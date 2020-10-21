@@ -1,0 +1,56 @@
+{
+    "GURPS.ST" : "ST",
+    "GURPS.DX" : "DX",
+    "GURPS.IQ" : "IQ",
+    "GURPS.HT" : "HT",
+    "GURPS.WILL" : "Will",
+    "GURPS.PER" : "Per",
+
+    "GURPS.HP" : "HP",
+    "GURPS.FP" : "FP",
+
+    "GURPS.ST.NAME" : "Strength",
+    "GURPS.DX.NAME" : "Dexterity",
+    "GURPS.IQ.NAME" : "Intelligence",
+    "GURPS.HT.NAME" : "Health",
+    "GURPS.WILL.NAME" : "Will",
+    "GURPS.PER.NAME" : "Perception",
+
+    "GURPS.HP.NAME" : "Hit Points",
+    "GURPS.FP.NAME" : "Fatigue Points",
+
+    "GURPS.Vision" : "Vision",
+    "GURPS.Hearing" : "Hearing",
+    "GURPS.TasteSmell" : "Taste/Smell",
+
+    "GURPS.Basic.Speed" : "Basic Speed",
+    "GURPS.Basic.Move" : "Basic Move",
+    "GURPS.Basic.Thrust" : "Basic Thrust",
+    "GURPS.Basic.Swing" : "Basic Swing",
+    "GURPS.Move" : "Move",
+
+		"GURPS.Skill.DXE": "DX/E",
+		"GURPS.Skill.DXA": "DX/A",
+		"GURPS.Skill.DXH": "DX/H",
+		"GURPS.Skill.DXVH": "DX/VH",
+
+		"GURPS.Skill.IQE": "IQ/E",
+		"GURPS.Skill.IQA": "IQ/A",
+		"GURPS.Skill.IQH": "IQ/H",
+		"GURPS.Skill.IQVH": "IQ/VH",
+
+		"GURPS.Skill.HTE": "HT/E",
+		"GURPS.Skill.HTA": "HT/A",
+		"GURPS.Skill.HTH": "HT/H",
+		"GURPS.Skill.HTVH": "HT/VH",
+
+		"GURPS.Skill.WillE": "Will/E",
+		"GURPS.Skill.WillA": "Will/A",
+		"GURPS.Skill.WillH": "Will/H",
+		"GURPS.Skill.WillVH": "Will/VH",
+
+		"GURPS.Skill.PerE": "Per/E",
+		"GURPS.Skill.PerA": "Per/A",
+		"GURPS.Skill.PerH": "Per/H",
+		"GURPS.Skill.PerVH": "Per/VH"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "gurps",
+  "title": "Generic Universal RolePlaying System 4th Edition - Unofficial",
+  "description": "An adaption of GURPS 4e for Foundry VTT",
+  "version": "0.1.0",
+  "minimumCoreVersion": "0.6.6",
+  "compatibleCoreVersion": "0.6.6",
+  "templateVersion": 2,
+  "author": "Chris Normand/Nose66",
+  "esmodules": ["module/gurps.js"],
+  "styles": ["styles/simple.css"],
+  "packs": [],
+  "languages": [    
+		{
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+	],
+  "gridDistance": 1,
+  "gridUnits": "yd",
+  "primaryTokenAttribute": "",
+  "secondaryTokenAttribute": "",
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "license": "LICENSE.txt"
+}
