@@ -4,7 +4,7 @@
   "description": "An adaption of GURPS 4e for Foundry VTT",
   "version": "0.1.0",
   "minimumCoreVersion": "0.6.6",
-  "compatibleCoreVersion": "0.6.6",
+  "compatibleCoreVersion": "0.7.5",
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
   "esmodules": ["module/gurps.js"],
