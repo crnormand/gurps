@@ -150,8 +150,10 @@ function objToString(obj, ndeep) {
   }
 }
 
-
+function trim(s) {
+	return s.replace(/^\s*$(?:\r\n?|\n)/gm,"");         // /^\s*[\r\n]/gm
+}
 
 GURPS.xmlTextToJson = xmlTextToJson;
 GURPS.objToString = objToString;
-
+GURPS.trim=trim;

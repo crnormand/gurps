@@ -2,11 +2,7 @@
 
     {{!-- Sheet Header --}}
     <header class="sheet-header">
-				<div style="display: flex;flex-direction: column; width: 100px">
         <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100"/>
-				<div style="width: 100px">TEST</div>
-				</div>
-
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
             <div class="attributes">
@@ -93,13 +89,44 @@
 
         {{!-- Biography Tab --}}
         <div class="tab biography" data-group="primary" data-tab="description">
-            {{editor content=data.biography target="data.biography" button=true owner=owner editable=editable}}
+             <div id="description">
+                <div class="fieldblock">
+                    <div class="label">Gender:</div>
+                    <div class="field">Male</div>
+                    <div class="label">Age:</div>
+                    <div class="field">20</div>
+                    <div class="label">Birthday:</div>
+                    <div class="field">July 4</div>
+                    <div class="label">Religion:</div>
+                    <div class="field">&quot;Nature&quot;</div>
+                </div>
+                <div class="fieldblock">
+                    <div class="label">Height:</div>
+                    <div class="field">6' 10&quot;</div>
+                    <div class="label">Weight:</div>
+                    <div class="field">300 lb</div>
+                    <div class="label">Size:</div>
+                    <div class="field">+0</div>
+                    <div class="label">TL:</div>
+                    <div class="field">3</div>
+                </div>
+                <div class="fieldblock">
+                    <div class="label">Hair:</div>
+                    <div class="field">Bald</div>
+                    <div class="label">Eyes:</div>
+                    <div class="field">Brown</div>
+                    <div class="label">Skin:</div>
+                    <div class="field">Dark Green amd Brown</div>
+                    <div class="label">Hand:</div>
+                    <div class="field">Right</div>
+                </div>
+            </div>
         </div>
 
         {{!-- Owned Items Tab --}}
         <div class="tab items" data-group="primary" data-tab="items">
             <ol class="item-list">
-            {{#each actor.items as |item id|}}
+            {{#each actor.data.data.skills as |item id|}}
                 <li class="item flexrow" data-item-id="{{item._id}}">
                     <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>
                     <h4 class="item-name">{{item.name}}</h4>
