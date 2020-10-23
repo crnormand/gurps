@@ -4,47 +4,47 @@
   "character": {
     "attributes": {
       "ST": {
-        "value": 13,
-        "points": 15,
+        "value": 10,
+        "points": 0,
 				"dtype": "Number"
       },
       "DX": {
-        "value": 11,
-        "points": 20,
+        "value": 10,
+        "points": 0,
 				"dtype": "Number"
       },
       "IQ": {
-        "value": 12,
-        "points": 40,
+        "value": 10,
+        "points": 0,
 				"dtype": "Number"
       },
       "HT": {
-        "value": 11,
-        "points": 5,
+        "value": 10,
+        "points": 0,
 				"dtype": "Number"
       },
 	     "WILL": {
-	      "value": 11,
-				"points": 5,
+	      "value": 10,
+				"points": 0,
 				"dtype": "Number"
 	    },
 	    "PER": {
-	      "value": 13,
-				"points": 15,
+	      "value": 10,
+				"points": 0,
 				"dtype": "Number"
 	    }
 		},
    	"HP": {
-    	"value": 9,
+    	"value": 10,
     	"min": 0,
-    	"max": 11,
-      "points": 2
+    	"max": 10,
+      "points": 0
   	},
     "FP": {
       "value": 10,
       "min": 0,
-      "max": 13,
-      "points": 9
+      "max": 10,
+      "points": 0
     },
 		"Dodge": {
 			"value": 10,

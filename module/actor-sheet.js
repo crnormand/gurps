@@ -113,8 +113,8 @@ export class GurpsActorSheet extends ActorSheet {
 	    }).render(true);
 	  }	
 
-	importFromGCS(xml) {
-		this.actor.importFromGCS(xml);
+	importFromGCSv1(xml) {
+		this.actor.importFromGCSv1(xml);
 	}
 
 

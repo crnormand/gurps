@@ -6,11 +6,6 @@ export class GurpsActor extends Actor {
     return data;
   }
 
-	// hack to get to provate text element created by xml->json method. 
-	textFrom(o) {
-		return o["#text"];
-	}
-
 	// First attempt at import GCS FG XML export data.
 	async importFromGCSv1(xml) {
 		console.log(xml);
@@ -21,35 +16,64 @@ export class GurpsActor extends Actor {
 		console.log(this);
 		// The character object starts here
 		let c = x.root.character;
-		let nm = this.t(c.name);
+		let nm = this.textFrom(c.name);
 		console.log("New Name=" + nm);
 		// this is how you have to update the domain object so that it is synchronized.
 		await this.update({"name": nm});
 
 		// This is going to get ugly, so break out various data into different methods
+		this.importAttributesFromCGSv1(c.attributes);
 		this.importSkillsFromGCSv1(c.abilities.skilllist, true)
+		//this.importSpellsFromGCSv1(c.abilities.spelllist, true)
+		
 	}
 	
+	// hack to get to provate text element created by xml->json method. 
+	textFrom(o) {
+		return o["#text"];
+	}
 	
-		// create/update the skills.   
-		// NOTE:  For the update to work correctly, no two skills can have the same name.
-		// When reading data, use "this.data.data", however, when updating, use "data.skills".
-		async importSkillsFromGCSv1(jsonSkills, overwrite) {
+	intFrom(o) {
+		return parseInt(this.textFrom(o));
+	}
+
+	async importAttributesFromCGSv1(json) {
+		let att = this.data.data.attributes;
+		att.ST.value = this.intFrom(json["strength"]);
+		att.ST.points = this.intFrom(json["strength_points"]);
+		att.DX.value = this.intFrom(json["dexterity"]);
+		att.DX.points = this.intFrom(json["dexterity_points"]);
+		att.IQ.value = this.intFrom(json["intelligence"]);
+		att.IQ.points = this.intFrom(json["intelligence_points"]);
+		att.HT.value = this.intFrom(json["health"]);
+		att.HT.points = this.intFrom(json["health_points"]);
+		att.WILL.value = this.intFrom(json["will"]);
+		att.WILL.points = this.intFrom(json["will_points"]);
+		att.PER.value = this.intFrom(json["perception"]);
+		att.PER.points = this.intFrom(json["perception_points"]);
+		await this.update({"data.attributes": att});
+	}
+
+	// create/update the skills.   
+	// NOTE:  For the update to work correctly, no two skills can have the same name.
+	// When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
+	async importSkillsFromGCSv1(json, overwrite) {
 		let skills = [];
 		if (!overwrite) {
 			skills = this.data.data.skills;
 		}
 		let t = this.textFrom;		/// shortcut to make code smaller
-		for (let key in jsonSkills) {
+		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-				let j = jsonSkills[key];
-				let sk = new Skill();
-				sk.name = t(j.name)
+				let j = json[key];
+				let sn =  t(j.name);
+				let sk = skills.find(s => s.name === sn);
+				if (!sk) sk = new Skill();
+				sk.name = sn;				
 				sk.type = t(j.type);
-				sk.skillLevel = parseInt(t(j.level));
+				sk.level = parseInt(t(j.level));
 				sk.relativeLevel = t(j.relativelevel);
-				sk.notes = CONFIG.GURPS.trim(t(j.text));
-				sk.parseGCSv1Notes();
+				sk.setNotes(CONFIG.GURPS.trim(t(j.text)));
 				skills.push(sk);
 			}
 		}
@@ -58,19 +82,14 @@ export class GurpsActor extends Actor {
 	
 }
 
-
-export class Skill {
+export class NamedLeveled {
 	name = "Throwing";
-	type = "DX/E";
-	skillLevel = 11;
-	relativeLevel = "DX+1";
-	points = 0;
+	level = 1;
+	points = 1;
 	notes = "";
 	pageRef = "";
 	
-	// Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-	parseGCSv1Notes() {
-		let n = this.notes;
+	setNotes(n) {
 		if (!!n) {
 			let k = "Page Ref: ";
 			let i = n.indexOf(k);
@@ -78,4 +97,21 @@ export class Skill {
 			this.pageRef = n.substr(i+k.length);
 		}
 	}
+
 }
+
+export class Skill extends NamedLeveled {
+	type = "DX/E";
+	relativeLevel = "DX+1";
+	
+	// Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
+}
+
+export class Spell extends NamedLeveled {
+	class = "";
+	college = "";
+	costMaintain = "2/1";
+	duration = "1";
+	resist = "HT";
+	time = "1 sec";
+	}

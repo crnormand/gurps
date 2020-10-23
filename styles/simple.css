@@ -9,7 +9,7 @@
   overflow-y: hidden;
 }
 .gurps .sheet-header {
-  height: 210px;
+  height: 250px;
   overflow: hidden;
   display: flex;
   flex-direction: row;
