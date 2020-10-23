@@ -6,17 +6,53 @@ export class GurpsActor extends Actor {
     return data;
   }
 
+hex(s) {
+    var hex, i;
+
+    var result = "";
+    for (i=0; i<s.length; i++) {
+        hex = s.charCodeAt(i).toString(16);
+        result += ("000"+hex).slice(-4);
+    }
+    return result
+}
+
+	
+	cleanUpP(xml) {
+		// First, remove non-ascii characters
+		xml = xml.replace(/[^ -~]+/g, "");
+		let s = xml.indexOf("<p>");
+		while (s > 0) {
+			let e = xml.indexOf("</p>", s);
+			if (e > s) {
+				let t1 = xml.substring(0, s);
+				let t2 = xml.substring(s+3, e);
+				try {
+				t2 = btoa(t2) + "\n";
+				} catch { console.log("T2:'" + t2 + "'"); console.log(this.hex(t2)); }
+				let t3 = xml.substr(e+4);
+				xml = t1 + t2 + t3;
+				s = xml.indexOf("<p>", s + t2.length);
+			}
+		}
+		return xml;
+	}
+
 	// First attempt at import GCS FG XML export data.
 	async importFromGCSv1(xml) {
 		// need to remove <p> and replace </p> with newlines from "formatted text"
-		let x = xml.replace(/<p>/g, "").replace(/<\/p>/g,"\n");
+		console.log("XML:" + xml);
+		let x = this.cleanUpP(xml);
 		console.log(x);
-		x = CONFIG.GURPS.trim
 		x = CONFIG.GURPS.xmlTextToJson(x);
 		console.log(x);
 		console.log(this);
 		// The character object starts here
 		let c = x.root.character;
+		if (!c) {
+			ui.notifications.warn("Unable to detect character format.   Possibly importing npc format?");
+			return;
+		}
 		let nm = this.textFrom(c.name);
 		console.log("New Name=" + nm);
 		// this is how you have to update the domain object so that it is synchronized.
@@ -59,7 +95,7 @@ export class GurpsActor extends Actor {
 		data.HP.max = i(json["hitpoints"]);
 		data.HP.points = i(json["hitpoints_points"]);
 		data.HP.value = i(json["hps"]);
-		data.FP.max = i(json["fatiguepoints "]);
+		data.FP.max = i(json["fatiguepoints"]);
 		data.FP.points = i(json["fatiguepoints_points"]);
 		data.FP.value = i(json["fps"]);
 		
@@ -89,7 +125,7 @@ export class GurpsActor extends Actor {
 				sk.type = t(j.type);
 				sk.level = parseInt(t(j.level));
 				sk.relativeLevel = t(j.relativelevel);
-				sk.setNotes(CONFIG.GURPS.trim(t(j.text)));
+				sk.setNotes(t(j.text));
 				skills.push(sk);
 			}
 		}
@@ -107,10 +143,15 @@ export class NamedLeveled {
 	
 	setNotes(n) {
 		if (!!n) {
+			let s = n.split("\n");
+			let v = "";
+			for (let b of s) {
+				if (!!b) v += atob(b) + "\n";
+			}
 			let k = "Page Ref: ";
-			let i = n.indexOf(k);
-			this.notes = n.substr(0, i);
-			this.pageRef = n.substr(i+k.length);
+			let i = v.indexOf(k);
+			this.notes = v.substr(0, i).trim();
+			this.pageRef = v.substr(i+k.length).trim();
 		}
 	}
 

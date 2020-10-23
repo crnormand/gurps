@@ -99,7 +99,7 @@ export class GurpsActorSheet extends ActorSheet {
 	          callback: html => {
 	            const form = html.find("form")[0];
 	            if ( !form.data.files.length ) return ui.notifications.error("You did not upload a data file!");
-	            readTextFromFile(form.data.files[0]).then(text => this.importFromGCSv1(text));
+	            readTextFromFile(form.data.files[0]).then(text => this.actor.importFromGCSv1(text));
 	          }
 	        },
 	        no: {
@@ -112,11 +112,6 @@ export class GurpsActorSheet extends ActorSheet {
 	      width: 400
 	    }).render(true);
 	  }	
-
-	importFromGCSv1(xml) {
-		this.actor.importFromGCSv1(xml);
-	}
-
 
 
   /* -------------------------------------------- */
