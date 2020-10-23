@@ -5,19 +5,12 @@ export class GurpsActor extends Actor {
     const data = super.getRollData();
     return data;
   }
-
-hex(s) {
-    var hex, i;
-
-    var result = "";
-    for (i=0; i<s.length; i++) {
-        hex = s.charCodeAt(i).toString(16);
-        result += ("000"+hex).slice(-4);
-    }
-    return result
-}
-
 	
+	// This is an ugly hack to cleasn up the "formatted text" output from GCS FG XML.
+	// First we have to remove non-printing characters, and then we want to replace 
+	// all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
+	// the DOMParser doesn't like some of the stuff in the formatted text sections, so
+	// we will base64 encode it, and the decode it in the NamedLeveled subclass setNotes()
 	cleanUpP(xml) {
 		// First, remove non-ascii characters
 		xml = xml.replace(/[^ -~]+/g, "");
@@ -27,9 +20,7 @@ hex(s) {
 			if (e > s) {
 				let t1 = xml.substring(0, s);
 				let t2 = xml.substring(s+3, e);
-				try {
 				t2 = btoa(t2) + "\n";
-				} catch { console.log("T2:'" + t2 + "'"); console.log(this.hex(t2)); }
 				let t3 = xml.substr(e+4);
 				xml = t1 + t2 + t3;
 				s = xml.indexOf("<p>", s + t2.length);
@@ -41,20 +32,26 @@ hex(s) {
 	// First attempt at import GCS FG XML export data.
 	async importFromGCSv1(xml) {
 		// need to remove <p> and replace </p> with newlines from "formatted text"
-		console.log("XML:" + xml);
+		//console.log("XML:" + xml);
 		let x = this.cleanUpP(xml);
-		console.log(x);
+		//console.log(x);
 		x = CONFIG.GURPS.xmlTextToJson(x);
-		console.log(x);
+		//console.log(x);
 		console.log(this);
+		let r = x.root;
+		if (!r) {
+			ui.notifications.warn("No <root> object found.  Are you importing the correct GCS XML file?");
+			return;
+		}
+			
 		// The character object starts here
-		let c = x.root.character;
+		let c = r.character;
 		if (!c) {
-			ui.notifications.warn("Unable to detect character format.   Possibly importing npc format?");
+			ui.notifications.warn("Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format.");
 			return;
 		}
 		let nm = this.textFrom(c.name);
-		console.log("New Name=" + nm);
+		console.log("Importing '" + nm + "'");
 		// this is how you have to update the domain object so that it is synchronized.
 		await this.update({"name": nm});
 
@@ -62,20 +59,46 @@ hex(s) {
 		this.importAttributesFromCGSv1(c.attributes);
 		this.importSkillsFromGCSv1(c.abilities.skilllist, true)
 		//this.importSpellsFromGCSv1(c.abilities.spelllist, true)
+		this.importTraitsfromGCSv1(c.traits);
 		
 	}
 	
-	// hack to get to provate text element created by xml->json method. 
+	// hack to get to private text element created by xml->json method. 
 	textFrom(o) {
 		return o["#text"];
 	}
 	
+	// similar hack to get text as integer.
 	intFrom(o) {
 		return parseInt(o["#text"]);
 	}
+		
+	async importTraitsfromGCSv1(json) {
+		let t = this.textFrom;
+		let ts = this.data.data.traits;
+		
+		ts.race = t(json["race"]);
+		ts.height = t(json["height"]);
+		ts.weight = t(json["weight"]);
+		ts.age = t(json["age"]);
+		// <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
+		let a = t(json["appearance"]);
+		ts.appearance = a;
+		let x = a.indexOf(", Eyes: ");
+		ts.gender = a.substring(0, x);
+		let y = a.indexOf(", Hair: ");
+		ts.eyes = a.substring(x + 8, y);
+		x = a.indexOf(", Skin: ")
+		ts.hair = a.substring(y + 8, x);
+		ts.skin = a.substr(x + 8);
+		ts.sizemod = t(json["sizemodifier"]);
+		await this.update({"data.traits": ts});
+	}
 
+	// Import the <attributes> section of the GCS FG XML file.
 	async importAttributesFromCGSv1(json) {
 		let i = this.intFrom;		// shortcut to make code smaller
+		let t = this.textFrom;
 		let data = this.data.data;
 		let att = data.attributes;
 		att.ST.value = i(json["strength"]);
@@ -98,12 +121,27 @@ hex(s) {
 		data.FP.max = i(json["fatiguepoints"]);
 		data.FP.points = i(json["fatiguepoints_points"]);
 		data.FP.value = i(json["fps"]);
-		
+
+		data.basiclift = t(json["basiclift"]);
+		data.basicmove.value = i(json["basicmove"]);
+		data.basicmove.points = i(json["basicmove_points"]);
+		data.basicspeed.value = i(json["basicspeed"]);
+		data.basicspeed.points = i(json["basicspeed_points"]);
+		data.thrust = t(json["thrust"]);
+		data.swing = t(json["swing"]);
+		data.currentmove = t(json["move"]);
+	
+		// Instead of updating the whole "data" object, we can pass in subsets
 		await this.update({
 			"data.HP": data.HP,
-			"data.FP": data.FP
+			"data.FP": data.FP,
+			"data.basiclift": data.basiclift,
+			"data.basicmove": data.basicmove,
+			"data.basicspeed": data.basicspeed,
+			"data.thrust": data.thrust,
+			"data.swing": data.swing,
+			"data.currentmove": data.currentmove
 			});
-				
 	}
 
 	// create/update the skills.   
@@ -124,7 +162,7 @@ hex(s) {
 				sk.name = sn;				
 				sk.type = t(j.type);
 				sk.level = parseInt(t(j.level));
-				sk.relativeLevel = t(j.relativelevel);
+				sk.relativelevel = t(j.relativelevel);
 				sk.setNotes(t(j.text));
 				skills.push(sk);
 			}
@@ -139,7 +177,7 @@ export class NamedLeveled {
 	level = 1;
 	points = 1;
 	notes = "";
-	pageRef = "";
+	pageref = "";
 	
 	setNotes(n) {
 		if (!!n) {
@@ -151,7 +189,7 @@ export class NamedLeveled {
 			let k = "Page Ref: ";
 			let i = v.indexOf(k);
 			this.notes = v.substr(0, i).trim();
-			this.pageRef = v.substr(i+k.length).trim();
+			this.pageref = v.substr(i+k.length).trim();
 		}
 	}
 
@@ -159,7 +197,7 @@ export class NamedLeveled {
 
 export class Skill extends NamedLeveled {
 	type = "DX/E";
-	relativeLevel = "DX+1";
+	relativelevel = "DX+1";
 	
 	// Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
 }
@@ -167,7 +205,7 @@ export class Skill extends NamedLeveled {
 export class Spell extends NamedLeveled {
 	class = "";
 	college = "";
-	costMaintain = "2/1";
+	costmaintain = "2/1";
 	duration = "1";
 	resist = "HT";
 	time = "1 sec";

@@ -46,16 +46,22 @@
       "max": 10,
       "points": 0
     },
-		"Dodge": {
+		"dodge": {
 			"value": 10,
 			"enc_level": 0
 		},
-		"BL": 10,
-		"BM": 5,
-		"BS": 6,
-		"Move": 5,
-		"BasicThrust": "1d6",
-		"Basic Swing": "1d6+1",
+		"basiclift": "",
+		"basicmove": {
+			"value": 5,
+			"points": 0
+		},
+		"basicspeed": {
+			"value": 6,
+			"points": 0
+		},
+		"currentmove": 5,
+		"thrust": "1d6",
+		"swing": "1d6+1",
 		"frightcheck": "10",
 		"hearing": 10,
 		"tastesmell": 10,
@@ -69,14 +75,24 @@
 		"spells": [],
 		"money": [],
 		"traits": {
+			"title": "",
 			"race": "",
 			"height": "",
 			"weight": "",
 			"age": "",
-			"appearance": "",
-			"sizemod": "+0"
+			"birthday": "",
+			"religion": "",
+			"gender": "",
+			"eyes": "",
+			"hair": "",
+			"hand": "",
+			"skin": "",
+			"sizemod": "+0",
+			"techlevel": "",
+			"createdon": "",
+			"player":""
 		},
-		"points": {
+		"totalpoints": {
 			"attributes": 0,
 			"ads": 0,
 			"disads": 0,

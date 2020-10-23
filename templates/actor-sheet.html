@@ -92,33 +92,33 @@
              <div id="description">
                 <div class="fieldblock">
                     <div class="label">Gender:</div>
-                    <div class="field">Male</div>
+                    <div class="field">{{data.traits.gender}}</div>
                     <div class="label">Age:</div>
-                    <div class="field">20</div>
+                    <div class="field">{{data.traits.age}}</div>
                     <div class="label">Birthday:</div>
-                    <div class="field">July 4</div>
+                    <div class="field">{{data.traits.birthday}}</div>
                     <div class="label">Religion:</div>
-                    <div class="field">&quot;Nature&quot;</div>
+                    <div class="field">{{data.traits.religion}}</div>
                 </div>
                 <div class="fieldblock">
                     <div class="label">Height:</div>
-                    <div class="field">6' 10&quot;</div>
+                    <div class="field">{{data.traits.height}};</div>
                     <div class="label">Weight:</div>
-                    <div class="field">300 lb</div>
+                    <div class="field">{{data.traits.weight}}</div>
                     <div class="label">Size:</div>
-                    <div class="field">+0</div>
+                    <div class="field">{{data.traits.sizemod}}</div>
                     <div class="label">TL:</div>
-                    <div class="field">3</div>
+                    <div class="field">{{data.traits.techlevel}}</div>
                 </div>
                 <div class="fieldblock">
                     <div class="label">Hair:</div>
-                    <div class="field">Bald</div>
+                    <div class="field">{{data.traits.hair}}</div>
                     <div class="label">Eyes:</div>
-                    <div class="field">Brown</div>
+                    <div class="field">{{data.traits.eyes}}</div>
                     <div class="label">Skin:</div>
-                    <div class="field">Dark Green amd Brown</div>
+                    <div class="field">{{data.traits.skin}}</div>
                     <div class="label">Hand:</div>
-                    <div class="field">Right</div>
+                    <div class="field">{{data.traits.hand}}</div>
                 </div>
             </div>
         </div>
@@ -131,8 +131,8 @@
                 <li class="skill flexrow">
                      <h4 class="skill-name rollable">{{this.name}}</h4>
                     <span class="skill-ability">{{this.level}}</span>
-                    <span class="skill-mod">{{this.relativeLevel}}</span>
-                    <span class="skill-passive">({{this.pageRef}})</span>
+                    <span class="skill-mod">{{this.relativelevel}}</span>
+                    <span class="skill-passive">({{this.pageref}})</span>
                 </li>
             {{/each}}
             </ul>
