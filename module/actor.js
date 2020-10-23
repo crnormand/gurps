@@ -57,8 +57,8 @@ export class GurpsActor extends Actor {
 
 		// This is going to get ugly, so break out various data into different methods
 		this.importAttributesFromCGSv1(c.attributes);
-		this.importSkillsFromGCSv1(c.abilities.skilllist, true)
-		//this.importSpellsFromGCSv1(c.abilities.spelllist, true)
+		this.importSkillsFromGCSv1(c.abilities.skilllist)
+		this.importSpellsFromGCSv1(c.abilities.spelllist)
 		this.importTraitsfromGCSv1(c.traits);
 		
 	}
@@ -147,11 +147,8 @@ export class GurpsActor extends Actor {
 	// create/update the skills.   
 	// NOTE:  For the update to work correctly, no two skills can have the same name.
 	// When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
-	async importSkillsFromGCSv1(json, overwrite) {
-		let skills = [];
-		if (!overwrite) {
-			skills = this.data.data.skills;
-		}
+	async importSkillsFromGCSv1(json) {
+		let skills = this.data.data.skills;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -169,6 +166,35 @@ export class GurpsActor extends Actor {
 		}
 		await this.update({"data.skills": skills});
 	}
+	
+		// create/update the spells.   
+	// NOTE:  For the update to work correctly, no two spells can have the same name.
+	// When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
+	async importSpellsFromGCSv1(json) {
+		let spells = this.data.data.spells;
+		let t = this.textFrom;		/// shortcut to make code smaller
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let sn =  t(j.name);
+				let sp = spells.find(s => s.name === sn);
+				if (!sp) sp = new Spell();
+				sp.name = sn;			
+				sp.class = t(j.class);
+				sp.college = t(j.college);
+				sp.costmaintain = t(j.costmaintain);
+				sp.duration = t(j.duration);
+				sp.points = t(j.points);
+				sp.time = t(j.time);	
+				sp.level = parseInt(t(j.level));
+				sp.duration = t(j.duration);
+				sp.setNotes(t(j.text));
+				spells.push(sp);
+			}
+		}
+		await this.update({"data.spells": spells});
+	}
+
 	
 }
 
@@ -207,6 +233,6 @@ export class Spell extends NamedLeveled {
 	college = "";
 	costmaintain = "2/1";
 	duration = "1";
-	resist = "HT";
+	resist = "";
 	time = "1 sec";
 	}
