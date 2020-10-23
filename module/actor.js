@@ -8,9 +8,10 @@ export class GurpsActor extends Actor {
 
 	// First attempt at import GCS FG XML export data.
 	async importFromGCSv1(xml) {
-		console.log(xml);
 		// need to remove <p> and replace </p> with newlines from "formatted text"
 		let x = xml.replace(/<p>/g, "").replace(/<\/p>/g,"\n");
+		console.log(x);
+		x = CONFIG.GURPS.trim
 		x = CONFIG.GURPS.xmlTextToJson(x);
 		console.log(x);
 		console.log(this);
@@ -34,24 +35,39 @@ export class GurpsActor extends Actor {
 	}
 	
 	intFrom(o) {
-		return parseInt(this.textFrom(o));
+		return parseInt(o["#text"]);
 	}
 
 	async importAttributesFromCGSv1(json) {
-		let att = this.data.data.attributes;
-		att.ST.value = this.intFrom(json["strength"]);
-		att.ST.points = this.intFrom(json["strength_points"]);
-		att.DX.value = this.intFrom(json["dexterity"]);
-		att.DX.points = this.intFrom(json["dexterity_points"]);
-		att.IQ.value = this.intFrom(json["intelligence"]);
-		att.IQ.points = this.intFrom(json["intelligence_points"]);
-		att.HT.value = this.intFrom(json["health"]);
-		att.HT.points = this.intFrom(json["health_points"]);
-		att.WILL.value = this.intFrom(json["will"]);
-		att.WILL.points = this.intFrom(json["will_points"]);
-		att.PER.value = this.intFrom(json["perception"]);
-		att.PER.points = this.intFrom(json["perception_points"]);
+		let i = this.intFrom;		// shortcut to make code smaller
+		let data = this.data.data;
+		let att = data.attributes;
+		att.ST.value = i(json["strength"]);
+		att.ST.points = i(json["strength_points"]);
+		att.DX.value = i(json["dexterity"]);
+		att.DX.points = i(json["dexterity_points"]);
+		att.IQ.value = i(json["intelligence"]);
+		att.IQ.points = i(json["intelligence_points"]);
+		att.HT.value = i(json["health"]);
+		att.HT.points = i(json["health_points"]);
+		att.WILL.value = i(json["will"]);
+		att.WILL.points = i(json["will_points"]);
+		att.PER.value = i(json["perception"]);
+		att.PER.points = i(json["perception_points"]);
 		await this.update({"data.attributes": att});
+		
+		data.HP.max = i(json["hitpoints"]);
+		data.HP.points = i(json["hitpoints_points"]);
+		data.HP.value = i(json["hps"]);
+		data.FP.max = i(json["fatiguepoints "]);
+		data.FP.points = i(json["fatiguepoints_points"]);
+		data.FP.value = i(json["fps"]);
+		
+		await this.update({
+			"data.HP": data.HP,
+			"data.FP": data.FP
+			});
+				
 	}
 
 	// create/update the skills.   

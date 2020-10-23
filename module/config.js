@@ -46,7 +46,7 @@ GURPS.skillTypes = {
 }
 
 function xmlTextToJson(text) {
-	var xml = new DOMParser().parseFromString(text, 'text/xml');
+	var xml = new DOMParser().parseFromString(text, 'application/xml');
 	return xmlToJson(xml);
 }
 
