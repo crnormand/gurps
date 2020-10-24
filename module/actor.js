@@ -77,12 +77,12 @@ export class GurpsActor extends Actor {
 		let t = this.textFrom;
 		let ts = this.data.data.traits;
 		
-		ts.race = t(json["race"]);
-		ts.height = t(json["height"]);
-		ts.weight = t(json["weight"]);
-		ts.age = t(json["age"]);
+		ts.race = t(json.race);
+		ts.height = t(json.height);
+		ts.weight = t(json.weight);
+		ts.age = t(json.age);
 		// <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
-		let a = t(json["appearance"]);
+		let a = t(json.appearance);
 		ts.appearance = a;
 		let x = a.indexOf(", Eyes: ");
 		ts.gender = a.substring(0, x);
@@ -91,7 +91,7 @@ export class GurpsActor extends Actor {
 		x = a.indexOf(", Skin: ")
 		ts.hair = a.substring(y + 8, x);
 		ts.skin = a.substr(x + 8);
-		ts.sizemod = t(json["sizemodifier"]);
+		ts.sizemod = t(json.sizemodifier);
 		await this.update({"data.traits": ts});
 	}
 
@@ -101,35 +101,35 @@ export class GurpsActor extends Actor {
 		let t = this.textFrom;
 		let data = this.data.data;
 		let att = data.attributes;
-		att.ST.value = i(json["strength"]);
-		att.ST.points = i(json["strength_points"]);
-		att.DX.value = i(json["dexterity"]);
-		att.DX.points = i(json["dexterity_points"]);
-		att.IQ.value = i(json["intelligence"]);
-		att.IQ.points = i(json["intelligence_points"]);
-		att.HT.value = i(json["health"]);
-		att.HT.points = i(json["health_points"]);
-		att.WILL.value = i(json["will"]);
-		att.WILL.points = i(json["will_points"]);
-		att.PER.value = i(json["perception"]);
-		att.PER.points = i(json["perception_points"]);
+		att.ST.value = i(json.strength);
+		att.ST.points = i(json.strength_points);
+		att.DX.value = i(json.dexterity);
+		att.DX.points = i(json.dexterity_points);
+		att.IQ.value = i(json.intelligence);
+		att.IQ.points = i(json.intelligence_points);
+		att.HT.value = i(json.health);
+		att.HT.points = i(json.health_points);
+		att.WILL.value = i(json.will);
+		att.WILL.points = i(json.will_points);
+		att.PER.value = i(json.perception);
+		att.PER.points = i(json.perception_points);
 		await this.update({"data.attributes": att});
 		
-		data.HP.max = i(json["hitpoints"]);
-		data.HP.points = i(json["hitpoints_points"]);
-		data.HP.value = i(json["hps"]);
-		data.FP.max = i(json["fatiguepoints"]);
-		data.FP.points = i(json["fatiguepoints_points"]);
-		data.FP.value = i(json["fps"]);
+		data.HP.max = i(json.hitpoints);
+		data.HP.points = i(json.hitpoints_points);
+		data.HP.value = i(json.hps);
+		data.FP.max = i(json.fatiguepoints);
+		data.FP.points = i(json.fatiguepoints_points);
+		data.FP.value = i(json.fps);
 
-		data.basiclift = t(json["basiclift"]);
-		data.basicmove.value = i(json["basicmove"]);
-		data.basicmove.points = i(json["basicmove_points"]);
-		data.basicspeed.value = i(json["basicspeed"]);
-		data.basicspeed.points = i(json["basicspeed_points"]);
-		data.thrust = t(json["thrust"]);
-		data.swing = t(json["swing"]);
-		data.currentmove = t(json["move"]);
+		data.basiclift = t(json.basiclift);
+		data.basicmove.value = i(json.basicmove);
+		data.basicmove.points = i(json.basicmove_points);
+		data.basicspeed.value = i(json.basicspeed);
+		data.basicspeed.points = i(json.basicspeed_points);
+		data.thrust = t(json.thrust);
+		data.swing = t(json.swing);
+		data.currentmove = t(json.move);
 	
 		// Instead of updating the whole "data" object, we can pass in subsets
 		await this.update({
@@ -194,17 +194,35 @@ export class GurpsActor extends Actor {
 		}
 		await this.update({"data.spells": spells});
 	}
-
 	
+	async importAdvantagesFromGCSv1(updateLocation, datalist, json, cls) {
+		
+	}
+
+	async importBaseAdvantagesFromGCSv1(updateLocation, datalist, json, cls) {
+			let t = this.textFrom;		/// shortcut to make code smaller
+			for (let key in json) {
+				if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+					let j = json[key];
+					let sn =  t(j.name);
+					let a = datalist.find(s => s.name === sn);
+					if (!a) a = new cls();
+					a.name = sn;			
+					a.points = t(j.points);
+					a.setNotes(t(j.text));
+					datalist.push(a);
+				}
+			}
+			await this.update({updatelocation: datalist});
+		}
+
 }
 
-export class NamedLeveled {
-	name = "Throwing";
-	level = 1;
-	points = 1;
+export class Named {
+	name = "";
+	points = 0;
 	notes = "";
 	pageref = "";
-	
 	setNotes(n) {
 		if (!!n) {
 			let s = n.split("\n");
@@ -218,17 +236,20 @@ export class NamedLeveled {
 			this.pageref = v.substr(i+k.length).trim();
 		}
 	}
-
 }
 
-export class Skill extends NamedLeveled {
+export class Leveled extends Named {
+	level = 1;
+}
+
+export class Skill extends Leveled {
 	type = "DX/E";
 	relativelevel = "DX+1";
 	
 	// Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
 }
 
-export class Spell extends NamedLeveled {
+export class Spell extends Leveled {
 	class = "";
 	college = "";
 	costmaintain = "2/1";
@@ -236,3 +257,7 @@ export class Spell extends NamedLeveled {
 	resist = "";
 	time = "1 sec";
 	}
+	
+export class Advantage extends Named {
+
+}
