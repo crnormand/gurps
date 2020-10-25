@@ -1,11 +1,15 @@
 # FoundryVTT-GURPS4e
 Implmenting the GURPS 4e rules for Foundry VTT
 
+Version 1.01
+
 My general plan for is to prototype as many cool/interesting features as we can prior to January, so that we can 1. convince the other gurps group (https://gitlab.com/jbhuddleston/gurps4e) to switch to (or merge with) this system and 2. make it viable for Mook to use it to run a game in January, which may be an inroads to SJG.
 
 Some of the cool/interesting features I would like to implement/prototype (in no particular order, trust me ;-) ) are below.   There is a whole lot of stuff here... and we certainly don't have to implement all (or even a lot) of it.   
 
 A robust domain model.   I am starting with the GCS domain model for characters (and npcs).   As such, I am implementing one type of import (from the GCS FG XML export).  But there may be other models (or simplified models).
+
+The ability to edit/add to a character. While a GCS/GCA import can provide most of the data, it might not provide all (especially if the GM has homebrewed anything).   If so, we need to have the ability to add/edit skills/spells/ads/disads/attacks/etc.   It doesn't have to be flashy, since I am currently assuming the bulk of the data will come from an outside source (GCS/GCA).
 
 A quick and easy mechanism for rolling the various GURPS "checks" (ability/skill/spell/combat/reaction/etc.).   As a bare minimum, I want to make it as easy as possible for the GM or a Player to assemble the necessary modifiers for a roll, make the roll, and have the system announce the success or failure of that roll.   To me, this is the HEART of the game (in the VTT).   I want to add as many options/choices, and make it as easy/versatile as possible, so the users can spend more time fighting the monsters and less time fighting the VTT.
 
