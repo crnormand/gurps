@@ -82,6 +82,7 @@ export class GurpsActor extends Actor {
 		this.importEncumbranceFromGCSv1(c.encumbrance);
 		this.importCombatMeleeFromGCSv1(c.combat.meleecombatlist);
 		this.importCombatRangedFromGCSv1(c.combat.rangedcombatlist);
+		this.importPointTotalsFromGCSv1(c.pointtotals);
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
 	}
@@ -96,6 +97,20 @@ export class GurpsActor extends Actor {
 	// similar hack to get text as integer.
 	intFrom(o) {
 		return parseInt(o["#text"]);
+	}
+		
+	async importPointTotalsFromGCSv1(json) {
+		let i = this.intFrom;
+		await this.update({
+			"data.totalpoints.attributes": i(json.attributes),
+			"data.totalpoints.ads": i(json.ads),
+			"data.totalpoints.disads": i(json.disads),
+			"data.totalpoints.quirks": i(json.quirks),
+			"data.totalpoints.skills": i(json.skills),
+			"data.totalpoints.spells": i(json.spells),
+			"data.totalpoints.unspent": i(json.unspentpoints),
+			"data.totalpoints.total": i(json.totalpoints)
+		});
 	}
 	
 	async importEncumbranceFromGCSv1(json) {
