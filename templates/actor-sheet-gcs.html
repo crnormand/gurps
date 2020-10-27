@@ -323,114 +323,19 @@
             <div class="st header">ST</div>
             <div></div>
 
-            
-            <div class="desc">Fine Spear
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">1H Thrust</div>
-            <div class="level">15</div>
-            <div class="parry">10</div>
-            <div class="block"></div>
-            <div class="damage">1d+4 imp</div>
-            <div class="reach">1</div>
-            <div class="st">9</div>
-            <div></div>
-            
-            <div class="desc">Fine Spear
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">2H Swing</div>
-            <div class="level">13</div>
-            <div class="parry">11</div>
-            <div class="block"></div>
-            <div class="damage">2d+3 cr</div>
-            <div class="reach">1,2</div>
-            <div class="st">7</div>
-            <div></div>
-            
-            <div class="desc">Fine Spear
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">2H Thrust</div>
-            <div class="level">15</div>
-            <div class="parry">10</div>
-            <div class="block"></div>
-            <div class="damage">1d+5 imp</div>
-            <div class="reach">1,2</div>
-            <div class="st">9</div>
-            <div></div>
-            
-            <div class="desc">Long Knife
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Swung</div>
-            <div class="level">12</div>
-            <div class="parry">9</div>
-            <div class="block"></div>
-            <div class="damage">2d cut</div>
-            <div class="reach">C,1</div>
-            <div class="st">7</div>
-            <div></div>
-            
-            <div class="desc">Long Knife
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Thrust</div>
-            <div class="level">12</div>
-            <div class="parry">9</div>
-            <div class="block"></div>
-            <div class="damage">1d+1 imp</div>
-            <div class="reach">C,1</div>
-            <div class="st">7</div>
-            <div></div>
-            
-            <div class="desc">Wrestling
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Grapple(-1 arm, -3 neck)</div>
-            <div class="level">13</div>
-            <div class="parry"></div>
-            <div class="block"></div>
-            <div class="damage">1d+2 CP (Bear ST 2d+2)</div>
-            <div class="reach">C</div>
-            <div class="st"></div>
-            <div></div>
-            
-            <div class="desc">Wrestling
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Injure (Add to C attack)</div>
-            <div class="level">0</div>
-            <div class="parry"></div>
-            <div class="block"></div>
-            <div class="damage">0 Add 1d cr / 3 CP</div>
-            <div class="reach">C</div>
-            <div class="st"></div>
-            <div></div>
-            
-            <div class="desc">Wrestling
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Strangle</div>
-            <div class="level">0</div>
-            <div class="parry"></div>
-            <div class="block"></div>
-            <div class="damage">0 Quick vs ST/HT, -1 FP margin</div>
-            <div class="reach">C (Neck)</div>
-            <div class="st"></div>
-            <div></div>
-            
-            <div class="desc">Wrestling
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Takedown</div>
-            <div class="level">0</div>
-            <div class="parry"></div>
-            <div class="block"></div>
-            <div class="damage">0 Quick vs ST,DX,Grap Skill</div>
-            <div class="reach">C (Leg 2xCP)</div>
-            <div class="st"></div>
-            <div></div>
+						{{#each data.melee}}
+	            <div class="desc">{{this.name}}
+								<div class="list_note">{{this.note}}</div>
+							</div>
+	            <div class="usage">{{this.mode}}</div>
+	            <div class="level">{{this.level}}</div>
+	            <div class="parry">{{this.parry}}</div>
+	            <div class="block"></div>
+	            <div class="damage">{{this.block}}</div>
+	            <div class="reach">{{this.reach}}</div>
+	            <div class="st">{{this.st}}</div>
+	            <div></div>
+						{{/each}}
             
         </div>
         <div id="ranged">
@@ -447,47 +352,21 @@
             <div class="st header">ST</div>
 
             
-            <div class="desc">Fine Spear
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Thrown</div>
-            <div class="level">8</div>
-            <div class="acc">2</div>
-            <div class="damage">1d+4 imp</div>
-            <div class="range">x1/x1.5</div>
-            <div class="rof">1</div>
-            <div class="shots">T(1)</div>
-            <div class="bulk">-6</div>
-            <div class="rcl"></div>
-            <div class="st">9</div>
-            
-            <div class="desc">Fog - Obscure (Vision)
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Innate Att Gaze</div>
-            <div class="level">16</div>
-            <div class="acc">3</div>
-            <div class="damage">-25 vision checks</div>
-            <div class="range">100 yds, 8 yrd radius</div>
-            <div class="rof"></div>
-            <div class="shots"></div>
-            <div class="bulk"></div>
-            <div class="rcl"></div>
-            <div class="st"></div>
-            
-            <div class="desc">Tangle Growth - Binding (3 hex) ST 12
-                <div class="list_note"></div>
-            </div>
-            <div class="usage">Innate Att Gaze</div>
-            <div class="level">16</div>
-            <div class="acc">3</div>
-            <div class="damage">0 Quick Contest ST</div>
-            <div class="range">100</div>
-            <div class="rof">1</div>
-            <div class="shots"></div>
-            <div class="bulk"></div>
-            <div class="rcl"></div>
-            <div class="st"></div>
+						{{#each data.ranged}}
+	            <div class="desc">{{this.name}}
+	                <div class="list_note">{{this.note}}</div>
+	            </div>
+	            <div class="usage">{{this.mode}}</div>
+	            <div class="level">{{this.level}}</div>
+	            <div class="acc">{{this.acc}}</div>
+	            <div class="damage">{{this.damage}}</div>
+	            <div class="range">{{this.range}}</div>
+	            <div class="rof">{{this.rof}}</div>
+	            <div class="shots">{{this.shots}}</div>
+	            <div class="bulk">{{this.bulk}}</div>
+	            <div class="rcl">{{this.rcl}}</div>
+	            <div class="st">{{this.st}}</div>
+						{{/each}}
             
         </div>
         <div id="advantages">

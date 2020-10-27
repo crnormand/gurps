@@ -100,6 +100,8 @@ export class GurpsActor extends Actor {
 	}
 		
 	async importPointTotalsFromGCSv1(json) {
+		if (!json.attributes) return;
+		
 		let i = this.intFrom;
 		await this.update({
 			"data.totalpoints.attributes": i(json.attributes),
