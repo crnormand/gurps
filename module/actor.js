@@ -62,6 +62,7 @@ export class GurpsActor extends Actor {
 		this.importOtherAdsFromGCSv1(c.abilities.otherlist);
 		this.importEncumbranceFromGCSv1(c.encumbrance);
 		this.importCombatMeleeFromGCSv1(c.combat.meleecombatlist);
+		this.importCombatRangedFromGCSv1(c.combat.rangedcombatlist);
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
 	}
@@ -101,7 +102,7 @@ export class GurpsActor extends Actor {
 	
 	async importCombatMeleeFromGCSv1(json) {
 		let t = this.textFrom;
-		let melees = [];
+		let melee = [];
 		
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -126,12 +127,50 @@ export class GurpsActor extends Actor {
 						m.damage = t(j2.damage);
 						m.reach = t(j2.reach);
 						m.parry = t(j2.parry);
-  					melees.push(m);
+  					melee.push(m);
 					}
 				}
 			}
 		}
-		await this.update({"data.melee": melees});	
+		await this.update({"data.melee": melee});	
+	}
+	
+	async importCombatRangedFromGCSv1(json) {
+		let t = this.textFrom;
+		let ranged = [];
+		
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				for (let k2 in j.rangedmodelist) {
+					if (k2.startsWith("id-")) {	
+						let j2 = j.rangedmodelist[k2];
+						let r = new Ranged();
+						r.name = t(j.name);	
+						r.st = t(j.st);
+						r.bulk = t(j.bulk);
+						r.legalityclass = t(j.lc);
+						r.ammo = t(j.ammo);
+						try {
+							r.setNotes(t(j.text));
+						} catch {
+							console.log(m);
+							console.log(t(j.text));
+						}
+						r.mode = t(j2.name);
+						r.level = t(j2.level);
+						r.damage = t(j2.damage);
+						r.acc = t(j2.acc);
+						r.rof = t(j2.rof);
+						r.shots = t(j2.shots);
+						r.rcl = t(j2.rcl);
+  					ranged.push(r);
+					}
+				}
+			}
+		}
+		await this.update({"data.ranged": ranged});	
+	
 	}
 		
 	async importTraitsfromGCSv1(json) {
