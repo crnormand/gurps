@@ -5,6 +5,25 @@ export class GurpsActor extends Actor {
     const data = super.getRollData();
     return data;
   }
+
+	prepareData() {
+		super.prepareData();
+		
+		const d = this.data.data;
+		if (d.encumbrance.length == 0) {
+			let es = [];
+			for (let i = 0; i < 5; i++) {
+				let e = [];
+				e.key = ("enc" + i);
+				e.current = false;
+				e.weight = "";
+				e.move = "";
+				e.dodge = "?";
+			}
+			d.encumbrance = es;
+		}
+	}
+
 	
 	// This is an ugly hack to cleasn up the "formatted text" output from GCS FG XML.
 	// First we have to remove non-printing characters, and then we want to replace 
@@ -89,6 +108,7 @@ export class GurpsActor extends Actor {
 			let c = t(json[k]);
 			e.current = (c === "1");
 			k = "enc" + i;
+			e.key = k;
 			let k2 = k + "_weight";
 			e.weight = t(json[k2]);
 			k2 = k + "_move";
@@ -434,6 +454,7 @@ export class Ranged extends Attack {
 }
 
 export class Encumbrance {
+	key = "";
 	level = 0;
 	dodge = 9;
 	weight = "";

@@ -22,26 +22,7 @@ export class GurpsActorSheet extends ActorSheet {
   getData() {
     const sheetData = super.getData();
 		sheetData.config = CONFIG.GURPS;
-		
-		if (sheetData.data.encumbrance.length == 0) {
-			for (let i = 0; i < 5; i++) {
-				let k = "enc" + i;
-				sheetData[k] = (i == 0);
-				sheetData[k + "d"] = 9;
-				sheetData[k + "w"] = "";
-				sheetData[k + "m"] = "5";
-			}
-		} else {
-			let e = sheetData.data.encumbrance;
-			for (let i = 0; i < 5; i++) {
-				let k = "enc" + i;
-				sheetData[k] = e[i].current;
-				sheetData[k + "d"] = e[i].dodge;
-				sheetData[k + "w"] = e[i].weight;
-				sheetData[k + "m"] = e[i].move;
-			}
-		}
-		
+				
     return sheetData;
   }
 

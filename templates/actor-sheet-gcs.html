@@ -145,39 +145,21 @@
                 <div class="moveh header">Move</div>
                 <div class="dodgeh header">Dodge</div>
                 
-								{{#if enc0}}
-                <div class="encmarker current"></div>
-								{{else}}
-                <div class="encmarker "></div>
-								{{/if}}
-                <div class="enc current enc0"></div>
-                <div class="load current">{{enc0w}}</div>
-                <div class="move current">{{enc0m}}</div>
-                <div class="dodge current">{{enc0d}}</div>
-                
-                <div class="encmarker "></div>
-                <div class="enc  enc1"></div>
-                <div class="load ">90 lb</div>
-                <div class="move ">4</div>
-                <div class="dodge ">8</div>
-                
-                <div class="encmarker "></div>
-                <div class="enc  enc2"></div>
-                <div class="load ">135 lb</div>
-                <div class="move ">3</div>
-                <div class="dodge ">7</div>
-                
-                <div class="encmarker "></div>
-                <div class="enc  enc3"></div>
-                <div class="load ">270 lb</div>
-                <div class="move ">2</div>
-                <div class="dodge ">6</div>
-                
-                <div class="encmarker "></div>
-                <div class="enc  enc4"></div>
-                <div class="load ">450 lb</div>
-                <div class="move ">1</div>
-                <div class="dodge ">5</div>
+								{{#each data.encumbrance}}
+									{{#if this.current}}
+		                <div class="encmarker current"></div>
+		                <div class="enc current {{this.key}}"></div>
+		                <div class="load current">{{this.weight}}</div>
+		                <div class="move current">{{this.move}}</div>
+		                <div class="dodge current">{{this.dodge}}</div>
+									{{else}}
+										<div class="encmarker "></div>
+		                <div class="enc {{this.key}}"></div>
+		                <div class="load ">{{this.weight}}</div>
+		                <div class="move ">{{this.move}}</div>
+		                <div class="dodge ">{{this.dodge}}</div>
+									{{/if}}
+								{{/each}}
                 
             </div>
             <div id="lifting">
