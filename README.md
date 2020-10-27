@@ -1,7 +1,7 @@
 # FoundryVTT-GURPS4e
 Implmenting the GURPS 4e rules for Foundry VTT
 
-Version 1.01
+Version 1.02
 
 My general plan for is to prototype as many cool/interesting features as we can prior to January, so that we can 1. convince the other gurps group (https://gitlab.com/jbhuddleston/gurps4e) to switch to (or merge with) this system and 2. make it viable for Mook to use it to run a game in January, which may be an inroads to SJG.
 
@@ -68,6 +68,8 @@ TODO items... reminders to me of things I want to work on, or haven't finished, 
 
 - Complete import of GCS FG XML PC format.
 Herein lies one of the big differences between the GURPS game systems.   This system only uses Items for physical items, and creates it own classes for things like skills, advantages, etc.
+LOL, I am nowhere near done for this... I forgot combat and equipment (at least).
+And for some reason, the description information is not being saved.
 
 - Figure out how to implement different actor htmls.   Given that we have a GCS html output, I bet Rich would allow us to canibalize it for here.   And we could implement a version that looks like the book http://www.cox-thurmond.net/jim/jcsp, if people like that look.
 

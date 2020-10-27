@@ -4,6 +4,7 @@ import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
 import { GurpsActorSheet } from "./actor-sheet.js";
+import { GurpsActorSheet2 } from "./actor-sheet.js";
 import { Skill } from "./actor.js";
 
 /* -------------------------------------------- */
@@ -32,6 +33,7 @@ Hooks.once("init", async function() {
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
+  Actors.registerSheet("gurps", GurpsActorSheet2, { makeDefault: false });
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("gurps", GurpsItemSheet, {makeDefault: true});
 

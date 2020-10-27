@@ -85,15 +85,24 @@ export class GurpsActor extends Actor {
 		// <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
 		let a = t(json.appearance);
 		ts.appearance = a;
-		let x = a.indexOf(", Eyes: ");
-		ts.gender = a.substring(0, x);
-		let y = a.indexOf(", Hair: ");
-		ts.eyes = a.substring(x + 8, y);
-		x = a.indexOf(", Skin: ")
-		ts.hair = a.substring(y + 8, x);
-		ts.skin = a.substr(x + 8);
 		ts.sizemod = t(json.sizemodifier);
+		try {
+			let x = a.indexOf(", Eyes: ");
+			ts.gender = a.substring(0, x);
+			let y = a.indexOf(", Hair: ");
+			ts.eyes = a.substring(x + 8, y);
+			x = a.indexOf(", Skin: ")
+			ts.hair = a.substring(y + 8, x);
+			ts.skin = a.substr(x + 8);
+		} catch {
+			console.log("Unable to parse traits for ");
+			console.log(this);
+		}
 		await this.update({"data.traits": ts});
+		await this.update({
+			"data.traits.race": ts.race,
+			"data.traits.height": ts.height
+		});
 	}
 
 	// Import the <attributes> section of the GCS FG XML file.
@@ -154,9 +163,8 @@ export class GurpsActor extends Actor {
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
-				let sn =  t(j.name);
 				let sk = new Skill();
-				sk.name = sn;				
+				sk.name = t(j.name);	
 				sk.type = t(j.type);
 				sk.level = parseInt(t(j.level));
 				sk.relativelevel = t(j.relativelevel);
@@ -181,9 +189,8 @@ export class GurpsActor extends Actor {
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
-				let sn =  t(j.name);
 				let sp = new Spell();
-				sp.name = sn;			
+				sp.name = t(j.name);			
 				sp.class = t(j.class);
 				sp.college = t(j.college);
 				sp.costmaintain = t(j.costmaintain);
@@ -232,10 +239,9 @@ export class GurpsActor extends Actor {
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
-				let sn =  t(j.name);
 				let a = new Advantage();
-				a.name = sn;			
-				a.points = t(j.points);
+				a.name = t(j.name);		
+				a.points = this.intFrom(j.points);
 				a.setNotes(t(j.text));
 				datalist.push(a);
 			}
@@ -288,5 +294,22 @@ export class Spell extends Leveled {
 	}
 	
 export class Advantage extends Named {
-
 }
+
+export class Attack {
+	name = "";
+	notes = "";
+}
+
+export class Melee extends Attack {
+	st = "";
+	weight = "";
+	techlevel = "";
+	cost = "";
+	mode = "";
+	level = "";
+	damage = "";
+	reach = "";
+	parry = "";
+}
+

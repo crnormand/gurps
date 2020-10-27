@@ -223,3 +223,18 @@ export class GurpsActorSheet extends ActorSheet {
     return this.object.update(formData);
   }
 }
+
+export class GurpsActorSheet2 extends GurpsActorSheet {
+	  /** @override */
+	static get defaultOptions() {
+	  return mergeObject(super.defaultOptions, {
+  	  classes: ["gurps", "sheet", "actor"],
+  	  template: "systems/gurps/templates/actor-sheet2.html",
+      width: 600,
+      height: 600,
+      tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
+      dragDrop: [{dragSelector: ".item-list .item", dropSelector: null}]
+    });
+  }
+
+}

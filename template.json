@@ -66,6 +66,7 @@
 		"hearing": 10,
 		"tastesmell": 10,
 		"vision": 10,
+		"touch": 10,
 		"powers": [],
 		"ads": [],
 		"disads": [],
@@ -101,7 +102,9 @@
 			"spells": 0,
 			"total": 150,
 			"unspent": 2
-		}
+		},
+		"melee": [],
+		"ranged": []
 	},
 	"Item": {
 	  "types": ["items"],

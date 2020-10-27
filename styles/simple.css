@@ -225,3 +225,655 @@
   padding-right: .2em;
   border-bottom: 1px solid lightgray;
 }
+
+
+
+
+        body {
+            font-family: Verdana, sans-serif;
+            font-size: small;
+            font-weight: normal;
+            padding: 0;
+            margin: .25in;
+            margin-bottom: calc(.25in - 1em);
+        }
+
+        #sheet {
+            display: grid;
+            grid-template:
+                "personal personal"
+                "stats stats"
+                "reactions reactions"
+"melee melee"
+"ranged ranged"
+"advantages skills"
+"spells spells"
+"equipment equipment"
+"other_equipment other_equipment"
+"notes notes"
+ ;
+            grid-gap: .05in;
+        }
+
+        #footer {
+            text-align: center;
+            font-size: 80%;
+        }
+
+        .fieldblock {
+            display: grid;
+            grid-template-columns: 0fr 1fr;
+            align-items: end;
+            padding-bottom: .15em;
+        }
+
+        .fieldblock hr {
+            grid-column: 1 / span 2;
+            width: 100%;
+            border: none;
+            background-color: black;
+            height: 1px;
+            margin: 0;
+            margin-top: .2em;
+            margin-bottom: .1em;
+        }
+
+        .fieldblock3 {
+            display: grid;
+            grid-template-columns: 0fr 1fr 0fr;
+            align-items: end;
+            padding-bottom: .15em;
+        }
+
+        .fieldblock3 hr {
+            grid-column: 1 / span 3;
+            width: 100%;
+            border: none;
+            background-color: black;
+            height: 1px;
+            margin: 0;
+            margin-top: .2em;
+            margin-bottom: .1em;
+        }
+
+        #personal {
+            grid-area: personal;
+            display: grid;
+            grid-template:
+                "portrait identity miscellaneous points"
+                "portrait description description points";
+            grid-template-columns: 0fr 1fr 1fr 0fr;
+            grid-gap: .05in;
+        }
+
+         #portrait {
+            grid-area: portrait;
+            display: grid;
+            grid-template:
+                "header"
+                "portrait";
+            grid-template-rows: 0fr auto;
+            grid-template-columns: auto;
+            border: 1px solid black;
+        }
+       #identity {
+            grid-area: identity;
+        }
+
+        #miscellaneous {
+            grid-area: miscellaneous;
+        }
+
+        #points {
+            grid-area: points;
+        }
+
+        #identity, #miscellaneous, #points, #attributes, #lifting, #fatpoints, #hitpoints {
+            display: grid;
+            grid-template-rows: 0fr 1fr;
+            border: 1px solid black;
+        }
+
+        #points .field,
+        #attributes .field,
+        #lifting .field,
+        #hitpoints .field,
+        #fatpoints .field {
+            text-align: right;
+        }
+
+        #description {
+            grid-area: description;
+            display: grid;
+            grid-template:
+                "header header header"
+                "block1 block2 block3";
+            grid-template-rows: 0fr 1fr;
+            border: 1px solid black;
+        }
+
+        #description .header {
+            grid-area: header;
+        }
+
+        #description .fieldblock:nth-child(1n+3) {
+            border-left: 1px solid black;
+        }
+
+        #stats {
+            grid-area: stats;
+            display: grid;
+            grid-template:
+                "attributes fatpoints location encumbrance"
+                "attributes hitpoints location lifting";
+            grid-template-columns: 0fr 2fr 0fr 0fr;
+            grid-gap: .05in;
+        }
+
+        #attributes {
+            grid-area: attributes;
+        }
+
+        #fatpoints {
+            grid-area: fatpoints;
+            align-content: right;
+        }
+
+        #hitpoints {
+            grid-area: hitpoints;
+            align-content: stretch;
+        }
+
+        #encumbrance {
+            grid-area: encumbrance;
+            grid-template:
+                "header header header header header"
+                "encmarkerh ench loadh moveh dodgeh"
+                "encmarker enc load move dodge";
+        }
+
+        #lifting {
+            grid-area: lifting;
+            grid-template:
+                "header header"
+                "desc lift";
+            grid-template-columns: 1fr 0fr;
+        }
+
+        #lifting .header:first-child {
+            grid-area: header;
+        }
+
+        #location {
+            grid-area: location;
+            grid-template:
+                "header header header header"
+                "roll where penalty dr";
+            grid-template-rows: 0fr 0fr;
+            grid-auto-rows: 1fr;
+        }
+
+        #encumbrance .header:first-child,
+        #location .header:first-child {
+            grid-area: header;
+            border-bottom: 1px solid lightgray;
+        }
+
+        #encumbrance,
+        #lifting,
+        #location,
+        #reactions,
+        #melee,
+        #ranged,
+        #advantages,
+        #skills,
+        #spells,
+        #equipment,
+        #other_equipment,
+        #notes {
+            display: grid;
+            border: 1px solid black;
+            align-content: stretch;
+        }
+
+        #reactions,
+        #melee,
+        #ranged,
+        #advantages,
+        #skills,
+        #spells,
+        #equipment,
+        #other_equipment,
+        #notes {
+            grid-template-rows: repeat(1000, auto) 1fr;
+        }
+
+        #reactions {
+            grid-template-columns: 0fr 1fr;
+            grid-area: reactions;
+        }
+
+        #melee {
+            grid-template-columns: 1fr repeat(8, auto);
+            grid-area: melee;
+        }
+
+        #ranged {
+            grid-template-columns: 1fr repeat(10, auto);
+            grid-area: ranged;
+        }
+
+        #advantages {
+            grid-template-columns: 1fr repeat(2, auto);
+            grid-area: advantages;
+        }
+
+        #skills {
+            grid-template-columns: 1fr repeat(4, auto);
+            grid-area: skills;
+        }
+
+        #spells {
+            grid-template-columns: 1fr repeat(10, auto);
+            grid-area: spells;
+        }
+
+        #equipment {
+            grid-template-columns: auto auto 1fr repeat(6, auto);
+            grid-area: equipment;
+        }
+
+        #other_equipment {
+            grid-template-columns: auto 1fr repeat(5, auto);
+            grid-area: other_equipment;
+        }
+
+        #notes {
+            grid-template-columns: 1fr;
+            grid-area: notes;
+        }
+
+        .points {
+            text-align: right;
+            padding-left: .2em;
+            padding-right: .2em;
+            font-size: 80%;
+            align-self: center;
+        }
+
+        .label {
+            text-align: left;
+            padding-left: .2em;
+            padding-right: .2em;
+            font-size: 80%;
+            white-space: nowrap;
+            align-self: center;
+        }
+
+        .field {
+            margin-right: .2em;
+        }
+
+        .field,
+        .desc,
+        .cls,
+        .college,
+        .mana,
+        .mana_maintain,
+        .time,
+        .duration,
+        .sl,
+        .rsl,
+        .qty,
+        .equipped,
+        .cost,
+        .sum_cost,
+        .weight,
+        .sum_weight,
+        .pts,
+        .ref,
+        .usage,
+        .level,
+        .parry,
+        .block,
+        .damage,
+        .reach,
+        .st,
+        .acc,
+        .range,
+        .rof,
+        .shots,
+        .bulk,
+        .rcl,
+        .load,
+        .loadh,
+        .move,
+        .moveh,
+        .dodge,
+        .dodgeh,
+        .roll,
+        .where,
+        .penalty,
+        .dr,
+        .liftdesc,
+        .lift,
+        .modifier,
+        .situation {
+            padding-left: .2em;
+            padding-right: .2em;
+            border-bottom: 1px solid lightgray;
+        }
+
+        .enc,
+        .ench {
+            padding-left: 0;
+            padding-right: .2em;
+            border-bottom: 1px solid lightgray;
+        }
+
+        .encmarker,
+        .encmarkerh {
+            padding-left: .2em;
+            padding-right: 0;
+            border-bottom: 1px solid lightgray;
+        }
+
+        #encumbrance .encmarker:nth-last-child(10n+5),
+        #encumbrance .enc:nth-last-child(10n+4),
+        #encumbrance .load:nth-last-child(10n+3),
+        #encumbrance .move:nth-last-child(10n+2),
+        #encumbrance .dodge:nth-last-child(10n+1),
+        #lifting .liftdesc:nth-last-child(4n+1),
+        #lifting .lift:nth-last-child(4n+2),
+        #location .roll:nth-last-child(8n+4),
+        #location .where:nth-last-child(8n+3),
+        #location .penalty:nth-last-child(8n+2),
+        #location .dr:nth-last-child(8n+1),
+        #reactions .modifier:nth-child(even),
+        #reactions .situation:nth-child(odd),
+        #melee .desc:nth-child(even),
+        #melee .usage:nth-child(odd),
+        #melee .level:nth-child(even),
+        #melee .parry:nth-child(odd),
+        #melee .block:nth-child(even),
+        #melee .damage:nth-child(odd),
+        #melee .reach:nth-child(even),
+        #melee .st:nth-child(odd),
+        #ranged .desc:nth-child(even),
+        #ranged .usage:nth-child(odd),
+        #ranged .level:nth-child(even),
+        #ranged .acc:nth-child(odd),
+        #ranged .damage:nth-child(even),
+        #ranged .range:nth-child(odd),
+        #ranged .rof:nth-child(even),
+        #ranged .shots:nth-child(odd),
+        #ranged .bulk:nth-child(even),
+        #ranged .rcl:nth-child(odd),
+        #ranged .st:nth-child(even),
+        #advantages .desc:nth-child(even),
+        #advantages .pts:nth-child(odd),
+        #advantages .ref:nth-child(even),
+        #skills .desc:nth-child(even),
+        #skills .sl:nth-child(odd),
+        #skills .rsl:nth-child(even),
+        #skills .pts:nth-child(odd),
+        #skills .ref:nth-child(even),
+        #spells .desc:nth-child(even),
+        #spells .cls:nth-child(odd),
+        #spells .college:nth-child(even),
+        #spells .mana:nth-child(odd),
+        #spells .mana_maintain:nth-child(even),
+        #spells .time:nth-child(odd),
+        #spells .duration:nth-child(even),
+        #spells .sl:nth-child(odd),
+        #spells .rsl:nth-child(even),
+        #spells .pts:nth-child(odd),
+        #spells .ref:nth-child(even),
+        #equipment .equipped:nth-child(even),
+        #equipment .qty:nth-child(odd),
+        #equipment .desc:nth-child(even),
+        #equipment .cost:nth-child(odd),
+        #equipment .weight:nth-child(even),
+        #equipment .sum_cost:nth-child(odd),
+        #equipment .sum_weight:nth-child(even),
+        #equipment .ref:nth-child(odd),
+        #other_equipment .qty:nth-child(even),
+        #other_equipment .desc:nth-child(odd),
+        #other_equipment .cost:nth-child(even),
+        #other_equipment .weight:nth-child(odd),
+        #other_equipment .sum_cost:nth-child(even),
+        #other_equipment .sum_weight:nth-child(odd),
+        #other_equipment .ref:nth-child(even),
+        #notes .desc:nth-child(even) {
+            background-color: #e8ffe8;
+        }
+
+        #equipment .desc,
+        #other_equipment .desc,
+        .cls,
+        .college,
+        .mana,
+        .mana_maintain,
+        .time,
+        .duration,
+        .sl,
+        .rsl,
+        .qty,
+        .cost,
+        .sum_cost,
+        .weight,
+        .sum_weight,
+        .pts,
+        .ref,
+        .usage,
+        .level,
+        .parry,
+        .block,
+        .damage,
+        .reach,
+        .st,
+        .acc,
+        .range,
+        .rof,
+        .shots,
+        .bulk,
+        .rcl,
+        .load,
+        .loadh,
+        .move,
+        .moveh,
+        .dodge,
+        .dodgeh,
+        .where,
+        .penalty,
+        .dr,
+        .situation {
+            border-left: 1px solid lightgray;
+        }
+
+        .sl,
+        .rsl,
+        .qty,
+        .equipped,
+        .cost,
+        .sum_cost,
+        .weight,
+        .sum_weight,
+        .pts,
+        .ref,
+        .level,
+        .parry,
+        .block,
+        .reach,
+        .st,
+        .acc,
+        .rof,
+        .shots,
+        .bulk,
+        .rcl,
+        .load,
+        .move,
+        .dodge,
+        .where,
+        .penalty,
+        .dr,
+        .lift,
+        .modifier {
+            text-align: right;
+        }
+
+        .equipped,
+        .roll {
+            text-align: center;
+        }
+
+        .liftdesc,
+        .where {
+            text-align: left;
+        }
+
+        .encmarker,
+        .encmarkerh,
+        .enc,
+        .ench,
+        .load,
+        .loadh,
+        .move,
+        .moveh,
+        .dodge,
+        .dodgeh,
+        .roll,
+        .where,
+        .penalty,
+        .dr,
+        .liftdesc,
+        .lift,
+        .modifier {
+            white-space: nowrap;
+        }
+
+        #lifting .field,
+        .noedit {
+            white-space: nowrap;
+            border: none;
+        }
+
+        .header,
+        #reactions .header,
+        #melee .header,
+        #ranged .header,
+        #equipment .header,
+        #other_equipment .header {
+            background-color: black;
+            border-bottom: 1px solid black;
+            color: white;
+            text-align: center;
+            font-size: 80%;
+        }
+
+        #location .header:nth-last-child(8n+4),
+        #location .header:nth-last-child(8n+3),
+        #location .header:nth-last-child(8n+2),
+        #location .header:nth-last-child(8n+1) {
+            background-color: black;
+        }
+
+        #encumbrance > div:nth-last-child(-n+5),
+        #lifting > div:nth-last-child(-n+2),
+        #location > div:nth-last-child(-n+4) {
+            border-bottom: none;
+        }
+
+        #reactions > div:nth-last-child(-n+3),
+        #melee > div:nth-last-child(-n+9),
+        #ranged > div:nth-last-child(-n+11),
+        #advantages > div:nth-last-child(-n+3),
+        #skills > div:nth-last-child(-n+5),
+        #spells > div:nth-last-child(-n+11),
+        #equipment > div:nth-last-child(-n+9),
+        #other_equipment > div:nth-last-child(-n+7),
+        #notes > div:nth-last-child(-n+1) {
+            border-bottom: none;
+            grid-row: 1001;
+        }
+
+        .indent1 {
+            padding-left: 1em;
+        }
+
+        .indent2 {
+            padding-left: 2em;
+        }
+
+        .indent3 {
+            padding-left: 3em;
+        }
+
+        .indent4 {
+            padding-left: 4em;
+        }
+
+        .indent5 {
+            padding-left: 5em;
+        }
+
+        .indent6 {
+            padding-left: 6em;
+        }
+
+        .indent7 {
+            padding-left: 7em;
+        }
+
+        .indent8 {
+            padding-left: 8em;
+        }
+
+        .indent9 {
+            padding-left: 9em;
+        }
+
+        .satisfiedN {
+            color: red;
+        }
+
+        #encumbrance .current:nth-last-child(10n+5),
+        #encumbrance .current:nth-last-child(10n+4),
+        #encumbrance .current:nth-last-child(10n+3),
+        #encumbrance .current:nth-last-child(10n+2),
+        #encumbrance .current:nth-last-child(10n+1),
+        .current {
+            background-color: lightgoldenrodyellow;
+        }
+
+        .list_note {
+            font-size: 80%;
+        }
+
+        .encmarker.current:after {
+            content: '•';
+        }
+
+        .enc0:after {
+            content: 'None (0)';
+        }
+
+        .enc1:after {
+            content: 'Light (1)';
+        }
+
+        .enc2:after {
+            content: 'Medium (2)';
+        }
+
+        .enc3:after {
+            content: 'Heavy (3)';
+        }
+
+        .enc4:after {
+            content: 'X-heavy (4)';
+        }
+
+.overflowy {
+	overflow-y:auto;
+}
