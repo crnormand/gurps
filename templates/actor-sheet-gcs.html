@@ -87,21 +87,21 @@
                 <div class="header">Attributes</div>
                 <div class="fieldblock3">
                     <div class="points">[{{data.attributes.ST.points}}]</div>
-                    <div class="field rollable" data-path="attributes.ST">{{data.attributes.ST.value}}</div>
-                    <div class="label">{{localize "GURPS.STNAME"}} ({{localize "GURPS.ST"}})</div>
+                    <div class="field rollable" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
+                    <div class="label">{{localize "GURPS.attributeSTNAME"}} ({{localize "GURPS.attributeST"}})</div>
                     <div class="points">[{{data.attributes.DX.points}}]</div>
                     <div class="field">{{data.attributes.DX.value}}</div>
-                    <div class="label">{{localize "GURPS.DXNAME"}} ({{localize "GURPS.DX"}})</div>
+                    <div class="label">{{localize "GURPS.attributeDXNAME"}} ({{localize "GURPS.attributeDX"}})</div>
                     <div class="points">[{{data.attributes.IQ.points}}]</div>
                     <div class="field">{{data.attributes.ST.value}}</div>
-                    <div class="label">{{localize "GURPS.IQNAME"}} ({{localize "GURPS.IQ"}})</div>
+                    <div class="label">{{localize "GURPS.attributeIQNAME"}} ({{localize "GURPS.attributeIQ"}})</div>
                     <div class="points">[{{data.attributes.HT.points}}]</div>
                     <div class="field">{{data.attributes.HT.value}}</div>
-                    <div class="label">{{localize "GURPS.HTNAME"}} ({{localize "GURPS.HT"}})</div>
+                    <div class="label">{{localize "GURPS.attributeHTNAME"}} ({{localize "GURPS.attributeHT"}})</div>
                     <hr>
                     <div class="points">[{{data.attributes.WILL.value}}]</div>
                     <div class="field">{{data.attributes.HT.value}}</div>
-                    <div class="label">{{localize "GURPS.WILLNAME"}}</div>
+                    <div class="label">{{localize "GURPS.attributeWILLNAME"}}</div>
                     <div class="points"></div>
                     <div class="field noedit">{{data.frightcheck}}</div>
                     <div class="label">Fright Check</div>
@@ -115,7 +115,7 @@
                     <hr>
                     <div class="points">[{{data.attributes.PER.points}}]</div>
                     <div class="field">{{data.attributes.PER.value}}</div>
-                    <div class="label">{{localize "GURPS.PERNAME"}} ({{localize "GURPS.PER"}})</div>
+                    <div class="label">{{localize "GURPS.attributePERNAME"}} ({{localize "GURPS.attributePER"}})</div>
                     <div class="points"></div>
                     <div class="field noedit">{{data.vision}}</div>
                     <div class="label">Vision</div>
@@ -419,7 +419,7 @@
 	                <div class="list_note satisfiedY"></div>
 	                <div class="list_note satisfiedY">{{this.notes}}</div>
 	            </div>
-	            <div class="sl satisfiedY">{{this.level}}</div>
+	            <div class="sl satisfiedY rollable" data-skill="{{this.name}}">{{this.level}}</div>
 	            <div class="rsl satisfiedY">{{this.relativelevel}}</div>
 	            <div class="pts satisfiedY">{{this.points}}</div>
 	            <div class="ref satisfiedY">{{this.pageref}}</div>

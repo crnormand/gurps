@@ -116,50 +116,53 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
+	resolve(path, obj=self, separator='.') {
+	    var properties = Array.isArray(path) ? path : path.split(separator)
+	    return properties.reduce((prev, curr) => prev && prev[curr], obj)
+	}
+
 	async _onClickRoll(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
-		console.log("Event:");
+/*		console.log("Event:");
 		console.log(event);
 		console.log("Element:");
 		console.log(element);
 		console.log("Path:" + element.dataset.path);
 		console.log(element.textContent);
-		let r = new Roll("3d6");
 		console.log(this);
 		console.log(r);
-
+*/
 		  // Is Dice So Nice enabled ?
 	  let niceDice = false;
-	  try {
-	    niceDice = game.settings.get('dice-so-nice', 'settings').enabled;      
-	  } catch {
-	    console.log("Dice-so-nice! not enabled");
-	  }
+	  try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch {}
 	
-	  // show 3d Dice so Nice if enabled
-	  if (niceDice) {
-	    game.dice3d.showForRoll(r).then((displayed) => {
-	      let messageData = {
-			    speaker: ChatMessage.getSpeaker(),
-			    content: r.result,
-			    type: CONST.CHAT_MESSAGE_TYPES.OOC,
-			    roll: r
-				};
-	
-	  		CONFIG.ChatMessage.entityClass.create(messageData, {})
-	    });
-	  } else {
-	    r.roll();
-	      let messageData = {
-			    speaker: ChatMessage.getSpeaker(),
-			    content: r.result,
-			    type: CONST.CHAT_MESSAGE_TYPES.OOC,
-			    roll: r
-				};
-	
-	  		CONFIG.ChatMessage.entityClass.create(messageData, {})
-	  }
+		let mods = "";
+		let thing = "";
+		let target = 0;
+		if (!!element.dataset.path) {
+			target = this.resolve(element.dataset.path, this.actor.data.data);
+			let i = "GURPS." + (element.dataset.path.split(".")[1]) + "NAME";
+			thing = game.i18n.localize(i);
+		}
+		if (!!element.dataset.skill) {
+			target = parseInt(element.innerHtml);	
+		}
+			
+		let roll = new Roll("1d6 + 1d6 + 1d6" + mods);
+	  roll.roll();
+
+		let results = (roll.total <= target) ? "Success!  " : "Failure  ";
+		results += roll.total + " [" + roll.results.filter(d => d != "+") + "]";
+		let content = "Attempting " + path + " (" + target + ") " + results;
+    let messageData = {
+	    speaker: ChatMessage.getSpeaker(),
+	    content: content,
+	    type: CONST.CHAT_MESSAGE_TYPES.OOC,
+	    roll: roll
+		};
+
+	  CONFIG.ChatMessage.entityClass.create(messageData, {})
 	}
 
 
