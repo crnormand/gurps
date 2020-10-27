@@ -334,10 +334,17 @@ export class GurpsActor extends Actor {
 				sp.name = t(j.name);			
 				sp.class = t(j.class);
 				sp.college = t(j.college);
-				sp.costmaintain = t(j.costmaintain);
+				let cm = t(j.costmaintain);
+				let i = cm.indexOf('/');
+				if (i >= 0) {
+					sp.cost = cm.substring(0, i);
+					sp.maintain = cm.substr(i+1);
+				} else {
+					sp.cost = cm;
+				}
 				sp.duration = t(j.duration);
 				sp.points = t(j.points);
-				sp.time = t(j.time);	
+				sp.casttime = t(j.time);	
 				sp.level = parseInt(t(j.level));
 				sp.duration = t(j.duration);
 				sp.setNotes(t(j.text));
@@ -435,10 +442,11 @@ export class Skill extends Leveled {
 export class Spell extends Leveled {
 	class = "";
 	college = "";
-	costmaintain = "2/1";
-	duration = "1";
+	cost = "";
+	maintain = "";
+	duration = "";
 	resist = "";
-	time = "1 sec";
+	casttime = "";
 	}
 	
 export class Advantage extends NamedCost {
