@@ -224,12 +224,12 @@ export class GurpsActorSheet extends ActorSheet {
   }
 }
 
-export class GurpsActorSheet2 extends GurpsActorSheet {
+export class GurpsActorSheetGCS extends GurpsActorSheet {
 	  /** @override */
 	static get defaultOptions() {
 	  return mergeObject(super.defaultOptions, {
   	  classes: ["gurps", "sheet", "actor"],
-  	  template: "systems/gurps/templates/actor-sheet2.html",
+  	  template: "systems/gurps/templates/actor-sheet-gcs.html",
       width: 600,
       height: 600,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],

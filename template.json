@@ -104,7 +104,9 @@
 			"unspent": 2
 		},
 		"melee": [],
-		"ranged": []
+		"ranged": [],
+		"protection" : [],
+		"encumbrance": []
 	},
 	"Item": {
 	  "types": ["items"],

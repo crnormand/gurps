@@ -60,24 +60,83 @@ export class GurpsActor extends Actor {
 		this.importDisadsFromGCSv1(c.traits.disadslist);
 		this.importPowersFromGCSv1(c.abilities.powerlist);
 		this.importOtherAdsFromGCSv1(c.abilities.otherlist);
+		this.importEncumbranceFromGCSv1(c.encumbrance);
+		this.importCombatMeleeFromGCSv1(c.combat.meleecombatlist);
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
 	}
 	
 	// hack to get to private text element created by xml->json method. 
 	textFrom(o) {
-		return o["#text"].trim();
+		let t = o["#text"];
+		if (!!t) t = t.trim();
+		return t;
 	}
 	
 	// similar hack to get text as integer.
 	intFrom(o) {
 		return parseInt(o["#text"]);
 	}
+	
+	async importEncumbranceFromGCSv1(json) {
+		let t= this.textFrom;
+		let es = [];
+		for (let i = 0; i < 5; i++ ) {
+			let e = new Encumbrance();
+			e.level = i;
+			let k = "enc_" + i;
+			let c = t(json[k]);
+			e.current = (c === "1");
+			k = "enc" + i;
+			let k2 = k + "_weight";
+			e.weight = t(json[k2]);
+			k2 = k + "_move";
+			e.move = t(json[k2]);
+			k2 = k + "_dodge";
+			e.dodge = t(json[k2]);
+			es.push(e);
+		}
+		await this.update({"data.encumbrance": es});
+	}
+	
+	async importCombatMeleeFromGCSv1(json) {
+		let t = this.textFrom;
+		let melees = [];
+		
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				for (let k2 in j.meleemodelist) {
+					if (k2.startsWith("id-")) {	
+						let j2 = j.meleemodelist[k2];
+						let m = new Melee();
+						m.name = t(j.name);	
+						m.st = t(j.st);
+						m.weight = t(j.weight);
+						m.techlevel = t(j.tl);
+						m.cost = t(j.cost);
+						try {
+							m.setNotes(t(j.text));
+						} catch {
+							console.log(m);
+							console.log(t(j.text));
+						}
+						m.mode = t(j2.name);
+						m.level = t(j2.level);
+						m.damage = t(j2.damage);
+						m.reach = t(j2.reach);
+						m.parry = t(j2.parry);
+  					melees.push(m);
+					}
+				}
+			}
+		}
+		await this.update({"data.melee": melees});	
+	}
 		
 	async importTraitsfromGCSv1(json) {
 		let t = this.textFrom;
-		let ts = this.data.data.traits;
-		
+		let ts = [];
 		ts.race = t(json.race);
 		ts.height = t(json.height);
 		ts.weight = t(json.weight);
@@ -95,14 +154,10 @@ export class GurpsActor extends Actor {
 			ts.hair = a.substring(y + 8, x);
 			ts.skin = a.substr(x + 8);
 		} catch {
-			console.log("Unable to parse traits for ");
+			console.log("Unable to parse appearance traits for ");
 			console.log(this);
 		}
 		await this.update({"data.traits": ts});
-		await this.update({
-			"data.traits.race": ts.race,
-			"data.traits.height": ts.height
-		});
 	}
 
 	// Import the <attributes> section of the GCS FG XML file.
@@ -253,7 +308,6 @@ export class GurpsActor extends Actor {
 
 export class Named {
 	name = "";
-	points = 0;
 	notes = "";
 	pageref = "";
 	
@@ -267,14 +321,22 @@ export class Named {
 			}
 			let k = "Page Ref: ";
 			let i = v.indexOf(k);
-			this.notes = v.substr(0, i).trim();
-			// Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-			this.pageref = v.substr(i+k.length).trim();
+			if (i >= 0) {
+				this.notes = v.substr(0, i).trim();
+				// Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
+				this.pageref = v.substr(i+k.length).trim();
+			} else {
+				this.notes = v.trim();
+			}
 		}
 	}
 }
 
-export class Leveled extends Named {
+export class NamedCost extends Named {
+		points = 0;
+}
+
+export class Leveled extends NamedCost {
 	level = 1;
 }
 
@@ -293,23 +355,39 @@ export class Spell extends Leveled {
 	time = "1 sec";
 	}
 	
-export class Advantage extends Named {
+export class Advantage extends NamedCost {
 }
 
-export class Attack {
-	name = "";
-	notes = "";
-}
-
-export class Melee extends Attack {
+export class Attack extends Named {
 	st = "";
-	weight = "";
-	techlevel = "";
-	cost = "";
 	mode = "";
 	level = "";
 	damage = "";
+}
+
+export class Melee extends Attack {
+	weight = "";
+	techlevel = "";
+	cost = "";
 	reach = "";
 	parry = "";
 }
 
+export class Ranged extends Attack {
+	bulk = "";
+	legalityclass = "";
+	ammo = "";
+	acc = "";
+	range = "";
+	rof = "";
+	shots = "";
+	rcl = "";
+}
+
+export class Encumbrance {
+	level = 0;
+	dodge = 9;
+	weight = "";
+	move = "";
+	current = false;
+}
