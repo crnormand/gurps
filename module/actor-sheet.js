@@ -20,10 +20,29 @@ export class GurpsActorSheet extends ActorSheet {
 
   /** @override */
   getData() {
-    const data = super.getData();
-		data.config = CONFIG.GURPS;
+    const sheetData = super.getData();
+		sheetData.config = CONFIG.GURPS;
 		
-    return data;
+		if (sheetData.data.encumbrance.length == 0) {
+			for (let i = 0; i < 5; i++) {
+				let k = "enc" + i;
+				sheetData[k] = (i == 0);
+				sheetData[k + "d"] = 9;
+				sheetData[k + "w"] = "";
+				sheetData[k + "m"] = "5";
+			}
+		} else {
+			let e = sheetData.data.encumbrance;
+			for (let i = 0; i < 5; i++) {
+				let k = "enc" + i;
+				sheetData[k] = e[i].current;
+				sheetData[k + "d"] = e[i].dodge;
+				sheetData[k + "w"] = e[i].weight;
+				sheetData[k + "m"] = e[i].move;
+			}
+		}
+		
+    return sheetData;
   }
 
   /* -------------------------------------------- */
@@ -198,29 +217,7 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   _updateObject(event, formData) {
 
-    // Handle the free-form attributes list
-    const formAttrs = expandObject(formData).data.attributes || {};
-    const attributes = Object.values(formAttrs).reduce((obj, v) => {
-      let k = v["key"].trim();
-      if ( /[\s\.]/.test(k) )  return ui.notifications.error("Attribute keys may not contain spaces or periods");
-      delete v["key"];
-      obj[k] = v;
-      return obj;
-    }, {});
-    
-    // Remove attributes which are no longer used
-    for ( let k of Object.keys(this.object.data.data.attributes) ) {
-      if ( !attributes.hasOwnProperty(k) ) attributes[`-=${k}`] = null;
-    }
-
-    // Re-combine formData
-    formData = Object.entries(formData).filter(e => !e[0].startsWith("data.attributes")).reduce((obj, e) => {
-      obj[e[0]] = e[1];
-      return obj;
-    }, {_id: this.object._id, "data.attributes": attributes});
-    
-    // Update the Actor
-    return this.object.update(formData);
+    return super._updateObject(event, formData);
   }
 }
 

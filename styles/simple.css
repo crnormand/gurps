@@ -851,7 +851,7 @@
         }
 
         .encmarker.current:after {
-            content: '•';
+            content: '>';
         }
 
         .enc0:after {

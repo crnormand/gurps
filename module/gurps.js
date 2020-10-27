@@ -37,8 +37,8 @@ Hooks.once("init", async function() {
 
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
-  Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
-  Actors.registerSheet("gurps", GurpsActorSheetGCS, { makeDefault: false });
+  Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: false });
+  Actors.registerSheet("gurps", GurpsActorSheetGCS, { makeDefault: true });
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("gurps", GurpsItemSheet, {makeDefault: true});
 

@@ -13,7 +13,7 @@
                     <div class="label">Title:</div>
                     <div class="field">{{data.traits.title}}</div>
                     <div class="label">Player:</div>
-                    <div class="field">{{data.traits.player}}d</div>
+                    <div class="field">{{data.traits.player}}</div>
                 </div>
             </div>
             <div id="miscellaneous">
@@ -88,20 +88,20 @@
                 <div class="fieldblock3">
                     <div class="points">[{{data.attributes.ST.points}}]</div>
                     <div class="field">{{data.attributes.ST.value}}</div>
-                    <div class="label">{{localize "GURPS.ST.NAME"}} ({{localize "GURPS.ST"}})</div>
+                    <div class="label">{{localize "GURPS.STNAME"}} ({{localize "GURPS.ST"}})</div>
                     <div class="points">[{{data.attributes.DX.points}}]</div>
                     <div class="field">{{data.attributes.DX.value}}</div>
-                    <div class="label">{{localize "GURPS.DX.NAME"}} ({{localize "GURPS.DX"}})</div>
+                    <div class="label">{{localize "GURPS.DXNAME"}} ({{localize "GURPS.DX"}})</div>
                     <div class="points">[{{data.attributes.IQ.points}}]</div>
                     <div class="field">{{data.attributes.ST.value}}</div>
-                    <div class="label">{{localize "GURPS.IQ.NAME"}} ({{localize "GURPS.IQ"}})</div>
+                    <div class="label">{{localize "GURPS.IQNAME"}} ({{localize "GURPS.IQ"}})</div>
                     <div class="points">[{{data.attributes.HT.points}}]</div>
                     <div class="field">{{data.attributes.HT.value}}</div>
-                    <div class="label">{{localize "GURPS.HT.NAME"}} ({{localize "GURPS.HT"}})</div>
+                    <div class="label">{{localize "GURPS.HTNAME"}} ({{localize "GURPS.HT"}})</div>
                     <hr>
                     <div class="points">[{{data.attributes.WILL.value}}]</div>
                     <div class="field">{{data.attributes.HT.value}}</div>
-                    <div class="label">Will</div>
+                    <div class="label">{{localize "GURPS.WILLNAME"}}</div>
                     <div class="points"></div>
                     <div class="field noedit">{{data.frightcheck}}</div>
                     <div class="label">Fright Check</div>
@@ -113,9 +113,9 @@
                     <div class="field">{{data.basicmove.value}}</div>
                     <div class="label">Basic Move</div>
                     <hr>
-                    <div class="points">[{{data.attributes.PER.points}]</div>
-                    <div class="field">{{data.attributes.PER.value}</div>
-                    <div class="label">{{localize "GURPS.PER.NAME"}} ({{localize "GURPS.PER"}})</div>
+                    <div class="points">[{{data.attributes.PER.points}}]</div>
+                    <div class="field">{{data.attributes.PER.value}}</div>
+                    <div class="label">{{localize "GURPS.PERNAME"}} ({{localize "GURPS.PER"}})</div>
                     <div class="points"></div>
                     <div class="field noedit">{{data.vision}}</div>
                     <div class="label">Vision</div>
@@ -145,11 +145,15 @@
                 <div class="moveh header">Move</div>
                 <div class="dodgeh header">Dodge</div>
                 
+								{{#if enc0}}
                 <div class="encmarker current"></div>
+								{{else}}
+                <div class="encmarker "></div>
+								{{/if}}
                 <div class="enc current enc0"></div>
-                <div class="load current">45 lb</div>
-                <div class="move current">6</div>
-                <div class="dodge current">9</div>
+                <div class="load current">{{enc0w}}</div>
+                <div class="move current">{{enc0m}}</div>
+                <div class="dodge current">{{enc0d}}</div>
                 
                 <div class="encmarker "></div>
                 <div class="enc  enc1"></div>

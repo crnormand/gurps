@@ -196,7 +196,17 @@ export class GurpsActor extends Actor {
 			console.log("Unable to parse appearance traits for ");
 			console.log(this);
 		}
-		await this.update({"data.traits": ts});
+		await this.update({
+			"data.traits.race": ts.race,
+			"data.traits.height": ts.height,
+			"data.traits.weight": ts.weight,
+			"data.traits.age": ts.age,
+			"data.traits.appearance": ts.appearance,
+			"data.traits.gender": ts.gender,
+			"data.traits.eyes": ts.eyes,
+			"data.traits.hair": ts.hair,
+			"data.traits.skin": ts.skin
+			});
 	}
 
 	// Import the <attributes> section of the GCS FG XML file.
