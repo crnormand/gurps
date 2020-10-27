@@ -1,7 +1,7 @@
-# FoundryVTT-GURPS4e
-Implmenting the GURPS 4e rules for Foundry VTT
+# GURPS 4e game system for Foundry VTT
+Implementing the Generic Universal Roleplaying System 4e rules for Foundry VTT
 
-Version 1.02
+Version 0.3.0
 
 My general plan for is to prototype as many cool/interesting features as we can prior to January, so that we can 1. convince the other gurps group (https://gitlab.com/jbhuddleston/gurps4e) to switch to (or merge with) this system and 2. make it viable for Mook to use it to run a game in January, which may be an inroads to SJG.
 
@@ -10,6 +10,8 @@ Some of the cool/interesting features I would like to implement/prototype (in no
 A robust domain model.   I am starting with the GCS domain model for characters (and npcs).   As such, I am implementing one type of import (from the GCS FG XML export).  But there may be other models (or simplified models).
 
 The ability to edit/add to a character. While a GCS/GCA import can provide most of the data, it might not provide all (especially if the GM has homebrewed anything).   If so, we need to have the ability to add/edit skills/spells/ads/disads/attacks/etc.   It doesn't have to be flashy, since I am currently assuming the bulk of the data will come from an outside source (GCS/GCA).
+
+We probably need to include some kinf of CSS parser like 'less', because the CSS is just getting nasty.
 
 A quick and easy mechanism for rolling the various GURPS "checks" (ability/skill/spell/combat/reaction/etc.).   As a bare minimum, I want to make it as easy as possible for the GM or a Player to assemble the necessary modifiers for a roll, make the roll, and have the system announce the success or failure of that roll.   To me, this is the HEART of the game (in the VTT).   I want to add as many options/choices, and make it as easy/versatile as possible, so the users can spend more time fighting the monsters and less time fighting the VTT.
 
@@ -83,3 +85,7 @@ NOTE:  This code may be duplicating Exxor's roll library from the gurps4e projec
 - Steal the range calculation code from the other system, and automatically add the modifier to the modifier bucket.   I know we can detect ranged attacks, but we might not know if a particular skill is affected by range.   At least if we add it automatically, the user (or GM, if we can build that feature) can delete it from the bucket if it isn't necessary.   We might use a category like "ranged", and any skill/spell/advantage that is affected by range would be affected by this modifier.
 
 - Implement textual "on the fly" rolls.   As I implied above, I think this is one of the most import features for this system, since it can help us with the almost infinitely configurable nature of GURPS.   Also, we could also add [B265], etc. to link to PDFFoundry to display the PDF (like GCS does).  PDFFoundry will even "export" the view to the clients, so you can show the players the rules.  We will need to store offsets and local PDF locations (like CGS).
+
+
+##Versions
+0.3.0 - Introduction of GCS character sheet

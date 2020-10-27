@@ -3,10 +3,28 @@
   /* Items List */
   /* Attributes */
 }
+
+.rollable:hover {
+	text-shadow: none;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 115%;
+	background-color: rgb(255, 255, 128);
+}
+
+.rollable {
+  text-shadow: 3px 3px rgb(255, 255, 128);
+}
+
+.rollable:active {
+}
+
 .gurps .window-content {
   height: 100%;
   padding: 5px;
   overflow-y: hidden;
+	background: white;
 }
 .gurps .sheet-header {
   height: 250px;

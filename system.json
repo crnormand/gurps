@@ -2,7 +2,7 @@
   "name": "gurps",
   "title": "GURPS 4th Edition",
   "description": "An adaption of GURPS 4e for Foundry VTT",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "minimumCoreVersion": "0.7.5",
   "compatibleCoreVersion": "0.7.5",
   "templateVersion": 2,

@@ -123,7 +123,7 @@ export class GurpsActorSheet extends ActorSheet {
 		console.log(event);
 		console.log("Element:");
 		console.log(element);
-		console.log(element.dataset.type);
+		console.log("Path:" + element.dataset.path);
 		console.log(element.textContent);
 		let r = new Roll("3d6");
 		console.log(this);
