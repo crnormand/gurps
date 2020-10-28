@@ -9,8 +9,8 @@ export class GurpsActorSheet extends ActorSheet {
 	  return mergeObject(super.defaultOptions, {
   	  classes: ["gurps", "sheet", "actor"],
   	  template: "systems/gurps/templates/actor-sheet.html",
-      width: 700,
-      height: 700,
+      width: 600,
+      height: 600,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       dragDrop: [{dragSelector: ".item-list .item", dropSelector: null}]
     });
@@ -113,8 +113,17 @@ export class GurpsActorSheet extends ActorSheet {
 	    }).render(true);
 	  }	
 
-
-  /* -------------------------------------------- */
+	// Return the i18n string for this data path (note en.json must match up to the data paths).
+	// special case, drop ".value" from end of path (and append "NAME")
+	i18n(path, suffix) {
+		let i = path.indexOf(".value");
+		if (i >= 0) {
+			path = path.substr(0, i) + "NAME";	// used for the attributes
+		}
+		
+		path = path.replace(/\./g, "");	// remove periods
+		return game.i18n.localize("GURPS." + path);
+	}
 
 	resolve(path, obj=self, separator='.') {
 	    var properties = Array.isArray(path) ? path : path.split(separator)
@@ -139,24 +148,24 @@ export class GurpsActorSheet extends ActorSheet {
 	
 		let mods = "";
 		let thing = "";
-		let target = 0;
 		if (!!element.dataset.path) {
-			target = this.resolve(element.dataset.path, this.actor.data.data);
-			let i = "GURPS." + (element.dataset.path.split(".")[1]) + "NAME";
-			thing = game.i18n.localize(i);
+			thing = this.i18n(element.dataset.path);
 		}
-		if (!!element.dataset.skill) {
-			target = parseInt(element.innerHtml);	
+		if (!!element.dataset.name) {
+			thing = element.dataset.name;
 		}
-			
+		let target = parseInt(element.innerText);	
+
 		let roll = new Roll("1d6 + 1d6 + 1d6" + mods);
 	  roll.roll();
 
-		let results = (roll.total <= target) ? "Success!  " : "Failure  ";
-		results += roll.total + " [" + roll.results.filter(d => d != "+") + "]";
-		let content = "Attempting " + path + " (" + target + ") " + results;
+		let results = (roll.total <= target) ? "<span style='color:green'><b>Success!</b></span>  " : "<span style='color:red'><i>Failure</i></span>  ";
+		results += "<b>" + roll.total + "</b> {" + roll.results.filter(d => d != "+") + "}";
+		let content = "Roll vs " + thing + " [" + target + "]<br>" + results;
+		const speaker = { alias: this.actor.name, _id: this.actor._id }
     let messageData = {
-	    speaker: ChatMessage.getSpeaker(),
+			user: game.user._id,
+	    speaker: speaker,
 	    content: content,
 	    type: CONST.CHAT_MESSAGE_TYPES.OOC,
 	    roll: roll
@@ -211,8 +220,8 @@ export class GurpsActorSheetGCS extends GurpsActorSheet {
 	  return mergeObject(super.defaultOptions, {
   	  classes: ["gurps", "sheet", "actor"],
   	  template: "systems/gurps/templates/actor-sheet-gcs.html",
-      width: 600,
-      height: 600,
+      width: 730,
+      height: 800,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       dragDrop: [{dragSelector: ".item-list .item", dropSelector: null}]
     });

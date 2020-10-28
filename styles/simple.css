@@ -10,7 +10,8 @@
   text-decoration: underline;
   cursor: pointer;
   font-size: 115%;
-	background-color: rgb(255, 255, 164);
+  font-weight: bold;
+	background-color: rgb(255, 255, 164) !important;
 }
 
 .rollable {
