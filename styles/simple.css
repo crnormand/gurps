@@ -5,6 +5,7 @@
 }
 
 .rollable:hover {
+	/*
 	text-shadow: none;
   color: blue;
   text-decoration: underline;
@@ -12,6 +13,18 @@
   font-size: 115%;
   font-weight: bold;
 	background-color: rgb(255, 255, 128) !important;
+	*/
+  font-size: 115%;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: rgb(255, 255, 128) !important;
+  color: blue;
+  padding: 2px 3px 2px 3px;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+  border-radius: 8px;
 }
 
 .rollable {
@@ -21,6 +34,18 @@
 }
 
 .rollable:active {
+  font-size: 115%;
+  font-weight: bold;
+  text-decoration: none;
+  color: blue;
+  background-color: rgb(255, 255, 190) !important;
+  padding: 2px 3px 2px 3px;
+  border-bottom: 1px solid #CCCCCC;
+  border-left: 1px solid #333333;
+  border-top: 1px solid #333333;
+  border-right: 1px solid #CCCCCC;
+  border-radius: 8px;
+
 }
 
 .gurps .window-content {
