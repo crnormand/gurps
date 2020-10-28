@@ -4,6 +4,17 @@
   /* Attributes */
 }
 
+.pdflink {
+	color: red;
+  text-shadow: 2px 2px rgb(255, 255, 128);
+}
+
+.pdflink:hover {
+  font-size: 115%;
+  font-weight: bold;
+  text-decoration: none;	
+}
+
 .rollable:hover {
 	/*
 	text-shadow: none;

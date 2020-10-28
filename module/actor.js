@@ -9,7 +9,7 @@ export class GurpsActor extends Actor {
 	prepareData() {
 		super.prepareData();
 		
-		const d = this.data.data;
+/*		const d = this.data.data;
 		if (d.encumbrance.length == 0) {
 			let es = [];
 			for (let i = 0; i < 5; i++) {
@@ -22,10 +22,10 @@ export class GurpsActor extends Actor {
 			}
 			d.encumbrance = es;
 		}
-	}
+*/	}
 
 	
-	// This is an ugly hack to cleasn up the "formatted text" output from GCS FG XML.
+	// This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 	// First we have to remove non-printing characters, and then we want to replace 
 	// all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
 	// the DOMParser doesn't like some of the stuff in the formatted text sections, so

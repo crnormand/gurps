@@ -33,6 +33,7 @@ export class GurpsActorSheet extends ActorSheet {
     super.activateListeners(html);
 
 		html.find(".rollable").click(this._onClickRoll.bind(this));
+		html.find(".pdflink").click(this._onClickPdf.bind(this));
 		
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
@@ -113,6 +114,27 @@ export class GurpsActorSheet extends ActorSheet {
 	    }).render(true);
 	  }	
 
+	async _onClickPdf(event) {
+		event.preventDefault();
+		let element = event.currentTarget;
+		let t = element.innerText.trim();
+		let i = t.indexOf(":");
+		let book = "";
+		let page = 0;
+		if (i > 0) {
+			book = t.substring(0, i).trim();
+			page = parseInt(t.substr(i+1));
+		} else {
+			book = t.replace(/[0-9]*/g, "").trim();
+			page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
+		}
+		if (ui.PDFoundry) {
+    	ui.PDFoundry.openPDFByCode(book, { page });
+    } else {
+      ui.notifications.warn('PDFoundry must be installed to use links.');
+    }
+	}
+
 	// Return the i18n string for this data path (note en.json must match up to the data paths).
 	// special case, drop ".value" from end of path (and append "NAME")
 	i18n(path, suffix) {
@@ -149,7 +171,7 @@ export class GurpsActorSheet extends ActorSheet {
 			thing = this.i18n(element.dataset.path);
 		}
 		if ("name" in element.dataset) {
-			thing = element.dataset.name;
+			thing = element.dataset.name.replace(/\(\)$/g, "");
 		}
 		if ("damage" in element.dataset) {
 			let d = element.innerText;

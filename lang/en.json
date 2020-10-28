@@ -22,7 +22,7 @@
     "GURPS.vision" : "Vision",
     "GURPS.hearing" : "Hearing",
     "GURPS.tastesmell" : "Taste/Smell",
-
+    "GURPS.frightcheck" : "Fright Check",
     "GURPS.basicspeed" : "Basic Speed",
     "GURPS.basicmove" : "Basic Move",
     "GURPS.thrust" : "Basic Thrust",
