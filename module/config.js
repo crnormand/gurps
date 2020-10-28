@@ -154,6 +154,30 @@ function trim(s) {
 	return s.replace(/^\s*$(?:\r\n?|\n)/gm,"");         // /^\s*[\r\n]/gm
 }
 
+function parselink(str) {
+	return str;	
+}
+
+function gurpslink(str) {
+	let found = -1;
+	let output = "";
+	for (let i = 0; i < str.length; i++)
+	{
+		if (str[i] == "[")
+			found = ++i;
+		if (str[i] == "]" && found >= 0) {
+			output = str.substring(0, found);
+			output += this.parselink(str.substring(found, i));
+			str = str.substr(i+1);
+			i = 0;
+		}
+	}
+	output += str;
+	return output;
+}
+
 GURPS.xmlTextToJson = xmlTextToJson;
 GURPS.objToString = objToString;
-GURPS.trim=trim;
+GURPS.trim = trim;
+GURPS.gurpslink = gurpslink;
+GURPS.parselink = parselink;

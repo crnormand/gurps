@@ -20,7 +20,7 @@ export class GurpsItemSheet extends ItemSheet {
   /** @override */
   getData() {
     const data = super.getData();
-		data.config = CONFIG.GURPS;
+		data.config = game.GURPS;
     return data;
   }
 

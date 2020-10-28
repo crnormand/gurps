@@ -52,7 +52,7 @@ export class GurpsActor extends Actor {
 	async importFromGCSv1(xml) {
 		// need to remove <p> and replace </p> with newlines from "formatted text"
 		let x = this.cleanUpP(xml);
-		x = CONFIG.GURPS.xmlTextToJson(x);
+		x = game.GURPS.xmlTextToJson(x);
 		let r = x.root;
 		if (!r) {
 			ui.notifications.warn("No <root> object found.  Are you importing the correct GCS XML file?");

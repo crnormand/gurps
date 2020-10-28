@@ -11,6 +11,7 @@ import { Advantage } from "./actor.js";
 import { Melee } from "./actor.js";
 import { Ranged } from "./actor.js";
 import { Encumbrance } from "./actor.js";
+import { ModifierBucket } from "./modifiers.js";
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -18,7 +19,7 @@ import { Encumbrance } from "./actor.js";
 
 Hooks.once("init", async function() {
   console.log(`Initializing GURPS 4e System`);
-
+	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 	console.log(GURPS.objToString(GURPS));
 
@@ -66,4 +67,41 @@ Hooks.once("init", async function() {
   Handlebars.registerHelper('toLowerCase', function(str) {
     return str.toLowerCase();
   });
+
+  Handlebars.registerHelper('objToString', function(str) {
+    let o = CONFIG.GURPS.objToString(str);
+		console.log(o);
+		return o;
+  });
+
+  Handlebars.registerHelper('globalmodifier', function() {
+    return game.GURPS.ModifierBucket.getCurrentModifier();
+  });
+
+  Handlebars.registerHelper('gurpslink', function(str) {
+    return game.GURPS.gurpslink(str);
+  });
+
+
+
+});
+
+Hooks.once("ready", async function() {
+	let opts = {
+		"width": 300,
+		"height": 200,
+		"top": 600,
+		"left": 300,
+		"popOut": false,
+		"minimizable": false,
+		"resizable": false,
+		"id": "ModifierBucket",
+		"template": "systems/gurps/templates/modifier-bucket.html",
+		"classes": [],
+		
+	}
+	GURPS.ModifierBucket = new ModifierBucket(opts);
+	console.log("Ready!");
+	ui.modifierbucket = GURPS.ModifierBucket;
+	ui.modifierbucket.render(true);
 });

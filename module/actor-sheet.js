@@ -21,7 +21,7 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   getData() {
     const sheetData = super.getData();
-		sheetData.config = CONFIG.GURPS;
+		sheetData.config = game.GURPS;
 				
     return sheetData;
   }
@@ -188,11 +188,12 @@ export class GurpsActorSheet extends ActorSheet {
 		roll.roll();
 
 		if (!!thing) {
+			let target = parseInt(element.innerText);	
+			if (!target) return;
 			let rdesc = "<b>" + roll.total + "</b>" + " <small>{ ";
 			for (let i = 0; i < 6; i=i+2) 
 				rdesc += roll.results[i] + " ";
 			rdesc += "}</small>";
-			let target = parseInt(element.innerText);	
 			let results = (roll.total <= target) ? "<span style='color:green'><b>Success!</b></span>  " : "<span style='color:red'><i>Failure</i></span>  ";
 			content = "Roll vs " + thing + " [" + target + "]<br>" + results + rdesc;
 		} else {
