@@ -1,7 +1,9 @@
 # GURPS 4e game system for Foundry VTT
 Implementing the Generic Universal Roleplaying System 4e rules for Foundry VTT
 
-Version 0.3.0
+Version 0.4.0
+
+Design philosophy: Use GCS (or GCA) to create and modify the characters, and use FVTT for rolling.  Some (but not a lot) of editing might be possible.
 
 My general plan for is to prototype as many cool/interesting features as we can prior to January, so that we can 1. convince the other gurps group (https://gitlab.com/jbhuddleston/gurps4e) to switch to (or merge with) this system and 2. make it viable for Mook to use it to run a game in January, which may be an inroads to SJG.
 
@@ -70,13 +72,12 @@ TODO items... reminders to me of things I want to work on, or haven't finished, 
 
 - Complete import of GCS FG XML PC format.
 Herein lies one of the big differences between the GURPS game systems.   This system only uses Items for physical items, and creates it own classes for things like skills, advantages, etc.
-LOL, I am nowhere near done for this... I forgot combat and equipment (at least).
-And for some reason, the description information is not being saved.
+Still don't have equipment, and there are still persistence issues.
 
-- Figure out how to implement different actor htmls.   Given that we have a GCS html output, I bet Rich would allow us to canibalize it for here.   And we could implement a version that looks like the book http://www.cox-thurmond.net/jim/jcsp, if people like that look.
+- Done!  Figure out how to implement different actor htmls.   Given that we have a GCS html output, I bet Rich would allow us to canibalize it for here.   And we could implement a version that looks like the book http://www.cox-thurmond.net/jim/jcsp, if people like that look.
 
-- And of course, figure out the best way to implement rolling.   It requires an actor that is attempting the action and a skill/attribute/etc. to be rolled against, and maybe even a target.   And then make the roll (applying modifiers) and determine if the roll was successful or not and display some kind of useful information in the chat window (e.g. "Bog tries to climb and fails!", "Luna attempts to cast the spell 'Fireball' and succeeds!", "Luna does 12 pts of burning damage to Goblin #1", etc.).
-NOTE:  This code may be duplicating Exxor's roll library from the gurps4e project.   However, since his code is obfuscated, we may need to implement it ourselves
+- 75% done.  And of course, figure out the best way to implement rolling.   It requires an actor that is attempting the action and a skill/attribute/etc. to be rolled against, and maybe even a target.   And then make the roll (applying modifiers) and determine if the roll was successful or not and display some kind of useful information in the chat window (e.g. "Bog tries to climb and fails!", "Luna attempts to cast the spell 'Fireball' and succeeds!", "Luna does 12 pts of burning damage to Goblin #1", etc.).
+
 
 - Build "modifier bucket/stack" system.   A user clicks or drags various modifiers to a bucket to create a final add/subtract total for an upcoming roll.   The bucket should be able to display all of the individual modifiers that have been added, and allow for deletion.   I like how the macros box collapses and expands.   Maybe we can draw a box/bucket/whatever like the macro box (which cannot be moved).   And the GM's version aould expand horizontally to show each player's box, and could be collapsed back down to a single bucket if they just want to see their own.   Or we can just keep it open and show all players buckets.
 
@@ -89,3 +90,4 @@ NOTE:  This code may be duplicating Exxor's roll library from the gurps4e projec
 
 ##Versions
 0.3.0 - Introduction of GCS character sheet
+0.4.0 - Rollables and PDF (pagerefs) work
