@@ -141,37 +141,89 @@ function trim(s) {
 GURPS.trim = trim;
 
 GURPS.attributepaths = { 
-    "ST": "attributes.strength",
-    "DX": "attributes.dexterity",
-    "IQ": "attributes.intelligence",
-    "HT": "attributes.health",
-    "WILL": "attributes.will",
-    "Will": "attributes.will",
-    "PER": "attributes.perception",
-    "Per": "attributes.perception"
+    "ST": "attributes.ST",
+    "DX": "attributes.DX",
+    "IQ": "attributes.IQ",
+    "HT": "attributes.HT",
+    "WILL": "attributes.WILL",
+    "Will": "attributes.WILL",
+    "PER": "attributes.PER",
+    "Per": "attributes.PER"
   };
+
+function gspan(str) {
+	return "<span class='gurpslink'>" + str + "</span>";
+}
+GURPS.gspan=gspan;
 
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
-	+N <text>
- 	-N <text>
+	+N <desc>
+ 	-N <desc>
 		add a modifier to the stack, using text as the description
-	ST/IQ/DX[+-]N
+	ST/IQ/DX[+-]N <desc>
 		attribute roll with optional add/subtract
+	CR: N <desc>
+	  Self control roll
+	"Skill" +/-N
+		Roll vs skill (with option +/- mod).
 */
 function parselink(str) {
 	if (str.length < 2) 
 		return { "text": str };
 	
-	if (str[0] === "+" || str[0] === "-")
-		return this.parselinkMod(str);
+	// Modifiers
+	if (str[0] === "+" || str[0] === "-") {
+		let sign = str[0];
+		let rest = str.substr(1);
+		let num = rest.replace(/([0-9]+).*/g,"$1");
+		if (!num) return { "text": str };
+		let desc = rest.replace(/[0-9]+(.*)/g,"$1").trim();
+		return {
+			"text": this.gspan(str),
+			"action": {
+				"type": "modifier",
+				"mod": sign + num,
+				"desc": desc
+			}
+		}
+	}
 	
+	// Attributes ST+2 desc
+	let two = str.substr(0, 2);
+	let path = GURPS.attributepaths[two];
+	if (!!path) {
+		let rest = str.substr(2).trim();
+		let mod = rest.replace(/([+-][0-9]+).*/g,"$1");
+		let desc = rest.replace(/[+-][0-9]+ *(.*)/g,"$1");
+		return {
+			"text": this.gspan(str),
+			"action": {
+				"type": "attribute",
+				"attribute": two,
+				"path": path,
+				"desc": desc,
+				"mod": mod
+			}
+		}
+	}
 	
-	
-	return {
-		"test": "null",
-		"text": "<span class='gurpslink'>" + str + "</span>"
-	}	
+	// Self control roll CR: N
+	if (two === "CR" && str.length > 2 && str[2] === ":") {
+		let rest = str.substr(3).trim();	
+		let num = rest.replace(/([0-9]+).*/g,"$1");
+		let desc = rest.replace(/[0-9]+ *(.*)/g,"$1");
+		return {
+			"text": this.gspan(str),
+			"action": {
+				"type": "selfcontrol",
+				"num": num,
+				"desc": desc
+			}
+		}
+	}
+	 
+	return { "test": str };	
 }
 GURPS.parselink = parselink;
 
@@ -189,6 +241,7 @@ function gurpslink(str) {
 			output += action.text;
 			str = str.substr(i);
 			i = 0;
+			found = -1;
 		}
 	}
 	output += str;
