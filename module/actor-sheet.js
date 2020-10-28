@@ -137,23 +137,46 @@ export class GurpsActorSheet extends ActorSheet {
 	  let niceDice = false;
 	  try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch {}
 	
-		let mods = "";
+		let content = "";
+		let dmgtype = "";
+		let rollMods = "";
+		let damageMods = "";
+		
 		let thing = "";
-		if (!!element.dataset.path) {
+		let roll = new Roll("1d6 + 1d6 + 1d6 " + rollMods);
+		
+		if ("path" in element.dataset) {
 			thing = this.i18n(element.dataset.path);
 		}
-		if (!!element.dataset.name) {
+		if ("name" in element.dataset) {
 			thing = element.dataset.name;
 		}
-		let target = parseInt(element.innerText);	
+		if ("damage" in element.dataset) {
+			let d = element.innerText;
+			let i = d.indexOf(" ");
+			if (i > 0) {
+				dmgtype = d.substr(i+1);
+				d = d.substring(0, i);
+				let w = d.replace(/d([^6])/g, "d6$1");
+				d= w.replace(/d$/g, "d6");
+			}
+			roll = new Roll(d + damageMods);
+		}
+		
+		roll.roll();
 
-		let roll = new Roll("1d6 + 1d6 + 1d6" + mods);
-	  roll.roll();
-
-
-		let results = (roll.total <= target) ? "<span style='color:green'><b>Success!</b></span>  " : "<span style='color:red'><i>Failure</i></span>  ";
-		results += "<b>" + roll.total + "</b> {" + roll.results.filter(d => d != "+") + "}";
-		let content = "Roll vs " + thing + " [" + target + "]<br>" + results;
+		if (!!thing) {
+			let rdesc = "<b>" + roll.total + "</b>" + " <small>{ ";
+			for (let i = 0; i < 6; i=i+2) 
+				rdesc += roll.results[i] + " ";
+			rdesc += "}</small>";
+			let target = parseInt(element.innerText);	
+			let results = (roll.total <= target) ? "<span style='color:green'><b>Success!</b></span>  " : "<span style='color:red'><i>Failure</i></span>  ";
+			content = "Roll vs " + thing + " [" + target + "]<br>" + results + rdesc;
+		} else {
+			content = "<b>" + roll.total + "</b> points of '" + dmgtype + "' damage";
+		}
+		
 		const speaker = { alias: this.actor.name, _id: this.actor._id }
     let messageData = {
 			user: game.user._id,
@@ -218,7 +241,7 @@ export class GurpsActorSheetGCS extends GurpsActorSheet {
 	  return mergeObject(super.defaultOptions, {
   	  classes: ["gurps", "sheet", "actor"],
   	  template: "systems/gurps/templates/actor-sheet-gcs.html",
-      width: 730,
+      width: 800,
       height: 800,
       tabs: [{navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description"}],
       dragDrop: [{dragSelector: ".item-list .item", dropSelector: null}]
