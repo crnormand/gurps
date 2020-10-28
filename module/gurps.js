@@ -101,7 +101,7 @@ Hooks.once("ready", async function() {
 		
 	}
 	GURPS.ModifierBucket = new ModifierBucket(opts);
-	console.log("Ready!");
+	console.log(GURPS.ModifierBucket);
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
 });

@@ -22,7 +22,7 @@
                     <div class="label">Created:</div>
                     <div class="field">{{data.traits.createdon}}</div>
                     <div class="label">Modified:</div>
-                    <div class="field">{{gurpslink data.traits.title}}</div>
+                    <div class="field">{{{gurpslink data.traits.title}}}</div>
                     <div class="label">Options:</div>
                     <div class="field"></div>
                 </div>
@@ -324,8 +324,8 @@
             <div></div>
 
 						{{#each data.melee}}
-	            <div class="desc">{{this.name}}
-								<div class="list_note">{{this.note}}</div>
+	            <div class="desc">{{{gurpslink this.name}}}
+								<div class="list_note">{{{gurpslink this.notes}}}</div>
 							</div>
 	            <div class="usage">{{this.mode}}</div>
 	            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
@@ -353,8 +353,8 @@
 
             
 						{{#each data.ranged}}
-	            <div class="desc">{{this.name}}
-	                <div class="list_note">{{this.note}}</div>
+	            <div class="desc">{{{gurpslink this.name}}}
+	                <div class="list_note">{{{gurpslink this.notes}}}</div>
 	            </div>
 	            <div class="usage">{{this.mode}}</div>
 	            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
@@ -374,33 +374,33 @@
             <div class="pts header">Pts</div>
             <div class="ref header">Ref</div>          
 						{{#each data.ads}}
-	            <div class="desc indent0 satisfiedY">{{this.name}}
+	            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
 	                <div class="list_note satisfiedY"></div>
-	                <div class="list_note satisfiedY">{{this.notes}}</div>
+	                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
 	            </div>
 	            <div class="pts satisfiedY">{{this.points}}</div>
 	            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
 						{{/each}}  
 						{{#each data.powers}}
-	            <div class="desc indent0 satisfiedY">{{this.name}}
+	            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
 	                <div class="list_note satisfiedY"></div>
-	                <div class="list_note satisfiedY">{{this.notes}}</div>
+	                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
 	            </div>
 	            <div class="pts satisfiedY">{{this.points}}</div>
 	            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
 						{{/each}}  
 						{{#each data.disads}}
-	            <div class="desc indent0 satisfiedY">{{this.name}}
+	            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
 	                <div class="list_note satisfiedY"></div>
-	                <div class="list_note satisfiedY">{{this.notes}}</div>
+	                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
 	            </div>
 	            <div class="pts satisfiedY">{{this.points}}</div>
 	            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
 						{{/each}}  
 						{{#each data.others}}
-	            <div class="desc indent0 satisfiedY">{{this.name}}
+	            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
 	                <div class="list_note satisfiedY"></div>
-	                <div class="list_note satisfiedY">{{this.notes}}</div>
+	                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
 	            </div>
 	            <div class="pts satisfiedY">{{this.points}}</div>
 	            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
@@ -415,9 +415,9 @@
             <div class="ref header">Ref</div>
 
             {{#each data.skills}}
-	            <div class="desc indent0 satisfiedY">{{this.name}}
+	            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
 	                <div class="list_note satisfiedY"></div>
-	                <div class="list_note satisfiedY">{{this.notes}}</div>
+	                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
 	            </div>
 	            <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
 	            <div class="rsl satisfiedY">{{this.relativelevel}}</div>
@@ -439,9 +439,9 @@
             <div class="ref header">Ref</div>
 
 				{{#each data.spells}}
-          <div class="desc indent0 satisfiedY">{{this.name}}
+          <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{this.notes}}</div>
+                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
             </div>
             <div class="cls satisfiedY"></div>
             <div class="college satisfiedY">{{this.college}}</div>

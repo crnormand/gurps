@@ -155,7 +155,10 @@ function trim(s) {
 }
 
 function parselink(str) {
-	return str;	
+	return {
+		"test": "null",
+		"text": "<span class='gurpslink'>" + str + "</span>"
+	}	
 }
 
 function gurpslink(str) {
@@ -166,9 +169,10 @@ function gurpslink(str) {
 		if (str[i] == "[")
 			found = ++i;
 		if (str[i] == "]" && found >= 0) {
-			output = str.substring(0, found);
-			output += this.parselink(str.substring(found, i));
-			str = str.substr(i+1);
+			output += str.substring(0, found);
+			let action = this.parselink(str.substring(found, i));
+			output += action.text;
+			str = str.substr(i);
 			i = 0;
 		}
 	}
@@ -176,8 +180,122 @@ function gurpslink(str) {
 	return output;
 }
 
+function onPdf(event) {
+	let element = event.currentTarget;
+	let t = element.innerText.trim();
+	let i = t.indexOf(":");
+	let book = "";
+	let page = 0;
+	if (i > 0) {
+		book = t.substring(0, i).trim();
+		page = parseInt(t.substr(i+1));
+	} else {
+		book = t.replace(/[0-9]*/g, "").trim();
+		page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
+	}
+	if (ui.PDFoundry) {
+  	ui.PDFoundry.openPDFByCode(book, { page });
+  } else {
+    ui.notifications.warn('PDFoundry must be installed to use links.');
+  }
+}
+
+	// Return the i18n string for this data path (note en.json must match up to the data paths).
+	// special case, drop ".value" from end of path (and append "NAME")
+function i18n(path, suffix) {
+		let i = path.indexOf(".value");
+		if (i >= 0) {
+			path = path.substr(0, i) + "NAME";	// used for the attributes
+		}
+		
+		path = path.replace(/\./g, "");	// remove periods
+		return game.i18n.localize("GURPS." + path);
+	}
+
+function resolve(path, obj=self, separator='.') {
+	    var properties = Array.isArray(path) ? path : path.split(separator)
+	    return properties.reduce((prev, curr) => prev && prev[curr], obj)
+	}
+
+
+function onRoll(event, actor) {
+		let element = event.currentTarget;
+		  // Is Dice So Nice enabled ?
+	  let niceDice = false;
+	  try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch {}
+	
+		let content = "";
+		let dmgtype = "";
+		let rollMods = "";
+		let damageMods = "";
+		
+		let thing = "";
+		let roll = new Roll("1d6 + 1d6 + 1d6 " + rollMods);
+		
+		if ("path" in element.dataset) {
+			thing = this.i18n(element.dataset.path);
+		}
+		if ("name" in element.dataset) {
+			thing = element.dataset.name.replace(/\(\)$/g, "");
+		}
+		if ("damage" in element.dataset) {
+			let d = element.innerText;
+			let i = d.indexOf(" ");
+			if (i > 0) {
+				dmgtype = d.substr(i+1);
+				d = d.substring(0, i);
+				let w = d.replace(/d([^6])/g, "d6$1");
+				d= w.replace(/d$/g, "d6");
+			}
+			roll = new Roll(d + damageMods);
+		}
+		
+		roll.roll();
+		let rtotal = roll.total;
+		if (rtotal < 0) rtotal = 0;
+		if (!!thing) {
+			let target = parseInt(element.innerText);	
+			if (!target) return;
+			let rdesc = "<b>" + rtotal + "</b>" + " <small>{ ";
+			for (let i = 0; i < 6; i=i+2) 
+				rdesc += roll.results[i] + " ";
+			rdesc += "}</small>";
+			let results = (roll.total <= target) ? "<span style='color:green'><b>Success!</b></span>  " : "<span style='color:red'><i>Failure</i></span>  ";
+			content = "Roll vs " + thing + " [" + target + "]<br>" + results + rdesc;
+		} else {
+			content = "Does <b>" + rtotal + "</b> points of '" + dmgtype + "' damage";
+		}
+		
+		const speaker = { alias: actor.name, _id: actor._id }
+    let messageData = {
+			user: game.user._id,
+	    speaker: speaker,
+	    content: content,
+	    type: CONST.CHAT_MESSAGE_TYPES.OOC,
+	    roll: roll
+		};
+
+		if (niceDice) {
+			game.dice3d.showForRoll(roll).then((displayed) => { 
+				CONFIG.ChatMessage.entityClass.create(messageData, {})});
+		} else {
+			messageData.sound = CONFIG.sounds.dice;
+			CONFIG.ChatMessage.entityClass.create(messageData, {});
+		}
+	}
+	
+function onGurpslink(event, actor) {
+	let element = event.currentTarget;
+}
+
+
 GURPS.xmlTextToJson = xmlTextToJson;
 GURPS.objToString = objToString;
 GURPS.trim = trim;
 GURPS.gurpslink = gurpslink;
 GURPS.parselink = parselink;
+GURPS.i18n=i18n;
+GURPS.resolve=resolve;
+GURPS.onRoll=onRoll;
+GURPS.onPdf=onPdf;
+GURPS.onGurpslink=onGurpslink;
