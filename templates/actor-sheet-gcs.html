@@ -328,7 +328,7 @@
 								<div class="list_note">{{this.note}}</div>
 							</div>
 	            <div class="usage">{{this.mode}}</div>
-	            <div class="level">{{this.level}}</div>
+	            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
 	            <div class="parry">{{this.parry}}</div>
 	            <div class="block"></div>
 	            <div class="damage">{{this.block}}</div>
@@ -357,7 +357,7 @@
 	                <div class="list_note">{{this.note}}</div>
 	            </div>
 	            <div class="usage">{{this.mode}}</div>
-	            <div class="level">{{this.level}}</div>
+	            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
 	            <div class="acc">{{this.acc}}</div>
 	            <div class="damage">{{this.damage}}</div>
 	            <div class="range">{{this.range}}</div>
@@ -449,7 +449,7 @@
             <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
             <div class="time satisfiedY">{{this.casttime}}</div>
             <div class="duration satisfiedY">{{this.duration}}</div>
-            <div class="sl satisfiedY">{{this.level}}</div>
+            <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
             <div class="rsl satisfiedY"></div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY">{{this.pageref}}</div>

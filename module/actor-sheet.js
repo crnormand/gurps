@@ -133,15 +133,6 @@ export class GurpsActorSheet extends ActorSheet {
 	async _onClickRoll(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
-/*		console.log("Event:");
-		console.log(event);
-		console.log("Element:");
-		console.log(element);
-		console.log("Path:" + element.dataset.path);
-		console.log(element.textContent);
-		console.log(this);
-		console.log(r);
-*/
 		  // Is Dice So Nice enabled ?
 	  let niceDice = false;
 	  try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch {}
@@ -159,6 +150,7 @@ export class GurpsActorSheet extends ActorSheet {
 		let roll = new Roll("1d6 + 1d6 + 1d6" + mods);
 	  roll.roll();
 
+
 		let results = (roll.total <= target) ? "<span style='color:green'><b>Success!</b></span>  " : "<span style='color:red'><i>Failure</i></span>  ";
 		results += "<b>" + roll.total + "</b> {" + roll.results.filter(d => d != "+") + "}";
 		let content = "Roll vs " + thing + " [" + target + "]<br>" + results;
@@ -171,7 +163,13 @@ export class GurpsActorSheet extends ActorSheet {
 	    roll: roll
 		};
 
-	  CONFIG.ChatMessage.entityClass.create(messageData, {})
+		if (niceDice) {
+			game.dice3d.showForRoll(roll).then((displayed) => { 
+				CONFIG.ChatMessage.entityClass.create(messageData, {})});
+		} else {
+			messageData.sound = CONFIG.sounds.dice;
+			CONFIG.ChatMessage.entityClass.create(messageData, {});
+		}
 	}
 
 

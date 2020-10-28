@@ -11,11 +11,13 @@
   cursor: pointer;
   font-size: 115%;
   font-weight: bold;
-	background-color: rgb(255, 255, 164) !important;
+	background-color: rgb(255, 255, 128) !important;
 }
 
 .rollable {
-  text-shadow: 3px 3px rgb(255, 255, 128);
+  color: blue;
+  /* text-shadow: 2px 2px rgb(255, 255, 128); */
+	background-color: rgb(255, 255, 190) !important;
 }
 
 .rollable:active {
