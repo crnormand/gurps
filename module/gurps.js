@@ -268,14 +268,16 @@ function performAction(action, actor) {
 	let formula = "";
 	let rollmods = ""; 		// Should get this from the ModifierBucket someday
 	
+	if (action.type == "modifier") {
+		let mod = parseInt(action.mod);
+		game.GURPS.ModifierBucket.updateCurrentModifier(mod, action.desc);
+		return;
+	} 
 	if (action.type == "attribute") {
 		prefix = "Roll vs ";
 		thing = this.i18n(action.path);
 		formula = "3d6";
 		target = this.resolve(action.path, actor.data.data);
-	} 
-	if (action.type == "modifier") {
-		
 	} 
 	if (action.type == "selfcontrol") {
 		prefix = "Self Control ";

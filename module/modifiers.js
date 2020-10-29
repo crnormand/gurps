@@ -7,8 +7,6 @@ export class ModifierBucket extends Application {
 	}
 	activateListeners(html) {
 	  super.activateListeners(html);
-//		html.find(".pdflink").click(this._onClickPdf.bind(this));
-	
 		html.find("#gmodleft").click(this._onClickLeft.bind(this));
 		html.find("#gmodright").click(this._onClickRight.bind(this));
 	}
@@ -17,23 +15,31 @@ export class ModifierBucket extends Application {
 		event.preventDefault();
 		let element = event.currentTarget;
 		this.inc();
-		console.log(this.getCurrentModifier());
 	}
 	
 	async _onClickRight(event) {
 	  event.preventDefault();
 		let element = event.currentTarget;
 		this.dec();
-		console.log(this.getCurrentModifier());
 	}
 	
 	inc() {
-		this.setCurrentModifier(this.getCurrentModifier() + 1);	
+		this.updateCurrentModifier(1);	
 	}
 	dec() {
-		this.setCurrentModifier(this.getCurrentModifier() - 1);
+		this.updateCurrentModifier(-1);
 	}
 
+	updateCurrentModifier(num, reason) {
+		this.setCurrentModifier(this.getCurrentModifier() + num);
+		
+		let messageData = {
+	    content: "Current modifier: " + this.getCurrentModifier() + " " + reason,
+	    type: CONST.CHAT_MESSAGE_TYPES.OOC,
+	 	};
+	
+		CONFIG.ChatMessage.entityClass.create(messageData, {});
+	}
 	
 	getCurrentModifier() {
 		if (!game.GURPS.ModifierBucket.currentmodifier) game.GURPS.ModifierBucket.currentmodifier = 0;
