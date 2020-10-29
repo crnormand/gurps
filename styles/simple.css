@@ -34,15 +34,6 @@
 }
 
 .rollable:hover {
-	/*
-	text-shadow: none;
-  color: blue;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 115%;
-  font-weight: bold;
-	background-color: rgb(255, 255, 128) !important;
-	*/
   font-size: 115%;
   font-weight: bold;
   text-decoration: none;
@@ -67,26 +58,54 @@
   font-weight: bold;
   text-decoration: none;
   color: blue;
-  background-color: rgb(255, 255, 190) !important;
+  background-color: rgb(255, 255, 128) !important;
   padding: 2px 3px 2px 3px;
   border-bottom: 1px solid #CCCCCC;
   border-left: 1px solid #333333;
   border-top: 1px solid #333333;
   border-right: 1px solid #CCCCCC;
   border-radius: 8px;
-
 }
 
-.gurpslink:hover {
-	/*
-	text-shadow: none;
-  color: blue;
-  text-decoration: underline;
-  cursor: pointer;
+.gmod:hover {
   font-size: 115%;
   font-weight: bold;
-	background-color: rgb(255, 255, 128) !important;
-	*/
+  text-decoration: none;
+	background-image: none;
+  background-color: rgb(255, 128, 64) !important;
+  color: blue;
+  padding: 2px 3px 2px 3px;
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+  border-radius: 8px;
+}
+
+.gmod {
+  color: blue;
+  /*text-shadow: 2px 2px 8px rgb(255, 0, 0);*/
+	background-color: rgb(255, 215, 160) !important;
+	/* background-image: linear-gradient(to right, white , rgb(255, 200, 128)); */
+}
+
+.gmod:active {
+  font-size: 110%;
+  font-weight: bold;
+  text-decoration: none;
+  color: blue;
+	background-image: none;
+  background-color: rgb(255, 128, 128) !important;
+  padding: 1px 1px 1px 1px;
+  border-bottom: 1px solid #CCCCCC;
+  border-left: 1px solid #333333;
+  border-top: 1px solid #333333;
+  border-right: 1px solid #CCCCCC;
+  border-radius: 6px;
+}
+
+
+.gurpslink:hover {
   font-size: 115%;
   font-weight: bold;
   text-decoration: none;
@@ -111,7 +130,7 @@
   font-weight: bold;
   text-decoration: none;
   color: blue;
-  background-color: rgb(255, 255, 190) !important;
+  background-color: rgb(255, 255, 128) !important;
   padding: 2px 3px 2px 3px;
   border-bottom: 1px solid #CCCCCC;
   border-left: 1px solid #333333;

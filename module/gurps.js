@@ -156,6 +156,11 @@ function gspan(str) {
 }
 GURPS.gspan=gspan;
 
+function gmspan(str) {
+	return "<span class='gmod'>" + str + "</span>";
+}
+GURPS.gmspan=gmspan;
+
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
 	+N <desc>
@@ -180,7 +185,7 @@ function parselink(str) {
 		if (!num) return { "text": str };
 		let desc = rest.replace(/[0-9]+(.*)/g,"$1").trim();
 		return {
-			"text": this.gspan(str),
+			"text": this.gmspan(str),
 			"action": {
 				"type": "modifier",
 				"mod": sign + num,
