@@ -8,22 +8,7 @@ export class GurpsActor extends Actor {
 
 	prepareData() {
 		super.prepareData();
-		
-/*		const d = this.data.data;
-		if (d.encumbrance.length == 0) {
-			let es = [];
-			for (let i = 0; i < 5; i++) {
-				let e = [];
-				e.key = ("enc" + i);
-				e.current = false;
-				e.weight = "";
-				e.move = "";
-				e.dodge = "?";
-			}
-			d.encumbrance = es;
-		}
-*/	}
-
+	}
 	
 	// This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 	// First we have to remove non-printing characters, and then we want to replace 
