@@ -308,7 +308,7 @@ function onRoll(event, actor) {
 	let damageMods = "";
 	
 	let thing = "";
-	let roll = new Roll("1d6 + 1d6 + 1d6 " + rollMods);
+	let roll = new Roll("3d6" + rollMods);
 	
 	if ("path" in element.dataset) {
 		thing = this.i18n(element.dataset.path);
@@ -334,11 +334,14 @@ function onRoll(event, actor) {
 	if (!!thing) {
 		let target = parseInt(element.innerText);	
 		if (!target) return;
-		let rdesc = "<b>" + rtotal + "</b>" + " <small>{ ";
-		for (let i = 0; i < 6; i=i+2) 
-			rdesc += roll.results[i] + " ";
-		rdesc += "}</small>";
-		let results = (roll.total <= target) ? "<span style='color:green'><b>Success!</b></span>  " : "<span style='color:red'><i>Failure</i></span>  ";
+		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
+		results += (roll.total <= target) ? " <span style='color:green; font-size: 140%;'><b>Success!</b></span>  " : " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
+		let margin = target - rtotal;
+		let rdesc = " <small>";
+		if (margin == 0) rdesc += "just made it.";
+		if (margin > 0) rdesc += "made it by " + margin;
+		if (margin < 0) rdesc += "missed it by " + (-margin);
+		rdesc += "</small>";
 		content = "Roll vs " + thing + " [" + target + "]<br>" + results + rdesc;
 	} else {
 		content = "Does <b>" + rtotal + "</b> points of '" + dmgtype + "' damage";
