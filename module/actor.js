@@ -73,16 +73,17 @@ export class GurpsActor extends Actor {
 		// This is going to get ugly, so break out various data into different methods
 		this.importAttributesFromCGSv1(c.attributes);
 		this.importSkillsFromGCSv1(c.abilities.skilllist)
-		this.importSpellsFromGCSv1(c.abilities.spelllist)
 		this.importTraitsfromGCSv1(c.traits);
+		this.importCombatMeleeFromGCSv1(c.combat.meleecombatlist);
+		this.importCombatRangedFromGCSv1(c.combat.rangedcombatlist);
+		this.importSpellsFromGCSv1(c.abilities.spelllist)
 		this.importAdsFromGCSv1(c.traits.adslist);
 		this.importDisadsFromGCSv1(c.traits.disadslist);
 		this.importPowersFromGCSv1(c.abilities.powerlist);
 		this.importOtherAdsFromGCSv1(c.abilities.otherlist);
 		this.importEncumbranceFromGCSv1(c.encumbrance);
-		this.importCombatMeleeFromGCSv1(c.combat.meleecombatlist);
-		this.importCombatRangedFromGCSv1(c.combat.rangedcombatlist);
 		this.importPointTotalsFromGCSv1(c.pointtotals);
+
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
 	}

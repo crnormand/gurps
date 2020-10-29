@@ -172,6 +172,8 @@ GURPS.gmspan=gmspan;
 	  Self control roll
 	"Skill" +/-N
 		Roll vs skill (with option +/- mod).
+		
+	"modifier", "attribute", "selfcontrol"
 */
 function parselink(str) {
 	if (str.length < 2) 
@@ -231,6 +233,19 @@ function parselink(str) {
 	return { "test": str };	
 }
 GURPS.parselink = parselink;
+
+function performAction(action, actor) {
+	if (action.type === "attribute") {
+		
+	} 
+	if (action.type === "modifier") {
+		
+	} 
+	if (action.type === "selfcontrol") {
+		
+	} 
+}
+GURPS.performAction=performAction;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str) {
@@ -297,45 +312,55 @@ function resolve(path, obj=self, separator='.') {
 GURPS.resolve = resolve;
 
 function onRoll(event, actor) {
+	let roll = "";
+	let rollmods = ""; 		// Should get this from the ModifierBucket someday
 	let element = event.currentTarget;
-	  // Is Dice So Nice enabled ?
-  let niceDice = false;
-  try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch {}
-
-	let content = "";
-	let dmgtype = "";
-	let rollMods = "";
-	let damageMods = "";
-	
 	let thing = "";
-	let roll = new Roll("3d6" + rollMods);
+	let target = -1;		// -1 == damage roll, target = 0 is NO ROLL.
 	
 	if ("path" in element.dataset) {
 		thing = this.i18n(element.dataset.path);
+		roll = "3d6";
+		target = parseInt(element.innerText);	
 	}
 	if ("name" in element.dataset) {
-		thing = element.dataset.name.replace(/\(\)$/g, "");
+		thing = element.dataset.name.replace(/\(\)$/g, "");  // remove () from end of line
+		roll = "3d6";
+		target = parseInt(element.innerText);	
 	}
 	if ("damage" in element.dataset) {
 		let d = element.innerText;
 		let i = d.indexOf(" ");
 		if (i > 0) {
-			dmgtype = d.substr(i+1);
+			thing = d.substr(i+1);
 			d = d.substring(0, i);
-			let w = d.replace(/d([^6])/g, "d6$1");
-			d= w.replace(/d$/g, "d6");
-		}
-		roll = new Roll(d + damageMods);
+			let w = d.replace(/d([^6])/g, "d6$1");		// Find 'd's without a 6 behind it, and add it.
+			d= w.replace(/d$/g, "d6"); 								// and do the same for the end of the line.
+		} 
+		roll = d;
 	}
+	this.doRoll(actor, roll, rollmods, thing, target);
+}
+GURPS.onRoll = onRoll; 
 	
+// formula="3d6", rollmod="+1", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
+function doRoll(actor, formula, rollmods, thing, target) {
+	
+	if (target == 0) return;	// Target == 0, so no roll.
+	
+	  // Is Dice So Nice enabled ?
+  let niceDice = false;
+  try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch {}
+
+	let content = "";
+	
+	let	roll = new Roll(formula + rollmods);
 	roll.roll();
 	let rtotal = roll.total;
 	if (rtotal < 0) rtotal = 0;
-	if (!!thing) {
-		let target = parseInt(element.innerText);	
-		if (!target) return;
+	if (target > 0 && !!thing) {
 		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
-		results += (roll.total <= target) ? " <span style='color:green; font-size: 140%;'><b>Success!</b></span>  " : " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
+		results += (rtotal <= target) ? " <span style='color:green; font-size: 140%;'><b>Success!</b></span>  " : " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
 		let margin = target - rtotal;
 		let rdesc = " <small>";
 		if (margin == 0) rdesc += "just made it.";
@@ -344,7 +369,7 @@ function onRoll(event, actor) {
 		rdesc += "</small>";
 		content = "Roll vs " + thing + " [" + target + "]<br>" + results + rdesc;
 	} else {
-		content = "Does <b>" + rtotal + "</b> points of '" + dmgtype + "' damage";
+		content = "Does <b>" + rtotal + "</b> points of '" + thing + "' damage";
 	}
 	
 	const speaker = { alias: actor.name, _id: actor._id }
@@ -364,12 +389,15 @@ function onRoll(event, actor) {
 		CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
 }
-GURPS.onRoll = onRoll; 
+GURPS.doRoll = doRoll; 
 	
 function onGurpslink(event, actor) {
 	let element = event.currentTarget;
+	let action = this.parselink(element.innerText);
+	this.performAction(action, actor)
 }
 GURPS.onGurpslink = onGurpslink;
+
 
 
 /* -------------------------------------------- */

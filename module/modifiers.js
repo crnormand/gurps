@@ -16,16 +16,22 @@ export class ModifierBucket extends Application {
 	async _onClickLeft(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
-		this.setCurrentModifier(this.getCurrentModifier() -1);	
+		this.inc();
 		console.log(this.getCurrentModifier());
 	}
 	
 	async _onClickRight(event) {
 	  event.preventDefault();
 		let element = event.currentTarget;
-		if (element.id != "gmodright") return;
-		this.setCurrentModifier(this.getCurrentModifier() +1);	
+		this.dec();
 		console.log(this.getCurrentModifier());
+	}
+	
+	inc() {
+		this.setCurrentModifier(this.getCurrentModifier() + 1);	
+	}
+	dec() {
+		this.setCurrentModifier(this.getCurrentModifier() - 1);
 	}
 
 	
