@@ -35,11 +35,14 @@ export class ModifierBucket extends Application {
 		this.showMods();
 	}
 
+	makeModifier(mod, reason) {
+		let n = mod.toString();
+		if (n[0] != '-' && n[0] != '+') n = "+" + n;
+		return { "mod": n, "desc": reason };
+	}
 		
 	addModifier(mod, reason) {
-		let n = mod.toString();
-		if (n[0] != '-') n = "+" + n;
-		this.modifierList.push({ "mod": n, "desc": reason });
+		this.modifierList.push(this.makeModifier(mod, reason));
 		this.sum();
 		this.showMods();
 	}
@@ -53,12 +56,10 @@ export class ModifierBucket extends Application {
 		if (this.displaySum[0] != "-") this.displaySum = "+" + this.displaySum;
 	}
 
-	applyMods() {
-		let answer = {
-			"sum" : this.currentSum,
-			"mods" : this.modifierList
-		};
+	applyMods(targetmods) {
+		let answer = this.modifierList;
 		this.clear();
+		if (!!targetmods) answer = targetmods.concat(answer);
 		return answer;
 	}
 	

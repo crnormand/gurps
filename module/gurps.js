@@ -222,13 +222,13 @@ function parselink(str, actor, htmldesc) {
 				"type": "attribute",
 				"attribute": a[0],
 				"path": path,
-				"desc": a[2],
+				"desc": a[2],		// Action description, not modifier desc
 				"mod": a[1]
 			}
 		}
 	}
 	
-	// Special case where they are makeing a targeted roll, NOT using their own attributes.  ST26
+	// Special case where they are makeing a targeted roll, NOT using their own attributes.  ST26.  Does not support mod (no ST26+2)
 	parse = str.replace(/^([a-zA-Z]+)(\d+)(.*)$/g, "$1~$2~$3")
 	if (parse != str) {
 		a = parse.split("~");
@@ -241,7 +241,7 @@ function parselink(str, actor, htmldesc) {
 					"action": {
 						"type": "attribute",
 						"target": n,
-						"desc": a[2],
+						"desc": a[2],  // Action description, not modifier desc
 						"path": path
 					}
 				}
@@ -269,23 +269,24 @@ function parselink(str, actor, htmldesc) {
 	parse = str.replace(/^(\d+)d([-+]\d+)?(!)?(.*)$/g,"$1~$2~$3~$4")
 	if (parse != str) {
 		let a = parse.split("~");
-		let m = GURPS.woundModifiers[a[3]];
+		let d = a[3].trim();
+		let m = GURPS.woundModifiers[d];
 		if (!m) {		// Not one of the recognized damage types
 			return {
 				"text": this.gspan(str),
 				"action": {
 					"type": "roll",
 					"formula": a[0] + "d" + a[1] + a[2],
-					"desc": a[3]
+					"desc": d			// Action description, not modifier desc
 				}
 			}
-		} else {	// Damage roll 1d+2 cut
+		} else {	// Damage roll 1d+2 cut.   Not allowed an action desc
 			return {
 				"text": this.gspan(str),
 				"action": {
 					"type": "damage",
 					"formula": a[0] + "d" + a[1] + a[2],
-					"damagetype": a[3]
+					"damagetype": d
 				}
 			}
 		}
@@ -323,6 +324,8 @@ function parselink(str, actor, htmldesc) {
 }
 GURPS.parselink = parselink;
 
+
+
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill"
 function performAction(action, actor) {
 	let prefix = "";
@@ -333,7 +336,7 @@ function performAction(action, actor) {
 	
 	if (action.type == "modifier") {
 		let mod = parseInt(action.mod);
-		game.GURPS.ModifierBucket.addModifier(mod, action.desc);
+		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	} 
 	if (action.type == "attribute") {
@@ -342,6 +345,7 @@ function performAction(action, actor) {
 		formula = "3d6";
 		target = action.target;
 		if (!target) target = this.resolve(action.path, actor.data);
+		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
 	} 
 	if (action.type == "selfcontrol") {
 		prefix = "Self Control ";
@@ -364,7 +368,7 @@ function performAction(action, actor) {
 		let skill = actor.data.skills.find(s => s.name == thing);
 		target = skill.level;
 		formula = "3d6";
-		targetmods = [{ "desc":"", "mod":action.mod }];
+		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
 	}
 	
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target);
@@ -379,7 +383,7 @@ GURPS.d6ify=d6ify
 
 function onRoll(event, actor) {
 	let formula = "";
-	let targetmods = []; 		// Should get this from the ModifierBucket someday
+	let targetmods = null;
 	let element = event.currentTarget;
 	let prefix = "";
 	let thing = "";
@@ -425,10 +429,10 @@ function onRoll(event, actor) {
 GURPS.onRoll = onRoll; 
 	
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-function doRoll(actor, formula, targetmods, prefix, thing, target) {
+function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	
-	if (target == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-	let isTargeted = (target > 0 && !!thing);
+	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+	let isTargeted = (origtarget > 0 && !!thing);
 	
 	  // Is Dice So Nice enabled ?
   let niceDice = false;
@@ -455,6 +459,19 @@ function doRoll(actor, formula, targetmods, prefix, thing, target) {
 	let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 	
 	if (isTargeted) {
+		let modscontent = "";
+		let target = origtarget;
+		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
+		if (!!targetmods) {
+			modscontent = "<i>";
+			for (let m of targetmods) {
+				target += parseInt(m.mod);
+				modscontent += "<br><span style='font-size:85%'>" + m.mod;
+				if (!!m.desc) modscontent += " : " + m.desc;
+				modscontent += "</span>";
+			}
+			modscontent += "</i><br>New Target: [" + target + "]";
+		}
 		results += (rtotal <= target) ? " <span style='color:green; font-size: 140%;'><b>Success!</b></span>  " : " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
 		let margin = target - rtotal;
 		let rdesc = " <small>";
@@ -462,12 +479,11 @@ function doRoll(actor, formula, targetmods, prefix, thing, target) {
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</small>";
-		content = prefix + thing + " [" + target + "]<br>" + results + rdesc;
+		content = prefix + thing + " [" + origtarget + "]" + modscontent + "<br>" + results + rdesc;
 	} else {
 		if (rtotal == 1) {
 			thing = thing.replace("points", "point");
 			if (b378 && inittotal == 0) thing += " (minimum of 1 point of damage per B378)";	
-			//if (b378 && inittotal == 0) thing += "<span style='font-size:75%'>Minimum of 1 point of damage per B378</span>";	
 		}
 		content = prefix + results + thing;
 	}
