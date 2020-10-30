@@ -222,7 +222,7 @@ function parselink(str, actor, htmldesc) {
 				"type": "attribute",
 				"attribute": a[0],
 				"path": path,
-				"desc": a[2],		// Action description, not modifier desc
+				"desc": a[2].trim(),		// Action description, not modifier desc
 				"mod": a[1]
 			}
 		}
@@ -241,7 +241,7 @@ function parselink(str, actor, htmldesc) {
 					"action": {
 						"type": "attribute",
 						"target": n,
-						"desc": a[2],  // Action description, not modifier desc
+						"desc": a[2].trim(),  // Action description, not modifier desc
 						"path": path
 					}
 				}
@@ -342,6 +342,7 @@ function performAction(action, actor) {
 	if (action.type == "attribute") {
 		prefix = "Roll vs ";
 		thing = this.i18n(action.path);
+		if (!!action.desc) thing += "<br>&nbsp; " + action.desc
 		formula = "3d6";
 		target = action.target;
 		if (!target) target = this.resolve(action.path, actor.data);
@@ -354,7 +355,7 @@ function performAction(action, actor) {
 		target = action.target;
 	} 
 	if (action.type == "roll") {
-		prefix = "Rolling " + action.formula + action.desc + "<br>";
+		prefix = "Rolling " + action.formula + " " + action.desc + "<br>";
 		formula = this.d6ify(action.formula);
 	}
 	if (action.type == "damage") {
@@ -442,7 +443,7 @@ function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	let min = 0;
 	let b378 = false;
 	// This is a nasty hack to give other damage types a minimum of 1 pt
-	if (!isTargeted && !thing.includes("'cr' damage")) {
+	if (!isTargeted && thing.includes("damage") && !thing.includes("'cr' damage")) {
 		min = 1;
 		b378 = true;
 	}
@@ -462,7 +463,7 @@ function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		let modscontent = "";
 		let target = origtarget;
 		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
-		if (!!targetmods) {
+		if (targetmods.length > 0) {
 			modscontent = "<i>";
 			for (let m of targetmods) {
 				target += parseInt(m.mod);
