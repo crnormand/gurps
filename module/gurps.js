@@ -212,26 +212,46 @@ function parselink(str, actor) {
 		}
 	}
 	
-	// Attributes ST+2 desc
-	let two = str.substr(0, 2);
-	let path = GURPS.attributepaths[two];
+	// Attributes "ST+2 desc, Per"
+	let parse = str.replace(/^(\w+)([+-]\d+)?(.*)$/g, "$1~$2~$3")
+	let a = parse.split("~");
+	let path = GURPS.attributepaths[a[0]];
 	if (!!path) {
-		let rest = str.substr(2).trim();
-		let mod = rest.replace(/([+-][0-9]+).*/g,"$1");
-		let desc = rest.replace(/[+-][0-9]+ *(.*)/g,"$1");
 		return {
 			"text": this.gspan(str),
 			"action": {
 				"type": "attribute",
-				"attribute": two,
+				"attribute": a[0],
 				"path": path,
-				"desc": desc,
-				"mod": mod
+				"desc": a[2],
+				"mod": a[1]
+			}
+		}
+	}
+	
+	// Special case where they are makeing a targeted roll, NOT using their own attributes.  ST26
+	parse = str.replace(/^([a-zA-Z]+)(\d+)(.*)$/g, "$1~$2~$3")
+	if (parse != str) {
+		a = parse.split("~");
+		path = GURPS.attributepaths[a[0]];
+		if (!!path) {
+			let n = parseInt(a[1]);
+			if (n) {
+				return {
+					"text": this.gspan(str),
+					"action": {
+						"type": "attribute",
+						"target": n,
+						"desc": a[2],
+						"path": path
+					}
+				}
 			}
 		}
 	}
 	
 	// Self control roll CR: N
+	let two = str.substr(0, 2);
 	if (two === "CR" && str.length > 2 && str[2] === ":") {
 		let rest = str.substr(3).trim();	
 		let num = rest.replace(/([0-9]+).*/g,"$1");
@@ -247,7 +267,7 @@ function parselink(str, actor) {
 	}
 	
 	// Straight roll, no damage type. 4d, 2d-1, etc.   Allows "!" suffix to indicate minimum of 1.
-	let parse = str.replace(/^(\d+)d([-+]\d+)?(!)?(.*)$/g,"$1~$2~$3~$4")
+	parse = str.replace(/^(\d+)d([-+]\d+)?(!)?(.*)$/g,"$1~$2~$3~$4")
 	if (parse != str) {
 		let a = parse.split("~");
 		let m = GURPS.woundModifiers[a[3]];
@@ -260,7 +280,7 @@ function parselink(str, actor) {
 					"desc": a[3]
 				}
 			}
-		} else {
+		} else {	// Damage roll 1d+2 cut
 			return {
 				"text": this.gspan(str),
 				"action": {
@@ -321,7 +341,8 @@ function performAction(action, actor) {
 		prefix = "Roll vs ";
 		thing = this.i18n(action.path);
 		formula = "3d6";
-		target = this.resolve(action.path, actor.data.data);
+		target = action.target;
+		if (!target) target = this.resolve(action.path, actor.data);
 	} 
 	if (action.type == "selfcontrol") {
 		prefix = "Self Control ";
@@ -378,7 +399,6 @@ function onRoll(event, actor) {
 		target = parseInt(element.innerText);	
 	}
 	if ("damage" in element.dataset) {
-		target = -1;
 		formula = element.innerText;
 		let i = formula.indexOf(" ");
 		if (i > 0) {
@@ -386,8 +406,13 @@ function onRoll(event, actor) {
 			thing = " points of '" + dtype + "' damage";
 			formula = formula.substring(0, i);
 		} 
-		prefix = "Rolling " + formula + "<br>";
-		formula = this.d6ify(formula);
+		if (formula == "0") 
+			ui.notifications.warn("No actual damage to roll");
+		else {
+			prefix = "Rolling " + formula + "<br>";
+			formula = this.d6ify(formula);
+			target = -1;
+		}
 	}
 	if ("roll" in element.dataset) {
 		target = -1;
