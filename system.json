@@ -22,7 +22,7 @@
   "primaryTokenAttribute": "",
   "secondaryTokenAttribute": "",
   "url": "https://github.com/crnormand/gurps",
-  "manifest": "",
-  "download": "",
+  "manifest": "https://github.com/crnormand/gurps/blob/release/system.json",
+  "download": "https://github.com/crnormand/gurps/archive/0.5.0.zip",
   "license": "LICENSE.txt"
 }
