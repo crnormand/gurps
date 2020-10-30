@@ -1,5 +1,9 @@
 export class ModifierBucket extends Application {
 	
+	modifierList = [];  // { "mod": +/-N, "desc": "" }
+	currentSum = 0;
+	displaySum = "+0";
+	
   getData(options) {
     const data = super.getData(options);
 		data.gmod = game.GURPS.ModifierBucket;
@@ -7,48 +11,72 @@ export class ModifierBucket extends Application {
 	}
 	activateListeners(html) {
 	  super.activateListeners(html);
-		html.find("#gmodleft").click(this._onClickLeft.bind(this));
-		html.find("#gmodright").click(this._onClickRight.bind(this));
+		html.find("#showlist").click(this._onClickShowlist.bind(this));
+		html.find("#trash").click(this._onClickTrash.bind(this));
+		html.find("#globalmodifier").click(this._update.bind(this));
 	}
 	
-	async _onClickLeft(event) {
+	async _update(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
-		this.inc();
+		element.innerHtml = this.displaySum;
+				this.showMods();
+
 	}
 	
-	async _onClickRight(event) {
-	  event.preventDefault();
-		let element = event.currentTarget;
-		this.dec();
+	async _onClickShowlist(event) {
+		event.preventDefault();
+		this.showMods();
 	}
 	
-	inc() {
-		this.updateCurrentModifier(1);	
-	}
-	dec() {
-		this.updateCurrentModifier(-1);
+	async _onClickTrash(event) {
+		event.preventDefault();
+		this.clear();
+		this.showMods();
 	}
 
-	updateCurrentModifier(num, reason) {
-		this.setCurrentModifier(this.getCurrentModifier() + num);
 		
+	addModifier(mod, reason) {
+		let n = mod.toString();
+		if (n[0] != '-') n = "+" + n;
+		this.modifierList.push({ "mod": n, "desc": reason });
+		this.sum();
+		this.showMods();
+	}
+	
+	sum() {
+		this.currentSum = 0;
+		for (let m of this.modifierList) {
+			this.currentSum += parseInt(m.mod);
+		}
+		this.displaySum = this.currentSum.toString();
+		if (this.displaySum[0] != "-") this.displaySum = "+" + this.displaySum;
+	}
+
+	applyMods() {
+		let answer = {
+			"sum" : this.currentSum,
+			"mods" : this.modifierList
+		};
+		this.clear();
+		return answer;
+	}
+	
+	clear() {
+		this.modifierList = [];
+		this.sum();
+	}
+	
+	showMods() {
+		let content = "Current Modifiers:";
+		for (let m of this.modifierList) {
+			content += "<br>" + m.mod + " : " + m.desc;
+		}
+		content += "<br>Sum: " + this.currentSum;
 		let messageData = {
-	    content: "Current modifier: " + this.getCurrentModifier() + " " + reason,
+	    content: content,
 	    type: CONST.CHAT_MESSAGE_TYPES.OOC,
 	 	};
-	
 		CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
-	
-	getCurrentModifier() {
-		if (!game.GURPS.ModifierBucket.currentmodifier) game.GURPS.ModifierBucket.currentmodifier = 0;
-		return game.GURPS.ModifierBucket.currentmodifier;
-	}
-	
-	setCurrentModifier(m) {
-		return game.GURPS.ModifierBucket.currentmodifier = m;;
-	}
-
-
 }

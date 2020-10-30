@@ -15,7 +15,7 @@ import { ModifierBucket } from "./modifiers.js";
 export const GURPS = {};
 
 let opts = {
-	"width": 300,
+	"width": 200,
 	"height": 200,
 	"top": 600,
 	"left": 300,
@@ -25,7 +25,6 @@ let opts = {
 	"id": "ModifierBucket",
 	"template": "systems/gurps/templates/modifier-bucket.html",
 	"classes": [],
-	
 }
 
 GURPS.ModifierBucket = new ModifierBucket(opts);
@@ -191,7 +190,7 @@ GURPS.gmspan=gmspan;
 		
 	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill"
 */
-function parselink(str, actor) {
+function parselink(str, actor, htmldesc) {
 	if (str.length < 2) 
 		return { "text": str };
 	
@@ -207,7 +206,7 @@ function parselink(str, actor) {
 			"action": {
 				"type": "modifier",
 				"mod": sign + num,
-				"desc": desc
+				"desc": (!!desc) ? desc : htmldesc
 			}
 		}
 	}
@@ -334,7 +333,7 @@ function performAction(action, actor) {
 	
 	if (action.type == "modifier") {
 		let mod = parseInt(action.mod);
-		game.GURPS.ModifierBucket.updateCurrentModifier(mod, action.desc);
+		game.GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	} 
 	if (action.type == "attribute") {
@@ -556,9 +555,9 @@ function resolve(path, obj=self, separator='.') {
 }
 GURPS.resolve = resolve;
 	
-function onGurpslink(event, actor) {
+function onGurpslink(event, actor, desc) {
 	let element = event.currentTarget;
-	let action = this.parselink(element.innerText, actor.data);
+	let action = this.parselink(element.innerText, actor.data, desc);
 	this.performAction(action.action, actor.data);
 }
 GURPS.onGurpslink = onGurpslink;
@@ -624,10 +623,6 @@ Hooks.once("init", async function() {
     let o = CONFIG.GURPS.objToString(str);
 		console.log(o);
 		return o;
-  });
-
-  Handlebars.registerHelper('globalmodifier', function() {
-    return game.GURPS.ModifierBucket.getCurrentModifier();
   });
 
   Handlebars.registerHelper('gurpslink', function(str, root) {

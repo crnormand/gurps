@@ -35,7 +35,7 @@ export class GurpsActorSheet extends ActorSheet {
 		html.find(".rollable").click(this._onClickRoll.bind(this));
 		html.find(".pdflink").click(this._onClickPdf.bind(this));
 		html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
-		html.find(".gmod").click(this._onClickGurpslink.bind(this));
+		html.find(".gmod").click(this._onClickGmod.bind(this));
 		
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
@@ -126,6 +126,13 @@ export class GurpsActorSheet extends ActorSheet {
 	async _onClickGurpslink(event) {
 		event.preventDefault();
 		game.GURPS.onGurpslink(event, this.actor);
+	}
+	
+	async _onClickGmod(event) {
+		let element = event.currentTarget;
+		event.preventDefault();
+		let desc = element.dataset.name;
+		game.GURPS.onGurpslink(event, this.actor, desc);		
 	}
 	
  /* -------------------------------------------- */

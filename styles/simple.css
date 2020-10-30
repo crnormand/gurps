@@ -5,21 +5,18 @@
 }
 
 #modifierbucket {
-  z-index: 70;
   position: fixed;
-  bottom: 10px;
+  bottom: 5px;
   left: 805px;
-  width: 80px;
-  height: 52px;
+  width: 100px;
+  height: 50px;
   /*pointer-events: none;*/
-	display: flex;
-  flex-wrap: nowrap;
 	background-color: rgb(200, 200, 180);
 }
 
 #globalmodifier {
 	color:lightblue; 
-	font-size: 24px;
+	font-size: 20px;
 }
 
 .pdflink {
