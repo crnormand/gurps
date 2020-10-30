@@ -20,8 +20,7 @@ export class ModifierBucket extends Application {
 		event.preventDefault();
 		let element = event.currentTarget;
 		element.innerHtml = this.displaySum;
-				this.showMods();
-
+		this.showMods();
 	}
 	
 	async _onClickShowlist(event) {

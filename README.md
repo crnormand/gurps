@@ -1,25 +1,17 @@
 # GURPS 4e game system for Foundry VTT
 Implementing the Generic Universal Roleplaying System 4e rules for Foundry VTT
 
-Version 0.4.0
+Version 0.5.0
 
 Design philosophy: Use GCS (or GCA) to create and modify the characters, and use FVTT for rolling.  Some (but not a lot) of editing might be possible.
-
-My general plan for is to prototype as many cool/interesting features as we can prior to January, so that we can 1. convince the other gurps group (https://gitlab.com/jbhuddleston/gurps4e) to switch to (or merge with) this system and 2. make it viable for Mook to use it to run a game in January, which may be an inroads to SJG.
 
 Some of the cool/interesting features I would like to implement/prototype (in no particular order, trust me ;-) ) are below.   There is a whole lot of stuff here... and we certainly don't have to implement all (or even a lot) of it.   
 
 A robust domain model.   I am starting with the GCS domain model for characters (and npcs).   As such, I am implementing one type of import (from the GCS FG XML export).  But there may be other models (or simplified models).
 
-The ability to edit/add to a character. While a GCS/GCA import can provide most of the data, it might not provide all (especially if the GM has homebrewed anything).   If so, we need to have the ability to add/edit skills/spells/ads/disads/attacks/etc.   It doesn't have to be flashy, since I am currently assuming the bulk of the data will come from an outside source (GCS/GCA).
+The ability to edit/add to a character. While a GCS/GCA import can provide most of the data, it might not provide all (especially if the GM has homebrewed anything).   If so, we need to have the ability to add/edit skills/spells/ads/disads/attacks/etc.   It doesn't have to be flashy, since I am currently assuming the bulk of the data will come from an outside source (GCS/GCA).   The "On the Fly" rolling system can help here.
 
 We probably need to include some kinf of CSS parser like 'less', because the CSS is just getting nasty.
-
-A quick and easy mechanism for rolling the various GURPS "checks" (ability/skill/spell/combat/reaction/etc.).   As a bare minimum, I want to make it as easy as possible for the GM or a Player to assemble the necessary modifiers for a roll, make the roll, and have the system announce the success or failure of that roll.   To me, this is the HEART of the game (in the VTT).   I want to add as many options/choices, and make it as easy/versatile as possible, so the users can spend more time fighting the monsters and less time fighting the VTT.
-
-A consequence of this is that we need to provide all of the roll information to the user.   We need to clearly show where the user can click/drag/etc. to cause a roll to happen.  This is all in the HTML.  We should come up with a unified display scheme so that any kind of roll looks/behaves the same.   For example, we could highlight anything that could be rolled with a light blue background and a small dice icon to the right, and when the user hovers their mouse over it, it could add a 3d like border (to look somewhat like a button).   We can do this with a CSS class and an event listener.
-
-Currently, I envision a kind of bucket (or stack) where the player can drag and drop (or double click) to add a modifier to the stack.   And if all else fails, the player could just manually enter the modifier on the stack (because the GM tells them that they are "+2 to hit because 'reasons'").   The bucket/stack would be applied to the very next roll made by that player.
 
 I would like to add the ability for the GM to see each player's Modifier bucket/stack and be able to add/delete from it.   This way a GM could pre-load a player's bucket and the player would just have to make the roll.  I see this as VERY useful for new players.   
 
@@ -36,21 +28,15 @@ Create multiple "character sheets".   The player may want to use a compact "comb
 
 Being able to apply various modifiers based on the scene location or effect.   For example, if a scene contains an "oil spill", the GM could define a "-2 DX skill" while the player's token is in the spill, or if the player's token is in the visual effect of the poison gas cloud, it would apply a "Poisoned" status to their character.
 
-Implementing textual "on the fly" rolls.   GURPS is just too configurable to be fully implemented in a game system.   So I would like to implement a system that reads various portions of html for a recognizable signature, and parses it into an identifiable roll (it might change the background color and/or provide a button-like border around the text, just like any other kind of roll).   I implemented this in Fantasy Grounds and it was very useful.  I REALLY, REALLY want this implemented because it will help bridge the gap as we add more and more automation.   Also, it implements the concept of "we need to provide all of the roll information to the user" and it provides "A quick and easy mechanism for rolling the various GURPS checks".
+Allow Modifiers to have multiple triggers.   A "Retreat" maneuver gives "+3 Dodge/+1 Block/+1 Parry (+3 Parry w/Boxing, Judo, Karate or Fencing weapon) vs 1 Melee attack/round".  This modifier would occur if any of those rolls were attempted, and then go away.  Of course this would require that Modifiers and Rolls have some way to "match up", like a category, for example.    This sounds really nice... but upon more thought, could get very very messy.   I don't know if I want to touch it yet.
 
-My FG implementation supported attribute rolls (ex: [ST], [PER-2], [ST26-1]), Self control rolls (ex: [CR:12]), Damage rolls (ex: [2d cut], [3d-1 pi-]) and Skill rolls (ex: [Stealth], [First Aid+2]).   And given that we build the modifier bucket/stack system, we could also add modifiers to the bucket (ex: [-2 in cover], [+4 Telepathic attack]).   GCS already uses this format for "self control" rolls in their output templates, ex: "Phobia (Snakes)  [CR: 15 (Resist Almost All The Time)]".  It comes in handy with certain Advantages like "Acute Hearing".   If the character sheet does not show a separate "Hearing" roll, the Advantage could show "[PER+2]" somewhere in its name or note, and the user could click on it directly (instead of building a +2 Modifier and then rolling Perception.   "Hard to Kill" and "Hard to Subdue" gives +1/level to HT rolls and could be represented as [HT+1] (or maybe even {HT+lvl]... where we would use the level of the enclosing Advantage).   And this feature is a MUST if the GM uses any of the "Powers as Magic" systems, because all of the "spells" are implemented as Advantages, which by themselves do not have ANY rolls defined.   THE GM (or player) can use this system to embed the various rolls in the Advantage's User Description.  For example, the Hogwarts spell "Homenum Revelio" has the note "Reveals human presence nearby. Roll [PER+1] to detect, and [IQ+1] to analyze.".  Both of which would be "buttonized" so the player would know they could roll them.
-
-Build a "Quick Contest" system.   The GM defines which two actors must contest and those players (and only those players) are prompted to roll.   Each player picks a roll of the appropriate skill/attribute and makes that roll (affected by their own modifier stack (which the GM could pre-load)).   Once both have rolled, the results are shown to everyone.    It may not be worth much, but if a player does a Feint maneuver (a Quick Contest of the attacker's weapon/cloak skill vs the opponent's weapon/cloak/shield skill), it could automatically apply a Status of either "+X to hit with that melee weapon against that opponent next round" or "-X to opponent's defense when being attacked by this actor next round".
-
-Allow Modifiers to have multiple triggers.   A "Retreat" maneuver gives "+3 Dodge/+1 Block/+1 Parry (+3 Parry w/Boxing, Judo, Karate or Fencing weapon) vs 1 Melee attack/round".  This modifier would occur if any of those rolls were attempted, and then go away.
-
-Enhance modifiers to have follow-on actions.   For example, a player wants to add the extra effort "Mighty Blow" to his attack.  If damage is rolled, the modifier is applied to the damage AND the 1 FP cost is subtracted from the character.   Note, the modifier would only affect damage rolls... if the player applied the "Mightly Blow" modifier and then rolled to hit, the modifier could exempt itself from the roll and only apply itself if a damage is rolled.   It would also have a 1 combat round duration.   If the user applied "Mightly Blow", but then decided to do something else and their turn ended, the modifier should remove itself (so as to not mess up the next round).
+Enhance modifiers to have follow-on actions.   For example, a player wants to add the extra effort "Mighty Blow" to his attack.  If damage is rolled, the modifier is applied to the damage AND the 1 FP cost is subtracted from the character.   Note, the modifier would only affect damage rolls... if the player applied the "Mightly Blow" modifier and then rolled to hit, the modifier could exempt itself from the roll and only apply itself if a damage is rolled.   It would also have a 1 combat round duration.   If the user applied "Mightly Blow", but then decided to do something else and their turn ended, the modifier should remove itself (so as to not mess up the next round).   Again, this would require a way to match up a Roll with a Modifier.   We might be able to do it for some things (like combat rolls or skills rolls... again, more thought required).
 
 The follow-on actions could affect other actors.   If the player chooses to make a "Deceptive Attack", we could apply a Status of "-X to active defense roll" to the opponent.  Which would automatically be applied when the owner of that opponent makes the active defense roll.  Note: Officially, the opponent is only "-X to defenses" when being attacked by that particular character.  We would require "targeting" to make that work.
 
 Currently, selecting the target is not a requirement for any of the other features of this system to work.   The GM knows who is attacking whom, etc.   However, making the player "target" their attacks does offer the ability to do additional things, like applying Statuses or visual effects (like fireball flame) directly to the opponent.    Fortunately, Foundry makes this pretty easy to do.  The player just needs to select their own token (which should already be selected), right click on the target icon, and then left click on the "target" symbol that appears on the bottom left.   That token will then get a "targeted" halo effect so everyone can see which token is being targeted.   And we could draw a line from the attacker to the target with the GURPS range modifier displayed.   This could also automatically add a Modifier for ranged attacks to the Modifier stack.
 
-The "Charge Attack" maneuver could be applied as a new kind of Modifier.   It would apply the -4 to hit, but then apply a MAX:9 constraint as well.
+The "Charge Attack" maneuver include a new kind of Modifier.   It would apply the -4 to hit, but then apply a MAX:9 constraint as well.
 
 Posture could be applied as a kind of Status to a character, which could automatically apply modifiers to attack and defense rolls.  These kind of modifiers may have a permanent duration, until the Status is changed/lifted.   
 
@@ -67,27 +53,7 @@ When damage is applied to a token in the combat tracker (by the GM), we could br
 Support of the various types of hit location charts.   For example, the "Grand Unified Hit Locations Table v2.4" https://goo.gl/UBWilo , taken from GURPS Basic Set: Campaigns, GURPS Bio-Tech , GURPS Horror, GURPS Low-Tech, GURPS Low-Tech Instant Armor, GURPS Loadouts: Low-Tech Armor, GURPS Martial Arts, and GURPS Dungeon Fantasy Treasure Tables 1.  The owner of the other gurps project uses this table for all of their damage (and has even talked to Rich about trying to include it in GCS).
 
 
-
-TODO items... reminders to me of things I want to work on, or haven't finished, etc.
-
-- Complete import of GCS FG XML PC format.
-Herein lies one of the big differences between the GURPS game systems.   This system only uses Items for physical items, and creates it own classes for things like skills, advantages, etc.
-Still don't have equipment, and there are still persistence issues.
-
-- Done!  Figure out how to implement different actor htmls.   Given that we have a GCS html output, I bet Rich would allow us to canibalize it for here.   And we could implement a version that looks like the book http://www.cox-thurmond.net/jim/jcsp, if people like that look.
-
-- 75% done.  And of course, figure out the best way to implement rolling.   It requires an actor that is attempting the action and a skill/attribute/etc. to be rolled against, and maybe even a target.   And then make the roll (applying modifiers) and determine if the roll was successful or not and display some kind of useful information in the chat window (e.g. "Bog tries to climb and fails!", "Luna attempts to cast the spell 'Fireball' and succeeds!", "Luna does 12 pts of burning damage to Goblin #1", etc.).
-
-
-- Build "modifier bucket/stack" system.   A user clicks or drags various modifiers to a bucket to create a final add/subtract total for an upcoming roll.   The bucket should be able to display all of the individual modifiers that have been added, and allow for deletion.   I like how the macros box collapses and expands.   Maybe we can draw a box/bucket/whatever like the macro box (which cannot be moved).   And the GM's version aould expand horizontally to show each player's box, and could be collapsed back down to a single bucket if they just want to see their own.   Or we can just keep it open and show all players buckets.
-
-- Enhance roll system to be able to encode all of the stuff we need for Modifiers.  I think that we should define a dictionary of categories, and each roll and modifier can have 0 to many categories.   Be default, each skill would have a category for the base attribute of that skill (IQ/DX/etc.).   For example, the skill "Acrobatic Dodge" represents a skill roll of Acrobatics (category "DX") and could create a Modifier of "+2" with a category "dodge".   The Dodge roll would also have the category "dodge", so when it is rolled, the Modifier stack will know to apply the "+2".  These may need to be encoded in the HTML (as "data-" attributes) but that may mean duplication of data.  It would be nice is we could define some kind of Javascript dictionary/object system to maps well known rolls, and still allow html "data-" attributes in case we miss something.
-
-- Steal the range calculation code from the other system, and automatically add the modifier to the modifier bucket.   I know we can detect ranged attacks, but we might not know if a particular skill is affected by range.   At least if we add it automatically, the user (or GM, if we can build that feature) can delete it from the bucket if it isn't necessary.   We might use a category like "ranged", and any skill/spell/advantage that is affected by range would be affected by this modifier.
-
-- Implement textual "on the fly" rolls.   As I implied above, I think this is one of the most import features for this system, since it can help us with the almost infinitely configurable nature of GURPS.   Also, we could also add [B265], etc. to link to PDFFoundry to display the PDF (like GCS does).  PDFFoundry will even "export" the view to the clients, so you can show the players the rules.  We will need to store offsets and local PDF locations (like CGS).
-
-
 ##Versions
 0.3.0 - Introduction of GCS character sheet
 0.4.0 - Rollables and PDF (pagerefs) work
+0.5.0 - Atropos fixed my persistance issue.   Youtube demo made.
