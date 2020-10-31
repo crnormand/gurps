@@ -172,7 +172,7 @@ function gspan(str) {
 GURPS.gspan = gspan;
 
 function gmspan(str) {
-	return "<span class='gmod'>" + str + "</span>";
+	return "<span class='glinkmod'>" + str + "</span>";
 }
 GURPS.gmspan = gmspan;
 

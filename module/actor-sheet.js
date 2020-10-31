@@ -36,6 +36,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".pdflink").click(this._onClickPdf.bind(this));
     html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
     html.find(".gmod").click(this._onClickGmod.bind(this));
+    html.find(".glinkmod").click(this._onClickGmod.bind(this));
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
