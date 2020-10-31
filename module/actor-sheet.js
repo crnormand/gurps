@@ -165,7 +165,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       classes: ["gurps", "sheet", "actor"],
       template: "systems/gurps/templates/combat-sheet.html",
       width: 400,
-      height: 400,
+      height: 300,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });

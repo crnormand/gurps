@@ -1117,17 +1117,17 @@ body {
 
 /* ----- temp additions ----- */
 
-
 #combat-sheet {
   display: grid;
-  grid-template-columns: 1fr 0fr 6em 6em;
-  grid-template-rows: 0fr auto auto auto;
+  grid-template-columns: 1fr auto 6em 6em;
+  grid-template-rows: 0fr 0fr 1fr auto;
   grid-gap: .05in;
   grid-template-areas:
       'combat-identity combat-identity combat-hit      combat-fat'
       'combat-attrs    combat-location combat-location combat-location'
       'combat-weapons  combat-location combat-location combat-location'
-      'combat-weapons  .               .               .';
+      'combat-weapons  combat-location combat-location combat-location'
+      'combat-weapons  .                .               .';
 }
 
 #combat-identity,
@@ -1155,6 +1155,7 @@ body {
 
 #combat-attrs {
   grid-area: combat-attrs;
+  gap: 0;
 }
 
 #combat-location {
