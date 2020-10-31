@@ -1,0 +1,43 @@
+<form class="{{cssClass}} overflowy" autocomplete="off">
+  <div id="responsive">
+    <div id="combat-sheet">
+      <div id="personal">
+        <div id="identity">
+          <div class="header">Identity</div>
+          <div class="fieldblock">
+            <div class="label">Name:</div>
+            <div class="field">{{actor.name}}</div>
+            <div class="label">Player:</div>
+            <div class="field">{{data.traits.player}}</div>
+          </div>
+        </div> <!-- end of identity-->
+      </div> <!-- end of personal -->
+      <div id="stats">
+        <div id="attributes">
+          <div class="header">Hit Points</div>
+          <div class="fieldblock">
+            <div class="field">{{data.HP.value}}</div>
+            <div class="label">Current</div>
+            <div class="field">{{data.HP.max}}</div>
+            <div class="label">Basic</div>
+            <div class="condition-block">
+              <div class="label">Condition</div>
+              <div class="field" style="text-align: left;">Reeling</div>
+            </div>
+          </div>
+          <div class="header">Fatigue Points</div>
+          <div class="fieldblock">
+            <div class="field">{{data.FP.value}}</div>
+            <div class="label">Current</div>
+            <div class="field">{{data.FP.max}}</div>
+            <div class="label">Basic</div>
+            <div class="condition-block">
+              <div class="label">Condition</div>
+              <div class="field" style="text-align: left;">Tired</div>
+            </div>
+          </div>
+        </div> <!-- attributes -->
+      </div> <!-- end stats -->
+    </div> <!-- end of combat-sheet -->
+  </div> <!-- end of responsive -->
+</form>
