@@ -42,18 +42,16 @@
 
 
 .rollable:hover {
-/*  font-size: 1115%;
-  font-weight: bold;*/
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
   color: blue;
-  padding: 2px 3px 2px 3px;
+  padding: 1px 1px 1px 1px;
   border-top: 2px solid #CCCCCC;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
   border-left: 2px solid #CCCCCC;
   border-radius: 8px;
-	margin: -3px -0px -4px -6px;
+	margin: -2px 2px -3px -2px;
 	overflow: visible;
 	z-index: 99
 }
