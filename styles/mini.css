@@ -1,0 +1,73 @@
+#combat-sheet {
+    display: grid;
+    grid-template-columns: 1fr 10em 10em;
+    grid-template-rows: repeat(3, 1fr);
+    grid-gap: .05in;
+    grid-template-areas:
+        'combat-identity combat-hit      combat-fat'
+        'combat-attrs    combat-location combat-location'
+        'combat-weapons  combat-weapons  combat-weapons';
+}
+
+#combat-identity,
+#combat-hit,
+#combat-fat,
+#combat-attrs,
+#combat-location,
+#combat-weapons {
+    grid-gap: .05in;
+    display: grid;
+    grid-template-rows: 0fr 1fr;
+    border: 1px solid black;  
+}
+
+#combat-identity {
+    grid-area: combat-identity;
+}
+
+#combat-hit {
+    grid-area: combat-hit;
+}
+
+#combat-fat {
+    grid-area: combat-fat;
+}
+
+#combat-attrs {
+    grid-area: combat-attrs;
+}
+
+#combat-location {
+    grid-area: combat-location;
+}
+
+#combat-weapons {
+    grid-area: combat-weapons;
+}
+
+.condition-block {
+    margin-top: .4em;
+}
+
+.gurps .condition-block {
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    align-items: end;
+    padding-bottom: .15em;
+}
+
+.gurps .condition-block .field {
+  margin-right: .2em;
+  padding-left: .2em;
+  padding-right: .2em;
+  border-bottom: 1px solid lightgray;
+}
+
+.condition-block .label {
+    text-align: right;
+}
+  
+.condition-block .field {
+    text-align: left;
+}
+  
