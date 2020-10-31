@@ -1,0 +1,234 @@
+<form class='{{cssClass}} overflowy' autocomplete='off'>
+  <div id='responsive'>
+    <div id='combat-sheet'>
+
+      <div id='combat-identity'>
+        <div class='header'>Identity</div>
+        <div class='fieldblock'>
+          <div class='label'>Name:</div>
+          <div class='field'>{{actor.name}}</div>
+          <div class='label'>Player:</div>
+          <div class='field'>{{data.traits.player}}</div>
+        </div>
+      </div> <!-- end of identity-->
+
+      <div id='combat-hit'>
+        <div class='header'>Hit Points</div>
+        <div class='fieldblock'>
+          <div class='field'>{{data.HP.value}}</div>
+          <div class='label'>Current</div>
+        </div>
+        <div class='condition-block'>
+          <div class='basic-value'>{{data.HP.max}}</div>
+          <div class='basic-label'>Basic</div>
+          <div class='condition'>Check #1</div>
+        </div>
+      </div> <!-- end of combat-hit -->
+
+      <div id='combat-fat'>
+        <div class='header'>Fatigue</div>
+        <div class='fieldblock'>
+          <div class='field'>{{data.FP.value}}</div>
+          <div class='label'>Current</div>
+        </div>
+        <div class='condition-block'>
+          <div class='basic-value'>{{data.FP.max}}</div>
+          <div class='basic-label'>Basic</div>
+          <div class='condition'>Unconscious</div>
+        </div>
+      </div> <!-- combat-fat -->
+
+      <div id='combat-attrs'>
+        <div class='header'>Attributes</div>
+        <div id='combat-attrs-container'>
+          <div id='combat-attrs-1'>
+            <div class="fieldblock">
+              <div class="field rollable" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
+              <div class="label">{{localize "GURPS.attributesST"}}</div>
+
+              <div class="field rollable" data-path="attributes.DX.value">{{data.attributes.DX.value}}</div>
+              <div class="label">{{localize "GURPS.attributesDX"}}</div>
+
+              <div class="field rollable" data-path="attributes.IQ.value">{{data.attributes.IQ.value}}</div>
+              <div class="label">{{localize "GURPS.attributesIQ"}}</div>
+
+              <div class="field rollable" data-path="attributes.HT.value">{{data.attributes.HT.value}}</div>
+              <div class="label">{{localize "GURPS.attributesHT"}}</div>
+            </div>
+          </div>
+          <div id='combat-attrs-2'>
+            <div class="fieldblock">
+              <div class="field rollable" data-path="attributes.PER.value">{{data.attributes.PER.value}}</div>
+              <div class="label">{{localize "GURPS.attributesPER"}}</div>
+
+              <div class="field noedit rollable" data-path="vision">{{data.vision}}</div>
+              <div class="label">Vision</div>
+
+              <div class="field noedit rollable" data-path="hearing">{{data.hearing}}</div>
+              <div class="label">Hearing</div>
+
+              <div class="field noedit rollable" data-path="tastesmell">{{data.tastesmell}}</div>
+              <div class="label">Taste &amp; Smell</div>
+            </div>
+          </div>
+          <div id='combat-attrs-3'>
+            <div class="fieldblock">
+              <div class="field rollable" data-path="attributes.WILL.value">{{data.attributes.WILL.value}}</div>
+              <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
+
+              <div class="field noedit rollable" data-path="frightcheck">{{data.frightcheck}}</div>
+              <div class="label">Fright Check</div>
+
+              <div class="field">{{data.basicspeed.value}}</div>
+              <div class="label">Basic Speed</div>
+
+              <div class="field">{{data.basicmove.value}}</div>
+              <div class="label">Basic Move</div>
+            </div>
+          </div>
+          <div id='combat-attrs-4'>
+            <div class="fieldblock">
+              <div class="field rollable noedit">{{data.thrust}}</div>
+              <div class="label">Basic Thrust</div>
+              <div class="field rollable noedit">{{data.swing}}</div>
+              <div class="label">Basic Swing</div>
+            </div>
+          </div>
+
+        </div>
+      </div> <!-- end of combat-attrs-->
+
+      <div id='combat-location'>
+        <div class="header">Hit Location</div>
+        <div class="roll header">Roll</div>
+        <div class="where header">Where</div>
+        <div class="penalty header">Penalty</div>
+        <div class="dr header">DR</div>
+        <div class="roll">-</div>
+        <div class="where">Eye</div>
+        <div class="penalty gmod" data-name="to hit Eye">-9</div>
+        <div class="dr">0</div>
+
+        <div class="roll">3-4</div>
+        <div class="where">Skull</div>
+        <div class="penalty gmod" data-name="to hit Skull">-7</div>
+        <div class="dr">3</div>
+
+        <div class="roll">5</div>
+        <div class="where">Face</div>
+        <div class="penalty gmod" data-name="to hit Face">-5</div>
+        <div class="dr">1</div>
+
+        <div class="roll">6-7</div>
+        <div class="where">Right Leg</div>
+        <div class="penalty gmod" data-name="to hit Right Leg">-2</div>
+        <div class="dr">3</div>
+
+        <div class="roll">8</div>
+        <div class="where">Right Arm</div>
+        <div class="penalty gmod" data-name="to hit Right Arm">-2</div>
+        <div class="dr">3</div>
+
+        <div class="roll">9-10</div>
+        <div class="where">Torso</div>
+        <div class="penalty">0</div>
+        <div class="dr">4</div>
+
+        <div class="roll">11</div>
+        <div class="where">Groin</div>
+        <div class="penalty gmod" data-name="to hit Groin">-3</div>
+        <div class="dr">4</div>
+
+        <div class="roll">12</div>
+        <div class="where">Left Arm</div>
+        <div class="penalty gmod" data-name="to hit Left Arm">-2</div>
+        <div class="dr">3</div>
+
+        <div class="roll">13-14</div>
+        <div class="where">Left Leg</div>
+        <div class="penalty gmod" data-name="to hit Left Leg">-2</div>
+        <div class="dr">3</div>
+
+        <div class="roll">15</div>
+        <div class="where">Hand</div>
+        <div class="penalty gmod" data-name="to hit Hand">-4</div>
+        <div class="dr">1</div>
+
+        <div class="roll">16</div>
+        <div class="where">Foot</div>
+        <div class="penalty gmod" data-name="to hit Foot">-4</div>
+        <div class="dr">3</div>
+
+        <div class="roll">17-18</div>
+        <div class="where">Neck</div>
+        <div class="penalty gmod" data-name="to hit Neck">-5</div>
+        <div class="dr">4</div>
+
+        <div class="roll">-</div>
+        <div class="where">Vitals</div>
+        <div class="penalty gmod" data-name="to hit Vitals">-3</div>
+        <div class="dr">4</div>
+      </div> <!-- end of combat-location -->
+      <div id='combat-weapons'>
+        <div id="melee">
+          <div class="desc header">Melee Weapons</div>
+          <div class="usage header">Usage</div>
+          <div class="level header">Lvl</div>
+          <div class="parry header">Parry</div>
+          <div class="block header">Block</div>
+          <div class="damage header">Damage</div>
+          <div class="reach header">Reach</div>
+          <div class="st header">ST</div>
+          <div></div>
+
+          {{#each data.melee}}
+          <div class="desc">{{{gurpslink this.name}}}
+            <div class="list_note">{{{gurpslink this.notes}}}</div>
+          </div>
+          <div class="usage">{{this.mode}}</div>
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+          <div class="parry rollable" data-name="Parry">{{this.parry}}</div>
+          <div class="block rollable" data-name="Block">{{this.block}}</div>
+          <div class="damage rollable" data-damage>{{this.damage}}</div>
+          <div class="reach">{{this.reach}}</div>
+          <div class="st">{{this.st}}</div>
+          <div></div>
+          {{/each}}
+
+        </div>
+        <div id="ranged">
+          <div class="desc header">Ranged</div>
+          <div class="usage header">Usage</div>
+          <div class="level header">Lvl</div>
+          <div class="acc header">Acc</div>
+          <div class="damage header">Damage</div>
+          <div class="range header">Range</div>
+          <div class="rof header">RoF</div>
+          <div class="shots header">Shots</div>
+          <div class="bulk header">Bulk</div>
+          <div class="rcl header">Rcl</div>
+          <div class="st header">ST</div>
+
+
+          {{#each data.ranged}}
+          <div class="desc">{{{gurpslink this.name}}}
+            <div class="list_note">{{{gurpslink this.notes}}}</div>
+          </div>
+          <div class="usage">{{this.mode}}</div>
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+          <div class="acc">{{this.acc}}</div>
+          <div class="damage rollable" data-damage>{{this.damage}}</div>
+          <div class="range">{{this.range}}</div>
+          <div class="rof">{{this.rof}}</div>
+          <div class="shots">{{this.shots}}</div>
+          <div class="bulk">{{this.bulk}}</div>
+          <div class="rcl">{{this.rcl}}</div>
+          <div class="st">{{this.st}}</div>
+          {{/each}}
+
+        </div>
+
+      </div> <!-- end of combat-weapons -->
+    </div><!-- end of combat-sheet -->
+  </div> <!-- end of responsive -->
+</form>

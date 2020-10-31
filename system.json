@@ -7,16 +7,20 @@
   "compatibleCoreVersion": "0.7.5",
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
-  "esmodules": ["module/gurps.js"],
-  "styles": ["styles/simple.css"],
+  "esmodules": [
+    "module/gurps.js"
+  ],
+  "styles": [
+    "styles/simple.css"
+  ],
   "packs": [],
-  "languages": [    
-		{
+  "languages": [
+    {
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
     }
-	],
+  ],
   "gridDistance": 1,
   "gridUnits": "yd",
   "primaryTokenAttribute": "",

@@ -1,0 +1,67 @@
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8' />
+    <style>
+        body {
+            margin: 40px;
+        }
+
+        #combat-sheet {
+            display: grid;
+            grid-template-columns: 1fr 10em 10em;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            grid-template-areas:
+                'combat-identity combat-hit      combat-fat'
+                'combat-attrs    combat-location combat-location'
+                'combat-weapons  combat-weapons  combat-weapons';
+        }
+
+        #combat-identity {
+            grid-area: combat-identity;
+            display: flex;
+        }
+
+        #combat-hit {
+            grid-area: combat-hit;
+        }
+
+        #combat-fat {
+            grid-area: combat-fat;
+        }
+
+        #combat-attrs {
+            grid-area: combat-attrs;
+        }
+
+        #combat-location {
+            grid-area: combat-location;
+        }
+
+        #combat-weapons {
+            grid-area: combat-weapons;
+        }
+
+        .demo {
+            background-color: #444;
+            color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 150%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='combat-sheet'>
+        <div id='combat-identity' class='demo'></div>
+        <div id='combat-hit' class='demo'></div>
+        <div id='combat-fat' class='demo'></div>
+        <div id='combat-attrs' class='demo'></div>
+        <div id='combat-location' class='demo'></div>
+        <div id='combat-weapons' class='demo'></div>
+    </div>
+</body>
+
+</html>
