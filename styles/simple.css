@@ -20,28 +20,42 @@
 }
 
 .pdflink {
-	color: red;
+	text-shadow: none;
+	color: blue;
+  text-decoration: underline;	
+
+/*	color: red;
   text-shadow: 2px 2px rgb(255, 255, 128);
-}
+*/}
 
 .pdflink:hover {
-  font-size: 115%;
-  font-weight: bold;
-  text-decoration: none;	
+  /*font-size: 115%;
+  font-weight: bold;*/
+  text-shadow: none;
+
+	color: red;
+  text-decoration: underline;	
+	overflow: visible;
+	z-index: 99
  }
 
+
+
 .rollable:hover {
-  font-size: 115%;
-  font-weight: bold;
+/*  font-size: 1115%;
+  font-weight: bold;*/
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
   color: blue;
   padding: 2px 3px 2px 3px;
-  border-top: 1px solid #CCCCCC;
-  border-right: 1px solid #333333;
-  border-bottom: 1px solid #333333;
-  border-left: 1px solid #CCCCCC;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
   border-radius: 8px;
+	margin: -3px -0px -4px -6px;
+	overflow: visible;
+	z-index: 99
 }
 
 .rollable {
@@ -51,8 +65,8 @@
 }
 
 .rollable:active {
-  font-size: 115%;
-  font-weight: bold;
+ /* font-size: 115%;
+  font-weight: bold;*/
   text-decoration: none;
   color: blue;
   background-color: rgb(255, 255, 128) !important;
@@ -62,21 +76,23 @@
   border-top: 1px solid #333333;
   border-right: 1px solid #CCCCCC;
   border-radius: 8px;
+	margin: -2px -2px -3px -2px;
 }
 
 .gmod:hover {
-  font-size: 110%;
-  font-weight: bold;
+ /* font-size: 110%;
+  font-weight: bold;*/
   text-decoration: none;
 	background-image: none;
-  background-color: rgb(255, 128, 64) !important;
+  background-color: rgb(255, 128, 100) !important;
   color: black;
   padding: 1px 1em 1px 1px;
-  border-top: 1px solid #CCCCCC;
-  border-right: 1px solid #333333;
-  border-bottom: 1px solid #333333;
-  border-left: 1px solid #CCCCCC;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
   border-radius: 8px;
+	margin: -2px 0px -1px 2px;
 }
 
 .gmod {
@@ -87,44 +103,86 @@
 }
 
 .gmod:active {
-  font-size: 110%;
-  font-weight: bold;
+ /* font-size: 110%;
+  font-weight: bold;*/
   text-decoration: none;
   color: black;
 	background-image: none;
-  background-color: rgb(255, 128, 128) !important;
+  background-color: rgb(255, 128, 100) !important;
   padding: 1px 1em 1px 1px;
-  border-bottom: 1px solid #CCCCCC;
-  border-left: 1px solid #333333;
-  border-top: 1px solid #333333;
-  border-right: 1px solid #CCCCCC;
+  border-bottom: 2px solid #CCCCCC;
+  border-left: 2px solid #333333;
+  border-top: 2px solid #333333;
+  border-right: 2px solid #CCCCCC;
   border-radius: 8px;
+	margin: -1px -6px -2px 4px;
+	overflow: visible;
+	z-index: 99
+}
+
+.glinkmod:hover {
+  text-decoration: none;
+	background-image: none;
+  background-color: rgb(255, 128, 64) !important;
+  color: black;
+  padding: 1px 1px 1px 1px;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
+  border-radius: 8px;
+	margin: -1px -2px -1px -4px;
+}
+
+.glinkmod {
+  color: blue;
+	background-color: rgb(255, 230, 190) !important;
+}
+
+.glinkmod:active {
+ /* font-size: 110%;
+  font-weight: bold;*/
+  text-decoration: none;
+  color: black;
+	background-image: none;
+  background-color: rgb(255, 128, 64) !important;
+  padding: 1px 1px 1px 1px;
+  border-bottom: 2px solid #CCCCCC;
+  border-left: 2px solid #333333;
+  border-top: 2px solid #333333;
+  border-right: 2px solid #CCCCCC;
+  border-radius: 8px;
+	margin: -1px -3px -1px -3px;
+	z-index: 99
 }
 
 
 .gurpslink:hover {
-  font-size: 115%;
-  font-weight: bold;
+  /*font-size: 115%;*/
+  /*font-weight: bold;*/
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
   color: blue;
   padding: 2px 3px 2px 3px;
-  border-top: 1px solid #CCCCCC;
-  border-right: 1px solid #333333;
-  border-bottom: 1px solid #333333;
-  border-left: 1px solid #CCCCCC;
-  border-radius: 8px;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
+  border-radius: 5px;
+	margin: -2px -4px -2px -6px;
+	overflow: visible;
+	z-index: 99
 }
 
 .gurpslink {
   color: blue;
   /* text-shadow: 2px 2px rgb(255, 255, 128); */
-	background-color: rgb(255, 255, 190) !important;
+	background-color: rgb(255, 255, 175) !important;
 }
 
 .gurpslink:active {
-  font-size: 115%;
-  font-weight: bold;
+/*  font-size: 115%;
+  font-weight: bold; */
   text-decoration: none;
   color: blue;
   background-color: rgb(255, 255, 128) !important;
@@ -134,13 +192,15 @@
   border-top: 1px solid #333333;
   border-right: 1px solid #CCCCCC;
   border-radius: 8px;
-
+	margin: -2px -5px -2px -3px;
+	overflow: visible;
+	z-index: 99
 }
 
 .gurps .window-content {
   height: 100%;
   padding: 5px;
-  overflow-y: hidden;
+  /*overflow-y: hidden;*/
 	background: white;
 }
 .gurps .sheet-header {
