@@ -324,7 +324,7 @@
             <div></div>
 
 						{{#each data.melee}}
-	            <div class="desc">{{{gurpslink this.name}}}
+	            <div class="desc gcs-edit-name" data-path="data.melee.{{@key}}.name">{{{gurpslink this.name}}}
 								<div class="list_note">{{{gurpslink this.notes}}}</div>
 							</div>
 	            <div class="usage">{{this.mode}}</div>

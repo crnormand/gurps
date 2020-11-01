@@ -103,7 +103,20 @@
 			"total": 150,
 			"unspent": 0
 		},
-		"melee": [],
+		"melee": [ {
+				"name": "",
+				"notes":"",
+				"pageref": "",
+				"st":"",
+				"mode": "",
+				"level":"",
+				"damage": "",
+				"weight":"",
+				"techlevel":"",
+				"cost":"",
+				"reach":"",
+				"parry":""
+			}],
 		"ranged": [],
 		"protection" : [],
 		"encumbrance": []

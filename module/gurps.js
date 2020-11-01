@@ -512,6 +512,7 @@ GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str, actor) {
+	if (str === undefined) return "!!UNDEFINED";
 	let found = -1;
 	let output = "";
 	for (let i = 0; i < str.length; i++) {
