@@ -295,28 +295,25 @@ function parselink(str, actor, htmldesc) {
 	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)?.*/g, "$1~$2~$3");
 	let skill = null;
 	let mod = "";
-	if (!!actor) {
-		let actorskills = Object.values(actor.data.skills);
-		if (parse == str)
-			skill = actorskills.find(s => s.name == str);
-		else {
-			let a = parse.split("~");
-			let n = a[0].trim();
-			if (!!n) {
-				mod = a[2];
-				if (a[1] == "*") {
-					skill = actorskills.find(s => s.name.startsWith(n));
-				} else {
-					skill = actorskills.find(s => s.name == n);
-				}
-				if (!!skill) {
-					return {
-						"text": this.gspan(str),
-						"action": {
-							"type": "skill",
-							"name": skill.name,
-							"mod": mod
-						}
+	if (parse == str)
+		skill = actor?.data.skills.find(s => s.name == str);
+	else {
+		let a = parse.split("~");
+		let n = a[0].trim();
+		if (!!n) {
+			mod = a[2];
+			if (a[1] == "*") {
+					skill = actor?.data.skills.find(s => s.name.startsWith(n));
+			} else {
+					skill = actor?.data.skills.find(s => s.name == n);
+			}
+			if (!!skill) {
+				return {
+					"text": this.gspan(str),
+					"action": {
+						"type": "skill",
+						"name": skill.name,
+						"mod": mod
 					}
 				}
 			}
@@ -536,7 +533,7 @@ function gurpslink(str, actor) {
 		}
 	}
 	output += str;
-	return output;
+	return output.replace(/\n/g, "<br>");
 }
 GURPS.gurpslink = gurpslink;
 
@@ -604,6 +601,16 @@ function put(obj, index, v) {
 }
 GURPS.put=put;
 
+
+/*********************  HACK WARNING!!!! *************************/
+/* The following method has been secretly added to the Object class/prototype to
+   make it work like an Array. 
+*/
+Object.defineProperty(Object.prototype, 'find', {
+  value: function(expression) {
+		return Object.values(this).find(expression);	
+	}});
+
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
@@ -670,8 +677,6 @@ Hooks.once("init", async function () {
 		if (!actor) actor = root?.actor;
 		return game.GURPS.gurpslink(str, actor);
 	});
-
-
 
 });
 

@@ -68,6 +68,9 @@ export class GurpsActor extends Actor {
 		await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
 		await this.importEncumbranceFromGCSv1(c.encumbrance);
 		await this.importPointTotalsFromGCSv1(c.pointtotals);
+		await this.importNotesFromGCSv1(c.notelist);
+		await this.importEquipmentFromGCSv1(c.notelist);
+
 
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
@@ -101,6 +104,42 @@ export class GurpsActor extends Actor {
 			"data.totalpoints.unspent": i(json.unspentpoints),
 			"data.totalpoints.total": i(json.totalpoints)
 		});
+	}
+	
+	async importNotesFromGCSv1(json) {
+		if (!json) return;
+		let t= this.textFrom;
+		let ns = {};
+		let index = 0;
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let n = new Note();
+				n.setNotes(t(j.text));
+				game.GURPS.put(ns, index++, n);
+			}
+		}
+		await this.update({"data.notes": ns});
+	}
+	
+	async importEquipmentFromGCSv1(json) {
+		if (!json) return;
+		let t= this.textFrom;
+		let eqts = {
+			"carried": {},
+			"other": {}
+		};
+		let cindex = 0;
+		let oindex = 0;
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let sk = new Skill();
+				sk.name = t(j.name);	
+				sk.type = t(j.type);
+				sk.level = parseInt(t(j.level));
+			}
+		}
 	}
 	
 	async importEncumbranceFromGCSv1(json) {
@@ -486,4 +525,19 @@ export class Encumbrance {
 	weight = "";
 	move = "";
 	current = false;
+}
+
+export class Note extends Named {
+}
+
+export class Equipment extends Named {
+	identified = true;
+	count = 0;
+	cost = 0;
+	weight = 0;
+	location ="";
+	techlevel = "";
+	legalityclass = "";
+	categories = "";
+	holds = {};
 }
