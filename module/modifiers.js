@@ -3,23 +3,34 @@ export class ModifierBucket extends Application {
 	modifierList = [];  // { "mod": +/-N, "desc": "" }
 	currentSum = 0;
 	displaySum = "+0";
+	displayElement = null;
 	
   getData(options) {
     const data = super.getData(options);
-		data.gmod = game.GURPS.ModifierBucket;
+		data.gmod = this;
     return data;
 	}
 	activateListeners(html) {
 	  super.activateListeners(html);
 		html.find("#showlist").click(this._onClickShowlist.bind(this));
 		html.find("#trash").click(this._onClickTrash.bind(this));
-		html.find("#globalmodifier").click(this._update.bind(this));
+		this.displayElement = html.find("#globalmodifier");
+		this.displayElement.click(this._update.bind(this));
+		html.find("modifierbucket").hover(this._onHover.bind(this));
+	}
+	
+	async _onHover(event) {
+		event.preventDefault();
+		let element = event.currentTarget;
+		console.log("Hovering over:");
+		console.log(element);		
 	}
 	
 	async _update(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
-		element.innerHtml = this.displaySum;
+		for (let e of this.displayElement) 
+			e.innerHTML(this.displaySum);
 		this.showMods();
 	}
 	
