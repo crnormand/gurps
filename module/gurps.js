@@ -295,25 +295,28 @@ function parselink(str, actor, htmldesc) {
 	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)?.*/g, "$1~$2~$3");
 	let skill = null;
 	let mod = "";
-	if (parse == str)
-		skill = actor?.data.skills.find(s => s.name == str);
-	else {
-		let a = parse.split("~");
-		let n = a[0].trim();
-		if (!!n) {
-			mod = a[2];
-			if (a[1] == "*") {
-				skill = actor?.data.skills.find(s => s.name.startsWith(n));
-			} else {
-				skill = actor?.data.skills.find(s => s.name == n);
-			}
-			if (!!skill) {
-				return {
-					"text": this.gspan(str),
-					"action": {
-						"type": "skill",
-						"name": skill.name,
-						"mod": mod
+	if (!!actor) {
+		let actorskills = Object.values(actor.data.skills);
+		if (parse == str)
+			skill = actorskills.find(s => s.name == str);
+		else {
+			let a = parse.split("~");
+			let n = a[0].trim();
+			if (!!n) {
+				mod = a[2];
+				if (a[1] == "*") {
+					skill = actorskills.find(s => s.name.startsWith(n));
+				} else {
+					skill = actorskills.find(s => s.name == n);
+				}
+				if (!!skill) {
+					return {
+						"text": this.gspan(str),
+						"action": {
+							"type": "skill",
+							"name": skill.name,
+							"mod": mod
+						}
 					}
 				}
 			}
@@ -365,7 +368,7 @@ function performAction(action, actor) {
 	if (action.type == "skill") {
 		prefix = "Attempting ";
 		thing = action.name;
-		let skill = actor.data.skills.find(s => s.name == thing);
+		let skill = Object.values(actor.data.skills).find(s => s.name == thing);
 		target = skill.level;
 		formula = "3d6";
 		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
@@ -399,10 +402,15 @@ async function onRoll(event, actor) {
 		prefix = "Attempting ";
 		thing = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
 		formula = "3d6";
-		target = parseInt(element.innerText);
+		let t = element.innerText;
+		if (!!t) {
+			t = t.trim();
+			if (!!t)
+				target = parseInt(t);
+		}
 	}
 	if ("damage" in element.dataset) {
-		formula = element.innerText;
+		formula = element.innerText.trim();
 		let i = formula.indexOf(" ");
 		if (i > 0) {
 			let dtype = formula.substr(i + 1).trim();
@@ -581,7 +589,20 @@ function onGurpslink(event, actor, desc) {
 }
 GURPS.onGurpslink = onGurpslink;
 
+function genkey(index) {
+	let k = "key-";
+	if (index < 10)
+		k += "00";
+	if (index < 100)
+		k += "0)";
+	return k + index;
+}
+GURPS.genkey=genkey;
 
+function put(obj, index, v) {
+	obj[this.genkey(index)] = v;
+}
+GURPS.put=put;
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */

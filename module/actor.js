@@ -83,6 +83,7 @@ export class GurpsActor extends Actor {
 	
 	// similar hack to get text as integer.
 	intFrom(o) {
+		if (!o) return 0;
 		return parseInt(o["#text"]);
 	}
 		
@@ -105,7 +106,8 @@ export class GurpsActor extends Actor {
 	async importEncumbranceFromGCSv1(json) {
 		if (!json) return;
 		let t= this.textFrom;
-		let es = [];
+		let es = {};
+		let index = 0;
 		for (let i = 0; i < 5; i++ ) {
 			let e = new Encumbrance();
 			e.level = i;
@@ -120,7 +122,7 @@ export class GurpsActor extends Actor {
 			e.move = t(json[k2]);
 			k2 = k + "_dodge";
 			e.dodge = t(json[k2]);
-			es.push(e);
+			game.GURPS.put(es, index++, e);
 		}
 		await this.update({"data.encumbrance": es});
 	}
@@ -128,8 +130,8 @@ export class GurpsActor extends Actor {
 	async importCombatMeleeFromGCSv1(json) {
 		if (!json) return;
 		let t = this.textFrom;
-		let melee = [];
-		
+		let melee = {};
+		let index = 0;
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
@@ -153,7 +155,7 @@ export class GurpsActor extends Actor {
 						m.damage = t(j2.damage);
 						m.reach = t(j2.reach);
 						m.parry = t(j2.parry);
-  					melee.push(m);
+						game.GURPS.put(melee, index++, m);
 					}
 				}
 			}
@@ -164,8 +166,8 @@ export class GurpsActor extends Actor {
 	async importCombatRangedFromGCSv1(json) {
 		if (!json) return;
 		let t = this.textFrom;
-		let ranged = [];
-		
+		let ranged = {};
+		let index = 0;
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
@@ -191,7 +193,7 @@ export class GurpsActor extends Actor {
 						r.rof = t(j2.rof);
 						r.shots = t(j2.shots);
 						r.rcl = t(j2.rcl);
-  					ranged.push(r);
+						game.GURPS.put(ranged, index++, r);
 					}
 				}
 			}
@@ -203,7 +205,7 @@ export class GurpsActor extends Actor {
 	async importTraitsfromGCSv1(json) {
 		if (!json) return;
 		let t = this.textFrom;
-		let ts = [];
+		let ts = {};
 		ts.race = t(json.race);
 		ts.height = t(json.height);
 		ts.weight = t(json.weight);
@@ -292,7 +294,8 @@ export class GurpsActor extends Actor {
 	// When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
 	async importSkillsFromGCSv1(json) {
 		if (!json) return;
-		let skills = [];
+		let skills = {};
+		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -308,7 +311,7 @@ export class GurpsActor extends Actor {
 					console.log(sk);
 					console.log(t(j.text));
 				}
-				skills.push(sk);
+				game.GURPS.put(skills, index++, sk);
 			}
 		}
 		await this.update({"data.skills": skills});
@@ -319,7 +322,8 @@ export class GurpsActor extends Actor {
 	// When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
 	async importSpellsFromGCSv1(json) {
 		if (!json) return;
-		let spells = [];
+		let spells = {};
+		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -342,7 +346,7 @@ export class GurpsActor extends Actor {
 				sp.level = parseInt(t(j.level));
 				sp.duration = t(j.duration);
 				sp.setNotes(t(j.text));
-				spells.push(sp);
+				game.GURPS.put(spells, index++, sp);
 			}
 		}
 		await this.update({"data.spells": spells});
@@ -378,9 +382,9 @@ export class GurpsActor extends Actor {
 		await this.update({"data.otherads": list});
 	}
 
-
 	importBaseAdvantagesFromGCSv1(json) {
-		let datalist = [];
+		let datalist = {};
+		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -389,12 +393,11 @@ export class GurpsActor extends Actor {
 				a.name = t(j.name);		
 				a.points = this.intFrom(j.points);
 				a.setNotes(t(j.text));
-				datalist.push(a);
+				game.GURPS.put(datalist, index++, a);
 			}
 		}
 		return datalist;
 	}
-
 }
 
 export class Named {
