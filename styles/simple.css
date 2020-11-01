@@ -19,6 +19,12 @@
   font-size: 20px;
 }
 
+.gcs-attr-input {
+	border-width: 0px !important;
+	border:none !important;
+	height: 100% !important;
+}
+
 .pdflink {
 	text-shadow: none;
 	color: blue;
@@ -38,8 +44,6 @@
 	overflow: visible;
 	z-index: 99
  }
-
-
 
 .rollable:hover {
   text-decoration: none;

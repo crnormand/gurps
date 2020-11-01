@@ -3,7 +3,6 @@ import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
 import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
-import { GurpsActorSheetGCS } from "./actor-sheet.js";
 import { Skill } from "./actor.js";
 import { Spell } from "./actor.js";
 import { Advantage } from "./actor.js";
@@ -382,7 +381,7 @@ function d6ify(str) {
 }
 GURPS.d6ify = d6ify
 
-function onRoll(event, actor) {
+async function onRoll(event, actor) {
 	let formula = "";
 	let targetmods = null;
 	let element = event.currentTarget;
@@ -430,7 +429,7 @@ function onRoll(event, actor) {
 GURPS.onRoll = onRoll;
 
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
+async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 
 	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);
@@ -498,14 +497,16 @@ function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		roll: roll
 	};
 
+	let chatmsg = null;
 	if (niceDice) {
 		game.dice3d.showForRoll(roll).then((displayed) => {
-			CONFIG.ChatMessage.entityClass.create(messageData, {})
+			CONFIG.ChatMessage.entityClass.create(messageData, {});
 		});
 	} else {
 		messageData.sound = CONFIG.sounds.dice;
-		CONFIG.ChatMessage.entityClass.create(messageData, {});
+		chatmsg = CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
+	return chatmsg;
 }
 GURPS.doRoll = doRoll;
 
@@ -606,8 +607,7 @@ Hooks.once("init", async function () {
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: false });
-	Actors.registerSheet("gurps", GurpsActorSheetGCS, { makeDefault: true });
+	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });

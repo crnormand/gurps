@@ -8,9 +8,9 @@ export class GurpsActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["gurps", "sheet", "actor"],
-      template: "systems/gurps/templates/actor-sheet.html",
-      width: 600,
-      height: 600,
+      template: "systems/gurps/templates/actor-sheet-gcs.html",
+      width: 800,
+      height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });
@@ -57,6 +57,13 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   /* -------------------------------------------- */
+
+ /** @override */
+  _onDrop(event) {
+		console.log("Dropped:");
+		console.log(event);
+	
+	}
 
   /** @override */
   setPosition(options = {}) {
@@ -145,19 +152,6 @@ export class GurpsActorSheet extends ActorSheet {
   }
 }
 
-export class GurpsActorSheetGCS extends GurpsActorSheet {
-  /** @override */
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ["gurps", "sheet", "actor"],
-      template: "systems/gurps/templates/actor-sheet-gcs.html",
-      width: 800,
-      height: 800,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
-      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
-    });
-  }
-}
 export class GurpsActorCombatSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {

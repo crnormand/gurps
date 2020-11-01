@@ -57,15 +57,15 @@ export class GurpsActor extends Actor {
 
 		// This is going to get ugly, so break out various data into different methods
 		await this.importAttributesFromCGSv1(c.attributes);
-		await this.importSkillsFromGCSv1(c.abilities.skilllist)
+		await this.importSkillsFromGCSv1(c.abilities?.skilllist)
 		await this.importTraitsfromGCSv1(c.traits);
-		await this.importCombatMeleeFromGCSv1(c.combat.meleecombatlist);
-		await this.importCombatRangedFromGCSv1(c.combat.rangedcombatlist);
-		await this.importSpellsFromGCSv1(c.abilities.spelllist)
-		await this.importAdsFromGCSv1(c.traits.adslist);
-		await this.importDisadsFromGCSv1(c.traits.disadslist);
-		await this.importPowersFromGCSv1(c.abilities.powerlist);
-		await this.importOtherAdsFromGCSv1(c.abilities.otherlist);
+		await this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist);
+		await this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist);
+		await this.importSpellsFromGCSv1(c.abilities?.spelllist)
+		await this.importAdsFromGCSv1(c.traits?.adslist);
+		await this.importDisadsFromGCSv1(c.traits?.disadslist);
+		await this.importPowersFromGCSv1(c.abilities?.powerlist);
+		await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
 		await this.importEncumbranceFromGCSv1(c.encumbrance);
 		await this.importPointTotalsFromGCSv1(c.pointtotals);
 
@@ -75,6 +75,7 @@ export class GurpsActor extends Actor {
 	
 	// hack to get to private text element created by xml->json method. 
 	textFrom(o) {
+		if (!o) return "";
 		let t = o["#text"];
 		if (!!t) t = t.trim();
 		return t;
@@ -102,6 +103,7 @@ export class GurpsActor extends Actor {
 	}
 	
 	async importEncumbranceFromGCSv1(json) {
+		if (!json) return;
 		let t= this.textFrom;
 		let es = [];
 		for (let i = 0; i < 5; i++ ) {
@@ -124,6 +126,7 @@ export class GurpsActor extends Actor {
 	}
 	
 	async importCombatMeleeFromGCSv1(json) {
+		if (!json) return;
 		let t = this.textFrom;
 		let melee = [];
 		
@@ -159,6 +162,7 @@ export class GurpsActor extends Actor {
 	}
 	
 	async importCombatRangedFromGCSv1(json) {
+		if (!json) return;
 		let t = this.textFrom;
 		let ranged = [];
 		
@@ -197,6 +201,7 @@ export class GurpsActor extends Actor {
 	}
 		
 	async importTraitsfromGCSv1(json) {
+		if (!json) return;
 		let t = this.textFrom;
 		let ts = [];
 		ts.race = t(json.race);
@@ -234,6 +239,7 @@ export class GurpsActor extends Actor {
 
 	// Import the <attributes> section of the GCS FG XML file.
 	async importAttributesFromCGSv1(json) {
+		if (!json) return;
 		let i = this.intFrom;		// shortcut to make code smaller
 		let t = this.textFrom;
 		let data = this.data.data;
@@ -285,6 +291,7 @@ export class GurpsActor extends Actor {
 	// NOTE:  For the update to work correctly, no two skills can have the same name.
 	// When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
 	async importSkillsFromGCSv1(json) {
+		if (!json) return;
 		let skills = [];
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
@@ -311,6 +318,7 @@ export class GurpsActor extends Actor {
 	// NOTE:  For the update to work correctly, no two spells can have the same name.
 	// When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
 	async importSpellsFromGCSv1(json) {
+		if (!json) return;
 		let spells = [];
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
@@ -347,21 +355,25 @@ export class GurpsActor extends Actor {
 		in these methods with the string literal.
 	*/
 	async importPowersFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.powers": list});
 	}
 	
 	async importAdsFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.ads": list});
 	}
 
 	async importDisadsFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.disads": list});
 	}
 
 	async importOtherAdsFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.otherads": list});
 	}
