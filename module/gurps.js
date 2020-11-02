@@ -296,16 +296,16 @@ function parselink(str, actor, htmldesc) {
 	let skill = null;
 	let mod = "";
 	if (parse == str)
-		skill = actor?.data.skills.find(s => s.name == str);
+		skill = actor?.data.skills.findInProperties(s => s.name == str);
 	else {
 		let a = parse.split("~");
 		let n = a[0].trim();
 		if (!!n) {
 			mod = a[2];
 			if (a[1] == "*") {
-					skill = actor?.data.skills.find(s => s.name.startsWith(n));
+					skill = actor?.data.skills.findInProperties(s => s.name.startsWith(n));
 			} else {
-					skill = actor?.data.skills.find(s => s.name == n);
+					skill = actor?.data.skills.findInProperties(s => s.name == n);
 			}
 			if (!!skill) {
 				return {
@@ -319,6 +319,33 @@ function parselink(str, actor, htmldesc) {
 			}
 		}
 	}
+	
+	// for PDF link
+	parse = str.replace(/^PDF: */g,"");
+	if (parse != str) {
+		return { "text": "<span class='pdflink'>" + parse + "</span>" };  // Just get rid of the "[PDF:" and allow the pdflink css class to do the work
+	}
+	
+	// SW and THR damage
+	parse = str.replace(/^(SW|THR)([-+]\d+)?(!)?( .*)?$/g, "$1~$2~$3~$4")
+	if (parse != str) {
+		let a = parse.split("~");
+		let d = a[3].trim();
+		let m = GURPS.woundModifiers[d];
+		if (!!m) {
+			let df = (a[0] == "SW" ? actor?.data.swing : actor?.data.thrust)
+			return {
+				"text": this.gspan(str),
+				"action": {
+					"type": "deriveddamage",
+					"derivedformula": df + a[1] + a[2],
+					"formula": a[0] + a[1] + a[2],
+					"damagetype": d
+				}
+			}
+		}
+	}
+	
 	return { "text": str };
 }
 GURPS.parselink = parselink;
@@ -362,10 +389,15 @@ function performAction(action, actor) {
 		thing = " points of '" + action.damagetype + "' damage";
 		formula = this.d6ify(action.formula);
 	}
+	if (action.type == "deriveddamage") {
+		prefix = "Rolling " + action.formula + "<br>";
+		thing = " points of '" + action.damagetype + "' damage";
+		formula = this.d6ify(action.derivedformula);
+	}
 	if (action.type == "skill") {
 		prefix = "Attempting ";
 		thing = action.name;
-		let skill = Object.values(actor.data.skills).find(s => s.name == thing);
+		let skill = actor.data.skills.findInProperties(s => s.name == thing);
 		target = skill.level;
 		formula = "3d6";
 		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
@@ -488,7 +520,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	} else {
 		if (rtotal == 1) {
 			thing = thing.replace("points", "point");
-			if (b378 && inittotal == 0) thing += " (minimum of 1 point of damage per B378)";
+			if (b378 && inittotal < 1) thing += " (minimum of 1 point of damage per B378)";
 		}
 		content = prefix + results + thing;
 	}
@@ -612,7 +644,7 @@ GURPS.put=put;
 /* The following method has been secretly added to the Object class/prototype to
    make it work like an Array. 
 */
-Object.defineProperty(Object.prototype, 'find', {
+Object.defineProperty(Object.prototype, 'findInProperties', {
   value: function(expression) {
 		return Object.values(this).find(expression);	
 	}});
