@@ -390,7 +390,7 @@ function performAction(action, actor) {
 		formula = this.d6ify(action.formula);
 	}
 	if (action.type == "deriveddamage") {
-		prefix = "Rolling " + action.formula + "<br>";
+		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")<br>";
 		thing = " points of '" + action.damagetype + "' damage";
 		formula = this.d6ify(action.derivedformula);
 	}
