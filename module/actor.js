@@ -69,7 +69,7 @@ export class GurpsActor extends Actor {
 		await this.importEncumbranceFromGCSv1(c.encumbrance);
 		await this.importPointTotalsFromGCSv1(c.pointtotals);
 		await this.importNotesFromGCSv1(c.notelist);
-		await this.importEquipmentFromGCSv1(c.notelist);
+		await this.importEquipmentFromGCSv1(c.inventorylist);
 
 
 		console.log("Done importing.  You can inspect the character data below:");
@@ -89,6 +89,12 @@ export class GurpsActor extends Actor {
 		if (!o) return 0;
 		return parseInt(o["#text"]);
 	}
+	
+	floatFrom(o) {
+		if (!o) return 0;
+		return parseFloat(o["#text"]);
+	}
+
 		
 	async importPointTotalsFromGCSv1(json) {
 		if (!json) return;
@@ -116,7 +122,7 @@ export class GurpsActor extends Actor {
 				let j = json[key];
 				let n = new Note();
 				n.setNotes(t(j.text));
-				game.GURPS.put(ns, index++, n);
+				game.GURPS.put(ns, n, index++);
 			}
 		}
 		await this.update({"data.notes": ns});
@@ -124,22 +130,59 @@ export class GurpsActor extends Actor {
 	
 	async importEquipmentFromGCSv1(json) {
 		if (!json) return;
-		let t= this.textFrom;
-		let eqts = {
+		let t = this.textFrom;
+		let i = this.intFrom;
+		let f = this.floatFrom;
+		
+		let temp = [];
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let eqt = new Equipment();
+				eqt.name = t(j.name);	
+				eqt.count = i(j.count);
+				eqt.cost = t(j.cost);
+				eqt.weight = f(j.weight);
+				eqt.location = t(j.location);
+				let cstatus = i(j.carried);
+				eqt.carried = (cstatus >= 1);
+				eqt.equipped = (cstatus == 2);
+				eqt.techlevel = t(j.tl);
+				eqt.legalityclass = t(j.lc);
+				eqt.categories = t(j.type);
+				eqt.setNotes(t(j.notes));
+				temp.push(eqt);
+			}
+		}
+		
+		// Put everything in it container (if found), otherwise at the top level
+		temp.forEach(eqt => {
+			if (!!eqt.location) {
+				let parent = null;
+				parent = temp.find(e => e.name === eqt.location);
+				if (!!parent)
+					game.GURPS.put(parent.contains, eqt);
+				else
+					eqt.location = "";	// Can't find a parent, so put it in the top list
+			}
+		});
+		
+		let equipment = {
 			"carried": {},
 			"other": {}
 		};
 		let cindex = 0;
 		let oindex = 0;
-		for (let key in json) {
-			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-				let j = json[key];
-				let sk = new Skill();
-				sk.name = t(j.name);	
-				sk.type = t(j.type);
-				sk.level = parseInt(t(j.level));
+
+		temp.forEach(eqt => {
+			if (!eqt.location) {
+				if (eqt.carried) 
+					game.GURPS.put(equipment.carried, eqt, cindex++);
+				else
+					game.GURPS.put(equipment.other, eqt, oindex++);
 			}
-		}
+		});
+		await this.update({ "data.equipment": equipment });
 	}
 	
 	async importEncumbranceFromGCSv1(json) {
@@ -161,7 +204,7 @@ export class GurpsActor extends Actor {
 			e.move = t(json[k2]);
 			k2 = k + "_dodge";
 			e.dodge = t(json[k2]);
-			game.GURPS.put(es, index++, e);
+			game.GURPS.put(es, e, index++);
 		}
 		await this.update({"data.encumbrance": es});
 	}
@@ -194,7 +237,7 @@ export class GurpsActor extends Actor {
 						m.damage = t(j2.damage);
 						m.reach = t(j2.reach);
 						m.parry = t(j2.parry);
-						game.GURPS.put(melee, index++, m);
+						game.GURPS.put(melee, m, index++);
 					}
 				}
 			}
@@ -232,7 +275,7 @@ export class GurpsActor extends Actor {
 						r.rof = t(j2.rof);
 						r.shots = t(j2.shots);
 						r.rcl = t(j2.rcl);
-						game.GURPS.put(ranged, index++, r);
+						game.GURPS.put(ranged, r, index++);
 					}
 				}
 			}
@@ -350,7 +393,7 @@ export class GurpsActor extends Actor {
 					console.log(sk);
 					console.log(t(j.text));
 				}
-				game.GURPS.put(skills, index++, sk);
+				game.GURPS.put(skills, sk, index++);
 			}
 		}
 		await this.update({"data.skills": skills});
@@ -385,7 +428,7 @@ export class GurpsActor extends Actor {
 				sp.level = parseInt(t(j.level));
 				sp.duration = t(j.duration);
 				sp.setNotes(t(j.text));
-				game.GURPS.put(spells, index++, sp);
+				game.GURPS.put(spells, sp, index++);
 			}
 		}
 		await this.update({"data.spells": spells});
@@ -432,7 +475,7 @@ export class GurpsActor extends Actor {
 				a.name = t(j.name);		
 				a.points = this.intFrom(j.points);
 				a.setNotes(t(j.text));
-				game.GURPS.put(datalist, index++, a);
+				game.GURPS.put(datalist, a, index++);
 			}
 		}
 		return datalist;
@@ -450,7 +493,13 @@ export class Named {
 			let s = n.split("\n");
 			let v = "";
 			for (let b of s) {
-				if (!!b) v += atob(b) + "\n";
+				if (!!b) {
+					try {
+						v += atob(b) + "\n";
+					} catch {
+						v += b + "\n";
+					}
+				}
 			}
 			let k = "Page Ref: ";
 			let i = v.indexOf(k);
@@ -460,6 +509,7 @@ export class Named {
 				this.pageref = v.substr(i+k.length).trim();
 			} else {
 				this.notes = v.trim();
+				this.pageref = "";
 			}
 		}
 	}
@@ -531,7 +581,8 @@ export class Note extends Named {
 }
 
 export class Equipment extends Named {
-	identified = true;
+	equipped = false;
+	carried = false;
 	count = 0;
 	cost = 0;
 	weight = 0;
@@ -539,5 +590,5 @@ export class Equipment extends Named {
 	techlevel = "";
 	legalityclass = "";
 	categories = "";
-	holds = {};
+	contains = {};
 }

@@ -459,7 +459,7 @@
         <div id="equipment">
             <div class="equipped header">E</div>
             <div class="qty header">Qty</div>
-            <div class="desc header">Equipment (44.51 lb; $955.6)</div>
+            <div class="desc header">Equipment (?? lb; $??)</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">x $</div>
@@ -467,45 +467,44 @@
             <div class="ref header">Ref</div>
             <div></div>
 
-            
-            <div class="equipped satisfiedY">x</div>
-            <div class="qty satisfiedY">1</div>
-            <div class="desc indent0 satisfiedY">Fine Spear
-                <div class="list_note satisfiedY"></div>
+            {{#listeqt data.equipment.carried }}
+            <div class="equipped satisfiedY">{{#if this.equipped}}X{{/if}}</div>
+            <div class="qty satisfiedY">{{this.count}}</div>
+            <div class="desc indent{{@indent}} satisfiedY">{{{gurpslink this.name}}}
+                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
                 <div class="list_note satisfiedY"></div>
             </div>
-            <div class="cost satisfiedY">120</div>
-            <div class="weight satisfiedY">4 lb</div>
-            <div class="sum_cost satisfiedY">120</div>
-            <div class="sum_weight satisfiedY">4 lb</div>
-            <div class="ref satisfiedY">DFA102</div>
+            <div class="cost satisfiedY">{{this.cost}}</div>
+            <div class="weight satisfiedY">{{this.weight}} lbs</div>
+            <div class="sum_cost satisfiedY"></div>
+            <div class="sum_weight satisfiedY"></div>
+            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
             <div></div>
-            
+ 						{{/listeqt}}           
  
-            
         </div>
         <div id="other_equipment">
             <div class="qty header">Qty</div>
-            <div class="desc header">Other Equipment ($1,800.4)</div>
+            <div class="desc header">Other Equipment ($??)</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">X $</div>
             <div class="sum_weight header">X lbs</div>
             <div class="ref header">Ref</div>
-
-            
-            <div class="qty satisfiedY">1</div>
-            <div class="desc indent0 satisfiedY">Heavy Cloth or Leather Body Armor
-                <div class="list_note satisfiedY"></div>
+           
+            {{#listeqt data.equipment.other }}
+           	<div class="qty satisfiedY">{{this.count}}</div>
+            <div class="desc indent{{@indent}} satisfiedY">{{{gurpslink this.name}}}
+                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
                 <div class="list_note satisfiedY"></div>
             </div>
-            <div class="cost satisfiedY">158</div>
-            <div class="weight satisfiedY">12.6 lb</div>
-            <div class="sum_cost satisfiedY">158</div>
-            <div class="sum_weight satisfiedY">12.6 lb</div>
-            <div class="ref satisfiedY">DFA108</div>
+            <div class="cost satisfiedY">{{this.cost}}</div>
+            <div class="weight satisfiedY">{{this.weight}} lb</div>
+            <div class="sum_cost satisfiedY"></div>
+            <div class="sum_weight satisfiedY"></div>
+            <div class="ref satisfiedY">{{this.pageref}}</div>
+ 						{{/listeqt}}           
   
-            
         </div>
         <div id="notes">
             <div class="desc header">Notes</div>

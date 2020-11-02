@@ -589,14 +589,20 @@ GURPS.onGurpslink = onGurpslink;
 function genkey(index) {
 	let k = "key-";
 	if (index < 10)
-		k += "00";
+		k += "0";
 	if (index < 100)
-		k += "0)";
+		k += "0";
+	if (index < 1000)
+		k += "0";
 	return k + index;
 }
 GURPS.genkey=genkey;
 
-function put(obj, index, v) {
+function put(obj, v, index = -1) {
+	if (index == -1) {
+		index = 0;
+		while (obj.hasOwnProperty(this.genkey(index))) index++;
+	}
 	obj[this.genkey(index)] = v;
 }
 GURPS.put=put;
@@ -677,6 +683,28 @@ Hooks.once("init", async function () {
 		if (!actor) actor = root?.actor;
 		return game.GURPS.gurpslink(str, actor);
 	});
+	
+	function listeqtrecurse(eqts, options, level, data) {
+		if (!eqts) return "";
+		var list = Object.values(eqts);
+		let ret = "";
+		for (var i = 0; i < list.length; i++) {
+			if (data) data.indent = level;
+    	ret = ret + options.fn(list[i], { data: data });
+			ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level+1, data);
+  	}
+		return ret;
+	}
+	GURPS.listeqtrecurse=listeqtrecurse;
+	
+	Handlebars.registerHelper('listeqt', function (context, options) {
+		var data;
+	  if (options.data)
+  	  data = Handlebars.createFrame(options.data);
+
+		return GURPS.listeqtrecurse(context, options, 0, data);
+	});
+
 
 });
 
