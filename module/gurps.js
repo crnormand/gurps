@@ -771,7 +771,7 @@ Hooks.once("ready", async function () {
 	  const changelogVersion = SemanticVersion.fromString(v);
 	  const curVersion = SemanticVersion.fromString(game.system.data.version);
 	  
-	  if (true || curVersion.isHigherThan(changelogVersion)) {
+	  if (curVersion.isHigherThan(changelogVersion)) {
 	    const app = new ChangeLogWindow(changelogVersion);
 	    app.render(true);
 	    game.settings.set("gurps", "changelogVersion", curVersion.toString());
