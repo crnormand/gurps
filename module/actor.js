@@ -385,7 +385,8 @@ export class GurpsActor extends Actor {
 				let sk = new Skill();
 				sk.name = t(j.name);	
 				sk.type = t(j.type);
-				sk.level = parseInt(t(j.level));
+				sk.level = this.intFrom(j.level);
+				sk.points = this.intFrom(j.points);
 				sk.relativelevel = t(j.relativelevel);
 				try {
 				sk.setNotes(t(j.text));

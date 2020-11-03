@@ -110,7 +110,8 @@
 		"notes": {},
 		"equipment": {
 			"carried": {},
-			"other": {}}
+			"other": {}},
+		"additionalresources": {}
 	},
 	"Item": {
 	  "types": ["items"],

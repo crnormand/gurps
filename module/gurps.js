@@ -10,10 +10,12 @@ import { Melee } from "./actor.js";
 import { Ranged } from "./actor.js";
 import { Encumbrance } from "./actor.js";
 import { ModifierBucket } from "./modifiers.js";
+import { ChangeLogWindow } from "../lib/change-log.js";
+import { SemanticVersion } from "../lib/semver.js";
 
 export const GURPS = {};
 
-let opts = {
+GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
 	"height": 200,
 	"top": 600,
@@ -24,9 +26,7 @@ let opts = {
 	"id": "ModifierBucket",
 	"template": "systems/gurps/templates/modifier-bucket.html",
 	"classes": [],
-}
-
-GURPS.ModifierBucket = new ModifierBucket(opts);
+});
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -291,8 +291,8 @@ function parselink(str, actor, htmldesc) {
 		}
 	}
 
-	// Look for skill*+/-N
-	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)?.*/g, "$1~$2~$3");
+	// Look for skill*+/-N test
+	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)? ?(.*)/g, "$1~$2~$3~$4");
 	let skill = null;
 	let mod = "";
 	if (parse == str)
@@ -313,7 +313,8 @@ function parselink(str, actor, htmldesc) {
 					"action": {
 						"type": "skill",
 						"name": skill.name,
-						"mod": mod
+						"mod": mod,
+						"desc": a[3]
 					}
 				}
 			}
@@ -398,6 +399,7 @@ function performAction(action, actor) {
 		prefix = "Attempting ";
 		thing = action.name;
 		let skill = actor.data.skills.findInProperties(s => s.name == thing);
+		if (!!action.desc) thing += "<br>&nbsp; " + action.desc;
 		target = skill.level;
 		formula = "3d6";
 		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
@@ -639,6 +641,20 @@ function put(obj, v, index = -1) {
 }
 GURPS.put=put;
 
+function listeqtrecurse(eqts, options, level, data) {
+	if (!eqts) return "";
+	var list = Object.values(eqts);
+	let ret = "";
+	for (var i = 0; i < list.length; i++) {
+		if (data) data.indent = level;
+  	ret = ret + options.fn(list[i], { data: data });
+		ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level+1, data);
+	}
+	return ret;
+}
+GURPS.listeqtrecurse=listeqtrecurse;
+
+
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -716,18 +732,6 @@ Hooks.once("init", async function () {
 		return game.GURPS.gurpslink(str, actor);
 	});
 	
-	function listeqtrecurse(eqts, options, level, data) {
-		if (!eqts) return "";
-		var list = Object.values(eqts);
-		let ret = "";
-		for (var i = 0; i < list.length; i++) {
-			if (data) data.indent = level;
-    	ret = ret + options.fn(list[i], { data: data });
-			ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level+1, data);
-  	}
-		return ret;
-	}
-	GURPS.listeqtrecurse=listeqtrecurse;
 	
 	Handlebars.registerHelper('listeqt', function (context, options) {
 		var data;
@@ -736,6 +740,22 @@ Hooks.once("init", async function () {
 
 		return GURPS.listeqtrecurse(context, options, 0, data);
 	});
+	
+	game.settings.register("gurps", "changelogVersion", {
+    name: "Changelog Version",
+    scope: "client",
+    config: false,
+    type: String,
+    default: "0.0.0",
+  });
+
+  game.settings.register("gurps", "dontShowChangelog", {
+    name: "Don't Automatically Show Changelog",
+    scope: "client",
+    config: false,
+    type: Boolean,
+    default: false,
+  });
 
 
 });
@@ -744,4 +764,17 @@ Hooks.once("ready", async function () {
 	console.log(GURPS.ModifierBucket);
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
+	
+  // Show changelog
+  if (!game.settings.get("gurps", "dontShowChangelog")) {
+	  const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
+	  const changelogVersion = SemanticVersion.fromString(v);
+	  const curVersion = SemanticVersion.fromString(game.system.data.version);
+	  
+	  if (true || curVersion.isHigherThan(changelogVersion)) {
+	    const app = new ChangeLogWindow(changelogVersion);
+	    app.render(true);
+	    game.settings.set("gurps", "changelogVersion", curVersion.toString());
+		}
+  }
 });

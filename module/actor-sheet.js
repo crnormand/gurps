@@ -135,11 +135,11 @@ export class GurpsActorSheet extends ActorSheet {
   async _onFileImport(event) {
     event.preventDefault();
     let element = event.currentTarget;
-    console.log("GCS File Import Event:");
+    console.log("XML File Import Event:");
     console.log(event);
     new Dialog({
-      title: `Import GCS data (FG XML) for: ${this.actor.name}`,
-      content: await renderTemplate("systems/gurps/templates/import-gcs-v1-data.html", { entity: "Actor", name: '"' + this.actor.name + '"' }),
+      title: `Import XML data for: ${this.actor.name}`,
+      content: await renderTemplate("systems/gurps/templates/import-gcs-v1-data.html", { name: '"' + this.actor.name + '"' }),
       buttons: {
         import: {
           icon: '<i class="fas fa-file-import"></i>',
