@@ -20,24 +20,25 @@
 }
 
 .pdflink {
-	text-shadow: none;
-	color: blue;
-  text-decoration: underline;	
+  text-shadow: none;
+  color: blue;
+  text-decoration: underline;
 
-/*	color: red;
+  /*	color: red;
   text-shadow: 2px 2px rgb(255, 255, 128);
-*/}
+*/
+}
 
 .pdflink:hover {
   /*font-size: 115%;
   font-weight: bold;*/
   text-shadow: none;
 
-	color: red;
-  text-decoration: underline;	
-	overflow: visible;
-	z-index: 99
- }
+  color: red;
+  text-decoration: underline;
+  overflow: visible;
+  z-index: 99
+}
 
 
 
@@ -51,9 +52,9 @@
   border-bottom: 2px solid #333333;
   border-left: 2px solid #CCCCCC;
   border-radius: 8px;
-	margin: -2px 2px -3px -2px;
-	overflow: visible;
-	z-index: 99
+  margin: -2px 2px -3px -2px;
+  overflow: visible;
+  z-index: 99
 }
 
 .rollable {
@@ -63,7 +64,7 @@
 }
 
 .rollable:active {
- /* font-size: 115%;
+  /* font-size: 115%;
   font-weight: bold;*/
   text-decoration: none;
   color: blue;
@@ -74,14 +75,14 @@
   border-top: 1px solid #333333;
   border-right: 1px solid #CCCCCC;
   border-radius: 8px;
-	margin: -2px -2px -3px -2px;
+  margin: -2px -2px -3px -2px;
 }
 
 .gmod:hover {
- /* font-size: 110%;
+  /* font-size: 110%;
   font-weight: bold;*/
   text-decoration: none;
-	background-image: none;
+  background-image: none;
   background-color: rgb(255, 128, 100) !important;
   color: black;
   padding: 1px 1em 1px 1px;
@@ -90,7 +91,7 @@
   border-bottom: 2px solid #333333;
   border-left: 2px solid #CCCCCC;
   border-radius: 8px;
-	margin: -2px 0px -1px 2px;
+  margin: -2px 0px -1px 2px;
 }
 
 .gmod {
@@ -101,11 +102,11 @@
 }
 
 .gmod:active {
- /* font-size: 110%;
+  /* font-size: 110%;
   font-weight: bold;*/
   text-decoration: none;
   color: black;
-	background-image: none;
+  background-image: none;
   background-color: rgb(255, 128, 100) !important;
   padding: 1px 1em 1px 1px;
   border-bottom: 2px solid #CCCCCC;
@@ -113,14 +114,14 @@
   border-top: 2px solid #333333;
   border-right: 2px solid #CCCCCC;
   border-radius: 8px;
-	margin: -1px -6px -2px 4px;
-	overflow: visible;
-	z-index: 99
+  margin: -1px -6px -2px 4px;
+  overflow: visible;
+  z-index: 99
 }
 
 .glinkmod:hover {
   text-decoration: none;
-	background-image: none;
+  background-image: none;
   background-color: rgb(255, 128, 64) !important;
   color: black;
   padding: 1px 1px 1px 1px;
@@ -129,20 +130,20 @@
   border-bottom: 2px solid #333333;
   border-left: 2px solid #CCCCCC;
   border-radius: 8px;
-	margin: -1px -2px -1px -4px;
+  margin: -1px -2px -1px -4px;
 }
 
 .glinkmod {
   color: blue;
-	background-color: rgb(255, 230, 190) !important;
+  background-color: rgb(255, 230, 190) !important;
 }
 
 .glinkmod:active {
- /* font-size: 110%;
+  /* font-size: 110%;
   font-weight: bold;*/
   text-decoration: none;
   color: black;
-	background-image: none;
+  background-image: none;
   background-color: rgb(255, 128, 64) !important;
   padding: 1px 1px 1px 1px;
   border-bottom: 2px solid #CCCCCC;
@@ -150,8 +151,8 @@
   border-top: 2px solid #333333;
   border-right: 2px solid #CCCCCC;
   border-radius: 8px;
-	margin: -1px -3px -1px -3px;
-	z-index: 99
+  margin: -1px -3px -1px -3px;
+  z-index: 99
 }
 
 
@@ -167,19 +168,19 @@
   border-bottom: 2px solid #333333;
   border-left: 2px solid #CCCCCC;
   border-radius: 5px;
-	margin: -2px -4px -2px -6px;
-	overflow: visible;
-	z-index: 99
+  margin: -2px -4px -2px -6px;
+  overflow: visible;
+  z-index: 99
 }
 
 .gurpslink {
   color: blue;
   /* text-shadow: 2px 2px rgb(255, 255, 128); */
-	background-color: rgb(255, 255, 175) !important;
+  background-color: rgb(255, 255, 175) !important;
 }
 
 .gurpslink:active {
-/*  font-size: 115%;
+  /*  font-size: 115%;
   font-weight: bold; */
   text-decoration: none;
   color: blue;
@@ -190,16 +191,16 @@
   border-top: 1px solid #333333;
   border-right: 1px solid #CCCCCC;
   border-radius: 8px;
-	margin: -2px -5px -2px -3px;
-	overflow: visible;
-	z-index: 99
+  margin: -2px -5px -2px -3px;
+  overflow: visible;
+  z-index: 99
 }
 
 .gurps .window-content {
   height: 100%;
   padding: 5px;
   /*overflow-y: hidden;*/
-	background: white;
+  background: white;
 }
 
 .gurps .sheet-header {
@@ -1119,26 +1120,29 @@ body {
 
 #combat-sheet {
   display: grid;
-  grid-template-columns: 1fr auto 6em 6em;
-  grid-template-rows: 0fr 0fr 1fr auto;
+  grid-template-columns: 1fr 6em 6em auto;
+  grid-template-rows: 0fr auto auto;
   grid-gap: .05in;
   grid-template-areas:
-      'combat-identity combat-identity combat-hit      combat-fat'
-      'combat-attrs    combat-location combat-location combat-location'
-      'combat-weapons  combat-location combat-location combat-location'
-      'combat-weapons  combat-location combat-location combat-location'
-      'combat-weapons  .                .               .';
+    'combat-identity combat-identity combat-hit      combat-fat      combat-location'
+    'combat-attrs    combat-encumber combat-encumber combat-encumber combat-location'
+    'combat-weapons  combat-weapons combat-weapons   combat-weapons  combat-weapons';
 }
 
 #combat-identity,
 #combat-hit,
 #combat-fat,
 #combat-attrs,
+#combat-weapons,
 #combat-location {
   grid-gap: .05in;
   display: grid;
   grid-template-rows: 0fr 1fr;
-  border: 1px solid black;  
+  border: 1px solid black;
+}
+
+#combat-encumber {
+  align-content: stretch;
 }
 
 #combat-identity {
@@ -1153,9 +1157,52 @@ body {
   grid-area: combat-fat;
 }
 
-#combat-attrs {
-  grid-area: combat-attrs;
-  gap: 0;
+.gurps .condition-block {
+  display: grid;
+  grid-template-columns: 0fr 1fr;
+  grid-template-rows: 0fr 0fr;
+  grid-template-areas:
+    "basic-value basic-label"
+    "condition condition";
+  align-items: end;
+  padding-bottom: .15em;
+}
+
+.gurps .condition-block {
+  text-align: left;
+  padding-left: .2em;
+  padding-right: .2em;
+  font-size: 80%;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.gurps .condition-block .basic-value {
+  grid-area: basic-value;
+  margin-right: .2em;
+  padding-left: .2em;
+  padding-right: .2em;
+}
+
+.gurps .condition-block .basic-label {
+  grid-area: basic-label;
+  text-align: left;
+  padding-left: .2em;
+  padding-right: .2em;
+  font-size: 80%;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.gurps .condition-block .condition {
+  grid-area: condition;
+  align-content: center;
+  text-align: center;
+  margin-right: .2em;
+  padding-left: .2em;
+  padding-right: .2em;
+  color: inherit;
+  background-color: lightcoral;
 }
 
 #combat-location {
@@ -1173,11 +1220,25 @@ body {
   padding-bottom: 0;
 }
 
+#combat-encumber {
+  grid-area: combat-encumber;
+  grid-template:
+    "header header header header header"
+    "encmarkerh ench loadh moveh dodgeh"
+    "encmarker enc load move dodge";
+}
+
+#combat-encumber .header:first-child,
 #combat-location .header:first-child {
   grid-area: header;
   border-bottom: 1px solid lightgray;
 }
 
+#combat-encumber .encmarker:nth-last-child(10n+5),
+#combat-encumber .enc:nth-last-child(10n+4),
+#combat-encumber .load:nth-last-child(10n+3),
+#combat-encumber .move:nth-last-child(10n+2),
+#combat-encumber .dodge:nth-last-child(10n+1),
 #combat-location .roll:nth-last-child(8n+4),
 #combat-location .where:nth-last-child(8n+3),
 #combat-location .penalty:nth-last-child(8n+2),
@@ -1203,13 +1264,62 @@ body {
   font-size: 80%;
 }
 
+#combat-attrs {
+  grid-area: combat-attrs;
+  gap: 0;
+}
+
+#combat-attrs-container {
+  display: grid;
+  gap: 0 0.15em;
+  grid-template-columns: 0fr 0fr;
+  grid-template-rows: auto;
+  grid-template-areas:
+    'combat-attrs-1 combat-attrs-2';
+}
+
+#combat-attrs-1 {
+  grid-area: combat-attrs-1;
+  border-right: 1px solid black;
+}
+
+#combat-attrs-2 {
+  grid-area: combat-attrs-2;
+}
+
+#combat-encumber {
+  grid-area: combat-encumber;
+}
+
+#combat-encumber {
+  grid-template:
+    "header header header header header"
+    "encmarkerh ench loadh moveh dodgeh"
+    "encmarker enc load move dodge";
+}
+
+#combat-encumber>div:nth-last-child(-n+5),
+#combat-location>div:nth-last-child(-n+4) {
+  border-bottom: none;
+}
+
+#combat-encumber .current:nth-last-child(10n+5),
+#combat-encumber .current:nth-last-child(10n+4),
+#combat-encumber .current:nth-last-child(10n+3),
+#combat-encumber .current:nth-last-child(10n+2),
+#combat-encumber .current:nth-last-child(10n+1),
+.current {
+  background-color: lightgoldenrodyellow;
+}
+
+
 #combat-weapons {
   grid-area: combat-weapons;
   display: grid;
   row-gap: .05in;
   grid-template-columns: 1fr;
   grid-template-rows: 0fr 0fr;
-  grid-template-areas: 
+  grid-template-areas:
     'melee'
     'ranged';
 }
@@ -1231,80 +1341,10 @@ body {
   font-size: 80%;
 }
 
-#combat-attrs-container {
-  display: grid;
-  gap: 0 0.15em;
-  grid-template-columns: auto auto auto 1fr;
-  grid-template-rows: auto;
-  grid-template-areas: 
-    'combat-attrs-1 combat-attrs-2 combat-attrs-3 combat-attrs-4';
-}
-
-#combat-attrs-1 {
-  grid-area: combat-attrs-1;
-  border-right: 1px solid black;
-}
-
-#combat-attrs-2 {
-  grid-area: combat-attrs-2;
-  border-right: 1px solid black;
-}
-
-#combat-attrs-3 {
-  grid-area: combat-attrs-3;
-  border-right: 1px solid black;
-}
-
 #combat-attrs-damage-sw {
   grid-area: combat-attrs-damage-sw;
 }
+
 #combat-attrs-damage-thr {
   grid-area: combat-attrs-damage-thr;
-}
-
-.gurps .condition-block {
-  display: grid;
-  grid-template-columns: 0fr 1fr;
-  grid-template-rows: 0fr 0fr;
-  grid-template-areas: 
-    "basic-value basic-label"
-    "condition condition";
-  align-items: end;
-  padding-bottom: .15em;
-}
-
-.gurps .condition-block  {
-  text-align: left;
-  padding-left: .2em;
-  padding-right: .2em;
-  font-size: 80%;
-  white-space: nowrap;
-  align-self: center;
-}
-
-.gurps .condition-block .basic-value {
-  grid-area: basic-value;
-  margin-right: .2em;
-  padding-left: .2em;
-  padding-right: .2em;
-}
-.gurps .condition-block .basic-label {
-  grid-area: basic-label;
-  text-align: left;
-  padding-left: .2em;
-  padding-right: .2em;
-  font-size: 80%;
-  white-space: nowrap;
-  align-self: center;
-}
-
-.gurps .condition-block .condition {
-  grid-area: condition;
-  align-content: center;
-  text-align: center;
-  margin-right: .2em;
-  padding-left: .2em;
-  padding-right: .2em;
-  color: inherit;
-  background-color: lightcoral;
 }
