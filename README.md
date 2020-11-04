@@ -5,7 +5,7 @@
 
 ### History
 - 0.6.3
-    
+    - Hot toggle between "full" and "combat" character sheets
 - 0.6.2
     - Support for stackable modifiers (clicking [-1 for range] multiple times)
     - Fixed display of desktop Modifier Bucket

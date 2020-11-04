@@ -15,6 +15,8 @@ import { SemanticVersion } from "../lib/semver.js";
 
 export const GURPS = {};
 
+//CONFIG.debug.hooks = true;
+
 GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
 	"height": 200,
