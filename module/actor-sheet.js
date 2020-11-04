@@ -75,6 +75,12 @@ export class GurpsActorSheet extends ActorSheet {
     if (this.options.editable && canConfigure) {
       buttons = [
         {
+          label: "Toggle",
+          class: "toggle",
+          icon: "fas fa-exchange-alt",
+          onclick: ev => this._onToggleSheet(ev)
+        },
+        {
           label: "Import",
           class: "import",
           icon: "fas fa-file-import",
@@ -112,6 +118,28 @@ export class GurpsActorSheet extends ActorSheet {
     }, {
       width: 400
     }).render(true);
+  }
+
+  async _onToggleSheet(event) {
+    event.preventDefault()
+
+    const original = this.actor.getFlag("core", "sheetClass")
+    console.log("original: " + original)
+    const newSheet = (original === "gurps.GurpsActorCombatSheet") ? "gurps.GurpsActorSheetGCS" : "gurps.GurpsActorCombatSheet"
+
+    // De-register the current sheet class
+    const sheet = this.actor.sheet
+    await sheet.close()
+
+    // Update the Entity-specific override
+    if (newSheet !== original) {
+      await this.actor.setFlag("core", "sheetClass", newSheet)
+    }
+
+    // Re-draw the updated sheet
+    const updated = this.actor.getFlag("core", "sheetClass")
+    console.log("updated: " + updated)
+    this.actor.sheet.render(true)
   }
 
   async _onClickPdf(event) {
