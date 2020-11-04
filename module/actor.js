@@ -57,17 +57,20 @@ export class GurpsActor extends Actor {
 
 		// This is going to get ugly, so break out various data into different methods
 		await this.importAttributesFromCGSv1(c.attributes);
-		await this.importSkillsFromGCSv1(c.abilities.skilllist)
+		await this.importSkillsFromGCSv1(c.abilities?.skilllist)
 		await this.importTraitsfromGCSv1(c.traits);
-		await this.importCombatMeleeFromGCSv1(c.combat.meleecombatlist);
-		await this.importCombatRangedFromGCSv1(c.combat.rangedcombatlist);
-		await this.importSpellsFromGCSv1(c.abilities.spelllist)
-		await this.importAdsFromGCSv1(c.traits.adslist);
-		await this.importDisadsFromGCSv1(c.traits.disadslist);
-		await this.importPowersFromGCSv1(c.abilities.powerlist);
-		await this.importOtherAdsFromGCSv1(c.abilities.otherlist);
+		await this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist);
+		await this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist);
+		await this.importSpellsFromGCSv1(c.abilities?.spelllist)
+		await this.importAdsFromGCSv1(c.traits?.adslist);
+		await this.importDisadsFromGCSv1(c.traits?.disadslist);
+		await this.importPowersFromGCSv1(c.abilities?.powerlist);
+		await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
 		await this.importEncumbranceFromGCSv1(c.encumbrance);
 		await this.importPointTotalsFromGCSv1(c.pointtotals);
+		await this.importNotesFromGCSv1(c.notelist);
+		await this.importEquipmentFromGCSv1(c.inventorylist);
+
 
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
@@ -75,6 +78,7 @@ export class GurpsActor extends Actor {
 	
 	// hack to get to private text element created by xml->json method. 
 	textFrom(o) {
+		if (!o) return "";
 		let t = o["#text"];
 		if (!!t) t = t.trim();
 		return t;
@@ -82,8 +86,15 @@ export class GurpsActor extends Actor {
 	
 	// similar hack to get text as integer.
 	intFrom(o) {
+		if (!o) return 0;
 		return parseInt(o["#text"]);
 	}
+	
+	floatFrom(o) {
+		if (!o) return 0;
+		return parseFloat(o["#text"]);
+	}
+
 		
 	async importPointTotalsFromGCSv1(json) {
 		if (!json) return;
@@ -101,9 +112,84 @@ export class GurpsActor extends Actor {
 		});
 	}
 	
-	async importEncumbranceFromGCSv1(json) {
+	async importNotesFromGCSv1(json) {
+		if (!json) return;
 		let t= this.textFrom;
-		let es = [];
+		let ns = {};
+		let index = 0;
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let n = new Note();
+				n.setNotes(t(j.text));
+				game.GURPS.put(ns, n, index++);
+			}
+		}
+		await this.update({"data.notes": ns});
+	}
+	
+	async importEquipmentFromGCSv1(json) {
+		if (!json) return;
+		let t = this.textFrom;
+		let i = this.intFrom;
+		let f = this.floatFrom;
+		
+		let temp = [];
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let eqt = new Equipment();
+				eqt.name = t(j.name);	
+				eqt.count = i(j.count);
+				eqt.cost = t(j.cost);
+				eqt.weight = f(j.weight);
+				eqt.location = t(j.location);
+				let cstatus = i(j.carried);
+				eqt.carried = (cstatus >= 1);
+				eqt.equipped = (cstatus == 2);
+				eqt.techlevel = t(j.tl);
+				eqt.legalityclass = t(j.lc);
+				eqt.categories = t(j.type);
+				eqt.setNotes(t(j.notes));
+				temp.push(eqt);
+			}
+		}
+		
+		// Put everything in it container (if found), otherwise at the top level
+		temp.forEach(eqt => {
+			if (!!eqt.location) {
+				let parent = null;
+				parent = temp.find(e => e.name === eqt.location);
+				if (!!parent)
+					game.GURPS.put(parent.contains, eqt);
+				else
+					eqt.location = "";	// Can't find a parent, so put it in the top list
+			}
+		});
+		
+		let equipment = {
+			"carried": {},
+			"other": {}
+		};
+		let cindex = 0;
+		let oindex = 0;
+
+		temp.forEach(eqt => {
+			if (!eqt.location) {
+				if (eqt.carried) 
+					game.GURPS.put(equipment.carried, eqt, cindex++);
+				else
+					game.GURPS.put(equipment.other, eqt, oindex++);
+			}
+		});
+		await this.update({ "data.equipment": equipment });
+	}
+	
+	async importEncumbranceFromGCSv1(json) {
+		if (!json) return;
+		let t= this.textFrom;
+		let es = {};
+		let index = 0;
 		for (let i = 0; i < 5; i++ ) {
 			let e = new Encumbrance();
 			e.level = i;
@@ -118,15 +204,16 @@ export class GurpsActor extends Actor {
 			e.move = t(json[k2]);
 			k2 = k + "_dodge";
 			e.dodge = t(json[k2]);
-			es.push(e);
+			game.GURPS.put(es, e, index++);
 		}
 		await this.update({"data.encumbrance": es});
 	}
 	
 	async importCombatMeleeFromGCSv1(json) {
+		if (!json) return;
 		let t = this.textFrom;
-		let melee = [];
-		
+		let melee = {};
+		let index = 0;
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
@@ -150,7 +237,7 @@ export class GurpsActor extends Actor {
 						m.damage = t(j2.damage);
 						m.reach = t(j2.reach);
 						m.parry = t(j2.parry);
-  					melee.push(m);
+						game.GURPS.put(melee, m, index++);
 					}
 				}
 			}
@@ -159,9 +246,10 @@ export class GurpsActor extends Actor {
 	}
 	
 	async importCombatRangedFromGCSv1(json) {
+		if (!json) return;
 		let t = this.textFrom;
-		let ranged = [];
-		
+		let ranged = {};
+		let index = 0;
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
@@ -187,7 +275,7 @@ export class GurpsActor extends Actor {
 						r.rof = t(j2.rof);
 						r.shots = t(j2.shots);
 						r.rcl = t(j2.rcl);
-  					ranged.push(r);
+						game.GURPS.put(ranged, r, index++);
 					}
 				}
 			}
@@ -197,8 +285,9 @@ export class GurpsActor extends Actor {
 	}
 		
 	async importTraitsfromGCSv1(json) {
+		if (!json) return;
 		let t = this.textFrom;
-		let ts = [];
+		let ts = {};
 		ts.race = t(json.race);
 		ts.height = t(json.height);
 		ts.weight = t(json.weight);
@@ -234,6 +323,7 @@ export class GurpsActor extends Actor {
 
 	// Import the <attributes> section of the GCS FG XML file.
 	async importAttributesFromCGSv1(json) {
+		if (!json) return;
 		let i = this.intFrom;		// shortcut to make code smaller
 		let t = this.textFrom;
 		let data = this.data.data;
@@ -285,7 +375,9 @@ export class GurpsActor extends Actor {
 	// NOTE:  For the update to work correctly, no two skills can have the same name.
 	// When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
 	async importSkillsFromGCSv1(json) {
-		let skills = [];
+		if (!json) return;
+		let skills = {};
+		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -293,7 +385,8 @@ export class GurpsActor extends Actor {
 				let sk = new Skill();
 				sk.name = t(j.name);	
 				sk.type = t(j.type);
-				sk.level = parseInt(t(j.level));
+				sk.level = this.intFrom(j.level);
+				sk.points = this.intFrom(j.points);
 				sk.relativelevel = t(j.relativelevel);
 				try {
 				sk.setNotes(t(j.text));
@@ -301,7 +394,7 @@ export class GurpsActor extends Actor {
 					console.log(sk);
 					console.log(t(j.text));
 				}
-				skills.push(sk);
+				game.GURPS.put(skills, sk, index++);
 			}
 		}
 		await this.update({"data.skills": skills});
@@ -311,7 +404,9 @@ export class GurpsActor extends Actor {
 	// NOTE:  For the update to work correctly, no two spells can have the same name.
 	// When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
 	async importSpellsFromGCSv1(json) {
-		let spells = [];
+		if (!json) return;
+		let spells = {};
+		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -334,7 +429,7 @@ export class GurpsActor extends Actor {
 				sp.level = parseInt(t(j.level));
 				sp.duration = t(j.duration);
 				sp.setNotes(t(j.text));
-				spells.push(sp);
+				game.GURPS.put(spells, sp, index++);
 			}
 		}
 		await this.update({"data.spells": spells});
@@ -347,28 +442,32 @@ export class GurpsActor extends Actor {
 		in these methods with the string literal.
 	*/
 	async importPowersFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.powers": list});
 	}
 	
 	async importAdsFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.ads": list});
 	}
 
 	async importDisadsFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.disads": list});
 	}
 
 	async importOtherAdsFromGCSv1(json) {
+		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
 		await this.update({"data.otherads": list});
 	}
 
-
 	importBaseAdvantagesFromGCSv1(json) {
-		let datalist = [];
+		let datalist = {};
+		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -377,12 +476,11 @@ export class GurpsActor extends Actor {
 				a.name = t(j.name);		
 				a.points = this.intFrom(j.points);
 				a.setNotes(t(j.text));
-				datalist.push(a);
+				game.GURPS.put(datalist, a, index++);
 			}
 		}
 		return datalist;
 	}
-
 }
 
 export class Named {
@@ -396,7 +494,13 @@ export class Named {
 			let s = n.split("\n");
 			let v = "";
 			for (let b of s) {
-				if (!!b) v += atob(b) + "\n";
+				if (!!b) {
+					try {
+						v += atob(b) + "\n";
+					} catch {
+						v += b + "\n";
+					}
+				}
 			}
 			let k = "Page Ref: ";
 			let i = v.indexOf(k);
@@ -406,6 +510,7 @@ export class Named {
 				this.pageref = v.substr(i+k.length).trim();
 			} else {
 				this.notes = v.trim();
+				this.pageref = "";
 			}
 		}
 	}
@@ -471,4 +576,20 @@ export class Encumbrance {
 	weight = "";
 	move = "";
 	current = false;
+}
+
+export class Note extends Named {
+}
+
+export class Equipment extends Named {
+	equipped = false;
+	carried = false;
+	count = 0;
+	cost = 0;
+	weight = 0;
+	location ="";
+	techlevel = "";
+	legalityclass = "";
+	categories = "";
+	contains = {};
 }

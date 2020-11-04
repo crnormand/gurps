@@ -3,7 +3,6 @@ import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
 import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
-import { GurpsActorSheetGCS } from "./actor-sheet.js";
 import { Skill } from "./actor.js";
 import { Spell } from "./actor.js";
 import { Advantage } from "./actor.js";
@@ -11,10 +10,14 @@ import { Melee } from "./actor.js";
 import { Ranged } from "./actor.js";
 import { Encumbrance } from "./actor.js";
 import { ModifierBucket } from "./modifiers.js";
+import { ChangeLogWindow } from "../lib/change-log.js";
+import { SemanticVersion } from "../lib/semver.js";
 
 export const GURPS = {};
 
-let opts = {
+//CONFIG.debug.hooks = true;
+
+GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
 	"height": 200,
 	"top": 600,
@@ -25,9 +28,7 @@ let opts = {
 	"id": "ModifierBucket",
 	"template": "systems/gurps/templates/modifier-bucket.html",
 	"classes": [],
-}
-
-GURPS.ModifierBucket = new ModifierBucket(opts);
+});
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -101,12 +102,18 @@ GURPS.skillTypes = {
 	"Per/VH": "GURPS.SkillPerVH"
 }
 
+/*
+	Convert XML text into a JSON object
+*/
 function xmlTextToJson(text) {
 	var xml = new DOMParser().parseFromString(text, 'application/xml');
 	return xmlToJson(xml);
 }
 GURPS.xmlTextToJson = xmlTextToJson;
 
+/*
+	Convert a DOMParsed version of the XML, return a JSON object.
+*/
 function xmlToJson(xml) {
 
 	// Create the return object
@@ -146,6 +153,9 @@ function xmlToJson(xml) {
 };
 GURPS.xmlToJson = xmlToJson;
 
+/*
+	A utility function to "deep" print an object
+*/
 function objToString(obj, ndeep) {
 	if (obj == null) { return String(obj); }
 	switch (typeof obj) {
@@ -179,16 +189,19 @@ GURPS.gmspan = gmspan;
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
 	+N <desc>
-		-N <desc>
+	-N <desc>
 		add a modifier to the stack, using text as the description
 	ST/IQ/DX[+-]N <desc>
 		attribute roll with optional add/subtract
 	CR: N <desc>
 		Self control roll
 	"Skill*" +/-N
-		Roll vs skill (with option +/- mod).
+		Roll vs skill (with option +/- mod)
+	"ST12"
+	"SW+1"/"THR-1"
+	"PDF:B102"
 		
-	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill"
+	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill", "pdf"
 */
 function parselink(str, actor, htmldesc) {
 	if (str.length < 2)
@@ -198,15 +211,17 @@ function parselink(str, actor, htmldesc) {
 	if (str[0] === "+" || str[0] === "-") {
 		let sign = str[0];
 		let rest = str.substr(1);
-		let num = rest.replace(/([0-9]+).*/g, "$1");
-		if (!num) return { "text": str };
-		let desc = rest.replace(/[0-9]+(.*)/g, "$1").trim();
-		return {
-			"text": this.gmspan(str),
-			"action": {
-				"type": "modifier",
-				"mod": sign + num,
-				"desc": (!!desc) ? desc : htmldesc
+		let parse = rest.replace(/^([0-9]+)+( .*)?/g, "$1~$2");
+		if (parse != rest) {
+			let a = parse.split("~");
+			let desc = a[1].trim();
+			return {
+				"text": this.gmspan(str),
+				"action": {
+					"type": "modifier",
+					"mod": sign + a[0],
+					"desc": (!!desc) ? desc : htmldesc
+				}
 			}
 		}
 	}
@@ -292,21 +307,21 @@ function parselink(str, actor, htmldesc) {
 		}
 	}
 
-	// Look for skill*+/-N
-	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)?.*/g, "$1~$2~$3");
+	// Look for skill*+/-N test
+	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)? ?(.*)/g, "$1~$2~$3~$4");
 	let skill = null;
 	let mod = "";
 	if (parse == str)
-		skill = actor?.data.skills.find(s => s.name == str);
+		skill = actor?.data.skills.findInProperties(s => s.name == str);
 	else {
 		let a = parse.split("~");
 		let n = a[0].trim();
 		if (!!n) {
 			mod = a[2];
 			if (a[1] == "*") {
-				skill = actor?.data.skills.find(s => s.name.startsWith(n));
+					skill = actor?.data.skills.findInProperties(s => s.name.startsWith(n));
 			} else {
-				skill = actor?.data.skills.find(s => s.name == n);
+					skill = actor?.data.skills.findInProperties(s => s.name == n);
 			}
 			if (!!skill) {
 				return {
@@ -314,19 +329,47 @@ function parselink(str, actor, htmldesc) {
 					"action": {
 						"type": "skill",
 						"name": skill.name,
-						"mod": mod
+						"mod": mod,
+						"desc": a[3]
 					}
 				}
 			}
 		}
 	}
+	
+	// for PDF link
+	parse = str.replace(/^PDF: */g,"");
+	if (parse != str) {
+		return { "text": "<span class='pdflink'>" + parse + "</span>" };  // Just get rid of the "[PDF:" and allow the pdflink css class to do the work
+	}
+	
+	// SW and THR damage
+	parse = str.replace(/^(SW|THR)([-+]\d+)?(!)?( .*)?$/g, "$1~$2~$3~$4")
+	if (parse != str) {
+		let a = parse.split("~");
+		let d = a[3].trim();
+		let m = GURPS.woundModifiers[d];
+		if (!!m) {
+			let df = (a[0] == "SW" ? actor?.data.swing : actor?.data.thrust)
+			return {
+				"text": this.gspan(str),
+				"action": {
+					"type": "deriveddamage",
+					"derivedformula": df + a[1] + a[2],
+					"formula": a[0] + a[1] + a[2],
+					"damagetype": d
+				}
+			}
+		}
+	}
+	
 	return { "text": str };
 }
 GURPS.parselink = parselink;
 
 
 
-//	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill"
+//	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 function performAction(action, actor) {
 	let prefix = "";
 	let thing = "";
@@ -363,10 +406,16 @@ function performAction(action, actor) {
 		thing = " points of '" + action.damagetype + "' damage";
 		formula = this.d6ify(action.formula);
 	}
+	if (action.type == "deriveddamage") {
+		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")<br>";
+		thing = " points of '" + action.damagetype + "' damage";
+		formula = this.d6ify(action.derivedformula);
+	}
 	if (action.type == "skill") {
 		prefix = "Attempting ";
 		thing = action.name;
-		let skill = actor.data.skills.find(s => s.name == thing);
+		let skill = actor.data.skills.findInProperties(s => s.name == thing);
+		if (!!action.desc) thing += "<br>&nbsp; " + action.desc;
 		target = skill.level;
 		formula = "3d6";
 		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
@@ -382,7 +431,12 @@ function d6ify(str) {
 }
 GURPS.d6ify = d6ify
 
-function onRoll(event, actor) {
+
+/*
+	The user clicked on a field that would allow a dice roll.  
+	Use the element information to try to determine what type of roll.
+*/
+async function onRoll(event, actor) {
 	let formula = "";
 	let targetmods = null;
 	let element = event.currentTarget;
@@ -400,10 +454,15 @@ function onRoll(event, actor) {
 		prefix = "Attempting ";
 		thing = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
 		formula = "3d6";
-		target = parseInt(element.innerText);
+		let t = element.innerText;
+		if (!!t) {
+			t = t.trim();
+			if (!!t)
+				target = parseInt(t);
+		}
 	}
 	if ("damage" in element.dataset) {
-		formula = element.innerText;
+		formula = element.innerText.trim();
 		let i = formula.indexOf(" ");
 		if (i > 0) {
 			let dtype = formula.substr(i + 1).trim();
@@ -429,8 +488,13 @@ function onRoll(event, actor) {
 }
 GURPS.onRoll = onRoll;
 
+
+/*
+	This is the BIG method that does the roll and prepares the chat message.
+	unfortunately, it has a lot fo hard coded junk in it.
+*/
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
+async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 
 	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);
@@ -459,7 +523,7 @@ function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 
 	let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 
-	if (isTargeted) {
+	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
 		let modscontent = "";
 		let target = origtarget;
 		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
@@ -473,7 +537,17 @@ function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			}
 			modscontent += "</i><br>New Target: [" + target + "]";
 		}
-		results += (rtotal <= target) ? " <span style='color:green; font-size: 140%;'><b>Success!</b></span>  " : " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
+		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && target >= 15) || (rtotal == 6 && target >= 16);
+		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10 && target > 0);
+		
+		if (isCritSuccess)
+			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 150%;'><b>Critical Success!</b></span>  ";
+		else if (isCritFailure)
+			results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 140%;'><b>Critical Failure!</b></span>  ";		
+		else if (rtotal <= target)
+			results += " <span style='color:green; font-size: 130%;'><b>Success!</b></span>  ";
+		else
+			results += " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
 		let margin = target - rtotal;
 		let rdesc = " <small>";
 		if (margin == 0) rdesc += "just made it.";
@@ -484,7 +558,7 @@ function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	} else {
 		if (rtotal == 1) {
 			thing = thing.replace("points", "point");
-			if (b378 && inittotal == 0) thing += " (minimum of 1 point of damage per B378)";
+			if (b378 && inittotal < 1) thing += " (minimum of 1 point of damage per B378)";
 		}
 		content = prefix + results + thing;
 	}
@@ -498,19 +572,22 @@ function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		roll: roll
 	};
 
+	let chatmsg = null;
 	if (niceDice) {
 		game.dice3d.showForRoll(roll).then((displayed) => {
-			CONFIG.ChatMessage.entityClass.create(messageData, {})
+			CONFIG.ChatMessage.entityClass.create(messageData, {});
 		});
 	} else {
 		messageData.sound = CONFIG.sounds.dice;
-		CONFIG.ChatMessage.entityClass.create(messageData, {});
+		chatmsg = CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
+	return chatmsg;
 }
 GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str, actor) {
+	if (str === undefined) return "!!UNDEFINED";
 	let found = -1;
 	let output = "";
 	for (let i = 0; i < str.length; i++) {
@@ -526,7 +603,7 @@ function gurpslink(str, actor) {
 		}
 	}
 	output += str;
-	return output;
+	return output.replace(/\n/g, "<br>");
 }
 GURPS.gurpslink = gurpslink;
 
@@ -579,7 +656,50 @@ function onGurpslink(event, actor, desc) {
 }
 GURPS.onGurpslink = onGurpslink;
 
+function genkey(index) {
+	let k = "key-";
+	if (index < 10)
+		k += "0";
+	if (index < 100)
+		k += "0";
+	if (index < 1000)
+		k += "0";
+	return k + index;
+}
+GURPS.genkey=genkey;
 
+function put(obj, v, index = -1) {
+	if (index == -1) {
+		index = 0;
+		while (obj.hasOwnProperty(this.genkey(index))) index++;
+	}
+	obj[this.genkey(index)] = v;
+}
+GURPS.put=put;
+
+function listeqtrecurse(eqts, options, level, data) {
+	if (!eqts) return "";
+	var list = Object.values(eqts);
+	let ret = "";
+	for (var i = 0; i < list.length; i++) {
+		if (data) data.indent = level;
+  	ret = ret + options.fn(list[i], { data: data });
+		ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level+1, data);
+	}
+	return ret;
+}
+GURPS.listeqtrecurse=listeqtrecurse;
+
+
+
+/*********************  HACK WARNING!!!! *************************/
+/* The following method has been secretly added to the Object class/prototype to
+   make it work like an Array. 
+*/
+Object.defineProperty(Object.prototype, 'findInProperties', {
+  value: function(expression) {
+		return Object.values(this).find(expression);	
+	}});
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -606,8 +726,7 @@ Hooks.once("init", async function () {
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: false });
-	Actors.registerSheet("gurps", GurpsActorSheetGCS, { makeDefault: true });
+	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
@@ -648,7 +767,31 @@ Hooks.once("init", async function () {
 		if (!actor) actor = root?.actor;
 		return game.GURPS.gurpslink(str, actor);
 	});
+	
+	
+	Handlebars.registerHelper('listeqt', function (context, options) {
+		var data;
+	  if (options.data)
+  	  data = Handlebars.createFrame(options.data);
 
+		return GURPS.listeqtrecurse(context, options, 0, data);
+	});
+	
+	game.settings.register("gurps", "changelogVersion", {
+    name: "Changelog Version",
+    scope: "client",
+    config: false,
+    type: String,
+    default: "0.0.0",
+  });
+
+  game.settings.register("gurps", "dontShowChangelog", {
+    name: "Don't Automatically Show Changelog",
+    scope: "client",
+    config: false,
+    type: Boolean,
+    default: false,
+  });
 
 
 });
@@ -657,4 +800,17 @@ Hooks.once("ready", async function () {
 	console.log(GURPS.ModifierBucket);
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
+	
+  // Show changelog
+  if (!game.settings.get("gurps", "dontShowChangelog")) {
+	  const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
+	  const changelogVersion = SemanticVersion.fromString(v);
+	  const curVersion = SemanticVersion.fromString(game.system.data.version);
+	  
+	  if (curVersion.isHigherThan(changelogVersion)) {
+	    const app = new ChangeLogWindow(changelogVersion);
+	    app.render(true);
+	    game.settings.set("gurps", "changelogVersion", curVersion.toString());
+		}
+  }
 });

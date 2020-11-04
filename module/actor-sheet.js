@@ -8,9 +8,9 @@ export class GurpsActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ["gurps", "sheet", "actor"],
-      template: "systems/gurps/templates/actor-sheet.html",
-      width: 600,
-      height: 600,
+      template: "systems/gurps/templates/actor-sheet-gcs.html",
+      width: 800,
+      height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });
@@ -28,6 +28,19 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
+	decode(obj, path, all)
+	{
+		let p = path.split(".");
+		let end = p.length;
+		if (!all) end = end -1;
+		for (let i = 0; i < end; i++) {
+			let q = p[i];
+			obj = obj[q];
+		}
+		return obj;
+	}
+		
+
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
@@ -37,6 +50,33 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
     html.find(".gmod").click(this._onClickGmod.bind(this));
     html.find(".glinkmod").click(this._onClickGmod.bind(this));
+
+		new ContextMenu(html, ".gcs-edit-name", [
+			{
+				name: "Edit",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: element => {
+					let path = element[0].dataset.path;
+					let nm = this.decode(this.actor.data, path, true);
+				   const template = "<div class='form-group' style='display:flex; flex-direction:column'><h1>Edit Name</h1><input id='tempinput' type='text' value='" + nm + "'></div>"
+			    new Dialog({
+			      title: "Edit Name", 
+			      content: template,
+			      buttons: {
+			        "ok":{
+			          label: "Done",
+			          callback: async (html)=>{
+			            let v = html.find("#tempinput")[0].value;
+			            let o = this.decode(this.actor.data, path, false);
+									let p = path.split(".");
+			            o[p[p.length-1]] = v
+			          }
+			        }
+			      }
+			    }).render(true);
+				}
+			}
+		]);
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
@@ -57,6 +97,13 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   /* -------------------------------------------- */
+
+ /** @override */
+  _onDrop(event) {
+		console.log("Dropped:");
+		console.log(event);
+	
+	}
 
   /** @override */
   setPosition(options = {}) {
@@ -94,11 +141,11 @@ export class GurpsActorSheet extends ActorSheet {
   async _onFileImport(event) {
     event.preventDefault();
     let element = event.currentTarget;
-    console.log("GCS File Import Event:");
+    console.log("XML File Import Event:");
     console.log(event);
     new Dialog({
-      title: `Import GCS data (FG XML) for: ${this.actor.name}`,
-      content: await renderTemplate("systems/gurps/templates/import-gcs-v1-data.html", { entity: "Actor", name: '"' + this.actor.name + '"' }),
+      title: `Import XML data for: ${this.actor.name}`,
+      content: await renderTemplate("systems/gurps/templates/import-gcs-v1-data.html", { name: '"' + this.actor.name + '"' }),
       buttons: {
         import: {
           icon: '<i class="fas fa-file-import"></i>',
@@ -173,19 +220,6 @@ export class GurpsActorSheet extends ActorSheet {
   }
 }
 
-export class GurpsActorSheetGCS extends GurpsActorSheet {
-  /** @override */
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ["gurps", "sheet", "actor"],
-      template: "systems/gurps/templates/actor-sheet-gcs.html",
-      width: 800,
-      height: 800,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
-      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
-    });
-  }
-}
 export class GurpsActorCombatSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {

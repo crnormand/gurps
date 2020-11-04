@@ -67,14 +67,14 @@
 		"tastesmell": 10,
 		"vision": 10,
 		"touch": 10,
-		"powers": [],
-		"ads": [],
-		"disads": [],
-		"otherads": [],
-		"languages": [],
-		"skills": [],
-		"spells": [],
-		"money": [],
+		"powers": {},
+		"ads": {},
+		"disads": {},
+		"otherads": {},
+		"languages": {},
+		"skills": {},
+		"spells": {},
+		"money": {},
 		"traits": {
 			"title": "",
 			"race": "",
@@ -103,10 +103,15 @@
 			"total": 150,
 			"unspent": 0
 		},
-		"melee": [],
-		"ranged": [],
-		"protection" : [],
-		"encumbrance": []
+		"melee": {},
+		"ranged": {},
+		"protection" : {},
+		"encumbrance": {},
+		"notes": {},
+		"equipment": {
+			"carried": {},
+			"other": {}},
+		"additionalresources": {}
 	},
 	"Item": {
 	  "types": ["items"],
