@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+
+<root release="4|CoreRPG:3" version="3.2">
+  <character>
+    <name type="string">Bjorn Bjornsson</name>
+    <abilities>
+      <skilllist>
+        <id-1>
+          <name type="string">Boating</name>
+          <type type="string">DX/A</type>
+          <level type="number">13</level>
+          <relativelevel type="string">DX-1</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA73</p></text>
+        </id-1>
+        <id-2>
+          <name type="string">Bow</name>
+          <type type="string">DX/A</type>
+          <level type="number">18</level>
+          <relativelevel type="string">DX+4</relativelevel>
+          <points type="number">16</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA83</p></text>
+        </id-2>
+        <id-3>
+          <name type="string">Broadsword</name>
+          <type type="string">DX/A</type>
+          <level type="number">16</level>
+          <relativelevel type="string">DX+2</relativelevel>
+          <points type="number">8</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA81</p></text>
+        </id-3>
+        <id-4>
+          <name type="string">Camouflage</name>
+          <type type="string">IQ/E</type>
+          <level type="number">14</level>
+          <relativelevel type="string">IQ+3</relativelevel>
+          <points type="number">2</points>
+          <text type="formattedtext"><p>  (Default: Survival (Arctic) - 2)</p><p>Page Ref: DFA73</p></text>
+        </id-4>
+        <id-5>
+          <name type="string">Cartography</name>
+          <type type="string">IQ/A</type>
+          <level type="number">12</level>
+          <relativelevel type="string">IQ+1</relativelevel>
+          <points type="number">4</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA74</p></text>
+        </id-5>
+        <id-6>
+          <name type="string">Climbing</name>
+          <type type="string">DX/A</type>
+          <level type="number">12</level>
+          <relativelevel type="string">DX-1</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA74</p></text>
+        </id-6>
+        <id-7>
+          <name type="string">Fast-Draw (Arrow)</name>
+          <type type="string">DX/E</type>
+          <level type="number">15</level>
+          <relativelevel type="string">DX+1</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA76</p></text>
+        </id-7>
+        <id-8>
+          <name type="string">Gesture</name>
+          <type type="string">IQ/E</type>
+          <level type="number">12</level>
+          <relativelevel type="string">IQ+1</relativelevel>
+          <points type="number">2</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA77</p></text>
+        </id-8>
+        <id-9>
+          <name type="string">Hiking</name>
+          <type type="string">HT/A</type>
+          <level type="number">12</level>
+          <relativelevel type="string">HT+0</relativelevel>
+          <points type="number">2</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA78</p></text>
+        </id-9>
+        <id-10>
+          <name type="string">Mimicry (Bird Calls)</name>
+          <type type="string">IQ/H</type>
+          <level type="number">12</level>
+          <relativelevel type="string">IQ+1</relativelevel>
+          <points type="number">2</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA83</p></text>
+        </id-10>
+        <id-11>
+          <name type="string">Navigation</name>
+          <type type="string">IQ/A</type>
+          <level type="number">15</level>
+          <relativelevel type="string">IQ+4</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p>  (Default: Cartography - 4)</p><p>Page Ref: DFA84</p></text>
+        </id-11>
+        <id-12>
+          <name type="string">Observation</name>
+          <type type="string">Per/A</type>
+          <level type="number">14</level>
+          <relativelevel type="string">Per+0</relativelevel>
+          <points type="number">2</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA84</p></text>
+        </id-12>
+        <id-13>
+          <name type="string">Riding (Horse)</name>
+          <type type="string">DX/A</type>
+          <level type="number">13</level>
+          <relativelevel type="string">DX-1</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA87</p></text>
+        </id-13>
+        <id-14>
+          <name type="string">Search</name>
+          <type type="string">Per/A</type>
+          <level type="number">13</level>
+          <relativelevel type="string">Per-1</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA88</p></text>
+        </id-14>
+        <id-15>
+          <name type="string">Shadowing</name>
+          <type type="string">IQ/A</type>
+          <level type="number">12</level>
+          <relativelevel type="string">IQ+1</relativelevel>
+          <points type="number">4</points>
+          <text type="formattedtext"><p>  (Default: Observation - 5)</p><p>Page Ref: DFA88</p></text>
+        </id-15>
+        <id-16>
+          <name type="string">Shield (Shield)</name>
+          <type type="string">DX/E</type>
+          <level type="number">16</level>
+          <relativelevel type="string">DX+2</relativelevel>
+          <points type="number">4</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA88</p></text>
+        </id-16>
+        <id-17>
+          <name type="string">Skiing</name>
+          <type type="string">HT/H</type>
+          <level type="number">10</level>
+          <relativelevel type="string">HT-2</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA89</p></text>
+        </id-17>
+        <id-18>
+          <name type="string">Stealth</name>
+          <type type="string">DX/A</type>
+          <level type="number">12</level>
+          <relativelevel type="string">DX-1</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA89</p></text>
+        </id-18>
+        <id-19>
+          <name type="string">Survival (Arctic)</name>
+          <type type="string">Per/A</type>
+          <level type="number">15</level>
+          <relativelevel type="string">Per+1</relativelevel>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA90</p></text>
+        </id-19>
+        <id-20>
+          <name type="string">Tracking</name>
+          <type type="string">Per/A</type>
+          <level type="number">16</level>
+          <relativelevel type="string">Per+2</relativelevel>
+          <points type="number">2</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA92</p></text>
+        </id-20>
+        <id-21>
+          <name type="string">Traps</name>
+          <type type="string">IQ/A</type>
+          <level type="number">12</level>
+          <relativelevel type="string">IQ+1</relativelevel>
+          <points type="number">4</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA92</p></text>
+        </id-21>
+      </skilllist>
+
+      <spelllist>
+      </spelllist>
+
+      
+      <powerlist>
+      </powerlist>
+
+      
+      <otherlist>
+      </otherlist>
+    </abilities>
+
+    <attributes>
+      <strength type="number">11</strength>
+      <strength_points type="number">10</strength_points>
+      <dexterity type="number">14</dexterity>
+      <dexterity_points type="number">80</dexterity_points>
+      <intelligence type="number">11</intelligence>
+      <intelligence_points type="number">20</intelligence_points>
+      <health type="number">12</health>
+      <health_points type="number">20</health_points>
+      <hitpoints type="number">11</hitpoints>
+      <hitpoints_points type="number">0</hitpoints_points>
+      <hps type="number">11</hps> 
+      <will type="number">11</will>
+      <will_points type="number">5</will_points>
+      <perception type="number">14</perception>
+      <perception_points type="number">20</perception_points>
+      <fatiguepoints type="number">12</fatiguepoints>
+      <fatiguepoints_points type="number">FP_POINTS</fatiguepoints_points>
+      <fps type="number">12</fps>
+      <basiclift type="string">24 lb</basiclift>
+      <thrust type="string">1d-1</thrust>
+      <swing type="string">1d+1</swing>
+      <basicspeed type="string">7</basicspeed>
+      <basicspeed_points type="number">10</basicspeed_points>
+      <basicmove type="string">8</basicmove>
+      <basicmove_points type="number">5</basicmove_points>
+      <move type="string">6</move>
+    </attributes>
+
+    
+    <coins>
+      <slot1>
+        <amount type="number">4</amount>
+        <name type="string">Gold Coin</name>
+      </slot1>
+      <slot2>
+        <amount type="number">5</amount>
+        <name type="string">Silver Coin</name>
+      </slot2>
+      <slot3>
+        <amount type="number">16</amount>
+        <name type="string">Copper Coin</name>
+      </slot3>
+    </coins>
+
+    <combat>
+      
+      <enc0_dodge type="number">11</enc0_dodge>
+      <enc1_dodge type="number">10</enc1_dodge>
+      <enc2_dodge type="number">9</enc2_dodge>
+      <enc3_dodge type="number">8</enc3_dodge>
+      <enc4_dodge type="number">7</enc4_dodge>
+      <dodge type="number">10</dodge>
+      <parry type="number">12</parry>
+      <block type="number">-</block>
+      <dr type="string">5</dr>
+
+      <meleecombatlist>
+        <id-1>
+          <name type="string">Broadsword</name>
+          <st type="string">10</st>
+          <weight type="string">3 lb</weight>
+          <tl type="string"></tl>
+          <cost type="string">600</cost>
+          <text type="formattedtext"><p></p></text>
+          <modifierlist>
+            <id-00001>
+              <modifier type="number">4</modifier>
+              <name type="string">All Out Attack (Determined), add to hit</name>
+            </id-00001>
+            <id-00002>
+              <modifier type="number">2</modifier>
+              <name type="string">All Out Attack (Strong), add to damage</name>
+            </id-00002>
+            <id-00003>
+              <modifier type="number">-2</modifier>
+              <name type="string">+Deceptive Attack (-1 to Target's Defenses), add to hit</name>
+            </id-00003>
+            <id-00004>
+              <modifier type="number">4</modifier>
+              <name type="string">+Telegraphic Attack (+2 to Target's Defenses), add to hit</name>
+            </id-00004>
+            <id-00005>
+              <modifier type="number">1</modifier>
+              <name type="string">Retreat Parry, add to parry</name>
+            </id-00005>
+            <id-00006>
+              <modifier type="number">-4</modifier>
+              <name type="string">2nd Parry this round, add to parry</name>
+            </id-00006>
+            <id-00007>
+              <modifier type="number">2</modifier>
+              <name type="string">Extra Effort: Mighty Blow [Cost 1FP], add to damage</name>
+            </id-00007>
+         </modifierlist>
+          <meleemodelist>
+            <id-1>
+              <name type="string">Swing</name>
+              <level type="number">16</level>
+              <damage type="string">1d+2 cut</damage>
+              <reach type="string">1</reach>
+              <parry type="string">12</parry>
+            </id-1>
+            <id-2>
+              <name type="string">Thrust</name>
+              <level type="number">16</level>
+              <damage type="string">1d+1 imp</damage>
+              <reach type="string">1</reach>
+              <parry type="string">12</parry>
+            </id-2>          </meleemodelist>
+        </id-1>
+	</meleecombatlist>
+
+      <rangedcombatlist>
+        <id-1>
+          <name type="string">Longbow</name>
+          <st type="string">11</st>
+          <bulk type="number">-8</bulk>
+          <lc type="string">4</lc>
+          <ammo type="number">0</ammo>
+          <text type="formattedtext"><p></p></text>
+          <modifierlist>
+            <id-00001>
+              <modifier type="number">1</modifier>
+              <name type="string">+AIM (Additional Round), add to hit</name>
+            </id-00001>
+            <id-00002>
+              <modifier type="number">-2</modifier>
+              <name type="string">+Lead the Target (-1 to Target's Defenses), add to hit</name>
+            </id-00002>
+          </modifierlist>
+          <rangedmodelist>
+            <id-1>
+              <name type="string">Shoot</name>
+              <level type="number">18</level>
+              <damage type="string">1d+1 imp</damage>
+              <acc type="number">4</acc>
+              <range type="string">x15/x20</range>
+              <rof type="string">1</rof>
+              <shots type="string">1(2)</shots>
+              <rcl type="number"></rcl>
+            </id-1>          </rangedmodelist>
+        </id-1>
+	</rangedcombatlist>
+
+      <protectionlist>
+        
+        <id-1>
+          <location type="string">Eye</location>   
+          <dr type="string">0</dr>
+          <db type="string">-9</db>
+          <name type="string"></name>
+  	    <text type="formattedtext"></text>
+        </id-1>
+        <id-2>
+          <location type="string">Skull</location>   
+          <dr type="string">3</dr>
+          <db type="string">-7</db>
+          <name type="string">Light Cloth, Leather, or Fur Helmet (Full Face)</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Helmet (Full Face)</p></text>
+        </id-2>
+        <id-3>
+          <location type="string">Face</location>   
+          <dr type="string">1</dr>
+          <db type="string">-5</db>
+          <name type="string">Light Cloth, Leather, or Fur Helmet (Full Face)</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Helmet (Full Face)</p></text>
+        </id-3>
+        <id-4>
+          <location type="string">Right Leg</location>   
+          <dr type="string">1</dr>
+          <db type="string">-2</db>
+          <name type="string">Light Cloth, Leather, or Fur Leggings</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Leggings</p></text>
+        </id-4>
+        <id-5>
+          <location type="string">Right Arm</location>   
+          <dr type="string">1</dr>
+          <db type="string">-2</db>
+          <name type="string">Light Cloth, Leather, or Fur Sleeves</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Sleeves</p></text>
+        </id-5>
+        <id-6>
+          <location type="string">Torso</location>   
+          <dr type="string">5</dr>
+          <db type="string">0</db>
+          <name type="string">Brigandine Body Armor</name>
+  	    <text type="formattedtext"><p>Brigandine Body Armor</p></text>
+        </id-6>
+        <id-7>
+          <location type="string">Groin</location>   
+          <dr type="string">5</dr>
+          <db type="string">-3</db>
+          <name type="string">Brigandine Body Armor</name>
+  	    <text type="formattedtext"><p>Brigandine Body Armor</p></text>
+        </id-7>
+        <id-8>
+          <location type="string">Left Arm</location>   
+          <dr type="string">1</dr>
+          <db type="string">-2</db>
+          <name type="string">Light Cloth, Leather, or Fur Sleeves</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Sleeves</p></text>
+        </id-8>
+        <id-9>
+          <location type="string">Left Leg</location>   
+          <dr type="string">1</dr>
+          <db type="string">-2</db>
+          <name type="string">Light Cloth, Leather, or Fur Leggings</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Leggings</p></text>
+        </id-9>
+        <id-10>
+          <location type="string">Hand</location>   
+          <dr type="string">1</dr>
+          <db type="string">-4</db>
+          <name type="string">Light Cloth, Leather, or Fur Gloves</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Gloves</p></text>
+        </id-10>
+        <id-11>
+          <location type="string">Foot</location>   
+          <dr type="string">1</dr>
+          <db type="string">-4</db>
+          <name type="string">Light Cloth, Leather, or Fur Boots</name>
+  	    <text type="formattedtext"><p>Light Cloth, Leather, or Fur Boots</p></text>
+        </id-11>
+        <id-12>
+          <location type="string">Neck</location>   
+          <dr type="string">5</dr>
+          <db type="string">-5</db>
+          <name type="string">Brigandine Body Armor</name>
+  	    <text type="formattedtext"><p>Brigandine Body Armor</p></text>
+        </id-12>
+        <id-13>
+          <location type="string">Vitals</location>   
+          <dr type="string">5</dr>
+          <db type="string">-3</db>
+          <name type="string">Brigandine Body Armor</name>
+  	    <text type="formattedtext"><p>Brigandine Body Armor</p></text>
+        </id-13>
+      </protectionlist>
+    </combat>
+
+    
+    <enc0dodge type="number">11</enc0dodge>
+    <enc1dodge type="number">10</enc1dodge>
+    <enc2dodge type="number">9</enc2dodge>
+    <enc3dodge type="number">8</enc3dodge>
+    <enc4dodge type="number">7</enc4dodge>
+
+    <encumbrance>
+      <enc_0 type="number"></enc_0>
+      <enc_1 type="number">1</enc_1>
+      <enc_2 type="number"></enc_2>
+      <enc_3 type="number"></enc_3>
+      <enc_4 type="number"></enc_4>
+      
+      <enc0_weight type="string">24 lb</enc0_weight>
+      <enc1_weight type="string">48 lb</enc1_weight>
+      <enc2_weight type="string">72 lb</enc2_weight>
+      <enc3_weight type="string">144 lb</enc3_weight>
+      <enc4_weight type="string">240 lb</enc4_weight>
+      
+      <enc0_move type="string">8</enc0_move>
+      <enc1_move type="string">6</enc1_move>
+      <enc2_move type="string">4</enc2_move>
+      <enc3_move type="string">3</enc3_move>
+      <enc4_move type="string">1</enc4_move>
+      
+      <enc0_dodge type="number">11</enc0_dodge>
+      <enc1_dodge type="number">10</enc1_dodge>
+      <enc2_dodge type="number">9</enc2_dodge>
+      <enc3_dodge type="number">8</enc3_dodge>
+      <enc4_dodge type="number">7</enc4_dodge>
+    </encumbrance>
+
+    <traits>
+      <race type="string"></race>
+      <height type="string">6' 1"</height>
+      <weight type="string">140 lb</weight>
+      <age type="string">22</age>
+      <appearance type="string">Male, Eyes: Grey, Hair: Redhead, Wavy, Short, Skin: Dark Tan</appearance>
+      <sizemodifier type="string">+0</sizemodifier>
+
+      
+      <adslist>
+        <id-1>
+          <name type="string">Absolute Direction </name>
+          <points type="number">5</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA46</p></text>
+        </id-1>
+        <id-2>
+          <name type="string">Acute Vision 1 </name>
+          <points type="number">2</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA46</p></text>
+        </id-2>
+        <id-3>
+          <name type="string">Combat Reflexes </name>
+          <points type="number">15</points>
+          <text type="formattedtext"><p>Never freeze; +6 on all IQ rolls to wake up or to recover from surprise or mental stun; Your side gets +1 to initiative rolls (+2 if you're the leader) </p><p>Page Ref: DFA48</p></text>
+        </id-3>
+        <id-4>
+          <name type="string">Heroic Archer </name>
+          <points type="number">20</points>
+          <text type="formattedtext"><p>Reduce arrow ready time by one round with roll/penalty and Acc bonus without aiming or ignore bulk </p><p>Page Ref: DFA35</p></text>
+        </id-4>
+        <id-5>
+          <name type="string">Night Vision 2 </name>
+          <points type="number">2</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA51</p></text>
+        </id-5>
+        <id-6>
+          <name type="string">Outdoorsman 2  [Benefit (Bonus to HT rolls to avoid harm from failure of covered skills)]</name>
+          <points type="number">20</points>
+          <text type="formattedtext"><p>  [Benefit (Bonus to HT rolls to avoid harm from failure of covered skills)]</p><p>Page Ref: DFA51</p></text>
+        </id-6>
+        <id-7>
+          <name type="string">Rapid Healing </name>
+          <points type="number">5</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA52</p></text>
+        </id-7>
+        <id-8>
+          <name type="string">Strongbow </name>
+          <points type="number">1</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA35</p></text>
+        </id-8>
+      </adslist>
+
+      
+      <disadslist>
+        <id-1>
+          <name type="string">Code of Honor (Soldier's) </name>
+          <points type="number">-10</points>
+          <text type="formattedtext"><p> </p><p>Page Ref: DFA58</p></text>
+        </id-1>
+        <id-2>
+          <name type="string">Honesty  [CR: 12 (Resist Quite Often)]</name>
+          <points type="number">-10</points>
+          <text type="formattedtext"><p>  [CR: 12 (Resist Quite Often)]</p><p>Page Ref: DFA61</p></text>
+        </id-2>
+        <id-3>
+          <name type="string">Sense of Duty  [Adventuring Companions]</name>
+          <points type="number">-5</points>
+          <text type="formattedtext"><p>  [Adventuring Companions]</p><p>Page Ref: DFA65</p></text>
+        </id-3>
+        <id-4>
+          <name type="string">Phobia (Crowds)  [CR: 12 (Resist Quite Often)]</name>
+          <points type="number">-15</points>
+          <text type="formattedtext"><p>  [CR: 12 (Resist Quite Often)]</p><p>Page Ref: DFA64</p></text>
+        </id-4>
+        <id-5>
+          <name type="string">Vow (Never sleep indoors)  [Major]</name>
+          <points type="number">-10</points>
+          <text type="formattedtext"><p>  [Major]</p><p>Page Ref: DFA67</p></text>
+        </id-5>
+      </disadslist>
+
+      <culturalfamiliaritylist>
+      </culturalfamiliaritylist>
+
+      <languagelist>
+      </languagelist>
+
+      <reactionmodifiers type="string"></reactionmodifiers>
+      <tl type="string">3</tl>
+      <tl_points type="number"></tl_points>
+    </traits>
+
+    
+    <inventorylist>
+      <id-1>
+        <name type="string">Clothing</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">0</cost>
+        <weight type="number">2</weight>
+        <location type="string"></location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Clothes</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA110</p></notes>
+      </id-1>
+      <id-2>
+        <name type="string">Broadsword</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">600</cost>
+        <weight type="number">3</weight>
+        <location type="string"></location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Melee Weapon</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA99</p></notes>
+      </id-2>
+      <id-3>
+        <name type="string">Longbow</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">1,000</cost>
+        <weight type="number">3</weight>
+        <location type="string"></location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Missile Weapon</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA104</p></notes>
+      </id-3>
+      <id-4>
+        <name type="string">Shoulder Quiver</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">10</cost>
+        <weight type="number">0.5</weight>
+        <location type="string"></location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Combat Accessories</type>
+        <notes type="formattedtext"><p>Holds 12 arrows/bolts </p><p>Page Ref: DFA111</p></notes>
+      </id-4>
+      <id-5>
+        <name type="string">Arrow</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">12</count>
+        <cost type="string">2</cost>
+        <weight type="number">0.1</weight>
+        <location type="string">Shoulder Quiver</location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Ammunition, Missile Weapon</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA104</p></notes>
+      </id-5>
+      <id-6>
+        <name type="string">Light Cloth, Leather, or Fur Suit</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">0</cost>
+        <weight type="number">0</weight>
+        <location type="string"></location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Armor</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA108</p></notes>
+      </id-6>
+      <id-7>
+        <name type="string">Light Cloth, Leather, or Fur Boots</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">17</cost>
+        <weight type="number">2.1</weight>
+        <location type="string">Light Cloth, Leather, or Fur Suit</location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Footwear</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA108</p></notes>
+      </id-7>
+      <id-8>
+        <name type="string">Light Cloth, Leather, or Fur Gloves</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">5</cost>
+        <weight type="number">0.6</weight>
+        <location type="string">Light Cloth, Leather, or Fur Suit</location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Gloves</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA108</p></notes>
+      </id-8>
+      <id-9>
+        <name type="string">Light Cloth, Leather, or Fur Helmet (Full Face)</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">18</cost>
+        <weight type="number">2.1</weight>
+        <location type="string">Light Cloth, Leather, or Fur Suit</location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Headgear</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA108</p></notes>
+      </id-9>
+      <id-10>
+        <name type="string">Light Cloth, Leather, or Fur Leggings</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">37</cost>
+        <weight type="number">4.5</weight>
+        <location type="string">Light Cloth, Leather, or Fur Suit</location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Limb Armor</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA108</p></notes>
+      </id-10>
+      <id-11>
+        <name type="string">Light Cloth, Leather, or Fur Sleeves</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">25</cost>
+        <weight type="number">3</weight>
+        <location type="string">Light Cloth, Leather, or Fur Suit</location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Limb Armor</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA108</p></notes>
+      </id-11>
+      <id-12>
+        <name type="string">Brigandine Body Armor</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">1,890</cost>
+        <weight type="number">21</weight>
+        <location type="string"></location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Body Armor</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA109</p></notes>
+      </id-12>
+      <id-13>
+        <name type="string">Pouch</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">10</cost>
+        <weight type="number">0.2</weight>
+        <location type="string"></location>
+        <carried type="number">2</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Camping and Survival Gear</type>
+        <notes type="formattedtext"><p>3 lb small items </p><p>Page Ref: DFA111</p></notes>
+      </id-13>  
+      <id-14>
+        <name type="string">Medium Buckler</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">300</cost>
+        <weight type="number">15</weight>
+        <location type="string"></location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Shield</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA107</p></notes>
+      </id-14>
+      <id-15>
+        <name type="string">Backpack, Small</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">60</cost>
+        <weight type="number">3</weight>
+        <location type="string"></location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Camping and Survival Gear</type>
+        <notes type="formattedtext"><p>Holds 40 lbs of gear </p><p>Page Ref: DFA111</p></notes>
+      </id-15>
+      <id-16>
+        <name type="string">Rope, 3/4", 10 yd</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">25</cost>
+        <weight type="number">5</weight>
+        <location type="string">Backpack, Small</location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Miscellaneous Hardware</type>
+        <notes type="formattedtext"><p>Supports 1,100 lb </p><p>Page Ref: DFA111</p></notes>
+      </id-16>
+      <id-17>
+        <name type="string">Sleeping Fur</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">50</cost>
+        <weight type="number">8</weight>
+        <location type="string">Backpack, Small</location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Camping and Survival Gear</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA111</p></notes>
+      </id-17>
+      <id-18>
+        <name type="string">Oil, Lantern, 1 Pint</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">2</cost>
+        <weight type="number">1</weight>
+        <location type="string">Backpack, Small</location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Light Sources</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA111</p></notes>
+      </id-18>
+      <id-19>
+        <name type="string">Lantern</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">20</cost>
+        <weight type="number">2</weight>
+        <location type="string">Backpack, Small</location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Light Sources</type>
+        <notes type="formattedtext"><p>Uses 1 pint of oil per 24 hours,  2 yd </p><p>Page Ref: DFA111</p></notes>
+      </id-19>
+      <id-20>
+        <name type="string">Personal Basics</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">5</cost>
+        <weight type="number">1</weight>
+        <location type="string">Backpack, Small</location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Camping and Survival Gear</type>
+        <notes type="formattedtext"><p>Basic EQ for individual Survival </p><p>Page Ref: DFA111</p></notes>
+      </id-20>
+      <id-21>
+        <name type="string">Canteen</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">10</cost>
+        <weight type="number">1</weight>
+        <location type="string">Backpack, Small</location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Camping and Survival Gear</type>
+        <notes type="formattedtext"><p>Holds 1 qt of liquid </p><p>Page Ref: DFA111</p></notes>
+      </id-21>
+      <id-22>
+        <name type="string">Water (1 Quart)</name>
+        <isidentified type="number">1</isidentified>
+        <count type="number">1</count>
+        <cost type="string">0</cost>
+        <weight type="number">2</weight>
+        <location type="string">Canteen</location>
+        <carried type="number">0</carried>
+        <tl type="string"></tl>
+        <lc type="string">LC4: Open</lc>
+        <type type="string">Camping and Survival Gear</type>
+        <notes type="formattedtext"><p> </p><p>Page Ref: DFA111</p></notes>
+      </id-22>
+
+    </inventorylist>
+
+    <pointtotals>
+      <attributes type="number">170</attributes>
+      <ads type="number">70</ads>
+      <disads type="number">-50</disads>
+      <quirks type="number">0</quirks>
+      <skills type="number">61</skills>
+      <spells type="number">0</spells>
+      <powers type="number"></powers>
+      <others type="number"></others>
+      <totalpoints type="number">275</totalpoints>
+      <unspentpoints type="number">24</unspentpoints>
+    </pointtotals>
+
+    <notelist>
+      <id-1>
+        <name type="string">Equipping the Medium Buckler shield gives: Dodge 11, Parry 14, Block 13, Basic Move 4.</name>
+        <text type="formattedtext"><p>Equipping the Medium Buckler shield gives: Dodge 11, Parry 14, Block 13, Basic Move 4.</p></text>
+      </id-1>
+    </notelist>
+  </character>
+</root>

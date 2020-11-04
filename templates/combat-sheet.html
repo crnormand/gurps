@@ -102,29 +102,31 @@
       </div> <!-- end of combat-attrs-->
 
       <div id='combat-encumber'>
-        <div class="header">Encumbrance, Move &amp; Dodge</div>
-        <div class="encmarkerh header"></div>
-        <div class="ench header">Level</div>
-        <div class="loadh header">Max Load</div>
-        <div class="moveh header">Move</div>
-        <div class="dodgeh header">Dodge</div>
+        <div id='combat-encumber-container'>
+          <div class="header">Encumbrance, Move, Dodge</div>
+          <div class="encmarkerh header"></div>
+          <div class="ench header">Level</div>
+          <div class="loadh header">Max</div>
+          <div class="moveh header">Move</div>
+          <div class="dodgeh header">Dodge</div>
 
-        {{#each data.encumbrance}}
-        {{#if this.current}}
-        <div class="encmarker current"></div>
-        <div class="enc current {{this.key}}"></div>
-        <div class="load current">{{this.weight}}</div>
-        <div class="move current">{{this.move}}</div>
-        <div class="dodge current rollable" data-path="dodge">{{this.dodge}}</div>
-        {{else}}
-        <div class="encmarker "></div>
-        <div class="enc {{this.key}}"></div>
-        <div class="load ">{{this.weight}}</div>
-        <div class="move ">{{this.move}}</div>
-        <div class="dodge rollable" data-path="dodge">{{this.dodge}}</div>
-        {{/if}}
-        {{/each}}
+          {{#each data.encumbrance}}
+          {{#if this.current}}
+          <div class="encmarker current"></div>
+          <div class="enc current {{this.key}}"></div>
+          <div class="load current">{{this.weight}}</div>
+          <div class="move current">{{this.move}}</div>
+          <div class="dodge current rollable" data-path="dodge">{{this.dodge}}</div>
+          {{else}}
+          <div class="encmarker "></div>
+          <div class="enc {{this.key}}"></div>
+          <div class="load ">{{this.weight}}</div>
+          <div class="move ">{{this.move}}</div>
+          <div class="dodge rollable" data-path="dodge">{{this.dodge}}</div>
+          {{/if}}
+          {{/each}}
 
+        </div>
       </div>
 
       <div id='combat-location'>

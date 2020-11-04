@@ -1120,7 +1120,7 @@ body {
 
 #combat-sheet {
   display: grid;
-  grid-template-columns: 1fr 6em 6em auto;
+  grid-template-columns: 1fr 1fr 6em 6em auto;
   grid-template-rows: 0fr auto auto;
   grid-gap: .05in;
   grid-template-areas:
@@ -1142,6 +1142,7 @@ body {
 }
 
 #combat-encumber {
+  border: 1px solid black;
   align-content: stretch;
 }
 
@@ -1220,12 +1221,27 @@ body {
   padding-bottom: 0;
 }
 
-#combat-encumber {
-  grid-area: combat-encumber;
+#combat-encumber-container {
+  display: grid;
+  grid-area: combat-encumber-container;
   grid-template:
     "header header header header header"
     "encmarkerh ench loadh moveh dodgeh"
     "encmarker enc load move dodge";
+  /* font-size: 80%; */
+}
+
+#combat-encumber-container .encmarkerh,
+#combat-encumber-container .ench,
+#combat-encumber-container .loadh,
+#combat-encumber-container .moveh,
+#combat-encumber-container .dodgeh,
+#combat-encumber-container .encmarker,
+#combat-encumber-container .enc,
+#combat-encumber-container .load,
+#combat-encumber-container .move,
+#combat-encumber-container .dodge {
+  font-size: 80%;
 }
 
 #combat-encumber .header:first-child,
