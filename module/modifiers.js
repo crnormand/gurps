@@ -14,24 +14,15 @@ export class ModifierBucket extends Application {
 	  super.activateListeners(html);
 		html.find("#showlist").click(this._onClickShowlist.bind(this));
 		html.find("#trash").click(this._onClickTrash.bind(this));
-		this.displayElement = html.find("#globalmodifier");
-		this.displayElement.click(this._update.bind(this));
-		html.find("modifierbucket").hover(this._onHover.bind(this));
+		let e = html.find("#globalmodifier");
+		if (!!e[0])
+			this.displayElement = e[0];
+		html.find("#modifierbucket").hover(this._onHover.bind(this));
 	}
 	
 	async _onHover(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
-		console.log("Hovering over:");
-		console.log(element);		
-	}
-	
-	async _update(event) {
-		event.preventDefault();
-		let element = event.currentTarget;
-		for (let e of this.displayElement) 
-			e.innerHTML(this.displaySum);
-		this.showMods();
 	}
 	
 	async _onClickShowlist(event) {
@@ -45,14 +36,20 @@ export class ModifierBucket extends Application {
 		this.showMods();
 	}
 
-	makeModifier(mod, reason) {
+	displayMod(mod) {
 		let n = mod.toString();
 		if (n[0] != '-' && n[0] != '+') n = "+" + n;
-		return { "mod": n, "desc": reason };
+		return n;
 	}
-		
+	
 	addModifier(mod, reason) {
-		this.modifierList.push(this.makeModifier(mod, reason));
+		let oldmod = this.modifierList.find(m => m.desc == reason);
+		if (!!oldmod) {
+			let m = parseInt(oldmod.mod) + mod;
+			oldmod.mod = this.displayMod(m);
+		} else {
+			this.modifierList.push({ "mod": this.displayMod(mod), "desc": reason });
+		}
 		this.sum();
 		this.showMods();
 	}
@@ -62,8 +59,7 @@ export class ModifierBucket extends Application {
 		for (let m of this.modifierList) {
 			this.currentSum += parseInt(m.mod);
 		}
-		this.displaySum = this.currentSum.toString();
-		if (this.displaySum[0] != "-") this.displaySum = "+" + this.displaySum;
+		this.displaySum = this.displayMod(this.currentSum);
 	}
 
 	applyMods(targetmods) {
@@ -88,6 +84,9 @@ export class ModifierBucket extends Application {
 	    content: content,
 	    type: CONST.CHAT_MESSAGE_TYPES.OOC,
 	 	};
-		CONFIG.ChatMessage.entityClass.create(messageData, {});
+		//CONFIG.ChatMessage.entityClass.create(messageData, {});
+		if (!!this.displayElement) {
+			this.displayElement.textContent = this.displaySum;
+		}
 	}
 }

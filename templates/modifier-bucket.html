@@ -1,10 +1,12 @@
 <form class="{{cssClass}} overflowy" autocomplete="off">
-	<div id="modifierbucket" class="app" style="border: 5px solid red">
-	<table style="border: none; width:100%">
+	<div id="modifierbucket" class="app" style="border:5px solid red;position:fixed;bottom:5px;left:805px;width:70px;height:50px;background-color: rgb(200, 200, 180);margin: 0px;padding: 0px">
+	<table style="border: none; width:100%; height=100%; margin: auto; padding: 0px 0px 0px 0px;border-spacing:0px;">
 	<tr>
-    <td><div id="showlist" class="fas fa-th-list"/></td>
-		<td style="padding-left: 5px; padding-right: 5px"><div id="globalmodifier" style="">{{gmod.displaySum}}</div></td>
-		<td><div id="trash" class="fas fa-trash-alt"/></td>
+		<td style="font-size: 20px;padding: 0px 0px 0px 0px;text-align:center; width:55px; height:100%;vertical-align:middle;">
+			<div style=height:40px; overflow:hidden; padding: 15px 0px 5px 0px"><div id="globalmodifier" style="line-height: 40px;">{{gmod.displaySum}}</div>
+			</div>
+		</td>
+		<td style="padding: 0px 0px 0px 0px;text-align: right;vertical-align:middle;"><div id="trash" class="fas fa-trash-alt"/></td>
 	</tr>
 	</table>
 	</div>

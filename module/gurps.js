@@ -197,15 +197,17 @@ function parselink(str, actor, htmldesc) {
 	if (str[0] === "+" || str[0] === "-") {
 		let sign = str[0];
 		let rest = str.substr(1);
-		let num = rest.replace(/([0-9]+).*/g, "$1");
-		if (!num) return { "text": str };
-		let desc = rest.replace(/[0-9]+(.*)/g, "$1").trim();
-		return {
-			"text": this.gmspan(str),
-			"action": {
-				"type": "modifier",
-				"mod": sign + num,
-				"desc": (!!desc) ? desc : htmldesc
+		let parse = rest.replace(/^([0-9]+)+( .*)?/g, "$1~$2");
+		if (parse != rest) {
+			let a = parse.split("~");
+			let desc = a[1].trim();
+			return {
+				"text": this.gmspan(str),
+				"action": {
+					"type": "modifier",
+					"mod": sign + a[0],
+					"desc": (!!desc) ? desc : htmldesc
+				}
 			}
 		}
 	}

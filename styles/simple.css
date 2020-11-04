@@ -4,21 +4,6 @@
   /* Attributes */
 }
 
-#modifierbucket {
-  position: fixed;
-  bottom: 5px;
-  left: 805px;
-  width: 100px;
-  height: 50px;
-  /*pointer-events: none;*/
-  background-color: rgb(200, 200, 180);
-}
-
-#globalmodifier {
-  color: lightblue;
-  font-size: 20px;
-}
-
 .gcs-attr-input {
 	border-width: 0px !important;
 	border:none !important;
