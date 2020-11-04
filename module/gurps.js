@@ -594,7 +594,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 				if (!!m.desc) modscontent += " : " + m.desc;
 				modscontent += "</span>";
 			}
-			modscontent += "</i><br>New Target: [" + target + "]";
+			modscontent += "</i><br>New Target: (" + target + ")";
 		}
 		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && target >= 15) || (rtotal == 6 && target >= 16);
 		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10 && target > 0);
@@ -613,7 +613,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</small>";
-		content = prefix + thing + " [" + origtarget + "]" + modscontent + "<br>" + results + rdesc;
+		content = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
 	} else {
 		if (rtotal == 1) {
 			thing = thing.replace("points", "point");
