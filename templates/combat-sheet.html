@@ -43,24 +43,33 @@
         <div id='combat-attrs-container'>
           <div id='combat-attrs-1'>
             <div class="fieldblock">
-              <div class="field rollable" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
               <div class="label">{{localize "GURPS.attributesST"}}</div>
 
-              <div class="field rollable" data-path="attributes.DX.value">{{data.attributes.DX.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.DX.value">{{data.attributes.DX.value}}</div>
               <div class="label">{{localize "GURPS.attributesDX"}}</div>
 
-              <div class="field rollable" data-path="attributes.IQ.value">{{data.attributes.IQ.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.IQ.value">{{data.attributes.IQ.value}}</div>
               <div class="label">{{localize "GURPS.attributesIQ"}}</div>
 
-              <div class="field rollable" data-path="attributes.HT.value">{{data.attributes.HT.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.HT.value">{{data.attributes.HT.value}}</div>
               <div class="label">{{localize "GURPS.attributesHT"}}</div>
+              <hr>
+              <div class="field noedit rollable" data-path="attributes.PER.value">{{data.attributes.PER.value}}</div>
+              <div class="label">{{localize "GURPS.attributesPER"}}</div>
+
+              <div class="field rollable" data-path="attributes.WILL.value">{{data.attributes.WILL.value}}</div>
+              <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
+              <hr>
+              <div class="field">{{data.basicspeed.value}}</div>
+              <div class="label">Basic Speed</div>
+
+              <div class="field">{{data.basicmove.value}}</div>
+              <div class="label">Basic Move</div>
             </div>
           </div>
           <div id='combat-attrs-2'>
             <div class="fieldblock">
-              <div class="field rollable" data-path="attributes.PER.value">{{data.attributes.PER.value}}</div>
-              <div class="label">{{localize "GURPS.attributesPER"}}</div>
-
               <div class="field noedit rollable" data-path="vision">{{data.vision}}</div>
               <div class="label">Vision</div>
 
@@ -69,34 +78,56 @@
 
               <div class="field noedit rollable" data-path="tastesmell">{{data.tastesmell}}</div>
               <div class="label">Taste &amp; Smell</div>
-            </div>
-          </div>
-          <div id='combat-attrs-3'>
-            <div class="fieldblock">
-              <div class="field rollable" data-path="attributes.WILL.value">{{data.attributes.WILL.value}}</div>
-              <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
+
+              <div class="field noedit rollable">{{data.touch}}</div>
+              <div class="label">Touch</div>
+
+              <div class="label"></div>
+              <div class="label">&nbsp;</div>
 
               <div class="field noedit rollable" data-path="frightcheck">{{data.frightcheck}}</div>
               <div class="label">Fright Check</div>
 
-              <div class="field">{{data.basicspeed.value}}</div>
-              <div class="label">Basic Speed</div>
+              <div class="label"></div>
+              <div class="label">&nbsp;</div>
 
-              <div class="field">{{data.basicmove.value}}</div>
-              <div class="label">Basic Move</div>
-            </div>
-          </div>
-          <div id='combat-attrs-4'>
-            <div class="fieldblock">
               <div class="field rollable noedit">{{data.thrust}}</div>
               <div class="label">Basic Thrust</div>
+
               <div class="field rollable noedit">{{data.swing}}</div>
               <div class="label">Basic Swing</div>
             </div>
           </div>
-
         </div>
       </div> <!-- end of combat-attrs-->
+
+      <div id='combat-encumber'>
+        <div id='combat-encumber-container'>
+          <div class="header">Encumbrance, Move, Dodge</div>
+          <div class="encmarkerh header"></div>
+          <div class="ench header">Level</div>
+          <div class="loadh header">Max</div>
+          <div class="moveh header">Move</div>
+          <div class="dodgeh header">Dodge</div>
+
+          {{#each data.encumbrance}}
+          {{#if this.current}}
+          <div class="encmarker current"></div>
+          <div class="enc current {{this.key}}"></div>
+          <div class="load current">{{this.weight}}</div>
+          <div class="move current">{{this.move}}</div>
+          <div class="dodge current rollable" data-path="dodge">{{this.dodge}}</div>
+          {{else}}
+          <div class="encmarker "></div>
+          <div class="enc {{this.key}}"></div>
+          <div class="load ">{{this.weight}}</div>
+          <div class="move ">{{this.move}}</div>
+          <div class="dodge rollable" data-path="dodge">{{this.dodge}}</div>
+          {{/if}}
+          {{/each}}
+
+        </div>
+      </div>
 
       <div id='combat-location'>
         <div class="header">Hit Location</div>
