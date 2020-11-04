@@ -434,7 +434,7 @@
 
 .gurps.sheet.actor {
   min-width: 560px;
-  min-height: 325px;
+  min-height: 375px;
 }
 
 .gurps.sheet.item {
@@ -1372,14 +1372,14 @@ body {
   background-color: lightgoldenrodyellow;
 }
 
-
 #combat-weapons {
   grid-area: combat-weapons;
   display: grid;
   row-gap: .05in;
-  grid-template-columns: 1fr;
-  grid-template-rows: 0fr 0fr;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
+    'speed-range-table'
     'melee'
     'ranged';
 }
@@ -1407,4 +1407,57 @@ body {
 
 #combat-attrs-damage-thr {
   grid-area: combat-attrs-damage-thr;
+}
+
+#speed-range-table {
+  grid-area: speed-range-table;
+  border: 1px solid black;
+  align-content: stretch;
+  display: grid;
+  grid-template-areas:
+    "header"
+    "range-table";
+}
+
+#range-table {
+  grid-area: range-table;
+  display: grid;
+  border: 1px solid lightgray;
+  align-content: stretch;
+  grid-template-columns: 3fr repeat(15, 1fr);
+  grid-template-rows: 0fr 0fr;
+}
+
+#range-table .label {
+  text-align: end;
+  border-right: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+}
+
+#range-table .label:nth-last-child(1),
+#range-table .label:nth-last-child(2),
+#range-table .label:nth-last-child(3),
+#range-table .label:nth-last-child(4),
+#range-table .label:nth-last-child(5),
+#range-table .label:nth-last-child(6),
+#range-table .label:nth-last-child(7),
+#range-table .label:nth-last-child(8),
+#range-table .label:nth-last-child(9),
+#range-table .label:nth-last-child(10),
+#range-table .label:nth-last-child(11),
+#range-table .label:nth-last-child(12),
+#range-table .label:nth-last-child(13),
+#range-table .label:nth-last-child(14),
+#range-table .label:nth-last-child(15),
+#range-table .label:nth-last-child(16) {
+  border-bottom: none;
+}
+
+#range-table .label:nth-last-child(17),
+#range-table .label:nth-last-child(1) {
+  border-right: none;
+}
+
+#range-table .label:nth-child(odd) {
+  background-color: #e8ffe8;
 }
