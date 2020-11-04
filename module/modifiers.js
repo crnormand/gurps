@@ -42,16 +42,20 @@ export class ModifierBucket extends Application {
 		return n;
 	}
 	
+	makeModifier(mod, reason) {
+		return { "mod": this.displayMod(mod), "desc": reason };
+	}
+	
 	addModifier(mod, reason) {
 		let oldmod = this.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
 			let m = parseInt(oldmod.mod) + mod;
 			oldmod.mod = this.displayMod(m);
 		} else {
-			this.modifierList.push({ "mod": this.displayMod(mod), "desc": reason });
+			this.modifierList.push(this.makeModifier(mod, reason));
+			this.sum();
+			this.showMods();
 		}
-		this.sum();
-		this.showMods();
 	}
 	
 	sum() {
@@ -87,6 +91,10 @@ export class ModifierBucket extends Application {
 		//CONFIG.ChatMessage.entityClass.create(messageData, {});
 		if (!!this.displayElement) {
 			this.displayElement.textContent = this.displaySum;
+			let st = "line-height: 40px;text-shadow: 2px 2px black";
+			if (this.currentSum < 0) st += ";color:#ff7f00";
+			if (this.currentSum > 0) st += ";color:lightgreen";
+			this.displayElement.style = st;
 		}
 	}
 }

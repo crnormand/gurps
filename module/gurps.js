@@ -100,12 +100,18 @@ GURPS.skillTypes = {
 	"Per/VH": "GURPS.SkillPerVH"
 }
 
+/*
+	Convert XML text into a JSON object
+*/
 function xmlTextToJson(text) {
 	var xml = new DOMParser().parseFromString(text, 'application/xml');
 	return xmlToJson(xml);
 }
 GURPS.xmlTextToJson = xmlTextToJson;
 
+/*
+	Convert a DOMParsed version of the XML, return a JSON object.
+*/
 function xmlToJson(xml) {
 
 	// Create the return object
@@ -145,6 +151,9 @@ function xmlToJson(xml) {
 };
 GURPS.xmlToJson = xmlToJson;
 
+/*
+	A utility function to "deep" print an object
+*/
 function objToString(obj, ndeep) {
 	if (obj == null) { return String(obj); }
 	switch (typeof obj) {
@@ -178,16 +187,19 @@ GURPS.gmspan = gmspan;
 /* Here is where we do all the work to try to parse the text inbetween [ ].
  Supported formats:
 	+N <desc>
-		-N <desc>
+	-N <desc>
 		add a modifier to the stack, using text as the description
 	ST/IQ/DX[+-]N <desc>
 		attribute roll with optional add/subtract
 	CR: N <desc>
 		Self control roll
 	"Skill*" +/-N
-		Roll vs skill (with option +/- mod).
+		Roll vs skill (with option +/- mod)
+	"ST12"
+	"SW+1"/"THR-1"
+	"PDF:B102"
 		
-	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill"
+	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill", "pdf"
 */
 function parselink(str, actor, htmldesc) {
 	if (str.length < 2)
@@ -355,7 +367,7 @@ GURPS.parselink = parselink;
 
 
 
-//	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill"
+//	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 function performAction(action, actor) {
 	let prefix = "";
 	let thing = "";
@@ -417,6 +429,11 @@ function d6ify(str) {
 }
 GURPS.d6ify = d6ify
 
+
+/*
+	The user clicked on a field that would allow a dice roll.  
+	Use the element information to try to determine what type of roll.
+*/
 async function onRoll(event, actor) {
 	let formula = "";
 	let targetmods = null;
@@ -469,6 +486,11 @@ async function onRoll(event, actor) {
 }
 GURPS.onRoll = onRoll;
 
+
+/*
+	This is the BIG method that does the roll and prepares the chat message.
+	unfortunately, it has a lot fo hard coded junk in it.
+*/
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
 async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 
@@ -499,7 +521,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 
 	let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 
-	if (isTargeted) {
+	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
 		let modscontent = "";
 		let target = origtarget;
 		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
@@ -513,7 +535,17 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			}
 			modscontent += "</i><br>New Target: [" + target + "]";
 		}
-		results += (rtotal <= target) ? " <span style='color:green; font-size: 140%;'><b>Success!</b></span>  " : " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
+		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && target >= 15) || (rtotal == 6 && target >= 16);
+		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10);
+		
+		if (isCritSuccess)
+			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 150%;'><b>Critical Success!</b></span>  ";
+		else if (isCritFailure)
+			results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 140%;'><b>Critical Failure!</b></span>  ";		
+		else if (rtotal <= target)
+			results += " <span style='color:green; font-size: 130%;'><b>Success!</b></span>  ";
+		else
+			results += " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
 		let margin = target - rtotal;
 		let rdesc = " <small>";
 		if (margin == 0) rdesc += "just made it.";
