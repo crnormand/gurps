@@ -137,70 +137,14 @@
         <div class="where header">Where</div>
         <div class="penalty header">Penalty</div>
         <div class="dr header">DR</div>
-        <div class="roll">-</div>
-        <div class="where">Eye</div>
-        <div class="penalty gmod" data-name="to hit Eye">-9</div>
-        <div class="dr">0</div>
 
-        <div class="roll">3-4</div>
-        <div class="where">Skull</div>
-        <div class="penalty gmod" data-name="to hit Skull">-7</div>
-        <div class="dr">3</div>
+				{{#each data.hitlocations}}
+          <div class="roll">{{hitlocationroll this.where this.roll}}</div>
+          <div class="where gurpstippable" data-tooltip="Equipment covering {{this.where}}: {{this.equipment}}">{{this.where}}</div>
+          <div class="penalty gmod" data-name="to hit {{this.where}}">{{this.penalty}}</div>
+          <div class="dr gurpstippable" data-tooltip="Equipment covering {{this.where}}: {{this.equipment}}">{{this.dr}}</div>
+       	{{/each}} 
 
-        <div class="roll">5</div>
-        <div class="where">Face</div>
-        <div class="penalty gmod" data-name="to hit Face">-5</div>
-        <div class="dr">1</div>
-
-        <div class="roll">6-7</div>
-        <div class="where">Right Leg</div>
-        <div class="penalty gmod" data-name="to hit Right Leg">-2</div>
-        <div class="dr">3</div>
-
-        <div class="roll">8</div>
-        <div class="where">Right Arm</div>
-        <div class="penalty gmod" data-name="to hit Right Arm">-2</div>
-        <div class="dr">3</div>
-
-        <div class="roll">9-10</div>
-        <div class="where">Torso</div>
-        <div class="penalty">0</div>
-        <div class="dr">4</div>
-
-        <div class="roll">11</div>
-        <div class="where">Groin</div>
-        <div class="penalty gmod" data-name="to hit Groin">-3</div>
-        <div class="dr">4</div>
-
-        <div class="roll">12</div>
-        <div class="where">Left Arm</div>
-        <div class="penalty gmod" data-name="to hit Left Arm">-2</div>
-        <div class="dr">3</div>
-
-        <div class="roll">13-14</div>
-        <div class="where">Left Leg</div>
-        <div class="penalty gmod" data-name="to hit Left Leg">-2</div>
-        <div class="dr">3</div>
-
-        <div class="roll">15</div>
-        <div class="where">Hand</div>
-        <div class="penalty gmod" data-name="to hit Hand">-4</div>
-        <div class="dr">1</div>
-
-        <div class="roll">16</div>
-        <div class="where">Foot</div>
-        <div class="penalty gmod" data-name="to hit Foot">-4</div>
-        <div class="dr">3</div>
-
-        <div class="roll">17-18</div>
-        <div class="where">Neck</div>
-        <div class="penalty gmod" data-name="to hit Neck">-5</div>
-        <div class="dr">4</div>
-
-        <div class="roll">-</div>
-        <div class="where">Vitals</div>
-        <div class="penalty gmod" data-name="to hit Vitals">-3</div>
-        <div class="dr">4</div>
       </div> <!-- end of combat-location -->
       <div id='combat-weapons'>
         <div id="melee">
