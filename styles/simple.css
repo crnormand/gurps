@@ -397,7 +397,7 @@
 
 .gurps.sheet.actor {
   min-width: 560px;
-  min-height: 420px;
+  min-height: 325px;
 }
 
 .gurps.sheet.item {
@@ -1138,6 +1138,13 @@ body {
   grid-gap: .05in;
   display: grid;
   grid-template-rows: 0fr 1fr;
+}
+
+#combat-identity,
+#combat-hit,
+#combat-fat,
+#combat-attrs,
+#combat-location {
   border: 1px solid black;
 }
 
