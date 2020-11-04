@@ -14,8 +14,8 @@ export class ModifierBucket extends Application {
 	activateListeners(html) {
 	  super.activateListeners(html);
 		html.find("#trash").click(this._onClickTrash.bind(this));
-		html.find(".modifierbucket").click(this._onClick.bind(this));
 		let e = html.find("#globalmodifier");
+		e.click(this._onClick.bind(this));
 		if (!!e[0])
 			this.displayElement = e[0];
 		e = html.find("#modttt");
@@ -83,7 +83,7 @@ export class ModifierBucket extends Application {
 	}
 	
 	showMods(inChat = false) {
-		let content = "<div style='font-size:130%'>No modifiers to next roll</div>";
+		let content = "<div style='font-size:130%'>No modifiers</div>";
 		if (this.modifierList.length > 0) {
 			let clr = "#ff7f00";
 			content = "<div style='font-size:130%'>Current Modifiers:<br><br>\n";
