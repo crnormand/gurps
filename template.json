@@ -50,7 +50,6 @@
 			"value": 10,
 			"enc_level": 0
 		},
-		"basiclift": "",
 		"basicmove": {
 			"value": 5,
 			"points": 0
@@ -105,12 +104,20 @@
 		},
 		"melee": {},
 		"ranged": {},
-		"protection" : {},
+		"hitlocations" : {},
 		"encumbrance": {},
 		"notes": {},
 		"equipment": {
 			"carried": {},
 			"other": {}},
+		"liftingmoving": {
+			"basiclift": "",
+			"carryonback": "",
+			"onehandedlift": "",
+			"runningshove": "",
+			"shiftslightly": "",
+			"shove": "",
+			"twohandedelift": "" },
 		"additionalresources": {}
 	},
 	"Item": {

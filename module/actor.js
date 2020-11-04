@@ -10,33 +10,10 @@ export class GurpsActor extends Actor {
 		super.prepareData();
 	}
 	
-	// This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
-	// First we have to remove non-printing characters, and then we want to replace 
-	// all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
-	// the DOMParser doesn't like some of the stuff in the formatted text sections, so
-	// we will base64 encode it, and the decode it in the NamedLeveled subclass setNotes()
-	cleanUpP(xml) {
-		// First, remove non-ascii characters
-		xml = xml.replace(/[^ -~]+/g, "");
-		let s = xml.indexOf("<p>");
-		while (s > 0) {
-			let e = xml.indexOf("</p>", s);
-			if (e > s) {
-				let t1 = xml.substring(0, s);
-				let t2 = xml.substring(s+3, e);
-				t2 = btoa(t2) + "\n";
-				let t3 = xml.substr(e+4);
-				xml = t1 + t2 + t3;
-				s = xml.indexOf("<p>", s + t2.length);
-			}
-		}
-		return xml;
-	}
-
 	// First attempt at import GCS FG XML export data.
 	async importFromGCSv1(xml) {
 		// need to remove <p> and replace </p> with newlines from "formatted text"
-		let x = this.cleanUpP(xml);
+		let x = game.GURPS.cleanUpP(xml);
 		x = game.GURPS.xmlTextToJson(x);
 		let r = x.root;
 		if (!r) {
@@ -70,6 +47,7 @@ export class GurpsActor extends Actor {
 		await this.importPointTotalsFromGCSv1(c.pointtotals);
 		await this.importNotesFromGCSv1(c.notelist);
 		await this.importEquipmentFromGCSv1(c.inventorylist);
+		await this.importProtectionFromGCSv1(c.combat?.protectionlist);
 
 
 		console.log("Done importing.  You can inspect the character data below:");
@@ -126,6 +104,26 @@ export class GurpsActor extends Actor {
 			}
 		}
 		await this.update({"data.notes": ns});
+	}
+	
+	async importProtectionFromGCSv1(json) {
+		if (!json) return;
+		let t= this.textFrom;
+		let prot = {};
+		let index = 0;
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let hl = new HitLocation();
+				hl.where = t(j.location);
+				hl.dr = t(j.dr);
+				hl.penalty = t(j.db);
+				hl.setEquipment(t(j.text));
+				game.GURPS.put(prot, hl, index++);
+			}
+		}
+		await this.update({"data.hitlocations": prot});
+
 	}
 	
 	async importEquipmentFromGCSv1(json) {
@@ -349,7 +347,9 @@ export class GurpsActor extends Actor {
 		data.FP.points = i(json.fatiguepoints_points);
 		data.FP.value = i(json.fps);
 
-		data.basiclift = t(json.basiclift);
+		let lm = {};
+		lm.basiclift = t(json.basiclift);
+		
 		data.basicmove.value = i(json.basicmove);
 		data.basicmove.points = i(json.basicmove_points);
 		data.basicspeed.value = i(json.basicspeed);
@@ -367,7 +367,8 @@ export class GurpsActor extends Actor {
 			"data.basicspeed": data.basicspeed,
 			"data.thrust": data.thrust,
 			"data.swing": data.swing,
-			"data.currentmove": data.currentmove
+			"data.currentmove": data.currentmove,
+			"data.liftingmoving": lm
 			});
 	}
 
@@ -491,17 +492,7 @@ export class Named {
 	// This is an ugly hack to parse the GCS FG Formatted Text entries.   See the method cleanUpP() above.
 	setNotes(n) {
 		if (!!n) {
-			let s = n.split("\n");
-			let v = "";
-			for (let b of s) {
-				if (!!b) {
-					try {
-						v += atob(b) + "\n";
-					} catch {
-						v += b + "\n";
-					}
-				}
-			}
+			let v = game.GURPS.extractP(n);
 			let k = "Page Ref: ";
 			let i = v.indexOf(k);
 			if (i >= 0) {
@@ -592,4 +583,17 @@ export class Equipment extends Named {
 	legalityclass = "";
 	categories = "";
 	contains = {};
+}
+
+export class HitLocation {
+	dr = "";
+	equipment = "";
+	penalty = "";
+	roll = "";
+	where = "";
+	
+	setEquipment(frmttext) {
+		let e = game.GURPS.extractP(frmttext);
+		this.equipment = e.trim().replace("\n", ", ");
+	}
 }
