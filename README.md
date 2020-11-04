@@ -1,9 +1,11 @@
 #### [Guide on how to use GURPS 4e for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
 
 
-## Current Version 0.6.2
+## Current Version 0.6.3
 
 ### History
+- 0.6.3
+    
 - 0.6.2
     - Support for stackable modifiers (clicking [-1 for range] multiple times)
     - Fixed display of desktop Modifier Bucket
