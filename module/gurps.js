@@ -536,7 +536,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			modscontent += "</i><br>New Target: [" + target + "]";
 		}
 		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && target >= 15) || (rtotal == 6 && target >= 16);
-		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10);
+		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10 && target > 0);
 		
 		if (isCritSuccess)
 			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 150%;'><b>Critical Success!</b></span>  ";

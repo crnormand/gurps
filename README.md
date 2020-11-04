@@ -5,8 +5,9 @@
 
 ### Versions
 - 0.6.2
-    - Support for stackable modifiers (clicking [-1 due to range] multiple times)
+    - Support for stackable modifiers (clicking [-1 for range] multiple times)
     - Fixed display of desktop Modifier Bucket
+    - Added Modifier tooltip
     - Added critical success/failure calculations
     - Added SJG notifications, as per the SJG Online Policy
 - 0.6.1
