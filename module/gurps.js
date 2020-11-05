@@ -378,9 +378,9 @@ function parselink(str, actor, htmldesc) {
 		if (!!n) {
 			mod = a[2];
 			if (a[1] == "*") {
-					skill = actor?.data.skills.findInProperties(s => s.name.startsWith(n));
+				skill = actor?.data.skills.findInProperties(s => s.name.startsWith(n));
 			} else {
-					skill = actor?.data.skills.findInProperties(s => s.name == n);
+				skill = actor?.data.skills.findInProperties(s => s.name == n);
 			}
 			if (!!skill) {
 				return {
@@ -395,13 +395,13 @@ function parselink(str, actor, htmldesc) {
 			}
 		}
 	}
-	
+
 	// for PDF link
-	parse = str.replace(/^PDF: */g,"");
+	parse = str.replace(/^PDF: */g, "");
 	if (parse != str) {
 		return { "text": "<span class='pdflink'>" + parse + "</span>" };  // Just get rid of the "[PDF:" and allow the pdflink css class to do the work
 	}
-	
+
 	// SW and THR damage
 	parse = str.replace(/^(SW|THR)([-+]\d+)?(!)?( .*)?$/g, "$1~$2~$3~$4")
 	if (parse != str) {
@@ -421,7 +421,7 @@ function parselink(str, actor, htmldesc) {
 			}
 		}
 	}
-	
+
 	return { "text": str };
 }
 GURPS.parselink = parselink;
@@ -597,11 +597,11 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		}
 		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && target >= 15) || (rtotal == 6 && target >= 16);
 		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10 && target > 0);
-		
+
 		if (isCritSuccess)
 			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 150%;'><b>Critical Success!</b></span>  ";
 		else if (isCritFailure)
-			results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 140%;'><b>Critical Failure!</b></span>  ";		
+			results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 140%;'><b>Critical Failure!</b></span>  ";
 		else if (rtotal <= target)
 			results += " <span style='color:green; font-size: 130%;'><b>Success!</b></span>  ";
 		else
@@ -724,7 +724,7 @@ function genkey(index) {
 		k += "0";
 	return k + index;
 }
-GURPS.genkey=genkey;
+GURPS.genkey = genkey;
 
 function put(obj, value, index = -1) {
 	if (index == -1) {
@@ -733,7 +733,7 @@ function put(obj, value, index = -1) {
 	}
 	obj[this.genkey(index)] = value;
 }
-GURPS.put=put;
+GURPS.put = put;
 
 function listeqtrecurse(eqts, options, level, data) {
 	if (!eqts) return "";
@@ -741,23 +741,24 @@ function listeqtrecurse(eqts, options, level, data) {
 	let ret = "";
 	for (var i = 0; i < list.length; i++) {
 		if (data) data.indent = level;
-  	ret = ret + options.fn(list[i], { data: data });
-		ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level+1, data);
+		ret = ret + options.fn(list[i], { data: data });
+		ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level + 1, data);
 	}
 	return ret;
 }
-GURPS.listeqtrecurse=listeqtrecurse;
+GURPS.listeqtrecurse = listeqtrecurse;
 
 
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
-   make it work like an Array. 
+	 make it work like an Array. 
 */
 Object.defineProperty(Object.prototype, 'findInProperties', {
-  value: function(expression) {
-		return Object.values(this).find(expression);	
-	}});
+	value: function (expression) {
+		return Object.values(this).find(expression);
+	}
+});
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -825,15 +826,50 @@ Hooks.once("init", async function () {
 		if (!actor) actor = root?.actor;
 		return game.GURPS.gurpslink(str, actor);
 	});
-	
-	
+
+
 	Handlebars.registerHelper('listeqt', function (context, options) {
 		var data;
-	  if (options.data)
-  	  data = Handlebars.createFrame(options.data);
+		if (options.data)
+			data = Handlebars.createFrame(options.data);
 
 		return GURPS.listeqtrecurse(context, options, 0, data);
 	});
+
+	Handlebars.registerHelper('hpCondition', function (hpMax, hpCurrent) {
+		if (hpCurrent >= hpMax / 3) return 'Normal'
+		if (hpCurrent > 0) return 'Reeling'
+		if (hpCurrent > -hpMax) return 'Collapse'
+		if (hpCurrent > -2 * hpMax) return 'Check #1'
+		if (hpCurrent > -3 * hpMax) return 'Check #2'
+		if (hpCurrent > -4 * hpMax) return 'Check #3'
+		if (hpCurrent > -5 * hpMax) return 'Check #4'
+		if (hpCurrent > -10 * hpMax) return 'Dead'
+		return 'Destroyed'
+	});
+
+	Handlebars.registerHelper('hpConditionStyle', function (hpMax, hpCurrent) {
+		if (hpCurrent >= hpMax / 3) return 'normal'
+		if (hpCurrent > 0) return 'reeling'
+		if (hpCurrent > -hpMax) return 'collapse'
+		if (hpCurrent > -5 * hpMax) return 'check'
+		if (hpCurrent > -10 * hpMax) return 'dead'
+		return 'destroyed'
+	});
+
+	Handlebars.registerHelper('fpCondition', function (fpMax, fpCurrent) {
+		if (fpCurrent >= fpMax / 3) return 'Normal'
+		if (fpCurrent > 0) return 'Tired'
+		if (fpCurrent > -fpMax) return 'Collapse'
+		return 'Unconscious'
+	});
+
+	Handlebars.registerHelper('fpConditionStyle', function (fpMax, fpCurrent) {
+		if (fpCurrent >= fpMax / 3) return 'normal'
+		if (fpCurrent > 0) return 'reeling'
+		if (fpCurrent > -fpMax) return 'collapse'
+		return 'unconscious'
+  });
 	
 	// Only necessary because of the FG import
 	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {
@@ -843,20 +879,20 @@ Hooks.once("init", async function () {
 	});
 
 	game.settings.register("gurps", "changelogVersion", {
-    name: "Changelog Version",
-    scope: "client",
-    config: false,
-    type: String,
-    default: "0.0.0",
-  });
+		name: "Changelog Version",
+		scope: "client",
+		config: false,
+		type: String,
+		default: "0.0.0",
+	});
 
-  game.settings.register("gurps", "dontShowChangelog", {
-    name: "Don't Automatically Show Changelog",
-    scope: "client",
-    config: false,
-    type: Boolean,
-    default: false,
-  });
+	game.settings.register("gurps", "dontShowChangelog", {
+		name: "Don't Automatically Show Changelog",
+		scope: "client",
+		config: false,
+		type: Boolean,
+		default: false,
+	});
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
@@ -894,5 +930,4 @@ Hooks.once("ready", async function () {
 			}
 		}
 	});
-
 });
