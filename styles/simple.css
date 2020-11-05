@@ -44,6 +44,7 @@
   margin: 0px;
   padding: 0px;
   z-index: 999;
+  cursor: pointer;
 }
 
 .modifierbucket .modttt {
@@ -94,10 +95,6 @@
   text-shadow: none;
   color: blue;
   text-decoration: underline;
-
-  /*	color: red;
-  text-shadow: 2px 2px rgb(255, 255, 128);
-*/
 }
 
 .pdflink:hover {
@@ -108,10 +105,12 @@
   color: red;
   text-decoration: underline;
   overflow: visible;
-  z-index: 99
+  z-index: 99;
+  cursor: pointer;
 }
 
 .rollable:hover {
+  cursor: pointer;
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
   color: blue;
@@ -133,8 +132,7 @@
 }
 
 .rollable:active {
-  /* font-size: 115%;
-  font-weight: bold;*/
+  cursor: pointer;
   text-decoration: none;
   color: blue;
   background-color: rgb(255, 255, 128) !important;
@@ -148,8 +146,7 @@
 }
 
 .gmod:hover {
-  /* font-size: 110%;
-  font-weight: bold;*/
+  cursor: pointer;
   text-decoration: none;
   background-image: none;
   background-color: rgb(255, 128, 100) !important;
@@ -171,8 +168,7 @@
 }
 
 .gmod:active {
-  /* font-size: 110%;
-  font-weight: bold;*/
+  cursor: pointer;
   text-decoration: none;
   color: black;
   background-image: none;
@@ -189,6 +185,7 @@
 }
 
 .glinkmod:hover {
+  cursor: pointer;
   text-decoration: none;
   background-image: none;
   background-color: rgb(255, 128, 64) !important;
@@ -208,8 +205,7 @@
 }
 
 .glinkmod:active {
-  /* font-size: 110%;
-  font-weight: bold;*/
+  cursor: pointer;
   text-decoration: none;
   color: black;
   background-image: none;
@@ -226,8 +222,7 @@
 
 
 .gurpslink:hover {
-  /*font-size: 115%;*/
-  /*font-weight: bold;*/
+  cursor: pointer;
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
   color: blue;
@@ -249,8 +244,7 @@
 }
 
 .gurpslink:active {
-  /*  font-size: 115%;
-  font-weight: bold; */
+  cursor: pointer;
   text-decoration: none;
   color: blue;
   background-color: rgb(255, 255, 128) !important;
