@@ -430,6 +430,7 @@ GURPS.parselink = parselink;
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 function performAction(action, actor) {
+	if (!action) return;
 	let prefix = "";
 	let thing = "";
 	let target = -1;	// There will be a roll
@@ -444,11 +445,10 @@ function performAction(action, actor) {
 	if (action.type == "attribute") {
 		prefix = "Roll vs ";
 		thing = this.i18n(action.path);
-		if (!!action.desc) thing += "<br>&nbsp; " + action.desc
 		formula = "3d6";
 		target = action.target;
 		if (!target) target = this.resolve(action.path, actor.data);
-		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
+		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 	}
 	if (action.type == "selfcontrol") {
 		prefix = "Self Control ";
@@ -474,10 +474,9 @@ function performAction(action, actor) {
 		prefix = "Attempting ";
 		thing = action.name;
 		let skill = actor.data.skills.findInProperties(s => s.name == thing);
-		if (!!action.desc) thing += "<br>&nbsp; " + action.desc;
 		target = skill.level;
 		formula = "3d6";
-		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, ""));
+		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 	}
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target);
@@ -727,12 +726,12 @@ function genkey(index) {
 }
 GURPS.genkey=genkey;
 
-function put(obj, v, index = -1) {
+function put(obj, value, index = -1) {
 	if (index == -1) {
 		index = 0;
 		while (obj.hasOwnProperty(this.genkey(index))) index++;
 	}
-	obj[this.genkey(index)] = v;
+	obj[this.genkey(index)] = value;
 }
 GURPS.put=put;
 
@@ -859,13 +858,13 @@ Hooks.once("init", async function () {
     default: false,
   });
 
+	ui.modifierbucket = GURPS.ModifierBucket;
+	ui.modifierbucket.render(true);
 
 });
 
 Hooks.once("ready", async function () {
-	console.log(GURPS.ModifierBucket);
-	ui.modifierbucket = GURPS.ModifierBucket;
-	ui.modifierbucket.render(true);
+	GURPS.ModifierBucket.clear();
 	
   // Show changelog
   if (!game.settings.get("gurps", "dontShowChangelog")) {
@@ -879,4 +878,21 @@ Hooks.once("ready", async function () {
 	    game.settings.set("gurps", "changelogVersion", curVersion.toString());
 		}
   }
+
+	Hooks.on('updateUser',(...args) => {
+		if (!!args) {
+			if (args.length >= 4) {
+				let source = args[3];
+				let target = args[1]._id;
+//				console.log("Update for: " + game.users.get(target).name + " from: " + game.users.get(source).name);
+				if (target == game.user.id) { 
+					if (source != target) {		// Someone else (a GM) is updating your data.
+						let date = args[1].flags?.gurps?.modifierchanged;
+						if (!!date) game.GURPS.ModifierBucket.updateDisplay(date);
+					}
+				}
+			}
+		}
+	});
+
 });

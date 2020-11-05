@@ -189,7 +189,7 @@
 							{{#each data.hitlocations}}
 	              <div class="roll">{{hitlocationroll this.where this.roll}}</div>
                 <div class="where gurpstippable" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">{{this.where}}</div>
-                <div class="penalty gmod" data-name="to hit {{this.where}}">{{this.penalty}}</div>
+                <div class="penalty {{#if (ne this.penalty "0")}}gmod{{/if}}" data-name="to hit {{this.where}}">{{this.penalty}}</div>
                 <div class="dr gurpstippable" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">{{this.dr}}</div>
              	{{/each}} 
  
