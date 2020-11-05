@@ -70,7 +70,7 @@ export class ModifierBucket extends Application {
 		
 		let dialogData = {
       title: "Update Player's Modifier Bucket", 
-      content: "Send your Modifier Bucket to:",
+      content: "Send your Modifier Bucket:<br><br><div style='background-color:black;color:white'>" + this.htmlForMods() + "</div><br><br>To which player:<br>",
 			buttons: {}
     }
 		let buttons = dialogData.buttons;
@@ -164,7 +164,7 @@ export class ModifierBucket extends Application {
 	chatString(modst, name = "") {
 		let content =  name + "No modifiers";
 		if (Object.values(modst.modifierList).length > 0) {
-			content = name + ", total: " +  modst.displaySum;
+			content = name + "total: " +  modst.displaySum;
 			for (let m of Object.values(modst.modifierList)) {
 				content += "<br> &nbsp;" + m.mod + " : " + m.desc;
 			}
@@ -172,7 +172,7 @@ export class ModifierBucket extends Application {
 		return content;
 	}
 	
-	showMods(inChat) {
+	htmlForMods() {
 		let stack = this.modifierStack;
 		let content = "<div style='font-size:130%'>No modifiers</div>";
 		if (Object.values(stack.modifierList).length > 0) {
@@ -187,7 +187,11 @@ export class ModifierBucket extends Application {
 			if (this.currentSum > 0) clr = "lightgreen;";
 			if (this.currentSum < 0) clr = "#ff7f00";
 			content += "<br><div style='color:" + clr + "'>Total: " + this.displaySum() + "</div></div>";
-		}
+		}	
+		return content;
+	}
+	
+	showMods(inChat) {
 		if (inChat) {
 			let messageData = {
 		  	content: this.chatString(stack),		
@@ -200,6 +204,6 @@ export class ModifierBucket extends Application {
 		if (this.currentSum() < 0) st += ";color:#ff7f00";
 		if (this.currentSum() > 0) st += ";color:lightgreen";
 		this.displayElement.style = st;
-		this.tooltipElement.innerHTML = content;
+		this.tooltipElement.innerHTML = this.htmlForMods();
 	}
 }

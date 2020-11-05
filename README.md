@@ -9,6 +9,7 @@
     - template.json changes.   You must delete all Actors created prior to v0.6.3
     - imported Hit Location information
     - tooltips for Hit Location equipment
+    - GM Mod push!
 - 0.6.2
     - Support for stackable modifiers (clicking [-1 for range] multiple times)
     - Fixed display of desktop Modifier Bucket
