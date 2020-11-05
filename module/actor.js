@@ -597,3 +597,4 @@ export class HitLocation {
 		this.equipment = e.trim().replace("\n", ", ");
 	}
 }
+

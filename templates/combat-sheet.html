@@ -16,27 +16,29 @@
 
       <div id='combat-hit'>
         <div class='header'>Hit Points</div>
-        <div class='fieldblock'>
-          <div class='field'>{{data.HP.value}}</div>
-          <div class='label'>Current</div>
+        <div class='field'>
+          <input name="data.HP.value" type="text" value="{{data.HP.value}}" placeholder="{{data.HP.max}}"
+            data-dtype="Number" />
         </div>
         <div class='condition-block'>
           <div class='basic-value'>{{data.HP.max}}</div>
           <div class='basic-label'>Basic</div>
-          <div class='condition'>Check #1</div>
+          <div class='condition {{hpConditionStyle data.HP.max data.HP.value}}'>
+            {{hpCondition data.HP.max data.HP.value}}</div>
         </div>
       </div> <!-- end of combat-hit -->
 
       <div id='combat-fat'>
         <div class='header'>Fatigue</div>
-        <div class='fieldblock'>
-          <div class='field'>{{data.FP.value}}</div>
-          <div class='label'>Current</div>
+        <div class='field'>
+          <input name="data.FP.value" type="text" value="{{data.FP.value}}" placeholder="{{data.FP.max}}"
+            data-dtype="Number" />
         </div>
         <div class='condition-block'>
           <div class='basic-value'>{{data.FP.max}}</div>
           <div class='basic-label'>Basic</div>
-          <div class='condition'>Unconscious</div>
+          <div class='condition {{fpConditionStyle data.FP.max data.FP.value}}'>
+            {{fpCondition data.FP.max data.FP.value}}</div>
         </div>
       </div> <!-- combat-fat -->
 
