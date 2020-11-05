@@ -593,3 +593,6 @@ export class Equipment extends Named {
 	categories = "";
 	contains = {};
 }
+
+/* -------- JEFF'S ADDITIONS -------- */
+Handlebars

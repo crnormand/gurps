@@ -5,15 +5,15 @@
 }
 
 .modifierbucket {
-	border:5px solid rgb(255, 0, 0);
-	position:fixed;
-	bottom:10px;
-	left:805px;
-	width:70px;
-	height:52px;
-	background-color: rgb(200, 200, 180);
-	margin: 0px;
-	padding: 0px;
+  border: 5px solid rgb(255, 0, 0);
+  position: fixed;
+  bottom: 10px;
+  left: 805px;
+  width: 70px;
+  height: 52px;
+  background-color: rgb(200, 200, 180);
+  margin: 0px;
+  padding: 0px;
   z-index: 999;
 }
 
@@ -30,7 +30,7 @@
   bottom: 200%;
   left: 50%;
   margin-left: -200px;
-  
+
   /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
   /* opacity: 0;
   transition: opacity 1s; */
@@ -56,9 +56,9 @@
 }
 
 .gcs-attr-input {
-	border-width: 0px !important;
-	border:none !important;
-	height: 100% !important;
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
 }
 
 .pdflink {
@@ -1202,19 +1202,25 @@ body {
   grid-area: combat-fat;
 }
 
+#combat-fat .field,
+#combat-hit .field {
+  text-align: end;
+  border-bottom: none;
+}
+
 .gurps .condition-block {
   display: grid;
   grid-template-columns: 0fr 1fr;
   grid-template-rows: 0fr 0fr;
   grid-template-areas:
     "basic-value basic-label"
-    "condition condition";
+    "condition   condition";
   align-items: end;
   padding-bottom: .15em;
 }
 
 .gurps .condition-block {
-  text-align: left;
+  text-align: start;
   padding-left: .2em;
   padding-right: .2em;
   font-size: 80%;
@@ -1246,8 +1252,33 @@ body {
   margin-right: .2em;
   padding-left: .2em;
   padding-right: .2em;
-  color: inherit;
-  background-color: lightcoral;
+}
+
+.gurps .condition-block .normal {
+  background-color: palegreen;
+}
+
+.gurps .condition-block .reeling {
+  background-color: khaki;
+}
+
+.gurps .condition-block .collapse {
+  background-color: rgb(255, 128, 64);
+}
+
+.gurps .condition-block .check {
+  background-color: tomato;
+}
+
+.gurps .condition-block .unconscious,
+.gurps .condition-block .dead {
+  background-color: black;
+  color: white;
+}
+
+.gurps .condition-block .destroyed {
+  background-color: black;
+  color: gold;
 }
 
 #combat-location {
