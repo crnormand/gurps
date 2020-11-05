@@ -1287,6 +1287,11 @@ body {
   background-color: lightgreen;
 }
 
+#hitpoints .selected,
+#fatpoints .selected {
+  background-color: #e8ffe8;
+}
+
 .gurps .condition-block .reeling {
   background-color: lightcyan;
 }
@@ -1299,7 +1304,7 @@ body {
   background-color: lightcoral;
 }
 
-.gurps .condition-block .unconscious,
+.gurps .unconscious,
 .gurps .condition-block .dead {
   background-color: black;
   color: white;
