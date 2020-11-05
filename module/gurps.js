@@ -169,11 +169,11 @@ function xmlToJson(xml) {
 };
 GURPS.xmlToJson = xmlToJson;
 
-	// This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
-	// First we have to remove non-printing characters, and then we want to replace 
-	// all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
-	// the DOMParser doesn't like some of the stuff in the formatted text sections, so
-	// we will base64 encode it, and the decode it in the Named subclass setNotes()
+// This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
+// First we have to remove non-printing characters, and then we want to replace 
+// all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
+// the DOMParser doesn't like some of the stuff in the formatted text sections, so
+// we will base64 encode it, and the decode it in the Named subclass setNotes()
 function cleanUpP(xml) {
 	// First, remove non-ascii characters
 	xml = xml.replace(/[^ -~]+/g, "");
@@ -182,16 +182,16 @@ function cleanUpP(xml) {
 		let e = xml.indexOf("</p>", s);
 		if (e > s) {
 			let t1 = xml.substring(0, s);
-			let t2 = xml.substring(s+3, e);
+			let t2 = xml.substring(s + 3, e);
 			t2 = btoa(t2) + "\n";
-			let t3 = xml.substr(e+4);
+			let t3 = xml.substr(e + 4);
 			xml = t1 + t2 + t3;
 			s = xml.indexOf("<p>", s + t2.length);
 		}
 	}
 	return xml;
 }
-GURPS.cleanUpP=cleanUpP;
+GURPS.cleanUpP = cleanUpP;
 
 function extractP(str) {
 	let v = "";
@@ -209,7 +209,7 @@ function extractP(str) {
 	}
 	return v;
 }
-GURPS.extractP=extractP;
+GURPS.extractP = extractP;
 
 
 /*
@@ -836,7 +836,30 @@ Hooks.once("init", async function () {
 		return GURPS.listeqtrecurse(context, options, 0, data);
 	});
 
-	Handlebars.registerHelper('hpCondition', function (hpMax, hpCurrent) {
+	Handlebars.registerHelper('hpBreakpoints', function (index, hpMax) {
+		const hpBreakpoints = [
+			Math.floor(hpMax / 3),
+			0,
+			-1 * hpMax,
+			-2 * hpMax,
+			-3 * hpMax,
+			-4 * hpMax,
+			-5 * hpMax]
+
+		return hpBreakpoints[index]
+	});
+
+	Handlebars.registerHelper('fpBreakpoints', function (index, fpMax) {
+		const fpBreakpoints = [
+			Math.floor(fpMax / 3),
+			0,
+			-1 * fpMax
+		]
+
+		return fpBreakpoints[index]
+	});
+
+	const hpCondition = function (hpMax, hpCurrent) {
 		if (hpCurrent >= hpMax / 3) return 'Normal'
 		if (hpCurrent > 0) return 'Reeling'
 		if (hpCurrent > -hpMax) return 'Collapse'
@@ -846,7 +869,16 @@ Hooks.once("init", async function () {
 		if (hpCurrent > -5 * hpMax) return 'Check #4'
 		if (hpCurrent > -10 * hpMax) return 'Dead'
 		return 'Destroyed'
-	});
+	}
+
+	const fpCondition = function (fpMax, fpCurrent) {
+		if (fpCurrent >= fpMax / 3) return 'Normal'
+		if (fpCurrent > 0) return 'Tired'
+		if (fpCurrent > -fpMax) return 'Collapse'
+		return 'Unconscious'
+	}
+
+	Handlebars.registerHelper('hpCondition', hpCondition);
 
 	Handlebars.registerHelper('hpConditionStyle', function (hpMax, hpCurrent) {
 		if (hpCurrent >= hpMax / 3) return 'normal'
@@ -857,20 +889,25 @@ Hooks.once("init", async function () {
 		return 'destroyed'
 	});
 
-	Handlebars.registerHelper('fpCondition', function (fpMax, fpCurrent) {
-		if (fpCurrent >= fpMax / 3) return 'Normal'
-		if (fpCurrent > 0) return 'Tired'
-		if (fpCurrent > -fpMax) return 'Collapse'
-		return 'Unconscious'
+	Handlebars.registerHelper('hpConditionSelected', function (hp, name) {
+		var label = hpCondition(hp.max, hp.value)
+		return (label === name) ? 'selected' : ''
 	});
+
+	Handlebars.registerHelper('fpConditionSelected', function (fp, name) {
+		var label = fpCondition(fp.max, fp.value)
+		return (label === name) ? 'selected' : ''
+	});
+
+	Handlebars.registerHelper('fpCondition', fpCondition);
 
 	Handlebars.registerHelper('fpConditionStyle', function (fpMax, fpCurrent) {
 		if (fpCurrent >= fpMax / 3) return 'normal'
 		if (fpCurrent > 0) return 'reeling'
 		if (fpCurrent > -fpMax) return 'collapse'
 		return 'unconscious'
-  });
-	
+	});
+
 	// Only necessary because of the FG import
 	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {
 		if (!roll)

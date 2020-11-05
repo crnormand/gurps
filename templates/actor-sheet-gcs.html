@@ -209,14 +209,14 @@
                     <div class="field">{{data.FP.max}}</div>
                     <div class="label">Basic</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Tired</div>
+                    <div class="field noedit">{{fpBreakpoints 0 data.FP.max}}</div>
+                    <div class="label {{fpConditionSelected data.FP 'Tired'}}">Tired</div>
                     <div class="points"></div>
-                    <div class="field noedit">0</div>
-                    <div class="label">Collapse</div>
+                    <div class="field noedit">{{fpBreakpoints 1 data.FP.max}}</div>
+                    <div class="label {{fpConditionSelected data.FP 'Collapse'}}">Collapse</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Unconscious</div>
+                    <div class="field noedit">{{fpBreakpoints 2 data.FP.max}}</div>
+                    <div class="label {{fpConditionSelected data.FP 'Unconscious'}}">Unconscious</div>
                 </div>
             </div>
             <div id="hitpoints">
@@ -230,26 +230,26 @@
                     <div class="field">{{data.HP.max}}</div>
                     <div class="label">Basic</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Reeling</div>
+                    <div class="field noedit">{{hpBreakpoints 0 data.HP.max}}</div>
+                    <div class="label {{hpConditionSelected data.HP 'Reeling'}}">Reeling</div>
                     <div class="points"></div>
-                    <div class="field noedit">0</div>
-                    <div class="label">Collapse</div>
+                    <div class="field noedit">{{hpBreakpoints 1 data.HP.max}}</div>
+                    <div class="label {{hpConditionSelected data.HP 'Collapse'}}">Collapse</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Check #1</div>
+                    <div class="field noedit">{{hpBreakpoints 2 data.HP.max}}</div>
+                    <div class="label {{hpConditionSelected data.HP 'Check #1'}}">Check #1</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Check #2</div>
+                    <div class="field noedit">{{hpBreakpoints 3 data.HP.max}}</div>
+                    <div class="label {{hpConditionSelected data.HP 'Check #2'}}">Check #2</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Check #3</div>
+                    <div class="field noedit">{{hpBreakpoints 4 data.HP.max}}</div>
+                    <div class="label {{hpConditionSelected data.HP 'Check #3'}}">Check #3</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Check #4</div>
+                    <div class="field noedit">{{hpBreakpoints 5 data.HP.max}}</div>
+                    <div class="label {{hpConditionSelected data.HP 'Check #4'}}">Check #4</div>
                     <div class="points"></div>
-                    <div class="field noedit">-</div>
-                    <div class="label">Dead</div>
+                    <div class="field noedit">{{hpBreakpoints 6 data.HP.max}}</div>
+                    <div class="label {{hpConditionSelected data.HP 'Dead'}}">Dead</div>
                 </div>
             </div>
         </div>

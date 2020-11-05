@@ -17,8 +17,8 @@
       <div id='combat-hit'>
         <div class='header'>Hit Points</div>
         <div class='field'>
-          <input name="data.HP.value" type="text" value="{{data.HP.value}}" placeholder="{{data.HP.max}}"
-            data-dtype="Number" />
+          <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
+            placeholder="{{data.HP.max}}" data-dtype="Number" />
         </div>
         <div class='condition-block'>
           <div class='basic-value'>{{data.HP.max}}</div>
@@ -31,8 +31,8 @@
       <div id='combat-fat'>
         <div class='header'>Fatigue</div>
         <div class='field'>
-          <input name="data.FP.value" type="text" value="{{data.FP.value}}" placeholder="{{data.FP.max}}"
-            data-dtype="Number" />
+          <input class="gcs-attr-input" name="data.FP.value" type="text" value="{{data.FP.value}}"
+            placeholder="{{data.FP.max}}" data-dtype="Number" />
         </div>
         <div class='condition-block'>
           <div class='basic-value'>{{data.FP.max}}</div>
@@ -140,12 +140,13 @@
         <div class="penalty header">Penalty</div>
         <div class="dr header">DR</div>
 
-				{{#each data.hitlocations}}
-          <div class="roll">{{hitlocationroll this.where this.roll}}</div>
-          <div class="where">{{this.where}}</div>
-          <div class="penalty {{#if (ne this.penalty "0")}}gmod{{/if}}" data-name="to hit {{this.where}}">{{this.penalty}}</div>
-          <div class="dr">{{this.dr}}</div>
-       	{{/each}} 
+        {{#each data.hitlocations}}
+        <div class="roll">{{hitlocationroll this.where this.roll}}</div>
+        <div class="where">{{this.where}}</div>
+        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">{{this.penalty}}
+        </div>
+        <div class="dr">{{this.dr}}</div>
+        {{/each}}
 
       </div> <!-- end of combat-location -->
       <div id='combat-weapons'>
