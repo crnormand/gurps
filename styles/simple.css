@@ -1234,7 +1234,6 @@ body {
 #combat-fat .field,
 #combat-hit .field {
   text-align: end;
-  border-bottom: none;
 }
 
 .gurps .condition-block {
