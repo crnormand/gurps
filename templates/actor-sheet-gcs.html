@@ -306,12 +306,14 @@
             </div>
             <div class="usage">{{this.mode}}</div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
-            <div class="acc">{{this.acc}}</div>
+            <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='for {{this.name}} Acc'>
+                {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
             <div class="damage rollable" data-damage>{{this.damage}}</div>
             <div class="range">{{this.range}}</div>
             <div class="rof">{{this.rof}}</div>
             <div class="shots">{{this.shots}}</div>
-            <div class="bulk">{{this.bulk}}</div>
+            <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='for {{this.name}} Bulk'>{{this.bulk}}
+            </div>
             <div class="rcl">{{this.rcl}}</div>
             <div class="st">{{this.st}}</div>
             {{/each}}

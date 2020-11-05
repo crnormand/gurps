@@ -836,6 +836,8 @@ Hooks.once("init", async function () {
 		return GURPS.listeqtrecurse(context, options, 0, data);
 	});
 
+	Handlebars.registerHelper('gt', function (a, b) { return a > b; });
+
 	Handlebars.registerHelper('hpBreakpoints', function (index, hpMax) {
 		const hpBreakpoints = [
 			Math.floor(hpMax / 3),
@@ -938,27 +940,27 @@ Hooks.once("init", async function () {
 
 Hooks.once("ready", async function () {
 	GURPS.ModifierBucket.clear();
-	
-  // Show changelog
-  if (!game.settings.get("gurps", "dontShowChangelog")) {
-	  const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
-	  const changelogVersion = SemanticVersion.fromString(v);
-	  const curVersion = SemanticVersion.fromString(game.system.data.version);
-	  
-	  if (curVersion.isHigherThan(changelogVersion)) {
-	    const app = new ChangeLogWindow(changelogVersion);
-	    app.render(true);
-	    game.settings.set("gurps", "changelogVersion", curVersion.toString());
-		}
-  }
 
-	Hooks.on('updateUser',(...args) => {
+	// Show changelog
+	if (!game.settings.get("gurps", "dontShowChangelog")) {
+		const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
+		const changelogVersion = SemanticVersion.fromString(v);
+		const curVersion = SemanticVersion.fromString(game.system.data.version);
+
+		if (curVersion.isHigherThan(changelogVersion)) {
+			const app = new ChangeLogWindow(changelogVersion);
+			app.render(true);
+			game.settings.set("gurps", "changelogVersion", curVersion.toString());
+		}
+	}
+
+	Hooks.on('updateUser', (...args) => {
 		if (!!args) {
 			if (args.length >= 4) {
 				let source = args[3];
 				let target = args[1]._id;
-//				console.log("Update for: " + game.users.get(target).name + " from: " + game.users.get(source).name);
-				if (target == game.user.id) { 
+				//				console.log("Update for: " + game.users.get(target).name + " from: " + game.users.get(source).name);
+				if (target == game.user.id) {
 					if (source != target) {		// Someone else (a GM) is updating your data.
 						let date = args[1].flags?.gurps?.modifierchanged;
 						if (!!date) game.GURPS.ModifierBucket.updateDisplay(date);
