@@ -21,8 +21,6 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   getData() {
     const sheetData = super.getData();
-    sheetData.config = game.GURPS;
-
     return sheetData;
   }
 

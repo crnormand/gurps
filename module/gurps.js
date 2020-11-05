@@ -102,6 +102,22 @@ GURPS.skillTypes = {
 	"Per/VH": "GURPS.SkillPerVH"
 }
 
+GURPS.hitlocationRolls = {
+	"Eye": "-",
+	"Skull": "3-4",
+	"Face": "5",
+	"Right Leg": "6-7",
+	"Right Arm": "8",
+	"Torso": "9-10",
+	"Groin": "11",
+	"Left Arm": "12",
+	"Left Leg": "13-14",
+	"Hand": "15",
+	"Foot": "16",
+	"Neck": "17-18",
+	"Vitals": "-"
+}
+
 /*
 	Convert XML text into a JSON object
 */
@@ -152,6 +168,49 @@ function xmlToJson(xml) {
 	return obj;
 };
 GURPS.xmlToJson = xmlToJson;
+
+	// This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
+	// First we have to remove non-printing characters, and then we want to replace 
+	// all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
+	// the DOMParser doesn't like some of the stuff in the formatted text sections, so
+	// we will base64 encode it, and the decode it in the Named subclass setNotes()
+function cleanUpP(xml) {
+	// First, remove non-ascii characters
+	xml = xml.replace(/[^ -~]+/g, "");
+	let s = xml.indexOf("<p>");
+	while (s > 0) {
+		let e = xml.indexOf("</p>", s);
+		if (e > s) {
+			let t1 = xml.substring(0, s);
+			let t2 = xml.substring(s+3, e);
+			t2 = btoa(t2) + "\n";
+			let t3 = xml.substr(e+4);
+			xml = t1 + t2 + t3;
+			s = xml.indexOf("<p>", s + t2.length);
+		}
+	}
+	return xml;
+}
+GURPS.cleanUpP=cleanUpP;
+
+function extractP(str) {
+	let v = "";
+	if (!!str) {
+		let s = str.split("\n");
+		for (let b of s) {
+			if (!!b) {
+				try {
+					v += atob(b) + "\n";
+				} catch {
+					v += b + "\n";
+				}
+			}
+		}
+	}
+	return v;
+}
+GURPS.extractP=extractP;
+
 
 /*
 	A utility function to "deep" print an object
@@ -535,7 +594,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 				if (!!m.desc) modscontent += " : " + m.desc;
 				modscontent += "</span>";
 			}
-			modscontent += "</i><br>New Target: [" + target + "]";
+			modscontent += "</i><br>New Target: (" + target + ")";
 		}
 		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && target >= 15) || (rtotal == 6 && target >= 16);
 		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10 && target > 0);
@@ -554,7 +613,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</small>";
-		content = prefix + thing + " [" + origtarget + "]" + modscontent + "<br>" + results + rdesc;
+		content = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
 	} else {
 		if (rtotal == 1) {
 			thing = thing.replace("points", "point");
@@ -811,6 +870,13 @@ Hooks.once("init", async function () {
 		if (fpCurrent > 0) return 'reeling'
 		if (fpCurrent > -fpMax) return 'collapse'
 		return 'unconscious'
+  });
+	
+	// Only necessary because of the FG import
+	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {
+		if (!roll)
+			roll = GURPS.hitlocationRolls[loc];
+		return roll;
 	});
 
 	game.settings.register("gurps", "changelogVersion", {

@@ -4,6 +4,34 @@
   /* Attributes */
 }
 
+.gurpstippable {
+  position: relative ;
+}
+.gurpstippable:hover::after {
+  content: attr(data-tooltip) ;
+  position: absolute ;
+  bottom: 130% ;
+  left: -50%;
+  min-width: 20px ;
+  border: 1px #808080 solid ;
+  padding: 8px ;
+  color: black ;
+  background-color: rgb(192, 192, 192) ;
+  z-index: 102 ;
+} 
+
+.gurpstippable:hover::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+  z-index: 102;
+}
+
 .modifierbucket {
   border: 5px solid rgb(255, 0, 0);
   position: fixed;

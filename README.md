@@ -6,6 +6,8 @@
 ### History
 - 0.6.3
     - Hot toggle between "full" and "combat" character sheets
+    - template.json changes.   You must delete all Actors created prior to v0.6.3
+    - imported Hit Location information
 - 0.6.2
     - Support for stackable modifiers (clicking [-1 for range] multiple times)
     - Fixed display of desktop Modifier Bucket
