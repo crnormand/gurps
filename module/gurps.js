@@ -526,16 +526,16 @@ function performAction(action, actor) {
 		target = action.target;
 	}
 	if (action.type == "roll") {
-		prefix = "Rolling " + action.formula + " " + action.desc + "<br>";
+		prefix = "Rolling " + action.formula + " " + action.desc;
 		formula = this.d6ify(action.formula);
 	}
 	if (action.type == "damage") {
-		prefix = "Rolling " + action.formula + "<br>";
+		prefix = "Rolling " + action.formula;
 		thing = " points of '" + action.damagetype + "' damage";
 		formula = this.d6ify(action.formula);
 	}
 	if (action.type == "deriveddamage") {
-		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")<br>";
+		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")";
 		thing = " points of '" + action.damagetype + "' damage";
 		formula = this.d6ify(action.derivedformula);
 	}
@@ -596,18 +596,16 @@ async function onRoll(event, actor) {
 			thing = " points of '" + dtype + "' damage";
 			formula = formula.substring(0, i);
 		}
-		if (formula == "0")
-			ui.notifications.warn("No actual damage to roll");
-		else {
-			prefix = "Rolling " + formula + "<br>";
+		if (formula != "0") {
+			prefix = "Rolling " + formula;
 			formula = this.d6ify(formula);
-			target = -1;
+			target = -1;		// Set flag to indicate a non-targeted roll
 		}
 	}
 	if ("roll" in element.dataset) {
-		target = -1;
+		target = -1;   // Set flag to indicate a non-targeted roll
 		formula = element.innerText;
-		prefix = "Rolling " + formula + "<br>";
+		prefix = "Rolling " + formula;
 		formula = this.d6ify(formula);
 	}
 
@@ -619,111 +617,105 @@ GURPS.onRoll = onRoll;
 /*
 	This is the BIG method that does the roll and prepares the chat message.
 	unfortunately, it has a lot fo hard coded junk in it.
-*/
+	*/
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
 async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 
 	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-	let isTargeted = (origtarget > 0 && !!thing);
+	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
 
 	// Is Dice So Nice enabled ?
 	let niceDice = false;
 	try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
-
-	let content = "";
-	let min = 0;
-	let b378 = false;
-	// This is a nasty hack to give other damage types a minimum of 1 pt
-	if (!isTargeted && thing.includes("damage") && !thing.includes("'cr' damage")) {
-		min = 1;
-		b378 = true;
-	}
-	if (formula[formula.length - 1] == "!") {
-		formula = formula.substr(0, formula.length - 1);
-		min = 1;
-	}
-	let roll = new Roll(formula);
-	roll.roll();
-	let inittotal = roll.total;
-	let rtotal = inittotal;
-	if (rtotal < min) rtotal = min;
-
-
-	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
-		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
-		let modscontent = "";
-		let target = origtarget;
-		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
-		if (targetmods.length > 0) {
-			modscontent = "<i>";
-			for (let m of targetmods) {
-				target += parseInt(m.mod);
-				modscontent += "<br><span style='font-size:85%'>" + m.mod;
-				if (!!m.desc) modscontent += " : " + m.desc;
-				modscontent += "</span>";
-			}
-			modscontent += "</i><br>New Target: (" + target + ")";
+	
+	// Lets collect up the modifiers, they are used differently depending on the type of roll
+	let modscontent = "";
+	let modifier = 0;
+	
+	targetmods = GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
+	if (targetmods.length > 0) {
+		modscontent = "<i>";
+		for (let m of targetmods) {
+			modifier += parseInt(m.mod);
+			modscontent += "<br> &nbsp;<span style='font-size:85%'>" + m.mod;
+			if (!!m.desc) modscontent += " : " + m.desc;
+			modscontent += "</span>";
 		}
-		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && target >= 15) || (rtotal == 6 && target >= 16);
-		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && target <= 15) || (rtotal - target >= 10 && target > 0);
+	}
 
+	let chatcontent = "";
+	let roll = null;  // Will be the Roll
+	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
+		let finaltarget = origtarget + modifier;
+		roll = new Roll(formula);		// The formula will always be "3d6" for a "targetted" roll
+		roll.roll();
+		let rtotal = roll.total;
+		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
+		if (!!modscontent) modscontent += "</i><br>New Target: (" + finaltarget + ")";  // If we had modifiers, the target will have changed.
+
+		// Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
+		let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16);
+		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0);
+
+		let margin = finaltarget - rtotal;
 		if (isCritSuccess)
 			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 150%;'><b>Critical Success!</b></span>  ";
 		else if (isCritFailure)
 			results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 140%;'><b>Critical Failure!</b></span>  ";
-		else if (rtotal <= target)
+		else if (margin >= 0)
 			results += " <span style='color:green; font-size: 130%;'><b>Success!</b></span>  ";
 		else
 			results += " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
-		let margin = target - rtotal;
+	
 		let rdesc = " <small>";
 		if (margin == 0) rdesc += "just made it.";
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</small>";
-		content = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
-	} else {
-		let modscontent = "";
-		let bonus = 0;
-		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
-		if (targetmods.length > 0) {
-			modscontent = "<i>";
-			for (let m of targetmods) {
-				bonus += parseInt(m.mod);
-				modscontent += "<span style='font-size:85%'>" + m.mod;
-				if (!!m.desc) modscontent += " : " + m.desc;
-				modscontent += "</span><br>";
-			}
-			modscontent += "</i>";
+		chatcontent = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
+	} else {	// This is "damage" roll where the modifier is added to the roll, not the target
+		let min = 0;
+		let b378 = false;
+		let b378content = "";
+		// This is a nasty hack to give other damage types a minimum of 1 pt
+		if (thing.includes("damage") && !thing.includes("'cr' damage")) {
+			min = 1;
+			b378 = true;
 		}
-		rtotal += bonus;
+		if (formula[formula.length - 1] == "!") {
+			formula = formula.substr(0, formula.length - 1);
+			min = 1;
+		}
+		roll = new Roll(formula + `+${modifier}`);
+		roll.roll();
+		let rtotal = roll.total;
+		if (rtotal < min) {
+			rtotal = min;
+			if (b378) b378content = " (minimum of 1 point of damage per B378)"
+		}
+		
 		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
-		if (rtotal == 1) {
-			thing = thing.replace("points", "point");
-			if (b378 && inittotal < 1) thing += " (minimum of 1 point of damage per B378)";
-		}
-		content = prefix + modscontent + results + thing;
-	}
+		if (rtotal == 1) thing = thing.replace("points", "point") + b378content;
+		chatcontent = prefix + modscontent + "<br>" + results + thing;
+	} 
 
 	const speaker = { alias: actor.name, _id: actor._id }
 	let messageData = {
 		user: game.user._id,
 		speaker: speaker,
-		content: content,
+		content: chatcontent,
 		type: CONST.CHAT_MESSAGE_TYPES.OOC,
 		roll: roll
 	};
 
-	let chatmsg = null;
 	if (niceDice) {
 		game.dice3d.showForRoll(roll).then((displayed) => {
 			CONFIG.ChatMessage.entityClass.create(messageData, {});
 		});
 	} else {
 		messageData.sound = CONFIG.sounds.dice;
-		chatmsg = CONFIG.ChatMessage.entityClass.create(messageData, {});
+		CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
-	return chatmsg;
 }
 GURPS.doRoll = doRoll;
 
