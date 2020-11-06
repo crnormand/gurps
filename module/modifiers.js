@@ -141,8 +141,7 @@ export class ModifierBucket extends Application {
 	
 	applyMods(targetmods) {
 		let stack = this.modifierStack;
-		let answer = [];
-		if (!!targetmods) answer.pus(targetmods);		// Prepend action mods before mods in the stack
+		let answer = (!!targetmods) ? targetmods : [];
 		for (let m of Object.values(stack.modifierList))
 				 answer.push(m);
 		this.clear();

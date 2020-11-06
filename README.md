@@ -1,9 +1,12 @@
 ### [Guide on how to use GURPS 4e for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
 
 
-## Current Version 0.6.3
+## Current Version 0.6.4
 
 ### History
+- 0.6.4
+		- Measuring Ruler automatically creates Range Modifier.
+		- Started work for Monster Hunters 2 range modifiers.
 - 0.6.3
     - Hot toggle between "full" and "combat" character sheets
     - template.json changes.   You must delete all Actors created prior to v0.6.3

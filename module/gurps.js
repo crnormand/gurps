@@ -112,6 +112,81 @@ GURPS.hitlocationRolls = {
 	"Vitals": "-"
 }
 
+// Must be kept in order... checking range vs Max.   If >Max, go to next entry.
+/* Example code:
+				for (let range of game.GURPS.ranges) {
+					if (yards <= range.max)
+						return range.penalty;
+				}
+*/
+GURPS.monsterHunter2Ranges = [
+	{
+		band: "Close", 
+		max: 5,
+		penalty: 0,
+		description: "Can touch or strike foe"
+	},
+	{
+		band: "Short", 
+		max: 20,
+		penalty: -3,
+		description: "Can talk to foe; pistol or muscle-powered missile range"
+	},
+	{
+		band: "Medium", 
+		max: 100,
+		penalty: -7,
+		description: "Can only shout to foe; shotgun or SMG range"
+	},
+	{
+		band: "Long", 
+		max: 500,
+		penalty: -11,
+		description: "Opponent out of earshot; rifle range"
+	},
+	{
+		band: "Extreme", 
+		max: 999999,				// Finaly entry.   Could be null, but would require extra check... so just make it LARGE
+		penalty: -15,
+		desc: "Rival difficult to even see; sniper range"
+	}
+];
+
+// Must be kept in order... checking range vs Max.   If >Max, go to next entry.
+GURPS.basicSetRanges = [];
+// Yes, I should be able to do this programatically... but my brain hurts right now, so there.
+let r = [ 
+	2, 0, 
+	3, -1,
+	5, -2,
+	7, -3,
+	10, -4,
+	15,	-5,
+	20, -6,
+	30, -7,
+	50, -8,
+	70, -9,
+	100, -10,
+	150, -11,
+	200, -12,
+	300, -13,
+	500, -14,
+	700, -15,
+	1000, -16 ];
+
+for (let i = 0; i < r.length; i = i + 2) {
+	let d = {
+		band: `${r[i]} yds`,
+		max: r[i],
+		penalty: r[i+1],
+		desc: `${r[i]} yds`
+	};
+	GURPS.basicSetRanges.push(d);
+}	
+	
+//GURPS.ranges = GURPS.monsterHunter2Ranges;
+GURPS.ranges = GURPS.basicSetRanges;
+
 /*
 	Convert XML text into a JSON object
 */
@@ -573,9 +648,9 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	let rtotal = inittotal;
 	if (rtotal < min) rtotal = min;
 
-	let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 
 	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
+		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 		let modscontent = "";
 		let target = origtarget;
 		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
@@ -608,11 +683,26 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		rdesc += "</small>";
 		content = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
 	} else {
+		let modscontent = "";
+		let bonus = 0;
+		targetmods = GURPS.ModifierBucket.applyMods(targetmods);
+		if (targetmods.length > 0) {
+			modscontent = "<i>";
+			for (let m of targetmods) {
+				bonus += parseInt(m.mod);
+				modscontent += "<span style='font-size:85%'>" + m.mod;
+				if (!!m.desc) modscontent += " : " + m.desc;
+				modscontent += "</span><br>";
+			}
+			modscontent += "</i>";
+		}
+		rtotal += bonus;
+		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 		if (rtotal == 1) {
 			thing = thing.replace("points", "point");
 			if (b378 && inittotal < 1) thing += " (minimum of 1 point of damage per B378)";
 		}
-		content = prefix + results + thing;
+		content = prefix + modscontent + results + thing;
 	}
 
 	const speaker = { alias: actor.name, _id: actor._id }
@@ -762,7 +852,7 @@ Hooks.once("init", async function () {
 	console.log(`Initializing GURPS 4e System`);
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
-	//console.log(GURPS.objToString(GURPS));
+	console.log(GURPS.objToString(GURPS));
 
 	/**
 	 * Set an initiative formula for the system
