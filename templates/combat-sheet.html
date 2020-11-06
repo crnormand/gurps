@@ -210,39 +210,15 @@
 
         <div id='speed-range-table'>
           <div class="header">Speed/Range Table</div>
-          <div id="range-table">
+          <div id="range-table" style="--count: {{ranges.length}}">
             <div class="label">Measure (yd)</div>
-            <div class="label">2</div>
-            <div class="label">3</div>
-            <div class="label">5</div>
-            <div class="label">7</div>
-            <div class="label">10</div>
-            <div class="label">15</div>
-            <div class="label">20</div>
-            <div class="label">30</div>
-            <div class="label">50</div>
-            <div class="label">70</div>
-            <div class="label">100</div>
-            <div class="label">150</div>
-            <div class="label">200</div>
-            <div class="label">300</div>
-            <div class="label">500</div>
+						{{#each ranges}}
+            <div class="label">{{this.max}}</div>
+						{{/each}}
             <div class="label">Modifier</div>
-            <div class="label">0</div>
-            <div class="label gmod" data-name="for range/speed 3 yds">-1</div>
-            <div class="label gmod" data-name="for range/speed 5 yds">-2</div>
-            <div class="label gmod" data-name="for range/speed 7 yds">-3</div>
-            <div class="label gmod" data-name="for range/speed 10 yds">-4</div>
-            <div class="label gmod" data-name="for range/speed 15 yds">-5</div>
-            <div class="label gmod" data-name="for range/speed 20 yds">-6</div>
-            <div class="label gmod" data-name="for range/speed 30 yds">-7</div>
-            <div class="label gmod" data-name="for range/speed 50 yds">-8</div>
-            <div class="label gmod" data-name="for range/speed 70 yds">-9</div>
-            <div class="label gmod" data-name="for range/speed 100 yds">-10</div>
-            <div class="label gmod" data-name="for range/speed 150 yds">-11</div>
-            <div class="label gmod" data-name="for range/speed 200 yds">-12</div>
-            <div class="label gmod" data-name="for range/speed 300 yds">-13</div>
-            <div class="label gmod" data-name="for range/speed 500 yds">-14</div>
+						{{#each ranges}}
+            <div class="label {{#if (ne this '0')}}gmod{{/if}}" data-name="{{this.moddesc}}">{{this.penalty}}</div>
+						{{/each}}
           </div>
         </div>
       </div> <!-- end of combat-weapons -->

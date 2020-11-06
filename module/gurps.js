@@ -121,32 +121,32 @@ GURPS.hitlocationRolls = {
 */
 GURPS.monsterHunter2Ranges = [
 	{
-		band: "Close", 
+		moddesc: "for Close range", 
 		max: 5,
 		penalty: 0,
 		description: "Can touch or strike foe"
 	},
 	{
-		band: "Short", 
+		moddesc: "for Short range", 
 		max: 20,
 		penalty: -3,
 		description: "Can talk to foe; pistol or muscle-powered missile range"
 	},
 	{
-		band: "Medium", 
+		moddesc: "for Medium range", 
 		max: 100,
 		penalty: -7,
 		description: "Can only shout to foe; shotgun or SMG range"
 	},
 	{
-		band: "Long", 
+		moddesc: "for Long range", 
 		max: 500,
 		penalty: -11,
 		description: "Opponent out of earshot; rifle range"
 	},
 	{
-		band: "Extreme", 
-		max: 999999,				// Finaly entry.   Could be null, but would require extra check... so just make it LARGE
+		moddesc: "for Extreme range", 
+		max: "500+",				// Finaly entry.   Could be null, but would require extra check... so just make it LARGE
 		penalty: -15,
 		desc: "Rival difficult to even see; sniper range"
 	}
@@ -170,13 +170,11 @@ let r = [
 	150, -11,
 	200, -12,
 	300, -13,
-	500, -14,
-	700, -15,
-	1000, -16 ];
+	"300+", -14 ];
 
 for (let i = 0; i < r.length; i = i + 2) {
 	let d = {
-		band: `${r[i]} yds`,
+		moddesc: `for range/speed ${r[i]} yds`,
 		max: r[i],
 		penalty: r[i+1],
 		desc: `${r[i]} yds`
@@ -184,8 +182,8 @@ for (let i = 0; i < r.length; i = i + 2) {
 	GURPS.basicSetRanges.push(d);
 }	
 	
-//GURPS.ranges = GURPS.monsterHunter2Ranges;
-GURPS.ranges = GURPS.basicSetRanges;
+GURPS.ranges = GURPS.monsterHunter2Ranges;
+//GURPS.ranges = GURPS.basicSetRanges;
 
 /*
 	Convert XML text into a JSON object

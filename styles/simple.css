@@ -1482,7 +1482,7 @@ body {
   display: grid;
   border: 1px solid lightgray;
   align-content: stretch;
-  grid-template-columns: 3fr repeat(15, 1fr);
+  grid-template-columns: 3fr repeat(var(--count), 1fr);
   grid-template-rows: 0fr 0fr;
 }
 

@@ -5,8 +5,9 @@
 
 ### History
 - 0.6.4
-		- Measuring Ruler automatically creates Range Modifier.
-		- Started work for Monster Hunters 2 range modifiers.
+    - Measuring Ruler automatically creates Range Modifier.
+    - Started work for Monster Hunters 2 range modifiers.
+    - Refactored dice rolling so that modifiers now add to damage
 - 0.6.3
     - Hot toggle between "full" and "combat" character sheets
     - template.json changes.   You must delete all Actors created prior to v0.6.3
