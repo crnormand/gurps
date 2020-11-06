@@ -7,6 +7,16 @@ export class ModifierBucket extends Application {
 	};
 	displayElement = null;
 	tooltipElement = null;	
+	tempRangeMod = null;
+	
+	addTempRangeMod() {
+		this.addModifier(this.tempRangeMod, "for range");
+	}
+	
+	setTempRangeMod(mod) {
+//		console.log("Range mod: " + mod);
+		this.tempRangeMod = mod;
+	}
 
   getData(options) {
     const data = super.getData(options);

@@ -8,7 +8,8 @@
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
   "esmodules": [
-    "module/gurps.js"
+    "module/gurps.js",
+		"lib/SSRT/main.js"
   ],
   "styles": [
     "styles/simple.css"

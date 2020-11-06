@@ -3,12 +3,6 @@ import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
 import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
-import { Skill } from "./actor.js";
-import { Spell } from "./actor.js";
-import { Advantage } from "./actor.js";
-import { Melee } from "./actor.js";
-import { Ranged } from "./actor.js";
-import { Encumbrance } from "./actor.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
@@ -768,7 +762,7 @@ Hooks.once("init", async function () {
 	console.log(`Initializing GURPS 4e System`);
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
-	console.log(GURPS.objToString(GURPS));
+	//console.log(GURPS.objToString(GURPS));
 
 	/**
 	 * Set an initiative formula for the system
