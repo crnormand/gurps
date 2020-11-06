@@ -5,9 +5,11 @@
 
 ### History
 - 0.6.4
+    - HP & FP editable, and Conditions change color.
+    - ACC and Bulk ranged modifiers work.
     - Measuring Ruler automatically creates Range Modifier.
     - Started work for Monster Hunters 2 range modifiers.
-    - Refactored dice rolling so that modifiers now add to damage
+    - Refactored dice rolling so that modifiers now add to damage.
 - 0.6.3
     - Hot toggle between "full" and "combat" character sheets
     - template.json changes.   You must delete all Actors created prior to v0.6.3
