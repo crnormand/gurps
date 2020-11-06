@@ -121,31 +121,31 @@ GURPS.hitlocationRolls = {
 */
 GURPS.monsterHunter2Ranges = [
 	{
-		moddesc: "for Close range", 
+		moddesc: "for Close range",
 		max: 5,
 		penalty: 0,
 		description: "Can touch or strike foe"
 	},
 	{
-		moddesc: "for Short range", 
+		moddesc: "for Short range",
 		max: 20,
 		penalty: -3,
 		description: "Can talk to foe; pistol or muscle-powered missile range"
 	},
 	{
-		moddesc: "for Medium range", 
+		moddesc: "for Medium range",
 		max: 100,
 		penalty: -7,
 		description: "Can only shout to foe; shotgun or SMG range"
 	},
 	{
-		moddesc: "for Long range", 
+		moddesc: "for Long range",
 		max: 500,
 		penalty: -11,
 		description: "Opponent out of earshot; rifle range"
 	},
 	{
-		moddesc: "for Extreme range", 
+		moddesc: "for Extreme range",
 		max: "500+",				// Finaly entry.   Could be null, but would require extra check... so just make it LARGE
 		penalty: -15,
 		desc: "Rival difficult to even see; sniper range"
@@ -155,13 +155,13 @@ GURPS.monsterHunter2Ranges = [
 // Must be kept in order... checking range vs Max.   If >Max, go to next entry.
 GURPS.basicSetRanges = [];
 // Yes, I should be able to do this programatically... but my brain hurts right now, so there.
-let r = [ 
-	2, 0, 
+let r = [
+	2, 0,
 	3, -1,
 	5, -2,
 	7, -3,
 	10, -4,
-	15,	-5,
+	15, -5,
 	20, -6,
 	30, -7,
 	50, -8,
@@ -170,18 +170,18 @@ let r = [
 	150, -11,
 	200, -12,
 	300, -13,
-	"300+", -14 ];
+	"300+", -14];
 
 for (let i = 0; i < r.length; i = i + 2) {
 	let d = {
 		moddesc: `for range/speed ${r[i]} yds`,
 		max: r[i],
-		penalty: r[i+1],
+		penalty: r[i + 1],
 		desc: `${r[i]} yds`
 	};
 	GURPS.basicSetRanges.push(d);
-}	
-	
+}
+
 GURPS.ranges = GURPS.monsterHunter2Ranges;
 //GURPS.ranges = GURPS.basicSetRanges;
 
@@ -625,11 +625,11 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	// Is Dice So Nice enabled ?
 	let niceDice = false;
 	try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
-	
+
 	// Lets collect up the modifiers, they are used differently depending on the type of roll
 	let modscontent = "";
 	let modifier = 0;
-	
+
 	targetmods = GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
 	if (targetmods.length > 0) {
 		modscontent = "<i>";
@@ -664,7 +664,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			results += " <span style='color:green; font-size: 130%;'><b>Success!</b></span>  ";
 		else
 			results += " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
-	
+
 		let rdesc = " <small>";
 		if (margin == 0) rdesc += "just made it.";
 		if (margin > 0) rdesc += "made it by " + margin;
@@ -691,11 +691,11 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			rtotal = min;
 			if (b378) b378content = " (minimum of 1 point of damage per B378)"
 		}
-		
+
 		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 		if (rtotal == 1) thing = thing.replace("points", "point") + b378content;
 		chatcontent = prefix + modscontent + "<br>" + results + thing;
-	} 
+	}
 
 	const speaker = { alias: actor.name, _id: actor._id }
 	let messageData = {
@@ -912,76 +912,133 @@ Hooks.once("init", async function () {
 
 	Handlebars.registerHelper('gt', function (a, b) { return a > b; });
 
-	Handlebars.registerHelper('hpBreakpoints', function (index, hpMax) {
-		const hpBreakpoints = [
-			Math.floor(hpMax / 3),
-			0,
-			-1 * hpMax,
-			-2 * hpMax,
-			-3 * hpMax,
-			-4 * hpMax,
-			-5 * hpMax]
-
-		return hpBreakpoints[index]
-	});
-
-	Handlebars.registerHelper('fpBreakpoints', function (index, fpMax) {
-		const fpBreakpoints = [
-			Math.floor(fpMax / 3),
-			0,
-			-1 * fpMax
-		]
-
-		return fpBreakpoints[index]
-	});
-
-	const hpCondition = function (hpMax, hpCurrent) {
-		if (hpCurrent >= hpMax / 3) return 'Normal'
-		if (hpCurrent > 0) return 'Reeling'
-		if (hpCurrent > -hpMax) return 'Collapse'
-		if (hpCurrent > -2 * hpMax) return 'Check #1'
-		if (hpCurrent > -3 * hpMax) return 'Check #2'
-		if (hpCurrent > -4 * hpMax) return 'Check #3'
-		if (hpCurrent > -5 * hpMax) return 'Check #4'
-		if (hpCurrent > -10 * hpMax) return 'Dead'
-		return 'Destroyed'
+	GURPS.hpConditions = {
+		NORMAL: {
+			breakpoint: (_) => Number.MAX_SAFE_INTEGER,
+			label: 'Normal',
+			style: 'normal'
+		},
+		REELING: {
+			breakpoint: (HP) => (HP.max / 3),
+			label: 'Reeling',
+			style: 'reeling'
+		},
+		COLLAPSE: {
+			breakpoint: (_) => 0,
+			label: 'Collapse',
+			style: 'collapse'
+		},
+		CHECK1: {
+			breakpoint: (HP) => -1 * HP.max,
+			label: 'Check #1',
+			style: 'check'
+		},
+		CHECK2: {
+			breakpoint: (HP) => -2 * HP.max,
+			label: 'Check #2',
+			style: 'check'
+		},
+		CHECK3: {
+			breakpoint: (HP) => -3 * HP.max,
+			label: 'Check #3',
+			style: 'check'
+		},
+		CHECK4: {
+			breakpoint: (HP) => -4 * HP.max,
+			label: 'Check #4',
+			style: 'check'
+		},
+		DEAD: {
+			breakpoint: (HP) => -5 * HP.max,
+			label: 'Dead',
+			style: 'dead'
+		},
+		DESTROYED: {
+			breakpoint: (HP) => -10 * HP.max,
+			label: 'Destroyed',
+			style: 'destroyed'
+		}
 	}
 
-	const fpCondition = function (fpMax, fpCurrent) {
-		if (fpCurrent >= fpMax / 3) return 'Normal'
-		if (fpCurrent > 0) return 'Tired'
-		if (fpCurrent > -fpMax) return 'Collapse'
-		return 'Unconscious'
+	GURPS.fpConditions = {
+		NORMAL: {
+			breakpoint: (_) => Number.MAX_SAFE_INTEGER,
+			label: 'Normal',
+			style: 'normal'
+		},
+		REELING: {
+			breakpoint: (FP) => (FP.max / 3),
+			label: 'Tired',
+			style: 'tired'
+		},
+		COLLAPSE: {
+			breakpoint: (_) => 0,
+			label: 'Collapse',
+			style: 'collapse'
+		},
+		UNCONSCIOUS: {
+			breakpoint: (FP) => -1 * FP.max,
+			label: 'Unconscious',
+			style: 'unconscious'
+		}
+	}
+
+	const getConditionKey = function (pts, conditions) {
+		var found = conditions['NORMAL']
+		for (const [key, value] of Object.entries(conditions)) {
+			if (pts.value > value.breakpoint(pts)) { return found }
+			found = key
+		}
+		return found
+	}
+
+	const hpCondition = function (HP, member) {
+		let key = getConditionKey(HP, GURPS.hpConditions)
+		return GURPS.hpConditions[key][member]
+	}
+
+	const fpCondition = function (FP, member) {
+		let key = getConditionKey(FP, GURPS.fpConditions)
+		return GURPS.fpConditions[key][member]
 	}
 
 	Handlebars.registerHelper('hpCondition', hpCondition);
-
-	Handlebars.registerHelper('hpConditionStyle', function (hpMax, hpCurrent) {
-		if (hpCurrent >= hpMax / 3) return 'normal'
-		if (hpCurrent > 0) return 'reeling'
-		if (hpCurrent > -hpMax) return 'collapse'
-		if (hpCurrent > -5 * hpMax) return 'check'
-		if (hpCurrent > -10 * hpMax) return 'dead'
-		return 'destroyed'
-	});
-
-	Handlebars.registerHelper('hpConditionSelected', function (hp, name) {
-		var label = hpCondition(hp.max, hp.value)
-		return (label === name) ? 'selected' : ''
-	});
-
-	Handlebars.registerHelper('fpConditionSelected', function (fp, name) {
-		var label = fpCondition(fp.max, fp.value)
-		return (label === name) ? 'selected' : ''
-	});
-
 	Handlebars.registerHelper('fpCondition', fpCondition);
 
-	Handlebars.registerHelper('fpConditionStyle', function (fpMax, fpCurrent) {
-		if (fpCurrent >= fpMax / 3) return 'normal'
-		if (fpCurrent > 0) return 'reeling'
-		if (fpCurrent > -fpMax) return 'collapse'
-		return 'unconscious'
+	const buildOutput = function (list, opt) {
+		var results = ''
+		list.forEach((item) => {
+			results += opt.fn(item)
+		})
+		return results
+	}
+
+	Handlebars.registerHelper('hpBreakpoints', function (HP, opt) {
+		var list = []
+		for (const [key, value] of Object.entries(GURPS.hpConditions)) {
+			let currentKey = getConditionKey(HP, GURPS.hpConditions)
+			list.push({
+				breakpoint: Math.floor(value.breakpoint(HP)).toString(),
+				label: value.label.toString(),
+				style: (key === currentKey) ? "selected" : ""
+			})
+		}
+		list.shift()
+		return buildOutput(list, opt)
+	});
+
+	Handlebars.registerHelper('fpBreakpoints', function (FP, opt) {
+		var list = []
+		for (const [key, value] of Object.entries(GURPS.fpConditions)) {
+			let currentKey = getConditionKey(FP, GURPS.fpConditions)
+			list.push({
+				breakpoint: Math.floor(value.breakpoint(FP)).toString(),
+				label: value.label.toString(),
+				style: (key === currentKey) ? "selected" : ""
+			})
+		}
+		list.shift()
+		return buildOutput(list, opt)
 	});
 
 	// Only necessary because of the FG import

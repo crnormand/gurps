@@ -23,8 +23,7 @@
         <div class='condition-block'>
           <div class='basic-value'>{{data.HP.max}}</div>
           <div class='basic-label'>Basic</div>
-          <div class='condition {{hpConditionStyle data.HP.max data.HP.value}}'>
-            {{hpCondition data.HP.max data.HP.value}}</div>
+          <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}</div>
         </div>
       </div> <!-- end of combat-hit -->
 
@@ -37,8 +36,7 @@
         <div class='condition-block'>
           <div class='basic-value'>{{data.FP.max}}</div>
           <div class='basic-label'>Basic</div>
-          <div class='condition {{fpConditionStyle data.FP.max data.FP.value}}'>
-            {{fpCondition data.FP.max data.FP.value}}</div>
+          <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}</div>
         </div>
       </div> <!-- combat-fat -->
 
@@ -212,13 +210,13 @@
           <div class="header">Speed/Range Table</div>
           <div id="range-table" style="--count: {{ranges.length}}">
             <div class="label">Measure (yd)</div>
-						{{#each ranges}}
+            {{#each ranges}}
             <div class="label">{{this.max}}</div>
-						{{/each}}
+            {{/each}}
             <div class="label">Modifier</div>
-						{{#each ranges}}
+            {{#each ranges}}
             <div class="label {{#if (ne this '0')}}gmod{{/if}}" data-name="{{this.moddesc}}">{{this.penalty}}</div>
-						{{/each}}
+            {{/each}}
           </div>
         </div>
       </div> <!-- end of combat-weapons -->
