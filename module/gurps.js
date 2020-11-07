@@ -1028,6 +1028,7 @@ Hooks.once("ready", async function () {
 		}
 	}
 
+	// This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
 	Hooks.on('updateUser', (...args) => {
 		if (!!args) {
 			if (args.length >= 4) {
@@ -1036,7 +1037,7 @@ Hooks.once("ready", async function () {
 				//				console.log("Update for: " + game.users.get(target).name + " from: " + game.users.get(source).name);
 				if (target == game.user.id) {
 					if (source != target) {		// Someone else (a GM) is updating your data.
-						let date = args[1].flags?.gurps?.modifierchanged;
+						let date = args[1].flags?.gurps?.modifierchanged;			// Just look for the "modifierchanged" data (which will be a date in ms... something that won't be the same)
 						if (!!date) game.GURPS.ModifierBucket.updateDisplay(date);
 					}
 				}

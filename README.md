@@ -1,9 +1,12 @@
 ### [Guide on how to use GURPS 4e for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
 
 
-## Current Version 0.6.4
+## Current Version 0.6.5
 
 ### History
+- 0.6.5
+		- Removed "+0" range modifiers
+		- Enabled Full/Combat view for Players
 - 0.6.4
     - HP & FP editable, and Conditions change color.
     - ACC and Bulk ranged modifiers work.

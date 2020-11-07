@@ -10,11 +10,11 @@ export class ModifierBucket extends Application {
 	tempRangeMod = null;
 	
 	addTempRangeMod() {
-		this.addModifier(this.tempRangeMod, "for range");
+		if (this.tempRangeMod != 0)
+			this.addModifier(this.tempRangeMod, "for range");
 	}
 	
 	setTempRangeMod(mod) {
-//		console.log("Range mod: " + mod);
 		this.tempRangeMod = mod;
 	}
 
@@ -139,7 +139,7 @@ export class ModifierBucket extends Application {
 		this.updateBucket();
 	}
 	
-	applyMods(targetmods) {
+	async applyMods(targetmods) {
 		let stack = this.modifierStack;
 		let answer = (!!targetmods) ? targetmods : [];
 		for (let m of Object.values(stack.modifierList))
@@ -158,13 +158,12 @@ export class ModifierBucket extends Application {
 		this.updateBucket();
 	}
 	
-	updateBucket() {
+	async updateBucket() {
 		this.showMods(false);		
 		game.user.setFlag("gurps", "modifierstack", this.modifierStack);
 	}
 	
-	updateDisplay(changed) {
-		console.log("Update display: " + changed);
+	async updateDisplay(changed) {
 		this.modifierStack = game.user.getFlag("gurps", "modifierstack");
 		this.sum();
 		this.showMods(false);		
@@ -200,7 +199,7 @@ export class ModifierBucket extends Application {
 		return content;
 	}
 	
-	showMods(inChat) {
+	async showMods(inChat) {
 		if (inChat) {
 			let messageData = {
 		  	content: this.chatString(stack),		
@@ -213,6 +212,6 @@ export class ModifierBucket extends Application {
 		if (this.currentSum() < 0) st += ";color:#ff7f00";
 		if (this.currentSum() > 0) st += ";color:lightgreen";
 		this.displayElement.style = st;
-		this.tooltipElement.innerHTML = this.htmlForMods();
+		this.tooltipElement.innerHTML = await renderTemplate("systems/gurps/templates/modifier-bucket-tooltip.html", { test: "test me" });
 	}
 }
