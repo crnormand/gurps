@@ -1,12 +1,16 @@
 export class ModifierBucket extends Application {
 	
+	SHOWING = false;
 	modifierStack = {
 		modifierList: [],  // { "mod": +/-N, "desc": "" }
 		currentSum: 0,
-		displaySum: "+0"
+		displaySum: "+0",
+		plus: false,
+		minus: false
 	};
 	displayElement = null;
 	tooltipElement = null;	
+	tooltipElementParent = null;
 	tempRangeMod = null;
 	
 	addTempRangeMod() {
@@ -21,9 +25,20 @@ export class ModifierBucket extends Application {
   getData(options) {
     const data = super.getData(options);
 		data.gmod = this;
-		data.mlist = this.modifierStack;
+		data.stack = this.modifierStack;
     return data;
 	}
+		
+	_onleave(ev) {
+		this.tooltipElement.style.setProperty("visibility", "hidden");
+		this.SHOWING = false;
+	}
+	
+	_onenter(ev) {
+		this.tooltipElement.style.setProperty("visibility", "visible");
+		this.SHOWING = true;
+	}
+
 	
 	activateListeners(html) {
 	  super.activateListeners(html);
@@ -31,16 +46,33 @@ export class ModifierBucket extends Application {
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
 		e.contextmenu(this.onRightClick.bind(this));
+		
+		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
+
 		if (!!e[0])
 			this.displayElement = e[0];
-		e = html.find("#modttt");
-		if (!!e[0])
-			this.tooltipElement = e[0];
+		this.tooltipElementParent = html.find("#modttt");
+		
+		this.tooltipElementParent.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
+		this.tooltipElementParent.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
+		if (!!this.tooltipElementParent[0])
+			this.tooltipElement = this.tooltipElementParent[0];
+		html.find(".removemod").click(this._onClickRemoveMod.bind(this));
+		this.tooltipElement.style.setProperty("visibility", this.SHOWING ? "visible" : "hidden");
 	}
 	
 	async _onClickTrash(event) {
 		event.preventDefault();
 		this.clear();
+	}
+	
+	async _onClickRemoveMod(event) {
+		event.preventDefault();
+		let element = event.currentTarget;
+		let index = element.dataset.index;
+		this.modifierStack.modifierList.splice(index, 1);
+		this.sum();
+		this.render(true);	
 	}
 	
 	async _onClick(event) {
@@ -106,7 +138,8 @@ export class ModifierBucket extends Application {
 
 	// Public method.   Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
-		return { "mod": this.displayMod(mod), "desc": reason };
+		let m = this.displayMod(mod);
+		return { "mod": m, "desc": reason, "plus": (m[0] == "+")};
 	}
 	
 	sum() {
@@ -116,6 +149,8 @@ export class ModifierBucket extends Application {
 			stack.currentSum += parseInt(m.mod);
 		}
 		stack.displaySum = this.displayMod(stack.currentSum);
+		stack.plus = stack.currentSum > 0;
+		stack.minus = stack.currentSum < 0;
 	}
 
 	displaySum() {
@@ -206,11 +241,9 @@ export class ModifierBucket extends Application {
 		 	};
 			CONFIG.ChatMessage.entityClass.create(messageData, {}); 
 		}
-		this.displayElement.textContent = this.displaySum();
-		let st = "line-height: 40px;text-shadow: 2px 2px black";
-		if (this.currentSum() < 0) st += ";color:#ff7f00";
-		if (this.currentSum() > 0) st += ";color:lightgreen";
-		this.displayElement.style = st;
-		this.tooltipElement.innerHTML = this.htmlForMods(); // await renderTemplate("systems/gurps/templates/modifier-bucket-tooltip.html", { test: "test me" });
-	}
+		this.render(true);
+/*		setTimeout(() => {
+				this.tooltipElement.style.setProperty("visibility", "hidden");
+			}, 2000);
+*/	}
 }

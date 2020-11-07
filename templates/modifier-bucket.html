@@ -3,12 +3,42 @@
 		<table style="border: none; width:100%; height:100%; margin: auto; padding: 0px 0px 0px 0px;border-spacing:0px;">
 		<tr>
 			<td style="font-size: 20px;padding: 0px 0px 0px 0px;text-align:center; width:55px; height:100%;vertical-align:middle;">
-				<div style=height:40px; overflow:hidden; padding: 15px 0px 5px 0px"><div id="globalmodifier" style="line-height: 40px;text-shadow: 2px 2px black">{{mlist.displaySum}}</div>
+				<div style=height:40px; overflow:hidden; padding: 15px 0px 5px 0px">
+					<div id="globalmodifier" style="line-height: 40px;text-shadow: 2px 2px black;{{#if stack.plus}}color:lightgreen{{/if}}{{#if stack.minus}}color:#ff7f00{{/if}}">{{stack.displaySum}}</div>
+				
 				</div>
 			</td>
 			<td style="padding: 0px 2px 0px 0px;vertical-align:middle;"><div id="trash" class="fas fa-trash-alt"/></td>
 		</tr>
 		</table>
-		<div id="modttt" class="modttt">No modifiers</div>
+		<div id="modttt" class="modttt">
+
+			<div id="modtooltip">
+				<div id="modtooltiplefttop">    
+					<div> line 1</div>
+					<div> line 2</div>
+					<div> line 3</div>
+					<div> line a</div>
+					<div> line w</div>
+					<div> line s</div>
+			  </div>
+			
+			  <div id="modtooltipleftcenter">
+			      left center
+			  </div>
+			
+			  <div id="modtooltipleftbottom">
+			    <div style="font-size:130%;color:black">Current Modifiers:</div>
+					{{#each stack.modifierList}}
+						<div class="removemod" data-index="{{@index}}" style="color:{{#if this.plus}}green{{else}}red{{/if}}">{{this.mod}} : {{this.desc}}</div>
+					{{/each}}
+					<div style="display: grid;align-content: end;">    
+
+						<div style="color:black">Total: {{stack.displaySum}}</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
 	</div>
 <form>

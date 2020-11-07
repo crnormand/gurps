@@ -37,7 +37,9 @@
 	display: grid;
 	justify-content: start;
 	align-content: start;    
-
+	border: 5px;
+	margin: 5px;
+	background-color: white;
 }
 
 #modtooltiprighttop {
@@ -100,7 +102,7 @@
 }
 
 .modifierbucket .modttt {
-/*  visibility: hidden;  */
+/*  visibility: hidden;  */  visibility: hidden;
   width: 820px;
 	height: 600px;
   background-color: black;
@@ -110,7 +112,7 @@
   padding: 5px 10px 5px 10px;
   position: absolute;
   z-index: 999;
-  bottom: 200%;
+  bottom: 102px;
   left: 50%;
   margin-left: -410px;
 
@@ -120,9 +122,10 @@
 }
 
 
-.modifierbucket:hover .modttt {
+
+.modifierbucket:hover .modttt, #modtt:focus-within {
   visibility: visible;
-  z-index: 999;
+  z-index: 1000;
   /*opacity: 1;	*/
 }
 
@@ -135,7 +138,7 @@
   border-width: 37px 300px;
   border-style: solid;
   border-color: black transparent transparent transparent;
-  z-index: 999;
+  z-index: -100;
 }
 
 .gcs-attr-input {
