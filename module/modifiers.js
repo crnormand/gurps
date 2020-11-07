@@ -1,7 +1,7 @@
 export class ModifierBucket extends Application {
 	
 	modifierStack = {
-		modifierList: {},  // { "mod": +/-N, "desc": "" }
+		modifierList: [],  // { "mod": +/-N, "desc": "" }
 		currentSum: 0,
 		displaySum: "+0"
 	};
@@ -112,7 +112,7 @@ export class ModifierBucket extends Application {
 	sum() {
 		let stack = this.modifierStack;
 		stack.currentSum = 0;
-		for (let m of Object.values(stack.modifierList)) {
+		for (let m of stack.modifierList) {
 			stack.currentSum += parseInt(m.mod);
 		}
 		stack.displaySum = this.displayMod(stack.currentSum);
@@ -128,12 +128,12 @@ export class ModifierBucket extends Application {
 	
 	addModifier(mod, reason) {
 		let stack = this.modifierStack;
-		let oldmod = stack.modifierList.findInProperties(m => m.desc == reason);
+		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
 			let m = parseInt(oldmod.mod) + mod;
 			oldmod.mod = this.displayMod(m);
 		} else {
-			game.GURPS.put(stack.modifierList, this.makeModifier(mod, reason));
+			stack.modifierList.push(this.makeModifier(mod, reason));
 		}
 		this.sum();
 		this.updateBucket();
@@ -142,8 +142,7 @@ export class ModifierBucket extends Application {
 	async applyMods(targetmods) {
 		let stack = this.modifierStack;
 		let answer = (!!targetmods) ? targetmods : [];
-		for (let m of Object.values(stack.modifierList))
-				 answer.push(m);
+		answer = answer.concat(stack.modifierList);
 		this.clear();
   	return answer;
 	}
@@ -151,7 +150,7 @@ export class ModifierBucket extends Application {
 	async clear() {
 		await game.user.setFlag("gurps", "modifierstack", null);
 		this.modifierStack = {
-			modifierList: {},  // { "mod": +/-N, "desc": "" }
+			modifierList: [],  // { "mod": +/-N, "desc": "" }
 			currentSum: 0,
 			displaySum: "+0"
 		}
@@ -171,9 +170,9 @@ export class ModifierBucket extends Application {
 	
 	chatString(modst, name = "") {
 		let content =  name + "No modifiers";
-		if (Object.values(modst.modifierList).length > 0) {
+		if (modst.modifierList.length > 0) {
 			content = name + "total: " +  modst.displaySum;
-			for (let m of Object.values(modst.modifierList)) {
+			for (let m of modst.modifierList) {
 				content += "<br> &nbsp;" + m.mod + " : " + m.desc;
 			}
 		}
@@ -183,10 +182,10 @@ export class ModifierBucket extends Application {
 	htmlForMods() {
 		let stack = this.modifierStack;
 		let content = "<div style='font-size:130%'>No modifiers</div>";
-		if (Object.values(stack.modifierList).length > 0) {
+		if (stack.modifierList.length > 0) {
 			let clr = "#ff7f00";
 			content = "<div style='font-size:130%'>Current Modifiers:<br><br>\n";
-			for (let m of Object.values(stack.modifierList)) {
+			for (let m of stack.modifierList) {
 				let clr = "#ff7f00";
 				clr = (m.mod[0] == "+") ? "lightgreen" : "#ff7f00";
 				content += "<div style='color:" + clr + ";text-align: left;'>" + m.mod + " : " + m.desc + "</div>\n";
@@ -212,6 +211,6 @@ export class ModifierBucket extends Application {
 		if (this.currentSum() < 0) st += ";color:#ff7f00";
 		if (this.currentSum() > 0) st += ";color:lightgreen";
 		this.displayElement.style = st;
-		this.tooltipElement.innerHTML = await renderTemplate("systems/gurps/templates/modifier-bucket-tooltip.html", { test: "test me" });
+		this.tooltipElement.innerHTML = this.htmlForMods(); // await renderTemplate("systems/gurps/templates/modifier-bucket-tooltip.html", { test: "test me" });
 	}
 }

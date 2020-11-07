@@ -101,7 +101,7 @@
 
 .modifierbucket .modttt {
 /*  visibility: hidden;  */
-  width: 620px;
+  width: 820px;
 	height: 600px;
   background-color: black;
   color: #fff;
@@ -112,7 +112,7 @@
   z-index: 999;
   bottom: 200%;
   left: 50%;
-  margin-left: -310px;
+  margin-left: -410px;
 
   /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
   /* opacity: 0;

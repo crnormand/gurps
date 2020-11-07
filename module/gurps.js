@@ -630,7 +630,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	let modscontent = "";
 	let modifier = 0;
 	
-	targetmods = GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
+	targetmods = await GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
 	if (targetmods.length > 0) {
 		modscontent = "<i>";
 		for (let m of targetmods) {
