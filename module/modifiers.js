@@ -8,9 +8,8 @@ export class ModifierBucket extends Application {
 		plus: false,
 		minus: false
 	};
-	displayElement = null;
+	ModifierBucketElement = null;
 	tooltipElement = null;	
-	tooltipElementParent = null;
 	tempRangeMod = null;
 	
 	addTempRangeMod() {
@@ -26,9 +25,17 @@ export class ModifierBucket extends Application {
     const data = super.getData(options);
 		data.gmod = this;
 		data.stack = this.modifierStack;
+		data.meleemods = game.GURPS.MeleeMods;
+		data.rangedmods = game.GURPS.RangedMods;
+		data.defensemods = game.GURPS.DefenseMods;
+		data.speedrangemods = game.GURPS.SpeedRangeMods;
+		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "None selected";
+		data.othermods = game.GURPS.OtherMods;
+		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
+		data.users = game.users?.filter(u => u._id != game.user._id) || [];
     return data;
 	}
-		
+	
 	_onleave(ev) {
 		this.tooltipElement.style.setProperty("visibility", "hidden");
 		this.SHOWING = false;
@@ -45,21 +52,65 @@ export class ModifierBucket extends Application {
 		html.find("#trash").click(this._onClickTrash.bind(this));
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
-		e.contextmenu(this.onRightClick.bind(this));
-		
+		//e.contextmenu(this.onRightClick.bind(this));
 		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
-
 		if (!!e[0])
 			this.displayElement = e[0];
-		this.tooltipElementParent = html.find("#modttt");
-		
-		this.tooltipElementParent.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
-		this.tooltipElementParent.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
-		if (!!this.tooltipElementParent[0])
-			this.tooltipElement = this.tooltipElementParent[0];
+			
+		e = html.find("#modttt");
+		e.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
+		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
+		if (!!e[0])
+			this.tooltipElement = e[0];
 		html.find(".removemod").click(this._onClickRemoveMod.bind(this));
-		this.tooltipElement.style.setProperty("visibility", this.SHOWING ? "visible" : "hidden");
+		if (this.SHOWING) {
+			this.tooltipElement.style.setProperty("visibility", "visible");
+		} else {
+			this.tooltipElement.style.setProperty("visibility", "hidden");
+		}
+		
+		html.find(".rollable").click(this._onClickRoll.bind(this));
+    html.find(".pdflink").click(this._onClickPdf.bind(this));
+    html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
+    html.find(".gmod").click(this._onClickGmod.bind(this));
+    html.find(".glinkmod").click(this._onClickGmod.bind(this));
+
+		html.find(".gmbutton").click(this._onGMbutton.bind(this));
+
 	}
+	
+	async _onGMbutton(event) {
+    event.preventDefault();
+		let element = event.currentTarget;
+		let id = element.dataset.id;
+		 
+		let u = game.users.get(id);
+		await u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
+		await u.setFlag("gurps", "modifierchanged", Date.now());
+		this.showOthers();
+	}
+	
+	async _onClickPdf(event) {
+    event.preventDefault();
+    game.GURPS.onPdf(event);
+  }
+
+  async _onClickRoll(event) {
+    event.preventDefault();
+    game.GURPS.onRoll(event, this.actor);
+  }
+
+  async _onClickGurpslink(event) {
+    event.preventDefault();
+    game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+  }
+
+  async _onClickGmod(event) {
+    let element = event.currentTarget;
+    event.preventDefault();
+    let desc = element.dataset.name;
+    game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+  }
 	
 	async _onClickTrash(event) {
 		event.preventDefault();
@@ -83,13 +134,18 @@ export class ModifierBucket extends Application {
 			this.showMods(true);
 			return;
 		}
+		
+		this.showOthers();
+	}
+	
+	async showOthers() {
 		let users = game.users.filter(u => u._id != game.user._id);
 		let content = "";
 		let d = "";
 		for (let u of users) {
 			content += d;
 			d = "<hr>";
-			let stack = u.getFlag("gurps", "modifierstack");
+			let stack = await u.getFlag("gurps", "modifierstack");
 			if (!!stack)
 				content += this.chatString(stack, u.name + ", ");
 			else 
@@ -108,6 +164,8 @@ export class ModifierBucket extends Application {
 	async onRightClick(event) {
 		event.preventDefault();
 		if (!game.user.isGM) return;
+		this.SHOWING = false;
+		this.refresh();
 		let users = game.users.filter(u => u._id != game.user._id);
 		
 		let dialogData = {
@@ -233,6 +291,10 @@ export class ModifierBucket extends Application {
 		return content;
 	}
 	
+	refresh() {
+		this.render(true);
+	}
+	
 	async showMods(inChat) {
 		if (inChat) {
 			let messageData = {
@@ -241,9 +303,6 @@ export class ModifierBucket extends Application {
 		 	};
 			CONFIG.ChatMessage.entityClass.create(messageData, {}); 
 		}
-		this.render(true);
-/*		setTimeout(() => {
-				this.tooltipElement.style.setProperty("visibility", "hidden");
-			}, 2000);
-*/	}
+		this.refresh();
+	}
 }

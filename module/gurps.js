@@ -11,6 +11,14 @@ export const GURPS = {};
 
 //CONFIG.debug.hooks = true;
 
+// Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
+GURPS.LastActor = null;
+GURPS.SetLastActor = function (actor) {
+	GURPS.LastActor = actor;
+	GURPS.ModifierBucket.refresh();
+	console.log("Last Actor:" + actor.name);
+}
+
 GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
 	"height": 200,
@@ -23,6 +31,67 @@ GURPS.ModifierBucket = new ModifierBucket({
 	"template": "systems/gurps/templates/modifier-bucket.html",
 	"classes": [],
 });
+
+
+GURPS.MeleeMods = [
+	"[+4 to hit (Determined Attack melee)]",
+	"[+4 to hit (Telegraphic Attack)]",
+	"[-2 to hit (Deceptive Attack)]",
+	"[-2 to hit (Crouch)]",
+	"[-4 to hit (Prone)]",
+	"[+2 damage (Strong Attack)]",
+	"[+2 damage (Mighty Blow) *Cost 1FP]",
+	"[Heroic Charge *Cost 1FP]",
+];
+
+GURPS.RangedMods = [
+	"[+1 Aim]",
+	"[+1 to hit (Determined Attack ranged)]",
+	"[-2 to hit (Prone)]",
+	"[-2 to hit (Crouch)]",
+];
+	
+GURPS.DefenseMods = [
+	"[+2 All-Out Defense]",
+	"[+2 to dodge (Acrobatics)]",
+	"[+3 Dive]",
+	"[+3 Retreat dodge]",
+	"[+1 Retreat block/parry]",
+	"[-2 to dodge (Failed Acrobatics)]",
+	"[-2 to dodge (Attacked from side/back)]",
+	"[-4 to dodge (Attacked from rear)]",
+	"[-2 to defend (Kneeling/Sitting)]",
+	"[-3 to defend (Prone)]",
+	"[-4 to defend (Stunned!)]",
+	"[+2 Feverish Defense *Cost 1FP]"
+	
+]
+
+GURPS.BasicRangeSpeedMods = [
+	"[-1 Range 3 yds]",
+	"[-2 Range 5 yds]",
+	"[-3 Range 7 yds]",
+	"[-4 Range 10 yds]",
+	"[-5 Range 15 yds]",
+	"[-6 Range 20 yds]",
+	"[-7 Range 30 yds]",
+	"[-8 Range 50 yds]",
+	"[-9 Range 70 yds]"
+]
+
+GURPS.MonsterHunterSpeedRangeMods= [
+	"[-3 20 yds, Short range]",
+	"[-7 100 yds, Medium range]",
+	"[-11 500 yds, Long range]",
+	"[-15 500+ yds, Extreme range]"
+];
+	
+GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
+
+GURPS.OtherMods= [
+	"[+1 GM 'cause I said so!]",
+	"[-1 GM 'cause I said so!]"
+]
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -182,8 +251,8 @@ for (let i = 0; i < r.length; i = i + 2) {
 	GURPS.basicSetRanges.push(d);
 }	
 	
-GURPS.ranges = GURPS.monsterHunter2Ranges;
-//GURPS.ranges = GURPS.basicSetRanges;
+//GURPS.ranges = GURPS.monsterHunter2Ranges;
+GURPS.ranges = GURPS.basicSetRanges;
 
 /*
 	Convert XML text into a JSON object
@@ -783,8 +852,8 @@ GURPS.resolve = resolve;
 
 function onGurpslink(event, actor, desc) {
 	let element = event.currentTarget;
-	let action = this.parselink(element.innerText, actor.data, desc);
-	this.performAction(action.action, actor.data);
+	let action = this.parselink(element.innerText, actor?.data, desc);
+	this.performAction(action.action, actor?.data);
 }
 GURPS.onGurpslink = onGurpslink;
 
@@ -895,6 +964,8 @@ Hooks.once("init", async function () {
 		return o;
 	});
 
+
+	/// NOTE:  To use this, you must use {{{gurpslink sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
 	Handlebars.registerHelper('gurpslink', function (str, root) {
 		let actor = root?.data?.root?.actor;
 		if (!actor) actor = root?.actor;

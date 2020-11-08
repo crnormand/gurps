@@ -1,5 +1,5 @@
 <form class="{{cssClass}} overflowy" autocomplete="off">
-	<div class="app modifierbucket">
+	<div id="modifierbucket" class="app modifierbucket">
 		<table style="border: none; width:100%; height:100%; margin: auto; padding: 0px 0px 0px 0px;border-spacing:0px;">
 		<tr>
 			<td style="font-size: 20px;padding: 0px 0px 0px 0px;text-align:center; width:55px; height:100%;vertical-align:middle;">
@@ -15,29 +15,65 @@
 
 			<div id="modtooltip">
 				<div id="modtooltiplefttop">    
-					<div> line 1</div>
-					<div> line 2</div>
-					<div> line 3</div>
-					<div> line a</div>
-					<div> line w</div>
-					<div> line s</div>
-			  </div>
-			
-			  <div id="modtooltipleftcenter">
-			      left center
-			  </div>
-			
+					<div class="modttlabel">Current Effects on</div>
+					<div style="color:black">{{actorname}}</div>
+
+				</div>
+				
 			  <div id="modtooltipleftbottom">
-			    <div style="font-size:130%;color:black">Current Modifiers:</div>
+			    <div class="modttlabel">Current Modifiers <span style="font-size:75%"><i>(click to remove)</i></span></div>
+					<div>&nbsp;</div>
 					{{#each stack.modifierList}}
 						<div class="removemod" data-index="{{@index}}" style="color:{{#if this.plus}}green{{else}}red{{/if}}">{{this.mod}} : {{this.desc}}</div>
 					{{/each}}
-					<div style="display: grid;align-content: end;">    
-
-						<div style="color:black">Total: {{stack.displaySum}}</div>
-					</div>
-
+					<div class="modttlabel"><br>Total: {{stack.displaySum}}</div>
 				</div>
+				
+				<div id="modtooltipcentertop">
+				<div class="modttlabel">Melee Attack:</div>
+					{{#each meleemods}}
+						<div>{{{gurpslink this}}}</div>
+					{{/each}}
+				</div>
+				
+				<div id="modtooltipleftcenter">Click on modifiers above and to the right to add to your next roll.<br><br>
+					They will appear in the Current Modifiers list below.<br><br><small><i>Move the mouse off of the window to close it.</i></small>
+				</div>
+	
+				<div id="modtooltipcentercenter">
+				<div class="modttlabel">Ranged:</div>
+					{{#each rangedmods}}
+						<div>{{{gurpslink this}}}</div>
+					{{/each}}
+				</div>
+			
+				<div id="modtooltiprighttop">
+				<div class="modttlabel">Defense:</div>
+					{{#each defensemods}}
+						<div>{{{gurpslink this}}}</div>
+					{{/each}}
+				</div>
+				
+				<div id="modtooltipcenterbottom">
+				<div class="modttlabel">Speed/Range</div>
+					{{#each speedrangemods}}
+						<div>{{{gurpslink this}}}</div>
+					{{/each}}
+				</div>
+
+				<div id="modtooltiprightbottom">
+					<div class="modttlabel">Other Modifiers</div>
+					{{#each othermods}}
+						<div>{{{gurpslink this}}}</div>
+					{{/each}}
+					<div style="display:grid;background-color:gold;display:{{#if cansend}}block{{else}}none{{/if}}; align-content: end">
+					<div class="modttlabel">Send your Modifier Bucket to:</div>
+					{{#each users}}
+						<button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
+					{{/each}}
+					</div>
+				</div>
+				
 			</div>
 		</div>
 	</div>
