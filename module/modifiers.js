@@ -25,14 +25,22 @@ export class ModifierBucket extends Application {
     const data = super.getData(options);
 		data.gmod = this;
 		data.stack = this.modifierStack;
-		data.meleemods = game.GURPS.MeleeMods;
-		data.rangedmods = game.GURPS.RangedMods;
-		data.defensemods = game.GURPS.DefenseMods;
-		data.speedrangemods = game.GURPS.SpeedRangeMods;
+		data.meleemods = game.GURPS.MeleeMods.split("\n");
+		data.rangedmods = game.GURPS.RangedMods.split("\n");
+		data.defensemods = game.GURPS.DefenseMods.split("\n");
+		data.speedrangemods = game.GURPS.SpeedRangeMods.split("\n");
 		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "None selected";
-		data.othermods = game.GURPS.OtherMods;
+		data.othermods = game.GURPS.OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
+		
+		data.currentmods = `${game.GURPS.horiz("Melee")}
+[-4 to hit melee (Prone)]
+${game.GURPS.horiz("Ranged")}
+[-2 to hit ranged (Prone)]
+${game.GURPS.horiz("Defense")}
+[-3 to defend (Prone)]`.split("\n");
+
     return data;
 	}
 	
@@ -74,6 +82,8 @@ export class ModifierBucket extends Application {
     html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
     html.find(".gmod").click(this._onClickGmod.bind(this));
     html.find(".glinkmod").click(this._onClickGmod.bind(this));
+   	html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
+   	html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
 

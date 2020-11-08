@@ -7,6 +7,7 @@
 - 0.6.5
 		- Removed "+0" range modifiers
 		- Enabled Full/Combat view for Players
+		- Major overhaul of the Modifier Bucket "tool tip"
 - 0.6.4
     - HP & FP editable, and Conditions change color.
     - ACC and Bulk ranged modifiers work.

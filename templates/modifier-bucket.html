@@ -16,7 +16,10 @@
 			<div id="modtooltip">
 				<div id="modtooltiplefttop">    
 					<div class="modttlabel">Current Effects on</div>
-					<div style="color:black">{{actorname}}</div>
+					<div style="color:blue">{{actorname}}</div>
+					{{#each currentmods}}
+						<div>{{{gurpslink this true}}}</div>
+					{{/each}}
 
 				</div>
 				
@@ -32,7 +35,7 @@
 				<div id="modtooltipcentertop">
 				<div class="modttlabel">Melee Attack:</div>
 					{{#each meleemods}}
-						<div>{{{gurpslink this}}}</div>
+						<div>{{{gurpslink this true}}}</div>
 					{{/each}}
 				</div>
 				
@@ -43,28 +46,28 @@
 				<div id="modtooltipcentercenter">
 				<div class="modttlabel">Ranged:</div>
 					{{#each rangedmods}}
-						<div>{{{gurpslink this}}}</div>
+						<div>{{{gurpslink this true}}}</div>
 					{{/each}}
 				</div>
 			
 				<div id="modtooltiprighttop">
 				<div class="modttlabel">Defense:</div>
 					{{#each defensemods}}
-						<div>{{{gurpslink this}}}</div>
+						<div>{{{gurpslink this true}}}</div>
 					{{/each}}
 				</div>
 				
 				<div id="modtooltipcenterbottom">
 				<div class="modttlabel">Speed/Range</div>
 					{{#each speedrangemods}}
-						<div>{{{gurpslink this}}}</div>
+						<div>{{{gurpslink this true}}}</div>
 					{{/each}}
 				</div>
 
 				<div id="modtooltiprightbottom">
 					<div class="modttlabel">Other Modifiers</div>
 					{{#each othermods}}
-						<div>{{{gurpslink this}}}</div>
+						<div>{{{gurpslink this true}}}</div>
 					{{/each}}
 					<div style="display:grid;background-color:gold;display:{{#if cansend}}block{{else}}none{{/if}}; align-content: end">
 					<div class="modttlabel">Send your Modifier Bucket to:</div>

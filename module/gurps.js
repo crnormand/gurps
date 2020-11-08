@@ -32,66 +32,66 @@ GURPS.ModifierBucket = new ModifierBucket({
 	"classes": [],
 });
 
+// Trick to make a nice break between items, instead of "---"
+GURPS.horiz = function (text, size = 10) {
+	let s = "<span style='text-decoration:line-through'>";
+	let line = s;
+	for (let i = 0; i < size; i++)
+		line += "&nbsp;";
+	line += "</span>";
+	line += " " + text + " ";
+	line += s;
+	for (let i = 0; i < size; i++)
+		line += "&nbsp;";
+	line += "</span>";
+	return line;
+}
 
-GURPS.MeleeMods = [
-	"[+4 to hit (Determined Attack melee)]",
-	"[+4 to hit (Telegraphic Attack)]",
-	"[-2 to hit (Deceptive Attack)]",
-	"[-2 to hit (Crouch)]",
-	"[-4 to hit (Prone)]",
-	"[+2 damage (Strong Attack)]",
-	"[+2 damage (Mighty Blow) *Cost 1FP]",
-	"[Heroic Charge *Cost 1FP]",
-];
+// Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
+GURPS.MeleeMods = `[+4 to hit (Determined Attack)]
+[+4 to hit (Telegraphic Attack)]
+[-2 to hit (Deceptive Attack)]
+[+2 damage (Strong Attack)]
+${GURPS.horiz("Extra Effort")}
+[+2 damage (Mighty Blow) *Cost 1FP]
+[+0 Heroic Charge *Cost 1FP]`;
 
-GURPS.RangedMods = [
-	"[+1 Aim]",
-	"[+1 to hit (Determined Attack ranged)]",
-	"[-2 to hit (Prone)]",
-	"[-2 to hit (Crouch)]",
-];
+GURPS.RangedMods = `[+1 Aim]
+[+1 to hit (Determined Attack)]`;
 	
-GURPS.DefenseMods = [
-	"[+2 All-Out Defense]",
-	"[+2 to dodge (Acrobatics)]",
-	"[+3 Dive]",
-	"[+3 Retreat dodge]",
-	"[+1 Retreat block/parry]",
-	"[-2 to dodge (Failed Acrobatics)]",
-	"[-2 to dodge (Attacked from side/back)]",
-	"[-4 to dodge (Attacked from rear)]",
-	"[-2 to defend (Kneeling/Sitting)]",
-	"[-3 to defend (Prone)]",
-	"[-4 to defend (Stunned!)]",
-	"[+2 Feverish Defense *Cost 1FP]"
-	
-]
+GURPS.DefenseMods = `[+2 All-Out Defense]
+[+1 to dodge (Shield)]
+[+2 to dodge (Acrobatics)]
+[+3 to dodge (Dive)]
+[+3 to dodge (Retreat)]
+[+1 block/parry (Retreat)]
 
-GURPS.BasicRangeSpeedMods = [
-	"[-1 Range 3 yds]",
-	"[-2 Range 5 yds]",
-	"[-3 Range 7 yds]",
-	"[-4 Range 10 yds]",
-	"[-5 Range 15 yds]",
-	"[-6 Range 20 yds]",
-	"[-7 Range 30 yds]",
-	"[-8 Range 50 yds]",
-	"[-9 Range 70 yds]"
-]
+[-2 to dodge (Failed Acrobatics)]
+[-2 to dodge (Attacked from side)]
+[-4 to dodge (Attacked from rear)]
+[-2 to defend (Kneeling/Sitting)]
+${GURPS.horiz("Extra Effort")}
+[+2 Feverish Defense *Cost 1FP]`;
 
-GURPS.MonsterHunterSpeedRangeMods= [
-	"[-3 20 yds, Short range]",
-	"[-7 100 yds, Medium range]",
-	"[-11 500 yds, Long range]",
-	"[-15 500+ yds, Extreme range]"
-];
+GURPS.BasicRangeSpeedMods = `[-1 Range 3 yds]
+[-2 Range 5 yds]
+[-3 Range 7 yds]
+[-4 Range 10 yds]
+[-5 Range 15 yds]
+[-6 Range 20 yds]
+[-7 Range 30 yds]
+[-8 Range 50 yds]
+[-9 Range 70 yds]`;
+
+GURPS.MonsterHunterSpeedRangeMods= `[-3 20 yds, Short range]
+[-7 100 yds, Medium range]
+[-11 500 yds, Long range]
+[-15 500+ yds, Extreme range]`;
 	
 GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
 
-GURPS.OtherMods= [
-	"[+1 GM 'cause I said so!]",
-	"[-1 GM 'cause I said so!]"
-]
+GURPS.OtherMods= `[+1 GM 'cause I said so!]
+[-1 GM 'cause I said so!]`
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -376,7 +376,13 @@ function gspan(str) {
 }
 GURPS.gspan = gspan;
 
-function gmspan(str) {
+function gmspan(str, plus, clrdmods) {
+	if (clrdmods) {
+		if (plus) 
+			return "<span class='glinkmodplus'>" + str + "</span>";
+		else
+			return "<span class='glinkmodminus'>" + str + "</span>";
+	}
 	return "<span class='glinkmod'>" + str + "</span>";
 }
 GURPS.gmspan = gmspan;
@@ -398,7 +404,7 @@ GURPS.gmspan = gmspan;
 		
 	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill", "pdf"
 */
-function parselink(str, actor, htmldesc) {
+function parselink(str, actor, htmldesc, clrdmods = false) {
 	if (str.length < 2)
 		return { "text": str };
 
@@ -411,7 +417,7 @@ function parselink(str, actor, htmldesc) {
 			let a = parse.split("~");
 			let desc = a[1].trim();
 			return {
-				"text": this.gmspan(str),
+				"text": this.gmspan(str, sign == "+", clrdmods),
 				"action": {
 					"type": "modifier",
 					"mod": sign + a[0],
@@ -788,7 +794,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
-function gurpslink(str, actor) {
+function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
 	if (str === undefined) return "!!UNDEFINED";
 	let found = -1;
 	let output = "";
@@ -796,10 +802,10 @@ function gurpslink(str, actor) {
 		if (str[i] == "[")
 			found = ++i;
 		if (str[i] == "]" && found >= 0) {
-			output += str.substring(0, found);
-			let action = this.parselink(str.substring(found, i), actor);
+			output += str.substring(0, (inclbrks ? found : found -1));
+			let action = this.parselink(str.substring(found, i), actor, "", clrdmods);
 			output += action.text;
-			str = str.substr(i);
+			str = str.substr(inclbrks ? i : i + 1);
 			i = 0;
 			found = -1;
 		}
@@ -967,10 +973,10 @@ Hooks.once("init", async function () {
 
 
 	/// NOTE:  To use this, you must use {{{gurpslink sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
-	Handlebars.registerHelper('gurpslink', function (str, root) {
+	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods=false, inclbrks=false) {
 		let actor = root?.data?.root?.actor;
 		if (!actor) actor = root?.actor;
-		return game.GURPS.gurpslink(str, actor);
+		return game.GURPS.gurpslink(str, actor, clrdmods, inclbrks);
 	});
 
 
