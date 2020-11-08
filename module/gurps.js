@@ -51,17 +51,13 @@ GURPS.horiz = function (text, size = 10) {
 GURPS.MeleeMods = `[+4 to hit (Determined Attack)]
 [+4 to hit (Telegraphic Attack)]
 [-2 to hit (Deceptive Attack)]
-[-2 to hit (Crouch)]
-[-4 to hit (Prone)]
 [+2 damage (Strong Attack)]
 ${GURPS.horiz("Extra Effort")}
 [+2 damage (Mighty Blow) *Cost 1FP]
 [+0 Heroic Charge *Cost 1FP]`;
 
 GURPS.RangedMods = `[+1 Aim]
-[+1 to hit (Determined Attack)]
-[-2 to hit (Prone)]
-[-2 to hit (Crouch)]`;
+[+1 to hit (Determined Attack)]`;
 	
 GURPS.DefenseMods = `[+2 All-Out Defense]
 [+1 to dodge (Shield)]
@@ -74,8 +70,6 @@ GURPS.DefenseMods = `[+2 All-Out Defense]
 [-2 to dodge (Attacked from side)]
 [-4 to dodge (Attacked from rear)]
 [-2 to defend (Kneeling/Sitting)]
-[-3 to defend (Prone)]
-[-4 to defend (Stunned!)]
 ${GURPS.horiz("Extra Effort")}
 [+2 Feverish Defense *Cost 1FP]`;
 

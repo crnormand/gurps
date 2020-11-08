@@ -33,6 +33,14 @@ export class ModifierBucket extends Application {
 		data.othermods = game.GURPS.OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
+		
+		data.currentmods = `${game.GURPS.horiz("Melee")}
+[-4 to hit melee (Prone)]
+${game.GURPS.horiz("Ranged")}
+[-2 to hit ranged (Prone)]
+${game.GURPS.horiz("Defense")}
+[-3 to defend (Prone)]`.split("\n");
+
     return data;
 	}
 	

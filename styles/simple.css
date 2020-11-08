@@ -14,25 +14,30 @@
 	justify-content: stretch;
 	align-items: stretch;
 	text-align: left;
+	background-color: black;
 }
 
 .removemod {
+	font-weight: bold;
 	cursor: pointer;
 }
 
 .removemod:hover {
-	cursor: pointer;
 	font-weight: bold;
+	cursor: pointer;
+	font-size: 110%;
 }
 #modtooltiplefttop {
 	grid-column: 1;
   grid-row: 1;
 
 	display: grid;
+	justify-self: stretch;
 	justify-content: start;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
+	color: black;
 	background-color: white;
 	row-gap: 3px;
 	padding: 5px;
@@ -43,6 +48,7 @@
  	grid-row: 2;
 
 	display: grid;
+	justify-self: stretch;
 	justify-content: start;
 	align-content: start;    
 	border: 5px;
@@ -57,6 +63,7 @@
  	grid-row: 3;
 
 	display: grid;
+	justify-self: stretch;
 	justify-content: start;
 	align-content: start;    
 	border: 5px solid green;
@@ -72,6 +79,7 @@
   grid-row: 1;
 
 	display: grid;
+	justify-self: stretch;
 	justify-content: start;
 	align-content: start;    
 	border: 5px;
@@ -88,6 +96,7 @@
   grid-row: 2;
 
 	display: grid;
+	justify-self: stretch;
 	justify-content: start;
 	align-content: start;    
 	border: 5px;
@@ -104,6 +113,7 @@
   grid-row: 3;
 
 	display: grid;
+	justify-self: stretch;
 	justify-content: start;
 	align-content: start;    
 	border: 5px;

@@ -16,7 +16,10 @@
 			<div id="modtooltip">
 				<div id="modtooltiplefttop">    
 					<div class="modttlabel">Current Effects on</div>
-					<div style="color:black">{{actorname}}</div>
+					<div style="color:blue">{{actorname}}</div>
+					{{#each currentmods}}
+						<div>{{{gurpslink this true}}}</div>
+					{{/each}}
 
 				</div>
 				
