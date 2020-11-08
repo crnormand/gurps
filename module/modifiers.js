@@ -1,46 +1,129 @@
 export class ModifierBucket extends Application {
 	
+	SHOWING = false;
 	modifierStack = {
-		modifierList: {},  // { "mod": +/-N, "desc": "" }
+		modifierList: [],  // { "mod": +/-N, "desc": "" }
 		currentSum: 0,
-		displaySum: "+0"
+		displaySum: "+0",
+		plus: false,
+		minus: false
 	};
-	displayElement = null;
+	ModifierBucketElement = null;
 	tooltipElement = null;	
 	tempRangeMod = null;
 	
 	addTempRangeMod() {
-		this.addModifier(this.tempRangeMod, "for range");
+		if (this.tempRangeMod != 0)
+			this.addModifier(this.tempRangeMod, "for range");
 	}
 	
 	setTempRangeMod(mod) {
-//		console.log("Range mod: " + mod);
 		this.tempRangeMod = mod;
 	}
 
   getData(options) {
     const data = super.getData(options);
 		data.gmod = this;
-		data.mlist = this.modifierStack;
+		data.stack = this.modifierStack;
+		data.meleemods = game.GURPS.MeleeMods;
+		data.rangedmods = game.GURPS.RangedMods;
+		data.defensemods = game.GURPS.DefenseMods;
+		data.speedrangemods = game.GURPS.SpeedRangeMods;
+		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "None selected";
+		data.othermods = game.GURPS.OtherMods;
+		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
+		data.users = game.users?.filter(u => u._id != game.user._id) || [];
     return data;
 	}
+	
+	_onleave(ev) {
+		this.tooltipElement.style.setProperty("visibility", "hidden");
+		this.SHOWING = false;
+	}
+	
+	_onenter(ev) {
+		this.tooltipElement.style.setProperty("visibility", "visible");
+		this.SHOWING = true;
+	}
+
 	
 	activateListeners(html) {
 	  super.activateListeners(html);
 		html.find("#trash").click(this._onClickTrash.bind(this));
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
-		e.contextmenu(this.onRightClick.bind(this));
+		//e.contextmenu(this.onRightClick.bind(this));
+		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
 		if (!!e[0])
 			this.displayElement = e[0];
+			
 		e = html.find("#modttt");
+		e.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
+		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
 		if (!!e[0])
 			this.tooltipElement = e[0];
+		html.find(".removemod").click(this._onClickRemoveMod.bind(this));
+		if (this.SHOWING) {
+			this.tooltipElement.style.setProperty("visibility", "visible");
+		} else {
+			this.tooltipElement.style.setProperty("visibility", "hidden");
+		}
+		
+		html.find(".rollable").click(this._onClickRoll.bind(this));
+    html.find(".pdflink").click(this._onClickPdf.bind(this));
+    html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
+    html.find(".gmod").click(this._onClickGmod.bind(this));
+    html.find(".glinkmod").click(this._onClickGmod.bind(this));
+
+		html.find(".gmbutton").click(this._onGMbutton.bind(this));
+
 	}
+	
+	async _onGMbutton(event) {
+    event.preventDefault();
+		let element = event.currentTarget;
+		let id = element.dataset.id;
+		 
+		let u = game.users.get(id);
+		await u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
+		await u.setFlag("gurps", "modifierchanged", Date.now());
+		this.showOthers();
+	}
+	
+	async _onClickPdf(event) {
+    event.preventDefault();
+    game.GURPS.onPdf(event);
+  }
+
+  async _onClickRoll(event) {
+    event.preventDefault();
+    game.GURPS.onRoll(event, this.actor);
+  }
+
+  async _onClickGurpslink(event) {
+    event.preventDefault();
+    game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+  }
+
+  async _onClickGmod(event) {
+    let element = event.currentTarget;
+    event.preventDefault();
+    let desc = element.dataset.name;
+    game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+  }
 	
 	async _onClickTrash(event) {
 		event.preventDefault();
 		this.clear();
+	}
+	
+	async _onClickRemoveMod(event) {
+		event.preventDefault();
+		let element = event.currentTarget;
+		let index = element.dataset.index;
+		this.modifierStack.modifierList.splice(index, 1);
+		this.sum();
+		this.render(true);	
 	}
 	
 	async _onClick(event) {
@@ -51,13 +134,18 @@ export class ModifierBucket extends Application {
 			this.showMods(true);
 			return;
 		}
+		
+		this.showOthers();
+	}
+	
+	async showOthers() {
 		let users = game.users.filter(u => u._id != game.user._id);
 		let content = "";
 		let d = "";
 		for (let u of users) {
 			content += d;
 			d = "<hr>";
-			let stack = u.getFlag("gurps", "modifierstack");
+			let stack = await u.getFlag("gurps", "modifierstack");
 			if (!!stack)
 				content += this.chatString(stack, u.name + ", ");
 			else 
@@ -76,6 +164,8 @@ export class ModifierBucket extends Application {
 	async onRightClick(event) {
 		event.preventDefault();
 		if (!game.user.isGM) return;
+		this.SHOWING = false;
+		this.refresh();
 		let users = game.users.filter(u => u._id != game.user._id);
 		
 		let dialogData = {
@@ -106,16 +196,19 @@ export class ModifierBucket extends Application {
 
 	// Public method.   Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
-		return { "mod": this.displayMod(mod), "desc": reason };
+		let m = this.displayMod(mod);
+		return { "mod": m, "desc": reason, "plus": (m[0] == "+")};
 	}
 	
 	sum() {
 		let stack = this.modifierStack;
 		stack.currentSum = 0;
-		for (let m of Object.values(stack.modifierList)) {
+		for (let m of stack.modifierList) {
 			stack.currentSum += parseInt(m.mod);
 		}
 		stack.displaySum = this.displayMod(stack.currentSum);
+		stack.plus = stack.currentSum > 0;
+		stack.minus = stack.currentSum < 0;
 	}
 
 	displaySum() {
@@ -128,22 +221,21 @@ export class ModifierBucket extends Application {
 	
 	addModifier(mod, reason) {
 		let stack = this.modifierStack;
-		let oldmod = stack.modifierList.findInProperties(m => m.desc == reason);
+		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
 			let m = parseInt(oldmod.mod) + mod;
 			oldmod.mod = this.displayMod(m);
 		} else {
-			game.GURPS.put(stack.modifierList, this.makeModifier(mod, reason));
+			stack.modifierList.push(this.makeModifier(mod, reason));
 		}
 		this.sum();
 		this.updateBucket();
 	}
 	
-	applyMods(targetmods) {
+	async applyMods(targetmods) {
 		let stack = this.modifierStack;
 		let answer = (!!targetmods) ? targetmods : [];
-		for (let m of Object.values(stack.modifierList))
-				 answer.push(m);
+		answer = answer.concat(stack.modifierList);
 		this.clear();
   	return answer;
 	}
@@ -151,20 +243,19 @@ export class ModifierBucket extends Application {
 	async clear() {
 		await game.user.setFlag("gurps", "modifierstack", null);
 		this.modifierStack = {
-			modifierList: {},  // { "mod": +/-N, "desc": "" }
+			modifierList: [],  // { "mod": +/-N, "desc": "" }
 			currentSum: 0,
 			displaySum: "+0"
 		}
 		this.updateBucket();
 	}
 	
-	updateBucket() {
+	async updateBucket() {
 		this.showMods(false);		
 		game.user.setFlag("gurps", "modifierstack", this.modifierStack);
 	}
 	
-	updateDisplay(changed) {
-		console.log("Update display: " + changed);
+	async updateDisplay(changed) {
 		this.modifierStack = game.user.getFlag("gurps", "modifierstack");
 		this.sum();
 		this.showMods(false);		
@@ -172,9 +263,9 @@ export class ModifierBucket extends Application {
 	
 	chatString(modst, name = "") {
 		let content =  name + "No modifiers";
-		if (Object.values(modst.modifierList).length > 0) {
+		if (modst.modifierList.length > 0) {
 			content = name + "total: " +  modst.displaySum;
-			for (let m of Object.values(modst.modifierList)) {
+			for (let m of modst.modifierList) {
 				content += "<br> &nbsp;" + m.mod + " : " + m.desc;
 			}
 		}
@@ -184,10 +275,10 @@ export class ModifierBucket extends Application {
 	htmlForMods() {
 		let stack = this.modifierStack;
 		let content = "<div style='font-size:130%'>No modifiers</div>";
-		if (Object.values(stack.modifierList).length > 0) {
+		if (stack.modifierList.length > 0) {
 			let clr = "#ff7f00";
 			content = "<div style='font-size:130%'>Current Modifiers:<br><br>\n";
-			for (let m of Object.values(stack.modifierList)) {
+			for (let m of stack.modifierList) {
 				let clr = "#ff7f00";
 				clr = (m.mod[0] == "+") ? "lightgreen" : "#ff7f00";
 				content += "<div style='color:" + clr + ";text-align: left;'>" + m.mod + " : " + m.desc + "</div>\n";
@@ -200,7 +291,11 @@ export class ModifierBucket extends Application {
 		return content;
 	}
 	
-	showMods(inChat) {
+	refresh() {
+		this.render(true);
+	}
+	
+	async showMods(inChat) {
 		if (inChat) {
 			let messageData = {
 		  	content: this.chatString(stack),		
@@ -208,11 +303,6 @@ export class ModifierBucket extends Application {
 		 	};
 			CONFIG.ChatMessage.entityClass.create(messageData, {}); 
 		}
-		this.displayElement.textContent = this.displaySum();
-		let st = "line-height: 40px;text-shadow: 2px 2px black";
-		if (this.currentSum() < 0) st += ";color:#ff7f00";
-		if (this.currentSum() > 0) st += ";color:lightgreen";
-		this.displayElement.style = st;
-		this.tooltipElement.innerHTML = this.htmlForMods();
+		this.refresh();
 	}
 }

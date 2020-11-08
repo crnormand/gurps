@@ -4,7 +4,7 @@
   "description": "An adaption of GURPS 4e for Foundry VTT (GCS/GCA edition)",
   "version": "0.6.4",
   "minimumCoreVersion": "0.7.5",
-  "compatibleCoreVersion": "0.7.5",
+  "compatibleCoreVersion": "0.7.6",
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
   "esmodules": [

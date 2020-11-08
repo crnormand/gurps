@@ -22,6 +22,7 @@ export class GurpsActorSheet extends ActorSheet {
   getData() {
     const sheetData = super.getData();
 		sheetData.ranges = game.GURPS.ranges;
+		game.GURPS.SetLastActor(this.actor);
     return sheetData;
   }
 
@@ -42,6 +43,8 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
+
+		html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('mousedown', ev => this._onfocus(ev), false) });
 
     html.find(".rollable").click(this._onClickRoll.bind(this));
     html.find(".pdflink").click(this._onClickPdf.bind(this));
@@ -102,6 +105,10 @@ export class GurpsActorSheet extends ActorSheet {
     console.log(event);
 
   }
+
+	_onfocus(ev) {
+		game.GURPS.SetLastActor(this.actor);
+	}
 
   /** @override */
   setPosition(options = {}) {

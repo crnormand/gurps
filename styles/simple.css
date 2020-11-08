@@ -4,6 +4,149 @@
   /* Attributes */
 }
 
+#modtooltip {
+  width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: 2fr 2fr 2fr;
+	grid-template-rows: 2fr 1fr 2fr ;
+	gap: 10px 10px;
+	justify-items: stretch;
+	justify-content: stretch;
+	align-items: stretch;
+	text-align: left;
+}
+
+#modtooltiplefttop {
+	grid-column: 1;
+  grid-row: 1;
+
+	display: grid;
+	justify-content: start;
+	align-content: start;    
+	border: 5px;
+	margin: 5px;
+	background-color: white;
+	row-gap: 3px;
+}
+
+#modtooltipleftcenter {
+	grid-column: 1;
+ 	grid-row: 2;
+
+	display: grid;
+	justify-content: start;
+	align-content: start;    
+	border: 5px;
+	margin: 5px;
+	color: yellow;
+	background-color: rgb(64, 64, 64);
+}
+
+#modtooltipleftbottom {
+	grid-column: 1;
+ 	grid-row: 3;
+
+	display: grid;
+	justify-content: start;
+	align-content: start;    
+	border: 5px solid green;
+	margin: 5px;
+	color:black;
+	background-color: white;
+	row-gap: 2px;
+}
+
+#modtooltipcentertop {
+	grid-column: 2;
+  grid-row: 1;
+
+	display: grid;
+	justify-content: start;
+	align-content: start;    
+	border: 5px;
+	margin: 5px;
+	color:black;
+	background-color: white;
+	
+	row-gap: 5px;
+}
+
+#modtooltipcentercenter {
+	grid-column: 2;
+  grid-row: 2;
+
+	display: grid;
+	justify-content: start;
+	align-content: start;    
+	border: 5px;
+	margin: 5px;
+	color:black;
+	background-color: white;
+	
+	row-gap: 5px;
+}
+
+#modtooltipcenterbottom {
+	grid-column: 2;
+  grid-row: 3;
+
+	display: grid;
+	justify-content: start;
+	align-content: start;    
+	border: 5px;
+	margin: 5px;
+	color:black;
+	background-color: white;
+	
+	row-gap: 5px;
+}
+
+#modtooltiprighttop {
+	grid-column: 3;
+  grid-row-start: 1;
+  grid-row-end: 3;
+
+	display: grid;
+	justify-self: stretch;
+	justify-content: start;
+	align-content: start;    
+	border: 5px;
+	margin: 5px;
+	color:black;
+	background-color: white;
+	
+	row-gap: 5px;
+}
+
+
+#modtooltiprightbottom {
+	grid-column: 3;
+  grid-row: 3;
+
+	display: grid;
+	justify-self: stretch;
+	justify-content: start;
+	align-content: start;    
+	border: 5px;
+	margin: 5px;
+	color:black;
+	background-color: white;
+	
+	row-gap: 5px;
+}
+
+.modttlabel {
+	font-size:120%;
+	color: blue;
+	text-shadow: 1px 1px black;
+}
+
+.gmbutton {
+	font-size:90%;	
+	padding: 2 px;
+	}
+
 .gurpstippable {
   position: relative;
 }
@@ -43,23 +186,24 @@
   background-color: rgb(200, 200, 180);
   margin: 0px;
   padding: 0px;
-  z-index: 999;
   cursor: pointer;
+  z-index: 999;
 }
 
 .modifierbucket .modttt {
-  visibility: hidden;
-  width: 400px;
+/*  visibility: hidden;  */  visibility: hidden;
+  width: 900px;
+	height: 700px;
   background-color: black;
   color: #fff;
   text-align: center;
   border-radius: 6px;
   padding: 5px 10px 5px 10px;
   position: absolute;
-  z-index: 999;
-  bottom: 200%;
+  bottom: 102px;
   left: 50%;
-  margin-left: -200px;
+  margin-left: -450px;
+  z-index: 999;
 
   /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
   /* opacity: 0;
@@ -67,7 +211,8 @@
 }
 
 
-.modifierbucket:hover .modttt {
+
+.modifierbucket:hover .modttt, #modtt:focus-within {
   visibility: visible;
   z-index: 999;
   /*opacity: 1;	*/
@@ -78,11 +223,11 @@
   position: absolute;
   top: 100%;
   left: 50%;
-  margin-left: -20px;
-  border-width: 20px;
+  margin-left: -300px;
+  border-width: 37px 300px;
   border-style: solid;
   border-color: black transparent transparent transparent;
-  z-index: 999;
+  z-index: -100;
 }
 
 .gcs-attr-input {
