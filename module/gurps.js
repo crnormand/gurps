@@ -71,7 +71,7 @@ GURPS.DefenseMods = `[+2 All-Out Defense]
 [+1 block/parry (Retreat)]
 
 [-2 to dodge (Failed Acrobatics)]
-[-2 to dodge (Attacked from side/back)]
+[-2 to dodge (Attacked from side)]
 [-4 to dodge (Attacked from rear)]
 [-2 to defend (Kneeling/Sitting)]
 [-3 to defend (Prone)]

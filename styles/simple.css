@@ -274,7 +274,7 @@
   cursor: pointer;
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
-  color: blue;
+  color: black;
   padding: 1px 1px 1px 1px;
   border-top: 2px solid #CCCCCC;
   border-right: 2px solid #333333;
@@ -287,7 +287,7 @@
 }
 
 .rollable {
-  color: blue;
+  color: black;
   /* text-shadow: 2px 2px rgb(255, 255, 128); */
   background-color: rgb(255, 255, 190) !important;
 }
@@ -295,7 +295,7 @@
 .rollable:active {
   cursor: pointer;
   text-decoration: none;
-  color: blue;
+  color: black;
   background-color: rgb(255, 255, 128) !important;
   padding: 2px 3px 2px 3px;
   border-bottom: 1px solid #CCCCCC;
@@ -322,7 +322,7 @@
 }
 
 .gmod {
-  color: blue;
+  color: black;
   /*text-shadow: 2px 2px 8px rgb(255, 0, 0);*/
   background-color: rgb(255, 230, 190) !important;
   /* background-image: linear-gradient(to right, white , rgb(255, 200, 128)); */
@@ -361,7 +361,7 @@
 }
 
 .glinkmod {
-  color: blue;
+  color: black;
   background-color: rgb(255, 230, 190) !important;
 }
 
@@ -463,7 +463,7 @@
   cursor: pointer;
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
-  color: blue;
+  color: black;
   padding: 2px 3px 2px 3px;
   border-top: 2px solid #CCCCCC;
   border-right: 2px solid #333333;
@@ -476,7 +476,7 @@
 }
 
 .gurpslink {
-  color: blue;
+  color: black;
   /* text-shadow: 2px 2px rgb(255, 255, 128); */
   background-color: rgb(255, 255, 175) !important;
 }
@@ -484,7 +484,7 @@
 .gurpslink:active {
   cursor: pointer;
   text-decoration: none;
-  color: blue;
+  color: black;
   background-color: rgb(255, 255, 128) !important;
   padding: 2px 3px 2px 3px;
   border-bottom: 1px solid #CCCCCC;
