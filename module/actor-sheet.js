@@ -125,7 +125,7 @@ export class GurpsActorSheet extends ActorSheet {
     const sheet = this.actor.getFlag("core", "sheetClass")
 
     // Token Configuration
-    const canConfigure = game.user.isGM || (this.actor.owner && game.user.can("TOKEN_CONFIGURE"));
+    const canConfigure = game.user.isGM || this.actor.owner;
     if (this.options.editable && canConfigure) {
       buttons = [
         {

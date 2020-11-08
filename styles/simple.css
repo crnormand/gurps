@@ -1427,11 +1427,12 @@ body {
 
 #hitpoints .selected,
 #fatpoints .selected {
-  background-color: #e8ffe8;
+  background-color: #b8ffff;
 }
 
+.gurps .condition-block .tired,
 .gurps .condition-block .reeling {
-  background-color: lightcyan;
+  background-color: #b8ffff;
 }
 
 .gurps .condition-block .collapse {
@@ -1442,7 +1443,7 @@ body {
   background-color: lightcoral;
 }
 
-.gurps .unconscious,
+.gurps .condition-block .unconscious,
 .gurps .condition-block .dead {
   background-color: black;
   color: white;
