@@ -312,13 +312,14 @@
   background-image: none;
   background-color: rgb(255, 128, 100) !important;
   color: black;
-  padding: 1px 1em 1px 1px;
+  padding: 1px 1px 1px 1px;
   border-top: 2px solid #CCCCCC;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
   border-left: 2px solid #CCCCCC;
   border-radius: 8px;
   margin: -2px 0px -1px 2px;
+	text-align: center;
 }
 
 .gmod {
