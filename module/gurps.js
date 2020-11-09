@@ -96,8 +96,10 @@ GURPS.MonsterHunterSpeedRangeMods= `[-3 20 yds, Short range]
 	
 GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
 
-GURPS.OtherMods= `[+1 GM 'cause I said so!]
-[-1 GM 'cause I said so!]`
+GURPS.OtherMods= `[+1 GM said so]
+[-4 GM don't try it]
+[+4 GM Blessed]
+[-1 GM said so]`
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -263,14 +265,51 @@ GURPS.ranges = GURPS.basicSetRanges;
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
 CONFIG.statusEffects= [
-	GURPS.SavedStatusEffects.find(s => s.id == "shock"),
+	{
+		icon: "systems/gurps/icons/shock1.svg",
+		id: "shock1",
+		label: "EFFECT.StatusShocked"
+	},
+	{
+		icon: "systems/gurps/icons/shock2.svg",
+		id: "shock2",
+		label: "EFFECT.StatusShocked"
+	},
+	{
+		icon: "systems/gurps/icons/shock3.svg",
+		id: "shock3",
+		label: "EFFECT.StatusShocked"
+	},
+	{
+		icon: "systems/gurps/icons/shock4.svg",
+		id: "shock4",
+		label: "EFFECT.StatusShocked"
+	},
 	GURPS.SavedStatusEffects.find(s => s.id == "prone"),
 	GURPS.SavedStatusEffects.find(s => s.id == "stun"),
 ];
 
 GURPS.ModifiersForStatus = {
-	"shock": {
+	"shock1": {
 		gen: [ "[-1 to IQ/DX skills (Shock)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock2": {
+		gen: [ "[-2 to IQ/DX skills (Shock)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock3": {
+		gen: [ "[-3 to IQ/DX skills (Shock)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock4": {
+		gen: [ "[-4 to IQ/DX skills (Shock)]" ],
 		melee: [],
 		ranged: [],
 		defense: []
@@ -289,6 +328,21 @@ GURPS.ModifiersForStatus = {
 	},
 };
 
+
+GURPS.TaskDifficultyModifiers = [
+	"+10 Automatic",
+	"+8 Trivial",
+	"+6 Very Easy",
+	"+4 Easy",
+	"+2 Very Favorable",
+	"+1 Favorable",
+	"-1 Unfavorable",
+	"-2 Very Unfavorable",
+	"-4 Hard",
+	"-6 Very hard",
+	"-8 Dangerous",
+	"-10 Impossible"
+]
 
 /*
 	Convert XML text into a JSON object
@@ -724,7 +778,7 @@ GURPS.onRoll = onRoll;
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
-	let parse = desc.replace(/.*\*Cost (\d+) ?FP.*/g, "$1");
+	let parse = desc.replace(/.*\* ?Cost (\d+) ?FP.*/g, "$1");
 	if (parse != desc) {
 		let fp = parseInt(parse);
 		fp =  actor.data.data.FP.value - fp;
