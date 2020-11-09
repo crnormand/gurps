@@ -8,8 +8,10 @@ import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
 
 export const GURPS = {};
-
 window.GURPS = GURPS;		// Make GURPS global!
+
+import { GURPSRange } from '../lib/ranges.js'
+
 
 //CONFIG.debug.hooks = true;
 
@@ -79,22 +81,28 @@ ${GURPS.horiz("Extra Effort")}
 ${GURPS.horiz("Actions")}
 [WILL-3 Concentration check]`;
 
-GURPS.BasicRangeSpeedMods = `[-1 Range 3 yds]
-[-2 Range 5 yds]
-[-3 Range 7 yds]
-[-4 Range 10 yds]
-[-5 Range 15 yds]
-[-6 Range 20 yds]
-[-7 Range 30 yds]
-[-8 Range 50 yds]
-[-9 Range 70 yds]`;
+// GURPS.BasicRangeSpeedMods = `[-1 Range 3 yds]
+// [-2 Range 5 yds]
+// [-3 Range 7 yds]
+// [-4 Range 10 yds]
+// [-5 Range 15 yds]
+// [-6 Range 20 yds]
+// [-7 Range 30 yds]
+// [-8 Range 50 yds]
+// [-9 Range 70 yds]`;
 
-GURPS.MonsterHunterSpeedRangeMods = `[-3 20 yds, Short range]
-[-7 100 yds, Medium range]
-[-11 500 yds, Long range]
-[-15 500+ yds, Extreme range]`;
+// GURPS.MonsterHunterSpeedRangeMods = `[-3 20 yds, Short range]
+// [-7 100 yds, Medium range]
+// [-11 500 yds, Long range]
+// [-15 500+ yds, Extreme range]`;
 
-GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
+// GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
+
+
+// GURPS.SpeedRangeMods =
+// 	// game.settings.get('gurps', 'rangeMethod') === 'Standard' ?
+// 	GURPS.BasicRangeSpeedMods
+// // : GURPS.MonsterHunterSpeedRangeMods;
 
 GURPS.OtherMods = `[+1 GM 'cause I said so!]
 [-1 GM 'cause I said so!]`
@@ -187,78 +195,6 @@ GURPS.hitlocationRolls = {
 	"Vitals": "-"
 }
 
-// Must be kept in order... checking range vs Max.   If >Max, go to next entry.
-/* Example code:
-				for (let range of game.GURPS.ranges) {
-					if (yards <= range.max)
-						return range.penalty;
-				}
-*/
-GURPS.monsterHunter2Ranges = [
-	{
-		moddesc: "for Close range",
-		max: 5,
-		penalty: 0,
-		description: "Can touch or strike foe"
-	},
-	{
-		moddesc: "for Short range",
-		max: 20,
-		penalty: -3,
-		description: "Can talk to foe; pistol or muscle-powered missile range"
-	},
-	{
-		moddesc: "for Medium range",
-		max: 100,
-		penalty: -7,
-		description: "Can only shout to foe; shotgun or SMG range"
-	},
-	{
-		moddesc: "for Long range",
-		max: 500,
-		penalty: -11,
-		description: "Opponent out of earshot; rifle range"
-	},
-	{
-		moddesc: "for Extreme range",
-		max: "500+",				// Finaly entry.   Could be null, but would require extra check... so just make it LARGE
-		penalty: -15,
-		desc: "Rival difficult to even see; sniper range"
-	}
-];
-
-// Must be kept in order... checking range vs Max.   If >Max, go to next entry.
-GURPS.basicSetRanges = [];
-// Yes, I should be able to do this programatically... but my brain hurts right now, so there.
-let r = [
-	2, 0,
-	3, -1,
-	5, -2,
-	7, -3,
-	10, -4,
-	15, -5,
-	20, -6,
-	30, -7,
-	50, -8,
-	70, -9,
-	100, -10,
-	150, -11,
-	200, -12,
-	300, -13,
-	"300+", -14];
-
-for (let i = 0; i < r.length; i = i + 2) {
-	let d = {
-		moddesc: `for range/speed ${r[i]} yds`,
-		max: r[i],
-		penalty: r[i + 1],
-		desc: `${r[i]} yds`
-	};
-	GURPS.basicSetRanges.push(d);
-}
-
-//GURPS.ranges = GURPS.monsterHunter2Ranges;
-GURPS.ranges = GURPS.basicSetRanges;
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
@@ -955,6 +891,7 @@ function listeqtrecurse(eqts, options, level, data) {
 }
 GURPS.listeqtrecurse = listeqtrecurse;
 
+GURPS.rangeObject = new GURPSRange()
 
 
 /*********************  HACK WARNING!!!! *************************/
@@ -976,22 +913,6 @@ Hooks.once("init", async function () {
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 	console.log(GURPS.objToString(GURPS));
-
-
-	/* Define Settings */
-	game.settings.register('gurps', 'rangeMethod', {
-		name: 'Default Range modifier rule',
-		hint: 'Sets the formula to use to calculate range penalties.',
-		scope: 'world',
-		config: true,
-		type: String,
-		choices: {
-			'Standard': 'Size and Speed/Range Table',
-			'Simplified': 'Monster Hunters tange bands'
-		},
-		default: 'Standard',
-		onChange: value => console.log(value)
-	})
 
 	/**
 	 * Set an initiative formula for the system
@@ -1214,6 +1135,11 @@ Hooks.once("init", async function () {
 		type: Boolean,
 		default: false,
 	});
+
+	// GURPS.SpeedRangeMods =
+	// 	game.settings.get('gurps', 'rangeMethod') === 'Standard' ?
+	// 		GURPS.BasicRangeSpeedMods
+	// 		: GURPS.MonsterHunterSpeedRangeMods;
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
