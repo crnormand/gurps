@@ -288,7 +288,7 @@ ${game.GURPS.OtherMods}`;
 		let stack = this.modifierStack;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
-			let m = parseInt(oldmod.mod) + mod;
+			let m = parseInt(oldmod.mod) + parseInt(mod);
 			oldmod.mod = this.displayMod(m);
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));

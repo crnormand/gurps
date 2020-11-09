@@ -330,6 +330,7 @@ GURPS.ModifiersForStatus = {
 
 
 GURPS.TaskDifficultyModifiers = [
+	"0 Select Task Difficulty",
 	"+10 Automatic",
 	"+8 Trivial",
 	"+6 Very Easy",
