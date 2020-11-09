@@ -924,7 +924,7 @@ Hooks.once("init", async function () {
 		type: String,
 		choices: {
 			'Standard': 'Size and Speed/Range Table',
-			'Simplified': 'Range bands from GURPS Monster Hunters 2: The Mission'
+			'Simplified': 'Monster Hunters tange bands'
 		},
 		default: 'Standard',
 		onChange: value => console.log(value)
