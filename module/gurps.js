@@ -8,8 +8,10 @@ import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
 
 export const GURPS = {};
-
 window.GURPS = GURPS;		// Make GURPS global!
+
+import { GURPSRange } from '../lib/ranges.js'
+
 
 //CONFIG.debug.hooks = true;
 
@@ -63,7 +65,7 @@ GURPS.RangedMods = `[+1 Aim]
 [+1 to hit (Determined Attack)]
 ${GURPS.horiz("Actions")}
 [WILL check to maintain Aim]`;
-	
+
 GURPS.DefenseMods = `[+2 All-Out Defense]
 [+1 to dodge (Shield)]
 [+2 to dodge (Acrobatics)]
@@ -79,24 +81,30 @@ ${GURPS.horiz("Extra Effort")}
 ${GURPS.horiz("Actions")}
 [WILL-3 Concentration check]`;
 
-GURPS.BasicRangeSpeedMods = `[-1 Range 3 yds]
-[-2 Range 5 yds]
-[-3 Range 7 yds]
-[-4 Range 10 yds]
-[-5 Range 15 yds]
-[-6 Range 20 yds]
-[-7 Range 30 yds]
-[-8 Range 50 yds]
-[-9 Range 70 yds]`;
+// GURPS.BasicRangeSpeedMods = `[-1 Range 3 yds]
+// [-2 Range 5 yds]
+// [-3 Range 7 yds]
+// [-4 Range 10 yds]
+// [-5 Range 15 yds]
+// [-6 Range 20 yds]
+// [-7 Range 30 yds]
+// [-8 Range 50 yds]
+// [-9 Range 70 yds]`;
 
-GURPS.MonsterHunterSpeedRangeMods= `[-3 20 yds, Short range]
-[-7 100 yds, Medium range]
-[-11 500 yds, Long range]
-[-15 500+ yds, Extreme range]`;
-	
-GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
+// GURPS.MonsterHunterSpeedRangeMods = `[-3 20 yds, Short range]
+// [-7 100 yds, Medium range]
+// [-11 500 yds, Long range]
+// [-15 500+ yds, Extreme range]`;
 
-GURPS.OtherMods= `[+1 GM 'cause I said so!]
+// GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
+
+
+// GURPS.SpeedRangeMods =
+// 	// game.settings.get('gurps', 'rangeMethod') === 'Standard' ?
+// 	GURPS.BasicRangeSpeedMods
+// // : GURPS.MonsterHunterSpeedRangeMods;
+
+GURPS.OtherMods = `[+1 GM 'cause I said so!]
 [-1 GM 'cause I said so!]`
 
 GURPS.woundModifiers = {
@@ -187,82 +195,10 @@ GURPS.hitlocationRolls = {
 	"Vitals": "-"
 }
 
-// Must be kept in order... checking range vs Max.   If >Max, go to next entry.
-/* Example code:
-				for (let range of game.GURPS.ranges) {
-					if (yards <= range.max)
-						return range.penalty;
-				}
-*/
-GURPS.monsterHunter2Ranges = [
-	{
-		moddesc: "for Close range",
-		max: 5,
-		penalty: 0,
-		description: "Can touch or strike foe"
-	},
-	{
-		moddesc: "for Short range",
-		max: 20,
-		penalty: -3,
-		description: "Can talk to foe; pistol or muscle-powered missile range"
-	},
-	{
-		moddesc: "for Medium range",
-		max: 100,
-		penalty: -7,
-		description: "Can only shout to foe; shotgun or SMG range"
-	},
-	{
-		moddesc: "for Long range",
-		max: 500,
-		penalty: -11,
-		description: "Opponent out of earshot; rifle range"
-	},
-	{
-		moddesc: "for Extreme range",
-		max: "500+",				// Finaly entry.   Could be null, but would require extra check... so just make it LARGE
-		penalty: -15,
-		desc: "Rival difficult to even see; sniper range"
-	}
-];
-
-// Must be kept in order... checking range vs Max.   If >Max, go to next entry.
-GURPS.basicSetRanges = [];
-// Yes, I should be able to do this programatically... but my brain hurts right now, so there.
-let r = [
-	2, 0,
-	3, -1,
-	5, -2,
-	7, -3,
-	10, -4,
-	15, -5,
-	20, -6,
-	30, -7,
-	50, -8,
-	70, -9,
-	100, -10,
-	150, -11,
-	200, -12,
-	300, -13,
-	"300+", -14];
-
-for (let i = 0; i < r.length; i = i + 2) {
-	let d = {
-		moddesc: `for range/speed ${r[i]} yds`,
-		max: r[i],
-		penalty: r[i + 1],
-		desc: `${r[i]} yds`
-	};
-	GURPS.basicSetRanges.push(d);
-}	
-	
-//GURPS.ranges = GURPS.monsterHunter2Ranges;
-GURPS.ranges = GURPS.basicSetRanges;
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
-CONFIG.statusEffects= [
+CONFIG.statusEffects = [
 	GURPS.SavedStatusEffects.find(s => s.id == "shock"),
 	GURPS.SavedStatusEffects.find(s => s.id == "prone"),
 	GURPS.SavedStatusEffects.find(s => s.id == "stun"),
@@ -270,22 +206,22 @@ CONFIG.statusEffects= [
 
 GURPS.ModifiersForStatus = {
 	"shock": {
-		gen: [ "[-1 to IQ/DX skills (Shock)]" ],
+		gen: ["[-1 to IQ/DX skills (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"prone": {
 		gen: [],
-		melee: [ "[-4 to hit (Prone)]"],
-		ranged: [ "[-2 to hit (Prone)]"],
-		defense: [ "[-2 to defenses (Prone)]" ]
+		melee: ["[-4 to hit (Prone)]"],
+		ranged: ["[-2 to hit (Prone)]"],
+		defense: ["[-2 to defenses (Prone)]"]
 	},
 	"stun": {
 		gen: [],
 		melee: [],
 		ranged: [],
-		defense: [ "[-4 to defenses (Stunned)]" ]
+		defense: ["[-4 to defenses (Stunned)]"]
 	},
 };
 
@@ -414,7 +350,7 @@ GURPS.gspan = gspan;
 
 function gmspan(str, plus, clrdmods) {
 	if (clrdmods) {
-		if (plus) 
+		if (plus)
 			return "<span class='glinkmodplus'>" + str + "</span>";
 		else
 			return "<span class='glinkmodminus'>" + str + "</span>";
@@ -624,7 +560,7 @@ function performAction(action, actor) {
 		formula = "3d6";
 		target = action.target;
 		if (!target) target = this.resolve(action.path, actor.data);
-		if (!!action.mod || !!action.desc) 
+		if (!!action.mod || !!action.desc)
 			targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 	}
 	if (action.type == "selfcontrol") {
@@ -727,8 +663,8 @@ function applyModifierDesc(actor, desc) {
 	let parse = desc.replace(/.*\*Cost (\d+) ?FP.*/g, "$1");
 	if (parse != desc) {
 		let fp = parseInt(parse);
-		fp =  actor.data.data.FP.value - fp;
-		actor.update({"data.FP.value": fp});
+		fp = actor.data.data.FP.value - fp;
+		actor.update({ "data.FP.value": fp });
 	}
 	parse = desc.replace(/.*\*Max: ?(\d+).*/g, "$1");
 	if (parse != desc) {
@@ -757,7 +693,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	let modscontent = "";
 	let modifier = 0;
 	let maxtarget = null;			// If not null, then the target cannot be any higher than this.
-	
+
 	targetmods = await GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
 
 	if (targetmods.length > 0) {
@@ -859,7 +795,7 @@ function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
 		if (str[i] == "[")
 			found = ++i;
 		if (str[i] == "]" && found >= 0) {
-			output += str.substring(0, (inclbrks ? found : found -1));
+			output += str.substring(0, (inclbrks ? found : found - 1));
 			let action = this.parselink(str.substring(found, i), actor, "", clrdmods);
 			output += action.text;
 			str = str.substr(inclbrks ? i : i + 1);
@@ -955,6 +891,7 @@ function listeqtrecurse(eqts, options, level, data) {
 }
 GURPS.listeqtrecurse = listeqtrecurse;
 
+GURPS.rangeObject = new GURPSRange()
 
 
 /*********************  HACK WARNING!!!! *************************/
@@ -1030,7 +967,7 @@ Hooks.once("init", async function () {
 
 
 	/// NOTE:  To use this, you must use {{{gurpslink sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
-	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods=false, inclbrks=false) {
+	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods = false, inclbrks = false) {
 		let actor = root?.data?.root?.actor;
 		if (!actor) actor = root?.actor;
 		return game.GURPS.gurpslink(str, actor, clrdmods, inclbrks);
@@ -1199,6 +1136,11 @@ Hooks.once("init", async function () {
 		default: false,
 	});
 
+	// GURPS.SpeedRangeMods =
+	// 	game.settings.get('gurps', 'rangeMethod') === 'Standard' ?
+	// 		GURPS.BasicRangeSpeedMods
+	// 		: GURPS.MonsterHunterSpeedRangeMods;
+
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
 
@@ -1237,3 +1179,4 @@ Hooks.once("ready", async function () {
 		}
 	});
 });
+
