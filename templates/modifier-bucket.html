@@ -74,7 +74,7 @@
   				<input type="text" id="modmanualentry"><br>
 					<div style="display:grid;background-color:gold;display:{{#if cansend}}block{{else}}none{{/if}}; align-content: end">
 					<div class="modttlabel">Send your Modifier Bucket to:</div>
-					<div style="position: relative;">
+					<div style="position: relative;text-align: center;display: inline-flex;justify-content: center; ">
 					{{#each users}}
 						<button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
 					{{/each}}

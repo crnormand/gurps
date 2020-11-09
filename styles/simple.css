@@ -34,7 +34,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -50,7 +50,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -65,7 +65,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px solid green;
 	margin: 5px;
@@ -81,7 +81,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -98,7 +98,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -115,7 +115,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -133,7 +133,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -151,7 +151,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
