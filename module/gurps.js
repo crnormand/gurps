@@ -50,7 +50,7 @@ GURPS.RangedMods = [
 	"[-2 to hit (Prone)]",
 	"[-2 to hit (Crouch)]",
 ];
-	
+
 GURPS.DefenseMods = [
 	"[+2 All-Out Defense]",
 	"[+2 to dodge (Acrobatics)]",
@@ -64,7 +64,7 @@ GURPS.DefenseMods = [
 	"[-3 to defend (Prone)]",
 	"[-4 to defend (Stunned!)]",
 	"[+2 Feverish Defense *Cost 1FP]"
-	
+
 ]
 
 GURPS.BasicRangeSpeedMods = [
@@ -79,16 +79,16 @@ GURPS.BasicRangeSpeedMods = [
 	"[-9 Range 70 yds]"
 ]
 
-GURPS.MonsterHunterSpeedRangeMods= [
+GURPS.MonsterHunterSpeedRangeMods = [
 	"[-3 20 yds, Short range]",
 	"[-7 100 yds, Medium range]",
 	"[-11 500 yds, Long range]",
 	"[-15 500+ yds, Extreme range]"
 ];
-	
+
 GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
 
-GURPS.OtherMods= [
+GURPS.OtherMods = [
 	"[+1 GM 'cause I said so!]",
 	"[-1 GM 'cause I said so!]"
 ]
@@ -249,8 +249,8 @@ for (let i = 0; i < r.length; i = i + 2) {
 		desc: `${r[i]} yds`
 	};
 	GURPS.basicSetRanges.push(d);
-}	
-	
+}
+
 //GURPS.ranges = GURPS.monsterHunter2Ranges;
 GURPS.ranges = GURPS.basicSetRanges;
 
@@ -698,7 +698,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	// Lets collect up the modifiers, they are used differently depending on the type of roll
 	let modscontent = "";
 	let modifier = 0;
-	
+
 	targetmods = await GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
 
 	if (targetmods.length > 0) {
@@ -913,6 +913,22 @@ Hooks.once("init", async function () {
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 	console.log(GURPS.objToString(GURPS));
+
+
+	/* Define Settings */
+	game.settings.register('gurps', 'rangeMethod', {
+		name: 'Default Range modifier rule',
+		hint: 'Sets the formula to use to calculate range penalties.',
+		scope: 'world',
+		config: true,
+		type: String,
+		choices: {
+			'Standard': 'Size and Speed/Range Table',
+			'Simplified': 'Range bands from GURPS Monster Hunters 2: The Mission'
+		},
+		default: 'Standard',
+		onChange: value => console.log(value)
+	})
 
 	/**
 	 * Set an initiative formula for the system
@@ -1174,3 +1190,4 @@ Hooks.once("ready", async function () {
 		}
 	});
 });
+
