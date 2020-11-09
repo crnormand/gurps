@@ -10,6 +10,12 @@ export class GurpsActor extends Actor {
 		super.prepareData();
 	}
 	
+	 /** @override */
+  _onUpdate(data, options, userId, context) {
+		super._onUpdate(data, options, userId, context);
+		game.GURPS.SetLastActor(this);
+	}
+	
 	// First attempt at import GCS FG XML export data.
 	async importFromGCSv1(xml) {
 		// need to remove <p> and replace </p> with newlines from "formatted text"

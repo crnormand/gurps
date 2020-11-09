@@ -25,7 +25,8 @@
 .removemod:hover {
 	font-weight: bold;
 	cursor: pointer;
-	font-size: 110%;
+	text-shadow: 1px 1px grey;
+	background-color: yellow;
 }
 #modtooltiplefttop {
 	grid-column: 1;
@@ -33,7 +34,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -49,7 +50,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -64,7 +65,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px solid green;
 	margin: 5px;
@@ -80,7 +81,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -97,7 +98,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -114,7 +115,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -132,7 +133,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -150,7 +151,7 @@
 
 	display: grid;
 	justify-self: stretch;
-	justify-content: start;
+	justify-content: stretch;
 	align-content: start;    
 	border: 5px;
 	margin: 5px;
@@ -168,8 +169,11 @@
 }
 
 .gmbutton {
+	display:inline-block;
+	text-align: center;
 	font-size:90%;	
 	padding: 2 px;
+	width: fit-content;
 	}
 
 .gurpstippable {
