@@ -36,13 +36,46 @@ export class ModifierBucket extends Application {
 		data.rangedmods = game.GURPS.RangedMods.split("\n");
 		data.defensemods = game.GURPS.DefenseMods.split("\n");
 		data.speedrangemods = game.GURPS.SpeedRangeMods.split("\n");
-		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "None selected";
+		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "No active character!";
 		data.othermods = game.GURPS.OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
 		
 		data.currentmods = [];
 		
+		if (!!game.GURPS.LastActor) {
+			let melee =[];
+			let ranged = [];
+			let defense = [];
+			let gen = [];
+			let effects = game.GURPS.LastActor.temporaryEffects;
+			for (let e of effects) {
+				let type = e.data.flags.core.statusId;
+				let m = game.GURPS.ModifiersForStatus[type];
+				if (!!m) {
+					melee = melee.concat(m.melee)
+					ranged = ranged.concat(m.ranged)
+					defense = defense.concat(m.defense)
+					gen = gen.concat(m.gen)
+				}
+			}
+			if (gen.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("General"));
+				gen.forEach(e => data.currentmods.push(e));
+			}
+			if (melee.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("Melee"));
+				melee.forEach(e => data.currentmods.push(e));
+			}
+			if (ranged.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("Ranged"));
+				ranged.forEach(e => data.currentmods.push(e));
+			}
+			if (defense.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("Defense"));
+				defense.forEach(e => data.currentmods.push(e));
+			}
+		}
 /*		`${game.GURPS.horiz("Melee")}
 [-4 to hit melee (Prone)]
 ${game.GURPS.horiz("Ranged")}
@@ -69,7 +102,7 @@ ${game.GURPS.horiz("Defense")}
 		html.find("#trash").click(this._onClickTrash.bind(this));
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
-		//e.contextmenu(this.onRightClick.bind(this));
+		e.contextmenu(this.onRightClick.bind(this));
 		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
 		if (!!e[0])
 			this.displayElement = e[0];
@@ -105,7 +138,8 @@ ${game.GURPS.horiz("Defense")}
 		let parsed = game.GURPS.parselink(element.value, game.GURPS.LastActor);
 		if (!!parsed.action && parsed.action.type === "modifier") {
 			this.addModifier(parsed.action.mod, parsed.action.desc);
-		}
+		} else
+			this.refresh();
 	}
 	
 	async _onGMbutton(event) {
@@ -193,31 +227,31 @@ ${game.GURPS.horiz("Defense")}
 	async onRightClick(event) {
 		event.preventDefault();
 		if (!game.user.isGM) return;
-		this.SHOWING = false;
-		this.refresh();
-		let users = game.users.filter(u => u._id != game.user._id);
+		let c = `Melee:
+${game.GURPS.MeleeMods}
+
+Ranged:
+${game.GURPS.RangedMods}
+
+Defense:
+${game.GURPS.DefenseMods}
+
+Other:
+${game.GURPS.OtherMods}`;
+
+		let output = "";
+		for (let l of c.split("\n"))
+			output += "<br>" + l;
 		
-		let dialogData = {
-      title: "Update Player's Modifier Bucket", 
-      content: "Send your Modifier Bucket:<br><br><div style='background-color:black;color:white'>" + this.htmlForMods() + "</div><br><br>To which player:<br>",
-			buttons: {}
-    }
-		let buttons = dialogData.buttons;
-		for (let u of users) {
-			let b = {
-				label: u.name,
-				icon: '<i class="fas fa-user"></i>',
-				callback: () => { 
-					u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
-					u.setFlag("gurps", "modifierchanged", Date.now());
-				}
-			}
-			buttons[u.name] = b;
-		}
-		new Dialog(dialogData).render(true);
+		let messageData = {
+		 	content: output,		
+		 	type: CONST.CHAT_MESSAGE_TYPES.OOC,
+			};
+		CONFIG.ChatMessage.entityClass.create(messageData, {}); 
 	}
 	
 	displayMod(mod) {
+		if (!mod) mod = "0";
 		let n = mod.toString();
 		if (n[0] != '-' && n[0] != '+') n = "+" + n;
 		return n;

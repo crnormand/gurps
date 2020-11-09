@@ -9,6 +9,8 @@ import { SemanticVersion } from "../lib/semver.js";
 
 export const GURPS = {};
 
+window.GURPS = GURPS;		// Make GURPS global!
+
 //CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
@@ -60,7 +62,7 @@ ${GURPS.horiz("Extra Effort")}
 GURPS.RangedMods = `[+1 Aim]
 [+1 to hit (Determined Attack)]
 ${GURPS.horiz("Actions")}
-[WILL Concentration check]`;
+[WILL check to maintain Aim]`;
 	
 GURPS.DefenseMods = `[+2 All-Out Defense]
 [+1 to dodge (Shield)]
@@ -258,15 +260,35 @@ for (let i = 0; i < r.length; i = i + 2) {
 //GURPS.ranges = GURPS.monsterHunter2Ranges;
 GURPS.ranges = GURPS.basicSetRanges;
 
-GURPS.saveStatusEffects = CONFIG.statusEffects;
+GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
-CONFIG.statusEffectsX= [
-	{
-		icon: "systems/gurps/icons/postures/crouching.png",
-		id: "crouch",
-		label: "GURPS.crouch"
-	},
+CONFIG.statusEffects= [
+	GURPS.SavedStatusEffects.find(s => s.id == "shock"),
+	GURPS.SavedStatusEffects.find(s => s.id == "prone"),
+	GURPS.SavedStatusEffects.find(s => s.id == "stun"),
 ];
+
+GURPS.ModifiersForStatus = {
+	"shock": {
+		gen: [ "[-1 to IQ/DX skills (Shock)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"prone": {
+		gen: [],
+		melee: [ "[-4 to hit (Prone)]"],
+		ranged: [ "[-2 to hit (Prone)]"],
+		defense: [ "[-2 to defenses (Prone)]" ]
+	},
+	"stun": {
+		gen: [],
+		melee: [],
+		ranged: [],
+		defense: [ "[-4 to defenses (Stunned)]" ]
+	},
+};
+
 
 /*
 	Convert XML text into a JSON object
@@ -602,7 +624,8 @@ function performAction(action, actor) {
 		formula = "3d6";
 		target = action.target;
 		if (!target) target = this.resolve(action.path, actor.data);
-		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+		if (!!action.mod || !!action.desc) 
+			targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 	}
 	if (action.type == "selfcontrol") {
 		prefix = "Self Control ";
