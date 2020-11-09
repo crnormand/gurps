@@ -13,8 +13,15 @@ export class ModifierBucket extends Application {
 	tempRangeMod = null;
 	
 	addTempRangeMod() {
-		if (this.tempRangeMod != 0)
-			this.addModifier(this.tempRangeMod, "for range");
+		// Only allow 1 measured range, for the moment.
+		let d = "for range";
+		this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
+		if (this.tempRangeMod == 0) {
+			this.sum();
+			this.updateBucket();
+		} else {
+			this.addModifier(this.tempRangeMod, d);
+		}
 	}
 	
 	setTempRangeMod(mod) {
@@ -25,14 +32,57 @@ export class ModifierBucket extends Application {
     const data = super.getData(options);
 		data.gmod = this;
 		data.stack = this.modifierStack;
-		data.meleemods = game.GURPS.MeleeMods;
-		data.rangedmods = game.GURPS.RangedMods;
-		data.defensemods = game.GURPS.DefenseMods;
-		data.speedrangemods = game.GURPS.SpeedRangeMods;
-		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "None selected";
-		data.othermods = game.GURPS.OtherMods;
+		data.meleemods = game.GURPS.MeleeMods.split("\n");
+		data.rangedmods = game.GURPS.RangedMods.split("\n");
+		data.defensemods = game.GURPS.DefenseMods.split("\n");
+		data.speedrangemods = game.GURPS.SpeedRangeMods.split("\n");
+		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "No active character!";
+		data.othermods = game.GURPS.OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
+		
+		data.currentmods = [];
+		
+		if (!!game.GURPS.LastActor) {
+			let melee =[];
+			let ranged = [];
+			let defense = [];
+			let gen = [];
+			let effects = game.GURPS.LastActor.temporaryEffects;
+			for (let e of effects) {
+				let type = e.data.flags.core.statusId;
+				let m = game.GURPS.ModifiersForStatus[type];
+				if (!!m) {
+					melee = melee.concat(m.melee)
+					ranged = ranged.concat(m.ranged)
+					defense = defense.concat(m.defense)
+					gen = gen.concat(m.gen)
+				}
+			}
+			if (gen.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("General"));
+				gen.forEach(e => data.currentmods.push(e));
+			}
+			if (melee.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("Melee"));
+				melee.forEach(e => data.currentmods.push(e));
+			}
+			if (ranged.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("Ranged"));
+				ranged.forEach(e => data.currentmods.push(e));
+			}
+			if (defense.length > 0) {
+				data.currentmods.push(game.GURPS.horiz("Defense"));
+				defense.forEach(e => data.currentmods.push(e));
+			}
+		}
+/*		`${game.GURPS.horiz("Melee")}
+[-4 to hit melee (Prone)]
+${game.GURPS.horiz("Ranged")}
+[-2 to hit ranged (Prone)]
+${game.GURPS.horiz("Defense")}
+[-3 to defend (Prone)]`.split("\n");
+*/
     return data;
 	}
 	
@@ -52,7 +102,7 @@ export class ModifierBucket extends Application {
 		html.find("#trash").click(this._onClickTrash.bind(this));
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
-		//e.contextmenu(this.onRightClick.bind(this));
+		e.contextmenu(this.onRightClick.bind(this));
 		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
 		if (!!e[0])
 			this.displayElement = e[0];
@@ -74,9 +124,22 @@ export class ModifierBucket extends Application {
     html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
     html.find(".gmod").click(this._onClickGmod.bind(this));
     html.find(".glinkmod").click(this._onClickGmod.bind(this));
+   	html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
+   	html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
-
+		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
+	}
+	
+	async _onManualEntry(envent) {
+    event.preventDefault();
+		let element = event.currentTarget;
+		let v = element.value;
+		let parsed = game.GURPS.parselink(element.value, game.GURPS.LastActor);
+		if (!!parsed.action && parsed.action.type === "modifier") {
+			this.addModifier(parsed.action.mod, parsed.action.desc);
+		} else
+			this.refresh();
 	}
 	
 	async _onGMbutton(event) {
@@ -164,31 +227,31 @@ export class ModifierBucket extends Application {
 	async onRightClick(event) {
 		event.preventDefault();
 		if (!game.user.isGM) return;
-		this.SHOWING = false;
-		this.refresh();
-		let users = game.users.filter(u => u._id != game.user._id);
+		let c = `Melee:
+${game.GURPS.MeleeMods}
+
+Ranged:
+${game.GURPS.RangedMods}
+
+Defense:
+${game.GURPS.DefenseMods}
+
+Other:
+${game.GURPS.OtherMods}`;
+
+		let output = "";
+		for (let l of c.split("\n"))
+			output += "<br>" + l;
 		
-		let dialogData = {
-      title: "Update Player's Modifier Bucket", 
-      content: "Send your Modifier Bucket:<br><br><div style='background-color:black;color:white'>" + this.htmlForMods() + "</div><br><br>To which player:<br>",
-			buttons: {}
-    }
-		let buttons = dialogData.buttons;
-		for (let u of users) {
-			let b = {
-				label: u.name,
-				icon: '<i class="fas fa-user"></i>',
-				callback: () => { 
-					u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
-					u.setFlag("gurps", "modifierchanged", Date.now());
-				}
-			}
-			buttons[u.name] = b;
-		}
-		new Dialog(dialogData).render(true);
+		let messageData = {
+		 	content: output,		
+		 	type: CONST.CHAT_MESSAGE_TYPES.OOC,
+			};
+		CONFIG.ChatMessage.entityClass.create(messageData, {}); 
 	}
 	
 	displayMod(mod) {
+		if (!mod) mod = "0";
 		let n = mod.toString();
 		if (n[0] != '-' && n[0] != '+') n = "+" + n;
 		return n;
@@ -219,7 +282,7 @@ export class ModifierBucket extends Application {
 		return this.modifierStack.currentSum;
 	}
 	
-	addModifier(mod, reason) {
+	async addModifier(mod, reason) {
 		let stack = this.modifierStack;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {

@@ -2,7 +2,7 @@
   "name": "gurps",
   "title": "GURPS 4th Edition (Unofficial)",
   "description": "An adaption of GURPS 4e for Foundry VTT (GCS/GCA edition)",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "minimumCoreVersion": "0.7.5",
   "compatibleCoreVersion": "0.7.6",
   "templateVersion": 2,
@@ -27,7 +27,7 @@
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
-  "manifest": "https://raw.githubusercontent.com/crnormand/gurps/0.6.4/system.json",
-  "download": "https://github.com/crnormand/gurps/archive/0.6.4.zip",
+  "manifest": "https://raw.githubusercontent.com/crnormand/gurps/0.6.5/system.json",
+  "download": "https://github.com/crnormand/gurps/archive/0.6.5.zip",
   "license": "LICENSE.txt"
 }
