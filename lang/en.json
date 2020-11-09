@@ -57,5 +57,7 @@
 		"GURPS.SkillPerE": "Per/E",
 		"GURPS.SkillPerA": "Per/A",
 		"GURPS.SkillPerH": "Per/H",
-		"GURPS.SkillPerVH": "Per/VH"
+		"GURPS.SkillPerVH": "Per/VH",
+		
+		"GURPS.crouch": "Crouch"
 }

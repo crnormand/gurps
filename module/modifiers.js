@@ -13,8 +13,15 @@ export class ModifierBucket extends Application {
 	tempRangeMod = null;
 	
 	addTempRangeMod() {
-		if (this.tempRangeMod != 0)
-			this.addModifier(this.tempRangeMod, "for range");
+		// Only allow 1 measured range, for the moment.
+		let d = "for range";
+		this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
+		if (this.tempRangeMod == 0) {
+			this.sum();
+			this.updateBucket();
+		} else {
+			this.addModifier(this.tempRangeMod, d);
+		}
 	}
 	
 	setTempRangeMod(mod) {
@@ -34,13 +41,15 @@ export class ModifierBucket extends Application {
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
 		
-		data.currentmods = `${game.GURPS.horiz("Melee")}
+		data.currentmods = [];
+		
+/*		`${game.GURPS.horiz("Melee")}
 [-4 to hit melee (Prone)]
 ${game.GURPS.horiz("Ranged")}
 [-2 to hit ranged (Prone)]
 ${game.GURPS.horiz("Defense")}
 [-3 to defend (Prone)]`.split("\n");
-
+*/
     return data;
 	}
 	
@@ -86,7 +95,17 @@ ${game.GURPS.horiz("Defense")}
    	html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
-
+		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
+	}
+	
+	async _onManualEntry(envent) {
+    event.preventDefault();
+		let element = event.currentTarget;
+		let v = element.value;
+		let parsed = game.GURPS.parselink(element.value, game.GURPS.LastActor);
+		if (!!parsed.action && parsed.action.type === "modifier") {
+			this.addModifier(parsed.action.mod, parsed.action.desc);
+		}
 	}
 	
 	async _onGMbutton(event) {
@@ -229,7 +248,7 @@ ${game.GURPS.horiz("Defense")}
 		return this.modifierStack.currentSum;
 	}
 	
-	addModifier(mod, reason) {
+	async addModifier(mod, reason) {
 		let stack = this.modifierStack;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {

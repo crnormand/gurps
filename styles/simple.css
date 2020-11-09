@@ -25,7 +25,8 @@
 .removemod:hover {
 	font-weight: bold;
 	cursor: pointer;
-	font-size: 110%;
+	text-shadow: 1px 1px grey;
+	background-color: yellow;
 }
 #modtooltiplefttop {
 	grid-column: 1;
@@ -168,8 +169,11 @@
 }
 
 .gmbutton {
+	display:inline-block;
+	text-align: center;
 	font-size:90%;	
 	padding: 2 px;
+	width: fit-content;
 	}
 
 .gurpstippable {

@@ -51,13 +51,16 @@ GURPS.horiz = function (text, size = 10) {
 GURPS.MeleeMods = `[+4 to hit (Determined Attack)]
 [+4 to hit (Telegraphic Attack)]
 [-2 to hit (Deceptive Attack)]
-[+2 damage (Strong Attack)]
+[-4 to hit (Charge Attack) *Max:9]
+[+2 dmg (Strong Attack)]
 ${GURPS.horiz("Extra Effort")}
-[+2 damage (Mighty Blow) *Cost 1FP]
+[+2 dmg (Mighty Blow) *Cost 1FP]
 [+0 Heroic Charge *Cost 1FP]`;
 
 GURPS.RangedMods = `[+1 Aim]
-[+1 to hit (Determined Attack)]`;
+[+1 to hit (Determined Attack)]
+${GURPS.horiz("Actions")}
+[WILL Concentration check]`;
 	
 GURPS.DefenseMods = `[+2 All-Out Defense]
 [+1 to dodge (Shield)]
@@ -69,9 +72,10 @@ GURPS.DefenseMods = `[+2 All-Out Defense]
 [-2 to dodge (Failed Acrobatics)]
 [-2 to dodge (Attacked from side)]
 [-4 to dodge (Attacked from rear)]
-[-2 to defend (Kneeling/Sitting)]
 ${GURPS.horiz("Extra Effort")}
-[+2 Feverish Defense *Cost 1FP]`;
+[+2 Feverish Defense *Cost 1FP]
+${GURPS.horiz("Actions")}
+[WILL-3 Concentration check]`;
 
 GURPS.BasicRangeSpeedMods = `[-1 Range 3 yds]
 [-2 Range 5 yds]
@@ -253,6 +257,16 @@ for (let i = 0; i < r.length; i = i + 2) {
 	
 //GURPS.ranges = GURPS.monsterHunter2Ranges;
 GURPS.ranges = GURPS.basicSetRanges;
+
+GURPS.saveStatusEffects = CONFIG.statusEffects;
+
+CONFIG.statusEffectsX= [
+	{
+		icon: "systems/gurps/icons/postures/crouching.png",
+		id: "crouch",
+		label: "GURPS.crouch"
+	},
+];
 
 /*
 	Convert XML text into a JSON object
@@ -512,9 +526,7 @@ function parselink(str, actor, htmldesc, clrdmods = false) {
 	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)? ?(.*)/g, "$1~$2~$3~$4");
 	let skill = null;
 	let mod = "";
-	if (parse == str)
-		skill = actor?.data.skills.findInProperties(s => s.name == str);
-	else {
+	if (parse != str) {
 		let a = parse.split("~");
 		let n = a[0].trim();
 		if (!!n) {
@@ -584,7 +596,7 @@ function performAction(action, actor) {
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
-	if (action.type == "attribute") {
+	if (action.type == "attribute" && !!actor) {
 		prefix = "Roll vs ";
 		thing = this.i18n(action.path);
 		formula = "3d6";
@@ -607,12 +619,12 @@ function performAction(action, actor) {
 		thing = " points of '" + action.damagetype + "' damage";
 		formula = this.d6ify(action.formula);
 	}
-	if (action.type == "deriveddamage") {
+	if (action.type == "deriveddamage" && !!actor) {
 		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")";
 		thing = " points of '" + action.damagetype + "' damage";
 		formula = this.d6ify(action.derivedformula);
 	}
-	if (action.type == "skill") {
+	if (action.type == "skill" && !!actor) {
 		prefix = "Attempting ";
 		thing = action.name;
 		let skill = actor.data.skills.findInProperties(s => s.name == thing);
@@ -687,6 +699,23 @@ async function onRoll(event, actor) {
 GURPS.onRoll = onRoll;
 
 
+// If the desc contains *Cost ?FP or *Max:9 then perform action
+function applyModifierDesc(actor, desc) {
+	let parse = desc.replace(/.*\*Cost (\d+) ?FP.*/g, "$1");
+	if (parse != desc) {
+		let fp = parseInt(parse);
+		fp =  actor.data.data.FP.value - fp;
+		actor.update({"data.FP.value": fp});
+	}
+	parse = desc.replace(/.*\*Max: ?(\d+).*/g, "$1");
+	if (parse != desc) {
+		return parseInt(parse);
+	}
+	return null;		// indicating no overriding MAX value
+}
+GURPS.applyModifierDesc = applyModifierDesc;
+
+
 /*
 	This is the BIG method that does the roll and prepares the chat message.
 	unfortunately, it has a lot fo hard coded junk in it.
@@ -704,6 +733,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	// Lets collect up the modifiers, they are used differently depending on the type of roll
 	let modscontent = "";
 	let modifier = 0;
+	let maxtarget = null;			// If not null, then the target cannot be any higher than this.
 	
 	targetmods = await GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
 
@@ -712,7 +742,10 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		for (let m of targetmods) {
 			modifier += parseInt(m.mod);
 			modscontent += "<br> &nbsp;<span style='font-size:85%'>" + m.mod;
-			if (!!m.desc) modscontent += " : " + m.desc;
+			if (!!m.desc) {
+				modscontent += " : " + m.desc;
+				maxtarget = GURPS.applyModifierDesc(actor, m.desc);
+			}
 			modscontent += "</span>";
 		}
 	}
@@ -721,6 +754,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	let roll = null;  // Will be the Roll
 	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
 		let finaltarget = origtarget + modifier;
+		if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget;
 		roll = new Roll(formula);		// The formula will always be "3d6" for a "targetted" roll
 		roll.roll();
 		let rtotal = roll.total;
