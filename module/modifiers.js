@@ -43,6 +43,7 @@ export class ModifierBucket extends Application {
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
 		data.taskdificulties = game.GURPS.TaskDifficultyModifiers;
+		data.lightingmods = game.GURPS.LightingModifiers;
 		data.currentmods = [];
 
 		if (!!game.GURPS.LastActor) {
@@ -125,6 +126,7 @@ export class ModifierBucket extends Application {
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
 		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
 		html.find("#modtaskdifficulty").change(this._onTaskDifficulty.bind(this));
+		html.find("#modlighting").change(this._onLighting.bind(this));
 	}
 
 	async _onManualEntry(envent) {
@@ -139,12 +141,21 @@ export class ModifierBucket extends Application {
 	}
 	
 	async _onTaskDifficulty(event) {
+    this._onSimpleList(event, "Difficulty: ");
+	}
+
+	async _onLighting(event) {
+    this._onSimpleList(event, "Lighting: ");
+	}
+	
+	async _onSimpleList(event, prefix) {
     event.preventDefault();
 		let element = event.currentTarget;
 		let v = element.value;
 		let i = v.indexOf(" ");
-		this.addModifier(v.substring(0,i), "Difficulty: " + v.substr(i+1));
+		this.addModifier(v.substring(0,i), prefix + v.substr(i+1));
 	}
+
 	
 	async _onGMbutton(event) {
 		event.preventDefault();

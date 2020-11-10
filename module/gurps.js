@@ -103,8 +103,10 @@ ${GURPS.horiz("Actions")}
 // 	GURPS.BasicRangeSpeedMods
 // // : GURPS.MonsterHunterSpeedRangeMods;
 
-GURPS.OtherMods = `[+1 GM 'cause I said so!]
-[-1 GM 'cause I said so!]`
+GURPS.OtherMods= `[+1 GM said so]
+[-1 GM said so]
+[+4 GM Blessed]
+[-4 GM don't try it]`;
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -263,7 +265,7 @@ GURPS.ModifiersForStatus = {
 
 
 GURPS.TaskDifficultyModifiers = [
-	"Select Task Difficulty",
+	"Task Difficulty",
 	"+10 Automatic",
 	"+8 Trivial",
 	"+6 Very Easy",
@@ -276,6 +278,20 @@ GURPS.TaskDifficultyModifiers = [
 	"-6 Very hard",
 	"-8 Dangerous",
 	"-10 Impossible"
+];
+
+GURPS.LightingModifiers = [
+	"Lighting",
+	"-1 Sunrise/Sunset/torch/flashlight",
+	"-2 Twilight/gaslight/cell-phone",
+	"-3 Deep twlight/candlelight",
+	"-4 Full moon",
+	"-5 Halkf moon",
+	"-6 Quarter moon",
+	"-7 Starlight",
+	"-8 Starelight through clouds",
+	"-9 Overcast moonless night",
+	"-10 Total darkness"	
 ];
 
 
