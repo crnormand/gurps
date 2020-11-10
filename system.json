@@ -11,7 +11,8 @@
     "module/gurps.js",
     "lib/SSRT/main.js",
     "lib/ranges.mjs",
-    "lib/initiative.mjs"
+    "lib/initiative.mjs",
+    "lib/hitpoints.mjs"
   ],
   "styles": [
     "styles/simple.css"
