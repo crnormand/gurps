@@ -12,7 +12,7 @@ window.GURPS = GURPS;		// Make GURPS global!
 
 import GURPSRange from '../lib/ranges.mjs'
 import Initiative from '../lib/initiative.mjs'
-import Hitpoints from '../lib/hitpoints.mjs'
+import HitFatPoints from '../lib/hitpoints.mjs'
 
 //CONFIG.debug.hooks = true;
 
@@ -465,77 +465,6 @@ for (let loc in GURPS.hitlocationRolls) {
 	GURPS.CoverHitlocModifiers.push(mod);
 }
 
-// GURPS.hpConditions = {
-// 	NORMAL: {
-// 		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
-// 		label: 'Normal',
-// 		style: 'normal'
-// 	},
-// 	REELING: {
-// 		breakpoint: (HP) => (HP.max / 3),
-// 		label: 'Reeling',
-// 		style: 'reeling'
-// 	},
-// 	COLLAPSE: {
-// 		breakpoint: (_) => 0,
-// 		label: 'Collapse',
-// 		style: 'collapse'
-// 	},
-// 	CHECK1: {
-// 		breakpoint: (HP) => -1 * HP.max,
-// 		label: 'Check #1',
-// 		style: 'check'
-// 	},
-// 	CHECK2: {
-// 		breakpoint: (HP) => -2 * HP.max,
-// 		label: 'Check #2',
-// 		style: 'check'
-// 	},
-// 	CHECK3: {
-// 		breakpoint: (HP) => -3 * HP.max,
-// 		label: 'Check #3',
-// 		style: 'check'
-// 	},
-// 	CHECK4: {
-// 		breakpoint: (HP) => -4 * HP.max,
-// 		label: 'Check #4',
-// 		style: 'check'
-// 	},
-// 	DEAD: {
-// 		breakpoint: (HP) => -5 * HP.max,
-// 		label: 'Dead',
-// 		style: 'dead'
-// 	},
-// 	DESTROYED: {
-// 		breakpoint: (HP) => -10 * HP.max,
-// 		label: 'Destroyed',
-// 		style: 'destroyed'
-// 	}
-// }
-
-GURPS.fpConditions = {
-	NORMAL: {
-		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
-		label: 'Normal',
-		style: 'normal'
-	},
-	REELING: {
-		breakpoint: (FP) => (FP.max / 3),
-		label: 'Tired',
-		style: 'tired'
-	},
-	COLLAPSE: {
-		breakpoint: (_) => 0,
-		label: 'Collapse',
-		style: 'collapse'
-	},
-	UNCONSCIOUS: {
-		breakpoint: (FP) => -1 * FP.max,
-		label: 'Unconscious',
-		style: 'unconscious'
-	}
-}
-
 GURPS.makeSelect = function (array) {
 	let groups = [];
 	let ans = { title: array[0], groups: groups };  // The title line.   Since we don't allow the select's to change, the first element in the select acts as its title.
@@ -865,8 +794,6 @@ function parselink(str, actor, htmldesc, clrdmods = false) {
 	return { "text": str };
 }
 GURPS.parselink = parselink;
-
-
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 function performAction(action, actor) {
@@ -1222,8 +1149,7 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
-GURPS.hitpoints = new Hitpoints()
-
+GURPS.hitpoints = new HitFatPoints()
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1306,67 +1232,6 @@ Hooks.once("init", async function () {
 
 	Handlebars.registerHelper('gt', function (a, b) { return a > b; });
 
-
-	// TODO remove when FP and HP are removed from this file
-	const getConditionKey = function (pts, conditions) {
-		var found = conditions['NORMAL']
-		for (const [key, value] of Object.entries(conditions)) {
-			if (pts.value > value.breakpoint(pts)) { return found }
-			found = key
-		}
-		return found
-	}
-
-	// const hpCondition = function (HP, member) {
-	// 	let key = getConditionKey(HP, GURPS.hpConditions)
-	// 	return GURPS.hpConditions[key][member]
-	// }
-
-	const fpCondition = function (FP, member) {
-		let key = getConditionKey(FP, GURPS.fpConditions)
-		return GURPS.fpConditions[key][member]
-	}
-
-	// Handlebars.registerHelper('hpCondition', hpCondition);
-	Handlebars.registerHelper('fpCondition', fpCondition);
-
-	// TODO remove when FP and HP are removed from this file
-	const buildOutput = function (list, opt) {
-		var results = ''
-		list.forEach((item) => {
-			results += opt.fn(item)
-		})
-		return results
-	}
-
-	// Handlebars.registerHelper('hpBreakpoints', function (HP, opt) {
-	// 	var list = []
-	// 	for (const [key, value] of Object.entries(GURPS.hpConditions)) {
-	// 		let currentKey = getConditionKey(HP, GURPS.hpConditions)
-	// 		list.push({
-	// 			breakpoint: Math.floor(value.breakpoint(HP)).toString(),
-	// 			label: value.label.toString(),
-	// 			style: (key === currentKey) ? "selected" : ""
-	// 		})
-	// 	}
-	// 	list.shift()
-	// 	return buildOutput(list, opt)
-	// });
-
-	Handlebars.registerHelper('fpBreakpoints', function (FP, opt) {
-		var list = []
-		for (const [key, value] of Object.entries(GURPS.fpConditions)) {
-			let currentKey = getConditionKey(FP, GURPS.fpConditions)
-			list.push({
-				breakpoint: Math.floor(value.breakpoint(FP)).toString(),
-				label: value.label.toString(),
-				style: (key === currentKey) ? "selected" : ""
-			})
-		}
-		list.shift()
-		return buildOutput(list, opt)
-	});
-
 	// Only necessary because of the FG import
 	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {
 		if (!roll)
@@ -1389,11 +1254,6 @@ Hooks.once("init", async function () {
 		type: Boolean,
 		default: false,
 	});
-
-	// GURPS.SpeedRangeMods =
-	// 	game.settings.get('gurps', 'rangeMethod') === 'Standard' ?
-	// 		GURPS.BasicRangeSpeedMods
-	// 		: GURPS.MonsterHunterSpeedRangeMods;
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
@@ -1438,4 +1298,3 @@ Hooks.on("controlToken", (...args) => {
 	let a = args[0]?.actor;
 	if (!!a) game.GURPS.SetLastActor(a);
 });
-
