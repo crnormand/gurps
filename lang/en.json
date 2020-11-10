@@ -59,5 +59,7 @@
 		"GURPS.SkillPerH": "Per/H",
 		"GURPS.SkillPerVH": "Per/VH",
 		
-		"GURPS.crouch": "Crouch"
+		"GURPS.STATUSCrouch": "Crouch",
+		"GURPS.STATUSSit": "Sitting",
+		"GURPS.STATUSKneel": "Kneeling"
 }

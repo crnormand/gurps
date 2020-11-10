@@ -46,6 +46,9 @@ export class ModifierBucket extends Application {
 		data.lightingmods = game.GURPS.LightingModifiers;
 		data.eqtqualitymods = game.GURPS.EqtQualifyModifiers;
 		data.rofmods = game.GURPS.RateOfFireModifiers;
+		data.posturemods = game.GURPS.makeSelect(game.GURPS.PostureStatusModifiers);
+		data.covermods = game.GURPS.makeSelect(game.GURPS.CoverHitlocModifiers);
+		data.sizemods = game.GURPS.SizeModifiers;
 		data.currentmods = [];
 
 		if (!!game.GURPS.LastActor) {
@@ -132,6 +135,9 @@ export class ModifierBucket extends Application {
 		html.find("#modspeedrange").change(this._onList.bind(this));
 		html.find("#modeqtquality").change(this._onList.bind(this));
 		html.find("#modrof").change(this._onList.bind(this));
+		html.find("#modposture").change(this._onList.bind(this));
+		html.find("#modcover").change(this._onList.bind(this));
+		html.find("#modsize").change(this._onList.bind(this));
 	}
 
 	async _onManualEntry(envent) {
@@ -162,6 +168,7 @@ export class ModifierBucket extends Application {
 		let element = event.currentTarget;
 		let v = element.value;
 		let i = v.indexOf(" ");
+		this.SHOWING = true;  					// Firefox seems to need this reset when showing a pulldown
 		this.addModifier(v.substring(0,i), prefix + v.substr(i+1));
 	}
 
