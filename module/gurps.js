@@ -211,24 +211,49 @@ GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
 CONFIG.statusEffects= [
 	{
-		icon: "systems/gurps/icons/shock1.svg",
+		icon: "systems/gurps/icons/shock1.png",
 		id: "shock1",
 		label: "EFFECT.StatusShocked"
 	},
 	{
-		icon: "systems/gurps/icons/shock2.svg",
+		icon: "systems/gurps/icons/shock2.png",
 		id: "shock2",
 		label: "EFFECT.StatusShocked"
 	},
 	{
-		icon: "systems/gurps/icons/shock3.svg",
+		icon: "systems/gurps/icons/shock3.png",
 		id: "shock3",
 		label: "EFFECT.StatusShocked"
 	},
 	{
-		icon: "systems/gurps/icons/shock4.svg",
+		icon: "systems/gurps/icons/shock4.png",
 		id: "shock4",
 		label: "EFFECT.StatusShocked"
+	},
+	{
+		icon: "systems/gurps/icons/star-struck.png",
+		id: "stun",
+		label: "EFFECT.StatusStunned"
+	},
+	{
+		icon: "systems/gurps/icons/falling.png",
+		id: "prone",
+		label: "EFFECT.StatusProne"
+	},
+	{
+		icon: "systems/gurps/icons/kneeling.png",
+		id: "kneel",
+		label: "GURPS.STATUSKneel"
+	},
+	{
+		icon: "systems/gurps/icons/leapfrog.png",
+		id: "crouch",
+		label: "GURPS.STATUSCrouch"
+	},
+	{
+		icon: "systems/gurps/icons/wooden-chair.png",
+		id: "sit",
+		label: "GURPS.STATUSSit"
 	},
 	GURPS.SavedStatusEffects.find(s => s.id == "prone"),
 	GURPS.SavedStatusEffects.find(s => s.id == "stun"),
@@ -263,13 +288,31 @@ GURPS.ModifiersForStatus = {
 		gen: [],
 		melee: ["[-4 to hit (Prone)]"],
 		ranged: ["[-2 to hit (Prone)]"],
-		defense: ["[-2 to defenses (Prone)]"]
+		defense: ["[-2 to active defenses (Prone)]"]
 	},
 	"stun": {
 		gen: [],
 		melee: [],
 		ranged: [],
-		defense: ["[-4 to defenses (Stunned)]"]
+		defense: ["[-4 to active defenses (Stunned)]"]
+	},
+	"kneel": {
+		gen: [],
+		melee: ["[-2 to hit (Kneeling)]"],
+		ranged: [],
+		defense: ["[-2 to active defenses (Kneeling)]"]
+	},
+	"crouch": {
+		gen: [],
+		melee: ["[-2 to hit (Crouching)]"],
+		ranged: ["[-2 to hit (Crounching)]"],
+		defense: []
+	},
+	"sit": {
+		gen: [],
+		melee: ["[-2 to hit (Sitting)]"],
+		ranged: [],
+		defense: ["[-2 to active defenses (Sitting)]"]
 	},
 };
 
@@ -320,12 +363,52 @@ GURPS.EqtQualifyModifiers = [
 	"+2 Fine Quality Equipment (20x cost)",
 	"+1 Good Quality Equipment (5x cost)",
 	"-2 Improvised Equipment (non-tech task)",
-	"-5 Improvised Equipment (tech tack)",
+	"-5 Improvised Equipment (tech task)",
 	"-1 Missing / Damaged item",
 	"-5 No Equipment (none-tech task)",
 	"-10 No Equipment (tech task)"
 ];
 
+
+/*
+
+		melee: ["[-4 to hit (Prone)]"],
+		ranged: ["[-2 to hit (Prone)]"],
+		defense: ["[-2 to defenses (Prone)]"]
+*/
+
+GURPS.PostureStatusModifiers = [
+	"Posture, Status & Afflictions",
+	"*Posture",
+	"-4 to hit Melee (Prone)",
+	"-2 to hit Ranged (Prone)",
+	"-3 to active defenses (Prone)",
+	"-2 to hit Melee (Crouch)",
+	"-2 to hit Ranged (Crouch)",
+	"-2 to hit Melee (Kneel/Sit)",
+	"-2 to active defenses (Kneel/Sit)",
+	"*Status",
+	"-1 to IQ/DX skills (Shock 1)",
+	"-2 to IQ/DX skills (Shock 2)",
+	"-3 to IQ/DX skills (Shock 3)",
+	"-4 to IQ/DX skills (Shock 4)",
+	"-4 to active defenses (Stunned)",
+	"*Afflictions",
+	"-3 to DX skills (Coughing)",
+	"-1 to IQ skills (Coughing)",
+	"-2 to IQ/DX/Self Control (Drowsy)",
+	"-2 to IQ/DX skills (Drunk)",
+	"-4 to Self Control (Drunk)",
+	"-1 to IQ/DX skills (Tipsy)",
+	"-2 to Self Control (Tipsy)",
+	"-3 to IQ/DX/Self Control (Euphoria)",
+	"-2 to ST/IQ/DX/HT/Will/Per (Nauseated)",
+	"-1 to active defense (Nauseated)",
+	"-2 to IQ/DX/Self Control (Moderate Pain)",
+	"-4 to IQ/DX/Self Control (Severe Pain)",
+	"-6 to IQ/DX/Self Control (Terrible Pain)",
+	"-5 to IQ/DX/Per skills (Retching)"
+];
 
 GURPS.hpConditions = {
 	NORMAL: {
@@ -396,6 +479,23 @@ GURPS.fpConditions = {
 		label: 'Unconscious',
 		style: 'unconscious'
 	}
+}
+
+GURPS.makeSelect = function(array) {
+	let groups = [];
+	let ans = { title: array[0], groups: groups };  // The title line.   Since we don't allow the select's to change, the first element in the select acts as its title.
+
+	let current = [];
+	for (let i = 1; i < array.length; i++) {
+		let line = array[i];
+		if (line[0] == "*") {
+			current = [];
+			groups.push({ group: line.substr(1), options: current });
+		} else {
+			current.push(line);
+		}
+	}
+	return ans;
 }
 
 
