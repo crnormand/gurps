@@ -9,7 +9,7 @@
 	height: 100%;
 	display: grid;
 	grid-template-columns: 2fr 2fr 2fr;
-	grid-template-rows: 2fr 1fr 2fr ;
+	grid-template-rows: 4fr 1fr 1fr 4fr ;
 	justify-items: stretch;
 	justify-content: stretch;
 	align-items: stretch;
@@ -46,7 +46,9 @@
 
 #modtooltipleftcenter {
 	grid-column: 1;
- 	grid-row: 2;
+ 	grid-row-start: 2;
+	grid-row-end: 4;
+
 
 	display: grid;
 	justify-self: stretch;
@@ -61,7 +63,7 @@
 
 #modtooltipleftbottom {
 	grid-column: 1;
- 	grid-row: 3;
+ 	grid-row: 4;
 
 	display: grid;
 	justify-self: stretch;
@@ -94,7 +96,8 @@
 
 #modtooltipcentercenter {
 	grid-column: 2;
-  grid-row: 2;
+  grid-row-start: 2;
+  grid-row-end: 4;
 
 	display: grid;
 	justify-self: stretch;
@@ -111,7 +114,7 @@
 
 #modtooltipcenterbottom {
 	grid-column: 2;
-  grid-row: 3;
+  grid-row: 4;
 
 	display: grid;
 	justify-self: stretch;
@@ -147,7 +150,8 @@
 
 #modtooltiprightbottom {
 	grid-column: 3;
-  grid-row: 3;
+  grid-row-start: 3;
+  grid-row-end: 5;
 
 	display: grid;
 	justify-self: stretch;

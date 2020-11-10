@@ -11,7 +11,7 @@ export const GURPS = {};
 
 window.GURPS = GURPS;		// Make GURPS global!
 
-//CONFIG.debug.hooks = true;
+CONFIG.debug.hooks = false;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
@@ -97,9 +97,9 @@ GURPS.MonsterHunterSpeedRangeMods= `[-3 20 yds, Short range]
 GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
 
 GURPS.OtherMods= `[+1 GM said so]
-[-4 GM don't try it]
+[-1 GM said so]
 [+4 GM Blessed]
-[-1 GM said so]`
+[-4 GM don't try it]`;
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -330,7 +330,7 @@ GURPS.ModifiersForStatus = {
 
 
 GURPS.TaskDifficultyModifiers = [
-	"0 Select Task Difficulty",
+	"Select Task Difficulty",
 	"+10 Automatic",
 	"+8 Trivial",
 	"+6 Very Easy",
@@ -343,7 +343,80 @@ GURPS.TaskDifficultyModifiers = [
 	"-6 Very hard",
 	"-8 Dangerous",
 	"-10 Impossible"
-]
+];
+
+
+GURPS.hpConditions = {
+	NORMAL: {
+		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
+		label: 'Normal',
+		style: 'normal'
+	},
+	REELING: {
+		breakpoint: (HP) => (HP.max / 3),
+		label: 'Reeling',
+		style: 'reeling'
+	},
+	COLLAPSE: {
+		breakpoint: (_) => 0,
+		label: 'Collapse',
+		style: 'collapse'
+	},
+	CHECK1: {
+		breakpoint: (HP) => -1 * HP.max,
+		label: 'Check #1',
+		style: 'check'
+	},
+	CHECK2: {
+		breakpoint: (HP) => -2 * HP.max,
+		label: 'Check #2',
+		style: 'check'
+	},
+	CHECK3: {
+		breakpoint: (HP) => -3 * HP.max,
+		label: 'Check #3',
+		style: 'check'
+	},
+	CHECK4: {
+		breakpoint: (HP) => -4 * HP.max,
+		label: 'Check #4',
+		style: 'check'
+	},
+	DEAD: {
+		breakpoint: (HP) => -5 * HP.max,
+		label: 'Dead',
+		style: 'dead'
+	},
+	DESTROYED: {
+		breakpoint: (HP) => -10 * HP.max,
+		label: 'Destroyed',
+		style: 'destroyed'
+	}
+}
+
+GURPS.fpConditions = {
+	NORMAL: {
+		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
+		label: 'Normal',
+		style: 'normal'
+	},
+	REELING: {
+		breakpoint: (FP) => (FP.max / 3),
+		label: 'Tired',
+		style: 'tired'
+	},
+	COLLAPSE: {
+		breakpoint: (_) => 0,
+		label: 'Collapse',
+		style: 'collapse'
+	},
+	UNCONSCIOUS: {
+		breakpoint: (FP) => -1 * FP.max,
+		label: 'Unconscious',
+		style: 'unconscious'
+	}
+}
+
 
 /*
 	Convert XML text into a JSON object
@@ -1102,76 +1175,6 @@ Hooks.once("init", async function () {
 
 	Handlebars.registerHelper('gt', function (a, b) { return a > b; });
 
-	GURPS.hpConditions = {
-		NORMAL: {
-			breakpoint: (_) => Number.MAX_SAFE_INTEGER,
-			label: 'Normal',
-			style: 'normal'
-		},
-		REELING: {
-			breakpoint: (HP) => (HP.max / 3),
-			label: 'Reeling',
-			style: 'reeling'
-		},
-		COLLAPSE: {
-			breakpoint: (_) => 0,
-			label: 'Collapse',
-			style: 'collapse'
-		},
-		CHECK1: {
-			breakpoint: (HP) => -1 * HP.max,
-			label: 'Check #1',
-			style: 'check'
-		},
-		CHECK2: {
-			breakpoint: (HP) => -2 * HP.max,
-			label: 'Check #2',
-			style: 'check'
-		},
-		CHECK3: {
-			breakpoint: (HP) => -3 * HP.max,
-			label: 'Check #3',
-			style: 'check'
-		},
-		CHECK4: {
-			breakpoint: (HP) => -4 * HP.max,
-			label: 'Check #4',
-			style: 'check'
-		},
-		DEAD: {
-			breakpoint: (HP) => -5 * HP.max,
-			label: 'Dead',
-			style: 'dead'
-		},
-		DESTROYED: {
-			breakpoint: (HP) => -10 * HP.max,
-			label: 'Destroyed',
-			style: 'destroyed'
-		}
-	}
-
-	GURPS.fpConditions = {
-		NORMAL: {
-			breakpoint: (_) => Number.MAX_SAFE_INTEGER,
-			label: 'Normal',
-			style: 'normal'
-		},
-		REELING: {
-			breakpoint: (FP) => (FP.max / 3),
-			label: 'Tired',
-			style: 'tired'
-		},
-		COLLAPSE: {
-			breakpoint: (_) => 0,
-			label: 'Collapse',
-			style: 'collapse'
-		},
-		UNCONSCIOUS: {
-			breakpoint: (FP) => -1 * FP.max,
-			label: 'Unconscious',
-			style: 'unconscious'
-		}
-	}
 
 	const getConditionKey = function (pts, conditions) {
 		var found = conditions['NORMAL']
@@ -1291,4 +1294,10 @@ Hooks.once("ready", async function () {
 			}
 		}
 	});
+});
+
+// Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
+Hooks.on("controlToken", (...args) => {
+	let a = args[0]?.actor;
+	if (!!a) game.GURPS.SetLastActor(a);
 });
