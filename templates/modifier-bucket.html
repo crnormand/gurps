@@ -58,38 +58,52 @@
 				</div>
 				
 				<div id="modtooltipcenterbottom">
-				<div class="modttlabel">Speed/Range</div>
-					{{#each speedrangemods}}
-						<div>{{{gurpslink this true}}}</div>
-					{{/each}}
-				</div>
-
-				<div id="modtooltiprightbottom">
 					<div class="modttlabel">Other Modifiers</div>
-					
 					<div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap; ">
 					{{#each othermods}}
 						<div style="display:inline-block;text-align: center;width: fit-content;margin:2px">{{{gurpslink this true}}}</div>
 					{{/each}}
 					</div>
-					
+				</div>
 
+				<div id="modtooltiprightbottom">
+					<div class="modttlabel">Commonly used Modifiers</div>
+				
 					<div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap">
 	
+						<select id="modspeedrange">
+						{{#each speedrangemods}}
+							<option value="{{this}}">{{this}}</option>
+						{{/each}}
+						</select>
+
 						<select id="modtaskdifficulty">
 						{{#each taskdificulties}}
 							<option value="{{this}}">{{this}}</option>
 						{{/each}}
 						</select>
+						
+						<select id="modeqtquality">
+						{{#each eqtqualitymods}}
+							<option value="{{this}}">{{this}}</option>
+						{{/each}}
+						</select>
+						
 						<select id="modlighting">
 						{{#each lightingmods}}
 							<option value="{{this}}">{{this}}</option>
 						{{/each}}
 						</select>
 						
+						<select id="modrof">
+						{{#each rofmods}}
+							<option value="{{this}}">{{this}}</option>
+						{{/each}}
+						</select>
+					
 					</div>
 					
-					<label for="fname">Or you can type in a modifier:</label>
+					<div class="modttlabel">Or you can type in a modifier:</div>
   				<input type="text" id="modmanualentry"><br>
 		
 					<div style="background-color:gold; align-content: end;display:{{#if cansend}}block{{else}}none{{/if}}">

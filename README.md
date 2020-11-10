@@ -1,9 +1,13 @@
 ### [Guide on how to use GURPS 4e for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
 
 
-## Current Version 0.6.5
+## Current Version 0.6.6
 
 ### History
+- 0.6.6
+    - Fixed manifest file to allow for automatic updating
+    - Added configurable system setting range system (Basic Set / Monster Hunters 2)
+    - Added common modifiers as pulldown lists on tooltip
 - 0.6.5
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players

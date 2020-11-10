@@ -103,7 +103,17 @@ ${GURPS.horiz("Actions")}
 // 	GURPS.BasicRangeSpeedMods
 // // : GURPS.MonsterHunterSpeedRangeMods;
 
-GURPS.OtherMods= `[+1 GM said so]
+GURPS.OtherMods= `[+1]
+[+2]
+[+3]
+[+4]
+[+5]
+[-1]
+[-2]
+[-3]
+[-4]
+[-5]
+[+1 GM said so]
 [-1 GM said so]
 [+4 GM Blessed]
 [-4 GM don't try it]`;
@@ -282,16 +292,38 @@ GURPS.TaskDifficultyModifiers = [
 
 GURPS.LightingModifiers = [
 	"Lighting",
-	"-1 Sunrise/Sunset/torch/flashlight",
-	"-2 Twilight/gaslight/cell-phone",
-	"-3 Deep twlight/candlelight",
+	"-1 Sunrise / sunset / torch / flashlight",
+	"-2 Twilight / gaslight / cell-phone",
+	"-3 Deep twlight / candlelight",
 	"-4 Full moon",
-	"-5 Halkf moon",
+	"-5 Half moon",
 	"-6 Quarter moon",
 	"-7 Starlight",
-	"-8 Starelight through clouds",
+	"-8 Starlight through clouds",
 	"-9 Overcast moonless night",
 	"-10 Total darkness"	
+];
+
+GURPS.RateOfFireModifiers = [
+	"Rate of Fire",
+	"+1 RoF: 5-8",
+	"+2 RoF: 9-12",
+	"+3 RoF: 13-16",
+	"+4 RoF: 17-24",
+	"+5 RoF: 25-49",
+	"+6 RoF: 50-99",
+];
+
+GURPS.EqtQualifyModifiers = [
+	"Equipment Quality",
+	"+4 Best Possible Equipment",
+	"+2 Fine Quality Equipment (20x cost)",
+	"+1 Good Quality Equipment (5x cost)",
+	"-2 Improvised Equipment (non-tech task)",
+	"-5 Improvised Equipment (tech tack)",
+	"-1 Missing / Damaged item",
+	"-5 No Equipment (none-tech task)",
+	"-10 No Equipment (tech task)"
 ];
 
 
@@ -1031,6 +1063,15 @@ function listeqtrecurse(eqts, options, level, data) {
 	return ret;
 }
 GURPS.listeqtrecurse = listeqtrecurse;
+
+function displayMod(mod) {
+	if (!mod) mod = "0";
+	let n = mod.toString();
+	if (n[0] != '-' && n[0] != '+') n = "+" + n;
+	return n;
+}
+GURPS.displayMod = displayMod;
+
 
 GURPS.rangeObject = new GURPSRange()
 

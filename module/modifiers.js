@@ -37,13 +37,15 @@ export class ModifierBucket extends Application {
 		data.meleemods = game.GURPS.MeleeMods.split("\n");
 		data.rangedmods = game.GURPS.RangedMods.split("\n");
 		data.defensemods = game.GURPS.DefenseMods.split("\n");
-		data.speedrangemods = game.GURPS.rangeObject.modifiers.split("\n");
+		data.speedrangemods = ["Speed / Range"].concat(game.GURPS.rangeObject.modifiers);
 		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "No active character!";
 		data.othermods = game.GURPS.OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
 		data.taskdificulties = game.GURPS.TaskDifficultyModifiers;
 		data.lightingmods = game.GURPS.LightingModifiers;
+		data.eqtqualitymods = game.GURPS.EqtQualifyModifiers;
+		data.rofmods = game.GURPS.RateOfFireModifiers;
 		data.currentmods = [];
 
 		if (!!game.GURPS.LastActor) {
@@ -127,6 +129,9 @@ export class ModifierBucket extends Application {
 		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
 		html.find("#modtaskdifficulty").change(this._onTaskDifficulty.bind(this));
 		html.find("#modlighting").change(this._onLighting.bind(this));
+		html.find("#modspeedrange").change(this._onList.bind(this));
+		html.find("#modeqtquality").change(this._onList.bind(this));
+		html.find("#modrof").change(this._onList.bind(this));
 	}
 
 	async _onManualEntry(envent) {
@@ -138,6 +143,10 @@ export class ModifierBucket extends Application {
 			this.addModifier(parsed.action.mod, parsed.action.desc);
 		} else
 			this.refresh();
+	}
+	
+	async _onList(event) {
+		this._onSimpleList(event, "");
 	}
 	
 	async _onTaskDifficulty(event) {
@@ -265,16 +274,9 @@ ${game.GURPS.OtherMods}`;
 		CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
 
-	displayMod(mod) {
-		if (!mod) mod = "0";
-		let n = mod.toString();
-		if (n[0] != '-' && n[0] != '+') n = "+" + n;
-		return n;
-	}
-
 	// Public method.   Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
-		let m = this.displayMod(mod);
+		let m = GURPS.displayMod(mod);
 		return { "mod": m, "desc": reason, "plus": (m[0] == "+") };
 	}
 
@@ -284,7 +286,7 @@ ${game.GURPS.OtherMods}`;
 		for (let m of stack.modifierList) {
 			stack.currentSum += parseInt(m.mod);
 		}
-		stack.displaySum = this.displayMod(stack.currentSum);
+		stack.displaySum = GURPS.displayMod(stack.currentSum);
 		stack.plus = stack.currentSum > 0;
 		stack.minus = stack.currentSum < 0;
 	}
@@ -302,7 +304,7 @@ ${game.GURPS.OtherMods}`;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
 			let m = parseInt(oldmod.mod) + parseInt(mod);
-			oldmod.mod = this.displayMod(m);
+			oldmod.mod = GURPS.displayMod(m);
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));
 		}
