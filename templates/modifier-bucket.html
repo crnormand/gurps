@@ -66,19 +66,34 @@
 
 				<div id="modtooltiprightbottom">
 					<div class="modttlabel">Other Modifiers</div>
+					
+					<div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap; ">
 					{{#each othermods}}
-						<div>{{{gurpslink this true}}}</div>
-					{{/each}}
-					<br>
-					<label for="fname">Or you can type in a modifier:</label>
-  				<input type="text" id="modmanualentry"><br>
-					<div style="display:grid;background-color:gold;display:{{#if cansend}}block{{else}}none{{/if}}; align-content: end">
-					<div class="modttlabel">Send your Modifier Bucket to:</div>
-					<div style="position: relative;text-align: center;display: inline-flex;justify-content: center; ">
-					{{#each users}}
-						<button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
+						<div style="display:inline-block;text-align: center;width: fit-content;margin:2px">{{{gurpslink this true}}}</div>
 					{{/each}}
 					</div>
+					
+
+					<div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap">
+	
+						<select id="modtaskdifficulty">
+						{{#each taskdificulties}}
+							<option value="{{this}}">{{this}}</option>
+						{{/each}}
+						</select>
+						
+					</div>
+					
+					<label for="fname">Or you can type in a modifier:</label>
+  				<input type="text" id="modmanualentry"><br>
+		
+					<div style="display:grid;background-color:gold;display:{{#if cansend}}block{{else}}none{{/if}}; align-content: end">
+						<div class="modttlabel">Send your Modifier Bucket to:</div>
+						<div style="position: relative;text-align: center;display: inline-flex;justify-content: center; ">
+							{{#each users}}
+								<button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
+							{{/each}}
+						</div>
 					</div>
 				</div>
 				

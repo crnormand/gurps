@@ -12,7 +12,6 @@ window.GURPS = GURPS;		// Make GURPS global!
 
 import { GURPSRange } from '../lib/ranges.js'
 
-
 //CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
@@ -198,15 +197,52 @@ GURPS.hitlocationRolls = {
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
-CONFIG.statusEffects = [
-	GURPS.SavedStatusEffects.find(s => s.id == "shock"),
+CONFIG.statusEffects= [
+	{
+		icon: "systems/gurps/icons/shock1.svg",
+		id: "shock1",
+		label: "EFFECT.StatusShocked"
+	},
+	{
+		icon: "systems/gurps/icons/shock2.svg",
+		id: "shock2",
+		label: "EFFECT.StatusShocked"
+	},
+	{
+		icon: "systems/gurps/icons/shock3.svg",
+		id: "shock3",
+		label: "EFFECT.StatusShocked"
+	},
+	{
+		icon: "systems/gurps/icons/shock4.svg",
+		id: "shock4",
+		label: "EFFECT.StatusShocked"
+	},
 	GURPS.SavedStatusEffects.find(s => s.id == "prone"),
 	GURPS.SavedStatusEffects.find(s => s.id == "stun"),
 ];
 
 GURPS.ModifiersForStatus = {
-	"shock": {
-		gen: ["[-1 to IQ/DX skills (Shock)]"],
+	"shock1": {
+		gen: [ "[-1 to IQ/DX skills (Shock)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock2": {
+		gen: [ "[-2 to IQ/DX skills (Shock)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock3": {
+		gen: [ "[-3 to IQ/DX skills (Shock)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock4": {
+		gen: [ "[-4 to IQ/DX skills (Shock)]" ],
 		melee: [],
 		ranged: [],
 		defense: []
@@ -224,6 +260,95 @@ GURPS.ModifiersForStatus = {
 		defense: ["[-4 to defenses (Stunned)]"]
 	},
 };
+
+
+GURPS.TaskDifficultyModifiers = [
+	"Select Task Difficulty",
+	"+10 Automatic",
+	"+8 Trivial",
+	"+6 Very Easy",
+	"+4 Easy",
+	"+2 Very Favorable",
+	"+1 Favorable",
+	"-1 Unfavorable",
+	"-2 Very Unfavorable",
+	"-4 Hard",
+	"-6 Very hard",
+	"-8 Dangerous",
+	"-10 Impossible"
+];
+
+
+GURPS.hpConditions = {
+	NORMAL: {
+		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
+		label: 'Normal',
+		style: 'normal'
+	},
+	REELING: {
+		breakpoint: (HP) => (HP.max / 3),
+		label: 'Reeling',
+		style: 'reeling'
+	},
+	COLLAPSE: {
+		breakpoint: (_) => 0,
+		label: 'Collapse',
+		style: 'collapse'
+	},
+	CHECK1: {
+		breakpoint: (HP) => -1 * HP.max,
+		label: 'Check #1',
+		style: 'check'
+	},
+	CHECK2: {
+		breakpoint: (HP) => -2 * HP.max,
+		label: 'Check #2',
+		style: 'check'
+	},
+	CHECK3: {
+		breakpoint: (HP) => -3 * HP.max,
+		label: 'Check #3',
+		style: 'check'
+	},
+	CHECK4: {
+		breakpoint: (HP) => -4 * HP.max,
+		label: 'Check #4',
+		style: 'check'
+	},
+	DEAD: {
+		breakpoint: (HP) => -5 * HP.max,
+		label: 'Dead',
+		style: 'dead'
+	},
+	DESTROYED: {
+		breakpoint: (HP) => -10 * HP.max,
+		label: 'Destroyed',
+		style: 'destroyed'
+	}
+}
+
+GURPS.fpConditions = {
+	NORMAL: {
+		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
+		label: 'Normal',
+		style: 'normal'
+	},
+	REELING: {
+		breakpoint: (FP) => (FP.max / 3),
+		label: 'Tired',
+		style: 'tired'
+	},
+	COLLAPSE: {
+		breakpoint: (_) => 0,
+		label: 'Collapse',
+		style: 'collapse'
+	},
+	UNCONSCIOUS: {
+		breakpoint: (FP) => -1 * FP.max,
+		label: 'Unconscious',
+		style: 'unconscious'
+	}
+}
 
 
 /*
@@ -660,7 +785,7 @@ GURPS.onRoll = onRoll;
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
-	let parse = desc.replace(/.*\*Cost (\d+) ?FP.*/g, "$1");
+	let parse = desc.replace(/.*\* ?Cost (\d+) ?FP.*/g, "$1");
 	if (parse != desc) {
 		let fp = parseInt(parse);
 		fp = actor.data.data.FP.value - fp;
@@ -984,76 +1109,6 @@ Hooks.once("init", async function () {
 
 	Handlebars.registerHelper('gt', function (a, b) { return a > b; });
 
-	GURPS.hpConditions = {
-		NORMAL: {
-			breakpoint: (_) => Number.MAX_SAFE_INTEGER,
-			label: 'Normal',
-			style: 'normal'
-		},
-		REELING: {
-			breakpoint: (HP) => (HP.max / 3),
-			label: 'Reeling',
-			style: 'reeling'
-		},
-		COLLAPSE: {
-			breakpoint: (_) => 0,
-			label: 'Collapse',
-			style: 'collapse'
-		},
-		CHECK1: {
-			breakpoint: (HP) => -1 * HP.max,
-			label: 'Check #1',
-			style: 'check'
-		},
-		CHECK2: {
-			breakpoint: (HP) => -2 * HP.max,
-			label: 'Check #2',
-			style: 'check'
-		},
-		CHECK3: {
-			breakpoint: (HP) => -3 * HP.max,
-			label: 'Check #3',
-			style: 'check'
-		},
-		CHECK4: {
-			breakpoint: (HP) => -4 * HP.max,
-			label: 'Check #4',
-			style: 'check'
-		},
-		DEAD: {
-			breakpoint: (HP) => -5 * HP.max,
-			label: 'Dead',
-			style: 'dead'
-		},
-		DESTROYED: {
-			breakpoint: (HP) => -10 * HP.max,
-			label: 'Destroyed',
-			style: 'destroyed'
-		}
-	}
-
-	GURPS.fpConditions = {
-		NORMAL: {
-			breakpoint: (_) => Number.MAX_SAFE_INTEGER,
-			label: 'Normal',
-			style: 'normal'
-		},
-		REELING: {
-			breakpoint: (FP) => (FP.max / 3),
-			label: 'Tired',
-			style: 'tired'
-		},
-		COLLAPSE: {
-			breakpoint: (_) => 0,
-			label: 'Collapse',
-			style: 'collapse'
-		},
-		UNCONSCIOUS: {
-			breakpoint: (FP) => -1 * FP.max,
-			label: 'Unconscious',
-			style: 'unconscious'
-		}
-	}
 
 	const getConditionKey = function (pts, conditions) {
 		var found = conditions['NORMAL']
@@ -1178,5 +1233,11 @@ Hooks.once("ready", async function () {
 			}
 		}
 	});
+});
+
+// Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
+Hooks.on("controlToken", (...args) => {
+	let a = args[0]?.actor;
+	if (!!a) game.GURPS.SetLastActor(a);
 });
 

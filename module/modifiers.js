@@ -42,7 +42,7 @@ export class ModifierBucket extends Application {
 		data.othermods = game.GURPS.OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
-
+		data.taskdificulties = game.GURPS.TaskDifficultyModifiers;
 		data.currentmods = [];
 
 		if (!!game.GURPS.LastActor) {
@@ -78,14 +78,7 @@ export class ModifierBucket extends Application {
 				defense.forEach(e => data.currentmods.push(e));
 			}
 		}
-		/*		`${game.GURPS.horiz("Melee")}
-		[-4 to hit melee (Prone)]
-		${game.GURPS.horiz("Ranged")}
-		[-2 to hit ranged (Prone)]
-		${game.GURPS.horiz("Defense")}
-		[-3 to defend (Prone)]`.split("\n");
-		*/
-		return data;
+    return data;
 	}
 
 	_onleave(ev) {
@@ -131,6 +124,7 @@ export class ModifierBucket extends Application {
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
 		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
+		html.find("#modtaskdifficulty").change(this._onTaskDifficulty.bind(this));
 	}
 
 	async _onManualEntry(envent) {
@@ -143,7 +137,15 @@ export class ModifierBucket extends Application {
 		} else
 			this.refresh();
 	}
-
+	
+	async _onTaskDifficulty(event) {
+    event.preventDefault();
+		let element = event.currentTarget;
+		let v = element.value;
+		let i = v.indexOf(" ");
+		this.addModifier(v.substring(0,i), "Difficulty: " + v.substr(i+1));
+	}
+	
 	async _onGMbutton(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
@@ -288,7 +290,7 @@ ${game.GURPS.OtherMods}`;
 		let stack = this.modifierStack;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
-			let m = parseInt(oldmod.mod) + mod;
+			let m = parseInt(oldmod.mod) + parseInt(mod);
 			oldmod.mod = this.displayMod(m);
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));
