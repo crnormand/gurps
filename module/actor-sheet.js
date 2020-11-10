@@ -21,8 +21,8 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   getData() {
     const sheetData = super.getData();
-		sheetData.ranges = game.GURPS.ranges;
-		game.GURPS.SetLastActor(this.actor);
+    sheetData.ranges = game.GURPS.rangeObject.ranges;
+    game.GURPS.SetLastActor(this.actor);
     return sheetData;
   }
 
@@ -44,16 +44,16 @@ export class GurpsActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-		html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('mousedown', ev => this._onfocus(ev), false) });
-		html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('focus', ev => this._onfocus(ev), false) });
+    html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('mousedown', ev => this._onfocus(ev), false) });
+    html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('focus', ev => this._onfocus(ev), false) });
 
     html.find(".rollable").click(this._onClickRoll.bind(this));
     html.find(".pdflink").click(this._onClickPdf.bind(this));
     html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
     html.find(".gmod").click(this._onClickGmod.bind(this));
     html.find(".glinkmod").click(this._onClickGmod.bind(this));
-   	html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
-   	html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
+    html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
+    html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
@@ -109,9 +109,9 @@ export class GurpsActorSheet extends ActorSheet {
 
   }
 
-	_onfocus(ev) {
-		game.GURPS.SetLastActor(this.actor);
-	}
+  _onfocus(ev) {
+    game.GURPS.SetLastActor(this.actor);
+  }
 
   /** @override */
   setPosition(options = {}) {
