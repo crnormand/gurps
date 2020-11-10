@@ -9,7 +9,8 @@
   "author": "Chris Normand/Nose66",
   "esmodules": [
     "module/gurps.js",
-		"lib/SSRT/main.js"
+    "lib/SSRT/main.js",
+    "lib/ranges.mjs"
   ],
   "styles": [
     "styles/simple.css"
