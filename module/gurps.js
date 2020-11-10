@@ -12,6 +12,7 @@ window.GURPS = GURPS;		// Make GURPS global!
 
 import GURPSRange from '../lib/ranges.mjs'
 import Initiative from '../lib/initiative.mjs'
+import Hitpoints from '../lib/hitpoints.mjs'
 
 //CONFIG.debug.hooks = true;
 
@@ -31,8 +32,6 @@ function displayMod(mod) {
 	return n;
 }
 GURPS.displayMod = displayMod;
-
-
 
 GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
@@ -466,53 +465,53 @@ for (let loc in GURPS.hitlocationRolls) {
 	GURPS.CoverHitlocModifiers.push(mod);
 }
 
-GURPS.hpConditions = {
-	NORMAL: {
-		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
-		label: 'Normal',
-		style: 'normal'
-	},
-	REELING: {
-		breakpoint: (HP) => (HP.max / 3),
-		label: 'Reeling',
-		style: 'reeling'
-	},
-	COLLAPSE: {
-		breakpoint: (_) => 0,
-		label: 'Collapse',
-		style: 'collapse'
-	},
-	CHECK1: {
-		breakpoint: (HP) => -1 * HP.max,
-		label: 'Check #1',
-		style: 'check'
-	},
-	CHECK2: {
-		breakpoint: (HP) => -2 * HP.max,
-		label: 'Check #2',
-		style: 'check'
-	},
-	CHECK3: {
-		breakpoint: (HP) => -3 * HP.max,
-		label: 'Check #3',
-		style: 'check'
-	},
-	CHECK4: {
-		breakpoint: (HP) => -4 * HP.max,
-		label: 'Check #4',
-		style: 'check'
-	},
-	DEAD: {
-		breakpoint: (HP) => -5 * HP.max,
-		label: 'Dead',
-		style: 'dead'
-	},
-	DESTROYED: {
-		breakpoint: (HP) => -10 * HP.max,
-		label: 'Destroyed',
-		style: 'destroyed'
-	}
-}
+// GURPS.hpConditions = {
+// 	NORMAL: {
+// 		breakpoint: (_) => Number.MAX_SAFE_INTEGER,
+// 		label: 'Normal',
+// 		style: 'normal'
+// 	},
+// 	REELING: {
+// 		breakpoint: (HP) => (HP.max / 3),
+// 		label: 'Reeling',
+// 		style: 'reeling'
+// 	},
+// 	COLLAPSE: {
+// 		breakpoint: (_) => 0,
+// 		label: 'Collapse',
+// 		style: 'collapse'
+// 	},
+// 	CHECK1: {
+// 		breakpoint: (HP) => -1 * HP.max,
+// 		label: 'Check #1',
+// 		style: 'check'
+// 	},
+// 	CHECK2: {
+// 		breakpoint: (HP) => -2 * HP.max,
+// 		label: 'Check #2',
+// 		style: 'check'
+// 	},
+// 	CHECK3: {
+// 		breakpoint: (HP) => -3 * HP.max,
+// 		label: 'Check #3',
+// 		style: 'check'
+// 	},
+// 	CHECK4: {
+// 		breakpoint: (HP) => -4 * HP.max,
+// 		label: 'Check #4',
+// 		style: 'check'
+// 	},
+// 	DEAD: {
+// 		breakpoint: (HP) => -5 * HP.max,
+// 		label: 'Dead',
+// 		style: 'dead'
+// 	},
+// 	DESTROYED: {
+// 		breakpoint: (HP) => -10 * HP.max,
+// 		label: 'Destroyed',
+// 		style: 'destroyed'
+// 	}
+// }
 
 GURPS.fpConditions = {
 	NORMAL: {
@@ -1222,7 +1221,8 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 
 GURPS.rangeObject = new GURPSRange()
-GURPS.initiative = new Initiative();
+GURPS.initiative = new Initiative()
+GURPS.hitpoints = new Hitpoints()
 
 
 /*********************  HACK WARNING!!!! *************************/
@@ -1307,6 +1307,7 @@ Hooks.once("init", async function () {
 	Handlebars.registerHelper('gt', function (a, b) { return a > b; });
 
 
+	// TODO remove when FP and HP are removed from this file
 	const getConditionKey = function (pts, conditions) {
 		var found = conditions['NORMAL']
 		for (const [key, value] of Object.entries(conditions)) {
@@ -1316,19 +1317,20 @@ Hooks.once("init", async function () {
 		return found
 	}
 
-	const hpCondition = function (HP, member) {
-		let key = getConditionKey(HP, GURPS.hpConditions)
-		return GURPS.hpConditions[key][member]
-	}
+	// const hpCondition = function (HP, member) {
+	// 	let key = getConditionKey(HP, GURPS.hpConditions)
+	// 	return GURPS.hpConditions[key][member]
+	// }
 
 	const fpCondition = function (FP, member) {
 		let key = getConditionKey(FP, GURPS.fpConditions)
 		return GURPS.fpConditions[key][member]
 	}
 
-	Handlebars.registerHelper('hpCondition', hpCondition);
+	// Handlebars.registerHelper('hpCondition', hpCondition);
 	Handlebars.registerHelper('fpCondition', fpCondition);
 
+	// TODO remove when FP and HP are removed from this file
 	const buildOutput = function (list, opt) {
 		var results = ''
 		list.forEach((item) => {
@@ -1337,19 +1339,19 @@ Hooks.once("init", async function () {
 		return results
 	}
 
-	Handlebars.registerHelper('hpBreakpoints', function (HP, opt) {
-		var list = []
-		for (const [key, value] of Object.entries(GURPS.hpConditions)) {
-			let currentKey = getConditionKey(HP, GURPS.hpConditions)
-			list.push({
-				breakpoint: Math.floor(value.breakpoint(HP)).toString(),
-				label: value.label.toString(),
-				style: (key === currentKey) ? "selected" : ""
-			})
-		}
-		list.shift()
-		return buildOutput(list, opt)
-	});
+	// Handlebars.registerHelper('hpBreakpoints', function (HP, opt) {
+	// 	var list = []
+	// 	for (const [key, value] of Object.entries(GURPS.hpConditions)) {
+	// 		let currentKey = getConditionKey(HP, GURPS.hpConditions)
+	// 		list.push({
+	// 			breakpoint: Math.floor(value.breakpoint(HP)).toString(),
+	// 			label: value.label.toString(),
+	// 			style: (key === currentKey) ? "selected" : ""
+	// 		})
+	// 	}
+	// 	list.shift()
+	// 	return buildOutput(list, opt)
+	// });
 
 	Handlebars.registerHelper('fpBreakpoints', function (FP, opt) {
 		var list = []
@@ -1395,7 +1397,6 @@ Hooks.once("init", async function () {
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
-
 });
 
 Hooks.once("ready", async function () {
