@@ -10,7 +10,7 @@ import { SemanticVersion } from "../lib/semver.js";
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
 
-import { GURPSRange } from '../lib/ranges.js'
+import GURPSRange from '../lib/ranges.mjs'
 
 //CONFIG.debug.hooks = true;
 
@@ -114,7 +114,7 @@ ${GURPS.horiz("Actions")}
 // 	GURPS.BasicRangeSpeedMods
 // // : GURPS.MonsterHunterSpeedRangeMods;
 
-GURPS.OtherMods= `[+1]
+GURPS.OtherMods = `[+1]
 [+2]
 [+3]
 [+4]
@@ -202,25 +202,25 @@ GURPS.skillTypes = {
 }
 
 GURPS.hitlocationRolls = {
-	"Eye": { roll: "-", penalty: -9},
-	"Eyeslit (in helmet)": { penalty: -10},
-	"Skull": { roll: "3-4", penalty: -7},
-	"Face": { roll: "5", penalty: -5},
-	"Nose": { penalty: -7, desc: "front only, *hit chest"},
-	"Jaw": { penalty: -6, desc: "front only, *hit chest"},
-	"Neck Vein/Artery": { penalty: -8, desc: "*hit neck"},
-	"Limb Vein/Artery": { penalty: -5, desc: "*hit limb"},
-	"Right Leg": { roll: "6-7", penalty: -2},
-	"Right Arm": { roll: "8", penalty: -2},
-	"Torso": { roll: "9-10", penalty: 0},
+	"Eye": { roll: "-", penalty: -9 },
+	"Eyeslit (in helmet)": { penalty: -10 },
+	"Skull": { roll: "3-4", penalty: -7 },
+	"Face": { roll: "5", penalty: -5 },
+	"Nose": { penalty: -7, desc: "front only, *hit chest" },
+	"Jaw": { penalty: -6, desc: "front only, *hit chest" },
+	"Neck Vein/Artery": { penalty: -8, desc: "*hit neck" },
+	"Limb Vein/Artery": { penalty: -5, desc: "*hit limb" },
+	"Right Leg": { roll: "6-7", penalty: -2 },
+	"Right Arm": { roll: "8", penalty: -2 },
+	"Torso": { roll: "9-10", penalty: 0 },
 	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI* only" },
-	"Vitals, Heart": {penalty: -5, desc: "IMP/PI* only"},
-	"Groin": { roll: "11", penalty: -3},
-	"Left Arm": { roll: "12", penalty: -2},
-	"Left Leg": { roll: "13-14", penalty: -2},
-	"Hand": { roll: "15", penalty: -4},
-	"Foot": { roll: "16", penalty: -4},
-	"Neck": { roll: "17-18", penalty: -5},
+	"Vitals, Heart": { penalty: -5, desc: "IMP/PI* only" },
+	"Groin": { roll: "11", penalty: -3 },
+	"Left Arm": { roll: "12", penalty: -2 },
+	"Left Leg": { roll: "13-14", penalty: -2 },
+	"Hand": { roll: "15", penalty: -4 },
+	"Foot": { roll: "16", penalty: -4 },
+	"Neck": { roll: "17-18", penalty: -5 },
 	"Chinks in armor, Torso": { penalty: -8, desc: "Halves DR" },
 	"Chinks in armor, Other": { penalty: -10, desc: "Halves DR" },
 };
@@ -228,7 +228,7 @@ GURPS.hitlocationRolls = {
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
-CONFIG.statusEffects= [
+CONFIG.statusEffects = [
 	{
 		icon: "systems/gurps/icons/shock1.png",
 		id: "shock1",
@@ -278,25 +278,25 @@ CONFIG.statusEffects= [
 
 GURPS.ModifiersForStatus = {
 	"shock1": {
-		gen: [ "[-1 to IQ/DX skills (Shock)]" ],
+		gen: ["[-1 to IQ/DX skills (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"shock2": {
-		gen: [ "[-2 to IQ/DX skills (Shock)]" ],
+		gen: ["[-2 to IQ/DX skills (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"shock3": {
-		gen: [ "[-3 to IQ/DX skills (Shock)]" ],
+		gen: ["[-3 to IQ/DX skills (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"shock4": {
-		gen: [ "[-4 to IQ/DX skills (Shock)]" ],
+		gen: ["[-4 to IQ/DX skills (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
@@ -361,7 +361,7 @@ GURPS.LightingModifiers = [
 	"-7 Starlight",
 	"-8 Starlight through clouds",
 	"-9 Overcast moonless night",
-	"-10 Total darkness"	
+	"-10 Total darkness"
 ];
 
 GURPS.RateOfFireModifiers = [
@@ -442,14 +442,14 @@ GURPS.CoverHitlocModifiers = [
 	"Cover & Hit Location",
 	"*Cover",
 	"-5 to hit, Head only",
- 	"-4 to hit, Head and shoulders exposed",
- 	"-3 to hit, Body half exposed",
- 	"-2 to hit, Behind light cover",
- 	"-4 to hit, Behind same-sized figure",
- 	"-4 to hit, Lying prone without cover",
- 	"-5 to hit, Lying prone, some cover, head up",
- 	"-7 to hit, Lying prone, some cover, head down",
- 	"-2 to hit, Crouching or kneeling, no cover",
+	"-4 to hit, Head and shoulders exposed",
+	"-3 to hit, Body half exposed",
+	"-2 to hit, Behind light cover",
+	"-4 to hit, Behind same-sized figure",
+	"-4 to hit, Lying prone without cover",
+	"-5 to hit, Lying prone, some cover, head up",
+	"-7 to hit, Lying prone, some cover, head down",
+	"-2 to hit, Crouching or kneeling, no cover",
 	"-4 to hit, firing through occupied hex",
 	"*Hit Locations (miss by one *)"
 ];
@@ -459,15 +459,15 @@ GURPS.SizeModifiers = [
 	"-10  Size 0.05 yard (1.8\")",
 	"-9  Size 0.07 yard (2.5\")",
 	"-8  Size 0.1 yard (3.5\")",
-	"-7  Size 0.15 yard (5\")",	
-	"-6  Size 0.2 yard (7\")",	
+	"-7  Size 0.15 yard (5\")",
+	"-6  Size 0.2 yard (7\")",
 	"-5  Size 0.3 yard (10\")",
 	"-4  Size 0.5 yard (18\")",
 	"-3  Size 0.7 yard (2')",
 	"-2  Size 1 yard (3')",
 	"-1  Size 1.5 yards (4.5')",
 	"+0  Size 2 yards (6')",
-	
+
 	"+1  Size 3 yards (9')",
 	"+2  Size 5 yards (15')",
 	"+3  Size 7 yards (21')",
@@ -559,7 +559,7 @@ GURPS.fpConditions = {
 	}
 }
 
-GURPS.makeSelect = function(array) {
+GURPS.makeSelect = function (array) {
 	let groups = [];
 	let ans = { title: array[0], groups: groups };  // The title line.   Since we don't allow the select's to change, the first element in the select acts as its title.
 

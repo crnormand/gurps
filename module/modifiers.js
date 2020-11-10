@@ -1,5 +1,3 @@
-import { SYSTEM_NAME, SETTING_NAME } from '../lib/ranges.js'
-
 export class ModifierBucket extends Application {
 
 	SHOWING = false;
@@ -84,7 +82,7 @@ export class ModifierBucket extends Application {
 				defense.forEach(e => data.currentmods.push(e));
 			}
 		}
-    return data;
+		return data;
 	}
 
 	_onleave(ev) {
@@ -150,29 +148,29 @@ export class ModifierBucket extends Application {
 		} else
 			this.refresh();
 	}
-	
+
 	async _onList(event) {
 		this._onSimpleList(event, "");
 	}
-	
+
 	async _onTaskDifficulty(event) {
-    this._onSimpleList(event, "Difficulty: ");
+		this._onSimpleList(event, "Difficulty: ");
 	}
 
 	async _onLighting(event) {
-    this._onSimpleList(event, "Lighting: ");
+		this._onSimpleList(event, "Lighting: ");
 	}
-	
+
 	async _onSimpleList(event, prefix) {
-    event.preventDefault();
+		event.preventDefault();
 		let element = event.currentTarget;
 		let v = element.value;
 		let i = v.indexOf(" ");
 		this.SHOWING = true;  					// Firefox seems to need this reset when showing a pulldown
-		this.addModifier(v.substring(0,i), prefix + v.substr(i+1));
+		this.addModifier(v.substring(0, i), prefix + v.substr(i + 1));
 	}
 
-	
+
 	async _onGMbutton(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
