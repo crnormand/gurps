@@ -22,6 +22,17 @@ GURPS.SetLastActor = function (actor) {
 	console.log("Last Actor:" + actor.name);
 }
 
+// This also needs to be defined early, since it is used in the creation of various modifier lists
+function displayMod(mod) {
+	if (!mod) mod = "0";
+	let n = mod.toString();
+	if (n[0] != '-' && n[0] != '+') n = "+" + n;
+	return n;
+}
+GURPS.displayMod = displayMod;
+
+
+
 GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
 	"height": 200,
@@ -191,20 +202,28 @@ GURPS.skillTypes = {
 }
 
 GURPS.hitlocationRolls = {
-	"Eye": "-",
-	"Skull": "3-4",
-	"Face": "5",
-	"Right Leg": "6-7",
-	"Right Arm": "8",
-	"Torso": "9-10",
-	"Groin": "11",
-	"Left Arm": "12",
-	"Left Leg": "13-14",
-	"Hand": "15",
-	"Foot": "16",
-	"Neck": "17-18",
-	"Vitals": "-"
-}
+	"Eye": { roll: "-", penalty: -9},
+	"Eyeslit (in helmet)": { penalty: -10},
+	"Skull": { roll: "3-4", penalty: -7},
+	"Face": { roll: "5", penalty: -5},
+	"Nose": { penalty: -7, desc: "front only, miss by 1 hit chest"},
+	"Jaw": { penalty: -6, desc: "front only, miss by 1 hit chest"},
+	"Neck Vein/Artery": { penalty: -8, desc: "miss by 1 hit neck"},
+	"Limb Vein/Artery": { penalty: -5, desc: "miss by 1 hit limb"},
+	"Right Leg": { roll: "6-7", penalty: -2},
+	"Right Arm": { roll: "8", penalty: -2},
+	"Torso": { roll: "9-10", penalty: 0},
+	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI* only" },
+	"Vitals (Heart)": {penalty: -5, desc: "IMP/PI* only"},
+	"Groin": { roll: "11", penalty: -3},
+	"Left Arm": { roll: "12", penalty: -2},
+	"Left Leg": { roll: "13-14", penalty: -2},
+	"Hand": { roll: "15", penalty: -4},
+	"Foot": { roll: "16", penalty: -4},
+	"Neck": { roll: "17-18", penalty: -5},
+	"Chinks in armor, Torso": { penalty: -8, desc: "Halves DR" },
+	"Chinks in armor, Other": { penalty: -10, desc: "Halves DR" },
+};
 
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
@@ -254,9 +273,7 @@ CONFIG.statusEffects= [
 		icon: "systems/gurps/icons/wooden-chair.png",
 		id: "sit",
 		label: "GURPS.STATUSSit"
-	},
-	GURPS.SavedStatusEffects.find(s => s.id == "prone"),
-	GURPS.SavedStatusEffects.find(s => s.id == "stun"),
+	}
 ];
 
 GURPS.ModifiersForStatus = {
@@ -370,15 +387,26 @@ GURPS.EqtQualifyModifiers = [
 ];
 
 
-/*
+/* For really big lists, use Select Optgroups.   The first line is the "title", followed by Optgroup names, then options in that optgroup
 
-		melee: ["[-4 to hit (Prone)]"],
-		ranged: ["[-2 to hit (Prone)]"],
-		defense: ["[-2 to defenses (Prone)]"]
+The code to display it is:
+
+	data.posturemods = game.GURPS.makeSelect(game.GURPS.PostureStatusModifiers);
+
+	<select id="modposture">
+		<option>{{posturemods.title}}</option>
+		{{#each posturemods.groups}}
+			<optgroup label="{{this.group}}">
+			{{#each this.options}}
+				<option value="{{this}}">{{this}}</option>
+			{{/each}}
+			</optgroup>
+		{{/each}}
+	</select>
 */
 
 GURPS.PostureStatusModifiers = [
-	"Posture, Status & Afflictions",
+	"Posture, Status & Affliction",
 	"*Posture",
 	"-4 to hit Melee (Prone)",
 	"-2 to hit Ranged (Prone)",
@@ -409,6 +437,56 @@ GURPS.PostureStatusModifiers = [
 	"-6 to IQ/DX/Self Control (Terrible Pain)",
 	"-5 to IQ/DX/Per skills (Retching)"
 ];
+
+GURPS.CoverHitlocModifiers = [
+	"Cover & Hit Location",
+	"*Cover",
+	"-5 to hit, Head only",
+ 	"-4 to hit, Head and shoulders exposed",
+ 	"-3 to hit, Body half exposed",
+ 	"-2 to hit, Behind light cover",
+ 	"-4 to hit, Behind human-sized figure (per figure)",
+ 	"-4 to hit, Lying prone without cover",
+ 	"-5 to hit, Lying prone, minimum cover, head up",
+ 	"-7 to hit, Lying prone, minimum cover, head down",
+ 	"-2 to hit, Crouching or kneeling, no cover",
+	"-4 to hit, firing through occupied hex",
+	"*Hit Locations"
+];
+
+GURPS.SizeModifiers = [
+	"Size Modifier (Melee: Difference, Ranged: Absolute)",
+	"-10  0.05 yard (1.8\")",
+	"-9  0.07 yard (2.5\")",
+	"-8  0.1 yard (3.5\")",
+	"-7  0.15 yard (5\")",	
+	"-6  0.2 yard (7\")",	
+	"-5  0.3 yard (10\")",
+	"-4  0.5 yard (18\")",
+	"-3  0.7 yard (2')",
+	"-2  1 yard (3')",
+	"-1  1.5 yards (4.5')",
+	"+0  2 yards (6')",
+	
+	"+1  3 yards (9')",
+	"+2  5 yards (15')",
+	"+3  7 yards (21')",
+	"+4  10 yards (30')",
+	"+5  15 yards (45')",
+	"+6  20 yards (60')",
+	"+7  30 yards (90')",
+	"+8  50 yards (150')",
+	"+9  70 yards (210')",
+	"+10 100 yards (300')",
+	"+11 150 yards (450')"
+];
+
+for (let loc in GURPS.hitlocationRolls) {
+	let hit = GURPS.hitlocationRolls[loc];
+	let mod = GURPS.displayMod(hit.penalty) + " to hit " + loc;
+	if (!!hit.desc) mod += " (" + hit.desc + ")";
+	GURPS.CoverHitlocModifiers.push(mod);
+}
 
 GURPS.hpConditions = {
 	NORMAL: {
@@ -1164,14 +1242,6 @@ function listeqtrecurse(eqts, options, level, data) {
 }
 GURPS.listeqtrecurse = listeqtrecurse;
 
-function displayMod(mod) {
-	if (!mod) mod = "0";
-	let n = mod.toString();
-	if (n[0] != '-' && n[0] != '+') n = "+" + n;
-	return n;
-}
-GURPS.displayMod = displayMod;
-
 
 GURPS.rangeObject = new GURPSRange()
 
@@ -1328,7 +1398,7 @@ Hooks.once("init", async function () {
 	// Only necessary because of the FG import
 	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {
 		if (!roll)
-			roll = GURPS.hitlocationRolls[loc];
+			roll = GURPS.hitlocationRolls[loc].roll;
 		return roll;
 	});
 

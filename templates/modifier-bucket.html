@@ -126,9 +126,26 @@
 							{{/each}}
 						</select>
 					
+						<select id="modcover">
+							<option>{{covermods.title}}</option>
+							{{#each covermods.groups}}
+								<optgroup label="{{this.group}}">
+								{{#each this.options}}
+									<option value="{{this}}">{{this}}</option>
+								{{/each}}
+								</optgroup>
+							{{/each}}
+						</select>
+						
+						<select id="modsize">
+						{{#each sizemods}}
+							<option value="{{this}}">{{this}}</option>
+						{{/each}}
+						</select>
+
+
 					</div>
 					
-		
 				</div>
 				
 			</div>

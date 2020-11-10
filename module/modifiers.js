@@ -47,6 +47,8 @@ export class ModifierBucket extends Application {
 		data.eqtqualitymods = game.GURPS.EqtQualifyModifiers;
 		data.rofmods = game.GURPS.RateOfFireModifiers;
 		data.posturemods = game.GURPS.makeSelect(game.GURPS.PostureStatusModifiers);
+		data.covermods = game.GURPS.makeSelect(game.GURPS.CoverHitlocModifiers);
+		data.sizemods = game.GURPS.SizeModifiers;
 		data.currentmods = [];
 
 		if (!!game.GURPS.LastActor) {
@@ -134,6 +136,8 @@ export class ModifierBucket extends Application {
 		html.find("#modeqtquality").change(this._onList.bind(this));
 		html.find("#modrof").change(this._onList.bind(this));
 		html.find("#modposture").change(this._onList.bind(this));
+		html.find("#modcover").change(this._onList.bind(this));
+		html.find("#modsize").change(this._onList.bind(this));
 	}
 
 	async _onManualEntry(envent) {
