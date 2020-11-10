@@ -11,7 +11,7 @@ export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
 
 import GURPSRange from '../lib/ranges.mjs'
-import '../lib/initiative.js'
+import Initiative from '../lib/initiative.mjs'
 
 //CONFIG.debug.hooks = true;
 
@@ -91,29 +91,6 @@ ${GURPS.horiz("Extra Effort")}
 [+2 Feverish Defense *Cost 1FP]
 ${GURPS.horiz("Actions")}
 [WILL-3 Concentration check]`;
-
-// GURPS.BasicRangeSpeedMods = `[-1 Range 3 yds]
-// [-2 Range 5 yds]
-// [-3 Range 7 yds]
-// [-4 Range 10 yds]
-// [-5 Range 15 yds]
-// [-6 Range 20 yds]
-// [-7 Range 30 yds]
-// [-8 Range 50 yds]
-// [-9 Range 70 yds]`;
-
-// GURPS.MonsterHunterSpeedRangeMods = `[-3 20 yds, Short range]
-// [-7 100 yds, Medium range]
-// [-11 500 yds, Long range]
-// [-15 500+ yds, Extreme range]`;
-
-// GURPS.SpeedRangeMods = GURPS.BasicRangeSpeedMods;
-
-
-// GURPS.SpeedRangeMods =
-// 	// game.settings.get('gurps', 'rangeMethod') === 'Standard' ?
-// 	GURPS.BasicRangeSpeedMods
-// // : GURPS.MonsterHunterSpeedRangeMods;
 
 GURPS.OtherMods = `[+1]
 [+2]
@@ -1245,6 +1222,7 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 
 GURPS.rangeObject = new GURPSRange()
+GURPS.initiative = new Initiative();
 
 
 /*********************  HACK WARNING!!!! *************************/
