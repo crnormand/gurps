@@ -11,6 +11,7 @@ export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
 
 import GURPSRange from '../lib/ranges.mjs'
+import '../lib/initiative.js'
 
 //CONFIG.debug.hooks = true;
 
@@ -1265,15 +1266,6 @@ Hooks.once("init", async function () {
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 	console.log(GURPS.objToString(GURPS));
-
-	/**
-	 * Set an initiative formula for the system
-	 * @type {String}
-	 */
-	CONFIG.Combat.initiative = {
-		formula: "1d20",
-		decimals: 2
-	};
 
 	// Define custom Entity classes
 	CONFIG.Actor.entityClass = GurpsActor;
