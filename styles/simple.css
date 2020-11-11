@@ -154,9 +154,12 @@
   grid-row-end: 5;
 
 	display: grid;
+	/* Just trying to get SELECT statements to fill up width */
 	justify-self: stretch;
+	justify-items: stretch;
 	justify-content: stretch;
 	align-content: start;    
+	align-items: stretch;
 	border: 5px;
 	margin: 5px;
 	color:black;

@@ -32,8 +32,6 @@ function displayMod(mod) {
 }
 GURPS.displayMod = displayMod;
 
-
-
 GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
 	"height": 200,
@@ -178,30 +176,6 @@ GURPS.skillTypes = {
 	"Per/H": "GURPS.SkillPerH",
 	"Per/VH": "GURPS.SkillPerVH"
 }
-
-GURPS.hitlocationRolls = {
-	"Eye": { roll: "-", penalty: -9 },
-	"Eyeslit (in helmet)": { penalty: -10 },
-	"Skull": { roll: "3-4", penalty: -7 },
-	"Face": { roll: "5", penalty: -5 },
-	"Nose": { penalty: -7, desc: "front only, *hit chest" },
-	"Jaw": { penalty: -6, desc: "front only, *hit chest" },
-	"Neck Vein/Artery": { penalty: -8, desc: "*hit neck" },
-	"Limb Vein/Artery": { penalty: -5, desc: "*hit limb" },
-	"Right Leg": { roll: "6-7", penalty: -2 },
-	"Right Arm": { roll: "8", penalty: -2 },
-	"Torso": { roll: "9-10", penalty: 0 },
-	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI* only" },
-	"Vitals, Heart": { penalty: -5, desc: "IMP/PI* only" },
-	"Groin": { roll: "11", penalty: -3 },
-	"Left Arm": { roll: "12", penalty: -2 },
-	"Left Leg": { roll: "13-14", penalty: -2 },
-	"Hand": { roll: "15", penalty: -4 },
-	"Foot": { roll: "16", penalty: -4 },
-	"Neck": { roll: "17-18", penalty: -5 },
-	"Chinks in armor, Torso": { penalty: -8, desc: "Halves DR" },
-	"Chinks in armor, Other": { penalty: -10, desc: "Halves DR" },
-};
 
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
@@ -383,8 +357,44 @@ The code to display it is:
 	</select>
 */
 
-GURPS.PostureStatusModifiers = [
-	"Posture, Status & Affliction",
+GURPS.StatusModifiers = [
+	"Status & Afflictions",
+	"*Status",
+	"-1 to IQ/DX checks (Shock 1)",
+	"-2 to IQ/DX checks (Shock 2)",
+	"-3 to IQ/DX checks (Shock 3)",
+	"-4 to IQ/DX checks (Shock 4)",
+	"-4 to active defenses (Stunned)",
+	"*Afflictions",
+	"-3 to DX checks (Coughing)",
+	"-1 to IQ checks (Coughing)",
+	"-2 to IQ/DX/CR roll (Drowsy)",
+	"-2 to IQ/DX checks (Drunk)",
+	"-4 to CR roll (Drunk)",
+	"-1 to IQ/DX checks (Tipsy)",
+	"-2 to CR roll (Tipsy)",
+	"-3 to IQ/DX/CR roll (Euphoria)",
+	"-2 to All attributes (Nauseated)",
+	"-1 to active defense (Nauseated)",
+	"-2 to IQ/DX/CR roll (Moderate Pain)",
+	"-4 to IQ/DX/CR roll (Severe Pain)",
+	"-6 to IQ/DX/CR roll (Terrible Pain)",
+	"-5 to IQ/DX/PER checks (Retching)"
+];
+
+GURPS.CoverPostureModifiers = [
+	"Cover & Posture",
+	"*Cover",
+	"-5 to hit, Head only",
+	"-4 to hit, Head and shoulders exposed",
+	"-3 to hit, Body half exposed",
+	"-2 to hit, Behind light cover",
+	"-4 to hit, Behind same-sized figure",
+	"-4 to hit, Prone without cover",
+	"-5 to hit, Prone some cover, head up",
+	"-7 to hit, Prone some cover, head down",
+	"-2 to hit, Crouching/kneeling no cover",
+	"-4 to hit, firing through occupied hex",
 	"*Posture",
 	"-4 to hit Melee (Prone)",
 	"-2 to hit Ranged (Prone)",
@@ -393,47 +403,10 @@ GURPS.PostureStatusModifiers = [
 	"-2 to hit Ranged (Crouch)",
 	"-2 to hit Melee (Kneel/Sit)",
 	"-2 to active defenses (Kneel/Sit)",
-	"*Status",
-	"-1 to IQ/DX skills (Shock 1)",
-	"-2 to IQ/DX skills (Shock 2)",
-	"-3 to IQ/DX skills (Shock 3)",
-	"-4 to IQ/DX skills (Shock 4)",
-	"-4 to active defenses (Stunned)",
-	"*Afflictions",
-	"-3 to DX skills (Coughing)",
-	"-1 to IQ skills (Coughing)",
-	"-2 to IQ/DX/Self Control (Drowsy)",
-	"-2 to IQ/DX skills (Drunk)",
-	"-4 to Self Control (Drunk)",
-	"-1 to IQ/DX skills (Tipsy)",
-	"-2 to Self Control (Tipsy)",
-	"-3 to IQ/DX/Self Control (Euphoria)",
-	"-2 to ST/IQ/DX/HT/Will/Per (Nauseated)",
-	"-1 to active defense (Nauseated)",
-	"-2 to IQ/DX/Self Control (Moderate Pain)",
-	"-4 to IQ/DX/Self Control (Severe Pain)",
-	"-6 to IQ/DX/Self Control (Terrible Pain)",
-	"-5 to IQ/DX/Per skills (Retching)"
-];
-
-GURPS.CoverHitlocModifiers = [
-	"Cover & Hit Location",
-	"*Cover",
-	"-5 to hit, Head only",
-	"-4 to hit, Head and shoulders exposed",
-	"-3 to hit, Body half exposed",
-	"-2 to hit, Behind light cover",
-	"-4 to hit, Behind same-sized figure",
-	"-4 to hit, Lying prone without cover",
-	"-5 to hit, Lying prone, some cover, head up",
-	"-7 to hit, Lying prone, some cover, head down",
-	"-2 to hit, Crouching or kneeling, no cover",
-	"-4 to hit, firing through occupied hex",
-	"*Hit Locations (miss by one *)"
 ];
 
 GURPS.SizeModifiers = [
-	"Size Modifier",
+	"Size Modifier (melee diff, ranged abs)",
 	"-10  Size 0.05 yard (1.8\")",
 	"-9  Size 0.07 yard (2.5\")",
 	"-8  Size 0.1 yard (3.5\")",
@@ -459,11 +432,40 @@ GURPS.SizeModifiers = [
 	"+11 Size 150 yards (450')"
 ];
 
+GURPS.hitlocationRolls = {
+	"Eye": { roll: "-", penalty: -9 },
+	"Skull": { roll: "3-4", penalty: -7 },
+	"Skull, from behind": { penalty: -5 },
+	"Face": { roll: "5", penalty: -5 },
+	"Face, from behind": { penalty: -7 },
+	"Nose": { penalty: -7, desc: "front only, *hit chest" },
+	"Jaw": { penalty: -6, desc: "front only, *hit chest" },
+	"Neck Vein/Artery": { penalty: -8, desc: "*hit neck" },
+	"Limb Vein/Artery": { penalty: -5, desc: "*hit limb" },
+	"Right Leg": { roll: "6-7", penalty: -2 },
+	"Right Arm": { roll: "8", penalty: -2 },
+	"Right Arm, holding shield": { penalty: -4 },
+	"Torso": { roll: "9-10", penalty: 0 },
+	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI[any] only" },
+	"Vitals, Heart": { penalty: -5, desc: "IMP/PI[any] only" },
+	"Groin": { roll: "11", penalty: -3 },
+	"Left Arm": { roll: "12", penalty: -2 },
+	"Left Arm, holding shield": { penalty: -4 },
+	"Left Leg": { roll: "13-14", penalty: -2 },
+	"Hand": { roll: "15", penalty: -4 },
+	"Foot": { roll: "16", penalty: -4 },
+	"Neck": { roll: "17-18", penalty: -5 },
+	"Chinks in Torso": { penalty: -8, desc: "Halves DR" },
+	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
+};
+
+
+GURPS.HitlocationModifiers = [ "Hit Locations (if miss by 1, then *)" ];
 for (let loc in GURPS.hitlocationRolls) {
 	let hit = GURPS.hitlocationRolls[loc];
 	let mod = GURPS.displayMod(hit.penalty) + " to hit " + loc;
 	if (!!hit.desc) mod += " (" + hit.desc + ")";
-	GURPS.CoverHitlocModifiers.push(mod);
+	GURPS.HitlocationModifiers.push(mod);
 }
 
 GURPS.hpConditions = {

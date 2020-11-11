@@ -44,9 +44,10 @@ export class ModifierBucket extends Application {
 		data.lightingmods = game.GURPS.LightingModifiers;
 		data.eqtqualitymods = game.GURPS.EqtQualifyModifiers;
 		data.rofmods = game.GURPS.RateOfFireModifiers;
-		data.posturemods = game.GURPS.makeSelect(game.GURPS.PostureStatusModifiers);
-		data.covermods = game.GURPS.makeSelect(game.GURPS.CoverHitlocModifiers);
+		data.statusmods = game.GURPS.makeSelect(game.GURPS.StatusModifiers);
+		data.covermods = game.GURPS.makeSelect(game.GURPS.CoverPostureModifiers);
 		data.sizemods = game.GURPS.SizeModifiers;
+		data.hitlocationmods = game.GURPS.HitlocationModifiers;
 		data.currentmods = [];
 
 		if (!!game.GURPS.LastActor) {
@@ -54,7 +55,7 @@ export class ModifierBucket extends Application {
 			let ranged = [];
 			let defense = [];
 			let gen = [];
-			let effects = game.GURPS.LastActor.temporaryEffects;
+			let effects = game.GURPS.LastActor.temporaryEffects;   // This will need to be changed when we introduce timed statuses (.e.g Shock lasting for 1 round)
 			for (let e of effects) {
 				let type = e.data.flags.core.statusId;
 				let m = game.GURPS.ModifiersForStatus[type];
@@ -133,9 +134,10 @@ export class ModifierBucket extends Application {
 		html.find("#modspeedrange").change(this._onList.bind(this));
 		html.find("#modeqtquality").change(this._onList.bind(this));
 		html.find("#modrof").change(this._onList.bind(this));
-		html.find("#modposture").change(this._onList.bind(this));
+		html.find("#modstatus").change(this._onList.bind(this));
 		html.find("#modcover").change(this._onList.bind(this));
 		html.find("#modsize").change(this._onList.bind(this));
+		html.find("#modhitlocations").change(this._onList.bind(this));
 	}
 
 	async _onManualEntry(envent) {
