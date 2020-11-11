@@ -12,7 +12,8 @@
     "lib/SSRT/main.js",
     "lib/ranges.mjs",
     "lib/initiative.mjs",
-    "lib/hitpoints.mjs"
+    "lib/hitpoints.mjs",
+    "lib/hitlocationtooltip.mjs"
   ],
   "styles": [
     "styles/simple.css"
