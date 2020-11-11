@@ -104,8 +104,6 @@ export class ModifierBucket extends Application {
 		e.click(this._onClick.bind(this));
 		e.contextmenu(this.onRightClick.bind(this));
 		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
-		if (!!e[0])
-			this.displayElement = e[0];
 
 		e = html.find("#modttt");
 		e.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
@@ -217,7 +215,7 @@ export class ModifierBucket extends Application {
 		let index = element.dataset.index;
 		this.modifierStack.modifierList.splice(index, 1);
 		this.sum();
-		this.render(true);
+		this.refresh();
 	}
 
 	async _onClick(event) {
@@ -225,7 +223,11 @@ export class ModifierBucket extends Application {
 
 		// If not the GM, just broadcast our mods to the chat	
 		if (!game.user.isGM) {
-			this.showMods(true);
+			let messageData = {
+				content: this.chatString(this.modifierStack),
+				type: CONST.CHAT_MESSAGE_TYPES.OOC,
+			};
+			CONFIG.ChatMessage.entityClass.create(messageData, {});
 			return;
 		}
 
@@ -254,7 +256,7 @@ export class ModifierBucket extends Application {
 		CONFIG.ChatMessage.entityClass.create(chatData, {});
 	}
 
-	// If the GM right clicks on the modifier bucket, it will pop up a list of users, and set their stack	
+	// If the GM right clicks on the modifier bucket, it will print the raw text data driving the tooltip
 	async onRightClick(event) {
 		event.preventDefault();
 		if (!game.user.isGM) return;
@@ -319,6 +321,7 @@ ${game.GURPS.OtherMods}`;
 		this.updateBucket();
 	}
 
+	// Called during the dice roll to return a list of modifiers and then clear
 	async applyMods(targetmods) {
 		let stack = this.modifierStack;
 		let answer = (!!targetmods) ? targetmods : [];
@@ -338,14 +341,15 @@ ${game.GURPS.OtherMods}`;
 	}
 
 	async updateBucket() {
-		this.showMods(false);
+		this.refresh();
 		game.user.setFlag("gurps", "modifierstack", this.modifierStack);
 	}
 
+	// A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
 	async updateDisplay(changed) {
 		this.modifierStack = game.user.getFlag("gurps", "modifierstack");
 		this.sum();
-		this.showMods(false);
+		this.refresh();
 	}
 
 	chatString(modst, name = "") {
@@ -358,38 +362,9 @@ ${game.GURPS.OtherMods}`;
 		}
 		return content;
 	}
-
-	htmlForMods() {
-		let stack = this.modifierStack;
-		let content = "<div style='font-size:130%'>No modifiers</div>";
-		if (stack.modifierList.length > 0) {
-			let clr = "#ff7f00";
-			content = "<div style='font-size:130%'>Current Modifiers:<br><br>\n";
-			for (let m of stack.modifierList) {
-				let clr = "#ff7f00";
-				clr = (m.mod[0] == "+") ? "lightgreen" : "#ff7f00";
-				content += "<div style='color:" + clr + ";text-align: left;'>" + m.mod + " : " + m.desc + "</div>\n";
-			}
-			clr = "white";
-			if (this.currentSum > 0) clr = "lightgreen;";
-			if (this.currentSum < 0) clr = "#ff7f00";
-			content += "<br><div style='color:" + clr + "'>Total: " + this.displaySum() + "</div></div>";
-		}
-		return content;
-	}
-
+	
 	refresh() {
 		this.render(true);
 	}
 
-	async showMods(inChat) {
-		if (inChat) {
-			let messageData = {
-				content: this.chatString(stack),
-				type: CONST.CHAT_MESSAGE_TYPES.OOC,
-			};
-			CONFIG.ChatMessage.entityClass.create(messageData, {});
-		}
-		this.refresh();
-	}
 }
