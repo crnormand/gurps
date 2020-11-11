@@ -6,9 +6,10 @@
 ### History
 - 0.6.6
     - Fixed manifest file to allow for automatic updating
-    - Added configurable system setting range system (Basic Set / Monster Hunters 2)
+    - Added configurable system settings (range system (Basic Set / Monster Hunters 2), etc.)
     - Added common modifiers as pulldown lists on tooltip
     - Installed GURPS combat initiative (GURPS Turn Sequence B362)
+    - added support for basic GURPS status and aflictions
 - 0.6.5
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players
