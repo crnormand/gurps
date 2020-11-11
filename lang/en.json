@@ -61,5 +61,15 @@
 		
 		"GURPS.STATUSCrouch": "Crouch",
 		"GURPS.STATUSSit": "Sitting",
-		"GURPS.STATUSKneel": "Kneeling"
+		"GURPS.STATUSKneel": "Kneeling",
+		"GURPS.STATUSEuphoria": "Euphoria",
+		"GURPS.STATUSCoughing": "Coughing",
+		"GURPS.STATUSDrowsy": "Drowsy",
+		"GURPS.STATUSDrunk": "Drunk",
+		"GURPS.STATUSTipsy": "Tipsy",
+		"GURPS.STATUSNauseated": "Nauseated",
+		"GURPS.STATUSModerate": "Moderate Pain",
+		"GURPS.STATUSSevere": "Severe Pain",
+		"GURPS.STATUSTerrible": "Terrible Pain",
+		"GURPS.STATUSRetching": "Retching"
 }
