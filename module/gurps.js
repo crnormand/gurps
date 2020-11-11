@@ -1177,7 +1177,6 @@ Hooks.once("init", async function () {
 	CONFIG.GURPS = GURPS;
 	console.log(GURPS.objToString(GURPS));
 
-	// TODO initialize tooltip setting
 
 	// Define custom Entity classes
 	CONFIG.Actor.entityClass = GurpsActor;
