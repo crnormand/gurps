@@ -38,25 +38,36 @@ export class GurpsActor extends Actor {
 		console.log("Importing '" + nm + "'");
 		// this is how you have to update the domain object so that it is synchronized.
 		await this.update({"name": nm});
-
-		// This is going to get ugly, so break out various data into different methods
-		await this.importAttributesFromCGSv1(c.attributes);
-		await this.importSkillsFromGCSv1(c.abilities?.skilllist)
-		await this.importTraitsfromGCSv1(c.traits);
-		await this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist);
-		await this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist);
-		await this.importSpellsFromGCSv1(c.abilities?.spelllist)
-		await this.importAdsFromGCSv1(c.traits?.adslist);
-		await this.importDisadsFromGCSv1(c.traits?.disadslist);
-		await this.importPowersFromGCSv1(c.abilities?.powerlist);
-		await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
-		await this.importEncumbranceFromGCSv1(c.encumbrance);
-		await this.importPointTotalsFromGCSv1(c.pointtotals);
-		await this.importNotesFromGCSv1(c.notelist);
-		await this.importEquipmentFromGCSv1(c.inventorylist);
-		await this.importProtectionFromGCSv1(c.combat?.protectionlist);
-
-
+		await this.update({"token.name": nm});
+		
+		try {
+			// This is going to get ugly, so break out various data into different methods
+			await this.importAttributesFromCGSv1(c.attributes);
+			await this.importSkillsFromGCSv1(c.abilities?.skilllist)
+			await this.importTraitsfromGCSv1(c.traits);
+			await this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist);
+			await this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist);
+			await this.importSpellsFromGCSv1(c.abilities?.spelllist)
+			await this.importAdsFromGCSv1(c.traits?.adslist);
+			await this.importDisadsFromGCSv1(c.traits?.disadslist);
+			await this.importPowersFromGCSv1(c.abilities?.powerlist);
+			await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
+			await this.importEncumbranceFromGCSv1(c.encumbrance);
+			await this.importPointTotalsFromGCSv1(c.pointtotals);
+			await this.importNotesFromGCSv1(c.notelist);
+			await this.importEquipmentFromGCSv1(c.inventorylist);
+			await this.importProtectionFromGCSv1(c.combat?.protectionlist);
+		} catch (err) {
+			let msg = "An error occured while importing " + nm + ", " + err.name + ":" + err.message;
+			ui.notifications.warn(msg);
+			let chatData = {
+				user: game.user._id,
+				type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+				content: msg,
+				whisper: [game.user._id]
+			}
+			CONFIG.ChatMessage.entityClass.create(chatData, {});
+		}
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
 	}

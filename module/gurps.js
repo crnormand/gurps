@@ -14,7 +14,7 @@ import GURPSRange from '../lib/ranges.mjs'
 import Initiative from '../lib/initiative.mjs'
 import HitFatPoints from '../lib/hitpoints.mjs'
 
-//CONFIG.debug.hooks = true;
+CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
@@ -203,7 +203,7 @@ CONFIG.statusEffects = [
 		label: "EFFECT.StatusShocked"
 	},
 	{
-		icon: "systems/gurps/icons/star-struck.png",
+		icon: "systems/gurps/icons/stunned.png",
 		id: "stun",
 		label: "EFFECT.StatusStunned"
 	},
@@ -1429,6 +1429,11 @@ Hooks.once("ready", async function () {
 				}
 			}
 		}
+	});
+	
+	Hooks.on('createActiveEffect', (...args) => {
+		if (!!args && args.length >= 4)
+			GURPS.SetLastActor(args[0]);
 	});
 });
 
