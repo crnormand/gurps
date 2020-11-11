@@ -1,5 +1,5 @@
 // Import Modules
-import { displayMod, makeSelect } from '../lib/utilities.mjs'
+import parselink from '../lib/parselink.mjs'
 
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
@@ -27,6 +27,35 @@ GURPS.SetLastActor = function (actor) {
 	console.log("Last Actor:" + actor.name);
 }
 
+
+GURPS.hitlocationRolls = {
+	"Eye": { roll: "-", penalty: -9 },
+	"Skull": { roll: "3-4", penalty: -7 },
+	"Skull, from behind": { penalty: -5 },
+	"Face": { roll: "5", penalty: -5 },
+	"Face, from behind": { penalty: -7 },
+	"Nose": { penalty: -7, desc: "front only, *hit chest" },
+	"Jaw": { penalty: -6, desc: "front only, *hit chest" },
+	"Neck Vein/Artery": { penalty: -8, desc: "*hit neck" },
+	"Limb Vein/Artery": { penalty: -5, desc: "*hit limb" },
+	"Right Leg": { roll: "6-7", penalty: -2 },
+	"Right Arm": { roll: "8", penalty: -2 },
+	"Right Arm, holding shield": { penalty: -4 },
+	"Torso": { roll: "9-10", penalty: 0 },
+	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI[any] only" },
+	"Vitals, Heart": { penalty: -5, desc: "IMP/PI[any] only" },
+	"Groin": { roll: "11", penalty: -3 },
+	"Left Arm": { roll: "12", penalty: -2 },
+	"Left Arm, holding shield": { penalty: -4 },
+	"Left Leg": { roll: "13-14", penalty: -2 },
+	"Hand": { roll: "15", penalty: -4 },
+	"Foot": { roll: "16", penalty: -4 },
+	"Neck": { roll: "17-18", penalty: -5 },
+	"Chinks in Torso": { penalty: -8, desc: "Halves DR" },
+	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
+};
+
+
 GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
 	"height": 200,
@@ -39,66 +68,6 @@ GURPS.ModifierBucket = new ModifierBucket({
 	"template": "systems/gurps/templates/modifier-bucket.html",
 	"classes": [],
 });
-
-// Trick to make a nice break between items, instead of "---"
-GURPS.horiz = function (text, size = 10) {
-	let s = "<span style='text-decoration:line-through'>";
-	let line = s;
-	for (let i = 0; i < size; i++)
-		line += "&nbsp;";
-	line += "</span>";
-	line += " " + text + " ";
-	line += s;
-	for (let i = 0; i < size; i++)
-		line += "&nbsp;";
-	line += "</span>";
-	return line;
-}
-
-// Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
-GURPS.MeleeMods = `[+4 to hit (Determined Attack)]
-[+4 to hit (Telegraphic Attack)]
-[-2 to hit (Deceptive Attack)]
-[-4 to hit (Charge Attack) *Max:9]
-[+2 dmg (Strong Attack)]
-${GURPS.horiz("Extra Effort")}
-[+2 dmg (Mighty Blow) *Cost 1FP]
-[+0 Heroic Charge *Cost 1FP]`;
-
-GURPS.RangedMods = `[+1 Aim]
-[+1 to hit (Determined Attack)]
-${GURPS.horiz("Actions")}
-[WILL check to maintain Aim]`;
-
-GURPS.DefenseMods = `[+2 All-Out Defense]
-[+1 to dodge (Shield)]
-[+2 to dodge (Acrobatics)]
-[+3 to dodge (Dive)]
-[+3 to dodge (Retreat)]
-[+1 block/parry (Retreat)]
-
-[-2 to dodge (Failed Acrobatics)]
-[-2 to dodge (Attacked from side)]
-[-4 to dodge (Attacked from rear)]
-${GURPS.horiz("Extra Effort")}
-[+2 Feverish Defense *Cost 1FP]
-${GURPS.horiz("Actions")}
-[WILL-3 Concentration check]`;
-
-GURPS.OtherMods = `[+1]
-[+2]
-[+3]
-[+4]
-[+5]
-[-1]
-[-2]
-[-3]
-[-4]
-[-5]
-[+1 GM said so]
-[-1 GM said so]
-[+4 GM Blessed]
-[-4 GM don't try it]`;
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -273,318 +242,6 @@ CONFIG.statusEffects = [
 	}
 ];
 
-GURPS.ModifiersForStatus = {
-	"retching": {
-		gen: ["[-5 to IQ/DX/PER checks (Retching)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"moderate": {
-		gen: ["[-2 to IQ/DX/CR rolls (Moderate Pain)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"severe": {
-		gen: ["[-4 to IQ/DX/CR rolls (Severe Pain)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"terrible": {
-		gen: ["[-6 to IQ/DX/CR rolls (Terrible Pain)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"nauseated": {
-		gen: ["[-2 to All attributes (Nauseated)]"],
-		melee: [],
-		ranged: [],
-		defense: ["[-1 to active defense (Nauseated)]"]
-	},
-	"tipsy": {
-		gen: [
-			"[-1 to IQ/DX checks (Tipsy)]",
-			"[-2 to CR rolls (Tipsy)]",
-		],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"drunk": {
-		gen: [
-			"[-2 to IQ/DX checks (Drunk)]",
-			"[-4 to CR rolls (Drunk)]",
-		],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"drowsy": {
-		gen: ["[-2 to IQ/DX/CR rolls (Drowsy)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"coughing": {
-		gen: [
-			"[-3 to DX checks (Coughing)]",
-			"[-1 to IQ checks (Coughing)]"
-		],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"euphoria": {
-		gen: ["[-3 to IQ/DX/CR rolls (Euphoria)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"shock1": {
-		gen: ["[-1 to IQ/DX checks (Shock)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"shock2": {
-		gen: ["[-2 to IQ/DX checks (Shock)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"shock3": {
-		gen: ["[-3 to IQ/DX checks (Shock)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"shock4": {
-		gen: ["[-4 to IQ/DX checks (Shock)]"],
-		melee: [],
-		ranged: [],
-		defense: []
-	},
-	"prone": {
-		gen: [],
-		melee: ["[-4 to hit Melee (Prone)]"],
-		ranged: ["[-2 to hit Ranged (Prone)]"],
-		defense: ["[-2 to active defenses (Prone)]"]
-	},
-	"stun": {
-		gen: [],
-		melee: [],
-		ranged: [],
-		defense: ["[-4 to active defenses (Stunned)]"]
-	},
-	"kneel": {
-		gen: [],
-		melee: ["[-2 to hit Melee (Kneeling)]"],
-		ranged: [],
-		defense: ["[-2 to active defenses (Kneeling)]"]
-	},
-	"crouch": {
-		gen: [],
-		melee: ["[-2 to hit Melee (Crouching)]"],
-		ranged: ["[-2 to hit Ranged (Crouching)]"],
-		defense: []
-	},
-	"sit": {
-		gen: [],
-		melee: ["[-2 to hit Melee (Sitting)]"],
-		ranged: [],
-		defense: ["[-2 to active defenses (Sitting)]"]
-	},
-};
-
-
-GURPS.TaskDifficultyModifiers = [
-	"Task Difficulty",
-	"+10 Automatic",
-	"+8 Trivial",
-	"+6 Very Easy",
-	"+4 Easy",
-	"+2 Very Favorable",
-	"+1 Favorable",
-	"-1 Unfavorable",
-	"-2 Very Unfavorable",
-	"-4 Hard",
-	"-6 Very hard",
-	"-8 Dangerous",
-	"-10 Impossible"
-];
-
-GURPS.LightingModifiers = [
-	"Lighting",
-	"-1 Sunrise / sunset / torch / flashlight",
-	"-2 Twilight / gaslight / cell-phone",
-	"-3 Deep twlight / candlelight",
-	"-4 Full moon",
-	"-5 Half moon",
-	"-6 Quarter moon",
-	"-7 Starlight",
-	"-8 Starlight through clouds",
-	"-9 Overcast moonless night",
-	"-10 Total darkness"
-];
-
-GURPS.RateOfFireModifiers = [
-	"Rate of Fire",
-	"+1 RoF: 5-8",
-	"+2 RoF: 9-12",
-	"+3 RoF: 13-16",
-	"+4 RoF: 17-24",
-	"+5 RoF: 25-49",
-	"+6 RoF: 50-99",
-];
-
-GURPS.EqtQualifyModifiers = [
-	"Equipment Quality",
-	"+4 Best Possible Equipment",
-	"+2 Fine Quality Equipment (20x cost)",
-	"+1 Good Quality Equipment (5x cost)",
-	"-2 Improvised Equipment (non-tech task)",
-	"-5 Improvised Equipment (tech task)",
-	"-1 Missing / Damaged item",
-	"-5 No Equipment (none-tech task)",
-	"-10 No Equipment (tech task)"
-];
-
-
-/* For really big lists, use Select Optgroups.   
-
-	The first line is the "title", followed by Optgroup names, then options in 
-	that optgroup.
-
-	The code to display it is:
-
-		data.posturemods = makeSelect(game.GURPS.PostureStatusModifiers);
-
-	<select id="modposture">
-		<option>{{posturemods.title}}</option>
-		{{#each posturemods.groups}}
-			<optgroup label="{{this.group}}">
-			{{#each this.options}}
-				<option value="{{this}}">{{this}}</option>
-			{{/each}}
-			</optgroup>
-		{{/each}}
-	</select>
-*/
-
-GURPS.StatusModifiers = [
-	"Status & Afflictions",
-	"*Status",
-	"-1 to IQ/DX checks (Shock 1)",
-	"-2 to IQ/DX checks (Shock 2)",
-	"-3 to IQ/DX checks (Shock 3)",
-	"-4 to IQ/DX checks (Shock 4)",
-	"-4 to active defenses (Stunned)",
-	"*Afflictions",
-	"-3 to DX checks (Coughing)",
-	"-1 to IQ checks (Coughing)",
-	"-2 to IQ/DX/CR rolls (Drowsy)",
-	"-2 to IQ/DX checks (Drunk)",
-	"-4 to CR rolls (Drunk)",
-	"-1 to IQ/DX checks (Tipsy)",
-	"-2 to CR rolls (Tipsy)",
-	"-3 to IQ/DX/CR rolls (Euphoria)",
-	"-2 to All attributes (Nauseated)",
-	"-1 to active defense (Nauseated)",
-	"-2 to IQ/DX/CR rolls (Moderate Pain)",
-	"-4 to IQ/DX/CR rolls (Severe Pain)",
-	"-6 to IQ/DX/CR rolls (Terrible Pain)",
-	"-5 to IQ/DX/PER checks (Retching)"
-];
-
-GURPS.CoverPostureModifiers = [
-	"Cover & Posture",
-	"*Cover",
-	"-5 to hit, Head only",
-	"-4 to hit, Head and shoulders exposed",
-	"-3 to hit, Body half exposed",
-	"-2 to hit, Behind light cover",
-	"-4 to hit, Behind same-sized figure",
-	"-4 to hit, Prone without cover",
-	"-5 to hit, Prone some cover, head up",
-	"-7 to hit, Prone some cover, head down",
-	"-2 to hit, Crouching/kneeling no cover",
-	"-4 to hit, firing through occupied hex",
-	"*Posture",
-	"-4 to hit Melee (Prone)",
-	"-2 to hit Ranged (Prone)",
-	"-3 to active defenses (Prone)",
-	"-2 to hit Melee (Crouch)",
-	"-2 to hit Ranged (Crouch)",
-	"-2 to hit Melee (Kneel/Sit)",
-	"-2 to active defenses (Kneel/Sit)",
-];
-
-GURPS.SizeModifiers = [
-	"Size Modifier (melee diff, ranged abs)",
-	"-10  Size 0.05 yard (1.8\")",
-	"-9  Size 0.07 yard (2.5\")",
-	"-8  Size 0.1 yard (3.5\")",
-	"-7  Size 0.15 yard (5\")",
-	"-6  Size 0.2 yard (7\")",
-	"-5  Size 0.3 yard (10\")",
-	"-4  Size 0.5 yard (18\")",
-	"-3  Size 0.7 yard (2')",
-	"-2  Size 1 yard (3')",
-	"-1  Size 1.5 yards (4.5')",
-	"+0  Size 2 yards (6')",
-
-	"+1  Size 3 yards (9')",
-	"+2  Size 5 yards (15')",
-	"+3  Size 7 yards (21')",
-	"+4  Size 10 yards (30')",
-	"+5  Size 15 yards (45')",
-	"+6  Size 20 yards (60')",
-	"+7  Size 30 yards (90')",
-	"+8  Size 50 yards (150')",
-	"+9  Size 70 yards (210')",
-	"+10 Size 100 yards (300')",
-	"+11 Size 150 yards (450')"
-];
-
-GURPS.hitlocationRolls = {
-	"Eye": { roll: "-", penalty: -9 },
-	"Skull": { roll: "3-4", penalty: -7 },
-	"Skull, from behind": { penalty: -5 },
-	"Face": { roll: "5", penalty: -5 },
-	"Face, from behind": { penalty: -7 },
-	"Nose": { penalty: -7, desc: "front only, *hit chest" },
-	"Jaw": { penalty: -6, desc: "front only, *hit chest" },
-	"Neck Vein/Artery": { penalty: -8, desc: "*hit neck" },
-	"Limb Vein/Artery": { penalty: -5, desc: "*hit limb" },
-	"Right Leg": { roll: "6-7", penalty: -2 },
-	"Right Arm": { roll: "8", penalty: -2 },
-	"Right Arm, holding shield": { penalty: -4 },
-	"Torso": { roll: "9-10", penalty: 0 },
-	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI[any] only" },
-	"Vitals, Heart": { penalty: -5, desc: "IMP/PI[any] only" },
-	"Groin": { roll: "11", penalty: -3 },
-	"Left Arm": { roll: "12", penalty: -2 },
-	"Left Arm, holding shield": { penalty: -4 },
-	"Left Leg": { roll: "13-14", penalty: -2 },
-	"Hand": { roll: "15", penalty: -4 },
-	"Foot": { roll: "16", penalty: -4 },
-	"Neck": { roll: "17-18", penalty: -5 },
-	"Chinks in Torso": { penalty: -8, desc: "Halves DR" },
-	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
-};
-
-
-GURPS.HitlocationModifiers = ["Hit Locations (if miss by 1, then *)"];
-for (let loc in GURPS.hitlocationRolls) {
-	let hit = GURPS.hitlocationRolls[loc];
-	let mod = displayMod(hit.penalty) + " to hit " + loc;
-	if (!!hit.desc) mod += " (" + hit.desc + ")";
-	GURPS.HitlocationModifiers.push(mod);
-}
-
 /*
 	Convert XML text into a JSON object
 */
@@ -701,201 +358,6 @@ function trim(s) {
 	return s.replace(/^\s*$(?:\r\n?|\n)/gm, "");         // /^\s*[\r\n]/gm
 }
 GURPS.trim = trim;
-
-function gspan(str) {
-	return "<span class='gurpslink'>" + str + "</span>";
-}
-GURPS.gspan = gspan;
-
-function gmspan(str, plus, clrdmods) {
-	if (clrdmods) {
-		if (plus)
-			return "<span class='glinkmodplus'>" + str + "</span>";
-		else
-			return "<span class='glinkmodminus'>" + str + "</span>";
-	}
-	return "<span class='glinkmod'>" + str + "</span>";
-}
-GURPS.gmspan = gmspan;
-
-/* Here is where we do all the work to try to parse the text inbetween [ ].
- Supported formats:
-	+N <desc>
-	-N <desc>
-		add a modifier to the stack, using text as the description
-	ST/IQ/DX[+-]N <desc>
-		attribute roll with optional add/subtract
-	CR: N <desc>
-		Self control roll
-	"Skill*" +/-N
-		Roll vs skill (with option +/- mod)
-	"ST12"
-	"SW+1"/"THR-1"
-	"PDF:B102"
-		
-	"modifier", "attribute", "selfcontrol", "damage", "roll", "skill", "pdf"
-*/
-function parselink(str, actor, htmldesc, clrdmods = false) {
-	if (str.length < 2)
-		return { "text": str };
-
-	// Modifiers
-	if (str[0] === "+" || str[0] === "-") {
-		let sign = str[0];
-		let rest = str.substr(1);
-		let parse = rest.replace(/^([0-9]+)+( .*)?/g, "$1~$2");
-		if (parse != rest) {
-			let a = parse.split("~");
-			let desc = a[1].trim();
-			return {
-				"text": this.gmspan(str, sign == "+", clrdmods),
-				"action": {
-					"type": "modifier",
-					"mod": sign + a[0],
-					"desc": (!!desc) ? desc : htmldesc
-				}
-			}
-		}
-	}
-
-	// Attributes "ST+2 desc, Per"
-	let parse = str.replace(/^(\w+)([+-]\d+)?(.*)$/g, "$1~$2~$3")
-	let a = parse.split("~");
-	let path = GURPS.attributepaths[a[0]];
-	if (!!path) {
-		return {
-			"text": this.gspan(str),
-			"action": {
-				"type": "attribute",
-				"attribute": a[0],
-				"path": path,
-				"desc": a[2].trim(),		// Action description, not modifier desc
-				"mod": a[1]
-			}
-		}
-	}
-
-	// Special case where they are makeing a targeted roll, NOT using their own attributes.  ST26.  Does not support mod (no ST26+2)
-	parse = str.replace(/^([a-zA-Z]+)(\d+)(.*)$/g, "$1~$2~$3")
-	if (parse != str) {
-		a = parse.split("~");
-		path = GURPS.attributepaths[a[0]];
-		if (!!path) {
-			let n = parseInt(a[1]);
-			if (n) {
-				return {
-					"text": this.gspan(str),
-					"action": {
-						"type": "attribute",
-						"target": n,
-						"desc": a[2].trim(),  // Action description, not modifier desc
-						"path": path
-					}
-				}
-			}
-		}
-	}
-
-	// Self control roll CR: N
-	let two = str.substr(0, 2);
-	if (two === "CR" && str.length > 2 && str[2] === ":") {
-		let rest = str.substr(3).trim();
-		let num = rest.replace(/([0-9]+).*/g, "$1");
-		let desc = rest.replace(/[0-9]+ *(.*)/g, "$1");
-		return {
-			"text": this.gspan(str),
-			"action": {
-				"type": "selfcontrol",
-				"target": num,
-				"desc": desc
-			}
-		}
-	}
-
-	// Straight roll, no damage type. 4d, 2d-1, etc.   Allows "!" suffix to indicate minimum of 1.
-	parse = str.replace(/^(\d+)d([-+]\d+)?(!)?(.*)$/g, "$1~$2~$3~$4")
-	if (parse != str) {
-		let a = parse.split("~");
-		let d = a[3].trim();
-		let m = GURPS.woundModifiers[d];
-		if (!m) {		// Not one of the recognized damage types
-			return {
-				"text": this.gspan(str),
-				"action": {
-					"type": "roll",
-					"formula": a[0] + "d" + a[1] + a[2],
-					"desc": d			// Action description, not modifier desc
-				}
-			}
-		} else {	// Damage roll 1d+2 cut.   Not allowed an action desc
-			return {
-				"text": this.gspan(str),
-				"action": {
-					"type": "damage",
-					"formula": a[0] + "d" + a[1] + a[2],
-					"damagetype": d
-				}
-			}
-		}
-	}
-
-	// Look for skill*+/-N test
-	parse = str.replace(/^([\w ]*)(\*?)([-+]\d+)? ?(.*)/g, "$1~$2~$3~$4");
-	let skill = null;
-	let mod = "";
-	if (parse != str) {
-		let a = parse.split("~");
-		let n = a[0].trim();
-		if (!!n) {
-			mod = a[2];
-			if (a[1] == "*") {
-				skill = actor?.data.skills.findInProperties(s => s.name.startsWith(n));
-			} else {
-				skill = actor?.data.skills.findInProperties(s => s.name == n);
-			}
-			if (!!skill) {
-				return {
-					"text": this.gspan(str),
-					"action": {
-						"type": "skill",
-						"name": skill.name,
-						"mod": mod,
-						"desc": a[3]
-					}
-				}
-			}
-		}
-	}
-
-	// for PDF link
-	parse = str.replace(/^PDF: */g, "");
-	if (parse != str) {
-		return { "text": "<span class='pdflink'>" + parse + "</span>" };  // Just get rid of the "[PDF:" and allow the pdflink css class to do the work
-	}
-
-	// SW and THR damage
-	parse = str.replace(/^(SW|THR)([-+]\d+)?(!)?( .*)?$/g, "$1~$2~$3~$4")
-	if (parse != str) {
-		let a = parse.split("~");
-		let d = a[3].trim();
-		let m = GURPS.woundModifiers[d];
-		if (!!m) {
-			let df = (a[0] == "SW" ? actor?.data.swing : actor?.data.thrust)
-			return {
-				"text": this.gspan(str),
-				"action": {
-					"type": "deriveddamage",
-					"derivedformula": df + a[1] + a[2],
-					"formula": a[0] + a[1] + a[2],
-					"damagetype": d
-				}
-			}
-		}
-	}
-
-	return { "text": str };
-}
-GURPS.parselink = parselink;
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 function performAction(action, actor) {
@@ -1153,7 +615,7 @@ function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
 			found = ++i;
 		if (str[i] == "]" && found >= 0) {
 			output += str.substring(0, (inclbrks ? found : found - 1));
-			let action = this.parselink(str.substring(found, i), actor, "", clrdmods);
+			let action = parselink(str.substring(found, i), actor, "", clrdmods);
 			output += action.text;
 			str = str.substr(inclbrks ? i : i + 1);
 			i = 0;
@@ -1209,7 +671,7 @@ GURPS.resolve = resolve;
 
 function onGurpslink(event, actor, desc) {
 	let element = event.currentTarget;
-	let action = this.parselink(element.innerText, actor?.data, desc);
+	let action = parselink(element.innerText, actor?.data, desc);
 	this.performAction(action.action, actor?.data);
 }
 GURPS.onGurpslink = onGurpslink;

@@ -1,7 +1,19 @@
-import { displayMod, makeSelect } from '../lib/utilities.mjs'
-
+import { displayMod, makeSelect, horiz } from '../lib/utilities.mjs'
+import parselink from '../lib/parselink.mjs'
 
 export class ModifierBucket extends Application {
+	constructor(options = {}) {
+		super(options)
+
+		for (let loc in GURPS.hitlocationRolls) {
+			let hit = GURPS.hitlocationRolls[loc];
+			let mod = displayMod(hit.penalty) + " to hit " + loc;
+
+			if (!!hit.desc) mod += " (" + hit.desc + ")";
+
+			HitlocationModifiers.push(mod);
+		}
+	}
 
 	SHOWING = false;
 	modifierStack = {
@@ -35,22 +47,22 @@ export class ModifierBucket extends Application {
 		const data = super.getData(options);
 		data.gmod = this;
 		data.stack = this.modifierStack;
-		data.meleemods = game.GURPS.MeleeMods.split("\n");
-		data.rangedmods = game.GURPS.RangedMods.split("\n");
-		data.defensemods = game.GURPS.DefenseMods.split("\n");
+		data.meleemods = MeleeMods.split("\n");
+		data.rangedmods = RangedMods.split("\n");
+		data.defensemods = DefenseMods.split("\n");
 		data.speedrangemods = ["Speed / Range"].concat(game.GURPS.rangeObject.modifiers);
 		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "No active character!";
-		data.othermods = game.GURPS.OtherMods.split("\n");
+		data.othermods = OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
-		data.taskdificulties = game.GURPS.TaskDifficultyModifiers;
-		data.lightingmods = game.GURPS.LightingModifiers;
-		data.eqtqualitymods = game.GURPS.EqtQualifyModifiers;
-		data.rofmods = game.GURPS.RateOfFireModifiers;
-		data.statusmods = makeSelect(game.GURPS.StatusModifiers);
-		data.covermods = makeSelect(game.GURPS.CoverPostureModifiers);
-		data.sizemods = game.GURPS.SizeModifiers;
-		data.hitlocationmods = game.GURPS.HitlocationModifiers;
+		data.taskdificulties = TaskDifficultyModifiers;
+		data.lightingmods = LightingModifiers;
+		data.eqtqualitymods = EqtQualifyModifiers;
+		data.rofmods = RateOfFireModifiers;
+		data.statusmods = makeSelect(StatusModifiers);
+		data.covermods = makeSelect(CoverPostureModifiers);
+		data.sizemods = SizeModifiers;
+		data.hitlocationmods = HitlocationModifiers;
 		data.currentmods = [];
 
 		if (!!game.GURPS.LastActor) {
@@ -61,7 +73,7 @@ export class ModifierBucket extends Application {
 			let effects = game.GURPS.LastActor.temporaryEffects;   // This will need to be changed when we introduce timed statuses (.e.g Shock lasting for 1 round)
 			for (let e of effects) {
 				let type = e.data.flags.core.statusId;
-				let m = game.GURPS.ModifiersForStatus[type];
+				let m = ModifiersForStatus[type];
 				if (!!m) {
 					melee = melee.concat(m.melee)
 					ranged = ranged.concat(m.ranged)
@@ -70,19 +82,19 @@ export class ModifierBucket extends Application {
 				}
 			}
 			if (gen.length > 0) {
-				data.currentmods.push(game.GURPS.horiz("General"));
+				data.currentmods.push(horiz("General"));
 				gen.forEach(e => data.currentmods.push(e));
 			}
 			if (melee.length > 0) {
-				data.currentmods.push(game.GURPS.horiz("Melee"));
+				data.currentmods.push(horiz("Melee"));
 				melee.forEach(e => data.currentmods.push(e));
 			}
 			if (ranged.length > 0) {
-				data.currentmods.push(game.GURPS.horiz("Ranged"));
+				data.currentmods.push(horiz("Ranged"));
 				ranged.forEach(e => data.currentmods.push(e));
 			}
 			if (defense.length > 0) {
-				data.currentmods.push(game.GURPS.horiz("Defense"));
+				data.currentmods.push(horiz("Defense"));
 				defense.forEach(e => data.currentmods.push(e));
 			}
 		}
@@ -98,7 +110,6 @@ export class ModifierBucket extends Application {
 		this.tooltipElement.style.setProperty("visibility", "visible");
 		this.SHOWING = true;
 	}
-
 
 	activateListeners(html) {
 		super.activateListeners(html);
@@ -141,11 +152,11 @@ export class ModifierBucket extends Application {
 		html.find("#modhitlocations").change(this._onList.bind(this));
 	}
 
-	async _onManualEntry(envent) {
+	async _onManualEntry(event) {
 		event.preventDefault();
 		let element = event.currentTarget;
 		let v = element.value;
-		let parsed = game.GURPS.parselink(element.value, game.GURPS.LastActor);
+		let parsed = parselink(element.value, game.GURPS.LastActor);
 		if (!!parsed.action && parsed.action.type === "modifier") {
 			this.addModifier(parsed.action.mod, parsed.action.desc);
 		} else
@@ -172,7 +183,6 @@ export class ModifierBucket extends Application {
 		this.SHOWING = true;  					// Firefox seems to need this reset when showing a pulldown
 		this.addModifier(v.substring(0, i), prefix + v.substr(i + 1));
 	}
-
 
 	async _onGMbutton(event) {
 		event.preventDefault();
@@ -264,16 +274,16 @@ export class ModifierBucket extends Application {
 		event.preventDefault();
 		if (!game.user.isGM) return;
 		let c = `Melee:
-${game.GURPS.MeleeMods}
+${MeleeMods}
 
 Ranged:
-${game.GURPS.RangedMods}
+${RangedMods}
 
 Defense:
-${game.GURPS.DefenseMods}
+${DefenseMods}
 
 Other:
-${game.GURPS.OtherMods}`;
+${OtherMods}`;
 
 		let output = "";
 		for (let l of c.split("\n"))
@@ -286,7 +296,7 @@ ${game.GURPS.OtherMods}`;
 		CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
 
-	// Public method.   Used by GURPS to create a temporary modifer for an action.
+	// Public method. Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
 		let m = displayMod(mod);
 		return { "mod": m, "desc": reason, "plus": (m[0] == "+") };
@@ -371,3 +381,304 @@ ${game.GURPS.OtherMods}`;
 	}
 
 }
+
+const StatusModifiers = [
+	"Status & Afflictions",
+	"*Status",
+	"-1 to IQ/DX checks (Shock 1)",
+	"-2 to IQ/DX checks (Shock 2)",
+	"-3 to IQ/DX checks (Shock 3)",
+	"-4 to IQ/DX checks (Shock 4)",
+	"-4 to active defenses (Stunned)",
+	"*Afflictions",
+	"-3 to DX checks (Coughing)",
+	"-1 to IQ checks (Coughing)",
+	"-2 to IQ/DX/CR rolls (Drowsy)",
+	"-2 to IQ/DX checks (Drunk)",
+	"-4 to CR rolls (Drunk)",
+	"-1 to IQ/DX checks (Tipsy)",
+	"-2 to CR rolls (Tipsy)",
+	"-3 to IQ/DX/CR rolls (Euphoria)",
+	"-2 to All attributes (Nauseated)",
+	"-1 to active defense (Nauseated)",
+	"-2 to IQ/DX/CR rolls (Moderate Pain)",
+	"-4 to IQ/DX/CR rolls (Severe Pain)",
+	"-6 to IQ/DX/CR rolls (Terrible Pain)",
+	"-5 to IQ/DX/PER checks (Retching)"
+];
+
+const CoverPostureModifiers = [
+	"Cover & Posture",
+	"*Cover",
+	"-5 to hit, Head only",
+	"-4 to hit, Head and shoulders exposed",
+	"-3 to hit, Body half exposed",
+	"-2 to hit, Behind light cover",
+	"-4 to hit, Behind same-sized figure",
+	"-4 to hit, Prone without cover",
+	"-5 to hit, Prone some cover, head up",
+	"-7 to hit, Prone some cover, head down",
+	"-2 to hit, Crouching/kneeling no cover",
+	"-4 to hit, firing through occupied hex",
+	"*Posture",
+	"-4 to hit Melee (Prone)",
+	"-2 to hit Ranged (Prone)",
+	"-3 to active defenses (Prone)",
+	"-2 to hit Melee (Crouch)",
+	"-2 to hit Ranged (Crouch)",
+	"-2 to hit Melee (Kneel/Sit)",
+	"-2 to active defenses (Kneel/Sit)",
+];
+
+const SizeModifiers = [
+	"Size Modifier (melee diff, ranged abs)",
+	"-10  Size 0.05 yard (1.8\")",
+	"-9  Size 0.07 yard (2.5\")",
+	"-8  Size 0.1 yard (3.5\")",
+	"-7  Size 0.15 yard (5\")",
+	"-6  Size 0.2 yard (7\")",
+	"-5  Size 0.3 yard (10\")",
+	"-4  Size 0.5 yard (18\")",
+	"-3  Size 0.7 yard (2')",
+	"-2  Size 1 yard (3')",
+	"-1  Size 1.5 yards (4.5')",
+	"+0  Size 2 yards (6')",
+
+	"+1  Size 3 yards (9')",
+	"+2  Size 5 yards (15')",
+	"+3  Size 7 yards (21')",
+	"+4  Size 10 yards (30')",
+	"+5  Size 15 yards (45')",
+	"+6  Size 20 yards (60')",
+	"+7  Size 30 yards (90')",
+	"+8  Size 50 yards (150')",
+	"+9  Size 70 yards (210')",
+	"+10 Size 100 yards (300')",
+	"+11 Size 150 yards (450')"
+];
+
+let HitlocationModifiers = ["Hit Locations (if miss by 1, then *)"];
+
+// Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
+const MeleeMods = `[+4 to hit (Determined Attack)]
+[+4 to hit (Telegraphic Attack)]
+[-2 to hit (Deceptive Attack)]
+[-4 to hit (Charge Attack) *Max:9]
+[+2 dmg (Strong Attack)]
+${horiz("Extra Effort")}
+[+2 dmg (Mighty Blow) *Cost 1FP]
+[+0 Heroic Charge *Cost 1FP]`;
+
+const RangedMods = `[+1 Aim]
+[+1 to hit (Determined Attack)]
+${horiz("Actions")}
+[WILL check to maintain Aim]`;
+
+const DefenseMods = `[+2 All-Out Defense]
+[+1 to dodge (Shield)]
+[+2 to dodge (Acrobatics)]
+[+3 to dodge (Dive)]
+[+3 to dodge (Retreat)]
+[+1 block/parry (Retreat)]
+
+[-2 to dodge (Failed Acrobatics)]
+[-2 to dodge (Attacked from side)]
+[-4 to dodge (Attacked from rear)]
+${horiz("Extra Effort")}
+[+2 Feverish Defense *Cost 1FP]
+${horiz("Actions")}
+[WILL-3 Concentration check]`;
+
+const OtherMods = `[+1]
+[+2]
+[+3]
+[+4]
+[+5]
+[-1]
+[-2]
+[-3]
+[-4]
+[-5]
+[+1 GM said so]
+[-1 GM said so]
+[+4 GM Blessed]
+[-4 GM don't try it]`;
+
+const TaskDifficultyModifiers = [
+	"Task Difficulty",
+	"+10 Automatic",
+	"+8 Trivial",
+	"+6 Very Easy",
+	"+4 Easy",
+	"+2 Very Favorable",
+	"+1 Favorable",
+	"-1 Unfavorable",
+	"-2 Very Unfavorable",
+	"-4 Hard",
+	"-6 Very hard",
+	"-8 Dangerous",
+	"-10 Impossible"
+];
+
+const LightingModifiers = [
+	"Lighting",
+	"-1 Sunrise / sunset / torch / flashlight",
+	"-2 Twilight / gaslight / cell-phone",
+	"-3 Deep twlight / candlelight",
+	"-4 Full moon",
+	"-5 Half moon",
+	"-6 Quarter moon",
+	"-7 Starlight",
+	"-8 Starlight through clouds",
+	"-9 Overcast moonless night",
+	"-10 Total darkness"
+];
+
+const RateOfFireModifiers = [
+	"Rate of Fire",
+	"+1 RoF: 5-8",
+	"+2 RoF: 9-12",
+	"+3 RoF: 13-16",
+	"+4 RoF: 17-24",
+	"+5 RoF: 25-49",
+	"+6 RoF: 50-99",
+];
+
+const EqtQualifyModifiers = [
+	"Equipment Quality",
+	"+4 Best Possible Equipment",
+	"+2 Fine Quality Equipment (20x cost)",
+	"+1 Good Quality Equipment (5x cost)",
+	"-2 Improvised Equipment (non-tech task)",
+	"-5 Improvised Equipment (tech task)",
+	"-1 Missing / Damaged item",
+	"-5 No Equipment (none-tech task)",
+	"-10 No Equipment (tech task)"
+];
+
+const ModifiersForStatus = {
+	"retching": {
+		gen: ["[-5 to IQ/DX/PER checks (Retching)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"moderate": {
+		gen: ["[-2 to IQ/DX/CR rolls (Moderate Pain)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"severe": {
+		gen: ["[-4 to IQ/DX/CR rolls (Severe Pain)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"terrible": {
+		gen: ["[-6 to IQ/DX/CR rolls (Terrible Pain)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"nauseated": {
+		gen: ["[-2 to All attributes (Nauseated)]"],
+		melee: [],
+		ranged: [],
+		defense: ["[-1 to active defense (Nauseated)]"]
+	},
+	"tipsy": {
+		gen: [
+			"[-1 to IQ/DX checks (Tipsy)]",
+			"[-2 to CR rolls (Tipsy)]",
+		],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"drunk": {
+		gen: [
+			"[-2 to IQ/DX checks (Drunk)]",
+			"[-4 to CR rolls (Drunk)]",
+		],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"drowsy": {
+		gen: ["[-2 to IQ/DX/CR rolls (Drowsy)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"coughing": {
+		gen: [
+			"[-3 to DX checks (Coughing)]",
+			"[-1 to IQ checks (Coughing)]"
+		],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"euphoria": {
+		gen: ["[-3 to IQ/DX/CR rolls (Euphoria)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock1": {
+		gen: ["[-1 to IQ/DX checks (Shock)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock2": {
+		gen: ["[-2 to IQ/DX checks (Shock)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock3": {
+		gen: ["[-3 to IQ/DX checks (Shock)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"shock4": {
+		gen: ["[-4 to IQ/DX checks (Shock)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"prone": {
+		gen: [],
+		melee: ["[-4 to hit Melee (Prone)]"],
+		ranged: ["[-2 to hit Ranged (Prone)]"],
+		defense: ["[-2 to active defenses (Prone)]"]
+	},
+	"stun": {
+		gen: [],
+		melee: [],
+		ranged: [],
+		defense: ["[-4 to active defenses (Stunned)]"]
+	},
+	"kneel": {
+		gen: [],
+		melee: ["[-2 to hit Melee (Kneeling)]"],
+		ranged: [],
+		defense: ["[-2 to active defenses (Kneeling)]"]
+	},
+	"crouch": {
+		gen: [],
+		melee: ["[-2 to hit Melee (Crouching)]"],
+		ranged: ["[-2 to hit Ranged (Crouching)]"],
+		defense: []
+	},
+	"sit": {
+		gen: [],
+		melee: ["[-2 to hit Melee (Sitting)]"],
+		ranged: [],
+		defense: ["[-2 to active defenses (Sitting)]"]
+	},
+};
+

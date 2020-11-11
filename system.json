@@ -14,7 +14,8 @@
     "lib/initiative.mjs",
     "lib/hitpoints.mjs",
     "lib/hitlocationtooltip.mjs",
-    "lib/utilities.mjs"
+    "lib/utilities.mjs",
+    "lib/parselink.mjs"
   ],
   "styles": [
     "styles/simple.css"
