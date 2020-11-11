@@ -226,38 +226,157 @@ CONFIG.statusEffects = [
 		icon: "systems/gurps/icons/wooden-chair.png",
 		id: "sit",
 		label: "GURPS.STATUSSit"
+	},
+	{
+		icon: "systems/gurps/icons/euphoria.png",
+		id: "euphoria",
+		label: "GURPS.STATUSEuphoria"
+	},
+	{
+		icon: "systems/gurps/icons/coughing.png",
+		id: "coughing",
+		label: "GURPS.STATUSCoughing"
+	},
+	{
+		icon: "systems/gurps/icons/drowsy.png",
+		id: "drowsy",
+		label: "GURPS.STATUSDrowsy"
+	},
+	{
+		icon: "systems/gurps/icons/drunk.png",
+		id: "drunk",
+		label: "GURPS.STATUSDrunk"
+	},
+	{
+		icon: "systems/gurps/icons/tipsy.png",
+		id: "tipsy",
+		label: "GURPS.STATUSTipsy"
+	},
+	{
+		icon: "systems/gurps/icons/nauseated.png",
+		id: "nauseated",
+		label: "GURPS.STATUSNauseated"
+	},
+	{
+		icon: "systems/gurps/icons/moderate.png",
+		id: "moderate",
+		label: "GURPS.STATUSModerate"
+	},
+	{
+		icon: "systems/gurps/icons/severe.png",
+		id: "severe",
+		label: "GURPS.STATUSSevere"
+	},
+	{
+		icon: "systems/gurps/icons/terrible.png",
+		id: "terrible",
+		label: "GURPS.STATUSTerrible"
+	},
+	{
+		icon: "systems/gurps/icons/vomiting.png",
+		id: "retching",
+		label: "GURPS.STATUSRetching"
 	}
 ];
 
 GURPS.ModifiersForStatus = {
+	"retching": {
+		gen: ["[-5 to IQ/DX/PER checks (Retching)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"moderate": {
+		gen: ["[-2 to IQ/DX/CR rolls (Moderate Pain)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"severe": {
+		gen: ["[-4 to IQ/DX/CR rolls (Severe Pain)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"terrible": {
+		gen: ["[-6 to IQ/DX/CR rolls (Terrible Pain)]" ],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"nauseated": {
+		gen: ["[-2 to All attributes (Nauseated)]" ],
+		melee: [],
+		ranged: [],
+		defense: ["[-1 to active defense (Nauseated)]"]
+	},
+	"tipsy": {
+		gen: [
+			"[-1 to IQ/DX checks (Tipsy)]",
+			"[-2 to CR rolls (Tipsy)]",
+		],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"drunk": {
+		gen: [
+			"[-2 to IQ/DX checks (Drunk)]",
+			"[-4 to CR rolls (Drunk)]",
+		],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"drowsy": {
+		gen: ["[-2 to IQ/DX/CR rolls (Drowsy)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"coughing": {
+		gen: [	
+			"[-3 to DX checks (Coughing)]",
+			"[-1 to IQ checks (Coughing)]"
+		],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
+	"euphoria": {
+		gen: ["[-3 to IQ/DX/CR rolls (Euphoria)]"],
+		melee: [],
+		ranged: [],
+		defense: []
+	},
 	"shock1": {
-		gen: ["[-1 to IQ/DX skills (Shock)]"],
+		gen: ["[-1 to IQ/DX checks (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"shock2": {
-		gen: ["[-2 to IQ/DX skills (Shock)]"],
+		gen: ["[-2 to IQ/DX checks (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"shock3": {
-		gen: ["[-3 to IQ/DX skills (Shock)]"],
+		gen: ["[-3 to IQ/DX checks (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"shock4": {
-		gen: ["[-4 to IQ/DX skills (Shock)]"],
+		gen: ["[-4 to IQ/DX checks (Shock)]"],
 		melee: [],
 		ranged: [],
 		defense: []
 	},
 	"prone": {
 		gen: [],
-		melee: ["[-4 to hit (Prone)]"],
-		ranged: ["[-2 to hit (Prone)]"],
+		melee: ["[-4 to hit Melee (Prone)]"],
+		ranged: ["[-2 to hit Ranged (Prone)]"],
 		defense: ["[-2 to active defenses (Prone)]"]
 	},
 	"stun": {
@@ -268,19 +387,19 @@ GURPS.ModifiersForStatus = {
 	},
 	"kneel": {
 		gen: [],
-		melee: ["[-2 to hit (Kneeling)]"],
+		melee: ["[-2 to hit Melee (Kneeling)]"],
 		ranged: [],
 		defense: ["[-2 to active defenses (Kneeling)]"]
 	},
 	"crouch": {
 		gen: [],
-		melee: ["[-2 to hit (Crouching)]"],
-		ranged: ["[-2 to hit (Crounching)]"],
+		melee: ["[-2 to hit Melee (Crouching)]"],
+		ranged: ["[-2 to hit Ranged (Crouching)]"],
 		defense: []
 	},
 	"sit": {
 		gen: [],
-		melee: ["[-2 to hit (Sitting)]"],
+		melee: ["[-2 to hit Melee (Sitting)]"],
 		ranged: [],
 		defense: ["[-2 to active defenses (Sitting)]"]
 	},
@@ -369,17 +488,17 @@ GURPS.StatusModifiers = [
 	"*Afflictions",
 	"-3 to DX checks (Coughing)",
 	"-1 to IQ checks (Coughing)",
-	"-2 to IQ/DX/CR roll (Drowsy)",
+	"-2 to IQ/DX/CR rolls (Drowsy)",
 	"-2 to IQ/DX checks (Drunk)",
-	"-4 to CR roll (Drunk)",
+	"-4 to CR rolls (Drunk)",
 	"-1 to IQ/DX checks (Tipsy)",
-	"-2 to CR roll (Tipsy)",
-	"-3 to IQ/DX/CR roll (Euphoria)",
+	"-2 to CR rolls (Tipsy)",
+	"-3 to IQ/DX/CR rolls (Euphoria)",
 	"-2 to All attributes (Nauseated)",
 	"-1 to active defense (Nauseated)",
-	"-2 to IQ/DX/CR roll (Moderate Pain)",
-	"-4 to IQ/DX/CR roll (Severe Pain)",
-	"-6 to IQ/DX/CR roll (Terrible Pain)",
+	"-2 to IQ/DX/CR rolls (Moderate Pain)",
+	"-4 to IQ/DX/CR rolls (Severe Pain)",
+	"-6 to IQ/DX/CR rolls (Terrible Pain)",
 	"-5 to IQ/DX/PER checks (Retching)"
 ];
 
@@ -469,6 +588,22 @@ for (let loc in GURPS.hitlocationRolls) {
 	GURPS.HitlocationModifiers.push(mod);
 }
 
+/* For really big lists, use Select Optgroups.   The first line is the "title", followed by Optgroup names, then options in that optgroup
+Use the function GURPS.makeSelect() to convert an array of strings into a data structure that can be displayed with the following:
+
+	data.posturemods = game.GURPS.makeSelect(game.GURPS.CoverPostureModifiers);
+
+	<select id="modposture">
+		<option>{{posturemods.title}}</option>
+		{{#each posturemods.groups}}
+			<optgroup label="{{this.group}}">
+			{{#each this.options}}
+				<option value="{{this}}">{{this}}</option>
+			{{/each}}
+			</optgroup>
+		{{/each}}
+	</select>
+*/
 GURPS.makeSelect = function (array) {
 	let groups = [];
 	let ans = { title: array[0], groups: groups };  // The title line.   Since we don't allow the select's to change, the first element in the select acts as its title.

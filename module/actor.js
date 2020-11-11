@@ -9,6 +9,13 @@ export class GurpsActor extends Actor {
 	prepareData() {
 		super.prepareData();
 	}
+	
+		 /** @override */
+  _onUpdate(data, options, userId, context) {
+		super._onUpdate(data, options, userId, context);
+		game.GURPS.ModifierBucket.refresh();		// Update the bucket, in case the actor's status effects have changed
+	}
+
 		
 	// First attempt at import GCS FG XML export data.
 	async importFromGCSv1(xml) {
