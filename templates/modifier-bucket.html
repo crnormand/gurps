@@ -83,7 +83,7 @@
 				<div id="modtooltiprightbottom">
 					<div class="modttlabel">Commonly used Modifiers</div>
 				
-					<div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap;font-size:80%">
+					<div style="font-size:60%">
 	
 						<select id="modspeedrange">
 						{{#each speedrangemods}}
@@ -91,6 +91,34 @@
 						{{/each}}
 						</select>
 
+						<select id="modhitlocations">
+						{{#each hitlocationmods}}
+							<option value="{{this}}">{{this}}</option>
+						{{/each}}
+						</select>
+
+						<select id="modcover">
+							<option>{{covermods.title}}</option>
+							{{#each covermods.groups}}
+								<optgroup label="{{this.group}}">
+								{{#each this.options}}
+									<option value="{{this}}">{{this}}</option>
+								{{/each}}
+								</optgroup>
+							{{/each}}
+						</select>
+						
+						<select id="modstatus">
+							<option>{{statusmods.title}}</option>
+							{{#each statusmods.groups}}
+								<optgroup label="{{this.group}}">
+								{{#each this.options}}
+									<option value="{{this}}">{{this}}</option>
+								{{/each}}
+								</optgroup>
+							{{/each}}
+						</select>
+					
 						<select id="modtaskdifficulty">
 						{{#each taskdificulties}}
 							<option value="{{this}}">{{this}}</option>
@@ -109,41 +137,18 @@
 						{{/each}}
 						</select>
 						
-						<select id="modrof">
-						{{#each rofmods}}
-							<option value="{{this}}">{{this}}</option>
-						{{/each}}
-						</select>
-					
-						<select id="modposture">
-							<option>{{posturemods.title}}</option>
-							{{#each posturemods.groups}}
-								<optgroup label="{{this.group}}">
-								{{#each this.options}}
-									<option value="{{this}}">{{this}}</option>
-								{{/each}}
-								</optgroup>
-							{{/each}}
-						</select>
-					
-						<select id="modcover">
-							<option>{{covermods.title}}</option>
-							{{#each covermods.groups}}
-								<optgroup label="{{this.group}}">
-								{{#each this.options}}
-									<option value="{{this}}">{{this}}</option>
-								{{/each}}
-								</optgroup>
-							{{/each}}
-						</select>
-						
 						<select id="modsize">
 						{{#each sizemods}}
 							<option value="{{this}}">{{this}}</option>
 						{{/each}}
 						</select>
 
-
+						<select id="modrof">
+						{{#each rofmods}}
+							<option value="{{this}}">{{this}}</option>
+						{{/each}}
+						</select>
+					
 					</div>
 					
 				</div>
