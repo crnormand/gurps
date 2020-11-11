@@ -1,4 +1,6 @@
 // Import Modules
+import { displayMod, makeSelect } from '../lib/utilities.mjs'
+
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
@@ -24,15 +26,6 @@ GURPS.SetLastActor = function (actor) {
 	GURPS.ModifierBucket.refresh();
 	console.log("Last Actor:" + actor.name);
 }
-
-// This also needs to be defined early, since it is used in the creation of various modifier lists
-function displayMod(mod) {
-	if (!mod) mod = "0";
-	let n = mod.toString();
-	if (n[0] != '-' && n[0] != '+') n = "+" + n;
-	return n;
-}
-GURPS.displayMod = displayMod;
 
 GURPS.ModifierBucket = new ModifierBucket({
 	"width": 200,
@@ -341,11 +334,14 @@ GURPS.EqtQualifyModifiers = [
 ];
 
 
-/* For really big lists, use Select Optgroups.   The first line is the "title", followed by Optgroup names, then options in that optgroup
+/* For really big lists, use Select Optgroups.   
 
-The code to display it is:
+	The first line is the "title", followed by Optgroup names, then options in 
+	that optgroup.
 
-	data.posturemods = game.GURPS.makeSelect(game.GURPS.PostureStatusModifiers);
+	The code to display it is:
+
+		data.posturemods = makeSelect(game.GURPS.PostureStatusModifiers);
 
 	<select id="modposture">
 		<option>{{posturemods.title}}</option>
@@ -462,31 +458,13 @@ GURPS.hitlocationRolls = {
 };
 
 
-GURPS.HitlocationModifiers = [ "Hit Locations (if miss by 1, then *)" ];
+GURPS.HitlocationModifiers = ["Hit Locations (if miss by 1, then *)"];
 for (let loc in GURPS.hitlocationRolls) {
 	let hit = GURPS.hitlocationRolls[loc];
-	let mod = GURPS.displayMod(hit.penalty) + " to hit " + loc;
+	let mod = displayMod(hit.penalty) + " to hit " + loc;
 	if (!!hit.desc) mod += " (" + hit.desc + ")";
 	GURPS.HitlocationModifiers.push(mod);
 }
-
-GURPS.makeSelect = function (array) {
-	let groups = [];
-	let ans = { title: array[0], groups: groups };  // The title line.   Since we don't allow the select's to change, the first element in the select acts as its title.
-
-	let current = [];
-	for (let i = 1; i < array.length; i++) {
-		let line = array[i];
-		if (line[0] == "*") {
-			current = [];
-			groups.push({ group: line.substr(1), options: current });
-		} else {
-			current.push(line);
-		}
-	}
-	return ans;
-}
-
 
 /*
 	Convert XML text into a JSON object

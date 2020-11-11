@@ -1,3 +1,5 @@
+import { displayMod, makeSelect } from '../lib/utilities.mjs'
+
 export class ModifierBucket extends Application {
 
 	SHOWING = false;
@@ -44,8 +46,8 @@ export class ModifierBucket extends Application {
 		data.lightingmods = game.GURPS.LightingModifiers;
 		data.eqtqualitymods = game.GURPS.EqtQualifyModifiers;
 		data.rofmods = game.GURPS.RateOfFireModifiers;
-		data.statusmods = game.GURPS.makeSelect(game.GURPS.StatusModifiers);
-		data.covermods = game.GURPS.makeSelect(game.GURPS.CoverPostureModifiers);
+		data.statusmods = makeSelect(game.GURPS.StatusModifiers);
+		data.covermods = makeSelect(game.GURPS.CoverPostureModifiers);
 		data.sizemods = game.GURPS.SizeModifiers;
 		data.hitlocationmods = game.GURPS.HitlocationModifiers;
 		data.currentmods = [];
@@ -283,7 +285,7 @@ ${game.GURPS.OtherMods}`;
 
 	// Public method.   Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
-		let m = GURPS.displayMod(mod);
+		let m = displayMod(mod);
 		return { "mod": m, "desc": reason, "plus": (m[0] == "+") };
 	}
 
@@ -293,7 +295,7 @@ ${game.GURPS.OtherMods}`;
 		for (let m of stack.modifierList) {
 			stack.currentSum += parseInt(m.mod);
 		}
-		stack.displaySum = GURPS.displayMod(stack.currentSum);
+		stack.displaySum = displayMod(stack.currentSum);
 		stack.plus = stack.currentSum > 0;
 		stack.minus = stack.currentSum < 0;
 	}
@@ -311,7 +313,7 @@ ${game.GURPS.OtherMods}`;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
 			let m = parseInt(oldmod.mod) + parseInt(mod);
-			oldmod.mod = GURPS.displayMod(m);
+			oldmod.mod = displayMod(m);
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));
 		}
