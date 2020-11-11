@@ -13,6 +13,7 @@ window.GURPS = GURPS;		// Make GURPS global!
 import GURPSRange from '../lib/ranges.mjs'
 import Initiative from '../lib/initiative.mjs'
 import HitFatPoints from '../lib/hitpoints.mjs'
+import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.mjs'
 
 //CONFIG.debug.hooks = true;
 
@@ -1150,6 +1151,7 @@ GURPS.listeqtrecurse = listeqtrecurse;
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
+GURPS.hitLocationTooltip = new HitLocationEquipmentTooltip()
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1170,6 +1172,8 @@ Hooks.once("init", async function () {
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 	console.log(GURPS.objToString(GURPS));
+
+	// TODO initialize tooltip setting
 
 	// Define custom Entity classes
 	CONFIG.Actor.entityClass = GurpsActor;
