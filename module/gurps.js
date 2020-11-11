@@ -1377,7 +1377,7 @@ Hooks.once("init", async function () {
 	// Only necessary because of the FG import
 	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {
 		if (!roll)
-			roll = GURPS.hitlocationRolls[loc].roll;
+			roll = GURPS.hitlocationRolls[loc]?.roll;
 		return roll;
 	});
 
