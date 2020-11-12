@@ -1782,3 +1782,31 @@ body {
 #range-table .label:nth-child(odd) {
   background-color: #e8ffe8;
 }
+
+/* Message Chat styles */
+.damage-message {
+  border: 1px #6f6c66;
+  border-style: outset;
+  border-radius: 5px;
+  margin: 3px;
+  padding: 0.25em;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.damage-message .modifier-list {
+  list-style-type: none;
+}
+
+.damage-message .modifier-list li {
+  font-size: 85%;
+  font-style: italic;
+}
+
+.damage-message .damage-result {
+  vertical-align: middle !important;
+}
+
+.damage-message .damage-value {
+  font-size: 140%;
+  font-weight: bold;
+}
