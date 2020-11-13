@@ -35,19 +35,19 @@
 	    }
 		},
    	"HP": {
-    	"value": 10,
+    	"value": 0,
     	"min": 0,
-    	"max": 10,
+    	"max": 0,
       "points": 0
   	},
     "FP": {
-      "value": 10,
+      "value": 0,
       "min": 0,
-      "max": 10,
+      "max": 0,
       "points": 0
     },
 		"dodge": {
-			"value": 10,
+			"value": 0,
 			"enc_level": 0
 		},
 		"basicmove": {
@@ -55,16 +55,16 @@
 			"points": 0
 		},
 		"basicspeed": {
-			"value": 6,
+			"value": 0,
 			"points": 0
 		},
-		"currentmove": 5,
-		"thrust": "1d6",
-		"swing": "1d6+1",
+		"currentmove": 0,
+		"thrust": "",
+		"swing": "",
 		"frightcheck": 0,
-		"hearing": 10,
-		"tastesmell": 10,
-		"vision": 10,
+		"hearing": 0,
+		"tastesmell": 0,
+		"vision": 0,
 		"touch": 0,
 		"powers": {},
 		"ads": {},

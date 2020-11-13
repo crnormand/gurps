@@ -7,11 +7,11 @@ export class ModifierBucket extends Application {
 
 		for (let loc in GURPS.hitlocationRolls) {
 			let hit = GURPS.hitlocationRolls[loc];
-			let mod = displayMod(hit.penalty) + " to hit " + loc;
-
-			if (!!hit.desc) mod += " (" + hit.desc + ")";
-
-			HitlocationModifiers.push(mod);
+			if (!hit.skip) {			// Only include the items in the menu is skip is false (or empty)
+				let mod = displayMod(hit.penalty) + " to hit " + loc;
+				if (!!hit.desc) mod += " (" + hit.desc + ")";
+				HitlocationModifiers.push(mod);
+			}
 		}
 	}
 

@@ -23,7 +23,7 @@
                     <div class="label">Created:</div>
                     <div class="field">{{data.traits.createdon}}</div>
                     <div class="label">Modified:</div>
-                    <div class="field">{{{gurpslink data.traits.title}}}</div>
+                    <div class="field"></div>
                     <div class="label">Options:</div>
                     <div class="field"></div>
                 </div>
@@ -127,7 +127,7 @@
                     <div class="field noedit rollable" data-path="tastesmell">{{data.tastesmell}}</div>
                     <div class="label">Taste &amp; Smell</div>
                     <div class="points"></div>
-                    <div class="field noedit">{{data.touch}}</div>
+                    <div class="field noedit rollable" data-path="touch">{{data.touch}}</div>
                     <div class="label">Touch</div>
                     <hr>
                     <div class="points"></div>
@@ -167,17 +167,17 @@
                 <div class="header">Lifting &amp; Moving Things</div>
                 <div class="lift">{{data.liftingmoving.basiclift}}</div>
                 <div class="liftdesc">Basic Lift</div>
-                <div class="lift"></div>
+                <div class="lift">{{data.liftingmoving.onehandedlift}}</div>
                 <div class="liftdesc">One-Handed Lift</div>
-                <div class="lift"></div>
+                <div class="lift">{{data.liftingmoving.twohandedelift}}</div>
                 <div class="liftdesc">Two-Handed Lift</div>
-                <div class="lift"></div>
+                <div class="lift">{{data.liftingmoving.shove}}</div>
                 <div class="liftdesc">Shove &amp; Knock Over</div>
-                <div class="lift"></div>
+                <div class="lift">{{data.liftingmoving.runningshove}}</div>
                 <div class="liftdesc">Running Shove &amp; Knock Over</div>
-                <div class="lift"></div>
+                <div class="lift">{{data.liftingmoving.carryonback}}</div>
                 <div class="liftdesc">Carry on Back</div>
-                <div class="lift"></div>
+                <div class="lift">{{data.liftingmoving.shiftslightly}}</div>
                 <div class="liftdesc">Shift Slightly</div>
             </div>
             <div id="location">
@@ -193,7 +193,7 @@
                     {{this.where}}
                 </div>
                 <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
-                    {{this.penalty}}</div>
+                    {{hitlocationpenalty this.where this.penalty}}</div>
                 <div class="dr {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">{{this.dr}}
                 </div>
                 {{/each}}

@@ -27,6 +27,9 @@ export class GurpsActor extends Actor {
 			ui.notifications.warn("No <root> object found.  Are you importing the correct GCS XML file?");
 			return;
 		}
+		
+		let ra = r["@attributes"];
+		const foundryV1 = (!!ra && ra.release == "Foundry" && ra.version == "1");
 			
 		// The character object starts here
 		let c = r.character;
@@ -52,10 +55,14 @@ export class GurpsActor extends Actor {
 			await this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist);
 			await this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist);
 			await this.importSpellsFromGCSv1(c.abilities?.spelllist)
-			await this.importAdsFromGCSv1(c.traits?.adslist);
-			await this.importDisadsFromGCSv1(c.traits?.disadslist);
-			await this.importPowersFromGCSv1(c.abilities?.powerlist);
-			await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
+			if (foundryV1) {
+				await this.importAdsFromGCSv2(c.traits?.adslist);
+			} else {
+				await this.importAdsFromGCSv1(c.traits?.adslist);
+				await this.importDisadsFromGCSv1(c.traits?.disadslist);
+				await this.importPowersFromGCSv1(c.abilities?.powerlist);
+				await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
+			}
 			await this.importEncumbranceFromGCSv1(c.encumbrance);
 			await this.importPointTotalsFromGCSv1(c.pointtotals);
 			await this.importNotesFromGCSv1(c.notelist);
@@ -121,7 +128,8 @@ export class GurpsActor extends Actor {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
 				let n = new Note();
-				n.setNotes(t(j.text));
+				//n.setNotes(t(j.text));
+				n.notes = t(j.name);
 				game.GURPS.put(ns, n, index++);
 			}
 		}
@@ -257,6 +265,7 @@ export class GurpsActor extends Actor {
 						m.damage = t(j2.damage);
 						m.reach = t(j2.reach);
 						m.parry = t(j2.parry);
+						m.block = t(j2.block);
 						game.GURPS.put(melee, m, index++);
 					}
 				}
@@ -301,7 +310,6 @@ export class GurpsActor extends Actor {
 			}
 		}
 		await this.update({"data.ranged": ranged});	
-	
 	}
 		
 	async importTraitsfromGCSv1(json) {
@@ -312,11 +320,18 @@ export class GurpsActor extends Actor {
 		ts.height = t(json.height);
 		ts.weight = t(json.weight);
 		ts.age = t(json.age);
+		ts.title = t(json.title);
+		ts.player = t(json.player);
+		ts.createdon = t(json.createdon);
+		ts.religion = t(json.religion);
+		ts.birthday = t(json.birthday);
+		ts.hand = t(json.hand);
+		ts.sizemod = t(json.sizemodifier);
+		ts.techlevel = t(json.tl);
 		// <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
 		let a = t(json.appearance);
 		ts.appearance = a;
-		ts.sizemod = t(json.sizemodifier);
-		try {
+			try {
 			let x = a.indexOf(", Eyes: ");
 			ts.gender = a.substring(0, x);
 			let y = a.indexOf(", Hair: ");
@@ -328,17 +343,7 @@ export class GurpsActor extends Actor {
 			console.log("Unable to parse appearance traits for ");
 			console.log(this);
 		}
-		await this.update({
-			"data.traits.race": ts.race,
-			"data.traits.height": ts.height,
-			"data.traits.weight": ts.weight,
-			"data.traits.age": ts.age,
-			"data.traits.appearance": ts.appearance,
-			"data.traits.gender": ts.gender,
-			"data.traits.eyes": ts.eyes,
-			"data.traits.hair": ts.hair,
-			"data.traits.skin": ts.skin
-			});
+		await this.update({"data.traits": ts});
 	}
 
 	// Import the <attributes> section of the GCS FG XML file.
@@ -371,6 +376,13 @@ export class GurpsActor extends Actor {
 
 		let lm = {};
 		lm.basiclift = t(json.basiclift);
+		lm.carryonback = t(json.carryonback);
+		lm.onehandedlift = t(json.onehandedlift);
+		lm.runningshove = t(json.runningshove);
+		lm.shiftslightly = t(json.shiftslightly);
+		lm.shove = t(json.shove);
+		lm.twohandedelift = t(json.twohandedelift);
+
 		
 		data.basicmove.value = i(json.basicmove);
 		data.basicmove.points = i(json.basicmove_points);
@@ -379,6 +391,12 @@ export class GurpsActor extends Actor {
 		data.thrust = t(json.thrust);
 		data.swing = t(json.swing);
 		data.currentmove = t(json.move);
+		data.frightcheck = i(json.frightcheck);
+		
+		data.hearing = i(json.hearing);
+		data.tastesmell = i(json.tastesmell);
+		data.touch = i(json.touch);
+		data.vision = i(json.vision);
 	
 		// Instead of updating the whole "data" object, we can pass in subsets
 		await this.update({
@@ -390,6 +408,11 @@ export class GurpsActor extends Actor {
 			"data.thrust": data.thrust,
 			"data.swing": data.swing,
 			"data.currentmove": data.currentmove,
+			"data.frightcheck": data.frightcheck,
+			"data.hearing": data.hearing,
+			"data.tastesmell": data.tastesmell,
+			"data.touch": data.touch,
+			"data.vision": data.vision,
 			"data.liftingmoving": lm
 			});
 	}
@@ -504,6 +527,33 @@ export class GurpsActor extends Actor {
 		}
 		return datalist;
 	}
+	
+	async importAdsFromGCSv2(json) {
+		let list = {};
+		let index = 0;
+		let t = this.textFrom;		/// shortcut to make code smaller
+		for (let key in json) {
+			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
+				let j = json[key];
+				let a = new Advantage();
+				a.name = t(j.name);		
+				a.points = this.intFrom(j.points);
+				a.note = t(j.notes);
+				a.userdesc = t(j.userdesc);
+				a.notes = "";
+				if (!!a.note && !!a.userdesc)
+					a.notes = a.note + "\n" + a.userdesc;
+				else if (!!a.note)
+					a.notes = a.note;
+				else if (!!a.userdesc)
+					a.notes = a.userdesc;
+				a.pageref = t(j.pageref);
+				game.GURPS.put(list, a, index++);
+			}
+		await this.update({"data.ads": list});
+		}
+		
+	}
 }
 
 export class Named {
@@ -554,6 +604,8 @@ export class Spell extends Leveled {
 	}
 	
 export class Advantage extends NamedCost {
+	userdesc = "";
+	note = "";
 }
 
 export class Attack extends Named {

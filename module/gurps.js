@@ -24,12 +24,15 @@ GURPS.LastActor = null;
 GURPS.SetLastActor = function (actor) {
 	GURPS.LastActor = actor;
 	GURPS.ModifierBucket.refresh();
-	console.log("Last Actor:" + actor.name);
+//	console.log("Last Actor:" + actor.name);
 }
 
 
+// This table is used to display dice rolls and penalties (if they are missing from the import data)
+// And to create the HitLocations pulldown menu (skipping any "skip:true" entries)
 GURPS.hitlocationRolls = {
-	"Eye": { roll: "-", penalty: -9 },
+	"Eye": { roll: "-", penalty: -9, skip: true},
+	"Eyes": { roll: "-", penalty: -9 },																// GCA
 	"Skull": { roll: "3-4", penalty: -7 },
 	"Skull, from behind": { penalty: -5 },
 	"Face": { roll: "5", penalty: -5 },
@@ -38,18 +41,25 @@ GURPS.hitlocationRolls = {
 	"Jaw": { penalty: -6, desc: "front only, *hit chest" },
 	"Neck Vein/Artery": { penalty: -8, desc: "*hit neck" },
 	"Limb Vein/Artery": { penalty: -5, desc: "*hit limb" },
-	"Right Leg": { roll: "6-7", penalty: -2 },
-	"Right Arm": { roll: "8", penalty: -2 },
-	"Right Arm, holding shield": { penalty: -4 },
+	"Right Leg": { roll: "6-7", penalty: -2, skip: true },
+	"Right Arm": { roll: "8", penalty: -2, skip: true },
+	"Right Arm, holding shield": { penalty: -4, skip: true },
+	"Arm, holding shield": { penalty: -4 },
+	"Arm": { roll: "8 & 12", penalty: -2 },													// GCA
+	"Arms": { roll: "8 & 12", penalty: -2, skip: true  },													// GCA
 	"Torso": { roll: "9-10", penalty: 0 },
 	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI[any] only" },
 	"Vitals, Heart": { penalty: -5, desc: "IMP/PI[any] only" },
 	"Groin": { roll: "11", penalty: -3 },
-	"Left Arm": { roll: "12", penalty: -2 },
-	"Left Arm, holding shield": { penalty: -4 },
-	"Left Leg": { roll: "13-14", penalty: -2 },
+	"Left Arm": { roll: "12", penalty: -2, skip: true },
+	"Left Arm, holding shield": { penalty: -4, skip: true },
+	"Left Leg": { roll: "13-14", penalty: -2, skip: true },
+	"Legs": { roll: "6-7&13-14", penalty: -2, skip: true },												// GCA
+	"Leg": { roll: "6-7&13-14", penalty: -2 },												// GCA
 	"Hand": { roll: "15", penalty: -4 },
+	"Hands": { roll: "15", penalty: -4, skip: true },									// GCA
 	"Foot": { roll: "16", penalty: -4 },
+	"Feet": { roll: "16", penalty: -4, skip: true },															// GCA
 	"Neck": { roll: "17-18", penalty: -5 },
 	"Chinks in Torso": { penalty: -8, desc: "Halves DR" },
 	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
@@ -255,6 +265,7 @@ GURPS.SJGProductMappings = {
 	"DFA": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	"DFM": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	"DFS": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
+	"DFE": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	"DR": "http://www.warehouse23.com/products/gurps-dragons-1",
 	"F": "http://www.warehouse23.com/products/gurps-fantasy",
 	"GUL": "https://www.gamesdiner.com/gulliver/",
@@ -367,6 +378,7 @@ function cleanUpP(xml) {
 	}
 	xml = swap(xml, "&lt;p&gt;", "&lt;/p&gt;");
 	xml = swap(xml, "<p>", "</p>");
+	xml = xml.replace(/<br>/g, "\n");
 	return xml;
 }
 GURPS.cleanUpP = cleanUpP;
@@ -503,6 +515,7 @@ async function onRoll(event, actor) {
 			t = t.trim();
 			if (!!t)
 				target = parseInt(t);
+				if (isNaN(target)) target = 0;		// Can't roll against a non-integer
 		}
 	}
 	if ("damage" in element.dataset) {
@@ -865,6 +878,14 @@ Hooks.once("init", async function () {
 			roll = GURPS.hitlocationRolls[loc]?.roll;
 		return roll;
 	});
+	Handlebars.registerHelper('hitlocationpenalty', function (loc, penalty) {
+		if (!penalty)
+			penalty = GURPS.hitlocationRolls[loc]?.penalty;
+		return penalty;
+	});
+	
+	
+	
 
 	game.settings.register("gurps", "changelogVersion", {
 		name: "Changelog Version",

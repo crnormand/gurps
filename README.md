@@ -13,6 +13,7 @@
     - refactored code to make it less of a "prototype" and more of a "pre-alpha"
     - fixed import for GCS characters that contain "&" in fields, assuming they turn @ENCODING back on
     - Page Ref links to non-existent PDFs will now go to the SJG Warehouse 23 website
+    - Started work on enhanced GCS export/import
 - 0.6.5
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players
