@@ -281,6 +281,7 @@ GURPS.SJGProductMappings = {
 	"LT": "http://www.warehouse23.com/products/gurps-fourth-edition-low-tech",
 	"LTC1": "http://www.warehouse23.com/products/gurps-low-tech-companion-1-philosophers-and-kings",
 	"LTIA": "http://www.warehouse23.com/products/gurps-low-tech-instant-armor",
+	"LITE": "http://www.warehouse23.com/products/SJG31-0004",
 	"M": "http://www.warehouse23.com/products/gurps-magic-5",
 	"MPS": "http://www.warehouse23.com/products/gurps-magic-plant-spells",
 	"MA": "http://www.warehouse23.com/products/gurps-martial-arts",
