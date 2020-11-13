@@ -9,7 +9,10 @@
     - Added configurable system settings (range system (Basic Set / Monster Hunters 2), etc.)
     - Added common modifiers as pulldown lists on tooltip
     - Installed GURPS combat initiative (GURPS Turn Sequence B362)
-    - added support for basic GURPS status and aflictions
+    - added support for basic GURPS status and afflictions "effects" (and icons)
+    - refactored code to make it less of a "prototype" and more of a "pre-alpha"
+    - fixed import for GCS characters that contain "&" in fields, assuming they turn @ENCODING back on
+    - Page Ref links to non-existent PDFs will now go to the SJG Warehouse 23 website
 - 0.6.5
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players
