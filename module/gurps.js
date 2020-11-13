@@ -16,6 +16,11 @@ import GURPSRange from '../lib/ranges.mjs'
 import Initiative from '../lib/initiative.mjs'
 import HitFatPoints from '../lib/hitpoints.mjs'
 import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.mjs'
+import ChatMessage from '../lib/damagemessage.mjs'
+
+import helpers from '../lib/moustachewax.mjs'
+
+helpers()
 
 //CONFIG.debug.hooks = true;
 
@@ -627,29 +632,68 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		rdesc += "</small>";
 		chatcontent = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
 	} else {	// This is "damage" roll where the modifier is added to the roll, not the target
-		let min = 0;
-		let b378 = false;
-		let b378content = "";
-		// This is a nasty hack to give other damage types a minimum of 1 pt
-		if (thing.includes("damage") && !thing.includes("'cr' damage")) {
-			min = 1;
-			b378 = true;
+
+		let diceText = prefix.replace(/^Rolling /, '')
+		let type = thing.replace(/^ points of '/, '').replace(/' damage/, '')
+		let min = 1
+		let b378 = false
+
+		if (type === 'cr') min = 0
+
+		if (formula.slice(-1) === '!') {
+			formula = formula.slice(0, -1)
+			min = 1
 		}
-		if (formula[formula.length - 1] == "!") {
-			formula = formula.substr(0, formula.length - 1);
-			min = 1;
-		}
-		roll = new Roll(formula + `+${modifier}`);
+
+		let roll = new Roll(formula + `+${modifier}`);
 		roll.roll();
 		let rtotal = roll.total;
 		if (rtotal < min) {
 			rtotal = min;
-			if (b378) b378content = " (minimum of 1 point of damage per B378)"
+			if (type !== 'cr') b378 = true
 		}
 
-		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
+		let contentData = {
+			dice: diceText,
+			damage: rtotal,
+			type: type,
+			modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
+			isB378: b378
+		}
+
+		let results = "<i class='fa fa-dice'/> " +
+			"<i class='fa fa-long-arrow-alt-right'/> " +
+			"<b style='font-size: 140%;'>" +
+			rtotal +
+			"</b>";
 		if (rtotal == 1) thing = thing.replace("points", "point") + b378content;
-		chatcontent = prefix + modscontent + "<br>" + results + thing;
+		chatcontent = prefix + modscontent + "<br>" +
+			"<div draggable='true' ondragstart='console.log(event)'>" +
+			results + thing +
+			"</div>";
+
+		let html = await
+			renderTemplate('systems/gurps/templates/damage-message.html', contentData)
+
+		console.log(html)
+		const speaker = { alias: actor.name, _id: actor._id }
+		let messageData = {
+			user: game.user._id,
+			speaker: speaker,
+			content: html,
+			type: CONST.CHAT_MESSAGE_TYPES.OOC,
+			roll: roll
+		};
+
+		if (niceDice) {
+			game.dice3d.showForRoll(roll).then((displayed) => {
+				CONFIG.ChatMessage.entityClass.create(messageData, {});
+			});
+		} else {
+			messageData.sound = CONFIG.sounds.dice;
+			CONFIG.ChatMessage.entityClass.create(messageData, {});
+		}
+		return
 	}
 
 	const speaker = { alias: actor.name, _id: actor._id }
@@ -789,6 +833,7 @@ GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 GURPS.hitLocationTooltip = new HitLocationEquipmentTooltip()
+GURPS.chatmessage = new ChatMessage()
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -803,7 +848,6 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
-
 Hooks.once("init", async function () {
 	console.log(`Initializing GURPS 4e System`);
 	game.GURPS = GURPS;
@@ -821,31 +865,6 @@ Hooks.once("init", async function () {
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
-
-	// If you need to add Handlebars helpers, here are a few useful examples:
-	Handlebars.registerHelper('concat', function () {
-		var outStr = '';
-		for (var arg in arguments) {
-			if (typeof arguments[arg] != 'object') {
-				outStr += arguments[arg];
-			}
-		}
-		return outStr;
-	});
-
-	// Add "@index to {{times}} function
-	Handlebars.registerHelper("times", function (n, content) {
-		let result = "";
-		for (let i = 0; i < n; i++) {
-			content.data.index = i + 1;
-			result += content.fn(i);
-		}
-		return result;
-	});
-
-	Handlebars.registerHelper('toLowerCase', function (str) {
-		return str.toLowerCase();
-	});
 
 	Handlebars.registerHelper('objToString', function (str) {
 		let o = CONFIG.GURPS.objToString(str);
@@ -870,7 +889,6 @@ Hooks.once("init", async function () {
 		return GURPS.listeqtrecurse(context, options, 0, data);
 	});
 
-	Handlebars.registerHelper('gt', function (a, b) { return a > b; });
 
 	// Only necessary because of the FG import
 	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {

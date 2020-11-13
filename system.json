@@ -15,7 +15,9 @@
     "lib/hitpoints.mjs",
     "lib/hitlocationtooltip.mjs",
     "lib/utilities.mjs",
-    "lib/parselink.mjs"
+    "lib/parselink.mjs",
+    "lib/damagemessage.mjs",
+    "lib/moustachewax.mjs"
   ],
   "styles": [
     "styles/simple.css"

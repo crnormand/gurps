@@ -1,0 +1,14 @@
+<div class='gurps damage-message' data-transfer='{{transfer}}'>
+  <div class='prefix'>Rolling {{dice}} damage</div>
+  <ul class='modifier-list'>
+    {{#each modifiers}}
+    <li>{{this}}</li>
+    {{/each}}
+  </ul>
+  <div class='damage-result'>
+    <span class='fa fa-dice' />&nbsp;
+    <span class='fa fa-long-arrow-alt-right' />&nbsp;
+    <span class='damage-value'>{{damage}}</span>
+    <span class='damage-detail'>{{pluralize 'point' damage}} of '{{type}}' damage.</span>
+  </div>
+</div>
