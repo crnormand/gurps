@@ -17,7 +17,7 @@ import Initiative from '../lib/initiative.mjs'
 import HitFatPoints from '../lib/hitpoints.mjs'
 import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.mjs'
 
-CONFIG.debug.hooks = true;
+//CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
@@ -57,10 +57,6 @@ GURPS.hitlocationRolls = {
 
 
 GURPS.ModifierBucket = new ModifierBucket({
-	"width": 200,
-	"height": 200,
-	"top": 600,
-	"left": 300,
 	"popOut": false,
 	"minimizable": false,
 	"resizable": false,
@@ -242,6 +238,58 @@ CONFIG.statusEffects = [
 	}
 ];
 
+GURPS.SJGProductMappings = {
+  "ACT1": "http://www.warehouse23.com/products/gurps-action-1-heroes",
+  "ACT3": "http://www.warehouse23.com/products/gurps-action-3-furious-fists",
+  "B": "http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns",
+	"BS": "http://www.warehouse23.com/products/gurps-banestorm",
+  "DF1": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-1-adventurers-1",
+	"DF3": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-3-the-next-level-1",
+	"DF4": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-4-sages-1",
+	"DF8": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-8-treasure-tables",
+	"DF11": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-11-power-ups",
+	"DF12": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-12-ninja",
+	"DF13": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-13-loadouts",
+	"DF14": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-14-psi",
+	"DFM1": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-monsters-1",
+	"DFA": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
+	"DFM": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
+	"DFS": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
+	"DR": "http://www.warehouse23.com/products/gurps-dragons-1",
+	"F": "http://www.warehouse23.com/products/gurps-fantasy",
+	"GUL": "https://www.gamesdiner.com/gulliver/",
+	"H": "http://www.warehouse23.com/products/gurps-horror-1",
+	"HF": "http://www.mygurps.com/historical_folks_4e.pdf",
+	"HT": "http://www.warehouse23.com/products/gurps-high-tech-2",
+	"IW": "http://www.warehouse23.com/products/gurps-infinite-worlds-1",
+	"LT": "http://www.warehouse23.com/products/gurps-fourth-edition-low-tech",
+	"LTC1": "http://www.warehouse23.com/products/gurps-low-tech-companion-1-philosophers-and-kings",
+	"LTIA": "http://www.warehouse23.com/products/gurps-low-tech-instant-armor",
+	"M": "http://www.warehouse23.com/products/gurps-magic-5",
+	"MPS": "http://www.warehouse23.com/products/gurps-magic-plant-spells",
+	"MA": "http://www.warehouse23.com/products/gurps-martial-arts",
+	"MAFCCS": "http://www.warehouse23.com/products/gurps-martial-arts-fairbairn-close-combat-systems",
+	"MATG": "http://www.warehouse23.com/products/gurps-martial-arts-technical-grappling",
+	"MH1": "http://www.warehouse23.com/products/gurps-monster-hunters-1-champions",
+	"MYST": "http://www.warehouse23.com/products/gurps-mysteries-1",
+	"MYTH": "http://www.sjgames.com/gurps/books/myth/",
+	"P": "http://www.warehouse23.com/products/gurps-powers",
+	"PDF": "http://www.warehouse23.com/products/gurps-powers-divine-favor",
+	"PSI": "http://www.warehouse23.com/products/gurps-psionic-powers",
+	"PU1": "http://www.warehouse23.com/products/gurps-power-ups-1-imbuements-1",
+	"PU2": "http://www.warehouse23.com/products/gurps-power-ups-2-perks",
+	"PU3": "http://www.warehouse23.com/products/gurps-power-ups-3-talents",
+	"PY#": "http://www.warehouse23.com/products?utf8=%E2%9C%93&keywords=pyramid+magazine&x=0&y=0",
+	"RSWL": "http://www.warehouse23.com/products/gurps-reign-of-steel-will-to-live",
+	"SU": "http://www.warehouse23.com/products/gurps-supers-3",
+	"TMS": "http://www.warehouse23.com/products/gurps-thaumatology-magical-styles",
+	"TRPM": "http://www.warehouse23.com/products/gurps-thaumatology-ritual-path-magic",
+	"TS": "http://www.warehouse23.com/products/gurps-tactical-shooting",
+	"TSOR": "http://www.warehouse23.com/products/gurps-thaumatology-sorcery",
+	"UT": "http://www.warehouse23.com/products/gurps-ultra-tech",
+	"VOR": "http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game"
+}
+
 /*
 	Convert XML text into a JSON object
 */
@@ -301,18 +349,24 @@ GURPS.xmlToJson = xmlToJson;
 function cleanUpP(xml) {
 	// First, remove non-ascii characters
 	xml = xml.replace(/[^ -~]+/g, "");
-	let s = xml.indexOf("<p>");
-	while (s > 0) {
-		let e = xml.indexOf("</p>", s);
-		if (e > s) {
-			let t1 = xml.substring(0, s);
-			let t2 = xml.substring(s + 3, e);
-			t2 = btoa(t2) + "\n";
-			let t3 = xml.substr(e + 4);
-			xml = t1 + t2 + t3;
-			s = xml.indexOf("<p>", s + t2.length);
+	// &lt;p&gt;
+	let swap = (xml, tagin, tagout) => {
+		let s = xml.indexOf(tagin);
+		while (s > 0) {
+			let e = xml.indexOf(tagout, s);
+			if (e > s) {
+				let t1 = xml.substring(0, s);
+				let t2 = xml.substring(s + 3, e);
+				t2 = btoa(t2) + "\n";
+				let t3 = xml.substr(e + 4);
+				xml = t1 + t2 + t3;
+				s = xml.indexOf(tagin, s + t2.length);
+			}
 		}
+		return xml;
 	}
+	xml = swap(xml, "&lt;p&gt;", "&lt;/p&gt;");
+	xml = swap(xml, "<p>", "</p>");
 	return xml;
 }
 GURPS.cleanUpP = cleanUpP;
@@ -479,7 +533,7 @@ GURPS.onRoll = onRoll;
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
-	let parse = desc.replace(/.*\* ?Cost (\d+) ?FP.*/g, "$1");
+	let parse = desc.replace(/.*\* ?Costs? (\d+) ?FP.*/g, "$1");
 	if (parse != desc) {
 		let fp = parseInt(parse);
 		fp = actor.data.data.FP.value - fp;
@@ -642,7 +696,14 @@ function onPdf(event) {
 		page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
 	}
 	if (ui.PDFoundry) {
-		ui.PDFoundry.openPDFByCode(book, { page });
+    const pdf = ui.PDFoundry.findPDFDataByCode(book);
+    if (pdf === undefined) {
+			let url = game.GURPS.SJGProductMappings[book];
+			if (!url) url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb";		// The main GURPS page
+      window.open(url, '_blank');
+    }
+    else
+			ui.PDFoundry.openPDF(pdf, { page });
 	} else {
 		ui.notifications.warn('PDFoundry must be installed to use links.');
 	}
@@ -862,10 +923,13 @@ Hooks.once("ready", async function () {
 		if (!!args && args.length >= 4)
 			GURPS.SetLastActor(args[0]);
 	});
+	
+	// Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket (only when args[1] is true)
+	Hooks.on("controlToken", (...args) => {
+		if (args.length > 1 && args[1]) {
+			let a = args[0]?.actor;
+			if (!!a) game.GURPS.SetLastActor(a);
+		}
+	});
 });
 
-// Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
-Hooks.on("controlToken", (...args) => {
-	let a = args[0]?.actor;
-	if (!!a) game.GURPS.SetLastActor(a);
-});

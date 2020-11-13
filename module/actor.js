@@ -18,7 +18,7 @@ export class GurpsActor extends Actor {
 
 		
 	// First attempt at import GCS FG XML export data.
-	async importFromGCSv1(xml) {
+	async importFromGCSv1(xml, importname, importpath) {
 		// need to remove <p> and replace </p> with newlines from "formatted text"
 		let x = game.GURPS.cleanUpP(xml);
 		x = game.GURPS.xmlTextToJson(x);
@@ -39,6 +39,10 @@ export class GurpsActor extends Actor {
 		// this is how you have to update the domain object so that it is synchronized.
 		await this.update({"name": nm});
 		await this.update({"token.name": nm});
+		let ar = this.data.data.additionalresources || {};
+		ar.importname = importname;
+		ar.importpath = importpath;
+		await this.update({"data.additionalresources": ar});
 		
 		try {
 			// This is going to get ugly, so break out various data into different methods

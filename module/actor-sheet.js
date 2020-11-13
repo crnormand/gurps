@@ -153,8 +153,6 @@ export class GurpsActorSheet extends ActorSheet {
   async _onFileImport(event) {
     event.preventDefault();
     let element = event.currentTarget;
-    console.log("XML File Import Event:");
-    console.log(event);
     new Dialog({
       title: `Import XML data for: ${this.actor.name}`,
       content: await renderTemplate("systems/gurps/templates/import-gcs-v1-data.html", { name: '"' + this.actor.name + '"' }),
@@ -164,9 +162,15 @@ export class GurpsActorSheet extends ActorSheet {
           label: "Import",
           callback: html => {
             const form = html.find("form")[0];
-            if (!form.data.files.length) return ui.notifications.error("You did not upload a data file!");
-            readTextFromFile(form.data.files[0]).then(text => this.actor.importFromGCSv1(text));
-          }
+						let files = form.data.files;
+						let file = null;
+            if (!files.length) {
+							return ui.notifications.error("You did not upload a data file!");
+						}	else {
+							file = files[0];
+	          	readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path));
+						}
+					}
         },
         no: {
           icon: '<i class="fas fa-times"></i>',

@@ -61,7 +61,7 @@
 		"currentmove": 5,
 		"thrust": "1d6",
 		"swing": "1d6+1",
-		"frightcheck": 10,
+		"frightcheck": 0,
 		"hearing": 10,
 		"tastesmell": 10,
 		"vision": 10,
