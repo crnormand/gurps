@@ -11,7 +11,7 @@
           <level type="number">@SL</level>
           <relativelevel type="string">@RSL</relativelevel>
           <points type="number">@POINTS</points>
-          <text type="formattedtext"><p>@DESCRIPTION_NOTES @DESCRIPTION_MODIFIER_NOTES_PAREN</p><p>Page Ref: @REF</p></text>
+          <text type="formattedtext"><p>@DESCRIPTION_NOTES</p><p>Page Ref: @REF</p></text>
         </id-@ID>@SKILLS_LOOP_END
       </skilllist>
 

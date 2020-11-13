@@ -265,6 +265,7 @@ GURPS.SJGProductMappings = {
 	"DFA": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	"DFM": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	"DFS": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
+	"DFE": "http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game",
 	"DR": "http://www.warehouse23.com/products/gurps-dragons-1",
 	"F": "http://www.warehouse23.com/products/gurps-fantasy",
 	"GUL": "https://www.gamesdiner.com/gulliver/",

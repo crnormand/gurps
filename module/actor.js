@@ -540,11 +540,12 @@ export class GurpsActor extends Actor {
 				a.points = this.intFrom(j.points);
 				a.note = t(j.notes);
 				a.userdesc = t(j.userdesc);
+				a.notes = "";
 				if (!!a.note && !!a.userdesc)
 					a.notes = a.note + "\n" + a.userdesc;
 				else if (!!a.note)
 					a.notes = a.note;
-				else 
+				else if (!!a.userdesc)
 					a.notes = a.userdesc;
 				a.pageref = t(j.pageref);
 				game.GURPS.put(list, a, index++);
