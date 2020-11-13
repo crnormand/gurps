@@ -681,7 +681,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			user: game.user._id,
 			speaker: speaker,
 			content: html,
-			type: CONST.CHAT_MESSAGE_TYPES.OOC,
+			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 			roll: roll
 		};
 
