@@ -104,9 +104,17 @@ export class GurpsActorSheet extends ActorSheet {
 
   /** @override */
   _onDrop(event) {
+    let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+
     console.log("Dropped:");
     console.log(event);
+    console.log(dragData)
 
+    if (dragData.type === 'damageItem') {
+      let current = this.actor.data.data.HP.value
+      current -= dragData.payload.damage
+      this.actor.update({ "data.HP.value": current })
+    }
   }
 
   _onfocus(ev) {
@@ -162,15 +170,15 @@ export class GurpsActorSheet extends ActorSheet {
           label: "Import",
           callback: html => {
             const form = html.find("form")[0];
-						let files = form.data.files;
-						let file = null;
+            let files = form.data.files;
+            let file = null;
             if (!files.length) {
-							return ui.notifications.error("You did not upload a data file!");
-						}	else {
-							file = files[0];
-	          	readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path));
-						}
-					}
+              return ui.notifications.error("You did not upload a data file!");
+            } else {
+              file = files[0];
+              readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path));
+            }
+          }
         },
         no: {
           icon: '<i class="fas fa-times"></i>',

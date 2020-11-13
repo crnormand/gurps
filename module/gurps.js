@@ -16,7 +16,7 @@ import GURPSRange from '../lib/ranges.mjs'
 import Initiative from '../lib/initiative.mjs'
 import HitFatPoints from '../lib/hitpoints.mjs'
 import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.mjs'
-import ChatMessage from '../lib/damagemessage.mjs'
+import DamageChat from '../lib/damagemessage.mjs'
 
 import helpers from '../lib/moustachewax.mjs'
 
@@ -29,14 +29,14 @@ GURPS.LastActor = null;
 GURPS.SetLastActor = function (actor) {
 	GURPS.LastActor = actor;
 	GURPS.ModifierBucket.refresh();
-//	console.log("Last Actor:" + actor.name);
+	//	console.log("Last Actor:" + actor.name);
 }
 
 
 // This table is used to display dice rolls and penalties (if they are missing from the import data)
 // And to create the HitLocations pulldown menu (skipping any "skip:true" entries)
 GURPS.hitlocationRolls = {
-	"Eye": { roll: "-", penalty: -9, skip: true},
+	"Eye": { roll: "-", penalty: -9, skip: true },
 	"Eyes": { roll: "-", penalty: -9 },																// GCA
 	"Skull": { roll: "3-4", penalty: -7 },
 	"Skull, from behind": { penalty: -5 },
@@ -51,7 +51,7 @@ GURPS.hitlocationRolls = {
 	"Right Arm, holding shield": { penalty: -4, skip: true },
 	"Arm, holding shield": { penalty: -4 },
 	"Arm": { roll: "8 & 12", penalty: -2 },													// GCA
-	"Arms": { roll: "8 & 12", penalty: -2, skip: true  },													// GCA
+	"Arms": { roll: "8 & 12", penalty: -2, skip: true },													// GCA
 	"Torso": { roll: "9-10", penalty: 0 },
 	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI[any] only" },
 	"Vitals, Heart": { penalty: -5, desc: "IMP/PI[any] only" },
@@ -254,11 +254,11 @@ CONFIG.statusEffects = [
 ];
 
 GURPS.SJGProductMappings = {
-  "ACT1": "http://www.warehouse23.com/products/gurps-action-1-heroes",
-  "ACT3": "http://www.warehouse23.com/products/gurps-action-3-furious-fists",
-  "B": "http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns",
+	"ACT1": "http://www.warehouse23.com/products/gurps-action-1-heroes",
+	"ACT3": "http://www.warehouse23.com/products/gurps-action-3-furious-fists",
+	"B": "http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns",
 	"BS": "http://www.warehouse23.com/products/gurps-banestorm",
-  "DF1": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-1-adventurers-1",
+	"DF1": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-1-adventurers-1",
 	"DF3": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-3-the-next-level-1",
 	"DF4": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-4-sages-1",
 	"DF8": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-8-treasure-tables",
@@ -520,7 +520,7 @@ async function onRoll(event, actor) {
 			t = t.trim();
 			if (!!t)
 				target = parseInt(t);
-				if (isNaN(target)) target = 0;		// Can't roll against a non-integer
+			if (isNaN(target)) target = 0;		// Can't roll against a non-integer
 		}
 	}
 	if ("damage" in element.dataset) {
@@ -658,20 +658,9 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			damage: rtotal,
 			type: type,
 			modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-			isB378: b378
+			isB378: b378,
+			type: 'Damage'
 		}
-
-		let results = "<i class='fa fa-dice'/> " +
-			"<i class='fa fa-long-arrow-alt-right'/> " +
-			"<b style='font-size: 140%;'>" +
-			rtotal +
-			"</b>";
-		if (rtotal == 1) thing = thing.replace("points", "point") + b378content;
-		chatcontent = prefix + modscontent + "<br>" +
-			"<div draggable='true' ondragstart='console.log(event)'>" +
-			results + thing +
-			"</div>";
-
 		let html = await
 			renderTemplate('systems/gurps/templates/damage-message.html', contentData)
 
@@ -685,14 +674,15 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 			roll: roll
 		};
 
-		if (niceDice) {
-			game.dice3d.showForRoll(roll).then((displayed) => {
-				CONFIG.ChatMessage.entityClass.create(messageData, {});
-			});
-		} else {
-			messageData.sound = CONFIG.sounds.dice;
-			CONFIG.ChatMessage.entityClass.create(messageData, {});
-		}
+		messageData["flags.transfer"] = JSON.stringify(
+			{
+				type: 'damageItem',
+				payload: contentData
+			}
+		)
+
+		let me = await CONFIG.ChatMessage.entityClass.create(messageData);
+		// me.data.flags.damage = contentData
 		return
 	}
 
@@ -753,13 +743,13 @@ function onPdf(event) {
 		page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
 	}
 	if (ui.PDFoundry) {
-    const pdf = ui.PDFoundry.findPDFDataByCode(book);
-    if (pdf === undefined) {
+		const pdf = ui.PDFoundry.findPDFDataByCode(book);
+		if (pdf === undefined) {
 			let url = game.GURPS.SJGProductMappings[book];
 			if (!url) url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb";		// The main GURPS page
-      window.open(url, '_blank');
-    }
-    else
+			window.open(url, '_blank');
+		}
+		else
 			ui.PDFoundry.openPDF(pdf, { page });
 	} else {
 		ui.notifications.warn('PDFoundry must be installed to use links.');
@@ -833,7 +823,7 @@ GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 GURPS.hitLocationTooltip = new HitLocationEquipmentTooltip()
-GURPS.chatmessage = new ChatMessage()
+GURPS.chatmessage = new DamageChat()
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -901,9 +891,9 @@ Hooks.once("init", async function () {
 			penalty = GURPS.hitlocationRolls[loc]?.penalty;
 		return penalty;
 	});
-	
-	
-	
+
+
+
 
 	game.settings.register("gurps", "changelogVersion", {
 		name: "Changelog Version",
@@ -962,7 +952,7 @@ Hooks.once("ready", async function () {
 		if (!!args && args.length >= 4)
 			GURPS.SetLastActor(args[0]);
 	});
-	
+
 	// Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket (only when args[1] is true)
 	Hooks.on("controlToken", (...args) => {
 		if (args.length > 1 && args[1]) {
