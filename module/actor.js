@@ -121,6 +121,7 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(rs, r, index++);
 			}
 		}
+		await this.update({"data.-=reactions": null});		// Pain in the butt.. data storage can't handle deletions.
 		await this.update({"data.reactions": rs});
 		
 	}
@@ -155,6 +156,7 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(ns, n, index++);
 			}
 		}
+		await this.update({"data.-=notes": null});
 		await this.update({"data.notes": ns});
 	}
 	
@@ -174,6 +176,7 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(prot, hl, index++);
 			}
 		}
+		await this.update({"data.-=hitlocations": null});
 		await this.update({"data.hitlocations": prot});
 
 	}
@@ -236,6 +239,7 @@ export class GurpsActor extends Actor {
 					game.GURPS.put(equipment.other, eqt, oindex++);
 			}
 		});
+		await this.update({ "data.-=equipment": null });
 		await this.update({ "data.equipment": equipment });
 	}
 	
@@ -260,6 +264,7 @@ export class GurpsActor extends Actor {
 			e.dodge = t(json[k2]);
 			game.GURPS.put(es, e, index++);
 		}
+		await this.update({"data.-=encumbrance": null});
 		await this.update({"data.encumbrance": es});
 	}
 	
@@ -301,6 +306,7 @@ export class GurpsActor extends Actor {
 				}
 			}
 		}
+		await this.update({"data.-=melee": null});	
 		await this.update({"data.melee": melee});	
 	}
 	
@@ -343,6 +349,7 @@ export class GurpsActor extends Actor {
 				}
 			}
 		}
+		await this.update({"data.-=ranged": null});	
 		await this.update({"data.ranged": ranged});	
 	}
 		
@@ -377,6 +384,7 @@ export class GurpsActor extends Actor {
 			console.log("Unable to parse appearance traits for ");
 			console.log(this);
 		}
+		await this.update({"data.-=traits": null});
 		await this.update({"data.traits": ts});
 	}
 
@@ -481,6 +489,7 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(skills, sk, index++);
 			}
 		}
+		await this.update({"data.-=skills": null});
 		await this.update({"data.skills": skills});
 	}
 	
@@ -523,6 +532,7 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(spells, sp, index++);
 			}
 		}
+		await this.update({"data.-=spells": null});
 		await this.update({"data.spells": spells});
 	}
 	
@@ -535,24 +545,28 @@ export class GurpsActor extends Actor {
 	async importPowersFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
+		await this.update({"data.-=powers": null});
 		await this.update({"data.powers": list});
 	}
 	
 	async importAdsFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
+		await this.update({"data.-=ads": null});
 		await this.update({"data.ads": list});
 	}
 
 	async importDisadsFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
+		await this.update({"data.-=disads": null});
 		await this.update({"data.disads": list});
 	}
 
 	async importOtherAdsFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
+		await this.update({"data.-=otherads": null});
 		await this.update({"data.otherads": list});
 	}
 
@@ -595,6 +609,7 @@ export class GurpsActor extends Actor {
 				a.pageref = t(j.pageref);
 				game.GURPS.put(list, a, index++);
 			}
+		await this.update({"data.-=ads": null});
 		await this.update({"data.ads": list});
 		}
 		
