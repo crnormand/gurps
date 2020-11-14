@@ -410,7 +410,7 @@
         <div id="equipment">
             <div class="equipped header">E</div>
             <div class="qty header">Qty</div>
-            <div class="desc header">Equipment (?? lb; $??)</div>
+            <div class="desc header">Equipment ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">x $</div>
@@ -436,7 +436,7 @@
         </div>
         <div id="other_equipment">
             <div class="qty header">Qty</div>
-            <div class="desc header">Other Equipment ($??)</div>
+            <div class="desc header">Other Equipment ({{eqtsummary.othercost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">X $</div>
@@ -451,8 +451,8 @@
             </div>
             <div class="cost satisfiedY">{{this.cost}}</div>
             <div class="weight satisfiedY">{{this.weight}} lb</div>
-            <div class="sum_cost satisfiedY"></div>
-            <div class="sum_weight satisfiedY"></div>
+            <div class="sum_cost satisfiedY">{{this.costsum}}</div>
+            <div class="sum_weight satisfiedY">{{this.weightsum}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
             {{/listeqt}}
 

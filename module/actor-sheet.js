@@ -18,11 +18,20 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
+	int(str) {
+		return !!str ? parseInt(str): 0;
+	}
+	
   /** @override */
   getData() {
     const sheetData = super.getData();
     sheetData.ranges = game.GURPS.rangeObject.ranges;
     game.GURPS.SetLastActor(this.actor);
+		let i = this.int;
+		let eqtcost = 0;			// Have to handle recurve containership
+		let eqtlbs = 0;
+		let othercost = 0;
+		sheetData.eqtsummary = { eqtcost: eqtcost, eqtlbs: eqtlbs, othercost: othercost };
     return sheetData;
   }
 

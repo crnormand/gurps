@@ -208,6 +208,8 @@ export class GurpsActor extends Actor {
 				eqt.count = i(j.count);
 				eqt.cost = t(j.cost);
 				eqt.weight = f(j.weight);
+				eqt.costsum = t(j.costsum);
+				eqt.weightsum = t(j.weightsum);
 				eqt.location = t(j.location);
 				let cstatus = i(j.carried);
 				eqt.carried = (cstatus >= 1);
@@ -740,6 +742,8 @@ export class Equipment extends Named {
 	legalityclass = "";
 	categories = "";
 	contains = {};
+	costsum = "";
+	weightsum = "";
 }
 
 export class HitLocation {

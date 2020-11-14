@@ -175,6 +175,7 @@
           <userdesc type="string">@DESCRIPTION_USER</userdesc>
 	    <notes type="string">@DESCRIPTION_NOTES</notes>
 	    <pageref>@REF</pageref>
+	    <type>@TYPE</type>
         </id-@ID>@ADVANTAGES_LOOP_END
       </adslist>
 
@@ -187,7 +188,9 @@
         <isidentified type="number">1</isidentified>
         <count type="number">@QTY</count>
         <cost type="string">@COST</cost>
+        <costsum type="string">@COST_SUMMARY</costsum>
         <weight type="number">@WEIGHT_RAW</weight>
+        <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
         <location type="string">@LOCATION</location>
         <carried type="number">@CARRIED_STATUS</carried>
         <tl type="string">@TL</tl>
@@ -201,7 +204,9 @@
         <isidentified type="number">1</isidentified>
         <count type="number">@QTY</count>
         <cost type="string">@COST</cost>
+        <costsum type="string">@COST_SUMMARY</costsum>
         <weight type="number">@WEIGHT_RAW</weight>
+        <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
         <location type="string">@LOCATION</location>
         <carried type="number">@CARRIED_STATUS</carried>
         <tl type="string">@TL</tl>
