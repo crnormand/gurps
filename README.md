@@ -3,9 +3,8 @@
 
 ## Current Release Version 0.6.5
 
-### History
-This is what we have worked on (or are working on):
-- 0.6.6
+This is what we are currently working on:
+- 0.7.0
     - Fixed manifest file to allow for automatic updating
     - Added configurable system settings (range system (Basic Set / Monster Hunters 2), etc.)
     - Added common modifiers as pulldown lists on tooltip
@@ -14,7 +13,12 @@ This is what we have worked on (or are working on):
     - refactored code to make it less of a "prototype" and more of a "pre-alpha"
     - fixed import for GCS characters that contain "&" in fields, assuming they turn @ENCODING back on
     - Page Ref links to non-existent PDFs will now go to the SJG Warehouse 23 website
-    - Started work on enhanced GCS export/import
+    - Created Foundry VTT specific GCS export/import and massive performance boost.
+    - Started work on drag and drop damage!
+
+**NOTE:   YOU MUST delete all of your actors, and Restart Foundry for the changes to take effect**
+
+### History
 - 0.6.5
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players
