@@ -40,35 +40,37 @@ export class GurpsActor extends Actor {
 		let nm = this.textFrom(c.name);
 		console.log("Importing '" + nm + "'");
 		// this is how you have to update the domain object so that it is synchronized.
-		await this.update({"name": nm});
-		await this.update({"token.name": nm});
+		
+		let commit = {}
+		commit = {...commit, ...{"name": nm}};
+		commit = {...commit, ...{"token.name": nm}};
 		let ar = this.data.data.additionalresources || {};
 		ar.importname = importname;
 		ar.importpath = importpath;
-		await this.update({"data.additionalresources": ar});
+		commit = {...commit, ...{"data.additionalresources": ar}};
 		
 		try {
 			// This is going to get ugly, so break out various data into different methods
-			await this.importAttributesFromCGSv1(c.attributes);
-			await this.importSkillsFromGCSv1(c.abilities?.skilllist, isFoundryV1)
-			await this.importTraitsfromGCSv1(c.traits);
-			await this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist, isFoundryV1);
-			await this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist, isFoundryV1);
-			await this.importSpellsFromGCSv1(c.abilities?.spelllist, isFoundryV1)
+			commit = {...commit, ...this.importAttributesFromCGSv1(c.attributes)};
+			commit = {...commit, ...this.importSkillsFromGCSv1(c.abilities?.skilllist, isFoundryV1)};
+			commit = {...commit, ...this.importTraitsfromGCSv1(c.traits)};
+			commit = {...commit, ...this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist, isFoundryV1)};
+			commit = {...commit, ...this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist, isFoundryV1)};
+			commit = {...commit, ...this.importSpellsFromGCSv1(c.abilities?.spelllist, isFoundryV1)};
 			if (isFoundryV1) {
-				await this.importAdsFromGCSv2(c.traits?.adslist);
-				await this.importReactionsFromGCSv2(c.reactions);
+				commit = {...commit, ...this.importAdsFromGCSv2(c.traits?.adslist)};
+				commit = {...commit, ...this.importReactionsFromGCSv2(c.reactions)};
 			} else {
-				await this.importAdsFromGCSv1(c.traits?.adslist);
-				await this.importDisadsFromGCSv1(c.traits?.disadslist);
-				await this.importPowersFromGCSv1(c.abilities?.powerlist);
-				await this.importOtherAdsFromGCSv1(c.abilities?.otherlist);
+				commit = {...commit, ...this.importAdsFromGCSv1(c.traits?.adslist)};
+				commit = {...commit, ...this.importDisadsFromGCSv1(c.traits?.disadslist)};
+				commit = {...commit, ...this.importPowersFromGCSv1(c.abilities?.powerlist)};
+				commit = {...commit, ...this.importOtherAdsFromGCSv1(c.abilities?.otherlist)};
 			}
-			await this.importEncumbranceFromGCSv1(c.encumbrance);
-			await this.importPointTotalsFromGCSv1(c.pointtotals);
-			await this.importNotesFromGCSv1(c.notelist);
-			await this.importEquipmentFromGCSv1(c.inventorylist, isFoundryV1);
-			await this.importProtectionFromGCSv1(c.combat?.protectionlist);
+			commit = {...commit, ...this.importEncumbranceFromGCSv1(c.encumbrance)};
+			commit = {...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals)};
+			commit = {...commit, ...this.importNotesFromGCSv1(c.notelist)};
+			commit = {...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryV1)};
+			commit = {...commit, ...this.importProtectionFromGCSv1(c.combat?.protectionlist)};
 		} catch (err) {
 			let msg = "An error occured while importing " + nm + ", " + err.name + ":" + err.message;
 			ui.notifications.warn(msg);
@@ -80,6 +82,14 @@ export class GurpsActor extends Actor {
 			}
 			CONFIG.ChatMessage.entityClass.create(chatData, {});
 		}
+		console.log("Starting commit");
+		
+		let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes(".-=")));
+		let adds = Object.fromEntries(Object.entries(commit).filter(([key, value]) => !key.includes(".-=")));
+		
+		await this.update(deletes);
+		await this.update(adds);
+		
 		console.log("Done importing.  You can inspect the character data below:");
 		console.log(this);
 	}
@@ -107,7 +117,7 @@ export class GurpsActor extends Actor {
 		return parseFloat(f);
 	}
 
-	async importReactionsFromGCSv2(json) {
+	importReactionsFromGCSv2(json) {
 		if (!json) return;
 		let t= this.textFrom;
 		let rs = {};
@@ -121,16 +131,16 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(rs, r, index++);
 			}
 		}
-		await this.update({"data.-=reactions": null});		// Pain in the butt.. data storage can't handle deletions.
-		await this.update({"data.reactions": rs});
-		
+		return {
+			"data.-=reactions": null,
+			"data.reactions": rs};
 	}
 		
-	async importPointTotalsFromGCSv1(json) {
+	importPointTotalsFromGCSv1(json) {
 		if (!json) return;
 		
 		let i = this.intFrom;
-		await this.update({
+		return {
 			"data.totalpoints.attributes": i(json.attributes),
 			"data.totalpoints.ads": i(json.ads),
 			"data.totalpoints.disads": i(json.disads),
@@ -139,10 +149,10 @@ export class GurpsActor extends Actor {
 			"data.totalpoints.spells": i(json.spells),
 			"data.totalpoints.unspent": i(json.unspentpoints),
 			"data.totalpoints.total": i(json.totalpoints)
-		});
+		};
 	}
 	
-	async importNotesFromGCSv1(json) {
+	importNotesFromGCSv1(json) {
 		if (!json) return;
 		let t= this.textFrom;
 		let ns = {};
@@ -156,11 +166,12 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(ns, n, index++);
 			}
 		}
-		await this.update({"data.-=notes": null});
-		await this.update({"data.notes": ns});
+		return {
+			"data.-=notes": null,
+			"data.notes": ns};
 	}
 	
-	async importProtectionFromGCSv1(json) {
+	importProtectionFromGCSv1(json) {
 		if (!json) return;
 		let t= this.textFrom;
 		let prot = {};
@@ -176,12 +187,13 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(prot, hl, index++);
 			}
 		}
-		await this.update({"data.-=hitlocations": null});
-		await this.update({"data.hitlocations": prot});
+		return {
+			"data.-=hitlocations": null,
+			"data.hitlocations": prot};
 
 	}
 	
-	async importEquipmentFromGCSv1(json, isFoundryV1) {
+	importEquipmentFromGCSv1(json, isFoundryV1) {
 		if (!json) return;
 		let t = this.textFrom;
 		let i = this.intFrom;
@@ -239,11 +251,12 @@ export class GurpsActor extends Actor {
 					game.GURPS.put(equipment.other, eqt, oindex++);
 			}
 		});
-		await this.update({ "data.-=equipment": null });
-		await this.update({ "data.equipment": equipment });
+		return {
+			"data.-=equipment": null,
+			"data.equipment": equipment };
 	}
 	
-	async importEncumbranceFromGCSv1(json) {
+	importEncumbranceFromGCSv1(json) {
 		if (!json) return;
 		let t= this.textFrom;
 		let es = {};
@@ -264,11 +277,12 @@ export class GurpsActor extends Actor {
 			e.dodge = t(json[k2]);
 			game.GURPS.put(es, e, index++);
 		}
-		await this.update({"data.-=encumbrance": null});
-		await this.update({"data.encumbrance": es});
+		return {
+			"data.-=encumbrance": null,
+			"data.encumbrance": es};
 	}
 	
-	async importCombatMeleeFromGCSv1(json, isFoundryV1) {
+	importCombatMeleeFromGCSv1(json, isFoundryV1) {
 		if (!json) return;
 		let t = this.textFrom;
 		let melee = {};
@@ -306,11 +320,12 @@ export class GurpsActor extends Actor {
 				}
 			}
 		}
-		await this.update({"data.-=melee": null});	
-		await this.update({"data.melee": melee});	
+		return {
+			"data.-=melee": null,
+			"data.melee": melee};	
 	}
 	
-	async importCombatRangedFromGCSv1(json, isFoundryV1) {
+	importCombatRangedFromGCSv1(json, isFoundryV1) {
 		if (!json) return;
 		let t = this.textFrom;
 		let ranged = {};
@@ -349,11 +364,12 @@ export class GurpsActor extends Actor {
 				}
 			}
 		}
-		await this.update({"data.-=ranged": null});	
-		await this.update({"data.ranged": ranged});	
+		return {
+			"data.-=ranged": null,
+			"data.ranged": ranged};	
 	}
 		
-	async importTraitsfromGCSv1(json) {
+	importTraitsfromGCSv1(json) {
 		if (!json) return;
 		let t = this.textFrom;
 		let ts = {};
@@ -384,12 +400,13 @@ export class GurpsActor extends Actor {
 			console.log("Unable to parse appearance traits for ");
 			console.log(this);
 		}
-		await this.update({"data.-=traits": null});
-		await this.update({"data.traits": ts});
+		return {
+			"data.-=traits": null,
+			"data.traits": ts};
 	}
 
 	// Import the <attributes> section of the GCS FG XML file.
-	async importAttributesFromCGSv1(json) {
+	importAttributesFromCGSv1(json) {
 		if (!json) return;
 		let i = this.intFrom;		// shortcut to make code smaller
 		let t = this.textFrom;
@@ -407,7 +424,6 @@ export class GurpsActor extends Actor {
 		att.WILL.points = i(json.will_points);
 		att.PER.value = i(json.perception);
 		att.PER.points = i(json.perception_points);
-		await this.update({"data.attributes": att});
 		
 		data.HP.max = i(json.hitpoints);
 		data.HP.points = i(json.hitpoints_points);
@@ -440,8 +456,8 @@ export class GurpsActor extends Actor {
 		data.touch = i(json.touch);
 		data.vision = i(json.vision);
 	
-		// Instead of updating the whole "data" object, we can pass in subsets
-		await this.update({
+		return {
+			"data.attributes": att,
 			"data.HP": data.HP,
 			"data.FP": data.FP,
 			"data.basiclift": data.basiclift,
@@ -456,13 +472,13 @@ export class GurpsActor extends Actor {
 			"data.touch": data.touch,
 			"data.vision": data.vision,
 			"data.liftingmoving": lm
-			});
+			};
 	}
 
 	// create/update the skills.   
 	// NOTE:  For the update to work correctly, no two skills can have the same name.
 	// When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
-	async importSkillsFromGCSv1(json, isFoundryV1) {
+	importSkillsFromGCSv1(json, isFoundryV1) {
 		if (!json) return;
 		let skills = {};
 		let index = 0;
@@ -489,14 +505,15 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(skills, sk, index++);
 			}
 		}
-		await this.update({"data.-=skills": null});
-		await this.update({"data.skills": skills});
+		return {
+			"data.-=skills": null,
+			"data.skills": skills};
 	}
 	
 		// create/update the spells.   
 	// NOTE:  For the update to work correctly, no two spells can have the same name.
 	// When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
-	async importSpellsFromGCSv1(json, isFoundryV1) {
+	importSpellsFromGCSv1(json, isFoundryV1) {
 		if (!json) return;
 		let spells = {};
 		let index = 0;
@@ -532,8 +549,9 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(spells, sp, index++);
 			}
 		}
-		await this.update({"data.-=spells": null});
-		await this.update({"data.spells": spells});
+		return {
+			"data.-=spells": null,
+			"data.spells": spells};
 	}
 	
 	
@@ -542,32 +560,36 @@ export class GurpsActor extends Actor {
 		importBaseAdvantagesFromGCSv1() method.   So instead, I did the update()
 		in these methods with the string literal.
 	*/
-	async importPowersFromGCSv1(json) {
+	importPowersFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
-		await this.update({"data.-=powers": null});
-		await this.update({"data.powers": list});
+		return {
+			"data.-=powers": null,
+			"data.powers": list};
 	}
 	
-	async importAdsFromGCSv1(json) {
+	importAdsFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
-		await this.update({"data.-=ads": null});
-		await this.update({"data.ads": list});
+		return {
+			"data.-=ads": null,
+			"data.ads": list};
 	}
 
-	async importDisadsFromGCSv1(json) {
+	importDisadsFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
-		await this.update({"data.-=disads": null});
-		await this.update({"data.disads": list});
+		return {
+			"data.-=disads": null,
+			"data.disads": list};
 	}
 
-	async importOtherAdsFromGCSv1(json) {
+	importOtherAdsFromGCSv1(json) {
 		if (!json) return;
 		let list = this.importBaseAdvantagesFromGCSv1(json);
-		await this.update({"data.-=otherads": null});
-		await this.update({"data.otherads": list});
+		return {
+			"data.-=otherads": null,
+			"data.otherads": list};
 	}
 
 	importBaseAdvantagesFromGCSv1(json) {
@@ -587,8 +609,8 @@ export class GurpsActor extends Actor {
 		return datalist;
 	}
 	
-	async importAdsFromGCSv2(json) {
-		let list = {};
+	importAdsFromGCSv2(json) {
+    let list = {};
 		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
@@ -609,10 +631,10 @@ export class GurpsActor extends Actor {
 				a.pageref = t(j.pageref);
 				game.GURPS.put(list, a, index++);
 			}
-		await this.update({"data.-=ads": null});
-		await this.update({"data.ads": list});
 		}
-		
+		return {
+			"data.-=ads": null,
+			"data.ads": list};
 	}
 }
 
