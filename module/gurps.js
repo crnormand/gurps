@@ -8,6 +8,7 @@ import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
+import { d6ify } from '../lib/utilities.mjs'
 
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
@@ -306,56 +307,6 @@ GURPS.SJGProductMappings = {
 	"VOR": "http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game"
 }
 
-/*
-	Convert XML text into a JSON object
-*/
-function xmlTextToJson(text) {
-	var xml = new DOMParser().parseFromString(text, 'application/xml');
-	return xmlToJson(xml);
-}
-GURPS.xmlTextToJson = xmlTextToJson;
-
-/*
-	Convert a DOMParsed version of the XML, return a JSON object.
-*/
-function xmlToJson(xml) {
-
-	// Create the return object
-	var obj = {};
-
-	if (xml.nodeType == 1) { // element
-		// do attributes
-		if (xml.attributes.length > 0) {
-			obj["@attributes"] = {};
-			for (var j = 0; j < xml.attributes.length; j++) {
-				var attribute = xml.attributes.item(j);
-				obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
-			}
-		}
-	} else if (xml.nodeType == 3) { // text
-		obj = xml.nodeValue;
-	}
-
-	// do children
-	if (xml.hasChildNodes()) {
-		for (var i = 0; i < xml.childNodes.length; i++) {
-			var item = xml.childNodes.item(i);
-			var nodeName = item.nodeName;
-			if (typeof (obj[nodeName]) == "undefined") {
-				obj[nodeName] = xmlToJson(item);
-			} else {
-				if (typeof (obj[nodeName].push) == "undefined") {
-					var old = obj[nodeName];
-					obj[nodeName] = [];
-					obj[nodeName].push(old);
-				}
-				obj[nodeName].push(xmlToJson(item));
-			}
-		}
-	}
-	return obj;
-};
-GURPS.xmlToJson = xmlToJson;
 
 // This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 // First we have to remove non-printing characters, and then we want to replace 
@@ -461,17 +412,17 @@ function performAction(action, actor) {
 	}
 	if (action.type == "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
-		formula = this.d6ify(action.formula);
+		formula = d6ify(action.formula);
 	}
 	if (action.type == "damage") {
 		prefix = "Rolling " + action.formula;
 		thing = " points of '" + action.damagetype + "' damage";
-		formula = this.d6ify(action.formula);
+		formula = d6ify(action.formula);
 	}
 	if (action.type == "deriveddamage" && !!actor) {
 		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")";
 		thing = " points of '" + action.damagetype + "' damage";
-		formula = this.d6ify(action.derivedformula);
+		formula = d6ify(action.derivedformula);
 	}
 	if (action.type == "skill" && !!actor) {
 		prefix = "Attempting ";
@@ -486,11 +437,6 @@ function performAction(action, actor) {
 }
 GURPS.performAction = performAction;
 
-function d6ify(str) {
-	let w = str.replace(/d([^6])/g, "d6$1");		// Find 'd's without a 6 behind it, and add it.
-	return w.replace(/d$/g, "d6"); 								// and do the same for the end of the line.
-}
-GURPS.d6ify = d6ify
 
 
 /*
@@ -524,24 +470,25 @@ async function onRoll(event, actor) {
 		}
 	}
 	if ("damage" in element.dataset) {
-		formula = element.innerText.trim();
-		let i = formula.indexOf(" ");
+		// expect text like '2d+1 cut'
+		let formula = element.innerText.trim();
+		let dtype = ''
+
+		let i = formula.indexOf(' ');
 		if (i > 0) {
-			let dtype = formula.substr(i + 1).trim();
-			thing = " points of '" + dtype + "' damage";
+			dtype = formula.substr(i + 1).trim();
 			formula = formula.substring(0, i);
 		}
-		if (formula != "0") {
-			prefix = "Rolling " + formula;
-			formula = this.d6ify(formula);
-			target = -1;		// Set flag to indicate a non-targeted roll
-		}
+
+		GURPS.damageChat.create(actor, formula, dtype)
+
+		return
 	}
 	if ("roll" in element.dataset) {
 		target = -1;   // Set flag to indicate a non-targeted roll
 		formula = element.innerText;
 		prefix = "Rolling " + formula;
-		formula = this.d6ify(formula);
+		formula = d6ify(formula);
 	}
 
 	this.doRoll(actor, formula, targetmods, prefix, thing, target);
@@ -580,6 +527,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	let niceDice = false;
 	try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
 
+	// TODO Code below is duplicated in damagemessage.mjs (DamageChat) -- make sure it is updated in both places
 	// Lets collect up the modifiers, they are used differently depending on the type of roll
 	let modscontent = "";
 	let modifier = 0;
@@ -632,58 +580,59 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		rdesc += "</small>";
 		chatcontent = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
 	} else {	// This is "damage" roll where the modifier is added to the roll, not the target
+		// REPLACED by code in damagemessage.mjs/DamageChat
 
-		let diceText = prefix.replace(/^Rolling /, '')
-		let type = thing.replace(/^ points of '/, '').replace(/' damage/, '')
-		let min = 1
-		let b378 = false
+		// let diceText = prefix.replace(/^Rolling /, '')
+		// let type = thing.replace(/^ points of '/, '').replace(/' damage/, '')
+		// let min = 1
+		// let b378 = false
 
-		if (type === 'cr') min = 0
+		// if (type === 'cr') min = 0
 
-		if (formula.slice(-1) === '!') {
-			formula = formula.slice(0, -1)
-			min = 1
-		}
+		// if (formula.slice(-1) === '!') {
+		// 	formula = formula.slice(0, -1)
+		// 	min = 1
+		// }
 
-		let roll = new Roll(formula + `+${modifier}`);
-		roll.roll();
-		let rtotal = roll.total;
-		if (rtotal < min) {
-			rtotal = min;
-			if (type !== 'cr') b378 = true
-		}
+		// let roll = new Roll(formula + `+${modifier}`);
+		// roll.roll();
+		// let rtotal = roll.total;
+		// if (rtotal < min) {
+		// 	rtotal = min;
+		// 	if (type !== 'cr') b378 = true
+		// }
 
-		let contentData = {
-			dice: diceText,
-			damage: rtotal,
-			type: type,
-			modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-			isB378: b378,
-			type: 'Damage'
-		}
-		let html = await
-			renderTemplate('systems/gurps/templates/damage-message.html', contentData)
+		// let contentData = {
+		// 	dice: diceText,
+		// 	damage: rtotal,
+		// 	type: type,
+		// 	modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
+		// 	isB378: b378,
+		// 	type: 'Damage'
+		// }
+		// let html = await
+		// 	renderTemplate('systems/gurps/templates/damage-message.html', contentData)
 
-		console.log(html)
-		const speaker = { alias: actor.name, _id: actor._id }
-		let messageData = {
-			user: game.user._id,
-			speaker: speaker,
-			content: html,
-			type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-			roll: roll
-		};
+		// console.log(html)
+		// const speaker = { alias: actor.name, _id: actor._id }
+		// let messageData = {
+		// 	user: game.user._id,
+		// 	speaker: speaker,
+		// 	content: html,
+		// 	type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+		// 	roll: roll
+		// };
 
-		messageData["flags.transfer"] = JSON.stringify(
-			{
-				type: 'damageItem',
-				payload: contentData
-			}
-		)
+		// messageData["flags.transfer"] = JSON.stringify(
+		// 	{
+		// 		type: 'damageItem',
+		// 		payload: contentData
+		// 	}
+		// )
 
-		let me = await CONFIG.ChatMessage.entityClass.create(messageData);
-		// me.data.flags.damage = contentData
-		return
+		// let me = await CONFIG.ChatMessage.entityClass.create(messageData);
+		// // me.data.flags.damage = contentData
+		// return
 	}
 
 	const speaker = { alias: actor.name, _id: actor._id }
@@ -823,7 +772,7 @@ GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 GURPS.hitLocationTooltip = new HitLocationEquipmentTooltip()
-GURPS.chatmessage = new DamageChat()
+GURPS.damageChat = new DamageChat()
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
