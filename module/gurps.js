@@ -1,5 +1,5 @@
 // Import Modules
-import parselink from '../lib/parselink.mjs'
+import parselink from '../lib/parselink.js'
 
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
@@ -8,19 +8,19 @@ import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
-import { d6ify } from '../lib/utilities.mjs'
+import { d6ify } from '../lib/utilities.js'
 import { ThreeD6 } from "../lib/threed6.js";
 
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
 
-import GURPSRange from '../lib/ranges.mjs'
-import Initiative from '../lib/initiative.mjs'
-import HitFatPoints from '../lib/hitpoints.mjs'
-import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.mjs'
-import DamageChat from '../lib/damagemessage.mjs'
+import GURPSRange from '../lib/ranges.js'
+import Initiative from '../lib/initiative.js'
+import HitFatPoints from '../lib/hitpoints.js'
+import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
+import DamageChat from '../lib/damagemessage.js'
 
-import helpers from '../lib/moustachewax.mjs'
+import helpers from '../lib/moustachewax.js'
 
 helpers()
 
