@@ -1,5 +1,5 @@
-import { displayMod, makeSelect, horiz } from '../lib/utilities.mjs'
-import parselink from '../lib/parselink.mjs'
+import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
+import parselink from '../lib/parselink.js'
 
 export class ModifierBucket extends Application {
 	constructor(options = {}) {

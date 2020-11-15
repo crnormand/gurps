@@ -1,4 +1,4 @@
-import { xmlTextToJson } from '../lib/utilities.mjs'
+import { xmlTextToJson } from '../lib/utilities.js'
 
 export class GurpsActor extends Actor {
 
