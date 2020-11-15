@@ -223,7 +223,7 @@ export class GurpsActorSheet extends ActorSheet {
 
       console.log(effectiveDR)
 
-      this.applyDamageToSpecificLocation(location, damage, effectiveDR)
+      this.applyDamageToSpecificLocationWithDR(location, damage, effectiveDR)
     }
     else {
       // get DR for that location
@@ -234,12 +234,23 @@ export class GurpsActorSheet extends ActorSheet {
       }
       let dr = parseInt(hitlocation.dr)
 
-      this.applyDamageToSpecificLocation(location, damage, dr)
+      this.applyDamageToSpecificLocationWithDR(location, damage, dr)
     }
   }
 
+  applyDamageToSpecificLocation(location, damage) {
+    // get DR for that location
+    let hitlocation = null
+    for (const [key, value] of Object.entries(this.actor.data.data.hitlocations)) {
+      if (value.where === location)
+        hitlocation = value
+    }
+    let dr = parseInt(hitlocation.dr)
+    this.applyDamageToSpecificLocationWithDR(location, damage, dr)
+  }
+
   // Location is set to a specific hit location
-  applyDamageToSpecificLocation(location, damage, dr) {
+  applyDamageToSpecificLocationWithDR(location, damage, dr) {
     let current = this.actor.data.data.HP.value
     let attacker = game.actors.get(damage.attacker)
 
