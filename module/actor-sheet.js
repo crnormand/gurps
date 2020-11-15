@@ -1,3 +1,6 @@
+import { GURPS } from "./gurps.js";
+import { isNiceDiceEnabled } from '../lib/utilities.mjs'
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -106,15 +109,177 @@ export class GurpsActorSheet extends ActorSheet {
   _onDrop(event) {
     let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
 
-    console.log("Dropped:");
-    console.log(event);
-    console.log(dragData)
-
     if (dragData.type === 'damageItem') {
-      let current = this.actor.data.data.HP.value
-      current -= dragData.payload.damage
-      this.actor.update({ "data.HP.value": current })
+      renderTemplate('systems/gurps/templates/damage-location.html').then(dlg => {
+        new Dialog({
+          title: 'Apply Damage',
+          content: dlg,
+          buttons: {
+            cancel: {
+              label: 'Cancel',
+              callback: (dlg) => {
+                console.log('cancel')
+              }
+            },
+            apply: {
+              label: 'Apply',
+              callback: (dlg) => {
+                var location = dlg.find('input[name="hitlocation"]:checked')[0]
+                console.log(location.value)
+                this.applyDamage(location.value, dragData.payload)
+              }
+            }
+          },
+          default: 'apply'
+        }).render(true)
+      })
     }
+  }
+
+  // Converts the GURPS.hitlocationRolls properties into a map keyed by roll value.
+  // Locations that map to multiple rolls (such as Skull: 3-4) will be expanded to
+  // one entry per roll value: { 3: "Skull", 4: "Skull" } for example.
+  get hitLocationTable() {
+    let hitLocationTable = {}
+    const excludes = ['Arm', 'Arms', 'Leg', 'Legs', 'Hands']
+
+    for (const [key, value] of Object.entries(GURPS.hitlocationRolls)) {
+      // exclude any value with no rolls AND any value that is is the exclusion list
+      if (value.roll !== undefined && value.roll !== '-' && !excludes.includes(key)) {
+
+        // value will either be a single int value, like '6', or a range like '7-8'
+        let roll = value.roll
+        let index = roll.indexOf('-')
+
+        // single value
+        if (index === -1) {
+          hitLocationTable[parseInt(roll)] = key
+        } else {
+          // range
+          let start = parseInt(roll.slice(0, index))
+          let end = parseInt(roll.slice(index + 1))
+          for (let i = start; i <= end; i++) {
+            hitLocationTable[i] = key
+          }
+        }
+      }
+    }
+    console.log(hitLocationTable)
+    return hitLocationTable
+  }
+
+  /*
+   * Apply damage
+   */
+  applyDamage(location, damage) {
+    if (location === 'Random') {
+
+      let roll3d = new Roll('3d6')
+      roll3d.roll()
+      let total = roll3d.total
+
+      let contentData = {
+        dice: '3d',
+        value: total,
+        location: this.hitLocationTable[total]
+      }
+
+      renderTemplate('systems/gurps/templates/random-hitloc.html', contentData).then(html => {
+        const speaker = { alias: this.actor.name, _id: this.actor._id }
+        let messageData = {
+          user: game.user._id,
+          speaker: speaker,
+          content: html,
+          type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+          roll: roll3d
+        }
+
+        if (!isNiceDiceEnabled()) {
+          messageData.sound = CONFIG.sounds.dice
+        }
+        CONFIG.ChatMessage.entityClass.create(messageData);
+
+        this.applyDamageToSpecificLocation(contentData.location, damage)
+      })
+    } // Random
+    else if (location === 'Large-Area') {
+      console.log('implement Large-Area Injury')
+
+      // find the location with the lowest DR
+      let lowestDR = Number.POSITIVE_INFINITY
+      let torsoDR = null
+      for (const [key, value] of Object.entries(this.actor.data.data.hitlocations)) {
+        let theDR = parseInt(value.dr)
+        if (theDR < lowestDR) {
+          lowestDR = theDR
+        }
+        if (value.where === 'Torso') {
+          torsoDR = theDR
+        }
+      }
+      console.log(`lowest DR = ${lowestDR}, torsoDR = ${torsoDR}`)
+
+      let effectiveDR = Math.ceil((lowestDR + torsoDR) / 2)
+
+      console.log(effectiveDR)
+
+      this.applyDamageToSpecificLocation(location, damage, effectiveDR)
+    }
+    else {
+      // get DR for that location
+      let hitlocation = null
+      for (const [key, value] of Object.entries(this.actor.data.data.hitlocations)) {
+        if (value.where === location)
+          hitlocation = value
+      }
+      let dr = parseInt(hitlocation.dr)
+
+      this.applyDamageToSpecificLocation(location, damage, dr)
+    }
+  }
+
+  // Location is set to a specific hit location
+  applyDamageToSpecificLocation(location, damage, dr) {
+    let current = this.actor.data.data.HP.value
+    let attacker = game.actors.get(damage.attacker)
+
+    let basicDamage = damage.damage
+    let penetratingDamage = Math.max(basicDamage - dr, 0)
+    let woundingModifier = GURPS.woundModifiers[damage.damageType]
+    let injury = Math.floor(penetratingDamage * woundingModifier)
+
+    let contentData = {
+      steps: [
+        `${attacker.data.name} inflicts ${basicDamage} points ${damage.damageType} to the ${location}.`,
+        `DR ${dr} leaves ${penetratingDamage} points penetrating damage.`,
+        `${penetratingDamage} ×${woundingModifier} (for ${damage.damageType}) = ${injury} points of injury.`
+      ],
+      attacker: attacker.data.name,
+      defender: this.actor.data.name,
+      basicDamage: basicDamage,
+      damageType: damage.damageType,
+      location: location,
+      injury: injury,
+      current: current,
+      newHP: current - injury
+    }
+
+    this.actor.update({ "data.HP.value": current - injury })
+
+    renderTemplate('systems/gurps/templates/apply-damage.html', contentData).then(html => {
+      const speaker = { alias: this.actor.name, _id: this.actor._id }
+      let messageData = {
+        user: game.user._id,
+        speaker: speaker,
+        content: html,
+        type: CONST.CHAT_MESSAGE_TYPES.OOC
+      }
+
+      if (!isNiceDiceEnabled()) {
+        messageData.sound = CONFIG.sounds.dice
+      }
+      CONFIG.ChatMessage.entityClass.create(messageData);
+    })
   }
 
   _onfocus(ev) {
