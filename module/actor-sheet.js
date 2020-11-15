@@ -207,23 +207,31 @@ export class GurpsActorSheet extends ActorSheet {
         location: this.hitLocationTable[total]
       }
 
-      renderTemplate('systems/gurps/templates/random-hitloc.html', contentData).then(html => {
-        const speaker = { alias: this.actor.name, _id: this.actor._id }
-        let messageData = {
-          user: game.user._id,
-          speaker: speaker,
-          content: html,
-          type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-          roll: roll3d
-        }
+      let self = this
 
-        if (!isNiceDiceEnabled()) {
-          messageData.sound = CONFIG.sounds.dice
-        }
-        CONFIG.ChatMessage.entityClass.create(messageData);
+      game.dice3d.showForRoll(roll3d)
+        .then(display => renderTemplate('systems/gurps/templates/random-hitloc.html', contentData))
+        .then(html => {
+          const speaker = { alias: self.actor.name, _id: self.actor._id }
+          let messageData = {
+            user: game.user._id,
+            speaker: speaker,
+            content: html,
+            type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+            roll: roll3d
+          }
+          if (!isNiceDiceEnabled()) {
+            messageData.sound = CONFIG.sounds.dice
+          }
+          game.dice3d.messageHookDisabled = true
+          return CONFIG.ChatMessage.entityClass.create(messageData)
+        })
+        .then(entity => {
+          game.dice3d.messageHookDisabled = false
+          self.applyDamageToSpecificLocation(contentData.location, damage)
+        })
 
-        this.applyDamageToSpecificLocation(contentData.location, damage)
-      })
+
     } // Random
     else if (location === 'Large-Area') {
       console.log('implement Large-Area Injury')
