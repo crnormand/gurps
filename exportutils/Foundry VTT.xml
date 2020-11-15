@@ -164,6 +164,7 @@
       <sizemodifier type="string">@SIZE</sizemodifier>
 	<player type="string">@PLAYER</player>
 	<createdon type="string">@CREATED_ON</createdon>
+	<modifiedon type="string">@MODIFIED_ON</modifiedon>
 	<religion type="string">@RELIGION</religion>
 	<birthday type="string">@BIRTHDAY</birthday>
 	<hand type="string">@HAND</hand>
@@ -187,7 +188,7 @@
         <name type="string">@DESCRIPTION_PRIMARY</name>
         <isidentified type="number">1</isidentified>
         <count type="number">@QTY</count>
-        <cost type="string">@COST</cost>
+        <cost type="number">@COST</cost>
         <costsum type="string">@COST_SUMMARY</costsum>
         <weight type="number">@WEIGHT_RAW</weight>
         <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
@@ -225,8 +226,7 @@
       <quirks type="number">@QUIRK_POINTS</quirks>
       <skills type="number">@SKILL_POINTS</skills>
       <spells type="number">@SPELL_POINTS</spells>
-      <powers type="number"></powers>
-      <others type="number"></others>
+      <race type="number">@RACE_POINTS</race>
       <totalpoints type="number">@TOTAL_POINTS</totalpoints>
       <unspentpoints type="number">@UNSPENT_POINTS</unspentpoints>
     </pointtotals>
