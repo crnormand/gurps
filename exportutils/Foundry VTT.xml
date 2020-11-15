@@ -11,7 +11,8 @@
           <level type="number">@SL</level>
           <relativelevel type="string">@RSL</relativelevel>
           <points type="number">@POINTS</points>
-          <text type="formattedtext"><p>@DESCRIPTION_NOTES</p><p>Page Ref: @REF</p></text>
+          <notes type="string">@DESCRIPTION_NOTES</notes>
+	    <pageref>@REF</pageref>
         </id-@ID>@SKILLS_LOOP_END
       </skilllist>
 
@@ -19,16 +20,17 @@
         <id-@ID>
           <class type="string">@CLASS</class>
           <college type="string">@COLLEGE</college>
-          <costmaintain type="string">@MANA_CAST/@MANA_MAINTAIN</costmaintain>
+          <cost type="string">@MANA_CAST</cost>
+	    <maintain type="string">@MANA_MAINTAIN</maintain>
           <duration type="string">@DURATION</duration>
           <level type="number">@SL</level>
           <name type="string">@DESCRIPTION_PRIMARY</name>
-          <page type="string">@REF</page>
           <points type="number">@POINTS</points>
-          <resist type="string"></resist>
+          <resist type="string">@RESIST</resist>
           <time type="string">@TIME_CAST</time>
-          <type type="string"></type>
-          <text type="formattedtext"><p>@DESCRIPTION_NOTES @DESCRIPTION_MODIFIER_NOTES_PAREN</p><p>Page Ref: @REF</p></text>
+          <difficulty type="string">@DIFFICULTY</difficulty>
+          <notes type="string">@DESCRIPTION_NOTES</notes>
+	    <pageref type="string">@REF</pageref>
        </id-@ID>@SPELLS_LOOP_END
       </spelllist>
 
@@ -90,7 +92,7 @@
           <weight type="string">@WEIGHT</weight>
           <tl type="string">@TL</tl>
           <cost type="string">@COST</cost>
-          <text type="formattedtext"><p>@DESCRIPTION_NOTES</p></text>
+          <notes type="string">@DESCRIPTION_NOTES</notes>
           <meleemodelist>@ATTACK_MODES_LOOP_START
             <id-@ID>
               <name type="string">@USAGE</name>
@@ -111,8 +113,8 @@
           <bulk type="number">@BULK</bulk>
           <lc type="string">@LEGALITY_CLASS</lc>
           <ammo type="number">@AMMO</ammo>
-          <text type="formattedtext"><p>@DESCRIPTION_NOTES</p></text>
-          <rangedmodelist>@ATTACK_MODES_LOOP_START
+          <notes type="string">@DESCRIPTION_NOTES</notes>
+         <rangedmodelist>@ATTACK_MODES_LOOP_START
             <id-@ID>
               <name type="string">@USAGE</name>
               <level type="number">@LEVEL</level>
@@ -162,6 +164,7 @@
       <sizemodifier type="string">@SIZE</sizemodifier>
 	<player type="string">@PLAYER</player>
 	<createdon type="string">@CREATED_ON</createdon>
+	<modifiedon type="string">@MODIFIED_ON</modifiedon>
 	<religion type="string">@RELIGION</religion>
 	<birthday type="string">@BIRTHDAY</birthday>
 	<hand type="string">@HAND</hand>
@@ -173,6 +176,7 @@
           <userdesc type="string">@DESCRIPTION_USER</userdesc>
 	    <notes type="string">@DESCRIPTION_NOTES</notes>
 	    <pageref>@REF</pageref>
+	    <type>@TYPE</type>
         </id-@ID>@ADVANTAGES_LOOP_END
       </adslist>
 
@@ -184,27 +188,33 @@
         <name type="string">@DESCRIPTION_PRIMARY</name>
         <isidentified type="number">1</isidentified>
         <count type="number">@QTY</count>
-        <cost type="string">@COST</cost>
+        <cost type="number">@COST</cost>
+        <costsum type="string">@COST_SUMMARY</costsum>
         <weight type="number">@WEIGHT_RAW</weight>
+        <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
         <location type="string">@LOCATION</location>
         <carried type="number">@CARRIED_STATUS</carried>
         <tl type="string">@TL</tl>
         <lc type="string">@LEGALITY_CLASS</lc>
         <type type="string">@CATEGORIES</type>
-        <notes type="formattedtext"><p>@DESCRIPTION_NOTES @DESCRIPTION_MODIFIER_NOTES_PAREN</p><p>Page Ref: @REF</p></notes>
+        <notes type="string">@DESCRIPTION_NOTES</notes>
+	  <pageref type="string">@REF</pageref>
       </id-@ID>@EQUIPMENT_LOOP_END @CONTINUE_ID @OTHER_EQUIPMENT_LOOP_START
       <id-@ID>
         <name type="string">@DESCRIPTION_PRIMARY</name>
         <isidentified type="number">1</isidentified>
         <count type="number">@QTY</count>
         <cost type="string">@COST</cost>
+        <costsum type="string">@COST_SUMMARY</costsum>
         <weight type="number">@WEIGHT_RAW</weight>
+        <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
         <location type="string">@LOCATION</location>
         <carried type="number">@CARRIED_STATUS</carried>
         <tl type="string">@TL</tl>
         <lc type="string">@LEGALITY_CLASS</lc>
         <type type="string">@CATEGORIES</type>
-        <notes type="formattedtext"><p>@DESCRIPTION_NOTES @DESCRIPTION_MODIFIER_NOTES_PAREN</p><p>Page Ref: @REF</p></notes>
+        <notes type="string">@DESCRIPTION_NOTES</notes>
+	  <pageref type="string">@REF</pageref>
       </id-@ID>@OTHER_EQUIPMENT_LOOP_END
 
     </inventorylist>
@@ -216,8 +226,7 @@
       <quirks type="number">@QUIRK_POINTS</quirks>
       <skills type="number">@SKILL_POINTS</skills>
       <spells type="number">@SPELL_POINTS</spells>
-      <powers type="number"></powers>
-      <others type="number"></others>
+      <race type="number">@RACE_POINTS</race>
       <totalpoints type="number">@TOTAL_POINTS</totalpoints>
       <unspentpoints type="number">@UNSPENT_POINTS</unspentpoints>
     </pointtotals>
@@ -227,5 +236,13 @@
         <name type="string">@NOTE</name>
        </id-@ID>@NOTES_LOOP_END
     </notelist>
+
+    <reactions>@REACTION_LOOP_START
+      <id-@ID>
+        <modifier type="string">@MODIFIER</modifier>
+        <situation type="string">@SITUATION</situation>
+       </id-@ID>@REACTION_LOOP_END
+    </reactions>
+
   </character>
 </root>

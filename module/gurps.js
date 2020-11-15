@@ -9,6 +9,7 @@ import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
 import { d6ify } from '../lib/utilities.mjs'
+import { ThreeD6 } from "../lib/threed6.js";
 
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
@@ -32,6 +33,25 @@ GURPS.SetLastActor = function (actor) {
 	GURPS.ModifierBucket.refresh();
 	//	console.log("Last Actor:" + actor.name);
 }
+
+GURPS.ModifierBucket = new ModifierBucket({
+	"popOut": false,
+	"minimizable": false,
+	"resizable": false,
+	"id": "ModifierBucket",
+	"template": "systems/gurps/templates/modifier-bucket.html",
+	"classes": [],
+});
+
+GURPS.ThreeD6 = new ThreeD6({
+	"popOut": false,
+	"minimizable": false,
+	"resizable": false,
+	"id": "ThreeD6",
+	"template": "systems/gurps/templates/threed6.html",
+	"classes": [],
+});
+
 
 
 // This table is used to display dice rolls and penalties (if they are missing from the import data)
@@ -71,15 +91,6 @@ GURPS.hitlocationRolls = {
 	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
 };
 
-
-GURPS.ModifierBucket = new ModifierBucket({
-	"popOut": false,
-	"minimizable": false,
-	"resizable": false,
-	"id": "ModifierBucket",
-	"template": "systems/gurps/templates/modifier-bucket.html",
-	"classes": [],
-});
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -282,6 +293,7 @@ GURPS.SJGProductMappings = {
 	"LT": "http://www.warehouse23.com/products/gurps-fourth-edition-low-tech",
 	"LTC1": "http://www.warehouse23.com/products/gurps-low-tech-companion-1-philosophers-and-kings",
 	"LTIA": "http://www.warehouse23.com/products/gurps-low-tech-instant-armor",
+	"LITE": "http://www.warehouse23.com/products/SJG31-0004",
 	"M": "http://www.warehouse23.com/products/gurps-magic-5",
 	"MPS": "http://www.warehouse23.com/products/gurps-magic-plant-spells",
 	"MA": "http://www.warehouse23.com/products/gurps-martial-arts",
@@ -733,6 +745,15 @@ function onGurpslink(event, actor, desc) {
 }
 GURPS.onGurpslink = onGurpslink;
 
+
+/* You may be asking yourself, why the hell is he generating fake keys to fit in an object
+	when he could have just used an array.   Well, I had TONs of problems with the handlebars and Foundry
+	trying to deal with an array.   While is "should" be possible to use it, and some people claim
+	that they could... everything I tried did something wonky.   So the 2am fix was just make everything an
+	object with fake indexes.   Handlebars deals with this just fine using {{#each someobject}} 
+	and if you really did just want to modify a single entry, you could use {{#each somobject as | obj key |}}
+	which will give you the object, and also the key, such that you could execute somebject.key to get the 
+	correct instance.   */
 function genkey(index) {
 	let k = "key-";
 	if (index < 10)
@@ -812,6 +833,11 @@ Hooks.once("init", async function () {
 	});
 
 
+	Handlebars.registerHelper('notEmpty', function (obj) {
+		return !!obj ? Object.values(obj).length > 0 : false;
+	});
+
+
 	/// NOTE:  To use this, you must use {{{gurpslink sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
 	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods = false, inclbrks = false) {
 		let actor = root?.data?.root?.actor;
@@ -866,6 +892,7 @@ Hooks.once("init", async function () {
 
 Hooks.once("ready", async function () {
 	GURPS.ModifierBucket.clear();
+	GURPS.ThreeD6.refresh();
 
 	// Show changelog
 	if (!game.settings.get("gurps", "dontShowChangelog")) {
