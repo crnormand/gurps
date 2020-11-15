@@ -18,8 +18,21 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
-	int(str) {
-		return !!str ? parseInt(str): 0;
+	flt(str) {
+		return !!str ? parseFloat(str): 0;
+	}
+	
+	sum(dict, type) {
+		if (!dict) return 0.0;
+		let sum = 0;
+		for(let k in dict) {
+			let e = dict[k];
+			let c = this.flt(e.count);
+			let t = this.flt(e[type])
+			sum += c * t;
+			sum += this.sum(e.contains, type);
+		}
+		return sum;
 	}
 	
   /** @override */
@@ -27,11 +40,11 @@ export class GurpsActorSheet extends ActorSheet {
     const sheetData = super.getData();
     sheetData.ranges = game.GURPS.rangeObject.ranges;
     game.GURPS.SetLastActor(this.actor);
-		let i = this.int;
-		let eqtcost = 0;			// Have to handle recurve containership
-		let eqtlbs = 0;
-		let othercost = 0;
-		sheetData.eqtsummary = { eqtcost: eqtcost, eqtlbs: eqtlbs, othercost: othercost };
+		let eqt = this.actor.data.data.equipment || {};
+		sheetData.eqtsummary = { 
+			eqtcost: this.sum(eqt.carried, "cost"), 
+			eqtlbs: this.sum(eqt.carried, "weight"), 
+			othercost: this.sum(eqt.other, "cost") };
     return sheetData;
   }
 

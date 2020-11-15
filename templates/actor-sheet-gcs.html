@@ -23,7 +23,7 @@
                     <div class="label">Created:</div>
                     <div class="field">{{data.traits.createdon}}</div>
                     <div class="label">Modified:</div>
-                    <div class="field"></div>
+                    <div class="field">{{data.traits.modifiedon}}</div>
                     <div class="label">Options:</div>
                     <div class="field"></div>
                 </div>
@@ -427,8 +427,8 @@
             </div>
             <div class="cost satisfiedY">{{this.cost}}</div>
             <div class="weight satisfiedY">{{this.weight}} lbs</div>
-            <div class="sum_cost satisfiedY"></div>
-            <div class="sum_weight satisfiedY"></div>
+            <div class="sum_cost satisfiedY">{{this.costsum}}</div>
+            <div class="sum_weight satisfiedY">{{this.weightsum}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
             <div></div>
             {{/listeqt}}
@@ -436,7 +436,7 @@
         </div>
         <div id="other_equipment">
             <div class="qty header">Qty</div>
-            <div class="desc header">Other Equipment ({{eqtsummary.othercost}})</div>
+            <div class="desc header">Other Equipment (${{eqtsummary.othercost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">X $</div>

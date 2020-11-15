@@ -8,6 +8,7 @@ import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
+import { ThreeD6 } from "../lib/threed6.js";
 
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
@@ -31,6 +32,25 @@ GURPS.SetLastActor = function (actor) {
 	GURPS.ModifierBucket.refresh();
 //	console.log("Last Actor:" + actor.name);
 }
+
+GURPS.ModifierBucket = new ModifierBucket({
+	"popOut": false,
+	"minimizable": false,
+	"resizable": false,
+	"id": "ModifierBucket",
+	"template": "systems/gurps/templates/modifier-bucket.html",
+	"classes": [],
+});
+
+GURPS.ThreeD6 = new ThreeD6({
+	"popOut": false,
+	"minimizable": false,
+	"resizable": false,
+	"id": "ThreeD6",
+	"template": "systems/gurps/templates/threed6.html",
+	"classes": [],
+});
+
 
 
 // This table is used to display dice rolls and penalties (if they are missing from the import data)
@@ -70,15 +90,6 @@ GURPS.hitlocationRolls = {
 	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
 };
 
-
-GURPS.ModifierBucket = new ModifierBucket({
-	"popOut": false,
-	"minimizable": false,
-	"resizable": false,
-	"id": "ModifierBucket",
-	"template": "systems/gurps/templates/modifier-bucket.html",
-	"classes": [],
-});
 
 GURPS.woundModifiers = {
 	"burn": 1,
@@ -942,6 +953,7 @@ Hooks.once("init", async function () {
 
 Hooks.once("ready", async function () {
 	GURPS.ModifierBucket.clear();
+	GURPS.ThreeD6.refresh();
 
 	// Show changelog
 	if (!game.settings.get("gurps", "dontShowChangelog")) {

@@ -4,6 +4,44 @@
   /* Attributes */
 }
 
+#threed6 {
+  /*border: 5px solid rgb(255, 123, 0);*/
+  position: fixed;
+  bottom: 10px;
+  left: 880px;
+  width: 52px;
+  height: 52px;
+  margin: 0px;
+  padding: 0px;
+  cursor: pointer;
+  z-index: 999;
+  display: inline-block;
+}
+
+#threed6 #threed6dicerot {
+	display:none;
+	position: absolute;
+	top:0;
+	left:0;
+	z-index:105;
+}
+
+#threed6 #threed6dicerotactive {
+	display:none;
+	position: absolute;
+	top:0;
+	left:0;
+	z-index:105;
+}
+
+#threed6:hover #threed6dicerot {
+	display: inline;
+}
+
+#threed6:active #threed6dicerotactive {
+	display: inline;
+}
+
 #modtooltip {
   width: 100%;
   height: 100%;

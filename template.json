@@ -90,6 +90,7 @@
 			"sizemod": "+0",
 			"techlevel": "",
 			"createdon": "",
+			"modifiedon": "",
 			"player":""
 		},
 		"totalpoints": {
@@ -100,7 +101,8 @@
 			"skills": 0,
 			"spells": 0,
 			"total": 150,
-			"unspent": 0
+			"unspent": 0,
+			"race": 0
 		},
 		"melee": {},
 		"ranged": {},

@@ -148,7 +148,8 @@ export class GurpsActor extends Actor {
 			"data.totalpoints.skills": i(json.skills),
 			"data.totalpoints.spells": i(json.spells),
 			"data.totalpoints.unspent": i(json.unspentpoints),
-			"data.totalpoints.total": i(json.totalpoints)
+			"data.totalpoints.total": i(json.totalpoints),
+			"data.totalpoints.race": i(json.race)
 		};
 	}
 	
@@ -382,6 +383,7 @@ export class GurpsActor extends Actor {
 		ts.title = t(json.title);
 		ts.player = t(json.player);
 		ts.createdon = t(json.createdon);
+		ts.modifiedon = t(json.modifiedon);
 		ts.religion = t(json.religion);
 		ts.birthday = t(json.birthday);
 		ts.hand = t(json.hand);
