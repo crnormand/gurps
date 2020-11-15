@@ -424,6 +424,7 @@ GURPS.extractP = extractP;
 */
 function objToString(obj, ndeep) {
 	if (obj == null) { return String(obj); }
+	if (ndeep > 10) return "(stopping due to depth): " + obj.toString();
 	switch (typeof obj) {
 		case "string": return '"' + obj + '"';
 		case "function": return obj.name || obj.toString();
