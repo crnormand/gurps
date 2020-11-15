@@ -1,0 +1,9 @@
+<div class='chat-message flexcol'>
+    <div class='prefix'>Apply {{basicDamage}} {{damageType}} to {{location}}:</div>
+    <ul class='modifier-list'>
+        {{#each steps}}
+        <li>{{this}}</li>
+        {{/each}}
+    </ul>
+    <div>{{defender}}'s HP are reduced from {{current}} to {{newHP}}.</div>
+</div>

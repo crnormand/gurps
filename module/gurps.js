@@ -8,6 +8,7 @@ import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
+import { d6ify } from '../lib/utilities.mjs'
 import { ThreeD6 } from "../lib/threed6.js";
 
 export const GURPS = {};
@@ -17,7 +18,7 @@ import GURPSRange from '../lib/ranges.mjs'
 import Initiative from '../lib/initiative.mjs'
 import HitFatPoints from '../lib/hitpoints.mjs'
 import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.mjs'
-import ChatMessage from '../lib/damagemessage.mjs'
+import DamageChat from '../lib/damagemessage.mjs'
 
 import helpers from '../lib/moustachewax.mjs'
 
@@ -30,7 +31,7 @@ GURPS.LastActor = null;
 GURPS.SetLastActor = function (actor) {
 	GURPS.LastActor = actor;
 	GURPS.ModifierBucket.refresh();
-//	console.log("Last Actor:" + actor.name);
+	//	console.log("Last Actor:" + actor.name);
 }
 
 GURPS.ModifierBucket = new ModifierBucket({
@@ -56,7 +57,7 @@ GURPS.ThreeD6 = new ThreeD6({
 // This table is used to display dice rolls and penalties (if they are missing from the import data)
 // And to create the HitLocations pulldown menu (skipping any "skip:true" entries)
 GURPS.hitlocationRolls = {
-	"Eye": { roll: "-", penalty: -9, skip: true},
+	"Eye": { roll: "-", penalty: -9, skip: true },
 	"Eyes": { roll: "-", penalty: -9 },																// GCA
 	"Skull": { roll: "3-4", penalty: -7 },
 	"Skull, from behind": { penalty: -5 },
@@ -71,7 +72,7 @@ GURPS.hitlocationRolls = {
 	"Right Arm, holding shield": { penalty: -4, skip: true },
 	"Arm, holding shield": { penalty: -4 },
 	"Arm": { roll: "8 & 12", penalty: -2 },													// GCA
-	"Arms": { roll: "8 & 12", penalty: -2, skip: true  },													// GCA
+	"Arms": { roll: "8 & 12", penalty: -2, skip: true },													// GCA
 	"Torso": { roll: "9-10", penalty: 0 },
 	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI[any] only" },
 	"Vitals, Heart": { penalty: -5, desc: "IMP/PI[any] only" },
@@ -265,11 +266,11 @@ CONFIG.statusEffects = [
 ];
 
 GURPS.SJGProductMappings = {
-  "ACT1": "http://www.warehouse23.com/products/gurps-action-1-heroes",
-  "ACT3": "http://www.warehouse23.com/products/gurps-action-3-furious-fists",
-  "B": "http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns",
+	"ACT1": "http://www.warehouse23.com/products/gurps-action-1-heroes",
+	"ACT3": "http://www.warehouse23.com/products/gurps-action-3-furious-fists",
+	"B": "http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns",
 	"BS": "http://www.warehouse23.com/products/gurps-banestorm",
-  "DF1": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-1-adventurers-1",
+	"DF1": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-1-adventurers-1",
 	"DF3": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-3-the-next-level-1",
 	"DF4": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-4-sages-1",
 	"DF8": "http://www.warehouse23.com/products/gurps-dungeon-fantasy-8-treasure-tables",
@@ -318,56 +319,6 @@ GURPS.SJGProductMappings = {
 	"VOR": "http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game"
 }
 
-/*
-	Convert XML text into a JSON object
-*/
-function xmlTextToJson(text) {
-	var xml = new DOMParser().parseFromString(text, 'application/xml');
-	return xmlToJson(xml);
-}
-GURPS.xmlTextToJson = xmlTextToJson;
-
-/*
-	Convert a DOMParsed version of the XML, return a JSON object.
-*/
-function xmlToJson(xml) {
-
-	// Create the return object
-	var obj = {};
-
-	if (xml.nodeType == 1) { // element
-		// do attributes
-		if (xml.attributes.length > 0) {
-			obj["@attributes"] = {};
-			for (var j = 0; j < xml.attributes.length; j++) {
-				var attribute = xml.attributes.item(j);
-				obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
-			}
-		}
-	} else if (xml.nodeType == 3) { // text
-		obj = xml.nodeValue;
-	}
-
-	// do children
-	if (xml.hasChildNodes()) {
-		for (var i = 0; i < xml.childNodes.length; i++) {
-			var item = xml.childNodes.item(i);
-			var nodeName = item.nodeName;
-			if (typeof (obj[nodeName]) == "undefined") {
-				obj[nodeName] = xmlToJson(item);
-			} else {
-				if (typeof (obj[nodeName].push) == "undefined") {
-					var old = obj[nodeName];
-					obj[nodeName] = [];
-					obj[nodeName].push(old);
-				}
-				obj[nodeName].push(xmlToJson(item));
-			}
-		}
-	}
-	return obj;
-};
-GURPS.xmlToJson = xmlToJson;
 
 // This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 // First we have to remove non-printing characters, and then we want to replace 
@@ -473,17 +424,17 @@ function performAction(action, actor) {
 	}
 	if (action.type == "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
-		formula = this.d6ify(action.formula);
+		formula = d6ify(action.formula);
 	}
 	if (action.type == "damage") {
 		prefix = "Rolling " + action.formula;
 		thing = " points of '" + action.damagetype + "' damage";
-		formula = this.d6ify(action.formula);
+		formula = d6ify(action.formula);
 	}
 	if (action.type == "deriveddamage" && !!actor) {
 		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")";
 		thing = " points of '" + action.damagetype + "' damage";
-		formula = this.d6ify(action.derivedformula);
+		formula = d6ify(action.derivedformula);
 	}
 	if (action.type == "skill" && !!actor) {
 		prefix = "Attempting ";
@@ -498,11 +449,6 @@ function performAction(action, actor) {
 }
 GURPS.performAction = performAction;
 
-function d6ify(str) {
-	let w = str.replace(/d([^6])/g, "d6$1");		// Find 'd's without a 6 behind it, and add it.
-	return w.replace(/d$/g, "d6"); 								// and do the same for the end of the line.
-}
-GURPS.d6ify = d6ify
 
 
 /*
@@ -532,28 +478,29 @@ async function onRoll(event, actor) {
 			t = t.trim();
 			if (!!t)
 				target = parseInt(t);
-				if (isNaN(target)) target = 0;		// Can't roll against a non-integer
+			if (isNaN(target)) target = 0;		// Can't roll against a non-integer
 		}
 	}
 	if ("damage" in element.dataset) {
-		formula = element.innerText.trim();
-		let i = formula.indexOf(" ");
+		// expect text like '2d+1 cut'
+		let formula = element.innerText.trim();
+		let dtype = ''
+
+		let i = formula.indexOf(' ');
 		if (i > 0) {
-			let dtype = formula.substr(i + 1).trim();
-			thing = " points of '" + dtype + "' damage";
+			dtype = formula.substr(i + 1).trim();
 			formula = formula.substring(0, i);
 		}
-		if (formula != "0") {
-			prefix = "Rolling " + formula;
-			formula = this.d6ify(formula);
-			target = -1;		// Set flag to indicate a non-targeted roll
-		}
+
+		GURPS.damageChat.create(actor, formula, dtype)
+
+		return
 	}
 	if ("roll" in element.dataset) {
 		target = -1;   // Set flag to indicate a non-targeted roll
 		formula = element.innerText;
 		prefix = "Rolling " + formula;
-		formula = this.d6ify(formula);
+		formula = d6ify(formula);
 	}
 
 	this.doRoll(actor, formula, targetmods, prefix, thing, target);
@@ -592,6 +539,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 	let niceDice = false;
 	try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
 
+	// TODO Code below is duplicated in damagemessage.mjs (DamageChat) -- make sure it is updated in both places
 	// Lets collect up the modifiers, they are used differently depending on the type of roll
 	let modscontent = "";
 	let modifier = 0;
@@ -644,68 +592,59 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		rdesc += "</small>";
 		chatcontent = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
 	} else {	// This is "damage" roll where the modifier is added to the roll, not the target
+		// REPLACED by code in damagemessage.mjs/DamageChat
 
-		let diceText = prefix.replace(/^Rolling /, '')
-		let type = thing.replace(/^ points of '/, '').replace(/' damage/, '')
-		let min = 1
-		let b378 = false
+		// let diceText = prefix.replace(/^Rolling /, '')
+		// let type = thing.replace(/^ points of '/, '').replace(/' damage/, '')
+		// let min = 1
+		// let b378 = false
 
-		if (type === 'cr') min = 0
+		// if (type === 'cr') min = 0
 
-		if (formula.slice(-1) === '!') {
-			formula = formula.slice(0, -1)
-			min = 1
-		}
+		// if (formula.slice(-1) === '!') {
+		// 	formula = formula.slice(0, -1)
+		// 	min = 1
+		// }
 
-		let roll = new Roll(formula + `+${modifier}`);
-		roll.roll();
-		let rtotal = roll.total;
-		if (rtotal < min) {
-			rtotal = min;
-			if (type !== 'cr') b378 = true
-		}
+		// let roll = new Roll(formula + `+${modifier}`);
+		// roll.roll();
+		// let rtotal = roll.total;
+		// if (rtotal < min) {
+		// 	rtotal = min;
+		// 	if (type !== 'cr') b378 = true
+		// }
 
-		let contentData = {
-			dice: diceText,
-			damage: rtotal,
-			type: type,
-			modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-			isB378: b378
-		}
+		// let contentData = {
+		// 	dice: diceText,
+		// 	damage: rtotal,
+		// 	type: type,
+		// 	modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
+		// 	isB378: b378,
+		// 	type: 'Damage'
+		// }
+		// let html = await
+		// 	renderTemplate('systems/gurps/templates/damage-message.html', contentData)
 
-		let results = "<i class='fa fa-dice'/> " +
-			"<i class='fa fa-long-arrow-alt-right'/> " +
-			"<b style='font-size: 140%;'>" +
-			rtotal +
-			"</b>";
-		if (rtotal == 1) thing = thing.replace("points", "point") + b378content;
-		chatcontent = prefix + modscontent + "<br>" +
-			"<div draggable='true' ondragstart='console.log(event)'>" +
-			results + thing +
-			"</div>";
+		// console.log(html)
+		// const speaker = { alias: actor.name, _id: actor._id }
+		// let messageData = {
+		// 	user: game.user._id,
+		// 	speaker: speaker,
+		// 	content: html,
+		// 	type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+		// 	roll: roll
+		// };
 
-		let html = await
-			renderTemplate('systems/gurps/templates/damage-message.html', contentData)
+		// messageData["flags.transfer"] = JSON.stringify(
+		// 	{
+		// 		type: 'damageItem',
+		// 		payload: contentData
+		// 	}
+		// )
 
-		console.log(html)
-		const speaker = { alias: actor.name, _id: actor._id }
-		let messageData = {
-			user: game.user._id,
-			speaker: speaker,
-			content: html,
-			type: CONST.CHAT_MESSAGE_TYPES.OOC,
-			roll: roll
-		};
-
-		if (niceDice) {
-			game.dice3d.showForRoll(roll).then((displayed) => {
-				CONFIG.ChatMessage.entityClass.create(messageData, {});
-			});
-		} else {
-			messageData.sound = CONFIG.sounds.dice;
-			CONFIG.ChatMessage.entityClass.create(messageData, {});
-		}
-		return
+		// let me = await CONFIG.ChatMessage.entityClass.create(messageData);
+		// // me.data.flags.damage = contentData
+		// return
 	}
 
 	const speaker = { alias: actor.name, _id: actor._id }
@@ -765,13 +704,13 @@ function onPdf(event) {
 		page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
 	}
 	if (ui.PDFoundry) {
-    const pdf = ui.PDFoundry.findPDFDataByCode(book);
-    if (pdf === undefined) {
+		const pdf = ui.PDFoundry.findPDFDataByCode(book);
+		if (pdf === undefined) {
 			let url = game.GURPS.SJGProductMappings[book];
 			if (!url) url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb";		// The main GURPS page
-      window.open(url, '_blank');
-    }
-    else
+			window.open(url, '_blank');
+		}
+		else
 			ui.PDFoundry.openPDF(pdf, { page });
 	} else {
 		ui.notifications.warn('PDFoundry must be installed to use links.');
@@ -854,7 +793,7 @@ GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 GURPS.hitLocationTooltip = new HitLocationEquipmentTooltip()
-GURPS.chatmessage = new ChatMessage()
+GURPS.damageChat = new DamageChat()
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -892,8 +831,8 @@ Hooks.once("init", async function () {
 		console.log(o);
 		return o;
 	});
-	
-	
+
+
 	Handlebars.registerHelper('notEmpty', function (obj) {
 		return !!obj ? Object.values(obj).length > 0 : false;
 	});
@@ -927,9 +866,9 @@ Hooks.once("init", async function () {
 			penalty = GURPS.hitlocationRolls[loc]?.penalty;
 		return penalty;
 	});
-	
-	
-	
+
+
+
 
 	game.settings.register("gurps", "changelogVersion", {
 		name: "Changelog Version",
@@ -989,7 +928,7 @@ Hooks.once("ready", async function () {
 		if (!!args && args.length >= 4)
 			GURPS.SetLastActor(args[0]);
 	});
-	
+
 	// Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket (only when args[1] is true)
 	Hooks.on("controlToken", (...args) => {
 		if (args.length > 1 && args[1]) {
