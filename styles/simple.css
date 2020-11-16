@@ -885,6 +885,24 @@ body {
   grid-gap: .05in;
 }
 
+#editorsheet {
+  display: grid;
+  grid-template:
+    "personal personal"
+    "stats stats"
+    "reactions reactions"
+    "melee melee"
+    "ranged ranged"
+    "advantages advantages"
+		"skills skills"
+    "spells spells"
+    "equipment equipment"
+    "other_equipment other_equipment"
+    "notes notes"
+  ;
+  grid-gap: .05in;
+}
+
 #footer {
   text-align: center;
   font-size: 80%;
