@@ -778,12 +778,16 @@ GURPS.put = put;
 
 function listeqtrecurse(eqts, options, level, data) {
 	if (!eqts) return "";
-	var list = Object.values(eqts);
 	let ret = "";
-	for (var i = 0; i < list.length; i++) {
-		if (data) data.indent = level;
-		ret = ret + options.fn(list[i], { data: data });
-		ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level + 1, data);
+	let i = 0;
+	for (let key in eqts) {
+		let eqt = eqts[key];
+		if (data) {
+			data.indent = level;
+			data.key = key;
+		}
+		ret = ret + options.fn(eqt, { data: data });
+		ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data);
 	}
 	return ret;
 }
