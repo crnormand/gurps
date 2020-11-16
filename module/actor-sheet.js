@@ -337,19 +337,24 @@ export class GurpsActorSheet extends ActorSheet {
     return position;
   }
 
+	get title() {
+		const t = this.actor.name;
+		const sheet = this.actor.getFlag("core", "sheetClass");
+		return (sheet === "gurps.GurpsActorEditorSheet") ? "Editing: " + t : t;
+	}
+
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
 
-    const sheet = this.actor.getFlag("core", "sheetClass")
+    const sheet = this.actor.getFlag("core", "sheetClass");
+		const isFull = sheet === undefined || sheet === "gurps.GurpsActorSheetGCS";
 
     // Token Configuration
     const canConfigure = game.user.isGM || this.actor.owner;
     if (this.options.editable && canConfigure) {
-      buttons = [
+      let b = [
         {
-          label: (sheet === "gurps.GurpsActorCombatSheet")
-            ? "Full View"
-            : "Combat View",
+          label: isFull ? "Combat View" : "Full View",
           class: "toggle",
           icon: "fas fa-exchange-alt",
           onclick: ev => this._onToggleSheet(ev)
@@ -360,7 +365,17 @@ export class GurpsActorSheet extends ActorSheet {
           icon: "fas fa-file-import",
           onclick: ev => this._onFileImport(ev)
         }
-      ].concat(buttons);
+      ];
+			if (isFull) {
+				b.push(         
+					{
+	          label: "Edit",
+	          class: "edit",
+	          icon: "fas fa-edit",
+	          onclick: ev => this._onOpenEditor(ev)
+	        } );
+			}
+			buttons = b.concat(buttons);
     }
     return buttons
   }
@@ -403,9 +418,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     const original = this.actor.getFlag("core", "sheetClass")
     console.log("original: " + original)
-    const newSheet = (original === "gurps.GurpsActorCombatSheet")
-      ? "gurps.GurpsActorSheetGCS"
-      : "gurps.GurpsActorCombatSheet"
+		let newSheet = "gurps.GurpsActorCombatSheet"
+    if (original === "gurps.GurpsActorCombatSheet" || original === "gurps.GurpsActorEditorSheet") newSheet = "gurps.GurpsActorSheetGCS";
 
     await this.actor.sheet.close()
 
@@ -417,6 +431,13 @@ export class GurpsActorSheet extends ActorSheet {
     console.log("updated: " + updated)
     this.actor.sheet.render(true)
   }
+
+	async _onOpenEditor(event) {
+    event.preventDefault();
+    await this.actor.sheet.close();
+    await this.actor.setFlag("core", "sheetClass", "gurps.GurpsActorEditorSheet");
+    this.actor.sheet.render(true)
+	}
 
   async _onClickPdf(event) {
     event.preventDefault();
@@ -457,6 +478,20 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       template: "systems/gurps/templates/combat-sheet.html",
       width: 550,
       height: 275,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
+      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
+    });
+  }
+}
+
+export class GurpsActorEditorSheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["gurps", "sheet", "actor"],
+      template: "systems/gurps/templates/actor-sheet-gcs-editor.html",
+      width: 800,
+      height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });

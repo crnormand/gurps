@@ -4,6 +4,12 @@
   /* Attributes */
 }
 
+.gcs-input {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+}
+
 #threed6 {
   /*border: 5px solid rgb(255, 123, 0);*/
   position: fixed;
@@ -302,12 +308,6 @@
   border-style: solid;
   border-color: black transparent transparent transparent;
   z-index: -100;
-}
-
-.gcs-attr-input {
-  border-width: 0px !important;
-  border: none !important;
-  height: 100% !important;
 }
 
 .pdflink {

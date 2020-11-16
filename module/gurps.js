@@ -4,7 +4,7 @@ import parselink from '../lib/parselink.js'
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
-import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
+import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
@@ -824,6 +824,7 @@ Hooks.once("init", async function () {
 	Actors.unregisterSheet("core", ActorSheet);
 	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
 
