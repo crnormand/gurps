@@ -4,10 +4,59 @@
   /* Attributes */
 }
 
+.gcs-input-ta {
+  border-width: 0px !important;
+  border: none !important;
+  height: 1em !important;
+	padding: 1px !important;
+}
 .gcs-input {
   border-width: 0px !important;
   border: none !important;
   height: 100% !important;
+	padding: 1px !important;
+}
+.gcs-input-sm2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 2em;
+	padding: 1px !important;
+}
+.gcs-input-sm3 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 3em;
+	padding: 1px !important;
+}
+.gcs-input-sm4 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 4em;
+	padding: 1px !important;
+}
+.gcs-input-sm5 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 5em;
+	padding: 1px !important;
+}
+.gcs-input-25 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 25em !important;
+	padding: 1px !important;
+}
+.gcs-input-30 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 30em !important;
+	padding: 1px !important;
 }
 
 #threed6 {
