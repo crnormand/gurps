@@ -336,7 +336,7 @@ function cleanUpP(xml) {
 			if (e > s) {
 				let t1 = xml.substring(0, s);
 				let t2 = xml.substring(s + 3, e);
-				t2 = btoa(t2) + "\n";
+				t2 = "@@@@" + btoa(t2) + "\n";
 				let t3 = xml.substr(e + 4);
 				xml = t1 + t2 + t3;
 				s = xml.indexOf(tagin, s + t2.length);
@@ -357,11 +357,11 @@ function extractP(str) {
 		let s = str.split("\n");
 		for (let b of s) {
 			if (!!b) {
-				try {
-					v += atob(b) + "\n";
-				} catch {
-					v += b + "\n";
-				}
+				if (b.startsWith("@@@@")) {
+						b = b.substr(4);
+						v += atob(b) + "\n";
+				} else
+						v += b + "\n";
 			}
 		}
 	}
