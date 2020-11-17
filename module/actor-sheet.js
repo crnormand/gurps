@@ -496,4 +496,29 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });
   }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    html.find(".enc").click(this._onClick.bind(this));
+	}
+	
+	async _onClick(ev) {
+		event.preventDefault();
+		let element = ev.currentTarget;
+		let key = element.dataset.key;
+		let encs = this.actor.data.data.encumbrance;
+		if (encs[key].current) return;  // already selected
+		for (let enckey in encs) {
+			let enc = encs[enckey];
+			let t = "data.encumbrance." + enckey + ".current";
+			if (enc.current) {
+				await this.actor.update({ [t] : false });
+			}
+			if (key === enckey) {
+				await this.actor.update({ [t] : true });
+			}
+		} 
+		 this.actor.sheet.render(true);
+	}
 }

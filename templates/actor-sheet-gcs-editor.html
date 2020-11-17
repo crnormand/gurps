@@ -148,16 +148,16 @@
                 {{#each data.encumbrance as | this key |}}   
                 {{#if this.current}}
                 <div class="encmarker current"></div>
-                <div class="enc current {{this.key}}"></div>
+                <div class="enc current {{this.key}}" data-key="{{key}}"></div>
                 <div class="load current"><input name="data.encumbrance.{{key}}.weight" class="gcs-input" type="text" value="{{this.weight}}"/></div>
-                <div class="move current">{{this.move}}</div>
-                <div class="dodge current" data-path="dodge">{{this.dodge}}</div>
+                <div class="move current"><input name="data.encumbrance.{{key}}.move" class="gcs-input" type="text" value="{{this.move}}"/></div>
+                <div class="dodge current"><input name="data.encumbrance.{{key}}.dodge" class="gcs-input" type="text" value="{{this.dodge}}"/></div>
                 {{else}}
                 <div class="encmarker "></div>
-                <div class="enc {{this.key}}"></div>
+                <div class="enc {{this.key}}" data-key="{{key}}"></div>
                 <div class="load "><input name="data.encumbrance.{{key}}.weight" class="gcs-input" type="text" value="{{this.weight}}"/></div>
-                <div class="move ">{{this.move}}</div>
-                <div class="dodge rollable" data-path="dodge">{{this.dodge}}</div>
+                <div class="move "><input name="data.encumbrance.{{key}}.move" class="gcs-input" type="text" value="{{this.move}}"/></div>
+                <div class="dodge"><input name="data.encumbrance.{{key}}.dodge" class="gcs-input" type="text" value="{{this.dodge}}"/></div>
                 {{/if}}
                 {{/each}}
 
