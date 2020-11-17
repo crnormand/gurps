@@ -391,16 +391,16 @@
 <!--                <div class="list_note satisfiedY"></div>
 -->                <div class="list_note satisfiedY"><input name="data.spells.{{key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div><div></div>
             </div>
-            <div class="cls satisfiedY"></div>
-            <div class="college satisfiedY">{{this.college}}</div>
-            <div class="mana satisfiedY">{{this.cost}}</div>
-            <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
-            <div class="time satisfiedY">{{this.casttime}}</div>
-            <div class="duration satisfiedY">{{this.duration}}</div>
-            <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
+            <div class="cls satisfiedY"><input name="data.spells.{{key}}.class" class="gcs-input-sm5" type="text" value="{{this.class}}"/></div>
+            <div class="college satisfiedY"><input name="data.spells.{{key}}.college" class="gcs-input-sm5" type="text" value="{{this.college}}"/></div>
+            <div class="mana satisfiedY"><input name="data.spells.{{key}}.cost" class="gcs-input-sm3" type="text" value="{{this.cost}}"/></div>
+            <div class="mana_maintain satisfiedY"><input name="data.spells.{{key}}.maintain" class="gcs-input-sm4" type="text" value="{{this.maintain}}"/></div>
+            <div class="time satisfiedY"><input name="data.spells.{{key}}.casttime" class="gcs-input-sm5" type="text" value="{{this.casttime}}"/></div>
+            <div class="duration satisfiedY"><input name="data.spells.{{key}}.duration" class="gcs-input-sm5" type="text" value="{{this.duration}}"/></div>
+            <div class="sl satisfiedY"><input name="data.spells.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
             <div class="rsl satisfiedY"></div>
-            <div class="pts satisfiedY">{{this.points}}</div>
-            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
+            <div class="pts satisfiedY"><input name="data.spells.{{key}}.points" class="gcs-input-sm2" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY"><input name="data.spells.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
 
         </div>
@@ -427,7 +427,7 @@
             <div class="weight satisfiedY"><input name="data.equipment.carried.{{@key}}.weight" class="gcs-input-sm5" type="text" value="{{this.weight}}"/></div>
             <div class="sum_cost satisfiedY"><input name="data.equipment.carried.{{@key}}.costsum" class="gcs-input-sm5" type="text" value="{{this.costsum}}"/></div>
             <div class="sum_weight satisfiedY"><input name="data.equipment.carried.{{@key}}.weightsum" class="gcs-input-sm5" type="text" value="{{this.weightsum}}"/></div>
-            <div class="ref satisfiedY pdflink"><input name="data.equipment.carried.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="ref satisfiedY"><input name="data.equipment.carried.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             <div></div>
             {{/listeqt}}
 

@@ -789,7 +789,7 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 			data.key = parentkey + key;
 		}
 		ret = ret + options.fn(eqt, { data: data });
-		ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, key + ".contains.");
+		ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + ".contains.");
 	}
 	return ret;
 }
