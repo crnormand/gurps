@@ -164,19 +164,19 @@
             </div>
             <div id="lifting">
                 <div class="header">Lifting &amp; Moving Things</div>
-                <div class="lift">{{data.liftingmoving.basiclift}}</div>
+                <div class="lift"><input name="data.liftingmoving.basiclift" class="gcs-input-5" type="text" value="{{data.liftingmoving.basiclift}}"/></div>
                 <div class="liftdesc">Basic Lift</div>
-                <div class="lift">{{data.liftingmoving.onehandedlift}}</div>
+                <div class="lift"><input name="data.liftingmoving.onehandedlift" class="gcs-input-5" type="text" value="{{data.liftingmoving.onehandedlift}}"/></div>
                 <div class="liftdesc">One-Handed Lift</div>
-                <div class="lift">{{data.liftingmoving.twohandedelift}}</div>
+                <div class="lift"><input name="data.liftingmoving.twohandedelift" class="gcs-input-5" type="text" value="{{data.liftingmoving.twohandedelift}}"/></div>
                 <div class="liftdesc">Two-Handed Lift</div>
-                <div class="lift">{{data.liftingmoving.shove}}</div>
+                <div class="lift"><input name="data.liftingmoving.shove" class="gcs-input-5" type="text" value="{{data.liftingmoving.shove}}"/></div>
                 <div class="liftdesc">Shove &amp; Knock Over</div>
-                <div class="lift">{{data.liftingmoving.runningshove}}</div>
+                <div class="lift"><input name="data.liftingmoving.runningshove" class="gcs-input-5" type="text" value="{{data.liftingmoving.runningshove}}"/></div>
                 <div class="liftdesc">Running Shove &amp; Knock Over</div>
-                <div class="lift">{{data.liftingmoving.carryonback}}</div>
+                <div class="lift"><input name="data.liftingmoving.carryonback" class="gcs-input-5" type="text" value="{{data.liftingmoving.carryonback}}"/></div>
                 <div class="liftdesc">Carry on Back</div>
-                <div class="lift">{{data.liftingmoving.shiftslightly}}</div>
+                <div class="lift"><input name="data.liftingmoving.shiftslightly" class="gcs-input-5" type="text" value="{{data.liftingmoving.shiftslightly}}"/></div>
                 <div class="liftdesc">Shift Slightly</div>
             </div>
             <div id="location">
@@ -202,11 +202,12 @@
                 <div class="header">Fatigue Points</div>
                 <div class="fieldblock3">
                     <div class="points"></div>
-                    <div class="field"><input class="gcs-attr-input" name="data.FP.value" type="text"
+                    <div class="field"><input class="gcs-input-4" name="data.FP.value" type="text"
                             value="{{data.FP.value}}" data-dtype="Number" /></div>
                     <div class="label">Current</div>
                     <div class="points">[{{data.FP.points}}]</div>
-                    <div class="field">{{data.FP.max}}</div>
+                    <div class="field"><input class="gcs-input-4" name="data.FP.max" type="text"
+                            value="{{data.FP.max}}" data-dtype="Number" /></div>
                     <div class="label">Basic</div>
 
                     {{#fpBreakpoints data.FP}}
@@ -220,12 +221,13 @@
                 <div class="header">Hit Points</div>
                 <div class="fieldblock3">
                     <div class="points"></div>
-                    <div class="field"><input class="gcs-attr-input" name="data.HP.value" type="text"
+                    <div class="field"><input class="gcs-input-4" name="data.HP.value" type="text"
                             value="{{data.HP.value}}" data-dtype="Number" /></div>
                     <div class="label">Current</div>
 
                     <div class="points">[{{data.HP.points}}]</div>
-                    <div class="field">{{data.HP.max}}</div>
+                    <div class="field"><input class="gcs-input-4" name="data.HP.max" type="text"
+                            value="{{data.HP.max}}" data-dtype="Number" /></div>
                     <div class="label">Basic</div>
 
                     {{#hpBreakpoints data.HP}}
@@ -242,9 +244,9 @@
             <div class="modifier header">Modifier</div>
             <div class="situation header">Reaction</div>
             <div></div>
-					{{#each data.reactions}}
-						<div class="modifier gmod" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
-            <div class="situation">{{{gurpslink this.situation}}}</div>
+					{{#each data.reactions as | this key |}}
+						<div class="modifier"><input name="data.reactions.{{key}}.modifier" class="gcs-input-sm4" type="text" value="{{this.modifier}}"/></div>
+            <div class="situation"><input name="data.reactions.{{key}}.situation" class="gcs-input" type="text" value="{{this.situation}}"/></div>
             <div></div>
 					{{/each}}
 

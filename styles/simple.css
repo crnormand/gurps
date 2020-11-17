@@ -44,11 +44,32 @@
 	max-width: 5em;
 	padding: 1px !important;
 }
+.gcs-input-2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 2em !important;
+	padding: 1px !important;
+}
 .gcs-input-3 {
   border-width: 0px !important;
   border: none !important;
   height: 100% !important;
 	min-width: 3em !important;
+	padding: 1px !important;
+}
+.gcs-input-4 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 4em !important;
+	padding: 1px !important;
+}
+.gcs-input-5 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 5em !important;
 	padding: 1px !important;
 }
 
