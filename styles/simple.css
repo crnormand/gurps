@@ -44,6 +44,14 @@
 	max-width: 5em;
 	padding: 1px !important;
 }
+.gcs-input-3 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 3em !important;
+	padding: 1px !important;
+}
+
 .gcs-input-25 {
   border-width: 0px !important;
   border: none !important;
