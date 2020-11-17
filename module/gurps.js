@@ -756,7 +756,7 @@ GURPS.onGurpslink = onGurpslink;
 	which will give you the object, and also the key, such that you could execute somebject.key to get the 
 	correct instance.   */
 function genkey(index) {
-	let k = "key-";
+	let k = "key_";
 	if (index < 10)
 		k += "0";
 	if (index < 100)
@@ -776,7 +776,9 @@ function put(obj, value, index = -1) {
 }
 GURPS.put = put;
 
-function listeqtrecurse(eqts, options, level, data) {
+/*  Funky helper function to be able to list hierarchical equipment in a linear list (with appropriate keys for editing)
+*/
+function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 	if (!eqts) return "";
 	let ret = "";
 	let i = 0;
@@ -784,10 +786,10 @@ function listeqtrecurse(eqts, options, level, data) {
 		let eqt = eqts[key];
 		if (data) {
 			data.indent = level;
-			data.key = key;
+			data.key = parentkey + key;
 		}
 		ret = ret + options.fn(eqt, { data: data });
-		ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data);
+		ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, key + ".contains.");
 	}
 	return ret;
 }
@@ -857,7 +859,8 @@ Hooks.once("init", async function () {
 		if (options.data)
 			data = Handlebars.createFrame(options.data);
 
-		return GURPS.listeqtrecurse(context, options, 0, data);
+		let ans = GURPS.listeqtrecurse(context, options, 0, data);
+		return ans;
 	});
 
 
@@ -872,9 +875,6 @@ Hooks.once("init", async function () {
 			penalty = GURPS.hitlocationRolls[loc]?.penalty;
 		return penalty;
 	});
-
-
-
 
 	game.settings.register("gurps", "changelogVersion", {
 		name: "Changelog Version",
