@@ -4,7 +4,7 @@ import parselink from '../lib/parselink.js'
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
-import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
+import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
@@ -336,7 +336,7 @@ function cleanUpP(xml) {
 			if (e > s) {
 				let t1 = xml.substring(0, s);
 				let t2 = xml.substring(s + 3, e);
-				t2 = btoa(t2) + "\n";
+				t2 = "@@@@" + btoa(t2) + "\n";
 				let t3 = xml.substr(e + 4);
 				xml = t1 + t2 + t3;
 				s = xml.indexOf(tagin, s + t2.length);
@@ -357,11 +357,11 @@ function extractP(str) {
 		let s = str.split("\n");
 		for (let b of s) {
 			if (!!b) {
-				try {
-					v += atob(b) + "\n";
-				} catch {
-					v += b + "\n";
-				}
+				if (b.startsWith("@@@@")) {
+						b = b.substr(4);
+						v += atob(b) + "\n";
+				} else
+						v += b + "\n";
 			}
 		}
 	}
@@ -375,6 +375,7 @@ GURPS.extractP = extractP;
 */
 function objToString(obj, ndeep) {
 	if (obj == null) { return String(obj); }
+	if (ndeep > 10) return "(stopping due to depth): " + obj.toString();
 	switch (typeof obj) {
 		case "string": return '"' + obj + '"';
 		case "function": return obj.name || obj.toString();
@@ -755,7 +756,7 @@ GURPS.onGurpslink = onGurpslink;
 	which will give you the object, and also the key, such that you could execute somebject.key to get the 
 	correct instance.   */
 function genkey(index) {
-	let k = "key-";
+	let k = "key_";
 	if (index < 10)
 		k += "0";
 	if (index < 100)
@@ -775,14 +776,20 @@ function put(obj, value, index = -1) {
 }
 GURPS.put = put;
 
-function listeqtrecurse(eqts, options, level, data) {
+/*  Funky helper function to be able to list hierarchical equipment in a linear list (with appropriate keys for editing)
+*/
+function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 	if (!eqts) return "";
-	var list = Object.values(eqts);
 	let ret = "";
-	for (var i = 0; i < list.length; i++) {
-		if (data) data.indent = level;
-		ret = ret + options.fn(list[i], { data: data });
-		ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level + 1, data);
+	let i = 0;
+	for (let key in eqts) {
+		let eqt = eqts[key];
+		if (data) {
+			data.indent = level;
+			data.key = parentkey + key;
+		}
+		ret = ret + options.fn(eqt, { data: data });
+		ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + ".contains.");
 	}
 	return ret;
 }
@@ -823,6 +830,7 @@ Hooks.once("init", async function () {
 	Actors.unregisterSheet("core", ActorSheet);
 	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
 
@@ -851,7 +859,8 @@ Hooks.once("init", async function () {
 		if (options.data)
 			data = Handlebars.createFrame(options.data);
 
-		return GURPS.listeqtrecurse(context, options, 0, data);
+		let ans = GURPS.listeqtrecurse(context, options, 0, data);
+		return ans;
 	});
 
 
@@ -866,9 +875,6 @@ Hooks.once("init", async function () {
 			penalty = GURPS.hitlocationRolls[loc]?.penalty;
 		return penalty;
 	});
-
-
-
 
 	game.settings.register("gurps", "changelogVersion", {
 		name: "Changelog Version",

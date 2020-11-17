@@ -337,19 +337,24 @@ export class GurpsActorSheet extends ActorSheet {
     return position;
   }
 
+	get title() {
+		const t = this.actor.name;
+		const sheet = this.actor.getFlag("core", "sheetClass");
+		return (sheet === "gurps.GurpsActorEditorSheet") ? "Editing: " + t : t;
+	}
+
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
 
-    const sheet = this.actor.getFlag("core", "sheetClass")
+    const sheet = this.actor.getFlag("core", "sheetClass");
+		const isFull = sheet === undefined || sheet === "gurps.GurpsActorSheetGCS";
 
     // Token Configuration
     const canConfigure = game.user.isGM || this.actor.owner;
     if (this.options.editable && canConfigure) {
-      buttons = [
+      let b = [
         {
-          label: (sheet === "gurps.GurpsActorCombatSheet")
-            ? "Full View"
-            : "Combat View",
+          label: isFull ? "Combat View" : "Full View",
           class: "toggle",
           icon: "fas fa-exchange-alt",
           onclick: ev => this._onToggleSheet(ev)
@@ -360,7 +365,17 @@ export class GurpsActorSheet extends ActorSheet {
           icon: "fas fa-file-import",
           onclick: ev => this._onFileImport(ev)
         }
-      ].concat(buttons);
+      ];
+			if (isFull) {
+				b.push(         
+					{
+	          label: "Edit",
+	          class: "edit",
+	          icon: "fas fa-edit",
+	          onclick: ev => this._onOpenEditor(ev)
+	        } );
+			}
+			buttons = b.concat(buttons);
     }
     return buttons
   }
@@ -403,9 +418,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     const original = this.actor.getFlag("core", "sheetClass")
     console.log("original: " + original)
-    const newSheet = (original === "gurps.GurpsActorCombatSheet")
-      ? "gurps.GurpsActorSheetGCS"
-      : "gurps.GurpsActorCombatSheet"
+		let newSheet = "gurps.GurpsActorCombatSheet"
+    if (original === "gurps.GurpsActorCombatSheet" || original === "gurps.GurpsActorEditorSheet") newSheet = "gurps.GurpsActorSheetGCS";
 
     await this.actor.sheet.close()
 
@@ -417,6 +431,13 @@ export class GurpsActorSheet extends ActorSheet {
     console.log("updated: " + updated)
     this.actor.sheet.render(true)
   }
+
+	async _onOpenEditor(event) {
+    event.preventDefault();
+    await this.actor.sheet.close();
+    await this.actor.setFlag("core", "sheetClass", "gurps.GurpsActorEditorSheet");
+    this.actor.sheet.render(true)
+	}
 
   async _onClickPdf(event) {
     event.preventDefault();
@@ -461,4 +482,60 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });
   }
+}
+
+export class GurpsActorEditorSheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["gurps", "sheet", "actor"],
+      template: "systems/gurps/templates/actor-sheet-gcs-editor.html",
+      width: 800,
+      height: 800,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
+      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
+    });
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    html.find(".enc").click(this._onClickEnc.bind(this));
+    html.find(".changeequip").click(this._onClickEquip.bind(this));
+
+	}
+	
+	async _onClickEquip(ev) {
+		event.preventDefault();
+		let element = ev.currentTarget;
+		let key = element.dataset.key;
+		let eqts = this.actor.data.data.equipment.carried;
+		for (let ek in eqts) {
+			if (ek === key) {
+				let eqt = eqts[ek];
+				let t = "data.equipment.carried." + key + ".equipped";
+				await this.actor.update({ [t] : !eqt.equipped });
+			}
+		}
+ 		//this.actor.sheet.render(true);
+	}
+	
+	async _onClickEnc(ev) {
+		event.preventDefault();
+		let element = ev.currentTarget;
+		let key = element.dataset.key;
+		let encs = this.actor.data.data.encumbrance;
+		if (encs[key].current) return;  // already selected
+		for (let enckey in encs) {
+			let enc = encs[enckey];
+			let t = "data.encumbrance." + enckey + ".current";
+			if (enc.current) {
+				await this.actor.update({ [t] : false });
+			}
+			if (key === enckey) {
+				await this.actor.update({ [t] : true });
+			}
+		} 
+		 this.actor.sheet.render(true);
+	}
 }

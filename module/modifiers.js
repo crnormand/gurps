@@ -70,7 +70,8 @@ export class ModifierBucket extends Application {
 			let ranged = [];
 			let defense = [];
 			let gen = [];
-			let effects = game.GURPS.LastActor.temporaryEffects;   // This will need to be changed when we introduce timed statuses (.e.g Shock lasting for 1 round)
+			
+			let effects = game.GURPS.LastActor.effects.filter(e => !e.data.disabled);
 			for (let e of effects) {
 				let type = e.data.flags.core.statusId;
 				let m = ModifiersForStatus[type];

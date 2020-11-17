@@ -4,6 +4,90 @@
   /* Attributes */
 }
 
+.gcs-input-ta {
+  border-width: 0px !important;
+  border: none !important;
+  height: 1em !important;
+	padding: 1px !important;
+}
+.gcs-input {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	padding: 1px !important;
+}
+.gcs-input-sm2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 2em;
+	padding: 1px !important;
+}
+.gcs-input-sm3 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 3em;
+	padding: 1px !important;
+}
+.gcs-input-sm4 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 4em;
+	padding: 1px !important;
+}
+.gcs-input-sm5 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 5em;
+	padding: 1px !important;
+}
+.gcs-input-2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 2em !important;
+	padding: 1px !important;
+}
+.gcs-input-3 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 3em !important;
+	padding: 1px !important;
+}
+.gcs-input-4 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 4em !important;
+	padding: 1px !important;
+}
+.gcs-input-5 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 5em !important;
+	padding: 1px !important;
+}
+
+.gcs-input-25 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 25em !important;
+	padding: 1px !important;
+}
+.gcs-input-30 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 30em !important;
+	padding: 1px !important;
+}
+
 #threed6 {
   /*border: 5px solid rgb(255, 123, 0);*/
   position: fixed;
@@ -302,12 +386,6 @@
   border-style: solid;
   border-color: black transparent transparent transparent;
   z-index: -100;
-}
-
-.gcs-attr-input {
-  border-width: 0px !important;
-  border: none !important;
-  height: 100% !important;
 }
 
 .pdflink {
@@ -828,6 +906,24 @@ body {
     "melee melee"
     "ranged ranged"
     "advantages skills"
+    "spells spells"
+    "equipment equipment"
+    "other_equipment other_equipment"
+    "notes notes"
+  ;
+  grid-gap: .05in;
+}
+
+#editorsheet {
+  display: grid;
+  grid-template:
+    "personal personal"
+    "stats stats"
+    "reactions reactions"
+    "melee melee"
+    "ranged ranged"
+    "advantages advantages"
+		"skills skills"
     "spells spells"
     "equipment equipment"
     "other_equipment other_equipment"
