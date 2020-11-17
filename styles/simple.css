@@ -4,6 +4,7 @@
   /* Attributes */
 }
 
+#testdialog,
 #threed6 {
   /*border: 5px solid rgb(255, 123, 0);*/
   position: fixed;
@@ -18,28 +19,32 @@
   display: inline-block;
 }
 
+#testdialog {
+  left: 940px;
+}
+
 #threed6 #threed6dicerot {
-	display:none;
-	position: absolute;
-	top:0;
-	left:0;
-	z-index:105;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 105;
 }
 
 #threed6 #threed6dicerotactive {
-	display:none;
-	position: absolute;
-	top:0;
-	left:0;
-	z-index:105;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 105;
 }
 
 #threed6:hover #threed6dicerot {
-	display: inline;
+  display: inline;
 }
 
 #threed6:active #threed6dicerotactive {
-	display: inline;
+  display: inline;
 }
 
 #modtooltip {
@@ -1851,4 +1856,32 @@ body {
 .roll-result .roll-value {
   font-size: 140%;
   font-weight: bold;
+}
+
+.gurps-grid {
+  display: grid;
+  gap: .5em;
+}
+
+.gurps-grid-3col {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.gurps-fields,
+.gurps-group {
+  display: flex;
+  flex-direction: column;
+  border: solid black 1px;
+}
+
+.gurps-fields {
+  padding: 0.5em;
+  border: none;
+}
+
+.gurps-group .header {
+  background-color: black;
+  color: white;
+  margin-bottom: 0.5em;
+  font-size: larger;
 }

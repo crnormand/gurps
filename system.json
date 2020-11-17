@@ -20,7 +20,8 @@
     "lib/moustachewax.js"
   ],
   "styles": [
-    "styles/simple.css"
+    "styles/simple.css",
+    "styles/css_boilerplate.css"
   ],
   "packs": [],
   "languages": [

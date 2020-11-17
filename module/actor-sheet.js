@@ -187,7 +187,6 @@ export class GurpsActorSheet extends ActorSheet {
         }
       }
     }
-    console.log(hitLocationTable)
     return hitLocationTable
   }
 
@@ -230,8 +229,6 @@ export class GurpsActorSheet extends ActorSheet {
           game.dice3d.messageHookDisabled = false
           self.applyDamageToSpecificLocation(contentData.location, damage)
         })
-
-
     } // Random
     else if (location === 'Large-Area') {
       console.log('implement Large-Area Injury')
