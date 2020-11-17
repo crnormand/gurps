@@ -428,14 +428,14 @@ function performAction(action, actor) {
 		formula = d6ify(action.formula);
 	}
 	if (action.type == "damage") {
-		prefix = "Rolling " + action.formula;
-		thing = " points of '" + action.damagetype + "' damage";
 		formula = d6ify(action.formula);
+		GURPS.damageChat.create(actor, formula, action.damagetype);
+		return;
 	}
 	if (action.type == "deriveddamage" && !!actor) {
-		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")";
-		thing = " points of '" + action.damagetype + "' damage";
 		formula = d6ify(action.derivedformula);
+		GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
+		return;
 	}
 	if (action.type == "skill" && !!actor) {
 		prefix = "Attempting ";
@@ -462,6 +462,7 @@ async function onRoll(event, actor) {
 	let element = event.currentTarget;
 	let prefix = "";
 	let thing = "";
+	let opt = "";
 	let target = 0;		// -1 == damage roll, target = 0 is NO ROLL.
 
 	if ("path" in element.dataset) {
@@ -472,7 +473,10 @@ async function onRoll(event, actor) {
 	}
 	if ("name" in element.dataset) {
 		prefix = "Attempting ";
-		thing = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
+		let text = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
+		thing = text.replace(/(.*?)\(.*\)/g,"$1");
+		opt = text.replace(/.*?\((.*)\)/g,"<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+		if (opt === text) opt = "";	
 		formula = "3d6";
 		let t = element.innerText;
 		if (!!t) {
@@ -492,9 +496,7 @@ async function onRoll(event, actor) {
 			dtype = formula.substr(i + 1).trim();
 			formula = formula.substring(0, i);
 		}
-
 		GURPS.damageChat.create(actor, formula, dtype)
-
 		return
 	}
 	if ("roll" in element.dataset) {
@@ -504,7 +506,7 @@ async function onRoll(event, actor) {
 		formula = d6ify(formula);
 	}
 
-	this.doRoll(actor, formula, targetmods, prefix, thing, target);
+	this.doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
 GURPS.onRoll = onRoll;
 
@@ -531,7 +533,7 @@ GURPS.applyModifierDesc = applyModifierDesc;
 	unfortunately, it has a lot fo hard coded junk in it.
 	*/
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
+async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optlabel = "") {
 
 	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
@@ -591,61 +593,26 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</small>";
-		chatcontent = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
-	} else {	// This is "damage" roll where the modifier is added to the roll, not the target
-		// REPLACED by code in damagemessage.mjs/DamageChat
+		chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + results + rdesc;
+	} else {	// This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
+		// NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
-		// let diceText = prefix.replace(/^Rolling /, '')
-		// let type = thing.replace(/^ points of '/, '').replace(/' damage/, '')
-		// let min = 1
-		// let b378 = false
+ 		let min = 0
+		if (formula.slice(-1) === '!') {
+			formula = formula.slice(0, -1)
+			min = 1
+		}
 
-		// if (type === 'cr') min = 0
+		roll = new Roll(formula + `+${modifier}`);
+		roll.roll();
+		let rtotal = roll.total;
+		if (rtotal < min) {
+			rtotal = min;
+		}
 
-		// if (formula.slice(-1) === '!') {
-		// 	formula = formula.slice(0, -1)
-		// 	min = 1
-		// }
-
-		// let roll = new Roll(formula + `+${modifier}`);
-		// roll.roll();
-		// let rtotal = roll.total;
-		// if (rtotal < min) {
-		// 	rtotal = min;
-		// 	if (type !== 'cr') b378 = true
-		// }
-
-		// let contentData = {
-		// 	dice: diceText,
-		// 	damage: rtotal,
-		// 	type: type,
-		// 	modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-		// 	isB378: b378,
-		// 	type: 'Damage'
-		// }
-		// let html = await
-		// 	renderTemplate('systems/gurps/templates/damage-message.html', contentData)
-
-		// console.log(html)
-		// const speaker = { alias: actor.name, _id: actor._id }
-		// let messageData = {
-		// 	user: game.user._id,
-		// 	speaker: speaker,
-		// 	content: html,
-		// 	type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-		// 	roll: roll
-		// };
-
-		// messageData["flags.transfer"] = JSON.stringify(
-		// 	{
-		// 		type: 'damageItem',
-		// 		payload: contentData
-		// 	}
-		// )
-
-		// let me = await CONFIG.ChatMessage.entityClass.create(messageData);
-		// // me.data.flags.damage = contentData
-		// return
+		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
+		if (rtotal == 1) thing = thing.replace("points", "point");
+		chatcontent = prefix + modscontent + "<br>" + results + thing;
 	}
 
 	const speaker = { alias: actor.name, _id: actor._id }
@@ -665,6 +632,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		messageData.sound = CONFIG.sounds.dice;
 		CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
+
 }
 GURPS.doRoll = doRoll;
 
