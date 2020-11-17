@@ -500,10 +500,27 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".enc").click(this._onClick.bind(this));
+    html.find(".enc").click(this._onClickEnc.bind(this));
+    html.find(".changeequip").click(this._onClickEquip.bind(this));
+
 	}
 	
-	async _onClick(ev) {
+	async _onClickEquip(ev) {
+		event.preventDefault();
+		let element = ev.currentTarget;
+		let key = element.dataset.key;
+		let eqts = this.actor.data.data.equipment.carried;
+		for (let ek in eqts) {
+			if (ek === key) {
+				let eqt = eqts[ek];
+				let t = "data.equipment.carried." + key + ".equipped";
+				await this.actor.update({ [t] : !eqt.equipped });
+			}
+		}
+ 		//this.actor.sheet.render(true);
+	}
+	
+	async _onClickEnc(ev) {
 		event.preventDefault();
 		let element = ev.currentTarget;
 		let key = element.dataset.key;

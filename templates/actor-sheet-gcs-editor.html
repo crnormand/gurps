@@ -86,34 +86,34 @@
             <div id="attributes">
                 <div class="header">Attributes</div>
                 <div class="fieldblock3">
-                    <div class="points">[{{data.attributes.ST.points}}]</div>
+                    <div class="points"><input name="data.attributes.ST.points" class="gcs-input-sm2" type="text" value="{{data.attributes.ST.points}}"/></div>
                     <div class="field"><input name="data.attributes.ST.value" class="gcs-input" type="text" value="{{data.attributes.ST.value}}"/></div>
                     <div class="label">{{localize "GURPS.attributesSTNAME"}} ({{localize "GURPS.attributesST"}})</div>
-                    <div class="points">[{{data.attributes.DX.points}}]</div>
+                    <div class="points"><input name="data.attributes.DX.points" class="gcs-input-sm2" type="text" value="{{data.attributes.DX.points}}"/></div>
                     <div class="field"><input name="data.attributes.DX.value" class="gcs-input" type="text" value="{{data.attributes.DX.value}}"/></div>
                     <div class="label">{{localize "GURPS.attributesDXNAME"}} ({{localize "GURPS.attributesDX"}})</div>
-                    <div class="points">[{{data.attributes.IQ.points}}]</div>
+                    <div class="points"><input name="data.attributes.IQ.points" class="gcs-input-sm2" type="text" value="{{data.attributes.IQ.points}}"/></div>
                     <div class="field"><input name="data.attributes.IQ.value" class="gcs-input" type="text" value="{{data.attributes.IQ.value}}"/></div>
                     <div class="label">{{localize "GURPS.attributesIQNAME"}} ({{localize "GURPS.attributesIQ"}})</div>
-                    <div class="points">[{{data.attributes.HT.points}}]</div>
+                    <div class="points"><input name="data.attributes.HT.points" class="gcs-input-sm2" type="text" value="{{data.attributes.HT.points}}"/></div>
                     <div class="field"><input name="data.attributes.HT.value" class="gcs-input" type="text" value="{{data.attributes.HT.value}}"/></div>
                     <div class="label">{{localize "GURPS.attributesHTNAME"}} ({{localize "GURPS.attributesHT"}})</div>
                     <hr>
-                    <div class="points">[{{data.attributes.WILL.points}}]</div>
+                    <div class="points"><input name="data.attributes.WILL.points" class="gcs-input-sm2" type="text" value="{{data.attributes.WILL.points}}"/></div>
                     <div class="field"><input name="data.attributes.WILL.value" class="gcs-input" type="text" value="{{data.attributes.WILL.value}}"/></div>
                     <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
                     <div class="points"></div>
 										<div class="field"><input name="data.frightcheck" class="gcs-input" type="text" value="{{data.frightcheck}}"/></div>
                     <div class="label">Fright Check</div>
                     <hr>
-                    <div class="points">[{{data.basicspeed.points}}]</div>
+                    <div class="points"><input name="data.basicspeed.points" class="gcs-input-sm2" type="text" value="{{data.basicspeed.points}}"/></div>
  										<div class="field"><input name="data.basicspeed.value" class="gcs-input" type="text" value="{{data.basicspeed.value}}"/></div>
                     <div class="label">Basic Speed</div>
-                    <div class="points">[{{data.basicmove.points}}]</div>
+                    <div class="points"><input name="data.basicmove.points" class="gcs-input-sm2" type="text" value="{{data.basicmove.points}}"/></div>
 										<div class="field"><input name="data.basicmove.value" class="gcs-input" type="text" value="{{data.basicmove.value}}"/></div>
                     <div class="label">Basic Move</div>
                     <hr>
-                    <div class="points">[{{data.attributes.PER.points}}]</div>
+                    <div class="points"><input name="data.attributes.PER.points" class="gcs-input-sm2" type="text" value="{{data.attributes.PER.points}}"/></div>
                     <div class="field"><input name="data.attributes.PER.value" class="gcs-input" type="text" value="{{data.attributes.PER.value}}"/></div>
                     <div class="label">{{localize "GURPS.attributesPERNAME"}} ({{localize "GURPS.attributesPER"}})</div>
                     <div class="points"></div>
@@ -202,11 +202,11 @@
                 <div class="header">Fatigue Points</div>
                 <div class="fieldblock3">
                     <div class="points"></div>
-                    <div class="field"><input class="gcs-input-4" name="data.FP.value" type="text"
+                    <div class="field"><input class="gcs-input-sm3" name="data.FP.value" type="text"
                             value="{{data.FP.value}}" data-dtype="Number" /></div>
                     <div class="label">Current</div>
                     <div class="points">[{{data.FP.points}}]</div>
-                    <div class="field"><input class="gcs-input-4" name="data.FP.max" type="text"
+                    <div class="field"><input class="gcs-input-sm3" name="data.FP.max" type="text"
                             value="{{data.FP.max}}" data-dtype="Number" /></div>
                     <div class="label">Basic</div>
 
@@ -221,12 +221,12 @@
                 <div class="header">Hit Points</div>
                 <div class="fieldblock3">
                     <div class="points"></div>
-                    <div class="field"><input class="gcs-input-4" name="data.HP.value" type="text"
+                    <div class="field"><input class="gcs-input-sm3" name="data.HP.value" type="text"
                             value="{{data.HP.value}}" data-dtype="Number" /></div>
                     <div class="label">Current</div>
 
                     <div class="points">[{{data.HP.points}}]</div>
-                    <div class="field"><input class="gcs-input-4" name="data.HP.max" type="text"
+                    <div class="field"><input class="gcs-input-sm3" name="data.HP.max" type="text"
                             value="{{data.HP.max}}" data-dtype="Number" /></div>
                     <div class="label">Basic</div>
 
@@ -297,22 +297,20 @@
             <div class="st header">ST</div>
 
 
-            {{#each data.ranged}}
-            <div class="desc">{{{gurpslink this.name}}}
-                <div class="list_note">{{{gurpslink this.notes}}}</div>
+            {{#each data.ranged as | this key |}}
+            <div class="desc"><input name="data.ranged.{{key}}.name" class="gcs-input-25" type="text" value="{{this.name}}"/>
+                <div class="list_note"><input name="data.ranged.{{key}}.notes" class="gcs-input-25" type="text" value="{{this.notes}}"/></div>
             </div>
-            <div class="usage">{{this.mode}}</div>
-            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
-            <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='for {{this.name}} Acc'>
-                {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
-            <div class="damage rollable" data-damage>{{this.damage}}</div>
-            <div class="range">{{this.range}}</div>
-            <div class="rof">{{this.rof}}</div>
-            <div class="shots">{{this.shots}}</div>
-            <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='for {{this.name}} Bulk'>{{this.bulk}}
-            </div>
-            <div class="rcl">{{this.rcl}}</div>
-            <div class="st">{{this.st}}</div>
+            <div class="usage"><input name="data.ranged.{{key}}.mode" class="gcs-input" type="text" value="{{this.mode}}"/></div>
+            <div class="level"><input name="data.ranged.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
+            <div class="acc"><input name="data.ranged.{{key}}.acc" class="gcs-input-sm2" type="text" value="{{this.acc}}"/></div>
+            <div class="damage"><input name="data.ranged.{{key}}.damage" class="gcs-input-5" type="text" value="{{this.damage}}"/></div>
+            <div class="range"><input name="data.ranged.{{key}}.range" class="gcs-input-sm5" type="text" value="{{this.range}}"/></div>
+            <div class="rof"><input name="data.ranged.{{key}}.rof" class="gcs-input-sm2" type="text" value="{{this.rof}}"/></div>
+            <div class="shots"><input name="data.ranged.{{key}}.shots" class="gcs-input-sm2" type="text" value="{{this.shots}}"/></div>
+            <div class="bulk"><input name="data.ranged.{{key}}.bulk" class="gcs-input-sm2" type="text" value="{{this.bulk}}"/></div>
+            <div class="rcl"><input name="data.ranged.{{key}}.rcl" class="gcs-input-sm2" type="text" value="{{this.rcl}}"/></div>
+            <div class="st"><input name="data.ranged.{{key}}.st" class="gcs-input-sm2" type="text" value="{{this.st}}"/></div>
             {{/each}}
 
         </div>
@@ -329,29 +327,29 @@
             <div class="pts satisfiedY"><input name="data.ads.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
             <div class="ref satisfiedY"><input name="data.ads.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
-            {{#each data.powers}}
-            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
+            {{#each data.powers as | this key |}}
+            <div class="desc indent0 satisfiedY"><input name="data.powers.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY"><textarea name="data.powers.{{key}}.notes" class="gcs-input-ta" type="text">{{this.notes}}</textarea></div>
             </div>
-            <div class="pts satisfiedY">{{this.points}}</div>
-            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
+            <div class="pts satisfiedY"><input name="data.powers.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY"><input name="data.powers.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
-            {{#each data.disads}}
-            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
+            {{#each data.disads as | this key |}}
+            <div class="desc indent0 satisfiedY"><input name="data.disads.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY"><textarea name="data.disads.{{key}}.notes" class="gcs-input-ta" type="text">{{this.notes}}</textarea></div>
             </div>
-            <div class="pts satisfiedY">{{this.points}}</div>
-            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
+            <div class="pts satisfiedY"><input name="data.disads.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY"><input name="data.disads.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
-            {{#each data.others}}
-            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
+            {{#each data.others as | this key |}}
+            <div class="desc indent0 satisfiedY"><input name="data.others.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY"><textarea name="data.others.{{key}}.notes" class="gcs-input-ta" type="text">{{this.notes}}</textarea></div>
             </div>
-            <div class="pts satisfiedY">{{this.points}}</div>
-            <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
+            <div class="pts satisfiedY"><input name="data.others.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY"><input name="data.others.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
         </div>
 
@@ -365,7 +363,7 @@
             {{#each data.skills as | this key |}}
             <div class="desc indent0 satisfiedY"><input name="data.skills.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
 <!--                <div class="list_note satisfiedY"></div>
--->                <div class="list_note satisfiedY"><input name="data.skills.{{key}}.notes" class="gcs-input-ta" type="text" value="{{this.notes}}"/></div><div></div>
+-->                <div class="list_note satisfiedY"><input name="data.skills.{{key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div><div></div>
             </div>
             <div class="sl satisfiedY"><input name="data.skills.{{key}}.level" class="gcs-input-sm3" type="text" value="{{this.level}}"/></div>
             <div class="rsl satisfiedY"><input name="data.skills.{{key}}.relativelevel" class="gcs-input-sm4" type="text" value="{{this.relativelevel}}"/></div>
@@ -388,10 +386,10 @@
             <div class="pts header">Pts</div>
             <div class="ref header">Ref</div>
 
-            {{#each data.spells}}
-            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
-                <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+            {{#each data.spells as | this key |}}
+            <div class="desc indent0 satisfiedY"><input name="data.spells.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
+<!--                <div class="list_note satisfiedY"></div>
+-->                <div class="list_note satisfiedY"><input name="data.spells.{{key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div><div></div>
             </div>
             <div class="cls satisfiedY"></div>
             <div class="college satisfiedY">{{this.college}}</div>
@@ -419,7 +417,7 @@
             <div></div>
 
            {{#listeqt data.equipment.carried }}
-            <div class="equipped satisfiedY">{{#if this.equipped}}X{{/if}}</div>
+            <div class="equipped satisfiedY changeequip" data-key="{{@key}}">{{#if this.equipped}}X{{/if}}</div>
             <div class="qty satisfiedY"><input name="data.equipment.carried.{{@key}}.count" class="gcs-input-sm3" type="text" value="{{this.count}}"/></div>
             <div class="desc indent{{@indent}} satisfiedY"><input name="data.equipment.carried.{{@key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"><input name="data.equipment.carried.{{@key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div>
@@ -453,7 +451,7 @@
             <div class="weight satisfiedY"><input name="data.equipment.other.{{@key}}.weight" class="gcs-input-sm5" type="text" value="{{this.weight}}"/></div>
             <div class="sum_cost satisfiedY"><input name="data.equipment.other.{{@key}}.costsum" class="gcs-input-sm5" type="text" value="{{this.costsum}}"/></div>
             <div class="sum_weight satisfiedY"><input name="data.equipment.other.{{@key}}.weightsum" class="gcs-input-sm5" type="text" value="{{this.weightsum}}"/></div>
-            <div class="ref satisfiedY pdflink"><input name="data.equipment.other.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="ref satisfiedY"><input name="data.equipment.other.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/listeqt}}
 
         </div>
