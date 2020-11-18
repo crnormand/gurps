@@ -748,7 +748,7 @@ function put(obj, value, index = -1) {
 }
 GURPS.put = put;
 
-// Convolutions to remove a key from an object and fill in the gaps
+// Convolutions to remove a key from an object and fill in the gaps, necessary because the default add behavior just looks for the first open gap
 async function removeKey(actor, path) {
 	let i = path.lastIndexOf(".");
 	let objpath = path.substring(0, i);
@@ -774,6 +774,7 @@ async function removeKey(actor, path) {
 }
 GURPS.removeKey = removeKey;
 
+// Because the DB just merges keys, the best way to insert is to delete the whole colleciton object, fix it up, and then re-add it.
 async function insertBeforeKey(actor, path, newobj) {
 	let i = path.lastIndexOf(".");
 	let objpath = path.substring(0, i);

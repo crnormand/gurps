@@ -1,6 +1,6 @@
 import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
-import { Melee, Reaction } from './actor.js';
+import { Melee, Reaction, Ranged, Advantage, Skill, Spell } from './actor.js';
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -462,18 +462,30 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 		]);
 	}
 	
-	makeHeaderMenu(html, cssclass, obj, path) {
-		new ContextMenu(html, cssclass, [								// reactions
-			{
-				name: "Add to the end",
+	makeHeaderMenu(html, cssclass, name, obj, path, name2, obj2, path2) {
+		let opts = [];
+		opts.push(			{
+				name: "Add " + name + " to the end",
 				icon: "<i class='fas fa-edit'></i>",
 				callback: e => {
 					let o = GURPS.decode(this.actor.data, path);
 					GURPS.put(o, obj);
 					this.actor.update({ [path] : o });
 				}
-			}	
-		]);
+			});
+		if (!!path2) {
+			opts.push(			{
+				name: "Add " + name2 + " to the end",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let o = GURPS.decode(this.actor.data, path2);
+					GURPS.put(o, obj2);
+					this.actor.update({ [path2] : o });
+				}
+			});
+		}
+
+		new ContextMenu(html, cssclass, opts);
 	}
 
   activateListeners(html) {
@@ -482,11 +494,24 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     html.find(".enc").click(this._onClickEnc.bind(this));
     html.find(".changeequip").click(this._onClickEquip.bind(this));
 
-    this.makeHeaderMenu(html, ".reacthead", new Reaction("+0", "from who"), "data.reactions");
+    this.makeHeaderMenu(html, ".reacthead", "Reaction", new Reaction("+0", "from who"), "data.reactions");
 		this.makeAddDeleteMenu(html, ".reactmenu", new Reaction("+0", "from who"));
-    this.makeHeaderMenu(html, ".meleehead", new Melee("New Attack"), "data.melee");
+
+    this.makeHeaderMenu(html, ".meleehead", "Melee Attack", new Melee("New Attack"), "data.melee");
 		this.makeAddDeleteMenu(html, ".meleemenu", new Melee("New Attack"));
 
+    this.makeHeaderMenu(html, ".rangedhead", "Ranged Attack", new Ranged("New Attack"), "data.ranged");
+		this.makeAddDeleteMenu(html, ".rangedmenu", new Ranged("New Attack"));
+
+    this.makeHeaderMenu(html, ".adshead", "Advantage", new Advantage("New Advantage"), "data.ads", "Disadvantage", new Advantage("New Disadvantage"), "data.disads");
+		this.makeAddDeleteMenu(html, ".adsmenu", new Advantage("New Advantage"));
+		this.makeAddDeleteMenu(html, ".disadsmenu", new Advantage("New Disadvantage"));
+
+    this.makeHeaderMenu(html, ".skillhead", "Skill", new Skill("New Skill"), "data.skills");
+		this.makeAddDeleteMenu(html, ".skillmenu", new Skill("New Skill"));
+
+    this.makeHeaderMenu(html, ".spellhead", "Spell", new Spell("New Spell"), "data.spells");
+		this.makeAddDeleteMenu(html, ".spellmenu", new Spell("New Spell"));
 
 	}
 	

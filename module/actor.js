@@ -543,6 +543,7 @@ export class GurpsActor extends Actor {
 				if (isFoundryV1) {
 					sp.cost = t(j.cost);
 					sp.maintain = t(j.maintain);
+					sp.difficulty = t(j.difficulty);
 					sp.notes = t(j.notes);
 					sp.pageref = t(j.pageref);
 				} else {

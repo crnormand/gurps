@@ -263,7 +263,7 @@
             <div></div>
 
             {{#each data.melee as | this key |}}
-            <div class="desc gcs-edit meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.name" class="gcs-input-25" type="text" value="{{this.name}}"/>
+            <div class="desc meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.name" class="gcs-input-25" type="text" value="{{this.name}}"/>
                 <div class="list_note"><input name="data.melee.{{key}}.notes" class="gcs-input-25" type="text" value="{{this.notes}}"/></div>
             </div>
             <div class="usage meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.mode" class="gcs-input" type="text" value="{{this.mode}}"/></div>
@@ -279,48 +279,49 @@
         </div>
 
        <div id="ranged">
-            <div class="desc header">Ranged Weapons</div>
-            <div class="usage header">Usage</div>
-            <div class="level header">Lvl</div>
-            <div class="acc header">Acc</div>
-            <div class="damage header">Damage</div>
-            <div class="range header">Range</div>
-            <div class="rof header">RoF</div>
-            <div class="shots header">Shots</div>
-            <div class="bulk header">Bulk</div>
-            <div class="rcl header">Rcl</div>
-            <div class="st header">ST</div>
+            <div class="desc header rangedhead">Ranged Weapons</div>
+            <div class="usage header rangedhead">Usage</div>
+            <div class="level header rangedhead">Lvl</div>
+            <div class="acc header rangedhead">Acc</div>
+            <div class="damage header rangedhead">Damage</div>
+            <div class="range header rangedhead">Range</div>
+            <div class="rof header rangedhead">RoF</div>
+            <div class="shots header rangedhead">Shots</div>
+            <div class="bulk header rangedhead">Bulk</div>
+            <div class="rcl header rangedhead">Rcl</div>
+            <div class="st header rangedhead">ST</div>
 
 
             {{#each data.ranged as | this key |}}
-            <div class="desc"><input name="data.ranged.{{key}}.name" class="gcs-input-25" type="text" value="{{this.name}}"/>
+            <div class="desc rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.name" class="gcs-input-25" type="text" value="{{this.name}}"/>
                 <div class="list_note"><input name="data.ranged.{{key}}.notes" class="gcs-input-25" type="text" value="{{this.notes}}"/></div>
             </div>
-            <div class="usage"><input name="data.ranged.{{key}}.mode" class="gcs-input" type="text" value="{{this.mode}}"/></div>
-            <div class="level"><input name="data.ranged.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
-            <div class="acc"><input name="data.ranged.{{key}}.acc" class="gcs-input-sm2" type="text" value="{{this.acc}}"/></div>
-            <div class="damage"><input name="data.ranged.{{key}}.damage" class="gcs-input-5" type="text" value="{{this.damage}}"/></div>
-            <div class="range"><input name="data.ranged.{{key}}.range" class="gcs-input-sm5" type="text" value="{{this.range}}"/></div>
-            <div class="rof"><input name="data.ranged.{{key}}.rof" class="gcs-input-sm2" type="text" value="{{this.rof}}"/></div>
-            <div class="shots"><input name="data.ranged.{{key}}.shots" class="gcs-input-sm2" type="text" value="{{this.shots}}"/></div>
-            <div class="bulk"><input name="data.ranged.{{key}}.bulk" class="gcs-input-sm2" type="text" value="{{this.bulk}}"/></div>
-            <div class="rcl"><input name="data.ranged.{{key}}.rcl" class="gcs-input-sm2" type="text" value="{{this.rcl}}"/></div>
-            <div class="st"><input name="data.ranged.{{key}}.st" class="gcs-input-sm2" type="text" value="{{this.st}}"/></div>
+            <div class="usage rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.mode" class="gcs-input" type="text" value="{{this.mode}}"/></div>
+            <div class="level rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
+            <div class="acc rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.acc" class="gcs-input-sm2" type="text" value="{{this.acc}}"/></div>
+            <div class="damage rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.damage" class="gcs-input-5" type="text" value="{{this.damage}}"/></div>
+            <div class="range rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.range" class="gcs-input-sm5" type="text" value="{{this.range}}"/></div>
+            <div class="rof rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.rof" class="gcs-input-sm2" type="text" value="{{this.rof}}"/></div>
+            <div class="shots rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.shots" class="gcs-input-sm2" type="text" value="{{this.shots}}"/></div>
+            <div class="bulk rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.bulk" class="gcs-input-sm2" type="text" value="{{this.bulk}}"/></div>
+            <div class="rcl rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.rcl" class="gcs-input-sm2" type="text" value="{{this.rcl}}"/></div>
+            <div class="st rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.st" class="gcs-input-sm2" type="text" value="{{this.st}}"/></div>
             {{/each}}
 
         </div>
 
+				{{! Only added editing capabilities to the ads/disads lists.   Powers and Others for for FG import only }}
         <div id="advantages">
-            <div class="desc header">Advantages, Disadvantages, Perks &amp; Quirks</div>
-            <div class="pts header">Pts</div>
-            <div class="ref header">Ref</div>
+            <div class="desc header adshead">Advantages, Disadvantages, Perks &amp; Quirks</div>
+            <div class="pts header adshead">Pts</div>
+            <div class="ref header adshead">Ref</div>
             {{#each data.ads as | this key |}}
-            <div class="desc indent0 satisfiedY"><input name="data.ads.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
+            <div class="desc indent0 satisfiedY adsmenu" data-key="data.ads.{{key}}"><input name="data.ads.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"></div>
                 <div class="list_note satisfiedY"><textarea name="data.ads.{{key}}.notes" class="gcs-input-ta" type="text">{{this.notes}}</textarea></div>
             </div>
-            <div class="pts satisfiedY"><input name="data.ads.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
-            <div class="ref satisfiedY"><input name="data.ads.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="pts satisfiedY adsmenu" data-key="data.ads.{{key}}"><input name="data.ads.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY adsmenu" data-key="data.ads.{{key}}"><input name="data.ads.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
             {{#each data.powers as | this key |}}
             <div class="desc indent0 satisfiedY"><input name="data.powers.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
@@ -331,12 +332,12 @@
             <div class="ref satisfiedY"><input name="data.powers.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
             {{#each data.disads as | this key |}}
-            <div class="desc indent0 satisfiedY"><input name="data.disads.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
+            <div class="desc indent0 satisfiedY disadsmenu" data-key="data.disads.{{key}}"><input name="data.disads.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"></div>
                 <div class="list_note satisfiedY"><textarea name="data.disads.{{key}}.notes" class="gcs-input-ta" type="text">{{this.notes}}</textarea></div>
             </div>
-            <div class="pts satisfiedY"><input name="data.disads.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
-            <div class="ref satisfiedY"><input name="data.disads.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="pts satisfiedY disadsmenu" data-key="data.disads.{{key}}"><input name="data.disads.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY disadsmenu" data-key="data.disads.{{key}}"><input name="data.disads.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
             {{#each data.others as | this key |}}
             <div class="desc indent0 satisfiedY"><input name="data.others.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
@@ -349,52 +350,52 @@
         </div>
 
         <div id="skills">
-            <div class="desc header">Skills</div>
-            <div class="sl header">SL</div>
-            <div class="rsl header">RSL</div>
-            <div class="pts header">Pts</div>
-            <div class="ref header">Ref</div>
+            <div class="desc header skillhead">Skills</div>
+            <div class="sl header skillhead">SL</div>
+            <div class="rsl header skillhead">RSL</div>
+            <div class="pts header skillhead">Pts</div>
+            <div class="ref header skillhead">Ref</div>
 
             {{#each data.skills as | this key |}}
-            <div class="desc indent0 satisfiedY"><input name="data.skills.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
+            <div class="desc indent0 satisfiedY skillmenu" data-key="data.skills.{{key}}"><input name="data.skills.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
 <!--                <div class="list_note satisfiedY"></div>
 -->                <div class="list_note satisfiedY"><input name="data.skills.{{key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div><div></div>
             </div>
-            <div class="sl satisfiedY"><input name="data.skills.{{key}}.level" class="gcs-input-sm3" type="text" value="{{this.level}}"/></div>
-            <div class="rsl satisfiedY"><input name="data.skills.{{key}}.relativelevel" class="gcs-input-sm4" type="text" value="{{this.relativelevel}}"/></div>
-            <div class="pts satisfiedY"><input name="data.skills.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
-            <div class="ref satisfiedY"><input name="data.skills.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="sl satisfiedY skillmenu" data-key="data.skills.{{key}}"><input name="data.skills.{{key}}.level" class="gcs-input-sm3" type="text" value="{{this.level}}"/></div>
+            <div class="rsl satisfiedY skillmenu" data-key="data.skills.{{key}}"><input name="data.skills.{{key}}.relativelevel" class="gcs-input-sm4" type="text" value="{{this.relativelevel}}"/></div>
+            <div class="pts satisfiedY skillmenu" data-key="data.skills.{{key}}"><input name="data.skills.{{key}}.points" class="gcs-input-sm3" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY skillmenu" data-key="data.skills.{{key}}"><input name="data.skills.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
         </div>
 
         <div id="spells">
-            <div class="desc header">Spells</div>
-            <div class="cls header">Class</div>
-            <div class="college header">College</div>
-            <div class="mana header">Cost</div>
-            <div class="mana_maintain header">Maintain</div>
-            <div class="time header">Time</div>
-            <div class="duration header">Duration</div>
-            <div class="sl header">SL</div>
-            <div class="rsl header">RSL</div>
-            <div class="pts header">Pts</div>
-            <div class="ref header">Ref</div>
+            <div class="desc header spellhead">Spells</div>
+            <div class="cls header spellhead">Class</div>
+            <div class="college header spellhead">College</div>
+            <div class="mana header spellhead">Cost</div>
+            <div class="mana_maintain header spellhead">Maintain</div>
+            <div class="time header spellhead">Time</div>
+            <div class="duration header spellhead">Duration</div>
+            <div class="sl header spellhead">SL</div>
+            <div class="rsl header spellhead">RSL</div>
+            <div class="pts header spellhead">Pts</div>
+            <div class="ref header spellhead">Ref</div>
 
             {{#each data.spells as | this key |}}
-            <div class="desc indent0 satisfiedY"><input name="data.spells.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
+            <div class="desc indent0 satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
 <!--                <div class="list_note satisfiedY"></div>
 -->                <div class="list_note satisfiedY"><input name="data.spells.{{key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div><div></div>
             </div>
-            <div class="cls satisfiedY"><input name="data.spells.{{key}}.class" class="gcs-input-sm5" type="text" value="{{this.class}}"/></div>
-            <div class="college satisfiedY"><input name="data.spells.{{key}}.college" class="gcs-input-sm5" type="text" value="{{this.college}}"/></div>
-            <div class="mana satisfiedY"><input name="data.spells.{{key}}.cost" class="gcs-input-sm3" type="text" value="{{this.cost}}"/></div>
-            <div class="mana_maintain satisfiedY"><input name="data.spells.{{key}}.maintain" class="gcs-input-sm4" type="text" value="{{this.maintain}}"/></div>
-            <div class="time satisfiedY"><input name="data.spells.{{key}}.casttime" class="gcs-input-sm5" type="text" value="{{this.casttime}}"/></div>
-            <div class="duration satisfiedY"><input name="data.spells.{{key}}.duration" class="gcs-input-sm5" type="text" value="{{this.duration}}"/></div>
-            <div class="sl satisfiedY"><input name="data.spells.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
-            <div class="rsl satisfiedY"></div>
-            <div class="pts satisfiedY"><input name="data.spells.{{key}}.points" class="gcs-input-sm2" type="text" value="{{this.points}}"/></div>
-            <div class="ref satisfiedY"><input name="data.spells.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="cls satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.class" class="gcs-input-sm5" type="text" value="{{this.class}}"/></div>
+            <div class="college satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.college" class="gcs-input-sm5" type="text" value="{{this.college}}"/></div>
+            <div class="mana satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.cost" class="gcs-input-sm3" type="text" value="{{this.cost}}"/></div>
+            <div class="mana_maintain satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.maintain" class="gcs-input-sm4" type="text" value="{{this.maintain}}"/></div>
+            <div class="time satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.casttime" class="gcs-input-sm5" type="text" value="{{this.casttime}}"/></div>
+            <div class="duration satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.duration" class="gcs-input-sm5" type="text" value="{{this.duration}}"/></div>
+            <div class="sl satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
+            <div class="rsl satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.difficulty" class="gcs-input-sm3" type="text" value="{{this.difficulty}}"/></div>
+            <div class="pts satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.points" class="gcs-input-sm2" type="text" value="{{this.points}}"/></div>
+            <div class="ref satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/each}}
 
         </div>
