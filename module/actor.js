@@ -752,6 +752,10 @@ export class Encumbrance {
 }
 
 export class Note extends Named {
+	constructor(n) {
+		super();
+		this.notes = n;
+	}
 }
 
 export class Equipment extends Named {

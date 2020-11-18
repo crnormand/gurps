@@ -1,6 +1,6 @@
 import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
-import { Melee, Reaction, Ranged, Advantage, Skill, Spell } from './actor.js';
+import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Note } from './actor.js';
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -434,8 +434,9 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      classes: ["gurps", "sheet", "actor"],
+      classes: ["gurps", "gurpsactorsheet", "sheet", "actor"],
       template: "systems/gurps/templates/actor-sheet-gcs-editor.html",
+			scrollY: [".gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes"], 
       width: 800,
       height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
@@ -449,7 +450,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 				name: "Add Before",
 				icon: "<i class='fas fa-edit'></i>",
 				callback: e => {
-					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, obj);
+					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj));
 				}
 			},
 			{
@@ -469,7 +470,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 				icon: "<i class='fas fa-edit'></i>",
 				callback: e => {
 					let o = GURPS.decode(this.actor.data, path);
-					GURPS.put(o, obj);
+					GURPS.put(o, duplicate(obj));
 					this.actor.update({ [path] : o });
 				}
 			});
@@ -479,7 +480,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 				icon: "<i class='fas fa-edit'></i>",
 				callback: e => {
 					let o = GURPS.decode(this.actor.data, path2);
-					GURPS.put(o, obj2);
+					GURPS.put(o, duplicate(obj2));
 					this.actor.update({ [path2] : o });
 				}
 			});
@@ -494,8 +495,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     html.find(".enc").click(this._onClickEnc.bind(this));
     html.find(".changeequip").click(this._onClickEquip.bind(this));
 
-    this.makeHeaderMenu(html, ".reacthead", "Reaction", new Reaction("+0", "from who"), "data.reactions");
-		this.makeAddDeleteMenu(html, ".reactmenu", new Reaction("+0", "from who"));
+    this.makeHeaderMenu(html, ".reacthead", "Reaction", new Reaction("+0", "from ..."), "data.reactions");
+		this.makeAddDeleteMenu(html, ".reactmenu", new Reaction("+0", "from ..."));
 
     this.makeHeaderMenu(html, ".meleehead", "Melee Attack", new Melee("New Attack"), "data.melee");
 		this.makeAddDeleteMenu(html, ".meleemenu", new Melee("New Attack"));
@@ -513,6 +514,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeHeaderMenu(html, ".spellhead", "Spell", new Spell("New Spell"), "data.spells");
 		this.makeAddDeleteMenu(html, ".spellmenu", new Spell("New Spell"));
 
+    this.makeHeaderMenu(html, ".notehead", "Note", new Note("New Note"), "data.notes");
+		this.makeAddDeleteMenu(html, ".notemenu", new Note("New Note"));
 	}
 	
 	async _onRightClickReactions(ev) {

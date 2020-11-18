@@ -1,4 +1,4 @@
-<form class="{{cssClass}} overflowy" autocomplete="off">
+<form class="{{cssClass}} " autocomplete="off">
     <div id="editorsheet" class="gurpsactorsheet">
         <div id="personal">
             <div id="portrait">
@@ -451,9 +451,9 @@
 
         </div>
         <div id="notes">
-            <div class="desc header">Notes</div>
+            <div class="desc header notehead">Notes</div>
             {{#each data.notes as | this key |}}
-            <div class="desc indent0"><textarea name="data.notes.{{key}}.notes" class="gcs-input-ta" type="text">{{this.notes}}</textarea></div>
+            <div class="desc indent0 notemenu" data-key="data.notes.{{key}}"><textarea name="data.notes.{{key}}.notes" class="gcs-input-ta" type="text">{{this.notes}}</textarea></div>
             {{/each}}
         </div>
     </div>
