@@ -1,6 +1,6 @@
 import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
-import { Reaction } from './actor.js';
+import { Melee, Reaction } from './actor.js';
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -443,28 +443,13 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     });
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    html.find(".enc").click(this._onClickEnc.bind(this));
-    html.find(".changeequip").click(this._onClickEquip.bind(this));
-    new ContextMenu(html, "#sithead, #modhead", [
-			{
-				name: "Add",
-				icon: "<i class='fas fa-edit'></i>",
-				callback: e => {
-					let r = this.actor.data.data.reactions;
-					GURPS.put(r, new Reaction("+0", "from who"));
-					this.actor.update({ "data.reactions" : r });
-				}
-			}	
-		]);
-    new ContextMenu(html, ".sitmenu", [
+	makeAddDeleteMenu(html, cssclass, obj) {
+		new ContextMenu(html, cssclass, [
 			{
 				name: "Add Before",
 				icon: "<i class='fas fa-edit'></i>",
 				callback: e => {
-					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, new Reaction("+0", "from who"));
+					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, obj);
 				}
 			},
 			{
@@ -474,8 +459,34 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 					GURPS.removeKey(this.actor, e[0].dataset.key);
 				}
 			}	
-
 		]);
+	}
+	
+	makeHeaderMenu(html, cssclass, obj, path) {
+		new ContextMenu(html, cssclass, [								// reactions
+			{
+				name: "Add to the end",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let o = GURPS.decode(this.actor.data, path);
+					GURPS.put(o, obj);
+					this.actor.update({ [path] : o });
+				}
+			}	
+		]);
+	}
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    html.find(".enc").click(this._onClickEnc.bind(this));
+    html.find(".changeequip").click(this._onClickEquip.bind(this));
+
+    this.makeHeaderMenu(html, ".reacthead", new Reaction("+0", "from who"), "data.reactions");
+		this.makeAddDeleteMenu(html, ".reactmenu", new Reaction("+0", "from who"));
+    this.makeHeaderMenu(html, ".meleehead", new Melee("New Attack"), "data.melee");
+		this.makeAddDeleteMenu(html, ".meleemenu", new Melee("New Attack"));
+
 
 	}
 	

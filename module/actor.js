@@ -660,6 +660,9 @@ export class GurpsActor extends Actor {
 }
 
 export class Named {
+	constructor(n1) {
+		this.name = n1;
+	}
 	name = "";
 	notes = "";
 	pageref = "";

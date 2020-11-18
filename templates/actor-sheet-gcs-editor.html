@@ -240,39 +240,39 @@
         </div>
 
         <div id="reactions">
-            <div id="modhead" class="modifier header">Modifier</div>
-            <div id="sithead" class="situation header">Reaction</div>
+            <div class="modifier header reacthead">Modifier</div>
+            <div class="situation header reacthead">Reaction</div>
             <div></div>
 					{{#each data.reactions as | this key |}}
-						<div class="modifier sitmenu" data-key="data.reactions.{{key}}"><input name="data.reactions.{{key}}.modifier" class="gcs-input-sm4" type="text" value="{{this.modifier}}"/></div>
-            <div class="situation sitmenu" data-key="data.reactions.{{key}}"><input name="data.reactions.{{key}}.situation" class="gcs-input" type="text" value="{{this.situation}}"/></div>
+						<div class="modifier reactmenu" data-key="data.reactions.{{key}}"><input name="data.reactions.{{key}}.modifier" class="gcs-input-sm4" type="text" value="{{this.modifier}}"/></div>
+            <div class="situation reactmenu" data-key="data.reactions.{{key}}"><input name="data.reactions.{{key}}.situation" class="gcs-input" type="text" value="{{this.situation}}"/></div>
             <div></div>
 					{{/each}}
 
         </div>
 
         <div id="melee">
-            <div class="desc header">Melee Weapons</div>
-            <div class="usage header">Usage</div>
-            <div class="level header">Lvl</div>
-            <div class="parry header">Parry</div>
-            <div class="block header">Block</div>
-            <div class="damage header">Damage</div>
-            <div class="reach header">Reach</div>
-            <div class="st header">ST</div>
+            <div class="desc header meleehead">Melee Weapons</div>
+            <div class="usage header meleehead">Usage</div>
+            <div class="level header meleehead">Lvl</div>
+            <div class="parry header meleehead">Parry</div>
+            <div class="block header meleehead">Block</div>
+            <div class="damage header meleehead">Damage</div>
+            <div class="reach header meleehead">Reach</div>
+            <div class="st header meleehead">ST</div>
             <div></div>
 
             {{#each data.melee as | this key |}}
-            <div class="desc gcs-edit" data-path="data.melee"><input name="data.melee.{{key}}.name" class="gcs-input-25" type="text" value="{{this.name}}"/>
+            <div class="desc gcs-edit meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.name" class="gcs-input-25" type="text" value="{{this.name}}"/>
                 <div class="list_note"><input name="data.melee.{{key}}.notes" class="gcs-input-25" type="text" value="{{this.notes}}"/></div>
             </div>
-            <div class="usage"><input name="data.melee.{{key}}.mode" class="gcs-input" type="text" value="{{this.mode}}"/></div>
-            <div class="level"><input name="data.melee.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
-            <div class="parry"><input name="data.melee.{{key}}.parry" class="gcs-input-sm4" type="text" value="{{this.parry}}"/></div>
-            <div class="block"><input name="data.melee.{{key}}.block" class="gcs-input-sm4" type="text" value="{{this.block}}"/></div>
-            <div class="damage"><input name="data.melee.{{key}}.damage" class="gcs-input" type="text" value="{{this.damage}}"/></div>
-            <div class="reach"><input name="data.melee.{{key}}.reach" class="gcs-input-sm3" type="text" value="{{this.reach}}"/></div>
-            <div class="st"><input name="data.melee.{{key}}.st" class="gcs-input-sm2" type="text" value="{{this.st}}"/></div>
+            <div class="usage meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.mode" class="gcs-input" type="text" value="{{this.mode}}"/></div>
+            <div class="level meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.level" class="gcs-input-sm2" type="text" value="{{this.level}}"/></div>
+            <div class="parry meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.parry" class="gcs-input-sm4" type="text" value="{{this.parry}}"/></div>
+            <div class="block meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.block" class="gcs-input-sm4" type="text" value="{{this.block}}"/></div>
+            <div class="damage meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.damage" class="gcs-input" type="text" value="{{this.damage}}"/></div>
+            <div class="reach meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.reach" class="gcs-input-sm3" type="text" value="{{this.reach}}"/></div>
+            <div class="st meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.st" class="gcs-input-sm2" type="text" value="{{this.st}}"/></div>
             <div></div>
             {{/each}}
 
