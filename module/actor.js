@@ -679,7 +679,8 @@ export class GurpsActor extends Actor {
 				dr: parseInt(value.dr),
 				roll: this._convertRollStringToArrayOfInt(
 					GURPS.hitlocationRolls[value.where].roll
-				)
+				),
+				rollText: GURPS.hitlocationRolls[value.where].roll
 			})
 		}
 		return myhitlocations
