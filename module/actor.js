@@ -543,6 +543,7 @@ export class GurpsActor extends Actor {
 				if (isFoundryV1) {
 					sp.cost = t(j.cost);
 					sp.maintain = t(j.maintain);
+					sp.difficulty = t(j.difficulty);
 					sp.notes = t(j.notes);
 					sp.pageref = t(j.pageref);
 				} else {
@@ -660,6 +661,9 @@ export class GurpsActor extends Actor {
 }
 
 export class Named {
+	constructor(n1) {
+		this.name = n1;
+	}
 	name = "";
 	notes = "";
 	pageref = "";
@@ -748,6 +752,10 @@ export class Encumbrance {
 }
 
 export class Note extends Named {
+	constructor(n) {
+		super();
+		this.notes = n;
+	}
 }
 
 export class Equipment extends Named {
@@ -781,4 +789,8 @@ export class HitLocation {
 export class Reaction {
 	modifier = "";
 	situation = "";
+	constructor(m, s) {
+		this.modifier = m;
+		this.situation = s;
+	}
 }
