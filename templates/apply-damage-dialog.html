@@ -2,8 +2,9 @@
 
   <h2>Apply {{damageData.damage}} points of {{damageData.damageType}} damage to {{actor.data.name}}</h2>
   <div classes='flexcol flex-between'>
-    <div class='flexrow flex-group-center'>
-      <h3>Directly apply damage to:</h3>
+    <div class='flexrow flex-group-center gurps-aligned'>
+      <h3>Directly apply:</h3>
+      <input type='text' id='damage' name='damage' value='{{damageData.damage}}'>
       <div>
         <select name='apply-to'>
           <option value='HP' selected>Hit Points</option>
@@ -57,6 +58,12 @@
 
         <div class='gurps-group'>
           <div class='header'>Other Situations</div>
+          <label class='gurps-label'><input type='checkbox' name='specials' value='unliving'>&nbsp;Unliving <span
+              class='pdflink'>(B380)</span></input></label>
+          <label class='gurps-label'><input type='checkbox' name='specials' value='homogenous'>&nbsp;Homogenous <span
+              class='pdflink'>(B380)</span></input></label>
+          <label class='gurps-label'><input type='checkbox' name='specials' value='diffuse'>&nbsp;Diffuse <span
+              class='pdflink'>(B380)</span></input></label>
         </div>
       </div>
     </div>

@@ -1868,16 +1868,25 @@ body {
   flex-direction: column;
   border: solid black 1px;
   padding: 0.5em;
+  text-align: left;
+  vertical-align: middle;
 }
 
 .gurps-3col-expandlast {
   display: grid;
   grid-template-columns: auto auto auto;
   grid-template-rows: auto;
-  /* column-gap: 0.25em; */
   border: none;
   justify-items: stretch;
   text-align: left;
+}
+
+.gurps-label {
+  vertical-align: middle !important;
+}
+
+.gurps-aligned {
+  align-items: baseline !important;
 }
 
 .gurps-grid-header:nth-child(3n+3),
