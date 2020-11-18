@@ -92,17 +92,17 @@ GURPS.hitlocationRolls = {
 
 
 GURPS.woundModifiers = {
-	"burn": 1,
-	"cor": 1,
-	"cr": 1,
-	"cut": 1.5,
-	"fat": 1,
-	"imp": 2,
-	"pi-": 0.5,
-	"pi": 1,
-	"pi+": 1.5,
-	"pi++": 2,
-	"tox": 1
+	"burn": { multiplier: 1, label: 'Burning' },
+	"cor": { multiplier: 1, label: 'Corrosive' },
+	"cr": { multiplier: 1, label: 'Crushing' },
+	"cut": { multiplier: 1.5, label: 'Cutting' },
+	"fat": { multiplier: 1, label: 'Fatigue' },
+	"imp": { multiplier: 2, label: 'Impaling' },
+	"pi-": { multiplier: 0.5, label: 'Small Piercing' },
+	"pi": { multiplier: 1, label: 'Piercing' },
+	"pi+": { multiplier: 1.5, label: 'Large Piercing' },
+	"pi++": { multiplier: 2, label: 'Huge Piercing' },
+	"tox": { multiplier: 1, label: 'Impaling' }
 };
 
 GURPS.attributepaths = {

@@ -1894,7 +1894,7 @@ body {
 .gurps-3col-line:nth-child(6n+6),
 .gurps-3col-line:nth-child(6n+4),
 .gurps-3col-line:nth-child(6n+5) {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.10);
 }
 
 .gurps-grid-header {

@@ -1,32 +1,63 @@
-<div class='{{classes}} flexcol'>
-  <div class='flex-group-left'>
-    <div class='grid grid-3col flex-between'>
-      <div class='gurps-group'>
-        <div class='header'>Hit Location </div>
-        <!-- Use the data model's HitLocation.where as the value of the radio button. -->
-        <div class='gurps-3col-expandlast'>
-          <div class='gurps-grid-header'>Location</div>
-          <div class='gurps-grid-header'>Roll</div>
-          <div class='gurps-grid-header'>DR</div>
-          {{#each hitLocationsWithDR}}
-          <label class='gurps-3col-line'><input type='radio' name='hitlocation'
-              value='{{this.where}}'>&nbsp;{{this.where}}</input></label>
-          <div class='gurps-3col-line'>{{this.rollText}}</div>
-          <div class='gurps-3col-line'>{{this.dr}}</div>
-          {{/each}}
+<div class='{{classes}}' {{debug}}>
+
+  <h2>Apply {{damageData.damage}} points of {{damageData.damageType}} damage to {{actor.data.name}}</h2>
+  <div classes='flexcol flex-between'>
+    <div class='flexrow flex-group-center'>
+      <h3>Directly apply damage to:</h3>
+      <div>
+        <select name='apply-to'>
+          <option value='HP' selected>Hit Points</option>
+          <option value='FP'>Fatigue Points</option>
+        </select>
+      </div>
+      <button id='apply-publicly'>Apply</button>
+      <button id='apply-secretly'>Apply (Quietly)</button>
+    </div>
+
+    <div class='flex-group-center' style='margin-top: 1em;'>
+      <h3>Apply damage options:</h3>
+
+      <div class='grid grid-3col flex-between'>
+        <div class='gurps-group'>
+          <div class='header'>Hit Location </div>
+          <div class='gurps-3col-expandlast'>
+            <div class='gurps-grid-header'>Location</div>
+            <div class='gurps-grid-header'>Roll</div>
+            <div class='gurps-grid-header'>DR</div>
+            {{#each hitLocationsWithDR}}
+            <label class='gurps-3col-line'><input type='radio' name='hitlocation'
+                value='{{this.where}}'>&nbsp;{{this.where}}</input></label>
+            <div class='gurps-3col-line'>{{this.rollText}}</div>
+            <div class='gurps-3col-line'>{{this.dr}}</div>
+            {{/each}}
+          </div>
+          <hr />
+          <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury</input></label>
+          <hr />
+          <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
         </div>
-        <hr />
-        <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury</input></label>
-        <hr />
-        <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
-      </div>
 
-      <div class='gurps-group'>
-        <div class='header'>Damage Type/Multiplier</div>
-      </div>
+        <div class='gurps-group'>
+          <div class='header'>Damage Type/Multiplier</div>
+          <div class='gurps-3col-expandlast'>
+            <div class='gurps-grid-header'>Damage Type</div>
+            <div class='gurps-grid-header'>Abbrev</div>
+            <div class='gurps-grid-header'>Multiplier</div>
+            {{#each woundingModifiers}}
+            <label class='gurps-3col-line'><input type='radio' name='woundmodifier'
+                value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+            <div class='gurps-3col-line'>{{@key}}</div>
+            <div class='gurps-3col-line'>×{{this.multiplier}}</div>
+            {{/each}}
+          </div>
+          <hr />
+          <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No multiplier</input></label>
 
-      <div class='gurps-group'>
-        <div class='header'>Other Situations</div>
+        </div>
+
+        <div class='gurps-group'>
+          <div class='header'>Other Situations</div>
+        </div>
       </div>
     </div>
   </div>

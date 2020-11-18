@@ -133,7 +133,7 @@ export class GurpsActorSheet extends ActorSheet {
     let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
 
     if (dragData.type === 'damageItem') {
-      this.actor.handleDamageDrop(dragData)
+      this.actor.handleDamageDrop(dragData.payload)
     }
   }
 
@@ -262,7 +262,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     let basicDamage = damage.damage
     let penetratingDamage = Math.max(basicDamage - dr, 0)
-    let woundingModifier = GURPS.woundModifiers[damage.damageType]
+    let woundingModifier = GURPS.woundModifiers[damage.damageType].multiplier
     let injury = Math.floor(penetratingDamage * woundingModifier)
 
     let contentData = {

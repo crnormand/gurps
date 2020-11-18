@@ -662,9 +662,7 @@ export class GurpsActor extends Actor {
 	// --- Functions to handle events on actor ---
 
 	handleDamageDrop(damageData) {
-		renderTemplate('systems/gurps/templates/apply-damage-dialog.html').then(dlg => {
-			new ApplyDamageDialog(this).render(true)
-		})
+		new ApplyDamageDialog(this, damageData).render(true)
 	}
 
 	// This function merges the 'where' and 'dr' properties of this actor's hitlocations
