@@ -781,4 +781,8 @@ export class HitLocation {
 export class Reaction {
 	modifier = "";
 	situation = "";
+	constructor(m, s) {
+		this.modifier = m;
+		this.situation = s;
+	}
 }

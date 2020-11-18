@@ -239,21 +239,18 @@
             </div>
         </div>
 
-				{{#if (notEmpty data.reactions)}}
         <div id="reactions">
-            <div class="modifier header">Modifier</div>
-            <div class="situation header">Reaction</div>
+            <div id="modhead" class="modifier header">Modifier</div>
+            <div id="sithead" class="situation header">Reaction</div>
             <div></div>
 					{{#each data.reactions as | this key |}}
-						<div class="modifier"><input name="data.reactions.{{key}}.modifier" class="gcs-input-sm4" type="text" value="{{this.modifier}}"/></div>
-            <div class="situation"><input name="data.reactions.{{key}}.situation" class="gcs-input" type="text" value="{{this.situation}}"/></div>
+						<div class="modifier sitmenu" data-key="data.reactions.{{key}}"><input name="data.reactions.{{key}}.modifier" class="gcs-input-sm4" type="text" value="{{this.modifier}}"/></div>
+            <div class="situation sitmenu" data-key="data.reactions.{{key}}"><input name="data.reactions.{{key}}.situation" class="gcs-input" type="text" value="{{this.situation}}"/></div>
             <div></div>
 					{{/each}}
 
         </div>
-				{{/if}}
 
- 			 {{#if (notEmpty data.melee)}}
         <div id="melee">
             <div class="desc header">Melee Weapons</div>
             <div class="usage header">Usage</div>
@@ -280,9 +277,7 @@
             {{/each}}
 
         </div>
-				{{/if}}
 
- 			 {{#if (notEmpty data.ranged)}}
        <div id="ranged">
             <div class="desc header">Ranged Weapons</div>
             <div class="usage header">Usage</div>
@@ -314,7 +309,7 @@
             {{/each}}
 
         </div>
-				{{/if}}
+
         <div id="advantages">
             <div class="desc header">Advantages, Disadvantages, Perks &amp; Quirks</div>
             <div class="pts header">Pts</div>
@@ -372,7 +367,6 @@
             {{/each}}
         </div>
 
-				{{#if (notEmpty data.spells)}}
         <div id="spells">
             <div class="desc header">Spells</div>
             <div class="cls header">Class</div>
@@ -404,7 +398,7 @@
             {{/each}}
 
         </div>
-				{{/if}}
+
         <div id="equipment">
             <div class="equipped header">E</div>
             <div class="qty header">Qty</div>

@@ -724,12 +724,14 @@ GURPS.onGurpslink = onGurpslink;
 	which will give you the object, and also the key, such that you could execute somebject.key to get the 
 	correct instance.   */
 function genkey(index) {
-	let k = "key_";
+	let k = "";
 	if (index < 10)
 		k += "0";
 	if (index < 100)
 		k += "0";
 	if (index < 1000)
+		k += "0";
+	if (index < 10000)
 		k += "0";
 	return k + index;
 }
@@ -740,9 +742,72 @@ function put(obj, value, index = -1) {
 		index = 0;
 		while (obj.hasOwnProperty(this.genkey(index))) index++;
 	}
-	obj[this.genkey(index)] = value;
+	let k = this.genkey(index);
+	obj[k] = value;
+	return k;
 }
 GURPS.put = put;
+
+// Convolutions to remove a key from an object and fill in the gaps
+async function removeKey(actor, path) {
+	let i = path.lastIndexOf(".");
+	let objpath = path.substring(0, i);
+	let key = path.substr(i+1);
+	i = objpath.lastIndexOf(".");
+	let parentpath = objpath.substring(0, i);
+	let objkey = objpath.substr(i+1);
+	let object = GURPS.decode(actor.data, objpath);
+	let t = parentpath + ".-=" + objkey;
+	await actor.update({[t]: null});		// Delete the whole object
+	delete object[key];
+	i = parseInt(key);
+
+	i = i + 1;
+	while (object.hasOwnProperty(this.genkey(i))) {
+		let k = this.genkey(i);
+		object[key] = object[k];
+		delete object[k];
+		key = k;
+		i++;
+	}
+	await actor.update({[objpath] : object});
+}
+GURPS.removeKey = removeKey;
+
+async function insertBeforeKey(actor, path, newobj) {
+	let i = path.lastIndexOf(".");
+	let objpath = path.substring(0, i);
+	let key = path.substr(i+1);
+	i = objpath.lastIndexOf(".");
+	let parentpath = objpath.substring(0, i);
+	let objkey = objpath.substr(i+1);
+	let object = GURPS.decode(actor.data, objpath);
+	let t = parentpath + ".-=" + objkey;
+	await actor.update({[t]: null});		// Delete the whole object
+	let start = parseInt(key);
+		
+	i = start + 1;
+	while (object.hasOwnProperty(this.genkey(i))) i++;
+	i = i - 1;
+	for (let z = i; z >= start; z--) {
+		object[genkey(z+1)] = object[genkey(z)];
+	}
+	object[key] = newobj;
+	await actor.update({[objpath]: object});
+}
+GURPS.insertBeforeKey = insertBeforeKey;
+
+function decode(obj, path, all = true) {
+  let p = path.split(".");
+  let end = p.length;
+  if (!all) end = end - 1;
+  for (let i = 0; i < end; i++) {
+    let q = p[i];
+    obj = obj[q];
+  }
+  return obj;
+}
+GURPS.decode = decode;
 
 /*  Funky helper function to be able to list hierarchical equipment in a linear list (with appropriate keys for editing)
 */

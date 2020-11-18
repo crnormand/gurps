@@ -1,5 +1,6 @@
 import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
+import { Reaction } from './actor.js';
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -54,17 +55,6 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
-  decode(obj, path, all) {
-    let p = path.split(".");
-    let end = p.length;
-    if (!all) end = end - 1;
-    for (let i = 0; i < end; i++) {
-      let q = p[i];
-      obj = obj[q];
-    }
-    return obj;
-  }
-
 
   /** @override */
   activateListeners(html) {
@@ -80,50 +70,6 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmod").click(this._onClickGmod.bind(this));
     html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
-
-    // Everything below here is only needed if the sheet is editable
-    if (!this.options.editable) return;
-
-    new ContextMenu(html, ".gcs-edit-name", [
-      {
-        name: "Edit",
-        icon: "<i class='fas fa-edit'></i>",
-        callback: element => {
-          let path = element[0].dataset.path;
-          let nm = this.decode(this.actor.data, path, true);
-          const template = "<div class='form-group' style='display:flex; flex-direction:column'><h1>Edit Name</h1><input id='tempinput' type='text' value='" + nm + "'></div>"
-          new Dialog({
-            title: "Edit Name",
-            content: template,
-            buttons: {
-              "ok": {
-                label: "Done",
-                callback: async (html) => {
-                  let v = html.find("#tempinput")[0].value;
-                  let o = this.decode(this.actor.data, path, false);
-                  let p = path.split(".");
-                  o[p[p.length - 1]] = v
-                }
-              }
-            }
-          }).render(true);
-        }
-      }
-    ]);
-
-    // Update Inventory Item
-    html.find('.item-edit').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.getOwnedItem(li.data("itemId"));
-      item.sheet.render(true);
-    });
-
-    // Delete Inventory Item
-    html.find('.item-delete').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      this.actor.deleteOwnedItem(li.data("itemId"));
-      li.slideUp(200, () => this.render(false));
-    });
   }
 
   /* -------------------------------------------- */
@@ -502,26 +448,56 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     html.find(".enc").click(this._onClickEnc.bind(this));
     html.find(".changeequip").click(this._onClickEquip.bind(this));
+    new ContextMenu(html, "#sithead, #modhead", [
+			{
+				name: "Add",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let r = this.actor.data.data.reactions;
+					GURPS.put(r, new Reaction("+0", "from who"));
+					this.actor.update({ "data.reactions" : r });
+				}
+			}	
+		]);
+    new ContextMenu(html, ".sitmenu", [
+			{
+				name: "Add Before",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, new Reaction("+0", "from who"));
+				}
+			},
+			{
+				name: "Delete",
+				icon: "<i class='fas fa-trash'></i>",
+				callback: e => {
+					GURPS.removeKey(this.actor, e[0].dataset.key);
+				}
+			}	
+
+		]);
 
 	}
 	
+	async _onRightClickReactions(ev) {
+		ev.preventDefault();
+		let element = ev.currentTarget;
+	}
+	
 	async _onClickEquip(ev) {
-		event.preventDefault();
+		ev.preventDefault();
 		let element = ev.currentTarget;
 		let key = element.dataset.key;
 		let eqts = this.actor.data.data.equipment.carried;
-		for (let ek in eqts) {
-			if (ek === key) {
-				let eqt = eqts[ek];
-				let t = "data.equipment.carried." + key + ".equipped";
-				await this.actor.update({ [t] : !eqt.equipped });
-			}
-		}
+		let eqt = GURPS.decode(eqts, key);
+		eqt.equipped = !eqt.equipped;
+		let t = "data.equipment.carried." + key;
+		await this.actor.update({ [t] : eqt });
  		//this.actor.sheet.render(true);
 	}
 	
 	async _onClickEnc(ev) {
-		event.preventDefault();
+		ev.preventDefault();
 		let element = ev.currentTarget;
 		let key = element.dataset.key;
 		let encs = this.actor.data.data.encumbrance;
@@ -536,6 +512,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 				await this.actor.update({ [t] : true });
 			}
 		} 
-		 this.actor.sheet.render(true);
+//		 this.actor.sheet.render(true);
 	}
 }
