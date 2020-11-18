@@ -17,7 +17,8 @@
     "lib/utilities.js",
     "lib/parselink.js",
     "lib/damagemessage.js",
-    "lib/moustachewax.js"
+    "lib/moustachewax.js",
+    "lib/testdialog.js"
   ],
   "styles": [
     "styles/simple.css",

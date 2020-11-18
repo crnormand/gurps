@@ -10,7 +10,6 @@ import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
 import { d6ify } from '../lib/utilities.js'
 import { ThreeD6 } from "../lib/threed6.js";
-import TestDialog from '../lib/testdialog.js'
 
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
@@ -52,16 +51,6 @@ GURPS.ThreeD6 = new ThreeD6({
 	"template": "systems/gurps/templates/threed6.html",
 	"classes": [],
 });
-
-GURPS.TestDialog = new TestDialog({
-	"popOut": false,
-	"minimizable": false,
-	"resizable": false,
-	"id": "TestDialog",
-	"template": "systems/gurps/templates/test-dialog-button.html",
-	"classes": []
-})
-
 
 
 // This table is used to display dice rolls and penalties (if they are missing from the import data)
@@ -903,7 +892,6 @@ Hooks.once("init", async function () {
 Hooks.once("ready", async function () {
 	GURPS.ModifierBucket.clear();
 	GURPS.ThreeD6.refresh();
-	GURPS.TestDialog.refresh()
 
 	// Show changelog
 	if (!game.settings.get("gurps", "dontShowChangelog")) {
