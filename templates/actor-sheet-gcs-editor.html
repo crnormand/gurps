@@ -401,52 +401,52 @@
         </div>
 
         <div id="equipment">
-            <div class="equipped header">E</div>
-            <div class="qty header">Qty</div>
-            <div class="desc header">Equipment ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}})</div>
-            <div class="cost header">$</div>
-            <div class="weight header">lbs</div>
-            <div class="sum_cost header">x $</div>
-            <div class="sum_weight header">X lbs</div>
-            <div class="ref header">Ref</div>
+            <div class="equipped header carhead">E</div>
+            <div class="qty header carhead">Qty</div>
+            <div class="desc header carhead">Equipment ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}})</div>
+            <div class="cost header carhead">$</div>
+            <div class="weight header carhead">lbs</div>
+            <div class="sum_cost header carhead">x $</div>
+            <div class="sum_weight header carhead">X lbs</div>
+            <div class="ref header carhead">Ref</div>
             <div></div>
 
            {{#listeqt data.equipment.carried }}
-            <div class="equipped satisfiedY changeequip" data-key="{{@key}}">{{#if this.equipped}}X{{/if}}</div>
-            <div class="qty satisfiedY"><input name="data.equipment.carried.{{@key}}.count" class="gcs-input-sm3" type="text" value="{{this.count}}"/></div>
-            <div class="desc indent{{@indent}} satisfiedY"><input name="data.equipment.carried.{{@key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
+            <div class="equipped satisfiedY changeequip carmenu" data-key="data.equipment.carried.{{@key}}">{{#if this.equipped}}X{{/if}}</div>
+            <div class="qty satisfiedY carmenu" data-key="data.equipment.carried.{{@key}}"><input name="data.equipment.carried.{{@key}}.count" class="gcs-input-sm3" type="text" value="{{this.count}}"/></div>
+            <div class="desc indent{{@indent}} satisfiedY carmenu" data-key="data.equipment.carried.{{@key}}"><input name="data.equipment.carried.{{@key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"><input name="data.equipment.carried.{{@key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div>
                 <div class="list_note satisfiedY"></div>
             </div>
-            <div class="cost satisfiedY"><input name="data.equipment.carried.{{@key}}.cost" class="gcs-input-sm5" type="text" value="{{this.cost}}"/></div>
-            <div class="weight satisfiedY"><input name="data.equipment.carried.{{@key}}.weight" class="gcs-input-sm5" type="text" value="{{this.weight}}"/></div>
-            <div class="sum_cost satisfiedY"><input name="data.equipment.carried.{{@key}}.costsum" class="gcs-input-sm5" type="text" value="{{this.costsum}}"/></div>
-            <div class="sum_weight satisfiedY"><input name="data.equipment.carried.{{@key}}.weightsum" class="gcs-input-sm5" type="text" value="{{this.weightsum}}"/></div>
-            <div class="ref satisfiedY"><input name="data.equipment.carried.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="cost satisfiedY carmenu" data-key="data.equipment.carried.{{@key}}"><input name="data.equipment.carried.{{@key}}.cost" class="gcs-input-sm5" type="text" value="{{this.cost}}"/></div>
+            <div class="weight satisfiedY carmenu" data-key="data.equipment.carried.{{@key}}"><input name="data.equipment.carried.{{@key}}.weight" class="gcs-input-sm5" type="text" value="{{this.weight}}"/></div>
+            <div class="sum_cost satisfiedY carmenu" data-key="data.equipment.carried.{{@key}}"><input name="data.equipment.carried.{{@key}}.costsum" class="gcs-input-sm5" type="text" value="{{this.costsum}}"/></div>
+            <div class="sum_weight satisfiedY carmenu" data-key="data.equipment.carried.{{@key}}"><input name="data.equipment.carried.{{@key}}.weightsum" class="gcs-input-sm5" type="text" value="{{this.weightsum}}"/></div>
+            <div class="ref satisfiedY carmenu" data-key="data.equipment.carried.{{@key}}"><input name="data.equipment.carried.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             <div></div>
             {{/listeqt}}
 
         </div>
         <div id="other_equipment">
-            <div class="qty header">Qty</div>
-            <div class="desc header">Other Equipment (${{eqtsummary.othercost}})</div>
-            <div class="cost header">$</div>
-            <div class="weight header">lbs</div>
-            <div class="sum_cost header">X $</div>
-            <div class="sum_weight header">X lbs</div>
-            <div class="ref header">Ref</div>
+            <div class="qty header othhead">Qty</div>
+            <div class="desc header othhead">Other Equipment (${{eqtsummary.othercost}})</div>
+            <div class="cost header othhead">$</div>
+            <div class="weight header othhead">lbs</div>
+            <div class="sum_cost header othhead">X $</div>
+            <div class="sum_weight header othhead">X lbs</div>
+            <div class="ref header othhead">Ref</div>
 
             {{#listeqt data.equipment.other}}
-            <div class="qty satisfiedY"><input name="data.equipment.other.{{@key}}.count" class="gcs-input-sm3" type="text" value="{{this.count}}"/></div>
-            <div class="desc indent{{@indent}} satisfiedY"><input name="data.equipment.other.{{@key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
+            <div class="qty satisfiedY othmenu" data-key="data.equipment.other.{{@key}}"><input name="data.equipment.other.{{@key}}.count" class="gcs-input-sm3" type="text" value="{{this.count}}"/></div>
+            <div class="desc indent{{@indent}} satisfiedY othmenu" data-key="data.equipment.other.{{@key}}"><input name="data.equipment.other.{{@key}}.name" class="gcs-input" type="text" value="{{this.name}}"/>
                 <div class="list_note satisfiedY"><input name="data.equipment.other.{{@key}}.notes" class="gcs-input" type="text" value="{{this.notes}}"/></div>
                 <div class="list_note satisfiedY"></div>
             </div>
-            <div class="cost satisfiedY"><input name="data.equipment.other.{{@key}}.cost" class="gcs-input-sm5" type="text" value="{{this.cost}}"/></div>
-            <div class="weight satisfiedY"><input name="data.equipment.other.{{@key}}.weight" class="gcs-input-sm5" type="text" value="{{this.weight}}"/></div>
-            <div class="sum_cost satisfiedY"><input name="data.equipment.other.{{@key}}.costsum" class="gcs-input-sm5" type="text" value="{{this.costsum}}"/></div>
-            <div class="sum_weight satisfiedY"><input name="data.equipment.other.{{@key}}.weightsum" class="gcs-input-sm5" type="text" value="{{this.weightsum}}"/></div>
-            <div class="ref satisfiedY"><input name="data.equipment.other.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
+            <div class="cost satisfiedY othmenu" data-key="data.equipment.other.{{@key}}"><input name="data.equipment.other.{{@key}}.cost" class="gcs-input-sm5" type="text" value="{{this.cost}}"/></div>
+            <div class="weight satisfiedY othmenu" data-key="data.equipment.other.{{@key}}"><input name="data.equipment.other.{{@key}}.weight" class="gcs-input-sm5" type="text" value="{{this.weight}}"/></div>
+            <div class="sum_cost satisfiedY othmenu" data-key="data.equipment.other.{{@key}}"><input name="data.equipment.other.{{@key}}.costsum" class="gcs-input-sm5" type="text" value="{{this.costsum}}"/></div>
+            <div class="sum_weight satisfiedY othmenu" data-key="data.equipment.other.{{@key}}"><input name="data.equipment.other.{{@key}}.weightsum" class="gcs-input-sm5" type="text" value="{{this.weightsum}}"/></div>
+            <div class="ref satisfiedY othmenu" data-key="data.equipment.other.{{@key}}"><input name="data.equipment.other.{{@key}}.pageref" class="gcs-input-sm5" type="text" value="{{this.pageref}}"/></div>
             {{/listeqt}}
 
         </div>

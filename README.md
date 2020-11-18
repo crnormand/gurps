@@ -14,7 +14,8 @@ This is what we are currently working on:
     - fixed import for GCS characters that contain "&" in fields, assuming they turn @ENCODING back on
     - Page Ref links to non-existent PDFs will now go to the SJG Warehouse 23 website
     - Created Foundry VTT specific GCS export/import and massive performance boost.
-    - 3d6 on desktop
+    - 3d6/1d6 on desktop
+    - Can edit charactersheet
     - Started work on drag and drop damage!
 
 **NOTE:   YOU MUST delete all of your actors, and Restart Foundry for the changes to take effect**
