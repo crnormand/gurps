@@ -20,52 +20,96 @@
 
       <div class='grid grid-3col flex-between'>
         <div class='gurps-group'>
-          <div class='header'>Hit Location </div>
-          <div class='gurps-3col-expandlast'>
+          <div class='gurps-group-header'>Hit Location and DR</div>
+          <div class='gurps-3col-expandmiddle'>
             <div class='gurps-grid-header'>Location</div>
             <div class='gurps-grid-header'>Roll</div>
             <div class='gurps-grid-header'>DR</div>
+
             {{#each hitLocationsWithDR}}
-            <label class='gurps-3col-line'><input type='radio' name='hitlocation'
-                value='{{this.where}}'>&nbsp;{{this.where}}</input></label>
+            <div class='gurps-3col-line'>
+              <label><input type='radio' name='hitlocation' value='{{this.where}}'>&nbsp;{{this.where}}</input></label>
+            </div>
             <div class='gurps-3col-line'>{{this.rollText}}</div>
             <div class='gurps-3col-line'>{{this.dr}}</div>
             {{/each}}
+
           </div>
           <hr />
-          <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury</input></label>
-          <hr />
           <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
+          <hr />
+          <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury (<span
+              class='pdflink'>B400</span>)</input></label>
+          <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
+            <label><input type='radio' name='hitlocation' value='select-dr'>&nbsp;Enter DR:</input></label>
+            <input type='text' id='select-dr' name='select-dr' value='{{selectedDR}}'>
+          </div>
         </div>
 
         <div class='gurps-group'>
-          <div class='header'>Damage Type/Multiplier</div>
-          <div class='gurps-3col-expandlast'>
+          <div class='gurps-group-header'>Type and Wounding Modifiers</div>
+          <div class='gurps-3col-expandmiddle'>
             <div class='gurps-grid-header'>Damage Type</div>
             <div class='gurps-grid-header'>Abbrev</div>
-            <div class='gurps-grid-header'>Multiplier</div>
+            <div class='gurps-grid-header'>Modifier</div>
+
             {{#each woundingModifiers}}
-            <label class='gurps-3col-line'><input type='radio' name='woundmodifier'
-                value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+            <div class='gurps-3col-line'>
+              <label><input type='radio' name='woundmodifier' value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+            </div>
             <div class='gurps-3col-line'>{{@key}}</div>
             <div class='gurps-3col-line'>×{{this.multiplier}}</div>
             {{/each}}
+
           </div>
           <hr />
-          <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No multiplier</input></label>
-
+          <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No modifier</input></label>
+          <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
+            <label><input type='radio' name='woundmodifier' value='select-mod'>&nbsp;Enter modifier:</input></label>
+            <input type='text' id='woundmodifier' name='woundmodifier' value='{{selectedModifier}}'>
+          </div>
+          <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
+            <label>Additional modifier (stacks):</label>
+            <input type='text' id='addmodifier' name='addmodifier' value='{{additionalModifier}}'>
+          </div>
         </div>
 
         <div class='gurps-group'>
-          <div class='header'>Other Situations</div>
-          <label class='gurps-label'><input type='checkbox' name='specials' value='unliving'>&nbsp;Unliving <span
-              class='pdflink'>(B380)</span></input></label>
-          <label class='gurps-label'><input type='checkbox' name='specials' value='homogenous'>&nbsp;Homogenous <span
-              class='pdflink'>(B380)</span></input></label>
-          <label class='gurps-label'><input type='checkbox' name='specials' value='diffuse'>&nbsp;Diffuse <span
-              class='pdflink'>(B380)</span></input></label>
+          <div class='gurps-group-header'>Tactical Rules</div>
+          <div class='gurps-group-caption'>Use systems settings to set defaults.</div>
+          <div class='gurps-3col-expandmiddle'>
+            {{#each tacticalOptions}}
+            <div class='gurps-3col-line'>
+              <input id='tactical-{{this.id}}' type='checkbox' name='tactical' value='{{this.id}}'></input>
+            </div>
+            <div class='gurps-3col-line gurps-left-aligned'>
+              <label for='tactical-{{this.id}}'>{{this.label}}</label>
+            </div>
+            <div class='gurps-3col-line pdflink'>{{this.ref}}</div>
+            {{/each}}
+          </div>
+          <div class='gurps-group-header gurps-group-gap'>Other Situations</div>
+          <div class='gurps-3col-expandmiddle'>
+
+            {{#each otherSituations}}
+            <div class='gurps-3col-line'>
+              <input id='specials-{{this.id}}' type='checkbox' name='specials' value='{{this.id}}'></input>
+            </div>
+            <div class='gurps-3col-line gurps-left-aligned'>
+              <label for='specials-{{this.id}}'>{{this.label}}</label>
+            </div>
+            <div class='gurps-3col-line pdflink'>{{this.ref}}</div>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+
+      <div class='grid grid-1col'>
+        <div class='gurps-group'>
+          <div class='gurps-group-header'>Results</div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </div>

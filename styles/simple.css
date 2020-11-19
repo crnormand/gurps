@@ -1868,25 +1868,27 @@ body {
   flex-direction: column;
   border: solid black 1px;
   padding: 0.5em;
+  padding-top: 0;
   text-align: left;
   vertical-align: middle;
+  justify-content: flex-start;
 }
 
-.gurps-3col-expandlast {
+.gurps-3col-expandmiddle {
   display: grid;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto;
+  grid-template-columns: auto 1fr min-content;
+  grid-auto-rows: auto;
   border: none;
   justify-items: stretch;
   text-align: left;
 }
 
-.gurps-label {
-  vertical-align: middle !important;
-}
-
-.gurps-aligned {
-  align-items: baseline !important;
+.gurps-3col-line {
+  align-self: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .gurps-grid-header:nth-child(3n+3),
@@ -1900,10 +1902,14 @@ body {
   text-align: center;
 }
 
-.gurps-3col-line:nth-child(6n+6),
-.gurps-3col-line:nth-child(6n+4),
-.gurps-3col-line:nth-child(6n+5) {
+.gurps-3col-line:nth-of-type(6n+6),
+.gurps-3col-line:nth-of-type(6n+4),
+.gurps-3col-line:nth-of-type(6n+5) {
   background-color: rgba(0, 0, 0, 0.10);
+}
+
+.gurps-left-aligned {
+  text-align: start !important;
 }
 
 .gurps-grid-header {
@@ -1918,10 +1924,27 @@ body {
   grid-column: 1 / span 3;
 }
 
-
-.gurps-group .header {
+.gurps-group-header {
   background-color: black;
   color: white;
   margin-bottom: 0.5em;
   font-size: larger;
+  margin-left: -0.5em;
+  margin-right: -0.5em;
+  padding-left: 0.5em;
+}
+
+.gurps-group-gap {
+  margin-top: 0.5em;
+}
+
+.gurps-group-caption {
+  font-size: smaller;
+  font-style: italic;
+  margin-top: -0.5em;
+  margin-bottom: 0.5em;
+}
+
+.gurps-3col-expandmiddle .pdflink {
+  font-size: smaller;
 }
