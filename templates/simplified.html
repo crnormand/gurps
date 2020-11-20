@@ -37,16 +37,16 @@
       <div data-path="data.melee">{{{gurpslink this.name}}}
           <div class="list_note">{{{gurpslink this.notes}}}</div>
       </div>
-      <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
       <div class="rollable" data-damage>{{this.damage}}</div>
+      <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
     {{/each}}
 
     {{#each data.ranged}}
     <div ata-path="data.ranged">{{{gurpslink this.name}}}
         <div class="list_note">{{{gurpslink this.notes}}}</div>
     </div>
-    <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
     <div class="rollable" data-damage>{{this.damage}}</div>
+    <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
     {{/each}}
 
 	</div>
