@@ -31,7 +31,7 @@ GURPS.LastActor = null;
 GURPS.SetLastActor = function (actor) {
 	GURPS.LastActor = actor;
 	GURPS.ModifierBucket.refresh();
-	//	console.log("Last Actor:" + actor.name);
+	console.log("Last Actor:" + actor.name);
 }
 
 GURPS.ModifierBucket = new ModifierBucket({
@@ -390,7 +390,7 @@ function objToString(obj, ndeep) {
 GURPS.objToString = objToString;
 
 function trim(s) {
-	return s.replace(/^\s*$(?:\r\n?|\n)/gm, "");         // /^\s*[\r\n]/gm
+	return s.replace(/^\s*$(?:\r\n?|\n)/gm, "").trim();         // /^\s*[\r\n]/gm
 }
 GURPS.trim = trim;
 
@@ -408,15 +408,17 @@ function performAction(action, actor) {
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
-	if (action.type === "attribute" && !!actor) {
-		prefix = "Roll vs ";
-		thing = this.i18n(action.path);
-		formula = "3d6";
-		target = action.target;
-		if (!target) target = this.resolve(action.path, actor.data);
-		if (!!action.mod || !!action.desc)
-			targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
-	}
+	if (action.type === "attribute") 
+		if (!!actor) {
+			prefix = "Roll vs ";
+			thing = this.i18n(action.path);
+			formula = "3d6";
+			target = action.target;
+			if (!target) target = this.resolve(action.path, actor.data);
+			if (!!action.mod || !!action.desc)
+				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+		} else
+			ui.notification("You must have a character selected");
 	if (action.type === "selfcontrol") {
 		prefix = "Self Control ";
 		thing = action.desc;
@@ -432,19 +434,23 @@ function performAction(action, actor) {
 		GURPS.damageChat.create(actor, formula, action.damagetype);
 		return;
 	}
-	if (action.type === "deriveddamage" && !!actor) {
-		formula = d6ify(action.derivedformula);
-		GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
-		return;
-	}
-	if (action.type === "skill" && !!actor) {
-		prefix = "Attempting ";
-		thing = action.name;
-		let skill = actor.data.skills.findInProperties(s => s.name == thing);
-		target = skill.level;
-		formula = "3d6";
-		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
-	}
+	if (action.type === "deriveddamage")
+		if (!!actor) {
+			formula = d6ify(action.derivedformula);
+			GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
+			return;
+		} else
+			ui.notification("You must have a character selected");
+	if (action.type === "skill")
+		if (!!actor) {
+			prefix = "Attempting ";
+			thing = action.name;
+			let skill = actor.data.skills.findInProperties(s => s.name == thing);
+			target = parseInt(skill.level);
+			formula = "3d6";
+			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+		} else
+			ui.notification("You must have a character selected");
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target);
 }
@@ -514,7 +520,7 @@ GURPS.onRoll = onRoll;
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
 	let parse = desc.replace(/.*\* ?Costs? (\d+) ?FP.*/g, "$1");
-	if (parse != desc) {
+	if (parse != desc && !!actor) {
 		let fp = parseInt(parse);
 		fp = actor.data.data.FP.value - fp;
 		actor.update({ "data.FP.value": fp });
@@ -655,7 +661,8 @@ function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
 		}
 	}
 	output += str;
-	return output.replace(/\n/g, "<br>");
+//	return output.replace(/\n/g, "<br>");
+	return output;
 }
 GURPS.gurpslink = gurpslink;
 
@@ -880,15 +887,17 @@ Hooks.once("init", async function () {
 	Handlebars.registerHelper('simpleRating', function (lvl) {
 		if (!lvl) return "UNKNOWN";
 		let l = parseInt(lvl);
-		if (l <= 8 )
+		if (l < 10 )
 			return "Poor";
-		if (l <= 10 )
+		if (l <= 11 )
 			return "Fair";
-		if (l <= 12 )
+		if (l <= 13 )
 			return "Good";
-		if (l <= 14 )
+		if (l <= 15 )
 			return "Great";
-		return "Super";	
+		if (l <= 18 )
+			return "Super";	
+		return "Epic";
 	});
 
 	Handlebars.registerHelper('notEmpty', function (obj) {
