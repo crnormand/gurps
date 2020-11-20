@@ -1,0 +1,93 @@
+<form class="{{cssClass}} simple_form" autocomplete="off">
+
+<div class="simple_container">
+  <div class="simple_ST rollableicon" data-value="ST{{data.attributes.ST.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_4.png"/>
+		<label class="simple_input">{{simpleRating data.attributes.ST.value}}</label></div>
+  <div class="simple_DX rollableicon" data-value="ST{{data.attributes.DX.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_6.png"/>
+		<label class="simple_input">{{simpleRating data.attributes.DX.value}}</label></div>
+  <div class="simple_IQ rollableicon" data-value="ST{{data.attributes.IQ.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_8.png"/>
+		<label class="simple_input">{{simpleRating data.attributes.IQ.value}}</label></div>
+  <div class="simple_HT rollableicon" data-value="ST{{data.attributes.HT.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_10.png"/>
+		<label class="simple_input">{{simpleRating data.attributes.HT.value}}</label></div>
+  <div class="simple_ST-desc">
+		<label>Strength (</label><label class="rollable simple_lrg" data-path="attributes.ST.value">{{data.attributes.ST.value}}</label>
+		<label>): How <strong>strong</strong> and <strong>tough</strong></label>
+	</div>
+  <div class="simple_DX-desc">
+		<label>Dexterity (</label><label class="rollable simple_lrg" data-path="attributes.DX.value">{{data.attributes.DX.value}}</label>
+		<label>): How <strong>agile</strong> and <strong>fast</strong></label>
+	</div>
+  <div class="simple_IQ-desc">
+		<label>Intelligence (</label><label class="rollable simple_lrg" data-path="attributes.IQ.value">{{data.attributes.IQ.value}}</label>
+		<label>): How <strong>clever</strong> and <strong>aware</strong></label>
+	</div>
+  <div class="simple_HT-desc">
+		<label>Health (</label><label class="rollable simple_lrg" data-path="attributes.ST.value">{{data.attributes.HT.value}}</label>
+		<label>): How <strong>healthy</strong> and <strong>durable</strong></label>
+	</div>
+  <div class="simple_Shield">{{dodge}}</div>
+  <div class="simple_Body">{{defense}}</div>
+  <div class="simple_Heart">{{data.HP.value}}</div>
+  <div class="simple_Defend">Defend</div>
+  <div class="simple_Armor">Armor</div>
+  <div class="simple_HP">Hit Points</div>
+  <div class="simple_Attacks">
+		<label>My Attacks</label><label>Damage</label><label>Roll</label>
+    {{#each data.melee}}
+      <div data-path="data.melee">{{{gurpslink this.name}}}
+          <div class="list_note">{{{gurpslink this.notes}}}</div>
+      </div>
+      <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+      <div class="rollable" data-damage>{{this.damage}}</div>
+    {{/each}}
+
+    {{#each data.ranged}}
+    <div ata-path="data.ranged">{{{gurpslink this.name}}}
+        <div class="list_note">{{{gurpslink this.notes}}}</div>
+    </div>
+    <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+    <div class="rollable" data-damage>{{this.damage}}</div>
+    {{/each}}
+
+	</div>
+  <div class="simple_Skills">
+		<label>Things I Do Well</label><label>Roll</label>
+    {{#each data.skills}}
+    <div class="">{{{gurpslink this.name}}}
+        <div class="list_note">{{{gurpslink this.notes @root}}}</div>
+    </div>
+    <div class="rollable" data-name="{{this.name}}">{{this.level}}</div>
+    {{/each}}
+	</div>
+  <div class="simple_Eqt">
+		<label>My Belongings</label><label>#</label>
+    {{#listeqt data.equipment.carried }}
+     <div class="indent{{@indent}}">{{{gurpslink this.name}}}
+        <div class="list_note">{{{gurpslink this.notes}}}</div>
+    </div>
+   	<div>{{this.count}}</div>
+    {{/listeqt}}
+	</div>
+  <div class="simple_Ads">
+		<label>Things That Describe Me</label>
+    {{#each data.ads}}
+    <div>{{{gurpslink this.name}}}
+         <div>{{{gurpslink this.notes}}}</div>
+    </div>
+    {{/each}}
+    {{#each data.disads}}
+    <div>{{{gurpslink this.name}}}
+       <div>{{{gurpslink this.notes}}}</div>
+    </div>
+    {{/each}}
+	</div>
+  <div class="simple_Portrait"><img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/></div>
+  <div class="simple_Notes">
+    <label>Notes</label>
+    {{#each data.notes}}
+      <div>{{{gurpslink this.notes}}}</div>
+    {{/each}}
+  </div>
+</div>
+
+</form>
