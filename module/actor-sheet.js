@@ -1,7 +1,7 @@
 import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js';
-
+import parselink from '../lib/parselink.js';
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -366,7 +366,7 @@ export class GurpsActorSheet extends ActorSheet {
     const original = this.actor.getFlag("core", "sheetClass")
     console.log("original: " + original)
 		let newSheet = "gurps.GurpsActorCombatSheet"
-    if (original === "gurps.GurpsActorCombatSheet" || original === "gurps.GurpsActorEditorSheet") newSheet = "gurps.GurpsActorSheetGCS";
+    if (original != "gurps.GurpsActorSheetGCS") newSheet = "gurps.GurpsActorSheetGCS";
 
     await this.actor.sheet.close()
 
@@ -545,12 +545,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 		new ContextMenu(html, ".carmenu", opts);
 		new ContextMenu(html, ".othmenu", opts);
 	}
-	
-	async _onRightClickReactions(ev) {
-		ev.preventDefault();
-		let element = ev.currentTarget;
-	}
-	
+		
 	async _onClickEquip(ev) {
 		ev.preventDefault();
 		let element = ev.currentTarget;
@@ -576,5 +571,44 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 				await this.actor.update({ [t] : true });
 			}
 		} 
+	}
+}
+
+export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["gurps", "sheet", "actor"],
+      template: "systems/gurps/templates/simplified.html",
+      width: 820,
+      height: 900,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
+      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
+    });
+  }
+
+  getData() {
+    const data = super.getData();
+		for (const e of Object.values(this.actor.data.data.encumbrance)) {
+			if (e.current) data.dodge = e.dodge;
+		}
+		for (const e of Object.values(this.actor.data.data.hitlocations)) {
+			if (e.penalty == 0) data.defense = e.dr;
+		}
+		return data;
+	}
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find(".rollableicon").click(this._onClickRollableIcon.bind(this));
+
+	}
+	
+	async _onClickRollableIcon(ev) {
+		ev.preventDefault();
+		let element = ev.currentTarget;
+		let val = element.dataset.value;
+		let parsed = parselink(val, this.actor);
+		GURPS.performAction(parsed.action, this.actor);
 	}
 }

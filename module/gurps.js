@@ -4,7 +4,7 @@ import parselink from '../lib/parselink.js'
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
-import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet } from "./actor-sheet.js";
+import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet, GurpsActorSimplifiedSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
@@ -403,12 +403,12 @@ function performAction(action, actor) {
 	let formula = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
 
-	if (action.type == "modifier") {
+	if (action.type === "modifier") {
 		let mod = parseInt(action.mod);
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
-	if (action.type == "attribute" && !!actor) {
+	if (action.type === "attribute" && !!actor) {
 		prefix = "Roll vs ";
 		thing = this.i18n(action.path);
 		formula = "3d6";
@@ -417,27 +417,27 @@ function performAction(action, actor) {
 		if (!!action.mod || !!action.desc)
 			targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 	}
-	if (action.type == "selfcontrol") {
+	if (action.type === "selfcontrol") {
 		prefix = "Self Control ";
 		thing = action.desc;
 		formula = "3d6";
 		target = action.target;
 	}
-	if (action.type == "roll") {
+	if (action.type === "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
 		formula = d6ify(action.formula);
 	}
-	if (action.type == "damage") {
+	if (action.type === "damage") {
 		formula = d6ify(action.formula);
 		GURPS.damageChat.create(actor, formula, action.damagetype);
 		return;
 	}
-	if (action.type == "deriveddamage" && !!actor) {
+	if (action.type === "deriveddamage" && !!actor) {
 		formula = d6ify(action.derivedformula);
 		GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
 		return;
 	}
-	if (action.type == "skill" && !!actor) {
+	if (action.type === "skill" && !!actor) {
 		prefix = "Attempting ";
 		thing = action.name;
 		let skill = actor.data.skills.findInProperties(s => s.name == thing);
@@ -638,7 +638,8 @@ GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
-	if (str === undefined) return "!!UNDEFINED";
+	if (str === undefined) 
+		return "!!UNDEFINED";
 	let found = -1;
 	let output = "";
 	for (let i = 0; i < str.length; i++) {
@@ -865,6 +866,8 @@ Hooks.once("init", async function () {
 	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
 	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { makeDefault: false });
+	
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
 
@@ -874,6 +877,19 @@ Hooks.once("init", async function () {
 		return o;
 	});
 
+	Handlebars.registerHelper('simpleRating', function (lvl) {
+		if (!lvl) return "UNKNOWN";
+		let l = parseInt(lvl);
+		if (l <= 8 )
+			return "Poor";
+		if (l <= 10 )
+			return "Fair";
+		if (l <= 12 )
+			return "Good";
+		if (l <= 14 )
+			return "Great";
+		return "Super";	
+	});
 
 	Handlebars.registerHelper('notEmpty', function (obj) {
 		return !!obj ? Object.values(obj).length > 0 : false;
