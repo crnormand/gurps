@@ -415,15 +415,16 @@ function performAction(action, actor) {
 			formula = "3d6";
 			target = action.target;
 			if (!target) target = this.resolve(action.path, actor.data);
+			target = parseInt(target);
 			if (!!action.mod || !!action.desc)
 				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 		} else
-			ui.notification("You must have a character selected");
+			ui.notifications.warn("You must have a character selected");
 	if (action.type === "selfcontrol") {
 		prefix = "Self Control ";
 		thing = action.desc;
 		formula = "3d6";
-		target = action.target;
+		target = parseInt(action.target);
 	}
 	if (action.type === "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
@@ -440,17 +441,28 @@ function performAction(action, actor) {
 			GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
 			return;
 		} else
-			ui.notification("You must have a character selected");
+			ui.notifications.warn("You must have a character selected");
 	if (action.type === "skill")
 		if (!!actor) {
+			let skill = null;
 			prefix = "Attempting ";
 			thing = action.name;
-			let skill = actor.data.skills.findInProperties(s => s.name == thing);
+			if (thing[thing.length-1] == "*") {
+				thing = thing.substring(0, thing.length-1);
+		    skill = actor.data.skills?.findInProperties(s => s.name.startsWith(thing));
+      } else {
+        skill = actor.data.skills?.findInProperties(s => s.name == thing);
+      }
+      if (!skill) {
+				ui.notifications.warn("No skill named '" + action.name + "' found on " + actor.name);
+				return;
+			}
+			thing = skill.name;
 			target = parseInt(skill.level);
 			formula = "3d6";
 			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 		} else
-			ui.notification("You must have a character selected");
+			ui.notifications.warn("You must have a character selected");
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target);
 }
@@ -621,6 +633,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		chatcontent = prefix + modscontent + "<br>" + results + thing;
 	}
 
+  actor = actor || game.user;
 	const speaker = { alias: actor.name, _id: actor._id }
 	let messageData = {
 		user: game.user._id,
@@ -838,6 +851,21 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 GURPS.listeqtrecurse = listeqtrecurse;
 
 
+function chatClickGurpslink(event) {
+  event.preventDefault();
+  game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+}
+GURPS.chatClickGurpslink = chatClickGurpslink;
+
+
+function chatClickGmod(event) {
+  let element = event.currentTarget;
+  event.preventDefault();
+  let desc = element.dataset.name;
+  game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+}
+GURPS.chatClickGmod = chatClickGmod;
+
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
@@ -1001,5 +1029,24 @@ Hooks.once("ready", async function () {
 			if (!!a) game.GURPS.SetLastActor(a);
 		}
 	});
+	
+	Hooks.on('preCreateChatMessage', (data, options, userId) => {
+		let c = data.content;
+		//console.log("PRE CHAT:");
+		//console.log(c);
+		data.content = game.GURPS.gurpslink(c, game.GURPS.LastActor?.data);
+		//console.log("AFTER:");
+		//console.log(data.content);
+	});
+	
+	Hooks.on('renderChatMessage', (app, html, msg) => {
+    html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
+	  html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
+	  html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
+	  html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
+	  html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
+		});
+
 });
+
 
