@@ -21,7 +21,9 @@ import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
 import DamageChat from '../lib/damagemessage.js'
 
 import helpers from '../lib/moustachewax.js'
+import settings from '../lib/miscellaneous-settings.js'
 
+settings()
 helpers()
 
 //CONFIG.debug.hooks = true;

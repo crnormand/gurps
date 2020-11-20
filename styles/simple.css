@@ -1908,6 +1908,10 @@ body {
   background-color: rgba(0, 0, 0, 0.10);
 }
 
+.grid .gurps-continuation {
+  margin-top: 0;
+}
+
 .gurps-left-aligned {
   text-align: start !important;
 }

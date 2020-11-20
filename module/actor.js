@@ -1,5 +1,5 @@
 import { xmlTextToJson } from '../lib/utilities.js'
-import ApplyDamageDialog from '../lib/testdialog.js'
+import ApplyDamageDialog from '../lib/applydamage.js'
 
 export class GurpsActor extends Actor {
 
@@ -710,7 +710,7 @@ export class GurpsActor extends Actor {
 	// NOTE: could also return 'Random' or 'Large-Area'?
 	getDefaultHitLocation() {
 		// TODO implement a system setting but (potentially) allow it to be overridden
-		return "Torso"
+		return game.settings.get('gurps', 'default-hitlocation')
 	}
 }
 
