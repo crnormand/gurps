@@ -41,8 +41,8 @@
           <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury (<span
               class='pdflink'>B400</span>)</input></label>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
-            <label><input type='radio' name='hitlocation' value='Entered DR'>&nbsp;Enter DR:</input></label>
-            <input type='text' id='select-dr' name='Entered DR' value='{{selectedDR}}'>
+            <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter DR:</input></label>
+            <input type='text' id='select-dr' name='User Entered' value='{{selectedDR}}'>
           </div>
         </div>
 
@@ -65,12 +65,13 @@
           <hr />
           <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No modifier</input></label>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
-            <label><input type='radio' name='woundmodifier' value='select-mod'>&nbsp;Enter modifier:</input></label>
-            <input type='text' id='woundmodifier' name='woundmodifier' value='{{selectedModifier}}'>
+            <label><input type='radio' name='woundmodifier' value='User Entered'>&nbsp;Enter
+              modifier:</input></label>
+            <input type='text' id='select-mod' name='User Entered' value='{{selectedMod}}'>
           </div>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
             <label>Additional modifier (stacks):</label>
-            <input type='text' id='addmodifier' name='addmodifier' value='{{additionalModifier}}'>
+            <input type='text' id='addmodifier' name='addmodifier' value='{{additionalMods}}'>
           </div>
         </div>
 
@@ -151,6 +152,8 @@
               id='result-dr'>{{dr}}</span>.</div>
           <div>Damage type is <span id='result-type'>{{damageData.damageType}}</span>, modifier ×<span
               id='result-modifier'>1</span>.</div>
+          <div>Additional wounding modifier is ×<span id='result-addmods'>{{additionalMods}}</span>.</div>
+          <div>Total wounding modifier is ×<span id='result-totalmod'>{{totalMods}}</span>.</div>
         </div>
 
       </div>
