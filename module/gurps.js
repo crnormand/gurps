@@ -4,7 +4,7 @@ import parselink from '../lib/parselink.js'
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
-import { GurpsActorCombatSheet, GurpsActorSheet } from "./actor-sheet.js";
+import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet, GurpsActorSimplifiedSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
@@ -337,7 +337,7 @@ function cleanUpP(xml) {
 			if (e > s) {
 				let t1 = xml.substring(0, s);
 				let t2 = xml.substring(s + 3, e);
-				t2 = btoa(t2) + "\n";
+				t2 = "@@@@" + btoa(t2) + "\n";
 				let t3 = xml.substr(e + 4);
 				xml = t1 + t2 + t3;
 				s = xml.indexOf(tagin, s + t2.length);
@@ -358,11 +358,11 @@ function extractP(str) {
 		let s = str.split("\n");
 		for (let b of s) {
 			if (!!b) {
-				try {
-					v += atob(b) + "\n";
-				} catch {
-					v += b + "\n";
-				}
+				if (b.startsWith("@@@@")) {
+						b = b.substr(4);
+						v += atob(b) + "\n";
+				} else
+						v += b + "\n";
 			}
 		}
 	}
@@ -376,6 +376,7 @@ GURPS.extractP = extractP;
 */
 function objToString(obj, ndeep) {
 	if (obj == null) { return String(obj); }
+	if (ndeep > 10) return "(stopping due to depth): " + obj.toString();
 	switch (typeof obj) {
 		case "string": return '"' + obj + '"';
 		case "function": return obj.name || obj.toString();
@@ -403,12 +404,12 @@ function performAction(action, actor) {
 	let formula = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
 
-	if (action.type == "modifier") {
+	if (action.type === "modifier") {
 		let mod = parseInt(action.mod);
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
-	if (action.type == "attribute" && !!actor) {
+	if (action.type === "attribute" && !!actor) {
 		prefix = "Roll vs ";
 		thing = this.i18n(action.path);
 		formula = "3d6";
@@ -417,27 +418,27 @@ function performAction(action, actor) {
 		if (!!action.mod || !!action.desc)
 			targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 	}
-	if (action.type == "selfcontrol") {
+	if (action.type === "selfcontrol") {
 		prefix = "Self Control ";
 		thing = action.desc;
 		formula = "3d6";
 		target = action.target;
 	}
-	if (action.type == "roll") {
+	if (action.type === "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
 		formula = d6ify(action.formula);
 	}
-	if (action.type == "damage") {
-		prefix = "Rolling " + action.formula;
-		thing = " points of '" + action.damagetype + "' damage";
+	if (action.type === "damage") {
 		formula = d6ify(action.formula);
+		GURPS.damageChat.create(actor, formula, action.damagetype);
+		return;
 	}
-	if (action.type == "deriveddamage" && !!actor) {
-		prefix = "Rolling " + action.formula + " (" + action.derivedformula + ")";
-		thing = " points of '" + action.damagetype + "' damage";
+	if (action.type === "deriveddamage" && !!actor) {
 		formula = d6ify(action.derivedformula);
+		GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
+		return;
 	}
-	if (action.type == "skill" && !!actor) {
+	if (action.type === "skill" && !!actor) {
 		prefix = "Attempting ";
 		thing = action.name;
 		let skill = actor.data.skills.findInProperties(s => s.name == thing);
@@ -462,6 +463,7 @@ async function onRoll(event, actor) {
 	let element = event.currentTarget;
 	let prefix = "";
 	let thing = "";
+	let opt = "";
 	let target = 0;		// -1 == damage roll, target = 0 is NO ROLL.
 
 	if ("path" in element.dataset) {
@@ -472,7 +474,10 @@ async function onRoll(event, actor) {
 	}
 	if ("name" in element.dataset) {
 		prefix = "Attempting ";
-		thing = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
+		let text = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
+		thing = text.replace(/(.*?)\(.*\)/g,"$1");
+		opt = text.replace(/.*?\((.*)\)/g,"<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+		if (opt === text) opt = "";	
 		formula = "3d6";
 		let t = element.innerText;
 		if (!!t) {
@@ -492,9 +497,7 @@ async function onRoll(event, actor) {
 			dtype = formula.substr(i + 1).trim();
 			formula = formula.substring(0, i);
 		}
-
 		GURPS.damageChat.create(actor, formula, dtype)
-
 		return
 	}
 	if ("roll" in element.dataset) {
@@ -504,7 +507,7 @@ async function onRoll(event, actor) {
 		formula = d6ify(formula);
 	}
 
-	this.doRoll(actor, formula, targetmods, prefix, thing, target);
+	this.doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
 GURPS.onRoll = onRoll;
 
@@ -531,7 +534,7 @@ GURPS.applyModifierDesc = applyModifierDesc;
 	unfortunately, it has a lot fo hard coded junk in it.
 	*/
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
+async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optlabel = "") {
 
 	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
@@ -591,61 +594,26 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</small>";
-		chatcontent = prefix + thing + " (" + origtarget + ")" + modscontent + "<br>" + results + rdesc;
-	} else {	// This is "damage" roll where the modifier is added to the roll, not the target
-		// REPLACED by code in damagemessage.mjs/DamageChat
+		chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + results + rdesc;
+	} else {	// This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
+		// NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
-		// let diceText = prefix.replace(/^Rolling /, '')
-		// let type = thing.replace(/^ points of '/, '').replace(/' damage/, '')
-		// let min = 1
-		// let b378 = false
+ 		let min = 0
+		if (formula.slice(-1) === '!') {
+			formula = formula.slice(0, -1)
+			min = 1
+		}
 
-		// if (type === 'cr') min = 0
+		roll = new Roll(formula + `+${modifier}`);
+		roll.roll();
+		let rtotal = roll.total;
+		if (rtotal < min) {
+			rtotal = min;
+		}
 
-		// if (formula.slice(-1) === '!') {
-		// 	formula = formula.slice(0, -1)
-		// 	min = 1
-		// }
-
-		// let roll = new Roll(formula + `+${modifier}`);
-		// roll.roll();
-		// let rtotal = roll.total;
-		// if (rtotal < min) {
-		// 	rtotal = min;
-		// 	if (type !== 'cr') b378 = true
-		// }
-
-		// let contentData = {
-		// 	dice: diceText,
-		// 	damage: rtotal,
-		// 	type: type,
-		// 	modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
-		// 	isB378: b378,
-		// 	type: 'Damage'
-		// }
-		// let html = await
-		// 	renderTemplate('systems/gurps/templates/damage-message.html', contentData)
-
-		// console.log(html)
-		// const speaker = { alias: actor.name, _id: actor._id }
-		// let messageData = {
-		// 	user: game.user._id,
-		// 	speaker: speaker,
-		// 	content: html,
-		// 	type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-		// 	roll: roll
-		// };
-
-		// messageData["flags.transfer"] = JSON.stringify(
-		// 	{
-		// 		type: 'damageItem',
-		// 		payload: contentData
-		// 	}
-		// )
-
-		// let me = await CONFIG.ChatMessage.entityClass.create(messageData);
-		// // me.data.flags.damage = contentData
-		// return
+		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
+		if (rtotal == 1) thing = thing.replace("points", "point");
+		chatcontent = prefix + modscontent + "<br>" + results + thing;
 	}
 
 	const speaker = { alias: actor.name, _id: actor._id }
@@ -665,12 +633,14 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget) {
 		messageData.sound = CONFIG.sounds.dice;
 		CONFIG.ChatMessage.entityClass.create(messageData, {});
 	}
+
 }
 GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
-	if (str === undefined) return "!!UNDEFINED";
+	if (str === undefined) 
+		return "!!UNDEFINED";
 	let found = -1;
 	let output = "";
 	for (let i = 0; i < str.length; i++) {
@@ -756,12 +726,14 @@ GURPS.onGurpslink = onGurpslink;
 	which will give you the object, and also the key, such that you could execute somebject.key to get the 
 	correct instance.   */
 function genkey(index) {
-	let k = "key-";
+	let k = "";
 	if (index < 10)
 		k += "0";
 	if (index < 100)
 		k += "0";
 	if (index < 1000)
+		k += "0";
+	if (index < 10000)
 		k += "0";
 	return k + index;
 }
@@ -772,18 +744,88 @@ function put(obj, value, index = -1) {
 		index = 0;
 		while (obj.hasOwnProperty(this.genkey(index))) index++;
 	}
-	obj[this.genkey(index)] = value;
+	let k = this.genkey(index);
+	obj[k] = value;
+	return k;
 }
 GURPS.put = put;
 
-function listeqtrecurse(eqts, options, level, data) {
+// Convolutions to remove a key from an object and fill in the gaps, necessary because the default add behavior just looks for the first open gap
+async function removeKey(actor, path) {
+	let i = path.lastIndexOf(".");
+	let objpath = path.substring(0, i);
+	let key = path.substr(i+1);
+	i = objpath.lastIndexOf(".");
+	let parentpath = objpath.substring(0, i);
+	let objkey = objpath.substr(i+1);
+	let object = GURPS.decode(actor.data, objpath);
+	let t = parentpath + ".-=" + objkey;
+	await actor.update({[t]: null});		// Delete the whole object
+	delete object[key];
+	i = parseInt(key);
+
+	i = i + 1;
+	while (object.hasOwnProperty(this.genkey(i))) {
+		let k = this.genkey(i);
+		object[key] = object[k];
+		delete object[k];
+		key = k;
+		i++;
+	}
+	await actor.update({[objpath] : object});
+}
+GURPS.removeKey = removeKey;
+
+// Because the DB just merges keys, the best way to insert is to delete the whole colleciton object, fix it up, and then re-add it.
+async function insertBeforeKey(actor, path, newobj) {
+	let i = path.lastIndexOf(".");
+	let objpath = path.substring(0, i);
+	let key = path.substr(i+1);
+	i = objpath.lastIndexOf(".");
+	let parentpath = objpath.substring(0, i);
+	let objkey = objpath.substr(i+1);
+	let object = GURPS.decode(actor.data, objpath);
+	let t = parentpath + ".-=" + objkey;
+	await actor.update({[t]: null});		// Delete the whole object
+	let start = parseInt(key);
+		
+	i = start + 1;
+	while (object.hasOwnProperty(this.genkey(i))) i++;
+	i = i - 1;
+	for (let z = i; z >= start; z--) {
+		object[genkey(z+1)] = object[genkey(z)];
+	}
+	object[key] = newobj;
+	await actor.update({[objpath]: object});
+}
+GURPS.insertBeforeKey = insertBeforeKey;
+
+function decode(obj, path, all = true) {
+  let p = path.split(".");
+  let end = p.length;
+  if (!all) end = end - 1;
+  for (let i = 0; i < end; i++) {
+    let q = p[i];
+    obj = obj[q];
+  }
+  return obj;
+}
+GURPS.decode = decode;
+
+/*  Funky helper function to be able to list hierarchical equipment in a linear list (with appropriate keys for editing)
+*/
+function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 	if (!eqts) return "";
-	var list = Object.values(eqts);
 	let ret = "";
-	for (var i = 0; i < list.length; i++) {
-		if (data) data.indent = level;
-		ret = ret + options.fn(list[i], { data: data });
-		ret = ret + GURPS.listeqtrecurse(list[i].contains, options, level + 1, data);
+	let i = 0;
+	for (let key in eqts) {
+		let eqt = eqts[key];
+		if (data) {
+			data.indent = level;
+			data.key = parentkey + key;
+		}
+		ret = ret + options.fn(eqt, { data: data });
+		ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + ".contains.");
 	}
 	return ret;
 }
@@ -824,6 +866,9 @@ Hooks.once("init", async function () {
 	Actors.unregisterSheet("core", ActorSheet);
 	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { makeDefault: false });
+	
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
 
@@ -833,6 +878,19 @@ Hooks.once("init", async function () {
 		return o;
 	});
 
+	Handlebars.registerHelper('simpleRating', function (lvl) {
+		if (!lvl) return "UNKNOWN";
+		let l = parseInt(lvl);
+		if (l <= 8 )
+			return "Poor";
+		if (l <= 10 )
+			return "Fair";
+		if (l <= 12 )
+			return "Good";
+		if (l <= 14 )
+			return "Great";
+		return "Super";	
+	});
 
 	Handlebars.registerHelper('notEmpty', function (obj) {
 		return !!obj ? Object.values(obj).length > 0 : false;
@@ -852,7 +910,8 @@ Hooks.once("init", async function () {
 		if (options.data)
 			data = Handlebars.createFrame(options.data);
 
-		return GURPS.listeqtrecurse(context, options, 0, data);
+		let ans = GURPS.listeqtrecurse(context, options, 0, data);
+		return ans;
 	});
 
 
@@ -867,9 +926,6 @@ Hooks.once("init", async function () {
 			penalty = GURPS.hitlocationRolls[loc]?.penalty;
 		return penalty;
 	});
-
-
-
 
 	game.settings.register("gurps", "changelogVersion", {
 		name: "Changelog Version",

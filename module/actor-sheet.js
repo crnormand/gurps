@@ -1,6 +1,7 @@
 import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
-
+import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js';
+import parselink from '../lib/parselink.js';
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -54,17 +55,6 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
-  decode(obj, path, all) {
-    let p = path.split(".");
-    let end = p.length;
-    if (!all) end = end - 1;
-    for (let i = 0; i < end; i++) {
-      let q = p[i];
-      obj = obj[q];
-    }
-    return obj;
-  }
-
 
   /** @override */
   activateListeners(html) {
@@ -80,50 +70,6 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmod").click(this._onClickGmod.bind(this));
     html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
-
-    // Everything below here is only needed if the sheet is editable
-    if (!this.options.editable) return;
-
-    new ContextMenu(html, ".gcs-edit-name", [
-      {
-        name: "Edit",
-        icon: "<i class='fas fa-edit'></i>",
-        callback: element => {
-          let path = element[0].dataset.path;
-          let nm = this.decode(this.actor.data, path, true);
-          const template = "<div class='form-group' style='display:flex; flex-direction:column'><h1>Edit Name</h1><input id='tempinput' type='text' value='" + nm + "'></div>"
-          new Dialog({
-            title: "Edit Name",
-            content: template,
-            buttons: {
-              "ok": {
-                label: "Done",
-                callback: async (html) => {
-                  let v = html.find("#tempinput")[0].value;
-                  let o = this.decode(this.actor.data, path, false);
-                  let p = path.split(".");
-                  o[p[p.length - 1]] = v
-                }
-              }
-            }
-          }).render(true);
-        }
-      }
-    ]);
-
-    // Update Inventory Item
-    html.find('.item-edit').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.getOwnedItem(li.data("itemId"));
-      item.sheet.render(true);
-    });
-
-    // Delete Inventory Item
-    html.find('.item-delete').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      this.actor.deleteOwnedItem(li.data("itemId"));
-      li.slideUp(200, () => this.render(false));
-    });
   }
 
   /* -------------------------------------------- */
@@ -312,19 +258,25 @@ export class GurpsActorSheet extends ActorSheet {
     return position;
   }
 
+	get title() {
+		const t = this.actor.name;
+		const sheet = this.actor.getFlag("core", "sheetClass");
+		return (sheet === "gurps.GurpsActorEditorSheet") ? "**** Editing: " + t + " ****": t;
+	}
+
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
 
-    const sheet = this.actor.getFlag("core", "sheetClass")
+    const sheet = this.actor.getFlag("core", "sheetClass");
+		const isFull = sheet === undefined || sheet === "gurps.GurpsActorSheetGCS";
+		const isEditor = sheet === "gurps.GurpsActorEditorSheet";
 
     // Token Configuration
     const canConfigure = game.user.isGM || this.actor.owner;
     if (this.options.editable && canConfigure) {
-      buttons = [
+      let b = [
         {
-          label: (sheet === "gurps.GurpsActorCombatSheet")
-            ? "Full View"
-            : "Combat View",
+          label: isFull ? "Combat View" : "Full View",
           class: "toggle",
           icon: "fas fa-exchange-alt",
           onclick: ev => this._onToggleSheet(ev)
@@ -335,7 +287,17 @@ export class GurpsActorSheet extends ActorSheet {
           icon: "fas fa-file-import",
           onclick: ev => this._onFileImport(ev)
         }
-      ].concat(buttons);
+      ];
+			if (!isEditor) {
+				b.push(         
+					{
+	          label: "Editor",
+	          class: "edit",
+	          icon: "fas fa-edit",
+	          onclick: ev => this._onOpenEditor(ev)
+	        } );
+			}
+			buttons = b.concat(buttons);
     }
     return buttons
   }
@@ -378,9 +340,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     const original = this.actor.getFlag("core", "sheetClass")
     console.log("original: " + original)
-    const newSheet = (original === "gurps.GurpsActorCombatSheet")
-      ? "gurps.GurpsActorSheetGCS"
-      : "gurps.GurpsActorCombatSheet"
+		let newSheet = "gurps.GurpsActorCombatSheet"
+    if (original != "gurps.GurpsActorSheetGCS") newSheet = "gurps.GurpsActorSheetGCS";
 
     await this.actor.sheet.close()
 
@@ -392,6 +353,13 @@ export class GurpsActorSheet extends ActorSheet {
     console.log("updated: " + updated)
     this.actor.sheet.render(true)
   }
+
+	async _onOpenEditor(event) {
+    event.preventDefault();
+    await this.actor.sheet.close();
+    await this.actor.setFlag("core", "sheetClass", "gurps.GurpsActorEditorSheet");
+    this.actor.sheet.render(true)
+	}
 
   async _onClickPdf(event) {
     event.preventDefault();
@@ -436,4 +404,186 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });
   }
+}
+
+export class GurpsActorEditorSheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["gurps", "gurpsactorsheet", "sheet", "actor"],
+      template: "systems/gurps/templates/actor-sheet-gcs-editor.html",
+			scrollY: [".gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes"], 
+      width: 800,
+      height: 800,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
+      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
+    });
+  }
+
+	makeAddDeleteMenu(html, cssclass, obj) {
+		new ContextMenu(html, cssclass, this.addDeleteMenu(obj));
+	}
+	
+	addDeleteMenu(obj) {
+		return [
+			{
+				name: "Add Before",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj));
+				}
+			},
+			{
+				name: "Delete",
+				icon: "<i class='fas fa-trash'></i>",
+				callback: e => {
+					GURPS.removeKey(this.actor, e[0].dataset.key);
+				}
+			},
+			{
+				name: "Add at the end",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let p = e[0].dataset.key;
+					let i = p.lastIndexOf(".");
+					let objpath = p.substring(0, i);
+					let o = GURPS.decode(this.actor.data, objpath);
+					GURPS.put(o, duplicate(obj));
+					this.actor.update({ [objpath] : o });
+				}
+			}
+		];
+	}
+	
+	headerMenu(name, obj, path) {
+		return [ {
+				name: "Add " + name + " at the end",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let o = GURPS.decode(this.actor.data, path);
+					GURPS.put(o, duplicate(obj));
+					this.actor.update({ [path] : o });
+				}
+			} 
+		];
+	}
+		
+
+	makeHeaderMenu(html, cssclass, name, obj, path) {
+		new ContextMenu(html, cssclass, this.headerMenu(name, obj, path));
+	}
+
+  activateListeners(html) {
+    super.activateListeners(html);
+
+    html.find(".enc").click(this._onClickEnc.bind(this));
+    html.find(".changeequip").click(this._onClickEquip.bind(this));
+
+    this.makeHeaderMenu(html, ".reacthead", "Reaction", new Reaction("+0", "from ..."), "data.reactions");
+		this.makeAddDeleteMenu(html, ".reactmenu", new Reaction("+0", "from ..."));
+
+    this.makeHeaderMenu(html, ".meleehead", "Melee Attack", new Melee("New Attack"), "data.melee");
+		this.makeAddDeleteMenu(html, ".meleemenu", new Melee("New Attack"));
+
+    this.makeHeaderMenu(html, ".rangedhead", "Ranged Attack", new Ranged("New Attack"), "data.ranged");
+		this.makeAddDeleteMenu(html, ".rangedmenu", new Ranged("New Attack"));
+
+ 		let opts = this.headerMenu("Advantage", new Advantage("New Advantage"), "data.ads").concat(
+			this.headerMenu("Disadvantage", new Advantage("New Disadvantage"), "data.disads"));
+		new ContextMenu(html, ".adshead", opts);
+		this.makeAddDeleteMenu(html, ".adsmenu", new Advantage("New Advantage"));
+		this.makeAddDeleteMenu(html, ".disadsmenu", new Advantage("New Disadvantage"));
+
+    this.makeHeaderMenu(html, ".skillhead", "Skill", new Skill("New Skill"), "data.skills");
+		this.makeAddDeleteMenu(html, ".skillmenu", new Skill("New Skill"));
+
+    this.makeHeaderMenu(html, ".spellhead", "Spell", new Spell("New Spell"), "data.spells");
+		this.makeAddDeleteMenu(html, ".spellmenu", new Spell("New Spell"));
+
+    this.makeHeaderMenu(html, ".notehead", "Note", new Note("New Note"), "data.notes");
+		this.makeAddDeleteMenu(html, ".notemenu", new Note("New Note"));
+		
+	  this.makeHeaderMenu(html, ".carhead", "Carried Equipment", new Equipment("New Equipment"), "data.equipment.carried");
+    this.makeHeaderMenu(html, ".othhead", "Other Equipment", new Equipment("New Equipment"), "data.equipment.other");
+
+		opts = this.addDeleteMenu(new Equipment("New Equipment"));
+		opts.push( {
+				name: "Add In (new Equipment will be contained by this)",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let k = e[0].dataset.key + ".contains";
+					let o = GURPS.decode(this.actor.data, k ) || {};
+					GURPS.put(o, duplicate(new Equipment("New Equipment")));
+					this.actor.update({ [k] : o });
+				}
+			});
+		new ContextMenu(html, ".carmenu", opts);
+		new ContextMenu(html, ".othmenu", opts);
+	}
+		
+	async _onClickEquip(ev) {
+		ev.preventDefault();
+		let element = ev.currentTarget;
+		let key = element.dataset.key;
+		let eqt = GURPS.decode(this.actor.data, key);
+		eqt.equipped = !eqt.equipped;
+		await this.actor.update({ [key] : eqt });
+	}
+	
+	async _onClickEnc(ev) {
+		ev.preventDefault();
+		let element = ev.currentTarget;
+		let key = element.dataset.key;
+		let encs = this.actor.data.data.encumbrance;
+		if (encs[key].current) return;  // already selected
+		for (let enckey in encs) {
+			let enc = encs[enckey];
+			let t = "data.encumbrance." + enckey + ".current";
+			if (enc.current) {
+				await this.actor.update({ [t] : false });
+			}
+			if (key === enckey) {
+				await this.actor.update({ [t] : true });
+			}
+		} 
+	}
+}
+
+export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["gurps", "sheet", "actor"],
+      template: "systems/gurps/templates/simplified.html",
+      width: 820,
+      height: 900,
+      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
+      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
+    });
+  }
+
+  getData() {
+    const data = super.getData();
+		for (const e of Object.values(this.actor.data.data.encumbrance)) {
+			if (e.current) data.dodge = e.dodge;
+		}
+		for (const e of Object.values(this.actor.data.data.hitlocations)) {
+			if (e.penalty == 0) data.defense = e.dr;
+		}
+		return data;
+	}
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find(".rollableicon").click(this._onClickRollableIcon.bind(this));
+
+	}
+	
+	async _onClickRollableIcon(ev) {
+		ev.preventDefault();
+		let element = ev.currentTarget;
+		let val = element.dataset.value;
+		let parsed = parselink(val, this.actor);
+		GURPS.performAction(parsed.action, this.actor);
+	}
 }

@@ -1,4 +1,4 @@
-<form class="{{cssClass}} overflowy" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off">
     <div id="sheet" class="gurpsactorsheet">
         <div id="personal">
             <div id="portrait">
@@ -204,7 +204,7 @@
                 <div class="header">Fatigue Points</div>
                 <div class="fieldblock3">
                     <div class="points"></div>
-                    <div class="field"><input class="gcs-attr-input" name="data.FP.value" type="text"
+                    <div class="field"><input class="gcs-input-2" name="data.FP.value" type="text"
                             value="{{data.FP.value}}" data-dtype="Number" /></div>
                     <div class="label">Current</div>
                     <div class="points">[{{data.FP.points}}]</div>
@@ -222,7 +222,7 @@
                 <div class="header">Hit Points</div>
                 <div class="fieldblock3">
                     <div class="points"></div>
-                    <div class="field"><input class="gcs-attr-input" name="data.HP.value" type="text"
+                    <div class="field"><input class="gcs-input-2" name="data.HP.value" type="text"
                             value="{{data.HP.value}}" data-dtype="Number" /></div>
                     <div class="label">Current</div>
 
@@ -393,14 +393,14 @@
                 <div class="list_note satisfiedY"></div>
                 <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
             </div>
-            <div class="cls satisfiedY"></div>
+            <div class="cls satisfiedY">{{this.class}}</div>
             <div class="college satisfiedY">{{this.college}}</div>
             <div class="mana satisfiedY">{{this.cost}}</div>
             <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
             <div class="time satisfiedY">{{this.casttime}}</div>
             <div class="duration satisfiedY">{{this.duration}}</div>
             <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
-            <div class="rsl satisfiedY"></div>
+            <div class="rsl satisfiedY">{{this.difficulty}}</div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
             {{/each}}
@@ -464,7 +464,7 @@
             {{/each}}
         </div>
     </div>
-    <div id="footer">GCS is copyrighted �1998-2020 by Richard A. Wilkes � All rights reserved �
+    <div id="footer">GCS is copyrighted 1998-2020 by Richard A. Wilkes  All rights reserved
         <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
     </div>
 </form>

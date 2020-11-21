@@ -4,7 +4,341 @@
   /* Attributes */
 }
 
-#testdialog,
+.simple_Ads label,
+.simple_Eqt label,
+.simple_Skills label,
+.simple_Notes label,
+.simple_Attacks label {
+	font-size: 120%;
+	font-weight:bold;
+	font-style: italic;
+}
+
+.simple_form {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.simple_container {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 5px 5px;
+  grid-template-areas:
+    "ST ST-desc ST-desc Portrait Portrait"
+    "DX DX-desc DX-desc Portrait Portrait"
+    "IQ IQ-desc IQ-desc Portrait Portrait"
+    "HT HT-desc HT-desc Portrait Portrait"
+    "Shield Body Heart Notes Notes"
+    "Shield Body Heart Notes Notes"
+    "Shield Body Heart Notes Notes"
+    "Defend Armor HP Notes Notes"
+    "Attacks Attacks Attacks Skills Skills"
+    "Attacks Attacks Attacks Skills Skills"
+    "Attacks Attacks Attacks Skills Skills"
+    "Attacks Attacks Attacks Skills Skills"
+    "Attacks Attacks Attacks Skills Skills"
+    "Eqt Eqt Eqt Ads Ads"
+    "Eqt Eqt Eqt Ads Ads"
+    "Eqt Eqt Eqt Ads Ads"
+    "Eqt Eqt Eqt Ads Ads";
+}
+
+.simple_lrg {
+	font-size: 200%;
+}
+
+.simple_ST-desc label,
+.simple_DX-desc label,
+.simple_IQ-desc label,
+.simple_HT-desc label {
+	align-self:center;
+}
+
+.simple_ST { grid-area: ST; }
+
+.simple_DX { grid-area: DX; }
+
+.simple_IQ { grid-area: IQ; }
+
+.simple_HT { grid-area: HT; }
+
+.simple_ST-desc { 
+	grid-area: ST-desc;
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+}
+
+.simple_DX-desc {
+	grid-area: DX-desc;
+ 	display: flex;
+	flex-direction: row;
+	align-content: center;
+}
+
+.simple_IQ-desc { 
+	grid-area: IQ-desc; 
+ 	display: flex;
+	flex-direction: row;
+	align-content: center;
+}
+
+
+.simple_HT-desc { 
+	grid-area: HT-desc; 
+ 	display: flex;
+	flex-direction: row;
+	align-content: center;
+}
+
+.simple_Shield { 
+	grid-area: Shield; 
+	text-align: center;
+	background-image: url("../ui/ri_1.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center; 
+	font-size: 250%;
+	font-weight: bold;
+	
+	display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+.simple_Body { 
+	grid-area: Body; 
+	text-align: center;
+	background-image: url("../ui/ri_3.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center; 
+	font-size: 250%;
+	font-weight: bold;
+	
+	display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+.simple_Heart { 
+	grid-area: Heart;
+	text-align: center;
+	background-image: url("../ui/ri_2.png");
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center; 
+	font-size: 250%;
+	font-weight: bold;
+	
+	display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+.simple_Defend { 
+	grid-area: Defend; 
+	font-weight: bold;
+	text-align: center;
+	background-color: green; 
+}
+
+.simple_Armor { 
+	grid-area: Armor;
+	font-weight: bold;
+	text-align: center;
+	background-color: orange; 
+}
+
+.simple_HP { 
+	grid-area: HP; 
+	font-weight: bold;
+	text-align: center;
+	background-color: red;
+}
+
+.simple_Attacks { 
+	grid-area: Attacks;
+	background-color: rgb(220, 255, 255);
+	display: grid;
+  align-content: stretch;
+  grid-template-rows: repeat(100, 1fr);
+  grid-template-columns: 1.5fr 1fr 1fr;
+  text-align: center;
+	vertical-align: middle;
+  font-size: 120%;
+	gap: 10px 15px;
+	overflow-y: scroll;
+}
+
+.simple_Skills { 
+	grid-area: Skills; 
+	background-color: rgb(220, 255, 255);
+	display: grid;
+  align-content: stretch;
+  grid-template-rows: repeat(100, 1fr);
+  grid-template-columns: 3fr 1fr;
+  text-align: left;
+	vertical-align: middle;
+  font-size: 120%;
+	gap: 10px 15px;
+	overflow-y: scroll;
+}
+
+.simple_Eqt {
+	grid-area: Eqt; 
+	background-color: rgb(215, 215, 255);
+	display: grid;
+  align-content: stretch;
+  grid-template-rows: repeat(100, 1fr);
+  grid-template-columns: 9fr 1fr;
+  text-align: left;
+	vertical-align: middle;
+  font-size: 120%;
+	gap: 10px 15px;
+	overflow-y: scroll;	
+}
+
+.simple_Ads { 
+	grid-area: Ads; 
+	background-color: rgb(215, 215, 255);
+	display: grid;
+  align-content: stretch;
+  grid-template-rows: repeat(100, 1fr);
+  grid-template-columns: 1fr;
+  text-align: left;
+	vertical-align: middle;
+  font-size: 120%;
+	gap: 10px 20px;
+	overflow-y: scroll;
+}
+
+.simple_Portrait { 
+	grid-area: Portrait; 
+	object-fit: contain;
+	text-align: center; 
+}
+
+.simple_Notes { 
+	grid-area: Notes; 
+	background-color: rgb(220, 255, 255);
+	font-size: 120%;
+  display: grid;
+  align-content: stretch;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
+	padding: 0px 0px 0px 10px;
+	overflow-y: scroll;
+}
+
+.simple_icon {
+  max-width: 100%;
+  max-height: 100%;
+  vertical-align: middle;
+  background-color: rgb(255, 255, 175);
+}
+
+.simple_input {
+	font-size: 120% !important;
+	height: 40px !important;
+	width: 80px !important;
+	vertical-align: middle;
+	margin: 5px;
+	padding: 10px;
+	border: 2px solid black;
+  background-color: rgb(255, 255, 175);
+}
+
+.gcs-input-ta {
+  border-width: 0px !important;
+  border: none !important;
+  height: 1em !important;
+	padding: 1px !important;
+}
+.gcs-input {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	padding: 1px !important;
+}
+.gcs-input-sm2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 2em;
+	padding: 1px !important;
+}
+.gcs-input-sm3 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 3em;
+	padding: 1px !important;
+}
+.gcs-input-sm4 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 4em;
+	padding: 1px !important;
+}
+.gcs-input-sm5 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	max-width: 5em;
+	padding: 1px !important;
+}
+.gcs-input-2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 2em !important;
+	padding: 1px !important;
+}
+.gcs-input-3 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 3em !important;
+	padding: 1px !important;
+}
+.gcs-input-4 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 4em !important;
+	padding: 1px !important;
+}
+.gcs-input-5 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 5em !important;
+	padding: 1px !important;
+}
+
+.gcs-input-25 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 25em !important;
+	padding: 1px !important;
+}
+.gcs-input-30 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+	min-width: 30em !important;
+	padding: 1px !important;
+}
+
 #threed6 {
   /*border: 5px solid rgb(255, 123, 0);*/
   position: fixed;
@@ -307,12 +641,6 @@
   border-style: solid;
   border-color: black transparent transparent transparent;
   z-index: -100;
-}
-
-.gcs-attr-input {
-  border-width: 0px !important;
-  border: none !important;
-  height: 100% !important;
 }
 
 .pdflink {
@@ -833,6 +1161,24 @@ body {
     "melee melee"
     "ranged ranged"
     "advantages skills"
+    "spells spells"
+    "equipment equipment"
+    "other_equipment other_equipment"
+    "notes notes"
+  ;
+  grid-gap: .05in;
+}
+
+#editorsheet {
+  display: grid;
+  grid-template:
+    "personal personal"
+    "stats stats"
+    "reactions reactions"
+    "melee melee"
+    "ranged ranged"
+    "advantages advantages"
+		"skills skills"
     "spells spells"
     "equipment equipment"
     "other_equipment other_equipment"
