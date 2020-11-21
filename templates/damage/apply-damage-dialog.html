@@ -41,8 +41,8 @@
           <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury (<span
               class='pdflink'>B400</span>)</input></label>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
-            <label><input type='radio' name='hitlocation' value='select-dr'>&nbsp;Enter DR:</input></label>
-            <input type='text' id='select-dr' name='select-dr' value='{{selectedDR}}'>
+            <label><input type='radio' name='hitlocation' value='Entered DR'>&nbsp;Enter DR:</input></label>
+            <input type='text' id='select-dr' name='Entered DR' value='{{selectedDR}}'>
           </div>
         </div>
 
@@ -147,8 +147,12 @@
         <div class='gurps-group'>
           <div class='gurps-group-header'>Results</div>
           <div>Basic damage is {{damageData.damage}}.</div>
-          <div></div>
+          <div>Hit location is <span id='result-hitlocation'>{{hitlocation}}</span>, DR <span
+              id='result-dr'>{{dr}}</span>.</div>
+          <div>Damage type is <span id='result-type'>{{damageData.damageType}}</span>, modifier ×<span
+              id='result-modifier'>1</span>.</div>
         </div>
+
       </div>
     </div>
   </div>
