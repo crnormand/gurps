@@ -324,7 +324,7 @@
             {{#each data.ads}}
             <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY">{{{gurpslinkbr this.notes}}}</div>
             </div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
@@ -332,7 +332,7 @@
             {{#each data.powers}}
             <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY">{{{gurpslinkbr this.notes}}}</div>
             </div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
@@ -340,7 +340,7 @@
             {{#each data.disads}}
             <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY">{{{gurpslinkbr this.notes}}}</div>
             </div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
@@ -348,7 +348,7 @@
             {{#each data.others}}
             <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY">{{{gurpslinkbr this.notes}}}</div>
             </div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
@@ -460,7 +460,7 @@
         <div id="notes">
             <div class="desc header">Notes</div>
             {{#each data.notes}}
-            <div class="desc indent0">{{{gurpslink this.notes}}}</div>
+            <div class="desc indent0">{{{gurpslinkbr this.notes}}}</div>
             {{/each}}
         </div>
     </div>

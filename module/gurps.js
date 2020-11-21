@@ -866,6 +866,13 @@ function chatClickGmod(event) {
 }
 GURPS.chatClickGmod = chatClickGmod;
 
+function chatClickPdf(event) {
+  event.preventDefault();
+  game.GURPS.onPdf(event);
+}
+GURPS.chatClickPdf = chatClickPdf;
+
+
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
@@ -938,6 +945,15 @@ Hooks.once("init", async function () {
 		let actor = root?.data?.root?.actor;
 		if (!actor) actor = root?.actor;
 		return game.GURPS.gurpslink(str, actor, clrdmods, inclbrks);
+	});
+
+
+	/// NOTE:  To use this, you must use {{{gurpslinkbr sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
+	// Same as gurpslink, but converts \n to <br> for large text values (notes)
+	Handlebars.registerHelper('gurpslinkbr', function (str, root, clrdmods = false, inclbrks = false) {
+		let actor = root?.data?.root?.actor;
+		if (!actor) actor = root?.actor;
+		return game.GURPS.gurpslink(str, actor, clrdmods, inclbrks).replace(/\n/g, "<br>");;
 	});
 
 
@@ -1035,8 +1051,8 @@ Hooks.once("ready", async function () {
 		//console.log("PRE CHAT:");
 		//console.log(c);
 		data.content = game.GURPS.gurpslink(c, game.GURPS.LastActor?.data);
-		//console.log("AFTER:");
-		//console.log(data.content);
+		console.log("AFTER:");
+		console.log(data.content);
 	});
 	
 	Hooks.on('renderChatMessage', (app, html, msg) => {
@@ -1045,6 +1061,7 @@ Hooks.once("ready", async function () {
 	  html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
 	  html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
 	  html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
+    html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 		});
 
 });
