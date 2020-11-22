@@ -1,4 +1,5 @@
 import { xmlTextToJson } from '../lib/utilities.js'
+import ApplyDamageDialog from '../lib/applydamage.js'
 
 export class GurpsActor extends Actor {
 
@@ -657,6 +658,60 @@ export class GurpsActor extends Actor {
 			"data.-=ads": null,
 			"data.ads": list
 		};
+	}
+
+	// --- Functions to handle events on actor ---
+
+	handleDamageDrop(damageData) {
+		new ApplyDamageDialog(this, damageData).render(true)
+	}
+
+	// This function merges the 'where' and 'dr' properties of this actor's hitlocations
+	// with the roll value from the global GURPS.hitlocationRolls object, converting the
+	// roll from a string to an array of numbers (see the _convertRollStringToArrayOfInt
+	// function).
+	getHitLocationsWithDR() {
+		let myhitlocations = []
+		for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
+			myhitlocations.push({
+				where: value.where,
+				dr: parseInt(value.dr),
+				roll: this._convertRollStringToArrayOfInt(
+					GURPS.hitlocationRolls[value.where].roll
+				),
+				rollText: GURPS.hitlocationRolls[value.where].roll
+			})
+		}
+		return myhitlocations
+	}
+
+	// Take a string like "", "-", "3", "4-5" and convert it into an array of int.
+	// The resulting array will contain all ints between the first number and the last.
+	// E.g, if the input is '2-5' the result will be [2,3,4,5]. Non-numeric inputs
+	// result in the empty array.
+	_convertRollStringToArrayOfInt(text) {
+		let elements = text.split('-')
+		let range = elements.map(it => parseInt(it))
+
+		if (range.length === 0) return []
+
+		for (let i = 0; i < range.length; i++) {
+			if (typeof range[i] === 'undefined' || isNaN(range[i]))
+				return []
+		}
+
+		let results = []
+		for (let i = range[0]; i <= range[range.length - 1]; i++)
+			results.push(i)
+
+		return results
+	}
+
+	// Return the 'where' value of the default hit location. 
+	// NOTE: could also return 'Random' or 'Large-Area'?
+	getDefaultHitLocation() {
+		// TODO implement a system setting but (potentially) allow it to be overridden
+		return game.settings.get('gurps', 'default-hitlocation')
 	}
 }
 

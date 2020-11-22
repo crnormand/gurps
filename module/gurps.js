@@ -21,7 +21,9 @@ import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
 import DamageChat from '../lib/damagemessage.js'
 
 import helpers from '../lib/moustachewax.js'
+import settings from '../lib/miscellaneous-settings.js'
 
+settings()
 helpers()
 
 //CONFIG.debug.hooks = true;
@@ -51,7 +53,6 @@ GURPS.ThreeD6 = new ThreeD6({
 	"template": "systems/gurps/templates/threed6.html",
 	"classes": [],
 });
-
 
 
 // This table is used to display dice rolls and penalties (if they are missing from the import data)
@@ -93,17 +94,17 @@ GURPS.hitlocationRolls = {
 
 
 GURPS.woundModifiers = {
-	"burn": 1,
-	"cor": 1,
-	"cr": 1,
-	"cut": 1.5,
-	"fat": 1,
-	"imp": 2,
-	"pi-": 0.5,
-	"pi": 1,
-	"pi+": 1.5,
-	"pi++": 2,
-	"tox": 1
+	"burn": { multiplier: 1, label: 'Burning' },
+	"cor": { multiplier: 1, label: 'Corrosive' },
+	"cr": { multiplier: 1, label: 'Crushing' },
+	"cut": { multiplier: 1.5, label: 'Cutting' },
+	"fat": { multiplier: 1, label: 'Fatigue' },
+	"imp": { multiplier: 2, label: 'Impaling' },
+	"pi-": { multiplier: 0.5, label: 'Small Piercing' },
+	"pi": { multiplier: 1, label: 'Piercing' },
+	"pi+": { multiplier: 1.5, label: 'Large Piercing' },
+	"pi++": { multiplier: 2, label: 'Huge Piercing' },
+	"tox": { multiplier: 1, label: 'Toxic' }
 };
 
 GURPS.attributepaths = {

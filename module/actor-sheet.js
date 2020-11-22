@@ -79,29 +79,7 @@ export class GurpsActorSheet extends ActorSheet {
     let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
 
     if (dragData.type === 'damageItem') {
-      renderTemplate('systems/gurps/templates/damage-location.html').then(dlg => {
-        new Dialog({
-          title: 'Apply Damage',
-          content: dlg,
-          buttons: {
-            cancel: {
-              label: 'Cancel',
-              callback: (dlg) => {
-                console.log('cancel')
-              }
-            },
-            apply: {
-              label: 'Apply',
-              callback: (dlg) => {
-                var location = dlg.find('input[name="hitlocation"]:checked')[0]
-                console.log(location.value)
-                this.applyDamage(location.value, dragData.payload)
-              }
-            }
-          },
-          default: 'apply'
-        }).render(true)
-      })
+      this.actor.handleDamageDrop(dragData.payload)
     }
   }
 
@@ -133,7 +111,6 @@ export class GurpsActorSheet extends ActorSheet {
         }
       }
     }
-    console.log(hitLocationTable)
     return hitLocationTable
   }
 
@@ -176,8 +153,6 @@ export class GurpsActorSheet extends ActorSheet {
           game.dice3d.messageHookDisabled = false
           self.applyDamageToSpecificLocation(contentData.location, damage)
         })
-
-
     } // Random
     else if (location === 'Large-Area') {
       console.log('implement Large-Area Injury')
@@ -233,7 +208,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     let basicDamage = damage.damage
     let penetratingDamage = Math.max(basicDamage - dr, 0)
-    let woundingModifier = GURPS.woundModifiers[damage.damageType]
+    let woundingModifier = GURPS.woundModifiers[damage.damageType].multiplier
     let injury = Math.floor(penetratingDamage * woundingModifier)
 
     let contentData = {
