@@ -442,19 +442,14 @@ function performAction(action, actor) {
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
-	if (action.type === "skill")
+	if (action.type === "skill-spell")
 		if (!!actor) {
 			let skill = null;
 			prefix = "Attempting ";
 			thing = action.name;
-			if (thing[thing.length-1] == "*") {
-				thing = thing.substring(0, thing.length-1);
-		    skill = actor.data.skills?.findInProperties(s => s.name.startsWith(thing));
-      } else {
-        skill = actor.data.skills?.findInProperties(s => s.name == thing);
-      }
+			skill = GURPS.findSkillSpell(actor, thing);
       if (!skill) {
-				ui.notifications.warn("No skill named '" + action.name + "' found on " + actor.name);
+				ui.notifications.warn("No skill or spell named '" + action.name + "' found on " + actor.name);
 				return;
 			}
 			thing = skill.name;
@@ -463,12 +458,57 @@ function performAction(action, actor) {
 			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 		} else
 			ui.notifications.warn("You must have a character selected");
+			
+			
+	if (action.type === "attack")
+		if (!!actor) {
+			let att = null;
+			prefix = "Attempting ";
+			thing = action.name;
+			att = GURPS.findAttack(actor, thing);
+      if (!att) {
+				ui.notifications.warn("No melee or ranged attack named '" + action.name + "' found on " + actor.name);
+				return;
+			}
+			thing = att.name;
+			target = parseInt(att.level);
+			formula = "3d6";
+			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+		} else
+			ui.notifications.warn("You must have a character selected");
+			
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target);
 }
 GURPS.performAction = performAction;
 
+function findSkillSpell(actor, sname) {
+	let s = null;
+	if (sname[sname.length-1] == "*") {
+		sname = sname.substring(0, sname.length-1);
+	  s = actor.data.skills?.findInProperties(s => s.name.startsWith(sname));
+		if (!s) s = actor.data.spells?.findInProperties(s => s.name.startsWith(sname));
+	} else {
+	  s = actor.data.skills?.findInProperties(s => s.name == sname);
+		if (!s) s = actor.data.spells?.findInProperties(s => s.name == sname);
+  }	
+	return s;
+}
+GURPS.findSkillSpell = findSkillSpell;
 
+function findAttack(actor, sname) {
+	let s = null;
+	if (sname[sname.length-1] == "*") {
+		sname = sname.substring(0, sname.length-1);
+	  s = actor.data.melee?.findInProperties(s => s.name.startsWith(sname));
+		if (!s) s = actor.data.ranged?.findInProperties(s => s.name.startsWith(sname));
+	} else {
+	  s = actor.data.melee?.findInProperties(s => s.name == sname);
+		if (!s) s = actor.data.ranged?.findInProperties(s => s.name == sname);
+  }	
+	return s;
+}
+GURPS.findAttack = findAttack;
 
 /*
 	The user clicked on a field that would allow a dice roll.  
@@ -674,7 +714,6 @@ function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
 		}
 	}
 	output += str;
-//	return output.replace(/\n/g, "<br>");
 	return output;
 }
 GURPS.gurpslink = gurpslink;
@@ -728,9 +767,15 @@ function resolve(path, obj = self, separator = '.') {
 }
 GURPS.resolve = resolve;
 
+/*
+	A user has clicked on a "gurpslink", so we can assume that it previously qualified as a "gurpslink"
+	and followed the On-the-Fly formulas.   As such, we will parse the link again (not caring about
+	the text/color output) just looking for the action block.    And since we know this previously 
+	qualified, we can actually match the skill/spell/attack against the actor.
+*/
 function onGurpslink(event, actor, desc) {
 	let element = event.currentTarget;
-	let action = parselink(element.innerText, actor?.data, desc);
+	let action = parselink(element.innerText, actor?.data, desc, false, true);
 	this.performAction(action.action, actor?.data);
 }
 GURPS.onGurpslink = onGurpslink;
