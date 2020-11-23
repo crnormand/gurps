@@ -33,7 +33,7 @@ GURPS.LastActor = null;
 GURPS.SetLastActor = function (actor) {
 	GURPS.LastActor = actor;
 	GURPS.ModifierBucket.refresh();
-	//	console.log("Last Actor:" + actor.name);
+	console.log("Last Actor:" + actor.name);
 }
 
 GURPS.ModifierBucket = new ModifierBucket({
@@ -391,7 +391,7 @@ function objToString(obj, ndeep) {
 GURPS.objToString = objToString;
 
 function trim(s) {
-	return s.replace(/^\s*$(?:\r\n?|\n)/gm, "");         // /^\s*[\r\n]/gm
+	return s.replace(/^\s*$(?:\r\n?|\n)/gm, "").trim();         // /^\s*[\r\n]/gm
 }
 GURPS.trim = trim;
 
@@ -402,6 +402,7 @@ function performAction(action, actor) {
 	let thing = "";
 	let target = -1;	// There will be a roll
 	let formula = "";
+	let opt = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
 
 	if (action.type === "modifier") {
@@ -409,20 +410,23 @@ function performAction(action, actor) {
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
-	if (action.type === "attribute" && !!actor) {
-		prefix = "Roll vs ";
-		thing = this.i18n(action.path);
-		formula = "3d6";
-		target = action.target;
-		if (!target) target = this.resolve(action.path, actor.data);
-		if (!!action.mod || !!action.desc)
-			targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
-	}
+	if (action.type === "attribute") 
+		if (!!actor) {
+			prefix = "Roll vs ";
+			thing = this.i18n(action.path);
+			formula = "3d6";
+			target = action.target;
+			if (!target) target = this.resolve(action.path, actor.data);
+			target = parseInt(target);
+			if (!!action.mod || !!action.desc)
+				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+		} else
+			ui.notifications.warn("You must have a character selected");
 	if (action.type === "selfcontrol") {
 		prefix = "Self Control ";
 		thing = action.desc;
 		formula = "3d6";
-		target = action.target;
+		target = parseInt(action.target);
 	}
 	if (action.type === "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
@@ -433,25 +437,70 @@ function performAction(action, actor) {
 		GURPS.damageChat.create(actor, formula, action.damagetype);
 		return;
 	}
-	if (action.type === "deriveddamage" && !!actor) {
-		formula = d6ify(action.derivedformula);
-		GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
-		return;
-	}
-	if (action.type === "skill" && !!actor) {
-		prefix = "Attempting ";
-		thing = action.name;
-		let skill = actor.data.skills.findInProperties(s => s.name == thing);
-		target = skill.level;
-		formula = "3d6";
-		if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
-	}
+	if (action.type === "deriveddamage")
+		if (!!actor) {
+			formula = d6ify(action.derivedformula);
+			GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
+			return;
+		} else
+			ui.notifications.warn("You must have a character selected");
+	if (action.type === "skill-spell")
+		if (!!actor) {
+			let skill = null;
+			prefix = "Attempting ";
+			thing = action.name;
+			skill = GURPS.findSkillSpell(actor, thing);
+      if (!skill) {
+				ui.notifications.warn("No skill or spell named '" + action.name + "' found on " + actor.name);
+				return;
+			}
+			thing = skill.name;
+			target = parseInt(skill.level);
+			formula = "3d6";
+			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+		} else
+			ui.notifications.warn("You must have a character selected");
+			
+			
+	if (action.type === "attack")
+		if (!!actor) {
+			let att = null;
+			prefix = "Attempting ";
+			thing = action.name;
+			att = GURPS.findAttack(actor, thing);
+      if (!att) {
+				ui.notifications.warn("No melee or ranged attack named '" + action.name + "' found on " + actor.name);
+				return;
+			}
+			thing = att.name;
+			target = parseInt(att.level);
+			formula = "3d6";
+			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+			if (!!att.mode)
+				opt = "<br>&nbsp;<span style='font-size:85%'>(" + att.mode + ")</span>";
+		} else
+			ui.notifications.warn("You must have a character selected");
+			
 
-	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target);
+	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
 GURPS.performAction = performAction;
 
+function findSkillSpell(actor, sname) {
+	sname = sname.split("*").join(".*");
+  let t = actor.data.skills?.findInProperties(s => s.name.match(sname));
+	if (!t) t = actor.data.spells?.findInProperties(s => s.name.match(sname));
+	return t;
+}
+GURPS.findSkillSpell = findSkillSpell;
 
+function findAttack(actor, sname) {
+	sname = sname.split("*").join(".*");
+  let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")": "")).match(sname));
+	if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")": "")).match(sname));
+	return t;
+}
+GURPS.findAttack = findAttack;
 
 /*
 	The user clicked on a field that would allow a dice roll.  
@@ -515,7 +564,7 @@ GURPS.onRoll = onRoll;
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
 	let parse = desc.replace(/.*\* ?Costs? (\d+) ?FP.*/g, "$1");
-	if (parse != desc) {
+	if (parse != desc && !!actor) {
 		let fp = parseInt(parse);
 		fp = actor.data.data.FP.value - fp;
 		actor.update({ "data.FP.value": fp });
@@ -616,6 +665,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		chatcontent = prefix + modscontent + "<br>" + results + thing;
 	}
 
+  actor = actor || game.user;
 	const speaker = { alias: actor.name, _id: actor._id }
 	let messageData = {
 		user: game.user._id,
@@ -638,7 +688,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
-function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
+function gurpslink(str, clrdmods = true) {
 	if (str === undefined) 
 		return "!!UNDEFINED";
 	let found = -1;
@@ -647,16 +697,18 @@ function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
 		if (str[i] == "[")
 			found = ++i;
 		if (str[i] == "]" && found >= 0) {
-			output += str.substring(0, (inclbrks ? found : found - 1));
-			let action = parselink(str.substring(found, i), actor, "", clrdmods);
+			output += str.substring(0, found - 1);
+			let action = parselink(str.substring(found, i), "", clrdmods);
+			if (!action.action) output += "[";
 			output += action.text;
-			str = str.substr(inclbrks ? i : i + 1);
+			if (!action.action) output += "]";
+			str = str.substr(i + 1);
 			i = 0;
 			found = -1;
 		}
 	}
 	output += str;
-	return output.replace(/\n/g, "<br>");
+	return output;
 }
 GURPS.gurpslink = gurpslink;
 
@@ -709,10 +761,19 @@ function resolve(path, obj = self, separator = '.') {
 }
 GURPS.resolve = resolve;
 
+/*
+	A user has clicked on a "gurpslink", so we can assume that it previously qualified as a "gurpslink"
+	and followed the On-the-Fly formulas.   As such, we may already have an action block (base 64 encoded so we can handle
+	any text).  If not, we will just re-parse the text looking for the action block.    
+*/
 function onGurpslink(event, actor, desc) {
 	let element = event.currentTarget;
-	let action = parselink(element.innerText, actor?.data, desc);
-	this.performAction(action.action, actor?.data);
+	let action = element.dataset.action;		// If we have already parsed 
+	if (!!action) 
+		action = JSON.parse(atob(action));
+	else
+		action = parselink(element.innerText, desc, false).action;
+	this.performAction(action, actor?.data);
 }
 GURPS.onGurpslink = onGurpslink;
 
@@ -832,6 +893,28 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 GURPS.listeqtrecurse = listeqtrecurse;
 
 
+function chatClickGurpslink(event) {
+  event.preventDefault();
+  game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+}
+GURPS.chatClickGurpslink = chatClickGurpslink;
+
+
+function chatClickGmod(event) {
+  let element = event.currentTarget;
+  event.preventDefault();
+  let desc = element.dataset.name;
+  game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+}
+GURPS.chatClickGmod = chatClickGmod;
+
+function chatClickPdf(event) {
+  event.preventDefault();
+  game.GURPS.onPdf(event);
+}
+GURPS.chatClickPdf = chatClickPdf;
+
+
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
@@ -881,15 +964,17 @@ Hooks.once("init", async function () {
 	Handlebars.registerHelper('simpleRating', function (lvl) {
 		if (!lvl) return "UNKNOWN";
 		let l = parseInt(lvl);
-		if (l <= 8 )
+		if (l < 10 )
 			return "Poor";
-		if (l <= 10 )
+		if (l <= 11 )
 			return "Fair";
-		if (l <= 12 )
+		if (l <= 13 )
 			return "Good";
-		if (l <= 14 )
+		if (l <= 15 )
 			return "Great";
-		return "Super";	
+		if (l <= 18 )
+			return "Super";	
+		return "Epic";
 	});
 
 	Handlebars.registerHelper('notEmpty', function (obj) {
@@ -898,10 +983,19 @@ Hooks.once("init", async function () {
 
 
 	/// NOTE:  To use this, you must use {{{gurpslink sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
-	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods = false, inclbrks = false) {
+	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods = false) {
 		let actor = root?.data?.root?.actor;
 		if (!actor) actor = root?.actor;
-		return game.GURPS.gurpslink(str, actor, clrdmods, inclbrks);
+		return game.GURPS.gurpslink(str, clrdmods);
+	});
+
+
+	/// NOTE:  To use this, you must use {{{gurpslinkbr sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
+	// Same as gurpslink, but converts \n to <br> for large text values (notes)
+	Handlebars.registerHelper('gurpslinkbr', function (str, root, clrdmods = false) {
+		let actor = root?.data?.root?.actor;
+		if (!actor) actor = root?.actor;
+		return game.GURPS.gurpslink(str, clrdmods).replace(/\n/g, "<br>");;
 	});
 
 
@@ -993,5 +1087,25 @@ Hooks.once("ready", async function () {
 			if (!!a) game.GURPS.SetLastActor(a);
 		}
 	});
+	
+	Hooks.on('preCreateChatMessage', (data, options, userId) => {
+		let c = data.content;
+		//console.log("PRE CHAT:");
+		//console.log(c);
+		data.content = game.GURPS.gurpslink(c);
+		//console.log("AFTER:");
+		//console.log(data.content);
+	});
+	
+	Hooks.on('renderChatMessage', (app, html, msg) => {
+    html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
+	  html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
+	  html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
+	  html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
+	  html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
+    html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
+		});
+
 });
+
 

@@ -72,6 +72,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
   }
 
+
   /* -------------------------------------------- */
 
   /** @override */
@@ -583,7 +584,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
 		ev.preventDefault();
 		let element = ev.currentTarget;
 		let val = element.dataset.value;
-		let parsed = parselink(val, this.actor);
+		let parsed = parselink(val);
 		GURPS.performAction(parsed.action, this.actor);
 	}
 }

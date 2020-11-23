@@ -72,12 +72,12 @@
 		<label>Things That Describe Me</label>
     {{#each data.ads}}
     <div>{{{gurpslink this.name}}}
-         <div>{{{gurpslink this.notes}}}</div>
+         <div>{{{gurpslinkbr this.notes}}}</div>
     </div>
     {{/each}}
     {{#each data.disads}}
     <div>{{{gurpslink this.name}}}
-       <div>{{{gurpslink this.notes}}}</div>
+       <div>{{{gurpslinkbr this.notes}}}</div>
     </div>
     {{/each}}
 	</div>
@@ -85,7 +85,7 @@
   <div class="simple_Notes">
     <label>Notes</label>
     {{#each data.notes}}
-      <div>{{{gurpslink this.notes}}}</div>
+      <div>{{{gurpslinkbr this.notes}}}</div>
     {{/each}}
   </div>
 </div>
