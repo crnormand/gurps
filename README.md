@@ -15,6 +15,7 @@ This is what we are currently working on:
     - Enhanced On-the-Fly parsing for Skills, Spells and Attacks (melee & ranged)
     - Apply On-the-Fly parsing to the chat.   Now roll tables can include OtF formulas.
     - More explicit warning if a user tries to import a GCS file directly.
+    - Added support for Combined or Separate Basic Set PDFs.
 
 ### History
 - 0.7.0
