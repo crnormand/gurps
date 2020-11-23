@@ -726,6 +726,14 @@ function onPdf(event) {
 		book = t.replace(/[0-9]*/g, "").trim();
 		page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
 	}
+	// Special case for Separate Basic Set PDFs
+	if (book === "B") {
+		let s = game.settings.get("gurps", "basicsetpdf");
+		if (s === "Separate" && page > 336) {
+			book = "BX";
+			page = page - 335;
+		}
+	}
 	if (ui.PDFoundry) {
 		const pdf = ui.PDFoundry.findPDFDataByCode(book);
 		if (pdf === undefined) {
@@ -1029,13 +1037,29 @@ Hooks.once("init", async function () {
 		default: "0.0.0",
 	});
 
-	game.settings.register("gurps", "dontShowChangelog", {
-		name: "Don't Automatically Show Changelog",
+	game.settings.register("gurps", "showChangelog", {
+		name: "Show 'Read Me' on version change",
+		hint: "Open the Read Me file once, if a version change is detected.",
 		scope: "client",
-		config: false,
+		config: true,
 		type: Boolean,
-		default: false,
+		default: true,
 	});
+	
+	game.settings.register("gurps", "basicsetpdf", {
+      name: 'Basic Set PDF(S)',
+      hint: 'Select "Combined" or "Separate" and use the associated PDF codes when configuring PDFoundry.  ' +
+				'Note: If you select "Separate", the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.',
+      scope: 'world',
+      config: true,
+      type: String,
+      choices: {
+        'Combined': 'Combined Basic Set, code "B"',
+        'Separate': 'Separate Basic Set Characters, code "B".  Basic Set Campaigns, code "BX"'
+      },
+      default: 'Combined',
+    })
+
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
@@ -1046,7 +1070,7 @@ Hooks.once("ready", async function () {
 	GURPS.ThreeD6.refresh();
 
 	// Show changelog
-	if (!game.settings.get("gurps", "dontShowChangelog")) {
+	if (game.settings.get("gurps", "showChangelog")) {
 		const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
 		const changelogVersion = SemanticVersion.fromString(v);
 		const curVersion = SemanticVersion.fromString(game.system.data.version);
