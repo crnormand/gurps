@@ -2,10 +2,18 @@
 
 
 ## Current Release Version 0.7.0
+To install the latest release, use this manifest URL:   https://raw.githubusercontent.com/crnormand/gurps/release/system.json
+
+#The 'main' branch is being actively developed... and it may break things.   
+#So if you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
 - 0.8.0
     - Enhanced Drag and Drop Damage Dialog.
+    - Simplified (convention one-shot) character sheet
+    - Enhanced On-the-Fly parsing for Skills, Spells and Attacks (melee & ranged)
+    - Apply On-the-Fly parsing to the chat.   Now roll tables can include OtF formulas.
+    - More explicit warning if a user tries to import a GCS file directly.
 
 ### History
 - 0.7.0

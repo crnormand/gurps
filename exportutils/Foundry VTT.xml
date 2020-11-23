@@ -169,6 +169,12 @@
 	<birthday type="string">@BIRTHDAY</birthday>
 	<hand type="string">@HAND</hand>
 
+	<generaldr>@GENERAL_DR</generaldr>
+	<currentdodge>@CURRENT_DODGE</currentdodge>
+	<currentmove>@CURRENT_MOVE</currentmove>
+	<bestblock>@BEST_CURRENT_BLOCK</bestblock>
+	<bestparry>@BEST_CURRENT_BLOCK</bestparry>
+
       <adslist>@ADVANTAGES_LOOP_START
         <id-@ID>
           <name type="string">@DESCRIPTION_PRIMARY</name>

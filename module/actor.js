@@ -26,7 +26,10 @@ export class GurpsActor extends Actor {
 		x = xmlTextToJson(x);
 		let r = x.root;
 		if (!r) {
-			ui.notifications.warn("No <root> object found.  Are you importing the correct GCS XML file?");
+			if (xml[0] == "{" && importname.endsWith(".gcs"))
+				ui.notifications.error("We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.");
+			else
+				ui.notifications.error("No <root> object found.  Are you importing the correct XML file?");
 			return;
 		}
 

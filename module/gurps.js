@@ -401,6 +401,7 @@ function performAction(action, actor) {
 	let thing = "";
 	let target = -1;	// There will be a roll
 	let formula = "";
+	let opt = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
 
 	if (action.type === "modifier") {
@@ -474,39 +475,29 @@ function performAction(action, actor) {
 			target = parseInt(att.level);
 			formula = "3d6";
 			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+			if (!!att.mode)
+				opt = "<br>&nbsp;<span style='font-size:85%'>(" + att.mode + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
 			
 
-	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target);
+	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
 GURPS.performAction = performAction;
 
 function findSkillSpell(actor, sname) {
-	let s = null;
-	if (sname[sname.length-1] == "*") {
-		sname = sname.substring(0, sname.length-1);
-	  s = actor.data.skills?.findInProperties(s => s.name.startsWith(sname));
-		if (!s) s = actor.data.spells?.findInProperties(s => s.name.startsWith(sname));
-	} else {
-	  s = actor.data.skills?.findInProperties(s => s.name == sname);
-		if (!s) s = actor.data.spells?.findInProperties(s => s.name == sname);
-  }	
-	return s;
+	sname = sname.split("*").join(".*");
+  let t = actor.data.skills?.findInProperties(s => s.name.match(sname));
+	if (!t) t = actor.data.spells?.findInProperties(s => s.name.match(sname));
+	return t;
 }
 GURPS.findSkillSpell = findSkillSpell;
 
 function findAttack(actor, sname) {
-	let s = null;
-	if (sname[sname.length-1] == "*") {
-		sname = sname.substring(0, sname.length-1);
-	  s = actor.data.melee?.findInProperties(s => s.name.startsWith(sname));
-		if (!s) s = actor.data.ranged?.findInProperties(s => s.name.startsWith(sname));
-	} else {
-	  s = actor.data.melee?.findInProperties(s => s.name == sname);
-		if (!s) s = actor.data.ranged?.findInProperties(s => s.name == sname);
-  }	
-	return s;
+	sname = sname.split("*").join(".*");
+  let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")": "")).match(sname));
+	if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")": "")).match(sname));
+	return t;
 }
 GURPS.findAttack = findAttack;
 
@@ -696,7 +687,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
-function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
+function gurpslink(str, clrdmods = true) {
 	if (str === undefined) 
 		return "!!UNDEFINED";
 	let found = -1;
@@ -705,10 +696,12 @@ function gurpslink(str, actor, clrdmods = true, inclbrks = false) {
 		if (str[i] == "[")
 			found = ++i;
 		if (str[i] == "]" && found >= 0) {
-			output += str.substring(0, (inclbrks ? found : found - 1));
-			let action = parselink(str.substring(found, i), actor, "", clrdmods);
+			output += str.substring(0, found - 1);
+			let action = parselink(str.substring(found, i), "", clrdmods);
+			if (!action.action) output += "[";
 			output += action.text;
-			str = str.substr(inclbrks ? i : i + 1);
+			if (!action.action) output += "]";
+			str = str.substr(i + 1);
 			i = 0;
 			found = -1;
 		}
@@ -769,14 +762,17 @@ GURPS.resolve = resolve;
 
 /*
 	A user has clicked on a "gurpslink", so we can assume that it previously qualified as a "gurpslink"
-	and followed the On-the-Fly formulas.   As such, we will parse the link again (not caring about
-	the text/color output) just looking for the action block.    And since we know this previously 
-	qualified, we can actually match the skill/spell/attack against the actor.
+	and followed the On-the-Fly formulas.   As such, we may already have an action block (base 64 encoded so we can handle
+	any text).  If not, we will just re-parse the text looking for the action block.    
 */
 function onGurpslink(event, actor, desc) {
 	let element = event.currentTarget;
-	let action = parselink(element.innerText, actor?.data, desc, false, true);
-	this.performAction(action.action, actor?.data);
+	let action = element.dataset.action;		// If we have already parsed 
+	if (!!action) 
+		action = JSON.parse(atob(action));
+	else
+		action = parselink(element.innerText, desc, false).action;
+	this.performAction(action, actor?.data);
 }
 GURPS.onGurpslink = onGurpslink;
 
@@ -986,19 +982,19 @@ Hooks.once("init", async function () {
 
 
 	/// NOTE:  To use this, you must use {{{gurpslink sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
-	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods = false, inclbrks = false) {
+	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods = false) {
 		let actor = root?.data?.root?.actor;
 		if (!actor) actor = root?.actor;
-		return game.GURPS.gurpslink(str, actor, clrdmods, inclbrks);
+		return game.GURPS.gurpslink(str, clrdmods);
 	});
 
 
 	/// NOTE:  To use this, you must use {{{gurpslinkbr sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
 	// Same as gurpslink, but converts \n to <br> for large text values (notes)
-	Handlebars.registerHelper('gurpslinkbr', function (str, root, clrdmods = false, inclbrks = false) {
+	Handlebars.registerHelper('gurpslinkbr', function (str, root, clrdmods = false) {
 		let actor = root?.data?.root?.actor;
 		if (!actor) actor = root?.actor;
-		return game.GURPS.gurpslink(str, actor, clrdmods, inclbrks).replace(/\n/g, "<br>");;
+		return game.GURPS.gurpslink(str, clrdmods).replace(/\n/g, "<br>");;
 	});
 
 
@@ -1095,9 +1091,9 @@ Hooks.once("ready", async function () {
 		let c = data.content;
 		//console.log("PRE CHAT:");
 		//console.log(c);
-		data.content = game.GURPS.gurpslink(c, game.GURPS.LastActor?.data);
-		console.log("AFTER:");
-		console.log(data.content);
+		data.content = game.GURPS.gurpslink(c);
+		//console.log("AFTER:");
+		//console.log(data.content);
 	});
 	
 	Hooks.on('renderChatMessage', (app, html, msg) => {
