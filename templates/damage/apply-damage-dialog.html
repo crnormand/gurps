@@ -4,7 +4,7 @@
   <div classes='flexcol flex-between'>
     <div class='flexrow flex-group-center' style='justify-items: center;'>
       <h3 style='margin-bottom: 0;'>Directly apply:</h3>
-      <input type='text' id='damage' name='damage' value='{{damageData.damage}}'>
+      <input type='number' id='damage' name='damage' value='{{damageData.damage}}'>
       <div>
         <select id='apply-to' name='apply-to'>
           <option value='HP' selected>Hit Points</option>
@@ -33,7 +33,6 @@
             <div class='gurps-3col-line'>{{this.rollText}}</div>
             <div class='gurps-3col-line'>{{this.dr}}</div>
             {{/each}}
-
           </div>
           <hr />
           <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
@@ -42,7 +41,7 @@
               class='pdflink'>B400</span>)</input></label>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
             <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter DR:</input></label>
-            <input type='text' id='select-dr' name='User Entered' value='{{selectedDR}}'>
+            <input type='number' id='select-dr' name='User Entered' value='{{selectedDR}}'>
           </div>
         </div>
 
@@ -67,11 +66,11 @@
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
             <label><input type='radio' name='woundmodifier' value='User Entered'>&nbsp;Enter
               modifier:</input></label>
-            <input type='text' id='select-mod' name='User Entered' value='{{selectedMod}}'>
+            <input type='number' id='select-mod' name='User Entered' value='{{selectedMod}}'>
           </div>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
             <label>Additional modifier (stacks):</label>
-            <input type='text' id='addmodifier' name='addmodifier' value='{{additionalMods}}'>
+            <input type='number' id='addmodifier' name='addmodifier' value='{{additionalMods}}'>
           </div>
         </div>
 
@@ -147,13 +146,36 @@
       <div>
         <div class='gurps-group'>
           <div class='gurps-group-header'>Results</div>
-          <div>Basic damage is {{damageData.damage}}.</div>
-          <div>Hit location is <span id='result-hitlocation'>{{hitlocation}}</span>, DR <span
-              id='result-dr'>{{dr}}</span>.</div>
-          <div>Damage type is <span id='result-type'>{{damageData.damageType}}</span>, modifier ×<span
-              id='result-modifier'>1</span>.</div>
-          <div>Additional wounding modifier is ×<span id='result-addmods'>{{additionalMods}}</span>.</div>
-          <div>Total wounding modifier is ×<span id='result-totalmod'>{{totalMods}}</span>.</div>
+
+          <div class='grid grid-2col'>
+            <div class='gurps-3col'>
+              <!-- <div style='display: grid; grid-template-columns: min-content min-content auto;'> -->
+              <div class='gurps-3col-line right-justified'>BASIC&nbsp;DAMAGE</div>
+              <div class='gurps-3col-line emphasis right-justified'>{{damageData.damage}}</div>
+              <div class='gurps-3col-line left-justified'>
+                <span id='result-type'>{{damageData.damageType}}</span>
+              </div>
+
+              <div class='gurps-3col-line right-justified'>DAMAGE&nbsp;RESISTANCE</div>
+              <div class='gurps-3col-line emphasis right-justified'><span name='result-dr'>{{dr}}</span></div>
+              <div class='gurps-3col-line left-justified'><span id='result-hitlocation'>{{hitlocation}}</span></div>
+
+              <div class='gurps-3col-line right-justified'>PENETRATING&nbsp;DAMAGE</div>
+              <div class='gurps-3col-line emphasis right-justified'><span id='result-penetrating'>{{penetrating}}</span>
+              </div>
+              <div class='gurps-3col-line left-justified'>(<span>{{damageData.damage}}</span>&nbsp;&minus;&nbsp;<span
+                  name='result-dr'>{{dr}}</span>)
+              </div>
+
+              <div class='gurps-3col-line right-justified'>WOUNDING&nbsp;MODIFIER</div>
+              <div class='gurps-3col-line emphasis right-justified'>×<span id='result-totalmod'>{{totalMods}}</span>
+              </div>
+              <div class='gurps-3col-line left-justified'>(<span id='result-modifier'>1</span>&nbsp;for&nbsp;
+                <span id='result-type'>{{damageData.damageType}}</span>&nbsp;+&nbsp;
+                <span id='result-addmods'>{{additionalMods}}</span>&nbsp;additional)
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>

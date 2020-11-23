@@ -2204,6 +2204,10 @@ body {
   font-weight: bold;
 }
 
+input[type=number] {
+  text-align: end;
+}
+
 .gurps-grid {
   display: grid;
   gap: .5em;
@@ -2220,13 +2224,31 @@ body {
   justify-content: flex-start;
 }
 
-.gurps-3col-expandmiddle {
+.gurps-3col-expandmiddle,
+.gurps-3col {
   display: grid;
-  grid-template-columns: auto 1fr min-content;
+  grid-template-columns: min-content min-content auto;
   grid-auto-rows: auto;
   border: none;
   justify-items: stretch;
   text-align: left;
+}
+
+.gurps-3col .gurps-3col-line {
+  flex-flow: nowrap;
+}
+
+.right-justified {
+  justify-content: flex-end !important;
+  padding-right: 0.5em;
+}
+
+.left-justified {
+  justify-content: flex-start !important;
+}
+
+.gurps-3col-expandmiddle {
+  grid-template-columns: auto 1fr min-content;
 }
 
 .gurps-3col-line {
@@ -2237,8 +2259,8 @@ body {
   justify-content: center;
 }
 
-.gurps-grid-header:nth-child(3n+3),
-.gurps-3col-line:nth-child(3n+3) {
+.gurps-3col-expandmiddle .gurps-grid-header:nth-child(3n+3),
+.gurps-3col-expandmiddle .gurps-3col-line:nth-child(3n+3) {
   text-align: right;
   padding-right: 0.5em;
 }
@@ -2297,4 +2319,8 @@ body {
 
 .gurps-3col-expandmiddle .pdflink {
   font-size: smaller;
+}
+
+.gurps-3col .emphasis {
+  font-size: larger;
 }
