@@ -1,11 +1,12 @@
 ### [Guide on how to use GURPS 4e for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
 
 
-## Current Release Version 0.7.0
-To install the latest release, use this manifest URL:   https://raw.githubusercontent.com/crnormand/gurps/release/system.json
+# Current Release Version 0.7.0
+To install the latest release, use this manifest URL:   
+https://raw.githubusercontent.com/crnormand/gurps/release/system.json
 
-# The 'main' branch is being actively developed... and it may break things.   
-# If you are looking for the last stable release, use the manifest URL above.
+## The 'main' branch is being actively developed... and it may break things.   
+## If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
 - 0.8.0
