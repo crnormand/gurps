@@ -10,15 +10,8 @@
   "esmodules": [
     "module/gurps.js",
     "lib/SSRT/main.js",
-    "lib/ranges.js",
-    "lib/initiative.js",
-    "lib/hitpoints.js",
-    "lib/hitlocationtooltip.js",
-    "lib/utilities.js",
     "lib/parselink.js",
-    "lib/damagemessage.js",
-    "lib/moustachewax.js",
-    "lib/testdialog.js"
+    "lib/applydamage.js"
   ],
   "styles": [
     "styles/simple.css",
