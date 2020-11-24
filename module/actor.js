@@ -673,6 +673,14 @@ export class GurpsActor extends Actor {
 	// with the roll value from the global GURPS.hitlocationRolls object, converting the
 	// roll from a string to an array of numbers (see the _convertRollStringToArrayOfInt
 	// function).
+	//
+	// return value is an object with the following structure:
+	// 	{
+	//  	where: string value from the hitlocations table,
+	//  	dr: int DR value from the hitlocations table,
+	//  	rollText: string value of the roll from the hitlocations table (examples: '5', '6-9', '-')
+	//  	roll: array of int of the values that match rollText (examples: [5], [6,7,8,9], [])
+	// 	}
 	getHitLocationsWithDR() {
 		let myhitlocations = []
 		for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
@@ -710,8 +718,8 @@ export class GurpsActor extends Actor {
 		return results
 	}
 
-	// Return the 'where' value of the default hit location. 
-	// NOTE: could also return 'Random' or 'Large-Area'?
+	// Return the 'where' value of the default hit location, or 'Random'
+	// NOTE: could also return 'Large-Area'?
 	getDefaultHitLocation() {
 		// TODO implement a system setting but (potentially) allow it to be overridden
 		return game.settings.get('gurps', 'default-hitlocation')

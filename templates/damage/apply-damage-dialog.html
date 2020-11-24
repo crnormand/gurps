@@ -4,7 +4,7 @@
   <div classes='flexcol flex-between'>
     <div class='flexrow flex-group-center' style='justify-items: center;'>
       <h3 style='margin-bottom: 0;'>Directly apply:</h3>
-      <input type='text' id='damage' name='damage' value='{{damageData.damage}}'>
+      <input type='number' id='damage' name='damage' value='{{damageData.damage}}'>
       <div>
         <select id='apply-to' name='apply-to'>
           <option value='HP' selected>Hit Points</option>
@@ -21,6 +21,7 @@
       <div class='grid grid-3col flex-between'>
         <div class='gurps-group'>
           <div class='gurps-group-header'>Hit Location and DR</div>
+
           <div class='gurps-3col-expandmiddle'>
             <div class='gurps-grid-header'>Location</div>
             <div class='gurps-grid-header'>Roll</div>
@@ -33,7 +34,6 @@
             <div class='gurps-3col-line'>{{this.rollText}}</div>
             <div class='gurps-3col-line'>{{this.dr}}</div>
             {{/each}}
-
           </div>
           <hr />
           <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
@@ -42,7 +42,7 @@
               class='pdflink'>B400</span>)</input></label>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
             <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter DR:</input></label>
-            <input type='text' id='select-dr' name='User Entered' value='{{selectedDR}}'>
+            <input type='number' id='select-dr' name='User Entered' value='{{selectedDR}}'>
           </div>
         </div>
 
@@ -67,11 +67,11 @@
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
             <label><input type='radio' name='woundmodifier' value='User Entered'>&nbsp;Enter
               modifier:</input></label>
-            <input type='text' id='select-mod' name='User Entered' value='{{selectedMod}}'>
+            <input type='number' id='select-mod' name='User Entered' value='{{selectedMod}}'>
           </div>
           <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
             <label>Additional modifier (stacks):</label>
-            <input type='text' id='addmodifier' name='addmodifier' value='{{additionalMods}}'>
+            <input type='number' id='addmodifier' name='addmodifier' value='{{additionalMods}}'>
           </div>
         </div>
 
@@ -82,7 +82,7 @@
           <div class='gurps-3col-expandmiddle'>
             {{#each tacticalOptions}}
             <div class='gurps-3col-line'>
-              <input id='tactical-{{this.id}}' type='checkbox' name='tactical' value='{{this.id}}'></input>
+              <input disabled id='tactical-{{this.id}}' type='checkbox' name='tactical' value='{{this.id}}'></input>
             </div>
             <div class='gurps-3col-line gurps-left-aligned'>
               <label for='tactical-{{this.id}}'>{{this.label}}</label>
@@ -95,7 +95,7 @@
           <div class='gurps-3col-expandmiddle'>
             {{#each otherSituations}}
             <div class='gurps-3col-line'>
-              <input id='specials-{{this.id}}' type='checkbox' name='specials' value='{{this.id}}'></input>
+              <input disabled id='specials-{{this.id}}' type='checkbox' name='specials' value='{{this.id}}'></input>
             </div>
             <div class='gurps-3col-line gurps-left-aligned'>
               <label for='specials-{{this.id}}'>{{this.label}}</label>
@@ -108,7 +108,7 @@
           <div style='background-color: rgba(0, 0, 0, 0.10);'>
             <div class='gurps-3col-expandmiddle'>
               <div class='gurps-3col-line'>
-                <input id='vulnerable' type='checkbox' name='vulnerable' value='vulnerable'></input>
+                <input disabled id='vulnerable' type='checkbox' name='vulnerable' value='vulnerable'></input>
               </div>
               <div class='gurps-3col-line gurps-left-aligned'>
                 <label for='vulnerable'>Vulnerability:</label>
@@ -117,28 +117,28 @@
             </div>
             <div class='grid grid-4col gurps-continuation'>
               <div></div>
-              <label><input type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
-              <label><input type='radio' name='vulnerability' value='vulnerability-3'>&nbsp;×3</label>
-              <label><input type='radio' name='vulnerability' value='vulnerability-4'>&nbsp;×4</label>
+              <label><input disabled type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
+              <label><input disabled type='radio' name='vulnerability' value='vulnerability-3'>&nbsp;×3</label>
+              <label><input disabled type='radio' name='vulnerability' value='vulnerability-4'>&nbsp;×4</label>
             </div>
           </div>
 
           <div class='gurps-3col-expandmiddle'>
             <div class='gurps-3col-line'>
-              <input id='hardened' type='checkbox' name='hardened' value='hardened'></input>
+              <input disabled id='hardened' type='checkbox' name='hardened' value='hardened'></input>
             </div>
             <div class='gurps-3col-line gurps-left-aligned'>
-              <label for='vulnerable'>Hardened DR Level:</label>
+              <label for='hardened'>Hardened DR Level:</label>
             </div>
             <div class='gurps-3col-line pdflink'>B47</div>
           </div>
           <div class='grid grid-6col gurps-continuation'>
             <div></div>
-            <label><input type='radio' name='hardened' value='hardened-1'>&nbsp;1</label>
-            <label><input type='radio' name='hardened' value='hardened-2'>&nbsp;2</label>
-            <label><input type='radio' name='hardened' value='hardened-3'>&nbsp;3</label>
-            <label><input type='radio' name='hardened' value='hardened-4'>&nbsp;4</label>
-            <label><input type='radio' name='hardened' value='hardened-5'>&nbsp;5</label>
+            <label><input disabled type='radio' name='hardened' value='hardened-1'>&nbsp;1</label>
+            <label><input disabled type='radio' name='hardened' value='hardened-2'>&nbsp;2</label>
+            <label><input disabled type='radio' name='hardened' value='hardened-3'>&nbsp;3</label>
+            <label><input disabled type='radio' name='hardened' value='hardened-4'>&nbsp;4</label>
+            <label><input disabled type='radio' name='hardened' value='hardened-5'>&nbsp;5</label>
           </div>
         </div>
 
@@ -147,15 +147,44 @@
       <div>
         <div class='gurps-group'>
           <div class='gurps-group-header'>Results</div>
-          <div>Basic damage is {{damageData.damage}}.</div>
-          <div>Hit location is <span id='result-hitlocation'>{{hitlocation}}</span>, DR <span
-              id='result-dr'>{{dr}}</span>.</div>
-          <div>Damage type is <span id='result-type'>{{damageData.damageType}}</span>, modifier ×<span
-              id='result-modifier'>1</span>.</div>
-          <div>Additional wounding modifier is ×<span id='result-addmods'>{{additionalMods}}</span>.</div>
-          <div>Total wounding modifier is ×<span id='result-totalmod'>{{totalMods}}</span>.</div>
-        </div>
 
+          <div class='grid grid-3col'>
+
+            <div class='gurps-3col gurps-results-table'>
+              <div>BASIC DAMAGE</div>
+              <div>{{damageData.damage}}</div>
+              <div><span name='result-type'>{{damageData.damageType}}</span></div>
+
+              <div>DR</div>
+              <div><span name='result-dr'>{{dr}}</span></div>
+              <div><span name='result-hitlocation'>{{hitlocation}}</span></div>
+
+              <div>PENETRATING</div>
+              <div><span name='result-penetrating'>{{penetrating}}</span></div>
+              <div>(<span>{{damageData.damage}}</span> &minus; <span name='result-dr'>{{dr}}</span>)</div>
+
+              <div>MODIFIER</div>
+              <div>×<span name='result-totalmod'>{{totalMods}}</span></div>
+              <div>(<span name='result-type'>{{damageData.damageType}}</span><span name='result-type-add'> + <span
+                    name='result-addmods'>{{additionalMods}}</span>&nbsp;add</span>)
+              </div>
+
+              <div>INJURY</div>
+              <div><span name='result-injury'>{{injury}}</span></div>
+              <div><span name='result-penetrating'>{{penetrating}}</span> × <span
+                  name='result-totalmod'>{{totalMods}}</span></div>
+            </div>
+
+            <div></div>
+
+            <div class='apply-results'>
+              <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='number'
+                id='result-apply-injury' name='damage' value='{{injury}}'>
+              <button id='apply-injury-publicly'>Apply Injury</button>
+              <button id='apply-injury-secretly'>Apply Injury (Quietly)</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
