@@ -2204,8 +2204,8 @@ body {
   font-weight: bold;
 }
 
-input[type=number] {
-  text-align: end;
+.gurps-group input[type=number] {
+  text-align: center;
 }
 
 .gurps-grid {

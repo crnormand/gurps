@@ -21,6 +21,7 @@
       <div class='grid grid-3col flex-between'>
         <div class='gurps-group'>
           <div class='gurps-group-header'>Hit Location and DR</div>
+
           <div class='gurps-3col-expandmiddle'>
             <div class='gurps-grid-header'>Location</div>
             <div class='gurps-grid-header'>Roll</div>
@@ -148,32 +149,45 @@
           <div class='gurps-group-header'>Results</div>
 
           <div class='grid grid-3col'>
-            <div class='gurps-3col'>
-              <!-- <div style='display: grid; grid-template-columns: min-content min-content auto;'> -->
-              <div class='gurps-3col-line right-justified'>Basic&nbsp;Damage</div>
+            <div class='gurps-3col gurps-results-table'>
+              <div class='gurps-3col-line right-justified'>BASIC</div>
               <div class='gurps-3col-line emphasis right-justified'>{{damageData.damage}}</div>
               <div class='gurps-3col-line left-justified'>
                 <span name='result-type'>{{damageData.damageType}}</span>
               </div>
 
-              <div class='gurps-3col-line right-justified'>Damage&nbsp;Resistance</div>
+              <div class='gurps-3col-line right-justified'>DR</div>
               <div class='gurps-3col-line emphasis right-justified'><span name='result-dr'>{{dr}}</span></div>
-              <div class='gurps-3col-line left-justified'><span id='result-hitlocation'>{{hitlocation}}</span></div>
+              <div class='gurps-3col-line left-justified'><span name='result-hitlocation'>{{hitlocation}}</span></div>
 
-              <div class='gurps-3col-line right-justified'>Penetrating&nbsp;Damage</div>
-              <div class='gurps-3col-line emphasis right-justified'><span id='result-penetrating'>{{penetrating}}</span>
+              <div class='gurps-3col-line right-justified'>PENETRATING</div>
+              <div class='gurps-3col-line emphasis right-justified'><span
+                  name='result-penetrating'>{{penetrating}}</span>
               </div>
               <div class='gurps-3col-line left-justified'>(<span>{{damageData.damage}}</span> &minus; <span
                   name='result-dr'>{{dr}}</span>)
               </div>
 
-              <div class='gurps-3col-line right-justified'>Wounding&nbsp;Modifier</div>
-              <div class='gurps-3col-line emphasis right-justified'>×<span id='result-totalmod'>{{totalMods}}</span>
+              <div class='gurps-3col-line right-justified'>MODIFIER</div>
+              <div class='gurps-3col-line emphasis right-justified'>×<span name='result-totalmod'>{{totalMods}}</span>
               </div>
               <div class='gurps-3col-line left-justified'>(<span
-                  name='result-type'>{{damageData.damageType}}</span><span id='result-type-add'> + <span
-                    id='result-addmods'>{{additionalMods}}</span>&nbsp;add</span>)
+                  name='result-type'>{{damageData.damageType}}</span><span name='result-type-add'> + <span
+                    name='result-addmods'>{{additionalMods}}</span>&nbsp;add</span>)
               </div>
+
+              <div class='gurps-3col-line right-justified'>INJURY</div>
+              <div class='gurps-3col-line emphasis right-justified'><span name='result-injury'>{{injury}}</span></div>
+              <div class='gurps-3col-line left-justified'><span name='result-penetrating'>{{penetrating}}</span> × <span
+                  name='result-totalmod'>{{totalMods}}</span></div>
+            </div>
+
+            <div></div>
+
+            <div>
+              <input type='number' id='result-apply-injury' name='damage' value='{{injury}}'>
+              <button id='apply-publicly'>Apply</button>
+              <button id='apply-secretly'>Apply (Quietly)</button>
             </div>
           </div>
         </div>
