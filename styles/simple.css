@@ -2227,7 +2227,7 @@ input[type=number] {
 .gurps-3col-expandmiddle,
 .gurps-3col {
   display: grid;
-  grid-template-columns: min-content min-content auto;
+  grid-template-columns: auto 0fr auto;
   grid-auto-rows: auto;
   border: none;
   justify-items: stretch;
@@ -2236,10 +2236,15 @@ input[type=number] {
 
 .gurps-3col .gurps-3col-line {
   flex-flow: nowrap;
+  display: inline-block;
+}
+
+.invisible {
+  display: none;   
 }
 
 .right-justified {
-  justify-content: flex-end !important;
+  text-align: end;
   padding-right: 0.5em;
 }
 

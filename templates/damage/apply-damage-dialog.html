@@ -147,32 +147,32 @@
         <div class='gurps-group'>
           <div class='gurps-group-header'>Results</div>
 
-          <div class='grid grid-2col'>
+          <div class='grid grid-3col'>
             <div class='gurps-3col'>
               <!-- <div style='display: grid; grid-template-columns: min-content min-content auto;'> -->
-              <div class='gurps-3col-line right-justified'>BASIC&nbsp;DAMAGE</div>
+              <div class='gurps-3col-line right-justified'>Basic&nbsp;Damage</div>
               <div class='gurps-3col-line emphasis right-justified'>{{damageData.damage}}</div>
               <div class='gurps-3col-line left-justified'>
-                <span id='result-type'>{{damageData.damageType}}</span>
+                <span name='result-type'>{{damageData.damageType}}</span>
               </div>
 
-              <div class='gurps-3col-line right-justified'>DAMAGE&nbsp;RESISTANCE</div>
+              <div class='gurps-3col-line right-justified'>Damage&nbsp;Resistance</div>
               <div class='gurps-3col-line emphasis right-justified'><span name='result-dr'>{{dr}}</span></div>
               <div class='gurps-3col-line left-justified'><span id='result-hitlocation'>{{hitlocation}}</span></div>
 
-              <div class='gurps-3col-line right-justified'>PENETRATING&nbsp;DAMAGE</div>
+              <div class='gurps-3col-line right-justified'>Penetrating&nbsp;Damage</div>
               <div class='gurps-3col-line emphasis right-justified'><span id='result-penetrating'>{{penetrating}}</span>
               </div>
-              <div class='gurps-3col-line left-justified'>(<span>{{damageData.damage}}</span>&nbsp;&minus;&nbsp;<span
+              <div class='gurps-3col-line left-justified'>(<span>{{damageData.damage}}</span> &minus; <span
                   name='result-dr'>{{dr}}</span>)
               </div>
 
-              <div class='gurps-3col-line right-justified'>WOUNDING&nbsp;MODIFIER</div>
+              <div class='gurps-3col-line right-justified'>Wounding&nbsp;Modifier</div>
               <div class='gurps-3col-line emphasis right-justified'>×<span id='result-totalmod'>{{totalMods}}</span>
               </div>
-              <div class='gurps-3col-line left-justified'>(<span id='result-modifier'>1</span>&nbsp;for&nbsp;
-                <span id='result-type'>{{damageData.damageType}}</span>&nbsp;+&nbsp;
-                <span id='result-addmods'>{{additionalMods}}</span>&nbsp;additional)
+              <div class='gurps-3col-line left-justified'>(<span
+                  name='result-type'>{{damageData.damageType}}</span><span id='result-type-add'> + <span
+                    id='result-addmods'>{{additionalMods}}</span>&nbsp;add</span>)
               </div>
             </div>
           </div>
