@@ -197,8 +197,7 @@ export class ModifierBucket extends Application {
 	}
 
 	async _onClickPdf(event) {
-		event.preventDefault();
-		game.GURPS.onPdf(event);
+		game.GURPS.handleOnPdf(event);
 	}
 
 	async _onClickRoll(event) {

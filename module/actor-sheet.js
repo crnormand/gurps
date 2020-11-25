@@ -98,21 +98,27 @@ export class GurpsActorSheet extends ActorSheet {
 			if (!!targetkey) {
 				let srckey = dragData.key;
 				let object = GURPS.decode(this.actor.data, srckey);
+				// Because we may be modifing the same list, we have to check, are we in the same list
+				// and if so, apply the operation that occurs later in the list (to keep the indexes the same)
+				let srca = srckey.split(".");
+				let tara = targetkey.aplit(".");
+//				let isSameList = 
 				if (targetkey.endsWith(".other") || targetkey.endsWith(".carried")) {
-					await GURPS.removeKey(this.actor, srckey);
 					let target = GURPS.decode(this.actor.data, targetkey);
 					GURPS.put(target, object);
 					await this.actor.update({ [targetkey] : target } );
+					await GURPS.removeKey(this.actor, srckey);
 				} else {
 				let d = new Dialog({
-					title: "Place equipment",
+					title: object.name,
 					content: "<p>Where do you want to drop this?</p>",
 					buttons: {
 					 one: {
 					  icon: '<i class="fas fa-level-up-alt"></i>',
 					  label: "Before",
-					  callback: () => {
-							
+					  callback: async () => {
+							await GURPS.insertBeforeKey(this.actor, targetkey, object);
+							await GURPS.removeKey(this.actor, srckey);
 						}
 					 },
 					 two: {
@@ -137,6 +143,47 @@ export class GurpsActorSheet extends ActorSheet {
 			}
 			
 			/*
+		return [
+			{
+				name: "Add Before",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj));
+				}
+			},
+			{
+				name: "Delete",
+				icon: "<i class='fas fa-trash'></i>",
+				callback: e => {
+					GURPS.removeKey(this.actor, e[0].dataset.key);
+				}
+			},
+			{
+				name: "Add at the end",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let p = e[0].dataset.key;
+					let i = p.lastIndexOf(".");
+					let objpath = p.substring(0, i);
+					let o = GURPS.decode(this.actor.data, objpath);
+					GURPS.put(o, duplicate(obj));
+					this.actor.update({ [objpath] : o });
+				}
+			}
+		];
+	}
+	
+	headerMenu(name, obj, path) {
+		return [ {
+				name: "Add " + name + " at the end",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let o = GURPS.decode(this.actor.data, path);
+					GURPS.put(o, duplicate(obj));
+					this.actor.update({ [path] : o });
+				}
+
+	
 					opts.push( {
 				name: "Swap Carried/Other",
 				icon: "<i class='fas fa-edit'></i>",
@@ -440,8 +487,7 @@ export class GurpsActorSheet extends ActorSheet {
 	}
 
   async _onClickPdf(event) {
-    event.preventDefault();
-    game.GURPS.onPdf(event);
+    game.GURPS.handleOnPdf(event);
   }
 
   async _onClickRoll(event) {
