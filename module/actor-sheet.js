@@ -70,6 +70,14 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmod").click(this._onClickGmod.bind(this));
     html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
+
+   html.find(".eqtdraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+					return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "equipment", "key": ev.currentTarget.dataset.key }))
+        })
+    });
+
   }
 
 
@@ -82,6 +90,11 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type === 'damageItem') {
       this.actor.handleDamageDrop(dragData.payload)
     }
+
+		if (dragData.type === 'equipment') {
+			let element = event.target;
+			console.log(element.dataset.key);
+		}
   }
 
   // Converts the GURPS.hitlocationRolls properties into a map keyed by roll value.
@@ -518,6 +531,25 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 					this.actor.update({ [k] : o });
 				}
 			});
+		opts.push( {
+				name: "Swap Carried/Other",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let p = e[0].dataset.key;
+					let eqt = GURPS.decode(this.actor.data, p);
+					GURPS.removeKey(this.actor, p);
+					if (p.includes("data.equipment.carried")) {
+						let list = this.actor.data.data.equipment.other;
+						GURPS.put(this.actor.data.data.equipment.other, eqt);
+						this.actor.update({ "data.equipment.other": list });
+					} else {
+						let list = this.actor.data.data.equipment.carried;
+						GURPS.put(this.actor.data.data.equipment.carried, eqt);
+						this.actor.update({ "data.equipment.carried": list });
+					}
+				}
+			});
+
 		new ContextMenu(html, ".carmenu", opts);
 		new ContextMenu(html, ".othmenu", opts);
 	}
