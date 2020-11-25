@@ -97,17 +97,29 @@ export class GurpsActorSheet extends ActorSheet {
 			let targetkey = element.dataset.key;
 			if (!!targetkey) {
 				let srckey = dragData.key;
+				
+				if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
+					ui.notifications.error("Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.");
+					return;
+				}
 				let object = GURPS.decode(this.actor.data, srckey);
 				// Because we may be modifing the same list, we have to check, are we in the same list
-				// and if so, apply the operation that occurs later in the list (to keep the indexes the same)
+				// and if so, apply the operation that occurs later in the list, first (to keep the indexes the same)
 				let srca = srckey.split(".");
-				let tara = targetkey.aplit(".");
-//				let isSameList = 
+				srca.splice(0, 3);
+				let tara = targetkey.split(".");
+				tara.splice(0, 3);
+				let max = Math.min(srca.length, tara.length);
+				let isSrcFirst = false;
+				for (let i = 0; i < max; i++) {
+				  if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true;
+				}
 				if (targetkey.endsWith(".other") || targetkey.endsWith(".carried")) {
 					let target = GURPS.decode(this.actor.data, targetkey);
+					if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
 					GURPS.put(target, object);
 					await this.actor.update({ [targetkey] : target } );
-					await GURPS.removeKey(this.actor, srckey);
+					if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
 				} else {
 				let d = new Dialog({
 					title: object.name,
@@ -117,94 +129,26 @@ export class GurpsActorSheet extends ActorSheet {
 					  icon: '<i class="fas fa-level-up-alt"></i>',
 					  label: "Before",
 					  callback: async () => {
+						  if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
 							await GURPS.insertBeforeKey(this.actor, targetkey, object);
-							await GURPS.removeKey(this.actor, srckey);
+							if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
 						}
 					 },
 					 two: {
 					  icon: '<i class="fas fa-sign-in-alt"></i>',
 					  label: "In",
-					  callback: () => console.log("Chose Two")
-					 },
-					 three: {
-					  icon: '<i class="fas fa-level-down-alt"></i>',
-					  label: "After",
-					  callback: () => console.log("Chose Three")
+					  callback: async () => {
+						  if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+							await GURPS.insertBeforeKey(this.actor, targetkey + ".contains." + GURPS.genkey(0), object);
+							if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+						}
 					 }
 					},
 					default: "one",
 					});
 					d.render(true);
-					
-				}
-				
-				
-				
-			}
-			
-			/*
-		return [
-			{
-				name: "Add Before",
-				icon: "<i class='fas fa-edit'></i>",
-				callback: e => {
-					GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj));
-				}
-			},
-			{
-				name: "Delete",
-				icon: "<i class='fas fa-trash'></i>",
-				callback: e => {
-					GURPS.removeKey(this.actor, e[0].dataset.key);
-				}
-			},
-			{
-				name: "Add at the end",
-				icon: "<i class='fas fa-edit'></i>",
-				callback: e => {
-					let p = e[0].dataset.key;
-					let i = p.lastIndexOf(".");
-					let objpath = p.substring(0, i);
-					let o = GURPS.decode(this.actor.data, objpath);
-					GURPS.put(o, duplicate(obj));
-					this.actor.update({ [objpath] : o });
 				}
 			}
-		];
-	}
-	
-	headerMenu(name, obj, path) {
-		return [ {
-				name: "Add " + name + " at the end",
-				icon: "<i class='fas fa-edit'></i>",
-				callback: e => {
-					let o = GURPS.decode(this.actor.data, path);
-					GURPS.put(o, duplicate(obj));
-					this.actor.update({ [path] : o });
-				}
-
-	
-					opts.push( {
-				name: "Swap Carried/Other",
-				icon: "<i class='fas fa-edit'></i>",
-				callback: e => {
-					let p = e[0].dataset.key;
-					let eqt = GURPS.decode(this.actor.data, p);
-					GURPS.removeKey(this.actor, p);
-					if (p.includes("data.equipment.carried")) {
-						let list = this.actor.data.data.equipment.other;
-						GURPS.put(this.actor.data.data.equipment.other, eqt);
-						this.actor.update({ "data.equipment.other": list });
-					} else {
-						let list = this.actor.data.data.equipment.carried;
-						GURPS.put(this.actor.data.data.equipment.carried, eqt);
-						this.actor.update({ "data.equipment.carried": list });
-					}
-				}
-			});
-
-
-			*/
 		}
   }
 
