@@ -1,6 +1,6 @@
 <div class='apply-damage {{classes}}' {{debug}}>
 
-  <h2>Apply {{damageData.damage}} points of {{damageData.damageType}} damage to {{actor.data.name}}</h2>
+  <h2>Apply {{basicDamage}} points of {{damageType}} damage to {{actor.data.name}}</h2>
   <div classes='flexcol flex-between'>
     <div class='flexrow flex-group-center' style='justify-items: center;'>
       <h3 style='margin-bottom: 0;'>Directly apply:</h3>
@@ -98,7 +98,7 @@
           <div class='gurps-3col-expandmiddle'>
             {{#each tacticalOptions}}
             <div class='gurps-3col-line'>
-              <input disabled id='tactical-{{this.id}}' type='checkbox' name='tactical' value='{{this.id}}'></input>
+              <input id='tactical-{{this.id}}' type='checkbox' name='tactical' value='{{this.id}}'></input>
             </div>
             <div class='gurps-3col-line gurps-left-aligned'>
               <label for='tactical-{{this.id}}'>{{this.label}}</label>
@@ -167,23 +167,24 @@
           <div class='grid grid-3col'>
 
             <div class='gurps-3col gurps-results-table'>
-              <div>BASIC DAMAGE</div>
-              <div><span name='result-basic'>{{damageData.damage}}</span></div>
-              <div name='result-insert'><span name='result-apply-to'>{{applyTo}}</span></div>
+              <div>BASIC&nbsp;DAMAGE</div>
+              <div><span name='result-basic'>{{basicDamage}}</span></div>
+              <div><span name='result-apply-to'>{{applyTo}}</span></div>
 
               <div name='result-half'>&frac12; DAMAGE</div>
               <div name='result-half'>$this.halfDamage</div>
               <div name='result-half'>($this._basicDamage &divide; 2)</div>
 
-              <div>DAMAGE RESIST</div>
+              <div id='result-dr'>DR</div>
               <div><span name='result-dr'>{{dr}}</span></div>
               <div><span name='result-hitlocation'>{{hitlocation}}</span></div>
 
-              <div>PENETRATING</div>
+              <div id='result-penetrating'>PENETRATING</div>
               <div><span name='result-penetrating'>{{penetrating}}</span></div>
-              <div><span>(<span>{{basicDamage}}</span> &minus; <span name='result-dr'>{{dr}}</span>)</span></div>
+              <div><span>(<span name='result-halfdamage'>{{basicDamage}}</span> &minus; <span
+                    name='result-effective-dr'>{{dr}}</span>)</span></div>
 
-              <div>WOUND MODIFIER</div>
+              <div>MODIFIER</div>
               <div><span>×<span name='result-totalmod'>{{totalMods}}</span></span></div>
               <div><span><span name='result-type'>{{damageData.damageType}}</span><span name='result-type-add'> (+ <span
                       name='result-addmods'>{{additionalMods}}</span>&nbsp;add)</span></span>
