@@ -713,7 +713,8 @@ function gurpslink(str, clrdmods = true) {
 GURPS.gurpslink = gurpslink;
 
 // Convert GCS page refs into PDFoundry book & page.   Special handling for refs like "PU8:12"
-function onPdf(event) {
+function handleOnPdf(event) {
+  event.preventDefault();
 	let element = event.currentTarget;
 	let t = element.innerText.trim();
 	let i = t.indexOf(":");
@@ -747,7 +748,7 @@ function onPdf(event) {
 		ui.notifications.warn('PDFoundry must be installed to use links.');
 	}
 }
-GURPS.onPdf = onPdf;
+GURPS.handleOnPdf = handleOnPdf;
 
 // Return the i18n string for this data path (note en.json must match up to the data paths).
 // special case, drop ".value" from end of path (and append "NAME"), usually used for attributes
@@ -841,7 +842,8 @@ async function removeKey(actor, path) {
 		key = k;
 		i++;
 	}
-	await actor.update({[objpath] : object});
+	let sorted = Object.keys(object).sort().reduce((a,v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
+	await actor.update({[objpath] : sorted});
 }
 GURPS.removeKey = removeKey;
 
@@ -865,7 +867,8 @@ async function insertBeforeKey(actor, path, newobj) {
 		object[genkey(z+1)] = object[genkey(z)];
 	}
 	object[key] = newobj;
-	await actor.update({[objpath]: object});
+	let sorted = Object.keys(object).sort().reduce((a,v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
+	await actor.update({[objpath]: sorted});
 }
 GURPS.insertBeforeKey = insertBeforeKey;
 
