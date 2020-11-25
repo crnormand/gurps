@@ -2264,6 +2264,10 @@ body {
   padding-right: 0.5em;
 }
 
+.gurps-results-table .pdflink {
+  font-size: smaller;
+}
+
 .gurps-results-table > div:nth-child(3n+2) {
   font-weight: bolder;
   font-size: larger;

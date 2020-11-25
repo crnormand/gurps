@@ -51,14 +51,6 @@
                 <input type='number' id='select-dr' name='User Entered' value='{{selectedDR}}'>
               </div>
             </div>
-
-            <div class='gurps-3col-line'>
-              <input id='range12D' type='checkbox' name='range12D' value='Range12D'></input>
-            </div>
-            <div class='gurps-3col-line gurps-left-aligned'>
-              <label for='range12D'>Ranged, &frac12;D</label>
-            </div>
-            <div class='gurps-3col-line pdflink'>B378</div>
           </div>
         </div>
 
@@ -186,8 +178,11 @@
 
               <div>MODIFIER</div>
               <div><span>×<span name='result-totalmod'>{{totalMods}}</span></span></div>
-              <div><span><span name='result-type'>{{damageData.damageType}}</span><span name='result-type-add'> (+ <span
-                      name='result-addmods'>{{additionalMods}}</span>&nbsp;add)</span></span>
+              <div><span>(×<span name='result-modifier'>{{selectedMod}}</span> <span
+                    name='result-type'>{{damageType}}</span><span name='result-type-add'> + <span
+                      name='result-addmods'>{{additionalMods}}</span>
+                  </span>)
+                </span>
               </div>
 
               <div>INJURY</div>
