@@ -37,7 +37,7 @@ export class GurpsActorSheet extends ActorSheet {
       sum += c * t;
       sum += this.sum(e.contains, type);
     }
-    return sum;
+    return parseInt(sum * 100) / 100;
   }
 
   /** @override */
