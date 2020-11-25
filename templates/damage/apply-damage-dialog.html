@@ -7,8 +7,8 @@
       <input type='number' id='damage' name='damage' value='{{basicDamage}}'>
       <div>
         <select id='apply-to' name='apply-to'>
-          <option value='HP' selected>Hit Points</option>
-          <option value='FP'>Fatigue Points</option>
+          <option value='HP'>Hit Points</option>
+          <option value='FP' selected>Fatigue Points</option>
         </select>
       </div>
       <button id='apply-publicly'>Apply</button>
@@ -169,7 +169,7 @@
             <div class='gurps-3col gurps-results-table'>
               <div>BASIC DAMAGE</div>
               <div><span name='result-basic'>{{damageData.damage}}</span></div>
-              <div name='result-insert'><span name='result-type'>{{damageData.damageType}}</span></div>
+              <div name='result-insert'><span name='result-apply-to'>{{applyTo}}</span></div>
 
               <div name='result-half'>&frac12; DAMAGE</div>
               <div name='result-half'>$this.halfDamage</div>
