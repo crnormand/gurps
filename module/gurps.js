@@ -841,7 +841,8 @@ async function removeKey(actor, path) {
 		key = k;
 		i++;
 	}
-	await actor.update({[objpath] : object});
+	let sorted = Object.keys(object).sort().reduce((a,v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
+	await actor.update({[objpath] : sorted});
 }
 GURPS.removeKey = removeKey;
 
@@ -865,7 +866,8 @@ async function insertBeforeKey(actor, path, newobj) {
 		object[genkey(z+1)] = object[genkey(z)];
 	}
 	object[key] = newobj;
-	await actor.update({[objpath]: object});
+	let sorted = Object.keys(object).sort().reduce((a,v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
+	await actor.update({[objpath]: sorted});
 }
 GURPS.insertBeforeKey = insertBeforeKey;
 
