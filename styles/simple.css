@@ -2223,7 +2223,7 @@ body {
   padding-top: 0;
   text-align: left;
   vertical-align: middle;
-  justify-content: flex-start;
+  justify-content: start;
 }
 
 .gurps-group .apply-results > * {
@@ -2253,16 +2253,19 @@ body {
   justify-content: center;
 }
 
-.gurps-3col .gurps-3col-line,
-.gurps-3col > div {
-  flex-flow: nowrap;
-  display: inline-block;
+.gurps-results-table {
+  grid-template-columns: min-content min-content auto;
+  min-height: 130px;
 }
 
 .gurps-results-table > div:nth-child(3n+1),
 .gurps-results-table > div:nth-child(3n+2) {
   text-align: end;
   padding-right: 0.5em;
+}
+
+.gurps-results-table .pdflink {
+  font-size: smaller;
 }
 
 .gurps-results-table > div:nth-child(3n+2) {
@@ -2272,6 +2275,7 @@ body {
 
 .gurps-results-table > div:nth-child(3n+3) {
   text-align: start;
+  justify-content: center;
 }
 
 .invisible {
