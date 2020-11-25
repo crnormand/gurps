@@ -16,6 +16,7 @@ export class GurpsActorSheet extends ActorSheet {
       width: 800,
       height: 800,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
+			scrollY: [".gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes"], 
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });
   }
@@ -84,7 +85,7 @@ export class GurpsActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /** @override */
-  _onDrop(event) {
+  async _onDrop(event) {
     let dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
 
     if (dragData.type === 'damageItem') {
@@ -93,7 +94,70 @@ export class GurpsActorSheet extends ActorSheet {
 
 		if (dragData.type === 'equipment') {
 			let element = event.target;
-			console.log(element.dataset.key);
+			let targetkey = element.dataset.key;
+			if (!!targetkey) {
+				let srckey = dragData.key;
+				let object = GURPS.decode(this.actor.data, srckey);
+				if (targetkey.endsWith(".other") || targetkey.endsWith(".carried")) {
+					await GURPS.removeKey(this.actor, srckey);
+					let target = GURPS.decode(this.actor.data, targetkey);
+					GURPS.put(target, object);
+					await this.actor.update({ [targetkey] : target } );
+				} else {
+				let d = new Dialog({
+					title: "Place equipment",
+					content: "<p>Where do you want to drop this?</p>",
+					buttons: {
+					 one: {
+					  icon: '<i class="fas fa-level-up-alt"></i>',
+					  label: "Before",
+					  callback: () => {
+							
+						}
+					 },
+					 two: {
+					  icon: '<i class="fas fa-sign-in-alt"></i>',
+					  label: "In",
+					  callback: () => console.log("Chose Two")
+					 },
+					 three: {
+					  icon: '<i class="fas fa-level-down-alt"></i>',
+					  label: "After",
+					  callback: () => console.log("Chose Three")
+					 }
+					},
+					default: "one",
+					});
+					d.render(true);
+					
+				}
+				
+				
+				
+			}
+			
+			/*
+					opts.push( {
+				name: "Swap Carried/Other",
+				icon: "<i class='fas fa-edit'></i>",
+				callback: e => {
+					let p = e[0].dataset.key;
+					let eqt = GURPS.decode(this.actor.data, p);
+					GURPS.removeKey(this.actor, p);
+					if (p.includes("data.equipment.carried")) {
+						let list = this.actor.data.data.equipment.other;
+						GURPS.put(this.actor.data.data.equipment.other, eqt);
+						this.actor.update({ "data.equipment.other": list });
+					} else {
+						let list = this.actor.data.data.equipment.carried;
+						GURPS.put(this.actor.data.data.equipment.carried, eqt);
+						this.actor.update({ "data.equipment.carried": list });
+					}
+				}
+			});
+
+
+			*/
 		}
   }
 
@@ -531,25 +595,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 					this.actor.update({ [k] : o });
 				}
 			});
-		opts.push( {
-				name: "Swap Carried/Other",
-				icon: "<i class='fas fa-edit'></i>",
-				callback: e => {
-					let p = e[0].dataset.key;
-					let eqt = GURPS.decode(this.actor.data, p);
-					GURPS.removeKey(this.actor, p);
-					if (p.includes("data.equipment.carried")) {
-						let list = this.actor.data.data.equipment.other;
-						GURPS.put(this.actor.data.data.equipment.other, eqt);
-						this.actor.update({ "data.equipment.other": list });
-					} else {
-						let list = this.actor.data.data.equipment.carried;
-						GURPS.put(this.actor.data.data.equipment.carried, eqt);
-						this.actor.update({ "data.equipment.carried": list });
-					}
-				}
-			});
-
 		new ContextMenu(html, ".carmenu", opts);
 		new ContextMenu(html, ".othmenu", opts);
 	}
