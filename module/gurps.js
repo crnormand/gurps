@@ -439,8 +439,9 @@ function performAction(action, actor) {
 	}
 	if (action.type === "deriveddamage")
 		if (!!actor) {
-			formula = d6ify(action.derivedformula);
-			GURPS.damageChat.create(actor, formula, action.damagetype, action.formula);
+			let df = (action.derivedformula == "SW" ? actor.data.swing : actor.data.thrust)
+			formula = d6ify(df + action.formula);
+			GURPS.damageChat.create(actor, formula, action.damagetype, action.derivedformula + action.formula);
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
