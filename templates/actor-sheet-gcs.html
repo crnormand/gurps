@@ -421,8 +421,8 @@
             {{#listeqt data.equipment.carried }}
             <div class="equipped satisfiedY">{{#if this.equipped}}X{{/if}}</div>
             <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{this.count}}</div>
-            <div class="desc indent{{@indent}} satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.name}}} {{@key}}
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+            <div class="desc indent{{@indent}} satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.name}}}
+                <div class="list_note satisfiedY" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.notes}}}</div>
                 <div class="list_note satisfiedY"></div>
             </div>
             <div class="cost satisfiedY">{{this.cost}}</div>
@@ -446,7 +446,7 @@
             {{#listeqt data.equipment.other }}
             <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">{{this.count}}</div>
             <div class="desc indent{{@indent}} satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">{{{gurpslink this.name}}}
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.notes}}}</div>
                 <div class="list_note satisfiedY"></div>
             </div>
             <div class="cost satisfiedY">{{this.cost}}</div>
