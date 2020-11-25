@@ -4,7 +4,7 @@
   <div classes='flexcol flex-between'>
     <div class='flexrow flex-group-center' style='justify-items: center;'>
       <h3 style='margin-bottom: 0;'>Directly apply:</h3>
-      <input type='number' id='damage' name='damage' value='{{damageData.damage}}'>
+      <input type='number' id='damage' name='damage' value='{{basicDamage}}'>
       <div>
         <select id='apply-to' name='apply-to'>
           <option value='HP' selected>Hit Points</option>
@@ -38,11 +38,27 @@
           <hr />
           <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
           <hr />
-          <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury (<span
-              class='pdflink'>B400</span>)</input></label>
-          <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
-            <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter DR:</input></label>
-            <input type='number' id='select-dr' name='User Entered' value='{{selectedDR}}'>
+
+          <div class='gurps-3col-expandmiddle'>
+            <div class='gurps-3col-line' style='grid-column-start: span 2'>
+              <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury</input></label>
+            </div>
+            <div class='gurps-3col-line pdflink'>B400</div>
+
+            <div class='gurps-3col-line' style='grid-column-start: span 3'>
+              <div class='grid grid-2col flex-between' style='align-items: center; justify-items: flex-start;'>
+                <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter DR:</input></label>
+                <input type='number' id='select-dr' name='User Entered' value='{{selectedDR}}'>
+              </div>
+            </div>
+
+            <div class='gurps-3col-line'>
+              <input id='range12D' type='checkbox' name='range12D' value='Range12D'></input>
+            </div>
+            <div class='gurps-3col-line gurps-left-aligned'>
+              <label for='range12D'>Ranged, &frac12;D</label>
+            </div>
+            <div class='gurps-3col-line pdflink'>B378</div>
           </div>
         </div>
 
@@ -152,27 +168,31 @@
 
             <div class='gurps-3col gurps-results-table'>
               <div>BASIC DAMAGE</div>
-              <div>{{damageData.damage}}</div>
-              <div><span name='result-type'>{{damageData.damageType}}</span></div>
+              <div><span name='result-basic'>{{damageData.damage}}</span></div>
+              <div name='result-insert'><span name='result-type'>{{damageData.damageType}}</span></div>
 
-              <div>DR</div>
+              <div name='result-half'>&frac12; DAMAGE</div>
+              <div name='result-half'>$this.halfDamage</div>
+              <div name='result-half'>($this._basicDamage &divide; 2)</div>
+
+              <div>DAMAGE RESIST</div>
               <div><span name='result-dr'>{{dr}}</span></div>
               <div><span name='result-hitlocation'>{{hitlocation}}</span></div>
 
               <div>PENETRATING</div>
               <div><span name='result-penetrating'>{{penetrating}}</span></div>
-              <div>(<span>{{damageData.damage}}</span> &minus; <span name='result-dr'>{{dr}}</span>)</div>
+              <div><span>(<span>{{basicDamage}}</span> &minus; <span name='result-dr'>{{dr}}</span>)</span></div>
 
-              <div>MODIFIER</div>
-              <div>×<span name='result-totalmod'>{{totalMods}}</span></div>
-              <div>(<span name='result-type'>{{damageData.damageType}}</span><span name='result-type-add'> + <span
-                    name='result-addmods'>{{additionalMods}}</span>&nbsp;add</span>)
+              <div>WOUND MODIFIER</div>
+              <div><span>×<span name='result-totalmod'>{{totalMods}}</span></span></div>
+              <div><span><span name='result-type'>{{damageData.damageType}}</span><span name='result-type-add'> (+ <span
+                      name='result-addmods'>{{additionalMods}}</span>&nbsp;add)</span></span>
               </div>
 
               <div>INJURY</div>
               <div><span name='result-injury'>{{injury}}</span></div>
-              <div><span name='result-penetrating'>{{penetrating}}</span> × <span
-                  name='result-totalmod'>{{totalMods}}</span></div>
+              <div><span>(<span name='result-penetrating'>{{penetrating}}</span> × <span
+                    name='result-totalmod'>{{totalMods}}</span>)</span></div>
             </div>
 
             <div></div>
