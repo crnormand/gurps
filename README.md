@@ -16,7 +16,8 @@ This is what we are currently working on:
     - Apply On-the-Fly parsing to the chat.   Now roll tables can include OtF formulas.
     - More explicit warning if a user tries to import a GCS file directly.
     - Added support for Combined or Separate Basic Set PDFs.
-    - Drag and drop to move equipment between lists
+    - Drag and drop to move equipment between lists or in containers
+    - Foundry specific GCA export script
 
 ### History
 - 0.7.0

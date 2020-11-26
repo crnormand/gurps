@@ -33,9 +33,16 @@ export class GurpsActor extends Actor {
 				ui.notifications.error("No <root> object found.  Are you importing the correct XML file?");
 			return;
 		}
+		
+		let parsererror = r.parsererror;
+		if (!!parsererror) {
+			ui.notifications.error("Error parsing XML: " + this.textFrom(parsererror.div));
+			return;			
+		}
 
 		let ra = r["@attributes"];
 		const isFoundryV1 = (!!ra && ra.release == "Foundry" && ra.version == "1");
+		const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version == "GCA");
 
 		// The character object starts here
 		let c = r.character;
@@ -72,9 +79,11 @@ export class GurpsActor extends Actor {
 				commit = { ...commit, ...this.importPowersFromGCSv1(c.abilities?.powerlist) };
 				commit = { ...commit, ...this.importOtherAdsFromGCSv1(c.abilities?.otherlist) };
 			}
+			if (isFoundryGCA)
+				commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers) };
 			commit = { ...commit, ...this.importEncumbranceFromGCSv1(c.encumbrance) };
 			commit = { ...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals) };
-			commit = { ...commit, ...this.importNotesFromGCSv1(c.notelist) };
+			commit = { ...commit, ...this.importNotesFromGCSv1(c.description, c.notelist) };
 			commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryV1) };
 			commit = { ...commit, ...this.importProtectionFromGCSv1(c.combat?.protectionlist) };
 		} catch (err) {
@@ -142,6 +151,28 @@ export class GurpsActor extends Actor {
 			"data.reactions": rs
 		};
 	}
+	
+	importReactionsFromGCA(json) {
+		if (!json) return;
+		let text = this.textFrom(json);
+		let a = text.split(",");
+		let rs = {};
+		let index = 0;
+		a.forEach(m => {
+			if (!!m) {
+				let t = m.trim();
+				let i = t.indexOf(" ");
+				let mod = t.substring(0, i);
+				let sit = t.substr(i + 1);
+				let r = new Reaction(mod, sit);
+				game.GURPS.put(rs, r, index++);
+			}
+		});
+		return {
+			"data.-=reactions": null,
+			"data.reactions": rs
+		};		
+	}
 
 	importPointTotalsFromGCSv1(json) {
 		if (!json) return;
@@ -160,17 +191,24 @@ export class GurpsActor extends Actor {
 		};
 	}
 
-	importNotesFromGCSv1(json) {
+	importNotesFromGCSv1(descjson, json) {
 		if (!json) return;
 		let t = this.textFrom;
 		let ns = {};
 		let index = 0;
+		if (!!descjson) {  // support for GCA description
+			let n = new Note();
+			n.notes = t(descjson).replace(/\\r/g, "\n");
+			game.GURPS.put(ns, n, index++);
+		}
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
 				let j = json[key];
 				let n = new Note();
 				//n.setNotes(t(j.text));
 				n.notes = t(j.name);
+				let txt = t(j.text);
+				if (!!txt) n.notes = n.notes + "\n" + txt.replace(/\\r/g, "\n");
 				game.GURPS.put(ns, n, index++);
 			}
 		}
@@ -232,6 +270,8 @@ export class GurpsActor extends Actor {
 					eqt.pageref = t(j.pageref);
 				} else
 					eqt.setNotes(t(j.notes));
+				if (!!j.pageref)
+					eqt.pageref = t(j.pageref).split(",").splice(0, 1);
 				temp.push(eqt);
 			}
 		}
@@ -407,12 +447,15 @@ export class GurpsActor extends Actor {
 		ts.appearance = a;
 		try {
 			let x = a.indexOf(", Eyes: ");
-			ts.gender = a.substring(0, x);
-			let y = a.indexOf(", Hair: ");
-			ts.eyes = a.substring(x + 8, y);
-			x = a.indexOf(", Skin: ")
-			ts.hair = a.substring(y + 8, x);
-			ts.skin = a.substr(x + 8);
+			if (x >= 0) {
+				ts.gender = a.substring(0, x);
+				let y = a.indexOf(", Hair: ");
+				ts.eyes = a.substring(x + 8, y);
+				x = a.indexOf(", Skin: ")
+				ts.hair = a.substring(y + 8, x);
+				ts.skin = a.substr(x + 8);
+				delete ts.appearance;
+			}
 		} catch {
 			console.log("Unable to parse appearance traits for ");
 			console.log(this);
@@ -457,7 +500,7 @@ export class GurpsActor extends Actor {
 		lm.runningshove = t(json.runningshove);
 		lm.shiftslightly = t(json.shiftslightly);
 		lm.shove = t(json.shove);
-		lm.twohandedelift = t(json.twohandedelift);
+		lm.twohandedlift = t(json.twohandedlift);
 
 
 		data.basicmove.value = i(json.basicmove);
@@ -514,12 +557,9 @@ export class GurpsActor extends Actor {
 					sk.notes = t(j.notes);
 					sk.pageref = t(j.pageref);
 				} else
-					try {
-						sk.setNotes(t(j.text));
-					} catch {
-						console.log(sk);
-						console.log(t(j.text));
-					}
+					sk.setNotes(t(j.text));
+				if (!!j.pageref)
+					sk.pageref = t(j.pageref).split(",").splice(0, 1);
 				game.GURPS.put(skills, sk, index++);
 			}
 		}
@@ -560,6 +600,8 @@ export class GurpsActor extends Actor {
 						sp.cost = cm;
 					}
 					sp.setNotes(t(j.text));
+					if (!!j.pageref)
+						sp.pageref = t(j.pageref).split(",").splice(0, 1);
 				}
 				sp.duration = t(j.duration);
 				sp.points = t(j.points);
@@ -628,6 +670,8 @@ export class GurpsActor extends Actor {
 				a.name = t(j.name);
 				a.points = this.intFrom(j.points);
 				a.setNotes(t(j.text));
+				if (!!j.pageref)
+					a.pageref = t(j.pageref).split(",").splice(0, 1);
 				game.GURPS.put(datalist, a, index++);
 			}
 		}

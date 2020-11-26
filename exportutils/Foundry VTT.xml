@@ -69,7 +69,7 @@
 	<runningshove type="number">@RUNNING_SHOVE</runningshove>
 	<shiftslightly type="number">@SHIFT_SLIGHTLY</shiftslightly>
 	<shove type="number">@SHOVE</shove>
-	<twohandedelift type="number">@TWO_HANDED_LIFT</twohandedelift>
+	<twohandedlift type="number">@TWO_HANDED_LIFT</twohandedlift>
 	<hearing type="number">@HEARING</hearing>
 	<tastesmell type="number">@TASTE_SMELL</tastesmell>
 	<touch type="number">@TOUCH</touch>

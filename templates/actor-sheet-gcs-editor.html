@@ -50,6 +50,7 @@
                     <div class="field"><input name="data.traits.techlevel" class="gcs-input" type="text" value="{{data.traits.techlevel}}"/></div>
                 </div>
                 <div class="fieldblock">
+										{{#if data.traits.eyes}}
                     <div class="label">Hair:</div>
                     <div class="field"><input name="data.traits.hair" class="gcs-input" type="text" value="{{data.traits.hair}}"/></div>
                     <div class="label">Eyes:</div>
@@ -58,6 +59,16 @@
                     <div class="field"><input name="data.traits.skin" class="gcs-input" type="text" value="{{data.traits.skin}}"/></div>
                     <div class="label">Hand:</div>
                     <div class="field"><input name="data.traits.hand" class="gcs-input" type="text" value="{{data.traits.hand}}"/></div>
+										{{else}}
+                    <div class="label">&nbsp;</div>
+	                  <div class="field"></div>
+                    <div class="label"></div>
+	                  <div class="label">Appearance:</div>
+                    <div class="label"></div>
+                    <div class="field"><input name="data.traits.appearance" class="gcs-input" type="text" value="{{data.traits.appearance}}"/></div>
+                    <div class="label">&nbsp;</div>
+	                  <div class="field"></div>								
+										{{/if}}
                 </div>
             </div>
             <div id="points">
@@ -168,7 +179,7 @@
                 <div class="liftdesc">Basic Lift</div>
                 <div class="lift"><input name="data.liftingmoving.onehandedlift" class="gcs-input-5" type="text" value="{{data.liftingmoving.onehandedlift}}"/></div>
                 <div class="liftdesc">One-Handed Lift</div>
-                <div class="lift"><input name="data.liftingmoving.twohandedelift" class="gcs-input-5" type="text" value="{{data.liftingmoving.twohandedelift}}"/></div>
+                <div class="lift"><input name="data.liftingmoving.twohandedlift" class="gcs-input-5" type="text" value="{{data.liftingmoving.twohandedlift}}"/></div>
                 <div class="liftdesc">Two-Handed Lift</div>
                 <div class="lift"><input name="data.liftingmoving.shove" class="gcs-input-5" type="text" value="{{data.liftingmoving.shove}}"/></div>
                 <div class="liftdesc">Shove &amp; Knock Over</div>
@@ -407,7 +418,7 @@
             <div class="cost header carhead">$</div>
             <div class="weight header carhead">lbs</div>
             <div class="sum_cost header carhead">x $</div>
-            <div class="sum_weight header carhead">X lbs</div>
+            <div class="sum_weight header carhead">x lbs</div>
             <div class="ref header carhead">Ref</div>
             <div></div>
 
