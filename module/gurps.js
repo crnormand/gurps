@@ -447,6 +447,13 @@ function performAction(action, actor) {
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
+	if (action.type === "derivedroll")
+		if (!!actor) {
+			let df = (action.derivedformula == "SW" ? actor.data.swing : actor.data.thrust)
+			formula = d6ify(df + action.formula);
+			prefix = "Rolling " + action.derivedformula + action.formula + " " + action.desc;
+  	} else
+			ui.notifications.warn("You must have a character selected");
 	if (action.type === "skill-spell")
 		if (!!actor) {
 			let skill = null;
