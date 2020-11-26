@@ -329,7 +329,9 @@ GURPS.SJGProductMappings = {
 function cleanUpP(xml) {
 	// First, remove non-ascii characters
 	xml = xml.replace(/[^ -~]+/g, "");
-	// &lt;p&gt;
+	
+	// Now try to remove any lone " & " in names, etc.  Will only occur in GCA output
+	xml = xml.replace(/ & /g," &amp; ");
 	let swap = (xml, tagin, tagout) => {
 		let s = xml.indexOf(tagin);
 		while (s > 0) {
@@ -921,8 +923,7 @@ function chatClickGmod(event) {
 GURPS.chatClickGmod = chatClickGmod;
 
 function chatClickPdf(event) {
-  event.preventDefault();
-  game.GURPS.onPdf(event);
+  game.GURPS.handleOnPdf(event);
 }
 GURPS.chatClickPdf = chatClickPdf;
 

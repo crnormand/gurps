@@ -51,6 +51,7 @@
                     <div class="field">{{data.traits.techlevel}}</div>
                 </div>
                 <div class="fieldblock">
+								{{#if data.traits.eyes}}
                     <div class="label">Hair:</div>
                     <div class="field">{{data.traits.hair}}</div>
                     <div class="label">Eyes:</div>
@@ -59,6 +60,17 @@
                     <div class="field">{{data.traits.skin}}</div>
                     <div class="label">Hand:</div>
                     <div class="field">{{data.traits.hand}}</div>
+								{{else}}
+                    <div class="label">&nbsp;</div>
+                    <div class="label">&nbsp;</div>
+	                  <div class="label">Appearance:</div>
+                    <div class="label">&nbsp;</div>
+                    <div class="label">&nbsp;</div>
+                    <div class="label">&nbsp;</div>
+                    <div class="field">{{data.traits.appearance}}</div>
+                    <div class="label">&nbsp;</div>
+                    <div class="label">&nbsp;</div>
+								{{/if}}
                 </div>
             </div>
             <div id="points">
@@ -169,12 +181,14 @@
                 <div class="liftdesc">Basic Lift</div>
                 <div class="lift">{{data.liftingmoving.onehandedlift}}</div>
                 <div class="liftdesc">One-Handed Lift</div>
-                <div class="lift">{{data.liftingmoving.twohandedelift}}</div>
+                <div class="lift">{{data.liftingmoving.twohandedlift}}</div>
                 <div class="liftdesc">Two-Handed Lift</div>
                 <div class="lift">{{data.liftingmoving.shove}}</div>
                 <div class="liftdesc">Shove &amp; Knock Over</div>
+								{{#if data.liftingmoving.runningshove}}
                 <div class="lift">{{data.liftingmoving.runningshove}}</div>
                 <div class="liftdesc">Running Shove &amp; Knock Over</div>
+								{{/if}}
                 <div class="lift">{{data.liftingmoving.carryonback}}</div>
                 <div class="liftdesc">Carry on Back</div>
                 <div class="lift">{{data.liftingmoving.shiftslightly}}</div>
@@ -439,8 +453,8 @@
             <div class="desc header" data-key="data.equipment.other">Other Equipment (${{eqtsummary.othercost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
-            <div class="sum_cost header">X $</div>
-            <div class="sum_weight header">X lbs</div>
+            <div class="sum_cost header">x $</div>
+            <div class="sum_weight header">x lbs</div>
             <div class="ref header">Ref</div>
 
             {{#listeqt data.equipment.other }}
