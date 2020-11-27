@@ -352,10 +352,10 @@
             <div class="pts header">Pts</div>
             <div class="ref header">Ref</div>
 
-            {{#each data.skills}}
-            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
+            {{#each data.skills as | this key |}}
+            <div class="desc indent0 satisfiedY skldraggable" data-key="data.skills.{{key}}">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes @root}}}</div>
+                <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{key}}">{{{gurpslink this.notes @root}}}</div>
             </div>
             <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
             <div class="rsl satisfiedY">{{this.relativelevel}}</div>
@@ -378,10 +378,10 @@
             <div class="pts header">Pts</div>
             <div class="ref header">Ref</div>
 
-            {{#each data.spells}}
-            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
+            {{#each data.spells as | this key |}}
+            <div class="desc indent0 satisfiedY spldraggable" data-key="data.spells.{{key}}">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
-                <div class="list_note satisfiedY">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{key}}">{{{gurpslink this.notes}}}</div>
             </div>
             <div class="cls satisfiedY">{{this.class}}</div>
             <div class="college satisfiedY">{{this.college}}</div>
@@ -399,8 +399,8 @@
 				{{/if}}
         <div id="equipment">
             <div class="equipped header">E</div>
-            <div class="qty header" data-key="data.equipment.carried">Qty</div>
-            <div class="desc header" data-key="data.equipment.carried">Equipment ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}})</div>
+            <div class="qty header eqtdragtarget" data-key="data.equipment.carried">Qty</div>
+            <div class="desc header eqtdragtarget" data-key="data.equipment.carried">Equipment ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">x $</div>
@@ -412,7 +412,7 @@
             <div class="equipped satisfiedY">{{#if this.equipped}}X{{/if}}</div>
             <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{this.count}}</div>
             <div class="desc indent{{@indent}} satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.name}}}
-                <div class="list_note satisfiedY" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.notes}}}</div>
                 <div class="list_note satisfiedY"></div>
             </div>
             <div class="cost satisfiedY">{{this.cost}}</div>
@@ -425,8 +425,8 @@
 
         </div>
         <div id="other_equipment">
-            <div class="qty header" data-key="data.equipment.other">Qty</div>
-            <div class="desc header" data-key="data.equipment.other">Other Equipment (${{eqtsummary.othercost}})</div>
+            <div class="qty header eqtdragtarget" data-key="data.equipment.other">Qty</div>
+            <div class="desc header eqtdragtarget" data-key="data.equipment.other">Other Equipment (${{eqtsummary.othercost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">x $</div>
@@ -436,7 +436,7 @@
             {{#listeqt data.equipment.other }}
             <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">{{this.count}}</div>
             <div class="desc indent{{@indent}} satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">{{{gurpslink this.name}}}
-                <div class="list_note satisfiedY" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.notes}}}</div>
+                <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink this.notes}}}</div>
                 <div class="list_note satisfiedY"></div>
             </div>
             <div class="cost satisfiedY">{{this.cost}}</div>

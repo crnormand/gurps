@@ -86,6 +86,19 @@ export class GurpsActorSheet extends ActorSheet {
       })
     });
 
+    html.find(".skldraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+        return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "skill", "key": ev.currentTarget.dataset.key }))
+      })
+    });
+
+    html.find(".spldraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+        return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "spell", "key": ev.currentTarget.dataset.key }))
+      })
+    });
   }
 
 
@@ -98,38 +111,15 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type === 'damageItem') {
       this.actor.handleDamageDrop(dragData.payload)
     }
-
-    if (dragData.type === 'advantage') {
-      let element = event.target;
-      let targetkey = element.dataset.key;
-      if (!!targetkey) {
-        let srckey = dragData.key;
-
-        if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
-          ui.notifications.error("Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.");
-          return;
-        }
-        let object = GURPS.decode(this.actor.data, srckey);
-        // Because we may be modifing the same list, we have to check the order of the keys and
-        // apply the operation that occurs later in the list, first (to keep the indexes the same)
-        let srca = srckey.split(".");
-        srca.splice(0, 3);
-        let tara = targetkey.split(".");
-        tara.splice(0, 3);
-        let max = Math.min(srca.length, tara.length);
-        let isSrcFirst = false;
-        for (let i = 0; i < max; i++) {
-          if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true;
-        }
-        if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
-        await GURPS.insertBeforeKey(this.actor, targetkey, object);
-        if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
-			}
-		}
-
+		
+		this.handleDragFor(event, dragData, "advantage", "adsdraggable");
+		this.handleDragFor(event, dragData, "skill", "skldraggable");
+		this.handleDragFor(event, dragData, "spell", "spldraggable");
 
     if (dragData.type === 'equipment') {
       let element = event.target;
+			let classes = $(element).attr('class') || "";
+			if (!classes.includes('eqtdraggable') && !classes.includes('eqtdragtarget')) return;
       let targetkey = element.dataset.key;
       if (!!targetkey) {
         let srckey = dragData.key;
@@ -187,6 +177,39 @@ export class GurpsActorSheet extends ActorSheet {
       }
     }
   }
+
+
+async handleDragFor(event, dragData, type, cls) {
+  if (dragData.type === type) {
+    let element = event.target;
+		let classes = $(element).attr('class') || "";
+		if (!classes.includes(cls)) return;
+    let targetkey = element.dataset.key;
+    if (!!targetkey) {
+      let srckey = dragData.key;
+      if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
+        ui.notifications.error("Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.");
+        return;
+      }
+      let object = GURPS.decode(this.actor.data, srckey);
+      // Because we may be modifing the same list, we have to check the order of the keys and
+      // apply the operation that occurs later in the list, first (to keep the indexes the same)
+      let srca = srckey.split(".");
+      srca.splice(0, 3);
+      let tara = targetkey.split(".");
+      tara.splice(0, 3);
+      let max = Math.min(srca.length, tara.length);
+      let isSrcFirst = false;
+      for (let i = 0; i < max; i++) {
+        if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true;
+      }
+      if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+      await GURPS.insertBeforeKey(this.actor, targetkey, object);
+      if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+		}
+	}
+
+}
 
 
   _onfocus(ev) {
