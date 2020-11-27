@@ -79,6 +79,13 @@ export class GurpsActorSheet extends ActorSheet {
       })
     });
 
+    html.find(".adsdraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+        return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "advantage", "key": ev.currentTarget.dataset.key }))
+      })
+    });
+
   }
 
 
@@ -92,6 +99,35 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.handleDamageDrop(dragData.payload)
     }
 
+    if (dragData.type === 'advantage') {
+      let element = event.target;
+      let targetkey = element.dataset.key;
+      if (!!targetkey) {
+        let srckey = dragData.key;
+
+        if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
+          ui.notifications.error("Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.");
+          return;
+        }
+        let object = GURPS.decode(this.actor.data, srckey);
+        // Because we may be modifing the same list, we have to check the order of the keys and
+        // apply the operation that occurs later in the list, first (to keep the indexes the same)
+        let srca = srckey.split(".");
+        srca.splice(0, 3);
+        let tara = targetkey.split(".");
+        tara.splice(0, 3);
+        let max = Math.min(srca.length, tara.length);
+        let isSrcFirst = false;
+        for (let i = 0; i < max; i++) {
+          if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true;
+        }
+        if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+        await GURPS.insertBeforeKey(this.actor, targetkey, object);
+        if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+			}
+		}
+
+
     if (dragData.type === 'equipment') {
       let element = event.target;
       let targetkey = element.dataset.key;
@@ -103,8 +139,8 @@ export class GurpsActorSheet extends ActorSheet {
           return;
         }
         let object = GURPS.decode(this.actor.data, srckey);
-        // Because we may be modifing the same list, we have to check, are we in the same list
-        // and if so, apply the operation that occurs later in the list, first (to keep the indexes the same)
+        // Because we may be modifing the same list, we have to check the order of the keys and
+        // apply the operation that occurs later in the list, first (to keep the indexes the same)
         let srca = srckey.split(".");
         srca.splice(0, 3);
         let tara = targetkey.split(".");
