@@ -18,7 +18,10 @@ This is what we are currently working on:
     - Import error notification (mainly "&")
     - Added support for Combined or Separate Basic Set PDFs.
     - Drag and drop to move equipment between lists or in containers
-    - Foundry specific GCA export script
+    - Foundry specific GCA export script.    
+    - NOTE:   The Fantasy Grounds export is no longer supported.   
+    - - Either use the "Foundy VTT" output template for GCS, or
+    - - The "export to Foundry VTT.gce" script for GCA	
 
 ### History
 - 0.7.0
