@@ -335,8 +335,8 @@
             <div class="desc header">Advantages, Disadvantages, Perks &amp; Quirks</div>
             <div class="pts header">Pts</div>
             <div class="ref header">Ref</div>
-            {{#each data.ads}}
-            <div class="desc indent0 satisfiedY">{{{gurpslink this.name}}}
+            {{#each data.ads as | this key | }}
+            <div class="desc indent0 satisfiedY adsdraggable" data-key="data.ads.{{key}}">{{{gurpslink this.name}}}
                 <div class="list_note satisfiedY"></div>
                 <div class="list_note satisfiedY">{{{gurpslinkbr this.notes}}}</div>
             </div>
