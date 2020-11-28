@@ -2291,7 +2291,7 @@ body {
 /* grid with 3 colums; center is fixed */
 .gurps-3col {
   display: grid;
-  grid-template-columns: auto 0fr auto;
+  grid-template-columns: auto auto auto;
   grid-auto-rows: auto;
   border: none;
   justify-items: stretch;
@@ -2338,8 +2338,14 @@ body {
   margin-bottom: 0;
 }
 
+.gurps-group .user-entered {
+  color: darkred;
+  font-style: italic;
+}
+
 /* Apply Damage Dialog: Results Table panel */
 .gurps-group .results-table {
+  justify-self: stretch;
   grid-template-columns: min-content min-content 1fr;
   min-height: 130px;
 }
