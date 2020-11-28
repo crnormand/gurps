@@ -579,12 +579,8 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
 
   getData() {
     const data = super.getData();
-    for (const e of Object.values(this.actor.data.data.encumbrance)) {
-      if (e.current) data.dodge = e.dodge;
-    }
-    for (const e of Object.values(this.actor.data.data.hitlocations)) {
-      if (e.penalty == 0) data.defense = e.dr;
-    }
+    data.dodge = this.actor.getCurrentDodge();
+    data.defense = this.actor.getTorsoDr();
     return data;
   }
 

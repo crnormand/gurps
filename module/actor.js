@@ -734,6 +734,21 @@ export class GurpsActor extends Actor {
 		// TODO implement a system setting but (potentially) allow it to be overridden
 		return game.settings.get('gurps', 'default-hitlocation')
 	}
+	
+	getCurrentDodge() {
+		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
+		return (!!enc) ? enc.dodge : 0;
+	}
+	
+	getCurrentMove() {
+		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
+		return (!!enc) ? enc.move : 0;
+	}
+	
+	getTorsoDr() {
+		let hl = Object.values(this.data.data.hitlocations).find(h => h.penalty == 0);
+ 		return (!!hl) ? hl.dr : 0;
+  }
 }
 
 export class Named {
