@@ -72,6 +72,8 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
+		html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
+
     html.find(".eqtdraggable").each((i, li) => {
       li.setAttribute("draggable", true);
       li.addEventListener("dragstart", ev => {
@@ -100,6 +102,53 @@ export class GurpsActorSheet extends ActorSheet {
       })
     });
   }
+
+	async _onDblclickSort(event) {
+		event.preventDefault();
+    let element = event.currentTarget;
+		let key = element.dataset.key;
+		let self = this;
+		
+		let d = new Dialog({
+		  title: "Sort list",
+		  buttons: {
+		   one: {
+		    icon: '<i class="fas fa-sort-alpha-up"></i>',
+		    label: "Ascending",
+		    callback: async () => {
+					let i = key.lastIndexOf(".");
+					let parentpath = key.substring(0, i);
+					let objkey = key.substr(i+1);
+					let object = GURPS.decode(this.actor.data, key);
+					let t = parentpath + ".-=" + objkey;
+					await self.actor.update({[t]: null});		// Delete the whole object
+					let sortedobj = {};
+					let index = 0;
+					Object.values(object).sort((a, b) => a.name.localeCompare(b.name)).forEach(o => game.GURPS.put(sortedobj, o, index++));		
+					await self.actor.update({[key] : sortedobj});
+				}
+		   },
+		   two: {
+		    icon: '<i class="fas fa-sort-alpha-down"></i>',
+		    label: "Descending",
+		    callback: async () => {
+					let i = key.lastIndexOf(".");
+					let parentpath = key.substring(0, i);
+					let objkey = key.substr(i+1);
+					let object = GURPS.decode(this.actor.data, key);
+					let t = parentpath + ".-=" + objkey;
+					await self.actor.update({[t]: null});		// Delete the whole object
+					let sortedobj = {};
+					let index = 0;
+					Object.values(object).sort((a, b) => b.name.localeCompare(a.name)).forEach(o => game.GURPS.put(sortedobj, o, index++));		
+					await self.actor.update({[key] : sortedobj});
+				}
+		   }
+		  },
+		  default: "one",
+		 });
+	  d.render(true);
+	}
 
 
   /* -------------------------------------------- */

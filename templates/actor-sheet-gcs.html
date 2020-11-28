@@ -332,7 +332,7 @@
         </div>
 				{{/if}}
         <div id="advantages">
-            <div class="desc header">Advantages, Disadvantages, Perks &amp; Quirks</div>
+            <div class="desc header dblclksort" data-key="data.ads">Advantages, Disadvantages, Perks &amp; Quirks</div>
             <div class="pts header">Pts</div>
             <div class="ref header">Ref</div>
             {{#each data.ads as | this key | }}
@@ -346,7 +346,7 @@
         </div>
 
         <div id="skills">
-            <div class="desc header">Skills</div>
+            <div class="desc header dblclksort" data-key="data.skills">Skills</div>
             <div class="sl header">SL</div>
             <div class="rsl header">RSL</div>
             <div class="pts header">Pts</div>
@@ -366,7 +366,7 @@
 
 				{{#if (notEmpty data.spells)}}
         <div id="spells">
-            <div class="desc header">Spells</div>
+            <div class="desc header dblclksort" data-key="data.spells">Spells</div>
             <div class="cls header">Class</div>
             <div class="college header">College</div>
             <div class="mana header">Cost</div>
@@ -400,7 +400,7 @@
         <div id="equipment">
             <div class="equipped header">E</div>
             <div class="qty header eqtdragtarget" data-key="data.equipment.carried">Qty</div>
-            <div class="desc header eqtdragtarget" data-key="data.equipment.carried">Equipment ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}})</div>
+            <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried">Equipment ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">x $</div>
@@ -426,7 +426,7 @@
         </div>
         <div id="other_equipment">
             <div class="qty header eqtdragtarget" data-key="data.equipment.other">Qty</div>
-            <div class="desc header eqtdragtarget" data-key="data.equipment.other">Other Equipment (${{eqtsummary.othercost}})</div>
+            <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.other">Other Equipment (${{eqtsummary.othercost}})</div>
             <div class="cost header">$</div>
             <div class="weight header">lbs</div>
             <div class="sum_cost header">x $</div>
