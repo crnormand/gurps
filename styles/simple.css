@@ -94,21 +94,30 @@
 	align-content: center;
 }
 
+.simple_dodge {
+	font-size: 150%;
+	position: absolute;  
+	top: 50%;   
+	left:50%;                    
+  transform: translate(-50%, -50%);
+}
+
 .simple_Shield { 
 	grid-area: Shield; 
-	text-align: center;
-	background-image: url("../ui/ri_1.png");
+/*	text-align: center;
+	vertical-align: middle;
+*/	background-image: url("../ui/ri_1.png");
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center; 
 	font-size: 250%;
 	font-weight: bold;
-	
-	display: flex;
+	position: relative;
+/*	display: flex;
   justify-content: center;
   align-content: center;
   flex-direction: column;
-}
+*/}
 
 .simple_Body { 
 	grid-area: Body; 

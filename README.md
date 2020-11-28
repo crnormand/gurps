@@ -15,6 +15,8 @@ This is what we are currently working on:
 - 0.9.0
     - User configurable modifier lists
     - More Apply Damage Dialog options
+    - Allow "defense" to be rollable in Simple sheet
+    - Add [Dodge] to On-the-Fly formulas
 		
 
 ### History
