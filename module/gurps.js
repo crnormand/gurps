@@ -22,7 +22,9 @@ import DamageChat from '../lib/damagemessage.js'
 
 import helpers from '../lib/moustachewax.js'
 import settings from '../lib/miscellaneous-settings.js'
+import jqueryHelpers from '../lib/jquery-helper.js'
 
+jqueryHelpers()
 settings()
 helpers()
 
@@ -329,9 +331,9 @@ GURPS.SJGProductMappings = {
 function cleanUpP(xml) {
 	// First, remove non-ascii characters
 	xml = xml.replace(/[^ -~]+/g, "");
-	
+
 	// Now try to remove any lone " & " in names, etc.  Will only occur in GCA output
-	xml = xml.replace(/ & /g," &amp; ");
+	xml = xml.replace(/ & /g, " &amp; ");
 	let swap = (xml, tagin, tagout) => {
 		let s = xml.indexOf(tagin);
 		while (s > 0) {
@@ -361,10 +363,10 @@ function extractP(str) {
 		for (let b of s) {
 			if (!!b) {
 				if (b.startsWith("@@@@")) {
-						b = b.substr(4);
-						v += atob(b) + "\n";
+					b = b.substr(4);
+					v += atob(b) + "\n";
 				} else
-						v += b + "\n";
+					v += b + "\n";
 			}
 		}
 	}
@@ -413,7 +415,7 @@ function performAction(action, actor) {
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
-	if (action.type === "attribute") 
+	if (action.type === "attribute")
 		if (!!actor) {
 			prefix = "Roll vs ";
 			thing = this.i18n(action.path);
@@ -453,7 +455,7 @@ function performAction(action, actor) {
 			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
 			formula = d6ify(df + action.formula);
 			prefix = "Rolling " + action.derivedformula + action.formula + " " + action.desc;
-  	} else
+		} else
 			ui.notifications.warn("You must have a character selected");
 	if (action.type === "skill-spell")
 		if (!!actor) {
@@ -461,7 +463,7 @@ function performAction(action, actor) {
 			prefix = "Attempting ";
 			thing = action.name;
 			skill = GURPS.findSkillSpell(actordata, thing);
-      if (!skill) {
+			if (!skill) {
 				ui.notifications.warn("No skill or spell named '" + action.name + "' found on " + actor.name);
 				return;
 			}
@@ -471,15 +473,15 @@ function performAction(action, actor) {
 			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 		} else
 			ui.notifications.warn("You must have a character selected");
-			
-			
+
+
 	if (action.type === "attack")
 		if (!!actor) {
 			let att = null;
 			prefix = "Attempting ";
 			thing = action.name;
 			att = GURPS.findAttack(actordata, thing);
-      if (!att) {
+			if (!att) {
 				ui.notifications.warn("No melee or ranged attack named '" + action.name + "' found on " + actor.name);
 				return;
 			}
@@ -491,12 +493,12 @@ function performAction(action, actor) {
 				opt = "<br>&nbsp;<span style='font-size:85%'>(" + att.mode + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
-			
+
 	if (action.type === "dodge")
 		if (!!actor) {
 			target = parseInt(actor.getCurrentDodge());
 			formula = "3d6";
-			thing = "Dodge";		
+			thing = "Dodge";
 		} else
 			ui.notifications.warn("You must have a character selected");
 
@@ -506,7 +508,7 @@ GURPS.performAction = performAction;
 
 function findSkillSpell(actor, sname) {
 	sname = sname.split("*").join(".*");
-  let t = actor.data.skills?.findInProperties(s => s.name.match(sname));
+	let t = actor.data.skills?.findInProperties(s => s.name.match(sname));
 	if (!t) t = actor.data.spells?.findInProperties(s => s.name.match(sname));
 	return t;
 }
@@ -514,8 +516,8 @@ GURPS.findSkillSpell = findSkillSpell;
 
 function findAttack(actor, sname) {
 	sname = sname.split("*").join(".*");
-  let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")": "")).match(sname));
-	if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")": "")).match(sname));
+	let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
+	if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
 	return t;
 }
 GURPS.findAttack = findAttack;
@@ -542,9 +544,9 @@ async function onRoll(event, actor) {
 	if ("name" in element.dataset) {
 		prefix = "Attempting ";
 		let text = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
-		thing = text.replace(/(.*?)\(.*\)/g,"$1");
-		opt = text.replace(/.*?\((.*)\)/g,"<br>&nbsp;<span style='font-size:85%'>($1)</span>");
-		if (opt === text) opt = "";	
+		thing = text.replace(/(.*?)\(.*\)/g, "$1");
+		opt = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+		if (opt === text) opt = "";
 		formula = "3d6";
 		let t = element.innerText;
 		if (!!t) {
@@ -665,7 +667,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	} else {	// This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
 		// NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
- 		let min = 0
+		let min = 0
 		if (formula.slice(-1) === '!') {
 			formula = formula.slice(0, -1)
 			min = 1
@@ -683,7 +685,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		chatcontent = prefix + modscontent + "<br>" + results + thing;
 	}
 
-  actor = actor || game.user;
+	actor = actor || game.user;
 	const speaker = { alias: actor.name, _id: actor._id }
 	let messageData = {
 		user: game.user._id,
@@ -707,7 +709,7 @@ GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str, clrdmods = true) {
-	if (str === undefined) 
+	if (str === undefined)
 		return "!!UNDEFINED";
 	let found = -1;
 	let output = "";
@@ -732,7 +734,7 @@ GURPS.gurpslink = gurpslink;
 
 // Convert GCS page refs into PDFoundry book & page.   Special handling for refs like "PU8:12"
 function handleOnPdf(event) {
-  event.preventDefault();
+	event.preventDefault();
 	let element = event.currentTarget;
 	let t = element.innerText.trim();
 	let i = t.indexOf(":");
@@ -796,7 +798,7 @@ GURPS.resolve = resolve;
 function onGurpslink(event, actor, desc) {
 	let element = event.currentTarget;
 	let action = element.dataset.action;		// If we have already parsed 
-	if (!!action) 
+	if (!!action)
 		action = JSON.parse(atob(action));
 	else
 		action = parselink(element.innerText, desc, false).action;
@@ -842,13 +844,13 @@ GURPS.put = put;
 async function removeKey(actor, path) {
 	let i = path.lastIndexOf(".");
 	let objpath = path.substring(0, i);
-	let key = path.substr(i+1);
+	let key = path.substr(i + 1);
 	i = objpath.lastIndexOf(".");
 	let parentpath = objpath.substring(0, i);
-	let objkey = objpath.substr(i+1);
+	let objkey = objpath.substr(i + 1);
 	let object = GURPS.decode(actor.data, objpath);
 	let t = parentpath + ".-=" + objkey;
-	await actor.update({[t]: null});		// Delete the whole object
+	await actor.update({ [t]: null });		// Delete the whole object
 	delete object[key];
 	i = parseInt(key);
 
@@ -860,8 +862,8 @@ async function removeKey(actor, path) {
 		key = k;
 		i++;
 	}
-	let sorted = Object.keys(object).sort().reduce((a,v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
-	await actor.update({[objpath] : sorted});
+	let sorted = Object.keys(object).sort().reduce((a, v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
+	await actor.update({ [objpath]: sorted });
 }
 GURPS.removeKey = removeKey;
 
@@ -869,36 +871,36 @@ GURPS.removeKey = removeKey;
 async function insertBeforeKey(actor, path, newobj) {
 	let i = path.lastIndexOf(".");
 	let objpath = path.substring(0, i);
-	let key = path.substr(i+1);
+	let key = path.substr(i + 1);
 	i = objpath.lastIndexOf(".");
 	let parentpath = objpath.substring(0, i);
-	let objkey = objpath.substr(i+1);
+	let objkey = objpath.substr(i + 1);
 	let object = GURPS.decode(actor.data, objpath);
 	let t = parentpath + ".-=" + objkey;
-	await actor.update({[t]: null});		// Delete the whole object
+	await actor.update({ [t]: null });		// Delete the whole object
 	let start = parseInt(key);
-		
+
 	i = start + 1;
 	while (object.hasOwnProperty(this.genkey(i))) i++;
 	i = i - 1;
 	for (let z = i; z >= start; z--) {
-		object[genkey(z+1)] = object[genkey(z)];
+		object[genkey(z + 1)] = object[genkey(z)];
 	}
 	object[key] = newobj;
-	let sorted = Object.keys(object).sort().reduce((a,v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
-	await actor.update({[objpath]: sorted});
+	let sorted = Object.keys(object).sort().reduce((a, v) => { a[v] = object[v]; return a; }, {});  // Enforced key order
+	await actor.update({ [objpath]: sorted });
 }
 GURPS.insertBeforeKey = insertBeforeKey;
 
 function decode(obj, path, all = true) {
-  let p = path.split(".");
-  let end = p.length;
-  if (!all) end = end - 1;
-  for (let i = 0; i < end; i++) {
-    let q = p[i];
-    obj = obj[q];
-  }
-  return obj;
+	let p = path.split(".");
+	let end = p.length;
+	if (!all) end = end - 1;
+	for (let i = 0; i < end; i++) {
+		let q = p[i];
+		obj = obj[q];
+	}
+	return obj;
 }
 GURPS.decode = decode;
 
@@ -923,22 +925,22 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 
 function chatClickGurpslink(event) {
-  event.preventDefault();
-  game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+	event.preventDefault();
+	game.GURPS.onGurpslink(event, game.GURPS.LastActor);
 }
 GURPS.chatClickGurpslink = chatClickGurpslink;
 
 
 function chatClickGmod(event) {
-  let element = event.currentTarget;
-  event.preventDefault();
-  let desc = element.dataset.name;
-  game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+	let element = event.currentTarget;
+	event.preventDefault();
+	let desc = element.dataset.name;
+	game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
 }
 GURPS.chatClickGmod = chatClickGmod;
 
 function chatClickPdf(event) {
-  game.GURPS.handleOnPdf(event);
+	game.GURPS.handleOnPdf(event);
 }
 GURPS.chatClickPdf = chatClickPdf;
 
@@ -979,7 +981,7 @@ Hooks.once("init", async function () {
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
 	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
 	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { makeDefault: false });
-	
+
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
 
@@ -992,16 +994,16 @@ Hooks.once("init", async function () {
 	Handlebars.registerHelper('simpleRating', function (lvl) {
 		if (!lvl) return "UNKNOWN";
 		let l = parseInt(lvl);
-		if (l < 10 )
+		if (l < 10)
 			return "Poor";
-		if (l <= 11 )
+		if (l <= 11)
 			return "Fair";
-		if (l <= 13 )
+		if (l <= 13)
 			return "Good";
-		if (l <= 15 )
+		if (l <= 15)
 			return "Great";
-		if (l <= 18 )
-			return "Super";	
+		if (l <= 18)
+			return "Super";
 		return "Epic";
 	});
 
@@ -1065,20 +1067,20 @@ Hooks.once("init", async function () {
 		type: Boolean,
 		default: true,
 	});
-	
+
 	game.settings.register("gurps", "basicsetpdf", {
-      name: 'Basic Set PDF(S)',
-      hint: 'Select "Combined" or "Separate" and use the associated PDF codes when configuring PDFoundry.  ' +
-				'Note: If you select "Separate", the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.',
-      scope: 'world',
-      config: true,
-      type: String,
-      choices: {
-        'Combined': 'Combined Basic Set, code "B"',
-        'Separate': 'Separate Basic Set Characters, code "B".  Basic Set Campaigns, code "BX"'
-      },
-      default: 'Combined',
-    })
+		name: 'Basic Set PDF(S)',
+		hint: 'Select "Combined" or "Separate" and use the associated PDF codes when configuring PDFoundry.  ' +
+			'Note: If you select "Separate", the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.',
+		scope: 'world',
+		config: true,
+		type: String,
+		choices: {
+			'Combined': 'Combined Basic Set, code "B"',
+			'Separate': 'Separate Basic Set Characters, code "B".  Basic Set Campaigns, code "BX"'
+		},
+		default: 'Combined',
+	})
 
 
 	ui.modifierbucket = GURPS.ModifierBucket;
@@ -1131,7 +1133,7 @@ Hooks.once("ready", async function () {
 			if (!!a) game.GURPS.SetLastActor(a);
 		}
 	});
-	
+
 	Hooks.on('preCreateChatMessage', (data, options, userId) => {
 		let c = data.content;
 		//console.log("PRE CHAT:");
@@ -1140,15 +1142,15 @@ Hooks.once("ready", async function () {
 		//console.log("AFTER:");
 		//console.log(data.content);
 	});
-	
+
 	Hooks.on('renderChatMessage', (app, html, msg) => {
-    html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
-	  html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
-	  html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
-	  html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
-	  html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
-    html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
-		});
+		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
+		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
+		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
+	});
 
 });
 
