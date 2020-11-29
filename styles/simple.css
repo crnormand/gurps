@@ -2355,6 +2355,7 @@ body {
 /* Apply Damage Dialog: Results Table panel */
 .gurps-group .results-table {
   justify-self: stretch;
+  width: 100%;
   grid-template-columns: min-content min-content 1fr;
   min-height: 130px;
 }
