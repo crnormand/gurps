@@ -2365,3 +2365,32 @@ body {
   text-align: start;
   justify-content: center;
 }
+
+.with-button {
+  position: relative;
+}
+
+.with-button input {
+  padding-right: 1.5em;
+}
+
+.with-button button {
+    position: absolute; 
+    width: fit-content;
+    height: fit-content;
+    margin: 0;
+    padding: 0; 
+    right: 0.35em; 
+    top: 0.2em; 
+    line-height: 25px;
+    z-index: 2; 
+    border: none; 
+    border-radius: 0;
+    cursor: pointer; 
+    color: dimgrey; 
+    background: rgba(0,0,0,0); 
+}
+    /*
+    border: 1px solid #7a7971;
+    border-radius: 3px;
+    */
