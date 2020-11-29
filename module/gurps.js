@@ -402,6 +402,7 @@ GURPS.trim = trim;
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 function performAction(action, actor) {
 	if (!action) return;
+	let actordata = actor?.data;
 	let prefix = "";
 	let thing = "";
 	let target = -1;	// There will be a roll
@@ -420,7 +421,7 @@ function performAction(action, actor) {
 			thing = this.i18n(action.path);
 			formula = "3d6";
 			target = action.target;
-			if (!target) target = this.resolve(action.path, actor.data);
+			if (!target) target = this.resolve(action.path, actordata.data);
 			target = parseInt(target);
 			if (!!action.mod || !!action.desc)
 				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
@@ -443,7 +444,7 @@ function performAction(action, actor) {
 	}
 	if (action.type === "deriveddamage")
 		if (!!actor) {
-			let df = (action.derivedformula == "SW" ? actor.data.swing : actor.data.thrust)
+			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
 			formula = d6ify(df + action.formula);
 			GURPS.damageChat.create(actor, formula, action.damagetype, action.derivedformula + action.formula);
 			return;
@@ -451,7 +452,7 @@ function performAction(action, actor) {
 			ui.notifications.warn("You must have a character selected");
 	if (action.type === "derivedroll")
 		if (!!actor) {
-			let df = (action.derivedformula == "SW" ? actor.data.swing : actor.data.thrust)
+			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
 			formula = d6ify(df + action.formula);
 			prefix = "Rolling " + action.derivedformula + action.formula + " " + action.desc;
 		} else
@@ -461,7 +462,7 @@ function performAction(action, actor) {
 			let skill = null;
 			prefix = "Attempting ";
 			thing = action.name;
-			skill = GURPS.findSkillSpell(actor, thing);
+			skill = GURPS.findSkillSpell(actordata, thing);
 			if (!skill) {
 				ui.notifications.warn("No skill or spell named '" + action.name + "' found on " + actor.name);
 				return;
@@ -479,7 +480,7 @@ function performAction(action, actor) {
 			let att = null;
 			prefix = "Attempting ";
 			thing = action.name;
-			att = GURPS.findAttack(actor, thing);
+			att = GURPS.findAttack(actordata, thing);
 			if (!att) {
 				ui.notifications.warn("No melee or ranged attack named '" + action.name + "' found on " + actor.name);
 				return;
@@ -493,6 +494,13 @@ function performAction(action, actor) {
 		} else
 			ui.notifications.warn("You must have a character selected");
 
+	if (action.type === "dodge")
+		if (!!actor) {
+			target = parseInt(actor.getCurrentDodge());
+			formula = "3d6";
+			thing = "Dodge";
+		} else
+			ui.notifications.warn("You must have a character selected");
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
@@ -794,7 +802,7 @@ function onGurpslink(event, actor, desc) {
 		action = JSON.parse(atob(action));
 	else
 		action = parselink(element.innerText, desc, false).action;
-	this.performAction(action, actor?.data);
+	this.performAction(action, actor);
 }
 GURPS.onGurpslink = onGurpslink;
 

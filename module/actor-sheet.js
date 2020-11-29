@@ -72,6 +72,8 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
+		html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
+
     html.find(".eqtdraggable").each((i, li) => {
       li.setAttribute("draggable", true);
       li.addEventListener("dragstart", ev => {
@@ -79,7 +81,74 @@ export class GurpsActorSheet extends ActorSheet {
       })
     });
 
+    html.find(".adsdraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+        return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "advantage", "key": ev.currentTarget.dataset.key }))
+      })
+    });
+
+    html.find(".skldraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+        return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "skill", "key": ev.currentTarget.dataset.key }))
+      })
+    });
+
+    html.find(".spldraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+        return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "spell", "key": ev.currentTarget.dataset.key }))
+      })
+    });
   }
+
+	async _onDblclickSort(event) {
+		event.preventDefault();
+    let element = event.currentTarget;
+		let key = element.dataset.key;
+		let self = this;
+		
+		let d = new Dialog({
+		  title: "Sort list",
+		  buttons: {
+		   one: {
+		    icon: '<i class="fas fa-sort-alpha-up"></i>',
+		    label: "Ascending",
+		    callback: async () => {
+					let i = key.lastIndexOf(".");
+					let parentpath = key.substring(0, i);
+					let objkey = key.substr(i+1);
+					let object = GURPS.decode(this.actor.data, key);
+					let t = parentpath + ".-=" + objkey;
+					await self.actor.update({[t]: null});		// Delete the whole object
+					let sortedobj = {};
+					let index = 0;
+					Object.values(object).sort((a, b) => a.name.localeCompare(b.name)).forEach(o => game.GURPS.put(sortedobj, o, index++));		
+					await self.actor.update({[key] : sortedobj});
+				}
+		   },
+		   two: {
+		    icon: '<i class="fas fa-sort-alpha-down"></i>',
+		    label: "Descending",
+		    callback: async () => {
+					let i = key.lastIndexOf(".");
+					let parentpath = key.substring(0, i);
+					let objkey = key.substr(i+1);
+					let object = GURPS.decode(this.actor.data, key);
+					let t = parentpath + ".-=" + objkey;
+					await self.actor.update({[t]: null});		// Delete the whole object
+					let sortedobj = {};
+					let index = 0;
+					Object.values(object).sort((a, b) => b.name.localeCompare(a.name)).forEach(o => game.GURPS.put(sortedobj, o, index++));		
+					await self.actor.update({[key] : sortedobj});
+				}
+		   }
+		  },
+		  default: "one",
+		 });
+	  d.render(true);
+	}
 
 
   /* -------------------------------------------- */
@@ -91,9 +160,15 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type === 'damageItem') {
       this.actor.handleDamageDrop(dragData.payload)
     }
+		
+		this.handleDragFor(event, dragData, "advantage", "adsdraggable");
+		this.handleDragFor(event, dragData, "skill", "skldraggable");
+		this.handleDragFor(event, dragData, "spell", "spldraggable");
 
     if (dragData.type === 'equipment') {
       let element = event.target;
+			let classes = $(element).attr('class') || "";
+			if (!classes.includes('eqtdraggable') && !classes.includes('eqtdragtarget')) return;
       let targetkey = element.dataset.key;
       if (!!targetkey) {
         let srckey = dragData.key;
@@ -103,8 +178,8 @@ export class GurpsActorSheet extends ActorSheet {
           return;
         }
         let object = GURPS.decode(this.actor.data, srckey);
-        // Because we may be modifing the same list, we have to check, are we in the same list
-        // and if so, apply the operation that occurs later in the list, first (to keep the indexes the same)
+        // Because we may be modifing the same list, we have to check the order of the keys and
+        // apply the operation that occurs later in the list, first (to keep the indexes the same)
         let srca = srckey.split(".");
         srca.splice(0, 3);
         let tara = targetkey.split(".");
@@ -151,6 +226,39 @@ export class GurpsActorSheet extends ActorSheet {
       }
     }
   }
+
+
+async handleDragFor(event, dragData, type, cls) {
+  if (dragData.type === type) {
+    let element = event.target;
+		let classes = $(element).attr('class') || "";
+		if (!classes.includes(cls)) return;
+    let targetkey = element.dataset.key;
+    if (!!targetkey) {
+      let srckey = dragData.key;
+      if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
+        ui.notifications.error("Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.");
+        return;
+      }
+      let object = GURPS.decode(this.actor.data, srckey);
+      // Because we may be modifing the same list, we have to check the order of the keys and
+      // apply the operation that occurs later in the list, first (to keep the indexes the same)
+      let srca = srckey.split(".");
+      srca.splice(0, 3);
+      let tara = targetkey.split(".");
+      tara.splice(0, 3);
+      let max = Math.min(srca.length, tara.length);
+      let isSrcFirst = false;
+      for (let i = 0; i < max; i++) {
+        if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true;
+      }
+      if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+      await GURPS.insertBeforeKey(this.actor, targetkey, object);
+      if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+		}
+	}
+
+}
 
 
   _onfocus(ev) {
@@ -471,12 +579,8 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
 
   getData() {
     const data = super.getData();
-    for (const e of Object.values(this.actor.data.data.encumbrance)) {
-      if (e.current) data.dodge = e.dodge;
-    }
-    for (const e of Object.values(this.actor.data.data.hitlocations)) {
-      if (e.penalty == 0) data.defense = e.dr;
-    }
+    data.dodge = this.actor.getCurrentDodge();
+    data.defense = this.actor.getTorsoDr();
     return data;
   }
 

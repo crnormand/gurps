@@ -1,14 +1,25 @@
-### [Guide on how to use GURPS 4e for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
+### Users Guide for [GURPS 4e game aid for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
 
 
-# Current Release Version 0.7.0
+# Current Release Version 0.8.0
+**NOTE: If you upgrade to v0.8.0, you MUST delete all of your actors and restart Foundry**
+
 To install the latest release, use this manifest URL:   
-https://raw.githubusercontent.com/crnormand/gurps/release/system.json
+[https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
+
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ## If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
+- 0.9.0
+    - User configurable modifier lists
+    - More Apply Damage Dialog options
+    - Allow "defense" to be rollable in Simple sheet
+    - Add [Dodge] to On-the-Fly formulas
+		
+
+### History
 - 0.8.0
     - Enhanced Drag and Drop Damage Dialog.
     - Simplified (convention one-shot) character sheet
@@ -18,9 +29,13 @@ This is what we are currently working on:
     - Import error notification (mainly "&")
     - Added support for Combined or Separate Basic Set PDFs.
     - Drag and drop to move equipment between lists or in containers
-    - Foundry specific GCA export script
+    - Foundry specific GCA export script.    
+    - NOTE:   The Fantasy Grounds export is no longer supported.   
+    - - Either use the "Foundy VTT" output template for GCS, or
+    - - The "export to Foundry VTT.gce" script for GCA	
+    
+**NOTE: If you upgrade to v0.7.0, YOU MUST delete all of your actors, and Restart Foundry**
 
-### History
 - 0.7.0
     - Fixed manifest file to allow for automatic updating
     - Added configurable system settings (range system (Basic Set / Monster Hunters 2), etc.)
@@ -34,8 +49,8 @@ This is what we are currently working on:
     - 3d6/1d6 on desktop
     - Can edit character sheet
     - Started work on drag and drop damage!
-
-**NOTE:   YOU MUST delete all of your actors, and Restart Foundry for the changes to take effect**
+    
+**NOTE: If you upgrade to v0.7.0, YOU MUST delete all of your actors, and Restart Foundry**
 
 - 0.6.5
     - Removed "+0" range modifiers

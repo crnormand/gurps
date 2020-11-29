@@ -41,7 +41,7 @@ export class GurpsActor extends Actor {
 		}
 
 		let ra = r["@attributes"];
-		const isFoundryV1 = (!!ra && ra.release == "Foundry" && ra.version == "1");
+		const isFoundryGCS = (!!ra && ra.release == "Foundry" && ra.version == "1");
 		const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version == "GCA");
 
 		// The character object starts here
@@ -65,26 +65,23 @@ export class GurpsActor extends Actor {
 		try {
 			// This is going to get ugly, so break out various data into different methods
 			commit = { ...commit, ...this.importAttributesFromCGSv1(c.attributes) };
-			commit = { ...commit, ...this.importSkillsFromGCSv1(c.abilities?.skilllist, isFoundryV1) };
+			commit = { ...commit, ...this.importSkillsFromGCSv1(c.abilities?.skilllist, isFoundryGCS) };
 			commit = { ...commit, ...this.importTraitsfromGCSv1(c.traits) };
-			commit = { ...commit, ...this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist, isFoundryV1) };
-			commit = { ...commit, ...this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist, isFoundryV1) };
-			commit = { ...commit, ...this.importSpellsFromGCSv1(c.abilities?.spelllist, isFoundryV1) };
-			if (isFoundryV1) {
+			commit = { ...commit, ...this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist, isFoundryGCS) };
+			commit = { ...commit, ...this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist, isFoundryGCS) };
+			commit = { ...commit, ...this.importSpellsFromGCSv1(c.abilities?.spelllist, isFoundryGCS) };
+			if (isFoundryGCS) {
 				commit = { ...commit, ...this.importAdsFromGCSv2(c.traits?.adslist) };
 				commit = { ...commit, ...this.importReactionsFromGCSv2(c.reactions) };
-			} else {
-				commit = { ...commit, ...this.importAdsFromGCSv1(c.traits?.adslist) };
-				commit = { ...commit, ...this.importDisadsFromGCSv1(c.traits?.disadslist) };
-				commit = { ...commit, ...this.importPowersFromGCSv1(c.abilities?.powerlist) };
-				commit = { ...commit, ...this.importOtherAdsFromGCSv1(c.abilities?.otherlist) };
-			}
-			if (isFoundryGCA)
+			} 
+			if (isFoundryGCA) {
+				commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) };
 				commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers) };
+			}
 			commit = { ...commit, ...this.importEncumbranceFromGCSv1(c.encumbrance) };
 			commit = { ...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals) };
 			commit = { ...commit, ...this.importNotesFromGCSv1(c.description, c.notelist) };
-			commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryV1) };
+			commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryGCS) };
 			commit = { ...commit, ...this.importProtectionFromGCSv1(c.combat?.protectionlist) };
 		} catch (err) {
 			let msg = "An error occured while importing " + nm + ", " + err.name + ":" + err.message;
@@ -241,7 +238,7 @@ export class GurpsActor extends Actor {
 
 	}
 
-	importEquipmentFromGCSv1(json, isFoundryV1) {
+	importEquipmentFromGCSv1(json, isFoundryGCS) {
 		if (!json) return;
 		let t = this.textFrom;
 		let i = this.intFrom;
@@ -265,7 +262,7 @@ export class GurpsActor extends Actor {
 				eqt.techlevel = t(j.tl);
 				eqt.legalityclass = t(j.lc);
 				eqt.categories = t(j.type);
-				if (isFoundryV1) {
+				if (isFoundryGCS) {
 					eqt.notes = t(j.notes);
 					eqt.pageref = t(j.pageref);
 				} else
@@ -336,7 +333,7 @@ export class GurpsActor extends Actor {
 		};
 	}
 
-	importCombatMeleeFromGCSv1(json, isFoundryV1) {
+	importCombatMeleeFromGCSv1(json, isFoundryGCS) {
 		if (!json) return;
 		let t = this.textFrom;
 		let melee = {};
@@ -353,7 +350,7 @@ export class GurpsActor extends Actor {
 						m.weight = t(j.weight);
 						m.techlevel = t(j.tl);
 						m.cost = t(j.cost);
-						if (isFoundryV1) {
+						if (isFoundryGCS) {
 							m.notes = t(j.notes);
 							m.pageref = t(j.pageref);
 						} else
@@ -380,7 +377,7 @@ export class GurpsActor extends Actor {
 		};
 	}
 
-	importCombatRangedFromGCSv1(json, isFoundryV1) {
+	importCombatRangedFromGCSv1(json, isFoundryGCS) {
 		if (!json) return;
 		let t = this.textFrom;
 		let ranged = {};
@@ -397,7 +394,7 @@ export class GurpsActor extends Actor {
 						r.bulk = t(j.bulk);
 						r.legalityclass = t(j.lc);
 						r.ammo = t(j.ammo);
-						if (isFoundryV1) {
+						if (isFoundryGCS) {
 							r.notes = t(j.notes);
 							r.pageref = t(j.pageref);
 						} else
@@ -539,7 +536,7 @@ export class GurpsActor extends Actor {
 	// create/update the skills.   
 	// NOTE:  For the update to work correctly, no two skills can have the same name.
 	// When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
-	importSkillsFromGCSv1(json, isFoundryV1) {
+	importSkillsFromGCSv1(json, isFoundryGCS) {
 		if (!json) return;
 		let skills = {};
 		let index = 0;
@@ -553,7 +550,7 @@ export class GurpsActor extends Actor {
 				sk.level = this.intFrom(j.level);
 				sk.points = this.intFrom(j.points);
 				sk.relativelevel = t(j.relativelevel);
-				if (isFoundryV1) {
+				if (isFoundryGCS) {
 					sk.notes = t(j.notes);
 					sk.pageref = t(j.pageref);
 				} else
@@ -572,7 +569,7 @@ export class GurpsActor extends Actor {
 	// create/update the spells.   
 	// NOTE:  For the update to work correctly, no two spells can have the same name.
 	// When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
-	importSpellsFromGCSv1(json, isFoundryV1) {
+	importSpellsFromGCSv1(json, isFoundryGCS) {
 		if (!json) return;
 		let spells = {};
 		let index = 0;
@@ -584,7 +581,7 @@ export class GurpsActor extends Actor {
 				sp.name = t(j.name);
 				sp.class = t(j.class);
 				sp.college = t(j.college);
-				if (isFoundryV1) {
+				if (isFoundryGCS) {
 					sp.cost = t(j.cost);
 					sp.maintain = t(j.maintain);
 					sp.difficulty = t(j.difficulty);
@@ -617,51 +614,19 @@ export class GurpsActor extends Actor {
 		};
 	}
 
-
-	/* For the following methods, I could not figure out how to use the update location
-		"data.powers", "data.ads" as a variable (so I could pass it into the
-		importBaseAdvantagesFromGCSv1() method.   So instead, I did the update()
-		in these methods with the string literal.
-	*/
-	importPowersFromGCSv1(json) {
-		if (!json) return;
-		let list = this.importBaseAdvantagesFromGCSv1(json);
-		return {
-			"data.-=powers": null,
-			"data.powers": list
-		};
-	}
-
-	importAdsFromGCSv1(json) {
-		if (!json) return;
-		let list = this.importBaseAdvantagesFromGCSv1(json);
+	importAdsFromGCA(adsjson, disadsjson) {
+		let list = {};
+		let index = 0;
+		index = this.importBaseAdvantages(list, adsjson, index);
+		this.importBaseAdvantages(list, disadsjson, index);
 		return {
 			"data.-=ads": null,
 			"data.ads": list
 		};
 	}
 
-	importDisadsFromGCSv1(json) {
+	importBaseAdvantages(datalist, json, index) {
 		if (!json) return;
-		let list = this.importBaseAdvantagesFromGCSv1(json);
-		return {
-			"data.-=disads": null,
-			"data.disads": list
-		};
-	}
-
-	importOtherAdsFromGCSv1(json) {
-		if (!json) return;
-		let list = this.importBaseAdvantagesFromGCSv1(json);
-		return {
-			"data.-=otherads": null,
-			"data.otherads": list
-		};
-	}
-
-	importBaseAdvantagesFromGCSv1(json) {
-		let datalist = {};
-		let index = 0;
 		let t = this.textFrom;		/// shortcut to make code smaller
 		for (let key in json) {
 			if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -675,9 +640,10 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(datalist, a, index++);
 			}
 		}
-		return datalist;
+		return index;
 	}
 
+	// In the new GCS import, all ads/disad/quirks/perks are in one list.
 	importAdsFromGCSv2(json) {
 		let list = {};
 		let index = 0;
@@ -768,6 +734,21 @@ export class GurpsActor extends Actor {
 		// TODO implement a system setting but (potentially) allow it to be overridden
 		return game.settings.get('gurps', 'default-hitlocation')
 	}
+	
+	getCurrentDodge() {
+		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
+		return (!!enc) ? enc.dodge : 0;
+	}
+	
+	getCurrentMove() {
+		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
+		return (!!enc) ? enc.move : 0;
+	}
+	
+	getTorsoDr() {
+		let hl = Object.values(this.data.data.hitlocations).find(h => h.penalty == 0);
+ 		return (!!hl) ? hl.dr : 0;
+  }
 }
 
 export class Named {
