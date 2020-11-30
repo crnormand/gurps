@@ -666,7 +666,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</small>";
-		chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + results + rdesc;
+		chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + "<div class='gurps-results'>" + results + rdesc + "</div>";
 	} else {	// This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
 		// NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
@@ -699,12 +699,11 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	};
 	if (blindroll) {
 		messageData.whisper = ChatMessage.getWhisperRecipients("GM");
-		messageData.blind = true;
-		messageData.flavor = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent;
+		messageData.blind = true;		
 	}
 
 	if (niceDice) {
-		game.dice3d.showForRoll(roll).then((displayed) => {
+		game.dice3d.showForRoll(roll, game.user, true, null, blindroll).then((displayed) => { 					
 			CONFIG.ChatMessage.entityClass.create(messageData, {});
 		});
 	} else {
@@ -1095,7 +1094,16 @@ Hooks.once("init", async function () {
         ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
         return false;
     }
-});
+	});
+	
+	// Look for blind messages with .message-results and remove them
+	Hooks.on("renderChatMessage", (log, content, data) => {
+    if (!!data.message.blind) {
+			if (data.author.isSelf) {		// We are rendering the chat message for the sender.
+				$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
+			}
+		}
+	});
 
 
 	ui.modifierbucket = GURPS.ModifierBucket;

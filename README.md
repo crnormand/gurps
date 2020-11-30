@@ -21,6 +21,9 @@ This is what we are currently working on:
     - Current Encumbrance can be set on main/combat sheet
     - Fixed Full/Combat sheet toggle
     - Warn on FG import
+    - On-the-Fly can now parse "4d+1x2 (0.5)" damage rolls
+    - On-the-Fly can now create "blind" rolls.   Useful for GM to ask everyone to roll PER
+    - Started support for generic damage type "dmg"
 		
 
 ### History
