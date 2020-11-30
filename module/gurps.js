@@ -323,6 +323,8 @@ GURPS.SJGProductMappings = {
 	"VOR": "http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game"
 }
 
+GURPS.USER_GUIDE_URL = "https://bit.ly/2JaSlQd";
+
 
 // This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 // First we have to remove non-printing characters, and then we want to replace 
@@ -503,7 +505,7 @@ function performAction(action, actor) {
 		} else
 			ui.notifications.warn("You must have a character selected");
 
-	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
+	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt, action.blindroll);
 }
 GURPS.performAction = performAction;
 
@@ -604,7 +606,7 @@ GURPS.applyModifierDesc = applyModifierDesc;
 	unfortunately, it has a lot fo hard coded junk in it.
 	*/
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optlabel = "") {
+async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optlabel = "", blindroll = false) {
 
 	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
@@ -695,6 +697,11 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		type: CONST.CHAT_MESSAGE_TYPES.OOC,
 		roll: roll
 	};
+	if (blindroll) {
+		messageData.whisper = ChatMessage.getWhisperRecipients("GM");
+		messageData.blind = true;
+		messageData.flavor = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent;
+	}
 
 	if (niceDice) {
 		game.dice3d.showForRoll(roll).then((displayed) => {
@@ -1085,7 +1092,7 @@ Hooks.once("init", async function () {
 	
 	Hooks.on('chatMessage', (log, content, data) => {
     if (content === "/help" || content === "!help") {
-        ChatMessage.create({ content: "<a href='https://bit.ly/2JaSlQd'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+        ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
         return false;
     }
 });

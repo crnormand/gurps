@@ -1,4 +1,4 @@
-### Users Guide for [GURPS 4e game aid for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
+### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
 
 # Current Release Version 0.8.0
@@ -20,6 +20,7 @@ This is what we are currently working on:
     - Users Guide link in Foundry.   Type "/help" or "!help" in chat
     - Current Encumbrance can be set on main/combat sheet
     - Fixed Full/Combat sheet toggle
+    - Warn on FG import
 		
 
 ### History
