@@ -43,6 +43,11 @@ export class GurpsActor extends Actor {
 		let ra = r["@attributes"];
 		const isFoundryGCS = (!!ra && ra.release == "Foundry" && ra.version == "1");
 		const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version == "GCA");
+		if (!(isFoundryGCS || isFoundryGCA)) {
+			ui.notifications.error("We no longer support the Fantasy Ground import.   Please check the Users Guide (see Chat log).");
+			ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+			return;			
+		}
 
 		// The character object starts here
 		let c = r.character;
