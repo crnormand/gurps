@@ -1082,6 +1082,13 @@ Hooks.once("init", async function () {
 		},
 		default: 'Combined',
 	})
+	
+	Hooks.on('chatMessage', (log, content, data) => {
+    if (content === "/help" || content === "!help") {
+        ChatMessage.create({ content: "<a href='https://bit.ly/2JaSlQd'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+        return false;
+    }
+});
 
 
 	ui.modifierbucket = GURPS.ModifierBucket;

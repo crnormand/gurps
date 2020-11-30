@@ -17,8 +17,8 @@ This is what we are currently working on:
     - More Apply Damage Dialog options
     - Allow "defense" to be rollable in Simple sheet
     - Add [Dodge] to On-the-Fly formulas
-    - Users Guide link in Foundry
-    - Current Encumbrance can be set on main sheet
+    - Users Guide link in Foundry.   Type "/help" or "!help" in chat
+    - Current Encumbrance can be set on main/combat sheet
     - Fixed Full/Combat sheet toggle
 		
 
