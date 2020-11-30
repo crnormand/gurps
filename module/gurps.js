@@ -441,15 +441,14 @@ function performAction(action, actor) {
 		formula = d6ify(action.formula);
 	}
 	if (action.type === "damage") {
-		formula = d6ify(action.formula);
-		GURPS.damageChat.create(actor, formula, action.damagetype);
+		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype);
 		return;
 	}
 	if (action.type === "deriveddamage")
 		if (!!actor) {
 			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
-			formula = d6ify(df + action.formula);
-			GURPS.damageChat.create(actor, formula, action.damagetype, action.derivedformula + action.formula);
+			formula = df + action.formula;
+			GURPS.damageChat.create(actor || game.user, formula, action.damagetype, action.derivedformula + action.formula);
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
