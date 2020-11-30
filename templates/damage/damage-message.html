@@ -1,16 +1,22 @@
 <div class='gurps damage-message' data-transfer='{{transfer}}'>
   <div class='roll-message'>
     <div class='prefix'>Rolling {{dice}} damage</div>
+    <div class='roll-result'>
+      <span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />&nbsp;<span
+        class='roll-value'>{{damage}}&nbsp;</span><span class='roll-detail'>{{pluralize 'point' damage}} of
+        {{damageType}}damage.</span>
+    </div>
+    <hr />
+    <div style='text-align: start' class='aside'>Rolled ({{diceValue}}{{#if adds}}{{adds}}{{/if}}){{#if multiplier}} x
+      {{multiplier}}{{/if}} =
+      {{rawTotal}}{{#if isB378}}*{{/if}}.</div>
     <ul class='modifier-list'>
       {{#each modifiers}}
       <li>{{this}}</li>
       {{/each}}
     </ul>
-    <div class='roll-result'>
-      <span class='fa fa-dice' />&nbsp;
-      <span class='fa fa-long-arrow-alt-right' />&nbsp;
-      <span class='roll-value'>{{damage}}</span>
-      <span class='roll-detail'>{{pluralize 'point' damage}} of '{{damageType}}' damage.</span>
-    </div>
+    {{#if isB378}}
+    <div class='aside'>* — Minimum damage rule applied. (<span class='pdflink'>B378</span>)</div>
+    {{/if}}
   </div>
 </div>
