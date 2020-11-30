@@ -158,16 +158,16 @@
                 <div class="moveh header">Move</div>
                 <div class="dodgeh header">Dodge</div>
 
-                {{#each data.encumbrance}}
+                {{#each data.encumbrance as | this key |}}
                 {{#if this.current}}
                 <div class="encmarker current"></div>
-                <div class="enc current {{this.key}}"></div>
+                <div class="enc current {{this.key}}" data-key="{{key}}"></div>
                 <div class="load current">{{this.weight}}</div>
                 <div class="move current">{{this.move}}</div>
                 <div class="dodge current rollable" data-path="dodge">{{this.dodge}}</div>
                 {{else}}
                 <div class="encmarker "></div>
-                <div class="enc {{this.key}}"></div>
+                <div class="enc {{this.key}}" data-key="{{key}}"></div>
                 <div class="load ">{{this.weight}}</div>
                 <div class="move ">{{this.move}}</div>
                 <div class="dodge rollable" data-path="dodge">{{this.dodge}}</div>

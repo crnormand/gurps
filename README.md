@@ -12,11 +12,14 @@ To install the latest release, use this manifest URL:
 ## If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
-- 0.9.0
-    - User configurable modifier lists
+- 0.8.1
+    - Basic Speed no longer truncates
     - More Apply Damage Dialog options
     - Allow "defense" to be rollable in Simple sheet
     - Add [Dodge] to On-the-Fly formulas
+    - Users Guide link in Foundry
+    - Current Encumbrance can be set on main sheet
+    - Fixed Full/Combat sheet toggle
 		
 
 ### History

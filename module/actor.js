@@ -500,9 +500,9 @@ export class GurpsActor extends Actor {
 		lm.twohandedlift = t(json.twohandedlift);
 
 
-		data.basicmove.value = i(json.basicmove);
+		data.basicmove.value = t(json.basicmove);
 		data.basicmove.points = i(json.basicmove_points);
-		data.basicspeed.value = i(json.basicspeed);
+		data.basicspeed.value = t(json.basicspeed);
 		data.basicspeed.points = i(json.basicspeed_points);
 		data.thrust = t(json.thrust);
 		data.swing = t(json.swing);
