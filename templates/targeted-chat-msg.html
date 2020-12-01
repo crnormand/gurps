@@ -1,0 +1,17 @@
+<div class='gurps damage-message'>
+  <div class='roll-message'>
+    <div class='prefix'>{{prefix}}</div>
+    <div class='roll-result'>
+      <span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />&nbsp;
+      <span class='roll-value'>{{roll}}&nbsp;</span><span class='{{result-class}}'>{{result}}</span>
+    </div>
+    {{#if hasExplanation}}
+    <div>
+      <hr />
+      {{#if explainLineOne}}
+      <div style='text-align: start' class='aside'>{{explainLineOne}}</div>
+      {{/if}}
+    </div>
+    {{/if}}
+  </div>
+</div>
