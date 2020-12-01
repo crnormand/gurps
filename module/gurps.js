@@ -950,6 +950,24 @@ function chatClickPdf(event) {
 }
 GURPS.chatClickPdf = chatClickPdf;
 
+function getRulerSegmentLabel(segmentDistance, totalDistance, isTotal) {
+    const units = canvas.scene.data.gridUnits;
+		let dist = (d, u) => { return `${Math.round(d * 100) / 100} ${u}` };
+
+    let label = dist(segmentDistance, units);
+		let mod = game.GURPS.rangeObject.yardsToSpeedRangePenalty(totalDistance);
+		game.GURPS.ModifierBucket.setTempRangeMod(mod);
+		
+
+    if (isTotal && segmentDistance !== totalDistance) {
+        label += ` [${dist(totalDistance, units)}]`;
+    }
+
+		label += ` (${mod})`;
+
+    return label;
+};
+GURPS.getRulerSegmentLabel = getRulerSegmentLabel;
 
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
@@ -1158,11 +1176,7 @@ Hooks.once("ready", async function () {
 
 	Hooks.on('preCreateChatMessage', (data, options, userId) => {
 		let c = data.content;
-		//console.log("PRE CHAT:");
-		//console.log(c);
 		data.content = game.GURPS.gurpslink(c);
-		//console.log("AFTER:");
-		//console.log(data.content);
 	});
 
 	Hooks.on('renderChatMessage', (app, html, msg) => {
@@ -1173,7 +1187,7 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
-
+	
 });
 
 
