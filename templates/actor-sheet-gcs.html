@@ -311,13 +311,13 @@
             <div class="st header">ST</div>
 
 
-            {{#each data.ranged}}
+            {{#each data.ranged as | this key |}}
             <div class="desc">{{{gurpslink this.name}}}
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
             </div>
             <div class="usage">{{this.mode}}</div>
-            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
-            <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='for {{this.name}} Acc'>
+            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}">{{this.level}}</div>
+            <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
                 {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
             <div class="damage rollable" data-damage>{{this.damage}}</div>
             <div class="range">{{this.range}}</div>

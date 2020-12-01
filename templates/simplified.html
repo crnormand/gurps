@@ -41,12 +41,12 @@
       <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
     {{/each}}
 
-    {{#each data.ranged}}
+    {{#each data.ranged as | this key |}}
     <div ata-path="data.ranged">{{{gurpslink this.name}}}
         <div class="list_note">{{{gurpslink this.notes}}}</div>
     </div>
     <div class="rollable" data-damage>{{this.damage}}</div>
-    <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+    <div class="rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}">{{this.level}}</div>
     {{/each}}
 
 	</div>
