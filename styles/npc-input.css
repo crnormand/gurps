@@ -16,7 +16,7 @@
   height: 100% !important;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 4.5em 2fr 8em 2fr 2fr 4em;
+  grid-template-rows: 4.5em 1.5fr 8em 2fr 2fr 4em;
   gap: 1px 1px;
   grid-template-areas:
     "top top top top top top top top"
