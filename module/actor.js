@@ -33,11 +33,11 @@ export class GurpsActor extends Actor {
 				ui.notifications.error("No <root> object found.  Are you importing the correct XML file?");
 			return;
 		}
-		
+
 		let parsererror = r.parsererror;
 		if (!!parsererror) {
 			ui.notifications.error("Error parsing XML: " + this.textFrom(parsererror.div));
-			return;			
+			return;
 		}
 
 		let ra = r["@attributes"];
@@ -73,7 +73,7 @@ export class GurpsActor extends Actor {
 			if (isFoundryGCS) {
 				commit = { ...commit, ...this.importAdsFromGCSv2(c.traits?.adslist) };
 				commit = { ...commit, ...this.importReactionsFromGCSv2(c.reactions) };
-			} 
+			}
 			if (isFoundryGCA) {
 				commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) };
 				commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers) };
@@ -148,7 +148,7 @@ export class GurpsActor extends Actor {
 			"data.reactions": rs
 		};
 	}
-	
+
 	importReactionsFromGCA(json) {
 		if (!json) return;
 		let text = this.textFrom(json);
@@ -168,7 +168,7 @@ export class GurpsActor extends Actor {
 		return {
 			"data.-=reactions": null,
 			"data.reactions": rs
-		};		
+		};
 	}
 
 	importPointTotalsFromGCSv1(json) {
@@ -691,7 +691,7 @@ export class GurpsActor extends Actor {
 	//  	rollText: string value of the roll from the hitlocations table (examples: '5', '6-9', '-')
 	//  	roll: array of int of the values that match rollText (examples: [5], [6,7,8,9], [])
 	// 	}
-	getHitLocationsWithDR() {
+	get hitLocationsWithDR() {
 		let myhitlocations = []
 		for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
 			myhitlocations.push({
@@ -730,25 +730,25 @@ export class GurpsActor extends Actor {
 
 	// Return the 'where' value of the default hit location, or 'Random'
 	// NOTE: could also return 'Large-Area'?
-	getDefaultHitLocation() {
+	get defaultHitLocation() {
 		// TODO implement a system setting but (potentially) allow it to be overridden
 		return game.settings.get('gurps', 'default-hitlocation')
 	}
-	
+
 	getCurrentDodge() {
 		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
 		return (!!enc) ? enc.dodge : 0;
 	}
-	
+
 	getCurrentMove() {
 		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
 		return (!!enc) ? enc.move : 0;
 	}
-	
+
 	getTorsoDr() {
 		let hl = Object.values(this.data.data.hitlocations).find(h => h.penalty == 0);
- 		return (!!hl) ? hl.dr : 0;
-  }
+		return (!!hl) ? hl.dr : 0;
+	}
 }
 
 export class Named {

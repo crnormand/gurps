@@ -2260,6 +2260,11 @@ body {
   text-align: center;
 }
 
+/* remove this item from display  */
+.gurps-app .invisible {
+  display: none;
+}
+
 /* special override, 'cause I can't get the space any other way*/
 #apply-damage-advanced {
   margin-top: 1em;
@@ -2316,11 +2321,6 @@ body {
 .gurps-group .continuation {
   margin-top: 0;
   margin-left: 2em;
-}
-
-/* remove this item from display  */
-.gurps-group .invisible {
-  display: none;
 }
 
 /* striped table row appearance */
