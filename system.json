@@ -16,7 +16,8 @@
   "styles": [
     "styles/simple.css",
     "styles/css_boilerplate.css",
-		"styles/npc-input.css"
+    "styles/simplified.css",
+    "styles/npc-input.css"
   ],
   "packs": [],
   "languages": [
@@ -24,6 +25,11 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "English",
+      "path": "lang/pt-BR.json"
     }
   ],
   "gridDistance": 1,
