@@ -15,7 +15,8 @@
   ],
   "styles": [
     "styles/simple.css",
-    "styles/css_boilerplate.css"
+    "styles/css_boilerplate.css",
+		"styles/npc-input.css"
   ],
   "packs": [],
   "languages": [
