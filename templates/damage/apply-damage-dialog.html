@@ -1,10 +1,11 @@
 <div class='gurps-app {{classes}}' {{debug}}>
   <div classes='flexcol flex-between'>
-    <h2>Apply {{basicDamage}} points of {{printIfNe armorDivisor 0 '(*)' ' '}}{{damageType}} damage to
+    <h2>Apply {{CALC.basicDamage}} points of
+      {{printIfNe CALC.armorDivisor 0 '(*)' ' '}}{{CALC.damageType}} damage to
       {{actor.data.name}}</h2>
     <div class='flexrow flex-group-center flex-between'>
       <h3>DIRECTLY APPLY:</h3>
-      <input type='number' id='damage' name='damage' value='{{basicDamage}}'>
+      <input type='number' id='basicDamage' name='damage' value='{{CALC.basicDamage}}'>
       <div>
         <select id='apply-to' name='apply-to'>
           <option value='HP'>Hit Points</option>
@@ -24,14 +25,15 @@
             <header>Location</header>
             <header>Roll</header>
             <header>DR</header>
-            {{#each hitLocationsWithDR}}
+            {{#each CALC.hitLocationsWithDR}}
             <div><label><input type='radio' name='hitlocation' value='{{this.where}}'>&nbsp;{{this.where}}</label></div>
             <div>{{this.rollText}}</div>
             <div>{{this.dr}}</div>
             {{/each}}
           </div>
           <hr /> <!-- Doesn't do much except add some space -->
-          <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
+          <button id='random-location' style='font-family: "Font Awesome 5 Free", inherit'><i
+              class='fa fa-dice'>&nbsp;Random</i></button>
           <hr /> <!-- Doesn't do much except add some space -->
           <div class='gurps-3col gurps-radio-col'>
             <div><label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury</label></div>
@@ -40,7 +42,7 @@
           </div>
           <div class='grid grid-2col flex-between'>
             <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter DR:</input></label>
-            <input type='number' id='select-dr' name='User Entered' value='{{selectedDR}}'>
+            <input type='number' id='user-entered-dr' name='User Entered' value='{{CALC.userEnteredDR}}'>
           </div>
         </div>
 
@@ -62,11 +64,11 @@
           <div class='grid grid-2col flex-between'>
             <label><input type='radio' name='woundmodifier' value='User Entered'>&nbsp;Enter
               modifier:</input></label>
-            <input type='number' id='select-mod' name='User Entered' value='{{selectedMod}}'>
+            <input type='number' id='user-entered-woundmod' name='User Entered' value='1'>
           </div>
           <div class='grid grid-2col flex-between'>
             <label>Additional modifier (stacks):</label>
-            <input type='number' id='addmodifier' name='addmodifier' value='{{additionalMods}}'>
+            <input type='number' id='addmodifier' name='addmodifier' value='{{CALC._additionalWoundModifier}}'>
           </div>
         </div>
 
@@ -122,40 +124,34 @@
 
     <div>
       <div class='gurps-group'>
-        <h4>Results</h4>
+        <h4>Calculation and Results</h4>
         <div class='grid grid-3col'>
           <div class='gurps-3col results-table'>
             <div>BASIC&nbsp;DAMAGE</div>
-            <div><span name='result-basic'>{{basicDamage}}</span></div>
-            <div><span name='result-apply-to'>{{applyTo}}</span></div>
-
-            <div name='result-half'>&frac12; DAMAGE</div>
-            <div name='result-half'>$this.halfDamage</div>
-            <div name='result-half'>($this._basicDamage &divide; 2)</div>
+            <div><span name='result-basic'>{{CALC.basicDamage}}</span></div>
+            <div><span name='result-apply-to'>{{CALC.applyTo}}</span></div>
 
             <div id='result-dr'>DR</div>
-            <div><span name='result-dr'>{{dr}}</span></div>
-            <div><span name='result-hitlocation'>{{hitlocation}}</span></div>
+            <div><span name='result-dr'>{{CALC.DR}}</span></div>
+            <div><span name='result-hitlocation'>{{CALC.hitLocation}}</span></div>
 
             <div id='result-penetrating'>PENETRATING</div>
-            <div><span name='result-penetrating'>{{penetrating}}</span></div>
-            <div><span>(<span name='result-halfdamage'>{{basicDamage}}</span> &minus; <span
-                  name='result-effective-dr'>{{dr}}</span>)</span></div>
+            <div><span name='result-penetrating'>{{CALC.penetratingDamage}}</span></div>
+            <div><span>(<span name='result-halfdamage'>{{CALC.basicDamage}}</span> &minus; <span
+                  name='result-effective-dr'>{{CALC.effectiveDR}}</span>)</span></div>
 
             <div>MODIFIER</div>
-            <div><span>×<span name='result-totalmod'>{{totalMods}}</span></span></div>
-            <div><span>(×<span name='result-modifier'>{{selectedMod}}</span> <span
-                  name='result-type'>{{damageType}}</span><span name='result-type-add'> + <span
-                    name='result-addmods'>{{additionalMods}}</span>
-                </span>)<span id='modifier-footnote-wrapper'>* <span id="modifier-footnote"
-                    class="pdflink">B398</span></span>
+            <div><span>×<span name='result-totalmod'>{{CALC.totalWoundingModifier}}</span></span></div>
+            <div><span><span name='result-type'>{{CALC.damageType}}</span><span id='result-type-add'> (+ <span
+                    name='result-addmods'>{{CALC.additionalWoundModifier}}</span>)</span><span
+                  id='modifier-footnote-wrapper'>* <span id="modifier-footnote" class="pdflink">B398</span></span>
               </span>
             </div>
 
             <div>INJURY</div>
-            <div><span name='result-injury'>{{injury}}</span></div>
-            <div><span>(<span name='result-penetrating'>{{penetrating}}</span> × <span
-                  name='result-totalmod'>{{totalMods}}</span>)</span></div>
+            <div><span name='result-injury'>{{CALC.injury}}</span></div>
+            <div><span>(<span name='result-penetrating'>{{calculating.penetratingDamage}}</span> × <span
+                  name='result-totalmod'>{{CALC.totalWoundingModifier}}</span>)</span></div>
           </div>
 
           <div id="result-extrastuff">
@@ -165,7 +161,7 @@
 
           <div class='apply-results'>
             <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='number'
-              id='result-apply-injury' name='damage' value='{{injury}}'>
+              id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
             <button id='apply-injury-publicly'>Apply Injury</button>
             <button id='apply-injury-secretly'>Apply Injury (Quietly)</button>
           </div>
