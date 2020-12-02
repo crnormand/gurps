@@ -1,11 +1,16 @@
+.npc-input_form {
+  width: 100% !important;
+  height: 100% !important;	
+}
 
 .npc-input-ta {
-  /* border-width: 0px !important; */
   height: 100% !important;
   padding: 1px !important;
 }
 
 .npc-input-grid-container {
+  width: 100% !important;
+  height: 100% !important;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 2fr 1.5fr 2fr 2fr 2fr;
@@ -21,7 +26,7 @@
 .npc-input-top {
   display: grid;
   grid-template-columns: 0.5fr 2fr 0.5fr 2fr;
-  grid-template-rows: 2em 1fr;
+  grid-template-rows: 2em 2em;
   gap: 1px 1px;
   grid-template-areas:
     "nm nm-val title title-val"
