@@ -1,65 +1,63 @@
 <div class='gurps-app {{classes}} npc-input' {{debug}}>
 <div class="npc-input-grid-container">
   <div class="npc-input-top">
-    <div class="npc-input-nm">Name:</div>
-		<div class="npc-input-nm-val"><input id="npc-name" class="gcs-input" type="text" value=""/></div>
+    <div class="npc-input-nm">Name</div>
+    <div class="npc-input-nm-val"><input id="npc-name" class="gcs-input" type="text" value=""/></div>
     <div class="npc-input-title">Title:</div>
     <div class="npc-input-title-val"><input id="npc-title" class="gcs-input" type="text" value=""/></div>
-    <div class="npc-input-desc">Desc:</div>
     <div class="npc-input-desc-val"><input id="npc-desc" class="gcs-input" type="text" value=""/></div>
+    <div class="npc-input-desc">Desc:</div>
   </div>
   <div class="npc-input-notes">
-    <div class="npc-input-nt">Notes</div>
+    <div class="npc-input-nt">Notes:</div>
     <div class="npc-input-nt-val"><textarea name="" class="npc-input-ta" type="text"></textarea></div>
-	</div>
-  <div class="npc-input-attr1">
-    <div class="npc-input-dodge">Dodge</div>
-    <div class="npc-input-ht">HT</div>
-    <div class="npc-input-iq">IQ</div>
-    <div class="npc-input-dx">DX</div>
-    <div class="npc-input-st">ST</div>
-    <div class="npc-input-st-val"><input name="" class="gcs-input" type="text" value="10"/></div>
-    <div class="npc-input-dx-val"><input name="" class="gcs-input" type="text" value="11"/></div>
-    <div class="npc-input-iq-val"><input name="" class="gcs-input" type="text" value="12"/></div>
-    <div class="npc-input-ht-val"><input name="" class="gcs-input" type="text" value="13"/></div>
-    <div class="npc-input-dodge-val"><input name="" class="gcs-input" type="text" value="9"/></div>
-  </div>
-  <div class="npc-input-attr2">
-    <div class="npc-input-hp">HP</div>
-    <div class="npc-input-per">Per</div>
-    <div class="npc-input-will">Will</div>
-    <div class="npc-input-hp-val"><input name="" class="gcs-input" type="text" value="10"/></div>
-    <div class="npc-input-will-val"><input name="" class="gcs-input" type="text" value="11"/></div>
-    <div class="npc-input-per-val"><input name="" class="gcs-input" type="text" value="12"/></div>
-    <div class="npc-input-fp-val"><input name="" class="gcs-input" type="text" value="13"/></div>
-    <div class="npc-input-fp">FP</div>
-  </div>
-  <div class="npc-input-attr3">
-    <div class="npc-input-speed-val"><input name="" class="gcs-input" type="text" value="5.25"/></div>
-    <div class="npc-input-move">Move</div>
-    <div class="npc-input-move-val"><input name="" class="gcs-input" type="text" value="5"/></div>
-    <div class="npc-input-speed">Speed</div>
-    <div class="npc-input-sm">SM</div>
-    <div class="npc-input-sm-val"><input name="" class="gcs-input" type="text" value="0"/></div>
-    <div class="npc-input-dr">DR</div>
-    <div class="npc-input-dr-val"><input name="" class="gcs-input" type="text" value="2"/></div>
   </div>
   <div class="npc-input-traits">
-    <div class="pc-input-tr">Traits</div>
-    <div class="pc-input-tr-val"><textarea name="" class="npc-input-ta" type="text">traits</textarea></div>
-	</div>
+    <div class="npc-input-tr">Traits (Ads/Disads/Quirks/Perks):</div>
+    <div class="npc-input-tr-val"><textarea name="" class="npc-input-ta" type="text"></textarea></div>
+  </div>
   <div class="npc-input-skills">
-    <div class="pc-input-sk">Skills</div>
-    <div class="pc-input-sk-val"><textarea name="" class="npc-input-ta" type="text">skills</textarea></div>
-	</div>
+    <div class="npc-input-sk">Skills</div>
+    <div class="npc-input-sk-val"><textarea name="" class="npc-input-ta" type="text"></textarea></div>
+  </div>
   <div class="npc-input-melee">
-    <div class="pc-input-me">Melee</div>
-    <div class="pc-input-me-val"><textarea name="" class="npc-input-ta" type="text">melee</textarea></div>
-	</div>
+    <div class="npc-input-me">Melee</div>
+    <div class="npc-input-me-val"><textarea name="" class="npc-input-ta" type="text"></textarea></div>
+  </div>
   <div class="npc-input-ranged">
-    <div class="pc-input-ra">Ranged</div>
-    <div class="pc-input-ra-val"><textarea name="" class="npc-input-ta" type="text">ranged</textarea></div>
-	</div>
-	<div class="npc-input-create">Button</div>
+    <div class="npc-input-ra">Ranged</div>
+    <div class="npc-input-ra-val"><textarea name="" class="npc-input-ta" type="text"></textarea></div>
+  </div>
+  <div class="npc-input-button"></div>
+  <div class="npc-input-attr">
+    <div class="npc-input-st">ST</div>
+    <div class="npc-input-st-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-hp-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-hp">HP</div>
+    <div class="npc-input-spd">Speed</div>
+    <div class="npc-input-spd-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-dx">DX</div>
+    <div class="npc-input-dx-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-will">Will</div>
+    <div class="npc-input-will-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-mov">Move</div>
+    <div class="npc-input-mov-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-iq">IQ</div>
+    <div class="npc-input-iq-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-per">PER</div>
+    <div class="npc-input-per-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-ht">HT</div>
+    <div class="npc-input-ht-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-fp">FP</div>
+    <div class="npc-input-fp-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-sm">SM</div>
+    <div class="npc-input-sm-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-dodge">Dodge</div>
+    <div class="npc-input-dodge-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+    <div class="npc-input-dr">DR</div>
+    <div class="npc-input-dr-val"><input class="gcs-input-sm3" type="text" value=""/></div>
+  </div>
+  <div class="npc-input-img"></div>
+  <div class="npc-input-create"></div>
 </div>
 </div>

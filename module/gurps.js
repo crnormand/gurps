@@ -29,6 +29,17 @@ jqueryHelpers()
 settings()
 helpers()
 
+GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
+  / /_____|_____|_____|_____|_____|_____\\ \\   
+ / /      ____ _   _ ____  ____  ____    \\ \\  
+ | |     / ___| | | |  _ \\|  _ \\/ ___|    | | 
+ | |    | |  _| | | | |_) | |_) \\___ \\    | | 
+ | |    | |_| | |_| |  _ <|  __/ ___) |   | | 
+ | |     \\____|\\___/|_| \\_\\_|   |____/    | | 
+  \\ \\ _____ _____ _____ _____ _____ ____ / / 
+   \\_|_____|_____|_____|_____|_____|____|_/  
+`;
+
 //CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
@@ -982,10 +993,11 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
 Hooks.once("init", async function () {
-	console.log(`Initializing GURPS 4e System`);
+	console.log(GURPS.BANNER);
+	console.log(`Initializing GURPS 4e Game Aid`);
+	console.log(`GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the Steve Jackson Games Online Policy: http://www.sjgames.com/general/online_policy.html`);
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
-	console.log(GURPS.objToString(GURPS));
 
 
 	// Define custom Entity classes
@@ -1184,6 +1196,8 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
+	
+	new NpcInput().render(true);
 	
 });
 
