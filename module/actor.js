@@ -43,6 +43,11 @@ export class GurpsActor extends Actor {
 		let ra = r["@attributes"];
 		const isFoundryGCS = (!!ra && ra.release == "Foundry" && ra.version == "1");
 		const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version == "GCA");
+		if (!(isFoundryGCS || isFoundryGCA)) {
+			ui.notifications.error("We no longer support the Fantasy Ground import.   Please check the Users Guide (see Chat log).");
+			ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+			return;			
+		}
 
 		// The character object starts here
 		let c = r.character;
@@ -500,9 +505,9 @@ export class GurpsActor extends Actor {
 		lm.twohandedlift = t(json.twohandedlift);
 
 
-		data.basicmove.value = i(json.basicmove);
+		data.basicmove.value = t(json.basicmove);
 		data.basicmove.points = i(json.basicmove_points);
-		data.basicspeed.value = i(json.basicspeed);
+		data.basicspeed.value = t(json.basicspeed);
 		data.basicspeed.points = i(json.basicspeed_points);
 		data.thrust = t(json.thrust);
 		data.swing = t(json.swing);

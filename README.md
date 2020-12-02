@@ -1,4 +1,4 @@
-### Users Guide for [GURPS 4e game aid for Foundry VTT](https://docs.google.com/document/d/1NMBPt9KhA9aGG1_kZxyk8ncuOKhz9Z6o7vPS8JcjdWc/edit?usp=sharing)
+### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
 
 # Current Release Version 0.8.0
@@ -12,11 +12,19 @@ To install the latest release, use this manifest URL:
 ## If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
-- 0.9.0
-    - User configurable modifier lists
+- 0.8.1
+    - Basic Speed no longer truncates
     - More Apply Damage Dialog options
     - Allow "defense" to be rollable in Simple sheet
     - Add [Dodge] to On-the-Fly formulas
+    - Users Guide link in Foundry.   Type "/help" or "!help" in chat
+    - Current Encumbrance can be set on main/combat sheet
+    - Fixed Full/Combat sheet toggle
+    - Warn on FG import
+    - On-the-Fly can now parse "4d+1x2(0.5)" damage rolls
+    - On-the-Fly can now create "blind" rolls.   Useful for GM to ask everyone to roll PER
+    - Support for generic damage type "dmg"
+    - Added calculation of additional hits for RoF/Rcl.
 		
 
 ### History

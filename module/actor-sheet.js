@@ -73,6 +73,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
 		html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
+    html.find(".enc").click(this._onClickEnc.bind(this));
 
     html.find(".eqtdraggable").each((i, li) => {
       li.setAttribute("draggable", true);
@@ -284,7 +285,7 @@ async handleDragFor(event, dragData, type, cls) {
     let buttons = super._getHeaderButtons();
 
     const sheet = this.actor.getFlag("core", "sheetClass");
-    const isFull = sheet === undefined || sheet === "gurps.GurpsActorSheetGCS";
+    const isFull = sheet === undefined || sheet === "gurps.GurpsActorSheet";
     const isEditor = sheet === "gurps.GurpsActorEditorSheet";
 
     // Token Configuration
@@ -357,7 +358,7 @@ async handleDragFor(event, dragData, type, cls) {
     const original = this.actor.getFlag("core", "sheetClass")
     console.log("original: " + original)
     let newSheet = "gurps.GurpsActorCombatSheet"
-    if (original != "gurps.GurpsActorSheetGCS") newSheet = "gurps.GurpsActorSheetGCS";
+    if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
 
     await this.actor.sheet.close()
 
@@ -397,6 +398,25 @@ async handleDragFor(event, dragData, type, cls) {
     let desc = element.dataset.name;
     game.GURPS.onGurpslink(event, this.actor, desc);
   }
+
+  async _onClickEnc(ev) {
+    ev.preventDefault();
+    let element = ev.currentTarget;
+    let key = element.dataset.key;
+    let encs = this.actor.data.data.encumbrance;
+    if (encs[key].current) return;  // already selected
+    for (let enckey in encs) {
+      let enc = encs[enckey];
+      let t = "data.encumbrance." + enckey + ".current";
+      if (enc.current) {
+        await this.actor.update({ [t]: false });
+      }
+      if (key === enckey) {
+        await this.actor.update({ [t]: true });
+      }
+    }
+  }
+
 
   /* -------------------------------------------- */
 
@@ -491,8 +511,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".enc").click(this._onClickEnc.bind(this));
-    html.find(".changeequip").click(this._onClickEquip.bind(this));
+     html.find(".changeequip").click(this._onClickEquip.bind(this));
 
     this.makeHeaderMenu(html, ".reacthead", "Reaction", new Reaction("+0", "from ..."), "data.reactions");
     this.makeAddDeleteMenu(html, ".reactmenu", new Reaction("+0", "from ..."));
@@ -545,23 +564,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     await this.actor.update({ [key]: eqt });
   }
 
-  async _onClickEnc(ev) {
-    ev.preventDefault();
-    let element = ev.currentTarget;
-    let key = element.dataset.key;
-    let encs = this.actor.data.data.encumbrance;
-    if (encs[key].current) return;  // already selected
-    for (let enckey in encs) {
-      let enc = encs[enckey];
-      let t = "data.encumbrance." + enckey + ".current";
-      if (enc.current) {
-        await this.actor.update({ [t]: false });
-      }
-      if (key === enckey) {
-        await this.actor.update({ [t]: true });
-      }
-    }
-  }
 }
 
 export class GurpsActorSimplifiedSheet extends GurpsActorSheet {

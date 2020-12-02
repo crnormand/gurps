@@ -1,8 +1,8 @@
 {
   "name": "gurps",
-  "title": "GURPS 4th Edition game aid (Unofficial)",
+  "title": "GURPS 4th Edition Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT (GCS/GCA edition)",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "minimumCoreVersion": "0.7.5",
   "compatibleCoreVersion": "0.7.7",
   "templateVersion": 2,
@@ -15,7 +15,9 @@
   ],
   "styles": [
     "styles/simple.css",
-    "styles/css_boilerplate.css"
+    "styles/css_boilerplate.css",
+    "styles/simplified.css",
+    "styles/npc-input.css"
   ],
   "packs": [],
   "languages": [
@@ -23,6 +25,11 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "English",
+      "path": "lang/pt-BR.json"
     }
   ],
   "gridDistance": 1,
@@ -31,6 +38,6 @@
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/archive/0.8.0.zip",
+  "download": "https://github.com/crnormand/gurps/archive/0.8.1.zip",
   "license": "LICENSE.txt"
 }

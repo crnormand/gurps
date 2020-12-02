@@ -23,6 +23,7 @@ import DamageChat from '../lib/damagemessage.js'
 import helpers from '../lib/moustachewax.js'
 import settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
+import { NpcInput } from '../lib/npc-input.js'
 
 jqueryHelpers()
 settings()
@@ -37,25 +38,6 @@ GURPS.SetLastActor = function (actor) {
 	GURPS.ModifierBucket.refresh();
 	console.log("Last Actor:" + actor.name);
 }
-
-GURPS.ModifierBucket = new ModifierBucket({
-	"popOut": false,
-	"minimizable": false,
-	"resizable": false,
-	"id": "ModifierBucket",
-	"template": "systems/gurps/templates/modifier-bucket.html",
-	"classes": [],
-});
-
-GURPS.ThreeD6 = new ThreeD6({
-	"popOut": false,
-	"minimizable": false,
-	"resizable": false,
-	"id": "ThreeD6",
-	"template": "systems/gurps/templates/threed6.html",
-	"classes": [],
-});
-
 
 // This table is used to display dice rolls and penalties (if they are missing from the import data)
 // And to create the HitLocations pulldown menu (skipping any "skip:true" entries)
@@ -106,7 +88,8 @@ GURPS.woundModifiers = {
 	"pi": { multiplier: 1, label: 'Piercing' },
 	"pi+": { multiplier: 1.5, label: 'Large Piercing' },
 	"pi++": { multiplier: 2, label: 'Huge Piercing' },
-	"tox": { multiplier: 1, label: 'Toxic' }
+	"tox": { multiplier: 1, label: 'Toxic' },
+	"dmg": { multiplier: 1, label: 'Damage' }
 };
 
 GURPS.attributepaths = {
@@ -322,6 +305,8 @@ GURPS.SJGProductMappings = {
 	"VOR": "http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game"
 }
 
+GURPS.USER_GUIDE_URL = "https://bit.ly/2JaSlQd";
+
 
 // This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 // First we have to remove non-printing characters, and then we want to replace 
@@ -407,8 +392,10 @@ function performAction(action, actor) {
 	let thing = "";
 	let target = -1;	// There will be a roll
 	let formula = "";
-	let opt = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
+	let opt = {
+		blind: action.blindroll
+	};		// Ok, I am slowly learning this Javascrip thing ;-)	
 
 	if (action.type === "modifier") {
 		let mod = parseInt(action.mod);
@@ -438,15 +425,14 @@ function performAction(action, actor) {
 		formula = d6ify(action.formula);
 	}
 	if (action.type === "damage") {
-		formula = d6ify(action.formula);
-		GURPS.damageChat.create(actor, formula, action.damagetype);
+		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype);
 		return;
 	}
 	if (action.type === "deriveddamage")
 		if (!!actor) {
 			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
-			formula = d6ify(df + action.formula);
-			GURPS.damageChat.create(actor, formula, action.damagetype, action.derivedformula + action.formula);
+			formula = df + action.formula;
+			GURPS.damageChat.create(actor || game.user, formula, action.damagetype, action.derivedformula + action.formula);
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
@@ -460,7 +446,7 @@ function performAction(action, actor) {
 	if (action.type === "skill-spell")
 		if (!!actor) {
 			let skill = null;
-			prefix = "Attempting ";
+			prefix = "";  // "Attempting ";
 			thing = action.name;
 			skill = GURPS.findSkillSpell(actordata, thing);
 			if (!skill) {
@@ -490,7 +476,7 @@ function performAction(action, actor) {
 			formula = "3d6";
 			if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 			if (!!att.mode)
-				opt = "<br>&nbsp;<span style='font-size:85%'>(" + att.mode + ")</span>";
+				opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + att.mode + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
 
@@ -532,7 +518,7 @@ async function onRoll(event, actor) {
 	let element = event.currentTarget;
 	let prefix = "";
 	let thing = "";
-	let opt = "";
+	let opt = {};
 	let target = 0;		// -1 == damage roll, target = 0 is NO ROLL.
 
 	if ("path" in element.dataset) {
@@ -542,11 +528,12 @@ async function onRoll(event, actor) {
 		target = parseInt(element.innerText);
 	}
 	if ("name" in element.dataset) {
-		prefix = "Attempting ";
+		prefix = ""; // "Attempting ";
 		let text = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
 		thing = text.replace(/(.*?)\(.*\)/g, "$1");
-		opt = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
-		if (opt === text) opt = "";
+		opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+		if (opt.text === text) opt.text = "";
+		if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key);
 		formula = "3d6";
 		let t = element.innerText;
 		if (!!t) {
@@ -603,7 +590,7 @@ GURPS.applyModifierDesc = applyModifierDesc;
 	unfortunately, it has a lot fo hard coded junk in it.
 	*/
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optlabel = "") {
+async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optionalArgs) {
 
 	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
@@ -641,7 +628,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		roll = new Roll(formula);		// The formula will always be "3d6" for a "targetted" roll
 		roll.roll();
 		let rtotal = roll.total;
-		let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
+		let results = "<div><span class='fa fa-dice'/>&nbsp;<span class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
 		if (!!modscontent) modscontent += "</i><br>New Target: (" + finaltarget + ")";  // If we had modifiers, the target will have changed.
 
 		// Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
@@ -649,21 +636,27 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0);
 
 		let margin = finaltarget - rtotal;
+		
 		if (isCritSuccess)
-			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 150%;'><b>Critical Success!</b></span>  ";
+			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 130%;'><b>Critical Success!</b></span> ";
 		else if (isCritFailure)
-			results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 140%;'><b>Critical Failure!</b></span>  ";
+			results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 120%;'><b>Critical Failure!</b></span> ";
 		else if (margin >= 0)
-			results += " <span style='color:green; font-size: 130%;'><b>Success!</b></span>  ";
+			results += " <span style='color:green; font-size: 110%;'><b>Success!</b></span> ";
 		else
-			results += " <span style='color:red;font-size: 120%;'><i>Failure.</i></span>  ";
+			results += " <span style='color:red;font-size: 100%;'><i>Failure.</i></span> ";
 
-		let rdesc = " <small>";
-		if (margin == 0) rdesc += "just made it.";
+		let rdesc = " <span style='font-size: 100%; font-weight: normal'>";
+		if (margin == 0) rdesc += "just made it";
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
-		rdesc += "</small>";
-		chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + results + rdesc;
+		rdesc += "</span></div>";
+		if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {		// Additional ranged info
+			let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl))
+			if (rofrcl > 0) rdesc += `<div style='text-align: start'><span class='fa fa-bullseye'/>&nbsp;<i style='font-size:100%; font-weight: normal'>Total possible hits due to RoF/Rcl: </i><b style='font-size: 120%;'>${rofrcl + 1}</b></div>`;
+		}
+		let optlabel = optionalArgs.text || "";
+		chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + "<div class='gurps-results'>" + results + rdesc + "</div>";
 	} else {	// This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
 		// NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
 
@@ -694,9 +687,13 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		type: CONST.CHAT_MESSAGE_TYPES.OOC,
 		roll: roll
 	};
+	if (!!optionalArgs.blind) {
+		messageData.whisper = ChatMessage.getWhisperRecipients("GM");
+		messageData.blind = true;		
+	}
 
 	if (niceDice) {
-		game.dice3d.showForRoll(roll).then((displayed) => {
+		game.dice3d.showForRoll(roll, game.user, true, null, messageData.blind).then((displayed) => { 					
 			CONFIG.ChatMessage.entityClass.create(messageData, {});
 		});
 	} else {
@@ -944,12 +941,32 @@ function chatClickPdf(event) {
 }
 GURPS.chatClickPdf = chatClickPdf;
 
-
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 GURPS.hitLocationTooltip = new HitLocationEquipmentTooltip()
 GURPS.damageChat = new DamageChat()
+
+// Modifier Bucket must be defined after hit locations
+GURPS.ModifierBucket = new ModifierBucket({
+	"popOut": false,
+	"minimizable": false,
+	"resizable": false,
+	"id": "ModifierBucket",
+	"template": "systems/gurps/templates/modifier-bucket.html",
+	"classes": [],
+});
+
+GURPS.ThreeD6 = new ThreeD6({
+	"popOut": false,
+	"minimizable": false,
+	"resizable": false,
+	"id": "ThreeD6",
+	"template": "systems/gurps/templates/threed6.html",
+	"classes": [],
+});
+
+
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1069,7 +1086,7 @@ Hooks.once("init", async function () {
 	});
 
 	game.settings.register("gurps", "basicsetpdf", {
-		name: 'Basic Set PDF(S)',
+		name: 'Basic Set PDF(s)',
 		hint: 'Select "Combined" or "Separate" and use the associated PDF codes when configuring PDFoundry.  ' +
 			'Note: If you select "Separate", the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.',
 		scope: 'world',
@@ -1081,6 +1098,34 @@ Hooks.once("init", async function () {
 		},
 		default: 'Combined',
 	})
+	
+	Hooks.on('chatMessage', (log, content, data) => {
+    if (content === "/help" || content === "!help") {
+        ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+        return false;
+    }
+		if (content === "/npc" && game.user.isGM) {
+			let n = new NpcInput({
+				"popOut": false,
+				"minimizable": true,
+				"resizable": true,
+				"id": "npc-input",
+				"template": "systems/gurps/templates/npc-input.html",
+				"classes": [],
+			});
+			n.render(true);
+			return false;
+		}
+	});
+	
+	// Look for blind messages with .message-results and remove them
+	Hooks.on("renderChatMessage", (log, content, data) => {
+    if (!!data.message.blind) {
+			if (data.author?.isSelf && !!data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
+				$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
+			}
+		}
+	});
 
 
 	ui.modifierbucket = GURPS.ModifierBucket;
@@ -1136,11 +1181,7 @@ Hooks.once("ready", async function () {
 
 	Hooks.on('preCreateChatMessage', (data, options, userId) => {
 		let c = data.content;
-		//console.log("PRE CHAT:");
-		//console.log(c);
 		data.content = game.GURPS.gurpslink(c);
-		//console.log("AFTER:");
-		//console.log(data.content);
 	});
 
 	Hooks.on('renderChatMessage', (app, html, msg) => {
@@ -1151,7 +1192,7 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
-
+	
 });
 
 

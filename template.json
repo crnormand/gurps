@@ -51,11 +51,11 @@
 			"enc_level": 0
 		},
 		"basicmove": {
-			"value": 5,
+			"value": "0",
 			"points": 0
 		},
 		"basicspeed": {
-			"value": 0,
+			"value": "0",
 			"points": 0
 		},
 		"currentmove": 0,

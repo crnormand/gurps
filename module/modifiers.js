@@ -4,7 +4,6 @@ import parselink from '../lib/parselink.js'
 export class ModifierBucket extends Application {
 	constructor(options = {}) {
 		super(options)
-
 		for (let loc in GURPS.hitlocationRolls) {
 			let hit = GURPS.hitlocationRolls[loc];
 			if (!hit.skip) {			// Only include the items in the menu is skip is false (or empty)
