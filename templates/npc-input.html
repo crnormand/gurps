@@ -1,17 +1,16 @@
-<form class="{{cssClass}} npc-input_form" autocomplete="off">
-
+<div class='gurps-app {{classes}} npc-input' {{debug}}>
 <div class="npc-input-grid-container">
   <div class="npc-input-top">
     <div class="npc-input-nm">Name:</div>
-		<div class="npc-input-nm-val"><input name="" class="gcs-input" type="text" value="name"/></div>
+		<div class="npc-input-nm-val"><input id="npc-name" class="gcs-input" type="text" value=""/></div>
     <div class="npc-input-title">Title:</div>
-    <div class="npc-input-title-val"><input name="" class="gcs-input" type="text" value="title"/></div>
+    <div class="npc-input-title-val"><input id="npc-title" class="gcs-input" type="text" value=""/></div>
     <div class="npc-input-desc">Desc:</div>
-    <div class="npc-input-desc-val"><input name="" class="gcs-input" type="text" value="desc"/></div>
+    <div class="npc-input-desc-val"><input id="npc-desc" class="gcs-input" type="text" value=""/></div>
   </div>
   <div class="npc-input-notes">
     <div class="npc-input-nt">Notes</div>
-    <div class="npc-input-nt-val"><textarea name="" class="npc-input-ta" type="text">notes</textarea></div>
+    <div class="npc-input-nt-val"><textarea name="" class="npc-input-ta" type="text"></textarea></div>
 	</div>
   <div class="npc-input-attr1">
     <div class="npc-input-dodge">Dodge</div>
@@ -58,9 +57,9 @@
     <div class="pc-input-me-val"><textarea name="" class="npc-input-ta" type="text">melee</textarea></div>
 	</div>
   <div class="npc-input-ranged">
-    <div class="pc-input-ra"></div>
+    <div class="pc-input-ra">Ranged</div>
     <div class="pc-input-ra-val"><textarea name="" class="npc-input-ta" type="text">ranged</textarea></div>
 	</div>
+	<div class="npc-input-create">Button</div>
 </div>
-
-</form>
+</div>

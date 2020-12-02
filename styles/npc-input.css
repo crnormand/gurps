@@ -1,6 +1,9 @@
-.npc-input_form {
+.npc-input {
   width: 100% !important;
   height: 100% !important;	
+  background: url(../../../ui/parchment.jpg) repeat !important;
+	padding: 0;
+	margin: 0;
 }
 
 .npc-input-ta {
@@ -13,14 +16,20 @@
   height: 100% !important;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 2fr 1.5fr 2fr 2fr 2fr;
+  grid-template-rows: 4.5em 1.5fr 2fr 2fr 2fr 4em;
   gap: 2px 2px;
   grid-template-areas:
     "top top top top top top top top"
     "notes notes notes notes notes notes notes notes"
     "attr1 attr1 . attr2 attr2 . attr3 attr3"
     "traits traits traits traits skills skills skills skills"
-    "melee melee melee melee ranged ranged ranged ranged";
+    "melee melee melee melee ranged ranged ranged ranged"
+     ". . . create create . . .";
+}
+
+.npc-input-create { 
+	grid-area: create;
+	border: 2px solid red;
 }
 
 .npc-input-top {

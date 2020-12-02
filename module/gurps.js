@@ -1104,16 +1104,8 @@ Hooks.once("init", async function () {
         ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
         return false;
     }
-		if (content === "/npc" && game.user.isGM) {
-			let n = new NpcInput({
-				"popOut": false,
-				"minimizable": true,
-				"resizable": true,
-				"id": "npc-input",
-				"template": "systems/gurps/templates/npc-input.html",
-				"classes": [],
-			});
-			n.render(true);
+		if (content === "/mook" && game.user.isGM) {
+			new NpcInput().render(true);
 			return false;
 		}
 	});

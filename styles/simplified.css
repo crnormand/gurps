@@ -107,9 +107,6 @@
 
 .simple_Shield {
   grid-area: Shield;
-  /*	text-align: center;
-	vertical-align: middle;
-*/
   background-image: url("../ui/ri_1.png");
   background-repeat: no-repeat;
   background-size: contain;
@@ -117,11 +114,6 @@
   font-size: 250%;
   font-weight: bold;
   position: relative;
-  /*	display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-*/
 }
 
 .simple_Body {
