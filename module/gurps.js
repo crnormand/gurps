@@ -23,6 +23,7 @@ import DamageChat from '../lib/damagemessage.js'
 import helpers from '../lib/moustachewax.js'
 import settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
+import { NpcInput } from '../lib/npc-input.js'
 
 jqueryHelpers()
 settings()
@@ -1085,7 +1086,7 @@ Hooks.once("init", async function () {
 	});
 
 	game.settings.register("gurps", "basicsetpdf", {
-		name: 'Basic Set PDF(S)',
+		name: 'Basic Set PDF(s)',
 		hint: 'Select "Combined" or "Separate" and use the associated PDF codes when configuring PDFoundry.  ' +
 			'Note: If you select "Separate", the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.',
 		scope: 'world',
@@ -1103,6 +1104,18 @@ Hooks.once("init", async function () {
         ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
         return false;
     }
+		if (content === "/npc" && game.user.isGM) {
+			let n = new NpcInput({
+				"popOut": false,
+				"minimizable": true,
+				"resizable": true,
+				"id": "npc-input",
+				"template": "systems/gurps/templates/npc-input.html",
+				"classes": [],
+			});
+			n.render(true);
+			return false;
+		}
 	});
 	
 	// Look for blind messages with .message-results and remove them
