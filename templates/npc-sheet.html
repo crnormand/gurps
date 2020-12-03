@@ -1,16 +1,17 @@
-<div class='gurps-app {{classes}} npc-input' {{debug}}>
+<form class="{{cssClass}}" npc-input autocomplete="off">
+<div class='gurps-app {{classes}} npc-input'>
 <div class="npc-input-grid-container">
   <div class="npc-input-top">
     <div class="npc-input-nm npc-input-label">Name:</div>
-    <div class="npc-input-nm-val"><input id="npc-input-name" data-key="name" class="gcs-input" type="text" value="{{mook.name}}"/></div>
+    <div class="npc-input-nm-val"><label>{{actor.name}}</label></div>
     <div class="npc-input-title npc-input-label">Title:</div>
-    <div class="npc-input-title-val"><input data-key="title" class="gcs-input" type="text" value="{{mook.title}}"/></div>
+    <div class="npc-input-title-val">{{actor.title}}</div>
     <div class="npc-input-desc npc-input-label">Desc:</div>
-    <div class="npc-input-desc-val"><input data-key="desc" class="gcs-input" type="text" value="{{mook.desc}}"/></div>
+    <div class="npc-input-desc-val">{{{gurpslink actor.appearance}}}</div>
   </div>
   <div class="npc-input-attr">
     <div class="npc-input-st npc-input-label">ST:</div>
-    <div class="npc-input-st-val"><input data-key="st" class="gcs-input-sm2" type="text" value="{{mook.st}}"/></div>
+    <div class="npc-input-st-val rollable" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
     <div class="npc-input-dx npc-input-label">DX:</div>
     <div class="npc-input-dx-val"><input data-key="dx" class="gcs-input-sm2" type="text" value="{{mook.dx}}"/></div>
     <div class="npc-input-iq npc-input-label">IQ:</div>
@@ -28,7 +29,7 @@
     <div class="npc-input-fp npc-input-label">FP:</div>
     <div class="npc-input-fp-val"><input data-key="fp" class="gcs-input-sm2" type="text" value="{{mook.fp}}"/></div>
     <div class="npc-input-spd npc-input-label">Speed:</div>
-    <div class="npc-input-spd-val"><input data-key="speed" class="gcs-input-sm3" type="text" value="{{mook.speed}}"/></div>
+    <div class="npc-input-spd-val"><input data-key="speed" class="gcs-input-sm2" type="text" value="{{mook.speed}}"/></div>
     <div class="npc-input-mov npc-input-label">Move:</div>
     <div class="npc-input-mov-val"><input data-key="move" class="gcs-input-sm2" type="text" value="{{mook.move}}"/></div>
     <div class="npc-input-sm npc-input-label">SM:</div>
@@ -59,3 +60,4 @@
   <div class="npc-input-create"><button id="npc-input-create" type="button">Create Mook</button></div>
 </div>
 </div>
+</form>

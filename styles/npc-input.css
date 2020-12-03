@@ -16,12 +16,11 @@
   height: 100% !important;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 4.5em 1.5fr 10em 2fr 2fr 2em;
+  grid-template-rows: 4.5em 10em 2fr 2fr 2em;
   gap: 5px 5px;
   grid-template-areas:
     "top top top top top top top top"
-    "notes notes notes notes notes notes notes notes"
-    "attr attr attr attr img img img img"
+    "attr attr notes notes notes notes notes notes"
     "traits traits traits traits skills skills skills skills"
     "melee melee melee ranged ranged ranged ranged ranged"
     ". . . create create . . .";
@@ -133,7 +132,7 @@
 	margin: 1px;
 	padding: 1px;
 	border: 1px solid black;
-	border-radius: 3px;
+	border-radius: 3px;   
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1.5em 1.5em 1.5em 1.5em 1.5em;
