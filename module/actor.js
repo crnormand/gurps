@@ -835,6 +835,7 @@ export class Melee extends Attack {
 	cost = "";
 	reach = "";
 	parry = "";
+	block = "";
 }
 
 export class Ranged extends Attack {
