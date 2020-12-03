@@ -1,3 +1,9 @@
 <li name='result-effect'>
-  {{detail}} takes {{amount}} HP, crippled! Injury above this amount are ignored.
+  <div>
+    <div>
+      <header>Crippling Injury, {{detail}}</header>
+      <aside>{{#if reduceInjury}}Damage above {{amount}} HP ignored.{{/if}}</aside>
+    </div>
+    <div class='pdflink'>B420</div>
+  </div>
 </li>

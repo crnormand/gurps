@@ -2418,17 +2418,60 @@ body {
 
 .with-button button {
   position: absolute;
-  width: fit-content;
-  height: fit-content;
-  margin: 0;
-  padding: 0;
   right: 0.35em;
   top: 0.2em;
   line-height: 25px;
   z-index: 2;
+  color: dimgrey;
   border: none;
   border-radius: 0;
-  cursor: pointer;
-  color: dimgrey;
   background: rgba(0, 0, 0, 0);
+}
+
+ul#result-effects {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul#result-effects li {
+  margin: 0 0 6px 0;
+}
+
+.with-button button,
+[name=result-effect] button {
+  width: fit-content;
+  height: fit-content;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+[name=result-effect] button {
+  position: relative;
+  background-color: rgba(255, 255, 240, 0.8);
+  border: 1px solid #b5b3a4;
+  border-radius: 3px;
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+  padding-left: 5.5px;
+  padding-right: 5.5px;
+  margin-right: 4px;
+}
+
+[name=result-effect] .with-send-button {
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+}
+
+[name=result-effect]>div {
+  display: flex;
+  align-items: center;
+}
+
+[name=result-effect]>div div:first-child {
+  flex-grow: 1;
+}
+
+[name=result-effect] aside {
+  font-style: normal;
+  margin: 0;
 }

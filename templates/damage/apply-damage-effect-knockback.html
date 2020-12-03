@@ -1,3 +1,12 @@
 <li name='result-effect'>
-  {{amount}} yards knockback! Best of (DX, Judo, Acrobatics)&minus;{{modifier}} to stay on your feet.
+  <div>
+    <div>
+      <header>Knockback, {{amount}} yards</header>
+      <aside>Roll [DX, Judo, or Acrobatics]{{#if modifier}}&minus;{{modifier}}{{/if}} to remain standing.</aside>
+    </div>
+    <div class='with-send-button'>
+      <button name='send-knockback'><span class='fa fa-comment-alt'></span></button>
+    </div>
+    <div class='pdflink'>B419</div>
+  </div>
 </li>
