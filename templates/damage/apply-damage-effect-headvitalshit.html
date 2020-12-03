@@ -1,12 +1,12 @@
 <li name='result-effect'>
   <div>
     <div>
-      <header>Head or Vitals Hit</header>
+      <header>Head or Vitals Hit ({{detail}})</header>
       <aside>Roll HT{{#if modifier}}&minus;{{modifier}}{{/if}} to avoid Stun/Knockdown.</aside>
     </div>
     <div class='with-send-button'>
-      <button name='send-wound'><span class='fa fa-comment-alt'></span></button>
+      <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
     </div>
-    <div class='pdflink'>B420</div>
+    <div><span class='pdflink'>B420</span></div>
   </div>
 </li>
