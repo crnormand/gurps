@@ -39,6 +39,8 @@ GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __
   \\ \\ _____ _____ _____ _____ _____ ____ / / 
    \\_|_____|_____|_____|_____|_____|____|_/  
 `;
+GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`;
+
 
 //CONFIG.debug.hooks = true;
 
@@ -995,7 +997,7 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 Hooks.once("init", async function () {
 	console.log(GURPS.BANNER);
 	console.log(`Initializing GURPS 4e Game Aid`);
-	console.log(`GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the Steve Jackson Games Online Policy: http://www.sjgames.com/general/online_policy.html`);
+	console.log(GURPS.LEGAL);
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 
@@ -1141,17 +1143,23 @@ Hooks.once("ready", async function () {
 	GURPS.ThreeD6.refresh();
 
 	// Show changelog
-	if (game.settings.get("gurps", "showChangelog")) {
-		const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
-		const changelogVersion = SemanticVersion.fromString(v);
-		const curVersion = SemanticVersion.fromString(game.system.data.version);
+	const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
+	const changelogVersion = SemanticVersion.fromString(v);
+	const curVersion = SemanticVersion.fromString(game.system.data.version);
 
-		if (curVersion.isHigherThan(changelogVersion)) {
-			const app = new ChangeLogWindow(changelogVersion);
-			app.render(true);
-			game.settings.set("gurps", "changelogVersion", curVersion.toString());
-		}
-	}
+	if (curVersion.isHigherThan(changelogVersion)) {
+		if ($(ui.chat.element).find("#GURPS-LEGAL").length == 0)    // If it isn't already in the chat log somewhere
+  		ChatMessage.create({
+        content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [game.user]            
+      });
+    if (game.settings.get("gurps", "showChangelog")) {
+  		const app = new ChangeLogWindow(changelogVersion);
+  		app.render(true);
+  		game.settings.set("gurps", "changelogVersion", curVersion.toString());
+  	}
+  }
 
 	// This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
 	Hooks.on('updateUser', (...args) => {

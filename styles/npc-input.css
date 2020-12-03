@@ -16,27 +16,27 @@
   height: 100% !important;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 4.5em 1.5fr 8em 2fr 2fr 4em;
-  gap: 1px 1px;
+  grid-template-rows: 4.5em 1.5fr 10em 2fr 2fr 2em;
+  gap: 5px 5px;
   grid-template-areas:
     "top top top top top top top top"
     "notes notes notes notes notes notes notes notes"
     "attr attr attr attr img img img img"
     "traits traits traits traits skills skills skills skills"
-    "melee melee melee melee ranged ranged ranged ranged"
+    "melee melee melee ranged ranged ranged ranged ranged"
     ". . . create create . . .";
 }
 
 .npc-input-create { 
 	grid-area: create;
-	border: 2px solid red;
+	align-self:center;
 }
 
 .npc-input-top {
   display: grid;
   grid-template-columns: 40px 2fr 40px 2fr;
   grid-template-rows: 2em 2em;
-  gap: 1px 1px;
+  gap: 5px 5px;
   grid-template-areas:
     "nm nm-val title title-val"
     "desc desc-val desc-val desc-val";
@@ -59,11 +59,12 @@
   display: grid;
   grid-template-columns: 40px 9fr;
   grid-template-rows: 2em 3fr;
-  gap: 1px 1px;
+  gap: 5px 5px;
   grid-template-areas:
     "nt nt-val"
     ". nt-val";
   grid-area: notes;
+  padding: 0px 0px 5px 0px;
 }
 
 .npc-input-nt { grid-area: nt; }
@@ -74,27 +75,27 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2em 1fr;
-  gap: 1px 1px;
+  gap: 5px 5px;
   grid-template-areas:
     "tr"
     ".";
   grid-area: traits;
 }
 
-.npc-input-tr { grid-area: tr; }
+.npc-input-tr { grid-area: tr; align-self:end }
 
 .npc-input-skills {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2em 1fr;
-  gap: 1px 1px;
+  gap: 5px 5px;
   grid-template-areas:
     "sk"
     "sk-val";
   grid-area: skills;
 }
 
-.npc-input-sk { grid-area: sk; }
+.npc-input-sk { grid-area: sk; align-self:end }
 
 .npc-input-sk-val { grid-area: sk-val; }
 
@@ -102,14 +103,14 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2em 1fr;
-  gap: 1px 1px;
+  gap: 5px 5px;
   grid-template-areas:
     "me"
     "me-val";
   grid-area: melee;
 }
 
-.npc-input-me { grid-area: me; }
+.npc-input-me { grid-area: me; align-self:end }
 
 .npc-input-me-val { grid-area: me-val; }
 
@@ -117,22 +118,26 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2em 1fr;
-  gap: 1px 1px;
+  gap: 5px 5px;
   grid-template-areas:
     "ra"
     "ra-val";
   grid-area: ranged;
 }
 
-.npc-input-ra { grid-area: ra; }
+.npc-input-ra { grid-area: ra; align-self:end }
 
 .npc-input-ra-val { grid-area: ra-val; }
 
 .npc-input-attr {
+	margin: 1px;
+	padding: 1px;
+	border: 1px solid black;
+	border-radius: 3px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1.5em 1.5em 1.5em 1.5em 1.5em;
-  gap: 1px 1px;
+  gap: 5px 5px;
   grid-template-areas:
     "st st-val hp hp-val spd spd-val"
     "dx dx-val will will-val mov mov-val"
@@ -142,6 +147,11 @@
   grid-area: attr;
 }
 
+.npc-input-label { 
+	align-self: center; 
+	text-align: right;
+	padding: 0px 2px 0px 0px;
+}
 .npc-input-st { grid-area: st; }
 
 .npc-input-st-val { grid-area: st-val; }
@@ -194,5 +204,8 @@
 
 .npc-input-dr-val { grid-area: dr-val; }
 
-.npc-input-img { grid-area: img; }
+.npc-input-img { 
+	grid-area: img; 
+  align-self:center;
+}
 

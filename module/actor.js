@@ -787,12 +787,17 @@ export class NamedCost extends Named {
 }
 
 export class Leveled extends NamedCost {
+	constructor(n1, lvl) {
+    super(n1);
+    this.level = lvl;
+  }
+
 	level = 1;
 }
 
 export class Skill extends Leveled {
-	type = "DX/E";
-	relativelevel = "DX+1";
+	type = "";    // "DX/E";
+	relativelevel = "";   // "DX+1";
 
 }
 
@@ -817,6 +822,11 @@ export class Attack extends Named {
 	mode = "";
 	level = "";
 	damage = "";
+  constructor(n1, lvl, dmg) {
+    super(n1);
+    this.level = lvl;
+    this.damage = dmg;
+  }
 }
 
 export class Melee extends Attack {
