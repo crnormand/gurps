@@ -1206,6 +1206,8 @@ Hooks.once("ready", async function () {
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
 	
+	new NpcInput().render(true);
+	
 });
 
 

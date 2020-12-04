@@ -1,22 +1,46 @@
 .npc-input {
-  width: 100% !important;
-  height: 100% !important;	
-  background: url(../../../ui/parchment.jpg) repeat !important;
+/*  width: 100% !important;
+  height: 100% !important;	*/
 	padding: 0;
 	margin: 0;
 }
 
+.npc-sheet {
+ /* width: 100% !important;
+  height: 100% !important;  */
+  padding: 0;
+  margin: 0;
+}
+
+.npc-input .window-content {
+  padding: 5px;
+  background: url(../../../ui/parchment.jpg) repeat !important;
+}
+
+
+.npc-sheet .window-content {
+  padding: 5px;
+  background: url(../../../ui/parchment-white.jpg) repeat !important;
+}
+
+.npc-sheet .gurps-app {
+  height: 100% !important;
+}
+
+
 .npc-input-ta {
   height: 100% !important;
-  padding: 1px !important;
+  padding: 5px !important;
+  border: none;
+  overflow: auto;
 }
 
 .npc-input-grid-container {
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 4.5em 10em 2fr 2fr 2em;
+  grid-template-columns: 1fr 1.5fr 0.5fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 4.5em 9.75em 2fr 2fr 2em;
   gap: 5px 5px;
   grid-template-areas:
     "top top top top top top top top"
@@ -24,6 +48,20 @@
     "traits traits traits traits skills skills skills skills"
     "melee melee melee ranged ranged ranged ranged ranged"
     ". . . create create . . .";
+}
+
+.npc-sheet-grid-container {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid;
+  grid-template-columns: 1fr 1.7fr 0.5fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 3em 9.75em 2fr 2fr;
+  gap: 5px 5px;
+  grid-template-areas:
+    "top top top top top top top top"
+    "attr attr notes notes notes notes notes notes"
+    "traits traits traits traits skills skills skills skills"
+    "melee melee melee ranged ranged ranged ranged ranged"
 }
 
 .npc-input-create { 
@@ -34,7 +72,7 @@
 .npc-input-top {
   display: grid;
   grid-template-columns: 40px 2fr 40px 2fr;
-  grid-template-rows: 2em 2em;
+  grid-template-rows: 1fr 1fr;
   gap: 5px 5px;
   grid-template-areas:
     "nm nm-val title title-val"
@@ -56,101 +94,174 @@
 
 .npc-input-notes {
   display: grid;
-  grid-template-columns: 40px 9fr;
-  grid-template-rows: 2em 3fr;
-  gap: 5px 5px;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
   grid-template-areas:
-    "nt nt-val"
-    ". nt-val";
+    "nt-val";
   grid-area: notes;
-  padding: 0px 0px 5px 0px;
+  border: 1px solid rgb(125, 125, 125);
+  margin: 0px 0px 0px 5px;
 }
 
-.npc-input-nt { grid-area: nt; }
+.npc-input-nt { grid-area: nt; align-self:end }
 
-.npc-input-nt-val { grid-area: nt-val; }
+.npc-input-nt-val { 
+  grid-area: nt-val;
+  height: 100%;
+  overflow: var(--of);
+}
 
 .npc-input-traits {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2em 1fr;
+  grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
     "tr"
-    ".";
+    "tr-val";
   grid-area: traits;
+  border: 1px solid rgb(125, 125, 125);
 }
 
 .npc-input-tr { grid-area: tr; align-self:end }
 
+.npc-header {
+	background-color: black;
+	color: white;
+	height: 100%;
+}
+
+.npc-input-tr-val { 
+	grid-area: tr-val; 
+}
+
 .npc-input-skills {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2em 1fr;
+  grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
     "sk"
     "sk-val";
   grid-area: skills;
+  border: 1px solid rgb(125, 125, 125);
 }
 
 .npc-input-sk { grid-area: sk; align-self:end }
 
 .npc-input-sk-val { grid-area: sk-val; }
 
+.npc-sheet-sk-val { 
+	grid-area: sk-val; 
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 2em 0fr;
+  /*grid-auto-rows: auto; */
+  gap: 5px 5px;
+}
+
+.npc-sheet-ra-val .desc:nth-child(odd),
+.npc-sheet-me-val .desc:nth-child(odd),
+.npc-sheet-sk-val .desc:nth-child(odd),
+.npc-input-traits .desc:nth-child(odd) {
+  background-color: rgb(240, 240, 255);
+}
+
 .npc-input-melee {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2em 1fr;
+  grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
     "me"
     "me-val";
   grid-area: melee;
+  border: 1px solid rgb(125, 125, 125);
 }
 
 .npc-input-me { grid-area: me; align-self:end }
 
 .npc-input-me-val { grid-area: me-val; }
 
+.npc-sheet-me-val { 
+  grid-area: me-val; 
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 5fr 2em 1.5fr;
+  grid-auto-rows: auto;
+  gap: 5px 5px;
+}
+
 .npc-input-ranged {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: 2em 1fr;
+  grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
     "ra"
     "ra-val";
   grid-area: ranged;
+  border: 1px solid rgb(125, 125, 125);
 }
 
 .npc-input-ra { grid-area: ra; align-self:end }
 
 .npc-input-ra-val { grid-area: ra-val; }
 
+.npc-sheet-ra-val { 
+  grid-area: ra-val; 
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 5fr 2em 2em 1.5fr;
+  grid-auto-rows: auto;
+  gap: 5px 5px;
+}
+
+
 .npc-input-attr {
-	margin: 1px;
-	padding: 1px;
+	padding: 5px 0px 0px 0px;
 	border: 1px solid black;
 	border-radius: 3px;   
+	background-color: rgb(235, 235, 255);
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 1.5em 1.5em 1.5em 1.5em 1.5em;
-  gap: 5px 5px;
+  gap: 2px 3px;
   grid-template-areas:
-    "st st-val hp hp-val spd spd-val"
-    "dx dx-val will will-val mov mov-val"
-    "iq iq-val per per-val . ."
-    "ht ht-val fp fp-val sm sm-val"
-    "dodge dodge-val . . dr dr-val";
+    "st st-val will will-val spd spd-val"
+    "dx dx-val per per-val mov mov-val"
+    "iq iq-val hp hp-val sm sm-val"
+    "ht ht-val fp fp-val dr dr-val"
+    ". . . dodge dodge dodge-val";
   grid-area: attr;
+  font-size: 110%;
 }
 
 .npc-input-label { 
 	align-self: center; 
-	text-align: right;
+	text-align: center;
 	padding: 0px 2px 0px 0px;
 }
+
+.npc-input-labelr { 
+  align-self: center; 
+  text-align: right;
+  padding: 0px 2px 0px 0px;
+}
+
+.npc-sheet-centered {
+  align-self: center; 
+  text-align: center;
+  padding: 0px 1px 0px 0px;
+}
+
+.npc-sheet-label { 
+  align-self: center; 
+  text-align: left;
+  padding: 0px 1px 0px 0px;
+}
+
 .npc-input-st { grid-area: st; }
 
 .npc-input-st-val { grid-area: st-val; }
