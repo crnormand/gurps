@@ -600,3 +600,38 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
     GURPS.performAction(parsed.action, this.actor);
   }
 }
+
+export class GurpsActorNpcSheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ["npc-sheet", "sheet", "actor"],
+      template: "systems/gurps/templates/npc-sheet.html",
+      width: 650,
+      height: 450,
+      dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
+    });
+  }
+
+  getData() {
+    const data = super.getData();
+    data.dodge = this.actor.getCurrentDodge();
+    data.defense = this.actor.getTorsoDr();
+    return data;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find(".rollableicon").click(this._onClickRollableIcon.bind(this));
+
+  }
+
+  async _onClickRollableIcon(ev) {
+    ev.preventDefault();
+    let element = ev.currentTarget;
+    let val = element.dataset.value;
+    let parsed = parselink(val);
+    GURPS.performAction(parsed.action, this.actor);
+  }
+}
+

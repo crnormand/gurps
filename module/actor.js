@@ -456,7 +456,6 @@ export class GurpsActor extends Actor {
 				x = a.indexOf(", Skin: ")
 				ts.hair = a.substring(y + 8, x);
 				ts.skin = a.substr(x + 8);
-				delete ts.appearance;
 			}
 		} catch {
 			console.log("Unable to parse appearance traits for ");
@@ -741,16 +740,19 @@ export class GurpsActor extends Actor {
 	}
 
 	getCurrentDodge() {
+		if (!this.data.data.encumbrance) return 0;
 		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
 		return (!!enc) ? enc.dodge : 0;
 	}
 
 	getCurrentMove() {
+    if (!this.data.data.encumbrance) return 0;
 		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
 		return (!!enc) ? enc.move : 0;
 	}
 
 	getTorsoDr() {
+    if (!this.data.data.hitlocations) return 0;
 		let hl = Object.values(this.data.data.hitlocations).find(h => h.penalty == 0);
 		return (!!hl) ? hl.dr : 0;
 	}
@@ -787,12 +789,17 @@ export class NamedCost extends Named {
 }
 
 export class Leveled extends NamedCost {
+	constructor(n1, lvl) {
+    super(n1);
+    this.level = lvl;
+  }
+
 	level = 1;
 }
 
 export class Skill extends Leveled {
-	type = "DX/E";
-	relativelevel = "DX+1";
+	type = "";    // "DX/E";
+	relativelevel = "";   // "DX+1";
 
 }
 
@@ -817,6 +824,11 @@ export class Attack extends Named {
 	mode = "";
 	level = "";
 	damage = "";
+  constructor(n1, lvl, dmg) {
+    super(n1);
+    this.level = lvl;
+    this.damage = dmg;
+  }
 }
 
 export class Melee extends Attack {
@@ -825,6 +837,7 @@ export class Melee extends Attack {
 	cost = "";
 	reach = "";
 	parry = "";
+	block = "";
 }
 
 export class Ranged extends Attack {

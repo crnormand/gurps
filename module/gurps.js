@@ -4,7 +4,7 @@ import parselink from '../lib/parselink.js'
 import { GurpsActor } from "./actor.js";
 import { GurpsItem } from "./item.js";
 import { GurpsItemSheet } from "./item-sheet.js";
-import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet, GurpsActorSimplifiedSheet } from "./actor-sheet.js";
+import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet, GurpsActorSimplifiedSheet, GurpsActorNpcSheet } from "./actor-sheet.js";
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
@@ -28,6 +28,19 @@ import { NpcInput } from '../lib/npc-input.js'
 jqueryHelpers()
 settings()
 helpers()
+
+GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
+  / /_____|_____|_____|_____|_____|_____\\ \\   
+ / /      ____ _   _ ____  ____  ____    \\ \\  
+ | |     / ___| | | |  _ \\|  _ \\/ ___|    | | 
+ | |    | |  _| | | | |_) | |_) \\___ \\    | | 
+ | |    | |_| | |_| |  _ <|  __/ ___) |   | | 
+ | |     \\____|\\___/|_| \\_\\_|   |____/    | | 
+  \\ \\ _____ _____ _____ _____ _____ ____ / / 
+   \\_|_____|_____|_____|_____|_____|____|_/  
+`;
+GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`;
+
 
 //CONFIG.debug.hooks = true;
 
@@ -982,10 +995,11 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
 Hooks.once("init", async function () {
-	console.log(`Initializing GURPS 4e System`);
+	console.log(GURPS.BANNER);
+	console.log(`Initializing GURPS 4e Game Aid`);
+	console.log(GURPS.LEGAL);
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
-	console.log(GURPS.objToString(GURPS));
 
 
 	// Define custom Entity classes
@@ -998,6 +1012,7 @@ Hooks.once("init", async function () {
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
 	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
 	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { makeDefault: false });
+  Actors.registerSheet("gurps", GurpsActorNpcSheet, { makeDefault: false });
 
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
@@ -1104,16 +1119,8 @@ Hooks.once("init", async function () {
         ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
         return false;
     }
-		if (content === "/npc" && game.user.isGM) {
-			let n = new NpcInput({
-				"popOut": false,
-				"minimizable": true,
-				"resizable": true,
-				"id": "npc-input",
-				"template": "systems/gurps/templates/npc-input.html",
-				"classes": [],
-			});
-			n.render(true);
+		if (content === "/mook" && game.user.isGM) {
+			new NpcInput().render(true);
 			return false;
 		}
 	});
@@ -1137,17 +1144,23 @@ Hooks.once("ready", async function () {
 	GURPS.ThreeD6.refresh();
 
 	// Show changelog
-	if (game.settings.get("gurps", "showChangelog")) {
-		const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
-		const changelogVersion = SemanticVersion.fromString(v);
-		const curVersion = SemanticVersion.fromString(game.system.data.version);
+	const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
+	const changelogVersion = SemanticVersion.fromString(v);
+	const curVersion = SemanticVersion.fromString(game.system.data.version);
 
-		if (curVersion.isHigherThan(changelogVersion)) {
-			const app = new ChangeLogWindow(changelogVersion);
-			app.render(true);
-			game.settings.set("gurps", "changelogVersion", curVersion.toString());
-		}
-	}
+	if (curVersion.isHigherThan(changelogVersion)) {
+		if ($(ui.chat.element).find("#GURPS-LEGAL").length == 0)    // If it isn't already in the chat log somewhere
+  		ChatMessage.create({
+        content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [game.user]            
+      });
+    if (game.settings.get("gurps", "showChangelog")) {
+  		const app = new ChangeLogWindow(changelogVersion);
+  		app.render(true);
+  		game.settings.set("gurps", "changelogVersion", curVersion.toString());
+  	}
+  }
 
 	// This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
 	Hooks.on('updateUser', (...args) => {
@@ -1192,6 +1205,8 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
+	
+	new NpcInput().render(true);
 	
 });
 

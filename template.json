@@ -112,7 +112,7 @@
 				"where": "Eye"
 			},
 			"00001": {
-				"dr": "2",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "-7",
 				"roll": "",
@@ -126,42 +126,42 @@
 				"where": "Face"
 			},
 			"00003": {
-				"dr": "1",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "-2",
 				"roll": "",
 				"where": "Right Leg"
 			},
 			"00004": {
-				"dr": "1",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "-2",
 				"roll": "",
 				"where": "Right Arm"
 			},
 			"00005": {
-				"dr": "3",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "0",
 				"roll": "",
 				"where": "Torso"
 			},
 			"00006": {
-				"dr": "2",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "-3",
 				"roll": "",
 				"where": "Groin"
 			},
 			"00007": {
-				"dr": "1",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "-2",
 				"roll": "",
 				"where": "Left Arm"
 			},
 			"00008": {
-				"dr": "1",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "-2",
 				"roll": "",
@@ -189,7 +189,7 @@
 				"where": "Neck"
 			},
 			"00012": {
-				"dr": "3",
+				"dr": "0",
 				"equipment": "",
 				"penalty": "-3",
 				"roll": "",
