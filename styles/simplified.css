@@ -12,7 +12,7 @@
 .simple_form {
   width: 100% !important;
   height: 100% !important;
-}
+ }
 
 .simple_container {
   width: 100% !important;
@@ -130,14 +130,19 @@
   justify-content: center;
   align-content: center;
   flex-direction: column;
+  padding: 0px 0px 30px 0px;
 }
 
 .simple_Heart {
   grid-area: Heart;
+}
+.simple_Heart_inner {
+  width: 100%;
+  height: 100%;
   text-align: center;
-  background-image: url("../ui/ri_2.png");
+  background-image: url("../ui/ri_2t.png");
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   font-size: 250%;
   font-weight: bold;
@@ -146,7 +151,9 @@
   justify-content: center;
   align-content: center;
   flex-direction: column;
+  padding: 0px 0px 30px 0px;
 }
+
 
 .simple_Defend {
   grid-area: Defend;
@@ -260,3 +267,33 @@
   border: 2px solid black;
   background-color: rgb(255, 255, 175);
 }
+
+
+.simple_container .normal {
+  background-color: lightgreen;
+}
+
+.simple_container .tired,
+.simple_container .reeling {
+  background-color: #b8ffff;
+}
+
+.simple_container .collapse {
+  background-color: #ffcdd2;
+}
+
+.simple_container .check {
+  background-color: lightcoral;
+}
+
+.simple_container .unconscious,
+.simple_container .dead {
+  background-color: black;
+  color: white;
+}
+
+.simple_container .destroyed {
+  background-color: black;
+  color: lightcoral;
+}
+
