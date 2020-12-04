@@ -625,7 +625,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	if (targetmods.length > 0) {
 		modscontent = "<i>";
 		for (let m of targetmods) {
-			modifier += parseInt(m.mod);
+			modifier += m.modint;
 			modscontent += "<br> &nbsp;<span style='font-size:85%'>" + m.mod;
 			if (!!m.desc) {
 				modscontent += " : " + m.desc;

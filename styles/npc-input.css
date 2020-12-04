@@ -229,9 +229,9 @@
   grid-template-rows: 1.5em 1.5em 1.5em 1.5em 1.5em;
   gap: 2px 3px;
   grid-template-areas:
-    "st st-val will will-val spd spd-val"
-    "dx dx-val per per-val mov mov-val"
-    "iq iq-val hp hp-val sm sm-val"
+    "st st-val hp hp-val spd spd-val"
+    "dx dx-val will will-val mov mov-val"
+    "iq iq-val per per-val sm sm-val"
     "ht ht-val fp fp-val dr dr-val"
     ". . . dodge dodge dodge-val";
   grid-area: attr;

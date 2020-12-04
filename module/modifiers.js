@@ -339,7 +339,7 @@ ${OtherMods}`;
 	}
 
 	// Called during the dice roll to return a list of modifiers and then clear
-	async applyMods(targetmods) {
+	async applyMods(targetmods = []) {
 		let stack = this.modifierStack;
 		let answer = (!!targetmods) ? targetmods : [];
 		answer = answer.concat(stack.modifierList);
