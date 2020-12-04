@@ -1205,8 +1205,7 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
-	
-	new NpcInput().render(true);
+
 	
 });
 
