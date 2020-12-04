@@ -1010,11 +1010,11 @@ Hooks.once("init", async function () {
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
-	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
-	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
-	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { makeDefault: false });
-  Actors.registerSheet("gurps", GurpsActorNpcSheet, { makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorSheet, { label: "Full (GCS)", makeDefault: true });
+	Actors.registerSheet("gurps", GurpsActorCombatSheet, { label: "Combat", makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorEditorSheet, { label: "Editor", makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { label: "Simple", makeDefault: false });
+  Actors.registerSheet("gurps", GurpsActorNpcSheet, { label: "NPC/mini", makeDefault: false });
 
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
