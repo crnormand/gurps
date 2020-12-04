@@ -423,8 +423,10 @@ function performAction(action, actor) {
 			target = action.target;
 			if (!target) target = this.resolve(action.path, actordata.data);
 			target = parseInt(target);
-			if (!!action.mod || !!action.desc)
+			if (!!action.mod)
 				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
+			else
+			  opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
 	if (action.type === "selfcontrol") {
