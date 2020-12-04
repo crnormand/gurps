@@ -935,9 +935,11 @@
   margin-bottom: 10px;
 }
 
-.gurps .sheet-header .profile-img {
+.gurps .profile-img {
   flex: 0 0 100px;
-  height: 100px;
+  height: 100%;
+  width: 100%;
+  min-width: 100px;
   margin-right: 10px;
 }
 
