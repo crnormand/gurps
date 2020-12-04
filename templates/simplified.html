@@ -27,7 +27,7 @@
 	</div>
   <div class="simple_Shield rollableicon" data-value="Dodge"><label class="simple_dodge rollable">&nbsp;{{dodge}}&nbsp;</label></div>
   <div class="simple_Body">{{defense}}</div>
-  <div class="simple_Heart">{{data.HP.value}}</div>
+  <div class="simple_Heart {{hpCondition data.HP "style"}}"><div class="simple_Heart_inner">{{data.HP.value}}</div></div>
   <div class="simple_Defend">Defend</div>
   <div class="simple_Armor">Armor</div>
   <div class="simple_HP">Hit Points</div>

@@ -16,6 +16,7 @@ This is what we are currently working on:
     - Basic Speed no longer truncates
     - Major upgrade to Apply Damage Dialog!
     - Allow "defense" to be rollable in Simple sheet
+    - Simple sheet "Heart" now shows color based on HP condition
     - Add [Dodge] to On-the-Fly formulas
     - Users Guide link in Foundry.   Type "/help" or "!help" in chat
     - Current Encumbrance can be set on main/combat sheet
@@ -27,6 +28,7 @@ This is what we are currently working on:
     - Added calculation of additional hits for RoF/Rcl.
     - Mook Generator / NPC Sheet
     - Shift click Full View/Combat View cycles through all character sheets
+    - Support [Fright Check], [Vision], [Hearing], [Touch], [Taste], [Smell] On-the-Fly rolls.
 		
 
 ### History

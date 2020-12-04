@@ -320,38 +320,14 @@
 }
 
 
+/* Had to focefully overwrite the input css from elsewhere */
 .npc-input-2 {
-  border-radius: 2px;
-  border: 1px solid black;
+  font: 400 19px sans-serif;
   height: 100% !important;
   min-width: 2em !important;
   padding: 1px !important;
+  font-weight: 700;
+  font-size: 120% !important;;
+  font-family: "Roboto", sans-serif !important;; 
 }
 
-.npc-sheet .condition-block .normal {
-  background-color: lightgreen;
-}
-
-.npc-sheet .condition-block .tired,
-.npc-sheet .condition-block .reeling {
-  background-color: #b8ffff;
-}
-
-.npc-sheet .condition-block .collapse {
-  background-color: #ffcdd2;
-}
-
-.npc-sheet .condition-block .check {
-  background-color: lightcoral;
-}
-
-.npc-sheet .condition-block .unconscious,
-.npc-sheet .condition-block .dead {
-  background-color: black;
-  color: white;
-}
-
-.npc-sheet .condition-block .destroyed {
-  background-color: black;
-  color: lightcoral;
-}

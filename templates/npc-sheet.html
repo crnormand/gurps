@@ -9,7 +9,7 @@
     <div class="npc-input-desc npc-input-label">Desc:</div>
     <div class="npc-input-desc-val npc-sheet-label">{{{gurpslink data.traits.appearance}}}</div>
   </div>
-  <div class="npc-input-attr condition-block">
+  <div class="npc-input-attr gurps">
     <div class="npc-input-st npc-input-label">ST:</div>
     <div class="npc-input-st-val rollable npc-sheet-centered" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
     <div class="npc-input-dx npc-input-label">DX:</div>
@@ -19,13 +19,13 @@
     <div class="npc-input-ht npc-input-label">HT:</div>
     <div class="npc-input-ht-val rollable npc-sheet-centered" data-path="attributes.HT.value">{{data.attributes.HT.value}}</div>
     <div class="npc-input-hp npc-input-label">HP:</div>
-    <div class="npc-input-hp-val"><input class="npc-input-2 {{hpCondition data.HP "style"}}" name="data.HP.value" type="text" value="{{data.HP.value}}" data-dtype="Number" /></div>
+    <div class="npc-input-hp-val condition-block"><input class="npc-input-2 {{hpCondition data.HP "style"}}" name="data.HP.value" type="text" value="{{data.HP.value}}" data-dtype="Number" /></div>
     <div class="npc-input-will npc-input-label">Will:</div>
     <div class="npc-input-will-val rollable npc-sheet-centered" data-path="attributes.WILL.value">{{data.attributes.WILL.value}}</div>
     <div class="npc-input-per npc-input-label">PER:</div>
     <div class="npc-input-per-val rollable npc-sheet-centered" data-path="attributes.PER.value">{{data.attributes.PER.value}}</div>
     <div class="npc-input-fp npc-input-label">FP:</div>
-    <div class="npc-input-fp-val"><input class="npc-input-2 {{fpCondition data.FP "style"}}" name="data.FP.value" type="text" value="{{data.FP.value}}" data-dtype="Number" /></div>
+    <div class="npc-input-fp-val condition-block"><input class="npc-input-2 {{fpCondition data.FP "style"}}" name="data.FP.value" type="text" value="{{data.FP.value}}" data-dtype="Number" /></div>
     <div class="npc-input-dodge npc-input-labelr">Dodge:</div>
     <div class="npc-input-dodge-val rollable npc-sheet-centered" data-path="dodge">{{this.dodge}}</div>
     <div class="npc-input-spd npc-input-labelr">Speed:</div>
