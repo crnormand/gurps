@@ -163,6 +163,23 @@ GURPS.skillTypes = {
 	"Per/VH": "GURPS.SkillPerVH"
 }
 
+GURPS.PARSELINK_MAPPINGS = {
+  "Vision" : "vision",
+  "VISION" : "vision",
+  "FRIGHTCHECK": "frightcheck",
+  "Frightcheck" : "frightcheck",
+  "Fright check" : "frightcheck",
+  "Fright Check" : "frightcheck",
+  "Hearing" : "hearing",
+  "HEARING" : "hearing",
+  "TASTE" : "tastesmell",
+  "SMELL" : "tastesmell",
+  "Taste" : "tastesmell",
+  "Smell" : "tastesmell",
+  "TOUCH" : "touch", 
+  "Touch" : "touch"
+}
+
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
@@ -502,6 +519,15 @@ function performAction(action, actor) {
 			thing = "Dodge";
 		} else
 			ui.notifications.warn("You must have a character selected");
+			
+  if (action.type === "mapped")
+    if (!!actor) {
+      target = actordata.data[action.path];
+      formula = "3d6";
+      thing = action.desc;
+    } else
+      ui.notifications.warn("You must have a character selected");
+			
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
