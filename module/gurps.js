@@ -163,6 +163,23 @@ GURPS.skillTypes = {
 	"Per/VH": "GURPS.SkillPerVH"
 }
 
+GURPS.PARSELINK_MAPPINGS = {
+  "Vision" : "vision",
+  "VISION" : "vision",
+  "FRIGHTCHECK": "frightcheck",
+  "Frightcheck" : "frightcheck",
+  "Fright check" : "frightcheck",
+  "Fright Check" : "frightcheck",
+  "Hearing" : "hearing",
+  "HEARING" : "hearing",
+  "TASTE" : "tastesmell",
+  "SMELL" : "tastesmell",
+  "Taste" : "tastesmell",
+  "Smell" : "tastesmell",
+  "TOUCH" : "touch", 
+  "Touch" : "touch"
+}
+
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects;
 
@@ -502,6 +519,15 @@ function performAction(action, actor) {
 			thing = "Dodge";
 		} else
 			ui.notifications.warn("You must have a character selected");
+			
+  if (action.type === "mapped")
+    if (!!actor) {
+      target = actordata.data[action.path];
+      formula = "3d6";
+      thing = action.desc;
+    } else
+      ui.notifications.warn("You must have a character selected");
+			
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
@@ -625,7 +651,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	if (targetmods.length > 0) {
 		modscontent = "<i>";
 		for (let m of targetmods) {
-			modifier += parseInt(m.mod);
+			modifier += m.modint;
 			modscontent += "<br> &nbsp;<span style='font-size:85%'>" + m.mod;
 			if (!!m.desc) {
 				modscontent += " : " + m.desc;
@@ -1010,11 +1036,11 @@ Hooks.once("init", async function () {
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
-	Actors.registerSheet("gurps", GurpsActorSheet, { makeDefault: true });
-	Actors.registerSheet("gurps", GurpsActorCombatSheet, { makeDefault: false });
-	Actors.registerSheet("gurps", GurpsActorEditorSheet, { makeDefault: false });
-	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { makeDefault: false });
-  Actors.registerSheet("gurps", GurpsActorNpcSheet, { makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorSheet, { label: "Full (GCS)", makeDefault: true });
+	Actors.registerSheet("gurps", GurpsActorCombatSheet, { label: "Combat", makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorEditorSheet, { label: "Editor", makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { label: "Simple", makeDefault: false });
+  Actors.registerSheet("gurps", GurpsActorNpcSheet, { label: "NPC/mini", makeDefault: false });
 
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });

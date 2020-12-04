@@ -229,9 +229,9 @@
   grid-template-rows: 1.5em 1.5em 1.5em 1.5em 1.5em;
   gap: 2px 3px;
   grid-template-areas:
-    "st st-val will will-val spd spd-val"
-    "dx dx-val per per-val mov mov-val"
-    "iq iq-val hp hp-val sm sm-val"
+    "st st-val hp hp-val spd spd-val"
+    "dx dx-val will will-val mov mov-val"
+    "iq iq-val per per-val sm sm-val"
     "ht ht-val fp fp-val dr dr-val"
     ". . . dodge dodge dodge-val";
   grid-area: attr;
@@ -319,3 +319,39 @@
   align-self:center;
 }
 
+
+.npc-input-2 {
+  border-radius: 2px;
+  border: 1px solid black;
+  height: 100% !important;
+  min-width: 2em !important;
+  padding: 1px !important;
+}
+
+.npc-sheet .condition-block .normal {
+  background-color: lightgreen;
+}
+
+.npc-sheet .condition-block .tired,
+.npc-sheet .condition-block .reeling {
+  background-color: #b8ffff;
+}
+
+.npc-sheet .condition-block .collapse {
+  background-color: #ffcdd2;
+}
+
+.npc-sheet .condition-block .check {
+  background-color: lightcoral;
+}
+
+.npc-sheet .condition-block .unconscious,
+.npc-sheet .condition-block .dead {
+  background-color: black;
+  color: white;
+}
+
+.npc-sheet .condition-block .destroyed {
+  background-color: black;
+  color: lightcoral;
+}

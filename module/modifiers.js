@@ -298,14 +298,19 @@ ${OtherMods}`;
 	// Public method. Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
 		let m = displayMod(mod);
-		return { "mod": m, "desc": reason, "plus": (m[0] == "+") };
+		return { 
+      "mod": m, 
+      "modint": parseInt(m),
+      "desc": reason, 
+      "plus": (m[0] == "+") 
+    };
 	}
 
 	sum() {
 		let stack = this.modifierStack;
 		stack.currentSum = 0;
 		for (let m of stack.modifierList) {
-			stack.currentSum += parseInt(m.mod);
+			stack.currentSum += m.modint;
 		}
 		stack.displaySum = displayMod(stack.currentSum);
 		stack.plus = stack.currentSum > 0;
@@ -334,7 +339,7 @@ ${OtherMods}`;
 	}
 
 	// Called during the dice roll to return a list of modifiers and then clear
-	async applyMods(targetmods) {
+	async applyMods(targetmods = []) {
 		let stack = this.modifierStack;
 		let answer = (!!targetmods) ? targetmods : [];
 		answer = answer.concat(stack.modifierList);

@@ -14,7 +14,7 @@ To install the latest release, use this manifest URL:
 This is what we are currently working on:
 - 0.8.1
     - Basic Speed no longer truncates
-    - More Apply Damage Dialog options
+    - Major upgrade to Apply Damage Dialog!
     - Allow "defense" to be rollable in Simple sheet
     - Add [Dodge] to On-the-Fly formulas
     - Users Guide link in Foundry.   Type "/help" or "!help" in chat
@@ -25,6 +25,8 @@ This is what we are currently working on:
     - On-the-Fly can now create "blind" rolls.   Useful for GM to ask everyone to roll PER
     - Support for generic damage type "dmg"
     - Added calculation of additional hits for RoF/Rcl.
+    - Mook Generator / NPC Sheet
+    - Shift click Full View/Combat View cycles through all character sheets
 		
 
 ### History
