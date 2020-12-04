@@ -319,3 +319,39 @@
   align-self:center;
 }
 
+
+.npc-input-2 {
+  border-radius: 2px;
+  border: 1px solid black;
+  height: 100% !important;
+  min-width: 2em !important;
+  padding: 1px !important;
+}
+
+.npc-sheet .condition-block .normal {
+  background-color: lightgreen;
+}
+
+.npc-sheet .condition-block .tired,
+.npc-sheet .condition-block .reeling {
+  background-color: #b8ffff;
+}
+
+.npc-sheet .condition-block .collapse {
+  background-color: #ffcdd2;
+}
+
+.npc-sheet .condition-block .check {
+  background-color: lightcoral;
+}
+
+.npc-sheet .condition-block .unconscious,
+.npc-sheet .condition-block .dead {
+  background-color: black;
+  color: white;
+}
+
+.npc-sheet .condition-block .destroyed {
+  background-color: black;
+  color: lightcoral;
+}
