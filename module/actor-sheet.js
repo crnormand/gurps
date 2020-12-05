@@ -73,7 +73,8 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
     html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
-    html.find(".rollable").contextmenu(this._onRightClickRoll.bind(this));
+    html.find(".glinkmod").contextmenu(this._onRightClickGurpslink.bind(this));
+    html.find("[data-otf]").contextmenu(this._onRightClickOtf.bind(this));
 
 		html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
     html.find(".enc").click(this._onClickEnc.bind(this));
@@ -387,14 +388,22 @@ async handleDragFor(event, dragData, type, cls) {
   }
 
   async _onRightClickGurpslink(event) {
+    event.preventDefault();
     let el = event.currentTarget;
-    
-	
+    let action = el.dataset.action;    // If we have already parsed 
+    if (!!action) {
+      action = JSON.parse(atob(action));
+      this.whisperToOwner(action.orig);
+	  }
 	}
 
-  async _onRightClickRoll(event) {
+  async _onRightClickOtf(event, orig) {
 	  event.preventDefault();
-    let otf = event.currentTarget?.dataset?.otf;
+    this.whisperToOwner(event.currentTarget.dataset.otf);
+  }
+
+  async whisperToOwner(otf) {
+	  if (!game.user.isGM) return;
     if (!!otf) {
 	    let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true);
       if (!users) {
@@ -403,7 +412,7 @@ async handleDragFor(event, dragData, type, cls) {
       }
       let ids = users.map(it => it._id);
       let msgData = {
-        content: otf,
+        content: "[" + otf + "]",
         user: game.user._id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: ids

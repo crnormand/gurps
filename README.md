@@ -19,7 +19,7 @@ This is what we are currently working on:
     - Simple sheet "Heart" now shows color based on HP condition
     - Add [Dodge] to On-the-Fly formulas
     - Users Guide link in Foundry.   Type "/help" or "!help" in chat
-    - Current Encumbrance can be set on main/combat sheet
+    - Current Encumbrance can be set on main/combat sheet.   Only current Dodge can be rolled.
     - Fixed Full/Combat sheet toggle
     - Warn on FG import
     - On-the-Fly can now parse "4d+1x2(0.5)" damage rolls

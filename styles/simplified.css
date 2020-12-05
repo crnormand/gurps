@@ -234,11 +234,12 @@
   align-content: stretch;
   grid-template-rows: repeat(100, 1fr);
   grid-template-columns: 1.5fr 1fr 1fr;
-  text-align: center;
+  text-align: left;
   vertical-align: middle;
   font-size: 120%;
   gap: 10px 15px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Skills {
@@ -253,6 +254,7 @@
   font-size: 120%;
   gap: 10px 15px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Eqt {
@@ -267,6 +269,7 @@
   font-size: 120%;
   gap: 10px 15px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Ads {
@@ -281,6 +284,7 @@
   font-size: 120%;
   gap: 10px 20px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Portrait {
@@ -297,7 +301,7 @@
   align-content: stretch;
   grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-template-columns: 1fr;
-  padding: 0px 0px 0px 10px;
+  padding: 0px 0px 0px 5px;
   overflow-y: scroll;
 }
 
