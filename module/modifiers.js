@@ -200,8 +200,7 @@ export class ModifierBucket extends Application {
 	}
 
 	async _onClickRoll(event) {
-		event.preventDefault();
-		game.GURPS.onRoll(event, this.actor);
+		game.GURPS.handleRoll(event, this.actor);
 	}
 
 	async _onClickGurpslink(event) {

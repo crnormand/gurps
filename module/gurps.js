@@ -553,7 +553,8 @@ GURPS.findAttack = findAttack;
 	The user clicked on a field that would allow a dice roll.  
 	Use the element information to try to determine what type of roll.
 */
-async function onRoll(event, actor) {
+async function handleRoll(event, actor) {
+	event.preventDefault();
 	let formula = "";
 	let targetmods = null;
 	let element = event.currentTarget;
@@ -606,7 +607,7 @@ async function onRoll(event, actor) {
 
 	this.doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
-GURPS.onRoll = onRoll;
+GURPS.handleRoll = handleRoll;
 
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
