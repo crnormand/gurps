@@ -363,7 +363,7 @@ async handleDragFor(event, dragData, type, cls) {
     event.preventDefault()
     let newSheet = "gurps.GurpsActorCombatSheet"
 
-    const original = this.actor.getFlag("core", "sheetClass") || Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.default).id;
+    const original = this.actor.getFlag("core", "sheetClass") || Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.default)[0].id;
     console.log("original: " + original)
 
    if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
@@ -396,7 +396,7 @@ async handleDragFor(event, dragData, type, cls) {
     let action = el.dataset.action;    
     if (!!action) {
       action = JSON.parse(atob(action));
-      this.whisperOtfToOwner(action.orig, event);
+      this.whisperOtfToOwner(action.orig, event, (action.hasOwnProperty("blindroll") && !action.blindroll));  // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
 	  }
 	}
 	
@@ -416,30 +416,67 @@ async handleDragFor(event, dragData, type, cls) {
 
   async _onRightClickOtf(event) {
 	  event.preventDefault();
-    this.whisperOtfToOwner(event.currentTarget.dataset.otf, event);
+    let el = event.currentTarget;
+    this.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !el.dataset.hasOwnProperty("damage"));    // Can't blind roll damages (yet)
   }
 
-  async whisperOtfToOwner(otf, event) {
+  async whisperOtfToOwner(otf, event, canblind) {
 	  if (!game.user.isGM) return;
     if (!!otf) {
       otf =  otf.replace(/ \(\)/g, "");  // sent as "name (mode)", and mode is empty (only necessary for attacks)
-      let msgData = {
-        content: "[" + otf + "]",
-        user: game.user._id,
-      }
-	    if (event.shiftKey || event.ctrlKey || event.altKey) {
-		    msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
-		  } else {
-        msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
-  	    let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM);
-        if (users.length == 0) {
-  	      ui.notifications.warn(`There is no one to whisper to.  No one owns '${this.actor.name}.'`);
-          return;
+      let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM);
+      let botf = "[!" + otf + "]"
+      otf = "[" + otf + "]";
+      let buttons =  {};
+      buttons.one = {
+         icon: '<i class="fas fa-users"></i>',
+         label: "To Everyone",
+         callback: () => this.sendOtfMessage(otf, false)
         }
+      if (canblind)
+        buttons.two = {
+         icon: '<i class="fas fa-users-slash"></i>',
+         label: "Blindroll to Everyone",
+        callback: () => this.sendOtfMessage(botf, true)
+       };
+      if (users.length > 0) {
+	      let nms = users.map(u => u.name).join(' ');
+	      buttons.three = {
+          icon: '<i class="fas fa-user"></i>',
+          label: "Whisper to " + nms,
+          callback: () => this.sendOtfMessage(otf, false, users)
+        }
+        if (canblind)
+          buttons.four = {
+            icon: '<i class="fas fa-user-slash"></i>',
+            label: "Whisper Blindroll to " + nms,
+            callback: () => this.sendOtfMessage(botf, true, users)
+          }
+	    }
+      
+      let d = new Dialog({
+        title: "GM 'Send Formula'",
+        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
+        buttons: buttons,
+        default: "four"
+      });
+      d.render(true);
+    }
+  }
+    
+  sendOtfMessage(content, blindroll, users) {  
+	  let msgData = {
+      content: content,
+      user: game.user._id,
+      blind: blindroll
+    }
+    if (!!users) {
+		    msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
         msgData.whisper = users.map(it => it._id);
-      }
-      ChatMessage.create(msgData)
-	  }
+ 	  } else {
+       msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+    }
+    ChatMessage.create(msgData);
   }
 
   async _onClickPdf(event) {

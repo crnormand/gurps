@@ -668,7 +668,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	let chatcontent = "";
 	let roll = null;  // Will be the Roll
 	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
-		let finaltarget = origtarget + modifier;
+		let finaltarget = parseInt(origtarget) + modifier;
 		if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget;
 		roll = new Roll(formula);		// The formula will always be "3d6" for a "targetted" roll
 		roll.roll();
@@ -1159,7 +1159,7 @@ Hooks.once("init", async function () {
 	// Look for blind messages with .message-results and remove them
 	Hooks.on("renderChatMessage", (log, content, data) => {
     if (!!data.message.blind) {
-			if (data.author?.isSelf && !!data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
+			if (data.author?.isSelf && !data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
 				$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
 			}
 		}
