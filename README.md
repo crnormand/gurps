@@ -29,6 +29,7 @@ This is what we are currently working on:
     - Mook Generator / NPC Sheet
     - Shift/Ctrl click Full View/Combat View opens Simplified and NPC/Mini sheets
     - Support [Fright Check], [Vision], [Hearing], [Touch], [Taste], [Smell] On-the-Fly rolls.
+    - Right Click on Attack/Skill/Spell level & On-the-Fly formula to whisper to owner.
 		
 
 ### History

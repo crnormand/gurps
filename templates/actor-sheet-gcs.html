@@ -284,10 +284,10 @@
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
             </div>
             <div class="usage">{{this.mode}}</div>
-            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
             <div class="parry rollable" data-name="Parry">{{this.parry}}</div>
             <div class="block rollable" data-name="Block">{{this.block}}</div>
-            <div class="damage rollable" data-damage>{{this.damage}}</div>
+            <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
             <div class="reach">{{this.reach}}</div>
             <div class="st">{{this.st}}</div>
             <div></div>
@@ -316,14 +316,14 @@
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
             </div>
             <div class="usage">{{this.mode}}</div>
-            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}">{{this.level}}</div>
+            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
             <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
                 {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
-            <div class="damage rollable" data-damage>{{this.damage}}</div>
+            <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
             <div class="range">{{this.range}}</div>
             <div class="rof">{{this.rof}}</div>
             <div class="shots">{{this.shots}}</div>
-            <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='for {{this.name}} Bulk'>{{this.bulk}}
+            <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'>{{this.bulk}}
             </div>
             <div class="rcl">{{this.rcl}}</div>
             <div class="st">{{this.st}}</div>
@@ -357,7 +357,7 @@
                 <div class="list_note satisfiedY"></div>
                 <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{key}}">{{{gurpslink this.notes @root}}}</div>
             </div>
-            <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
+            <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
             <div class="rsl satisfiedY">{{this.relativelevel}}</div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
@@ -389,7 +389,7 @@
             <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
             <div class="time satisfiedY">{{this.casttime}}</div>
             <div class="duration satisfiedY">{{this.duration}}</div>
-            <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
+            <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
             <div class="rsl satisfiedY">{{this.difficulty}}</div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>

@@ -545,7 +545,7 @@ function findSkillSpell(actor, sname) {
 GURPS.findSkillSpell = findSkillSpell;
 
 function findAttack(actor, sname) {
-	sname = sname.split("*").join(".*");
+	sname = sname.split("*").join(".*").replace(/\(/g, "\\(").replace(/\)/g,"\\)");  // Make string into a RegEx pattern
 	let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
 	if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
 	return t;

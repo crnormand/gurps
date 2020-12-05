@@ -75,6 +75,9 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
     html.find(".glinkmod").contextmenu(this._onRightClickGurpslink.bind(this));
     html.find("[data-otf]").contextmenu(this._onRightClickOtf.bind(this));
+    html.find(".gmod").contextmenu(this._onRightClickGmod.bind(this));
+    html.find(".pdflink").contextmenu(this._onRightClickPdf.bind(this));
+
 
 		html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
     html.find(".enc").click(this._onClickEnc.bind(this));
@@ -390,32 +393,50 @@ async handleDragFor(event, dragData, type, cls) {
   async _onRightClickGurpslink(event) {
     event.preventDefault();
     let el = event.currentTarget;
-    let action = el.dataset.action;    // If we have already parsed 
+    let action = el.dataset.action;    
     if (!!action) {
       action = JSON.parse(atob(action));
-      this.whisperToOwner(action.orig);
+      this.whisperOtfToOwner(action.orig, event);
 	  }
 	}
+	
+	async _onRightClickPdf(event) {
+    event.preventDefault();
+    let el = event.currentTarget;
+ 		this.whisperOtfToOwner("PDF:" + el.innerText, event);
+	}
+	
+	async _onRightClickGmod(event) {
+    event.preventDefault();
+    let el = event.currentTarget;
+    let n = el.dataset.name;		
+    let t = el.innerText;
+    this.whisperOtfToOwner(t + " " + n, event);
+	}
 
-  async _onRightClickOtf(event, orig) {
+  async _onRightClickOtf(event) {
 	  event.preventDefault();
-    this.whisperToOwner(event.currentTarget.dataset.otf);
+    this.whisperOtfToOwner(event.currentTarget.dataset.otf, event);
   }
 
-  async whisperToOwner(otf) {
+  async whisperOtfToOwner(otf, event) {
 	  if (!game.user.isGM) return;
     if (!!otf) {
-	    let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true);
-      if (!users) {
-	      ui.notifications.warn(`Unable to whisper, there is no owner for ${this.actor.name}`);
-        return;
-      }
-      let ids = users.map(it => it._id);
+      otf =  otf.replace(/ \(\)/g, "");  // sent as "name (mode)", and mode is empty (only necessary for attacks)
       let msgData = {
         content: "[" + otf + "]",
         user: game.user._id,
-        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: ids
+      }
+	    if (event.shiftKey || event.ctrlKey || event.altKey) {
+		    msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+		  } else {
+        msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
+  	    let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM);
+        if (users.length == 0) {
+  	      ui.notifications.warn(`There is no one to whisper to.  No one owns '${this.actor.name}.'`);
+          return;
+        }
+        msgData.whisper = users.map(it => it._id);
       }
       ChatMessage.create(msgData)
 	  }
