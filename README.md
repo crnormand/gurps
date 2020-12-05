@@ -27,7 +27,7 @@ This is what we are currently working on:
     - Support for generic damage type "dmg"
     - Added calculation of additional hits for RoF/Rcl.
     - Mook Generator / NPC Sheet
-    - Shift click Full View/Combat View cycles through all character sheets
+    - Shift/Ctrl click Full View/Combat View opens Simplified and NPC/Mini sheets
     - Support [Fright Check], [Vision], [Hearing], [Touch], [Taste], [Smell] On-the-Fly rolls.
 		
 

@@ -359,18 +359,11 @@ async handleDragFor(event, dragData, type, cls) {
     const original = this.actor.getFlag("core", "sheetClass") || Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.default).id;
     console.log("original: " + original)
 
-    if (event.shiftKey) {   // Hold down the shift key to cycle through the "other" sheets
-	    let sheets = Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.id.startsWith("gurps") && !s.id.includes("Editor") && !s.id.includes("Combat"));
-      while (sheets[0].id !== original) {   // Find the current one, treat like a ring
-	      let s = sheets[0];
-        sheets.shift(); 
-        sheets.push(s);
-      }
-      sheets.shift(); // grab the next one
-      newSheet = sheets[0].id;
-    }
-    else   
-      if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
+   if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
+   if (event.shiftKey)   // Hold down the shift key for Simplified
+	    newSheet = "gurps.GurpsActorSimplifiedSheet";
+   if (event.ctrlKey)   // Hold down the shift key for Simplified
+      newSheet = "gurps.GurpsActorNpcSheet";
 
     await this.actor.sheet.close()
 

@@ -1,13 +1,13 @@
 <form class="{{cssClass}} simple_form" autocomplete="off">
 
 <div class="simple_container">
-  <div class="simple_ST rollableicon" data-value="ST{{data.attributes.ST.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_4.png"/>
+  <div class="simple_ST rollableicon" data-value="ST{{data.attributes.ST.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_4t.png"/>
 		<label class="simple_input">{{simpleRating data.attributes.ST.value}}</label></div>
-  <div class="simple_DX rollableicon" data-value="ST{{data.attributes.DX.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_6.png"/>
+  <div class="simple_DX rollableicon" data-value="ST{{data.attributes.DX.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_6t.png"/>
 		<label class="simple_input">{{simpleRating data.attributes.DX.value}}</label></div>
-  <div class="simple_IQ rollableicon" data-value="ST{{data.attributes.IQ.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_8.png"/>
+  <div class="simple_IQ rollableicon" data-value="ST{{data.attributes.IQ.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_8t.png"/>
 		<label class="simple_input">{{simpleRating data.attributes.IQ.value}}</label></div>
-  <div class="simple_HT rollableicon" data-value="ST{{data.attributes.HT.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_10.png"/>
+  <div class="simple_HT rollableicon" data-value="ST{{data.attributes.HT.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_10t.png"/>
 		<label class="simple_input">{{simpleRating data.attributes.HT.value}}</label></div>
   <div class="simple_ST-desc">
 		<label>Strength (</label><label class="rollable simple_lrg" data-path="attributes.ST.value">{{data.attributes.ST.value}}</label>
@@ -51,33 +51,28 @@
 
 	</div>
   <div class="simple_Skills">
-		<label>Things I Do Well</label><label>Roll</label>
-    {{#each data.skills}}
-    <div class="">{{{gurpslink this.name}}}
+		<label class="dblclksort" data-key="data.skills">Things I Do Well</label><label>Roll</label>
+    {{#each data.skills as | this key |}}
+    <div class="skldraggable" data-key="data.skills.{{key}}">{{{gurpslink this.name}}}
         <div class="list_note">{{{gurpslink this.notes @root}}}</div>
     </div>
-    <div class="rollable" data-name="{{this.name}}">{{this.level}}</div>
+    <div class="rollable simple_roll_label" data-name="{{this.name}}">{{this.level}}</div>
     {{/each}}
 	</div>
   <div class="simple_Eqt">
-		<label>My Belongings</label><label>#</label>
+		<label class="eqtdragtarget dblclksort" data-key="data.equipment.carried">My Belongings</label><label>#</label>
     {{#listeqt data.equipment.carried }}
-     <div class="indent{{@indent}}">{{{gurpslink this.name}}}
-        <div class="list_note">{{{gurpslink this.notes}}}</div>
+     <div class="indent{{@indent}} eqtdraggable" data-key="data.equipment.carried.{{@key}}"">{{{gurpslink this.name}}}
+        <div class="list_note eqtdraggable" data-key="data.equipment.carried.{{@key}}"">{{{gurpslink this.notes}}}</div>
     </div>
    	<div>{{this.count}}</div>
     {{/listeqt}}
 	</div>
   <div class="simple_Ads">
-		<label>Things That Describe Me</label>
-    {{#each data.ads}}
-    <div>{{{gurpslink this.name}}}
-         <div>{{{gurpslinkbr this.notes}}}</div>
-    </div>
-    {{/each}}
-    {{#each data.disads}}
-    <div>{{{gurpslink this.name}}}
-       <div>{{{gurpslinkbr this.notes}}}</div>
+		<label class="dblclksort" data-key="data.ads">Things That Describe Me</label>
+    {{#each data.ads as | this key |}}
+    <div class="adsdraggable" data-key="data.ads.{{key}}">{{{gurpslink this.name}}}
+         <div class="adsdraggable" data-key="data.ads.{{key}}">{{{gurpslinkbr this.notes}}}</div>
     </div>
     {{/each}}
 	</div>

@@ -442,7 +442,7 @@ function performAction(action, actor) {
 			target = parseInt(target);
 			if (!!action.mod)
 				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
-			else
+			else if (!!action.desc)
 			  opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
@@ -496,7 +496,7 @@ function performAction(action, actor) {
 	if (action.type === "attack")
 		if (!!actor) {
 			let att = null;
-			prefix = "Attempting ";
+			prefix = "";
 			thing = action.name;
 			att = GURPS.findAttack(actordata, thing);
 			if (!att) {

@@ -329,8 +329,9 @@ ${OtherMods}`;
 		let stack = this.modifierStack;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
-			let m = parseInt(oldmod.mod) + parseInt(mod);
+			let m = oldmod.modint + parseInt(mod);
 			oldmod.mod = displayMod(m);
+      oldmod.modint = m;
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));
 		}
