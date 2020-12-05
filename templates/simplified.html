@@ -10,22 +10,22 @@
   <div class="simple_HT rollableicon" data-value="ST{{data.attributes.HT.value}}"><img class="simple_icon" src="systems/gurps/ui/ri_10t.png"/>
 		<label class="simple_input">{{simpleRating data.attributes.HT.value}}</label></div>
   <div class="simple_ST-desc">
-		<label>Strength (</label><label class="rollable simple_lrg" data-path="attributes.ST.value">{{data.attributes.ST.value}}</label>
+		<label>Strength (</label><label class="rollable simple_lrg" data-path="attributes.ST.value" data-otf="[ST]">{{data.attributes.ST.value}}</label>
 		<label>): How <strong>strong</strong> and <strong>tough</strong></label>
 	</div>
   <div class="simple_DX-desc">
-		<label>Dexterity (</label><label class="rollable simple_lrg" data-path="attributes.DX.value">{{data.attributes.DX.value}}</label>
+		<label>Dexterity (</label><label class="rollable simple_lrg" data-path="attributes.DX.value" data-otf="[DX]">{{data.attributes.DX.value}}</label>
 		<label>): How <strong>agile</strong> and <strong>fast</strong></label>
 	</div>
   <div class="simple_IQ-desc">
-		<label>Intelligence (</label><label class="rollable simple_lrg" data-path="attributes.IQ.value">{{data.attributes.IQ.value}}</label>
+		<label>Intelligence (</label><label class="rollable simple_lrg" data-path="attributes.IQ.value" data-otf="[IQ]">{{data.attributes.IQ.value}}</label>
 		<label>): How <strong>clever</strong> and <strong>aware</strong></label>
 	</div>
   <div class="simple_HT-desc">
-		<label>Health (</label><label class="rollable simple_lrg" data-path="attributes.ST.value">{{data.attributes.HT.value}}</label>
+		<label>Health (</label><label class="rollable simple_lrg" data-path="attributes.HT.value" data-otf="[HT]">{{data.attributes.HT.value}}</label>
 		<label>): How <strong>healthy</strong> and <strong>durable</strong></label>
 	</div>
-  <div class="simple_Shield rollableicon" data-value="Dodge"><label class="simple_dodge rollable">&nbsp;{{dodge}}&nbsp;</label></div>
+  <div class="simple_Shield rollableicon" data-value="Dodge"><label class="simple_dodge rollable" data-otf="[Dodge]">&nbsp;{{dodge}}&nbsp;</label></div>
   <div class="simple_Body">{{defense}}</div>
   <div class="simple_Heart {{hpCondition data.HP "style"}}"><div class="simple_Heart_inner">{{data.HP.value}}</div></div>
   <div class="simple_Defend">Defend</div>
@@ -37,8 +37,8 @@
       <div data-path="data.melee">{{{gurpslink this.name}}}
           <div class="list_note">{{{gurpslink this.notes}}}</div>
       </div>
-      <div class="rollable" data-damage>{{this.damage}}</div>
-      <div class="rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+      <div class="rollable" data-damage data-otf='[{{this.damage}}]'>{{this.damage}}</div>
+      <div class="rollable" data-name="{{this.name}} ({{this.mode}})" data-otf='[A:"{{this.name}}"]'>{{this.level}}</div>
     {{/each}}
 
     {{#each data.ranged as | this key |}}
@@ -46,7 +46,7 @@
         <div class="list_note">{{{gurpslink this.notes}}}</div>
     </div>
     <div class="rollable" data-damage>{{this.damage}}</div>
-    <div class="rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}">{{this.level}}</div>
+    <div class="rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='[A:"{{this.name}}"]'>{{this.level}}</div>
     {{/each}}
 
 	</div>
@@ -56,7 +56,7 @@
     <div class="skldraggable" data-key="data.skills.{{key}}">{{{gurpslink this.name}}}
         <div class="list_note">{{{gurpslink this.notes @root}}}</div>
     </div>
-    <div class="rollable simple_roll_label" data-name="{{this.name}}">{{this.level}}</div>
+    <div class="rollable simple_roll_label" data-name="{{this.name}}" data-otf='[S:"{{this.name}}"]'>{{this.level}}</div>
     {{/each}}
 	</div>
   <div class="simple_Eqt">

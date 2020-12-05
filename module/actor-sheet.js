@@ -72,6 +72,9 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
+    html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
+    html.find(".rollable").contextmenu(this._onRightClickRoll.bind(this));
+
 		html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
     html.find(".enc").click(this._onClickEnc.bind(this));
 
@@ -383,6 +386,32 @@ async handleDragFor(event, dragData, type, cls) {
     this.actor.sheet.render(true)
   }
 
+  async _onRightClickGurpslink(event) {
+    let el = event.currentTarget;
+    
+	
+	}
+
+  async _onRightClickRoll(event) {
+	  event.preventDefault();
+    let otf = event.currentTarget?.dataset?.otf;
+    if (!!otf) {
+	    let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true);
+      if (!users) {
+	      ui.notifications.warn(`Unable to whisper, there is no owner for ${this.actor.name}`);
+        return;
+      }
+      let ids = users.map(it => it._id);
+      let msgData = {
+        content: otf,
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: ids
+      }
+      ChatMessage.create(msgData)
+	  }
+  }
+
   async _onClickPdf(event) {
     game.GURPS.handleOnPdf(event);
   }
@@ -392,15 +421,13 @@ async handleDragFor(event, dragData, type, cls) {
   }
 
   async _onClickGurpslink(event) {
-    event.preventDefault();
-    game.GURPS.onGurpslink(event, this.actor);
+    game.GURPS.handleGurpslink(event, this.actor);
   }
 
   async _onClickGmod(event) {
     let element = event.currentTarget;
-    event.preventDefault();
     let desc = element.dataset.name;
-    game.GURPS.onGurpslink(event, this.actor, desc);
+    game.GURPS.handleGurpslink(event, this.actor, desc);
   }
 
   async _onClickEnc(ev) {

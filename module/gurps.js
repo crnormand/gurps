@@ -834,7 +834,8 @@ GURPS.resolve = resolve;
 	and followed the On-the-Fly formulas.   As such, we may already have an action block (base 64 encoded so we can handle
 	any text).  If not, we will just re-parse the text looking for the action block.    
 */
-function onGurpslink(event, actor, desc) {
+function handleGurpslink(event, actor, desc) {
+	event.preventDefault();
 	let element = event.currentTarget;
 	let action = element.dataset.action;		// If we have already parsed 
 	if (!!action)
@@ -843,7 +844,7 @@ function onGurpslink(event, actor, desc) {
 		action = parselink(element.innerText, desc, false).action;
 	this.performAction(action, actor);
 }
-GURPS.onGurpslink = onGurpslink;
+GURPS.handleGurpslink = handleGurpslink;
 
 
 /* You may be asking yourself, why the hell is he generating fake keys to fit in an object
@@ -964,17 +965,15 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 
 function chatClickGurpslink(event) {
-	event.preventDefault();
-	game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+	game.GURPS.handleGurpslink(event, game.GURPS.LastActor);
 }
 GURPS.chatClickGurpslink = chatClickGurpslink;
 
 
 function chatClickGmod(event) {
 	let element = event.currentTarget;
-	event.preventDefault();
 	let desc = element.dataset.name;
-	game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+	game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
 }
 GURPS.chatClickGmod = chatClickGmod;
 

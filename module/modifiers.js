@@ -204,15 +204,13 @@ export class ModifierBucket extends Application {
 	}
 
 	async _onClickGurpslink(event) {
-		event.preventDefault();
-		game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+		game.GURPS.handleGurpslink(event, game.GURPS.LastActor);
 	}
 
 	async _onClickGmod(event) {
 		let element = event.currentTarget;
-		event.preventDefault();
 		let desc = element.dataset.name;
-		game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+		game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
 	}
 
 	async _onClickTrash(event) {
