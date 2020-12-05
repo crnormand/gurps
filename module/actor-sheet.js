@@ -363,7 +363,7 @@ async handleDragFor(event, dragData, type, cls) {
     event.preventDefault()
     let newSheet = "gurps.GurpsActorCombatSheet"
 
-    const original = this.actor.getFlag("core", "sheetClass") || Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.default).id;
+    const original = this.actor.getFlag("core", "sheetClass") || Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.default)[0].id;
     console.log("original: " + original)
 
    if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
@@ -456,7 +456,7 @@ async handleDragFor(event, dragData, type, cls) {
       
       let d = new Dialog({
         title: "GM 'Send Formula'",
-        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br><br>?<br>&nbsp;</div>`,
+        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
         buttons: buttons,
         default: "four"
       });
