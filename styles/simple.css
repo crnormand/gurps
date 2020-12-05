@@ -1421,8 +1421,6 @@ body {
 .bulk,
 .rcl,
 .load,
-.move,
-.dodge,
 .where,
 .penalty,
 .dr,
@@ -1431,6 +1429,8 @@ body {
   text-align: right;
 }
 
+.move,
+.dodge,
 .equipped,
 .roll {
   text-align: center;

@@ -172,6 +172,9 @@ GURPS.PARSELINK_MAPPINGS = {
   "Fright Check" : "frightcheck",
   "Hearing" : "hearing",
   "HEARING" : "hearing",
+  "TASTESMELL" : "tastesmell",
+  "Taste Smell" : "tastesmell",
+  "TASTE SMELL" : "tastesmell",
   "TASTE" : "tastesmell",
   "SMELL" : "tastesmell",
   "Taste" : "tastesmell",
@@ -442,7 +445,7 @@ function performAction(action, actor) {
 			target = parseInt(target);
 			if (!!action.mod)
 				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
-			else
+			else if (!!action.desc)
 			  opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
@@ -496,7 +499,7 @@ function performAction(action, actor) {
 	if (action.type === "attack")
 		if (!!actor) {
 			let att = null;
-			prefix = "Attempting ";
+			prefix = "";
 			thing = action.name;
 			att = GURPS.findAttack(actordata, thing);
 			if (!att) {
@@ -542,7 +545,7 @@ function findSkillSpell(actor, sname) {
 GURPS.findSkillSpell = findSkillSpell;
 
 function findAttack(actor, sname) {
-	sname = sname.split("*").join(".*");
+	sname = sname.split("*").join(".*").replace(/\(/g, "\\(").replace(/\)/g,"\\)");  // Make string into a RegEx pattern
 	let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
 	if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
 	return t;
@@ -553,7 +556,8 @@ GURPS.findAttack = findAttack;
 	The user clicked on a field that would allow a dice roll.  
 	Use the element information to try to determine what type of roll.
 */
-async function onRoll(event, actor) {
+async function handleRoll(event, actor) {
+	event.preventDefault();
 	let formula = "";
 	let targetmods = null;
 	let element = event.currentTarget;
@@ -606,7 +610,7 @@ async function onRoll(event, actor) {
 
 	this.doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
-GURPS.onRoll = onRoll;
+GURPS.handleRoll = handleRoll;
 
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
@@ -833,7 +837,8 @@ GURPS.resolve = resolve;
 	and followed the On-the-Fly formulas.   As such, we may already have an action block (base 64 encoded so we can handle
 	any text).  If not, we will just re-parse the text looking for the action block.    
 */
-function onGurpslink(event, actor, desc) {
+function handleGurpslink(event, actor, desc) {
+	event.preventDefault();
 	let element = event.currentTarget;
 	let action = element.dataset.action;		// If we have already parsed 
 	if (!!action)
@@ -842,7 +847,7 @@ function onGurpslink(event, actor, desc) {
 		action = parselink(element.innerText, desc, false).action;
 	this.performAction(action, actor);
 }
-GURPS.onGurpslink = onGurpslink;
+GURPS.handleGurpslink = handleGurpslink;
 
 
 /* You may be asking yourself, why the hell is he generating fake keys to fit in an object
@@ -963,17 +968,15 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 
 function chatClickGurpslink(event) {
-	event.preventDefault();
-	game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+	game.GURPS.handleGurpslink(event, game.GURPS.LastActor);
 }
 GURPS.chatClickGurpslink = chatClickGurpslink;
 
 
 function chatClickGmod(event) {
 	let element = event.currentTarget;
-	event.preventDefault();
 	let desc = element.dataset.name;
-	game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+	game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
 }
 GURPS.chatClickGmod = chatClickGmod;
 

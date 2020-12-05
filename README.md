@@ -19,7 +19,7 @@ This is what we are currently working on:
     - Simple sheet "Heart" now shows color based on HP condition
     - Add [Dodge] to On-the-Fly formulas
     - Users Guide link in Foundry.   Type "/help" or "!help" in chat
-    - Current Encumbrance can be set on main/combat sheet
+    - Current Encumbrance can be set on main/combat sheet.   Only current Dodge can be rolled.
     - Fixed Full/Combat sheet toggle
     - Warn on FG import
     - On-the-Fly can now parse "4d+1x2(0.5)" damage rolls
@@ -27,8 +27,9 @@ This is what we are currently working on:
     - Support for generic damage type "dmg"
     - Added calculation of additional hits for RoF/Rcl.
     - Mook Generator / NPC Sheet
-    - Shift click Full View/Combat View cycles through all character sheets
+    - Shift/Ctrl click Full View/Combat View opens Simplified and NPC/Mini sheets
     - Support [Fright Check], [Vision], [Hearing], [Touch], [Taste], [Smell] On-the-Fly rolls.
+    - Right Click on Attack/Skill/Spell level & On-the-Fly formula to whisper to owner.
 		
 
 ### History

@@ -100,23 +100,23 @@
                 <div class="header">Attributes</div>
                 <div class="fieldblock3">
                     <div class="points">[{{data.attributes.ST.points}}]</div>
-                    <div class="field rollable" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
+                    <div class="field rollable" data-path="attributes.ST.value" data-otf='ST'>{{data.attributes.ST.value}}</div>
                     <div class="label">{{localize "GURPS.attributesSTNAME"}} ({{localize "GURPS.attributesST"}})</div>
                     <div class="points">[{{data.attributes.DX.points}}]</div>
-                    <div class="field rollable" data-path="attributes.DX.value">{{data.attributes.DX.value}}</div>
+                    <div class="field rollable" data-path="attributes.DX.value"data-otf='DX'>{{data.attributes.DX.value}}</div>
                     <div class="label">{{localize "GURPS.attributesDXNAME"}} ({{localize "GURPS.attributesDX"}})</div>
                     <div class="points">[{{data.attributes.IQ.points}}]</div>
-                    <div class="field rollable" data-path="attributes.IQ.value">{{data.attributes.IQ.value}}</div>
+                    <div class="field rollable" data-path="attributes.IQ.value"data-otf='IQ'>{{data.attributes.IQ.value}}</div>
                     <div class="label">{{localize "GURPS.attributesIQNAME"}} ({{localize "GURPS.attributesIQ"}})</div>
                     <div class="points">[{{data.attributes.HT.points}}]</div>
-                    <div class="field rollable" data-path="attributes.HT.value">{{data.attributes.HT.value}}</div>
+                    <div class="field rollable" data-path="attributes.HT.value"data-otf='HT'>{{data.attributes.HT.value}}</div>
                     <div class="label">{{localize "GURPS.attributesHTNAME"}} ({{localize "GURPS.attributesHT"}})</div>
                     <hr>
                     <div class="points">[{{data.attributes.WILL.points}}]</div>
-                    <div class="field rollable" data-path="attributes.WILL.value">{{data.attributes.WILL.value}}</div>
+                    <div class="field rollable" data-path="attributes.WILL.value" data-otf='WILL'>{{data.attributes.WILL.value}}</div>
                     <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
                     <div class="points"></div>
-                    <div class="field noedit rollable" data-path="frightcheck">{{data.frightcheck}}</div>
+                    <div class="field noedit rollable" data-path="frightcheck" data-otf='Fright Check'>{{data.frightcheck}}</div>
                     <div class="label">Fright Check</div>
                     <hr>
                     <div class="points">[{{data.basicspeed.points}}]</div>
@@ -127,26 +127,26 @@
                     <div class="label">Basic Move</div>
                     <hr>
                     <div class="points">[{{data.attributes.PER.points}}]</div>
-                    <div class="field rollable" data-path="attributes.PER.value">{{data.attributes.PER.value}}</div>
+                    <div class="field rollable" data-path="attributes.PER.value" data-otf='PER'>{{data.attributes.PER.value}}</div>
                     <div class="label">{{localize "GURPS.attributesPERNAME"}} ({{localize "GURPS.attributesPER"}})</div>
                     <div class="points"></div>
-                    <div class="field noedit rollable" data-path="vision">{{data.vision}}</div>
+                    <div class="field noedit rollable" data-path="vision" data-otf='Vision'>{{data.vision}}</div>
                     <div class="label">Vision</div>
                     <div class="points"></div>
-                    <div class="field noedit rollable" data-path="hearing">{{data.hearing}}</div>
+                    <div class="field noedit rollable" data-path="hearing" data-otf='Hearing'>{{data.hearing}}</div>
                     <div class="label">Hearing</div>
                     <div class="points"></div>
-                    <div class="field noedit rollable" data-path="tastesmell">{{data.tastesmell}}</div>
+                    <div class="field noedit rollable" data-path="tastesmell" data-otf='Taste Smell'>{{data.tastesmell}}</div>
                     <div class="label">Taste &amp; Smell</div>
                     <div class="points"></div>
-                    <div class="field noedit rollable" data-path="touch">{{data.touch}}</div>
+                    <div class="field noedit rollable" data-path="touch" data-otf='Touch'>{{data.touch}}</div>
                     <div class="label">Touch</div>
                     <hr>
                     <div class="points"></div>
-                    <div class="field noedit">{{data.thrust}}</div>
+                    <div class="field noedit rollable" data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
                     <div class="label">Basic Thrust</div>
                     <div class="points"></div>
-                    <div class="field noedit">{{data.swing}}</div>
+                    <div class="field noedit rollable" data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
                     <div class="label">Basic Swing</div>
                 </div>
             </div>
@@ -164,13 +164,13 @@
                 <div class="enc current {{this.key}}" data-key="{{key}}"></div>
                 <div class="load current">{{this.weight}}</div>
                 <div class="move current">{{this.move}}</div>
-                <div class="dodge current rollable" data-path="dodge">{{this.dodge}}</div>
+                <div class="dodge current rollable" data-otf='Dodge' data-path="dodge">{{this.dodge}}</div>
                 {{else}}
                 <div class="encmarker "></div>
                 <div class="enc {{this.key}}" data-key="{{key}}"></div>
                 <div class="load ">{{this.weight}}</div>
                 <div class="move ">{{this.move}}</div>
-                <div class="dodge rollable" data-path="dodge">{{this.dodge}}</div>
+                <div class="dodge" data-path="dodge">{{this.dodge}}</div>
                 {{/if}}
                 {{/each}}
 
@@ -284,10 +284,10 @@
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
             </div>
             <div class="usage">{{this.mode}}</div>
-            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
             <div class="parry rollable" data-name="Parry">{{this.parry}}</div>
             <div class="block rollable" data-name="Block">{{this.block}}</div>
-            <div class="damage rollable" data-damage>{{this.damage}}</div>
+            <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
             <div class="reach">{{this.reach}}</div>
             <div class="st">{{this.st}}</div>
             <div></div>
@@ -316,14 +316,14 @@
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
             </div>
             <div class="usage">{{this.mode}}</div>
-            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}">{{this.level}}</div>
+            <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
             <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
                 {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
-            <div class="damage rollable" data-damage>{{this.damage}}</div>
+            <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
             <div class="range">{{this.range}}</div>
             <div class="rof">{{this.rof}}</div>
             <div class="shots">{{this.shots}}</div>
-            <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='for {{this.name}} Bulk'>{{this.bulk}}
+            <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'>{{this.bulk}}
             </div>
             <div class="rcl">{{this.rcl}}</div>
             <div class="st">{{this.st}}</div>
@@ -357,7 +357,7 @@
                 <div class="list_note satisfiedY"></div>
                 <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{key}}">{{{gurpslink this.notes @root}}}</div>
             </div>
-            <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
+            <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
             <div class="rsl satisfiedY">{{this.relativelevel}}</div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>
@@ -389,7 +389,7 @@
             <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
             <div class="time satisfiedY">{{this.casttime}}</div>
             <div class="duration satisfiedY">{{this.duration}}</div>
-            <div class="sl satisfiedY rollable" data-name="{{this.name}}">{{this.level}}</div>
+            <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
             <div class="rsl satisfiedY">{{this.difficulty}}</div>
             <div class="pts satisfiedY">{{this.points}}</div>
             <div class="ref satisfiedY pdflink">{{this.pageref}}</div>

@@ -1,3 +1,30 @@
+.simple_container .normal {
+  background-color: lightgreen;
+}
+
+.simple_container .tired,
+.simple_container .reeling {
+  background-color: #b8ffff;
+}
+
+.simple_container .collapse {
+  background-color: #ffcdd2;
+}
+
+.simple_container .check {
+  background-color: lightcoral;
+}
+
+.simple_container .unconscious,
+.simple_container .dead {
+  background-color: black;
+  color: white;
+}
+
+.simple_container .destroyed {
+  background-color: black;
+  color: lightcoral;
+}
 
 .simple_Ads label,
 .simple_Eqt label,
@@ -43,6 +70,10 @@
 
 .simple_lrg {
   font-size: 200%;
+}
+
+.simple_roll_label {
+  text-align: center;
 }
 
 .simple_ST-desc label,
@@ -103,7 +134,26 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+  border-radius: 5px;
+
 }
+
+.simple_container .gurpslink,
+.simple_container .glinkmod,
+.simple_container .rollable {
+  
+  border-top: 1px solid #CCCCCC;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #CCCCCC;
+  border-radius: 5px;
+  
+ }
 
 .simple_Shield {
   grid-area: Shield;
@@ -136,6 +186,7 @@
 .simple_Heart {
   grid-area: Heart;
 }
+
 .simple_Heart_inner {
   width: 100%;
   height: 100%;
@@ -183,11 +234,12 @@
   align-content: stretch;
   grid-template-rows: repeat(100, 1fr);
   grid-template-columns: 1.5fr 1fr 1fr;
-  text-align: center;
+  text-align: left;
   vertical-align: middle;
   font-size: 120%;
   gap: 10px 15px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Skills {
@@ -202,6 +254,7 @@
   font-size: 120%;
   gap: 10px 15px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Eqt {
@@ -216,6 +269,7 @@
   font-size: 120%;
   gap: 10px 15px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Ads {
@@ -230,6 +284,7 @@
   font-size: 120%;
   gap: 10px 20px;
   overflow-y: scroll;
+  padding: 0px 0px 0px 5px;
 }
 
 .simple_Portrait {
@@ -246,7 +301,7 @@
   align-content: stretch;
   grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-template-columns: 1fr;
-  padding: 0px 0px 0px 10px;
+  padding: 0px 0px 0px 5px;
   overflow-y: scroll;
 }
 
@@ -255,6 +310,70 @@
   max-height: 100%;
   vertical-align: middle;
   background-color: rgb(255, 255, 175);
+}
+
+.simple_input:hover {
+  cursor: pointer;
+  text-decoration: none;
+  background-color: rgb(255, 255, 128) !important;
+  color: black;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
+  border-radius: 5px;
+  overflow: visible;
+  z-index: 99;
+  margin: 3px;
+  padding: 10px;
+}
+
+.simple_icon:hover {
+  cursor: pointer;
+  text-decoration: none;
+  background-color: rgb(255, 255, 128) !important;
+  color: black;
+  padding: 0px 3px 0px 3px;
+  border-top: 2px solid #CCCCCC;
+  border-right: 2px solid #333333;
+  border-bottom: 2px solid #333333;
+  border-left: 2px solid #CCCCCC;
+  border-radius: 5px;
+  margin: -2px -4px 0px -2px;
+  overflow: visible;
+  z-index: 99;
+}
+
+.simple_input:active {
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  background-color: rgb(255, 255, 128) !important;
+  border-bottom: 2px solid #CCCCCC;
+  border-left: 2px solid #333333;
+  border-top: 2px solid #333333;
+  border-right: 2px solid #CCCCCC;
+  border-radius: 8px;
+  overflow: visible;
+  z-index: 99;
+  margin: 5px;
+  padding: 10px;
+ }
+
+.simple_icon:active {
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  background-color: rgb(255, 255, 128) !important;
+  padding: 0px 3px 0px 3px;
+  border-bottom: 2px solid #CCCCCC;
+  border-left: 2px solid #333333;
+  border-top: 2px solid #333333;
+  border-right: 2px solid #CCCCCC;
+  border-radius: 8px;
+  margin: -2px -5px 0px -3px;
+  overflow: visible;
+  z-index: 99
 }
 
 .simple_input {
@@ -268,32 +387,4 @@
   background-color: rgb(255, 255, 175);
 }
 
-
-.simple_container .normal {
-  background-color: lightgreen;
-}
-
-.simple_container .tired,
-.simple_container .reeling {
-  background-color: #b8ffff;
-}
-
-.simple_container .collapse {
-  background-color: #ffcdd2;
-}
-
-.simple_container .check {
-  background-color: lightcoral;
-}
-
-.simple_container .unconscious,
-.simple_container .dead {
-  background-color: black;
-  color: white;
-}
-
-.simple_container .destroyed {
-  background-color: black;
-  color: lightcoral;
-}
 

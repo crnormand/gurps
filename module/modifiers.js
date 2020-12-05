@@ -200,20 +200,17 @@ export class ModifierBucket extends Application {
 	}
 
 	async _onClickRoll(event) {
-		event.preventDefault();
-		game.GURPS.onRoll(event, this.actor);
+		game.GURPS.handleRoll(event, this.actor);
 	}
 
 	async _onClickGurpslink(event) {
-		event.preventDefault();
-		game.GURPS.onGurpslink(event, game.GURPS.LastActor);
+		game.GURPS.handleGurpslink(event, game.GURPS.LastActor);
 	}
 
 	async _onClickGmod(event) {
 		let element = event.currentTarget;
-		event.preventDefault();
 		let desc = element.dataset.name;
-		game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
+		game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
 	}
 
 	async _onClickTrash(event) {
@@ -329,8 +326,9 @@ ${OtherMods}`;
 		let stack = this.modifierStack;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
-			let m = parseInt(oldmod.mod) + parseInt(mod);
+			let m = oldmod.modint + parseInt(mod);
 			oldmod.mod = displayMod(m);
+      oldmod.modint = m;
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));
 		}

@@ -72,6 +72,13 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
     html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
 
+    html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
+    html.find(".glinkmod").contextmenu(this._onRightClickGurpslink.bind(this));
+    html.find("[data-otf]").contextmenu(this._onRightClickOtf.bind(this));
+    html.find(".gmod").contextmenu(this._onRightClickGmod.bind(this));
+    html.find(".pdflink").contextmenu(this._onRightClickPdf.bind(this));
+
+
 		html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
     html.find(".enc").click(this._onClickEnc.bind(this));
 
@@ -359,18 +366,11 @@ async handleDragFor(event, dragData, type, cls) {
     const original = this.actor.getFlag("core", "sheetClass") || Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.default).id;
     console.log("original: " + original)
 
-    if (event.shiftKey) {   // Hold down the shift key to cycle through the "other" sheets
-	    let sheets = Object.values(CONFIG.Actor.sheetClasses["character"]).filter(s => s.id.startsWith("gurps") && !s.id.includes("Editor") && !s.id.includes("Combat"));
-      while (sheets[0].id !== original) {   // Find the current one, treat like a ring
-	      let s = sheets[0];
-        sheets.shift(); 
-        sheets.push(s);
-      }
-      sheets.shift(); // grab the next one
-      newSheet = sheets[0].id;
-    }
-    else   
-      if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
+   if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
+   if (event.shiftKey)   // Hold down the shift key for Simplified
+	    newSheet = "gurps.GurpsActorSimplifiedSheet";
+   if (event.ctrlKey)   // Hold down the shift key for Simplified
+      newSheet = "gurps.GurpsActorNpcSheet";
 
     await this.actor.sheet.close()
 
@@ -390,25 +390,74 @@ async handleDragFor(event, dragData, type, cls) {
     this.actor.sheet.render(true)
   }
 
+  async _onRightClickGurpslink(event) {
+    event.preventDefault();
+    let el = event.currentTarget;
+    let action = el.dataset.action;    
+    if (!!action) {
+      action = JSON.parse(atob(action));
+      this.whisperOtfToOwner(action.orig, event);
+	  }
+	}
+	
+	async _onRightClickPdf(event) {
+    event.preventDefault();
+    let el = event.currentTarget;
+ 		this.whisperOtfToOwner("PDF:" + el.innerText, event);
+	}
+	
+	async _onRightClickGmod(event) {
+    event.preventDefault();
+    let el = event.currentTarget;
+    let n = el.dataset.name;		
+    let t = el.innerText;
+    this.whisperOtfToOwner(t + " " + n, event);
+	}
+
+  async _onRightClickOtf(event) {
+	  event.preventDefault();
+    this.whisperOtfToOwner(event.currentTarget.dataset.otf, event);
+  }
+
+  async whisperOtfToOwner(otf, event) {
+	  if (!game.user.isGM) return;
+    if (!!otf) {
+      otf =  otf.replace(/ \(\)/g, "");  // sent as "name (mode)", and mode is empty (only necessary for attacks)
+      let msgData = {
+        content: "[" + otf + "]",
+        user: game.user._id,
+      }
+	    if (event.shiftKey || event.ctrlKey || event.altKey) {
+		    msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+		  } else {
+        msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
+  	    let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM);
+        if (users.length == 0) {
+  	      ui.notifications.warn(`There is no one to whisper to.  No one owns '${this.actor.name}.'`);
+          return;
+        }
+        msgData.whisper = users.map(it => it._id);
+      }
+      ChatMessage.create(msgData)
+	  }
+  }
+
   async _onClickPdf(event) {
     game.GURPS.handleOnPdf(event);
   }
 
   async _onClickRoll(event) {
-    event.preventDefault();
-    game.GURPS.onRoll(event, this.actor);
+    game.GURPS.handleRoll(event, this.actor);
   }
 
   async _onClickGurpslink(event) {
-    event.preventDefault();
-    game.GURPS.onGurpslink(event, this.actor);
+    game.GURPS.handleGurpslink(event, this.actor);
   }
 
   async _onClickGmod(event) {
     let element = event.currentTarget;
-    event.preventDefault();
     let desc = element.dataset.name;
-    game.GURPS.onGurpslink(event, this.actor, desc);
+    game.GURPS.handleGurpslink(event, this.actor, desc);
   }
 
   async _onClickEnc(ev) {
