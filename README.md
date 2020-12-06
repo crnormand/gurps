@@ -1,17 +1,19 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
 
-# Current Release Version 0.8.0
-**NOTE: If you upgrade to v0.8.0, you MUST delete all of your actors and restart Foundry**
+# Current Release Version 0.8.1
 
 To install the latest release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
-
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ## If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
+- 0.8.2
+
+
+### History
 - 0.8.1
     - Basic Speed no longer truncates
     - Major upgrade to Apply Damage Dialog!
@@ -31,8 +33,7 @@ This is what we are currently working on:
     - Support [Fright Check], [Vision], [Hearing], [Touch], [Taste], [Smell] On-the-Fly rolls.
     - Right Click on Attack/Skill/Spell level & On-the-Fly formula to whisper to owner.
 		
-
-### History
+**NOTE: If you upgrade to v0.8.0, you MUST delete all of your actors and restart Foundry**
 - 0.8.0
     - Enhanced Drag and Drop Damage Dialog.
     - Simplified (convention one-shot) character sheet
