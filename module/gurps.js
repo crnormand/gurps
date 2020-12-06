@@ -578,7 +578,7 @@ async function handleRoll(event, actor) {
 		thing = text.replace(/(.*?)\(.*\)/g, "$1");
 		opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
 		if (opt.text === text) opt.text = "";
-		if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key);
+		if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key);   // During the roll, we may want to extract something from the object
 		formula = "3d6";
 		let t = element.innerText;
 		if (!!t) {
@@ -593,7 +593,7 @@ async function handleRoll(event, actor) {
 		let formula = element.innerText.trim();
 		let dtype = ''
 
-		let i = formula.indexOf(' ');
+		let i = formula.lastIndexOf(' ');
 		if (i > 0) {
 			dtype = formula.substr(i + 1).trim();
 			formula = formula.substring(0, i);
@@ -696,7 +696,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		if (margin > 0) rdesc += "made it by " + margin;
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</span></div>";
-		if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {		// Additional ranged info
+		if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {		// if the attached obj (see handleRoll()) as Recoil information, do the additional math
 			let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl))
 			if (rofrcl > 0) rdesc += `<div style='text-align: start'><span class='fa fa-bullseye'/>&nbsp;<i style='font-size:100%; font-weight: normal'>Total possible hits due to RoF/Rcl: </i><b style='font-size: 120%;'>${rofrcl + 1}</b></div>`;
 		}
