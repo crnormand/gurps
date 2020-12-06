@@ -32,8 +32,12 @@
             {{/each}}
           </div>
           <hr /> <!-- Doesn't do much except add some space -->
-          <button id='random-location' style='font-family: "Font Awesome 5 Free", inherit'><i
-              class='fa fa-dice'>&nbsp;Random</i></button>
+          <button id='random-location'>
+            <i class='fa fa-dice'><span
+                style='font-family: "Font Awesome 5 Free", Signika, sans-serif; font-weight:400'>&nbsp;
+                Random
+              </span></i>
+          </button>
           <hr /> <!-- Doesn't do much except add some space -->
           <div class='gurps-3col gurps-radio-col'>
             <div><label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury</label></div>
@@ -150,7 +154,8 @@
 
             <div>INJURY</div>
             <div><span name='result-injury'>{{CALC.injury}}</span></div>
-            <div id='result-injury-total'><span>(<span name='result-penetrating'>{{calculating.penetratingDamage}}</span> × <span
+            <div id='result-injury-total'><span>(<span
+                  name='result-penetrating'>{{calculating.penetratingDamage}}</span> × <span
                   name='result-totalmod'>{{CALC.totalWoundingModifier}}</span>)</span></div>
           </div>
 
