@@ -133,7 +133,7 @@ GURPS.damageTypeMap = {
 };	
 
 
-GURPS.parseDmg = (dmg) => { return dmg.replace(/^(\d+)d([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, "$1~$2~$3~$4~$5~$6") };
+GURPS.parseDmg = (dmg) => { return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, "$1~$2~$3~$4~$5~$6") };		// Allow opt '6' after 1d
 
 
 GURPS.attributepaths = {
@@ -616,7 +616,7 @@ async function handleRoll(event, actor) {
 			t = t.trim();
 			if (!!t)
 				target = parseInt(t);
-			if (Number.isNaN(target)) target = 0;		// Can't roll against a non-integer
+			if (isNaN(target)) target = 0;		// Can't roll against a non-integer
 		}
 	}
 	if ("damage" in element.dataset) {

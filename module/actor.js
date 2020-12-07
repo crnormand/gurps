@@ -721,7 +721,7 @@ export class GurpsActor extends Actor {
 		if (range.length === 0) return []
 
 		for (let i = 0; i < range.length; i++) {
-			if (typeof range[i] === 'undefined' || Number.isNaN(range[i]))
+			if (typeof range[i] === 'undefined' || isNaN(range[i]))
 				return []
 		}
 
