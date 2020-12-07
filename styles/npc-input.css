@@ -39,14 +39,14 @@
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1.5fr 1.5fr 0.5fr 1fr 1fr 1fr 1fr;
   grid-template-rows: 4.5em 9.75em 2fr 2fr 2em;
   gap: 5px 5px;
   grid-template-areas:
     "top top top top top top top top"
     "attr attr notes notes notes notes notes notes"
-    "traits traits traits traits skills skills skills skills"
     "melee melee melee ranged ranged ranged ranged ranged"
+    "traits traits traits traits skills skills skills skills"
     ". . . create create . . .";
 }
 
@@ -54,14 +54,14 @@
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 1fr 1.7fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 3em 9.75em 2fr 2fr;
+  grid-template-columns: 1fr 1.7fr 1.5fr 0.5fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 3em 9.75em minmax(1fr, auto) minmax(1fr, auto);
   gap: 5px 5px;
   grid-template-areas:
     "top top top top top top top top"
     "attr attr notes notes notes notes notes notes"
-    "traits traits traits traits skills skills skills skills"
     "melee melee melee ranged ranged ranged ranged ranged"
+    "traits traits traits traits skills skills skills skills"
 }
 
 .npc-input-create { 
