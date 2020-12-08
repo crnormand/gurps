@@ -2040,8 +2040,11 @@ body {
 .gurps-group aside {
   font-size: smaller;
   font-style: italic;
-  margin-top: -0.5em;
   margin-bottom: 0.5em;
+}
+
+.gurps-group h4 + aside {
+  margin-top: -0.5em;
 }
 
 .gurps-group .grid {
@@ -2096,6 +2099,8 @@ body {
 .gurps-radio-col>*:nth-child(3n+3) {
   text-align: end;
   padding-right: 0.5em;
+  flex-flow: nowrap;
+  justify-content: flex-end;
 }
 
 .gurps-radio-col>*:nth-child(3n+2) {
@@ -2206,4 +2211,59 @@ ul#result-effects li {
 [name=result-effect] aside {
   font-style: normal;
   margin: 0;
+}
+
+#wound-modifier-table aside {
+  text-align: end;
+}
+
+#wound-modifier-table .skull-eye-wound-modifiers [name=burn],
+#wound-modifier-table .skull-eye-wound-modifiers [name=cor],
+#wound-modifier-table .skull-eye-wound-modifiers [name=cr],
+#wound-modifier-table .skull-eye-wound-modifiers [name=cut],
+#wound-modifier-table .skull-eye-wound-modifiers [name=fat],
+#wound-modifier-table .skull-eye-wound-modifiers [name=imp],
+#wound-modifier-table .skull-eye-wound-modifiers [name=pi-],
+#wound-modifier-table .skull-eye-wound-modifiers [name=pi],
+#wound-modifier-table .skull-eye-wound-modifiers [name='pi+'],
+#wound-modifier-table .skull-eye-wound-modifiers [name='pi++'],
+#wound-modifier-table .extremity-wound-modifiers [name=imp],
+#wound-modifier-table .extremity-wound-modifiers [name='pi+'],
+#wound-modifier-table .extremity-wound-modifiers [name='pi++'],
+#wound-modifier-table .neck-wound-modifiers [name=cr],
+#wound-modifier-table .neck-wound-modifiers [name=cut],
+#wound-modifier-table .neck-wound-modifiers [name=cor],
+#wound-modifier-table .face-wound-modifiers [name=cor],
+#wound-modifier-table .vitals-wound-modifiers [name=imp],
+#wound-modifier-table .vitals-wound-modifiers [name=pi-],
+#wound-modifier-table .vitals-wound-modifiers [name=pi],
+#wound-modifier-table .vitals-wound-modifiers [name='pi+'],
+#wound-modifier-table .vitals-wound-modifiers [name='pi++'] {
+  color: darkred;
+}
+
+#wound-modifier-table .skull-eye-wound-modifiers [name=burn]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name=cor]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name=cr]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name=cut]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name=fat]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name=imp]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name=pi-]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name=pi]:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name='pi+']:after,
+#wound-modifier-table .skull-eye-wound-modifiers [name='pi++']:after,
+#wound-modifier-table .extremity-wound-modifiers [name=imp]:after,
+#wound-modifier-table .extremity-wound-modifiers [name=imp]:after,
+#wound-modifier-table .extremity-wound-modifiers [name='pi+']:after,
+#wound-modifier-table .extremity-wound-modifiers [name='pi++']:after,
+#wound-modifier-table .neck-wound-modifiers [name=cr]:after,
+#wound-modifier-table .neck-wound-modifiers [name=cut]:after,
+#wound-modifier-table .neck-wound-modifiers [name=cor]:after,
+#wound-modifier-table .face-wound-modifiers [name=cor]:after,
+#wound-modifier-table .vitals-wound-modifiers [name=imp]:after,
+#wound-modifier-table .vitals-wound-modifiers [name=pi-]:after,
+#wound-modifier-table .vitals-wound-modifiers [name=pi]:after,
+#wound-modifier-table .vitals-wound-modifiers [name='pi+']:after,
+#wound-modifier-table .vitals-wound-modifiers [name='pi++']:after {
+  content: '*'
 }

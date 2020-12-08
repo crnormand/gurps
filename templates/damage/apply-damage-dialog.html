@@ -52,17 +52,99 @@
 
         <div class='gurps-group'>
           <h4>Type and Wounding Modifiers</h4>
-          <div class='gurps-3col gurps-radio-col'>
-            <header>Damage Type</header>
-            <header>Abbrev</header>
-            <header>Modifier</header>
-            {{#each woundingModifiers}}
-            <div><label><input type='radio' name='woundmodifier' value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+          <section id='wound-modifier-table'>
+            <div class='tab default-wound-modifiers' data-group='wound-modifiers' data-tab='default-wound-modifiers'>
+              <div class='gurps-3col gurps-radio-col'>
+                <header>Damage Type</header>
+                <header>Abbrev</header>
+                <header>Modifier</header>
+                {{#each CALC.defaultWoundModifiers}}
+                <div><label><input type='radio' name='woundmodifier'
+                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+                </div>
+                <div>{{@key}}</div>
+                <div name='{{@key}}'>×{{this.multiplier}}</div>
+                {{/each}}
+              </div>
             </div>
-            <div>{{@key}}</div>
-            <div>×{{this.multiplier}}</div>
-            {{/each}}
-          </div>
+            <div class='tab vitals-wound-modifiers' data-group='wound-modifiers' data-tab='vitals-wound-modifiers'>
+              <div class='gurps-3col gurps-radio-col'>
+                <header>Damage Type</header>
+                <header>Abbrev</header>
+                <header>Modifier</header>
+                {{#each CALC.vitalsWoundModifiers}}
+                <div><label><input type='radio' name='_woundmodifier'
+                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+                </div>
+                <div>{{@key}}</div>
+                <div name='{{@key}}'>×{{this.multiplier}}</div>
+                {{/each}}
+              </div>
+              <aside>* - Adjusted for hit location.</aside>
+            </div>
+            <div class='tab skull-eye-wound-modifiers' data-group='wound-modifiers'
+              data-tab='skull-eye-wound-modifiers'>
+              <div class='gurps-3col gurps-radio-col'>
+                <header>Damage Type</header>
+                <header>Abbrev</header>
+                <header>Modifier</header>
+                {{#each CALC.skullEyeWoundModifiers}}
+                <div><label><input type='radio' name='_woundmodifier'
+                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+                </div>
+                <div>{{@key}}</div>
+                <div name='{{@key}}'>×{{this.multiplier}}</div>
+                {{/each}}
+              </div>
+              <aside>* - Adjusted for hit location.</aside>
+            </div>
+            <div class='tab face-wound-modifiers' data-group='wound-modifiers' data-tab='face-wound-modifiers'>
+              <div class='gurps-3col gurps-radio-col'>
+                <header>Damage Type</header>
+                <header>Abbrev</header>
+                <header>Modifier</header>
+                {{#each CALC.faceWoundModifiers}}
+                <div><label><input type='radio' name='_woundmodifier'
+                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+                </div>
+                <div>{{@key}}</div>
+                <div name='{{@key}}'>×{{this.multiplier}}</div>
+                {{/each}}
+              </div>
+              <aside>* - Adjusted for hit location.</aside>
+            </div>
+            <div class='tab neck-wound-modifiers' data-group='wound-modifiers' data-tab='neck-wound-modifiers'>
+              <div class='gurps-3col gurps-radio-col'>
+                <header>Damage Type</header>
+                <header>Abbrev</header>
+                <header>Modifier</header>
+                {{#each CALC.neckWoundModifiers}}
+                <div><label><input type='radio' name='_woundmodifier'
+                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+                </div>
+                <div>{{@key}}</div>
+                <div name='{{@key}}'>×{{this.multiplier}}</div>
+                {{/each}}
+              </div>
+              <aside>* - Adjusted for hit location.</aside>
+            </div>
+            <div class='tab extremity-wound-modifiers' data-group='wound-modifiers'
+              data-tab='extremity-wound-modifiers'>
+              <div class='gurps-3col gurps-radio-col'>
+                <header>Damage Type</header>
+                <header>Abbrev</header>
+                <header>Modifier</header>
+                {{#each CALC.extremityWoundModifiers}}
+                <div><label><input type='radio' name='_woundmodifier'
+                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+                </div>
+                <div>{{@key}}</div>
+                <div name='{{@key}}'>×{{this.multiplier}}</div>
+                {{/each}}
+              </div>
+              <aside>* - Adjusted for hit location.</aside>
+            </div>
+          </section>
           <hr /> <!-- Doesn't do much except add some space -->
           <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No modifier</input></label>
           <div class='grid grid-2col flex-between'>
