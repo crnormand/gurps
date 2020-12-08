@@ -234,7 +234,7 @@
     "dx dx-val will will-val mov mov-val"
     "iq iq-val per per-val sm sm-val"
     "ht ht-val fp fp-val dr dr-val"
-    ". . . dodge dodge dodge-val";
+    ". . parry parry-val dodge dodge-val";
   grid-area: attr;
   font-size: 110%;
 }
@@ -311,6 +311,10 @@
 
 .npc-input-dodge-val { grid-area: dodge-val; }
 
+.npc-input-parry { grid-area: parry; }
+
+.npc-input-parry-val { grid-area: parry-val; }
+
 .npc-input-dr { grid-area: dr; }
 
 .npc-input-dr-val { grid-area: dr-val; }
@@ -320,6 +324,13 @@
   align-self:center;
 }
 
+.npc-input-sm2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 2em;
+  padding: 1px !important;
+}
 
 /* Had to focefully overwrite the input css from elsewhere */
 .npc-input-2 {

@@ -211,7 +211,9 @@ GURPS.PARSELINK_MAPPINGS = {
   "Taste" : "tastesmell",
   "Smell" : "tastesmell",
   "TOUCH" : "touch", 
-  "Touch" : "touch"
+  "Touch" : "touch",
+	"Parry" : "parry",
+	"PARRY" : "parry"
 }
 
 

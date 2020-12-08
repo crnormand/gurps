@@ -34,6 +34,7 @@
     "GURPS.swing" : "Basic Swing",
     "GURPS.move" : "Move",
     "GURPS.dodge" : "Dodge",
+    "GURPS.dataparry" : "Parry",
 
 		"GURPS.SkillDXE": "DX/E",
 		"GURPS.SkillDXA": "DX/A",
