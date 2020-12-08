@@ -47,7 +47,7 @@
     "attr notes notes"
     "melee melee ranged"
     "traits traits skills"
-    ". . create";
+    "import import create";
 }
 
 .npc-sheet-grid-container {
@@ -69,6 +69,13 @@
 	align-self:center;
 	padding: 5px 50px 5px 50px;
 }
+
+.npc-input-import { 
+	grid-area: import;
+	align-self:center;
+	padding: 5px 50px 5px 50px;
+}
+
 
 .npc-input-top {
   display: grid;
