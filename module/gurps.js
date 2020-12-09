@@ -105,6 +105,37 @@ GURPS.woundModifiers = {
 	"dmg": { multiplier: 1, label: 'Damage' }
 };
 
+GURPS.damageTypeMap = {
+	"burn":"burn",
+	"cor":"cor",
+	"cr":"cr",
+	"cut":"cut",
+	"fat":"fat",
+	"imp":"imp",
+	"pi-":"pi-",
+	"pi":"pi",
+	"pi+":"pi+",
+	"pi++":"pi++",
+	"toxic": "tox",
+	"burning":"burn",
+	"corrosion":"cor",
+	"corrosive":"cor",
+	"crush":"cr",
+	"crushing":"cr",
+	"cutting":"cut",
+	"fatigue":"fat",
+	"impaling":"imp",
+	"small piercing":"pi-",
+	"piercing":"pi",
+	"large piercing":"pi+",
+	"huge piercing":"pi++",
+	"toxic": "tox",
+};	
+
+
+GURPS.parseDmg = (dmg) => { return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, "$1~$2~$3~$4~$5~$6") };		// Allow opt '6' after 1d
+
+
 GURPS.attributepaths = {
 	"ST": "attributes.ST.value",
 	"DX": "attributes.DX.value",
@@ -180,7 +211,9 @@ GURPS.PARSELINK_MAPPINGS = {
   "Taste" : "tastesmell",
   "Smell" : "tastesmell",
   "TOUCH" : "touch", 
-  "Touch" : "touch"
+  "Touch" : "touch",
+	"Parry" : "parry",
+	"PARRY" : "parry"
 }
 
 
