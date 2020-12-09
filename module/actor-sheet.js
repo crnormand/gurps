@@ -695,7 +695,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
     let element = ev.currentTarget;
     let val = element.dataset.value;
     let parsed = parselink(val);
-    GURPS.performAction(parsed.action, this.actor);
+    GURPS.performAction(parsed.action, this.actor, ev);
   }
 }
 
@@ -729,7 +729,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
     let element = ev.currentTarget;
     let val = element.dataset.value;
     let parsed = parselink(val);
-    GURPS.performAction(parsed.action, this.actor);
+    GURPS.performAction(parsed.action, this.actor, ev);
   }
 }
 

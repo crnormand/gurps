@@ -1196,13 +1196,13 @@ Hooks.once("init", async function () {
 	});
 	
 	// Look for blind messages with .message-results and remove them
-	Hooks.on("renderChatMessage", (log, content, data) => {
+/*	Hooks.on("renderChatMessage", (log, content, data) => {
     if (!!data.message.blind) {
 			if (data.author?.isSelf && !data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
 				$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
 			}
 		}
-	});
+	});  */
 
 
 	ui.modifierbucket = GURPS.ModifierBucket;
