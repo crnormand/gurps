@@ -451,7 +451,7 @@ function trim(s) {
 GURPS.trim = trim;
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-function performAction(action, actor) {
+function performAction(action, actor, event) {
 	if (!action) return;
 	let actordata = actor?.data;
 	let prefix = "";
@@ -460,7 +460,8 @@ function performAction(action, actor) {
 	let formula = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
 	let opt = {
-		blind: action.blindroll
+		blind: action.blindroll,
+		event: event
 	};		// Ok, I am slowly learning this Javascrip thing ;-)	
 
 	if (action.type === "modifier") {
@@ -493,14 +494,14 @@ function performAction(action, actor) {
 		formula = d6ify(action.formula);
 	}
 	if (action.type === "damage") {
-		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype);
+		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event);
 		return;
 	}
 	if (action.type === "deriveddamage")
 		if (!!actor) {
 			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
 			formula = df + action.formula;
-			GURPS.damageChat.create(actor || game.user, formula, action.damagetype, action.derivedformula + action.formula);
+			GURPS.damageChat.create(actor || game.user, formula, action.damagetype, event, action.derivedformula + action.formula);
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
@@ -596,7 +597,7 @@ async function handleRoll(event, actor) {
 	let element = event.currentTarget;
 	let prefix = "";
 	let thing = "";
-	let opt = {};
+	let opt = { event: event };
 	let target = 0;		// -1 == damage roll, target = 0 is NO ROLL.
 
 	if ("path" in element.dataset) {
@@ -631,7 +632,7 @@ async function handleRoll(event, actor) {
 			dtype = formula.substr(i + 1).trim();
 			formula = formula.substring(0, i);
 		}
-		GURPS.damageChat.create(actor, formula, dtype)
+		GURPS.damageChat.create(actor, formula, dtype, event)
 		return
 	}
 	if ("roll" in element.dataset) {
@@ -761,23 +762,28 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	let messageData = {
 		user: game.user._id,
 		speaker: speaker,
-		content: chatcontent,
+		content: "<div>" + chatcontent + "</div>", // wrap in HTML to trick Foundry
 		type: CONST.CHAT_MESSAGE_TYPES.OOC,
 		roll: roll
 	};
+	let whoCanSeeDice = null;
+	if (optionalArgs.event.shiftKey) {
+		whoCanSeeDice = [game.user._id];
+		messageData.whisper = [game.user._id];
+	}
 	if (!!optionalArgs.blind) {
 		messageData.whisper = ChatMessage.getWhisperRecipients("GM");
 		messageData.blind = true;		
 	}
 
-	if (niceDice) {
-		game.dice3d.showForRoll(roll, game.user, true, null, messageData.blind).then((displayed) => { 					
+/*	if (niceDice) {
+		game.dice3d.showForRoll(roll, game.user, true, whoCanSeeDice, messageData.blind).then((displayed) => { 					
 			CONFIG.ChatMessage.entityClass.create(messageData, {});
 		});
-	} else {
+	} else { */
 		messageData.sound = CONFIG.sounds.dice;
 		CONFIG.ChatMessage.entityClass.create(messageData, {});
-	}
+//	}
 
 }
 GURPS.doRoll = doRoll;
@@ -878,7 +884,7 @@ function handleGurpslink(event, actor, desc) {
 		action = JSON.parse(atob(action));
 	else
 		action = parselink(element.innerText, desc, false).action;
-	this.performAction(action, actor);
+	this.performAction(action, actor, event);
 }
 GURPS.handleGurpslink = handleGurpslink;
 
