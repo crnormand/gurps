@@ -13,6 +13,7 @@ This is what we are currently working on:
     - Rearrange npc sheet (attacks over traits/skills)
     - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
     - Adding Stat block importing/parsing
+    - Pressing SHIFT while making a roll makes it private (so GM can "roll behind the screen")
 
 ### History
 - 0.8.1
