@@ -11,7 +11,8 @@ To install the latest release, use this manifest URL:
 This is what we are currently working on:
 - 0.8.2
     - Rearrange npc sheet (attacks over traits/skills)
-    - Added notes for Melee, Ranged, Skills and Traits
+    - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
+    - Adding Stat block importing/parsing
 
 ### History
 - 0.8.1
