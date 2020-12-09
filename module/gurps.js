@@ -763,7 +763,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		user: game.user._id,
 		speaker: speaker,
 		content: "<div>" + chatcontent + "</div>", // wrap in HTML to trick Foundry
-		type: CONST.CHAT_MESSAGE_TYPES.OOC,
+		type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 		roll: roll
 	};
 	let whoCanSeeDice = null;
