@@ -1,0 +1,12 @@
+<div class='gurps-chat-message'>
+    <div class='prefix'>{{attacker}} hits {{defender}} for {{basicDamage}} points of {{type}} damage.</div>
+    <div class='collapsible-wrapper'>
+        <input id='collapsible-{{id}}' class='toggle' type='checkbox' checked>
+        <label for='collapsible-{{id}}' class='lbl-toggle'>Show the math</label>
+        <div class='gurps-group collapsible-content'>
+            <div class='grid gurps-3col results-table content-inner'>
+                {{{resultsTable}}}
+            </div>
+        </div>
+    </div>
+</div>
