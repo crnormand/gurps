@@ -2289,19 +2289,33 @@ ul#result-effects li {
   overflow:hidden;
   }
 
-.collapsible-wrapper .lbl-toggle {
+  /* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
+    <div class='collapsible-wrapper'>
+        <input id='collapsible' class='toggle offscreen-only' type='checkbox' checked>
+        <label for='collapsible' class='label-toggle'>Show the math</label>
+        <div class='collapsible-content'>
+            <div class='content-inner'>
+                {{{resultsTable}}}
+            </div>
+        </div>
+    </div> 
+  */
+.collapsible-wrapper .label-toggle {
   display: block;
   font-size: x-small;
-  background-color: rgba(0, 0, 0, 0.10);
+  font-family: 'Font Awesome 5 Free', Verdana, sans-serif;
+  padding: 0.25em;
+  background-color: black;
+  margin-top: 4px;
+  color: white;
   cursor: pointer;
   border-radius: 3px;
   text-transform: uppercase;
-  text-align: center;
-  transition: all 0.25s ease-out;
+  text-align: left;
 }
 
-.collapsible-wrapper .lbl-toggle:hover {
-  background-color: rgb(0, 0, 0, 0.3);
+.collapsible-wrapper .label-toggle:hover {
+  background-color: rgb(0, 0, 0, 0.7);
 }
 
 .collapsible-wrapper .collapsible-content {
@@ -2310,6 +2324,20 @@ ul#result-effects li {
   transition: max-height .25s ease-in-out;
 }
 
-.toggle:checked + .lbl-toggle + .collapsible-content {
+.toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
+}
+
+.collapsible-wrapper .label-toggle:after {
+  font: normal normal normal 12px/1 FontAwesome;
+  content: '\f078';
+  color: white;
+  float: right;
+}
+
+.toggle:checked + .label-toggle:after {
+  font: normal normal normal 12px/1 FontAwesome;
+  content: '\f077';
+  color: lightgray;
+  float: right;
 }

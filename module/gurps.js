@@ -164,23 +164,23 @@ GURPS.skillTypes = {
 }
 
 GURPS.PARSELINK_MAPPINGS = {
-  "Vision" : "vision",
-  "VISION" : "vision",
-  "FRIGHTCHECK": "frightcheck",
-  "Frightcheck" : "frightcheck",
-  "Fright check" : "frightcheck",
-  "Fright Check" : "frightcheck",
-  "Hearing" : "hearing",
-  "HEARING" : "hearing",
-  "TASTESMELL" : "tastesmell",
-  "Taste Smell" : "tastesmell",
-  "TASTE SMELL" : "tastesmell",
-  "TASTE" : "tastesmell",
-  "SMELL" : "tastesmell",
-  "Taste" : "tastesmell",
-  "Smell" : "tastesmell",
-  "TOUCH" : "touch", 
-  "Touch" : "touch"
+	"Vision": "vision",
+	"VISION": "vision",
+	"FRIGHTCHECK": "frightcheck",
+	"Frightcheck": "frightcheck",
+	"Fright check": "frightcheck",
+	"Fright Check": "frightcheck",
+	"Hearing": "hearing",
+	"HEARING": "hearing",
+	"TASTESMELL": "tastesmell",
+	"Taste Smell": "tastesmell",
+	"TASTE SMELL": "tastesmell",
+	"TASTE": "tastesmell",
+	"SMELL": "tastesmell",
+	"Taste": "tastesmell",
+	"Smell": "tastesmell",
+	"TOUCH": "touch",
+	"Touch": "touch"
 }
 
 
@@ -446,7 +446,7 @@ function performAction(action, actor) {
 			if (!!action.mod)
 				targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
 			else if (!!action.desc)
-			  opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ")</span>";
+				opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
 	if (action.type === "selfcontrol") {
@@ -522,15 +522,15 @@ function performAction(action, actor) {
 			thing = "Dodge";
 		} else
 			ui.notifications.warn("You must have a character selected");
-			
-  if (action.type === "mapped")
-    if (!!actor) {
-      target = actordata.data[action.path];
-      formula = "3d6";
-      thing = action.desc;
-    } else
-      ui.notifications.warn("You must have a character selected");
-			
+
+	if (action.type === "mapped")
+		if (!!actor) {
+			target = actordata.data[action.path];
+			formula = "3d6";
+			thing = action.desc;
+		} else
+			ui.notifications.warn("You must have a character selected");
+
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
@@ -545,7 +545,7 @@ function findSkillSpell(actor, sname) {
 GURPS.findSkillSpell = findSkillSpell;
 
 function findAttack(actor, sname) {
-	sname = sname.split("*").join(".*").replace(/\(/g, "\\(").replace(/\)/g,"\\)");  // Make string into a RegEx pattern
+	sname = sname.split("*").join(".*").replace(/\(/g, "\\(").replace(/\)/g, "\\)");  // Make string into a RegEx pattern
 	let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
 	if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? " (" + a.mode + ")" : "")).match(sname));
 	return t;
@@ -681,7 +681,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		let isCritFailure = (rtotal >= 18) || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0);
 
 		let margin = finaltarget - rtotal;
-		
+
 		if (isCritSuccess)
 			results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 130%;'><b>Critical Success!</b></span> ";
 		else if (isCritFailure)
@@ -734,11 +734,11 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	};
 	if (!!optionalArgs.blind) {
 		messageData.whisper = ChatMessage.getWhisperRecipients("GM");
-		messageData.blind = true;		
+		messageData.blind = true;
 	}
 
 	if (niceDice) {
-		game.dice3d.showForRoll(roll, game.user, true, null, messageData.blind).then((displayed) => { 					
+		game.dice3d.showForRoll(roll, game.user, true, null, messageData.blind).then((displayed) => {
 			CONFIG.ChatMessage.entityClass.create(messageData, {});
 		});
 	} else {
@@ -1043,7 +1043,7 @@ Hooks.once("init", async function () {
 	Actors.registerSheet("gurps", GurpsActorCombatSheet, { label: "Combat", makeDefault: false });
 	Actors.registerSheet("gurps", GurpsActorEditorSheet, { label: "Editor", makeDefault: false });
 	Actors.registerSheet("gurps", GurpsActorSimplifiedSheet, { label: "Simple", makeDefault: false });
-  Actors.registerSheet("gurps", GurpsActorNpcSheet, { label: "NPC/mini", makeDefault: false });
+	Actors.registerSheet("gurps", GurpsActorNpcSheet, { label: "NPC/mini", makeDefault: false });
 
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
@@ -1144,27 +1144,46 @@ Hooks.once("init", async function () {
 		},
 		default: 'Combined',
 	})
-	
+
 	Hooks.on('chatMessage', (log, content, data) => {
-    if (content === "/help" || content === "!help") {
-        ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
-        return false;
-    }
+		if (content === "/help" || content === "!help") {
+			ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+			return false;
+		}
 		if (content === "/mook" && game.user.isGM) {
 			new NpcInput().render(true);
 			return false;
 		}
 	});
-	
+
 	// Look for blind messages with .message-results and remove them
 	Hooks.on("renderChatMessage", (log, content, data) => {
-    if (!!data.message.blind) {
+		if (!!data.message.blind) {
 			if (data.author?.isSelf && !data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
 				$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
 			}
 		}
 	});
 
+	// Add the "for" attribute to a collapsible panel label. This is needed
+	// because the server in 0.7.8 strips the "for" attribute in an attempt
+	// to guard against weird security hacks. When "for" is whitelisted as
+	// a valid attribute (future) we can remove this.
+	Hooks.on('renderChatMessage', (app, html, msg) => {
+		// this is a fucking hack
+		let wrapper = html.find('.collapsible-wrapper')
+		if (wrapper.length > 0) {
+			console.log($(wrapper).html())
+			let input = $(wrapper).find('input.toggle')[0]
+			let label = $(input).siblings('label.label-toggle')[0]
+			let id = input.id
+			let labelFor = $(label).attr('for')
+			if (labelFor !== id) {
+				$(label).attr('for', id)
+			}
+			console.log($(wrapper).html())
+		}
+	});
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
@@ -1181,17 +1200,17 @@ Hooks.once("ready", async function () {
 
 	if (curVersion.isHigherThan(changelogVersion)) {
 		if ($(ui.chat.element).find("#GURPS-LEGAL").length == 0)    // If it isn't already in the chat log somewhere
-  		ChatMessage.create({
-        content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
-        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [game.user]            
-      });
-    if (game.settings.get("gurps", "showChangelog")) {
-  		const app = new ChangeLogWindow(changelogVersion);
-  		app.render(true);
-  		game.settings.set("gurps", "changelogVersion", curVersion.toString());
-  	}
-  }
+			ChatMessage.create({
+				content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
+				type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+				whisper: [game.user]
+			});
+		if (game.settings.get("gurps", "showChangelog")) {
+			const app = new ChangeLogWindow(changelogVersion);
+			app.render(true);
+			game.settings.set("gurps", "changelogVersion", curVersion.toString());
+		}
+	}
 
 	// This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
 	Hooks.on('updateUser', (...args) => {
@@ -1237,7 +1256,7 @@ Hooks.once("ready", async function () {
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
 
-	
+
 });
 
 
