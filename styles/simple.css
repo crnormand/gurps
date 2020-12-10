@@ -2267,3 +2267,77 @@ ul#result-effects li {
 #wound-modifier-table .vitals-wound-modifiers [name='pi++']:after {
   content: '*'
 }
+
+.chat-message .gurps-group {
+  font-size: smaller;
+  border: none;
+  padding: 0;
+}
+
+.chat-message .results-table {
+  gap: 0;
+  min-height: fit-content;
+  margin: 0;
+}
+
+.offscreen-only {
+  position:absolute;
+  left:-10000px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  }
+
+  /* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
+    <div class='collapsible-wrapper'>
+        <input id='collapsible' class='toggle offscreen-only' type='checkbox' checked>
+        <label for='collapsible' class='label-toggle'>Show the math</label>
+        <div class='collapsible-content'>
+            <div class='content-inner'>
+                {{{resultsTable}}}
+            </div>
+        </div>
+    </div> 
+  */
+.collapsible-wrapper .label-toggle {
+  display: block;
+  font-size: x-small;
+  font-family: 'Font Awesome 5 Free', Verdana, sans-serif;
+  padding: 0.25em;
+  background-color: black;
+  margin-top: 4px;
+  color: white;
+  cursor: pointer;
+  border-radius: 3px;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.collapsible-wrapper .label-toggle:hover {
+  background-color: rgb(0, 0, 0, 0.7);
+}
+
+.collapsible-wrapper .collapsible-content {
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height .25s ease-in-out;
+}
+
+.toggle:checked + .label-toggle + .collapsible-content {
+  max-height: 130vh;
+}
+
+.collapsible-wrapper .label-toggle:after {
+  font: normal normal normal 12px/1 FontAwesome;
+  content: '\f078';
+  color: white;
+  float: right;
+}
+
+.toggle:checked + .label-toggle:after {
+  font: normal normal normal 12px/1 FontAwesome;
+  content: '\f077';
+  color: lightgray;
+  float: right;
+}
