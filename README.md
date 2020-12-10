@@ -14,6 +14,7 @@ This is what we are currently working on:
     - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
     - Adding Stat block importing/parsing
     - Pressing SHIFT while making a roll makes it private (so GM can "roll behind the screen")
+    - Added @gmod, @gmodc to roll macros
 
 ### History
 - 0.8.1

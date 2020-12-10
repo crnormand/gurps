@@ -8,7 +8,7 @@ export class GurpsActor extends Actor {
 		const data = super.getRollData();
 		return data;
 	}
-
+	
 	prepareData() {
 		super.prepareData();
 	}

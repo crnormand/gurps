@@ -1266,7 +1266,7 @@ Hooks.once("ready", async function () {
 		let c = data.content;
 		data.content = game.GURPS.gurpslink(c);
 	});
-
+	
 	Hooks.on('renderChatMessage', (app, html, msg) => {
 		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
 		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
@@ -1276,7 +1276,7 @@ Hooks.once("ready", async function () {
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
 
-	
 });
+
 
 
