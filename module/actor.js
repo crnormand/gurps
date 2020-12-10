@@ -8,7 +8,7 @@ export class GurpsActor extends Actor {
 		const data = super.getRollData();
 		return data;
 	}
-
+	
 	prepareData() {
 		super.prepareData();
 	}
@@ -849,6 +849,14 @@ export class Ranged extends Attack {
 	rof = "";
 	shots = "";
 	rcl = "";
+	checkRange() {
+		if (!!this.halfd) 
+			this.range = this.halfd;
+		if (!!this.max)
+			this.range = this.max;
+		if (!!this.halfd && !!this.max) 
+			this.range = this.halfd + "/" + this.max;
+	}
 }
 
 export class Encumbrance {

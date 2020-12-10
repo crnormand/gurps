@@ -1,6 +1,20 @@
 import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import parselink from '../lib/parselink.js'
 
+export class GurpsRoll extends Roll {
+	_prepareData(data) {
+    let d = super._prepareData(data);
+    Object.defineProperty(d, 'gmodc', { get: () => {
+      let m = GURPS.ModifierBucket.currentSum();
+      GURPS.ModifierBucket.clear();
+      return m }});
+    d.gmod = GURPS.ModifierBucket.currentSum();
+		return d;
+  }
+}
+CONFIG.Dice.rolls[0] = GurpsRoll;
+
+
 export class ModifierBucket extends Application {
 	constructor(options = {}) {
 		super(options)

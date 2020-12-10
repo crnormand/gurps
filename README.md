@@ -1,6 +1,5 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-
 # Current Release Version 0.8.1
 
 To install the latest release, use this manifest URL:   
@@ -11,7 +10,11 @@ To install the latest release, use this manifest URL:
 
 This is what we are currently working on:
 - 0.8.2
-
+    - Rearrange npc sheet (attacks over traits/skills)
+    - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
+    - Adding Stat block importing/parsing
+    - Pressing SHIFT while making a roll makes it private (so GM can "roll behind the screen")
+    - Added @gmod, @gmodc to roll macros
 
 ### History
 - 0.8.1
@@ -64,8 +67,6 @@ This is what we are currently working on:
     - Can edit character sheet
     - Started work on drag and drop damage!
     
-**NOTE: If you upgrade to v0.7.0, YOU MUST delete all of your actors, and Restart Foundry**
-
 - 0.6.5
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players
@@ -109,3 +110,5 @@ The material presented here is my original creation, intended for use with the [
 [GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)
 
 This game system DOES NOT provide information contained in paid publications.   It is only intended to allow people to play GURPS online using their GURPS books/PDFs.
+
+https://ko-fi.com/crnormand

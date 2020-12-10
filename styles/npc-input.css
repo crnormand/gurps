@@ -39,35 +39,43 @@
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 4.5em 9.75em 2fr 2fr 2em;
+  grid-template-columns: 225px 1fr 50%;
+  grid-template-rows: 60px 130px 2fr 2fr 45px;
   gap: 5px 5px;
   grid-template-areas:
-    "top top top top top top top top"
-    "attr attr notes notes notes notes notes notes"
-    "traits traits traits traits skills skills skills skills"
-    "melee melee melee ranged ranged ranged ranged ranged"
-    ". . . create create . . .";
+    "top top top"
+    "attr notes notes"
+    "melee melee ranged"
+    "traits traits skills"
+    "import import create";
 }
 
 .npc-sheet-grid-container {
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 1fr 1.7fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 3em 9.75em 2fr 2fr;
+  grid-template-columns: 220px 1fr 50%;
+  grid-template-rows: 40px 125px auto auto;
   gap: 5px 5px;
   grid-template-areas:
-    "top top top top top top top top"
-    "attr attr notes notes notes notes notes notes"
-    "traits traits traits traits skills skills skills skills"
-    "melee melee melee ranged ranged ranged ranged ranged"
+    "top top top"
+    "attr notes notes"
+    "melee melee ranged"
+    "traits traits skills"
 }
 
 .npc-input-create { 
 	grid-area: create;
 	align-self:center;
+	padding: 5px 50px 5px 50px;
 }
+
+.npc-input-import { 
+	grid-area: import;
+	align-self:center;
+	padding: 5px 50px 5px 50px;
+}
+
 
 .npc-input-top {
   display: grid;
@@ -233,7 +241,7 @@
     "dx dx-val will will-val mov mov-val"
     "iq iq-val per per-val sm sm-val"
     "ht ht-val fp fp-val dr dr-val"
-    ". . . dodge dodge dodge-val";
+    ". . parry parry-val dodge dodge-val";
   grid-area: attr;
   font-size: 110%;
 }
@@ -310,6 +318,10 @@
 
 .npc-input-dodge-val { grid-area: dodge-val; }
 
+.npc-input-parry { grid-area: parry; }
+
+.npc-input-parry-val { grid-area: parry-val; }
+
 .npc-input-dr { grid-area: dr; }
 
 .npc-input-dr-val { grid-area: dr-val; }
@@ -319,6 +331,13 @@
   align-self:center;
 }
 
+.npc-input-sm2 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 2em;
+  padding: 1px !important;
+}
 
 /* Had to focefully overwrite the input css from elsewhere */
 .npc-input-2 {

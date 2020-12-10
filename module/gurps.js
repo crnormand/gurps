@@ -105,6 +105,37 @@ GURPS.woundModifiers = {
 	"dmg": { multiplier: 1, label: 'Damage' }
 };
 
+GURPS.damageTypeMap = {
+	"burn": "burn",
+	"cor": "cor",
+	"cr": "cr",
+	"cut": "cut",
+	"fat": "fat",
+	"imp": "imp",
+	"pi-": "pi-",
+	"pi": "pi",
+	"pi+": "pi+",
+	"pi++": "pi++",
+	"toxic": "tox",
+	"burning": "burn",
+	"corrosion": "cor",
+	"corrosive": "cor",
+	"crush": "cr",
+	"crushing": "cr",
+	"cutting": "cut",
+	"fatigue": "fat",
+	"impaling": "imp",
+	"small piercing": "pi-",
+	"piercing": "pi",
+	"large piercing": "pi+",
+	"huge piercing": "pi++",
+	"toxic": "tox",
+};
+
+
+GURPS.parseDmg = (dmg) => { return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, "$1~$2~$3~$4~$5~$6") };		// Allow opt '6' after 1d
+
+
 GURPS.attributepaths = {
 	"ST": "attributes.ST.value",
 	"DX": "attributes.DX.value",
@@ -180,7 +211,9 @@ GURPS.PARSELINK_MAPPINGS = {
 	"Taste": "tastesmell",
 	"Smell": "tastesmell",
 	"TOUCH": "touch",
-	"Touch": "touch"
+	"Touch": "touch",
+	"Parry": "parry",
+	"PARRY": "parry"
 }
 
 
@@ -418,7 +451,7 @@ function trim(s) {
 GURPS.trim = trim;
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-function performAction(action, actor) {
+function performAction(action, actor, event) {
 	if (!action) return;
 	let actordata = actor?.data;
 	let prefix = "";
@@ -427,7 +460,8 @@ function performAction(action, actor) {
 	let formula = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
 	let opt = {
-		blind: action.blindroll
+		blind: action.blindroll,
+		event: event
 	};		// Ok, I am slowly learning this Javascrip thing ;-)	
 
 	if (action.type === "modifier") {
@@ -460,14 +494,14 @@ function performAction(action, actor) {
 		formula = d6ify(action.formula);
 	}
 	if (action.type === "damage") {
-		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype);
+		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event);
 		return;
 	}
 	if (action.type === "deriveddamage")
 		if (!!actor) {
 			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
 			formula = df + action.formula;
-			GURPS.damageChat.create(actor || game.user, formula, action.damagetype, action.derivedformula + action.formula);
+			GURPS.damageChat.create(actor || game.user, formula, action.damagetype, event, action.derivedformula + action.formula);
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
@@ -563,7 +597,7 @@ async function handleRoll(event, actor) {
 	let element = event.currentTarget;
 	let prefix = "";
 	let thing = "";
-	let opt = {};
+	let opt = { event: event };
 	let target = 0;		// -1 == damage roll, target = 0 is NO ROLL.
 
 	if ("path" in element.dataset) {
@@ -598,7 +632,7 @@ async function handleRoll(event, actor) {
 			dtype = formula.substr(i + 1).trim();
 			formula = formula.substring(0, i);
 		}
-		GURPS.damageChat.create(actor, formula, dtype)
+		GURPS.damageChat.create(actor, formula, dtype, event)
 		return
 	}
 	if ("roll" in element.dataset) {
@@ -728,23 +762,28 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	let messageData = {
 		user: game.user._id,
 		speaker: speaker,
-		content: chatcontent,
-		type: CONST.CHAT_MESSAGE_TYPES.OOC,
+		content: "<div>" + chatcontent + "</div>", // wrap in HTML to trick Foundry
+		type: CONST.CHAT_MESSAGE_TYPES.ROLL,
 		roll: roll
 	};
+	let whoCanSeeDice = null;
+	if (optionalArgs.event.shiftKey) {
+		whoCanSeeDice = [game.user._id];
+		messageData.whisper = [game.user._id];
+	}
 	if (!!optionalArgs.blind) {
 		messageData.whisper = ChatMessage.getWhisperRecipients("GM");
 		messageData.blind = true;
 	}
 
-	if (niceDice) {
-		game.dice3d.showForRoll(roll, game.user, true, null, messageData.blind).then((displayed) => {
-			CONFIG.ChatMessage.entityClass.create(messageData, {});
-		});
-	} else {
-		messageData.sound = CONFIG.sounds.dice;
-		CONFIG.ChatMessage.entityClass.create(messageData, {});
-	}
+	/*	if (niceDice) {
+			game.dice3d.showForRoll(roll, game.user, true, whoCanSeeDice, messageData.blind).then((displayed) => {
+				CONFIG.ChatMessage.entityClass.create(messageData, {});
+			});
+		} else { */
+	messageData.sound = CONFIG.sounds.dice;
+	CONFIG.ChatMessage.entityClass.create(messageData, {});
+	//	}
 
 }
 GURPS.doRoll = doRoll;
@@ -845,7 +884,7 @@ function handleGurpslink(event, actor, desc) {
 		action = JSON.parse(atob(action));
 	else
 		action = parselink(element.innerText, desc, false).action;
-	this.performAction(action, actor);
+	this.performAction(action, actor, event);
 }
 GURPS.handleGurpslink = handleGurpslink;
 
@@ -1157,13 +1196,13 @@ Hooks.once("init", async function () {
 	});
 
 	// Look for blind messages with .message-results and remove them
-	Hooks.on("renderChatMessage", (log, content, data) => {
+	/*	Hooks.on("renderChatMessage", (log, content, data) => {
 		if (!!data.message.blind) {
-			if (data.author?.isSelf && !data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
-				$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
+				if (data.author?.isSelf && !data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
+					$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
+				}
 			}
-		}
-	});
+		});  */
 
 	// Add the "for" attribute to a collapsible panel label. This is needed
 	// because the server in 0.7.8 strips the "for" attribute in an attempt
@@ -1256,7 +1295,7 @@ Hooks.once("ready", async function () {
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
 
-
 });
+
 
 
