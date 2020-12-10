@@ -704,7 +704,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
 		let finaltarget = parseInt(origtarget) + modifier;
 		if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget;
-		roll = new Roll(formula);		// The formula will always be "3d6" for a "targetted" roll
+		roll = Roll.create(formula);		// The formula will always be "3d6" for a "targetted" roll
 		roll.roll();
 		let rtotal = roll.total;
 		let results = "<div><span class='fa fa-dice'/>&nbsp;<span class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
@@ -745,7 +745,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 			min = 1
 		}
 
-		roll = new Roll(formula + `+${modifier}`);
+		roll = Roll.create(formula + `+${modifier}`);
 		roll.roll();
 		let rtotal = roll.total;
 		if (rtotal < min) {
@@ -776,14 +776,8 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		messageData.blind = true;
 	}
 
-	/*	if (niceDice) {
-			game.dice3d.showForRoll(roll, game.user, true, whoCanSeeDice, messageData.blind).then((displayed) => {
-				CONFIG.ChatMessage.entityClass.create(messageData, {});
-			});
-		} else { */
 	messageData.sound = CONFIG.sounds.dice;
 	CONFIG.ChatMessage.entityClass.create(messageData, {});
-	//	}
 
 }
 GURPS.doRoll = doRoll;
