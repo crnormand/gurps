@@ -1993,6 +1993,7 @@ body {
 }
 
 /* remove this item from display  */
+.gurps-chat-message .invisible,
 .gurps-app .invisible {
   display: none;
 }
@@ -2305,9 +2306,9 @@ ul#result-effects li {
   font-size: x-small;
   font-family: 'Font Awesome 5 Free', Verdana, sans-serif;
   padding: 0.25em;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.50);
   margin-top: 4px;
-  color: white;
+  color: lightgray;
   cursor: pointer;
   border-radius: 3px;
   text-transform: uppercase;
@@ -2331,7 +2332,7 @@ ul#result-effects li {
 .collapsible-wrapper .label-toggle:after {
   font: normal normal normal 12px/1 FontAwesome;
   content: '\f078';
-  color: white;
+  color: lightgray;
   float: right;
 }
 

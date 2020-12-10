@@ -180,12 +180,12 @@
           </div>
           <div class='shaded'>
             <div class='gurps-3col gurps-checkbox-col'>
-              <div><input disabled id='vulnerable' type='checkbox' name='vulnerable' value='vulnerable'></input></div>
+              <div><input id='vulnerable' type='checkbox' name='vulnerable' value='vulnerable'></input></div>
               <div><label for='vulnerable'>Vulnerability:</label></div>
               <div class='pdflink'>B161</div>
             </div>
             <div class='grid grid-3col continuation'>
-              <label><input disabled type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
+              <label><input disabled checked type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
               <label><input disabled type='radio' name='vulnerability' value='vulnerability-3'>&nbsp;×3</label>
               <label><input disabled type='radio' name='vulnerability' value='vulnerability-4'>&nbsp;×4</label>
             </div>
@@ -223,22 +223,22 @@
 
             <div id='result-penetrating'>PENETRATING</div>
             <div><span name='result-penetrating'>{{CALC.penetratingDamage}}</span></div>
-            <div><span>(<span name='result-halfdamage'>{{CALC.basicDamage}}</span> &minus; <span
-                  name='result-effective-dr'>{{CALC.effectiveDR}}</span>)</span></div>
+            <div><span>= <span name='result-halfdamage'>{{CALC.basicDamage}}</span> &minus; <span
+                  name='result-effective-dr'>{{CALC.effectiveDR}}</span></span></div>
 
             <div>MODIFIER</div>
             <div><span>×<span name='result-totalmod'>{{CALC.totalWoundingModifier}}</span></span></div>
-            <div><span><span name='result-type'>{{CALC.damageType}}</span><span id='result-type-add'> (+ <span
-                    name='result-addmods'>{{CALC.additionalWoundModifier}}</span>)</span><span
+            <div><span>= <span name='result-type'>{{CALC.damageType}}</span><span id='result-type-add'> <span
+                    name='result-addmods'>{{CALC.additionalWoundModifier}}</span></span><span
                   id='modifier-footnote-wrapper'>* <span id="modifier-footnote" class="pdflink">B398</span></span>
               </span>
             </div>
 
             <div>INJURY</div>
             <div><span name='result-injury'>{{CALC.injury}}</span></div>
-            <div id='result-injury-total'><span>(<span
+            <div id='result-injury-total'><span>= <span
                   name='result-penetrating'>{{calculating.penetratingDamage}}</span> × <span
-                  name='result-totalmod'>{{CALC.totalWoundingModifier}}</span>)</span></div>
+                  name='result-totalmod'>{{CALC.totalWoundingModifier}}</span></span></div>
           </div>
 
           <div id="result-extrastuff">
