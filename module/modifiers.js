@@ -4,10 +4,11 @@ import parselink from '../lib/parselink.js'
 export class GurpsRoll extends Roll {
 	_prepareData(data) {
     let d = super._prepareData(data);
-    Object.defineProperty(d, 'gmodc', { get: () => {
-      let m = GURPS.ModifierBucket.currentSum();
-      GURPS.ModifierBucket.clear();
-      return m }});
+    if (!d.hasOwnProperty('gmodc'))
+	    Object.defineProperty(d, 'gmodc', { get: () => {
+	      let m = GURPS.ModifierBucket.currentSum();
+	      GURPS.ModifierBucket.clear();
+	      return m }});
     d.gmod = GURPS.ModifierBucket.currentSum();
 		return d;
   }
