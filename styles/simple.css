@@ -2145,6 +2145,8 @@ body {
 .gurps-group .results-table>div:nth-child(3n+3) {
   text-align: start;
   justify-content: center;
+  padding-left: 1em;
+  text-indent: -1em;
 }
 
 .with-button {

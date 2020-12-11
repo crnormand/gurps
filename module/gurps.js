@@ -1080,73 +1080,6 @@ Hooks.once("init", async function () {
 
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
-
-	Handlebars.registerHelper('objToString', function (str) {
-		let o = CONFIG.GURPS.objToString(str);
-		console.log(o);
-		return o;
-	});
-
-	Handlebars.registerHelper('simpleRating', function (lvl) {
-		if (!lvl) return "UNKNOWN";
-		let l = parseInt(lvl);
-		if (l < 10)
-			return "Poor";
-		if (l <= 11)
-			return "Fair";
-		if (l <= 13)
-			return "Good";
-		if (l <= 15)
-			return "Great";
-		if (l <= 18)
-			return "Super";
-		return "Epic";
-	});
-
-	Handlebars.registerHelper('notEmpty', function (obj) {
-		return !!obj ? Object.values(obj).length > 0 : false;
-	});
-
-
-	/// NOTE:  To use this, you must use {{{gurpslink sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
-	Handlebars.registerHelper('gurpslink', function (str, root, clrdmods = false) {
-		let actor = root?.data?.root?.actor;
-		if (!actor) actor = root?.actor;
-		return game.GURPS.gurpslink(str, clrdmods);
-	});
-
-
-	/// NOTE:  To use this, you must use {{{gurpslinkbr sometext}}}.   The triple {{{}}} keeps it from interpreting the HTML
-	// Same as gurpslink, but converts \n to <br> for large text values (notes)
-	Handlebars.registerHelper('gurpslinkbr', function (str, root, clrdmods = false) {
-		let actor = root?.data?.root?.actor;
-		if (!actor) actor = root?.actor;
-		return game.GURPS.gurpslink(str, clrdmods).replace(/\n/g, "<br>");;
-	});
-
-
-	Handlebars.registerHelper('listeqt', function (context, options) {
-		var data;
-		if (options.data)
-			data = Handlebars.createFrame(options.data);
-
-		let ans = GURPS.listeqtrecurse(context, options, 0, data);
-		return ans;
-	});
-
-
-	// Only necessary because of the FG import
-	Handlebars.registerHelper('hitlocationroll', function (loc, roll) {
-		if (!roll)
-			roll = GURPS.hitlocationRolls[loc]?.roll;
-		return roll;
-	});
-	Handlebars.registerHelper('hitlocationpenalty', function (loc, penalty) {
-		if (!penalty)
-			penalty = GURPS.hitlocationRolls[loc]?.penalty;
-		return penalty;
-	});
-
 	game.settings.register("gurps", "changelogVersion", {
 		name: "Changelog Version",
 		scope: "client",
@@ -1288,7 +1221,6 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
-
 });
 
 
