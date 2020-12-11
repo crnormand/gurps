@@ -18,6 +18,8 @@
     <div class="npc-input-iq-val rollable npc-sheet-centered" data-path="attributes.IQ.value" data-otf='IQ'>{{data.attributes.IQ.value}}</div>
     <div class="npc-input-ht npc-input-label">HT:</div>
     <div class="npc-input-ht-val rollable npc-sheet-centered" data-path="attributes.HT.value" data-otf='HT'>{{data.attributes.HT.value}}</div>
+    <div class="npc-input-dmg npc-input-labelr">Dmg:</div>
+    <div class="npc-input-dmg-val rollable npc-sheet-centered" data-path="swing" data-damage data-otf='{{data.swing}} dmg'">{{data.swing}}</div>
     <div class="npc-input-hp npc-input-label">HP:</div>
     <div class="npc-input-hp-val condition-block"><input class="npc-input-2 {{hpCondition data.HP "style"}}" name="data.HP.value" type="text" value="{{data.HP.value}}" data-dtype="Number" /></div>
     <div class="npc-input-will npc-input-label">Will:</div>
@@ -29,7 +31,7 @@
     <div class="npc-input-dodge npc-input-labelr">Dodge:</div>
     <div class="npc-input-dodge-val rollable npc-sheet-centered" data-path="dodge" data-otf='Dodge'>{{this.dodge}}</div>
     <div class="npc-input-parry npc-input-labelr">Parry:</div>
-    <div class="npc-input-parry-val rollable npc-sheet-centered" data-path="data.parry" data-otf='Parry'>{{data.parry}}</div>
+    <div class="npc-input-parry-val rollable npc-sheet-centered" data-path="parry" data-otf='Parry'>{{data.parry}}</div>
     <div class="npc-input-spd npc-input-labelr">Speed:</div>
     <div class="npc-input-spd-val npc-sheet-centered">{{data.basicspeed.value}}</div>
     <div class="npc-input-mov npc-input-labelr">Move:</div>

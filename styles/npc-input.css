@@ -39,7 +39,7 @@
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 225px 1fr 50%;
+  grid-template-columns: 250px 1fr 50%;
   grid-template-rows: 60px 130px 2fr 2fr 45px;
   gap: 5px 5px;
   grid-template-areas:
@@ -54,7 +54,7 @@
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 220px 1fr 50%;
+  grid-template-columns: 245px 1fr 50%;
   grid-template-rows: 40px 125px auto auto;
   gap: 5px 5px;
   grid-template-areas:
@@ -241,7 +241,7 @@
     "dx dx-val will will-val mov mov-val"
     "iq iq-val per per-val sm sm-val"
     "ht ht-val fp fp-val dr dr-val"
-    ". . parry parry-val dodge dodge-val";
+    "dmg dmg-val parry parry-val dodge dodge-val";
   grid-area: attr;
   font-size: 110%;
 }
@@ -326,6 +326,10 @@
 
 .npc-input-dr-val { grid-area: dr-val; }
 
+.npc-input-dmg { grid-area: dmg; }
+
+.npc-input-dmg-val { grid-area: dmg-val; }
+
 .npc-input-img { 
 	grid-area: img; 
   align-self:center;
@@ -336,6 +340,14 @@
   border: none !important;
   height: 100% !important;
   max-width: 2em;
+  padding: 1px !important;
+}
+
+.npc-input-sm3 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 3em;
   padding: 1px !important;
 }
 

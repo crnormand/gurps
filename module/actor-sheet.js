@@ -330,7 +330,7 @@ async handleDragFor(event, dragData, type, cls) {
     event.preventDefault();
     let element = event.currentTarget;
     new Dialog({
-      title: `Import XML data for: ${this.actor.name}`,
+      title: `Import character data for: ${this.actor.name}`,
       content: await renderTemplate("systems/gurps/templates/import-gcs-v1-data.html", { name: '"' + this.actor.name + '"' }),
       buttons: {
         import: {
