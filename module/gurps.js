@@ -102,7 +102,7 @@ GURPS.woundModifiers = {
 	"pi+": { multiplier: 1.5, label: 'Large Piercing' },
 	"pi++": { multiplier: 2, label: 'Huge Piercing' },
 	"tox": { multiplier: 1, label: 'Toxic' },
-	"dmg": { multiplier: 1, label: 'Damage' }
+	"dmg": { multiplier: 1, label: 'Damage', nodisplay: true }
 };
 
 GURPS.damageTypeMap = {
