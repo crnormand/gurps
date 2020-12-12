@@ -1,12 +1,13 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
 # Current Release Version 0.8.1
+[If you like our work...](https://ko-fi.com/crnormand)
 
 To install the latest release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
 
 ## The 'main' branch is being actively developed... and it may break things.   
-## If you are looking for the last stable release, use the manifest URL above.
+### If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
 - 0.8.2
@@ -15,6 +16,8 @@ This is what we are currently working on:
     - Adding Stat block importing/parsing
     - Pressing SHIFT while making a roll makes it private (so GM can "roll behind the screen")
     - Added @gmod, @gmodc to roll macros
+    - Started support for Vulnerability in Apply Damage Dialog (ADD) B161
+    - "Show the Math" on damage chat messages
 
 ### History
 - 0.8.1
@@ -110,5 +113,3 @@ The material presented here is my original creation, intended for use with the [
 [GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)
 
 This game system DOES NOT provide information contained in paid publications.   It is only intended to allow people to play GURPS online using their GURPS books/PDFs.
-
-https://ko-fi.com/crnormand
