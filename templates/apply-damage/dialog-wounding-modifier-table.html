@@ -1,0 +1,16 @@
+<div name='wounding-modifiers' class='default-wound-modifiers'>
+    <div class='gurps-3col gurps-radio-col'>
+        <header>Damage Type</header>
+        <header>Abbrev</header>
+        <header>Modifier</header>
+        {{#each CALC.effectiveWoundModifiers}}
+        <div><label><input type='radio' name='woundmodifier' value='{{@key}}'>&nbsp;{{this.label}}</label></div>
+        <div>{{@key}}</div>
+        <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>{{fractionalize this.multiplier 2
+            '×'}}
+        </div>
+        {{/each}}
+    </div>
+    {{#if CALC.isWoundModifierAdjustedForLocation}}<aside>* - Adjusted for hit location.</aside>{{/if}}
+    {{#if CALC.isInjuryTolerance}}<aside>† - Adjusted for Injury Tolerance.</aside>{{/if}}
+</div>

@@ -53,97 +53,6 @@
         <div class='gurps-group'>
           <h4>Type and Wounding Modifiers</h4>
           <section id='wound-modifier-table'>
-            <div class='tab default-wound-modifiers' data-group='wound-modifiers' data-tab='default-wound-modifiers'>
-              <div class='gurps-3col gurps-radio-col'>
-                <header>Damage Type</header>
-                <header>Abbrev</header>
-                <header>Modifier</header>
-                {{#each CALC.defaultWoundModifiers}}
-                <div><label><input type='radio' name='woundmodifier'
-                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
-                </div>
-                <div>{{@key}}</div>
-                <div name='{{@key}}'>×{{this.multiplier}}</div>
-                {{/each}}
-              </div>
-            </div>
-            <div class='tab vitals-wound-modifiers' data-group='wound-modifiers' data-tab='vitals-wound-modifiers'>
-              <div class='gurps-3col gurps-radio-col'>
-                <header>Damage Type</header>
-                <header>Abbrev</header>
-                <header>Modifier</header>
-                {{#each CALC.vitalsWoundModifiers}}
-                <div><label><input type='radio' name='_woundmodifier'
-                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
-                </div>
-                <div>{{@key}}</div>
-                <div name='{{@key}}'>×{{this.multiplier}}</div>
-                {{/each}}
-              </div>
-              <aside>* - Adjusted for hit location.</aside>
-            </div>
-            <div class='tab skull-eye-wound-modifiers' data-group='wound-modifiers'
-              data-tab='skull-eye-wound-modifiers'>
-              <div class='gurps-3col gurps-radio-col'>
-                <header>Damage Type</header>
-                <header>Abbrev</header>
-                <header>Modifier</header>
-                {{#each CALC.skullEyeWoundModifiers}}
-                <div><label><input type='radio' name='_woundmodifier'
-                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
-                </div>
-                <div>{{@key}}</div>
-                <div name='{{@key}}'>×{{this.multiplier}}</div>
-                {{/each}}
-              </div>
-              <aside>* - Adjusted for hit location.</aside>
-            </div>
-            <div class='tab face-wound-modifiers' data-group='wound-modifiers' data-tab='face-wound-modifiers'>
-              <div class='gurps-3col gurps-radio-col'>
-                <header>Damage Type</header>
-                <header>Abbrev</header>
-                <header>Modifier</header>
-                {{#each CALC.faceWoundModifiers}}
-                <div><label><input type='radio' name='_woundmodifier'
-                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
-                </div>
-                <div>{{@key}}</div>
-                <div name='{{@key}}'>×{{this.multiplier}}</div>
-                {{/each}}
-              </div>
-              <aside>* - Adjusted for hit location.</aside>
-            </div>
-            <div class='tab neck-wound-modifiers' data-group='wound-modifiers' data-tab='neck-wound-modifiers'>
-              <div class='gurps-3col gurps-radio-col'>
-                <header>Damage Type</header>
-                <header>Abbrev</header>
-                <header>Modifier</header>
-                {{#each CALC.neckWoundModifiers}}
-                <div><label><input type='radio' name='_woundmodifier'
-                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
-                </div>
-                <div>{{@key}}</div>
-                <div name='{{@key}}'>×{{this.multiplier}}</div>
-                {{/each}}
-              </div>
-              <aside>* - Adjusted for hit location.</aside>
-            </div>
-            <div class='tab extremity-wound-modifiers' data-group='wound-modifiers'
-              data-tab='extremity-wound-modifiers'>
-              <div class='gurps-3col gurps-radio-col'>
-                <header>Damage Type</header>
-                <header>Abbrev</header>
-                <header>Modifier</header>
-                {{#each CALC.extremityWoundModifiers}}
-                <div><label><input type='radio' name='_woundmodifier'
-                      value='{{@key}}'>&nbsp;{{this.label}}</input></label>
-                </div>
-                <div>{{@key}}</div>
-                <div name='{{@key}}'>×{{this.multiplier}}</div>
-                {{/each}}
-              </div>
-              <aside>* - Adjusted for hit location.</aside>
-            </div>
           </section>
           <hr /> <!-- Doesn't do much except add some space -->
           <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No modifier</input></label>
@@ -209,12 +118,11 @@
               <div><label><input type='radio' name='injury-tolerance' value='homogenous'>&nbsp;Homogenous<span
                     class='pdflink'>B380</span></label>
               </div>
-              <div><label><input type='radio' name='injury-tolerance' value='diffuse'>&nbsp;Diffuse<span
+              <div><label><input disabled type='radio' name='injury-tolerance' value='diffuse'>&nbsp;Diffuse<span
                     class='pdflink'>B380</span></label>
               </div>
             </div>
           </div>
-          <hr />
           <div id='specials-insert-point' class='gurps-3col' />
         </div>
       </div>
@@ -239,7 +147,7 @@
                   name='result-effective-dr'>{{CALC.effectiveDR}}</span></span></div>
 
             <div>MODIFIER</div>
-            <div><span>×<span name='result-totalmod'>{{CALC.totalWoundingModifier}}</span></span></div>
+            <div><span>×<span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span></span></div>
             <div><span>= <span name='result-addmods'>({{CALC.damageType}})</span><span id='modifier-footnote-wrapper'>*
                   <span id="modifier-footnote" class="pdflink">B398</span></span></span>
             </div>
@@ -248,7 +156,7 @@
             <div><span name='result-injury'>{{CALC.injury}}</span></div>
             <div id='result-injury-total'><span>= <span
                   name='result-penetrating'>{{calculating.penetratingDamage}}</span>
-                × <span name='result-totalmod'>{{CALC.totalWoundingModifier}}</span></span></div>
+                × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span></span></div>
           </div>
 
           <div id="result-extrastuff">

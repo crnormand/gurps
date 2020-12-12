@@ -2088,9 +2088,9 @@ body {
 /* striped table row appearance */
 .gurps-2col>*:nth-child(4n+3),
 .gurps-2col>*:nth-child(4n+4),
-.gurps-3col>div:nth-of-type(6n+4),
-.gurps-3col>div:nth-of-type(6n+5),
-.gurps-3col>div:nth-of-type(6n+6) {
+.gurps-3col>*:nth-of-type(6n+4),
+.gurps-3col>*:nth-of-type(6n+5),
+.gurps-3col>*:nth-of-type(6n+6) {
   background-color: rgba(0, 0, 0, 0.10);
 }
 
@@ -2138,6 +2138,7 @@ body {
 .gurps-group .results-table>div:nth-child(3n+2) {
   text-align: end;
   padding-right: 0.5em;
+  font-size: smaller;
 }
 
 .gurps-group .results-table>div:nth-child(3n+2) {
@@ -2222,57 +2223,25 @@ ul#result-effects li {
 
 #wound-modifier-table aside {
   text-align: end;
+  margin-bottom: 0;
 }
 
-#wound-modifier-table .skull-eye-wound-modifiers [name=burn],
-#wound-modifier-table .skull-eye-wound-modifiers [name=cor],
-#wound-modifier-table .skull-eye-wound-modifiers [name=cr],
-#wound-modifier-table .skull-eye-wound-modifiers [name=cut],
-#wound-modifier-table .skull-eye-wound-modifiers [name=fat],
-#wound-modifier-table .skull-eye-wound-modifiers [name=imp],
-#wound-modifier-table .skull-eye-wound-modifiers [name=pi-],
-#wound-modifier-table .skull-eye-wound-modifiers [name=pi],
-#wound-modifier-table .skull-eye-wound-modifiers [name='pi+'],
-#wound-modifier-table .skull-eye-wound-modifiers [name='pi++'],
-#wound-modifier-table .extremity-wound-modifiers [name=imp],
-#wound-modifier-table .extremity-wound-modifiers [name='pi+'],
-#wound-modifier-table .extremity-wound-modifiers [name='pi++'],
-#wound-modifier-table .neck-wound-modifiers [name=cr],
-#wound-modifier-table .neck-wound-modifiers [name=cut],
-#wound-modifier-table .neck-wound-modifiers [name=cor],
-#wound-modifier-table .face-wound-modifiers [name=cor],
-#wound-modifier-table .vitals-wound-modifiers [name=imp],
-#wound-modifier-table .vitals-wound-modifiers [name=pi-],
-#wound-modifier-table .vitals-wound-modifiers [name=pi],
-#wound-modifier-table .vitals-wound-modifiers [name='pi+'],
-#wound-modifier-table .vitals-wound-modifiers [name='pi++'] {
+#wound-modifier-table .hitlocation {
   color: darkred;
 }
 
-#wound-modifier-table .skull-eye-wound-modifiers [name=burn]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name=cor]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name=cr]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name=cut]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name=fat]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name=imp]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name=pi-]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name=pi]:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name='pi+']:after,
-#wound-modifier-table .skull-eye-wound-modifiers [name='pi++']:after,
-#wound-modifier-table .extremity-wound-modifiers [name=imp]:after,
-#wound-modifier-table .extremity-wound-modifiers [name=imp]:after,
-#wound-modifier-table .extremity-wound-modifiers [name='pi+']:after,
-#wound-modifier-table .extremity-wound-modifiers [name='pi++']:after,
-#wound-modifier-table .neck-wound-modifiers [name=cr]:after,
-#wound-modifier-table .neck-wound-modifiers [name=cut]:after,
-#wound-modifier-table .neck-wound-modifiers [name=cor]:after,
-#wound-modifier-table .face-wound-modifiers [name=cor]:after,
-#wound-modifier-table .vitals-wound-modifiers [name=imp]:after,
-#wound-modifier-table .vitals-wound-modifiers [name=pi-]:after,
-#wound-modifier-table .vitals-wound-modifiers [name=pi]:after,
-#wound-modifier-table .vitals-wound-modifiers [name='pi+']:after,
-#wound-modifier-table .vitals-wound-modifiers [name='pi++']:after {
-  content: '*'
+#wound-modifier-table .hitlocation:after {
+  content: '*';
+  color: black;
+}
+
+#wound-modifier-table .injury-tolerance {
+  color: darkviolet;
+}
+
+#wound-modifier-table .injury-tolerance:after {
+  content: '†';
+  color: black;
 }
 
 .chat-message .gurps-group {
@@ -2371,6 +2340,7 @@ ul#result-effects li {
   grid-column: 1 / span 2;
   background: rgba(0, 0, 0, 0.1);
   margin-bottom: 0;
+  padding-right: 4px;
 }
 
 .gurps-group .collapsible-content>*:nth-child(even) {
@@ -2383,11 +2353,13 @@ ul#result-effects li {
 
 .gurps-group .options-drawer label .pdflink {
   float: right;
+  padding-top: 2px;
 }
 
 .gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
-  padding: 0.5em;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset;
+  padding-bottom: 2px;
   margin-bottom: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 
+    0px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
