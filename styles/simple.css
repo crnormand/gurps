@@ -2053,17 +2053,18 @@ body {
   justify-items: stretch;
 }
 
-/* remove the top margin and indent */
-.gurps-group .continuation {
-  margin-top: 0;
-  margin-left: 2em;
-}
-
 /* striped table row appearance */
 .gurps-group .shaded {
   background-color: rgba(0, 0, 0, 0.10);
 }
 
+.gurps-2col {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-template-rows: auto;
+  justify-items: stretch;
+  text-align: left;
+}
 
 /* grid with 3 colums; center is fixed */
 .gurps-3col {
@@ -2085,6 +2086,8 @@ body {
 }
 
 /* striped table row appearance */
+.gurps-2col>*:nth-child(4n+3),
+.gurps-2col>*:nth-child(4n+4),
 .gurps-3col>div:nth-of-type(6n+4),
 .gurps-3col>div:nth-of-type(6n+5),
 .gurps-3col>div:nth-of-type(6n+6) {
@@ -2293,6 +2296,13 @@ ul#result-effects li {
   overflow:hidden;
   }
 
+  /* remove the top margin and indent */
+.gurps-group .continuation {
+  margin-top: 0;
+  margin-left: 2em;
+}
+
+
   /* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
     <div class='collapsible-wrapper'>
         <input id='collapsible' class='toggle offscreen-only' type='checkbox' checked>
@@ -2306,42 +2316,74 @@ ul#result-effects li {
   */
 .collapsible-wrapper .label-toggle {
   display: block;
-  font-size: x-small;
-  font-family: 'Font Awesome 5 Free', Verdana, sans-serif;
-  padding: 0.25em;
-  background-color: rgba(0, 0, 0, 0.50);
-  margin-top: 4px;
-  color: lightgray;
   cursor: pointer;
-  border-radius: 3px;
-  text-transform: uppercase;
   text-align: left;
-}
-
-.collapsible-wrapper .label-toggle:hover {
-  background-color: rgb(0, 0, 0, 0.7);
 }
 
 .collapsible-wrapper .collapsible-content {
   max-height: 0px;
   overflow: hidden;
-  transition: max-height .25s ease-in-out;
+  transition: all .25s ease-in-out;
 }
 
 .toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
 }
 
-.collapsible-wrapper .label-toggle:after {
+
+.gurps-chat-message .label-toggle {
+  font-size: x-small;
+  font-family: 'Font Awesome 5 Free', Verdana, sans-serif;
+  padding: 0.25em;
+  background-color: rgba(0, 0, 0, 0.50);
+  margin-top: 4px;
+  color: lightgray;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.gurps-chat-message  .label-toggle:hover {
+  background-color: rgb(0, 0, 0, 0.7);
+}
+
+.gurps-chat-message .label-toggle:after {
   font: normal normal normal 12px/1 FontAwesome;
   content: '\f078';
   color: lightgray;
   float: right;
 }
 
-.toggle:checked + .label-toggle:after {
+.gurps-chat-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1 FontAwesome;
   content: '\f077';
   color: lightgray;
   float: right;
+}
+
+.gurps-group .options-drawer {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-auto-rows: min-content;
+  align-items: center;
+}
+
+.gurps-group .collapsible-content {
+  grid-column: 1 / span 2;
+  background: rgba(0, 0, 0, 0.1);
+  margin-bottom: 0;
+}
+
+.gurps-group .options-drawer label {
+  padding-top: 2px;
+}
+
+.gurps-group .options-drawer label .pdflink {
+  float: right;
+}
+
+.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
+  max-height: 130vh;
+  padding: 0.5em;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset;
+  margin-bottom: 10px;
 }

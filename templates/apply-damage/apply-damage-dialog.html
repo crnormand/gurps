@@ -178,29 +178,39 @@
             <div class='pdflink'>{{this.ref}}</div>
             {{/each}}
           </div>
-          <div class='shaded'>
-            <div class='gurps-3col gurps-checkbox-col'>
-              <div><input id='vulnerable' type='checkbox' name='vulnerable' value='vulnerable'></input></div>
-              <div><label for='vulnerable'>Vulnerability:</label></div>
-              <div class='pdflink'>B161</div>
-            </div>
-            <div class='grid grid-3col continuation'>
+          <div class='shaded collapsible-wrapper options-drawer'>
+            <input id='vulnerable' class='toggle' type='checkbox' name='vulnerable' value='vulnerable'></input>
+            <label for='vulnerable' class='label-toggle'>Vulnerability:<span class='pdflink'>B161</span></label>
+            <div class='grid grid-3col continuation collapsible-content'>
               <label><input disabled checked type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
               <label><input disabled type='radio' name='vulnerability' value='vulnerability-3'>&nbsp;×3</label>
               <label><input disabled type='radio' name='vulnerability' value='vulnerability-4'>&nbsp;×4</label>
             </div>
           </div>
-          <div class='gurps-3col gurps-checkbox-col'>
-            <div><input id='hardened' type='checkbox' name='hardened' value='hardened'></input></div>
-            <div><label for='hardened'>Hardened DR Level:</label></div>
-            <div class='pdflink'>B47</div>
+          <div class='collapsible-wrapper options-drawer'>
+            <input id='hardened' class='toggle' type='checkbox' name='hardened' value='hardened'></input>
+            <label for='hardened' class='label-toggle'>Hardened DR Level: <span class='pdflink'>B47</span></label>
+            <div class='grid grid-5col continuation collapsible-content'>
+              <label><input type='radio' name='hardened' value='hardened-1'>&nbsp;1</label>
+              <label><input type='radio' name='hardened' value='hardened-2'>&nbsp;2</label>
+              <label><input type='radio' name='hardened' value='hardened-3'>&nbsp;3</label>
+              <label><input type='radio' name='hardened' value='hardened-4'>&nbsp;4</label>
+              <label><input type='radio' name='hardened' value='hardened-5'>&nbsp;5</label>
+            </div>
           </div>
-          <div class='grid grid-5col continuation'>
-            <label><input type='radio' name='hardened' value='hardened-1'>&nbsp;1</label>
-            <label><input type='radio' name='hardened' value='hardened-2'>&nbsp;2</label>
-            <label><input type='radio' name='hardened' value='hardened-3'>&nbsp;3</label>
-            <label><input type='radio' name='hardened' value='hardened-4'>&nbsp;4</label>
-            <label><input type='radio' name='hardened' value='hardened-5'>&nbsp;5</label>
+          <div class='shaded collapsible-wrapper options-drawer'>
+            <input id='injury-tolerance' class='toggle' type='checkbox' name='injury-tolerance'
+              value='injury-tolerance'></input>
+            <label for='injury-tolerance' class='label-toggle'>Injury Tolerance:<span class='pdflink'>
+                B60</span></label>
+            <div class='collapsible-content gurps-2col continuation'>
+              <label><input type='radio' name='injury-tolerance' value='unliving'>&nbsp;Unliving</label>
+              <div class='pdflink'>B380</div>
+              <label><input type='radio' name='injury-tolerance' value='homogenous'>&nbsp;Homogenous</label>
+              <div class='pdflink'>B380</div>
+              <label><input type='radio' name='injury-tolerance' value='diffuse'>&nbsp;Diffuse</label>
+              <div class='pdflink'>B380</div>
+            </div>
           </div>
           <hr />
           <div id='specials-insert-point' class='gurps-3col' />
@@ -235,8 +245,8 @@
             <div>INJURY</div>
             <div><span name='result-injury'>{{CALC.injury}}</span></div>
             <div id='result-injury-total'><span>= <span
-                  name='result-penetrating'>{{calculating.penetratingDamage}}</span> × <span
-                  name='result-totalmod'>{{CALC.totalWoundingModifier}}</span></span></div>
+                  name='result-penetrating'>{{calculating.penetratingDamage}}</span>
+                × <span name='result-totalmod'>{{CALC.totalWoundingModifier}}</span></span></div>
           </div>
 
           <div id="result-extrastuff">
