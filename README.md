@@ -6,6 +6,8 @@
 To install the latest release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
 
+Getting started video: https://youtu.be/FUqtOkdyBCo
+
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the last stable release, use the manifest URL above.
 
