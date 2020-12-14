@@ -118,7 +118,7 @@
               <div><label><input type='radio' name='injury-tolerance' value='homogenous'>&nbsp;Homogenous<span
                     class='pdflink'>B380</span></label>
               </div>
-              <div><label><input type='radio' name='injury-tolerance' value='diffuse'>&nbsp;Diffuse<span
+              <div><label><input disabled type='radio' name='injury-tolerance' value='diffuse'>&nbsp;Diffuse<span
                     class='pdflink'>B380</span></label>
               </div>
             </div>
@@ -156,8 +156,7 @@
             <div><span name='result-injury'>{{CALC.injury}}</span></div>
             <div id='result-injury-total'><span>= <span
                   name='result-penetrating'>{{calculating.penetratingDamage}}</span>
-                × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span><span
-                  name='result-penetrating-footnote'></span></div>
+                × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span></span></div>
           </div>
 
           <div id="result-extrastuff">
