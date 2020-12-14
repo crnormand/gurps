@@ -6,6 +6,8 @@
 To install the latest release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
 
+Getting started video: https://youtu.be/FUqtOkdyBCo
+
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the last stable release, use the manifest URL above.
 
@@ -16,8 +18,13 @@ This is what we are currently working on:
     - Adding Stat block importing/parsing
     - Pressing SHIFT while making a roll makes it private (so GM can "roll behind the screen")
     - Added @gmod, @gmodc to roll macros
-    - Started support for Vulnerability in Apply Damage Dialog (ADD) B161
+    - Enhancements for Apply Damage Dialog (ADD)
+      - Vulnerability
+      - Hardened DR
+      - Injury Tolerance
     - "Show the Math" on damage chat messages
+    - Additional ranged hits capped at RoF
+    - Import can now keep current HP & FP
 
 ### History
 - 0.8.1

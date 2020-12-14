@@ -731,8 +731,9 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		if (margin < 0) rdesc += "missed it by " + (-margin);
 		rdesc += "</span></div>";
 		if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {		// if the attached obj (see handleRoll()) as Recoil information, do the additional math
-			let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl))
-			if (rofrcl > 0) rdesc += `<div style='text-align: start'><span class='fa fa-bullseye'/>&nbsp;<i style='font-size:100%; font-weight: normal'>Total possible hits due to RoF/Rcl: </i><b style='font-size: 120%;'>${rofrcl + 1}</b></div>`;
+			let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1;
+			if (!!optionalArgs.obj.rof) rofrcl = Math.min(rofrcl, parseInt(optionalArgs.obj.rof));
+			if (rofrcl > 1) rdesc += `<div style='text-align: start'><span class='fa fa-bullseye'/>&nbsp;<i style='font-size:100%; font-weight: normal'>Total possible hits due to RoF/Rcl: </i><b style='font-size: 120%;'>${rofrcl}</b></div>`;
 		}
 		let optlabel = optionalArgs.text || "";
 		chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + "<div class='gurps-results'>" + results + rdesc + "</div>";
