@@ -1,6 +1,7 @@
 <input id='flexible-armor' name='flexible-armor' type='checkbox' value='flexible-armor'>
-<label name='flexible-armor' for='flexible-armor'>Flexible Armor, Blunt Trauma:</label>
-<div id='blunt-trauma-field' name='flexible-armor' class='with-button'>
+<label name='flexible-armor' for='flexible-armor'>Flexible Armor <span style='font-size: smaller;'>(Blunt
+        Trauma):</span></label>
+<div id="blunt-trauma-field" name="flexible-armor" class="with-button" style="margin-left: 5px;">
     <input id='blunt-trauma' class='{{classText}}' value='{{effectiveBluntTrauma}}' type='number'
         {{#if isEnabled}}{{else}}disabled{{/if}}>
     <button name='clear'><span class='fas fa-times-circle'></button>
