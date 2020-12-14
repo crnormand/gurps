@@ -18,8 +18,13 @@ This is what we are currently working on:
     - Adding Stat block importing/parsing
     - Pressing SHIFT while making a roll makes it private (so GM can "roll behind the screen")
     - Added @gmod, @gmodc to roll macros
-    - Started support for Vulnerability in Apply Damage Dialog (ADD) B161
+    - Enhancements for Apply Damage Dialog (ADD)
+      - Vulnerability
+      - Hardened DR
+      - Injury Tolerance
     - "Show the Math" on damage chat messages
+    - Additional ranged hits capped at RoF
+    - Import can now keep current HP & FP
 
 ### History
 - 0.8.1
