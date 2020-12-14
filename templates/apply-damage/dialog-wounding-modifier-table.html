@@ -11,6 +11,12 @@
         </div>
         {{/each}}
     </div>
-    {{#if CALC.isWoundModifierAdjustedForLocation}}<aside>* - Adjusted for hit location.</aside>{{/if}}
-    {{#if CALC.isInjuryTolerance}}<aside>† - Adjusted for Injury Tolerance.</aside>{{/if}}
+
+    {{#if CALC.isWoundModifierAdjustedForLocation}}
+    <aside>* - Adjusted for hit location.</aside>
+    {{/if}}
+
+    {{#if CALC.isInjuryTolerance}}{{#if CALC.injuryToleranceType}}
+    <aside>† - Adjusted for Injury Tolerance.</aside>
+    {{/if}}{{/if}}
 </div>
