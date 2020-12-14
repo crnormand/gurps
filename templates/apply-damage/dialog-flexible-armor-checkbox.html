@@ -2,7 +2,7 @@
 <label name='flexible-armor' for='flexible-armor'>Flexible Armor <span style='font-size: smaller;'>(Blunt
         Trauma):</span></label>
 <div id="blunt-trauma-field" name="flexible-armor" class="with-button" style="margin-left: 5px;">
-    <input id='blunt-trauma' class='{{classText}}' value='{{effectiveBluntTrauma}}' type='number'
-        {{#if isEnabled}}{{else}}disabled{{/if}}>
+    <input type='text' id='blunt-trauma' class='digits-only {{classText}}' value='{{effectiveBluntTrauma}}' {{#if
+        isEnabled}}{{else}}disabled{{/if}}>
     <button name='clear'><span class='fas fa-times-circle'></button>
 </div>

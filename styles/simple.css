@@ -1988,7 +1988,8 @@ body {
 }
 
 /* prefer center text in input fields */
-.gurps-app input[type=number] {
+.gurps-app input.digits-only,
+.gurps-app input.decimal-digits-only {
   text-align: center;
 }
 
