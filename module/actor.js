@@ -61,6 +61,7 @@ export class GurpsActor extends Actor {
 
 		let commit = {}
 		commit = { ...commit, ...{ "name": nm } };
+		commit = { ...commit, ...{ "data.lastImport": (new Date()).toString().split(' ').splice(1,4).join(' ') } };
 		commit = { ...commit, ...{ "token.name": nm } };
 		let ar = this.data.data.additionalresources || {};
 		ar.importname = importname;
@@ -69,7 +70,7 @@ export class GurpsActor extends Actor {
 
 		try {
 			// This is going to get ugly, so break out various data into different methods
-			commit = { ...commit, ...this.importAttributesFromCGSv1(c.attributes) };
+			commit = { ...commit, ... await this.importAttributesFromCGSv1(c.attributes) };
 			commit = { ...commit, ...this.importSkillsFromGCSv1(c.abilities?.skilllist, isFoundryGCS) };
 			commit = { ...commit, ...this.importTraitsfromGCSv1(c.traits) };
 			commit = { ...commit, ...this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist, isFoundryGCS) };
@@ -468,12 +469,13 @@ export class GurpsActor extends Actor {
 	}
 
 	// Import the <attributes> section of the GCS FG XML file.
-	importAttributesFromCGSv1(json) {
+	async importAttributesFromCGSv1(json) {
 		if (!json) return;
 		let i = this.intFrom;		// shortcut to make code smaller
 		let t = this.textFrom;
 		let data = this.data.data;
 		let att = data.attributes;
+		
 		att.ST.value = i(json.strength);
 		att.ST.points = i(json.strength_points);
 		att.DX.value = i(json.dexterity);
@@ -489,10 +491,38 @@ export class GurpsActor extends Actor {
 
 		data.HP.max = i(json.hitpoints);
 		data.HP.points = i(json.hitpoints_points);
-		data.HP.value = i(json.hps);
 		data.FP.max = i(json.fatiguepoints);
 		data.FP.points = i(json.fatiguepoints_points);
-		data.FP.value = i(json.fps);
+		let hp = i(json.hps);
+		let fp = i(json.fps);
+		let saveCurrent = false;
+		if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
+			saveCurrent = await new Promise((resolve, reject) => {
+				let d = new Dialog({
+		      title: "Current HP & FP",
+		      content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values (default) or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
+				  buttons: {
+				    save: {
+				     icon: '<i class="far fa-square"></i>',
+				     label: "Save",
+				     callback: () => resolve(true)
+				    },
+				    overwrite: {
+				     icon: '<i class="fas fa-edit"></i>',
+				     label: "Overwrite",
+				     callback: () => resolve(true)
+				    }
+				  },
+				 default: "save",
+				 close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
+		    });
+				d.render(true);
+			});
+		}
+		if (!saveCurrent) {
+			data.HP.value = hp;
+			data.FP.value = fp;
+		}
 
 		let lm = {};
 		lm.basiclift = t(json.basiclift);
