@@ -68,9 +68,8 @@
                 <div><label><input type='radio' name='woundmodifier' value='{{@key}}' {{ifeq ../CALC.damageType
                       @key 'checked' }}>&nbsp;{{this.label}}</label></div>
                 <div>{{@key}}</div>
-                <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>{{fractionalize
-                  this.multiplier 2
-                  '×'}}
+                <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>×{{fractionalize
+                  this.multiplier 2}}
                 </div>
                 {{/each}}
               </div>
@@ -134,12 +133,12 @@
               CALC.isVulnerable}}checked{{/if}}>
             <label for='vulnerable' class='label-toggle'>Vulnerability:<span class='pdflink'>B161</span></label>
             <div class='grid grid-3col continuation collapsible-content'>
-              <label><input {{#unless CALC.isVulnerable}}disabled{{/unless}} {{ifeq CALC.vulnerabilityMultiple
-                  2 'checked' }} type='radio' name='vulnerability' value='2'>&nbsp;×2</label>
-              <label><input {{#unless CALC.isVulnerable}}disabled{{/unless}} {{ifeq CALC.vulnerabilityMultiple
-                  3 'checked' }} type='radio' name='vulnerability' value='3'>&nbsp;×3</label>
-              <label><input {{#unless CALC.isVulnerable}}disabled{{/unless}} {{ifeq CALC.vulnerabilityMultiple
-                  4 'checked' }} type='radio' name='vulnerability' value='4'>&nbsp;×4</label>
+              <label><input {{ifeq CALC.vulnerabilityMultiple 2 'checked' }} type='radio' name='vulnerability'
+                  value='2'>&nbsp;×2</label>
+              <label><input {{ifeq CALC.vulnerabilityMultiple 3 'checked' }} type='radio' name='vulnerability'
+                  value='3'>&nbsp;×3</label>
+              <label><input {{ifeq CALC.vulnerabilityMultiple 4 'checked' }} type='radio' name='vulnerability'
+                  value='4'>&nbsp;×4</label>
             </div>
           </div>
           <div class='collapsible-wrapper options-drawer'>
@@ -147,16 +146,16 @@
               CALC.isHardenedDR}}checked{{/if}}>
             <label for='hardened' class='label-toggle'>Hardened DR Level: <span class='pdflink'>B47</span></label>
             <div class='grid grid-5col continuation collapsible-content'>
-              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='1'
-                  {{ifeq CALC.hardenedDRLevel 1 'checked' }}>&nbsp;1</label>
-              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='2'
-                  {{ifeq CALC.hardenedDRLevel 2 'checked' }}>&nbsp;2</label>
-              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='3'
-                  {{ifeq CALC.hardenedDRLevel 3 'checked' }}>&nbsp;3</label>
-              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='4'
-                  {{ifeq CALC.hardenedDRLevel 4 'checked' }}>&nbsp;4</label>
-              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='5'
-                  {{ifeq CALC.hardenedDRLevel 5 'checked' }}>&nbsp;5</label>
+              <label><input type='radio' name='hardened' value='1' {{ifeq CALC.hardenedDRLevel 1 'checked'
+                  }}>&nbsp;1</label>
+              <label><input type='radio' name='hardened' value='2' {{ifeq CALC.hardenedDRLevel 2 'checked'
+                  }}>&nbsp;2</label>
+              <label><input type='radio' name='hardened' value='3' {{ifeq CALC.hardenedDRLevel 3 'checked'
+                  }}>&nbsp;3</label>
+              <label><input type='radio' name='hardened' value='4' {{ifeq CALC.hardenedDRLevel 4 'checked'
+                  }}>&nbsp;4</label>
+              <label><input type='radio' name='hardened' value='5' {{ifeq CALC.hardenedDRLevel 5 'checked'
+                  }}>&nbsp;5</label>
             </div>
           </div>
           <div class='shaded collapsible-wrapper options-drawer'>
@@ -165,17 +164,33 @@
             <label for='injury-tolerance' class='label-toggle'>Injury Tolerance:<span class='pdflink'>
                 B60</span></label>
             <div class='collapsible-content continuation'>
-              <div><label><input type='radio' name='injury-tolerance' value='unliving'>&nbsp;Unliving<span
+              <div><label><input type='radio' name='injury-tolerance' value='unliving' {{ifeq
+                    CALC.injuryToleranceType 'unliving' 'checked' }}>&nbsp;Unliving<span
                     class='pdflink'>B380</span></label></div>
-              <div><label><input type='radio' name='injury-tolerance' value='homogenous'>&nbsp;Homogenous<span
+              <div><label><input type='radio' name='injury-tolerance' value='homogenous' {{ifeq
+                    CALC.injuryToleranceType 'homogenous' 'checked' }}>&nbsp;Homogenous<span
                     class='pdflink'>B380</span></label>
               </div>
-              <div><label><input type='radio' name='injury-tolerance' value='diffuse'>&nbsp;Diffuse<span
+              <div><label><input type='radio' name='injury-tolerance' value='diffuse' {{ifeq
+                    CALC.injuryToleranceType 'diffuse' 'checked' }}>&nbsp;Diffuse<span
                     class='pdflink'>B380</span></label>
               </div>
             </div>
           </div>
           <div id='specials-insert-point' class='gurps-3col' />
+
+          {{#if CALC.useBluntTrauma}}
+          {{debug CALC.bluntTrauma}}
+          <input id='flexible-armor' name='flexible-armor' type='checkbox' value='flexible-armor' {{#if
+            CALC.isFlexibleArmor}}checked{{/if}}>
+          <label for='flexible-armor'>Flexible Armor <span style='font-size: smaller;'>(Blunt Trauma):</span></label>
+          <div id="blunt-trauma-field" class="with-button" style="margin-left: 5px;">
+            <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
+              value='{{CALC.effectiveBluntTrauma}}' {{#unless CALC.isFlexibleArmor}}disabled{{/unless}}>
+            <button name='clear'><span class='fas fa-times-circle'></button>
+          </div>
+          {{/if}}
+
         </div>
       </div>
     </div>
@@ -186,30 +201,54 @@
         <div class='grid grid-3col'>
           <div class='gurps-3col results-table'>
             <div>BASIC&nbsp;DAMAGE</div>
-            <div><span name='result-basic'>{{CALC.basicDamage}}</span></div>
-            <div><span name='result-apply-to'>{{CALC.applyTo}}</span></div>
+            <div>{{CALC.basicDamage}}</div>
+            <div>{{CALC.applyTo}}</div>
+
+            {{#if CALC.isRangedHalfDamage}}
+            <div name='result-effective-dmg'>RANGED 1/2D</div>
+            <div name='result-effective-dmg'>{{effectiveDamage}}</div>
+            <div name='result-effective-dmg'>= {{basicDamage}} &divide; 2</div>
+            {{/if}}
 
             <div id='result-dr'>DR</div>
-            <div><span name='result-dr'>{{CALC.DR}}</span></div>
-            <div><span name='result-hitlocation'>{{CALC.hitLocation}}</span></div>
+            <div>{{CALC.DR}}</div>
+            <div>{{CALC.hitLocation}}</div>
+
+            {{#if CALC.useArmorDivisor}}
+            {{#if CALC.armorDivisor}}
+            <div>DR W/DIVISOR</div>
+            <div>{{CALC.effectiveDR}}</div>
+            <!-- This is a big messy looking block, but it prints either:
+                "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->
+            <div><span>= {{CALC.DR}} &divide;
+                {{#if CALC.isHardenedDR}}
+                ({{CALC.effectiveArmorDivisor}} = ({{CALC.armorDivisor}}) w/Hard–{{CALC.hardenedDRLevel}})
+                {{else}}
+                ({{CALC.armorDivisor}})
+                {{/if}}
+                {{#unless CALC.DR}}
+                {{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
+                {{/unless}}</span></div>
+            {{/if}}
+            {{/if}}
 
             <div id='result-penetrating'>PENETRATING</div>
-            <div><span name='result-penetrating'>{{CALC.penetratingDamage}}</span></div>
-            <div><span>= <span name='result-halfdamage'>{{CALC.basicDamage}}</span> &minus; <span
-                  name='result-effective-dr'>{{CALC.effectiveDR}}</span></span></div>
+            <div>{{CALC.penetratingDamage}}</div>
+            <div>= {{CALC.effectiveDamage}} &minus; {{CALC.effectiveDR}}</div>
 
             <div>MODIFIER</div>
-            <div><span>×<span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span></span></div>
+            <div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
             <div><span>= <span name='result-addmods'>({{CALC.damageType}})</span><span id='modifier-footnote-wrapper'>*
                   <span id="modifier-footnote" class="pdflink">B398</span></span></span>
             </div>
 
             <div>INJURY</div>
             <div><span name='result-injury'>{{CALC.injury}}</span></div>
-            <div id='result-injury-total'><span>= <span
-                  name='result-penetrating'>{{calculating.penetratingDamage}}</span>
-                × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span><span
-                  name='result-penetrating-footnote'></span></div>
+            <div id='result-injury-total'><span>= {{CALC.penetratingDamage}} × <span
+                  name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span>{{#if
+                CALC.maxInjuryForDiffuse}} (Max: {{CALC.maxInjuryForDiffuse}})* <span class="pdflink">B380</span>{{/if}}
+            </div>
+            <!-- add a footnote that there is blunt trauma -->
           </div>
 
           <div id="result-extrastuff">
