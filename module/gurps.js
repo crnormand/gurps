@@ -212,8 +212,6 @@ GURPS.PARSELINK_MAPPINGS = {
 	"Smell": "tastesmell",
 	"TOUCH": "touch",
 	"Touch": "touch",
-	"Parry": "parry",
-	"PARRY": "parry"
 }
 
 
@@ -529,7 +527,6 @@ function performAction(action, actor, event) {
 		} else
 			ui.notifications.warn("You must have a character selected");
 
-
 	if (action.type === "attack")
 		if (!!actor) {
 			let att = null;
@@ -564,6 +561,34 @@ function performAction(action, actor, event) {
 			thing = action.desc;
 		} else
 			ui.notifications.warn("You must have a character selected");
+			
+	if (action.type === "block-parry")
+		if (!!actor) {
+			thing = action.desc;
+			if (!action.melee) target = actordata.data[action.path];		// Is there a basic parry or block stored, and we didn't try to identify a melee
+			Object.values(actordata.data.melee).forEach(e => {
+				if (!target || target < 0) {
+					if (!!e[action.path]) {
+						if (!!action.melee) {
+							if (e.name.startsWith(action.melee)) {
+								target = e[action.path];
+								thing += " for " + e.name;
+							}
+						} else {
+							target = e[action.path];
+							thing += " for " + e.name;
+						}
+					}
+				}
+			});
+			target = parseInt(target);
+			if (target) 
+				formula = "3d6";
+			else
+				ui.notifications.warn("Unable to find a " + action.desc + " to roll");
+		} else
+			ui.notifications.warn("You must have a character selected");
+
 
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
@@ -671,7 +696,7 @@ GURPS.applyModifierDesc = applyModifierDesc;
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
 async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optionalArgs) {
 
-	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+	if (origtarget == 0 || isNaN(origtarget)) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
 
 	// Is Dice So Nice enabled ?
