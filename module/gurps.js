@@ -21,12 +21,12 @@ import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
 import DamageChat from '../lib/damagemessage.js'
 
 import helpers from '../lib/moustachewax.js'
-import settings from '../lib/miscellaneous-settings.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
 import { NpcInput } from '../lib/npc-input.js'
 
 jqueryHelpers()
-settings()
+settings.initializeSettings()
 helpers()
 
 GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
@@ -850,7 +850,7 @@ function handleOnPdf(event) {
 	}
 	// Special case for Separate Basic Set PDFs
 	if (book === "B") {
-		let s = game.settings.get("gurps", "basicsetpdf");
+		let s = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BASICSET_PDF);
 		if (page > 336)
 			if (s === "Separate") {
 				book = "BX";
@@ -1108,36 +1108,6 @@ Hooks.once("init", async function () {
 
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
-	game.settings.register("gurps", "changelogVersion", {
-		name: "Changelog Version",
-		scope: "client",
-		config: false,
-		type: String,
-		default: "0.0.0",
-	});
-
-	game.settings.register("gurps", "showChangelog", {
-		name: "Show 'Read Me' on version change",
-		hint: "Open the Read Me file once, if a version change is detected.",
-		scope: "client",
-		config: true,
-		type: Boolean,
-		default: true,
-	});
-
-	game.settings.register("gurps", "basicsetpdf", {
-		name: 'Basic Set PDF(s)',
-		hint: 'Select "Combined" or "Separate" and use the associated PDF codes when configuring PDFoundry.  ' +
-			'Note: If you select "Separate", the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.',
-		scope: 'world',
-		config: true,
-		type: String,
-		choices: {
-			'Combined': 'Combined Basic Set, code "B"',
-			'Separate': 'Separate Basic Set Characters, code "B".  Basic Set Campaigns, code "BX"'
-		},
-		default: 'Combined',
-	})
 
 	Hooks.on('chatMessage', (log, content, data) => {
 		if (content === "/help" || content === "!help") {
@@ -1202,7 +1172,7 @@ Hooks.once("ready", async function () {
 	GURPS.ThreeD6.refresh();
 
 	// Show changelog
-	const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
+	const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || "0.0.1";
 	const changelogVersion = SemanticVersion.fromString(v);
 	const curVersion = SemanticVersion.fromString(game.system.data.version);
 
@@ -1213,10 +1183,10 @@ Hooks.once("ready", async function () {
 				type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
 				whisper: [game.user]
 			});
-		if (game.settings.get("gurps", "showChangelog")) {
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHANGELOG)) {
 			const app = new ChangeLogWindow(changelogVersion);
 			app.render(true);
-			game.settings.set("gurps", "changelogVersion", curVersion.toString());
+			game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString());
 		}
 	}
 

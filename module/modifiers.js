@@ -1,5 +1,6 @@
 import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import parselink from '../lib/parselink.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 
 // Install Custom Roll to support global modifier access (@gmod & @gmodc)
 export class GurpsRoll extends Roll {
@@ -43,14 +44,16 @@ export class ModifierBucket extends Application {
 	tempRangeMod = null;
 
 	addTempRangeMod() {
-		// Only allow 1 measured range, for the moment.
-		let d = "for range";
-		this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
-		if (this.tempRangeMod == 0) {
-			this.sum();
-			this.updateBucket();
-		} else {
-			this.addModifier(this.tempRangeMod, d);
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_RANGE_TO_BUCKET)) {
+			// Only allow 1 measured range, for the moment.
+			let d = "for range";
+			this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
+			if (this.tempRangeMod == 0) {
+				this.sum();
+				this.updateBucket();
+			} else {
+				this.addModifier(this.tempRangeMod, d);
+			}
 		}
 	}
 
@@ -133,7 +136,8 @@ export class ModifierBucket extends Application {
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
 		e.contextmenu(this.onRightClick.bind(this));
-		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MODIFIER_TOOLTIP))
+			e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
 
 		e = html.find("#modttt");
 		e.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
@@ -245,18 +249,18 @@ export class ModifierBucket extends Application {
 
 	async _onClick(event) {
 		event.preventDefault();
-
-		// If not the GM, just broadcast our mods to the chat	
-		if (!game.user.isGM) {
-			let messageData = {
-				content: this.chatString(this.modifierStack),
-				type: CONST.CHAT_MESSAGE_TYPES.OOC,
-			};
-			CONFIG.ChatMessage.entityClass.create(messageData, {});
-			return;
-		}
-
-		this.showOthers();
+		if (event.shiftKey) {
+			// If not the GM, just broadcast our mods to the chat	
+			if (!game.user.isGM) {
+				let messageData = {
+					content: this.chatString(this.modifierStack),
+					type: CONST.CHAT_MESSAGE_TYPES.OOC,
+				};
+				CONFIG.ChatMessage.entityClass.create(messageData, {});
+			} else
+				this.showOthers();
+		} else
+			this._onenter(event);
 	}
 
 	async showOthers() {
