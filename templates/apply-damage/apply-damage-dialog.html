@@ -8,8 +8,8 @@
       <input type='text' id='basicDamage' name='damage' class='digits-only' value='{{CALC.basicDamage}}'>
       <div>
         <select id='apply-to' name='apply-to'>
-          <option value='HP'>Hit Points</option>
-          <option value='FP' selected>Fatigue Points</option>
+          <option value='HP' {{ifeq CALC.applyTo 'HP' 'selected' }}>Hit Points</option>
+          <option value='FP' {{ifeq CALC.applyTo 'FP' 'selected' }}>Fatigue Points</option>
         </select>
       </div>
       <button id='apply-publicly'>Apply</button>
@@ -75,7 +75,7 @@
               <aside>* - Adjusted for hit location.</aside>
               {{/if}}
 
-              {{#if CALC.showInjuryToleranceFootnote}}
+              {{#if CALC.isWoundModifierAdjustedForInjuryTolerance}}
               <aside>† - Adjusted for Injury Tolerance.</aside>
               {{/if}}
             </div>
