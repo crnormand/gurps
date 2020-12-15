@@ -86,7 +86,6 @@
           </section>
 
           <hr /> <!-- Doesn't do much except add some space -->
-          {{debug CALC.damageType}}
           <label><input type='radio' name='woundmodifier' value='none' {{ifeq CALC.damageType 'none' 'checked'
               }}>&nbsp;No modifier</label>
           <div class='grid grid-2col flex-between'>
@@ -106,40 +105,58 @@
           <h4>Tactical Rules</h4>
           <aside>Use systems settings to set defaults.</aside>
           <div class='gurps-3col gurps-checkbox-col'>
-            {{#each tacticalOptions}}
-            <div><input id='tactical-{{this.id}}' type='checkbox' name='tactical' value='{{this.id}}'></input></div>
-            <div><label for='tactical-{{this.id}}'>{{this.label}}</label></div>
-            <div class='pdflink'>{{this.ref}}</div>
-            {{/each}}
+
+            <div><input id='tactical-blunttrauma' type='checkbox' name='tactical' value='blunttrauma' {{#if
+                CALC.useBluntTrauma}}checked{{/if}}></div>
+            <div><label for='tactical-blunttrauma'>Blunt Trauma</label></div>
+            <div class='pdflink'>B379</div>
+
+            <div><input id='tactical-armordivisor' type='checkbox' name='tactical' value='armordivisor' {{#if
+                CALC.useArmorDivisor}}checked{{/if}}></div>
+            <div><label for='tactical-armordivisor'>Armor Divisor</label></div>
+            <div class='pdflink'>B378</div>
+
+            <div><input id='tactical-locationmodifier' type='checkbox' name='tactical' value='locationmodifier' {{#if
+                CALC.useLocationModifiers}}checked{{/if}}></div>
+            <div><label for='tactical-locationmodifier'>Hit Location Wound Modifiers</label></div>
+            <div class='pdflink'>B398</div>
           </div>
 
           <h4>Special Combat Situations</h4>
           <div class='gurps-3col gurps-checkbox-col'>
-            {{#each otherSituations}}
-            <div><input id='specials-{{this.id}}' type='checkbox' name='specials' value='{{this.id}}'></input>
-            </div>
-            <div><label for='specials-{{this.id}}'>{{this.label}}</label></div>
-            <div class='pdflink'>{{this.ref}}</div>
-            {{/each}}
+            <div><input id='specials-range12D' type='checkbox' name='specials' value='range12D' {{#if
+                CALC.isRangedHalfDamage}}checked{{/if}}></div>
+            <div><label for='specials-range12D'>Ranged, Half Damage (1/2D)</label></div>
+            <div class='pdflink'>B378</div>
           </div>
           <div class='shaded collapsible-wrapper options-drawer'>
-            <input id='vulnerable' class='toggle' type='checkbox' name='vulnerable' value='vulnerable'></input>
+            <input id='vulnerable' class='toggle' type='checkbox' name='vulnerable' value='vulnerable' {{#if
+              CALC.isVulnerable}}checked{{/if}}>
             <label for='vulnerable' class='label-toggle'>Vulnerability:<span class='pdflink'>B161</span></label>
             <div class='grid grid-3col continuation collapsible-content'>
-              <label><input disabled checked type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
-              <label><input disabled type='radio' name='vulnerability' value='vulnerability-3'>&nbsp;×3</label>
-              <label><input disabled type='radio' name='vulnerability' value='vulnerability-4'>&nbsp;×4</label>
+              <label><input {{#unless CALC.isVulnerable}}disabled{{/unless}} {{ifeq CALC.vulnerabilityMultiple
+                  2 'checked' }} type='radio' name='vulnerability' value='2'>&nbsp;×2</label>
+              <label><input {{#unless CALC.isVulnerable}}disabled{{/unless}} {{ifeq CALC.vulnerabilityMultiple
+                  3 'checked' }} type='radio' name='vulnerability' value='3'>&nbsp;×3</label>
+              <label><input {{#unless CALC.isVulnerable}}disabled{{/unless}} {{ifeq CALC.vulnerabilityMultiple
+                  4 'checked' }} type='radio' name='vulnerability' value='4'>&nbsp;×4</label>
             </div>
           </div>
           <div class='collapsible-wrapper options-drawer'>
-            <input id='hardened' class='toggle' type='checkbox' name='hardened' value='hardened'></input>
+            <input id='hardened' class='toggle' type='checkbox' name='hardened' value='hardened' {{#if
+              CALC.isHardenedDR}}checked{{/if}}>
             <label for='hardened' class='label-toggle'>Hardened DR Level: <span class='pdflink'>B47</span></label>
             <div class='grid grid-5col continuation collapsible-content'>
-              <label><input type='radio' name='hardened' value='hardened-1'>&nbsp;1</label>
-              <label><input type='radio' name='hardened' value='hardened-2'>&nbsp;2</label>
-              <label><input type='radio' name='hardened' value='hardened-3'>&nbsp;3</label>
-              <label><input type='radio' name='hardened' value='hardened-4'>&nbsp;4</label>
-              <label><input type='radio' name='hardened' value='hardened-5'>&nbsp;5</label>
+              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='1'
+                  {{ifeq CALC.hardenedDRLevel 1 'checked' }}>&nbsp;1</label>
+              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='2'
+                  {{ifeq CALC.hardenedDRLevel 2 'checked' }}>&nbsp;2</label>
+              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='3'
+                  {{ifeq CALC.hardenedDRLevel 3 'checked' }}>&nbsp;3</label>
+              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='4'
+                  {{ifeq CALC.hardenedDRLevel 4 'checked' }}>&nbsp;4</label>
+              <label><input type='radio' {{#unless CALC.isHardenedDR}}disabled{{/unless}} name='hardened' value='5'
+                  {{ifeq CALC.hardenedDRLevel 5 'checked' }}>&nbsp;5</label>
             </div>
           </div>
           <div class='shaded collapsible-wrapper options-drawer'>
