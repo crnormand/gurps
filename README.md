@@ -1,17 +1,20 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.1
+# Current Release Version 0.8.2
 [If you like our work...](https://ko-fi.com/crnormand)
 
 To install the latest release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
 
-Getting started video: https://youtu.be/FUqtOkdyBCo
+[Getting started video](https://youtu.be/FUqtOkdyBCo)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
+- 0.8.3
+
+### History
 - 0.8.2
     - Rearrange npc sheet (attacks over traits/skills)
     - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
@@ -27,7 +30,6 @@ This is what we are currently working on:
     - Import can now keep current HP & FP
     - fix for combined Basic Set PDF link for pages > 336
 
-### History
 - 0.8.1
     - Basic Speed no longer truncates
     - Major upgrade to Apply Damage Dialog!
