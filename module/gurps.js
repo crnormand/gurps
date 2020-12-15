@@ -20,14 +20,14 @@ import HitFatPoints from '../lib/hitpoints.js'
 import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
 import DamageChat from '../lib/damagemessage.js'
 
-import helpers from '../lib/moustachewax.js'
+import handlebarHelpers from '../lib/moustachewax.js'
 import settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
 import { NpcInput } from '../lib/npc-input.js'
 
 jqueryHelpers()
 settings()
-helpers()
+handlebarHelpers()
 
 GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -1066,7 +1066,6 @@ Hooks.once("init", async function () {
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 
-
 	// Define custom Entity classes
 	CONFIG.Actor.entityClass = GurpsActor;
 	CONFIG.Item.entityClass = GurpsItem;
@@ -1222,6 +1221,20 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
+
+	// 
+	// define partials for ADD:
+	const __dirname = 'systems/gurps/templates'
+
+	loadTemplates([
+		__dirname + '/apply-damage/effect-blunttrauma.html',
+		__dirname + '/apply-damage/effect-crippling.html',
+		__dirname + '/apply-damage/effect-headvitalshit.html',
+		__dirname + '/apply-damage/effect-knockback.html',
+		__dirname + '/apply-damage/effect-majorwound.html',
+		__dirname + '/apply-damage/effect-shock.html',
+	])
+
 });
 
 

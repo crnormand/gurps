@@ -27,7 +27,7 @@
             <header>Roll</header>
             <header>DR</header>
             {{#each CALC.hitLocationsWithDR}}
-            <div><label><input type='radio' name='hitlocation' value='{{this.where}}' {{ifeq CALC.hitLocation
+            <div><label><input type='radio' name='hitlocation' value='{{this.where}}' {{ifeq ../CALC.hitLocation
                   this.where 'checked' }}>&nbsp;{{this.where}}</label></div>
             <div>{{this.rollText}}</div>
             <div>{{this.dr}}</div>
@@ -159,8 +159,8 @@
             </div>
           </div>
           <div class='shaded collapsible-wrapper options-drawer'>
-            <input id='injury-tolerance' class='toggle' type='checkbox' name='injury-tolerance' value='injury-tolerance'
-              {{#if CALC.isInjuryTolerance}}checked{{/if}}></input>
+            <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{#if
+              CALC.isInjuryTolerance}}checked{{/if}}></input>
             <label for='injury-tolerance' class='label-toggle'>Injury Tolerance:<span class='pdflink'>
                 B60</span></label>
             <div class='collapsible-content continuation'>
@@ -180,7 +180,6 @@
           <div id='specials-insert-point' class='gurps-3col' />
 
           {{#if CALC.useBluntTrauma}}
-          {{debug CALC.bluntTrauma}}
           <input id='flexible-armor' name='flexible-armor' type='checkbox' value='flexible-armor' {{#if
             CALC.isFlexibleArmor}}checked{{/if}}>
           <label for='flexible-armor'>Flexible Armor <span style='font-size: smaller;'>(Blunt Trauma):</span></label>
@@ -220,15 +219,10 @@
             <div>{{CALC.effectiveDR}}</div>
             <!-- This is a big messy looking block, but it prints either:
                 "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->
-            <div><span>= {{CALC.DR}} &divide;
-                {{#if CALC.isHardenedDR}}
-                ({{CALC.effectiveArmorDivisor}} = ({{CALC.armorDivisor}}) w/Hard–{{CALC.hardenedDRLevel}})
-                {{else}}
-                ({{CALC.armorDivisor}})
-                {{/if}}
-                {{#unless CALC.DR}}
-                {{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
-                {{/unless}}</span></div>
+            <div><span>= {{CALC.DR}} &divide; {{#if CALC.isHardenedDR}}({{CALC.effectiveArmorDivisor}} =
+                ({{CALC.armorDivisor}}) w/Hard–{{CALC.hardenedDRLevel}}){{else}}({{CALC.armorDivisor}}){{/if}}{{#unless
+                CALC.DR}}{{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}{{/unless}}</span>
+            </div>
             {{/if}}
             {{/if}}
 
@@ -238,21 +232,41 @@
 
             <div>MODIFIER</div>
             <div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
-            <div><span>= <span name='result-addmods'>({{CALC.damageType}})</span><span id='modifier-footnote-wrapper'>*
-                  <span id="modifier-footnote" class="pdflink">B398</span></span></span>
+            <div>
+              <span>= {{woundModifierText CALC}}{{#if (isWoundModAdjForLocation CALC)}}* ({{CALC.hitLocation}}) <span
+                  class="pdflink">B398</span>{{/if}}{{#if (isWoundModAdjForInjuryTol CALC)}}*
+                <span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span> <span
+                  class="pdflink">B380</span>{{/if}}
+              </span>
             </div>
 
             <div>INJURY</div>
-            <div><span name='result-injury'>{{CALC.injury}}</span></div>
-            <div id='result-injury-total'><span>= {{CALC.penetratingDamage}} × <span
-                  name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span>{{#if
+            <div>{{CALC.injury}}</div>
+            <div><span>= {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize
+                  CALC.totalWoundingModifier 2}}</span>{{#if
                 CALC.maxInjuryForDiffuse}} (Max: {{CALC.maxInjuryForDiffuse}})* <span class="pdflink">B380</span>{{/if}}
             </div>
+
+            {{#if CALC.isBluntTraumaInjury}}
+            <div>BLUNT&nbsp;TRAUMA</div>
+            <div>{{CALC.effectiveBluntTrauma}}</div>
+            <div class="pdflink">B379</div>
+            {{/if}}
+
+            {{#if CALC.isInjuryReducedByLocation}}
+            <div>LOCATION MAX</div>
+            <div>{{CALC.locationMaxHPAsInt}}</div>
+            <div>{{CALC.hitLocation}}</div>
+            {{/if}}
+
             <!-- add a footnote that there is blunt trauma -->
           </div>
 
           <div id="result-extrastuff">
             <ul id='result-effects'>
+              {{#each CALC.effects}}
+              {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
+              {{/each}}
             </ul>
           </div>
 
