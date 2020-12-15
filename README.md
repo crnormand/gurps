@@ -13,6 +13,7 @@ To install the latest release, use this manifest URL:
 
 This is what we are currently working on:
 - 0.8.3
+    - Direct roll of On-the-Fly formulas.  e.g. /r [Per] or /roll [3d-2 cr]
 
 ### History
 - 0.8.2
