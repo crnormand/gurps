@@ -826,10 +826,12 @@ function handleOnPdf(event) {
 	// Special case for Separate Basic Set PDFs
 	if (book === "B") {
 		let s = game.settings.get("gurps", "basicsetpdf");
-		if (s === "Separate" && page > 336) {
-			book = "BX";
-			page = page - 335;
-		}
+		if (page > 336)
+			if (s === "Separate") {
+				book = "BX";
+				page = page - 335;
+			} else
+				page += 2;
 	}
 	if (ui.PDFoundry) {
 		const pdf = ui.PDFoundry.findPDFDataByCode(book);

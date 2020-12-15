@@ -25,6 +25,7 @@ This is what we are currently working on:
     - "Show the Math" on damage chat messages
     - Additional ranged hits capped at RoF
     - Import can now keep current HP & FP
+    - fix for combined Basic Set PDF link for pages > 336
 
 ### History
 - 0.8.1
