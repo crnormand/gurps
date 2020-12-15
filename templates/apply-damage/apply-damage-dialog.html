@@ -86,16 +86,19 @@
           </section>
 
           <hr /> <!-- Doesn't do much except add some space -->
-          <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No modifier</input></label>
+          {{debug CALC.damageType}}
+          <label><input type='radio' name='woundmodifier' value='none' {{ifeq CALC.damageType 'none' 'checked'
+              }}>&nbsp;No modifier</label>
           <div class='grid grid-2col flex-between'>
-            <label><input type='radio' name='woundmodifier' value='User Entered'>&nbsp;Enter
-              modifier:</input></label>
+            <label><input type='radio' name='woundmodifier' value='User Entered' {{ifeq
+                CALC.damageType 'User Entered' 'checked' }}>&nbsp;Enter
+              modifier:</label>
             <input type='text' class='decimal-digits-only' id='user-entered-woundmod' name='User Entered' value='1'>
           </div>
           <div class='grid grid-2col flex-between'>
             <label>Additional modifier (stacks):</label>
             <input type='number' class='decimal-digits-only' id='addmodifier' name='addmodifier'
-              value='{{CALC._additionalWoundModifier}}'>
+              value='{{CALC.additionalWoundModifier}}'>
           </div>
         </div>
 
