@@ -768,7 +768,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		roll: roll
 	};
 	let whoCanSeeDice = null;
-	if (optionalArgs.event.shiftKey) {
+	if (optionalArgs.event?.shiftKey) {
 		whoCanSeeDice = [game.user._id];
 		messageData.whisper = [game.user._id];
 	}
@@ -880,7 +880,7 @@ function handleGurpslink(event, actor, desc) {
 	if (!!action)
 		action = JSON.parse(atob(action));
 	else
-		action = parselink(element.innerText, desc, false).action;
+		action = parselink(element.innerText, desc).action;
 	this.performAction(action, actor, event);
 }
 GURPS.handleGurpslink = handleGurpslink;
@@ -1116,12 +1116,26 @@ Hooks.once("init", async function () {
 
 	Hooks.on('chatMessage', (log, content, data) => {
 		if (content === "/help" || content === "!help") {
-			ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+		  let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a><br>/help - this message";
+			if (game.user.isGM) c += "<br>/mook - Open Mook Generator";
+			ChatMessage.create({ 
+				content: c, 
+				user: game.user._id, 
+				type: CONST.CHAT_MESSAGE_TYPES.OTHER });
 			return false;
 		}
 		if (content === "/mook" && game.user.isGM) {
 			new NpcInput().render(true);
 			return false;
+		}
+		let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+		let m = content.match(re);
+		if (!!m && !!m[2]) {
+			let action = parselink(m[2]);
+			if (!!action.action) {
+				GURPS.performAction(action.action, GURPS.LastActor);
+				return false;
+			}
 		}
 	});
 

@@ -1,6 +1,7 @@
 import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import parselink from '../lib/parselink.js'
 
+// Install Custom Roll to support global modifier access (@gmod & @gmodc)
 export class GurpsRoll extends Roll {
 	_prepareData(data) {
     let d = super._prepareData(data);
