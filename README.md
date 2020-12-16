@@ -13,10 +13,12 @@ To install the latest release, use this manifest URL:
 
 This is what we are currently working on:
 - 0.8.3
-    - Direct roll of On-the-Fly formulas.  e.g. /r [Per] or /roll [3d-2 cr]
-    - Parry & Block On-the-Fly formulas
+    - Direct roll of On-the-Fly formulas in chat.  e.g. /r [Per] or /roll [3d-2 cr]
+    - Direct roll of On-the-Fly formulas in Rolltables
+    - Direct roll of On-the-Fly formulas in Macros (multiple lines)
+    - Added Parry & Block to the On-the-Fly formulas
     - Enhancements to the Mook Generator stat block importing
-    - Journal entries now parse (and display) On-the-Fly formulas.    Great with GM screen.
+    - Journal entries now parse (and display) On-the-Fly formulas.  
 
 ### History
 - 0.8.2

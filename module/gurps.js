@@ -1037,13 +1037,14 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 }
 GURPS.listeqtrecurse = listeqtrecurse;
 
+// Given a jquery html, attach all of our listeners to it.
 function hookupGurps(html) {
 		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
 		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
 		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
 		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));		
+		html.find(".pdflink").click(GURPS.handleOnPdf.bind(this));		
 }
 GURPS.hookupGurps = hookupGurps;
 
@@ -1060,11 +1061,6 @@ function chatClickGmod(event) {
 	game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
 }
 GURPS.chatClickGmod = chatClickGmod;
-
-function chatClickPdf(event) {
-	game.GURPS.handleOnPdf(event);
-}
-GURPS.chatClickPdf = chatClickPdf;
 
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
@@ -1144,14 +1140,19 @@ Hooks.once("init", async function () {
 			return false;
 		}
 		let re = /^(\/r|\/roll) \[([^\]]+)\]/;
-		let m = content.match(re);
-		if (!!m && !!m[2]) {
-			let action = parselink(m[2]);
-			if (!!action.action) {
-				GURPS.performAction(action.action, GURPS.LastActor);
-				return false;
+		let found = false;
+		content.split("\n").forEach(e => {		// Handle multiline chat messages (mostly from macros)
+			let m = e.match(re);
+			if (!!m && !!m[2]) {
+				let action = parselink(m[2]);
+				if (!!action.action) {
+					GURPS.performAction(action.action, GURPS.LastActor);
+					found = true;
+				}
 			}
-		}
+		});
+		if (found) return false;
+		
 	});
 
 	// Look for blind messages with .message-results and remove them
@@ -1242,16 +1243,24 @@ Hooks.once("ready", async function () {
 
 	Hooks.on('preCreateChatMessage', (data, options, userId) => {
 		let c = data.content;
-		let r = $(c).find(".result-text");		// Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
-		let re = /^(\/r|\/roll) \[([^\]]+)\]/;
-		let m = r[0]?.innerText.match(re);
-		if (!!m && !!m[2]) {
-			let action = parselink(m[2]);
-			if (!!action.action) {
-				GURPS.performAction(action.action, GURPS.LastActor);
-//				return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
+		try {
+			let html = $(c);
+			let rt = html.find(".result-text");		// Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
+			let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+			let t = rt[0]?.innerText;
+			if (!!t) {
+				t.split("\n").forEach(e => {
+					let m = e.match(re);
+					if (!!m && !!m[2]) {
+						let action = parselink(m[2]);
+						if (!!action.action) {
+							GURPS.performAction(action.action, GURPS.LastActor);
+	//					return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
+						}
+					}
+				});
 			}
-		}
+		} catch (e) {};	// a dangerous game... but limited to GURPs /roll OtF
 		data.content = game.GURPS.gurpslink(c);
 	});
 
