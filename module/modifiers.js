@@ -1,6 +1,8 @@
 import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import parselink from '../lib/parselink.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 
+// Install Custom Roll to support global modifier access (@gmod & @gmodc)
 export class GurpsRoll extends Roll {
 	_prepareData(data) {
     let d = super._prepareData(data);
@@ -42,14 +44,16 @@ export class ModifierBucket extends Application {
 	tempRangeMod = null;
 
 	addTempRangeMod() {
-		// Only allow 1 measured range, for the moment.
-		let d = "for range";
-		this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
-		if (this.tempRangeMod == 0) {
-			this.sum();
-			this.updateBucket();
-		} else {
-			this.addModifier(this.tempRangeMod, d);
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_RANGE_TO_BUCKET)) {
+			// Only allow 1 measured range, for the moment.
+			let d = "for range";
+			this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
+			if (this.tempRangeMod == 0) {
+				this.sum();
+				this.updateBucket();
+			} else {
+				this.addModifier(this.tempRangeMod, d);
+			}
 		}
 	}
 
@@ -132,7 +136,8 @@ export class ModifierBucket extends Application {
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
 		e.contextmenu(this.onRightClick.bind(this));
-		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MODIFIER_TOOLTIP))
+			e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
 
 		e = html.find("#modttt");
 		e.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
@@ -146,13 +151,7 @@ export class ModifierBucket extends Application {
 			this.tooltipElement.style.setProperty("visibility", "hidden");
 		}
 
-		html.find(".rollable").click(this._onClickRoll.bind(this));
-		html.find(".pdflink").click(this._onClickPdf.bind(this));
-		html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
-		html.find(".gmod").click(this._onClickGmod.bind(this));
-		html.find(".glinkmod").click(this._onClickGmod.bind(this));
-		html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
-		html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
+		GURPS.hookupGurps(html);
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
 		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
@@ -210,24 +209,6 @@ export class ModifierBucket extends Application {
 		this.showOthers();
 	}
 
-	async _onClickPdf(event) {
-		game.GURPS.handleOnPdf(event);
-	}
-
-	async _onClickRoll(event) {
-		game.GURPS.handleRoll(event, this.actor);
-	}
-
-	async _onClickGurpslink(event) {
-		game.GURPS.handleGurpslink(event, game.GURPS.LastActor);
-	}
-
-	async _onClickGmod(event) {
-		let element = event.currentTarget;
-		let desc = element.dataset.name;
-		game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
-	}
-
 	async _onClickTrash(event) {
 		event.preventDefault();
 		this.clear();
@@ -244,18 +225,18 @@ export class ModifierBucket extends Application {
 
 	async _onClick(event) {
 		event.preventDefault();
-
-		// If not the GM, just broadcast our mods to the chat	
-		if (!game.user.isGM) {
-			let messageData = {
-				content: this.chatString(this.modifierStack),
-				type: CONST.CHAT_MESSAGE_TYPES.OOC,
-			};
-			CONFIG.ChatMessage.entityClass.create(messageData, {});
-			return;
-		}
-
-		this.showOthers();
+		if (event.shiftKey) {
+			// If not the GM, just broadcast our mods to the chat	
+			if (!game.user.isGM) {
+				let messageData = {
+					content: this.chatString(this.modifierStack),
+					type: CONST.CHAT_MESSAGE_TYPES.OOC,
+				};
+				CONFIG.ChatMessage.entityClass.create(messageData, {});
+			} else
+				this.showOthers();
+		} else
+			this._onenter(event);
 	}
 
 	async showOthers() {

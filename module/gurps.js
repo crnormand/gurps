@@ -21,13 +21,13 @@ import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
 import DamageChat from '../lib/damagemessage.js'
 
 import handlebarHelpers from '../lib/moustachewax.js'
-import settings from '../lib/miscellaneous-settings.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
 import { NpcInput } from '../lib/npc-input.js'
 
 jqueryHelpers()
-settings()
 handlebarHelpers()
+settings.initializeSettings()
 
 GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -212,8 +212,6 @@ GURPS.PARSELINK_MAPPINGS = {
 	"Smell": "tastesmell",
 	"TOUCH": "touch",
 	"Touch": "touch",
-	"Parry": "parry",
-	"PARRY": "parry"
 }
 
 
@@ -464,6 +462,11 @@ function performAction(action, actor, event) {
 		event: event
 	};		// Ok, I am slowly learning this Javascrip thing ;-)	
 
+	if (action.type === "pdf") {
+		GURPS.handlePdf(action.link);
+		return;
+	}
+
 	if (action.type === "modifier") {
 		let mod = parseInt(action.mod);
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
@@ -529,7 +532,6 @@ function performAction(action, actor, event) {
 		} else
 			ui.notifications.warn("You must have a character selected");
 
-
 	if (action.type === "attack")
 		if (!!actor) {
 			let att = null;
@@ -564,6 +566,34 @@ function performAction(action, actor, event) {
 			thing = action.desc;
 		} else
 			ui.notifications.warn("You must have a character selected");
+
+	if (action.type === "block-parry")
+		if (!!actor) {
+			thing = action.desc;
+			if (!action.melee) target = actordata.data[action.path];		// Is there a basic parry or block stored, and we didn't try to identify a melee
+			Object.values(actordata.data.melee).forEach(e => {
+				if (!target || target < 0) {
+					if (!!e[action.path]) {
+						if (!!action.melee) {
+							if (e.name.startsWith(action.melee)) {
+								target = e[action.path];
+								thing += " for " + e.name;
+							}
+						} else {
+							target = e[action.path];
+							thing += " for " + e.name;
+						}
+					}
+				}
+			});
+			target = parseInt(target);
+			if (target)
+				formula = "3d6";
+			else
+				ui.notifications.warn("Unable to find a " + action.desc + " to roll");
+		} else
+			ui.notifications.warn("You must have a character selected");
+
 
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
@@ -671,7 +701,7 @@ GURPS.applyModifierDesc = applyModifierDesc;
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
 async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optionalArgs) {
 
-	if (origtarget == 0) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+	if (origtarget == 0 || isNaN(origtarget)) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
 	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
 
 	// Is Dice So Nice enabled ?
@@ -768,7 +798,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 		roll: roll
 	};
 	let whoCanSeeDice = null;
-	if (optionalArgs.event.shiftKey) {
+	if (optionalArgs.event?.shiftKey) {
 		whoCanSeeDice = [game.user._id];
 		messageData.whisper = [game.user._id];
 	}
@@ -811,8 +841,12 @@ GURPS.gurpslink = gurpslink;
 // Convert GCS page refs into PDFoundry book & page.   Special handling for refs like "PU8:12"
 function handleOnPdf(event) {
 	event.preventDefault();
-	let element = event.currentTarget;
-	let t = element.innerText.trim();
+	GURPS.handlePdf(event.currentTarget.innerText);
+}
+GURPS.handleOnPdf = handleOnPdf;
+
+function handlePdf(link) {
+	let t = link.trim();
 	let i = t.indexOf(":");
 	let book = "";
 	let page = 0;
@@ -825,11 +859,13 @@ function handleOnPdf(event) {
 	}
 	// Special case for Separate Basic Set PDFs
 	if (book === "B") {
-		let s = game.settings.get("gurps", "basicsetpdf");
-		if (s === "Separate" && page > 336) {
-			book = "BX";
-			page = page - 335;
-		}
+		let s = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BASICSET_PDF);
+		if (page > 336)
+			if (s === "Separate") {
+				book = "BX";
+				page = page - 335;
+			} else
+				page += 2;
 	}
 	if (ui.PDFoundry) {
 		const pdf = ui.PDFoundry.findPDFDataByCode(book);
@@ -844,7 +880,8 @@ function handleOnPdf(event) {
 		ui.notifications.warn('PDFoundry must be installed to use links.');
 	}
 }
-GURPS.handleOnPdf = handleOnPdf;
+GURPS.handlePdf = handlePdf;
+
 
 // Return the i18n string for this data path (note en.json must match up to the data paths).
 // special case, drop ".value" from end of path (and append "NAME"), usually used for attributes
@@ -878,7 +915,7 @@ function handleGurpslink(event, actor, desc) {
 	if (!!action)
 		action = JSON.parse(atob(action));
 	else
-		action = parselink(element.innerText, desc, false).action;
+		action = parselink(element.innerText, desc).action;
 	this.performAction(action, actor, event);
 }
 GURPS.handleGurpslink = handleGurpslink;
@@ -1000,6 +1037,17 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 }
 GURPS.listeqtrecurse = listeqtrecurse;
 
+// Given a jquery html, attach all of our listeners to it.
+function hookupGurps(html) {
+	html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
+	html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
+	html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
+	html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
+	html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
+	html.find(".pdflink").click(GURPS.handleOnPdf.bind(this));
+}
+GURPS.hookupGurps = hookupGurps;
+
 
 function chatClickGurpslink(event) {
 	game.GURPS.handleGurpslink(event, game.GURPS.LastActor);
@@ -1013,11 +1061,6 @@ function chatClickGmod(event) {
 	game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
 }
 GURPS.chatClickGmod = chatClickGmod;
-
-function chatClickPdf(event) {
-	game.GURPS.handleOnPdf(event);
-}
-GURPS.chatClickPdf = chatClickPdf;
 
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
@@ -1080,46 +1123,36 @@ Hooks.once("init", async function () {
 
 	Items.unregisterSheet("core", ItemSheet);
 	Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
-	game.settings.register("gurps", "changelogVersion", {
-		name: "Changelog Version",
-		scope: "client",
-		config: false,
-		type: String,
-		default: "0.0.0",
-	});
-
-	game.settings.register("gurps", "showChangelog", {
-		name: "Show 'Read Me' on version change",
-		hint: "Open the Read Me file once, if a version change is detected.",
-		scope: "client",
-		config: true,
-		type: Boolean,
-		default: true,
-	});
-
-	game.settings.register("gurps", "basicsetpdf", {
-		name: 'Basic Set PDF(s)',
-		hint: 'Select "Combined" or "Separate" and use the associated PDF codes when configuring PDFoundry.  ' +
-			'Note: If you select "Separate", the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.',
-		scope: 'world',
-		config: true,
-		type: String,
-		choices: {
-			'Combined': 'Combined Basic Set, code "B"',
-			'Separate': 'Separate Basic Set Characters, code "B".  Basic Set Campaigns, code "BX"'
-		},
-		default: 'Combined',
-	})
 
 	Hooks.on('chatMessage', (log, content, data) => {
 		if (content === "/help" || content === "!help") {
-			ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+			let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a><br>/help - this message";
+			if (game.user.isGM) c += "<br>/mook - Open Mook Generator";
+			ChatMessage.create({
+				content: c,
+				user: game.user._id,
+				type: CONST.CHAT_MESSAGE_TYPES.OTHER
+			});
 			return false;
 		}
 		if (content === "/mook" && game.user.isGM) {
 			new NpcInput().render(true);
 			return false;
 		}
+		let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+		let found = false;
+		content.split("\n").forEach(e => {		// Handle multiline chat messages (mostly from macros)
+			let m = e.match(re);
+			if (!!m && !!m[2]) {
+				let action = parselink(m[2]);
+				if (!!action.action) {
+					GURPS.performAction(action.action, GURPS.LastActor);
+					found = true;
+				}
+			}
+		});
+		if (found) return false;
+
 	});
 
 	// Look for blind messages with .message-results and remove them
@@ -1160,7 +1193,7 @@ Hooks.once("ready", async function () {
 	GURPS.ThreeD6.refresh();
 
 	// Show changelog
-	const v = game.settings.get("gurps", "changelogVersion") || "0.0.1";
+	const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || "0.0.1";
 	const changelogVersion = SemanticVersion.fromString(v);
 	const curVersion = SemanticVersion.fromString(game.system.data.version);
 
@@ -1171,10 +1204,10 @@ Hooks.once("ready", async function () {
 				type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
 				whisper: [game.user]
 			});
-		if (game.settings.get("gurps", "showChangelog")) {
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHANGELOG)) {
 			const app = new ChangeLogWindow(changelogVersion);
 			app.render(true);
-			game.settings.set("gurps", "changelogVersion", curVersion.toString());
+			game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString());
 		}
 	}
 
@@ -1210,22 +1243,41 @@ Hooks.once("ready", async function () {
 
 	Hooks.on('preCreateChatMessage', (data, options, userId) => {
 		let c = data.content;
+		try {
+			let html = $(c);
+			let rt = html.find(".result-text");		// Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
+			let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+			let t = rt[0]?.innerText;
+			if (!!t) {
+				t.split("\n").forEach(e => {
+					let m = e.match(re);
+					if (!!m && !!m[2]) {
+						let action = parselink(m[2]);
+						if (!!action.action) {
+							GURPS.performAction(action.action, GURPS.LastActor);
+							//					return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
+						}
+					}
+				});
+			}
+		} catch (e) { };	// a dangerous game... but limited to GURPs /roll OtF
 		data.content = game.GURPS.gurpslink(c);
 	});
 
 	Hooks.on('renderChatMessage', (app, html, msg) => {
-		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
-		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
+		GURPS.hookupGurps(html);
 	});
 
-	// 
-	// define partials for ADD:
-	const __dirname = 'systems/gurps/templates'
+	Hooks.on('renderJournalSheet', (app, html, opts) => {
+		let h = html.find(".editor-content");
+		if (!!h) {
+			h.html(GURPS.gurpslink(h[0].innerHTML));
+			GURPS.hookupGurps(html);
+		}
+	});
 
+	// define Handlebars partials for ADD:
+	const __dirname = 'systems/gurps/templates'
 	loadTemplates([
 		__dirname + '/apply-damage/effect-blunttrauma.html',
 		__dirname + '/apply-damage/effect-crippling.html',
@@ -1234,8 +1286,5 @@ Hooks.once("ready", async function () {
 		__dirname + '/apply-damage/effect-majorwound.html',
 		__dirname + '/apply-damage/effect-shock.html',
 	])
-
 });
-
-
 
