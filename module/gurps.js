@@ -1256,12 +1256,7 @@ Hooks.once("ready", async function () {
 	});
 
 	Hooks.on('renderChatMessage', (app, html, msg) => {
-		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
-		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
+			GURPS.hookupGurps(html);
 	});
 	
 	Hooks.on('renderJournalSheet', (app, html, opts) => {

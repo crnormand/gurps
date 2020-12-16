@@ -64,13 +64,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('mousedown', ev => this._onfocus(ev), false) });
     html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('focus', ev => this._onfocus(ev), false) });
 
-    html.find(".rollable").click(this._onClickRoll.bind(this));
-    html.find(".pdflink").click(this._onClickPdf.bind(this));
-    html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
-    html.find(".gmod").click(this._onClickGmod.bind(this));
-    html.find(".glinkmod").click(this._onClickGmod.bind(this));
-    html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
-    html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
+    GURPS.hookupGurps(html);
 
     html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
     html.find(".glinkmod").contextmenu(this._onRightClickGurpslink.bind(this));
@@ -477,24 +471,6 @@ export class GurpsActorSheet extends ActorSheet {
       msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
     }
     ChatMessage.create(msgData);
-  }
-
-  async _onClickPdf(event) {
-    game.GURPS.handleOnPdf(event);
-  }
-
-  async _onClickRoll(event) {
-    game.GURPS.handleRoll(event, this.actor);
-  }
-
-  async _onClickGurpslink(event) {
-    game.GURPS.handleGurpslink(event, this.actor);
-  }
-
-  async _onClickGmod(event) {
-    let element = event.currentTarget;
-    let desc = element.dataset.name;
-    game.GURPS.handleGurpslink(event, this.actor, desc);
   }
 
   async _onClickEnc(ev) {
