@@ -15,6 +15,8 @@ This is what we are currently working on:
 - 0.8.3
     - Direct roll of On-the-Fly formulas.  e.g. /r [Per] or /roll [3d-2 cr]
     - Parry & Block On-the-Fly formulas
+    - Enhancements to the Mook Generator stat block importing
+    - Journal entries now parse (and display) On-the-Fly formulas.    Great with GM screen.
 
 ### History
 - 0.8.2

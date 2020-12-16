@@ -42,7 +42,7 @@ GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __
 GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`;
 
 
-//CONFIG.debug.hooks = true;
+// CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
@@ -1233,7 +1233,17 @@ Hooks.once("ready", async function () {
 		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
 		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
 	});
+	
+	Hooks.on('renderJournalSheet', (app, html, opts) => {
+		let h = html.find(".editor-content");
+		if (!!h) h.html(GURPS.gurpslink(h[0].innerHTML));
+		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
+		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
+		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));		
+	});
+	
 });
-
-
 
