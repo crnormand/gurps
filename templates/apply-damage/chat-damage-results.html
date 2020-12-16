@@ -1,5 +1,7 @@
 <div class='gurps-chat-message'>
-    <div class='prefix'>{{attacker}} hits {{defender}} for {{basicDamage}} points of {{type}} damage.</div>
+    {{debug}}
+    <div class='prefix'>{{attacker}} injures {{defender}} for {{injury}} points of {{type}} damage to the
+        {{location}}.</div>
     {{#if resultsTable}}
     <div class='collapsible-wrapper'>
         <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox' checked>

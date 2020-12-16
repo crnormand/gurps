@@ -2026,13 +2026,14 @@ body {
 
 .gurps-group h4 {
   background-color: black;
-  color: white;
+  color: lightgrey;
   margin-bottom: 0.5em;
   font-size: larger;
   margin-left: -0.5em;
   margin-right: -0.5em;
   padding-left: 0.5em;
   margin-top: 0.5em;
+  text-transform: uppercase;
 }
 
 .gurps-group>h4:first-child {
@@ -2166,7 +2167,6 @@ body {
 .with-button button {
   position: absolute;
   right: 0.35em;
-  top: 0.2em;
   line-height: 25px;
   z-index: 2;
   color: dimgrey;
@@ -2301,10 +2301,13 @@ ul#result-effects li {
   max-height: 130vh;
 }
 
+.gurps-chat-message * {
+  font-family: Roboto, sans-serif;
+}
 
 .gurps-chat-message .label-toggle {
   font-size: x-small;
-  font-family: 'Font Awesome 5 Free', Verdana, sans-serif;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding: 0.25em;
   background-color: rgba(0, 0, 0, 0.50);
   margin-top: 4px;
@@ -2364,4 +2367,26 @@ ul#result-effects li {
   margin-bottom: 5px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 
     0px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
+}
+
+.gurps-app button.with-icon > i > span{
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  font-weight: 400;
+}
+
+.gurps-app * {
+  font-family: Roboto, sans-serif;
+}
+
+.gurps-app .fa, 
+.gurps-app .fab, 
+.gurps-app .fad, 
+.gurps-app .fal, 
+.gurps-app .far, 
+.gurps-app .fas {
+  font-family: 'Font Awesome 5 Free' !important;
+} 
+
+.gurps-app #blunt-trauma-field {
+  margin-left: 6px;
 }
