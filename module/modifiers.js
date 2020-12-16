@@ -151,13 +151,7 @@ export class ModifierBucket extends Application {
 			this.tooltipElement.style.setProperty("visibility", "hidden");
 		}
 
-		html.find(".rollable").click(this._onClickRoll.bind(this));
-		html.find(".pdflink").click(this._onClickPdf.bind(this));
-		html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
-		html.find(".gmod").click(this._onClickGmod.bind(this));
-		html.find(".glinkmod").click(this._onClickGmod.bind(this));
-		html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
-		html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
+		GURPS.hookupGurps(html);
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
 		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
@@ -213,24 +207,6 @@ export class ModifierBucket extends Application {
 		await u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
 		await u.setFlag("gurps", "modifierchanged", Date.now());
 		this.showOthers();
-	}
-
-	async _onClickPdf(event) {
-		game.GURPS.handleOnPdf(event);
-	}
-
-	async _onClickRoll(event) {
-		game.GURPS.handleRoll(event, this.actor);
-	}
-
-	async _onClickGurpslink(event) {
-		game.GURPS.handleGurpslink(event, game.GURPS.LastActor);
-	}
-
-	async _onClickGmod(event) {
-		let element = event.currentTarget;
-		let desc = element.dataset.name;
-		game.GURPS.handleGurpslink(event, game.GURPS.LastActor, desc);
 	}
 
 	async _onClickTrash(event) {

@@ -42,7 +42,7 @@ GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __
 GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`;
 
 
-// CONFIG.debug.hooks = true;
+//CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
@@ -461,6 +461,11 @@ function performAction(action, actor, event) {
 		blind: action.blindroll,
 		event: event
 	};		// Ok, I am slowly learning this Javascrip thing ;-)	
+	
+	if (action.type === "pdf" ) {
+		GURPS.handlePdf(action.link);	
+		return;
+	}
 
 	if (action.type === "modifier") {
 		let mod = parseInt(action.mod);
@@ -836,8 +841,12 @@ GURPS.gurpslink = gurpslink;
 // Convert GCS page refs into PDFoundry book & page.   Special handling for refs like "PU8:12"
 function handleOnPdf(event) {
 	event.preventDefault();
-	let element = event.currentTarget;
-	let t = element.innerText.trim();
+	GURPS.handlePdf(event.currentTarget.innerText);
+}
+GURPS.handleOnPdf = handleOnPdf;
+
+function handlePdf(link) {
+	let t = link.trim();
 	let i = t.indexOf(":");
 	let book = "";
 	let page = 0;
@@ -871,7 +880,8 @@ function handleOnPdf(event) {
 		ui.notifications.warn('PDFoundry must be installed to use links.');
 	}
 }
-GURPS.handleOnPdf = handleOnPdf;
+GURPS.handlePdf = handlePdf;
+
 
 // Return the i18n string for this data path (note en.json must match up to the data paths).
 // special case, drop ".value" from end of path (and append "NAME"), usually used for attributes
@@ -1026,6 +1036,16 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 	return ret;
 }
 GURPS.listeqtrecurse = listeqtrecurse;
+
+function hookupGurps(html) {
+		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
+		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
+		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
+		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));		
+}
+GURPS.hookupGurps = hookupGurps;
 
 
 function chatClickGurpslink(event) {
@@ -1222,27 +1242,29 @@ Hooks.once("ready", async function () {
 
 	Hooks.on('preCreateChatMessage', (data, options, userId) => {
 		let c = data.content;
+		let r = $(c).find(".result-text");		// Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
+		let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+		let m = r[0]?.innerText.match(re);
+		if (!!m && !!m[2]) {
+			let action = parselink(m[2]);
+			if (!!action.action) {
+				GURPS.performAction(action.action, GURPS.LastActor);
+//				return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
+			}
+		}
 		data.content = game.GURPS.gurpslink(c);
 	});
 
 	Hooks.on('renderChatMessage', (app, html, msg) => {
-		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
-		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));
+			GURPS.hookupGurps(html);
 	});
 	
 	Hooks.on('renderJournalSheet', (app, html, opts) => {
 		let h = html.find(".editor-content");
-		if (!!h) h.html(GURPS.gurpslink(h[0].innerHTML));
-		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
-		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".pdflink").click(GURPS.chatClickPdf.bind(this));		
+		if (!!h) {
+			h.html(GURPS.gurpslink(h[0].innerHTML));
+			GURPS.hookupGurps(html);
+		}
 	});
 	
 });
