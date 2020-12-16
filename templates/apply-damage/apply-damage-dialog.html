@@ -48,8 +48,8 @@
             <div class='pdflink'>B400</div>
           </div>
           <div class='grid grid-2col flex-between'>
-            <label><input type='radio' name='hitlocation' value='User Entered' {{ifeq
-                CALC.hitLocation 'User Entered' 'checked' }}>&nbsp;Enter DR:</input></label>
+            <div><label><input type='radio' name='hitlocation' value='User Entered' {{ifeq
+                  CALC.hitLocation 'User Entered' 'checked' }}>&nbsp;Enter DR:</input></label></div>
             <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
               value='{{CALC.userEnteredDR}}'>
           </div>
@@ -88,9 +88,9 @@
           <label><input type='radio' name='woundmodifier' value='none' {{ifeq CALC.damageType 'none' 'checked'
               }}>&nbsp;No modifier</label>
           <div class='grid grid-2col flex-between'>
-            <label><input type='radio' name='woundmodifier' value='User Entered' {{ifeq
-                CALC.damageType 'User Entered' 'checked' }}>&nbsp;Enter
-              modifier:</label>
+            <div><label><input type='radio' name='woundmodifier' value='User Entered' {{ifeq
+                  CALC.damageType 'User Entered' 'checked' }}>&nbsp;Enter
+                modifier:</label></div>
             <input type='text' class='decimal-digits-only' id='user-entered-woundmod' name='User Entered' value='1'>
           </div>
           <div class='grid grid-2col flex-between'>

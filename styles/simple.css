@@ -2061,7 +2061,7 @@ body {
 
 .gurps-2col {
   display: grid;
-  grid-template-columns: 1fr min-content;
+  grid-template-columns: 1fr 1fr;
   grid-template-rows: auto;
   justify-items: stretch;
   text-align: left;
@@ -2077,6 +2077,7 @@ body {
   text-align: left;
 }
 
+.grid-2col>*,
 .gurps-3col>* {
   align-self: center;
   height: 100%;
