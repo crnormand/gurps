@@ -142,7 +142,7 @@
             </div>
           </div>
           <div class='collapsible-wrapper options-drawer'>
-            <input id='hardened' class='toggle' type='checkbox' name='hardened' value='hardened' {{#if
+            <input id='hardened' class='toggle' type='checkbox' value='hardened' {{#if
               CALC.isHardenedDR}}checked{{/if}}>
             <label for='hardened' class='label-toggle'>Hardened DR Level: <span class='pdflink'>B47</span></label>
             <div class='grid grid-5col continuation collapsible-content'>
@@ -205,8 +205,8 @@
 
             {{#if CALC.isRangedHalfDamage}}
             <div name='result-effective-dmg'>RANGED 1/2D</div>
-            <div name='result-effective-dmg'>{{effectiveDamage}}</div>
-            <div name='result-effective-dmg'>= {{basicDamage}} &divide; 2</div>
+            <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+            <div name='result-effective-dmg'>= {{CALC.basicDamage}} &divide; 2</div>
             {{/if}}
 
             <div id='result-dr'>DR</div>
@@ -250,7 +250,8 @@
             {{#if CALC.isBluntTraumaInjury}}
             <div>BLUNT&nbsp;TRAUMA</div>
             <div>{{CALC.effectiveBluntTrauma}}</div>
-            <div class="pdflink">B379</div>
+            <div><span>= {{CALC.effectiveDamage}} ({{CALC.damageType}}) &divide; {{#if (eq CALC.damageType
+                'cr')}}5{{else}}10{{/if}} <span class="pdflink">B379</span></span></div>
             {{/if}}
 
             {{#if CALC.isInjuryReducedByLocation}}
