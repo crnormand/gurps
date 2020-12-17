@@ -1,129 +1,206 @@
-<div class='gurps-app {{classes}}' {{debug}}>
+<div class='gurps-app {{classes}}'>
   <div classes='flexcol flex-between'>
+
     <h2>Apply {{CALC.basicDamage}} points of
       {{printIfNe CALC.armorDivisor 0 '(*)' ' '}}{{CALC.damageType}} damage to
       {{actor.data.name}}</h2>
+
     <div class='flexrow flex-group-center flex-between'>
       <h3>DIRECTLY APPLY:</h3>
-      <input type='number' id='basicDamage' name='damage' value='{{CALC.basicDamage}}'>
+      <input type='text' id='basicDamage' class='digits-only' value='{{CALC.basicDamage}}'>
       <div>
-        <select id='apply-to' name='apply-to'>
-          <option value='HP'>Hit Points</option>
-          <option value='FP' selected>Fatigue Points</option>
+        <select id='apply-to'>
+          <option value='HP' {{#if (eq CALC.applyTo 'HP' )}}selected{{/if}}>Hit Points</option>
+          <option value='FP' {{#if (eq CALC.applyTo 'FP' )}}selected{{/if}}>Fatigue Points</option>
         </select>
       </div>
       <button id='apply-publicly'>Apply</button>
       <button id='apply-secretly'>Apply (Quietly)</button>
     </div>
-    <div id='apply-damage-advanced' class='flex-group-left'>
+
+    <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>
       <h3>APPLY DAMAGE OPTIONS:</h3>
 
       <div class='grid grid-3col flex-between'>
+
         <div class='gurps-group'>
           <h4>Hit Location and DR</h4>
+
           <div class='gurps-3col gurps-radio-col'>
             <header>Location</header>
             <header>Roll</header>
             <header>DR</header>
+
             {{#each CALC.hitLocationsWithDR}}
-            <div><label><input type='radio' name='hitlocation' value='{{this.where}}'>&nbsp;{{this.where}}</label></div>
+            <div><label><input type='radio' name='hitlocation' value='{{this.where}}' {{#if (eq ../CALC.hitLocation
+                  this.where)}}checked{{/if}}>&nbsp;{{this.where}}</label></div>
             <div>{{this.rollText}}</div>
             <div>{{this.dr}}</div>
             {{/each}}
           </div>
+
           <hr /> <!-- Doesn't do much except add some space -->
-          <button id='random-location'>
-            <i class='fa fa-dice'><span
-                style='font-family: "Font Awesome 5 Free", Signika, sans-serif; font-weight:400'>&nbsp;
-                Random
-              </span></i>
+
+          <button id='random-location' class='with-icon'>
+            <i class='fa fa-dice'><span>&nbsp;Random</span></i>
           </button>
+
           <hr /> <!-- Doesn't do much except add some space -->
+
           <div class='gurps-3col gurps-radio-col'>
-            <div><label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury</label></div>
+            <div><label><input type='radio' name='hitlocation' value='Large-Area' {{#if (eq
+                  CALC.hitLocation 'Large-Area' )}}checked{{/if}}>&nbsp;Large-Area Injury</label></div>
             <div></div>
             <div class='pdflink'>B400</div>
           </div>
+
           <div class='grid grid-2col flex-between'>
-            <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter DR:</input></label>
-            <input type='number' id='user-entered-dr' name='User Entered' value='{{CALC.userEnteredDR}}'>
+            <div><label><input type='radio' name='hitlocation' value='User Entered' {{#if (eq
+                  CALC.hitLocation 'User Entered' )}}checked{{/if}}>&nbsp;Enter DR:</input></label></div>
+            <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
+              value='{{CALC.userEnteredDR}}'>
           </div>
         </div>
 
         <div class='gurps-group'>
           <h4>Type and Wounding Modifiers</h4>
+
           <section id='wound-modifier-table'>
+            <div name='wounding-modifiers' class='default-wound-modifiers'>
+              <div class='gurps-3col gurps-radio-col'>
+                <header>Damage Type</header>
+                <header>Abbrev</header>
+                <header>Modifier</header>
+
+                {{#each CALC.effectiveWoundModifiers}}
+                <div><label><input type='radio' name='woundmodifier' value='{{@key}}' {{#if (eq ../CALC.damageType
+                      @key)}}checked{{/if}}>&nbsp;{{this.label}}</label></div>
+                <div>{{@key}}</div>
+                <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>×{{fractionalize
+                  this.multiplier 2}}
+                </div>
+                {{/each}}
+              </div>
+
+              {{#if CALC.isWoundModifierAdjustedForLocation}}
+              <aside>* - Adjusted for hit location.</aside>
+              {{/if}}
+
+              {{#if CALC.isWoundModifierAdjustedForInjuryTolerance}}
+              <aside>† - Adjusted for Injury Tolerance.</aside>
+              {{/if}}
+            </div>
           </section>
+
           <hr /> <!-- Doesn't do much except add some space -->
-          <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No modifier</input></label>
+
+          <label><input type='radio' name='woundmodifier' value='none' {{#if (eq CALC.damageType 'none'
+              )}}checked{{/if}}>&nbsp;No modifier</label>
           <div class='grid grid-2col flex-between'>
-            <label><input type='radio' name='woundmodifier' value='User Entered'>&nbsp;Enter
-              modifier:</input></label>
-            <input type='number' id='user-entered-woundmod' name='User Entered' value='1'>
+            <div><label><input type='radio' name='woundmodifier' value='User Entered' {{#if (eq
+                  CALC.damageType 'User Entered' )}}checked{{/if}}>&nbsp;Enter
+                modifier:</label></div>
+            <input type='text' class='decimal-digits-only' id='user-entered-woundmod' value='1'>
           </div>
           <div class='grid grid-2col flex-between'>
             <label>Additional modifier (stacks):</label>
-            <input type='number' id='addmodifier' name='addmodifier' value='{{CALC._additionalWoundModifier}}'>
+            <input type='number' class='decimal-digits-only' id='addmodifier' value='{{CALC.additionalWoundModifier}}'>
           </div>
         </div>
 
         <div class='gurps-group'>
           <h4>Tactical Rules</h4>
           <aside>Use systems settings to set defaults.</aside>
+
           <div class='gurps-3col gurps-checkbox-col'>
-            {{#each tacticalOptions}}
-            <div><input id='tactical-{{this.id}}' type='checkbox' name='tactical' value='{{this.id}}'></input></div>
-            <div><label for='tactical-{{this.id}}'>{{this.label}}</label></div>
-            <div class='pdflink'>{{this.ref}}</div>
-            {{/each}}
+
+            <div><input id='tactical-blunttrauma' type='checkbox' value='blunttrauma' {{#if
+                CALC.useBluntTrauma}}checked{{/if}}></div>
+            <div><label for='tactical-blunttrauma'>Blunt Trauma</label></div>
+            <div class='pdflink'>B379</div>
+
+            <div><input id='tactical-armordivisor' type='checkbox' value='armordivisor' {{#if
+                CALC.useArmorDivisor}}checked{{/if}}></div>
+            <div><label for='tactical-armordivisor'>Armor Divisor</label></div>
+            <div class='pdflink'>B378</div>
+
+            <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{#if
+                CALC.useLocationModifiers}}checked{{/if}}></div>
+            <div><label for='tactical-locationmodifier'>Hit Location Wound Modifiers</label></div>
+            <div class='pdflink'>B398</div>
           </div>
 
-          <h4>Other Situations</h4>
+          <h4>Special Combat Situations</h4>
           <div class='gurps-3col gurps-checkbox-col'>
-            {{#each otherSituations}}
-            <div><input id='specials-{{this.id}}' type='checkbox' name='specials' value='{{this.id}}'></input>
-            </div>
-            <div><label for='specials-{{this.id}}'>{{this.label}}</label></div>
-            <div class='pdflink'>{{this.ref}}</div>
-            {{/each}}
+            <div><input id='specials-range12D' type='checkbox' value='range12D' {{#if
+                CALC.isRangedHalfDamage}}checked{{/if}}></div>
+            <div><label for='specials-range12D'>Ranged, Half Damage (1/2D)</label></div>
+            <div class='pdflink'>B378</div>
           </div>
+
           <div class='shaded collapsible-wrapper options-drawer'>
-            <input id='vulnerable' class='toggle' type='checkbox' name='vulnerable' value='vulnerable'></input>
+            <input id='vulnerable' class='toggle' type='checkbox' value='vulnerable' {{#if
+              CALC.isVulnerable}}checked{{/if}}>
             <label for='vulnerable' class='label-toggle'>Vulnerability:<span class='pdflink'>B161</span></label>
             <div class='grid grid-3col continuation collapsible-content'>
-              <label><input disabled checked type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
-              <label><input disabled type='radio' name='vulnerability' value='vulnerability-3'>&nbsp;×3</label>
-              <label><input disabled type='radio' name='vulnerability' value='vulnerability-4'>&nbsp;×4</label>
+              <label><input type='radio' name='vulnerability' value='2' {{#if (eq CALC.vulnerabilityMultiple
+                  2)}}checked{{/if}}>&nbsp;×2</label>
+              <label><input type='radio' name='vulnerability' value='3' {{#if (eq CALC.vulnerabilityMultiple
+                  3)}}checked{{/if}}>&nbsp;×3</label>
+              <label><input type='radio' name='vulnerability' value='4' {{#if (eq CALC.vulnerabilityMultiple
+                  4)}}checked{{/if}}>&nbsp;×4</label>
             </div>
           </div>
+
           <div class='collapsible-wrapper options-drawer'>
-            <input id='hardened' class='toggle' type='checkbox' name='hardened' value='hardened'></input>
+            <input id='hardened' class='toggle' type='checkbox' value='hardened' {{#if
+              CALC.isHardenedDR}}checked{{/if}}>
             <label for='hardened' class='label-toggle'>Hardened DR Level: <span class='pdflink'>B47</span></label>
             <div class='grid grid-5col continuation collapsible-content'>
-              <label><input type='radio' name='hardened' value='hardened-1'>&nbsp;1</label>
-              <label><input type='radio' name='hardened' value='hardened-2'>&nbsp;2</label>
-              <label><input type='radio' name='hardened' value='hardened-3'>&nbsp;3</label>
-              <label><input type='radio' name='hardened' value='hardened-4'>&nbsp;4</label>
-              <label><input type='radio' name='hardened' value='hardened-5'>&nbsp;5</label>
+              <label><input type='radio' name='hardened' value='1' {{#if (eq CALC.hardenedDRLevel 1)}}
+                  checked{{/if}}>&nbsp;1</label>
+              <label><input type='radio' name='hardened' value='2' {{#if (eq CALC.hardenedDRLevel 2)}}
+                  checked{{/if}}>&nbsp;2</label>
+              <label><input type='radio' name='hardened' value='3' {{#if (eq CALC.hardenedDRLevel 3)}}
+                  checked{{/if}}>&nbsp;3</label>
+              <label><input type='radio' name='hardened' value='4' {{#if (eq CALC.hardenedDRLevel 4)}}
+                  checked{{/if}}>&nbsp;4</label>
+              <label><input type='radio' name='hardened' value='5' {{#if (eq CALC.hardenedDRLevel 5)}}
+                  checked{{/if}}>&nbsp;5</label>
             </div>
           </div>
+
           <div class='shaded collapsible-wrapper options-drawer'>
-            <input id='injury-tolerance' class='toggle' type='checkbox' name='injury-tolerance'
-              value='injury-tolerance'></input>
+            <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{#if
+              CALC.isInjuryTolerance}}checked{{/if}}></input>
             <label for='injury-tolerance' class='label-toggle'>Injury Tolerance:<span class='pdflink'>
                 B60</span></label>
             <div class='collapsible-content continuation'>
-              <div><label><input type='radio' name='injury-tolerance' value='unliving'>&nbsp;Unliving<span
+              <div><label><input type='radio' name='injury-tolerance' value='unliving' {{#if (eq
+                    CALC.injuryToleranceType 'unliving' )}}checked{{/if}}>&nbsp;Unliving<span
                     class='pdflink'>B380</span></label></div>
-              <div><label><input type='radio' name='injury-tolerance' value='homogenous'>&nbsp;Homogenous<span
-                    class='pdflink'>B380</span></label>
-              </div>
-              <div><label><input type='radio' name='injury-tolerance' value='diffuse'>&nbsp;Diffuse<span
-                    class='pdflink'>B380</span></label>
-              </div>
+              <div><label><input type='radio' name='injury-tolerance' value='homogenous' {{#if (eq
+                    CALC.injuryToleranceType 'homogenous' )}}checked{{/if}}>&nbsp;Homogenous<span
+                    class='pdflink'>B380</span></label></div>
+              <div><label><input type='radio' name='injury-tolerance' value='diffuse' {{#if (eq
+                    CALC.injuryToleranceType 'diffuse' )}}checked{{/if}}>&nbsp;Diffuse<span
+                    class='pdflink'>B380</span></label></div>
             </div>
           </div>
-          <div id='specials-insert-point' class='gurps-3col' />
+
+          {{#if CALC.useBluntTrauma}}
+          <div id='specials-insert-point' class='gurps-3col'>
+            <input id='flexible-armor' type='checkbox' value='flexible-armor' {{#if
+              CALC.isFlexibleArmor}}checked{{/if}}>
+            <label for='flexible-armor'>Flexible Armor <aside>(Blunt Trauma):</aside></label>
+            <div id='blunt-trauma-field' class='with-button'>
+              <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
+                value='{{CALC.effectiveBluntTrauma}}' {{#unless CALC.isFlexibleArmor}}disabled{{/unless}}>
+              <button name='clear'><span class='fas fa-times-circle'></button>
+            </div>
+          </div>
+          {{/if}}
+
         </div>
       </div>
     </div>
@@ -134,40 +211,82 @@
         <div class='grid grid-3col'>
           <div class='gurps-3col results-table'>
             <div>BASIC&nbsp;DAMAGE</div>
-            <div><span name='result-basic'>{{CALC.basicDamage}}</span></div>
-            <div><span name='result-apply-to'>{{CALC.applyTo}}</span></div>
+            <div>{{CALC.basicDamage}}</div>
+            <div>{{CALC.applyTo}}</div>
+
+            {{#if CALC.isRangedHalfDamage}}
+            <div name='result-effective-dmg'>RANGED 1/2D</div>
+            <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+            <div name='result-effective-dmg'>= {{CALC.basicDamage}} &divide; 2</div>
+            {{/if}}
 
             <div id='result-dr'>DR</div>
-            <div><span name='result-dr'>{{CALC.DR}}</span></div>
-            <div><span name='result-hitlocation'>{{CALC.hitLocation}}</span></div>
+            <div>{{CALC.DR}}</div>
+            <div>{{CALC.hitLocation}}</div>
+
+            {{#if CALC.useArmorDivisor}}
+            {{#if CALC.armorDivisor}}
+            <div>DR W/DIVISOR</div>
+            <div>{{CALC.effectiveDR}}</div>
+            <!-- This is a big messy looking block, but it prints either:
+                "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->
+            <div><span>= {{CALC.DR}} &divide; {{#if CALC.isHardenedDR}}({{CALC.effectiveArmorDivisor}} =
+                ({{CALC.armorDivisor}})
+                w/Hard–{{CALC.hardenedDRLevel}}){{else}}({{CALC.armorDivisor}}){{/if}}{{#unless
+                CALC.DR}}{{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}{{/unless}}</span>
+            </div>
+            {{/if}}
+            {{/if}}
 
             <div id='result-penetrating'>PENETRATING</div>
-            <div><span name='result-penetrating'>{{CALC.penetratingDamage}}</span></div>
-            <div><span>= <span name='result-halfdamage'>{{CALC.basicDamage}}</span> &minus; <span
-                  name='result-effective-dr'>{{CALC.effectiveDR}}</span></span></div>
+            <div>{{CALC.penetratingDamage}}</div>
+            <div>= {{CALC.effectiveDamage}} &minus; {{CALC.effectiveDR}}</div>
 
             <div>MODIFIER</div>
-            <div><span>×<span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span></span></div>
-            <div><span>= <span name='result-addmods'>({{CALC.damageType}})</span><span id='modifier-footnote-wrapper'>*
-                  <span id="modifier-footnote" class="pdflink">B398</span></span></span>
+            <div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
+            <div>
+              <span>= {{woundModifierText CALC}}{{#if (isWoundModAdjForLocation CALC)}}* ({{CALC.hitLocation}}) <span
+                  class="pdflink">B398</span>{{/if}}{{#if (isWoundModAdjForInjuryTol CALC)}}*
+                <span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span> <span
+                  class="pdflink">B380</span>{{/if}}
+              </span>
             </div>
 
             <div>INJURY</div>
-            <div><span name='result-injury'>{{CALC.injury}}</span></div>
-            <div id='result-injury-total'><span>= <span
-                  name='result-penetrating'>{{calculating.penetratingDamage}}</span>
-                × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}</span><span
-                  name='result-penetrating-footnote'></span></div>
+            <div>{{CALC.injury}}</div>
+            <div><span>= {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize
+                  CALC.totalWoundingModifier 2}}</span>{{#if
+                CALC.maxInjuryForDiffuse}} (Diffuse, max {{CALC.maxInjuryForDiffuse}})* <span
+                  class="pdflink">B380</span>{{/if}}
+            </div>
+
+            {{#if CALC.isBluntTraumaInjury}}
+            <div>BLUNT&nbsp;TRAUMA</div>
+            <div>{{CALC.effectiveBluntTrauma}}</div>
+            <div><span>= {{CALC.effectiveDamage}} ({{CALC.damageType}}) &divide; {{#if (eq CALC.damageType
+                'cr')}}5{{else}}10{{/if}} <span class="pdflink">B379</span></span></div>
+            {{/if}}
+
+            {{#if CALC.isInjuryReducedByLocation}}
+            <div>LOCATION MAX</div>
+            <div>{{CALC.locationMaxHPAsInt}}</div>
+            <div>{{CALC.hitLocation}}</div>
+            {{/if}}
+
+            <!-- add a footnote that there is blunt trauma -->
           </div>
 
           <div id="result-extrastuff">
             <ul id='result-effects'>
+              {{#each CALC.effects}}
+              {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
+              {{/each}}
             </ul>
           </div>
 
           <div class='apply-results'>
-            <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='number'
-              id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
+            <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
+              class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
             <button id='apply-injury-publicly'>Apply Injury</button>
             <button id='apply-injury-secretly'>Apply Injury (Quietly)</button>
           </div>
