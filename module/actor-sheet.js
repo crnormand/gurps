@@ -580,7 +580,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     ];
   }
 
-
   makeHeaderMenu(html, cssclass, name, obj, path) {
     new ContextMenu(html, cssclass, this.headerMenu(name, obj, path));
   }
@@ -640,7 +639,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     eqt.equipped = !eqt.equipped;
     await this.actor.update({ [key]: eqt });
   }
-
 }
 
 export class GurpsActorSimplifiedSheet extends GurpsActorSheet {

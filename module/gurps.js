@@ -1039,12 +1039,12 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 // Given a jquery html, attach all of our listeners to it.  No need to call bind(), since they don't use "this"
 function hookupGurps(html) {
-		html.find(".gurpslink").click(GURPS.chatClickGurpslink);
-		html.find(".gmod").click(GURPS.chatClickGmod);
-		html.find(".glinkmod").click(GURPS.chatClickGmod);
-		html.find(".glinkmodplus").click(GURPS.chatClickGmod);
-		html.find(".glinkmodminus").click(GURPS.chatClickGmod);
-		html.find(".pdflink").click(GURPS.handleOnPdf);		
+	html.find(".gurpslink").click(GURPS.chatClickGurpslink);
+	html.find(".gmod").click(GURPS.chatClickGmod);
+	html.find(".glinkmod").click(GURPS.chatClickGmod);
+	html.find(".glinkmodplus").click(GURPS.chatClickGmod);
+	html.find(".glinkmodminus").click(GURPS.chatClickGmod);
+	html.find(".pdflink").click(GURPS.handleOnPdf);
 }
 GURPS.hookupGurps = hookupGurps;
 
@@ -1274,6 +1274,30 @@ Hooks.once("ready", async function () {
 			h.html(GURPS.gurpslink(h[0].innerHTML));
 			GURPS.hookupGurps(html);
 		}
+	});
+
+	Hooks.on('dropCanvasData', function (canvas, dropData) {
+		let grid_size = canvas.scene.data.grid
+
+		let numberTargets = canvas.tokens.targetObjects({
+			x: dropData.x - grid_size / 2,
+			y: dropData.y - grid_size / 2,
+			height: grid_size,
+			width: grid_size,
+			releaseOthers: true
+		})
+
+		// actual targets are stored in game.user.targets
+		// get the first one and print it
+		if (game.user.targets.size === 1) {
+			let keys = game.user.targets.keys()
+			let first = keys.next()
+			if (dropData.type === 'damageItem') {
+				first.value.actor.handleDamageDrop(dropData.payload)
+			}
+		}
+
+		// $("[data-item-id^='" + b.data._id + "']").last()[0].children[0].children[0].click()
 	});
 
 	// define Handlebars partials for ADD:
