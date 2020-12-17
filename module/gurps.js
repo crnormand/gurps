@@ -789,7 +789,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
 	}
 
 	actor = actor || game.user;
-	const speaker = { alias: actor.name, _id: actor._id }
+	const speaker = { alias: actor.name, _id: actor._id, actor: actor }
 	let messageData = {
 		user: game.user._id,
 		speaker: speaker,
@@ -1037,14 +1037,14 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
 }
 GURPS.listeqtrecurse = listeqtrecurse;
 
-// Given a jquery html, attach all of our listeners to it.
+// Given a jquery html, attach all of our listeners to it.  No need to call bind(), since they don't use "this"
 function hookupGurps(html) {
-		html.find(".gurpslink").click(GURPS.chatClickGurpslink.bind(this));
-		html.find(".gmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmod").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodplus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".glinkmodminus").click(GURPS.chatClickGmod.bind(this));
-		html.find(".pdflink").click(GURPS.handleOnPdf.bind(this));		
+		html.find(".gurpslink").click(GURPS.chatClickGurpslink);
+		html.find(".gmod").click(GURPS.chatClickGmod);
+		html.find(".glinkmod").click(GURPS.chatClickGmod);
+		html.find(".glinkmodplus").click(GURPS.chatClickGmod);
+		html.find(".glinkmodminus").click(GURPS.chatClickGmod);
+		html.find(".pdflink").click(GURPS.handleOnPdf);		
 }
 GURPS.hookupGurps = hookupGurps;
 
