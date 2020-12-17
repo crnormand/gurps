@@ -2394,3 +2394,8 @@ ul#result-effects li {
 .gurps-app #blunt-trauma-field {
   margin-left: 6px;
 }
+
+.gurps .ranged_options {
+	display: flex;
+	flex-wrap: no-wrap;
+}
