@@ -1113,6 +1113,11 @@ Hooks.once("init", async function () {
 	CONFIG.Actor.entityClass = GurpsActor;
 	CONFIG.Item.entityClass = GurpsItem;
 
+	// preload drag-and-drop image
+	let img = new Image();
+	img.src = 'systems/gurps/icons/blood-splatter-clipart-small.png'
+	GURPS.damageDragImage = img
+
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
 	Actors.registerSheet("gurps", GurpsActorSheet, { label: "Full (GCS)", makeDefault: true });
