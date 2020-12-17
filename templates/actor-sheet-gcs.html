@@ -314,6 +314,7 @@
             {{#each data.ranged as | this key |}}
             <div class="desc">{{{gurpslink this.name}}}
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
+{{!								<div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button></div>   }}
             </div>
             <div class="usage">{{this.mode}}</div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>

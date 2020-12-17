@@ -151,7 +151,7 @@ export class ModifierBucket extends Application {
 			this.tooltipElement.style.setProperty("visibility", "hidden");
 		}
 
-		GURPS.hookupGurps(html);
+		GURPS.hookupGurps(html, this);
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
 		html.find("#modmanualentry").change(this._onManualEntry.bind(this));

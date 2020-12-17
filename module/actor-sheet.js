@@ -63,9 +63,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('mousedown', ev => this._onfocus(ev), false) });
     html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('focus', ev => this._onfocus(ev), false) });
-
+    html.find(".rollable").click(this._onClickRoll.bind(this));
     GURPS.hookupGurps(html);
-
     html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
     html.find(".glinkmod").contextmenu(this._onRightClickGurpslink.bind(this));
     html.find("[data-otf]").contextmenu(this._onRightClickOtf.bind(this));
@@ -471,6 +470,10 @@ export class GurpsActorSheet extends ActorSheet {
       msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
     }
     ChatMessage.create(msgData);
+  }
+
+  async _onClickRoll(event) {
+    game.GURPS.handleRoll(event, this.actor);
   }
 
   async _onClickEnc(ev) {

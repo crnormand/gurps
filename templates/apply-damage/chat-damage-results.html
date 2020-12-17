@@ -1,7 +1,7 @@
 <div class='gurps-chat-message'>
     {{debug}}
-    <div class='prefix'>{{attacker}} injures {{defender}} for {{injury}}
-        points of {{type}} damage{{#if (and (ne 'User Entered' location) (ne 'Large-Area' location))}}
+      <div class='prefix'>... injures {{defender}} for {{injury}} {{pluralize 'point' injury}} 
+        of {{type}} damage{{#if (and (ne 'User Entered' location) (ne 'Large-Area' location))}}
         to the {{location}}{{/if}}.</div>
     {{#if resultsTable}}
     <div class='collapsible-wrapper'>
