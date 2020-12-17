@@ -20,14 +20,14 @@ import HitFatPoints from '../lib/hitpoints.js'
 import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
 import DamageChat from '../lib/damagemessage.js'
 
-import helpers from '../lib/moustachewax.js'
+import handlebarHelpers from '../lib/moustachewax.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
 import { NpcInput } from '../lib/npc-input.js'
 
 jqueryHelpers()
+handlebarHelpers()
 settings.initializeSettings()
-helpers()
 
 GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -461,9 +461,9 @@ function performAction(action, actor, event) {
 		blind: action.blindroll,
 		event: event
 	};		// Ok, I am slowly learning this Javascrip thing ;-)	
-	
-	if (action.type === "pdf" ) {
-		GURPS.handlePdf(action.link);	
+
+	if (action.type === "pdf") {
+		GURPS.handlePdf(action.link);
 		return;
 	}
 
@@ -566,7 +566,7 @@ function performAction(action, actor, event) {
 			thing = action.desc;
 		} else
 			ui.notifications.warn("You must have a character selected");
-			
+
 	if (action.type === "block-parry")
 		if (!!actor) {
 			thing = action.desc;
@@ -587,7 +587,7 @@ function performAction(action, actor, event) {
 				}
 			});
 			target = parseInt(target);
-			if (target) 
+			if (target)
 				formula = "3d6";
 			else
 				ui.notifications.warn("Unable to find a " + action.desc + " to roll");
@@ -1109,7 +1109,6 @@ Hooks.once("init", async function () {
 	game.GURPS = GURPS;
 	CONFIG.GURPS = GURPS;
 
-
 	// Define custom Entity classes
 	CONFIG.Actor.entityClass = GurpsActor;
 	CONFIG.Item.entityClass = GurpsItem;
@@ -1127,12 +1126,13 @@ Hooks.once("init", async function () {
 
 	Hooks.on('chatMessage', (log, content, data) => {
 		if (content === "/help" || content === "!help") {
-		  let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a><br>/help - this message";
+			let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a><br>/help - this message";
 			if (game.user.isGM) c += "<br>/mook - Open Mook Generator";
-			ChatMessage.create({ 
-				content: c, 
-				user: game.user._id, 
-				type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+			ChatMessage.create({
+				content: c,
+				user: game.user._id,
+				type: CONST.CHAT_MESSAGE_TYPES.OTHER
+			});
 			return false;
 		}
 		if (content === "/mook" && game.user.isGM) {
@@ -1152,7 +1152,7 @@ Hooks.once("init", async function () {
 			}
 		});
 		if (found) return false;
-		
+
 	});
 
 	// Look for blind messages with .message-results and remove them
@@ -1255,19 +1255,19 @@ Hooks.once("ready", async function () {
 						let action = parselink(m[2]);
 						if (!!action.action) {
 							GURPS.performAction(action.action, GURPS.LastActor);
-	//					return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
+							//					return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
 						}
 					}
 				});
 			}
-		} catch (e) {};	// a dangerous game... but limited to GURPs /roll OtF
+		} catch (e) { };	// a dangerous game... but limited to GURPs /roll OtF
 		data.content = game.GURPS.gurpslink(c);
 	});
 
 	Hooks.on('renderChatMessage', (app, html, msg) => {
-			GURPS.hookupGurps(html);
+		GURPS.hookupGurps(html);
 	});
-	
+
 	Hooks.on('renderJournalSheet', (app, html, opts) => {
 		let h = html.find(".editor-content");
 		if (!!h) {
@@ -1275,6 +1275,16 @@ Hooks.once("ready", async function () {
 			GURPS.hookupGurps(html);
 		}
 	});
-	
+
+	// define Handlebars partials for ADD:
+	const __dirname = 'systems/gurps/templates'
+	loadTemplates([
+		__dirname + '/apply-damage/effect-blunttrauma.html',
+		__dirname + '/apply-damage/effect-crippling.html',
+		__dirname + '/apply-damage/effect-headvitalshit.html',
+		__dirname + '/apply-damage/effect-knockback.html',
+		__dirname + '/apply-damage/effect-majorwound.html',
+		__dirname + '/apply-damage/effect-shock.html',
+	])
 });
 
