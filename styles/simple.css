@@ -2399,3 +2399,9 @@ ul#result-effects li {
 	display: flex;
 	flex-wrap: no-wrap;
 }
+
+.dragging {
+  outline: 5px auto -webkit-focus-ring-color;
+  box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+  border-radius: 3px;
+}
