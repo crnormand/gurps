@@ -19,6 +19,7 @@ This is what we are currently working on:
     - Added Parry & Block to the On-the-Fly formulas
     - Enhancements to the Mook Generator stat block importing
     - Journal entries now parse (and display) On-the-Fly formulas.  
+    - Chat Portraits module supported (and recommended!)
 
 ### History
 - 0.8.2
