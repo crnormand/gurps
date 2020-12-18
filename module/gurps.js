@@ -1189,27 +1189,6 @@ Hooks.once("init", async function () {
 		}
 	})
 
-	Hooks.on('renderCombatTracker', function (a, html, c) {
-		html.on("drop", function (ev) {
-			ev.preventDefault()
-			ev.stopPropagation()
-			let x = ev.clientX, y = ev.clientY
-			let elementMouseIsOver = document.elementFromPoint(x, y)
-			console.log(elementMouseIsOver)
-
-			let token = $(elementMouseIsOver).parents(".combatant").attr("data-token-id")
-			let combatant = $(elementMouseIsOver).parents(".combatant").attr("data-combatant-id")
-
-			let target = game.combat.combatants.filter(c => c._id === combatant)[0]
-
-			let event = ev.originalEvent
-			let dropData = JSON.parse(event.dataTransfer.getData("text/plain"));
-			if (dropData.type === 'damageItem') {
-				target.actor.handleDamageDrop(dropData.payload)
-			}
-		});
-	})
-
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
@@ -1237,6 +1216,28 @@ Hooks.once("ready", async function () {
 			game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString());
 		}
 	}
+
+	Hooks.on('renderCombatTracker', function (a, html, c) {
+		// use class 'bound' to know if the drop event is already bound
+		if (!html.hasClass('bound')) {
+			html.addClass('bound')
+			html.on('drop', function (ev) {
+				console.log('Haandle drop event on combatTracker')
+				ev.preventDefault()
+				ev.stopPropagation()
+				let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
+
+				let combatant = $(elementMouseIsOver).parents(".combatant").attr("data-combatant-id")
+				let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+
+				let event = ev.originalEvent
+				let dropData = JSON.parse(event.dataTransfer.getData("text/plain"));
+				if (dropData.type === 'damageItem') {
+					target.actor.handleDamageDrop(dropData.payload)
+				}
+			})
+		}
+	})
 
 	// This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
 	Hooks.on('updateUser', (...args) => {
