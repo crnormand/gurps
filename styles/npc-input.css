@@ -40,13 +40,14 @@
   height: 100% !important;
   display: grid;
   grid-template-columns: 250px 1fr 50%;
-  grid-template-rows: 60px 130px 2fr 2fr 45px;
+  grid-template-rows: 60px 130px 2fr 2fr 2fr 45px;
   gap: 5px 5px;
   grid-template-areas:
     "top top top"
     "attr notes notes"
     "melee melee ranged"
     "traits traits skills"
+		"equip equip spells"
     "import import create";
 }
 
@@ -159,6 +160,38 @@
 .npc-input-sk { grid-area: sk; align-self:end }
 
 .npc-input-sk-val { grid-area: sk-val; }
+
+.npc-input-spells {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1.5em 1fr;
+  gap: 5px 5px;
+  grid-template-areas:
+    "sp"
+    "sp-val";
+  grid-area: spells;
+  border: 1px solid rgb(125, 125, 125);
+}
+
+.npc-input-equip {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1.5em 1fr;
+  gap: 5px 5px;
+  grid-template-areas:
+    "eqt"
+    "eqt-val";
+  grid-area: equip;
+  border: 1px solid rgb(125, 125, 125);
+}
+
+.npc-input-sp { grid-area: sp; align-self:end }
+
+.npc-input-sp-val { grid-area: sp-val; }
+
+.npc-input-eqt { grid-area: eqt; align-self:end }
+
+.npc-input-eqt-val { grid-area: eqt-val; }
 
 .npc-sheet-sk-val { 
 	grid-area: sk-val; 
