@@ -42,7 +42,7 @@ GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __
 GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`;
 
 
-//CONFIG.debug.hooks = true;
+CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
@@ -1187,7 +1187,29 @@ Hooks.once("init", async function () {
 			}
 			console.log($(wrapper).html())
 		}
-	});
+	})
+
+	Hooks.on('renderCombatTracker', function (a, html, c) {
+		html.on("drop", function (ev) {
+			ev.preventDefault()
+			ev.stopPropagation()
+			let x = ev.clientX, y = ev.clientY
+			let elementMouseIsOver = document.elementFromPoint(x, y)
+			console.log(elementMouseIsOver)
+
+			let token = $(elementMouseIsOver).parents(".combatant").attr("data-token-id")
+			let combatant = $(elementMouseIsOver).parents(".combatant").attr("data-combatant-id")
+
+			let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+
+			let event = ev.originalEvent
+			let dropData = JSON.parse(event.dataTransfer.getData("text/plain"));
+			if (dropData.type === 'damageItem') {
+				target.actor.handleDamageDrop(dropData.payload)
+			}
+		});
+	})
+
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
@@ -1281,6 +1303,9 @@ Hooks.once("ready", async function () {
 		}
 	});
 
+	/**
+	 * Add a listener to handle damage being dropped on a token. 
+	 */
 	Hooks.on('dropCanvasData', function (canvas, dropData) {
 		let grid_size = canvas.scene.data.grid
 
@@ -1293,7 +1318,6 @@ Hooks.once("ready", async function () {
 		})
 
 		// actual targets are stored in game.user.targets
-		// get the first one and print it
 		if (game.user.targets.size === 1) {
 			let keys = game.user.targets.keys()
 			let first = keys.next()
@@ -1301,9 +1325,7 @@ Hooks.once("ready", async function () {
 				first.value.actor.handleDamageDrop(dropData.payload)
 			}
 		}
-
-		// $("[data-item-id^='" + b.data._id + "']").last()[0].children[0].children[0].click()
-	});
+	})
 
 	// define Handlebars partials for ADD:
 	const __dirname = 'systems/gurps/templates'
