@@ -102,7 +102,35 @@ export class GurpsActorSheet extends ActorSheet {
         return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "spell", "key": ev.currentTarget.dataset.key }))
       })
     });
+
+    html.find('button[data-operation="resource-inc"]').click(ev => {
+      let button = $(ev.currentTarget)
+      let parent = $(button).closest('[data-gurps-resource]')
+      let path = parent.attr('data-gurps-resource')
+      let value = this.actor.data.data[path].value + 1
+      let json = `{ "data.${path}.value": ${value} }`
+      this.actor.update(JSON.parse(json))
+    })
+
+    html.find('button[data-operation="resource-dec"]').click(ev => {
+      let button = $(ev.currentTarget)
+      let parent = $(button).closest('[data-gurps-resource]')
+      let path = parent.attr('data-gurps-resource')
+      let value = this.actor.data.data[path].value - 1
+      let json = `{ "data.${path}.value": ${value} }`
+      this.actor.update(JSON.parse(json))
+    })
+
+    html.find('button[data-operation="resource-reset"]').click(ev => {
+      let button = $(ev.currentTarget)
+      let parent = $(button).closest('[data-gurps-resource]')
+      let path = parent.attr('data-gurps-resource')
+      let value = this.actor.data.data[path].max
+      let json = `{ "data.${path}.value": ${value} }`
+      this.actor.update(JSON.parse(json))
+    })
   }
+
 
   async _onDblclickSort(event) {
     event.preventDefault();
