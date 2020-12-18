@@ -1640,6 +1640,9 @@ body {
 #combat-fat .field,
 #combat-hit .field {
   text-align: end;
+  border: none;
+  margin-left: 2px;
+  margin-right: 0;
 }
 
 .gurps .condition-block {
@@ -1647,10 +1650,11 @@ body {
   grid-template-columns: 0fr 1fr;
   grid-template-rows: 0fr 0fr;
   grid-template-areas:
-    "basic-value basic-label"
-    "condition   condition";
+    "basic-value basic-label reset"
+    "condition   condition   condition";
   align-items: end;
   padding-bottom: .15em;
+  grid-gap: 3px;
 }
 
 .gurps .condition-block {
@@ -1681,15 +1685,28 @@ body {
 
 .gurps .condition-block .condition {
   grid-area: condition;
+  grid-gap: 2px;
   align-content: center;
   text-align: center;
-  margin-right: .2em;
   padding-left: .2em;
   padding-right: .2em;
 }
 
 .gurps .condition-block .normal {
   background-color: lightgreen;
+}
+
+.gurps .condiition-block .reset {
+  grid-area: reset;
+}
+
+.gurps .condition-block .reset  {
+  line-height: unset;
+  font-size: smaller;
+  margin: unset;
+  padding: unset;
+  padding-left: 4px;
+  padding-right: 2px;
 }
 
 #hitpoints .selected,
@@ -2398,4 +2415,44 @@ ul#result-effects li {
 .gurps .ranged_options {
 	display: flex;
 	flex-wrap: no-wrap;
+}
+
+.dragging {
+  outline: 5px auto -webkit-focus-ring-color;
+  box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+  border-radius: 3px;
+}
+
+.resource-spinner {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.resource-spinner button {
+  line-height: unset;
+  margin: 0;
+  padding: 2px;
+  height: 26px;
+  flex: 0;
+  border: 1px solid grey;
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+}
+
+.resource-spinner button:first-child{
+  border-radius: 3px 0px 0px 3px; 
+  border: 1px solid grey; 
+  border-right-width: 0;
+}
+
+.resource-spinner button:last-child {
+  border-radius: 0px 3px 3px 0px; 
+  border: 1px solid grey; 
+  border-left-width: 0;  
+  padding-left: 4px;
+  padding-right: 0;
+}
+
+.resource-spinner input {
+  flex: 3; 
+  border-radius: 0; 
 }

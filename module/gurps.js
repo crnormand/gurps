@@ -42,7 +42,7 @@ GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __
 GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`;
 
 
-//CONFIG.debug.hooks = true;
+CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
@@ -1044,12 +1044,12 @@ GURPS.listeqtrecurse = listeqtrecurse;
 
 // Given a jquery html, attach all of our listeners to it.  No need to call bind(), since they don't use "this"
 function hookupGurps(html) {
-		html.find(".gurpslink").click(GURPS.chatClickGurpslink);
-		html.find(".gmod").click(GURPS.chatClickGmod);
-		html.find(".glinkmod").click(GURPS.chatClickGmod);
-		html.find(".glinkmodplus").click(GURPS.chatClickGmod);
-		html.find(".glinkmodminus").click(GURPS.chatClickGmod);
-		html.find(".pdflink").click(GURPS.handleOnPdf);		
+	html.find(".gurpslink").click(GURPS.chatClickGurpslink);
+	html.find(".gmod").click(GURPS.chatClickGmod);
+	html.find(".glinkmod").click(GURPS.chatClickGmod);
+	html.find(".glinkmodplus").click(GURPS.chatClickGmod);
+	html.find(".glinkmodminus").click(GURPS.chatClickGmod);
+	html.find(".pdflink").click(GURPS.handleOnPdf);
 }
 GURPS.hookupGurps = hookupGurps;
 
@@ -1117,6 +1117,11 @@ Hooks.once("init", async function () {
 	// Define custom Entity classes
 	CONFIG.Actor.entityClass = GurpsActor;
 	CONFIG.Item.entityClass = GurpsItem;
+
+	// preload drag-and-drop image
+	let img = new Image();
+	img.src = 'systems/gurps/icons/blood-splatter-clipart-small.png'
+	GURPS.damageDragImage = img
 
 	// Register sheet application classes
 	Actors.unregisterSheet("core", ActorSheet);
@@ -1187,7 +1192,8 @@ Hooks.once("init", async function () {
 			}
 			console.log($(wrapper).html())
 		}
-	});
+	})
+
 
 	ui.modifierbucket = GURPS.ModifierBucket;
 	ui.modifierbucket.render(true);
@@ -1215,6 +1221,28 @@ Hooks.once("ready", async function () {
 			game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString());
 		}
 	}
+
+	Hooks.on('renderCombatTracker', function (a, html, c) {
+		// use class 'bound' to know if the drop event is already bound
+		if (!html.hasClass('bound')) {
+			html.addClass('bound')
+			html.on('drop', function (ev) {
+				console.log('Haandle drop event on combatTracker')
+				ev.preventDefault()
+				ev.stopPropagation()
+				let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
+
+				let combatant = $(elementMouseIsOver).parents(".combatant").attr("data-combatant-id")
+				let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+
+				let event = ev.originalEvent
+				let dropData = JSON.parse(event.dataTransfer.getData("text/plain"));
+				if (dropData.type === 'damageItem') {
+					target.actor.handleDamageDrop(dropData.payload)
+				}
+			})
+		}
+	})
 
 	// This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
 	Hooks.on('updateUser', (...args) => {
@@ -1280,6 +1308,30 @@ Hooks.once("ready", async function () {
 			GURPS.hookupGurps(html);
 		}
 	});
+
+	/**
+	 * Add a listener to handle damage being dropped on a token. 
+	 */
+	Hooks.on('dropCanvasData', function (canvas, dropData) {
+		let grid_size = canvas.scene.data.grid
+
+		let numberTargets = canvas.tokens.targetObjects({
+			x: dropData.x - grid_size / 2,
+			y: dropData.y - grid_size / 2,
+			height: grid_size,
+			width: grid_size,
+			releaseOthers: true
+		})
+
+		// actual targets are stored in game.user.targets
+		if (game.user.targets.size === 1) {
+			let keys = game.user.targets.keys()
+			let first = keys.next()
+			if (dropData.type === 'damageItem') {
+				first.value.actor.handleDamageDrop(dropData.payload)
+			}
+		}
+	})
 
 	// define Handlebars partials for ADD:
 	const __dirname = 'systems/gurps/templates'
