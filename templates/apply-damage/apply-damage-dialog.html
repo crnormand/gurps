@@ -2,8 +2,9 @@
   <div classes='flexcol flex-between'>
 
     <h2>Apply {{CALC.basicDamage}} points of
-      {{printIfNe CALC.armorDivisor 0 '(*)' ' '}}{{CALC.damageType}} damage to
-      {{actor.data.name}}</h2>
+      {{#if CALC.armorDivisor}}({{CALC.armorDivisor}}){{/if}}
+      {{#if (ne CALC.damageType 'none')}}{{CALC.damageType}}{{/if}}
+      damage to {{actor.data.name}}</h2>
 
     <div class='flexrow flex-group-center flex-between'>
       <h3>DIRECTLY APPLY:</h3>
