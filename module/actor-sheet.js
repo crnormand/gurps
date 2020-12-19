@@ -104,24 +104,29 @@ export class GurpsActorSheet extends ActorSheet {
     });
 
     html.find('button[data-operation="resource-inc"]').click(ev => {
+      ev.preventDefault();
       let button = $(ev.currentTarget)
       let parent = $(button).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
       let value = this.actor.data.data[path].value + 1
+      if (isNaN(value)) value = this.actor.data.data[path].max
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
     html.find('button[data-operation="resource-dec"]').click(ev => {
+      ev.preventDefault();
       let button = $(ev.currentTarget)
       let parent = $(button).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
       let value = this.actor.data.data[path].value - 1
+      if (isNaN(value)) value = this.actor.data.data[path].max
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
     html.find('button[data-operation="resource-reset"]').click(ev => {
+      ev.preventDefault();
       let button = $(ev.currentTarget)
       let parent = $(button).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
