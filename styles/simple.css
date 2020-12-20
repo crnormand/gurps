@@ -1027,7 +1027,6 @@ body {
 #points,
 #attributes,
 #lifting,
-/* #fatpoints, */
 #hitpoints {
   display: grid;
   grid-template-rows: 0fr 1fr;
@@ -1038,7 +1037,7 @@ body {
 #attributes .field,
 #lifting .field,
 #hitpoints .field,
-#fatpoints .field {
+#trackers .field {
   text-align: right;
 }
 
@@ -1064,8 +1063,8 @@ body {
   grid-area: stats;
   display: grid;
   grid-template:
-    "attributes fatpoints location encumbrance"
-    "attributes hitpoints location lifting";
+    "attributes trackers location encumbrance"
+    "attributes trackers location lifting";
   grid-template-columns: 0fr 2fr 0fr 0fr;
   grid-gap: .05in;
 }
@@ -1074,17 +1073,61 @@ body {
   grid-area: attributes;
 }
 
-#fatpoints {
-  grid-area: fatpoints;
+#trackers {
+  grid-area: trackers;
   align-content: right;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0fr 0fr;
+  grid-gap: .05in;
 }
 
-#fatpoints {
+#trackers > * {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 0fr;
-  grid-template: "combat-hit combat-fat";
   grid-gap: .05in;
+}
+
+#trackers > *:first-child {
+  grid-template: "combat-hit combat-fat"
+}
+
+#trackers > *:last-child {
+  grid-template-rows: 0fr 0fr 0fr;
+  grid-gap: 0;
+}
+
+#resources {
+  grid-template-rows: 0fr 0fr;
+  border: 1px solid black;
+}
+
+#resources > * {
+  border: none;
+}
+
+#resources > *:nth-child(even) {
+  border-right: 1px solid black;
+}
+
+#resources .tracked-resource .header {
+  background-color: dimgrey;
+}
+
+#resources .tracked-resource .header {
+  border-top: 1px solid black;
+}
+
+.tracked-resource .fieldblock {
+  font-size: unset;
+}
+
+.tracked-resource .fieldblock .field {
+  border: none;
+}
+
+.tracked-resource .fieldblock .label {
+  font-size: unset;
 }
 
 #hitpoints {
@@ -1614,7 +1657,8 @@ body {
 #combat-fat,
 #combat-attrs,
 #combat-weapons,
-#combat-location {
+#combat-location,
+.tracked-resource {
   grid-gap: .05in;
   display: grid;
   grid-template-rows: 0fr 1fr;
@@ -1624,7 +1668,8 @@ body {
 #combat-hit,
 #combat-fat,
 #combat-attrs,
-#combat-location {
+#combat-location,
+.tracked-resource {
   border: 1px solid black;
 }
 
@@ -1646,20 +1691,21 @@ body {
 }
 
 #combat-fat .field,
-#combat-hit .field {
+#combat-hit .field,
+.tracked-resource .field {
   text-align: end;
   border: none;
   margin-left: 2px;
-  margin-right: 0;
+  margin-right: 2px;
 }
 
 .gurps .condition-block {
   display: grid;
-  grid-template-columns: 0fr 1fr;
-  grid-template-rows: 0fr 0fr;
+  grid-template-columns: 1fr 0fr;
   grid-template-areas:
-    "basic-value basic-label reset"
-    "condition   condition   condition";
+    "basic-value reset"
+    "condition   condition";
+  grid-template-rows: 0fr 0fr;
   align-items: end;
   padding-bottom: .15em;
   grid-gap: 3px;
@@ -1673,8 +1719,12 @@ body {
   align-self: center;
 }
 
-.gurps .combat-sheet .condition-block {
+.gurps #combat-sheet .condition-block {
   font-size: 80%;
+  grid-template-columns: 0fr 1fr 0fr;
+  grid-template-areas:
+    "basic-value basic-label reset"
+    "condition   condition   condition";
 }
 
 .gurps .condition-block .basic-value {
@@ -1693,7 +1743,7 @@ body {
   align-self: center;
 }
 
-.gurps .combat-sheet  .condition-block .basic-label {
+.gurps #combat-sheet .condition-block .basic-label {
   font-size: 80%;
 }
 
@@ -1724,7 +1774,7 @@ body {
 }
 
 #hitpoints .selected,
-#fatpoints .selected {
+#trackers .selected {
   background-color: #ffcdd2;
 }
 
