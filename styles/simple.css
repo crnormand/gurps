@@ -1699,6 +1699,12 @@ body {
   margin-right: 2px;
 }
 
+#editorsheet #combat-hit .field,
+#editorsheet #combat-fat .field,
+#editorsheet .tracked-resource .field {
+  border-bottom: 1px solid lightgrey;
+}
+
 .gurps .condition-block {
   display: grid;
   grid-template-columns: 1fr 0fr;
@@ -2575,4 +2581,12 @@ ul#result-effects li {
   margin: auto;
   text-transform: uppercase;
   font-size: smaller;
+}
+
+.fieldblock3 .tooltip-wrapper {
+  grid-column: 1 / span 2;
+}
+
+.tooltip .fieldblock .field {
+  border: none !important;
 }
