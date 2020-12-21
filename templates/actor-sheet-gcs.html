@@ -221,109 +221,101 @@
 
 
       </div>
-      <div id="fatpoints">
-        <!-- <div class="header">Fatigue Points</div>
-                <div class="fieldblock3">
-                    <div class="points"></div>
-                    <div class="field"><input class="gcs-input-2" name="data.FP.value" type="text"
-                            value="{{data.FP.value}}" data-dtype="Number" /></div>
-                    <div class="label">Current</div>
-                    <div class="points">[{{data.FP.points}}]</div>
-                    <div class="field">{{data.FP.max}}</div>
-                    <div class="label">Basic</div>
+      <div id="trackers">
+        <div>
+          <div id='combat-hit' data-gurps-resource='HP'>
+            <div class='header'>Hit Points</div>
+            <div class='field'>
+              <div class='resource-spinner'>
+                <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
+                <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
+                  placeholder="{{data.HP.max}}" data-dtype="Number" />
+                <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
+              </div>
+            </div>
+            <div class='tooltip-wrapper'>
+              <div class="tooltip">Thresholds
+                <span class="tooltiptext">
+                  <div class="fieldblock">
+                    {{#hpBreakpoints data.HP}}
+                    <div class="field condensed noedit">{{breakpoint}}</div>
+                    <div class="label {{style}}">{{label}}</div>
+                    {{/hpBreakpoints}}
+                  </div>
+                </span>
+              </div>
+            </div>
+            <div class='condition-block'>
+              <div class='basic-value fieldblock3'>
+                <div class="points">[{{data.HP.points}}]</div>
+                <div class='field'>{{data.HP.max}}</div>
+                <div class='label'>Basic</div>
+              </div>
+              <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}</div>
+              <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
+            </div>
+          </div> <!-- end of combat-hit -->
 
+          <div id='combat-fat' data-gurps-resource='FP'>
+            <div class='header'>Fatigue</div>
+            <div class='field'>
+              <div class='resource-spinner'>
+                <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
+                <input class="gcs-attr-input" name="data.FP.value" type="text" value="{{data.FP.value}}"
+                  placeholder="{{data.FP.max}}" data-dtype="Number" />
+                <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
+              </div>
+            </div>
+            <div class='tooltip-wrapper'>
+              <div class="tooltip">Thresholds
+                <span class="tooltiptext">
+                  <div class="fieldblock">
                     {{#fpBreakpoints data.FP}}
-                    <div class="points"></div>
                     <div class="field condensed noedit">{{breakpoint}}</div>
                     <div class="label {{style}}">{{label}}</div>
                     {{/fpBreakpoints}}
-                </div> -->
-        <div id='combat-hit' data-gurps-resource='HP'>
-          <div class='header'>Hit Points</div>
-          <div class='field'>
-            <div class='resource-spinner'>
-              <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
-              <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
-                placeholder="{{data.HP.max}}" data-dtype="Number" />
-              <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
+                  </div>
+                </span>
+              </div>
             </div>
-          </div>
-          <div class='tooltip-wrapper'>
-            <div class="tooltip">Thresholds
-              <span class="tooltiptext">
-                <div class="fieldblock">
-                  {{#hpBreakpoints data.HP}}
-                  <div class="field condensed noedit">{{breakpoint}}</div>
-                  <div class="label {{style}}">{{label}}</div>
-                  {{/hpBreakpoints}}
-                </div>
-              </span>
+            <div class='condition-block'>
+              <div class='basic-value fieldblock3'>
+                <div class="points">[{{data.FP.points}}]</div>
+                <div class='field'>{{data.FP.max}}</div>
+                <div class='label'>Basic</div>
+              </div>
+              <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}</div>
+              <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
             </div>
-          </div>
-          <div class='condition-block'>
-            <div class='basic-value fieldblock3'>
-              <div class="points">[{{data.HP.points}}]</div>
-              <div class='field'>{{data.HP.max}}</div>
-              <div class='label'>Basic</div>
-            </div>
-            <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}</div>
-            <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-          </div>
-        </div> <!-- end of combat-hit -->
+          </div> <!-- combat-fat -->
+        </div>
 
-        <div id='combat-fat' data-gurps-resource='FP'>
-          <div class='header'>Fatigue</div>
-          <div class='field'>
-            <div class='resource-spinner'>
-              <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
-              <input class="gcs-attr-input" name="data.FP.value" type="text" value="{{data.FP.value}}"
-                placeholder="{{data.FP.max}}" data-dtype="Number" />
-              <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
+        <div id='resources'>
+          <div class="header" style="grid-column: 1 / span 2;">Resource Trackers</div>
+
+          {{#each (filter data.additionalresources.tracker 'name')}}
+          <div class='tracked-resource' data-gurps-resource='additionalresources.tracker.{{@index}}'>
+            <div class='header'>{{#if name}}{{name}}{{else}}Resource {{@index}}{{/if}}</div>
+            <div class='field'>
+              <div class='resource-spinner'>
+                <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
+                <input class="gcs-attr-input" name="data.additionalresources.tracker.{{@index}}.value" type="text"
+                  value="{{value}}" placeholder="0" data-dtype="Number" />
+                <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
+              </div>
             </div>
-          </div>
-          <div class='tooltip-wrapper'>
-            <div class="tooltip">Thresholds
-              <span class="tooltiptext">
-                <div class="fieldblock">
-                  {{#fpBreakpoints data.FP}}
-                  <div class="field condensed noedit">{{breakpoint}}</div>
-                  <div class="label {{style}}">{{label}}</div>
-                  {{/fpBreakpoints}}
-                </div>
-              </span>
+            <div class='condition-block'>
+              <div class='basic-value fieldblock'>
+                <div class='field'>{{max}}</div>
+                <div class='label'>Maximum</div>
+              </div>
+              <div class='condition'></div>
+              <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
             </div>
-          </div>
-          <div class='condition-block'>
-            <div class='basic-value fieldblock3'>
-              <div class="points">[{{data.FP.points}}]</div>
-              <div class='field'>{{data.FP.max}}</div>
-              <div class='label'>Basic</div>
-            </div>
-            <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}</div>
-            <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-          </div>
-        </div> <!-- combat-fat -->
+          </div> <!-- end of resource -->
+          {{/each}}
 
-      </div>
-
-      <div id="hitpoints">
-        <!-- <div class="header">Hit Points</div>
-        <div class="fieldblock3">
-          <div class="points"></div>
-          <div class="field"><input class="gcs-input-2" name="data.HP.value" type="text" value="{{data.HP.value}}"
-              data-dtype="Number" /></div>
-          <div class="label">Current</div>
-
-          <div class="points">[{{data.HP.points}}]</div>
-          <div class="field">{{data.HP.max}}</div>
-          <div class="label">Basic</div>
-
-          {{#hpBreakpoints data.HP}}
-          <div class="points"></div>
-          <div class="field condensed noedit">{{breakpoint}}</div>
-          <div class="label {{style}}">{{label}}</div>
-          {{/hpBreakpoints}}
-        </div> -->
+        </div>
       </div>
     </div>
 
