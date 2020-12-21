@@ -1027,7 +1027,6 @@ body {
 #points,
 #attributes,
 #lifting,
-#fatpoints,
 #hitpoints {
   display: grid;
   grid-template-rows: 0fr 1fr;
@@ -1038,7 +1037,7 @@ body {
 #attributes .field,
 #lifting .field,
 #hitpoints .field,
-#fatpoints .field {
+#trackers .field {
   text-align: right;
 }
 
@@ -1064,8 +1063,8 @@ body {
   grid-area: stats;
   display: grid;
   grid-template:
-    "attributes fatpoints location encumbrance"
-    "attributes hitpoints location lifting";
+    "attributes trackers location encumbrance"
+    "attributes trackers location lifting";
   grid-template-columns: 0fr 2fr 0fr 0fr;
   grid-gap: .05in;
 }
@@ -1074,9 +1073,74 @@ body {
   grid-area: attributes;
 }
 
-#fatpoints {
-  grid-area: fatpoints;
+#trackers {
+  grid-area: trackers;
   align-content: right;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0fr 0fr;
+  grid-gap: .05in;
+}
+
+#trackers > * {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: .05in;
+}
+
+#trackers > *:first-child {
+  grid-template: "combat-hit combat-fat"
+}
+
+#trackers > *:last-child {
+  grid-template-rows: 0fr 0fr 0fr;
+  grid-gap: 0;
+}
+
+#resources {
+  grid-template-rows: 0fr 0fr;
+  /* border: 1px solid black; */
+}
+
+#editorsheet #resources {
+  font-size: 80%;
+}
+
+#editorsheet #resources .tracked-resource .fieldblock3 *:first-child {
+  grid-column: 1 / span 3;
+}
+
+#editorsheet #resources .tracked-resource .fieldblock3 .name {
+  text-align: start;
+}
+
+#resources > * {
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+
+#resources > *:nth-child(even) {
+  border-left: 1px solid black;
+}
+
+#resources .tracked-resource .header {
+  background-color: dimgrey;
+}
+
+#resources .tracked-resource .header {
+  border-bottom: 1px solid lightgray;
+}
+
+.tracked-resource .fieldblock {
+  font-size: unset;
+}
+
+.tracked-resource .fieldblock .field {
+  border: none;
+}
+
+.tracked-resource ::placeholder {
+  color: grey;
 }
 
 #hitpoints {
@@ -1606,7 +1670,8 @@ body {
 #combat-fat,
 #combat-attrs,
 #combat-weapons,
-#combat-location {
+#combat-location,
+.tracked-resource {
   grid-gap: .05in;
   display: grid;
   grid-template-rows: 0fr 1fr;
@@ -1638,20 +1703,27 @@ body {
 }
 
 #combat-fat .field,
-#combat-hit .field {
+#combat-hit .field,
+.tracked-resource .field {
   text-align: end;
   border: none;
   margin-left: 2px;
-  margin-right: 0;
+  margin-right: 2px;
+}
+
+#editorsheet #combat-hit .field,
+#editorsheet #combat-fat .field,
+#editorsheet .tracked-resource .field {
+  border-bottom: 1px solid lightgrey;
 }
 
 .gurps .condition-block {
   display: grid;
-  grid-template-columns: 0fr 1fr;
-  grid-template-rows: 0fr 0fr;
+  grid-template-columns: 1fr 0fr;
   grid-template-areas:
-    "basic-value basic-label reset"
-    "condition   condition   condition";
+    "basic-value reset"
+    "condition   condition";
+  grid-template-rows: 0fr 0fr;
   align-items: end;
   padding-bottom: .15em;
   grid-gap: 3px;
@@ -1661,9 +1733,16 @@ body {
   text-align: start;
   padding-left: .2em;
   padding-right: .2em;
-  font-size: 80%;
   white-space: nowrap;
   align-self: center;
+}
+
+.gurps #combat-sheet .condition-block {
+  font-size: 80%;
+  grid-template-columns: 0fr 1fr 0fr;
+  grid-template-areas:
+    "basic-value basic-label reset"
+    "condition   condition   condition";
 }
 
 .gurps .condition-block .basic-value {
@@ -1678,9 +1757,12 @@ body {
   text-align: left;
   padding-left: .2em;
   padding-right: .2em;
-  font-size: 80%;
   white-space: nowrap;
   align-self: center;
+}
+
+.gurps #combat-sheet .condition-block .basic-label {
+  font-size: 80%;
 }
 
 .gurps .condition-block .condition {
@@ -1710,7 +1792,7 @@ body {
 }
 
 #hitpoints .selected,
-#fatpoints .selected {
+#trackers .selected {
   background-color: #ffcdd2;
 }
 
@@ -2455,4 +2537,68 @@ ul#result-effects li {
 .resource-spinner input {
   flex: 3; 
   border-radius: 0; 
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted darkgrey; /* If you want dots under the hoverable text */
+  text-transform: uppercase;
+  color: darkgrey
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: large;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip-wrapper {
+  margin: auto;
+  text-transform: uppercase;
+  font-size: smaller;
+}
+
+.fieldblock3 .tooltip-wrapper {
+  grid-column: 1 / span 2;
+}
+
+.tooltip .fieldblock .field {
+  border: none !important;
 }
