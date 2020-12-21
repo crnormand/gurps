@@ -105,32 +105,36 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('button[data-operation="resource-inc"]').click(ev => {
       ev.preventDefault();
-      let button = $(ev.currentTarget)
-      let parent = $(button).closest('[data-gurps-resource]')
+      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
-      let value = this.actor.data.data[path].value + 1
-      if (isNaN(value)) value = this.actor.data.data[path].max
+
+      let tracker = getProperty(this.actor.data.data, path)
+      let value = tracker.value + 1
+      if (isNaN(value)) value = tracker.max
+
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
     html.find('button[data-operation="resource-dec"]').click(ev => {
-      ev.preventDefault();
-      let button = $(ev.currentTarget)
-      let parent = $(button).closest('[data-gurps-resource]')
+      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
-      let value = this.actor.data.data[path].value - 1
-      if (isNaN(value)) value = this.actor.data.data[path].max
+
+      let tracker = getProperty(this.actor.data.data, path)
+      let value = tracker.value - 1
+      if (isNaN(value)) value = tracker.max
+
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
     html.find('button[data-operation="resource-reset"]').click(ev => {
-      ev.preventDefault();
-      let button = $(ev.currentTarget)
-      let parent = $(button).closest('[data-gurps-resource]')
+      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
-      let value = this.actor.data.data[path].max
+
+      let tracker = getProperty(this.actor.data.data, path)
+      let value = tracker.max
+
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
@@ -743,3 +747,17 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   }
 }
 
+let _getProperty = function (object, key) {
+  let target = object;
+
+  // Convert the key to an object reference if it contains dot notation
+  if (key.indexOf('.') !== -1) {
+    let parts = key.split('.');
+    key = parts.pop();
+    target = parts.reduce((o, i) => {
+      if (!o.hasOwnProperty(i)) o[i] = {};
+      return o[i];
+    }, object);
+  }
+  return target;
+}

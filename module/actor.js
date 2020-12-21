@@ -8,9 +8,13 @@ export class GurpsActor extends Actor {
 		const data = super.getRollData();
 		return data;
 	}
-	
+
 	prepareData() {
 		super.prepareData();
+	}
+
+	prepareDerivedData() {
+		super.prepareDerivedData()
 	}
 
 	/** @override */
@@ -46,7 +50,7 @@ export class GurpsActor extends Actor {
 		if (!(isFoundryGCS || isFoundryGCA)) {
 			ui.notifications.error("We no longer support the Fantasy Ground import.   Please check the Users Guide (see Chat log).");
 			ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
-			return;			
+			return;
 		}
 
 		// The character object starts here
@@ -61,7 +65,7 @@ export class GurpsActor extends Actor {
 
 		let commit = {}
 		commit = { ...commit, ...{ "name": nm } };
-		commit = { ...commit, ...{ "data.lastImport": (new Date()).toString().split(' ').splice(1,4).join(' ') } };
+		commit = { ...commit, ...{ "data.lastImport": (new Date()).toString().split(' ').splice(1, 4).join(' ') } };
 		commit = { ...commit, ...{ "token.name": nm } };
 		let ar = this.data.data.additionalresources || {};
 		ar.importname = importname;
@@ -475,7 +479,7 @@ export class GurpsActor extends Actor {
 		let t = this.textFrom;
 		let data = this.data.data;
 		let att = data.attributes;
-		
+
 		att.ST.value = i(json.strength);
 		att.ST.points = i(json.strength_points);
 		att.DX.value = i(json.dexterity);
@@ -499,23 +503,23 @@ export class GurpsActor extends Actor {
 		if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
 			saveCurrent = await new Promise((resolve, reject) => {
 				let d = new Dialog({
-		      title: "Current HP & FP",
-		      content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values (default) or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
-				  buttons: {
-				    save: {
-				     icon: '<i class="far fa-square"></i>',
-				     label: "Save",
-				     callback: () => resolve(true)
-				    },
-				    overwrite: {
-				     icon: '<i class="fas fa-edit"></i>',
-				     label: "Overwrite",
-				     callback: () => resolve(true)
-				    }
-				  },
-				 default: "save",
-				 close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
-		    });
+					title: "Current HP & FP",
+					content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values (default) or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
+					buttons: {
+						save: {
+							icon: '<i class="far fa-square"></i>',
+							label: "Save",
+							callback: () => resolve(true)
+						},
+						overwrite: {
+							icon: '<i class="fas fa-edit"></i>',
+							label: "Overwrite",
+							callback: () => resolve(true)
+						}
+					},
+					default: "save",
+					close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
+				});
 				d.render(true);
 			});
 		}
@@ -776,13 +780,13 @@ export class GurpsActor extends Actor {
 	}
 
 	getCurrentMove() {
-    if (!this.data.data.encumbrance) return 0;
+		if (!this.data.data.encumbrance) return 0;
 		let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
 		return (!!enc) ? enc.move : 0;
 	}
 
 	getTorsoDr() {
-    if (!this.data.data.hitlocations) return 0;
+		if (!this.data.data.hitlocations) return 0;
 		let hl = Object.values(this.data.data.hitlocations).find(h => h.penalty == 0);
 		return (!!hl) ? hl.dr : 0;
 	}
@@ -820,9 +824,9 @@ export class NamedCost extends Named {
 
 export class Leveled extends NamedCost {
 	constructor(n1, lvl) {
-    super(n1);
-    this.level = lvl;
-  }
+		super(n1);
+		this.level = lvl;
+	}
 
 	level = 1;
 }
@@ -854,11 +858,11 @@ export class Attack extends Named {
 	mode = "";
 	level = "";
 	damage = "";
-  constructor(n1, lvl, dmg) {
-    super(n1);
-    this.level = lvl;
-    this.damage = dmg;
-  }
+	constructor(n1, lvl, dmg) {
+		super(n1);
+		this.level = lvl;
+		this.damage = dmg;
+	}
 }
 
 export class Melee extends Attack {
@@ -880,11 +884,11 @@ export class Ranged extends Attack {
 	shots = "";
 	rcl = "";
 	checkRange() {
-		if (!!this.halfd) 
+		if (!!this.halfd)
 			this.range = this.halfd;
 		if (!!this.max)
 			this.range = this.max;
-		if (!!this.halfd && !!this.max) 
+		if (!!this.halfd && !!this.max)
 			this.range = this.halfd + "/" + this.max;
 	}
 }

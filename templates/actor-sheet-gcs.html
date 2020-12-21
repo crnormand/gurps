@@ -289,88 +289,32 @@
             </div>
           </div> <!-- combat-fat -->
         </div>
+
         <div id='resources'>
           <div class="header" style="grid-column: 1 / span 2;">Resource Trackers</div>
 
-          <div class='tracked-resource' data-gurps-resource='Resource1'>
-            <div class='header'>Resource One</div>
+          {{#each (filter data.additionalresources.tracker 'name')}}
+          <div class='tracked-resource' data-gurps-resource='additionalresources.tracker.{{@index}}'>
+            <div class='header'>{{#if name}}{{name}}{{else}}Resource {{@index}}{{/if}}</div>
             <div class='field'>
               <div class='resource-spinner'>
                 <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
-                <input class="gcs-attr-input" name="data.Resource1.value" type="text" value="" placeholder="99"
-                  data-dtype="Number" />
+                <input class="gcs-attr-input" name="data.additionalresources.tracker.{{@index}}.value" type="text"
+                  value="{{value}}" placeholder="0" data-dtype="Number" />
                 <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
               </div>
             </div>
             <div class='condition-block'>
               <div class='basic-value fieldblock'>
-                <div class='field'>99</div>
-                <div class='label'>Max</div>
+                <div class='field'>{{max}}</div>
+                <div class='label'>Maximum</div>
               </div>
               <div class='condition'></div>
               <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
             </div>
           </div> <!-- end of resource -->
+          {{/each}}
 
-          <div class='tracked-resource' data-gurps-resource='Resource2'>
-            <div class='header'>Resource Two</div>
-            <div class='field'>
-              <div class='resource-spinner'>
-                <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
-                <input class="gcs-attr-input" name="data.Resource1.value" type="text" value="" placeholder="99"
-                  data-dtype="Number" />
-                <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
-              </div>
-            </div>
-            <div class='condition-block'>
-              <div class='basic-value fieldblock'>
-                <div class='field'>99</div>
-                <div class='label'>Max</div>
-              </div>
-              <div class='condition'></div>
-              <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-            </div>
-          </div> <!-- end of resource -->
-
-          <div class='tracked-resource' data-gurps-resource='Resource3'>
-            <div class='header'>Resource Three</div>
-            <div class='field'>
-              <div class='resource-spinner'>
-                <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
-                <input class="gcs-attr-input" name="data.Resource1.value" type="text" value="" placeholder="99"
-                  data-dtype="Number" />
-                <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
-              </div>
-            </div>
-            <div class='condition-block'>
-              <div class='basic-value fieldblock'>
-                <div class='field'>99</div>
-                <div class='label'>Max</div>
-              </div>
-              <div class='condition'></div>
-              <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-            </div>
-          </div> <!-- end of resource -->
-
-          <div class='tracked-resource' data-gurps-resource='Resource4'>
-            <div class='header'>Resource Four</div>
-            <div class='field'>
-              <div class='resource-spinner'>
-                <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
-                <input class="gcs-attr-input" name="data.Resource1.value" type="text" value="" placeholder="99"
-                  data-dtype="Number" />
-                <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
-              </div>
-            </div>
-            <div class='condition-block'>
-              <div class='basic-value fieldblock'>
-                <div class='field'>99</div>
-                <div class='label'>Max</div>
-              </div>
-              <div class='condition'></div>
-              <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-            </div>
-          </div> <!-- end of resource -->
         </div>
       </div>
     </div>

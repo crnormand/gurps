@@ -272,7 +272,7 @@
 
       <div id='trackers'>
         <div>
-          <div id='combat-hit' data-gurps-resource='FP'>
+          <div id='combat-hit' data-gurps-resource='HP'>
             <div class='header'>Hit Points</div>
             <div class="fieldblock3">
               <div class="points"></div>
@@ -313,7 +313,7 @@
               <div class="label">Current</div>
 
               <div class="points">
-                <input name="{{data.FP.points}}" class="gcs-input-sm2" type="text" value="{{data.FP.points}}">
+                <input name="data.FP.points" class="gcs-input-sm2" type="text" value="{{data.FP.points}}">
               </div>
 
               <div class="field">
@@ -338,7 +338,41 @@
 
         </div>
 
-        <div></div>
+        <div id='resources'>
+          <div class="header" style="grid-column: 1 / span 2;">Resource Trackers</div>
+
+          {{#each data.additionalresources.tracker}}
+          <div class='tracked-resource' data-gurps-resource='additionalresources.tracker.{{@index}}'>
+            <div class='header'>Resource {{@index}}</div>
+            <div class="fieldblock3" style='padding-bottom: 0.05in; '>
+              <div class='field name' style='margin-bottom: 0.05in;'>
+                <input name="data.additionalresources.tracker.{{@index}}.name" class="gcs-input" type="text"
+                  value="{{name}}" placeholder="Resource Name">
+              </div>
+
+              <div class="points"></div>
+              <div class="field"><input class="gcs-input" name="data.additionalresources.tracker.{{@index}}.value"
+                  type="text" value="{{value}}" data-dtype="Number" /></div>
+              <div class="label">Current</div>
+
+              <div class="points"></div>
+              <div class="field"><input class="gcs-input" name="data.additionalresources.tracker.{{@index}}.min"
+                  type="text" value="{{min}}" data-dtype="Number" /></div>
+              <div class="label">Minimum</div>
+
+              <div class="points">
+                <input name="data.additionalresources.tracker.{{@index}}.points" class="gcs-input-sm2" type="text"
+                  value="{{points}}">
+              </div>
+              <div class="field">
+                <input class="gcs-input" name="data.additionalresources.tracker.{{@index}}.max" type="text"
+                  value="{{max}}" data-dtype="Number" />
+              </div>
+              <div class="label">Maximum</div>
+            </div>
+          </div> <!-- end of resource -->
+          {{/each}}
+        </div>
       </div>
 
       <!-- <div id="fatpoints">

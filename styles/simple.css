@@ -1099,15 +1099,28 @@ body {
 
 #resources {
   grid-template-rows: 0fr 0fr;
-  border: 1px solid black;
+  /* border: 1px solid black; */
+}
+
+#editorsheet #resources {
+  font-size: 80%;
+}
+
+#editorsheet #resources .tracked-resource .fieldblock3 *:first-child {
+  grid-column: 1 / span 3;
+}
+
+#editorsheet #resources .tracked-resource .fieldblock3 .name {
+  text-align: start;
 }
 
 #resources > * {
-  border: none;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
 }
 
 #resources > *:nth-child(even) {
-  border-right: 1px solid black;
+  border-left: 1px solid black;
 }
 
 #resources .tracked-resource .header {
@@ -1115,7 +1128,7 @@ body {
 }
 
 #resources .tracked-resource .header {
-  border-top: 1px solid black;
+  border-bottom: 1px solid lightgray;
 }
 
 .tracked-resource .fieldblock {
@@ -1126,8 +1139,8 @@ body {
   border: none;
 }
 
-.tracked-resource .fieldblock .label {
-  font-size: unset;
+.tracked-resource ::placeholder {
+  color: grey;
 }
 
 #hitpoints {
@@ -1668,8 +1681,7 @@ body {
 #combat-hit,
 #combat-fat,
 #combat-attrs,
-#combat-location,
-.tracked-resource {
+#combat-location {
   border: 1px solid black;
 }
 
