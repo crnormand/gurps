@@ -892,7 +892,7 @@
   text-align: left;
   padding-left: .2em;
   padding-right: .2em;
-  font-size: 80%;
+  /* font-size: 80%; */
   white-space: nowrap;
   align-self: center;
 }
@@ -1123,11 +1123,11 @@ body {
   border-left: 1px solid black;
 }
 
-#resources .tracked-resource .header {
+.tracked-resource .header {
   background-color: dimgrey;
 }
 
-#resources .tracked-resource .header {
+ .tracked-resource .header {
   border-bottom: 1px solid lightgray;
 }
 
@@ -1141,6 +1141,12 @@ body {
 
 .tracked-resource ::placeholder {
   color: grey;
+}
+
+.tracked-resource {
+  grid-gap: .05in;
+  display: grid;
+  grid-template-rows: 0fr 1fr;
 }
 
 #hitpoints {
@@ -1652,26 +1658,41 @@ body {
 }
 
 
-/* ----- temp additions ----- */
+/* ----- combat sheet additions ----- */
 
 #combat-sheet {
   display: grid;
-  grid-template-columns: 1fr 1fr 6em 6em auto;
+  grid-template-columns: 0fr 8em 8em auto;
   grid-template-rows: 0fr auto auto;
   grid-gap: .05in;
   grid-template-areas:
-    'combat-identity combat-identity combat-hit      combat-fat      combat-location'
-    'combat-attrs    combat-encumber combat-encumber combat-encumber combat-location'
-    'combat-weapons  combat-weapons combat-weapons   combat-weapons  combat-weapons';
+    'combat-attrs    combat-hitfat   combat-trackers combat-location'
+    'combat-encumber combat-encumber combat-trackers combat-location'
+    'combat-weapons  combat-weapons  combat-weapons  combat-weapons ';
 }
 
-#combat-identity,
+#combat-hitfat {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  grid-gap: .05in;
+  grid-template-areas:
+    'combat-hit'
+    'combat-fat';
+}
+
+#combat-trackers {
+  grid-area: combat-trackers;
+  display: flex;
+  flex-flow: column nowrap;
+  border: 1px solid black;
+}
+
 #combat-hit,
 #combat-fat,
 #combat-attrs,
 #combat-weapons,
-#combat-location,
-.tracked-resource {
+#combat-location {
   grid-gap: .05in;
   display: grid;
   grid-template-rows: 0fr 1fr;
@@ -1791,8 +1812,7 @@ body {
   padding-right: 2px;
 }
 
-#hitpoints .selected,
-#trackers .selected {
+#hitpoints .selected {
   background-color: #ffcdd2;
 }
 
@@ -1801,8 +1821,9 @@ body {
   background-color: #b8ffff;
 }
 
-.gurps .condition-block .collapse {
-  background-color: #ffcdd2;
+.gurps .condition-block .collapse,
+.resource-spinner .depleted {
+    background-color: #ffcdd2;
 }
 
 .gurps .condition-block .check {
@@ -2538,6 +2559,15 @@ ul#result-effects li {
   flex: 3; 
   border-radius: 0; 
 }
+
+#combat-sheet .resource-spinner button {
+  height: 21px;
+}
+#combat-sheet .resource-spinner input {
+  height: 21px;
+  font-size: 80%;
+}
+
 
 /* Tooltip container */
 .tooltip {

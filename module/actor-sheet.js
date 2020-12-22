@@ -547,7 +547,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
     return mergeObject(super.defaultOptions, {
       classes: ["gurps", "sheet", "actor"],
       template: "systems/gurps/templates/combat-sheet.html",
-      width: 550,
+      width: 600,
       height: 275,
       tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
