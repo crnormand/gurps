@@ -933,6 +933,15 @@ export class Equipment extends Named {
 	contains = {};
 	costsum = "";
 	weightsum = "";
+	
+	calc() {
+		if (!isNaN(this.count) && !isNaN(this.cost)) {
+			this.costsum = this.count * this.cost;
+		} 
+		if (!isNaN(this.count) && !isNaN(this.weight)) {
+			this.weightsum = (this.count * this.weight) + " lb";
+		}
+	}
 }
 
 export class HitLocation {

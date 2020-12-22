@@ -720,7 +720,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
       classes: ["npc-sheet", "sheet", "actor"],
       template: "systems/gurps/templates/npc-sheet.html",
       width: 650,
-      height: 400,
+      height: 450,
       dragDrop: [{ dragSelector: ".item-list .item", dropSelector: null }]
     });
   }

@@ -56,13 +56,14 @@
   height: 100% !important;
   display: grid;
   grid-template-columns: 245px 1fr 50%;
-  grid-template-rows: 40px 125px auto auto;
+  grid-template-rows: 40px 125px auto auto auto;
   gap: 5px 5px;
   grid-template-areas:
     "top top top"
     "attr notes notes"
     "melee melee ranged"
     "traits traits skills"
+		"equip equip spells"
 }
 
 .npc-input-create { 
@@ -202,9 +203,29 @@
   gap: 5px 5px;
 }
 
+.npc-sheet-sp-val { 
+	grid-area: sp-val; 
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 2em 0fr;
+  grid-auto-rows: fit-content(30px);
+  gap: 5px 5px;
+}
+
+.npc-sheet-eqt-val { 
+	grid-area: eqt-val; 
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-columns: 1em 1em 1fr 3em 3em;
+  grid-auto-rows: fit-content(30px);
+  gap: 5px 5px;
+}
+
 .npc-sheet-ra-val .desc:nth-child(odd),
 .npc-sheet-me-val .desc:nth-child(odd),
 .npc-sheet-sk-val .desc:nth-child(odd),
+.npc-sheet-sp-val .desc:nth-child(odd),
+.npc-sheet-eqt-val .desc:nth-child(odd),
 .npc-input-traits .desc:nth-child(odd) {
   background-color: rgb(240, 240, 255);
 }
