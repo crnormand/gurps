@@ -421,6 +421,17 @@ export class GurpsActor extends Actor {
 						r.rof = t(j2.rof);
 						r.shots = t(j2.shots);
 						r.rcl = t(j2.rcl);
+						let rng = t(j2.range);
+						let m = rng.match(/^ *x(\d+) $/);
+						if (m) {
+							rng = parseInt(m[1]) * this.data.data.attributes.ST.value;
+						} else {
+							m = rng.match(/^ *x(\d+) *\/ *x(\d+) *$/);
+							if (m) {
+								rng = `${parseInt(m[1]) * this.data.data.attributes.ST.value}/${parseInt(m[2]) * this.data.data.attributes.ST.value}`;
+							}
+						}
+						r.range = rng;
 						game.GURPS.put(ranged, r, index++);
 					}
 				}
@@ -922,6 +933,15 @@ export class Equipment extends Named {
 	contains = {};
 	costsum = "";
 	weightsum = "";
+	
+	calc() {
+		if (!isNaN(this.count) && !isNaN(this.cost)) {
+			this.costsum = this.count * this.cost;
+		} 
+		if (!isNaN(this.count) && !isNaN(this.weight)) {
+			this.weightsum = (this.count * this.weight) + " lb";
+		}
+	}
 }
 
 export class HitLocation {

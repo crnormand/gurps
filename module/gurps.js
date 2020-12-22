@@ -454,7 +454,7 @@ function performAction(action, actor, event) {
 	let actordata = actor?.data;
 	let prefix = "";
 	let thing = "";
-	let target = -1;	// There will be a roll
+	let target = -1;	// < 0 non-targeted roll, > 0 targeted roll
 	let formula = "";
 	let targetmods = []; 		// Should get this from the ModifierBucket someday
 	let opt = {
@@ -472,6 +472,7 @@ function performAction(action, actor, event) {
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
+	
 	if (action.type === "attribute")
 		if (!!actor) {
 			prefix = "Roll vs ";
@@ -486,20 +487,24 @@ function performAction(action, actor, event) {
 				opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
-	if (action.type === "selfcontrol") {
-		prefix = "Self Control ";
+			
+	if (action.type === "controlroll") {
+		prefix = "Control Roll, ";
 		thing = action.desc;
 		formula = "3d6";
 		target = parseInt(action.target);
 	}
+	
 	if (action.type === "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
 		formula = d6ify(action.formula);
 	}
+	
 	if (action.type === "damage") {
 		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event);
 		return;
 	}
+	
 	if (action.type === "deriveddamage")
 		if (!!actor) {
 			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
@@ -508,6 +513,7 @@ function performAction(action, actor, event) {
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
+			
 	if (action.type === "derivedroll")
 		if (!!actor) {
 			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
@@ -515,6 +521,7 @@ function performAction(action, actor, event) {
 			prefix = "Rolling " + action.derivedformula + action.formula + " " + action.desc;
 		} else
 			ui.notifications.warn("You must have a character selected");
+			
 	if (action.type === "skill-spell")
 		if (!!actor) {
 			let skill = null;
@@ -593,8 +600,6 @@ function performAction(action, actor, event) {
 				ui.notifications.warn("Unable to find a " + action.desc + " to roll");
 		} else
 			ui.notifications.warn("You must have a character selected");
-
-
 
 	if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
@@ -702,7 +707,7 @@ GURPS.applyModifierDesc = applyModifierDesc;
 async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optionalArgs) {
 
 	if (origtarget == 0 || isNaN(origtarget)) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-	let isTargeted = (origtarget > 0 && !!thing);		// Roll "against" something (true), or just a roll (false)
+	let isTargeted = (origtarget > 0);		// Roll "against" something (true), or just a roll (false)
 
 	// Is Dice So Nice enabled ?
 	let niceDice = false;

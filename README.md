@@ -20,6 +20,7 @@ This is what we are currently working on:
     - Enhancements to the Mook Generator stat block importing
     - Journal entries now parse (and display) On-the-Fly formulas.  
     - Chat Portraits module supported (and recommended!)
+    - General Resource trackers!
 
 ### History
 - 0.8.2
