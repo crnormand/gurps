@@ -103,7 +103,7 @@ export class GurpsActorSheet extends ActorSheet {
       })
     });
 
-    html.find('button[data-operation="resource-inc"]').click(ev => {
+    html.find('button[data-operation="resource-inc"]').click(async ev => {
       ev.preventDefault();
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
