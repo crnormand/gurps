@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.2
+# Current Release Version 0.8.3
 [If you like our work...](https://ko-fi.com/crnormand)
 
 To install the latest release, use this manifest URL:   
@@ -12,6 +12,9 @@ To install the latest release, use this manifest URL:
 ### If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
+- 0.8.4
+
+### History
 - 0.8.3
     - Direct roll of On-the-Fly formulas in chat.  e.g. /r [Per] or /roll [3d-2 cr]
     - Direct roll of On-the-Fly formulas in Rolltables
@@ -20,9 +23,10 @@ This is what we are currently working on:
     - Enhancements to the Mook Generator stat block importing
     - Journal entries now parse (and display) On-the-Fly formulas.  
     - Chat Portraits module supported (and recommended!)
-    - General Resource trackers!
+    - Drag and drop damage onto Tokens
+    - Drag and drop damage onto Combat Tracker
+    - General Resource trackers!  Full and Combat sheets
 
-### History
 - 0.8.2
     - Rearrange npc sheet (attacks over traits/skills)
     - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
