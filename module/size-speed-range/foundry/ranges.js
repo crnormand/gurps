@@ -8,11 +8,14 @@ import parseDistance from '../../../lib/gurps-foundry-ssrt-lib/src/js/Parsing.js
 import * as conversionMethods from '../../../lib/gurps-foundry-ssrt-lib/src/js/UnitsOfMeasure/Methods.js';
 
 const SYSTEM_NAME = 'gurps';
-const SETTING_NAME = 'rangeStrategy';
+const SETTING_STRATEGY_NAME = 'rangeStrategy';
 const STRATEGY_STANDARD = 'Standard';
 const STRATEGY_RANGE_BANDS = 'Simplified';
+const SETTING_METRIC_CONVERSION_METHOD = 'metricConversion';
+const CONVERSION_METHOD_REAL = 'real';
+const CONVERSION_METHOD_SIMPLE = '1meter1yard';
 
-const getStrategy = () => game.settings.get(SYSTEM_NAME, SETTING_NAME);
+const getStrategy = () => game.settings.get(SYSTEM_NAME, SETTING_STRATEGY_NAME);
 
 const simplifiedRangeTable = RangeBandTable.table().map(row => ({
     moddesc: `${row.band} range (${row.maxDistanceYards} yds)`,
@@ -81,20 +84,33 @@ export default class GURPSRange {
         Hooks.once('init', async function () {
             game.GURPS = GURPS;
 
-            const choices = {};
-            choices[STRATEGY_STANDARD] = 'Size and Speed/Range Table';
-            choices[STRATEGY_RANGE_BANDS] = 'Monster Hunters 2 Range Bands';
-
             /* Define Settings */
-            game.settings.register(SYSTEM_NAME, SETTING_NAME, {
+
+            const strategyChoices = {};
+            strategyChoices[STRATEGY_STANDARD] = 'Size and Speed/Range Table';
+            strategyChoices[STRATEGY_RANGE_BANDS] = 'Monster Hunters 2 Range Bands';
+            game.settings.register(SYSTEM_NAME, SETTING_STRATEGY_NAME, {
                 name: 'Default range modifier strategy:',
                 hint: 'Sets the formula to use to calculate range penalties.',
                 scope: 'world',
                 config: true,
                 type: String,
-                choices,
+                choices: strategyChoices,
                 default: STRATEGY_STANDARD,
                 onChange: value => self._updateAfterSettingsChange()
+            });
+
+            const conversionMethodChoices = {};
+            conversionMethodChoices[CONVERSION_METHOD_REAL] = 'Precise';
+            conversionMethodChoices[CONVERSION_METHOD_SIMPLE] = 'Convert metric to meters, convert meters to yards at 1 m = 1 yd';
+            game.settings.register(SYSTEM_NAME, SETTING_METRIC_CONVERSION_METHOD, {
+                name: 'Metric unit conversion method:',
+                hint: 'Determines how metric units are converted to yards for purposes of the range ruler.',
+                scope: 'world',
+                config: true,
+                type: String,
+                choices: conversionMethodChoices,
+                default: CONVERSION_METHOD_REAL,
             });
         });
 
@@ -129,17 +145,22 @@ export default class GURPSRange {
     }
 
     _getRangePenalty(distance, units) {
+        let conversionMethod = CONVERSION_METHOD_REAL;
+        if (game.settings.get(SYSTEM_NAME, SETTING_METRIC_CONVERSION_METHOD) === CONVERSION_METHOD_SIMPLE) {
+            conversionMethod = conversionMethods.meterEqualsYard;
+        }
+
         if (getStrategy() === STRATEGY_RANGE_BANDS) {
             return RangeBandTable.yardsToPenalty(
                 convertToYards({
                     value: distance,
                     inputUnit: parseDistance(`${distance} ${units}`).unit,
-                    conversionMethod: conversionMethods.real
+                    conversionMethod
                 })
             );
         }
 
-        return SSRT.speedRangeFromExpression({expression: `${distance} ${units}`});
+        return SSRT.speedRangeFromExpression({expression: `${distance} ${units}`, metricConversionMethod: conversionMethod});
     }
 
     async _updateAfterSettingsChange() {
