@@ -1,0 +1,21 @@
+{
+    "name": "gurps-foundry-ssrt-lib",
+    "version": "1.1.0",
+    "description": "Library for use in Foundry VTT modules and systems providing SSRT lookup functionality.",
+    "repository": {
+        "type": "git",
+        "url": "git@gitlab.com:gurps-foundry/ssrt-lib.git"
+    },
+    "author": "Exxar",
+    "license": "MIT",
+    "devDependencies": {
+        "docdash": "^1.2.0",
+        "jsdoc": "^3.6.5",
+        "jsdoc-export-default-interop": "^0.3.1",
+        "prettier": "2.0.5"
+    },
+    "dependencies": {},
+    "scripts": {
+        "dist": "jsdoc -c jsdoc.json"
+    }
+}

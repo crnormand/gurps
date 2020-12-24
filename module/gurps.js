@@ -14,7 +14,7 @@ import { ThreeD6 } from "../lib/threed6.js";
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
 
-import GURPSRange from '../lib/ranges.js'
+import GURPSRange from './size-speed-range/foundry/ranges.js'
 import Initiative from '../lib/initiative.js'
 import HitFatPoints from '../lib/hitpoints.js'
 import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'

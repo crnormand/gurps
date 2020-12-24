@@ -68,7 +68,7 @@ export class ModifierBucket extends Application {
 		data.meleemods = MeleeMods.split("\n");
 		data.rangedmods = RangedMods.split("\n");
 		data.defensemods = DefenseMods.split("\n");
-		data.speedrangemods = ["Speed / Range"].concat(game.GURPS.rangeObject.modifiers);
+		data.speedrangemods = ["Speed / Range"].concat(game.GURPS.rangeObject.bucketModifiers);
 		data.actorname = (!!game.GURPS.LastActor) ? game.GURPS.LastActor.name : "No active character!";
 		data.othermods = OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");

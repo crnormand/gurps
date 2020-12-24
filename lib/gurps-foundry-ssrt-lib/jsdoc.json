@@ -1,0 +1,20 @@
+{
+    "source": {
+        "include": ["./src/js"],
+        "includePattern": "\\.js$"
+    },
+    "plugins": ["./node_modules/jsdoc-export-default-interop/dist/index"],
+    "opts": {
+        "template": "./node_modules/docdash",
+        "encoding": "utf8",
+        "destination": "docs/",
+        "recurse": true,
+        "access": "public",
+        "readme": "./README.md"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "sourceType": "module"
+}

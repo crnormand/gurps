@@ -43,7 +43,7 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   getData() {
     const sheetData = super.getData();
-    sheetData.ranges = game.GURPS.rangeObject.ranges;
+    sheetData.ranges = game.GURPS.rangeObject.rangeTable;
     game.GURPS.SetLastActor(this.actor);
     let eqt = this.actor.data.data.equipment || {};
     sheetData.eqtsummary = {
