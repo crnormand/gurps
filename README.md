@@ -2,6 +2,9 @@
 
 # Current Release Version 0.8.3
 [If you like our work...](https://ko-fi.com/crnormand)
+<a href="https://ko-fi.com/crnormand">
+<img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2" border="0" alt="Buy Me a Coffee at ko-fi.com">
+</a>
 
 To install the latest release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
