@@ -1685,7 +1685,8 @@ body {
   grid-area: combat-trackers;
   display: flex;
   flex-flow: column nowrap;
-  border: 1px solid black;
+  justify-content: space-between;
+  /* border: 1px solid black; */
 }
 
 #combat-hit,
@@ -2563,11 +2564,15 @@ ul#result-effects li {
 #combat-sheet .resource-spinner button {
   height: 21px;
 }
+
 #combat-sheet .resource-spinner input {
   height: 21px;
   font-size: 80%;
 }
 
+#combat-sheet .tracked-resource {
+  border: 1px solid black;
+}
 
 /* Tooltip container */
 .tooltip {

@@ -54,7 +54,10 @@
       </div>
 
       <div id='combat-trackers'>
+        <!-- <div class='header'>Resource Trackers</div> -->
+        {{#unless (filter data.additionalresources.tracker 'name')}}
         <div class='header'>Resource Trackers</div>
+        {{/unless}}
         {{#each (filter data.additionalresources.tracker 'name')}}
         <div class='tracked-resource' data-gurps-resource='additionalresources.tracker.{{@index}}'>
           <div class='header'>{{#if name}}{{name}}{{else}}Resource {{@index}}{{/if}}</div>
