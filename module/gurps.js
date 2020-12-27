@@ -419,7 +419,9 @@ function extractP(str) {
 			}
 		}
 	}
-	return v;
+	// Maybe a temporary fix? There are junk characters at the start and end of
+	// this string after decoding. Example: ";p&gt;Heavy Mail Hauberk↵/p>↵"
+	return v.replace(/^;p&gt;/, '').replace(/\n$/, '').replace(/\/p\>$/, '');
 }
 GURPS.extractP = extractP;
 

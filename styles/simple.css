@@ -321,20 +321,20 @@
   position: relative;
 }
 
-.gurpstippable:hover::after {
+.gurpstippable:hover::before {
   content: attr(data-tooltip);
   position: absolute;
   bottom: 130%;
   left: -50%;
   min-width: 20px;
-  border: 1px #808080 solid;
+  border-radius: 6px;
   padding: 8px;
-  color: black;
-  background-color: rgb(192, 192, 192);
-  z-index: 102;
+  color: #fff;
+  background-color: #555;
+  z-index: 102; 
 }
 
-.gurpstippable:hover::before {
+.gurpstippable:hover::after {
   content: "";
   position: absolute;
   top: -30%;
@@ -342,7 +342,7 @@
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: black transparent transparent transparent;
+  border-color: #555 transparent transparent transparent;
   z-index: 102;
 }
 
@@ -2586,13 +2586,13 @@ ul#result-effects li {
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  min-width: 120px;
   background-color: #555;
   color: #fff;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
-  font-size: large;
+  font-size: medium;
 
   /* Position the tooltip text */
   position: absolute;
