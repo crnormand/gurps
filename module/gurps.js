@@ -505,7 +505,7 @@ function performAction(action, actor, event) {
 		return;
 	}
 
-	const BASIC_SWING = 'sw'
+	const BASIC_SWING = 'sw';
 
 	if (action.type === "deriveddamage")
 		if (!!actor) {
