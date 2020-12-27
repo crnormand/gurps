@@ -402,6 +402,9 @@ const StatusModifiers = [
 	"-2 to IQ/DX/CR rolls (Moderate Pain)",
 	"-4 to IQ/DX/CR rolls (Severe Pain)",
 	"-6 to IQ/DX/CR rolls (Terrible Pain)",
+	"-1 to IQ/DX/CR rolls (Moderate Pain /w HPT)",
+	"-2 to IQ/DX/CR rolls (Severe Pain /w HPT)",
+	"-3 to IQ/DX/CR rolls (Terrible Pain /w HPT)",
 	"-5 to IQ/DX/PER checks (Retching)"
 ];
 
