@@ -472,7 +472,7 @@ function performAction(action, actor, event) {
 		GURPS.ModifierBucket.addModifier(mod, action.desc);
 		return;
 	}
-	
+
 	if (action.type === "attribute")
 		if (!!actor) {
 			prefix = "Roll vs ";
@@ -487,41 +487,43 @@ function performAction(action, actor, event) {
 				opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ")</span>";
 		} else
 			ui.notifications.warn("You must have a character selected");
-			
+
 	if (action.type === "controlroll") {
 		prefix = "Control Roll, ";
 		thing = action.desc;
 		formula = "3d6";
 		target = parseInt(action.target);
 	}
-	
+
 	if (action.type === "roll") {
 		prefix = "Rolling " + action.formula + " " + action.desc;
 		formula = d6ify(action.formula);
 	}
-	
+
 	if (action.type === "damage") {
 		GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event);
 		return;
 	}
-	
+
+	const BASIC_SWING = 'sw'
+
 	if (action.type === "deriveddamage")
 		if (!!actor) {
-			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
+			let df = (action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust)
 			formula = df + action.formula;
 			GURPS.damageChat.create(actor || game.user, formula, action.damagetype, event, action.derivedformula + action.formula);
 			return;
 		} else
 			ui.notifications.warn("You must have a character selected");
-			
+
 	if (action.type === "derivedroll")
 		if (!!actor) {
-			let df = (action.derivedformula == "SW" ? actordata.data.swing : actordata.data.thrust)
+			let df = (action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust)
 			formula = d6ify(df + action.formula);
 			prefix = "Rolling " + action.derivedformula + action.formula + " " + action.desc;
 		} else
 			ui.notifications.warn("You must have a character selected");
-			
+
 	if (action.type === "skill-spell")
 		if (!!actor) {
 			let skill = null;
@@ -1071,7 +1073,7 @@ GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 GURPS.hitLocationTooltip = new HitLocationEquipmentTooltip()
-GURPS.damageChat = new DamageChat()
+GURPS.damageChat = new DamageChat(GURPS)
 
 // Modifier Bucket must be defined after hit locations
 GURPS.ModifierBucket = new ModifierBucket({
