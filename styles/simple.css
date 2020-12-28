@@ -881,6 +881,7 @@
     "header header header"
     "block1 block2 block3";
   grid-template-rows: 0fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   border: 1px solid black;
 }
 
@@ -1203,7 +1204,7 @@ body {
 #notes {
   display: grid;
   border: 1px solid black;
-  align-content: stretch;
+  align-content: start;
 }
 
 #reactions,
@@ -2636,4 +2637,37 @@ ul#result-effects li {
 
 .tooltip .fieldblock .field {
   border: none !important;
+}
+
+.field select {
+  height: min-content;
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: 90%;
+  cursor: inherit;
+  line-height: inherit;
+}
+
+.field textarea {
+  font-family: inherit;
+  font-size: 80%; 
+  border-radius: 0;
+  border: 1px solid lightgrey;
+  padding: 3px;
+  resize: none;
+  /* background-color: transparent; */
+  margin-top: 3px;
+}
+
+.field textarea:read-only {
+  background-color: transparent;
+}
+
+.label.textarea {
+  align-self: start;
+  margin-top: 6px;
 }

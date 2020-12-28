@@ -89,6 +89,24 @@ GURPS.hitlocationRolls = {
 	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
 };
 
+GURPS.quadrupedHitLocations = {
+	"Eye": { roll: "-", penalty: -9 },
+	"Skull": { roll: "3-4", penalty: -7 },
+	"Face": { roll: "5", penalty: -5 },
+	"Neck": { roll: "6", penalty: -5 },
+	"Foreleg": { roll: "7-8", penalty: -2 },
+	"Torso": { roll: "9-11", penalty: 0 },
+	"Groin": { roll: "12", penalty: -3 },
+	"Hindleg": { roll: "13-14", penalty: -2 },
+	"Foot": { roll: "15-16", penalty: -4 },
+	"Tail": { roll: "17-18", penalty: -3 },
+	"Vitals": { roll: "-", penalty: -3 }
+};
+
+GURPS.hitlocationDictionary = {
+	"humanoid": GURPS.hitlocationRolls,
+	"quadruped": GURPS.quadrupedHitLocations
+}
 
 GURPS.woundModifiers = {
 	"burn": { multiplier: 1, label: 'Burning' },

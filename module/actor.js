@@ -740,6 +740,7 @@ export class GurpsActor extends Actor {
 	//  	rollText: string value of the roll from the hitlocations table (examples: '5', '6-9', '-')
 	//  	roll: array of int of the values that match rollText (examples: [5], [6,7,8,9], [])
 	// 	}
+	// TODO update for non-humanoid hit locations
 	get hitLocationsWithDR() {
 		let myhitlocations = []
 		for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
@@ -933,11 +934,11 @@ export class Equipment extends Named {
 	contains = {};
 	costsum = "";
 	weightsum = "";
-	
+
 	calc() {
 		if (!isNaN(this.count) && !isNaN(this.cost)) {
 			this.costsum = this.count * this.cost;
-		} 
+		}
 		if (!isNaN(this.count) && !isNaN(this.weight)) {
 			this.weightsum = (this.count * this.weight) + " lb";
 		}
