@@ -740,20 +740,36 @@ export class GurpsActor extends Actor {
 	//  	rollText: string value of the roll from the hitlocations table (examples: '5', '6-9', '-')
 	//  	roll: array of int of the values that match rollText (examples: [5], [6,7,8,9], [])
 	// 	}
-	// TODO update for non-humanoid hit locations
 	get hitLocationsWithDR() {
 		let myhitlocations = []
+		let table = this._hitLocationRolls
 		for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
 			myhitlocations.push({
 				where: value.where,
 				dr: parseInt(value.dr),
 				roll: this._convertRollStringToArrayOfInt(
-					GURPS.hitlocationRolls[value.where].roll
+					table[value.where].roll
 				),
-				rollText: GURPS.hitlocationRolls[value.where].roll
+				rollText: table[value.where].roll
 			})
 		}
 		return myhitlocations
+	}
+
+	/**
+	 * @returns the appropriate hitlocation table based on the actor's bodyplan
+	 */
+	get _hitLocationRolls() {
+		let tableName = this.data.data.additionalresources?.bodyplan
+
+		if (!tableName)
+			tableName = 'humanoid'
+
+		let table = GURPS.hitlocationDictionary[tableName]
+		if (!table)
+			table = GURPS.hitlocationDictionary['humanoid']
+
+		return table
 	}
 
 	// Take a string like "", "-", "3", "4-5" and convert it into an array of int.
