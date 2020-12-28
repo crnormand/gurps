@@ -56,7 +56,7 @@
   height: 100% !important;
   display: grid;
   grid-template-columns: 245px 1fr 50%;
-  grid-template-rows: 40px 125px auto auto auto;
+  grid-template-rows: auto 125px auto auto auto;
   gap: 5px 5px;
   grid-template-areas:
     "top top top"
@@ -82,7 +82,7 @@
 .npc-input-top {
   display: grid;
   grid-template-columns: 40px 2fr 40px 2fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 0fr 1fr;
   gap: 5px 5px;
   grid-template-areas:
     "nm nm-val title title-val"

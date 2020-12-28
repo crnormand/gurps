@@ -742,17 +742,34 @@ export class GurpsActor extends Actor {
 	// 	}
 	get hitLocationsWithDR() {
 		let myhitlocations = []
+		let table = this._hitLocationRolls
 		for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
 			myhitlocations.push({
 				where: value.where,
 				dr: parseInt(value.dr),
 				roll: this._convertRollStringToArrayOfInt(
-					GURPS.hitlocationRolls[value.where].roll
+					table[value.where].roll
 				),
-				rollText: GURPS.hitlocationRolls[value.where].roll
+				rollText: table[value.where].roll
 			})
 		}
 		return myhitlocations
+	}
+
+	/**
+	 * @returns the appropriate hitlocation table based on the actor's bodyplan
+	 */
+	get _hitLocationRolls() {
+		let tableName = this.data.data.additionalresources?.bodyplan
+
+		if (!tableName)
+			tableName = 'humanoid'
+
+		let table = GURPS.hitlocationDictionary[tableName]
+		if (!table)
+			table = GURPS.hitlocationDictionary['humanoid']
+
+		return table
 	}
 
 	// Take a string like "", "-", "3", "4-5" and convert it into an array of int.
@@ -933,11 +950,11 @@ export class Equipment extends Named {
 	contains = {};
 	costsum = "";
 	weightsum = "";
-	
+
 	calc() {
 		if (!isNaN(this.count) && !isNaN(this.cost)) {
 			this.costsum = this.count * this.cost;
-		} 
+		}
 		if (!isNaN(this.count) && !isNaN(this.weight)) {
 			this.weightsum = (this.count * this.weight) + " lb";
 		}

@@ -216,6 +216,7 @@
 			},
 			"reactions": {},
 			"additionalresources": {
+				"bodyplan": "humanoid",
 				"tracker": {
 					"0": {
 						"name": "",

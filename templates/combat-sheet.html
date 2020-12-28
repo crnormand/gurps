@@ -180,14 +180,15 @@
       </div>
 
       <div id='combat-location'>
-        <div class="header">Hit Location</div>
+        <div class="header">Hit Location ({{localize (concat 'GURPS.BODYPLAN' data.additionalresources.bodyplan)}})
+        </div>
         <div class="roll header">Roll</div>
         <div class="where header">Where</div>
         <div class="penalty header">Penalty</div>
         <div class="dr header">DR</div>
 
         {{#each data.hitlocations}}
-        <div class="roll">{{hitlocationroll this.where this.roll}}</div>
+        <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where">{{this.where}}</div>
         <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
           {{hitlocationpenalty this.where this.penalty}}

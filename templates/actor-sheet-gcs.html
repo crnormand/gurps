@@ -38,6 +38,8 @@
           <div class="field">{{data.traits.birthday}}</div>
           <div class="label">Religion:</div>
           <div class="field">{{data.traits.religion}}</div>
+          <div class="label">&nbsp;</div>
+          <div class="field"></div>
         </div>
         <div class="fieldblock">
           <div class="label">Height:</div>
@@ -48,6 +50,9 @@
           <div class="field">{{data.traits.sizemod}}</div>
           <div class="label">TL:</div>
           <div class="field">{{data.traits.techlevel}}</div>
+          <div class="label">Body Plan:</div>
+          <div class="field">{{localize (concat 'GURPS.BODYPLAN'
+            data.additionalresources.bodyplan)}}</div>
         </div>
         <div class="fieldblock">
           {{#if data.traits.eyes}}
@@ -60,15 +65,12 @@
           <div class="label">Hand:</div>
           <div class="field">{{data.traits.hand}}</div>
           {{else}}
-          <div class="label">&nbsp;</div>
-          <div class="label">&nbsp;</div>
-          <div class="label">Appearance:</div>
-          <div class="label">&nbsp;</div>
-          <div class="label">&nbsp;</div>
-          <div class="label">&nbsp;</div>
-          <div class="field">{{data.traits.appearance}}</div>
-          <div class="label">&nbsp;</div>
-          <div class="label">&nbsp;</div>
+          <div class="label textarea">Appearance:</div>
+          <div class="label"></div>
+
+          <div class="field" style="border: none; grid-column: 1 / span 2;">
+            <textarea readonly rows="4">{{data.traits.appearance}}</textarea>
+          </div>
           {{/if}}
         </div>
       </div>
@@ -209,12 +211,12 @@
         <div class="dr header">DR</div>
 
         {{#each data.hitlocations}}
-        <div class="roll">{{hitlocationroll this.where this.roll}}</div>
+        <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
           {{this.where}}
         </div>
         <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
-          {{hitlocationpenalty this.where this.penalty}}</div>
+          {{hitlocationpenalty this.where this.penalty ../data}}</div>
         <div class="dr {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">{{this.dr}}
         </div>
         {{/each}}

@@ -5,19 +5,23 @@ import * as settings from '../lib/miscellaneous-settings.js'
 // Install Custom Roll to support global modifier access (@gmod & @gmodc)
 export class GurpsRoll extends Roll {
 	_prepareData(data) {
-    let d = super._prepareData(data);
-    if (!d.hasOwnProperty('gmodc'))
-	    Object.defineProperty(d, 'gmodc', { get: () => {
-	      let m = GURPS.ModifierBucket.currentSum();
-	      GURPS.ModifierBucket.clear();
-	      return m }});
-    d.gmod = GURPS.ModifierBucket.currentSum();
+		let d = super._prepareData(data);
+		if (!d.hasOwnProperty('gmodc'))
+			Object.defineProperty(d, 'gmodc', {
+				get: () => {
+					let m = GURPS.ModifierBucket.currentSum();
+					GURPS.ModifierBucket.clear();
+					return m;
+				}
+			});
+		d.gmod = GURPS.ModifierBucket.currentSum();
 		return d;
-  }
+	}
 }
 CONFIG.Dice.rolls[0] = GurpsRoll;
 
 
+// TODO how to handle non-humanoid hit locations?
 export class ModifierBucket extends Application {
 	constructor(options = {}) {
 		super(options)
@@ -88,7 +92,7 @@ export class ModifierBucket extends Application {
 			let ranged = [];
 			let defense = [];
 			let gen = [];
-			
+
 			let effects = game.GURPS.LastActor.effects.filter(e => !e.data.disabled);
 			for (let e of effects) {
 				let type = e.data.flags.core.statusId;
@@ -291,12 +295,12 @@ ${OtherMods}`;
 	// Public method. Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
 		let m = displayMod(mod);
-		return { 
-      "mod": m, 
-      "modint": parseInt(m),
-      "desc": reason, 
-      "plus": (m[0] == "+") 
-    };
+		return {
+			"mod": m,
+			"modint": parseInt(m),
+			"desc": reason,
+			"plus": (m[0] == "+")
+		};
 	}
 
 	sum() {
@@ -324,7 +328,7 @@ ${OtherMods}`;
 		if (!!oldmod) {
 			let m = oldmod.modint + parseInt(mod);
 			oldmod.mod = displayMod(m);
-      oldmod.modint = m;
+			oldmod.modint = m;
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));
 		}
