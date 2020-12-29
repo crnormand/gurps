@@ -1,4 +1,4 @@
-import { xmlTextToJson } from '../lib/utilities.js'
+import { xmlTextToJson, zeroFill } from '../lib/utilities.js'
 import ApplyDamageDialog from '../lib/applydamage.js'
 
 export class GurpsActor extends Actor {
@@ -22,6 +22,36 @@ export class GurpsActor extends Actor {
 		super._onUpdate(data, options, userId, context);
 		game.GURPS.ModifierBucket.refresh();		// Update the bucket, in case the actor's status effects have changed
 	}
+
+	get _additionalResources() { return this.data.data.additionalresources }
+
+	// update(data, options) {
+	// update data for hit location if bodyplan is different
+	// if (data.data?.additionalresources?.bodyplan && data.data.additionalresources.bodyplan !== this.data.data.additionalresources?.bodyplan) {
+	// 	let bodyplan = additionalResources.bodyplan
+	// 	let hitlocationTable = game.GURPS.hitlocationDictionary[bodyplan]
+	// 	if (!hitlocationTable) {
+	// 		ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
+	// 	} else {
+	// 		let hitlocations = {};
+	// 		let count = 0
+	// 		for (let loc in hitlocationTable) {
+	// 			let hit = GURPS.hitlocationRolls[loc];
+	// 			if (hit.skip) continue
+	// 			hitlocations[zeroFill(count++, 4)] = {
+	// 				dr: 0,
+	// 				equipment: "",
+	// 				penalty: hit.penalty,
+	// 				roll: hit.roll,
+	// 				where: loc
+	// 			}
+	// 		}
+	//
+	// 		data.data.hitlocations = hitlocations
+	// 	}
+	// }
+	// super.update(data, options)
+	// }
 
 
 	// First attempt at import GCS FG XML export data.
@@ -241,9 +271,41 @@ export class GurpsActor extends Actor {
 				game.GURPS.put(prot, hl, index++);
 			}
 		}
+
+		// until Rich/GCS supports exporting the hit location table name ("humanoid", 
+		// "quadruped", etc), try to find the best match:
+
+		// each key is a "body plan" name like "humanoid" or "quadruped"
+		let tableNames = Object.keys(game.GURPS.hitlocationDictionary)
+
+		// create a map of tableName:count
+		let tableScores = {}
+		tableNames.forEach(it => tableScores[it] = 0)
+
+		// increment the count for a tableScore if it contains the same hit location as "prot"
+		Object.keys(prot).forEach(function (key) {
+			tableNames.forEach(function (tableName) {
+				if (game.GURPS.hitlocationDictionary[tableName].hasOwnProperty(prot[key].where)) {
+					tableScores[tableName] = tableScores[tableName] + 1
+				}
+			})
+		})
+
+		// select the tableScore with the highest score
+		let match = -1
+		let name = 'humanoid'
+		Object.keys(tableScores).forEach(function (score) {
+			if (tableScores[score] > match) {
+				match = tableScores[score]
+				name = score
+			}
+		})
+
 		return {
 			"data.-=hitlocations": null,
-			"data.hitlocations": prot
+			"data.hitlocations": prot,
+			"data.additionalresources.-=bodyplan": null,
+			"data.additionalresources.bodyplan": name
 		};
 
 	}
