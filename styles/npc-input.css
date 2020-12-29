@@ -287,8 +287,8 @@
 	border-radius: 3px;   
 	background-color: rgb(235, 235, 255);
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1.5em 1.5em 1.5em 1.5em 1.5em;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(5, 1.5em);
   gap: 2px 3px;
   grid-template-areas:
     "st st-val hp hp-val spd spd-val"
@@ -328,7 +328,16 @@
 
 .npc-input-st-val { grid-area: st-val; }
 
-.npc-input-hp-val { grid-area: hp-val; }
+.npc-input-hp-val { 
+  grid-area: hp-val; 
+}
+
+.npc-input-hp-val,
+.npc-input-fp-val {
+  grid-gap: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
 
 .npc-input-hp { grid-area: hp; }
 
@@ -412,7 +421,8 @@
   min-width: 2em !important;
   padding: 1px !important;
   font-weight: 700;
-  font-size: 120% !important;;
+  /* font-size: 120% !important;; */
   font-family: "Roboto", sans-serif !important;; 
+  width: 100% !important;
 }
 
