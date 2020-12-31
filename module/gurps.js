@@ -52,11 +52,18 @@ GURPS.SetLastActor = function (actor) {
 	console.log("Last Actor:" + actor.name);
 }
 
-// This table is used to display dice rolls and penalties (if they are missing from the import data)
-// And to create the HitLocations pulldown menu (skipping any "skip:true" entries)
+// This table is used to display dice rolls and penalties (if they are missing from the import
+// data) and to create the HitLocations pulldown menu (skipping any "skip:true" entries).
+//
+// Use the 'RAW' property to provide the Rules-As-Written hit location name, which is used in the
+// per-bodyplan hit location tables, below. 
+//
+// Some entries combine two (or more?) related locations, such as left and right limbs. They will
+// have a 'roll' property that uses the ampersand (&) character. Those locations must also include
+// a 'prefix' property that will be used when splitting out the combined values into single values.
 GURPS.hitlocationRolls = {
 	"Eye": { roll: "-", penalty: -9, skip: true },
-	"Eyes": { roll: "-", penalty: -9 },																// GCA
+	"Eyes": { roll: "-", penalty: -9, RAW: "Eye" },								// GCA
 	"Skull": { roll: "3-4", penalty: -7 },
 	"Skull, from behind": { penalty: -5 },
 	"Face": { roll: "5", penalty: -5 },
@@ -69,8 +76,8 @@ GURPS.hitlocationRolls = {
 	"Right Arm": { roll: "8", penalty: -2, skip: true },
 	"Right Arm, holding shield": { penalty: -4, skip: true },
 	"Arm, holding shield": { penalty: -4 },
-	"Arm": { roll: "8 & 12", penalty: -2 },													// GCA
-	"Arms": { roll: "8 & 12", penalty: -2, skip: true },													// GCA
+	"Arm": { roll: "8 & 12", penalty: -2, prefix: ["Right", "Left"] },												// GCA
+	"Arms": { roll: "8 & 12", penalty: -2, skip: true, RAW: "Arm", prefix: ["Right", "Left"] },					// GCA
 	"Torso": { roll: "9-10", penalty: 0 },
 	"Vitals": { roll: "-", penalty: -3, desc: "IMP/PI[any] only" },
 	"Vitals, Heart": { penalty: -5, desc: "IMP/PI[any] only" },
@@ -78,15 +85,18 @@ GURPS.hitlocationRolls = {
 	"Left Arm": { roll: "12", penalty: -2, skip: true },
 	"Left Arm, holding shield": { penalty: -4, skip: true },
 	"Left Leg": { roll: "13-14", penalty: -2, skip: true },
-	"Legs": { roll: "6-7&13-14", penalty: -2, skip: true },												// GCA
-	"Leg": { roll: "6-7&13-14", penalty: -2 },												// GCA
+	"Legs": { roll: "6-7&13-14", penalty: -2, skip: true, RAW: "Leg", prefix: ["Right", "Left"] },				// GCA
+	"Leg": { roll: "6-7&13-14", penalty: -2, RAW: "Leg", prefix: ["Right", "Left"] },										// GCA
 	"Hand": { roll: "15", penalty: -4 },
-	"Hands": { roll: "15", penalty: -4, skip: true },									// GCA
+	"Hands": { roll: "15", penalty: -4, skip: true, RAW: "Hand" },							// GCA
 	"Foot": { roll: "16", penalty: -4 },
-	"Feet": { roll: "16", penalty: -4, skip: true },															// GCA
+	"Feet": { roll: "16", penalty: -4, skip: true, RAW: "Foot" },							// GCA
 	"Neck": { roll: "17-18", penalty: -5 },
 	"Chinks in Torso": { penalty: -8, desc: "Halves DR" },
 	"Chinks in Other": { penalty: -10, desc: "Halves DR" },
+	"Foreleg": { roll: "7-8", penalty: -2 },
+	"Hindleg": { roll: "13-14", penalty: -2 },
+	"Tail": { roll: "17-18", penalty: -3 },
 };
 
 GURPS.quadrupedHitLocations = {
@@ -103,8 +113,24 @@ GURPS.quadrupedHitLocations = {
 	"Vitals": { roll: "-", penalty: -3 }
 };
 
+GURPS.humanoidHitLocations = {
+	"Eye": { roll: "-", penalty: -9 },
+	"Skull": { roll: "3-4", penalty: -7 },
+	"Face": { roll: "5", penalty: -5 },
+	"Right Leg": { roll: "6-7", penalty: -2 },
+	"Right Arm": { roll: "8", penalty: -2 },
+	"Torso": { roll: "9-10", penalty: 0 },
+	"Groin": { roll: "11", penalty: -3 },
+	"Left Arm": { roll: "12", penalty: -2 },
+	"Left Leg": { roll: "13-14", penalty: -2 },
+	"Hand": { roll: "15", penalty: -4 },
+	"Foot": { roll: "16", penalty: -4 },
+	"Neck": { roll: "17-18", penalty: -5 },
+	"Vitals": { roll: "-", penalty: -3 }
+};
+
 GURPS.hitlocationDictionary = {
-	"humanoid": GURPS.hitlocationRolls,
+	"humanoid": GURPS.humanoidHitLocations,
 	"quadruped": GURPS.quadrupedHitLocations
 }
 
@@ -970,6 +996,21 @@ function genkey(index) {
 }
 GURPS.genkey = genkey;
 
+/**
+ * Add the value as a property to obj. The key will be a generated value equal
+ * to a five-digit string equal to the index, padded to the left with zeros; e.g:
+ * if index is 12, the property key will be "00012". 
+ * 
+ * If index is equal to -1, then the existing properties of the object are examined
+ * and the index set to the next available (i.e, no property exists) key of the same
+ * form.
+ * 
+ * TODO should be moved to lib/utilities.js and removed from the GURPS object.
+ * 
+ * @param {*} obj 
+ * @param {*} value 
+ * @param {*} index 
+ */
 function put(obj, value, index = -1) {
 	if (index == -1) {
 		index = 0;

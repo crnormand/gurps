@@ -266,6 +266,7 @@
         <div class="penalty header">Penalty</div>
         <div class="dr header">DR</div>
 
+        {{debug}}
         {{#each data.hitlocations as | this key |}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
