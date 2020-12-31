@@ -24,6 +24,7 @@ import handlebarHelpers from '../lib/moustachewax.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
 import { NpcInput } from '../lib/npc-input.js'
+import GURPSConditionalInjury from "./injury/foundry/conditional-injury.js";
 
 jqueryHelpers()
 handlebarHelpers()
@@ -1114,7 +1115,7 @@ GURPS.ThreeD6 = new ThreeD6({
 	"classes": [],
 });
 
-
+GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to

@@ -1272,6 +1272,13 @@ body {
   align-self: center;
 }
 
+.points-fp {
+  text-align: right;
+  padding-left: .2em;
+  padding-right: .2em;
+  font-size: 80%;
+}
+
 .label {
   text-align: left;
   padding-left: .2em;
