@@ -2,6 +2,7 @@
 
 import { xmlTextToJson, zeroFill } from '../lib/utilities.js'
 import ApplyDamageDialog from '../lib/applydamage.js'
+import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 
 export class GurpsActor extends Actor {
 
@@ -16,7 +17,6 @@ export class GurpsActor extends Actor {
 	}
 
 	prepareDerivedData() {
-
 		super.prepareDerivedData()
 	}
 
@@ -32,7 +32,7 @@ export class GurpsActor extends Actor {
 		// update data for hit location if bodyplan is different
 		if (data.data?.additionalresources?.bodyplan && data.data.additionalresources.bodyplan !== this.data.data.additionalresources?.bodyplan) {
 			let bodyplan = data.data.additionalresources.bodyplan
-			let hitlocationTable = game.GURPS.hitlocationDictionary[bodyplan]
+			let hitlocationTable = hitlocationDictionary[bodyplan]
 			if (!hitlocationTable) {
 				ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
 			} else {
@@ -302,7 +302,7 @@ export class GurpsActor extends Actor {
 		let bodyplan = this._getBodyPlan(locations)
 
 		// update location's roll and penalty based on the bodyplan
-		let table = game.GURPS.hitlocationDictionary[bodyplan]
+		let table = hitlocationDictionary[bodyplan]
 		if (!!table) {
 			Object.values(locations).forEach(it => {
 				it.penalty = (!!it.penalty) ? it.penalty : table[it.where].penalty
@@ -343,7 +343,7 @@ export class GurpsActor extends Actor {
 	 */
 	_getBodyPlan(locations) {
 		// each key is a "body plan" name like "humanoid" or "quadruped"
-		let tableNames = Object.keys(game.GURPS.hitlocationDictionary)
+		let tableNames = Object.keys(hitlocationDictionary)
 
 		// create a map of tableName:count
 		let tableScores = {}
@@ -352,7 +352,7 @@ export class GurpsActor extends Actor {
 		// increment the count for a tableScore if it contains the same hit location as "prot"
 		locations.forEach(function (hitLocation) {
 			tableNames.forEach(function (tableName) {
-				if (game.GURPS.hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
+				if (hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
 					tableScores[tableName] = tableScores[tableName] + 1
 				}
 			})
@@ -375,7 +375,7 @@ export class GurpsActor extends Actor {
 			let diff = Number.MAX_SAFE_INTEGER
 			Object.keys(results).forEach(key => {
 				// find the smallest difference
-				let table = game.GURPS.hitlocationDictionary[key]
+				let table = hitlocationDictionary[key]
 				if (Object.keys(table).length - match < diff) {
 					diff = Object.keys(table).length - match
 					name = key
@@ -882,13 +882,15 @@ export class GurpsActor extends Actor {
 		let myhitlocations = []
 		let table = this._hitLocationRolls
 		for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
+			let rollText = (!!value.roll && value.roll.length > 0)
+				? value.roll
+				: table[value.where].roll
+
 			myhitlocations.push({
 				where: value.where,
 				dr: parseInt(value.dr),
-				roll: this._convertRollStringToArrayOfInt(
-					table[value.where].roll
-				),
-				rollText: table[value.where].roll
+				roll: this._convertRollStringToArrayOfInt(rollText),
+				rollText: rollText
 			})
 		}
 		return myhitlocations
@@ -898,16 +900,7 @@ export class GurpsActor extends Actor {
 	 * @returns the appropriate hitlocation table based on the actor's bodyplan
 	 */
 	get _hitLocationRolls() {
-		let tableName = this.data.data.additionalresources?.bodyplan
-
-		if (!tableName)
-			tableName = 'humanoid'
-
-		let table = GURPS.hitlocationDictionary[tableName]
-		if (!table)
-			table = GURPS.hitlocationDictionary['humanoid']
-
-		return table
+		return HitLocation.getHitLocationRolls(this.data.data.additionalresources?.bodyplan)
 	}
 
 	// Take a string like "", "-", "3", "4-5" and convert it into an array of int.
@@ -1098,51 +1091,6 @@ export class Equipment extends Named {
 		}
 	}
 }
-
-export class HitLocation {
-	dr = "";
-	equipment = "";
-	penalty = "";
-	roll = "";
-	where = "";
-
-	setEquipment(frmttext) {
-		let e = game.GURPS.extractP(frmttext);
-		this.equipment = e.trim().replace("\n", ", ");
-	}
-
-	/**
-	 * Translates this HitLocation to one or more RAW/canonical HitLocations
-	 * as needed.
-	 * 
-	 * @returns array of HitLocation
-	 */
-	get locations() {
-		let entry = game.GURPS.hitlocationRolls[this.where]
-
-		// replace non-RAW name with RAW name
-		let name = (!!entry.RAW) ? entry.RAW : this.where
-
-		let locations = []
-		if (!!entry.prefix) {
-			entry.prefix.forEach(it => {
-				let location = new HitLocation()
-				location.dr = this.dr
-				location.equipment = this.equipment
-				location.where = `${it} ${name}`
-				locations.push(location)
-			})
-		} else {
-			let location = new HitLocation()
-			location.dr = this.dr
-			location.equipment = this.equipment
-			location.where = name
-			locations.push(location)
-		}
-		return locations
-	}
-}
-
 export class Reaction {
 	modifier = "";
 	situation = "";

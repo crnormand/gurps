@@ -14,21 +14,6 @@ import { ThreeD6 } from "../lib/threed6.js";
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
 
-import GURPSRange from '../lib/ranges.js'
-import Initiative from '../lib/initiative.js'
-import HitFatPoints from '../lib/hitpoints.js'
-import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
-import DamageChat from '../lib/damagemessage.js'
-
-import handlebarHelpers from '../lib/moustachewax.js'
-import * as settings from '../lib/miscellaneous-settings.js'
-import jqueryHelpers from '../lib/jquery-helper.js'
-import { NpcInput } from '../lib/npc-input.js'
-
-jqueryHelpers()
-handlebarHelpers()
-settings.initializeSettings()
-
 GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
  / /      ____ _   _ ____  ____  ____    \\ \\  
@@ -41,6 +26,25 @@ GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __
 `;
 GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted by http://www.sjgames.com/general/online_policy.html`;
 
+
+import GURPSRange from '../lib/ranges.js'
+import Initiative from '../lib/initiative.js'
+import HitFatPoints from '../lib/hitpoints.js'
+import HitLocationEquipmentTooltip from '../lib/hitlocationtooltip.js'
+import DamageChat from '../lib/damagemessage.js'
+
+import handlebarHelpers from '../lib/moustachewax.js'
+import * as settings from '../lib/miscellaneous-settings.js'
+import jqueryHelpers from '../lib/jquery-helper.js'
+import { NpcInput } from '../lib/npc-input.js'
+import * as HitLocations from '../module/hitlocation/hitlocation.js'
+
+jqueryHelpers()
+handlebarHelpers()
+settings.initializeSettings()
+
+GURPS.hitlocationDictionary = HitLocations.hitlocationDictionary
+GURPS.getHitLocationTableNames = HitLocations.getHitLocationTableNames
 
 // CONFIG.debug.hooks = true;
 
@@ -98,41 +102,6 @@ GURPS.hitlocationRolls = {
 	"Hindleg": { roll: "13-14", penalty: -2 },
 	"Tail": { roll: "17-18", penalty: -3 },
 };
-
-GURPS.quadrupedHitLocations = {
-	"Eye": { roll: "-", penalty: -9 },
-	"Skull": { roll: "3-4", penalty: -7 },
-	"Face": { roll: "5", penalty: -5 },
-	"Neck": { roll: "6", penalty: -5 },
-	"Foreleg": { roll: "7-8", penalty: -2 },
-	"Torso": { roll: "9-11", penalty: 0 },
-	"Groin": { roll: "12", penalty: -3 },
-	"Hindleg": { roll: "13-14", penalty: -2 },
-	"Foot": { roll: "15-16", penalty: -4 },
-	"Tail": { roll: "17-18", penalty: -3 },
-	"Vitals": { roll: "-", penalty: -3 }
-};
-
-GURPS.humanoidHitLocations = {
-	"Eye": { roll: "-", penalty: -9 },
-	"Skull": { roll: "3-4", penalty: -7 },
-	"Face": { roll: "5", penalty: -5 },
-	"Right Leg": { roll: "6-7", penalty: -2 },
-	"Right Arm": { roll: "8", penalty: -2 },
-	"Torso": { roll: "9-10", penalty: 0 },
-	"Groin": { roll: "11", penalty: -3 },
-	"Left Arm": { roll: "12", penalty: -2 },
-	"Left Leg": { roll: "13-14", penalty: -2 },
-	"Hand": { roll: "15", penalty: -4 },
-	"Foot": { roll: "16", penalty: -4 },
-	"Neck": { roll: "17-18", penalty: -5 },
-	"Vitals": { roll: "-", penalty: -3 }
-};
-
-GURPS.hitlocationDictionary = {
-	"humanoid": GURPS.humanoidHitLocations,
-	"quadruped": GURPS.quadrupedHitLocations
-}
 
 GURPS.woundModifiers = {
 	"burn": { multiplier: 1, label: 'Burning' },
