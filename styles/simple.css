@@ -1120,16 +1120,24 @@ body {
   border-right: 1px solid black;
 }
 
+#resources > *:first-child {
+  border-bottom: 1px solid white;
+}
+
 #resources > *:nth-child(even) {
   border-left: 1px solid black;
 }
 
-.tracked-resource .header {
+/* .tracked-resource .header {
   background-color: dimgrey;
+} */
+
+#resources .tracked-resource:nth-child(even) .header {
+  border-right: 1px solid white;
 }
 
- .tracked-resource .header {
-  border-bottom: 1px solid lightgray;
+#resources .tracked-resource:nth-child(odd) .header {
+  border-left: none;
 }
 
 .tracked-resource .fieldblock {
@@ -2528,6 +2536,11 @@ ul#result-effects li {
   border-radius: 3px;
 }
 
+.tracked-resource.inactive .header {
+  color: whitesmoke;
+  background-color: grey;
+}
+
 .resource-spinner {
   display: flex;
   flex-flow: row nowrap;
@@ -2541,6 +2554,16 @@ ul#result-effects li {
   flex: 0;
   border: 1px solid grey;
   font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+}
+
+.tracked-resource.inactive .condition-block > *,
+.tracked-resource.inactive .resource-spinner input,
+.tracked-resource.inactive .resource-spinner button {
+  color: grey;
+}
+
+.resource-spinner .inactive button {
+  color: grey;
 }
 
 .resource-spinner button:first-child{
