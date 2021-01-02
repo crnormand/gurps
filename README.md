@@ -17,6 +17,16 @@ To install the latest release, use this manifest URL:
 
 This is what we are currently working on:
 - 0.8.4
+  - Support multiple hit location tables: Humanoid, Quadruped, Quadruped (winged), Avian, Centaur, Hexapod, Hexapod (winged), 
+    Veriform, Snakeman, Winged Serpent, Octopoid, Squid, Cancroid, Scorpion, Ichthyoid, and Arachnoid. Until the GCS import 
+    can be enhanced, the app makes its best guess at the form of the imported character.
+  - Enhanced editor to change which hit location table is in use by that character.
+  - Updated the Apply Damage Dialog to work with all the hit location tables.
+  - Multiple small tweaks to the UI.
+  - Enhanced the Mook Generator to use tabs as a delimiter.
+  - Added pain penalties for characters with High Pain Threshold (HPT) to the modifier bucket (thanks, @Exxar!)
+  - Enhanced the character sheet to enable damage formulas based on Swing or Thrust; e.g. "sw+2" or "thr-1".
+  - Updated the damage chat message to show individual dice results in addition to the sum.
 
 ### History
 - 0.8.3
