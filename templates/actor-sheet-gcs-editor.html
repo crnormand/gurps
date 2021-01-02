@@ -63,10 +63,12 @@
           <div class="label">Body Plan:</div>
           <div class="field">
             <select id='body-plan' name="data.additionalresources.bodyplan">
-              <option value='humanoid' {{#if (eq data.additionalresources.bodyplan 'humanoid' )}}selected{{/if}}>
-                {{localize 'GURPS.BODYPLANhumanoid'}}</option>
-              <option value='quadruped' {{#if (eq data.additionalresources.bodyplan 'quadruped' )}}selected{{/if}}>
-                {{localize 'GURPS.BODYPLANquadruped'}}</option>
+              {{#each (listAllBodyPlans)}}
+              <option value='{{this}}' {{#if (eq ../data.additionalresources.bodyplan this )}}selected{{/if}}>
+                {{localize (concat 'GURPS.BODYPLAN' this)}}</option>
+              <!-- <option value='quadruped' {{#if (eq ../data.additionalresources.bodyplan 'quadruped' )}}selected{{/if}}>
+                {{localize 'GURPS.BODYPLANquadruped'}}</option> -->
+              {{/each}}
             </select>
           </div>
         </div>
@@ -266,6 +268,7 @@
         <div class="penalty header">Penalty</div>
         <div class="dr header">DR</div>
 
+        {{debug}}
         {{#each data.hitlocations as | this key |}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
