@@ -29,6 +29,7 @@ This is what we are currently working on:
     extremities.
     - Multiple small tweaks to the UI.
     - System setting to ignore 'name' attribute during import
+    - More flexible parsing for stat block attacks
 
 ### History
 - 0.8.3
