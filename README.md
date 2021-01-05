@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.3
+# Current Release Version 0.8.4
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -16,6 +16,9 @@ To install the latest release, use this manifest URL:
 
 This is what we are currently working on:
 
+- 0.8.5
+
+### History
 - 0.8.4
     - Enhanced the Mook Generator to use tabs as a delimiter.
     - Added pain penalties for characters with High Pain Threshold (HPT) to the modifier bucket (thanks, @Exxar!)
@@ -31,7 +34,6 @@ This is what we are currently working on:
     - System setting to ignore 'name' attribute during import
     - More flexible parsing for stat block attacks
 
-### History
 - 0.8.3
     - Direct roll of On-the-Fly formulas in chat.  e.g. /r [Per] or /roll [3d-2 cr]
     - Direct roll of On-the-Fly formulas in Rolltables
