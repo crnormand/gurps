@@ -3,6 +3,7 @@
 import { extractP, xmlTextToJson, zeroFill } from '../lib/utilities.js'
 import ApplyDamageDialog from '../lib/applydamage.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 
 export class GurpsActor extends Actor {
 
@@ -100,9 +101,12 @@ export class GurpsActor extends Actor {
     // this is how you have to update the domain object so that it is synchronized.
 
     let commit = {}
-    commit = { ...commit, ...{ "name": nm } };
+
+		if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
+	    commit = { ...commit, ...{ "name": nm } };
+  	  commit = { ...commit, ...{ "token.name": nm } };
+		}
     commit = { ...commit, ...{ "data.lastImport": (new Date()).toString().split(' ').splice(1, 4).join(' ') } };
-    commit = { ...commit, ...{ "token.name": nm } };
     let ar = this.data.data.additionalresources || {};
     ar.importname = importname;
     ar.importpath = importpath;
