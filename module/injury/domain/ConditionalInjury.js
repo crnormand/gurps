@@ -210,20 +210,20 @@ export const decrementSeverity = severity => {
     return decrementedSeverity < -6 ? -6 : decrementedSeverity;
 }
 
-export const incrementDaysToHeal = days => {
+export const incrementDaysToHeal = (days, delta = 1) => {
     if (days === "" || days === null || days === undefined) {
         days = 0;
     }
 
-    return parseInt(days, 10) + 1;
+    return parseInt(days, 10) + delta;
 }
 
-export const decrementDaysToHeal = days => {
+export const decrementDaysToHeal = (days, delta = 1) => {
     if (days === "" || days === null || days === undefined) {
         days = 0;
     }
 
-    const decrementedDays = parseInt(days, 10) - 1;
+    const decrementedDays = parseInt(days, 10) - delta;
 
     return decrementedDays < 0 ? 0 : decrementedDays;
 }
