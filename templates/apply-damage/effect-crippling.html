@@ -3,7 +3,20 @@
     <div>
       <header>Crippling Injury, {{detail}}</header>
       <aside>{{#if reduceInjury}}Damage above {{amount}} HP ignored.{{/if}}</aside>
+      {{#if (eq detail 'Tail')}}
+      <aside>
+        Ground creatures: -1 DX.<br />Swimmer/flyer: -2 DX and half Move.
+      </aside>
+      {{/if}}
     </div>
+
+    {{#if (eq detail 'Tail')}}
+    <div class='with-send-button'>
+      <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
+    </div>
+    {{/if}}
+
+
     <div><span class='pdflink'>B420</span></div>
   </div>
 </li>

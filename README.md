@@ -1,11 +1,10 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.3
+# Current Release Version 0.8.4
 [If you like our work...](https://ko-fi.com/crnormand)
 
-<a href="https://ko-fi.com/crnormand">
-<img height="36" style="border:0px;height:36px;" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2" border="0" alt="Buy Me a Coffee at ko-fi.com">
-</a>
+<a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
+
 
 To install the latest release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
@@ -16,9 +15,25 @@ To install the latest release, use this manifest URL:
 ### If you are looking for the last stable release, use the manifest URL above.
 
 This is what we are currently working on:
-- 0.8.4
+
+- 0.8.5
 
 ### History
+- 0.8.4
+    - Enhanced the Mook Generator to use tabs as a delimiter.
+    - Added pain penalties for characters with High Pain Threshold (HPT) to the modifier bucket (thanks, @Exxar!)
+    - Enhanced the character sheet to enable damage formulas based on Swing or Thrust; e.g. "sw+2" or "thr-1".
+    - Updated the damage chat message to show individual dice results in addition to the sum.
+    - Support multiple hit location tables: Humanoid, Quadruped, Quadruped (winged), Avian, Centaur, Hexapod, Hexapod (winged), 
+    Veriform, Snakeman, Winged Serpent, Octopoid, Squid, Cancroid, Scorpion, Ichthyoid, and Arachnoid. Until the GCS import 
+    can be enhanced, the app makes its best guess at the form of the imported character.
+    - Enhanced editor to select the hit location table that is in use by that character.
+    - Updated the Apply Damage Dialog to work with all the hit location tables, including damage effects on non-human limbs and
+    extremities.
+    - Multiple small tweaks to the UI.
+    - System setting to ignore 'name' attribute during import
+    - More flexible parsing for stat block attacks
+
 - 0.8.3
     - Direct roll of On-the-Fly formulas in chat.  e.g. /r [Per] or /roll [3d-2 cr]
     - Direct roll of On-the-Fly formulas in Rolltables

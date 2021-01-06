@@ -343,15 +343,18 @@
         <div id='resources'>
           <div class="header" style="grid-column: 1 / span 2;">Resource Trackers</div>
 
-          {{#each (filter data.additionalresources.tracker 'name')}}
-          <div class='tracked-resource' data-gurps-resource='additionalresources.tracker.{{@index}}'>
-            <div class='header'>{{#if name}}{{name}}{{else}}Resource {{@index}}{{/if}}</div>
+          {{#each data.additionalresources.tracker}}
+          <div class='tracked-resource {{#unless name}}inactive{{/unless}}'
+            data-gurps-resource='additionalresources.tracker.{{@index}}'>
+            <div class='header'>{{#if name}}{{name}}{{else}}Resource
+              {{@index}}{{/if}}</div>
             <div class='field'>
               <div class='resource-spinner'>
                 <button data-operation='resource-dec'><i class="fas fa-caret-left"></i></button>
-                <input class="gcs-attr-input {{#if (not (gt value min))}}depleted{{/if}}"
-                  name="data.additionalresources.tracker.{{@index}}.value" type="text" value="{{value}}" placeholder="0"
-                  data-dtype="Number" />
+                <input class="gcs-attr-input {{#if max}}
+                {{#unless (gt value min)}}depleted{{/unless}}
+                {{/if}}" name="data.additionalresources.tracker.{{@index}}.value" type="text" value="{{value}}"
+                  placeholder="0" data-dtype="Number" />
                 <button data-operation='resource-inc'><i class="fas fa-caret-right"></i></button>
               </div>
             </div>
