@@ -14,8 +14,8 @@ export default class GURPSConditionalInjury {
             Handlebars.registerHelper('ciCurrentGrossEffects', self.currentGrossEffects)
 
             game.settings.register(SYSTEM_NAME, SETTING_NAME, {
-                name: 'Use Conditional Injury?',
-                hint: 'From Pyramid #3/120',
+                name: 'Use Conditional Injury instead of HP',
+                hint: 'From Pyramid #3/120: Conditional Injury removes Hit Points from the game as the basis for wound tracking, and replaces them with an effects based method for injury.',
                 scope: 'world',
                 config: true,
                 type: Boolean,
