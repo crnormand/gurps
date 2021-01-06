@@ -18,6 +18,7 @@ This is what we are currently working on:
 
 - 0.8.5
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
+    - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
 
 ### History
 - 0.8.4

@@ -111,7 +111,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = tracker.value + 1
+      let value = tracker.value + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max
 
       let json = `{ "data.${path}.value": ${value} }`
@@ -123,7 +123,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = tracker.value - 1
+      let value = tracker.value - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max
 
       let json = `{ "data.${path}.value": ${value} }`
@@ -173,12 +173,12 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('button[data-operation="ci-days-inc"]').click(async ev => {
       ev.preventDefault()
-      updateActorWithChangedDaysToHeal(CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal))
+      updateActorWithChangedDaysToHeal(CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, (ev.shiftKey ? 5 : 1)))
     })
 
     html.find('button[data-operation="ci-days-dec"]').click(ev => {
       ev.preventDefault()
-      updateActorWithChangedDaysToHeal(CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal))
+      updateActorWithChangedDaysToHeal(CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, (ev.shiftKey ? 5 : 1)))
     })
 
     html.find('button[data-operation="ci-reset"]').click(ev => {
