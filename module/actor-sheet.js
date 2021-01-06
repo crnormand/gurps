@@ -2,6 +2,7 @@ import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js';
 import parselink from '../lib/parselink.js';
+import * as CI from "./injury/domain/ConditionalInjury.js";
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -44,6 +45,7 @@ export class GurpsActorSheet extends ActorSheet {
   getData() {
     const sheetData = super.getData();
     sheetData.ranges = game.GURPS.rangeObject.ranges;
+    sheetData.useCI = game.GURPS.ConditionalInjury.isInUse();
     game.GURPS.SetLastActor(this.actor);
     let eqt = this.actor.data.data.equipment || {};
     sheetData.eqtsummary = {
@@ -138,6 +140,66 @@ export class GurpsActorSheet extends ActorSheet {
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
+
+    // START CONDITIONAL INJURY
+
+    const formatCIEmpty = val => val === null ? "" : val;
+
+    const updateActorWithChangedSeverity = changedSeverity => {
+      console.log('updateActorWithChangedSeverity');
+      this.actor.update({
+        "data.conditionalinjury.injury.severity": formatCIEmpty(changedSeverity),
+        "data.conditionalinjury.injury.daystoheal": formatCIEmpty(CI.daysToHealForSeverity(changedSeverity)),
+      })
+    }
+
+    html.find('button[data-operation="ci-severity-inc"]').click(async ev => {
+      ev.preventDefault()
+      updateActorWithChangedSeverity(CI.incrementSeverity(this.actor.data.data.conditionalinjury.injury.severity))
+    })
+
+    html.find('button[data-operation="ci-severity-dec"]').click(ev => {
+      ev.preventDefault()
+      updateActorWithChangedSeverity(CI.decrementSeverity(this.actor.data.data.conditionalinjury.injury.severity))
+    })
+
+    const updateActorWithChangedDaysToHeal = changedDaysToHeal => {
+      console.log('updateActorWithChangedDaysToHeal');
+      this.actor.update({
+        "data.conditionalinjury.injury.severity": formatCIEmpty(CI.severityForDaysToHeal(changedDaysToHeal)),
+        "data.conditionalinjury.injury.daystoheal": formatCIEmpty(changedDaysToHeal),
+      })
+    }
+
+    html.find('button[data-operation="ci-days-inc"]').click(async ev => {
+      ev.preventDefault()
+      updateActorWithChangedDaysToHeal(CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal))
+    })
+
+    html.find('button[data-operation="ci-days-dec"]').click(ev => {
+      ev.preventDefault()
+      updateActorWithChangedDaysToHeal(CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal))
+    })
+
+    html.find('button[data-operation="ci-reset"]').click(ev => {
+      ev.preventDefault()
+      updateActorWithChangedSeverity(null)
+    })
+
+    html.find('input[data-operation="ci-severity-set"]').change(ev => {
+      ev.preventDefault()
+      console.log('change severity', ev.target.value)
+      updateActorWithChangedSeverity(CI.setSeverity(ev.target.value))
+    })
+
+    // TODO after this event resolves, the severity field briefly flashes with the correct value but then reverts to what was there before the change
+    html.find('input[data-operation="ci-days-set"]').change(ev => {
+      ev.preventDefault()
+      console.log('change days', ev.target.value)
+      updateActorWithChangedDaysToHeal(CI.setDaysToHeal(ev.target.value))
+    })
+
+    // END CONDITIONAL INJURY
   }
 
 

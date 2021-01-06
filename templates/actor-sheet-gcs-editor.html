@@ -284,37 +284,85 @@
 
       <div id='trackers'>
         <div>
-          <div id='combat-hit' data-gurps-resource='HP'>
-            <div class='header'>Hit Points</div>
-            <div class="fieldblock3">
-              <div class="points"></div>
-              <div class="field"><input class="gcs-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
-                  data-dtype="Number" /></div>
-              <div class="label">Current</div>
+          {{#if useCI}}
+            <div id='combat-hit'>
+              <div class='header'>Injury</div>
+              <div class="fieldblock3">
+                <div class="points"></div>
+                <div class="field"><input class="gcs-input" name="data.conditionalinjury.injury.severity" type="text" value="{{data.conditionalinjury.injury.severity}}"
+                    data-dtype="Number" />
+                </div>
+                <div class="label">Severity</div>
 
-              <div class="points">
-                <input name="{{data.HP.points}}" class="gcs-input-sm2" type="text" value="{{data.HP.points}}">
-              </div>
+                <div class="points"></div>
+                <div class="field"><input class="gcs-input" name="data.conditionalinjury.injury.daystoheal" type="text" value="{{data.conditionalinjury.injury.daystoheal}}"
+                    data-dtype="Number" />
+                </div>
+                <div class="label">Days</div>
 
-              <div class="field">
-                <input class="gcs-input" name="data.HP.max" type="text" value="{{data.HP.max}}" data-dtype="Number" />
-              </div>
-              <div class="label">Basic</div>
+                <div class="points">
+                  <input name="data.conditionalinjury.RT.points" class="gcs-input-sm2" type="text" value="{{data.conditionalinjury.RT.points}}">
+                </div>
+                <div class="field"><input class="gcs-input" name="data.conditionalinjury.RT.value" type="text" value="{{data.conditionalinjury.RT.value}}"
+                    data-dtype="Number" />
+                </div>
+                <div class="label">RT</div>
 
-            </div>
-            <div class='tooltip-wrapper'>
-              <div class="tooltip">Thresholds
-                <span class="tooltiptext">
-                  <div class="fieldblock">
-                    {{#hpBreakpoints data.HP}}
-                    <div class="field condensed noedit">{{breakpoint}}</div>
-                    <div class="label {{style}}">{{label}}</div>
-                    {{/hpBreakpoints}}
-                  </div>
-                </span>
+                <div class="points">
+                  <input name="{{data.HP.points}}" class="gcs-input-sm2" type="text" value="{{data.HP.points}}">
+                </div>
+                <div class="field">
+                  <input class="gcs-input" name="data.HP.max" type="text" value="{{data.HP.max}}" data-dtype="Number" />
+                </div>
+                <div class="label">HP</div>
+
               </div>
-            </div>
-          </div> <!-- combat-hit -->
+              <div class='tooltip-wrapper'>
+                <div class="tooltip">Severities
+                  <span class="tooltiptext">
+                    <div class="fieldblock">
+                      {{#ciSeveritiesTooltip}}
+                      <div class="field condensed noedit">{{severity}}</div>
+                      <div class="label">{{label}}</div>
+                      {{/ciSeveritiesTooltip}}
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div> <!-- combat-hit -->
+          {{else}}
+            <div id='combat-hit' data-gurps-resource='HP'>
+              <div class='header'>Hit Points</div>
+              <div class="fieldblock3">
+                <div class="points"></div>
+                <div class="field"><input class="gcs-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
+                                          data-dtype="Number" /></div>
+                <div class="label">Current</div>
+
+                <div class="points">
+                  <input name="{{data.HP.points}}" class="gcs-input-sm2" type="text" value="{{data.HP.points}}">
+                </div>
+
+                <div class="field">
+                  <input class="gcs-input" name="data.HP.max" type="text" value="{{data.HP.max}}" data-dtype="Number" />
+                </div>
+                <div class="label">Basic</div>
+
+              </div>
+              <div class='tooltip-wrapper'>
+                <div class="tooltip">Thresholds
+                  <span class="tooltiptext">
+                    <div class="fieldblock">
+                      {{#hpBreakpoints data.HP}}
+                      <div class="field condensed noedit">{{breakpoint}}</div>
+                      <div class="label {{style}}">{{label}}</div>
+                      {{/hpBreakpoints}}
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div> <!-- combat-hit -->
+          {{/if}}
 
           <div id='combat-fat' data-gurps-resource='FP'>
             <div class='header'>Fatigue</div>
@@ -324,7 +372,7 @@
                   data-dtype="Number" /></div>
               <div class="label">Current</div>
 
-              <div class="points">
+              <div class="{{#if useCI}}points-fp{{else}}points{{/if}}">
                 <input name="data.FP.points" class="gcs-input-sm2" type="text" value="{{data.FP.points}}">
               </div>
 
