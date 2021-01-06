@@ -339,7 +339,8 @@ export class GurpsActor extends Actor {
 
     return {
       "data.-=hitlocations": null,
-      "data.hitlocations": prot
+      "data.hitlocations": prot,
+			"data.additionalresources.bodyplan": bodyplan
     }
   }
 
