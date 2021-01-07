@@ -132,7 +132,7 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals) };
       commit = { ...commit, ...this.importNotesFromGCSv1(c.description, c.notelist) };
       commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryGCS) };
-      commit = { ...commit, ...this.importProtectionFromGCSv1(c.combat?.protectionlist, isFoundryGCA) };
+      commit = { ...commit, ... await this.importProtectionFromGCSv1(c.combat?.protectionlist, isFoundryGCA) };
     } catch (err) {
       let msg = "An error occured while importing " + nm + ", " + err.name + ":" + err.message;
       ui.notifications.warn(msg);
@@ -271,9 +271,10 @@ export class GurpsActor extends Actor {
     };
   }
 
-  importProtectionFromGCSv1(json, isFoundryGCA) {
+  async importProtectionFromGCSv1(json, isFoundryGCA) {
     if (!json) return;
     let t = this.textFrom;
+    let data = this.data.data;
     let locations = []
     for (let key in json) {
       if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -337,11 +338,44 @@ export class GurpsActor extends Actor {
     let index = 0
     temp.forEach(it => game.GURPS.put(prot, it, index++))
 
-    return {
-      "data.-=hitlocations": null,
-      "data.hitlocations": prot,
-			"data.additionalresources.bodyplan": bodyplan
+    let saveprot = true;
+    if (!!data.lastImport && !!data.additionalresources.bodyplan && (bodyplan != data.additionalresources.bodyplan)) {
+			let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN);
+			if (option == 1) {
+				saveprot = false;
+			}
+			if (option == 2) {
+	      saveprot = await new Promise((resolve, reject) => {
+	        let d = new Dialog({
+	          title: "Current HP & FP",
+	          content: `Do you want to <br><br><b>Save</b> the current Body Plan (${data.additionalresources.bodyplan}) or <br><br><b>Overwrite</b> it with the Body Plan from the import: (${bodyplan})?<br><br>&nbsp;`,
+	          buttons: {
+	            save: {
+	              icon: '<i class="far fa-square"></i>',
+	              label: "Save",
+	              callback: () => resolve(true)
+	            },
+	            overwrite: {
+	              icon: '<i class="fas fa-edit"></i>',
+	              label: "Overwrite",
+	              callback: () => resolve(true)
+	            }
+	          },
+	          default: "save",
+	          close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
+	        });
+	        d.render(true);
+	      });
+			}
     }
+    if (saveprot)
+	    return {
+	      "data.-=hitlocations": null,
+	      "data.hitlocations": prot,
+				"data.additionalresources.bodyplan": bodyplan
+	    };
+		else 
+			return {};
   }
 
   /**
@@ -657,27 +691,33 @@ export class GurpsActor extends Actor {
     let fp = i(json.fps);
     let saveCurrent = false;
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      saveCurrent = await new Promise((resolve, reject) => {
-        let d = new Dialog({
-          title: "Current HP & FP",
-          content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values (default) or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
-          buttons: {
-            save: {
-              icon: '<i class="far fa-square"></i>',
-              label: "Save",
-              callback: () => resolve(true)
-            },
-            overwrite: {
-              icon: '<i class="fas fa-edit"></i>',
-              label: "Overwrite",
-              callback: () => resolve(true)
-            }
-          },
-          default: "save",
-          close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
-        });
-        d.render(true);
-      });
+			let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP);
+			if (option == 0) {
+				saveCurrent = true;
+			}
+			if (option == 2) {
+	      saveCurrent = await new Promise((resolve, reject) => {
+	        let d = new Dialog({
+	          title: "Current HP & FP",
+	          content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
+	          buttons: {
+	            save: {
+	              icon: '<i class="far fa-square"></i>',
+	              label: "Save",
+	              callback: () => resolve(true)
+	            },
+	            overwrite: {
+	              icon: '<i class="fas fa-edit"></i>',
+	              label: "Overwrite",
+	              callback: () => resolve(true)
+	            }
+	          },
+	          default: "save",
+	          close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
+	        });
+	        d.render(true);
+	      });
+			}
     }
     if (!saveCurrent) {
       data.HP.value = hp;
