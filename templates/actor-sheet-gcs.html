@@ -232,18 +232,10 @@
                 <div class="header">Severity</div>
                 <div class='field'>
                   <div class='resource-spinner'>
-<!--
                     <button data-operation='ci-severity-dec'><i class="fas fa-caret-left"></i></button>
                     <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text" value="{{data.conditionalinjury.injury.severity}}"
                            placeholder="" data-dtype="String" data-operation="ci-severity-set" />
                     <button data-operation='ci-severity-inc'><i class="fas fa-caret-right"></i></button>
--->
-										<select id="ci-severity">
-										{{#each conditionalEffectsTable}}
-											<option value="{{this.severity}}">{{this.grossEffects}}{{#if (defined this.severity)}} ({{this.severity}}){{/if}}</option>
-										{{/each}}
-										</select>
-									
                   </div>
                 </div>
                 <div class="header">Days to Heal</div>
