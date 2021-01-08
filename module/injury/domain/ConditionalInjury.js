@@ -151,13 +151,13 @@ export const conditionalEffectsTable = [
     },
     {
         severity: 4,
-        grossEffects: "Instantly Fatal Wound",
+        grossEffects: "Instantly Fatal",
         shock: -4,
         pain: "Agony",
     },
     {
         severity: 5,
-        grossEffects: "Instantly Fatal Wound",
+        grossEffects: "Instantly Fatal",
         shock: -4,
         pain: "Agony",
     },

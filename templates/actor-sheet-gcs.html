@@ -226,51 +226,49 @@
       <div id="trackers">
         <div>
           {{#if useCI}}
-          <div id='combat-hit'>
-            <div class='header'>Injury</div>
-            <div class="tracked-resource">
-              <div class="header">Severity</div>
-              <div class='field'>
-                <div class='resource-spinner'>
-                  <button data-operation='ci-severity-dec'><i class="fas fa-caret-left"></i></button>
-                  <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
-                    value="{{data.conditionalinjury.injury.severity}}" placeholder="" data-dtype="String"
-                    data-operation="ci-severity-set" />
-                  <button data-operation='ci-severity-inc'><i class="fas fa-caret-right"></i></button>
-                </div>
+          <div id='combat-hit' class='conditional-injury'>
+            <div class='header major-heading'>Injury</div>
+            <div class="tracked-resource no-border">
+              <div class="header minor-heading">Severity</div>
+              <div class='spinner'>
+                <button class='decrement' data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
+                <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
+                  value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
+                  data-operation="ci-severity-set" />
+                <button class='increment' data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
+                <button class='reset' data-operation='ci-reset'><i class="fas fa-undo"></i></button>
               </div>
-              <div class="header">Days to Heal</div>
-              <div class='field'>
-                <div class='resource-spinner'>
-                  <button data-operation='ci-days-dec'><i class="fas fa-caret-left"></i></button>
-                  <input class="gcs-attr-input" name="data.conditionalinjury.injury.daystoheal" type="text"
-                    value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
-                    data-operation="ci-days-set" />
-                  <button data-operation='ci-days-inc'><i class="fas fa-caret-right"></i></button>
-                </div>
+              <div class="header minor-heading">Time to Heal</div>
+              <div class='spinner'>
+                <button class='decrement' data-operation='ci-days-dec'><i class="fas fa-minus"></i></button>
+                <input class="gcs-attr-input" name="data.conditionalinjury.injury.daystoheal" type="text"
+                  value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
+                  data-operation="ci-days-set" />
+                <button class='increment' data-operation='ci-days-inc'><i class="fas fa-plus"></i></button>
+                <div style='font-size: 85%;'>&nbsp;Days</div>
               </div>
-            </div>
-            <div class='tooltip-wrapper'>
-              <div class="tooltip">Severities
-                <span class="tooltiptext">
-                  <div class="fieldblock">
-                    {{#ciSeveritiesTooltip}}
-                    <div class="field condensed noedit">{{severity}}</div>
-                    <div class="label">{{label}}</div>
-                    {{/ciSeveritiesTooltip}}
+
+              <div class='condition-block'>
+                <div class='tooltip-wrapper'>
+                  <div
+                    class='tooltip condition {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "style"}}'>
+                    {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "label"}}
+                    <span class="tooltiptext">
+                      <div class="fieldblock">
+                        {{#ciSeveritiesTooltip}}
+                        <div class="field condensed noedit">{{severity}}</div>
+                        <div class="label">{{label}}</div>
+                        {{/ciSeveritiesTooltip}}
+                      </div>
+                    </span>
                   </div>
-                </span>
+                </div>
+                <div class='basic-value fieldblock3'>
+                  <div class="points">[{{data.conditionalinjury.RT.points}}]</div>
+                  <div class='field'>{{data.conditionalinjury.RT.value}}&nbsp;RT</div>
+                  <div class='label'>{{data.HP.max}}&nbsp;HP</div>
+                </div>
               </div>
-            </div>
-            <div class='condition-block'>
-              <div class='basic-value fieldblock3'>
-                <div class="points">[{{data.conditionalinjury.RT.points}}]</div>
-                <div class='field'>{{data.conditionalinjury.RT.value}}</div>
-                <div class='field'>RT</div>
-              </div>
-              <div class='condition {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "style"}}'>
-                {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "label"}}</div>
-              <button class='reset' data-operation='ci-reset'><i class="fas fa-undo"></i></button>
             </div>
           </div>
           {{else}}
@@ -357,7 +355,8 @@
               <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
             </div>
             <div class='condition-block'>
-              <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>{{#if
+              <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
+                {{#if
                 (gt value max)}}Over{{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}</div>
               <div class='max'>[{{min}}/{{max}}]</div>
             </div>

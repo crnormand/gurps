@@ -1619,7 +1619,6 @@ body {
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
-  /* border: 1px solid black; */
 }
 
 #combat-attrs,
@@ -1636,6 +1635,19 @@ body {
 #combat-attrs,
 #combat-location {
   border: 1px solid black;
+}
+
+.header.major-heading {
+  border-bottom: 1px solid white;
+}
+
+.header.minor-heading {
+  background-color: grey !important;
+  border: none !important;
+}
+
+.no-border {
+  border: none !important;
 }
 
 #combat-encumber {
@@ -1670,27 +1682,6 @@ body {
   border-bottom: 1px solid lightgrey;
 }
 
-/* 
-.gurps .condition-block {
-  display: grid;
-  grid-template-columns: 1fr 0fr;
-  grid-template-areas:
-    "basic-value reset"
-    "condition   condition";
-  grid-template-rows: 0fr 0fr;
-  align-items: end;
-  padding-bottom: .15em;
-  grid-gap: 3px;
-}
-
-.gurps .condition-block {
-  text-align: start;
-  padding-left: .2em;
-  padding-right: .2em;
-  white-space: nowrap;
-  align-self: center;
-} */
-
 .gurps #combat-sheet .condition-block {
   font-size: 80%;
   grid-template-columns: 0fr 1fr 0fr;
@@ -1701,9 +1692,6 @@ body {
 
 .gurps .condition-block .basic-value {
   grid-area: basic-value;
-  margin-right: .2em;
-  padding-left: .2em;
-  padding-right: .2em;
 }
 
 .gurps .condition-block .basic-label {
@@ -1715,10 +1703,13 @@ body {
   align-self: center;
 }
 
+.conditional-injury .condition-block .basic-value .label {
+  text-align: right;
+}
+
 .gurps #combat-sheet .condition-block .basic-label {
   font-size: 80%;
 }
-
 
 #hitpoints .selected {
   background-color: #ffcdd2;
@@ -2454,7 +2445,7 @@ ul#result-effects li {
 .tooltip {
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted darkgrey;
+  border-bottom: 1px dotted grey;
   /* If you want dots under the hoverable text */
   /* text-transform: uppercase; */
   /* color: darkgrey */
@@ -2594,7 +2585,6 @@ ul#result-effects li {
 .tracked-resource {
   display: flex;
   flex-flow: column nowrap;
-  justify-content: space-between;
   border-left: 1px solid black;
   border-bottom: 1px solid black;
 }
@@ -2631,6 +2621,7 @@ ul#result-effects li {
   display: flex;
   flex-flow: row nowrap;
   line-height: unset;
+  align-items: center;
 }
 
 .tracked-resource button i {
@@ -2679,7 +2670,6 @@ ul#result-effects li {
 .tracked-resource .condition-block .condition {
   text-align: center;
   width: 100%;
-  border-bottom: 1px grey dotted;
 }
 
 .tracked-resource .condition.normal {
