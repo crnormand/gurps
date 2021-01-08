@@ -331,7 +331,7 @@
   padding: 8px;
   color: #fff;
   background-color: #555;
-  z-index: 102; 
+  z-index: 102;
 }
 
 .gurpstippable:hover::after {
@@ -1074,89 +1074,6 @@ body {
   grid-area: attributes;
 }
 
-#trackers {
-  grid-area: trackers;
-  align-content: right;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 0fr 0fr;
-  grid-gap: .05in;
-}
-
-#trackers > * {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: .05in;
-}
-
-#trackers > *:first-child {
-  grid-template: "combat-hit combat-fat"
-}
-
-#trackers > *:last-child {
-  grid-template-rows: 0fr 0fr 0fr;
-  grid-gap: 0;
-}
-
-#resources {
-  grid-template-rows: 0fr 0fr;
-  /* border: 1px solid black; */
-}
-
-#editorsheet #resources {
-  font-size: 80%;
-}
-
-#editorsheet #resources .tracked-resource .fieldblock3 *:first-child {
-  grid-column: 1 / span 3;
-}
-
-#editorsheet #resources .tracked-resource .fieldblock3 .name {
-  text-align: start;
-}
-
-#resources > * {
-  border-bottom: 1px solid black;
-  border-right: 1px solid black;
-}
-
-#resources > *:first-child {
-  border-bottom: 1px solid white;
-}
-
-#resources > *:nth-child(even) {
-  border-left: 1px solid black;
-}
-
-/* .tracked-resource .header {
-  background-color: dimgrey;
-} */
-
-#resources .tracked-resource:nth-child(even) .header {
-  border-right: 1px solid white;
-}
-
-#resources .tracked-resource:nth-child(odd) .header {
-  border-left: none;
-}
-
-.tracked-resource .fieldblock {
-  font-size: unset;
-}
-
-.tracked-resource .fieldblock .field {
-  border: none;
-}
-
-.tracked-resource ::placeholder {
-  color: grey;
-}
-
-.tracked-resource {
-  grid-gap: .05in;
-  display: grid;
-  grid-template-rows: 0fr 1fr;
-}
 
 #hitpoints {
   grid-area: hitpoints;
@@ -1705,8 +1622,6 @@ body {
   /* border: 1px solid black; */
 }
 
-#combat-hit,
-#combat-fat,
 #combat-attrs,
 #combat-weapons,
 #combat-location {
@@ -1755,6 +1670,7 @@ body {
   border-bottom: 1px solid lightgrey;
 }
 
+/* 
 .gurps .condition-block {
   display: grid;
   grid-template-columns: 1fr 0fr;
@@ -1773,7 +1689,7 @@ body {
   padding-right: .2em;
   white-space: nowrap;
   align-self: center;
-}
+} */
 
 .gurps #combat-sheet .condition-block {
   font-size: 80%;
@@ -1803,31 +1719,6 @@ body {
   font-size: 80%;
 }
 
-.gurps .condition-block .condition {
-  grid-area: condition;
-  grid-gap: 2px;
-  align-content: center;
-  text-align: center;
-  padding-left: .2em;
-  padding-right: .2em;
-}
-
-.gurps .condition-block .normal {
-  background-color: lightgreen;
-}
-
-.gurps .condiition-block .reset {
-  grid-area: reset;
-}
-
-.gurps .condition-block .reset  {
-  line-height: unset;
-  font-size: smaller;
-  margin: unset;
-  padding: unset;
-  padding-left: 4px;
-  padding-right: 2px;
-}
 
 #hitpoints .selected {
   background-color: #ffcdd2;
@@ -1840,7 +1731,7 @@ body {
 
 .gurps .condition-block .collapse,
 .resource-spinner .depleted {
-    background-color: #ffcdd2;
+  background-color: #ffcdd2;
 }
 
 .gurps .condition-block .check {
@@ -2183,7 +2074,7 @@ body {
   margin-bottom: 0.5em;
 }
 
-.gurps-group h4 + aside {
+.gurps-group h4+aside {
   margin-top: -0.5em;
 }
 
@@ -2396,22 +2287,22 @@ ul#result-effects li {
 }
 
 .offscreen-only {
-  position:absolute;
-  left:-10000px;
-  top:auto;
-  width:1px;
-  height:1px;
-  overflow:hidden;
-  }
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 
-  /* remove the top margin and indent */
+/* remove the top margin and indent */
 .gurps-group .continuation {
   margin-top: 0;
   margin-left: 2em;
 }
 
 
-  /* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
+/* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
     <div class='collapsible-wrapper'>
         <input id='collapsible' class='toggle offscreen-only' type='checkbox' checked>
         <label for='collapsible' class='label-toggle'>Show the math</label>
@@ -2434,7 +2325,7 @@ ul#result-effects li {
   transition: all .25s ease-in-out;
 }
 
-.toggle:checked + .label-toggle + .collapsible-content {
+.toggle:checked+.label-toggle+.collapsible-content {
   max-height: 130vh;
 }
 
@@ -2453,7 +2344,7 @@ ul#result-effects li {
   text-transform: uppercase;
 }
 
-.gurps-chat-message  .label-toggle:hover {
+.gurps-chat-message .label-toggle:hover {
   background-color: rgb(0, 0, 0, 0.7);
 }
 
@@ -2464,7 +2355,7 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-chat-message .toggle:checked + .label-toggle:after {
+.gurps-chat-message .toggle:checked+.label-toggle:after {
   font: normal normal normal 12px/1 FontAwesome;
   content: '\f077';
   color: lightgray;
@@ -2498,11 +2389,11 @@ ul#result-effects li {
   padding-top: 2px;
 }
 
-.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
+.gurps-group .options-drawer .toggle:checked+.label-toggle+.collapsible-content {
   max-height: 130vh;
   padding-bottom: 2px;
   margin-bottom: 5px;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset,
     0px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
 
@@ -2510,7 +2401,7 @@ ul#result-effects li {
   text-transform: uppercase;
 }
 
-.gurps-app button.with-icon > i > span{
+.gurps-app button.with-icon>i>span {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   font-weight: 400;
 }
@@ -2519,22 +2410,22 @@ ul#result-effects li {
   font-family: Roboto, sans-serif;
 }
 
-.gurps-app .fa, 
-.gurps-app .fab, 
-.gurps-app .fad, 
-.gurps-app .fal, 
-.gurps-app .far, 
+.gurps-app .fa,
+.gurps-app .fab,
+.gurps-app .fad,
+.gurps-app .fal,
+.gurps-app .far,
 .gurps-app .fas {
   font-family: 'Font Awesome 5 Free' !important;
-} 
+}
 
 .gurps-app #blunt-trauma-field {
   margin-left: 6px;
 }
 
 .gurps .ranged_options {
-	display: flex;
-	flex-wrap: no-wrap;
+  display: flex;
+  flex-wrap: no-wrap;
 }
 
 .dragging {
@@ -2543,54 +2434,8 @@ ul#result-effects li {
   border-radius: 3px;
 }
 
-.tracked-resource.inactive .header {
-  color: whitesmoke;
-  background-color: grey;
-}
 
-.resource-spinner {
-  display: flex;
-  flex-flow: row nowrap;
-}
 
-.resource-spinner button {
-  line-height: unset;
-  margin: 0;
-  padding: 2px;
-  height: 26px;
-  flex: 0;
-  border: 1px solid grey;
-  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
-}
-
-.tracked-resource.inactive .condition-block > *,
-.tracked-resource.inactive .resource-spinner input,
-.tracked-resource.inactive .resource-spinner button {
-  color: grey;
-}
-
-.resource-spinner .inactive button {
-  color: grey;
-}
-
-.resource-spinner button:first-child{
-  border-radius: 3px 0px 0px 3px; 
-  border: 1px solid grey; 
-  border-right-width: 0;
-}
-
-.resource-spinner button:last-child {
-  border-radius: 0px 3px 3px 0px; 
-  border: 1px solid grey; 
-  border-left-width: 0;  
-  padding-left: 4px;
-  padding-right: 0;
-}
-
-.resource-spinner input {
-  flex: 3; 
-  border-radius: 0; 
-}
 
 #combat-sheet .resource-spinner button {
   height: 21px;
@@ -2609,9 +2454,10 @@ ul#result-effects li {
 .tooltip {
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted darkgrey; /* If you want dots under the hoverable text */
-  text-transform: uppercase;
-  color: darkgrey
+  border-bottom: 1px dotted darkgrey;
+  /* If you want dots under the hoverable text */
+  /* text-transform: uppercase; */
+  /* color: darkgrey */
 }
 
 /* Tooltip text */
@@ -2655,12 +2501,6 @@ ul#result-effects li {
   opacity: 1;
 }
 
-.tooltip-wrapper {
-  margin: auto;
-  text-transform: uppercase;
-  font-size: smaller;
-}
-
 .fieldblock3 .tooltip-wrapper {
   grid-column: 1 / span 2;
 }
@@ -2684,7 +2524,7 @@ ul#result-effects li {
 
 .field textarea {
   font-family: inherit;
-  font-size: 80%; 
+  font-size: 80%;
   border-radius: 0;
   border: 1px solid lightgrey;
   padding: 3px;
@@ -2700,4 +2540,202 @@ ul#result-effects li {
 .label.textarea {
   align-self: start;
   margin-top: 6px;
+}
+
+
+/* Resource Trackers and Editors */
+
+#trackers {
+  grid-area: trackers;
+  align-content: right;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+  grid-gap: .05in;
+}
+
+#trackers>* {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: .05in;
+}
+
+#trackers>*:first-child {
+  grid-template: "combat-hit combat-fat"
+}
+
+#trackers>*:last-child {
+  grid-template-rows: 0fr 1fr 1fr;
+  grid-gap: 0;
+}
+
+#resources {
+  grid-template-rows: 0fr 0fr;
+}
+
+#resources .tracked-resource .header:hover {
+  outline: none;
+  box-shadow: 0 0 5px red;
+}
+
+#resources>*:first-child {
+  border-bottom: 1px solid white;
+}
+
+.tracked-resource:nth-child(even) .header {
+  border-right: 1px solid white;
+}
+
+.tracked-resource:nth-child(odd) .header {
+  border-left: none;
+}
+
+.resource-editor,
+.tracked-resource {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.tracked-resource:nth-child(odd) {
+  border-right: 1px solid black;
+}
+
+.resource-editor>*,
+.tracked-resource>* {
+  margin: 0 0.25rem 0.25rem 0.25rem;
+}
+
+.resource-editor .header,
+.tracked-resource .header {
+  color: white;
+  background-color: black;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px solid black;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tracked-resource .header .edit {
+  float: right;
+  margin-right: 0.25em;
+}
+
+.resource-editor .name,
+.tracked-resource .spinner {
+  display: flex;
+  flex-flow: row nowrap;
+  line-height: unset;
+}
+
+.tracked-resource button i {
+  font-size: 67%;
+  margin: 0;
+}
+
+.resource-editor input,
+.tracked-resource .spinner input {
+  height: 1.2rem;
+  min-width: 2rem;
+  border: 1px solid grey;
+  border-radius: 0;
+  font-size: inherit;
+  text-align: center;
+
+}
+
+.tracked-resource .spinner .increment {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
+}
+
+.tracked-resource .spinner .decrement {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.tracked-resource .spinner .reset {
+  margin-left: 0.25rem;
+}
+
+.tracked-resource .condition-block {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: stretch;
+}
+
+.tracked-resource .condition-block .max {
+  font-size: 80%;
+  text-align: end;
+}
+
+.tracked-resource .condition-block .condition {
+  text-align: center;
+  width: 100%;
+  border-bottom: 1px grey dotted;
+}
+
+.tracked-resource .condition.normal {
+  background-color: rgba(144, 238, 144, 0.6);
+}
+
+.tracked-resource .condition.below {
+  background-color: rgba(240, 128, 128, 0.6);
+}
+
+.tracked-resource .condition.above {
+  background-color: rgba(238, 130, 238, 0.6);
+}
+
+.tracked-resource ::placeholder {
+  color: grey;
+}
+
+.resource-editor .inputs {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto;
+  grid-gap: 0.15rem;
+}
+
+.resource-editor .inputs .label {
+  font-size: 80%;
+}
+
+.resource-editor button i {
+  margin-right: 0.25rem;
+}
+
+.resource-editor button {
+  font-size: inherit;
+  padding: 0 0.15rem;
+}
+
+.tracked-resource .spinner button {
+  line-height: unset;
+  margin: 0;
+  height: 1.2rem;
+  flex: 0;
+  border: 1px solid grey;
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+}
+
+.tracked-resource.inactive .condition-block>* {
+  color: grey;
+}
+
+.tracked-resource.inactive .header {
+  color: whitesmoke;
+  background-color: grey;
+}
+
+.tracked-resource .fieldblock3 {
+  grid-template-columns: 0fr 0fr 1fr;
 }
