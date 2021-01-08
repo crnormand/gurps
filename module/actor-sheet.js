@@ -24,6 +24,11 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
+	async close(options={}) {
+		await super.close(options);
+		game.GURPS.ClearLastActor(this.actor);
+	}
+
   flt(str) {
     return !!str ? parseFloat(str) : 0;
   }
@@ -46,6 +51,7 @@ export class GurpsActorSheet extends ActorSheet {
     const sheetData = super.getData();
     sheetData.ranges = game.GURPS.rangeObject.ranges;
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse();
+		sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable();
     game.GURPS.SetLastActor(this.actor);
     let eqt = this.actor.data.data.equipment || {};
     sheetData.eqtsummary = {
@@ -63,8 +69,9 @@ export class GurpsActorSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('mousedown', ev => this._onfocus(ev), false) });
-    html.find(".gurpsactorsheet").each((i, li) => { li.addEventListener('focus', ev => this._onfocus(ev), false) });
+    html.find(".gurpsactorsheet").click(ev => { this._onfocus(ev) });
+		html.parent(".window-content").siblings(".window-header").click(ev => { this._onfocus(ev) });
+
     html.find(".rollable").click(this._onClickRoll.bind(this));
     GURPS.hookupGurps(html);
     html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
@@ -362,6 +369,7 @@ export class GurpsActorSheet extends ActorSheet {
 
 
   _onfocus(ev) {
+		ev.preventDefault();
     game.GURPS.SetLastActor(this.actor);
   }
 
@@ -461,7 +469,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (original != "gurps.GurpsActorSheet") newSheet = "gurps.GurpsActorSheet";
     if (event.shiftKey)   // Hold down the shift key for Simplified
       newSheet = "gurps.GurpsActorSimplifiedSheet";
-    if (event.ctrlKey || event.metaKey)   // Hold down the Ctrl key (Command on Mac) for Simplified
+    if (game.keyboard.isCtrl(event))   // Hold down the Ctrl key (Command on Mac) for Simplified
       newSheet = "gurps.GurpsActorNpcSheet";
 
     await this.actor.sheet.close()

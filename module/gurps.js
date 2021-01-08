@@ -48,14 +48,23 @@ settings.initializeSettings()
 GURPS.hitlocationDictionary = HitLocations.hitlocationDictionary
 GURPS.getHitLocationTableNames = HitLocations.getHitLocationTableNames
 
-// CONFIG.debug.hooks = true;
+//CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null;
+
 GURPS.SetLastActor = function (actor) {
   GURPS.LastActor = actor;
-  GURPS.ModifierBucket.refresh();
-  console.log("Last Actor:" + actor.name);
+  console.log("Setting Last Actor:" + actor?.name);
+  setTimeout(() => GURPS.ModifierBucket.refresh(), 100);		// Need to make certain the mod bucket refresh occurs later
+}
+GURPS.ClearLastActor = function(actor) {
+	if (GURPS.LastActor == actor) {
+	  console.log("Clearing Last Actor:" + GURPS.LastActor?.name);
+	  GURPS.ModifierBucket.refresh();
+		GURPS.LastActor = null;
+		if (canvas.tokens.controlled.length > 0) GURPS.SetLastActor(canvas.tokens.controlled[0].actor);  // There may still be tokens selected... if so, select one of them
+	}
 }
 
 // This table is used to display dice rolls and penalties (if they are missing from the import
@@ -1271,17 +1280,24 @@ Hooks.once("ready", async function () {
     }
   });
 
+/*		// Should not need this hook, if we are watching controlToken
   Hooks.on('createActiveEffect', (...args) => {
     if (!!args && args.length >= 4)
       GURPS.SetLastActor(args[0]);
   });
+*/
 
-  // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket (only when args[1] is true)
+  // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on("controlToken", (...args) => {
-    if (args.length > 1 && args[1]) {
+    if (args.length > 1) {
       let a = args[0]?.actor;
-      if (!!a) game.GURPS.SetLastActor(a);
-    }
+			if (!!a) {
+	      if (args[1])
+					game.GURPS.SetLastActor(a);
+				else
+					game.GURPS.ClearLastActor(a);
+	    }
+		}
   });
 
   Hooks.on('preCreateChatMessage', (data, options, userId) => {

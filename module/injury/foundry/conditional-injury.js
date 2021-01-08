@@ -32,6 +32,8 @@ export default class GURPSConditionalInjury {
 
     isInUse = () => game.settings.get(SYSTEM_NAME, SETTING_NAME);
 
+		conditionalEffectsTable = () => { return CI.conditionalEffectsTable };
+
     severitiesTooltip = opt => {
         const data = CI.conditionalEffectsTable.map(row => ({ severity: row.severity, label: row.grossEffects}));
         data.forEach(row => {

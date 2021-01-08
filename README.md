@@ -6,10 +6,12 @@
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
 
-To install the latest release, use this manifest URL:   
+To install the latest stable release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
 
-[Getting started video](https://youtu.be/FUqtOkdyBCo)
+[Getting Started video](https://youtu.be/FUqtOkdyBCo)
+
+[Players Guide video](https://youtu.be/T8e3fUUs6mk)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the last stable release, use the manifest URL above.
