@@ -2595,7 +2595,7 @@ ul#result-effects li {
 
 .resource-editor>*,
 .tracked-resource>* {
-  margin: 0 0.25rem 0.25rem 0.25rem;
+  margin: 0 0.15rem 0.15rem 0.15rem;
 }
 
 .resource-editor .header,
@@ -2653,7 +2653,7 @@ ul#result-effects li {
 }
 
 .tracked-resource .spinner .reset {
-  margin-left: 0.25rem;
+  margin-left: 0.15rem;
 }
 
 .tracked-resource .condition-block {
@@ -2700,7 +2700,7 @@ ul#result-effects li {
 }
 
 .resource-editor button i {
-  margin-right: 0.25rem;
+  margin-right: 0.15rem;
 }
 
 .resource-editor button {
@@ -2727,5 +2727,22 @@ ul#result-effects li {
 }
 
 .tracked-resource .fieldblock3 {
-  grid-template-columns: 0fr 0fr 1fr;
+  grid-template-columns: 0fr 1fr 1fr;
+}
+
+.gentle-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1ch;
+}
+
+.condition-block .fieldblock3 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.tracked-resource .name {
+  text-align: center !important;
 }
