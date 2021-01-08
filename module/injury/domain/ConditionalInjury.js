@@ -51,7 +51,7 @@ const naturalHealingTable = [
 
 export const daysToHealForSeverity = severity => {
     // gotta love untyped languages
-    if (severity < -6 || severity === "" || severity === null || severity === undefined) {
+    if (severity < -6 || !severity) {
         return 0;
     }
 
@@ -67,7 +67,7 @@ export const daysToHealForSeverity = severity => {
 };
 
 export const severityForDaysToHeal = days => {
-    if (days <= 0 || days === "" || days === null || days === undefined) {
+    if (days <= 0 || !days) {
         return null;
     }
 
@@ -84,7 +84,7 @@ export const severityForDaysToHeal = days => {
 
 export const conditionalEffectsTable = [
     {
-        severity: "-7 or less",
+//        severity: "",
         grossEffects: "None",
         shock: null,
         pain: null,
@@ -151,18 +151,18 @@ export const conditionalEffectsTable = [
     },
     {
         severity: 4,
-        grossEffects: "Instantly Fatal Wound",
+        grossEffects: "Instantly Fatal",
         shock: -4,
         pain: "Agony",
     },
     {
         severity: 5,
-        grossEffects: "Instantly Fatal Wound",
+        grossEffects: "Instantly Fatal",
         shock: -4,
         pain: "Agony",
     },
     {
-        severity: "6 or more",
+        severity: "6+",
         grossEffects: "Total Destruction",
         shock: null,
         pain: null,
