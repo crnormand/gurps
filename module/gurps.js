@@ -55,14 +55,15 @@ GURPS.LastActor = null;
 
 GURPS.SetLastActor = function (actor) {
   GURPS.LastActor = actor;
-  GURPS.ModifierBucket.refresh();
   console.log("Setting Last Actor:" + actor?.name);
+  setTimeout(() => GURPS.ModifierBucket.refresh(), 100);		// Need to make certain the mod bucket refresh occurs later
 }
 GURPS.ClearLastActor = function(actor) {
 	if (GURPS.LastActor == actor) {
 	  console.log("Clearing Last Actor:" + GURPS.LastActor?.name);
 	  GURPS.ModifierBucket.refresh();
 		GURPS.LastActor = null;
+		if (canvas.tokens.controlled.length > 0) GURPS.SetLastActor(canvas.tokens.controlled[0].actor);  // There may still be tokens selected... if so, select one of them
 	}
 }
 
@@ -1286,7 +1287,7 @@ Hooks.once("ready", async function () {
   });
 */
 
-  // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket (only when args[1] is true)
+  // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on("controlToken", (...args) => {
     if (args.length > 1) {
       let a = args[0]?.actor;
