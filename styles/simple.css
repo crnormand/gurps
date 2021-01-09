@@ -1671,7 +1671,6 @@ body {
 #combat-hit .field,
 .tracked-resource .field {
   text-align: end;
-  border: none;
   margin-left: 2px;
   margin-right: 2px;
 }
@@ -1682,15 +1681,21 @@ body {
   border-bottom: 1px solid lightgrey;
 }
 
-.gurps #combat-sheet .condition-block {
+
+#editorsheet .tracked-resource .tooltip .field {
+  border: none !important;
+}
+
+
+/* .gurps #combat-sheet .condition-block {
   font-size: 80%;
   grid-template-columns: 0fr 1fr 0fr;
   grid-template-areas:
     "basic-value basic-label reset"
     "condition   condition   condition";
-}
+} */
 
-.gurps .condition-block .basic-value {
+/* .gurps .condition-block .basic-value {
   grid-area: basic-value;
 }
 
@@ -1701,7 +1706,7 @@ body {
   padding-right: .2em;
   white-space: nowrap;
   align-self: center;
-}
+} */
 
 .conditional-injury .condition-block .basic-value .label {
   text-align: right;
@@ -2538,10 +2543,9 @@ ul#result-effects li {
 
 #trackers {
   grid-area: trackers;
-  align-content: right;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto;
+  grid-template-rows: 0fr auto 0fr;
   grid-gap: .05in;
 }
 
@@ -2595,7 +2599,7 @@ ul#result-effects li {
 
 .resource-editor>*,
 .tracked-resource>* {
-  margin: 0 0.15rem 0.15rem 0.15rem;
+  margin: 0 0.25rem 0.25rem 0.25rem;
 }
 
 .resource-editor .header,
@@ -2652,6 +2656,10 @@ ul#result-effects li {
   border-right: none;
 }
 
+.tracked-resource .tooltip-wrapper {
+  margin-bottom: 0.15rem;
+}
+
 .tracked-resource .spinner .reset {
   margin-left: 0.15rem;
 }
@@ -2662,9 +2670,17 @@ ul#result-effects li {
   justify-content: stretch;
 }
 
+#combat-trackers .tracked-resource .condition-block {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: stretch;
+  align-items: baseline;
+}
+
 .tracked-resource .condition-block .max {
   font-size: 80%;
   text-align: end;
+  margin-left: 0.15rem;
 }
 
 .tracked-resource .condition-block .condition {
@@ -2745,4 +2761,12 @@ ul#result-effects li {
 
 .tracked-resource .name {
   text-align: center !important;
+}
+
+#combat-sheet .tracked-resource .spinner button {
+  padding: 0 2px 2px 2px;
+}
+
+#combat-sheet .fieldblock .field {
+  text-align: right;
 }
