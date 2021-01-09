@@ -22,6 +22,11 @@ This is what we are currently working on:
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
     - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
     - System settings concerning overwriting current HP/FP and Body Plan
+    - LastActor deselection fixed
+    - Rework the look of the resource trackers and HP/FP trackers to make them more compact.
+    - Remove the cp entry fields on resource tracker editors.
+    - Display the current resource tracker thresholds. Right now, that is only "Below" (value is below the minimum), "Over" (value is over the maximum), or "Normal".
+    - User can directly edit the trackers in Full view without going to the editor (pencil icon)
 
 ### History
 - 0.8.4
