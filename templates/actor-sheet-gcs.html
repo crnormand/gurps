@@ -342,7 +342,7 @@
           {{#each data.additionalresources.tracker}}
           <div class='tracked-resource {{#unless name}}inactive{{/unless}}'
             data-gurps-resource='additionalresources.tracker.{{@index}}'>
-            <div class='header'>
+            <div class='header with-editor'>
               {{#if name}}{{name}}{{else}}Resource {{@index}}{{/if}}<span class='edit'><i
                   class='fas fa-pencil-alt'></i></span>
             </div>
