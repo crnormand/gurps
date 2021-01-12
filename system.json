@@ -27,6 +27,11 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "pt_br",
+      "name": "Brazilian Portuguese",
+      "path": "lang/pt_br.json"
     }
   ],
   "gridDistance": 1,
