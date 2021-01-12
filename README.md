@@ -11,7 +11,7 @@ To install the latest stable release, use this manifest URL:
 
 [Getting Started video](https://youtu.be/FUqtOkdyBCo)
 
-[Players Guide video](https://youtu.be/T8e3fUUs6mk)
+[Players Guide video](https://youtu.be/x-xD39x_JQw)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the last stable release, use the manifest URL above.
@@ -24,9 +24,8 @@ This is what we are currently working on:
     - System settings concerning overwriting current HP/FP and Body Plan
     - LastActor deselection fixed
     - Rework the look of the resource trackers and HP/FP trackers to make them more compact.
-    - Remove the cp entry fields on resource tracker editors.
     - Display the current resource tracker thresholds. Right now, that is only "Below" (value is below the minimum), "Over" (value is over the maximum), or "Normal".
-    - User can directly edit the trackers in Full view without going to the editor (pencil icon)
+    - Inline editing of the resource trackers
 
 ### History
 - 0.8.4
