@@ -6,74 +6,74 @@
         <div class="header-fields">
             <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
             <div class="attributes">
-				      <table>
-				        <tr class="tr_fontSize6_lineHeight8">
-				          <td class="no-border w9px">&nbsp;</td>
-				          <td class="no-border w40px">&nbsp;</td>
-				          <td class="no-border w9px">&nbsp;</td>
-				          <td class="no-border w20px">&nbsp;</td>
-				          <td class="no-border w9px">&nbsp;</td>
-				          <td class="no-border">&nbsp;</td>
-				          <td class="no-border w40px">&nbsp;</td>
-				          <td class="no-border w40px">CURRENT</td>
-				          <td class="no-border w9px">&nbsp;</td>
-				          <td class="no-border w20px">&nbsp;</td>
-				          <td class="no-border w9px">&nbsp;</td>
-				        </tr>
-				        <tr>
-				          <td style="font-weight: 900; border: none; text-align: center; padding-right: 6px;">{{localize "GURPS.attributeST"}}</td>
-				          <td style="" class="rollable fill-in" data-type="ST">{{data.attributes.ST.value}}</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.attributes.ST.points}}</td>
-				          <td style="" class="brackets">]</td>
-				          <td style="font-weight: 900; text-align: right; padding-right: 6px; border-top: none; border-left: none;">{{localize "GURPS.HP"}}</td>
-				          <td style="" class="rollable fill-in" data-type="HP">{{data.HP.max}}</td>
-				          <td style="" class="rollable fill-in" data-type="HP">{{data.HP.value}}</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.HP.points}}</td>
-				          <td style="" class="brackets">]</td>
-				        </tr>
-				        <tr>
-				          <td style="font-weight: 900; border: none; text-align: center; padding-right: 6px;">{{localize "GURPS.attributeDX"}}</td>
-				          <td style="" class="rollable fill-in" data-type="DX">{{data.attributes.DX.value}}</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.attributes.DX.points}}</td>
-				          <td style="" class="brackets">]</td>
-				          <td style="font-weight: 900; text-align: right; padding-right: 6px; border-top: none; border-left: none;">{{localize "GURPS.attributeWILL"}}</td>
-				          <td style="" class="rollable fill-in" data-type="Will">{{data.attributes.WILL.value}}</td>
-				          <td style="">&nbsp;</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.attributes.WILL.points}}</td>
-				          <td style="" class="brackets">]</td>
-				        </tr>
-				        <tr>
-				          <td style="font-weight: 900; border: none; text-align: center; padding-right: 6px;">{{localize "GURPS.attributeIQ"}}</td>
-				          <td style="" class="rollable fill-in" data-type="IQ">{{data.attributes.IQ.value}}</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.attributes.IQ.points}}</td>
-				          <td style="" class="brackets">]</td>
-				          <td style="font-weight: 900; text-align: right; padding-right: 6px; border-top: none; border-left: none;">{{localize "GURPS.attributePER"}}</td>
-				          <td style="" class="rollable fill-in" data-type="Per">{{data.attributes.PER.value}}</td>
-				          <td style="border-top: none; font-size: 6pt; line-height:8px; vertical-align: bottom;">CURRENT</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.attributes.PER.points}}</td>
-				          <td style="" class="brackets">]</td>
-				        </tr>
-				        <tr>
-				          <td style="font-weight: 900; border: none; text-align: center; padding-right: 6px;">{{localize "GURPS.attributeHT"}}</td>
-				          <td style="border-bottom: 1px solid black;" class="rollable fill-in" data-type="HT">{{data.attributes.HT.value}}</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.attributes.HT.points}}</td>
-				          <td style="" class="brackets">]</td>
-				          <td style="font-weight: 900; text-align: right; padding-right: 6px; border-top: none; border-left: none;">{{localize "GURPS.FP"}}</td>
-				          <td style="border-bottom: 1px solid black;" class="rollable fill-in" data-type="FP">{{data.FP.max}}</td>
-				          <td style="" class="rollable fill-in" data-type="FP">{{data.FP.value}}</td>
-				          <td style="" class="brackets">[</td>
-				          <td style="" class="pts">{{data.FP.points}}</td>
-				          <td style="" class="brackets">]</td>
-				        </tr>
-				      </table>            
-						</div>
+              <table>
+                <tr class="tr_fontSize6_lineHeight8">
+                  <td class="w9px">&nbsp;</td>
+                  <td class="w40px">&nbsp;</td>
+                  <td class="w9px">&nbsp;</td>
+                  <td class="w20px">&nbsp;</td>
+                  <td class="w9px">&nbsp;</td>
+                  <td>&nbsp;</td>
+                  <td class="w40px">&nbsp;</td>
+                  <td class="w40px">CURRENT</td>
+                  <td class="w9px">&nbsp;</td>
+                  <td class="w20px">&nbsp;</td>
+                  <td class="w9px">&nbsp;</td>
+                </tr>
+                <tr>
+                  <td class="fw900 no-border text-center padding-right-6" >{{localize "GURPS.attributeST"}}</td>
+                  <td class="rollable fill-in" data-type="ST">{{data.attributes.ST.value}}</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.attributes.ST.points}}</td>
+                  <td class="brackets">]</td>
+                  <td class="fw900 text-right padding-right-6 no-border-top no-border-left" >{{localize "GURPS.HP"}}</td>
+                  <td class="rollable fill-in" data-type="HP">{{data.HP.max}}</td>
+                  <td class="rollable fill-in" data-type="HP">{{data.HP.value}}</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.HP.points}}</td>
+                  <td class="brackets">]</td>
+                </tr>
+                <tr>
+                  <td class="fw900 text-center padding-right-6 no-border">{{localize "GURPS.attributeDX"}}</td>
+                  <td class="rollable fill-in" data-type="DX">{{data.attributes.DX.value}}</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.attributes.DX.points}}</td>
+                  <td class="brackets">]</td>
+                  <td class="fw900 text-right padding-right-6 no-border-top no-border-left" >{{localize "GURPS.attributeWILL"}}</td>
+                  <td class="rollable fill-in" data-type="Will">{{data.attributes.WILL.value}}</td>
+                  <td style="">&nbsp;</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.attributes.WILL.points}}</td>
+                  <td class="brackets">]</td>
+                </tr>
+                <tr>
+                  <td sclass="fw900 no-border text-center padding-right-6">{{localize "GURPS.attributeIQ"}}</td>
+                  <td class="rollable fill-in" data-type="IQ">{{data.attributes.IQ.value}}</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.attributes.IQ.points}}</td>
+                  <td class="brackets">]</td>
+                  <td class="fw900 text-right padding-right-6 no-border-top no-border-left">{{localize "GURPS.attributePER"}}</td>
+                  <td class="rollable fill-in" data-type="Per">{{data.attributes.PER.value}}</td>
+                  <td class="no-border-top fontSize6_lineHeight8 vertical-bottom">CURRENT</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.attributes.PER.points}}</td>
+                  <td class="brackets">]</td>
+                </tr>
+                <tr>
+                  <td sclass="fw900 no-border text-center padding-right-6">{{localize "GURPS.attributeHT"}}</td>
+                  <td style="border-bottom: 1px solid black;" class="rollable fill-in" data-type="HT">{{data.attributes.HT.value}}</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.attributes.HT.points}}</td>
+                  <td class="brackets">]</td>
+                  <td class="fw900 text-right padding-right-6 no-border-top no-border-left">{{localize "GURPS.FP"}}</td>
+                  <td class="border-bottom-1-solid-black rollable fill-in" data-type="FP">{{data.FP.max}}</td>
+                  <td class="rollable fill-in" data-type="FP">{{data.FP.value}}</td>
+                  <td class="brackets">[</td>
+                  <td class="pts">{{data.FP.points}}</td>
+                  <td class="brackets">]</td>
+                </tr>
+              </table>
+            </div>
         </div>
     </header>
 

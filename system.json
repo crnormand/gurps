@@ -15,7 +15,9 @@
   ],
   "styles": [
     "styles/simple.css",
-    "styles/css_boilerplate.css"
+    "styles/css_boilerplate.css",
+    "styles/table.css"
+
   ],
   "packs": [],
   "languages": [
