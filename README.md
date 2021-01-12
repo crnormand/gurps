@@ -14,7 +14,7 @@ To install the latest stable release, use this manifest URL:
 [Players Guide video](https://youtu.be/x-xD39x_JQw)
 
 ## The 'main' branch is being actively developed... and it may break things.   
-### If you are looking for the last stable release, use the manifest URL above.
+### If you are looking for the latest stable release, use the manifest URL above.
 
 This is what we are currently working on:
 
