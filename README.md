@@ -11,7 +11,7 @@ To install the latest stable release, use this manifest URL:
 
 [Getting Started video](https://youtu.be/FUqtOkdyBCo)
 
-[Players Guide video](https://youtu.be/T8e3fUUs6mk)
+[Players Guide video](https://youtu.be/x-xD39x_JQw)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the last stable release, use the manifest URL above.
@@ -22,6 +22,9 @@ This is what we are currently working on:
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
     - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
     - System settings concerning overwriting current HP/FP and Body Plan
+    - LastActor deselection fixed
+    - Rework the look of the resource trackers and HP/FP trackers to make them more compact.
+    - Display the current resource tracker thresholds. Right now, that is only "Below" (value is below the minimum), "Over" (value is over the maximum), or "Normal".
     - Inline editing of the resource trackers
 
 ### History
