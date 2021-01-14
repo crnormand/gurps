@@ -233,8 +233,9 @@
               <div class='spinner'>
                 <button data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
 
-                <input class="gcs-attr-input" name="injury.severity" type="text" value="{{injury.severity}}"
-                  data-dtype="String" data-operation="ci-severity-set" />
+                <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
+                  value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
+                  data-operation="ci-severity-set" />
 
                 <button data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
                 <button data-operation='ci-reset'><i class="fas fa-undo"></i></button>
@@ -242,8 +243,9 @@
               <div class="header minor-heading">Time to Heal</div>
               <div class='spinner'>
                 <button data-operation='ci-days-dec'><i class="fas fa-minus"></i></button>
-                <input class="gcs-attr-input" name="injury.daystoheal" type="text" value="{{injury.daystoheal}}"
-                  placeholder="" data-dtype="Number" data-operation="ci-days-set" />
+                <input class="gcs-attr-input" name="injury.daystoheal" type="text"
+                  value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
+                  data-operation="ci-days-set" />
                 <button class='no-gap' data-operation='ci-days-inc'><i class="fas fa-plus"></i></button>
                 <div style='font-size: 85%;'>&nbsp;Days</div>
               </div>
