@@ -2660,7 +2660,7 @@ ul#result-effects li {
   margin-bottom: 0.15rem;
 }
 
-.tracked-resource .spinner .reset {
+.tracked-resource .spinner > button:last-of-type:not(.no-gap) {
   margin-left: 0.15rem;
 }
 
@@ -2817,6 +2817,11 @@ ul#result-effects li {
 
 .spinner .button-ribbon button:hover {
   box-shadow: 0 0 5px red;
+}
+
+.spinner .button-ribbon button.restore {
+  color: darkred;
+  font-weight: bold;
 }
 
 .tracked-resource .spinner details {

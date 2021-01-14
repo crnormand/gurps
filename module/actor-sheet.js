@@ -3,6 +3,8 @@ import { isNiceDiceEnabled } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js';
 import parselink from '../lib/parselink.js';
 import * as CI from "./injury/domain/ConditionalInjury.js";
+import * as settings from '../lib/miscellaneous-settings.js'
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -251,68 +253,70 @@ export class GurpsActorSheet extends ActorSheet {
 
     // END CONDITIONAL INJURY
 
-    // spinner input popup button-ribbon
-    html.find('.spinner details summary input').focus(ev => {
-      let details = ev.currentTarget.closest('details')
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ENHANCED_INPUT)) {
+      // spinner input popup button-ribbon
+      html.find('.spinner details summary input').focus(ev => {
+        let details = ev.currentTarget.closest('details')
 
-      if (!details.open) {
-        let parent = ev.currentTarget.closest('[data-gurps-resource]')
-        let path = $(parent).attr('data-gurps-resource')
-        let tracker = getProperty(this.actor.data.data, path)
+        if (!details.open) {
+          let parent = ev.currentTarget.closest('[data-gurps-resource]')
+          let path = $(parent).attr('data-gurps-resource')
+          let tracker = getProperty(this.actor.data.data, path)
+
+          let restoreButton = $(details).find('button.restore')
+          restoreButton.attr('data-value', `${tracker.value}`)
+          restoreButton.text(tracker.value)
+        }
+        details.open = true
+        console.log('open')
+      })
+
+      // Update the actor's data, set the restore button to the new value, 
+      // and close the popup.
+      html.find('.spinner details summary input').focusout(ev => {
+        // set the restore button to the new value of the input field      
+        let details = ev.currentTarget.closest('details')
+        let input = $(details).find('input')
+        let newValue = input.val()
 
         let restoreButton = $(details).find('button.restore')
-        restoreButton.attr('data-value', `${tracker.value}`)
-        restoreButton.text(tracker.value)
-      }
-      details.open = true
-      console.log('open')
-    })
+        restoreButton.attr('data-value', newValue)
+        restoreButton.text(newValue)
 
-    // Update the actor's data, set the restore button to the new value, 
-    // and close the popup.
-    html.find('.spinner details summary input').focusout(ev => {
-      // set the restore button to the new value of the input field      
-      let details = ev.currentTarget.closest('details')
-      let input = $(details).find('input')
-      let newValue = input.val()
+        // update the actor's data to newValue
+        let parent = ev.currentTarget.closest('[data-gurps-resource]')
+        let path = $(parent).attr('data-gurps-resource')
+        let value = parseInt(newValue)
+        let json = `{ "data.${path}.value": ${value} }`
+        this.actor.update(JSON.parse(json))
 
-      let restoreButton = $(details).find('button.restore')
-      restoreButton.attr('data-value', newValue)
-      restoreButton.text(newValue)
+        details.open = false
+        console.log('close')
+      })
 
-      // update the actor's data to newValue
-      let parent = ev.currentTarget.closest('[data-gurps-resource]')
-      let path = $(parent).attr('data-gurps-resource')
-      let value = parseInt(newValue)
-      let json = `{ "data.${path}.value": ${value} }`
-      this.actor.update(JSON.parse(json))
+      html.find('.spinner details .popup > *').mousedown(ev => {
+        ev.preventDefault()
+      })
 
-      details.open = false
-      console.log('close')
-    })
+      // update the text input field, but do not update the actor's data
+      html.find('button[data-operation="resource-update"]').click(ev => {
 
-    html.find('.spinner details .popup > *').mousedown(ev => {
-      ev.preventDefault()
-    })
+        let dataValue = $(ev.currentTarget).attr('data-value')
+        let details = $(ev.currentTarget).closest('details')
+        let input = $(details).find('input')
+        let value = parseInt(input.val())
 
-    // update the text input field, but do not update the actor's data
-    html.find('button[data-operation="resource-update"]').click(ev => {
+        if (dataValue.charAt(0) === '-' || dataValue.charAt(0) === '+') {
+          value += parseInt(dataValue)
+        } else {
+          value = parseInt(dataValue)
+        }
 
-      let dataValue = $(ev.currentTarget).attr('data-value')
-      let details = $(ev.currentTarget).closest('details')
-      let input = $(details).find('input')
-      let value = parseInt(input.val())
-
-      if (dataValue.charAt(0) === '-' || dataValue.charAt(0) === '+') {
-        value += parseInt(dataValue)
-      } else {
-        value = parseInt(dataValue)
-      }
-
-      if (!isNaN(value)) {
-        input.val(value)
-      }
-    })
+        if (!isNaN(value)) {
+          input.val(value)
+        }
+      })
+    } // end enhanced input
   }
 
 
