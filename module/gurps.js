@@ -1168,14 +1168,14 @@ Hooks.once("init", async function () {
       new NpcInput().render(true);
       return false;
     }
-    let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+    let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/;
     let found = false;
     content.split("\n").forEach(e => {		// Handle multiline chat messages (mostly from macros)
       let m = e.match(re);
       if (!!m && !!m[2]) {
         let action = parselink(m[2]);
         if (!!action.action) {
-          GURPS.performAction(action.action, GURPS.LastActor);
+          GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith("/pr") });
           found = true;
         }
       }
@@ -1305,7 +1305,7 @@ Hooks.once("ready", async function () {
     try {
       let html = $(c);
       let rt = html.find(".result-text");		// Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
-      let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+      let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/;
       let t = rt[0]?.innerText;
       if (!!t) {
         t.split("\n").forEach(e => {
@@ -1313,7 +1313,7 @@ Hooks.once("ready", async function () {
           if (!!m && !!m[2]) {
             let action = parselink(m[2]);
             if (!!action.action) {
-              GURPS.performAction(action.action, GURPS.LastActor);
+              GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith("/pr") });
               //					return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
             }
           }

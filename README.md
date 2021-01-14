@@ -25,7 +25,8 @@ This is what we are currently working on:
     - LastActor deselection fixed
     - Rework the look of the resource trackers and HP/FP trackers to make them more compact.
     - Display the current resource tracker thresholds. Right now, that is only "Below" (value is below the minimum), "Over" (value is over the maximum), or "Normal".
-    - Inline editing of the resource trackers
+    - Inline editing of the resource trackers (pencil icon)
+    - /pr /private chat commands to roll On-the-Fly formulas privately
 
 ### History
 - 0.8.4
