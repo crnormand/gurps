@@ -233,9 +233,11 @@
               <div class="header minor-heading">Severity</div>
               <div class='spinner'>
                 <button class='decrement' data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
+
                 <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
                   value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
                   data-operation="ci-severity-set" />
+
                 <button class='increment' data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
                 <button class='reset' data-operation='ci-reset'><i class="fas fa-undo"></i></button>
               </div>
@@ -274,11 +276,27 @@
           <div id='combat-hit' class='tracked-resource' data-gurps-resource='HP'>
             <div class='header'>Hit Points</div>
             <div class='spinner'>
-              <button class='decrement' data-operation='resource-dec'><i class="fas fa-minus"></i></button>
-              <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
-                placeholder="{{data.HP.max}}" data-dtype="Number" />
-              <button class='increment' data-operation='resource-inc'><i class="fas fa-plus"></i></button>
-              <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
+              <button data-operation='resource-dec'><i class="fas fa-minus"></i></button>
+
+              <details>
+                <summary>
+                  <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
+                    placeholder="{{data.HP.max}}" data-dtype="Number" />
+                </summary>
+                <div class='popup button-ribbon'>
+                  <button data-operation='resource-update' data-value='-10'>-10</button>
+                  <button data-operation='resource-update' data-value='-5'>-5</button>
+                  <button data-operation='resource-update' data-value='-1'>-1</button>
+                  <button data-operation='resource-update' data-value='0'>0</button>
+                  <button class='restore' data-operation='resource-update' data-value=''></button>
+                  <button data-operation='resource-update' data-value='+1'>+1</button>
+                  <button data-operation='resource-update' data-value='+5'>+5</button>
+                  <button data-operation='resource-update' data-value='+10'>+10</button>
+                </div>
+              </details>
+
+              <button data-operation='resource-inc'><i class="fas fa-plus"></i></button>
+              <button data-operation='resource-reset'><i class="fas fa-undo"></i></button>
             </div>
             <div class='condition-block'>
               <div class='tooltip-wrapper'>

@@ -24,10 +24,10 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
-	async close(options={}) {
-		await super.close(options);
-		game.GURPS.ClearLastActor(this.actor);
-	}
+  async close(options = {}) {
+    await super.close(options);
+    game.GURPS.ClearLastActor(this.actor);
+  }
 
   flt(str) {
     return !!str ? parseFloat(str) : 0;
@@ -51,7 +51,7 @@ export class GurpsActorSheet extends ActorSheet {
     const sheetData = super.getData();
     sheetData.ranges = game.GURPS.rangeObject.ranges;
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse();
-		sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable();
+    sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable();
     game.GURPS.SetLastActor(this.actor);
     let eqt = this.actor.data.data.equipment || {};
     sheetData.eqtsummary = {
@@ -70,7 +70,7 @@ export class GurpsActorSheet extends ActorSheet {
     super.activateListeners(html);
 
     html.find(".gurpsactorsheet").click(ev => { this._onfocus(ev) });
-		html.parent(".window-content").siblings(".window-header").click(ev => { this._onfocus(ev) });
+    html.parent(".window-content").siblings(".window-header").click(ev => { this._onfocus(ev) });
 
     html.find(".rollable").click(this._onClickRoll.bind(this));
     GURPS.hookupGurps(html);
@@ -250,6 +250,69 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     // END CONDITIONAL INJURY
+
+    // spinner input popup button-ribbon
+    html.find('.spinner details summary input').focus(ev => {
+      let details = ev.currentTarget.closest('details')
+
+      if (!details.open) {
+        let parent = ev.currentTarget.closest('[data-gurps-resource]')
+        let path = $(parent).attr('data-gurps-resource')
+        let tracker = getProperty(this.actor.data.data, path)
+
+        let restoreButton = $(details).find('button.restore')
+        restoreButton.attr('data-value', `${tracker.value}`)
+        restoreButton.text(tracker.value)
+      }
+      details.open = true
+      console.log('open')
+    })
+
+    // Update the actor's data, set the restore button to the new value, 
+    // and close the popup.
+    html.find('.spinner details summary input').focusout(ev => {
+      // set the restore button to the new value of the input field      
+      let details = ev.currentTarget.closest('details')
+      let input = $(details).find('input')
+      let newValue = input.val()
+
+      let restoreButton = $(details).find('button.restore')
+      restoreButton.attr('data-value', newValue)
+      restoreButton.text(newValue)
+
+      // update the actor's data to newValue
+      let parent = ev.currentTarget.closest('[data-gurps-resource]')
+      let path = $(parent).attr('data-gurps-resource')
+      let value = parseInt(newValue)
+      let json = `{ "data.${path}.value": ${value} }`
+      this.actor.update(JSON.parse(json))
+
+      details.open = false
+      console.log('close')
+    })
+
+    html.find('.spinner details .popup > *').mousedown(ev => {
+      ev.preventDefault()
+    })
+
+    // update the text input field, but do not update the actor's data
+    html.find('button[data-operation="resource-update"]').click(ev => {
+
+      let dataValue = $(ev.currentTarget).attr('data-value')
+      let details = $(ev.currentTarget).closest('details')
+      let input = $(details).find('input')
+      let value = parseInt(input.val())
+
+      if (dataValue.charAt(0) === '-' || dataValue.charAt(0) === '+') {
+        value += parseInt(dataValue)
+      } else {
+        value = parseInt(dataValue)
+      }
+
+      if (!isNaN(value)) {
+        input.val(value)
+      }
+    })
   }
 
 
@@ -412,7 +475,7 @@ export class GurpsActorSheet extends ActorSheet {
 
 
   _onfocus(ev) {
-		ev.preventDefault();
+    ev.preventDefault();
     game.GURPS.SetLastActor(this.actor);
   }
 
