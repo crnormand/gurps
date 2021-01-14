@@ -82,13 +82,20 @@ export class GurpsActor extends Actor {
     }
 
     let ra = r["@attributes"];
-    const isFoundryGCS = (!!ra && ra.release == "Foundry" && ra.version == "1");
-    const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version == "GCA");
+    const isFoundryGCS = (!!ra && ra.release == "Foundry" && (ra.version == "1" || ra.version.startsWith("GCS")));
+    const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version.startsWith("GCA"));
     if (!(isFoundryGCS || isFoundryGCA)) {
-      ui.notifications.error("We no longer support the Fantasy Ground import.   Please check the Users Guide (see Chat log).");
+      ui.notifications.error("We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).");
       ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
       return;
     }
+		if (isFoundryGCA) {
+			const v = ra.version.split("-");
+			if (v[1] != "1") {
+	      ui.notifications.error("This file was created with an older version of the GCA Export.   Please update to the latest version.   Check the Users Guide for details (see Chat log).");
+      	ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+			}		
+		}
 
     // The character object starts here
     let c = r.character;
@@ -148,12 +155,6 @@ export class GurpsActor extends Actor {
 
     let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes(".-=")));
     let adds = Object.fromEntries(Object.entries(commit).filter(([key, value]) => !key.includes(".-=")));
-
-    // potentially update data.additionalresources.bodyplan
-    // until Rich/GCS supports exporting the hit location table name ("humanoid", 
-    // "quadruped", etc), try to find the best match:
-    let bodyplan = this._getBodyPlan(Object.values(adds['data.hitlocations']))
-    ar.bodyplan = bodyplan;
 
     await this.update(deletes);
     await this.update(adds);
@@ -311,10 +312,14 @@ export class GurpsActor extends Actor {
     // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and 
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
-    let bodyplan = this._getBodyPlan(locations)
-
+		let bodyplan = t(json.bodyplan)?.toLowerCase();		// Was a body plan actually in the import?  
+		let table = hitlocationDictionary[bodyplan]; // If so, try to use it.
+    if (!table) {
+			bodyplan = this._getBodyPlan(locations)
+			table = hitlocationDictionary[bodyplan]
+		}
     // update location's roll and penalty based on the bodyplan
-    let table = hitlocationDictionary[bodyplan]
+
     if (!!table) {
       Object.values(locations).forEach(it => {
         it.penalty = (!!it.penalty) ? it.penalty : table[it.where].penalty
@@ -353,7 +358,7 @@ export class GurpsActor extends Actor {
 	            save: {
 	              icon: '<i class="far fa-square"></i>',
 	              label: "Save",
-	              callback: () => resolve(true)
+	              callback: () => resolve(false)
 	            },
 	            overwrite: {
 	              icon: '<i class="fas fa-edit"></i>',
@@ -709,7 +714,7 @@ export class GurpsActor extends Actor {
 	            overwrite: {
 	              icon: '<i class="fas fa-edit"></i>',
 	              label: "Overwrite",
-	              callback: () => resolve(true)
+	              callback: () => resolve(false)
 	            }
 	          },
 	          default: "save",
