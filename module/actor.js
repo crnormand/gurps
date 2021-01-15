@@ -1,6 +1,6 @@
 'use strict'
 
-import { extractP, xmlTextToJson, zeroFill } from '../lib/utilities.js'
+import { extractP, xmlTextToJson, zeroFill, convertRollStringToArrayOfInt } from '../lib/utilities.js'
 import ApplyDamageDialog from '../lib/applydamage.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
@@ -322,8 +322,12 @@ export class GurpsActor extends Actor {
 
     if (!!table) {
       Object.values(locations).forEach(it => {
-        it.penalty = (!!it.penalty) ? it.penalty : table[it.where].penalty
-        it.roll = (!it.roll || it.roll.length === 0) ? table[it.where].roll : it.roll
+				let [lbl, entry] = HitLocation.findTableEntry(table, it.where);
+				if (!!entry) {
+					it.where = lbl;			// It might be renamed (ex: Skull -> Brain)
+					if (!it.penalty) it.penalty = entry.penalty;
+					if (!it.roll || it.roll.length === 0) it.roll = entry.roll;
+				}
       })
     }
 
@@ -332,7 +336,10 @@ export class GurpsActor extends Actor {
     let temp = []
     Object.keys(table).forEach(key => {
       let results = Object.values(locations).filter(loc => loc.where === key)
-      if (results.length === 1) {
+      if (results.length > 0) {
+				if (results.length > 1) {		// If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
+					results[0].dr = results.map(e => e.dr).join("/");
+				}
         temp.push(results[0])
         locations = locations.filter(it => it.where !== key)
       }
@@ -941,7 +948,7 @@ export class GurpsActor extends Actor {
       myhitlocations.push({
         where: value.where,
         dr: parseInt(value.dr),
-        roll: this._convertRollStringToArrayOfInt(rollText),
+        roll: convertRollStringToArrayOfInt(rollText),
         rollText: rollText
       })
     }
@@ -953,28 +960,6 @@ export class GurpsActor extends Actor {
    */
   get _hitLocationRolls() {
     return HitLocation.getHitLocationRolls(this.data.data.additionalresources?.bodyplan)
-  }
-
-  // Take a string like "", "-", "3", "4-5" and convert it into an array of int.
-  // The resulting array will contain all ints between the first number and the last.
-  // E.g, if the input is '2-5' the result will be [2,3,4,5]. Non-numeric inputs
-  // result in the empty array.
-  _convertRollStringToArrayOfInt(text) {
-    let elements = text.split('-')
-    let range = elements.map(it => parseInt(it))
-
-    if (range.length === 0) return []
-
-    for (let i = 0; i < range.length; i++) {
-      if (typeof range[i] === 'undefined' || isNaN(range[i]))
-        return []
-    }
-
-    let results = []
-    for (let i = range[0]; i <= range[range.length - 1]; i++)
-      results.push(i)
-
-    return results
   }
 
   // Return the 'where' value of the default hit location, or 'Random'

@@ -1,6 +1,6 @@
 'use strict'
 
-import { extractP } from '../../lib/utilities.js'
+import { extractP, convertRollStringToArrayOfInt } from '../../lib/utilities.js'
 
 export const LIMB = 'limb'
 export const EXTREMITY = 'extremity'
@@ -40,6 +40,32 @@ export class HitLocation {
     let table = hitlocationDictionary[bodyplan]
     return (!!table) ? table : hitlocationDictionary['humanoid']
   }
+
+	/**
+	 * Try to map GCA hit location "where" to GCS/Foundry location
+   * GCA might send "Leg 7" which we map to "Leg 7-8"
+	 */
+	static findTableEntry(table, where) {
+		if (table.hasOwnProperty(where)) return [ where, table[where]];
+		if (table.hasOwnProperty("Brain") && where == "Skull") return [ "Brain", table["Brain"]];
+		var lbl, entry;
+		let re = /^([A-Za-z]+) *(\d+)/
+		let m = where.match(re)
+		if (!!m) {
+			let t = parseInt(m[2]);
+			Object.keys(table).forEach(e => {
+				if (e.startsWith(m[1])) {
+					let indexes = convertRollStringToArrayOfInt(e.split(" ")[1])
+					if (indexes.includes(t)) {
+						lbl = e
+						entry = table[e]
+					}
+				}
+			})
+		}
+		return [ lbl, entry ];
+	}
+	
 
   setEquipment(frmttext) {
     let e = extractP(frmttext)
