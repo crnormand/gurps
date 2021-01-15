@@ -7,25 +7,37 @@ export const EXTREMITY = 'extremity'
 
 const hitLocationAlias = {
   "Eyes": { RAW: "Eye" },
-  "Arm": { prefix: ["Right", "Left"] },
+  "Arm": { RAW: "Arm", prefix: ["Right", "Left"] },
   "Arms": { RAW: "Arm", prefix: ["Right", "Left"] },
   "Legs": { RAW: "Leg", prefix: ["Right", "Left"] },
   "Leg": { RAW: "Leg", prefix: ["Right", "Left"] },
   "Hands": { RAW: "Hand" },
   "Feet": { RAW: "Foot" },
   "Hindleg": { RAW: "Hind Leg" },
-  "Midleg": { RAW: "Mid Leg" },
+  "HindLegs": { RAW: "Hind Leg" },
+  "ForeLegs": { RAW: "Foreleg" },
+  "Midlegs": { RAW: "Mid Leg" },
+  "Wings": { RAW: "Wing" },
+  "ForeFeet": { RAW: "Foot" },
+  "HindFeet": { RAW: "Foot" },
 }
 
 export class HitLocation {
-  constructor(isFoundryGCA = false) {
-    this._isFoundryGCA = isFoundryGCA
+  static VITALS = 'Vitals'
+  static HUMANOID = 'humanoid'
+  static SKULL = 'Skull'
+  static BRAIN = 'Brain'
+  static DEFAULT = '-'
+
+  constructor(loc = '') {
     this.dr = ''
     this.equipment = ''
     this.penalty = ''
-    this.roll = ''
-    this.where = ''
+    this.roll = HitLocation.DEFAULT
+    this.where = loc
+		return this
   }
+
 
   /**
    * Given a bodyplan, return the associated hit location table. (Default to 'humanoid').
@@ -34,20 +46,24 @@ export class HitLocation {
    */
   static getHitLocationRolls(bodyplan) {
     if (!bodyplan) {
-      bodyplan = 'humanoid'
+      bodyplan = HitLocation.HUMANOID
     }
 
     let table = hitlocationDictionary[bodyplan]
-    return (!!table) ? table : hitlocationDictionary['humanoid']
+    return (!!table) ? table : hitlocationDictionary[HitLocation.HUMANOID]
   }
 
+  static makeWinged(table) {
+    return {...table, ...{ "Wings": { roll: "-", penalty: -2,  role: EXTREMITY}}}
+  }
+ 
 	/**
 	 * Try to map GCA hit location "where" to GCS/Foundry location
    * GCA might send "Leg 7" which we map to "Leg 7-8"
 	 */
 	static findTableEntry(table, where) {
 		if (table.hasOwnProperty(where)) return [ where, table[where]];
-		if (table.hasOwnProperty("Brain") && where == "Skull") return [ "Brain", table["Brain"]];
+		if (table.hasOwnProperty(HitLocation.BRAIN) && where == HitLocation.SKULL) return [ HitLocation.BRAIN, table[HitLocation.BRAIN]];
 		var lbl, entry;
 		let re = /^([A-Za-z]+) *(\d+)/
 		let m = where.match(re)
@@ -66,6 +82,14 @@ export class HitLocation {
 		return [ lbl, entry ];
 	}
 	
+	// Ensure that a hit location has enough information for the ADD
+	static normalized(hitloc) {
+	  if (!hitloc.where) hitloc.where = "???";   // Should never happen
+    if (!hitloc.roll) hitloc.roll = "-";   
+    if (!hitloc.penalty) hitloc.penalty = "";   
+    return hitloc;
+	}
+	
 
   setEquipment(frmttext) {
     let e = extractP(frmttext)
@@ -78,31 +102,27 @@ export class HitLocation {
    * 
    * @returns array of HitLocation
    */
-  get locations() {
+  locations(includeself = false) {
     let entry = hitLocationAlias[this.where]
     if (!entry) {
       return [this]
     }
 
     // replace non-RAW name with RAW name
-    let name = (!!entry.RAW) ? entry.RAW : this.where
+    this.where = entry.RAW
 
     let locations = []
-    if (!!entry.prefix && this._isFoundryGCA) {
+    if (!!entry.prefix) {
+      if (includeself) locations.push(this);
       entry.prefix.forEach(it => {
         let location = new HitLocation()
         location.dr = this.dr
         location.equipment = this.equipment
-        location.where = `${it} ${name}`
+        location.where = `${it} ${this.where}`
         locations.push(location)
       })
-    } else {
-      let location = new HitLocation()
-      location.dr = this.dr
-      location.equipment = this.equipment
-      location.where = name
-      locations.push(location)
-    }
+    } else
+      locations.push(this)
     return locations
   }
 }
@@ -316,17 +336,22 @@ const arachnoidHitLocations = {
   "Vitals": { roll: "-", penalty: -3 }
 }
 
-
+// Important that GCA keys be directly under GCS keys (as they are duplicates, and should be ignored when listing)
 export const hitlocationDictionary = {
   "humanoid": humanoidHitLocations,
+  "humanoid expanded": {...humanoidHitLocations, ...{ "Chest": { roll: "-", penalty: 0}}},    // GCA
+  "winged humanoid": {...humanoidHitLocations, ...{ "Wings": { roll: "-", penalty: -2,  role: LIMB}}},    // GCA
   "quadruped": quadrupedHitLocations,
   "quadrupedWinged": wingedQuadHitLocations,
+  "winged quadruped": wingedQuadHitLocations,    // GCA
   "avian": avianHitLocations,
   "centaur": centaurHitLocations,
   "hexapod": hexapodHitLocations,
   "hexapodWinged": wingedHexHitLocations,
+  "winged hexapod": wingedHexHitLocations,    // GCA
   "vermiform": vermiformHitLocations,
   "vermiformWinged": wingedSerpentHitLocations,
+  "winged vermiform": wingedSerpentHitLocations,    // GCA
   "snakeman": snakeManHitLocations,
   "octopod": octopodHitLocations,
   "squid": squidHitLocations,
@@ -337,5 +362,12 @@ export const hitlocationDictionary = {
 }
 
 export const getHitLocationTableNames = function () {
-  return Object.keys(hitlocationDictionary)
+  let keys = []
+  var last
+  Object.keys(hitlocationDictionary).forEach(e => {
+    let t = hitlocationDictionary[e]
+    if (t != last) keys.push(e);
+    last = t;
+  });
+  return keys
 }

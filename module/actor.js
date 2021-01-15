@@ -280,42 +280,48 @@ export class GurpsActor extends Actor {
     for (let key in json) {
       if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key];
-        let hl = new HitLocation(isFoundryGCA);
-        hl.where = t(j.location);
+        let hl = new HitLocation(t(j.location));
         hl.dr = t(j.dr);
         hl.penalty = t(j.db);
         hl.setEquipment(t(j.text));
 
-        // translate into RAW locations and collect them into an Array
-        hl.locations.forEach(loc => {
-          // Some hit location tables have two entries for the same location. The code requires
-          // each location to be unique. Append an asterisk to the location name in that case.
-          while (locations.filter(it => it.where == loc.where).length > 0) {
-            loc.where = loc.where + '*'
-          }
-          locations.push(loc)
-        })
+        // Some hit location tables have two entries for the same location. The code requires
+        // each location to be unique. Append an asterisk to the location name in that case.   Hexapods and ichthyoid
+        while (locations.filter(it => it.where == hl.where).length > 0) {
+          hl.where = hl.where + '*'
+        }
+        locations.push(hl);
       }
     }
 
     // Do the results contain vitals? If not, add it.
-    let vitals = locations.filter(value => value.where === 'Vitals')
+    let vitals = locations.filter(value => value.where === HitLocation.VITALS)
     if (vitals.length === 0) {
-      let hl = new HitLocation()
-      hl.where = 'Vitals'
-      hl.penalty = game.GURPS.hitlocationRolls['Vitals'].penalty
-      hl.roll = game.GURPS.hitlocationRolls['Vitals'].roll
+      let hl = new HitLocation(HitLocation.VITALS)
+      hl.penalty = game.GURPS.hitlocationRolls[HitLocation.VITALS].penalty
+      hl.roll = game.GURPS.hitlocationRolls[HitLocation.VITALS].roll
       hl.dr = '0'
       locations.push(hl)
     }
+
 
     // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and 
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
 		let bodyplan = t(json.bodyplan)?.toLowerCase();		// Was a body plan actually in the import?  
 		let table = hitlocationDictionary[bodyplan]; // If so, try to use it.
+		let locs = []
+    locations.forEach(e => {
+      e.locations(false).forEach(l => locs.push(l));      // Map to new names
+    })
+    locations = locs
+
     if (!table) {
-			bodyplan = this._getBodyPlan(locations)
+			locs = []
+			locations.forEach(e => {
+				e.locations(true).forEach(l => locs.push(l));	// Map to new names, but include original to help match against tables
+			})
+			bodyplan = this._getBodyPlan(locs)
 			table = hitlocationDictionary[bodyplan]
 		}
     // update location's roll and penalty based on the bodyplan
@@ -326,7 +332,7 @@ export class GurpsActor extends Actor {
 				if (!!entry) {
 					it.where = lbl;			// It might be renamed (ex: Skull -> Brain)
 					if (!it.penalty) it.penalty = entry.penalty;
-					if (!it.roll || it.roll.length === 0) it.roll = entry.roll;
+					if (!it.roll || it.roll.length === 0 || it.roll === HitLocation.DEFAULT) it.roll = entry.roll;
 				}
       })
     }
@@ -338,13 +344,14 @@ export class GurpsActor extends Actor {
       let results = Object.values(locations).filter(loc => loc.where === key)
       if (results.length > 0) {
 				if (results.length > 1) {		// If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
-					results[0].dr = results.map(e => e.dr).join("/");
+					results[0].dr = results.map(e => e.dr).join("|");  //  Show each DR separated by |
 				}
         temp.push(results[0])
         locations = locations.filter(it => it.where !== key)
       }
     })
     locations.forEach(it => temp.push(it))
+ //   locations.forEach(it => temp.push(HitLocation.normalized(it)))
 
     let prot = {}
     let index = 0
@@ -359,8 +366,9 @@ export class GurpsActor extends Actor {
 			if (option == 2) {
 	      saveprot = await new Promise((resolve, reject) => {
 	        let d = new Dialog({
-	          title: "Current HP & FP",
-	          content: `Do you want to <br><br><b>Save</b> the current Body Plan (${data.additionalresources.bodyplan}) or <br><br><b>Overwrite</b> it with the Body Plan from the import: (${bodyplan})?<br><br>&nbsp;`,
+	          title: "Hit Location Body Plan",
+	          content: `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize('GURPS.BODYPLAN' + data.additionalresources.bodyplan)}) or ` +
+                      `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize('GURPS.BODYPLAN' + bodyplan)})?<br><br>&nbsp;`,
 	          buttons: {
 	            save: {
 	              icon: '<i class="far fa-square"></i>',
@@ -384,7 +392,7 @@ export class GurpsActor extends Actor {
 	    return {
 	      "data.-=hitlocations": null,
 	      "data.hitlocations": prot,
-				"data.additionalresources.bodyplan": bodyplan
+        "data.additionalresources.bodyplan": bodyplan
 	    };
 		else 
 			return {};
@@ -413,7 +421,7 @@ export class GurpsActor extends Actor {
 
     // Select the tableScore with the highest score.
     let match = -1
-    let name = 'humanoid'
+    let name = HitLocation.HUMANOID
     Object.keys(tableScores).forEach(function (score) {
       if (tableScores[score] > match) {
         match = tableScores[score];
