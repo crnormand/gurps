@@ -19,6 +19,7 @@ To install the latest stable release, use this manifest URL:
 This is what we are currently working on:
 
 - 0.8.5
+    - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP). 
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
     - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
     - System settings concerning overwriting current HP/FP and Body Plan

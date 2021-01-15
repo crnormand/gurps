@@ -101,7 +101,8 @@
             <div><label><input type='radio' name='woundmodifier' value='User Entered' {{#if (eq
                   CALC.damageType 'User Entered' )}}checked{{/if}}>&nbsp;Enter
                 modifier:</label></div>
-            <input type='text' class='decimal-digits-only' id='user-entered-woundmod' value='1'>
+            <input type='text' class='decimal-digits-only' id='user-entered-woundmod'
+              value='{{CALC.userEnteredWoundModifier}}'>
           </div>
           <div class='grid grid-2col flex-between'>
             <label>Additional modifier (stacks):</label>
