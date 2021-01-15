@@ -30,7 +30,7 @@ export class HitLocation {
   static DEFAULT = '-'
 
   constructor(loc = '') {
-    this.dr = ''
+    this.dr = '0'
     this.equipment = ''
     this.penalty = ''
     this.roll = HitLocation.DEFAULT

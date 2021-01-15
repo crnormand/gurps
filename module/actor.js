@@ -92,8 +92,9 @@ export class GurpsActor extends Actor {
 		if (isFoundryGCA) {
 			const v = ra.version.split("-");
 			if (v[1] != "1") {
-	      ui.notifications.error("This file was created with an older version of the GCA Export.   Please update to the latest version.   Check the Users Guide for details (see Chat log).");
-      	ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+			  let msg = "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.   Check the Users Guide for details."
+	      ui.notifications.error(msg);
+      	ChatMessage.create({ content: msg + "<br><a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
 			}		
 		}
 
@@ -276,6 +277,7 @@ export class GurpsActor extends Actor {
     if (!json) return;
     let t = this.textFrom;
     let data = this.data.data;
+    if (!!data.additionalresources.ignoreinputbodyplan) return;
     let locations = []
     for (let key in json) {
       if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -949,10 +951,10 @@ export class GurpsActor extends Actor {
     let myhitlocations = []
     let table = this._hitLocationRolls
     for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
-      let rollText = (!!value.roll && value.roll.length > 0)
-        ? value.roll
-        : table[value.where].roll
-
+      let rollText = value.roll
+      if (!value.roll && !!table[value.where])    // Can happen if manually edited
+        rollText = table[value.where].roll
+      if (!rollText) rollText = HitLocation.DEFAULT
       myhitlocations.push({
         where: value.where,
         dr: parseInt(value.dr),

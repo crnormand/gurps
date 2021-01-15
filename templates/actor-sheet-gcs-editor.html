@@ -262,20 +262,22 @@
         <div class="liftdesc">Shift Slightly</div>
       </div>
       <div id="location">
-        <div class="header">Hit Location</div>
-        <div class="roll header">Roll</div>
-        <div class="where header">Where</div>
-        <div class="penalty header">Penalty</div>
-        <div class="dr header">DR</div>
+        <div class="header hlhead">Hit Location
+          <div><input id="ignoreinputbodyplan" type="checkbox" {{checked data.additionalresources.ignoreinputbodyplan}} style="zoom:0.5">Always ignore Body Plan from Import</div>
+        </div>
+        <div class="roll header hlhead">Roll</div>
+        <div class="where header hlhead">Where</div>
+        <div class="penalty header hlhead">Penalty</div>
+        <div class="dr header hlhead">DR</div>
 
         {{debug}}
         {{#each data.hitlocations as | this key |}}
-        <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
-        <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
-          {{this.where}}
+        <div class="roll hlmenu" data-key="data.hitlocations.{{key}}"><input name="data.hitlocations.{{key}}.roll" class="gcs-input-5" type="text" value="{{hitlocationroll this.where this.roll ../data}}" /></div>
+        <div class="where {{gurpstippable}} hlmenu" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}" data-key="data.hitlocations.{{key}}">
+          <input name="data.hitlocations.{{key}}.where" class="gcs-input-5" type="text" value="{{this.where}}" />
         </div>
-        <div class="penalty">{{hitlocationpenalty this.where this.penalty ../data}}</div>
-        <div class="dr"><input class="gcs-input" type="text" name="data.hitlocations.{{key}}.dr" value="{{this.dr}}" />
+        <div class="penalty hlmenu" data-key="data.hitlocations.{{key}}"><input name="data.hitlocations.{{key}}.penalty" class="gcs-input-5" type="text" value="{{hitlocationpenalty this.where this.penalty ../data}}" /></div>
+        <div class="dr hlmenu" data-key="data.hitlocations.{{key}}"><input class="gcs-input" type="text" name="data.hitlocations.{{key}}.dr" value="{{this.dr}}" />
         </div>
         {{/each}}
 

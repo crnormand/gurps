@@ -23,6 +23,8 @@ This is what we are currently working on:
     - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
     - System settings concerning overwriting current HP/FP and Body Plan
     - Updated GCA export to support Body Plan
+    - Allow manual edit of hit locations
+    - Per actor flag to ignore body plan from import
     - LastActor deselection fixed
     - Rework the look of the resource trackers and HP/FP trackers to make them more compact.
     - Display the current resource tracker thresholds. Right now, that is only "Below" (value is below the minimum), "Over" (value is over the maximum), or "Normal".

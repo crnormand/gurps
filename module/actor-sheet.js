@@ -1,6 +1,7 @@
 import { GURPS } from "./gurps.js";
 import { isNiceDiceEnabled } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js';
+import { HitLocation } from '../module/hitlocation/hitlocation.js'
 import parselink from '../lib/parselink.js';
 import * as CI from "./injury/domain/ConditionalInjury.js";
 import * as settings from '../lib/miscellaneous-settings.js'
@@ -805,6 +806,10 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     super.activateListeners(html);
 
     html.find(".changeequip").click(this._onClickEquip.bind(this));
+    html.find("#ignoreinputbodyplan").click(this._onClickBodyPlan.bind(this));
+    
+    this.makeHeaderMenu(html, ".hlhead", "Hit Location", new HitLocation("???"), "data.hitlocations");
+    this.makeAddDeleteMenu(html, ".hlmenu", new HitLocation("???"));
 
     this.makeHeaderMenu(html, ".reacthead", "Reaction", new Reaction("+0", "from ..."), "data.reactions");
     this.makeAddDeleteMenu(html, ".reactmenu", new Reaction("+0", "from ..."));
@@ -815,11 +820,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeHeaderMenu(html, ".rangedhead", "Ranged Attack", new Ranged("New Attack"), "data.ranged");
     this.makeAddDeleteMenu(html, ".rangedmenu", new Ranged("New Attack"));
 
-    let opts = this.headerMenu("Advantage", new Advantage("New Advantage"), "data.ads").concat(
-      this.headerMenu("Disadvantage", new Advantage("New Disadvantage"), "data.disads"));
-    new ContextMenu(html, ".adshead", opts);
+    this.makeHeaderMenu(html, ".adshead", "Advantage/Disadvantage/Quirk/Perk", new Advantage("New Advantage/Disadvantage/Quirk/Perk"), "data.ads");
     this.makeAddDeleteMenu(html, ".adsmenu", new Advantage("New Advantage"));
-    this.makeAddDeleteMenu(html, ".disadsmenu", new Advantage("New Disadvantage"));
 
     this.makeHeaderMenu(html, ".skillhead", "Skill", new Skill("New Skill"), "data.skills");
     this.makeAddDeleteMenu(html, ".skillmenu", new Skill("New Skill"));
@@ -833,7 +835,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeHeaderMenu(html, ".carhead", "Carried Equipment", new Equipment("New Equipment"), "data.equipment.carried");
     this.makeHeaderMenu(html, ".othhead", "Other Equipment", new Equipment("New Equipment"), "data.equipment.other");
 
-    opts = this.addDeleteMenu(new Equipment("New Equipment"));
+    let opts = this.addDeleteMenu(new Equipment("New Equipment"));
     opts.push({
       name: "Add In (new Equipment will be contained by this)",
       icon: "<i class='fas fa-edit'></i>",
@@ -846,6 +848,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     });
     new ContextMenu(html, ".carmenu", opts);
     new ContextMenu(html, ".othmenu", opts);
+  }
+  
+  
+  async _onClickBodyPlan(ev) {
+    ev.preventDefault();
+    let element = ev.currentTarget;
+    let ignore = element.checked
+    await this.actor.update({ "data.additionalresources.ignoreinputbodyplan": ignore });
   }
 
   async _onClickEquip(ev) {
