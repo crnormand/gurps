@@ -29,13 +29,13 @@ export class HitLocation {
   static BRAIN = 'Brain'
   static DEFAULT = '-'
 
-  constructor(loc = '') {
-    this.dr = '0'
-    this.equipment = ''
-    this.penalty = ''
-    this.roll = HitLocation.DEFAULT
+  constructor(loc = '', dr = '0', penalty = '', roll = HitLocation.DEFAULT, equipment = '') {
     this.where = loc
-		return this
+    this.dr = dr
+    this.equipment = equipment
+    this.penalty = penalty
+    this.roll = roll
+ 		return this
   }
 
 
@@ -48,13 +48,8 @@ export class HitLocation {
     if (!bodyplan) {
       bodyplan = HitLocation.HUMANOID
     }
-
     let table = hitlocationDictionary[bodyplan]
     return (!!table) ? table : hitlocationDictionary[HitLocation.HUMANOID]
-  }
-
-  static makeWinged(table) {
-    return {...table, ...{ "Wings": { roll: "-", penalty: -2,  role: EXTREMITY}}}
   }
  
 	/**
@@ -82,15 +77,6 @@ export class HitLocation {
 		return [ lbl, entry ];
 	}
 	
-	// Ensure that a hit location has enough information for the ADD
-	static normalized(hitloc) {
-	  if (!hitloc.where) hitloc.where = "???";   // Should never happen
-    if (!hitloc.roll) hitloc.roll = "-";   
-    if (!hitloc.penalty) hitloc.penalty = "";   
-    return hitloc;
-	}
-	
-
   setEquipment(frmttext) {
     let e = extractP(frmttext)
     this.equipment = e.trim().replace('\n', ', ')
@@ -316,7 +302,7 @@ const ichthyoidHitLocations = {
   "Skull": { roll: "3-4", penalty: -7 },
   "Face": { roll: "5", penalty: -5 },
   "Fin": { roll: "6", penalty: -4, role: EXTREMITY },
-  "Torso": { roll: "8-12", penalty: 0 },
+  "Torso": { roll: "7-12", penalty: 0 },
   "Fin*": { roll: "13-16", penalty: -4, role: EXTREMITY },
   "Tail": { roll: "17-18", penalty: -5, role: EXTREMITY },
   "Vitals": { roll: "-", penalty: -3 }

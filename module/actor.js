@@ -31,29 +31,27 @@ export class GurpsActor extends Actor {
 
   async update(data, options) {
     // update data for hit location if bodyplan is different
-    if (data.data?.additionalresources?.bodyplan && data.data.additionalresources.bodyplan !== this.data.data.additionalresources?.bodyplan) {
+    if (data.data?.additionalresources?.bodyplan && data.data.additionalresources.bodyplan !== this._additionalResources?.bodyplan) {
       let bodyplan = data.data.additionalresources.bodyplan
       let hitlocationTable = hitlocationDictionary[bodyplan]
       if (!hitlocationTable) {
         ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
       } else {
         let hitlocations = {}
+        let oldlocations = this.data.data.hitlocations || {}
         let count = 0
         for (let loc in hitlocationTable) {
           let hit = hitlocationTable[loc];
-          let originalLoc = Object.values(this.data.data.hitlocations).filter(it => it.where === loc)
+          let originalLoc = Object.values(oldlocations).filter(it => it.where === loc)
           let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
-          hitlocations[zeroFill(count++, 5)] = {
-            dr: dr,
-            equipment: "",
-            penalty: hit.penalty,
-            roll: hit.roll,
-            where: loc
-          }
+          let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
+          game.GURPS.put(hitlocations, it, count++)
         }
-
-        data.data.hitlocations = hitlocations
-        let updatedActor = await super.update({ "data.-=hitlocations": null })
+        // Since we are in the middle of an update now, we have to let it finish, and then change the hitlocations list
+        setTimeout(async () => {
+            await this.update({ "data.-=hitlocations": null })
+            this.update({ "data.hitlocations": hitlocations })
+          }, 200);    
         return super.update(data, options)
       }
     }

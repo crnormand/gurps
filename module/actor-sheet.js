@@ -11,7 +11,6 @@ import * as settings from '../lib/miscellaneous-settings.js'
  * @extends {ActorSheet}
  */
 export class GurpsActorSheet extends ActorSheet {
-
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
