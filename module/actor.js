@@ -955,9 +955,11 @@ export class GurpsActor extends Actor {
       if (!value.roll && !!table[value.where])    // Can happen if manually edited
         rollText = table[value.where].roll
       if (!rollText) rollText = HitLocation.DEFAULT
+      let dr = parseInt(value.dr)
+      if (isNaN(dr)) dr = 0
       myhitlocations.push({
         where: value.where,
-        dr: parseInt(value.dr),
+        dr: dr,
         roll: convertRollStringToArrayOfInt(rollText),
         rollText: rollText
       })
