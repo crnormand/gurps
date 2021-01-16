@@ -664,12 +664,13 @@ async function handleRoll(event, actor) {
   if ("damage" in element.dataset) {
     // expect text like '2d+1 cut'
     let formula = element.innerText.trim();
-    let dtype = ''
+    let dtype = formula.replace(DamageChat.basicRegex, "").trim();   // Remove any kind of damage formula
+    dtype = dtype.replace(DamageChat.fullRegex, "").trim();
 
-    let i = formula.lastIndexOf(' ');
+    let i = dtype.indexOf(' ');
     if (i > 0) {
-      dtype = formula.substr(i + 1).trim();
-      formula = formula.substring(0, i);
+      dtype = dtype.substring(0, i).trim();
+      formula = formula.split(dtype)[0];
     }
     GURPS.damageChat.create(actor, formula, dtype, event)
     return
