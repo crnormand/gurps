@@ -33,7 +33,7 @@ This is what we are currently working on:
     - /pr /private chat commands to roll On-the-Fly formulas privately
     - [fixed a bunch of bugs](https://github.com/crnormand/gurps/issues?q=is%3Aissue+is%3Aclosed+updated:%3E2021-01-05)
     - added system setting for 'SHOW THE MATH'
-    - Encumbrance level automatically set based on carried equipment weight
+    - Encumbrance level automatically set based on carried equipment weight and system setting
 
 ### History
 - 0.8.4

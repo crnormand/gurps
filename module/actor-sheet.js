@@ -91,7 +91,8 @@ export class GurpsActorSheet extends ActorSheet {
       eqtlbs: this.sum(eqt.carried, "weight"),
       othercost: this.sum(eqt.other, "cost")
     };
-    this.checkEncumbance(sheetData.eqtsummary.eqtlbs);
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
+      this.checkEncumbance(sheetData.eqtsummary.eqtlbs);
     return sheetData;
   }
 
@@ -726,19 +727,23 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onClickEnc(ev) {
     ev.preventDefault();
-    let element = ev.currentTarget;
-    let key = element.dataset.key;
-    let encs = this.actor.data.data.encumbrance;
-    if (encs[key].current) return;  // already selected
-    for (let enckey in encs) {
-      let enc = encs[enckey];
-      let t = "data.encumbrance." + enckey + ".current";
-      if (enc.current) {
-        await this.actor.update({ [t]: false });
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+      let element = ev.currentTarget;
+      let key = element.dataset.key;
+      let encs = this.actor.data.data.encumbrance;
+      if (encs[key].current) return;  // already selected
+      for (let enckey in encs) {
+        let enc = encs[enckey];
+        let t = "data.encumbrance." + enckey + ".current";
+        if (enc.current) {
+          await this.actor.update({ [t]: false });
+        }
+        if (key === enckey) {
+          await this.actor.update({ [t]: true });
+        }
       }
-      if (key === enckey) {
-        await this.actor.update({ [t]: true });
-      }
+    } else {
+     ui.notifications.warn("You cannot manually change the Encumbrance level.  The 'Automatically calculate Encumbrance' setting is turned on.");
     }
   }
 
