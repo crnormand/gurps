@@ -75,7 +75,9 @@
 		"GURPS.STATUSTerrible": "Terrible Pain",
 		"GURPS.STATUSRetching": "Retching",
 
-		"GURPS.BODYPLANhumanoid": "Humanoid",
+    "GURPS.BODYPLANhumanoid": "Humanoid",
+    "GURPS.BODYPLANwinged humanoid": "Humanoid, Winged",
+    "GURPS.BODYPLANhumanoid expanded": "Humanoid, Expanded (GCA)",
 		"GURPS.BODYPLANavian": "Avian",
 		"GURPS.BODYPLANcentaur": "Centaur",		
 		"GURPS.BODYPLANhexapod": "Hexapod",

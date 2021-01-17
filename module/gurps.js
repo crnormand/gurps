@@ -664,12 +664,13 @@ async function handleRoll(event, actor) {
   if ("damage" in element.dataset) {
     // expect text like '2d+1 cut'
     let formula = element.innerText.trim();
-    let dtype = ''
+    let dtype = formula.replace(DamageChat.basicRegex, "").trim();   // Remove any kind of damage formula
+    dtype = dtype.replace(DamageChat.fullRegex, "").trim();
 
-    let i = formula.lastIndexOf(' ');
+    let i = dtype.indexOf(' ');
     if (i > 0) {
-      dtype = formula.substr(i + 1).trim();
-      formula = formula.substring(0, i);
+      dtype = dtype.substring(0, i).trim();
+      formula = formula.split(dtype)[0];
     }
     GURPS.damageChat.create(actor, formula, dtype, event)
     return
@@ -1168,14 +1169,14 @@ Hooks.once("init", async function () {
       new NpcInput().render(true);
       return false;
     }
-    let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+    let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/;
     let found = false;
     content.split("\n").forEach(e => {		// Handle multiline chat messages (mostly from macros)
       let m = e.match(re);
       if (!!m && !!m[2]) {
         let action = parselink(m[2]);
         if (!!action.action) {
-          GURPS.performAction(action.action, GURPS.LastActor);
+          GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith("/pr") });
           found = true;
         }
       }
@@ -1305,7 +1306,7 @@ Hooks.once("ready", async function () {
     try {
       let html = $(c);
       let rt = html.find(".result-text");		// Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
-      let re = /^(\/r|\/roll) \[([^\]]+)\]/;
+      let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/;
       let t = rt[0]?.innerText;
       if (!!t) {
         t.split("\n").forEach(e => {
@@ -1313,7 +1314,7 @@ Hooks.once("ready", async function () {
           if (!!m && !!m[2]) {
             let action = parselink(m[2]);
             if (!!action.action) {
-              GURPS.performAction(action.action, GURPS.LastActor);
+              GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith("/pr") });
               //					return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
             }
           }

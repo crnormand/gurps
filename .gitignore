@@ -3,5 +3,6 @@
 .vs/
 .DS_Store
 .project
+.settings/
 Thumbs.db
 scripts/foundry.js

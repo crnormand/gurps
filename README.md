@@ -19,14 +19,21 @@ To install the latest stable release, use this manifest URL:
 This is what we are currently working on:
 
 - 0.8.5
-    - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP). 
+    - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP) and system setting.
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
     - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
     - System settings concerning overwriting current HP/FP and Body Plan
+    - Updated GCA export to support Body Plan
+    - Allow manual edit of hit locations
+    - Per actor flag to ignore body plan from import
     - LastActor deselection fixed
     - Rework the look of the resource trackers and HP/FP trackers to make them more compact.
     - Display the current resource tracker thresholds. Right now, that is only "Below" (value is below the minimum), "Over" (value is over the maximum), or "Normal".
-    - Inline editing of the resource trackers
+    - Inline editing of the resource trackers (pencil icon)
+    - /pr /private chat commands to roll On-the-Fly formulas privately
+    - [fixed a bunch of bugs](https://github.com/crnormand/gurps/issues?q=is%3Aissue+is%3Aclosed+updated:%3E2021-01-05)
+    - added system setting for 'SHOW THE MATH'
+    - Encumbrance level automatically set based on carried equipment weight and system setting
 
 ### History
 - 0.8.4
