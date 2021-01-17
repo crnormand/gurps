@@ -344,10 +344,21 @@ export class GurpsActor extends Actor {
       let results = Object.values(locations).filter(loc => loc.where === key)
       if (results.length > 0) {
 				if (results.length > 1) {		// If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
-					results[0].dr = results.map(e => e.dr).join("|");  //  Show each DR separated by |
+				  let d = ""
+		      let last = 0
+		      results.forEach(r => { 
+            if (r.dr != last) {
+              d += "|" + r.dr;
+              last = r.dr
+            }
+          })
+          if (!!d) d = d.substr(1)
+					results[0].dr = d
 				}
         temp.push(results[0])
         locations = locations.filter(it => it.where !== key)
+      } else {    // Didn't find loc that should be in the table.   Make a default entry
+        temp.push(new HitLocation(key, 0, table[key].penalty, table[key].roll))
       }
     })
     locations.forEach(it => temp.push(it))

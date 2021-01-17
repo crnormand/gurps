@@ -20,6 +20,7 @@ const hitLocationAlias = {
   "Wings": { RAW: "Wing" },
   "ForeFeet": { RAW: "Foot" },
   "HindFeet": { RAW: "Foot" },
+  "Fins": { RAW: "Fin" },
 }
 
 export class HitLocation {

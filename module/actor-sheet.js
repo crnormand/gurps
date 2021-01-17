@@ -47,6 +47,36 @@ export class GurpsActorSheet extends ActorSheet {
     }
     return parseInt(sum * 100) / 100;
   }
+  
+  checkEncumbance(currentWeight) {
+    let encs = this.actor.data.data.encumbrance;
+    var last, best, prev;
+    for (let key in encs) {
+      last = key;
+      let enc = encs[key];
+      if (enc.current) prev = key;
+      let w = parseFloat(enc.weight);
+      if (currentWeight <= w) {
+        best = key;
+        break;
+      }
+    }
+    if (!best) best = last;
+    if (best != prev) {
+      setTimeout(async () => {
+        for (let key in encs) {
+          let enc = encs[key];
+          let t = "data.encumbrance." + key + ".current";
+          if (enc.current) {
+            await this.actor.update({ [t]: false });
+          }
+          if (key === best) {
+            await this.actor.update({ [t]: true });
+          }
+        }
+      }, 200);
+    }
+  }
 
   /** @override */
   getData() {
@@ -61,6 +91,7 @@ export class GurpsActorSheet extends ActorSheet {
       eqtlbs: this.sum(eqt.carried, "weight"),
       othercost: this.sum(eqt.other, "cost")
     };
+    this.checkEncumbance(sheetData.eqtsummary.eqtlbs);
     return sheetData;
   }
 
