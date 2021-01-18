@@ -345,7 +345,7 @@ export class GurpsActor extends Actor {
       if (results.length > 0) {
 				if (results.length > 1) {		// If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
 				  let d = ""
-		      let last = 0
+		      var last;
 		      results.forEach(r => { 
             if (r.dr != last) {
               d += "|" + r.dr;

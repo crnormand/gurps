@@ -579,7 +579,11 @@
 
       {{#listeqt data.equipment.carried }}
       <div class="equipped satisfiedY">{{#if this.equipped}}X{{/if}}</div>
-      <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{this.count}}</div>
+      <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
+        <!--<button class="equipmentbutton" data-operation='equipment-dec'><i class="fas fa-minus"></i></button>-->
+        {{this.count}}
+        <!--<button class="equipmentbutton" data-operation='equipment-inc'><i class="fas fa-plus"></i></button>-->
+      </div>
       <div class="desc indent{{@indent}} satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
         {{{gurpslink this.name}}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink

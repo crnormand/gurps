@@ -743,7 +743,7 @@ export class GurpsActorSheet extends ActorSheet {
         }
       }
     } else {
-     ui.notifications.warn("You cannot manually change the Encumbrance level.  The 'Automatically calculate Encumbrance' setting is turned on.");
+     ui.notifications.warn("You cannot manually change the Encumbrance level.  The 'Automatically calculate Encumbrance Level' setting is turned on.");
     }
   }
 
