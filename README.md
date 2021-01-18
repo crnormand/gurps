@@ -19,6 +19,7 @@ To install the latest stable release, use this manifest URL:
 This is what we are currently working on:
 
 - 0.8.6
+    - Yet more updates to Mook Generator stat block importer
 
 ### History
 - 0.8.5
