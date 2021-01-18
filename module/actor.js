@@ -473,8 +473,16 @@ export class GurpsActor extends Actor {
         eqt.count = i(j.count);
         eqt.cost = t(j.cost);
         eqt.weight = f(j.weight);
-        eqt.costsum = t(j.costsum);
-        eqt.weightsum = t(j.weightsum);
+        let tmp = parseFloat(eqt.cost);
+        if (!isNaN(tmp))
+          eqt.costsum = eqt.count * tmp;
+        else
+          eqt.costsum = t(j.costsum);
+        tmp = parseFloat(eqt.weight)
+         if (!isNaN(tmp))
+          eqt.weightsum = eqt.count * tmp;
+        else
+          eqt.weightsum = t(j.weightsum);
         eqt.location = t(j.location);
         let cstatus = i(j.carried);
         eqt.carried = (cstatus >= 1);
@@ -482,7 +490,7 @@ export class GurpsActor extends Actor {
         eqt.techlevel = t(j.tl);
         eqt.legalityclass = t(j.lc);
         eqt.categories = t(j.type);
-        if (isFoundryGCS) {
+       if (isFoundryGCS) {
           eqt.notes = t(j.notes);
           eqt.pageref = t(j.pageref);
         } else
