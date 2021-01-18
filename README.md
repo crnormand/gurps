@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.4
+# Current Release Version 0.8.5
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,6 +18,9 @@ To install the latest stable release, use this manifest URL:
 
 This is what we are currently working on:
 
+- 0.8.6
+
+### History
 - 0.8.5
     - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP) and system setting.
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
@@ -35,7 +38,6 @@ This is what we are currently working on:
     - added system setting for 'SHOW THE MATH'
     - Encumbrance level automatically set based on carried equipment weight and system setting
 
-### History
 - 0.8.4
     - Enhanced the Mook Generator to use tabs as a delimiter.
     - Added pain penalties for characters with High Pain Threshold (HPT) to the modifier bucket (thanks, @Exxar!)
