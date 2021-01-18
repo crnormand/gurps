@@ -20,6 +20,8 @@ This is what we are currently working on:
 
 - 0.8.6
     - Yet more updates to Mook Generator stat block importer
+    - Support for OtF [Dodge+/-mod text] and [<mapped>+/-mod text] (Vision, Hearing, Fright Check, etc.)
+    
 
 ### History
 - 0.8.5
