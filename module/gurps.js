@@ -567,6 +567,7 @@ function performAction(action, actor, event) {
       target = parseInt(actor.getCurrentDodge());
       formula = "3d6";
       thing = "Dodge";
+      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc));
     } else
       ui.notifications.warn("You must have a character selected");
 
