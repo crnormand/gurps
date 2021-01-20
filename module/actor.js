@@ -908,8 +908,7 @@ export class GurpsActor extends Actor {
         a.name = t(j.name);
         a.points = this.intFrom(j.points);
         a.setNotes(t(j.text));
-        if (!!j.pageref)
-          a.pageref = t(j.pageref).split(",").splice(0, 1);
+        a.pageref = t(j.pageref);
         game.GURPS.put(datalist, a, index++);
       }
     }

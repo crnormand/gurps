@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.6
+# Current Release Version 0.8.7
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,9 +18,12 @@ To install the latest stable release, use this manifest URL:
 
 This is what we are currently working on:
 
-- 0.8.7
+- 0.8.8
 
 ### History
+- 0.8.7
+    - Bug fix for multiple PDF links (and GCA import failure)
+
 - 0.8.6
     - Yet more updates to Mook Generator stat block importer
     - Support for OtF [Dodge+/-mod text] and [<mapped>+/-mod text] (Vision, Hearing, Fright Check, etc.)
