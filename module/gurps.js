@@ -857,29 +857,35 @@ function handleOnPdf(event) {
 }
 GURPS.handleOnPdf = handleOnPdf;
 
-function handlePdf(link) {
-  let t = link.trim();
-  let i = t.indexOf(":");
-  let book = "";
-  let page = 0;
-  if (i > 0) {
-    book = t.substring(0, i).trim();
-    page = parseInt(t.substr(i + 1));
-  } else {
-    book = t.replace(/[0-9]*/g, "").trim();
-    page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
+function handlePdf(links) {
+  if (!ui.PDFoundry) {
+    ui.notifications.warn('PDFoundry must be installed and configured to use links.');
+    return;
   }
-  // Special case for Separate Basic Set PDFs
-  if (book === "B") {
-    let s = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BASICSET_PDF);
-    if (page > 336)
-      if (s === "Separate") {
-        book = "BX";
-        page = page - 335;
-      } else
-        page += 2;
-  }
-  if (ui.PDFoundry) {
+
+  // Just in case we get sent multiple links separated by commas, we will open them all
+  links.split(",").forEach(link => {
+    let t = link.trim();
+    let i = t.indexOf(":");
+    let book = "";
+    let page = 0;
+    if (i > 0) {
+      book = t.substring(0, i).trim();
+      page = parseInt(t.substr(i + 1));
+    } else {
+      book = t.replace(/[0-9]*/g, "").trim();
+      page = parseInt(t.replace(/[a-zA-Z]*/g, ""));
+    }
+    // Special case for Separate Basic Set PDFs
+    if (book === "B") {
+      let s = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BASICSET_PDF);
+      if (page > 336)
+        if (s === "Separate") {
+          book = "BX";
+          page = page - 335;
+        } else
+          page += 2;
+    }
     const pdf = ui.PDFoundry.findPDFDataByCode(book);
     if (pdf === undefined) {
       let url = game.GURPS.SJGProductMappings[book];
@@ -888,9 +894,7 @@ function handlePdf(link) {
     }
     else
       ui.PDFoundry.openPDF(pdf, { page });
-  } else {
-    ui.notifications.warn('PDFoundry must be installed to use links.');
-  }
+  });
 }
 GURPS.handlePdf = handlePdf;
 
