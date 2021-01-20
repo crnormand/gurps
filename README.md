@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.5
+# Current Release Version 0.8.6
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,6 +18,9 @@ To install the latest stable release, use this manifest URL:
 
 This is what we are currently working on:
 
+- 0.8.7
+
+### History
 - 0.8.6
     - Yet more updates to Mook Generator stat block importer
     - Support for OtF [Dodge+/-mod text] and [<mapped>+/-mod text] (Vision, Hearing, Fright Check, etc.)
@@ -26,7 +29,6 @@ This is what we are currently working on:
     - Fixed "lost" Automatic Encumbrance system setting
     - Support opening multiple PDF links "B101, MA105"
     
-### History
 - 0.8.5
     - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP) and system setting.
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
