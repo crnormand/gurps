@@ -22,8 +22,10 @@ This is what we are currently working on:
     - Yet more updates to Mook Generator stat block importer
     - Support for OtF [Dodge+/-mod text] and [<mapped>+/-mod text] (Vision, Hearing, Fright Check, etc.)
     - Fixed weight/cost sum import for GCA
+    - @Exxar's fix to CI
+    - Fixed "lost" Automatic Encumbrance system setting
+    - Support opening multiple PDF links "B101, MA105"
     
-
 ### History
 - 0.8.5
     - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP) and system setting.
