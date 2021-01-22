@@ -77,6 +77,7 @@ export class ModifierBucket extends Application {
 		data.othermods = OtherMods.split("\n");
 		data.cansend = game.user?.isGM || game.user?.isRole("TRUSTED") || game.user?.isRole("ASSISTANT");
 		data.users = game.users?.filter(u => u._id != game.user._id) || [];
+    if (data.users.length > 1) data.users.push({name:"Everyone!"});
 		data.taskdificulties = TaskDifficultyModifiers;
 		data.lightingmods = LightingModifiers;
 		data.eqtqualitymods = EqtQualifyModifiers;
@@ -206,11 +207,19 @@ export class ModifierBucket extends Application {
 		event.preventDefault();
 		let element = event.currentTarget;
 		let id = element.dataset.id;
-
-		let u = game.users.get(id);
-		await u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
-		await u.setFlag("gurps", "modifierchanged", Date.now());
-		this.showOthers();
+		let user = game.users.get(id);
+    let set = (!!user) ? [user] : game.users?.filter(u => u._id != game.user._id) || [];
+    let d = Date.now();
+    {
+      await set.forEach(u => {
+    		u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
+      });
+      await set.forEach(u => {
+        u.setFlag("gurps", "modifierchanged", d);
+      });
+    }
+    
+		setTimeout(() => this.showOthers(), 1000);    // Need time for clients to update...and 
 	}
 
 	async _onClickTrash(event) {

@@ -585,22 +585,24 @@ function performAction(action, actor, event) {
       thing = action.desc;
       if (!action.melee) target = actordata.data[action.path];		// Is there a basic parry or block stored, and we didn't try to identify a melee
       Object.values(actordata.data.melee).forEach(e => {
-        if (!target || target < 0) {
+        if (!target || target <= 0) {
           if (!!e[action.path]) {
             if (!!action.melee) {
               let n = action.melee.split("*").join(".*").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
               if ((e.name + (!!e.mode ? " (" + e.mode + ")" : "")).match(n)) {
-                target = e[action.path];
-                thing += " for " + e.name;
+                target = parseInt(e[action.path]);
               }
             } else {
-              target = e[action.path];
+              target = parseInt(e[action.path]);
+            }
+            if (!!target && target > 0) {
               thing += " for " + e.name;
+              if (!!e.mode)
+                opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + e.mode + ")</span>";
             }
           }
         }
       });
-      target = parseInt(target);
       if (target > 0)
         formula = "3d6";
       else

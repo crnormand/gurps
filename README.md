@@ -19,6 +19,8 @@ To install the latest stable release, use this manifest URL:
 This is what we are currently working on:
 
 - 0.8.8
+    - Fixed [Parry] bug (if Parry column has "No" in it)
+    - Added "Send to 'Everyone'" GM option in modifier bucket
 
 ### History
 - 0.8.7
