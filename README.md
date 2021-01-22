@@ -1,32 +1,109 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
+# Current Release Version 0.8.5
+[If you like our work...](https://ko-fi.com/crnormand)
 
-# Current Release Version 0.8.0
-**NOTE: If you upgrade to v0.8.0, you MUST delete all of your actors and restart Foundry**
+<a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
-To install the latest release, use this manifest URL:   
+
+To install the latest stable release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
 
+[Getting Started video](https://youtu.be/FUqtOkdyBCo)
+
+[Players Guide video](https://youtu.be/x-xD39x_JQw)
 
 ## The 'main' branch is being actively developed... and it may break things.   
-## If you are looking for the last stable release, use the manifest URL above.
+### If you are looking for the latest stable release, use the manifest URL above.
 
 This is what we are currently working on:
+
+- 0.8.6
+    - Yet more updates to Mook Generator stat block importer
+    - Support for OtF [Dodge+/-mod text] and [<mapped>+/-mod text] (Vision, Hearing, Fright Check, etc.)
+    - Fixed weight/cost sum import for GCA
+    
+
+### History
+- 0.8.5
+    - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP) and system setting.
+    - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
+    - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
+    - System settings concerning overwriting current HP/FP and Body Plan
+    - Updated GCA export to support Body Plan
+    - Allow manual edit of hit locations
+    - Per actor flag to ignore body plan from import
+    - LastActor deselection fixed
+    - Rework the look of the resource trackers and HP/FP trackers to make them more compact.
+    - Display the current resource tracker thresholds. Right now, that is only "Below" (value is below the minimum), "Over" (value is over the maximum), or "Normal".
+    - Inline editing of the resource trackers (pencil icon)
+    - /pr /private chat commands to roll On-the-Fly formulas privately
+    - [fixed a bunch of bugs](https://github.com/crnormand/gurps/issues?q=is%3Aissue+is%3Aclosed+updated:%3E2021-01-05)
+    - added system setting for 'SHOW THE MATH'
+    - Encumbrance level automatically set based on carried equipment weight and system setting
+
+- 0.8.4
+    - Enhanced the Mook Generator to use tabs as a delimiter.
+    - Added pain penalties for characters with High Pain Threshold (HPT) to the modifier bucket (thanks, @Exxar!)
+    - Enhanced the character sheet to enable damage formulas based on Swing or Thrust; e.g. "sw+2" or "thr-1".
+    - Updated the damage chat message to show individual dice results in addition to the sum.
+    - Support multiple hit location tables: Humanoid, Quadruped, Quadruped (winged), Avian, Centaur, Hexapod, Hexapod (winged), 
+    Veriform, Snakeman, Winged Serpent, Octopoid, Squid, Cancroid, Scorpion, Ichthyoid, and Arachnoid. Until the GCS import 
+    can be enhanced, the app makes its best guess at the form of the imported character.
+    - Enhanced editor to select the hit location table that is in use by that character.
+    - Updated the Apply Damage Dialog to work with all the hit location tables, including damage effects on non-human limbs and
+    extremities.
+    - Multiple small tweaks to the UI.
+    - System setting to ignore 'name' attribute during import
+    - More flexible parsing for stat block attacks
+
+- 0.8.3
+    - Direct roll of On-the-Fly formulas in chat.  e.g. /r [Per] or /roll [3d-2 cr]
+    - Direct roll of On-the-Fly formulas in Rolltables
+    - Direct roll of On-the-Fly formulas in Macros (multiple lines)
+    - Added Parry & Block to the On-the-Fly formulas
+    - Enhancements to the Mook Generator stat block importing
+    - Journal entries now parse (and display) On-the-Fly formulas.  
+    - Chat Portraits module supported (and recommended!)
+    - Drag and drop damage onto Tokens
+    - Drag and drop damage onto Combat Tracker
+    - General Resource trackers!  Full and Combat sheets
+
+- 0.8.2
+    - Rearrange npc sheet (attacks over traits/skills)
+    - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
+    - Adding Stat block importing/parsing
+    - Pressing SHIFT while making a roll makes it private (so GM can "roll behind the screen")
+    - Added @gmod, @gmodc to roll macros
+    - Enhancements for Apply Damage Dialog (ADD)
+      - Vulnerability
+      - Hardened DR
+      - Injury Tolerance
+    - "Show the Math" on damage chat messages
+    - Additional ranged hits capped at RoF
+    - Import can now keep current HP & FP
+    - fix for combined Basic Set PDF link for pages > 336
+
 - 0.8.1
     - Basic Speed no longer truncates
-    - More Apply Damage Dialog options
+    - Major upgrade to Apply Damage Dialog!
     - Allow "defense" to be rollable in Simple sheet
+    - Simple sheet "Heart" now shows color based on HP condition
     - Add [Dodge] to On-the-Fly formulas
     - Users Guide link in Foundry.   Type "/help" or "!help" in chat
-    - Current Encumbrance can be set on main/combat sheet
+    - Current Encumbrance can be set on main/combat sheet.   Only current Dodge can be rolled.
     - Fixed Full/Combat sheet toggle
     - Warn on FG import
     - On-the-Fly can now parse "4d+1x2(0.5)" damage rolls
     - On-the-Fly can now create "blind" rolls.   Useful for GM to ask everyone to roll PER
     - Support for generic damage type "dmg"
+    - Added calculation of additional hits for RoF/Rcl.
+    - Mook Generator / NPC Sheet
+    - Shift/Ctrl click Full View/Combat View opens Simplified and NPC/Mini sheets
+    - Support [Fright Check], [Vision], [Hearing], [Touch], [Taste], [Smell] On-the-Fly rolls.
+    - Right Click on Attack/Skill/Spell level & On-the-Fly formula to whisper to owner.
 		
-
-### History
+**NOTE: If you upgrade to v0.8.0, you MUST delete all of your actors and restart Foundry**
 - 0.8.0
     - Enhanced Drag and Drop Damage Dialog.
     - Simplified (convention one-shot) character sheet
@@ -57,8 +134,6 @@ This is what we are currently working on:
     - Can edit character sheet
     - Started work on drag and drop damage!
     
-**NOTE: If you upgrade to v0.7.0, YOU MUST delete all of your actors, and Restart Foundry**
-
 - 0.6.5
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players

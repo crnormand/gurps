@@ -1,0 +1,17 @@
+<div>
+  {{name}} suffers a crippling injury <span style='font-size: smaller;'>([PDF:B422])</span> to {{location}}.<br />
+  {{#if (eq location 'Tail')}}
+  <hr />
+  <span style='font-size:small;'>
+    Ground creatures suffer:
+    <ul>
+      <li>[-1 to all DX-based rolls]. </li>
+    </ul>
+    Swimmers or Flyers suffer:
+    <ul>
+      <li>[-2 to all DX-based rolls], </li>
+      <li>Move is reduced to half.</li>
+    </ul>
+  </span>
+  {{/if}}
+</div>
