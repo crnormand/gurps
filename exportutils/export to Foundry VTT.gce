@@ -7,9 +7,8 @@
 'By Brian Ronnle, enhanced for Foundry VTT by Chris Normand/Nose66
 'Based on the original export filter by Graham Brand (Spyke)
 '
-Const LastUpdated = 202021125
-' Last Updated: Nov 25, 2020
-' v1
+Const LastUpdated = 20210114
+' Last Updated: Jan 14, 2021
 '
 Const gcaStat = 1
 Const Stats = 1
@@ -41,7 +40,7 @@ Sub Main()
 
     ' begin the xml file
     Paragraph = "<?xml version=""1.0"" encoding=""iso-8859-1""?>"
-    Paragraph = "<root release=""Foundry"" version=""GCA"">"
+    Paragraph = "<root release=""Foundry"" version=""GCA-1"">"
     Paragraph = "<character>"
 
     ' in Fantasy Grounds the <name> field must be at the top level
@@ -1238,6 +1237,7 @@ Sub PrintProtection()
 
     Paragraph = ""
     Paragraph = "<protectionlist>"
+    Paragraph = "<bodyplan type=""string"">" & Char.BodyType & "</bodyplan>"
 
     'get DR bonus, if any
     ListLoc = Char.ItemPositionByNameAndExt("DR", Stats)

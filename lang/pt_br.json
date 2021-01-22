@@ -34,6 +34,7 @@
   "GURPS.swing" : "Golpe de Balanço (BAL)",
   "GURPS.move" : "Movimentação",
   "GURPS.dodge" : "Esquiva",
+  "GURPS.parry" : "Desviar-se",
 
   "GURPS.SkillDXE": "DX/F",
   "GURPS.SkillDXA": "DX/M",
@@ -72,5 +73,24 @@
   "GURPS.STATUSModerate": "Dor Moderada",
   "GURPS.STATUSSevere": "Dor Severa",
   "GURPS.STATUSTerrible": "Dor Terrível",
-  "GURPS.STATUSRetching": "Vomitando"
+  "GURPS.STATUSRetching": "Vomitando",
+  
+  "GURPS.BODYPLANhumanoid": "Humanoid",
+  "GURPS.BODYPLANwinged humanoid": "Humanoid, Winged",
+  "GURPS.BODYPLANavian": "Avian",
+  "GURPS.BODYPLANcentaur": "Centaur",   
+  "GURPS.BODYPLANhexapod": "Hexapod",
+  "GURPS.BODYPLANhexapodWinged": "Hexapod, Winged",
+  "GURPS.BODYPLANquadruped": "Quadruped",
+  "GURPS.BODYPLANquadrupedWinged": "Quadruped, Winged",
+  "GURPS.BODYPLANsnakeman": "Snakeman",
+  "GURPS.BODYPLANvermiform": "Vermiform",
+  "GURPS.BODYPLANvermiformWinged": "Serpent, Winged",
+  "GURPS.BODYPLANoctopod": "Octopod",
+  "GURPS.BODYPLANsquid": "Squid",
+  "GURPS.BODYPLANcancroid": "Cancroid",
+  "GURPS.BODYPLANscorpion": "Scorpion",
+  "GURPS.BODYPLANichthyoid": "Ichthyoid",
+  "GURPS.BODYPLANarachnoid": "Arachnoid"
+
 }

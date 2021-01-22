@@ -1,6 +1,27 @@
 import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import parselink from '../lib/parselink.js'
+import * as settings from '../lib/miscellaneous-settings.js'
 
+// Install Custom Roll to support global modifier access (@gmod & @gmodc)
+export class GurpsRoll extends Roll {
+	_prepareData(data) {
+		let d = super._prepareData(data);
+		if (!d.hasOwnProperty('gmodc'))
+			Object.defineProperty(d, 'gmodc', {
+				get: () => {
+					let m = GURPS.ModifierBucket.currentSum();
+					GURPS.ModifierBucket.clear();
+					return m;
+				}
+			});
+		d.gmod = GURPS.ModifierBucket.currentSum();
+		return d;
+	}
+}
+CONFIG.Dice.rolls[0] = GurpsRoll;
+
+
+// TODO how to handle non-humanoid hit locations?
 export class ModifierBucket extends Application {
 	constructor(options = {}) {
 		super(options)
@@ -27,14 +48,16 @@ export class ModifierBucket extends Application {
 	tempRangeMod = null;
 
 	addTempRangeMod() {
-		// Only allow 1 measured range, for the moment.
-		let d = "for range";
-		this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
-		if (this.tempRangeMod == 0) {
-			this.sum();
-			this.updateBucket();
-		} else {
-			this.addModifier(this.tempRangeMod, d);
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_RANGE_TO_BUCKET)) {
+			// Only allow 1 measured range, for the moment.
+			let d = "for range";
+			this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d);
+			if (this.tempRangeMod == 0) {
+				this.sum();
+				this.updateBucket();
+			} else {
+				this.addModifier(this.tempRangeMod, d);
+			}
 		}
 	}
 
@@ -69,7 +92,7 @@ export class ModifierBucket extends Application {
 			let ranged = [];
 			let defense = [];
 			let gen = [];
-			
+
 			let effects = game.GURPS.LastActor.effects.filter(e => !e.data.disabled);
 			for (let e of effects) {
 				let type = e.data.flags.core.statusId;
@@ -117,7 +140,8 @@ export class ModifierBucket extends Application {
 		let e = html.find("#globalmodifier");
 		e.click(this._onClick.bind(this));
 		e.contextmenu(this.onRightClick.bind(this));
-		e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
+		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MODIFIER_TOOLTIP))
+			e.each((i, li) => { li.addEventListener('mouseenter', ev => this._onenter(ev), false) });
 
 		e = html.find("#modttt");
 		e.each((i, li) => { li.addEventListener('mouseleave', ev => this._onleave(ev), false) });
@@ -131,13 +155,7 @@ export class ModifierBucket extends Application {
 			this.tooltipElement.style.setProperty("visibility", "hidden");
 		}
 
-		html.find(".rollable").click(this._onClickRoll.bind(this));
-		html.find(".pdflink").click(this._onClickPdf.bind(this));
-		html.find(".gurpslink").click(this._onClickGurpslink.bind(this));
-		html.find(".gmod").click(this._onClickGmod.bind(this));
-		html.find(".glinkmod").click(this._onClickGmod.bind(this));
-		html.find(".glinkmodplus").click(this._onClickGmod.bind(this));
-		html.find(".glinkmodminus").click(this._onClickGmod.bind(this));
+		GURPS.hookupGurps(html, this);
 
 		html.find(".gmbutton").click(this._onGMbutton.bind(this));
 		html.find("#modmanualentry").change(this._onManualEntry.bind(this));
@@ -195,27 +213,6 @@ export class ModifierBucket extends Application {
 		this.showOthers();
 	}
 
-	async _onClickPdf(event) {
-		game.GURPS.handleOnPdf(event);
-	}
-
-	async _onClickRoll(event) {
-		event.preventDefault();
-		game.GURPS.onRoll(event, this.actor);
-	}
-
-	async _onClickGurpslink(event) {
-		event.preventDefault();
-		game.GURPS.onGurpslink(event, game.GURPS.LastActor);
-	}
-
-	async _onClickGmod(event) {
-		let element = event.currentTarget;
-		event.preventDefault();
-		let desc = element.dataset.name;
-		game.GURPS.onGurpslink(event, game.GURPS.LastActor, desc);
-	}
-
 	async _onClickTrash(event) {
 		event.preventDefault();
 		this.clear();
@@ -232,18 +229,18 @@ export class ModifierBucket extends Application {
 
 	async _onClick(event) {
 		event.preventDefault();
-
-		// If not the GM, just broadcast our mods to the chat	
-		if (!game.user.isGM) {
-			let messageData = {
-				content: this.chatString(this.modifierStack),
-				type: CONST.CHAT_MESSAGE_TYPES.OOC,
-			};
-			CONFIG.ChatMessage.entityClass.create(messageData, {});
-			return;
-		}
-
-		this.showOthers();
+		if (event.shiftKey) {
+			// If not the GM, just broadcast our mods to the chat	
+			if (!game.user.isGM) {
+				let messageData = {
+					content: this.chatString(this.modifierStack),
+					type: CONST.CHAT_MESSAGE_TYPES.OOC,
+				};
+				CONFIG.ChatMessage.entityClass.create(messageData, {});
+			} else
+				this.showOthers();
+		} else
+			this._onenter(event);
 	}
 
 	async showOthers() {
@@ -298,14 +295,19 @@ ${OtherMods}`;
 	// Public method. Used by GURPS to create a temporary modifer for an action.
 	makeModifier(mod, reason) {
 		let m = displayMod(mod);
-		return { "mod": m, "desc": reason, "plus": (m[0] == "+") };
+		return {
+			"mod": m,
+			"modint": parseInt(m),
+			"desc": reason,
+			"plus": (m[0] == "+")
+		};
 	}
 
 	sum() {
 		let stack = this.modifierStack;
 		stack.currentSum = 0;
 		for (let m of stack.modifierList) {
-			stack.currentSum += parseInt(m.mod);
+			stack.currentSum += m.modint;
 		}
 		stack.displaySum = displayMod(stack.currentSum);
 		stack.plus = stack.currentSum > 0;
@@ -324,8 +326,9 @@ ${OtherMods}`;
 		let stack = this.modifierStack;
 		let oldmod = stack.modifierList.find(m => m.desc == reason);
 		if (!!oldmod) {
-			let m = parseInt(oldmod.mod) + parseInt(mod);
+			let m = oldmod.modint + parseInt(mod);
 			oldmod.mod = displayMod(m);
+			oldmod.modint = m;
 		} else {
 			stack.modifierList.push(this.makeModifier(mod, reason));
 		}
@@ -334,7 +337,7 @@ ${OtherMods}`;
 	}
 
 	// Called during the dice roll to return a list of modifiers and then clear
-	async applyMods(targetmods) {
+	async applyMods(targetmods = []) {
 		let stack = this.modifierStack;
 		let answer = (!!targetmods) ? targetmods : [];
 		answer = answer.concat(stack.modifierList);
@@ -403,6 +406,9 @@ const StatusModifiers = [
 	"-2 to IQ/DX/CR rolls (Moderate Pain)",
 	"-4 to IQ/DX/CR rolls (Severe Pain)",
 	"-6 to IQ/DX/CR rolls (Terrible Pain)",
+	"-1 to IQ/DX/CR rolls (Moderate Pain /w HPT)",
+	"-2 to IQ/DX/CR rolls (Severe Pain /w HPT)",
+	"-3 to IQ/DX/CR rolls (Terrible Pain /w HPT)",
 	"-5 to IQ/DX/PER checks (Retching)"
 ];
 
