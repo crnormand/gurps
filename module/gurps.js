@@ -588,7 +588,8 @@ function performAction(action, actor, event) {
         if (!target || target < 0) {
           if (!!e[action.path]) {
             if (!!action.melee) {
-              if (e.name.startsWith(action.melee)) {
+              let n = action.melee.split("*").join(".*").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+              if ((e.name + (!!e.mode ? " (" + e.mode + ")" : "")).match(n)) {
                 target = e[action.path];
                 thing += " for " + e.name;
               }
@@ -600,10 +601,10 @@ function performAction(action, actor, event) {
         }
       });
       target = parseInt(target);
-      if (target)
+      if (target > 0)
         formula = "3d6";
       else
-        ui.notifications.warn("Unable to find a " + action.desc + " to roll");
+        ui.notifications.warn("Unable to find a " + action.orig + " to roll");
     } else
       ui.notifications.warn("You must have a character selected");
 
