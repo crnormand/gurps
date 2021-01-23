@@ -225,9 +225,85 @@ export class GurpsActorSheet extends ActorSheet {
       d.render(true);
     })
     
+    // Equipment 
+    html.find(".changeequip").click(this._onClickEquip.bind(this));
+    html.find(".addequipmenticon").click(async ev => {
+      let parent = $(ev.currentTarget).closest('.header')
+      let path = parent.attr('data-key')
+      let actor = this.actor 
+      let eqtlist = getProperty(actor.data, path)
+      let eqt = new Equipment();
+      eqt.carried = path.includes("carried");
+      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
+
+      let options = {
+        width: 130,
+        popOut: true,
+        minimizable: false,
+        jQuery: true
+      }
+
+      let d = new Dialog({
+        title: 'Equipment Editor',
+        content: dlgHtml,
+        buttons: {
+          one: {
+            label: "Update",
+            callback: async (html) => {
+              eqt.name = html.find('.name input').val()
+              eqt.cost = parseInt(html.find('.cost').val())
+              eqt.count = parseInt(html.find('.count').val())
+              eqt.weight = parseInt(html.find('.weight').val())
+              Equipment.calc(eqt);
+              GURPS.put(eqtlist, eqt);
+              actor.update({ [path]: eqtlist })
+            }
+          }
+        },
+        default: "one",
+      },
+        options);
+      d.render(true);
+    })
     
-    // Handle Equipment QTY changes
-    html.find('button[data-operation="equipment-inc"]').click(async ev => {
+    html.find(".dblclkedit").click(async ev => {
+      let element = ev.currentTarget;
+      let path = element.dataset.key;
+      let actor = this.actor 
+      let eqt = getProperty(actor.data, path)
+      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
+
+      let options = {
+        width: 130,
+        popOut: true,
+        minimizable: false,
+        jQuery: true
+      }
+
+      let d = new Dialog({
+        title: 'Equipment Editor',
+        content: dlgHtml,
+        buttons: {
+          one: {
+            label: "Update",
+            callback: async (html) => {
+              eqt.name = html.find('.name input').val()
+              eqt.cost = parseInt(html.find('.cost').val())
+              eqt.count = parseInt(html.find('.count').val())
+              eqt.weight = parseInt(html.find('.weight').val())
+              Equipment.calc(eqt);
+              actor.update({ [path]: eqt })
+            }
+          }
+        },
+        default: "one",
+      },
+        options);
+      d.render(true);
+    })
+
+   
+   html.find('button[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault();
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
@@ -785,6 +861,14 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
+  async _onClickEquip(ev) {
+    ev.preventDefault();
+    let element = ev.currentTarget;
+    let key = element.dataset.key;
+    let eqt = GURPS.decode(this.actor.data, key);
+    eqt.equipped = !eqt.equipped;
+    await this.actor.update({ [key]: eqt });
+  }
 
   /* -------------------------------------------- */
 
@@ -878,7 +962,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
-    html.find(".changeequip").click(this._onClickEquip.bind(this));
     html.find("#ignoreinputbodyplan").click(this._onClickBodyPlan.bind(this));
     
     this.makeHeaderMenu(html, ".hlhead", "Hit Location", new HitLocation("???"), "data.hitlocations");
@@ -931,14 +1014,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     await this.actor.update({ "data.additionalresources.ignoreinputbodyplan": ignore });
   }
 
-  async _onClickEquip(ev) {
-    ev.preventDefault();
-    let element = ev.currentTarget;
-    let key = element.dataset.key;
-    let eqt = GURPS.decode(this.actor.data, key);
-    eqt.equipped = !eqt.equipped;
-    await this.actor.update({ [key]: eqt });
-  }
 }
 
 export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
