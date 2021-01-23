@@ -22,6 +22,8 @@ This is what we are currently working on:
     - Fixed [Parry] bug (if Parry column has "No" in it)
     - Added "Send to 'Everyone'" GM option in modifier bucket
     - Added QTY +/- buttons to equipment (ugly, but functional)
+    - Added RMB menu to equipment (Add Before, Delete, Add at end, Add in, Edit)
+    - Added Equipment edit dialog
 
 ### History
 - 0.8.7

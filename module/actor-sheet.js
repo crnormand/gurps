@@ -225,118 +225,6 @@ export class GurpsActorSheet extends ActorSheet {
       d.render(true);
     })
     
-    // Equipment 
-    html.find(".changeequip").click(this._onClickEquip.bind(this));
-    html.find(".addequipmenticon").click(async ev => {
-      let parent = $(ev.currentTarget).closest('.header')
-      let path = parent.attr('data-key')
-      let actor = this.actor 
-      let eqtlist = getProperty(actor.data, path)
-      let eqt = new Equipment();
-      eqt.carried = path.includes("carried");
-      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
-
-      let options = {
-        width: 130,
-        popOut: true,
-        minimizable: false,
-        jQuery: true
-      }
-
-      let d = new Dialog({
-        title: 'Equipment Editor',
-        content: dlgHtml,
-        buttons: {
-          one: {
-            label: "Update",
-            callback: async (html) => {
-              eqt.name = html.find('.name input').val()
-              eqt.cost = parseInt(html.find('.cost').val())
-              eqt.count = parseInt(html.find('.count').val())
-              eqt.weight = parseInt(html.find('.weight').val())
-              Equipment.calc(eqt);
-              GURPS.put(eqtlist, eqt);
-              actor.update({ [path]: eqtlist })
-            }
-          }
-        },
-        default: "one",
-      },
-        options);
-      d.render(true);
-    })
-    
-    html.find(".dblclkedit").click(async ev => {
-      let element = ev.currentTarget;
-      let path = element.dataset.key;
-      let actor = this.actor 
-      let eqt = getProperty(actor.data, path)
-      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
-
-      let options = {
-        width: 130,
-        popOut: true,
-        minimizable: false,
-        jQuery: true
-      }
-
-      let d = new Dialog({
-        title: 'Equipment Editor',
-        content: dlgHtml,
-        buttons: {
-          one: {
-            label: "Update",
-            callback: async (html) => {
-              eqt.name = html.find('.name input').val()
-              eqt.cost = parseInt(html.find('.cost').val())
-              eqt.count = parseInt(html.find('.count').val())
-              eqt.weight = parseInt(html.find('.weight').val())
-              Equipment.calc(eqt);
-              actor.update({ [path]: eqt })
-            }
-          }
-        },
-        default: "one",
-      },
-        options);
-      d.render(true);
-    })
-
-   
-   html.find('button[data-operation="equipment-inc"]').click(async ev => {
-      ev.preventDefault();
-      let parent = $(ev.currentTarget).closest('[data-key]')
-      let path = parent.attr('data-key')
-
-      let eqt = getProperty(this.actor.data, path)
-      let value = eqt.count + (ev.shiftKey ? 5 : 1)
-      if (isNaN(value)) value = 0
-      eqt.count = value;
-      Equipment.calc(eqt);
-      this.actor.update({ [path]: eqt })
-    })
-    html.find('button[data-operation="equipment-dec"]').click(async ev => {
-      ev.preventDefault();
-      let parent = $(ev.currentTarget).closest('[data-key]')
-      let path = parent.attr('data-key')
-      let actor = this.actor
-      let eqt = getProperty(actor.data, path)
-      if (eqt.count == 0) {
-        let agree = false;
-        await Dialog.confirm({
-          title: "Delete",
-          content: "Do you want to delete this equipment from the list?",
-          yes: () => agree = true
-        });
-        if (agree) GURPS.removeKey(actor, path);
-      } else {
-        let value = eqt.count - (ev.shiftKey ? 5 : 1)
-        if (isNaN(value) || value < 0) value = 0
-        eqt.count = value;
-        Equipment.calc(eqt);
-        this.actor.update({ [path]: eqt })
-      }
-    })
 
 
     // START CONDITIONAL INJURY
@@ -463,7 +351,151 @@ export class GurpsActorSheet extends ActorSheet {
         }
       })
     } // end enhanced input
+    
+    // Equipment 
+    html.find(".changeequip").click(this._onClickEquip.bind(this));
+    html.find(".addequipmenticon").click(async ev => {
+      let parent = $(ev.currentTarget).closest('.header')
+      let path = parent.attr('data-key')
+      let actor = this.actor 
+      let eqtlist = getProperty(actor.data, path)
+      let eqt = new Equipment();
+      eqt.carried = path.includes("carried");
+      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
+
+      let options = {  // NOTE:  This code is duplicated below.  Haven't refactored yet
+        width: 530,
+        popOut: true,
+        minimizable: false,
+        jQuery: true
+      }
+
+      let d = new Dialog({
+        title: 'Equipment Editor',
+        content: dlgHtml,
+        buttons: {
+          one: {
+            label: "Update",
+            callback: async (html) => {         
+              eqt.name = html.find('.name input').val()
+              eqt.cost = parseInt(html.find('.cost').val())
+              eqt.count = parseInt(html.find('.count').val())
+              eqt.weight = parseInt(html.find('.weight').val())
+              eqt.notes = html.find('.notes').val()
+              eqt.pageref = html.find('.pageref').val()
+              Equipment.calc(eqt);
+              GURPS.put(eqtlist, eqt);
+              actor.update({ [path]: eqtlist })
+            }
+          }
+        },
+        default: "one",
+      },
+        options);
+      d.render(true);
+    })
+    
+    html.find(".dblclkedit").dblclick(async ev => {
+      let element = ev.currentTarget;
+      let path = element.dataset.key;
+      let actor = this.actor 
+      let eqt = getProperty(actor.data, path)
+      this.editEquipment(actor, path, eqt)
+    })
+    
+    let opts = this.addDeleteMenu(new Equipment("New Equipment"));
+    opts.push({
+      name: "Add In",
+      icon: "<i class='fas fa-sign-in-alt'></i>",
+      callback: e => {
+        let k = e[0].dataset.key + ".contains";
+        let o = GURPS.decode(this.actor.data, k) || {};
+        GURPS.put(o, duplicate(new Equipment("New Equipment")));
+        this.actor.update({ [k]: o });
+      }
+    });
+    opts.push({
+      name: "Edit",
+      icon: "<i class='fas fa-edit'></i>",
+      callback: e => {
+        let path = e[0].dataset.key;
+        let o = GURPS.decode(this.actor.data, path);
+        this.editEquipment(this.actor, path, o);
+      }
+    });
+  new ContextMenu(html, ".equipmenu", opts);
+   
+   html.find('button[data-operation="equipment-inc"]').click(async ev => {
+      ev.preventDefault();
+      let parent = $(ev.currentTarget).closest('[data-key]')
+      let path = parent.attr('data-key')
+
+      let eqt = getProperty(this.actor.data, path)
+      let value = eqt.count + (ev.shiftKey ? 5 : 1)
+      if (isNaN(value)) value = 0
+      eqt.count = value;
+      Equipment.calc(eqt);
+      this.actor.update({ [path]: eqt })
+    })
+    html.find('button[data-operation="equipment-dec"]').click(async ev => {
+      ev.preventDefault();
+      let parent = $(ev.currentTarget).closest('[data-key]')
+      let path = parent.attr('data-key')
+      let actor = this.actor
+      let eqt = getProperty(actor.data, path)
+      if (eqt.count == 0) {
+        let agree = false;
+        await Dialog.confirm({
+          title: "Delete",
+          content: `Do you want to delete "${eqt.name}" from the list?`,
+          yes: () => agree = true
+        });
+        if (agree) GURPS.removeKey(actor, path);
+      } else {
+        let value = eqt.count - (ev.shiftKey ? 5 : 1)
+        if (isNaN(value) || value < 0) value = 0
+        eqt.count = value;
+        Equipment.calc(eqt);
+        this.actor.update({ [path]: eqt })
+      }
+    })
+
   }
+
+  async editEquipment(actor, path, eqt) {  // NOTE:  This code is duplicated above.  Haven't refactored yet
+    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
+
+    let options = {
+      width: 530,
+      popOut: true,
+      minimizable: false,
+      jQuery: true
+    }
+
+    let d = new Dialog({
+      title: 'Equipment Editor',
+      content: dlgHtml,
+      buttons: {
+        one: {
+          label: "Update",
+          callback: async (html) => {   
+            eqt.name = html.find('.name input').val()
+            eqt.cost = parseInt(html.find('.cost').val())
+            eqt.count = parseInt(html.find('.count').val())
+            eqt.weight = parseInt(html.find('.weight').val())
+            eqt.notes = html.find('.notes').val()
+            eqt.pageref = html.find('.pageref').val()
+            Equipment.calc(eqt);
+            actor.update({ [path]: eqt })
+          }
+        }
+      },
+      default: "one",
+    },
+      options);
+    d.render(true);
+  }
+
 
 
   async _onDblclickSort(event) {
@@ -869,6 +901,38 @@ export class GurpsActorSheet extends ActorSheet {
     eqt.equipped = !eqt.equipped;
     await this.actor.update({ [key]: eqt });
   }
+  
+  addDeleteMenu(obj) {
+    return [
+      {
+        name: "Add Before",
+        icon: "<i class='fas fa-level-up-alt'></i>",
+        callback: e => {
+          GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj));
+        }
+      },
+      {
+        name: "Delete",
+        icon: "<i class='fas fa-trash'></i>",
+        callback: e => {
+          GURPS.removeKey(this.actor, e[0].dataset.key);
+        }
+      },
+      {
+        name: "Add at the end",
+        icon: "<i class='fas fa-fast-forward'></i>",
+        callback: e => {
+          let p = e[0].dataset.key;
+          let i = p.lastIndexOf(".");
+          let objpath = p.substring(0, i);
+          let o = GURPS.decode(this.actor.data, objpath);
+          GURPS.put(o, duplicate(obj));
+          this.actor.update({ [objpath]: o });
+        }
+      }
+    ];
+  }
+
 
   /* -------------------------------------------- */
 
@@ -909,37 +973,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
   makeAddDeleteMenu(html, cssclass, obj) {
     new ContextMenu(html, cssclass, this.addDeleteMenu(obj));
-  }
-
-  addDeleteMenu(obj) {
-    return [
-      {
-        name: "Add Before",
-        icon: "<i class='fas fa-edit'></i>",
-        callback: e => {
-          GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj));
-        }
-      },
-      {
-        name: "Delete",
-        icon: "<i class='fas fa-trash'></i>",
-        callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key);
-        }
-      },
-      {
-        name: "Add at the end",
-        icon: "<i class='fas fa-edit'></i>",
-        callback: e => {
-          let p = e[0].dataset.key;
-          let i = p.lastIndexOf(".");
-          let objpath = p.substring(0, i);
-          let o = GURPS.decode(this.actor.data, objpath);
-          GURPS.put(o, duplicate(obj));
-          this.actor.update({ [objpath]: o });
-        }
-      }
-    ];
   }
 
   headerMenu(name, obj, path) {
@@ -991,19 +1024,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeHeaderMenu(html, ".carhead", "Carried Equipment", new Equipment("New Equipment"), "data.equipment.carried");
     this.makeHeaderMenu(html, ".othhead", "Other Equipment", new Equipment("New Equipment"), "data.equipment.other");
 
-    let opts = this.addDeleteMenu(new Equipment("New Equipment"));
-    opts.push({
-      name: "Add In (new Equipment will be contained by this)",
-      icon: "<i class='fas fa-edit'></i>",
-      callback: e => {
-        let k = e[0].dataset.key + ".contains";
-        let o = GURPS.decode(this.actor.data, k) || {};
-        GURPS.put(o, duplicate(new Equipment("New Equipment")));
-        this.actor.update({ [k]: o });
-      }
-    });
-    new ContextMenu(html, ".carmenu", opts);
-    new ContextMenu(html, ".othmenu", opts);
   }
   
   

@@ -830,7 +830,7 @@ GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str, clrdmods = true) {
-  if (str === undefined)
+  if (str === undefined || str == null)
     return "!!UNDEFINED";
   let found = -1;
   let output = "";

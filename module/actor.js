@@ -1148,12 +1148,11 @@ export class Equipment extends Named {
   weightsum = "";
 
   static calc(eqt) {
-    if (!isNaN(eqt.count) && !isNaN(eqt.cost)) {
-      eqt.costsum = eqt.count * eqt.cost;
-    }
-    if (!isNaN(eqt.count) && !isNaN(eqt.weight)) {
-      eqt.weightsum = (eqt.count * eqt.weight);
-    }
+    if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0;
+    if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0;
+    if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0;
+    eqt.costsum = eqt.count * eqt.cost;
+    eqt.weightsum = (eqt.count * eqt.weight);
   }
 }
 export class Reaction {

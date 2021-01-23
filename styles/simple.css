@@ -82,6 +82,14 @@
   padding: 1px !important;
 }
 
+.gcs-input-10 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  min-width: 10em !important;
+  padding: 1px !important;
+}
+
 .gcs-input-25 {
   border-width: 0px !important;
   border: none !important;
@@ -2866,4 +2874,3 @@ ul#result-effects li {
   align-items: center;
   justify-content: center;
 }
-
