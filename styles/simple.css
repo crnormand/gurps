@@ -2835,3 +2835,33 @@ ul#result-effects li {
   display: none;
 }
 
+.equipmentbutton {
+  text-align: center;
+  line-height: 0.5;
+  font-size: inherit;
+  margin: 0;
+  height: 0.75rem;
+  min-width: 0.75rem;
+  flex: 0;
+/*  border: 1px solid grey;  */
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+  padding: 0px 0px 0px 0px;
+}
+
+.equipmentbutton.bold {
+  font-weight: bold;
+}
+
+.equipmentlist .qty {
+  display: flex;
+  flex-flow: row nowrap;
+  line-height: unset;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.equipped {
+   margin: auto;
+}
+
+

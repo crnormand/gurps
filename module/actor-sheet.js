@@ -224,6 +224,44 @@ export class GurpsActorSheet extends ActorSheet {
         options);
       d.render(true);
     })
+    
+    
+    // Handle Equipment QTY changes
+    html.find('button[data-operation="equipment-inc"]').click(async ev => {
+      ev.preventDefault();
+      let parent = $(ev.currentTarget).closest('[data-key]')
+      let path = parent.attr('data-key')
+
+      let eqt = getProperty(this.actor.data, path)
+      let value = eqt.count + (ev.shiftKey ? 5 : 1)
+      if (isNaN(value)) value = 0
+      eqt.count = value;
+      Equipment.calc(eqt);
+      this.actor.update({ [path]: eqt })
+    })
+    html.find('button[data-operation="equipment-dec"]').click(async ev => {
+      ev.preventDefault();
+      let parent = $(ev.currentTarget).closest('[data-key]')
+      let path = parent.attr('data-key')
+      let actor = this.actor
+      let eqt = getProperty(actor.data, path)
+      if (eqt.count == 0) {
+        let agree = false;
+        await Dialog.confirm({
+          title: "Delete",
+          content: "Do you want to delete this equipment from the list?",
+          yes: () => agree = true
+        });
+        if (agree) GURPS.removeKey(actor, path);
+      } else {
+        let value = eqt.count - (ev.shiftKey ? 5 : 1)
+        if (isNaN(value) || value < 0) value = 0
+        eqt.count = value;
+        Equipment.calc(eqt);
+        this.actor.update({ [path]: eqt })
+      }
+    })
+
 
     // START CONDITIONAL INJURY
 

@@ -945,8 +945,8 @@ GURPS.handleGurpslink = handleGurpslink;
   trying to deal with an array.   While is "should" be possible to use it, and some people claim
   that they could... everything I tried did something wonky.   So the 2am fix was just make everything an
   object with fake indexes.   Handlebars deals with this just fine using {{#each someobject}} 
-  and if you really did just want to modify a single entry, you could use {{#each somobject as | obj key |}}
-  which will give you the object, and also the key, such that you could execute somebject.key to get the 
+  and if you really did just want to modify a single entry, you could use {{#each someobject as | obj key |}}
+  which will give you the object, and also the key, such that you could execute someobject.key to get the 
   correct instance.   */
 function genkey(index) {
   let k = "";
@@ -1063,6 +1063,7 @@ function listeqtrecurse(eqts, options, level, data, parentkey = "") {
     if (data) {
       data.indent = level;
       data.key = parentkey + key;
+      data.count = eqt.count;
     }
     ret = ret + options.fn(eqt, { data: data });
     ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + ".contains.");
