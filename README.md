@@ -24,6 +24,9 @@ This is what we are currently working on:
     - Added QTY +/- buttons to equipment (ugly, but functional)
     - Added RMB menu to equipment (Add Before, Delete, Add at end, Add in, Edit)
     - Added Equipment edit dialog
+    - Added Melee and Ranged edit dialog
+    - Added Advantage, Skill and Spell edit dialog
+    - Added Note editor and page ref column
     - Restricted editing functions to owners
 
 ### History
