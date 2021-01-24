@@ -115,6 +115,9 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".pdflink").contextmenu(this._onRightClickPdf.bind(this));
 
 
+    const canConfigure = game.user.isGM || this.actor.owner;
+    if (!canConfigure) return;    // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
+
     html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
     html.find(".enc").click(this._onClickEnc.bind(this));
 
@@ -377,12 +380,8 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: "Update",
             callback: async (html) => {         
-              eqt.name = html.find('.name input').val()
-              eqt.cost = parseInt(html.find('.cost').val())
-              eqt.count = parseInt(html.find('.count').val())
-              eqt.weight = parseInt(html.find('.weight').val())
-              eqt.notes = html.find('.notes').val()
-              eqt.pageref = html.find('.pageref').val()
+            [ 'name', 'notes', 'pageref' ].forEach(a => eqt[a] = html.find(`.${a}`).val());    
+            [ 'count', 'cost', 'weight' ].forEach(a => eqt[a] = parseInt(html.find(`.${a}`).val()));    
               Equipment.calc(eqt);
               GURPS.put(eqtlist, eqt);
               actor.update({ [path]: eqtlist })
@@ -399,8 +398,13 @@ export class GurpsActorSheet extends ActorSheet {
       let element = ev.currentTarget;
       let path = element.dataset.key;
       let actor = this.actor 
-      let eqt = getProperty(actor.data, path)
-      this.editEquipment(actor, path, eqt)
+      let obj = getProperty(actor.data, path)
+      if (path.includes("equipment"))
+        this.editEquipment(actor, path, obj)
+      if (path.includes("melee"))
+        this.editMelee(actor, path, obj)
+      if (path.includes("ranged"))
+        this.editRanged(actor, path, obj)
     })
     
     let opts = this.addDeleteMenu(new Equipment("New Equipment"));
@@ -462,15 +466,8 @@ export class GurpsActorSheet extends ActorSheet {
 
   }
 
-  async editEquipment(actor, path, eqt) {  // NOTE:  This code is duplicated above.  Haven't refactored yet
-    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
-
-    let options = {
-      width: 530,
-      popOut: true,
-      minimizable: false,
-      jQuery: true
-    }
+  async editEquipment(actor, path, obj) {  // NOTE:  This code is duplicated above.  Haven't refactored yet
+    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
 
     let d = new Dialog({
       title: 'Equipment Editor',
@@ -478,21 +475,73 @@ export class GurpsActorSheet extends ActorSheet {
       buttons: {
         one: {
           label: "Update",
-          callback: async (html) => {   
-            eqt.name = html.find('.name input').val()
-            eqt.cost = parseInt(html.find('.cost').val())
-            eqt.count = parseInt(html.find('.count').val())
-            eqt.weight = parseInt(html.find('.weight').val())
-            eqt.notes = html.find('.notes').val()
-            eqt.pageref = html.find('.pageref').val()
+          callback: async (html) => {
+            [ 'name', 'notes', 'pageref' ].forEach(a => obj[a] = html.find(`.${a}`).val());    
+            [ 'count', 'cost', 'weight' ].forEach(a => obj[a] = parseInt(html.find(`.${a}`).val()));    
             Equipment.calc(eqt);
-            actor.update({ [path]: eqt })
+            actor.update({ [path]: obj })
           }
         }
       },
       default: "one",
-    },
-      options);
+    },{
+      width: 530,
+      popOut: true,
+      minimizable: false,
+      jQuery: true
+    });
+    d.render(true);
+  }
+
+  async editMelee(actor, path, obj) { 
+    let dlgHtml = await renderTemplate('systems/gurps/templates/melee-editor-popup.html', obj)
+
+    let d = new Dialog({
+      title: 'Melee Weapon Editor',
+      content: dlgHtml,
+      buttons: {
+        one: {
+          label: "Update",
+          callback: async (html) => {   
+            [ 'name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes'].forEach(a => obj[a] = html.find(`.${a}`).val()); 
+            obj.level = parseInt(html.find('.level').val())
+            actor.update({ [path]: obj })
+          }
+        }
+      },
+      default: "one",
+    },{
+      width: 530,
+      popOut: true,
+      minimizable: false,
+      jQuery: true
+    });
+    d.render(true);
+  }
+  
+  async editRanged(actor, path, obj) { 
+    let dlgHtml = await renderTemplate('systems/gurps/templates/ranged-editor-popup.html', obj)
+
+    let d = new Dialog({
+      title: 'Ranged Weapon Editor',
+      content: dlgHtml,
+      buttons: {
+        one: {
+          label: "Update",
+          callback: async (html) => {   
+            [ 'name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes'].forEach(a => obj[a] = html.find(`.${a}`).val()); 
+            [ 'level', 'acc', 'bulk'].forEach(a => obj[a] = parseInt(html.find(`.${a}`).val())); 
+            actor.update({ [path]: obj })
+          }
+        }
+      },
+      default: "one",
+    },{
+      width: 530,
+      popOut: true,
+      minimizable: false,
+      jQuery: true
+    });
     d.render(true);
   }
 
