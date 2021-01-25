@@ -380,8 +380,8 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: "Create",
             callback: async (html) => {         
-            [ 'name', 'notes', 'pageref' ].forEach(a => eqt[a] = html.find(`.${a}`).val());    
-            [ 'count', 'cost', 'weight' ].forEach(a => eqt[a] = parseInt(html.find(`.${a}`).val()));    
+              [ 'name', 'notes', 'pageref' ].forEach(a => eqt[a] = html.find(`.${a}`).val());    
+              [ 'count', 'cost', 'weight' ].forEach(a => eqt[a] = parseFloat(html.find(`.${a}`).val()));    
               Equipment.calc(eqt);
               GURPS.put(eqtlist, eqt);
               actor.update({ [path]: eqtlist })
@@ -534,7 +534,7 @@ export class GurpsActorSheet extends ActorSheet {
           label: "Update",
           callback: async (html) => {
             [ 'name', 'notes', 'pageref' ].forEach(a => obj[a] = html.find(`.${a}`).val());    
-            [ 'count', 'cost', 'weight' ].forEach(a => obj[a] = parseInt(html.find(`.${a}`).val()));    
+            [ 'count', 'cost', 'weight' ].forEach(a => obj[a] = parseFloat(html.find(`.${a}`).val()));    
             Equipment.calc(obj);
             actor.update({ [path]: obj })
           }
@@ -580,7 +580,7 @@ export class GurpsActorSheet extends ActorSheet {
     this.editItem(actor, path, obj, 'systems/gurps/templates/note-editor-popup.html', 'Note Editor', ['pageref', 'notes'], [], 730);
   }
   
-  async editItem(actor, path, obj, html, title, strprops, intprops, width = 550) { 
+  async editItem(actor, path, obj, html, title, strprops, numprops, width = 550) { 
     let dlgHtml = await renderTemplate(html, obj)
 
     let d = new Dialog({
@@ -591,7 +591,7 @@ export class GurpsActorSheet extends ActorSheet {
           label: "Update",
           callback: async (html) => {   
             strprops.forEach(a => obj[a] = html.find(`.${a}`).val()); 
-            intprops.forEach(a => obj[a] = parseInt(html.find(`.${a}`).val())); 
+            numprops.forEach(a => obj[a] = parseFloat(html.find(`.${a}`).val())); 
             actor.update({ [path]: obj } )
           }
         }

@@ -30,6 +30,7 @@ This is what we are currently working on:
     - Added RMB to notes (Edit, Delete)
     - Restricted editing functions to owners
     - Updated chat commands (/help - to see them all) 
+    - Support limited multiline chat macros
 
 ### History
 - 0.8.7
