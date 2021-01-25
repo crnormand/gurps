@@ -208,19 +208,34 @@ export class ModifierBucket extends Application {
 		let element = event.currentTarget;
 		let id = element.dataset.id;
 		let user = game.users.get(id);
+    this.sendBucket(user);
+		setTimeout(() => this.showOthers(), 1000);    // Need time for clients to update...and 
+	}
+  
+  async sendBucketToPlayer(name) {
+    if (!name) {
+      this.sendBucket();
+    } else {
+      let users = game.users.players.filter(u => u.name == name) || [];
+      if (users.length > 0)
+        this.sendBucket(users[0]);
+      else
+        ui.notifications.warn("No player named '" + name + "'");
+    }
+  }
+  
+  async sendBucket(user) {
     let set = (!!user) ? [user] : game.users?.filter(u => u._id != game.user._id) || [];
     let d = Date.now();
     {
       await set.forEach(u => {
-    		u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
+        u.setFlag("gurps", "modifierstack", game.GURPS.ModifierBucket.modifierStack);
       });
       await set.forEach(u => {
         u.setFlag("gurps", "modifierchanged", d);
       });
     }
-    
-		setTimeout(() => this.showOthers(), 1000);    // Need time for clients to update...and 
-	}
+  }
 
 	async _onClickTrash(event) {
 		event.preventDefault();

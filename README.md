@@ -27,7 +27,9 @@ This is what we are currently working on:
     - Added Melee and Ranged edit dialog
     - Added Advantage, Skill and Spell edit dialog
     - Added Note editor and page ref column
+    - Added RMB to notes (Edit, Delete)
     - Restricted editing functions to owners
+    - Updated chat commands (/help - to see them all) 
 
 ### History
 - 0.8.7

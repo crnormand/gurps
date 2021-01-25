@@ -1166,12 +1166,19 @@ Hooks.once("init", async function () {
 
   Hooks.on('chatMessage', (log, content, data) => {
     if (content === "/help" || content === "!help") {
-      let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a><br>/help - this message";
-      if (game.user.isGM) c += "<br>/mook - Open Mook Generator";
+      let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>";
+      c += "<br>/roll (or /r) [On-the-Fly formula]";
+      c += "<br>/private (or /pr) [On-the-Fly formula]";
+      c += "<br>/clearmb";
+      if (game.user.isGM) {
+        c += "<br>/sendmb &lt;playername&gt";
+        c += "<br>/mook";
+      }
       ChatMessage.create({
         content: c,
         user: game.user._id,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [ game.user._id ]
       });
       return false;
     }
@@ -1179,6 +1186,7 @@ Hooks.once("init", async function () {
       new NpcInput().render(true);
       return false;
     }
+
     let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/;
     let found = false;
     content.split("\n").forEach(e => {		// Handle multiline chat messages (mostly from macros)
@@ -1189,6 +1197,16 @@ Hooks.once("init", async function () {
           GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith("/pr") });
           found = true;
         }
+      } else {
+        if (e === "/clearmb") {
+          GURPS.ModifierBucket.clear();
+          found = true;
+        }
+        if (e.startsWith("/sendmb")) {
+          let user = e.replace(/\/sendmb/,"").trim();
+          GURPS.ModifierBucket.sendBucketToPlayer(user);
+          found = true;
+        }    
       }
     });
     if (found) return false;
