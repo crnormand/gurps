@@ -19,6 +19,7 @@ To install the latest stable release, use this manifest URL:
 This is what we are currently working on:
 
 - 0.8.9
+    - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
 
 ### History
 - 0.8.8
