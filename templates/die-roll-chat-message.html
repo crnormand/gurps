@@ -1,0 +1,45 @@
+<div>
+  <div>{{prefix}} {{thing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}} {{optlabel}}
+    {{#if targetmods}}
+    <ul class='aside'>
+      {{#each targetmods}}
+      <li>{{mod}}{{#if desc}} : {{desc}}{{/if}}</li>
+      {{/each}}
+    </ul>
+    New Target: ({{finaltarget}})
+    {{/if}}
+  </div>
+  {{#if (not (eq origtarget -1))}}
+  <div class='gurps-results'>
+    <div>
+      <span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />
+      <b style='font-size: 140%;'>{{rtotal}}</b>
+      {{#if isCritSuccess}}
+      <span style='color:green; text-shadow: 1px 1px black; font-size: 130%;'><b>Critical Success!</b></span>
+      {{else}}{{#if isCritFailure}}
+      <span style='color:red; text-shadow: 1px 1px black; font-size: 120%;'><b>Critical Failure!</b></span>
+      {{else}}{{#if (lt margin 0)}}
+      <span style='color:red;font-size: 100%;'><i>Failure.</i></span>
+      {{else}}{{#if (not (lt margin 0))}}
+      <span style='color:green; font-size: 110%;'><b>Success!</b></span>
+      {{/if}}{{/if}}{{/if}}{{/if}}
+      <span style='font-size: 100%; font-weight: normal'>
+        {{#if (eq margin 0)}}just made it{{/if}}
+        {{#if (gt margin 0)}}made it by {{margin}}{{/if}}
+        {{#if (lt margin 0)}}missed it by {{abs margin}}{{/if}}
+      </span>
+    </div>
+    {{#if (gt rofrcl 1)}}
+    <div style='text-align: start'><span class='fa fa-bullseye' />&nbsp;<i
+        style='font-size:100%; font-weight: normal'>Total possible hits due to RoF/Rcl: </i><b
+        style='font-size: 120%;'>{{rofrcl}}</b></div>
+    {{/if}}
+  </div>
+  {{/if}}
+  <div>
+    <hr />
+    <div style='text-align: start' class='aside'>
+      Rolled ({{#each rolls}}{{this}}, {{/each}}){{#if modifier}} + {{modifier}}{{/if}} = {{rtotal}}
+    </div>
+  </div>
+</div>

@@ -58,13 +58,13 @@ GURPS.SetLastActor = function (actor) {
   console.log("Setting Last Actor:" + actor?.name);
   setTimeout(() => GURPS.ModifierBucket.refresh(), 100);		// Need to make certain the mod bucket refresh occurs later
 }
-GURPS.ClearLastActor = function(actor) {
-	if (GURPS.LastActor == actor) {
-	  console.log("Clearing Last Actor:" + GURPS.LastActor?.name);
-	  GURPS.ModifierBucket.refresh();
-		GURPS.LastActor = null;
-		if (canvas.tokens.controlled.length > 0) GURPS.SetLastActor(canvas.tokens.controlled[0].actor);  // There may still be tokens selected... if so, select one of them
-	}
+GURPS.ClearLastActor = function (actor) {
+  if (GURPS.LastActor == actor) {
+    console.log("Clearing Last Actor:" + GURPS.LastActor?.name);
+    GURPS.ModifierBucket.refresh();
+    GURPS.LastActor = null;
+    if (canvas.tokens.controlled.length > 0) GURPS.SetLastActor(canvas.tokens.controlled[0].actor);  // There may still be tokens selected... if so, select one of them
+  }
 }
 
 // This table is used to display dice rolls and penalties (if they are missing from the import
@@ -713,11 +713,18 @@ GURPS.applyModifierDesc = applyModifierDesc;
   This is the BIG method that does the roll and prepares the chat message.
   unfortunately, it has a lot fo hard coded junk in it.
   */
-// formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
+// formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', 
+// target=skill level or -1=damage roll
 async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optionalArgs) {
 
   if (origtarget == 0 || isNaN(origtarget)) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   let isTargeted = (origtarget > 0);		// Roll "against" something (true), or just a roll (false)
+
+  let chatdata = {
+    prefix: prefix.trim(),
+    thing: thing,
+    origtarget: origtarget
+  }
 
   // Is Dice So Nice enabled ?
   let niceDice = false;
@@ -730,6 +737,8 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
   let maxtarget = null;			// If not null, then the target cannot be any higher than this.
 
   targetmods = await GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
+
+  chatdata['targetmods'] = targetmods
 
   if (targetmods.length > 0) {
     modscontent = "<i>";
@@ -744,6 +753,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
     }
   }
 
+
   let chatcontent = "";
   let roll = null;  // Will be the Roll
   if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
@@ -752,6 +762,12 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
     roll = Roll.create(formula);		// The formula will always be "3d6" for a "targetted" roll
     roll.roll();
     let rtotal = roll.total;
+
+    chatdata['rtotal'] = rtotal
+    chatdata['rolls'] = roll.dice[0].results.map(it => it.result)
+    chatdata['modifier'] = modifier
+    chatdata['finaltarget'] = finaltarget
+
     let results = "<div><span class='fa fa-dice'/>&nbsp;<span class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
     if (!!modscontent) modscontent += "</i><br>New Target: (" + finaltarget + ")";  // If we had modifiers, the target will have changed.
 
@@ -760,6 +776,10 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
     let isCritFailure = (rtotal >= 18) || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0);
 
     let margin = finaltarget - rtotal;
+
+    chatdata['isCritSuccess'] = isCritSuccess
+    chatdata['isCritFailure'] = isCritFailure
+    chatdata['margin'] = margin
 
     if (isCritSuccess)
       results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 130%;'><b>Critical Success!</b></span> ";
@@ -779,8 +799,14 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
       let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1;
       if (!!optionalArgs.obj.rof) rofrcl = Math.min(rofrcl, parseInt(optionalArgs.obj.rof));
       if (rofrcl > 1) rdesc += `<div style='text-align: start'><span class='fa fa-bullseye'/>&nbsp;<i style='font-size:100%; font-weight: normal'>Total possible hits due to RoF/Rcl: </i><b style='font-size: 120%;'>${rofrcl}</b></div>`;
+
+      chatdata['rofrcl'] = rofrcl
     }
+
     let optlabel = optionalArgs.text || "";
+
+    chatdata['optlabel'] = optlabel
+
     chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + "<div class='gurps-results'>" + results + rdesc + "</div>";
   } else {	// This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
@@ -801,14 +827,21 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
     let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
     if (rtotal == 1) thing = thing.replace("points", "point");
     chatcontent = prefix + modscontent + "<br>" + results + thing;
+
+    chatdata['rtotal'] = rtotal
+    chatdata['rolls'] = roll.dice[0].results.map(it => it.result)
+    chatdata['modifier'] = modifier
   }
+
+  let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.html', chatdata)
+  console.log(message)
 
   actor = actor || game.user;
   const speaker = { alias: actor.name, _id: actor._id, actor: actor }
   let messageData = {
     user: game.user._id,
     speaker: speaker,
-    content: "<div>" + chatcontent + "</div>", // wrap in HTML to trick Foundry
+    content: message,
     type: CONST.CHAT_MESSAGE_TYPES.ROLL,
     roll: roll
   };
@@ -1291,24 +1324,24 @@ Hooks.once("ready", async function () {
     }
   });
 
-/*		// Should not need this hook, if we are watching controlToken
-  Hooks.on('createActiveEffect', (...args) => {
-    if (!!args && args.length >= 4)
-      GURPS.SetLastActor(args[0]);
-  });
-*/
+  /*		// Should not need this hook, if we are watching controlToken
+    Hooks.on('createActiveEffect', (...args) => {
+      if (!!args && args.length >= 4)
+        GURPS.SetLastActor(args[0]);
+    });
+  */
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on("controlToken", (...args) => {
     if (args.length > 1) {
       let a = args[0]?.actor;
-			if (!!a) {
-	      if (args[1])
-					game.GURPS.SetLastActor(a);
-				else
-					game.GURPS.ClearLastActor(a);
-	    }
-		}
+      if (!!a) {
+        if (args[1])
+          game.GURPS.SetLastActor(a);
+        else
+          game.GURPS.ClearLastActor(a);
+      }
+    }
   });
 
   Hooks.on('preCreateChatMessage', (data, options, userId) => {
