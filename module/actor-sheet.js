@@ -115,6 +115,9 @@ export class GurpsActorSheet extends ActorSheet {
     html.find(".pdflink").contextmenu(this._onRightClickPdf.bind(this));
 
 
+    const canConfigure = game.user.isGM || this.actor.owner;
+    if (!canConfigure) return;    // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
+
     html.find(".dblclksort").dblclick(this._onDblclickSort.bind(this));
     html.find(".enc").click(this._onClickEnc.bind(this));
 
@@ -358,7 +361,7 @@ export class GurpsActorSheet extends ActorSheet {
       let parent = $(ev.currentTarget).closest('.header')
       let path = parent.attr('data-key')
       let actor = this.actor 
-      let eqtlist = getProperty(actor.data, path)
+      let eqtlist = duplicate(getProperty(actor.data, path))
       let eqt = new Equipment();
       eqt.carried = path.includes("carried");
       let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
@@ -375,14 +378,10 @@ export class GurpsActorSheet extends ActorSheet {
         content: dlgHtml,
         buttons: {
           one: {
-            label: "Update",
+            label: "Create",
             callback: async (html) => {         
-              eqt.name = html.find('.name input').val()
-              eqt.cost = parseInt(html.find('.cost').val())
-              eqt.count = parseInt(html.find('.count').val())
-              eqt.weight = parseInt(html.find('.weight').val())
-              eqt.notes = html.find('.notes').val()
-              eqt.pageref = html.find('.pageref').val()
+            [ 'name', 'notes', 'pageref' ].forEach(a => eqt[a] = html.find(`.${a}`).val());    
+            [ 'count', 'cost', 'weight' ].forEach(a => eqt[a] = parseInt(html.find(`.${a}`).val()));    
               Equipment.calc(eqt);
               GURPS.put(eqtlist, eqt);
               actor.update({ [path]: eqtlist })
@@ -399,9 +398,22 @@ export class GurpsActorSheet extends ActorSheet {
       let element = ev.currentTarget;
       let path = element.dataset.key;
       let actor = this.actor 
-      let eqt = getProperty(actor.data, path)
-      this.editEquipment(actor, path, eqt)
-    })
+      let obj = duplicate(getProperty(actor.data, path)); // must dup so difference can be detected when updated
+      if (path.includes("equipment"))
+        this.editEquipment(actor, path, obj)
+      if (path.includes("melee"))
+        this.editMelee(actor, path, obj)
+      if (path.includes("ranged"))
+        this.editRanged(actor, path, obj)
+       if (path.includes("ads"))
+        this.editAds(actor, path, obj)
+       if (path.includes("skills"))
+        this.editSkills(actor, path, obj)
+       if (path.includes("spells"))
+        this.editSpells(actor, path, obj)
+       if (path.includes("notes"))
+        this.editNotes(actor, path, obj)
+   })
     
     let opts = this.addDeleteMenu(new Equipment("New Equipment"));
     opts.push({
@@ -419,7 +431,7 @@ export class GurpsActorSheet extends ActorSheet {
       icon: "<i class='fas fa-edit'></i>",
       callback: e => {
         let path = e[0].dataset.key;
-        let o = GURPS.decode(this.actor.data, path);
+        let o = duplicate(GURPS.decode(this.actor.data, path));
         this.editEquipment(this.actor, path, o);
       }
     });
@@ -459,18 +471,60 @@ export class GurpsActorSheet extends ActorSheet {
         this.actor.update({ [path]: eqt })
       }
     })
+    
+    html.find(".addnoteicon").click(async ev => {
+      let parent = $(ev.currentTarget).closest('.header')
+      let path = parent.attr('data-key')
+      let actor = this.actor 
+      let list = duplicate(getProperty(actor.data, path))
+      let obj = new Note();
+      let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
+
+      let d = new Dialog({
+        title: 'Note Editor',
+        content: dlgHtml,
+        buttons: {
+          one: {
+            label: "Create",
+            callback: async (html) => {         
+              [ 'notes', 'pageref' ].forEach(a => obj[a] = html.find(`.${a}`).val());    
+              GURPS.put(list, obj);
+              actor.update({ [path]: list })
+            }
+          }
+        },
+        default: "one",
+      }, {  
+        width: 730,
+        popOut: true,
+        minimizable: false,
+        jQuery: true
+      });
+      d.render(true);
+    })
+    
+    opts = [ {
+      name: "Edit",
+      icon: "<i class='fas fa-edit'></i>",
+      callback: e => {
+        let path = e[0].dataset.key;
+        let o = duplicate(GURPS.decode(this.actor.data, path));
+        this.editNotes(this.actor, path, o);
+      }
+    }, {
+        name: "Delete",
+        icon: "<i class='fas fa-trash'></i>",
+        callback: e => {
+          GURPS.removeKey(this.actor, e[0].dataset.key);
+        }
+      },
+    ];
+    new ContextMenu(html, ".notesmenu", opts);
 
   }
 
-  async editEquipment(actor, path, eqt) {  // NOTE:  This code is duplicated above.  Haven't refactored yet
-    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
-
-    let options = {
-      width: 530,
-      popOut: true,
-      minimizable: false,
-      jQuery: true
-    }
+  async editEquipment(actor, path, obj) {  // NOTE:  This code is duplicated above.  Haven't refactored yet
+    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
 
     let d = new Dialog({
       title: 'Equipment Editor',
@@ -478,21 +532,76 @@ export class GurpsActorSheet extends ActorSheet {
       buttons: {
         one: {
           label: "Update",
-          callback: async (html) => {   
-            eqt.name = html.find('.name input').val()
-            eqt.cost = parseInt(html.find('.cost').val())
-            eqt.count = parseInt(html.find('.count').val())
-            eqt.weight = parseInt(html.find('.weight').val())
-            eqt.notes = html.find('.notes').val()
-            eqt.pageref = html.find('.pageref').val()
-            Equipment.calc(eqt);
-            actor.update({ [path]: eqt })
+          callback: async (html) => {
+            [ 'name', 'notes', 'pageref' ].forEach(a => obj[a] = html.find(`.${a}`).val());    
+            [ 'count', 'cost', 'weight' ].forEach(a => obj[a] = parseInt(html.find(`.${a}`).val()));    
+            Equipment.calc(obj);
+            actor.update({ [path]: obj })
           }
         }
       },
       default: "one",
-    },
-      options);
+    },{
+      width: 530,
+      popOut: true,
+      minimizable: false,
+      jQuery: true
+    });
+    d.render(true);
+  }
+
+  async editMelee(actor, path, obj) { 
+    this.editItem(actor, path, obj, 'systems/gurps/templates/melee-editor-popup.html', 'Melee Weapon Editor', 
+        [ 'name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes'],
+        [ 'level' ])
+  }
+  
+  async editRanged(actor, path, obj) { 
+    this.editItem(actor, path, obj, 'systems/gurps/templates/ranged-editor-popup.html','Ranged Weapon Editor', 
+      [ 'name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes'],
+      [ 'level', 'acc', 'bulk']);
+  }
+
+  async editAds(actor, path, obj) { 
+    this.editItem(actor, path, obj, 'systems/gurps/templates/advantage-editor-popup.html','Advantage / Disadvantage / Perk / Quirk Editor',[ 'name', 'notes'], [ 'points']);
+  }
+
+  async editSkills(actor, path, obj) { 
+    this.editItem(actor, path, obj, 'systems/gurps/templates/skill-editor-popup.html', 'Skill Editor', [ 'name', 'rsl', 'pageref', 'notes'], [ 'level', 'points']);
+  }
+
+  async editSpells(actor, path, obj) { 
+    this.editItem(actor, path, obj, 'systems/gurps/templates/spell-editor-popup.html', 'Skill Editor', 
+        [ 'name', 'rsl', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college' ],
+        [ 'level', 'points']);
+  }
+  
+  async editNotes(actor, path, obj) { 
+    this.editItem(actor, path, obj, 'systems/gurps/templates/note-editor-popup.html', 'Note Editor', ['pageref', 'notes'], [], 730);
+  }
+  
+  async editItem(actor, path, obj, html, title, strprops, intprops, width = 550) { 
+    let dlgHtml = await renderTemplate(html, obj)
+
+    let d = new Dialog({
+      title: title,
+      content: dlgHtml,
+      buttons: {
+        one: {
+          label: "Update",
+          callback: async (html) => {   
+            strprops.forEach(a => obj[a] = html.find(`.${a}`).val()); 
+            intprops.forEach(a => obj[a] = parseInt(html.find(`.${a}`).val())); 
+            actor.update({ [path]: obj } )
+          }
+        }
+      }
+    },{
+      width: width,
+      popOut: true,
+      minimizable: false,
+      jQuery: true
+    });
     d.render(true);
   }
 

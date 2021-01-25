@@ -438,8 +438,8 @@
       <div class="st header">ST</div>
       <div></div>
 
-      {{#each data.melee}}
-      <div class="desc gcs-edit" data-path="data.melee">{{{gurpslink this.name}}}
+      {{#each data.melee as | this key |}}
+      <div class="desc gcs-edit dblclkedit" data-key="data.melee.{{@key}}" data-path="data.melee">{{{gurpslink this.name}}}
         <div class="list_note">{{{gurpslink this.notes}}}</div>
       </div>
       <div class="usage">{{this.mode}}</div>
@@ -472,7 +472,7 @@
 
 
       {{#each data.ranged as | this key |}}
-      <div class="desc">{{{gurpslink this.name}}}
+      <div class="desc dblclkedit" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
         <div class="list_note">{{{gurpslink this.notes}}}</div>
         {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
         </div> }}
@@ -499,7 +499,7 @@
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
       {{#each data.ads as | this key | }}
-      <div class="desc indent0 satisfiedY adsdraggable" data-key="data.ads.{{key}}">{{{gurpslink this.name}}}
+      <div class="desc indent0 satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{key}}">{{{gurpslink this.name}}}
         <div class="list_note satisfiedY"></div>
         <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{key}}">{{{gurpslinkbr this.notes}}}
         </div>
@@ -517,7 +517,7 @@
       <div class="ref header">Ref</div>
 
       {{#each data.skills as | this key |}}
-      <div class="desc indent0 satisfiedY skldraggable" data-key="data.skills.{{key}}">{{{gurpslink this.name}}}
+      <div class="desc indent0 satisfiedY skldraggable dblclkedit" data-key="data.skills.{{key}}">{{{gurpslink this.name}}}
         <div class="list_note satisfiedY"></div>
         <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{key}}">{{{gurpslink this.notes
           @root}}}</div>
@@ -545,7 +545,7 @@
       <div class="ref header">Ref</div>
 
       {{#each data.spells as | this key |}}
-      <div class="desc indent0 satisfiedY spldraggable" data-key="data.spells.{{key}}">{{{gurpslink this.name}}}
+      <div class="desc indent0 satisfiedY spldraggable dblclkedit" data-key="data.spells.{{key}}">{{{gurpslink this.name}}}
         <div class="list_note satisfiedY"></div>
         <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{key}}">{{{gurpslink this.notes}}}
         </div>
@@ -630,10 +630,12 @@
 
     </div>
     <div id="notes">
-      <div class="desc header">Notes</div>
-      {{#each data.notes}}
-      <div class="desc indent0">{{{gurpslinkbr this.notes}}}</div>
+      <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></span></div><div class="ref header">Ref</div>
+      {{#each data.notes as | this key |}}
+      <div class="desc indent0 dblclkedit notesmenu" data-key="data.notes.{{@key}}">{{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}</div>
+      <div class="ref">{{{pdflink this.pageref}}}</div>
       {{/each}}
+      <div></div>
     </div>
   </div>
   <div id="footer">GCS is copyrighted 1998-2020 by Richard A. Wilkes All rights reserved

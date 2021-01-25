@@ -50,6 +50,23 @@
   padding: 1px !important;
 }
 
+.gcs-input-sm8 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 8em;
+  padding: 1px !important;
+}
+
+.gcs-input-sm10 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 10em;
+  padding: 1px !important;
+}
+
+
 .gcs-input-2 {
   border-width: 0px !important;
   border: none !important;
@@ -1192,7 +1209,7 @@ body {
 }
 
 #notes {
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr auto;
   grid-area: notes;
 }
 
@@ -2714,6 +2731,13 @@ ul#result-effects li {
 .resource-editor .inputs {
   display: grid;
   grid-template-columns: 1fr auto;
+  grid-template-rows: auto;
+  grid-gap: 0.15rem;
+}
+
+.resource-editor .inputsv2 {
+  display: grid;
+  grid-template-columns: auto 1fr;
   grid-template-rows: auto;
   grid-gap: 0.15rem;
 }
