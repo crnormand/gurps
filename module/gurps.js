@@ -654,7 +654,10 @@ async function handleRoll(event, actor) {
     prefix = ""; // "Attempting ";
     let text = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
     thing = text.replace(/(.*?)\(.*\)/g, "$1");
-    opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+
+    // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+    opt.text = text.replace(/.*?\((.*)\)/g, "$1");
+
     if (opt.text === text) opt.text = "";
     if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key);   // During the roll, we may want to extract something from the object
     formula = "3d6";
@@ -764,7 +767,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
     let rtotal = roll.total;
 
     chatdata['rtotal'] = rtotal
-    chatdata['rolls'] = roll.dice[0].results.map(it => it.result)
+    chatdata['rolls'] = roll.dice[0].results.map(it => it.result.toString()).join(', ')
     chatdata['modifier'] = modifier
     chatdata['finaltarget'] = finaltarget
 
@@ -829,7 +832,7 @@ async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, opt
     chatcontent = prefix + modscontent + "<br>" + results + thing;
 
     chatdata['rtotal'] = rtotal
-    chatdata['rolls'] = roll.dice[0].results.map(it => it.result)
+    chatdata['rolls'] = roll.dice[0].results.map(it => it.result.toString()).join(', ')
     chatdata['modifier'] = modifier
   }
 

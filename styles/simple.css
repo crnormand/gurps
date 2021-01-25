@@ -2001,11 +2001,45 @@ body {
 .roll-message .aside {
   font-size: smaller;
   text-align: end;
+  font-weight: normal;
+  text-align: start;
 }
 
 .roll-result .roll-value,
 .roll-result .roll-detail {
   font-family: "Font Awesome 5 Free", 'Roboto', sans-serif;
+}
+
+.roll-result .roll-detail {
+  font-weight: normal;
+}
+
+.roll-result .roll-detail .aside {
+  font-size: inherit;
+}
+
+.roll-result .roll-detail .crit {
+  font-size: large;
+  font-weight: bolder;
+}
+
+.roll-result .roll-detail .success {
+  color: darkgreen;
+  font-weight: bold;
+}
+
+.roll-result .roll-detail .failure {
+  color: darkred;
+  font-weight: bold;
+}
+
+.roll-result .roll-detail .crit.success {
+  color: black;
+  text-shadow: 0 0 3px #00FF00;
+}
+.roll-result .roll-detail .crit.failure {
+  color: black;
+  text-shadow: 0 0 3px #FF0000;
 }
 
 /* GURPS App CSS */
