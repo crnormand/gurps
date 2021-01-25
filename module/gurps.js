@@ -10,6 +10,7 @@ import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
 import { d6ify } from '../lib/utilities.js'
 import { ThreeD6 } from "../lib/threed6.js";
+import { doRoll } from '../module/dierolls/dieroll.js'
 
 export const GURPS = {};
 window.GURPS = GURPS;		// Make GURPS global!
@@ -58,13 +59,13 @@ GURPS.SetLastActor = function (actor) {
   console.log("Setting Last Actor:" + actor?.name);
   setTimeout(() => GURPS.ModifierBucket.refresh(), 100);		// Need to make certain the mod bucket refresh occurs later
 }
-GURPS.ClearLastActor = function(actor) {
-	if (GURPS.LastActor == actor) {
-	  console.log("Clearing Last Actor:" + GURPS.LastActor?.name);
-	  GURPS.ModifierBucket.refresh();
-		GURPS.LastActor = null;
-		if (canvas.tokens.controlled.length > 0) GURPS.SetLastActor(canvas.tokens.controlled[0].actor);  // There may still be tokens selected... if so, select one of them
-	}
+GURPS.ClearLastActor = function (actor) {
+  if (GURPS.LastActor == actor) {
+    console.log("Clearing Last Actor:" + GURPS.LastActor?.name);
+    GURPS.ModifierBucket.refresh();
+    GURPS.LastActor = null;
+    if (canvas.tokens.controlled.length > 0) GURPS.SetLastActor(canvas.tokens.controlled[0].actor);  // There may still be tokens selected... if so, select one of them
+  }
 }
 
 // This table is used to display dice rolls and penalties (if they are missing from the import
@@ -654,7 +655,10 @@ async function handleRoll(event, actor) {
     prefix = ""; // "Attempting ";
     let text = element.dataset.name.replace(/ \(\)$/g, "");  // sent as "name (mode)", and mode is empty
     thing = text.replace(/(.*?)\(.*\)/g, "$1");
-    opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+
+    // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
+    opt.text = text.replace(/.*?\((.*)\)/g, "$1");
+
     if (opt.text === text) opt.text = "";
     if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key);   // During the roll, we may want to extract something from the object
     formula = "3d6";
@@ -687,7 +691,7 @@ async function handleRoll(event, actor) {
     formula = d6ify(formula);
   }
 
-  this.doRoll(actor, formula, targetmods, prefix, thing, target, opt);
+  doRoll(actor, formula, targetmods, prefix, thing, target, opt);
 }
 GURPS.handleRoll = handleRoll;
 
@@ -709,124 +713,6 @@ function applyModifierDesc(actor, desc) {
 GURPS.applyModifierDesc = applyModifierDesc;
 
 
-/*
-  This is the BIG method that does the roll and prepares the chat message.
-  unfortunately, it has a lot fo hard coded junk in it.
-  */
-// formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn', target=skill level or -1=damage roll
-async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optionalArgs) {
-
-  if (origtarget == 0 || isNaN(origtarget)) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-  let isTargeted = (origtarget > 0);		// Roll "against" something (true), or just a roll (false)
-
-  // Is Dice So Nice enabled ?
-  let niceDice = false;
-  try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
-
-  // TODO Code below is duplicated in damagemessage.mjs (DamageChat) -- make sure it is updated in both places
-  // Lets collect up the modifiers, they are used differently depending on the type of roll
-  let modscontent = "";
-  let modifier = 0;
-  let maxtarget = null;			// If not null, then the target cannot be any higher than this.
-
-  targetmods = await GURPS.ModifierBucket.applyMods(targetmods);		// append any global mods
-
-  if (targetmods.length > 0) {
-    modscontent = "<i>";
-    for (let m of targetmods) {
-      modifier += m.modint;
-      modscontent += "<br> &nbsp;<span style='font-size:85%'>" + m.mod;
-      if (!!m.desc) {
-        modscontent += " : " + m.desc;
-        maxtarget = GURPS.applyModifierDesc(actor, m.desc);
-      }
-      modscontent += "</span>";
-    }
-  }
-
-  let chatcontent = "";
-  let roll = null;  // Will be the Roll
-  if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
-    let finaltarget = parseInt(origtarget) + modifier;
-    if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget;
-    roll = Roll.create(formula);		// The formula will always be "3d6" for a "targetted" roll
-    roll.roll();
-    let rtotal = roll.total;
-    let results = "<div><span class='fa fa-dice'/>&nbsp;<span class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
-    if (!!modscontent) modscontent += "</i><br>New Target: (" + finaltarget + ")";  // If we had modifiers, the target will have changed.
-
-    // Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
-    let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16);
-    let isCritFailure = (rtotal >= 18) || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0);
-
-    let margin = finaltarget - rtotal;
-
-    if (isCritSuccess)
-      results += " <span style='color:green; text-shadow: 1px 1px black; font-size: 130%;'><b>Critical Success!</b></span> ";
-    else if (isCritFailure)
-      results += " <span style='color:red; text-shadow: 1px 1px black; font-size: 120%;'><b>Critical Failure!</b></span> ";
-    else if (margin >= 0)
-      results += " <span style='color:green; font-size: 110%;'><b>Success!</b></span> ";
-    else
-      results += " <span style='color:red;font-size: 100%;'><i>Failure.</i></span> ";
-
-    let rdesc = " <span style='font-size: 100%; font-weight: normal'>";
-    if (margin == 0) rdesc += "just made it";
-    if (margin > 0) rdesc += "made it by " + margin;
-    if (margin < 0) rdesc += "missed it by " + (-margin);
-    rdesc += "</span></div>";
-    if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {		// if the attached obj (see handleRoll()) as Recoil information, do the additional math
-      let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1;
-      if (!!optionalArgs.obj.rof) rofrcl = Math.min(rofrcl, parseInt(optionalArgs.obj.rof));
-      if (rofrcl > 1) rdesc += `<div style='text-align: start'><span class='fa fa-bullseye'/>&nbsp;<i style='font-size:100%; font-weight: normal'>Total possible hits due to RoF/Rcl: </i><b style='font-size: 120%;'>${rofrcl}</b></div>`;
-    }
-    let optlabel = optionalArgs.text || "";
-    chatcontent = prefix + thing + " (" + origtarget + ")" + optlabel + modscontent + "<br>" + "<div class='gurps-results'>" + results + rdesc + "</div>";
-  } else {	// This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
-    // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
-
-    let min = 0
-    if (formula.slice(-1) === '!') {
-      formula = formula.slice(0, -1)
-      min = 1
-    }
-
-    roll = Roll.create(formula + `+${modifier}`);
-    roll.roll();
-    let rtotal = roll.total;
-    if (rtotal < min) {
-      rtotal = min;
-    }
-
-    let results = "<i class='fa fa-dice'/> <i class='fa fa-long-arrow-alt-right'/> <b style='font-size: 140%;'>" + rtotal + "</b>";
-    if (rtotal == 1) thing = thing.replace("points", "point");
-    chatcontent = prefix + modscontent + "<br>" + results + thing;
-  }
-
-  actor = actor || game.user;
-  const speaker = { alias: actor.name, _id: actor._id, actor: actor }
-  let messageData = {
-    user: game.user._id,
-    speaker: speaker,
-    content: "<div>" + chatcontent + "</div>", // wrap in HTML to trick Foundry
-    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-    roll: roll
-  };
-  let whoCanSeeDice = null;
-  if (optionalArgs.event?.shiftKey) {
-    whoCanSeeDice = [game.user._id];
-    messageData.whisper = [game.user._id];
-  }
-  if (!!optionalArgs.blind) {
-    messageData.whisper = ChatMessage.getWhisperRecipients("GM");
-    messageData.blind = true;
-  }
-
-  messageData.sound = CONFIG.sounds.dice;
-  CONFIG.ChatMessage.entityClass.create(messageData, {});
-
-}
-GURPS.doRoll = doRoll;
 
 // Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>
 function gurpslink(str, clrdmods = true) {
@@ -1335,24 +1221,24 @@ Hooks.once("ready", async function () {
     }
   });
 
-/*		// Should not need this hook, if we are watching controlToken
-  Hooks.on('createActiveEffect', (...args) => {
-    if (!!args && args.length >= 4)
-      GURPS.SetLastActor(args[0]);
-  });
-*/
+  /*		// Should not need this hook, if we are watching controlToken
+    Hooks.on('createActiveEffect', (...args) => {
+      if (!!args && args.length >= 4)
+        GURPS.SetLastActor(args[0]);
+    });
+  */
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on("controlToken", (...args) => {
     if (args.length > 1) {
       let a = args[0]?.actor;
-			if (!!a) {
-	      if (args[1])
-					game.GURPS.SetLastActor(a);
-				else
-					game.GURPS.ClearLastActor(a);
-	    }
-		}
+      if (!!a) {
+        if (args[1])
+          game.GURPS.SetLastActor(a);
+        else
+          game.GURPS.ClearLastActor(a);
+      }
+    }
   });
 
   Hooks.on('preCreateChatMessage', (data, options, userId) => {
