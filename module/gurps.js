@@ -1165,7 +1165,8 @@ Hooks.once("init", async function () {
   Items.registerSheet("gurps", GurpsItemSheet, { makeDefault: true });
 
   Hooks.on('chatMessage', (log, content, data) => {
-    if (content === "/help" || content === "!help") {
+  if (!!data.alreadyProcessed) return true;
+   if (content === "/help" || content === "!help") {
       let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>";
       c += "<br>/roll (or /r) [On-the-Fly formula]";
       c += "<br>/private (or /pr) [On-the-Fly formula]";
@@ -1189,27 +1190,52 @@ Hooks.once("init", async function () {
 
     let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/;
     let found = false;
+    let c = "executing:";
+    let delayed = "";
     content.split("\n").forEach(e => {		// Handle multiline chat messages (mostly from macros)
+      let used = false;
       let m = e.match(re);
       if (!!m && !!m[2]) {
         let action = parselink(m[2]);
         if (!!action.action) {
+          c += "<br>" + e;
           GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith("/pr") });
-          found = true;
+          used = true;
         }
       } else {
         if (e === "/clearmb") {
+          c += "<br>" + e;
           GURPS.ModifierBucket.clear();
-          found = true;
+          used = true;
         }
         if (e.startsWith("/sendmb")) {
+          c += "<br>" + e;
           let user = e.replace(/\/sendmb/,"").trim();
           GURPS.ModifierBucket.sendBucketToPlayer(user);
-          found = true;
+          used = true;
         }    
       }
+      if (!used) delayed += e + "\n";
+      found = found || used;
     });
-    if (found) return false;
+    if (found) {
+ //     setTimeout(() => {
+          ChatMessage.create({
+            alreadyProcessed: true,
+            content: c,
+            user: game.user._id,
+            type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+            whisper: [ game.user._id ]
+          });
+          if (!!delayed) {
+            let d = duplicate(data);
+            d.content = delayed;
+            d.alreadyProcessed = true;
+            ChatMessage.create(d);
+          }
+ //       }, 500);
+      return false;
+    }
 
   });
 

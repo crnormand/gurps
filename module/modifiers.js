@@ -369,8 +369,8 @@ ${OtherMods}`;
 		return answer;
 	}
 
-	async clear() {
-		await game.user.setFlag("gurps", "modifierstack", null);
+	clear() {
+		//await game.user.setFlag("gurps", "modifierstack", null);
 		this.modifierStack = {
 			modifierList: [],  // { "mod": +/-N, "desc": "" }
 			currentSum: 0,
