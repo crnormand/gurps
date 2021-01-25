@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.7
+# Current Release Version 0.8.8
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,6 +18,9 @@ To install the latest stable release, use this manifest URL:
 
 This is what we are currently working on:
 
+- 0.8.9
+
+### History
 - 0.8.8
     - Fixed [Parry] bug (if Parry column has "No" in it)
     - Added "Send to 'Everyone'" GM option in modifier bucket
@@ -32,7 +35,6 @@ This is what we are currently working on:
     - Updated chat commands (/help - to see them all) 
     - Support limited multiline chat macros
 
-### History
 - 0.8.7
     - Bug fix for multiple PDF links (and GCA import failure)
 
