@@ -2,65 +2,97 @@
   <div id='responsive' class="gurpsactorsheet">
     <div id='combat-sheet'>
 
-      <div id='combat-identity'>
-        <div class='header'>Identity</div>
-        <div class='fieldblock'>
-          <div class='label'>Name:</div>
-          <div class='field'>{{actor.name}}</div>
-          <div class="label">Title:</div>
-          <div class="field">{{data.traits.title}}</div>
-          <div class='label'>Player:</div>
-          <div class='field'>{{data.traits.player}}</div>
-        </div>
-      </div> <!-- end of identity-->
+      <div id='combat-hitfat'>
+        <div id='combat-hit' class='tracked-resource' data-gurps-resource='HP'>
+          <div class='header'>Hit Points</div>
+          <div class='spinner'>
+            <button class='decrement' data-operation='resource-dec'><i class="fas fa-minus"></i></button>
+            <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
+              placeholder="{{data.HP.max}}" data-dtype="Number" />
+            <button class='increment' data-operation='resource-inc'><i class="fas fa-plus"></i></button>
+            <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
+          </div>
+          <div class='condition-block'>
+            <div class='basic-value fieldblock'>
+              <div class='field'>{{data.HP.max}}</div>
+              <div class='label'>Basic</div>
+            </div>
+            <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}</div>
+          </div>
+        </div> <!-- end of combat-hit -->
 
-      <div id='combat-hit'>
-        <div class='header'>Hit Points</div>
-        <div class='field'>
-          <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
-            placeholder="{{data.HP.max}}" data-dtype="Number" />
-        </div>
-        <div class='condition-block'>
-          <div class='basic-value'>{{data.HP.max}}</div>
-          <div class='basic-label'>Basic</div>
-          <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}</div>
-        </div>
-      </div> <!-- end of combat-hit -->
+        <div id='combat-fat' class='tracked-resource' data-gurps-resource='FP'>
+          <div class='header'>Fatigue</div>
+          <div class='spinner'>
+            <button class='decrement' data-operation='resource-dec'><i class="fas fa-minus"></i></button>
+            <input class="gcs-attr-input" name="data.FP.value" type="text" value="{{data.FP.value}}"
+              placeholder="{{data.FP.max}}" data-dtype="Number" />
+            <button class='increment' data-operation='resource-inc'><i class="fas fa-plus"></i></button>
+            <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
+          </div>
+          <div class='condition-block'>
+            <div class='basic-value fieldblock'>
+              <div class='field'>{{data.FP.max}}</div>
+              <div class='label'>Basic</div>
+            </div>
+            <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}</div>
+          </div>
+        </div> <!-- combat-fat -->
+      </div>
 
-      <div id='combat-fat'>
-        <div class='header'>Fatigue</div>
-        <div class='field'>
-          <input class="gcs-attr-input" name="data.FP.value" type="text" value="{{data.FP.value}}"
-            placeholder="{{data.FP.max}}" data-dtype="Number" />
-        </div>
-        <div class='condition-block'>
-          <div class='basic-value'>{{data.FP.max}}</div>
-          <div class='basic-label'>Basic</div>
-          <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}</div>
-        </div>
-      </div> <!-- combat-fat -->
+      <div id='combat-trackers'>
+        <!-- <div class='header'>Resource Trackers</div> -->
+        {{#each data.additionalresources.tracker}}
+        <div class='tracked-resource {{#unless name}}inactive{{/unless}}'
+          data-gurps-resource='additionalresources.tracker.{{@index}}'>
+          <div class='header'>{{#if name}}{{name}}{{else}}Resource {{@index}}{{/if}}</div>
+          <div class='spinner'>
+            <button class='decrement' data-operation='resource-dec'><i class="fas fa-minus"></i></button>
+            <input class="gcs-attr-input {{#if max}}
+              {{#unless (gt value min)}}depleted{{/unless}}
+              {{/if}}" name="data.additionalresources.tracker.{{@index}}.value" type="text" value="{{value}}"
+              placeholder="0" data-dtype="Number" />
+            <button class='increment' data-operation='resource-inc'><i class="fas fa-plus"></i></button>
+            <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
+          </div>
+          <div class='condition-block'>
+            <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
+              {{#if
+              (gt value max)}}Over{{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}</div>
+            <div class='max'>({{min}}/{{max}})</div>
+          </div>
+        </div> <!-- end of resource -->
+        {{/each}}
+      </div>
+
 
       <div id='combat-attrs'>
         <div class='header'>Attributes</div>
         <div id='combat-attrs-container'>
           <div id='combat-attrs-1'>
             <div class="fieldblock">
-              <div class="field noedit rollable" data-path="attributes.ST.value">{{data.attributes.ST.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.ST.value" data-otf='ST'>
+                {{data.attributes.ST.value}}</div>
               <div class="label">{{localize "GURPS.attributesST"}}</div>
 
-              <div class="field noedit rollable" data-path="attributes.DX.value">{{data.attributes.DX.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.DX.value" data-otf='DX'>
+                {{data.attributes.DX.value}}</div>
               <div class="label">{{localize "GURPS.attributesDX"}}</div>
 
-              <div class="field noedit rollable" data-path="attributes.IQ.value">{{data.attributes.IQ.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.IQ.value" data-otf='IQ'>
+                {{data.attributes.IQ.value}}</div>
               <div class="label">{{localize "GURPS.attributesIQ"}}</div>
 
-              <div class="field noedit rollable" data-path="attributes.HT.value">{{data.attributes.HT.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.HT.value " data-otf='HT'>
+                {{data.attributes.HT.value}}</div>
               <div class="label">{{localize "GURPS.attributesHT"}}</div>
               <hr>
-              <div class="field noedit rollable" data-path="attributes.PER.value">{{data.attributes.PER.value}}</div>
+              <div class="field noedit rollable" data-path="attributes.PER.value" data-otf='PER'>
+                {{data.attributes.PER.value}}</div>
               <div class="label">{{localize "GURPS.attributesPER"}}</div>
 
-              <div class="field rollable" data-path="attributes.WILL.value">{{data.attributes.WILL.value}}</div>
+              <div class="field rollable" data-path="attributes.WILL.value" data-otf='WILL'>
+                {{data.attributes.WILL.value}}</div>
               <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
               <hr>
               <div class="field">{{data.basicspeed.value}}</div>
@@ -72,31 +104,32 @@
           </div>
           <div id='combat-attrs-2'>
             <div class="fieldblock">
-              <div class="field noedit rollable" data-path="vision">{{data.vision}}</div>
+              <div class="field noedit rollable" data-path="vision" data-otf='Vision'>{{data.vision}}</div>
               <div class="label">Vision</div>
 
-              <div class="field noedit rollable" data-path="hearing">{{data.hearing}}</div>
+              <div class="field noedit rollable" data-path="hearing" data-otf='Hearing'>{{data.hearing}}</div>
               <div class="label">Hearing</div>
 
-              <div class="field noedit rollable" data-path="tastesmell">{{data.tastesmell}}</div>
+              <div class="field noedit rollable" data-path="tastesmell" data-otf='Taste Smell'>{{data.tastesmell}}</div>
               <div class="label">Taste &amp; Smell</div>
 
-              <div class="field noedit rollable">{{data.touch}}</div>
+              <div class="field noedit rollable" data-path="touch" data-otf='Touch'>{{data.touch}}</div>
               <div class="label">Touch</div>
 
               <div class="label"></div>
               <div class="label">&nbsp;</div>
 
-              <div class="field noedit rollable" data-path="frightcheck">{{data.frightcheck}}</div>
+              <div class="field noedit rollable" data-path="frightcheck" data-otf='Fright Check'>{{data.frightcheck}}
+              </div>
               <div class="label">Fright Check</div>
 
               <div class="label"></div>
               <div class="label">&nbsp;</div>
 
-              <div class="field rollable noedit" data-damage>{{data.thrust}}</div>
+              <div class="field rollable noedit" data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
               <div class="label">Basic Thrust</div>
 
-              <div class="field rollable noedit" data-damage>{{data.swing}}</div>
+              <div class="field rollable noedit" data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
               <div class="label">Basic Swing</div>
             </div>
           </div>
@@ -118,13 +151,13 @@
           <div class="enc current {{this.key}}" data-key="{{key}}"></div>
           <div class="load current">{{this.weight}}</div>
           <div class="move current">{{this.move}}</div>
-          <div class="dodge current rollable" data-path="dodge">{{this.dodge}}</div>
+          <div class="dodge current rollable" data-path="dodge" data-otf='Dodge'>{{this.dodge}}</div>
           {{else}}
           <div class="encmarker "></div>
           <div class="enc {{this.key}}" data-key="{{key}}"></div>
           <div class="load ">{{this.weight}}</div>
           <div class="move ">{{this.move}}</div>
-          <div class="dodge rollable" data-path="dodge">{{this.dodge}}</div>
+          <div class="dodge">{{this.dodge}}</div>
           {{/if}}
           {{/each}}
 
@@ -132,23 +165,25 @@
       </div>
 
       <div id='combat-location'>
-        <div class="header">Hit Location</div>
+        <div class="header">Hit Location ({{localize (concat 'GURPS.BODYPLAN' data.additionalresources.bodyplan)}})
+        </div>
         <div class="roll header">Roll</div>
         <div class="where header">Where</div>
         <div class="penalty header">Penalty</div>
         <div class="dr header">DR</div>
 
         {{#each data.hitlocations}}
-        <div class="roll">{{hitlocationroll this.where this.roll}}</div>
+        <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where">{{this.where}}</div>
-        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">{{hitlocationpenalty this.where this.penalty}}
+        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
+          {{hitlocationpenalty this.where this.penalty}}
         </div>
         <div class="dr">{{this.dr}}</div>
         {{/each}}
 
       </div> <!-- end of combat-location -->
       <div id='combat-weapons'>
- 			 {{#if (notEmpty data.melee)}}
+        {{#if (notEmpty data.melee)}}
         <div id="melee">
           <div class="desc header">Melee Weapons</div>
           <div class="usage header">Usage</div>
@@ -165,17 +200,18 @@
             <div class="list_note">{{{gurpslink this.notes}}}</div>
           </div>
           <div class="usage">{{this.mode}}</div>
-          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})">{{this.level}}</div>
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})"
+            data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
           <div class="parry rollable" data-name="Parry">{{this.parry}}</div>
           <div class="block rollable" data-name="Block">{{this.block}}</div>
-          <div class="damage rollable" data-damage>{{this.damage}}</div>
+          <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
           <div class="reach">{{this.reach}}</div>
           <div class="st">{{this.st}}</div>
           <div></div>
           {{/each}}
 
         </div>
-				{{/if}}
+        {{/if}}
         {{#if (notEmpty data.ranged)}}
         <div id="ranged">
           <div class="desc header">Ranged Weapons</div>
@@ -196,19 +232,20 @@
             <div class="list_note">{{{gurpslink this.notes}}}</div>
           </div>
           <div class="usage">{{this.mode}}</div>
-          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}">{{this.level}}</div>
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
+            data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
           <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
             {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
-          <div class="damage rollable" data-damage>{{this.damage}}</div>
+          <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
           <div class="range">{{this.range}}</div>
           <div class="rof">{{this.rof}}</div>
           <div class="shots">{{this.shots}}</div>
-          <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='for {{this.name}} Bulk'>{{this.bulk}}</div>
+          <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'>{{this.bulk}}</div>
           <div class="rcl">{{this.rcl}}</div>
           <div class="st">{{this.st}}</div>
           {{/each}}
         </div>
-				{{/if}}
+        {{/if}}
         <div id='speed-range-table'>
           <div class="header">Speed/Range Table</div>
           <div id="range-table" style="--count: {{ranges.length}}">
