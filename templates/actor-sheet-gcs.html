@@ -491,22 +491,25 @@
       <div class="rcl">{{this.rcl}}</div>
       <div class="st">{{this.st}}</div>
       {{/each}}
-
     </div>
     {{/if}}
+    
     <div id="advantages">
       <div class="desc header dblclksort" data-key="data.ads">Advantages, Disadvantages, Perks &amp; Quirks</div>
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
-      {{#each data.ads as | this key | }}
-      <div class="desc indent0 satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{key}}">{{{gurpslink this.name}}}
+      {{#listeqt data.ads}}
+      <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{@key}}">
+          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
+          {{{gurpslink this.name}}}
         <div class="list_note satisfiedY"></div>
-        <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{key}}">{{{gurpslinkbr this.notes}}}
+        <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">{{{gurpslinkbr this.notes}}}
         </div>
       </div>
       <div class="pts satisfiedY">{{this.points}}</div>
       <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
-      {{/each}}
+      {{/listeqt}}
     </div>
 
     <div id="skills">
@@ -585,6 +588,8 @@
         <button class="equipmentbutton" data-operation='equipment-inc'>+</button>   
       </div>
       <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu" data-key="data.equipment.carried.{{@key}}">
+        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
         {{{gurpslink this.name}}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
@@ -616,6 +621,8 @@
         <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
       </div>
       <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu" data-key="data.equipment.other.{{@key}}">
+        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
         {{{gurpslink this.name}}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>

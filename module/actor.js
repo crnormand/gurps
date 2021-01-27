@@ -545,6 +545,26 @@ export class GurpsActor extends Actor {
       "data.equipment": equipment
     };
   }
+  
+  // Fold a flat array into a hierarchical target object
+  foldList(flat, target = {}) {
+    flat.forEach(obj => {
+      if (!!obj.parentuuid) {
+        const parent = flat.find(o => o.uuid == obj.parentuuid);
+        if (!!parent) {
+          if (!parent.contains) parent.contains = {};   // lazy init for older characters
+          game.GURPS.put(parent.contains, obj);
+        } else
+          obj.parentuuid = "";  // Can't find a parent, so put it in the top list.  should never happen with GCS 
+      }
+    });
+    let index = 0;
+    flat.forEach(obj => {
+      if (!obj.parentuuid)
+        game.GURPS.put(target, obj, index++);
+    }); 
+    return target;
+  }
 
   importEncumbranceFromGCSv1(json) {
     if (!json) return;
@@ -929,9 +949,8 @@ export class GurpsActor extends Actor {
 
   // In the new GCS import, all ads/disad/quirks/perks are in one list.
   importAdsFromGCSv2(json) {
-    let list = {};
-    let index = 0;
     let t = this.textFrom;		/// shortcut to make code smaller
+    let temp =  [];
     for (let key in json) {
       if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key];
@@ -948,12 +967,14 @@ export class GurpsActor extends Actor {
         else if (!!a.userdesc)
           a.notes = a.userdesc;
         a.pageref = t(j.pageref);
-        game.GURPS.put(list, a, index++);
+        a.uuid = t(j.uuid);
+        a.parentuuid = t(j.parentuuid);
+        temp.push(a);
       }
     }
     return {
       "data.-=ads": null,
-      "data.ads": list
+      "data.ads": this.foldList(temp)
     };
   }
 
@@ -1035,6 +1056,7 @@ export class Named {
   name = "";
   notes = "";
   pageref = "";
+  contains = {};
 
   // This is an ugly hack to parse the GCS FG Formatted Text entries.   See the method cleanUpP() above.
   setNotes(n) {
@@ -1155,7 +1177,6 @@ export class Equipment extends Named {
   techlevel = "";
   legalityclass = "";
   categories = "";
-  contains = {};
   costsum = "";
   weightsum = "";
 
