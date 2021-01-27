@@ -80,21 +80,32 @@ export class GurpsActor extends Actor {
     }
 
     let ra = r["@attributes"];
+    // Sorry for the horrible version checking... it sort of evolved organically
     const isFoundryGCS = (!!ra && ra.release == "Foundry" && (ra.version == "1" || ra.version.startsWith("GCS")));
     const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version.startsWith("GCA"));
     if (!(isFoundryGCS || isFoundryGCA)) {
       ui.notifications.error("We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).");
-      ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
+      ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.WHISPER, whisper: [ game.user.id ]});
       return;
     }
+    let msg = "";
+    let exit = false;
 		if (isFoundryGCA) {
 			const v = ra.version.split("-");
-			if (v[1] != "1") {
-			  let msg = "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.   Check the Users Guide for details."
-	      ui.notifications.error(msg);
-      	ChatMessage.create({ content: msg + "<br><a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
-			}		
+			if (!v[1]) {
+			  msg += "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.<br>"
+			} 
+      let vernum = 1;
+      if (!!v[1]) vernum = parseInt(v[1]);
+      if (vernum < 2) {
+        msg += "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks.   If you are missing ranged attacks, please upgrade to the latest export script.<br>"
+      } 
 		}
+    if (!!msg) {
+      ui.notifications.error(msg);
+      ChatMessage.create({ content: msg + "<br>Check the Users Guide for details. <a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.WHISPER, whisper: [ game.user.id ] });
+      if (exit) return;   // Some older imports can still work.
+    }
 
     // The character object starts here
     let c = r.character;
@@ -116,6 +127,7 @@ export class GurpsActor extends Actor {
     let ar = this.data.data.additionalresources || {};
     ar.importname = importname;
     ar.importpath = importpath;
+    ar.importversion = ra.version;
     commit = { ...commit, ...{ "data.additionalresources": ar } };
 
     try {
