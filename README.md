@@ -20,6 +20,7 @@ This is what we are currently working on:
 
 - 0.8.9
     - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
+    - Fixed CGA export to correctly export ranged innate attacks.
 
 ### History
 - 0.8.8
