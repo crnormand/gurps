@@ -492,8 +492,10 @@ export class GurpsActor extends Actor {
         eqt.equipped = (cstatus == 2);
         eqt.techlevel = t(j.tl);
         eqt.legalityclass = t(j.lc);
-        eqt.categories = t(j.type);
-       if (isFoundryGCS) {
+        eqt.categories = t(j.type); 
+        eqt.uuid = t(j.uuid);
+        eqt.parentuuid = t(j.parentuuid);
+        if (isFoundryGCS) {
           eqt.notes = t(j.notes);
           eqt.pageref = t(j.pageref);
         } else
@@ -506,13 +508,13 @@ export class GurpsActor extends Actor {
 
     // Put everything in it container (if found), otherwise at the top level
     temp.forEach(eqt => {
-      if (!!eqt.location) {
+      if (!!eqt.parentuuid) {
         let parent = null;
-        parent = temp.find(e => e.name === eqt.location);
+        parent = temp.find(e => e.uuid === eqt.parentuuid);
         if (!!parent)
           game.GURPS.put(parent.contains, eqt);
         else
-          eqt.location = "";	// Can't find a parent, so put it in the top list
+          eqt.parentuuid = "";	// Can't find a parent, so put it in the top list
       }
     });
 
@@ -525,7 +527,7 @@ export class GurpsActor extends Actor {
 
     temp.forEach(eqt => {
       Equipment.calc(eqt);
-      if (!eqt.location) {
+      if (!eqt.parentuuid) {
         if (eqt.carried)
           game.GURPS.put(equipment.carried, eqt, cindex++);
         else
