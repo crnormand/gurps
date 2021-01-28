@@ -259,12 +259,11 @@ export class GurpsActor extends Actor {
   importNotesFromGCSv1(descjson, json) {
     if (!json) return;
     let t = this.textFrom;
-    let ns = {};
-    let index = 0;
+    let temp = [];
     if (!!descjson) {  // support for GCA description
       let n = new Note();
       n.notes = t(descjson).replace(/\\r/g, "\n");
-      game.GURPS.put(ns, n, index++);
+      temp.push(n);
     }
     for (let key in json) {
       if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -274,12 +273,14 @@ export class GurpsActor extends Actor {
         n.notes = t(j.name);
         let txt = t(j.text);
         if (!!txt) n.notes = n.notes + "\n" + txt.replace(/\\r/g, "\n");
-        game.GURPS.put(ns, n, index++);
-      }
+        n.uuid = t(j.uuid);
+        n.parentuuid = t(j.parentuuid);
+        temp.push(n);
+       }
     }
     return {
       "data.-=notes": null,
-      "data.notes": ns
+      "data.notes": this.foldList(temp)
     };
   }
 
@@ -484,17 +485,7 @@ export class GurpsActor extends Actor {
         eqt.name = t(j.name);
         eqt.count = i(j.count);
         eqt.cost = t(j.cost);
-        eqt.weight = f(j.weight);
-        let tmp = parseFloat(eqt.cost);
-        if (!isNaN(tmp))
-          eqt.costsum = eqt.count * tmp;
-        else
-          eqt.costsum = t(j.costsum);
-        tmp = parseFloat(eqt.weight)
-         if (!isNaN(tmp))
-          eqt.weightsum = eqt.count * tmp;
-        else
-          eqt.weightsum = t(j.weightsum);
+        eqt.weight = t(j.weight);
         eqt.location = t(j.location);
         let cstatus = i(j.carried);
         eqt.carried = (cstatus >= 1);
@@ -533,6 +524,7 @@ export class GurpsActor extends Actor {
     let oindex = 0;
 
     temp.forEach(eqt => {
+      Equipment.calc(eqt);
       if (!eqt.location) {
         if (eqt.carried)
           game.GURPS.put(equipment.carried, eqt, cindex++);
@@ -843,8 +835,7 @@ export class GurpsActor extends Actor {
   // When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
   importSkillsFromGCSv1(json, isFoundryGCS) {
     if (!json) return;
-    let skills = {};
-    let index = 0;
+    let temp = [];
     let t = this.textFrom;		/// shortcut to make code smaller
     for (let key in json) {
       if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -852,7 +843,8 @@ export class GurpsActor extends Actor {
         let sk = new Skill();
         sk.name = t(j.name);
         sk.type = t(j.type);
-        sk.level = this.intFrom(j.level);
+        sk.level = t(j.level);
+        if (sk.level == 0) sk.level = "";
         sk.points = this.intFrom(j.points);
         sk.relativelevel = t(j.relativelevel);
         if (isFoundryGCS) {
@@ -861,13 +853,15 @@ export class GurpsActor extends Actor {
         } else
           sk.setNotes(t(j.text));
         if (!!j.pageref)
-          sk.pageref = t(j.pageref).split(",").splice(0, 1);
-        game.GURPS.put(skills, sk, index++);
+          sk.pageref = t(j.pageref)
+        sk.uuid = t(j.uuid);
+        sk.parentuuid = t(j.parentuuid);
+        temp.push(sk);
       }
     }
     return {
       "data.-=skills": null,
-      "data.skills": skills
+      "data.skills": this.foldList(temp)
     };
   }
 
@@ -876,8 +870,7 @@ export class GurpsActor extends Actor {
   // When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
   importSpellsFromGCSv1(json, isFoundryGCS) {
     if (!json) return;
-    let spells = {};
-    let index = 0;
+    let temp = [];
     let t = this.textFrom;		/// shortcut to make code smaller
     for (let key in json) {
       if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -908,14 +901,16 @@ export class GurpsActor extends Actor {
         sp.duration = t(j.duration);
         sp.points = t(j.points);
         sp.casttime = t(j.time);
-        sp.level = parseInt(t(j.level));
+        sp.level = t(j.level);
         sp.duration = t(j.duration);
-        game.GURPS.put(spells, sp, index++);
+        sp.uuid = t(j.uuid);
+        sp.parentuuid = t(j.parentuuid);
+        temp.push(sp);
       }
     }
     return {
       "data.-=spells": null,
-      "data.spells": spells
+      "data.spells": this.foldList(temp)
     };
   }
 
@@ -1179,13 +1174,24 @@ export class Equipment extends Named {
   categories = "";
   costsum = "";
   weightsum = "";
-
+  
   static calc(eqt) {
     if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0;
     if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0;
     if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0;
     eqt.costsum = eqt.count * eqt.cost;
     eqt.weightsum = eqt.count * eqt.weight;
+    if (!!eqt.contains) Object.values(eqt.contains).forEach(e => {
+        let [c, w] = Equipment.calc(e);
+        eqt.costsum += c;
+        eqt.weightsum += w;
+      });
+    if (!!eqt.collapsed) Object.values(eqt.collapsed).forEach(e => {
+        let [c, w] = Equipment.calc(e);
+        eqt.costsum += c;
+        eqt.weightsum += w;
+      });
+    return [eqt.costsum, eqt.weightsum];
   }
 }
 export class Reaction {

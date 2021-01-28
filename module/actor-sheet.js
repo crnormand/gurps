@@ -775,9 +775,9 @@ export class GurpsActorSheet extends ActorSheet {
         // Because we may be modifing the same list, we have to check the order of the keys and
         // apply the operation that occurs later in the list, first (to keep the indexes the same)
         let srca = srckey.split(".");
-        srca.splice(0, 3);
+        srca.splice(0, 2);    // Remove data.xxxx
         let tara = targetkey.split(".");
-        tara.splice(0, 3);
+        tara.splice(0, 2);
         let max = Math.min(srca.length, tara.length);
         let isSrcFirst = false;
         for (let i = 0; i < max; i++) {
