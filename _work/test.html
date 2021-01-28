@@ -15,175 +15,373 @@
 </head>
 
 <body>
-    <div class='apply-damage {{classes}}' {{debug}}>
+    <div id="actor-85It90fOLsRPvLDP" class="app window-app gurps sheet actor" data-appid="36"
+        style="z-index: 103; width: 560px; height: 375px; left: 722px; top: 500px;">
+        <header class="window-header flexrow draggable resizable">
+            <h4 class="window-title">Findlay Silvertongue</h4>
+            <a class="header-button toggle"><i class="fas fa-exchange-alt"></i>Full View</a>
+            <a class="header-button import"><i class="fas fa-file-import"></i>Import</a>
+            <a class="header-button edit"><i class="fas fa-edit"></i>Editor</a>
+            <a class="header-button configure-sheet"><i class="fas fa-cog"></i>Sheet</a>
+            <a class="header-button configure-token"><i class="fas fa-user-circle"></i>Token</a>
+            <a class="header-button close"><i class="fas fa-times"></i>Close</a>
+        </header>
 
-        <h2>Apply {{damageData.damage}} points of {{damageData.damageType}} damage to {{actor.data.name}}</h2>
-        <div classes='flexcol flex-between'>
-            <div class='flexrow flex-group-center' style='justify-items: center;'>
-                <h3 style='margin-bottom: 0;'>Directly apply:</h3>
-                <input type='number' id='damage' name='damage' value='{{damageData.damage}}'>
-                <div>
-                    <select id='apply-to' name='apply-to'>
-                        <option value='HP' selected>Hit Points</option>
-                        <option value='FP'>Fatigue Points</option>
-                    </select>
-                </div>
-                <button id='apply-publicly'>Apply</button>
-                <button id='apply-secretly'>Apply (Quietly)</button>
-            </div>
+        <section class="window-content">
+            <form class="editable overflowy" autocomplete="off">
+                <div id="responsive" class="gurpsactorsheet">
+                    <div id="combat-sheet">
 
-            <div class='flex-group-center' style='margin-top: 1em;'>
-                <h3>Apply damage options:</h3>
-
-                <div class='grid grid-3col flex-between'>
-                    <div class='gurps-group'>
-                        <div class='gurps-group-header'>Hit Location and DR</div>
-                        <div class='gurps-3col-expandmiddle'>
-                            <div class='gurps-grid-header'>Location</div>
-                            <div class='gurps-grid-header'>Roll</div>
-                            <div class='gurps-grid-header'>DR</div>
-
-                            {{#each hitLocationsWithDR}}
-                            <div class='gurps-3col-line'>
-                                <label><input type='radio' name='hitlocation'
-                                        value='{{this.where}}'>&nbsp;{{this.where}}</input></label>
+                        <div id="combat-identity">
+                            <div class="header">Identity</div>
+                            <div class="fieldblock">
+                                <div class="label">Name:</div>
+                                <div class="field">Findlay Silvertongue</div>
+                                <div class="label">Title:</div>
+                                <div class="field"></div>
+                                <div class="label">Player:</div>
+                                <div class="field">Sam</div>
                             </div>
-                            <div class='gurps-3col-line'>{{this.rollText}}</div>
-                            <div class='gurps-3col-line'>{{this.dr}}</div>
-                            {{/each}}
+                        </div> <!-- end of identity-->
 
-                        </div>
-                        <hr />
-                        <button id='random-location'><i class='fa fa-dice'>&nbsp;Random</i></button>
-                        <hr />
-                        <label><input type='radio' name='hitlocation' value='Large-Area'>&nbsp;Large-Area Injury (<span
-                                class='pdflink'>B400</span>)</input></label>
-                        <div class='grid grid-2col flex-between'
-                            style='align-items: center; justify-items: flex-start;'>
-                            <label><input type='radio' name='hitlocation' value='User Entered'>&nbsp;Enter
-                                DR:</input></label>
-                            <input type='number' id='select-dr' name='User Entered' value='{{selectedDR}}'>
-                        </div>
-                    </div>
-
-                    <div class='gurps-group'>
-                        <div class='gurps-group-header'>Type and Wounding Modifiers</div>
-                        <div class='gurps-3col-expandmiddle'>
-                            <div class='gurps-grid-header'>Damage Type</div>
-                            <div class='gurps-grid-header'>Abbrev</div>
-                            <div class='gurps-grid-header'>Modifier</div>
-
-                            {{#each woundingModifiers}}
-                            <div class='gurps-3col-line'>
-                                <label><input type='radio' name='woundmodifier'
-                                        value='{{@key}}'>&nbsp;{{this.label}}</input></label>
+                        <div id="combat-hit">
+                            <div class="header">Hit Points</div>
+                            <div class="field">
+                                <input class="gcs-attr-input" name="data.HP.value" type="text" value="14"
+                                    placeholder="14" data-dtype="Number">
                             </div>
-                            <div class='gurps-3col-line'>{{@key}}</div>
-                            <div class='gurps-3col-line'>×{{this.multiplier}}</div>
-                            {{/each}}
-
-                        </div>
-                        <hr />
-                        <label><input type='radio' name='woundmodifier' value='none'>&nbsp;No modifier</input></label>
-                        <div class='grid grid-2col flex-between'
-                            style='align-items: center; justify-items: flex-start;'>
-                            <label><input type='radio' name='woundmodifier' value='User Entered'>&nbsp;Enter
-                                modifier:</input></label>
-                            <input type='number' id='select-mod' name='User Entered' value='{{selectedMod}}'>
-                        </div>
-                        <div class='grid grid-2col flex-between'
-                            style='align-items: center; justify-items: flex-start;'>
-                            <label>Additional modifier (stacks):</label>
-                            <input type='number' id='addmodifier' name='addmodifier' value='{{additionalMods}}'>
-                        </div>
-                    </div>
-
-                    <div class='gurps-group'>
-                        <div class='gurps-group-header'>Tactical Rules</div>
-
-                        <div class='gurps-group-caption'>Use systems settings to set defaults.</div>
-                        <div class='gurps-3col-expandmiddle'>
-                            {{#each tacticalOptions}}
-                            <div class='gurps-3col-line'>
-                                <input id='tactical-{{this.id}}' type='checkbox' name='tactical'
-                                    value='{{this.id}}'></input>
+                            <div class="condition-block">
+                                <div class="basic-value">14</div>
+                                <div class="basic-label">Basic</div>
+                                <div class="condition normal">Normal</div>
                             </div>
-                            <div class='gurps-3col-line gurps-left-aligned'>
-                                <label for='tactical-{{this.id}}'>{{this.label}}</label>
-                            </div>
-                            <div class='gurps-3col-line pdflink'>{{this.ref}}</div>
-                            {{/each}}
-                        </div>
+                        </div> <!-- end of combat-hit -->
 
-                        <div class='gurps-group-header gurps-group-gap'>Other Situations</div>
-                        <div class='gurps-3col-expandmiddle'>
-                            {{#each otherSituations}}
-                            <div class='gurps-3col-line'>
-                                <input id='specials-{{this.id}}' type='checkbox' name='specials'
-                                    value='{{this.id}}'></input>
+                        <div id="combat-fat">
+                            <div class="header">Fatigue</div>
+                            <div class="field">
+                                <input class="gcs-attr-input" name="data.FP.value" type="text" value="11"
+                                    placeholder="11" data-dtype="Number">
                             </div>
-                            <div class='gurps-3col-line gurps-left-aligned'>
-                                <label for='specials-{{this.id}}'>{{this.label}}</label>
+                            <div class="condition-block">
+                                <div class="basic-value">11</div>
+                                <div class="basic-label">Basic</div>
+                                <div class="condition normal">Normal</div>
                             </div>
-                            <div class='gurps-3col-line pdflink'>{{this.ref}}</div>
-                            {{/each}}
-                        </div>
-                        <hr />
+                        </div> <!-- combat-fat -->
 
-                        <div style='background-color: rgba(0, 0, 0, 0.10);'>
-                            <div class='gurps-3col-expandmiddle'>
-                                <div class='gurps-3col-line'>
-                                    <input id='vulnerable' type='checkbox' name='vulnerable' value='vulnerable'></input>
+                        <div id="combat-attrs">
+                            <div class="header">Attributes</div>
+                            <div id="combat-attrs-container">
+                                <div id="combat-attrs-1">
+                                    <div class="fieldblock">
+                                        <div class="field noedit rollable" data-path="attributes.ST.value"
+                                            data-otf="ST">10</div>
+                                        <div class="label">ST</div>
+
+                                        <div class="field noedit rollable" data-path="attributes.DX.value"
+                                            data-otf="DX">13</div>
+                                        <div class="label">DX</div>
+
+                                        <div class="field noedit rollable" data-path="attributes.IQ.value"
+                                            data-otf="IQ">13</div>
+                                        <div class="label">IQ</div>
+
+                                        <div class="field noedit rollable" data-path="attributes.HT.value "
+                                            data-otf="HT">12</div>
+                                        <div class="label">HT</div>
+                                        <hr>
+                                        <div class="field noedit rollable" data-path="attributes.PER.value"
+                                            data-otf="PER">12</div>
+                                        <div class="label">Per</div>
+
+                                        <div class="field rollable" data-path="attributes.WILL.value" data-otf="WILL">15
+                                        </div>
+                                        <div class="label">Will</div>
+                                        <hr>
+                                        <div class="field">6</div>
+                                        <div class="label">Basic Speed</div>
+
+                                        <div class="field">6</div>
+                                        <div class="label">Basic Move</div>
+                                    </div>
                                 </div>
-                                <div class='gurps-3col-line gurps-left-aligned'>
-                                    <label for='vulnerable'>Vulnerability:</label>
+                                <div id="combat-attrs-2">
+                                    <div class="fieldblock">
+                                        <div class="field noedit rollable" data-path="vision" data-otf="Vision">12</div>
+                                        <div class="label">Vision</div>
+
+                                        <div class="field noedit rollable" data-path="hearing" data-otf="Hearing">12
+                                        </div>
+                                        <div class="label">Hearing</div>
+
+                                        <div class="field noedit rollable" data-path="tastesmell"
+                                            data-otf="Taste Smell">12</div>
+                                        <div class="label">Taste &amp; Smell</div>
+
+                                        <div class="field noedit rollable" data-path="touch" data-otf="Touch">12</div>
+                                        <div class="label">Touch</div>
+
+                                        <div class="label"></div>
+                                        <div class="label">&nbsp;</div>
+
+                                        <div class="field noedit rollable" data-path="frightcheck"
+                                            data-otf="Fright Check">15</div>
+                                        <div class="label">Fright Check</div>
+
+                                        <div class="label"></div>
+                                        <div class="label">&nbsp;</div>
+
+                                        <div class="field rollable noedit" data-damage="" data-otf="1d-2 dmg">1d-2</div>
+                                        <div class="label">Basic Thrust</div>
+
+                                        <div class="field rollable noedit" data-damage="" data-otf="1d dmg">1d</div>
+                                        <div class="label">Basic Swing</div>
+                                    </div>
                                 </div>
-                                <div class='gurps-3col-line pdflink'>B161</div>
                             </div>
-                            <div class='grid grid-4col gurps-continuation'>
+                        </div> <!-- end of combat-attrs-->
+
+                        <div id="combat-encumber">
+                            <div id="combat-encumber-container">
+                                <div class="header">Encumbrance, Move, Dodge</div>
+                                <div class="encmarkerh header"></div>
+                                <div class="ench header">Level</div>
+                                <div class="loadh header">Max</div>
+                                <div class="moveh header">Move</div>
+                                <div class="dodgeh header">Dodge</div>
+
+                                <div class="encmarker current"></div>
+                                <div class="enc current enc0" data-key="00000"></div>
+                                <div class="load current">20 lb</div>
+                                <div class="move current">6</div>
+                                <div class="dodge current rollable" data-path="dodge" data-otf="Dodge">11</div>
+                                <div class="encmarker "></div>
+                                <div class="enc enc1" data-key="00001"></div>
+                                <div class="load ">40 lb</div>
+                                <div class="move ">4</div>
+                                <div class="dodge">10</div>
+                                <div class="encmarker "></div>
+                                <div class="enc enc2" data-key="00002"></div>
+                                <div class="load ">60 lb</div>
+                                <div class="move ">3</div>
+                                <div class="dodge">9</div>
+                                <div class="encmarker "></div>
+                                <div class="enc enc3" data-key="00003"></div>
+                                <div class="load ">120 lb</div>
+                                <div class="move ">2</div>
+                                <div class="dodge">8</div>
+                                <div class="encmarker "></div>
+                                <div class="enc enc4" data-key="00004"></div>
+                                <div class="load ">200 lb</div>
+                                <div class="move ">1</div>
+                                <div class="dodge">7</div>
+
+                            </div>
+                        </div>
+
+                        <div id="combat-location">
+                            <div class="header">Hit Location</div>
+                            <div class="roll header">Roll</div>
+                            <div class="where header">Where</div>
+                            <div class="penalty header">Penalty</div>
+                            <div class="dr header">DR</div>
+
+                            <div class="roll">-</div>
+                            <div class="where">Eye</div>
+                            <div class="penalty gmod" data-name="to hit Eye">-9
+                            </div>
+                            <div class="dr">0</div>
+                            <div class="roll">3-4</div>
+                            <div class="where">Skull</div>
+                            <div class="penalty gmod" data-name="to hit Skull">-7
+                            </div>
+                            <div class="dr">3</div>
+                            <div class="roll">5</div>
+                            <div class="where">Face</div>
+                            <div class="penalty gmod" data-name="to hit Face">-5
+                            </div>
+                            <div class="dr">0</div>
+                            <div class="roll">6-7</div>
+                            <div class="where">Right Leg</div>
+                            <div class="penalty gmod" data-name="to hit Right Leg">-2
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">8</div>
+                            <div class="where">Right Arm</div>
+                            <div class="penalty gmod" data-name="to hit Right Arm">-2
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">9-10</div>
+                            <div class="where">Torso</div>
+                            <div class="penalty " data-name="to hit Torso">0
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">11</div>
+                            <div class="where">Groin</div>
+                            <div class="penalty gmod" data-name="to hit Groin">-3
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">12</div>
+                            <div class="where">Left Arm</div>
+                            <div class="penalty gmod" data-name="to hit Left Arm">-2
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">13-14</div>
+                            <div class="where">Left Leg</div>
+                            <div class="penalty gmod" data-name="to hit Left Leg">-2
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">15</div>
+                            <div class="where">Hand</div>
+                            <div class="penalty gmod" data-name="to hit Hand">-4
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">16</div>
+                            <div class="where">Foot</div>
+                            <div class="penalty gmod" data-name="to hit Foot">-4
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">17-18</div>
+                            <div class="where">Neck</div>
+                            <div class="penalty gmod" data-name="to hit Neck">-5
+                            </div>
+                            <div class="dr">1</div>
+                            <div class="roll">-</div>
+                            <div class="where">Vitals</div>
+                            <div class="penalty gmod" data-name="to hit Vitals">-3
+                            </div>
+                            <div class="dr">1</div>
+
+                        </div> <!-- end of combat-location -->
+                        <div id="combat-weapons">
+                            <div id="melee">
+                                <div class="desc header">Melee Weapons</div>
+                                <div class="usage header">Usage</div>
+                                <div class="level header">Lvl</div>
+                                <div class="parry header">Parry</div>
+                                <div class="block header">Block</div>
+                                <div class="damage header">Damage</div>
+                                <div class="reach header">Reach</div>
+                                <div class="st header">ST</div>
                                 <div></div>
-                                <label><input type='radio' name='vulnerability' value='vulnerability-2'>&nbsp;×2</label>
-                                <label><input type='radio' name='vulnerability' value='vulnerability-3'>&nbsp;×3</label>
-                                <label><input type='radio' name='vulnerability' value='vulnerability-4'>&nbsp;×4</label>
+
+                                <div class="desc">Heavy Cloak
+                                    <div class="list_note"></div>
+                                </div>
+                                <div class="usage">Grapple</div>
+                                <div class="level rollable" data-name="Heavy Cloak (Grapple)"
+                                    data-otf="A:&quot;Heavy Cloak (Grapple)&quot;">14</div>
+                                <div class="parry rollable" data-name="Parry">No</div>
+                                <div class="block rollable" data-name="Block">12</div>
+                                <div class="damage rollable" data-damage="" data-otf="0 -">0 -</div>
+                                <div class="reach">C,1</div>
+                                <div class="st"></div>
+                                <div></div>
+                                <div class="desc">Rapier
+                                    <div class="list_note"></div>
+                                </div>
+                                <div class="usage">Thrust</div>
+                                <div class="level rollable" data-name="Rapier (Thrust)"
+                                    data-otf="A:&quot;Rapier (Thrust)&quot;">15</div>
+                                <div class="parry rollable" data-name="Parry">12F</div>
+                                <div class="block rollable" data-name="Block">No</div>
+                                <div class="damage rollable" data-damage="" data-otf="1d-1 imp">1d-1 imp</div>
+                                <div class="reach">1,2</div>
+                                <div class="st">9</div>
+                                <div></div>
+
                             </div>
-                        </div>
+                            <div id="ranged">
+                                <div class="desc header">Ranged Weapons</div>
+                                <div class="usage header">Usage</div>
+                                <div class="level header">Lvl</div>
+                                <div class="acc header">Acc</div>
+                                <div class="damage header">Damage</div>
+                                <div class="range header">Range</div>
+                                <div class="rof header">RoF</div>
+                                <div class="shots header">Shots</div>
+                                <div class="bulk header">Bulk</div>
+                                <div class="rcl header">Rcl</div>
+                                <div class="st header">ST</div>
 
-                        <div class='gurps-3col-expandmiddle'>
-                            <div class='gurps-3col-line'>
-                                <input id='hardened' type='checkbox' name='hardened' value='hardened'></input>
+
+                                <div class="desc">Regular Bow (ST12)
+                                    <div class="list_note">Elven</div>
+                                </div>
+                                <div class="usage"></div>
+                                <div class="level rollable" data-name="Regular Bow (ST12) ()"
+                                    data-key="data.ranged.00000" data-otf="A:&quot;Regular Bow (ST12) ()&quot;">13</div>
+                                <div class="acc gmod" data-name="Acc for Regular Bow (ST12)">
+                                    +2</div>
+                                <div class="damage rollable" data-damage="" data-otf="1d imp">1d imp</div>
+                                <div class="range"></div>
+                                <div class="rof">1</div>
+                                <div class="shots">1(2)</div>
+                                <div class="bulk gmod" data-name="Bulk for Regular Bow (ST12)">-7</div>
+                                <div class="rcl"></div>
+                                <div class="st">12</div>
+                                <div class="desc">Heavy Cloak
+                                    <div class="list_note"></div>
+                                </div>
+                                <div class="usage">Thrown</div>
+                                <div class="level rollable" data-name="Heavy Cloak (Thrown)"
+                                    data-key="data.ranged.00001" data-otf="A:&quot;Heavy Cloak (Thrown)&quot;">14</div>
+                                <div class="acc gmod" data-name="Acc for Heavy Cloak">
+                                    ++1</div>
+                                <div class="damage rollable" data-damage="" data-otf="0 Special">0 Special</div>
+                                <div class="range"></div>
+                                <div class="rof">1</div>
+                                <div class="shots">T(1)</div>
+                                <div class="bulk gmod" data-name="Bulk for Heavy Cloak">-6</div>
+                                <div class="rcl"></div>
+                                <div class="st">8</div>
                             </div>
-                            <div class='gurps-3col-line gurps-left-aligned'>
-                                <label for='vulnerable'>Hardened DR Level:</label>
+                            <div id="speed-range-table">
+                                <div class="header">Speed/Range Table</div>
+                                <div id="range-table" style="--count: 16">
+                                    <div class="label">Measure (yd)</div>
+                                    <div class="label">2</div>
+                                    <div class="label">3</div>
+                                    <div class="label">5</div>
+                                    <div class="label">7</div>
+                                    <div class="label">10</div>
+                                    <div class="label">15</div>
+                                    <div class="label">20</div>
+                                    <div class="label">30</div>
+                                    <div class="label">50</div>
+                                    <div class="label">70</div>
+                                    <div class="label">100</div>
+                                    <div class="label">150</div>
+                                    <div class="label">200</div>
+                                    <div class="label">300</div>
+                                    <div class="label">500</div>
+                                    <div class="label">500+</div>
+                                    <div class="label">Modifier</div>
+                                    <div class="label gmod" data-name="for range/speed 2 yds">0</div>
+                                    <div class="label gmod" data-name="for range/speed 3 yds">-1</div>
+                                    <div class="label gmod" data-name="for range/speed 5 yds">-2</div>
+                                    <div class="label gmod" data-name="for range/speed 7 yds">-3</div>
+                                    <div class="label gmod" data-name="for range/speed 10 yds">-4</div>
+                                    <div class="label gmod" data-name="for range/speed 15 yds">-5</div>
+                                    <div class="label gmod" data-name="for range/speed 20 yds">-6</div>
+                                    <div class="label gmod" data-name="for range/speed 30 yds">-7</div>
+                                    <div class="label gmod" data-name="for range/speed 50 yds">-8</div>
+                                    <div class="label gmod" data-name="for range/speed 70 yds">-9</div>
+                                    <div class="label gmod" data-name="for range/speed 100 yds">-10</div>
+                                    <div class="label gmod" data-name="for range/speed 150 yds">-11</div>
+                                    <div class="label gmod" data-name="for range/speed 200 yds">-12</div>
+                                    <div class="label gmod" data-name="for range/speed 300 yds">-13</div>
+                                    <div class="label gmod" data-name="for range/speed 500 yds">-14</div>
+                                    <div class="label gmod" data-name="for range/speed 500+ yds">-15</div>
+                                </div>
                             </div>
-                            <div class='gurps-3col-line pdflink'>B47</div>
-                        </div>
-                        <div class='grid grid-6col gurps-continuation'>
-                            <div></div>
-                            <label><input type='radio' name='hardened' value='hardened-1'>&nbsp;1</label>
-                            <label><input type='radio' name='hardened' value='hardened-2'>&nbsp;2</label>
-                            <label><input type='radio' name='hardened' value='hardened-3'>&nbsp;3</label>
-                            <label><input type='radio' name='hardened' value='hardened-4'>&nbsp;4</label>
-                            <label><input type='radio' name='hardened' value='hardened-5'>&nbsp;5</label>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div>
-                    <div class='gurps-group'>
-                        <div class='gurps-group-header'>Results</div>
-                        <div>Basic damage is {{damageData.damage}}.</div>
-                        <div>Hit location is <span id='result-hitlocation'>{{hitlocation}}</span>, DR <span
-                                id='result-dr'>{{dr}}</span>.</div>
-                        <div>Damage type is <span id='result-type'>{{damageData.damageType}}</span>, modifier ×<span
-                                id='result-modifier'>1</span>.</div>
-                        <div>Additional wounding modifier is ×<span id='result-addmods'>{{additionalMods}}</span>.</div>
-                        <div>Total wounding modifier is ×<span id='result-totalmod'>{{totalMods}}</span>.</div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+                        </div> <!-- end of combat-weapons -->
+                    </div><!-- end of combat-sheet -->
+                </div> <!-- end of responsive -->
+            </form>
+        </section>
+        <div class="window-resizable-handle"><i class="fas fa-arrows-alt-h"></i></div>
     </div>
 </body>
 
