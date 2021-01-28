@@ -1176,22 +1176,7 @@ export class Equipment extends Named {
   weightsum = "";
   
   static calc(eqt) {
-    if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0;
-    if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0;
-    if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0;
-    eqt.costsum = eqt.count * eqt.cost;
-    eqt.weightsum = eqt.count * eqt.weight;
-    if (!!eqt.contains) Object.values(eqt.contains).forEach(e => {
-        let [c, w] = Equipment.calc(e);
-        eqt.costsum += c;
-        eqt.weightsum += w;
-      });
-    if (!!eqt.collapsed) Object.values(eqt.collapsed).forEach(e => {
-        let [c, w] = Equipment.calc(e);
-        eqt.costsum += c;
-        eqt.weightsum += w;
-      });
-    return [eqt.costsum, eqt.weightsum];
+    Equipment.calcUpdate(null, eqt, "");
   }
   
   
@@ -1219,10 +1204,11 @@ export class Equipment extends Named {
         ws += e.weightsum;
       }
     };
-    await actor.update({
-      [objkey + ".costsum"]: cs,
-      [objkey + ".weightsum"]: ws
-    });
+    if (!!actor) 
+      await actor.update({
+        [objkey + ".costsum"]: cs,
+        [objkey + ".weightsum"]: ws
+      });
     // the local values 'should' be updated... but I need to force them anyway
     eqt.costsum = cs;
     eqt.weightsum = ws;
