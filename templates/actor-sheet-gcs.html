@@ -2,70 +2,70 @@
   <div id="sheet" class="gurpsactorsheet">
     <div id="personal">
       <div id="portrait">
-        <div class="header">Portrait</div>
+        <div class="header">{{localize "GURPS.portrait"}}</div>
         <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
       </div>
       <div id="identity">
-        <div class="header">Identity</div>
+        <div class="header">{{localize "GURPS.identity"}}</div>
         <div class="fieldblock">
-          <div class="label">Name:</div>
+          <div class="label">{{localize "GURPS.identityName"}}:</div>
           <div class="field">{{actor.name}}</div>
-          <div class="label">Title:</div>
+          <div class="label">{{localize "GURPS.identityTitle"}}:</div>
           <div class="field">{{data.traits.title}}</div>
-          <div class="label">Player:</div>
+          <div class="label">{{localize "GURPS.identityPlayer"}}:</div>
           <div class="field">{{data.traits.player}}</div>
         </div>
       </div>
       <div id="miscellaneous">
-        <div class="header">Miscellaneous</div>
+        <div class="header">{{localize "GURPS.miscellaneous"}}</div>
         <div class="fieldblock">
-          <div class="label">Created:</div>
+          <div class="label">{{localize "GURPS.miscellaneousCreated"}}:</div>
           <div class="field">{{data.traits.createdon}}</div>
-          <div class="label">Modified:</div>
+          <div class="label">{{localize "GURPS.miscellaneousModified"}}:</div>
           <div class="field">{{data.traits.modifiedon}}</div>
-          <div class="label">Options:</div>
+          <div class="label">{{localize "GURPS.miscellaneousOptions"}}:</div>
           <div class="field"></div>
         </div>
       </div>
       <div id="description">
-        <div class="header">Description</div>
+        <div class="header">{{localize "GURPS.description"}}</div>
         <div class="fieldblock">
-          <div class="label">Gender:</div>
+          <div class="label">{{localize "GURPS.descriptionGender"}}:</div>
           <div class="field">{{data.traits.gender}}</div>
-          <div class="label">Age:</div>
+          <div class="label">{{localize "GURPS.descriptionAge"}}:</div>
           <div class="field">{{data.traits.age}}</div>
-          <div class="label">Birthday:</div>
+          <div class="label">{{localize "GURPS.descriptionBirthday"}}:</div>
           <div class="field">{{data.traits.birthday}}</div>
-          <div class="label">Religion:</div>
+          <div class="label">{{localize "GURPS.descriptionReligion"}}:</div>
           <div class="field">{{data.traits.religion}}</div>
           <div class="label">&nbsp;</div>
           <div class="field"></div>
         </div>
         <div class="fieldblock">
-          <div class="label">Height:</div>
+          <div class="label">{{localize "GURPS.descriptionHeight"}}:</div>
           <div class="field">{{data.traits.height}}</div>
-          <div class="label">Weight:</div>
+          <div class="label">{{localize "GURPS.descriptionWeight"}}:</div>
           <div class="field">{{data.traits.weight}}</div>
-          <div class="label">Size:</div>
+          <div class="label">{{localize "GURPS.descriptionSizeModifier"}}:</div>
           <div class="field">{{data.traits.sizemod}}</div>
-          <div class="label">TL:</div>
+          <div class="label">{{localize "GURPS.descriptionTechLevel"}}:</div>
           <div class="field">{{data.traits.techlevel}}</div>
-          <div class="label">Body Plan:</div>
+          <div class="label">{{localize "GURPS.descriptionBodyPlan"}}:</div>
           <div class="field">{{localize (concat 'GURPS.BODYPLAN'
             data.additionalresources.bodyplan)}}</div>
         </div>
         <div class="fieldblock">
           {{#if data.traits.eyes}}
-          <div class="label">Hair:</div>
+          <div class="label">{{localize "GURPS.descriptionEyes"}}:</div>
           <div class="field">{{data.traits.hair}}</div>
-          <div class="label">Eyes:</div>
+          <div class="label">{{localize "GURPS.descriptionHair"}}:</div>
           <div class="field">{{data.traits.eyes}}</div>
-          <div class="label">Skin:</div>
+          <div class="label">{{localize "GURPS.descriptionSkin"}}:</div>
           <div class="field">{{data.traits.skin}}</div>
-          <div class="label">Hand:</div>
+          <div class="label">{{localize "GURPS.descriptionHand"}}:</div>
           <div class="field">{{data.traits.hand}}</div>
           {{else}}
-          <div class="label textarea">Appearance:</div>
+          <div class="label textarea">{{localize "GURPS.descriptionAppearance"}}:</div>
           <div class="label"></div>
 
           <div class="field" style="border: none; grid-column: 1 / span 2;">
@@ -75,24 +75,24 @@
         </div>
       </div>
       <div id="points">
-        <div class="header">{{data.totalpoints.total}} Points</div>
+        <div class="header">{{data.totalpoints.total}} {{localize "GURPS.points"}}</div>
         <div class="fieldblock">
           <div class="field">{{data.totalpoints.unspent}}</div>
-          <div class="label">Unspent</div>
+          <div class="label">{{localize "GURPS.points"}}</div>
           <div class="field noedit"></div>
-          <div class="label">Race</div>
+          <div class="label">{{localize "GURPS.pointsRace"}}</div>
           <div class="field noedit">{{data.totalpoints.attributes}}</div>
-          <div class="label">Attributes</div>
+          <div class="label">{{localize "GURPS.pointsAttributes"}}</div>
           <div class="field noedit">{{data.totalpoints.ads}}</div>
-          <div class="label">Advantages</div>
+          <div class="label">{{localize "GURPS.pointsAdvantages"}}</div>
           <div class="field noedit">{{data.totalpoints.disads}}</div>
-          <div class="label">Disadvantages</div>
+          <div class="label">{{localize "GURPS.pointsDisadvantages"}}</div>
           <div class="field noedit">{{data.totalpoints.quirks}}</div>
-          <div class="label">Quirks</div>
+          <div class="label">{{localize "GURPS.pointsQuirks"}}</div>
           <div class="field noedit">{{data.totalpoints.skills}}</div>
-          <div class="label">Skills</div>
+          <div class="label">{{localize "GURPS.pointsSkills"}}</div>
           <div class="field noedit">{{data.totalpoints.spells}}</div>
-          <div class="label">Spells</div>
+          <div class="label">{{localize "GURPS.pointsSpells"}}</div>
         </div>
       </div>
     </div>
