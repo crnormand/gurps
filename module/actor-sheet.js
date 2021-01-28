@@ -402,6 +402,7 @@ export class GurpsActorSheet extends ActorSheet {
       d.render(true);
     })
     
+    // Simple trick, move 'contains' items into 'collapsed' and back.   The html doesn't show 'collapsed'
     html.find(".expandcollapseicon").click(async ev => {
       let actor = this.actor;
       let element = ev.currentTarget;
@@ -476,19 +477,19 @@ export class GurpsActorSheet extends ActorSheet {
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
 
-      let eqt = getProperty(this.actor.data, path)
+      let eqt = duplicate(getProperty(this.actor.data, path))
       let value = eqt.count + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = 0
       eqt.count = value;
-      Equipment.calc(eqt);
-      this.actor.update({ [path]: eqt })
+      await this.actor.update({ [path]: eqt })
+      await this.updateParentOf(path, 4);
     })
     html.find('button[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault();
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
       let actor = this.actor
-      let eqt = getProperty(actor.data, path)
+      let eqt = duplicate(getProperty(actor.data, path))
       if (eqt.count == 0) {
         let agree = false;
         await Dialog.confirm({
@@ -501,8 +502,8 @@ export class GurpsActorSheet extends ActorSheet {
         let value = eqt.count - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
         eqt.count = value;
-        Equipment.calc(eqt);
-        this.actor.update({ [path]: eqt })
+        await this.actor.update({ [path]: eqt })
+        await this.updateParentOf(path, 4);
       }
     })
     
@@ -570,7 +571,8 @@ export class GurpsActorSheet extends ActorSheet {
             [ 'name', 'notes', 'pageref' ].forEach(a => obj[a] = html.find(`.${a}`).val());    
             [ 'count', 'cost', 'weight' ].forEach(a => obj[a] = parseFloat(html.find(`.${a}`).val()));    
             Equipment.calc(obj);
-            actor.update({ [path]: obj })
+            await actor.update({ [path]: obj })
+            await this.updateParentOf(path, 4);
           }
         }
       },
@@ -1106,7 +1108,7 @@ export class GurpsActorSheet extends ActorSheet {
     ev.preventDefault();
     let element = ev.currentTarget;
     let key = element.dataset.key;
-    let eqt = GURPS.decode(this.actor.data, key);
+    let eqt = duplicate(GURPS.decode(this.actor.data, key));
     eqt.equipped = !eqt.equipped;
     await this.actor.update({ [key]: eqt });
   }

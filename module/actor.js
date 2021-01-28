@@ -1223,6 +1223,9 @@ export class Equipment extends Named {
       [objkey + ".costsum"]: cs,
       [objkey + ".weightsum"]: ws
     });
+    // the local values 'should' be updated... but I need to force them anyway
+    eqt.costsum = cs;
+    eqt.weightsum = ws;
   }
 
 }

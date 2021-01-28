@@ -23,6 +23,7 @@ This is what we are currently working on:
     - Fixed CGA export to correctly export ranged innate attacks.
     - Support GCS v4.27 export hierarchy for Ads/Disads, Skills, Spells and Notes
     - Added collapsible carets for  Ads/Disads, Skills, Spells, Notes & Equipment
+    - Added drag and drop menu 'before' and 'in' for all lists so you can create containers
 
 ### History
 - 0.8.8
