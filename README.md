@@ -21,6 +21,9 @@ This is what we are currently working on:
 - 0.8.9
     - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
     - Fixed CGA export to correctly export ranged innate attacks.
+    - Support GCS v4.27 export hierarchy for Ads/Disads, Skills, Spells and Notes
+    - Added collapsible carets for  Ads/Disads, Skills, Spells, Notes & Equipment
+    - Added drag and drop menu 'before' and 'in' for all lists so you can create containers
 
 ### History
 - 0.8.8

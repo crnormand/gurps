@@ -491,22 +491,25 @@
       <div class="rcl">{{this.rcl}}</div>
       <div class="st">{{this.st}}</div>
       {{/each}}
-
     </div>
     {{/if}}
+    
     <div id="advantages">
       <div class="desc header dblclksort" data-key="data.ads">Advantages, Disadvantages, Perks &amp; Quirks</div>
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
-      {{#each data.ads as | this key | }}
-      <div class="desc indent0 satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{key}}">{{{gurpslink this.name}}}
+      {{#listeqt data.ads}}
+      <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{@key}}">
+          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
+          {{{gurpslink this.name}}}
         <div class="list_note satisfiedY"></div>
-        <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{key}}">{{{gurpslinkbr this.notes}}}
+        <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">{{{gurpslinkbr this.notes}}}
         </div>
       </div>
       <div class="pts satisfiedY">{{this.points}}</div>
       <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
-      {{/each}}
+      {{/listeqt}}
     </div>
 
     <div id="skills">
@@ -516,18 +519,21 @@
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
 
-      {{#each data.skills as | this key |}}
-      <div class="desc indent0 satisfiedY skldraggable dblclkedit" data-key="data.skills.{{key}}">{{{gurpslink this.name}}}
+      {{#listeqt data.skills}}
+      <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit" data-key="data.skills.{{@key}}">
+        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
+        {{{gurpslink this.name}}}
         <div class="list_note satisfiedY"></div>
-        <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{key}}">{{{gurpslink this.notes
+        <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
           @root}}}</div>
       </div>
-      <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}
+      <div class="sl satisfiedY {{#if (gt this.level 0)}}rollable{{/if}}" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}
       </div>
       <div class="rsl satisfiedY">{{this.relativelevel}}</div>
       <div class="pts satisfiedY">{{this.points}}</div>
       <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
-      {{/each}}
+      {{/listeqt}}
     </div>
 
     {{#if (notEmpty data.spells)}}
@@ -544,10 +550,13 @@
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
 
-      {{#each data.spells as | this key |}}
-      <div class="desc indent0 satisfiedY spldraggable dblclkedit" data-key="data.spells.{{key}}">{{{gurpslink this.name}}}
+      {{#listeqt data.spells}}
+      <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit" data-key="data.spells.{{@key}}">
+        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
+        {{{gurpslink this.name}}}
         <div class="list_note satisfiedY"></div>
-        <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{key}}">{{{gurpslink this.notes}}}
+        <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{@key}}">{{{gurpslink this.notes}}}
         </div>
       </div>
       <div class="cls satisfiedY">{{this.class}}</div>
@@ -561,7 +570,7 @@
       <div class="rsl satisfiedY">{{this.difficulty}}</div>
       <div class="pts satisfiedY">{{this.points}}</div>
       <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
-      {{/each}}
+      {{/listeqt}}
 
     </div>
     {{/if}}
@@ -585,6 +594,8 @@
         <button class="equipmentbutton" data-operation='equipment-inc'>+</button>   
       </div>
       <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu" data-key="data.equipment.carried.{{@key}}">
+        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
         {{{gurpslink this.name}}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
@@ -592,8 +603,8 @@
       </div>
       <div class="cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.cost}}</div>
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
-      <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.costsum}}</div>
-      <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weightsum}} lb</div>
+      <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}</div>
+      <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.weightsum}} lb</div>
       <div class="ref satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{{pdflink this.pageref}}}</div>
       <div></div>
       {{/listeqt}}
@@ -616,6 +627,8 @@
         <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
       </div>
       <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu" data-key="data.equipment.other.{{@key}}">
+        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
         {{{gurpslink this.name}}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
@@ -623,18 +636,21 @@
       </div>
       <div class="cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
-      <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.costsum}}</div>
-      <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weightsum}} lb</div>
+      <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
+      <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}} lb</div>
       <div class="ref satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{{pdflink this.pageref}}}</div>
       {{/listeqt}}
 
     </div>
     <div id="notes">
       <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></span></div><div class="ref header">Ref</div>
-      {{#each data.notes as | this key |}}
-      <div class="desc indent0 dblclkedit notesmenu" data-key="data.notes.{{@key}}">{{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}</div>
+      {{#listeqt data.notes}}
+      <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable" data-key="data.notes.{{@key}}">
+      {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+      {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}        
+      {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}</div>
       <div class="ref">{{{pdflink this.pageref}}}</div>
-      {{/each}}
+      {{/listeqt}}
       <div></div>
     </div>
   </div>
