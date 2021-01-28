@@ -735,18 +735,33 @@ export class GurpsActorSheet extends ActorSheet {
                 icon: '<i class="fas fa-level-up-alt"></i>',
                 label: "Before",
                 callback: async () => {
-                  if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+                  if (!isSrcFirst) {
+                    await GURPS.removeKey(this.actor, srckey);
+                    await this.updateParentOf(srckey);
+                  }
                   await GURPS.insertBeforeKey(this.actor, targetkey, object);
-                  if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+                  await this.updateParentOf(targetkey);
+                  if (isSrcFirst) {
+                    await GURPS.removeKey(this.actor, srckey);
+                    await this.updateParentOf(srckey);
+                  }
                 }
               },
               two: {
                 icon: '<i class="fas fa-sign-in-alt"></i>',
                 label: "In",
                 callback: async () => {
-                  if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
-                  await GURPS.insertBeforeKey(this.actor, targetkey + ".contains." + GURPS.genkey(0), object);
-                  if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+                  if (!isSrcFirst) {
+                    await GURPS.removeKey(this.actor, srckey);
+                    await this.updateParentOf(srckey);
+                  }
+                  let k = targetkey + ".contains." + GURPS.genkey(0);
+                  await GURPS.insertBeforeKey(this.actor, k, object);
+                  await this.updateParentOf(k);
+                  if (isSrcFirst) {
+                    await GURPS.removeKey(this.actor, srckey);
+                    await this.updateParentOf(srckey);
+                  }
                 }
               }
             },
@@ -757,8 +772,15 @@ export class GurpsActorSheet extends ActorSheet {
       }
     }
   }
-
-
+  
+  async updateParentOf(srckey) {
+    let sp = srckey.split(".").slice(0,4).join(".");
+    if (sp != srckey) {
+      let eqt = GURPS.decode(this.actor.data, sp);
+      await Equipment.calcUpdate(this.actor, eqt, sp);
+    }
+  }
+  
   async handleDragFor(event, dragData, type, cls) {
     if (dragData.type === type) {
       let element = event.target;
