@@ -150,6 +150,13 @@ export class GurpsActorSheet extends ActorSheet {
       })
     });
 
+    html.find(".notedraggable").each((i, li) => {
+      li.setAttribute("draggable", true);
+      li.addEventListener("dragstart", ev => {
+        return ev.dataTransfer.setData("text/plain", JSON.stringify({ "type": "note", "key": ev.currentTarget.dataset.key }))
+      })
+    });
+
     html.find('button[data-operation="resource-inc"]').click(async ev => {
       ev.preventDefault();
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
@@ -695,6 +702,7 @@ export class GurpsActorSheet extends ActorSheet {
     this.handleDragFor(event, dragData, "advantage", "adsdraggable");
     this.handleDragFor(event, dragData, "skill", "skldraggable");
     this.handleDragFor(event, dragData, "spell", "spldraggable");
+    this.handleDragFor(event, dragData, "note", "notedraggable");
 
     if (dragData.type === 'equipment') {
       let element = event.target;
@@ -737,13 +745,13 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey);
-                    await this.updateParentOf(srckey);
+                    await this.updateParentOf(srckey, 4);
                   }
                   await GURPS.insertBeforeKey(this.actor, targetkey, object);
-                  await this.updateParentOf(targetkey);
+                  await this.updateParentOf(targetkey, 4);
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey);
-                    await this.updateParentOf(srckey);
+                    await this.updateParentOf(srckey, 4);
                   }
                 }
               },
@@ -753,14 +761,14 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey);
-                    await this.updateParentOf(srckey);
+                    await this.updateParentOf(srckey, 4);
                   }
                   let k = targetkey + ".contains." + GURPS.genkey(0);
                   await GURPS.insertBeforeKey(this.actor, k, object);
-                  await this.updateParentOf(k);
+                  await this.updateParentOf(k, 4);
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey);
-                    await this.updateParentOf(srckey);
+                    await this.updateParentOf(srckey, 4);
                   }
                 }
               }
@@ -773,8 +781,8 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
   
-  async updateParentOf(srckey) {
-    let sp = srckey.split(".").slice(0,4).join(".");
+  async updateParentOf(srckey, pindex = 3) {    // pindex = 4 for equipment, 3 for everything else.
+    let sp = srckey.split(".").slice(0, pindex).join(".");
     if (sp != srckey) {
       let eqt = GURPS.decode(this.actor.data, sp);
       await Equipment.calcUpdate(this.actor, eqt, sp);
@@ -805,9 +813,52 @@ export class GurpsActorSheet extends ActorSheet {
         for (let i = 0; i < max; i++) {
           if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true;
         }
-        if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
-        await GURPS.insertBeforeKey(this.actor, targetkey, object);
-        if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+//        if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+//        await GURPS.insertBeforeKey(this.actor, targetkey, object);
+//        if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
+        
+        let d = new Dialog({
+          title: object.name,
+          content: "<p>Where do you want to drop this?</p>",
+          buttons: {
+            one: {
+              icon: '<i class="fas fa-level-up-alt"></i>',
+              label: "Before",
+              callback: async () => {
+                if (!isSrcFirst) {
+                  await GURPS.removeKey(this.actor, srckey);
+                  await this.updateParentOf(srckey);
+                }
+                await GURPS.insertBeforeKey(this.actor, targetkey, object);
+                await this.updateParentOf(targetkey);
+                if (isSrcFirst) {
+                  await GURPS.removeKey(this.actor);
+                  await this.updateParentOf(srckey);
+                }
+              }
+            },
+            two: {
+              icon: '<i class="fas fa-sign-in-alt"></i>',
+              label: "In",
+              callback: async () => {
+                if (!isSrcFirst) {
+                  await GURPS.removeKey(this.actor, srckey);
+                  await this.updateParentOf(srckey);
+                }
+                let k = targetkey + ".contains." + GURPS.genkey(0);
+                await GURPS.insertBeforeKey(this.actor, k, object);
+                await this.updateParentOf(k);
+                if (isSrcFirst) {
+                  await GURPS.removeKey(this.actor, srckey);
+                  await this.updateParentOf(srckey);
+                }
+              }
+            }
+          },
+          default: "one",
+        });
+        d.render(true);
+
       }
     }
 
