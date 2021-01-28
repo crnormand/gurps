@@ -3,6 +3,7 @@
 		"GURPS.changelog": "README",
 		"GURPS.DontShowAgain": "Don't show README again",
 		
+    "GURPS.attributes" : "Attributes",
     "GURPS.attributesST" : "ST",
     "GURPS.attributesDX" : "DX",
     "GURPS.attributesIQ" : "IQ",
