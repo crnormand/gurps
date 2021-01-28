@@ -1,0 +1,133 @@
+<form class="{{cssClass}}" npc-sheet autocomplete="off">
+<div class='gurps-app {{classes}} npc-sheet'>
+<div class="npc-sheet-grid-container">
+  <div class="npc-input-top">
+    <div class="npc-input-nm npc-input-label">Name:</div>
+    <div class="npc-input-nm-val npc-sheet-label">{{{gurpslink actor.name}}}</div>
+    <div class="npc-input-title npc-input-label">Title:</div>
+    <div class="npc-input-title-val npc-sheet-label">{{{gurpslink data.traits.title}}}</div>
+    <div class="npc-input-desc npc-input-label">Desc:</div>
+    <div class="npc-input-desc-val npc-sheet-label">{{{gurpslink data.traits.appearance}}}</div>
+  </div>
+  <div class="npc-input-attr gurps">
+    <div class="npc-input-st npc-input-label">ST:</div>
+    <div class="npc-input-st-val rollable npc-sheet-centered" data-path="attributes.ST.value" data-otf='ST'>{{data.attributes.ST.value}}</div>
+    <div class="npc-input-dx npc-input-label">DX:</div>
+    <div class="npc-input-dx-val rollable npc-sheet-centered" data-path="attributes.DX.value" data-otf='DX'>{{data.attributes.DX.value}}</div>
+    <div class="npc-input-iq npc-input-label">IQ:</div>
+    <div class="npc-input-iq-val rollable npc-sheet-centered" data-path="attributes.IQ.value" data-otf='IQ'>{{data.attributes.IQ.value}}</div>
+    <div class="npc-input-ht npc-input-label">HT:</div>
+    <div class="npc-input-ht-val rollable npc-sheet-centered" data-path="attributes.HT.value" data-otf='HT'>{{data.attributes.HT.value}}</div>
+    <div class="npc-input-dmg npc-input-labelr">Dmg:</div>
+    <div class="npc-input-dmg-val rollable npc-sheet-centered" data-path="swing" data-damage data-otf='{{data.swing}} dmg'">{{data.swing}}</div>
+    <div class="npc-input-hp npc-input-label">HP:</div>
+    <div class="npc-input-hp-val condition-block"><input class="npc-input-2 {{hpCondition data.HP "style"}}" name="data.HP.value" type="text" value="{{data.HP.value}}" data-dtype="Number" /></div>
+    <div class="npc-input-will npc-input-label">Will:</div>
+    <div class="npc-input-will-val rollable npc-sheet-centered" data-path="attributes.WILL.value" data-otf='WILL'>{{data.attributes.WILL.value}}</div>
+    <div class="npc-input-per npc-input-label">PER:</div>
+    <div class="npc-input-per-val rollable npc-sheet-centered" data-path="attributes.PER.value" data-otf='PER'>{{data.attributes.PER.value}}</div>
+    <div class="npc-input-fp npc-input-label">FP:</div>
+    <div class="npc-input-fp-val condition-block"><input class="npc-input-2 {{fpCondition data.FP "style"}}" name="data.FP.value" type="text" value="{{data.FP.value}}" data-dtype="Number" /></div>
+    <div class="npc-input-dodge npc-input-labelr">Dodge:</div>
+    <div class="npc-input-dodge-val rollable npc-sheet-centered" data-path="dodge" data-otf='Dodge'>{{this.dodge}}</div>
+    <div class="npc-input-parry npc-input-labelr">Parry:</div>
+    <div class="npc-input-parry-val rollable npc-sheet-centered" data-path="parry" data-otf='Parry'>{{data.parry}}</div>
+    <div class="npc-input-spd npc-input-labelr">Speed:</div>
+    <div class="npc-input-spd-val npc-sheet-centered">{{data.basicspeed.value}}</div>
+    <div class="npc-input-mov npc-input-labelr">Move:</div>
+    <div class="npc-input-mov-val npc-sheet-centered">{{data.basicmove.value}}</div>
+    <div class="npc-input-sm npc-input-labelr">SM:</div>
+    <div class="npc-input-sm-val npc-sheet-centered">{{data.traits.sizemod}}</div>
+    <div class="npc-input-dr npc-input-labelr">DR:</div>
+    <div class="npc-input-dr-val npc-sheet-centered">{{defense}}</div>
+  </div>
+  <div class="npc-input-notes">
+    <div class="npc-input-nt-val" style="--of:auto">           
+    {{#each data.notes}}
+      <div class="desc indent0">{{{gurpslinkbr this.notes}}}</div>
+    {{/each}}
+    </div>
+  </div>
+  <div class="npc-input-traits">
+    <div class="npc-input-tr dblclksort npc-header" data-key="data.ads">Traits (Ads/Disads/Quirks/Perks)</div>
+    <div class="npc-input-tr-val">
+      {{#each data.ads as | this key | }}
+      <div class="desc indent0 satisfiedY adsdraggable" data-key="data.ads.{{key}}">{{{gurpslink this.name}}}
+         <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{key}}">{{{gurpslinkbr this.notes}}}</div>
+       </div>
+      {{/each}}
+    </div>
+  </div>
+  <div class="npc-input-skills">
+    <div class="npc-input-sk dblclksort npc-header" data-key="data.skills">Skills</div>
+    <div class="npc-sheet-sk-val">
+      {{#each data.skills as | this key |}}
+      <div class="desc indent0 satisfiedY skldraggable" data-key="data.skills.{{key}}">{{{gurpslink this.name}}}
+        <div class="list_note satisfiedY skldraggable" data-key="data.skills.{{key}}">{{{gurpslink this.notes @root}}}</div>
+      </div>
+      <div class="sl satisfiedY rollable npc-sheet-centered" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
+      <div></div>
+      {{/each}}
+    </div>
+  </div>
+  <div class="npc-input-melee">
+    <div class="npc-input-me desc npc-header">Melee</div>
+    <div class="npc-sheet-me-val">
+      {{#each data.melee}}
+      <div class="desc gcs-edit" data-path="data.melee">{{{gurpslink this.name}}}
+          <div class="list_note">{{{gurpslink this.notes}}}</div>
+      </div>
+      <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+      <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+      {{/each}}
+    </div>
+  </div>
+  <div class="npc-input-ranged">
+    <div class="npc-input-ra desc npc-header">Ranged</div>
+    <div class="npc-sheet-ra-val">
+        {{#each data.ranged as | this key |}}
+        <div class="desc">{{{gurpslink this.name}}}
+            <div class="list_note">{{{gurpslink this.notes}}}</div>
+        </div>
+        <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+        <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
+            {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
+        <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+        {{/each}}    
+    </div>
+  </div>
+
+  <div class="npc-input-spells">
+    <div class="npc-input-sp dblclksort npc-header" data-key="data.spells">Spells</div>
+    <div class="npc-sheet-sp-val">
+      {{#each data.spells as | this key |}}
+      <div class="desc indent0 spldraggable" data-key="data.spells.{{key}}">{{{gurpslink this.name}}}
+        <div class="list_note spldraggable" data-key="data.spells.{{key}}">{{{gurpslink this.notes @root}}}</div>
+      </div>
+      <div class="sl rollable npc-sheet-centered" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
+      <div></div>
+      {{/each}}
+    </div>
+  </div>
+
+	<div class="npc-input-equip">  
+    <div class="npc-input-eqt dblclksort npc-header">Equipment</div>
+ 		<div class="npc-sheet-eqt-val">
+    {{#listeqt data.equipment.carried }}
+      <div class="equipped satisfiedY">{{#if this.equipped}}X{{/if}}</div>
+      <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{this.count}}</div>
+      <div class="desc indent{{@indent}} satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
+        {{{gurpslink this.name}}}
+        <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
+          this.notes}}}</div>
+        <div class="list_note satisfiedY"></div>
+      </div>
+      <div class="sum_cost satisfiedY">${{this.costsum}}</div>
+      <div class="sum_weight satisfiedY">{{this.weightsum}}</div>
+      {{/listeqt}}
+		</div>
+	</div>
+
+</div>
+</div>
+</form>

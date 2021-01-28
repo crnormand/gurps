@@ -1,0 +1,59 @@
+<div class='roll-message'>
+  <div class='prefix'>
+    {{prefix}} {{thing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
+  </div>
+  {{#if targetmods}}
+  <div>
+    {{#if optlabel}}({{optlabel}}){{/if}}
+    <ul class='modifier-list'>
+      {{#each targetmods}}
+      <li>{{mod}}{{#if desc}} : {{desc}}{{/if}}</li>
+      {{/each}}
+    </ul>
+  </div>
+  New Target: ({{finaltarget}})
+  {{/if}}
+  <div class='roll-result'>
+    {{#if (not (eq origtarget -1))}}
+    <div>
+      <span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />
+      <span class='roll-value'>{{rtotal}}</span>
+      <span class='roll-detail'>
+        {{#if isCritSuccess}}
+        <span class='crit success'>Critical Success!</span>
+        {{else}}{{#if isCritFailure}}
+        <span class='crit failure'>Critical Failure!</span>
+        {{else}}{{#if (lt margin 0)}}
+        <span class='failure'>Failure.</span>
+        {{else}}{{#if (not (lt margin 0))}}
+        <span class='success'>Success!</span>
+        {{/if}}{{/if}}{{/if}}{{/if}}
+        <span class='aside'>
+          {{#if (eq margin 0)}}Just made it.{{/if}}
+          {{#if (gt margin 0)}}Made it by {{margin}}.{{/if}}
+          {{#if (lt margin 0)}}Missed it by {{abs margin}}.{{/if}}
+        </span>
+      </span>
+    </div>
+    {{/if}}
+    <div>
+      <hr />
+      {{#if (gt rofrcl 1)}}
+      <div>
+        <span class='fa fa-bullseye' />
+        <span class='roll-detail'>
+          &nbsp;Total possible hits due to RoF/Rcl: <span class='roll-value'>{{rofrcl}}</span>
+        </span>
+      </div>
+      {{/if}}
+      <div class='aside'>
+        Rolled ({{rolls}})
+        <!-- 
+        {{#if modifier}}{{#if (lt modifier 0)}} &minus; {{abs modifier}}
+        {{else}} + {{modifier}}{{/if}}{{/if}}
+        -->
+        = {{rtotal}}.
+      </div>
+    </div>
+  </div>
+</div>

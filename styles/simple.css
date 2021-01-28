@@ -4,416 +4,6 @@
   /* Attributes */
 }
 
-.npc-input-grid-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1.5fr 2fr 2fr 2fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "name name name name name name name name"
-    "notes notes notes notes notes notes notes notes"
-    "attr1 attr1 . attr2 attr2 . attr3 attr3"
-    "traits traits traits traits skills skills skills skills"
-    "melee melee melee melee ranged ranged ranged ranged";
-}
-
-.npc-input-name {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 2fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "nm title"
-    "desc desc";
-  grid-area: name;
-}
-
-.npc-input-nm { grid-area: nm; }
-
-.npc-input-title { grid-area: title; }
-
-.npc-input-desc { grid-area: desc; }
-
-.npc-input-notes { grid-area: notes; }
-
-.npc-input-traits { grid-area: traits; }
-
-.npc-input-skills { grid-area: skills; }
-
-.npc-input-melee { grid-area: melee; }
-
-.npc-input-ranged { grid-area: ranged; }
-
-.npc-input-attr1 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "st st-val"
-    "dx dx-val"
-    "iq iq-val"
-    "ht ht-val"
-    ". ."
-    "dodge dodge-val";
-  grid-area: attr1;
-}
-
-.npc-input-dodge { grid-area: dodge; }
-
-.npc-input-ht { grid-area: ht; }
-
-.npc-input-iq { grid-area: iq; }
-
-.npc-input-dx { grid-area: dx; }
-
-.npc-input-st { grid-area: st; }
-
-.npc-input-st-val { grid-area: st-val; }
-
-.npc-input-dx-val { grid-area: dx-val; }
-
-.npc-input-iq-val { grid-area: iq-val; }
-
-.npc-input-ht-val { grid-area: ht-val; }
-
-.npc-input-dodge-val { grid-area: dodge-val; }
-
-.npc-input-attr2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "hp hp-val"
-    "will will-val"
-    "per per-val"
-    "fp fp-val"
-    ". ."
-    ". .";
-  grid-area: attr2;
-}
-
-.npc-input-hp { grid-area: hp; }
-
-.npc-input-per { grid-area: per; }
-
-.npc-input-will { grid-area: will; }
-
-.npc-input-hp-val { grid-area: hp-val; }
-
-.npc-input-will-val { grid-area: will-val; }
-
-.npc-input-per-val { grid-area: per-val; }
-
-.npc-input-fp-val { grid-area: fp-val; }
-
-.npc-input-fp { grid-area: fp; }
-
-.npc-input-attr3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-  gap: 0px 0px;
-  grid-template-areas:
-    "speed speed-val"
-    "move move-val"
-    ". ."
-    "sm sm-val"
-    ". ."
-    "dr dr-val";
-  grid-area: attr3;
-}
-
-.npc-input-dr { grid-area: dr; }
-
-.npc-input-dr-val { grid-area: dr-val; }
-
-.npc-input-sm { grid-area: sm; }
-
-.npc-input-sm-val { grid-area: sm-val; }
-
-.npc-input-move { grid-area: move; }
-
-.npc-input-move-val { grid-area: move-val; }
-
-.npc-input-speed-val { grid-area: speed-val; }
-
-.npc-input-speed { grid-area: speed; }
-
-
-
-
-.simple_Ads label,
-.simple_Eqt label,
-.simple_Skills label,
-.simple_Notes label,
-.simple_Attacks label {
-  font-size: 120%;
-  font-weight: bold;
-  font-style: italic;
-}
-
-.simple_form {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.simple_container {
-  width: 100% !important;
-  height: 100% !important;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  gap: 5px 5px;
-  grid-template-areas:
-    "ST ST-desc ST-desc Portrait Portrait"
-    "DX DX-desc DX-desc Portrait Portrait"
-    "IQ IQ-desc IQ-desc Portrait Portrait"
-    "HT HT-desc HT-desc Portrait Portrait"
-    "Shield Body Heart Notes Notes"
-    "Shield Body Heart Notes Notes"
-    "Shield Body Heart Notes Notes"
-    "Defend Armor HP Notes Notes"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Eqt Eqt Eqt Ads Ads"
-    "Eqt Eqt Eqt Ads Ads"
-    "Eqt Eqt Eqt Ads Ads"
-    "Eqt Eqt Eqt Ads Ads";
-}
-
-.simple_lrg {
-  font-size: 200%;
-}
-
-.simple_ST-desc label,
-.simple_DX-desc label,
-.simple_IQ-desc label,
-.simple_HT-desc label {
-  align-self: center;
-}
-
-.simple_ST {
-  grid-area: ST;
-}
-
-.simple_DX {
-  grid-area: DX;
-}
-
-.simple_IQ {
-  grid-area: IQ;
-}
-
-.simple_HT {
-  grid-area: HT;
-}
-
-.simple_ST-desc {
-  grid-area: ST-desc;
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-}
-
-.simple_DX-desc {
-  grid-area: DX-desc;
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-}
-
-.simple_IQ-desc {
-  grid-area: IQ-desc;
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-}
-
-
-.simple_HT-desc {
-  grid-area: HT-desc;
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-}
-
-.simple_dodge {
-  font-size: 150%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.simple_Shield {
-  grid-area: Shield;
-  /*	text-align: center;
-	vertical-align: middle;
-*/
-  background-image: url("../ui/ri_1.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  font-size: 250%;
-  font-weight: bold;
-  position: relative;
-  /*	display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-*/
-}
-
-.simple_Body {
-  grid-area: Body;
-  text-align: center;
-  background-image: url("../ui/ri_3.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  font-size: 250%;
-  font-weight: bold;
-
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-}
-
-.simple_Heart {
-  grid-area: Heart;
-  text-align: center;
-  background-image: url("../ui/ri_2.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  font-size: 250%;
-  font-weight: bold;
-
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-}
-
-.simple_Defend {
-  grid-area: Defend;
-  font-weight: bold;
-  text-align: center;
-  background-color: green;
-}
-
-.simple_Armor {
-  grid-area: Armor;
-  font-weight: bold;
-  text-align: center;
-  background-color: orange;
-}
-
-.simple_HP {
-  grid-area: HP;
-  font-weight: bold;
-  text-align: center;
-  background-color: red;
-}
-
-.simple_Attacks {
-  grid-area: Attacks;
-  background-color: rgb(220, 255, 255);
-  display: grid;
-  align-content: stretch;
-  grid-template-rows: repeat(100, 1fr);
-  grid-template-columns: 1.5fr 1fr 1fr;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 120%;
-  gap: 10px 15px;
-  overflow-y: scroll;
-}
-
-.simple_Skills {
-  grid-area: Skills;
-  background-color: rgb(220, 255, 255);
-  display: grid;
-  align-content: stretch;
-  grid-template-rows: repeat(100, 1fr);
-  grid-template-columns: 3fr 1fr;
-  text-align: left;
-  vertical-align: middle;
-  font-size: 120%;
-  gap: 10px 15px;
-  overflow-y: scroll;
-}
-
-.simple_Eqt {
-  grid-area: Eqt;
-  background-color: rgb(215, 215, 255);
-  display: grid;
-  align-content: stretch;
-  grid-template-rows: repeat(100, 1fr);
-  grid-template-columns: 9fr 1fr;
-  text-align: left;
-  vertical-align: middle;
-  font-size: 120%;
-  gap: 10px 15px;
-  overflow-y: scroll;
-}
-
-.simple_Ads {
-  grid-area: Ads;
-  background-color: rgb(215, 215, 255);
-  display: grid;
-  align-content: stretch;
-  grid-template-rows: repeat(100, 1fr);
-  grid-template-columns: 1fr;
-  text-align: left;
-  vertical-align: middle;
-  font-size: 120%;
-  gap: 10px 20px;
-  overflow-y: scroll;
-}
-
-.simple_Portrait {
-  grid-area: Portrait;
-  object-fit: contain;
-  text-align: center;
-}
-
-.simple_Notes {
-  grid-area: Notes;
-  background-color: rgb(220, 255, 255);
-  font-size: 120%;
-  display: grid;
-  align-content: stretch;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
-  grid-template-columns: 1fr;
-  padding: 0px 0px 0px 10px;
-  overflow-y: scroll;
-}
-
-.simple_icon {
-  max-width: 100%;
-  max-height: 100%;
-  vertical-align: middle;
-  background-color: rgb(255, 255, 175);
-}
-
-.simple_input {
-  font-size: 120% !important;
-  height: 40px !important;
-  width: 80px !important;
-  vertical-align: middle;
-  margin: 5px;
-  padding: 10px;
-  border: 2px solid black;
-  background-color: rgb(255, 255, 175);
-}
-
 .gcs-input-ta {
   border-width: 0px !important;
   border: none !important;
@@ -460,6 +50,23 @@
   padding: 1px !important;
 }
 
+.gcs-input-sm8 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 8em;
+  padding: 1px !important;
+}
+
+.gcs-input-sm10 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 10em;
+  padding: 1px !important;
+}
+
+
 .gcs-input-2 {
   border-width: 0px !important;
   border: none !important;
@@ -492,6 +99,14 @@
   padding: 1px !important;
 }
 
+.gcs-input-10 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  min-width: 10em !important;
+  padding: 1px !important;
+}
+
 .gcs-input-25 {
   border-width: 0px !important;
   border: none !important;
@@ -518,7 +133,6 @@
   margin: 0px;
   padding: 0px;
   cursor: pointer;
-  z-index: 999;
   display: inline-block;
 }
 
@@ -731,20 +345,20 @@
   position: relative;
 }
 
-.gurpstippable:hover::after {
+.gurpstippable:hover::before {
   content: attr(data-tooltip);
   position: absolute;
   bottom: 130%;
   left: -50%;
   min-width: 20px;
-  border: 1px #808080 solid;
+  border-radius: 6px;
   padding: 8px;
-  color: black;
-  background-color: rgb(192, 192, 192);
+  color: #fff;
+  background-color: #555;
   z-index: 102;
 }
 
-.gurpstippable:hover::before {
+.gurpstippable:hover::after {
   content: "";
   position: absolute;
   top: -30%;
@@ -752,7 +366,7 @@
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: black transparent transparent transparent;
+  border-color: #555 transparent transparent transparent;
   z-index: 102;
 }
 
@@ -1075,9 +689,11 @@
   margin-bottom: 10px;
 }
 
-.gurps .sheet-header .profile-img {
+.gurps .profile-img {
   flex: 0 0 100px;
-  height: 100px;
+  height: 100%;
+  width: 100%;
+  min-width: 100px;
   margin-right: 10px;
 }
 
@@ -1289,6 +905,7 @@
     "header header header"
     "block1 block2 block3";
   grid-template-rows: 0fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   border: 1px solid black;
 }
 
@@ -1300,7 +917,7 @@
   text-align: left;
   padding-left: .2em;
   padding-right: .2em;
-  font-size: 80%;
+  /* font-size: 80%; */
   white-space: nowrap;
   align-self: center;
 }
@@ -1435,7 +1052,6 @@ body {
 #points,
 #attributes,
 #lifting,
-#fatpoints,
 #hitpoints {
   display: grid;
   grid-template-rows: 0fr 1fr;
@@ -1446,7 +1062,7 @@ body {
 #attributes .field,
 #lifting .field,
 #hitpoints .field,
-#fatpoints .field {
+#trackers .field {
   text-align: right;
 }
 
@@ -1472,8 +1088,8 @@ body {
   grid-area: stats;
   display: grid;
   grid-template:
-    "attributes fatpoints location encumbrance"
-    "attributes hitpoints location lifting";
+    "attributes trackers location encumbrance"
+    "attributes trackers location lifting";
   grid-template-columns: 0fr 2fr 0fr 0fr;
   grid-gap: .05in;
 }
@@ -1482,10 +1098,6 @@ body {
   grid-area: attributes;
 }
 
-#fatpoints {
-  grid-area: fatpoints;
-  align-content: right;
-}
 
 #hitpoints {
   grid-area: hitpoints;
@@ -1541,7 +1153,7 @@ body {
 #notes {
   display: grid;
   border: 1px solid black;
-  align-content: stretch;
+  align-content: start;
 }
 
 #reactions,
@@ -1597,7 +1209,7 @@ body {
 }
 
 #notes {
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr auto;
   grid-area: notes;
 }
 
@@ -1607,6 +1219,13 @@ body {
   padding-right: .2em;
   font-size: 80%;
   align-self: center;
+}
+
+.points-fp {
+  text-align: right;
+  padding-left: .2em;
+  padding-right: .2em;
+  font-size: 80%;
 }
 
 .label {
@@ -1829,8 +1448,6 @@ body {
 .bulk,
 .rcl,
 .load,
-.move,
-.dodge,
 .where,
 .penalty,
 .dr,
@@ -1839,6 +1456,8 @@ body {
   text-align: right;
 }
 
+.move,
+.dodge,
 .equipped,
 .roll {
   text-align: center;
@@ -1996,22 +1615,36 @@ body {
 }
 
 
-/* ----- temp additions ----- */
+/* ----- combat sheet additions ----- */
 
 #combat-sheet {
   display: grid;
-  grid-template-columns: 1fr 1fr 6em 6em auto;
+  grid-template-columns: 0fr 8em 8em auto;
   grid-template-rows: 0fr auto auto;
   grid-gap: .05in;
   grid-template-areas:
-    'combat-identity combat-identity combat-hit      combat-fat      combat-location'
-    'combat-attrs    combat-encumber combat-encumber combat-encumber combat-location'
-    'combat-weapons  combat-weapons combat-weapons   combat-weapons  combat-weapons';
+    'combat-attrs    combat-hitfat   combat-trackers combat-location'
+    'combat-encumber combat-encumber combat-trackers combat-location'
+    'combat-weapons  combat-weapons  combat-weapons  combat-weapons ';
 }
 
-#combat-identity,
-#combat-hit,
-#combat-fat,
+#combat-hitfat {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  grid-gap: .05in;
+  grid-template-areas:
+    'combat-hit'
+    'combat-fat';
+}
+
+#combat-trackers {
+  grid-area: combat-trackers;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+}
+
 #combat-attrs,
 #combat-weapons,
 #combat-location {
@@ -2026,6 +1659,19 @@ body {
 #combat-attrs,
 #combat-location {
   border: 1px solid black;
+}
+
+.header.major-heading {
+  border-bottom: 1px solid white;
+}
+
+.header.minor-heading {
+  background-color: grey !important;
+  border: none !important;
+}
+
+.no-border {
+  border: none !important;
 }
 
 #combat-encumber {
@@ -2046,35 +1692,35 @@ body {
 }
 
 #combat-fat .field,
-#combat-hit .field {
+#combat-hit .field,
+.tracked-resource .field {
   text-align: end;
+  margin-left: 2px;
+  margin-right: 2px;
 }
 
-.gurps .condition-block {
-  display: grid;
-  grid-template-columns: 0fr 1fr;
-  grid-template-rows: 0fr 0fr;
-  grid-template-areas:
-    "basic-value basic-label"
-    "condition   condition";
-  align-items: end;
-  padding-bottom: .15em;
+#editorsheet #combat-hit .field,
+#editorsheet #combat-fat .field,
+#editorsheet .tracked-resource .field {
+  border-bottom: 1px solid lightgrey;
 }
 
-.gurps .condition-block {
-  text-align: start;
-  padding-left: .2em;
-  padding-right: .2em;
+
+#editorsheet .tracked-resource .tooltip .field {
+  border: none !important;
+}
+
+
+/* .gurps #combat-sheet .condition-block {
   font-size: 80%;
-  white-space: nowrap;
-  align-self: center;
-}
+  grid-template-columns: 0fr 1fr 0fr;
+  grid-template-areas:
+    "basic-value basic-label reset"
+    "condition   condition   condition";
+} */
 
-.gurps .condition-block .basic-value {
+/* .gurps .condition-block .basic-value {
   grid-area: basic-value;
-  margin-right: .2em;
-  padding-left: .2em;
-  padding-right: .2em;
 }
 
 .gurps .condition-block .basic-label {
@@ -2082,26 +1728,19 @@ body {
   text-align: left;
   padding-left: .2em;
   padding-right: .2em;
-  font-size: 80%;
   white-space: nowrap;
   align-self: center;
+} */
+
+.conditional-injury .condition-block .basic-value .label {
+  text-align: right;
 }
 
-.gurps .condition-block .condition {
-  grid-area: condition;
-  align-content: center;
-  text-align: center;
-  margin-right: .2em;
-  padding-left: .2em;
-  padding-right: .2em;
+.gurps #combat-sheet .condition-block .basic-label {
+  font-size: 80%;
 }
 
-.gurps .condition-block .normal {
-  background-color: lightgreen;
-}
-
-#hitpoints .selected,
-#fatpoints .selected {
+#hitpoints .selected {
   background-color: #ffcdd2;
 }
 
@@ -2110,7 +1749,8 @@ body {
   background-color: #b8ffff;
 }
 
-.gurps .condition-block .collapse {
+.gurps .condition-block .collapse,
+.resource-spinner .depleted {
   background-color: #ffcdd2;
 }
 
@@ -2378,11 +2018,45 @@ body {
 .roll-message .aside {
   font-size: smaller;
   text-align: end;
+  font-weight: normal;
+  text-align: start;
 }
 
 .roll-result .roll-value,
 .roll-result .roll-detail {
-  font-family: "Font Awesome 5 Free", Verdana, sans-serif;
+  font-family: "Font Awesome 5 Free", 'Roboto', sans-serif;
+}
+
+.roll-result .roll-detail {
+  font-weight: normal;
+}
+
+.roll-result .roll-detail .aside {
+  font-size: inherit;
+}
+
+.roll-result .roll-detail .crit {
+  font-size: large;
+  font-weight: bolder;
+}
+
+.roll-result .roll-detail .success {
+  color: darkgreen;
+  font-weight: bold;
+}
+
+.roll-result .roll-detail .failure {
+  color: darkred;
+  font-weight: bold;
+}
+
+.roll-result .roll-detail .crit.success {
+  color: black;
+  text-shadow: 0 0 3px #00FF00;
+}
+.roll-result .roll-detail .crit.failure {
+  color: black;
+  text-shadow: 0 0 3px #FF0000;
 }
 
 /* GURPS App CSS */
@@ -2396,8 +2070,15 @@ body {
 }
 
 /* prefer center text in input fields */
-.gurps-app input[type=number] {
+.gurps-app input.digits-only,
+.gurps-app input.decimal-digits-only {
   text-align: center;
+}
+
+/* remove this item from display  */
+.gurps-chat-message .invisible,
+.gurps-app .invisible {
+  display: none;
 }
 
 /* special override, 'cause I can't get the space any other way*/
@@ -2427,13 +2108,14 @@ body {
 
 .gurps-group h4 {
   background-color: black;
-  color: white;
+  color: lightgrey;
   margin-bottom: 0.5em;
   font-size: larger;
   margin-left: -0.5em;
   margin-right: -0.5em;
   padding-left: 0.5em;
   margin-top: 0.5em;
+  text-transform: uppercase;
 }
 
 .gurps-group>h4:first-child {
@@ -2443,24 +2125,16 @@ body {
 .gurps-group aside {
   font-size: smaller;
   font-style: italic;
-  margin-top: -0.5em;
   margin-bottom: 0.5em;
 }
 
+.gurps-group h4+aside {
+  margin-top: -0.5em;
+}
+
 .gurps-group .grid {
-  align-items: center;
-  justify-items: flex-start;
-}
-
-/* remove the top margin and indent */
-.gurps-group .continuation {
-  margin-top: 0;
-  margin-left: 2em;
-}
-
-/* remove this item from display  */
-.gurps-group .invisible {
-  display: none;
+  align-items: start;
+  justify-items: stretch;
 }
 
 /* striped table row appearance */
@@ -2468,6 +2142,13 @@ body {
   background-color: rgba(0, 0, 0, 0.10);
 }
 
+.gurps-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto;
+  justify-items: stretch;
+  text-align: left;
+}
 
 /* grid with 3 colums; center is fixed */
 .gurps-3col {
@@ -2479,6 +2160,7 @@ body {
   text-align: left;
 }
 
+.grid-2col>*,
 .gurps-3col>* {
   align-self: center;
   height: 100%;
@@ -2489,9 +2171,11 @@ body {
 }
 
 /* striped table row appearance */
-.gurps-3col>div:nth-of-type(6n+4),
-.gurps-3col>div:nth-of-type(6n+5),
-.gurps-3col>div:nth-of-type(6n+6) {
+.gurps-2col>*:nth-child(4n+3),
+.gurps-2col>*:nth-child(4n+4),
+.gurps-3col>*:nth-of-type(6n+4),
+.gurps-3col>*:nth-of-type(6n+5),
+.gurps-3col>*:nth-of-type(6n+6) {
   background-color: rgba(0, 0, 0, 0.10);
 }
 
@@ -2504,6 +2188,8 @@ body {
 .gurps-radio-col>*:nth-child(3n+3) {
   text-align: end;
   padding-right: 0.5em;
+  flex-flow: nowrap;
+  justify-content: flex-end;
 }
 
 .gurps-radio-col>*:nth-child(3n+2) {
@@ -2530,12 +2216,14 @@ body {
   width: 100%;
   grid-template-columns: min-content min-content 1fr;
   min-height: 130px;
+  font-size: 12px;
 }
 
 .gurps-group .results-table>div:nth-child(3n+1),
 .gurps-group .results-table>div:nth-child(3n+2) {
   text-align: end;
   padding-right: 0.5em;
+  font-size: smaller;
 }
 
 .gurps-group .results-table>div:nth-child(3n+2) {
@@ -2546,6 +2234,8 @@ body {
 .gurps-group .results-table>div:nth-child(3n+3) {
   text-align: start;
   justify-content: center;
+  padding-left: 1em;
+  text-indent: -1em;
 }
 
 .with-button {
@@ -2558,17 +2248,687 @@ body {
 
 .with-button button {
   position: absolute;
+  right: 0.35em;
+  line-height: 25px;
+  z-index: 2;
+  color: dimgrey;
+  border: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0);
+}
+
+ul#result-effects {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul#result-effects li {
+  margin: 0 0 6px 0;
+}
+
+.with-button button,
+[name=result-effect] button {
   width: fit-content;
   height: fit-content;
   margin: 0;
   padding: 0;
-  right: 0.35em;
-  top: 0.2em;
-  line-height: 25px;
-  z-index: 2;
-  border: none;
-  border-radius: 0;
   cursor: pointer;
-  color: dimgrey;
-  background: rgba(0, 0, 0, 0);
+}
+
+[name=result-effect] button {
+  position: relative;
+  background-color: rgba(255, 255, 240, 0.8);
+  border: 1px solid #b5b3a4;
+  border-radius: 3px;
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+  padding-left: 5.5px;
+  padding-right: 5.5px;
+  margin-right: 4px;
+}
+
+[name=result-effect] .with-send-button {
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+}
+
+[name=result-effect]>div {
+  display: flex;
+  align-items: center;
+}
+
+[name=result-effect]>div div:first-child {
+  flex-grow: 1;
+}
+
+[name=result-effect] aside {
+  font-style: normal;
+  margin: 0;
+}
+
+#wound-modifier-table aside {
+  text-align: end;
+  margin-bottom: 0;
+}
+
+#wound-modifier-table .hitlocation {
+  color: darkred;
+}
+
+#wound-modifier-table .hitlocation:after {
+  content: '*';
+  color: black;
+}
+
+#wound-modifier-table .injury-tolerance {
+  color: darkviolet;
+}
+
+#wound-modifier-table .injury-tolerance:after {
+  content: '†';
+  color: black;
+}
+
+.chat-message .gurps-group {
+  font-size: smaller;
+  border: none;
+  padding: 0;
+}
+
+.chat-message .results-table {
+  gap: 0;
+  min-height: fit-content;
+  margin: 0;
+}
+
+.offscreen-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* remove the top margin and indent */
+.gurps-group .continuation {
+  margin-top: 0;
+  margin-left: 2em;
+}
+
+
+/* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
+    <div class='collapsible-wrapper'>
+        <input id='collapsible' class='toggle offscreen-only' type='checkbox' checked>
+        <label for='collapsible' class='label-toggle'>Show the math</label>
+        <div class='collapsible-content'>
+            <div class='content-inner'>
+                {{{resultsTable}}}
+            </div>
+        </div>
+    </div> 
+  */
+.collapsible-wrapper .label-toggle {
+  display: block;
+  cursor: pointer;
+  text-align: left;
+}
+
+.collapsible-wrapper .collapsible-content {
+  max-height: 0px;
+  overflow: hidden;
+  transition: all .25s ease-in-out;
+}
+
+.toggle:checked+.label-toggle+.collapsible-content {
+  max-height: 130vh;
+}
+
+.gurps-chat-message * {
+  font-family: Roboto, sans-serif;
+}
+
+.gurps-chat-message .label-toggle {
+  font-size: x-small;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  padding: 0.25em;
+  background-color: rgba(0, 0, 0, 0.50);
+  margin-top: 4px;
+  color: lightgray;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.gurps-chat-message .label-toggle:hover {
+  background-color: rgb(0, 0, 0, 0.7);
+}
+
+.gurps-chat-message .label-toggle:after {
+  font: normal normal normal 12px/1 FontAwesome;
+  content: '\f078';
+  color: lightgray;
+  float: right;
+}
+
+.gurps-chat-message .toggle:checked+.label-toggle:after {
+  font: normal normal normal 12px/1 FontAwesome;
+  content: '\f077';
+  color: lightgray;
+  float: right;
+}
+
+.gurps-group .options-drawer {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-auto-rows: auto;
+  align-items: center;
+}
+
+.gurps-group .collapsible-content {
+  grid-column: 1 / span 2;
+  background: rgba(0, 0, 0, 0.1);
+  margin-bottom: 0;
+  padding-right: 4px;
+}
+
+.gurps-group .collapsible-content>*:nth-child(even) {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.gurps-group .options-drawer label {
+  padding-top: 2px;
+}
+
+.gurps-group .options-drawer label .pdflink {
+  float: right;
+  padding-top: 2px;
+}
+
+.gurps-group .options-drawer .toggle:checked+.label-toggle+.collapsible-content {
+  max-height: 130vh;
+  padding-bottom: 2px;
+  margin-bottom: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset,
+    0px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
+}
+
+.gurps-app button {
+  text-transform: uppercase;
+}
+
+.gurps-app button.with-icon>i>span {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  font-weight: 400;
+}
+
+.gurps-app * {
+  font-family: Roboto, sans-serif;
+}
+
+.gurps-app .fa,
+.gurps-app .fab,
+.gurps-app .fad,
+.gurps-app .fal,
+.gurps-app .far,
+.gurps-app .fas {
+  font-family: 'Font Awesome 5 Free' !important;
+}
+
+.gurps-app #blunt-trauma-field {
+  margin-left: 6px;
+}
+
+.gurps .ranged_options {
+  display: flex;
+  flex-wrap: no-wrap;
+}
+
+.dragging {
+  outline: 5px auto -webkit-focus-ring-color;
+  box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+  border-radius: 3px;
+}
+
+
+
+
+#combat-sheet .resource-spinner button {
+  height: 21px;
+}
+
+#combat-sheet .resource-spinner input {
+  height: 21px;
+  font-size: 80%;
+}
+
+#combat-sheet .tracked-resource {
+  border: 1px solid black;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted grey;
+  /* If you want dots under the hoverable text */
+  /* text-transform: uppercase; */
+  /* color: darkgrey */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  min-width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: medium;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.fieldblock3 .tooltip-wrapper {
+  grid-column: 1 / span 2;
+}
+
+.tooltip .fieldblock .field {
+  border: none !important;
+}
+
+.field select {
+  height: min-content;
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: 90%;
+  cursor: inherit;
+  line-height: inherit;
+}
+
+.field textarea {
+  font-family: inherit;
+  font-size: 80%;
+  border-radius: 0;
+  border: 1px solid lightgrey;
+  padding: 3px;
+  resize: none;
+  /* background-color: transparent; */
+  margin-top: 3px;
+}
+
+.field textarea:read-only {
+  background-color: transparent;
+}
+
+.label.textarea {
+  align-self: start;
+  margin-top: 6px;
+}
+
+
+/* Resource Trackers and Editors */
+
+#trackers {
+  grid-area: trackers;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0fr auto 0fr;
+  grid-gap: .05in;
+}
+
+#trackers>* {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: .05in;
+}
+
+#trackers>*:first-child {
+  grid-template: "combat-hit combat-fat"
+}
+
+#trackers>*:last-child {
+  grid-template-rows: 0fr 1fr 1fr;
+  grid-gap: 0;
+}
+
+#resources {
+  grid-template-rows: 0fr 0fr;
+}
+
+#resources .tracked-resource .header:hover {
+  outline: none;
+  box-shadow: 0 0 5px red;
+}
+
+#resources>*:first-child {
+  border-bottom: 1px solid white;
+}
+
+.tracked-resource:nth-child(even) .header {
+  border-right: 1px solid white;
+}
+
+.tracked-resource:nth-child(odd) .header {
+  border-left: none;
+}
+
+.resource-editor,
+.tracked-resource {
+  display: flex;
+  flex-flow: column nowrap;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.tracked-resource:nth-child(odd) {
+  border-right: 1px solid black;
+}
+
+.resource-editor>*,
+.tracked-resource>* {
+  margin: 0 0.25rem 0.25rem 0.25rem;
+}
+
+.resource-editor .header,
+.tracked-resource .header {
+  color: white;
+  background-color: black;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px solid black;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tracked-resource .header .edit {
+  float: right;
+  margin-right: 0.25em;
+}
+
+.resource-editor .name,
+.tracked-resource .spinner {
+  display: flex;
+  flex-flow: row nowrap;
+  line-height: unset;
+  align-items: center;
+}
+
+.tracked-resource button i {
+  font-size: 67%;
+  margin: 0;
+}
+
+.resource-editor input,
+.tracked-resource .spinner input {
+  height: 1.2rem;
+  min-width: 2rem;
+  border: 1px solid grey;
+  border-radius: 0;
+  font-size: inherit;
+  text-align: center;
+
+}
+
+.tracked-resource .spinner > button:first-of-type {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.tracked-resource .spinner > button:nth-of-type(2) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
+}
+
+.tracked-resource .tooltip-wrapper {
+  margin-bottom: 0.15rem;
+}
+
+.tracked-resource .spinner > button:last-of-type:not(.no-gap) {
+  margin-left: 0.15rem;
+}
+
+.tracked-resource .condition-block {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: stretch;
+}
+
+#combat-trackers .tracked-resource .condition-block {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: stretch;
+  align-items: baseline;
+}
+
+.tracked-resource .condition-block .max {
+  font-size: 80%;
+  text-align: end;
+  margin-left: 0.15rem;
+}
+
+.tracked-resource .condition-block .condition {
+  text-align: center;
+  width: 100%;
+}
+
+.tracked-resource .condition.normal {
+  background-color: rgba(144, 238, 144, 0.6);
+}
+
+.tracked-resource .condition.below {
+  background-color: rgba(240, 128, 128, 0.6);
+}
+
+.tracked-resource .condition.above {
+  background-color: rgba(238, 130, 238, 0.6);
+}
+
+.tracked-resource ::placeholder {
+  color: grey;
+}
+
+.resource-editor .inputs {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto;
+  grid-gap: 0.15rem;
+}
+
+.resource-editor .inputsv2 {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto;
+  grid-gap: 0.15rem;
+}
+
+.resource-editor .inputs .label {
+  font-size: 80%;
+}
+
+.resource-editor button i {
+  margin-right: 0.15rem;
+}
+
+.resource-editor button {
+  font-size: inherit;
+  padding: 0 0.15rem;
+}
+
+.tracked-resource .spinner button {
+  line-height: unset;
+  margin: 0;
+  height: 1.2rem;
+  flex: 0;
+  border: 1px solid grey;
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+}
+
+.tracked-resource.inactive .condition-block>* {
+  color: grey;
+}
+
+.tracked-resource.inactive .header {
+  color: whitesmoke;
+  background-color: grey;
+}
+
+.tracked-resource .fieldblock3 {
+  grid-template-columns: 0fr 1fr 1fr;
+}
+
+.gentle-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1ch;
+}
+
+.condition-block .fieldblock3 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.tracked-resource .name {
+  text-align: center !important;
+}
+
+#combat-sheet .tracked-resource .spinner button {
+  padding: 0 2px 2px 2px;
+}
+
+#combat-sheet .fieldblock .field {
+  text-align: right;
+}
+
+
+.spinner details {
+  position: relative;
+}
+
+.spinner details summary input {
+  width: 100%;
+}
+
+.spinner details .popup {
+  display: flex;
+  flex-flow: row nowrap;
+  position: absolute;
+  z-index: 10;
+  margin-left: -150%;
+  font-size: 80%;
+  min-inline-size: max-content;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.5),0 2px 4px -1px rgba(0,0,0,.3);
+  border: none;
+  border-radius: 3px;
+}
+
+.spinner .button-ribbon button {
+  margin: 0;
+  font-size: inherit;
+}
+
+.spinner .button-ribbon button:first-of-type {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.spinner .button-ribbon button:last-of-type {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.spinner .button-ribbon button:not(:first-of-type):not(:last-of-type) {
+  border-radius: 0;
+  border-left: none;
+}
+
+.spinner .button-ribbon button:hover {
+  box-shadow: 0 0 5px red;
+}
+
+.spinner .button-ribbon button.restore {
+  color: darkred;
+  font-weight: bold;
+}
+
+.tracked-resource .spinner details {
+  min-width: 2rem;
+}
+
+.tracked-resource .spinner summary {
+  line-height: 1.2;
+}
+
+.tracked-resource .spinner summary::-webkit-details-marker {
+  display: none;
+}
+
+.equipmentbutton {
+  text-align: center;
+  line-height: 0.5;
+  font-size: inherit;
+  margin: 0;
+  height: 0.75rem;
+  min-width: 0.75rem;
+  flex: 0;
+/*  border: 1px solid grey;  */
+  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+  padding: 0px 0px 0px 0px;
+}
+
+.equipmentbutton.bold {
+  font-weight: bold;
+}
+
+.equipmentlist .qty {
+  display: flex;
+  flex-flow: row nowrap;
+  line-height: unset;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.equipped {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

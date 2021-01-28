@@ -45,7 +45,7 @@
 
 					<div style="background-color:gold; align-content: end;display:{{#if cansend}}block{{else}}none{{/if}}">
 						<div class="modttlabel">Send your Modifier Bucket to:</div>
-						<div style="position: relative;text-align: center;display: inline-flex;justify-content: center; ">
+						<div style="position: relative;text-align: center;display: flex;justify-content: center; flex-wrap: wrap; ">
 							{{#each users}}
 								<button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
 							{{/each}}
