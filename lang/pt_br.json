@@ -3,11 +3,12 @@
   "GURPS.changelog": "README",
   "GURPS.DontShowAgain": "Não exibir README novamente",
 
+  "GURPS.attributes" : "Atributos",
   "GURPS.attributesST" : "ST",
   "GURPS.attributesDX" : "DX",
   "GURPS.attributesIQ" : "IQ",
   "GURPS.attributesHT" : "HT",
-  "GURPS.attributesWILL" : "Will",
+  "GURPS.attributesWILL" : "Von",
   "GURPS.attributesPER" : "Per",
 
   "GURPS.HP" : "HP",
@@ -26,7 +27,7 @@
   "GURPS.vision" : "Visão",
   "GURPS.hearing" : "Audição",
   "GURPS.tastesmell" : "Paladar / Cheiro",
-  "GURPS.touch" : "Toque",
+  "GURPS.touch" : "Tato",
   "GURPS.frightcheck" : "Verificação de Pânico",
   "GURPS.basicspeed" : "Velocidade Básica",
   "GURPS.basicmove" : "Movimentação Básica",
