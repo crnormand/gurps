@@ -24,6 +24,7 @@ This is what we are currently working on:
     - Support GCS v4.27 export hierarchy for Ads/Disads, Skills, Spells and Notes
     - Added collapsible carets for  Ads/Disads, Skills, Spells, Notes & Equipment
     - Added drag and drop menu 'before' and 'in' for all lists so you can create containers
+    - Allow user created notes & equipment to survive import
 
 ### History
 - 0.8.8
