@@ -1,9 +1,9 @@
 'use strict'
 
 import { DamageCalculator } from './damagecalculator.js'
-import { isNiceDiceEnabled, parseFloatFrom, parseIntFrom } from './utilities.js'
-import * as settings from './miscellaneous-settings.js'
-import { digitsAndDecimalOnly, digitsOnly } from './jquery-helper.js'
+import { isNiceDiceEnabled, parseFloatFrom, parseIntFrom } from '../../lib/utilities.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
+import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
 
 const standardDialogHeight = 800
 const simpleDialogHeight = 130

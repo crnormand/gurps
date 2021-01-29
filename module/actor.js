@@ -1,20 +1,19 @@
 'use strict'
 
 import { extractP, xmlTextToJson, zeroFill, convertRollStringToArrayOfInt } from '../lib/utilities.js'
-import ApplyDamageDialog from '../lib/applydamage.js'
-import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
+import ApplyDamageDialog from './damage/applydamage.js'
+import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 
 export class GurpsActor extends Actor {
-
   /** @override */
   getRollData() {
-    const data = super.getRollData();
-    return data;
+    const data = super.getRollData()
+    return data
   }
 
   prepareData() {
-    super.prepareData();
+    super.prepareData()
   }
 
   prepareDerivedData() {
@@ -23,15 +22,20 @@ export class GurpsActor extends Actor {
 
   /** @override */
   _onUpdate(data, options, userId, context) {
-    super._onUpdate(data, options, userId, context);
-    game.GURPS.ModifierBucket.refresh();		// Update the bucket, in case the actor's status effects have changed
+    super._onUpdate(data, options, userId, context)
+    game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
 
-  get _additionalResources() { return this.data.data.additionalresources }
+  get _additionalResources() {
+    return this.data.data.additionalresources
+  }
 
   async update(data, options) {
     // update data for hit location if bodyplan is different
-    if (data.data?.additionalresources?.bodyplan && data.data.additionalresources.bodyplan !== this._additionalResources?.bodyplan) {
+    if (
+      data.data?.additionalresources?.bodyplan &&
+      data.data.additionalresources.bodyplan !== this._additionalResources?.bodyplan
+    ) {
       let bodyplan = data.data.additionalresources.bodyplan
       let hitlocationTable = hitlocationDictionary[bodyplan]
       if (!hitlocationTable) {
@@ -41,390 +45,412 @@ export class GurpsActor extends Actor {
         let oldlocations = this.data.data.hitlocations || {}
         let count = 0
         for (let loc in hitlocationTable) {
-          let hit = hitlocationTable[loc];
-          let originalLoc = Object.values(oldlocations).filter(it => it.where === loc)
+          let hit = hitlocationTable[loc]
+          let originalLoc = Object.values(oldlocations).filter((it) => it.where === loc)
           let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
           let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
           game.GURPS.put(hitlocations, it, count++)
         }
         // Since we are in the middle of an update now, we have to let it finish, and then change the hitlocations list
         setTimeout(async () => {
-            await this.update({ "data.-=hitlocations": null })
-            this.update({ "data.hitlocations": hitlocations })
-          }, 200);    
+          await this.update({ 'data.-=hitlocations': null })
+          this.update({ 'data.hitlocations': hitlocations })
+        }, 200)
         return super.update(data, options)
       }
     }
     return super.update(data, options)
   }
 
-
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
     // need to remove <p> and replace </p> with newlines from "formatted text"
-    let x = game.GURPS.cleanUpP(xml);
-    x = xmlTextToJson(x);
-    let r = x.root;
+    let x = game.GURPS.cleanUpP(xml)
+    x = xmlTextToJson(x)
+    let r = x.root
     if (!r) {
-      if (xml[0] == "{" && importname.endsWith(".gcs"))
-        ui.notifications.error("We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.");
-      else
-        ui.notifications.error("No <root> object found.  Are you importing the correct XML file?");
-      return;
+      if (xml[0] == '{' && importname.endsWith('.gcs'))
+        ui.notifications.error(
+          'We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.'
+        )
+      else ui.notifications.error('No <root> object found.  Are you importing the correct XML file?')
+      return
     }
 
-    let parsererror = r.parsererror;
+    let parsererror = r.parsererror
     if (!!parsererror) {
-      ui.notifications.error("Error parsing XML: " + this.textFrom(parsererror.div));
-      return;
+      ui.notifications.error('Error parsing XML: ' + this.textFrom(parsererror.div))
+      return
     }
 
-    let ra = r["@attributes"];
-    const isFoundryGCS = (!!ra && ra.release == "Foundry" && (ra.version == "1" || ra.version.startsWith("GCS")));
-    const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version.startsWith("GCA"));
+    let ra = r['@attributes']
+    const isFoundryGCS = !!ra && ra.release == 'Foundry' && (ra.version == '1' || ra.version.startsWith('GCS'))
+    const isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
     if (!(isFoundryGCS || isFoundryGCA)) {
-      ui.notifications.error("We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).");
-      ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
-      return;
+      ui.notifications.error(
+        'We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).'
+      )
+      ChatMessage.create({
+        content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>",
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      })
+      return
     }
-		if (isFoundryGCA) {
-			const v = ra.version.split("-");
-			if (v[1] != "1") {
-			  let msg = "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.   Check the Users Guide for details."
-	      ui.notifications.error(msg);
-      	ChatMessage.create({ content: msg + "<br><a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.OTHER });
-			}		
-		}
+    if (isFoundryGCA) {
+      const v = ra.version.split('-')
+      if (v[1] != '1') {
+        let msg =
+          "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.   Check the Users Guide for details."
+        ui.notifications.error(msg)
+        ChatMessage.create({
+          content: msg + "<br><a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>",
+          user: game.user._id,
+          type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        })
+      }
+    }
 
     // The character object starts here
-    let c = r.character;
+    let c = r.character
     if (!c) {
-      ui.notifications.warn("Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format.");
-      return;
+      ui.notifications.warn(
+        "Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format."
+      )
+      return
     }
-    let nm = this.textFrom(c.name);
-    console.log("Importing '" + nm + "'");
+    let nm = this.textFrom(c.name)
+    console.log("Importing '" + nm + "'")
     // this is how you have to update the domain object so that it is synchronized.
 
     let commit = {}
 
-		if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
-	    commit = { ...commit, ...{ "name": nm } };
-  	  commit = { ...commit, ...{ "token.name": nm } };
-		}
-    commit = { ...commit, ...{ "data.lastImport": (new Date()).toString().split(' ').splice(1, 4).join(' ') } };
-    let ar = this.data.data.additionalresources || {};
-    ar.importname = importname;
-    ar.importpath = importpath;
-    commit = { ...commit, ...{ "data.additionalresources": ar } };
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
+      commit = { ...commit, ...{ name: nm } }
+      commit = { ...commit, ...{ 'token.name': nm } }
+    }
+    commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
+    let ar = this.data.data.additionalresources || {}
+    ar.importname = importname
+    ar.importpath = importpath
+    commit = { ...commit, ...{ 'data.additionalresources': ar } }
 
     try {
       // This is going to get ugly, so break out various data into different methods
-      commit = { ...commit, ... await this.importAttributesFromCGSv1(c.attributes) };
-      commit = { ...commit, ...this.importSkillsFromGCSv1(c.abilities?.skilllist, isFoundryGCS) };
-      commit = { ...commit, ...this.importTraitsfromGCSv1(c.traits) };
-      commit = { ...commit, ...this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist, isFoundryGCS) };
-      commit = { ...commit, ...this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist, isFoundryGCS) };
-      commit = { ...commit, ...this.importSpellsFromGCSv1(c.abilities?.spelllist, isFoundryGCS) };
+      commit = { ...commit, ...(await this.importAttributesFromCGSv1(c.attributes)) }
+      commit = { ...commit, ...this.importSkillsFromGCSv1(c.abilities?.skilllist, isFoundryGCS) }
+      commit = { ...commit, ...this.importTraitsfromGCSv1(c.traits) }
+      commit = { ...commit, ...this.importCombatMeleeFromGCSv1(c.combat?.meleecombatlist, isFoundryGCS) }
+      commit = { ...commit, ...this.importCombatRangedFromGCSv1(c.combat?.rangedcombatlist, isFoundryGCS) }
+      commit = { ...commit, ...this.importSpellsFromGCSv1(c.abilities?.spelllist, isFoundryGCS) }
       if (isFoundryGCS) {
-        commit = { ...commit, ...this.importAdsFromGCSv2(c.traits?.adslist) };
-        commit = { ...commit, ...this.importReactionsFromGCSv2(c.reactions) };
+        commit = { ...commit, ...this.importAdsFromGCSv2(c.traits?.adslist) }
+        commit = { ...commit, ...this.importReactionsFromGCSv2(c.reactions) }
       }
       if (isFoundryGCA) {
-        commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) };
-        commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers) };
+        commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) }
+        commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers) }
       }
-      commit = { ...commit, ...this.importEncumbranceFromGCSv1(c.encumbrance) };
-      commit = { ...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals) };
-      commit = { ...commit, ...this.importNotesFromGCSv1(c.description, c.notelist) };
-      commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryGCS) };
-      commit = { ...commit, ... await this.importProtectionFromGCSv1(c.combat?.protectionlist, isFoundryGCA) };
+      commit = { ...commit, ...this.importEncumbranceFromGCSv1(c.encumbrance) }
+      commit = { ...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals) }
+      commit = { ...commit, ...this.importNotesFromGCSv1(c.description, c.notelist) }
+      commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryGCS) }
+      commit = { ...commit, ...(await this.importProtectionFromGCSv1(c.combat?.protectionlist, isFoundryGCA)) }
     } catch (err) {
-      let msg = "An error occured while importing " + nm + ", " + err.name + ":" + err.message;
-      ui.notifications.warn(msg);
+      let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
+      ui.notifications.warn(msg)
       let chatData = {
         user: game.user._id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         content: msg,
-        whisper: [game.user._id]
+        whisper: [game.user._id],
       }
-      CONFIG.ChatMessage.entityClass.create(chatData, {});
+      CONFIG.ChatMessage.entityClass.create(chatData, {})
     }
-    console.log("Starting commit");
+    console.log('Starting commit')
 
-    let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes(".-=")));
-    let adds = Object.fromEntries(Object.entries(commit).filter(([key, value]) => !key.includes(".-=")));
+    let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes('.-=')))
+    let adds = Object.fromEntries(Object.entries(commit).filter(([key, value]) => !key.includes('.-=')))
 
-    await this.update(deletes);
-    await this.update(adds);
+    await this.update(deletes)
+    await this.update(adds)
 
-    console.log("Done importing.  You can inspect the character data below:");
-    console.log(this);
+    console.log('Done importing.  You can inspect the character data below:')
+    console.log(this)
   }
 
-  // hack to get to private text element created by xml->json method. 
+  // hack to get to private text element created by xml->json method.
   textFrom(o) {
-    if (!o) return "";
-    let t = o["#text"];
-    if (!t) return "";
-    return t.trim();
+    if (!o) return ''
+    let t = o['#text']
+    if (!t) return ''
+    return t.trim()
   }
 
   // similar hack to get text as integer.
   intFrom(o) {
-    if (!o) return 0;
-    let i = o["#text"];
-    if (!i) return 0;
-    return parseInt(i);
+    if (!o) return 0
+    let i = o['#text']
+    if (!i) return 0
+    return parseInt(i)
   }
 
   floatFrom(o) {
-    if (!o) return 0;
-    let f = o["#text"];
-    if (!f) return 0;
-    return parseFloat(f);
+    if (!o) return 0
+    let f = o['#text']
+    if (!f) return 0
+    return parseFloat(f)
   }
 
   importReactionsFromGCSv2(json) {
-    if (!json) return;
-    let t = this.textFrom;
-    let rs = {};
-    let index = 0;
+    if (!json) return
+    let t = this.textFrom
+    let rs = {}
+    let index = 0
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let r = new Reaction();
-        r.modifier = t(j.modifier);
-        r.situation = t(j.situation);
-        game.GURPS.put(rs, r, index++);
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let r = new Reaction()
+        r.modifier = t(j.modifier)
+        r.situation = t(j.situation)
+        game.GURPS.put(rs, r, index++)
       }
     }
     return {
-      "data.-=reactions": null,
-      "data.reactions": rs
-    };
+      'data.-=reactions': null,
+      'data.reactions': rs,
+    }
   }
 
   importReactionsFromGCA(json) {
-    if (!json) return;
-    let text = this.textFrom(json);
-    let a = text.split(",");
-    let rs = {};
-    let index = 0;
-    a.forEach(m => {
+    if (!json) return
+    let text = this.textFrom(json)
+    let a = text.split(',')
+    let rs = {}
+    let index = 0
+    a.forEach((m) => {
       if (!!m) {
-        let t = m.trim();
-        let i = t.indexOf(" ");
-        let mod = t.substring(0, i);
-        let sit = t.substr(i + 1);
-        let r = new Reaction(mod, sit);
-        game.GURPS.put(rs, r, index++);
+        let t = m.trim()
+        let i = t.indexOf(' ')
+        let mod = t.substring(0, i)
+        let sit = t.substr(i + 1)
+        let r = new Reaction(mod, sit)
+        game.GURPS.put(rs, r, index++)
       }
-    });
+    })
     return {
-      "data.-=reactions": null,
-      "data.reactions": rs
-    };
+      'data.-=reactions': null,
+      'data.reactions': rs,
+    }
   }
 
   importPointTotalsFromGCSv1(json) {
-    if (!json) return;
+    if (!json) return
 
-    let i = this.intFrom;
+    let i = this.intFrom
     return {
-      "data.totalpoints.attributes": i(json.attributes),
-      "data.totalpoints.ads": i(json.ads),
-      "data.totalpoints.disads": i(json.disads),
-      "data.totalpoints.quirks": i(json.quirks),
-      "data.totalpoints.skills": i(json.skills),
-      "data.totalpoints.spells": i(json.spells),
-      "data.totalpoints.unspent": i(json.unspentpoints),
-      "data.totalpoints.total": i(json.totalpoints),
-      "data.totalpoints.race": i(json.race)
-    };
+      'data.totalpoints.attributes': i(json.attributes),
+      'data.totalpoints.ads': i(json.ads),
+      'data.totalpoints.disads': i(json.disads),
+      'data.totalpoints.quirks': i(json.quirks),
+      'data.totalpoints.skills': i(json.skills),
+      'data.totalpoints.spells': i(json.spells),
+      'data.totalpoints.unspent': i(json.unspentpoints),
+      'data.totalpoints.total': i(json.totalpoints),
+      'data.totalpoints.race': i(json.race),
+    }
   }
 
   importNotesFromGCSv1(descjson, json) {
-    if (!json) return;
-    let t = this.textFrom;
-    let ns = {};
-    let index = 0;
-    if (!!descjson) {  // support for GCA description
-      let n = new Note();
-      n.notes = t(descjson).replace(/\\r/g, "\n");
-      game.GURPS.put(ns, n, index++);
+    if (!json) return
+    let t = this.textFrom
+    let ns = {}
+    let index = 0
+    if (!!descjson) {
+      // support for GCA description
+      let n = new Note()
+      n.notes = t(descjson).replace(/\\r/g, '\n')
+      game.GURPS.put(ns, n, index++)
     }
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let n = new Note();
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let n = new Note()
         //n.setNotes(t(j.text));
-        n.notes = t(j.name);
-        let txt = t(j.text);
-        if (!!txt) n.notes = n.notes + "\n" + txt.replace(/\\r/g, "\n");
-        game.GURPS.put(ns, n, index++);
+        n.notes = t(j.name)
+        let txt = t(j.text)
+        if (!!txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
+        game.GURPS.put(ns, n, index++)
       }
     }
     return {
-      "data.-=notes": null,
-      "data.notes": ns
-    };
+      'data.-=notes': null,
+      'data.notes': ns,
+    }
   }
 
   async importProtectionFromGCSv1(json, isFoundryGCA) {
-    if (!json) return;
-    let t = this.textFrom;
-    let data = this.data.data;
-    if (!!data.additionalresources.ignoreinputbodyplan) return;
+    if (!json) return
+    let t = this.textFrom
+    let data = this.data.data
+    if (!!data.additionalresources.ignoreinputbodyplan) return
     let locations = []
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let hl = new HitLocation(t(j.location));
-        hl.dr = t(j.dr);
-        hl.penalty = t(j.db);
-        hl.setEquipment(t(j.text));
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let hl = new HitLocations.HitLocation(t(j.location))
+        hl.dr = t(j.dr)
+        hl.penalty = t(j.db)
+        hl.setEquipment(t(j.text))
 
         // Some hit location tables have two entries for the same location. The code requires
         // each location to be unique. Append an asterisk to the location name in that case.   Hexapods and ichthyoid
-        while (locations.filter(it => it.where == hl.where).length > 0) {
+        while (locations.filter((it) => it.where == hl.where).length > 0) {
           hl.where = hl.where + '*'
         }
-        locations.push(hl);
+        locations.push(hl)
       }
     }
 
     // Do the results contain vitals? If not, add it.
-    let vitals = locations.filter(value => value.where === HitLocation.VITALS)
+    let vitals = locations.filter((value) => value.where === HitLocations.HitLocation.VITALS)
     if (vitals.length === 0) {
-      let hl = new HitLocation(HitLocation.VITALS)
-      hl.penalty = game.GURPS.hitlocationRolls[HitLocation.VITALS].penalty
-      hl.roll = game.GURPS.hitlocationRolls[HitLocation.VITALS].roll
+      let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
+      hl.penalty = HitLocations.hitlocationRolls[HitLocation.VITALS].penalty
+      hl.roll = HitLocations.hitlocationRolls[HitLocation.VITALS].roll
       hl.dr = '0'
       locations.push(hl)
     }
 
-
-    // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and 
+    // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and
     // potentially other features) will not work. Sometime in the future, we will look at
     // user-entered hit locations.
-		let bodyplan = t(json.bodyplan)?.toLowerCase();		// Was a body plan actually in the import?  
-		let table = hitlocationDictionary[bodyplan]; // If so, try to use it.
-		let locs = []
-    locations.forEach(e => {
-      e.locations(false).forEach(l => locs.push(l));      // Map to new names
+    let bodyplan = t(json.bodyplan)?.toLowerCase() // Was a body plan actually in the import?
+    let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
+    let locs = []
+    locations.forEach((e) => {
+      e.locations(false).forEach((l) => locs.push(l)) // Map to new names
     })
     locations = locs
 
     if (!table) {
-			locs = []
-			locations.forEach(e => {
-				e.locations(true).forEach(l => locs.push(l));	// Map to new names, but include original to help match against tables
-			})
-			bodyplan = this._getBodyPlan(locs)
-			table = hitlocationDictionary[bodyplan]
-		}
+      locs = []
+      locations.forEach((e) => {
+        e.locations(true).forEach((l) => locs.push(l)) // Map to new names, but include original to help match against tables
+      })
+      bodyplan = this._getBodyPlan(locs)
+      table = HitLocations.hitlocationDictionary[bodyplan]
+    }
     // update location's roll and penalty based on the bodyplan
 
     if (!!table) {
-      Object.values(locations).forEach(it => {
-				let [lbl, entry] = HitLocation.findTableEntry(table, it.where);
-				if (!!entry) {
-					it.where = lbl;			// It might be renamed (ex: Skull -> Brain)
-					if (!it.penalty) it.penalty = entry.penalty;
-					if (!it.roll || it.roll.length === 0 || it.roll === HitLocation.DEFAULT) it.roll = entry.roll;
-				}
+      Object.values(locations).forEach((it) => {
+        let [lbl, entry] = HitLocations.HitLocation.findTableEntry(table, it.where)
+        if (!!entry) {
+          it.where = lbl // It might be renamed (ex: Skull -> Brain)
+          if (!it.penalty) it.penalty = entry.penalty
+          if (!it.roll || it.roll.length === 0 || it.roll === HitLocations.HitLocation.DEFAULT) it.roll = entry.roll
+        }
       })
     }
 
     // write the hit locations out in bodyplan hit location table order. If there are
     // other entries, append them at the end.
     let temp = []
-    Object.keys(table).forEach(key => {
-      let results = Object.values(locations).filter(loc => loc.where === key)
+    Object.keys(table).forEach((key) => {
+      let results = Object.values(locations).filter((loc) => loc.where === key)
       if (results.length > 0) {
-				if (results.length > 1) {		// If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
-				  let d = ""
-		      var last;
-		      results.forEach(r => { 
+        if (results.length > 1) {
+          // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
+          let d = ''
+          var last
+          results.forEach((r) => {
             if (r.dr != last) {
-              d += "|" + r.dr;
+              d += '|' + r.dr
               last = r.dr
             }
           })
           if (!!d) d = d.substr(1)
-					results[0].dr = d
-				}
+          results[0].dr = d
+        }
         temp.push(results[0])
-        locations = locations.filter(it => it.where !== key)
-      } else {    // Didn't find loc that should be in the table.   Make a default entry
-        temp.push(new HitLocation(key, 0, table[key].penalty, table[key].roll))
+        locations = locations.filter((it) => it.where !== key)
+      } else {
+        // Didn't find loc that should be in the table.   Make a default entry
+        temp.push(new HitLocations.HitLocation(key, 0, table[key].penalty, table[key].roll))
       }
     })
-    locations.forEach(it => temp.push(it))
- //   locations.forEach(it => temp.push(HitLocation.normalized(it)))
+    locations.forEach((it) => temp.push(it))
+    //   locations.forEach(it => temp.push(HitLocation.normalized(it)))
 
     let prot = {}
     let index = 0
-    temp.forEach(it => game.GURPS.put(prot, it, index++))
+    temp.forEach((it) => game.GURPS.put(prot, it, index++))
 
-    let saveprot = true;
-    if (!!data.lastImport && !!data.additionalresources.bodyplan && (bodyplan != data.additionalresources.bodyplan)) {
-			let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN);
-			if (option == 1) {
-				saveprot = false;
-			}
-			if (option == 2) {
-	      saveprot = await new Promise((resolve, reject) => {
-	        let d = new Dialog({
-	          title: "Hit Location Body Plan",
-	          content: `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize('GURPS.BODYPLAN' + data.additionalresources.bodyplan)}) or ` +
-                      `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize('GURPS.BODYPLAN' + bodyplan)})?<br><br>&nbsp;`,
-	          buttons: {
-	            save: {
-	              icon: '<i class="far fa-square"></i>',
-	              label: "Save",
-	              callback: () => resolve(false)
-	            },
-	            overwrite: {
-	              icon: '<i class="fas fa-edit"></i>',
-	              label: "Overwrite",
-	              callback: () => resolve(true)
-	            }
-	          },
-	          default: "save",
-	          close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
-	        });
-	        d.render(true);
-	      });
-			}
+    let saveprot = true
+    if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
+      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN)
+      if (option == 1) {
+        saveprot = false
+      }
+      if (option == 2) {
+        saveprot = await new Promise((resolve, reject) => {
+          let d = new Dialog({
+            title: 'Hit Location Body Plan',
+            content:
+              `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
+                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
+              )}) or ` +
+              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
+                'GURPS.BODYPLAN' + bodyplan
+              )})?<br><br>&nbsp;`,
+            buttons: {
+              save: {
+                icon: '<i class="far fa-square"></i>',
+                label: 'Save',
+                callback: () => resolve(false),
+              },
+              overwrite: {
+                icon: '<i class="fas fa-edit"></i>',
+                label: 'Overwrite',
+                callback: () => resolve(true),
+              },
+            },
+            default: 'save',
+            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
+          })
+          d.render(true)
+        })
+      }
     }
     if (saveprot)
-	    return {
-	      "data.-=hitlocations": null,
-	      "data.hitlocations": prot,
-        "data.additionalresources.bodyplan": bodyplan
-	    };
-		else 
-			return {};
+      return {
+        'data.-=hitlocations': null,
+        'data.hitlocations': prot,
+        'data.additionalresources.bodyplan': bodyplan,
+      }
+    else return {}
   }
 
   /**
-   * 
-   * @param {Array<HitLocation>} locations
+   *
+   * @param {Array<HitLocations.HitLocation>} locations
    */
   _getBodyPlan(locations) {
     // each key is a "body plan" name like "humanoid" or "quadruped"
-    let tableNames = Object.keys(hitlocationDictionary)
+    let tableNames = Object.keys(HitLocations.hitlocationDictionary)
 
     // create a map of tableName:count
     let tableScores = {}
-    tableNames.forEach(it => tableScores[it] = 0)
+    tableNames.forEach((it) => (tableScores[it] = 0))
 
     // increment the count for a tableScore if it contains the same hit location as "prot"
     locations.forEach(function (hitLocation) {
       tableNames.forEach(function (tableName) {
-        if (hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
+        if (HitLocations.hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
           tableScores[tableName] = tableScores[tableName] + 1
         }
       })
@@ -432,22 +458,22 @@ export class GurpsActor extends Actor {
 
     // Select the tableScore with the highest score.
     let match = -1
-    let name = HitLocation.HUMANOID
+    let name = HitLocations.HitLocation.HUMANOID
     Object.keys(tableScores).forEach(function (score) {
       if (tableScores[score] > match) {
-        match = tableScores[score];
-        name = score;
+        match = tableScores[score]
+        name = score
       }
     })
 
     // In the case of a tie, select the one whose score is closest to the number of entries
     // in the table.
-    let results = Object.keys(tableScores).filter(it => tableScores[it] === match)
+    let results = Object.keys(tableScores).filter((it) => tableScores[it] === match)
     if (results.length > 1) {
       let diff = Number.MAX_SAFE_INTEGER
-      results.forEach(key => {
+      results.forEach((key) => {
         // find the smallest difference
-        let table = hitlocationDictionary[key]
+        let table = HitLocations.hitlocationDictionary[key]
         if (Object.keys(table).length - match < diff) {
           diff = Object.keys(table).length - match
           name = key
@@ -459,490 +485,482 @@ export class GurpsActor extends Actor {
   }
 
   importEquipmentFromGCSv1(json, isFoundryGCS) {
-    if (!json) return;
-    let t = this.textFrom;
-    let i = this.intFrom;
-    let f = this.floatFrom;
+    if (!json) return
+    let t = this.textFrom
+    let i = this.intFrom
+    let f = this.floatFrom
 
-    let temp = [];
+    let temp = []
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let eqt = new Equipment();
-        eqt.name = t(j.name);
-        eqt.count = i(j.count);
-        eqt.cost = t(j.cost);
-        eqt.weight = f(j.weight);
-        let tmp = parseFloat(eqt.cost);
-        if (!isNaN(tmp))
-          eqt.costsum = eqt.count * tmp;
-        else
-          eqt.costsum = t(j.costsum);
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let eqt = new Equipment()
+        eqt.name = t(j.name)
+        eqt.count = i(j.count)
+        eqt.cost = t(j.cost)
+        eqt.weight = f(j.weight)
+        let tmp = parseFloat(eqt.cost)
+        if (!isNaN(tmp)) eqt.costsum = eqt.count * tmp
+        else eqt.costsum = t(j.costsum)
         tmp = parseFloat(eqt.weight)
-         if (!isNaN(tmp))
-          eqt.weightsum = eqt.count * tmp;
-        else
-          eqt.weightsum = t(j.weightsum);
-        eqt.location = t(j.location);
-        let cstatus = i(j.carried);
-        eqt.carried = (cstatus >= 1);
-        eqt.equipped = (cstatus == 2);
-        eqt.techlevel = t(j.tl);
-        eqt.legalityclass = t(j.lc);
-        eqt.categories = t(j.type);
-       if (isFoundryGCS) {
-          eqt.notes = t(j.notes);
-          eqt.pageref = t(j.pageref);
-        } else
-          eqt.setNotes(t(j.notes));
-        if (!!j.pageref)
-          eqt.pageref = t(j.pageref).split(",").splice(0, 1);
-        temp.push(eqt);
+        if (!isNaN(tmp)) eqt.weightsum = eqt.count * tmp
+        else eqt.weightsum = t(j.weightsum)
+        eqt.location = t(j.location)
+        let cstatus = i(j.carried)
+        eqt.carried = cstatus >= 1
+        eqt.equipped = cstatus == 2
+        eqt.techlevel = t(j.tl)
+        eqt.legalityclass = t(j.lc)
+        eqt.categories = t(j.type)
+        if (isFoundryGCS) {
+          eqt.notes = t(j.notes)
+          eqt.pageref = t(j.pageref)
+        } else eqt.setNotes(t(j.notes))
+        if (!!j.pageref) eqt.pageref = t(j.pageref).split(',').splice(0, 1)
+        temp.push(eqt)
       }
     }
 
     // Put everything in it container (if found), otherwise at the top level
-    temp.forEach(eqt => {
+    temp.forEach((eqt) => {
       if (!!eqt.location) {
-        let parent = null;
-        parent = temp.find(e => e.name === eqt.location);
-        if (!!parent)
-          game.GURPS.put(parent.contains, eqt);
-        else
-          eqt.location = "";	// Can't find a parent, so put it in the top list
+        let parent = null
+        parent = temp.find((e) => e.name === eqt.location)
+        if (!!parent) game.GURPS.put(parent.contains, eqt)
+        else eqt.location = '' // Can't find a parent, so put it in the top list
       }
-    });
+    })
 
     let equipment = {
-      "carried": {},
-      "other": {}
-    };
-    let cindex = 0;
-    let oindex = 0;
+      carried: {},
+      other: {},
+    }
+    let cindex = 0
+    let oindex = 0
 
-    temp.forEach(eqt => {
+    temp.forEach((eqt) => {
       if (!eqt.location) {
-        if (eqt.carried)
-          game.GURPS.put(equipment.carried, eqt, cindex++);
-        else
-          game.GURPS.put(equipment.other, eqt, oindex++);
+        if (eqt.carried) game.GURPS.put(equipment.carried, eqt, cindex++)
+        else game.GURPS.put(equipment.other, eqt, oindex++)
       }
-    });
+    })
     return {
-      "data.-=equipment": null,
-      "data.equipment": equipment
-    };
+      'data.-=equipment': null,
+      'data.equipment': equipment,
+    }
   }
 
   importEncumbranceFromGCSv1(json) {
-    if (!json) return;
-    let t = this.textFrom;
-    let es = {};
-    let index = 0;
+    if (!json) return
+    let t = this.textFrom
+    let es = {}
+    let index = 0
     for (let i = 0; i < 5; i++) {
-      let e = new Encumbrance();
-      e.level = i;
-      let k = "enc_" + i;
-      let c = t(json[k]);
-      e.current = (c === "1");
-      k = "enc" + i;
-      e.key = k;
-      let k2 = k + "_weight";
-      e.weight = t(json[k2]);
-      k2 = k + "_move";
-      e.move = t(json[k2]);
-      k2 = k + "_dodge";
-      e.dodge = t(json[k2]);
-      game.GURPS.put(es, e, index++);
+      let e = new Encumbrance()
+      e.level = i
+      let k = 'enc_' + i
+      let c = t(json[k])
+      e.current = c === '1'
+      k = 'enc' + i
+      e.key = k
+      let k2 = k + '_weight'
+      e.weight = t(json[k2])
+      k2 = k + '_move'
+      e.move = t(json[k2])
+      k2 = k + '_dodge'
+      e.dodge = t(json[k2])
+      game.GURPS.put(es, e, index++)
     }
     return {
-      "data.-=encumbrance": null,
-      "data.encumbrance": es
-    };
+      'data.-=encumbrance': null,
+      'data.encumbrance': es,
+    }
   }
 
   importCombatMeleeFromGCSv1(json, isFoundryGCS) {
-    if (!json) return;
-    let t = this.textFrom;
-    let melee = {};
-    let index = 0;
+    if (!json) return
+    let t = this.textFrom
+    let melee = {}
+    let index = 0
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
         for (let k2 in j.meleemodelist) {
-          if (k2.startsWith("id-")) {
-            let j2 = j.meleemodelist[k2];
-            let m = new Melee();
-            m.name = t(j.name);
-            m.st = t(j.st);
-            m.weight = t(j.weight);
-            m.techlevel = t(j.tl);
-            m.cost = t(j.cost);
+          if (k2.startsWith('id-')) {
+            let j2 = j.meleemodelist[k2]
+            let m = new Melee()
+            m.name = t(j.name)
+            m.st = t(j.st)
+            m.weight = t(j.weight)
+            m.techlevel = t(j.tl)
+            m.cost = t(j.cost)
             if (isFoundryGCS) {
-              m.notes = t(j.notes);
-              m.pageref = t(j.pageref);
+              m.notes = t(j.notes)
+              m.pageref = t(j.pageref)
             } else
               try {
-                m.setNotes(t(j.text));
+                m.setNotes(t(j.text))
               } catch {
-                console.log(m);
-                console.log(t(j.text));
+                console.log(m)
+                console.log(t(j.text))
               }
-            m.mode = t(j2.name);
-            m.level = t(j2.level);
-            m.damage = t(j2.damage);
-            m.reach = t(j2.reach);
-            m.parry = t(j2.parry);
-            m.block = t(j2.block);
-            game.GURPS.put(melee, m, index++);
+            m.mode = t(j2.name)
+            m.level = t(j2.level)
+            m.damage = t(j2.damage)
+            m.reach = t(j2.reach)
+            m.parry = t(j2.parry)
+            m.block = t(j2.block)
+            game.GURPS.put(melee, m, index++)
           }
         }
       }
     }
     return {
-      "data.-=melee": null,
-      "data.melee": melee
-    };
+      'data.-=melee': null,
+      'data.melee': melee,
+    }
   }
 
   importCombatRangedFromGCSv1(json, isFoundryGCS) {
-    if (!json) return;
-    let t = this.textFrom;
-    let ranged = {};
-    let index = 0;
+    if (!json) return
+    let t = this.textFrom
+    let ranged = {}
+    let index = 0
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
         for (let k2 in j.rangedmodelist) {
-          if (k2.startsWith("id-")) {
-            let j2 = j.rangedmodelist[k2];
-            let r = new Ranged();
-            r.name = t(j.name);
-            r.st = t(j.st);
-            r.bulk = t(j.bulk);
-            r.legalityclass = t(j.lc);
-            r.ammo = t(j.ammo);
+          if (k2.startsWith('id-')) {
+            let j2 = j.rangedmodelist[k2]
+            let r = new Ranged()
+            r.name = t(j.name)
+            r.st = t(j.st)
+            r.bulk = t(j.bulk)
+            r.legalityclass = t(j.lc)
+            r.ammo = t(j.ammo)
             if (isFoundryGCS) {
-              r.notes = t(j.notes);
-              r.pageref = t(j.pageref);
+              r.notes = t(j.notes)
+              r.pageref = t(j.pageref)
             } else
               try {
-                r.setNotes(t(j.text));
+                r.setNotes(t(j.text))
               } catch {
-                console.log(r);
-                console.log(t(j.text));
+                console.log(r)
+                console.log(t(j.text))
               }
-            r.mode = t(j2.name);
-            r.level = t(j2.level);
-            r.damage = t(j2.damage);
-            r.acc = t(j2.acc);
-            r.rof = t(j2.rof);
-            r.shots = t(j2.shots);
-            r.rcl = t(j2.rcl);
-            let rng = t(j2.range);
-            let m = rng.match(/^ *x(\d+) $/);
+            r.mode = t(j2.name)
+            r.level = t(j2.level)
+            r.damage = t(j2.damage)
+            r.acc = t(j2.acc)
+            r.rof = t(j2.rof)
+            r.shots = t(j2.shots)
+            r.rcl = t(j2.rcl)
+            let rng = t(j2.range)
+            let m = rng.match(/^ *x(\d+) $/)
             if (m) {
-              rng = parseInt(m[1]) * this.data.data.attributes.ST.value;
+              rng = parseInt(m[1]) * this.data.data.attributes.ST.value
             } else {
-              m = rng.match(/^ *x(\d+) *\/ *x(\d+) *$/);
+              m = rng.match(/^ *x(\d+) *\/ *x(\d+) *$/)
               if (m) {
-                rng = `${parseInt(m[1]) * this.data.data.attributes.ST.value}/${parseInt(m[2]) * this.data.data.attributes.ST.value}`;
+                rng = `${parseInt(m[1]) * this.data.data.attributes.ST.value}/${
+                  parseInt(m[2]) * this.data.data.attributes.ST.value
+                }`
               }
             }
-            r.range = rng;
-            game.GURPS.put(ranged, r, index++);
+            r.range = rng
+            game.GURPS.put(ranged, r, index++)
           }
         }
       }
     }
     return {
-      "data.-=ranged": null,
-      "data.ranged": ranged
-    };
+      'data.-=ranged': null,
+      'data.ranged': ranged,
+    }
   }
 
   importTraitsfromGCSv1(json) {
-    if (!json) return;
-    let t = this.textFrom;
-    let ts = {};
-    ts.race = t(json.race);
-    ts.height = t(json.height);
-    ts.weight = t(json.weight);
-    ts.age = t(json.age);
-    ts.title = t(json.title);
-    ts.player = t(json.player);
-    ts.createdon = t(json.createdon);
-    ts.modifiedon = t(json.modifiedon);
-    ts.religion = t(json.religion);
-    ts.birthday = t(json.birthday);
-    ts.hand = t(json.hand);
-    ts.sizemod = t(json.sizemodifier);
-    ts.techlevel = t(json.tl);
+    if (!json) return
+    let t = this.textFrom
+    let ts = {}
+    ts.race = t(json.race)
+    ts.height = t(json.height)
+    ts.weight = t(json.weight)
+    ts.age = t(json.age)
+    ts.title = t(json.title)
+    ts.player = t(json.player)
+    ts.createdon = t(json.createdon)
+    ts.modifiedon = t(json.modifiedon)
+    ts.religion = t(json.religion)
+    ts.birthday = t(json.birthday)
+    ts.hand = t(json.hand)
+    ts.sizemod = t(json.sizemodifier)
+    ts.techlevel = t(json.tl)
     // <appearance type="string">@GENDER, Eyes: @EYES, Hair: @HAIR, Skin: @SKIN</appearance>
-    let a = t(json.appearance);
-    ts.appearance = a;
+    let a = t(json.appearance)
+    ts.appearance = a
     try {
-      let x = a.indexOf(", Eyes: ");
+      let x = a.indexOf(', Eyes: ')
       if (x >= 0) {
-        ts.gender = a.substring(0, x);
-        let y = a.indexOf(", Hair: ");
-        ts.eyes = a.substring(x + 8, y);
-        x = a.indexOf(", Skin: ")
-        ts.hair = a.substring(y + 8, x);
-        ts.skin = a.substr(x + 8);
+        ts.gender = a.substring(0, x)
+        let y = a.indexOf(', Hair: ')
+        ts.eyes = a.substring(x + 8, y)
+        x = a.indexOf(', Skin: ')
+        ts.hair = a.substring(y + 8, x)
+        ts.skin = a.substr(x + 8)
       }
     } catch {
-      console.log("Unable to parse appearance traits for ");
-      console.log(this);
+      console.log('Unable to parse appearance traits for ')
+      console.log(this)
     }
     return {
-      "data.-=traits": null,
-      "data.traits": ts
-    };
+      'data.-=traits': null,
+      'data.traits': ts,
+    }
   }
 
   // Import the <attributes> section of the GCS FG XML file.
   async importAttributesFromCGSv1(json) {
-    if (!json) return;
-    let i = this.intFrom;		// shortcut to make code smaller
-    let t = this.textFrom;
-    let data = this.data.data;
-    let att = data.attributes;
+    if (!json) return
+    let i = this.intFrom // shortcut to make code smaller
+    let t = this.textFrom
+    let data = this.data.data
+    let att = data.attributes
 
-    att.ST.value = i(json.strength);
-    att.ST.points = i(json.strength_points);
-    att.DX.value = i(json.dexterity);
-    att.DX.points = i(json.dexterity_points);
-    att.IQ.value = i(json.intelligence);
-    att.IQ.points = i(json.intelligence_points);
-    att.HT.value = i(json.health);
-    att.HT.points = i(json.health_points);
-    att.WILL.value = i(json.will);
-    att.WILL.points = i(json.will_points);
-    att.PER.value = i(json.perception);
-    att.PER.points = i(json.perception_points);
+    att.ST.value = i(json.strength)
+    att.ST.points = i(json.strength_points)
+    att.DX.value = i(json.dexterity)
+    att.DX.points = i(json.dexterity_points)
+    att.IQ.value = i(json.intelligence)
+    att.IQ.points = i(json.intelligence_points)
+    att.HT.value = i(json.health)
+    att.HT.points = i(json.health_points)
+    att.WILL.value = i(json.will)
+    att.WILL.points = i(json.will_points)
+    att.PER.value = i(json.perception)
+    att.PER.points = i(json.perception_points)
 
-    data.HP.max = i(json.hitpoints);
-    data.HP.points = i(json.hitpoints_points);
-    data.FP.max = i(json.fatiguepoints);
-    data.FP.points = i(json.fatiguepoints_points);
-    let hp = i(json.hps);
-    let fp = i(json.fps);
-    let saveCurrent = false;
+    data.HP.max = i(json.hitpoints)
+    data.HP.points = i(json.hitpoints_points)
+    data.FP.max = i(json.fatiguepoints)
+    data.FP.points = i(json.fatiguepoints_points)
+    let hp = i(json.hps)
+    let fp = i(json.fps)
+    let saveCurrent = false
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-			let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP);
-			if (option == 0) {
-				saveCurrent = true;
-			}
-			if (option == 2) {
-	      saveCurrent = await new Promise((resolve, reject) => {
-	        let d = new Dialog({
-	          title: "Current HP & FP",
-	          content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
-	          buttons: {
-	            save: {
-	              icon: '<i class="far fa-square"></i>',
-	              label: "Save",
-	              callback: () => resolve(true)
-	            },
-	            overwrite: {
-	              icon: '<i class="fas fa-edit"></i>',
-	              label: "Overwrite",
-	              callback: () => resolve(false)
-	            }
-	          },
-	          default: "save",
-	          close: () => resolve(false) // just assume overwrite.   Error handling would be too much work right now.
-	        });
-	        d.render(true);
-	      });
-			}
+      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)
+      if (option == 0) {
+        saveCurrent = true
+      }
+      if (option == 2) {
+        saveCurrent = await new Promise((resolve, reject) => {
+          let d = new Dialog({
+            title: 'Current HP & FP',
+            content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
+            buttons: {
+              save: {
+                icon: '<i class="far fa-square"></i>',
+                label: 'Save',
+                callback: () => resolve(true),
+              },
+              overwrite: {
+                icon: '<i class="fas fa-edit"></i>',
+                label: 'Overwrite',
+                callback: () => resolve(false),
+              },
+            },
+            default: 'save',
+            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
+          })
+          d.render(true)
+        })
+      }
     }
     if (!saveCurrent) {
-      data.HP.value = hp;
-      data.FP.value = fp;
+      data.HP.value = hp
+      data.FP.value = fp
     }
 
-    let lm = {};
-    lm.basiclift = t(json.basiclift);
-    lm.carryonback = t(json.carryonback);
-    lm.onehandedlift = t(json.onehandedlift);
-    lm.runningshove = t(json.runningshove);
-    lm.shiftslightly = t(json.shiftslightly);
-    lm.shove = t(json.shove);
-    lm.twohandedlift = t(json.twohandedlift);
+    let lm = {}
+    lm.basiclift = t(json.basiclift)
+    lm.carryonback = t(json.carryonback)
+    lm.onehandedlift = t(json.onehandedlift)
+    lm.runningshove = t(json.runningshove)
+    lm.shiftslightly = t(json.shiftslightly)
+    lm.shove = t(json.shove)
+    lm.twohandedlift = t(json.twohandedlift)
 
+    data.basicmove.value = t(json.basicmove)
+    data.basicmove.points = i(json.basicmove_points)
+    data.basicspeed.value = t(json.basicspeed)
+    data.basicspeed.points = i(json.basicspeed_points)
+    data.thrust = t(json.thrust)
+    data.swing = t(json.swing)
+    data.currentmove = t(json.move)
+    data.frightcheck = i(json.frightcheck)
 
-    data.basicmove.value = t(json.basicmove);
-    data.basicmove.points = i(json.basicmove_points);
-    data.basicspeed.value = t(json.basicspeed);
-    data.basicspeed.points = i(json.basicspeed_points);
-    data.thrust = t(json.thrust);
-    data.swing = t(json.swing);
-    data.currentmove = t(json.move);
-    data.frightcheck = i(json.frightcheck);
-
-    data.hearing = i(json.hearing);
-    data.tastesmell = i(json.tastesmell);
-    data.touch = i(json.touch);
-    data.vision = i(json.vision);
+    data.hearing = i(json.hearing)
+    data.tastesmell = i(json.tastesmell)
+    data.touch = i(json.touch)
+    data.vision = i(json.vision)
 
     return {
-      "data.attributes": att,
-      "data.HP": data.HP,
-      "data.FP": data.FP,
-      "data.basiclift": data.basiclift,
-      "data.basicmove": data.basicmove,
-      "data.basicspeed": data.basicspeed,
-      "data.thrust": data.thrust,
-      "data.swing": data.swing,
-      "data.currentmove": data.currentmove,
-      "data.frightcheck": data.frightcheck,
-      "data.hearing": data.hearing,
-      "data.tastesmell": data.tastesmell,
-      "data.touch": data.touch,
-      "data.vision": data.vision,
-      "data.liftingmoving": lm
-    };
+      'data.attributes': att,
+      'data.HP': data.HP,
+      'data.FP': data.FP,
+      'data.basiclift': data.basiclift,
+      'data.basicmove': data.basicmove,
+      'data.basicspeed': data.basicspeed,
+      'data.thrust': data.thrust,
+      'data.swing': data.swing,
+      'data.currentmove': data.currentmove,
+      'data.frightcheck': data.frightcheck,
+      'data.hearing': data.hearing,
+      'data.tastesmell': data.tastesmell,
+      'data.touch': data.touch,
+      'data.vision': data.vision,
+      'data.liftingmoving': lm,
+    }
   }
 
-  // create/update the skills.   
+  // create/update the skills.
   // NOTE:  For the update to work correctly, no two skills can have the same name.
   // When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
   importSkillsFromGCSv1(json, isFoundryGCS) {
-    if (!json) return;
-    let skills = {};
-    let index = 0;
-    let t = this.textFrom;		/// shortcut to make code smaller
+    if (!json) return
+    let skills = {}
+    let index = 0
+    let t = this.textFrom /// shortcut to make code smaller
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let sk = new Skill();
-        sk.name = t(j.name);
-        sk.type = t(j.type);
-        sk.level = this.intFrom(j.level);
-        sk.points = this.intFrom(j.points);
-        sk.relativelevel = t(j.relativelevel);
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let sk = new Skill()
+        sk.name = t(j.name)
+        sk.type = t(j.type)
+        sk.level = this.intFrom(j.level)
+        sk.points = this.intFrom(j.points)
+        sk.relativelevel = t(j.relativelevel)
         if (isFoundryGCS) {
-          sk.notes = t(j.notes);
-          sk.pageref = t(j.pageref);
-        } else
-          sk.setNotes(t(j.text));
-        if (!!j.pageref)
-          sk.pageref = t(j.pageref).split(",").splice(0, 1);
-        game.GURPS.put(skills, sk, index++);
+          sk.notes = t(j.notes)
+          sk.pageref = t(j.pageref)
+        } else sk.setNotes(t(j.text))
+        if (!!j.pageref) sk.pageref = t(j.pageref).split(',').splice(0, 1)
+        game.GURPS.put(skills, sk, index++)
       }
     }
     return {
-      "data.-=skills": null,
-      "data.skills": skills
-    };
+      'data.-=skills': null,
+      'data.skills': skills,
+    }
   }
 
-  // create/update the spells.   
+  // create/update the spells.
   // NOTE:  For the update to work correctly, no two spells can have the same name.
   // When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
   importSpellsFromGCSv1(json, isFoundryGCS) {
-    if (!json) return;
-    let spells = {};
-    let index = 0;
-    let t = this.textFrom;		/// shortcut to make code smaller
+    if (!json) return
+    let spells = {}
+    let index = 0
+    let t = this.textFrom /// shortcut to make code smaller
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let sp = new Spell();
-        sp.name = t(j.name);
-        sp.class = t(j.class);
-        sp.college = t(j.college);
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let sp = new Spell()
+        sp.name = t(j.name)
+        sp.class = t(j.class)
+        sp.college = t(j.college)
         if (isFoundryGCS) {
-          sp.cost = t(j.cost);
-          sp.maintain = t(j.maintain);
-          sp.difficulty = t(j.difficulty);
-          sp.notes = t(j.notes);
-          sp.pageref = t(j.pageref);
+          sp.cost = t(j.cost)
+          sp.maintain = t(j.maintain)
+          sp.difficulty = t(j.difficulty)
+          sp.notes = t(j.notes)
+          sp.pageref = t(j.pageref)
         } else {
-          let cm = t(j.costmaintain);
-          let i = cm.indexOf('/');
+          let cm = t(j.costmaintain)
+          let i = cm.indexOf('/')
           if (i >= 0) {
-            sp.cost = cm.substring(0, i);
-            sp.maintain = cm.substr(i + 1);
+            sp.cost = cm.substring(0, i)
+            sp.maintain = cm.substr(i + 1)
           } else {
-            sp.cost = cm;
+            sp.cost = cm
           }
-          sp.setNotes(t(j.text));
-          if (!!j.pageref)
-            sp.pageref = t(j.pageref).split(",").splice(0, 1);
+          sp.setNotes(t(j.text))
+          if (!!j.pageref) sp.pageref = t(j.pageref).split(',').splice(0, 1)
         }
-        sp.duration = t(j.duration);
-        sp.points = t(j.points);
-        sp.casttime = t(j.time);
-        sp.level = parseInt(t(j.level));
-        sp.duration = t(j.duration);
-        game.GURPS.put(spells, sp, index++);
+        sp.duration = t(j.duration)
+        sp.points = t(j.points)
+        sp.casttime = t(j.time)
+        sp.level = parseInt(t(j.level))
+        sp.duration = t(j.duration)
+        game.GURPS.put(spells, sp, index++)
       }
     }
     return {
-      "data.-=spells": null,
-      "data.spells": spells
-    };
+      'data.-=spells': null,
+      'data.spells': spells,
+    }
   }
 
   importAdsFromGCA(adsjson, disadsjson) {
-    let list = {};
-    let index = 0;
-    index = this.importBaseAdvantages(list, adsjson, index);
-    this.importBaseAdvantages(list, disadsjson, index);
+    let list = {}
+    let index = 0
+    index = this.importBaseAdvantages(list, adsjson, index)
+    this.importBaseAdvantages(list, disadsjson, index)
     return {
-      "data.-=ads": null,
-      "data.ads": list
-    };
+      'data.-=ads': null,
+      'data.ads': list,
+    }
   }
 
   importBaseAdvantages(datalist, json, index) {
-    if (!json) return;
-    let t = this.textFrom;		/// shortcut to make code smaller
+    if (!json) return
+    let t = this.textFrom /// shortcut to make code smaller
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let a = new Advantage();
-        a.name = t(j.name);
-        a.points = this.intFrom(j.points);
-        a.setNotes(t(j.text));
-        a.pageref = t(j.pageref);
-        game.GURPS.put(datalist, a, index++);
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let a = new Advantage()
+        a.name = t(j.name)
+        a.points = this.intFrom(j.points)
+        a.setNotes(t(j.text))
+        a.pageref = t(j.pageref)
+        game.GURPS.put(datalist, a, index++)
       }
     }
-    return index;
+    return index
   }
 
   // In the new GCS import, all ads/disad/quirks/perks are in one list.
   importAdsFromGCSv2(json) {
-    let list = {};
-    let index = 0;
-    let t = this.textFrom;		/// shortcut to make code smaller
+    let list = {}
+    let index = 0
+    let t = this.textFrom /// shortcut to make code smaller
     for (let key in json) {
-      if (key.startsWith("id-")) {	// Allows us to skip over junk elements created by xml->json code, and only select the skills.
-        let j = json[key];
-        let a = new Advantage();
-        a.name = t(j.name);
-        a.points = this.intFrom(j.points);
-        a.note = t(j.notes);
-        a.userdesc = t(j.userdesc);
-        a.notes = "";
-        if (!!a.note && !!a.userdesc)
-          a.notes = a.note + "\n" + a.userdesc;
-        else if (!!a.note)
-          a.notes = a.note;
-        else if (!!a.userdesc)
-          a.notes = a.userdesc;
-        a.pageref = t(j.pageref);
-        game.GURPS.put(list, a, index++);
+      if (key.startsWith('id-')) {
+        // Allows us to skip over junk elements created by xml->json code, and only select the skills.
+        let j = json[key]
+        let a = new Advantage()
+        a.name = t(j.name)
+        a.points = this.intFrom(j.points)
+        a.note = t(j.notes)
+        a.userdesc = t(j.userdesc)
+        a.notes = ''
+        if (!!a.note && !!a.userdesc) a.notes = a.note + '\n' + a.userdesc
+        else if (!!a.note) a.notes = a.note
+        else if (!!a.userdesc) a.notes = a.userdesc
+        a.pageref = t(j.pageref)
+        game.GURPS.put(list, a, index++)
       }
     }
     return {
-      "data.-=ads": null,
-      "data.ads": list
-    };
+      'data.-=ads': null,
+      'data.ads': list,
+    }
   }
 
   // --- Functions to handle events on actor ---
@@ -952,7 +970,7 @@ export class GurpsActor extends Actor {
   }
 
   // This function merges the 'where' and 'dr' properties of this actor's hitlocations
-  // with the roll value from the global GURPS.hitlocationRolls object, converting the
+  // with the roll value from the  HitLocations.hitlocationRolls, converting the
   // roll from a string to an array of numbers (see the _convertRollStringToArrayOfInt
   // function).
   //
@@ -968,16 +986,17 @@ export class GurpsActor extends Actor {
     let table = this._hitLocationRolls
     for (const [key, value] of Object.entries(this.data.data.hitlocations)) {
       let rollText = value.roll
-      if (!value.roll && !!table[value.where])    // Can happen if manually edited
+      if (!value.roll && !!table[value.where])
+        // Can happen if manually edited
         rollText = table[value.where].roll
-      if (!rollText) rollText = HitLocation.DEFAULT
+      if (!rollText) rollText = HitLocations.HitLocation.DEFAULT
       let dr = parseInt(value.dr)
       if (isNaN(dr)) dr = 0
       myhitlocations.push({
         where: value.where,
         dr: dr,
         roll: convertRollStringToArrayOfInt(rollText),
-        rollText: rollText
+        rollText: rollText,
       })
     }
     return myhitlocations
@@ -998,168 +1017,164 @@ export class GurpsActor extends Actor {
   }
 
   getCurrentDodge() {
-    if (!this.data.data.encumbrance) return 0;
-    let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
-    return (!!enc) ? enc.dodge : 0;
+    if (!this.data.data.encumbrance) return 0
+    let enc = Object.values(this.data.data.encumbrance).find((e) => e.current)
+    return !!enc ? enc.dodge : 0
   }
 
   getCurrentMove() {
-    if (!this.data.data.encumbrance) return 0;
-    let enc = Object.values(this.data.data.encumbrance).find(e => e.current);
-    return (!!enc) ? enc.move : 0;
+    if (!this.data.data.encumbrance) return 0
+    let enc = Object.values(this.data.data.encumbrance).find((e) => e.current)
+    return !!enc ? enc.move : 0
   }
 
   getTorsoDr() {
-    if (!this.data.data.hitlocations) return 0;
-    let hl = Object.values(this.data.data.hitlocations).find(h => h.penalty == 0);
-    return (!!hl) ? hl.dr : 0;
+    if (!this.data.data.hitlocations) return 0
+    let hl = Object.values(this.data.data.hitlocations).find((h) => h.penalty == 0)
+    return !!hl ? hl.dr : 0
   }
 }
 
 export class Named {
   constructor(n1) {
-    this.name = n1;
+    this.name = n1
   }
-  name = "";
-  notes = "";
-  pageref = "";
+  name = ''
+  notes = ''
+  pageref = ''
 
   // This is an ugly hack to parse the GCS FG Formatted Text entries.   See the method cleanUpP() above.
   setNotes(n) {
     if (!!n) {
-      let v = extractP(n);
-      let k = "Page Ref: ";
-      let i = v.indexOf(k);
+      let v = extractP(n)
+      let k = 'Page Ref: '
+      let i = v.indexOf(k)
       if (i >= 0) {
-        this.notes = v.substr(0, i).trim();
+        this.notes = v.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageref = v.substr(i + k.length).trim();
+        this.pageref = v.substr(i + k.length).trim()
       } else {
-        this.notes = v.trim();
-        this.pageref = "";
+        this.notes = v.trim()
+        this.pageref = ''
       }
     }
   }
 }
 
 export class NamedCost extends Named {
-  points = 0;
+  points = 0
 }
 
 export class Leveled extends NamedCost {
   constructor(n1, lvl) {
-    super(n1);
-    this.level = lvl;
+    super(n1)
+    this.level = lvl
   }
 
-  level = 1;
+  level = 1
 }
 
 export class Skill extends Leveled {
-  type = "";    // "DX/E";
-  relativelevel = "";   // "DX+1";
-
+  type = '' // "DX/E";
+  relativelevel = '' // "DX+1";
 }
 
 export class Spell extends Leveled {
-  class = "";
-  college = "";
-  cost = "";
-  maintain = "";
-  duration = "";
-  resist = "";
-  casttime = "";
-  difficulty = "";
+  class = ''
+  college = ''
+  cost = ''
+  maintain = ''
+  duration = ''
+  resist = ''
+  casttime = ''
+  difficulty = ''
 }
 
 export class Advantage extends NamedCost {
-  userdesc = "";
-  note = "";
+  userdesc = ''
+  note = ''
 }
 
 export class Attack extends Named {
-  st = "";
-  mode = "";
-  level = "";
-  damage = "";
+  st = ''
+  mode = ''
+  level = ''
+  damage = ''
   constructor(n1, lvl, dmg) {
-    super(n1);
-    this.level = lvl;
-    this.damage = dmg;
+    super(n1)
+    this.level = lvl
+    this.damage = dmg
   }
 }
 
 export class Melee extends Attack {
-  weight = "";
-  techlevel = "";
-  cost = "";
-  reach = "";
-  parry = "";
-  block = "";
+  weight = ''
+  techlevel = ''
+  cost = ''
+  reach = ''
+  parry = ''
+  block = ''
 }
 
 export class Ranged extends Attack {
-  bulk = "";
-  legalityclass = "";
-  ammo = "";
-  acc = "";
-  range = "";
-  rof = "";
-  shots = "";
-  rcl = "";
+  bulk = ''
+  legalityclass = ''
+  ammo = ''
+  acc = ''
+  range = ''
+  rof = ''
+  shots = ''
+  rcl = ''
   checkRange() {
-    if (!!this.halfd)
-      this.range = this.halfd;
-    if (!!this.max)
-      this.range = this.max;
-    if (!!this.halfd && !!this.max)
-      this.range = this.halfd + "/" + this.max;
+    if (!!this.halfd) this.range = this.halfd
+    if (!!this.max) this.range = this.max
+    if (!!this.halfd && !!this.max) this.range = this.halfd + '/' + this.max
   }
 }
 
 export class Encumbrance {
-  key = "";
-  level = 0;
-  dodge = 9;
-  weight = "";
-  move = "";
-  current = false;
+  key = ''
+  level = 0
+  dodge = 9
+  weight = ''
+  move = ''
+  current = false
 }
 
 export class Note extends Named {
   constructor(n) {
-    super();
-    this.notes = n;
+    super()
+    this.notes = n
   }
 }
 
 export class Equipment extends Named {
-  equipped = false;
-  carried = false;
-  count = 0;
-  cost = 0;
-  weight = 0;
-  location = "";
-  techlevel = "";
-  legalityclass = "";
-  categories = "";
-  contains = {};
-  costsum = "";
-  weightsum = "";
+  equipped = false
+  carried = false
+  count = 0
+  cost = 0
+  weight = 0
+  location = ''
+  techlevel = ''
+  legalityclass = ''
+  categories = ''
+  contains = {}
+  costsum = ''
+  weightsum = ''
 
   static calc(eqt) {
-    if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0;
-    if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0;
-    if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0;
-    eqt.costsum = eqt.count * eqt.cost;
-    eqt.weightsum = (eqt.count * eqt.weight);
+    if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0
+    if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0
+    if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0
+    eqt.costsum = eqt.count * eqt.cost
+    eqt.weightsum = eqt.count * eqt.weight
   }
 }
 export class Reaction {
-  modifier = "";
-  situation = "";
+  modifier = ''
+  situation = ''
   constructor(m, s) {
-    this.modifier = m;
-    this.situation = s;
+    this.modifier = m
+    this.situation = s
   }
 }

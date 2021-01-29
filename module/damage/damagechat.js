@@ -1,25 +1,25 @@
 'use strict'
 
-import { d6ify, isNiceDiceEnabled, parseIntFrom } from './utilities.js'
-import { gspan } from './parselink.js'
+import { woundModifiers } from './damage-tables.js'
+import { d6ify, isNiceDiceEnabled, parseIntFrom } from '../../lib/utilities.js'
+import { gspan } from '../../lib/parselink.js'
 
 const damageLinkPattern = /^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g
 const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)?( .*)?$/g
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
- * it. 
- * 
+ * it.
+ *
  * The chat message will contain a drag-and-droppable div that will be used to apply the damage to a
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
- * 
- * 
+ *
+ *
  */
 export default class DamageChat {
-
   static basicRegex = /^(?<basic>SW|Sw|sw|THR|Thr|thr)[^A-Za-z]/
   static fullRegex = /^(?<roll>\d+d(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>\d+(?:\.\d+)?)\))?/
-  
+
   constructor(GURPS) {
     this.setup()
     this._gurps = GURPS
@@ -31,13 +31,13 @@ export default class DamageChat {
       if (damageMessage) {
         damageMessage.setAttribute('draggable', true)
 
-        damageMessage.addEventListener('dragstart', ev => {
+        damageMessage.addEventListener('dragstart', (ev) => {
           $(ev.currentTarget).addClass('dragging')
           ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
           return ev.dataTransfer.setData('text/plain', app.data.flags.transfer)
         })
 
-        damageMessage.addEventListener('dragend', ev => {
+        damageMessage.addEventListener('dragend', (ev) => {
           $(ev.currentTarget).removeClass('dragging')
         })
       }
@@ -48,24 +48,24 @@ export default class DamageChat {
    * Create the damage chat message.
    * @param {Actor} actor that rolled the damage.
    * @param {String} diceText such as '3d-1(2)'
-   * @param {String} damageType text from GURPS.damageTypeMap
+   * @param {String} damageType text from DamageTables.damageTypeMap
    * @param {Event} event that triggered this action
    * @param {String} overrideDiceText ??
    */
   async create(actor, diceText, damageType, event, overrideDiceText) {
     // First check for basic damage syntax, such as thr+3, sw-1, etc...
-  
+
     let result = DamageChat.basicRegex.exec(diceText)
     if (!!result) {
       let basicType = (result?.groups?.basic).toLowerCase()
 
       if (basicType === 'sw') {
-				overrideDiceText = diceText
+        overrideDiceText = diceText
         diceText = diceText.replace(/^(SW|Sw|sw)/, actor.data.data.swing)
       }
 
       if (basicType === 'thr') {
-				overrideDiceText = diceText
+        overrideDiceText = diceText
         diceText = diceText.replace(/^(THR|Thr|thr)/, actor.data.data.thrust)
       }
     }
@@ -81,10 +81,10 @@ export default class DamageChat {
     //
     // Examples: 3d, 1d-1, 3dx5, 3d-1x5, 2d(2), 5d-1(0.2), 3dx2(5), 4d-1x4(5).
     //
-    // Added support for a second add, such as: 1d-2+3 -- this was to support damage expressed 
+    // Added support for a second add, such as: 1d-2+3 -- this was to support damage expressed
     // using basic damage syntax, such as "sw+3" (which could translate to '1d-2+3', for exmaple).
 
-    result =  DamageChat.fullRegex.exec(diceText)
+    result = DamageChat.fullRegex.exec(diceText)
 
     if (!result) {
       return ui.notifications.warn(`Invalid Dice formula: "${diceText}"`)
@@ -93,10 +93,10 @@ export default class DamageChat {
     diceText = result?.groups?.roll
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
-    let multiplier = (!!result.groups.mult) ? parseInt(result.groups.mult) : 1
-    let divisor = (!!result.groups.divisor) ? parseFloat(result.groups.divisor) : 0
-    let adds1 = (!!result.groups.adds1) ? result.groups.adds1 : ''
-    let adds2 = (!!result.groups.adds2) ? result.groups.adds2 : ''
+    let multiplier = !!result.groups.mult ? parseInt(result.groups.mult) : 1
+    let divisor = !!result.groups.divisor ? parseFloat(result.groups.divisor) : 0
+    let adds1 = !!result.groups.adds1 ? result.groups.adds1 : ''
+    let adds2 = !!result.groups.adds2 ? result.groups.adds2 : ''
     let formula = d6ify(diceText)
 
     let min = 1
@@ -110,14 +110,14 @@ export default class DamageChat {
       min = 1
     }
 
-    let targetmods = await this._gurps.ModifierBucket.applyMods()		// append any global mods
+    let targetmods = await this._gurps.ModifierBucket.applyMods() // append any global mods
     let modifier = 0
-    let maxtarget = null			// If not null, then the target cannot be any higher than this.
+    let maxtarget = null // If not null, then the target cannot be any higher than this.
 
     for (let m of targetmods) {
-      modifier += m.modint;
+      modifier += m.modint
       if (!!m.desc) {
-        maxtarget = this._gurps.applyModifierDesc(actor, m.desc);
+        maxtarget = this._gurps.applyModifierDesc(actor, m.desc)
       }
     }
 
@@ -127,13 +127,13 @@ export default class DamageChat {
     let diceValue = roll.results[0]
     let dicePlusAdds = diceValue
     if (adds1 && adds1 !== '') {
-      let temp = (adds1.startsWith('+')) ? adds1.slice(1) : adds1
+      let temp = adds1.startsWith('+') ? adds1.slice(1) : adds1
       let value = parseInt(temp)
       dicePlusAdds = value + dicePlusAdds
     }
 
     if (adds2 && adds2 !== '') {
-      let temp = (adds2.startsWith('+')) ? adds2.slice(1) : adds2
+      let temp = adds2.startsWith('+') ? adds2.slice(1) : adds2
       let value = parseInt(temp)
       dicePlusAdds = value + dicePlusAdds
     }
@@ -147,8 +147,8 @@ export default class DamageChat {
     let damage = rollTotal * multiplier
 
     let explainLineOne = null
-    if ((roll.dice[0].results.length > 1) || (adds1 && adds1 !== 0)) {
-      let tempString = roll.dice[0].results.map(it => it.result).join()
+    if (roll.dice[0].results.length > 1 || (adds1 && adds1 !== 0)) {
+      let tempString = roll.dice[0].results.map((it) => it.result).join()
       tempString = `(${tempString})`
 
       if (adds1 && adds1 !== 0) {
@@ -181,7 +181,7 @@ export default class DamageChat {
       }
     }
 
-    let hasExplanation = (explainLineOne || explainLineTwo)
+    let hasExplanation = explainLineOne || explainLineTwo
 
     if (hasExplanation && b378) {
       if (explainLineTwo) explainLineTwo = `${explainLineTwo}*`
@@ -197,27 +197,24 @@ export default class DamageChat {
     }
 
     if (divisor > 0)
-      if (!!overrideDiceText)
-        overrideDiceText = `${overrideDiceText} (${divisor})`
-      else
-        diceText = `${diceText} (${divisor})`
+      if (!!overrideDiceText) overrideDiceText = `${overrideDiceText} (${divisor})`
+      else diceText = `${diceText} (${divisor})`
 
     let contentData = {
       attacker: actor._id,
-      dice: overrideDiceText || diceText,		// overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
+      dice: overrideDiceText || diceText, // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
       damageType: damageType,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
       armorDivisor: divisor,
       damage: damage,
-      modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
+      modifiers: targetmods.map((it) => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       hasExplanation: hasExplanation,
       explainLineOne: explainLineOne,
       explainLineTwo: explainLineTwo,
-      isB378: b378
+      isB378: b378,
     }
 
-    let html = await
-      renderTemplate('systems/gurps/templates/damage-message.html', contentData)
+    let html = await renderTemplate('systems/gurps/templates/damage-message.html', contentData)
 
     const speaker = { alias: actor.name, _id: actor._id, actor: actor }
     let messageData = {
@@ -225,23 +222,21 @@ export default class DamageChat {
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: roll
-    };
+      roll: roll,
+    }
 
     if (event?.shiftKey) {
-      messageData.whisper = [game.user._id];
+      messageData.whisper = [game.user._id]
     }
 
     if (!isNiceDiceEnabled()) {
       messageData.sound = CONFIG.sounds.dice
     }
 
-    messageData['flags.transfer'] = JSON.stringify(
-      {
-        type: 'damageItem',
-        payload: contentData
-      }
-    )
+    messageData['flags.transfer'] = JSON.stringify({
+      type: 'damageItem',
+      payload: contentData,
+    })
 
     CONFIG.ChatMessage.entityClass.create(messageData).then((arg) => {
       console.log(arg)
@@ -252,13 +247,13 @@ export default class DamageChat {
 
   /**
    * Try to parse the link text as a damage roll.
-   * 
-   * @param {String} linkText 
+   *
+   * @param {String} linkText
    * @returns {String} the original linkText if not recognized; otherwise a string of
    *    the form "$1~$2~$3~$4~$5~$6", where each $n is a component of the damage roll.
    *    For example, '2d-1x10(2)! cut' would be "2~-1~x10~(2)~!~cut".
    */
-   
+
   parseLink(linkText) {
     let parsedText = linkText.replace(damageLinkPattern, 'damage~$1~$2~$3~$4~$5~$6')
     if (parsedText != linkText) {
@@ -268,12 +263,11 @@ export default class DamageChat {
     // Also handle linkText of the format, "<basic-damage>+<adds>! <type>", e.g.: 'SW+2! imp'.
     return linkText.replace(swingThrustPattern, 'derived~$1~$2~$3~$4')
   }
-  
 
   /**
    * Given pre-parsed text in the same format as produced by the parseLink(text) function,
    * create and return an Action object.
-   * 
+   *
    * @param {String} linkText the original link text.
    * @param {String} parsedText  a string of the form "$1~$2~$3~$4~$5~$6", where each $n is
    *    a component of the damage roll.
@@ -283,11 +277,9 @@ export default class DamageChat {
   createAction(linkText, parsedText) {
     let type = parsedText.split('~')[0]
     let dataString = parsedText.substr(type.length + 1)
-    if (type === 'damage')
-      return this._createDamageAction(linkText, dataString)
+    if (type === 'damage') return this._createDamageAction(linkText, dataString)
 
-    if (type === 'derived')
-      return this._createDerivedAction(linkText, dataString)
+    if (type === 'derived') return this._createDerivedAction(linkText, dataString)
 
     // this should never happen
     return ui.notifications.warn(`Unexpected error processing link: "${linkText}" (${parsedText})`)
@@ -303,9 +295,9 @@ export default class DamageChat {
 
     let a = parsedText.split('~')
     let damageType = a[INDEX_TYPE].trim()
-    let woundingModifier = GURPS.woundModifiers[damageType]
+    let woundingModifier = woundModifiers[damageType]
 
-    // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.  
+    // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
     // Must convert to '*' for Foundry.
     if (!woundingModifier) {
       let multiplier = a[INDEX_MULTIPLIER]
@@ -314,29 +306,29 @@ export default class DamageChat {
       }
 
       let action = {
-        'orig': linkText,
-        'type': 'roll',
-        'formula': a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + multiplier + a[INDEX_BANG],
-        'desc': damageType     // Action description
+        orig: linkText,
+        type: 'roll',
+        formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + multiplier + a[INDEX_BANG],
+        desc: damageType, // Action description
       }
 
       return {
-        'text': gspan(linkText, action),
-        'action': action
+        text: gspan(linkText, action),
+        action: action,
       }
     }
 
     // Damage roll 1d+2 cut.  Not allowed an action desc (?).
     let action = {
-      'orig': linkText,
-      'type': 'damage',
-      'formula': a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + a[INDEX_MULTIPLIER] + a[INDEX_DIVISOR] + a[INDEX_BANG],
-      'damagetype': damageType
+      orig: linkText,
+      type: 'damage',
+      formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + a[INDEX_MULTIPLIER] + a[INDEX_DIVISOR] + a[INDEX_BANG],
+      damagetype: damageType,
     }
 
     return {
-      'text': gspan(linkText, action),
-      'action': action
+      text: gspan(linkText, action),
+      action: action,
     }
   }
 
@@ -346,38 +338,36 @@ export default class DamageChat {
     const INDEX_BANG = 2
     const INDEX_TYPE = 3
 
-    let a = parsedText.split("~");
-    let damageType = a[INDEX_TYPE].trim();
-    let woundingModifier = GURPS.woundModifiers[damageType];
+    let a = parsedText.split('~')
+    let damageType = a[INDEX_TYPE].trim()
+    let woundingModifier = woundModifiers[damageType]
     if (!!woundingModifier) {
       let action = {
-        "orig": linkText,
-        "type": "deriveddamage",
-        "derivedformula": a[INDEX_BASICDAMAGE].toLowerCase(),
-        "formula": a[INDEX_ADDS] + a[INDEX_BANG],
-        "damagetype": damageType
-      };
+        orig: linkText,
+        type: 'deriveddamage',
+        derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
+        formula: a[INDEX_ADDS] + a[INDEX_BANG],
+        damagetype: damageType,
+      }
       return {
-        "text": gspan(linkText, action),
-        "action": action
+        text: gspan(linkText, action),
+        action: action,
       }
     }
 
     let action = {
-      "orig": linkText,
-      "type": "derivedroll",
-      "derivedformula": a[INDEX_BASICDAMAGE].toLowerCase(),
-      "formula": a[INDEX_ADDS] + a[INDEX_BANG],
-      "desc": damageType
-    };
+      orig: linkText,
+      type: 'derivedroll',
+      derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
+      formula: a[INDEX_ADDS] + a[INDEX_BANG],
+      desc: damageType,
+    }
     return {
-      "text": gspan(linkText, action),
-      "action": action
+      text: gspan(linkText, action),
+      action: action,
     }
   }
 }
-
-
 
 /*
 let transfer = {

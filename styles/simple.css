@@ -193,7 +193,6 @@
   grid-row-start: 2;
   grid-row-end: 4;
 
-
   display: grid;
   justify-self: stretch;
   justify-content: stretch;
@@ -291,7 +290,6 @@
   padding: 5px;
 }
 
-
 #modtooltiprightbottom {
   grid-column: 3;
   grid-row-start: 3;
@@ -342,7 +340,7 @@
 }
 
 .gurpstippable:hover::after {
-  content: "";
+  content: '';
   position: absolute;
   top: -30%;
   left: 50%;
@@ -389,8 +387,6 @@
   transition: opacity 1s; */
 }
 
-
-
 .modifierbucket:hover .modttt {
   visibility: visible;
   z-index: 999;
@@ -398,7 +394,7 @@
 }
 
 .modifierbucket .modttt::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 50%;
@@ -433,14 +429,14 @@
   background-color: rgb(255, 255, 128) !important;
   color: black;
   padding: 1px 1px 1px 1px;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 8px;
   margin: -2px 2px -3px -2px;
   overflow: visible;
-  z-index: 99
+  z-index: 99;
 }
 
 .rollable {
@@ -455,10 +451,10 @@
   color: black;
   background-color: rgb(255, 255, 128) !important;
   padding: 2px 3px 2px 3px;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid #cccccc;
   border-left: 1px solid #333333;
   border-top: 1px solid #333333;
-  border-right: 1px solid #CCCCCC;
+  border-right: 1px solid #cccccc;
   border-radius: 8px;
   margin: -2px -2px -3px -2px;
 }
@@ -470,10 +466,10 @@
   background-color: rgb(255, 128, 100) !important;
   color: black;
   padding: 1px 1px 1px 1px;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 8px;
   margin: -2px 0px -1px 2px;
   text-align: center;
@@ -493,14 +489,14 @@
   background-image: none;
   background-color: rgb(255, 128, 100) !important;
   padding: 1px 1em 1px 1px;
-  border-bottom: 2px solid #CCCCCC;
+  border-bottom: 2px solid #cccccc;
   border-left: 2px solid #333333;
   border-top: 2px solid #333333;
-  border-right: 2px solid #CCCCCC;
+  border-right: 2px solid #cccccc;
   border-radius: 8px;
   margin: -1px -6px -2px 4px;
   overflow: visible;
-  z-index: 99
+  z-index: 99;
 }
 
 .glinkmod:hover {
@@ -510,10 +506,10 @@
   background-color: rgb(255, 128, 64) !important;
   color: black;
   padding: 1px 1px 1px 1px;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 8px;
   margin: -1px -2px -1px -4px;
 }
@@ -530,13 +526,13 @@
   background-image: none;
   background-color: rgb(255, 128, 64) !important;
   padding: 1px 1px 1px 1px;
-  border-bottom: 2px solid #CCCCCC;
+  border-bottom: 2px solid #cccccc;
   border-left: 2px solid #333333;
   border-top: 2px solid #333333;
-  border-right: 2px solid #CCCCCC;
+  border-right: 2px solid #cccccc;
   border-radius: 8px;
   margin: -1px -3px -1px -3px;
-  z-index: 99
+  z-index: 99;
 }
 
 .glinkmodplus:hover {
@@ -546,10 +542,10 @@
   background-color: rgb(0, 255, 0) !important;
   color: black;
   padding: 1px 1px 1px 1px;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 8px;
   margin: -1px -2px -1px -4px;
   font-weight: bold;
@@ -567,10 +563,10 @@
   background-image: none;
   background-color: rgb(0, 255, 0) !important;
   padding: 1px 1px 1px 1px;
-  border-bottom: 2px solid #CCCCCC;
+  border-bottom: 2px solid #cccccc;
   border-left: 2px solid #333333;
   border-top: 2px solid #333333;
-  border-right: 2px solid #CCCCCC;
+  border-right: 2px solid #cccccc;
   border-radius: 8px;
   margin: -1px -3px -1px -3px;
   z-index: 99;
@@ -585,10 +581,10 @@
   color: yellow;
   text-shadow: 1px 1px black;
   padding: 1px 1px 1px 1px;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 8px;
   margin: -1px -2px -1px -4px;
   font-weight: bold;
@@ -607,10 +603,10 @@
   background-image: none;
   background-color: rgb(255, 0, 0) !important;
   padding: 1px 1px 1px 1px;
-  border-bottom: 2px solid #CCCCCC;
+  border-bottom: 2px solid #cccccc;
   border-left: 2px solid #333333;
   border-top: 2px solid #333333;
-  border-right: 2px solid #CCCCCC;
+  border-right: 2px solid #cccccc;
   border-radius: 8px;
   margin: -1px -3px -1px -3px;
   z-index: 99;
@@ -623,14 +619,14 @@
   background-color: rgb(255, 255, 128) !important;
   color: black;
   padding: 2px 3px 2px 3px;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 5px;
   margin: -2px -4px -2px -6px;
   overflow: visible;
-  z-index: 99
+  z-index: 99;
 }
 
 .gurpslink {
@@ -645,14 +641,14 @@
   color: black;
   background-color: rgb(255, 255, 128) !important;
   padding: 2px 3px 2px 3px;
-  border-bottom: 1px solid #CCCCCC;
+  border-bottom: 1px solid #cccccc;
   border-left: 1px solid #333333;
   border-top: 1px solid #333333;
-  border-right: 1px solid #CCCCCC;
+  border-right: 1px solid #cccccc;
   border-radius: 8px;
   margin: -2px -5px -2px -3px;
   overflow: visible;
-  z-index: 99
+  z-index: 99;
 }
 
 .gurps .window-content {
@@ -713,8 +709,8 @@
 
 .gurps .tabs {
   height: 40px;
-  border-top: 1px solid #AAA;
-  border-bottom: 1px solid #AAA;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
 }
 
 .gurps .tabs .item {
@@ -752,7 +748,7 @@
   height: 30px;
   line-height: 24px;
   padding: 3px 0;
-  border-bottom: 1px solid #BBB;
+  border-bottom: 1px solid #bbb;
 }
 
 .gurps .item-list .item img {
@@ -816,7 +812,7 @@
   padding: 5px;
   margin: 5px 0;
   background: rgba(0, 0, 0, 0.05);
-  border: 1px solid #AAA;
+  border: 1px solid #aaa;
   border-radius: 2px;
   text-align: center;
   font-weight: bold;
@@ -836,14 +832,14 @@
   padding: 0;
 }
 
-.gurps .attributes-list li>* {
+.gurps .attributes-list li > * {
   margin: 0 3px;
   height: 28px;
   line-height: 24px;
   background: transparent;
   border: none;
   border-radius: 0;
-  border-bottom: 1px solid #AAA;
+  border-bottom: 1px solid #aaa;
 }
 
 .gurps .attributes-list a.attribute-control {
@@ -867,7 +863,7 @@
   display: grid;
   grid-template-columns: 0fr 1fr;
   align-items: end;
-  padding-bottom: .15em;
+  padding-bottom: 0.15em;
 }
 
 .gurps .fieldblock hr {
@@ -877,16 +873,16 @@
   background-color: black;
   height: 1px;
   margin: 0;
-  margin-top: .2em;
-  margin-bottom: .1em;
+  margin-top: 0.2em;
+  margin-bottom: 0.1em;
 }
 
 .gurps #description {
   grid-area: description;
   display: grid;
   grid-template:
-    "header header header"
-    "block1 block2 block3";
+    'header header header'
+    'block1 block2 block3';
   grid-template-rows: 0fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
   border: 1px solid black;
@@ -898,17 +894,17 @@
 
 .gurps .fieldblock {
   text-align: left;
-  padding-left: .2em;
-  padding-right: .2em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
   /* font-size: 80%; */
   white-space: nowrap;
   align-self: center;
 }
 
 .gurps .fieldblock .field {
-  margin-right: .2em;
-  padding-left: .2em;
-  padding-right: .2em;
+  margin-right: 0.2em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
   border-bottom: 1px solid lightgray;
 }
 
@@ -917,43 +913,41 @@ body {
   font-size: small;
   font-weight: normal;
   padding: 0;
-  margin: .25in;
-  margin-bottom: calc(.25in - 1em);
+  margin: 0.25in;
+  margin-bottom: calc(0.25in - 1em);
 }
 
 #sheet {
   display: grid;
   grid-template:
-    "personal personal"
-    "stats stats"
-    "reactions reactions"
-    "melee melee"
-    "ranged ranged"
-    "advantages skills"
-    "spells spells"
-    "equipment equipment"
-    "other_equipment other_equipment"
-    "notes notes"
-  ;
-  grid-gap: .05in;
+    'personal personal'
+    'stats stats'
+    'reactions reactions'
+    'melee melee'
+    'ranged ranged'
+    'advantages skills'
+    'spells spells'
+    'equipment equipment'
+    'other_equipment other_equipment'
+    'notes notes';
+  grid-gap: 0.05in;
 }
 
 #editorsheet {
   display: grid;
   grid-template:
-    "personal personal"
-    "stats stats"
-    "reactions reactions"
-    "melee melee"
-    "ranged ranged"
-    "advantages advantages"
-    "skills skills"
-    "spells spells"
-    "equipment equipment"
-    "other_equipment other_equipment"
-    "notes notes"
-  ;
-  grid-gap: .05in;
+    'personal personal'
+    'stats stats'
+    'reactions reactions'
+    'melee melee'
+    'ranged ranged'
+    'advantages advantages'
+    'skills skills'
+    'spells spells'
+    'equipment equipment'
+    'other_equipment other_equipment'
+    'notes notes';
+  grid-gap: 0.05in;
 }
 
 #footer {
@@ -965,7 +959,7 @@ body {
   display: grid;
   grid-template-columns: 0fr 1fr;
   align-items: end;
-  padding-bottom: .15em;
+  padding-bottom: 0.15em;
 }
 
 .fieldblock hr {
@@ -975,15 +969,15 @@ body {
   background-color: black;
   height: 1px;
   margin: 0;
-  margin-top: .2em;
-  margin-bottom: .1em;
+  margin-top: 0.2em;
+  margin-bottom: 0.1em;
 }
 
 .fieldblock3 {
   display: grid;
   grid-template-columns: 0fr 1fr 0fr;
   align-items: end;
-  padding-bottom: .15em;
+  padding-bottom: 0.15em;
 }
 
 .fieldblock3 hr {
@@ -993,26 +987,26 @@ body {
   background-color: black;
   height: 1px;
   margin: 0;
-  margin-top: .2em;
-  margin-bottom: .1em;
+  margin-top: 0.2em;
+  margin-bottom: 0.1em;
 }
 
 #personal {
   grid-area: personal;
   display: grid;
   grid-template:
-    "portrait identity miscellaneous points"
-    "portrait description description points";
+    'portrait identity miscellaneous points'
+    'portrait description description points';
   grid-template-columns: 0fr 1fr 1fr 0fr;
-  grid-gap: .05in;
+  grid-gap: 0.05in;
 }
 
 #portrait {
   grid-area: portrait;
   display: grid;
   grid-template:
-    "header"
-    "portrait";
+    'header'
+    'portrait';
   grid-template-rows: 0fr auto;
   grid-template-columns: auto;
   border: 1px solid black;
@@ -1053,8 +1047,8 @@ body {
   grid-area: description;
   display: grid;
   grid-template:
-    "header header header"
-    "block1 block2 block3";
+    'header header header'
+    'block1 block2 block3';
   grid-template-rows: 0fr 1fr;
   border: 1px solid black;
 }
@@ -1063,7 +1057,7 @@ body {
   grid-area: header;
 }
 
-#description .fieldblock:nth-child(1n+3) {
+#description .fieldblock:nth-child(1n + 3) {
   border-left: 1px solid black;
 }
 
@@ -1071,16 +1065,15 @@ body {
   grid-area: stats;
   display: grid;
   grid-template:
-    "attributes trackers location encumbrance"
-    "attributes trackers location lifting";
+    'attributes trackers location encumbrance'
+    'attributes trackers location lifting';
   grid-template-columns: 0fr 2fr 0fr 0fr;
-  grid-gap: .05in;
+  grid-gap: 0.05in;
 }
 
 #attributes {
   grid-area: attributes;
 }
-
 
 #hitpoints {
   grid-area: hitpoints;
@@ -1090,16 +1083,16 @@ body {
 #encumbrance {
   grid-area: encumbrance;
   grid-template:
-    "header header header header header"
-    "encmarkerh ench loadh moveh dodgeh"
-    "encmarker enc load move dodge";
+    'header header header header header'
+    'encmarkerh ench loadh moveh dodgeh'
+    'encmarker enc load move dodge';
 }
 
 #lifting {
   grid-area: lifting;
   grid-template:
-    "header header"
-    "desc lift";
+    'header header'
+    'desc lift';
   grid-template-columns: 1fr 0fr;
 }
 
@@ -1110,8 +1103,8 @@ body {
 #location {
   grid-area: location;
   grid-template:
-    "header header header header"
-    "roll where penalty dr";
+    'header header header header'
+    'roll where penalty dr';
   grid-template-rows: 0fr 0fr;
   grid-auto-rows: 1fr;
 }
@@ -1198,29 +1191,29 @@ body {
 
 .points {
   text-align: right;
-  padding-left: .2em;
-  padding-right: .2em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
   font-size: 80%;
   align-self: center;
 }
 
 .points-fp {
   text-align: right;
-  padding-left: .2em;
-  padding-right: .2em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
   font-size: 80%;
 }
 
 .label {
   text-align: left;
-  padding-left: .2em;
-  padding-right: .2em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
   font-size: 80%;
   white-space: nowrap;
 }
 
 .field {
-  margin-right: .2em;
+  margin-right: 0.2em;
 }
 
 .condensed {
@@ -1271,43 +1264,42 @@ body {
 .lift,
 .modifier,
 .situation {
-  padding-left: .2em;
-  padding-right: .2em;
+  padding-left: 0.2em;
+  padding-right: 0.2em;
   border-bottom: 1px solid lightgray;
 }
 
 .penalty {
-  padding-left: .2em;
+  padding-left: 0.2em;
   padding-right: 1em;
   border-bottom: 1px solid lightgray;
 }
 
-
 .enc,
 .ench {
   padding-left: 0;
-  padding-right: .2em;
+  padding-right: 0.2em;
   border-bottom: 1px solid lightgray;
 }
 
 .encmarker,
 .encmarkerh {
-  padding-left: .2em;
+  padding-left: 0.2em;
   padding-right: 0;
   border-bottom: 1px solid lightgray;
 }
 
-#encumbrance .encmarker:nth-last-child(10n+5),
-#encumbrance .enc:nth-last-child(10n+4),
-#encumbrance .load:nth-last-child(10n+3),
-#encumbrance .move:nth-last-child(10n+2),
-#encumbrance .dodge:nth-last-child(10n+1),
-#lifting .liftdesc:nth-last-child(4n+1),
-#lifting .lift:nth-last-child(4n+2),
-#location .roll:nth-last-child(8n+4),
-#location .where:nth-last-child(8n+3),
-#location .penalty:nth-last-child(8n+2),
-#location .dr:nth-last-child(8n+1),
+#encumbrance .encmarker:nth-last-child(10n + 5),
+#encumbrance .enc:nth-last-child(10n + 4),
+#encumbrance .load:nth-last-child(10n + 3),
+#encumbrance .move:nth-last-child(10n + 2),
+#encumbrance .dodge:nth-last-child(10n + 1),
+#lifting .liftdesc:nth-last-child(4n + 1),
+#lifting .lift:nth-last-child(4n + 2),
+#location .roll:nth-last-child(8n + 4),
+#location .where:nth-last-child(8n + 3),
+#location .penalty:nth-last-child(8n + 2),
+#location .dr:nth-last-child(8n + 1),
 #reactions .modifier:nth-child(even),
 #reactions .situation:nth-child(odd),
 #melee .desc:nth-child(even),
@@ -1490,28 +1482,28 @@ body {
   font-size: 80%;
 }
 
-#location .header:nth-last-child(8n+4),
-#location .header:nth-last-child(8n+3),
-#location .header:nth-last-child(8n+2),
-#location .header:nth-last-child(8n+1) {
+#location .header:nth-last-child(8n + 4),
+#location .header:nth-last-child(8n + 3),
+#location .header:nth-last-child(8n + 2),
+#location .header:nth-last-child(8n + 1) {
   background-color: black;
 }
 
-#encumbrance>div:nth-last-child(-n+5),
-#lifting>div:nth-last-child(-n+2),
-#location>div:nth-last-child(-n+4) {
+#encumbrance > div:nth-last-child(-n + 5),
+#lifting > div:nth-last-child(-n + 2),
+#location > div:nth-last-child(-n + 4) {
   border-bottom: none;
 }
 
-#reactions>div:nth-last-child(-n+3),
-#melee>div:nth-last-child(-n+9),
-#ranged>div:nth-last-child(-n+11),
-#advantages>div:nth-last-child(-n+3),
-#skills>div:nth-last-child(-n+5),
-#spells>div:nth-last-child(-n+11),
-#equipment>div:nth-last-child(-n+9),
-#other_equipment>div:nth-last-child(-n+7),
-#notes>div:nth-last-child(-n+1) {
+#reactions > div:nth-last-child(-n + 3),
+#melee > div:nth-last-child(-n + 9),
+#ranged > div:nth-last-child(-n + 11),
+#advantages > div:nth-last-child(-n + 3),
+#skills > div:nth-last-child(-n + 5),
+#spells > div:nth-last-child(-n + 11),
+#equipment > div:nth-last-child(-n + 9),
+#other_equipment > div:nth-last-child(-n + 7),
+#notes > div:nth-last-child(-n + 1) {
   border-bottom: none;
   grid-row: 1001;
 }
@@ -1556,11 +1548,11 @@ body {
   color: red;
 }
 
-#encumbrance .current:nth-last-child(10n+5),
-#encumbrance .current:nth-last-child(10n+4),
-#encumbrance .current:nth-last-child(10n+3),
-#encumbrance .current:nth-last-child(10n+2),
-#encumbrance .current:nth-last-child(10n+1),
+#encumbrance .current:nth-last-child(10n + 5),
+#encumbrance .current:nth-last-child(10n + 4),
+#encumbrance .current:nth-last-child(10n + 3),
+#encumbrance .current:nth-last-child(10n + 2),
+#encumbrance .current:nth-last-child(10n + 1),
 .current {
   background-color: lightgoldenrodyellow;
 }
@@ -1597,14 +1589,13 @@ body {
   overflow-y: auto;
 }
 
-
 /* ----- combat sheet additions ----- */
 
 #combat-sheet {
   display: grid;
   grid-template-columns: 0fr 8em 8em auto;
   grid-template-rows: 0fr auto auto;
-  grid-gap: .05in;
+  grid-gap: 0.05in;
   grid-template-areas:
     'combat-attrs    combat-hitfat   combat-trackers combat-location'
     'combat-encumber combat-encumber combat-trackers combat-location'
@@ -1615,7 +1606,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto auto;
-  grid-gap: .05in;
+  grid-gap: 0.05in;
   grid-template-areas:
     'combat-hit'
     'combat-fat';
@@ -1631,7 +1622,7 @@ body {
 #combat-attrs,
 #combat-weapons,
 #combat-location {
-  grid-gap: .05in;
+  grid-gap: 0.05in;
   display: grid;
   grid-template-rows: 0fr 1fr;
 }
@@ -1688,11 +1679,9 @@ body {
   border-bottom: 1px solid lightgrey;
 }
 
-
 #editorsheet .tracked-resource .tooltip .field {
   border: none !important;
 }
-
 
 /* .gurps #combat-sheet .condition-block {
   font-size: 80%;
@@ -1759,8 +1748,8 @@ body {
   align-content: stretch;
   grid-area: combat-location;
   grid-template:
-    "header header header  header"
-    "roll   where  penalty dr";
+    'header header header  header'
+    'roll   where  penalty dr';
   grid-template-rows: 0fr 0fr;
   grid-auto-rows: 1fr;
   padding-top: 0;
@@ -1771,9 +1760,9 @@ body {
   display: grid;
   grid-area: combat-encumber-container;
   grid-template:
-    "header header header header header"
-    "encmarkerh ench loadh moveh dodgeh"
-    "encmarker enc load move dodge";
+    'header header header header header'
+    'encmarkerh ench loadh moveh dodgeh'
+    'encmarker enc load move dodge';
   /* font-size: 80%; */
 }
 
@@ -1796,26 +1785,26 @@ body {
   border-bottom: 1px solid lightgray;
 }
 
-#combat-encumber .encmarker:nth-last-child(10n+5),
-#combat-encumber .enc:nth-last-child(10n+4),
-#combat-encumber .load:nth-last-child(10n+3),
-#combat-encumber .move:nth-last-child(10n+2),
-#combat-encumber .dodge:nth-last-child(10n+1),
-#combat-location .roll:nth-last-child(8n+4),
-#combat-location .where:nth-last-child(8n+3),
-#combat-location .penalty:nth-last-child(8n+2),
-#combat-location .dr:nth-last-child(8n+1) {
+#combat-encumber .encmarker:nth-last-child(10n + 5),
+#combat-encumber .enc:nth-last-child(10n + 4),
+#combat-encumber .load:nth-last-child(10n + 3),
+#combat-encumber .move:nth-last-child(10n + 2),
+#combat-encumber .dodge:nth-last-child(10n + 1),
+#combat-location .roll:nth-last-child(8n + 4),
+#combat-location .where:nth-last-child(8n + 3),
+#combat-location .penalty:nth-last-child(8n + 2),
+#combat-location .dr:nth-last-child(8n + 1) {
   background-color: #e8ffe8;
 }
 
-#combat-location .header:nth-last-child(8n+4),
-#combat-location .header:nth-last-child(8n+3),
-#combat-location .header:nth-last-child(8n+2),
-#combat-location .header:nth-last-child(8n+1) {
+#combat-location .header:nth-last-child(8n + 4),
+#combat-location .header:nth-last-child(8n + 3),
+#combat-location .header:nth-last-child(8n + 2),
+#combat-location .header:nth-last-child(8n + 1) {
   background-color: black;
 }
 
-#combat-location>div:nth-last-child(-n+4) {
+#combat-location > div:nth-last-child(-n + 4) {
   border-bottom: none;
 }
 
@@ -1836,8 +1825,7 @@ body {
   gap: 0 0.15em;
   grid-template-columns: 0fr 0fr;
   grid-template-rows: auto;
-  grid-template-areas:
-    'combat-attrs-1 combat-attrs-2';
+  grid-template-areas: 'combat-attrs-1 combat-attrs-2';
 }
 
 #combat-attrs-1 {
@@ -1855,21 +1843,21 @@ body {
 
 #combat-encumber {
   grid-template:
-    "header header header header header"
-    "encmarkerh ench loadh moveh dodgeh"
-    "encmarker enc load move dodge";
+    'header header header header header'
+    'encmarkerh ench loadh moveh dodgeh'
+    'encmarker enc load move dodge';
 }
 
-#combat-encumber>div:nth-last-child(-n+5),
-#combat-location>div:nth-last-child(-n+4) {
+#combat-encumber > div:nth-last-child(-n + 5),
+#combat-location > div:nth-last-child(-n + 4) {
   border-bottom: none;
 }
 
-#combat-encumber .current:nth-last-child(10n+5),
-#combat-encumber .current:nth-last-child(10n+4),
-#combat-encumber .current:nth-last-child(10n+3),
-#combat-encumber .current:nth-last-child(10n+2),
-#combat-encumber .current:nth-last-child(10n+1),
+#combat-encumber .current:nth-last-child(10n + 5),
+#combat-encumber .current:nth-last-child(10n + 4),
+#combat-encumber .current:nth-last-child(10n + 3),
+#combat-encumber .current:nth-last-child(10n + 2),
+#combat-encumber .current:nth-last-child(10n + 1),
 .current {
   background-color: lightgoldenrodyellow;
 }
@@ -1877,7 +1865,7 @@ body {
 #combat-weapons {
   grid-area: combat-weapons;
   display: grid;
-  row-gap: .05in;
+  row-gap: 0.05in;
   grid-template-columns: auto;
   grid-template-rows: auto auto auto;
   grid-template-areas:
@@ -1917,8 +1905,8 @@ body {
   align-content: stretch;
   display: grid;
   grid-template-areas:
-    "header"
-    "range-table";
+    'header'
+    'range-table';
 }
 
 #range-table {
@@ -2007,7 +1995,7 @@ body {
 
 .roll-result .roll-value,
 .roll-result .roll-detail {
-  font-family: "Font Awesome 5 Free", 'Roboto', sans-serif;
+  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
 }
 
 .roll-result .roll-detail {
@@ -2035,11 +2023,11 @@ body {
 
 .roll-result .roll-detail .crit.success {
   color: black;
-  text-shadow: 0 0 3px #00FF00;
+  text-shadow: 0 0 3px #00ff00;
 }
 .roll-result .roll-detail .crit.failure {
   color: black;
-  text-shadow: 0 0 3px #FF0000;
+  text-shadow: 0 0 3px #ff0000;
 }
 
 /* GURPS App CSS */
@@ -2101,7 +2089,7 @@ body {
   text-transform: uppercase;
 }
 
-.gurps-group>h4:first-child {
+.gurps-group > h4:first-child {
   margin-top: 0;
 }
 
@@ -2111,7 +2099,7 @@ body {
   margin-bottom: 0.5em;
 }
 
-.gurps-group h4+aside {
+.gurps-group h4 + aside {
   margin-top: -0.5em;
 }
 
@@ -2122,7 +2110,7 @@ body {
 
 /* striped table row appearance */
 .gurps-group .shaded {
-  background-color: rgba(0, 0, 0, 0.10);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .gurps-2col {
@@ -2143,8 +2131,8 @@ body {
   text-align: left;
 }
 
-.grid-2col>*,
-.gurps-3col>* {
+.grid-2col > *,
+.gurps-3col > * {
   align-self: center;
   height: 100%;
   display: flex;
@@ -2154,12 +2142,12 @@ body {
 }
 
 /* striped table row appearance */
-.gurps-2col>*:nth-child(4n+3),
-.gurps-2col>*:nth-child(4n+4),
-.gurps-3col>*:nth-of-type(6n+4),
-.gurps-3col>*:nth-of-type(6n+5),
-.gurps-3col>*:nth-of-type(6n+6) {
-  background-color: rgba(0, 0, 0, 0.10);
+.gurps-2col > *:nth-child(4n + 3),
+.gurps-2col > *:nth-child(4n + 4),
+.gurps-3col > *:nth-of-type(6n + 4),
+.gurps-3col > *:nth-of-type(6n + 5),
+.gurps-3col > *:nth-of-type(6n + 6) {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 /* useful classes for showing a 'table' of checkboxes or radio buttons */
@@ -2168,23 +2156,23 @@ body {
   grid-template-columns: auto 1fr min-content;
 }
 
-.gurps-radio-col>*:nth-child(3n+3) {
+.gurps-radio-col > *:nth-child(3n + 3) {
   text-align: end;
   padding-right: 0.5em;
   flex-flow: nowrap;
   justify-content: flex-end;
 }
 
-.gurps-radio-col>*:nth-child(3n+2) {
+.gurps-radio-col > *:nth-child(3n + 2) {
   text-align: center;
 }
 
 /* Apply Damage Dialog: Apply buttons panel */
-.gurps-group .apply-results>* {
+.gurps-group .apply-results > * {
   margin-bottom: 0.2em;
 }
 
-.gurps-group .apply-results>*:last-child {
+.gurps-group .apply-results > *:last-child {
   margin-bottom: 0;
 }
 
@@ -2202,19 +2190,19 @@ body {
   font-size: 12px;
 }
 
-.gurps-group .results-table>div:nth-child(3n+1),
-.gurps-group .results-table>div:nth-child(3n+2) {
+.gurps-group .results-table > div:nth-child(3n + 1),
+.gurps-group .results-table > div:nth-child(3n + 2) {
   text-align: end;
   padding-right: 0.5em;
   font-size: smaller;
 }
 
-.gurps-group .results-table>div:nth-child(3n+2) {
+.gurps-group .results-table > div:nth-child(3n + 2) {
   font-weight: bolder;
   font-size: larger;
 }
 
-.gurps-group .results-table>div:nth-child(3n+3) {
+.gurps-group .results-table > div:nth-child(3n + 3) {
   text-align: start;
   justify-content: center;
   padding-left: 1em;
@@ -2251,7 +2239,7 @@ ul#result-effects li {
 }
 
 .with-button button,
-[name=result-effect] button {
+[name='result-effect'] button {
   width: fit-content;
   height: fit-content;
   margin: 0;
@@ -2259,31 +2247,31 @@ ul#result-effects li {
   cursor: pointer;
 }
 
-[name=result-effect] button {
+[name='result-effect'] button {
   position: relative;
   background-color: rgba(255, 255, 240, 0.8);
   border: 1px solid #b5b3a4;
   border-radius: 3px;
-  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding-left: 5.5px;
   padding-right: 5.5px;
   margin-right: 4px;
 }
 
-[name=result-effect] .with-send-button {
-  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+[name='result-effect'] .with-send-button {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
 }
 
-[name=result-effect]>div {
+[name='result-effect'] > div {
   display: flex;
   align-items: center;
 }
 
-[name=result-effect]>div div:first-child {
+[name='result-effect'] > div div:first-child {
   flex-grow: 1;
 }
 
-[name=result-effect] aside {
+[name='result-effect'] aside {
   font-style: normal;
   margin: 0;
 }
@@ -2338,7 +2326,6 @@ ul#result-effects li {
   margin-left: 2em;
 }
 
-
 /* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
     <div class='collapsible-wrapper'>
         <input id='collapsible' class='toggle offscreen-only' type='checkbox' checked>
@@ -2359,10 +2346,10 @@ ul#result-effects li {
 .collapsible-wrapper .collapsible-content {
   max-height: 0px;
   overflow: hidden;
-  transition: all .25s ease-in-out;
+  transition: all 0.25s ease-in-out;
 }
 
-.toggle:checked+.label-toggle+.collapsible-content {
+.toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
 }
 
@@ -2374,7 +2361,7 @@ ul#result-effects li {
   font-size: x-small;
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding: 0.25em;
-  background-color: rgba(0, 0, 0, 0.50);
+  background-color: rgba(0, 0, 0, 0.5);
   margin-top: 4px;
   color: lightgray;
   border-radius: 3px;
@@ -2392,7 +2379,7 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-chat-message .toggle:checked+.label-toggle:after {
+.gurps-chat-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1 FontAwesome;
   content: '\f077';
   color: lightgray;
@@ -2413,7 +2400,7 @@ ul#result-effects li {
   padding-right: 4px;
 }
 
-.gurps-group .collapsible-content>*:nth-child(even) {
+.gurps-group .collapsible-content > *:nth-child(even) {
   background: rgba(255, 255, 255, 0.25);
 }
 
@@ -2426,19 +2413,19 @@ ul#result-effects li {
   padding-top: 2px;
 }
 
-.gurps-group .options-drawer .toggle:checked+.label-toggle+.collapsible-content {
+.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
   padding-bottom: 2px;
   margin-bottom: 5px;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset,
-    0px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
+    0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
 
 .gurps-app button {
   text-transform: uppercase;
 }
 
-.gurps-app button.with-icon>i>span {
+.gurps-app button.with-icon > i > span {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   font-weight: 400;
 }
@@ -2470,9 +2457,6 @@ ul#result-effects li {
   box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
   border-radius: 3px;
 }
-
-
-
 
 #combat-sheet .resource-spinner button {
   height: 21px;
@@ -2522,7 +2506,7 @@ ul#result-effects li {
 
 /* Tooltip arrow */
 .tooltip .tooltiptext::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 50%;
@@ -2579,7 +2563,6 @@ ul#result-effects li {
   margin-top: 6px;
 }
 
-
 /* Resource Trackers and Editors */
 
 #trackers {
@@ -2587,20 +2570,20 @@ ul#result-effects li {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 0fr auto 0fr;
-  grid-gap: .05in;
+  grid-gap: 0.05in;
 }
 
-#trackers>* {
+#trackers > * {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: .05in;
+  grid-gap: 0.05in;
 }
 
-#trackers>*:first-child {
-  grid-template: "combat-hit combat-fat"
+#trackers > *:first-child {
+  grid-template: 'combat-hit combat-fat';
 }
 
-#trackers>*:last-child {
+#trackers > *:last-child {
   grid-template-rows: 0fr 1fr 1fr;
   grid-gap: 0;
 }
@@ -2614,7 +2597,7 @@ ul#result-effects li {
   box-shadow: 0 0 5px red;
 }
 
-#resources>*:first-child {
+#resources > *:first-child {
   border-bottom: 1px solid white;
 }
 
@@ -2638,8 +2621,8 @@ ul#result-effects li {
   border-right: 1px solid black;
 }
 
-.resource-editor>*,
-.tracked-resource>* {
+.resource-editor > *,
+.tracked-resource > * {
   margin: 0 0.25rem 0.25rem 0.25rem;
 }
 
@@ -2672,6 +2655,7 @@ ul#result-effects li {
 .tracked-resource button i {
   font-size: 67%;
   margin: 0;
+  padding-bottom: 9px;
 }
 
 .resource-editor input,
@@ -2682,7 +2666,6 @@ ul#result-effects li {
   border-radius: 0;
   font-size: inherit;
   text-align: center;
-
 }
 
 .tracked-resource .spinner > button:first-of-type {
@@ -2771,10 +2754,10 @@ ul#result-effects li {
   height: 1.2rem;
   flex: 0;
   border: 1px solid grey;
-  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
 }
 
-.tracked-resource.inactive .condition-block>* {
+.tracked-resource.inactive .condition-block > * {
   color: grey;
 }
 
@@ -2812,7 +2795,6 @@ ul#result-effects li {
   text-align: right;
 }
 
-
 .spinner details {
   position: relative;
 }
@@ -2830,7 +2812,7 @@ ul#result-effects li {
   font-size: 80%;
   min-inline-size: max-content;
   background-color: white;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,.5),0 2px 4px -1px rgba(0,0,0,.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 3px;
 }
@@ -2885,8 +2867,8 @@ ul#result-effects li {
   height: 0.75rem;
   min-width: 0.75rem;
   flex: 0;
-/*  border: 1px solid grey;  */
-  font-family: "Font Awesome 5 Free", Roboto, sans-serif;
+  /*  border: 1px solid grey;  */
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding: 0px 0px 0px 0px;
 }
 
