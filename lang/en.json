@@ -76,6 +76,9 @@
     "GURPS.dodge" : "Dodge",
     "GURPS.parry" : "Parry",
 
+	"GURPS.majorwound": "Major Wound",
+	"GURPS.htcheck": "Roll HT",
+	"GURPS.majorwoundeffect": " to avoid Stun/Knockdown.",
 	"GURPS.shock": "Shock",
 	"GURPS.penalty": "Penalty ",
 	"GURPS.toDXandIQ": " to DX and IQ.",

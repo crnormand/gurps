@@ -76,6 +76,9 @@
   "GURPS.dodge" : "Esquiva",
   "GURPS.parry" : "Aparar",
 
+  "GURPS.majorwound": "Ferimento Grave",
+  "GURPS.htcheck": "Teste de HT",
+  "GURPS.majorwoundeffect": " para evitar ficar atordoado(a) ou ser derrubado(a)",
   "GURPS.shock": "Choque",
   "GURPS.penalty": "Penalidade de ",
   "GURPS.toDXandIQ": " para DX e IQ.",
