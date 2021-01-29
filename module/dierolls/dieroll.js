@@ -30,6 +30,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
 
     for (let m of targetmods) {
         modifier += m.modint;
+        maxtarget = GURPS.applyModifierDesc(actor, m.desc);
     }
 
     let roll = null;  // Will be the Roll
