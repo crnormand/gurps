@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 @ENHANCED_KEY_PARSING
-<root release="Foundry" version="1">
+<root release="Foundry" version="GCS-2">
   <character>
     <name type="string">@NAME</name>
+    <portrait>@PORTRAIT</portrait>
     <abilities>
       <skilllist>@SKILLS_LOOP_START
         <id-@ID>
@@ -13,6 +14,8 @@
           <points type="number">@POINTS</points>
           <notes type="string">@DESCRIPTION_NOTES</notes>
 	    <pageref>@REF</pageref>
+          <uuid>@ID</uuid>
+          <parentuuid>@PARENT_ID</parentuuid>
         </id-@ID>@SKILLS_LOOP_END
       </skilllist>
 
@@ -31,6 +34,8 @@
           <difficulty type="string">@DIFFICULTY</difficulty>
           <notes type="string">@DESCRIPTION_NOTES</notes>
 	    <pageref type="string">@REF</pageref>
+          <uuid>@ID</uuid>
+          <parentuuid>@PARENT_ID</parentuuid>
        </id-@ID>@SPELLS_LOOP_END
       </spelllist>
 
@@ -88,7 +93,7 @@
       <meleecombatlist>@HIERARCHICAL_MELEE_LOOP_START
         <id-@ID>
           <name type="string">@DESCRIPTION_PRIMARY</name>
-          <st type="string">@WEAPON_STRENGTH</st>
+          <st type="string">@STRENGTH</st>
           <weight type="string">@WEIGHT</weight>
           <tl type="string">@TL</tl>
           <cost type="string">@COST</cost>
@@ -109,7 +114,7 @@
       <rangedcombatlist>@HIERARCHICAL_RANGED_LOOP_START
         <id-@ID>
           <name type="string">@DESCRIPTION_PRIMARY</name>
-          <st type="string">@WEAPON_STRENGTH</st>
+          <st type="string">@STRENGTH</st>
           <bulk type="number">@BULK</bulk>
           <lc type="string">@LEGALITY_CLASS</lc>
           <ammo type="number">@AMMO</ammo>
@@ -130,6 +135,7 @@
 	</rangedcombatlist>
 
       <protectionlist>
+	  <bodyplan type="string">@BODY_TYPE</bodyplan>
         @HIT_LOCATION_LOOP_START
         <id-@ID>
           <location type="string">@WHERE</location>   
@@ -183,6 +189,8 @@
 	    <notes type="string">@DESCRIPTION_NOTES</notes>
 	    <pageref>@REF</pageref>
 	    <type>@TYPE</type>
+          <uuid>@ID</uuid>
+          <parentuuid>@PARENT_ID</parentuuid>
         </id-@ID>@ADVANTAGES_LOOP_END
       </adslist>
 
@@ -198,13 +206,14 @@
         <costsum type="string">@COST_SUMMARY</costsum>
         <weight type="number">@WEIGHT_RAW</weight>
         <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
-        <location type="string">@LOCATION</location>
         <carried type="number">@CARRIED_STATUS</carried>
         <tl type="string">@TL</tl>
         <lc type="string">@LEGALITY_CLASS</lc>
         <type type="string">@CATEGORIES</type>
         <notes type="string">@DESCRIPTION_NOTES</notes>
 	  <pageref type="string">@REF</pageref>
+        <uuid>@ID</uuid>
+        <parentuuid>@PARENT_ID</parentuuid>
       </id-@ID>@EQUIPMENT_LOOP_END @CONTINUE_ID @OTHER_EQUIPMENT_LOOP_START
       <id-@ID>
         <name type="string">@DESCRIPTION_PRIMARY</name>
@@ -214,13 +223,14 @@
         <costsum type="string">@COST_SUMMARY</costsum>
         <weight type="number">@WEIGHT_RAW</weight>
         <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
-        <location type="string">@LOCATION</location>
         <carried type="number">@CARRIED_STATUS</carried>
         <tl type="string">@TL</tl>
         <lc type="string">@LEGALITY_CLASS</lc>
         <type type="string">@CATEGORIES</type>
         <notes type="string">@DESCRIPTION_NOTES</notes>
 	  <pageref type="string">@REF</pageref>
+        <uuid>@ID</uuid>
+        <parentuuid>@PARENT_ID</parentuuid>
       </id-@ID>@OTHER_EQUIPMENT_LOOP_END
 
     </inventorylist>
@@ -240,7 +250,10 @@
     <notelist>@NOTES_LOOP_START
       <id-@ID>
         <name type="string">@NOTE</name>
-       </id-@ID>@NOTES_LOOP_END
+ 	  <pageref type="string">@REF</pageref>
+        <uuid>@ID</uuid>
+        <parentuuid>@PARENT_ID</parentuuid>
+      </id-@ID>@NOTES_LOOP_END
     </notelist>
 
     <reactions>@REACTION_LOOP_START

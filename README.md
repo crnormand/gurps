@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.7
+# Current Release Version 0.8.9
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,14 +18,33 @@ To install the latest stable release, use this manifest URL:
 
 This is what we are currently working on:
 
+- 0.8.10
+
+### History
+- 0.8.9
+    - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
+    - Fixed CGA export to correctly export ranged innate attacks.
+    - Added Equipment hierarchy to GCA export
+    - Support GCS v4.27, export hierarchy for Ads/Disads, Skills, Spells and Notes
+    - Added Page Refs for Notes
+    - Added collapsible carets for Ads/Disads, Skills, Spells, Notes & Equipment
+    - Added drag and drop menu 'before' and 'in' for all lists so you can create containers
+    - Allow user created notes & equipment to survive import
+
 - 0.8.8
     - Fixed [Parry] bug (if Parry column has "No" in it)
     - Added "Send to 'Everyone'" GM option in modifier bucket
     - Added QTY +/- buttons to equipment (ugly, but functional)
     - Added RMB menu to equipment (Add Before, Delete, Add at end, Add in, Edit)
     - Added Equipment edit dialog
+    - Added Melee and Ranged edit dialog
+    - Added Advantage, Skill and Spell edit dialog
+    - Added Note editor and page ref column
+    - Added RMB to notes (Edit, Delete)
+    - Restricted editing functions to owners
+    - Updated chat commands (/help - to see them all) 
+    - Support limited multiline chat macros
 
-### History
 - 0.8.7
     - Bug fix for multiple PDF links (and GCA import failure)
 

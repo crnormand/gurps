@@ -64,60 +64,80 @@ export class GurpsActor extends Actor {
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
+    var c, ra // The character json, release attributes
+    let isFoundryGCS = false
+    let isFoundryGCA = false
     // need to remove <p> and replace </p> with newlines from "formatted text"
     let x = game.GURPS.cleanUpP(xml)
     x = xmlTextToJson(x)
     let r = x.root
+    let msg = ''
+    let exit = false
     if (!r) {
       if (xml[0] == '{' && importname.endsWith('.gcs'))
-        ui.notifications.error(
-          'We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.'
-        )
-      else ui.notifications.error('No <root> object found.  Are you importing the correct XML file?')
-      return
-    }
+        msg +=
+          'We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.<br>'
+      else msg += 'No <root> object found.  Are you importing the correct XML file?<br>'
+      exit = true
+    } else {
+      // The character object starts here
+      c = r.character
+      if (!c) {
+        msg += "Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format.<br>"
+        exit = true
+      }
 
-    let parsererror = r.parsererror
-    if (!!parsererror) {
-      ui.notifications.error('Error parsing XML: ' + this.textFrom(parsererror.div))
-      return
-    }
+      let parsererror = r.parsererror
+      if (!!parsererror) {
+        msg += 'Error parsing XML: ' + this.textFrom(parsererror.div)
+        exit = true
+      }
 
-    let ra = r['@attributes']
-    const isFoundryGCS = !!ra && ra.release == 'Foundry' && (ra.version == '1' || ra.version.startsWith('GCS'))
-    const isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
-    if (!(isFoundryGCS || isFoundryGCA)) {
-      ui.notifications.error(
-        'We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).'
-      )
-      ChatMessage.create({
-        content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>",
-        user: game.user._id,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      })
-      return
-    }
-    if (isFoundryGCA) {
-      const v = ra.version.split('-')
-      if (v[1] != '1') {
-        let msg =
-          "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.   Check the Users Guide for details."
+      ra = r['@attributes']
+      // Sorry for the horrible version checking... it sort of evolved organically
+      isFoundryGCS = !!ra && ra.release == 'Foundry' && (ra.version == '1' || ra.version.startsWith('GCS'))
+      isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
+      if (!(isFoundryGCS || isFoundryGCA)) {
+        msg += 'We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).<br>'
+        exit = true
+      }
+      const v = !!ra?.version ? ra.version.split('-') : []
+      if (isFoundryGCA) {
+        if (!v[1]) {
+          msg +=
+            "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.<br>"
+        }
+        let vernum = 1
+        if (!!v[1]) vernum = parseInt(v[1])
+        if (vernum < 2) {
+          msg +=
+            "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the 'Parent' Attribute for equipment." +
+            '   If you are missing ranged attacks or your equipment is not appearing inside the correct container, please upgrade to the latest export script.<br>'
+        }
+      }
+      if (isFoundryGCS) {
+        let vernum = 1
+        if (!!v[1]) vernum = parseInt(v[1])
+        if (vernum < 2) {
+          msg +=
+            "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   We cannot determine which items are contained in others.  Please upgrade to the latest export script.<br>"
+        }
+      }
+
+      if (!!msg) {
         ui.notifications.error(msg)
         ChatMessage.create({
-          content: msg + "<br><a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>",
+          content:
+            msg +
+            "<br>Check the Users Guide for details. <a href='" +
+            GURPS.USER_GUIDE_URL +
+            "'>GURPS 4e Game Aid USERS GUIDE</a>",
           user: game.user._id,
-          type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+          type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+          whisper: [game.user.id],
         })
+        if (exit) return // Some errors cannot be forgiven ;-)
       }
-    }
-
-    // The character object starts here
-    let c = r.character
-    if (!c) {
-      ui.notifications.warn(
-        "Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format."
-      )
-      return
     }
     let nm = this.textFrom(c.name)
     console.log("Importing '" + nm + "'")
@@ -133,6 +153,7 @@ export class GurpsActor extends Actor {
     let ar = this.data.data.additionalresources || {}
     ar.importname = importname
     ar.importpath = importpath
+    ar.importversion = ra.version
     commit = { ...commit, ...{ 'data.additionalresources': ar } }
 
     try {
@@ -265,13 +286,13 @@ export class GurpsActor extends Actor {
   importNotesFromGCSv1(descjson, json) {
     if (!json) return
     let t = this.textFrom
-    let ns = {}
-    let index = 0
+    let temp = []
     if (!!descjson) {
       // support for GCA description
       let n = new Note()
       n.notes = t(descjson).replace(/\\r/g, '\n')
-      game.GURPS.put(ns, n, index++)
+      n.imported = true
+      temp.push(n)
     }
     for (let key in json) {
       if (key.startsWith('id-')) {
@@ -282,12 +303,22 @@ export class GurpsActor extends Actor {
         n.notes = t(j.name)
         let txt = t(j.text)
         if (!!txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
-        game.GURPS.put(ns, n, index++)
+        n.uuid = t(j.uuid)
+        n.parentuuid = t(j.parentuuid)
+        n.imported = true
+        temp.push(n)
       }
     }
+    // Save the old User Entered Notes.
+    if (!!this.data.data.notes)
+      Object.values(this.data.data.notes).forEach((n) => {
+        Named.recurse(n, (t) => {
+          if (!!t.save) temp.push(t)
+        })
+      })
     return {
       'data.-=notes': null,
-      'data.notes': ns,
+      'data.notes': this.foldList(temp),
     }
   }
 
@@ -499,13 +530,7 @@ export class GurpsActor extends Actor {
         eqt.name = t(j.name)
         eqt.count = i(j.count)
         eqt.cost = t(j.cost)
-        eqt.weight = f(j.weight)
-        let tmp = parseFloat(eqt.cost)
-        if (!isNaN(tmp)) eqt.costsum = eqt.count * tmp
-        else eqt.costsum = t(j.costsum)
-        tmp = parseFloat(eqt.weight)
-        if (!isNaN(tmp)) eqt.weightsum = eqt.count * tmp
-        else eqt.weightsum = t(j.weightsum)
+        eqt.weight = t(j.weight)
         eqt.location = t(j.location)
         let cstatus = i(j.carried)
         eqt.carried = cstatus >= 1
@@ -513,6 +538,8 @@ export class GurpsActor extends Actor {
         eqt.techlevel = t(j.tl)
         eqt.legalityclass = t(j.lc)
         eqt.categories = t(j.type)
+        eqt.uuid = t(j.uuid)
+        eqt.parentuuid = t(j.parentuuid)
         if (isFoundryGCS) {
           eqt.notes = t(j.notes)
           eqt.pageref = t(j.pageref)
@@ -524,13 +551,28 @@ export class GurpsActor extends Actor {
 
     // Put everything in it container (if found), otherwise at the top level
     temp.forEach((eqt) => {
-      if (!!eqt.location) {
+      if (!!eqt.parentuuid) {
         let parent = null
-        parent = temp.find((e) => e.name === eqt.location)
+        parent = temp.find((e) => e.uuid === eqt.parentuuid)
         if (!!parent) game.GURPS.put(parent.contains, eqt)
-        else eqt.location = '' // Can't find a parent, so put it in the top list
+        else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
       }
     })
+
+    // Save the old User Entered Notes.
+    if (!!this.data.data.equipment.carried)
+      Object.values(this.data.data.equipment.carried).forEach((n) => {
+        Named.recurse(n, (t) => {
+          t.carried = true
+          if (!!t.save) temp.push(t)
+        })
+      })
+    if (!!this.data.data.equipment.other)
+      Object.values(this.data.data.equipment.other).forEach((n) => {
+        Named.recurse(n, (t) => {
+          if (!!t.save) temp.push(t)
+        })
+      })
 
     let equipment = {
       carried: {},
@@ -540,7 +582,8 @@ export class GurpsActor extends Actor {
     let oindex = 0
 
     temp.forEach((eqt) => {
-      if (!eqt.location) {
+      Equipment.calc(eqt)
+      if (!eqt.parentuuid) {
         if (eqt.carried) game.GURPS.put(equipment.carried, eqt, cindex++)
         else game.GURPS.put(equipment.other, eqt, oindex++)
       }
@@ -549,6 +592,24 @@ export class GurpsActor extends Actor {
       'data.-=equipment': null,
       'data.equipment': equipment,
     }
+  }
+
+  // Fold a flat array into a hierarchical target object
+  foldList(flat, target = {}) {
+    flat.forEach((obj) => {
+      if (!!obj.parentuuid) {
+        const parent = flat.find((o) => o.uuid == obj.parentuuid)
+        if (!!parent) {
+          if (!parent.contains) parent.contains = {} // lazy init for older characters
+          game.GURPS.put(parent.contains, obj)
+        } else obj.parentuuid = '' // Can't find a parent, so put it in the top list.  should never happen with GCS
+      }
+    })
+    let index = 0
+    flat.forEach((obj) => {
+      if (!obj.parentuuid) game.GURPS.put(target, obj, index++)
+    })
+    return target
   }
 
   importEncumbranceFromGCSv1(json) {
@@ -831,8 +892,7 @@ export class GurpsActor extends Actor {
   // When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
   importSkillsFromGCSv1(json, isFoundryGCS) {
     if (!json) return
-    let skills = {}
-    let index = 0
+    let temp = []
     let t = this.textFrom /// shortcut to make code smaller
     for (let key in json) {
       if (key.startsWith('id-')) {
@@ -841,20 +901,23 @@ export class GurpsActor extends Actor {
         let sk = new Skill()
         sk.name = t(j.name)
         sk.type = t(j.type)
-        sk.level = this.intFrom(j.level)
+        sk.level = t(j.level)
+        if (sk.level == 0) sk.level = ''
         sk.points = this.intFrom(j.points)
         sk.relativelevel = t(j.relativelevel)
         if (isFoundryGCS) {
           sk.notes = t(j.notes)
           sk.pageref = t(j.pageref)
         } else sk.setNotes(t(j.text))
-        if (!!j.pageref) sk.pageref = t(j.pageref).split(',').splice(0, 1)
-        game.GURPS.put(skills, sk, index++)
+        if (!!j.pageref) sk.pageref = t(j.pageref)
+        sk.uuid = t(j.uuid)
+        sk.parentuuid = t(j.parentuuid)
+        temp.push(sk)
       }
     }
     return {
       'data.-=skills': null,
-      'data.skills': skills,
+      'data.skills': this.foldList(temp),
     }
   }
 
@@ -863,8 +926,7 @@ export class GurpsActor extends Actor {
   // When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
   importSpellsFromGCSv1(json, isFoundryGCS) {
     if (!json) return
-    let spells = {}
-    let index = 0
+    let temp = []
     let t = this.textFrom /// shortcut to make code smaller
     for (let key in json) {
       if (key.startsWith('id-')) {
@@ -895,14 +957,16 @@ export class GurpsActor extends Actor {
         sp.duration = t(j.duration)
         sp.points = t(j.points)
         sp.casttime = t(j.time)
-        sp.level = parseInt(t(j.level))
+        sp.level = t(j.level)
         sp.duration = t(j.duration)
-        game.GURPS.put(spells, sp, index++)
+        sp.uuid = t(j.uuid)
+        sp.parentuuid = t(j.parentuuid)
+        temp.push(sp)
       }
     }
     return {
       'data.-=spells': null,
-      'data.spells': spells,
+      'data.spells': this.foldList(temp),
     }
   }
 
@@ -937,9 +1001,8 @@ export class GurpsActor extends Actor {
 
   // In the new GCS import, all ads/disad/quirks/perks are in one list.
   importAdsFromGCSv2(json) {
-    let list = {}
-    let index = 0
     let t = this.textFrom /// shortcut to make code smaller
+    let temp = []
     for (let key in json) {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
@@ -954,12 +1017,14 @@ export class GurpsActor extends Actor {
         else if (!!a.note) a.notes = a.note
         else if (!!a.userdesc) a.notes = a.userdesc
         a.pageref = t(j.pageref)
-        game.GURPS.put(list, a, index++)
+        a.uuid = t(j.uuid)
+        a.parentuuid = t(j.parentuuid)
+        temp.push(a)
       }
     }
     return {
       'data.-=ads': null,
-      'data.ads': list,
+      'data.ads': this.foldList(temp),
     }
   }
 
@@ -1042,6 +1107,7 @@ export class Named {
   name = ''
   notes = ''
   pageref = ''
+  contains = {}
 
   // This is an ugly hack to parse the GCS FG Formatted Text entries.   See the method cleanUpP() above.
   setNotes(n) {
@@ -1058,6 +1124,12 @@ export class Named {
         this.pageref = ''
       }
     }
+  }
+
+  static recurse(obj, fn) {
+    fn(obj)
+    if (!!obj.contains) Object.values(obj.contains).forEach((o) => Named.recurse(o, fn))
+    if (!!obj.collapsed) Object.values(obj.collapsed).forEach((o) => Named.recurse(o, fn))
   }
 }
 
@@ -1142,13 +1214,18 @@ export class Encumbrance {
 }
 
 export class Note extends Named {
-  constructor(n) {
+  constructor(n, ue) {
     super()
     this.notes = n
+    this.save = ue
   }
 }
 
 export class Equipment extends Named {
+  constructor(nm, ue) {
+    super(nm)
+    this.save = ue
+  }
   equipped = false
   carried = false
   count = 0
@@ -1158,16 +1235,45 @@ export class Equipment extends Named {
   techlevel = ''
   legalityclass = ''
   categories = ''
-  contains = {}
   costsum = ''
   weightsum = ''
 
   static calc(eqt) {
+    Equipment.calcUpdate(null, eqt, '')
+  }
+
+  // OMG, do NOT fuck around with this method.   So many gotchas...
+  // the worst being that you cannot use array.forEach.   You must use a for loop
+  static async calcUpdate(actor, eqt, objkey) {
     if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0
     if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0
     if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0
-    eqt.costsum = eqt.count * eqt.cost
-    eqt.weightsum = eqt.count * eqt.weight
+    let cs = eqt.count * eqt.cost
+    let ws = eqt.count * eqt.weight
+    if (!!eqt.contains) {
+      for (let k in eqt.contains) {
+        let e = eqt.contains[k]
+        await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
+        cs += e.costsum
+        ws += e.weightsum
+      }
+    }
+    if (!!eqt.collapsed) {
+      for (let k in eqt.collapsed) {
+        let e = eqt.contains[k]
+        await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
+        cs += e.costsum
+        ws += e.weightsum
+      }
+    }
+    if (!!actor)
+      await actor.update({
+        [objkey + '.costsum']: cs,
+        [objkey + '.weightsum']: ws,
+      })
+    // the local values 'should' be updated... but I need to force them anyway
+    eqt.costsum = cs
+    eqt.weightsum = ws
   }
 }
 export class Reaction {

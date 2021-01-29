@@ -13,7 +13,7 @@ export class GurpsRoll extends Roll {
           let m = GURPS.ModifierBucket.currentSum()
           GURPS.ModifierBucket.clear()
           return m
-        },
+        }
       })
     d.gmod = GURPS.ModifierBucket.currentSum()
     return d
@@ -21,6 +21,7 @@ export class GurpsRoll extends Roll {
 }
 CONFIG.Dice.rolls[0] = GurpsRoll
 
+// TODO how to handle non-humanoid hit locations?
 export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
@@ -41,7 +42,7 @@ export class ModifierBucket extends Application {
     currentSum: 0,
     displaySum: '+0',
     plus: false,
-    minus: false,
+    minus: false
   }
   ModifierBucketElement = null
   tooltipElement = null
@@ -51,7 +52,7 @@ export class ModifierBucket extends Application {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_RANGE_TO_BUCKET)) {
       // Only allow 1 measured range, for the moment.
       let d = 'for range'
-      this.modifierStack.modifierList = this.modifierStack.modifierList.filter((m) => m.desc != d)
+      this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d)
       if (this.tempRangeMod == 0) {
         this.sum()
         this.updateBucket()
@@ -76,7 +77,7 @@ export class ModifierBucket extends Application {
     data.actorname = !!game.GURPS.LastActor ? game.GURPS.LastActor.name : 'No active character!'
     data.othermods = OtherMods.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
-    data.users = game.users?.filter((u) => u._id != game.user._id) || []
+    data.users = game.users?.filter(u => u._id != game.user._id) || []
     if (data.users.length > 1) data.users.push({ name: 'Everyone!' })
     data.taskdificulties = TaskDifficultyModifiers
     data.lightingmods = LightingModifiers
@@ -94,7 +95,7 @@ export class ModifierBucket extends Application {
       let defense = []
       let gen = []
 
-      let effects = game.GURPS.LastActor.effects.filter((e) => !e.data.disabled)
+      let effects = game.GURPS.LastActor.effects.filter(e => !e.data.disabled)
       for (let e of effects) {
         let type = e.data.flags.core.statusId
         let m = ModifiersForStatus[type]
@@ -107,19 +108,19 @@ export class ModifierBucket extends Application {
       }
       if (gen.length > 0) {
         data.currentmods.push(horiz('General'))
-        gen.forEach((e) => data.currentmods.push(e))
+        gen.forEach(e => data.currentmods.push(e))
       }
       if (melee.length > 0) {
         data.currentmods.push(horiz('Melee'))
-        melee.forEach((e) => data.currentmods.push(e))
+        melee.forEach(e => data.currentmods.push(e))
       }
       if (ranged.length > 0) {
         data.currentmods.push(horiz('Ranged'))
-        ranged.forEach((e) => data.currentmods.push(e))
+        ranged.forEach(e => data.currentmods.push(e))
       }
       if (defense.length > 0) {
         data.currentmods.push(horiz('Defense'))
-        defense.forEach((e) => data.currentmods.push(e))
+        defense.forEach(e => data.currentmods.push(e))
       }
     }
     return data
@@ -143,15 +144,15 @@ export class ModifierBucket extends Application {
     e.contextmenu(this.onRightClick.bind(this))
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MODIFIER_TOOLTIP))
       e.each((i, li) => {
-        li.addEventListener('mouseenter', (ev) => this._onenter(ev), false)
+        li.addEventListener('mouseenter', ev => this._onenter(ev), false)
       })
 
     e = html.find('#modttt')
     e.each((i, li) => {
-      li.addEventListener('mouseleave', (ev) => this._onleave(ev), false)
+      li.addEventListener('mouseleave', ev => this._onleave(ev), false)
     })
     e.each((i, li) => {
-      li.addEventListener('mouseenter', (ev) => this._onenter(ev), false)
+      li.addEventListener('mouseenter', ev => this._onenter(ev), false)
     })
     if (!!e[0]) this.tooltipElement = e[0]
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
@@ -212,18 +213,32 @@ export class ModifierBucket extends Application {
     let element = event.currentTarget
     let id = element.dataset.id
     let user = game.users.get(id)
-    let set = !!user ? [user] : game.users?.filter((u) => u._id != game.user._id) || []
+
+    this.sendBucket(user)
+    setTimeout(() => this.showOthers(), 1000) // Need time for clients to update...and
+  }
+
+  async sendBucketToPlayer(name) {
+    if (!name) {
+      this.sendBucket()
+    } else {
+      let users = game.users.players.filter(u => u.name == name) || []
+      if (users.length > 0) this.sendBucket(users[0])
+      else ui.notifications.warn("No player named '" + name + "'")
+    }
+  }
+
+  async sendBucket(user) {
+    let set = !!user ? [user] : game.users?.filter(u => u._id != game.user._id) || []
     let d = Date.now()
     {
-      await set.forEach((u) => {
+      await set.forEach(u => {
         u.setFlag('gurps', 'modifierstack', game.GURPS.ModifierBucket.modifierStack)
       })
-      await set.forEach((u) => {
+      await set.forEach(u => {
         u.setFlag('gurps', 'modifierchanged', d)
       })
     }
-
-    setTimeout(() => this.showOthers(), 1000) // Need time for clients to update...and
   }
 
   async _onClickTrash(event) {
@@ -247,7 +262,7 @@ export class ModifierBucket extends Application {
       if (!game.user.isGM) {
         let messageData = {
           content: this.chatString(this.modifierStack),
-          type: CONST.CHAT_MESSAGE_TYPES.OOC,
+          type: CONST.CHAT_MESSAGE_TYPES.OOC
         }
         CONFIG.ChatMessage.entityClass.create(messageData, {})
       } else this.showOthers()
@@ -255,7 +270,7 @@ export class ModifierBucket extends Application {
   }
 
   async showOthers() {
-    let users = game.users.filter((u) => u._id != game.user._id)
+    let users = game.users.filter(u => u._id != game.user._id)
     let content = ''
     let d = ''
     for (let u of users) {
@@ -269,7 +284,7 @@ export class ModifierBucket extends Application {
       user: game.user._id,
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       content: content,
-      whisper: [game.user._id],
+      whisper: [game.user._id]
     }
     CONFIG.ChatMessage.entityClass.create(chatData, {})
   }
@@ -295,7 +310,7 @@ ${OtherMods}`
 
     let messageData = {
       content: output,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC,
+      type: CONST.CHAT_MESSAGE_TYPES.OOC
     }
     CONFIG.ChatMessage.entityClass.create(messageData, {})
   }
@@ -307,7 +322,7 @@ ${OtherMods}`
       mod: m,
       modint: parseInt(m),
       desc: reason,
-      plus: m[0] == '+',
+      plus: m[0] == '+'
     }
   }
 
@@ -332,7 +347,93 @@ ${OtherMods}`
 
   async addModifier(mod, reason) {
     let stack = this.modifierStack
-    let oldmod = stack.modifierList.find((m) => m.desc == reason)
+    let oldmod = stack.modifierList.find(m => m.desc == reason)
+    if (!!oldmod) {
+      let m = oldmod.modint + parseInt(mod)
+      oldmod.mod = displayMod(m)
+      oldmod.modint = m
+    } else {
+      stack.modifierList.push(this.makeModifier(mod, reason))
+    }
+    this.sum()
+    this.updateBucket()
+  }
+
+  // Called during the dice roll to return a list of modifiers and then clear
+  async applyMods(targetmods = []) {
+    let stack = this.modifierStack
+    let answer = !!targetmods ? targetmods : []
+    answer = answer.concat(stack.modifierList)
+    this.clear()
+    return answer
+  }
+
+  clear() {
+    //await game.user.setFlag("gurps", "modifierstack", null);
+    this.modifierStack = {
+      modifierList: [], // { "mod": +/-N, "desc": "" }
+      currentSum: 0,
+      displaySum: '+0'
+    }
+    this.updateBucket()
+  }
+
+  async updateBucket() {
+    this.refresh()
+    game.user.setFlag('gurps', 'modifierstack', this.modifierStack)
+  }
+
+  // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
+  async updateDisplay(changed) {
+    this.modifierStack = game.user.getFlag('gurps', 'modifierstack')
+    this.sum()
+    this.refresh()
+  }
+
+  chatString(modst, name = '') {
+    let content = name + 'No modifiers'
+    if (modst.modifierList.length > 0) {
+      content = name + 'total: ' + modst.displaySum
+      for (let m of modst.modifierList) {
+        content += '<br> &nbsp;' + m.mod + ' : ' + m.desc
+      }
+    }
+    return content
+  }
+
+  // Public method. Used by GURPS to create a temporary modifer for an action.
+  makeModifier(mod, reason) {
+    let m = displayMod(mod)
+    return {
+      mod: m,
+      modint: parseInt(m),
+      desc: reason,
+      plus: m[0] == '+'
+    }
+  }
+
+  sum() {
+    let stack = this.modifierStack
+    stack.currentSum = 0
+    for (let m of stack.modifierList) {
+      stack.currentSum += m.modint
+    }
+    stack.displaySum = displayMod(stack.currentSum)
+    stack.plus = stack.currentSum > 0
+    stack.minus = stack.currentSum < 0
+  }
+
+  displaySum() {
+    return this.modifierStack.displaySum
+  }
+
+  currentSum() {
+    return this.modifierStack.currentSum
+  }
+
+  async addModifier(mod, reason) {
+    let stack = this.modifierStack
+    let oldmod = stack.modifierList.find(m => m.desc == reason)
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
       oldmod.mod = displayMod(m)
@@ -358,7 +459,7 @@ ${OtherMods}`
     this.modifierStack = {
       modifierList: [], // { "mod": +/-N, "desc": "" }
       currentSum: 0,
-      displaySum: '+0',
+      displaySum: '+0'
     }
     this.updateBucket()
   }
@@ -416,7 +517,7 @@ const StatusModifiers = [
   '-1 to IQ/DX/CR rolls (Moderate Pain /w HPT)',
   '-2 to IQ/DX/CR rolls (Severe Pain /w HPT)',
   '-3 to IQ/DX/CR rolls (Terrible Pain /w HPT)',
-  '-5 to IQ/DX/PER checks (Retching)',
+  '-5 to IQ/DX/PER checks (Retching)'
 ]
 
 const CoverPostureModifiers = [
@@ -439,7 +540,7 @@ const CoverPostureModifiers = [
   '-2 to hit Melee (Crouch)',
   '-2 to hit Ranged (Crouch)',
   '-2 to hit Melee (Kneel/Sit)',
-  '-2 to active defenses (Kneel/Sit)',
+  '-2 to active defenses (Kneel/Sit)'
 ]
 
 const SizeModifiers = [
@@ -466,7 +567,7 @@ const SizeModifiers = [
   "+8  Size 50 yards (150')",
   "+9  Size 70 yards (210')",
   "+10 Size 100 yards (300')",
-  "+11 Size 150 yards (450')",
+  "+11 Size 150 yards (450')"
 ]
 
 let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
@@ -529,7 +630,7 @@ const TaskDifficultyModifiers = [
   '-4 Hard',
   '-6 Very hard',
   '-8 Dangerous',
-  '-10 Impossible',
+  '-10 Impossible'
 ]
 
 const LightingModifiers = [
@@ -543,7 +644,7 @@ const LightingModifiers = [
   '-7 Starlight',
   '-8 Starlight through clouds',
   '-9 Overcast moonless night',
-  '-10 Total darkness',
+  '-10 Total darkness'
 ]
 
 const RateOfFireModifiers = [
@@ -553,7 +654,7 @@ const RateOfFireModifiers = [
   '+3 RoF: 13-16',
   '+4 RoF: 17-24',
   '+5 RoF: 25-49',
-  '+6 RoF: 50-99',
+  '+6 RoF: 50-99'
 ]
 
 const EqtQualifyModifiers = [
@@ -565,7 +666,7 @@ const EqtQualifyModifiers = [
   '-5 Improvised Equipment (tech task)',
   '-1 Missing / Damaged item',
   '-5 No Equipment (none-tech task)',
-  '-10 No Equipment (tech task)',
+  '-10 No Equipment (tech task)'
 ]
 
 const ModifiersForStatus = {
@@ -573,114 +674,114 @@ const ModifiersForStatus = {
     gen: ['[-5 to IQ/DX/PER checks (Retching)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   moderate: {
     gen: ['[-2 to IQ/DX/CR rolls (Moderate Pain)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   severe: {
     gen: ['[-4 to IQ/DX/CR rolls (Severe Pain)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   terrible: {
     gen: ['[-6 to IQ/DX/CR rolls (Terrible Pain)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   nauseated: {
     gen: ['[-2 to All attributes (Nauseated)]'],
     melee: [],
     ranged: [],
-    defense: ['[-1 to active defense (Nauseated)]'],
+    defense: ['[-1 to active defense (Nauseated)]']
   },
   tipsy: {
     gen: ['[-1 to IQ/DX checks (Tipsy)]', '[-2 to CR rolls (Tipsy)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   drunk: {
     gen: ['[-2 to IQ/DX checks (Drunk)]', '[-4 to CR rolls (Drunk)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   drowsy: {
     gen: ['[-2 to IQ/DX/CR rolls (Drowsy)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   coughing: {
     gen: ['[-3 to DX checks (Coughing)]', '[-1 to IQ checks (Coughing)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   euphoria: {
     gen: ['[-3 to IQ/DX/CR rolls (Euphoria)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   shock1: {
     gen: ['[-1 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   shock2: {
     gen: ['[-2 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   shock3: {
     gen: ['[-3 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   shock4: {
     gen: ['[-4 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: [],
+    defense: []
   },
   prone: {
     gen: [],
     melee: ['[-4 to hit Melee (Prone)]'],
     ranged: ['[-2 to hit Ranged (Prone)]'],
-    defense: ['[-2 to active defenses (Prone)]'],
+    defense: ['[-2 to active defenses (Prone)]']
   },
   stun: {
     gen: [],
     melee: [],
     ranged: [],
-    defense: ['[-4 to active defenses (Stunned)]'],
+    defense: ['[-4 to active defenses (Stunned)]']
   },
   kneel: {
     gen: [],
     melee: ['[-2 to hit Melee (Kneeling)]'],
     ranged: [],
-    defense: ['[-2 to active defenses (Kneeling)]'],
+    defense: ['[-2 to active defenses (Kneeling)]']
   },
   crouch: {
     gen: [],
     melee: ['[-2 to hit Melee (Crouching)]'],
     ranged: ['[-2 to hit Ranged (Crouching)]'],
-    defense: [],
+    defense: []
   },
   sit: {
     gen: [],
     melee: ['[-2 to hit Melee (Sitting)]'],
     ranged: [],
-    defense: ['[-2 to active defenses (Sitting)]'],
-  },
+    defense: ['[-2 to active defenses (Sitting)]']
+  }
 }

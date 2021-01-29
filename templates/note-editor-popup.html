@@ -1,0 +1,14 @@
+<div class='resource-editor' style='border: none;'>
+  <div>
+  </div>
+  <div class='inputsv2'>
+     <div class="label">Note</div>
+    <textarea class="notes gcs-input-ta" style="width: 100%; height:400px !important;" rows="10">{{notes}}</textarea>
+    <div class="label">Page Ref</div>
+    <input class="pageref gcs-input-sm5" type="text" value="{{pageref}}"/>
+    {{#if (defined save)}}
+    <input class='save' type='checkbox' {{#if (eq save true)}}checked{{/if}}>
+    <div class="label">Check this to save this note during imports</div>
+    {{/if}}
+  </div>
+</div>

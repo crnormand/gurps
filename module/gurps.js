@@ -50,6 +50,9 @@ jqueryHelpers()
 handlebarHelpers()
 settings.initializeSettings()
 
+// Use the target d6 icon for rolltable entries
+CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.png'
+
 //CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
@@ -1030,6 +1033,10 @@ Hooks.once('init', async function () {
   console.log(GURPS.LEGAL)
   game.GURPS = GURPS
   CONFIG.GURPS = GURPS
+  let src = 'systems/gurps/icons/gurps4e.png'
+  if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
+  $('#logo').attr('src', src)
+  $('#logo').attr('width', '100px')
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
@@ -1067,13 +1074,21 @@ Hooks.once('init', async function () {
   Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
   Hooks.on('chatMessage', (log, content, data) => {
+    if (!!data.alreadyProcessed) return true
     if (content === '/help' || content === '!help') {
-      let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a><br>/help - this message"
-      if (game.user.isGM) c += '<br>/mook - Open Mook Generator'
+      let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
+      c += '<br>/roll (or /r) [On-the-Fly formula]'
+      c += '<br>/private (or /pr) [On-the-Fly formula]'
+      c += '<br>/clearmb'
+      if (game.user.isGM) {
+        c += '<br>/sendmb &lt;playername&gt'
+        c += '<br>/mook'
+      }
       ChatMessage.create({
         content: c,
         user: game.user._id,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [game.user._id],
       })
       return false
     }
@@ -1081,22 +1096,56 @@ Hooks.once('init', async function () {
       new NpcInput().render(true)
       return false
     }
+
     let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
     let found = false
+    let c = 'executing:'
+    let delayed = ''
     content.split('\n').forEach((e) => {
       // Handle multiline chat messages (mostly from macros)
+      let used = false
       let m = e.match(re)
       if (!!m && !!m[2]) {
         let action = parselink(m[2])
         if (!!action.action) {
-          GURPS.performAction(action.action, GURPS.LastActor, {
-            shiftKey: e.startsWith('/pr'),
-          })
-          found = true
+          c += '<br>' + e
+          GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith('/pr') })
+          used = true
+        }
+      } else {
+        if (e === '/clearmb') {
+          c += '<br>' + e
+          GURPS.ModifierBucket.clear()
+          used = true
+        }
+        if (e.startsWith('/sendmb')) {
+          c += '<br>' + e
+          let user = e.replace(/\/sendmb/, '').trim()
+          GURPS.ModifierBucket.sendBucketToPlayer(user)
+          used = true
         }
       }
+      if (!used) delayed += e + '\n'
+      found = found || used
     })
-    if (found) return false
+    if (found) {
+      //     setTimeout(() => {
+      ChatMessage.create({
+        alreadyProcessed: true,
+        content: c,
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [game.user._id],
+      })
+      if (!!delayed) {
+        let d = duplicate(data)
+        d.content = delayed
+        d.alreadyProcessed = true
+        ChatMessage.create(d)
+      }
+      //       }, 500);
+      return false
+    }
   })
 
   // Look for blind messages with .message-results and remove them
@@ -1126,6 +1175,12 @@ Hooks.once('init', async function () {
       }
       console.log($(wrapper).html())
     }
+  })
+
+  // Warning, the very firsttable will take a refresh for the dice to show up in the dialog.  Sorry, can't seem to get around that
+  Hooks.on('createRollTable', async function (entity, options, userId) {
+    await entity.update({ img: 'systems/gurps/icons/single-die.png' })
+    entity.data.img = 'systems/gurps/icons/single-die.png'
   })
 
   ui.modifierbucket = GURPS.ModifierBucket
