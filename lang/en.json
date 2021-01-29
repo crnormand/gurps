@@ -2,6 +2,8 @@
 	"GURPS.title": "GURPS",
 	"GURPS.changelog": "README",
 	"GURPS.DontShowAgain": "Don't show README again",
+	"GURPS.copyright": "GURPS© is copyrighted by Steve Jackson Games",
+	"GURPS.copyrightGCS": "GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved ",
 
 	"GURPS.portrait": "Portrait",
 	"GURPS.identity": "Identity",
@@ -59,9 +61,6 @@
     "GURPS.attributesWILLNAME" : "Will",
     "GURPS.attributesPERNAME" : "Perception",
 
-    "GURPS.HPNAME" : "Hit Points",
-    "GURPS.FPNAME" : "Fatigue Points",
-
     "GURPS.vision" : "Vision",
     "GURPS.hearing" : "Hearing",
     "GURPS.tastesmell" : "Taste/Smell",
@@ -75,6 +74,23 @@
 	"GURPS.block" : "Block",
     "GURPS.dodge" : "Dodge",
     "GURPS.parry" : "Parry",
+
+	"GURPS.reaction": "Reaction",
+	"GURPS.modifier": "Modifier",
+
+	"GURPS.advDisadvPerkQuirks": "Advantages, Disadvantages, Perks & Quirks",
+	"GURPS.skills": "Skills",
+	"GURPS.sl": "SL",
+	"GURPS.rsl": "RSL",
+	"GURPS.spells": "Spells",
+	"GURPS.spellClass": "Class",
+	"GURPS.spellCost": "Cost",
+	"GURPS.spellMaintain": "Maintain",
+	"GURPS.spellTime": "Time",
+	"GURPS.spellDuration": "Duration",
+
+	"GURPS.equipment": "Equipment",
+	"GURPS.otherEquipment": "Other Equipment",
 
 	"GURPS.shock": "Shock",
 	"GURPS.penalty": "Penalty ",

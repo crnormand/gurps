@@ -2,6 +2,8 @@
   "GURPS.title": "GURPS",
   "GURPS.changelog": "README",
   "GURPS.DontShowAgain": "Não exibir README novamente",
+  "GURPS.copyright": "GURPS© Copyrighted by Steve Jackson Games",
+  "GURPS.copyrightGCS": "GCS© Copyright 1998-2020 Richard A. Wilkes. Todos os direitos reservados. ",
 
   "GURPS.portrait": "Retrato",
   "GURPS.identity": "Identidade",
@@ -59,9 +61,6 @@
   "GURPS.attributesWILLNAME" : "Vontade",
   "GURPS.attributesPERNAME" : "Percepção",
 
-  "GURPS.HPNAME" : "Pontos de Vida",
-  "GURPS.FPNAME" : "Pontos de Fadiga",
-
   "GURPS.vision" : "Visão",
   "GURPS.hearing" : "Audição",
   "GURPS.tastesmell" : "Paladar / Cheiro",
@@ -75,6 +74,23 @@
   "GURPS.block" : "Bloqueio",
   "GURPS.dodge" : "Esquiva",
   "GURPS.parry" : "Aparar",
+
+  "GURPS.reaction": "Reação",
+  "GURPS.modifier": "Modificador",
+
+  "GURPS.advDisadvPerkQuirks": "Vantagens, Desvantagens, Utilidades e Peculiaridades",
+  "GURPS.skills": "Perícias",
+  "GURPS.sl": "NH",
+  "GURPS.rsl": "NH Rel",
+  "GURPS.spells": "Magias",
+  "GURPS.spellClass": "Classe",
+  "GURPS.spellCost": "Custo",
+  "GURPS.spellMaintain": "Manter",
+  "GURPS.spellTime": "Tempo",
+  "GURPS.spellDuration": "Duração",
+
+  "GURPS.equipment": "Equipamento",
+  "GURPS.otherEquipment": "Outros Equipamentos",
 
   "GURPS.shock": "Choque",
   "GURPS.penalty": "Penalidade de ",
