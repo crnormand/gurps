@@ -37,7 +37,7 @@
   "GURPS.pointsDisadvantages": "Desvantagens",
   "GURPS.pointsQuirks": "Peculiaridades",
   "GURPS.pointsSkills": "Perícias",
-  "GURPS.pointsSpells": "Feitiços",
+  "GURPS.pointsSpells": "Magias",
 
   "GURPS.attributes" : "Atributos",
   "GURPS.attributesST" : "ST",
@@ -49,6 +49,8 @@
 
   "GURPS.HP" : "HP",
   "GURPS.FP" : "FP",
+  "GURPS.attributesHPNAME" : "Pontos de Vida",
+  "GURPS.attributesFPNAME" : "Pontos de Fadiga",
 
   "GURPS.attributesSTNAME" : "Força",
   "GURPS.attributesDXNAME" : "Destreza",
@@ -65,13 +67,50 @@
   "GURPS.tastesmell" : "Paladar / Cheiro",
   "GURPS.touch" : "Tato",
   "GURPS.frightcheck" : "Verificação de Pânico",
-  "GURPS.basicspeed" : "Velocidade Básica",
-  "GURPS.basicmove" : "Movimentação Básica",
+  "GURPS.basicspeed" : "Vel. Básica",
+  "GURPS.basicmove" : "Desl. Básico",
   "GURPS.thrust" : "Golpe de Ponta (GDP)",
   "GURPS.swing" : "Golpe de Balanço (BAL)",
-  "GURPS.move" : "Movimentação",
+  "GURPS.move" : "Deslocamento",
+  "GURPS.block" : "Bloqueio",
   "GURPS.dodge" : "Esquiva",
-  "GURPS.parry" : "Desviar-se",
+  "GURPS.parry" : "Aparar",
+
+  "GURPS.basic" : "Básico",
+  "GURPS.normal" : "Normal",
+  "GURPS.resourceTrackers" : "Controle de Recursos",
+
+  "GURPS.encumbranceMoveDodge" : "Sobrecarga, Deslocamento e Esquiva",
+  "GURPS.maxload" : "Carga Máx",
+  "GURPS.level" : "Nível",
+
+  "GURPS.liftingAndMovingThings": "Erguendo E Movendo Coisas",
+  "GURPS.basicLift" : "Carga Básica",
+  "GURPS.oneHandLift" : "Levantar com UMA mão",
+  "GURPS.twoHandLift" : "Levantar com DUAS mãos",
+  "GURPS.shoveAndKnockOver" : "Empurrar e Derrubar",
+  "GURPS.runningShoveAndKnockOver" : "Encontrão e Derrubar",
+  "GURPS.carryOnBack" : "Carregar nas Costas",
+  "GURPS.shiftSlightly" : "Mover Levemente",
+
+  "GURPS.hitLocation" : "Local de Acerto",
+  "GURPS.roll" : "Resultado",
+  "GURPS.hitLocationWhere" : "Onde",
+  "GURPS.hitLocationPenalty" : "Modificador",
+  "GURPS.hitLocationDR" : "RD",
+
+  "GURPS.meleeWeapons" : "Armas de Combate Corpo a Corpo",
+  "GURPS.usage" : "Modo de Uso",
+  "GURPS.damage" : "Dano",
+  "GURPS.reach" : "Alcance",
+
+  "GURPS.rangedWeapons" : "Armas de Combate à Distância",
+  "GURPS.acc" : "Prec",
+  "GURPS.rof" : "CdT",
+  "GURPS.shots" : "Tiro",
+  "GURPS.bulk" : "Magnitude",
+  "GURPS.rcl" : "Recuo",
+
 
   "GURPS.SkillDXE": "DX/F",
   "GURPS.SkillDXA": "DX/M",
