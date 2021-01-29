@@ -414,8 +414,8 @@
 
     {{#if (notEmpty data.reactions)}}
     <div id="reactions">
-      <div class="modifier header">Modifier</div>
-      <div class="situation header">Reaction</div>
+      <div class="modifier header">{{localize "GURPS.modifier"}}</div>
+      <div class="situation header">{{localize "GURPS.reaction"}}</div>
       <div></div>
       {{#each data.reactions}}
       <div class="modifier gmod" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
@@ -495,7 +495,7 @@
     {{/if}}
     
     <div id="advantages">
-      <div class="desc header dblclksort" data-key="data.ads">Advantages, Disadvantages, Perks &amp; Quirks</div>
+      <div class="desc header dblclksort" data-key="data.ads">{{localize "GURPS.advDisadvPerkQuirks"}}</div>
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
       {{#listeqt data.ads}}
@@ -513,9 +513,9 @@
     </div>
 
     <div id="skills">
-      <div class="desc header dblclksort" data-key="data.skills">Skills</div>
-      <div class="sl header">SL</div>
-      <div class="rsl header">RSL</div>
+      <div class="desc header dblclksort" data-key="data.skills">{{localize "GURPS.skills"}}</div>
+      <div class="sl header">{{localize "GURPS.sl"}}</div>
+      <div class="rsl header">{{localize "GURPS.rsl"}}</div>
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
 
@@ -538,15 +538,15 @@
 
     {{#if (notEmpty data.spells)}}
     <div id="spells">
-      <div class="desc header dblclksort" data-key="data.spells">Spells</div>
-      <div class="cls header">Class</div>
-      <div class="college header">College</div>
-      <div class="mana header">Cost</div>
-      <div class="mana_maintain header">Maintain</div>
-      <div class="time header">Time</div>
-      <div class="duration header">Duration</div>
-      <div class="sl header">SL</div>
-      <div class="rsl header">RSL</div>
+      <div class="desc header dblclksort" data-key="data.spells">{{localize "GURPS.spells"}}</div>
+      <div class="cls header">{{localize "GURPS.spellClass"}}</div>
+      <div class="college header">{{localize "GURPS.spellCollege"}}</div>
+      <div class="mana header">{{localize "GURPS.spellCost"}}</div>
+      <div class="mana_maintain header">{{localize "GURPS.spellMaintain"}}</div>
+      <div class="time header">{{localize "GURPS.spellTime"}}</div>
+      <div class="duration header">{{localize "GURPS.spellDuration"}}</div>
+      <div class="sl header">{{localize "GURPS.sl"}}</div>
+      <div class="rsl header">{{localize "GURPS.rsl"}}</div>
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
 
@@ -577,7 +577,7 @@
     <div id="equipment" class="equipmentlist">
       <div class="equipped header">E</div>
       <div class="qty header eqtdragtarget" data-key="data.equipment.carried">Qty</div>
-      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried"><span class='edit'>Equipment
+      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried"><span class='edit'>{{localize "GURPS.equipment"}}
         ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}}) &nbsp; <i class='fas fa-plus addequipmenticon'></i></span></div>
       <div class="cost header">$</div>
       <div class="weight header">lb</div>
@@ -612,7 +612,7 @@
     </div>
     <div id="other_equipment" class="equipmentlist">
       <div class="qty header eqtdragtarget" data-key="data.equipment.other">Qty</div>
-      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.other">Other Equipment
+      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.other">{{localize "GURPS.otherEquipment"}}
         (${{eqtsummary.othercost}}) &nbsp; <i class='fas fa-plus addequipmenticon'></i></span></div>
       <div class="cost header">$</div>
       <div class="weight header">lb</div>
@@ -654,7 +654,7 @@
       <div></div>
     </div>
   </div>
-  <div id="footer">GCS is copyrighted 1998-2020 by Richard A. Wilkes All rights reserved
+  <div id="footer">{{localize "GURPS-copyrightGCS"}}
     <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
   </div>
 </form>
