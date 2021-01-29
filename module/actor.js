@@ -98,14 +98,15 @@ export class GurpsActor extends Actor {
       let vernum = 1;
       if (!!v[1]) vernum = parseInt(v[1]);
       if (vernum < 2) {
-        msg += "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks.   If you are missing ranged attacks, please upgrade to the latest export script.<br>"
+        msg += "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the 'Parent' Attribute for equipment." +
+            "   If you are missing ranged attacks or your equipment is not appearing inside the correct container, please upgrade to the latest export script.<br>"
       } 
 		}
     if (isFoundryGCS) {
       let vernum = 1;
       if (!!v[1]) vernum = parseInt(v[1]);
       if (vernum < 2) {
-        msg += "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   Without them, we cannot determine which items are contained in others, you should upgrade to the latest export script.<br>"
+        msg += "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   We cannot determine which items are contained in others.  Please upgrade to the latest export script.<br>"
       } 
     }
 
