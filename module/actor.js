@@ -61,66 +61,69 @@ export class GurpsActor extends Actor {
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
+    var c, ra;    // The character json, release attributes
+    let isFoundryGCS = false;
+    let isFoundryGCA = false;
     // need to remove <p> and replace </p> with newlines from "formatted text"
     let x = game.GURPS.cleanUpP(xml);
     x = xmlTextToJson(x);
     let r = x.root;
-    if (!r) {
-      if (xml[0] == "{" && importname.endsWith(".gcs"))
-        ui.notifications.error("We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.");
-      else
-        ui.notifications.error("No <root> object found.  Are you importing the correct XML file?");
-      return;
-    }
-
-    let parsererror = r.parsererror;
-    if (!!parsererror) {
-      ui.notifications.error("Error parsing XML: " + this.textFrom(parsererror.div));
-      return;
-    }
-
-    let ra = r["@attributes"];
-    // Sorry for the horrible version checking... it sort of evolved organically
-    const isFoundryGCS = (!!ra && ra.release == "Foundry" && (ra.version == "1" || ra.version.startsWith("GCS")));
-    const isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version.startsWith("GCA"));
-    if (!(isFoundryGCS || isFoundryGCA)) {
-      ui.notifications.error("We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).");
-      ChatMessage.create({ content: "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.WHISPER, whisper: [ game.user.id ]});
-      return;
-    }
     let msg = "";
     let exit = false;
-    const v = ra.version.split("-");
-		if (isFoundryGCA) {
-				if (!v[1]) {
-			  msg += "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.<br>"
-			} 
-      let vernum = 1;
-      if (!!v[1]) vernum = parseInt(v[1]);
-      if (vernum < 2) {
-        msg += "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the 'Parent' Attribute for equipment." +
-            "   If you are missing ranged attacks or your equipment is not appearing inside the correct container, please upgrade to the latest export script.<br>"
-      } 
-		}
-    if (isFoundryGCS) {
-      let vernum = 1;
-      if (!!v[1]) vernum = parseInt(v[1]);
-      if (vernum < 2) {
-        msg += "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   We cannot determine which items are contained in others.  Please upgrade to the latest export script.<br>"
-      } 
-    }
+    if (!r) {
+      if (xml[0] == "{" && importname.endsWith(".gcs"))
+        msg += "We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.<br>";
+      else
+        msg += "No <root> object found.  Are you importing the correct XML file?<br>";
+      exit = true;
+    } else {
+      // The character object starts here
+      c = r.character;
+      if (!c) {
+        msg += "Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format.<br>";
+        exit = true;
+      }
 
-    if (!!msg) {
-      ui.notifications.error(msg);
-      ChatMessage.create({ content: msg + "<br>Check the Users Guide for details. <a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.WHISPER, whisper: [ game.user.id ] });
-      if (exit) return;   // Some older imports can still work.
-    }
-
-    // The character object starts here
-    let c = r.character;
-    if (!c) {
-      ui.notifications.warn("Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format.");
-      return;
+      let parsererror = r.parsererror;
+      if (!!parsererror) {
+        msg += "Error parsing XML: " + this.textFrom(parsererror.div);
+        exit = true;
+      }
+  
+      ra = r["@attributes"];
+      // Sorry for the horrible version checking... it sort of evolved organically
+      isFoundryGCS = (!!ra && ra.release == "Foundry" && (ra.version == "1" || ra.version.startsWith("GCS")));
+      isFoundryGCA = (!!ra && ra.release == "Foundry" && ra.version.startsWith("GCA"));
+      if (!(isFoundryGCS || isFoundryGCA)) {
+        msg += ("We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).<br>");
+        exit = true;
+      }
+      const v = (!!ra?.version) ? ra.version.split("-") : [];
+  		if (isFoundryGCA) {
+  			if (!v[1]) {
+  			  msg += "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.<br>"
+  			} 
+        let vernum = 1;
+        if (!!v[1]) vernum = parseInt(v[1]);
+        if (vernum < 2) {
+          msg += "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the 'Parent' Attribute for equipment." +
+              "   If you are missing ranged attacks or your equipment is not appearing inside the correct container, please upgrade to the latest export script.<br>"
+        } 
+  		}
+      if (isFoundryGCS) {
+        let vernum = 1;
+        if (!!v[1]) vernum = parseInt(v[1]);
+        if (vernum < 2) {
+          msg += "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   We cannot determine which items are contained in others.  Please upgrade to the latest export script.<br>"
+        } 
+      }
+  
+      if (!!msg) {
+        ui.notifications.error(msg);
+        ChatMessage.create({ content: msg + "<br>Check the Users Guide for details. <a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.WHISPER, whisper: [ game.user.id ] });
+        if (exit) return;   // Some errors cannot be forgiven ;-)
+      }
+  
     }
     let nm = this.textFrom(c.name);
     console.log("Importing '" + nm + "'");
