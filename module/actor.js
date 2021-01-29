@@ -90,9 +90,9 @@ export class GurpsActor extends Actor {
     }
     let msg = "";
     let exit = false;
+    const v = ra.version.split("-");
 		if (isFoundryGCA) {
-			const v = ra.version.split("-");
-			if (!v[1]) {
+				if (!v[1]) {
 			  msg += "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.<br>"
 			} 
       let vernum = 1;
@@ -101,6 +101,14 @@ export class GurpsActor extends Actor {
         msg += "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks.   If you are missing ranged attacks, please upgrade to the latest export script.<br>"
       } 
 		}
+    if (isFoundryGCS) {
+      let vernum = 1;
+      if (!!v[1]) vernum = parseInt(v[1]);
+      if (vernum < 2) {
+        msg += "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   Without them, we cannot determine which items are contained in others, you should upgrade to the latest export script.<br>"
+      } 
+    }
+
     if (!!msg) {
       ui.notifications.error(msg);
       ChatMessage.create({ content: msg + "<br>Check the Users Guide for details. <a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>", user: game.user._id, type: CONST.CHAT_MESSAGE_TYPES.WHISPER, whisper: [ game.user.id ] });
