@@ -76,6 +76,10 @@
     "GURPS.dodge" : "Dodge",
     "GURPS.parry" : "Parry",
 
+	"GURPS.shock": "Shock",
+	"GURPS.penalty": "Penalty ",
+	"GURPS.toDXandIQ": " to DX and IQ.",
+
 	"GURPS.basic" : "Basic",
 	"GURPS.normal" : "Normal",
 	"GURPS.resourceTrackers" : "Resource Trackers",
