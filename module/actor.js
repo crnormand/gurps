@@ -271,6 +271,7 @@ export class GurpsActor extends Actor {
     if (!!descjson) {  // support for GCA description
       let n = new Note();
       n.notes = t(descjson).replace(/\\r/g, "\n");
+      n.imported = true;
       temp.push(n);
     }
     for (let key in json) {
@@ -283,9 +284,13 @@ export class GurpsActor extends Actor {
         if (!!txt) n.notes = n.notes + "\n" + txt.replace(/\\r/g, "\n");
         n.uuid = t(j.uuid);
         n.parentuuid = t(j.parentuuid);
+        n.imported = true;
         temp.push(n);
        }
     }
+    // Save the old User Entered Notes.
+    if (!!this.data.data.notes) Object.values(this.data.data.notes).forEach(n => { 
+      Named.recurse(n, (t) => {if (!!t.save) temp.push(t) })});
     return {
       "data.-=notes": null,
       "data.notes": this.foldList(temp)
@@ -525,6 +530,13 @@ export class GurpsActor extends Actor {
           eqt.parentuuid = "";	// Can't find a parent, so put it in the top list
       }
     });
+
+    
+    // Save the old User Entered Notes.
+    if (!!this.data.data.equipment.carried) Object.values(this.data.data.equipment.carried).forEach(n => { 
+      Named.recurse(n, (t) => { t.carried = true; if (!!t.save) temp.push(t) })});
+    if (!!this.data.data.equipment.other) Object.values(this.data.data.equipment.other).forEach(n => { 
+      Named.recurse(n, (t) => {if (!!t.save) temp.push(t) })});
 
     let equipment = {
       "carried": {},
@@ -1079,6 +1091,12 @@ export class Named {
       }
     }
   }
+  
+  static recurse(obj, fn) {
+    fn(obj);
+    if (!!obj.contains) Object.values(obj.contains).forEach(o => Named.recurse(o, fn));
+    if (!!obj.collapsed) Object.values(obj.collapsed).forEach(o => Named.recurse(o, fn));
+  }
 }
 
 export class NamedCost extends Named {
@@ -1166,13 +1184,18 @@ export class Encumbrance {
 }
 
 export class Note extends Named {
-  constructor(n) {
+  constructor(n, ue) {
     super();
     this.notes = n;
+    this.save = ue;
   }
 }
 
 export class Equipment extends Named {
+  constructor(nm, ue) {
+    super(nm);
+    this.save = ue;
+  }
   equipped = false;
   carried = false;
   count = 0;

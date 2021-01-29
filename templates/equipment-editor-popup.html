@@ -13,5 +13,9 @@
     <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5">{{notes}}</textarea>
     <div class="label">Page Ref</div>
     <input class="pageref gcs-input-sm5" type="text" value="{{pageref}}"/>
+    {{#if (defined save)}}
+    <input class='save' type='checkbox' {{#if (eq save true)}}checked{{/if}}>
+    <div class="label">Check this to save this equipment during imports</div>
+    {{/if}}
   </div>
 </div>
