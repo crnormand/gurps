@@ -49,6 +49,8 @@
 
     "GURPS.HP" : "HP",
     "GURPS.FP" : "FP",
+	"GURPS.attributesHPNAME" : "Hit Points",
+	"GURPS.attributesFPNAME" : "Fatigue",
 
     "GURPS.attributesSTNAME" : "Strength",
     "GURPS.attributesDXNAME" : "Dexterity",
@@ -70,8 +72,44 @@
     "GURPS.thrust" : "Basic Thrust",
     "GURPS.swing" : "Basic Swing",
     "GURPS.move" : "Move",
+	"GURPS.block" : "Block",
     "GURPS.dodge" : "Dodge",
     "GURPS.parry" : "Parry",
+
+	"GURPS.basic" : "Basic",
+	"GURPS.normal" : "Normal",
+	"GURPS.resourceTrackers" : "Resource Trackers",
+
+	"GURPS.encumbranceMoveDodge" : "Encumbrance, Move & Dodge",
+	"GURPS.maxload" : "Max Load",
+	"GURPS.level" : "Level",
+
+	"GURPS.liftingAndMovingThings": "Lifting & Moving Things",
+	"GURPS.basicLift" : "Basic Lift",
+	"GURPS.oneHandLift" : "One-Hand Lift",
+	"GURPS.twoHandLift" : "Two-Hand Lift",
+	"GURPS.shoveAndKnockOver" : "Shove & Knock Over",
+	"GURPS.runningShoveAndKnockOver" : "Running Shove & Knock Over",
+	"GURPS.carryOnBack" : "carryOnBack",
+	"GURPS.shiftSlightly" : "Shift Slightly",
+
+	"GURPS.hitLocation" : "Hit Location",
+	"GURPS.roll" : "Roll",
+	"GURPS.hitLocationWhere" : "Where",
+	"GURPS.hitLocationPenalty" : "Penalty",
+	"GURPS.hitLocationDR" : "DR",
+
+	"GURPS.meleeWeapons" : "Melee Weapons",
+	"GURPS.usage" : "Usage",
+	"GURPS.damage" : "Damage",
+	"GURPS.reach" : "Reach",
+
+	"GURPS.rangedWeapons" : "Ranged Weapons",
+	"GURPS.acc" : "Acc",
+	"GURPS.rof" : "RoF",
+	"GURPS.shots" : "Shots",
+	"GURPS.bulk" : "Bulk",
+	"GURPS.rcl" : "Rcl",
 
 	"GURPS.SkillDXE": "DX/E",
 	"GURPS.SkillDXA": "DX/A",
