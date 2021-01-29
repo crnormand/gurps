@@ -160,12 +160,12 @@
         </div>
       </div>
       <div id="encumbrance">
-        <div class="header">Encumbrance, Move &amp; Dodge</div>
+        <div class="header">{{localize "GURPS.encumbranceMoveDodge"}}</div>
         <div class="encmarkerh header"></div>
-        <div class="ench header">Level</div>
-        <div class="loadh header">Max Load</div>
-        <div class="moveh header">Move</div>
-        <div class="dodgeh header">Dodge</div>
+        <div class="ench header">{{localize "GURPS.level"}}</div>
+        <div class="loadh header">{{localize "GURPS.maxload"}}</div>
+        <div class="moveh header">{{localize "GURPS.move"}}</div>
+        <div class="dodgeh header">{{localize "GURPS.dodge"}}</div>
 
         {{#each data.encumbrance as | this key |}}
         {{#if this.current}}
@@ -185,30 +185,30 @@
 
       </div>
       <div id="lifting">
-        <div class="header">Lifting &amp; Moving Things</div>
+        <div class="header">{{localize "GURPS.liftingAndMovingThings"}}</div>
         <div class="lift">{{data.liftingmoving.basiclift}}</div>
-        <div class="liftdesc">Basic Lift</div>
+        <div class="liftdesc">{{localize "GURPS.basicLift"}}</div>
         <div class="lift">{{data.liftingmoving.onehandedlift}}</div>
-        <div class="liftdesc">One-Handed Lift</div>
+        <div class="liftdesc">{{localize "GURPS.oneHandLift"}}</div>
         <div class="lift">{{data.liftingmoving.twohandedlift}}</div>
-        <div class="liftdesc">Two-Handed Lift</div>
+        <div class="liftdesc">{{localize "GURPS.twoHandLift"}}</div>
         <div class="lift">{{data.liftingmoving.shove}}</div>
-        <div class="liftdesc">Shove &amp; Knock Over</div>
+        <div class="liftdesc">{{localize "GURPS.shoveAndKnockOver"}}</div>
         {{#if data.liftingmoving.runningshove}}
         <div class="lift">{{data.liftingmoving.runningshove}}</div>
-        <div class="liftdesc">Running Shove &amp; Knock Over</div>
+        <div class="liftdesc">{{localize "GURPS.runningShoveAndKnockOver"}}</div>
         {{/if}}
         <div class="lift">{{data.liftingmoving.carryonback}}</div>
-        <div class="liftdesc">Carry on Back</div>
+        <div class="liftdesc">{{localize "GURPS.carryOnBack"}}</div>
         <div class="lift">{{data.liftingmoving.shiftslightly}}</div>
-        <div class="liftdesc">Shift Slightly</div>
+        <div class="liftdesc">{{localize "GURPS.shiftSlightly"}}</div>
       </div>
       <div id="location">
-        <div class="header">Hit Location</div>
-        <div class="roll header">Roll</div>
-        <div class="where header">Where</div>
-        <div class="penalty header">Penalty</div>
-        <div class="dr header">DR</div>
+        <div class="header">{{localize "GURPS.hitLocation"}}</div>
+        <div class="roll header">{{localize "GURPS.roll"}}</div>
+        <div class="where header">{{localize "GURPS.hitLocationWhere"}}</div>
+        <div class="penalty header">{{localize "GURPS.hitLocationPenalty"}}</div>
+        <div class="dr header">{{localize "GURPS.hitLocationDR"}}</div>
 
         {{#each data.hitlocations}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
@@ -276,7 +276,7 @@
           </div>
           {{else}}
           <div id='combat-hit' class='tracked-resource' data-gurps-resource='HP'>
-            <div class='header'>Hit Points</div>
+            <div class='header'>{{localize "GURPS.attributesHPNAME"}}</div>
             <div class='spinner'>
               <button data-operation='resource-dec'><i class="fas fa-minus"></i></button>
               <details>
@@ -314,7 +314,7 @@
               <div class='basic-value fieldblock3'>
                 <div class="points">[{{data.HP.points}}]</div>
                 <div class='field'>{{data.HP.max}}</div>
-                <div class='label'>Basic</div>
+                <div class='label'>{{localize "GURPS.basic"}}</div>
               </div>
             </div>
           </div>
@@ -322,7 +322,7 @@
           <!-- end of combat-hit -->
 
           <div id='combat-fat' class='tracked-resource' data-gurps-resource='FP'>
-            <div class='header'>Fatigue</div>
+            <div class='header'>{{localize "GURPS.attributesFPNAME"}}</div>
             <div class='spinner'>
               <button data-operation='resource-dec'><i class="fas fa-minus"></i></button>
               <details>
@@ -360,7 +360,7 @@
               <div class='basic-value fieldblock3'>
                 <div class="points">[{{data.FP.points}}]</div>
                 <div class='field'>{{data.FP.max}}</div>
-                <div class='label'>Basic</div>
+                <div class='label'>{{localize "GURPS.basic"}}</div>
               </div>
             </div>
           </div> <!-- combat-fat -->
@@ -369,7 +369,7 @@
         <div></div>
 
         <div id='resources'>
-          <div class="header" style="grid-column: 1 / span 2;">Resource Trackers</div>
+          <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
 
           {{#each data.additionalresources.tracker}}
           <div class='tracked-resource {{#unless name}}inactive{{/unless}}'
@@ -428,14 +428,14 @@
 
     {{#if (notEmpty data.melee)}}
     <div id="melee">
-      <div class="desc header">Melee Weapons</div>
-      <div class="usage header">Usage</div>
-      <div class="level header">Lvl</div>
-      <div class="parry header">Parry</div>
-      <div class="block header">Block</div>
-      <div class="damage header">Damage</div>
-      <div class="reach header">Reach</div>
-      <div class="st header">ST</div>
+      <div class="desc header">{{localize "GURPS.meleeWeapons"}}</div>
+      <div class="usage header">{{localize "GURPS.usage"}}</div>
+      <div class="level header">{{localize "GURPS.level"}}</div>
+      <div class="parry header">{{localize "GURPS.parry"}}</div>
+      <div class="block header">{{localize "GURPS.block"}}</div>
+      <div class="damage header">{{localize "GURPS.damage"}}</div>
+      <div class="reach header">{{localize "GURPS.reach"}}</div>
+      <div class="st header">{{localize "GURPS.attributesST"}}</div>
       <div></div>
 
       {{#each data.melee as | this key |}}
@@ -458,17 +458,17 @@
 
     {{#if (notEmpty data.ranged)}}
     <div id="ranged">
-      <div class="desc header">Ranged Weapons</div>
-      <div class="usage header">Usage</div>
-      <div class="level header">Lvl</div>
-      <div class="acc header">Acc</div>
-      <div class="damage header">Damage</div>
-      <div class="range header">Range</div>
-      <div class="rof header">RoF</div>
-      <div class="shots header">Shots</div>
-      <div class="bulk header">Bulk</div>
-      <div class="rcl header">Rcl</div>
-      <div class="st header">ST</div>
+      <div class="desc header">{{localize "GURPS.rangedWeapons"}}</div>
+      <div class="usage header">{{localize "GURPS.usage"}}</div>
+      <div class="level header">{{localize "GURPS.level"}}</div>
+      <div class="acc header">{{localize "GURPS.acc"}}</div>
+      <div class="damage header">{{localize "GURPS.damage"}}</div>
+      <div class="range header">{{localize "GURPS.reach"}}</div>
+      <div class="rof header">{{localize "GURPS.rof"}}</div>
+      <div class="shots header">{{localize "GURPS.Shots"}}</div>
+      <div class="bulk header">{{localize "GURPS.bulk"}}</div>
+      <div class="rcl header">{{localize "GURPS.rcl"}}</div>
+      <div class="st header">{{localize "GURPS.attributesST"}}</div>
 
 
       {{#each data.ranged as | this key |}}
