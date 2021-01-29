@@ -492,8 +492,10 @@ export class GurpsActor extends Actor {
         eqt.equipped = (cstatus == 2);
         eqt.techlevel = t(j.tl);
         eqt.legalityclass = t(j.lc);
-        eqt.categories = t(j.type);
-       if (isFoundryGCS) {
+        eqt.categories = t(j.type); 
+        eqt.uuid = t(j.uuid);
+        eqt.parentuuid = t(j.parentuuid);
+        if (isFoundryGCS) {
           eqt.notes = t(j.notes);
           eqt.pageref = t(j.pageref);
         } else
@@ -506,13 +508,13 @@ export class GurpsActor extends Actor {
 
     // Put everything in it container (if found), otherwise at the top level
     temp.forEach(eqt => {
-      if (!!eqt.location) {
+      if (!!eqt.parentuuid) {
         let parent = null;
-        parent = temp.find(e => e.name === eqt.location);
+        parent = temp.find(e => e.uuid === eqt.parentuuid);
         if (!!parent)
           game.GURPS.put(parent.contains, eqt);
         else
-          eqt.location = "";	// Can't find a parent, so put it in the top list
+          eqt.parentuuid = "";	// Can't find a parent, so put it in the top list
       }
     });
 
@@ -525,7 +527,7 @@ export class GurpsActor extends Actor {
 
     temp.forEach(eqt => {
       Equipment.calc(eqt);
-      if (!eqt.location) {
+      if (!eqt.parentuuid) {
         if (eqt.carried)
           game.GURPS.put(equipment.carried, eqt, cindex++);
         else
@@ -1176,22 +1178,7 @@ export class Equipment extends Named {
   weightsum = "";
   
   static calc(eqt) {
-    if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0;
-    if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0;
-    if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0;
-    eqt.costsum = eqt.count * eqt.cost;
-    eqt.weightsum = eqt.count * eqt.weight;
-    if (!!eqt.contains) Object.values(eqt.contains).forEach(e => {
-        let [c, w] = Equipment.calc(e);
-        eqt.costsum += c;
-        eqt.weightsum += w;
-      });
-    if (!!eqt.collapsed) Object.values(eqt.collapsed).forEach(e => {
-        let [c, w] = Equipment.calc(e);
-        eqt.costsum += c;
-        eqt.weightsum += w;
-      });
-    return [eqt.costsum, eqt.weightsum];
+    Equipment.calcUpdate(null, eqt, "");
   }
   
   
@@ -1219,10 +1206,11 @@ export class Equipment extends Named {
         ws += e.weightsum;
       }
     };
-    await actor.update({
-      [objkey + ".costsum"]: cs,
-      [objkey + ".weightsum"]: ws
-    });
+    if (!!actor) 
+      await actor.update({
+        [objkey + ".costsum"]: cs,
+        [objkey + ".weightsum"]: ws
+      });
     // the local values 'should' be updated... but I need to force them anyway
     eqt.costsum = cs;
     eqt.weightsum = ws;

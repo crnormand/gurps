@@ -46,6 +46,9 @@ jqueryHelpers()
 handlebarHelpers()
 settings.initializeSettings()
 
+// Use the target d6 icon for rolltable entries
+CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.png'
+
 GURPS.hitlocationDictionary = HitLocations.hitlocationDictionary
 GURPS.getHitLocationTableNames = HitLocations.getHitLocationTableNames
 
@@ -1029,7 +1032,12 @@ Hooks.once("init", async function () {
   console.log(GURPS.LEGAL);
   game.GURPS = GURPS;
   CONFIG.GURPS = GURPS;
-
+  let src = 'systems/gurps/icons/gurps4e.png';
+  if (game.i18n.lang == "pt_br")
+    src = 'systems/gurps/icons/gurps4e-pt_br.png';
+  $('#logo').attr('src', src);
+  $('#logo').attr('width', '100px');
+  
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor;
   CONFIG.Item.entityClass = GurpsItem;
@@ -1153,7 +1161,12 @@ Hooks.once("init", async function () {
       console.log($(wrapper).html())
     }
   })
-
+  
+  // Warning, the very firsttable will take a refresh for the dice to show up in the dialog.  Sorry, can't seem to get around that
+  Hooks.on('createRollTable', async function (entity, options, userId) {
+    await entity.update({'img':'systems/gurps/icons/single-die.png'});
+    entity.data.img = 'systems/gurps/icons/single-die.png';
+  });
 
   ui.modifierbucket = GURPS.ModifierBucket;
   ui.modifierbucket.render(true);
@@ -1162,6 +1175,7 @@ Hooks.once("init", async function () {
 Hooks.once("ready", async function () {
   GURPS.ModifierBucket.clear();
   GURPS.ThreeD6.refresh();
+  
 
   // Show changelog
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || "0.0.1";
@@ -1298,6 +1312,7 @@ Hooks.once("ready", async function () {
         first.value.actor.handleDamageDrop(dropData.payload)
       }
     }
+    
   })
 
   // define Handlebars partials for ADD:

@@ -46,6 +46,7 @@ Sub Main()
 
     ' in Fantasy Grounds the <name> field must be at the top level
     Paragraph = "<name type=""string"">" & Char.Name & "</name>"
+    Paragraph = "<portrait type=""string"">" & Char.Portrait & "</portrait>"
 
     ' add the various sections
     Call PrintAbilities()
@@ -1324,7 +1325,8 @@ Sub PrintEquipment()
                 Paragraph = "<notes type=""formattedtext"">" & Char.Items(i).tagitem("description") & "</notes>"
                 Paragraph = "<carried type=""number"">2</carried>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).tagitem("page") & "</pageref>"
-
+                Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+                Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
                 Paragraph = "</id-" & tag_index & ">"
 
             End If
