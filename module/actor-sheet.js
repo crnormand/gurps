@@ -370,7 +370,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-key')
       let actor = this.actor 
       let eqtlist = duplicate(getProperty(actor.data, path))
-      let eqt = new Equipment();
+      let eqt = new Equipment("", true);
       eqt.carried = path.includes("carried");
       let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
 
@@ -390,6 +390,8 @@ export class GurpsActorSheet extends ActorSheet {
             callback: async (html) => {         
               [ 'name', 'notes', 'pageref' ].forEach(a => eqt[a] = html.find(`.${a}`).val());    
               [ 'count', 'cost', 'weight' ].forEach(a => eqt[a] = parseFloat(html.find(`.${a}`).val()));    
+              let u = html.find(".save");   // Should only find in Note (or equipment)
+              if (!!u) eqt.save = (u.is(":checked"));
               Equipment.calc(eqt);
               GURPS.put(eqtlist, eqt);
               actor.update({ [path]: eqtlist })
@@ -450,14 +452,14 @@ export class GurpsActorSheet extends ActorSheet {
         this.editNotes(actor, path, obj)
    })
     
-    let opts = this.addDeleteMenu(new Equipment("New Equipment"));
+    let opts = this.addDeleteMenu(new Equipment("New Equipment", true));
     opts.push({
       name: "Add In",
       icon: "<i class='fas fa-sign-in-alt'></i>",
       callback: e => {
         let k = e[0].dataset.key + ".contains";
         let o = GURPS.decode(this.actor.data, k) || {};
-        GURPS.put(o, duplicate(new Equipment("New Equipment")));
+        GURPS.put(o, duplicate(new Equipment("New Equipment", true)));
         this.actor.update({ [k]: o });
       }
     });
@@ -512,7 +514,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-key')
       let actor = this.actor 
       let list = duplicate(getProperty(actor.data, path))
-      let obj = new Note();
+      let obj = new Note("", true);
       let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
 
       let d = new Dialog({
@@ -523,6 +525,8 @@ export class GurpsActorSheet extends ActorSheet {
             label: "Create",
             callback: async (html) => {         
               [ 'notes', 'pageref' ].forEach(a => obj[a] = html.find(`.${a}`).val());    
+              let u = html.find(".save");   // Should only find in Note (or equipment)
+              if (!!u) obj.save = (u.is(":checked"));
               GURPS.put(list, obj);
               actor.update({ [path]: list })
             }
@@ -570,6 +574,8 @@ export class GurpsActorSheet extends ActorSheet {
           callback: async (html) => {
             [ 'name', 'notes', 'pageref' ].forEach(a => obj[a] = html.find(`.${a}`).val());    
             [ 'count', 'cost', 'weight' ].forEach(a => obj[a] = parseFloat(html.find(`.${a}`).val()));    
+            let u = html.find(".save");   // Should only find in Note (or equipment)
+            if (!!u) obj.save = (u.is(":checked"));
             Equipment.calc(obj);
             await actor.update({ [path]: obj })
             await this.updateParentOf(path, 4);
@@ -628,6 +634,9 @@ export class GurpsActorSheet extends ActorSheet {
           callback: async (html) => {   
             strprops.forEach(a => obj[a] = html.find(`.${a}`).val()); 
             numprops.forEach(a => obj[a] = parseFloat(html.find(`.${a}`).val())); 
+            
+            let u = html.find(".save");   // Should only find in Note (or equipment)
+            if (!!u) obj.save = (u.is(":checked"));
             actor.update({ [path]: obj } )
           }
         }
@@ -1229,11 +1238,11 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeHeaderMenu(html, ".spellhead", "Spell", new Spell("New Spell"), "data.spells");
     this.makeAddDeleteMenu(html, ".spellmenu", new Spell("New Spell"));
 
-    this.makeHeaderMenu(html, ".notehead", "Note", new Note("New Note"), "data.notes");
-    this.makeAddDeleteMenu(html, ".notemenu", new Note("New Note"));
+    this.makeHeaderMenu(html, ".notehead", "Note", new Note("New Note", true), "data.notes");
+    this.makeAddDeleteMenu(html, ".notemenu", new Note("New Note", true));
 
-    this.makeHeaderMenu(html, ".carhead", "Carried Equipment", new Equipment("New Equipment"), "data.equipment.carried");
-    this.makeHeaderMenu(html, ".othhead", "Other Equipment", new Equipment("New Equipment"), "data.equipment.other");
+    this.makeHeaderMenu(html, ".carhead", "Carried Equipment", new Equipment("New Equipment", true), "data.equipment.carried");
+    this.makeHeaderMenu(html, ".othhead", "Other Equipment", new Equipment("New Equipment", true), "data.equipment.other");
 
   }
   
