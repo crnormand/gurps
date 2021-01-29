@@ -92,6 +92,10 @@
 	"GURPS.equipment": "Equipment",
 	"GURPS.otherEquipment": "Other Equipment",
 
+	"GURPS.shock": "Shock",
+	"GURPS.penalty": "Penalty ",
+	"GURPS.toDXandIQ": " to DX and IQ.",
+
 	"GURPS.basic" : "Basic",
 	"GURPS.normal" : "Normal",
 	"GURPS.resourceTrackers" : "Resource Trackers",
