@@ -476,6 +476,7 @@ export class ModifierBucketEditor extends Application {
     this.bucket.modifierStack.modifierList.splice(index, 1)
     this.sum()
     this.refresh()
+    this.bucket.refresh()
   }
 
   async _onClick(event) {

@@ -399,6 +399,7 @@
   border-style: solid;
   border-color: black transparent transparent transparent;
   z-index: -100;
+  pointer-events: none;
 }
 
 .pdflink {
