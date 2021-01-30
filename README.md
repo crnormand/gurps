@@ -19,6 +19,8 @@ To install the latest stable release, use this manifest URL:
 This is what we are currently working on:
 
 - 0.8.10
+    - @Tratz equipment bug fix, portrait fix and logo fix!
+    - Bug fix for OtF formulas in Skills/Spells in containers
 
 ### History
 - 0.8.9
