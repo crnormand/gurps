@@ -379,12 +379,10 @@
   margin: 0px;
   padding: 0px;
   cursor: pointer;
-  z-index: 999;
+  z-index: auto;
 }
 
-.modifierbucket .modttt {
-  /*  visibility: hidden;  */
-  visibility: hidden;
+.modttt {
   width: 900px;
   height: 700px;
   background-color: black;
@@ -396,21 +394,16 @@
   bottom: 102px;
   left: 50%;
   margin-left: -450px;
-  z-index: 999;
   cursor: default;
 
   /* Fade in tooltip - takes 1 second to go from 0% to 100% opac: */
   /* opacity: 0;
   transition: opacity 1s; */
-}
-
-.modifierbucket:hover .modttt {
-  visibility: visible;
-  z-index: 999;
+  z-index: 100;
   /*opacity: 1;	*/
 }
 
-.modifierbucket .modttt::after {
+.modttt::after {
   content: '';
   position: absolute;
   top: 100%;

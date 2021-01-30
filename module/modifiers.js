@@ -1,6 +1,6 @@
 import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import parselink from '../lib/parselink.js'
-import * as settings from '../lib/miscellaneous-settings.js'
+import * as Settings from '../lib/miscellaneous-settings.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 
 // Install Custom Roll to support global modifier access (@gmod & @gmodc)
@@ -20,11 +20,242 @@ export class GurpsRoll extends Roll {
   }
 }
 CONFIG.Dice.rolls[0] = GurpsRoll
-
-// TODO how to handle non-humanoid hit locations?
+/**
+ * ModifierBucket is the always-present widget at the bottom of the
+ * Foundry UI, that display the current total modifier and a 'trashcan'
+ * button to clear all modifiers.
+ * 
+ * This class owns the modifierStack, while the ModifierBucketEditor
+ * modifies it.
+ */
 export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
+
+    this.editor = new ModifierBucketEditor(this, {
+      popOut: true,
+      minimizable: false,
+      resizable: false,
+      id: 'ModifierBucketEditor',
+      template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
+      classes: [],
+    })
+  }
+
+  getData(options) {
+    const data = super.getData(options)
+    data.stack = this.modifierStack
+    return data
+  }
+
+  // whether the ModifierBucketEditor is visible
+  SHOWING = false
+
+  modifierStack = {
+    modifierList: [], // { "mod": +/-N, "desc": "" }
+    currentSum: 0,
+    displaySum: '+0',
+    plus: false,
+    minus: false
+  }
+  get modifierStack() { return this.modifierStack }
+
+  setTempRangeMod(mod) { this.editor._tempRangeMod = mod }
+  addTempRangeMod() { this.editor._addTempRangeMod() }
+
+  activateListeners(html) {
+    super.activateListeners(html)
+
+    html.find('#trash').click(this._onClickTrash.bind(this))
+
+    let e = html.find('#globalmodifier')
+    e.click(this._onClick.bind(this))
+    e.contextmenu(this.onRightClick.bind(this))
+
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)) {
+      e.mouseenter(ev => this._onenter(ev), false)
+    }
+  }
+
+  _onenter(ev) {
+    this.SHOWING = true
+    this.editor.render(true, {
+      left: 
+    })
+  }
+
+  async _onClickTrash(event) {
+    event.preventDefault()
+    this.clear()
+  }
+
+  async _onClick(event) {
+    event.preventDefault()
+    if (event.shiftKey) {
+      // If not the GM, just broadcast our mods to the chat
+      if (!game.user.isGM) {
+        let messageData = {
+          content: this.chatString(this.modifierStack),
+          type: CONST.CHAT_MESSAGE_TYPES.OOC
+        }
+        CONFIG.ChatMessage.entityClass.create(messageData, {})
+      } else this.showOthers()
+    } else this._onenter(event)
+  }
+
+  async showOthers() {
+    let users = game.users.filter(u => u._id != game.user._id)
+    let content = ''
+    let d = ''
+    for (let user of users) {
+      content += d
+      d = '<hr>'
+      let stack = await user.getFlag('gurps', 'modifierstack')
+      if (!!stack) content += this.chatString(stack, user.name + ', ')
+      else content += user.name + ', No modifiers'
+    }
+    let chatData = {
+      user: game.user._id,
+      type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+      content: content,
+      whisper: [game.user._id]
+    }
+    CONFIG.ChatMessage.entityClass.create(chatData, {})
+  }
+
+  // If the GM right clicks on the modifier bucket, it will print the raw text data driving the tooltip
+  // TODO must get this data from the Tooltip application...
+  async onRightClick(event) {
+    event.preventDefault()
+    if (!game.user.isGM) return
+    let c = `Melee:
+${this.editor.MeleeMods}
+
+Ranged:
+${this.editor.RangedMods}
+
+Defense:
+${this.editor.DefenseMods}
+
+Other:
+${this.editor.OtherMods}`
+
+    let output = ''
+    for (let l of c.split('\n')) output += '<br>' + l
+
+    let messageData = {
+      content: output,
+      type: CONST.CHAT_MESSAGE_TYPES.OOC
+    }
+    CONFIG.ChatMessage.entityClass.create(messageData, {})
+  }
+
+  // Public method. Used by GURPS to create a temporary modifer for an action.
+  makeModifier(mod, reason) {
+    let m = displayMod(mod)
+    return {
+      mod: m,
+      modint: parseInt(m),
+      desc: reason,
+      plus: m[0] == '+'
+    }
+  }
+
+  sum() {
+    let stack = this.modifierStack
+    stack.currentSum = 0
+    for (let m of stack.modifierList) {
+      stack.currentSum += m.modint
+    }
+    stack.displaySum = displayMod(stack.currentSum)
+    stack.plus = stack.currentSum > 0
+    stack.minus = stack.currentSum < 0
+  }
+
+  displaySum() {
+    return this.modifierStack.displaySum
+  }
+
+  currentSum() {
+    return this.modifierStack.currentSum
+  }
+
+  async addModifier(mod, reason) {
+    let stack = this.modifierStack
+    let oldmod = stack.modifierList.find(m => m.desc == reason)
+    if (!!oldmod) {
+      let m = oldmod.modint + parseInt(mod)
+      oldmod.mod = displayMod(m)
+      oldmod.modint = m
+    } else {
+      stack.modifierList.push(this.makeModifier(mod, reason))
+    }
+    this.sum()
+    this.updateBucket()
+  }
+
+  // Called during the dice roll to return a list of modifiers and then clear
+  async applyMods(targetmods = []) {
+    let stack = this.modifierStack
+    let answer = !!targetmods ? targetmods : []
+    answer = answer.concat(stack.modifierList)
+    this.clear()
+    return answer
+  }
+
+  async updateBucket() {
+    this.refresh()
+    // TODO also update the Tooltip if it is showing
+    if (this.SHOWING) {
+      this.editor.render(true)
+    }
+    game.user.setFlag('gurps', 'modifierstack', this.modifierStack)
+  }
+
+  // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
+  async updateDisplay(changed) {
+    this.modifierStack = game.user.getFlag('gurps', 'modifierstack')
+    this.sum()
+    this.refresh()
+  }
+
+  chatString(modst, name = '') {
+    let content = name + 'No modifiers'
+    if (modst.modifierList.length > 0) {
+      content = name + 'total: ' + modst.displaySum
+      for (let m of modst.modifierList) {
+        content += '<br> &nbsp;' + m.mod + ' : ' + m.desc
+      }
+    }
+    return content
+  }
+
+  async clear() {
+    await game.user.setFlag('gurps', 'modifierstack', null)
+    this.modifierStack = {
+      modifierList: [], // { "mod": +/-N, "desc": "" }
+      currentSum: 0,
+      displaySum: '+0'
+    }
+    this.updateBucket()
+  }
+
+  refresh() {
+    this.render(true)
+  }
+}
+
+/**
+ * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
+ * to the current or other actors. 
+ */
+export class ModifierBucketEditor extends Application {
+  constructor(bucket, options = {}) {
+    super(options)
+
+    this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
+    this.visible = false
+
     for (let loc in HitLocations.hitlocationRolls) {
       let hit = HitLocations.hitlocationRolls[loc]
       if (!hit.skip) {
@@ -36,40 +267,15 @@ export class ModifierBucket extends Application {
     }
   }
 
-  SHOWING = false
-  modifierStack = {
-    modifierList: [], // { "mod": +/-N, "desc": "" }
-    currentSum: 0,
-    displaySum: '+0',
-    plus: false,
-    minus: false
-  }
-  ModifierBucketElement = null
-  tooltipElement = null
-  tempRangeMod = null
-
-  addTempRangeMod() {
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_RANGE_TO_BUCKET)) {
-      // Only allow 1 measured range, for the moment.
-      let d = 'for range'
-      this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d)
-      if (this.tempRangeMod == 0) {
-        this.sum()
-        this.updateBucket()
-      } else {
-        this.addModifier(this.tempRangeMod, d)
-      }
-    }
-  }
-
-  setTempRangeMod(mod) {
-    this.tempRangeMod = mod
+  render(force, options = {}) {
+    super.render(force, options)
+    this.bucket.SHOWING = true
   }
 
   getData(options) {
     const data = super.getData(options)
-    data.gmod = this
-    data.stack = this.modifierStack
+    // data.gmod = this
+    // data.stack = this.modifierStack
     data.meleemods = MeleeMods.split('\n')
     data.rangedmods = RangedMods.split('\n')
     data.defensemods = DefenseMods.split('\n')
@@ -96,8 +302,8 @@ export class ModifierBucket extends Application {
       let gen = []
 
       let effects = game.GURPS.LastActor.effects.filter(e => !e.data.disabled)
-      for (let e of effects) {
-        let type = e.data.flags.core.statusId
+      for (let effect of effects) {
+        let type = effect.data.flags.core.statusId
         let m = ModifiersForStatus[type]
         if (!!m) {
           melee = melee.concat(m.melee)
@@ -126,41 +332,32 @@ export class ModifierBucket extends Application {
     return data
   }
 
-  _onleave(ev) {
-    this.tooltipElement.style.setProperty('visibility', 'hidden')
-    this.SHOWING = false
-  }
+  _tempRangeMod = null
 
-  _onenter(ev) {
-    this.tooltipElement.style.setProperty('visibility', 'visible')
-    this.SHOWING = true
+  _addTempRangeMod() {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
+      // Only allow 1 measured range, for the moment.
+      let d = 'for range'
+      this.bucket.modifierStack.modifierList = this.bucket.modifierStack.modifierList.filter(m => m.desc != d)
+      if (this._tempRangeMod == 0) {
+        this.sum()
+        this.bucket.updateBucket()
+      } else {
+        this.addModifier(this._tempRangeMod, d)
+      }
+    }
   }
 
   activateListeners(html) {
     super.activateListeners(html)
-    html.find('#trash').click(this._onClickTrash.bind(this))
-    let e = html.find('#globalmodifier')
-    e.click(this._onClick.bind(this))
-    e.contextmenu(this.onRightClick.bind(this))
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MODIFIER_TOOLTIP))
-      e.each((i, li) => {
-        li.addEventListener('mouseenter', ev => this._onenter(ev), false)
-      })
 
-    e = html.find('#modttt')
-    e.each((i, li) => {
-      li.addEventListener('mouseleave', ev => this._onleave(ev), false)
-    })
-    e.each((i, li) => {
-      li.addEventListener('mouseenter', ev => this._onenter(ev), false)
-    })
-    if (!!e[0]) this.tooltipElement = e[0]
+    let e = html.find('#modttt')
+    e.mouseleave(ev => this._onleave(ev), false)
+    e.mouseenter(ev => this._onenter(ev), false)
+
+    if (!!e[0]) this.applicationElement = e[0]
+
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
-    if (this.SHOWING) {
-      this.tooltipElement.style.setProperty('visibility', 'visible')
-    } else {
-      this.tooltipElement.style.setProperty('visibility', 'hidden')
-    }
 
     GURPS.hookupGurps(html, this)
 
@@ -177,6 +374,16 @@ export class ModifierBucket extends Application {
     html.find('#modhitlocations').change(this._onList.bind(this))
   }
 
+  _onleave(ev) {
+    this.bucket.SHOWING = false
+    this.close()
+  }
+
+  _onenter(ev) {
+    this.bucket.SHOWING = true
+    this.render(true)
+  }
+
   async _onManualEntry(event) {
     event.preventDefault()
     let element = event.currentTarget
@@ -184,7 +391,7 @@ export class ModifierBucket extends Application {
     let parsed = parselink(element.value, game.GURPS.LastActor)
     if (!!parsed.action && parsed.action.type === 'modifier') {
       this.addModifier(parsed.action.mod, parsed.action.desc)
-    } else this.refresh()
+    } else this.editor.refresh()
   }
 
   async _onList(event) {
@@ -491,6 +698,7 @@ ${OtherMods}`
     this.render(true)
   }
 }
+
 
 const StatusModifiers = [
   'Status & Afflictions',
