@@ -501,7 +501,7 @@ export class GurpsActor extends Actor {
         let eqt = new Equipment();
         eqt.name = t(j.name);
         eqt.count = i(j.count);
-        eqt.cost = t(j.cost);
+        eqt.cost = t(j.cost).replace(',', '');
         eqt.weight = t(j.weight);
         eqt.location = t(j.location);
         let cstatus = i(j.carried);
