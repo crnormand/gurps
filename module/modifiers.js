@@ -32,14 +32,7 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
-    this.editor = new ModifierBucketEditor(this, {
-      popOut: true,
-      minimizable: false,
-      resizable: false,
-      id: 'ModifierBucketEditor',
-      template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
-      classes: [],
-    })
+    this.editor = new ModifierBucketEditor(this)
   }
 
   getData(options) {
@@ -73,15 +66,16 @@ export class ModifierBucket extends Application {
     e.contextmenu(this.onRightClick.bind(this))
 
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)) {
-      e.mouseenter(ev => this._onenter(ev), false)
+      e.mouseenter(ev => this._onenter(ev))
     }
   }
 
   _onenter(ev) {
     this.SHOWING = true
-    this.editor.render(true, {
-      left: 
-    })
+    this.editor.position.left = ev.pageX - (this.editor.position.width / 2)
+    this.editor.position.top = window.innerHeight -
+      this.editor.position.height - 30 - 74
+    this.editor.render(true)
   }
 
   async _onClickTrash(event) {
@@ -254,7 +248,7 @@ export class ModifierBucketEditor extends Application {
     super(options)
 
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
-    this.visible = false
+    this.inside = false
 
     for (let loc in HitLocations.hitlocationRolls) {
       let hit = HitLocations.hitlocationRolls[loc]
@@ -265,6 +259,22 @@ export class ModifierBucketEditor extends Application {
         HitlocationModifiers.push(mod)
       }
     }
+
+    // stupid Javascript
+    this._onleave.bind(this)
+    this._onenter.bind(this)
+  }
+
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      id: 'ModifierBucketEditor',
+      template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
+      width: 900,
+      height: 800,
+      resizeable: false,
+      minimizable: false,
+      popOut: true,
+    })
   }
 
   render(force, options = {}) {
@@ -274,8 +284,8 @@ export class ModifierBucketEditor extends Application {
 
   getData(options) {
     const data = super.getData(options)
-    // data.gmod = this
-    // data.stack = this.modifierStack
+    data.gmod = this
+    data.stack = this.bucket.modifierStack
     data.meleemods = MeleeMods.split('\n')
     data.rangedmods = RangedMods.split('\n')
     data.defensemods = DefenseMods.split('\n')
@@ -351,11 +361,12 @@ export class ModifierBucketEditor extends Application {
   activateListeners(html) {
     super.activateListeners(html)
 
-    let e = html.find('#modttt')
-    e.mouseleave(ev => this._onleave(ev), false)
-    e.mouseenter(ev => this._onenter(ev), false)
+    console.log('activatelisteners')
 
-    if (!!e[0]) this.applicationElement = e[0]
+    html.find('#modtooltip').off('mouseleave')
+    html.find('#modtooltip').off('mouseenter')
+    this.inside = false
+    html.find('#modtooltip').mouseenter(ev => this._onenter(ev))
 
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
 
@@ -375,13 +386,18 @@ export class ModifierBucketEditor extends Application {
   }
 
   _onleave(ev) {
+    console.log('onleave')
+    this.inside = false
     this.bucket.SHOWING = false
     this.close()
   }
 
   _onenter(ev) {
-    this.bucket.SHOWING = true
-    this.render(true)
+    if (!this.inside) {
+      console.log('onenter')
+      this.inside = true
+      $(ev.currentTarget).mouseleave(ev => this._onleave(ev))
+    }
   }
 
   async _onManualEntry(event) {
@@ -457,7 +473,7 @@ export class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let index = element.dataset.index
-    this.modifierStack.modifierList.splice(index, 1)
+    this.bucket.modifierStack.modifierList.splice(index, 1)
     this.sum()
     this.refresh()
   }
@@ -468,7 +484,7 @@ export class ModifierBucketEditor extends Application {
       // If not the GM, just broadcast our mods to the chat
       if (!game.user.isGM) {
         let messageData = {
-          content: this.chatString(this.modifierStack),
+          content: this.chatString(this.bucket.modifierStack),
           type: CONST.CHAT_MESSAGE_TYPES.OOC
         }
         CONFIG.ChatMessage.entityClass.create(messageData, {})
@@ -534,7 +550,7 @@ ${OtherMods}`
   }
 
   sum() {
-    let stack = this.modifierStack
+    let stack = this.bucket.modifierStack
     stack.currentSum = 0
     for (let m of stack.modifierList) {
       stack.currentSum += m.modint
@@ -545,15 +561,15 @@ ${OtherMods}`
   }
 
   displaySum() {
-    return this.modifierStack.displaySum
+    return this.bucket.modifierStack.displaySum
   }
 
   currentSum() {
-    return this.modifierStack.currentSum
+    return this.bucket.modifierStack.currentSum
   }
 
   async addModifier(mod, reason) {
-    let stack = this.modifierStack
+    let stack = this.bucket.modifierStack
     let oldmod = stack.modifierList.find(m => m.desc == reason)
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
@@ -568,7 +584,7 @@ ${OtherMods}`
 
   // Called during the dice roll to return a list of modifiers and then clear
   async applyMods(targetmods = []) {
-    let stack = this.modifierStack
+    let stack = this.bucket.modifierStack
     let answer = !!targetmods ? targetmods : []
     answer = answer.concat(stack.modifierList)
     this.clear()
@@ -577,7 +593,7 @@ ${OtherMods}`
 
   clear() {
     //await game.user.setFlag("gurps", "modifierstack", null);
-    this.modifierStack = {
+    this.bucket.modifierStack = {
       modifierList: [], // { "mod": +/-N, "desc": "" }
       currentSum: 0,
       displaySum: '+0'
@@ -587,12 +603,12 @@ ${OtherMods}`
 
   async updateBucket() {
     this.refresh()
-    game.user.setFlag('gurps', 'modifierstack', this.modifierStack)
+    game.user.setFlag('gurps', 'modifierstack', this.bucket.modifierStack)
   }
 
   // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
   async updateDisplay(changed) {
-    this.modifierStack = game.user.getFlag('gurps', 'modifierstack')
+    this.bucket.modifierStack = game.user.getFlag('gurps', 'modifierstack')
     this.sum()
     this.refresh()
   }
@@ -620,7 +636,7 @@ ${OtherMods}`
   }
 
   sum() {
-    let stack = this.modifierStack
+    let stack = this.bucket.modifierStack
     stack.currentSum = 0
     for (let m of stack.modifierList) {
       stack.currentSum += m.modint
@@ -631,15 +647,15 @@ ${OtherMods}`
   }
 
   displaySum() {
-    return this.modifierStack.displaySum
+    return this.bucket.modifierStack.displaySum
   }
 
   currentSum() {
-    return this.modifierStack.currentSum
+    return this.bucket.modifierStack.currentSum
   }
 
   async addModifier(mod, reason) {
-    let stack = this.modifierStack
+    let stack = this.bucket.modifierStack
     let oldmod = stack.modifierList.find(m => m.desc == reason)
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
@@ -654,7 +670,7 @@ ${OtherMods}`
 
   // Called during the dice roll to return a list of modifiers and then clear
   async applyMods(targetmods = []) {
-    let stack = this.modifierStack
+    let stack = this.bucket.modifierStack
     let answer = !!targetmods ? targetmods : []
     answer = answer.concat(stack.modifierList)
     this.clear()
@@ -663,7 +679,7 @@ ${OtherMods}`
 
   async clear() {
     await game.user.setFlag('gurps', 'modifierstack', null)
-    this.modifierStack = {
+    this.bucket.modifierStack = {
       modifierList: [], // { "mod": +/-N, "desc": "" }
       currentSum: 0,
       displaySum: '+0'
@@ -673,12 +689,12 @@ ${OtherMods}`
 
   async updateBucket() {
     this.refresh()
-    game.user.setFlag('gurps', 'modifierstack', this.modifierStack)
+    game.user.setFlag('gurps', 'modifierstack', this.bucket.modifierStack)
   }
 
   // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
   async updateDisplay(changed) {
-    this.modifierStack = game.user.getFlag('gurps', 'modifierstack')
+    this.bucket.modifierStack = game.user.getFlag('gurps', 'modifierstack')
     this.sum()
     this.refresh()
   }
