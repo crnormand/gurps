@@ -8,7 +8,7 @@ import { GurpsActorCombatSheet, GurpsActorSheet, GurpsActorEditorSheet, GurpsAct
 import { ModifierBucket } from "./modifiers.js";
 import { ChangeLogWindow } from "../lib/change-log.js";
 import { SemanticVersion } from "../lib/semver.js";
-import { d6ify } from '../lib/utilities.js'
+import { d6ify, recurselist } from '../lib/utilities.js'
 import { ThreeD6 } from "../lib/threed6.js";
 import { doRoll } from '../module/dierolls/dieroll.js'
 
@@ -620,8 +620,9 @@ GURPS.performAction = performAction;
 
 function findSkillSpell(actor, sname) {
   sname = sname.split("*").join(".*");
-  let t = actor.data.skills?.findInProperties(s => s.name.match(sname));
-  if (!t) t = actor.data.spells?.findInProperties(s => s.name.match(sname));
+  var t;
+  recurselist(actor.data.skills, (s) => { if (s.name.match(sname)) t = s});
+  if (!t) recurselist(actor.data.spells, (s) => { if (s.name.match(sname)) t = s});
   return t;
 }
 GURPS.findSkillSpell = findSkillSpell;
@@ -1036,7 +1037,6 @@ Hooks.once("init", async function () {
   if (game.i18n.lang == "pt_br")
     src = 'systems/gurps/icons/gurps4e-pt_br.png';
   $('#logo').attr('src', src);
-  $('#logo').attr('width', '100px');
   
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor;
