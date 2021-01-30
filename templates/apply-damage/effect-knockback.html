@@ -1,8 +1,8 @@
 <li name='result-effect'>
   <div>
     <div>
-      <header>Knockback, {{amount}} yards</header>
-      <aside>Roll [DX, Judo, or Acrobatics]{{#if modifier}}&minus;{{modifier}}{{/if}} to remain standing.</aside>
+      <header>{{localize "GURPS.knockback"}}{{amount}}{{localize "GURPS.yards"}}</header>
+      <aside>{{localize "GURPS.dxJudoAcrobaticsCheck"}}{{#if modifier}}&minus;{{modifier}}{{/if}}{{localize "GURPS.remainStanding"}}</aside>
     </div>
     <div class='with-send-button'>
       <button name='send-knockback' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>

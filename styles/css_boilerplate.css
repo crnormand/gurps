@@ -10,6 +10,15 @@
   font-family: "Roboto", sans-serif;
 }
 
+
+.directory-list > .directory-item.actor {
+  align-items: center;
+}
+
+.directory-list > .directory-item.actor > .profile.actor-profile {
+  height: initial;
+}
+
 .rollable:hover,
 .rollable:focus {
   color: #000;

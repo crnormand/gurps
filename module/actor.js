@@ -499,9 +499,9 @@ export class GurpsActor extends Actor {
         let j = json[key];
         let eqt = new Equipment();
         eqt.name = t(j.name);
-        eqt.count = i(j.count);
-        eqt.cost = t(j.cost);
-        eqt.weight = t(j.weight);
+        eqt.count = i(j.count).replace(',', '');
+        eqt.cost = t(j.cost).replace(',', '');
+        eqt.weight = t(j.weight).replace(',', '');
         eqt.location = t(j.location);
         let cstatus = i(j.carried);
         eqt.carried = (cstatus >= 1);
