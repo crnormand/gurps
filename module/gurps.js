@@ -14,7 +14,7 @@ import {
 import { ModifierBucket } from './modifiers.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify } from '../lib/utilities.js'
+import { d6ify, recurselist } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 
@@ -629,10 +629,11 @@ function performAction(action, actor, event) {
 GURPS.performAction = performAction
 
 function findSkillSpell(actor, sname) {
-  sname = sname.split('*').join('.*')
-  let t = actor.data.skills?.findInProperties((s) => s.name.match(sname))
-  if (!t) t = actor.data.spells?.findInProperties((s) => s.name.match(sname))
-  return t
+  sname = sname.split("*").join(".*");
+  var t;
+  recurselist(actor.data.skills, (s) => { if (s.name.match(sname)) t = s });
+  if (!t) recurselist(actor.data.spells, (s) => { if (s.name.match(sname)) t = s });
+  return t;
 }
 GURPS.findSkillSpell = findSkillSpell
 
@@ -1027,16 +1028,16 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
-Hooks.once('init', async function () {
-  console.log(GURPS.BANNER)
-  console.log(`Initializing GURPS 4e Game Aid`)
-  console.log(GURPS.LEGAL)
-  game.GURPS = GURPS
-  CONFIG.GURPS = GURPS
-  let src = 'systems/gurps/icons/gurps4e.png'
-  if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
-  $('#logo').attr('src', src)
-  $('#logo').attr('width', '100px')
+Hooks.once("init", async function () {
+  console.log(GURPS.BANNER);
+  console.log(`Initializing GURPS 4e Game Aid`);
+  console.log(GURPS.LEGAL);
+  game.GURPS = GURPS;
+  CONFIG.GURPS = GURPS;
+  let src = 'systems/gurps/icons/gurps4e.png';
+  if (game.i18n.lang == "pt_br")
+    src = 'systems/gurps/icons/gurps4e-pt_br.png';
+  $('#logo').attr('src', src);
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
@@ -1290,7 +1291,7 @@ Hooks.once('ready', async function () {
           }
         })
       }
-    } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
+    } catch (e) { } // a dangerous game... but limited to GURPs /roll OtF
     data.content = game.GURPS.gurpslink(c)
   })
 

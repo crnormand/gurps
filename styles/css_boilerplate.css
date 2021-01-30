@@ -1,8 +1,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Martel:wght@400;800&family=Roboto:wght@300;400;500&display=swap");
 
 /* Global styles */
+#navigation {
+  top: 20px; left: 180px;
+  width: calc(100% - 510px); 
+}
+
 .window-app {
   font-family: "Roboto", sans-serif;
+}
+
+
+.directory-list > .directory-item.actor {
+  align-items: center;
+}
+
+.directory-list > .directory-item.actor > .profile.actor-profile {
+  height: initial;
 }
 
 .rollable:hover,

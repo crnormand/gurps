@@ -1,8 +1,8 @@
 <li name='result-effect'>
   <div>
     <div>
-      <header>Head or Vitals Hit ({{detail}})</header>
-      <aside>Roll HT{{#if modifier}}&minus;{{modifier}}{{/if}} to avoid Stun/Knockdown.</aside>
+      <header>{{localize "GURPS.headVitalsHit"}}({{detail}})</header>
+      <aside>{{localize "GURPS.htcheck"}}{{#if modifier}}&minus;{{modifier}}{{/if}}{{localize "GURPS.majorwoundeffect"}}</aside>
     </div>
     <div class='with-send-button'>
       <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>

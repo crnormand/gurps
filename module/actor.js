@@ -1,6 +1,6 @@
 'use strict'
 
-import { extractP, xmlTextToJson, zeroFill, convertRollStringToArrayOfInt } from '../lib/utilities.js'
+import { extractP, xmlTextToJson, zeroFill, convertRollStringToArrayOfInt, recurselist } from '../lib/utilities.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
@@ -310,12 +310,7 @@ export class GurpsActor extends Actor {
       }
     }
     // Save the old User Entered Notes.
-    if (!!this.data.data.notes)
-      Object.values(this.data.data.notes).forEach((n) => {
-        Named.recurse(n, (t) => {
-          if (!!t.save) temp.push(t)
-        })
-      })
+    recurselist(this.data.data.notes, (t) => { if (!!t.save) temp.push(t) });
     return {
       'data.-=notes': null,
       'data.notes': this.foldList(temp),
@@ -560,19 +555,8 @@ export class GurpsActor extends Actor {
     })
 
     // Save the old User Entered Notes.
-    if (!!this.data.data.equipment.carried)
-      Object.values(this.data.data.equipment.carried).forEach((n) => {
-        Named.recurse(n, (t) => {
-          t.carried = true
-          if (!!t.save) temp.push(t)
-        })
-      })
-    if (!!this.data.data.equipment.other)
-      Object.values(this.data.data.equipment.other).forEach((n) => {
-        Named.recurse(n, (t) => {
-          if (!!t.save) temp.push(t)
-        })
-      })
+    recurselist(this.data.data.equipment.carried, (t) => { t.carried = true; if (!!t.save) temp.push(t) });   // Ensure carried eqt stays in carried
+    recurselist(this.data.data.equipment.other, (t) => { t.carried = false; if (!!t.save) temp.push(t) });
 
     let equipment = {
       carried: {},
@@ -726,9 +710,8 @@ export class GurpsActor extends Actor {
             } else {
               m = rng.match(/^ *x(\d+) *\/ *x(\d+) *$/)
               if (m) {
-                rng = `${parseInt(m[1]) * this.data.data.attributes.ST.value}/${
-                  parseInt(m[2]) * this.data.data.attributes.ST.value
-                }`
+                rng = `${parseInt(m[1]) * this.data.data.attributes.ST.value}/${parseInt(m[2]) * this.data.data.attributes.ST.value
+                  }`
               }
             }
             r.range = rng
@@ -1124,12 +1107,6 @@ export class Named {
         this.pageref = ''
       }
     }
-  }
-
-  static recurse(obj, fn) {
-    fn(obj)
-    if (!!obj.contains) Object.values(obj.contains).forEach((o) => Named.recurse(o, fn))
-    if (!!obj.collapsed) Object.values(obj.collapsed).forEach((o) => Named.recurse(o, fn))
   }
 }
 

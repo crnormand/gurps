@@ -3,7 +3,9 @@
     <div id="personal">
       <div id="portrait">
         <div class="header">Portrait</div>
-        <img class="profile-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="100" width="100" />
+        <div class="img-display" style="background-image: url({{ actor.img }});">
+          <img class="profile-img" src="{{ actor.img }}" data-edit="img" title="{{actor.name}}" />
+        </div>
       </div>
       <div id="identity">
         <div class="header">Identity</div>
