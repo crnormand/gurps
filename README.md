@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.9
+# Current Release Version 0.8.10
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,11 +18,13 @@ To install the latest stable release, use this manifest URL:
 
 This is what we are currently working on:
 
+- 0.8.11
+
+### History
 - 0.8.10
     - @Tratz equipment bug fix, portrait fix and logo fix!
     - Bug fix for OtF formulas in Skills/Spells in containers
 
-### History
 - 0.8.9
     - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
     - Fixed CGA export to correctly export ranged innate attacks.
