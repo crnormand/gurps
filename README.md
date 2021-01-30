@@ -19,6 +19,7 @@ To install the latest stable release, use this manifest URL:
 This is what we are currently working on:
 
 - 0.8.11
+    - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!).
 
 ### History
 - 0.8.10
