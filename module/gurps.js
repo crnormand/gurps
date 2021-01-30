@@ -1035,9 +1035,10 @@ Hooks.once("init", async function () {
   let src = 'systems/gurps/icons/gurps4e.png';
   if (game.i18n.lang == "pt_br")
     src = 'systems/gurps/icons/gurps4e-pt_br.png';
-  $('#logo').attr('src', src);
-  $('#logo').attr('width', '100px');
-  
+
+  const logo = document.querySelector("#logo");
+  logo.setAttribute('src', src);
+
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor;
   CONFIG.Item.entityClass = GurpsItem;
