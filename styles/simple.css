@@ -689,12 +689,18 @@
   margin-bottom: 10px;
 }
 
-.gurps .profile-img {
-  flex: 0 0 100px;
+.gurps #portrait .img-display {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 112.25px;
+}
+
+.gurps #portrait .profile-img {
+  display: block;
   height: 100%;
+  opacity: 0;
   width: 100%;
-  min-width: 100px;
-  margin-right: 10px;
 }
 
 .gurps .sheet-header .header-fields {
