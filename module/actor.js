@@ -499,9 +499,9 @@ export class GurpsActor extends Actor {
         let j = json[key];
         let eqt = new Equipment();
         eqt.name = t(j.name);
-        eqt.count = i(j.count).replace(',', '');
-        eqt.cost = t(j.cost).replace(',', '');
-        eqt.weight = t(j.weight).replace(',', '');
+        eqt.count = i(j.count);
+        eqt.cost = t(j.cost);
+        eqt.weight = t(j.weight);
         eqt.location = t(j.location);
         let cstatus = i(j.carried);
         eqt.carried = (cstatus >= 1);
@@ -1211,9 +1211,13 @@ export class Equipment extends Named {
   // OMG, do NOT fuck around with this method.   So many gotchas...
   // the worst being that you cannot use array.forEach.   You must use a for loop
   static async calcUpdate(actor, eqt, objkey) {
-    if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0;
-    if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0;
-    if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0;
+    const cln = (s) => { 
+      if (!!s && isNaN(s)) s = s.replace(",", "");
+      return (isNaN(s) || s == '') ? 0 : s;
+    };
+    eqt.count = cln(eqt.count);
+    eqt.cost = cln(eqt.cost);
+    eqt.weight = cln(eqt.weight);
     let cs = eqt.count * eqt.cost;
     let ws = eqt.count * eqt.weight;
     if (!!eqt.contains) {
