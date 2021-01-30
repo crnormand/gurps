@@ -1,8 +1,8 @@
 'use strict'
 
-import * as settings from './miscellaneous-settings.js'
-import { GURPS } from '../module/gurps.js'
-import * as HITLOCATION from '../module/hitlocation/hitlocation.js'
+import * as Settings from '../../lib/miscellaneous-settings.js'
+import * as HitLocation from '../hitlocation/hitlocation.js'
+import * as DamageTables from './damage-tables.js'
 
 /* 
   Crippling injury:
@@ -21,38 +21,35 @@ const piercing = ['pi-', 'pi', 'pi+', 'pi++']
 const DIFFUSE = 'diffuse'
 const HOMOGENOUS = 'homogenous'
 
-// -1 means 'Ignores DR' 
+// -1 means 'Ignores DR'
 const armorDivisorSteps = [-1, 100, 5, 3, 2, 1]
 
 export class DamageCalculator {
   constructor(defender, damageData) {
-    this._useBluntTrauma = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLUNT_TRAUMA)
-    this._useLocationModifiers = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_LOCATION_MODIFIERS)
-    this._useArmorDivisor = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_APPLY_DIVISOR)
+    this._useBluntTrauma = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLUNT_TRAUMA)
+    this._useLocationModifiers = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_LOCATION_MODIFIERS)
+    this._useArmorDivisor = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_APPLY_DIVISOR)
 
     this._defender = defender
     this._attacker = damageData.attacker
 
-    this._defaultWoundingModifiers = Object.keys(GURPS.woundModifiers).reduce(function (r, e) {
-      if (!GURPS.woundModifiers[e].nodisplay)
-        r[e] = GURPS.woundModifiers[e]
+    this._defaultWoundingModifiers = Object.keys(DamageTables.woundModifiers).reduce(function (r, e) {
+      if (!DamageTables.woundModifiers[e].nodisplay) r[e] = DamageTables.woundModifiers[e]
       return r
     }, {})
 
     if (Object.keys(this._defaultWoundingModifiers).includes(damageData.damageType))
       this._damageType = damageData.damageType
     else {
-      let temp = GURPS.damageTypeMap[damageData.damageType]
-      if (temp)
-        this._damageType = temp
-      else
-        this._damageType = 'none'
+      let temp = DamageTables.damageTypeMap[damageData.damageType]
+      if (temp) this._damageType = temp
+      else this._damageType = 'none'
     }
 
     this._armorDivisor = damageData.armorDivisor
     this._basicDamage = damageData.damage
 
-    this._applyTo = (this._damageType === 'fat') ? 'FP' : 'HP'
+    this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
 
     this._hitLocation = this._defender.defaultHitLocation
     this._userEnteredDR = 0
@@ -76,12 +73,24 @@ export class DamageCalculator {
     this._maxInjuryForDiffuse = null
   }
 
-  get attacker() { return this._attacker }
-  get HP() { return this._defender.data.data.HP }
-  get FP() { return this._defender.data.data.FP }
-  get attributes() { return this._defender.data.data.attributes }
-  get allHitLocations() { return this._defender.data.data.hitlocations }
-  get hitLocationsWithDR() { return this._defender.hitLocationsWithDR }
+  get attacker() {
+    return this._attacker
+  }
+  get HP() {
+    return this._defender.data.data.HP
+  }
+  get FP() {
+    return this._defender.data.data.FP
+  }
+  get attributes() {
+    return this._defender.data.data.attributes
+  }
+  get allHitLocations() {
+    return this._defender.data.data.hitlocations
+  }
+  get hitLocationsWithDR() {
+    return this._defender.hitLocationsWithDR
+  }
 
   get _hitLocationRole() {
     let hitLocation = this._defender._hitLocationRolls[this._hitLocation]
@@ -113,13 +122,11 @@ export class DamageCalculator {
           table = this.neckWoundModifiers
           break
 
-        default:
-          {
-            if ([HITLOCATION.EXTREMITY, HITLOCATION.LIMB].includes(this._hitLocationRole))
-              table = this.extremityWoundModifiers
-            else
-              table = this.defaultWoundModifiers;
-          }
+        default: {
+          if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._hitLocationRole))
+            table = this.extremityWoundModifiers
+          else table = this.defaultWoundModifiers
+        }
       }
     }
 
@@ -136,12 +143,12 @@ export class DamageCalculator {
 
         // TODO Homogenous includes the benefits of No Brain and No Vitals.
 
-        // No Brain: You may have a head, but a blow to the skull or eye is treated no 
+        // No Brain: You may have a head, but a blow to the skull or eye is treated no
         // differently than a blow to the face (except that an eye injury can still cripple
         // that eye).
 
         // No Vitals: You have no vital organs (such as a heart or engine) that attackers can
-        // target for extra damage. Treat hits to the â€œvitalsâ€� or â€œgroinâ€� as torso hits. 
+        // target for extra damage. Treat hits to the 'vitals' or 'groin' as torso hits.
         case HOMOGENOUS:
           // Homogenous: Ignore all wounding modifiers for hit location.
           table = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
@@ -152,8 +159,8 @@ export class DamageCalculator {
           this._modifyForInjuryTolerance(table['pi-'], 0.1)
           break
 
-        // TODO Diffuse: This makes you immune to crippling injuries and reduces the damage you 
-        // suffer from most physical blows. Diffuse includes all the benefits of No Blood, 
+        // TODO Diffuse: This makes you immune to crippling injuries and reduces the damage you
+        // suffer from most physical blows. Diffuse includes all the benefits of No Blood,
         // No Brain, and No Vitals.
         case DIFFUSE:
           // Diffuse: Ignore all wounding modifiers for hit location.
@@ -185,10 +192,10 @@ export class DamageCalculator {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
-    // update the ones that need it 
+    // update the ones that need it
     Object.keys(results)
-      .filter(key => ['imp', ...piercing].includes(key))
-      .forEach(key => {
+      .filter((key) => ['imp', ...piercing].includes(key))
+      .forEach((key) => {
         results[key].multiplier = 3
         results[key].changed = 'hitlocation'
       })
@@ -199,10 +206,10 @@ export class DamageCalculator {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
-    // update the ones that need it 
+    // update the ones that need it
     Object.keys(results)
-      .filter(key => key !== 'tox') // everything EXCEPT toxic
-      .forEach(key => {
+      .filter((key) => key !== 'tox') // everything EXCEPT toxic
+      .forEach((key) => {
         results[key].multiplier = 4
         results[key].changed = 'hitlocation'
       })
@@ -213,7 +220,7 @@ export class DamageCalculator {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
-    // update the ones that need it 
+    // update the ones that need it
     results['cor'].multiplier = 1.5
     results['cor'].changed = 'hitlocation'
     return results
@@ -223,7 +230,7 @@ export class DamageCalculator {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
-    // update the ones that need it 
+    // update the ones that need it
     results['cr'].multiplier = 1.5
     results['cor'].multiplier = 1.5
     results['cut'].multiplier = 2
@@ -237,10 +244,10 @@ export class DamageCalculator {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
-    // update the ones that need it 
+    // update the ones that need it
     Object.keys(results)
-      .filter(key => ['imp', 'pi+', 'pi++'].includes(key))
-      .forEach(key => {
+      .filter((key) => ['imp', 'pi+', 'pi++'].includes(key))
+      .forEach((key) => {
         results[key].multiplier = 1
         results[key].changed = 'hitlocation'
       })
@@ -266,20 +273,22 @@ export class DamageCalculator {
   //    + any Vulnerability multiplier.
   //
   // Injury = Penetrating Damage x Total Wounding Modifier.
-  // 
+  //
   // Calculated Blunt Trauma = 1/10 of the Effective Damage for the appropriate damage types; 1/5 of
   //    Effective Damage if damage type is 'cr' (Crushing).
   //
   // Effective Blunt Trauma = Calculated Blunt Trauma, unless the user overrode it with his own value,
   //    in which case the user entered value is used.
   //
-  // Unmodified Points to Apply = Injury, unless injury is zero and there was potential 
+  // Unmodified Points to Apply = Injury, unless injury is zero and there was potential
   //    Effective Blunt Trauma, in which case the value is equal to the Effective Blunt Trauma.
   //
-  // Points to Apply = Unmodified Points to Apply, adjusted by the maximum amount of damage per hit 
+  // Points to Apply = Unmodified Points to Apply, adjusted by the maximum amount of damage per hit
   //    location if using "Hit Location Wounding Modifiers".
 
-  get effectiveDamage() { return this._isRangedHalfDamage ? Math.floor(this._basicDamage / 2) : this._basicDamage }
+  get effectiveDamage() {
+    return this._isRangedHalfDamage ? Math.floor(this._basicDamage / 2) : this._basicDamage
+  }
 
   // return the DR indicated by the Hit Location
   get DR() {
@@ -292,7 +301,7 @@ export class DamageCalculator {
       let torsoDR = 0
 
       // find the location with the lowest DR
-      for (let value of this._defender.hitLocationsWithDR.filter(it => it.roll.length > 0)) {
+      for (let value of this._defender.hitLocationsWithDR.filter((it) => it.roll.length > 0)) {
         if (value.dr < lowestDR) lowestDR = value.dr
         if (value.where === 'Torso') torsoDR = value.dr
       }
@@ -300,7 +309,7 @@ export class DamageCalculator {
       return Math.ceil((lowestDR + torsoDR) / 2)
     }
 
-    return this._defender.hitLocationsWithDR.filter(it => it.where === this._hitLocation).map(it => it.dr)[0]
+    return this._defender.hitLocationsWithDR.filter((it) => it.where === this._hitLocation).map((it) => it.dr)[0]
   }
 
   get effectiveArmorDivisor() {
@@ -322,13 +331,15 @@ export class DamageCalculator {
       // -1 divisor means "Ignore DR"
       if (this.effectiveArmorDivisor === -1) return 0
 
-      let tempDR = (this.effectiveArmorDivisor < 1 && dr === 0) ? 1 : dr
+      let tempDR = this.effectiveArmorDivisor < 1 && dr === 0 ? 1 : dr
       return Math.floor(tempDR / this.effectiveArmorDivisor)
     }
     return dr
   }
 
-  get penetratingDamage() { return Math.max(0, this.effectiveDamage - this.effectiveDR) }
+  get penetratingDamage() {
+    return Math.max(0, this.effectiveDamage - this.effectiveDR)
+  }
 
   get woundingModifier() {
     if (this._damageType === 'none') return 1
@@ -338,14 +349,11 @@ export class DamageCalculator {
   }
 
   get effectiveVulnerabilityMultiple() {
-    return (this._isVulnerable)
-      ? this._vulnerabilityMultiple
-      : 1
+    return this._isVulnerable ? this._vulnerabilityMultiple : 1
   }
 
   get totalWoundingModifier() {
-    return (this.woundingModifier + this._additionalWoundModifier)
-      * this.effectiveVulnerabilityMultiple
+    return (this.woundingModifier + this._additionalWoundModifier) * this.effectiveVulnerabilityMultiple
   }
 
   /**
@@ -357,7 +365,7 @@ export class DamageCalculator {
 
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
     if (this._isInjuryTolerance && this._injuryToleranceType === DIFFUSE) {
-      // ...Impaling and piercing attacks (of any size) never do more than 1 HP of injury, 
+      // ...Impaling and piercing attacks (of any size) never do more than 1 HP of injury,
       // regardless of penetrating damage!
       if (['imp', ...piercing].includes(this._damageType)) {
         this._maxInjuryForDiffuse = Math.min(1, injury)
@@ -388,20 +396,19 @@ export class DamageCalculator {
    */
   get unmodifiedPointsToApply() {
     let injury = this.injury
-    let pointsToApply = (injury === 0)
-      ? (this._isFlexibleArmor && this._useBluntTrauma) ? this.effectiveBluntTrauma : 0
-      : injury
+    let pointsToApply =
+      injury === 0 ? (this._isFlexibleArmor && this._useBluntTrauma ? this.effectiveBluntTrauma : 0) : injury
     return pointsToApply
   }
 
   /**
-   * Actual number of HP to apply is the amount of injury, or the effective blunt trauma. 
+   * Actual number of HP to apply is the amount of injury, or the effective blunt trauma.
    * Set a limit of the max needed to cripple the location.
    */
   get pointsToApply() {
     let pointsToApply = this.unmodifiedPointsToApply
     if (this._useLocationModifiers) {
-      if ([HITLOCATION.EXTREMITY, HITLOCATION.LIMB].includes(this._hitLocationRole)) {
+      if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._hitLocationRole)) {
         return Math.min(pointsToApply, Math.floor(this.locationMaxHP))
       }
     }
@@ -414,26 +421,26 @@ export class DamageCalculator {
     return shock
   }
 
-  get isMajorWound() { return (this.pointsToApply > (this.HP.max / 2)) }
+  get isMajorWound() {
+    return this.pointsToApply > this.HP.max / 2
+  }
 
   get penaltyToHTRollForStunning() {
     // Diffuse or Homogenous: Ignore all knockdown modifiers for hit location.
     if (this._isInjuryTolerance && (this._injuryToleranceType === DIFFUSE || this._injuryToleranceType === HOMOGENOUS))
       return 0
 
-    if (['Face', 'Vitals', 'Groin'].includes(this._hitLocation))
-      return 5
+    if (['Face', 'Vitals', 'Groin'].includes(this._hitLocation)) return 5
 
-    // No Brain (Diffuse or Homogenous) - blows to skull or eye are no different than a blow to 
+    // No Brain (Diffuse or Homogenous) - blows to skull or eye are no different than a blow to
     // the face, except that eyes can still be crippled. (Handled earlier in this method.)
-    if (this.isMajorWound && ['Eye', 'Skull', 'Brain'].includes(this._hitLocation))
-      return 10
+    if (this.isMajorWound && ['Eye', 'Skull', 'Brain'].includes(this._hitLocation)) return 10
 
     return 0
   }
 
   get _isCrippleableLocation() {
-    return ([HITLOCATION.EXTREMITY, HITLOCATION.LIMB].includes(this._hitLocationRole) || this._hitLocation === 'Eye')
+    return [HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._hitLocationRole) || this._hitLocation === 'Eye'
   }
 
   get isCripplingInjury() {
@@ -444,8 +451,8 @@ export class DamageCalculator {
   }
 
   get locationMaxHP() {
-    if (this._hitLocationRole === HITLOCATION.LIMB) return this.HP.max / 2
-    if (this._hitLocationRole === HITLOCATION.EXTREMITY) return this.HP.max / 3
+    if (this._hitLocationRole === HitLocation.LIMB) return this.HP.max / 2
+    if (this._hitLocationRole === HitLocation.EXTREMITY) return this.HP.max / 3
     if (this._hitLocation === 'Eye') return this.HP.max / 10
     return this.HP.max
   }
@@ -455,19 +462,18 @@ export class DamageCalculator {
   }
 
   get isInjuryReducedByLocation() {
-    return (this._useLocationModifiers && this.isCripplingInjury && this._hitLocation !== 'Eye')
+    return this._useLocationModifiers && this.isCripplingInjury && this._hitLocation !== 'Eye'
   }
 
   get isKnockbackEligible() {
-    if (this._damageType === 'cr' && this._basicDamage > 0)
-      return true
+    if (this._damageType === 'cr' && this._basicDamage > 0) return true
 
-    return (this._damageType === 'cut' && this._basicDamage > 0 && this.penetratingDamage === 0)
+    return this._damageType === 'cut' && this._basicDamage > 0 && this.penetratingDamage === 0
   }
 
   /*
    * let effect = {
-   *   type: <string: 'shock' | 'majorwound' | 'headvitalshit' | 'crippling' | 'knockback'>, 
+   *   type: <string: 'shock' | 'majorwound' | 'headvitalshit' | 'crippling' | 'knockback'>,
    *   modifier: <int: any penalty/modifier due to effect>,
    *   amount: <int: any associated value/level of effect>,
    *   detail: <string: any required information for effect>
@@ -481,7 +487,7 @@ export class DamageCalculator {
       if (shock > 0) {
         _effects.push({
           type: 'shock',
-          amount: shock
+          amount: shock,
         })
       }
 
@@ -490,13 +496,13 @@ export class DamageCalculator {
         isMajorWound = true
         _effects.push({
           type: 'majorwound',
-          modifier: this.penaltyToHTRollForStunning
+          modifier: this.penaltyToHTRollForStunning,
         })
-      } else if ([...head, 'Vitals'].includes(this._hitLocation) && (shock > 0)) {
+      } else if ([...head, 'Vitals'].includes(this._hitLocation) && shock > 0) {
         _effects.push({
           type: 'headvitalshit',
           detail: this._hitLocation,
-          modifier: this.penaltyToHTRollForStunning
+          modifier: this.penaltyToHTRollForStunning,
         })
       }
 
@@ -511,7 +517,7 @@ export class DamageCalculator {
         if (!isMajorWound)
           _effects.push({
             type: 'majorwound',
-            modifier: this.penaltyToHTRollForStunning
+            modifier: this.penaltyToHTRollForStunning,
           })
       }
     }
@@ -523,7 +529,7 @@ export class DamageCalculator {
         _effects.push({
           type: 'knockback',
           amount: knockback,
-          modifier: modifier
+          modifier: modifier,
         })
       }
     }
@@ -547,92 +553,170 @@ export class DamageCalculator {
     roll3d.roll()
     let total = roll3d.total
 
-    let loc = this._defender.hitLocationsWithDR.filter(it => it.roll.includes(total))
-    if (!!loc && loc.length > 0) 
-      this._hitLocation = loc[0].where
-    else
-      ui.notifications.warn(`There are no hit locations defined for #${total}`);
+    let loc = this._defender.hitLocationsWithDR.filter((it) => it.roll.includes(total))
+    if (!!loc && loc.length > 0) this._hitLocation = loc[0].where
+    else ui.notifications.warn(`There are no hit locations defined for #${total}`)
     return roll3d
   }
 
-  get basicDamage() { return this._basicDamage }
-  set basicDamage(value) { this._basicDamage = value }
+  get basicDamage() {
+    return this._basicDamage
+  }
+  set basicDamage(value) {
+    this._basicDamage = value
+  }
 
-  get armorDivisor() { return this._armorDivisor }
+  get armorDivisor() {
+    return this._armorDivisor
+  }
 
-  get damageType() { return this._damageType }
-  set damageType(type) { this._damageType = type }
+  get damageType() {
+    return this._damageType
+  }
+  set damageType(type) {
+    this._damageType = type
+  }
 
-  get applyTo() { return this._applyTo }
-  set applyTo(value) { this._applyTo = value }
+  get applyTo() {
+    return this._applyTo
+  }
+  set applyTo(value) {
+    this._applyTo = value
+  }
 
-  get hitLocation() { return this._hitLocation }
-  set hitLocation(text) { this._hitLocation = text }
+  get hitLocation() {
+    return this._hitLocation
+  }
+  set hitLocation(text) {
+    this._hitLocation = text
+  }
 
-  get userEnteredDR() { return this._userEnteredDR }
-  set userEnteredDR(value) { this._userEnteredDR = value }
+  get userEnteredDR() {
+    return this._userEnteredDR
+  }
+  set userEnteredDR(value) {
+    this._userEnteredDR = value
+  }
 
-  get useArmorDivisor() { return this._useArmorDivisor }
-  set useArmorDivisor(value) { this._useArmorDivisor = value }
+  get useArmorDivisor() {
+    return this._useArmorDivisor
+  }
+  set useArmorDivisor(value) {
+    this._useArmorDivisor = value
+  }
 
-  get userEnteredWoundModifier() { return this._userEnteredWoundModifier }
-  set userEnteredWoundModifier(value) { this._userEnteredWoundModifier = value }
+  get userEnteredWoundModifier() {
+    return this._userEnteredWoundModifier
+  }
+  set userEnteredWoundModifier(value) {
+    this._userEnteredWoundModifier = value
+  }
 
-  get additionalWoundModifier() { return this._additionalWoundModifier }
-  set additionalWoundModifier(value) { this._additionalWoundModifier = value }
+  get additionalWoundModifier() {
+    return this._additionalWoundModifier
+  }
+  set additionalWoundModifier(value) {
+    this._additionalWoundModifier = value
+  }
 
-  get useBluntTrauma() { return this._useBluntTrauma }
-  set useBluntTrauma(value) { this._useBluntTrauma = value }
+  get useBluntTrauma() {
+    return this._useBluntTrauma
+  }
+  set useBluntTrauma(value) {
+    this._useBluntTrauma = value
+  }
 
-  get bluntTrauma() { return this._bluntTrauma }
-  set bluntTrauma(value) { this._bluntTrauma = value }
+  get bluntTrauma() {
+    return this._bluntTrauma
+  }
+  set bluntTrauma(value) {
+    this._bluntTrauma = value
+  }
 
-  get isFlexibleArmor() { return this._isFlexibleArmor }
-  set isFlexibleArmor(value) { this._isFlexibleArmor = value }
+  get isFlexibleArmor() {
+    return this._isFlexibleArmor
+  }
+  set isFlexibleArmor(value) {
+    this._isFlexibleArmor = value
+  }
 
-  get useLocationModifiers() { return this._useLocationModifiers }
-  set useLocationModifiers(value) { this._useLocationModifiers = value }
+  get useLocationModifiers() {
+    return this._useLocationModifiers
+  }
+  set useLocationModifiers(value) {
+    this._useLocationModifiers = value
+  }
 
-  get isRangedHalfDamage() { return this._isRangedHalfDamage }
-  set isRangedHalfDamage(value) { this._isRangedHalfDamage = value }
+  get isRangedHalfDamage() {
+    return this._isRangedHalfDamage
+  }
+  set isRangedHalfDamage(value) {
+    this._isRangedHalfDamage = value
+  }
 
-  get isVulnerable() { return this._isVulnerable }
-  set isVulnerable(value) { this._isVulnerable = value }
+  get isVulnerable() {
+    return this._isVulnerable
+  }
+  set isVulnerable(value) {
+    this._isVulnerable = value
+  }
 
-  get vulnerabilityMultiple() { return this._vulnerabilityMultiple }
-  set vulnerabilityMultiple(value) { this._vulnerabilityMultiple = value }
+  get vulnerabilityMultiple() {
+    return this._vulnerabilityMultiple
+  }
+  set vulnerabilityMultiple(value) {
+    this._vulnerabilityMultiple = value
+  }
 
   get hasAdditionalWoundingModifiers() {
     return this.additionalWoundModifier > 0 || this.effectiveVulnerabilityMultiple > 0
   }
 
-  get isHardenedDR() { return this._isHardenedDR }
-  set isHardenedDR(value) { this._isHardenedDR = value }
+  get isHardenedDR() {
+    return this._isHardenedDR
+  }
+  set isHardenedDR(value) {
+    this._isHardenedDR = value
+  }
 
-  get hardenedDRLevel() { return this._hardenedDRLevel }
-  set hardenedDRLevel(value) { this._hardenedDRLevel = value }
+  get hardenedDRLevel() {
+    return this._hardenedDRLevel
+  }
+  set hardenedDRLevel(value) {
+    this._hardenedDRLevel = value
+  }
 
-  get isInjuryTolerance() { return this._isInjuryTolerance }
-  set isInjuryTolerance(value) { this._isInjuryTolerance = value }
+  get isInjuryTolerance() {
+    return this._isInjuryTolerance
+  }
+  set isInjuryTolerance(value) {
+    this._isInjuryTolerance = value
+  }
 
-  get injuryToleranceType() { return this._injuryToleranceType }
-  set injuryToleranceType(value) { this._injuryToleranceType = value }
+  get injuryToleranceType() {
+    return this._injuryToleranceType
+  }
+  set injuryToleranceType(value) {
+    this._injuryToleranceType = value
+  }
 
   get isWoundModifierAdjustedForInjuryTolerance() {
     let table = this.effectiveWoundModifiers
-    let entries = Object.keys(table).filter(key => table[key].changed === 'injury-tolerance')
+    let entries = Object.keys(table).filter((key) => table[key].changed === 'injury-tolerance')
     return entries.length > 0
   }
 
   get isWoundModifierAdjustedForLocation() {
     let table = this.effectiveWoundModifiers
-    let entries = Object.keys(table).filter(key => table[key].changed === 'hitlocation')
+    let entries = Object.keys(table).filter((key) => table[key].changed === 'hitlocation')
     return entries.length > 0
   }
 
   get isBluntTraumaInjury() {
-    return (this.injury === 0 && this._isFlexibleArmor && this._useBluntTrauma && this.effectiveBluntTrauma > 0)
+    return this.injury === 0 && this._isFlexibleArmor && this._useBluntTrauma && this.effectiveBluntTrauma > 0
   }
 
-  get maxInjuryForDiffuse() { return this._maxInjuryForDiffuse }
+  get maxInjuryForDiffuse() {
+    return this._maxInjuryForDiffuse
+  }
 }
