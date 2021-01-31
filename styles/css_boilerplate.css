@@ -11,11 +11,11 @@
 }
 
 
-.directory-list > .directory-item.actor {
+.directory-list .directory-item.actor {
   align-items: center;
 }
 
-.directory-list > .directory-item.actor > .profile.actor-profile {
+.directory-list .directory-item.actor > .profile.actor-profile {
   height: initial;
 }
 
