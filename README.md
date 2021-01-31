@@ -20,6 +20,7 @@ This is what we are currently working on:
 - 0.8.11
     - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!).
     - Ongoing internationalization effort by @Gus https://github.com/gtludwig
+    - Fixed GCS export to reinstate Self Control Rolls, ex: [CR: 12 Bad Temper]
 
 ### History
 - 0.8.10 - 1/20/2021
