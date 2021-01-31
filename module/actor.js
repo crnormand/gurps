@@ -120,7 +120,11 @@ export class GurpsActor extends Actor {
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg +=
-            "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   We cannot determine which items are contained in others.  Please upgrade to the latest export script.<br>"
+            "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   If items are not appearing in their containers, please upgrade to the latest export script.<br>"
+        }
+        if (vernum < 3) {
+          msg +=
+            "This file was created with an older version of the GCS Export which does not contain the Self Control rolls for Disadvantages (ex: [CR: 9 Bad Temper]).   If you are missing these rolls, please upgrade to the latest export script.<br>"
         }
       }
 
