@@ -13,6 +13,8 @@ To install the latest stable release, use this manifest URL:
 
 [Players Guide video](https://youtu.be/x-xD39x_JQw)
 
+[GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
+
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the latest stable release, use the manifest URL above.
 
@@ -20,6 +22,7 @@ This is what we are currently working on:
 
 - 0.8.11
     - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!).
+    - Ongoing internationalization effort by @Gus https://github.com/gtludwig
 
 ### History
 - 0.8.10
@@ -28,7 +31,7 @@ This is what we are currently working on:
 
 - 0.8.9
     - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
-    - Fixed CGA export to correctly export ranged innate attacks.
+    - Fixed GCA export to correctly export ranged innate attacks.
     - Added Equipment hierarchy to GCA export
     - Support GCS v4.27, export hierarchy for Ads/Disads, Skills, Spells and Notes
     - Added Page Refs for Notes
