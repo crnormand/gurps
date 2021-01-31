@@ -270,7 +270,7 @@ export class ModifierBucketEditor extends Application {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
       width: 900,
-      height: 800,
+      height: 700,
       resizeable: false,
       minimizable: false,
       popOut: true,
