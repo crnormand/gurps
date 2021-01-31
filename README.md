@@ -14,6 +14,7 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the latest stable release, use the manifest URL above.
+[Current GCA Export version: GCA-2 1/29/2021 / Current GCS Export version: GCS-3 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
