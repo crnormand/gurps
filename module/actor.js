@@ -37,7 +37,7 @@ export class GurpsActor extends Actor {
       data.data.additionalresources.bodyplan !== this._additionalResources?.bodyplan
     ) {
       let bodyplan = data.data.additionalresources.bodyplan
-      let hitlocationTable = hitlocationDictionary[bodyplan]
+      let hitlocationTable = HitLocations.hitlocationDictionary[bodyplan]
       if (!hitlocationTable) {
         ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
       } else {
@@ -48,7 +48,7 @@ export class GurpsActor extends Actor {
           let hit = hitlocationTable[loc]
           let originalLoc = Object.values(oldlocations).filter((it) => it.where === loc)
           let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
-          let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
+          let it = new HitLocations.HitLocation(loc, dr, hit.penalty, hit.roll)
           game.GURPS.put(hitlocations, it, count++)
         }
         // Since we are in the middle of an update now, we have to let it finish, and then change the hitlocations list
@@ -349,8 +349,8 @@ export class GurpsActor extends Actor {
     let vitals = locations.filter((value) => value.where === HitLocations.HitLocation.VITALS)
     if (vitals.length === 0) {
       let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
-      hl.penalty = HitLocations.hitlocationRolls[HitLocation.VITALS].penalty
-      hl.roll = HitLocations.hitlocationRolls[HitLocation.VITALS].roll
+      hl.penalty = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].penalty
+      hl.roll = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].roll
       hl.dr = '0'
       locations.push(hl)
     }
@@ -414,7 +414,7 @@ export class GurpsActor extends Actor {
       }
     })
     locations.forEach((it) => temp.push(it))
-    //   locations.forEach(it => temp.push(HitLocation.normalized(it)))
+    //   locations.forEach(it => temp.push(HitLocations.HitLocation.normalized(it)))
 
     let prot = {}
     let index = 0
