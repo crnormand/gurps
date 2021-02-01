@@ -309,7 +309,7 @@ export class GurpsActor extends Actor {
         if (!!txt) n.notes = n.notes + '\n' + txt.replace(/\\r/g, '\n')
         n.uuid = t(j.uuid)
         n.parentuuid = t(j.parentuuid)
-        n.imported = true
+        n.pageref = t(j.pageref)
         temp.push(n)
       }
     }
