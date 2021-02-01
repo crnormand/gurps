@@ -3,6 +3,12 @@ import parselink from '../lib/parselink.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 
+Hooks.once('init', async function () {
+  Hooks.on('closeModifierBucketEditor', (editor, element) => {
+    $(element).hide()   // To make this application appear to close faster, we will hide it before the animation
+  })
+})
+
 // Install Custom Roll to support global modifier access (@gmod & @gmodc)
 export class GurpsRoll extends Roll {
   _prepareData(data) {
@@ -278,7 +284,7 @@ export class ModifierBucketEditor extends Application {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
       width: 900,
-      height: 800,
+      height: 700,
       resizeable: false,
       minimizable: false,
       popOut: false,

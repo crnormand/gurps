@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 @ENHANCED_KEY_PARSING
-<root release="Foundry" version="GCS-2">
+<root release="Foundry" version="GCS-3">
   <character>
     <name type="string">@NAME</name>
     <portrait>@PORTRAIT</portrait>
@@ -186,7 +186,7 @@
           <name type="string">@DESCRIPTION_PRIMARY</name>
           <points type="number">@POINTS</points>
           <userdesc type="string">@DESCRIPTION_USER</userdesc>
-	    <notes type="string">@DESCRIPTION_NOTES</notes>
+	    <notes type="string">@DESCRIPTION_NOTES @DESCRIPTION_MODIFIER_NOTES_BRACKET</notes>
 	    <pageref>@REF</pageref>
 	    <type>@TYPE</type>
           <uuid>@ID</uuid>

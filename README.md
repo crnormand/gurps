@@ -5,30 +5,33 @@
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
-
 To install the latest stable release, use this manifest URL:   
 [https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
 
-[Getting Started video](https://youtu.be/FUqtOkdyBCo)
+[Getting Started video](https://youtu.be/FUqtOkdyBCo) / [Players Guide video](https://youtu.be/x-xD39x_JQw)
 
-[Players Guide video](https://youtu.be/x-xD39x_JQw)
+Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the latest stable release, use the manifest URL above.
+[Current GCA Export version: GCA-2 1/29/2021 / Current GCS Export version: GCS-3 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
 - 0.8.11
-    - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!).
+    - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!)
+    - Ongoing internationalization effort by @Gus
+    - Fixed GCS export to reinstate Self Control Rolls, ex: [CR: 12 Bad Temper] (GCS-3)
+    - Added chat command: /everyone +/-N FP/HP 
 
 ### History
-- 0.8.10
+- 0.8.10 - 1/30/2021
     - @Tratz equipment bug fix, portrait fix and logo fix!
     - Bug fix for OtF formulas in Skills/Spells in containers
 
-- 0.8.9
+- 0.8.9 - 1/29/2021
     - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
-    - Fixed CGA export to correctly export ranged innate attacks.
+    - Fixed GCA export to correctly export ranged innate attacks.
     - Added Equipment hierarchy to GCA export
     - Support GCS v4.27, export hierarchy for Ads/Disads, Skills, Spells and Notes
     - Added Page Refs for Notes
@@ -36,7 +39,7 @@ This is what we are currently working on:
     - Added drag and drop menu 'before' and 'in' for all lists so you can create containers
     - Allow user created notes & equipment to survive import
 
-- 0.8.8
+- 0.8.8 - 1/24/2021
     - Fixed [Parry] bug (if Parry column has "No" in it)
     - Added "Send to 'Everyone'" GM option in modifier bucket
     - Added QTY +/- buttons to equipment (ugly, but functional)
@@ -50,10 +53,10 @@ This is what we are currently working on:
     - Updated chat commands (/help - to see them all) 
     - Support limited multiline chat macros
 
-- 0.8.7
+- 0.8.7 - 1/20/2021
     - Bug fix for multiple PDF links (and GCA import failure)
 
-- 0.8.6
+- 0.8.6 - 1/20/2021
     - Yet more updates to Mook Generator stat block importer
     - Support for OtF [Dodge+/-mod text] and [<mapped>+/-mod text] (Vision, Hearing, Fright Check, etc.)
     - Fixed weight/cost sum import for GCA
@@ -61,7 +64,7 @@ This is what we are currently working on:
     - Fixed "lost" Automatic Encumbrance system setting
     - Support opening multiple PDF links "B101, MA105"
     
-- 0.8.5
+- 0.8.5 - 1/17/2021
     - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP) and system setting.
     - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
     - Shift-click on Resource Tracker increments/decrements by 5 (also affects CI Days to Heal)
@@ -78,7 +81,7 @@ This is what we are currently working on:
     - added system setting for 'SHOW THE MATH'
     - Encumbrance level automatically set based on carried equipment weight and system setting
 
-- 0.8.4
+- 0.8.4 - 1/5/2021
     - Enhanced the Mook Generator to use tabs as a delimiter.
     - Added pain penalties for characters with High Pain Threshold (HPT) to the modifier bucket (thanks, @Exxar!)
     - Enhanced the character sheet to enable damage formulas based on Swing or Thrust; e.g. "sw+2" or "thr-1".
@@ -93,7 +96,7 @@ This is what we are currently working on:
     - System setting to ignore 'name' attribute during import
     - More flexible parsing for stat block attacks
 
-- 0.8.3
+- 0.8.3 - 12/22/2020
     - Direct roll of On-the-Fly formulas in chat.  e.g. /r [Per] or /roll [3d-2 cr]
     - Direct roll of On-the-Fly formulas in Rolltables
     - Direct roll of On-the-Fly formulas in Macros (multiple lines)
@@ -105,7 +108,7 @@ This is what we are currently working on:
     - Drag and drop damage onto Combat Tracker
     - General Resource trackers!  Full and Combat sheets
 
-- 0.8.2
+- 0.8.2 - 12/14/2020
     - Rearrange npc sheet (attacks over traits/skills)
     - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
     - Adding Stat block importing/parsing
@@ -120,7 +123,7 @@ This is what we are currently working on:
     - Import can now keep current HP & FP
     - fix for combined Basic Set PDF link for pages > 336
 
-- 0.8.1
+- 0.8.1 - 12/6/2020
     - Basic Speed no longer truncates
     - Major upgrade to Apply Damage Dialog!
     - Allow "defense" to be rollable in Simple sheet
@@ -140,7 +143,7 @@ This is what we are currently working on:
     - Right Click on Attack/Skill/Spell level & On-the-Fly formula to whisper to owner.
 		
 **NOTE: If you upgrade to v0.8.0, you MUST delete all of your actors and restart Foundry**
-- 0.8.0
+- 0.8.0 - 11/27/2020
     - Enhanced Drag and Drop Damage Dialog.
     - Simplified (convention one-shot) character sheet
     - Enhanced On-the-Fly parsing for Skills, Spells and Attacks (melee & ranged)
@@ -156,7 +159,7 @@ This is what we are currently working on:
     
 **NOTE: If you upgrade to v0.7.0, YOU MUST delete all of your actors, and Restart Foundry**
 
-- 0.7.0
+- 0.7.0 - 11/18/2020
     - Fixed manifest file to allow for automatic updating
     - Added configurable system settings (range system (Basic Set / Monster Hunters 2), etc.)
     - Added common modifiers as pulldown lists on tooltip
@@ -170,43 +173,51 @@ This is what we are currently working on:
     - Can edit character sheet
     - Started work on drag and drop damage!
     
-- 0.6.5
+- 0.6.5 - 11/9/2020
     - Removed "+0" range modifiers
     - Enabled Full/Combat view for Players
     - Fixed font color to be more readable
     - Major overhaul of the Modifier Bucket "tool tip"!!
-- 0.6.4
+- 0.6.4 - 11/6/2020
     - HP & FP editable, and Conditions change color.
     - ACC and Bulk ranged modifiers work.
     - Measuring Ruler automatically creates Range Modifier.
     - Started work for Monster Hunters 2 range modifiers.
     - Refactored dice rolling so that modifiers now add to damage.
-- 0.6.3
+- 0.6.3 - 11/5/2020
     - Hot toggle between "full" and "combat" character sheets
     - template.json changes.   You must delete all Actors created prior to v0.6.3
     - imported Hit Location information
     - tooltips for Hit Location equipment
     - GM Mod push!
-- 0.6.2
+- 0.6.2 - 11/4/2020
     - Support for stackable modifiers (clicking [-1 for range] multiple times)
     - Fixed display of desktop Modifier Bucket
     - Added Modifier tooltip
     - Added critical success/failure calculations
     - Added SJG notifications, as per the SJG Online Policy
-- 0.6.1
+- 0.6.1 - 11/3/2020
     - Started User Guide and added README popup
     - Imported skill points
-- 0.6.0 
+- 0.6.0 - 11/2/2020
     - Imported Notes & Equipment
     - Incorporated new "combat-focused" character sheet.  
     -	Fixed import of GCA exports (using Fantasy Ground format).   
     - Made current FP and HP editable.
     -	Continuing work on editable entries.   
     -	Reworked template.json to remove arrays (All characters prior to 0.6.0 must be deleted and reimported!)
-- 0.5.1 - Due to overwhelming pressure (3 people), I did my best to fix the "jumpy" buttons that cause the page to constantly shift.
-- 0.5.0 - Atropos fixed my persistance issue.   Youtube demo made.
-- 0.4.0 - Rollables and PDF (pagerefs) work
-- 0.3.0 - Introduction of GCS character sheet
+- 0.5.1 - 10/31/2020
+    - Due to overwhelming pressure (3 people), I did my best to fix the "jumpy" buttons that cause the page to constantly shift.
+- 0.5.0 - 10/30/2020
+    - Atropos fixed my persistance issue.   Youtube demo made.
+- 0.4.0 - 10/28/2020
+    - Rollables and PDF (pagerefs) work
+- 0.3.0 - 10/27/2020
+    - Introduction of GCS character sheet
+- 0.2.0 - 10/25/2020
+    - Renamed system
+- 0.1.0 - 10/21/2020
+    - Started GCS Import
 
 The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
 
