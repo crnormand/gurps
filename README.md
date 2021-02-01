@@ -22,6 +22,7 @@ This is what we are currently working on:
     - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!)
     - Ongoing internationalization effort by @Gus
     - Fixed GCS export to reinstate Self Control Rolls, ex: [CR: 12 Bad Temper] (GCS-3)
+    - Added chat command: /everyone +/-N FP/HP 
 
 ### History
 - 0.8.10 - 1/30/2021

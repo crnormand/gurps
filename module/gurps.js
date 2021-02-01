@@ -1084,6 +1084,7 @@ Hooks.once("init", async function () {
       if (game.user.isGM) {
         c += '<br>/sendmb &lt;playername&gt'
         c += '<br>/mook'
+        c += '<br>/everyone (or /every) +/-N FP/HP'
       }
       ChatMessage.create({
         content: c,
@@ -1097,10 +1098,34 @@ Hooks.once("init", async function () {
       new NpcInput().render(true)
       return false
     }
+    
+    let m = content.match(/\/(everyone|every) ([+-])(\d+) ?([FfHh][Pp])/);
+    if (!!m && game.user.isGM) {
+     let c = []
+     game.actors.entities.forEach(actor => {
+        let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
+        if (users.length > 0) {
+          let v = parseInt(m[3])
+          if (m[2] == "-") v = v * -1
+          let attr = m[4].toUpperCase()
+          let cur = actor.data.data[attr].value;
+          actor.update({ [ "data." + attr + ".value"] : cur + v });
+          c.push(`${actor.name} ${m[2]}${m[3]} ${m[4]}`)
+        }
+      })
+        
+      ChatMessage.create({
+        alreadyProcessed: true,
+        content: c.join("<br>"),
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.OOC
+      })
+      return false
+    }
 
+    let c = 'executing:'
     let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
     let found = false
-    let c = 'executing:'
     let delayed = ''
     content.split('\n').forEach((e) => {
       // Handle multiline chat messages (mostly from macros)
