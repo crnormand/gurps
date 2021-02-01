@@ -24,7 +24,7 @@ This is what we are currently working on:
     - Fixed GCS export to reinstate Self Control Rolls, ex: [CR: 12 Bad Temper]
 
 ### History
-- 0.8.10 - 1/20/2021
+- 0.8.10 - 1/30/2021
     - @Tratz equipment bug fix, portrait fix and logo fix!
     - Bug fix for OtF formulas in Skills/Spells in containers
 
@@ -207,12 +207,16 @@ This is what we are currently working on:
     -	Reworked template.json to remove arrays (All characters prior to 0.6.0 must be deleted and reimported!)
 - 0.5.1 - 10/31/2020
     - Due to overwhelming pressure (3 people), I did my best to fix the "jumpy" buttons that cause the page to constantly shift.
-- 0.5.0 
+- 0.5.0 - 10/30/2020
     - Atropos fixed my persistance issue.   Youtube demo made.
-- 0.4.0 
+- 0.4.0 - 10/28/2020
     - Rollables and PDF (pagerefs) work
-- 0.3.0 
+- 0.3.0 - 10/27/2020
     - Introduction of GCS character sheet
+- 0.2.0 - 10/25/2020
+    - Renamed system
+- 0.1.0 - 10/21/2020
+    - Started GCS Import
 
 The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
 
