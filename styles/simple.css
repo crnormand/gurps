@@ -385,8 +385,11 @@
 .modttt {
   text-align: center;
   border-radius: 10px;
+  width: 900px;
+  height: 700px;
+  position: absolute;
   /* padding: 5px 10px 5px 10px; */
-  /* z-index: 100; */
+  z-index: 100;
 }
 
 .modttt::after {
@@ -398,7 +401,6 @@
   border-width: 37px 300px;
   border-style: solid;
   border-color: black transparent transparent transparent;
-  z-index: -100;
   pointer-events: none;
 }
 
