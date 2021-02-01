@@ -1058,7 +1058,7 @@ export class GurpsActor extends Actor {
    * @returns the appropriate hitlocation table based on the actor's bodyplan
    */
   get _hitLocationRolls() {
-    return HitLocation.getHitLocationRolls(this.data.data.additionalresources?.bodyplan)
+    return HitLocations.HitLocation.getHitLocationRolls(this.data.data.additionalresources?.bodyplan)
   }
 
   // Return the 'where' value of the default hit location, or 'Random'
