@@ -1,36 +1,36 @@
 <div class='gurps-app {{classes}}'>
   <div classes='flexcol flex-between'>
 
-    <h2>Apply {{CALC.basicDamage}} points of
+    <h2>{{localize "GURPS.addTitleConcat0" basicDamage=CALC.basicDamage}}
       {{#if CALC.armorDivisor}}({{CALC.armorDivisor}}){{/if}}
       {{#if (ne CALC.damageType 'none')}}{{CALC.damageType}}{{/if}}
-      damage to {{actor.data.name}}</h2>
+      {{localize "GURPS.addTitleConcat1" name=actor.data.name}}</h2>
 
     <div class='flexrow flex-group-center flex-between'>
-      <h3>DIRECTLY APPLY:</h3>
+      <h3>{{localize "GURPS.addDirectlyApply"}}:</h3>
       <input type='text' id='basicDamage' class='digits-only' value='{{CALC.basicDamage}}'>
       <div>
         <select id='apply-to'>
-          <option value='HP' {{#if (eq CALC.applyTo 'HP' )}}selected{{/if}}>Hit Points</option>
-          <option value='FP' {{#if (eq CALC.applyTo 'FP' )}}selected{{/if}}>Fatigue Points</option>
+          <option value='HP' {{#if (eq CALC.applyTo 'HP' )}}selected{{/if}}>{{localize "GURPS.attributesHPNAME"}}</option>
+          <option value='FP' {{#if (eq CALC.applyTo 'FP' )}}selected{{/if}}>{{localize "GURPS.attributesFPNAME"}}</option>
         </select>
       </div>
-      <button id='apply-publicly'>Apply</button>
-      <button id='apply-secretly'>Apply (Quietly)</button>
+      <button id='apply-publicly'>{{localize "GURPS.addApply"}}</button>
+      <button id='apply-secretly'>{{localize "GURPS.addApplyQuietly"}}</button>
     </div>
 
     <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>
-      <h3>APPLY DAMAGE OPTIONS:</h3>
+      <h3>{{localize "GURPS.addApplyDamageOptions"}}:</h3>
 
       <div class='grid grid-3col flex-between'>
 
         <div class='gurps-group'>
-          <h4>Hit Location and DR</h4>
+          <h4>{{localize "GURPS.addHitLocationAndDR"}}</h4>
 
           <div class='gurps-3col gurps-radio-col'>
-            <header>Location</header>
-            <header>Roll</header>
-            <header>DR</header>
+            <header>{{localize "GURPS.location"}}</header>
+            <header>{{localize "GURPS.roll"}}</header>
+            <header>{{localize "GURPS.hitLocationDR"}}</header>
 
             {{#each CALC.hitLocationsWithDR}}
             <div><label><input type='radio' name='hitlocation' value='{{this.where}}' {{#if (eq ../CALC.hitLocation

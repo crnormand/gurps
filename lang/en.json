@@ -94,6 +94,14 @@
 
 	"GURPS.wasStruckIn": "was struck in",
 	"GURPS.bluntTrauma": "Blunt Trauma",
+	"GURPS.addTitleConcat0": "Apply {basicDamage} points of ",
+	"GURPS.addTitleConcat1": "damage to {name}",
+	"GURPS.addDirectlyApply": "DIRECTLY APPLY",
+	"GURPS.addApply": "Apply",
+	"GURPS.addApplyQuietly": "Apply (Quietly)",
+	"GURPS.addApplyDamageOptions": "APPLY DAMAGE OPTIONS",
+	"GURPS.addHitLocationAndDR": "Hit Location and DR",
+
 	"GURPS.crippling": "Crippling Injury, ",
 	"GURPS.damageAbove": "Damage above ",
 	"GURPS.hpIgnored": " HP ignored.",
@@ -133,9 +141,11 @@
 
 	"GURPS.hitLocation" : "Hit Location",
 	"GURPS.roll" : "Roll",
+	"GURPS.location" : "Location",
 	"GURPS.hitLocationWhere" : "Where",
 	"GURPS.hitLocationPenalty" : "Penalty",
 	"GURPS.hitLocationDR" : "DR",
+	"GURPS.hitLocationRandom" : "Random",
 
 	"GURPS.meleeWeapons" : "Melee Weapons",
 	"GURPS.usage" : "Usage",

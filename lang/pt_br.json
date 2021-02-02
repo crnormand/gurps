@@ -94,6 +94,14 @@
 
   "GURPS.wasStruckIn": "foi acertado(a) no(a)",
   "GURPS.bluntTrauma": "Contusão",
+  "GURPS.addTitleConcat0": "Aplicat {basicDamage} pontos de ",
+  "GURPS.addTitleConcat1": "dano a {name}",
+  "GURPS.addDirectlyApply": "APLICAR DIRETAMENTE",
+  "GURPS.addApply": "Aplicar",
+  "GURPS.addApplyQuietly": "Aplicar (Discretamente)",
+  "GURPS.addApplyDamageOptions": "OPÇÕES PARA APLICAR DANO",
+  "GURPS.addHitLocationAndDR": "Local de Acerto e RD",
+
   "GURPS.crippling": "Lesão paralisante, ",
   "GURPS.damageAbove": "Dano acima de ",
   "GURPS.hpIgnored": " PV são ignorados.",
@@ -133,9 +141,11 @@
 
   "GURPS.hitLocation" : "Local de Acerto",
   "GURPS.roll" : "Resultado",
+  "GURPS.location" : "Local",
   "GURPS.hitLocationWhere" : "Onde",
   "GURPS.hitLocationPenalty" : "Modificador",
   "GURPS.hitLocationDR" : "RD",
+  "GURPS.hitLocationRandom" : "Aleatório",
 
   "GURPS.meleeWeapons" : "Armas de Combate Corpo a Corpo",
   "GURPS.usage" : "Modo de Uso",
