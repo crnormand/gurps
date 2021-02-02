@@ -1,5 +1,6 @@
 'use strict'
 import parselink from '../lib/parselink.js'
+import { NpcInput } from '../lib/npc-input.js'
 
 /**
  *  This holds functions for all things chat related
@@ -86,24 +87,28 @@ export default function addChatHooks() {
         }
       
         // /everyone +1 fp or /everyone -2d-1 fp
-        let m = line.match(/\/(everyone|ev) ([+-]\d+d)?([+-]\d+)? ?([FfHh][Pp])/);
+        let m = line.match(/\/(everyone|ev) ([+-]\d+d)?([+-]\d+)?(!)? ?([FfHh][Pp])/);
         if (!!m && game.user.isGM) {
          let c = []
          game.actors.entities.forEach(actor => {
             let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
             if (users.length > 0) {
               let mod = m[3] || ""
+              let value = mod;
               let dice = m[2] || "";
               if (!!dice) {
                 let sign = (dice[0] == "-") ? -1 : 1
                 let roll = Roll.create(dice.substring(1, dice.length) + "6 " + mod).evaluate()
                 if (niceDice) game.dice3d.showForRoll(roll, game.user, data.whisper)
-                mod = sign * (roll.result)
+                value = Math.max(roll.total, !!m[4] ? 1 : 0)
+                value *= sign
+                if (!!m[4]) mod += m[4]
               } 
-              let attr = m[4].toUpperCase()
+              let attr = m[5].toUpperCase()
               let cur = actor.data.data[attr].value
-              actor.update({ [ "data." + attr + ".value"] : cur + parseInt(mod) })
-              priv.push(`${actor.name} ${dice}${m[3]} ${m[4]}`)
+              actor.update({ [ "data." + attr + ".value"] : cur + parseInt(value) })
+              let t = (mod != value) ? `(${value})` : ""
+              priv.push(`${actor.name} ${dice}${mod} ${t} ${m[5]}`)
             }
           })  
           return
@@ -114,19 +119,22 @@ export default function addChatHooks() {
         if (!!m && !!m[2]) {
           let action = parselink(m[2])
           if (!!action.action) {
-            send(priv, pub, data)
-            GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith('/pr') })
+            if (action.action.type === 'modifier')
+              priv.push(line)
+            else
+              send(priv, pub, data)
+            GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') })
             return
           }
         } 
         if (line === '/clearmb') {
-          priv.push(e);
+          priv.push(line);
           GURPS.ModifierBucket.clear()
           return
         }
         if (line.startsWith('/sendmb')) {
           priv.push(line)
-          let user = e.replace(/\/sendmb/, '').trim()
+          let user = line.replace(/\/sendmb/, '').trim()
           GURPS.ModifierBucket.sendBucketToPlayer(user)
           return
         }
