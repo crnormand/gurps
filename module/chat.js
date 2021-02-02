@@ -101,7 +101,6 @@ export default function addChatHooks() {
         // /everyone +1 fp or /everyone -2d-1 fp
         let m = line.match(/\/(everyone|ev) ([+-]\d+d)?([+-]\d+)?(!)? ?([FfHh][Pp])/);
         if (!!m && game.user.isGM) {
-         let c = []
          game.actors.entities.forEach(actor => {
             let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
             if (users.length > 0) {
@@ -118,22 +117,38 @@ export default function addChatHooks() {
               } 
               let attr = m[5].toUpperCase()
               let cur = actor.data.data[attr].value
-              actor.update({ [ "data." + attr + ".value"] : cur + parseInt(value) })
+              let newval = cur + parseInt(value)
+              if (newval > actor.data.data[attr].max) newval = Math.max(cur, actor.data.data[attr].max)
+              actor.update({ [ "data." + attr + ".value"] : newval })
               let t = (mod != value) ? `(${value})` : ""
               priv(`${actor.name} ${dice}${mod} ${t} ${m[5]}`, msgs)
             }
           })  
           return
         }
-    
+        
+        // /everyone reset fp/hp
+        m = line.match(/\/(everyone|ev) reset ([FfHh][Pp])/);
+        if (!!m && game.user.isGM) {
+         game.actors.entities.forEach(actor => {
+            let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
+            if (users.length > 0) {
+              let attr = m[2].toUpperCase()
+              let max = actor.data.data[attr].max
+              actor.update({ [ "data." + attr + ".value"] : max })
+              priv(`${actor.name} reset to ${max} ${m[2]}`, msgs)
+            }
+          })  
+          return
+        }
+
+  
         m = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
         if (!!m && !!m[2]) {
           let action = parselink(m[2])
           if (!!action.action) {
-            //if (action.action.type === 'modifier')
+            if (action.action.type === 'modifier')  // only need to show modifiers, everything else does something.
               priv(line, msgs)
-            //else
-            //  send(priv, pub, data)
             GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') })
             return
           }

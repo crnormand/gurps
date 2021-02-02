@@ -708,13 +708,13 @@ GURPS.handleRoll = handleRoll
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
-  let parse = desc.replace(/.*\* ?Costs? (\d+) ?FP.*/g, '$1')
+  let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
   if (parse != desc && !!actor) {
     let fp = parseInt(parse)
     fp = actor.data.data.FP.value - fp
     actor.update({ 'data.FP.value': fp })
   }
-  parse = desc.replace(/.*\*Max: ?(\d+).*/g, '$1')
+  parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {
     return parseInt(parse)
   }
