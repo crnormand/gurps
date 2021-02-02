@@ -38,24 +38,37 @@ export default function addChatHooks() {
 
   Hooks.once('ready', async function () {
    
-    let send = (priv, pub, data) => {
-      if (priv.length > 0) {
+    let send = (msgs) => {
+      if (msgs.priv.length > 0) {
         ChatMessage.create({
           alreadyProcessed: true,
-          content: priv.join("<br>"),
+          content: msgs.priv.join("<br>"),
           user: game.user._id,
           type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
           whisper: [game.user._id],
         })
-        priv.length = 0
+        msgs.priv.length = 0
       }
-      if (pub.length > 0) {
-        data.alreadyProcessed = true
-        data.content = pub.join("<br>")
-        ChatMessage.create(data)
-        pub.length = 0
+      if (msgs.pub.length > 0) {
+        msgs.data.alreadyProcessed = true
+        msgs.data.content = msgs.pub.join("<br>")
+        ChatMessage.create(msgs.data)
+        msgs.pub.length = 0
       }
     }
+    
+    // Stack up as many public messages as we can, until we need to print a private one (to reduce the number of chat messages)
+    let pub = (text, msgs) => {
+      if (msgs.priv.length > 0) 
+        send(msgs)
+      msgs.pub.push(text);
+    } 
+    // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
+    let priv = (text, msgs) => {
+      if (msgs.pub.length > 0) 
+        send(msgs)
+      msgs.priv.push(text);
+    } 
    
     Hooks.on('chatMessage', (log, message, data) => {
       if (!!data.alreadyProcessed) return true    // The chat message has already been parsed for GURPS commands show it should just be displayed
@@ -63,8 +76,7 @@ export default function addChatHooks() {
       // Is Dice So Nice enabled ?
       let niceDice = false
       try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
-      let priv = []    // collect lines to send
-      let pub = []
+      let msgs = { pub: [], priv: [], data: data }
       message.split('\n').forEach((line) => {
         if (line === '/help' || line === '!help') {
           let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
@@ -77,12 +89,12 @@ export default function addChatHooks() {
             c += '<br>/mook'
             c += '<br>/everyone (or /ev) +/-N FP/HP'
           }
-          priv.push(c);
+          priv(c, msgs);
           return    // Nothing left to do
         }
         if (line === '/mook' && game.user.isGM) {
           new NpcInput().render(true)
-          priv.push("Opening Mook Generator")
+          priv("Opening Mook Generator", msgs)
           return
         }
       
@@ -108,40 +120,39 @@ export default function addChatHooks() {
               let cur = actor.data.data[attr].value
               actor.update({ [ "data." + attr + ".value"] : cur + parseInt(value) })
               let t = (mod != value) ? `(${value})` : ""
-              priv.push(`${actor.name} ${dice}${mod} ${t} ${m[5]}`)
+              priv(`${actor.name} ${dice}${mod} ${t} ${m[5]}`, msgs)
             }
           })  
           return
         }
     
-        let used = false
         m = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
         if (!!m && !!m[2]) {
           let action = parselink(m[2])
           if (!!action.action) {
-            if (action.action.type === 'modifier')
-              priv.push(line)
-            else
-              send(priv, pub, data)
+            //if (action.action.type === 'modifier')
+              priv(line, msgs)
+            //else
+            //  send(priv, pub, data)
             GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') })
             return
           }
         } 
         if (line === '/clearmb') {
-          priv.push(line);
+          priv(line, msgs);
           GURPS.ModifierBucket.clear()
           return
         }
         if (line.startsWith('/sendmb')) {
-          priv.push(line)
+          priv(line, msgs)
           let user = line.replace(/\/sendmb/, '').trim()
           GURPS.ModifierBucket.sendBucketToPlayer(user)
           return
         }
-        pub.push(line)
+        pub(line, msgs)  // If not handled, must just be public text
       })  // end split
-      send(priv, pub, data)
-      return false    // Don't display this chat message... display the ones we created
+      send(msgs)
+      return false    // Don't display this chat message, since we have handled it with others
     })
   
     // Look for blind messages with .message-results and remove them
