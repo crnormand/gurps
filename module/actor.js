@@ -605,6 +605,8 @@ export class GurpsActor extends Actor {
     let t = this.textFrom
     let es = {}
     let index = 0
+    let cm = 0
+    let cd = 0
     for (let i = 0; i < 5; i++) {
       let e = new Encumbrance()
       e.level = i
@@ -616,12 +618,18 @@ export class GurpsActor extends Actor {
       let k2 = k + '_weight'
       e.weight = t(json[k2])
       k2 = k + '_move'
-      e.move = t(json[k2])
+      e.move = this.intFrom(json[k2])
       k2 = k + '_dodge'
-      e.dodge = t(json[k2])
+      e.dodge = this.intFrom(json[k2])
+      if (e.current) {
+        cm = e.move
+        cd = e.dodge
+      }
       game.GURPS.put(es, e, index++)
     }
     return {
+      'data.currentmove': cm,
+      'data.currentdodge': cd,
       'data.-=encumbrance': null,
       'data.encumbrance': es,
     }
@@ -1069,15 +1077,11 @@ export class GurpsActor extends Actor {
   }
 
   getCurrentDodge() {
-    if (!this.data.data.encumbrance) return 0
-    let enc = Object.values(this.data.data.encumbrance).find((e) => e.current)
-    return !!enc ? enc.dodge : 0
+    return this.data.data.currentdodge
   }
 
   getCurrentMove() {
-    if (!this.data.data.encumbrance) return 0
-    let enc = Object.values(this.data.data.encumbrance).find((e) => e.current)
-    return !!enc ? enc.move : 0
+    return this.data.data.currentmove
   }
 
   getTorsoDr() {

@@ -247,6 +247,10 @@ ${this.editor.OtherMods}`
   refresh() {
     this.render(true)
   }
+  
+  async sendBucketToPlayer(name) {
+    this.editor.sendBucketToPlayer(name)
+  }
 }
 
 /**
