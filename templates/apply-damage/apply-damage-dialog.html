@@ -43,28 +43,28 @@
           <hr /> <!-- Doesn't do much except add some space -->
 
           <button id='random-location' class='with-icon'>
-            <i class='fa fa-dice'><span>&nbsp;Random</span></i>
+            <i class='fa fa-dice'><span>&nbsp;{{localize "GURPS.hitLocationRandom"}}</span></i>
           </button>
 
           <hr /> <!-- Doesn't do much except add some space -->
 
           <div class='gurps-3col gurps-radio-col'>
             <div><label><input type='radio' name='hitlocation' value='Large-Area' {{#if (eq
-                  CALC.hitLocation 'Large-Area' )}}checked{{/if}}>&nbsp;Large-Area Injury</label></div>
+                  CALC.hitLocation 'Large-Area' )}}checked{{/if}}>&nbsp;{{localize "GURPS.addLargeAreaInjury"}}</label></div>
             <div></div>
             <div class='pdflink'>B400</div>
           </div>
 
           <div class='grid grid-2col flex-between'>
             <div><label><input type='radio' name='hitlocation' value='User Entered' {{#if (eq
-                  CALC.hitLocation 'User Entered' )}}checked{{/if}}>&nbsp;Enter DR:</input></label></div>
+                  CALC.hitLocation 'User Entered' )}}checked{{/if}}>&nbsp;{{localize "GURPS.addEnterDR"}}:</input></label></div>
             <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
               value='{{CALC.userEnteredDR}}'>
           </div>
         </div>
 
         <div class='gurps-group'>
-          <h4>Type and Wounding Modifiers</h4>
+          <h4>{{localize "GURPS.addTypeAndWoundingModifiers"}}</h4>
 
           <section id='wound-modifier-table'>
             <div name='wounding-modifiers' class='default-wound-modifiers'>

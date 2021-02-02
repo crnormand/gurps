@@ -101,6 +101,9 @@
   "GURPS.addApplyQuietly": "Aplicar (Discretamente)",
   "GURPS.addApplyDamageOptions": "OPÇÕES PARA APLICAR DANO",
   "GURPS.addHitLocationAndDR": "Local de Acerto e RD",
+  "GURPS.addLargeAreaInjury" : "Lesão em grande área",
+  "GURPS.addEnterDR" : "Informe a RD",
+  "GURPS.addTypeAndWoundingModifiers": "Modificadores de tipo e ferimento",
 
   "GURPS.crippling": "Lesão paralisante, ",
   "GURPS.damageAbove": "Dano acima de ",

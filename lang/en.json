@@ -101,6 +101,9 @@
 	"GURPS.addApplyQuietly": "Apply (Quietly)",
 	"GURPS.addApplyDamageOptions": "APPLY DAMAGE OPTIONS",
 	"GURPS.addHitLocationAndDR": "Hit Location and DR",
+	"GURPS.addLargeAreaInjury" : "Large-Area Injury",
+	"GURPS.addEnterDR" : "Enter DR",
+	"GURPS.addTypeAndWoundingModifiers": "Type And Wounding Modifiers",
 
 	"GURPS.crippling": "Crippling Injury, ",
 	"GURPS.damageAbove": "Damage above ",
