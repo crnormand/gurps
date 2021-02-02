@@ -541,9 +541,10 @@ export class GurpsActor extends Actor {
         eqt.parentuuid = t(j.parentuuid)
         if (isFoundryGCS) {
           eqt.notes = t(j.notes)
-          eqt.pageref = t(j.pageref)
-        } else eqt.setNotes(t(j.notes))
-        if (!!j.pageref) eqt.pageref = t(j.pageref).split(',').splice(0, 1)
+        } else {
+          eqt.setNotes(t(j.notes))
+        }
+        eqt.pageref = t(j.pageref)
         temp.push(eqt)
       }
     }
@@ -936,7 +937,6 @@ export class GurpsActor extends Actor {
           sp.maintain = t(j.maintain)
           sp.difficulty = t(j.difficulty)
           sp.notes = t(j.notes)
-          sp.pageref = t(j.pageref)
         } else {
           let cm = t(j.costmaintain)
           let i = cm.indexOf('/')
@@ -947,8 +947,8 @@ export class GurpsActor extends Actor {
             sp.cost = cm
           }
           sp.setNotes(t(j.text))
-          if (!!j.pageref) sp.pageref = t(j.pageref).split(',').splice(0, 1)
         }
+        sp.pageref = t(j.pageref)
         sp.duration = t(j.duration)
         sp.points = t(j.points)
         sp.casttime = t(j.time)
@@ -1089,6 +1089,31 @@ export class GurpsActor extends Actor {
     let hl = Object.values(this.data.data.hitlocations).find((h) => h.penalty == 0)
     return !!hl ? hl.dr : 0
   }
+  
+  getEquipped(key) {
+    let val = 0;
+    Object.values(this.data.data.melee).forEach(melee => {
+      recurselist(this.data.data.equipment.carried, (e) => {
+        if (!val && e.equipped && e.name == melee.name) {
+          let t = parseInt(melee[key])
+          if (!isNaN(t)) val = t
+        }
+      })
+    })
+    return val;
+  }
+
+  get equippedparry() {
+    let p = this.getEquipped('parry')
+    if (!p && !!this.data.data.parry)   // If we can't find a parry on a melee, check the NPC parry value
+      p = this.data.data.parry
+    return p
+  }
+
+  get equippedblock() {
+    return this.getEquipped('block')
+  }
+
 }
 
 export class Named {
