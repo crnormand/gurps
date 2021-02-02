@@ -1,13 +1,13 @@
 <div>
-  {{name}} takes {{modifier}} points of Shock <span style='font-size: smaller;'>([PDF:B419])</span>.<br />
-  <span style='font-size:small;'>[-{{modifier}} to DX and IQ] <i>next turn only</i>.
+  {{localize "GURPS.chatShock" name=name modifier=modifier}}<span style='font-size: smaller;'>([PDF:B419])</span>.<br />
+  <span style='font-size:small;'>[-{{modifier}} {{localize "GURPS.toDXAndIQ"}}] <i>{{localize "GURPS.nextTurnOnly"}}</i>.
     <hr />
     <ul>
-      <li>High Pain Threshold negates; no penalty. <span style='font-size: smaller;'>([PDF:B59])</span></li>
-      <li>Low Pain Threshold <i>doubles:</i> [-{{doubled}} to DX and IQ]. <span
+      <li>{{localize "GURPS.highPainThresholdNoPenalty"}}. <span style='font-size: smaller;'>([PDF:B59])</span></li>
+      <li>{{localize "GURPS.lowPainThreshold"}} <i>{{localize "GURPS.effectsDoubles"}}:</i> [-{{doubled}} {{localize "GURPS.toDXAndIQ"}}]. <span
           style='font-size: smaller;'>([PDF:B142])</span></li>
     </ul>
-    <span style='font-size: smaller;'>Does not apply to Active Defenses or other defensive reactions. See <i>Temporary
-        Attribute Penalties, </i><span style='font-size: smaller;'>([PDF:B421])</span>.</span>
+    <span style='font-size: smaller;'>{{localize "GURPS.effectsNotApplicableDefenses"}}
+      <i>{{localize "GURPS.effectsTemporaryAttributePenalties"}}</i>, <span style='font-size: smaller;'>([PDF:B421])</span>.</span>
   </span>
 </div>
