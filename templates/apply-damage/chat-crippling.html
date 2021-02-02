@@ -1,16 +1,16 @@
 <div>
-  {{name}} suffers a crippling injury <span style='font-size: smaller;'>([PDF:B422])</span> to {{location}}.<br />
+  {{localize "GURPS.chatSuffersCrippling" name=name}} <span style='font-size: smaller;'>([PDF:B422])</span> {{localize "GURPS.chatToLocation" location=location}}.<br />
   {{#if (eq location 'Tail')}}
   <hr />
   <span style='font-size:small;'>
-    Ground creatures suffer:
+    {{localize "GURPS.groundCreaturesSuffer"}}:
     <ul>
-      <li>[-1 to all DX-based rolls]. </li>
+      <li>[-1 {{localize "GURPS.toAllDXBasedRolls}}]. </li>
     </ul>
-    Swimmers or Flyers suffer:
+    {{localize "GURPS.swimmersOrFlyersSuffer"}}:
     <ul>
-      <li>[-2 to all DX-based rolls], </li>
-      <li>Move is reduced to half.</li>
+      <li>[-2 {{localize "GURPS.toAllDXBasedRolls}}], </li>
+      <li>{{localize "GURPS.moveReducedToHalf}}.</li>
     </ul>
   </span>
   {{/if}}
