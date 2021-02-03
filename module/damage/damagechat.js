@@ -26,13 +26,20 @@ export default class DamageChat {
   setup() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
       let damageMessages = html.find('.damage-message')
-      for (var message of damageMessages) {
-        message.setAttribute('draggable', true)
+      let transfer = JSON.parse(app.data.flags.transfer)
+      for (let index = 0; index < damageMessages.length; index++) {
+        let message = damageMessages[index]
 
+        message.setAttribute('draggable', true)
         message.addEventListener('dragstart', (ev) => {
           $(ev.currentTarget).addClass('dragging')
           ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
-          return ev.dataTransfer.setData('text/plain', app.data.flags.transfer)
+          let payload = transfer.payload[index]
+          let data = {
+            type: 'damageItem',
+            payload: payload,
+          }
+          return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
         })
 
         message.addEventListener('dragend', (ev) => {
