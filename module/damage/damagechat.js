@@ -4,8 +4,8 @@ import { woundModifiers } from './damage-tables.js'
 import { d6ify, isNiceDiceEnabled, parseIntFrom } from '../../lib/utilities.js'
 import { gspan } from '../../lib/parselink.js'
 
-const damageLinkPattern = /^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g
-const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)?( .*)?$/g
+const damageLinkPattern = /^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?([^\*]*)(\*[Cc]osts? \d+[Ff][Pp])?$/g
+const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)? ?([^\*]*)(\*[Cc]osts? \d+[Ff][Pp])?$/g
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -255,13 +255,13 @@ export default class DamageChat {
    */
 
   parseLink(linkText) {
-    let parsedText = linkText.replace(damageLinkPattern, 'damage~$1~$2~$3~$4~$5~$6')
+    let parsedText = linkText.replace(damageLinkPattern, 'damage~$1~$2~$3~$4~$5~$6~$7')
     if (parsedText != linkText) {
       return parsedText
     }
 
     // Also handle linkText of the format, "<basic-damage>+<adds>! <type>", e.g.: 'SW+2! imp'.
-    return linkText.replace(swingThrustPattern, 'derived~$1~$2~$3~$4')
+    return linkText.replace(swingThrustPattern, 'derived~$1~$2~$3~$4~$5')
   }
 
   /**
@@ -292,10 +292,12 @@ export default class DamageChat {
     const INDEX_DIVISOR = 3
     const INDEX_BANG = 4
     const INDEX_TYPE = 5
+    const INDEX_COST = 6
 
     let a = parsedText.split('~')
     let damageType = a[INDEX_TYPE].trim()
     let woundingModifier = woundModifiers[damageType]
+    let costs = a[INDEX_COST];
 
     // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
     // Must convert to '*' for Foundry.
@@ -310,6 +312,7 @@ export default class DamageChat {
         type: 'roll',
         formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + multiplier + a[INDEX_BANG],
         desc: damageType, // Action description
+        costs: costs
       }
 
       return {
@@ -324,6 +327,7 @@ export default class DamageChat {
       type: 'damage',
       formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + a[INDEX_MULTIPLIER] + a[INDEX_DIVISOR] + a[INDEX_BANG],
       damagetype: damageType,
+      costs: costs
     }
 
     return {
@@ -337,10 +341,12 @@ export default class DamageChat {
     const INDEX_ADDS = 1
     const INDEX_BANG = 2
     const INDEX_TYPE = 3
+    const INDEX_COST = 4
 
     let a = parsedText.split('~')
     let damageType = a[INDEX_TYPE].trim()
     let woundingModifier = woundModifiers[damageType]
+    let costs = a[INDEX_COST];
     if (!!woundingModifier) {
       let action = {
         orig: linkText,
@@ -348,6 +354,7 @@ export default class DamageChat {
         derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
         formula: a[INDEX_ADDS] + a[INDEX_BANG],
         damagetype: damageType,
+        costs: costs
       }
       return {
         text: gspan(linkText, action),
@@ -361,6 +368,7 @@ export default class DamageChat {
       derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
       formula: a[INDEX_ADDS] + a[INDEX_BANG],
       desc: damageType,
+      costs: costs
     }
     return {
       text: gspan(linkText, action),

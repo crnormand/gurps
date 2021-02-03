@@ -173,7 +173,7 @@ ${this.editor.OtherMods}`
       stack.currentSum += m.modint
     }
     stack.displaySum = displayMod(stack.currentSum)
-    stack.plus = stack.currentSum > 0
+    stack.plus = stack.currentSum > 0 || stack.modifierList.length > 0   // cheating here... it shouldn't be named "plus", but "green"
     stack.minus = stack.currentSum < 0
   }
 
@@ -431,7 +431,7 @@ export class ModifierBucketEditor extends Application {
     let v = element.value
     let parsed = parselink(element.value, game.GURPS.LastActor)
     if (!!parsed.action && parsed.action.type === 'modifier') {
-      this.addModifier(parsed.action.mod, parsed.action.desc)
+      this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else this.editor.refresh()
   }
 
@@ -608,15 +608,6 @@ ${OtherMods}`
     this.updateBucket()
   }
 
-  // Called during the dice roll to return a list of modifiers and then clear
-  async applyMods(targetmods = []) {
-    let stack = this.bucket.modifierStack
-    let answer = !!targetmods ? targetmods : []
-    answer = answer.concat(stack.modifierList)
-    this.clear()
-    return answer
-  }
-
   clear() {
     //await game.user.setFlag("gurps", "modifierstack", null);
     this.bucket.modifierStack = {
@@ -692,15 +683,6 @@ ${OtherMods}`
     }
     this.sum()
     this.updateBucket()
-  }
-
-  // Called during the dice roll to return a list of modifiers and then clear
-  async applyMods(targetmods = []) {
-    let stack = this.bucket.modifierStack
-    let answer = !!targetmods ? targetmods : []
-    answer = answer.concat(stack.modifierList)
-    this.clear()
-    return answer
   }
 
   async clear() {

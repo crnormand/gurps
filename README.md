@@ -22,8 +22,12 @@ This is what we are currently working on:
     - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!)
     - Ongoing internationalization effort by @Gus
     - Fixed GCS export to reinstate Self Control Rolls, ex: [CR: 12 Bad Temper] (GCS-3)
-    - Added chat command: /everyone +/-N FP/HP 
-    - revamped the chat message handler
+    - Added chat command: /everyone <commands> 
+    - revamped the chat message handler (it actually works now)
+    - Added currentdodge, currentmove, equippedparry and equippedblock attributes (for use with modules like Token Tooltip Alt)
+    - Added GM Send function to Journal entries
+    - Enhance OtF for damage to allow "*Costs ?FP" [4d-4 burn *Costs 4FP]
+    - Defaults for skill OtF [S:Skillname(DX-2)], actually infinite, can be used to try other skills [S:Skill1(S:Skill2(S:Skill3(IQ-4 default)))]
 
 ### History
 - 0.8.10 - 1/30/2021
