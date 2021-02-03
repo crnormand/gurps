@@ -1,0 +1,39 @@
+<div>
+  <div class='prefix'>Rolling {{dice}} {{damageTypeText}} damage.</div>
+  <div class='roll-message'>
+    <hr />
+    <ul class='modifier-list'>
+      {{#each modifiers}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+
+  </div>
+  <div>
+    {{#each draggableData}}
+    <div class='gurps damage-message' data-transfer='{{transfer}}'>
+      <div class='roll-message'>
+        <div class='roll-result'>{{target}}:
+          <span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />&nbsp;<span
+            class='roll-value'>{{damage}}&nbsp;</span><span class='roll-detail'>{{pluralize 'point' damage}} of
+            damage.</span>
+        </div>
+        {{#if hasExplanation}}
+        <div>
+          <hr />
+          {{#if explainLineOne}}
+          <div style='text-align: start' class='aside'>{{explainLineOne}}</div>
+          {{/if}}
+          {{#if explainLineTwo}}
+          <div style='text-align: start' class='aside'>{{explainLineTwo}}</div>
+          {{/if}}
+          {{#if isB378}}
+          <div class='aside'>* — Minimum damage rule applied. (<span class='pdflink'>B378</span>)</div>
+          {{/if}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
