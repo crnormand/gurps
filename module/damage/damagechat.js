@@ -4,8 +4,8 @@ import { woundModifiers } from './damage-tables.js'
 import { d6ify, isNiceDiceEnabled, parseIntFrom } from '../../lib/utilities.js'
 import { gspan } from '../../lib/parselink.js'
 
-const damageLinkPattern = /^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?([^\*]*)(\*[Cc]osts? \d+[Ff][Pp])?$/g
-const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)? ?([^\*]*)(\*[Cc]osts? \d+[Ff][Pp])?$/g
+const damageLinkPattern = /^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g
+const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)?( .*)?$/g
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -13,8 +13,6 @@ const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)? ?([^\*]*)(\*[C
  *
  * The chat message will contain a drag-and-droppable div that will be used to apply the damage to a
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
- *
- *
  */
 export default class DamageChat {
   static basicRegex = /^(?<basic>SW|Sw|sw|THR|Thr|thr)[^A-Za-z]/
@@ -27,17 +25,17 @@ export default class DamageChat {
 
   setup() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
-      let damageMessage = html.find('.damage-message')[0]
-      if (damageMessage) {
-        damageMessage.setAttribute('draggable', true)
+      let damageMessages = html.find('.damage-message')
+      for (var message of damageMessages) {
+        message.setAttribute('draggable', true)
 
-        damageMessage.addEventListener('dragstart', (ev) => {
+        message.addEventListener('dragstart', (ev) => {
           $(ev.currentTarget).addClass('dragging')
           ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
           return ev.dataTransfer.setData('text/plain', app.data.flags.transfer)
         })
 
-        damageMessage.addEventListener('dragend', (ev) => {
+        message.addEventListener('dragend', (ev) => {
           $(ev.currentTarget).removeClass('dragging')
         })
       }
@@ -52,9 +50,26 @@ export default class DamageChat {
    * @param {Event} event that triggered this action
    * @param {String} overrideDiceText ??
    */
-  async create(actor, diceText, damageType, event, overrideDiceText) {
-    // First check for basic damage syntax, such as thr+3, sw-1, etc...
+  async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
+    let targetmods = await this._gurps.ModifierBucket.applyMods() // append any global mods
 
+    if (!!tokenNames && tokenNames.length > 0) {
+      let draggableData = []
+      await tokenNames.forEach(async (tokenName) => {
+        let data = await this._createDraggableSection(
+          actor, tokenName, targetmods, diceText, damageType, overrideDiceText)
+        draggableData.push(data)
+      })
+
+      this._createChatMessage(actor, draggableData, event)
+      return
+    }
+    const newLocal = this._createDraggableSection(actor, null, targetmods, diceText, damageType, overrideDiceText)
+    this._createChatMessage(actor, [newLocal])
+  }
+
+  async _createDraggableSection(actor, tokenName, targetmods, diceText, damageType, overrideDiceText) {
+    // First check for basic damage syntax, such as thr+3, sw-1, etc...
     let result = DamageChat.basicRegex.exec(diceText)
     if (!!result) {
       let basicType = (result?.groups?.basic).toLowerCase()
@@ -110,7 +125,6 @@ export default class DamageChat {
       min = 1
     }
 
-    let targetmods = await this._gurps.ModifierBucket.applyMods() // append any global mods
     let modifier = 0
     let maxtarget = null // If not null, then the target cannot be any higher than this.
 
@@ -212,9 +226,21 @@ export default class DamageChat {
       explainLineOne: explainLineOne,
       explainLineTwo: explainLineTwo,
       isB378: b378,
+      roll: roll,
+      target: tokenName
     }
 
-    let html = await renderTemplate('systems/gurps/templates/damage-message.html', contentData)
+    return contentData
+  }
+
+  async _createChatMessage(actor, draggableData, event) {
+    let html = ''
+    for (let index = 0; index < draggableData.length; index++) {
+      let template = await renderTemplate('systems/gurps/templates/damage-message.html', draggableData[index])
+      html = '\n' + html + template
+    }
+
+    html = '<div>' + html + "\n</div>"
 
     const speaker = { alias: actor.name, _id: actor._id, actor: actor }
     let messageData = {
@@ -222,7 +248,7 @@ export default class DamageChat {
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: roll,
+      roll: draggableData[0].roll,
     }
 
     if (event?.shiftKey) {
@@ -235,7 +261,7 @@ export default class DamageChat {
 
     messageData['flags.transfer'] = JSON.stringify({
       type: 'damageItem',
-      payload: contentData,
+      payload: draggableData,
     })
 
     CONFIG.ChatMessage.entityClass.create(messageData).then((arg) => {
@@ -255,13 +281,13 @@ export default class DamageChat {
    */
 
   parseLink(linkText) {
-    let parsedText = linkText.replace(damageLinkPattern, 'damage~$1~$2~$3~$4~$5~$6~$7')
+    let parsedText = linkText.replace(damageLinkPattern, 'damage~$1~$2~$3~$4~$5~$6')
     if (parsedText != linkText) {
       return parsedText
     }
 
     // Also handle linkText of the format, "<basic-damage>+<adds>! <type>", e.g.: 'SW+2! imp'.
-    return linkText.replace(swingThrustPattern, 'derived~$1~$2~$3~$4~$5')
+    return linkText.replace(swingThrustPattern, 'derived~$1~$2~$3~$4')
   }
 
   /**
@@ -292,12 +318,10 @@ export default class DamageChat {
     const INDEX_DIVISOR = 3
     const INDEX_BANG = 4
     const INDEX_TYPE = 5
-    const INDEX_COST = 6
 
     let a = parsedText.split('~')
     let damageType = a[INDEX_TYPE].trim()
     let woundingModifier = woundModifiers[damageType]
-    let costs = a[INDEX_COST];
 
     // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
     // Must convert to '*' for Foundry.
@@ -312,7 +336,6 @@ export default class DamageChat {
         type: 'roll',
         formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + multiplier + a[INDEX_BANG],
         desc: damageType, // Action description
-        costs: costs
       }
 
       return {
@@ -327,7 +350,6 @@ export default class DamageChat {
       type: 'damage',
       formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + a[INDEX_MULTIPLIER] + a[INDEX_DIVISOR] + a[INDEX_BANG],
       damagetype: damageType,
-      costs: costs
     }
 
     return {
@@ -341,12 +363,10 @@ export default class DamageChat {
     const INDEX_ADDS = 1
     const INDEX_BANG = 2
     const INDEX_TYPE = 3
-    const INDEX_COST = 4
 
     let a = parsedText.split('~')
     let damageType = a[INDEX_TYPE].trim()
     let woundingModifier = woundModifiers[damageType]
-    let costs = a[INDEX_COST];
     if (!!woundingModifier) {
       let action = {
         orig: linkText,
@@ -354,7 +374,6 @@ export default class DamageChat {
         derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
         formula: a[INDEX_ADDS] + a[INDEX_BANG],
         damagetype: damageType,
-        costs: costs
       }
       return {
         text: gspan(linkText, action),
@@ -368,7 +387,6 @@ export default class DamageChat {
       derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
       formula: a[INDEX_ADDS] + a[INDEX_BANG],
       desc: damageType,
-      costs: costs
     }
     return {
       text: gspan(linkText, action),
