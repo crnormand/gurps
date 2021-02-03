@@ -486,13 +486,13 @@ function performAction(action, actor, event) {
 
   if (action.type === 'pdf') {
     GURPS.handlePdf(action.link)
-    return
+    return true
   }
 
   if (action.type === 'modifier') {
     let mod = parseInt(action.mod)
     GURPS.ModifierBucket.addModifier(mod, action.desc)
-    return
+    return true
   }
 
   if (action.type === 'attribute')
@@ -523,7 +523,7 @@ function performAction(action, actor, event) {
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event)
-    return
+    return true
   }
 
   const BASIC_SWING = 'sw'
@@ -540,7 +540,7 @@ function performAction(action, actor, event) {
         event,
         action.derivedformula + action.formula
       )
-      return
+      return true
     } else ui.notifications.warn('You must have a character selected')
 
   if (action.type === 'derivedroll')
@@ -558,8 +558,11 @@ function performAction(action, actor, event) {
       thing = action.name
       skill = GURPS.findSkillSpell(actordata, thing)
       if (!skill) {
+        if (!!action.default) {
+          if (GURPS.performAction(action.default, actor, event)) return true;
+        }
         ui.notifications.warn("No skill or spell named '" + action.name + "' found on " + actor.name)
-        return
+        return false
       }
       thing = skill.name
       target = parseInt(skill.level)
@@ -575,7 +578,7 @@ function performAction(action, actor, event) {
       att = GURPS.findAttack(actordata, thing)
       if (!att) {
         ui.notifications.warn("No melee or ranged attack named '" + action.name + "' found on " + actor.name)
-        return
+        return false
       }
       thing = att.name
       target = parseInt(att.level)
@@ -603,7 +606,7 @@ function performAction(action, actor, event) {
   if (action.type === 'block-parry')
     if (!!actor) {
       thing = action.desc
-      if (!action.melee) target = actordata.data[action.path] // Is there a basic parry or block stored, and we didn't try to identify a melee
+      if (!action.melee) target = actordata.data['equipped' + action.path] // Is there a basic parry or block stored, and we didn't try to identify a melee
       Object.values(actordata.data.melee).forEach((e) => {
         if (!target || target <= 0) {
           if (!!e[action.path]) {
@@ -626,7 +629,10 @@ function performAction(action, actor, event) {
       else ui.notifications.warn('Unable to find a ' + action.orig + ' to roll')
     } else ui.notifications.warn('You must have a character selected')
 
-  if (!!formula) doRoll(actor, formula, targetmods, prefix, thing, target, opt)
+  
+  if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+  doRoll(actor, formula, targetmods, prefix, thing, target, opt)
+  return true
 }
 GURPS.performAction = performAction
 
