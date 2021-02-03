@@ -25,6 +25,8 @@ This is what we are currently working on:
     - Added chat command: /everyone <commands> 
     - revamped the chat message handler
     - Added currentdodge, currentmove, equippedparry and equippedblock attributes (for use with modules like Token Tooltip Alt)
+    - Added GM Send function to Journal entries
+    - Enhance OtF for damage to allow "*Costs ?FP"
 
 ### History
 - 0.8.10 - 1/30/2021
