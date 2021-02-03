@@ -247,6 +247,10 @@ ${this.editor.OtherMods}`
   refresh() {
     this.render(true)
   }
+  
+  async sendBucketToPlayer(name) {
+    this.editor.sendBucketToPlayer(name)
+  }
 }
 
 /**
@@ -284,7 +288,7 @@ export class ModifierBucketEditor extends Application {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
       width: 900,
-      height: 700,
+      height: 800,
       resizeable: false,
       minimizable: false,
       popOut: false,

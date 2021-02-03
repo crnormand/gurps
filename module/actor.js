@@ -541,9 +541,10 @@ export class GurpsActor extends Actor {
         eqt.parentuuid = t(j.parentuuid)
         if (isFoundryGCS) {
           eqt.notes = t(j.notes)
-          eqt.pageref = t(j.pageref)
-        } else eqt.setNotes(t(j.notes))
-        if (!!j.pageref) eqt.pageref = t(j.pageref).split(',').splice(0, 1)
+        } else {
+          eqt.setNotes(t(j.notes))
+        }
+        eqt.pageref = t(j.pageref)
         temp.push(eqt)
       }
     }
@@ -605,6 +606,8 @@ export class GurpsActor extends Actor {
     let t = this.textFrom
     let es = {}
     let index = 0
+    let cm = 0
+    let cd = 0
     for (let i = 0; i < 5; i++) {
       let e = new Encumbrance()
       e.level = i
@@ -616,12 +619,18 @@ export class GurpsActor extends Actor {
       let k2 = k + '_weight'
       e.weight = t(json[k2])
       k2 = k + '_move'
-      e.move = t(json[k2])
+      e.move = this.intFrom(json[k2])
       k2 = k + '_dodge'
-      e.dodge = t(json[k2])
+      e.dodge = this.intFrom(json[k2])
+      if (e.current) {
+        cm = e.move
+        cd = e.dodge
+      }
       game.GURPS.put(es, e, index++)
     }
     return {
+      'data.currentmove': cm,
+      'data.currentdodge': cd,
       'data.-=encumbrance': null,
       'data.encumbrance': es,
     }
@@ -928,7 +937,6 @@ export class GurpsActor extends Actor {
           sp.maintain = t(j.maintain)
           sp.difficulty = t(j.difficulty)
           sp.notes = t(j.notes)
-          sp.pageref = t(j.pageref)
         } else {
           let cm = t(j.costmaintain)
           let i = cm.indexOf('/')
@@ -939,8 +947,8 @@ export class GurpsActor extends Actor {
             sp.cost = cm
           }
           sp.setNotes(t(j.text))
-          if (!!j.pageref) sp.pageref = t(j.pageref).split(',').splice(0, 1)
         }
+        sp.pageref = t(j.pageref)
         sp.duration = t(j.duration)
         sp.points = t(j.points)
         sp.casttime = t(j.time)
@@ -1069,15 +1077,11 @@ export class GurpsActor extends Actor {
   }
 
   getCurrentDodge() {
-    if (!this.data.data.encumbrance) return 0
-    let enc = Object.values(this.data.data.encumbrance).find((e) => e.current)
-    return !!enc ? enc.dodge : 0
+    return this.data.data.currentdodge
   }
 
   getCurrentMove() {
-    if (!this.data.data.encumbrance) return 0
-    let enc = Object.values(this.data.data.encumbrance).find((e) => e.current)
-    return !!enc ? enc.move : 0
+    return this.data.data.currentmove
   }
 
   getTorsoDr() {
@@ -1085,6 +1089,31 @@ export class GurpsActor extends Actor {
     let hl = Object.values(this.data.data.hitlocations).find((h) => h.penalty == 0)
     return !!hl ? hl.dr : 0
   }
+  
+  getEquipped(key) {
+    let val = 0;
+    Object.values(this.data.data.melee).forEach(melee => {
+      recurselist(this.data.data.equipment.carried, (e) => {
+        if (!val && e.equipped && e.name == melee.name) {
+          let t = parseInt(melee[key])
+          if (!isNaN(t)) val = t
+        }
+      })
+    })
+    return val;
+  }
+
+  get equippedparry() {
+    let p = this.getEquipped('parry')
+    if (!p && !!this.data.data.parry)   // If we can't find a parry on a melee, check the NPC parry value
+      p = this.data.data.parry
+    return p
+  }
+
+  get equippedblock() {
+    return this.getEquipped('block')
+  }
+
 }
 
 export class Named {

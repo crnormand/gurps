@@ -43,9 +43,11 @@ import handlebarHelpers from '../lib/moustachewax.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
 import { NpcInput } from '../lib/npc-input.js'
+import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
 
+addChatHooks()
 jqueryHelpers()
 handlebarHelpers()
 settings.initializeSettings()
@@ -163,10 +165,6 @@ GURPS.ClearLastActor = function (actor) {
 //   'huge piercing': 'pi++',
 //   toxic: 'tox',
 // }
-
-// GURPS.parseDmg = (dmg) => {
-//   return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, '$1~$2~$3~$4~$5~$6')
-// } // Allow opt '6' after 1d
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -710,13 +708,13 @@ GURPS.handleRoll = handleRoll
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
-  let parse = desc.replace(/.*\* ?Costs? (\d+) ?FP.*/g, '$1')
+  let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
   if (parse != desc && !!actor) {
     let fp = parseInt(parse)
     fp = actor.data.data.FP.value - fp
     actor.update({ 'data.FP.value': fp })
   }
-  parse = desc.replace(/.*\*Max: ?(\d+).*/g, '$1')
+  parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {
     return parseInt(parse)
   }
@@ -1074,136 +1072,8 @@ Hooks.once("init", async function () {
   Items.unregisterSheet('core', ItemSheet)
   Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
-  Hooks.on('chatMessage', (log, content, data) => {
-    if (!!data.alreadyProcessed) return true
-    if (content === '/help' || content === '!help') {
-      let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
-      c += '<br>/roll (or /r) [On-the-Fly formula]'
-      c += '<br>/private (or /pr) [On-the-Fly formula]'
-      c += '<br>/clearmb'
-      if (game.user.isGM) {
-        c += '<br>/sendmb &lt;playername&gt'
-        c += '<br>/mook'
-        c += '<br>/everyone (or /every) +/-N FP/HP'
-      }
-      ChatMessage.create({
-        content: c,
-        user: game.user._id,
-        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [game.user._id],
-      })
-      return false
-    }
-    if (content === '/mook' && game.user.isGM) {
-      new NpcInput().render(true)
-      return false
-    }
-    
-    let m = content.match(/\/(everyone|every) ([+-])(\d+) ?([FfHh][Pp])/);
-    if (!!m && game.user.isGM) {
-     let c = []
-     game.actors.entities.forEach(actor => {
-        let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
-        if (users.length > 0) {
-          let v = parseInt(m[3])
-          if (m[2] == "-") v = v * -1
-          let attr = m[4].toUpperCase()
-          let cur = actor.data.data[attr].value;
-          actor.update({ [ "data." + attr + ".value"] : cur + v });
-          c.push(`${actor.name} ${m[2]}${m[3]} ${m[4]}`)
-        }
-      })
-        
-      ChatMessage.create({
-        alreadyProcessed: true,
-        content: c.join("<br>"),
-        user: game.user._id,
-        type: CONST.CHAT_MESSAGE_TYPES.OOC
-      })
-      return false
-    }
 
-    let c = 'executing:'
-    let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
-    let found = false
-    let delayed = ''
-    content.split('\n').forEach((e) => {
-      // Handle multiline chat messages (mostly from macros)
-      let used = false
-      let m = e.match(re)
-      if (!!m && !!m[2]) {
-        let action = parselink(m[2])
-        if (!!action.action) {
-          c += '<br>' + e
-          GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: e.startsWith('/pr') })
-          used = true
-        }
-      } else {
-        if (e === '/clearmb') {
-          c += '<br>' + e
-          GURPS.ModifierBucket.clear()
-          used = true
-        }
-        if (e.startsWith('/sendmb')) {
-          c += '<br>' + e
-          let user = e.replace(/\/sendmb/, '').trim()
-          GURPS.ModifierBucket.sendBucketToPlayer(user)
-          used = true
-        }
-      }
-      if (!used) delayed += e + '\n'
-      found = found || used
-    })
-    if (found) {
-      //     setTimeout(() => {
-      ChatMessage.create({
-        alreadyProcessed: true,
-        content: c,
-        user: game.user._id,
-        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [game.user._id],
-      })
-      if (!!delayed) {
-        let d = duplicate(data)
-        d.content = delayed
-        d.alreadyProcessed = true
-        ChatMessage.create(d)
-      }
-      //       }, 500);
-      return false
-    }
-  })
-
-  // Look for blind messages with .message-results and remove them
-  /*	Hooks.on("renderChatMessage", (log, content, data) => {
-    if (!!data.message.blind) {
-        if (data.author?.isSelf && !data.author.isGm) {		// We are rendering the chat message for the sender (and they are not the GM)
-          $(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
-        }
-      }
-    });  */
-
-  // Add the "for" attribute to a collapsible panel label. This is needed
-  // because the server in 0.7.8 strips the "for" attribute in an attempt
-  // to guard against weird security hacks. When "for" is whitelisted as
-  // a valid attribute (future) we can remove this.
-  Hooks.on('renderChatMessage', (app, html, msg) => {
-    // this is a fucking hack
-    let wrapper = html.find('.collapsible-wrapper')
-    if (wrapper.length > 0) {
-      console.log($(wrapper).html())
-      let input = $(wrapper).find('input.toggle')[0]
-      let label = $(input).siblings('label.label-toggle')[0]
-      let id = input.id
-      let labelFor = $(label).attr('for')
-      if (labelFor !== id) {
-        $(label).attr('for', id)
-      }
-      console.log($(wrapper).html())
-    }
-  })
-
-  // Warning, the very firsttable will take a refresh for the dice to show up in the dialog.  Sorry, can't seem to get around that
+  // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
   Hooks.on('createRollTable', async function (entity, options, userId) {
     await entity.update({ img: 'systems/gurps/icons/single-die.png' })
     entity.data.img = 'systems/gurps/icons/single-die.png'
@@ -1293,35 +1163,6 @@ Hooks.once('ready', async function () {
         else game.GURPS.ClearLastActor(a)
       }
     }
-  })
-
-  Hooks.on('preCreateChatMessage', (data, options, userId) => {
-    let c = data.content
-    try {
-      let html = $(c)
-      let rt = html.find('.result-text') // Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
-      let re = /^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/
-      let t = rt[0]?.innerText
-      if (!!t) {
-        t.split('\n').forEach((e) => {
-          let m = e.match(re)
-          if (!!m && !!m[2]) {
-            let action = parselink(m[2])
-            if (!!action.action) {
-              GURPS.performAction(action.action, GURPS.LastActor, {
-                shiftKey: e.startsWith('/pr'),
-              })
-              //					return false;	// Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
-            }
-          }
-        })
-      }
-    } catch (e) { } // a dangerous game... but limited to GURPs /roll OtF
-    data.content = game.GURPS.gurpslink(c)
-  })
-
-  Hooks.on('renderChatMessage', (app, html, msg) => {
-    GURPS.hookupGurps(html)
   })
 
   Hooks.on('renderJournalSheet', (app, html, opts) => {

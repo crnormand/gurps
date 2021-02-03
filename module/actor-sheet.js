@@ -72,7 +72,11 @@ export class GurpsActorSheet extends ActorSheet {
             await this.actor.update({ [t]: false });
           }
           if (key === best) {
-            await this.actor.update({ [t]: true });
+            await this.actor.update({ 
+              [t]: true,
+              'data.currentmove': enc.move,
+              'data.currentdodge': enc.dodge
+            });
           }
         }
       }, 200);
@@ -1105,7 +1109,11 @@ export class GurpsActorSheet extends ActorSheet {
           await this.actor.update({ [t]: false });
         }
         if (key === enckey) {
-          await this.actor.update({ [t]: true });
+          await this.actor.update({ 
+            [t]: true,
+            'data.currentmove': enc.move,
+            'data.currentdodge': enc.dodge
+          });
         }
       }
     } else {
