@@ -115,6 +115,8 @@ export class GurpsActorSheet extends ActorSheet {
     GURPS.hookupGurps(html);
     html.find(".gurpslink").contextmenu(this._onRightClickGurpslink.bind(this));
     html.find(".glinkmod").contextmenu(this._onRightClickGurpslink.bind(this));
+    html.find(".glinkmodplus").contextmenu(this._onRightClickGurpslink.bind(this));
+    html.find(".glinkmodminus").contextmenu(this._onRightClickGurpslink.bind(this));
     html.find("[data-otf]").contextmenu(this._onRightClickOtf.bind(this));
     html.find(".gmod").contextmenu(this._onRightClickGmod.bind(this));
     html.find(".pdflink").contextmenu(this._onRightClickPdf.bind(this));
@@ -1008,14 +1010,14 @@ export class GurpsActorSheet extends ActorSheet {
     let action = el.dataset.action;
     if (!!action) {
       action = JSON.parse(atob(action));
-      this.whisperOtfToOwner(action.orig, event, (action.hasOwnProperty("blindroll") && !action.blindroll));  // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+      GURPS.whisperOtfToOwner(action.orig, event, (action.hasOwnProperty("blindroll") && !action.blindroll), this.actor);  // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
     }
   }
 
   async _onRightClickPdf(event) {
     event.preventDefault();
     let el = event.currentTarget;
-    this.whisperOtfToOwner("PDF:" + el.innerText, event);
+    GURPS.whisperOtfToOwner("PDF:" + el.innerText, event, false, this.actor);
   }
 
   async _onRightClickGmod(event) {
@@ -1023,72 +1025,13 @@ export class GurpsActorSheet extends ActorSheet {
     let el = event.currentTarget;
     let n = el.dataset.name;
     let t = el.innerText;
-    this.whisperOtfToOwner(t + " " + n, event);
+    GURPS.whisperOtfToOwner(t + " " + n, event, false, this.actor);
   }
 
   async _onRightClickOtf(event) {
     event.preventDefault();
     let el = event.currentTarget;
-    this.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !el.dataset.hasOwnProperty("damage"));    // Can't blind roll damages (yet)
-  }
-
-  async whisperOtfToOwner(otf, event, canblind) {
-    if (!game.user.isGM) return;
-    if (!!otf) {
-      otf = otf.replace(/ \(\)/g, "");  // sent as "name (mode)", and mode is empty (only necessary for attacks)
-      let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM);
-      let botf = "[!" + otf + "]"
-      otf = "[" + otf + "]";
-      let buttons = {};
-      buttons.one = {
-        icon: '<i class="fas fa-users"></i>',
-        label: "To Everyone",
-        callback: () => this.sendOtfMessage(otf, false)
-      }
-      if (canblind)
-        buttons.two = {
-          icon: '<i class="fas fa-users-slash"></i>',
-          label: "Blindroll to Everyone",
-          callback: () => this.sendOtfMessage(botf, true)
-        };
-      if (users.length > 0) {
-        let nms = users.map(u => u.name).join(' ');
-        buttons.three = {
-          icon: '<i class="fas fa-user"></i>',
-          label: "Whisper to " + nms,
-          callback: () => this.sendOtfMessage(otf, false, users)
-        }
-        if (canblind)
-          buttons.four = {
-            icon: '<i class="fas fa-user-slash"></i>',
-            label: "Whisper Blindroll to " + nms,
-            callback: () => this.sendOtfMessage(botf, true, users)
-          }
-      }
-
-      let d = new Dialog({
-        title: "GM 'Send Formula'",
-        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-        buttons: buttons,
-        default: "four"
-      });
-      d.render(true);
-    }
-  }
-
-  sendOtfMessage(content, blindroll, users) {
-    let msgData = {
-      content: content,
-      user: game.user._id,
-      blind: blindroll
-    }
-    if (!!users) {
-      msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
-      msgData.whisper = users.map(it => it._id);
-    } else {
-      msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
-    }
-    ChatMessage.create(msgData);
+    GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !el.dataset.hasOwnProperty("damage"), this.actor);    // Can't blind roll damages (yet)
   }
 
   async _onClickRoll(event) {

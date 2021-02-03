@@ -608,15 +608,6 @@ ${OtherMods}`
     this.updateBucket()
   }
 
-  // Called during the dice roll to return a list of modifiers and then clear
-  async applyMods(targetmods = []) {
-    let stack = this.bucket.modifierStack
-    let answer = !!targetmods ? targetmods : []
-    answer = answer.concat(stack.modifierList)
-    this.clear()
-    return answer
-  }
-
   clear() {
     //await game.user.setFlag("gurps", "modifierstack", null);
     this.bucket.modifierStack = {
@@ -692,15 +683,6 @@ ${OtherMods}`
     }
     this.sum()
     this.updateBucket()
-  }
-
-  // Called during the dice roll to return a list of modifiers and then clear
-  async applyMods(targetmods = []) {
-    let stack = this.bucket.modifierStack
-    let answer = !!targetmods ? targetmods : []
-    answer = answer.concat(stack.modifierList)
-    this.clear()
-    return answer
   }
 
   async clear() {
