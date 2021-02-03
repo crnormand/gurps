@@ -201,7 +201,7 @@ export class GurpsActor extends Actor {
     await this.update(adds)
     let p = this.getEquippedParry()
     let b = this.getEquippedBlock()
-    this.actor.update({ 
+    this.update({ 
       "data.equippedparry": p,
       "data.equippedblock": b 
     });

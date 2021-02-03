@@ -638,9 +638,20 @@ GURPS.performAction = performAction
 
 function findSkillSpell(actor, sname) {
   sname = sname.split("*").join(".*");
+  let best = 0;
   var t;
-  recurselist(actor.data.skills, (s) => { if (s.name.match(sname)) t = s });
-  if (!t) recurselist(actor.data.spells, (s) => { if (s.name.match(sname)) t = s });
+  recurselist(actor.data.skills, (s) => { 
+    if (s.name.match(sname) && s.level > best) {
+      t = s
+      best = parseInt(s.level)
+    }
+  });
+  if (!t) recurselist(actor.data.spells, (s) => { 
+    if (s.name.match(sname) && s.level > best) {
+      t = s
+      best = parseInt(s.level)
+    }
+  });
   return t;
 }
 GURPS.findSkillSpell = findSkillSpell
