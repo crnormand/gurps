@@ -173,7 +173,7 @@ ${this.editor.OtherMods}`
       stack.currentSum += m.modint
     }
     stack.displaySum = displayMod(stack.currentSum)
-    stack.plus = stack.currentSum > 0
+    stack.plus = stack.currentSum > 0 || stack.modifierList.length > 0   // cheating here... it shouldn't be named "plus", but "green"
     stack.minus = stack.currentSum < 0
   }
 
@@ -431,7 +431,7 @@ export class ModifierBucketEditor extends Application {
     let v = element.value
     let parsed = parselink(element.value, game.GURPS.LastActor)
     if (!!parsed.action && parsed.action.type === 'modifier') {
-      this.addModifier(parsed.action.mod, parsed.action.desc)
+      this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else this.editor.refresh()
   }
 
