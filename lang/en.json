@@ -125,7 +125,16 @@
 	"GURPS.addInjuryToleranceDiffuse" : "Diffuse",
 	"GURPS.addFlexibleArmor" : "Flexible Armor",
 
+	"GURPS.addCalculationAndResults" : "Calculation and Results",
+	"GURPS.addBasicDamage" : "Basic Damage",
+	"GURPS.addWHard" : "w/Hard",
+	"GURPS.addPenetrating" : "Penetrating",
+	"GURPS.addInjury" : "Injury",
+	"GURPS.addDiffuseMax" : "Diffuse, max",
+	"GURPS.addLocationMax" : "Location Max",
 
+	"GURPS.addApplyInjury" : "Apply Injury",
+	"GURPS.addApplyInjuryQuietly" : "Apply Injury (Quietly)",
 
 	"GURPS.crippling" : "Crippling Injury, ",
 	"GURPS.damageAbove" : "Damage above ",
@@ -170,6 +179,7 @@
 	"GURPS.hitLocationWhere" : "Where",
 	"GURPS.hitLocationPenalty" : "Penalty",
 	"GURPS.hitLocationDR" : "DR",
+	"GURPS.hitLocationDRWithDivisor" : "DR with Divisor",
 	"GURPS.hitLocationRandom" : "Random",
 
 	"GURPS.meleeWeapons" : "Melee Weapons",

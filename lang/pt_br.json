@@ -125,6 +125,17 @@
   "GURPS.addInjuryToleranceDiffuse" : "Difuso",
   "GURPS.addFlexibleArmor" : "Armadura Flexível",
 
+  "GURPS.addCalculationAndResults" : "Cálculos e Resultados",
+  "GURPS.addBasicDamage" : "Dano Básico",
+  "GURPS.addWHard" : "c/ Rígido",
+  "GURPS.addPenetrating" : "Penetrante",
+  "GURPS.addInjury" : "Lesão",
+  "GURPS.addDiffuseMax" : "Difuso, dano máximo",
+  "GURPS.addLocationMax" : "Dano máximo no local",
+
+  "GURPS.addApplyInjury" : "Aplicar Dano",
+  "GURPS.addApplyInjuryQuietly" : "Aplicar Dano (Sileciosamente)",
+
   "GURPS.crippling" : "Lesão paralisante, ",
   "GURPS.damageAbove" : "Dano acima de ",
   "GURPS.hpIgnored" : " PV são ignorados.",
@@ -168,6 +179,7 @@
   "GURPS.hitLocationWhere" : "Onde",
   "GURPS.hitLocationPenalty" : "Modificador",
   "GURPS.hitLocationDR" : "RD",
+  "GURPS.hitLocationDRWithDivisor" : "RD com Divisor",
   "GURPS.hitLocationRandom" : "Aleatório",
 
   "GURPS.meleeWeapons" : "Armas de Combate Corpo a Corpo",
