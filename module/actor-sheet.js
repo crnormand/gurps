@@ -1127,7 +1127,13 @@ export class GurpsActorSheet extends ActorSheet {
     let key = element.dataset.key;
     let eqt = duplicate(GURPS.decode(this.actor.data, key));
     eqt.equipped = !eqt.equipped;
-    await this.actor.update({ [key]: eqt });
+    await this.actor.update({ [key]: eqt })
+    let p = this.actor.getEquippedParry()
+    let b = this.actor.getEquippedBlock()
+    this.actor.update({ 
+      "data.equippedparry": p,
+      "data.equippedblock": b 
+    });
   }
   
   addDeleteMenu(obj) {
