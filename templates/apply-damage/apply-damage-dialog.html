@@ -69,9 +69,9 @@
           <section id='wound-modifier-table'>
             <div name='wounding-modifiers' class='default-wound-modifiers'>
               <div class='gurps-3col gurps-radio-col'>
-                <header>Damage Type</header>
-                <header>Abbrev</header>
-                <header>Modifier</header>
+                <header>{{localize "GURPS.addDamageType"}}</header>
+                <header>{{localize "GURPS.addAbbrev"}}</header>
+                <header>{{localize "GURPS.modifier"}}</header>
 
                 {{#each CALC.effectiveWoundModifiers}}
                 <div><label><input type='radio' name='woundmodifier' value='{{@key}}' {{#if (eq ../CALC.damageType
@@ -84,11 +84,11 @@
               </div>
 
               {{#if CALC.isWoundModifierAdjustedForLocation}}
-              <aside>* - Adjusted for hit location.</aside>
+              <aside>{{localize "GURPS.addAdjustedForHitLocation"}}.</aside>
               {{/if}}
 
               {{#if CALC.isWoundModifierAdjustedForInjuryTolerance}}
-              <aside>† - Adjusted for Injury Tolerance.</aside>
+              <aside>{{localize "GURPS.addAdjustedForInjuryTolerance"}}.</aside>
               {{/if}}
             </div>
           </section>
@@ -96,23 +96,22 @@
           <hr /> <!-- Doesn't do much except add some space -->
 
           <label><input type='radio' name='woundmodifier' value='none' {{#if (eq CALC.damageType 'none'
-              )}}checked{{/if}}>&nbsp;No modifier</label>
+              )}}checked{{/if}}>&nbsp;{{localize "GURPS.noModifier"}}</label>
           <div class='grid grid-2col flex-between'>
             <div><label><input type='radio' name='woundmodifier' value='User Entered' {{#if (eq
-                  CALC.damageType 'User Entered' )}}checked{{/if}}>&nbsp;Enter
-                modifier:</label></div>
+                  CALC.damageType 'User Entered' )}}checked{{/if}}>&nbsp;{{localize "GURPS.addEnterModifier"}}:</label></div>
             <input type='text' class='decimal-digits-only' id='user-entered-woundmod'
               value='{{CALC.userEnteredWoundModifier}}'>
           </div>
           <div class='grid grid-2col flex-between'>
-            <label>Additional modifier (stacks):</label>
+            <label>{{localize "GURPS.addAdditionalStackingModifier"}}:</label>
             <input type='number' class='decimal-digits-only' id='addmodifier' value='{{CALC.additionalWoundModifier}}'>
           </div>
         </div>
 
         <div class='gurps-group'>
-          <h4>Tactical Rules</h4>
-          <aside>Use systems settings to set defaults.</aside>
+          <h4>{{localize "GURPS.addTacticalRules"}}</h4>
+          <aside>{{localize "GURPS.addTacticalRulesDefaults"}}.</aside>
 
           <div class='gurps-3col gurps-checkbox-col'>
 

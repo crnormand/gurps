@@ -77,6 +77,7 @@
 
   "GURPS.reaction": "Reação",
   "GURPS.modifier": "Modificador",
+  "GURPS.noModifier": "Sem Modificador",
 
   "GURPS.advDisadvPerkQuirks": "Vantagens, Desvantagens, Utilidades e Peculiaridades",
   "GURPS.skills": "Perícias",
@@ -104,6 +105,14 @@
   "GURPS.addLargeAreaInjury" : "Lesão em grande área",
   "GURPS.addEnterDR" : "Informe a RD",
   "GURPS.addTypeAndWoundingModifiers": "Modificadores de tipo e ferimento",
+  "GURPS.addDamageType" : "Tipo de Dano",
+  "GURPS.addAbbrev" : "Abrev",
+  "GURPS.addAdjustedForHitLocation" : "* - Ajustado para local de acerto",
+  "GURPS.addAdjustedForInjuryTolerance" : "† - Ajustado para Tolerância a Ferimentos",
+  "GURPS.addEnterModifier" : "Informe modificador",
+  "GURPS.addAdditionalStackingModifier" : "Modificadores adicionais (acumulam)",
+  "GURPS.addTacticalRules" : "Regras Táticas",
+  "GURPS.addTacticalRulesDefaults" : "Usar definições do sistema como padrão",
 
   "GURPS.crippling": "Lesão paralisante, ",
   "GURPS.damageAbove": "Dano acima de ",
