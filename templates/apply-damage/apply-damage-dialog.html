@@ -117,32 +117,32 @@
 
             <div><input id='tactical-blunttrauma' type='checkbox' value='blunttrauma' {{#if
                 CALC.useBluntTrauma}}checked{{/if}}></div>
-            <div><label for='tactical-blunttrauma'>Blunt Trauma</label></div>
+            <div><label for='tactical-blunttrauma'>{{localize "GURPS.bluntTrauma"}}</label></div>
             <div class='pdflink'>B379</div>
 
             <div><input id='tactical-armordivisor' type='checkbox' value='armordivisor' {{#if
                 CALC.useArmorDivisor}}checked{{/if}}></div>
-            <div><label for='tactical-armordivisor'>Armor Divisor</label></div>
+            <div><label for='tactical-armordivisor'>{{localize "GURPS.addArmorDivisor"}}</label></div>
             <div class='pdflink'>B378</div>
 
             <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{#if
                 CALC.useLocationModifiers}}checked{{/if}}></div>
-            <div><label for='tactical-locationmodifier'>Hit Location Wound Modifiers</label></div>
+            <div><label for='tactical-locationmodifier'>{{localize "GURPS.addHitLocationWoundModifiers"}}</label></div>
             <div class='pdflink'>B398</div>
           </div>
 
-          <h4>Special Combat Situations</h4>
+          <h4>{{localize "GURPS.addSpecialCombatSituations"}}</h4>
           <div class='gurps-3col gurps-checkbox-col'>
             <div><input id='specials-range12D' type='checkbox' value='range12D' {{#if
                 CALC.isRangedHalfDamage}}checked{{/if}}></div>
-            <div><label for='specials-range12D'>Ranged, Half Damage (1/2D)</label></div>
+            <div><label for='specials-range12D'>{{localize "GURPS.addRangedHalfDamage"}}</label></div>
             <div class='pdflink'>B378</div>
           </div>
 
           <div class='shaded collapsible-wrapper options-drawer'>
             <input id='vulnerable' class='toggle' type='checkbox' value='vulnerable' {{#if
               CALC.isVulnerable}}checked{{/if}}>
-            <label for='vulnerable' class='label-toggle'>Vulnerability:<span class='pdflink'>B161</span></label>
+            <label for='vulnerable' class='label-toggle'>{{localize "GURPS.addVulnerability"}}:<span class='pdflink'>B161</span></label>
             <div class='grid grid-3col continuation collapsible-content'>
               <label><input type='radio' name='vulnerability' value='2' {{#if (eq CALC.vulnerabilityMultiple
                   2)}}checked{{/if}}>&nbsp;×2</label>
@@ -156,7 +156,7 @@
           <div class='collapsible-wrapper options-drawer'>
             <input id='hardened' class='toggle' type='checkbox' value='hardened' {{#if
               CALC.isHardenedDR}}checked{{/if}}>
-            <label for='hardened' class='label-toggle'>Hardened DR Level: <span class='pdflink'>B47</span></label>
+            <label for='hardened' class='label-toggle'>{{localize "GURPS.addHardenedDRLevel"}}: <span class='pdflink'>B47</span></label>
             <div class='grid grid-5col continuation collapsible-content'>
               <label><input type='radio' name='hardened' value='1' {{#if (eq CALC.hardenedDRLevel 1)}}
                   checked{{/if}}>&nbsp;1</label>
@@ -174,17 +174,17 @@
           <div class='shaded collapsible-wrapper options-drawer'>
             <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{#if
               CALC.isInjuryTolerance}}checked{{/if}}></input>
-            <label for='injury-tolerance' class='label-toggle'>Injury Tolerance:<span class='pdflink'>
+            <label for='injury-tolerance' class='label-toggle'>{{localize "GURPS.addInjuryTolerance"}}:<span class='pdflink'>
                 B60</span></label>
             <div class='collapsible-content continuation'>
               <div><label><input type='radio' name='injury-tolerance' value='unliving' {{#if (eq
-                    CALC.injuryToleranceType 'unliving' )}}checked{{/if}}>&nbsp;Unliving<span
+                    CALC.injuryToleranceType 'unliving' )}}checked{{/if}}>&nbsp;{{localize "GURPS.addInjuryToleranceUnliving"}}<span
                     class='pdflink'>B380</span></label></div>
               <div><label><input type='radio' name='injury-tolerance' value='homogenous' {{#if (eq
-                    CALC.injuryToleranceType 'homogenous' )}}checked{{/if}}>&nbsp;Homogenous<span
+                    CALC.injuryToleranceType 'homogenous' )}}checked{{/if}}>&nbsp;{{localize "GURPS.addInjuryToleranceHomogenous"}}<span
                     class='pdflink'>B380</span></label></div>
               <div><label><input type='radio' name='injury-tolerance' value='diffuse' {{#if (eq
-                    CALC.injuryToleranceType 'diffuse' )}}checked{{/if}}>&nbsp;Diffuse<span
+                    CALC.injuryToleranceType 'diffuse' )}}checked{{/if}}>&nbsp;{{localize "GURPS.addInjuryToleranceDiffuse"}}<span
                     class='pdflink'>B380</span></label></div>
             </div>
           </div>
@@ -193,7 +193,7 @@
           <div id='specials-insert-point' class='gurps-3col'>
             <input id='flexible-armor' type='checkbox' value='flexible-armor' {{#if
               CALC.isFlexibleArmor}}checked{{/if}}>
-            <label for='flexible-armor'>Flexible Armor <aside>(Blunt Trauma):</aside></label>
+            <label for='flexible-armor'>{{localize "GURPS.addFlexibleArmor"}} <aside>({{localize "GURPS.bluntTrauma"}}):</aside></label>
             <div id='blunt-trauma-field' class='with-button'>
               <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
                 value='{{CALC.effectiveBluntTrauma}}' {{#unless CALC.isFlexibleArmor}}disabled{{/unless}}>

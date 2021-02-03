@@ -113,6 +113,19 @@
 	"GURPS.addAdditionalStackingModifier" : "Additional modifier (stacks)",
 	"GURPS.addTacticalRules" : "Tactical Rules",
 	"GURPS.addTacticalRulesDefaults" : "Use systems settings to set defaults",
+	"GURPS.addArmorDivisor" : "Armor Divisor",
+	"GURPS.addHitLocationWoundModifiers" : "Hit Location Wound Modifiers",
+	"GURPS.addSpecialCombatSituations" : "Special Combat Situations",
+	"GURPS.addRangedHalfDamage" : "Ranged, Half Damage (1/2D)",
+	"GURPS.addVulnerability" : "Vulnerability",
+	"GURPS.addHardenedDRLevel" : "Hardened DR Level",
+	"GURPS.addInjuryTolerance" : "Injury Tolerance",
+	"GURPS.addInjuryToleranceUnliving" : "Unliving",
+	"GURPS.addInjuryToleranceHomogeneous" : "Homogeneous",
+	"GURPS.addInjuryToleranceDiffuse" : "Diffuse",
+	"GURPS.addFlexibleArmor" : "Flexible Armor",
+
+
 
 	"GURPS.crippling" : "Crippling Injury, ",
 	"GURPS.damageAbove" : "Damage above ",
