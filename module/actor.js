@@ -199,6 +199,12 @@ export class GurpsActor extends Actor {
 
     await this.update(deletes)
     await this.update(adds)
+    let p = this.getEquippedParry()
+    let b = this.getEquippedBlock()
+    this.actor.update({ 
+      "data.equippedparry": p,
+      "data.equippedblock": b 
+    });
 
     console.log('Done importing.  You can inspect the character data below:')
     console.log(this)
@@ -1103,14 +1109,14 @@ export class GurpsActor extends Actor {
     return val;
   }
 
-  get equippedparry() {
+  getEquippedParry() {
     let p = this.getEquipped('parry')
     if (!p && !!this.data.data.parry)   // If we can't find a parry on a melee, check the NPC parry value
       p = this.data.data.parry
     return p
   }
 
-  get equippedblock() {
+  getEquippedBlock() {
     return this.getEquipped('block')
   }
 
