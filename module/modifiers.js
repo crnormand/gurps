@@ -133,26 +133,7 @@ export class ModifierBucket extends Application {
   async onRightClick(event) {
     event.preventDefault()
     if (!game.user.isGM) return
-    let c = `Melee:
-${this.editor.MeleeMods}
-
-Ranged:
-${this.editor.RangedMods}
-
-Defense:
-${this.editor.DefenseMods}
-
-Other:
-${this.editor.OtherMods}`
-
-    let output = ''
-    for (let l of c.split('\n')) output += '<br>' + l
-
-    let messageData = {
-      content: output,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
-    }
-    CONFIG.ChatMessage.entityClass.create(messageData, {})
+    this.showOthers();
   }
 
   // Public method. Used by GURPS to create a temporary modifer for an action.
@@ -463,7 +444,7 @@ export class ModifierBucketEditor extends Application {
     let user = game.users.get(id)
 
     this.sendBucket(user)
-    setTimeout(() => this.showOthers(), 1000) // Need time for clients to update...and
+    setTimeout(() => this.bucket.showOthers(), 1000) // Need time for clients to update...and
   }
 
   async sendBucketToPlayer(name) {
@@ -504,6 +485,7 @@ export class ModifierBucketEditor extends Application {
     this.bucket.refresh()
   }
 
+
   async _onClick(event) {
     event.preventDefault()
     if (event.shiftKey) {
@@ -517,7 +499,7 @@ export class ModifierBucketEditor extends Application {
       } else this.showOthers()
     } else this._onenter(event)
   }
-
+/*
   async showOthers() {
     let users = game.users.filter(u => u._id != game.user._id)
     let content = ''
@@ -542,26 +524,7 @@ export class ModifierBucketEditor extends Application {
   async onRightClick(event) {
     event.preventDefault()
     if (!game.user.isGM) return
-    let c = `Melee:
-${MeleeMods}
-
-Ranged:
-${RangedMods}
-
-Defense:
-${DefenseMods}
-
-Other:
-${OtherMods}`
-
-    let output = ''
-    for (let l of c.split('\n')) output += '<br>' + l
-
-    let messageData = {
-      content: output,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
-    }
-    CONFIG.ChatMessage.entityClass.create(messageData, {})
+    showOthers();
   }
 
   // Public method. Used by GURPS to create a temporary modifer for an action.
@@ -574,6 +537,7 @@ ${OtherMods}`
       plus: m[0] == '+'
     }
   }
+*/
 
   sum() {
     let stack = this.bucket.modifierStack

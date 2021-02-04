@@ -83,11 +83,12 @@ export default function addChatHooks() {
           c += '<br>/roll (or /r) [On-the-Fly formula]'
           c += '<br>/private (or /pr) [On-the-Fly formula]'
           c += '<br>/clearmb'
+          c += '<br>/:&lt;macro name&gt'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
             c += '<br>/sendmb &lt;playername&gt'
             c += '<br>/mook'
-            c += '<br>/everyone (or /ev) +/-N FP/HP'
+            c += '<br>/everyone (or /ev) &lt;formula&gt;'
           }
           priv(c, msgs);
           return    // Nothing left to do
@@ -163,6 +164,13 @@ export default function addChatHooks() {
           let user = line.replace(/\/sendmb/, '').trim()
           GURPS.ModifierBucket.sendBucketToPlayer(user)
           return
+        }
+        if (line.startsWith("/:")) {
+          m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)));
+          if (m.length > 0) {
+            m[0].execute()
+            return
+          }
         }
         pub(line, msgs)  // If not handled, must just be public text
       })  // end split
