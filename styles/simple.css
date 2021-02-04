@@ -1987,7 +1987,7 @@ body {
 }
 
 .roll-result .roll-value {
-  font-size: 140%;
+  font-size: medium;
   font-weight: bold;
 }
 
@@ -2358,8 +2358,30 @@ ul#result-effects li {
   max-height: 130vh;
 }
 
+.damage-message .label-toggle {
+  font-size: small;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
+.damage-message .label-toggle:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f078';
+  float: right;
+}
+
+.damage-message .toggle:checked + .label-toggle:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f077';
+  float: right;
+}
+
 .gurps-chat-message * {
-  font-family: Roboto, sans-serif;
+  /* font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /* TODO removed because it messed up Font Awesome rendering */
 }
 
 .gurps-chat-message .label-toggle {
@@ -2378,14 +2400,18 @@ ul#result-effects li {
 }
 
 .gurps-chat-message .label-toggle:after {
-  font: normal normal normal 12px/1 FontAwesome;
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
   content: '\f078';
   color: lightgray;
   float: right;
 }
 
 .gurps-chat-message .toggle:checked + .label-toggle:after {
-  font: normal normal normal 12px/1 FontAwesome;
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
   content: '\f077';
   color: lightgray;
   float: right;

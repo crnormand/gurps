@@ -1,7 +1,7 @@
 'use strict'
 
 import { woundModifiers } from './damage-tables.js'
-import { d6ify, isNiceDiceEnabled, parseIntFrom } from '../../lib/utilities.js'
+import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.js'
 import { gspan } from '../../lib/parselink.js'
 
 const damageLinkPattern = /^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g
@@ -26,24 +26,25 @@ export default class DamageChat {
   setup() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
       let damageMessages = html.find('.damage-message')
-      let transfer = JSON.parse(app.data.flags.transfer)
-      for (let index = 0; index < damageMessages.length; index++) {
-        let message = damageMessages[index]
+      if (!!damageMessages && damageMessages.length > 0) {
+        let transfer = JSON.parse(app.data.flags.transfer)
+        for (let index = 0; index < damageMessages.length; index++) {
+          let message = damageMessages[index]
 
-        message.setAttribute('draggable', true)
-        message.addEventListener('dragstart', (ev) => {
-          $(ev.currentTarget).addClass('dragging')
-          ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
-          let data = {
-            type: 'damageItem',
-            payload: transfer.payload[index],
-          }
-          return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
-        })
-
-        message.addEventListener('dragend', (ev) => {
-          $(ev.currentTarget).removeClass('dragging')
-        })
+          message.setAttribute('draggable', true)
+          message.addEventListener('dragstart', (ev) => {
+            $(ev.currentTarget).addClass('dragging')
+            ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
+            let data = {
+              type: 'damageItem',
+              payload: transfer.payload[index],
+            }
+            return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
+          })
+          message.addEventListener('dragend', (ev) => {
+            $(ev.currentTarget).removeClass('dragging')
+          })
+        }
       }
     })
   }
@@ -57,7 +58,7 @@ export default class DamageChat {
    * @param {String} overrideDiceText ??
    */
   async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
-    let targetmods = await this._gurps.ModifierBucket.applyMods() // append any global mods
+    let targetmods = await this._gurps.applyMods() // append any global mods
 
     let dice = this._getDiceData(diceText, damageType, targetmods, overrideDiceText)
 
@@ -266,6 +267,7 @@ export default class DamageChat {
     }
 
     let contentData = {
+      id: generateUniqueId(),
       attacker: actor._id,
       dice: diceData.diceText,
       damageType: diceData.damageType,
