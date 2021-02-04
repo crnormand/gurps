@@ -494,19 +494,7 @@ function performAction(action, actor, event) {
     GURPS.ModifierBucket.addModifier(mod, action.desc)
     return true
   }
-
-  if (action.type === 'attribute')
-    if (!!actor) {
-      prefix = 'Roll vs '
-      thing = this.i18n(action.path)
-      formula = '3d6'
-      target = action.target
-      if (!target) target = this.resolve(action.path, actordata.data)
-      target = parseInt(target)
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
-      else if (!!action.desc) opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ')</span>'
-    } else ui.notifications.warn('You must have a character selected')
-
+  
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
     thing = action.desc
@@ -551,23 +539,64 @@ function performAction(action, actor, event) {
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
     } else ui.notifications.warn('You must have a character selected')
 
-  if (action.type === 'skill-spell')
-    if (!!actor) {
-      let skill = null
-      prefix = '' // "Attempting ";
-      thing = action.name
-      skill = GURPS.findSkillSpell(actordata, thing)
-      if (!skill) {
-        if (!!action.default) {
-          if (GURPS.performAction(action.default, actor, event)) return true;
+  let attr = (action) => {
+    let target = action.target
+    if (!target) target = this.resolve(action.path, actordata.data)
+    target = parseInt(target)
+    return {
+      prefix: 'Roll vs ',
+      thing: this.i18n(action.path),
+      target: target
+    }  
+  }
+
+  let processLinked = (tempAction) => {
+    let bestLvl = 0
+    var bestAction
+    let attempts = []
+    while (!!tempAction) {
+      if (tempAction.type == 'attribute') {
+        let t = parseInt(action.target)
+        if (!t) t = parseInt(this.resolve(tempAction.path, actordata.data))
+        let sl = t
+        if (!!tempAction.mod) sl += parseInt(tempAction.mod)
+        if (sl > bestLvl) {
+          bestLvl = parseInt(sl)
+          bestAction = tempAction
+          thing = this.i18n(tempAction.path)
+          prefix = 'Roll vs '
+          target = t
         }
-        ui.notifications.warn("No skill or spell named '" + action.name + "' found on " + actor.name)
+      } else { // skill
+        let skill = GURPS.findSkillSpell(actordata, tempAction.name)
+        if (!skill) attempts.push(tempAction.name)
+        else {
+          let sl = parseInt(skill.level);
+          if (!!tempAction.mod) sl += parseInt(tempAction.mod)
+          if (sl > bestLvl) {
+            bestLvl = parseInt(sl)
+            bestAction = tempAction
+            thing = skill.name
+            target = parseInt(skill.level)  // target is without mods
+            prefix = ''
+         }
+        }
+      }
+      tempAction = tempAction.next
+    }
+    return [ bestAction, attempts ]
+  }
+  
+  if (action.type === 'skill-spell' || action.type === 'attribute')
+    if (!!actor) {
+      const [ bestAction, attempts ] = processLinked(action)
+      if (!bestAction) {
+        ui.notifications.warn("No skill or spell named '" + attempts.join("' or '") + "' found on " + actor.name)
         return false
       }
-      thing = skill.name
-      target = parseInt(skill.level)
       formula = '3d6'
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
+      if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
+      else if (!!bestAction.desc) opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
 
   if (action.type === 'attack')
@@ -611,7 +640,7 @@ function performAction(action, actor, event) {
         if (!target || target <= 0) {
           if (!!e[action.path]) {
             if (!!action.melee) {
-              let n = action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+              let n = "^" + (action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)'))
               if ((e.name + (!!e.mode ? ' (' + e.mode + ')' : '')).match(n)) {
                 target = parseInt(e[action.path])
               }
@@ -637,7 +666,7 @@ function performAction(action, actor, event) {
 GURPS.performAction = performAction
 
 function findSkillSpell(actor, sname) {
-  sname = sname.split("*").join(".*");
+  sname = "^" + (sname.split("*").join(".*"));
   let best = 0;
   var t;
   recurselist(actor.data.skills, (s) => { 
@@ -657,7 +686,7 @@ function findSkillSpell(actor, sname) {
 GURPS.findSkillSpell = findSkillSpell
 
 function findAttack(actor, sname) {
-  sname = sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = "^" + (sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // Make string into a RegEx pattern
   let t = actor.data.melee?.findInProperties((a) => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (!t) t = actor.data.ranged?.findInProperties((a) => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
