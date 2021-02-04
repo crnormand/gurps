@@ -713,9 +713,10 @@ async function handleRoll(event, actor) {
     formula = '3d6'
     target = parseInt(element.innerText)
   }
-  if ('name' in element.dataset) {
+  if ('name' in element.dataset || 'otf' in element.dataset) {
     prefix = '' // "Attempting ";
-    let text = element.dataset.name.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
+    let text = element.dataset.name || element.dataset.otf
+    text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
     thing = text.replace(/(.*?)\(.*\)/g, '$1')
 
     // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
@@ -1107,13 +1108,18 @@ GURPS.whisperOtfToOwner = function(otf, event, canblind, actor) {
             callback: () => GURPS.sendOtfMessage(botf, true, users)
           }
       }
+      buttons.def = {
+        icon: '<i class="far fa-copy"></i>',
+        label: "Copy to chat input",
+        callback: () => {$(document).find("#chat-message").val(otf)}
+      }
 
       let d = new Dialog({
         title: "GM 'Send Formula'",
         content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
         buttons: buttons,
-        default: "four"
-      });
+        default: "def"
+      }, { width: 700 });
       d.render(true);
     }
   }
