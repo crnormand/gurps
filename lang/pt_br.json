@@ -49,7 +49,7 @@
   "GURPS.attributesWILL" : "Von",
   "GURPS.attributesPER" : "Per",
 
-  "GURPS.HP" : "HP",
+  "GURPS.HP" : "PV",
   "GURPS.FP" : "FP",
   "GURPS.attributesHPNAME" : "Pontos de Vida",
   "GURPS.attributesFPNAME" : "Pontos de Fadiga",

@@ -49,8 +49,11 @@ export const hitlocationRolls = {
   'Chinks in Other': { penalty: -10, desc: 'Halves DR' },
 }
 
+// const i18nEye = game.i18n.format("MYMODULE.GREETING");
+const localize = new Localization();
+
 const hitLocationAlias = {
-  Eyes: { RAW: 'Eye' },
+  Eyes: { RAW: localize("GURPS.eye") },
   Arm: { RAW: 'Arm', prefix: ['Right', 'Left'] },
   Arms: { RAW: 'Arm', prefix: ['Right', 'Left'] },
   Legs: { RAW: 'Leg', prefix: ['Right', 'Left'] },
