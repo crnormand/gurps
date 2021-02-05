@@ -249,100 +249,100 @@ GURPS.SavedStatusEffects = CONFIG.statusEffects
 
 CONFIG.statusEffects = [
   {
-    icon: 'systems/gurps/icons/shock1.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock1.png',
     id: 'shock1',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/shock2.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock2.png',
     id: 'shock2',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/shock3.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock3.png',
     id: 'shock3',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/shock4.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock4.png',
     id: 'shock4',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/stunned.png',
+    icon: 'systems/gurps/icons/statuses/dd-condition-stunned.png',
     id: 'stun',
     label: 'EFFECT.StatusStunned',
   },
   {
-    icon: 'systems/gurps/icons/falling.png',
+    icon: 'systems/gurps/icons/statuses/dd-condition-prone.png',
     id: 'prone',
     label: 'EFFECT.StatusProne',
   },
   {
-    icon: 'systems/gurps/icons/kneeling.png',
+    icon: 'systems/gurps/icons/statuses/condition-kneel.png',
     id: 'kneel',
     label: 'GURPS.STATUSKneel',
   },
   {
-    icon: 'systems/gurps/icons/leapfrog.png',
+    icon: 'systems/gurps/icons/statuses/condition-crouch.png',
     id: 'crouch',
     label: 'GURPS.STATUSCrouch',
   },
   {
-    icon: 'systems/gurps/icons/wooden-chair.png',
+    icon: 'systems/gurps/icons/statuses/condition-sit.png',
     id: 'sit',
     label: 'GURPS.STATUSSit',
   },
   {
-    icon: 'systems/gurps/icons/euphoria.png',
+    icon: 'systems/gurps/icons/statuses/path-condition-fascinated.png',
     id: 'euphoria',
     label: 'GURPS.STATUSEuphoria',
   },
   {
-    icon: 'systems/gurps/icons/coughing.png',
+    icon: 'systems/gurps/icons/statuses/condition-cough.png',
     id: 'coughing',
     label: 'GURPS.STATUSCoughing',
   },
   {
-    icon: 'systems/gurps/icons/drowsy.png',
+    icon: 'systems/gurps/icons/statuses/condition-wretch.png',
+    id: 'retching',
+    label: 'GURPS.STATUSRetching',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/x-drowsy.png',
     id: 'drowsy',
     label: 'GURPS.STATUSDrowsy',
   },
   {
-    icon: 'systems/gurps/icons/drunk.png',
-    id: 'drunk',
-    label: 'GURPS.STATUSDrunk',
-  },
-  {
-    icon: 'systems/gurps/icons/tipsy.png',
+    icon: 'systems/gurps/icons/statuses/condition-drunk1.png',
     id: 'tipsy',
     label: 'GURPS.STATUSTipsy',
   },
   {
-    icon: 'systems/gurps/icons/nauseated.png',
+    icon: 'systems/gurps/icons/statuses/condition-drunk2.png',
+    id: 'drunk',
+    label: 'GURPS.STATUSDrunk',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-nauseated.png',
     id: 'nauseated',
     label: 'GURPS.STATUSNauseated',
   },
   {
-    icon: 'systems/gurps/icons/moderate.png',
+    icon: 'systems/gurps/icons/statuses/condition-pain2.png',
     id: 'moderate',
     label: 'GURPS.STATUSModerate',
   },
   {
-    icon: 'systems/gurps/icons/severe.png',
+    icon: 'systems/gurps/icons/statuses/condition-pain4.png',
     id: 'severe',
     label: 'GURPS.STATUSSevere',
   },
   {
-    icon: 'systems/gurps/icons/terrible.png',
+    icon: 'systems/gurps/icons/statuses/condition-pain6.png',
     id: 'terrible',
     label: 'GURPS.STATUSTerrible',
-  },
-  {
-    icon: 'systems/gurps/icons/vomiting.png',
-    id: 'retching',
-    label: 'GURPS.STATUSRetching',
-  },
+  }
 ]
 
 GURPS.SJGProductMappings = {
