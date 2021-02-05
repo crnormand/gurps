@@ -199,13 +199,13 @@
   "GURPS.SkillDXH" : "DX/D",
   "GURPS.SkillDXVH" : "DX/MD",
 
-  "GURPS.SkillIQE " : "IQ/F",
-  "GURPS.SkillIQA " : "IQ/M",
-  "GURPS.SkillIQH " : "IQ/D",
-  "GURPS.SkillIQVH " : "IQ/MD",
+  "GURPS.SkillIQE" : "IQ/F",
+  "GURPS.SkillIQA" : "IQ/M",
+  "GURPS.SkillIQH" : "IQ/D",
+  "GURPS.SkillIQVH" : "IQ/MD",
 
-  "GURPS.SkillHTE " :"HT/F",
-  "GURPS.SkillHTA " :"HT/M",
+  "GURPS.SkillHTE" :"HT/F",
+  "GURPS.SkillHTA" :"HT/M",
   "GURPS.SkillHTH" : "HT/D",
   "GURPS.SkillHTVH" : "HT/MD",
 

@@ -202,11 +202,11 @@
 	"GURPS.SkillIQE" : "IQ/E",
 	"GURPS.SkillIQA" : "IQ/A",
 	"GURPS.SkillIQH" : "IQ/H",
-	"GURPS.SkillIQVH " : "IQ/VH",
+	"GURPS.SkillIQVH" : "IQ/VH",
 
 	"GURPS.SkillHTE" : "HT/E",
-	"GURPS.SkillHTA " : "HT/A",
-	"GURPS.SkillHTH " : "HT/H",
+	"GURPS.SkillHTA" : "HT/A",
+	"GURPS.SkillHTH" : "HT/H",
 	"GURPS.SkillHTVH" : "HT/VH",
 
 	"GURPS.SkillWillE" : "Will/E",
