@@ -27,8 +27,9 @@ This is what we are currently working on:
     - Added currentdodge, currentmove, equippedparry and equippedblock attributes (for use with modules like Token Tooltip Alt)
     - Added GM Send function to Journal entries
     - Enhance OtF for damage to allow "*Costs ?FP" [4d-4 burn *Costs 4FP]
-    - Defaults for skill OtF [S:Skillname(DX-2)], actually infinite, can be used to try other skills [S:Skill1(S:Skill2(S:Skill3(IQ-4 default)))]
-
+    - "Best of" skill or attribute OtF [S:Skillname|DX-2], actually infinite, can be used to try other skills [S:Skill1|S:Skill2|ST|S:Skill3|IQ-4 default]
+    - Copy to chat input (GM Send).   Can't do clipboard
+ 
 ### History
 - 0.8.10 - 1/30/2021
     - @Tratz equipment bug fix, portrait fix and logo fix!
