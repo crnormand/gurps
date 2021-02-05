@@ -223,3 +223,5 @@ The material presented here is my original creation, intended for use with the [
 [GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)
 
 This game system DOES NOT provide information contained in paid publications.   It is only intended to allow people to play GURPS online using their GURPS books/PDFs.
+
+Status icons for actors provided by [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) - check them out!
