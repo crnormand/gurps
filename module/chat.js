@@ -77,8 +77,10 @@ export default function addChatHooks() {
       let niceDice = false
       try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
       let msgs = { pub: [], priv: [], data: data }
+      let handled = false;
       message.split('\n').forEach((line) => {
         if (line === '/help' || line === '!help') {
+          handled = true
           let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
           c += '<br>/roll (or /r) [On-the-Fly formula]'
           c += '<br>/private (or /pr) [On-the-Fly formula]'
@@ -94,6 +96,7 @@ export default function addChatHooks() {
           return    // Nothing left to do
         }
         if (line === '/mook' && game.user.isGM) {
+          handled = true
           new NpcInput().render(true)
           priv("Opening Mook Generator", msgs)
           return
@@ -105,6 +108,7 @@ export default function addChatHooks() {
          game.actors.entities.forEach(actor => {
             let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
             if (users.length > 0) {
+              handled = true
               let mod = m[3] || ""
               let value = mod;
               let dice = m[2] || "";
@@ -134,6 +138,7 @@ export default function addChatHooks() {
          game.actors.entities.forEach(actor => {
             let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
             if (users.length > 0) {
+              handled = true
               let attr = m[2].toUpperCase()
               let max = actor.data.data[attr].max
               actor.update({ [ "data." + attr + ".value"] : max })
@@ -148,6 +153,7 @@ export default function addChatHooks() {
         if (!!m && !!m[2]) {
           let action = parselink(m[2])
           if (!!action.action) {
+           handled = true
             if (action.action.type === 'modifier')  // only need to show modifiers, everything else does something.
               priv(line, msgs)
             GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') })
@@ -155,11 +161,13 @@ export default function addChatHooks() {
           }
         } 
         if (line === '/clearmb') {
+          handled = true
           priv(line, msgs);
           GURPS.ModifierBucket.clear()
           return
         }
         if (line.startsWith('/sendmb')) {
+          handled = true
           priv(line, msgs)
           let user = line.replace(/\/sendmb/, '').trim()
           GURPS.ModifierBucket.sendBucketToPlayer(user)
@@ -168,14 +176,17 @@ export default function addChatHooks() {
         if (line.startsWith("/:")) {
           m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)));
           if (m.length > 0) {
+          handled = true
             m[0].execute()
             return
           }
         }
         pub(line, msgs)  // If not handled, must just be public text
       })  // end split
-      send(msgs)
-      return false    // Don't display this chat message, since we have handled it with others
+      if (handled) {
+        send(msgs)
+        return false    // Don't display this chat message, since we have handled it with others
+      } else return true
     })
   
     // Look for blind messages with .message-results and remove them
