@@ -29,6 +29,8 @@ This is what we are currently working on:
     - Enhance OtF for damage to allow "*Costs ?FP" [4d-4 burn *Costs 4FP]
     - "Best of" skill or attribute OtF [S:Skillname|DX-2], actually infinite, can be used to try other skills [S:Skill1|S:Skill2|ST|S:Skill3|IQ-4 default]
     - Copy to chat input (GM Send).   Can't do clipboard
+    - Chat command /:<macro name> - call macro
+    - OtF formula [/<chat command>] execute chat command as a button
  
 ### History
 - 0.8.10 - 1/30/2021
