@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.11
+# Current Release Version 0.8.12
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -14,14 +14,17 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the latest stable release, use the manifest URL above.
-[Current GCA Export version: GCA-3 2/04/2021 / Current GCS Export version: GCS-3 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA Export version: 'GCA-3' 2/04/2021 / Current GCS Export version: 'GCS-3' 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
-- 0.8.12
+- 0.8.13
 
 ### History
-- 0.8.11
+- 0.8.12 - 2/5/2021
+    - Bug fix for chat commands, e.g. "/r 3d6", etc.
+    
+- 0.8.11 - 2/4/2021
     - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!)
     - Ongoing internationalization effort by @Gus
     - Fixed GCS export to reinstate Self Control Rolls, ex: [CR: 12 Bad Temper] (GCS-3)
