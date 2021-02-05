@@ -495,6 +495,11 @@ function performAction(action, actor, event) {
     return true
   }
   
+  if (action.type === 'chat') {
+    ui.chat.processMessage(action.orig);
+    return true
+  }
+  
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
     thing = action.desc

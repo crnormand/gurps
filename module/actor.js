@@ -64,6 +64,8 @@ export class GurpsActor extends Actor {
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
+    const GCAVersion = "GCA-3"
+    const GCSVersion = "GCS-3"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
@@ -72,12 +74,14 @@ export class GurpsActor extends Actor {
     x = xmlTextToJson(x)
     let r = x.root
     let msg = ''
+    let version ='unknown'
     let exit = false
     if (!r) {
-      if (xml[0] == '{' && importname.endsWith('.gcs'))
-        msg +=
-          'We cannot import a GCS file directly.   You must export the file using the Foundry VTT output template.<br>'
-      else msg += 'No <root> object found.  Are you importing the correct XML file?<br>'
+      if (importname.endsWith('.gcs'))
+        msg += "We cannot import a GCS file directly. Please export the file using the 'Foundry VTT' output template.<br>"
+      else if (importname.endsWith('.gca4'))
+        msg += "We cannot import a GCA file directly. Please export the file using the 'export to Foundry VTT.gce' script.<br>"
+      else if (!xml.startsWith("<?xml")) msg += 'No XML detected.  Are you importing the correct XML file?<br>'
       exit = true
     } else {
       // The character object starts here
@@ -98,21 +102,25 @@ export class GurpsActor extends Actor {
       isFoundryGCS = !!ra && ra.release == 'Foundry' && (ra.version == '1' || ra.version.startsWith('GCS'))
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       if (!(isFoundryGCS || isFoundryGCA)) {
-        msg += 'We no longer support the Fantasy Grounds import.   Please check the Users Guide (see Chat log).<br>'
+        msg += 'We no longer support the Fantasy Grounds import.<br>'
         exit = true
       }
+      version = ra?.version || ''
       const v = !!ra?.version ? ra.version.split('-') : []
       if (isFoundryGCA) {
         if (!v[1]) {
           msg +=
-            "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', however, you should upgrade to the latest export script.<br>"
+            "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', but we may get it wrong.<br>"
         }
         let vernum = 1
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg +=
             "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the 'Parent' Attribute for equipment." +
-            '   If you are missing ranged attacks or your equipment is not appearing inside the correct container, please upgrade to the latest export script.<br>'
+            '  You may be missing ranged attacks or equipment may not appear in the correct container.<br>'
+        }
+        if (vernum < 3) {
+          msg += "This file was created with an older version of the GCA Export that may incorrectly put ranged attacks in the melee list and does not sanitize equipment page refs.<br>"   // Equipment Page ref's sanitized
         }
       }
       if (isFoundryGCS) {
@@ -120,28 +128,28 @@ export class GurpsActor extends Actor {
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg +=
-            "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   If items are not appearing in their containers, please upgrade to the latest export script.<br>"
+            "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   Items will not appear in their containers.<br>"
         }
         if (vernum < 3) {
           msg +=
-            "This file was created with an older version of the GCS Export which does not contain the Self Control rolls for Disadvantages (ex: [CR: 9 Bad Temper]).   If you are missing these rolls, please upgrade to the latest export script.<br>"
+            "This file was created with an older version of the GCS Export which does not contain the Self Control rolls for Disadvantages (ex: [CR: 9 Bad Temper]).<br>"
         }
       }
-
-      if (!!msg) {
-        ui.notifications.error(msg)
-        ChatMessage.create({
-          content:
-            msg +
-            "<br>Check the Users Guide for details. <a href='" +
-            GURPS.USER_GUIDE_URL +
-            "'>GURPS 4e Game Aid USERS GUIDE</a>",
-          user: game.user._id,
-          type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-          whisper: [game.user.id],
-        })
-        if (exit) return // Some errors cannot be forgiven ;-)
-      }
+    }
+    if (!!msg) {
+      ui.notifications.error(msg)
+      msg = `WARNING:<br>${msg}<br>The file version: '${version}'<br>Current Versions: '${GCAVersion}' & '${GCSVersion}'` 
+      ChatMessage.create({
+        content:
+          msg +
+          "<br>Check the Users Guide for details on where to get the latest version.<br><a href='" +
+          GURPS.USER_GUIDE_URL +
+          "'>GURPS 4e Game Aid USERS GUIDE</a>",
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [game.user.id],
+      })
+      if (exit) return // Some errors cannot be forgiven ;-)
     }
     let nm = this.textFrom(c.name)
     console.log("Importing '" + nm + "'")
@@ -550,7 +558,7 @@ export class GurpsActor extends Actor {
         } else {
           eqt.setNotes(t(j.notes))
         }
-        eqt.pageref = t(j.pageref)
+        eqt.pageRef(t(j.pageref))
         temp.push(eqt)
       }
     }
@@ -1130,6 +1138,14 @@ export class Named {
   notes = ''
   pageref = ''
   contains = {}
+  
+  pageRef(r) {
+    this.pageref = r
+    if (!!r && r.match(/[hH][tT][Tt][pP][sS]?:\/\//)) {
+      this.pageref = "*Link"
+      this.externallink = r;
+    }
+  }
 
   // This is an ugly hack to parse the GCS FG Formatted Text entries.   See the method cleanUpP() above.
   setNotes(n) {
