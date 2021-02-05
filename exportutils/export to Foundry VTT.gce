@@ -7,7 +7,7 @@
 'By Brian Ronnle, enhanced for Foundry VTT by Chris Normand/Nose66
 'Based on the original export filter by Graham Brand (Spyke)
 '
-Const LastUpdated = 20210126
+Const LastUpdated = 20210204
 ' Last Updated: Nov 25, 2020
 ' v1
 '
@@ -41,7 +41,7 @@ Sub Main()
 
     ' begin the xml file
     Paragraph = "<?xml version=""1.0"" encoding=""iso-8859-1""?>"
-    Paragraph = "<root release=""Foundry"" version=""GCA-2"">"
+    Paragraph = "<root release=""Foundry"" version=""GCA-3"">"
     Paragraph = "<character>"
 
     ' in Fantasy Grounds the <name> field must be at the top level
@@ -1017,6 +1017,10 @@ Sub PrintHandWeapons()
         If Char.Items(i).TagItem("charreach") <> "" Then
             okay = True
         End If
+	  'that don't have a range
+        If Char.Items(i).DamageModeTagItemCount("charrangemax") > 0 Then
+            okay = False
+        End If
 
         'exclude hidden items
         If Char.Items(CurItem).TagItem("hide") <> "" Then
@@ -1322,9 +1326,9 @@ Sub PrintEquipment()
                 Paragraph = "<cost type=""string"">" & StrToDbl(Char.Items(i).tagitem("cost")) / qty & "</cost>"
                 Paragraph = "<weight type=""number"">" & StrToDbl(Char.Items(i).tagitem("weight")) / qty & "</weight>"
                 Paragraph = "<location type=""string"">" & Char.Items(i).tagitem("location") & "</location>"
-                Paragraph = "<notes type=""formattedtext"">" & Char.Items(i).tagitem("description") & "</notes>"
+                Paragraph = "<notes type=""formattedtext"">" & UpdateEscapeChars(Char.Items(i).tagitem("description")) & "</notes>"
                 Paragraph = "<carried type=""number"">2</carried>"
-                Paragraph = "<pageref type=""string"">" & Char.Items(i).tagitem("page") & "</pageref>"
+                Paragraph = "<pageref type=""string"">" & UpdateEscapeChars(Char.Items(i).tagitem("page")) & "</pageref>"
                 Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
                 Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
                 Paragraph = "</id-" & tag_index & ">"
