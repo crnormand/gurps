@@ -78,14 +78,11 @@ export class ModifierBucket extends Application {
 
   _onenter(ev) {
     this.SHOWING = true
+    // The location of bucket is hardcoded in the css #modifierbucket, so I'm ok with hardcoding it here.
     let position = {
-      left: ev.pageX - (this.editor.position.width / 2),
+      left: (805 + (70 / 2)) - (this.editor.position.width / 2),
       top: window.innerHeight - this.editor.position.height - 4
     }
-    // this.editor.position.left = ev.pageX - (this.editor.position.width / 2)
-    // this.editor.position.top = window.innerHeight - this.editor.position.height - 30 - 74
-
-    console.log(position)
     this.editor._position = position
     this.editor.render(true)
   }
