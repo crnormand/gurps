@@ -272,9 +272,9 @@ CONFIG.statusEffects = [
     label: 'EFFECT.StatusStunned',
   },
   {
-    icon: 'systems/gurps/icons/statuses/cth-condition-readied.png',
-    id: 'aim',
-    label: 'GURPS.STATUSAim',
+    icon: 'systems/gurps/icons/statuses/path-condition-grappled.png',
+    id: 'grapple',
+    label: 'GURPS.STATUSGrapple',
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-prone.png',
@@ -417,14 +417,94 @@ CONFIG.statusEffects = [
     label: 'GURPS.STATUSSuffocate',
   },
   {
-    icon: 'systems/gurps/icons/statuses/path-condition-grappled.png',
-    id: 'grapple',
-    label: 'GURPS.STATUSGrapple',
-  },
-  {
     icon: 'systems/gurps/icons/statuses/dd-condition-unconscious.png',
     id: 'disbled',
     label: 'GURPS.STATUSDisable',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/dd-condition-blinded.png',
+    id: 'blind',
+    label: 'GURPS.STATUSBlind',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/dd-condition-deafened.png',
+    id: 'deaf',
+    label: 'GURPS.STATUSDeaf',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/x-silenced.png',
+    id: 'silence',
+    label: 'GURPS.STATUSSilence',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/cth-condition-readied.png',
+    id: 'aim',
+    label: 'GURPS.STATUSAim',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/x-stealth.png',
+    id: 'stealth',
+    label: 'GURPS.STATUSStealth',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/x-low-light-vision.png',
+    id: 'waiting',
+    label: 'GURPS.STATUSWait',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/x-haste.png',
+    id: 'sprint',
+    label: 'GURPS.STATUSSprint',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-1.png',
+    id: 'num1',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-2.png',
+    id: 'num2',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-3.png',
+    id: 'num3',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-4.png',
+    id: 'num4',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-5.png',
+    id: 'num5',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-6.png',
+    id: 'num6',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-7.png',
+    id: 'num7',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-8.png',
+    id: 'num8',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-9.png',
+    id: 'num9',
+    label: 'GURPS.STATUSCounter',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/number-10.png',
+    id: 'num10',
+    label: 'GURPS.STATUSCounter',
   }
 ]
 

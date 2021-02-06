@@ -1006,5 +1006,11 @@ const ModifiersForStatus = {
     melee: ['[-2 to hit Melee (Sitting)]'],
     ranged: [],
     defense: ['[-2 to active defenses (Sitting)]']
+  },
+  blind: {
+    gen: [],
+    melee: ['[-10 (Suddenly Blind)]', '[-6 (Blind)]'],
+    ranged: ['[-10 (Suddenly Blind)]', '[-6 (Blind)]'],
+    defense: []
   }
 }

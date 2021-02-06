@@ -273,6 +273,13 @@
   "GURPS.STATUSExhausted": "Fatigued",
   "GURPS.STATUSAim": "Aiming",
   "GURPS.STATUSDisable": "Disabled",
+  "GURPS.STATUSBlind": "Blinded",
+  "GURPS.STATUSDeaf": "Deafened",
+  "GURPS.STATUSSilence": "Sileneced",
+  "GURPS.STATUSSprint": "Sprinting",
+  "GURPS.STATUSStealth": "Sneaking/Stealth",
+  "GURPS.STATUSWait": "Waiting",
+  "GURPS.STATUSCounter": "Counter",
 
     "GURPS.BODYPLANhumanoid" : "Humanoid",
     "GURPS.BODYPLANwinged humanoid" : "Humanoid, Winged",
