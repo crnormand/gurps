@@ -258,6 +258,8 @@
 	"GURPS.STATUSSevere" : "Severe Pain",
 	"GURPS.STATUSTerrible" : "Terrible Pain",
 	"GURPS.STATUSRetching" : "Retching",
+  "GURPS.STATUSBleed": "Bleeding",
+  "GURPS.STATUSPoison": "Poisoned",
 
     "GURPS.BODYPLANhumanoid" : "Humanoid",
     "GURPS.BODYPLANwinged humanoid" : "Humanoid, Winged",

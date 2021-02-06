@@ -340,6 +340,16 @@ CONFIG.statusEffects = [
     icon: 'systems/gurps/icons/statuses/condition-pain6.png',
     id: 'terrible',
     label: 'GURPS.STATUSTerrible',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-bleeding.png',
+    id: 'bleed',
+    label: 'GURPS.STATUSBleed',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/dd-condition-poisoned.png',
+    id: 'poison',
+    label: 'GURPS.STATUSPoison',
   }
 ]
 
