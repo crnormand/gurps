@@ -342,6 +342,16 @@ CONFIG.statusEffects = [
     label: 'GURPS.STATUSTerrible',
   },
   {
+    icon: 'systems/gurps/icons/statuses/path-condition-broken.png',
+    id: 'reeling',
+    label: 'GURPS.STATUSReeling',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-exhausted.png',
+    id: 'exhausted',
+    label: 'GURPS.STATUSExhausted',
+  },
+  {
     icon: 'systems/gurps/icons/statuses/path-condition-bleeding.png',
     id: 'bleed',
     label: 'GURPS.STATUSBleed',

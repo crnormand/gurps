@@ -260,6 +260,8 @@
 	"GURPS.STATUSRetching" : "Retching",
   "GURPS.STATUSBleed": "Bleeding",
   "GURPS.STATUSPoison": "Poisoned",
+  "GURPS.STATUSReeling": "Reeling",
+  "GURPS.STATUSExhausted": "Fatigued",
 
     "GURPS.BODYPLANhumanoid" : "Humanoid",
     "GURPS.BODYPLANwinged humanoid" : "Humanoid, Winged",
