@@ -121,7 +121,7 @@
   "GURPS.addHardenedDRLevel" : "RD Ampliada Nível",
   "GURPS.addInjuryTolerance" : "Tolerância a Danos",
   "GURPS.addInjuryToleranceUnliving" : "Não vivo",
-  "GURPS.addInjuryToleranceHomogeneous" : "Homogêneo",
+  "GURPS.addInjuryToleranceHomogenous" : "Homogêneo",
   "GURPS.addInjuryToleranceDiffuse" : "Difuso",
   "GURPS.addFlexibleArmor" : "Armadura Flexível",
 
