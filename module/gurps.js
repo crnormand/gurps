@@ -659,6 +659,7 @@ function performAction(action, actor, event) {
           }
         }
       })
+      if (!target) target = parseInt(actordata.data[action.path])
       if (target > 0) formula = '3d6'
       else ui.notifications.warn('Unable to find a ' + action.orig + ' to roll')
     } else ui.notifications.warn('You must have a character selected')
