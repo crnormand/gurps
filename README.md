@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.10
+# Current Release Version 0.8.12
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -14,11 +14,19 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the latest stable release, use the manifest URL above.
-[Current GCA Export version: GCA-2 1/29/2021 / Current GCS Export version: GCS-3 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA Export version: 'GCA-3' 2/04/2021 / Current GCS Export version: 'GCS-3' 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
-- 0.8.11
+- 0.8.13
+    - @Tratz engaged [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) to upgrade our icons.   
+    - Allow 'mooks' to show up in tooltip alt
+
+### History
+- 0.8.12 - 2/5/2021
+    - Bug fix for chat commands, e.g. "/r 3d6", etc.
+    
+- 0.8.11 - 2/4/2021
     - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!)
     - Ongoing internationalization effort by @Gus
     - Fixed GCS export to reinstate Self Control Rolls, ex: [CR: 12 Bad Temper] (GCS-3)
@@ -27,9 +35,13 @@ This is what we are currently working on:
     - Added currentdodge, currentmove, equippedparry and equippedblock attributes (for use with modules like Token Tooltip Alt)
     - Added GM Send function to Journal entries
     - Enhance OtF for damage to allow "*Costs ?FP" [4d-4 burn *Costs 4FP]
-    - Defaults for skill OtF [S:Skillname(DX-2)], actually infinite, can be used to try other skills [S:Skill1(S:Skill2(S:Skill3(IQ-4 default)))]
-
-### History
+    - "Best of" skill or attribute OtF [S:Skillname|DX-2], actually infinite, can be used to try other skills [S:Skill1|S:Skill2|ST|S:Skill3|IQ-4 default]
+    - Copy to chat input (GM Send).   Can't do clipboard
+    - Chat command /:<macro name> - call macro
+    - OtF formula [/<chat command>] execute chat command as a button
+    - Fixed GCA export, ranged attacks in the melee list and sanitize pagerefs
+    - Enhanced the import error warnings
+ 
 - 0.8.10 - 1/30/2021
     - @Tratz equipment bug fix, portrait fix and logo fix!
     - Bug fix for OtF formulas in Skills/Spells in containers
@@ -229,3 +241,5 @@ The material presented here is my original creation, intended for use with the [
 [GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)
 
 This game system DOES NOT provide information contained in paid publications.   It is only intended to allow people to play GURPS online using their GURPS books/PDFs.
+
+Status icons for actors provided by [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) - check them out!

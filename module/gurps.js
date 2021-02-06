@@ -158,100 +158,100 @@ GURPS.SavedStatusEffects = CONFIG.statusEffects
 
 CONFIG.statusEffects = [
   {
-    icon: 'systems/gurps/icons/shock1.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock1.png',
     id: 'shock1',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/shock2.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock2.png',
     id: 'shock2',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/shock3.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock3.png',
     id: 'shock3',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/shock4.png',
+    icon: 'systems/gurps/icons/statuses/condition-shock4.png',
     id: 'shock4',
     label: 'EFFECT.StatusShocked',
   },
   {
-    icon: 'systems/gurps/icons/stunned.png',
+    icon: 'systems/gurps/icons/statuses/dd-condition-stunned.png',
     id: 'stun',
     label: 'EFFECT.StatusStunned',
   },
   {
-    icon: 'systems/gurps/icons/falling.png',
+    icon: 'systems/gurps/icons/statuses/dd-condition-prone.png',
     id: 'prone',
     label: 'EFFECT.StatusProne',
   },
   {
-    icon: 'systems/gurps/icons/kneeling.png',
+    icon: 'systems/gurps/icons/statuses/condition-kneel.png',
     id: 'kneel',
     label: 'GURPS.STATUSKneel',
   },
   {
-    icon: 'systems/gurps/icons/leapfrog.png',
+    icon: 'systems/gurps/icons/statuses/condition-crouch.png',
     id: 'crouch',
     label: 'GURPS.STATUSCrouch',
   },
   {
-    icon: 'systems/gurps/icons/wooden-chair.png',
+    icon: 'systems/gurps/icons/statuses/condition-sit.png',
     id: 'sit',
     label: 'GURPS.STATUSSit',
   },
   {
-    icon: 'systems/gurps/icons/euphoria.png',
+    icon: 'systems/gurps/icons/statuses/path-condition-fascinated.png',
     id: 'euphoria',
     label: 'GURPS.STATUSEuphoria',
   },
   {
-    icon: 'systems/gurps/icons/coughing.png',
+    icon: 'systems/gurps/icons/statuses/condition-cough.png',
     id: 'coughing',
     label: 'GURPS.STATUSCoughing',
   },
   {
-    icon: 'systems/gurps/icons/drowsy.png',
+    icon: 'systems/gurps/icons/statuses/condition-wretch.png',
+    id: 'retching',
+    label: 'GURPS.STATUSRetching',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/x-drowsy.png',
     id: 'drowsy',
     label: 'GURPS.STATUSDrowsy',
   },
   {
-    icon: 'systems/gurps/icons/drunk.png',
-    id: 'drunk',
-    label: 'GURPS.STATUSDrunk',
-  },
-  {
-    icon: 'systems/gurps/icons/tipsy.png',
+    icon: 'systems/gurps/icons/statuses/condition-drunk1.png',
     id: 'tipsy',
     label: 'GURPS.STATUSTipsy',
   },
   {
-    icon: 'systems/gurps/icons/nauseated.png',
+    icon: 'systems/gurps/icons/statuses/condition-drunk2.png',
+    id: 'drunk',
+    label: 'GURPS.STATUSDrunk',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-nauseated.png',
     id: 'nauseated',
     label: 'GURPS.STATUSNauseated',
   },
   {
-    icon: 'systems/gurps/icons/moderate.png',
+    icon: 'systems/gurps/icons/statuses/condition-pain2.png',
     id: 'moderate',
     label: 'GURPS.STATUSModerate',
   },
   {
-    icon: 'systems/gurps/icons/severe.png',
+    icon: 'systems/gurps/icons/statuses/condition-pain4.png',
     id: 'severe',
     label: 'GURPS.STATUSSevere',
   },
   {
-    icon: 'systems/gurps/icons/terrible.png',
+    icon: 'systems/gurps/icons/statuses/condition-pain6.png',
     id: 'terrible',
     label: 'GURPS.STATUSTerrible',
-  },
-  {
-    icon: 'systems/gurps/icons/vomiting.png',
-    id: 'retching',
-    label: 'GURPS.STATUSRetching',
-  },
+  }
 ]
 
 GURPS.SJGProductMappings = {
@@ -406,17 +406,10 @@ function performAction(action, actor, event) {
     return true
   }
 
-  if (action.type === 'attribute')
-    if (!!actor) {
-      prefix = 'Roll vs '
-      thing = this.i18n(action.path)
-      formula = '3d6'
-      target = action.target
-      if (!target) target = this.resolve(action.path, actordata.data)
-      target = parseInt(target)
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
-      else if (!!action.desc) opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + action.desc + ')</span>'
-    } else ui.notifications.warn('You must have a character selected')
+  if (action.type === 'chat') {
+    ui.chat.processMessage(action.orig);
+    return true
+  }
 
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
@@ -462,23 +455,64 @@ function performAction(action, actor, event) {
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
     } else ui.notifications.warn('You must have a character selected')
 
-  if (action.type === 'skill-spell')
-    if (!!actor) {
-      let skill = null
-      prefix = '' // "Attempting ";
-      thing = action.name
-      skill = GURPS.findSkillSpell(actordata, thing)
-      if (!skill) {
-        if (!!action.default) {
-          if (GURPS.performAction(action.default, actor, event)) return true;
+  let attr = (action) => {
+    let target = action.target
+    if (!target) target = this.resolve(action.path, actordata.data)
+    target = parseInt(target)
+    return {
+      prefix: 'Roll vs ',
+      thing: this.i18n(action.path),
+      target: target
+    }
+  }
+
+  let processLinked = (tempAction) => {
+    let bestLvl = 0
+    var bestAction
+    let attempts = []
+    while (!!tempAction) {
+      if (tempAction.type == 'attribute') {
+        let t = parseInt(action.target)
+        if (!t) t = parseInt(this.resolve(tempAction.path, actordata.data))
+        let sl = t
+        if (!!tempAction.mod) sl += parseInt(tempAction.mod)
+        if (sl > bestLvl) {
+          bestLvl = parseInt(sl)
+          bestAction = tempAction
+          thing = this.i18n(tempAction.path)
+          prefix = 'Roll vs '
+          target = t
         }
-        ui.notifications.warn("No skill or spell named '" + action.name + "' found on " + actor.name)
+      } else { // skill
+        let skill = GURPS.findSkillSpell(actordata, tempAction.name)
+        if (!skill) attempts.push(tempAction.name)
+        else {
+          let sl = parseInt(skill.level);
+          if (!!tempAction.mod) sl += parseInt(tempAction.mod)
+          if (sl > bestLvl) {
+            bestLvl = parseInt(sl)
+            bestAction = tempAction
+            thing = skill.name
+            target = parseInt(skill.level)  // target is without mods
+            prefix = ''
+          }
+        }
+      }
+      tempAction = tempAction.next
+    }
+    return [bestAction, attempts]
+  }
+
+  if (action.type === 'skill-spell' || action.type === 'attribute')
+    if (!!actor) {
+      const [bestAction, attempts] = processLinked(action)
+      if (!bestAction) {
+        ui.notifications.warn("No skill or spell named '" + attempts.join("' or '") + "' found on " + actor.name)
         return false
       }
-      thing = skill.name
-      target = parseInt(skill.level)
       formula = '3d6'
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
+      if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
+      else if (!!bestAction.desc) opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
 
   if (action.type === 'attack')
@@ -522,7 +556,7 @@ function performAction(action, actor, event) {
         if (!target || target <= 0) {
           if (!!e[action.path]) {
             if (!!action.melee) {
-              let n = action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+              let n = "^" + (action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)'))
               if ((e.name + (!!e.mode ? ' (' + e.mode + ')' : '')).match(n)) {
                 target = parseInt(e[action.path])
               }
@@ -548,7 +582,7 @@ function performAction(action, actor, event) {
 GURPS.performAction = performAction
 
 function findSkillSpell(actor, sname) {
-  sname = sname.split("*").join(".*");
+  sname = "^" + (sname.split("*").join(".*"));
   let best = 0;
   var t;
   recurselist(actor.data.skills, (s) => {
@@ -568,7 +602,7 @@ function findSkillSpell(actor, sname) {
 GURPS.findSkillSpell = findSkillSpell
 
 function findAttack(actor, sname) {
-  sname = sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = "^" + (sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // Make string into a RegEx pattern
   let t = actor.data.melee?.findInProperties((a) => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (!t) t = actor.data.ranged?.findInProperties((a) => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
@@ -595,9 +629,10 @@ async function handleRoll(event, actor) {
     formula = '3d6'
     target = parseInt(element.innerText)
   }
-  if ('name' in element.dataset) {
+  if ('name' in element.dataset || 'otf' in element.dataset) {
     prefix = '' // "Attempting ";
-    let text = element.dataset.name.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
+    let text = element.dataset.name || element.dataset.otf
+    text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
     thing = text.replace(/(.*?)\(.*\)/g, '$1')
 
     // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
@@ -992,16 +1027,35 @@ GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
           label: "Whisper Blindroll to " + nms,
           callback: () => GURPS.sendOtfMessage(botf, true, users)
         }
+      if (canblind)
+        buttons.four = {
+          icon: '<i class="fas fa-user-slash"></i>',
+          label: "Whisper Blindroll to " + nms,
+          callback: () => GURPS.sendOtfMessage(botf, true, users)
+        }
+    }
+    buttons.def = {
+      icon: '<i class="far fa-copy"></i>',
+      label: "Copy to chat input",
+      callback: () => { $(document).find("#chat-message").val(otf) }
     }
 
     let d = new Dialog({
       title: "GM 'Send Formula'",
       content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
       buttons: buttons,
-      default: "four"
-    });
+      default: "def"
+    }, { width: 700 });
     d.render(true);
   }
+
+  let d = new Dialog({
+    title: "GM 'Send Formula'",
+    content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
+    buttons: buttons,
+    default: "four"
+  });
+  d.render(true);
 }
 
 
