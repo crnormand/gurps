@@ -342,7 +342,7 @@ CONFIG.statusEffects = [
     label: 'GURPS.STATUSTerrible',
   },
   {
-    icon: 'systems/gurps/icons/statuses/path-condition-broken.png',
+    icon: 'systems/gurps/icons/statuses/cth-condition-major-wound.png',
     id: 'reeling',
     label: 'GURPS.STATUSReeling',
   },
