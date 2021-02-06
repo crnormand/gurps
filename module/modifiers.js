@@ -863,25 +863,55 @@ const EqtQualifyModifiers = [
 ]
 
 const ModifiersForStatus = {
+  grapple: {
+    gen: ['[-4 to DX checks (Grappled)]'],
+    melee: [],
+    ranged: [],
+    defense: []
+  },
+  aim: {
+    gen: ['Aiming! Reference weapon ACC mod'],
+    melee: [],
+    ranged: [],
+    defense: []
+  },
   retching: {
     gen: ['[-5 to IQ/DX/PER checks (Retching)]'],
     melee: [],
     ranged: [],
     defense: []
   },
-  moderate: {
+  mild_pain: {
+    gen: ['[-1 to IQ/DX/CR rolls (Mild Pain)]'],
+    melee: [],
+    ranged: [],
+    defense: []
+  },
+  moderate_pain: {
     gen: ['[-2 to IQ/DX/CR rolls (Moderate Pain)]'],
     melee: [],
     ranged: [],
     defense: []
   },
-  severe: {
+  moderate_pain2: {
+    gen: ['[-3 to IQ/DX/CR rolls (Moderate Pain)]'],
+    melee: [],
+    ranged: [],
+    defense: []
+  },
+  severe_pain: {
     gen: ['[-4 to IQ/DX/CR rolls (Severe Pain)]'],
     melee: [],
     ranged: [],
     defense: []
   },
-  terrible: {
+  severe_pain2: {
+    gen: ['[-5 to IQ/DX/CR rolls (Severe Pain)]'],
+    melee: [],
+    ranged: [],
+    defense: []
+  },
+  terrible_pain: {
     gen: ['[-6 to IQ/DX/CR rolls (Terrible Pain)]'],
     melee: [],
     ranged: [],

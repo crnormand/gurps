@@ -272,6 +272,11 @@ CONFIG.statusEffects = [
     label: 'EFFECT.StatusStunned',
   },
   {
+    icon: 'systems/gurps/icons/statuses/cth-condition-readied.png',
+    id: 'aim',
+    label: 'GURPS.STATUSAim',
+  },
+  {
     icon: 'systems/gurps/icons/statuses/dd-condition-prone.png',
     id: 'prone',
     label: 'EFFECT.StatusProne',
@@ -292,9 +297,24 @@ CONFIG.statusEffects = [
     label: 'GURPS.STATUSSit',
   },
   {
-    icon: 'systems/gurps/icons/statuses/path-condition-fascinated.png',
-    id: 'euphoria',
-    label: 'GURPS.STATUSEuphoria',
+    icon: 'systems/gurps/icons/statuses/x-flying.png',
+    id: 'fly',
+    label: 'GURPS.STATUSFly',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/condition-fall.png',
+    id: 'fall',
+    label: 'GURPS.STATUSFall',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-pinned.png',
+    id: 'pinned',
+    label: 'GURPS.STATUSPin',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-nauseated.png',
+    id: 'nauseated',
+    label: 'GURPS.STATUSNauseated',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-cough.png',
@@ -312,6 +332,11 @@ CONFIG.statusEffects = [
     label: 'GURPS.STATUSDrowsy',
   },
   {
+    icon: 'systems/gurps/icons/statuses/x-asleep.png',
+    id: 'sleeping',
+    label: 'GURPS.STATUSSleep',
+  },
+  {
     icon: 'systems/gurps/icons/statuses/condition-drunk1.png',
     id: 'tipsy',
     label: 'GURPS.STATUSTipsy',
@@ -322,24 +347,44 @@ CONFIG.statusEffects = [
     label: 'GURPS.STATUSDrunk',
   },
   {
-    icon: 'systems/gurps/icons/statuses/path-condition-nauseated.png',
-    id: 'nauseated',
-    label: 'GURPS.STATUSNauseated',
+    icon: 'systems/gurps/icons/statuses/path-condition-fascinated.png',
+    id: 'euphoria',
+    label: 'GURPS.STATUSEuphoria',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/condition-pain1.png',
+    id: 'mild_pain',
+    label: 'GURPS.STATUSMildPain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain2.png',
-    id: 'moderate',
-    label: 'GURPS.STATUSModerate',
+    id: 'moderate_pain',
+    label: 'GURPS.STATUSModeratePain',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/condition-pain3.png',
+    id: 'moderate_pain2',
+    label: 'GURPS.STATUSModeratePain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain4.png',
-    id: 'severe',
-    label: 'GURPS.STATUSSevere',
+    id: 'severe_pain',
+    label: 'GURPS.STATUSSeverePain',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/condition-pain5.png',
+    id: 'severe_pain2',
+    label: 'GURPS.STATUSSeverePain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain6.png',
-    id: 'terrible',
-    label: 'GURPS.STATUSTerrible',
+    id: 'terrible_pain',
+    label: 'GURPS.STATUSTerriblePain',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-helpless.png',
+    id: 'agony',
+    label: 'GURPS.STATUSAgony',
   },
   {
     icon: 'systems/gurps/icons/statuses/cth-condition-major-wound.png',
@@ -360,6 +405,26 @@ CONFIG.statusEffects = [
     icon: 'systems/gurps/icons/statuses/dd-condition-poisoned.png',
     id: 'poison',
     label: 'GURPS.STATUSPoison',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/x-burning.png',
+    id: 'burn',
+    label: 'GURPS.STATUSBurn',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/condition-suffocate.png',
+    id: 'suffocate',
+    label: 'GURPS.STATUSSuffocate',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/path-condition-grappled.png',
+    id: 'grapple',
+    label: 'GURPS.STATUSGrapple',
+  },
+  {
+    icon: 'systems/gurps/icons/statuses/dd-condition-unconscious.png',
+    id: 'disbled',
+    label: 'GURPS.STATUSDisable',
   }
 ]
 
