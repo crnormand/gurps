@@ -58,22 +58,29 @@ export default class DamageChat {
    * @param {String} overrideDiceText ??
    */
   async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
-    let targetmods = await this._gurps.applyMods() // append any global mods
+    const targetmods = await this._gurps.ModifierBucket.applyMods() // append any global mods
 
     let dice = this._getDiceData(diceText, damageType, targetmods, overrideDiceText)
 
-    if (!!tokenNames && tokenNames.length > 0) {
-      let draggableData = []
-      await tokenNames.forEach(async (tokenName) => {
-        let data = await this._createDraggableSection(actor, dice, tokenName, targetmods)
-        draggableData.push(data)
-      })
-
-      this._createChatMessage(actor, dice.diceText, dice.damageType, targetmods, draggableData, event)
-      return
+    if (!tokenNames || tokenNames.length == 0) {
+      tokenNames.push('')
     }
-    const newLocal = this._createDraggableSection(actor, null, targetmods, diceText, damageType, overrideDiceText)
-    this._createChatMessage(actor, [newLocal])
+
+    let draggableData = []
+    await tokenNames.forEach(async (tokenName) => {
+      let data = await this._createDraggableSection(actor, dice, tokenName, targetmods)
+      draggableData.push(data)
+    })
+
+    this._createChatMessage(actor, dice.diceText, dice.damageType, targetmods, draggableData, event)
+
+    // Resolve any modifier descriptors (such as *Costs 1FP)
+    // for (let m of targetmods) {
+    //   if (!!m.desc) {
+    //     this._gurps.applyModifierDesc(actor, m.desc)
+    //   }
+    // }
+    targetmods.filter(it => !!it.desc).map(it => it.desc).forEach(it => this._gurps.applyModifierDesc(actor, it))
   }
 
   /**
@@ -166,7 +173,6 @@ export default class DamageChat {
     for (let m of targetmods) {
       modifier += m.modint
     }
-
     if (multiplier > 1) {
       if (!!overrideDiceText) {
         overrideDiceText = `${overrideDiceText}×${multiplier}`

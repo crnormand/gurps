@@ -132,7 +132,7 @@
             <div class='pdflink'>B398</div>
           </div>
 
-          <h4>Special Combat Situations</h4>
+          <h4>Special Situations</h4>
           <div class='gurps-3col gurps-checkbox-col'>
             <div><input id='specials-range12D' type='checkbox' value='range12D' {{#if
                 CALC.isRangedHalfDamage}}checked{{/if}}></div>
@@ -203,6 +203,18 @@
           </div>
           {{/if}}
 
+          <div class='shaded collapsible-wrapper options-drawer'>
+            <input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{#if
+              CALC.isExplosion}}checked{{/if}}></input>
+            <label for='explosion-damage' class='label-toggle'>Explosion:<span class='pdflink'>B414</span></label>
+            <div class='collapsible-content continuation'>
+              <div style='display: flex; padding: 3px;'><label for='explosion-yards'
+                  style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>Hexes from
+                  center:</label><input type='text' id='explosion-yards' class='digits-only'
+                  value='{{CALC.hexesFromExplosion}}' /></div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -228,6 +240,7 @@
 
             {{#if CALC.useArmorDivisor}}
             {{#if CALC.armorDivisor}}
+            {{#unless CALC.isExplosion}}
             <div>DR W/DIVISOR</div>
             <div>{{CALC.effectiveDR}}</div>
             <!-- This is a big messy looking block, but it prints either:
@@ -237,6 +250,7 @@
                 w/Hard–{{CALC.hardenedDRLevel}}){{else}}({{CALC.armorDivisor}}){{/if}}{{#unless
                 CALC.DR}}{{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}{{/unless}}</span>
             </div>
+            {{/unless}}
             {{/if}}
             {{/if}}
 
@@ -254,10 +268,18 @@
               </span>
             </div>
 
+            {{#if CALC.isExplosion}}
+            <div>EXPLOSION</div>
+            <div><span>×<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span></div>
+            <div><span>({{CALC.hexesFromExplosion}} {{pluralize 'hex' CALC.hexesFromExplosion}} from center)</span>
+            </div>
+            {{/if}}
+
             <div>INJURY</div>
             <div>{{CALC.injury}}</div>
             <div><span>= {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize
-                  CALC.totalWoundingModifier 2}}</span>{{#if
+                  CALC.totalWoundingModifier 2}}{{#if CALC.isExplosion}} <span>×<sup>
+                      1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>{{/if}}</span>{{#if
                 CALC.maxInjuryForDiffuse}} (Diffuse, max {{CALC.maxInjuryForDiffuse}})* <span
                   class="pdflink">B380</span>{{/if}}
             </div>

@@ -52,6 +52,7 @@ export class DamageCalculator {
     this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
 
     this._hitLocation = this._defender.defaultHitLocation
+    this._previousHitLocation = this._hitLocation
     this._userEnteredDR = 0
 
     // the wounding modifier selected using the radio buttons
@@ -71,6 +72,10 @@ export class DamageCalculator {
     this._isInjuryTolerance = false
     this._injuryToleranceType = null
     this._maxInjuryForDiffuse = null
+
+    this._isExplosion = false
+    this._hexesFromExplosion = 1
+    this._explosionDivisor = 1
   }
 
   get attacker() {
@@ -272,7 +277,7 @@ export class DamageCalculator {
   // Total Wounding Modifier = Wounding Modifier + any additional (user entered) wounding modifier
   //    + any Vulnerability multiplier.
   //
-  // Injury = Penetrating Damage x Total Wounding Modifier.
+  // Injury = Penetrating Damage x Total Wounding Modifier x Explosion divider.
   //
   // Calculated Blunt Trauma = 1/10 of the Effective Damage for the appropriate damage types; 1/5 of
   //    Effective Damage if damage type is 'cr' (Crushing).
@@ -313,6 +318,9 @@ export class DamageCalculator {
   }
 
   get effectiveArmorDivisor() {
+    // Armor Divisors do not apply to Explosions, (B414)
+    if (this._isExplosion) return 1
+
     if (this._armorDivisor > 1 && this._isHardenedDR) {
       let maxIndex = armorDivisorSteps.length - 1
       let index = armorDivisorSteps.indexOf(this._armorDivisor)
@@ -361,7 +369,7 @@ export class DamageCalculator {
    */
   get injury() {
     this._maxInjuryForDiffuse = null
-    let injury = Math.floor(this.penetratingDamage * this.totalWoundingModifier)
+    let injury = Math.floor(this.penetratingDamage * this.totalWoundingModifier / this.explosionDivisor)
 
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
     if (this._isInjuryTolerance && this._injuryToleranceType === DIFFUSE) {
@@ -718,5 +726,30 @@ export class DamageCalculator {
 
   get maxInjuryForDiffuse() {
     return this._maxInjuryForDiffuse
+  }
+
+  get isExplosion() { return this._isExplosion }
+  set isExplosion(value) {
+    if (value && !this._isExplosion) {
+      this._previousHitLocation = this._hitLocation
+      this._hitLocation = 'Large-Area'
+    } else if (!value && this._isExplosion) {
+      this._hitLocation = this._previousHitLocation
+    }
+    this._isExplosion = value
+  }
+
+  get hexesFromExplosion() {
+    return this._hexesFromExplosion
+  }
+  set hexesFromExplosion(value) {
+    this._hexesFromExplosion = value
+  }
+
+  get explosionDivisor() {
+    if (this.isExplosion) {
+      return this._hexesFromExplosion * 3
+    }
+    return 1
   }
 }

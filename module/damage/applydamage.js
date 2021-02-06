@@ -166,6 +166,18 @@ export default class ApplyDamageDialog extends Application {
       this.updateUI()
     })
 
+    // if checked, target has flexible armor; check for blunt trauma
+    html.find('#explosion-damage').click(ev =>
+      this._updateModelFromBooleanElement($(ev.currentTarget), 'isExplosion'))
+
+    html.find('#explosion-yards').on('change', ev => {
+      let currentValue = $(ev.currentTarget).val()
+      this._calculator.hexesFromExplosion = (currentValue === '' || currentValue === '0')
+        ? 1
+        : parseInt(currentValue)
+      this.updateUI()
+    })
+
     // ==== Results ====
     html.find('#result-effects button').click(async ev => this._handleEffectButtonClick(ev))
 

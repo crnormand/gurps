@@ -626,11 +626,12 @@ async function handleRoll(event, actor) {
     }
     // TODO temporary change for my testing
     //  Original code:   GURPS.damageChat.create(actor, formula, dtype, event)
-    let activeScene = game.scenes.active
-    let tokens = activeScene.data.tokens
-    let tokenNames = tokens.map(it => it.name)
-    // let targets = []
-    // actorIds.forEach(id => targets.push(game.actors.get(id)))
+    let tokenNames = []
+    if (actor.data.name === 'Shae') {
+      let activeScene = game.scenes.active
+      let tokens = activeScene.data.tokens
+      tokenNames = tokens.map(it => it.name)
+    }
     GURPS.damageChat.create(actor, formula, dtype, event, null, tokenNames)
     // TODO End
     return
