@@ -2195,6 +2195,10 @@ body {
   font-size: 12px;
 }
 
+.gurps-group .results-table > div:nth-child(3n+1) {
+  text-transform: uppercase;
+}
+
 .gurps-group .results-table > div:nth-child(3n + 1),
 .gurps-group .results-table > div:nth-child(3n + 2) {
   text-align: end;
