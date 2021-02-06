@@ -19,7 +19,7 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
   }
-
+    
   /** @override */
   _onUpdate(data, options, userId, context) {
     super._onUpdate(data, options, userId, context)
@@ -1114,14 +1114,13 @@ export class GurpsActor extends Actor {
         }
       })
     })
-    return val;
+    if (!val && !!this.data.data[key]) 
+      val = parseInt(this.data.data[key])
+    return val
   }
 
   getEquippedParry() {
-    let p = this.getEquipped('parry')
-    if (!p && !!this.data.data.parry)   // If we can't find a parry on a melee, check the NPC parry value
-      p = this.data.data.parry
-    return p
+    return this.getEquipped('parry')
   }
 
   getEquippedBlock() {

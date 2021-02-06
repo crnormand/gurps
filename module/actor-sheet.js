@@ -1054,8 +1054,8 @@ export class GurpsActorSheet extends ActorSheet {
         if (key === enckey) {
           await this.actor.update({ 
             [t]: true,
-            'data.currentmove': enc.move,
-            'data.currentdodge': enc.dodge
+            'data.currentmove': parseInt(enc.move),
+            'data.currentdodge': parseInt(enc.dodge)
           });
         }
       }
@@ -1264,7 +1264,14 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
     const data = super.getData();
     data.dodge = this.actor.getCurrentDodge();
     data.defense = this.actor.getTorsoDr();
-    return data;
+    let p = this.actor.getEquippedParry();
+//    let b = this.actor.getEquippedBlock();      // Don't have a good way to display block yet
+//    if (b > 0)
+//      data.parryblock = p + "/" + b;
+//    else
+      data.parryblock = p;
+  
+   return data;
   }
 
   activateListeners(html) {

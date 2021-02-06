@@ -19,6 +19,8 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 This is what we are currently working on:
 
 - 0.8.13
+    - @Tratz engaged [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) to upgrade our icons.   
+    - Allow 'mooks' to show up in tooltip alt
 
 ### History
 - 0.8.12 - 2/5/2021
