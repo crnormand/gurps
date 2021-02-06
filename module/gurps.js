@@ -624,16 +624,11 @@ async function handleRoll(event, actor) {
       dtype = dtype.substring(0, i).trim()
       formula = formula.split(dtype)[0]
     }
-    // TODO temporary change for my testing
-    //  Original code:   GURPS.damageChat.create(actor, formula, dtype, event)
+
+    // TODO Find some way to specify who is in the blast radius, and fill out the 
+    // token name array for each of those actors.
     let tokenNames = []
-    if (actor.data.name === 'Shae') {
-      let activeScene = game.scenes.active
-      let tokens = activeScene.data.tokens
-      tokenNames = tokens.map(it => it.name)
-    }
     GURPS.damageChat.create(actor, formula, dtype, event, null, tokenNames)
-    // TODO End
     return
   }
   if ('roll' in element.dataset) {
