@@ -76,6 +76,8 @@ GURPS.ClearLastActor = function (actor) {
   }
 }
 
+GURPS.ChatCommandsInProcess = []    // Taking advantage of synchronous nature of JS arrays
+
 // Moved to module/hitlocation/hitlocation.js
 
 // This table is used to display dice rolls and penalties (if they are missing from the import
@@ -471,7 +473,7 @@ function trim(s) {
 GURPS.trim = trim
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-function performAction(action, actor, event) {
+async function performAction(action, actor, event) {
   if (!action) return
   let actordata = actor?.data
   let prefix = ''

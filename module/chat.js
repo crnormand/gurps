@@ -72,15 +72,18 @@ export default function addChatHooks() {
    
     Hooks.on('chatMessage', (log, message, data) => {
       if (!!data.alreadyProcessed) return true    // The chat message has already been parsed for GURPS commands show it should just be displayed
-      
+      if (GURPS.ChatCommandsInProcess.includes(message)) {
+        GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(item => item !== message)
+        return true   // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
+      }
+       
       // Is Dice So Nice enabled ?
       let niceDice = false
       try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
       let msgs = { pub: [], priv: [], data: data }
-      let handled = false;
+      let handled = false
       message.split('\n').forEach((line) => {
         if (line === '/help' || line === '!help') {
-          handled = true
           let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
           c += '<br>/roll (or /r) [On-the-Fly formula]'
           c += '<br>/private (or /pr) [On-the-Fly formula]'
@@ -93,97 +96,121 @@ export default function addChatHooks() {
             c += '<br>/everyone (or /ev) &lt;formula&gt;'
           }
           priv(c, msgs);
-          return    // Nothing left to do
+          handled = true
+          return
         }
         if (line === '/mook' && game.user.isGM) {
-          handled = true
           new NpcInput().render(true)
           priv("Opening Mook Generator", msgs)
+          handled = true
           return
         }
       
         // /everyone +1 fp or /everyone -2d-1 fp
         let m = line.match(/\/(everyone|ev) ([+-]\d+d)?([+-]\d+)?(!)? ?([FfHh][Pp])/);
-        if (!!m && game.user.isGM) {
-         game.actors.entities.forEach(actor => {
-            let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
-            if (users.length > 0) {
-              handled = true
-              let mod = m[3] || ""
-              let value = mod;
-              let dice = m[2] || "";
-              if (!!dice) {
-                let sign = (dice[0] == "-") ? -1 : 1
-                let roll = Roll.create(dice.substring(1, dice.length) + "6 " + mod).evaluate()
-                if (niceDice) game.dice3d.showForRoll(roll, game.user, data.whisper)
-                value = Math.max(roll.total, !!m[4] ? 1 : 0)
-                value *= sign
-                if (!!m[4]) mod += m[4]
-              } 
-              let attr = m[5].toUpperCase()
-              let cur = actor.data.data[attr].value
-              let newval = cur + parseInt(value)
-              if (newval > actor.data.data[attr].max) newval = Math.max(cur, actor.data.data[attr].max)
-              actor.update({ [ "data." + attr + ".value"] : newval })
-              let t = (mod != value) ? `(${value})` : ""
-              priv(`${actor.name} ${dice}${mod} ${t} ${m[5]}`, msgs)
-            }
-          })  
+        if (!!m) {
+          if (game.user.isGM) {
+            game.actors.entities.forEach(actor => {
+              let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
+              if (users.length > 0) {
+                let mod = m[3] || ""
+                let value = mod;
+                let dice = m[2] || "";
+                if (!!dice) {
+                  let sign = (dice[0] == "-") ? -1 : 1
+                  let roll = Roll.create(dice.substring(1, dice.length) + "6 " + mod).evaluate()
+                  if (niceDice) game.dice3d.showForRoll(roll, game.user, data.whisper)
+                  value = Math.max(roll.total, !!m[4] ? 1 : 0)
+                  value *= sign
+                  if (!!m[4]) mod += m[4]
+                } 
+                let attr = m[5].toUpperCase()
+                let cur = actor.data.data[attr].value
+                let newval = cur + parseInt(value)
+                if (newval > actor.data.data[attr].max) newval = Math.max(cur, actor.data.data[attr].max)
+                actor.update({ [ "data." + attr + ".value"] : newval })
+                let t = (mod != value) ? `(${value})` : ""
+                priv(`${actor.name} ${dice}${mod} ${t} ${m[5]}`, msgs)
+              }
+            }) 
+          } else
+            priv(`You must be a GM to execute '${line}'`, msgs)
+          handled = true
           return
-        }
+         }
         
         // /everyone reset fp/hp
         m = line.match(/\/(everyone|ev) reset ([FfHh][Pp])/);
-        if (!!m && game.user.isGM) {
-         game.actors.entities.forEach(actor => {
-            let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
-            if (users.length > 0) {
-              handled = true
-              let attr = m[2].toUpperCase()
-              let max = actor.data.data[attr].max
-              actor.update({ [ "data." + attr + ".value"] : max })
-              priv(`${actor.name} reset to ${max} ${m[2]}`, msgs)
-            }
-          })  
+        if (!!m) {
+          if (game.user.isGM) {
+            game.actors.entities.forEach(actor => {
+              let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
+              if (users.length > 0) {
+                handled = true
+                let attr = m[2].toUpperCase()
+                let max = actor.data.data[attr].max
+                actor.update({ [ "data." + attr + ".value"] : max })
+                priv(`${actor.name} reset to ${max} ${m[2]}`, msgs)
+              }
+            })  
+          } else
+            priv(`You must be a GM to execute '${line}'`, msgs)
+          handled = true
           return
         }
-
-  
+ 
         m = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
         if (!!m && !!m[2]) {
           let action = parselink(m[2])
           if (!!action.action) {
-           handled = true
             if (action.action.type === 'modifier')  // only need to show modifiers, everything else does something.
               priv(line, msgs)
-            GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') })
-            return
-          }
-        } 
-        if (line === '/clearmb') {
+            else
+              send(msgs) // send what we have
+            GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') })   // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
+          } else
+            pub(line, msgs)   // Looks like an OtF, but didn't parse as one
           handled = true
+          return
+       } 
+        if (line === '/clearmb') {
           priv(line, msgs);
           GURPS.ModifierBucket.clear()
+          handled = true
           return
         }
         if (line.startsWith('/sendmb')) {
+          if (game.user.isGM) {
+            priv(line, msgs)
+            let user = line.replace(/\/sendmb/, '').trim()
+            GURPS.ModifierBucket.sendBucketToPlayer(user)
+          } else 
+            priv(`You must be a GM to execute '${line}'`, msgs)
           handled = true
-          priv(line, msgs)
-          let user = line.replace(/\/sendmb/, '').trim()
-          GURPS.ModifierBucket.sendBucketToPlayer(user)
           return
         }
         if (line.startsWith("/:")) {
           m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)));
           if (m.length > 0) {
-          handled = true
+            send(msgs)
             m[0].execute()
-            return
-          }
+          } else
+            priv(`Unable to find macro named '${line.substr(2)}'`, msgs)
+          handled = true
+          return
         }
-        pub(line, msgs)  // If not handled, must just be public text
+        if (line.trim().startsWith("/")) {// immediately flush our stored msgs, and execute the slash command using the default parser
+          handled = true
+          send(msgs)
+          GURPS.ChatCommandsInProcess.push(line)  // Remember which chat message we are running, so we don't run it again!
+          ui.chat.processMessage(line).catch(err => {
+            ui.notifications.error(err);
+            console.error(err);
+          })
+        } else
+          pub(line, msgs)  // If not handled, must just be public text
       })  // end split
-      if (handled) {
+      if (handled) {  // If we handled 'some' messages, then send the remaining messages, and return false (so the default handler doesn't try)
         send(msgs)
         return false    // Don't display this chat message, since we have handled it with others
       } else return true
