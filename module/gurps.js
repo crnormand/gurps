@@ -514,7 +514,7 @@ async function performAction(action, actor, event) {
       }
       formula = '3d6'
       if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
-      else if (!!bestAction.desc) opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
+      else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
 
   if (action.type === 'attack')
@@ -531,7 +531,7 @@ async function performAction(action, actor, event) {
       target = parseInt(att.level)
       formula = '3d6'
       if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
-      if (!!att.mode) opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + att.mode + ')</span>'
+      if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
 
   if (action.type === 'dodge')
@@ -567,7 +567,7 @@ async function performAction(action, actor, event) {
             }
             if (!!target && target > 0) {
               thing += ' for ' + e.name
-              if (!!e.mode) opt.text = "<br>&nbsp;<span style='font-size:85%'>(" + e.mode + ')</span>'
+              if (!!e.mode) opt.text = "<span style='font-size:85%'>(" + e.mode + ')</span>'
             }
           }
         }
