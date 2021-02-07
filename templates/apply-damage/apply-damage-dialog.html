@@ -201,8 +201,8 @@
           <div id='specials-insert-point' class='gurps-3col'>
             <input id='flexible-armor' type='checkbox' value='flexible-armor' {{#if
               CALC.isFlexibleArmor}}checked{{/if}}>
-            <label for='flexible-armor'>{{localize "GURPS.addFlexibleArmor"}} <aside>({{localize
-                "GURPS.bluntTrauma"}}):</aside></label>
+            <label for='flexible-armor'>{{localize "GURPS.addFlexibleArmor"}} <aside>({{localize "GURPS.bluntTrauma"}}):
+              </aside></label>
             <div id='blunt-trauma-field' class='with-button'>
               <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
                 value='{{CALC.effectiveBluntTrauma}}' {{#unless CALC.isFlexibleArmor}}disabled{{/unless}}>

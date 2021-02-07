@@ -76,6 +76,8 @@ GURPS.ClearLastActor = function (actor) {
   }
 }
 
+GURPS.ChatCommandsInProcess = []    // Taking advantage of synchronous nature of JS arrays
+
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -382,7 +384,7 @@ function trim(s) {
 GURPS.trim = trim
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-function performAction(action, actor, event) {
+async function performAction(action, actor, event) {
   if (!action) return
   let actordata = actor?.data
   let prefix = ''
@@ -570,6 +572,7 @@ function performAction(action, actor, event) {
           }
         }
       })
+      if (!target) target = parseInt(actordata.data[action.path])
       if (target > 0) formula = '3d6'
       else ui.notifications.warn('Unable to find a ' + action.orig + ' to roll')
     } else ui.notifications.warn('You must have a character selected')
