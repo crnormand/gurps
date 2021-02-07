@@ -121,7 +121,7 @@
 	"GURPS.addHardenedDRLevel" : "Hardened DR Level",
 	"GURPS.addInjuryTolerance" : "Injury Tolerance",
 	"GURPS.addInjuryToleranceUnliving" : "Unliving",
-	"GURPS.addInjuryToleranceHomogenous" : "Homogeneous",
+	"GURPS.addInjuryToleranceHomogenous" : "Homogenous",
 	"GURPS.addInjuryToleranceDiffuse" : "Diffuse",
 	"GURPS.addFlexibleArmor" : "Flexible Armor",
 
@@ -175,7 +175,7 @@
 
 	"GURPS.hitLocation" : "Hit Location",
 	"GURPS.roll" : "Roll",
-	"GURPS.location" : "Location",
+	"GURPS.location" : "Location", 
 	"GURPS.hitLocationWhere" : "Where",
 	"GURPS.hitLocationPenalty" : "Penalty",
 	"GURPS.hitLocationDR" : "DR",

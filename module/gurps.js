@@ -14,7 +14,7 @@ import {
 import { ModifierBucket } from './modifiers.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist } from '../lib/utilities.js'
+import { d6ify, recurselist, getAllActorsInActiveScene } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 
@@ -78,95 +78,6 @@ GURPS.ClearLastActor = function (actor) {
 
 GURPS.ChatCommandsInProcess = []    // Taking advantage of synchronous nature of JS arrays
 
-// Moved to module/hitlocation/hitlocation.js
-
-// This table is used to display dice rolls and penalties (if they are missing from the import
-// data) and to create the HitLocations pulldown menu (skipping any "skip:true" entries).
-//
-// Use the 'RAW' property to provide the Rules-As-Written hit location name, which is used in the
-// per-bodyplan hit location tables, below.
-//
-// Some entries combine two (or more?) related locations, such as left and right limbs. They will
-// have a 'roll' property that uses the ampersand (&) character. Those locations must also include
-// a 'prefix' property that will be used when splitting out the combined values into single values.
-// GURPS.hitlocationRolls = {
-//   Eye: { roll: '-', penalty: -9, skip: true },
-//   Eyes: { roll: '-', penalty: -9 }, // GCA
-//   Skull: { roll: '3-4', penalty: -7 },
-//   'Skull, from behind': { penalty: -5 },
-//   Face: { roll: '5', penalty: -5 },
-//   'Face, from behind': { penalty: -7 },
-//   Nose: { penalty: -7, desc: 'front only, *hit chest' },
-//   Jaw: { penalty: -6, desc: 'front only, *hit chest' },
-//   'Neck Vein/Artery': { penalty: -8, desc: '*hit neck' },
-//   'Limb Vein/Artery': { penalty: -5, desc: '*hit limb' },
-//   'Right Leg': { roll: '6-7', penalty: -2, skip: true },
-//   'Right Arm': { roll: '8', penalty: -2, skip: true },
-//   'Right Arm, holding shield': { penalty: -4, skip: true },
-//   'Arm, holding shield': { penalty: -4 },
-//   Arm: { roll: '8 & 12', penalty: -2 }, // GCA
-//   Arms: { roll: '8 & 12', penalty: -2, skip: true }, // GCA
-//   Torso: { roll: '9-10', penalty: 0 },
-//   Vitals: { roll: '-', penalty: -3, desc: 'IMP/PI[any] only' },
-//   'Vitals, Heart': { penalty: -5, desc: 'IMP/PI[any] only' },
-//   Groin: { roll: '11', penalty: -3 },
-//   'Left Arm': { roll: '12', penalty: -2, skip: true },
-//   'Left Arm, holding shield': { penalty: -4, skip: true },
-//   'Left Leg': { roll: '13-14', penalty: -2, skip: true },
-//   Legs: { roll: '6-7&13-14', penalty: -2, skip: true }, // GCA
-//   Leg: { roll: '6-7&13-14', penalty: -2 }, // GCA
-//   Hand: { roll: '15', penalty: -4 },
-//   Hands: { roll: '15', penalty: -4, skip: true }, // GCA
-//   Foot: { roll: '16', penalty: -4 },
-//   Feet: { roll: '16', penalty: -4, skip: true }, // GCA
-//   Neck: { roll: '17-18', penalty: -5 },
-//   'Chinks in Torso': { penalty: -8, desc: 'Halves DR' },
-//   'Chinks in Other': { penalty: -10, desc: 'Halves DR' },
-// }
-
-// Moved to module/damage/damage-table.js
-
-// GURPS.woundModifiers = {
-//   "burn": { multiplier: 1, label: 'Burning' },
-//   "cor": { multiplier: 1, label: 'Corrosive' },
-//   "cr": { multiplier: 1, label: 'Crushing' },
-//   "cut": { multiplier: 1.5, label: 'Cutting' },
-//   "fat": { multiplier: 1, label: 'Fatigue' },
-//   "imp": { multiplier: 2, label: 'Impaling' },
-//   "pi-": { multiplier: 0.5, label: 'Small Piercing' },
-//   "pi": { multiplier: 1, label: 'Piercing' },
-//   "pi+": { multiplier: 1.5, label: 'Large Piercing' },
-//   "pi++": { multiplier: 2, label: 'Huge Piercing' },
-//   "tox": { multiplier: 1, label: 'Toxic' },
-//   "dmg": { multiplier: 1, label: 'Damage', nodisplay: true }
-// };
-
-// GURPS.damageTypeMap = {
-//   burn: 'burn',
-//   cor: 'cor',
-//   cr: 'cr',
-//   cut: 'cut',
-//   fat: 'fat',
-//   imp: 'imp',
-//   'pi-': 'pi-',
-//   pi: 'pi',
-//   'pi+': 'pi+',
-//   'pi++': 'pi++',
-//   toxic: 'tox',
-//   burning: 'burn',
-//   corrosion: 'cor',
-//   corrosive: 'cor',
-//   crush: 'cr',
-//   crushing: 'cr',
-//   cutting: 'cut',
-//   fatigue: 'fat',
-//   impaling: 'imp',
-//   'small piercing': 'pi-',
-//   piercing: 'pi',
-//   'large piercing': 'pi+',
-//   'huge piercing': 'pi++',
-//   toxic: 'tox',
-// }
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -496,12 +407,12 @@ async function performAction(action, actor, event) {
     GURPS.ModifierBucket.addModifier(mod, action.desc)
     return true
   }
-  
+
   if (action.type === 'chat') {
     ui.chat.processMessage(action.orig);
     return true
   }
-  
+
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
     thing = action.desc
@@ -554,7 +465,7 @@ async function performAction(action, actor, event) {
       prefix: 'Roll vs ',
       thing: this.i18n(action.path),
       target: target
-    }  
+    }
   }
 
   let processLinked = (tempAction) => {
@@ -586,17 +497,17 @@ async function performAction(action, actor, event) {
             thing = skill.name
             target = parseInt(skill.level)  // target is without mods
             prefix = ''
-         }
+          }
         }
       }
       tempAction = tempAction.next
     }
-    return [ bestAction, attempts ]
+    return [bestAction, attempts]
   }
-  
+
   if (action.type === 'skill-spell' || action.type === 'attribute')
     if (!!actor) {
-      const [ bestAction, attempts ] = processLinked(action)
+      const [bestAction, attempts] = processLinked(action)
       if (!bestAction) {
         ui.notifications.warn("No skill or spell named '" + attempts.join("' or '") + "' found on " + actor.name)
         return false
@@ -666,7 +577,7 @@ async function performAction(action, actor, event) {
       else ui.notifications.warn('Unable to find a ' + action.orig + ' to roll')
     } else ui.notifications.warn('You must have a character selected')
 
-  
+
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   doRoll(actor, formula, targetmods, prefix, thing, target, opt)
   return true
@@ -677,13 +588,13 @@ function findSkillSpell(actor, sname) {
   sname = "^" + (sname.split("*").join(".*"));
   let best = 0;
   var t;
-  recurselist(actor.data.skills, (s) => { 
+  recurselist(actor.data.skills, (s) => {
     if (s.name.match(sname) && s.level > best) {
       t = s
       best = parseInt(s.level)
     }
   });
-  if (!t) recurselist(actor.data.spells, (s) => { 
+  if (!t) recurselist(actor.data.spells, (s) => {
     if (s.name.match(sname) && s.level > best) {
       t = s
       best = parseInt(s.level)
@@ -751,7 +662,11 @@ async function handleRoll(event, actor) {
       dtype = dtype.substring(0, i).trim()
       formula = formula.split(dtype)[0]
     }
-    GURPS.damageChat.create(actor, formula, dtype, event)
+
+    // TODO Find some way to specify who is in the blast radius, and fill out the 
+    // token name array for each of those actors.
+    let tokenNames = []
+    GURPS.damageChat.create(actor, formula, dtype, event, null, tokenNames)
     return
   }
   if ('roll' in element.dataset) {
@@ -1072,81 +987,95 @@ GURPS.ThreeD6 = new ThreeD6({
 
 GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
-GURPS.onRightClickGurpslink = function(event) {
-    event.preventDefault();
-    let el = event.currentTarget;
-    let action = el.dataset.action;
-    if (!!action) {
-      action = JSON.parse(window.atob(action));
-      GURPS.whisperOtfToOwner(action.orig, event, (action.hasOwnProperty("blindroll") && !action.blindroll));  // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
-    }
+GURPS.onRightClickGurpslink = function (event) {
+  event.preventDefault();
+  let el = event.currentTarget;
+  let action = el.dataset.action;
+  if (!!action) {
+    action = JSON.parse(window.atob(action));
+    GURPS.whisperOtfToOwner(action.orig, event, (action.hasOwnProperty("blindroll") && !action.blindroll));  // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
+}
 
 
-GURPS.whisperOtfToOwner = function(otf, event, canblind, actor) {
-    if (!game.user.isGM) return;
-    if (!!otf) {
-      otf = otf.replace(/ \(\)/g, "");  // sent as "name (mode)", and mode is empty (only necessary for attacks)
-      let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-      let botf = "[!" + otf + "]"
-      otf = "[" + otf + "]";
-      let buttons = {};
-      buttons.one = {
-        icon: '<i class="fas fa-users"></i>',
-        label: "To Everyone",
-        callback: () => GURPS.sendOtfMessage(otf, false)
+GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
+  if (!game.user.isGM) return;
+  if (!!otf) {
+    otf = otf.replace(/ \(\)/g, "");  // sent as "name (mode)", and mode is empty (only necessary for attacks)
+    let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
+    let botf = "[!" + otf + "]"
+    otf = "[" + otf + "]";
+    let buttons = {};
+    buttons.one = {
+      icon: '<i class="fas fa-users"></i>',
+      label: "To Everyone",
+      callback: () => GURPS.sendOtfMessage(otf, false)
+    }
+    if (canblind)
+      buttons.two = {
+        icon: '<i class="fas fa-users-slash"></i>',
+        label: "Blindroll to Everyone",
+        callback: () => GURPS.sendOtfMessage(botf, true)
+      };
+    if (users.length > 0) {
+      let nms = users.map(u => u.name).join(' ');
+      buttons.three = {
+        icon: '<i class="fas fa-user"></i>',
+        label: "Whisper to " + nms,
+        callback: () => GURPS.sendOtfMessage(otf, false, users)
       }
       if (canblind)
-        buttons.two = {
-          icon: '<i class="fas fa-users-slash"></i>',
-          label: "Blindroll to Everyone",
-          callback: () => GURPS.sendOtfMessage(botf, true)
-        };
-      if (users.length > 0) {
-        let nms = users.map(u => u.name).join(' ');
-        buttons.three = {
-          icon: '<i class="fas fa-user"></i>',
-          label: "Whisper to " + nms,
-          callback: () => GURPS.sendOtfMessage(otf, false, users)
+        buttons.four = {
+          icon: '<i class="fas fa-user-slash"></i>',
+          label: "Whisper Blindroll to " + nms,
+          callback: () => GURPS.sendOtfMessage(botf, true, users)
         }
-        if (canblind)
-          buttons.four = {
-            icon: '<i class="fas fa-user-slash"></i>',
-            label: "Whisper Blindroll to " + nms,
-            callback: () => GURPS.sendOtfMessage(botf, true, users)
-          }
-      }
-      buttons.def = {
-        icon: '<i class="far fa-copy"></i>',
-        label: "Copy to chat input",
-        callback: () => {$(document).find("#chat-message").val(otf)}
-      }
+      if (canblind)
+        buttons.four = {
+          icon: '<i class="fas fa-user-slash"></i>',
+          label: "Whisper Blindroll to " + nms,
+          callback: () => GURPS.sendOtfMessage(botf, true, users)
+        }
+    }
+    buttons.def = {
+      icon: '<i class="far fa-copy"></i>',
+      label: "Copy to chat input",
+      callback: () => { $(document).find("#chat-message").val(otf) }
+    }
 
-      let d = new Dialog({
-        title: "GM 'Send Formula'",
-        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-        buttons: buttons,
-        default: "def"
-      }, { width: 700 });
-      d.render(true);
-    }
+    let d = new Dialog({
+      title: "GM 'Send Formula'",
+      content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
+      buttons: buttons,
+      default: "def"
+    }, { width: 700 });
+    d.render(true);
   }
-  
-  
-GURPS.sendOtfMessage = function(content, blindroll, users) {
-    let msgData = {
-      content: content,
-      user: game.user._id,
-      blind: blindroll
-    }
-    if (!!users) {
-      msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
-      msgData.whisper = users.map(it => it._id);
-    } else {
-      msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
-    }
-    ChatMessage.create(msgData);
+
+  let d = new Dialog({
+    title: "GM 'Send Formula'",
+    content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
+    buttons: buttons,
+    default: "four"
+  });
+  d.render(true);
+}
+
+
+GURPS.sendOtfMessage = function (content, blindroll, users) {
+  let msgData = {
+    content: content,
+    user: game.user._id,
+    blind: blindroll
   }
+  if (!!users) {
+    msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
+    msgData.whisper = users.map(it => it._id);
+  } else {
+    msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+  }
+  ChatMessage.create(msgData);
+}
 
 
 /*********************  HACK WARNING!!!! *************************/
