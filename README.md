@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.12
+# Current Release Version 0.8.13
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,12 +18,16 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 
 This is what we are currently working on:
 
-- 0.8.13
-    - @Tratz engaged [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) to upgrade our icons.   
-    - Allow 'mooks' to show up in tooltip alt
-    - Implement explosion damage in the ADD
+- 0.8.14 
 
 ### History
+
+- 0.8.13 - 2/6/2021
+    - @Tratz engaged [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) to upgrade our icons.   
+    - Allow mook parry to show up in tooltip alt
+    - Fixed Parry/Blook OtF for mooks
+    - Fixed more /chat handler bugs
+
 - 0.8.12 - 2/5/2021
     - Bug fix for chat commands, e.g. "/r 3d6", etc.
     

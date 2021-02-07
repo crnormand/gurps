@@ -607,7 +607,7 @@
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
       <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}</div>
       <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.weightsum}} lb</div>
-      <div class="ref satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{{pdflink this.pageref}}}</div>
+      <div class="ref satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{{pdflinkext this.pageref this.externallink}}}</div>
       <div></div>
       {{/listeqt}}
 
@@ -640,7 +640,7 @@
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
       <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
       <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}} lb</div>
-      <div class="ref satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{{pdflink this.pageref}}}</div>
+      <div class="ref satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref this.externallink}}}</div>
       {{/listeqt}}
 
     </div>
