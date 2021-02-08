@@ -36,7 +36,6 @@ GURPS.LEGAL = `GURPS is a trademark of Steve Jackson Games, and its rules and ar
 import GURPSRange from '../lib/ranges.js'
 import Initiative from '../lib/initiative.js'
 import HitFatPoints from '../lib/hitpoints.js'
-import HitLocationEquipmentTooltip from './hitlocation/hitlocationtooltip.js'
 import DamageChat from './damage/damagechat.js'
 
 import handlebarHelpers from '../lib/moustachewax.js'
@@ -403,8 +402,11 @@ async function performAction(action, actor, event) {
   }
 
   if (action.type === 'modifier') {
-    let mod = parseInt(action.mod)
-    GURPS.ModifierBucket.addModifier(mod, action.desc)
+    while (!!action && action.type === 'modifier') {
+      let mod = parseInt(action.mod)
+      GURPS.ModifierBucket.addModifier(mod, action.desc)
+      action = action.next
+    }
     return true
   }
 
@@ -963,7 +965,6 @@ GURPS.chatClickGmod = chatClickGmod
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
-new HitLocationEquipmentTooltip()
 GURPS.damageChat = new DamageChat(GURPS)
 
 // Modifier Bucket must be defined after hit locations
