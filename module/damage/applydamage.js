@@ -68,8 +68,8 @@ export default class ApplyDamageDialog extends Application {
     html.find('#basicDamage').on('change', ev =>
       this._updateModelFromInputText($(ev.currentTarget), "basicDamage", parseIntFrom))
 
-    html.find('#apply-publicly').on('click', () => this.submitDirectApply(true))
-    html.find('#apply-secretly').on('click', () => this.submitDirectApply(false))
+    html.find('#apply-publicly').on('click', (ev) => this.submitDirectApply(ev, true))
+    html.find('#apply-secretly').on('click', (ev) => this.submitDirectApply(ev, false))
 
     // Set Apply To dropdown value.
     // When dropdown changes, update the calculator and refresh GUI.
@@ -320,10 +320,10 @@ export default class ApplyDamageDialog extends Application {
    * Handle clicking on the Apply (Publicly or Secretly) buttons.
    * @param {boolean} publicly - if true, display to everyone; else display to GM and owner.
    */
-  submitDirectApply(publicly) {
+  submitDirectApply(ev, publicly) {
     let injury = this._calculator.basicDamage
     let type = this._calculator.applyTo
-    this.resolveInjury(injury, type, publicly)
+    this.resolveInjury(ev, injury, type, publicly)
   }
 
   /**
@@ -337,7 +337,7 @@ export default class ApplyDamageDialog extends Application {
     let dialog = $(ev.currentTarget).parents('.gurps-app')
     let results = $(dialog).find('.results-table')
     let clone = results.clone().html()
-    this.resolveInjury(injury, type, publicly, clone)
+    this.resolveInjury(ev, injury, type, publicly, clone)
   }
 
   /**
@@ -346,7 +346,7 @@ export default class ApplyDamageDialog extends Application {
    * @param {*} type 
    * @param {boolean} publicly - if true, display to everyone; else display to GM and owner.
    */
-  resolveInjury(injury, type, publicly, results = null) {
+  resolveInjury(ev, injury, type, publicly, results = null) {
     let current = type === 'FP' ? this._calculator.FP.value : this._calculator.HP.value
 
     let attackingActor = game.actors.get(this._calculator.attacker)
@@ -392,7 +392,7 @@ export default class ApplyDamageDialog extends Application {
       }
 
       CONFIG.ChatMessage.entityClass.create(messageData)
-      this.close()
+      if (!ev.shiftKey) this.close()
     })
   }
 }

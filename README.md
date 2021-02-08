@@ -19,6 +19,12 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 This is what we are currently working on:
 
 - 0.8.14 
+    - Added Explosion damage calculation to Damage Calculator
+    - Fixed a few issues with the Modifier Bucket, Targeted Chat messages, and others.
+    - pagerefs can be http links (and will show up as '*Link')
+    - SHIFT-Apply keeps Damage Dialog open (to allow multiple RoF damage results)
+    - Removed hitlocation eqt tooltip (no longer valid)
+    - Allow multiple modifiers [+1 to hit & +2 lucky]
 
 ### History
 
