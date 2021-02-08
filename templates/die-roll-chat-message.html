@@ -3,8 +3,7 @@
     {{prefix}} {{thing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
   </div>
   {{#if targetmods}}
-  <div>
-    {{#if optlabel}}({{optlabel}}){{/if}}
+  <div>{{#if optlabel}}{{{optlabel}}}{{/if}}
     <ul class='modifier-list'>
       {{#each targetmods}}
       <li>{{displayNumber mod}}{{#if desc}} : {{desc}}{{/if}}</li>
@@ -12,7 +11,7 @@
     </ul>
   </div>
   {{#if (gt finaltarget 0)}}
-    New Target: ({{finaltarget}})
+  New Target: ({{finaltarget}})
   {{/if}}
   {{/if}}
   <div class='roll-result'>

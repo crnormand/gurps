@@ -39,6 +39,19 @@ export class ModifierBucket extends Application {
     super(options)
 
     this.editor = new ModifierBucketEditor(this)
+
+    // whether the ModifierBucketEditor is visible
+    this.SHOWING = false
+
+    this._tempRangeMod = null
+
+    this.modifierStack = {
+      modifierList: [], // { "mod": +/-N, "desc": "" }
+      currentSum: 0,
+      displaySum: '+0',
+      plus: false,
+      minus: false
+    }
   }
 
   getData(options) {
@@ -47,20 +60,23 @@ export class ModifierBucket extends Application {
     return data
   }
 
-  // whether the ModifierBucketEditor is visible
-  SHOWING = false
-
-  modifierStack = {
-    modifierList: [], // { "mod": +/-N, "desc": "" }
-    currentSum: 0,
-    displaySum: '+0',
-    plus: false,
-    minus: false
+  setTempRangeMod(mod) {
+    this._tempRangeMod = mod
   }
-  get modifierStack() { return this.modifierStack }
 
-  setTempRangeMod(mod) { this.editor._tempRangeMod = mod }
-  addTempRangeMod() { this.editor._addTempRangeMod() }
+  addTempRangeMod() {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
+      // Only allow 1 measured range, for the moment.
+      let d = 'for range'
+      this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d)
+      if (this._tempRangeMod == 0) {
+        this.sum()
+        this.updateBucket()
+      } else {
+        this.addModifier(this._tempRangeMod, d)
+      }
+    }
+  }
 
   activateListeners(html) {
     super.activateListeners(html)
@@ -155,10 +171,6 @@ export class ModifierBucket extends Application {
     stack.minus = stack.currentSum < 0
   }
 
-  displaySum() {
-    return this.modifierStack.displaySum
-  }
-
   currentSum() {
     return this.modifierStack.currentSum
   }
@@ -198,6 +210,9 @@ export class ModifierBucket extends Application {
   async updateDisplay(changed) {
     this.modifierStack = game.user.getFlag('gurps', 'modifierstack')
     this.sum()
+    if (this.SHOWING) {
+      this.editor.render(true)
+    }
     this.refresh()
   }
 
@@ -225,9 +240,28 @@ export class ModifierBucket extends Application {
   refresh() {
     this.render(true)
   }
-  
+
   async sendBucketToPlayer(name) {
-    this.editor.sendBucketToPlayer(name)
+    if (!name) {
+      this.sendBucket()
+    } else {
+      let users = game.users.players.filter(u => u.name == name) || []
+      if (users.length > 0) this.sendBucket(users[0])
+      else ui.notifications.warn("No player named '" + name + "'")
+    }
+  }
+
+  async sendBucket(user) {
+    let set = !!user ? [user] : game.users?.filter(u => u._id != game.user._id) || []
+    let d = Date.now()
+    {
+      await set.forEach(u => {
+        u.setFlag('gurps', 'modifierstack', game.GURPS.ModifierBucket.modifierStack)
+      })
+      await set.forEach(u => {
+        u.setFlag('gurps', 'modifierchanged', d)
+      })
+    }
   }
 }
 
@@ -277,7 +311,6 @@ export class ModifierBucketEditor extends Application {
     super.render(force, options)
     this.bucket.SHOWING = true
   }
-
 
   getData(options) {
     const data = super.getData(options)
@@ -337,22 +370,6 @@ export class ModifierBucketEditor extends Application {
       }
     }
     return data
-  }
-
-  _tempRangeMod = null
-
-  _addTempRangeMod() {
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
-      // Only allow 1 measured range, for the moment.
-      let d = 'for range'
-      this.bucket.modifierStack.modifierList = this.bucket.modifierStack.modifierList.filter(m => m.desc != d)
-      if (this._tempRangeMod == 0) {
-        this.sum()
-        this.bucket.updateBucket()
-      } else {
-        this.addModifier(this._tempRangeMod, d)
-      }
-    }
   }
 
   activateListeners(html) {
@@ -431,7 +448,7 @@ export class ModifierBucketEditor extends Application {
     let v = element.value
     let i = v.indexOf(' ')
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
-    this.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
+    this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
   }
 
   async _onGMbutton(event) {
@@ -440,36 +457,8 @@ export class ModifierBucketEditor extends Application {
     let id = element.dataset.id
     let user = game.users.get(id)
 
-    this.sendBucket(user)
+    this.bucket.sendBucket(user)
     setTimeout(() => this.bucket.showOthers(), 1000) // Need time for clients to update...and
-  }
-
-  async sendBucketToPlayer(name) {
-    if (!name) {
-      this.sendBucket()
-    } else {
-      let users = game.users.players.filter(u => u.name == name) || []
-      if (users.length > 0) this.sendBucket(users[0])
-      else ui.notifications.warn("No player named '" + name + "'")
-    }
-  }
-
-  async sendBucket(user) {
-    let set = !!user ? [user] : game.users?.filter(u => u._id != game.user._id) || []
-    let d = Date.now()
-    {
-      await set.forEach(u => {
-        u.setFlag('gurps', 'modifierstack', game.GURPS.ModifierBucket.modifierStack)
-      })
-      await set.forEach(u => {
-        u.setFlag('gurps', 'modifierchanged', d)
-      })
-    }
-  }
-
-  async _onClickTrash(event) {
-    event.preventDefault()
-    this.clear()
   }
 
   async _onClickRemoveMod(event) {
@@ -477,210 +466,9 @@ export class ModifierBucketEditor extends Application {
     let element = event.currentTarget
     let index = element.dataset.index
     this.bucket.modifierStack.modifierList.splice(index, 1)
-    this.sum()
-    this.refresh()
+    this.bucket.sum()
     this.bucket.refresh()
-  }
-
-
-  async _onClick(event) {
-    event.preventDefault()
-    if (event.shiftKey) {
-      // If not the GM, just broadcast our mods to the chat
-      if (!game.user.isGM) {
-        let messageData = {
-          content: this.chatString(this.bucket.modifierStack),
-          type: CONST.CHAT_MESSAGE_TYPES.OOC
-        }
-        CONFIG.ChatMessage.entityClass.create(messageData, {})
-      } else this.showOthers()
-    } else this._onenter(event)
-  }
-/*
-  async showOthers() {
-    let users = game.users.filter(u => u._id != game.user._id)
-    let content = ''
-    let d = ''
-    for (let u of users) {
-      content += d
-      d = '<hr>'
-      let stack = await u.getFlag('gurps', 'modifierstack')
-      if (!!stack) content += this.chatString(stack, u.name + ', ')
-      else content += u.name + ', No modifiers'
-    }
-    let chatData = {
-      user: game.user._id,
-      type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-      content: content,
-      whisper: [game.user._id]
-    }
-    CONFIG.ChatMessage.entityClass.create(chatData, {})
-  }
-
-  // If the GM right clicks on the modifier bucket, it will print the raw text data driving the tooltip
-  async onRightClick(event) {
-    event.preventDefault()
-    if (!game.user.isGM) return
-    showOthers();
-  }
-
-  // Public method. Used by GURPS to create a temporary modifer for an action.
-  makeModifier(mod, reason) {
-    let m = displayMod(mod)
-    return {
-      mod: m,
-      modint: parseInt(m),
-      desc: reason,
-      plus: m[0] == '+'
-    }
-  }
-*/
-
-  sum() {
-    let stack = this.bucket.modifierStack
-    stack.currentSum = 0
-    for (let m of stack.modifierList) {
-      stack.currentSum += m.modint
-    }
-    stack.displaySum = displayMod(stack.currentSum)
-    stack.plus = stack.currentSum > 0
-    stack.minus = stack.currentSum < 0
-  }
-
-  displaySum() {
-    return this.bucket.modifierStack.displaySum
-  }
-
-  currentSum() {
-    return this.bucket.modifierStack.currentSum
-  }
-
-  async addModifier(mod, reason) {
-    let stack = this.bucket.modifierStack
-    let oldmod = stack.modifierList.find(m => m.desc == reason)
-    if (!!oldmod) {
-      let m = oldmod.modint + parseInt(mod)
-      oldmod.mod = displayMod(m)
-      oldmod.modint = m
-    } else {
-      stack.modifierList.push(this.makeModifier(mod, reason))
-    }
-    this.sum()
-    this.updateBucket()
-  }
-
-  clear() {
-    //await game.user.setFlag("gurps", "modifierstack", null);
-    this.bucket.modifierStack = {
-      modifierList: [], // { "mod": +/-N, "desc": "" }
-      currentSum: 0,
-      displaySum: '+0'
-    }
-    this.updateBucket()
-  }
-
-  async updateBucket() {
-    this.refresh()
-    game.user.setFlag('gurps', 'modifierstack', this.bucket.modifierStack)
-  }
-
-  // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
-  async updateDisplay(changed) {
-    this.bucket.modifierStack = game.user.getFlag('gurps', 'modifierstack')
-    this.sum()
-    this.refresh()
-  }
-
-  chatString(modst, name = '') {
-    let content = name + 'No modifiers'
-    if (modst.modifierList.length > 0) {
-      content = name + 'total: ' + modst.displaySum
-      for (let m of modst.modifierList) {
-        content += '<br> &nbsp;' + m.mod + ' : ' + m.desc
-      }
-    }
-    return content
-  }
-
-  // Public method. Used by GURPS to create a temporary modifer for an action.
-  makeModifier(mod, reason) {
-    let m = displayMod(mod)
-    return {
-      mod: m,
-      modint: parseInt(m),
-      desc: reason,
-      plus: m[0] == '+'
-    }
-  }
-
-  sum() {
-    let stack = this.bucket.modifierStack
-    stack.currentSum = 0
-    for (let m of stack.modifierList) {
-      stack.currentSum += m.modint
-    }
-    stack.displaySum = displayMod(stack.currentSum)
-    stack.plus = stack.currentSum > 0
-    stack.minus = stack.currentSum < 0
-  }
-
-  displaySum() {
-    return this.bucket.modifierStack.displaySum
-  }
-
-  currentSum() {
-    return this.bucket.modifierStack.currentSum
-  }
-
-  async addModifier(mod, reason) {
-    let stack = this.bucket.modifierStack
-    let oldmod = stack.modifierList.find(m => m.desc == reason)
-    if (!!oldmod) {
-      let m = oldmod.modint + parseInt(mod)
-      oldmod.mod = displayMod(m)
-      oldmod.modint = m
-    } else {
-      stack.modifierList.push(this.makeModifier(mod, reason))
-    }
-    this.sum()
-    this.updateBucket()
-  }
-
-  async clear() {
-    await game.user.setFlag('gurps', 'modifierstack', null)
-    this.bucket.modifierStack = {
-      modifierList: [], // { "mod": +/-N, "desc": "" }
-      currentSum: 0,
-      displaySum: '+0'
-    }
-    this.updateBucket()
-  }
-
-  async updateBucket() {
-    this.refresh()
-    game.user.setFlag('gurps', 'modifierstack', this.bucket.modifierStack)
-  }
-
-  // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
-  async updateDisplay(changed) {
-    this.bucket.modifierStack = game.user.getFlag('gurps', 'modifierstack')
-    this.sum()
-    this.refresh()
-  }
-
-  chatString(modst, name = '') {
-    let content = name + 'No modifiers'
-    if (modst.modifierList.length > 0) {
-      content = name + 'total: ' + modst.displaySum
-      for (let m of modst.modifierList) {
-        content += '<br> &nbsp;' + m.mod + ' : ' + m.desc
-      }
-    }
-    return content
-  }
-
-  refresh() {
-    this.render(true)
+    this.render(false)
   }
 }
 

@@ -1,7 +1,7 @@
 'use strict'
 
 import { DamageCalculator } from './damagecalculator.js'
-import { isNiceDiceEnabled, parseFloatFrom, parseIntFrom } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, parseFloatFrom, parseIntFrom, generateUniqueId } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
 
@@ -163,6 +163,18 @@ export default class ApplyDamageDialog extends Application {
     // clear the user override of the Blunt trauma value
     html.find('#blunt-trauma-field button').click(() => {
       this._calculator.bluntTrauma = null
+      this.updateUI()
+    })
+
+    // if checked, target has flexible armor; check for blunt trauma
+    html.find('#explosion-damage').click(ev =>
+      this._updateModelFromBooleanElement($(ev.currentTarget), 'isExplosion'))
+
+    html.find('#explosion-yards').on('change', ev => {
+      let currentValue = $(ev.currentTarget).val()
+      this._calculator.hexesFromExplosion = (currentValue === '' || currentValue === '0')
+        ? 1
+        : parseInt(currentValue)
       this.updateUI()
     })
 
@@ -340,7 +352,7 @@ export default class ApplyDamageDialog extends Application {
     let attackingActor = game.actors.get(this._calculator.attacker)
 
     let data = {
-      id: this._generateUniqueId(),
+      id: generateUniqueId(),
       injury: injury,
       defender: this.actor.data.name,
       current: current,
@@ -356,8 +368,15 @@ export default class ApplyDamageDialog extends Application {
     }
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
-      let speaker = { alias: game.user.data.name, _id: game.user._id }
-      if (!!attackingActor) speaker = { alias: attackingActor.data.name, _id: attackingActor._id, actor: attackingActor };
+      let speaker = {
+        alias: game.user.data.name,
+        _id: game.user._id
+      }
+      if (!!attackingActor) speaker = {
+        alias: attackingActor.data.name,
+        _id: attackingActor._id,
+        actor: attackingActor
+      }
       let messageData = {
         user: game.user._id,
         speaker: speaker,
@@ -375,15 +394,5 @@ export default class ApplyDamageDialog extends Application {
       CONFIG.ChatMessage.entityClass.create(messageData)
       this.close()
     })
-  }
-
-  _generateUniqueId() {
-    let now = new Date().getTime()
-
-    if (GURPS.uniqueId >= now) {
-      now = GURPS.uniqueId + 1
-    }
-    GURPS.uniqueID = now
-    return now
   }
 }
