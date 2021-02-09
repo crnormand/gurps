@@ -76,8 +76,8 @@ export class GurpsActorSheet extends ActorSheet {
           if (key === best) {
             await this.actor.update({
               [t]: true,
-              'data.currentmove': enc.move,
-              'data.currentdodge': enc.dodge
+              'data.currentmove': parseInt(enc.move),
+              'data.currentdodge': parseInt(enc.dodge)
             })
           }
         }
@@ -680,7 +680,7 @@ export class GurpsActorSheet extends ActorSheet {
       path,
       obj,
       'systems/gurps/templates/spell-editor-popup.html',
-      'Skill Editor',
+      'Spell Editor',
       ['name', 'rsl', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college'],
       ['level', 'points']
     )
@@ -1200,7 +1200,7 @@ export class GurpsActorSheet extends ActorSheet {
     await this.actor.update({ [key]: eqt })
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
-    this.actor.update({
+    await this.actor.update({
       'data.equippedparry': p,
       'data.equippedblock': b
     })

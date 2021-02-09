@@ -48,7 +48,7 @@
               "color": "#008000"
             },
             {
-              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nbs=b > 0 ? concat(\"/\", string(b)): '';\nconcat(string(d), \"/\", string(p), bs )\n}",
+              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nds = p == 0 and b == 0 ? concat(\"D:\", string(d)) : p == 0 or b == 0 ? concat(\"D:\", string(d), \"/\") : concat(string(d), \"/\");\nps = p == 0 ? \"\": b == 0 ? concat(\"P:\", string(p)) : concat(string(p), \"/\");\nbs = b == 0 ? \"\": string(b);\nconcat(ds, ps, bs)\n}",
               "icon": "fa-shield-alt",
               "isFunction": false,
               "expression": true,
@@ -85,7 +85,7 @@
               "color": "#008000"
             },
             {
-              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nbs=b > 0 ? concat(\"/\", string(b)): '';\nconcat(string(d), \"/\", string(p), bs )\n}",
+              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nds = p == 0 and b == 0 ? concat(\"D:\", string(d)) : p == 0 or b == 0 ? concat(\"D:\", string(d), \"/\") : concat(string(d), \"/\");\nps = p == 0 ? \"\": b == 0 ? concat(\"P:\", string(p)) : concat(string(p), \"/\");\nbs = b == 0 ? \"\": string(b);\nconcat(ds, ps, bs)\n}",
               "icon": "fa-shield-alt",
               "isFunction": false,
               "expression": true,
@@ -122,7 +122,7 @@
               "color": "#008000"
             },
             {
-              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nbs=b > 0 ? concat(\"/\", string(b)): '';\nconcat(string(d), \"/\", string(p), bs )\n}",
+              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nds = p == 0 and b == 0 ? concat(\"D:\", string(d)) : p == 0 or b == 0 ? concat(\"D:\", string(d), \"/\") : concat(string(d), \"/\");\nps = p == 0 ? \"\": b == 0 ? concat(\"P:\", string(p)) : concat(string(p), \"/\");\nbs = b == 0 ? \"\": string(b);\nconcat(ds, ps, bs)\n}",
               "icon": "fa-shield-alt",
               "isFunction": false,
               "expression": true,
@@ -207,7 +207,7 @@
               "color": "#008000"
             },
             {
-              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nbs=b > 0 ? concat(\"/\", string(b)): '';\nconcat(string(d), \"/\", string(p), bs )\n}",
+              "value": "{\nd=<currentdodge>;\np=<equippedparry>;\nb=<equippedblock>;\nds = p == 0 and b == 0 ? concat(\"D:\", string(d)) : p == 0 or b == 0 ? concat(\"D:\", string(d), \"/\") : concat(string(d), \"/\");\nps = p == 0 ? \"\": b == 0 ? concat(\"P:\", string(p)) : concat(string(p), \"/\");\nbs = b == 0 ? \"\": string(b);\nconcat(ds, ps, bs)\n}",
               "icon": "fa-shield-alt",
               "isFunction": false,
               "expression": true,
