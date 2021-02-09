@@ -299,5 +299,11 @@
 	"GURPS.BODYPLANcancroid" : "Cancroid",
 	"GURPS.BODYPLANscorpion" : "Scorpion",
 	"GURPS.BODYPLANichthyoid" : "Ichthyoid",
-	"GURPS.BODYPLANarachnoid" : "Arachnoid"
+	"GURPS.BODYPLANarachnoid" : "Arachnoid",
+
+	"GURPS.RESOLVEDAMAGETitle": "Resolve Damage Roll",
+	"GURPS.RESOLVEDAMAGEPrompt": "What do you want to do with this Damage roll?",
+	"GURPS.RESOLVEDAMAGEQuantity": "Number of rolls:",
+	"GURPS.RESOLVEDAMAGESendTo": "Send OtF to...",
+	"GURPS.RESOLVEDAMAGEMultiple": "Multiple rolls"
 }
