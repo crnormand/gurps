@@ -1118,20 +1118,42 @@ export class GurpsActorSheet extends ActorSheet {
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {
-      if (isGM) {
-        this.resolveDamageRoll(event, otf)
-      }
+      this.resolveDamageRoll(event, otf, isGM)
     } else {
       GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
   }
 
-  async resolveDamageRoll(event, otf) {
+  async resolveDamageRoll(event, otf, isGM) {
     let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
     let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
     let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
     let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
     let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
+
+    let buttons = {}
+
+    if (isGM) {
+      buttons.send = {
+        icon: '<i class="fas fa-paper-plane"></i>',
+        label: `${sendTo}`,
+        callback: () => GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
+      }
+    }
+
+    buttons.multiple = {
+      icon: '<i class="fas fa-clone"></i>',
+      label: `${multiple}`,
+      callback: html => {
+        let text = html.find('#number-rolls').val()
+        let number = parseInt(text)
+        let targets = []
+        for (let index = 0; index < number; index++) {
+          targets[index] = `${index + 1}`
+        }
+        this._onClickRoll(event, targets)
+      }
+    }
 
     let dlg = new Dialog({
       title: `${title}`,
@@ -1146,26 +1168,7 @@ export class GurpsActorSheet extends ActorSheet {
           <p/>
         </div>
         `,
-      buttons: {
-        send: {
-          icon: '<i class="fas fa-paper-plane"></i>',
-          label: `${sendTo}`,
-          callback: () => GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
-        },
-        multiple: {
-          icon: '<i class="fas fa-clone"></i>',
-          label: `${multiple}`,
-          callback: html => {
-            let text = html.find('#number-rolls').val()
-            let number = parseInt(text)
-            let targets = []
-            for (let index = 0; index < number; index++) {
-              targets[index] = `${index + 1}`
-            }
-            this._onClickRoll(event, targets)
-          }
-        }
-      },
+      buttons: buttons,
       default: 'send'
     })
     dlg.render(true)
@@ -1198,7 +1201,7 @@ export class GurpsActorSheet extends ActorSheet {
       }
     } else {
       ui.notifications.warn(
-        "You cannot manually change the Encumbrance level.  The 'Automatically calculate Encumbrance Level' setting is turned on."
+        "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on."
       )
     }
   }
