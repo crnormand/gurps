@@ -1222,14 +1222,6 @@ GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
     )
     d.render(true)
   }
-
-  let d = new Dialog({
-    title: "GM 'Send Formula'",
-    content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-    buttons: buttons,
-    default: 'four'
-  })
-  d.render(true)
 }
 
 GURPS.sendOtfMessage = function (content, blindroll, users) {

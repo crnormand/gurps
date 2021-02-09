@@ -306,15 +306,34 @@ export default class DamageChat {
       messageData.whisper = [game.user._id]
     }
 
-    if (!isNiceDiceEnabled()) {
-      messageData.sound = CONFIG.sounds.dice
-    }
-
     messageData['flags.transfer'] = JSON.stringify({
       type: 'damageItem',
       payload: draggableData,
     })
 
+    if (isNiceDiceEnabled()) {
+      let rolls = draggableData.map(d => d.roll);
+      let throws = []
+      let dice = []
+      rolls.shift() // The first roll will be handled by DSN's chat handler... the reset we will manually roll
+      rolls.forEach(r => {
+         r.dice.forEach(d => {
+          let type = 'd' + d.faces
+          d.results.forEach(s => dice.push({
+            result: s.result,
+            resultLabel: s.result,
+            type: type,
+            vectors:[],
+            options:{}
+          }))
+        })
+      })
+      throws.push({ dice: dice })
+      if (dice.length > 0)  // The user made a "multi-damage" roll... let them see the dice!
+        game.dice3d.show({throws: throws})
+    } else {
+      messageData.sound = CONFIG.sounds.dice
+    }
     CONFIG.ChatMessage.entityClass.create(messageData).then((arg) => {
       console.log(arg)
       let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
