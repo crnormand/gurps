@@ -7,7 +7,7 @@
 'By Brian Ronnle, enhanced for Foundry VTT by Chris Normand/Nose66
 'Based on the original export filter by Graham Brand (Spyke)
 '
-Const LastUpdated = 20210204
+Const LastUpdated = 20210208
 ' Last Updated: Nov 25, 2020
 ' v1
 '
@@ -41,7 +41,7 @@ Sub Main()
 
     ' begin the xml file
     Paragraph = "<?xml version=""1.0"" encoding=""iso-8859-1""?>"
-    Paragraph = "<root release=""Foundry"" version=""GCA-3"">"
+    Paragraph = "<root release=""Foundry"" version=""GCA-4"">"
     Paragraph = "<character>"
 
     ' in Fantasy Grounds the <name> field must be at the top level
@@ -697,6 +697,8 @@ Sub PrintAds()
                     Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
 	              Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
                     Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
+            	  Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+            	  Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
                     Paragraph = "</id-" & tag_index & ">"
 
                 End If
@@ -736,6 +738,8 @@ Sub PrintAds()
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
                 Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
+                Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+                Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
                 Paragraph = "</id-" & tag_index & ">"
 
             End If
@@ -791,6 +795,8 @@ Sub PrintDisads()
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
                 Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
+                Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+                Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
                 Paragraph = "</id-" & tag_index & ">"
 
             End If
@@ -829,6 +835,8 @@ Sub PrintDisads()
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
                 Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
+                Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+                Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
                 Paragraph = "</id-" & tag_index & ">"
 
             End If
@@ -900,6 +908,8 @@ Sub PrintSkills()
             Paragraph = "<points type=""number"">" & Char.Items(i).TagItem("points") & "</points>"
             Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
             Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
+            Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+            Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
 
             Paragraph = "</id-" & tag_index & ">"
 
@@ -948,7 +958,9 @@ Sub PrintSpells()
                 tmp = tmp & work
             End If
 
-		
+		spellClass = ""
+		spellResist = ""
+		if Char.Items(i).TagItem("class") <> "" Then
 			classSplit = Split(Char.Items(i).TagItem("class"), "/", 2)
 			If UBound(classSplit) > 0 Then
 				spellClass = classSplit(0)
@@ -956,6 +968,11 @@ Sub PrintSpells()
 			Else
 				spellClass = classSplit(0)
 			End If
+		End If
+		spellCat = Char.Items(i).TagItem("cat")
+		if spellCat = "%NewSpellList%" Then	
+			spellCat = ""
+		End If
 			
             Paragraph = "<name type=""string"">" & UpdateEscapeChars(tmp) & "</name>"
             Paragraph = "<level type=""number"">" & Char.Items(i).Level & "</level>"
@@ -968,8 +985,10 @@ Sub PrintSpells()
             Paragraph = "<duration type=""string"">" & Char.Items(i).TagItem("duration") & "</duration>"
             Paragraph = "<costmaintain type=""string"">" & Char.Items(i).TagItem("castingcost") & "</costmaintain>"
             Paragraph = "<resist type=""string"">" & spellResist & "</resist>"
-            Paragraph = "<college type=""string"">" & Char.Items(i).TagItem("cat") & "</college>"
+            Paragraph = "<college type=""string"">" & spellCat & "</college>"
             Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
+            Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+            Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
 
             work = Char.Items(i).TagItem("stepoff")
             If work <> "" Then

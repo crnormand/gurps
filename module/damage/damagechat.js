@@ -62,9 +62,8 @@ export default class DamageChat {
 
     let dice = this._getDiceData(diceText, damageType, targetmods, overrideDiceText)
 
-    if (!tokenNames || tokenNames.length == 0) {
-      tokenNames.push('')
-    }
+    if (!tokenNames) tokenNames = []
+    if (tokenNames.length == 0) tokenNames.push('')
 
     let draggableData = []
     await tokenNames.forEach(async (tokenName) => {
