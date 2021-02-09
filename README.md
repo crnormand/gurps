@@ -14,7 +14,7 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the latest stable release, use the manifest URL above.
-[Current GCA Export version: 'GCA-3' 2/04/2021 / Current GCS Export version: 'GCS-3' 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA Export version: 'GCA-4' 2/08/2021 / Current GCS Export version: 'GCS-3' 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
@@ -25,6 +25,7 @@ This is what we are currently working on:
     - SHIFT-Apply keeps Damage Dialog open (to allow multiple RoF damage results)
     - Removed hitlocation eqt tooltip (no longer valid)
     - Allow multiple modifiers [+1 to hit & +2 lucky]
+    - Fixed actors not having the new calculated values (currentdodge, currentmove, equippedparry, equippedblock)
 
 ### History
 

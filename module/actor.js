@@ -18,6 +18,23 @@ export class GurpsActor extends Actor {
 
   prepareDerivedData() {
     super.prepareDerivedData()
+    this.calculateDerivedValues()
+  }
+  
+  // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
+  calculateDerivedValues() {
+    if (!this.data.data.currentdodge || !this.data.data.currentmove) {
+      let encs = this.data.data.encumbrance;
+      for (let enckey in encs) {
+        let enc = encs[enckey];
+        if (enc.current) {
+          this.data.data.currentmove = parseInt(enc.move)
+          this.data.data.currentdodge = parseInt(enc.dodge)
+        }
+      }
+    }
+    if (!this.data.data.equippedparry) this.data.data.equippedparry = this.getEquippedParry()
+    if (!this.data.data.equippedblock) this.data.data.equippedblock = this.getEquippedBlock() 
   }
     
   /** @override */
@@ -64,7 +81,7 @@ export class GurpsActor extends Actor {
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
-    const GCAVersion = "GCA-3"
+    const GCAVersion = "GCA-4"
     const GCSVersion = "GCS-3"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
@@ -121,6 +138,9 @@ export class GurpsActor extends Actor {
         }
         if (vernum < 3) {
           msg += "This file was created with an older version of the GCA Export that may incorrectly put ranged attacks in the melee list and does not sanitize equipment page refs.<br>"   // Equipment Page ref's sanitized
+        }
+        if (vernum < 4) {
+          msg += "This file was created with an older version of the GCA Export which does not contain the 'Parent' attributes for Ads/Disads, Skills or Spells<br>"   
         }
       }
       if (isFoundryGCS) {
@@ -207,12 +227,9 @@ export class GurpsActor extends Actor {
 
     await this.update(deletes)
     await this.update(adds)
-    let p = this.getEquippedParry()
-    let b = this.getEquippedBlock()
-    this.update({ 
-      "data.equippedparry": p,
-      "data.equippedblock": b 
-    });
+    
+    // This has to be done after all of the equipment is loaded
+    this.calculateDerivedValues()
 
     console.log('Done importing.  You can inspect the character data below:')
     console.log(this)
@@ -980,17 +997,16 @@ export class GurpsActor extends Actor {
   }
 
   importAdsFromGCA(adsjson, disadsjson) {
-    let list = {}
-    let index = 0
-    index = this.importBaseAdvantages(list, adsjson, index)
-    this.importBaseAdvantages(list, disadsjson, index)
+    let list = []
+    this.importBaseAdvantages(list, adsjson)
+    this.importBaseAdvantages(list, disadsjson)
     return {
       'data.-=ads': null,
-      'data.ads': list,
+      'data.ads': this.foldList(list),
     }
   }
 
-  importBaseAdvantages(datalist, json, index) {
+  importBaseAdvantages(datalist, json) {
     if (!json) return
     let t = this.textFrom /// shortcut to make code smaller
     for (let key in json) {
@@ -1001,11 +1017,12 @@ export class GurpsActor extends Actor {
         a.name = t(j.name)
         a.points = this.intFrom(j.points)
         a.setNotes(t(j.text))
-        a.pageref = t(j.pageref)
-        game.GURPS.put(datalist, a, index++)
+        a.pageref = t(j.pageref) || a.pageref
+        a.uuid = t(j.uuid)
+        a.parentuuid = t(j.parentuuid)
+        datalist.push(a)
       }
     }
-    return index
   }
 
   // In the new GCS import, all ads/disad/quirks/perks are in one list.

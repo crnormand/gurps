@@ -85,6 +85,7 @@
 	"GURPS.rsl" : "RSL",
 	"GURPS.spells" : "Spells",
 	"GURPS.spellClass" : "Class",
+  "GURPS.spellCollege" : "College",
 	"GURPS.spellCost" : "Cost",
 	"GURPS.spellMaintain" : "Maintain",
 	"GURPS.spellTime" : "Time",

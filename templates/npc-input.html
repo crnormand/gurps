@@ -1,3 +1,4 @@
+<form class="{{cssClass}}" autocomplete="off">
 <div class='gurps-app {{classes}} npc-input'>
 <div class="npc-input-grid-container">
   <div class="npc-input-top">
@@ -67,7 +68,10 @@
     <div class="npc-input-sp">Spells</div>
     <div class="npc-input-sp-val"><textarea data-key="spells" class="npc-input-ta" type="text">{{mook.spells}}</textarea></div>
   </div>
+  {{#if this.displaybuttons}}
   <div class="npc-input-create"><button id="npc-input-create" type="button">{{mode}}</button></div>
   <div class="npc-input-import"><button id="npc-input-import" type="button">Import Stat block</button></div>
+  {{/if}}
 </div>
 </div>
+</form>

@@ -85,6 +85,7 @@
   "GURPS.rsl" :"NH Rel",
   "GURPS.spells" :"Magias",
   "GURPS.spellClass" :"Classe",
+  "GURPS.spellCollege" : "Faculdade",
   "GURPS.spellCost" :"Custo",
   "GURPS.spellMaintain" :"Manter",
   "GURPS.spellTime" :"Tempo",

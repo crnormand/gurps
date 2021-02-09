@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 @ENHANCED_KEY_PARSING
-<root release="Foundry" version="GCS-3">
+<root release="Foundry" version="GCS-4">
   <character>
     <name type="string">@NAME</name>
     <portrait>@PORTRAIT</portrait>
@@ -212,6 +212,8 @@
         <type type="string">@CATEGORIES</type>
         <notes type="string">@DESCRIPTION_NOTES</notes>
 	  <pageref type="string">@REF</pageref>
+        <uses>@USES</uses>
+        <maxuses>@MAX_USES</maxuses>
         <uuid>@ID</uuid>
         <parentuuid>@PARENT_ID</parentuuid>
       </id-@ID>@EQUIPMENT_LOOP_END @CONTINUE_ID @OTHER_EQUIPMENT_LOOP_START
@@ -224,6 +226,8 @@
         <weight type="number">@WEIGHT_RAW</weight>
         <weightsum type="number">@WEIGHT_SUMMARY</weightsum>
         <carried type="number">@CARRIED_STATUS</carried>
+        <uses>@USES</uses>
+        <maxuses>@MAX_USES</maxuses>
         <tl type="string">@TL</tl>
         <lc type="string">@LEGALITY_CLASS</lc>
         <type type="string">@CATEGORIES</type>
