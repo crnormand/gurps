@@ -1123,14 +1123,15 @@ export class GurpsActor extends Actor {
   
   getEquipped(key) {
     let val = 0;
-    Object.values(this.data.data.melee).forEach(melee => {
-      recurselist(this.data.data.equipment.carried, (e) => {
-        if (!val && e.equipped && e.name == melee.name) {
-          let t = parseInt(melee[key])
-          if (!isNaN(t)) val = t
-        }
+    if (!!this.data.data.melee && !!this.data.data.equipment.carried) 
+      Object.values(this.data.data.melee).forEach(melee => {
+        recurselist(this.data.data.equipment.carried, (e) => {
+          if (!val && e.equipped && e.name == melee.name) {
+            let t = parseInt(melee[key])
+            if (!isNaN(t)) val = t
+          }
+        })
       })
-    })
     if (!val && !!this.data.data[key]) 
       val = parseInt(this.data.data[key])
     return val
