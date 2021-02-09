@@ -74,11 +74,6 @@ export default class DamageChat {
     this._createChatMessage(actor, dice.diceText, dice.damageType, targetmods, draggableData, event)
 
     // Resolve any modifier descriptors (such as *Costs 1FP)
-    // for (let m of targetmods) {
-    //   if (!!m.desc) {
-    //     this._gurps.applyModifierDesc(actor, m.desc)
-    //   }
-    // }
     targetmods.filter(it => !!it.desc).map(it => it.desc).forEach(it => this._gurps.applyModifierDesc(actor, it))
   }
 

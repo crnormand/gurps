@@ -5,7 +5,6 @@ import { HitLocation } from '../module/hitlocation/hitlocation.js'
 import parselink from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
-import { resolveDamageRoll } from './resolve-damage-roll.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
