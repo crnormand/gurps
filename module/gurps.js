@@ -9,7 +9,7 @@ import {
   GurpsActorSheet,
   GurpsActorEditorSheet,
   GurpsActorSimplifiedSheet,
-  GurpsActorNpcSheet,
+  GurpsActorNpcSheet
 } from './actor-sheet.js'
 import { ModifierBucket } from './modifiers.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -75,8 +75,7 @@ GURPS.ClearLastActor = function (actor) {
   }
 }
 
-GURPS.ChatCommandsInProcess = []    // Taking advantage of synchronous nature of JS arrays
-
+GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -86,7 +85,7 @@ GURPS.attributepaths = {
   WILL: 'attributes.WILL.value',
   Will: 'attributes.WILL.value',
   PER: 'attributes.PER.value',
-  Per: 'attributes.PER.value',
+  Per: 'attributes.PER.value'
 }
 
 // Map stuff back to translation keys... don't know if useful yet
@@ -96,7 +95,7 @@ GURPS.attributes = {
   IQ: 'GURPS.attributesIQ',
   HT: 'GURPS.attributesHT',
   Will: 'GURPS.attributesWILL',
-  Per: 'GURPS.attributesPER',
+  Per: 'GURPS.attributesPER'
 }
 
 GURPS.attributeNames = {
@@ -105,7 +104,7 @@ GURPS.attributeNames = {
   IQ: 'GURPS.attributesIQNAME',
   HT: 'GURPS.attributesHTNAME',
   Will: 'GURPS.attributesWILLNAME',
-  Per: 'GURPS.attributesPERNAME',
+  Per: 'GURPS.attributesPERNAME'
 }
 
 GURPS.skillTypes = {
@@ -132,7 +131,7 @@ GURPS.skillTypes = {
   'Per/E': 'GURPS.SkillPerE',
   'Per/A': 'GURPS.SkillPerA',
   'Per/H': 'GURPS.SkillPerH',
-  'Per/VH': 'GURPS.SkillPerVH',
+  'Per/VH': 'GURPS.SkillPerVH'
 }
 
 GURPS.PARSELINK_MAPPINGS = {
@@ -152,7 +151,7 @@ GURPS.PARSELINK_MAPPINGS = {
   Taste: 'tastesmell',
   Smell: 'tastesmell',
   TOUCH: 'touch',
-  Touch: 'touch',
+  Touch: 'touch'
 }
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects
@@ -161,97 +160,97 @@ CONFIG.statusEffects = [
   {
     icon: 'systems/gurps/icons/statuses/condition-shock1.png',
     id: 'shock1',
-    label: 'EFFECT.StatusShocked',
+    label: 'EFFECT.StatusShocked'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-shock2.png',
     id: 'shock2',
-    label: 'EFFECT.StatusShocked',
+    label: 'EFFECT.StatusShocked'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-shock3.png',
     id: 'shock3',
-    label: 'EFFECT.StatusShocked',
+    label: 'EFFECT.StatusShocked'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-shock4.png',
     id: 'shock4',
-    label: 'EFFECT.StatusShocked',
+    label: 'EFFECT.StatusShocked'
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-stunned.png',
     id: 'stun',
-    label: 'EFFECT.StatusStunned',
+    label: 'EFFECT.StatusStunned'
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-prone.png',
     id: 'prone',
-    label: 'EFFECT.StatusProne',
+    label: 'EFFECT.StatusProne'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-kneel.png',
     id: 'kneel',
-    label: 'GURPS.STATUSKneel',
+    label: 'GURPS.STATUSKneel'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-crouch.png',
     id: 'crouch',
-    label: 'GURPS.STATUSCrouch',
+    label: 'GURPS.STATUSCrouch'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-sit.png',
     id: 'sit',
-    label: 'GURPS.STATUSSit',
+    label: 'GURPS.STATUSSit'
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-fascinated.png',
     id: 'euphoria',
-    label: 'GURPS.STATUSEuphoria',
+    label: 'GURPS.STATUSEuphoria'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-cough.png',
     id: 'coughing',
-    label: 'GURPS.STATUSCoughing',
+    label: 'GURPS.STATUSCoughing'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-wretch.png',
     id: 'retching',
-    label: 'GURPS.STATUSRetching',
+    label: 'GURPS.STATUSRetching'
   },
   {
     icon: 'systems/gurps/icons/statuses/x-drowsy.png',
     id: 'drowsy',
-    label: 'GURPS.STATUSDrowsy',
+    label: 'GURPS.STATUSDrowsy'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-drunk1.png',
     id: 'tipsy',
-    label: 'GURPS.STATUSTipsy',
+    label: 'GURPS.STATUSTipsy'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-drunk2.png',
     id: 'drunk',
-    label: 'GURPS.STATUSDrunk',
+    label: 'GURPS.STATUSDrunk'
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-nauseated.png',
     id: 'nauseated',
-    label: 'GURPS.STATUSNauseated',
+    label: 'GURPS.STATUSNauseated'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain2.png',
     id: 'moderate',
-    label: 'GURPS.STATUSModerate',
+    label: 'GURPS.STATUSModerate'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain4.png',
     id: 'severe',
-    label: 'GURPS.STATUSSevere',
+    label: 'GURPS.STATUSSevere'
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain6.png',
     id: 'terrible',
-    label: 'GURPS.STATUSTerrible',
+    label: 'GURPS.STATUSTerrible'
   }
 ]
 
@@ -306,7 +305,7 @@ GURPS.SJGProductMappings = {
   TS: 'http://www.warehouse23.com/products/gurps-tactical-shooting',
   TSOR: 'http://www.warehouse23.com/products/gurps-thaumatology-sorcery',
   UT: 'http://www.warehouse23.com/products/gurps-ultra-tech',
-  VOR: 'http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game',
+  VOR: 'http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game'
 }
 
 GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
@@ -393,7 +392,7 @@ async function performAction(action, actor, event) {
   let targetmods = [] // Should get this from the ModifierBucket someday
   let opt = {
     blind: action.blindroll,
-    event: event,
+    event: event
   } // Ok, I am slowly learning this Javascrip thing ;-)
 
   if (action.type === 'pdf') {
@@ -411,7 +410,7 @@ async function performAction(action, actor, event) {
   }
 
   if (action.type === 'chat') {
-    ui.chat.processMessage(action.orig);
+    ui.chat.processMessage(action.orig)
     return true
   }
 
@@ -459,7 +458,7 @@ async function performAction(action, actor, event) {
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
     } else ui.notifications.warn('You must have a character selected')
 
-  let attr = (action) => {
+  let attr = action => {
     let target = action.target
     if (!target) target = this.resolve(action.path, actordata.data)
     target = parseInt(target)
@@ -470,7 +469,7 @@ async function performAction(action, actor, event) {
     }
   }
 
-  let processLinked = (tempAction) => {
+  let processLinked = tempAction => {
     let bestLvl = 0
     var bestAction
     let attempts = []
@@ -487,17 +486,18 @@ async function performAction(action, actor, event) {
           prefix = 'Roll vs '
           target = t
         }
-      } else { // skill
+      } else {
+        // skill
         let skill = GURPS.findSkillSpell(actordata, tempAction.name)
         if (!skill) attempts.push(tempAction.name)
         else {
-          let sl = parseInt(skill.level);
+          let sl = parseInt(skill.level)
           if (!!tempAction.mod) sl += parseInt(tempAction.mod)
           if (sl > bestLvl) {
             bestLvl = parseInt(sl)
             bestAction = tempAction
             thing = skill.name
-            target = parseInt(skill.level)  // target is without mods
+            target = parseInt(skill.level) // target is without mods
             prefix = ''
           }
         }
@@ -556,11 +556,11 @@ async function performAction(action, actor, event) {
     if (!!actor) {
       thing = action.desc
       if (!action.melee) target = actordata.data['equipped' + action.path] // Is there a basic parry or block stored, and we didn't try to identify a melee
-      Object.values(actordata.data.melee).forEach((e) => {
+      Object.values(actordata.data.melee).forEach(e => {
         if (!target || target <= 0) {
           if (!!e[action.path]) {
             if (!!action.melee) {
-              let n = "^" + (action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)'))
+              let n = '^' + action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
               if ((e.name + (!!e.mode ? ' (' + e.mode + ')' : '')).match(n)) {
                 target = parseInt(e[action.path])
               }
@@ -579,7 +579,6 @@ async function performAction(action, actor, event) {
       else ui.notifications.warn('Unable to find a ' + action.orig + ' to roll')
     } else ui.notifications.warn('You must have a character selected')
 
-
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   doRoll(actor, formula, targetmods, prefix, thing, target, opt)
   return true
@@ -587,29 +586,30 @@ async function performAction(action, actor, event) {
 GURPS.performAction = performAction
 
 function findSkillSpell(actor, sname) {
-  sname = "^" + (sname.split("*").join(".*"));
-  let best = 0;
-  var t;
-  recurselist(actor.data.skills, (s) => {
+  sname = '^' + sname.split('*').join('.*')
+  let best = 0
+  var t
+  recurselist(actor.data.skills, s => {
     if (s.name.match(sname) && s.level > best) {
       t = s
       best = parseInt(s.level)
     }
-  });
-  if (!t) recurselist(actor.data.spells, (s) => {
-    if (s.name.match(sname) && s.level > best) {
-      t = s
-      best = parseInt(s.level)
-    }
-  });
-  return t;
+  })
+  if (!t)
+    recurselist(actor.data.spells, s => {
+      if (s.name.match(sname) && s.level > best) {
+        t = s
+        best = parseInt(s.level)
+      }
+    })
+  return t
 }
 GURPS.findSkillSpell = findSkillSpell
 
 function findAttack(actor, sname) {
-  sname = "^" + (sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')) // Make string into a RegEx pattern
-  let t = actor.data.melee?.findInProperties((a) => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
-  if (!t) t = actor.data.ranged?.findInProperties((a) => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
 }
 GURPS.findAttack = findAttack
@@ -618,7 +618,7 @@ GURPS.findAttack = findAttack
   The user clicked on a field that would allow a dice roll.  
   Use the element information to try to determine what type of roll.
 */
-async function handleRoll(event, actor) {
+async function handleRoll(event, actor, targets) {
   event.preventDefault()
   let formula = ''
   let targetmods = null
@@ -665,9 +665,9 @@ async function handleRoll(event, actor) {
       formula = formula.split(dtype)[0]
     }
 
-    // TODO Find some way to specify who is in the blast radius, and fill out the 
+    // TODO Find some way to specify who is in the blast radius, and fill out the
     // token name array for each of those actors.
-    let tokenNames = []
+    let tokenNames = targets
     GURPS.damageChat.create(actor, formula, dtype, event, null, tokenNames)
     return
   }
@@ -735,7 +735,7 @@ function handlePdf(links) {
   }
 
   // Just in case we get sent multiple links separated by commas, we will open them all
-  links.split(',').forEach((link) => {
+  links.split(',').forEach(link => {
     let t = link.trim()
     let i = t.indexOf(':')
     let book = ''
@@ -974,7 +974,7 @@ GURPS.ModifierBucket = new ModifierBucket({
   resizable: false,
   id: 'ModifierBucket',
   template: 'systems/gurps/templates/modifier-bucket.html',
-  classes: [],
+  classes: []
 })
 
 GURPS.ThreeD6 = new ThreeD6({
@@ -983,85 +983,88 @@ GURPS.ThreeD6 = new ThreeD6({
   resizable: false,
   id: 'ThreeD6',
   template: 'systems/gurps/templates/threed6.html',
-  classes: [],
+  classes: []
 })
 
 GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
 GURPS.onRightClickGurpslink = function (event) {
-  event.preventDefault();
-  let el = event.currentTarget;
-  let action = el.dataset.action;
+  event.preventDefault()
+  let el = event.currentTarget
+  let action = el.dataset.action
   if (!!action) {
-    action = JSON.parse(window.atob(action));
-    GURPS.whisperOtfToOwner(action.orig, event, (action.hasOwnProperty("blindroll") && !action.blindroll));  // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+    action = JSON.parse(window.atob(action))
+    GURPS.whisperOtfToOwner(action.orig, event, action.hasOwnProperty('blindroll') && !action.blindroll) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
 }
 
-
 GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
-  if (!game.user.isGM) return;
+  if (!game.user.isGM) return
   if (!!otf) {
-    otf = otf.replace(/ \(\)/g, "");  // sent as "name (mode)", and mode is empty (only necessary for attacks)
+    otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
     let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-    let botf = "[!" + otf + "]"
-    otf = "[" + otf + "]";
-    let buttons = {};
+    let botf = '[!' + otf + ']'
+    otf = '[' + otf + ']'
+    let buttons = {}
     buttons.one = {
       icon: '<i class="fas fa-users"></i>',
-      label: "To Everyone",
+      label: 'To Everyone',
       callback: () => GURPS.sendOtfMessage(otf, false)
     }
     if (canblind)
       buttons.two = {
         icon: '<i class="fas fa-users-slash"></i>',
-        label: "Blindroll to Everyone",
+        label: 'Blindroll to Everyone',
         callback: () => GURPS.sendOtfMessage(botf, true)
-      };
+      }
     if (users.length > 0) {
-      let nms = users.map(u => u.name).join(' ');
+      let nms = users.map(u => u.name).join(' ')
       buttons.three = {
         icon: '<i class="fas fa-user"></i>',
-        label: "Whisper to " + nms,
+        label: 'Whisper to ' + nms,
         callback: () => GURPS.sendOtfMessage(otf, false, users)
       }
       if (canblind)
         buttons.four = {
           icon: '<i class="fas fa-user-slash"></i>',
-          label: "Whisper Blindroll to " + nms,
+          label: 'Whisper Blindroll to ' + nms,
           callback: () => GURPS.sendOtfMessage(botf, true, users)
         }
       if (canblind)
         buttons.four = {
           icon: '<i class="fas fa-user-slash"></i>',
-          label: "Whisper Blindroll to " + nms,
+          label: 'Whisper Blindroll to ' + nms,
           callback: () => GURPS.sendOtfMessage(botf, true, users)
         }
     }
     buttons.def = {
       icon: '<i class="far fa-copy"></i>',
-      label: "Copy to chat input",
-      callback: () => { $(document).find("#chat-message").val(otf) }
+      label: 'Copy to chat input',
+      callback: () => {
+        $(document).find('#chat-message').val(otf)
+      }
     }
 
-    let d = new Dialog({
-      title: "GM 'Send Formula'",
-      content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-      buttons: buttons,
-      default: "def"
-    }, { width: 700 });
-    d.render(true);
+    let d = new Dialog(
+      {
+        title: "GM 'Send Formula'",
+        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
+        buttons: buttons,
+        default: 'def'
+      },
+      { width: 700 }
+    )
+    d.render(true)
   }
 
   let d = new Dialog({
     title: "GM 'Send Formula'",
     content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
     buttons: buttons,
-    default: "four"
-  });
-  d.render(true);
+    default: 'four'
+  })
+  d.render(true)
 }
-
 
 GURPS.sendOtfMessage = function (content, blindroll, users) {
   let msgData = {
@@ -1070,14 +1073,13 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
     blind: blindroll
   }
   if (!!users) {
-    msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
-    msgData.whisper = users.map(it => it._id);
+    msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    msgData.whisper = users.map(it => it._id)
   } else {
-    msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC;
+    msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC
   }
-  ChatMessage.create(msgData);
+  ChatMessage.create(msgData)
 }
-
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1086,22 +1088,21 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
 Object.defineProperty(Object.prototype, 'findInProperties', {
   value: function (expression) {
     return Object.values(this).find(expression)
-  },
+  }
 })
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
-Hooks.once("init", async function () {
-  console.log(GURPS.BANNER);
-  console.log(`Initializing GURPS 4e Game Aid`);
-  console.log(GURPS.LEGAL);
-  game.GURPS = GURPS;
-  CONFIG.GURPS = GURPS;
-  let src = 'systems/gurps/icons/gurps4e.png';
-  if (game.i18n.lang == "pt_br")
-    src = 'systems/gurps/icons/gurps4e-pt_br.png';
-  $('#logo').attr('src', src);
+Hooks.once('init', async function () {
+  console.log(GURPS.BANNER)
+  console.log(`Initializing GURPS 4e Game Aid`)
+  console.log(GURPS.LEGAL)
+  game.GURPS = GURPS
+  CONFIG.GURPS = GURPS
+  let src = 'systems/gurps/icons/gurps4e.png'
+  if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
+  $('#logo').attr('src', src)
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
@@ -1116,28 +1117,27 @@ Hooks.once("init", async function () {
   Actors.unregisterSheet('core', ActorSheet)
   Actors.registerSheet('gurps', GurpsActorSheet, {
     label: 'Full (GCS)',
-    makeDefault: true,
+    makeDefault: true
   })
   Actors.registerSheet('gurps', GurpsActorCombatSheet, {
     label: 'Combat',
-    makeDefault: false,
+    makeDefault: false
   })
   Actors.registerSheet('gurps', GurpsActorEditorSheet, {
     label: 'Editor',
-    makeDefault: false,
+    makeDefault: false
   })
   Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
     label: 'Simple',
-    makeDefault: false,
+    makeDefault: false
   })
   Actors.registerSheet('gurps', GurpsActorNpcSheet, {
     label: 'NPC/mini',
-    makeDefault: false,
+    makeDefault: false
   })
 
   Items.unregisterSheet('core', ItemSheet)
   Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-
 
   // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
   Hooks.on('createRollTable', async function (entity, options, userId) {
@@ -1164,7 +1164,7 @@ Hooks.once('ready', async function () {
       ChatMessage.create({
         content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [game.user],
+        whisper: [game.user]
       })
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHANGELOG)) {
       const app = new ChangeLogWindow(changelogVersion)
@@ -1184,7 +1184,7 @@ Hooks.once('ready', async function () {
         let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
 
         let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-        let target = game.combat.combatants.filter((c) => c._id === combatant)[0]
+        let target = game.combat.combatants.filter(c => c._id === combatant)[0]
 
         let event = ev.originalEvent
         let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -1236,14 +1236,14 @@ Hooks.once('ready', async function () {
     if (!!h) {
       h.html(GURPS.gurpslink(h[0].innerHTML))
       GURPS.hookupGurps(html)
-      html.find(".gurpslink").contextmenu(GURPS.onRightClickGurpslink);
-      html.find(".glinkmod").contextmenu(GURPS.onRightClickGurpslink);
-      html.find(".glinkmodplus").contextmenu(GURPS.onRightClickGurpslink);
-      html.find(".glinkmodminus").contextmenu(GURPS.onRightClickGurpslink);
-      html.find(".pdflink").contextmenu((event) => {
-        event.preventDefault();
-        let el = event.currentTarget;
-        GURPS.whisperOtfToOwner("PDF:" + el.innerText, event, false);
+      html.find('.gurpslink').contextmenu(GURPS.onRightClickGurpslink)
+      html.find('.glinkmod').contextmenu(GURPS.onRightClickGurpslink)
+      html.find('.glinkmodplus').contextmenu(GURPS.onRightClickGurpslink)
+      html.find('.glinkmodminus').contextmenu(GURPS.onRightClickGurpslink)
+      html.find('.pdflink').contextmenu(event => {
+        event.preventDefault()
+        let el = event.currentTarget
+        GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false)
       })
     }
   })
@@ -1259,7 +1259,7 @@ Hooks.once('ready', async function () {
       y: dropData.y - grid_size / 2,
       height: grid_size,
       width: grid_size,
-      releaseOthers: true,
+      releaseOthers: true
     })
 
     // actual targets are stored in game.user.targets
@@ -1280,6 +1280,6 @@ Hooks.once('ready', async function () {
     __dirname + '/apply-damage/effect-headvitalshit.html',
     __dirname + '/apply-damage/effect-knockback.html',
     __dirname + '/apply-damage/effect-majorwound.html',
-    __dirname + '/apply-damage/effect-shock.html',
+    __dirname + '/apply-damage/effect-shock.html'
   ])
 })
