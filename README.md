@@ -27,6 +27,7 @@ This is what we are currently working on:
     - Allow multiple modifiers [+1 to hit & +2 lucky]
     - Fixed actors not having the new calculated values (currentdodge, currentmove, equippedparry, equippedblock)
     - Added Mook Generator defaults editor
+    - GCA export/import now handles parents for Ads/Disads/Spells and Skills
 
 ### History
 
