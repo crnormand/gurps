@@ -779,10 +779,14 @@ function findAttack(actor, sname) {
 }
 GURPS.findAttack = findAttack
 
-/*
-  The user clicked on a field that would allow a dice roll.  
-  Use the element information to try to determine what type of roll.
-*/
+/**
+ * The user clicked on a field that would allow a dice roll. Use the element
+ * information to try to determine what type of roll.
+ *
+ * @param {*} event
+ * @param {*} actor
+ * @param {Array<String>} targets - labels for multiple Damage rolls
+ */
 async function handleRoll(event, actor, targets) {
   event.preventDefault()
   let formula = ''
@@ -830,10 +834,7 @@ async function handleRoll(event, actor, targets) {
       formula = formula.split(dtype)[0]
     }
 
-    // TODO Find some way to specify who is in the blast radius, and fill out the
-    // token name array for each of those actors.
-    let tokenNames = targets
-    GURPS.damageChat.create(actor, formula, dtype, event, null, tokenNames)
+    GURPS.damageChat.create(actor, formula, dtype, event, null, targets)
     return
   }
   if ('roll' in element.dataset) {

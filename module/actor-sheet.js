@@ -5,6 +5,7 @@ import { HitLocation } from '../module/hitlocation/hitlocation.js'
 import parselink from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
+import { resolveDamageRoll } from './resolve-damage-roll.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -1118,45 +1119,56 @@ export class GurpsActorSheet extends ActorSheet {
 
     if (isDamageRoll) {
       if (isGM) {
-        let dlg = new Dialog({
-          title: 'Resolve Damage Roll',
-          content: `
-        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
-          <p><b>${otf}</b></p>
-          <p>What do you want to do with this Damage Roll?</p>
-          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
-            <label>Number of rolls:</label>
-            <input type='text' id='number-rolls' class='digits-only' value='2'>
-          </div>
-          <p/>
-        </div>
-        `,
-          buttons: {
-            send: {
-              icon: '<i class="fas fa-paper-plane"></i>',
-              label: 'Send OtF to...',
-              callback: () => GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
-            },
-            multiple: {
-              icon: '<i class="fas fa-clone"></i>',
-              label: 'Multiple rolls',
-              callback: () => {
-                console.log(event)
-                let targets = []
-                for (let index = 0; index < 4; index++) {
-                  targets[index] = `${index + 1}`
-                }
-                this._onClickRoll(event, targets)
-              }
-            }
-          },
-          default: 'send'
-        })
-        dlg.render(true)
+        this.resolveDamageRoll(event, otf)
       }
     } else {
       GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
+  }
+
+  async resolveDamageRoll(event, otf) {
+    let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
+    let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
+    let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
+    let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
+    let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
+
+    let dlg = new Dialog({
+      title: `${title}`,
+      content: `
+        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
+          <p style='font-size: large;'><strong>${otf}</strong></p>
+          <p>${prompt}</p>
+          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
+            <label>${quantity}</label>
+            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='1'>
+          </div>
+          <p/>
+        </div>
+        `,
+      buttons: {
+        send: {
+          icon: '<i class="fas fa-paper-plane"></i>',
+          label: `${sendTo}`,
+          callback: () => GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
+        },
+        multiple: {
+          icon: '<i class="fas fa-clone"></i>',
+          label: `${multiple}`,
+          callback: html => {
+            let text = html.find('#number-rolls').val()
+            let number = parseInt(text)
+            let targets = []
+            for (let index = 0; index < number; index++) {
+              targets[index] = `${index + 1}`
+            }
+            this._onClickRoll(event, targets)
+          }
+        }
+      },
+      default: 'send'
+    })
+    dlg.render(true)
   }
 
   async _onClickRoll(event, targets) {

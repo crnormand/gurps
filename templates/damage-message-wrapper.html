@@ -18,7 +18,7 @@
           <div class='collapsible-wrapper'>
             <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox'>
             <label for='collapsible-{{id}}' class='roll-result label-toggle'>
-              <span>{{#if target}}<i class="far fa-times-circle" style='color: grey;'></i>&nbsp;{{target}}:{{/if}}
+              <span>{{#if target}}&nbsp;{{target}}:{{/if}}
                   <i class='fa fa-dice'></i><i class='fa fa-long-arrow-alt-right'></i>
                   <span class='roll-value'>{{damage}}</span>
                   <span class='roll-detail'>{{pluralize 'point' damage}} of damage.</span>
@@ -46,7 +46,7 @@
       </div>
     {{/each}}
   </div>
-  <div style='border: 1px black solid; border-radius: 4px; padding: 5px;'>
+  <!-- <div style='border: 1px black solid; border-radius: 4px; padding: 5px;'>
     <span><i class="fas fa-layer-group"></i>&nbsp;All</span>
-  </div>
+  </div> -->
 </div>
