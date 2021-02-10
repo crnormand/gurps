@@ -2,10 +2,6 @@
 
 import { woundModifiers } from './damage-tables.js'
 import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.js'
-import { gspan } from '../../lib/parselink.js'
-
-const damageLinkPattern = /^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g
-const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)?( .*)?$/g
 
 /**
  * DamageChat is responsible for parsing a damage roll and rendering the appropriate chat message for
@@ -15,8 +11,7 @@ const swingThrustPattern = /^(SW|Sw|sw|THR|Thr|thr)([-+]\d+)?(!)?( .*)?$/g
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
  */
 export default class DamageChat {
-  static basicRegex = /^(?<basic>SW|Sw|sw|THR|Thr|thr)[^A-Za-z]/
-  static fullRegex = /^(?<roll>\d+d(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>\d+(?:\.\d+)?)\))?/
+  static fullRegex = /^(?<roll>\d+(?<D>d)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>\d+(?:\.\d+)?)\))?/
 
   constructor(GURPS) {
     this.setup()
@@ -71,7 +66,7 @@ export default class DamageChat {
       draggableData.push(data)
     })
 
-    this._createChatMessage(actor, dice.diceText, dice.damageType, targetmods, draggableData, event)
+    this._createChatMessage(actor, dice, targetmods, draggableData, event)
 
     // Resolve any modifier descriptors (such as *Costs 1FP)
     targetmods.filter(it => !!it.desc).map(it => it.desc).forEach(it => this._gurps.applyModifierDesc(actor, it))
@@ -95,22 +90,6 @@ export default class DamageChat {
    * @param {*} overrideDiceText 
    */
   _getDiceData(diceText, damageType, targetmods, overrideDiceText) {
-    // First check for basic damage syntax, such as thr+3, sw-1, etc...
-    let result = DamageChat.basicRegex.exec(diceText)
-    if (!!result) {
-      let basicType = (result?.groups?.basic).toLowerCase()
-
-      if (basicType === 'sw') {
-        overrideDiceText = diceText
-        diceText = diceText.replace(/^(SW|Sw|sw)/, actor.data.data.swing)
-      }
-
-      if (basicType === 'thr') {
-        overrideDiceText = diceText
-        diceText = diceText.replace(/^(THR|Thr|thr)/, actor.data.data.thrust)
-      }
-    }
-
     // format for diceText:
     //
     // '<dice>d+<adds1>+<adds2>x<multiplier>(<divisor>)'
@@ -125,14 +104,14 @@ export default class DamageChat {
     // Added support for a second add, such as: 1d-2+3 -- this was to support damage expressed
     // using basic damage syntax, such as "sw+3" (which could translate to '1d-2+3', for exmaple).
 
-    result = DamageChat.fullRegex.exec(diceText)
+    let result = DamageChat.fullRegex.exec(diceText)
 
     if (!result) {
       ui.notifications.warn(`Invalid Dice formula: "${diceText}"`)
       return null
     }
 
-    diceText = result?.groups?.roll
+    diceText = result.groups.roll
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
     let multiplier = !!result.groups.mult ? parseInt(result.groups.mult) : 1
@@ -152,7 +131,13 @@ export default class DamageChat {
       adds2 = parseInt(temp)
     }
 
-    let formula = d6ify(diceText)
+    let formula = diceText
+    let verb = ''
+    if (!!result.groups.D) {
+      formula = d6ify(diceText)
+      verb = 'Rolling '
+    }
+    let displayText = overrideDiceText || diceText      // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
     let min = 1
 
     if (damageType === '') damageType = 'dmg'
@@ -167,27 +152,20 @@ export default class DamageChat {
     for (let m of targetmods) {
       modifier += m.modint
     }
+    let additionalText = ''
     if (multiplier > 1) {
-      if (!!overrideDiceText) {
-        overrideDiceText = `${overrideDiceText}×${multiplier}`
-      } else {
-        diceText = `${diceText}×${multiplier}`
-      }
+      additionalText += `×${multiplier}`
     }
 
     if (divisor > 0) {
-      if (!!overrideDiceText) {
-        overrideDiceText = `${overrideDiceText} (${divisor})`
-      } else {
-        diceText = `${diceText} (${divisor})`
-      }
+      additionalText += ` (${divisor})`
     }
 
     let diceData = {
       formula: formula,
+      verb: verb,         // Rolling (if we have dice) or nothing
       modifier: modifier,
-      // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
-      diceText: diceText || overrideDiceText,
+      diceText: displayText + additionalText,
       damageType: damageType,
       multiplier: multiplier,
       divisor: divisor,
@@ -227,9 +205,13 @@ export default class DamageChat {
     let damage = rollTotal * diceData.multiplier
 
     let explainLineOne = null
-    if (roll.dice[0].results.length > 1 || (diceData.adds1 !== 0)) {
-      let tempString = roll.dice[0].results.map((it) => it.result).join()
-      tempString = `(${tempString})`
+    if ((roll.dice.length > 0 && roll.dice[0].results.length > 1) || (diceData.adds1 !== 0)) {
+      let tempString = ''
+      if (roll.dice.length > 0) {
+        tempString = roll.dice[0].results.map((it) => it.result).join()
+        tempString = `Rolled (${tempString})`
+      } else
+        tempString = diceValue
 
       if (diceData.adds1 !== 0) {
         let sign = diceData.adds1 < 0 ? '−' : '+'
@@ -242,7 +224,7 @@ export default class DamageChat {
         let value = Math.abs(diceData.adds2)
         tempString = `${tempString} ${sign} ${value}`
       }
-      explainLineOne = `Rolled ${tempString} = ${dicePlusAdds}.`
+      explainLineOne = `${tempString} = ${dicePlusAdds}.`
     }
 
     let explainLineTwo = null
@@ -285,10 +267,13 @@ export default class DamageChat {
     return contentData
   }
 
-  async _createChatMessage(actor, diceText, damageType, targetmods, draggableData, event) {
+  async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
+  
+    const damageType = diceData.damageType
     let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
       draggableData: draggableData,
-      dice: diceText,
+      verb: diceData.verb,
+      dice: diceData.diceText,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
       modifiers: targetmods.map((it) => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
     })

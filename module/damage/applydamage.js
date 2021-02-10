@@ -282,13 +282,14 @@ export default class ApplyDamageDialog extends Application {
     }
 
     if (object.type === 'knockback') {
+      let dxCheck = object.modifier === 0 ? 'DX' : `DX-${object.modifier}`
+      let acroCheck = object.modifier === 0 ? 'S:Acrobatics' : `S:Acrobatics-${object.modifier}`
+      let judoCheck = object.modifier === 0 ? 'S:Judo' : `S:Judo-${object.modifier}`
       message = await this._renderTemplate('chat-knockback.html',
         {
           name: this.actor.data.name,
           yards: object.amount,
-          dxCheck: object.modifier === 0 ? 'DX' : `DX-${object.modifier}`,
-          acroCheck: object.modifier === 0 ? 'S:Acrobatics' : `S:Acrobatics-${object.modifier}`,
-          judoCheck: object.modifier === 0 ? 'S:Judo' : `S:Judo-${object.modifier}`
+          combinedCheck: `${dxCheck}|${acroCheck}|${judoCheck}`
         })
     }
 

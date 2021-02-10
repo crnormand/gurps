@@ -610,7 +610,7 @@ async function performAction(action, actor, event, targets) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula,
+        action.derivedformula.toUpperCase() + action.formula,
         targets
       )
       return true
