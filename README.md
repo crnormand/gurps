@@ -10,7 +10,7 @@ To install the latest stable release, use this manifest URL:
 
 [Getting Started video](https://youtu.be/FUqtOkdyBCo) / [Players Guide video](https://youtu.be/x-xD39x_JQw)
 
-Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/7qzzgJDT)
+Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 ## The 'main' branch is being actively developed... and it may break things.   
 ### If you are looking for the latest stable release, use the manifest URL above.

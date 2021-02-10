@@ -80,7 +80,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     if (rtotal == 1) thing = thing.replace("points", "point");
 
     chatdata['rtotal'] = rtotal
-    chatdata['rolls'] = roll.dice[0].results.map(it => it.result.toString()).join(', ')
+    chatdata['rolls'] = roll.results.join(' ').replace(" + 0", "");
     chatdata['modifier'] = modifier
   }
 
