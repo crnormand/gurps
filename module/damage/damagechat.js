@@ -25,26 +25,49 @@ export default class DamageChat {
 
   setup() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
+      let transfer = JSON.parse(app.data.flags.transfer)
+
       let damageMessages = html.find('.damage-message')
       if (!!damageMessages && damageMessages.length > 0) {
-        let transfer = JSON.parse(app.data.flags.transfer)
         for (let index = 0; index < damageMessages.length; index++) {
           let message = damageMessages[index]
 
           message.setAttribute('draggable', true)
-          message.addEventListener('dragstart', (ev) => {
+
+          message.addEventListener('dragstart', ev => {
             $(ev.currentTarget).addClass('dragging')
             ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
             let data = {
               type: 'damageItem',
-              payload: transfer.payload[index],
+              payload: transfer.payload[index]
             }
             return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
           })
-          message.addEventListener('dragend', (ev) => {
+
+          message.addEventListener('dragend', ev => {
             $(ev.currentTarget).removeClass('dragging')
           })
         }
+      }
+
+      let allDamageMessage = html.find('.damage-all-message')
+      if (!!allDamageMessage && allDamageMessage.length == 1) {
+        let message = allDamageMessage[0]
+        message.setAttribute('draggable', true)
+
+        message.addEventListener('dragstart', ev => {
+          $(ev.currentTarget).addClass('dragging')
+          ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
+          let data = {
+            type: 'damageItem',
+            payload: transfer.payload
+          }
+          return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
+        })
+
+        message.addEventListener('dragend', ev => {
+          $(ev.currentTarget).removeClass('dragging')
+        })
       }
     })
   }
@@ -66,7 +89,7 @@ export default class DamageChat {
     if (tokenNames.length == 0) tokenNames.push('')
 
     let draggableData = []
-    await tokenNames.forEach(async (tokenName) => {
+    await tokenNames.forEach(async tokenName => {
       let data = await this._createDraggableSection(actor, dice, tokenName, targetmods)
       draggableData.push(data)
     })
@@ -74,13 +97,16 @@ export default class DamageChat {
     this._createChatMessage(actor, dice.diceText, dice.damageType, targetmods, draggableData, event)
 
     // Resolve any modifier descriptors (such as *Costs 1FP)
-    targetmods.filter(it => !!it.desc).map(it => it.desc).forEach(it => this._gurps.applyModifierDesc(actor, it))
+    targetmods
+      .filter(it => !!it.desc)
+      .map(it => it.desc)
+      .forEach(it => this._gurps.applyModifierDesc(actor, it))
   }
 
   /**
    * This method is all about interpreting the die roll text.
-   * 
-   * Returns { 
+   *
+   * Returns {
    *    formula: String, -- Foundry Dice formula
    *    modifier: num, -- sum of modifiers
    *    diceText: String, -- GURPS die text
@@ -90,9 +116,9 @@ export default class DamageChat {
    *    adds2: num, -- second add
    *    min: num, -- minimum value of the die roll (0, 1)
    * }
-   * @param {String} diceText 
-   * @param {*} damageType 
-   * @param {*} overrideDiceText 
+   * @param {String} diceText
+   * @param {*} damageType
+   * @param {*} overrideDiceText
    */
   _getDiceData(diceText, damageType, targetmods, overrideDiceText) {
     // First check for basic damage syntax, such as thr+3, sw-1, etc...
@@ -193,7 +219,7 @@ export default class DamageChat {
       divisor: divisor,
       adds1: adds1,
       adds2: adds2,
-      min: min,
+      min: min
     }
     console.log(diceData)
     return diceData
@@ -202,10 +228,10 @@ export default class DamageChat {
   /**
    * This method creates the content of each draggable section with
    * damage rolled for a single target.
-   * @param {*} actor 
-   * @param {*} diceData 
-   * @param {*} tokenName 
-   * @param {*} targetmods 
+   * @param {*} actor
+   * @param {*} diceData
+   * @param {*} tokenName
+   * @param {*} targetmods
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods) {
     let roll = Roll.create(diceData.formula + `+${diceData.modifier}`)
@@ -227,8 +253,8 @@ export default class DamageChat {
     let damage = rollTotal * diceData.multiplier
 
     let explainLineOne = null
-    if (roll.dice[0].results.length > 1 || (diceData.adds1 !== 0)) {
-      let tempString = roll.dice[0].results.map((it) => it.result).join()
+    if (roll.dice[0].results.length > 1 || diceData.adds1 !== 0) {
+      let tempString = roll.dice[0].results.map(it => it.result).join()
       tempString = `(${tempString})`
 
       if (diceData.adds1 !== 0) {
@@ -290,7 +316,7 @@ export default class DamageChat {
       draggableData: draggableData,
       dice: diceText,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
-      modifiers: targetmods.map((it) => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
+      modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`)
     })
 
     const speaker = { alias: actor.name, _id: actor._id, actor: actor }
@@ -299,7 +325,7 @@ export default class DamageChat {
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: draggableData[0].roll,
+      roll: draggableData[0].roll
     }
 
     if (event?.shiftKey) {
@@ -312,13 +338,13 @@ export default class DamageChat {
 
     messageData['flags.transfer'] = JSON.stringify({
       type: 'damageItem',
-      payload: draggableData,
+      payload: draggableData
     })
 
-    CONFIG.ChatMessage.entityClass.create(messageData).then((arg) => {
+    CONFIG.ChatMessage.entityClass.create(messageData).then(arg => {
       console.log(arg)
       let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
-      $(`[data-message-id='${messageId}']`).click((ev) => this._gurps.handleOnPdf(ev))
+      $(`[data-message-id='${messageId}']`).click(ev => this._gurps.handleOnPdf(ev))
     })
   }
 
@@ -386,12 +412,12 @@ export default class DamageChat {
         orig: linkText,
         type: 'roll',
         formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + multiplier + a[INDEX_BANG],
-        desc: damageType, // Action description
+        desc: damageType // Action description
       }
 
       return {
         text: gspan(linkText, action),
-        action: action,
+        action: action
       }
     }
 
@@ -400,12 +426,12 @@ export default class DamageChat {
       orig: linkText,
       type: 'damage',
       formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + a[INDEX_MULTIPLIER] + a[INDEX_DIVISOR] + a[INDEX_BANG],
-      damagetype: damageType,
+      damagetype: damageType
     }
 
     return {
       text: gspan(linkText, action),
-      action: action,
+      action: action
     }
   }
 
@@ -424,11 +450,11 @@ export default class DamageChat {
         type: 'deriveddamage',
         derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
         formula: a[INDEX_ADDS] + a[INDEX_BANG],
-        damagetype: damageType,
+        damagetype: damageType
       }
       return {
         text: gspan(linkText, action),
-        action: action,
+        action: action
       }
     }
 
@@ -437,11 +463,11 @@ export default class DamageChat {
       type: 'derivedroll',
       derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
       formula: a[INDEX_ADDS] + a[INDEX_BANG],
-      desc: damageType,
+      desc: damageType
     }
     return {
       text: gspan(linkText, action),
-      action: action,
+      action: action
     }
   }
 }

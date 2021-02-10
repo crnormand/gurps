@@ -24,6 +24,25 @@ const HOMOGENOUS = 'homogenous'
 // -1 means 'Ignores DR'
 const armorDivisorSteps = [-1, 100, 5, 3, 2, 1]
 
+export class CompositeDamageCalculator {
+  /**
+   * Create a composite damage calculator, which is a damage calculator that
+   *  wraps multiple damage calculators.
+   * @param {*} defender
+   * @param {Array} damageData
+   */
+  constructor(defender, damageData) {
+    this._useBluntTrauma = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLUNT_TRAUMA)
+    this._useLocationModifiers = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_LOCATION_MODIFIERS)
+    this._useArmorDivisor = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_APPLY_DIVISOR)
+
+    this._defender = defender
+
+    this.calculators = damageData.map(data => new DamageCalculator(defender, data))
+    this.calculators.push()
+  }
+}
+
 export class DamageCalculator {
   constructor(defender, damageData) {
     this._useBluntTrauma = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLUNT_TRAUMA)
@@ -199,8 +218,8 @@ export class DamageCalculator {
 
     // update the ones that need it
     Object.keys(results)
-      .filter((key) => ['imp', ...piercing].includes(key))
-      .forEach((key) => {
+      .filter(key => ['imp', ...piercing].includes(key))
+      .forEach(key => {
         results[key].multiplier = 3
         results[key].changed = 'hitlocation'
       })
@@ -213,8 +232,8 @@ export class DamageCalculator {
 
     // update the ones that need it
     Object.keys(results)
-      .filter((key) => key !== 'tox') // everything EXCEPT toxic
-      .forEach((key) => {
+      .filter(key => key !== 'tox') // everything EXCEPT toxic
+      .forEach(key => {
         results[key].multiplier = 4
         results[key].changed = 'hitlocation'
       })
@@ -251,8 +270,8 @@ export class DamageCalculator {
 
     // update the ones that need it
     Object.keys(results)
-      .filter((key) => ['imp', 'pi+', 'pi++'].includes(key))
-      .forEach((key) => {
+      .filter(key => ['imp', 'pi+', 'pi++'].includes(key))
+      .forEach(key => {
         results[key].multiplier = 1
         results[key].changed = 'hitlocation'
       })
@@ -306,7 +325,7 @@ export class DamageCalculator {
       let torsoDR = 0
 
       // find the location with the lowest DR
-      for (let value of this._defender.hitLocationsWithDR.filter((it) => it.roll.length > 0)) {
+      for (let value of this._defender.hitLocationsWithDR.filter(it => it.roll.length > 0)) {
         if (value.dr < lowestDR) lowestDR = value.dr
         if (value.where === 'Torso') torsoDR = value.dr
       }
@@ -314,7 +333,7 @@ export class DamageCalculator {
       return Math.ceil((lowestDR + torsoDR) / 2)
     }
 
-    return this._defender.hitLocationsWithDR.filter((it) => it.where === this._hitLocation).map((it) => it.dr)[0]
+    return this._defender.hitLocationsWithDR.filter(it => it.where === this._hitLocation).map(it => it.dr)[0]
   }
 
   get effectiveArmorDivisor() {
@@ -369,7 +388,7 @@ export class DamageCalculator {
    */
   get injury() {
     this._maxInjuryForDiffuse = null
-    let injury = Math.floor(this.penetratingDamage * this.totalWoundingModifier / this.explosionDivisor)
+    let injury = Math.floor((this.penetratingDamage * this.totalWoundingModifier) / this.explosionDivisor)
 
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
     if (this._isInjuryTolerance && this._injuryToleranceType === DIFFUSE) {
@@ -495,7 +514,7 @@ export class DamageCalculator {
       if (shock > 0) {
         _effects.push({
           type: 'shock',
-          amount: shock,
+          amount: shock
         })
       }
 
@@ -504,13 +523,13 @@ export class DamageCalculator {
         isMajorWound = true
         _effects.push({
           type: 'majorwound',
-          modifier: this.penaltyToHTRollForStunning,
+          modifier: this.penaltyToHTRollForStunning
         })
       } else if ([...head, 'Vitals'].includes(this._hitLocation) && shock > 0) {
         _effects.push({
           type: 'headvitalshit',
           detail: this._hitLocation,
-          modifier: this.penaltyToHTRollForStunning,
+          modifier: this.penaltyToHTRollForStunning
         })
       }
 
@@ -520,12 +539,12 @@ export class DamageCalculator {
           type: 'crippling',
           amount: Math.floor(this.locationMaxHP),
           detail: this._hitLocation,
-          reduceInjury: this.isInjuryReducedByLocation,
+          reduceInjury: this.isInjuryReducedByLocation
         })
         if (!isMajorWound)
           _effects.push({
             type: 'majorwound',
-            modifier: this.penaltyToHTRollForStunning,
+            modifier: this.penaltyToHTRollForStunning
           })
       }
     }
@@ -537,7 +556,7 @@ export class DamageCalculator {
         _effects.push({
           type: 'knockback',
           amount: knockback,
-          modifier: modifier,
+          modifier: modifier
         })
       }
     }
@@ -561,7 +580,7 @@ export class DamageCalculator {
     roll3d.roll()
     let total = roll3d.total
 
-    let loc = this._defender.hitLocationsWithDR.filter((it) => it.roll.includes(total))
+    let loc = this._defender.hitLocationsWithDR.filter(it => it.roll.includes(total))
     if (!!loc && loc.length > 0) this._hitLocation = loc[0].where
     else ui.notifications.warn(`There are no hit locations defined for #${total}`)
     return roll3d
@@ -710,13 +729,13 @@ export class DamageCalculator {
 
   get isWoundModifierAdjustedForInjuryTolerance() {
     let table = this.effectiveWoundModifiers
-    let entries = Object.keys(table).filter((key) => table[key].changed === 'injury-tolerance')
+    let entries = Object.keys(table).filter(key => table[key].changed === 'injury-tolerance')
     return entries.length > 0
   }
 
   get isWoundModifierAdjustedForLocation() {
     let table = this.effectiveWoundModifiers
-    let entries = Object.keys(table).filter((key) => table[key].changed === 'hitlocation')
+    let entries = Object.keys(table).filter(key => table[key].changed === 'hitlocation')
     return entries.length > 0
   }
 
@@ -728,7 +747,9 @@ export class DamageCalculator {
     return this._maxInjuryForDiffuse
   }
 
-  get isExplosion() { return this._isExplosion }
+  get isExplosion() {
+    return this._isExplosion
+  }
   set isExplosion(value) {
     if (value && !this._isExplosion) {
       this._previousHitLocation = this._hitLocation
