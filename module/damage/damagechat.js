@@ -11,7 +11,7 @@ import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
  */
 export default class DamageChat {
-  static fullRegex = /^(?<roll>\d+(?<D>d)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>\d+(?:\.\d+)?)\))?/
+  static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>\d+(?:\.\d+)?)\))?/
 
   constructor(GURPS) {
     this.setup()
@@ -134,8 +134,8 @@ export default class DamageChat {
     let formula = diceText
     let verb = ''
     if (!!result.groups.D) {
-      formula = d6ify(diceText)
       verb = 'Rolling '
+      if (result.groups.D === 'd') formula = d6ify(diceText)  // GURPS dice (assume 6)
     }
     let displayText = overrideDiceText || diceText      // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
     let min = 1

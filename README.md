@@ -30,6 +30,7 @@ This is what we are currently working on:
     - Added Mook Generator defaults editor
     - GCA export/import now handles parents for Ads/Disads/Spells and Skills
     - Rewrite of damage parser, more uniform handling of multipliers/divisors, etc.  support for const damage [1 cut]
+    - Don't tell anyone, but we now support any sided dice for non-targeted, non-derived damage rolls [3d4], [2d20 cut]
 
 ### History
 
