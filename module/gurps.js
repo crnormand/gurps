@@ -547,7 +547,7 @@ function trim(s) {
 GURPS.trim = trim
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-async function performAction(action, actor, event) {
+async function performAction(action, actor, event, targets) {
   if (!action) return
   let actordata = actor?.data
   let prefix = ''
@@ -594,7 +594,7 @@ async function performAction(action, actor, event) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event)
+    GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
     return true
   }
 
@@ -610,7 +610,8 @@ async function performAction(action, actor, event) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula
+        action.derivedformula + action.formula,
+        targets
       )
       return true
     } else ui.notifications.warn('You must have a character selected')
@@ -957,13 +958,13 @@ GURPS.resolve = resolve
   and followed the On-the-Fly formulas.   As such, we may already have an action block (base 64 encoded so we can handle
   any text).  If not, we will just re-parse the text looking for the action block.    
 */
-function handleGurpslink(event, actor, desc) {
+function handleGurpslink(event, actor, desc, targets) {
   event.preventDefault()
   let element = event.currentTarget
   let action = element.dataset.action // If we have already parsed
   if (!!action) action = JSON.parse(atob(action))
   else action = parselink(element.innerText, desc).action
-  this.performAction(action, actor, event)
+  this.performAction(action, actor, event, targets)
 }
 GURPS.handleGurpslink = handleGurpslink
 
