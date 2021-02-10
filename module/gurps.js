@@ -1,5 +1,5 @@
 // Import Modules
-import * as P from '../lib/parselink.js';
+import { parselink, parseForDamage } from '../lib/parselink.js';
 
 import { GurpsActor } from './actor.js'
 import { GurpsItem } from './item.js'
@@ -823,30 +823,8 @@ async function handleRoll(event, actor, targets) {
   }
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
-    let formula = element.innerText.trim()
-    let m = formula.match(DAMAGE_REGEX)
-    let dtype = ''
-    if (!!m) {
-      dtype = m[DERIVED_DAMAGE_INDEX_TYPE]
-    }
-    let i = dtype.indexOf(' ')
-    if (i > 0) {
-      dtype = dtype.substring(0, i).trim()
-      formula = formula.split(dtype)[0]
-    }
-    
-    
-          GURPS.damageChat.create(
-        actor || game.user,
-        formula,
-        action.damagetype,
-        event,
-        action.derivedformula + action.formula,
-        targets
-      )
-
-
-    GURPS.damageChat.create(actor, formula, dtype, event, null, targets)
+    let action = parseForDamage(element.innerText.trim())
+    if (!!action.action) performAction(action.action, actor, event, targets) 
     return
   }
   if ('roll' in element.dataset) {
@@ -885,7 +863,7 @@ function gurpslink(str, clrdmods = true) {
     if (str[i] == '[') found = ++i
     if (str[i] == ']' && found >= 0) {
       output += str.substring(0, found - 1)
-      let action = P.parselink(str.substring(found, i), '', clrdmods)
+      let action = parselink(str.substring(found, i), '', clrdmods)
       if (!action.action) output += '['
       output += action.text
       if (!action.action) output += ']'
@@ -974,7 +952,7 @@ function handleGurpslink(event, actor, desc, targets) {
   let element = event.currentTarget
   let action = element.dataset.action // If we have already parsed
   if (!!action) action = JSON.parse(atob(action))
-  else action = P.parselink(element.innerText, desc).action
+  else action = parselink(element.innerText, desc).action
   this.performAction(action, actor, event, targets)
 }
 GURPS.handleGurpslink = handleGurpslink

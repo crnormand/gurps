@@ -29,7 +29,7 @@ This is what we are currently working on:
     - Fixed actors not having the new calculated values (currentdodge, currentmove, equippedparry, equippedblock)
     - Added Mook Generator defaults editor
     - GCA export/import now handles parents for Ads/Disads/Spells and Skills
-    - Support for const damage [1 cut]
+    - Rewrite of damage parser, more uniform handling of multipliers/divisors, etc.  support for const damage [1 cut]
 
 ### History
 
