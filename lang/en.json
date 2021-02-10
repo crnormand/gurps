@@ -229,6 +229,7 @@
 	"GURPS.forTurns" : "for {turns} turns",
 	"GURPS.suffersA" : "suffers a",
 	"GURPS.for" : "for ",
+  "GURPS.highest" : "Highest",
 	"GURPS.of" : "of ",
 	"GURPS.effectsDoubles" : "doubles",
 	"GURPS.effectsNotApplicableDefenses" : "Does not apply to Active Defenses or other defensive reactions. See ",

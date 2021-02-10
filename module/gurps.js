@@ -1,5 +1,5 @@
 // Import Modules
-import parselink from '../lib/parselink.js'
+import { parselink, parseForDamage } from '../lib/parselink.js';
 
 import { GurpsActor } from './actor.js'
 import { GurpsItem } from './item.js'
@@ -587,8 +587,8 @@ async function performAction(action, actor, event, targets) {
   }
 
   if (action.type === 'roll') {
-    prefix = 'Rolling ' + action.formula + ' ' + action.desc
-    formula = d6ify(action.formula)
+    prefix = 'Rolling ' + action.displayformula + ' ' + action.desc
+    formula = action.rollformula
     if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
   }
 
@@ -598,11 +598,9 @@ async function performAction(action, actor, event, targets) {
     return true
   }
 
-  const BASIC_SWING = 'sw'
-
   if (action.type === 'deriveddamage')
     if (!!actor) {
-      let df = action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
       formula = df + action.formula
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       GURPS.damageChat.create(
@@ -618,7 +616,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'derivedroll')
     if (!!actor) {
-      let df = action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
       formula = d6ify(df + action.formula)
       prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
@@ -825,17 +823,8 @@ async function handleRoll(event, actor, targets) {
   }
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
-    let formula = element.innerText.trim()
-    let dtype = formula.replace(DamageChat.basicRegex, '').trim() // Remove any kind of damage formula
-    dtype = dtype.replace(DamageChat.fullRegex, '').trim()
-
-    let i = dtype.indexOf(' ')
-    if (i > 0) {
-      dtype = dtype.substring(0, i).trim()
-      formula = formula.split(dtype)[0]
-    }
-
-    GURPS.damageChat.create(actor, formula, dtype, event, null, targets)
+    let action = parseForDamage(element.innerText.trim())
+    if (!!action.action) performAction(action.action, actor, event, targets) 
     return
   }
   if ('roll' in element.dataset) {

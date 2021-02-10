@@ -1,5 +1,5 @@
 import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
-import parselink from '../lib/parselink.js'
+import { parselink } from '../lib/parselink.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 

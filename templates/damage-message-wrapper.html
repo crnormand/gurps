@@ -1,5 +1,5 @@
 <div>
-  <div class='prefix'>Rolling {{dice}} {{damageTypeText}} damage.</div>
+  <div class='prefix'>{{verb}}{{dice}} {{damageTypeText}} damage.</div>
   <div class='roll-message'>
     {{#if modifiers}}
       <hr />
@@ -17,7 +17,7 @@
         <div class='roll-message'>
           <div class='collapsible-wrapper'>
             <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox'>
-            <label for='collapsible-{{id}}' class='roll-result label-toggle'>
+            <label for='collapsible-{{id}}' class='roll-result {{#if hasExplanation}}label-toggle{{/if}}'>
               <span>{{#if target}}&nbsp;{{target}}:{{/if}}
                   <i class='fa fa-dice'></i><i class='fa fa-long-arrow-alt-right'></i>
                   <span class='roll-value'>{{damage}}</span>
