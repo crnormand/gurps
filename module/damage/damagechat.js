@@ -28,17 +28,15 @@ export default class DamageChat {
           let message = damageMessages[index]
 
           message.setAttribute('draggable', true)
-
           message.addEventListener('dragstart', ev => {
             $(ev.currentTarget).addClass('dragging')
             ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
             let data = {
               type: 'damageItem',
-              payload: transfer.payload[index]
+              payload: transfer.payload[index],
             }
             return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
           })
-
           message.addEventListener('dragend', ev => {
             $(ev.currentTarget).removeClass('dragging')
           })
@@ -55,7 +53,7 @@ export default class DamageChat {
           ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
           let data = {
             type: 'damageItem',
-            payload: transfer.payload
+            payload: transfer.payload,
           }
           return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
         })
@@ -197,7 +195,7 @@ export default class DamageChat {
       divisor: divisor,
       adds1: adds1,
       adds2: adds2,
-      min: min
+      min: min,
     }
     console.log(diceData)
     return diceData
@@ -286,20 +284,21 @@ export default class DamageChat {
       explainLineTwo: explainLineTwo,
       isB378: b378,
       roll: roll,
-      target: tokenName
+      target: tokenName,
     }
     console.log(contentData)
     return contentData
   }
 
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
+
     const damageType = diceData.damageType
     let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
       draggableData: draggableData,
       verb: diceData.verb,
       dice: diceData.diceText,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
-      modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`)
+      modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
     })
 
     const speaker = { alias: actor.name, _id: actor._id, actor: actor }
@@ -308,7 +307,7 @@ export default class DamageChat {
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: draggableData[0].roll
+      roll: draggableData[0].roll,
     }
 
     if (event?.shiftKey) {
@@ -317,7 +316,7 @@ export default class DamageChat {
 
     messageData['flags.transfer'] = JSON.stringify({
       type: 'damageItem',
-      payload: draggableData
+      payload: draggableData,
     })
 
     if (isNiceDiceEnabled()) {
@@ -328,13 +327,12 @@ export default class DamageChat {
       rolls.forEach(r => {
         r.dice.forEach(d => {
           let type = 'd' + d.faces
-          d.results.forEach(s =>
-            dice.push({
+          d.results.forEach(s => dice.push({
               result: s.result,
               resultLabel: s.result,
               type: type,
               vectors: [],
-              options: {}
+              options: {},
             })
           )
         })
