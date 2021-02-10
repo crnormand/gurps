@@ -280,9 +280,9 @@
   "GURPS.BODYPLANichthyoid" : "Ictióde",
   "GURPS.BODYPLANarachnoid" : "Aracnóide",
 
-  "GURPS.RESOLVEDAMAGETitle": "Resolve Damage Roll",
-  "GURPS.RESOLVEDAMAGEPrompt": "What do you want to do with this Damage roll?",
-  "GURPS.RESOLVEDAMAGEQuantity": "Number of rolls:",
-  "GURPS.RESOLVEDAMAGESendTo": "Send OtF to...",
-  "GURPS.RESOLVEDAMAGEMultiple": "Multiple rolls"
+  "GURPS.RESOLVEDAMAGETitle": "Explicar Rolagem de Dano",
+  "GURPS.RESOLVEDAMAGEPrompt": "O que você quer fazer com esta rolagem de dano?",
+  "GURPS.RESOLVEDAMAGEQuantity": "Número de rolagens:",
+  "GURPS.RESOLVEDAMAGESendTo": "Enviar OtF para...",
+  "GURPS.RESOLVEDAMAGEMultiple": "Rolagens múltiplas"
 }
