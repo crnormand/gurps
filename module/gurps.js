@@ -1,5 +1,5 @@
 // Import Modules
-import parselink from '../lib/parselink.js'
+import { parselink, parseForDamage } from '../lib/parselink.js';
 
 import { GurpsActor } from './actor.js'
 import { GurpsItem } from './item.js'
@@ -547,7 +547,7 @@ function trim(s) {
 GURPS.trim = trim
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-async function performAction(action, actor, event) {
+async function performAction(action, actor, event, targets) {
   if (!action) return
   let actordata = actor?.data
   let prefix = ''
@@ -587,22 +587,20 @@ async function performAction(action, actor, event) {
   }
 
   if (action.type === 'roll') {
-    prefix = 'Rolling ' + action.formula + ' ' + action.desc
-    formula = d6ify(action.formula)
+    prefix = 'Rolling ' + action.displayformula + ' ' + action.desc
+    formula = action.rollformula
     if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
   }
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event)
+    GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
     return true
   }
 
-  const BASIC_SWING = 'sw'
-
   if (action.type === 'deriveddamage')
     if (!!actor) {
-      let df = action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
       formula = df + action.formula
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       GURPS.damageChat.create(
@@ -610,14 +608,15 @@ async function performAction(action, actor, event) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula
+        action.derivedformula + action.formula,
+        targets
       )
       return true
     } else ui.notifications.warn('You must have a character selected')
 
   if (action.type === 'derivedroll')
     if (!!actor) {
-      let df = action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
       formula = d6ify(df + action.formula)
       prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
@@ -824,17 +823,8 @@ async function handleRoll(event, actor, targets) {
   }
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
-    let formula = element.innerText.trim()
-    let dtype = formula.replace(DamageChat.basicRegex, '').trim() // Remove any kind of damage formula
-    dtype = dtype.replace(DamageChat.fullRegex, '').trim()
-
-    let i = dtype.indexOf(' ')
-    if (i > 0) {
-      dtype = dtype.substring(0, i).trim()
-      formula = formula.split(dtype)[0]
-    }
-
-    GURPS.damageChat.create(actor, formula, dtype, event, null, targets)
+    let action = parseForDamage(element.innerText.trim())
+    if (!!action.action) performAction(action.action, actor, event, targets) 
     return
   }
   if ('roll' in element.dataset) {
@@ -957,13 +947,13 @@ GURPS.resolve = resolve
   and followed the On-the-Fly formulas.   As such, we may already have an action block (base 64 encoded so we can handle
   any text).  If not, we will just re-parse the text looking for the action block.    
 */
-function handleGurpslink(event, actor, desc) {
+function handleGurpslink(event, actor, desc, targets) {
   event.preventDefault()
   let element = event.currentTarget
   let action = element.dataset.action // If we have already parsed
   if (!!action) action = JSON.parse(atob(action))
   else action = parselink(element.innerText, desc).action
-  this.performAction(action, actor, event)
+  this.performAction(action, actor, event, targets)
 }
 GURPS.handleGurpslink = handleGurpslink
 
@@ -1222,14 +1212,6 @@ GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
     )
     d.render(true)
   }
-
-  let d = new Dialog({
-    title: "GM 'Send Formula'",
-    content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-    buttons: buttons,
-    default: 'four'
-  })
-  d.render(true)
 }
 
 GURPS.sendOtfMessage = function (content, blindroll, users) {

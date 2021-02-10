@@ -1,5 +1,5 @@
 'use strict'
-import parselink from '../lib/parselink.js'
+import { parselink } from '../lib/parselink.js'
 import { NpcInput } from '../lib/npc-input.js'
 
 /**

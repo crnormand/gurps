@@ -229,6 +229,7 @@
   "GURPS.forTurns" : "por {turns} turnos",
   "GURPS.suffersA" : "recebe um ",
   "GURPS.for" : "devido a ",
+  "GURPS.highest" : "Highest",
   "GURPS.of" : "de ",
   "GURPS.effectsDoubles" : "dobra",
   "GURPS.effectsNotApplicableDefenses" : "Não se aplica a Defesas Ativas ou outras reações defensivas. Consulte ",

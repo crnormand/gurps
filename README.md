@@ -20,6 +20,7 @@ This is what we are currently working on:
 
 - 0.8.14 
     - Added Explosion damage calculation to Damage Calculator
+    	- either as a single damage roll applied multiple times to different targets, or right-click on the damage roll to be prompted for the number of rolls to generate
     - Fixed a few issues with the Modifier Bucket, Targeted Chat messages, and others.
     - pagerefs can be http links (and will show up as '*Link')
     - SHIFT-Apply keeps Damage Dialog open (to allow multiple RoF damage results)
@@ -28,6 +29,8 @@ This is what we are currently working on:
     - Fixed actors not having the new calculated values (currentdodge, currentmove, equippedparry, equippedblock)
     - Added Mook Generator defaults editor
     - GCA export/import now handles parents for Ads/Disads/Spells and Skills
+    - Rewrite of damage parser, more uniform handling of multipliers/divisors, etc.  support for const damage [1 cut]
+    - Don't tell anyone, but we now support any sided dice for non-targeted, non-derived damage rolls [3d4], [2d20 cut]
 
 ### History
 

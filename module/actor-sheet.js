@@ -2,7 +2,7 @@ import { GURPS } from './gurps.js'
 import { isNiceDiceEnabled } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation } from '../module/hitlocation/hitlocation.js'
-import parselink from '../lib/parselink.js'
+import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 
@@ -1087,11 +1087,17 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onRightClickGurpslink(event) {
     event.preventDefault()
+    event.stopImmediatePropagation()    // Since this may occur in note or a list (which has its own RMB handler)
     let el = event.currentTarget
     let action = el.dataset.action
     if (!!action) {
       action = JSON.parse(atob(action))
-      GURPS.whisperOtfToOwner(action.orig, event, action.hasOwnProperty('blindroll') && !action.blindroll, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+      let isBlind = action.hasOwnProperty('blindroll') && !action.blindroll
+      if (action.type === 'damage' || action.type === 'deriveddamage') {
+        this.resolveDamageRoll(event, action.orig, game.user.isGM, true)
+      } else {
+        GURPS.whisperOtfToOwner(action.orig, event, isBlind, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+      }
     }
   }
 
@@ -1123,7 +1129,7 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
-  async resolveDamageRoll(event, otf, isGM) {
+  async resolveDamageRoll(event, otf, isGM, isOtf = false) {
     let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
     let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
     let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
@@ -1136,7 +1142,7 @@ export class GurpsActorSheet extends ActorSheet {
       buttons.send = {
         icon: '<i class="fas fa-paper-plane"></i>',
         label: `${sendTo}`,
-        callback: () => GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
+        callback: () => GURPS.whisperOtfToOwner(otf, event, false, this.actor) // Can't blind roll damages (yet)
       }
     }
 
@@ -1150,7 +1156,10 @@ export class GurpsActorSheet extends ActorSheet {
         for (let index = 0; index < number; index++) {
           targets[index] = `${index + 1}`
         }
-        this._onClickRoll(event, targets)
+        if (isOtf)
+          game.GURPS.handleGurpslink(event, this.actor, null, targets)
+        else
+          this._onClickRoll(event, targets)
       }
     }
 
@@ -1162,7 +1171,7 @@ export class GurpsActorSheet extends ActorSheet {
           <p>${prompt}</p>
           <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
             <label>${quantity}</label>
-            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='1'>
+            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='2'>
           </div>
           <p/>
         </div>
