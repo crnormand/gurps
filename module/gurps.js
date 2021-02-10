@@ -1,5 +1,5 @@
 // Import Modules
-import parselink from '../lib/parselink.js'
+import * as P from '../lib/parselink.js';
 
 import { GurpsActor } from './actor.js'
 import { GurpsItem } from './item.js'
@@ -598,11 +598,9 @@ async function performAction(action, actor, event, targets) {
     return true
   }
 
-  const BASIC_SWING = 'sw'
-
   if (action.type === 'deriveddamage')
     if (!!actor) {
-      let df = action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
       formula = df + action.formula
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       GURPS.damageChat.create(
@@ -610,7 +608,7 @@ async function performAction(action, actor, event, targets) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula.toUpperCase() + action.formula,
+        action.derivedformula + action.formula,
         targets
       )
       return true
@@ -618,7 +616,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'derivedroll')
     if (!!actor) {
-      let df = action.derivedformula == BASIC_SWING ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
       formula = d6ify(df + action.formula)
       prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
@@ -826,14 +824,27 @@ async function handleRoll(event, actor, targets) {
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
     let formula = element.innerText.trim()
-    let dtype = formula.replace(DamageChat.basicRegex, '').trim() // Remove any kind of damage formula
-    dtype = dtype.replace(DamageChat.fullRegex, '').trim()
-
+    let m = formula.match(DAMAGE_REGEX)
+    let dtype = ''
+    if (!!m) {
+      dtype = m[DERIVED_DAMAGE_INDEX_TYPE]
+    }
     let i = dtype.indexOf(' ')
     if (i > 0) {
       dtype = dtype.substring(0, i).trim()
       formula = formula.split(dtype)[0]
     }
+    
+    
+          GURPS.damageChat.create(
+        actor || game.user,
+        formula,
+        action.damagetype,
+        event,
+        action.derivedformula + action.formula,
+        targets
+      )
+
 
     GURPS.damageChat.create(actor, formula, dtype, event, null, targets)
     return
@@ -874,7 +885,7 @@ function gurpslink(str, clrdmods = true) {
     if (str[i] == '[') found = ++i
     if (str[i] == ']' && found >= 0) {
       output += str.substring(0, found - 1)
-      let action = parselink(str.substring(found, i), '', clrdmods)
+      let action = P.parselink(str.substring(found, i), '', clrdmods)
       if (!action.action) output += '['
       output += action.text
       if (!action.action) output += ']'
@@ -963,7 +974,7 @@ function handleGurpslink(event, actor, desc, targets) {
   let element = event.currentTarget
   let action = element.dataset.action // If we have already parsed
   if (!!action) action = JSON.parse(atob(action))
-  else action = parselink(element.innerText, desc).action
+  else action = P.parselink(element.innerText, desc).action
   this.performAction(action, actor, event, targets)
 }
 GURPS.handleGurpslink = handleGurpslink

@@ -228,17 +228,15 @@ export default class DamageChat {
     }
 
     let explainLineTwo = null
-    {
-      let sign = diceData.modifier < 0 ? '−' : '+'
-      let value = Math.abs(diceData.modifier)
+    let sign = diceData.modifier < 0 ? '−' : '+'
+    let value = Math.abs(diceData.modifier)
 
-      if (targetmods.length > 0 && diceData.multiplier > 1) {
-        explainLineTwo = `Total = (${dicePlusAdds} ${sign} ${value}) × ${diceData.multiplier} = ${damage}.`
-      } else if (targetmods.length > 0) {
-        explainLineTwo = `Total = ${dicePlusAdds} ${sign} ${value} = ${damage}.`
-      } else if (diceData.multiplier > 1) {
-        explainLineTwo = `Total = ${dicePlusAdds} × ${diceData.multiplier} = ${damage}.`
-      }
+    if (targetmods.length > 0 && diceData.multiplier > 1) {
+      explainLineTwo = `Total = (${dicePlusAdds} ${sign} ${value}) × ${diceData.multiplier} = ${damage}.`
+    } else if (targetmods.length > 0) {
+      explainLineTwo = `Total = ${dicePlusAdds} ${sign} ${value} = ${damage}.`
+    } else if (diceData.multiplier > 1) {
+      explainLineTwo = `Total = ${dicePlusAdds} × ${diceData.multiplier} = ${damage}.`
     }
 
     let hasExplanation = explainLineOne || explainLineTwo
@@ -324,129 +322,6 @@ export default class DamageChat {
       let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
       $(`[data-message-id='${messageId}']`).click((ev) => this._gurps.handleOnPdf(ev))
     })
-  }
-
-  /**
-   * Try to parse the link text as a damage roll.
-   *
-   * @param {String} linkText
-   * @returns {String} the original linkText if not recognized; otherwise a string of
-   *    the form "$1~$2~$3~$4~$5~$6", where each $n is a component of the damage roll.
-   *    For example, '2d-1x10(2)! cut' would be "2~-1~x10~(2)~!~cut".
-   */
-
-  parseLink(linkText) {
-    let parsedText = linkText.replace(damageLinkPattern, 'damage~$1~$2~$3~$4~$5~$6')
-    if (parsedText != linkText) {
-      return parsedText
-    }
-
-    // Also handle linkText of the format, "<basic-damage>+<adds>! <type>", e.g.: 'SW+2! imp'.
-    return linkText.replace(swingThrustPattern, 'derived~$1~$2~$3~$4')
-  }
-
-  /**
-   * Given pre-parsed text in the same format as produced by the parseLink(text) function,
-   * create and return an Action object.
-   *
-   * @param {String} linkText the original link text.
-   * @param {String} parsedText  a string of the form "$1~$2~$3~$4~$5~$6", where each $n is
-   *    a component of the damage roll.
-   * @returns {JSON} An JSON object that can be processed by the GURPS.performAction()
-   *    function.
-   */
-  createAction(linkText, parsedText) {
-    let type = parsedText.split('~')[0]
-    let dataString = parsedText.substr(type.length + 1)
-    if (type === 'damage') return this._createDamageAction(linkText, dataString)
-
-    if (type === 'derived') return this._createDerivedAction(linkText, dataString)
-
-    // this should never happen
-    return ui.notifications.warn(`Unexpected error processing link: "${linkText}" (${parsedText})`)
-  }
-
-  _createDamageAction(linkText, parsedText) {
-    const INDEX_DICE = 0
-    const INDEX_ADDS = 1
-    const INDEX_MULTIPLIER = 2
-    const INDEX_DIVISOR = 3
-    const INDEX_BANG = 4
-    const INDEX_TYPE = 5
-
-    let a = parsedText.split('~')
-    let damageType = a[INDEX_TYPE].trim()
-    let woundingModifier = woundModifiers[damageType]
-
-    // Not one of the recognized damage types. Ignore Armor divisor, but allow multiplier.
-    // Must convert to '*' for Foundry.
-    if (!woundingModifier) {
-      let multiplier = a[INDEX_MULTIPLIER]
-      if (!!multiplier && 'Xx'.includes(multiplier[0])) {
-        multiplier = '*' + multiplier.substr(1)
-      }
-
-      let action = {
-        orig: linkText,
-        type: 'roll',
-        formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + multiplier + a[INDEX_BANG],
-        desc: damageType, // Action description
-      }
-
-      return {
-        text: gspan(linkText, action),
-        action: action,
-      }
-    }
-
-    // Damage roll 1d+2 cut.  Not allowed an action desc (?).
-    let action = {
-      orig: linkText,
-      type: 'damage',
-      formula: a[INDEX_DICE] + 'd' + a[INDEX_ADDS] + a[INDEX_MULTIPLIER] + a[INDEX_DIVISOR] + a[INDEX_BANG],
-      damagetype: damageType,
-    }
-
-    return {
-      text: gspan(linkText, action),
-      action: action,
-    }
-  }
-
-  _createDerivedAction(linkText, parsedText) {
-    const INDEX_BASICDAMAGE = 0
-    const INDEX_ADDS = 1
-    const INDEX_BANG = 2
-    const INDEX_TYPE = 3
-
-    let a = parsedText.split('~')
-    let damageType = a[INDEX_TYPE].trim()
-    let woundingModifier = woundModifiers[damageType]
-    if (!!woundingModifier) {
-      let action = {
-        orig: linkText,
-        type: 'deriveddamage',
-        derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
-        formula: a[INDEX_ADDS] + a[INDEX_BANG],
-        damagetype: damageType,
-      }
-      return {
-        text: gspan(linkText, action),
-        action: action,
-      }
-    }
-
-    let action = {
-      orig: linkText,
-      type: 'derivedroll',
-      derivedformula: a[INDEX_BASICDAMAGE].toLowerCase(),
-      formula: a[INDEX_ADDS] + a[INDEX_BANG],
-      desc: damageType,
-    }
-    return {
-      text: gspan(linkText, action),
-      action: action,
-    }
   }
 }
 
