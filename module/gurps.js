@@ -601,6 +601,10 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'deriveddamage')
     if (!!actor) {
       let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
+      if (!df) {
+        ui.notifications.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
+        return true
+      }
       formula = df + action.formula
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       GURPS.damageChat.create(
@@ -1147,11 +1151,15 @@ GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
 GURPS.onRightClickGurpslink = function (event) {
   event.preventDefault()
+  event.stopImmediatePropagation()    // Since this may occur in note or a list (which has its own RMB handler)
   let el = event.currentTarget
   let action = el.dataset.action
   if (!!action) {
     action = JSON.parse(window.atob(action))
-    GURPS.whisperOtfToOwner(action.orig, event, action) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+    if (action.type === 'damage' || action.type === 'deriveddamage')
+      GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
+    else 
+      GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
 }
 
@@ -1231,6 +1239,60 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
   }
   ChatMessage.create(msgData)
 }
+
+GURPS.resolveDamageRoll = function(event, actor, otf, isGM, isOtf = false) {
+    let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
+    let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
+    let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
+    let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
+    let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
+
+    let buttons = {}
+
+    if (isGM) {
+      buttons.send = {
+        icon: '<i class="fas fa-paper-plane"></i>',
+        label: `${sendTo}`,
+        callback: () => GURPS.whisperOtfToOwner(otf, event, false, actor) // Can't blind roll damages (yet)
+      }
+    }
+
+    buttons.multiple = {
+      icon: '<i class="fas fa-clone"></i>',
+      label: `${multiple}`,
+      callback: html => {
+        let text = html.find('#number-rolls').val()
+        let number = parseInt(text)
+        let targets = []
+        for (let index = 0; index < number; index++) {
+          targets[index] = `${index + 1}`
+        }
+        if (isOtf)
+          game.GURPS.handleGurpslink(event, actor, null, targets)
+        else
+          game.GURPS.handleRoll(event, actor, targets)
+      }
+    }
+
+    let dlg = new Dialog({
+      title: `${title}`,
+      content: `
+        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
+          <p style='font-size: large;'><strong>${otf}</strong></p>
+          <p>${prompt}</p>
+          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
+            <label>${quantity}</label>
+            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='2'>
+          </div>
+          <p/>
+        </div>
+        `,
+      buttons: buttons,
+      default: 'send'
+    })
+    dlg.render(true)
+  }
+
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1394,7 +1456,7 @@ Hooks.once('ready', async function () {
       html.find('.pdflink').contextmenu(event => {
         event.preventDefault()
         let el = event.currentTarget
-        GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false)
+        GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false, GURPS.LastActor)
       })
     }
   })

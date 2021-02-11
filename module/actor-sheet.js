@@ -1093,7 +1093,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!action) {
       action = JSON.parse(atob(action))
       if (action.type === 'damage' || action.type === 'deriveddamage') {
-        this.resolveDamageRoll(event, action.orig, game.user.isGM, true)
+        GURPS.resolveDamageRoll(event, this.actor, action.orig, game.user.isGM, true)
       } else {
         GURPS.whisperOtfToOwner(action.orig, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       }
@@ -1118,67 +1118,13 @@ export class GurpsActorSheet extends ActorSheet {
     event.preventDefault()
     let el = event.currentTarget
     let isDamageRoll = el.dataset.hasOwnProperty('damage')
-    let isGM = game.user.isGM
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {
-      this.resolveDamageRoll(event, otf, isGM)
+      GURPS.resolveDamageRoll(event, this.actor, otf, game.user.isGM)
     } else {
       GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
-  }
-
-  async resolveDamageRoll(event, otf, isGM, isOtf = false) {
-    let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
-    let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
-    let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
-    let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
-    let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
-
-    let buttons = {}
-
-    if (isGM) {
-      buttons.send = {
-        icon: '<i class="fas fa-paper-plane"></i>',
-        label: `${sendTo}`,
-        callback: () => GURPS.whisperOtfToOwner(otf, event, false, this.actor) // Can't blind roll damages (yet)
-      }
-    }
-
-    buttons.multiple = {
-      icon: '<i class="fas fa-clone"></i>',
-      label: `${multiple}`,
-      callback: html => {
-        let text = html.find('#number-rolls').val()
-        let number = parseInt(text)
-        let targets = []
-        for (let index = 0; index < number; index++) {
-          targets[index] = `${index + 1}`
-        }
-        if (isOtf)
-          game.GURPS.handleGurpslink(event, this.actor, null, targets)
-        else
-          this._onClickRoll(event, targets)
-      }
-    }
-
-    let dlg = new Dialog({
-      title: `${title}`,
-      content: `
-        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
-          <p style='font-size: large;'><strong>${otf}</strong></p>
-          <p>${prompt}</p>
-          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
-            <label>${quantity}</label>
-            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='2'>
-          </div>
-          <p/>
-        </div>
-        `,
-      buttons: buttons,
-      default: 'send'
-    })
-    dlg.render(true)
   }
 
   async _onClickRoll(event, targets) {
@@ -1440,6 +1386,9 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html)
+    html.find('.npc-sheet').click(ev => {
+      this._onfocus(ev)
+    })
     html.find('.rollableicon').click(this._onClickRollableIcon.bind(this))
   }
 
