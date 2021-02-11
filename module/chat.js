@@ -110,9 +110,11 @@ export default function addChatHooks() {
         let m = line.match(/\/(everyone|ev) ([+-]\d+d)?([+-]\d+)?(!)? ?([FfHh][Pp])/);
         if (!!m) {
           if (game.user.isGM) {
+            let any = false
             game.actors.entities.forEach(actor => {
               let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
               if (users.length > 0) {
+                any = true
                 let mod = m[3] || ""
                 let value = mod;
                 let dice = m[2] || "";
@@ -133,6 +135,7 @@ export default function addChatHooks() {
                 priv(`${actor.name} ${dice}${mod} ${t} ${m[5]}`, msgs)
               }
             }) 
+            if (!any) priv(`There are no player owned characters!`, msgs)
           } else
             priv(`You must be a GM to execute '${line}'`, msgs)
           handled = true
@@ -143,17 +146,19 @@ export default function addChatHooks() {
         m = line.match(/\/(everyone|ev) reset ([FfHh][Pp])/);
         if (!!m) {
           if (game.user.isGM) {
+            let any = false
             game.actors.entities.forEach(actor => {
               let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
               if (users.length > 0) {
-                handled = true
+                any = true
                 let attr = m[2].toUpperCase()
                 let max = actor.data.data[attr].max
                 actor.update({ [ "data." + attr + ".value"] : max })
                 priv(`${actor.name} reset to ${max} ${m[2]}`, msgs)
               }
             })  
-          } else
+            if (!any) priv(`There are no player owned characters!`, msgs)
+         } else
             priv(`You must be a GM to execute '${line}'`, msgs)
           handled = true
           return
