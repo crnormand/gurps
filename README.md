@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.13
+# Current Release Version 0.8.14
 [If you like our work...](https://ko-fi.com/crnormand)
 
 <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
@@ -18,7 +18,10 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 This is what we are currently working on:
 
-- 0.8.14 
+- 0.8.15
+
+### History
+- 0.8.14 - 2/11/2021
     - Added Explosion damage calculation to Damage Calculator
     	- either as a single damage roll applied multiple times to different targets, or right-click on the damage roll to be prompted for the number of rolls to generate
     - Fixed a few issues with the Modifier Bucket, Targeted Chat messages, and others.
@@ -31,8 +34,6 @@ This is what we are currently working on:
     - GCA export/import now handles parents for Ads/Disads/Spells and Skills
     - Rewrite of damage parser, more uniform handling of multipliers/divisors, etc.  support for const damage [1 cut]
     - Don't tell anyone, but we now support any sided dice for non-targeted, non-derived damage rolls [3d4], [2d20 cut]
-
-### History
 
 - 0.8.13 - 2/6/2021
     - @Tratz engaged [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) to upgrade our icons.   
