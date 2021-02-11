@@ -675,7 +675,7 @@ async function performAction(action, actor, event, targets) {
     if (!!actor) {
       const [bestAction, attempts] = processLinked(action)
       if (!bestAction) {
-        ui.notifications.warn("No skill or spell named '" + attempts.join("' or '") + "' found on " + actor.name)
+        ui.notifications.warn("No skill or spell named '" + attempts.join("' or '").replace("<", "&lt;") + "' found on " + actor.name)
         return false
       }
       formula = '3d6'
@@ -690,7 +690,7 @@ async function performAction(action, actor, event, targets) {
       thing = action.name
       att = GURPS.findAttack(actordata, thing)
       if (!att) {
-        ui.notifications.warn("No melee or ranged attack named '" + action.name + "' found on " + actor.name)
+        ui.notifications.warn("No melee or ranged attack named '" + action.name.replace("<", "&lt;") + "' found on " + actor.name)
         return false
       }
       thing = att.name
@@ -740,7 +740,7 @@ async function performAction(action, actor, event, targets) {
       })
       if (!target) target = parseInt(actordata.data[action.path])
       if (target > 0) formula = '3d6'
-      else ui.notifications.warn('Unable to find a ' + action.orig + ' to roll')
+      else ui.notifications.warn('Unable to find a ' + action.orig.replace("<", "&lt;") + ' to roll on ' + actor.name)
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
@@ -840,6 +840,7 @@ GURPS.handleRoll = handleRoll
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
+  if (!desc) return null
   let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
   if (parse != desc && !!actor && !actor.isSelf) {
     let fp = parseInt(parse)
@@ -1150,14 +1151,22 @@ GURPS.onRightClickGurpslink = function (event) {
   let action = el.dataset.action
   if (!!action) {
     action = JSON.parse(window.atob(action))
-    GURPS.whisperOtfToOwner(action.orig, event, action.hasOwnProperty('blindroll') && !action.blindroll) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+    GURPS.whisperOtfToOwner(action.orig, event, action) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
 }
 
-GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
+GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
   if (!game.user.isGM) return
   if (!!otf) {
     otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
+    let canblind = false
+    if (!!blindcheck) {
+      canblind = blindcheck.hasOwnProperty('blindroll')
+      if (canblind && blindcheck.blindroll) {
+        otf = "!" + otf
+        canblind = false
+      }
+    }  
     let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
     let botf = '[!' + otf + ']'
     otf = '[' + otf + ']'
@@ -1180,12 +1189,6 @@ GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
         label: 'Whisper to ' + nms,
         callback: () => GURPS.sendOtfMessage(otf, false, users)
       }
-      if (canblind)
-        buttons.four = {
-          icon: '<i class="fas fa-user-slash"></i>',
-          label: 'Whisper Blindroll to ' + nms,
-          callback: () => GURPS.sendOtfMessage(botf, true, users)
-        }
       if (canblind)
         buttons.four = {
           icon: '<i class="fas fa-user-slash"></i>',

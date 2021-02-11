@@ -1092,11 +1092,10 @@ export class GurpsActorSheet extends ActorSheet {
     let action = el.dataset.action
     if (!!action) {
       action = JSON.parse(atob(action))
-      let isBlind = action.hasOwnProperty('blindroll') && !action.blindroll
       if (action.type === 'damage' || action.type === 'deriveddamage') {
         this.resolveDamageRoll(event, action.orig, game.user.isGM, true)
       } else {
-        GURPS.whisperOtfToOwner(action.orig, event, isBlind, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+        GURPS.whisperOtfToOwner(action.orig, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       }
     }
   }
