@@ -2191,7 +2191,7 @@ body {
 .gurps-group .results-table {
   justify-self: stretch;
   width: 100%;
-  grid-template-columns: min-content min-content 1fr;
+  grid-template-columns: auto min-content 1fr;
   min-height: 130px;
   font-size: 12px;
 }
@@ -2933,4 +2933,39 @@ ul#result-effects li {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination div {
+  color: black;
+  float: left;
+  padding: 4px 8px;
+  text-decoration: none;
+  border: 1px solid #7a7971;
+  border-right: none;
+}
+
+.pagination div.active {
+  background-color: #686868;
+  color: white;
+}
+
+.pagination div:hover:not(.active) {
+  background-color: rgba(104, 104, 104, 0.3);
+}
+
+.pagination div:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background-color: rgba(255, 255, 240, 0.8);
+}
+
+.pagination div:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-right: 1px solid #7a7971;
+  background-color: rgba(255, 255, 240, 0.8);
 }

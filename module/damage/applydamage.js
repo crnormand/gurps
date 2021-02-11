@@ -35,10 +35,11 @@ export default class ApplyDamageDialog extends Application {
   constructor(actor, damageData, options = {}) {
     super(options)
 
+    if (!Array.isArray(damageData)) damageData = [damageData]
+
     this._calculator = new CompositeDamageCalculator(actor, damageData)
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
-    this.index = 0
   }
 
   static get defaultOptions() {
@@ -52,18 +53,14 @@ export default class ApplyDamageDialog extends Application {
       height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
         ? simpleDialogHeight
         : standardDialogHeight,
-      title: 'Apply Damage Calculator'
+      title: 'Apply Damage Calculator',
     })
-  }
-
-  get calculator() {
-    return this._calculator.get(index)
   }
 
   getData() {
     let data = super.getData()
     data.actor = this.actor
-    data.CALC = this.calculator
+    data.CALC = this._calculator
     data.isSimpleDialog = this.isSimpleDialog
     return data
   }
@@ -79,6 +76,9 @@ export default class ApplyDamageDialog extends Application {
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
+    // ==== Multiple Dice ====
+    html.find('.pagination > div')
+
     // ==== Simple Damage ====
     html
       .find('#basicDamage')
@@ -90,7 +90,7 @@ export default class ApplyDamageDialog extends Application {
     // Set Apply To dropdown value.
     // When dropdown changes, update the calculator and refresh GUI.
     html.find('#apply-to').on('change', ev => {
-      this.calculator.applyTo = $(ev.currentTarget).find('option:selected').val()
+      this._calculator.applyTo = $(ev.currentTarget).find('option:selected').val()
       this.updateUI()
     })
 
@@ -101,7 +101,7 @@ export default class ApplyDamageDialog extends Application {
       .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'userEnteredDR', parseIntFrom))
 
     // If the current hit location is Random, resolve the die roll and update the hit location.
-    if (this.calculator.hitLocation === 'Random') this._randomizeHitLocation()
+    if (this._calculator.hitLocation === 'Random') this._randomizeHitLocation()
 
     // When the 'random' button is clicked, update the hit location.
     html.find('#random-location').on('click', async () => this._randomizeHitLocation())
@@ -236,13 +236,13 @@ export default class ApplyDamageDialog extends Application {
     }
   ) {
     if (element.is(':checked')) {
-      this.calculator[property] = converter(element.val())
+      this._calculator[property] = converter(element.val())
       this.updateUI()
     }
   }
 
   _updateModelFromBooleanElement(element, property) {
-    this.calculator[property] = element.is(':checked')
+    this._calculator[property] = element.is(':checked')
     this.updateUI()
   }
 
@@ -250,7 +250,7 @@ export default class ApplyDamageDialog extends Application {
    * Ask the calculator to randomly select a hit location, and return the roll used.
    */
   async _randomizeHitLocation() {
-    let roll3d = this.calculator.randomizeHitLocation()
+    let roll3d = this._calculator.randomizeHitLocation()
 
     if (isNiceDiceEnabled()) {
       game.dice3d.showForRoll(roll3d).then(display => this.updateUI())
@@ -292,14 +292,14 @@ export default class ApplyDamageDialog extends Application {
       message = await this._renderTemplate('chat-shock.html', {
         name: this.actor.data.name,
         modifier: object.amount,
-        doubled: object.amount * 2
+        doubled: object.amount * 2,
       })
     }
 
     if (object.type === 'majorwound') {
       message = await this._renderTemplate('chat-majorwound.html', {
         name: this.actor.data.name,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`
+        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
       })
     }
 
@@ -307,7 +307,7 @@ export default class ApplyDamageDialog extends Application {
       message = await this._renderTemplate('chat-headvitalshit.html', {
         name: this.actor.data.name,
         location: object.detail,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`
+        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
       })
     }
 
@@ -318,7 +318,7 @@ export default class ApplyDamageDialog extends Application {
       message = await this._renderTemplate('chat-knockback.html', {
         name: this.actor.data.name,
         yards: object.amount,
-        combinedCheck: `${dxCheck}|${acroCheck}|${judoCheck}`
+        combinedCheck: `${dxCheck}|${acroCheck}|${judoCheck}`,
       })
     }
 
@@ -327,14 +327,14 @@ export default class ApplyDamageDialog extends Application {
         name: this.actor.data.name,
         location: object.detail,
         groundModifier: 'DX-1',
-        swimFlyModifer: 'DX-2'
+        swimFlyModifer: 'DX-2',
       })
     }
 
     let msgData = {
       content: message,
       user: game.user._id,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      type: CONST.CHAT_MESSAGE_TYPES.OOC,
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {
       let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
@@ -351,8 +351,8 @@ export default class ApplyDamageDialog extends Application {
    * @param {boolean} publicly - if true, display to everyone; else display to GM and owner.
    */
   submitDirectApply(ev, publicly) {
-    let injury = this.calculator.basicDamage
-    let type = this.calculator.applyTo
+    let injury = this._calculator.basicDamage
+    let type = this._calculator.applyTo
     this.resolveInjury(ev, injury, type, publicly)
   }
 
@@ -388,7 +388,7 @@ export default class ApplyDamageDialog extends Application {
       current: current,
       location: this._calculator.hitLocation,
       type: type,
-      resultsTable: results
+      resultsTable: results,
     }
 
     if (type === 'FP') {
@@ -400,19 +400,19 @@ export default class ApplyDamageDialog extends Application {
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = {
         alias: game.user.data.name,
-        _id: game.user._id
+        _id: game.user._id,
       }
       if (!!attackingActor)
         speaker = {
           alias: attackingActor.data.name,
           _id: attackingActor._id,
-          actor: attackingActor
+          actor: attackingActor,
         }
       let messageData = {
         user: game.user._id,
         speaker: speaker,
         content: html,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       }
 
       if (!publicly) {

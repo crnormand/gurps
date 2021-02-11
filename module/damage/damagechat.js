@@ -20,10 +20,9 @@ export default class DamageChat {
 
   setup() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
-      let transfer = JSON.parse(app.data.flags.transfer)
-
       let damageMessages = html.find('.damage-message')
       if (!!damageMessages && damageMessages.length > 0) {
+        let transfer = JSON.parse(app.data.flags.transfer)
         for (let index = 0; index < damageMessages.length; index++) {
           let message = damageMessages[index]
 
@@ -45,9 +44,10 @@ export default class DamageChat {
 
       let allDamageMessage = html.find('.damage-all-message')
       if (!!allDamageMessage && allDamageMessage.length == 1) {
+        let transfer = JSON.parse(app.data.flags.transfer)
         let message = allDamageMessage[0]
-        message.setAttribute('draggable', true)
 
+        message.setAttribute('draggable', true)
         message.addEventListener('dragstart', ev => {
           $(ev.currentTarget).addClass('dragging')
           ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
@@ -57,7 +57,6 @@ export default class DamageChat {
           }
           return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
         })
-
         message.addEventListener('dragend', ev => {
           $(ev.currentTarget).removeClass('dragging')
         })
@@ -291,7 +290,6 @@ export default class DamageChat {
   }
 
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
-
     const damageType = diceData.damageType
     let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
       draggableData: draggableData,
@@ -323,11 +321,12 @@ export default class DamageChat {
       let rolls = draggableData.map(d => d.roll)
       let throws = []
       let dice = []
-      rolls.shift() // The first roll will be handled by DSN's chat handler... the reset we will manually roll
+      rolls.shift() // The first roll will be handled by DSN's chat handler... the rest we will manually roll
       rolls.forEach(r => {
         r.dice.forEach(d => {
           let type = 'd' + d.faces
-          d.results.forEach(s => dice.push({
+          d.results.forEach(s =>
+            dice.push({
               result: s.result,
               resultLabel: s.result,
               type: type,
