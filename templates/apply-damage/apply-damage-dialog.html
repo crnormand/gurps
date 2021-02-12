@@ -254,101 +254,122 @@
     <div>
       <div class='gurps-group'>
         <h4>{{localize "GURPS.addCalculationAndResults"}}</h4>
-        <div class='grid grid-3col'>
-          <div class='gurps-3col results-table'>
-            <div>{{localize "GURPS.addBasicDamage"}}</div>
-            <div>{{CALC.basicDamage}}</div>
-            <div>{{CALC.applyTo}}</div>
+        <div class='grid grid-3col' display='grid-template-columns: 3fr 3fr 2fr;'>
 
-            {{#if CALC.isRangedHalfDamage}}
-              <div name='result-effective-dmg'>{{localize "GURPS.addRangedHalfDamageShort"}}</div>
-              <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
-              <div name='result-effective-dmg'>= {{CALC.basicDamage}} &divide; 2</div>
-            {{/if}}
+          {{#if (eq CALC.viewId "all")}}
+            <div class='overflowy' style='border: 1px solid black;'>
+              <aside>Select a damage roll to see the calculation.</aside>
+              <!-- CALC.pointsToApply -->
+              <div style='display: inline-flex; flex-flow: column wrap; max-height: 150px;'>
+                {{#each CALC.calculators}}
+                  <button style='display: inline-flex; align-items: center;'>
+                    <div>{{basicDamage}}</div>
+                    <div style='color: grey;'><i class="fas fa-arrow-right"></i></div>
+                    <div style='font-weight: bold; font-size: large;'>{{pointsToApply}}</div>
+                  </button>
+                {{/each}}
+              </div>
+            </div>
+          {{else}}
+            <div class='gurps-3col results-table'>
+              <div>{{localize "GURPS.addBasicDamage"}}</div>
+              <div>{{CALC.basicDamage}}</div>
+              <div>{{CALC.applyTo}}</div>
 
-            <div id='result-dr'>{{localize "GURPS.hitLocationDR"}}</div>
-            <div>{{CALC.DR}}</div>
-            <div>{{CALC.hitLocation}}</div>
+              {{#if CALC.isRangedHalfDamage}}
+                <div name='result-effective-dmg'>{{localize "GURPS.addRangedHalfDamageShort"}}</div>
+                <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+                <div name='result-effective-dmg'>= {{CALC.basicDamage}} &divide; 2</div>
+              {{/if}}
 
-            {{#if CALC.useArmorDivisor}}
-              {{#if CALC.armorDivisor}}
-                {{#unless CALC.isExplosion}}
-                  <div>{{localize "GURPS.hitLocationDRWithDivisor"}}</div>
-                  <div>{{CALC.effectiveDR}}</div>
-                  <!-- This is a big messy looking block, but it prints either:
-                "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->
-                  <div><span>= {{CALC.DR}} &divide; {{#if CALC.isHardenedDR}}({{CALC.effectiveArmorDivisor}} =
-                        ({{CALC.armorDivisor}})
-                        {{localize "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}}){{else}}({{CALC.armorDivisor}}){{/if}}{{#unless
-                        CALC.DR}}{{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
-                {{/unless}}</span>
-          </div>
-          {{/unless}}
-          {{/if}}
-          {{/if}}
+              <div id='result-dr'>{{localize "GURPS.hitLocationDR"}}</div>
+              <div>{{CALC.DR}}</div>
+              <div>{{CALC.hitLocation}}</div>
 
-          <div id='result-penetrating'>{{localize "GURPS.addPenetrating"}}</div>
-          <div>{{CALC.penetratingDamage}}</div>
-          <div>= {{CALC.effectiveDamage}} &minus; {{CALC.effectiveDR}}</div>
+              {{#if CALC.useArmorDivisor}}
+                {{#if CALC.armorDivisor}}
+                  {{#unless CALC.isExplosion}}
+                    <div>{{localize "GURPS.hitLocationDRWithDivisor"}}</div>
+                    <div>{{CALC.effectiveDR}}</div>
+                    <!-- This is a big messy looking block, but it prints either:
+                    "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->
+                    <div><span>= {{CALC.DR}} &divide;
+                        {{#if CALC.isHardenedDR}}({{CALC.effectiveArmorDivisor}} =
+                          ({{CALC.armorDivisor}})
+                          {{localize "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
+                        {{else}}({{CALC.armorDivisor}})
+                        {{/if}}
+                        {{#unless
+                          CALC.DR}}{{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
+                        {{/unless}}</span>
+                    </div>
+                  {{/unless}}
+                {{/if}}
+              {{/if}}
 
-          <div>{{localize "GURPS.modifier"}}</div>
-          <div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
-          <div>
-            <span>= {{woundModifierText CALC}}{{#if (isWoundModAdjForLocation CALC)}}* ({{CALC.hitLocation}}) <span
-                  class="pdflink">B398</span>{{/if}}{{#if (isWoundModAdjForInjuryTol CALC)}}*
-                <span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span> <span
-                  class="pdflink">B380</span>{{/if}}
-            </span>
-          </div>
+              <div id='result-penetrating'>{{localize "GURPS.addPenetrating"}}</div>
+              <div>{{CALC.penetratingDamage}}</div>
+              <div>= {{CALC.effectiveDamage}} &minus; {{CALC.effectiveDR}}</div>
 
-          {{#if CALC.isExplosion}}
-            <div>EXPLOSION</div>
-            <div><span>×<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span></div>
-            <div><span>({{CALC.hexesFromExplosion}} {{pluralize 'hex' CALC.hexesFromExplosion}} from center)</span>
+              <div>{{localize "GURPS.modifier"}}</div>
+              <div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
+              <div>
+                <span>= {{woundModifierText CALC}}{{#if (isWoundModAdjForLocation CALC)}}* ({{CALC.hitLocation}}) <span
+                      class="pdflink">B398</span>{{/if}}{{#if (isWoundModAdjForInjuryTol CALC)}}*
+                    <span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span> <span
+                      class="pdflink">B380</span>{{/if}}
+                </span>
+              </div>
+
+              {{#if CALC.isExplosion}}
+                <div>EXPLOSION</div>
+                <div><span>×<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span></div>
+                <div><span>({{CALC.hexesFromExplosion}} {{pluralize 'hex' CALC.hexesFromExplosion}} from center)</span>
+                </div>
+              {{/if}}
+
+              <div>{{localize "GURPS.addInjury"}}</div>
+              <div>{{CALC.injury}}</div>
+              <div><span>= {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize
+                  CALC.totalWoundingModifier 2}}{{#if CALC.isExplosion}}<span> ×<sup>
+                          1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>{{/if}}</span>{{#if
+                CALC.maxInjuryForDiffuse}} ({{localize "GURPS.addDiffuseMax"}} {{CALC.maxInjuryForDiffuse}})* <span
+                      class="pdflink">B380</span>{{/if}}
+              </div>
+
+              {{#if CALC.isBluntTraumaInjury}}
+                <div>{{localize "GURPS.bluntTrauma"}}</div>
+                <div>{{CALC.effectiveBluntTrauma}}</div>
+                <div><span>= {{CALC.effectiveDamage}} ({{CALC.damageType}}) &divide; {{#if (eq CALC.damageType
+                'cr')}}5{{else}}10{{/if}} <span class="pdflink">B379</span></span></div>
+              {{/if}}
+
+              {{#if CALC.isInjuryReducedByLocation}}
+                <div>{{localize "GURPS.addLocationMax"}}</div>
+                <div>{{CALC.locationMaxHPAsInt}}</div>
+                <div>{{CALC.hitLocation}}</div>
+              {{/if}}
+
+              <!-- add a footnote that there is blunt trauma -->
             </div>
           {{/if}}
 
-          <div>{{localize "GURPS.addInjury"}}</div>
-          <div>{{CALC.injury}}</div>
-          <div><span>= {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize
-                  CALC.totalWoundingModifier 2}}{{#if CALC.isExplosion}}<span> ×<sup>
-                      1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>{{/if}}</span>{{#if
-                CALC.maxInjuryForDiffuse}} ({{localize "GURPS.addDiffuseMax"}} {{CALC.maxInjuryForDiffuse}})* <span
-                  class="pdflink">B380</span>{{/if}}
+          <div id="result-extrastuff">
+            <ul id='result-effects'>
+              {{#each CALC.effects}}
+                {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
+              {{/each}}
+            </ul>
           </div>
 
-          {{#if CALC.isBluntTraumaInjury}}
-            <div>{{localize "GURPS.bluntTrauma"}}</div>
-            <div>{{CALC.effectiveBluntTrauma}}</div>
-            <div><span>= {{CALC.effectiveDamage}} ({{CALC.damageType}}) &divide; {{#if (eq CALC.damageType
-                'cr')}}5{{else}}10{{/if}} <span class="pdflink">B379</span></span></div>
-          {{/if}}
-
-          {{#if CALC.isInjuryReducedByLocation}}
-            <div>{{localize "GURPS.addLocationMax"}}</div>
-            <div>{{CALC.locationMaxHPAsInt}}</div>
-            <div>{{CALC.hitLocation}}</div>
-          {{/if}}
-
-          <!-- add a footnote that there is blunt trauma -->
-        </div>
-
-        <div id="result-extrastuff">
-          <ul id='result-effects'>
-            {{#each CALC.effects}}
-              {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
-            {{/each}}
-          </ul>
-        </div>
-
-        <div class='apply-results'>
-          <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
-            class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
-          <button id='apply-injury-publicly'>{{localize "GURPS.addApplyInjury"}}</button>
-          <button id='apply-injury-secretly'>{{localize "GURPS.addApplyInjuryQuietly"}}</button>
+          <div class='apply-results'>
+            <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
+              class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
+            <button id='apply-injury-publicly'>{{localize "GURPS.addApplyInjury"}}</button>
+            <button id='apply-injury-secretly'>{{localize "GURPS.addApplyInjuryQuietly"}}</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>
