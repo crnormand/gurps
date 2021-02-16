@@ -17,7 +17,7 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 ### If you are looking for the latest stable release, use the manifest URL above.
 
-[Current GCA Export version: 'GCA-4' 2/08/2021 / Current GCS Export version: 'GCS-3' 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA Export version: 'GCA-5' 2/16/2021 / Current GCS Export version: 'GCS-3' 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
@@ -26,6 +26,7 @@ This is what we are currently working on:
   - Bug fix for 3D6 roll icon (at bottom of screen)
   - Bug fix for costs, counts, weights that contain commas ","
   - Bug fix for 17&18 always being a failure (even with very high skill)
+  - Updated GCA export to handle & in ad/disad/quirk/perk name
 
 0.8.14 - 2/11/2021
 
