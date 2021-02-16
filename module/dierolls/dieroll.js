@@ -36,7 +36,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     roll = Roll.create(formula);		// The formula will always be "3d6" for a "targetted" roll
     roll.roll();
     let rtotal = roll.total;
-
+    
     chatdata['rtotal'] = rtotal
     chatdata['rolls'] = roll.dice[0].results.map(it => it.result.toString()).join(',')
     chatdata['modifier'] = modifier
@@ -45,12 +45,15 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     // Actually, you aren't allowed to roll if the target is < 3... except for active defenses.   So we will just allow it and let the GM decide.
     let isCritSuccess = (rtotal <= 4) || (rtotal == 5 && finaltarget >= 15) || (rtotal == 6 && finaltarget >= 16);
     let isCritFailure = (rtotal >= 18) || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0);
-
     let margin = finaltarget - rtotal;
-
+    let seventeen = rtotal >= 17
+    let failure = seventeen || margin < 0
+ 
     chatdata['isCritSuccess'] = isCritSuccess
     chatdata['isCritFailure'] = isCritFailure
     chatdata['margin'] = margin
+    chatdata['failure'] = failure
+    chatdata['seventeen'] = seventeen
 
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {		// if the attached obj (see handleRoll()) as Recoil information, do the additional math
       let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1;

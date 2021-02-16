@@ -24,15 +24,18 @@
         <span class='crit success'>Critical Success!</span>
         {{else}}{{#if isCritFailure}}
         <span class='crit failure'>Critical Failure!</span>
-        {{else}}{{#if (lt margin 0)}}
+        {{else}}{{#if failure}}
         <span class='failure'>Failure.</span>
-        {{else}}{{#if (not (lt margin 0))}}
+        {{else}}{{#if (not failure)}}
         <span class='success'>Success!</span>
         {{/if}}{{/if}}{{/if}}{{/if}}
         <span class='aside'>
-          {{#if (eq margin 0)}}Just made it.{{/if}}
-          {{#if (gt margin 0)}}Made it by {{margin}}.{{/if}}
-          {{#if (lt margin 0)}}Missed it by {{abs margin}}.{{/if}}
+          {{#if seventeen}}17 & 18 are always failures.
+          {{else}}
+            {{#if (eq margin 0)}}Just made it.{{/if}}
+            {{#if (gt margin 0)}}Made it by {{margin}}.{{/if}}
+            {{#if (lt margin 0)}}Missed it by {{abs margin}}.{{/if}}
+          {{/if}}
         </span>
       </span>
     </div>
