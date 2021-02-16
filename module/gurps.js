@@ -587,8 +587,8 @@ async function performAction(action, actor, event, targets) {
   }
 
   if (action.type === 'roll') {
-    prefix = 'Rolling ' + action.displayformula + ' ' + action.desc
-    formula = action.rollformula
+    prefix = 'Rolling ' + ((!!action.displayformula) ? action.displayformula : action.formula) + ' ' + action.desc
+    formula = action.formula
     if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
   }
 
