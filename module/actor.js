@@ -81,14 +81,14 @@ export class GurpsActor extends Actor {
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
-    const GCAVersion = "GCA-4"
+    const GCAVersion = "GCA-5"
     const GCSVersion = "GCS-3"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
     // need to remove <p> and replace </p> with newlines from "formatted text"
-    let x = game.GURPS.cleanUpP(xml)
-    x = xmlTextToJson(x)
+    let origx = game.GURPS.cleanUpP(xml)
+    let x = xmlTextToJson(origx)
     let r = x.root
     let msg = ''
     let version ='unknown'
@@ -142,6 +142,10 @@ export class GurpsActor extends Actor {
         if (vernum < 4) {
           msg += "This file was created with an older version of the GCA Export which does not contain the 'Parent' attributes for Ads/Disads, Skills or Spells<br>"   
         }
+        if (vernum < 5) {
+          msg += "This file was created with an older version of the GCA Export which does not sanitize Notes or Ad/Disad names<br>"   
+        }
+       
       }
       if (isFoundryGCS) {
         let vernum = 1

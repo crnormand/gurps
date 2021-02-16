@@ -7,7 +7,7 @@
 'By Brian Ronnle, enhanced for Foundry VTT by Chris Normand/Nose66
 'Based on the original export filter by Graham Brand (Spyke)
 '
-Const LastUpdated = 20210208
+Const LastUpdated = 20210216
 ' Last Updated: Nov 25, 2020
 ' v1
 '
@@ -41,7 +41,7 @@ Sub Main()
 
     ' begin the xml file
     Paragraph = "<?xml version=""1.0"" encoding=""iso-8859-1""?>"
-    Paragraph = "<root release=""Foundry"" version=""GCA-4"">"
+    Paragraph = "<root release=""Foundry"" version=""GCA-5"">"
     Paragraph = "<character>"
 
     ' in Fantasy Grounds the <name> field must be at the top level
@@ -648,7 +648,7 @@ Sub PrintAds()
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
                 Paragraph = "<id-" & tag_index & ">"
-                Paragraph = "<name type=""string"">" & tmp & "</name>"
+                Paragraph = "<name type=""string"">" & UpdateEscapeChars(tmp) & "</name>"
                 ' get the points cost
                 work = CInt(Char.Items(i).TagItem("points"))
                 ' if the item is a parent, subtract the points value of its children
@@ -687,7 +687,7 @@ Sub PrintAds()
                     tag_index = LeadingZeroes(CStr(ads_index), 5)
 
                     Paragraph = "<id-" & tag_index & ">"
-                    Paragraph = "<name type=""string"">" & tmp & "</name>"
+                    Paragraph = "<name type=""string"">" & UpdateEscapeChars(tmp) & "</name>"
                     ' get the points cost
                     work = CInt(Char.Items(i).TagItem("points"))
                     ' if the item is a parent, subtract the points value of its children
@@ -728,7 +728,7 @@ Sub PrintAds()
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
                 Paragraph = "<id-" & tag_index & ">"
-                Paragraph = "<name type=""string"">" & tmp & "</name>"
+                Paragraph = "<name type=""string"">" & UpdateEscapeChars(tmp) & "</name>"
                 ' get the points cost
                 work = CInt(Char.Items(i).TagItem("points"))
                 ' if the item is a parent, subtract the points value of its children
@@ -785,7 +785,7 @@ Sub PrintDisads()
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
                 Paragraph = "<id-" & tag_index & ">"
-                Paragraph = "<name type=""string"">" & tmp & "</name>"
+                Paragraph = "<name type=""string"">" & UpdateEscapeChars(tmp) & "</name>"
                 ' get the points cost
                 work = CInt(Char.Items(i).TagItem("points"))
                 ' if the item is a parent, subtract the points value of its children
@@ -825,7 +825,7 @@ Sub PrintDisads()
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
                 Paragraph = "<id-" & tag_index & ">"
-                Paragraph = "<name type=""string"">" & tmp & "</name>"
+                Paragraph = "<name type=""string"">" & UpdateEscapeChars(tmp) & "</name>"
                 ' get the points cost
                 work = CInt(Char.Items(i).TagItem("points"))
                 ' if the item is a parent, subtract the points value of its children
@@ -1395,11 +1395,12 @@ Sub PrintNotes()
 
     ' first strip out line feeds
     tmp = Replace(PlainText(Char.Notes), Chr(10), "")
+    tmp = Replace(tmp, Chr(13), "\r")
 
     ' then print, converting carriage returns to \r
     ' (I've done this in two steps in case the pairs ever come through the other way round, e.g. after editing in a different app)
     Paragraph = "<name type=""string"">Character Note</name>"
-    Paragraph = "<text type=""string"">" & Replace(tmp, Chr(13), "\r") & "</text>"
+    Paragraph = "<text type=""string"">" & UpdateEscapeChars(tmp) & "</text>"
 
 	Paragraph = "</id-00001>"
     Paragraph = "</notelist>"
