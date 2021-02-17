@@ -1298,7 +1298,7 @@ export class Equipment extends Named {
   // OMG, do NOT fuck around with this method.   So many gotchas...
   // the worst being that you cannot use array.forEach.   You must use a for loop
   static async calcUpdate(actor, eqt, objkey) {
-    const num = (s) => { return isNaN(s) ? 0 : s }
+    const num = (s) => { return isNaN(s) ? 0 : Number(s) }
     const cln = (s) => { return (!s) ? 0 : num(s.replace(/,/g, '')) }
         
     eqt.count = cln(eqt.count)

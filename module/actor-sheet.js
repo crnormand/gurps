@@ -837,13 +837,13 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                   await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                  await this.updateParentOf(targetkey, 4)
+                  await this.updateParentOf(targetkey)
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                 }
               },
@@ -853,14 +853,14 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                   let k = targetkey + '.contains.' + GURPS.genkey(0)
                   await GURPS.insertBeforeKey(this.actor, k, object)
-                  await this.updateParentOf(k, 4)
+                  await this.updateParentOf(k)
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                 }
               }
@@ -873,7 +873,7 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
-  async updateParentOf(srckey, pindex = 3) {
+  async updateParentOf(srckey, pindex = 4) {
     // pindex = 4 for equipment, 3 for everything else.
     let sp = srckey.split('.').slice(0, pindex).join('.')
     if (sp != srckey) {
@@ -882,6 +882,7 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
+  // Non-equipment list drags
   async handleDragFor(event, dragData, type, cls) {
     if (dragData.type === type) {
       let element = event.target
@@ -906,9 +907,6 @@ export class GurpsActorSheet extends ActorSheet {
         for (let i = 0; i < max; i++) {
           if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
         }
-        //        if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
-        //        await GURPS.insertBeforeKey(this.actor, targetkey, object);
-        //        if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
 
         let d = new Dialog({
           title: object.name,
@@ -918,33 +916,19 @@ export class GurpsActorSheet extends ActorSheet {
               icon: '<i class="fas fa-level-up-alt"></i>',
               label: 'Before',
               callback: async () => {
-                if (!isSrcFirst) {
-                  await GURPS.removeKey(this.actor, srckey)
-                  await this.updateParentOf(srckey)
-                }
+                if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
                 await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                await this.updateParentOf(targetkey)
-                if (isSrcFirst) {
-                  await GURPS.removeKey(this.actor)
-                  await this.updateParentOf(srckey)
-                }
+                if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
               }
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
               label: 'In',
               callback: async () => {
-                if (!isSrcFirst) {
-                  await GURPS.removeKey(this.actor, srckey)
-                  await this.updateParentOf(srckey)
-                }
+                if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
                 let k = targetkey + '.contains.' + GURPS.genkey(0)
                 await GURPS.insertBeforeKey(this.actor, k, object)
-                await this.updateParentOf(k)
-                if (isSrcFirst) {
-                  await GURPS.removeKey(this.actor, srckey)
-                  await this.updateParentOf(srckey)
-                }
+                if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
               }
             }
           },
