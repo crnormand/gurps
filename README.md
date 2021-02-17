@@ -27,6 +27,8 @@ This is what we are currently working on:
   - Bug fix for costs, counts, weights that contain commas ","
   - Bug fix for 17&18 always being a failure (even with very high skill)
   - Updated GCA export to handle & in ad/disad/quirk/perk name
+  - Bug fix for drag and drop reordering in lists
+  - For GMs, display LastActor name above Modifier Bucket
 
 0.8.14 - 2/11/2021
 
