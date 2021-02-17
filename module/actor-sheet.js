@@ -1,7 +1,7 @@
 import { GURPS } from './gurps.js'
 import { isNiceDiceEnabled } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
-import { HitLocation } from '../module/hitlocation/hitlocation.js'
+import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
@@ -1298,6 +1298,33 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       new Equipment('New Equipment', true),
       'data.equipment.other'
     )
+    
+    html.find('#body-plan').change(async (e) => {
+      let bodyplan = e.currentTarget.value
+      if (bodyplan !== this.actor.data.data.additionalresources.bodyplan) {
+        let hitlocationTable = hitlocationDictionary[bodyplan]
+        if (!hitlocationTable) {
+          ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
+        } else {    // Try to copy any DR values from hit locations that match
+          let hitlocations = {}
+          let oldlocations = this.actor.data.data.hitlocations || {}
+          let count = 0
+          for (let loc in hitlocationTable) {
+            let hit = hitlocationTable[loc]
+            let originalLoc = Object.values(oldlocations).filter((it) => it.where === loc)
+            let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
+            let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
+            game.GURPS.put(hitlocations, it, count++)
+          }
+          await this.actor.update({ 
+            'data.-=hitlocations': null,
+            'data.additionalresources.bodyplan' : bodyplan
+          })
+          await this.actor.update({ 'data.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
+          await this.actor.update({ 'data.hitlocations': hitlocations })
+        }
+      }  
+    })
   }
 
   async _onClickBodyPlan(ev) {

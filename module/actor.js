@@ -47,38 +47,6 @@ export class GurpsActor extends Actor {
     return this.data.data.additionalresources
   }
 
-  async update(data, options) {
-    // update data for hit location if bodyplan is different
-    if (
-      data.data?.additionalresources?.bodyplan &&
-      data.data.additionalresources.bodyplan !== this._additionalResources?.bodyplan
-    ) {
-      let bodyplan = data.data.additionalresources.bodyplan
-      let hitlocationTable = HitLocations.hitlocationDictionary[bodyplan]
-      if (!hitlocationTable) {
-        ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
-      } else {
-        let hitlocations = {}
-        let oldlocations = this.data.data.hitlocations || {}
-        let count = 0
-        for (let loc in hitlocationTable) {
-          let hit = hitlocationTable[loc]
-          let originalLoc = Object.values(oldlocations).filter((it) => it.where === loc)
-          let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
-          let it = new HitLocations.HitLocation(loc, dr, hit.penalty, hit.roll)
-          game.GURPS.put(hitlocations, it, count++)
-        }
-        // Since we are in the middle of an update now, we have to let it finish, and then change the hitlocations list
-        setTimeout(async () => {
-          await this.update({ 'data.-=hitlocations': null })
-          this.update({ 'data.hitlocations': hitlocations })
-        }, 200)
-        return super.update(data, options)
-      }
-    }
-    return super.update(data, options)
-  }
-
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
     const GCAVersion = "GCA-5"
@@ -1299,7 +1267,7 @@ export class Equipment extends Named {
   // the worst being that you cannot use array.forEach.   You must use a for loop
   static async calcUpdate(actor, eqt, objkey) {
     const num = (s) => { return isNaN(s) ? 0 : Number(s) }
-    const cln = (s) => { return (!s) ? 0 : num(s.replace(/,/g, '')) }
+    const cln = (s) => { return (!s) ? 0 : num(String(s).replace(/,/g, '')) }
         
     eqt.count = cln(eqt.count)
     eqt.cost = cln(eqt.cost)

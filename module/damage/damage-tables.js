@@ -16,10 +16,12 @@ export const woundModifiers = {
   'pi+': { multiplier: 1.5, label: 'Large Piercing' },
   'pi++': { multiplier: 2, label: 'Huge Piercing' },
   tox: { multiplier: 1, label: 'Toxic' },
-  dmg: { multiplier: 1, label: 'Damage', nodisplay: true },
+  dmg: { multiplier: 1, label: 'Damage', nodisplay: false },    // This needs to be collected in the default list of hit locations... maybe remove "nodisplay"?
 }
 
+// Map possible damage types to the allowed GURPS dmage types (plus support for dmg)
 export const damageTypeMap = {
+  dmg: 'dmg',
   burn: 'burn',
   cor: 'cor',
   cr: 'cr',
@@ -30,7 +32,7 @@ export const damageTypeMap = {
   pi: 'pi',
   'pi+': 'pi+',
   'pi++': 'pi++',
-  toxic: 'tox',
+  tox: 'tox',
   burning: 'burn',
   corrosion: 'cor',
   corrosive: 'cor',
@@ -40,8 +42,11 @@ export const damageTypeMap = {
   fatigue: 'fat',
   impaling: 'imp',
   'small piercing': 'pi-',
+  'piercing-': 'pi-',
   piercing: 'pi',
   'large piercing': 'pi+',
+  'piercing+': 'pi+',
   'huge piercing': 'pi++',
+  'piercing++': 'pi++',
   toxic: 'tox',
 }
