@@ -1322,9 +1322,18 @@ Hooks.once('init', async function () {
   CONFIG.Item.entityClass = GurpsItem
 
   // preload drag-and-drop image
-  let img = new Image()
-  img.src = 'systems/gurps/icons/blood-splatter-clipart-small.png'
-  GURPS.damageDragImage = img
+  {
+    let img = new Image()
+    img.src = 'systems/gurps/icons/blood-splatter-clipart-small.png'
+    GURPS.damageDragImage = img
+  }
+
+  // LOAD ALL THE THINGS!!!
+  {
+    let img = new Image()
+    img.src = 'systems/gurps/icons/all-the-things-transparent.png'
+    GURPS.allTheThingsImage = img
+  }
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet)

@@ -24,32 +24,48 @@ const HOMOGENOUS = 'homogenous'
 // -1 means 'Ignores DR'
 const armorDivisorSteps = [-1, 100, 5, 3, 2, 1]
 
-export class DamageCalculator {
+export class CompositeDamageCalculator {
+  /**
+   * Create a composite damage calculator, which is a damage calculator that
+   *  wraps multiple damage calculators.
+   *
+   * The basic assumption made by this composite damage calculation is that
+   * all variables (hit location, armor divisor, damage type, etc) are the same
+   * for every damage roll; the only thing that is different is the amount of
+   * damage.
+   *
+   * @param {*} defender
+   * @param {Array} damageData
+   */
   constructor(defender, damageData) {
     this._useBluntTrauma = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLUNT_TRAUMA)
     this._useLocationModifiers = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_LOCATION_MODIFIERS)
     this._useArmorDivisor = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_APPLY_DIVISOR)
 
     this._defender = defender
-    this._attacker = damageData.attacker
+
+    this._calculators = damageData.map(data => new DamageCalculator(this, data))
+
+    this.viewId = this._calculators.length == 1 ? 0 : 'all'
 
     this._defaultWoundingModifiers = Object.keys(DamageTables.woundModifiers).reduce(function (r, e) {
       if (!DamageTables.woundModifiers[e].nodisplay) r[e] = DamageTables.woundModifiers[e]
       return r
     }, {})
 
-    if (Object.keys(this._defaultWoundingModifiers).includes(damageData.damageType))
-      this._damageType = damageData.damageType
+    this._attacker = damageData[0].attacker
+
+    if (Object.keys(this._defaultWoundingModifiers).includes(damageData[0].damageType))
+      this._damageType = damageData[0].damageType
     else {
-      let temp = DamageTables.damageTypeMap[damageData.damageType]
+      let temp = DamageTables.damageTypeMap[damageData[0].damageType]
       if (temp) this._damageType = temp
       else this._damageType = 'none'
     }
 
-    this._armorDivisor = damageData.armorDivisor
-    this._basicDamage = damageData.damage
-
     this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
+
+    this._armorDivisor = damageData[0].armorDivisor
 
     this._hitLocation = this._defender.defaultHitLocation
     this._previousHitLocation = this._hitLocation
@@ -61,7 +77,6 @@ export class DamageCalculator {
 
     this._isRangedHalfDamage = false
     this._isFlexibleArmor = false
-    this._bluntTrauma = null
 
     this._isVulnerable = false
     this._vulnerabilityMultiple = 2
@@ -71,38 +86,203 @@ export class DamageCalculator {
 
     this._isInjuryTolerance = false
     this._injuryToleranceType = null
-    this._maxInjuryForDiffuse = null
 
     this._isExplosion = false
     this._hexesFromExplosion = 1
     this._explosionDivisor = 1
   }
 
-  get attacker() {
-    return this._attacker
+  get(viewId) {
+    if (viewId === 'all') return this
+    return this._calculators[viewId]
   }
-  get HP() {
-    return this._defender.data.data.HP
+
+  get additionalWoundModifier() {
+    return this._additionalWoundModifier
   }
-  get FP() {
-    return this._defender.data.data.FP
+
+  set additionalWoundModifier(value) {
+    this._additionalWoundModifier = value
   }
-  get attributes() {
-    return this._defender.data.data.attributes
-  }
+
   get allHitLocations() {
     return this._defender.data.data.hitlocations
   }
-  get hitLocationsWithDR() {
-    return this._defender.hitLocationsWithDR
+
+  get armorDivisor() {
+    return this._armorDivisor
   }
 
-  get _hitLocationRole() {
-    let hitLocation = this._defender._hitLocationRolls[this._hitLocation]
-    if (!!hitLocation?.role) {
-      return hitLocation.role
+  get applyTo() {
+    return this._applyTo
+  }
+
+  set applyTo(value) {
+    this._applyTo = value
+  }
+
+  get attacker() {
+    return this._attacker
+  }
+
+  get attributes() {
+    return this._defender.data.data.attributes
+  }
+
+  /**
+   * Override at the individual dice roll level.
+   */
+  get basicDamage() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].basicDamage
+  }
+
+  set basicDamage(value) {
+    if (this._viewId === 'all') return
+    this._calculators[this._viewId].basicDamage = value
+  }
+
+  get calculators() {
+    return this._calculators
+  }
+
+  get damageType() {
+    return this._damageType
+  }
+
+  set damageType(type) {
+    this._damageType = type
+  }
+
+  get defaultWoundModifiers() {
+    return this._defaultWoundingModifiers
+  }
+
+  // return the DR indicated by the Hit Location
+  get DR() {
+    if (this._hitLocation === 'Random') return 0
+
+    if (this._hitLocation === 'User Entered') return this._userEnteredDR
+
+    if (this._hitLocation === 'Large-Area') {
+      let lowestDR = Number.POSITIVE_INFINITY
+      let torsoDR = 0
+
+      // find the location with the lowest DR
+      for (let value of this._defender.hitLocationsWithDR.filter(it => it.roll.length > 0)) {
+        if (value.dr < lowestDR) lowestDR = value.dr
+        if (value.where === 'Torso') torsoDR = value.dr
+      }
+      // return the average of torso and lowest dr
+      return Math.ceil((lowestDR + torsoDR) / 2)
     }
-    return null
+
+    return this._defender.hitLocationsWithDR.filter(it => it.where === this._hitLocation).map(it => it.dr)[0]
+  }
+
+  get effects() {
+    // TODO accumulate effects
+    // each call to _calculator.effects returns an array of effects
+    // create a flattened array of effects
+    let effects = []
+    this._calculators.map(calculator => calculator.effects).forEach(effect => effects.push(effect))
+    effects = effects.flat()
+
+    let results = []
+
+    // process shock -- shock is the sum of all shock to the maximum of 4
+    let shock = effects
+      .filter(it => it.type === 'shock')
+      .map(it => it.amount)
+      .reduce((acc, value, index, array) => {
+        return acc + value
+      }, 0)
+
+    if (shock > 0) {
+      results.push({
+        type: 'shock',
+        amount: Math.min(shock, 4),
+      })
+    }
+
+    // process knockback -- value and modifier is the sum across all hits
+    let allKnockbacks = effects.filter(it => it.type === 'knockback')
+
+    let knockbackValue = allKnockbacks
+      .map(it => it.amount)
+      .reduce((acc, value, index, array) => {
+        return acc + value
+      }, 0)
+
+    let knockbackMods = allKnockbacks
+      .map(it => it.modifier)
+      .reduce((acc, value, index, array) => {
+        return acc + value
+      }, 0)
+
+    if (allKnockbacks.length > 0) {
+      results.push({
+        type: 'knockback',
+        amount: knockbackValue,
+        modifier: knockbackMods,
+      })
+    }
+
+    // process crippling -- just keep one of them
+    let crippling = effects.find(it => it.type === 'crippling')
+    if (!!crippling) {
+      results.push(crippling)
+    }
+
+    // process major wound -- just keep one of them
+    let majorwound = effects.find(it => it.type === 'majorwound')
+    if (!!majorwound) {
+      results.push(majorwound)
+    }
+
+    return results
+  }
+
+  get effectiveArmorDivisor() {
+    // Armor Divisors do not apply to Explosions, (B414)
+    if (this._isExplosion) return 1
+
+    if (this._armorDivisor > 1 && this._isHardenedDR) {
+      let maxIndex = armorDivisorSteps.length - 1
+      let index = armorDivisorSteps.indexOf(this._armorDivisor)
+      if (index !== -1) {
+        index = Math.min(index + this._hardenedDRLevel, maxIndex)
+        return armorDivisorSteps[index]
+      }
+    }
+    return this._armorDivisor
+  }
+
+  get effectiveBluntTrauma() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].effectiveBluntTrauma
+  }
+
+  get effectiveDamage() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].effectiveDamage
+  }
+
+  // figure out the current DR modified by armor divisor, if necessary
+  get effectiveDR() {
+    let dr = this.DR
+    if (this._useArmorDivisor && !!this._armorDivisor) {
+      // -1 divisor means "Ignore DR"
+      if (this.effectiveArmorDivisor === -1) return 0
+
+      let tempDR = this.effectiveArmorDivisor < 1 && dr === 0 ? 1 : dr
+      return Math.floor(tempDR / this.effectiveArmorDivisor)
+    }
+    return dr
+  }
+
+  get effectiveVulnerabilityMultiple() {
+    return this._isVulnerable ? this._vulnerabilityMultiple : 1
   }
 
   get effectiveWoundModifiers() {
@@ -111,25 +291,25 @@ export class DamageCalculator {
     if (this._useLocationModifiers) {
       switch (this._hitLocation) {
         case 'Vitals':
-          table = this.vitalsWoundModifiers
+          table = this._vitalsWoundModifiers
           break
 
         case 'Skull':
         case 'Eye':
-          table = this.skullEyeWoundModifiers
+          table = this._skullEyeWoundModifiers
           break
 
         case 'Face':
-          table = this.faceWoundModifiers
+          table = this._faceWoundModifiers
           break
 
         case 'Neck':
-          table = this.neckWoundModifiers
+          table = this._neckWoundModifiers
           break
 
         default: {
-          if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._hitLocationRole))
-            table = this.extremityWoundModifiers
+          if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this.hitLocationRole))
+            table = this._extremityWoundModifiers
           else table = this.defaultWoundModifiers
         }
       }
@@ -180,48 +360,269 @@ export class DamageCalculator {
     return table
   }
 
-  _modifyForInjuryTolerance(result, value) {
-    let m = Math.min(result.multiplier, value)
-
-    if (m <= result.multiplier) {
-      result.multiplier = m
-      result.changed = 'injury-tolerance'
+  get explosionDivisor() {
+    if (this._isExplosion) {
+      return this._hexesFromExplosion * 3
     }
+    return 1
   }
 
-  get defaultWoundModifiers() {
-    return this._defaultWoundingModifiers
+  get FP() {
+    return this._defender.data.data.FP
   }
 
-  get vitalsWoundModifiers() {
+  get hardenedDRLevel() {
+    return this._hardenedDRLevel
+  }
+
+  set hardenedDRLevel(value) {
+    this._hardenedDRLevel = value
+  }
+
+  get hasAdditionalWoundingModifiers() {
+    return this.additionalWoundModifier > 0 || this.effectiveVulnerabilityMultiple > 0
+  }
+
+  get hexesFromExplosion() {
+    return this._hexesFromExplosion
+  }
+
+  set hexesFromExplosion(value) {
+    this._hexesFromExplosion = value
+  }
+
+  get hitLocation() {
+    return this._hitLocation
+  }
+
+  set hitLocation(text) {
+    this._hitLocation = text
+  }
+
+  get hitLocationRole() {
+    let hitLocation = this._defender._hitLocationRolls[this._hitLocation]
+    if (!!hitLocation?.role) {
+      return hitLocation.role
+    }
+    return null
+  }
+
+  get hitLocationsWithDR() {
+    return this._defender.hitLocationsWithDR
+  }
+
+  get HP() {
+    return this._defender.data.data.HP
+  }
+
+  get injury() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].injury
+  }
+
+  get injuryToleranceType() {
+    return this._injuryToleranceType
+  }
+
+  set injuryToleranceType(value) {
+    this._injuryToleranceType = value
+  }
+
+  get isCrippleableLocation() {
+    return [HitLocation.EXTREMITY, HitLocation.LIMB].includes(this.hitLocationRole) || this._hitLocation === 'Eye'
+  }
+
+  get isBluntTraumaInjury() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].isBluntTraumaInjury
+  }
+
+  get isExplosion() {
+    return this._isExplosion
+  }
+
+  set isExplosion(value) {
+    if (value && !this._isExplosion) {
+      this._previousHitLocation = this._hitLocation
+      this._hitLocation = 'Large-Area'
+    } else if (!value && this._isExplosion) {
+      this._hitLocation = this._previousHitLocation
+    }
+    this._isExplosion = value
+  }
+
+  get isFlexibleArmor() {
+    return this._isFlexibleArmor
+  }
+
+  set isFlexibleArmor(value) {
+    this._isFlexibleArmor = value
+  }
+
+  get isHardenedDR() {
+    return this._isHardenedDR
+  }
+
+  set isHardenedDR(value) {
+    this._isHardenedDR = value
+  }
+
+  get isInjuryReducedByLocation() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].isInjuryReducedByLocation
+  }
+
+  get isInjuryTolerance() {
+    return this._isInjuryTolerance
+  }
+
+  set isInjuryTolerance(value) {
+    this._isInjuryTolerance = value
+  }
+
+  get isRangedHalfDamage() {
+    return this._isRangedHalfDamage
+  }
+
+  set isRangedHalfDamage(value) {
+    this._isRangedHalfDamage = value
+  }
+
+  get isVulnerable() {
+    return this._isVulnerable
+  }
+
+  set isVulnerable(value) {
+    this._isVulnerable = value
+  }
+
+  get isWoundModifierAdjustedForInjuryTolerance() {
+    let table = this.effectiveWoundModifiers
+    let entries = Object.keys(table).filter(key => table[key].changed === 'injury-tolerance')
+    return entries.length > 0
+  }
+
+  get isWoundModifierAdjustedForLocation() {
+    let table = this.effectiveWoundModifiers
+    let entries = Object.keys(table).filter(key => table[key].changed === 'hitlocation')
+    return entries.length > 0
+  }
+
+  get length() {
+    return this._calculators.length
+  }
+
+  get locationMaxHP() {
+    if (this.hitLocationRole === HitLocation.LIMB) return this.HP.max / 2
+    if (this.hitLocationRole === HitLocation.EXTREMITY) return this.HP.max / 3
+    if (this.hitLocation === 'Eye') return this.HP.max / 10
+    return this.HP.max
+  }
+
+  get locationMaxHPAsInt() {
+    return Math.floor(this.locationMaxHP)
+  }
+
+  get maxInjuryForDiffuse() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].maxInjuryForDiffuse
+  }
+
+  get penetratingDamage() {
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].penetratingDamage
+  }
+
+  get pointsToApply() {
+    return this._calculators.map(it => it.pointsToApply).reduce((acc, value) => acc + value)
+  }
+
+  get totalBasicDamage() {
+    return this._calculators.map(it => it.basicDamage).reduce((acc, value) => acc + value)
+  }
+
+  get totalWoundingModifier() {
+    return (this.woundingModifier + this._additionalWoundModifier) * this.effectiveVulnerabilityMultiple
+  }
+
+  get useArmorDivisor() {
+    return this._useArmorDivisor
+  }
+
+  set useArmorDivisor(value) {
+    this._useArmorDivisor = value
+  }
+
+  get useBluntTrauma() {
+    return this._useBluntTrauma
+  }
+
+  set useBluntTrauma(value) {
+    this._useBluntTrauma = value
+  }
+
+  get useLocationModifiers() {
+    return this._useLocationModifiers
+  }
+
+  set useLocationModifiers(value) {
+    this._useLocationModifiers = value
+  }
+
+  get userEnteredDR() {
+    return this._userEnteredDR
+  }
+
+  set userEnteredDR(value) {
+    this._userEnteredDR = value
+  }
+
+  get userEnteredWoundModifier() {
+    return this._userEnteredWoundModifier
+  }
+
+  set userEnteredWoundModifier(value) {
+    this._userEnteredWoundModifier = value
+  }
+
+  get viewId() {
+    return this._viewId
+  }
+
+  set viewId(value) {
+    this._viewId = value
+  }
+
+  get vulnerabilityMultiple() {
+    return this._vulnerabilityMultiple
+  }
+
+  set vulnerabilityMultiple(value) {
+    this._vulnerabilityMultiple = value
+  }
+
+  get woundingModifier() {
+    if (this._damageType === 'none') return 1
+    if (this._damageType === 'User Entered') return this._userEnteredWoundModifier
+
+    return this.effectiveWoundModifiers[this._damageType].multiplier
+  }
+
+  get _extremityWoundModifiers() {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
     // update the ones that need it
     Object.keys(results)
-      .filter((key) => ['imp', ...piercing].includes(key))
-      .forEach((key) => {
-        results[key].multiplier = 3
+      .filter(key => ['imp', 'pi+', 'pi++'].includes(key))
+      .forEach(key => {
+        results[key].multiplier = 1
         results[key].changed = 'hitlocation'
       })
     return results
   }
 
-  get skullEyeWoundModifiers() {
-    // copy the properties into my local variable
-    let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
-
-    // update the ones that need it
-    Object.keys(results)
-      .filter((key) => key !== 'tox') // everything EXCEPT toxic
-      .forEach((key) => {
-        results[key].multiplier = 4
-        results[key].changed = 'hitlocation'
-      })
-    return results
-  }
-
-  get faceWoundModifiers() {
+  get _faceWoundModifiers() {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
@@ -231,7 +632,7 @@ export class DamageCalculator {
     return results
   }
 
-  get neckWoundModifiers() {
+  get _neckWoundModifiers() {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
@@ -245,18 +646,66 @@ export class DamageCalculator {
     return results
   }
 
-  get extremityWoundModifiers() {
+  get _skullEyeWoundModifiers() {
     // copy the properties into my local variable
     let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
 
     // update the ones that need it
     Object.keys(results)
-      .filter((key) => ['imp', 'pi+', 'pi++'].includes(key))
-      .forEach((key) => {
-        results[key].multiplier = 1
+      .filter(key => key !== 'tox') // everything EXCEPT toxic
+      .forEach(key => {
+        results[key].multiplier = 4
         results[key].changed = 'hitlocation'
       })
     return results
+  }
+
+  get _vitalsWoundModifiers() {
+    // copy the properties into my local variable
+    let results = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
+
+    // update the ones that need it
+    Object.keys(results)
+      .filter(key => ['imp', ...piercing].includes(key))
+      .forEach(key => {
+        results[key].multiplier = 3
+        results[key].changed = 'hitlocation'
+      })
+    return results
+  }
+
+  _modifyForInjuryTolerance(result, value) {
+    let m = Math.min(result.multiplier, value)
+
+    if (m <= result.multiplier) {
+      result.multiplier = m
+      result.changed = 'injury-tolerance'
+    }
+  }
+
+  randomizeHitLocation() {
+    let roll3d = Roll.create('3d6')
+    roll3d.roll()
+    let total = roll3d.total
+
+    let loc = this._defender.hitLocationsWithDR.filter(it => it.roll.includes(total))
+    if (!!loc && loc.length > 0) this._hitLocation = loc[0].where
+    else ui.notifications.warn(`There are no hit locations defined for #${total}`)
+    return roll3d
+  }
+}
+
+class DamageCalculator {
+  /**
+   *
+   * @param {CompositeDamageCalculator} parent
+   * @param {*} damageData
+   */
+  constructor(parent, damageData) {
+    this._parent = parent
+    this._basicDamage = damageData.damage
+    this._maxInjuryForDiffuse = null
+    this._bluntTrauma = null
   }
 
   // --- DAMAGE CALCULATION ---
@@ -292,76 +741,11 @@ export class DamageCalculator {
   //    location if using "Hit Location Wounding Modifiers".
 
   get effectiveDamage() {
-    return this._isRangedHalfDamage ? Math.floor(this._basicDamage / 2) : this._basicDamage
-  }
-
-  // return the DR indicated by the Hit Location
-  get DR() {
-    if (this._hitLocation === 'Random') return 0
-
-    if (this._hitLocation === 'User Entered') return this._userEnteredDR
-
-    if (this._hitLocation === 'Large-Area') {
-      let lowestDR = Number.POSITIVE_INFINITY
-      let torsoDR = 0
-
-      // find the location with the lowest DR
-      for (let value of this._defender.hitLocationsWithDR.filter((it) => it.roll.length > 0)) {
-        if (value.dr < lowestDR) lowestDR = value.dr
-        if (value.where === 'Torso') torsoDR = value.dr
-      }
-      // return the average of torso and lowest dr
-      return Math.ceil((lowestDR + torsoDR) / 2)
-    }
-
-    return this._defender.hitLocationsWithDR.filter((it) => it.where === this._hitLocation).map((it) => it.dr)[0]
-  }
-
-  get effectiveArmorDivisor() {
-    // Armor Divisors do not apply to Explosions, (B414)
-    if (this._isExplosion) return 1
-
-    if (this._armorDivisor > 1 && this._isHardenedDR) {
-      let maxIndex = armorDivisorSteps.length - 1
-      let index = armorDivisorSteps.indexOf(this._armorDivisor)
-      if (index !== -1) {
-        index = Math.min(index + this._hardenedDRLevel, maxIndex)
-        return armorDivisorSteps[index]
-      }
-    }
-    return this._armorDivisor
-  }
-
-  // figure out the current DR modified by armor divisor, if necessary
-  get effectiveDR() {
-    let dr = this.DR
-    if (this._useArmorDivisor && this._armorDivisor && this._armorDivisor !== 0) {
-      // -1 divisor means "Ignore DR"
-      if (this.effectiveArmorDivisor === -1) return 0
-
-      let tempDR = this.effectiveArmorDivisor < 1 && dr === 0 ? 1 : dr
-      return Math.floor(tempDR / this.effectiveArmorDivisor)
-    }
-    return dr
+    return this._parent.isRangedHalfDamage ? Math.floor(this._basicDamage / 2) : this._basicDamage
   }
 
   get penetratingDamage() {
-    return Math.max(0, this.effectiveDamage - this.effectiveDR)
-  }
-
-  get woundingModifier() {
-    if (this._damageType === 'none') return 1
-    if (this._damageType === 'User Entered') return this._userEnteredWoundModifier
-
-    return this.effectiveWoundModifiers[this._damageType].multiplier
-  }
-
-  get effectiveVulnerabilityMultiple() {
-    return this._isVulnerable ? this._vulnerabilityMultiple : 1
-  }
-
-  get totalWoundingModifier() {
-    return (this.woundingModifier + this._additionalWoundModifier) * this.effectiveVulnerabilityMultiple
+    return Math.max(0, this.effectiveDamage - this._parent.effectiveDR)
   }
 
   /**
@@ -369,13 +753,15 @@ export class DamageCalculator {
    */
   get injury() {
     this._maxInjuryForDiffuse = null
-    let injury = Math.floor(this.penetratingDamage * this.totalWoundingModifier / this.explosionDivisor)
+    let injury = Math.floor(
+      (this.penetratingDamage * this._parent.totalWoundingModifier) / this._parent.explosionDivisor
+    )
 
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
-    if (this._isInjuryTolerance && this._injuryToleranceType === DIFFUSE) {
+    if (this._parent.isInjuryTolerance && this._parent.injuryToleranceType === DIFFUSE) {
       // ...Impaling and piercing attacks (of any size) never do more than 1 HP of injury,
       // regardless of penetrating damage!
-      if (['imp', ...piercing].includes(this._damageType)) {
+      if (['imp', ...piercing].includes(this._parent.damageType)) {
         this._maxInjuryForDiffuse = Math.min(1, injury)
         return this._maxInjuryForDiffuse
       }
@@ -390,8 +776,8 @@ export class DamageCalculator {
 
   get calculatedBluntTrauma() {
     if (this.effectiveDamage === 0 || this.penetratingDamage > 0) return 0
-    if (!bluntTraumaTypes.includes(this._damageType)) return 0
-    if (this._damageType === 'cr') return Math.floor(this.effectiveDamage / 5)
+    if (!bluntTraumaTypes.includes(this._parent.damageType)) return 0
+    if (this._parent.damageType === 'cr') return Math.floor(this.effectiveDamage / 5)
     return Math.floor(this.effectiveDamage / 10)
   }
 
@@ -405,7 +791,11 @@ export class DamageCalculator {
   get unmodifiedPointsToApply() {
     let injury = this.injury
     let pointsToApply =
-      injury === 0 ? (this._isFlexibleArmor && this._useBluntTrauma ? this.effectiveBluntTrauma : 0) : injury
+      injury === 0
+        ? this._parent.isFlexibleArmor && this._parent.useBluntTrauma
+          ? this.effectiveBluntTrauma
+          : 0
+        : injury
     return pointsToApply
   }
 
@@ -415,68 +805,56 @@ export class DamageCalculator {
    */
   get pointsToApply() {
     let pointsToApply = this.unmodifiedPointsToApply
-    if (this._useLocationModifiers) {
-      if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._hitLocationRole)) {
-        return Math.min(pointsToApply, Math.floor(this.locationMaxHP))
+    if (this._parent.useLocationModifiers) {
+      if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._parent.hitLocationRole)) {
+        return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
       }
     }
     return pointsToApply
   }
 
   get calculatedShock() {
-    let factor = Math.max(1, Math.floor(this.HP.max / 10))
+    let factor = Math.max(1, Math.floor(this._parent.HP.max / 10))
     let shock = Math.min(4, Math.floor(this.pointsToApply / factor))
     return shock
   }
 
   get isMajorWound() {
-    return this.pointsToApply > this.HP.max / 2
+    return this.pointsToApply > this._parent.HP.max / 2
   }
 
   get penaltyToHTRollForStunning() {
     // Diffuse or Homogenous: Ignore all knockdown modifiers for hit location.
-    if (this._isInjuryTolerance && (this._injuryToleranceType === DIFFUSE || this._injuryToleranceType === HOMOGENOUS))
+    let isInjuryTolerance = this._parent.isInjuryTolerance
+    let injuryToleranceType = this._parent.injuryToleranceType
+    if (isInjuryTolerance && (injuryToleranceType === DIFFUSE || injuryToleranceType === HOMOGENOUS)) {
       return 0
+    }
 
-    if (['Face', 'Vitals', 'Groin'].includes(this._hitLocation)) return 5
+    if (['Face', 'Vitals', 'Groin'].includes(this._parent.hitLocation)) return 5
 
     // No Brain (Diffuse or Homogenous) - blows to skull or eye are no different than a blow to
     // the face, except that eyes can still be crippled. (Handled earlier in this method.)
-    if (this.isMajorWound && ['Eye', 'Skull', 'Brain'].includes(this._hitLocation)) return 10
+    if (this.isMajorWound && ['Eye', 'Skull', 'Brain'].includes(this._parent.hitLocation)) return 10
 
     return 0
   }
 
-  get _isCrippleableLocation() {
-    return [HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._hitLocationRole) || this._hitLocation === 'Eye'
-  }
-
   get isCripplingInjury() {
-    if (this._useLocationModifiers && this._isCrippleableLocation) {
-      return this.unmodifiedPointsToApply > this.locationMaxHP
+    if (this._parent.useLocationModifiers && this._parent.isCrippleableLocation) {
+      return this.unmodifiedPointsToApply > this._parent.locationMaxHP
     }
     return false
   }
 
-  get locationMaxHP() {
-    if (this._hitLocationRole === HitLocation.LIMB) return this.HP.max / 2
-    if (this._hitLocationRole === HitLocation.EXTREMITY) return this.HP.max / 3
-    if (this._hitLocation === 'Eye') return this.HP.max / 10
-    return this.HP.max
-  }
-
-  get locationMaxHPAsInt() {
-    return Math.floor(this.locationMaxHP)
-  }
-
   get isInjuryReducedByLocation() {
-    return this._useLocationModifiers && this.isCripplingInjury && this._hitLocation !== 'Eye'
+    return this._parent.useLocationModifiers && this.isCripplingInjury && this._parent.hitLocation !== 'Eye'
   }
 
   get isKnockbackEligible() {
-    if (this._damageType === 'cr' && this._basicDamage > 0) return true
+    if (this._parent.damageType === 'cr' && this._basicDamage > 0) return true
 
-    return this._damageType === 'cut' && this._basicDamage > 0 && this.penetratingDamage === 0
+    return this._parent.damageType === 'cut' && this._basicDamage > 0 && this.penetratingDamage === 0
   }
 
   /*
@@ -506,10 +884,10 @@ export class DamageCalculator {
           type: 'majorwound',
           modifier: this.penaltyToHTRollForStunning,
         })
-      } else if ([...head, 'Vitals'].includes(this._hitLocation) && shock > 0) {
+      } else if ([...head, 'Vitals'].includes(this._parent.hitLocation) && shock > 0) {
         _effects.push({
           type: 'headvitalshit',
-          detail: this._hitLocation,
+          detail: this._parent.hitLocation,
           modifier: this.penaltyToHTRollForStunning,
         })
       }
@@ -518,8 +896,8 @@ export class DamageCalculator {
       if (this.isCripplingInjury) {
         _effects.push({
           type: 'crippling',
-          amount: Math.floor(this.locationMaxHP),
-          detail: this._hitLocation,
+          amount: Math.floor(this._parent.locationMaxHP),
+          detail: this._parent.hitLocation,
           reduceInjury: this.isInjuryReducedByLocation,
         })
         if (!isMajorWound)
@@ -531,7 +909,7 @@ export class DamageCalculator {
     }
 
     if (this.isKnockbackEligible) {
-      let knockback = Math.floor(this._basicDamage / (this.attributes.ST.value - 2))
+      let knockback = Math.floor(this._basicDamage / (this._parent.attributes.ST.value - 2))
       if (knockback > 0) {
         let modifier = knockback - 1
         _effects.push({
@@ -556,200 +934,29 @@ export class DamageCalculator {
     return _effects
   }
 
-  randomizeHitLocation() {
-    let roll3d = Roll.create('3d6')
-    roll3d.roll()
-    let total = roll3d.total
-
-    let loc = this._defender.hitLocationsWithDR.filter((it) => it.roll.includes(total))
-    if (!!loc && loc.length > 0) this._hitLocation = loc[0].where
-    else ui.notifications.warn(`There are no hit locations defined for #${total}`)
-    return roll3d
-  }
-
   get basicDamage() {
     return this._basicDamage
   }
+
   set basicDamage(value) {
     this._basicDamage = value
-  }
-
-  get armorDivisor() {
-    return this._armorDivisor
-  }
-
-  get damageType() {
-    return this._damageType
-  }
-  set damageType(type) {
-    this._damageType = type
-  }
-
-  get applyTo() {
-    return this._applyTo
-  }
-  set applyTo(value) {
-    this._applyTo = value
-  }
-
-  get hitLocation() {
-    return this._hitLocation
-  }
-  set hitLocation(text) {
-    this._hitLocation = text
-  }
-
-  get userEnteredDR() {
-    return this._userEnteredDR
-  }
-  set userEnteredDR(value) {
-    this._userEnteredDR = value
-  }
-
-  get useArmorDivisor() {
-    return this._useArmorDivisor
-  }
-  set useArmorDivisor(value) {
-    this._useArmorDivisor = value
-  }
-
-  get userEnteredWoundModifier() {
-    return this._userEnteredWoundModifier
-  }
-  set userEnteredWoundModifier(value) {
-    this._userEnteredWoundModifier = value
-  }
-
-  get additionalWoundModifier() {
-    return this._additionalWoundModifier
-  }
-  set additionalWoundModifier(value) {
-    this._additionalWoundModifier = value
-  }
-
-  get useBluntTrauma() {
-    return this._useBluntTrauma
-  }
-  set useBluntTrauma(value) {
-    this._useBluntTrauma = value
   }
 
   get bluntTrauma() {
     return this._bluntTrauma
   }
+
   set bluntTrauma(value) {
     this._bluntTrauma = value
   }
 
-  get isFlexibleArmor() {
-    return this._isFlexibleArmor
-  }
-  set isFlexibleArmor(value) {
-    this._isFlexibleArmor = value
-  }
-
-  get useLocationModifiers() {
-    return this._useLocationModifiers
-  }
-  set useLocationModifiers(value) {
-    this._useLocationModifiers = value
-  }
-
-  get isRangedHalfDamage() {
-    return this._isRangedHalfDamage
-  }
-  set isRangedHalfDamage(value) {
-    this._isRangedHalfDamage = value
-  }
-
-  get isVulnerable() {
-    return this._isVulnerable
-  }
-  set isVulnerable(value) {
-    this._isVulnerable = value
-  }
-
-  get vulnerabilityMultiple() {
-    return this._vulnerabilityMultiple
-  }
-  set vulnerabilityMultiple(value) {
-    this._vulnerabilityMultiple = value
-  }
-
-  get hasAdditionalWoundingModifiers() {
-    return this.additionalWoundModifier > 0 || this.effectiveVulnerabilityMultiple > 0
-  }
-
-  get isHardenedDR() {
-    return this._isHardenedDR
-  }
-  set isHardenedDR(value) {
-    this._isHardenedDR = value
-  }
-
-  get hardenedDRLevel() {
-    return this._hardenedDRLevel
-  }
-  set hardenedDRLevel(value) {
-    this._hardenedDRLevel = value
-  }
-
-  get isInjuryTolerance() {
-    return this._isInjuryTolerance
-  }
-  set isInjuryTolerance(value) {
-    this._isInjuryTolerance = value
-  }
-
-  get injuryToleranceType() {
-    return this._injuryToleranceType
-  }
-  set injuryToleranceType(value) {
-    this._injuryToleranceType = value
-  }
-
-  get isWoundModifierAdjustedForInjuryTolerance() {
-    let table = this.effectiveWoundModifiers
-    let entries = Object.keys(table).filter((key) => table[key].changed === 'injury-tolerance')
-    return entries.length > 0
-  }
-
-  get isWoundModifierAdjustedForLocation() {
-    let table = this.effectiveWoundModifiers
-    let entries = Object.keys(table).filter((key) => table[key].changed === 'hitlocation')
-    return entries.length > 0
-  }
-
   get isBluntTraumaInjury() {
-    return this.injury === 0 && this._isFlexibleArmor && this._useBluntTrauma && this.effectiveBluntTrauma > 0
+    return (
+      this.injury === 0 && this._parent.isFlexibleArmor && this._parent.useBluntTrauma && this.effectiveBluntTrauma > 0
+    )
   }
 
   get maxInjuryForDiffuse() {
     return this._maxInjuryForDiffuse
-  }
-
-  get isExplosion() { return this._isExplosion }
-  set isExplosion(value) {
-    if (value && !this._isExplosion) {
-      this._previousHitLocation = this._hitLocation
-      this._hitLocation = 'Large-Area'
-    } else if (!value && this._isExplosion) {
-      this._hitLocation = this._previousHitLocation
-    }
-    this._isExplosion = value
-  }
-
-  get hexesFromExplosion() {
-    return this._hexesFromExplosion
-  }
-  set hexesFromExplosion(value) {
-    this._hexesFromExplosion = value
-  }
-
-  get explosionDivisor() {
-    if (this.isExplosion) {
-      return this._hexesFromExplosion * 3
-    }
-    return 1
   }
 }

@@ -1,9 +1,10 @@
 'use strict'
 
-import { DamageCalculator } from './damagecalculator.js'
+import { CompositeDamageCalculator } from './damagecalculator.js'
 import { isNiceDiceEnabled, parseFloatFrom, parseIntFrom, generateUniqueId } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
+import { GurpsActor } from '../actor.js'
 
 const standardDialogHeight = 800
 const simpleDialogHeight = 130
@@ -24,10 +25,19 @@ const simpleDialogHeight = 130
  *   }
  */
 export default class ApplyDamageDialog extends Application {
+  /**
+   * Create a new ADD.
+   *
+   * @param {GurpsActor} actor
+   * @param {Array} damageData
+   * @param {*} options
+   */
   constructor(actor, damageData, options = {}) {
     super(options)
 
-    this._calculator = new DamageCalculator(actor, damageData)
+    if (!Array.isArray(damageData)) damageData = [damageData]
+
+    this._calculator = new CompositeDamageCalculator(actor, damageData)
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
   }
@@ -40,8 +50,10 @@ export default class ApplyDamageDialog extends Application {
       resizable: true,
       minimizable: false,
       width: 800,
-      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : standardDialogHeight,
-      title: 'Apply Damage Calculator'
+      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
+        ? simpleDialogHeight
+        : standardDialogHeight,
+      title: 'Apply Damage Calculator',
     })
   }
 
@@ -64,12 +76,44 @@ export default class ApplyDamageDialog extends Application {
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
-    // ==== Simple Damage ====
-    html.find('#basicDamage').on('change', ev =>
-      this._updateModelFromInputText($(ev.currentTarget), "basicDamage", parseIntFrom))
+    // ==== Multiple Dice ====
+    html.find('#pagination-left').on('click', ev => {
+      if (this._calculator.viewId === 'all') return
+      if (this._calculator.viewId === 0) this._calculator.viewId = 'all'
+      else this._calculator.viewId = this._calculator.viewId - 1
 
-    html.find('#apply-publicly').on('click', (ev) => this.submitDirectApply(ev, true))
-    html.find('#apply-secretly').on('click', (ev) => this.submitDirectApply(ev, false))
+      this.updateUI()
+    })
+
+    html.find('#pagination-right').on('click', ev => {
+      if (this._calculator.viewId === 'all') this._calculator.viewId = 0
+      else {
+        let index = this._calculator.viewId + 1
+        if (index >= this._calculator.length) return
+        this._calculator.viewId = index
+      }
+      this.updateUI()
+    })
+
+    for (let index = 0; index < this._calculator.length; index++) {
+      html.find(`#pagination-${index}`).on('click', ev => {
+        this._calculator.viewId = index
+        this.updateUI()
+      })
+    }
+
+    html.find('#pagination-all').on('click', ev => {
+      this._calculator.viewId = 'all'
+      this.updateUI()
+    })
+
+    // ==== Simple Damage ====
+    html
+      .find('#basicDamage')
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'basicDamage', parseIntFrom))
+
+    html.find('#apply-publicly').on('click', ev => this.submitDirectApply(ev, true))
+    html.find('#apply-secretly').on('click', ev => this.submitDirectApply(ev, false))
 
     // Set Apply To dropdown value.
     // When dropdown changes, update the calculator and refresh GUI.
@@ -80,8 +124,9 @@ export default class ApplyDamageDialog extends Application {
 
     // ==== Hit Location and DR ====
     // When user-entered DR input changes, update the calculator.
-    html.find("#user-entered-dr").on('change', ev =>
-      this._updateModelFromInputText($(ev.currentTarget), "userEnteredDR", parseIntFrom))
+    html
+      .find('#user-entered-dr')
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'userEnteredDR', parseIntFrom))
 
     // If the current hit location is Random, resolve the die roll and update the hit location.
     if (this._calculator.hitLocation === 'Random') this._randomizeHitLocation()
@@ -90,73 +135,87 @@ export default class ApplyDamageDialog extends Application {
     html.find('#random-location').on('click', async () => this._randomizeHitLocation())
 
     // When a new Hit Location is selected, calculate the new results and update the UI.
-    html.find('input[name="hitlocation"]').click(ev =>
-      this._updateModelFromRadioValue($(ev.currentTarget), 'hitLocation'))
+    html
+      .find('input[name="hitlocation"]')
+      .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'hitLocation'))
 
     // ==== Type and Wounding Modifiers ====
-    html.find('input[name="woundmodifier"]').click(ev =>
-      this._updateModelFromRadioValue($(ev.currentTarget), 'damageType'))
+    html
+      .find('input[name="woundmodifier"]')
+      .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'damageType'))
 
-    html.find("#user-entered-woundmod").on('change', ev =>
-      this._updateModelFromInputText($(ev.currentTarget), "userEnteredWoundModifier", parseFloatFrom))
+    html
+      .find('#user-entered-woundmod')
+      .on('change', ev =>
+        this._updateModelFromInputText($(ev.currentTarget), 'userEnteredWoundModifier', parseFloatFrom)
+      )
 
     // When 'Additional Mods' text changes, save the (numeric) value in this object and
     // update the result-addmodifier, if necessary.
-    html.find("#addmodifier").on('change', ev =>
-      this._updateModelFromInputText($(ev.currentTarget), "additionalWoundModifier", parseFloatFrom))
+    html
+      .find('#addmodifier')
+      .on('change', ev =>
+        this._updateModelFromInputText($(ev.currentTarget), 'additionalWoundModifier', parseFloatFrom)
+      )
 
     // ==== Tactical Rules ====
     // use armor divisor rules
-    html.find('#tactical-armordivisor').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'useArmorDivisor'))
+    html
+      .find('#tactical-armordivisor')
+      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useArmorDivisor'))
 
     // use blunt trauma rules
-    html.find('#tactical-blunttrauma').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'useBluntTrauma'))
+    html
+      .find('#tactical-blunttrauma')
+      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useBluntTrauma'))
 
     // use hit location wounding modifiers rules
-    html.find('#tactical-locationmodifier').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'useLocationModifiers'))
+    html
+      .find('#tactical-locationmodifier')
+      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useLocationModifiers'))
 
     // ==== Other situations ====
     // is a ranged attack and at 1/2 damage or further range
-    html.find('#specials-range12D').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'isRangedHalfDamage'))
+    html
+      .find('#specials-range12D')
+      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isRangedHalfDamage'))
 
     // target is vulnerable to this attack
-    html.find('#vulnerable').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'isVulnerable'))
+    html.find('#vulnerable').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isVulnerable'))
 
     // Vulnerability level
-    html.find('input[name="vulnerability"]').click(ev =>
-      this._updateModelFromRadioValue($(ev.currentTarget), "vulnerabilityMultiple", parseFloat))
+    html
+      .find('input[name="vulnerability"]')
+      .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'vulnerabilityMultiple', parseFloat))
 
     // target has Hardened DR
-    html.find('#hardened').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'isHardenedDR'))
+    html.find('#hardened').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isHardenedDR'))
 
     // Hardened DR level
-    html.find('input[name="hardened"]').click(ev =>
-      this._updateModelFromRadioValue($(ev.currentTarget), "hardenedDRLevel", parseFloat))
+    html
+      .find('input[name="hardened"]')
+      .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'hardenedDRLevel', parseFloat))
 
     // target has Injury Tolerance
-    html.find('#injury-tolerance').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'isInjuryTolerance'))
+    html
+      .find('#injury-tolerance')
+      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isInjuryTolerance'))
 
     // type of Injury Tolerance
-    html.find('input[name="injury-tolerance"]').click(ev =>
-      this._updateModelFromRadioValue($(ev.currentTarget), "injuryToleranceType"))
+    html
+      .find('input[name="injury-tolerance"]')
+      .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'injuryToleranceType'))
 
     // if checked, target has flexible armor; check for blunt trauma
-    html.find('#flexible-armor').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'isFlexibleArmor'))
+    html
+      .find('#flexible-armor')
+      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isFlexibleArmor'))
 
     // Blunt Trauma user override text field
     html.find('#blunt-trauma-field input').on('change', ev => {
       let currentValue = $(ev.currentTarget).val()
-      this._calculator.bluntTrauma = (currentValue === '' || currentValue === this._calculator.calculatedBluntTrauma)
-        ? null
-        : parseFloat(currentValue)
+      this._calculator.bluntTrauma =
+        currentValue === '' || currentValue === this._calculator.calculatedBluntTrauma ? null : parseFloat(currentValue)
       this.updateUI()
     })
 
@@ -167,14 +226,11 @@ export default class ApplyDamageDialog extends Application {
     })
 
     // if checked, target has flexible armor; check for blunt trauma
-    html.find('#explosion-damage').click(ev =>
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'isExplosion'))
+    html.find('#explosion-damage').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isExplosion'))
 
     html.find('#explosion-yards').on('change', ev => {
       let currentValue = $(ev.currentTarget).val()
-      this._calculator.hexesFromExplosion = (currentValue === '' || currentValue === '0')
-        ? 1
-        : parseInt(currentValue)
+      this._calculator.hexesFromExplosion = currentValue === '' || currentValue === '0' ? 1 : parseInt(currentValue)
       this.updateUI()
     })
 
@@ -186,7 +242,7 @@ export default class ApplyDamageDialog extends Application {
   }
 
   /**
-   * 
+   *
    * @param {node} element to get value from
    * @param {string} property name in the model to update
    * @param {function(string) : any} converter function to covert element value (string) to model data type
@@ -195,13 +251,18 @@ export default class ApplyDamageDialog extends Application {
     this._calculator[property] = converter(element.val())
 
     // removes leading zeros or replaces blank with zero
-    if (element.val() !== this._calculator[property].toString())
-      element.val(this._calculator[property])
+    if (element.val() !== this._calculator[property].toString()) element.val(this._calculator[property])
 
     this.updateUI()
   }
 
-  _updateModelFromRadioValue(element, property, converter = (value) => { return value }) {
+  _updateModelFromRadioValue(
+    element,
+    property,
+    converter = value => {
+      return value
+    }
+  ) {
     if (element.is(':checked')) {
       this._calculator[property] = converter(element.val())
       this.updateUI()
@@ -248,7 +309,7 @@ export default class ApplyDamageDialog extends Application {
 
   /**
    * Create and show the chat message for the Effect.
-   * @param {*} ev 
+   * @param {*} ev
    */
   async _handleEffectButtonClick(ev) {
     let stringified = ev.currentTarget.attributes['data-struct'].value
@@ -256,41 +317,37 @@ export default class ApplyDamageDialog extends Application {
 
     let message = ''
     if (object.type === 'shock') {
-      message = await this._renderTemplate('chat-shock.html',
-        {
-          name: this.actor.data.name,
-          modifier: object.amount,
-          doubled: object.amount * 2
-        })
+      message = await this._renderTemplate('chat-shock.html', {
+        name: this.actor.data.name,
+        modifier: object.amount,
+        doubled: object.amount * 2,
+      })
     }
 
     if (object.type === 'majorwound') {
-      message = await this._renderTemplate('chat-majorwound.html',
-        {
-          name: this.actor.data.name,
-          htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`
-        })
+      message = await this._renderTemplate('chat-majorwound.html', {
+        name: this.actor.data.name,
+        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+      })
     }
 
     if (object.type === 'headvitalshit') {
-      message = await this._renderTemplate('chat-headvitalshit.html',
-        {
-          name: this.actor.data.name,
-          location: object.detail,
-          htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`
-        })
+      message = await this._renderTemplate('chat-headvitalshit.html', {
+        name: this.actor.data.name,
+        location: object.detail,
+        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+      })
     }
 
     if (object.type === 'knockback') {
       let dxCheck = object.modifier === 0 ? 'DX' : `DX-${object.modifier}`
       let acroCheck = object.modifier === 0 ? 'S:Acrobatics' : `S:Acrobatics-${object.modifier}`
       let judoCheck = object.modifier === 0 ? 'S:Judo' : `S:Judo-${object.modifier}`
-      message = await this._renderTemplate('chat-knockback.html',
-        {
-          name: this.actor.data.name,
-          yards: object.amount,
-          combinedCheck: `${dxCheck}|${acroCheck}|${judoCheck}`
-        })
+      message = await this._renderTemplate('chat-knockback.html', {
+        name: this.actor.data.name,
+        yards: object.amount,
+        combinedCheck: `${dxCheck}|${acroCheck}|${judoCheck}`,
+      })
     }
 
     if (object.type === 'crippling') {
@@ -298,14 +355,14 @@ export default class ApplyDamageDialog extends Application {
         name: this.actor.data.name,
         location: object.detail,
         groundModifier: 'DX-1',
-        swimFlyModifer: 'DX-2'
+        swimFlyModifer: 'DX-2',
       })
     }
 
     let msgData = {
       content: message,
       user: game.user._id,
-      type: CONST.CHAT_MESSAGE_TYPES.OOC
+      type: CONST.CHAT_MESSAGE_TYPES.OOC,
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {
       let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
@@ -343,8 +400,8 @@ export default class ApplyDamageDialog extends Application {
 
   /**
    * Handle the actual loss of HP or FP on the actor and display the results in the chat.
-   * @param {*} injury 
-   * @param {*} type 
+   * @param {*} injury
+   * @param {*} type
    * @param {boolean} publicly - if true, display to everyone; else display to GM and owner.
    */
   resolveInjury(ev, injury, type, publicly, results = null) {
@@ -359,30 +416,31 @@ export default class ApplyDamageDialog extends Application {
       current: current,
       location: this._calculator.hitLocation,
       type: type,
-      resultsTable: results
+      resultsTable: results,
     }
 
     if (type === 'FP') {
-      this.actor.update({ "data.FP.value": this._calculator.FP.value - injury })
+      this.actor.update({ 'data.FP.value': this._calculator.FP.value - injury })
     } else {
-      this.actor.update({ "data.HP.value": this._calculator.HP.value - injury })
+      this.actor.update({ 'data.HP.value': this._calculator.HP.value - injury })
     }
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = {
         alias: game.user.data.name,
-        _id: game.user._id
+        _id: game.user._id,
       }
-      if (!!attackingActor) speaker = {
-        alias: attackingActor.data.name,
-        _id: attackingActor._id,
-        actor: attackingActor
-      }
+      if (!!attackingActor)
+        speaker = {
+          alias: attackingActor.data.name,
+          _id: attackingActor._id,
+          actor: attackingActor,
+        }
       let messageData = {
         user: game.user._id,
         speaker: speaker,
         content: html,
-        type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       }
 
       if (!publicly) {

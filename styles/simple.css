@@ -66,7 +66,6 @@
   padding: 1px !important;
 }
 
-
 .gcs-input-2 {
   border-width: 0px !important;
   border: none !important;
@@ -1958,6 +1957,7 @@ body {
 }
 
 /* Message Chat styles */
+.damage-all-message,
 .damage-message {
   border: 1px #6f6c66;
   border-style: outset;
@@ -1966,6 +1966,7 @@ body {
   padding: 0.25em;
 }
 
+.damage-all-message:hover,
 .damage-message:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -2111,6 +2112,7 @@ body {
 .gurps-group .grid {
   align-items: start;
   justify-items: stretch;
+  margin: 0;
 }
 
 /* striped table row appearance */
@@ -2190,7 +2192,7 @@ body {
 .gurps-group .results-table {
   justify-self: stretch;
   width: 100%;
-  grid-template-columns: min-content min-content 1fr;
+  grid-template-columns: auto min-content 1fr;
   min-height: 130px;
   font-size: 12px;
 }
@@ -2491,6 +2493,7 @@ ul#result-effects li {
   outline: 5px auto -webkit-focus-ring-color;
   box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
   border-radius: 3px;
+  background-color: rgba(240, 128, 128, 0.6);
 }
 
 #combat-sheet .resource-spinner button {
@@ -2931,4 +2934,39 @@ ul#result-effects li {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination div {
+  color: black;
+  float: left;
+  padding: 4px 8px;
+  text-decoration: none;
+  border: 1px solid #7a7971;
+  border-right: none;
+}
+
+.pagination div.active {
+  background-color: #686868;
+  color: white;
+}
+
+.pagination div:hover:not(.active) {
+  background-color: rgba(104, 104, 104, 0.3);
+}
+
+.pagination div:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background-color: rgba(255, 255, 240, 0.8);
+}
+
+.pagination div:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-right: 1px solid #7a7971;
+  background-color: rgba(255, 255, 240, 0.8);
 }
