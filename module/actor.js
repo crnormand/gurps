@@ -47,48 +47,16 @@ export class GurpsActor extends Actor {
     return this.data.data.additionalresources
   }
 
-  async update(data, options) {
-    // update data for hit location if bodyplan is different
-    if (
-      data.data?.additionalresources?.bodyplan &&
-      data.data.additionalresources.bodyplan !== this._additionalResources?.bodyplan
-    ) {
-      let bodyplan = data.data.additionalresources.bodyplan
-      let hitlocationTable = HitLocations.hitlocationDictionary[bodyplan]
-      if (!hitlocationTable) {
-        ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
-      } else {
-        let hitlocations = {}
-        let oldlocations = this.data.data.hitlocations || {}
-        let count = 0
-        for (let loc in hitlocationTable) {
-          let hit = hitlocationTable[loc]
-          let originalLoc = Object.values(oldlocations).filter((it) => it.where === loc)
-          let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
-          let it = new HitLocations.HitLocation(loc, dr, hit.penalty, hit.roll)
-          game.GURPS.put(hitlocations, it, count++)
-        }
-        // Since we are in the middle of an update now, we have to let it finish, and then change the hitlocations list
-        setTimeout(async () => {
-          await this.update({ 'data.-=hitlocations': null })
-          this.update({ 'data.hitlocations': hitlocations })
-        }, 200)
-        return super.update(data, options)
-      }
-    }
-    return super.update(data, options)
-  }
-
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
-    const GCAVersion = "GCA-4"
+    const GCAVersion = "GCA-5"
     const GCSVersion = "GCS-3"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
     // need to remove <p> and replace </p> with newlines from "formatted text"
-    let x = game.GURPS.cleanUpP(xml)
-    x = xmlTextToJson(x)
+    let origx = game.GURPS.cleanUpP(xml)
+    let x = xmlTextToJson(origx)
     let r = x.root
     let msg = ''
     let version ='unknown'
@@ -142,6 +110,10 @@ export class GurpsActor extends Actor {
         if (vernum < 4) {
           msg += "This file was created with an older version of the GCA Export which does not contain the 'Parent' attributes for Ads/Disads, Skills or Spells<br>"   
         }
+        if (vernum < 5) {
+          msg += "This file was created with an older version of the GCA Export which does not sanitize Notes or Ad/Disad names<br>"   
+        }
+       
       }
       if (isFoundryGCS) {
         let vernum = 1
@@ -558,7 +530,7 @@ export class GurpsActor extends Actor {
         let j = json[key]
         let eqt = new Equipment()
         eqt.name = t(j.name)
-        eqt.count = i(j.count)
+        eqt.count = t(j.count)
         eqt.cost = t(j.cost)
         eqt.weight = t(j.weight)
         eqt.location = t(j.location)
@@ -1294,9 +1266,12 @@ export class Equipment extends Named {
   // OMG, do NOT fuck around with this method.   So many gotchas...
   // the worst being that you cannot use array.forEach.   You must use a for loop
   static async calcUpdate(actor, eqt, objkey) {
-    if (isNaN(eqt.count) || eqt.count == '') eqt.count = 0
-    if (isNaN(eqt.cost) || eqt.cost == '') eqt.cost = 0
-    if (isNaN(eqt.weight) || eqt.weight == '') eqt.weight = 0
+    const num = (s) => { return isNaN(s) ? 0 : Number(s) }
+    const cln = (s) => { return (!s) ? 0 : num(String(s).replace(/,/g, '')) }
+        
+    eqt.count = cln(eqt.count)
+    eqt.cost = cln(eqt.cost)
+    eqt.weight = cln(eqt.weight)
     let cs = eqt.count * eqt.cost
     let ws = eqt.count * eqt.weight
     if (!!eqt.contains) {

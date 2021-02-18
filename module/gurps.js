@@ -67,8 +67,8 @@ GURPS.SetLastActor = function (actor) {
 GURPS.ClearLastActor = function (actor) {
   if (GURPS.LastActor == actor) {
     console.log('Clearing Last Actor:' + GURPS.LastActor?.name)
-    GURPS.ModifierBucket.refresh()
     GURPS.LastActor = null
+    GURPS.ModifierBucket.refresh()
     if (canvas.tokens.controlled.length > 0) {
       GURPS.SetLastActor(canvas.tokens.controlled[0].actor)
     } // There may still be tokens selected... if so, select one of them
@@ -587,8 +587,8 @@ async function performAction(action, actor, event, targets) {
   }
 
   if (action.type === 'roll') {
-    prefix = 'Rolling ' + action.displayformula + ' ' + action.desc
-    formula = action.rollformula
+    prefix = 'Rolling ' + ((!!action.displayformula) ? action.displayformula : action.formula) + ' ' + action.desc
+    formula = action.formula
     if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
   }
 
@@ -601,6 +601,10 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'deriveddamage')
     if (!!actor) {
       let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
+      if (!df) {
+        ui.notifications.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
+        return true
+      }
       formula = df + action.formula
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       GURPS.damageChat.create(
@@ -675,7 +679,7 @@ async function performAction(action, actor, event, targets) {
     if (!!actor) {
       const [bestAction, attempts] = processLinked(action)
       if (!bestAction) {
-        ui.notifications.warn("No skill or spell named '" + attempts.join("' or '") + "' found on " + actor.name)
+        ui.notifications.warn("No skill or spell named '" + attempts.join("' or '").replace("<", "&lt;") + "' found on " + actor.name)
         return false
       }
       formula = '3d6'
@@ -690,7 +694,7 @@ async function performAction(action, actor, event, targets) {
       thing = action.name
       att = GURPS.findAttack(actordata, thing)
       if (!att) {
-        ui.notifications.warn("No melee or ranged attack named '" + action.name + "' found on " + actor.name)
+        ui.notifications.warn("No melee or ranged attack named '" + action.name.replace("<", "&lt;") + "' found on " + actor.name)
         return false
       }
       thing = att.name
@@ -740,7 +744,7 @@ async function performAction(action, actor, event, targets) {
       })
       if (!target) target = parseInt(actordata.data[action.path])
       if (target > 0) formula = '3d6'
-      else ui.notifications.warn('Unable to find a ' + action.orig + ' to roll')
+      else ui.notifications.warn('Unable to find a ' + action.orig.replace("<", "&lt;") + ' to roll on ' + actor.name)
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
@@ -840,6 +844,7 @@ GURPS.handleRoll = handleRoll
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 function applyModifierDesc(actor, desc) {
+  if (!desc) return null
   let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
   if (parse != desc && !!actor && !actor.isSelf) {
     let fp = parseInt(parse)
@@ -1146,18 +1151,30 @@ GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
 GURPS.onRightClickGurpslink = function (event) {
   event.preventDefault()
+  event.stopImmediatePropagation()    // Since this may occur in note or a list (which has its own RMB handler)
   let el = event.currentTarget
   let action = el.dataset.action
   if (!!action) {
     action = JSON.parse(window.atob(action))
-    GURPS.whisperOtfToOwner(action.orig, event, action.hasOwnProperty('blindroll') && !action.blindroll) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+    if (action.type === 'damage' || action.type === 'deriveddamage')
+      GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
+    else 
+      GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
 }
 
-GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
+GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
   if (!game.user.isGM) return
   if (!!otf) {
     otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
+    let canblind = false
+    if (!!blindcheck) {
+      canblind = blindcheck.hasOwnProperty('blindroll')
+      if (canblind && blindcheck.blindroll) {
+        otf = "!" + otf
+        canblind = false
+      }
+    }  
     let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
     let botf = '[!' + otf + ']'
     otf = '[' + otf + ']'
@@ -1180,12 +1197,6 @@ GURPS.whisperOtfToOwner = function (otf, event, canblind, actor) {
         label: 'Whisper to ' + nms,
         callback: () => GURPS.sendOtfMessage(otf, false, users)
       }
-      if (canblind)
-        buttons.four = {
-          icon: '<i class="fas fa-user-slash"></i>',
-          label: 'Whisper Blindroll to ' + nms,
-          callback: () => GURPS.sendOtfMessage(botf, true, users)
-        }
       if (canblind)
         buttons.four = {
           icon: '<i class="fas fa-user-slash"></i>',
@@ -1228,6 +1239,60 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
   }
   ChatMessage.create(msgData)
 }
+
+GURPS.resolveDamageRoll = function(event, actor, otf, isGM, isOtf = false) {
+    let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
+    let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
+    let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
+    let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
+    let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
+
+    let buttons = {}
+
+    if (isGM) {
+      buttons.send = {
+        icon: '<i class="fas fa-paper-plane"></i>',
+        label: `${sendTo}`,
+        callback: () => GURPS.whisperOtfToOwner(otf, event, false, actor) // Can't blind roll damages (yet)
+      }
+    }
+
+    buttons.multiple = {
+      icon: '<i class="fas fa-clone"></i>',
+      label: `${multiple}`,
+      callback: html => {
+        let text = html.find('#number-rolls').val()
+        let number = parseInt(text)
+        let targets = []
+        for (let index = 0; index < number; index++) {
+          targets[index] = `${index + 1}`
+        }
+        if (isOtf)
+          game.GURPS.handleGurpslink(event, actor, null, targets)
+        else
+          game.GURPS.handleRoll(event, actor, targets)
+      }
+    }
+
+    let dlg = new Dialog({
+      title: `${title}`,
+      content: `
+        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
+          <p style='font-size: large;'><strong>${otf}</strong></p>
+          <p>${prompt}</p>
+          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
+            <label>${quantity}</label>
+            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='2'>
+          </div>
+          <p/>
+        </div>
+        `,
+      buttons: buttons,
+      default: 'send'
+    })
+    dlg.render(true)
+  }
+
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1400,7 +1465,7 @@ Hooks.once('ready', async function () {
       html.find('.pdflink').contextmenu(event => {
         event.preventDefault()
         let el = event.currentTarget
-        GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false)
+        GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false, GURPS.LastActor)
       })
     }
   })

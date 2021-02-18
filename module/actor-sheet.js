@@ -1,7 +1,7 @@
 import { GURPS } from './gurps.js'
 import { isNiceDiceEnabled } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
-import { HitLocation } from '../module/hitlocation/hitlocation.js'
+import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
@@ -837,13 +837,13 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                   await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                  await this.updateParentOf(targetkey, 4)
+                  await this.updateParentOf(targetkey)
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                 }
               },
@@ -853,14 +853,14 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                   let k = targetkey + '.contains.' + GURPS.genkey(0)
                   await GURPS.insertBeforeKey(this.actor, k, object)
-                  await this.updateParentOf(k, 4)
+                  await this.updateParentOf(k)
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey, 4)
+                    await this.updateParentOf(srckey)
                   }
                 }
               }
@@ -873,7 +873,7 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
-  async updateParentOf(srckey, pindex = 3) {
+  async updateParentOf(srckey, pindex = 4) {
     // pindex = 4 for equipment, 3 for everything else.
     let sp = srckey.split('.').slice(0, pindex).join('.')
     if (sp != srckey) {
@@ -882,6 +882,7 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
+  // Non-equipment list drags
   async handleDragFor(event, dragData, type, cls) {
     if (dragData.type === type) {
       let element = event.target
@@ -906,9 +907,6 @@ export class GurpsActorSheet extends ActorSheet {
         for (let i = 0; i < max; i++) {
           if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
         }
-        //        if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey);
-        //        await GURPS.insertBeforeKey(this.actor, targetkey, object);
-        //        if (isSrcFirst) await GURPS.removeKey(this.actor, srckey);
 
         let d = new Dialog({
           title: object.name,
@@ -918,33 +916,19 @@ export class GurpsActorSheet extends ActorSheet {
               icon: '<i class="fas fa-level-up-alt"></i>',
               label: 'Before',
               callback: async () => {
-                if (!isSrcFirst) {
-                  await GURPS.removeKey(this.actor, srckey)
-                  await this.updateParentOf(srckey)
-                }
+                if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
                 await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                await this.updateParentOf(targetkey)
-                if (isSrcFirst) {
-                  await GURPS.removeKey(this.actor)
-                  await this.updateParentOf(srckey)
-                }
+                if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
               }
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
               label: 'In',
               callback: async () => {
-                if (!isSrcFirst) {
-                  await GURPS.removeKey(this.actor, srckey)
-                  await this.updateParentOf(srckey)
-                }
+                if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
                 let k = targetkey + '.contains.' + GURPS.genkey(0)
                 await GURPS.insertBeforeKey(this.actor, k, object)
-                await this.updateParentOf(k)
-                if (isSrcFirst) {
-                  await GURPS.removeKey(this.actor, srckey)
-                  await this.updateParentOf(srckey)
-                }
+                if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
               }
             }
           },
@@ -1092,11 +1076,10 @@ export class GurpsActorSheet extends ActorSheet {
     let action = el.dataset.action
     if (!!action) {
       action = JSON.parse(atob(action))
-      let isBlind = action.hasOwnProperty('blindroll') && !action.blindroll
       if (action.type === 'damage' || action.type === 'deriveddamage') {
-        this.resolveDamageRoll(event, action.orig, game.user.isGM, true)
+        GURPS.resolveDamageRoll(event, this.actor, action.orig, game.user.isGM, true)
       } else {
-        GURPS.whisperOtfToOwner(action.orig, event, isBlind, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+        GURPS.whisperOtfToOwner(action.orig, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       }
     }
   }
@@ -1119,67 +1102,13 @@ export class GurpsActorSheet extends ActorSheet {
     event.preventDefault()
     let el = event.currentTarget
     let isDamageRoll = el.dataset.hasOwnProperty('damage')
-    let isGM = game.user.isGM
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {
-      this.resolveDamageRoll(event, otf, isGM)
+      GURPS.resolveDamageRoll(event, this.actor, otf, game.user.isGM)
     } else {
       GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
-  }
-
-  async resolveDamageRoll(event, otf, isGM, isOtf = false) {
-    let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
-    let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
-    let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
-    let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
-    let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
-
-    let buttons = {}
-
-    if (isGM) {
-      buttons.send = {
-        icon: '<i class="fas fa-paper-plane"></i>',
-        label: `${sendTo}`,
-        callback: () => GURPS.whisperOtfToOwner(otf, event, false, this.actor) // Can't blind roll damages (yet)
-      }
-    }
-
-    buttons.multiple = {
-      icon: '<i class="fas fa-clone"></i>',
-      label: `${multiple}`,
-      callback: html => {
-        let text = html.find('#number-rolls').val()
-        let number = parseInt(text)
-        let targets = []
-        for (let index = 0; index < number; index++) {
-          targets[index] = `${index + 1}`
-        }
-        if (isOtf)
-          game.GURPS.handleGurpslink(event, this.actor, null, targets)
-        else
-          this._onClickRoll(event, targets)
-      }
-    }
-
-    let dlg = new Dialog({
-      title: `${title}`,
-      content: `
-        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
-          <p style='font-size: large;'><strong>${otf}</strong></p>
-          <p>${prompt}</p>
-          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
-            <label>${quantity}</label>
-            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='2'>
-          </div>
-          <p/>
-        </div>
-        `,
-      buttons: buttons,
-      default: 'send'
-    })
-    dlg.render(true)
   }
 
   async _onClickRoll(event, targets) {
@@ -1369,6 +1298,33 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       new Equipment('New Equipment', true),
       'data.equipment.other'
     )
+    
+    html.find('#body-plan').change(async (e) => {
+      let bodyplan = e.currentTarget.value
+      if (bodyplan !== this.actor.data.data.additionalresources.bodyplan) {
+        let hitlocationTable = hitlocationDictionary[bodyplan]
+        if (!hitlocationTable) {
+          ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
+        } else {    // Try to copy any DR values from hit locations that match
+          let hitlocations = {}
+          let oldlocations = this.actor.data.data.hitlocations || {}
+          let count = 0
+          for (let loc in hitlocationTable) {
+            let hit = hitlocationTable[loc]
+            let originalLoc = Object.values(oldlocations).filter((it) => it.where === loc)
+            let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
+            let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
+            game.GURPS.put(hitlocations, it, count++)
+          }
+          await this.actor.update({ 
+            'data.-=hitlocations': null,
+            'data.additionalresources.bodyplan' : bodyplan
+          })
+          await this.actor.update({ 'data.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
+          await this.actor.update({ 'data.hitlocations': hitlocations })
+        }
+      }  
+    })
   }
 
   async _onClickBodyPlan(ev) {
@@ -1441,6 +1397,9 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html)
+    html.find('.npc-sheet').click(ev => {
+      this._onfocus(ev)
+    })
     html.find('.rollableicon').click(this._onClickRollableIcon.bind(this))
   }
 

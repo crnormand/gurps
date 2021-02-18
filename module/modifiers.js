@@ -57,6 +57,12 @@ export class ModifierBucket extends Application {
   getData(options) {
     const data = super.getData(options)
     data.stack = this.modifierStack
+    let ca = ''
+    if (game.user?.isGM && !!GURPS.LastActor) {
+      ca = GURPS.LastActor.name
+      if (ca.length > 20) ca = ca.substring(0, 17) + '...'
+    }
+    data.currentActor = ca
     return data
   }
 
