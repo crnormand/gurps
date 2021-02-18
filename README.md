@@ -23,6 +23,8 @@ This is what we are currently working on:
 
 0.8.16
 
+  - Bug fix for GCA exports.   Now equipment with melee & ranged attacks appear in both (Spears), and Block is calculated correctly for items with DB (shields)
+
 ##History
 
 0.8.15 - 2/17/2021
