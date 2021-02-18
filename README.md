@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.13
+# Current Release Version 0.8.15
 
 [If you like our work...](https://ko-fi.com/crnormand)
 
@@ -21,7 +21,11 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 This is what we are currently working on:
 
-0.8.15 - 2/16/2021
+0.8.16
+
+##History
+
+0.8.15 - 2/17/2021
 
   - Bug fix for 3D6 roll icon (at bottom of screen)
   - Bug fix for costs, counts, weights that contain commas ","
