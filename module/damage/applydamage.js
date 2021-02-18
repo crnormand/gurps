@@ -77,7 +77,35 @@ export default class ApplyDamageDialog extends Application {
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
     // ==== Multiple Dice ====
-    html.find('.pagination > div')
+    html.find('#pagination-left').on('click', ev => {
+      if (this._calculator.viewId === 'all') return
+      if (this._calculator.viewId === 0) this._calculator.viewId = 'all'
+      else this._calculator.viewId = this._calculator.viewId - 1
+
+      this.updateUI()
+    })
+
+    html.find('#pagination-right').on('click', ev => {
+      if (this._calculator.viewId === 'all') this._calculator.viewId = 0
+      else {
+        let index = this._calculator.viewId + 1
+        if (index >= this._calculator.length) return
+        this._calculator.viewId = index
+      }
+      this.updateUI()
+    })
+
+    for (let index = 0; index < this._calculator.length; index++) {
+      html.find(`#pagination-${index}`).on('click', ev => {
+        this._calculator.viewId = index
+        this.updateUI()
+      })
+    }
+
+    html.find('#pagination-all').on('click', ev => {
+      this._calculator.viewId = 'all'
+      this.updateUI()
+    })
 
     // ==== Simple Damage ====
     html

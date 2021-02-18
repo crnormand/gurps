@@ -133,13 +133,13 @@ export class CompositeDamageCalculator {
    * Override at the individual dice roll level.
    */
   get basicDamage() {
-    return this.totalDamage
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].basicDamage
   }
 
   set basicDamage(value) {
     if (this._viewId === 'all') return
-    let index = parseInt(this._viewId)
-    this._calculators[index].basicDamage = value
+    this._calculators[this._viewId].basicDamage = value
   }
 
   get calculators() {
@@ -260,14 +260,12 @@ export class CompositeDamageCalculator {
 
   get effectiveBluntTrauma() {
     if (this._viewId === 'all') return
-    let index = parseInt(this._viewId)
-    return this._calculators[index].effectiveBluntTrauma
+    return this._calculators[this._viewId].effectiveBluntTrauma
   }
 
   get effectiveDamage() {
     if (this._viewId === 'all') return
-    let index = parseInt(this._viewId)
-    return this._calculators[index].effectiveDamage
+    return this._calculators[this._viewId].effectiveDamage
   }
 
   // figure out the current DR modified by armor divisor, if necessary
@@ -418,7 +416,8 @@ export class CompositeDamageCalculator {
   }
 
   get injury() {
-    return this._calculators.map(it => it.injury).reduce((acc, value) => acc + value)
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].injury
   }
 
   get injuryToleranceType() {
@@ -435,8 +434,7 @@ export class CompositeDamageCalculator {
 
   get isBluntTraumaInjury() {
     if (this._viewId === 'all') return
-    let index = parseInt(this._viewId)
-    return this._calculators[index].isBluntTraumaInjury
+    return this._calculators[this._viewId].isBluntTraumaInjury
   }
 
   get isExplosion() {
@@ -471,8 +469,7 @@ export class CompositeDamageCalculator {
 
   get isInjuryReducedByLocation() {
     if (this._viewId === 'all') return
-    let index = parseInt(this._viewId)
-    return this._calculators[index].isInjuryReducedByLocation
+    return this._calculators[this._viewId].isInjuryReducedByLocation
   }
 
   get isInjuryTolerance() {
@@ -528,19 +525,19 @@ export class CompositeDamageCalculator {
 
   get maxInjuryForDiffuse() {
     if (this._viewId === 'all') return
-    let index = parseInt(this._viewId)
-    return this._calculators[index].maxInjuryForDiffuse
+    return this._calculators[this._viewId].maxInjuryForDiffuse
   }
 
   get penetratingDamage() {
-    return this._calculators.map(it => it.penetratingDamage).reduce((acc, value) => acc + value)
+    if (this._viewId === 'all') return
+    return this._calculators[this._viewId].penetratingDamage
   }
 
   get pointsToApply() {
     return this._calculators.map(it => it.pointsToApply).reduce((acc, value) => acc + value)
   }
 
-  get totalDamage() {
+  get totalBasicDamage() {
     return this._calculators.map(it => it.basicDamage).reduce((acc, value) => acc + value)
   }
 

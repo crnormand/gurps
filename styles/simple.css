@@ -2112,6 +2112,7 @@ body {
 .gurps-group .grid {
   align-items: start;
   justify-items: stretch;
+  margin: 0;
 }
 
 /* striped table row appearance */
