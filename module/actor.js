@@ -49,7 +49,7 @@ export class GurpsActor extends Actor {
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
-    const GCAVersion = "GCA-6"
+    const GCAVersion = "GCA-7"
     const GCSVersion = "GCS-3"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false

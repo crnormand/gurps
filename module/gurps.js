@@ -54,7 +54,7 @@ settings.initializeSettings()
 // Use the target d6 icon for rolltable entries
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.png'
 
-CONFIG.debug.hooks = true;
+//CONFIG.debug.hooks = true;
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null
