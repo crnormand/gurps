@@ -49,7 +49,7 @@ export class GurpsActor extends Actor {
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
-    const GCAVersion = "GCA-5"
+    const GCAVersion = "GCA-7"
     const GCSVersion = "GCS-3"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
@@ -113,7 +113,12 @@ export class GurpsActor extends Actor {
         if (vernum < 5) {
           msg += "This file was created with an older version of the GCA Export which does not sanitize Notes or Ad/Disad names<br>"   
         }
-       
+        if (vernum < 6) {
+          msg += "This file was created with an older version of the GCA Export which may not export a melee attack if it also exists in ranged attacks (e.g. Spears)<br>"   
+        }
+        if (vernum < 7) {
+          msg += "This file was created with an older version of the GCA Export which incorrectly calculates Block value for items with DB (e.g. Shields)<br>"   
+        }
       }
       if (isFoundryGCS) {
         let vernum = 1
