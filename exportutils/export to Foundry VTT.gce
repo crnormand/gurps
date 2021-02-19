@@ -41,7 +41,7 @@ Sub Main()
 
     ' begin the xml file
     Paragraph = "<?xml version=""1.0"" encoding=""iso-8859-1""?>"
-    Paragraph = "<root release=""Foundry"" version=""GCA-6"">"
+    Paragraph = "<root release=""Foundry"" version=""GCA-7"">"
     Paragraph = "<character>"
 
     ' in Fantasy Grounds the <name> field must be at the top level
@@ -1125,10 +1125,27 @@ Sub PrintHandWeapons()
 
                 db = Char.Items(i).DamageModeTagItem(CurMode, "db")
 		    ' If it has a DB value, then compute a block (since I can't find the "blocklevel")
-                if db <> "" Then
-			blk = saved_level \ 2
-			blk = blk + 3
-  	   		Paragraph = "<block type=""string"">" & blk & "</block>"
+                  if db <> "" Then
+                  dim tskill, pos, block
+                  tskill = Char.Items(i).DamageModeTagItem(CurMode, "charskillused")
+                  'remove surrounding quotes, if any
+                  if left(tskill,1) = chr(34) then
+                    tskill = mid(tskill, 2)
+                  end if
+                  if right(tskill,1) = chr(34) then
+                    tskill = left(tskill, len(tskill)-1)
+                  end if
+                  'remove prefix tag, if any
+                  if left(tskill, 3) = "SK:" then
+                    tskill = mid(tskill, 4)
+                  end if
+
+                  pos = Char.ItemPositionByNameAndExt(tskill, Skills)
+                  If pos > 0 Then
+                    block = Char.Items(pos).TagItem("blocklevel")
+			  block = StrToLng(block)
+  	              Paragraph = "<block type=""string"">" & (block + db) & "</block>"
+                  End If
                 End If
 
                 CurMode = Char.Items(i).DamageModeTagItemAt("charreach", CurMode + 1)
