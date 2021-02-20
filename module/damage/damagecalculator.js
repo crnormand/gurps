@@ -513,9 +513,9 @@ export class CompositeDamageCalculator {
   }
 
   get locationMaxHP() {
-    if (this.hitLocationRole === HitLocation.LIMB) return this.HP.max / 2
-    if (this.hitLocationRole === HitLocation.EXTREMITY) return this.HP.max / 3
-    if (this.hitLocation === 'Eye') return this.HP.max / 10
+    if (this.hitLocationRole === HitLocation.LIMB) return (this.HP.max / 2) + 1
+    if (this.hitLocationRole === HitLocation.EXTREMITY) return (this.HP.max / 3) + 1
+    if (this.hitLocation === 'Eye') return (this.HP.max / 10) + 1
     return this.HP.max
   }
 
