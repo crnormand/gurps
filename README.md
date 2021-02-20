@@ -23,9 +23,10 @@ This is what we are currently working on:
 
 0.8.16
 
-  - Bug fix for GCA exports.   Now equipment with melee & ranged attacks appear in both (Spears)
-  - Big fix for GCA exports (with Armin's help!)   Block is calculated correctly for items with DB (shields)
+  - Bug fix for GCA exports. Now equipment with melee & ranged attacks appear in both (Spears)
+  - Big fix for GCA exports (with Armin's help!) Block is calculated correctly for items with DB (shields)
   - Add doubleclick edit to NPC Sheet Notes, Melee, Ranged, Ads, Skill and Spells list
+  - Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be *over* that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes *more than* 5 points of damage (i.e., 6).
 
 ##History
 
