@@ -12,7 +12,8 @@
       <div class="modttlabel">Current Modifiers <span style="font-size:75%"><i>(click to remove)</i></span></div>
       <div>&nbsp;</div>
       {{#each stack.modifierList}}
-      <div class="removemod" data-index="{{@index}}" style="color:{{#if this.plus}}green{{else}}red{{/if}}">
+      <div class="removemod" data-index="{{@index}}" {{#if this.plus}}style="color: green;" {{else}}style="color: red;"
+        {{/if}}>
         {{this.mod}} : {{this.desc}}</div>
       {{/each}}
       <div class="modttlabel"><br>Total: {{stack.displaySum}}</div>
@@ -26,14 +27,15 @@
     </div>
 
     <div id="modtooltipleftcenter">
-      <div style="display:{{#if cansend}}none{{else}}block{{/if}}">Click on modifiers above and to the right to add
-        to your next roll.<br><br>
-        They will appear in the Current Modifiers list below.<br><br><small><i>Move the mouse off of the window to
-            close it.</i></small></div>
+      <div {{#if cansend}}style="display: none;" {{else}}style="display: block" {{/if}}>Click on modifiers above and to
+        the right to add to your next roll.<br><br>
+        They will appear in the Current Modifiers list below.<br><br>
+        <small><i>Move the mouse off of the window to close it.</i></small>
+      </div>
 
-      <div style="background-color:gold; align-content: end;display:{{#if cansend}}block{{else}}none{{/if}}">
+      <div style="background-color:gold; align-content: end; display: {{#if cansend}}block;{{else}}none;{{/if}}">
         <div class="modttlabel">Send your Modifier Bucket to:</div>
-        <div style="position: relative;text-align: center;display: flex;justify-content: center; flex-wrap: wrap; ">
+        <div style="position: relative; text-align: center; display: flex; justify-content: center; flex-wrap: wrap; ">
           {{#each users}}
           <button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
           {{/each}}
