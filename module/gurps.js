@@ -1133,15 +1133,15 @@ GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 GURPS.damageChat = new DamageChat(GURPS)
 
-// Modifier Bucket must be defined after hit locations
-GURPS.ModifierBucket = new ModifierBucket({
-  popOut: false,
-  minimizable: false,
-  resizable: false,
-  id: 'ModifierBucket',
-  template: 'systems/gurps/templates/modifier-bucket.html',
-  classes: [],
-})
+// // Modifier Bucket must be defined after hit locations
+// GURPS.ModifierBucket = new ModifierBucket({
+//   popOut: false,
+//   minimizable: false,
+//   resizable: false,
+//   id: 'ModifierBucket',
+//   template: 'systems/gurps/templates/modifier-bucket.html',
+//   classes: [],
+// })
 
 GURPS.ThreeD6 = new ThreeD6({
   popOut: false,
@@ -1317,6 +1317,16 @@ Hooks.once('init', async function () {
   let src = 'systems/gurps/icons/gurps4e.png'
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
   $('#logo').attr('src', src)
+
+  // Modifier Bucket must be defined after hit locations
+  GURPS.ModifierBucket = new ModifierBucket({
+    popOut: false,
+    minimizable: false,
+    resizable: false,
+    id: 'ModifierBucket',
+    template: 'systems/gurps/templates/modifier-bucket.html',
+    classes: [],
+  })
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor

@@ -5,7 +5,7 @@ import * as HitLocations from '../module/hitlocation/hitlocation.js'
 
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
-    $(element).hide()   // To make this application appear to close faster, we will hide it before the animation
+    $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
 })
 
@@ -19,7 +19,7 @@ export class GurpsRoll extends Roll {
           let m = GURPS.ModifierBucket.currentSum()
           GURPS.ModifierBucket.clear()
           return m
-        }
+        },
       })
     d.gmod = GURPS.ModifierBucket.currentSum()
     return d
@@ -30,7 +30,7 @@ CONFIG.Dice.rolls[0] = GurpsRoll
  * ModifierBucket is the always-present widget at the bottom of the
  * Foundry UI, that display the current total modifier and a 'trashcan'
  * button to clear all modifiers.
- * 
+ *
  * This class owns the modifierStack, while the ModifierBucketEditor
  * modifies it.
  */
@@ -38,7 +38,11 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
-    this.editor = new ModifierBucketEditor(this)
+    this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
+
+    this.editor = new ModifierBucketEditor(this, {
+      popOut: !this.isTooltip,
+    })
 
     // whether the ModifierBucketEditor is visible
     this.SHOWING = false
@@ -50,7 +54,7 @@ export class ModifierBucket extends Application {
       currentSum: 0,
       displaySum: '+0',
       plus: false,
-      minus: false
+      minus: false,
     }
   }
 
@@ -93,7 +97,7 @@ export class ModifierBucket extends Application {
     e.click(this._onClick.bind(this))
     e.contextmenu(this.onRightClick.bind(this))
 
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)) {
+    if (this.isTooltip) {
       e.mouseenter(ev => this._onenter(ev))
     }
   }
@@ -102,8 +106,8 @@ export class ModifierBucket extends Application {
     this.SHOWING = true
     // The location of bucket is hardcoded in the css #modifierbucket, so I'm ok with hardcoding it here.
     let position = {
-      left: (805 + (70 / 2)) - (this.editor.position.width / 2),
-      top: window.innerHeight - this.editor.position.height - 4
+      left: 805 + 70 / 2 - this.editor.position.width / 2,
+      top: window.innerHeight - this.editor.position.height - 4,
     }
     this.editor._position = position
     this.editor.render(true)
@@ -121,7 +125,7 @@ export class ModifierBucket extends Application {
       if (!game.user.isGM) {
         let messageData = {
           content: this.chatString(this.modifierStack),
-          type: CONST.CHAT_MESSAGE_TYPES.OOC
+          type: CONST.CHAT_MESSAGE_TYPES.OOC,
         }
         CONFIG.ChatMessage.entityClass.create(messageData, {})
       } else this.showOthers()
@@ -143,7 +147,7 @@ export class ModifierBucket extends Application {
       user: game.user._id,
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       content: content,
-      whisper: [game.user._id]
+      whisper: [game.user._id],
     }
     CONFIG.ChatMessage.entityClass.create(chatData, {})
   }
@@ -152,7 +156,7 @@ export class ModifierBucket extends Application {
   async onRightClick(event) {
     event.preventDefault()
     if (!game.user.isGM) return
-    this.showOthers();
+    this.showOthers()
   }
 
   // Public method. Used by GURPS to create a temporary modifer for an action.
@@ -162,7 +166,7 @@ export class ModifierBucket extends Application {
       mod: m,
       modint: parseInt(m),
       desc: reason,
-      plus: m[0] == '+'
+      plus: m[0] == '+',
     }
   }
 
@@ -173,7 +177,7 @@ export class ModifierBucket extends Application {
       stack.currentSum += m.modint
     }
     stack.displaySum = displayMod(stack.currentSum)
-    stack.plus = stack.currentSum > 0 || stack.modifierList.length > 0   // cheating here... it shouldn't be named "plus", but "green"
+    stack.plus = stack.currentSum > 0 || stack.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     stack.minus = stack.currentSum < 0
   }
 
@@ -238,7 +242,7 @@ export class ModifierBucket extends Application {
     this.modifierStack = {
       modifierList: [], // { "mod": +/-N, "desc": "" }
       currentSum: 0,
-      displaySum: '+0'
+      displaySum: '+0',
     }
     this.updateBucket()
   }
@@ -273,7 +277,7 @@ export class ModifierBucket extends Application {
 
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
- * to the current or other actors. 
+ * to the current or other actors.
  */
 export class ModifierBucketEditor extends Application {
   constructor(bucket, options = {}) {
@@ -283,7 +287,7 @@ export class ModifierBucketEditor extends Application {
     this.inside = false
     this._position = {
       left: 375,
-      top: 296
+      top: 296,
     }
 
     for (let loc in HitLocations.hitlocationRolls) {
@@ -320,6 +324,8 @@ export class ModifierBucketEditor extends Application {
 
   getData(options) {
     const data = super.getData(options)
+
+    data.isTooltip = !this.options.popOut
     data.gmod = this
     data.stack = this.bucket.modifierStack
     data.meleemods = MeleeMods.split('\n')
@@ -419,10 +425,12 @@ export class ModifierBucketEditor extends Application {
   }
 
   _onenter(ev) {
-    if (!this.inside) {
-      console.log('onenter')
-      this.inside = true
-      $(ev.currentTarget).mouseleave(ev => this._onleave(ev))
+    if (!this.options.popOut) {
+      if (!this.inside) {
+        console.log('onenter')
+        this.inside = true
+        $(ev.currentTarget).mouseleave(ev => this._onleave(ev))
+      }
     }
   }
 
@@ -478,7 +486,6 @@ export class ModifierBucketEditor extends Application {
   }
 }
 
-
 const StatusModifiers = [
   'Status & Afflictions',
   '*Status',
@@ -504,7 +511,7 @@ const StatusModifiers = [
   '-1 to IQ/DX/CR rolls (Moderate Pain /w HPT)',
   '-2 to IQ/DX/CR rolls (Severe Pain /w HPT)',
   '-3 to IQ/DX/CR rolls (Terrible Pain /w HPT)',
-  '-5 to IQ/DX/PER checks (Retching)'
+  '-5 to IQ/DX/PER checks (Retching)',
 ]
 
 const CoverPostureModifiers = [
@@ -527,7 +534,7 @@ const CoverPostureModifiers = [
   '-2 to hit Melee (Crouch)',
   '-2 to hit Ranged (Crouch)',
   '-2 to hit Melee (Kneel/Sit)',
-  '-2 to active defenses (Kneel/Sit)'
+  '-2 to active defenses (Kneel/Sit)',
 ]
 
 const SizeModifiers = [
@@ -554,7 +561,7 @@ const SizeModifiers = [
   "+8  Size 50 yards (150')",
   "+9  Size 70 yards (210')",
   "+10 Size 100 yards (300')",
-  "+11 Size 150 yards (450')"
+  "+11 Size 150 yards (450')",
 ]
 
 let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
@@ -617,7 +624,7 @@ const TaskDifficultyModifiers = [
   '-4 Hard',
   '-6 Very hard',
   '-8 Dangerous',
-  '-10 Impossible'
+  '-10 Impossible',
 ]
 
 const LightingModifiers = [
@@ -631,7 +638,7 @@ const LightingModifiers = [
   '-7 Starlight',
   '-8 Starlight through clouds',
   '-9 Overcast moonless night',
-  '-10 Total darkness'
+  '-10 Total darkness',
 ]
 
 const RateOfFireModifiers = [
@@ -641,7 +648,7 @@ const RateOfFireModifiers = [
   '+3 RoF: 13-16',
   '+4 RoF: 17-24',
   '+5 RoF: 25-49',
-  '+6 RoF: 50-99'
+  '+6 RoF: 50-99',
 ]
 
 const EqtQualifyModifiers = [
@@ -653,7 +660,7 @@ const EqtQualifyModifiers = [
   '-5 Improvised Equipment (tech task)',
   '-1 Missing / Damaged item',
   '-5 No Equipment (none-tech task)',
-  '-10 No Equipment (tech task)'
+  '-10 No Equipment (tech task)',
 ]
 
 const ModifiersForStatus = {
@@ -661,150 +668,150 @@ const ModifiersForStatus = {
     gen: ['[-4 to DX checks (Grappled)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   aim: {
     gen: ['Aiming! Reference weapon ACC mod'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   retching: {
     gen: ['[-5 to IQ/DX/PER checks (Retching)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   mild_pain: {
     gen: ['[-1 to IQ/DX/CR rolls (Mild Pain)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   moderate_pain: {
     gen: ['[-2 to IQ/DX/CR rolls (Moderate Pain)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   moderate_pain2: {
     gen: ['[-3 to IQ/DX/CR rolls (Moderate Pain)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   severe_pain: {
     gen: ['[-4 to IQ/DX/CR rolls (Severe Pain)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   severe_pain2: {
     gen: ['[-5 to IQ/DX/CR rolls (Severe Pain)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   terrible_pain: {
     gen: ['[-6 to IQ/DX/CR rolls (Terrible Pain)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   nauseated: {
     gen: ['[-2 to All attributes (Nauseated)]'],
     melee: [],
     ranged: [],
-    defense: ['[-1 to active defense (Nauseated)]']
+    defense: ['[-1 to active defense (Nauseated)]'],
   },
   tipsy: {
     gen: ['[-1 to IQ/DX checks (Tipsy)]', '[-2 to CR rolls (Tipsy)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   drunk: {
     gen: ['[-2 to IQ/DX checks (Drunk)]', '[-4 to CR rolls (Drunk)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   drowsy: {
     gen: ['[-2 to IQ/DX/CR rolls (Drowsy)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   coughing: {
     gen: ['[-3 to DX checks (Coughing)]', '[-1 to IQ checks (Coughing)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   euphoria: {
     gen: ['[-3 to IQ/DX/CR rolls (Euphoria)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   shock1: {
     gen: ['[-1 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   shock2: {
     gen: ['[-2 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   shock3: {
     gen: ['[-3 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   shock4: {
     gen: ['[-4 to IQ/DX checks (Shock)]'],
     melee: [],
     ranged: [],
-    defense: []
+    defense: [],
   },
   prone: {
     gen: [],
     melee: ['[-4 to hit Melee (Prone)]'],
     ranged: ['[-2 to hit Ranged (Prone)]'],
-    defense: ['[-2 to active defenses (Prone)]']
+    defense: ['[-2 to active defenses (Prone)]'],
   },
   stun: {
     gen: [],
     melee: [],
     ranged: [],
-    defense: ['[-4 to active defenses (Stunned)]']
+    defense: ['[-4 to active defenses (Stunned)]'],
   },
   kneel: {
     gen: [],
     melee: ['[-2 to hit Melee (Kneeling)]'],
     ranged: [],
-    defense: ['[-2 to active defenses (Kneeling)]']
+    defense: ['[-2 to active defenses (Kneeling)]'],
   },
   crouch: {
     gen: [],
     melee: ['[-2 to hit Melee (Crouching)]'],
     ranged: ['[-2 to hit Ranged (Crouching)]'],
-    defense: []
+    defense: [],
   },
   sit: {
     gen: [],
     melee: ['[-2 to hit Melee (Sitting)]'],
     ranged: [],
-    defense: ['[-2 to active defenses (Sitting)]']
+    defense: ['[-2 to active defenses (Sitting)]'],
   },
   blind: {
     gen: [],
     melee: ['[-10 (Suddenly Blind)]', '[-6 (Blind)]'],
     ranged: ['[-10 (Suddenly Blind)]', '[-6 (Blind)]'],
-    defense: []
-  }
+    defense: [],
+  },
 }
