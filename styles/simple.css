@@ -2973,7 +2973,7 @@ ul#result-effects li {
 
 .navigate-bar {
   height: 24px;
-  background-color: dimgray;
+  background-color: rgba(0, 0, 0, 0.8);
   margin-bottom: 5px;
   position: sticky;
   left: 0;
@@ -2987,12 +2987,11 @@ ul#result-effects li {
 
 .navigation-link {
   border-radius: 3px;
-  background-color: #333333;
-  border: 2px inset #333333;
-  color: whitesmoke;
+  background-color: black;
+  color: white;
   margin-right: 8px;
-  padding-left: 3px;
-  padding-right: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .navigation-link:hover {
