@@ -2970,3 +2970,32 @@ ul#result-effects li {
   border-right: 1px solid #7a7971;
   background-color: rgba(255, 255, 240, 0.8);
 }
+
+.navigate-bar {
+  height: 24px;
+  background-color: dimgray;
+  margin-bottom: 5px;
+  position: sticky;
+  left: 0;
+  bottom: 0;
+  box-shadow: 0px 5px 5px black;
+  display: flex;
+  padding-left: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.navigation-link {
+  border-radius: 3px;
+  background-color: #333333;
+  border: 2px inset #333333;
+  color: whitesmoke;
+  margin-right: 8px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.navigation-link:hover {
+  outline: none;
+  box-shadow: 0 0 5px red;
+}
