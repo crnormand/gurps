@@ -24,8 +24,9 @@ This is what we are currently working on:
 0.8.16
 
   - Bug fix for GCA exports.   Now equipment with melee & ranged attacks appear in both (Spears)
-  - Big fix for GCA exports (with Armin's help!)   Block is calculated correctly for items with DB (shields)
+  - Bug fix for GCA exports (with Armin's help!)   Block is calculated correctly for items with DB (shields)
   - Add doubleclick edit to NPC Sheet Notes, Melee, Ranged, Ads, Skill and Spells list
+  
 
 ##History
 

@@ -196,20 +196,33 @@ export class GurpsActor extends Actor {
         whisper: [game.user._id],
       }
       CONFIG.ChatMessage.entityClass.create(chatData, {})
+      // Don't return, because we want to see how much actually gets committed.
     }
     console.log('Starting commit')
 
     let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes('.-=')))
     let adds = Object.fromEntries(Object.entries(commit).filter(([key, value]) => !key.includes('.-=')))
 
-    await this.update(deletes)
-    await this.update(adds)
-    
-    // This has to be done after all of the equipment is loaded
-    this.calculateDerivedValues()
-
-    console.log('Done importing.  You can inspect the character data below:')
-    console.log(this)
+    try {
+      await this.update(deletes)
+      await this.update(adds)
+      // This has to be done after all of the equipment is loaded
+      this.calculateDerivedValues()
+      console.log('Done importing.  You can inspect the character data below:')
+      console.log(this)
+    } catch (err) {
+      let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
+      if (err.message == "Maximum depth exceeded")
+        msg = "You have too many levels of containers.  The Foundry import only supports up to 3 levels of sub-containers"
+      ui.notifications.warn(msg)
+      let chatData = {
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        content: msg,
+        whisper: [game.user._id],
+      }
+      CONFIG.ChatMessage.entityClass.create(chatData, {})
+    }
   }
 
   // hack to get to private text element created by xml->json method.
