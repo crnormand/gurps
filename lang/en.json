@@ -118,6 +118,7 @@
 	"GURPS.addHitLocationWoundModifiers" : "Hit Location Wound Modifiers",
 	"GURPS.addSpecialCombatSituations" : "Special Situations",
 	"GURPS.addRangedHalfDamage" : "Ranged, Half Damage (1/2D)",
+	"GURPS.addRangedHalfDamageShort": "Ranged (1/2D)",
 	"GURPS.addVulnerability" : "Vulnerability",
 	"GURPS.addHardenedDRLevel" : "Hardened DR Level",
 	"GURPS.addInjuryTolerance" : "Injury Tolerance",
@@ -136,6 +137,9 @@
 
 	"GURPS.addApplyInjury" : "Apply Injury",
 	"GURPS.addApplyInjuryQuietly" : "Apply Injury (Quietly)",
+
+	"GURPS.addSingleRollSelected": "Single damage roll selected",
+	"GURPS.addApplyOptionsToAll": "These options apply to all damage",
 
 	"GURPS.crippling" : "Crippling Injury, ",
 	"GURPS.damageAbove" : "Damage above ",

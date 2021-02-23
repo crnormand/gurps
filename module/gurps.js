@@ -1,5 +1,5 @@
 // Import Modules
-import { parselink, parseForDamage } from '../lib/parselink.js';
+import { parselink, parseForDamage } from '../lib/parselink.js'
 
 import { GurpsActor } from './actor.js'
 import { GurpsItem } from './item.js'
@@ -9,7 +9,7 @@ import {
   GurpsActorSheet,
   GurpsActorEditorSheet,
   GurpsActorSimplifiedSheet,
-  GurpsActorNpcSheet
+  GurpsActorNpcSheet,
 } from './actor-sheet.js'
 import { ModifierBucket } from './modifiers.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -45,6 +45,7 @@ import { NpcInput } from '../lib/npc-input.js'
 import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
+import { HitLocation } from './hitlocation/hitlocation.js'
 
 addChatHooks()
 jqueryHelpers()
@@ -85,7 +86,7 @@ GURPS.attributepaths = {
   WILL: 'attributes.WILL.value',
   Will: 'attributes.WILL.value',
   PER: 'attributes.PER.value',
-  Per: 'attributes.PER.value'
+  Per: 'attributes.PER.value',
 }
 
 // Map stuff back to translation keys... don't know if useful yet
@@ -95,7 +96,7 @@ GURPS.attributes = {
   IQ: 'GURPS.attributesIQ',
   HT: 'GURPS.attributesHT',
   Will: 'GURPS.attributesWILL',
-  Per: 'GURPS.attributesPER'
+  Per: 'GURPS.attributesPER',
 }
 
 GURPS.attributeNames = {
@@ -104,7 +105,7 @@ GURPS.attributeNames = {
   IQ: 'GURPS.attributesIQNAME',
   HT: 'GURPS.attributesHTNAME',
   Will: 'GURPS.attributesWILLNAME',
-  Per: 'GURPS.attributesPERNAME'
+  Per: 'GURPS.attributesPERNAME',
 }
 
 GURPS.skillTypes = {
@@ -131,7 +132,7 @@ GURPS.skillTypes = {
   'Per/E': 'GURPS.SkillPerE',
   'Per/A': 'GURPS.SkillPerA',
   'Per/H': 'GURPS.SkillPerH',
-  'Per/VH': 'GURPS.SkillPerVH'
+  'Per/VH': 'GURPS.SkillPerVH',
 }
 
 GURPS.PARSELINK_MAPPINGS = {
@@ -151,7 +152,7 @@ GURPS.PARSELINK_MAPPINGS = {
   Taste: 'tastesmell',
   Smell: 'tastesmell',
   TOUCH: 'touch',
-  Touch: 'touch'
+  Touch: 'touch',
 }
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects
@@ -160,263 +161,263 @@ CONFIG.statusEffects = [
   {
     icon: 'systems/gurps/icons/statuses/condition-shock1.png',
     id: 'shock1',
-    label: 'EFFECT.StatusShocked'
+    label: 'EFFECT.StatusShocked',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-shock2.png',
     id: 'shock2',
-    label: 'EFFECT.StatusShocked'
+    label: 'EFFECT.StatusShocked',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-shock3.png',
     id: 'shock3',
-    label: 'EFFECT.StatusShocked'
+    label: 'EFFECT.StatusShocked',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-shock4.png',
     id: 'shock4',
-    label: 'EFFECT.StatusShocked'
+    label: 'EFFECT.StatusShocked',
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-stunned.png',
     id: 'stun',
-    label: 'EFFECT.StatusStunned'
+    label: 'EFFECT.StatusStunned',
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-grappled.png',
     id: 'grapple',
-    label: 'GURPS.STATUSGrapple'
+    label: 'GURPS.STATUSGrapple',
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-prone.png',
     id: 'prone',
-    label: 'EFFECT.StatusProne'
+    label: 'EFFECT.StatusProne',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-kneel.png',
     id: 'kneel',
-    label: 'GURPS.STATUSKneel'
+    label: 'GURPS.STATUSKneel',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-crouch.png',
     id: 'crouch',
-    label: 'GURPS.STATUSCrouch'
+    label: 'GURPS.STATUSCrouch',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-sit.png',
     id: 'sit',
-    label: 'GURPS.STATUSSit'
+    label: 'GURPS.STATUSSit',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-flying.png',
     id: 'fly',
-    label: 'GURPS.STATUSFly'
+    label: 'GURPS.STATUSFly',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-fall.png',
     id: 'fall',
-    label: 'GURPS.STATUSFall'
+    label: 'GURPS.STATUSFall',
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-pinned.png',
     id: 'pinned',
-    label: 'GURPS.STATUSPin'
+    label: 'GURPS.STATUSPin',
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-nauseated.png',
     id: 'nauseated',
-    label: 'GURPS.STATUSNauseated'
+    label: 'GURPS.STATUSNauseated',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-cough.png',
     id: 'coughing',
-    label: 'GURPS.STATUSCoughing'
+    label: 'GURPS.STATUSCoughing',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-wretch.png',
     id: 'retching',
-    label: 'GURPS.STATUSRetching'
+    label: 'GURPS.STATUSRetching',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-drowsy.png',
     id: 'drowsy',
-    label: 'GURPS.STATUSDrowsy'
+    label: 'GURPS.STATUSDrowsy',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-asleep.png',
     id: 'sleeping',
-    label: 'GURPS.STATUSSleep'
+    label: 'GURPS.STATUSSleep',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-drunk1.png',
     id: 'tipsy',
-    label: 'GURPS.STATUSTipsy'
+    label: 'GURPS.STATUSTipsy',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-drunk2.png',
     id: 'drunk',
-    label: 'GURPS.STATUSDrunk'
+    label: 'GURPS.STATUSDrunk',
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-fascinated.png',
     id: 'euphoria',
-    label: 'GURPS.STATUSEuphoria'
+    label: 'GURPS.STATUSEuphoria',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain1.png',
     id: 'mild_pain',
-    label: 'GURPS.STATUSMildPain'
+    label: 'GURPS.STATUSMildPain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain2.png',
     id: 'moderate_pain',
-    label: 'GURPS.STATUSModeratePain'
+    label: 'GURPS.STATUSModeratePain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain3.png',
     id: 'moderate_pain2',
-    label: 'GURPS.STATUSModeratePain'
+    label: 'GURPS.STATUSModeratePain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain4.png',
     id: 'severe_pain',
-    label: 'GURPS.STATUSSeverePain'
+    label: 'GURPS.STATUSSeverePain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain5.png',
     id: 'severe_pain2',
-    label: 'GURPS.STATUSSeverePain'
+    label: 'GURPS.STATUSSeverePain',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-pain6.png',
     id: 'terrible_pain',
-    label: 'GURPS.STATUSTerriblePain'
+    label: 'GURPS.STATUSTerriblePain',
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-helpless.png',
     id: 'agony',
-    label: 'GURPS.STATUSAgony'
+    label: 'GURPS.STATUSAgony',
   },
   {
     icon: 'systems/gurps/icons/statuses/cth-condition-major-wound.png',
     id: 'reeling',
-    label: 'GURPS.STATUSReeling'
+    label: 'GURPS.STATUSReeling',
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-exhausted.png',
     id: 'exhausted',
-    label: 'GURPS.STATUSExhausted'
+    label: 'GURPS.STATUSExhausted',
   },
   {
     icon: 'systems/gurps/icons/statuses/path-condition-bleeding.png',
     id: 'bleed',
-    label: 'GURPS.STATUSBleed'
+    label: 'GURPS.STATUSBleed',
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-poisoned.png',
     id: 'poison',
-    label: 'GURPS.STATUSPoison'
+    label: 'GURPS.STATUSPoison',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-burning.png',
     id: 'burn',
-    label: 'GURPS.STATUSBurn'
+    label: 'GURPS.STATUSBurn',
   },
   {
     icon: 'systems/gurps/icons/statuses/condition-suffocate.png',
     id: 'suffocate',
-    label: 'GURPS.STATUSSuffocate'
+    label: 'GURPS.STATUSSuffocate',
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-unconscious.png',
     id: 'disbled',
-    label: 'GURPS.STATUSDisable'
+    label: 'GURPS.STATUSDisable',
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-blinded.png',
     id: 'blind',
-    label: 'GURPS.STATUSBlind'
+    label: 'GURPS.STATUSBlind',
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-deafened.png',
     id: 'deaf',
-    label: 'GURPS.STATUSDeaf'
+    label: 'GURPS.STATUSDeaf',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-silenced.png',
     id: 'silence',
-    label: 'GURPS.STATUSSilence'
+    label: 'GURPS.STATUSSilence',
   },
   {
     icon: 'systems/gurps/icons/statuses/cth-condition-readied.png',
     id: 'aim',
-    label: 'GURPS.STATUSAim'
+    label: 'GURPS.STATUSAim',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-stealth.png',
     id: 'stealth',
-    label: 'GURPS.STATUSStealth'
+    label: 'GURPS.STATUSStealth',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-low-light-vision.png',
     id: 'waiting',
-    label: 'GURPS.STATUSWait'
+    label: 'GURPS.STATUSWait',
   },
   {
     icon: 'systems/gurps/icons/statuses/x-haste.png',
     id: 'sprint',
-    label: 'GURPS.STATUSSprint'
+    label: 'GURPS.STATUSSprint',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-1.png',
     id: 'num1',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-2.png',
     id: 'num2',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-3.png',
     id: 'num3',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-4.png',
     id: 'num4',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-5.png',
     id: 'num5',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-6.png',
     id: 'num6',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-7.png',
     id: 'num7',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-8.png',
     id: 'num8',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-9.png',
     id: 'num9',
-    label: 'GURPS.STATUSCounter'
+    label: 'GURPS.STATUSCounter',
   },
   {
     icon: 'systems/gurps/icons/statuses/number-10.png',
     id: 'num10',
-    label: 'GURPS.STATUSCounter'
-  }
+    label: 'GURPS.STATUSCounter',
+  },
 ]
 
 GURPS.SJGProductMappings = {
@@ -470,7 +471,7 @@ GURPS.SJGProductMappings = {
   TS: 'http://www.warehouse23.com/products/gurps-tactical-shooting',
   TSOR: 'http://www.warehouse23.com/products/gurps-thaumatology-sorcery',
   UT: 'http://www.warehouse23.com/products/gurps-ultra-tech',
-  VOR: 'http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game'
+  VOR: 'http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game',
 }
 
 GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
@@ -557,7 +558,7 @@ async function performAction(action, actor, event, targets) {
   let targetmods = [] // Should get this from the ModifierBucket someday
   let opt = {
     blind: action.blindroll,
-    event: event
+    event: event,
   } // Ok, I am slowly learning this Javascrip thing ;-)
 
   if (action.type === 'pdf') {
@@ -587,7 +588,7 @@ async function performAction(action, actor, event, targets) {
   }
 
   if (action.type === 'roll') {
-    prefix = 'Rolling ' + ((!!action.displayformula) ? action.displayformula : action.formula) + ' ' + action.desc
+    prefix = 'Rolling ' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc
     formula = action.formula
     if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
   }
@@ -633,7 +634,7 @@ async function performAction(action, actor, event, targets) {
     return {
       prefix: 'Roll vs ',
       thing: this.i18n(action.path),
-      target: target
+      target: target,
     }
   }
 
@@ -679,7 +680,9 @@ async function performAction(action, actor, event, targets) {
     if (!!actor) {
       const [bestAction, attempts] = processLinked(action)
       if (!bestAction) {
-        ui.notifications.warn("No skill or spell named '" + attempts.join("' or '").replace("<", "&lt;") + "' found on " + actor.name)
+        ui.notifications.warn(
+          "No skill or spell named '" + attempts.join("' or '").replace('<', '&lt;') + "' found on " + actor.name
+        )
         return false
       }
       formula = '3d6'
@@ -694,7 +697,9 @@ async function performAction(action, actor, event, targets) {
       thing = action.name
       att = GURPS.findAttack(actordata, thing)
       if (!att) {
-        ui.notifications.warn("No melee or ranged attack named '" + action.name.replace("<", "&lt;") + "' found on " + actor.name)
+        ui.notifications.warn(
+          "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+        )
         return false
       }
       thing = att.name
@@ -744,7 +749,7 @@ async function performAction(action, actor, event, targets) {
       })
       if (!target) target = parseInt(actordata.data[action.path])
       if (target > 0) formula = '3d6'
-      else ui.notifications.warn('Unable to find a ' + action.orig.replace("<", "&lt;") + ' to roll on ' + actor.name)
+      else ui.notifications.warn('Unable to find a ' + action.orig.replace('<', '&lt;') + ' to roll on ' + actor.name)
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
@@ -828,7 +833,7 @@ async function handleRoll(event, actor, targets) {
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
     let action = parseForDamage(element.innerText.trim())
-    if (!!action.action) performAction(action.action, actor, event, targets) 
+    if (!!action.action) performAction(action.action, actor, event, targets)
     return
   }
   if ('roll' in element.dataset) {
@@ -1135,7 +1140,7 @@ GURPS.ModifierBucket = new ModifierBucket({
   resizable: false,
   id: 'ModifierBucket',
   template: 'systems/gurps/templates/modifier-bucket.html',
-  classes: []
+  classes: [],
 })
 
 GURPS.ThreeD6 = new ThreeD6({
@@ -1144,22 +1149,21 @@ GURPS.ThreeD6 = new ThreeD6({
   resizable: false,
   id: 'ThreeD6',
   template: 'systems/gurps/templates/threed6.html',
-  classes: []
+  classes: [],
 })
 
 GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
 GURPS.onRightClickGurpslink = function (event) {
   event.preventDefault()
-  event.stopImmediatePropagation()    // Since this may occur in note or a list (which has its own RMB handler)
+  event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
   let el = event.currentTarget
   let action = el.dataset.action
   if (!!action) {
     action = JSON.parse(window.atob(action))
     if (action.type === 'damage' || action.type === 'deriveddamage')
       GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
-    else 
-      GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+    else GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
 }
 
@@ -1171,10 +1175,10 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
     if (!!blindcheck) {
       canblind = blindcheck.hasOwnProperty('blindroll')
       if (canblind && blindcheck.blindroll) {
-        otf = "!" + otf
+        otf = '!' + otf
         canblind = false
       }
-    }  
+    }
     let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
     let botf = '[!' + otf + ']'
     otf = '[' + otf + ']'
@@ -1182,26 +1186,26 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
     buttons.one = {
       icon: '<i class="fas fa-users"></i>',
       label: 'To Everyone',
-      callback: () => GURPS.sendOtfMessage(otf, false)
+      callback: () => GURPS.sendOtfMessage(otf, false),
     }
     if (canblind)
       buttons.two = {
         icon: '<i class="fas fa-users-slash"></i>',
         label: 'Blindroll to Everyone',
-        callback: () => GURPS.sendOtfMessage(botf, true)
+        callback: () => GURPS.sendOtfMessage(botf, true),
       }
     if (users.length > 0) {
       let nms = users.map(u => u.name).join(' ')
       buttons.three = {
         icon: '<i class="fas fa-user"></i>',
         label: 'Whisper to ' + nms,
-        callback: () => GURPS.sendOtfMessage(otf, false, users)
+        callback: () => GURPS.sendOtfMessage(otf, false, users),
       }
       if (canblind)
         buttons.four = {
           icon: '<i class="fas fa-user-slash"></i>',
           label: 'Whisper Blindroll to ' + nms,
-          callback: () => GURPS.sendOtfMessage(botf, true, users)
+          callback: () => GURPS.sendOtfMessage(botf, true, users),
         }
     }
     buttons.def = {
@@ -1209,7 +1213,7 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
       label: 'Copy to chat input',
       callback: () => {
         $(document).find('#chat-message').val(otf)
-      }
+      },
     }
 
     let d = new Dialog(
@@ -1217,7 +1221,7 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
         title: "GM 'Send Formula'",
         content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
         buttons: buttons,
-        default: 'def'
+        default: 'def',
       },
       { width: 700 }
     )
@@ -1229,7 +1233,7 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
   let msgData = {
     content: content,
     user: game.user._id,
-    blind: blindroll
+    blind: blindroll,
   }
   if (!!users) {
     msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
@@ -1240,43 +1244,41 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
   ChatMessage.create(msgData)
 }
 
-GURPS.resolveDamageRoll = function(event, actor, otf, isGM, isOtf = false) {
-    let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
-    let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
-    let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
-    let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
-    let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
+GURPS.resolveDamageRoll = function (event, actor, otf, isGM, isOtf = false) {
+  let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
+  let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
+  let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
+  let sendTo = game.i18n.localize('GURPS.RESOLVEDAMAGESendTo')
+  let multiple = game.i18n.localize('GURPS.RESOLVEDAMAGEMultiple')
 
-    let buttons = {}
+  let buttons = {}
 
-    if (isGM) {
-      buttons.send = {
-        icon: '<i class="fas fa-paper-plane"></i>',
-        label: `${sendTo}`,
-        callback: () => GURPS.whisperOtfToOwner(otf, event, false, actor) // Can't blind roll damages (yet)
-      }
+  if (isGM) {
+    buttons.send = {
+      icon: '<i class="fas fa-paper-plane"></i>',
+      label: `${sendTo}`,
+      callback: () => GURPS.whisperOtfToOwner(otf, event, false, actor), // Can't blind roll damages (yet)
     }
+  }
 
-    buttons.multiple = {
-      icon: '<i class="fas fa-clone"></i>',
-      label: `${multiple}`,
-      callback: html => {
-        let text = html.find('#number-rolls').val()
-        let number = parseInt(text)
-        let targets = []
-        for (let index = 0; index < number; index++) {
-          targets[index] = `${index + 1}`
-        }
-        if (isOtf)
-          game.GURPS.handleGurpslink(event, actor, null, targets)
-        else
-          game.GURPS.handleRoll(event, actor, targets)
+  buttons.multiple = {
+    icon: '<i class="fas fa-clone"></i>',
+    label: `${multiple}`,
+    callback: html => {
+      let text = html.find('#number-rolls').val()
+      let number = parseInt(text)
+      let targets = []
+      for (let index = 0; index < number; index++) {
+        targets[index] = `${index + 1}`
       }
-    }
+      if (isOtf) game.GURPS.handleGurpslink(event, actor, null, targets)
+      else game.GURPS.handleRoll(event, actor, targets)
+    },
+  }
 
-    let dlg = new Dialog({
-      title: `${title}`,
-      content: `
+  let dlg = new Dialog({
+    title: `${title}`,
+    content: `
         <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
           <p style='font-size: large;'><strong>${otf}</strong></p>
           <p>${prompt}</p>
@@ -1287,12 +1289,11 @@ GURPS.resolveDamageRoll = function(event, actor, otf, isGM, isOtf = false) {
           <p/>
         </div>
         `,
-      buttons: buttons,
-      default: 'send'
-    })
-    dlg.render(true)
-  }
-
+    buttons: buttons,
+    default: 'send',
+  })
+  dlg.render(true)
+}
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1301,7 +1302,7 @@ GURPS.resolveDamageRoll = function(event, actor, otf, isGM, isOtf = false) {
 Object.defineProperty(Object.prototype, 'findInProperties', {
   value: function (expression) {
     return Object.values(this).find(expression)
-  }
+  },
 })
 
 /* -------------------------------------------- */
@@ -1321,32 +1322,44 @@ Hooks.once('init', async function () {
   CONFIG.Actor.entityClass = GurpsActor
   CONFIG.Item.entityClass = GurpsItem
 
+  // set up all hitlocation tables
+  HitLocation.init()
+
   // preload drag-and-drop image
-  let img = new Image()
-  img.src = 'systems/gurps/icons/blood-splatter-clipart-small.png'
-  GURPS.damageDragImage = img
+  {
+    let img = new Image()
+    img.src = 'systems/gurps/icons/blood-splatter-clipart-small.png'
+    GURPS.damageDragImage = img
+  }
+
+  // LOAD ALL THE THINGS!!!
+  {
+    let img = new Image()
+    img.src = 'systems/gurps/icons/all-the-things-transparent.png'
+    GURPS.allTheThingsImage = img
+  }
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet)
   Actors.registerSheet('gurps', GurpsActorSheet, {
     label: 'Full (GCS)',
-    makeDefault: true
+    makeDefault: true,
   })
   Actors.registerSheet('gurps', GurpsActorCombatSheet, {
     label: 'Combat',
-    makeDefault: false
+    makeDefault: false,
   })
   Actors.registerSheet('gurps', GurpsActorEditorSheet, {
     label: 'Editor',
-    makeDefault: false
+    makeDefault: false,
   })
   Actors.registerSheet('gurps', GurpsActorSimplifiedSheet, {
     label: 'Simple',
-    makeDefault: false
+    makeDefault: false,
   })
   Actors.registerSheet('gurps', GurpsActorNpcSheet, {
     label: 'NPC/mini',
-    makeDefault: false
+    makeDefault: false,
   })
 
   Items.unregisterSheet('core', ItemSheet)
@@ -1377,7 +1390,7 @@ Hooks.once('ready', async function () {
       ChatMessage.create({
         content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [game.user]
+        whisper: [game.user],
       })
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHANGELOG)) {
       const app = new ChangeLogWindow(changelogVersion)
@@ -1489,7 +1502,7 @@ Hooks.once('ready', async function () {
       y: dropData.y - grid_size / 2,
       height: grid_size,
       width: grid_size,
-      releaseOthers: true
+      releaseOthers: true,
     })
 
     // actual targets are stored in game.user.targets
@@ -1510,6 +1523,6 @@ Hooks.once('ready', async function () {
     __dirname + '/apply-damage/effect-headvitalshit.html',
     __dirname + '/apply-damage/effect-knockback.html',
     __dirname + '/apply-damage/effect-majorwound.html',
-    __dirname + '/apply-damage/effect-shock.html'
+    __dirname + '/apply-damage/effect-shock.html',
   ])
 })

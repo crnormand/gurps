@@ -27,7 +27,7 @@ export default class DamageChat {
           let message = damageMessages[index]
 
           message.setAttribute('draggable', true)
-          message.addEventListener('dragstart', (ev) => {
+          message.addEventListener('dragstart', ev => {
             $(ev.currentTarget).addClass('dragging')
             ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
             let data = {
@@ -36,10 +36,30 @@ export default class DamageChat {
             }
             return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
           })
-          message.addEventListener('dragend', (ev) => {
+          message.addEventListener('dragend', ev => {
             $(ev.currentTarget).removeClass('dragging')
           })
         }
+      }
+
+      let allDamageMessage = html.find('.damage-all-message')
+      if (!!allDamageMessage && allDamageMessage.length == 1) {
+        let transfer = JSON.parse(app.data.flags.transfer)
+        let message = allDamageMessage[0]
+
+        message.setAttribute('draggable', true)
+        message.addEventListener('dragstart', ev => {
+          $(ev.currentTarget).addClass('dragging')
+          ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
+          let data = {
+            type: 'damageItem',
+            payload: transfer.payload,
+          }
+          return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
+        })
+        message.addEventListener('dragend', ev => {
+          $(ev.currentTarget).removeClass('dragging')
+        })
       }
     })
   }
@@ -61,7 +81,7 @@ export default class DamageChat {
     if (tokenNames.length == 0) tokenNames.push('')
 
     let draggableData = []
-    await tokenNames.forEach(async (tokenName) => {
+    await tokenNames.forEach(async tokenName => {
       let data = await this._createDraggableSection(actor, dice, tokenName, targetmods)
       draggableData.push(data)
     })
@@ -69,13 +89,16 @@ export default class DamageChat {
     this._createChatMessage(actor, dice, targetmods, draggableData, event)
 
     // Resolve any modifier descriptors (such as *Costs 1FP)
-    targetmods.filter(it => !!it.desc).map(it => it.desc).forEach(it => this._gurps.applyModifierDesc(actor, it))
+    targetmods
+      .filter(it => !!it.desc)
+      .map(it => it.desc)
+      .forEach(it => this._gurps.applyModifierDesc(actor, it))
   }
 
   /**
    * This method is all about interpreting the die roll text.
-   * 
-   * Returns { 
+   *
+   * Returns {
    *    formula: String, -- Foundry Dice formula
    *    modifier: num, -- sum of modifiers
    *    diceText: String, -- GURPS die text
@@ -85,9 +108,9 @@ export default class DamageChat {
    *    adds2: num, -- second add
    *    min: num, -- minimum value of the die roll (0, 1)
    * }
-   * @param {String} diceText 
-   * @param {*} damageType 
-   * @param {*} overrideDiceText 
+   * @param {String} diceText
+   * @param {*} damageType
+   * @param {*} overrideDiceText
    */
   _getDiceData(diceText, damageType, targetmods, overrideDiceText) {
     // format for diceText:
@@ -135,9 +158,9 @@ export default class DamageChat {
     let verb = ''
     if (!!result.groups.D) {
       verb = 'Rolling '
-      if (result.groups.D === 'd') formula = d6ify(diceText)  // GURPS dice (assume 6)
+      if (result.groups.D === 'd') formula = d6ify(diceText) // GURPS dice (assume 6)
     }
-    let displayText = overrideDiceText || diceText      // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
+    let displayText = overrideDiceText || diceText // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
     let min = 1
 
     if (damageType === '') damageType = 'dmg'
@@ -163,7 +186,7 @@ export default class DamageChat {
 
     let diceData = {
       formula: formula,
-      verb: verb,         // Rolling (if we have dice) or nothing
+      verb: verb, // Rolling (if we have dice) or nothing
       modifier: modifier,
       diceText: displayText + additionalText,
       damageType: damageType,
@@ -180,10 +203,10 @@ export default class DamageChat {
   /**
    * This method creates the content of each draggable section with
    * damage rolled for a single target.
-   * @param {*} actor 
-   * @param {*} diceData 
-   * @param {*} tokenName 
-   * @param {*} targetmods 
+   * @param {*} actor
+   * @param {*} diceData
+   * @param {*} tokenName
+   * @param {*} targetmods
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods) {
     let roll = Roll.create(diceData.formula + `+${diceData.modifier}`)
@@ -205,13 +228,14 @@ export default class DamageChat {
     let damage = rollTotal * diceData.multiplier
 
     let explainLineOne = null
-    if ((roll.dice.length > 0 && roll.dice[0].results.length > 1) || (diceData.adds1 !== 0)) {
+    if ((roll.dice.length > 0 && roll.dice[0].results.length > 1) || diceData.adds1 !== 0) {
       let tempString = ''
       if (roll.dice.length > 0) {
-        tempString = roll.dice[0].results.map((it) => it.result).join()
+        tempString = roll.dice[0].results.map(it => it.result).join()
         tempString = `Rolled (${tempString})`
-      } else
+      } else {
         tempString = diceValue
+      }
 
       if (diceData.adds1 !== 0) {
         let sign = diceData.adds1 < 0 ? '−' : '+'
@@ -259,21 +283,20 @@ export default class DamageChat {
       explainLineTwo: explainLineTwo,
       isB378: b378,
       roll: roll,
-      target: tokenName
+      target: tokenName,
     }
     console.log(contentData)
     return contentData
   }
 
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
-  
     const damageType = diceData.damageType
     let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
       draggableData: draggableData,
       verb: diceData.verb,
       dice: diceData.diceText,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
-      modifiers: targetmods.map((it) => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
+      modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
     })
 
     const speaker = { alias: actor.name, _id: actor._id, actor: actor }
@@ -295,32 +318,36 @@ export default class DamageChat {
     })
 
     if (isNiceDiceEnabled()) {
-      let rolls = draggableData.map(d => d.roll);
+      let rolls = draggableData.map(d => d.roll)
       let throws = []
       let dice = []
-      rolls.shift() // The first roll will be handled by DSN's chat handler... the reset we will manually roll
+      rolls.shift() // The first roll will be handled by DSN's chat handler... the rest we will manually roll
       rolls.forEach(r => {
-         r.dice.forEach(d => {
+        r.dice.forEach(d => {
           let type = 'd' + d.faces
-          d.results.forEach(s => dice.push({
-            result: s.result,
-            resultLabel: s.result,
-            type: type,
-            vectors:[],
-            options:{}
-          }))
+          d.results.forEach(s =>
+            dice.push({
+              result: s.result,
+              resultLabel: s.result,
+              type: type,
+              vectors: [],
+              options: {},
+            })
+          )
         })
       })
       throws.push({ dice: dice })
-      if (dice.length > 0)  // The user made a "multi-damage" roll... let them see the dice!
-        game.dice3d.show({throws: throws})
+      if (dice.length > 0) {
+        // The user made a "multi-damage" roll... let them see the dice!
+        game.dice3d.show({ throws: throws })
+      }
     } else {
       messageData.sound = CONFIG.sounds.dice
     }
-    CONFIG.ChatMessage.entityClass.create(messageData).then((arg) => {
+    CONFIG.ChatMessage.entityClass.create(messageData).then(arg => {
       console.log(arg)
       let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
-      $(`[data-message-id='${messageId}']`).click((ev) => this._gurps.handleOnPdf(ev))
+      $(`[data-message-id='${messageId}']`).click(ev => this._gurps.handleOnPdf(ev))
     })
   }
 }
