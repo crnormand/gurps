@@ -50,7 +50,7 @@ export class GurpsActor extends Actor {
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
     const GCAVersion = "GCA-7"
-    const GCSVersion = "GCS-3"
+    const GCSVersion = "GCS-4"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
@@ -130,6 +130,10 @@ export class GurpsActor extends Actor {
         if (vernum < 3) {
           msg +=
             "This file was created with an older version of the GCS Export which does not contain the Self Control rolls for Disadvantages (ex: [CR: 9 Bad Temper]).<br>"
+        }
+        if (vernum < 4) {
+          msg +=
+            "This file was created with an older version of the GCS Export which does not contain the 'Uses' column for Equipment.<br>"
         }
       }
     }
@@ -558,6 +562,8 @@ export class GurpsActor extends Actor {
         eqt.techlevel = t(j.tl)
         eqt.legalityclass = t(j.lc)
         eqt.categories = t(j.type)
+        eqt.uses = t(j.uses)
+        eqt.maxuses = t(j.maxuses)
         eqt.uuid = t(j.uuid)
         eqt.parentuuid = t(j.parentuuid)
         if (isFoundryGCS) {

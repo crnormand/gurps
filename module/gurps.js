@@ -1390,7 +1390,7 @@ Hooks.once('ready', async function () {
     // use class 'bound' to know if the drop event is already bound
     if (!html.hasClass('bound')) {
     
-      let cc = html.find('.combatant-controls')
+/*      let cc = html.find('.combatant-controls')
       cc.prepend('<a class="combatant-control" title="1/3 HP" data-gurpscontrol="HP"><i class="fas fa-heart-broken"></i></a>');
       cc.prepend('<a class="combatant-control" title="1/3 FP" data-gurpscontrol="FP"><i class="fas fa-heartbeat"></i></a>');
       
@@ -1404,6 +1404,7 @@ Hooks.once('ready', async function () {
         let target = game.combat.combatants.filter(c => c._id === combatant)[0]
         console.log(target.actor.name)
       })
+*/
     
       html.addClass('bound')
       html.on('drop', function (ev) {

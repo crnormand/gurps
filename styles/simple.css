@@ -1185,7 +1185,7 @@ body {
 }
 
 #other_equipment {
-  grid-template-columns: auto 1fr repeat(5, auto);
+  grid-template-columns: auto 1fr repeat(7, auto);
   grid-area: other_equipment;
 }
 
@@ -1237,6 +1237,7 @@ body {
 .rsl,
 .qty,
 .equipped,
+.uses,
 .cost,
 .sum_cost,
 .weight,
@@ -1348,20 +1349,23 @@ body {
 #equipment .equipped:nth-child(even),
 #equipment .qty:nth-child(odd),
 #equipment .desc:nth-child(even),
-#equipment .cost:nth-child(odd),
-#equipment .weight:nth-child(even),
-#equipment .sum_cost:nth-child(odd),
-#equipment .sum_weight:nth-child(even),
-#equipment .ref:nth-child(odd),
+#equipment .uses:nth-child(odd),
+#equipment .cost:nth-child(even),
+#equipment .weight:nth-child(odd),
+#equipment .sum_cost:nth-child(even),
+#equipment .sum_weight:nth-child(odd),
+#equipment .ref:nth-child(even),
 #other_equipment .qty:nth-child(even),
 #other_equipment .desc:nth-child(odd),
-#other_equipment .cost:nth-child(even),
-#other_equipment .weight:nth-child(odd),
-#other_equipment .sum_cost:nth-child(even),
-#other_equipment .sum_weight:nth-child(odd),
-#other_equipment .ref:nth-child(even),
-#notes .desc:nth-child(even) {
-  background-color: #e8ffe8;
+#other_equipment .uses:nth-child(even),
+#other_equipment .cost:nth-child(odd),
+#other_equipment .weight:nth-child(even),
+#other_equipment .sum_cost:nth-child(odd),
+#other_equipment .sum_weight:nth-child(even),
+#other_equipment .ref:nth-child(odd),
+#notes .desc:nth-child(even),
+#notes .ref:nth-child(odd) {
+    background-color: #e8ffe8;
 }
 
 #equipment .desc,
@@ -1375,6 +1379,7 @@ body {
 .sl,
 .rsl,
 .qty,
+.uses,
 .cost,
 .sum_cost,
 .weight,
@@ -1411,6 +1416,7 @@ body {
 .rsl,
 .qty,
 .equipped,
+.uses,
 .cost,
 .sum_cost,
 .weight,
@@ -1507,7 +1513,7 @@ body {
 #skills > div:nth-last-child(-n + 5),
 #spells > div:nth-last-child(-n + 11),
 #equipment > div:nth-last-child(-n + 9),
-#other_equipment > div:nth-last-child(-n + 7),
+#other_equipment > div:nth-last-child(-n + 9),
 #notes > div:nth-last-child(-n + 1) {
   border-bottom: none;
   grid-row: 1001;
