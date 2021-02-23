@@ -102,7 +102,7 @@ export class GurpsActorSheet extends ActorSheet {
       this.checkEncumbance(sheetData.eqtsummary.eqtlbs)
 
     // TODO get this from system property
-    sheetData.navigateVisible = true
+    sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
 
     return sheetData
   }
