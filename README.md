@@ -17,7 +17,7 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 ### If you are looking for the latest stable release, use the manifest URL above.
 
-[Current GCA Export version: 'GCA-7' 2/18/2021 / Current GCS Export version: 'GCS-3' 1/31/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA Export version: 'GCA-7' 2/18/2021 / Current GCS Export version: 'GCS-4' 2/23/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
@@ -28,6 +28,7 @@ This is what we are currently working on:
   - Add doubleclick edit to NPC Sheet Notes, Melee, Ranged, Ads, Skill and Spells list
   - Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be *over* that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes *more than* 5 points of damage (i.e., 6).
   - High rate of fire weapons damage is supported directly. Right-click on a damage roll to get a menu to enter the number of hits. There will be a new "ALL THE DAMAGE" draggable section of the damage chat message. Dragging that onto a character will apply all damage rolls in the ADD. The ADD has been enhanced to allow each damage calculation to be displayed, while applying the total.
+ - Updated GCS import to accept 'uses' and 'maxuses' columns for equipment (requires GCS 4.28 and Master Library 2.9)
 
 ##History
 

@@ -302,7 +302,7 @@
             </div>
             <div class='condition-block'>
               <div class='tooltip-wrapper'>
-                <div class='tooltip condition {{fpCondition data.HP "style"}}'>{{hpCondition data.HP 'label'}}
+                <div class='tooltip condition {{fpCondition data.HP "style"}}'>{{hpCondition data.HP 'label'}} &nbsp; <i class='fas fa-heart-broken' style='color:grey'></i>
                   <span class="tooltiptext">
                     <div class="fieldblock">
                       {{#hpBreakpoints data.HP}}
@@ -348,7 +348,7 @@
             </div>
             <div class='condition-block'>
               <div class='tooltip-wrapper'>
-                <div class='tooltip condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}
+                <div class='tooltip condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}} &nbsp; <i class='fas fa-heartbeat' style='color:grey'></i>
                   <span class="tooltiptext">
                     <div class="fieldblock">
                       {{#fpBreakpoints data.FP}}
@@ -579,14 +579,14 @@
     <div id="equipment" class="equipmentlist">
       <div class="equipped header">E</div>
       <div class="qty header eqtdragtarget" data-key="data.equipment.carried">Qty</div>
-      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried"><span class='edit'>{{localize "GURPS.equipment"}}
-        ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}}) &nbsp; <i class='fas fa-plus addequipmenticon'></i></span></div>
+      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried">{{localize "GURPS.equipment"}}
+        ({{eqtsummary.eqtlbs}} lb; ${{eqtsummary.eqtcost}}) &nbsp; <i class='fas fa-plus addequipmenticon'></i></div>
+      <div class="uses header">Uses</div>
       <div class="cost header">$</div>
       <div class="weight header">lb</div>
       <div class="sum_cost header">&sum; $</div>
       <div class="sum_weight header">&sum; lb</div>
       <div class="ref header">Ref</div>
-      <div></div>
 
       {{#listeqt data.equipment.carried }}
       <div class="equipped satisfiedY changeequip equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if this.equipped}}X{{/if}}</div>
@@ -601,26 +601,28 @@
         {{{gurpslink this.name}}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
-        <div class="list_note satisfiedY"></div>
       </div>
+      <div class="uses satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if (ne this.maxuses "0")}}{{this.uses}}{{/if}}</div>
       <div class="cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.cost}}</div>
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
       <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}</div>
       <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.weightsum}} lb</div>
       <div class="ref satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{{pdflinkext this.pageref this.externallink}}}</div>
-      <div></div>
       {{/listeqt}}
 
     </div>
     <div id="other_equipment" class="equipmentlist">
       <div class="qty header eqtdragtarget" data-key="data.equipment.other">Qty</div>
       <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.other">{{localize "GURPS.otherEquipment"}}
-        (${{eqtsummary.othercost}}) &nbsp; <i class='fas fa-plus addequipmenticon'></i></span></div>
+        (${{eqtsummary.othercost}}) &nbsp; <i class='fas fa-plus addequipmenticon'></i></div>
+      <div class="uses header">Uses</div>
       <div class="cost header">$</div>
       <div class="weight header">lb</div>
       <div class="sum_cost header">&sum; $</div>
       <div class="sum_weight header">&sum; lb</div>
       <div class="ref header">Ref</div>
+      <div></div>
+
 
       {{#listeqt data.equipment.other }}
       <div class="qty satisfiedY eqtdraggable equipmenu" data-key="data.equipment.other.{{@key}}">
@@ -634,18 +636,20 @@
         {{{gurpslink this.name}}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
-        <div class="list_note satisfiedY"></div>
       </div>
+      <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (ne this.maxuses "0")}}{{this.uses}}{{/if}}</div>
       <div class="cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
       <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
       <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}} lb</div>
       <div class="ref satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref this.externallink}}}</div>
+      <div></div>
+
       {{/listeqt}}
 
     </div>
     <div id="notes">
-      <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></span></div><div class="ref header">Ref</div>
+      <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div><div class="ref header">Ref</div>
       {{#listeqt data.notes}}
       <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable" data-key="data.notes.{{@key}}">
       {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}

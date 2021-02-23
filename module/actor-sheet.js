@@ -420,7 +420,7 @@ export class GurpsActorSheet extends ActorSheet {
             one: {
               label: 'Create',
               callback: async html => {
-                ;['name', 'notes', 'pageref'].forEach(a => (eqt[a] = html.find(`.${a}`).val()))
+                ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (eqt[a] = html.find(`.${a}`).val()))
                 ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
                 let u = html.find('.save') // Should only find in Note (or equipment)
                 if (!!u) eqt.save = u.is(':checked')
@@ -604,7 +604,7 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              ;['name', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
