@@ -2562,7 +2562,9 @@ ul#result-effects li {
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
-  visibility: visible;
+  visibility:visible;
+  transition-property:visibility;
+  transition-delay: 0.5s;  
   opacity: 1;
 }
 
@@ -2975,4 +2977,8 @@ ul#result-effects li {
   border-bottom-right-radius: 5px;
   border-right: 1px solid #7a7971;
   background-color: rgba(255, 255, 240, 0.8);
+}
+
+.redboxshadowX:hover {
+   box-shadow: 0 0 5px red;
 }
