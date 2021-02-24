@@ -90,6 +90,9 @@ export class CompositeDamageCalculator {
     this._isExplosion = false
     this._hexesFromExplosion = 1
     this._explosionDivisor = 1
+
+    this._isShotgun = false
+    this._shotgunRofMultiplier = 1
   }
 
   get(viewId) {
@@ -271,6 +274,11 @@ export class CompositeDamageCalculator {
   // figure out the current DR modified by armor divisor, if necessary
   get effectiveDR() {
     let dr = this.DR
+
+    if (this._isShotgun && this._shotgunRofMultiplier > 1) {
+      dr = dr * this.shotgunDamageMultiplier
+    }
+
     if (this._useArmorDivisor && !!this._armorDivisor) {
       // -1 divisor means "Ignore DR"
       if (this.effectiveArmorDivisor === -1) return 0
@@ -486,6 +494,28 @@ export class CompositeDamageCalculator {
 
   set isRangedHalfDamage(value) {
     this._isRangedHalfDamage = value
+    if (value) {
+      this._isShotgun = false
+    }
+  }
+
+  get isShotgun() {
+    return this._isShotgun
+  }
+
+  set isShotgun(value) {
+    this._isShotgun = value
+    if (value) {
+      this._isRangedHalfDamage = false
+    }
+  }
+
+  get shotgunRofMultiplier() {
+    return this._shotgunRofMultiplier
+  }
+
+  set shotgunRofMultiplier(value) {
+    this._shotgunRofMultiplier = value
   }
 
   get isVulnerable() {
@@ -513,9 +543,9 @@ export class CompositeDamageCalculator {
   }
 
   get locationMaxHP() {
-    if (this.hitLocationRole === HitLocation.LIMB) return (this.HP.max / 2) + 1
-    if (this.hitLocationRole === HitLocation.EXTREMITY) return (this.HP.max / 3) + 1
-    if (this.hitLocation === 'Eye') return (this.HP.max / 10) + 1
+    if (this.hitLocationRole === HitLocation.LIMB) return this.HP.max / 2 + 1
+    if (this.hitLocationRole === HitLocation.EXTREMITY) return this.HP.max / 3 + 1
+    if (this.hitLocation === 'Eye') return this.HP.max / 10 + 1
     return this.HP.max
   }
 
@@ -535,6 +565,13 @@ export class CompositeDamageCalculator {
 
   get pointsToApply() {
     return this._calculators.map(it => it.pointsToApply).reduce((acc, value) => acc + value)
+  }
+
+  get shotgunDamageMultiplier() {
+    if (this._isShotgun && this._shotgunRofMultiplier > 1) {
+      return Math.floor(this._shotgunRofMultiplier / 2)
+    }
+    return 1
   }
 
   get totalBasicDamage() {
@@ -741,7 +778,13 @@ class DamageCalculator {
   //    location if using "Hit Location Wounding Modifiers".
 
   get effectiveDamage() {
-    return this._parent.isRangedHalfDamage ? Math.floor(this._basicDamage / 2) : this._basicDamage
+    if (this._parent.isRangedHalfDamage) {
+      return Math.floor(this._basicDamage / 2)
+    } else if (this._parent.isShotgun) {
+      return this._basicDamage * this._parent.shotgunDamageMultiplier
+    } else {
+      return this._basicDamage
+    }
   }
 
   get penetratingDamage() {
