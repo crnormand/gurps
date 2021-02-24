@@ -261,7 +261,8 @@
               </label>
               <div id='blunt-trauma-field' class='with-button'>
                 <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
-                  value='{{CALC.effectiveBluntTrauma}}' {{#unless CALC.isFlexibleArmor}}disabled{{/unless}}>
+                  value='{{CALC.effectiveBluntTrauma}}' {{#unless CALC.isFlexibleArmor}}disabled{{/unless}}
+                  style='border: 1px solid #7a7971;'>
                 <button name='clear'><span class='fas fa-times-circle'></button>
               </div>
             </div>
