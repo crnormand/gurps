@@ -141,9 +141,13 @@
   "GURPS.addApplyQuietlyAndKeep": "Apply (Quietly)/Keep Open",
   "GURPS.addApplyInjuryAndKeep": "Apply Injury/Keep Open",
   "GURPS.addApplyInjuryQuietlyAndKeep": "Apply Injury (Quietly)/Keep Open",
+  "GURPS.addShotgunCloseRange": "Shotgun, Extremely Close",
+  "GURPS.addShotgunRofMultiplier": "RoF Multiplier",
+  "GURPS.addShotgunDamage": "Shotgun Damage",
 
   "GURPS.addSingleRollSelected": "Single damage roll selected",
   "GURPS.addApplyOptionsToAll": "These options apply to all damage",
+  "GURPS.addApplyMultipleTimes": "Apply multiple times",
 
   "GURPS.crippling": "Crippling Injury, ",
   "GURPS.damageAbove": "Damage above ",
@@ -188,7 +192,7 @@
   "GURPS.hitLocationWhere": "Where",
   "GURPS.hitLocationPenalty": "Penalty",
   "GURPS.hitLocationDR": "DR",
-  "GURPS.hitLocationDRWithDivisor": "DR with Divisor",
+  "GURPS.hitLocationDRWithDivisor": "Effective DR",
   "GURPS.hitLocationRandom": "Random",
 
   "GURPS.meleeWeapons": "Melee Weapons",

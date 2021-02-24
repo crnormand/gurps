@@ -266,6 +266,14 @@ export default class ApplyDamageDialog extends Application {
       this.updateUI()
     })
 
+    html.find('#shotgun-damage').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isShotgun'))
+
+    html.find('#shotgun-rof-multiplier').on('change', ev => {
+      let currentValue = $(ev.currentTarget).val()
+      this._calculator.shotgunRofMultiplier = currentValue === '' || currentValue === '0' ? 1 : parseInt(currentValue)
+      this.updateUI()
+    })
+
     // ==== Results ====
     html.find('#result-effects button').click(async ev => this._handleEffectButtonClick(ev))
 

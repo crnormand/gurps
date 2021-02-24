@@ -137,13 +137,6 @@
 
   "GURPS.addApplyInjury": "Aplicar Dano",
   "GURPS.addApplyInjuryQuietly": "Aplicar Dano (Sileciosamente)",
-  "GURPS.addApplyAndKeep": "TODO::Apply and Keep Open",
-  "GURPS.addApplyQuietlyAndKeep": "TODO::Apply (Quietly)/Keep Open",
-  "GURPS.addApplyInjuryAndKeep": "TODO::Apply Injury/Keep Open",
-  "GURPS.addApplyInjuryQuietlyAndKeep": "TODO::Apply Injury (Quietly)/Keep Open",
-
-  "GURPS.addSingleRollSelected": "TODO::Single damage roll selected",
-  "GURPS.addApplyOptionsToAll": "TODO::These options apply to all damage",
 
   "GURPS.crippling": "Lesão paralisante, ",
   "GURPS.damageAbove": "Dano acima de ",
@@ -188,7 +181,7 @@
   "GURPS.hitLocationWhere": "Onde",
   "GURPS.hitLocationPenalty": "Modificador",
   "GURPS.hitLocationDR": "RD",
-  "GURPS.hitLocationDRWithDivisor": "RD com Divisor",
+
   "GURPS.hitLocationRandom": "Aleatório",
 
   "GURPS.meleeWeapons": "Armas de Combate Corpo a Corpo",

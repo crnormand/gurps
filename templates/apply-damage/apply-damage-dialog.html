@@ -257,7 +257,7 @@
               <input id='flexible-armor' type='checkbox' value='flexible-armor' {{#if
                 CALC.isFlexibleArmor}}checked{{/if}}>
               <label for='flexible-armor'>{{localize "GURPS.addFlexibleArmor"}}
-                <aside>({{localize "GURPS.bluntTrauma"}}):</aside>
+                <aside style='margin: 0;'>({{localize "GURPS.bluntTrauma"}}):</aside>
               </label>
               <div id='blunt-trauma-field' class='with-button'>
                 <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
@@ -268,6 +268,27 @@
             </div>
           </div>
           {{/if}}
+
+          <div class='collapsible-wrapper options-drawer'>
+            <input id='shotgun-damage' class='toggle' type='checkbox' value='shotgun-damage' {{#if
+              CALC.isShotgun}}checked{{/if}}></input>
+            <label for='shotgun-damage' class='label-toggle'>{{localize "GURPS.addShotgunCloseRange"}}:<span
+                class='pdflink'>B409</span></label>
+            <div class='collapsible-content continuation'>
+              <div style='display: flex; padding: 3px;'>
+                <label for='shotgun-rof-multiplier'
+                  style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>{{localize
+                  "GURPS.addShotgunRofMultiplier"}}:&nbsp;</label>
+                <div style='position: relative;'>
+                  <input type='number' id='shotgun-rof-multiplier' class='digits-only'
+                    value='{{CALC.shotgunRofMultiplier}}' style='padding-left: 1.5rem;' />
+                  <span
+                    style='position: absolute; text-align: center; width: 1.5rem; color: dimgray; left: 0; bottom: 0; line-height: 1.5rem;'>×</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -304,6 +325,11 @@
             <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
             <div name='result-effective-dmg'>= {{CALC.basicDamage}} &divide; 2</div>
             {{/if}}
+            {{#if CALC.isShotgun}}
+            <div name='result-effective-dmg'>{{localize "GURPS.addShotgunDamage"}}</div>
+            <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+            <div name='result-effective-dmg'>= {{CALC.basicDamage}} &times; {{CALC.shotgunDamageMultiplier}}</div>
+            {{/if}}
 
             <div id='result-dr'>{{localize "GURPS.hitLocationDR"}}</div>
             <div>{{CALC.DR}}</div>
@@ -316,15 +342,20 @@
             <div>{{CALC.effectiveDR}}</div>
             <!-- This is a big messy looking block, but it prints either:
                     "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->
-            <div><span>= {{CALC.DR}} &divide;
-                {{#if CALC.isHardenedDR}}({{CALC.effectiveArmorDivisor}} =
+            <div><span>= {{CALC.DR}}
+                {{#if CALC.isShotgun}} &times; {{CALC.shotgunDamageMultiplier}} (Shotgun){{/if}}
+                {{#if CALC.armorDivisor}}
+                &divide;
+                {{#if CALC.isHardenedDR}}
+                ({{CALC.effectiveArmorDivisor}} = ({{CALC.armorDivisor}}) {{localize
+                "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
+                {{else}}
                 ({{CALC.armorDivisor}})
-                {{localize "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
-                {{else}}({{CALC.armorDivisor}})
                 {{/if}}
-                {{#unless
-                CALC.DR}}{{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
+                {{#unless CALC.DR}}
+                {{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
                 {{/unless}}</span>
+              {{/if}}
             </div>
             {{/unless}}
             {{/if}}
@@ -390,14 +421,11 @@
               class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
 
             <div class="grid grid-2col flex-between" style='grid-template-columns: max-content 1fr;'>
-              <label for='apply-multiple'>Apply multiple times:</label>
+              <label for='apply-multiple'>{{localize "GURPS.addApplyMultipleTimes"}}:</label>
               <div style='position: relative;'>
-                <input type="number" class="decimal-digits-only" id="apply-multiple" value="{{timesToApply}}"
+                <input type="number" class="digits-only" id="apply-multiple" value="{{timesToApply}}"
                   style='padding-left: 1.5rem;'>
-                <span style='position: absolute;
-                text-align: center;
-                width: 1.5rem;
-                color: dimgray;'>×</span>
+                <span style='position: absolute; text-align: center; width: 1.5rem; color: dimgray;'>×</span>
               </div>
             </div>
 
