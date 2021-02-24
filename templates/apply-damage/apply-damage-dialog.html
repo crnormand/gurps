@@ -388,7 +388,19 @@
             <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
               class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
 
-            <div style='display: grid; grid-template-columns: 1fr min-content;'>
+            <div class="grid grid-2col flex-between" style='grid-template-columns: max-content 1fr;'>
+              <label for='apply-multiple'>Apply multiple times:</label>
+              <div style='position: relative;'>
+                <input type="number" class="decimal-digits-only" id="apply-multiple" value="{{timesToApply}}"
+                  style='padding-left: 1.5rem;'>
+                <span style='position: absolute;
+                text-align: center;
+                width: 1.5rem;
+                color: dimgray;'>×</span>
+              </div>
+            </div>
+
+            <div style='display: grid; grid-template-columns: 1fr min-content; margin-top: 1rem;'>
               <button id='apply-injury-publicly' class='split-button'>{{localize "GURPS.addApplyInjury"}}</button>
               <div class='dropdown'>
                 <button id='apply-injury-split' class='split-button'>

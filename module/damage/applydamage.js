@@ -40,6 +40,7 @@ export default class ApplyDamageDialog extends Application {
     this._calculator = new CompositeDamageCalculator(actor, damageData)
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
+    this.timesToApply = 1
   }
 
   static get defaultOptions() {
@@ -61,6 +62,7 @@ export default class ApplyDamageDialog extends Application {
     let data = super.getData()
     data.actor = this.actor
     data.CALC = this._calculator
+    data.timesToApply = this.timesToApply
     data.isSimpleDialog = this.isSimpleDialog
     return data
   }
@@ -151,6 +153,12 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('#user-entered-dr')
       .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'userEnteredDR', parseIntFrom))
+
+    html.find('#apply-multiple').on('change', ev => {
+      let temp = $(ev.currentTarget).val()
+      temp = parseIntFrom(temp, 1)
+      this.timesToApply = temp
+    })
 
     // If the current hit location is Random, resolve the die roll and update the hit location.
     if (this._calculator.hitLocation === 'Random') this._randomizeHitLocation()
@@ -436,23 +444,27 @@ export default class ApplyDamageDialog extends Application {
    * Handle clicking on the Apply Injury (public or secret) buttons.
    * @param {boolean} publicly - if true, display to everyone; else display to GM and owner.
    */
-  submitInjuryApply(ev, keepOpen, publicly) {
+  async submitInjuryApply(ev, keepOpen, publicly) {
     let injury = this._calculator.pointsToApply
     let type = this.damageType === 'fat' ? 'FP' : 'HP'
 
     let dialog = $(ev.currentTarget).parents('.gurps-app')
     let results = $(dialog).find('.results-table')
     let clone = results.clone().html()
-    this.resolveInjury(keepOpen, injury, type, publicly, clone)
+
+    for (let index = 0; index < this.timesToApply; index++) {
+      await this.resolveInjury(keepOpen, injury, type, publicly, clone)
+    }
   }
 
   /**
    * Handle the actual loss of HP or FP on the actor and display the results in the chat.
-   * @param {*} injury
-   * @param {*} type
+   * @param {boolean} keepOpen - if true, apply the damage and keep this window open.
+   * @param {int} injury
+   * @param {String} type - either 'FP' or 'HP'
    * @param {boolean} publicly - if true, display to everyone; else display to GM and owner.
    */
-  resolveInjury(keepOpen, injury, type, publicly, results = null) {
+  async resolveInjury(keepOpen, injury, type, publicly, results = null) {
     let current = type === 'FP' ? this._calculator.FP.value : this._calculator.HP.value
 
     let attackingActor = game.actors.get(this._calculator.attacker)
@@ -468,9 +480,9 @@ export default class ApplyDamageDialog extends Application {
     }
 
     if (type === 'FP') {
-      this.actor.update({ 'data.FP.value': this._calculator.FP.value - injury })
+      await this.actor.update({ 'data.FP.value': this.actor.data.data.FP.value - injury })
     } else {
-      this.actor.update({ 'data.HP.value': this._calculator.HP.value - injury })
+      await this.actor.update({ 'data.HP.value': this.actor.data.data.HP.value - injury })
     }
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
