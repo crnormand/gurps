@@ -50,7 +50,7 @@ export class GurpsActor extends Actor {
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
     const GCAVersion = "GCA-7"
-    const GCSVersion = "GCS-3"
+    const GCSVersion = "GCS-4"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
@@ -131,6 +131,10 @@ export class GurpsActor extends Actor {
           msg +=
             "This file was created with an older version of the GCS Export which does not contain the Self Control rolls for Disadvantages (ex: [CR: 9 Bad Temper]).<br>"
         }
+        if (vernum < 4) {
+          msg +=
+            "This file was created with an older version of the GCS Export which does not contain the 'Uses' column for Equipment.<br>"
+        }
       }
     }
     if (!!msg) {
@@ -196,20 +200,33 @@ export class GurpsActor extends Actor {
         whisper: [game.user._id],
       }
       CONFIG.ChatMessage.entityClass.create(chatData, {})
+      // Don't return, because we want to see how much actually gets committed.
     }
     console.log('Starting commit')
 
     let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes('.-=')))
     let adds = Object.fromEntries(Object.entries(commit).filter(([key, value]) => !key.includes('.-=')))
 
-    await this.update(deletes)
-    await this.update(adds)
-    
-    // This has to be done after all of the equipment is loaded
-    this.calculateDerivedValues()
-
-    console.log('Done importing.  You can inspect the character data below:')
-    console.log(this)
+    try {
+      await this.update(deletes)
+      await this.update(adds)
+      // This has to be done after all of the equipment is loaded
+      this.calculateDerivedValues()
+      console.log('Done importing.  You can inspect the character data below:')
+      console.log(this)
+    } catch (err) {
+      let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
+      if (err.message == "Maximum depth exceeded")
+        msg = "You have too many levels of containers.  The Foundry import only supports up to 3 levels of sub-containers"
+      ui.notifications.warn(msg)
+      let chatData = {
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        content: msg,
+        whisper: [game.user._id],
+      }
+      CONFIG.ChatMessage.entityClass.create(chatData, {})
+    }
   }
 
   // hack to get to private text element created by xml->json method.
@@ -545,6 +562,8 @@ export class GurpsActor extends Actor {
         eqt.techlevel = t(j.tl)
         eqt.legalityclass = t(j.lc)
         eqt.categories = t(j.type)
+        eqt.uses = t(j.uses)
+        eqt.maxuses = t(j.maxuses)
         eqt.uuid = t(j.uuid)
         eqt.parentuuid = t(j.parentuuid)
         if (isFoundryGCS) {

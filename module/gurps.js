@@ -1412,9 +1412,26 @@ Hooks.once('ready', async function () {
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
     if (!html.hasClass('bound')) {
+    
+/*      let cc = html.find('.combatant-controls')
+      cc.prepend('<a class="combatant-control" title="1/3 HP" data-gurpscontrol="HP"><i class="fas fa-heart-broken"></i></a>');
+      cc.prepend('<a class="combatant-control" title="1/3 FP" data-gurpscontrol="FP"><i class="fas fa-heartbeat"></i></a>');
+      
+      html.find('[data-gurpscontrol]').click((ev) => {
+        let el = ev.currentTarget
+        if ($(el).hasClass("active")) 
+          $(el).removeClass("active")
+        else
+          $(el).addClass("active")
+        let combatant = $(el).parents('.combatant').attr('data-combatant-id')
+        let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+        console.log(target.actor.name)
+      })
+*/
+    
       html.addClass('bound')
       html.on('drop', function (ev) {
-        console.log('Haandle drop event on combatTracker')
+        console.log('Handle drop event on combatTracker')
         ev.preventDefault()
         ev.stopPropagation()
         let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
