@@ -20,9 +20,9 @@ export class GurpsActorSheet extends ActorSheet {
       height: 800,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       scrollY: [
-        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes'
+        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }]
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
 
@@ -77,7 +77,7 @@ export class GurpsActorSheet extends ActorSheet {
             await this.actor.update({
               [t]: true,
               'data.currentmove': parseInt(enc.move),
-              'data.currentdodge': parseInt(enc.dodge)
+              'data.currentdodge': parseInt(enc.dodge),
             })
           }
         }
@@ -96,10 +96,14 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.eqtsummary = {
       eqtcost: this.sum(eqt.carried, 'cost'),
       eqtlbs: this.sum(eqt.carried, 'weight'),
-      othercost: this.sum(eqt.other, 'cost')
+      othercost: this.sum(eqt.other, 'cost'),
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
       this.checkEncumbance(sheetData.eqtsummary.eqtlbs)
+
+    // TODO get this from system property
+    sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
+
     return sheetData
   }
 
@@ -119,6 +123,7 @@ export class GurpsActorSheet extends ActorSheet {
         this._onfocus(ev)
       })
 
+    html.find('.navigation-link').click(this._onNavigate.bind(this))
     html.find('.rollable').click(this._onClickRoll.bind(this))
     GURPS.hookupGurps(html)
     html.find('.gurpslink').contextmenu(this._onRightClickGurpslink.bind(this))
@@ -232,7 +237,7 @@ export class GurpsActorSheet extends ActorSheet {
         width: 130,
         popOut: true,
         minimizable: false,
-        jQuery: true
+        jQuery: true,
       }
 
       let d = new Dialog(
@@ -255,10 +260,10 @@ export class GurpsActorSheet extends ActorSheet {
                 if (!!maximum) update[`data.${path}.max`] = maximum
 
                 this.actor.update(update)
-              }
-            }
+              },
+            },
           },
-          default: 'one'
+          default: 'one',
         },
         options
       )
@@ -273,7 +278,7 @@ export class GurpsActorSheet extends ActorSheet {
       console.log('updateActorWithChangedSeverity')
       this.actor.update({
         'data.conditionalinjury.injury.severity': formatCIEmpty(changedSeverity),
-        'data.conditionalinjury.injury.daystoheal': formatCIEmpty(CI.daysToHealForSeverity(changedSeverity))
+        'data.conditionalinjury.injury.daystoheal': formatCIEmpty(CI.daysToHealForSeverity(changedSeverity)),
       })
     }
 
@@ -291,7 +296,7 @@ export class GurpsActorSheet extends ActorSheet {
       console.log('updateActorWithChangedDaysToHeal')
       this.actor.update({
         'data.conditionalinjury.injury.severity': formatCIEmpty(CI.severityForDaysToHeal(changedDaysToHeal)),
-        'data.conditionalinjury.injury.daystoheal': formatCIEmpty(changedDaysToHeal)
+        'data.conditionalinjury.injury.daystoheal': formatCIEmpty(changedDaysToHeal),
       })
     }
 
@@ -409,7 +414,7 @@ export class GurpsActorSheet extends ActorSheet {
         width: 530,
         popOut: true,
         minimizable: false,
-        jQuery: true
+        jQuery: true,
       }
 
       let d = new Dialog(
@@ -427,10 +432,10 @@ export class GurpsActorSheet extends ActorSheet {
                 Equipment.calc(eqt)
                 GURPS.put(eqtlist, eqt)
                 actor.update({ [path]: eqtlist })
-              }
-            }
+              },
+            },
           },
-          default: 'one'
+          default: 'one',
         },
         options
       )
@@ -450,7 +455,7 @@ export class GurpsActorSheet extends ActorSheet {
         update = {
           [path + '.-=contains']: null,
           [path + '.contains']: {},
-          [path + '.collapsed']: temp
+          [path + '.collapsed']: temp,
         }
         actor.update(update)
       } else if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
@@ -458,7 +463,7 @@ export class GurpsActorSheet extends ActorSheet {
         update = {
           [path + '.-=collapsed']: null,
           [path + '.collapsed']: {},
-          [path + '.contains']: temp
+          [path + '.contains']: temp,
         }
         actor.update(update)
       }
@@ -487,7 +492,7 @@ export class GurpsActorSheet extends ActorSheet {
         let o = GURPS.decode(this.actor.data, k) || {}
         GURPS.put(o, duplicate(new Equipment('New Equipment', true)))
         this.actor.update({ [k]: o })
-      }
+      },
     })
     opts.push({
       name: 'Edit',
@@ -496,7 +501,7 @@ export class GurpsActorSheet extends ActorSheet {
         let path = e[0].dataset.key
         let o = duplicate(GURPS.decode(this.actor.data, path))
         this.editEquipment(this.actor, path, o)
-      }
+      },
     })
     new ContextMenu(html, '.equipmenu', opts)
 
@@ -523,7 +528,7 @@ export class GurpsActorSheet extends ActorSheet {
         await Dialog.confirm({
           title: 'Delete',
           content: `Do you want to delete "${eqt.name}" from the list?`,
-          yes: () => (agree = true)
+          yes: () => (agree = true),
         })
         if (agree) GURPS.removeKey(actor, path)
       } else {
@@ -556,16 +561,16 @@ export class GurpsActorSheet extends ActorSheet {
                 if (!!u) obj.save = u.is(':checked')
                 GURPS.put(list, obj)
                 actor.update({ [path]: list })
-              }
-            }
+              },
+            },
           },
-          default: 'one'
+          default: 'one',
         },
         {
           width: 730,
           popOut: true,
           minimizable: false,
-          jQuery: true
+          jQuery: true,
         }
       )
       d.render(true)
@@ -579,15 +584,15 @@ export class GurpsActorSheet extends ActorSheet {
           let path = e[0].dataset.key
           let o = duplicate(GURPS.decode(this.actor.data, path))
           this.editNotes(this.actor, path, o)
-        }
+        },
       },
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
           GURPS.removeKey(this.actor, e[0].dataset.key)
-        }
-      }
+        },
+      },
     ]
     new ContextMenu(html, '.notesmenu', opts)
   }
@@ -611,16 +616,16 @@ export class GurpsActorSheet extends ActorSheet {
               Equipment.calc(obj)
               await actor.update({ [path]: obj })
               await this.updateParentOf(path, 4)
-            }
-          }
+            },
+          },
         },
-        default: 'one'
+        default: 'one',
       },
       {
         width: 530,
         popOut: true,
         minimizable: false,
-        jQuery: true
+        jQuery: true,
       }
     )
     d.render(true)
@@ -716,15 +721,15 @@ export class GurpsActorSheet extends ActorSheet {
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
               actor.update({ [path]: obj })
-            }
-          }
-        }
+            },
+          },
+        },
       },
       {
         width: width,
         popOut: true,
         minimizable: false,
-        jQuery: true
+        jQuery: true,
       }
     )
     d.render(true)
@@ -755,7 +760,7 @@ export class GurpsActorSheet extends ActorSheet {
               .sort((a, b) => a.name.localeCompare(b.name))
               .forEach(o => game.GURPS.put(sortedobj, o, index++))
             await self.actor.update({ [key]: sortedobj })
-          }
+          },
         },
         two: {
           icon: '<i class="fas fa-sort-alpha-down"></i>',
@@ -773,10 +778,10 @@ export class GurpsActorSheet extends ActorSheet {
               .sort((a, b) => b.name.localeCompare(a.name))
               .forEach(o => game.GURPS.put(sortedobj, o, index++))
             await self.actor.update({ [key]: sortedobj })
-          }
-        }
+          },
+        },
       },
-      default: 'one'
+      default: 'one',
     })
     d.render(true)
   }
@@ -845,7 +850,7 @@ export class GurpsActorSheet extends ActorSheet {
                     await GURPS.removeKey(this.actor, srckey)
                     await this.updateParentOf(srckey)
                   }
-                }
+                },
               },
               two: {
                 icon: '<i class="fas fa-sign-in-alt"></i>',
@@ -862,10 +867,10 @@ export class GurpsActorSheet extends ActorSheet {
                     await GURPS.removeKey(this.actor, srckey)
                     await this.updateParentOf(srckey)
                   }
-                }
-              }
+                },
+              },
             },
-            default: 'one'
+            default: 'one',
           })
           d.render(true)
         }
@@ -919,7 +924,7 @@ export class GurpsActorSheet extends ActorSheet {
                 if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
                 await GURPS.insertBeforeKey(this.actor, targetkey, object)
                 if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
-              }
+              },
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
@@ -929,10 +934,10 @@ export class GurpsActorSheet extends ActorSheet {
                 let k = targetkey + '.contains.' + GURPS.genkey(0)
                 await GURPS.insertBeforeKey(this.actor, k, object)
                 if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
-              }
-            }
+              },
+            },
           },
-          default: 'one'
+          default: 'one',
         })
         d.render(true)
       }
@@ -974,21 +979,21 @@ export class GurpsActorSheet extends ActorSheet {
           label: isFull ? 'Combat View' : 'Full View',
           class: 'toggle',
           icon: 'fas fa-exchange-alt',
-          onclick: ev => this._onToggleSheet(ev)
+          onclick: ev => this._onToggleSheet(ev),
         },
         {
           label: 'Import',
           class: 'import',
           icon: 'fas fa-file-import',
-          onclick: ev => this._onFileImport(ev)
-        }
+          onclick: ev => this._onFileImport(ev),
+        },
       ]
       if (!isEditor) {
         b.push({
           label: 'Editor',
           class: 'edit',
           icon: 'fas fa-edit',
-          onclick: ev => this._onOpenEditor(ev)
+          onclick: ev => this._onOpenEditor(ev),
         })
       }
       buttons = b.concat(buttons)
@@ -1003,7 +1008,7 @@ export class GurpsActorSheet extends ActorSheet {
       {
         title: `Import character data for: ${this.actor.name}`,
         content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
-          name: '"' + this.actor.name + '"'
+          name: '"' + this.actor.name + '"',
         }),
         buttons: {
           import: {
@@ -1019,17 +1024,17 @@ export class GurpsActorSheet extends ActorSheet {
                 file = files[0]
                 readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
               }
-            }
+            },
           },
           no: {
             icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel'
-          }
+            label: 'Cancel',
+          },
         },
-        default: 'import'
+        default: 'import',
       },
       {
-        width: 400
+        width: 400,
       }
     ).render(true)
   }
@@ -1071,7 +1076,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onRightClickGurpslink(event) {
     event.preventDefault()
-    event.stopImmediatePropagation()    // Since this may occur in note or a list (which has its own RMB handler)
+    event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
     let el = event.currentTarget
     let action = el.dataset.action
     if (!!action) {
@@ -1115,6 +1120,12 @@ export class GurpsActorSheet extends ActorSheet {
     game.GURPS.handleRoll(event, this.actor, targets)
   }
 
+  async _onNavigate(event) {
+    let dataValue = $(event.currentTarget).attr('data-value')
+    var elmnt = document.getElementById(dataValue)
+    elmnt.scrollIntoView()
+  }
+
   async _onClickEnc(ev) {
     ev.preventDefault()
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -1132,7 +1143,7 @@ export class GurpsActorSheet extends ActorSheet {
           await this.actor.update({
             [t]: true,
             'data.currentmove': parseInt(enc.move),
-            'data.currentdodge': parseInt(enc.dodge)
+            'data.currentdodge': parseInt(enc.dodge),
           })
         }
       }
@@ -1154,7 +1165,7 @@ export class GurpsActorSheet extends ActorSheet {
     let b = this.actor.getEquippedBlock()
     await this.actor.update({
       'data.equippedparry': p,
-      'data.equippedblock': b
+      'data.equippedblock': b,
     })
   }
 
@@ -1165,14 +1176,14 @@ export class GurpsActorSheet extends ActorSheet {
         icon: "<i class='fas fa-level-up-alt'></i>",
         callback: e => {
           GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj))
-        }
+        },
       },
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
           GURPS.removeKey(this.actor, e[0].dataset.key)
-        }
+        },
       },
       {
         name: 'Add at the end',
@@ -1184,8 +1195,8 @@ export class GurpsActorSheet extends ActorSheet {
           let o = GURPS.decode(this.actor.data, objpath)
           GURPS.put(o, duplicate(obj))
           this.actor.update({ [objpath]: o })
-        }
-      }
+        },
+      },
     ]
   }
 
@@ -1206,7 +1217,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       width: 600,
       height: 275,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }]
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
 }
@@ -1218,12 +1229,12 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       classes: ['gurps', 'gurpsactorsheet', 'sheet', 'actor'],
       template: 'systems/gurps/templates/actor-sheet-gcs-editor.html',
       scrollY: [
-        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes'
+        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
       width: 800,
       height: 800,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }]
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
 
@@ -1240,8 +1251,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
           let o = GURPS.decode(this.actor.data, path)
           GURPS.put(o, duplicate(obj))
           this.actor.update({ [path]: o })
-        }
-      }
+        },
+      },
     ]
   }
 
@@ -1298,32 +1309,33 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       new Equipment('New Equipment', true),
       'data.equipment.other'
     )
-    
-    html.find('#body-plan').change(async (e) => {
+
+    html.find('#body-plan').change(async e => {
       let bodyplan = e.currentTarget.value
       if (bodyplan !== this.actor.data.data.additionalresources.bodyplan) {
         let hitlocationTable = hitlocationDictionary[bodyplan]
         if (!hitlocationTable) {
           ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
-        } else {    // Try to copy any DR values from hit locations that match
+        } else {
+          // Try to copy any DR values from hit locations that match
           let hitlocations = {}
           let oldlocations = this.actor.data.data.hitlocations || {}
           let count = 0
           for (let loc in hitlocationTable) {
             let hit = hitlocationTable[loc]
-            let originalLoc = Object.values(oldlocations).filter((it) => it.where === loc)
+            let originalLoc = Object.values(oldlocations).filter(it => it.where === loc)
             let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
             game.GURPS.put(hitlocations, it, count++)
           }
-          await this.actor.update({ 
+          await this.actor.update({
             'data.-=hitlocations': null,
-            'data.additionalresources.bodyplan' : bodyplan
+            'data.additionalresources.bodyplan': bodyplan,
           })
           await this.actor.update({ 'data.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
           await this.actor.update({ 'data.hitlocations': hitlocations })
         }
-      }  
+      }
     })
   }
 
@@ -1344,7 +1356,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
       width: 820,
       height: 900,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }]
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
 
@@ -1377,7 +1389,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/npc-sheet.html',
       width: 650,
       height: 450,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }]
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
 
