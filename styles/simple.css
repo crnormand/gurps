@@ -2979,10 +2979,6 @@ ul#result-effects li {
   background-color: rgba(255, 255, 240, 0.8);
 }
 
-.redboxshadow:hover {
-   box-shadow: 0 0 5px red;
-}
-
 .navigate-bar {
   height: 24px;
   background-color: rgba(0, 0, 0, 0.6);
@@ -3063,3 +3059,32 @@ ul#result-effects li {
   border-left: 2px solid rgba(255, 255, 240, 0.5);
   margin-left: 0;
 }
+
+.buttongrey {
+  color: grey; 
+}
+
+.buttongrey:hover {
+   box-shadow: 0 0 5px red;
+}
+
+.buttonpulsatingred {
+  animation: pulsered 1.5s infinite;
+}
+
+@keyframes pulsered {
+  0% {
+    color:black;
+  }
+  60% {
+    color: rgb(255, 64, 64);
+  }
+  100% {
+    color: black;
+  }
+}
+
+.buttonpulsatingred:hover {
+   box-shadow: 0 0 5px red;
+}
+

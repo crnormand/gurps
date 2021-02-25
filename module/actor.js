@@ -23,13 +23,30 @@ export class GurpsActor extends Actor {
   
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
   calculateDerivedValues() {
-    if (!this.data.data.currentdodge || !this.data.data.currentmove) {
-      let encs = this.data.data.encumbrance;
+    const encs = this.data.data.encumbrance;
+    const isReeling = !!this.data.data.additionalresources.isReeling
+    const isTired = !!this.data.data.additionalresources.isTired
+    this.data.data.attributes.ST.currentvalue = isTired ? Math.ceil(parseInt(this.data.data.attributes.ST.value) / 2) : this.data.data.attributes.ST.value
+    // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
+    if (!!encs) {
+      const level0 = encs[GURPS.genkey(0)]    // if there are encumbrances, there will always be a level0
+      let m = parseInt(level0.move)
+      let d = parseInt(level0.dodge)
+      if (isReeling) {
+        m = Math.ceil(m / 2)
+        d = Math.ceil(d / 2)
+      } 
+      if (isTired) {
+        m = Math.ceil(m / 2)
+        d = Math.ceil(d / 2)
+      } 
       for (let enckey in encs) {
         let enc = encs[enckey];
-        if (enc.current) {
-          this.data.data.currentmove = parseInt(enc.move)
-          this.data.data.currentdodge = parseInt(enc.dodge)
+        enc.currentmove = Math.max(1, m - parseInt(enc.level))
+        enc.currentdodge = Math.max(1, d - parseInt(enc.level))
+        if (enc.current) {  // Save the global move/dodge
+          this.data.data.currentmove = enc.currentmove
+          this.data.data.currentdodge = enc.currentdodge
         }
       }
     }
@@ -1139,6 +1156,29 @@ export class GurpsActor extends Actor {
 
   getEquippedBlock() {
     return this.getEquipped('block')
+  }
+  
+  changeOneThirdStatus(option, flag) {
+    this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
+      this.calculateDerivedValues()
+      let msg = this.name + " "
+      if (option === 'isReeling') {
+        if (flag) msg += 'is Reeling. Move and Dodge are halved. [PDF:B419]'
+        else msg += 'is no longer reeling.'
+      }
+      if (option === 'isTired') {
+        if (flag) msg += 'is Tired.   Move, Dodge and ST are halved. [PDF:B426]'
+        else msg += 'is no longer tired.'
+      }
+      let users = this.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
+      let ids = users.map(it => it._id)
+      let messageData = {
+        content: msg,
+        whisper: ids,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER
+      }
+      ChatMessage.create(messageData)
+    })
   }
 
 }

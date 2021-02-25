@@ -595,6 +595,13 @@ export class GurpsActorSheet extends ActorSheet {
       },
     ]
     new ContextMenu(html, '.notesmenu', opts)
+    
+    html.find('[data-onethird]').click((ev) => {
+      let el = ev.currentTarget
+      let opt = el.dataset.onethird
+      let b = !!this.actor.data.data.additionalresources[opt]
+      this.actor.changeOneThirdStatus(opt, !b)
+    })
   }
 
   async editEquipment(actor, path, obj) {

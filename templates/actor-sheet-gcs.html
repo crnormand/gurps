@@ -104,7 +104,7 @@
         <div class="fieldblock3">
           <div class="points">[{{data.attributes.ST.points}}]</div>
           <div class="field rollable" data-path="attributes.ST.value" data-otf='ST'>
-            {{data.attributes.ST.value}}</div>
+            {{data.attributes.ST.currentvalue}}</div>
           <div class="label">{{localize "GURPS.attributesSTNAME"}} ({{localize "GURPS.attributesST"}})</div>
           <div class="points">[{{data.attributes.DX.points}}]</div>
           <div class="field rollable" data-path="attributes.DX.value" data-otf='DX'>
@@ -174,14 +174,14 @@
         <div class="encmarker current"></div>
         <div class="enc current {{this.key}}" data-key="{{key}}"></div>
         <div class="load current">{{this.weight}}</div>
-        <div class="move current">{{this.move}}</div>
-        <div class="dodge current rollable" data-otf='Dodge' data-path="dodge">{{this.dodge}}</div>
+        <div class="move current">{{this.currentmove}}</div>
+        <div class="dodge current rollable" data-otf='Dodge' data-path="dodge">{{this.currentdodge}}</div>
         {{else}}
         <div class="encmarker "></div>
         <div class="enc {{this.key}}" data-key="{{key}}"></div>
         <div class="load ">{{this.weight}}</div>
-        <div class="move ">{{this.move}}</div>
-        <div class="dodge" data-path="dodge">{{this.dodge}}</div>
+        <div class="move ">{{this.currentmove}}</div>
+        <div class="dodge" data-path="dodge">{{this.currentdodge}}</div>
         {{/if}}
         {{/each}}
 
@@ -302,7 +302,8 @@
             </div>
             <div class='condition-block'>
               <div class='tooltip-wrapper'>
-                <div class='tooltip condition {{fpCondition data.HP "style"}}'>{{hpCondition data.HP 'label'}} &nbsp; <i class='fas fa-heart-broken redboxshadow' style='color:grey'></i>
+                <div class='tooltip condition {{fpCondition data.HP "style"}}'>{{hpCondition data.HP 'label'}} 
+                &nbsp; <i class='fas fa-heart-broken {{optionSetStyle data.additionalresources.isReeling}}' data-onethird='isReeling'></i>
                   <span class="tooltiptext">
                     <div class="fieldblock">
                       {{#hpBreakpoints data.HP}}
@@ -348,7 +349,8 @@
             </div>
             <div class='condition-block'>
               <div class='tooltip-wrapper'>
-                <div class='tooltip condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}} &nbsp; <i class='fas fa-heartbeat redboxshadow' style='color:grey'></i>
+                <div class='tooltip condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}
+                &nbsp; <i class='fas fa-heartbeat {{optionSetStyle data.additionalresources.isTired}}' data-onethird='isTired'></i>
                   <span class="tooltiptext">
                     <div class="fieldblock">
                       {{#fpBreakpoints data.FP}}

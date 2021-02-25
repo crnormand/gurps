@@ -17,7 +17,9 @@
               <div class='field'>{{data.HP.max}}</div>
               <div class='label'>Basic</div>
             </div>
-            <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}</div>
+            <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}
+              &nbsp; <i class='fas fa-heart-broken {{optionSetStyle data.additionalresources.isReeling}}' data-onethird='isReeling'></i>
+            </div>
           </div>
         </div> <!-- end of combat-hit -->
 
@@ -35,7 +37,9 @@
               <div class='field'>{{data.FP.max}}</div>
               <div class='label'>Basic</div>
             </div>
-            <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}</div>
+            <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}
+              &nbsp; <i class='fas fa-heartbeat {{optionSetStyle data.additionalresources.isTired}}' data-onethird='isTired'></i>
+            </div>
           </div>
         </div> <!-- combat-fat -->
       </div>
@@ -72,7 +76,7 @@
           <div id='combat-attrs-1'>
             <div class="fieldblock">
               <div class="field noedit rollable" data-path="attributes.ST.value" data-otf='ST'>
-                {{data.attributes.ST.value}}</div>
+                {{data.attributes.ST.currentvalue}}</div>
               <div class="label">{{localize "GURPS.attributesST"}}</div>
 
               <div class="field noedit rollable" data-path="attributes.DX.value" data-otf='DX'>
@@ -150,14 +154,14 @@
           <div class="encmarker current"></div>
           <div class="enc current {{this.key}}" data-key="{{key}}"></div>
           <div class="load current">{{this.weight}}</div>
-          <div class="move current">{{this.move}}</div>
-          <div class="dodge current rollable" data-path="dodge" data-otf='Dodge'>{{this.dodge}}</div>
+          <div class="move current">{{this.currentmove}}</div>
+          <div class="dodge current rollable" data-path="dodge" data-otf='Dodge'>{{this.currentdodge}}</div>
           {{else}}
           <div class="encmarker "></div>
           <div class="enc {{this.key}}" data-key="{{key}}"></div>
           <div class="load ">{{this.weight}}</div>
-          <div class="move ">{{this.move}}</div>
-          <div class="dodge">{{this.dodge}}</div>
+          <div class="move ">{{this.currentmove}}</div>
+          <div class="dodge">{{this.currentdodge}}</div>
           {{/if}}
           {{/each}}
 
