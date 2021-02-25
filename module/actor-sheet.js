@@ -190,6 +190,18 @@ export class GurpsActorSheet extends ActorSheet {
       })
     })
 
+    html.find('input[name="data.HP.value"]').keypress(ev => {
+      if (ev.which === 13) ev.preventDefault()
+    })
+
+    html.find('input[name="data.FP.value"]').keypress(ev => {
+      if (ev.which === 13) ev.preventDefault()
+    })
+
+    html.find('input[name*="data.additionalresources.tracker."]').keypress(ev => {
+      if (ev.which === 13) ev.preventDefault()
+    })
+
     html.find('button[data-operation="resource-inc"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
@@ -204,6 +216,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     html.find('button[data-operation="resource-dec"]').click(ev => {
+      ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
@@ -216,6 +229,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     html.find('button[data-operation="resource-reset"]').click(ev => {
+      ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
 
@@ -227,6 +241,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     html.find('.tracked-resource .header.with-editor').click(async ev => {
+      ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
       let tracker = getProperty(this.actor.data.data, path)
@@ -595,8 +610,8 @@ export class GurpsActorSheet extends ActorSheet {
       },
     ]
     new ContextMenu(html, '.notesmenu', opts)
-    
-    html.find('[data-onethird]').click((ev) => {
+
+    html.find('[data-onethird]').click(ev => {
       let el = ev.currentTarget
       let opt = el.dataset.onethird
       let b = !!this.actor.data.data.additionalresources[opt]
