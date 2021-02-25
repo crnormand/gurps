@@ -301,7 +301,7 @@ export class HitLocation {
     hitlocationDictionary = {
       humanoid: humanoidHitLocations,
       'humanoid expanded': { ...humanoidHitLocations, ...{ Chest: { roll: '-', penalty: 0 } } }, // GCA
-      'winged humanoid': { ...humanoidHitLocations, ...{ Wings: { roll: '-', penalty: -2, role: LIMB } } }, // GCA
+      'winged humanoid': { ...humanoidHitLocations, ...{ Wing: { roll: '-', penalty: -2, role: LIMB } } }, // GCA
       quadruped: quadrupedHitLocations,
       quadrupedWinged: wingedQuadHitLocations,
       'winged quadruped': wingedQuadHitLocations, // GCA

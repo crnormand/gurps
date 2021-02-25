@@ -74,8 +74,12 @@
             <header>{{localize "GURPS.hitLocationDR"}}</header>
 
             {{#each CALC.hitLocationsWithDR}}
-            <div><label><input type='radio' name='hitlocation' value='{{this.where}}' {{#if (eq ../CALC.hitLocation
-                  this.where)}}checked{{/if}}>&nbsp;{{this.where}}</label></div>
+            <div>
+              <label>
+                <input type='radio' name='hitlocation' value='{{this.where}}' {{#if (eq ../CALC.hitLocation
+                  this.where)}}checked{{/if}}>&nbsp;{{localize (concat "GURPS.hitLocation" this.where)}}
+              </label>
+            </div>
             <div>{{this.rollText}}</div>
             <div>{{this.dr}}</div>
             {{/each}}

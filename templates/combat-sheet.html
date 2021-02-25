@@ -18,7 +18,8 @@
               <div class='label'>Basic</div>
             </div>
             <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}
-              &nbsp; <i class='fas fa-heart-broken {{optionSetStyle data.additionalresources.isReeling}}' data-onethird='isReeling'></i>
+              &nbsp; <i class='fas fa-heart-broken {{optionSetStyle data.additionalresources.isReeling}}'
+                data-onethird='isReeling'></i>
             </div>
           </div>
         </div> <!-- end of combat-hit -->
@@ -38,7 +39,8 @@
               <div class='label'>Basic</div>
             </div>
             <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}
-              &nbsp; <i class='fas fa-heartbeat {{optionSetStyle data.additionalresources.isTired}}' data-onethird='isTired'></i>
+              &nbsp; <i class='fas fa-heartbeat {{optionSetStyle data.additionalresources.isTired}}'
+                data-onethird='isTired'></i>
             </div>
           </div>
         </div> <!-- combat-fat -->
@@ -178,7 +180,7 @@
 
         {{#each data.hitlocations}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
-        <div class="where">{{this.where}}</div>
+        <div class="where">{{localize (concat "GURPS.hitLocation" this.where)}}</div>
         <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
           {{hitlocationpenalty this.where this.penalty}}
         </div>
