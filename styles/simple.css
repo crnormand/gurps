@@ -1364,7 +1364,7 @@ body {
 #other_equipment .ref:nth-child(odd),
 #notes .desc:nth-child(even),
 #notes .ref:nth-child(odd) {
-    background-color: #e8ffe8;
+  background-color: #e8ffe8;
 }
 
 #equipment .desc,
@@ -2237,7 +2237,7 @@ body {
 .with-button button {
   position: absolute;
   right: 0.35em;
-  line-height: 25px;
+  line-height: 28px;
   z-index: 2;
   color: dimgrey;
   border: none;
@@ -2562,9 +2562,9 @@ ul#result-effects li {
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
-  visibility:visible;
-  transition-property:visibility;
-  transition-delay: 0.5s;  
+  visibility: visible;
+  transition-property: visibility;
+  transition-delay: 0.5s;
   opacity: 1;
 }
 
@@ -3041,16 +3041,12 @@ ul#result-effects li {
   background-color: #ccccc0;
 }
 
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-  /* display: block; */
-}
-
 .split-button {
   border-radius: 3px 0 0 3px;
   border: 1px solid #b5b3a4;
   border-right: 2px solid rgba(0, 0, 0, 0.25);
   margin-right: 0;
+  background: rgba(255, 255, 240, 0.5);
 }
 
 .dropdown .split-button {
@@ -3061,11 +3057,11 @@ ul#result-effects li {
 }
 
 .buttongrey {
-  color: grey; 
+  color: grey;
 }
 
 .buttongrey:hover {
-   box-shadow: 0 0 5px red;
+  box-shadow: 0 0 5px red;
 }
 
 .buttonpulsatingred {
@@ -3074,7 +3070,7 @@ ul#result-effects li {
 
 @keyframes pulsered {
   0% {
-    color:black;
+    color: black;
   }
   60% {
     color: rgb(255, 64, 64);
@@ -3085,6 +3081,5 @@ ul#result-effects li {
 }
 
 .buttonpulsatingred:hover {
-   box-shadow: 0 0 5px red;
+  box-shadow: 0 0 5px red;
 }
-

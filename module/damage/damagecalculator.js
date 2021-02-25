@@ -415,8 +415,25 @@ export class CompositeDamageCalculator {
     return null
   }
 
+  /**
+   * HitLocationsWithDR is an array of...
+   * {
+   *   where: 'Torso',
+   *   dr: 5,
+   *   roll: [9,10,11],
+   *   rollText: '9-11',
+   * }
+   */
   get hitLocationsWithDR() {
-    return this._defender.hitLocationsWithDR
+    // internationalize English hit location name
+    let locations = this._defender.hitLocationsWithDR
+
+    locations.forEach(it => {
+      let where = it.where // .replace(/ /g, '_')
+      it.where = game.i18n.localize(`GURPS.hitLocation${where}`)
+    })
+
+    return locations
   }
 
   get HP() {
