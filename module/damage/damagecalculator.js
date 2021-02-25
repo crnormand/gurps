@@ -427,12 +427,6 @@ export class CompositeDamageCalculator {
   get hitLocationsWithDR() {
     // internationalize English hit location name
     let locations = this._defender.hitLocationsWithDR
-
-    locations.forEach(it => {
-      let where = it.where // .replace(/ /g, '_')
-      it.where = game.i18n.localize(`GURPS.hitLocation${where}`)
-    })
-
     return locations
   }
 

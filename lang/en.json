@@ -341,6 +341,7 @@
   "GURPS.hitLocationExtremity": "Extremity",
   "GURPS.hitLocationMid Leg": "Mid Leg",
   "GURPS.hitLocationMid Leg*": "Mid Leg",
+  "GURPS.hitLocationArm": "Arm",
   "GURPS.hitLocationArm*": "Arm",
   "GURPS.hitLocationTorso*": "Torso",
   "GURPS.hitLocationBrain": "Brain",
@@ -353,5 +354,6 @@
   "GURPS.hitLocationLeg 1-2": "Leg 1-2",
   "GURPS.hitLocationLeg 3-4": "Leg 3-4",
   "GURPS.hitLocationLeg 5-6": "Leg 5-6",
-  "GURPS.hitLocationLeg 7-8": "Arm 7-8"
+  "GURPS.hitLocationLeg 7-8": "Arm 7-8",
+  "GURPS.hitLocationChest": "Chest"
 }
