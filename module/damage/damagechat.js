@@ -20,11 +20,38 @@ export default class DamageChat {
 
   setup() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
-      let damageMessages = html.find('.damage-message')
-      if (!!damageMessages && damageMessages.length > 0) {
+      let isDamageChatMessage = !!html.find('.damage-chat-message')
+
+      if (isDamageChatMessage) {
         let transfer = JSON.parse(app.data.flags.transfer)
-        for (let index = 0; index < damageMessages.length; index++) {
-          let message = damageMessages[index]
+
+        // for each damage-message, set the drag-and-drop events and data
+        let damageMessages = html.find('.damage-message')
+        if (!!damageMessages && damageMessages.length > 0) {
+          for (let index = 0; index < damageMessages.length; index++) {
+            let message = damageMessages[index]
+
+            message.setAttribute('draggable', true)
+            message.addEventListener('dragstart', ev => {
+              $(ev.currentTarget).addClass('dragging')
+              ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
+              let data = {
+                type: 'damageItem',
+                payload: transfer.payload[index],
+              }
+              return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
+            })
+            message.addEventListener('dragend', ev => {
+              $(ev.currentTarget).removeClass('dragging')
+            })
+          }
+        } // end-if (!!damageMessages && damageMessages.length)
+
+        // for the damage-all-message, set the drag-and-drop events and data
+        let allDamageMessage = html.find('.damage-all-message')
+        if (!!allDamageMessage && allDamageMessage.length == 1) {
+          let transfer = JSON.parse(app.data.flags.transfer)
+          let message = allDamageMessage[0]
 
           message.setAttribute('draggable', true)
           message.addEventListener('dragstart', ev => {
@@ -32,7 +59,7 @@ export default class DamageChat {
             ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
             let data = {
               type: 'damageItem',
-              payload: transfer.payload[index],
+              payload: transfer.payload,
             }
             return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
           })
@@ -40,27 +67,24 @@ export default class DamageChat {
             $(ev.currentTarget).removeClass('dragging')
           })
         }
-      }
 
-      let allDamageMessage = html.find('.damage-all-message')
-      if (!!allDamageMessage && allDamageMessage.length == 1) {
-        let transfer = JSON.parse(app.data.flags.transfer)
-        let message = allDamageMessage[0]
+        // If there was a target, enable the GM's apply button
+        let button = html.find('button', '.apply-all')
+        button.hide()
+        if (!!transfer.userTarget && transfer.userTarget != null) {
+          if (game.user.isGM) {
+            button.show()
 
-        message.setAttribute('draggable', true)
-        message.addEventListener('dragstart', ev => {
-          $(ev.currentTarget).addClass('dragging')
-          ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
-          let data = {
-            type: 'damageItem',
-            payload: transfer.payload,
+            button.click(ev => {
+              // get actor from id
+              let targetActor = game.actors.get(transfer.userTarget) // ...
+              // get payload; its either the "all damage" payload or ...
+              let payload = transfer.payload
+              targetActor.handleDamageDrop(payload)
+            })
           }
-          return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
-        })
-        message.addEventListener('dragend', ev => {
-          $(ev.currentTarget).removeClass('dragging')
-        })
-      }
+        }
+      } // end-if (damageChatMessage)
     })
   }
 
@@ -290,6 +314,11 @@ export default class DamageChat {
   }
 
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
+    let userTarget = null
+    if (!!game.user.targets.size) {
+      userTarget = game.user.targets.values().next().value
+    }
+
     const damageType = diceData.damageType
     let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
       draggableData: draggableData,
@@ -297,6 +326,7 @@ export default class DamageChat {
       dice: diceData.diceText,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
+      userTarget: userTarget,
     })
 
     const speaker = { alias: actor.name, _id: actor._id, actor: actor }
@@ -315,6 +345,7 @@ export default class DamageChat {
     messageData['flags.transfer'] = JSON.stringify({
       type: 'damageItem',
       payload: draggableData,
+      userTarget: !!userTarget ? userTarget.actor.id : null,
     })
 
     if (isNiceDiceEnabled()) {
