@@ -193,6 +193,7 @@
   "GURPS.hitLocationPenalty": "Penalty",
   "GURPS.hitLocationDR": "DR",
   "GURPS.hitLocationDRWithDivisor": "Effective DR",
+
   "GURPS.hitLocationRandom": "Random",
 
   "GURPS.meleeWeapons": "Melee Weapons",
