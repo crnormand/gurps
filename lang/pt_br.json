@@ -192,6 +192,7 @@
   "GURPS.hitLocationWhere": "Onde",
   "GURPS.hitLocationPenalty": "Modificador",
   "GURPS.hitLocationDR": "RD",
+  "GURPS.hitLocationDRWithDivisor": "RD Efetiva com Divisor",
 
   "GURPS.hitLocationRandom": "Aleatório",
 
