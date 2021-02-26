@@ -69,16 +69,20 @@ export default class DamageChat {
         }
 
         // If there was a target, enable the GM's apply button
-        if (!!transfer.userTarget) {
-          let button = html.find('button', '.apply-all')
-          game.user.isGM ? button.show() : button.hide()
-          button.click(ev => {
-            // get actor from id
-            let targetActor = game.actors.get(transfer.userTarget) // ...
-            // get payload; its either the "all damage" payload or ...
-            let payload = transfer.payload
-            targetActor.handleDamageDrop(payload)
-          })
+        let button = html.find('button', '.apply-all')
+        button.hide()
+        if (!!transfer.userTarget && transfer.userTarget != null) {
+          if (game.user.isGM) {
+            button.show()
+
+            button.click(ev => {
+              // get actor from id
+              let targetActor = game.actors.get(transfer.userTarget) // ...
+              // get payload; its either the "all damage" payload or ...
+              let payload = transfer.payload
+              targetActor.handleDamageDrop(payload)
+            })
+          }
         }
       } // end-if (damageChatMessage)
     })
