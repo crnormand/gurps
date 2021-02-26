@@ -53,6 +53,11 @@ export class GurpsActor extends Actor {
     if (!this.data.data.equippedparry) this.data.data.equippedparry = this.getEquippedParry()
     if (!this.data.data.equippedblock) this.data.data.equippedblock = this.getEquippedBlock() 
   }
+  
+/*  update(data, options) {
+    console.log("UPDATE: "+ GURPS.objToString(data))
+    super.update(data, options)
+  } */
     
   /** @override */
   _onUpdate(data, options, userId, context) {
@@ -1178,6 +1183,7 @@ export class GurpsActor extends Actor {
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER
       }
       ChatMessage.create(messageData)
+      ui.combat.render()
     })
   }
 
