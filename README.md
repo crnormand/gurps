@@ -35,8 +35,9 @@ This is what we are currently working on:
  - Added generic 'weight' icon to character sheet in preparation for (one day) handling metric.
  - Added 'apply multiple times' to ADD.
  - Added 'Reeling' and 'Tired' buttons to Full and Combat sheet (and Combat tracker)
+ - Add "Apply Damage to <Target>" button to Damage Chat Message. If the user who rolled the damage also has set a target, this adds the button only for the GM.
 
-##History
+## History
 
 0.8.15 - 2/17/2021
 
