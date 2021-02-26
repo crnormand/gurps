@@ -53,18 +53,17 @@ export class GurpsActorSheet extends ActorSheet {
 
   checkEncumbance(currentWeight) {
     let encs = this.actor.data.data.encumbrance
-    var last, best, prev
+    var prev
+    let best = GURPS.genkey(0)
     for (let key in encs) {
-      last = key
       let enc = encs[key]
       if (enc.current) prev = key
       let w = parseFloat(enc.weight)
-      if (currentWeight <= w) {
+      if (w > 0 && currentWeight <= w) {
         best = key
         break
       }
     }
-    if (!best) best = last
     if (best != prev) {
       setTimeout(async () => {
         for (let key in encs) {
@@ -602,6 +601,16 @@ export class GurpsActorSheet extends ActorSheet {
       let b = !!this.actor.data.data.additionalresources[opt]
       this.actor.changeOneThirdStatus(opt, !b)
     })
+    html.find("[data-onethird]").hover(
+      function() {
+        let opt = $(this).attr('data-onethird').substr(2)
+        let msg = "Disable&nbsp;" + opt
+        if ($(this).hasClass("buttongrey")) msg = "Enable&nbsp;" + opt
+        $( this ).append( $( `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>` ) );
+      }, function() {
+        $( this ).find( "div" ).last().remove();
+      }
+    );
   }
 
   async editEquipment(actor, path, obj) {

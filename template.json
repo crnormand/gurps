@@ -199,7 +199,43 @@
 					"where": "Vitals"
 				}
 			},
-			"encumbrance": {},
+			"encumbrance": {
+        "00000" : { 
+          "key": "enc0",
+          "level": 0,
+          "dodge": 0,
+          "weight": 0,
+          "move": 0
+        },
+        "00001" : { 
+          "key": "enc1",
+          "level": 1,
+          "dodge": 0,
+          "weight": 0,
+          "move": 0
+        },
+        "00002" : { 
+          "key": "enc2",
+          "level": 2,
+          "dodge": 0,
+          "weight": 0,
+          "move": 0
+        },
+        "00003" : { 
+          "key": "enc3",
+          "level": 3,
+          "dodge": 0,
+          "weight": 0,
+          "move": 0
+        },
+        "00004" : { 
+          "key": "enc4",
+          "level": 4,
+          "dodge": 0,
+          "weight": 0,
+          "move": 0
+        }
+      },
 			"notes": {},
 			"equipment": {
 				"carried": {},

@@ -34,6 +34,7 @@ This is what we are currently working on:
  - Added navigation footer to GCS Full Sheet.
  - Added generic 'weight' icon to character sheet in preparation for (one day) handling metric.
  - Added 'apply multiple times' to ADD.
+ - Added 'Reeling' and 'Tired' buttons to Full and Combat sheet (and Combat tracker)
 
 ##History
 
