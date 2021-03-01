@@ -1,5 +1,5 @@
 import { GURPS } from './gurps.js'
-import { isNiceDiceEnabled } from '../lib/utilities.js'
+import { isNiceDiceEnabled, atou, utoa } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
@@ -1111,7 +1111,7 @@ export class GurpsActorSheet extends ActorSheet {
     let el = event.currentTarget
     let action = el.dataset.action
     if (!!action) {
-      action = JSON.parse(atob(action))
+      action = JSON.parse(atou(action))
       if (action.type === 'damage' || action.type === 'deriveddamage') {
         GURPS.resolveDamageRoll(event, this.actor, action.orig, game.user.isGM, true)
       } else {
