@@ -36,7 +36,7 @@ function send(priv, pub, data) {
  
 export default function addChatHooks() {
 
-  Hooks.once('ready', async function () {
+  Hooks.once('init', async function () {
    
     let send = (msgs) => {
       if (msgs.priv.length > 0) {
@@ -91,7 +91,7 @@ export default function addChatHooks() {
           c += '<br>/:&lt;macro name&gt'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
-            c += '<br>/sendmb &lt;playername&gt'
+            c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
             c += '<br>/mook'
             c += '<br>/everyone (or /ev) &lt;formula&gt;'
           }
@@ -188,7 +188,17 @@ export default function addChatHooks() {
           if (game.user.isGM) {
             priv(line, msgs)
             let user = line.replace(/\/sendmb/, '').trim()
-            GURPS.ModifierBucket.sendBucketToPlayer(user)
+            let m = user.match(/\[(.*)\](.*)/)
+            if (!!m) {
+              let otf = m[1]
+              let t = parselink(otf)
+              if (!!t.action && t.action.type == 'modifier')
+                GURPS.ModifierBucket.sendToPlayer(t.action, m[2])
+              else
+                GURPS.ModifierBucket.sendBucketToPlayer(user)
+            }
+            else
+              GURPS.ModifierBucket.sendBucketToPlayer(user)
           } else 
             priv(`You must be a GM to execute '${line}'`, msgs)
           handled = true

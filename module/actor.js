@@ -1075,7 +1075,10 @@ export class GurpsActor extends Actor {
   // --- Functions to handle events on actor ---
 
   handleDamageDrop(damageData) {
-    new ApplyDamageDialog(this, damageData).render(true)
+    if (game.user.isGM && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD)) 
+      new ApplyDamageDialog(this, damageData).render(true)
+    else
+      ui.notifications.warn("Only GMs are allowed to Apply Damage.");
   }
 
   // This function merges the 'where' and 'dr' properties of this actor's hitlocations
