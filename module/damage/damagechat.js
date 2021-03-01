@@ -20,7 +20,7 @@ export default class DamageChat {
 
   setup() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
-      let isDamageChatMessage = !!html.find('.damage-chat-message')
+      let isDamageChatMessage = !!html.find('.damage-chat-message').length
 
       if (isDamageChatMessage) {
         let transfer = JSON.parse(app.data.flags.transfer)
