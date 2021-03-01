@@ -250,13 +250,25 @@ export class ModifierBucket extends Application {
   refresh() {
     this.render(true)
   }
+  
+  async sendToPlayer(action, user) {
+    const saved = this.modifierStack.modifierList
+    this.modifierStack.modifierList = []
+    GURPS.performAction(action).then(() => {
+      this.sendBucketToPlayer(user).then(() => {
+        this.modifierStack.modifierList = saved
+        this.sum()
+        this.updateBucket()
+      })
+    })
+  }
 
   async sendBucketToPlayer(name) {
     if (!name) {
-      this.sendBucket()
+      await this.sendBucket()
     } else {
       let users = game.users.players.filter(u => u.name == name) || []
-      if (users.length > 0) this.sendBucket(users[0])
+      if (users.length > 0) await this.sendBucket(users[0])
       else ui.notifications.warn("No player named '" + name + "'")
     }
   }
@@ -265,11 +277,11 @@ export class ModifierBucket extends Application {
     let set = !!user ? [user] : game.users?.filter(u => u._id != game.user._id) || []
     let d = Date.now()
     {
-      await set.forEach(u => {
-        u.setFlag('gurps', 'modifierstack', game.GURPS.ModifierBucket.modifierStack)
+      await set.forEach(async (u) => {
+        await u.setFlag('gurps', 'modifierstack', game.GURPS.ModifierBucket.modifierStack)
       })
-      await set.forEach(u => {
-        u.setFlag('gurps', 'modifierchanged', d)
+      await set.forEach(async (u) => {
+        await u.setFlag('gurps', 'modifierchanged', d)
       })
     }
   }
