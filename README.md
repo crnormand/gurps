@@ -39,6 +39,7 @@ This is what we are currently working on:
   - Better parsing of On-the-Fly formulas in Journal entries (especially unicode characters)
   - Restrict Apply Damage Calculator to GM only (system setting)
   - Updated /sendmb to allow optional OtF modifier: /sendmb [+1 to hit & +3 luck] &lt;playername(s)>
+  - Allow OtF skill check to use a different attribute than the default. (E.g., make a Per-based Traps skill check at -2 for difficulty: "[S:Traps -2 difficulty (Based:Per)]".)
 
 ## History
 
