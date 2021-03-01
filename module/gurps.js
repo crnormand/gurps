@@ -14,7 +14,7 @@ import {
 import { ModifierBucket } from './modifiers.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, getAllActorsInActiveScene } from '../lib/utilities.js'
+import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 
@@ -494,7 +494,7 @@ function cleanUpP(xml) {
       if (e > s) {
         let t1 = xml.substring(0, s)
         let t2 = xml.substring(s + 3, e)
-        t2 = '@@@@' + btoa(t2) + '\n'
+        t2 = '@@@@' + utoa(t2) + '\n'
         let t3 = xml.substr(e + 4)
         xml = t1 + t2 + t3
         s = xml.indexOf(tagin, s + t2.length)
@@ -961,7 +961,7 @@ function handleGurpslink(event, actor, desc, targets) {
   event.preventDefault()
   let element = event.currentTarget
   let action = element.dataset.action // If we have already parsed
-  if (!!action) action = JSON.parse(atob(action))
+  if (!!action) action = JSON.parse(atou(action))
   else action = parselink(element.innerText, desc).action
   this.performAction(action, actor, event, targets)
 }
@@ -1160,7 +1160,7 @@ GURPS.onRightClickGurpslink = function (event) {
   let el = event.currentTarget
   let action = el.dataset.action
   if (!!action) {
-    action = JSON.parse(window.atob(action))
+    action = JSON.parse(window.atou(action))
     if (action.type === 'damage' || action.type === 'deriveddamage')
       GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
     else GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
