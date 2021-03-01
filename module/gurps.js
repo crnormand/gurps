@@ -658,15 +658,38 @@ async function performAction(action, actor, event, targets) {
       } else {
         // skill
         let skill = GURPS.findSkillSpell(actordata, tempAction.name)
-        if (!skill) attempts.push(tempAction.name)
-        else {
-          let sl = parseInt(skill.level)
-          if (!!tempAction.mod) sl += parseInt(tempAction.mod)
-          if (sl > bestLvl) {
-            bestLvl = parseInt(sl)
+
+        if (!skill) {
+          attempts.push(tempAction.name)
+        } else {
+          // on a normal skill check, look for the skill with the highest level
+          let getLevel = skill => parseInt(skill.level)
+
+          let getSkillName = skill => skill.name
+
+          // on a floating skill check, we want the skill with the highest relative skill level
+          if (!!tempAction.floatingAttribute) {
+            getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
+
+            let value = this.resolve(tempAction.floatingAttribute, actordata.data)
+            getLevel = skill => {
+              let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
+              console.log(rsl)
+              let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
+              console.log(valueText)
+              return valueText === rsl ? 0 : parseInt(valueText) + parseInt(value)
+            }
+          }
+
+          let skillLevel = getLevel(skill)
+
+          if (!!tempAction.mod) skillLevel += parseInt(tempAction.mod)
+
+          if (skillLevel > bestLvl) {
+            bestLvl = skillLevel
             bestAction = tempAction
-            thing = skill.name
-            target = parseInt(skill.level) // target is without mods
+            thing = getSkillName(skill)
+            target = getLevel(skill) // target is without mods
             prefix = ''
           }
         }
@@ -1412,27 +1435,28 @@ Hooks.once('ready', async function () {
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
     if (!html.hasClass('bound')) {
-    
       let cc = html.find('.combatant-controls')
-      cc.prepend('<a class="combatant-control" title="<1/3 FP" data-onethird="isTired"><i class="fas fa-heartbeat"></i></a>');
-      cc.prepend('<a class="combatant-control" title="<1/3 HP" data-onethird="isReeling"><i class="fas fa-heart-broken"></i></a>');
-     
+      cc.prepend(
+        '<a class="combatant-control" title="<1/3 FP" data-onethird="isTired"><i class="fas fa-heartbeat"></i></a>'
+      )
+      cc.prepend(
+        '<a class="combatant-control" title="<1/3 HP" data-onethird="isReeling"><i class="fas fa-heart-broken"></i></a>'
+      )
+
       let t = html.find('[data-onethird]')
       for (let i = 0; i < t.length; i++) {
         let el = t[i]
         let combatant = $(el).parents('.combatant').attr('data-combatant-id')
         let target = game.combat.combatants.filter(c => c._id === combatant)[0]
-        if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')])
-          $(el).addClass("active")
+        if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
       }
-      
-      html.find('[data-onethird]').click((ev) => {
+
+      html.find('[data-onethird]').click(ev => {
         let el = ev.currentTarget
         let flag = false
-        if ($(el).hasClass("active")) 
-          $(el).removeClass("active")
+        if ($(el).hasClass('active')) $(el).removeClass('active')
         else {
-          $(el).addClass("active")
+          $(el).addClass('active')
           flag = true
         }
         let combatant = $(el).parents('.combatant').attr('data-combatant-id')
@@ -1440,7 +1464,6 @@ Hooks.once('ready', async function () {
         target.actor.changeOneThirdStatus($(el).attr('data-onethird'), flag)
       })
 
-    
       html.addClass('bound')
       html.on('drop', function (ev) {
         console.log('Handle drop event on combatTracker')
