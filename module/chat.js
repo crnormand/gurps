@@ -105,9 +105,72 @@ export default function addChatHooks() {
           handled = true
           return
         }
-      
+        
+        let m = line.match(/([fh]p) ([+-=]\d+)?(reset)?(.*)/i)
+        if (!!m) {
+          let actor = GURPS.LastActor
+          if (!actor)
+            ui.notifications.warn('You must have a character selected')
+          else {
+            let attr = m[1].toUpperCase()
+            let delta = parseInt(m[2])
+            const max = actor.data.data[attr].max
+            let reset = ''
+            if (!!m[3]) {
+              actor.update({ [ "data." + attr + ".value"] : max })
+              priv(`${actor.name} reset to ${max} ${attr}`, msgs)
+            } else if (isNaN(delta)) {    // only happens with '='
+              delta = parseInt(m[2].substr(1))
+              if (isNaN(delta))
+                ui.notifications.warn(`Unrecognized format for '/${attr} ${m[4]}'`)
+              else {
+                actor.update({ [ "data." + attr + ".value"] : delta })
+                priv(`${actor.name} set to ${delta} ${attr}`, msgs)
+              }
+            } else if (!!m[2]) {
+              actor.update({ [ "data." + attr + ".value"] : Math.min(max, actor.data.data[attr].value + delta) })
+              priv(`${actor.name} ${m[2]} ${attr}`, msgs)
+            } else
+              ui.notifications.warn(`Unrecognized format for '/${attr} ${m[4]}'`)
+          }  
+          handled = true
+          return      
+        }
+ 
+        m = line.match(/(tracker|tr|rt|resource)([0123]) ([+-=]\d+)?(reset)?(.*)/i)
+        if (!!m) {
+          let actor = GURPS.LastActor
+          if (!actor)
+            ui.notifications.warn('You must have a character selected')
+          else {
+            let tracker = parseInt(m[2])
+            let delta = parseInt(m[3])
+            let reset = ''
+            let max = actor.data.data.additionalresources.tracker[tracker].max
+            if (!!m[4]) {
+              actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : max})
+              priv(`Resource Tracker${tracker} reset to ${max}`, msgs)
+            } else if (isNaN(delta)) {    // only happens with '='
+              delta = parseInt(m[3].substr(1))
+              if (isNaN(delta))
+                ui.notifications.warn(`Unrecognized format for '/tracker${tracker} ${m[5]}'`)
+              else {
+                actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : delta})
+                priv(`Resource Tracker${tracker} set to ${delta}`, msgs)
+              }           
+            } else if (!!m[3]) {
+              if (max == 0) max = Number.MAX_SAFE_INTEGER
+              actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : Math.min(max, actor.data.data.additionalresources.tracker[tracker].value + delta) })
+              priv(`Resource Tracker${tracker} ${m[3]}`, msgs)
+            } else
+              ui.notifications.warn(`Unrecognized format for '/tracker${tracker} ${m[5]}'`)
+          }  
+          handled = true
+          return      
+        }
+     
         // /everyone +1 fp or /everyone -2d-1 fp
-        let m = line.match(/\/(everyone|ev) ([+-]\d+d)?([+-]\d+)?(!)? ?([FfHh][Pp])/);
+        m = line.match(/\/(everyone|ev) ([+-]\d+d)?([+-]\d+)?(!)? ?([fh]p)/i);
         if (!!m) {
           if (game.user.isGM) {
             let any = false
@@ -130,9 +193,10 @@ export default function addChatHooks() {
                 let cur = actor.data.data[attr].value
                 let newval = cur + parseInt(value)
                 if (newval > actor.data.data[attr].max) newval = Math.max(cur, actor.data.data[attr].max)
+                //newval = Math.min(newval, actor.data.data[attr].max)
                 actor.update({ [ "data." + attr + ".value"] : newval })
                 let t = (mod != value) ? `(${value})` : ""
-                priv(`${actor.name} ${dice}${mod} ${t} ${m[5]}`, msgs)
+                priv(`${actor.name} ${dice}${mod} ${t} ${attr}`, msgs)
               }
             }) 
             if (!any) priv(`There are no player owned characters!`, msgs)
@@ -143,7 +207,7 @@ export default function addChatHooks() {
          }
         
         // /everyone reset fp/hp
-        m = line.match(/\/(everyone|ev) reset ([FfHh][Pp])/);
+        m = line.match(/\/(everyone|ev) reset ([fh]p)/i);
         if (!!m) {
           if (game.user.isGM) {
             let any = false
@@ -154,7 +218,7 @@ export default function addChatHooks() {
                 let attr = m[2].toUpperCase()
                 let max = actor.data.data[attr].max
                 actor.update({ [ "data." + attr + ".value"] : max })
-                priv(`${actor.name} reset to ${max} ${m[2]}`, msgs)
+                priv(`${actor.name} reset to ${max} ${attr}`, msgs)
               }
             })  
             if (!any) priv(`There are no player owned characters!`, msgs)

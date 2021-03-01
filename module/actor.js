@@ -54,10 +54,12 @@ export class GurpsActor extends Actor {
     if (!this.data.data.equippedblock) this.data.data.equippedblock = this.getEquippedBlock() 
   }
   
-/*  update(data, options) {
-    console.log("UPDATE: "+ GURPS.objToString(data))
+  /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
+  async update(data, options) {
+    console.log(this.name + " UPDATE: "+ GURPS.objToString(data))
     super.update(data, options)
-  } */
+  } 
+  // */
     
   /** @override */
   _onUpdate(data, options, userId, context) {
@@ -231,11 +233,12 @@ export class GurpsActor extends Actor {
 
     try {
       await this.update(deletes)
-      await this.update(adds)
-      // This has to be done after all of the equipment is loaded
-      this.calculateDerivedValues()
-      console.log('Done importing.  You can inspect the character data below:')
-      console.log(this)
+      this.update(adds).then(() => {
+        // This has to be done after everything is loaded
+        this.calculateDerivedValues()
+       console.log('Done importing.  You can inspect the character data below:')
+       console.log(this)
+     })
     } catch (err) {
       let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
       if (err.message == "Maximum depth exceeded")
