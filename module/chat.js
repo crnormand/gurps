@@ -189,8 +189,7 @@ export default function addChatHooks() {
           if (game.user.isGM) {
             let any = false
             game.actors.entities.forEach(actor => {
-              let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
-              if (users.length > 0) {
+              if (actor.hasPlayerOwner) {
                 any = true
                 let mod = m[4] || ""
                 let value = mod
@@ -247,8 +246,7 @@ export default function addChatHooks() {
           if (game.user.isGM) {
             let any = false
             game.actors.entities.forEach(actor => {
-              let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER).filter(o => !o.isGM)
-              if (users.length > 0) {
+             if (actor.hasPlayerOwner) {
                 any = true
                 let attr = m[2].toUpperCase()
                 let max = actor.data.data[attr].max
