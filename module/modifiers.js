@@ -579,30 +579,30 @@ const SizeModifiers = [
 let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
 
 // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
-const MeleeMods = `[+4 to hit (Determined Attack)]
-[+4 to hit (Telegraphic Attack)]
-[-2 to hit (Deceptive Attack)]
-[-4 to hit (Charge Attack) *Max:9]
-[+2 dmg (Strong Attack)]
-${horiz('Extra Effort')}
+const MeleeMods = `[+4 to hit (Determined Attack)] [PDF:B365]
+[+4 to hit (Telegraphic Attack)] [PDF:MA113]
+[-2 to hit (Deceptive Attack)] [PDF:B369]
+[-4 to hit (Charge Attack) *Max:9] [PDF:B365]
+[+2 dmg (Strong Attack)] [PDF:B365]
+${horiz('Extra Effort')} [PDF:B357]
 [+2 dmg (Mighty Blow) *Cost 1FP]
-[+0 Heroic Charge *Cost 1FP]`
+[+0 Heroic Charge *Cost 1FP] [PDF:MA131]`
 
 const RangedMods = `[+1 Aim]
-[+1 to hit (Determined Attack)]
+[+1 to hit (Determined Attack)] [PDF:B365]
 ${horiz('Actions')}
 [WILL check to maintain Aim]`
 
-const DefenseMods = `[+2 All-Out Defense]
-[+1 to dodge (Shield)]
-[+2 to dodge (Acrobatics)]
-[+3 to dodge (Dive)]
-[+3 to dodge (Retreat)]
-[+1 block/parry (Retreat)]
+const DefenseMods = `[+2 All-Out Defense] [PDF:B365]
+[+1 to dodge (Shield)] [PDF:B374]
+[+2 to dodge (Acrobatics)] [PDF:B374]
+[+3 to dodge (Dive)] [PDF:B377]
+[+3 to dodge (Retreat)] [PDF:B375]
+[+1 block/parry (Retreat)] [PDF:B377]
 
-[-2 to dodge (Failed Acrobatics)]
-[-2 to dodge (Attacked from side)]
-[-4 to dodge (Attacked from rear)]
+[-2 to dodge (Failed Acrobatics)] [PDF:B375]
+[-2 to dodge (Attacked from side)] [PDF:B390] 
+[-4 to dodge (Attacked from rear)] [PDF:B391]
 ${horiz('Extra Effort')}
 [+2 Feverish Defense *Cost 1FP]
 ${horiz('Actions')}
