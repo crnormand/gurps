@@ -699,7 +699,7 @@ async function performAction(action, actor, event, targets) {
       }
       tempAction = tempAction.next
     }
-    if (!!bestAction && besttrue) {
+    if (!!bestAction && !!besttrue) {
       bestAction.truetext = besttrue.truetext
       bestAction.falsetext = besttrue.falsetext
     }

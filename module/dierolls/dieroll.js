@@ -117,7 +117,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   
   if (isTargeted && !!optionalArgs.action) {
     let u = game.users.entities.filter(u => u.isGM)[0]
-    let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM)
+    let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
     let ids = users.map(it => it._id)    
     let messageData = {
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
