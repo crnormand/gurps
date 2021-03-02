@@ -1089,7 +1089,7 @@ export class GurpsActor extends Actor {
   // --- Functions to handle events on actor ---
 
   handleDamageDrop(damageData) {
-    if (game.user.isGM && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD)) 
+    if (game.user.isGM || game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD)) 
       new ApplyDamageDialog(this, damageData).render(true)
     else
       ui.notifications.warn("Only GMs are allowed to Apply Damage.");
@@ -1202,6 +1202,69 @@ export class GurpsActor extends Actor {
       ChatMessage.create(messageData)
       ui.combat.render()
     })
+  }
+  
+  findEquipmentByName(pattern) {
+    pattern = '^' + pattern.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+    var eqt, key
+    recurselist(this.data.data.equipment.carried, (e, k) => {
+      if (!eqt && e.name.match(pattern)) {
+        eqt = e
+        key = k
+      }
+    }, 'data.equipment.carried.' )
+    recurselist(this.data.data.equipment.other, (e, k) => {
+      if (!eqt && e.name.match(pattern)) {
+        eqt = e
+        key = k
+      }
+    }, 'data.equipment.other.' )
+    return [eqt, key]
+  }
+  
+  async updateParentOf(srckey, pindex = 4) {
+    // pindex = 4 for equipment, 3 for everything else.
+    let sp = srckey.split('.').slice(0, pindex).join('.')
+    if (sp != srckey) {
+      let eqt = GURPS.decode(this.data, sp)
+      await Equipment.calcUpdate(this, eqt, sp)
+    }
+  }
+  
+  checkEncumbance(currentWeight) {
+    let encs = this.data.data.encumbrance
+    var best, prev, last
+    for (let key in encs) {
+      let enc = encs[key]
+      if (enc.current) prev = key
+      let w = parseFloat(enc.weight)
+      if (w > 0) {
+        last = key
+        if (currentWeight <= w) {
+          best = key
+          break
+        }
+      }
+    }
+    if (!best && !!last) best = last
+    if (best != prev) {
+      setTimeout(async () => {
+        for (let key in encs) {
+          let enc = encs[key]
+          let t = 'data.encumbrance.' + key + '.current'
+          if (enc.current) {
+            await this.update({ [t]: false })
+          }
+          if (key === best) {
+            await this.update({
+              [t]: true,
+              'data.currentmove': parseInt(enc.currentmove),
+              'data.currentdodge': parseInt(enc.currentdodge),
+            })
+          }
+        }
+      }, 200)
+    }
   }
 
 }
@@ -1345,6 +1408,8 @@ export class Equipment extends Named {
   categories = ''
   costsum = ''
   weightsum = ''
+  uses = ''
+  maxuses = ''
 
   static calc(eqt) {
     Equipment.calcUpdate(null, eqt, '')
