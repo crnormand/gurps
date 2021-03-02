@@ -8,6 +8,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
 
   if (origtarget == 0 || isNaN(origtarget)) return;	// Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   let isTargeted = (origtarget > 0);		// Roll "against" something (true), or just a roll (false)
+  let failure = false
 
   let chatdata = {
     prefix: prefix.trim(),
@@ -47,7 +48,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     let isCritFailure = (rtotal >= 18) || (rtotal == 17 && finaltarget <= 15) || (rtotal - finaltarget >= 10 && finaltarget > 0);
     let margin = finaltarget - rtotal;
     let seventeen = rtotal >= 17
-    let failure = seventeen || margin < 0
+    failure = seventeen || margin < 0
  
     chatdata['isCritSuccess'] = isCritSuccess
     chatdata['isCritFailure'] = isCritFailure
@@ -112,7 +113,20 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   }
 
   messageData.sound = CONFIG.sounds.dice;
-  CONFIG.ChatMessage.entityClass.create(messageData, {});
+  ChatMessage.create(messageData, {});
+  
+  if (isTargeted && !!optionalArgs.action) {
+    let u = game.users.entities.filter(u => u.isGM)[0]
+    let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
+    let ids = users.map(it => it._id)    
+    let messageData = {
+      type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+      whisper: ids
+    };
+    if (!failure && !!optionalArgs.action.truetext) messageData.content = optionalArgs.action.truetext
+    if (!!failure && !!optionalArgs.action.falsetext) messageData.content = optionalArgs.action.falsetext
+    if (!!messageData.content) ChatMessage.create(messageData);
+  }
 }
 
 //  GURPS.doRoll = doRoll; YOU don't need this -- just import the function wherever it is needed.

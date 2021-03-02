@@ -640,9 +640,10 @@ async function performAction(action, actor, event, targets) {
 
   let processLinked = tempAction => {
     let bestLvl = 0
-    var bestAction
+    var bestAction, besttrue
     let attempts = []
     while (!!tempAction) {
+      if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
         let t = parseInt(action.target)
         if (!t) t = parseInt(this.resolve(tempAction.path, actordata.data))
@@ -654,6 +655,7 @@ async function performAction(action, actor, event, targets) {
           thing = this.i18n(tempAction.path)
           prefix = 'Roll vs '
           target = t
+          if (!!tempAction.truetext) besttrue = tempAction
         }
       } else {
         // skill
@@ -691,10 +693,15 @@ async function performAction(action, actor, event, targets) {
             thing = getSkillName(skill)
             target = getLevel(skill) // target is without mods
             prefix = ''
+            if (!!tempAction.truetext) besttrue = tempAction
           }
         }
       }
       tempAction = tempAction.next
+    }
+    if (!!bestAction && !!besttrue) {
+      bestAction.truetext = besttrue.truetext
+      bestAction.falsetext = besttrue.falsetext
     }
     return [bestAction, attempts]
   }
@@ -709,6 +716,7 @@ async function performAction(action, actor, event, targets) {
         return false
       }
       formula = '3d6'
+      opt.action = bestAction
       if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
       else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
