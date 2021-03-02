@@ -580,6 +580,12 @@ let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
 
 // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
 const MeleeMods = `[+4 to hit (Determined Attack)] [PDF:B365]
+[+4 to hit (Telegraphic Attack)]
+[-2 to hit (Deceptive Attack)] [PDF:B369]
+[-4 to hit (Charge Attack) *Max:9] [PDF:B365]
+[+2 dmg (Strong Attack)]
+${horiz('Extra Effort')}
+const MeleeMods = `[+4 to hit (Determined Attack)] [PDF:B365]
 [+4 to hit (Telegraphic Attack)] [PDF:MA113]
 [-2 to hit (Deceptive Attack)] [PDF:B369]
 [-4 to hit (Charge Attack) *Max:9] [PDF:B365]
@@ -601,7 +607,7 @@ const DefenseMods = `[+2 All-Out Defense] [PDF:B365]
 [+1 block/parry (Retreat)] [PDF:B377]
 
 [-2 to dodge (Failed Acrobatics)] [PDF:B375]
-[-2 to dodge (Attacked from side)] [PDF:B390] 
+[-2 to dodge (Attacked from side)] [PDF:B390]
 [-4 to dodge (Attacked from rear)] [PDF:B391]
 ${horiz('Extra Effort')}
 [+2 Feverish Defense *Cost 1FP]
