@@ -89,6 +89,9 @@ export default function addChatHooks() {
           c += '<br>/private (or /pr) [On-the-Fly formula]'
           c += '<br>/clearmb'
           c += '<br>/:&lt;macro name&gt'
+          c += '<br>/fp &lt;formula&gt;'
+          c += '<br>/hp &lt;formula&gt;'
+          c += '<br>/trackerN (N=0-3) &lt;formula&gt;'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
             c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
