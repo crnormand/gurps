@@ -579,10 +579,10 @@ const SizeModifiers = [
 let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
 
 // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
-const MeleeMods = `[+4 to hit (Determined Attack)]
+const MeleeMods = `[+4 to hit (Determined Attack)] [PDF:B365]
 [+4 to hit (Telegraphic Attack)]
-[-2 to hit (Deceptive Attack)]
-[-4 to hit (Charge Attack) *Max:9]
+[-2 to hit (Deceptive Attack)] [PDF:B369]
+[-4 to hit (Charge Attack) *Max:9] [PDF:B365]
 [+2 dmg (Strong Attack)]
 ${horiz('Extra Effort')}
 [+2 dmg (Mighty Blow) *Cost 1FP]

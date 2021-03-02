@@ -1,6 +1,7 @@
 'use strict'
 import { parselink } from '../lib/parselink.js'
 import { NpcInput } from '../lib/npc-input.js'
+import { Equipment } from './actor.js'
 
 /**
  *  This holds functions for all things chat related
@@ -83,6 +84,7 @@ export default function addChatHooks() {
       let msgs = { pub: [], priv: [], data: data }
       let handled = false
       message.split('\n').forEach((line) => {
+        var m
         if (line === '/help' || line === '!help') {
           let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
           c += '<br>/roll (or /r) [On-the-Fly formula]'
@@ -92,6 +94,7 @@ export default function addChatHooks() {
           c += '<br>/fp &lt;formula&gt;'
           c += '<br>/hp &lt;formula&gt;'
           c += '<br>/trackerN (N=0-3) &lt;formula&gt;'
+          c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
             c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
@@ -109,7 +112,45 @@ export default function addChatHooks() {
           return
         }
         
-        let m = line.match(/\/([fh]p) ([+-=]\d+)?(reset)?(.*)/i)
+        m = line.match(/\/qty ([+-=]\d+)(.*)/i)
+        if (!!m) {
+          let actor = GURPS.LastActor
+          if (!actor)
+            ui.notifications.warn('You must have a character selected')
+          else {
+            let pattern = m[2].trim()
+            let [eqt, key] = actor.findEquipmentByName(pattern)
+            if (!eqt)
+              ui.notifications.warn("No equipment matched '" + pattern + "'")
+            else {
+              eqt = duplicate(eqt)
+              let delta = parseInt(m[1])
+              if (isNaN(delta)) {   // only happens with '='
+                delta = parseInt(m[1].substr(1))
+                if (isNaN(delta))
+                  ui.notifications.warn(`Unrecognized format '${m[1]}'`)
+                else {
+                  eqt.count = delta
+                  actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+                  priv(`${eqt.name} set to ${delta}`, msgs)
+                }
+              } else {
+                let q = eqt.count + delta
+                if (q < 0) 
+                  ui.notifications.warn("You do not have enough '" + eqt.name + "'")
+                else {
+                  priv(`${eqt.name} QTY ${m[1]}`, msgs)
+                  eqt.count = q
+                  actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+                }
+              } 
+            }      
+          }   
+          handled = true
+          return     
+        }
+        
+        m = line.match(/\/([fh]p) ([+-=]\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)

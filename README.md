@@ -43,6 +43,7 @@ This is what we are currently working on:
   - Allow OtF skill check to use a different attribute than the default. (E.g., make a Per-based Traps skill check at -2 for difficulty: "[S:Traps -2 difficulty (Based:Per)]".)
   - Allow conditional text for Attribute and Skill checks [!Per ?"You sense something is there", "You hear nothing!"]
   - Bug fix for old chat messages.  Can now be clicked on
+  - Added /hp /fp /qty /trackerN chat commands
 
 ## History
 

@@ -909,7 +909,7 @@ function gurpslink(str, clrdmods = true) {
       output += action.text
       if (!action.action) output += ']'
       str = str.substr(i + 1)
-      i = 0
+      i = -1
       found = -1
     }
   }

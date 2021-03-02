@@ -51,39 +51,6 @@ export class GurpsActorSheet extends ActorSheet {
     return parseInt(sum * 100) / 100
   }
 
-  checkEncumbance(currentWeight) {
-    let encs = this.actor.data.data.encumbrance
-    var prev
-    let best = GURPS.genkey(0)
-    for (let key in encs) {
-      let enc = encs[key]
-      if (enc.current) prev = key
-      let w = parseFloat(enc.weight)
-      if (w > 0 && currentWeight <= w) {
-        best = key
-        break
-      }
-    }
-    if (best != prev) {
-      setTimeout(async () => {
-        for (let key in encs) {
-          let enc = encs[key]
-          let t = 'data.encumbrance.' + key + '.current'
-          if (enc.current) {
-            await this.actor.update({ [t]: false })
-          }
-          if (key === best) {
-            await this.actor.update({
-              [t]: true,
-              'data.currentmove': parseInt(enc.move),
-              'data.currentdodge': parseInt(enc.dodge),
-            })
-          }
-        }
-      }, 200)
-    }
-  }
-
   /** @override */
   getData() {
     const sheetData = super.getData()
@@ -98,7 +65,7 @@ export class GurpsActorSheet extends ActorSheet {
       othercost: this.sum(eqt.other, 'cost'),
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
-      this.checkEncumbance(sheetData.eqtsummary.eqtlbs)
+      this.actor.checkEncumbance(sheetData.eqtsummary.eqtlbs)
 
     // TODO get this from system property
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
@@ -529,7 +496,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       eqt.count = value
       await this.actor.update({ [path]: eqt })
-      await this.updateParentOf(path, 4)
+      await this.actor.updateParentOf(path, 4)
     })
     html.find('button[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault()
@@ -550,7 +517,7 @@ export class GurpsActorSheet extends ActorSheet {
         if (isNaN(value) || value < 0) value = 0
         eqt.count = value
         await this.actor.update({ [path]: eqt })
-        await this.updateParentOf(path, 4)
+        await this.actor.updateParentOf(path, 4)
       }
     })
 
@@ -646,7 +613,7 @@ export class GurpsActorSheet extends ActorSheet {
               if (!!u) obj.save = u.is(':checked')
               Equipment.calc(obj)
               await actor.update({ [path]: obj })
-              await this.updateParentOf(path, 4)
+              await actor.updateParentOf(path, 4)
             },
           },
         },
@@ -873,13 +840,13 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey)
+                    await this.actor.updateParentOf(srckey)
                   }
                   await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                  await this.updateParentOf(targetkey)
+                  await this.actor.updateParentOf(targetkey)
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey)
+                    await this.actor.updateParentOf(srckey)
                   }
                 },
               },
@@ -889,14 +856,14 @@ export class GurpsActorSheet extends ActorSheet {
                 callback: async () => {
                   if (!isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey)
+                    await this.actor.updateParentOf(srckey)
                   }
                   let k = targetkey + '.contains.' + GURPS.genkey(0)
                   await GURPS.insertBeforeKey(this.actor, k, object)
-                  await this.updateParentOf(k)
+                  await this.actor.updateParentOf(k)
                   if (isSrcFirst) {
                     await GURPS.removeKey(this.actor, srckey)
-                    await this.updateParentOf(srckey)
+                    await this.actor.updateParentOf(srckey)
                   }
                 },
               },
@@ -906,15 +873,6 @@ export class GurpsActorSheet extends ActorSheet {
           d.render(true)
         }
       }
-    }
-  }
-
-  async updateParentOf(srckey, pindex = 4) {
-    // pindex = 4 for equipment, 3 for everything else.
-    let sp = srckey.split('.').slice(0, pindex).join('.')
-    if (sp != srckey) {
-      let eqt = GURPS.decode(this.actor.data, sp)
-      await Equipment.calcUpdate(this.actor, eqt, sp)
     }
   }
 
