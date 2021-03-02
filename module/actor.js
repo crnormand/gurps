@@ -57,14 +57,25 @@ export class GurpsActor extends Actor {
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
   async update(data, options) {
     console.log(this.name + " UPDATE: "+ GURPS.objToString(data))
-    super.update(data, options)
+    await super.update(data, options)
   } 
   // */
     
   /** @override */
   _onUpdate(data, options, userId, context) {
+    //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
     super._onUpdate(data, options, userId, context)
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
+      if (!isNaN(data.data?.HP?.value)) {
+        let flag = data.data.HP.value < (this.data.data.HP.max / 3)
+        if ((!!this.data.data.additionalresources.isReeling) != flag) this.changeOneThirdStatus('isReeling', flag)
+      }
+      if (!isNaN(data.data?.FP?.value)) {
+        let flag = data.data.FP.value < (this.data.data.FP.max / 3)
+        if ((!!this.data.data.additionalresources.isTired) != flag) this.changeOneThirdStatus('isTired', flag)
+      }
+    }
   }
 
   get _additionalResources() {

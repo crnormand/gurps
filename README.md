@@ -35,11 +35,14 @@ This is what we are currently working on:
   - Added generic 'weight' icon to character sheet in preparation for (one day) handling metric.
   - Added 'apply multiple times' to ADD.
   - Added 'Reeling' and 'Tired' buttons to Full and Combat sheet (and Combat tracker)
+  - Added system setting to allow automatic setting of Reeling and Tired
   - Add "Apply Damage to <Target>" button to Damage Chat Message. If the user who rolled the damage also has set a target, this adds the button only for the GM.
   - Better parsing of On-the-Fly formulas in Journal entries (especially unicode characters)
   - Restrict Apply Damage Calculator to GM only (system setting)
   - Updated /sendmb to allow optional OtF modifier: /sendmb [+1 to hit & +3 luck] &lt;playername(s)>
   - Allow OtF skill check to use a different attribute than the default. (E.g., make a Per-based Traps skill check at -2 for difficulty: "[S:Traps -2 difficulty (Based:Per)]".)
+  - Allow conditional text for Attribute and Skill checks [!Per ?"You sense something is there", "You hear nothing!"]
+  - Bug fix for old chat messages.  Can now be clicked on
 
 ## History
 
