@@ -591,7 +591,7 @@ const MeleeMods = `[+4 to hit (Determined Attack)] [PDF:B365]
 [-4 to hit (Charge Attack) *Max:9] [PDF:B365]
 [+2 dmg (Strong Attack)] [PDF:B365]
 ${horiz('Extra Effort')} [PDF:B357]
-[+2 dmg (Mighty Blow) *Cost 1FP]
+[+2 dmg (Mighty Blow) *Cost 1FP] [PDF:MA131]
 [+0 Heroic Charge *Cost 1FP] [PDF:MA131]`
 
 const RangedMods = `[+1 Aim]
