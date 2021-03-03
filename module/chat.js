@@ -96,6 +96,7 @@ export default function addChatHooks() {
           c += '<br>/trackerN (N=0-3) &lt;formula&gt;'
           c += '<br>/tracker(&lt;name&gt;) &lt;formula&gt;'
           c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
+          c += '<br>/uses &lt;formula&gt; &lt;equipment name&gt;'
           c += '<br>/status on|off|t|toggle &lt;status&gt;'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
@@ -114,10 +115,14 @@ export default function addChatHooks() {
           return
         }
         
-        m = line.match(/\/(st|status) (t|toggle|on|off|\+|-) ([^ ]+)(.*)/i)
+        m = line.match(/\/(st|status) (t|toggle|on|off|\+|-) ([^ ]+)(@self)?/i)
         if (!!m) {
           let pattern =  new RegExp('^' + (m[3].trim().split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')), 'i') // Make string into a RegEx pattern
-          var effect
+          let any = false
+          let on = false
+          let set = m[2].toLowerCase() == "on" || m[2] == '+'
+          let toggle = m[2].toLowerCase() == "t" || m[2].toLowerCase() == "toggle"
+          var effect, msg
           Object.values(CONFIG.statusEffects).forEach(s => {
             let nm = game.i18n.localize(s.label)
             if (nm.match(pattern)) effect = s   // match on name or id (shock1, shock2, etc.)
@@ -125,28 +130,39 @@ export default function addChatHooks() {
           })
           if (!effect) 
             ui.notifications.warn("No status matched '" + pattern + "'")
-          else {
-            let any = false
+          else if (!!m[4]) {
+            if (!!GURPS.LastActor) {
+              let tokens = GURPS.LastActor?.getActiveTokens()
+              if (tokens.length == 0)
+                msg = "Your character does not have any tokens.   We require a token to set statuses"
+              else {
+                GURPS.LastActor.effects.forEach(e => { 
+                  if (effect.id == e.getFlag("core", "statusId")) on = true 
+                })
+                if ((on & !set) || (!on && set) || toggle) {
+                  priv(`Toggling ${game.i18n.localize(effect.label)} for ${GURPS.LastActor.name}`, msgs)
+                  t.toggleEffect(effect)
+                }
+              } 
+            } else msg = "You must select a character to apply status effects"
+          } else {
+            msg = "You must select tokens (or use @self) to apply status effects"
             canvas.tokens.controlled.forEach(t => {
               any = true
-              let on = false
               if (!!t.actor) 
                 t.actor.effects.forEach(e => { 
                   if (effect.id == e.getFlag("core", "statusId")) on = true 
                 })
-              let set = m[2].toLowerCase() == "on" || m[2] == '+'
-              let toggle = m[2].toLowerCase() == "t" || m[2].toLowerCase() == "toggle"
               if ((on & !set) || (!on && set) || toggle) {
                 priv(`Toggling ${game.i18n.localize(effect.label)} for ${t.actor.name}`, msgs)
                 t.toggleEffect(effect)
               }
             })
-           if (!any) ui.notifications.warn("You must select tokens to apply status effects")
-         }
+          }
+          if (!any) ui.notifications.warn(msg)
           handled = true
           return          
         }
-
         
         m = line.match(/\/qty ([\+-=]\d+)(.*)/i)
         if (!!m) {
@@ -186,6 +202,49 @@ export default function addChatHooks() {
           return     
         }
         
+        m = line.match(/\/uses ([\+-=]\w+)?(reset)?(.*)/i)
+        if (!!m) {
+          let actor = GURPS.LastActor
+          if (!actor)
+            ui.notifications.warn('You must have a character selected')
+          else {
+            let pattern = m[3].trim()
+            let [eqt, key] = actor.findEquipmentByName(pattern)
+            if (!eqt)
+              ui.notifications.warn("No equipment matched '" + pattern + "'")
+            else {
+              eqt = duplicate(eqt)
+              let delta = parseInt(m[1])
+              if (!!m[2]) {
+                priv(`${eqt.name} USES reset to MAX USES (${eqt.maxuses})`, msgs)
+                eqt.uses = eqt.maxuses
+                actor.update({ [key]: eqt })    
+              } else if (isNaN(delta)) {   // only happens with '='
+                delta = m[1].substr(1)
+                eqt.uses = delta
+                actor.update({ [key]: eqt })
+                priv(`${eqt.name} USES set to ${delta}`, msgs)         
+              } else {
+                let q = parseInt(eqt.uses) + delta
+                let max = parseInt(eqt.maxuses)
+                if (isNaN(q))
+                  ui.notifications.warn(eqt.name + " 'uses' is not a number")
+                else if (q < 0) 
+                  ui.notifications.warn(eqt.name + " does not have enough USES")
+                else if (!isNaN(max) && max > 0 && q > max)
+                  ui.notifications.warn("Exceeded max uses (${max}) for " + eqt.name)
+                else {
+                  priv(`${eqt.name} USES ${m[1]} = ${q}`, msgs)
+                  eqt.uses = q
+                  actor.update({ [key]: eqt })
+                }
+              } 
+            }      
+          }   
+          handled = true
+          return     
+        }
+
         m = line.match(/\/([fh]p) ([+-=]\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor

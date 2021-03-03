@@ -44,6 +44,7 @@ This is what we are currently working on:
   - Allow conditional text for Attribute and Skill checks [!Per ?"You sense something is there", "You hear nothing!"]
   - Bug fix for old chat messages.  Can now be clicked on
   - Added /hp /fp /qty /trackerN chat commands
+  - Added /qty /uses /status /tracker(name) chat commands
 
 ## History
 
