@@ -1443,35 +1443,36 @@ Hooks.once('ready', async function () {
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
     if (!html.hasClass('bound')) {
-      let cc = html.find('.combatant-controls')
-      cc.prepend(
-        '<a class="combatant-control" title="<1/3 FP" data-onethird="isTired"><i class="fas fa-heartbeat"></i></a>'
-      )
-      cc.prepend(
-        '<a class="combatant-control" title="<1/3 HP" data-onethird="isReeling"><i class="fas fa-heart-broken"></i></a>'
-      )
-
-      let t = html.find('[data-onethird]')
-      for (let i = 0; i < t.length; i++) {
-        let el = t[i]
-        let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-        let target = game.combat.combatants.filter(c => c._id === combatant)[0]
-        if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
-      }
-
-      html.find('[data-onethird]').click(ev => {
-        let el = ev.currentTarget
-        let flag = false
-        if ($(el).hasClass('active')) $(el).removeClass('active')
-        else {
-          $(el).addClass('active')
-          flag = true
+      if (game.user.isGM) {
+        let cc = html.find('.combatant-controls')
+        cc.prepend(
+          '<a class="combatant-control" title="<1/3 FP" data-onethird="isTired"><i class="fas fa-heartbeat"></i></a>'
+        )
+        cc.prepend(
+          '<a class="combatant-control" title="<1/3 HP" data-onethird="isReeling"><i class="fas fa-heart-broken"></i></a>'
+        )
+  
+        let t = html.find('[data-onethird]')
+        for (let i = 0; i < t.length; i++) {
+          let el = t[i]
+          let combatant = $(el).parents('.combatant').attr('data-combatant-id')
+          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
-        let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-        let target = game.combat.combatants.filter(c => c._id === combatant)[0]
-        target.actor.changeOneThirdStatus($(el).attr('data-onethird'), flag)
-      })
-
+  
+        html.find('[data-onethird]').click(ev => {
+          let el = ev.currentTarget
+          let flag = false
+          if ($(el).hasClass('active')) $(el).removeClass('active')
+          else {
+            $(el).addClass('active')
+            flag = true
+          }
+          let combatant = $(el).parents('.combatant').attr('data-combatant-id')
+          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          target.actor.changeOneThirdStatus($(el).attr('data-onethird'), flag)
+        })
+      }
       html.addClass('bound')
       html.on('drop', function (ev) {
         console.log('Handle drop event on combatTracker')
