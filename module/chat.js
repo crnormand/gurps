@@ -94,6 +94,7 @@ export default function addChatHooks() {
           c += '<br>/fp &lt;formula&gt;'
           c += '<br>/hp &lt;formula&gt;'
           c += '<br>/trackerN (N=0-3) &lt;formula&gt;'
+          c += '<br>/tracker(&lt;name&gt;) &lt;formula&gt;'
           c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
           c += '<br>/status on|off|t|toggle &lt;status&gt;'
           if (game.user.isGM) {
@@ -227,33 +228,47 @@ export default function addChatHooks() {
           return      
         }
  
-        m = line.match(/\/(tracker|tr|rt|resource)([0123]) ([+-=]\d+)?(reset)?(.*)/i)
+        m = line.match(/\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? ([+-=]\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
             ui.notifications.warn('You must have a character selected')
           else {
             let tracker = parseInt(m[2])
-            let delta = parseInt(m[3])
+            let display = tracker
+            if (!!m[3]) {
+              for (const [key, value] of Object.entries(actor.data.data.additionalresources.tracker)) {
+                if (value.name.match(m[4])) {
+                  tracker = key
+                  display = "(" + value.name + ")"
+                }
+              } 
+            }
+            let delta = parseInt(m[5])
             let reset = ''
             let max = actor.data.data.additionalresources.tracker[tracker].max
-            if (!!m[4]) {
+            if (!!m[6]) {
               actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : max})
-              priv(`Resource Tracker${tracker} reset to ${max}`, msgs)
+              priv(`Resource Tracker${display} reset to ${max}`, msgs)
             } else if (isNaN(delta)) {    // only happens with '='
-              delta = parseInt(m[3].substr(1))
+              delta = parseInt(m[5].substr(1))
               if (isNaN(delta))
-                ui.notifications.warn(`Unrecognized format for '/tracker${tracker} ${m[5]}'`)
+                ui.notifications.warn(`Unrecognized format for '${line}'`)
               else {
                 actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : delta})
-                priv(`Resource Tracker${tracker} set to ${delta}`, msgs)
+                priv(`Resource Tracker${display} set to ${delta}`, msgs)
               }           
-            } else if (!!m[3]) {
+            } else if (!!m[5]) {
               if (max == 0) max = Number.MAX_SAFE_INTEGER
-              actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : Math.min(max, actor.data.data.additionalresources.tracker[tracker].value + delta) })
-              priv(`Resource Tracker${tracker} ${m[3]}`, msgs)
+              let v = actor.data.data.additionalresources.tracker[tracker].value + delta
+              if (v > max) {
+                ui.notifications.warn(`Exceeded MAX:${max} for Resource Tracker${tracker}`)
+                v = max
+              }
+              actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : v })
+              priv(`Resource Tracker${display} ${m[5]} = ${v}`, msgs)
             } else
-              ui.notifications.warn(`Unrecognized format for '/tracker${tracker} ${m[5]}'`)
+              ui.notifications.warn(`Unrecognized format for '${line}'`)
           }  
           handled = true
           return      
