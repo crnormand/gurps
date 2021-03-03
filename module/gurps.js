@@ -1550,7 +1550,7 @@ Hooks.once('ready', async function () {
    */
   Hooks.on('dropCanvasData', function (canvas, dropData) {
     let grid_size = canvas.scene.data.grid
-
+    let old = new Set(game.user.targets)
     let numberTargets = canvas.tokens.targetObjects({
       x: dropData.x - grid_size / 2,
       y: dropData.y - grid_size / 2,
@@ -1564,6 +1564,12 @@ Hooks.once('ready', async function () {
       let keys = game.user.targets.keys()
       let first = keys.next()
       if (dropData.type === 'damageItem') {
+        for ( let t of game.user.targets ) {
+          t.setTarget(false, {releaseOthers: false, groupSelection: true});
+        }
+        old.forEach(t => {
+          t.setTarget(true, {releaseOthers: false, groupSelection: true});
+        });
         first.value.actor.handleDamageDrop(dropData.payload)
       }
     }
