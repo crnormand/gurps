@@ -70,7 +70,7 @@ export default function addChatHooks() {
         send(msgs)
       msgs.priv.push(text);
     } 
-   
+    
     Hooks.on('chatMessage', (log, message, data) => {
       if (!!data.alreadyProcessed) return true    // The chat message has already been parsed for GURPS commands show it should just be displayed
       if (GURPS.ChatCommandsInProcess.includes(message)) {
@@ -95,6 +95,7 @@ export default function addChatHooks() {
           c += '<br>/hp &lt;formula&gt;'
           c += '<br>/trackerN (N=0-3) &lt;formula&gt;'
           c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
+          c += '<br>/status on|off|t|toggle &lt;status&gt;'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
             c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
@@ -112,7 +113,41 @@ export default function addChatHooks() {
           return
         }
         
-        m = line.match(/\/qty ([+-=]\d+)(.*)/i)
+        m = line.match(/\/(st|status) (t|toggle|on|off|\+|-) ([^ ]+)(.*)/i)
+        if (!!m) {
+          let pattern =  new RegExp('^' + (m[3].trim().split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')), 'i') // Make string into a RegEx pattern
+          var effect
+          Object.values(CONFIG.statusEffects).forEach(s => {
+            let nm = game.i18n.localize(s.label)
+            if (nm.match(pattern)) effect = s   // match on name or id (shock1, shock2, etc.)
+            if (s.id.match(pattern)) effect = s
+          })
+          if (!effect) 
+            ui.notifications.warn("No status matched '" + pattern + "'")
+          else {
+            let any = false
+            canvas.tokens.controlled.forEach(t => {
+              any = true
+              let on = false
+              if (!!t.actor) 
+                t.actor.effects.forEach(e => { 
+                  if (effect.id == e.getFlag("core", "statusId")) on = true 
+                })
+              let set = m[2].toLowerCase() == "on" || m[2] == '+'
+              let toggle = m[2].toLowerCase() == "t" || m[2].toLowerCase() == "toggle"
+              if ((on & !set) || (!on && set) || toggle) {
+                priv(`Toggling ${game.i18n.localize(effect.label)} for ${t.actor.name}`, msgs)
+                t.toggleEffect(effect)
+              }
+            })
+           if (!any) ui.notifications.warn("You must select tokens to apply status effects")
+         }
+          handled = true
+          return          
+        }
+
+        
+        m = line.match(/\/qty ([\+-=]\d+)(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
