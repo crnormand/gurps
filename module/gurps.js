@@ -601,7 +601,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'deriveddamage')
     if (!!actor) {
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/sw/i) ? actordata.data.swing : actordata.data.thrust
       if (!df) {
         ui.notifications.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
         return true
@@ -613,7 +613,7 @@ async function performAction(action, actor, event, targets) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula,
+        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, "$1"),  // Just keep the +/- mod
         targets
       )
       return true
@@ -899,18 +899,25 @@ GURPS.applyModifierDesc = applyModifierDesc
 function gurpslink(str, clrdmods = true) {
   if (str === undefined || str == null) return '!!UNDEFINED'
   let found = -1
+  let depth = 0
   let output = ''
   for (let i = 0; i < str.length; i++) {
-    if (str[i] == '[') found = ++i
-    if (str[i] == ']' && found >= 0) {
-      output += str.substring(0, found - 1)
-      let action = parselink(str.substring(found, i), '', clrdmods)
-      if (!action.action) output += '['
-      output += action.text
-      if (!action.action) output += ']'
-      str = str.substr(i + 1)
-      i = -1
-      found = -1
+    if (str[i] == '[') {
+      if (depth == 0) found = ++i
+      depth++
+    }
+    if (str[i] == ']') {
+      depth--
+      if (depth == 0 && found >= 0) {
+        output += str.substring(0, found - 1)
+        let action = parselink(str.substring(found, i), '', clrdmods)
+        if (!action.action) output += '['
+        output += action.text
+        if (!action.action) output += ']'
+        str = str.substr(i + 1)
+        i = -1
+        found = -1
+      }
     }
   }
   output += str
