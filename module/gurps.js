@@ -601,7 +601,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'deriveddamage')
     if (!!actor) {
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/sw/i) ? actordata.data.swing : actordata.data.thrust
       if (!df) {
         ui.notifications.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
         return true
@@ -613,7 +613,7 @@ async function performAction(action, actor, event, targets) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula,
+        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, "$1"),  // Just keep the +/- mod
         targets
       )
       return true
