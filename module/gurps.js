@@ -646,7 +646,7 @@ async function performAction(action, actor, event, targets) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
         let t = parseInt(action.target)
-        if (!t) t = parseInt(this.resolve(tempAction.path, actordata.data))
+        if (!t && !!actor) t = parseInt(this.resolve(tempAction.path, actordata.data))
         let sl = t
         if (!!tempAction.mod) sl += parseInt(tempAction.mod)
         if (sl > bestLvl) {
@@ -659,8 +659,13 @@ async function performAction(action, actor, event, targets) {
         }
       } else {
         // skill
-        let skill = GURPS.findSkillSpell(actordata, tempAction.name)
-
+        var skill
+        if (!!tempAction.target) { // Skill-12
+          skill = { 
+            name: tempAction.name,
+            level: parseInt(tempAction.target)
+          }
+        } else skill = GURPS.findSkillSpell(actordata, tempAction.name)
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
@@ -670,18 +675,19 @@ async function performAction(action, actor, event, targets) {
           let getSkillName = skill => skill.name
 
           // on a floating skill check, we want the skill with the highest relative skill level
-          if (!!tempAction.floatingAttribute) {
-            getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
-
-            let value = this.resolve(tempAction.floatingAttribute, actordata.data)
-            getLevel = skill => {
-              let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
-              console.log(rsl)
-              let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
-              console.log(valueText)
-              return valueText === rsl ? 0 : parseInt(valueText) + parseInt(value)
-            }
-          }
+          if (!!tempAction.floatingAttribute)
+            if (!!actor) {
+              getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
+  
+              let value = this.resolve(tempAction.floatingAttribute, actordata.data)
+              getLevel = skill => {
+                let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
+                console.log(rsl)
+                let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
+                console.log(valueText)
+                return valueText === rsl ? 0 : parseInt(valueText) + parseInt(value)
+              }
+            } else ui.notifications.warn('You must have a character selected to use a "Based" Skill')
 
           let skillLevel = getLevel(skill)
 
@@ -706,8 +712,8 @@ async function performAction(action, actor, event, targets) {
     return [bestAction, attempts]
   }
 
-  if (action.type === 'skill-spell' || action.type === 'attribute')
-    if (!!actor) {
+  // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
+  if (action.type === 'skill-spell' || action.type === 'attribute') {
       const [bestAction, attempts] = processLinked(action)
       if (!bestAction) {
         ui.notifications.warn(
@@ -715,11 +721,15 @@ async function performAction(action, actor, event, targets) {
         )
         return false
       }
+      if (!bestAction.target && !actor) {
+        ui.notifications.warn('You must have a character selected')
+        return false
+      }
       formula = '3d6'
       opt.action = bestAction
       if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
       else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
-    } else ui.notifications.warn('You must have a character selected')
+  }
 
   if (action.type === 'attack')
     if (!!actor) {
