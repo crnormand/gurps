@@ -540,4 +540,3 @@ export default function addChatHooks() {
   
   })    // End of "ready"
 }
-  
