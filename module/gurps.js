@@ -1191,7 +1191,7 @@ GURPS.onRightClickGurpslink = function (event) {
   let el = event.currentTarget
   let action = el.dataset.action
   if (!!action) {
-    action = JSON.parse(window.atou(action))
+    action = JSON.parse(atou(action))
     if (action.type === 'damage' || action.type === 'deriveddamage')
       GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
     else GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
