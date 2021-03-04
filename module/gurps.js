@@ -863,7 +863,8 @@ async function handleRoll(event, actor, targets) {
   }
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
-    let action = parseForDamage(element.innerText.trim())
+    let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
+    let action = parseForDamage(f)
     if (!!action.action) performAction(action.action, actor, event, targets)
     return
   }
