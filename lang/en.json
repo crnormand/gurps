@@ -97,7 +97,7 @@
 
   "GURPS.wasStruckIn": "was struck in",
   "GURPS.bluntTrauma": "Blunt Trauma",
-  "GURPS.addTitleConcat0": "Apply {basicDamage}",
+  "GURPS.addTitleConcat0": "Apply",
   "GURPS.addTitleConcat01": "point of ",
   "GURPS.addTitleConcat0s": "points of ",
   "GURPS.addTitleConcat1": "damage to {name}",

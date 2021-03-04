@@ -1,7 +1,7 @@
 <div class='gurps-app {{classes}}'>
   <div classes='flexcol flex-between'>
 
-    <h2>{{localize "GURPS.addTitleConcat0" basicDamage=CALC.totalBasicDamage}}
+    <h2>{{localize "GURPS.addTitleConcat0"}} {{CALC.totalBasicDamage}}
       {{#if (eq CALC.totalBasicDamage 1)}}{{localize "GURPS.addTitleConcat01"}}{{else}}{{localize "GURPS.addTitleConcat0s"}}{{/if}}
       {{#if CALC.armorDivisor}}({{CALC.armorDivisor}}){{/if}}
       {{#if (ne CALC.damageType 'none')}}{{CALC.damageType}}{{/if}}
