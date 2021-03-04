@@ -114,7 +114,7 @@ export default function addChatHooks() {
           handled = true
           return
         }
-        
+                
         m = line.match(/\/(st|status) (t|toggle|on|off|\+|-) ([^ ]+)(@self)?/i)
         if (!!m) {
           let pattern =  new RegExp('^' + (m[3].trim().split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')), 'i') // Make string into a RegEx pattern
@@ -425,13 +425,26 @@ export default function addChatHooks() {
             pub(line, msgs)   // Looks like an OtF, but didn't parse as one
           handled = true
           return
-       } 
+        }
+        
+        m = line.match(/([\.\/]p?ra) +(\w+-)?(\d+)/i)
+        if (!!m) {
+          let skill = m[2] || "Default="
+          let action = parselink("S:" + skill.replace('-', '=') + m[3])
+          send(msgs) // send what we have
+          GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.substr(1).startsWith('pra')  })   // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
+          handled = true
+          return
+        }
+
+         
         if (line === '/clearmb') {
           priv(line, msgs);
           GURPS.ModifierBucket.clear()
           handled = true
           return
         }
+        
         if (line.startsWith('/sendmb')) {
           if (game.user.isGM) {
             priv(line, msgs)

@@ -1220,7 +1220,7 @@ export class GurpsActor extends Actor {
           eqt = e
           key = k
         }
-      } else return l > 0
+      } else return pats.length == 1
     }, pkey1 )
     recurselist(list2, (e, k, d) => {
       let l = pats.length - 1
@@ -1230,7 +1230,7 @@ export class GurpsActor extends Actor {
           eqt = e
           key = k
         }
-      } else return l > 0
+      } else return pats.length == 1
     }, pkey2 )
     return [eqt, key]
   }
