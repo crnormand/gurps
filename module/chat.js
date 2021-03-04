@@ -170,8 +170,9 @@ export default function addChatHooks() {
           if (!actor)
             ui.notifications.warn('You must have a character selected')
           else {
-            let pattern = m[2].trim()
-            let [eqt, key] = actor.findEquipmentByName(pattern)
+            let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
+            let pattern = m2[2]
+            let [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
             if (!eqt)
               ui.notifications.warn("No equipment matched '" + pattern + "'")
             else {
@@ -187,7 +188,7 @@ export default function addChatHooks() {
                   priv(`${eqt.name} set to ${delta}`, msgs)
                 }
               } else {
-                let q = eqt.count + delta
+                let q = parseInt(eqt.count) + delta
                 if (q < 0) 
                   ui.notifications.warn("You do not have enough '" + eqt.name + "'")
                 else {

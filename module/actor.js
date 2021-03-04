@@ -1204,21 +1204,34 @@ export class GurpsActor extends Actor {
     })
   }
   
-  findEquipmentByName(pattern) {
-    pattern = '^' + pattern.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+  findEquipmentByName(pattern, otherFirst = false) {
+    pattern = pattern.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+    let pats = pattern.split("/")
     var eqt, key
-    recurselist(this.data.data.equipment.carried, (e, k) => {
-      if (!eqt && e.name.match(pattern)) {
-        eqt = e
-        key = k
-      }
-    }, 'data.equipment.carried.' )
-    recurselist(this.data.data.equipment.other, (e, k) => {
-      if (!eqt && e.name.match(pattern)) {
-        eqt = e
-        key = k
-      }
-    }, 'data.equipment.other.' )
+    let list1 = otherFirst ? this.data.data.equipment.other: this.data.data.equipment.carried
+    let list2 = otherFirst ? this.data.data.equipment.carried : this.data.data.equipment.other
+    let pkey1 = otherFirst ? 'data.equipment.other.' : 'data.equipment.carried.'
+    let pkey2 = otherFirst ? 'data.equipment.carried.' : 'data.equipment.other.'
+    recurselist(list1, (e, k, d) => {
+      let l = pats.length - 1
+      let p = pats[Math.min(d, l)]
+      if (e.name.match("^" + p)) {
+        if (!eqt && (d == l || pats.length == 1)) { 
+          eqt = e
+          key = k
+        }
+      } else return l > 0
+    }, pkey1 )
+    recurselist(list2, (e, k, d) => {
+      let l = pats.length - 1
+      let p = pats[Math.min(d, l)]
+      if (e.name.match("^" + p)) {
+        if (!eqt && (d == l || pats.length == 1)) { 
+          eqt = e
+          key = k
+        }
+      } else return l > 0
+    }, pkey2 )
     return [eqt, key]
   }
   
