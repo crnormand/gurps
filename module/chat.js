@@ -116,7 +116,7 @@ export default function addChatHooks() {
           return
         }
                 
-        m = line.match(/\/(st|status) (t|toggle|on|off|\+|-) ([^ ]+)(@self)?/i)
+        m = line.match(/\/(st|status) +(t|toggle|on|off|\+|-) +([^ ]+)(@self)?/i)
         if (!!m) {
           let pattern =  new RegExp('^' + (m[3].trim().split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')), 'i') // Make string into a RegEx pattern
           let any = false
@@ -165,7 +165,7 @@ export default function addChatHooks() {
           return          
         }
         
-        m = line.match(/\/qty ?([\+-=]\d+)(.*)/i)
+        m = line.match(/\/qty *([\+-=]\d+)(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -204,7 +204,7 @@ export default function addChatHooks() {
           return     
         }
         
-        m = line.match(/\/uses ?([\+-=]\w+)?(reset)?(.*)/i)
+        m = line.match(/\/uses *([\+-=]\w+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -247,7 +247,7 @@ export default function addChatHooks() {
           return     
         }
 
-        m = line.match(/\/([fh]p) ?([+-=]\d+)?(reset)?(.*)/i)
+        m = line.match(/\/([fh]p) *([+-=]\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -289,7 +289,7 @@ export default function addChatHooks() {
           return      
         }
  
-        m = line.match(/\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? ?([+-=]\d+)?(reset)?(.*)/i)
+        m = line.match(/\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -342,7 +342,7 @@ export default function addChatHooks() {
         }
      
         // /everyone +1 fp or /everyone -2d-1 fp
-        m = line.match(/\/(everyone|ev) ([fh]p) ?([+-]\d+d\d*)?([+-=]\d+)?(!)?/i);
+        m = line.match(/\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i);
         if (!!m && (!!m[3] || !!m[4])) {
           if (game.user.isGM) {
             let any = false
