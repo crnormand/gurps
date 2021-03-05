@@ -1125,16 +1125,16 @@ export class GurpsActorSheet extends ActorSheet {
       for (let enckey in encs) {
         let enc = encs[enckey]
         let t = 'data.encumbrance.' + enckey + '.current'
-        if (enc.current) {
-          await this.actor.update({ [t]: false })
-        }
         if (key === enckey) {
           await this.actor.update({
             [t]: true,
             'data.currentmove': parseInt(enc.move),
             'data.currentdodge': parseInt(enc.dodge),
           })
+        } else if (enc.current) {
+          await this.actor.update({ [t]: false })
         }
+
       }
     } else {
       ui.notifications.warn(
@@ -1384,7 +1384,8 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
 
   getData() {
     const data = super.getData()
-    data.dodge = this.actor.getCurrentDodge()
+    data.currentdodge = this.actor.data.data.currentdodge
+    data.currentmove = this.actor.data.data.currentmove
     data.defense = this.actor.getTorsoDr()
     let p = this.actor.getEquippedParry()
     //    let b = this.actor.getEquippedBlock();      // Don't have a good way to display block yet
