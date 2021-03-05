@@ -569,7 +569,7 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'modifier') {
     while (!!action && action.type === 'modifier') {
       let mod = parseInt(action.mod)
-      GURPS.ModifierBucket.addModifier(mod, action.desc)
+      await GURPS.ModifierBucket.addModifier(mod, action.desc)
       action = action.next
     }
     return true

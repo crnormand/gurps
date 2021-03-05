@@ -90,6 +90,7 @@ export default function addChatHooks() {
           c += '<br>/roll (or /r) [On-the-Fly formula]'
           c += '<br>/private (or /pr) [On-the-Fly formula]'
           c += '<br>/clearmb'
+          c += '<br>/showmbs'
           c += '<br>/:&lt;macro name&gt'
           c += '<br>/fp &lt;formula&gt;'
           c += '<br>/hp &lt;formula&gt;'
@@ -451,6 +452,12 @@ export default function addChatHooks() {
           handled = true
           return
         }
+        if (line === '/showmbs') {
+          priv(line, msgs);
+          GURPS.ModifierBucket.showOthers()
+          handled = true
+          return
+        }
         
         if (line.startsWith('/sendmb')) {
           if (game.user.isGM) {
@@ -461,7 +468,7 @@ export default function addChatHooks() {
               let otf = m[1]
               let t = parselink(otf)
               if (!!t.action && t.action.type == 'modifier')
-                GURPS.ModifierBucket.sendToPlayer(t.action, m[2])
+                GURPS.ModifierBucket.sendToPlayer(t.action, m[2].trim())
               else
                 GURPS.ModifierBucket.sendBucketToPlayer(user)
             }
