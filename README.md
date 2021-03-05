@@ -45,6 +45,7 @@ This is what we are currently working on:
   - Bug fix for old chat messages.  Can now be clicked on
   - Added /hp /fp /qty /trackerN chat commands
   - Added /qty /uses /status /tracker(name) chat commands
+  - Added .ra /sendmbs multiline chat msgs \\
 
 ## History
 

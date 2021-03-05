@@ -83,7 +83,7 @@ export default function addChatHooks() {
       try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
       let msgs = { pub: [], priv: [], data: data }
       let handled = false
-      message.split('\n').forEach((line) => {
+      message.replace(/\\\\/g,"\n").split('\n').forEach((line) => {
         var m
         if (line === '/help' || line === '!help') {
           let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
