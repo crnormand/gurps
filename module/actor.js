@@ -52,20 +52,16 @@ export class GurpsActor extends Actor {
     }
     if (!this.data.data.equippedparry) this.data.data.equippedparry = this.getEquippedParry()
     if (!this.data.data.equippedblock) this.data.data.equippedblock = this.getEquippedBlock() 
-  }
+ }
   
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
   async update(data, options) {
     console.log(this.name + " UPDATE: "+ GURPS.objToString(data))
     await super.update(data, options)
-  } 
-  // */
+  } */
     
   /** @override */
   _onUpdate(data, options, userId, context) {
-    //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
-    super._onUpdate(data, options, userId, context)
-    game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (!isNaN(data.data?.HP?.value)) {
         let flag = data.data.HP.value < (this.data.data.HP.max / 3)
@@ -76,6 +72,9 @@ export class GurpsActor extends Actor {
         if ((!!this.data.data.additionalresources.isTired) != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
+    //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
+    super._onUpdate(data, options, userId, context)
+    game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
 
   get _additionalResources() {
@@ -1246,7 +1245,8 @@ export class GurpsActor extends Actor {
   
   checkEncumbance(currentWeight) {
     let encs = this.data.data.encumbrance
-    var best, prev, last
+    let last = GURPS.genkey(0)    // if there are encumbrances, there will always be a level0
+    var best, prev
     for (let key in encs) {
       let enc = encs[key]
       if (enc.current) prev = key
@@ -1259,24 +1259,21 @@ export class GurpsActor extends Actor {
         }
       }
     }
-    if (!best && !!last) best = last
+    if (!best) best = last // that has a weight
     if (best != prev) {
-      setTimeout(async () => {
-        for (let key in encs) {
-          let enc = encs[key]
-          let t = 'data.encumbrance.' + key + '.current'
-          if (enc.current) {
-            await this.update({ [t]: false })
-          }
-          if (key === best) {
-            await this.update({
-              [t]: true,
-              'data.currentmove': parseInt(enc.currentmove),
-              'data.currentdodge': parseInt(enc.currentdodge),
-            })
-          }
+      for (let key in encs) {
+        let enc = encs[key]
+        let t = 'data.encumbrance.' + key + '.current'
+        if (key === best) {
+          this.update({
+            [t]: true,
+            'data.currentmove': parseInt(enc.currentmove),
+            'data.currentdodge': parseInt(enc.currentdodge),
+          })
+        } else if (enc.current) {
+          this.update({ [t]: false })
         }
-      }, 200)
+      }
     }
   }
 

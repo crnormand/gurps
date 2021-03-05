@@ -98,6 +98,7 @@ export default function addChatHooks() {
           c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
           c += '<br>/uses &lt;formula&gt; &lt;equipment name&gt;'
           c += '<br>/status on|off|t|toggle &lt;status&gt;'
+          c += '<br>/ra N | Skillname-N'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
             c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
@@ -164,7 +165,7 @@ export default function addChatHooks() {
           return          
         }
         
-        m = line.match(/\/qty ([\+-=]\d+)(.*)/i)
+        m = line.match(/\/qty ?([\+-=]\d+)(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -203,7 +204,7 @@ export default function addChatHooks() {
           return     
         }
         
-        m = line.match(/\/uses ([\+-=]\w+)?(reset)?(.*)/i)
+        m = line.match(/\/uses ?([\+-=]\w+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -246,7 +247,7 @@ export default function addChatHooks() {
           return     
         }
 
-        m = line.match(/\/([fh]p) ([+-=]\d+)?(reset)?(.*)/i)
+        m = line.match(/\/([fh]p) ?([+-=]\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -288,7 +289,7 @@ export default function addChatHooks() {
           return      
         }
  
-        m = line.match(/\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? ([+-=]\d+)?(reset)?(.*)/i)
+        m = line.match(/\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? ?([+-=]\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -297,12 +298,18 @@ export default function addChatHooks() {
             let tracker = parseInt(m[2])
             let display = tracker
             if (!!m[3]) {
+              tracker = -1
               for (const [key, value] of Object.entries(actor.data.data.additionalresources.tracker)) {
                 if (value.name.match(m[4])) {
                   tracker = key
                   display = "(" + value.name + ")"
                 }
               } 
+              if (tracker == -1) {
+                ui.notifications.warn(`No Resource Tracker matched '${m[3]}'`)
+                handled = true
+                return      
+              }
             }
             let delta = parseInt(m[5])
             let reset = ''
@@ -335,7 +342,7 @@ export default function addChatHooks() {
         }
      
         // /everyone +1 fp or /everyone -2d-1 fp
-        m = line.match(/\/(everyone|ev) ([fh]p) ([+-]\d+d\d*)?([+-=]\d+)?(!)?/i);
+        m = line.match(/\/(everyone|ev) ([fh]p) ?([+-]\d+d\d*)?([+-=]\d+)?(!)?/i);
         if (!!m && (!!m[3] || !!m[4])) {
           if (game.user.isGM) {
             let any = false
