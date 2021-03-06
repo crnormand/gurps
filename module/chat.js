@@ -83,13 +83,14 @@ export default function addChatHooks() {
       try { niceDice = game.settings.get('dice-so-nice', 'settings').enabled; } catch { }
       let msgs = { pub: [], priv: [], data: data }
       let handled = false
-      message.split('\n').forEach((line) => {
+      message.replace(/\\\\/g,"\n").split('\n').forEach((line) => {
         var m
         if (line === '/help' || line === '!help') {
           let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
           c += '<br>/roll (or /r) [On-the-Fly formula]'
           c += '<br>/private (or /pr) [On-the-Fly formula]'
           c += '<br>/clearmb'
+          c += '<br>/showmbs'
           c += '<br>/:&lt;macro name&gt'
           c += '<br>/fp &lt;formula&gt;'
           c += '<br>/hp &lt;formula&gt;'
@@ -116,7 +117,7 @@ export default function addChatHooks() {
           return
         }
                 
-        m = line.match(/\/(st|status) +(t|toggle|on|off|\+|-) +([^ ]+)(@self)?/i)
+        m = line.match(/\/(st|status) +(t|toggle|on|off|\+|-) +([^ ]+) +(\@self)?/i)
         if (!!m) {
           let pattern =  new RegExp('^' + (m[3].trim().split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')), 'i') // Make string into a RegEx pattern
           let any = false
@@ -137,12 +138,13 @@ export default function addChatHooks() {
               if (tokens.length == 0)
                 msg = "Your character does not have any tokens.   We require a token to set statuses"
               else {
+                any = true
                 GURPS.LastActor.effects.forEach(e => { 
                   if (effect.id == e.getFlag("core", "statusId")) on = true 
                 })
                 if ((on & !set) || (!on && set) || toggle) {
                   priv(`Toggling ${game.i18n.localize(effect.label)} for ${GURPS.LastActor.name}`, msgs)
-                  t.toggleEffect(effect)
+                  tokens[0].toggleEffect(effect)
                 }
               } 
             } else msg = "You must select a character to apply status effects"
@@ -186,14 +188,14 @@ export default function addChatHooks() {
                 else {
                   eqt.count = delta
                   actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
-                  priv(`${eqt.name} set to ${delta}`, msgs)
+                  priv(`${pattern} set to ${delta}`, msgs)
                 }
               } else {
                 let q = parseInt(eqt.count) + delta
                 if (q < 0) 
                   ui.notifications.warn("You do not have enough '" + eqt.name + "'")
                 else {
-                  priv(`${eqt.name} QTY ${m[1]}`, msgs)
+                  priv(`${pattern} QTY ${m[1]}`, msgs)
                   eqt.count = q
                   actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
                 }
@@ -218,14 +220,14 @@ export default function addChatHooks() {
               eqt = duplicate(eqt)
               let delta = parseInt(m[1])
               if (!!m[2]) {
-                priv(`${eqt.name} USES reset to MAX USES (${eqt.maxuses})`, msgs)
+                priv(`${pattern} USES reset to MAX USES (${eqt.maxuses})`, msgs)
                 eqt.uses = eqt.maxuses
                 actor.update({ [key]: eqt })    
               } else if (isNaN(delta)) {   // only happens with '='
                 delta = m[1].substr(1)
                 eqt.uses = delta
                 actor.update({ [key]: eqt })
-                priv(`${eqt.name} USES set to ${delta}`, msgs)         
+                priv(`${pattern} USES set to ${delta}`, msgs)         
               } else {
                 let q = parseInt(eqt.uses) + delta
                 let max = parseInt(eqt.maxuses)
@@ -234,9 +236,9 @@ export default function addChatHooks() {
                 else if (q < 0) 
                   ui.notifications.warn(eqt.name + " does not have enough USES")
                 else if (!isNaN(max) && max > 0 && q > max)
-                  ui.notifications.warn("Exceeded max uses (${max}) for " + eqt.name)
+                  ui.notifications.warn(`Exceeded max uses (${max}) for ` + eqt.name)
                 else {
-                  priv(`${eqt.name} USES ${m[1]} = ${q}`, msgs)
+                  priv(`${pattern} USES ${m[1]} = ${q}`, msgs)
                   eqt.uses = q
                   actor.update({ [key]: eqt })
                 }
@@ -247,7 +249,7 @@ export default function addChatHooks() {
           return     
         }
 
-        m = line.match(/\/([fh]p) *([+-=]\d+)?(reset)?(.*)/i)
+        m = line.match(/\/([fh]p) *([+-=]-?\d+)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
@@ -451,6 +453,12 @@ export default function addChatHooks() {
           handled = true
           return
         }
+        if (line === '/showmbs') {
+          priv(line, msgs);
+          GURPS.ModifierBucket.showOthers()
+          handled = true
+          return
+        }
         
         if (line.startsWith('/sendmb')) {
           if (game.user.isGM) {
@@ -461,7 +469,7 @@ export default function addChatHooks() {
               let otf = m[1]
               let t = parselink(otf)
               if (!!t.action && t.action.type == 'modifier')
-                GURPS.ModifierBucket.sendToPlayer(t.action, m[2])
+                GURPS.ModifierBucket.sendToPlayer(t.action, m[2].trim())
               else
                 GURPS.ModifierBucket.sendBucketToPlayer(user)
             }

@@ -87,6 +87,7 @@
     <div class="npc-sheet-ra-val">
         {{#each data.ranged as | this key |}}
         <div class="desc dblclkedit" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
+        {{#if this.rof}} Rof:{{this.rof}}{{/if}}{{#if this.rcl}} Rcl:{{this.rcl}}{{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>
         </div>
         <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>

@@ -569,7 +569,7 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'modifier') {
     while (!!action && action.type === 'modifier') {
       let mod = parseInt(action.mod)
-      GURPS.ModifierBucket.addModifier(mod, action.desc)
+      await GURPS.ModifierBucket.addModifier(mod, action.desc)
       action = action.next
     }
     return true
@@ -685,7 +685,7 @@ async function performAction(action, actor, event, targets) {
                 console.log(rsl)
                 let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
                 console.log(valueText)
-                return valueText === rsl ? 0 : parseInt(valueText) + parseInt(value)
+                return valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
               }
             } else ui.notifications.warn('You must have a character selected to use a "Based" Skill')
 

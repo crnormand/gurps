@@ -492,7 +492,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-key')
 
       let eqt = duplicate(getProperty(this.actor.data, path))
-      let value = eqt.count + (ev.shiftKey ? 5 : 1)
+      let value = parseInt(eqt.count) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = 0
       eqt.count = value
       await this.actor.update({ [path]: eqt })
@@ -513,7 +513,7 @@ export class GurpsActorSheet extends ActorSheet {
         })
         if (agree) GURPS.removeKey(actor, path)
       } else {
-        let value = eqt.count - (ev.shiftKey ? 5 : 1)
+        let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
         eqt.count = value
         await this.actor.update({ [path]: eqt })
@@ -672,7 +672,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'rsl', 'pageref', 'notes'],
+      ['name', 'relativelevel', 'pageref', 'notes'],
       ['level', 'points']
     )
   }
@@ -684,7 +684,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/spell-editor-popup.html',
       'Spell Editor',
-      ['name', 'rsl', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college'],
+      ['name', 'difficulty', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college'],
       ['level', 'points']
     )
   }
@@ -1111,8 +1111,13 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onNavigate(event) {
     let dataValue = $(event.currentTarget).attr('data-value')
-    var elmnt = document.getElementById(dataValue)
-    elmnt.scrollIntoView()
+    if (dataValue == 'CLOSE') {
+      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
+      this.render()
+    } else {
+      var elmnt = document.getElementById(dataValue)
+      elmnt.scrollIntoView()
+    }
   }
 
   async _onClickEnc(ev) {

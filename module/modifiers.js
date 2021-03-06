@@ -185,7 +185,7 @@ export class ModifierBucket extends Application {
     return this.modifierStack.currentSum
   }
 
-  async addModifier(mod, reason) {
+  addModifier(mod, reason) {
     let stack = this.modifierStack
     let oldmod = stack.modifierList.find(m => m.desc == reason)
     if (!!oldmod) {
@@ -213,7 +213,7 @@ export class ModifierBucket extends Application {
     if (this.SHOWING) {
       this.editor.render(true)
     }
-    game.user.setFlag('gurps', 'modifierstack', this.modifierStack)
+    await game.user.setFlag('gurps', 'modifierstack', this.modifierStack)
   }
 
   // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
@@ -254,13 +254,11 @@ export class ModifierBucket extends Application {
   async sendToPlayer(action, user) {
     const saved = this.modifierStack.modifierList
     this.modifierStack.modifierList = []
-    GURPS.performAction(action).then(() => {
-      this.sendBucketToPlayer(user).then(() => {
-        this.modifierStack.modifierList = saved
-        this.sum()
-        this.updateBucket()
-      })
-    })
+    await GURPS.performAction(action)
+    await this.sendBucketToPlayer(user)
+    this.modifierStack.modifierList = saved
+    this.sum()
+    this.updateBucket()
   }
 
   async sendBucketToPlayer(name) {
@@ -277,12 +275,12 @@ export class ModifierBucket extends Application {
     let set = !!user ? [user] : game.users?.filter(u => u._id != game.user._id) || []
     let d = Date.now()
     {
-      await set.forEach(async (u) => {
+      for (const u of set) {
         await u.setFlag('gurps', 'modifierstack', game.GURPS.ModifierBucket.modifierStack)
-      })
-      await set.forEach(async (u) => {
+      }
+      for (const u of set) {
         await u.setFlag('gurps', 'modifierchanged', d)
-      })
+      }
     }
   }
 }

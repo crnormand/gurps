@@ -60,6 +60,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
       let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1;
       if (!!optionalArgs.obj.rof) rofrcl = Math.min(rofrcl, parseInt(optionalArgs.obj.rof));
 
+      chatdata['rof'] = optionalArgs.obj.rof
+      chatdata['rcl'] = optionalArgs.obj.rcl
       chatdata['rofrcl'] = rofrcl
     }
 
