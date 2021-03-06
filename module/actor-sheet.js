@@ -672,7 +672,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'rsl', 'pageref', 'notes'],
+      ['name', 'relativelevel', 'pageref', 'notes'],
       ['level', 'points']
     )
   }
@@ -684,7 +684,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/spell-editor-popup.html',
       'Spell Editor',
-      ['name', 'rsl', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college'],
+      ['name', 'difficulty', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college'],
       ['level', 'points']
     )
   }

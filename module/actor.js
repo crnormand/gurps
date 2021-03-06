@@ -243,12 +243,12 @@ export class GurpsActor extends Actor {
 
     try {
       await this.update(deletes)
-      this.update(adds).then(() => {
+      await this.update(adds)  //.then(() => {
         // This has to be done after everything is loaded
         this.calculateDerivedValues()
        console.log('Done importing.  You can inspect the character data below:')
        console.log(this)
-     })
+    //})
     } catch (err) {
       let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
       if (err.message == "Maximum depth exceeded")
