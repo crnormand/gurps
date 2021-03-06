@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.15
+# Current Release Version 0.8.16
 
 [If you like our work...](https://ko-fi.com/crnormand)
 
@@ -21,7 +21,12 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 This is what we are currently working on:
 
-0.8.16
+0.9.0
+  - Items... yes... actual items.
+  
+## History
+
+0.8.16 - 3/6/2021
 
   - Bug fix for GCA exports. Now equipment with melee & ranged attacks appear in both (Spears)
   - Bug fix for GCA exports (with Armin's help!) Block is calculated correctly for items with DB (shields)
@@ -47,7 +52,6 @@ This is what we are currently working on:
   - Added /qty /uses /status /tracker(name) chat commands
   - Added .ra /sendmbs multiline chat msgs \\
 
-## History
 
 0.8.15 - 2/17/2021
 
