@@ -2913,8 +2913,10 @@ ul#result-effects li {
 
 .tracked-resource .spinner summary {
   line-height: 1.2;
+  list-style: none;
 }
 
+.tracked-resource .spinner summary::marker,
 .tracked-resource .spinner summary::-webkit-details-marker {
   display: none;
 }
