@@ -583,16 +583,21 @@ export class GurpsActorSheet extends ActorSheet {
       let b = !!this.actor.data.data.additionalresources[opt]
       this.actor.changeOneThirdStatus(opt, !b)
     })
-    html.find("[data-onethird]").hover(
-      function() {
+    html.find('[data-onethird]').hover(
+      function () {
         let opt = $(this).attr('data-onethird').substr(2)
-        let msg = "Disable&nbsp;" + opt
-        if ($(this).hasClass("buttongrey")) msg = "Enable&nbsp;" + opt
-        $( this ).append( $( `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>` ) );
-      }, function() {
-        $( this ).find( "div" ).last().remove();
+        let msg = 'Disable&nbsp;' + opt
+        if ($(this).hasClass('buttongrey')) msg = 'Enable&nbsp;' + opt
+        $(this).append(
+          $(
+            `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`
+          )
+        )
+      },
+      function () {
+        $(this).find('div').last().remove()
       }
-    );
+    )
   }
 
   async editEquipment(actor, path, obj) {
@@ -684,7 +689,19 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/spell-editor-popup.html',
       'Spell Editor',
-      ['name', 'difficulty', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college'],
+      [
+        'name',
+        'difficulty',
+        'pageref',
+        'notes',
+        'resist',
+        'class',
+        'cost',
+        'maintain',
+        'casttime',
+        'duration',
+        'college',
+      ],
       ['level', 'points']
     )
   }
@@ -1115,8 +1132,12 @@ export class GurpsActorSheet extends ActorSheet {
       game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
       this.render()
     } else {
-      var elmnt = document.getElementById(dataValue)
-      elmnt.scrollIntoView()
+      let target = document.getElementById(dataValue)
+      let windowContent = target.closest('.window-content')
+
+      // The '33' represents the hieght of the window title bar + a bit of margin
+      // TODO: we should really look this up and use the actual values as found in the DOM.
+      windowContent.scrollTop = target.offsetTop - 33
     }
   }
 
@@ -1139,7 +1160,6 @@ export class GurpsActorSheet extends ActorSheet {
         } else if (enc.current) {
           await this.actor.update({ [t]: false })
         }
-
       }
     } else {
       ui.notifications.warn(
