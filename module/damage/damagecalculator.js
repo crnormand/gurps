@@ -94,6 +94,9 @@ export class CompositeDamageCalculator {
 
     this._isInjuryTolerance = false
     this._injuryToleranceType = null
+    // Injury Tolerance (Damage Reduction) is handled separately from other types of IT
+    this._useDamageReduction = false
+    this._damageReductionLevel = null
 
     this._isExplosion = false
     this._hexesFromExplosion = 1
@@ -466,6 +469,22 @@ export class CompositeDamageCalculator {
 
   set injuryToleranceType(value) {
     this._injuryToleranceType = value
+  }
+
+  get useDamageReduction() {
+    return this._useDamageReduction
+  }
+
+  set useDamageReduction(value) {
+    this._useDamageReduction = value
+  }
+
+  get damageReductionLevel() {
+    return this._damageReductionLevel
+  }
+
+  set damageReductionLevel(value) {
+    this._damageReductionLevel = value
   }
 
   get isCrippleableLocation() {
@@ -860,6 +879,11 @@ class DamageCalculator {
     let injury = Math.floor(
       (this.penetratingDamage * this._parent.totalWoundingModifier) / this._parent.explosionDivisor
     )
+
+    if (this._parent._damageReductionLevel !== null && this._parent._damageReductionLevel != 0) {
+      // Injury Tolerance (Damage Reduction) can't reduce damage below 1
+      injury = Math.max(1, Math.floor(injury / this._parent._damageReductionLevel));
+    }
 
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
     if (this._parent.isInjuryTolerance && this._parent.injuryToleranceType === DIFFUSE) {
