@@ -1132,8 +1132,8 @@ export class GurpsActorSheet extends ActorSheet {
       game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
       this.render()
     } else {
-      let target = document.getElementById(dataValue)
-      let windowContent = target.closest('.window-content')
+      let windowContent = event.currentTarget.closest('.window-content')
+      let target = windowContent.querySelector(`#${dataValue}`)
 
       // The '33' represents the hieght of the window title bar + a bit of margin
       // TODO: we should really look this up and use the actual values as found in the DOM.
