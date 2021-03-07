@@ -92,7 +92,7 @@ export class CompositeDamageCalculator {
     this._explosionDivisor = 1
 
     this._isShotgun = false
-    this._shotgunRofMultiplier = 1
+    this._shotgunRofMultiplier = 9
   }
 
   get(viewId) {

@@ -340,8 +340,10 @@
             <div>{{CALC.DR}}</div>
             <div>{{CALC.hitLocation}}</div>
 
-            {{#if CALC.useArmorDivisor}}
-            {{#if CALC.armorDivisor}}
+            {{debug (concat CALC.useArmorDivisor "|" CALC.armorDivisor "|" CALC.isShotgun "|" CALC.isExplosion)}}
+            {{debug (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
+
+            {{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
             {{#unless CALC.isExplosion}}
             <div>{{localize "GURPS.hitLocationDRWithDivisor"}}</div>
             <div>{{CALC.effectiveDR}}</div>
@@ -363,7 +365,6 @@
               {{/if}}
             </div>
             {{/unless}}
-            {{/if}}
             {{/if}}
 
             <div id='result-penetrating'>{{localize "GURPS.addPenetrating"}}</div>
