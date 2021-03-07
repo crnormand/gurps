@@ -2916,7 +2916,6 @@ ul#result-effects li {
   list-style: none;
 }
 
-.tracked-resource .spinner summary::marker,
 .tracked-resource .spinner summary::-webkit-details-marker {
   display: none;
 }
