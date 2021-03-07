@@ -180,7 +180,7 @@
 
         {{#each data.hitlocations}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
-        <div class="where">{{localize (concat "GURPS.hitLocation" this.where)}}</div>
+        <div class="where">{{localizeWithFallback (concat "GURPS.hitLocation" this.where) this.where}}</div>
         <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
           {{hitlocationpenalty this.where this.penalty}}
         </div>

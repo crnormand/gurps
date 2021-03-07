@@ -78,7 +78,8 @@
             <div>
               <label>
                 <input type='radio' name='hitlocation' value='{{this.where}}' {{#if (eq ../CALC.hitLocation
-                  this.where)}}checked{{/if}}>&nbsp;{{localize (concat "GURPS.hitLocation" this.where)}}
+                  this.where)}}checked{{/if}}>&nbsp;{{localizeWithFallback (concat "GURPS.hitLocation" this.where)
+                this.where}}
               </label>
             </div>
             <div>{{this.rollText}}</div>
