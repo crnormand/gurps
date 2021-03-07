@@ -244,7 +244,21 @@
             </div>
           </div>
 
-          <div class='collapsible-wrapper options-drawer'>
+          <div style='display: flex; flex-direction: column; justify-content: center;'>
+            <div id='damage-reduction-container' class='gurps-3col'>
+              <input id='damage-reduction' type='checkbox' value='damage-reduction' {{#if
+                     CALC.useDamageReduction}}checked{{/if}}>
+              <label for='damage-reduction'>Damage Reduction</label>
+              <div id='damage-reduction-field' class='with-button'>
+                <input type='text' id='damage-reduction-level' class='digits-only'
+                       value='{{CALC.damageReductionLevel}}' {{#unless CALC.useDamageReduction}}disabled{{/unless}}
+                style='border: 1px solid #7a7971;'>
+                <button name='clear'><span class='fas fa-times-circle'></button>
+              </div>
+            </div>
+          </div>
+
+          <div class='shaded collapsible-wrapper options-drawer'>
             <input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{#if
               CALC.isExplosion}}checked{{/if}}></input>
             <label for='explosion-damage' class='label-toggle'>Explosion:<span class='pdflink'>B414</span></label>
@@ -258,7 +272,7 @@
 
           {{#if CALC.useBluntTrauma}}
           <div style='display: flex; flex-direction: column; justify-content: center;'>
-            <div id='specials-insert-point' class='shaded gurps-3col'>
+            <div id='specials-insert-point' class='gurps-3col'>
               <input id='flexible-armor' type='checkbox' value='flexible-armor' {{#if
                 CALC.isFlexibleArmor}}checked{{/if}}>
               <label for='flexible-armor'>{{localize "GURPS.addFlexibleArmor"}}
@@ -274,7 +288,7 @@
           </div>
           {{/if}}
 
-          <div class='collapsible-wrapper options-drawer'>
+          <div class='shaded collapsible-wrapper options-drawer'>
             <input id='shotgun-damage' class='toggle' type='checkbox' value='shotgun-damage' {{#if
               CALC.isShotgun}}checked{{/if}}></input>
             <label for='shotgun-damage' class='label-toggle'>{{localize "GURPS.addShotgunCloseRange"}}:<span
