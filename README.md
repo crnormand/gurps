@@ -17,7 +17,7 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 ### If you are looking for the latest stable release, use the manifest URL above.
 
-[Current GCA Export version: 'GCA-7' 2/18/2021 / Current GCS Export version: 'GCS-4' 2/23/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA Export version: 'GCA-7' 2/18/2021 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 This is what we are currently working on:
 
@@ -25,6 +25,15 @@ This is what we are currently working on:
   - Items... yes... actual items.
   
 ## History
+
+0.8.17
+  - Bug fix for names/names containing '%'
+  - Bug fix for resource tracker mis-alignment (due to arrow)
+  - Bug fix for missing hitlocation internationalization
+  - Bug fixes for Navigation buttons
+  - Bug fix for ADD Shotgun DR
+  - Bug fix for GCS import individual melee and ranged notes
+  - /hp /fp now support dice roll /hp +1d
 
 0.8.16 - 3/6/2021
 

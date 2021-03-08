@@ -71,6 +71,13 @@ export default function addChatHooks() {
       msgs.priv.push(text);
     } 
     
+    let prnt = (text, msgs) => {
+      if (game.user.isGM)
+        priv(text, msgs)
+      else
+        pub(text, msgs)
+    }
+    
     Hooks.on('chatMessage', (log, message, data) => {
       if (!!data.alreadyProcessed) return true    // The chat message has already been parsed for GURPS commands show it should just be displayed
       if (GURPS.ChatCommandsInProcess.includes(message)) {
@@ -143,7 +150,7 @@ export default function addChatHooks() {
                   if (effect.id == e.getFlag("core", "statusId")) on = true 
                 })
                 if ((on & !set) || (!on && set) || toggle) {
-                  priv(`Toggling ${game.i18n.localize(effect.label)} for ${GURPS.LastActor.name}`, msgs)
+                  prnt(`Toggling ${game.i18n.localize(effect.label)} for ${GURPS.LastActor.name}`, msgs)
                   tokens[0].toggleEffect(effect)
                 }
               } 
@@ -157,7 +164,7 @@ export default function addChatHooks() {
                   if (effect.id == e.getFlag("core", "statusId")) on = true 
                 })
               if ((on & !set) || (!on && set) || toggle) {
-                priv(`Toggling ${game.i18n.localize(effect.label)} for ${t.actor.name}`, msgs)
+                prnt(`Toggling ${game.i18n.localize(effect.label)} for ${t.actor.name}`, msgs)
                 t.toggleEffect(effect)
               }
             })
@@ -188,14 +195,14 @@ export default function addChatHooks() {
                 else {
                   eqt.count = delta
                   actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
-                  priv(`${pattern} set to ${delta}`, msgs)
+                  prnt(`${pattern} set to ${delta}`, msgs)
                 }
               } else {
                 let q = parseInt(eqt.count) + delta
                 if (q < 0) 
                   ui.notifications.warn("You do not have enough '" + eqt.name + "'")
                 else {
-                  priv(`${pattern} QTY ${m[1]}`, msgs)
+                  prnt(`${pattern} QTY ${m[1]}`, msgs)
                   eqt.count = q
                   actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
                 }
@@ -220,14 +227,14 @@ export default function addChatHooks() {
               eqt = duplicate(eqt)
               let delta = parseInt(m[1])
               if (!!m[2]) {
-                priv(`${pattern} USES reset to MAX USES (${eqt.maxuses})`, msgs)
+                prnt(`${pattern} USES reset to MAX USES (${eqt.maxuses})`, msgs)
                 eqt.uses = eqt.maxuses
                 actor.update({ [key]: eqt })    
               } else if (isNaN(delta)) {   // only happens with '='
                 delta = m[1].substr(1)
                 eqt.uses = delta
                 actor.update({ [key]: eqt })
-                priv(`${pattern} USES set to ${delta}`, msgs)         
+                prnt(`${pattern} USES set to ${delta}`, msgs)         
               } else {
                 let q = parseInt(eqt.uses) + delta
                 let max = parseInt(eqt.maxuses)
@@ -238,7 +245,7 @@ export default function addChatHooks() {
                 else if (!isNaN(max) && max > 0 && q > max)
                   ui.notifications.warn(`Exceeded max uses (${max}) for ` + eqt.name)
                 else {
-                  priv(`${pattern} USES ${m[1]} = ${q}`, msgs)
+                  prnt(`${pattern} USES ${m[1]} = ${q}`, msgs)
                   eqt.uses = q
                   actor.update({ [key]: eqt })
                 }
@@ -249,23 +256,23 @@ export default function addChatHooks() {
           return     
         }
 
-        m = line.match(/\/([fh]p) *([+-=]-?\d+)?(reset)?(.*)/i)
+        m = line.match(/\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
             ui.notifications.warn('You must have a character selected')
           else {
             let attr = m[1].toUpperCase()
-            let delta = parseInt(m[2])
+            let delta = parseInt(m[3])
             const max = actor.data.data[attr].max
             let reset = ''
-            if (!!m[3]) {
+            if (!!m[5]) {
               actor.update({ [ "data." + attr + ".value"] : max })
-              priv(`${actor.name} reset to ${max} ${attr}`, msgs)
-            } else if (isNaN(delta)) {   // only happens with '='
-              delta = parseInt(m[2].substr(1))
+              prnt(`${actor.name} reset to ${max} ${attr}`, msgs)
+            } else if (isNaN(delta) && !!m[3]) {   // only happens with '='
+              delta = parseInt(m[3].substr(1))
               if (isNaN(delta))
-                ui.notifications.warn(`Unrecognized format for '/${attr} ${m[4]}'`)
+                ui.notifications.warn(`Unrecognized format for '${line}'`)
               else {
                 let mtxt = ''
                 if (delta > max) {
@@ -273,19 +280,41 @@ export default function addChatHooks() {
                   mtxt = ` (max: ${max})`
                 }
                 actor.update({ [ "data." + attr + ".value"] : delta })
-                priv(`${actor.name} set to ${delta} ${attr}${mtxt}`, msgs)
+                prnt(`${actor.name} set to ${delta} ${attr}${mtxt}`, msgs)
               }
-            } else if (!!m[2]) {
-                let mtxt = ''
-                delta += actor.data.data[attr].value
-                if (delta > max) {
-                  delta = max
-                  mtxt = ` (max: ${max})`
-                }
+            } else if (!!m[2] || !!m[3]) {
+              let mtxt = '' 
+              let mod = m[3] || ""
+              delta = parseInt(mod)
+              let dice = m[2] || "";
+              let txt = ''
+              if (!!dice) {
+                let sign = (dice[0] == "-") ? -1 : 1
+                let d = dice.match(/[+-](\d+)d(\d*)/)
+                let r = d[1] + "d" + (!!d[2] ? d[2] : "6")
+                let roll = Roll.create(r).evaluate()
+                if (niceDice) game.dice3d.showForRoll(roll, game.user, data.whisper)
+                delta = roll.total
+                if (!!mod)
+                  if (isNaN(mod)) {
+                    ui.notifications.warn(`Unrecognized format '${line}'`)
+                    handled = true
+                    return              
+                  } else delta += parseInt(mod)
+                delta = Math.max(delta, !!m[4] ? 1 : 0)
+                if (!!m[4]) mod += "!"
+                delta *= sign
+                txt = `(${delta}) `
+              } 
+              delta += actor.data.data[attr].value
+              if (delta > max) {
+                delta = max
+                mtxt = ` (max: ${max})`
+              }
               actor.update({ [ "data." + attr + ".value"] : delta })
-              priv(`${actor.name} ${m[2]} ${attr}${mtxt}`, msgs)
-            } else
-              ui.notifications.warn(`Unrecognized format for '/${attr} ${m[4]}'`)
+              prnt(`${actor.name} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
+           } else
+              ui.notifications.warn(`Unrecognized format for '${line}'`)
           }  
           handled = true
           return      
@@ -318,14 +347,14 @@ export default function addChatHooks() {
             let max = actor.data.data.additionalresources.tracker[tracker].max
             if (!!m[6]) {
               actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : max})
-              priv(`Resource Tracker${display} reset to ${max}`, msgs)
+              prnt(`Resource Tracker${display} reset to ${max}`, msgs)
             } else if (isNaN(delta)) {    // only happens with '='
               delta = parseInt(m[5].substr(1))
               if (isNaN(delta))
                 ui.notifications.warn(`Unrecognized format for '${line}'`)
               else {
                 actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : delta})
-                priv(`Resource Tracker${display} set to ${delta}`, msgs)
+                prnt(`Resource Tracker${display} set to ${delta}`, msgs)
               }           
             } else if (!!m[5]) {
               if (max == 0) max = Number.MAX_SAFE_INTEGER
@@ -335,7 +364,7 @@ export default function addChatHooks() {
                 v = max
               }
               actor.update({ ["data.additionalresources.tracker." + tracker + ".value"] : v })
-              priv(`Resource Tracker${display} ${m[5]} = ${v}`, msgs)
+              prnt(`Resource Tracker${display} ${m[5]} = ${v}`, msgs)
             } else
               ui.notifications.warn(`Unrecognized format for '${line}'`)
           }  
@@ -430,10 +459,9 @@ export default function addChatHooks() {
             else
               send(msgs) // send what we have
             GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') })   // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
-          } else
-            pub(line, msgs)   // Looks like an OtF, but didn't parse as one
-          handled = true
-          return
+            handled = true
+            return
+          } // Looks like a /roll OtF, but didn't parse as one
         }
         
         m = line.match(/([\.\/]p?ra) +(\w+-)?(\d+)/i)
@@ -446,7 +474,6 @@ export default function addChatHooks() {
           return
         }
 
-         
         if (line === '/clearmb') {
           priv(line, msgs);
           GURPS.ModifierBucket.clear()
