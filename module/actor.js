@@ -84,7 +84,7 @@ export class GurpsActor extends Actor {
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
     const GCAVersion = "GCA-7"
-    const GCSVersion = "GCS-4"
+    const GCSVersion = "GCS-5"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
@@ -168,6 +168,10 @@ export class GurpsActor extends Actor {
         if (vernum < 4) {
           msg +=
             "This file was created with an older version of the GCS Export which does not contain the 'Uses' column for Equipment.<br>"
+        }
+        if (vernum < 5) {
+          msg +=
+            "This file was created with an older version of the GCS Export which does not export individual Melee and Ranged attack notes created by the same item.<br>"
         }
       }
     }
@@ -707,6 +711,7 @@ export class GurpsActor extends Actor {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
+        let oldnote = t(j.notes)
         for (let k2 in j.meleemodelist) {
           if (k2.startsWith('id-')) {
             let j2 = j.meleemodelist[k2]
@@ -717,8 +722,8 @@ export class GurpsActor extends Actor {
             m.techlevel = t(j.tl)
             m.cost = t(j.cost)
             if (isFoundryGCS) {
-              m.notes = t(j.notes)
-              m.pageref = t(j.pageref)
+              m.notes = t(j2.notes) || oldnote
+              m.pageref = t(j2.pageref)
             } else
               try {
                 m.setNotes(t(j.text))
@@ -752,6 +757,7 @@ export class GurpsActor extends Actor {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
+        let oldnote = t(j.notes)
         for (let k2 in j.rangedmodelist) {
           if (k2.startsWith('id-')) {
             let j2 = j.rangedmodelist[k2]
@@ -762,8 +768,8 @@ export class GurpsActor extends Actor {
             r.legalityclass = t(j.lc)
             r.ammo = t(j.ammo)
             if (isFoundryGCS) {
-              r.notes = t(j.notes)
-              r.pageref = t(j.pageref)
+              r.notes = t(j2.notes) || oldnote
+              r.pageref = t(j2.pageref)
             } else
               try {
                 r.setNotes(t(j.text))
