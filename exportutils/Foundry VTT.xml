@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 @ENHANCED_KEY_PARSING
-<root release="Foundry" version="GCS-4">
+<root release="Foundry" version="GCS-5">
   <character>
     <name type="string">@NAME</name>
     <portrait>@PORTRAIT</portrait>
@@ -97,7 +97,6 @@
           <weight type="string">@WEIGHT</weight>
           <tl type="string">@TL</tl>
           <cost type="string">@COST</cost>
-          <notes type="string">@DESCRIPTION_NOTES</notes>
           <meleemodelist>@ATTACK_MODES_LOOP_START
             <id-@ID>
               <name type="string">@USAGE</name>
@@ -106,6 +105,7 @@
               <reach type="string">@REACH</reach>
               <parry type="string">@PARRY</parry>
               <block type="string">@BLOCK</block>
+          	  <notes type="string">@DESCRIPTION_NOTES</notes>
             </id-@ID>@ATTACK_MODES_LOOP_END
           </meleemodelist>
         </id-@ID>@HIERARCHICAL_MELEE_LOOP_END
@@ -118,8 +118,7 @@
           <bulk type="number">@BULK</bulk>
           <lc type="string">@LEGALITY_CLASS</lc>
           <ammo type="number">@AMMO</ammo>
-          <notes type="string">@DESCRIPTION_NOTES</notes>
-         <rangedmodelist>@ATTACK_MODES_LOOP_START
+          <rangedmodelist>@ATTACK_MODES_LOOP_START
             <id-@ID>
               <name type="string">@USAGE</name>
               <level type="number">@LEVEL</level>
@@ -129,6 +128,7 @@
               <rof type="string">@ROF</rof>
               <shots type="string">@SHOTS</shots>
               <rcl type="number">@RECOIL</rcl>
+          	  <notes type="string">@DESCRIPTION_NOTES</notes>
             </id-@ID>@ATTACK_MODES_LOOP_END
           </rangedmodelist>
         </id-@ID>@HIERARCHICAL_RANGED_LOOP_END
