@@ -26,7 +26,7 @@ This is what we are currently working on:
   
 ## History
 
-0.8.17
+0.8.17 - 3/8/2021
   - Bug fix for names/names containing '%'
   - Bug fix for resource tracker mis-alignment (due to arrow)
   - Bug fix for missing hitlocation internationalization
