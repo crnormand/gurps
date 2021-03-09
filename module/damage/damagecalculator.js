@@ -22,7 +22,7 @@ const DIFFUSE = 'diffuse'
 const HOMOGENOUS = 'homogenous'
 
 // -1 means 'Ignores DR'
-const armorDivisorSteps = [-1, 100, 5, 3, 2, 1]
+const armorDivisorSteps = [-1, 10, 5, 3, 2, 1]
 
 export class CompositeDamageCalculator {
   /**

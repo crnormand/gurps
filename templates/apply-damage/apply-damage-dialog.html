@@ -185,10 +185,10 @@
                             checked{{/if}}>&nbsp;3</label>
               <label><input type='radio' name='tactical-armordivisor' value='5' {{#if (eq CALC.armorDivisor 5)}}
                             checked{{/if}}>&nbsp;5</label>
-              <label><input type='radio' name='tactical-armordivisor' value='10' {{#if (eq CALC.armorDivisor 10)}}
-                            checked{{/if}}>&nbsp;100</label>
+              <label style="width: 35px"><input style="margin-left: 2px" type='radio' name='tactical-armordivisor' value='10' {{#if (eq CALC.armorDivisor 10)}}
+                            checked{{/if}}>&nbsp;10</label>
               <label><input type='radio' name='tactical-armordivisor' value='-1' {{#if (eq CALC.armorDivisor -1)}}
-                            checked{{/if}}>&nbsp;inf</label>
+                            checked{{/if}}>&nbsp;&infin;</label>
             </div>
           </div>
 
@@ -228,7 +228,7 @@
               CALC.isHardenedDR}}checked{{/if}}>
             <label for='hardened' class='label-toggle'>{{localize "GURPS.addHardenedDRLevel"}}: <span
                 class='pdflink'>B47</span></label>
-            <div class='grid grid-5col continuation collapsible-content'>
+            <div class='grid grid-4col continuation collapsible-content'>
               <label><input type='radio' name='hardened' value='1' {{#if (eq CALC.hardenedDRLevel 1)}}
                   checked{{/if}}>&nbsp;1</label>
               <label><input type='radio' name='hardened' value='2' {{#if (eq CALC.hardenedDRLevel 2)}}
@@ -237,8 +237,6 @@
                   checked{{/if}}>&nbsp;3</label>
               <label><input type='radio' name='hardened' value='4' {{#if (eq CALC.hardenedDRLevel 4)}}
                   checked{{/if}}>&nbsp;4</label>
-              <label><input type='radio' name='hardened' value='5' {{#if (eq CALC.hardenedDRLevel 5)}}
-                  checked{{/if}}>&nbsp;5</label>
             </div>
           </div>
 
