@@ -3,7 +3,9 @@
 
     <h2>{{localize "GURPS.addTitleConcat0"}} {{CALC.totalBasicDamage}}
       {{localize (chooseplural CALC.totalBasicDamage "GURPS.addTitleConcat01" "GURPS.addTitleConcat0s")}}
-      {{#if CALC.armorDivisor}}({{CALC.armorDivisor}}){{/if}}
+      {{#if CALC.armorDivisor}}
+      ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
+      {{/if}}
       {{#if (and (ne CALC.damageType 'dmg') (ne CALC.damageType 'none'))}}{{CALC.damageType}}{{/if}}
       {{localize "GURPS.addTitleConcat1" name=actor.data.name}}
     </h2>
@@ -176,20 +178,20 @@
 
           <div class='shaded collapsible-wrapper options-drawer'>
             <input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{#if
-                   CALC.useArmorDivisor}}checked{{/if}}>
+              CALC.useArmorDivisor}}checked{{/if}}>
             <label for='tactical-armordivisor' class='label-toggle'>{{localize "GURPS.addArmorDivisor"}}: <span
-                    class='pdflink'>B378</span></label>
+                class='pdflink'>B378</span></label>
             <div class='grid grid-5col continuation collapsible-content'>
               <label><input type='radio' name='tactical-armordivisor' value='2' {{#if (eq CALC.armorDivisor 2)}}
-                            checked{{/if}}>&nbsp;2</label>
+                  checked{{/if}}>&nbsp;2</label>
               <label><input type='radio' name='tactical-armordivisor' value='3' {{#if (eq CALC.armorDivisor 3)}}
-                            checked{{/if}}>&nbsp;3</label>
+                  checked{{/if}}>&nbsp;3</label>
               <label><input type='radio' name='tactical-armordivisor' value='5' {{#if (eq CALC.armorDivisor 5)}}
-                            checked{{/if}}>&nbsp;5</label>
-              <label style="width: 35px"><input style="margin-left: 2px" type='radio' name='tactical-armordivisor' value='10' {{#if (eq CALC.armorDivisor 10)}}
-                            checked{{/if}}>&nbsp;10</label>
+                  checked{{/if}}>&nbsp;5</label>
+              <label style="width: 35px"><input style="margin-left: 2px" type='radio' name='tactical-armordivisor'
+                  value='10' {{#if (eq CALC.armorDivisor 10)}} checked{{/if}}>&nbsp;10</label>
               <label><input type='radio' name='tactical-armordivisor' value='-1' {{#if (eq CALC.armorDivisor -1)}}
-                            checked{{/if}}>&nbsp;&infin;</label>
+                  checked{{/if}}>&nbsp;&infin;</label>
             </div>
           </div>
 
@@ -373,7 +375,7 @@
                 ({{CALC.effectiveArmorDivisor}} = ({{CALC.armorDivisor}}) {{localize
                 "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
                 {{else}}
-                ({{CALC.armorDivisor}})
+                ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
                 {{/if}}
                 {{#unless CALC.DR}}
                 {{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
