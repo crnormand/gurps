@@ -136,6 +136,14 @@ GURPS.skillTypes = {
 }
 
 GURPS.PARSELINK_MAPPINGS = {
+  ST: 'attributes.ST.value',
+  DX: 'attributes.DX.value',
+  IQ: 'attributes.IQ.value',
+  HT: 'attributes.HT.value',
+  WILL: 'attributes.WILL.value',
+  Will: 'attributes.WILL.value',
+  PER: 'attributes.PER.value',
+  Per: 'attributes.PER.value',
   Vision: 'vision',
   VISION: 'vision',
   FRIGHTCHECK: 'frightcheck',
@@ -645,17 +653,21 @@ async function performAction(action, actor, event, targets) {
     while (!!tempAction) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
-        let t = parseInt(action.target)
-        if (!t && !!actor) t = parseInt(this.resolve(tempAction.path, actordata.data))
-        let sl = t
-        if (!!tempAction.mod) sl += parseInt(tempAction.mod)
-        if (sl > bestLvl) {
-          bestLvl = parseInt(sl)
-          bestAction = tempAction
-          thing = this.i18n(tempAction.path)
-          prefix = 'Roll vs '
-          target = t
-          if (!!tempAction.truetext) besttrue = tempAction
+        if (!actordata)
+          ui.notifications.warn('You must have a character selected to perform an Attribute check')
+        else {
+          let t = parseInt(action.target)
+          if (!t && !!actor) t = parseInt(this.resolve(tempAction.path, actordata.data))
+          let sl = t
+          if (!!tempAction.mod) sl += parseInt(tempAction.mod)
+          if (sl > bestLvl) {
+            bestLvl = parseInt(sl)
+            bestAction = tempAction
+            thing = this.i18n(tempAction.path)
+            prefix = 'Roll vs '
+            target = t
+            if (!!tempAction.truetext) besttrue = tempAction
+          }
         }
       } else {
         // skill

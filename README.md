@@ -23,6 +23,11 @@ This is what we are currently working on:
 
 0.9.0
   - Items... yes... actual items.
+
+0.8.18
+  - Self Control rolls can be "blind"   [!CR:12]
+  - 'Sense' rolls are now considered 'attribute' checks, and can be included in multi-checks [S:Traps|Vision-5]
+  
   
 ## History
 
