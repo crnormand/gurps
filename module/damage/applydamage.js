@@ -196,6 +196,11 @@ export default class ApplyDamageDialog extends Application {
       .find('#tactical-armordivisor')
       .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useArmorDivisor'))
 
+    // armor divisor level
+    html
+        .find('input[name="tactical-armordivisor"]')
+        .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'armorDivisor', parseFloat))
+
     // use blunt trauma rules
     html
       .find('#tactical-blunttrauma')

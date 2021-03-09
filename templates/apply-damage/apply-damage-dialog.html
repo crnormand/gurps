@@ -172,11 +172,28 @@
             <div><label for='tactical-blunttrauma'>{{localize "GURPS.bluntTrauma"}}</label></div>
             <div class='pdflink'>B379</div>
 
-            <div><input id='tactical-armordivisor' type='checkbox' value='armordivisor' {{#if
-                CALC.useArmorDivisor}}checked{{/if}}></div>
-            <div><label for='tactical-armordivisor'>{{localize "GURPS.addArmorDivisor"}}</label></div>
-            <div class='pdflink'>B378</div>
+          </div>
 
+          <div class='shaded collapsible-wrapper options-drawer'>
+            <input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{#if
+                   CALC.useArmorDivisor}}checked{{/if}}>
+            <label for='tactical-armordivisor' class='label-toggle'>{{localize "GURPS.addArmorDivisor"}}: <span
+                    class='pdflink'>B378</span></label>
+            <div class='grid grid-5col continuation collapsible-content'>
+              <label><input type='radio' name='tactical-armordivisor' value='2' {{#if (eq CALC.armorDivisor 2)}}
+                            checked{{/if}}>&nbsp;2</label>
+              <label><input type='radio' name='tactical-armordivisor' value='3' {{#if (eq CALC.armorDivisor 3)}}
+                            checked{{/if}}>&nbsp;3</label>
+              <label><input type='radio' name='tactical-armordivisor' value='5' {{#if (eq CALC.armorDivisor 5)}}
+                            checked{{/if}}>&nbsp;5</label>
+              <label style="width: 35px"><input style="margin-left: 2px" type='radio' name='tactical-armordivisor' value='10' {{#if (eq CALC.armorDivisor 10)}}
+                            checked{{/if}}>&nbsp;10</label>
+              <label><input type='radio' name='tactical-armordivisor' value='-1' {{#if (eq CALC.armorDivisor -1)}}
+                            checked{{/if}}>&nbsp;&infin;</label>
+            </div>
+          </div>
+
+          <div class='gurps-3col gurps-checkbox-col'>
             <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{#if
                 CALC.useLocationModifiers}}checked{{/if}}></div>
             <div><label for='tactical-locationmodifier'>{{localize "GURPS.addHitLocationWoundModifiers"}}</label>
@@ -212,7 +229,7 @@
               CALC.isHardenedDR}}checked{{/if}}>
             <label for='hardened' class='label-toggle'>{{localize "GURPS.addHardenedDRLevel"}}: <span
                 class='pdflink'>B47</span></label>
-            <div class='grid grid-5col continuation collapsible-content'>
+            <div class='grid grid-4col continuation collapsible-content'>
               <label><input type='radio' name='hardened' value='1' {{#if (eq CALC.hardenedDRLevel 1)}}
                   checked{{/if}}>&nbsp;1</label>
               <label><input type='radio' name='hardened' value='2' {{#if (eq CALC.hardenedDRLevel 2)}}
@@ -221,8 +238,6 @@
                   checked{{/if}}>&nbsp;3</label>
               <label><input type='radio' name='hardened' value='4' {{#if (eq CALC.hardenedDRLevel 4)}}
                   checked{{/if}}>&nbsp;4</label>
-              <label><input type='radio' name='hardened' value='5' {{#if (eq CALC.hardenedDRLevel 5)}}
-                  checked{{/if}}>&nbsp;5</label>
             </div>
           </div>
 
