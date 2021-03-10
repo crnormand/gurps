@@ -739,6 +739,7 @@ async function performAction(action, actor, event, targets) {
       }
       formula = '3d6'
       opt.action = bestAction
+      if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
       else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
   }
