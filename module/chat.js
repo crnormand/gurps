@@ -94,24 +94,25 @@ export default function addChatHooks() {
         var m
         if (line === '/help' || line === '!help') {
           let c = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a>"
-          c += '<br>/roll (or /r) [On-the-Fly formula]'
-          c += '<br>/private (or /pr) [On-the-Fly formula]'
-          c += '<br>/clearmb'
-          c += '<br>/showmbs'
           c += '<br>/:&lt;macro name&gt'
+          c += '<br>/clearmb'
           c += '<br>/fp &lt;formula&gt;'
           c += '<br>/hp &lt;formula&gt;'
-          c += '<br>/trackerN (N=0-3) &lt;formula&gt;'
-          c += '<br>/tracker(&lt;name&gt;) &lt;formula&gt;'
+          c += '<br>/private (or /pr) [On-the-Fly formula]'
           c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
-          c += '<br>/uses &lt;formula&gt; &lt;equipment name&gt;'
-          c += '<br>/status on|off|t|toggle &lt;status&gt;'
           c += '<br>/ra N | Skillname-N'
+          c += '<br>/roll (or /r) [On-the-Fly formula]'
+          c += '<br>/select &lt;Actor name&gt'
+          c += '<br>/showmbs'
+          c += '<br>/status on|off|t|toggle &lt;status&gt;'
+          c += '<br>/tracker(&lt;name&gt;) &lt;formula&gt;'
+          c += '<br>/trackerN (N=0-3) &lt;formula&gt;'
+          c += '<br>/uses &lt;formula&gt; &lt;equipment name&gt;'
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
-            c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
-            c += '<br>/mook'
             c += '<br>/everyone (or /ev) &lt;formula&gt;'
+            c += '<br>/mook'
+            c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
           }
           priv(c, msgs);
           handled = true
@@ -122,6 +123,27 @@ export default function addChatHooks() {
           priv("Opening Mook Generator", msgs)
           handled = true
           return
+        }
+        
+        m = line.match(/\/(select|sel) ?([^!]*)(!)?/)
+        if (!!m) {
+          if (!m[2]) {
+            GURPS.ClearLastActor(GURPS.LastActor)
+            priv("Clearing Last Actor", msgs)
+          } else {
+            let pat = m[2].split('*').join('.*')
+            let list = Object.values(game.scenes.entries).filter(s => s._view)[0].data.tokens.map(t => game.actors.get(t.actorId)) 
+            if (!!m[3]) list = game.actors.entities
+            let a = list.filter(a => a.name.match(pat));
+            if (a.length == 0) ui.notifications.warn("No Actor found matching '" + m[2] + "'")
+            else if (a.length > 1) ui.notifications.warn("More than one Actor found matching '" + m[2] + "': " + a.map(e => e.name).join(', '))
+            else {
+              GURPS.SetLastActor(a[0])
+              priv("Selecting " + a[0].name, msgs)
+            }
+          }
+          handled = true
+          return              
         }
                 
         m = line.match(/\/(st|status) +(t|toggle|on|off|\+|-) +([^ ]+) +(\@self)?/i)
