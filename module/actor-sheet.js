@@ -215,7 +215,7 @@ export class GurpsActorSheet extends ActorSheet {
       let dlgHtml = await renderTemplate('systems/gurps/templates/resource-editor-popup.html', tracker)
 
       let options = {
-        width: 130,
+        width: 360,
         popOut: true,
         minimizable: false,
         jQuery: true,

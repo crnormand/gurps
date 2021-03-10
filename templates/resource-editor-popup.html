@@ -2,12 +2,127 @@
   <div class='name'>
     <input class="gcs-input" type="text" value="{{name}}" placeholder="Resource Name">
   </div>
-  <div class='inputs'>
+  <div class='inputs' style='max-width: 150;'>
     <input class="current gcs-input" type="text" value="{{value}}" data-dtype="Number" />
     <div class="label">Current</div>
     <input class="minimum gcs-input" type="text" value="{{min}}" data-dtype="Number" />
     <div class="label">Minimum</div>
     <input class="maximum gcs-input" type="text" value="{{max}}" data-dtype="Number" />
     <div class="label">Maximum</div>
+  </div>
+  <hr />
+  <h3>Thresholds:</h3>
+  <div style='display: grid; grid-template-columns: min-content min-content min-content 1fr auto; gap: 0.15rem'>
+    <div style='grid-column: 1 / 4; justify-content: center;' class='label'>Current Value</div>
+    <div class='label'>Condition</div>
+    <div class='label'>Color</div>
+
+    <div><select style='font-size: 120%;'>
+        <option value='>' selected>&gt;</option>
+        <option value='≥'>&ge;</option>
+        <option value='<'>&lt;</option>
+        <option value='≤'>&le;</option>
+      </select>
+    </div>
+    <div><select>
+        <option value='+'>MAX &plus;</option>
+        <option value='−'>MAX &minus;</option>
+        <option value='×' selected>MAX &times;</option>
+        <option value='÷'>MAX &divide;</option>
+      </select>
+    </div>
+    <input class="gcs-input" type="text" value="0.9" data-dtype="Number" />
+    <input class="gcs-input" type="text" value="NORMAL" />
+    <div style='display: flex; align-items: center;'> <input type="color" value="#80FF80"></div>
+
+    <div><select style='font-size: 120%;'>
+        <option value='>'>&gt;</option>
+        <option value='≥'>&ge;</option>
+        <option value='<'>&lt;</option>
+        <option value='≤' selected>&le;</option>
+      </select>
+    </div>
+    <div><select>
+        <option value='+'>MAX &plus;</option>
+        <option value='−'>MAX &minus;</option>
+        <option value='×' selected>MAX &times;</option>
+        <option value='÷'>MAX &divide;</option>
+      </select>
+    </div>
+    <input class="gcs-input" type="text" value="0.9" data-dtype="Number" />
+    <input class="gcs-input" type="text" value="GRABBED" />
+    <div style='display: flex; align-items: center;'> <input type="color" value="#FFFF80"></div>
+
+    <div><select style='font-size: 120%;'>
+        <option value='>'>&gt;</option>
+        <option value='≥'>&ge;</option>
+        <option value='<'>&lt;</option>
+        <option value='≤' selected>&le;</option>
+      </select>
+    </div>
+    <div><select>
+        <option value='+'>MAX &plus;</option>
+        <option value='−'>MAX &minus;</option>
+        <option value='×' selected>MAX &times;</option>
+        <option value='÷'>MAX &divide;</option>
+      </select>
+    </div>
+    <input class="gcs-input" type="text" value="0.5" data-dtype="Number" />
+    <input class="gcs-input" type="text" value="GRAPPLED" />
+    <div style='display: flex; align-items: center;'> <input type="color" value="#FFC880"></div>
+
+    <div><select style='font-size: 120%;'>
+        <option value='>'>&gt;</option>
+        <option value='≥'>&ge;</option>
+        <option value='<'>&lt;</option>
+        <option value='≤' selected>&le;</option>
+      </select>
+    </div>
+    <div><select>
+        <option value='+'>MAX &plus;</option>
+        <option value='−'>MAX &minus;</option>
+        <option value='×' selected>MAX &times;</option>
+        <option value='÷'>MAX &divide;</option>
+      </select>
+    </div>
+    <input class="gcs-input" type="text" value="0" data-dtype="Number" />
+    <input class="gcs-input" type="text" value="RESTRAINED" />
+    <div style='display: flex; align-items: center;'> <input type="color" value="#FF8080"></div>
+
+    <div><select style='font-size: 120%;'>
+        <option value='>'>&gt;</option>
+        <option value='≥'>&ge;</option>
+        <option value='<'>&lt;</option>
+        <option value='≤' selected>&le;</option>
+      </select>
+    </div>
+    <div><select>
+        <option value='+'>MAX &plus;</option>
+        <option value='−'>MAX &minus;</option>
+        <option value='×' selected>MAX &times;</option>
+        <option value='÷'>MAX &divide;</option>
+      </select>
+    </div>
+    <input class="gcs-input" type="text" value="-0.5" data-dtype="Number" />
+    <input class="gcs-input" type="text" value="CONTROLLED" />
+    <div style='display: flex; align-items: center;'> <input type="color" value="#FF4040"></div>
+
+    <div><select style='font-size: 120%;'>
+        <option value='>'>&gt;</option>
+        <option value='≥'>&ge;</option>
+        <option value='<'>&lt;</option>
+        <option value='≤' selected>&le;</option>
+      </select>
+    </div>
+    <div><select>
+        <option value='+'>MAX &plus;</option>
+        <option value='−'>MAX &minus;</option>
+        <option value='×' selected>MAX &times;</option>
+        <option value='÷'>MAX &divide;</option>
+      </select>
+    </div>
+    <input class="gcs-input" type="text" value="-1" data-dtype="Number" />
+    <input class="gcs-input" type="text" value="PINNED" />
+    <div style='display: flex; align-items: center;'> <input type="color" value="#804040"></div>
   </div>
 </div>

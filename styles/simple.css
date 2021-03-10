@@ -2777,15 +2777,17 @@ ul#result-effects li {
   background-color: rgba(238, 130, 238, 0.6);
 }
 
+.resource-editor ::placeholder,
 .tracked-resource ::placeholder {
   color: grey;
 }
 
 .resource-editor .inputs {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 0fr max-content;
   grid-template-rows: auto;
   grid-gap: 0.15rem;
+  justify-content: center;
 }
 
 .resource-editor .inputsv2 {
