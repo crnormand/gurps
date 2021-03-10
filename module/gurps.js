@@ -69,6 +69,7 @@ GURPS.ClearLastActor = function (actor) {
   if (GURPS.LastActor == actor) {
     console.log('Clearing Last Actor:' + GURPS.LastActor?.name)
     GURPS.LastActor = null
+    GURPS.LastActorName = null
     GURPS.ModifierBucket.refresh()
     if (canvas.tokens.controlled.length > 0) {
       GURPS.SetLastActor(canvas.tokens.controlled[0].actor)

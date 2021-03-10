@@ -132,14 +132,21 @@ export default function addChatHooks() {
             priv("Clearing Last Actor", msgs)
           } else {
             let pat = m[2].split('*').join('.*')
+            pat = "^" + pat + "$"
             let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
             if (!!m[3]) list = game.actors.entities
             let a = list.filter(a => a.name.match(pat));
-            if (a.length == 0) ui.notifications.warn("No Actor found matching '" + m[2] + "'")
-            else if (a.length > 1) ui.notifications.warn("More than one Actor found matching '" + m[2] + "': " + a.map(e => e.name).join(', '))
+            let msg = "More than one Actor found matching '" + m[2] + "': " + a.map(e => e.name).join(', ')
+            if (a.length == 0 || a.length > 1) {  // No good match on actors, try token names
+              a = canvas.tokens.placeables.filter(t => t.name.match(pat))
+              msg = "More than one Token found matching '" + m[2] + "': " + a.map(e => e.name).join(', ')
+              a = a.map(t => t.actor)
+             }
+            if (a.length == 0) ui.notifications.warn("No Actor/Token found matching '" + m[2] + "'")
+            else if (a.length > 1) ui.notifications.warn(msg)
             else {
               GURPS.SetLastActor(a[0])
-              priv("Selecting " + a[0].name, msgs)
+              priv("Selecting " + a[0].displayname, msgs)
             }
           }
           handled = true
@@ -173,14 +180,14 @@ export default function addChatHooks() {
                   if (clear) Object.values(CONFIG.statusEffects).forEach(s => { 
                       if (s.id == e.getFlag("core", "statusId")) {
                         tokens[0].toggleEffect(s)
-                        prnt(`Clearing ${e.data.label} for ${GURPS.LastActor.name}`, msgs)
+                        prnt(`Clearing ${e.data.label} for ${GURPS.LastActor.displayname}`, msgs)
                       }
                   })
                   else if (effect.id == e.getFlag("core", "statusId")) on = true
 
                 })
                 if ((on & !set) || (!on && set) || toggle) {
-                  prnt(`Toggling ${game.i18n.localize(effect.label)} for ${GURPS.LastActor.name}`, msgs)
+                  prnt(`Toggling ${game.i18n.localize(effect.label)} for ${GURPS.LastActor.displayname}`, msgs)
                   tokens[0].toggleEffect(effect)
                 }
               }
@@ -194,13 +201,13 @@ export default function addChatHooks() {
                   if (clear) Object.values(CONFIG.statusEffects).forEach(s => { 
                     if (s.id == e.getFlag("core", "statusId")) {
                       t.toggleEffect(s)
-                      prnt(`Clearing ${e.data.label} for ${t.actor.name}`, msgs)
+                      prnt(`Clearing ${e.data.label} for ${t.actor.displayname}`, msgs)
                     }
                   })
                   else if (effect.id == e.getFlag("core", "statusId")) on = true
                 })
               if ((on & !set) || (!on && set) || toggle) {
-                prnt(`Toggling ${game.i18n.localize(effect.label)} for ${t.actor.name}`, msgs)
+                prnt(`Toggling ${game.i18n.localize(effect.label)} for ${t.actor.displayname}`, msgs)
                 t.toggleEffect(effect)
               }
             })
@@ -304,7 +311,7 @@ export default function addChatHooks() {
             let reset = ''
             if (!!m[5]) {
               actor.update({ [ "data." + attr + ".value"] : max })
-              prnt(`${actor.name} reset to ${max} ${attr}`, msgs)
+              prnt(`${actor.displayname} reset to ${max} ${attr}`, msgs)
             } else if (isNaN(delta) && !!m[3]) {   // only happens with '='
               delta = parseInt(m[3].substr(1))
               if (isNaN(delta))
@@ -316,7 +323,7 @@ export default function addChatHooks() {
                   mtxt = ` (max: ${max})`
                 }
                 actor.update({ [ "data." + attr + ".value"] : delta })
-                prnt(`${actor.name} set to ${delta} ${attr}${mtxt}`, msgs)
+                prnt(`${actor.displayname} set to ${delta} ${attr}${mtxt}`, msgs)
               }
             } else if (!!m[2] || !!m[3]) {
               let mtxt = '' 
@@ -348,7 +355,7 @@ export default function addChatHooks() {
                 mtxt = ` (max: ${max})`
               }
               actor.update({ [ "data." + attr + ".value"] : delta })
-              prnt(`${actor.name} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
+              prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
            } else
               ui.notifications.warn(`Unrecognized format for '${line}'`)
           }  
@@ -455,7 +462,7 @@ export default function addChatHooks() {
                   mtxt = `(max: ${max})`
                 }
                 actor.update({ [ "data." + attr + ".value"] : newval })
-                priv(`${actor.name} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
+                priv(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
               }
             }) 
             if (!any) priv(`There are no player owned characters!`, msgs)
@@ -476,7 +483,7 @@ export default function addChatHooks() {
                 let attr = m[2].toUpperCase()
                 let max = actor.data.data[attr].max
                 actor.update({ [ "data." + attr + ".value"] : max })
-                priv(`${actor.name} ${attr} reset to ${max}`, msgs)
+                priv(`${actor.displayname} ${attr} reset to ${max}`, msgs)
               }
             })  
             if (!any) priv(`There are no player owned characters!`, msgs)

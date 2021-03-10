@@ -63,8 +63,8 @@ export class ModifierBucket extends Application {
     data.stack = this.modifierStack
     let ca = ''
     if (game.user?.isGM && !!GURPS.LastActor) {
-      ca = GURPS.LastActor.name
-      if (ca.length > 20) ca = ca.substring(0, 17) + '...'
+      ca = GURPS.LastActor.displayname
+      if (ca.length > 25) ca = ca.substring(0, 22) + '...'
     }
     data.currentActor = ca
     return data
