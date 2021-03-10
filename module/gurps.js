@@ -1230,65 +1230,67 @@ GURPS.onRightClickGurpslink = function (event) {
 }
 
 GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
-  if (!game.user.isGM) return
-  if (!!otf) {
-    otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
-    let canblind = false
-    if (!!blindcheck) {
-      canblind = blindcheck.hasOwnProperty('blindroll')
-      if (canblind && blindcheck.blindroll) {
-        otf = '!' + otf
-        canblind = false
-      }
+  if (!otf) return
+  if (!game.user.isGM) {
+    $(document).find('#chat-message').val('[' + otf + ']')
+    return
+  }
+  otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
+  let canblind = false
+  if (!!blindcheck) {
+    canblind = blindcheck.hasOwnProperty('blindroll')
+    if (canblind && blindcheck.blindroll) {
+      otf = '!' + otf
+      canblind = false
     }
-    let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-    let botf = '[!' + otf + ']'
-    otf = '[' + otf + ']'
-    let buttons = {}
-    buttons.one = {
-      icon: '<i class="fas fa-users"></i>',
-      label: 'To Everyone',
-      callback: () => GURPS.sendOtfMessage(otf, false),
+  }
+  let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
+  otf = '[' + otf + ']'
+  let botf = '[!' + otf + ']'
+  let buttons = {}
+  buttons.one = {
+    icon: '<i class="fas fa-users"></i>',
+    label: 'To Everyone',
+    callback: () => GURPS.sendOtfMessage(otf, false),
+  }
+  if (canblind)
+    buttons.two = {
+      icon: '<i class="fas fa-users-slash"></i>',
+      label: 'Blindroll to Everyone',
+      callback: () => GURPS.sendOtfMessage(botf, true),
+    }
+  if (users.length > 0) {
+    let nms = users.map(u => u.name).join(' ')
+    buttons.three = {
+      icon: '<i class="fas fa-user"></i>',
+      label: 'Whisper to ' + nms,
+      callback: () => GURPS.sendOtfMessage(otf, false, users),
     }
     if (canblind)
-      buttons.two = {
-        icon: '<i class="fas fa-users-slash"></i>',
-        label: 'Blindroll to Everyone',
-        callback: () => GURPS.sendOtfMessage(botf, true),
+      buttons.four = {
+        icon: '<i class="fas fa-user-slash"></i>',
+        label: 'Whisper Blindroll to ' + nms,
+        callback: () => GURPS.sendOtfMessage(botf, true, users),
       }
-    if (users.length > 0) {
-      let nms = users.map(u => u.name).join(' ')
-      buttons.three = {
-        icon: '<i class="fas fa-user"></i>',
-        label: 'Whisper to ' + nms,
-        callback: () => GURPS.sendOtfMessage(otf, false, users),
-      }
-      if (canblind)
-        buttons.four = {
-          icon: '<i class="fas fa-user-slash"></i>',
-          label: 'Whisper Blindroll to ' + nms,
-          callback: () => GURPS.sendOtfMessage(botf, true, users),
-        }
-    }
-    buttons.def = {
-      icon: '<i class="far fa-copy"></i>',
-      label: 'Copy to chat input',
-      callback: () => {
-        $(document).find('#chat-message').val(otf)
-      },
-    }
-
-    let d = new Dialog(
-      {
-        title: "GM 'Send Formula'",
-        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-        buttons: buttons,
-        default: 'def',
-      },
-      { width: 700 }
-    )
-    d.render(true)
   }
+  buttons.def = {
+    icon: '<i class="far fa-copy"></i>',
+    label: 'Copy to chat input',
+    callback: () => {
+      $(document).find('#chat-message').val(otf)
+    },
+  }
+
+  let d = new Dialog(
+    {
+      title: "GM 'Send Formula'",
+      content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
+      buttons: buttons,
+      default: 'def',
+    },
+    { width: 700 }
+  )
+  d.render(true)
 }
 
 GURPS.sendOtfMessage = function (content, blindroll, users) {
