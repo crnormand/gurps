@@ -1383,6 +1383,9 @@ Hooks.once('init', async function () {
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
   $('#logo').attr('src', src)
 
+  // set up all hitlocation tables (must be done before MB)
+  HitLocation.init()
+
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket({
     popOut: false,
@@ -1397,8 +1400,6 @@ Hooks.once('init', async function () {
   CONFIG.Actor.entityClass = GurpsActor
   CONFIG.Item.entityClass = GurpsItem
 
-  // set up all hitlocation tables
-  HitLocation.init()
 
   // preload drag-and-drop image
   {
