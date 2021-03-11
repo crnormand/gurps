@@ -8,9 +8,11 @@ This is what we are currently working on:
   - Converted 'mapped' to 'attribute' so [S:Trap|Vision-5] works
   - Add blindroll to CR
   - Implemented selectable armor divisor in the apply damage dialog
-  - Implmentned /select ActorName (sets the LastActor)
-  - Implemented /status clear (clears all status effects)
+  - Added /select ActorName (sets the LastActor)
+  - Added support for unlinked Actors, which display like "TokenName(ActorName)"
+  - Added /status clear (clears all status effects)
   - Right Mouse Click for NON-GMs sends OtF formula to chat input
+  - Fixed i18n issues with ranged 
 
 0.8.17 - 3/8/2021
   - Bug fix for names/names containing '%'
