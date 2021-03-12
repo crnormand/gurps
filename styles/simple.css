@@ -2005,6 +2005,13 @@ body {
   text-align: start;
 }
 
+.roll-message .note {
+  font-size: medium;
+  text-align: right;
+  font-weight: normal;
+  text-align: start;
+}
+
 .roll-result .roll-value,
 .roll-result .roll-detail {
   font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
@@ -2906,6 +2913,7 @@ ul#result-effects li {
 
 .tracked-resource .spinner summary {
   line-height: 1.2;
+  list-style: none;
 }
 
 .tracked-resource .spinner summary::-webkit-details-marker {

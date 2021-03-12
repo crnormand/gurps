@@ -22,7 +22,7 @@ const DIFFUSE = 'diffuse'
 const HOMOGENOUS = 'homogenous'
 
 // -1 means 'Ignores DR'
-const armorDivisorSteps = [-1, 100, 5, 3, 2, 1]
+const armorDivisorSteps = [-1, 10, 5, 3, 2, 1]
 
 export class CompositeDamageCalculator {
   /**
@@ -66,6 +66,9 @@ export class CompositeDamageCalculator {
     this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
 
     this._armorDivisor = damageData[0].armorDivisor
+    if (this._armorDivisor === 0) {
+      this._useArmorDivisor = false
+    }
 
     this._hitLocation = this._defender.defaultHitLocation
     this._previousHitLocation = this._hitLocation
@@ -92,7 +95,7 @@ export class CompositeDamageCalculator {
     this._explosionDivisor = 1
 
     this._isShotgun = false
-    this._shotgunRofMultiplier = 1
+    this._shotgunRofMultiplier = 9
   }
 
   get(viewId) {
@@ -114,6 +117,10 @@ export class CompositeDamageCalculator {
 
   get armorDivisor() {
     return this._armorDivisor
+  }
+
+  set armorDivisor(value) {
+    this._armorDivisor = value
   }
 
   get applyTo() {

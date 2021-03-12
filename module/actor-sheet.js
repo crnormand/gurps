@@ -492,7 +492,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-key')
 
       let eqt = duplicate(getProperty(this.actor.data, path))
-      let value = eqt.count + (ev.shiftKey ? 5 : 1)
+      let value = parseInt(eqt.count) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = 0
       eqt.count = value
       await this.actor.update({ [path]: eqt })
@@ -513,7 +513,7 @@ export class GurpsActorSheet extends ActorSheet {
         })
         if (agree) GURPS.removeKey(actor, path)
       } else {
-        let value = eqt.count - (ev.shiftKey ? 5 : 1)
+        let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
         eqt.count = value
         await this.actor.update({ [path]: eqt })
@@ -583,16 +583,21 @@ export class GurpsActorSheet extends ActorSheet {
       let b = !!this.actor.data.data.additionalresources[opt]
       this.actor.changeOneThirdStatus(opt, !b)
     })
-    html.find("[data-onethird]").hover(
-      function() {
+    html.find('[data-onethird]').hover(
+      function () {
         let opt = $(this).attr('data-onethird').substr(2)
-        let msg = "Disable&nbsp;" + opt
-        if ($(this).hasClass("buttongrey")) msg = "Enable&nbsp;" + opt
-        $( this ).append( $( `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>` ) );
-      }, function() {
-        $( this ).find( "div" ).last().remove();
+        let msg = 'Disable&nbsp;' + opt
+        if ($(this).hasClass('buttongrey')) msg = 'Enable&nbsp;' + opt
+        $(this).append(
+          $(
+            `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`
+          )
+        )
+      },
+      function () {
+        $(this).find('div').last().remove()
       }
-    );
+    )
   }
 
   async editEquipment(actor, path, obj) {
@@ -672,7 +677,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'rsl', 'pageref', 'notes'],
+      ['name', 'relativelevel', 'pageref', 'notes'],
       ['level', 'points']
     )
   }
@@ -684,7 +689,19 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/spell-editor-popup.html',
       'Spell Editor',
-      ['name', 'rsl', 'pageref', 'notes', 'resist', 'class', 'cost', 'maintain', 'casttime', 'duration', 'college'],
+      [
+        'name',
+        'difficulty',
+        'pageref',
+        'notes',
+        'resist',
+        'class',
+        'cost',
+        'maintain',
+        'casttime',
+        'duration',
+        'college',
+      ],
       ['level', 'points']
     )
   }
@@ -1111,8 +1128,17 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onNavigate(event) {
     let dataValue = $(event.currentTarget).attr('data-value')
-    var elmnt = document.getElementById(dataValue)
-    elmnt.scrollIntoView()
+    if (dataValue == 'CLOSE') {
+      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
+      this.render()
+    } else {
+      let windowContent = event.currentTarget.closest('.window-content')
+      let target = windowContent.querySelector(`#${dataValue}`)
+
+      // The '33' represents the hieght of the window title bar + a bit of margin
+      // TODO: we should really look this up and use the actual values as found in the DOM.
+      windowContent.scrollTop = target.offsetTop - 33
+    }
   }
 
   async _onClickEnc(ev) {
@@ -1125,15 +1151,14 @@ export class GurpsActorSheet extends ActorSheet {
       for (let enckey in encs) {
         let enc = encs[enckey]
         let t = 'data.encumbrance.' + enckey + '.current'
-        if (enc.current) {
-          await this.actor.update({ [t]: false })
-        }
         if (key === enckey) {
           await this.actor.update({
             [t]: true,
             'data.currentmove': parseInt(enc.move),
             'data.currentdodge': parseInt(enc.dodge),
           })
+        } else if (enc.current) {
+          await this.actor.update({ [t]: false })
         }
       }
     } else {
@@ -1384,7 +1409,8 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
 
   getData() {
     const data = super.getData()
-    data.dodge = this.actor.getCurrentDodge()
+    data.currentdodge = this.actor.data.data.currentdodge
+    data.currentmove = this.actor.data.data.currentmove
     data.defense = this.actor.getTorsoDr()
     let p = this.actor.getEquippedParry()
     //    let b = this.actor.getEquippedBlock();      // Don't have a good way to display block yet

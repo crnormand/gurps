@@ -52,20 +52,16 @@ export class GurpsActor extends Actor {
     }
     if (!this.data.data.equippedparry) this.data.data.equippedparry = this.getEquippedParry()
     if (!this.data.data.equippedblock) this.data.data.equippedblock = this.getEquippedBlock() 
-  }
+ }
   
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
   async update(data, options) {
     console.log(this.name + " UPDATE: "+ GURPS.objToString(data))
     await super.update(data, options)
-  } 
-  // */
+  } */
     
   /** @override */
   _onUpdate(data, options, userId, context) {
-    //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
-    super._onUpdate(data, options, userId, context)
-    game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (!isNaN(data.data?.HP?.value)) {
         let flag = data.data.HP.value < (this.data.data.HP.max / 3)
@@ -76,6 +72,9 @@ export class GurpsActor extends Actor {
         if ((!!this.data.data.additionalresources.isTired) != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
+    //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
+    super._onUpdate(data, options, userId, context)
+    game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
 
   get _additionalResources() {
@@ -85,7 +84,7 @@ export class GurpsActor extends Actor {
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
     const GCAVersion = "GCA-7"
-    const GCSVersion = "GCS-4"
+    const GCSVersion = "GCS-5"
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
@@ -170,6 +169,10 @@ export class GurpsActor extends Actor {
           msg +=
             "This file was created with an older version of the GCS Export which does not contain the 'Uses' column for Equipment.<br>"
         }
+        if (vernum < 5) {
+          msg +=
+            "This file was created with an older version of the GCS Export which does not export individual Melee and Ranged attack notes created by the same item.<br>"
+        }
       }
     }
     if (!!msg) {
@@ -244,12 +247,12 @@ export class GurpsActor extends Actor {
 
     try {
       await this.update(deletes)
-      this.update(adds).then(() => {
+      await this.update(adds)  //.then(() => {
         // This has to be done after everything is loaded
         this.calculateDerivedValues()
        console.log('Done importing.  You can inspect the character data below:')
        console.log(this)
-     })
+    //})
     } catch (err) {
       let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
       if (err.message == "Maximum depth exceeded")
@@ -708,6 +711,7 @@ export class GurpsActor extends Actor {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
+        let oldnote = t(j.notes)
         for (let k2 in j.meleemodelist) {
           if (k2.startsWith('id-')) {
             let j2 = j.meleemodelist[k2]
@@ -718,8 +722,8 @@ export class GurpsActor extends Actor {
             m.techlevel = t(j.tl)
             m.cost = t(j.cost)
             if (isFoundryGCS) {
-              m.notes = t(j.notes)
-              m.pageref = t(j.pageref)
+              m.notes = t(j2.notes) || oldnote
+              m.pageref = t(j2.pageref)
             } else
               try {
                 m.setNotes(t(j.text))
@@ -753,6 +757,7 @@ export class GurpsActor extends Actor {
       if (key.startsWith('id-')) {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
+        let oldnote = t(j.notes)
         for (let k2 in j.rangedmodelist) {
           if (k2.startsWith('id-')) {
             let j2 = j.rangedmodelist[k2]
@@ -763,8 +768,8 @@ export class GurpsActor extends Actor {
             r.legalityclass = t(j.lc)
             r.ammo = t(j.ammo)
             if (isFoundryGCS) {
-              r.notes = t(j.notes)
-              r.pageref = t(j.pageref)
+              r.notes = t(j2.notes) || oldnote
+              r.pageref = t(j2.pageref)
             } else
               try {
                 r.setNotes(t(j.text))
@@ -1089,7 +1094,7 @@ export class GurpsActor extends Actor {
   // --- Functions to handle events on actor ---
 
   handleDamageDrop(damageData) {
-    if (game.user.isGM || game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD)) 
+    if (game.user.isGM || !game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD))
       new ApplyDamageDialog(this, damageData).render(true)
     else
       ui.notifications.warn("Only GMs are allowed to Apply Damage.");
@@ -1204,21 +1209,34 @@ export class GurpsActor extends Actor {
     })
   }
   
-  findEquipmentByName(pattern) {
-    pattern = '^' + pattern.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+  findEquipmentByName(pattern, otherFirst = false) {
+    pattern = pattern.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+    let pats = pattern.split("/")
     var eqt, key
-    recurselist(this.data.data.equipment.carried, (e, k) => {
-      if (!eqt && e.name.match(pattern)) {
-        eqt = e
-        key = k
-      }
-    }, 'data.equipment.carried.' )
-    recurselist(this.data.data.equipment.other, (e, k) => {
-      if (!eqt && e.name.match(pattern)) {
-        eqt = e
-        key = k
-      }
-    }, 'data.equipment.other.' )
+    let list1 = otherFirst ? this.data.data.equipment.other: this.data.data.equipment.carried
+    let list2 = otherFirst ? this.data.data.equipment.carried : this.data.data.equipment.other
+    let pkey1 = otherFirst ? 'data.equipment.other.' : 'data.equipment.carried.'
+    let pkey2 = otherFirst ? 'data.equipment.carried.' : 'data.equipment.other.'
+    recurselist(list1, (e, k, d) => {
+      let l = pats.length - 1
+      let p = pats[Math.min(d, l)]
+      if (e.name.match("^" + p)) {
+        if (!eqt && (d == l || pats.length == 1)) { 
+          eqt = e
+          key = k
+        }
+      } else return pats.length == 1
+    }, pkey1 )
+    recurselist(list2, (e, k, d) => {
+      let l = pats.length - 1
+      let p = pats[Math.min(d, l)]
+      if (e.name.match("^" + p)) {
+        if (!eqt && (d == l || pats.length == 1)) { 
+          eqt = e
+          key = k
+        }
+      } else return pats.length == 1
+    }, pkey2 )
     return [eqt, key]
   }
   
@@ -1233,7 +1251,8 @@ export class GurpsActor extends Actor {
   
   checkEncumbance(currentWeight) {
     let encs = this.data.data.encumbrance
-    var best, prev, last
+    let last = GURPS.genkey(0)    // if there are encumbrances, there will always be a level0
+    var best, prev
     for (let key in encs) {
       let enc = encs[key]
       if (enc.current) prev = key
@@ -1246,24 +1265,21 @@ export class GurpsActor extends Actor {
         }
       }
     }
-    if (!best && !!last) best = last
+    if (!best) best = last // that has a weight
     if (best != prev) {
-      setTimeout(async () => {
-        for (let key in encs) {
-          let enc = encs[key]
-          let t = 'data.encumbrance.' + key + '.current'
-          if (enc.current) {
-            await this.update({ [t]: false })
-          }
-          if (key === best) {
-            await this.update({
-              [t]: true,
-              'data.currentmove': parseInt(enc.currentmove),
-              'data.currentdodge': parseInt(enc.currentdodge),
-            })
-          }
+      for (let key in encs) {
+        let enc = encs[key]
+        let t = 'data.encumbrance.' + key + '.current'
+        if (key === best) {
+          this.update({
+            [t]: true,
+            'data.currentmove': parseInt(enc.currentmove),
+            'data.currentdodge': parseInt(enc.currentdodge),
+          })
+        } else if (enc.current) {
+          this.update({ [t]: false })
         }
-      }, 200)
+      }
     }
   }
 

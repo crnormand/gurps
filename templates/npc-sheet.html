@@ -11,7 +11,7 @@
   </div>
   <div class="npc-input-attr gurps">
     <div class="npc-input-st npc-input-label">ST:</div>
-    <div class="npc-input-st-val rollable npc-sheet-centered" data-path="attributes.ST.value" data-otf='ST'>{{data.attributes.ST.value}}</div>
+    <div class="npc-input-st-val rollable npc-sheet-centered" data-path="attributes.ST.currentvalue" data-otf='ST'>{{data.attributes.ST.currentvalue}}</div>
     <div class="npc-input-dx npc-input-label">DX:</div>
     <div class="npc-input-dx-val rollable npc-sheet-centered" data-path="attributes.DX.value" data-otf='DX'>{{data.attributes.DX.value}}</div>
     <div class="npc-input-iq npc-input-label">IQ:</div>
@@ -29,13 +29,13 @@
     <div class="npc-input-fp npc-input-label">FP:</div>
     <div class="npc-input-fp-val condition-block"><input class="npc-input-2 {{fpCondition data.FP "style"}}" name="data.FP.value" type="text" value="{{data.FP.value}}" data-dtype="Number" /></div>
     <div class="npc-input-dodge npc-input-labelr">Dodge:</div>
-    <div class="npc-input-dodge-val rollable npc-sheet-centered" data-path="dodge" data-otf='Dodge'>{{this.dodge}}</div>
+    <div class="npc-input-dodge-val rollable npc-sheet-centered" data-path="dodge" data-otf='Dodge'>{{data.currentdodge}}</div>
     <div class="npc-input-parry npc-input-labelr">Parry:</div>
     <div class="npc-input-parry-val rollable npc-sheet-centered" data-path="parry" data-otf='Parry'>{{this.parryblock}}</div>
     <div class="npc-input-spd npc-input-labelr">Speed:</div>
     <div class="npc-input-spd-val npc-sheet-centered">{{data.basicspeed.value}}</div>
     <div class="npc-input-mov npc-input-labelr">Move:</div>
-    <div class="npc-input-mov-val npc-sheet-centered">{{data.basicmove.value}}</div>
+    <div class="npc-input-mov-val npc-sheet-centered">{{data.currentmove}}</div>
     <div class="npc-input-sm npc-input-labelr">SM:</div>
     <div class="npc-input-sm-val npc-sheet-centered">{{data.traits.sizemod}}</div>
     <div class="npc-input-dr npc-input-labelr">DR:</div>
@@ -87,6 +87,7 @@
     <div class="npc-sheet-ra-val">
         {{#each data.ranged as | this key |}}
         <div class="desc dblclkedit" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
+        {{#if this.rof}} Rof:{{this.rof}}{{/if}}{{#if this.rcl}} Rcl:{{this.rcl}}{{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>
         </div>
         <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>

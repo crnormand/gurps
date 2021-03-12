@@ -31,6 +31,7 @@
   "GURPS.descriptionHand": "Lateralidade",
   "GURPS.descriptionAppearance": "Aparência",
 
+  "GURPS.point": "Ponto",
   "GURPS.points": "Pontos",
   "GURPS.pointsUnspent": "Não Gastos",
   "GURPS.pointsRace": "Raça",
@@ -96,7 +97,9 @@
 
   "GURPS.wasStruckIn": "foi acertado(a) no(a)",
   "GURPS.bluntTrauma": "Contusão",
-  "GURPS.addTitleConcat0": "Aplicar {basicDamage} pontos de ",
+  "GURPS.addTitleConcat0": "Aplicar",
+  "GURPS.addTitleConcat01": "ponto de ",
+  "GURPS.addTitleConcat0s": "pontos de ",
   "GURPS.addTitleConcat1": "dano a {name}",
   "GURPS.addDirectlyApply": "APLICAR DIRETAMENTE",
   "GURPS.addApply": "Aplicar",

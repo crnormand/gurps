@@ -569,7 +569,7 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'modifier') {
     while (!!action && action.type === 'modifier') {
       let mod = parseInt(action.mod)
-      GURPS.ModifierBucket.addModifier(mod, action.desc)
+      await GURPS.ModifierBucket.addModifier(mod, action.desc)
       action = action.next
     }
     return true
@@ -601,7 +601,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'deriveddamage')
     if (!!actor) {
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actordata.data.swing : actordata.data.thrust
+      let df = action.derivedformula.match(/sw/i) ? actordata.data.swing : actordata.data.thrust
       if (!df) {
         ui.notifications.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
         return true
@@ -613,7 +613,7 @@ async function performAction(action, actor, event, targets) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula,
+        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, "$1"),  // Just keep the +/- mod
         targets
       )
       return true
@@ -646,7 +646,7 @@ async function performAction(action, actor, event, targets) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
         let t = parseInt(action.target)
-        if (!t) t = parseInt(this.resolve(tempAction.path, actordata.data))
+        if (!t && !!actor) t = parseInt(this.resolve(tempAction.path, actordata.data))
         let sl = t
         if (!!tempAction.mod) sl += parseInt(tempAction.mod)
         if (sl > bestLvl) {
@@ -659,8 +659,13 @@ async function performAction(action, actor, event, targets) {
         }
       } else {
         // skill
-        let skill = GURPS.findSkillSpell(actordata, tempAction.name)
-
+        var skill
+        if (!!tempAction.target) { // Skill-12
+          skill = { 
+            name: tempAction.name,
+            level: parseInt(tempAction.target)
+          }
+        } else skill = GURPS.findSkillSpell(actordata, tempAction.name)
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
@@ -670,18 +675,19 @@ async function performAction(action, actor, event, targets) {
           let getSkillName = skill => skill.name
 
           // on a floating skill check, we want the skill with the highest relative skill level
-          if (!!tempAction.floatingAttribute) {
-            getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
-
-            let value = this.resolve(tempAction.floatingAttribute, actordata.data)
-            getLevel = skill => {
-              let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
-              console.log(rsl)
-              let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
-              console.log(valueText)
-              return valueText === rsl ? 0 : parseInt(valueText) + parseInt(value)
-            }
-          }
+          if (!!tempAction.floatingAttribute)
+            if (!!actor) {
+              getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
+  
+              let value = this.resolve(tempAction.floatingAttribute, actordata.data)
+              getLevel = skill => {
+                let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
+                console.log(rsl)
+                let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
+                console.log(valueText)
+                return valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
+              }
+            } else ui.notifications.warn('You must have a character selected to use a "Based" Skill')
 
           let skillLevel = getLevel(skill)
 
@@ -706,8 +712,8 @@ async function performAction(action, actor, event, targets) {
     return [bestAction, attempts]
   }
 
-  if (action.type === 'skill-spell' || action.type === 'attribute')
-    if (!!actor) {
+  // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
+  if (action.type === 'skill-spell' || action.type === 'attribute') {
       const [bestAction, attempts] = processLinked(action)
       if (!bestAction) {
         ui.notifications.warn(
@@ -715,11 +721,15 @@ async function performAction(action, actor, event, targets) {
         )
         return false
       }
+      if (!bestAction.target && !actor) {
+        ui.notifications.warn('You must have a character selected')
+        return false
+      }
       formula = '3d6'
       opt.action = bestAction
       if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
       else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
-    } else ui.notifications.warn('You must have a character selected')
+  }
 
   if (action.type === 'attack')
     if (!!actor) {
@@ -863,7 +873,8 @@ async function handleRoll(event, actor, targets) {
   }
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
-    let action = parseForDamage(element.innerText.trim())
+    let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
+    let action = parseForDamage(f)
     if (!!action.action) performAction(action.action, actor, event, targets)
     return
   }
@@ -899,18 +910,25 @@ GURPS.applyModifierDesc = applyModifierDesc
 function gurpslink(str, clrdmods = true) {
   if (str === undefined || str == null) return '!!UNDEFINED'
   let found = -1
+  let depth = 0
   let output = ''
   for (let i = 0; i < str.length; i++) {
-    if (str[i] == '[') found = ++i
-    if (str[i] == ']' && found >= 0) {
-      output += str.substring(0, found - 1)
-      let action = parselink(str.substring(found, i), '', clrdmods)
-      if (!action.action) output += '['
-      output += action.text
-      if (!action.action) output += ']'
-      str = str.substr(i + 1)
-      i = -1
-      found = -1
+    if (str[i] == '[') {
+      if (depth == 0) found = ++i
+      depth++
+    }
+    if (str[i] == ']') {
+      depth--
+      if (depth == 0 && found >= 0) {
+        output += str.substring(0, found - 1)
+        let action = parselink(str.substring(found, i), '', clrdmods)
+        if (!action.action) output += '['
+        output += action.text
+        if (!action.action) output += ']'
+        str = str.substr(i + 1)
+        i = -1
+        found = -1
+      }
     }
   }
   output += str
@@ -1191,7 +1209,7 @@ GURPS.onRightClickGurpslink = function (event) {
   let el = event.currentTarget
   let action = el.dataset.action
   if (!!action) {
-    action = JSON.parse(window.atou(action))
+    action = JSON.parse(atou(action))
     if (action.type === 'damage' || action.type === 'deriveddamage')
       GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
     else GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
@@ -1414,6 +1432,9 @@ Hooks.once('init', async function () {
 
   ui.modifierbucket = GURPS.ModifierBucket
   ui.modifierbucket.render(true)
+  
+  const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
+
 })
 
 Hooks.once('ready', async function () {
@@ -1550,7 +1571,7 @@ Hooks.once('ready', async function () {
    */
   Hooks.on('dropCanvasData', function (canvas, dropData) {
     let grid_size = canvas.scene.data.grid
-
+    let old = new Set(game.user.targets)
     let numberTargets = canvas.tokens.targetObjects({
       x: dropData.x - grid_size / 2,
       y: dropData.y - grid_size / 2,
@@ -1564,6 +1585,12 @@ Hooks.once('ready', async function () {
       let keys = game.user.targets.keys()
       let first = keys.next()
       if (dropData.type === 'damageItem') {
+        for ( let t of game.user.targets ) {
+          t.setTarget(false, {releaseOthers: false, groupSelection: true});
+        }
+        old.forEach(t => {
+          t.setTarget(true, {releaseOthers: false, groupSelection: true});
+        });
         first.value.actor.handleDamageDrop(dropData.payload)
       }
     }

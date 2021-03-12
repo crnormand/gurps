@@ -215,7 +215,7 @@
         {{#each data.hitlocations}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
-          {{localize (concat "GURPS.hitLocation" this.where)}}
+          {{localizeWithFallback (concat "GURPS.hitLocation" this.where) this.where}}
         </div>
         <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
           {{hitlocationpenalty this.where this.penalty ../data}}</div>
@@ -610,8 +610,8 @@
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
       </div>
-      <div class="uses satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if (ne this.maxuses
-        "0")}}{{this.uses}}{{/if}}</div>
+      <div class="uses satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if (or (ne this.maxuses "0")
+        (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
       <div class="cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.cost}}</div>
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
       <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}</div>
@@ -691,6 +691,7 @@
     <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
     <div class='navigation-link' data-value="other_equipment">OTHER</div>
     <div class='navigation-link' data-value="notes">NOTES</div>
+    <div class='navigation-link' data-value="CLOSE"><i class="fas fa-times"></i></div>
   </div>
   {{/if}}
 </form>
