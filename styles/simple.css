@@ -2552,7 +2552,7 @@ ul#result-effects li {
 
   /* Fade in tooltip */
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.4s;
 }
 
 /* Tooltip arrow */
