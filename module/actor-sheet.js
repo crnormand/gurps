@@ -214,46 +214,6 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
       let dlg = new ResourceTrackerEditorDialog(this.actor, path)
       dlg.render(true)
-
-      // let tracker = getProperty(this.actor.data.data, path)
-
-      // let dlgHtml = await renderTemplate('systems/gurps/templates/resource-editor-popup.html', tracker)
-
-      // let options = {
-      //   width: 360,
-      //   popOut: true,
-      //   minimizable: false,
-      //   jQuery: true,
-      // }
-
-      // let d = new Dialog(
-      //   {
-      //     title: 'Resource Editor',
-      //     content: dlgHtml,
-      //     buttons: {
-      //       one: {
-      //         label: 'Update',
-      //         callback: async html => {
-      //           let name = html.find('.name input').val()
-      //           let current = parseInt(html.find('.current').val())
-      //           let minimum = parseInt(html.find('.minimum').val())
-      //           let maximum = parseInt(html.find('.maximum').val())
-
-      //           let update = {}
-      //           if (!!name) update[`data.${path}.name`] = name
-      //           if (!!current) update[`data.${path}.value`] = current
-      //           if (!!minimum) update[`data.${path}.min`] = minimum
-      //           if (!!maximum) update[`data.${path}.max`] = maximum
-
-      //           this.actor.update(update)
-      //         },
-      //       },
-      //     },
-      //     default: 'one',
-      //   },
-      //   options
-      // )
-      // d.render(true)
     })
 
     // START CONDITIONAL INJURY

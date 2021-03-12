@@ -1,18 +1,12 @@
-export class ResourceTrackerEditorDialog extends Dialog {
-  constructor(actor, path) {
-    super({
-      title: 'Resource Tracker Editor',
-      buttons: {
-        one: {
-          icon: '<i class="fas fa-save"></i>',
-          label: 'Update',
-          callback: () => {
-            this._updateTracker()
-          },
-        },
-      },
-      default: 'one',
-    })
+export class ResourceTrackerEditorDialog extends Application {
+  /**
+   * Create a new Resource Tracker Editor
+   * @param {GurpsActor} actor
+   * @param {String} path to the tracker data in the actor
+   * @param {*} options
+   */
+  constructor(actor, path, options = {}) {
+    super(options)
 
     this._actor = actor
     this._path = path
@@ -26,8 +20,9 @@ export class ResourceTrackerEditorDialog extends Dialog {
       width: 360,
       popOut: true,
       minimizable: false,
-      jQuery: false,
+      jQuery: true,
       resizable: true,
+      title: 'Resource Tracker Editor',
     })
   }
 
@@ -41,8 +36,8 @@ export class ResourceTrackerEditorDialog extends Dialog {
   async _updateTracker(html) {
     let update = {}
     update[`data.${this._path}`] = this._tracker
-
     this._actor.update(update)
+    this.close()
   }
 
   /** @override */
@@ -110,5 +105,7 @@ export class ResourceTrackerEditorDialog extends Dialog {
       let index = $(ev.currentTarget).attr('data')
       this._tracker.thresholds[index].color = ev.currentTarget.value
     })
+
+    html.find('#update').click(() => this._updateTracker())
   }
 }
