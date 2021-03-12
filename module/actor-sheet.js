@@ -235,10 +235,10 @@ export class GurpsActorSheet extends ActorSheet {
                 let maximum = parseInt(html.find('.maximum').val())
 
                 let update = {}
-                if (!!name) update[`data.${path}.name`] = name
-                if (!!current) update[`data.${path}.value`] = current
-                if (!!minimum) update[`data.${path}.min`] = minimum
-                if (!!maximum) update[`data.${path}.max`] = maximum
+                update[`data.${path}.name`] = name
+                update[`data.${path}.value`] = current || 0
+                update[`data.${path}.min`] = minimum || 0
+                update[`data.${path}.max`] = maximum || 0
 
                 this.actor.update(update)
               },
