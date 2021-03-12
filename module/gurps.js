@@ -657,19 +657,21 @@ async function performAction(action, actor, event, targets) {
     let bestLvl = 0
     var bestAction, besttrue
     let attempts = []
+    var th
     while (!!tempAction) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
-        thing = this.i18n(tempAction.path)
+        th = this.i18n(tempAction.path)
         let t = parseInt(tempAction.target)   // is it pre-targeted (ST12)
         if (!t && !!actor) {
           if (!!tempAction.melee) {   // Is it trying to match to an attack name (should only occur with Parry: & Block:
             let m = GURPS.findAttack(actordata, tempAction.melee)
             if (!!m) {
-              thing += ' for ' + m.name
-              if (!!m.mode) tempAction.desc = m.mode
+              th += ' for ' + m.name
+              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode +')'
               t = parseInt(m[tempAction.attribute.toLowerCase()])  // should only occur with parry & block
-            } else attempts.push(tempAction.attribute + ":" + tempAction.melee)
+            } 
+            if (!m || !t) attempts.push(tempAction.attribute + ":" + tempAction.melee)
           }
           else {
             t = parseInt(this.resolve(tempAction.path, actordata.data))
@@ -683,6 +685,7 @@ async function performAction(action, actor, event, targets) {
           bestAction = tempAction
           prefix = 'Roll vs '
           target = t
+          thing = th
           if (!!tempAction.truetext) besttrue = tempAction
         }
       } else {
@@ -757,7 +760,7 @@ async function performAction(action, actor, event, targets) {
       opt.action = bestAction
       if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
-      else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
+      else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
   }
 
   if (action.type === 'attack')
@@ -779,33 +782,6 @@ async function performAction(action, actor, event, targets) {
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
 
-  if (action.type === 'block-parry')
-    if (!!actor) {
-      thing = action.desc
-      if (!action.melee) target = actordata.data['equipped' + action.path] // Is there a basic parry or block stored, and we didn't try to identify a melee
-      Object.values(actordata.data.melee).forEach(e => {
-        if (!target || target <= 0) {
-          if (!!e[action.path]) {
-            if (!!action.melee) {
-              let n = '^' + action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
-              if ((e.name + (!!e.mode ? ' (' + e.mode + ')' : '')).match(n)) {
-                target = parseInt(e[action.path])
-              }
-            } else {
-              target = parseInt(e[action.path])
-            }
-            if (!!target && target > 0) {
-              thing += ' for ' + e.name
-              if (!!e.mode) opt.text = "<span style='font-size:85%'>(" + e.mode + ')</span>'
-            }
-          }
-        }
-      })
-      if (!target) target = parseInt(actordata.data[action.path])
-      if (target > 0) formula = '3d6'
-      else ui.notifications.warn('Unable to find a ' + action.orig.replace('<', '&lt;') + ' to roll on ' + actor.name)
-    } else ui.notifications.warn('You must have a character selected')
-
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   doRoll(actor, formula, targetmods, prefix, thing, target, opt)
   return true
@@ -813,9 +789,10 @@ async function performAction(action, actor, event, targets) {
 GURPS.performAction = performAction
 
 function findSkillSpell(actor, sname) {
+  var t
+  if (!actor) return t
   sname = '^' + sname.split('*').join('.*')
   let best = 0
-  var t
   recurselist(actor.data.skills, s => {
     if (s.name.match(sname) && s.level > best) {
       t = s
@@ -834,8 +811,10 @@ function findSkillSpell(actor, sname) {
 GURPS.findSkillSpell = findSkillSpell
 
 function findAttack(actor, sname) {
+  var t
+  if (!actor) return t
   sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
-  let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
 }
