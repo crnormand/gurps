@@ -2,8 +2,9 @@
   <div class='prefix'>
     {{prefix}} {{thing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
   </div>
+  {{#if optlabel}}&nbsp;&nbsp;{{{optlabel}}}{{/if}}
   {{#if targetmods}}
-  <div>{{#if optlabel}}{{{optlabel}}}{{/if}}
+  <div>
     <ul class='modifier-list'>
       {{#each targetmods}}
       <li>{{displayNumber mod}}{{#if desc}} : {{desc}}{{/if}}</li>

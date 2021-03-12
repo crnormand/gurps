@@ -204,7 +204,7 @@ export class ModifierBucket extends Application {
     let stack = this.modifierStack
     let answer = !!targetmods ? targetmods : []
     answer = answer.concat(stack.modifierList)
-    this.clear()
+    await this.clear()
     return answer
   }
 

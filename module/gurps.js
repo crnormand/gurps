@@ -162,6 +162,12 @@ GURPS.PARSELINK_MAPPINGS = {
   Smell: 'tastesmell',
   TOUCH: 'touch',
   Touch: 'touch',
+  Dodge: 'currentdodge',
+  DODGE: 'currentdodge',
+  Parry: 'equippedparry',
+  PARRY: 'equippedparry',
+  Block: 'equippedblock',
+  BLOCK: 'equippedblock',
 }
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects
@@ -654,21 +660,30 @@ async function performAction(action, actor, event, targets) {
     while (!!tempAction) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
-        if (!actordata)
-          ui.notifications.warn('You must have a character selected to perform an Attribute check')
-        else {
-          let t = parseInt(action.target)
-          if (!t && !!actor) t = parseInt(this.resolve(tempAction.path, actordata.data))
-          let sl = t
-          if (!!tempAction.mod) sl += parseInt(tempAction.mod)
-          if (sl > bestLvl) {
-            bestLvl = parseInt(sl)
-            bestAction = tempAction
-            thing = this.i18n(tempAction.path)
-            prefix = 'Roll vs '
-            target = t
-            if (!!tempAction.truetext) besttrue = tempAction
+        thing = this.i18n(tempAction.path)
+        let t = parseInt(tempAction.target)   // is it pre-targeted (ST12)
+        if (!t && !!actor) {
+          if (!!tempAction.melee) {   // Is it trying to match to an attack name (should only occur with Parry: & Block:
+            let m = GURPS.findAttack(actordata, tempAction.melee)
+            if (!!m) {
+              thing += ' for ' + m.name
+              if (!!m.mode) tempAction.desc = m.mode
+              t = parseInt(m[tempAction.attribute.toLowerCase()])  // should only occur with parry & block
+            } else attempts.push(tempAction.attribute + ":" + tempAction.melee)
           }
+          else {
+            t = parseInt(this.resolve(tempAction.path, actordata.data))
+            if (!t) attempts.push(tempAction.attribute)
+          }
+        }
+        let sl = t
+        if (!!tempAction.mod) sl += parseInt(tempAction.mod)
+        if (sl > bestLvl) {
+          bestLvl = parseInt(sl)
+          bestAction = tempAction
+          prefix = 'Roll vs '
+          target = t
+          if (!!tempAction.truetext) besttrue = tempAction
         }
       } else {
         // skill
@@ -728,14 +743,14 @@ async function performAction(action, actor, event, targets) {
   // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
   if (action.type === 'skill-spell' || action.type === 'attribute') {
       const [bestAction, attempts] = processLinked(action)
-      if (!bestAction) {
-        ui.notifications.warn(
-          "No skill or spell named '" + attempts.join("' or '").replace('<', '&lt;') + "' found on " + actor.name
-        )
+      if (!actor && (!bestAction || !bestAction.target)) {
+        ui.notifications.warn('You must have a character selected')
         return false
       }
-      if (!bestAction.target && !actor) {
-        ui.notifications.warn('You must have a character selected')
+      if (!bestAction) {
+        ui.notifications.warn(
+          "Unable to find '" + attempts.join("' or '").replace('<', '&lt;') + "' on " + actor.name
+        )
         return false
       }
       formula = '3d6'
@@ -762,22 +777,6 @@ async function performAction(action, actor, event, targets) {
       formula = '3d6'
       if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
-    } else ui.notifications.warn('You must have a character selected')
-
-  if (action.type === 'dodge')
-    if (!!actor) {
-      target = parseInt(actor.getCurrentDodge())
-      formula = '3d6'
-      thing = 'Dodge'
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
-    } else ui.notifications.warn('You must have a character selected')
-
-  if (action.type === 'mapped')
-    if (!!actor) {
-      target = actordata.data[action.path]
-      formula = '3d6'
-      thing = action.thing
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
     } else ui.notifications.warn('You must have a character selected')
 
   if (action.type === 'block-parry')
@@ -876,6 +875,7 @@ async function handleRoll(event, actor, targets) {
     opt.text = text.replace(/.*?\((.*)\)/g, '$1')
 
     if (opt.text === text) opt.text = ''
+    else opt.text = "<span style='font-size:85%'>(" + opt.text + ')</span>'
     if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key) // During the roll, we may want to extract something from the object
     formula = '3d6'
     let t = element.innerText

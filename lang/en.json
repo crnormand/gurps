@@ -73,8 +73,11 @@
   "GURPS.swing": "Basic Swing",
   "GURPS.move": "Move",
   "GURPS.block": "Block",
+  "GURPS.equippedblock": "Block",
   "GURPS.dodge": "Dodge",
+  "GURPS.currentdodge": "Dodge",
   "GURPS.parry": "Parry",
+  "GURPS.equippedparry": "Parry",
 
   "GURPS.reaction": "Reaction",
   "GURPS.modifier": "Modifier",

@@ -73,8 +73,11 @@
   "GURPS.swing": "Golpe de Balanço (BAL)",
   "GURPS.move": "Deslocamento",
   "GURPS.block": "Bloqueio",
+  "GURPS.equippedblock": "Bloqueio",
   "GURPS.dodge": "Esquiva",
+  "GURPS.currentdodge": "Esquiva",
   "GURPS.parry": "Aparar",
+  "GURPS.equippedparry": "Aparar",
 
   "GURPS.reaction": "Reação",
   "GURPS.modifier": "Modificador",
