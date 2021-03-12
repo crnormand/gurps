@@ -186,6 +186,9 @@
         {{/each}}
 
       </div>
+      <div id='qnotes'>
+        {{#if data.additionalresources.qnotes}}{{{gurpslink data.additionalresources.qnotes}}}{{else}} <span style='color:lightgrey'>double click to edit Quick Note<span>{{/if}}
+      </div>
       <div id="lifting">
         <div class="header">{{localize "GURPS.liftingAndMovingThings"}}</div>
         <div class="lift">{{data.liftingmoving.basiclift}}</div>
@@ -488,9 +491,9 @@
       <div class="level header">{{localize "GURPS.level"}}</div>
       <div class="acc header">{{localize "GURPS.acc"}}</div>
       <div class="damage header">{{localize "GURPS.damage"}}</div>
-      <div class="range header">{{localize "GURPS.reach"}}</div>
+      <div class="range header">{{localize "GURPS.range"}}</div>
       <div class="rof header">{{localize "GURPS.rof"}}</div>
-      <div class="shots header">{{localize "GURPS.Shots"}}</div>
+      <div class="shots header">{{localize "GURPS.shots"}}</div>
       <div class="bulk header">{{localize "GURPS.bulk"}}</div>
       <div class="rcl header">{{localize "GURPS.rcl"}}</div>
       <div class="st header">{{localize "GURPS.attributesST"}}</div>

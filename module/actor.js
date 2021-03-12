@@ -80,6 +80,12 @@ export class GurpsActor extends Actor {
   get _additionalResources() {
     return this.data.data.additionalresources
   }
+  
+  get displayname() {
+     let n = this.name
+     if (!!this.token && this.token.name != n) n = this.token.name + "(" + n + ")"
+     return n
+  }
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
@@ -1188,7 +1194,7 @@ export class GurpsActor extends Actor {
   changeOneThirdStatus(option, flag) {
     this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
       this.calculateDerivedValues()
-      let msg = this.name + " "
+      let msg = this.displayname + " "
       if (option === 'isReeling') {
         if (flag) msg += 'is Reeling. Move and Dodge are halved. [PDF:B419]'
         else msg += 'is no longer reeling.'
