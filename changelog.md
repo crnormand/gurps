@@ -16,7 +16,7 @@ This is what we are currently working on:
   - Fixed missing hitlocation modifiers
   - Add Quick Note under Encumbrance
   - Added support for Parry / Block modifiers
-  - 'Grand' unification of attribute/skill parsing
+  - 'Grand' unification of attribute/skill parsing [Parry|Block:Shield|S:Skill|Fright Check|Dodge -2 slow|DX-4 ? "Ouch", "Close!"]
 
 0.8.17 - 3/8/2021
   - Bug fix for names/names containing '%'
