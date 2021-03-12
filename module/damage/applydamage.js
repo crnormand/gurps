@@ -198,8 +198,8 @@ export default class ApplyDamageDialog extends Application {
 
     // armor divisor level
     html
-        .find('input[name="tactical-armordivisor"]')
-        .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'armorDivisor', parseFloat))
+      .find('input[name="tactical-armordivisor"]')
+      .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'armorDivisor', parseFloat))
 
     // use blunt trauma rules
     html
@@ -325,6 +325,12 @@ export default class ApplyDamageDialog extends Application {
     this.updateUI()
   }
 
+  /**
+   * Update the model based on the property name.
+   * @param {*} element
+   * @param {*} property
+   * @param {*} converter
+   */
   _updateModelFromRadioValue(
     element,
     property,

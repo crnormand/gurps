@@ -61,12 +61,31 @@
             <button class='increment' data-operation='resource-inc'><i class="fas fa-plus"></i></button>
             <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
           </div>
-          <div class='condition-block'>
+
+          <div class='condition-block tooltip-wrapper'>
+            {{#if thresholds}}
+            {{#with (lookup thresholds (threshold-of thresholds max value))}}
+            {{debug this}}
+            <div class='tooltip condition' style='background-color: {{concat this.color "80"}};'>{{this.condition}}
+              <span class="tooltiptext">
+                <div style="display: grid; grid-template-columns: min-content min-content auto;">
+                  {{#each (thresholdBreakpoints ../this)}}
+                  <div class="field condensed noedit">{{comparison}}</div>
+                  <div class="field condensed noedit">{{breakpoint}}</div>
+                  <div class="label {{style}}">{{label}}</div>
+                  {{/each}}
+                </div>
+              </span>
+            </div>
+            {{/with}}
+            {{else}}
             <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
               {{#if
               (gt value max)}}Over{{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}</div>
             <div class='max'>({{min}}/{{max}})</div>
+            {{/if}}
           </div>
+
         </div> <!-- end of resource -->
         {{/each}}
       </div>

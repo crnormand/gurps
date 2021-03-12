@@ -5,6 +5,7 @@ import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitloc
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
+import { ResourceTrackerEditorDialog } from '../module/actor/tracker-editor-dialog.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -208,47 +209,11 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('.tracked-resource .header.with-editor').click(async ev => {
       ev.preventDefault()
+
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
-      let tracker = getProperty(this.actor.data.data, path)
-
-      let dlgHtml = await renderTemplate('systems/gurps/templates/resource-editor-popup.html', tracker)
-
-      let options = {
-        width: 130,
-        popOut: true,
-        minimizable: false,
-        jQuery: true,
-      }
-
-      let d = new Dialog(
-        {
-          title: 'Resource Editor',
-          content: dlgHtml,
-          buttons: {
-            one: {
-              label: 'Update',
-              callback: async html => {
-                let name = html.find('.name input').val()
-                let current = parseInt(html.find('.current').val())
-                let minimum = parseInt(html.find('.minimum').val())
-                let maximum = parseInt(html.find('.maximum').val())
-
-                let update = {}
-                update[`data.${path}.name`] = name
-                update[`data.${path}.value`] = current || 0
-                update[`data.${path}.min`] = minimum || 0
-                update[`data.${path}.max`] = maximum || 0
-
-                this.actor.update(update)
-              },
-            },
-          },
-          default: 'one',
-        },
-        options
-      )
-      d.render(true)
+      let dlg = new ResourceTrackerEditorDialog(this.actor, path)
+      dlg.render(true)
     })
 
     // START CONDITIONAL INJURY
@@ -598,21 +563,20 @@ export class GurpsActorSheet extends ActorSheet {
         $(this).find('div').last().remove()
       }
     )
-    
+
     html.find('#qnotes').dblclick(ex => {
-      const n = this.actor.data.data.additionalresources.qnotes || ""
+      const n = this.actor.data.data.additionalresources.qnotes || ''
       Dialog.prompt({
         title: 'Edit Quick Note',
         content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><input id="i" type="text" value="${n}" placeholder=""></input><br><br>Examples:
         <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
         label: 'OK',
         callback: html => {
-          const i = html[0].querySelector("#i");
-          this.actor.update({ "data.additionalresources.qnotes" : i.value })
-        }
-      });
+          const i = html[0].querySelector('#i')
+          this.actor.update({ 'data.additionalresources.qnotes': i.value })
+        },
+      })
     })
-
   }
 
   async editEquipment(actor, path, obj) {

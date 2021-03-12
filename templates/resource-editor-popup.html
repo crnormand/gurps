@@ -1,13 +1,61 @@
 <div class='resource-editor' style='border: none;'>
   <div class='name'>
-    <input class="gcs-input" type="text" value="{{name}}" placeholder="Resource Name">
+    <input class="gcs-input" style='font-size: 120%;' type="text" value="{{tracker.name}}" placeholder="Resource Name">
   </div>
-  <div class='inputs'>
-    <input class="current gcs-input" type="text" value="{{value}}" data-dtype="Number" />
+  <div class='inputs' style='max-width: 150;'>
+    <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
     <div class="label">Current</div>
-    <input class="minimum gcs-input" type="text" value="{{min}}" data-dtype="Number" />
+    <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
     <div class="label">Minimum</div>
-    <input class="maximum gcs-input" type="text" value="{{max}}" data-dtype="Number" />
+    <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
     <div class="label">Maximum</div>
   </div>
+  <hr />
+  <div style='display:flex; align-items: center; justify-content: space-between;'>
+    <h3>Thresholds:</h3>
+    <div><a id='threshold-add' class='button' style='color: #4b4a44;'><i class="fas fa-plus"></i></a></div>
+  </div>
+  <div
+    style='display: grid; grid-template-columns: min-content min-content min-content 1fr auto min-content; gap: 0.15rem; justify-items: center;'>
+    {{#if tracker.thresholds}}
+    <div style='grid-column: 1 / 4; justify-content: center;' class='label'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
+    <div class='label'>Condition</div>
+    <div class='label'>Color</div>
+    <div></div>
+    {{/if}}
+
+    {{#each tracker.thresholds}}
+    <div>
+      <!-- threshold.comparison -->
+      <select data='{{@index}}' name='comparison' style='font-size: 120%;'>
+        <option value='>' {{#if (eq comparison '>' )}}selected{{/if}}>&gt;</option>
+        <option value='≥' {{#if (eq comparison '≥' )}}selected{{/if}}>&ge;</option>
+        <option value='<' {{#if (eq comparison '<' )}}selected{{/if}}>&lt;</option>
+        <option value='≤' {{#if (eq comparison '≤' )}}selected{{/if}}>&le;</option>
+      </select>
+    </div>
+    <div>
+      <!-- threshold.operator -->
+      <select name='operator' data='{{@index}}'>
+        <option value='+' {{#if (eq operator '+' )}}selected{{/if}}>MAX &plus;</option>
+        <option value='−' {{#if (eq operator '−' )}}selected{{/if}}>MAX &minus;</option>
+        <option value='×' {{#if (eq operator '×' )}}selected{{/if}}>MAX &times;</option>
+        <option value='÷' {{#if (eq operator '÷' )}}selected{{/if}}>MAX &divide;</option>
+      </select>
+    </div>
+    <!-- threshold.value -->
+    <input name='value' data='{{@index}}' class="gcs-input" type="text" value="{{value}}" data-dtype="Number" />
+    <!-- threshold.condition -->
+    <input name='condition' data='{{@index}}' class="gcs-input" type="text" value="{{condition}}" />
+    <div style='display: flex; align-items: center;'>
+      <!-- threshold.color -->
+      <input name='color' data='{{@index}}' type="color" value="{{color}}">
+    </div>
+    <div style='display: flex; align-items: center; margin-left: 4px;'>
+      <a name='delete-threshold' data='{{@index}}' class='button' style='color: #4b4a44;'>
+        <i class="fas fa-trash"></i></a>
+    </div>
+    {{/each}}
+  </div>
+  <button id='update'><i class="fas fa-save"></i>Update</button>
 </div>
