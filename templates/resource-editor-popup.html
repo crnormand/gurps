@@ -1,145 +1,61 @@
 <div class='resource-editor' style='border: none;'>
+  {{debug}}
   <div class='name'>
-    <input class="gcs-input" type="text" value="{{name}}" placeholder="Resource Name">
+    <input class="gcs-input" style='font-size: 120%;' type="text" value="{{tracker.name}}" placeholder="Resource Name">
   </div>
   <div class='inputs' style='max-width: 150;'>
-    <input class="current gcs-input" type="text" value="{{value}}" data-dtype="Number" />
+    <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
     <div class="label">Current</div>
-    <input class="minimum gcs-input" type="text" value="{{min}}" data-dtype="Number" />
+    <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
     <div class="label">Minimum</div>
-    <input class="maximum gcs-input" type="text" value="{{max}}" data-dtype="Number" />
+    <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
     <div class="label">Maximum</div>
   </div>
   <hr />
   <div style='display:flex; align-items: center; justify-content: space-between;'>
     <h3>Thresholds:</h3>
-    <div><a class='button' style='color: green;'><i class="fas fa-plus-circle"></i></a></div>
+    <div><a id='threshold-add' class='button' style='color: #4b4a44;'><i class="fas fa-plus"></i></a></div>
   </div>
   <div
-    style='display: grid; grid-template-columns: min-content min-content min-content 1fr auto min-content; gap: 0.15rem'>
-    <div style='grid-column: 1 / 4; justify-content: center;' class='label'>Current Value</div>
+    style='display: grid; grid-template-columns: min-content min-content min-content 1fr auto min-content; gap: 0.15rem; justify-items: center;'>
+    {{#if tracker.thresholds}}
+    <div style='grid-column: 1 / 4; justify-content: center;' class='label'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
     <div class='label'>Condition</div>
     <div class='label'>Color</div>
     <div></div>
+    {{/if}}
 
-    <div><select style='font-size: 120%;'>
-        <option value='>' selected>&gt;</option>
-        <option value='≥'>&ge;</option>
-        <option value='<'>&lt;</option>
-        <option value='≤'>&le;</option>
+    {{#each tracker.thresholds}}
+    <div>
+      <!-- threshold.comparison -->
+      <select data='{{@index}}' name='comparison' style='font-size: 120%;'>
+        <option value='>' {{#if (eq comparison '>' )}}selected{{/if}}>&gt;</option>
+        <option value='≥' {{#if (eq comparison '≥' )}}selected{{/if}}>&ge;</option>
+        <option value='<' {{#if (eq comparison '<' )}}selected{{/if}}>&lt;</option>
+        <option value='≤' {{#if (eq comparison '≤' )}}selected{{/if}}>&le;</option>
       </select>
     </div>
-    <div><select>
-        <option value='+'>MAX &plus;</option>
-        <option value='−'>MAX &minus;</option>
-        <option value='×' selected>MAX &times;</option>
-        <option value='÷'>MAX &divide;</option>
+    <div>
+      <!-- threshold.operator -->
+      <select name='operator' data='{{@index}}'>
+        <option value='+' {{#if (eq operator '+' )}}selected{{/if}}>MAX &plus;</option>
+        <option value='−' {{#if (eq operator '−' )}}selected{{/if}}>MAX &minus;</option>
+        <option value='×' {{#if (eq operator '×' )}}selected{{/if}}>MAX &times;</option>
+        <option value='÷' {{#if (eq operator '÷' )}}selected{{/if}}>MAX &divide;</option>
       </select>
     </div>
-    <input class="gcs-input" type="text" value="0.9" data-dtype="Number" />
-    <input class="gcs-input" type="text" value="NORMAL" />
-    <div style='display: flex; align-items: center;'> <input type="color" value="#80FF80"></div>
-    <div style='display: flex; align-items: center; margin-left: 4px;'><a class='button' style='color: red;'><i
-          class="fas fa-minus-circle"></i></a></div>
-
-    <div><select style='font-size: 120%;'>
-        <option value='>'>&gt;</option>
-        <option value='≥'>&ge;</option>
-        <option value='<'>&lt;</option>
-        <option value='≤' selected>&le;</option>
-      </select>
+    <!-- threshold.value -->
+    <input name='value' data='{{@index}}' class="gcs-input" type="text" value="{{value}}" data-dtype="Number" />
+    <!-- threshold.condition -->
+    <input name='condition' data='{{@index}}' class="gcs-input" type="text" value="{{condition}}" />
+    <div style='display: flex; align-items: center;'>
+      <!-- threshold.color -->
+      <input name='color' data='{{@index}}' type="color" value="{{color}}">
     </div>
-    <div><select>
-        <option value='+'>MAX &plus;</option>
-        <option value='−'>MAX &minus;</option>
-        <option value='×' selected>MAX &times;</option>
-        <option value='÷'>MAX &divide;</option>
-      </select>
+    <div style='display: flex; align-items: center; margin-left: 4px;'>
+      <a name='delete-threshold' data='{{@index}}' class='button' style='color: #4b4a44;'>
+        <i class="fas fa-trash"></i></a>
     </div>
-    <input class="gcs-input" type="text" value="0.9" data-dtype="Number" />
-    <input class="gcs-input" type="text" value="GRABBED" />
-    <div style='display: flex; align-items: center;'> <input type="color" value="#FFFF80"></div>
-    <div style='display: flex; align-items: center; margin-left: 4px;'><a class='button' style='color: red;'><i
-          class="fas fa-minus-circle"></i></a></div>
-
-    <div><select style='font-size: 120%;'>
-        <option value='>'>&gt;</option>
-        <option value='≥'>&ge;</option>
-        <option value='<'>&lt;</option>
-        <option value='≤' selected>&le;</option>
-      </select>
-    </div>
-    <div><select>
-        <option value='+'>MAX &plus;</option>
-        <option value='−'>MAX &minus;</option>
-        <option value='×' selected>MAX &times;</option>
-        <option value='÷'>MAX &divide;</option>
-      </select>
-    </div>
-    <input class="gcs-input" type="text" value="0.5" data-dtype="Number" />
-    <input class="gcs-input" type="text" value="GRAPPLED" />
-    <div style='display: flex; align-items: center;'> <input type="color" value="#FFC880"></div>
-    <div style='display: flex; align-items: center; margin-left: 4px;'><a class='button' style='color: red;'><i
-          class="fas fa-minus-circle"></i></a></div>
-
-    <div><select style='font-size: 120%;'>
-        <option value='>'>&gt;</option>
-        <option value='≥'>&ge;</option>
-        <option value='<'>&lt;</option>
-        <option value='≤' selected>&le;</option>
-      </select>
-    </div>
-    <div><select>
-        <option value='+'>MAX &plus;</option>
-        <option value='−'>MAX &minus;</option>
-        <option value='×' selected>MAX &times;</option>
-        <option value='÷'>MAX &divide;</option>
-      </select>
-    </div>
-    <input class="gcs-input" type="text" value="0" data-dtype="Number" />
-    <input class="gcs-input" type="text" value="RESTRAINED" />
-    <div style='display: flex; align-items: center;'> <input type="color" value="#FF8080"></div>
-    <div style='display: flex; align-items: center; margin-left: 4px;'><a class='button' style='color: red;'><i
-          class="fas fa-minus-circle"></i></a></div>
-
-    <div><select style='font-size: 120%;'>
-        <option value='>'>&gt;</option>
-        <option value='≥'>&ge;</option>
-        <option value='<'>&lt;</option>
-        <option value='≤' selected>&le;</option>
-      </select>
-    </div>
-    <div><select>
-        <option value='+'>MAX &plus;</option>
-        <option value='−'>MAX &minus;</option>
-        <option value='×' selected>MAX &times;</option>
-        <option value='÷'>MAX &divide;</option>
-      </select>
-    </div>
-    <input class="gcs-input" type="text" value="-0.5" data-dtype="Number" />
-    <input class="gcs-input" type="text" value="CONTROLLED" />
-    <div style='display: flex; align-items: center;'> <input type="color" value="#FF4040"></div>
-    <div style='display: flex; align-items: center; margin-left: 4px;'><a class='button' style='color: red;'><i
-          class="fas fa-minus-circle"></i></a></div>
-
-    <div><select style='font-size: 120%;'>
-        <option value='>'>&gt;</option>
-        <option value='≥'>&ge;</option>
-        <option value='<'>&lt;</option>
-        <option value='≤' selected>&le;</option>
-      </select>
-    </div>
-    <div><select>
-        <option value='+'>MAX &plus;</option>
-        <option value='−'>MAX &minus;</option>
-        <option value='×' selected>MAX &times;</option>
-        <option value='÷'>MAX &divide;</option>
-      </select>
-    </div>
-    <input class="gcs-input" type="text" value="-1" data-dtype="Number" />
-    <input class="gcs-input" type="text" value="PINNED" />
-    <div style='display: flex; align-items: center;'> <input type="color" value="#804040"></div>
-    <div style='display: flex; align-items: center; margin-left: 4px;'><a class='button' style='color: red;'><i
-          class="fas fa-minus-circle"></i></a></div>
+    {{/each}}
   </div>
 </div>

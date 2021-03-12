@@ -5,6 +5,7 @@ import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitloc
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
+import { ResourceTrackerEditorDialog } from '../module/actor/tracker-editor-dialog.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -208,47 +209,51 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('.tracked-resource .header.with-editor').click(async ev => {
       ev.preventDefault()
+
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
-      let tracker = getProperty(this.actor.data.data, path)
+      let dlg = new ResourceTrackerEditorDialog(this.actor, path)
+      dlg.render(true)
 
-      let dlgHtml = await renderTemplate('systems/gurps/templates/resource-editor-popup.html', tracker)
+      // let tracker = getProperty(this.actor.data.data, path)
 
-      let options = {
-        width: 360,
-        popOut: true,
-        minimizable: false,
-        jQuery: true,
-      }
+      // let dlgHtml = await renderTemplate('systems/gurps/templates/resource-editor-popup.html', tracker)
 
-      let d = new Dialog(
-        {
-          title: 'Resource Editor',
-          content: dlgHtml,
-          buttons: {
-            one: {
-              label: 'Update',
-              callback: async html => {
-                let name = html.find('.name input').val()
-                let current = parseInt(html.find('.current').val())
-                let minimum = parseInt(html.find('.minimum').val())
-                let maximum = parseInt(html.find('.maximum').val())
+      // let options = {
+      //   width: 360,
+      //   popOut: true,
+      //   minimizable: false,
+      //   jQuery: true,
+      // }
 
-                let update = {}
-                if (!!name) update[`data.${path}.name`] = name
-                if (!!current) update[`data.${path}.value`] = current
-                if (!!minimum) update[`data.${path}.min`] = minimum
-                if (!!maximum) update[`data.${path}.max`] = maximum
+      // let d = new Dialog(
+      //   {
+      //     title: 'Resource Editor',
+      //     content: dlgHtml,
+      //     buttons: {
+      //       one: {
+      //         label: 'Update',
+      //         callback: async html => {
+      //           let name = html.find('.name input').val()
+      //           let current = parseInt(html.find('.current').val())
+      //           let minimum = parseInt(html.find('.minimum').val())
+      //           let maximum = parseInt(html.find('.maximum').val())
 
-                this.actor.update(update)
-              },
-            },
-          },
-          default: 'one',
-        },
-        options
-      )
-      d.render(true)
+      //           let update = {}
+      //           if (!!name) update[`data.${path}.name`] = name
+      //           if (!!current) update[`data.${path}.value`] = current
+      //           if (!!minimum) update[`data.${path}.min`] = minimum
+      //           if (!!maximum) update[`data.${path}.max`] = maximum
+
+      //           this.actor.update(update)
+      //         },
+      //       },
+      //     },
+      //     default: 'one',
+      //   },
+      //   options
+      // )
+      // d.render(true)
     })
 
     // START CONDITIONAL INJURY
