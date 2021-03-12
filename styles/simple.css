@@ -1070,9 +1070,15 @@ body {
   display: grid;
   grid-template:
     'attributes trackers location encumbrance'
+    'attributes trackers location qnotes'
     'attributes trackers location lifting';
   grid-template-columns: 0fr 2fr 0fr 0fr;
   grid-gap: 0.05in;
+}
+
+#qnotes {
+  grid-area: qnotes;
+  margin: 2px;
 }
 
 #attributes {

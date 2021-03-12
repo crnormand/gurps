@@ -14,6 +14,8 @@ This is what we are currently working on:
   - Right Mouse Click for NON-GMs sends OtF formula to chat input
   - Fixed i18n issues with ranged 
   - Fixed missing hitlocation modifiers
+  - Add Quick Note under Encumbrance
+  - Added support for Parry / Block modifiers
 
 0.8.17 - 3/8/2021
   - Bug fix for names/names containing '%'

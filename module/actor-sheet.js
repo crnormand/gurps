@@ -598,6 +598,21 @@ export class GurpsActorSheet extends ActorSheet {
         $(this).find('div').last().remove()
       }
     )
+    
+    html.find('#qnotes').dblclick(ex => {
+      const n = this.actor.data.data.additionalresources.qnotes || ""
+      Dialog.prompt({
+        title: 'Edit Quick Note',
+        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><input id="i" type="text" value="${n}" placeholder=""></input><br><br>Examples:
+        <br>[Dodge +1 shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
+        label: 'OK',
+        callback: html => {
+          const i = html[0].querySelector("#i");
+          this.actor.update({ "data.additionalresources.qnotes" : i.value })
+        }
+      });
+    })
+
   }
 
   async editEquipment(actor, path, obj) {
