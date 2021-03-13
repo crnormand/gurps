@@ -171,7 +171,8 @@ export default function addChatHooks() {
             ui.notifications.warn("No status matched '" + pattern + "'")
           else if (!!m[4]) {
             if (!!GURPS.LastActor) {
-              let tokens = GURPS.LastActor?.getActiveTokens()
+              
+              let tokens = !!GURPS.LastActor.token ? [ GURPS.LastActor.token ] : GURPS.LastActor.getActiveTokens()
               if (tokens.length == 0)
                 msg = "Your character does not have any tokens.   We require a token to set statuses"
               else {
