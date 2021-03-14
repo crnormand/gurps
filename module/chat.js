@@ -71,8 +71,8 @@ export default function addChatHooks() {
       msgs.priv.push(text);
     } 
     
-    let prnt = (text, msgs) => {
-      if (game.user.isGM)
+    let prnt = (text, msgs, p = false) => {
+      if (game.user.isGM || p)
         priv(text, msgs)
       else
         pub(text, msgs)
@@ -300,19 +300,24 @@ export default function addChatHooks() {
           return     
         }
 
-        m = line.match(/\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
+        m = line.match(/\/(p?[fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
         if (!!m) {
           let actor = GURPS.LastActor
           if (!actor)
             ui.notifications.warn('You must have a character selected')
           else {
             let attr = m[1].toUpperCase()
+            let prvt = false
+            if (attr[0] == 'P') {
+              prvt = true
+              attr = attr.substr(1)
+            }
             let delta = parseInt(m[3])
             const max = actor.data.data[attr].max
             let reset = ''
             if (!!m[5]) {
               actor.update({ [ "data." + attr + ".value"] : max })
-              prnt(`${actor.displayname} reset to ${max} ${attr}`, msgs)
+              prnt(`${actor.displayname} reset to ${max} ${attr}`, msgs, prvt)
             } else if (isNaN(delta) && !!m[3]) {   // only happens with '='
               delta = parseInt(m[3].substr(1))
               if (isNaN(delta))
@@ -324,7 +329,7 @@ export default function addChatHooks() {
                   mtxt = ` (max: ${max})`
                 }
                 actor.update({ [ "data." + attr + ".value"] : delta })
-                prnt(`${actor.displayname} set to ${delta} ${attr}${mtxt}`, msgs)
+                prnt(`${actor.displayname} set to ${delta} ${attr}${mtxt}`, msgs, prvt)
               }
             } else if (!!m[2] || !!m[3]) {
               let mtxt = '' 
@@ -356,7 +361,7 @@ export default function addChatHooks() {
                 mtxt = ` (max: ${max})`
               }
               actor.update({ [ "data." + attr + ".value"] : delta })
-              prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
+              prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs, prvt)
            } else
               ui.notifications.warn(`Unrecognized format for '${line}'`)
           }  
