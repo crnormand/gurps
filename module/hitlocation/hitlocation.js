@@ -69,7 +69,7 @@ export class HitLocation {
       'Chinks in Torso': { penalty: -8, desc: 'Halves DR' },
       'Chinks in Other': { penalty: -10, desc: 'Halves DR' },
     }
-    
+
     hitLocationAlias = {
       Eyes: { RAW: 'Eye' },
       Arm: { RAW: 'Arm', prefix: ['Right', 'Left'] },
@@ -313,7 +313,7 @@ export class HitLocation {
       vermiform: vermiformHitLocations,
       vermiformWinged: wingedSerpentHitLocations,
       'winged vermiform': wingedSerpentHitLocations, // GCA
-      snakeman: snakeManHitLocations,
+      snakeman: snakeManHitLocations, // what we expected from GCS
       octopod: octopodHitLocations,
       squid: squidHitLocations,
       cancroid: cancroidHitLocations,
