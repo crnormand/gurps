@@ -791,7 +791,7 @@ GURPS.performAction = performAction
 function findSkillSpell(actor, sname) {
   var t
   if (!actor) return t
-  sname = '^' + sname.split('*').join('.*')
+  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
   let best = 0
   recurselist(actor.data.skills, s => {
     if (s.name.match(sname) && s.level > best) {

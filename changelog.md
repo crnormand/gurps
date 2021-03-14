@@ -5,7 +5,9 @@ This is what we are currently working on:
 - Typescript & build process
 - Items... yes... actual items.
 
-0.8.18
+##History
+
+0.8.18 - 3/14/2021
 
 - Converted 'mapped' to 'attribute' so [S:Trap|Vision-5] works
 - Add blindroll to CR
@@ -17,10 +19,13 @@ This is what we are currently working on:
 - Fixed i18n issues with ranged
 - Fixed missing hitlocation modifiers
 - Add Quick Note under Encumbrance
-- Added support for Parry / Block modifiers
 - 'Grand' unification of attribute/skill parsing [Parry|Block:Shield|S:Skill|Fright Check|Dodge -2 slow|DX-4 ? "Ouch", "Close!"]
+- Skill checks can now cost FP (append '*Costs 1FP')
 - Fixed bug with clearing a resource tracker.
 - Added custom thresholds and condition names for resource trackers. For a description and instructions, see this link: https://github.com/crnormand/gurps/issues/380
+- Fixed Shotgun RoF (3x9)
+- Added system setting to make player chat commands private (GM's chat commands are already private)
+- Fixed Skill names that included '(' and ')'
 
 0.8.17 - 3/8/2021
 
