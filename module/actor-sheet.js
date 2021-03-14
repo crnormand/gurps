@@ -620,8 +620,8 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes'],
-      ['level']
+      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'level'],
+      []
     )
   }
 
@@ -632,8 +632,8 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes'],
-      ['level', 'acc', 'bulk']
+      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'level'],
+      ['acc', 'bulk']
     )
   }
 

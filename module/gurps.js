@@ -859,9 +859,15 @@ async function handleRoll(event, actor, targets) {
     formula = '3d6'
     let t = element.innerText
     if (!!t) {
-      t = t.trim()
+      let a = t.trim().split(' ')
+      t = a[0]
       if (!!t) target = parseInt(t)
       if (isNaN(target)) target = 0 // Can't roll against a non-integer
+      else {
+        a.shift()
+        let m = a.join(' ')
+        if (!!m) ui.modifierbucket.addModifier(0, m)
+      }
     }
   }
   if ('damage' in element.dataset) {
