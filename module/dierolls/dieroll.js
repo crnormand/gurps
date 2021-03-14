@@ -58,7 +58,14 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
 
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {		// if the attached obj (see handleRoll()) as Recoil information, do the additional math
       let rofrcl = Math.floor(margin / parseInt(optionalArgs.obj.rcl)) + 1;
-      if (!!optionalArgs.obj.rof) rofrcl = Math.min(rofrcl, parseInt(optionalArgs.obj.rof));
+      if (!!optionalArgs.obj.rof) {
+        let rof = optionalArgs.obj.rof
+        let m = rof.match(/(\d+)[×xX\*](\d+)/)   // Support shotgun RoF (3x9)
+        if (!!m) 
+          rofrcl = Math.min(rofrcl, parseInt(m[1]) * parseInt(m[2]))
+        else
+          rofrcl = Math.min(rofrcl, parseInt(rof))
+      }
 
       chatdata['rof'] = optionalArgs.obj.rof
       chatdata['rcl'] = optionalArgs.obj.rcl
