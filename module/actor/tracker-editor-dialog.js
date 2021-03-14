@@ -48,6 +48,10 @@ export class ResourceTrackerEditorDialog extends Application {
       this._tracker.name = ev.currentTarget.value
     })
 
+    html.find('.inputs .alias').change(ev => {
+      this._tracker.alias = ev.currentTarget.value
+    })
+
     html.find('.inputs .current').change(ev => {
       this._tracker.value = parseInt(ev.currentTarget.value)
     })

@@ -3,6 +3,8 @@
     <input class="gcs-input" style='font-size: 120%;' type="text" value="{{tracker.name}}" placeholder="Resource Name">
   </div>
   <div class='inputs' style='max-width: 150;'>
+    <input class="alias gcs-input" type="text" value="{{tracker.alias}}" />
+    <div class="label">Alias (Short name used in OtF and damage types)</div>
     <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
     <div class="label">Current</div>
     <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
