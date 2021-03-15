@@ -331,6 +331,11 @@ export class ModifierBucketEditor extends Application {
     super.render(force, options)
     this.bucket.SHOWING = true
   }
+  
+  close() {
+    this.bucket.SHOWING = false
+    super.close()
+  }
 
   getData(options) {
     const data = super.getData(options)
