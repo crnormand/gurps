@@ -196,10 +196,9 @@ export default class ApplyDamageDialog extends Application {
       .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useArmorDivisor'))
 
     // armor divisor level
-    html.find('select[name="tactical-armordivisor"]').on('change', ev => {
-      this._calculator.armorDivisor = parseFloat($(ev.currentTarget).find('option:selected').val())
-      this.updateUI()
-    })
+    html
+      .find('select[name="tactical-armordivisor"]')
+      .on('change', ev => this._updateModelFromSelect($(ev.currentTarget), 'armorDivisor', parseFloat))
 
     // use blunt trauma rules
     html
@@ -232,6 +231,10 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('input[name="hardened"]')
       .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'hardenedDRLevel', parseFloat))
+
+    html
+      .find('select[name="hardened"]')
+      .on('change', ev => this._updateModelFromSelect($(ev.currentTarget), 'hardenedDRLevel', parseInt))
 
     // target has Injury Tolerance
     html
@@ -346,19 +349,20 @@ export default class ApplyDamageDialog extends Application {
 
   /**
    *
-   * @param {*} element
-   * @param {*} property
-   * @param {*} converter
+   * @param {HtmlElement} select
+   * @param {String} property of model to update
+   * @param {Function} converter optional converter function; by default its the identity function
    */
-  _updateModelFromSelectValue(
-    element,
+  _updateModelFromSelect(
+    select,
     property,
     converter = value => {
       return value
     }
   ) {
-    this._calculator[property] = converter(element.val())
-    this._updateUI()
+    let valueText = select.find('option:selected').val()
+    this._calculator[property] = converter(valueText)
+    this.updateUI()
   }
 
   _updateModelFromBooleanElement(element, property) {
