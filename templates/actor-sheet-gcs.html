@@ -556,7 +556,7 @@
         <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
           @root}}}</div>
       </div>
-      <div class="sl satisfiedY {{#if (gt this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
+      <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
         data-otf='S:"{{this.name}}"'>{{this.level}}
       </div>
       <div class="rsl satisfiedY">{{this.relativelevel}}</div>
