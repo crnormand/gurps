@@ -1231,8 +1231,8 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
     }
   }
   let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-  otf = '[' + otf + ']'
   let botf = '[!' + otf + ']'
+  otf = '[' + otf + ']'
   let buttons = {}
   buttons.one = {
     icon: '<i class="fas fa-users"></i>',
