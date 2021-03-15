@@ -838,13 +838,18 @@ async function handleRoll(event, actor, targets) {
   let opt = { event: event }
   let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
 
-  if ('path' in element.dataset) {
+  if ('damage' in element.dataset) {
+    // expect text like '2d+1 cut'
+    let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
+    let action = parseForDamage(f)
+    if (!!action.action) performAction(action.action, actor, event, targets)
+    return
+  } else if ('path' in element.dataset) {
     prefix = 'Roll vs '
     thing = this.i18n(element.dataset.path)
     formula = '3d6'
     target = parseInt(element.innerText)
-  }
-  if ('name' in element.dataset || 'otf' in element.dataset) {
+  } else if ('name' in element.dataset || 'otf' in element.dataset) {
     prefix = '' // "Attempting ";
     let text = element.dataset.name || element.dataset.otf
     text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
@@ -869,15 +874,7 @@ async function handleRoll(event, actor, targets) {
         if (!!m) ui.modifierbucket.addModifier(0, m)
       }
     }
-  }
-  if ('damage' in element.dataset) {
-    // expect text like '2d+1 cut'
-    let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
-    let action = parseForDamage(f)
-    if (!!action.action) performAction(action.action, actor, event, targets)
-    return
-  }
-  if ('roll' in element.dataset) {
+  } else if ('roll' in element.dataset) {
     target = -1 // Set flag to indicate a non-targeted roll
     formula = element.innerText
     prefix = 'Rolling ' + formula
@@ -1231,8 +1228,8 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
     }
   }
   let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-  otf = '[' + otf + ']'
   let botf = '[!' + otf + ']'
+  otf = '[' + otf + ']'
   let buttons = {}
   buttons.one = {
     icon: '<i class="fas fa-users"></i>',

@@ -122,6 +122,10 @@ export class CompositeDamageCalculator {
   set armorDivisor(value) {
     this._armorDivisor = value
   }
+  
+  get useArmorDivisor() {
+    return this._useArmorDivisor
+  }
 
   get applyTo() {
     return this._applyTo
