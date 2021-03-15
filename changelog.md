@@ -12,6 +12,7 @@ This is what we are currently working on:
 - Translated status effects to German
 - Added all RAW armor divisors to ADD (0.1, 0.2., 0.5, 2, 3, 5, 10, 100, Ignores DR)
 - Fixed 'Ignores DR' to be affected by Hardened DR
+- Updated Hardened DR to include 6 levels (allows 'Ignores DR' to be modified down to 'no Armor Divisor')
 
   0.8.18 - 3/14/2021
 
