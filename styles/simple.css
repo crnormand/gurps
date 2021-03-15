@@ -2794,6 +2794,8 @@ ul#result-effects li {
   grid-template-rows: auto;
   grid-gap: 0.15rem;
   justify-content: center;
+  align-items: baseline;
+  margin: 0 1rem 1rem;
 }
 
 .resource-editor .inputsv2 {

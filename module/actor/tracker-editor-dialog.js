@@ -21,7 +21,7 @@ export class ResourceTrackerEditorDialog extends Application {
       popOut: true,
       minimizable: false,
       jQuery: true,
-      resizable: true,
+      resizable: false,
       title: 'Resource Tracker Editor',
     })
   }

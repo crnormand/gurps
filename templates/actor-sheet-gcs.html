@@ -424,13 +424,13 @@
                   </div>
                 </span>
               </div>
-              <div class='max'>({{../min}}/{{../max}})</div>
+              <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
               {{/with}}
               {{else}}
               <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
                 {{#if
                 (gt value max)}}Over{{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}</div>
-              <div class='max'>{{alias}}({{min}}/{{max}})</div>
+              <div class='max'>{{alias}} ({{min}}/{{max}})</div>
               {{/if}}
             </div>
           </div> <!-- end of resource -->
