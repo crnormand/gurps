@@ -11,7 +11,7 @@ import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
  */
 export default class DamageChat {
-  static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>\d+(?:\.\d+)?)\))?/
+  static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
   constructor(GURPS) {
     this.setup()
@@ -204,7 +204,7 @@ export default class DamageChat {
       additionalText += `×${multiplier}`
     }
 
-    if (divisor > 0) {
+    if (divisor != 0) {
       additionalText += ` (${divisor})`
     }
 
