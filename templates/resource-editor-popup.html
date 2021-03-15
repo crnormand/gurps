@@ -30,19 +30,19 @@
     <div>
       <!-- threshold.comparison -->
       <select data='{{@index}}' name='comparison' style='font-size: 120%;'>
-        <option value='>' {{#if (eq comparison '>' )}}selected{{/if}}>&gt;</option>
-        <option value='≥' {{#if (eq comparison '≥' )}}selected{{/if}}>&ge;</option>
-        <option value='<' {{#if (eq comparison '<' )}}selected{{/if}}>&lt;</option>
-        <option value='≤' {{#if (eq comparison '≤' )}}selected{{/if}}>&le;</option>
+        <option value='>' {{select-if comparison '>' }}>&gt;</option>
+        <option value='≥' {{select-if comparison '≥' }}>&ge;</option>
+        <option value='<' {{select-if comparison '<' }}>&lt;</option>
+        <option value='≤' {{select-if comparison '≤' }}>&le;</option>
       </select>
     </div>
     <div>
       <!-- threshold.operator -->
       <select name='operator' data='{{@index}}'>
-        <option value='+' {{#if (eq operator '+' )}}selected{{/if}}>MAX &plus;</option>
-        <option value='−' {{#if (eq operator '−' )}}selected{{/if}}>MAX &minus;</option>
-        <option value='×' {{#if (eq operator '×' )}}selected{{/if}}>MAX &times;</option>
-        <option value='÷' {{#if (eq operator '÷' )}}selected{{/if}}>MAX &divide;</option>
+        <option value='+' {{select-if operator '+' }}>MAX &plus;</option>
+        <option value='−' {{select-if operator '−' }}>MAX &minus;</option>
+        <option value='×' {{select-if operator '×' }}>MAX &times;</option>
+        <option value='÷' {{select-if operator '÷' }}>MAX &divide;</option>
       </select>
     </div>
     <!-- threshold.value -->
