@@ -163,36 +163,15 @@
           </div>
         </div>
 
-        <div class='gurps-group'>
+        <div class='gurps-group shaded-group'>
           <h4>{{localize "GURPS.addTacticalRules"}}</h4>
           <aside>{{localize "GURPS.addTacticalRulesDefaults"}}.</aside>
 
           <div class='gurps-3col gurps-checkbox-col'>
-
             <div><input id='tactical-blunttrauma' type='checkbox' value='blunttrauma' {{#if
                 CALC.useBluntTrauma}}checked{{/if}}></div>
             <div><label for='tactical-blunttrauma'>{{localize "GURPS.bluntTrauma"}}</label></div>
             <div class='pdflink'>B379</div>
-
-          </div>
-
-          <div class='shaded collapsible-wrapper options-drawer'>
-            <input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{#if
-              CALC.useArmorDivisor}}checked{{/if}}>
-            <label for='tactical-armordivisor' class='label-toggle'>{{localize "GURPS.addArmorDivisor"}}: <span
-                class='pdflink'>B378</span></label>
-            <div class='grid grid-5col continuation collapsible-content'>
-              <label><input type='radio' name='tactical-armordivisor' value='2' {{#if (eq CALC.armorDivisor 2)}}
-                  checked{{/if}}>&nbsp;2</label>
-              <label><input type='radio' name='tactical-armordivisor' value='3' {{#if (eq CALC.armorDivisor 3)}}
-                  checked{{/if}}>&nbsp;3</label>
-              <label><input type='radio' name='tactical-armordivisor' value='5' {{#if (eq CALC.armorDivisor 5)}}
-                  checked{{/if}}>&nbsp;5</label>
-              <label style="width: 35px"><input style="margin-left: 2px" type='radio' name='tactical-armordivisor'
-                  value='10' {{#if (eq CALC.armorDivisor 10)}} checked{{/if}}>&nbsp;10</label>
-              <label><input type='radio' name='tactical-armordivisor' value='-1' {{#if (eq CALC.armorDivisor -1)}}
-                  checked{{/if}}>&nbsp;&infin;</label>
-            </div>
           </div>
 
           <div class='gurps-3col gurps-checkbox-col'>
@@ -211,7 +190,7 @@
             <div class='pdflink'>B378</div>
           </div>
 
-          <div class='shaded collapsible-wrapper options-drawer'>
+          <div class='collapsible-wrapper options-drawer'>
             <input id='vulnerable' class='toggle' type='checkbox' value='vulnerable' {{#if
               CALC.isVulnerable}}checked{{/if}}>
             <label for='vulnerable' class='label-toggle'>{{localize "GURPS.addVulnerability"}}:<span
@@ -224,6 +203,31 @@
               <label><input type='radio' name='vulnerability' value='4' {{#if (eq CALC.vulnerabilityMultiple
                   4)}}checked{{/if}}>&nbsp;×4</label>
             </div>
+          </div>
+
+          <div class='gurps-3col gurps-checkbox-col'>
+            {{debug CALC.armorDivisor}}
+            <div><input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{#if
+                CALC.useArmorDivisor}}checked{{/if}}>
+            </div>
+            <div>
+              <label for='tactical-armordivisor' class='label-toggle'>{{localize "GURPS.addArmorDivisor"}}:
+                <select name='tactical-armordivisor' {{#unless CALC.useArmorDivisor}}disabled{{/unless}}
+                  style='margin-left: 8px;'>
+                  <option value='0' {{#if (eq CALC.armorDivisor 0)}}selected{{/if}}>None</option>
+                  <option value='0.1' {{#if (eq CALC.armorDivisor 0.1)}}selected{{/if}}>(0.1)</option>
+                  <option value='0.2' {{#if (eq CALC.armorDivisor 0.2)}}selected{{/if}}>(0.2)</option>
+                  <option value='0.5' {{#if (eq CALC.armorDivisor 0.5)}}selected{{/if}}>(0.5)</option>
+                  <option value='2' {{#if (eq CALC.armorDivisor 2)}}selected{{/if}}>(2)</option>
+                  <option value='3' {{#if (eq CALC.armorDivisor 3)}}selected{{/if}}>(3)</option>
+                  <option value='5' {{#if (eq CALC.armorDivisor 5)}}selected{{/if}}>(5)</option>
+                  <option value='10' {{#if (eq CALC.armorDivisor 10)}}selected{{/if}}>(10)</option>
+                  <option value='100' {{#if (eq CALC.armorDivisor 100)}}selected{{/if}}>(100)</option>
+                  <option value='-1' {{#if (eq CALC.armorDivisor -1)}}selected{{/if}}>Ignores DR</option>
+                </select></label>
+            </div>
+            <div class='pdflink'>B378</div>
+
           </div>
 
           <div class='collapsible-wrapper options-drawer'>
@@ -243,7 +247,7 @@
             </div>
           </div>
 
-          <div class='shaded collapsible-wrapper options-drawer'>
+          <div class='collapsible-wrapper options-drawer'>
             <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{#if
               CALC.isInjuryTolerance}}checked{{/if}}></input>
             <label for='injury-tolerance' class='label-toggle'>{{localize "GURPS.addInjuryTolerance"}}:<span
@@ -276,7 +280,7 @@
 
           {{#if CALC.useBluntTrauma}}
           <div style='display: flex; flex-direction: column; justify-content: center;'>
-            <div id='specials-insert-point' class='shaded gurps-3col'>
+            <div id='specials-insert-point' class='gurps-3col'>
               <input id='flexible-armor' type='checkbox' value='flexible-armor' {{#if
                 CALC.isFlexibleArmor}}checked{{/if}}>
               <label for='flexible-armor'>{{localize "GURPS.addFlexibleArmor"}}
@@ -308,7 +312,6 @@
                   <span
                     style='position: absolute; text-align: center; width: 1.5rem; color: dimgray; left: 0; bottom: 0; line-height: 1.5rem;'>×</span>
                 </div>
-
               </div>
             </div>
           </div>
@@ -372,7 +375,8 @@
                 {{#if CALC.armorDivisor}}
                 &divide;
                 {{#if CALC.isHardenedDR}}
-                ({{CALC.effectiveArmorDivisor}} = ({{CALC.armorDivisor}}) {{localize
+                ({{CALC.effectiveArmorDivisor}} = ({{#if (eq CALC.armorDivisor
+                -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}}) {{localize
                 "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
                 {{else}}
                 ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})

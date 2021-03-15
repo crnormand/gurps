@@ -22,7 +22,7 @@ const DIFFUSE = 'diffuse'
 const HOMOGENOUS = 'homogenous'
 
 // -1 means 'Ignores DR'
-const armorDivisorSteps = [-1, 10, 5, 3, 2, 1]
+const armorDivisorSteps = [-1, 100, 10, 5, 3, 2, 1]
 
 export class CompositeDamageCalculator {
   /**
@@ -257,13 +257,11 @@ export class CompositeDamageCalculator {
     // Armor Divisors do not apply to Explosions, (B414)
     if (this._isExplosion) return 1
 
-    if (this._armorDivisor > 1 && this._isHardenedDR) {
+    if ((this._armorDivisor > 1 || this._armorDivisor === -1) && this._isHardenedDR) {
       let maxIndex = armorDivisorSteps.length - 1
       let index = armorDivisorSteps.indexOf(this._armorDivisor)
-      if (index !== -1) {
-        index = Math.min(index + this._hardenedDRLevel, maxIndex)
-        return armorDivisorSteps[index]
-      }
+      index = Math.min(index + this._hardenedDRLevel, maxIndex)
+      return armorDivisorSteps[index]
     }
     return this._armorDivisor
   }
@@ -288,10 +286,11 @@ export class CompositeDamageCalculator {
 
     if (this._useArmorDivisor && !!this._armorDivisor) {
       // -1 divisor means "Ignore DR"
-      if (this.effectiveArmorDivisor === -1) return 0
+      let armorDivisor = this.effectiveArmorDivisor
+      if (armorDivisor === -1) return 0
 
-      let tempDR = this.effectiveArmorDivisor < 1 && dr === 0 ? 1 : dr
-      return Math.floor(tempDR / this.effectiveArmorDivisor)
+      let tempDR = armorDivisor < 1 && dr === 0 ? 1 : dr
+      return Math.floor(tempDR / armorDivisor)
     }
     return dr
   }
