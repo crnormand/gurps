@@ -7,11 +7,14 @@ This is what we are currently working on:
 
 ##History
 
-0.8.19
+0.8.19 - 3/15/2021
 
 - Translated status effects to German
 - Added all RAW armor divisors to ADD (0.1, 0.2., 0.5, 2, 3, 5, 10, 100, Ignores DR)
 - Fixed 'Ignores DR' to be affected by Hardened DR
+- Fixed GM Send Blind rolls
+- Fixed non-hover Modifier Bucket tooltip constantly re-opening
+- Fixed '+0 &lt;dmgtype>' showing up as a modifier for damage rolls
 
   0.8.18 - 3/14/2021
 
