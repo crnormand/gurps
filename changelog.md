@@ -16,6 +16,7 @@ This is what we are currently working on:
 - Fixed GM Send Blind rolls
 - Fixed non-hover Modifier Bucket tooltip constantly re-opening
 - Fixed '+0 &lt;dmgtype&gt;' showing up as a modifier for damage rolls
+- Support (-1) armor divisor (as "Ignores DR")
 
   0.8.18 - 3/14/2021
 
