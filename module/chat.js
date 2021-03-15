@@ -2,6 +2,7 @@
 import { parselink } from '../lib/parselink.js'
 import { NpcInput } from '../lib/npc-input.js'
 import { Equipment } from './actor.js'
+import * as Settings from '../lib/miscellaneous-settings.js'
 
 /**
  *  This holds functions for all things chat related
@@ -72,7 +73,8 @@ export default function addChatHooks() {
     } 
     
     let prnt = (text, msgs) => {
-      if (game.user.isGM)
+      let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
+      if (game.user.isGM || p_setting)
         priv(text, msgs)
       else
         pub(text, msgs)

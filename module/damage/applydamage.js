@@ -141,7 +141,6 @@ export default class ApplyDamageDialog extends Application {
       this._toggleVisibility(content, content.hasClass('invisible'))
     })
 
-    // Set Apply To dropdown value.
     // When dropdown changes, update the calculator and refresh GUI.
     html.find('#apply-to').on('change', ev => {
       this._calculator.applyTo = $(ev.currentTarget).find('option:selected').val()
@@ -198,8 +197,8 @@ export default class ApplyDamageDialog extends Application {
 
     // armor divisor level
     html
-      .find('input[name="tactical-armordivisor"]')
-      .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'armorDivisor', parseFloat))
+      .find('select[name="tactical-armordivisor"]')
+      .on('change', ev => this._updateModelFromSelect($(ev.currentTarget), 'armorDivisor', parseFloat))
 
     // use blunt trauma rules
     html
@@ -232,6 +231,10 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('input[name="hardened"]')
       .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'hardenedDRLevel', parseFloat))
+
+    html
+      .find('select[name="hardened"]')
+      .on('change', ev => this._updateModelFromSelect($(ev.currentTarget), 'hardenedDRLevel', parseInt))
 
     // target has Injury Tolerance
     html
@@ -342,6 +345,24 @@ export default class ApplyDamageDialog extends Application {
       this._calculator[property] = converter(element.val())
       this.updateUI()
     }
+  }
+
+  /**
+   *
+   * @param {HtmlElement} select
+   * @param {String} property of model to update
+   * @param {Function} converter optional converter function; by default its the identity function
+   */
+  _updateModelFromSelect(
+    select,
+    property,
+    converter = value => {
+      return value
+    }
+  ) {
+    let valueText = select.find('option:selected').val()
+    this._calculator[property] = converter(valueText)
+    this.updateUI()
   }
 
   _updateModelFromBooleanElement(element, property) {
