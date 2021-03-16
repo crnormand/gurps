@@ -2788,6 +2788,10 @@ ul#result-effects li {
   color: grey;
 }
 
+.resource-editor .name {
+  font-size: 120%;
+}
+
 .resource-editor .inputs {
   display: grid;
   grid-template-columns: 0fr max-content;
@@ -2816,6 +2820,52 @@ ul#result-effects li {
 .resource-editor button {
   font-size: inherit;
   padding: 0 0.15rem;
+}
+
+.resource-editor .section {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.resource-editor .button.icon {
+  color: #4b4a44;
+  padding-left: 20px;
+}
+
+.resource-editor .threshold.table {
+  display: grid;
+  grid-template-columns: min-content min-content min-content 1fr auto min-content;
+  gap: 0.15rem;
+  justify-items: center;
+}
+
+.resource-editor .tracker-manager.table {
+  display: grid;
+  grid-template-columns: 1fr min-content min-content 1fr min-content;
+  gap: 0.15rem;
+  justify-items: center;
+}
+
+.resource-editor .table .span3 {
+  grid-column: 1 / 4;
+  justify-content: center;
+}
+
+.resource-editor .vertical-center {
+  display: flex;
+  align-items: center;
+}
+
+.resource-editor input:read-only {
+  color: rgb(64, 64, 64);
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+}
+
+.resource-editor .clickable:hover {
+  cursor: pointer;
+  box-shadow: 0 0 5px red;
 }
 
 .tracked-resource .spinner button {

@@ -1,10 +1,12 @@
-<div class='resource-editor' style='border: none; position: relative; scroll-margin-bottom: 40px;'>
+<div class='resource-editor' style='border: none; position: relative'>
   <div class='name'>
-    <input class="gcs-input" style='font-size: 120%;' type="text" value="{{tracker.name}}" placeholder="Resource Name">
+    <input class="name gcs-input" type="text" value="{{tracker.name}}" placeholder="Resource Name">
   </div>
-  <div class='inputs' style='max-width: 150;'>
+  <div class='inputs'>
     <input class="alias gcs-input" type="text" value="{{tracker.alias}}" />
-    <div class="label">Alias (Short name used in OtF and damage types)</div>
+    <div class="label">Alias</div>
+    <div></div>
+    <div class='label'>Short name used in OtF and damage types.</div>
     <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
     <div class="label">Current</div>
     <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
@@ -13,14 +15,13 @@
     <div class="label">Maximum</div>
   </div>
   <hr />
-  <div style='display:flex; align-items: baseline; justify-content: space-between;'>
+  <div class='section'>
     <h3>Thresholds:</h3>
-    <div><a id='threshold-add' class='button' style='color: #4b4a44;'><i class="fas fa-plus"></i></a></div>
+    <div><a id='threshold-add' class='button icon'><i class="fas fa-plus"></i></a></div>
   </div>
-  <div class='overflowy'
-    style='display: grid; grid-template-columns: min-content min-content min-content 1fr auto min-content; gap: 0.15rem; justify-items: center; height: 200px;'>
+  <div class='threshold table'>
     {{#if tracker.thresholds}}
-    <div style='grid-column: 1 / 4; justify-content: center;' class='label'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
+    <div class='label span3'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
     <div class='label'>Condition</div>
     <div class='label'>Color</div>
     <div></div>
@@ -49,18 +50,18 @@
     <input name='value' data='{{@index}}' class="gcs-input" type="text" value="{{value}}" data-dtype="Number" />
     <!-- threshold.condition -->
     <input name='condition' data='{{@index}}' class="gcs-input" type="text" value="{{condition}}" />
-    <div style='display: flex; align-items: center;'>
+    <div class='vertical-center'>
       <!-- threshold.color -->
       <input name='color' data='{{@index}}' type="color" value="{{color}}">
     </div>
-    <div style='display: flex; align-items: center; margin-left: 4px;'>
-      <a name='delete-threshold' data='{{@index}}' class='button' style='color: #4b4a44;'>
+    <div class='vertical-center'>
+      <a name='delete-threshold' data='{{@index}}' class='button icon'>
         <i class="fas fa-trash"></i></a>
     </div>
     {{/each}}
   </div>
   <div
-    style='width: -webkit-fill-available;padding-top: 0.5rem;background: url(../ui/parchment.jpg) repeat;box-shadow: 0 -2px 1px 0 rgba(0,0,0, 0.2); margin: 0 -8px; padding-left: 8px; padding-right: 8px;'>
+    style='width: -webkit-fill-available; padding-top: 0.5rem; margin: 0 -8px; padding-left: 8px; padding-right: 8px;'>
     <button id='update'><i class="fas fa-save"></i>Update</button>
   </div>
 </div>

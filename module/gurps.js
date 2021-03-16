@@ -17,6 +17,7 @@ import { SemanticVersion } from '../lib/semver.js'
 import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
+import { ResourceTrackerManager } from '../module/actor/tracker-instance-manager.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -628,7 +629,7 @@ async function performAction(action, actor, event, targets) {
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, "$1"),  // Just keep the +/- mod
+        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
         targets
       )
       return true
@@ -662,18 +663,18 @@ async function performAction(action, actor, event, targets) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
         th = this.i18n(tempAction.path)
-        let t = parseInt(tempAction.target)   // is it pre-targeted (ST12)
+        let t = parseInt(tempAction.target) // is it pre-targeted (ST12)
         if (!t && !!actor) {
-          if (!!tempAction.melee) {   // Is it trying to match to an attack name (should only occur with Parry: & Block:
+          if (!!tempAction.melee) {
+            // Is it trying to match to an attack name (should only occur with Parry: & Block:
             let m = GURPS.findAttack(actordata, tempAction.melee)
             if (!!m) {
               th += ' for ' + m.name
-              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode +')'
-              t = parseInt(m[tempAction.attribute.toLowerCase()])  // should only occur with parry & block
-            } 
-            if (!m || !t) attempts.push(tempAction.attribute + ":" + tempAction.melee)
-          }
-          else {
+              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode + ')'
+              t = parseInt(m[tempAction.attribute.toLowerCase()]) // should only occur with parry & block
+            }
+            if (!m || !t) attempts.push(tempAction.attribute + ':' + tempAction.melee)
+          } else {
             t = parseInt(this.resolve(tempAction.path, actordata.data))
             if (!t) attempts.push(tempAction.attribute)
           }
@@ -691,10 +692,11 @@ async function performAction(action, actor, event, targets) {
       } else {
         // skill
         var skill
-        if (!!tempAction.target) { // Skill-12
-          skill = { 
+        if (!!tempAction.target) {
+          // Skill-12
+          skill = {
             name: tempAction.name,
-            level: parseInt(tempAction.target)
+            level: parseInt(tempAction.target),
           }
         } else skill = GURPS.findSkillSpell(actordata, tempAction.name)
         if (!skill) {
@@ -709,7 +711,7 @@ async function performAction(action, actor, event, targets) {
           if (!!tempAction.floatingAttribute)
             if (!!actor) {
               getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
-  
+
               let value = this.resolve(tempAction.floatingAttribute, actordata.data)
               getLevel = skill => {
                 let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
@@ -745,22 +747,20 @@ async function performAction(action, actor, event, targets) {
 
   // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
   if (action.type === 'skill-spell' || action.type === 'attribute') {
-      const [bestAction, attempts] = processLinked(action)
-      if (!actor && (!bestAction || !bestAction.target)) {
-        ui.notifications.warn('You must have a character selected')
-        return false
-      }
-      if (!bestAction) {
-        ui.notifications.warn(
-          "Unable to find '" + attempts.join("' or '").replace('<', '&lt;') + "' on " + actor.name
-        )
-        return false
-      }
-      formula = '3d6'
-      opt.action = bestAction
-      if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
-      else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
+    const [bestAction, attempts] = processLinked(action)
+    if (!actor && (!bestAction || !bestAction.target)) {
+      ui.notifications.warn('You must have a character selected')
+      return false
+    }
+    if (!bestAction) {
+      ui.notifications.warn("Unable to find '" + attempts.join("' or '").replace('<', '&lt;') + "' on " + actor.name)
+      return false
+    }
+    formula = '3d6'
+    opt.action = bestAction
+    if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
+    else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
   }
 
   if (action.type === 'attack')
@@ -867,7 +867,8 @@ async function handleRoll(event, actor, targets) {
       let a = t.trim().split(' ')
       t = a[0]
       if (!!t) target = parseInt(t)
-      if (isNaN(target)) target = 0 // Can't roll against a non-integer
+      if (isNaN(target)) target = 0
+      // Can't roll against a non-integer
       else {
         a.shift()
         let m = a.join(' ')
@@ -1215,7 +1216,9 @@ GURPS.onRightClickGurpslink = function (event) {
 GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
   if (!otf) return
   if (!game.user.isGM) {
-    $(document).find('#chat-message').val('[' + otf + ']')
+    $(document)
+      .find('#chat-message')
+      .val('[' + otf + ']')
     return
   }
   otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
@@ -1368,6 +1371,8 @@ Hooks.once('init', async function () {
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
 
+  ResourceTrackerManager.initSettings()
+
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket({
     popOut: false,
@@ -1381,7 +1386,6 @@ Hooks.once('init', async function () {
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
   CONFIG.Item.entityClass = GurpsItem
-
 
   // preload drag-and-drop image
   {
@@ -1431,9 +1435,8 @@ Hooks.once('init', async function () {
 
   ui.modifierbucket = GURPS.ModifierBucket
   ui.modifierbucket.render(true)
-  
-  const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
 
+  const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
 })
 
 Hooks.once('ready', async function () {
@@ -1471,7 +1474,7 @@ Hooks.once('ready', async function () {
         cc.prepend(
           '<a class="combatant-control" title="<1/3 HP" data-onethird="isReeling"><i class="fas fa-heart-broken"></i></a>'
         )
-  
+
         let t = html.find('[data-onethird]')
         for (let i = 0; i < t.length; i++) {
           let el = t[i]
@@ -1479,7 +1482,7 @@ Hooks.once('ready', async function () {
           let target = game.combat.combatants.filter(c => c._id === combatant)[0]
           if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
-  
+
         html.find('[data-onethird]').click(ev => {
           let el = ev.currentTarget
           let flag = false
@@ -1584,12 +1587,12 @@ Hooks.once('ready', async function () {
       let keys = game.user.targets.keys()
       let first = keys.next()
       if (dropData.type === 'damageItem') {
-        for ( let t of game.user.targets ) {
-          t.setTarget(false, {releaseOthers: false, groupSelection: true});
+        for (let t of game.user.targets) {
+          t.setTarget(false, { releaseOthers: false, groupSelection: true })
         }
         old.forEach(t => {
-          t.setTarget(true, {releaseOthers: false, groupSelection: true});
-        });
+          t.setTarget(true, { releaseOthers: false, groupSelection: true })
+        })
         first.value.actor.handleDamageDrop(dropData.payload)
       }
     }

@@ -5,7 +5,7 @@ import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitloc
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
-import { ResourceTrackerEditorDialog } from '../module/actor/tracker-editor-dialog.js'
+import { ResourceTrackerEditor } from '../module/actor/tracker-editor-dialog.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -212,8 +212,7 @@ export class GurpsActorSheet extends ActorSheet {
 
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
       let path = parent.attr('data-gurps-resource')
-      let dlg = new ResourceTrackerEditorDialog(this.actor, path)
-      dlg.render(true)
+      ResourceTrackerEditor.editForActor(this.actor, path)
     })
 
     // START CONDITIONAL INJURY
