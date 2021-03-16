@@ -1,67 +1,76 @@
 <div class='resource-editor' style='border: none; position: relative'>
-  <div class='name'>
-    <input class="name gcs-input" type="text" value="{{tracker.name}}" placeholder="Resource Name">
-  </div>
-  <div class='inputs'>
-    <input class="alias gcs-input" type="text" value="{{tracker.alias}}" />
-    <div class="label">Alias</div>
-    <div></div>
-    <div class='label'>Short name used in OtF and damage types.</div>
-    <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
-    <div class="label">Current</div>
-    <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
-    <div class="label">Minimum</div>
-    <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
-    <div class="label">Maximum</div>
-  </div>
-  <hr />
-  <div class='section'>
-    <h3>Thresholds:</h3>
-    <div><a id='threshold-add' class='button icon'><i class="fas fa-plus"></i></a></div>
-  </div>
-  <div class='threshold table'>
-    {{#if tracker.thresholds}}
-    <div class='label span3'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
-    <div class='label'>Condition</div>
-    <div class='label'>Color</div>
-    <div></div>
-    {{/if}}
+  <div style='display: flex; flex-flow: column nowrap;'>
+    <div>
+      <div class='name'>
+        <input class="name gcs-input" type="text" value="{{tracker.name}}" placeholder="Resource Name">
+      </div>
+      <div class='inputs'>
+        <input class="alias gcs-input" type="text" value="{{tracker.alias}}" />
+        <div class="label">Alias</div>
+        <div></div>
+        <div class='label'>Short name used in OtF and damage types.</div>
+        <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
+        <div class="label">Current</div>
+        <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
+        <div class="label">Minimum</div>
+        <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
+        <div class="label">Maximum</div>
+      </div>
+    </div>
+    <div>
+      <hr />
+    </div>
+    <div class='section'>
+      <h3>Thresholds:</h3>
+      <div><a id='threshold-add' class='button icon'><i class="fas fa-plus"></i></a></div>
+    </div>
+    <div style='overflow-y: auto; height: 200px;'>
+      <div class='threshold table'>
+        {{#if tracker.thresholds}}
+        <div class='label span3'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
+        <div class='label'>Condition</div>
+        <div class='label'>Color</div>
+        <div></div>
+        {{/if}}
 
-    {{#each tracker.thresholds}}
-    <div>
-      <!-- threshold.comparison -->
-      <select data='{{@index}}' name='comparison' style='font-size: 120%;'>
-        <option value='>' {{select-if comparison '>' }}>&gt;</option>
-        <option value='≥' {{select-if comparison '≥' }}>&ge;</option>
-        <option value='<' {{select-if comparison '<' }}>&lt;</option>
-        <option value='≤' {{select-if comparison '≤' }}>&le;</option>
-      </select>
+        {{#each tracker.thresholds}}
+        <div>
+          <!-- threshold.comparison -->
+          <select data='{{@index}}' name='comparison' style='font-size: 120%;'>
+            <option value='>' {{select-if comparison '>' }}>&gt;</option>
+            <option value='≥' {{select-if comparison '≥' }}>&ge;</option>
+            <option value='<' {{select-if comparison '<' }}>&lt;</option>
+            <option value='≤' {{select-if comparison '≤' }}>&le;</option>
+          </select>
+        </div>
+        <div>
+          <!-- threshold.operator -->
+          <select name='operator' data='{{@index}}'>
+            <option value='+' {{select-if operator '+' }}>MAX &plus;</option>
+            <option value='−' {{select-if operator '−' }}>MAX &minus;</option>
+            <option value='×' {{select-if operator '×' }}>MAX &times;</option>
+            <option value='÷' {{select-if operator '÷' }}>MAX &divide;</option>
+          </select>
+        </div>
+        <!-- threshold.value -->
+        <input name='value' data='{{@index}}' class="gcs-input" type="text" value="{{value}}" data-dtype="Number" />
+        <!-- threshold.condition -->
+        <input name='condition' data='{{@index}}' class="gcs-input" type="text" value="{{condition}}" />
+        <div class='vertical-center'>
+          <!-- threshold.color -->
+          <input name='color' data='{{@index}}' type="color" value="{{color}}">
+        </div>
+        <div class='vertical-center'>
+          <a name='delete-threshold' data='{{@index}}' class='button icon'>
+            <i class="fas fa-trash"></i></a>
+        </div>
+        {{/each}}
+      </div>
     </div>
-    <div>
-      <!-- threshold.operator -->
-      <select name='operator' data='{{@index}}'>
-        <option value='+' {{select-if operator '+' }}>MAX &plus;</option>
-        <option value='−' {{select-if operator '−' }}>MAX &minus;</option>
-        <option value='×' {{select-if operator '×' }}>MAX &times;</option>
-        <option value='÷' {{select-if operator '÷' }}>MAX &divide;</option>
-      </select>
+
+    <div
+      style='width: -webkit-fill-available; padding-top: 0.5rem; margin: 0 -8px; padding-left: 8px; padding-right: 8px;'>
+      <button id='update'><i class="fas fa-save"></i>Update</button>
     </div>
-    <!-- threshold.value -->
-    <input name='value' data='{{@index}}' class="gcs-input" type="text" value="{{value}}" data-dtype="Number" />
-    <!-- threshold.condition -->
-    <input name='condition' data='{{@index}}' class="gcs-input" type="text" value="{{condition}}" />
-    <div class='vertical-center'>
-      <!-- threshold.color -->
-      <input name='color' data='{{@index}}' type="color" value="{{color}}">
-    </div>
-    <div class='vertical-center'>
-      <a name='delete-threshold' data='{{@index}}' class='button icon'>
-        <i class="fas fa-trash"></i></a>
-    </div>
-    {{/each}}
-  </div>
-  <div
-    style='width: -webkit-fill-available; padding-top: 0.5rem; margin: 0 -8px; padding-left: 8px; padding-right: 8px;'>
-    <button id='update'><i class="fas fa-save"></i>Update</button>
   </div>
 </div>

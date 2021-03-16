@@ -1,5 +1,6 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from '../actor/tracker-editor-dialog.js'
+import { zeroFill } from '../../lib/utilities.js'
 
 export class ResourceTrackerManager extends FormApplication {
   static initSettings() {
@@ -11,20 +12,33 @@ export class ResourceTrackerManager extends FormApplication {
       restricted: false,
     })
 
-    // game.settings.register(settings.SYSTEM_NAME, settings.SETTING_MOOK_DEFAULT, {
-    //   name: 'Mook Default',
-    //   scope: 'world',
-    //   config: false,
-    //   type: Object,
-    //   default: new Mook(),
-    //   onChange: value => console.log(`Updated Mook Default: ${value}`),
-    // })
+    game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
+      name: 'Resource Tracker Templates',
+      scope: 'world',
+      config: false,
+      type: Object,
+      default: {},
+      onChange: value => console.log(`Updated Default Resource Trackers: ${value}`),
+    })
   }
 
+  /**
+   *
+   * @param {*} options
+   */
   constructor(options = {}) {
     super(options)
 
+    let temp = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES)
+    let templates = temp || {}
+
+    // convert from map to array
     this._templates = []
+    Object.entries(templates)
+      .sort(it => it.key)
+      .forEach(([key, value]) => {
+        this._templates.push(value)
+      })
   }
 
   static get defaultOptions() {
@@ -32,10 +46,10 @@ export class ResourceTrackerManager extends FormApplication {
       id: 'tracker-manager',
       // classes: ['sheet', 'actor', 'form'],
       template: 'systems/gurps/templates/actor/tracker-manager.html',
-      resizable: true,
+      resizable: false,
       minimizable: false,
-      width: 600,
-      height: 400,
+      width: 520,
+      height: 368,
       title: 'Resource Tracker Manager',
       closeOnSubmit: true,
     })
@@ -52,6 +66,8 @@ export class ResourceTrackerManager extends FormApplication {
    * @param {HtmlElement} html
    */
   activateListeners(html) {
+    super.activateListeners(html)
+
     html.find('#template-add').click(() => {
       if (!this._templates) {
         this._templates = []
@@ -111,6 +127,13 @@ export class ResourceTrackerManager extends FormApplication {
       }
       this.render(true)
     })
+
+    html.find('[name="initial-value"]').change(ev => {
+      let index = parseInt($(ev.currentTarget).attr('data'))
+      this._templates[index].initialValue = ev.currentTarget.value
+    })
+
+    html.find('#update').click(() => this._updateObject())
   }
 
   _validate(index, value) {
@@ -120,5 +143,13 @@ export class ResourceTrackerManager extends FormApplication {
   /**
    * @override
    */
-  _updateObject() {}
+  _updateObject() {
+    // convert the array into a map:
+    let data = {}
+    this._templates.forEach((template, index) => {
+      data[zeroFill(index, 4)] = template
+    })
+
+    game.settings.set(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, data)
+  }
 }

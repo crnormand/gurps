@@ -2794,12 +2794,12 @@ ul#result-effects li {
 
 .resource-editor .inputs {
   display: grid;
-  grid-template-columns: 0fr max-content;
+  grid-template-columns: 5rem max-content;
   grid-template-rows: auto;
   grid-gap: 0.15rem;
   justify-content: center;
   align-items: baseline;
-  margin: 0 1rem 1rem;
+  margin: 0.5rem 1rem 1rem;
 }
 
 .resource-editor .inputsv2 {
@@ -2830,7 +2830,7 @@ ul#result-effects li {
 
 .resource-editor .button.icon {
   color: #4b4a44;
-  padding-left: 20px;
+  padding: 0 20px 0 10px;
 }
 
 .resource-editor .threshold.table {
@@ -2838,11 +2838,12 @@ ul#result-effects li {
   grid-template-columns: min-content min-content min-content 1fr auto min-content;
   gap: 0.15rem;
   justify-items: center;
+  max-height: max-content;
 }
 
 .resource-editor .tracker-manager.table {
   display: grid;
-  grid-template-columns: 1fr min-content min-content 1fr min-content;
+  grid-template-columns: 3fr 1fr min-content 4fr min-content;
   gap: 0.15rem;
   justify-items: center;
 }

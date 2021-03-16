@@ -18,7 +18,8 @@ export class ResourceTrackerEditor extends Application {
    */
   static editForActor(actor, path, options) {
     let tracker = getProperty(actor.data.data, path)
-    let dialog = new ResourceTrackerEditor(tracker, options)
+    let temp = JSON.stringify(tracker)
+    let dialog = new ResourceTrackerEditor(JSON.parse(temp), options)
     dialog._updateTracker = async () => {
       let update = {}
       update[`data.${path}`] = dialog._tracker
@@ -33,11 +34,11 @@ export class ResourceTrackerEditor extends Application {
     return mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/resource-editor-popup.html',
       width: 360,
-      height: 440,
+      height: 468,
       popOut: true,
       minimizable: false,
       jQuery: true,
-      resizable: true,
+      resizable: false,
       title: 'Resource Tracker Editor',
     })
   }
