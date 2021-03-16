@@ -1,3 +1,5 @@
+### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
+
 This is what we are currently working on:
 
 0.9.0
@@ -18,6 +20,7 @@ This is what we are currently working on:
 - Fixed '+0 &lt;dmgtype&gt;' showing up as a modifier for damage rolls
 - Support (-1) armor divisor (as "Ignores DR")
 - Support editing of skills/spells with '*Costs xFP'
+- Fixed "*Max: 9" if not the last modifier
 
   0.8.18 - 3/14/2021
 
