@@ -1,6 +1,6 @@
 'use strict'
 
-import { extractP, xmlTextToJson, zeroFill, convertRollStringToArrayOfInt, recurselist } from '../lib/utilities.js'
+import { extractP, xmlTextToJson, objectToArray, convertRollStringToArrayOfInt, recurselist } from '../lib/utilities.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
@@ -266,6 +266,11 @@ export class GurpsActor extends Actor {
       await this.update(adds) //.then(() => {
       // This has to be done after everything is loaded
       this.calculateDerivedValues()
+
+      // ... set custom trackers based on templates
+      // should be last because it may need other data to initialize...
+      await this.setResourceTrackers()
+
       console.log('Done importing.  You can inspect the character data below:')
       console.log(this)
       //})
@@ -1122,6 +1127,58 @@ export class GurpsActor extends Actor {
       'data.-=ads': null,
       'data.ads': this.foldList(temp),
     }
+  }
+
+  async setResourceTrackers() {
+    // read the Templates from settings data
+    let temp = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES)
+
+    if (!temp || Object.keys(temp).length === 0) return
+
+    let templates = objectToArray(temp)
+
+    // find those with non-blank slots
+    templates = templates.filter(it => !!it.slot)
+
+    templates.forEach(async template => {
+      // find the matching data on this actor
+      let path = `additionalresources.tracker.${template.slot}`
+      let tracker = getProperty(this.data.data, path)
+
+      // skip if already set
+      if (tracker.name === template.tracker.name) {
+        return
+      }
+
+      // if not blank, don't overwrite
+      if (!!tracker.name) {
+        ui.notifications.warn(
+          `Will not overwrite Tracker ${template.slot} as its name is set to ${tracker.name}. Create Tracker for ${template.tracker.name} failed.`
+        )
+        return
+      }
+
+      // is there an initializer? If so calculate its value
+      let value = 0
+      if (!!template.initialValue) {
+        value = parseInt(template.initialValue, 10)
+        if (Number.isNaN(value)) {
+          // try to use initialValue as a path to another value
+          value = getProperty(this.data.data, template.initialValue)
+        }
+      }
+      template.tracker.max = value
+
+      // remove whatever is there
+      let del = {}
+      del[`data.-=${path}`] = null
+      await this.update(del)
+
+      // add the new tracker
+      let update = {}
+      update[`data.${path}`] = template.tracker
+      await this.update(update)
+    })
   }
 
   // --- Functions to handle events on actor ---
