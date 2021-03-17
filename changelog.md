@@ -21,6 +21,7 @@ This is what we are currently working on:
 - Support (-1) armor divisor (as "Ignores DR")
 - Support editing of skills/spells with '*Costs xFP'
 - Fixed "*Max: 9" if not the last modifier
+- Create and apply standard resource trackers across the world. Instructions: https://github.com/crnormand/gurps/issues/380#issuecomment-801357042
 
 0.8.18 - 3/14/2021
 
