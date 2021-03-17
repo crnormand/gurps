@@ -22,7 +22,7 @@ This is what we are currently working on:
 - Support editing of skills/spells with '*Costs xFP'
 - Fixed "*Max: 9" if not the last modifier
 
-  0.8.18 - 3/14/2021
+0.8.18 - 3/14/2021
 
 - Converted 'mapped' to 'attribute' so [S:Trap|Vision-5] works
 - Add blindroll to CR
