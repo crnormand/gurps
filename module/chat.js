@@ -134,7 +134,7 @@ export default function addChatHooks() {
             priv("Clearing Last Actor", msgs)
           } else {
             let pat = m[2].split('*').join('.*')
-            pat = "^" + pat + "$"
+            pat = "^" + pat.trim() + "$"
             let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
             if (!!m[3]) list = game.actors.entities
             let a = list.filter(a => a.name.match(pat));

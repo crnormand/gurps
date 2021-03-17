@@ -7,9 +7,9 @@ This is what we are currently working on:
 - Typescript & build process
 - Items... yes... actual items.
 
-##History
+## History
 
-0.8.19 - 3/15/2021
+  0.8.19 - 3/17/2021
 
 - Translated status effects to German
 - Added all RAW armor divisors to ADD (0.1, 0.2., 0.5, 2, 3, 5, 10, 100, Ignores DR)
