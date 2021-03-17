@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.18
+# Current Release Version 0.8.19
 
 [If you like our work...](https://ko-fi.com/crnormand)
 
@@ -20,6 +20,9 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 ### If you are looking for the latest stable release, use the manifest URL above.
 
 [Current GCA Export version: 'GCA-7' 2/18/2021 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+
+## [Change Log](changelog.md)
+The list was getting just too long, so it has been moved to a separate file.   Click to see what has changed.
 
 The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
 
