@@ -6,6 +6,7 @@ import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from '../module/actor/tracker-editor-dialog.js'
+import { GurpsActor } from '../module/actor.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications

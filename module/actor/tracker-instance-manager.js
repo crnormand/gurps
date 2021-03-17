@@ -1,6 +1,6 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from '../actor/tracker-editor-dialog.js'
-import { zeroFill } from '../../lib/utilities.js'
+import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 
 export class ResourceTrackerManager extends FormApplication {
   static initSettings() {
@@ -33,12 +33,7 @@ export class ResourceTrackerManager extends FormApplication {
     let templates = temp || {}
 
     // convert from map to array
-    this._templates = []
-    Object.entries(templates)
-      .sort(it => it.key)
-      .forEach(([key, value]) => {
-        this._templates.push(value)
-      })
+    this._templates = objectToArray(templates)
   }
 
   static get defaultOptions() {
@@ -144,12 +139,8 @@ export class ResourceTrackerManager extends FormApplication {
    * @override
    */
   _updateObject() {
-    // convert the array into a map:
-    let data = {}
-    this._templates.forEach((template, index) => {
-      data[zeroFill(index, 4)] = template
-    })
-
+    // convert the array into an object:
+    let data = arrayToObject(this._templates)
     game.settings.set(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, data)
   }
 }
