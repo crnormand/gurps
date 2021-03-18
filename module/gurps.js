@@ -1224,7 +1224,7 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
   otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
   let canblind = false
   if (!!blindcheck) {
-    canblind = blindcheck.hasOwnProperty('blindroll')
+    canblind = blindcheck == true || blindcheck.hasOwnProperty('blindroll')
     if (canblind && blindcheck.blindroll) {
       otf = '!' + otf
       canblind = false
