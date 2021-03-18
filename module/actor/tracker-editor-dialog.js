@@ -4,10 +4,11 @@ export class ResourceTrackerEditor extends Application {
    * @param {Tracker} tracker data to update
    * @param {*} options
    */
-  constructor(tracker, options = {}) {
+  constructor(tracker, isActor, options = {}) {
     super(options)
 
     this._tracker = tracker
+    this._isActor = isActor
   }
 
   /**
@@ -19,7 +20,7 @@ export class ResourceTrackerEditor extends Application {
   static editForActor(actor, path, options) {
     let tracker = getProperty(actor.data.data, path)
     let temp = JSON.stringify(tracker)
-    let dialog = new ResourceTrackerEditor(JSON.parse(temp), options)
+    let dialog = new ResourceTrackerEditor(JSON.parse(temp), true, options)
     dialog._updateTracker = async () => {
       let update = {}
       update[`data.${path}`] = dialog._tracker
@@ -47,6 +48,7 @@ export class ResourceTrackerEditor extends Application {
   getData(options) {
     const data = super.getData(options)
     data.tracker = this._tracker
+    data.isActor = this._isActor
     return data
   }
 

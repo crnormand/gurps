@@ -90,7 +90,7 @@ export class ResourceTrackerManager extends FormApplication {
     })
 
     html.find('[name="name"]').click(async ev => {
-      let index = $(ev.currentTarget).attr('data')
+      let index = parseInt($(ev.currentTarget).attr('data'))
       let data = JSON.stringify(this._templates[index].tracker)
       let dialog = new ResourceTrackerEditor(JSON.parse(data))
       let defaultClose = dialog.close
@@ -100,7 +100,7 @@ export class ResourceTrackerManager extends FormApplication {
           // validate that the new tracker's name and alias are unique
           let newTracker = dialog._tracker
           let match = this._templates
-            .filter((_, i) => i !== index) // remove the current tracker from the validation check
+            .filter((_, i) => i !== index)
             .find(
               t =>
                 (!!t.tracker.name && t.tracker.name === newTracker.name) ||
