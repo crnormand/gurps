@@ -83,8 +83,8 @@
             {{#each CALC.hitLocationsWithDR}}
             <div>
               <label>
-                <input type='radio' name='hitlocation' value='{{this.where}}' {{#if (eq ../CALC.hitLocation
-                  this.where)}}checked{{/if}}>&nbsp;{{localizeWithFallback (concat "GURPS.hitLocation" this.where)
+                <input type='radio' name='hitlocation' value='{{this.where}}' {{checked (eq ../CALC.hitLocation
+                  this.where)}}>&nbsp;{{localizeWithFallback (concat "GURPS.hitLocation" this.where)
                 this.where}}
               </label>
             </div>
@@ -102,18 +102,16 @@
           <hr /> <!-- Doesn't do much except add some space -->
 
           <div class='gurps-3col gurps-radio-col'>
-            <div><label><input type='radio' name='hitlocation' value='Large-Area' {{#if (eq
-                  CALC.hitLocation 'Large-Area' )}}checked{{/if}}>&nbsp;{{localize
-                "GURPS.addLargeAreaInjury"}}</label>
+            <div><label><input type='radio' name='hitlocation' value='Large-Area' {{checked (eq
+                  CALC.hitLocation "Large-Area" )}}>&nbsp;{{localize "GURPS.addLargeAreaInjury"}}</label>
             </div>
             <div></div>
             <div class='pdflink'>B400</div>
           </div>
 
           <div class='grid grid-2col flex-between' style='margin: 10px 0;'>
-            <div><label><input type='radio' name='hitlocation' value='User Entered' {{#if (eq
-                  CALC.hitLocation 'User Entered' )}}checked{{/if}}>&nbsp;{{localize
-                "GURPS.addEnterDR"}}:</input></label></div>
+            <div><label><input type='radio' name='hitlocation' value='User Entered' {{checked (eq
+                  CALC.hitLocation "User Entered" )}}>&nbsp;{{localize "GURPS.addEnterDR"}}:</input></label></div>
             <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
               value='{{CALC.userEnteredDR}}'>
           </div>
@@ -130,8 +128,8 @@
                 <header>{{localize "GURPS.modifier"}}</header>
 
                 {{#each CALC.effectiveWoundModifiers}}
-                <div><label><input type='radio' name='woundmodifier' value='{{@key}}' {{#if (eq ../CALC.damageType
-                      @key)}}checked{{/if}}>&nbsp;{{this.label}}</label></div>
+                <div><label><input type='radio' name='woundmodifier' value='{{@key}}' {{checked (eq ../CALC.damageType
+                      @key)}}>&nbsp;{{this.label}}</label></div>
                 <div>{{@key}}</div>
                 <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>×{{fractionalize
                   this.multiplier 2}}
@@ -151,12 +149,11 @@
 
           <hr /> <!-- Doesn't do much except add some space -->
 
-          <label><input type='radio' name='woundmodifier' value='none' {{#if (eq CALC.damageType 'none'
-              )}}checked{{/if}}>&nbsp;{{localize "GURPS.noModifier"}}</label>
+          <label><input type='radio' name='woundmodifier' value='none' {{checked (eq CALC.damageType 'none'
+              )}}>&nbsp;{{localize "GURPS.noModifier"}}</label>
           <div class='grid grid-2col flex-between' style='margin: 10px 0;'>
-            <div><label><input type='radio' name='woundmodifier' value='User Entered' {{#if (eq
-                  CALC.damageType 'User Entered' )}}checked{{/if}}>&nbsp;{{localize
-                "GURPS.addEnterModifier"}}:</label>
+            <div><label><input type='radio' name='woundmodifier' value='User Entered' {{checked (eq
+                  CALC.damageType 'User Entered' )}}>&nbsp;{{localize "GURPS.addEnterModifier"}}:</label>
             </div>
             <input type='text' class='decimal-digits-only' id='user-entered-woundmod'
               value='{{CALC.userEnteredWoundModifier}}'>
@@ -172,15 +169,15 @@
           <aside>{{localize "GURPS.addTacticalRulesDefaults"}}.</aside>
 
           <div class='gurps-3col gurps-checkbox-col'>
-            <div><input id='tactical-blunttrauma' type='checkbox' value='blunttrauma' {{#if
-                CALC.useBluntTrauma}}checked{{/if}}></div>
+            <div><input id='tactical-blunttrauma' type='checkbox' value='blunttrauma' {{checked CALC.useBluntTrauma}}>
+            </div>
             <div><label for='tactical-blunttrauma'>{{localize "GURPS.bluntTrauma"}}</label></div>
             <div class='pdflink'>B379</div>
           </div>
 
           <div class='gurps-3col gurps-checkbox-col'>
-            <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{#if
-                CALC.useLocationModifiers}}checked{{/if}}></div>
+            <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{checked
+                CALC.useLocationModifiers}}></div>
             <div><label for='tactical-locationmodifier'>{{localize "GURPS.addHitLocationWoundModifiers"}}</label>
             </div>
             <div class='pdflink'>B398</div>
@@ -188,45 +185,43 @@
 
           <h4>{{localize "GURPS.addSpecialCombatSituations"}}</h4>
           <div class='gurps-3col gurps-checkbox-col'>
-            <div><input id='specials-range12D' type='checkbox' value='range12D' {{#if
-                CALC.isRangedHalfDamage}}checked{{/if}}></div>
+            <div><input id='specials-range12D' type='checkbox' value='range12D' {{checked CALC.isRangedHalfDamage}}>
+            </div>
             <div><label for='specials-range12D'>{{localize "GURPS.addRangedHalfDamage"}}</label></div>
             <div class='pdflink'>B378</div>
           </div>
 
           <div class='collapsible-wrapper options-drawer'>
-            <input id='vulnerable' class='toggle' type='checkbox' value='vulnerable' {{#if
-              CALC.isVulnerable}}checked{{/if}}>
+            <input id='vulnerable' class='toggle' type='checkbox' value='vulnerable' {{checked CALC.isVulnerable}}>
             <label for='vulnerable' class='label-toggle'>{{localize "GURPS.addVulnerability"}}:<span
                 class='pdflink'>B161</span></label>
             <div class='grid grid-3col continuation collapsible-content'>
-              <label><input type='radio' name='vulnerability' value='2' {{#if (eq CALC.vulnerabilityMultiple
-                  2)}}checked{{/if}}>&nbsp;×2</label>
-              <label><input type='radio' name='vulnerability' value='3' {{#if (eq CALC.vulnerabilityMultiple
-                  3)}}checked{{/if}}>&nbsp;×3</label>
-              <label><input type='radio' name='vulnerability' value='4' {{#if (eq CALC.vulnerabilityMultiple
-                  4)}}checked{{/if}}>&nbsp;×4</label>
+              <label><input type='radio' name='vulnerability' value='2' {{checked (eq CALC.vulnerabilityMultiple
+                  2)}}>&nbsp;×2</label>
+              <label><input type='radio' name='vulnerability' value='3' {{checked (eq CALC.vulnerabilityMultiple
+                  3)}}>&nbsp;×3</label>
+              <label><input type='radio' name='vulnerability' value='4' {{checked (eq CALC.vulnerabilityMultiple
+                  4)}}>&nbsp;×4</label>
             </div>
           </div>
 
           <div class='gurps-3col gurps-checkbox-col'>
-            <div><input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{#if
-                CALC.useArmorDivisor}}checked{{/if}}>
+            <div><input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{checked
+                CALC.useArmorDivisor}}>
             </div>
             <div>
               <label for='tactical-armordivisor' class='label-toggle'>{{localize "GURPS.addArmorDivisor"}}:
-                <select name='tactical-armordivisor' {{#unless CALC.useArmorDivisor}}disabled{{/unless}}
-                  style='margin-left: 8px;'>
-                  <option value='0' {{#if (eq CALC.armorDivisor 0)}}selected{{/if}}>None</option>
-                  <option value='0.1' {{#if (eq CALC.armorDivisor 0.1)}}selected{{/if}}>(0.1)</option>
-                  <option value='0.2' {{#if (eq CALC.armorDivisor 0.2)}}selected{{/if}}>(0.2)</option>
-                  <option value='0.5' {{#if (eq CALC.armorDivisor 0.5)}}selected{{/if}}>(0.5)</option>
-                  <option value='2' {{#if (eq CALC.armorDivisor 2)}}selected{{/if}}>(2)</option>
-                  <option value='3' {{#if (eq CALC.armorDivisor 3)}}selected{{/if}}>(3)</option>
-                  <option value='5' {{#if (eq CALC.armorDivisor 5)}}selected{{/if}}>(5)</option>
-                  <option value='10' {{#if (eq CALC.armorDivisor 10)}}selected{{/if}}>(10)</option>
-                  <option value='100' {{#if (eq CALC.armorDivisor 100)}}selected{{/if}}>(100)</option>
-                  <option value='-1' {{#if (eq CALC.armorDivisor -1)}}selected{{/if}}>Ignores DR</option>
+                <select name='tactical-armordivisor' {{disabled (not CALC.useArmorDivisor)}} style='margin-left: 8px;'>
+                  <option value='0' {{select-if CALC.armorDivisor 0}}>None</option>
+                  <option value='0.1' {{select-if CALC.armorDivisor 0.1}}>(0.1)</option>
+                  <option value='0.2' {{select-if CALC.armorDivisor 0.2}}>(0.2)</option>
+                  <option value='0.5' {{select-if CALC.armorDivisor 0.5}}>(0.5)</option>
+                  <option value='2' {{select-if CALC.armorDivisor 2}}>(2)</option>
+                  <option value='3' {{select-if CALC.armorDivisor 3}}>(3)</option>
+                  <option value='5' {{select-if CALC.armorDivisor 5}}>(5)</option>
+                  <option value='10' {{select-if CALC.armorDivisor 10}}>(10)</option>
+                  <option value='100' {{select-if CALC.armorDivisor 100}}>(100)</option>
+                  <option value='-1' {{select-if CALC.armorDivisor -1}}>Ignores DR</option>
                 </select></label>
             </div>
             <div class='pdflink'>B378</div>
@@ -234,18 +229,17 @@
 
           <div class='gurps-3col gurps-checkbox-col'>
             <div>
-              <input id='hardened' class='toggle' type='checkbox' value='hardened' {{#if
-                CALC.isHardenedDR}}checked{{/if}}>
+              <input id='hardened' class='toggle' type='checkbox' value='hardened' {{checked CALC.isHardenedDR}}>
             </div>
             <div>
               <label for='hardened' class='label-toggle'>{{localize "GURPS.addHardenedDRLevel"}}:
-                <select name='hardened' {{#unless CALC.isHardenedDR}}disabled{{/unless}} style='margin-left: 8px;'>
-                  <option value='1' {{#if (eq CALC.hardenedDRLevel 1)}}selected{{/if}}>1</option>
-                  <option value='2' {{#if (eq CALC.hardenedDRLevel 2)}}selected{{/if}}>2</option>
-                  <option value='3' {{#if (eq CALC.hardenedDRLevel 3)}}selected{{/if}}>3</option>
-                  <option value='4' {{#if (eq CALC.hardenedDRLevel 4)}}selected{{/if}}>4</option>
-                  <option value='5' {{#if (eq CALC.hardenedDRLevel 5)}}selected{{/if}}>5</option>
-                  <option value='6' {{#if (eq CALC.hardenedDRLevel 6)}}selected{{/if}}>6</option>
+                <select name='hardened' {{disabled (not CALC.isHardenedDR)}} style='margin-left: 8px;'>
+                  <option value='1' {{select-if CALC.hardenedDRLevel 1}}>1</option>
+                  <option value='2' {{select-if CALC.hardenedDRLevel 2}}>2</option>
+                  <option value='3' {{select-if CALC.hardenedDRLevel 3}}>3</option>
+                  <option value='4' {{select-if CALC.hardenedDRLevel 4}}>4</option>
+                  <option value='5' {{select-if CALC.hardenedDRLevel 5}}>5</option>
+                  <option value='6' {{select-if CALC.hardenedDRLevel 6}}>6</option>
                 </select>
               </label>
             </div>
@@ -255,27 +249,27 @@
           </div>
 
           <div class='collapsible-wrapper options-drawer'>
-            <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{#if
-              CALC.isInjuryTolerance}}checked{{/if}}></input>
+            <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{checked
+              CALC.isInjuryTolerance}}></input>
             <label for='injury-tolerance' class='label-toggle'>{{localize "GURPS.addInjuryTolerance"}}:<span
                 class='pdflink'>
                 B60</span></label>
             <div class='collapsible-content continuation'>
-              <div><label><input type='radio' name='injury-tolerance' value='unliving' {{#if (eq
-                    CALC.injuryToleranceType 'unliving' )}}checked{{/if}}>&nbsp;{{localize
+              <div><label><input type='radio' name='injury-tolerance' value='unliving' {{checked (eq
+                    CALC.injuryToleranceType "unliving" )}}>&nbsp;{{localize
                   "GURPS.addInjuryToleranceUnliving"}}<span class='pdflink'>B380</span></label></div>
-              <div><label><input type='radio' name='injury-tolerance' value='homogenous' {{#if (eq
-                    CALC.injuryToleranceType 'homogenous' )}}checked{{/if}}>&nbsp;{{localize
+              <div><label><input type='radio' name='injury-tolerance' value='homogenous' {{checked (eq
+                    CALC.injuryToleranceType "homogenous" )}}>&nbsp;{{localize
                   "GURPS.addInjuryToleranceHomogenous"}}<span class='pdflink'>B380</span></label></div>
-              <div><label><input type='radio' name='injury-tolerance' value='diffuse' {{#if (eq
-                    CALC.injuryToleranceType 'diffuse' )}}checked{{/if}}>&nbsp;{{localize
+              <div><label><input type='radio' name='injury-tolerance' value='diffuse' {{checked (eq
+                    CALC.injuryToleranceType "diffuse" )}}>&nbsp;{{localize
                   "GURPS.addInjuryToleranceDiffuse"}}<span class='pdflink'>B380</span></label></div>
             </div>
           </div>
 
           <div class='collapsible-wrapper options-drawer'>
-            <input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{#if
-              CALC.isExplosion}}checked{{/if}}></input>
+            <input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{checked
+              CALC.isExplosion}}></input>
             <label for='explosion-damage' class='label-toggle'>Explosion:<span class='pdflink'>B414</span></label>
             <div class='collapsible-content continuation'>
               <div style='display: flex; padding: 3px;'><label for='explosion-yards'
@@ -288,14 +282,13 @@
           {{#if CALC.useBluntTrauma}}
           <div style='display: flex; flex-direction: column; justify-content: center;'>
             <div id='specials-insert-point' class='gurps-3col'>
-              <input id='flexible-armor' type='checkbox' value='flexible-armor' {{#if
-                CALC.isFlexibleArmor}}checked{{/if}}>
+              <input id='flexible-armor' type='checkbox' value='flexible-armor' {{checked CALC.isFlexibleArmor}}>
               <label for='flexible-armor'>{{localize "GURPS.addFlexibleArmor"}}
                 <aside style='margin: 0;'>({{localize "GURPS.bluntTrauma"}}):</aside>
               </label>
               <div id='blunt-trauma-field' class='with-button'>
                 <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
-                  value='{{CALC.effectiveBluntTrauma}}' {{#unless CALC.isFlexibleArmor}}disabled{{/unless}}
+                  value='{{CALC.effectiveBluntTrauma}}' {{disabled (not CALC.isFlexibleArmor)}}
                   style='border: 1px solid #7a7971;'>
                 <button name='clear'><span class='fas fa-times-circle'></button>
               </div>
@@ -304,8 +297,8 @@
           {{/if}}
 
           <div class='collapsible-wrapper options-drawer'>
-            <input id='shotgun-damage' class='toggle' type='checkbox' value='shotgun-damage' {{#if
-              CALC.isShotgun}}checked{{/if}}></input>
+            <input id='shotgun-damage' class='toggle' type='checkbox' value='shotgun-damage' {{checked
+              CALC.isShotgun}}></input>
             <label for='shotgun-damage' class='label-toggle'>{{localize "GURPS.addShotgunCloseRange"}}:<span
                 class='pdflink'>B409</span></label>
             <div class='collapsible-content continuation'>
