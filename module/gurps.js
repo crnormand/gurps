@@ -17,7 +17,7 @@ import { SemanticVersion } from '../lib/semver.js'
 import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
-import { ResourceTrackerManager } from '../module/actor/tracker-instance-manager.js'
+import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -47,6 +47,7 @@ import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
+import { damageTypeMap, woundModifiers } from './damage/damage-tables.js'
 
 addChatHooks()
 jqueryHelpers()
@@ -611,7 +612,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
+    DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
     return true
   }
 
@@ -624,7 +625,7 @@ async function performAction(action, actor, event, targets) {
       }
       formula = df + action.formula
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      GURPS.damageChat.create(
+      DamageChat.create(
         actor || game.user,
         formula,
         action.damagetype,
@@ -1177,7 +1178,6 @@ GURPS.chatClickGmod = chatClickGmod
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
-GURPS.damageChat = new DamageChat(GURPS)
 
 // // Modifier Bucket must be defined after hit locations
 // GURPS.ModifierBucket = new ModifierBucket({
@@ -1362,6 +1362,7 @@ Hooks.once('init', async function () {
   console.log(GURPS.BANNER)
   console.log(`Initializing GURPS 4e Game Aid`)
   console.log(GURPS.LEGAL)
+
   game.GURPS = GURPS
   CONFIG.GURPS = GURPS
   let src = 'systems/gurps/icons/gurps4e.png'
@@ -1372,6 +1373,23 @@ Hooks.once('init', async function () {
   HitLocation.init()
 
   ResourceTrackerManager.initSettings()
+
+  // get all aliases defined in the resource tracker templates and register them as damage types
+  let resourceTrackers = ResourceTrackerManager.getAllTemplates()
+    .filter(it => !!it.tracker.isDamageType)
+    .filter(it => !!it.tracker.alias)
+    .map(it => it.tracker)
+  resourceTrackers.forEach(it => (damageTypeMap[it.alias] = it.alias))
+  resourceTrackers.forEach(
+    it =>
+      (woundModifiers[it.alias] = {
+        multiplier: 1,
+        label: it.name,
+        resource: true,
+      })
+  )
+
+  DamageChat.initSettings()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket({

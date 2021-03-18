@@ -1,5 +1,5 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
-import { ResourceTrackerEditor } from '../actor/tracker-editor-dialog.js'
+import { ResourceTrackerEditor } from './tracker-editor-dialog.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 
 export class ResourceTrackerManager extends FormApplication {
@@ -22,6 +22,11 @@ export class ResourceTrackerManager extends FormApplication {
     })
   }
 
+  static getAllTemplates() {
+    let templates = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES) || {}
+    return objectToArray(templates)
+  }
+
   /**
    *
    * @param {*} options
@@ -29,11 +34,7 @@ export class ResourceTrackerManager extends FormApplication {
   constructor(options = {}) {
     super(options)
 
-    let temp = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES)
-    let templates = temp || {}
-
-    // convert from map to array
-    this._templates = objectToArray(templates)
+    this._templates = ResourceTrackerManager.getAllTemplates()
   }
 
   static get defaultOptions() {
@@ -89,13 +90,28 @@ export class ResourceTrackerManager extends FormApplication {
     })
 
     html.find('[name="name"]').click(async ev => {
-      let index = $(ev.currentTarget).attr('data')
+      let index = parseInt($(ev.currentTarget).attr('data'))
       let data = JSON.stringify(this._templates[index].tracker)
       let dialog = new ResourceTrackerEditor(JSON.parse(data))
       let defaultClose = dialog.close
 
       let tracker = await new Promise((resolve, reject) => {
         dialog._updateTracker = () => {
+          // validate that the new tracker's name and alias are unique
+          let newTracker = dialog._tracker
+          let match = this._templates
+            .filter((_, i) => i !== index)
+            .find(
+              t =>
+                (!!t.tracker.name && t.tracker.name === newTracker.name) ||
+                (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
+            )
+
+          if (!!match) {
+            ui.notifications.warn(`Tracker name (${newTracker.name}) or alias (${newTracker.alias}) is not unique.`)
+            resolve(this._templates[index].tracker)
+          }
+
           resolve(dialog._tracker)
         }
         dialog.close = () => {
@@ -128,11 +144,14 @@ export class ResourceTrackerManager extends FormApplication {
       this._templates[index].initialValue = ev.currentTarget.value
     })
 
-    html.find('#update').click(() => this._updateObject())
+    // html.find('#update').click(() => this._updateObject())
   }
 
   _validate(index, value) {
-    return this._templates.filter((it, idx) => idx != index).every(it => it.slot !== value)
+    return this._templates
+      .filter(it => !!it.slot)
+      .filter((it, idx) => idx != index)
+      .every(it => it.slot !== value)
   }
 
   /**

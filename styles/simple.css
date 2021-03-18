@@ -2794,7 +2794,7 @@ ul#result-effects li {
 
 .resource-editor .inputs {
   display: grid;
-  grid-template-columns: 5rem max-content;
+  grid-template-columns: 4.5rem auto;
   grid-template-rows: auto;
   grid-gap: 0.15rem;
   justify-content: center;
