@@ -97,6 +97,21 @@ export class ResourceTrackerManager extends FormApplication {
 
       let tracker = await new Promise((resolve, reject) => {
         dialog._updateTracker = () => {
+          // validate that the new tracker's name and alias are unique
+          let newTracker = dialog._tracker
+          let match = this._templates
+            .filter((_, i) => i !== index) // remove the current tracker from the validation check
+            .find(
+              t =>
+                (!!t.tracker.name && t.tracker.name === newTracker.name) ||
+                (!!t.tracker.alias && t.tracker.alias === newTracker.alias)
+            )
+
+          if (!!match) {
+            ui.notifications.warn(`Tracker name (${newTracker.name}) or alias (${newTracker.alias}) is not unique.`)
+            resolve(this._templates[index].tracker)
+          }
+
           resolve(dialog._tracker)
         }
         dialog.close = () => {
@@ -129,11 +144,14 @@ export class ResourceTrackerManager extends FormApplication {
       this._templates[index].initialValue = ev.currentTarget.value
     })
 
-    html.find('#update').click(() => this._updateObject())
+    // html.find('#update').click(() => this._updateObject())
   }
 
   _validate(index, value) {
-    return this._templates.filter((it, idx) => idx != index).every(it => it.slot !== value)
+    return this._templates
+      .filter(it => !!it.slot)
+      .filter((it, idx) => idx != index)
+      .every(it => it.slot !== value)
   }
 
   /**

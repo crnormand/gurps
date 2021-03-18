@@ -1376,6 +1376,7 @@ Hooks.once('init', async function () {
 
   // get all aliases defined in the resource tracker templates and register them as damage types
   let resourceTrackers = ResourceTrackerManager.getAllTemplates()
+    .filter(it => !!it.tracker.isDamageType)
     .filter(it => !!it.tracker.alias)
     .map(it => it.tracker)
   resourceTrackers.forEach(it => (damageTypeMap[it.alias] = it.alias))

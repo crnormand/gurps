@@ -68,6 +68,12 @@ export class ResourceTrackerEditor extends Application {
       this._tracker.alias = ev.currentTarget.value
     })
 
+    html.find('[name="damage-type"]').click(ev => {
+      let element = $(ev.currentTarget)
+      this._tracker.isDamageType = element.is(':checked')
+      this.render(false)
+    })
+
     html.find('.inputs .current').change(ev => {
       this._tracker.value = parseInt(ev.currentTarget.value)
     })
@@ -92,13 +98,13 @@ export class ResourceTrackerEditor extends Application {
         condition: 'Normal',
         color: '#FFFFFF',
       })
-      this.render(true)
+      this.render(false)
     })
 
     html.find('[name="delete-threshold"]').click(ev => {
       let index = $(ev.currentTarget).attr('data')
       this._tracker.thresholds.splice(index, 1)
-      this.render(true)
+      this.render(false)
     })
 
     html.find('[name="comparison"]').change(ev => {
