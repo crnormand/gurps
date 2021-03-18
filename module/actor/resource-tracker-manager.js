@@ -34,7 +34,7 @@ export class ResourceTrackerManager extends FormApplication {
   constructor(options = {}) {
     super(options)
 
-    this._templates = ResourceTrackerEditor.getAllTemplates()
+    this._templates = ResourceTrackerManager.getAllTemplates()
   }
 
   static get defaultOptions() {

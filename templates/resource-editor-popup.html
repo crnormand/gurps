@@ -4,17 +4,29 @@
       <div class='name'>
         <input class="name gcs-input" type="text" value="{{tracker.name}}" placeholder="Resource Name">
       </div>
-      <div class='inputs'>
-        <input class="alias gcs-input" type="text" value="{{tracker.alias}}" />
-        <div class="label">Alias</div>
-        <div></div>
-        <div class='label'>Short name used in OtF and damage types.</div>
-        <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
-        <div class="label">Current</div>
-        <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
-        <div class="label">Minimum</div>
-        <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
-        <div class="label">Maximum</div>
+      <div class='grid grid-2col'>
+        <div class='inputs' style='margin: 0;'>
+          <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
+          <div class="label">Current</div>
+          <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
+          <div class="label">Minimum</div>
+          <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
+          <div class="label">Maximum</div>
+        </div>
+        <div class='inputs' style='margin: 0;'>
+          <input class="alias gcs-input" type="text" value="{{tracker.alias}}" />
+          <div class="label">Alias</div>
+          <div></div>
+          <div></div>
+          <div style='grid-column: 1 / span 2; white-space: normal'>
+            <label class='label' style='display: block; padding-left: 15px; text-indent: -15px;'>
+              <input
+                style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
+                type='checkbox' name='damage-type' {{checked isDamageType}} />
+              Use as Damage Type
+            </label>
+          </div>
+        </div>
       </div>
     </div>
     <div>
@@ -24,7 +36,7 @@
       <h3>Thresholds:</h3>
       <div><a id='threshold-add' class='button icon'><i class="fas fa-plus"></i></a></div>
     </div>
-    <div style='overflow-y: auto; height: 200px;'>
+    <div style='overflow-y: auto; height: 239px;'>
       <div class='threshold table'>
         {{#if tracker.thresholds}}
         <div class='label span3'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
