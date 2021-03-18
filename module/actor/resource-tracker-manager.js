@@ -1,5 +1,5 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
-import { ResourceTrackerEditor } from '../actor/tracker-editor-dialog.js'
+import { ResourceTrackerEditor } from './tracker-editor-dialog.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 
 export class ResourceTrackerManager extends FormApplication {
@@ -22,6 +22,11 @@ export class ResourceTrackerManager extends FormApplication {
     })
   }
 
+  static getAllTemplates() {
+    let templates = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES) || {}
+    return objectToArray(templates)
+  }
+
   /**
    *
    * @param {*} options
@@ -29,11 +34,7 @@ export class ResourceTrackerManager extends FormApplication {
   constructor(options = {}) {
     super(options)
 
-    let temp = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES)
-    let templates = temp || {}
-
-    // convert from map to array
-    this._templates = objectToArray(templates)
+    this._templates = ResourceTrackerEditor.getAllTemplates()
   }
 
   static get defaultOptions() {

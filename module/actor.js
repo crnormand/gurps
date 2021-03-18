@@ -1129,12 +1129,13 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * Adds any assigned resource trackers to the actor data and sheet.
+   */
   async setResourceTrackers() {
     // read the Templates from settings data
     let temp = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES)
-
     if (!temp || Object.keys(temp).length === 0) return
-
     let templates = objectToArray(temp)
 
     // find those with non-blank slots
@@ -1168,6 +1169,7 @@ export class GurpsActor extends Actor {
         }
       }
       template.tracker.max = value
+      template.tracker.value = value
 
       // remove whatever is there
       let del = {}

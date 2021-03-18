@@ -16,7 +16,6 @@
         <div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
         <div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
         {{#each CALC.calculators}}
-        {{debug @index}}
         <div id='pagination-{{@index}}' class='{{#if (eq ../CALC.viewId @index)}}active{{else}}{{/if}}'>{{basicDamage}}
         </div>
         {{/each}}
@@ -39,6 +38,11 @@
           </option>
           <option value='FP' {{#if (eq CALC.applyTo 'FP' )}}selected{{/if}}>{{localize "GURPS.attributesFPNAME"}}
           </option>
+
+          {{#each resourceLabels}}
+          {{debug this}}
+          <option value='{{alias}}' {{select-if ../CALC.applyTo alias}}>{{name}}</option>
+          {{/each}}
         </select>
       </div>
 
@@ -206,7 +210,6 @@
           </div>
 
           <div class='gurps-3col gurps-checkbox-col'>
-            {{debug CALC.armorDivisor}}
             <div><input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{#if
                 CALC.useArmorDivisor}}checked{{/if}}>
             </div>
@@ -364,9 +367,6 @@
             <div id='result-dr'>{{localize "GURPS.hitLocationDR"}}</div>
             <div>{{CALC.DR}}</div>
             <div>{{CALC.hitLocation}}</div>
-
-            {{debug (concat CALC.useArmorDivisor "|" CALC.armorDivisor "|" CALC.isShotgun "|" CALC.isExplosion)}}
-            {{debug (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
 
             {{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
             {{#unless CALC.isExplosion}}
