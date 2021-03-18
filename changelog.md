@@ -9,7 +9,7 @@ This is what we are currently working on:
 
 ## History
 
-  0.8.20
+0.8.20
   
 - Fixed description of modifier for Skill OtF
 - Fixed GM Send to allow blind rolls
@@ -17,7 +17,8 @@ This is what we are currently working on:
 - Support adding Resources as a custom damage type (https://github.com/crnormand/gurps/issues/386)
 - Allow the ADD to apply resource damage to the actor's resource tracker (https://github.com/crnormand/gurps/issues/385)
 
-  0.8.19 - 3/17/2021
+
+0.8.19 - 3/17/2021
 
 - Translated status effects to German
 - Added all RAW armor divisors to ADD (0.1, 0.2., 0.5, 2, 3, 5, 10, 100, Ignores DR)
