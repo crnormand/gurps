@@ -9,6 +9,10 @@ This is what we are currently working on:
 
 ## History
 
+  0.8.20
+  
+- Fixed description of modifier for Skill OtF
+
   0.8.19 - 3/17/2021
 
 - Translated status effects to German
