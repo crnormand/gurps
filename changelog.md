@@ -14,6 +14,8 @@ This is what we are currently working on:
 - Fixed description of modifier for Skill OtF
 - Fixed GM Send to allow blind rolls
 - Fixed OtF coloration on skills
+- Support adding Resources as a custom damage type (https://github.com/crnormand/gurps/issues/386)
+- Allow the ADD to apply resource damage to the actor's resource tracker (https://github.com/crnormand/gurps/issues/385)
 
   0.8.19 - 3/17/2021
 
