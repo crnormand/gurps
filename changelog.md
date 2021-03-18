@@ -12,6 +12,8 @@ This is what we are currently working on:
   0.8.20
   
 - Fixed description of modifier for Skill OtF
+- Fixed GM Send to allow blind rolls
+- Fixed OtF coloration on skills
 
   0.8.19 - 3/17/2021
 
