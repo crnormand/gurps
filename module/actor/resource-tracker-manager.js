@@ -1,5 +1,5 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
-import { ResourceTrackerEditor } from './tracker-editor-dialog.js'
+import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 
 export class ResourceTrackerManager extends FormApplication {
@@ -12,13 +12,36 @@ export class ResourceTrackerManager extends FormApplication {
       restricted: true,
     })
 
+    let defaultTrackers = JSON.parse(`{
+      "0000": {
+        "tracker": {
+          "name": "Control Points",
+          "alias": "ctrl",
+          "max": 0,
+          "min": 0,
+          "value": 0,
+          "thresholds": [
+            { "comparison": ">", "operator": "×", "value": 0.9, "condition": "Normal", "color": "#00ff00" },
+            { "comparison": ">", "operator": "×", "value": 0.5, "condition": "Grabbed", "color": "#ffff00" },
+            { "comparison": ">", "operator": "×", "value": 0, "condition": "Grappled", "color": "#ffbb00" },
+            { "comparison": ">", "operator": "×", "value": -0.5, "condition": "Restrained", "color": "#ff8000" },
+            { "comparison": ">", "operator": "×", "value": -1, "condition": "Controlled", "color": "#ff0000" },
+            { "comparison": "≤", "operator": "×", "value": -1, "condition": "Pinned", "color": "#800000" }
+          ],
+          "isDamageType": true
+        },
+        "slot": "",
+        "initialValue": "attributes.ST.value"
+      }
+    }`)
+
     game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
       name: 'Resource Tracker Templates',
       scope: 'world',
       config: false,
       type: Object,
-      default: {},
-      onChange: value => console.log(`Updated Default Resource Trackers: ${value}`),
+      default: defaultTrackers,
+      onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
   }
 
