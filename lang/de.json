@@ -33,5 +33,8 @@
   "GURPS.STATUSSilence": "Stumm",
   "GURPS.STATUSSprint": "Sprintend",
   "GURPS.STATUSStealth": "Schleichend",
-  "GURPS.STATUSWait": "Wartend"
+  "GURPS.STATUSWait": "Wartend",
+
+  "EFFECT.StatusShocked": "Schock"
+
 }
