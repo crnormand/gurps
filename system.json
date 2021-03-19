@@ -25,8 +25,13 @@
     },
     {
       "lang": "pt_br",
-      "name": "Brazilian Portuguese",
+      "name": "Português (Brasil)",
       "path": "lang/pt_br.json"
+    },
+    {
+      "lang": "de",
+      "name": "German",
+      "path": "lang/de.json"
     }
   ],
   "gridDistance": 1,
