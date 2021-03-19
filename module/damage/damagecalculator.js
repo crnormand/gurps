@@ -77,7 +77,7 @@ export class CompositeDamageCalculator {
 
     this._hitLocation = this._defender.defaultHitLocation
     this._previousHitLocation = this._hitLocation
-    this._userEnteredDR = 0
+    this._userEnteredDR = null
 
     // the wounding modifier selected using the radio buttons
     this._userEnteredWoundModifier = 1
@@ -183,9 +183,11 @@ export class CompositeDamageCalculator {
 
   // return the DR indicated by the Hit Location
   get DR() {
+    if (this._userEnteredDR !== null) return this._userEnteredDR
+
     if (this._hitLocation === 'Random') return 0
 
-    if (this._hitLocation === 'User Entered') return this._userEnteredDR
+    // if (this._hitLocation === 'User Entered') return this._userEnteredDR
 
     if (this._hitLocation === 'Large-Area') {
       let lowestDR = Number.POSITIVE_INFINITY

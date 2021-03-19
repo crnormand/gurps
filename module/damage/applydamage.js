@@ -159,8 +159,22 @@ export default class ApplyDamageDialog extends Application {
     // ==== Hit Location and DR ====
     // When user-entered DR input changes, update the calculator.
     html
-      .find('#user-entered-dr')
+      .find('#override-dr input')
       .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'userEnteredDR', parseIntFrom))
+
+    // Blunt Trauma user override text field
+    // html.find('#blunt-trauma-field input').on('change', ev => {
+    //   let currentValue = $(ev.currentTarget).val()
+    //   this._calculator.bluntTrauma =
+    //     currentValue === '' || currentValue === this._calculator.calculatedBluntTrauma ? null : parseFloat(currentValue)
+    //   this.updateUI()
+    // })
+
+    // clear the user override of the Override DR value
+    html.find('#override-dr button').click(() => {
+      this._calculator.userEnteredDR = null
+      this.updateUI()
+    })
 
     html.find('#apply-multiple').on('change', ev => {
       let temp = $(ev.currentTarget).val()
