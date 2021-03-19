@@ -100,6 +100,9 @@
 
   "GURPS.wasStruckIn": "foi acertado(a) no(a)",
   "GURPS.bluntTrauma": "Contusão",
+
+  "GURPS.addApplyDamageDialog": "TODO::Apply Damage Dialog",
+
   "GURPS.addTitleConcat0": "Aplicar",
   "GURPS.addTitleConcat01": "ponto de ",
   "GURPS.addTitleConcat0s": "pontos de ",
