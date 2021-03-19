@@ -451,7 +451,7 @@ export class GurpsActor extends Actor {
     let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
     let locs = []
     locations.forEach(e => {
-      if (!!table[e.where]) {
+      if (!!table && !!table[e.where]) {
         // if e.where already exists in table, don't map
         locs.push(e)
       } else {
