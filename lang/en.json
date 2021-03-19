@@ -366,5 +366,31 @@
   "GURPS.hitLocationLeg 7-8": "Arm 7-8",
   "GURPS.hitLocationChest": "Chest",
 
+  "GURPS.damageTypeBurning": "Burning",
+  "GURPS.damageTypeCorrosive": "Corrosive",
+  "GURPS.damageTypeCrushing": "Crushing",
+  "GURPS.damageTypeCutting": "Cutting",
+  "GURPS.damageTypeFatigue": "Fatigue",
+  "GURPS.damageTypeImpaling": "Impaling",
+  "GURPS.damageTypeSmall Piercing": "Small Piercing",
+  "GURPS.damageTypePiercing": "Piercing",
+  "GURPS.damageTypeLarge Piercing": "Large Piercing",
+  "GURPS.damageTypeHuge Piercing": "Huge Piercing",
+  "GURPS.damageTypeToxic": "Toxic",
+  "GURPS.damageTypeDamage": "Damage",
+
+  "GURPS.damageAbbrevburn": "burn",
+  "GURPS.damageAbbrevcor": "cor",
+  "GURPS.damageAbbrevcr": "cr",
+  "GURPS.damageAbbrevcut": "cut",
+  "GURPS.damageAbbrevfat": "fat",
+  "GURPS.damageAbbrevimp": "imp",
+  "GURPS.damageAbbrevpi-": "pi-",
+  "GURPS.damageAbbrevpi": "pi",
+  "GURPS.damageAbbrevpi+": "pi+",
+  "GURPS.damageAbbrevpi++": "pi++",
+  "GURPS.damageAbbrevtox": "tox",
+  "GURPS.damageAbbrevdam": "dam",
+
   "GURPS.overridden": "overridden"
 }

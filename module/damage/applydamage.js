@@ -45,6 +45,7 @@ export default class ApplyDamageDialog extends Application {
 
     this._resourceLabels = ResourceTrackerManager.getAllTemplates()
       .filter(it => !!it.tracker.alias)
+      .filter(it => !!it.tracker.isDamageType)
       .map(it => {
         return { name: it.tracker.name, alias: it.tracker.alias }
       })

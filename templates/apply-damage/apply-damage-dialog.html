@@ -137,9 +137,11 @@
                 <header>{{localize "GURPS.modifier"}}</header>
 
                 {{#each CALC.effectiveWoundModifiers}}
-                <div><label><input type='radio' name='woundmodifier' value='{{@key}}' {{checked (eq ../CALC.damageType
-                      @key)}}>&nbsp;{{this.label}}</label></div>
-                <div>{{@key}}</div>
+                <div><label><input type='radio' name='woundmodifier' {{checked (eq ../CALC.damageType @key)}}
+                      value='{{@key}}'>&nbsp;
+                    {{localizeWithFallback (concat "GURPS.damageType" this.label) this.label}}</label></div>
+                <div>
+                  {{localizeWithFallback (concat "GURPS.damageAbbrev" @key) @key}} </div>
                 <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>×{{fractionalize
                   this.multiplier 2}}
                 </div>

@@ -9,7 +9,7 @@ export class ResourceTrackerManager extends FormApplication {
       hint: 'Use this to create, reuse, and automatically apply Resource Trackers to character sheets.',
       label: 'View and Edit Trackers',
       type: ResourceTrackerManager,
-      restricted: false,
+      restricted: true,
     })
 
     game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
