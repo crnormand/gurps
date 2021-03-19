@@ -17,6 +17,7 @@ export class ResourceTrackerManager extends FormApplication {
         "tracker": {
           "name": "Control Points",
           "alias": "ctrl",
+          "pdf": "FDG4",
           "max": 0,
           "min": 0,
           "value": 0,
