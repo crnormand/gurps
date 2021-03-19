@@ -17,6 +17,7 @@ export class ResourceTrackerManager extends FormApplication {
         "tracker": {
           "name": "Control Points",
           "alias": "ctrl",
+          "pdf": "FDG4",
           "max": 0,
           "min": 0,
           "value": 0,
@@ -40,7 +41,7 @@ export class ResourceTrackerManager extends FormApplication {
       scope: 'world',
       config: false,
       type: Object,
-      default: defaultTrackers,
+      default: {},
       onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
   }

@@ -88,6 +88,10 @@ export class ResourceTrackerEditor extends Application {
       this._tracker.max = parseInt(ev.currentTarget.value)
     })
 
+    html.find('.inputs .pdf-ref').change(ev => {
+      this._tracker.pdf = ev.currentTarget.value
+    })
+
     html.find('#threshold-add').click(() => {
       if (!this._tracker.thresholds) {
         this._tracker.thresholds = []
