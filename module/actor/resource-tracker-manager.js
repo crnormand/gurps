@@ -21,12 +21,12 @@ export class ResourceTrackerManager extends FormApplication {
           "min": 0,
           "value": 0,
           "thresholds": [
-            { "comparison": ">", "operator": "×", "value": 0.9, "condition": "Normal", "color": "#00ff00" },
-            { "comparison": ">", "operator": "×", "value": 0.5, "condition": "Grabbed", "color": "#ffff00" },
-            { "comparison": ">", "operator": "×", "value": 0, "condition": "Grappled", "color": "#ffbb00" },
-            { "comparison": ">", "operator": "×", "value": -0.5, "condition": "Restrained", "color": "#ff8000" },
-            { "comparison": ">", "operator": "×", "value": -1, "condition": "Controlled", "color": "#ff0000" },
-            { "comparison": "≤", "operator": "×", "value": -1, "condition": "Pinned", "color": "#800000" }
+            { "comparison": ">", "operator": "×", "value": 0.9, "condition": "Normal", "color": "#90ee90" },
+            { "comparison": ">", "operator": "×", "value": 0.5, "condition": "Grabbed", "color": "#eeee30" },
+            { "comparison": ">", "operator": "×", "value": 0, "condition": "Grappled", "color": "#eeaa30" },
+            { "comparison": ">", "operator": "×", "value": -0.5, "condition": "Restrained", "color": "#ee5000" },
+            { "comparison": ">", "operator": "×", "value": -1, "condition": "Controlled", "color": "#ee0000" },
+            { "comparison": "≤", "operator": "×", "value": -1, "condition": "Pinned", "color": "#900000" }
           ],
           "isDamageType": true
         },
