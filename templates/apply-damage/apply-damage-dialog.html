@@ -109,12 +109,21 @@
             <div class='pdflink'>B400</div>
           </div>
 
-          <div class='grid grid-2col flex-between' style='margin: 10px 0;'>
-            <div><label><input type='radio' name='hitlocation' value='User Entered' {{checked (eq
-                  CALC.hitLocation "User Entered" )}}>&nbsp;{{localize "GURPS.addEnterDR"}}:</input></label></div>
-            <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
-              value='{{CALC.userEnteredDR}}'>
+          <hr /> <!-- Doesn't do much except add some space -->
+
+          <div class='grid grid-2col flex-between'>
+            <label>{{localize "GURPS.addOverrideDR"}}:</label>
+            <!-- <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
+              value='{{CALC.userEnteredDR}}'> -->
+
+            <div id='override-dr' class='with-button'>
+              <input type='text' class='digits-only' style='border: 1px solid #7a7971;'
+                value="{{#unless (eq CALC.userEnteredDR null)}}{{CALC.userEnteredDR}}{{/unless}}">
+              <button name="clear"><span class="fas fa-times-circle"></span></button>
+            </div>
+
           </div>
+
         </div>
 
         <div class='gurps-group'>
@@ -359,7 +368,8 @@
 
             <div id='result-dr'>{{localize "GURPS.hitLocationDR"}}</div>
             <div>{{CALC.DR}}</div>
-            <div>{{CALC.hitLocation}}</div>
+            <div>{{CALC.hitLocation}}{{#unless (eq CALC.userEnteredDR null)}} ({{localize
+              "GURPS.overridden"}}){{/unless}}</div>
 
             {{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
             {{#unless CALC.isExplosion}}

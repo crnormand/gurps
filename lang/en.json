@@ -111,6 +111,7 @@
   "GURPS.addHitLocationAndDR": "Hit Location & DR",
   "GURPS.addLargeAreaInjury": "Large-Area Injury",
   "GURPS.addEnterDR": "Enter DR",
+  "GURPS.addOverrideDR": "Override DR for Location",
   "GURPS.addTypeAndWoundingModifiers": "Type & Wounding Modifiers",
   "GURPS.addDamageType": "Damage Type",
   "GURPS.addAbbrev": "Abbrev",
@@ -363,5 +364,7 @@
   "GURPS.hitLocationLeg 3-4": "Leg 3-4",
   "GURPS.hitLocationLeg 5-6": "Leg 5-6",
   "GURPS.hitLocationLeg 7-8": "Arm 7-8",
-  "GURPS.hitLocationChest": "Chest"
+  "GURPS.hitLocationChest": "Chest",
+
+  "GURPS.overridden": "overridden"
 }

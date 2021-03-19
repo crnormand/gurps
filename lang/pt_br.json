@@ -111,6 +111,7 @@
   "GURPS.addHitLocationAndDR": "Local de Acerto e RD",
   "GURPS.addLargeAreaInjury": "Lesão em grande área",
   "GURPS.addEnterDR": "Informe a RD",
+  "GURPS.addOverrideDR": "TODO::Override DR for Location",
   "GURPS.addTypeAndWoundingModifiers": "Modificadores de tipo e ferimento",
   "GURPS.addDamageType": "Tipo de Dano",
   "GURPS.addAbbrev": "Abrev",
