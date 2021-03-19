@@ -16,6 +16,7 @@ This is what we are currently working on:
 - Fixed OtF coloration on skills
 - Support adding Resources as a custom damage type (https://github.com/crnormand/gurps/issues/386)
 - Allow the ADD to apply resource damage to the actor's resource tracker (https://github.com/crnormand/gurps/issues/385)
+- Changed "User Entered DR" in the ADD to override the hit location DR (so you still get the other benefits of hitting a specific body part).
 
 
 0.8.19 - 3/17/2021
