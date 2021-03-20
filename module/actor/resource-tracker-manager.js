@@ -21,15 +21,16 @@ export class ResourceTrackerManager extends FormApplication {
           "max": 0,
           "min": 0,
           "value": 0,
+          "isDamageType": true,
+          "isDamageTracker": true,
           "thresholds": [
-            { "comparison": ">", "operator": "×", "value": 0.9, "condition": "Normal", "color": "#90ee90" },
-            { "comparison": ">", "operator": "×", "value": 0.5, "condition": "Grabbed", "color": "#eeee30" },
-            { "comparison": ">", "operator": "×", "value": 0, "condition": "Grappled", "color": "#eeaa30" },
-            { "comparison": ">", "operator": "×", "value": -0.5, "condition": "Restrained", "color": "#ee5000" },
-            { "comparison": ">", "operator": "×", "value": -1, "condition": "Controlled", "color": "#ee0000" },
-            { "comparison": "≤", "operator": "×", "value": -1, "condition": "Pinned", "color": "#900000" }
-          ],
-          "isDamageType": true
+            { "comparison": "<", "operator": "×", "value": 0.1, "condition": "Unrestrained", "color": "#90ee90" },
+            { "comparison": "<", "operator": "×", "value": 0.5, "condition": "Grabbed", "color": "#eeee30" },
+            { "comparison": "<", "operator": "×", "value": 1, "condition": "Grappled", "color": "#eeaa30" },
+            { "comparison": "<", "operator": "×", "value": 1.5, "condition": "Restrained", "color": "#ee5000" },
+            { "comparison": "<", "operator": "×", "value": 2, "condition": "Controlled", "color": "#ee0000" },
+            { "comparison": "≥", "operator": "×", "value": 2, "condition": "Pinned", "color": "#900000" }
+          ]
         },
         "slot": "",
         "initialValue": "attributes.ST.value"
@@ -41,7 +42,7 @@ export class ResourceTrackerManager extends FormApplication {
       scope: 'world',
       config: false,
       type: Object,
-      default: {},
+      default: defaultTrackers,
       onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
   }
