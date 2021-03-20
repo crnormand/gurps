@@ -40,7 +40,6 @@
           </option>
 
           {{#each resourceLabels}}
-          {{debug this}}
           <option value='{{alias}}' {{select-if ../CALC.applyTo alias}}>{{name}}</option>
           {{/each}}
         </select>

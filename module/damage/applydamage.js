@@ -63,7 +63,7 @@ export default class ApplyDamageDialog extends Application {
       height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
         ? simpleDialogHeight
         : standardDialogHeight,
-      title: 'Apply Damage Calculator',
+      title: game.i18n.localize('GURPS.addApplyDamageDialog'),
     })
   }
 

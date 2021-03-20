@@ -16,8 +16,8 @@
         <div class='inputs' style='margin: 0;'>
           <input class="alias gcs-input" type="text" value="{{tracker.alias}}" />
           <div class="label">Alias</div>
-          <div></div>
-          <div></div>
+          <input class="pdf-ref gcs-input" type="text" value="{{tracker.pdf}}" />
+          <div class='label'>Reference</div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
             <label class='label' style='display: block; padding-left: 15px; text-indent: -15px;'>
               <input name='damage-type' type='checkbox' {{checked tracker.isDamageType}} {{disabled isActor}}

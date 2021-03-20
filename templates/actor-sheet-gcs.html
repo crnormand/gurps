@@ -423,7 +423,10 @@
                   </div>
                 </span>
               </div>
-              <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
+              <div style='display: grid; grid-template-columns: 1fr 1fr;'>
+                <div class='pdflink' style='font-size: 80%;'>{{../pdf}}</div>
+                <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
+              </div>
               {{/with}}
               {{else}}
               <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
