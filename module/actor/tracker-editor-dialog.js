@@ -76,6 +76,12 @@ export class ResourceTrackerEditor extends Application {
       this.render(false)
     })
 
+    html.find('[name="damage-tracker"]').click(ev => {
+      let element = $(ev.currentTarget)
+      this._tracker.isDamageTracker = element.is(':checked')
+      this.render(false)
+    })
+
     html.find('.inputs .current').change(ev => {
       this._tracker.value = parseInt(ev.currentTarget.value)
     })

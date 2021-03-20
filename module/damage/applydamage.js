@@ -548,18 +548,11 @@ export default class ApplyDamageDialog extends Application {
       resultsTable: results,
     }
 
-    let valuePath = `${path}.value`
-    let update = {}
-    update[`${path}.value`] = resource.value - injury
-    await this.actor.update(update)
+    let newValue = resource.isDamageTracker ? resource.value + injury : resource.value - injury
 
-    // if (type === 'FP') {
-    //   await this.actor.update({ 'data.FP.value': resource.value - injury })
-    // } else if (type === 'HP') {
-    //   await this.actor.update({ 'data.HP.value': resource.value - injury })
-    // } else {
-    //   await this.actor.update({ 'data.'})
-    //}
+    let update = {}
+    update[`${path}.value`] = newValue
+    await this.actor.update(update)
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = {

@@ -20,14 +20,19 @@
           <div></div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
             <label class='label' style='display: block; padding-left: 15px; text-indent: -15px;'>
-              <input name='damage-type' type='checkbox' {{checked tracker.isDamageType}} value='damage-type' {{disabled
-                isActor}}
+              <input name='damage-type' type='checkbox' {{checked tracker.isDamageType}} {{disabled isActor}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;' />
               Use as Damage Type
             </label>
           </div>
         </div>
       </div>
+      <label class='label' style='display: block; padding-left: 15px; text-indent: -15px;'>
+        <input name='damage-tracker' type='checkbox' {{checked tracker.isDamageTracker}}
+          style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;' />
+        Damage Tracker (damage adds to value).
+      </label>
+
     </div>
     <div>
       <hr />
@@ -36,7 +41,7 @@
       <h3>Thresholds:</h3>
       <div><a id='threshold-add' class='button icon'><i class="fas fa-plus"></i></a></div>
     </div>
-    <div style='overflow-y: auto; height: 239px;'>
+    <div style='overflow-y: auto; height: 224px;'>
       <div class='threshold table'>
         {{#if tracker.thresholds}}
         <div class='label span3'>⎯⎯⎯⎯⎯⎯ Current Value ⎯⎯⎯⎯⎯⎯</div>
