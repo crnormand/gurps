@@ -40,7 +40,7 @@ export class ResourceTrackerEditor extends Application {
       minimizable: false,
       jQuery: true,
       resizable: false,
-      title: 'Resource Tracker Editor',
+      title: game.i18n.localize('GURPS.resourceTrackerEditor'),
     })
   }
 
@@ -107,7 +107,7 @@ export class ResourceTrackerEditor extends Application {
         comparison: '>',
         operator: '×',
         value: 1,
-        condition: 'Normal',
+        condition: game.i18n.localize('GURPS.normal'),
         color: '#FFFFFF',
       })
       this.render(false)

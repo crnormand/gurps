@@ -12,39 +12,78 @@ export class ResourceTrackerManager extends FormApplication {
       restricted: true,
     })
 
-    let defaultTrackers = JSON.parse(`{
-      "0000": {
-        "tracker": {
-          "name": "Control Points",
-          "alias": "ctrl",
-          "pdf": "FDG4",
-          "max": 0,
-          "min": 0,
-          "value": 0,
-          "isDamageType": true,
-          "isDamageTracker": true,
-          "thresholds": [
-            { "comparison": "<", "operator": "×", "value": 0.1, "condition": "Unrestrained", "color": "#90ee90" },
-            { "comparison": "<", "operator": "×", "value": 0.5, "condition": "Grabbed", "color": "#eeee30" },
-            { "comparison": "<", "operator": "×", "value": 1, "condition": "Grappled", "color": "#eeaa30" },
-            { "comparison": "<", "operator": "×", "value": 1.5, "condition": "Restrained", "color": "#ee5000" },
-            { "comparison": "<", "operator": "×", "value": 2, "condition": "Controlled", "color": "#ee0000" },
-            { "comparison": "≥", "operator": "×", "value": 2, "condition": "Pinned", "color": "#900000" }
-          ]
-        },
-        "slot": "",
-        "initialValue": "attributes.ST.value"
-      }
-    }`)
+    let cp = game.i18n.localize('GURPS.grapplingControlPoints')
 
     game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
       name: game.i18n.localize('GURPS.resourceTemplateTitle'),
       scope: 'world',
       config: false,
       type: Object,
-      default: defaultTrackers,
+      default: ResourceTrackerManager.getDefaultTemplates(),
       onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
+  }
+
+  static getDefaultTemplates() {
+    return {
+      '0000': {
+        tracker: {
+          name: game.i18n.localize('GURPS.grapplingControlPoints'),
+          alias: game.i18n.localize('GURPS.grapplingCPAbbrev'),
+          pdf: 'FDG4',
+          max: 0,
+          min: 0,
+          value: 0,
+          isDamageType: true,
+          isDamageTracker: true,
+          thresholds: [
+            {
+              comparison: '<',
+              operator: '×',
+              value: 0.1,
+              condition: game.i18n.localize('GURPS.grapplingUnrestrained'),
+              color: '#90ee90',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 0.5,
+              condition: game.i18n.localize('GURPS.grapplingGrabbed'),
+              color: '#eeee30',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 1,
+              condition: game.i18n.localize('GURPS.grapplingGrappled'),
+              color: '#eeaa30',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 1.5,
+              condition: game.i18n.localize('GURPS.grapplingRestrained'),
+              color: '#ee5000',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 2,
+              condition: game.i18n.localize('GURPS.grapplingControlled'),
+              color: '#ee0000',
+            },
+            {
+              comparison: '≥',
+              operator: '×',
+              value: 2,
+              condition: game.i18n.localize('GURPS.grapplingPinned'),
+              color: '#900000',
+            },
+          ],
+        },
+        initialValue: 'attributes.ST.value',
+      },
+    }
   }
 
   static getAllTemplates() {

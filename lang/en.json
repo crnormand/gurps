@@ -397,6 +397,15 @@
 
   "GURPS.overridden": "overridden",
 
+  "GURPS.current": "Current",
+  "GURPS.minimum": "Minimum",
+  "GURPS.maximum": "Maximum",
+  "GURPS.max": "Max",
+  "GURPS.reference": "Reference",
+  "GURPS.condition": "Condition",
+  "GURPS.color": "Color",
+  "GURPS.update": "Update",
+
   "GURPS.resourceTemplateManager": "Resource Tracker Manager",
   "GURPS.resourceTemplateHint": "Use this to create, reuse, and automatically apply Resource Trackers to character sheets.",
   "GURPS.resourceTemplateButton": "View and Edit Trackers",
@@ -406,9 +415,22 @@
   "GURPS.resourceTemplateSlot": "Assigned Slot",
   "GURPS.resourceTemplateInitializer": "Initializer",
   "GURPS.resourceTemplateClickToAdd": "Click the '+' button above to add a template.",
+  "GURPS.resourceTrackerEditor": "Resource Tracker Editor",
+
+  "GURPS.grapplingControlPoints": "Control Points",
+  "GURPS.grapplingCPAbbrev": "ctrl",
+  "GURPS.grapplingUnrestrained": "Unrestrained",
+  "GURPS.grapplingGrabbed": "Grabbed",
+  "GURPS.grapplingGrappled": "Grappled",
+  "GURPS.grapplingRestrained": "Restrained",
+  "GURPS.grapplingControlled": "Controlled",
+  "GURPS.grapplingPinned": "Pinned",
+
+  "GURPS.resourceDamageType": "Use as Damage Type",
+  "GURPS.resourceDamageTracker": "Damage Tracker (damage adds to value).",
+  "GURPS.resourceCurrentValue": "Current Value",
   "GURPS.clickToEdit": "Click to Edit",
   "GURPS.resourceTracker": "Tracker",
   "GURPS.trackerNotUnique": "Tracker name ({name}) or alias ({alias}) is not unique.",
-  "GURPS.slotNotUnique": "There is already a tracker assigned to slot Tracker {value}.",
-  "GURPS.update": "Update"
+  "GURPS.slotNotUnique": "There is already a tracker assigned to slot Tracker {value}."
 }

@@ -1372,24 +1372,6 @@ Hooks.once('init', async function () {
 
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
-
-  ResourceTrackerManager.initSettings()
-
-  // get all aliases defined in the resource tracker templates and register them as damage types
-  let resourceTrackers = ResourceTrackerManager.getAllTemplates()
-    .filter(it => !!it.tracker.isDamageType)
-    .filter(it => !!it.tracker.alias)
-    .map(it => it.tracker)
-  resourceTrackers.forEach(it => (damageTypeMap[it.alias] = it.alias))
-  resourceTrackers.forEach(
-    it =>
-      (woundModifiers[it.alias] = {
-        multiplier: 1,
-        label: it.name,
-        resource: true,
-      })
-  )
-
   DamageChat.initSettings()
 
   // Modifier Bucket must be defined after hit locations
@@ -1459,6 +1441,7 @@ Hooks.once('init', async function () {
 })
 
 Hooks.once('ready', async function () {
+  ResourceTrackerManager.initSettings()
   GURPS.ModifierBucket.clear()
   GURPS.ThreeD6.refresh()
 
@@ -1481,6 +1464,21 @@ Hooks.once('ready', async function () {
       game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString())
     }
   }
+
+  // get all aliases defined in the resource tracker templates and register them as damage types
+  let resourceTrackers = ResourceTrackerManager.getAllTemplates()
+    .filter(it => !!it.tracker.isDamageType)
+    .filter(it => !!it.tracker.alias)
+    .map(it => it.tracker)
+  resourceTrackers.forEach(it => (damageTypeMap[it.alias] = it.alias))
+  resourceTrackers.forEach(
+    it =>
+      (woundModifiers[it.alias] = {
+        multiplier: 1,
+        label: it.name,
+        resource: true,
+      })
+  )
 
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
