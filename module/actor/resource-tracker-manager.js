@@ -5,45 +5,85 @@ import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 export class ResourceTrackerManager extends FormApplication {
   static initSettings() {
     game.settings.registerMenu(settings.SYSTEM_NAME, settings.SETTING_TRACKER_DEFAULT_EDITOR, {
-      name: 'Resource Tracker Manager',
-      hint: 'Use this to create, reuse, and automatically apply Resource Trackers to character sheets.',
-      label: 'View and Edit Trackers',
+      name: game.i18n.localize('GURPS.resourceTemplateManager'),
+      hint: game.i18n.localize('GURPS.resourceTemplateHint'),
+      label: game.i18n.localize('GURPS.resourceTemplateButton'),
       type: ResourceTrackerManager,
       restricted: true,
     })
 
-    let defaultTrackers = JSON.parse(`{
-      "0000": {
-        "tracker": {
-          "name": "Control Points",
-          "alias": "ctrl",
-          "pdf": "FDG4",
-          "max": 0,
-          "min": 0,
-          "value": 0,
-          "thresholds": [
-            { "comparison": ">", "operator": "×", "value": 0.9, "condition": "Normal", "color": "#90ee90" },
-            { "comparison": ">", "operator": "×", "value": 0.5, "condition": "Grabbed", "color": "#eeee30" },
-            { "comparison": ">", "operator": "×", "value": 0, "condition": "Grappled", "color": "#eeaa30" },
-            { "comparison": ">", "operator": "×", "value": -0.5, "condition": "Restrained", "color": "#ee5000" },
-            { "comparison": ">", "operator": "×", "value": -1, "condition": "Controlled", "color": "#ee0000" },
-            { "comparison": "≤", "operator": "×", "value": -1, "condition": "Pinned", "color": "#900000" }
-          ],
-          "isDamageType": true
-        },
-        "slot": "",
-        "initialValue": "attributes.ST.value"
-      }
-    }`)
+    let cp = game.i18n.localize('GURPS.grapplingControlPoints')
 
     game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
-      name: 'Resource Tracker Templates',
+      name: game.i18n.localize('GURPS.resourceTemplateTitle'),
       scope: 'world',
       config: false,
       type: Object,
-      default: {},
+      default: ResourceTrackerManager.getDefaultTemplates(),
       onChange: value => console.log(`Updated Default Resource Trackers: ${JSON.stringify(value)}`),
     })
+  }
+
+  static getDefaultTemplates() {
+    return {
+      '0000': {
+        tracker: {
+          name: game.i18n.localize('GURPS.grapplingControlPoints'),
+          alias: game.i18n.localize('GURPS.grapplingCPAbbrev'),
+          pdf: 'FDG4',
+          max: 0,
+          min: 0,
+          value: 0,
+          isDamageType: true,
+          isDamageTracker: true,
+          thresholds: [
+            {
+              comparison: '<',
+              operator: '×',
+              value: 0.1,
+              condition: game.i18n.localize('GURPS.grapplingUnrestrained'),
+              color: '#90ee90',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 0.5,
+              condition: game.i18n.localize('GURPS.grapplingGrabbed'),
+              color: '#eeee30',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 1,
+              condition: game.i18n.localize('GURPS.grapplingGrappled'),
+              color: '#eeaa30',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 1.5,
+              condition: game.i18n.localize('GURPS.grapplingRestrained'),
+              color: '#ee5000',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 2,
+              condition: game.i18n.localize('GURPS.grapplingControlled'),
+              color: '#ee0000',
+            },
+            {
+              comparison: '≥',
+              operator: '×',
+              value: 2,
+              condition: game.i18n.localize('GURPS.grapplingPinned'),
+              color: '#900000',
+            },
+          ],
+        },
+        initialValue: 'attributes.ST.value',
+      },
+    }
   }
 
   static getAllTemplates() {
@@ -70,7 +110,7 @@ export class ResourceTrackerManager extends FormApplication {
       minimizable: false,
       width: 520,
       height: 368,
-      title: 'Resource Tracker Manager',
+      title: game.i18n.localize('GURPS.resourceTemplateManager'),
       closeOnSubmit: true,
     })
   }
@@ -132,7 +172,9 @@ export class ResourceTrackerManager extends FormApplication {
             )
 
           if (!!match) {
-            ui.notifications.warn(`Tracker name (${newTracker.name}) or alias (${newTracker.alias}) is not unique.`)
+            ui.notifications.warn(
+              game.i18n.format('GURPS.trackerNotUnique', { name: newTracker.name, alias: newTracker.alias })
+            )
             resolve(this._templates[index].tracker)
           }
 
@@ -158,7 +200,11 @@ export class ResourceTrackerManager extends FormApplication {
       if (this._validate(index, value)) {
         this._templates[index].slot = value
       } else {
-        ui.notifications.warn(`There is already a tracker assigned to slot Tracker ${value}.`)
+        ui.notifications.warn(
+          game.i18n.format('GURPS.slotNotUnique', {
+            value: value,
+          })
+        )
       }
       this.render(true)
     })

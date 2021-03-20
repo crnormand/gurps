@@ -1169,7 +1169,7 @@ export class GurpsActor extends Actor {
         }
       }
       template.tracker.max = value
-      template.tracker.value = value
+      template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
 
       // remove whatever is there
       let del = {}

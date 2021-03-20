@@ -40,7 +40,7 @@ export class ResourceTrackerEditor extends Application {
       minimizable: false,
       jQuery: true,
       resizable: false,
-      title: 'Resource Tracker Editor',
+      title: game.i18n.localize('GURPS.resourceTrackerEditor'),
     })
   }
 
@@ -76,6 +76,12 @@ export class ResourceTrackerEditor extends Application {
       this.render(false)
     })
 
+    html.find('[name="damage-tracker"]').click(ev => {
+      let element = $(ev.currentTarget)
+      this._tracker.isDamageTracker = element.is(':checked')
+      this.render(false)
+    })
+
     html.find('.inputs .current').change(ev => {
       this._tracker.value = parseInt(ev.currentTarget.value)
     })
@@ -101,7 +107,7 @@ export class ResourceTrackerEditor extends Application {
         comparison: '>',
         operator: '×',
         value: 1,
-        condition: 'Normal',
+        condition: game.i18n.localize('GURPS.normal'),
         color: '#FFFFFF',
       })
       this.render(false)
