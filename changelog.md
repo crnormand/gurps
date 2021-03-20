@@ -17,7 +17,8 @@ This is what we are currently working on:
 - Support adding Resources as a custom damage type (https://github.com/crnormand/gurps/issues/386)
 - Allow the ADD to apply resource damage to the actor's resource tracker (https://github.com/crnormand/gurps/issues/385)
 - Changed "User Entered DR" in the ADD to override the hit location DR (so you still get the other benefits of hitting a specific body part).
-
+- Added Control Points (Fantastic Dungeon Grappling: https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/) as a default Resource Tracker.
+- Modified Resource Trackers to *accumulate* damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
 
 0.8.19 - 3/17/2021
 
