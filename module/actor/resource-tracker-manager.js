@@ -5,9 +5,9 @@ import { arrayToObject, objectToArray } from '../../lib/utilities.js'
 export class ResourceTrackerManager extends FormApplication {
   static initSettings() {
     game.settings.registerMenu(settings.SYSTEM_NAME, settings.SETTING_TRACKER_DEFAULT_EDITOR, {
-      name: 'Resource Tracker Manager',
-      hint: 'Use this to create, reuse, and automatically apply Resource Trackers to character sheets.',
-      label: 'View and Edit Trackers',
+      name: game.i18n.localize('GURPS.resourceTemplateManager'),
+      hint: game.i18n.localize('GURPS.resourceTemplateHint'),
+      label: game.i18n.localize('GURPS.resourceTemplateButton'),
       type: ResourceTrackerManager,
       restricted: true,
     })
@@ -38,7 +38,7 @@ export class ResourceTrackerManager extends FormApplication {
     }`)
 
     game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
-      name: 'Resource Tracker Templates',
+      name: game.i18n.localize('GURPS.resourceTemplateTitle'),
       scope: 'world',
       config: false,
       type: Object,
@@ -71,7 +71,7 @@ export class ResourceTrackerManager extends FormApplication {
       minimizable: false,
       width: 520,
       height: 368,
-      title: 'Resource Tracker Manager',
+      title: game.i18n.localize('GURPS.resourceTemplateManager'),
       closeOnSubmit: true,
     })
   }
@@ -133,7 +133,9 @@ export class ResourceTrackerManager extends FormApplication {
             )
 
           if (!!match) {
-            ui.notifications.warn(`Tracker name (${newTracker.name}) or alias (${newTracker.alias}) is not unique.`)
+            ui.notifications.warn(
+              game.i18n.format('GURPS.trackerNotUnique', { name: newTracker.name, alias: newTracker.alias })
+            )
             resolve(this._templates[index].tracker)
           }
 
@@ -159,7 +161,11 @@ export class ResourceTrackerManager extends FormApplication {
       if (this._validate(index, value)) {
         this._templates[index].slot = value
       } else {
-        ui.notifications.warn(`There is already a tracker assigned to slot Tracker ${value}.`)
+        ui.notifications.warn(
+          game.i18n.format('GURPS.slotNotUnique', {
+            value: value,
+          })
+        )
       }
       this.render(true)
     })

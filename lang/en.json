@@ -395,5 +395,20 @@
   "GURPS.damageAbbrevtox": "tox",
   "GURPS.damageAbbrevdam": "dam",
 
-  "GURPS.overridden": "overridden"
+  "GURPS.overridden": "overridden",
+
+  "GURPS.resourceTemplateManager": "Resource Tracker Manager",
+  "GURPS.resourceTemplateHint": "Use this to create, reuse, and automatically apply Resource Trackers to character sheets.",
+  "GURPS.resourceTemplateButton": "View and Edit Trackers",
+  "GURPS.resourceTemplateTitle": "Resource Tracker Templates",
+  "GURPS.resourceTemplateName": "Resource Name",
+  "GURPS.resourceTemplateAlias": "Alias",
+  "GURPS.resourceTemplateSlot": "Assigned Slot",
+  "GURPS.resourceTemplateInitializer": "Initializer",
+  "GURPS.resourceTemplateClickToAdd": "Click the '+' button above to add a template.",
+  "GURPS.clickToEdit": "Click to Edit",
+  "GURPS.resourceTracker": "Tracker",
+  "GURPS.trackerNotUnique": "Tracker name ({name}) or alias ({alias}) is not unique.",
+  "GURPS.slotNotUnique": "There is already a tracker assigned to slot Tracker {value}.",
+  "GURPS.update": "Update"
 }
