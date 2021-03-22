@@ -565,7 +565,7 @@ function trim(s) {
 }
 GURPS.trim = trim
 
-GURPS.executeOTF = function (string, priv = false) {
+function executeOTF (string, priv = false) {
   if (!string) return
   string = string.trim()
   if (string[0] == '[' && string[string.length-1] == ']')
@@ -576,6 +576,7 @@ GURPS.executeOTF = function (string, priv = false) {
   else
     ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`);
 }
+GURPS.executeOTF = executeOTF
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 async function performAction(action, actor, event, targets) {

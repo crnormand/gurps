@@ -19,6 +19,8 @@ This is what we are currently working on:
 - Changed "User Entered DR" in the ADD to override the hit location DR (so you still get the other benefits of hitting a specific body part).
 - Added Control Points (Fantastic Dungeon Grappling: https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/) as a default Resource Tracker.
 - Modified Resource Trackers to optionally *accumulate* damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
+- Fixed parsing for damage with extraneous text '1d-1 burn/2 points'
+- Added GURPS.executeOTF()
 
 0.8.19 - 3/17/2021
 
