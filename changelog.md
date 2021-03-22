@@ -9,6 +9,10 @@ This is what we are currently working on:
 
 ## History
 
+0.8.21
+
+- Fixed parse bug where roll has no damage type or comment [3d]
+
 0.8.20
   
 - Fixed description of modifier for Skill OtF
