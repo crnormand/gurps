@@ -565,6 +565,18 @@ function trim(s) {
 }
 GURPS.trim = trim
 
+GURPS.executeOTF = function (string, priv = false) {
+  if (!string) return
+  string = string.trim()
+  if (string[0] == '[' && string[string.length-1] == ']')
+    string = string.substring(1,string.length-1)
+  let action = parselink(string)
+  if (!!action.action) 
+    GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv });
+  else
+    ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`);
+}
+
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 async function performAction(action, actor, event, targets) {
   if (!action) return
