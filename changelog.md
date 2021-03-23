@@ -12,6 +12,7 @@ This is what we are currently working on:
 0.8.21
 
 - Fixed parse bug where roll has no damage type or comment [3d]
+- Added German/Deutsche translation
 
 0.8.20
   
