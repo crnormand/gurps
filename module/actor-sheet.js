@@ -580,75 +580,50 @@ export class GurpsActorSheet extends ActorSheet {
   async editTracker(ev) {
     ev.preventDefault()
 
-    let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
-    let path = parent.attr('data-gurps-resource')
-
+    let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
     let templates = ResourceTrackerManager.getAllTemplates()
+    if (!templates || templates.length == 0) templates = null
 
-    if (!templates || templates.length == 0) {
-      ResourceTrackerEditor.editForActor(this.actor, path)
-      return
-    }
-
-    let selectTracker = function (html) {
+    let selectTracker = async function (html) {
       let name = html.find('select option:selected').text().trim()
-
       let template = templates.find(template => template.tracker.name === name)
-
-      // TODO this is a copy of code in actor ... should unify and remove the duplicatoin
-      // is there an initializer? If so calculate its value
-      let value = 0
-      if (!!template.initialValue) {
-        value = parseInt(template.initialValue, 10)
-        if (Number.isNaN(value)) {
-          // try to use initialValue as a path to another value
-          value = getProperty(this.actor.data.data, template.initialValue)
-        }
-      }
-      template.tracker.max = value
-      template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
-
-      let update = {}
-      update[`data.${path}`] = template.tracker
-      this.actor.update(update)
+      await this.actor.applyTrackerTemplate(path, template)
     }
 
     // show dialog asking if they want to apply a standard tracker, or edit this tracker
     let buttons = {
-      one: {
-        icon: '<i class="far fa-copy"></i>',
-        label: 'Copy Tracker Template',
-        callback: selectTracker.bind(this),
-      },
-      two: {
+      edit: {
         icon: '<i class="fas fa-edit"></i>',
-        label: 'Edit This Tracker',
+        label: game.i18n.localize('GURPS.resourceEditTracker'),
         callback: () => ResourceTrackerEditor.editForActor(this.actor, path),
       },
+      remove: {
+        icon: '<i class="fas fa-trash"></i>',
+        label: game.i18n.localize('GURPS.resourceDeleteTracker'),
+        callback: async () => await this.actor.removeTracker(path),
+      },
+    }
+
+    if (!!templates) {
+      buttons.apply = {
+        icon: '<i class="far fa-copy"></i>',
+        label: game.i18n.localize('GURPS.resourceCopyTemplate'),
+        callback: selectTracker.bind(this),
+      }
     }
 
     let d = new Dialog(
       {
-        title: 'Update Tracker',
+        title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
         content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
         buttons: buttons,
-        default: 'def',
+        default: 'edit',
         templates: templates,
       },
-      { width: 400 }
+      { width: 600 }
     )
     d.render(true)
   }
-
-  // ==========
-  // html.find('.tracked-resource .header.with-editor').click(async ev => {
-  //   ev.preventDefault()
-
-  //   let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
-  //   let path = parent.attr('data-gurps-resource')
-
-  // })
-  // ==========
 
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet

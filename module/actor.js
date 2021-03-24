@@ -1,6 +1,7 @@
 'use strict'
 
 import { extractP, xmlTextToJson, objectToArray, convertRollStringToArrayOfInt, recurselist } from '../lib/utilities.js'
+import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
@@ -1133,13 +1134,8 @@ export class GurpsActor extends Actor {
    * Adds any assigned resource trackers to the actor data and sheet.
    */
   async setResourceTrackers() {
-    // read the Templates from settings data
-    let temp = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES)
-    if (!temp || Object.keys(temp).length === 0) return
-    let templates = objectToArray(temp)
-
     // find those with non-blank slots
-    templates = templates.filter(it => !!it.slot)
+    let templates = ResourceTrackerManager.getAllTemplates().filter(it => !!it.slot)
 
     templates.forEach(async template => {
       // find the matching data on this actor
@@ -1147,40 +1143,72 @@ export class GurpsActor extends Actor {
       let tracker = getProperty(this.data.data, path)
 
       // skip if already set
-      if (tracker.name === template.tracker.name) {
+      if (tracker !== null && tracker.name === template.tracker.name) {
         return
       }
 
       // if not blank, don't overwrite
-      if (!!tracker.name) {
+      if (tracker !== null && !!tracker.name) {
         ui.notifications.warn(
           `Will not overwrite Tracker ${template.slot} as its name is set to ${tracker.name}. Create Tracker for ${template.tracker.name} failed.`
         )
         return
       }
 
-      // is there an initializer? If so calculate its value
-      let value = 0
-      if (!!template.initialValue) {
-        value = parseInt(template.initialValue, 10)
-        if (Number.isNaN(value)) {
-          // try to use initialValue as a path to another value
-          value = getProperty(this.data.data, template.initialValue)
-        }
-      }
-      template.tracker.max = value
-      template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
-
-      // remove whatever is there
-      let del = {}
-      del[`data.-=${path}`] = null
-      await this.update(del)
-
-      // add the new tracker
-      let update = {}
-      update[`data.${path}`] = template.tracker
-      await this.update(update)
+      await this.applyTrackerTemplate(path, template)
     })
+  }
+
+  /**
+   * Update this tracker slot with the contents of the template.
+   * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
+   * @param {*} template to apply
+   */
+  async applyTrackerTemplate(path, template) {
+    // is there an initializer? If so calculate its value
+    let value = 0
+    if (!!template.initialValue) {
+      value = parseInt(template.initialValue, 10)
+      if (Number.isNaN(value)) {
+        // try to use initialValue as a path to another value
+        value = getProperty(this.data.data, template.initialValue)
+      }
+    }
+    template.tracker.max = value
+    template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
+
+    // remove whatever is there
+    await this.removeTracker(path)
+
+    // add the new tracker
+    let update = {}
+    update[`data.${path}`] = template.tracker
+    await this.update(update)
+  }
+
+  /**
+   * Overwrites the tracker pointed to by the path with default/blank values.
+   * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
+   */
+  async removeTracker(path) {
+    // verify that this is a Tracker
+    if (!path.startsWith('additionalresources.tracker.'))
+      throw `Invalid actor data path, actor=[${this.actor.id}] path=[${path}]`
+
+    let update = {}
+    update[`data.${path}`] = {
+      name: '',
+      alias: '',
+      pdf: '',
+      max: 0,
+      min: 0,
+      value: 0,
+      isDamageTracker: false,
+      isDamageType: false,
+      initialValue: '',
+      thresholds: [],
+    }
+    await this.update(update)
   }
 
   // --- Functions to handle events on actor ---

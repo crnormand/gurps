@@ -432,5 +432,10 @@
   "GURPS.clickToEdit": "Click to Edit",
   "GURPS.resourceTracker": "Tracker",
   "GURPS.trackerNotUnique": "Tracker name ({name}) or alias ({alias}) is not unique.",
-  "GURPS.slotNotUnique": "There is already a tracker assigned to slot Tracker {value}."
+  "GURPS.slotNotUnique": "There is already a tracker assigned to slot Tracker {value}.",
+  "GURPS.resourceEditTracker": "Edit Tracker",
+  "GURPS.resourceDeleteTracker": "Delete Tracker",
+  "GURPS.resourceCopyTemplate": "Copy Template",
+  "GURPS.resourceUndefined": "None Defined",
+  "GURPS.resourceUpdateTrackerSlot": "Update Tracker Slot"
 }
