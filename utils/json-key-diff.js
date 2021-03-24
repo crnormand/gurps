@@ -1,6 +1,4 @@
 #! /usr/local/bin/node
-
-// Include the system utility library (for output).
 const fs = require('fs')
 
 let args = process.argv.slice(2)
