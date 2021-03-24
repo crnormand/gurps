@@ -6,6 +6,7 @@ import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
+import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -207,13 +208,7 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.update(JSON.parse(json))
     })
 
-    html.find('.tracked-resource .header.with-editor').click(async ev => {
-      ev.preventDefault()
-
-      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
-      let path = parent.attr('data-gurps-resource')
-      ResourceTrackerEditor.editForActor(this.actor, path)
-    })
+    html.find('.tracked-resource .header.with-editor').click(this.editTracker.bind(this))
 
     // START CONDITIONAL INJURY
 
@@ -576,6 +571,72 @@ export class GurpsActorSheet extends ActorSheet {
         },
       })
     })
+
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            type: 'OtF',
+            otf: li.getAttribute('data-otf'),
+            actor: this.actor.id,
+          })
+        )
+      })
+    })
+  }
+
+  /**
+   *
+   * @param {*} ev
+   */
+  async editTracker(ev) {
+    ev.preventDefault()
+
+    let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
+    let templates = ResourceTrackerManager.getAllTemplates()
+    if (!templates || templates.length == 0) templates = null
+
+    let selectTracker = async function (html) {
+      let name = html.find('select option:selected').text().trim()
+      let template = templates.find(template => template.tracker.name === name)
+      await this.actor.applyTrackerTemplate(path, template)
+    }
+
+    // show dialog asking if they want to apply a standard tracker, or edit this tracker
+    let buttons = {
+      edit: {
+        icon: '<i class="fas fa-edit"></i>',
+        label: game.i18n.localize('GURPS.resourceEditTracker'),
+        callback: () => ResourceTrackerEditor.editForActor(this.actor, path),
+      },
+      remove: {
+        icon: '<i class="fas fa-trash"></i>',
+        label: game.i18n.localize('GURPS.resourceDeleteTracker'),
+        callback: async () => await this.actor.removeTracker(path),
+      },
+    }
+
+    if (!!templates) {
+      buttons.apply = {
+        icon: '<i class="far fa-copy"></i>',
+        label: game.i18n.localize('GURPS.resourceCopyTemplate'),
+        callback: selectTracker.bind(this),
+      }
+    }
+
+    let d = new Dialog(
+      {
+        title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
+        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
+        buttons: buttons,
+        default: 'edit',
+        templates: templates,
+      },
+      { width: 600 }
+    )
+    d.render(true)
   }
 
   async editEquipment(actor, path, obj) {

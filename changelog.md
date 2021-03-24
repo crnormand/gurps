@@ -9,10 +9,17 @@ This is what we are currently working on:
 
 ## History
 
+0.8.22
+
+- Updated German/Deutsch translation
+- Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
+- Bugfix for pi-, pi+, and pi++ damage types.
+- Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
+ 
 0.8.21
 
 - Fixed parse bug where roll has no damage type or comment [3d]
-- Added German/Deutsche translation
+- Added German/Deutsch translation
 
 0.8.20
   
