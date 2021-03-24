@@ -571,6 +571,20 @@ export class GurpsActorSheet extends ActorSheet {
         },
       })
     })
+
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            type: 'OtF',
+            otf: li.getAttribute('data-otf'),
+            actor: this.actor.id,
+          })
+        )
+      })
+    })
   }
 
   /**
