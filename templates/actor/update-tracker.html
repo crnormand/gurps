@@ -1,0 +1,9 @@
+<div style='text-align: center; margin: 3rem 0;'>
+  Templates:
+  <select>
+    {{#each templates}}
+    {{debug this}}
+    <option value='{{tracker.name}}'>{{tracker.name}}</option>
+    {{/each}}
+  </select>
+</div>
