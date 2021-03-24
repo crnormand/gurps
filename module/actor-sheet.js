@@ -6,6 +6,7 @@ import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
+import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -207,13 +208,7 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.update(JSON.parse(json))
     })
 
-    html.find('.tracked-resource .header.with-editor').click(async ev => {
-      ev.preventDefault()
-
-      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
-      let path = parent.attr('data-gurps-resource')
-      ResourceTrackerEditor.editForActor(this.actor, path)
-    })
+    html.find('.tracked-resource .header.with-editor').click(this.editTracker.bind(this))
 
     // START CONDITIONAL INJURY
 
@@ -577,6 +572,83 @@ export class GurpsActorSheet extends ActorSheet {
       })
     })
   }
+
+  /**
+   *
+   * @param {*} ev
+   */
+  async editTracker(ev) {
+    ev.preventDefault()
+
+    let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
+    let path = parent.attr('data-gurps-resource')
+
+    let templates = ResourceTrackerManager.getAllTemplates()
+
+    if (!templates || templates.length == 0) {
+      ResourceTrackerEditor.editForActor(this.actor, path)
+      return
+    }
+
+    let selectTracker = function (html) {
+      let name = html.find('select option:selected').text().trim()
+
+      let template = templates.find(template => template.tracker.name === name)
+
+      // TODO this is a copy of code in actor ... should unify and remove the duplicatoin
+      // is there an initializer? If so calculate its value
+      let value = 0
+      if (!!template.initialValue) {
+        value = parseInt(template.initialValue, 10)
+        if (Number.isNaN(value)) {
+          // try to use initialValue as a path to another value
+          value = getProperty(this.actor.data.data, template.initialValue)
+        }
+      }
+      template.tracker.max = value
+      template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
+
+      let update = {}
+      update[`data.${path}`] = template.tracker
+      this.actor.update(update)
+    }
+
+    // show dialog asking if they want to apply a standard tracker, or edit this tracker
+    let buttons = {
+      one: {
+        icon: '<i class="far fa-copy"></i>',
+        label: 'Copy Tracker Template',
+        callback: selectTracker.bind(this),
+      },
+      two: {
+        icon: '<i class="fas fa-edit"></i>',
+        label: 'Edit This Tracker',
+        callback: () => ResourceTrackerEditor.editForActor(this.actor, path),
+      },
+    }
+
+    let d = new Dialog(
+      {
+        title: 'Update Tracker',
+        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
+        buttons: buttons,
+        default: 'def',
+        templates: templates,
+      },
+      { width: 400 }
+    )
+    d.render(true)
+  }
+
+  // ==========
+  // html.find('.tracked-resource .header.with-editor').click(async ev => {
+  //   ev.preventDefault()
+
+  //   let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
+  //   let path = parent.attr('data-gurps-resource')
+
+  // })
+  // ==========
 
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
