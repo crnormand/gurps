@@ -13,6 +13,7 @@ This is what we are currently working on:
 
 - Updated German/Deutsch translation
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
+- Bugfix for pi-, pi+, and pi++ damage types.
  
 0.8.21
 
