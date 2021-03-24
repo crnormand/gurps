@@ -15,6 +15,7 @@ This is what we are currently working on:
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
 - Bugfix for pi-, pi+, and pi++ damage types.
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
+- Added sanity check on Resource Tracker alias input.
  
 0.8.21
 
