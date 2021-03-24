@@ -582,11 +582,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
     let templates = ResourceTrackerManager.getAllTemplates()
-    if (!templates || templates.length == 0) {
-      templates = null
-      // ResourceTrackerEditor.editForActor(this.actor, path)
-      // return
-    }
+    if (!templates || templates.length == 0) templates = null
 
     let selectTracker = async function (html) {
       let name = html.find('select option:selected').text().trim()
@@ -598,12 +594,12 @@ export class GurpsActorSheet extends ActorSheet {
     let buttons = {
       edit: {
         icon: '<i class="fas fa-edit"></i>',
-        label: 'Edit Tracker',
+        label: game.i18n.localize('GURPS.resourceEditTracker'),
         callback: () => ResourceTrackerEditor.editForActor(this.actor, path),
       },
       remove: {
         icon: '<i class="fas fa-trash"></i>',
-        label: 'Delete Tracker',
+        label: game.i18n.localize('GURPS.resourceDeleteTracker'),
         callback: async () => await this.actor.removeTracker(path),
       },
     }
@@ -611,14 +607,14 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!templates) {
       buttons.apply = {
         icon: '<i class="far fa-copy"></i>',
-        label: 'Copy Template',
+        label: game.i18n.localize('GURPS.resourceCopyTemplate'),
         callback: selectTracker.bind(this),
       }
     }
 
     let d = new Dialog(
       {
-        title: 'Update Tracker',
+        title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
         content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
         buttons: buttons,
         default: 'edit',
