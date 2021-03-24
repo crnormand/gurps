@@ -565,16 +565,13 @@ function trim(s) {
 }
 GURPS.trim = trim
 
-function executeOTF (string, priv = false) {
+function executeOTF(string, priv = false) {
   if (!string) return
   string = string.trim()
-  if (string[0] == '[' && string[string.length-1] == ']')
-    string = string.substring(1,string.length-1)
+  if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action) 
-    GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv });
-  else
-    ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`);
+  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv })
+  else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
 }
 GURPS.executeOTF = executeOTF
 
@@ -1492,6 +1489,21 @@ Hooks.once('ready', async function () {
         resource: true,
       })
   )
+
+  Hooks.on('hotbarDrop', async (bar, data, slot) => {
+    console.log(data)
+    if (data.type !== 'OtF') return
+    let macro = await Macro.create({
+      name: `OtF: ${data.otf}`,
+      type: 'script',
+      command: `
+      let actor = game.actors.get('${data.actor}')
+      GURPS.SetLastActor(actor)
+      GURPS.executeOTF('${data.otf}')`,
+    })
+    game.user.assignHotbarMacro(macro, slot)
+    return false
+  })
 
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
