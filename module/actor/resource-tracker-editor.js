@@ -67,7 +67,16 @@ export class ResourceTrackerEditor extends Application {
     })
 
     html.find('.inputs .alias').change(ev => {
-      this._tracker.alias = ev.currentTarget.value
+      // change the regex from /(w+)(.*)/ to /([A-Za-z0-9_+-]+)(.*)/ to make sure we recognize pi-, pi+ and pi++
+      let alias = ev.currentTarget.value
+      if (/^[A-Za-z0-9_+-]+$/.test(alias)) this._tracker.alias = alias
+      else {
+        ui.notifications.warn(
+          `Invalid alias [${alias}].<br/>Only alphabet and number characters, plus ('+', '_', and '-'), are allowed.`
+        )
+
+        ev.currentTarget.value = this._tracker.alias
+      }
     })
 
     html.find('[name="damage-type"]').click(ev => {
