@@ -16,7 +16,7 @@ This is what we are currently working on:
 - Bugfix for pi-, pi+, and pi++ damage types.
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
 - Added sanity check on Resource Tracker alias input.
-- Added initial Russian/русский translation.
+- Added initial Russian/русский translation (thanks to Discord user @Weirdy)!
 - Bugfix for multiple damage drag-and-drop.
 - OtF damage types are now case-insensitive (e.g., 'Cut' and 'CUT' become 'cut').
  
