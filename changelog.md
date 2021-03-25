@@ -18,6 +18,7 @@ This is what we are currently working on:
 - Added sanity check on Resource Tracker alias input.
 - Added initial Russian/русский translation.
 - Bugfix for multiple damage drag-and-drop.
+- OtF damage types are now case-insensitive (e.g., 'Cut' and 'CUT' become 'cut').
  
 0.8.21
 
