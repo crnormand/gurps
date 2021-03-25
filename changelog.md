@@ -16,6 +16,8 @@ This is what we are currently working on:
 - Bugfix for pi-, pi+, and pi++ damage types.
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
 - Added sanity check on Resource Tracker alias input.
+- Added initial Russian translation.
+- Bugfix for multiple damage drag-and-drop.
  
 0.8.21
 
