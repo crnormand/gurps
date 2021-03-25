@@ -104,9 +104,9 @@
   "GURPS.addApplyDamageDialog": "Окно нанесения повреждений",
 
   "GURPS.addTitleConcat0": "Применить",
-  "GURPS.addTitleConcat01": "Очко ",
-  "GURPS.addTitleConcat0s": "Очков ",
-  "GURPS.addTitleConcat1": "урон по {name}",
+  "GURPS.addTitleConcat01": "единицу ",
+  "GURPS.addTitleConcat0s": "единиц ",
+  "GURPS.addTitleConcat1": "урона по {name}",
   "GURPS.addDirectlyApply": "НАНЕСТИ ПОВРЕЖДЕНИЯ НАПРЯМУЮ",
   "GURPS.addApply": "Принять",
   "GURPS.addApplyQuietly": "Принять (Скрытно)",
@@ -119,7 +119,7 @@
   "GURPS.addDamageType": "Тип урона",
   "GURPS.addAbbrev": "Сокращение",
   "GURPS.addAdjustedForHitLocation": "* - С учётом зоны попадания",
-  "GURPS.addAdjustedForInjuryTolerance": "вЂ  - С учётом Устойчивости к ранениям",
+  "GURPS.addAdjustedForInjuryTolerance": "вЂ  - С учётом Устойчивости к ранениям",
   "GURPS.addEnterModifier": "Введите модификатор",
   "GURPS.addAdditionalStackingModifier": "Дополнительный модификатор (складывается)",
   "GURPS.addTacticalRules": "Особые правила",
@@ -204,7 +204,7 @@
   "GURPS.hitLocationDR": "СП",
   "GURPS.hitLocationDRWithDivisor": "Эффективный СП",
 
-  "GURPS.hitLocationRandom": "Случайная",
+  "GURPS.hitLocationRandom": "Случайная зона",
 
   "GURPS.meleeWeapons": "Контактное оружие",
   "GURPS.usage": "Применение",
@@ -369,7 +369,7 @@
   "GURPS.hitLocationLeg 7-8": "Нога 7-8",
   "GURPS.hitLocationChest": "Грудь",
 
-  "GURPS.damageTypeBurning": "Общигающее",
+  "GURPS.damageTypeBurning": "Обжигающее",
   "GURPS.damageTypeCorrosive": "Разъедающее",
   "GURPS.damageTypeCrushing": "Дробящее",
   "GURPS.damageTypeCutting": "Режущее",
