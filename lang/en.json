@@ -145,6 +145,8 @@
   "GURPS.addDiffuseMax": "Diffuse, max",
   "GURPS.addLocationMax": "Location Max",
 
+  "GURPS.selectToken": "Select Token",
+  "GURPS.addApplyTo": "Apply to",
   "GURPS.addApplyInjury": "Apply Injury",
   "GURPS.addApplyInjuryQuietly": "Apply Injury (Quietly)",
   "GURPS.addApplyAndKeep": "Apply/Keep Open",
