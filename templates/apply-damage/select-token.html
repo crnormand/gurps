@@ -1,0 +1,9 @@
+<div style='text-align: center; margin: 1.5rem 0;'>
+  {{localize "GURPS.addApplyTo"}}:
+  <select>
+    {{#each tokens}}
+    {{debug this}}
+    <option value='{{this.name}}'>{{this.name}}</option>
+    {{/each}}
+  </select>
+</div>

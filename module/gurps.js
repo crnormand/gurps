@@ -1613,30 +1613,51 @@ Hooks.once('ready', async function () {
   /**
    * Add a listener to handle damage being dropped on a token.
    */
-  Hooks.on('dropCanvasData', function (canvas, dropData) {
-    let grid_size = canvas.scene.data.grid
-    let old = new Set(game.user.targets)
-    let numberTargets = canvas.tokens.targetObjects({
-      x: dropData.x - grid_size / 2,
-      y: dropData.y - grid_size / 2,
-      height: grid_size,
-      width: grid_size,
-      releaseOthers: true,
-    })
+  Hooks.on('dropCanvasData', async function (canvas, dropData) {
+    if (dropData.type === 'damageItem') {
+      let grid_size = canvas.scene.data.grid
+      canvas.tokens.targetObjects({
+        x: dropData.x - grid_size / 2,
+        y: dropData.y - grid_size / 2,
+        height: grid_size,
+        width: grid_size,
+        releaseOthers: true,
+      })
 
-    // actual targets are stored in game.user.targets
-    if (game.user.targets.size === 1) {
-      let keys = game.user.targets.keys()
-      let first = keys.next()
-      if (dropData.type === 'damageItem') {
-        for (let t of game.user.targets) {
-          t.setTarget(false, { releaseOthers: false, groupSelection: true })
-        }
-        old.forEach(t => {
-          t.setTarget(true, { releaseOthers: false, groupSelection: true })
-        })
-        first.value.actor.handleDamageDrop(dropData.payload)
+      // actual targets are stored in game.user.targets
+      if (game.user.targets.size === 0) return false
+      if (game.user.targets.size === 1) {
+        target.actor.handleDamageDrop(dropData.payload)
+        return false
       }
+
+      let buttons = {
+        apply: {
+          icon: '<i class="fas fa-check"></i>',
+          label: game.i18n.localize('GURPS.addApply'),
+          callback: html => {
+            let name = html.find('select option:selected').text().trim()
+            let target = [...game.user.targets].find(token => token.name === name)
+            target.actor.handleDamageDrop(dropData.payload)
+          },
+        },
+      }
+
+      let d = new Dialog(
+        {
+          title: game.i18n.localize('GURPS.selectToken'),
+          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
+            tokens: game.user.targets,
+          }),
+          buttons: buttons,
+          default: 'apply',
+          tokens: game.user.targets,
+        },
+        { width: 300 }
+      )
+      await d.render(true)
+
+      return false
     }
   })
 
