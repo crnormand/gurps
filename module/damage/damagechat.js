@@ -1,6 +1,5 @@
 'use strict'
 
-import { woundModifiers } from './damage-tables.js'
 import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.js'
 
 /**

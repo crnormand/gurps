@@ -2,7 +2,7 @@
 
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
-import * as DamageTables from './damage-tables.js'
+import { DamageTables } from './damage-tables.js'
 import { objectToArray } from '../../lib/utilities.js'
 
 /* 
@@ -59,7 +59,7 @@ export class CompositeDamageCalculator {
     if (Object.keys(this._defaultWoundingModifiers).includes(damageData[0].damageType))
       this._damageType = damageData[0].damageType
     else {
-      let temp = DamageTables.damageTypeMap[damageData[0].damageType]
+      let temp = DamageTables.translate(damageData[0].damageType)
       if (temp) this._damageType = temp
       else this._damageType = 'none'
     }
