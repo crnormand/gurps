@@ -18,6 +18,7 @@ import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../li
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
+import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -47,7 +48,6 @@ import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
-import { damageTypeMap, woundModifiers } from './damage/damage-tables.js'
 
 addChatHooks()
 jqueryHelpers()
@@ -1451,6 +1451,7 @@ Hooks.once('init', async function () {
 })
 
 Hooks.once('ready', async function () {
+  initializeDamageTables()
   ResourceTrackerManager.initSettings()
   GURPS.ModifierBucket.clear()
   GURPS.ThreeD6.refresh()
@@ -1480,10 +1481,10 @@ Hooks.once('ready', async function () {
     .filter(it => !!it.tracker.isDamageType)
     .filter(it => !!it.tracker.alias)
     .map(it => it.tracker)
-  resourceTrackers.forEach(it => (damageTypeMap[it.alias] = it.alias))
+  resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
   resourceTrackers.forEach(
     it =>
-      (woundModifiers[it.alias] = {
+      (DamageTables.woundModifiers[it.alias] = {
         multiplier: 1,
         label: it.name,
         resource: true,
@@ -1627,7 +1628,8 @@ Hooks.once('ready', async function () {
       // actual targets are stored in game.user.targets
       if (game.user.targets.size === 0) return false
       if (game.user.targets.size === 1) {
-        target.actor.handleDamageDrop(dropData.payload)
+        let targets = [...game.user.targets]
+        targets[0].actor.handleDamageDrop(dropData.payload)
         return false
       }
 
