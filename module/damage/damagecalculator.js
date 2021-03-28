@@ -303,9 +303,9 @@ export class CompositeDamageCalculator {
       // -1 divisor means "Ignore DR"
       let armorDivisor = this.effectiveArmorDivisor
       if (armorDivisor === -1) return 0
+      if (armorDivisor < 1 && dr === 0) return 1
 
-      let tempDR = armorDivisor < 1 && dr === 0 ? 1 : dr
-      return Math.floor(tempDR / armorDivisor)
+      return Math.floor(dr / armorDivisor)
     }
     return dr
   }
