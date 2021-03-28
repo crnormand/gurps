@@ -19,6 +19,8 @@ This is what we are currently working on:
 - Added initial Russian/русский translation (thanks to Discord user @Weirdy)!
 - Bugfix for multiple damage drag-and-drop.
 - OtF damage types are now case-insensitive (e.g., 'Cut' and 'CUT' become 'cut').
+- Dropping the damage chat onto a hex with multiple tokens will now prompt the user to select which token to apply it to.
+- Support localization of damage abbreviations (e.g., "cut" can be entered as "corte" in Brazilian Portuguese)
  
 0.8.21
 
