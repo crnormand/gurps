@@ -38,7 +38,7 @@ class SlamCalculator extends FormApplication {
       minimizable: false,
       jQuery: true,
       resizable: false,
-      title: game.i18n.localize('Slam Calculator'),
+      title: game.i18n.localize('GURPS.slamCalculator'),
     })
   }
 

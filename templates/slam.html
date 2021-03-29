@@ -1,24 +1,24 @@
 <form class='{{cssClass}}' slam-calculator autocomplete="off">
-  <h2>Slam Calculator</h2>
+  <h2>{{localize "GURPS.slamCalculator"}}</h2>
   <div class='inputs'>
-    <label>Attacker HP:</label>
+    <label>{{localize "GURPS.slamAttackerHP"}}:</label>
     <input type="text" value="10" data-dtype="Number" />
-    <label>Attacker Velocity:</label>
+    <label>{{localize "GURPS.slamAttackerVelocity"}}:</label>
     <input type="text" value="10" data-dtype="Number" />
-    <label for='aoa'>All Out Attack (Strong):</label>
+    <label for='aoa'>{{localize "GURPS.slamAOAStrong"}}:</label>
     <input type='checkbox' id='aoa'>
     <div style='margin-top: 0.5rem;'></div>
     <div></div>
-    <label>Target HP:</label>
+    <label>{{localize "GURPS.slamTargetHP"}}:</label>
     <input type="text" value="10" data-dtype="Number" />
-    <label>Target Velocity:</label>
+    <label>{{localize "GURPS.slamTargetVelocity"}}:</label>
     <input type="text" value="10" data-dtype="Number" />
     <div style='margin-top: 0.5rem;'></div>
     <div></div>
-    <label>Relative Velocity:</label>
+    <label>{{localize "GURPS.slamRelativeVelocity"}}:</label>
     <input type='text' value='20' readonly disabled>
   </div>
   <div class='button-bar'>
-    <button>Resolve</button>
+    <button>{{localize "GURPS.resolve"}}</button>
   </div>
 </form>

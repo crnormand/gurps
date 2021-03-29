@@ -439,5 +439,14 @@
   "GURPS.resourceDeleteTracker": "Delete Tracker",
   "GURPS.resourceCopyTemplate": "Copy Template",
   "GURPS.resourceUndefined": "None Defined",
-  "GURPS.resourceUpdateTrackerSlot": "Update Tracker Slot"
+  "GURPS.resourceUpdateTrackerSlot": "Update Tracker Slot",
+
+  "GURPS.resolve": "Resolve",
+  "GURPS.slamCalculator": "Slam Calculator",
+  "GURPS.slamAttackerHP": "Attacker HP",
+  "GURPS.slamAttackerVelocity": "Attacker Velocity",
+  "GURPS.slamAOAStrong": "All-Out Attack (Strong)",
+  "GURPS.slamTargetHP": "Target HP",
+  "GURPS.slamTargetVelocity": "Target Velocity",
+  "GURPS.slamRelativeVelocity": "Relative Velocity"
 }
