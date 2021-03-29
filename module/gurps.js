@@ -19,6 +19,7 @@ import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
+import SlamChatProcessor from '../module/slam.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -43,7 +44,6 @@ import DamageChat from './damage/damagechat.js'
 import handlebarHelpers from '../lib/moustachewax.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
-import { NpcInput } from '../lib/npc-input.js'
 import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
@@ -1383,6 +1383,7 @@ Hooks.once('init', async function () {
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
+  SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket({

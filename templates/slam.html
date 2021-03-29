@@ -1,0 +1,24 @@
+<form class='{{cssClass}}' slam-calculator autocomplete="off">
+  <h2>Slam Calculator</h2>
+  <div class='inputs'>
+    <label>Attacker HP:</label>
+    <input type="text" value="10" data-dtype="Number" />
+    <label>Attacker Velocity:</label>
+    <input type="text" value="10" data-dtype="Number" />
+    <label for='aoa'>All Out Attack (Strong):</label>
+    <input type='checkbox' id='aoa'>
+    <div style='margin-top: 0.5rem;'></div>
+    <div></div>
+    <label>Target HP:</label>
+    <input type="text" value="10" data-dtype="Number" />
+    <label>Target Velocity:</label>
+    <input type="text" value="10" data-dtype="Number" />
+    <div style='margin-top: 0.5rem;'></div>
+    <div></div>
+    <label>Relative Velocity:</label>
+    <input type='text' value='20' readonly disabled>
+  </div>
+  <div class='button-bar'>
+    <button>Resolve</button>
+  </div>
+</form>
