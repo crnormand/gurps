@@ -1,6 +1,9 @@
 {
+  "GURPS.title": "GURPS",
   "GURPS.changelog": "LIESMICH",
   "GURPS.DontShowAgain": "Zeige LIESMICH nicht noch einmal",
+  "GURPS.copyright": "GURPS© is copyrighted by Steve Jackson Games",
+  "GURPS.copyrightGCS": "GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved ",
 
   "GURPS.portrait": "Portrait",
   "GURPS.identity": "Identität",
@@ -40,7 +43,15 @@
   "GURPS.pointsSpells": "Zauber",
 
   "GURPS.attributes": "Attribute",
+  "GURPS.attributesST": "ST",
+  "GURPS.attributesDX": "DX",
+  "GURPS.attributesIQ": "IQ",
+  "GURPS.attributesHT": "HT",
+  "GURPS.attributesWILL": "Will",
+  "GURPS.attributesPER": "Per",
 
+  "GURPS.HP": "HP",
+  "GURPS.FP": "FP",
   "GURPS.attributesHPNAME": "Trefferpunkte",
   "GURPS.attributesFPNAME": "Ausdauerpunkte",
 
@@ -133,6 +144,8 @@
   "GURPS.addDiffuseMax": "Diffus, max",
   "GURPS.addLocationMax": "Location Max",
 
+  "GURPS.selectToken": "Wähle Token",
+  "GURPS.addApplyTo": "Wende an auf",
   "GURPS.addApplyInjury": "Wende Schaden an",
   "GURPS.addApplyInjuryQuietly": "Wende Schaden an (Privat)",
   "GURPS.addApplyAndKeep": "Anwenden/Geöffnet Lassen",
@@ -206,6 +219,31 @@
   "GURPS.bulk": "Bulk",
   "GURPS.rcl": "Rcl",
   "GURPS.range": "Reichweite",
+
+  "GURPS.SkillDXE": "DX/E",
+  "GURPS.SkillDXA": "DX/A",
+  "GURPS.SkillDXH": "DX/H",
+  "GURPS.SkillDXVH": "DX/VH",
+
+  "GURPS.SkillIQE": "IQ/E",
+  "GURPS.SkillIQA": "IQ/A",
+  "GURPS.SkillIQH": "IQ/H",
+  "GURPS.SkillIQVH": "IQ/VH",
+
+  "GURPS.SkillHTE": "HT/E",
+  "GURPS.SkillHTA": "HT/A",
+  "GURPS.SkillHTH": "HT/H",
+  "GURPS.SkillHTVH": "HT/VH",
+
+  "GURPS.SkillWillE": "Will/E",
+  "GURPS.SkillWillA": "Will/A",
+  "GURPS.SkillWillH": "Will/H",
+  "GURPS.SkillWillVH": "Will/VH",
+
+  "GURPS.SkillPerE": "Per/E",
+  "GURPS.SkillPerA": "Per/A",
+  "GURPS.SkillPerH": "Per/H",
+  "GURPS.SkillPerVH": "Per/VH",
 
   "GURPS.groundCreatures": "Boden Kreaturen",
   "GURPS.swimmerFlyer": "Schwimmer / Flieger",
@@ -347,6 +385,19 @@
   "GURPS.damageTypeToxic": "Toxisch",
   "GURPS.damageTypeDamage": "Schaden",
 
+  "GURPS.damageAbbrevburn": "burn",
+  "GURPS.damageAbbrevcor": "cor",
+  "GURPS.damageAbbrevcr": "cr",
+  "GURPS.damageAbbrevcut": "cut",
+  "GURPS.damageAbbrevfat": "fat",
+  "GURPS.damageAbbrevimp": "imp",
+  "GURPS.damageAbbrevpi-": "pi-",
+  "GURPS.damageAbbrevpi": "pi",
+  "GURPS.damageAbbrevpi+": "pi+",
+  "GURPS.damageAbbrevpi++": "pi++",
+  "GURPS.damageAbbrevtox": "tox",
+  "GURPS.damageAbbrevdmg": "dmg",
+
   "GURPS.overridden": "overridden",
 
   "GURPS.current": "Aktuell",
@@ -376,5 +427,18 @@
   "GURPS.grapplingGrappled": "Festgehalten",
   "GURPS.grapplingRestrained": "Eingeschränkt",
   "GURPS.grapplingControlled": "Kontrolliert",
-  "GURPS.grapplingPinned": "Niedergehalten"
+  "GURPS.grapplingPinned": "Niedergehalten",
+
+  "GURPS.resourceDamageType": "Benutze als Schadenstyp",
+  "GURPS.resourceDamageTracker": "Schadens Anzeige (Schaden erhöht den Wert).",
+  "GURPS.resourceCurrentValue": "Aktueller Wert",
+  "GURPS.clickToEdit": "Klicke zum Bearbeiten",
+  "GURPS.resourceTracker": "Anzeige",
+  "GURPS.trackerNotUnique": "Diesen AnzeigenName ({name}) oder Alias ({alias}) gibt es bereits.",
+  "GURPS.slotNotUnique": "Dem Platzhalter {value} ist bereits eine andere Anzeige zugewiesen.",
+  "GURPS.resourceEditTracker": "Bearbeite Anzeige",
+  "GURPS.resourceDeleteTracker": "Lösche Anzeige",
+  "GURPS.resourceCopyTemplate": "Kopiere Vorlage",
+  "GURPS.resourceUndefined": "Nicht definiert",
+  "GURPS.resourceUpdateTrackerSlot": "Aktualisiere Anzeige Platzhalter"
 }
