@@ -17,14 +17,19 @@
       "path": "lang/en.json"
     },
     {
-      "lang": "pt_br",
+      "lang": "pt-BR",
       "name": "Português (Brasil)",
       "path": "lang/pt_br.json"
     },
     {
       "lang": "de",
-      "name": "Deutsch",
+      "name": "Deutsch (German)",
       "path": "lang/de.json"
+    },
+    {
+      "lang": "ru",
+      "name": "русский (Russian)",
+      "path": "lang/ru.json"
     }
   ],
   "gridDistance": 1,

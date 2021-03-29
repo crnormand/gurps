@@ -1,6 +1,5 @@
 'use strict'
 
-import { woundModifiers } from './damage-tables.js'
 import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.js'
 
 /**
@@ -51,7 +50,7 @@ export default class DamageChat {
           message.setAttribute('draggable', true)
           message.addEventListener('dragstart', ev => {
             $(ev.currentTarget).addClass('dragging')
-            ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
+            ev.dataTransfer.setDragImage(game.GURPS.damageDragImage, 30, 30)
             let data = {
               type: 'damageItem',
               payload: transfer.payload,
@@ -94,7 +93,7 @@ export default class DamageChat {
   static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
     let message = new DamageChat()
 
-    const targetmods = await message._gurps.ModifierBucket.applyMods() // append any global mods
+    const targetmods = await game.GURPS.ModifierBucket.applyMods() // append any global mods
 
     let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText)
 
@@ -113,11 +112,7 @@ export default class DamageChat {
     targetmods
       .filter(it => !!it.desc)
       .map(it => it.desc)
-      .forEach(it => message._gurps.applyModifierDesc(actor, it))
-  }
-
-  get _gurps() {
-    return game.GURPS
+      .forEach(it => game.GURPS.applyModifierDesc(actor, it))
   }
 
   /**
@@ -379,7 +374,7 @@ export default class DamageChat {
     CONFIG.ChatMessage.entityClass.create(messageData).then(arg => {
       console.log(arg)
       let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
-      $(`[data-message-id='${messageId}']`).click(ev => this._gurps.handleOnPdf(ev))
+      $(`[data-message-id='${messageId}']`).click(ev => game.GURPS.handleOnPdf(ev))
     })
   }
 }

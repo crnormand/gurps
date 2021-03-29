@@ -12,8 +12,6 @@ export class ResourceTrackerManager extends FormApplication {
       restricted: true,
     })
 
-    let cp = game.i18n.localize('GURPS.grapplingControlPoints')
-
     game.settings.register(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, {
       name: game.i18n.localize('GURPS.resourceTemplateTitle'),
       scope: 'world',
@@ -213,8 +211,6 @@ export class ResourceTrackerManager extends FormApplication {
       let index = parseInt($(ev.currentTarget).attr('data'))
       this._templates[index].initialValue = ev.currentTarget.value
     })
-
-    // html.find('#update').click(() => this._updateObject())
   }
 
   _validate(index, value) {

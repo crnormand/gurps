@@ -18,6 +18,7 @@ import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../li
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
+import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -47,7 +48,6 @@ import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
-import { damageTypeMap, woundModifiers } from './damage/damage-tables.js'
 
 addChatHooks()
 jqueryHelpers()
@@ -565,16 +565,13 @@ function trim(s) {
 }
 GURPS.trim = trim
 
-function executeOTF (string, priv = false) {
+function executeOTF(string, priv = false) {
   if (!string) return
   string = string.trim()
-  if (string[0] == '[' && string[string.length-1] == ']')
-    string = string.substring(1,string.length-1)
+  if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action) 
-    GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv });
-  else
-    ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`);
+  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv })
+  else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
 }
 GURPS.executeOTF = executeOTF
 
@@ -1454,6 +1451,7 @@ Hooks.once('init', async function () {
 })
 
 Hooks.once('ready', async function () {
+  initializeDamageTables()
   ResourceTrackerManager.initSettings()
   GURPS.ModifierBucket.clear()
   GURPS.ThreeD6.refresh()
@@ -1483,15 +1481,30 @@ Hooks.once('ready', async function () {
     .filter(it => !!it.tracker.isDamageType)
     .filter(it => !!it.tracker.alias)
     .map(it => it.tracker)
-  resourceTrackers.forEach(it => (damageTypeMap[it.alias] = it.alias))
+  resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
   resourceTrackers.forEach(
     it =>
-      (woundModifiers[it.alias] = {
+      (DamageTables.woundModifiers[it.alias] = {
         multiplier: 1,
         label: it.name,
         resource: true,
       })
   )
+
+  Hooks.on('hotbarDrop', async (bar, data, slot) => {
+    console.log(data)
+    if (data.type !== 'OtF') return
+    let macro = await Macro.create({
+      name: `OtF: ${data.otf}`,
+      type: 'script',
+      command: `
+      let actor = game.actors.get('${data.actor}')
+      GURPS.SetLastActor(actor)
+      GURPS.executeOTF('${data.otf}')`,
+    })
+    game.user.assignHotbarMacro(macro, slot)
+    return false
+  })
 
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
@@ -1601,30 +1614,52 @@ Hooks.once('ready', async function () {
   /**
    * Add a listener to handle damage being dropped on a token.
    */
-  Hooks.on('dropCanvasData', function (canvas, dropData) {
-    let grid_size = canvas.scene.data.grid
-    let old = new Set(game.user.targets)
-    let numberTargets = canvas.tokens.targetObjects({
-      x: dropData.x - grid_size / 2,
-      y: dropData.y - grid_size / 2,
-      height: grid_size,
-      width: grid_size,
-      releaseOthers: true,
-    })
+  Hooks.on('dropCanvasData', async function (canvas, dropData) {
+    if (dropData.type === 'damageItem') {
+      let grid_size = canvas.scene.data.grid
+      canvas.tokens.targetObjects({
+        x: dropData.x - grid_size / 2,
+        y: dropData.y - grid_size / 2,
+        height: grid_size,
+        width: grid_size,
+        releaseOthers: true,
+      })
 
-    // actual targets are stored in game.user.targets
-    if (game.user.targets.size === 1) {
-      let keys = game.user.targets.keys()
-      let first = keys.next()
-      if (dropData.type === 'damageItem') {
-        for (let t of game.user.targets) {
-          t.setTarget(false, { releaseOthers: false, groupSelection: true })
-        }
-        old.forEach(t => {
-          t.setTarget(true, { releaseOthers: false, groupSelection: true })
-        })
-        first.value.actor.handleDamageDrop(dropData.payload)
+      // actual targets are stored in game.user.targets
+      if (game.user.targets.size === 0) return false
+      if (game.user.targets.size === 1) {
+        let targets = [...game.user.targets]
+        targets[0].actor.handleDamageDrop(dropData.payload)
+        return false
       }
+
+      let buttons = {
+        apply: {
+          icon: '<i class="fas fa-check"></i>',
+          label: game.i18n.localize('GURPS.addApply'),
+          callback: html => {
+            let name = html.find('select option:selected').text().trim()
+            let target = [...game.user.targets].find(token => token.name === name)
+            target.actor.handleDamageDrop(dropData.payload)
+          },
+        },
+      }
+
+      let d = new Dialog(
+        {
+          title: game.i18n.localize('GURPS.selectToken'),
+          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
+            tokens: game.user.targets,
+          }),
+          buttons: buttons,
+          default: 'apply',
+          tokens: game.user.targets,
+        },
+        { width: 300 }
+      )
+      await d.render(true)
+
+      return false
     }
   })
 

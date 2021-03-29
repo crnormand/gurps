@@ -2,7 +2,7 @@
 
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
-import * as DamageTables from './damage-tables.js'
+import { DamageTables } from './damage-tables.js'
 import { objectToArray } from '../../lib/utilities.js'
 
 /* 
@@ -59,7 +59,7 @@ export class CompositeDamageCalculator {
     if (Object.keys(this._defaultWoundingModifiers).includes(damageData[0].damageType))
       this._damageType = damageData[0].damageType
     else {
-      let temp = DamageTables.damageTypeMap[damageData[0].damageType]
+      let temp = DamageTables.translate(damageData[0].damageType)
       if (temp) this._damageType = temp
       else this._damageType = 'none'
     }
@@ -303,9 +303,9 @@ export class CompositeDamageCalculator {
       // -1 divisor means "Ignore DR"
       let armorDivisor = this.effectiveArmorDivisor
       if (armorDivisor === -1) return 0
+      if (armorDivisor < 1 && dr === 0) return 1
 
-      let tempDR = armorDivisor < 1 && dr === 0 ? 1 : dr
-      return Math.floor(tempDR / armorDivisor)
+      return Math.floor(dr / armorDivisor)
     }
     return dr
   }
