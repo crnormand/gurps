@@ -494,6 +494,33 @@ GURPS.SJGProductMappings = {
 
 GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 
+function escapeUnicode(str) {
+    return str.replace(/[^\0-~]/g, function(ch) {
+        return "&#x" + (("0000" + ch.charCodeAt().toString(16).toUpperCase()).slice(-4)) + ";"
+    });
+}
+GURPS.escapeUnicode = escapeUnicode
+
+/**
+ * Read text data from a user provided File object
+ * @param {File} file           A File object
+ * @return {Promise.<String>}   A Promise which resolves to the loaded text data
+ */
+function readTextFromFile(file) {
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = ev => {
+      resolve(reader.result);
+    };
+    reader.onerror = ev => {
+      reader.abort();
+      reject();
+    };
+    reader.readAsBinaryString(file);
+  });
+}
+GURPS.readTextFromFile = readTextFromFile
+
 // This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 // First we have to remove non-printing characters, and then we want to replace
 // all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
@@ -501,7 +528,8 @@ GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 // we will base64 encode it, and the decode it in the Named subclass setNotes()
 function cleanUpP(xml) {
   // First, remove non-ascii characters
-  xml = xml.replace(/[^ -~]+/g, '')
+  // xml = xml.replace(/[^ -~]+/g, '')
+  xml = GURPS.escapeUnicode(xml)
 
   // Now try to remove any lone " & " in names, etc.  Will only occur in GCA output
   xml = xml.replace(/ & /g, ' &amp; ')

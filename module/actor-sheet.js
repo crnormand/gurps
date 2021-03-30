@@ -1068,7 +1068,7 @@ export class GurpsActorSheet extends ActorSheet {
                 return ui.notifications.error('You did not upload a data file!')
               } else {
                 file = files[0]
-                readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
+                GURPS.readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
               }
             },
           },
