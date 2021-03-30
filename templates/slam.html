@@ -2,21 +2,21 @@
   <h2>{{localize "GURPS.slamCalculator"}}</h2>
   <div class='inputs'>
     <label>{{localize "GURPS.slamAttackerHP"}}:</label>
-    <input type="text" value="10" data-dtype="Number" />
+    <input id='attacker-hp' type="text" value="{{attackerHp}}" data-dtype="Number" />
     <label>{{localize "GURPS.slamAttackerVelocity"}}:</label>
-    <input type="text" value="10" data-dtype="Number" />
+    <input id='attacker-speed' type="text" value="{{attackerSpeed}}" data-dtype="Number" />
     <label for='aoa'>{{localize "GURPS.slamAOAStrong"}}:</label>
-    <input type='checkbox' id='aoa'>
+    <input id='aoa' type='checkbox'>
     <div style='margin-top: 0.5rem;'></div>
     <div></div>
     <label>{{localize "GURPS.slamTargetHP"}}:</label>
-    <input type="text" value="10" data-dtype="Number" />
+    <input id='target-hp' type="text" value="{{targetHp}}" data-dtype="Number" />
     <label>{{localize "GURPS.slamTargetVelocity"}}:</label>
-    <input type="text" value="10" data-dtype="Number" />
+    <input id='target-speed' type="text" value="{{targetSpeed}}" data-dtype="Number" />
     <div style='margin-top: 0.5rem;'></div>
     <div></div>
     <label>{{localize "GURPS.slamRelativeVelocity"}}:</label>
-    <input type='text' value='20' readonly disabled>
+    <input id='relative-speed' type='text' value='{{relativeSpeed}}' readonly disabled>
   </div>
   <div class='button-bar'>
     <button>{{localize "GURPS.resolve"}}</button>
