@@ -2,13 +2,6 @@
 
 This is what we are currently working on:
 
-0.9.0
-
-- Typescript & build process
-- Items... yes... actual items.
-
-## History
-
 0.8.22
 
 - Updated German/Deutsch translation
@@ -22,6 +15,8 @@ This is what we are currently working on:
 - Dropping the damage chat onto a hex with multiple tokens will now prompt the user to select which token to apply it to.
 - Support localization of damage abbreviations (e.g., "cut" can be entered as "corte" in Brazilian Portuguese)
 - Fixed DR calculation when Armor Divisor < 1 and location DR is 0.
+
+## History
 
   0.8.21
 

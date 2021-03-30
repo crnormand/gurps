@@ -526,6 +526,7 @@ export default function addChatHooks() {
           handled = true
           return
         }
+        
         if (line === '/showmbs') {
           priv(line, msgs);
           GURPS.ModifierBucket.showOthers()
@@ -553,6 +554,7 @@ export default function addChatHooks() {
           handled = true
           return
         }
+        
         if (line.startsWith("/:")) {
           m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)));
           if (m.length > 0) {
@@ -563,15 +565,275 @@ export default function addChatHooks() {
           handled = true
           return
         }
-        if (line.trim().startsWith("/")) {// immediately flush our stored msgs, and execute the slash command using the default parser
+        
+        if (line.match(/\/(fc|frightcheck)/)) {
           handled = true
+          if(!GURPS.LastActor){
+            ui.notifications.error("Please select a token/character.");
+            return;
+          }
+          let dialogTemplate = `<div style="display:flex>
+  <span>&#8226;</span> Unfazeable (No check required)<hr>
+
+  <span style="flex:1">Fearless/Fearfulness(+/-): <select id="mod2">
+    <option value= 0>  None </option>
+    <option value= 1> Fearless 1 </option>
+    <option value= 2> Fearless 2 </option>
+    <option value= 3> Fearless 3 </option>
+    <option value= 4> Fearless 4 </option>
+    <option value= 5> Fearless 5 </option>
+    <option value= -1> Fearfulness 1 </option>
+    <option value= -2> Fearfulness 2 </option>
+    <option value= -3> Fearfulness 3 </option>
+    <option value= -4> Fearfulness 4 </option>
+    <option value= -5> Fearfulness 5 </option>
+  </select></span><hr>
+  
+  <span style="flex:1">Combat Reflexes / Combat Paralysis: <select id="mod3">
+    <option value= 0>  None </option>
+    <option value= 2> Combat Reflexes (+2) </option>
+    <option value= -2> Combat Paralysis (-2) </option>
+  </select></span><hr>
+  
+  <span style="flex:1">Cowardess: <select id="mod4">
+    <option value= 0>  None </option>
+    <option value= -1> Cowardess 1 </option>
+    <option value= -2> Cowardess 2 </option>
+    <option value= -3> Cowardess 3 </option>
+    <option value= -4> Cowardess 4 </option>
+  </select></span><hr>
+  
+  <span style="flex:1">Xenophilia(Against monsters): <select id="mod5">
+    <option value= 0>  None </option>
+    <option value= 1> Xenophilia CR:15 (+1) </option>
+    <option value= 2> Xenophilia CR:12 (+2) </option>
+    <option value= 3> Xenophilia CR:9 (+3) </option>
+    <option value= 4> Xenophilia CR:6 (+4) </option>
+  </select></span><hr>
+  
+
+  <span style="flex:1">Bodies: <select id="bodies1">
+    <option value= 0> Most Victims of Violence (0) </option>
+    <option value= 1> Peaceful/Prepared for Burial (+6) </option>
+    <option value= 2> No sign of Violence (+2) </option>
+    <option value= -1> Grizzly Mutilations (-1) </option>
+    <option value= -2> Grizzly Mutilations (-2) </option>
+    <option value= -3> Grizzly Mutilations (-3) </option>
+    </select>
+  </span>
+  <br>
+    Bodies - Additional: Corpse was a dependant (-6) <input id="bodies2" type="checkbox" value= -6 />
+  <hr>
+  
+  
+  <span style="flex:1">Monster: <select id="monster1">
+    <option value= 0> None (0) </option>
+    <option value= -1> Inhuman (-1) </option>
+    <option value= -2> Beastly (-2) </option>
+    <option value= -3> Scary (-3) </option>
+    <option value= -4> Ghastly (-4) </option>
+    <option value= -5> Frightening (-5) </option>
+    <option value= -6> Horrifying (-6) </option>
+    <option value= -7> Blood-Curdling (-7) </option>
+    <option value= -8> Petrifying (-8) </option>
+    <option value= -9> Terrifying (-9) </option>
+    <option value= -10> Scarring (-10) </option>
+    </select>
+  </span>
+  <hr>
+  <span style="flex:1">Monster Horde: <select id="monster2">
+    <option value= 0> Less than 5 (0) </option>
+    <option value= -1> At least 5 (-1) </option>
+    <option value= -2> At least 10 (-2) </option>
+    <option value= -3> At least 20 (-3) </option>
+    <option value= -4> At least 50 (-4) </option>
+    <option value= -5> At least 100 (-5) </option>
+    </select>
+  </span>
+  <hr>
+  
+  <span style="flex:1">Circumstance - See corpse at Distance (+1) <input id="check4a" type="checkbox" value=1 /></span><br>
+  <span style="flex:1">Circumstance - See corpse Remotely (+3) <input id="check4b" type="checkbox" value=3 /></span><br>
+
+  <span style="flex:1">Circumstance - Touch corpse (-1) <input id="check4" type="checkbox" value=-1 /></span><br>
+  <span style="flex:1">Circumstance - Area is isolated (-1) <input id="check5" type="checkbox" value=-1 /></span><br>
+  <span style="flex:1">Circumstance - Night (-1) <input id="check6" type="checkbox" value=-1 /></span><br>
+  <span style="flex:1">Circumstance - If you believe you are alone (-2) <input id="check7" type="checkbox" value=-2 /></span><br>
+
+  <span style="flex:1">Heat of Battle (+5) <input id="check3" type="checkbox" value=5 /></span><br>
+  <span style="flex:1">Daredevil (+1) <input id="check1" type="checkbox" value=1 /></span><br>
+  <span style="flex:1">Higher Purpose(When applicable)(+1) <input id="check2" type="checkbox" value=1 /></span><br>
+  <span style="flex:1">Previouse exp with this threat (+1) <input id="check8" type="checkbox" value=1 /></span><hr>
+  <span style="flex:1">Preparation - Per exposure to this particular threat in 24 hours (+1): <input id="check9" type="number" value=0 style="width:50px;"/></span>
+  <hr>
+  <span style="flex:1">Additional Mod (+/-): <input id="mod1" type="number" value=0 style="width:50px;" /></span>
+  <hr>
+  <span>If Final Modified WILL exceeds 13, it will be reduced to 13</span>
+  
+</div>
+`
+
+          new Dialog({
+            title: "Fright Check",
+            content: dialogTemplate,
+            buttons: {
+              rollFrightCheck: {
+                label: "Roll Check",
+                callback: (html) =>{
+                  let mod1 = html.find("#mod1")[0].value;
+                  mod1 = parseInt(mod1,10);
+                  let mod2 = html.find("#mod2")[0].value;
+                  mod2 = parseInt(mod2,10);
+                  let mod3 = html.find("#mod3")[0].value;
+                  mod3 = parseInt(mod3,10);
+                  let mod4 = html.find("#mod4")[0].value;
+                  mod4 = parseInt(mod4,10);
+                  let mod5 = html.find("#mod5")[0].value;
+                  mod5 = parseInt(mod5,10);
+                  let check1 = html.find("#check1")[0];
+                  let check2 = html.find("#check2")[0];
+                  let bodies1 = html.find("#bodies1")[0].value;
+                  bodies1 = parseInt(bodies1,10);
+                  let bodies2 = html.find("#bodies2")[0];
+                  let check3 = html.find("#check3")[0];
+                  let monster1 = html.find("#monster1")[0].value;
+                  monster1 = parseInt(monster1,10);
+                  let monster2 = html.find("#monster2")[0].value;
+                  monster2 = parseInt(monster2,10);
+                  let check4 = html.find("#check4")[0];
+                  let check4a = html.find("#check4a")[0];
+                  let check4b = html.find("#check4b")[0];
+                  let check5 = html.find("#check5")[0];
+                  let check6 = html.find("#check6")[0];
+                  let check7 = html.find("#check7")[0];
+                  let check8 = html.find("#check8")[0];
+                  let check9 = html.find("#check9")[0];
+                  
+                  let actor = GURPS.LastActor || canvas.tokens.controlled[0].actor;
+                  let WILLVar = actor.data.data.frightcheck || actor.data.data.attributes.WILL.value;
+                  WILLVar=parseInt(WILLVar,10);
+          
+                  let rollString = `3d6`;
+                  let roll = Roll.create(rollString).roll();
+                  let fearMod = 0;
+                  
+                  let chatContent = ``;
+                  let totalMod = 0;
+                  
+                  if(check1.checked){
+                    check1=parseInt(check1.value,10);
+                    fearMod += check1;
+                  }
+                  if(check2.checked){
+                    check2=parseInt(check2.value,10);
+                    fearMod += check2;
+                  }
+                  if(bodies2.checked){
+                    bodies2=parseInt(bodies2.value,10);
+                    fearMod += bodies2;
+                  }
+                  if(check3.checked){
+                    check3=parseInt(check3.value,10);
+                    fearMod += check3;
+                  }
+                  if(check4.checked){
+                    check4=parseInt(check4.value,10);
+                    fearMod += check4;
+                  }
+                  if(check4a.checked){
+                    check4a=parseInt(check4a.value,10);
+                    fearMod += check4a;
+                  }
+                  if(check4b.checked){
+                    check4b=parseInt(check4b.value,10);
+                    fearMod += check4b;
+                  }
+                  if(check5.checked){
+                    check5=parseInt(check5.value,10);
+                    fearMod += check5;
+                  }
+                  if(check6.checked){
+                    check6=parseInt(check6.value,10);
+                    fearMod += check6;
+                  }
+                  if(check7.checked){
+                    check7=parseInt(check7.value,10);
+                    fearMod += check7;
+                  }
+                  if(check8.checked){
+                    check8=parseInt(check8.value,10);
+                    fearMod += check8;
+                  }
+                  if(check9.checked){
+                    check9=parseInt(check9.value,10);
+                    fearMod += check9;
+                  }
+                  console.log("Fright Margin mod: ",fearMod)
+                  
+                  totalMod = fearMod+mod1+mod2+mod3+mod4+mod5+bodies1+monster1+monster2+circumstance1;
+                  let tm = (totalMod >= 0) ? "+"+totalMod : totalMod
+                  console.log("Total mod before checked: ",totalMod)
+                  let targetRoll = totalMod+WILLVar;
+                  if(targetRoll > 13){
+                    targetRoll = 13;
+                  }
+                  
+                  if(roll.total > targetRoll){
+                    console.log("Fright Check FAIL");
+                    fearMod = roll.total - targetRoll;
+                    
+                    //let frightEntry = fearMod + rollMod.total;
+                    
+                    // Draw results using a custom roll formula
+                    let table = game.tables.entities.find(t => t.name === "Fright Table");
+                    let tableRoll = new Roll("3d6 + @rollvar", {rollvar: fearMod});
+                    if (!!table) table.draw({roll:tableRoll});
+          
+                    chatContent = `<p>Fright Check = ${WILLVar} ${tm} Bonuses/Penalties.</p>
+                      <p>(Cannot be greater than 13)</p>
+                      <p>Rolled: ${roll.total}</p>
+                      <p>Failed Final Fright Check: ${targetRoll} by ${fearMod}</p>
+                      <p>Fright Mod Roll: ${fearMod}</p>
+                      
+                    `              
+                  }else{
+                    console.log("Fright Check SUCCESS");
+                    chatContent = `<p>Fright Check = ${WILLVar} ${tm} Bonuses/Penalties.</p>
+                      <p>(Cannot be greater than 13)</p>
+                      <p>Fright Check SUCCESS: ${targetRoll}</p>
+                      <p>Rolled: ${roll.total}</p>
+                    `
+                  }
+                  ChatMessage.create({
+                    type: CHAT_MESSAGE_TYPES.ROLL,
+                    speaker:{
+                      alias: actor.name
+                    },
+                    content:chatContent,
+                    roll: roll,
+                    rollMode: game.settings.get("core", "rollMode"),
+                  })
+                }
+              },
+              close:{
+                label: "Close"
+              }
+            }
+          }, { width: 500 } ).render(true);
+          return
+        }
+        
+        // It isn't one of our commands...
+        if (line.trim().startsWith("/")) {// immediately flush our stored msgs, and execute the slash command using the default parser
           send(msgs)
           GURPS.ChatCommandsInProcess.push(line)  // Remember which chat message we are running, so we don't run it again!
           ui.chat.processMessage(line).catch(err => {
             ui.notifications.error(err);
             console.error(err);
           })
-        } else
+         handled = true
+        } 
+        else        
           pub(line, msgs)  // If not handled, must just be public text
       })  // end split
       if (handled) {  // If we handled 'some' messages, then send the remaining messages, and return false (so the default handler doesn't try)
