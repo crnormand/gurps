@@ -15,6 +15,9 @@ This is what we are currently working on:
 - Dropping the damage chat onto a hex with multiple tokens will now prompt the user to select which token to apply it to.
 - Support localization of damage abbreviations (e.g., "cut" can be entered as "corte" in Brazilian Portuguese)
 - Fixed DR calculation when Armor Divisor < 1 and location DR is 0.
+- Added /fc /frightcheck dialog (Thank you roaoon!)
+- Added /rolltable
+- Added /ev [OtF]
 
 ## History
 

@@ -104,6 +104,7 @@ export default function addChatHooks() {
           c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
           c += '<br>/ra N | Skillname-N'
           c += '<br>/roll (or /r) [On-the-Fly formula]'
+          c += '<br>/rolltable &lt;RollTable name&gt;'
           c += '<br>/select &lt;Actor name&gt'
           c += '<br>/showmbs'
           c += '<br>/status on|off|t|toggle|clear &lt;status&gt;'
@@ -113,6 +114,7 @@ export default function addChatHooks() {
           if (game.user.isGM) {
             c += '<br> --- GM only ---'
             c += '<br>/everyone (or /ev) &lt;formula&gt;'
+            c += '<br>/frightcheck (or /fc)'
             c += '<br>/mook'
             c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
           }
@@ -495,6 +497,31 @@ export default function addChatHooks() {
           handled = true
           return
         }
+        
+        m = line.match(/\/(everyone|ev) \[(.*)\]/i)
+        if (!!m) {
+          if (game.user.isGM) {
+            let any = false
+            let action = parselink(m[2].trim())
+            if (!!action.action) {
+              if (!['modifier', 'chat', 'pdf'].includes(action.action.type)) {
+                game.actors.entities.forEach(actor => {
+                  if (actor.hasPlayerOwner) {
+                    any = true
+                    GURPS.performAction(action.action, actor)
+                  }
+                })  
+                if (!any) priv(`There are no player owned characters!`, msgs)
+              } else
+                priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`, msgs)
+            } else
+              priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`, msgs)
+          } else
+            priv(`You must be a GM to execute '${line}'`, msgs)
+          handled = true
+          return
+        }
+
  
         m = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
         if (!!m && !!m[2]) {
@@ -566,120 +593,42 @@ export default function addChatHooks() {
           return
         }
         
+        m = line.match(/\/rolltable(.*)/) 
+        if (!!m) {
+          handled = true
+          let tblname = m[1].trim()
+          let table = game.tables.entities.find(t => t.name === tblname);
+          if (!table) {
+            ui.notifications.error("No table found for '" + tblname + "'")
+            return
+          }
+          let r = table.roll()
+          table.draw({roll:r})
+          GURPS.ModifierBucket.clear()
+          return
+        }
+        
         if (line.match(/\/(fc|frightcheck)/)) {
           handled = true
+          if (!game.user.isGM) { 
+            priv(`You must be a GM to execute '${line}'`, msgs)
+            return
+          }
           if(!GURPS.LastActor){
             ui.notifications.error("Please select a token/character.");
             return;
           }
           let actor = GURPS.LastActor
           let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || "Fright Check"
-          let dialogTemplate = `<div style="display:flex>
-  <span>&#8226;</span> Unfazeable (No check required)<hr>
-
-  <span style="flex:1">Fearless/Fearfulness(+/-): <select id="mod2">
-    <option value= 0>  None </option>
-    <option value= 1> Fearless 1 </option>
-    <option value= 2> Fearless 2 </option>
-    <option value= 3> Fearless 3 </option>
-    <option value= 4> Fearless 4 </option>
-    <option value= 5> Fearless 5 </option>
-    <option value= -1> Fearfulness 1 </option>
-    <option value= -2> Fearfulness 2 </option>
-    <option value= -3> Fearfulness 3 </option>
-    <option value= -4> Fearfulness 4 </option>
-    <option value= -5> Fearfulness 5 </option>
-  </select></span><hr>
-  
-  <span style="flex:1">Combat Reflexes / Combat Paralysis: <select id="mod3">
-    <option value= 0>  None </option>
-    <option value= 2> Combat Reflexes (+2) </option>
-    <option value= -2> Combat Paralysis (-2) </option>
-  </select></span><hr>
-  
-  <span style="flex:1">Cowardess: <select id="mod4">
-    <option value= 0>  None </option>
-    <option value= -1> Cowardess 1 </option>
-    <option value= -2> Cowardess 2 </option>
-    <option value= -3> Cowardess 3 </option>
-    <option value= -4> Cowardess 4 </option>
-  </select></span><hr>
-  
-  <span style="flex:1">Xenophilia(Against monsters): <select id="mod5">
-    <option value= 0>  None </option>
-    <option value= 1> Xenophilia CR:15 (+1) </option>
-    <option value= 2> Xenophilia CR:12 (+2) </option>
-    <option value= 3> Xenophilia CR:9 (+3) </option>
-    <option value= 4> Xenophilia CR:6 (+4) </option>
-  </select></span><hr>
-  
-
-  <span style="flex:1">Bodies: <select id="bodies1">
-    <option value= 0> Most Victims of Violence (0) </option>
-    <option value= 1> Peaceful/Prepared for Burial (+6) </option>
-    <option value= 2> No sign of Violence (+2) </option>
-    <option value= -1> Grizzly Mutilations (-1) </option>
-    <option value= -2> Grizzly Mutilations (-2) </option>
-    <option value= -3> Grizzly Mutilations (-3) </option>
-    </select>
-  </span>
-  <br>
-    Bodies - Additional: Corpse was a dependant (-6) <input id="bodies2" type="checkbox" value= -6 />
-  <hr>
-  
-  
-  <span style="flex:1">Monster: <select id="monster1">
-    <option value= 0> None (0) </option>
-    <option value= -1> Inhuman (-1) </option>
-    <option value= -2> Beastly (-2) </option>
-    <option value= -3> Scary (-3) </option>
-    <option value= -4> Ghastly (-4) </option>
-    <option value= -5> Frightening (-5) </option>
-    <option value= -6> Horrifying (-6) </option>
-    <option value= -7> Blood-Curdling (-7) </option>
-    <option value= -8> Petrifying (-8) </option>
-    <option value= -9> Terrifying (-9) </option>
-    <option value= -10> Scarring (-10) </option>
-    </select>
-  </span>
-  <hr>
-  <span style="flex:1">Monster Horde: <select id="monster2">
-    <option value= 0> Less than 5 (0) </option>
-    <option value= -1> At least 5 (-1) </option>
-    <option value= -2> At least 10 (-2) </option>
-    <option value= -3> At least 20 (-3) </option>
-    <option value= -4> At least 50 (-4) </option>
-    <option value= -5> At least 100 (-5) </option>
-    </select>
-  </span>
-  <hr>
-  
-  <span style="flex:1">Circumstance - See corpse at Distance (+1) <input id="check4a" type="checkbox" value=1 /></span>
-  <span style="flex:1"> See corpse Remotely (+3) <input id="check4b" type="checkbox" value=3 /></span><br>
-
-  <span style="flex:1">Circumstance - Touch corpse (-1) <input id="check4" type="checkbox" value=-1 /></span><br>
-  <span style="flex:1">Circumstance - Area is isolated (-1) <input id="check5" type="checkbox" value=-1 /></span><br>
-  <span style="flex:1">Circumstance - Night (-1) <input id="check6" type="checkbox" value=-1 /></span><br>
-  <span style="flex:1">Circumstance - If you believe you are alone (-2) <input id="check7" type="checkbox" value=-2 /></span><br>
-
-  <span style="flex:1">Heat of Battle (+5) <input id="check3" type="checkbox" value=5 /></span>
-  <span style="flex:1">Daredevil (+1) <input id="check1" type="checkbox" value=1 /></span><br>
-  <span style="flex:1">Higher Purpose(When applicable) (+1) <input id="check2" type="checkbox" value=1 /></span><br>
-  <span style="flex:1">Previouse experience with this threat (+1) <input id="check8" type="checkbox" value=1 /></span><hr>
-  <span style="flex:1">Preparation - Per exposure to this particular threat in 24 hours (+1): <input id="check9" type="number" value=0 style="width:50px;"/></span>
-  <hr>
-  <span style="flex:1">Additional Mod (+/-): <input id="mod1" type="number" value=0 style="width:50px;" /></span>
-  <hr><span style="flex:1">Name of table to roll against: <input id="tblname" value="${tblname}" style="width:250px;" /></span>
-
-</div>
-`
-
+          
+          let p = renderTemplate('systems/gurps/templates/frightcheck-macro.html', { tblname: tblname })
+          p.then((dialogTemplate) => 
           new Dialog({
             title: "Fright Check",
             content: dialogTemplate,
             buttons: {
               rollFrightCheck: {
-                label: "Roll Check",
+                label: "Roll Fright Check",
                 callback: (html) =>{
                   let mod1 = html.find("#mod1")[0].value;
                   mod1 = parseInt(mod1,10);
@@ -777,7 +726,7 @@ export default function addChatHooks() {
                   let g13 = ''
                   if(targetRoll > 13){
                     targetRoll = 13;
-                    g13 = `<span style='font-size:small;font-style:italic'>(Cannot be greater than 13 [PDF:B360])</span><br>`
+                    g13 = `<span style='font-size:small;font-style:italic'>(Cannot be greater than 13 [PDF:B360])</span><br><br>`
                   }
                   
                   tblname = html.find("#tblname")[0].value
@@ -795,13 +744,15 @@ export default function addChatHooks() {
           
                     chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
                       ${g13}
-                      <p>Rolled: ${roll.total}</p>
+                      <span><span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />
+                      ${roll.total}</span>
                       <span class='failure'>Failed Final Fright Check by ${fearMod}</span></div></div>`              
                   } else {
                     console.log("Fright Check SUCCESS");
                     chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
                       ${g13}
-                      <p>Rolled: ${roll.total}</p>
+                      <span><span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />
+                      ${roll.total}</span>
                       <span class='success'>Fright Check SUCCESS!</span></div></div>`
                   }
                   ChatMessage.create({
@@ -819,7 +770,7 @@ export default function addChatHooks() {
                 label: "Close"
               }
             }
-          }, { width: 500 } ).render(true);
+          }, { width: 500 } ).render(true) )
           return
         }
         
