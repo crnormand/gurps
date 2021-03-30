@@ -572,6 +572,8 @@ export default function addChatHooks() {
             ui.notifications.error("Please select a token/character.");
             return;
           }
+          let actor = GURPS.LastActor
+          let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || "Fright Check"
           let dialogTemplate = `<div style="display:flex>
   <span>&#8226;</span> Unfazeable (No check required)<hr>
 
@@ -652,24 +654,23 @@ export default function addChatHooks() {
   </span>
   <hr>
   
-  <span style="flex:1">Circumstance - See corpse at Distance (+1) <input id="check4a" type="checkbox" value=1 /></span><br>
-  <span style="flex:1">Circumstance - See corpse Remotely (+3) <input id="check4b" type="checkbox" value=3 /></span><br>
+  <span style="flex:1">Circumstance - See corpse at Distance (+1) <input id="check4a" type="checkbox" value=1 /></span>
+  <span style="flex:1"> See corpse Remotely (+3) <input id="check4b" type="checkbox" value=3 /></span><br>
 
   <span style="flex:1">Circumstance - Touch corpse (-1) <input id="check4" type="checkbox" value=-1 /></span><br>
   <span style="flex:1">Circumstance - Area is isolated (-1) <input id="check5" type="checkbox" value=-1 /></span><br>
   <span style="flex:1">Circumstance - Night (-1) <input id="check6" type="checkbox" value=-1 /></span><br>
   <span style="flex:1">Circumstance - If you believe you are alone (-2) <input id="check7" type="checkbox" value=-2 /></span><br>
 
-  <span style="flex:1">Heat of Battle (+5) <input id="check3" type="checkbox" value=5 /></span><br>
+  <span style="flex:1">Heat of Battle (+5) <input id="check3" type="checkbox" value=5 /></span>
   <span style="flex:1">Daredevil (+1) <input id="check1" type="checkbox" value=1 /></span><br>
-  <span style="flex:1">Higher Purpose(When applicable)(+1) <input id="check2" type="checkbox" value=1 /></span><br>
-  <span style="flex:1">Previouse exp with this threat (+1) <input id="check8" type="checkbox" value=1 /></span><hr>
+  <span style="flex:1">Higher Purpose(When applicable) (+1) <input id="check2" type="checkbox" value=1 /></span><br>
+  <span style="flex:1">Previouse experience with this threat (+1) <input id="check8" type="checkbox" value=1 /></span><hr>
   <span style="flex:1">Preparation - Per exposure to this particular threat in 24 hours (+1): <input id="check9" type="number" value=0 style="width:50px;"/></span>
   <hr>
   <span style="flex:1">Additional Mod (+/-): <input id="mod1" type="number" value=0 style="width:50px;" /></span>
-  <hr>
-  <span>If Final Modified WILL exceeds 13, it will be reduced to 13</span>
-  
+  <hr><span style="flex:1">Name of table to roll against: <input id="tblname" value="${tblname}" style="width:250px;" /></span>
+
 </div>
 `
 
@@ -709,7 +710,6 @@ export default function addChatHooks() {
                   let check8 = html.find("#check8")[0];
                   let check9 = html.find("#check9")[0];
                   
-                  let actor = GURPS.LastActor || canvas.tokens.controlled[0].actor;
                   let WILLVar = actor.data.data.frightcheck || actor.data.data.attributes.WILL.value;
                   WILLVar=parseInt(WILLVar,10);
           
@@ -770,14 +770,18 @@ export default function addChatHooks() {
                   }
                   console.log("Fright Margin mod: ",fearMod)
                   
-                  totalMod = fearMod+mod1+mod2+mod3+mod4+mod5+bodies1+monster1+monster2+circumstance1;
+                  totalMod = fearMod+mod1+mod2+mod3+mod4+mod5+bodies1+monster1+monster2;
                   let tm = (totalMod >= 0) ? "+"+totalMod : totalMod
                   console.log("Total mod before checked: ",totalMod)
                   let targetRoll = totalMod+WILLVar;
+                  let g13 = ''
                   if(targetRoll > 13){
                     targetRoll = 13;
+                    g13 = `<span style='font-size:small;font-style:italic'>(Cannot be greater than 13 [PDF:B360])</span><br>`
                   }
                   
+                  tblname = html.find("#tblname")[0].value
+                  game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, tblname)
                   if(roll.total > targetRoll){
                     console.log("Fright Check FAIL");
                     fearMod = roll.total - targetRoll;
@@ -785,24 +789,20 @@ export default function addChatHooks() {
                     //let frightEntry = fearMod + rollMod.total;
                     
                     // Draw results using a custom roll formula
-                    let table = game.tables.entities.find(t => t.name === "Fright Table");
+                    let table = game.tables.entities.find(t => t.name === tblname);
                     let tableRoll = new Roll("3d6 + @rollvar", {rollvar: fearMod});
                     if (!!table) table.draw({roll:tableRoll});
           
-                    chatContent = `<p>Fright Check = ${WILLVar} ${tm} Bonuses/Penalties.</p>
-                      <p>(Cannot be greater than 13)</p>
+                    chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
+                      ${g13}
                       <p>Rolled: ${roll.total}</p>
-                      <p>Failed Final Fright Check: ${targetRoll} by ${fearMod}</p>
-                      <p>Fright Mod Roll: ${fearMod}</p>
-                      
-                    `              
-                  }else{
+                      <span class='failure'>Failed Final Fright Check by ${fearMod}</span></div></div>`              
+                  } else {
                     console.log("Fright Check SUCCESS");
-                    chatContent = `<p>Fright Check = ${WILLVar} ${tm} Bonuses/Penalties.</p>
-                      <p>(Cannot be greater than 13)</p>
-                      <p>Fright Check SUCCESS: ${targetRoll}</p>
+                    chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
+                      ${g13}
                       <p>Rolled: ${roll.total}</p>
-                    `
+                      <span class='success'>Fright Check SUCCESS!</span></div></div>`
                   }
                   ChatMessage.create({
                     type: CHAT_MESSAGE_TYPES.ROLL,
