@@ -2,7 +2,7 @@
 
 This is what we are currently working on:
 
-0.8.22
+  0.8.22
 
 - Updated German/Deutsch translation
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
@@ -20,16 +20,18 @@ This is what we are currently working on:
 - Added /rolltable
 - Added /ev [OtF] (except PDF, Chat and Modifier)
 - Fixed import of unicode characters in names (and elsewhere)
-- Fixed damage to resources to allow HP or FP damage to apply to a resource.
+- Fixed damage to resources to allow HP or FP damage to apply to a resource
+- Added support for [A:Attack *Costs 1FP]
+- Fixed [A:Attack] where skill level includes "*Costs 1FP"
 
 ## History
 
-0.8.21
+  0.8.21 - 3/22/2021
 
 - Fixed parse bug where roll has no damage type or comment [3d]
 - Added German/Deutsch translation
 
-  0.8.20
+  0.8.20 - 3/22/2021
 
 - Fixed description of modifier for Skill OtF
 - Fixed GM Send to allow blind rolls

@@ -1654,6 +1654,7 @@ GURPS.executeOTF('${data.otf}')`,
    */
   Hooks.on('dropCanvasData', async function (canvas, dropData) {
     if (dropData.type === 'damageItem') {
+      let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene.data.grid
       canvas.tokens.targetObjects({
         x: dropData.x - grid_size / 2,
@@ -1662,12 +1663,22 @@ GURPS.executeOTF('${data.otf}')`,
         width: grid_size,
         releaseOthers: true,
       })
+      
+      let handleDamage = (actor) => {   // Reset selection back to original, and drop damage
+        for (let t of game.user.targets) {
+          t.setTarget(false, { releaseOthers: false, groupSelection: true })
+        }
+        oldselection.forEach(t => {
+          t.setTarget(true, { releaseOthers: false, groupSelection: true })
+        })
+        actor.handleDamageDrop(dropData.payload)
+      }
 
       // actual targets are stored in game.user.targets
       if (game.user.targets.size === 0) return false
       if (game.user.targets.size === 1) {
         let targets = [...game.user.targets]
-        targets[0].actor.handleDamageDrop(dropData.payload)
+        handleDamage(targets[0].actor)
         return false
       }
 
@@ -1678,7 +1689,7 @@ GURPS.executeOTF('${data.otf}')`,
           callback: html => {
             let name = html.find('select option:selected').text().trim()
             let target = [...game.user.targets].find(token => token.name === name)
-            target.actor.handleDamageDrop(dropData.payload)
+            handleDamage(target.actor)
           },
         },
       }
