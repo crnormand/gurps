@@ -817,8 +817,21 @@ async function performAction(action, actor, event, targets) {
         return false
       }
       thing = att.name
-      target = parseInt(att.level)
+      let t = att.level
+      if (!!t) {
+        let a = t.trim().split(' ')
+        t = a[0]
+        if (!!t) target = parseInt(t)
+        if (isNaN(target)) target = 0
+        // Can't roll against a non-integer
+        else {
+          a.shift()
+          let m = a.join(' ')
+          if (!!m) ui.modifierbucket.addModifier(0, m)
+        }
+      }
       formula = '3d6'
+      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
