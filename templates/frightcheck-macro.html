@@ -1,0 +1,98 @@
+<div>
+  <span style="flex:1">&#8226; Unfazeable (No check required)</span><hr>
+
+  <span style="flex:1">Fearless/Fearfulness(+/-): <select id="mod2">
+    <option value= 0>  None </option>
+    <option value= 1> Fearless 1 </option>
+    <option value= 2> Fearless 2 </option>
+    <option value= 3> Fearless 3 </option>
+    <option value= 4> Fearless 4 </option>
+    <option value= 5> Fearless 5 </option>
+    <option value= -1> Fearfulness 1 </option>
+    <option value= -2> Fearfulness 2 </option>
+    <option value= -3> Fearfulness 3 </option>
+    <option value= -4> Fearfulness 4 </option>
+    <option value= -5> Fearfulness 5 </option>
+  </select></span><hr>
+  
+  <span style="flex:1">Combat Reflexes / Combat Paralysis: <select id="mod3">
+    <option value= 0>  None </option>
+    <option value= 2> Combat Reflexes (+2) </option>
+    <option value= -2> Combat Paralysis (-2) </option>
+  </select></span><hr>
+  
+  <span style="flex:1">Cowardess: <select id="mod4">
+    <option value= 0>  None </option>
+    <option value= -1> Cowardess 1 </option>
+    <option value= -2> Cowardess 2 </option>
+    <option value= -3> Cowardess 3 </option>
+    <option value= -4> Cowardess 4 </option>
+  </select></span><hr>
+  
+  <span style="flex:1">Xenophilia(Against monsters): <select id="mod5">
+    <option value= 0>  None </option>
+    <option value= 1> Xenophilia CR:15 (+1) </option>
+    <option value= 2> Xenophilia CR:12 (+2) </option>
+    <option value= 3> Xenophilia CR:9 (+3) </option>
+    <option value= 4> Xenophilia CR:6 (+4) </option>
+  </select></span><hr>
+  
+
+  <span style="flex:1">Bodies: <select id="bodies1">
+    <option value= 0> Most Victims of Violence (0) </option>
+    <option value= 1> Peaceful/Prepared for Burial (+6) </option>
+    <option value= 2> No sign of Violence (+2) </option>
+    <option value= -1> Grizzly Mutilations (-1) </option>
+    <option value= -2> Grizzly Mutilations (-2) </option>
+    <option value= -3> Grizzly Mutilations (-3) </option>
+    </select>
+  </span>
+  <br>
+    Bodies - Additional: Corpse was a dependant (-6) <input id="bodies2" type="checkbox" value= -6 />
+  <hr>
+  
+  
+  <span style="flex:1">Monster: <select id="monster1">
+    <option value= 0> None (0) </option>
+    <option value= -1> Inhuman (-1) </option>
+    <option value= -2> Beastly (-2) </option>
+    <option value= -3> Scary (-3) </option>
+    <option value= -4> Ghastly (-4) </option>
+    <option value= -5> Frightening (-5) </option>
+    <option value= -6> Horrifying (-6) </option>
+    <option value= -7> Blood-Curdling (-7) </option>
+    <option value= -8> Petrifying (-8) </option>
+    <option value= -9> Terrifying (-9) </option>
+    <option value= -10> Scarring (-10) </option>
+    </select>
+  </span>
+  <hr>
+  <span style="flex:1">Monster Horde: <select id="monster2">
+    <option value= 0> Less than 5 (0) </option>
+    <option value= -1> At least 5 (-1) </option>
+    <option value= -2> At least 10 (-2) </option>
+    <option value= -3> At least 20 (-3) </option>
+    <option value= -4> At least 50 (-4) </option>
+    <option value= -5> At least 100 (-5) </option>
+    </select>
+  </span>
+  <hr>
+  
+  <span style="flex:1">Circumstance - See corpse at Distance (+1) <input id="check4a" type="checkbox" value=1 /></span>
+  <span style="flex:1"> See corpse Remotely (+3) <input id="check4b" type="checkbox" value=3 /></span><br>
+
+  <span style="flex:1">Circumstance - Touch corpse (-1) <input id="check4" type="checkbox" value=-1 /></span><br>
+  <span style="flex:1">Circumstance - Area is isolated (-1) <input id="check5" type="checkbox" value=-1 /></span><br>
+  <span style="flex:1">Circumstance - Night (-1) <input id="check6" type="checkbox" value=-1 /></span><br>
+  <span style="flex:1">Circumstance - If you believe you are alone (-2) <input id="check7" type="checkbox" value=-2 /></span><br>
+
+  <span style="flex:1">Heat of Battle (+5) <input id="check3" type="checkbox" value=5 /></span>
+  <span style="flex:1">Daredevil (+1) <input id="check1" type="checkbox" value=1 /></span><br>
+  <span style="flex:1">Higher Purpose(When applicable) (+1) <input id="check2" type="checkbox" value=1 /></span><br>
+  <span style="flex:1">Previouse experience with this threat (+1) <input id="check8" type="checkbox" value=1 /></span><hr>
+  <span style="flex:1">Preparation - Per exposure to this particular threat in 24 hours (+1): <input id="check9" type="number" value=0 style="width:50px;"/></span>
+  <hr>
+  <span style="flex:1">Additional Mod (+/-): <input id="mod1" type="number" value=0 style="width:50px;" /></span>
+  <hr><span style="flex:1">Name of table to roll against: <input id="tblname" value="{{tblname}}" style="width:250px;" /></span>
+
+</div>

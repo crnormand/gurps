@@ -199,7 +199,7 @@
         {{#each data.hitlocations}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where">{{localizeWithFallback (concat "GURPS.hitLocation" this.where) this.where}}</div>
-        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
+        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}" data-otf='{{this.penalty}} to hit {{this.where}}'>
           {{hitlocationpenalty this.where this.penalty}}
         </div>
         <div class="dr">{{this.dr}}</div>
@@ -258,13 +258,13 @@
           <div class="usage">{{this.mode}}</div>
           <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
             data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-          <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
+          <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}' data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
             {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
           <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
           <div class="range">{{this.range}}</div>
           <div class="rof">{{this.rof}}</div>
           <div class="shots">{{this.shots}}</div>
-          <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'>{{this.bulk}}</div>
+          <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}' data-otf='{{this.bulk}} Bulk'>{{this.bulk}}</div>
           <div class="rcl">{{this.rcl}}</div>
           <div class="st">{{this.st}}</div>
           {{/each}}
@@ -279,7 +279,7 @@
             {{/each}}
             <div class="label">Modifier</div>
             {{#each ranges}}
-            <div class="label {{#if (ne this '0')}}gmod{{/if}}" data-name="{{this.moddesc}}">{{this.penalty}}</div>
+            <div class="label {{#if (ne this '0')}}gmod{{/if}}" data-name="{{this.moddesc}}" data-otf='{{this.penalty}} for speed/range {{this.max}} yds'>{{this.penalty}}</div>
             {{/each}}
           </div>
         </div>

@@ -104,7 +104,8 @@ export class CompositeDamageCalculator {
   }
 
   static isResourceDamageType(damageType) {
-    return !!DamageTables.woundModifiers[damageType].resource
+    let modifier = DamageTables.woundModifiers[damageType]
+    return !!modifier && !!DamageTables.woundModifiers[damageType].resource
   }
 
   get(viewId) {
@@ -600,12 +601,12 @@ export class CompositeDamageCalculator {
   }
 
   get resource() {
-    if (CompositeDamageCalculator.isResourceDamageType(this._damageType)) {
+    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
       let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
       let tracker = null
       let index = null
       trackers.forEach((t, i) => {
-        if (t.alias === this._damageType) {
+        if (t.alias === this._applyTo) {
           index = i
           tracker = t
           return
@@ -614,17 +615,17 @@ export class CompositeDamageCalculator {
       return [tracker, `data.additionalresources.tracker.${index}`]
     }
 
-    if (this._damageType === 'fat') return [this._defender.data.data.FP, 'data.FP']
+    if (this._applyTo === 'fat') return [this._defender.data.data.FP, 'data.FP']
     return [this._defender.data.data.HP, 'data.HP']
   }
 
   get resourceType() {
-    if (CompositeDamageCalculator.isResourceDamageType(this._damageType)) {
+    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
       let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
-      return trackers.find(it => it.alias === this._damageType).name
+      return trackers.find(it => it.alias === this._applyTo).name
     }
 
-    if (this._damageType === 'fat') return 'FP'
+    if (this._applyTo === 'fat') return 'FP'
     return 'HP'
   }
 

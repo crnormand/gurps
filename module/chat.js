@@ -130,6 +130,7 @@ export default function addChatHooks() {
             c += '<br>/qty &lt;formula&gt; &lt;equipment name&gt;'
             c += '<br>/ra N | Skillname-N'
             c += '<br>/roll (or /r) [On-the-Fly formula]'
+            c += '<br>/rolltable &lt;RollTable name&gt;'
             c += '<br>/select &lt;Actor name&gt'
             c += '<br>/showmbs'
             c += '<br>/status on|off|t|toggle|clear &lt;status&gt;'
@@ -139,6 +140,7 @@ export default function addChatHooks() {
             if (game.user.isGM) {
               c += '<br> --- GM only ---'
               c += '<br>/everyone (or /ev) &lt;formula&gt;'
+              c += '<br>/frightcheck (or /fc)'
               c += '<br>/mook'
               c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
             }

@@ -11,7 +11,7 @@
         <div class="header">{{localize "GURPS.identity"}}</div>
         <div class="fieldblock">
           <div class="label">{{localize "GURPS.identityName"}}:</div>
-          <div class="field">{{actor.name}}</div>
+          <div class="field">{{{actor.name}}}</div>
           <div class="label">{{localize "GURPS.identityTitle"}}:</div>
           <div class="field">{{data.traits.title}}</div>
           <div class="label">{{localize "GURPS.identityPlayer"}}:</div>
@@ -221,7 +221,7 @@
         <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
           {{localizeWithFallback (concat "GURPS.hitLocation" this.where) this.where}}
         </div>
-        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
+        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}" data-otf='{{this.penalty}} to hit {{this.where}}'>
           {{hitlocationpenalty this.where this.penalty ../data}}</div>
         <div class="dr">{{this.dr}}
         </div>
@@ -511,13 +511,13 @@
       <div class="usage">{{this.mode}}</div>
       <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
         data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
+      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}' data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
         {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
       <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
       <div class="range">{{this.range}}</div>
       <div class="rof">{{this.rof}}</div>
       <div class="shots">{{this.shots}}</div>
-      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'>{{this.bulk}}
+      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}' data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
       </div>
       <div class="rcl">{{this.rcl}}</div>
       <div class="st">{{this.st}}</div>

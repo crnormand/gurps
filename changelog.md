@@ -2,19 +2,13 @@
 
 This is what we are currently working on:
 
-0.9.0
-
-- Typescript & build process
-- Items... yes... actual items.
-
-## History
-
 0.8.22
 
 - Updated German/Deutsch translation
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
 - Bugfix for pi-, pi+, and pi++ damage types.
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
+- Drag and drop now works for any OTF on character sheet
 - Added sanity check on Resource Tracker alias input.
 - Added initial Russian/русский translation (thanks to Discord user @Weirdy)!
 - Bugfix for multiple damage drag-and-drop.
@@ -22,8 +16,15 @@ This is what we are currently working on:
 - Dropping the damage chat onto a hex with multiple tokens will now prompt the user to select which token to apply it to.
 - Support localization of damage abbreviations (e.g., "cut" can be entered as "corte" in Brazilian Portuguese)
 - Fixed DR calculation when Armor Divisor < 1 and location DR is 0.
+- Added /fc /frightcheck dialog (Thank you roaoon!)
+- Added /rolltable
+- Added /ev [OtF] (except PDF, Chat and Modifier)
+- Fixed import of unicode characters in names (and elsewhere)
+- Fixed damage to resources to allow HP or FP damage to apply to a resource.
 
-  0.8.21
+## History
+
+0.8.21
 
 - Fixed parse bug where roll has no damage type or comment [3d]
 - Added German/Deutsch translation

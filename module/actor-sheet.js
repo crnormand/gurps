@@ -102,61 +102,45 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('.gmod').contextmenu(this._onRightClickGmod.bind(this))
     html.find('.pdflink').contextmenu(this._onRightClickPdf.bind(this))
 
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: li.getAttribute('data-otf'),
+            actor: this.actor.id,
+          })
+        )
+      })
+    })
+
     const canConfigure = game.user.isGM || this.actor.owner
     if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
 
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
     html.find('.enc').click(this._onClickEnc.bind(this))
-
-    html.find('.eqtdraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'equipment', key: ev.currentTarget.dataset.key })
-        )
+    
+    let makelistdrag = (cls, type) => {
+      html.find(cls).each((i, li) => {
+        li.setAttribute('draggable', true)
+        li.addEventListener('dragstart', ev => {
+          let oldd = ev.dataTransfer.getData('text/plain')
+          let newd = { type: type, key: ev.currentTarget.dataset.key }
+          if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
+          return ev.dataTransfer.setData(
+            'text/plain',
+            JSON.stringify(newd)
+          )
+        })
       })
-    })
+    }
 
-    html.find('.adsdraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'advantage', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
-
-    html.find('.skldraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'skill', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
-
-    html.find('.spldraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'spell', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
-
-    html.find('.notedraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'note', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
+    makelistdrag('.eqtdraggable', 'equipment')
+    makelistdrag('.adsdraggable', 'advantage')
+    makelistdrag('.skldraggable', 'skill')
+    makelistdrag('.spldraggable', 'spell')
+    makelistdrag('.notedraggable', 'note')
 
     html.find('input[name="data.HP.value"]').keypress(ev => {
       if (ev.which === 13) ev.preventDefault()
@@ -572,19 +556,6 @@ export class GurpsActorSheet extends ActorSheet {
       })
     })
 
-    html.find('[data-otf]').each((_, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({
-            type: 'OtF',
-            otf: li.getAttribute('data-otf'),
-            actor: this.actor.id,
-          })
-        )
-      })
-    })
   }
 
   /**
@@ -1068,7 +1039,7 @@ export class GurpsActorSheet extends ActorSheet {
                 return ui.notifications.error('You did not upload a data file!')
               } else {
                 file = files[0]
-                readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
+                GURPS.readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
               }
             },
           },

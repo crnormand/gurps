@@ -494,6 +494,34 @@ GURPS.SJGProductMappings = {
 
 GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 
+function escapeUnicode(str) {
+    return str.replace(/[^\0-~]/g, function(ch) {
+        return "&#x" + (("0000" + ch.charCodeAt().toString(16).toUpperCase()).slice(-4)) + ";"
+    });
+}
+GURPS.escapeUnicode = escapeUnicode
+
+/**
+ * Read text data from a user provided File object
+ * Stolen from Foundry, and replaced 'readAsText' with 'readAsBinaryString' to save unicode characters.
+ * @param {File} file           A File object
+ * @return {Promise.<String>}   A Promise which resolves to the loaded text data
+ */
+function readTextFromFile(file) {
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = ev => {
+      resolve(reader.result);
+    };
+    reader.onerror = ev => {
+      reader.abort();
+      reject();
+    };
+    reader.readAsBinaryString(file);
+  });
+}
+GURPS.readTextFromFile = readTextFromFile
+
 // This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 // First we have to remove non-printing characters, and then we want to replace
 // all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
@@ -501,7 +529,8 @@ GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 // we will base64 encode it, and the decode it in the Named subclass setNotes()
 function cleanUpP(xml) {
   // First, remove non-ascii characters
-  xml = xml.replace(/[^ -~]+/g, '')
+  // xml = xml.replace(/[^ -~]+/g, '')
+  xml = GURPS.escapeUnicode(xml)
 
   // Now try to remove any lone " & " in names, etc.  Will only occur in GCA output
   xml = xml.replace(/ & /g, ' &amp; ')
@@ -788,8 +817,21 @@ async function performAction(action, actor, event, targets) {
         return false
       }
       thing = att.name
-      target = parseInt(att.level)
+      let t = att.level
+      if (!!t) {
+        let a = t.trim().split(' ')
+        t = a[0]
+        if (!!t) target = parseInt(t)
+        if (isNaN(target)) target = 0
+        // Can't roll against a non-integer
+        else {
+          a.shift()
+          let m = a.join(' ')
+          if (!!m) ui.modifierbucket.addModifier(0, m)
+        }
+      }
       formula = '3d6'
+      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
@@ -1447,8 +1489,6 @@ Hooks.once('init', async function () {
 
   ui.modifierbucket = GURPS.ModifierBucket
   ui.modifierbucket.render(true)
-
-  const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
 })
 
 Hooks.once('ready', async function () {
@@ -1494,14 +1534,13 @@ Hooks.once('ready', async function () {
 
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
-    if (data.type !== 'OtF') return
+    if (!data.otf) return
     let macro = await Macro.create({
       name: `OtF: ${data.otf}`,
       type: 'script',
-      command: `
-      let actor = game.actors.get('${data.actor}')
-      GURPS.SetLastActor(actor)
-      GURPS.executeOTF('${data.otf}')`,
+      command: `let actor = game.actors.get('${data.actor}')
+GURPS.SetLastActor(actor)
+GURPS.executeOTF('${data.otf}')`,
     })
     game.user.assignHotbarMacro(macro, slot)
     return false

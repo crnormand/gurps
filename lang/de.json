@@ -144,6 +144,8 @@
   "GURPS.addDiffuseMax": "Diffus, max",
   "GURPS.addLocationMax": "Location Max",
 
+  "GURPS.selectToken": "Wähle Token",
+  "GURPS.addApplyTo": "Wende an auf",
   "GURPS.addApplyInjury": "Wende Schaden an",
   "GURPS.addApplyInjuryQuietly": "Wende Schaden an (Privat)",
   "GURPS.addApplyAndKeep": "Anwenden/Geöffnet Lassen",
@@ -433,5 +435,10 @@
   "GURPS.clickToEdit": "Klicke zum Bearbeiten",
   "GURPS.resourceTracker": "Anzeige",
   "GURPS.trackerNotUnique": "Diesen AnzeigenName ({name}) oder Alias ({alias}) gibt es bereits.",
-  "GURPS.slotNotUnique": "Dem Platzhalter {value} ist bereits eine andere Anzeige zugewiesen."
+  "GURPS.slotNotUnique": "Dem Platzhalter {value} ist bereits eine andere Anzeige zugewiesen.",
+  "GURPS.resourceEditTracker": "Bearbeite Anzeige",
+  "GURPS.resourceDeleteTracker": "Lösche Anzeige",
+  "GURPS.resourceCopyTemplate": "Kopiere Vorlage",
+  "GURPS.resourceUndefined": "Nicht definiert",
+  "GURPS.resourceUpdateTrackerSlot": "Aktualisiere Anzeige Platzhalter"
 }

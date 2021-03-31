@@ -45,7 +45,8 @@ export class GurpsActor extends Actor {
       }
       for (let enckey in encs) {
         let enc = encs[enckey]
-        enc.currentmove = Math.max(1, m - parseInt(enc.level))
+        let t = 1.0 - (0.2 * parseInt(enc.level))
+        enc.currentmove = Math.max(1, Math.floor(m * t))
         enc.currentdodge = Math.max(1, d - parseInt(enc.level))
         if (enc.current) {
           // Save the global move/dodge
