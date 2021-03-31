@@ -808,15 +808,14 @@ async function performAction(action, actor, event, targets) {
     if (!!actor) {
       let att = null
       prefix = ''
-      thing = action.name
-      att = GURPS.findAttack(actordata, thing)
+      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
         )
         return false
       }
-      thing = att.name
+      thing = att.name  // get real name of attack
       let t = att.level
       if (!!t) {
         let a = t.trim().split(' ')
@@ -827,7 +826,7 @@ async function performAction(action, actor, event, targets) {
         else {
           a.shift()
           let m = a.join(' ')
-          if (!!m) ui.modifierbucket.addModifier(0, m)
+          if (!!m) ui.modifierbucket.addModifier(0, m)    //  Level may have "*Costs xFP"
         }
       }
       formula = '3d6'
