@@ -503,6 +503,7 @@ GURPS.escapeUnicode = escapeUnicode
 
 /**
  * Read text data from a user provided File object
+ * Stolen from Foundry, and replaced 'readAsText' with 'readAsBinaryString' to save unicode characters.
  * @param {File} file           A File object
  * @return {Promise.<String>}   A Promise which resolves to the loaded text data
  */
@@ -1519,14 +1520,13 @@ Hooks.once('ready', async function () {
 
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
-    if (data.type !== 'OtF') return
+    if (!data.otf) return
     let macro = await Macro.create({
       name: `OtF: ${data.otf}`,
       type: 'script',
-      command: `
-      let actor = game.actors.get('${data.actor}')
-      GURPS.SetLastActor(actor)
-      GURPS.executeOTF('${data.otf}')`,
+      command: `let actor = game.actors.get('${data.actor}')
+GURPS.SetLastActor(actor)
+GURPS.executeOTF('${data.otf}')`,
     })
     game.user.assignHotbarMacro(macro, slot)
     return false

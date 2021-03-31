@@ -8,6 +8,7 @@ This is what we are currently working on:
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
 - Bugfix for pi-, pi+, and pi++ damage types.
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
+- Drag and drop now works for any OTF 
 - Added sanity check on Resource Tracker alias input.
 - Added initial Russian/русский translation (thanks to Discord user @Weirdy)!
 - Bugfix for multiple damage drag-and-drop.
@@ -18,6 +19,7 @@ This is what we are currently working on:
 - Added /fc /frightcheck dialog (Thank you roaoon!)
 - Added /rolltable
 - Added /ev [OtF]
+- Fixed import of unicode characters in names (and elsewhere)
 
 ## History
 
