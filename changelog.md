@@ -20,10 +20,11 @@ This is what we are currently working on:
 - Added /rolltable
 - Added /ev [OtF] (except PDF, Chat and Modifier)
 - Fixed import of unicode characters in names (and elsewhere)
+- Fixed damage to resources to allow HP or FP damage to apply to a resource.
 
 ## History
 
-  0.8.21
+0.8.21
 
 - Fixed parse bug where roll has no damage type or comment [3d]
 - Added German/Deutsch translation
