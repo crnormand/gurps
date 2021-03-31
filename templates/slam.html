@@ -1,5 +1,6 @@
 <form class='{{cssClass}}' slam-calculator autocomplete="off">
   <h2>{{localize "GURPS.slamCalculator"}}</h2>
+  <h3>{{attacker}} slams {{#if target}}{{target}}{{else}}target{{/if}}.</h3>
   <div class='inputs'>
     <label>{{localize "GURPS.slamAttackerHP"}}:</label>
     <input id='attacker-hp' type="text" value="{{attackerHp}}" data-dtype="Number" />

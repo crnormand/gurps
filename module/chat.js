@@ -1,8 +1,8 @@
 'use strict'
 import { parselink } from '../lib/parselink.js'
 import { NpcInput } from '../lib/npc-input.js'
+import { Equipment } from './actor.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
-import { assert } from '../lib/utilities.js'
 
 /**
  *  This holds functions for all things chat related
@@ -35,7 +35,7 @@ function send(priv, pub, data) {
   this.chat(pub, data)
 }
 
-class _ChatProcessors {
+class ChatProcessorRegistry {
   constructor() {
     this._processors = []
   }
@@ -45,9 +45,10 @@ class _ChatProcessors {
    * @param {String} line - chat input
    * @returns true, if handled
    */
-  handle(line) {
+  handle(line, msgs) {
     let processor = this._processors.find(it => it.matches(line))
-    return processor.process(line)
+    if (!!processor) return processor.process(line, msgs)
+    return false
   }
 
   /**
@@ -55,13 +56,58 @@ class _ChatProcessors {
    * @param {*} processor
    */
   registerProcessor(processor) {
-    assert(typeof processor.matches == 'function', 'arg must implement a matches(String) function')
-    assert(typeof processor.process == 'function', 'arg must implement a process(String) function')
     this._processors.push(processor)
   }
 }
 
-export let ChatProcessors = new _ChatProcessors()
+export let ChatProcessors = new ChatProcessorRegistry()
+
+// Stack up as many public messages as we can, until we need to print a private one (to reduce the number of chat messages)
+let pub = (text, msgs) => {
+  if (msgs.priv.length > 0) send(msgs)
+  msgs.pub.push(text)
+}
+// Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
+let priv = (text, msgs) => {
+  if (msgs.pub.length > 0) send(msgs)
+  msgs.priv.push(text)
+}
+
+let prnt = (text, msgs) => {
+  let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
+  if (game.user.isGM || p_setting) priv(text, msgs)
+  else pub(text, msgs)
+}
+
+/**
+ * Base class for a chat message processor.
+ */
+export class ChatProcessor {
+  /**
+   * Override
+   * @param {*} line - chat command
+   * @returns true if this processor will handle this chat command
+   */
+  matches(line) {}
+
+  /**
+   * Override to process a chat command
+   * @param {*} line
+   */
+  process(line, msgs) {}
+
+  sendPublicMessage(text, msgs) {
+    pub(text, msgs)
+  }
+
+  sendPrivateMessage(text, msgs) {
+    priv(text, msgs)
+  }
+
+  printMessage(text, msgs) {
+    prnt(text, msgs)
+  }
+}
 
 export default function addChatHooks() {
   Hooks.once('init', async function () {
@@ -84,23 +130,6 @@ export default function addChatHooks() {
       }
     }
 
-    // Stack up as many public messages as we can, until we need to print a private one (to reduce the number of chat messages)
-    let pub = (text, msgs) => {
-      if (msgs.priv.length > 0) send(msgs)
-      msgs.pub.push(text)
-    }
-    // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
-    let priv = (text, msgs) => {
-      if (msgs.pub.length > 0) send(msgs)
-      msgs.priv.push(text)
-    }
-
-    let prnt = (text, msgs) => {
-      let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
-      if (game.user.isGM || p_setting) priv(text, msgs)
-      else pub(text, msgs)
-    }
-
     Hooks.on('chatMessage', (log, message, data) => {
       if (!!data.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
       if (GURPS.ChatCommandsInProcess.includes(message)) {
@@ -108,12 +137,13 @@ export default function addChatHooks() {
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
       }
 
+      let msgs = { pub: [], priv: [], data: data }
+
       // Is Dice So Nice enabled ?
       let niceDice = false
       try {
         niceDice = game.settings.get('dice-so-nice', 'settings').enabled
       } catch {}
-      let msgs = { pub: [], priv: [], data: data }
       let handled = false
       message
         .replace(/\\\\/g, '\n')
@@ -515,6 +545,27 @@ export default function addChatHooks() {
             return
           }
 
+          m = line.match(/\/(everyone|ev) \[(.*)\]/i)
+          if (!!m) {
+            if (game.user.isGM) {
+              let any = false
+              let action = parselink(m[2].trim())
+              if (!!action.action) {
+                if (!['modifier', 'chat', 'pdf'].includes(action.action.type)) {
+                  game.actors.entities.forEach(actor => {
+                    if (actor.hasPlayerOwner) {
+                      any = true
+                      GURPS.performAction(action.action, actor)
+                    }
+                  })
+                  if (!any) priv(`There are no player owned characters!`, msgs)
+                } else priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`, msgs)
+              } else priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`, msgs)
+            } else priv(`You must be a GM to execute '${line}'`, msgs)
+            handled = true
+            return
+          }
+
           m = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
           if (!!m && !!m[2]) {
             let action = parselink(m[2])
@@ -548,6 +599,7 @@ export default function addChatHooks() {
             handled = true
             return
           }
+
           if (line === '/showmbs') {
             priv(line, msgs)
             GURPS.ModifierBucket.showOthers()
@@ -570,6 +622,7 @@ export default function addChatHooks() {
             handled = true
             return
           }
+
           if (line.startsWith('/:')) {
             m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)))
             if (m.length > 0) {
@@ -579,15 +632,202 @@ export default function addChatHooks() {
             handled = true
             return
           }
+
+          m = line.match(/\/rolltable(.*)/)
+          if (!!m) {
+            handled = true
+            let tblname = m[1].trim()
+            let table = game.tables.entities.find(t => t.name === tblname)
+            if (!table) {
+              ui.notifications.error("No table found for '" + tblname + "'")
+              return
+            }
+            let r = table.roll()
+            table.draw({ roll: r })
+            GURPS.ModifierBucket.clear()
+            return
+          }
+
+          if (line.match(/\/(fc|frightcheck)/)) {
+            handled = true
+            if (!game.user.isGM) {
+              priv(`You must be a GM to execute '${line}'`, msgs)
+              return
+            }
+            if (!GURPS.LastActor) {
+              ui.notifications.error('Please select a token/character.')
+              return
+            }
+            let actor = GURPS.LastActor
+            let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
+
+            let p = renderTemplate('systems/gurps/templates/frightcheck-macro.html', { tblname: tblname })
+            p.then(dialogTemplate =>
+              new Dialog(
+                {
+                  title: 'Fright Check',
+                  content: dialogTemplate,
+                  buttons: {
+                    rollFrightCheck: {
+                      label: 'Roll Fright Check',
+                      callback: html => {
+                        let mod1 = html.find('#mod1')[0].value
+                        mod1 = parseInt(mod1, 10)
+                        let mod2 = html.find('#mod2')[0].value
+                        mod2 = parseInt(mod2, 10)
+                        let mod3 = html.find('#mod3')[0].value
+                        mod3 = parseInt(mod3, 10)
+                        let mod4 = html.find('#mod4')[0].value
+                        mod4 = parseInt(mod4, 10)
+                        let mod5 = html.find('#mod5')[0].value
+                        mod5 = parseInt(mod5, 10)
+                        let check1 = html.find('#check1')[0]
+                        let check2 = html.find('#check2')[0]
+                        let bodies1 = html.find('#bodies1')[0].value
+                        bodies1 = parseInt(bodies1, 10)
+                        let bodies2 = html.find('#bodies2')[0]
+                        let check3 = html.find('#check3')[0]
+                        let monster1 = html.find('#monster1')[0].value
+                        monster1 = parseInt(monster1, 10)
+                        let monster2 = html.find('#monster2')[0].value
+                        monster2 = parseInt(monster2, 10)
+                        let check4 = html.find('#check4')[0]
+                        let check4a = html.find('#check4a')[0]
+                        let check4b = html.find('#check4b')[0]
+                        let check5 = html.find('#check5')[0]
+                        let check6 = html.find('#check6')[0]
+                        let check7 = html.find('#check7')[0]
+                        let check8 = html.find('#check8')[0]
+                        let check9 = html.find('#check9')[0]
+
+                        let WILLVar = actor.data.data.frightcheck || actor.data.data.attributes.WILL.value
+                        WILLVar = parseInt(WILLVar, 10)
+
+                        let rollString = `3d6`
+                        let roll = Roll.create(rollString).roll()
+                        let fearMod = 0
+
+                        let chatContent = ``
+                        let totalMod = 0
+
+                        if (check1.checked) {
+                          check1 = parseInt(check1.value, 10)
+                          fearMod += check1
+                        }
+                        if (check2.checked) {
+                          check2 = parseInt(check2.value, 10)
+                          fearMod += check2
+                        }
+                        if (bodies2.checked) {
+                          bodies2 = parseInt(bodies2.value, 10)
+                          fearMod += bodies2
+                        }
+                        if (check3.checked) {
+                          check3 = parseInt(check3.value, 10)
+                          fearMod += check3
+                        }
+                        if (check4.checked) {
+                          check4 = parseInt(check4.value, 10)
+                          fearMod += check4
+                        }
+                        if (check4a.checked) {
+                          check4a = parseInt(check4a.value, 10)
+                          fearMod += check4a
+                        }
+                        if (check4b.checked) {
+                          check4b = parseInt(check4b.value, 10)
+                          fearMod += check4b
+                        }
+                        if (check5.checked) {
+                          check5 = parseInt(check5.value, 10)
+                          fearMod += check5
+                        }
+                        if (check6.checked) {
+                          check6 = parseInt(check6.value, 10)
+                          fearMod += check6
+                        }
+                        if (check7.checked) {
+                          check7 = parseInt(check7.value, 10)
+                          fearMod += check7
+                        }
+                        if (check8.checked) {
+                          check8 = parseInt(check8.value, 10)
+                          fearMod += check8
+                        }
+                        if (check9.checked) {
+                          check9 = parseInt(check9.value, 10)
+                          fearMod += check9
+                        }
+                        console.log('Fright Margin mod: ', fearMod)
+
+                        totalMod = fearMod + mod1 + mod2 + mod3 + mod4 + mod5 + bodies1 + monster1 + monster2
+                        let tm = totalMod >= 0 ? '+' + totalMod : totalMod
+                        console.log('Total mod before checked: ', totalMod)
+                        let targetRoll = totalMod + WILLVar
+                        let g13 = ''
+                        if (targetRoll > 13) {
+                          targetRoll = 13
+                          g13 = `<span style='font-size:small;font-style:italic'>(Cannot be greater than 13 [PDF:B360])</span><br><br>`
+                        }
+
+                        tblname = html.find('#tblname')[0].value
+                        game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, tblname)
+                        if (roll.total > targetRoll) {
+                          console.log('Fright Check FAIL')
+                          fearMod = roll.total - targetRoll
+
+                          //let frightEntry = fearMod + rollMod.total;
+
+                          // Draw results using a custom roll formula
+                          let table = game.tables.entities.find(t => t.name === tblname)
+                          let tableRoll = new Roll('3d6 + @rollvar', { rollvar: fearMod })
+                          if (!!table) table.draw({ roll: tableRoll })
+
+                          chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
+                      ${g13}
+                      <span><span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />
+                      ${roll.total}</span>
+                      <span class='failure'>Failed Final Fright Check by ${fearMod}</span></div></div>`
+                        } else {
+                          console.log('Fright Check SUCCESS')
+                          chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
+                      ${g13}
+                      <span><span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />
+                      ${roll.total}</span>
+                      <span class='success'>Fright Check SUCCESS!</span></div></div>`
+                        }
+                        ChatMessage.create({
+                          type: CHAT_MESSAGE_TYPES.ROLL,
+                          speaker: {
+                            alias: actor.name,
+                          },
+                          content: chatContent,
+                          roll: roll,
+                          rollMode: game.settings.get('core', 'rollMode'),
+                        })
+                      },
+                    },
+                    close: {
+                      label: 'Close',
+                    },
+                  },
+                },
+                { width: 500 }
+              ).render(true)
+            )
+            return
+          }
+
+          // It isn't one of our commands...
           if (line.trim().startsWith('/')) {
             // immediately flush our stored msgs, and execute the slash command using the default parser
-            handled = true
             send(msgs)
             GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
             ui.chat.processMessage(line).catch(err => {
               ui.notifications.error(err)
               console.error(err)
             })
+            handled = true
           } else pub(line, msgs) // If not handled, must just be public text
         }) // end split
       if (handled) {
