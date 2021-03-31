@@ -23,6 +23,7 @@ This is what we are currently working on:
 - Fixed damage to resources to allow HP or FP damage to apply to a resource
 - Added support for [A:Attack *Costs 1FP]
 - Fixed [A:Attack] where skill level includes "*Costs 1FP"
+- Added Drag and drop OtF from chat
 
 ## History
 

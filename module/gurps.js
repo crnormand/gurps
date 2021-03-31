@@ -1533,12 +1533,18 @@ Hooks.once('ready', async function () {
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
     if (!data.otf) return
-    let macro = await Macro.create({
-      name: `OtF: ${data.otf}`,
-      type: 'script',
-      command: `let actor = game.actors.get('${data.actor}')
+    let cmd = `GURPS.executeOTF('${data.otf}')`
+    let name = `OtF: ${data.otf}`
+    if (!!data.actor) {
+      cmd = `let actor = game.actors.get('${data.actor}')
 GURPS.SetLastActor(actor)
-GURPS.executeOTF('${data.otf}')`,
+` + cmd
+      name = game.actors.get(data.actor).name + " " + name
+    }
+    let macro = await Macro.create({
+      name: name,
+      type: 'script',
+      command: cmd,
     })
     game.user.assignHotbarMacro(macro, slot)
     return false
