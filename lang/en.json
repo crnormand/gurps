@@ -444,11 +444,12 @@
   "GURPS.resourceUpdateTrackerSlot": "Update Tracker Slot",
 
   "GURPS.resolve": "Resolve",
+  "GURPS.slams": "slams",
   "GURPS.slamCalculator": "Slam Calculator",
-  "GURPS.slamAttackerHP": "Attacker HP",
-  "GURPS.slamAttackerVelocity": "Attacker Velocity",
+  "GURPS.slamVelocity": "Velocity",
   "GURPS.slamAOAStrong": "All-Out Attack (Strong)",
-  "GURPS.slamTargetHP": "Target HP",
-  "GURPS.slamTargetVelocity": "Target Velocity",
-  "GURPS.slamRelativeVelocity": "Relative Velocity"
+  "GURPS.slamRelativeVelocity": "Relative Velocity",
+  "GURPS.target": "Target",
+  "GURPS.fallsDown": "falls down!",
+  "GURPS.notAffected": "is not affected"
 }
