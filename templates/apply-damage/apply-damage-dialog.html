@@ -6,7 +6,7 @@
       {{#if (and CALC.useArmorDivisor CALC.armorDivisor)}}
       ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
       {{/if}}
-      {{#if (and (ne CALC.damageType 'dmg') (ne CALC.damageType 'none'))}}{{CALC.damageType}}{{/if}}
+      {{#if (and (ne CALC.damageType 'dmg') (ne CALC.damageType 'none'))}}'{{CALC.damageType}}'{{/if}}
       {{localize "GURPS.addTitleConcat1" name=actor.data.name}}
     </h2>
 
