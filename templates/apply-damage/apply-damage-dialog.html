@@ -478,6 +478,7 @@
           <div id="result-extrastuff">
             <ul id='result-effects'>
               {{#each CALC.effects}}
+              {{debug this}}
               {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
               {{/each}}
             </ul>
