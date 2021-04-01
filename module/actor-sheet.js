@@ -612,6 +612,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
+    obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
     let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
 
     let d = new Dialog(
