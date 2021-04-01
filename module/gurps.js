@@ -1536,8 +1536,7 @@ Hooks.once('ready', async function () {
     let cmd = `GURPS.executeOTF('${data.otf}')`
     let name = `OtF: ${data.otf}`
     if (!!data.actor) {
-      cmd = `let actor = game.actors.get('${data.actor}')
-GURPS.SetLastActor(actor)
+      cmd = `GURPS.SetLastActor(game.actors.get('${data.actor}'))
 ` + cmd
       name = game.actors.get(data.actor).name + " " + name
     }
