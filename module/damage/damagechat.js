@@ -71,10 +71,12 @@ export default class DamageChat {
 
             button.click(ev => {
               // get actor from id
-              let targetActor = game.actors.get(transfer.userTarget) // ...
+              let token = canvas.tokens.get(transfer.userTarget) // ...
               // get payload; its either the "all damage" payload or ...
-              let payload = transfer.payload
-              targetActor.handleDamageDrop(payload)
+              if (!!token) 
+                token.actor.handleDamageDrop(payload)
+              else
+                ui.notifications.warn("Unable to find token with ID:" + transfer.userTarget);
             })
           }
         }
@@ -341,7 +343,7 @@ export default class DamageChat {
     messageData['flags.transfer'] = JSON.stringify({
       type: 'damageItem',
       payload: draggableData,
-      userTarget: !!userTarget ? userTarget.actor.id : null,
+      userTarget: !!userTarget ? userTarget.id : null,
     })
 
     if (isNiceDiceEnabled()) {
