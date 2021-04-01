@@ -6,6 +6,7 @@ This is what we are currently working on:
   
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 - Merged @Exxar's Damage Reduction code into ADD
+- Adjust ADD results to show +3 bonus to HT checks when damage is Ranged, 1/2D.
 
 ## History
 
