@@ -3,6 +3,8 @@
 This is what we are currently working on:
 
   0.8.23
+  
+- Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 
 ## History
 
