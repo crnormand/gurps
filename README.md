@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.21
+# Current Release Version 0.8.22
 
 [If you like our work...](https://ko-fi.com/crnormand)
 

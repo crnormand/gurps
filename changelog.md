@@ -2,7 +2,11 @@
 
 This is what we are currently working on:
 
-  0.8.22
+  0.8.23
+
+## History
+
+  0.8.22 - 3/31/2021
 
 - Updated German/Deutsch translation
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
@@ -24,8 +28,6 @@ This is what we are currently working on:
 - Added support for [A:Attack *Costs 1FP]
 - Fixed [A:Attack] where skill level includes "*Costs 1FP"
 - Added Drag and drop OtF from chat
-
-## History
 
   0.8.21 - 3/22/2021
 
