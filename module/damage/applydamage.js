@@ -5,6 +5,7 @@ import { isNiceDiceEnabled, parseFloatFrom, parseIntFrom, generateUniqueId } fro
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
 import { GurpsActor } from '../actor.js'
+import { ResourceTrackerManager } from '../actor/resource-tracker-manager.js'
 
 const standardDialogHeight = 800
 const simpleDialogHeight = 130
@@ -41,6 +42,14 @@ export default class ApplyDamageDialog extends Application {
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
+
+    this._resourceLabels = ResourceTrackerManager.getAllTemplates()
+      .filter(it => !!it.tracker.alias)
+      .filter(it => !!it.tracker.isDamageType)
+      .map(it => {
+        return { name: it.tracker.name, alias: it.tracker.alias }
+      })
+    console.log(this._resourceLabels)
   }
 
   static get defaultOptions() {
@@ -54,7 +63,7 @@ export default class ApplyDamageDialog extends Application {
       height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
         ? simpleDialogHeight
         : standardDialogHeight,
-      title: 'Apply Damage Calculator',
+      title: game.i18n.localize('GURPS.addApplyDamageDialog'),
     })
   }
 
@@ -64,6 +73,7 @@ export default class ApplyDamageDialog extends Application {
     data.CALC = this._calculator
     data.timesToApply = this.timesToApply
     data.isSimpleDialog = this.isSimpleDialog
+    data.resourceLabels = this._resourceLabels
     return data
   }
 
@@ -141,7 +151,6 @@ export default class ApplyDamageDialog extends Application {
       this._toggleVisibility(content, content.hasClass('invisible'))
     })
 
-    // Set Apply To dropdown value.
     // When dropdown changes, update the calculator and refresh GUI.
     html.find('#apply-to').on('change', ev => {
       this._calculator.applyTo = $(ev.currentTarget).find('option:selected').val()
@@ -151,8 +160,22 @@ export default class ApplyDamageDialog extends Application {
     // ==== Hit Location and DR ====
     // When user-entered DR input changes, update the calculator.
     html
-      .find('#user-entered-dr')
+      .find('#override-dr input')
       .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'userEnteredDR', parseIntFrom))
+
+    // Blunt Trauma user override text field
+    // html.find('#blunt-trauma-field input').on('change', ev => {
+    //   let currentValue = $(ev.currentTarget).val()
+    //   this._calculator.bluntTrauma =
+    //     currentValue === '' || currentValue === this._calculator.calculatedBluntTrauma ? null : parseFloat(currentValue)
+    //   this.updateUI()
+    // })
+
+    // clear the user override of the Override DR value
+    html.find('#override-dr button').click(() => {
+      this._calculator.userEnteredDR = null
+      this.updateUI()
+    })
 
     html.find('#apply-multiple').on('change', ev => {
       let temp = $(ev.currentTarget).val()
@@ -198,8 +221,8 @@ export default class ApplyDamageDialog extends Application {
 
     // armor divisor level
     html
-        .find('input[name="tactical-armordivisor"]')
-        .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'armorDivisor', parseFloat))
+      .find('select[name="tactical-armordivisor"]')
+      .on('change', ev => this._updateModelFromSelect($(ev.currentTarget), 'armorDivisor', parseFloat))
 
     // use blunt trauma rules
     html
@@ -232,6 +255,10 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('input[name="hardened"]')
       .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'hardenedDRLevel', parseFloat))
+
+    html
+      .find('select[name="hardened"]')
+      .on('change', ev => this._updateModelFromSelect($(ev.currentTarget), 'hardenedDRLevel', parseInt))
 
     // target has Injury Tolerance
     html
@@ -325,6 +352,12 @@ export default class ApplyDamageDialog extends Application {
     this.updateUI()
   }
 
+  /**
+   * Update the model based on the property name.
+   * @param {*} element
+   * @param {*} property
+   * @param {*} converter
+   */
   _updateModelFromRadioValue(
     element,
     property,
@@ -336,6 +369,24 @@ export default class ApplyDamageDialog extends Application {
       this._calculator[property] = converter(element.val())
       this.updateUI()
     }
+  }
+
+  /**
+   *
+   * @param {HtmlElement} select
+   * @param {String} property of model to update
+   * @param {Function} converter optional converter function; by default its the identity function
+   */
+  _updateModelFromSelect(
+    select,
+    property,
+    converter = value => {
+      return value
+    }
+  ) {
+    let valueText = select.find('option:selected').val()
+    this._calculator[property] = converter(valueText)
+    this.updateUI()
   }
 
   _updateModelFromBooleanElement(element, property) {
@@ -449,8 +500,7 @@ export default class ApplyDamageDialog extends Application {
    */
   submitDirectApply(keepOpen, publicly) {
     let injury = this._calculator.basicDamage
-    let type = this._calculator.applyTo
-    this.resolveInjury(keepOpen, injury, type, publicly)
+    this.resolveInjury(keepOpen, injury, publicly)
   }
 
   /**
@@ -459,14 +509,13 @@ export default class ApplyDamageDialog extends Application {
    */
   async submitInjuryApply(ev, keepOpen, publicly) {
     let injury = this._calculator.pointsToApply
-    let type = this.damageType === 'fat' ? 'FP' : 'HP'
 
     let dialog = $(ev.currentTarget).parents('.gurps-app')
     let results = $(dialog).find('.results-table')
     let clone = results.clone().html()
 
     for (let index = 0; index < this.timesToApply; index++) {
-      await this.resolveInjury(keepOpen, injury, type, publicly, clone)
+      await this.resolveInjury(keepOpen, injury, publicly, clone)
     }
   }
 
@@ -474,11 +523,18 @@ export default class ApplyDamageDialog extends Application {
    * Handle the actual loss of HP or FP on the actor and display the results in the chat.
    * @param {boolean} keepOpen - if true, apply the damage and keep this window open.
    * @param {int} injury
-   * @param {String} type - either 'FP' or 'HP'
+   * @param {String} type - a valid damage type (including resources)
    * @param {boolean} publicly - if true, display to everyone; else display to GM and owner.
    */
-  async resolveInjury(keepOpen, injury, type, publicly, results = null) {
-    let current = type === 'FP' ? this._calculator.FP.value : this._calculator.HP.value
+  async resolveInjury(keepOpen, injury, publicly, results = null) {
+    let [resource, path] = this._calculator.resource
+
+    if (!resource || !path) {
+      ui.notifications.warn(
+        `Actor ${this.actor.data.name} does not have a resource named "${this._calculator.damageType}"!!`
+      )
+      return
+    }
 
     let attackingActor = game.actors.get(this._calculator.attacker)
 
@@ -486,17 +542,17 @@ export default class ApplyDamageDialog extends Application {
       id: generateUniqueId(),
       injury: injury,
       defender: this.actor.data.name,
-      current: current,
+      current: resource.value,
       location: this._calculator.hitLocation,
-      type: type,
+      type: this._calculator.resourceType,
       resultsTable: results,
     }
 
-    if (type === 'FP') {
-      await this.actor.update({ 'data.FP.value': this.actor.data.data.FP.value - injury })
-    } else {
-      await this.actor.update({ 'data.HP.value': this.actor.data.data.HP.value - injury })
-    }
+    let newValue = resource.isDamageTracker ? resource.value + injury : resource.value - injury
+
+    let update = {}
+    update[`${path}.value`] = newValue
+    await this.actor.update(update)
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = {

@@ -1,6 +1,5 @@
 'use strict'
 
-import { woundModifiers } from './damage-tables.js'
 import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.js'
 
 /**
@@ -11,14 +10,9 @@ import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
  */
 export default class DamageChat {
-  static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>\d+(?:\.\d+)?)\))?/
+  static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
-  constructor(GURPS) {
-    this.setup()
-    this._gurps = GURPS
-  }
-
-  setup() {
+  static initSettings() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
       let isDamageChatMessage = !!html.find('.damage-chat-message').length
 
@@ -34,7 +28,7 @@ export default class DamageChat {
             message.setAttribute('draggable', true)
             message.addEventListener('dragstart', ev => {
               $(ev.currentTarget).addClass('dragging')
-              ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
+              ev.dataTransfer.setDragImage(game.GURPS.damageDragImage, 30, 30)
               let data = {
                 type: 'damageItem',
                 payload: transfer.payload[index],
@@ -56,7 +50,7 @@ export default class DamageChat {
           message.setAttribute('draggable', true)
           message.addEventListener('dragstart', ev => {
             $(ev.currentTarget).addClass('dragging')
-            ev.dataTransfer.setDragImage(this._gurps.damageDragImage, 30, 30)
+            ev.dataTransfer.setDragImage(game.GURPS.damageDragImage, 30, 30)
             let data = {
               type: 'damageItem',
               payload: transfer.payload,
@@ -96,27 +90,29 @@ export default class DamageChat {
    * @param {Event} event that triggered this action
    * @param {String} overrideDiceText ??
    */
-  async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
-    const targetmods = await this._gurps.ModifierBucket.applyMods() // append any global mods
+  static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
+    let message = new DamageChat()
 
-    let dice = this._getDiceData(diceText, damageType, targetmods, overrideDiceText)
+    const targetmods = await game.GURPS.ModifierBucket.applyMods() // append any global mods
+
+    let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText)
 
     if (!tokenNames) tokenNames = []
     if (tokenNames.length == 0) tokenNames.push('')
 
     let draggableData = []
     await tokenNames.forEach(async tokenName => {
-      let data = await this._createDraggableSection(actor, dice, tokenName, targetmods)
+      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods)
       draggableData.push(data)
     })
 
-    this._createChatMessage(actor, dice, targetmods, draggableData, event)
+    message._createChatMessage(actor, dice, targetmods, draggableData, event)
 
     // Resolve any modifier descriptors (such as *Costs 1FP)
     targetmods
       .filter(it => !!it.desc)
       .map(it => it.desc)
-      .forEach(it => this._gurps.applyModifierDesc(actor, it))
+      .forEach(it => game.GURPS.applyModifierDesc(actor, it))
   }
 
   /**
@@ -204,7 +200,7 @@ export default class DamageChat {
       additionalText += `×${multiplier}`
     }
 
-    if (divisor > 0) {
+    if (divisor != 0) {
       additionalText += ` (${divisor})`
     }
 
@@ -378,7 +374,7 @@ export default class DamageChat {
     CONFIG.ChatMessage.entityClass.create(messageData).then(arg => {
       console.log(arg)
       let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
-      $(`[data-message-id='${messageId}']`).click(ev => this._gurps.handleOnPdf(ev))
+      $(`[data-message-id='${messageId}']`).click(ev => game.GURPS.handleOnPdf(ev))
     })
   }
 }

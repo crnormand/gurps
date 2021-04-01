@@ -1,0 +1,104 @@
+------------
+keys in [lang/de.json] that are missing in [lang/en.json]
+[ 'EFFECT.StatusShocked' ]
+------------
+keys in [lang/en.json] that are missing in [lang/de.json]
+[
+  'GURPS.FP',
+  'GURPS.HP',
+  'GURPS.SkillDXA',
+  'GURPS.SkillDXE',
+  'GURPS.SkillDXH',
+  'GURPS.SkillDXVH',
+  'GURPS.SkillHTA',
+  'GURPS.SkillHTE',
+  'GURPS.SkillHTH',
+  'GURPS.SkillHTVH',
+  'GURPS.SkillIQA',
+  'GURPS.SkillIQE',
+  'GURPS.SkillIQH',
+  'GURPS.SkillIQVH',
+  'GURPS.SkillPerA',
+  'GURPS.SkillPerE',
+  'GURPS.SkillPerH',
+  'GURPS.SkillPerVH',
+  'GURPS.SkillWillA',
+  'GURPS.SkillWillE',
+  'GURPS.SkillWillH',
+  'GURPS.SkillWillVH',
+  'GURPS.attributesDX',
+  'GURPS.attributesHT',
+  'GURPS.attributesIQ',
+  'GURPS.attributesPER',
+  'GURPS.attributesST',
+  'GURPS.attributesWILL',
+  'GURPS.clickToEdit',
+  'GURPS.copyright',
+  'GURPS.copyrightGCS',
+  'GURPS.damageAbbrevburn',
+  'GURPS.damageAbbrevcor',
+  'GURPS.damageAbbrevcr',
+  'GURPS.damageAbbrevcut',
+  'GURPS.damageAbbrevdmg',
+  'GURPS.damageAbbrevfat',
+  'GURPS.damageAbbrevimp',
+  'GURPS.damageAbbrevpi',
+  'GURPS.damageAbbrevpi+',
+  'GURPS.damageAbbrevpi++',
+  'GURPS.damageAbbrevpi-',
+  'GURPS.damageAbbrevtox',
+  'GURPS.resourceCopyTemplate',
+  'GURPS.resourceCurrentValue',
+  'GURPS.resourceDamageTracker',
+  'GURPS.resourceDamageType',
+  'GURPS.resourceDeleteTracker',
+  'GURPS.resourceEditTracker',
+  'GURPS.resourceTracker',
+  'GURPS.resourceUndefined',
+  'GURPS.resourceUpdateTrackerSlot',
+  'GURPS.slotNotUnique',
+  'GURPS.title',
+  'GURPS.trackerNotUnique'
+]
+------------
+values in [lang/en.json] that are the same in [lang/de.json]
+GURPS.BODYPLANcentaur: Centaur
+GURPS.BODYPLANhumanoid expanded: Humanoid, Expanded (GCA)
+GURPS.BODYPLANhumanoid: Humanoid
+GURPS.acc: Acc
+GURPS.addArmorDivisor: Armor Divisor
+GURPS.addHardenedDRLevel: Hardened DR Level
+GURPS.addInjuryTolerance: Injury Tolerance
+GURPS.addLargeAreaInjury: Large-Area Injury
+GURPS.addLocationMax: Location Max
+GURPS.addWHard: w/Hard
+GURPS.bulk: Bulk
+GURPS.damageTypeHuge Piercing: Huge Piercing
+GURPS.damageTypeLarge Piercing: Large Piercing
+GURPS.damageTypePiercing: Piercing
+GURPS.damageTypeSmall Piercing: Small Piercing
+GURPS.grapplingCPAbbrev: ctrl
+GURPS.highPainThreshold: High Pain Threshold
+GURPS.highest: Highest
+GURPS.hitLocationArm 1-2: Arm 1-2
+GURPS.hitLocationArm 3-4: Arm 3-4
+GURPS.hitLocationArm 5-6: Arm 5-6
+GURPS.hitLocationArm 7-8: Arm 7-8
+GURPS.hitLocationArm*: Arm
+GURPS.hitLocationArm: Arm
+GURPS.hitLocationHand: Hand
+GURPS.hitLocationLeg 7-8: Arm 7-8
+GURPS.identityName: Name
+GURPS.level: Level
+GURPS.lowPainThreshold: Low Pain Threshold
+GURPS.max: Max
+GURPS.maximum: Maximum
+GURPS.minimum: Minimum
+GURPS.normal: Normal
+GURPS.overridden: overridden
+GURPS.perfectBalance: Perfect Balance
+GURPS.portrait: Portrait
+GURPS.rcl: Rcl
+GURPS.resourceTemplateAlias: Alias
+GURPS.rof: RoF
+GURPS.yards:  yards

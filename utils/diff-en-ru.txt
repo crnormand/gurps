@@ -1,0 +1,18 @@
+------------
+keys in [lang/ru.json] that are missing in [lang/en.json]
+[]
+------------
+keys in [lang/en.json] that are missing in [lang/ru.json]
+[
+  'GURPS.resourceCopyTemplate',
+  'GURPS.resourceDeleteTracker',
+  'GURPS.resourceEditTracker',
+  'GURPS.resourceUndefined',
+  'GURPS.resourceUpdateTrackerSlot'
+]
+------------
+values in [lang/en.json] that are the same in [lang/ru.json]
+GURPS.changelog: README
+GURPS.highest: Highest
+GURPS.of: of 
+GURPS.title: GURPS

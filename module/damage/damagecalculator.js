@@ -1,8 +1,9 @@
 'use strict'
 
-import * as Settings from '../../lib/miscellaneous-settings.js'
-import * as HitLocation from '../hitlocation/hitlocation.js'
-import * as DamageTables from './damage-tables.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
+import * as hitlocation from '../hitlocation/hitlocation.js'
+import { DamageTables } from './damage-tables.js'
+import { objectToArray } from '../../lib/utilities.js'
 
 /* 
   Crippling injury:
@@ -22,7 +23,7 @@ const DIFFUSE = 'diffuse'
 const HOMOGENOUS = 'homogenous'
 
 // -1 means 'Ignores DR'
-const armorDivisorSteps = [-1, 10, 5, 3, 2, 1]
+const armorDivisorSteps = [-1, 100, 10, 5, 3, 2, 1]
 
 export class CompositeDamageCalculator {
   /**
@@ -38,9 +39,9 @@ export class CompositeDamageCalculator {
    * @param {Array} damageData
    */
   constructor(defender, damageData) {
-    this._useBluntTrauma = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BLUNT_TRAUMA)
-    this._useLocationModifiers = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_LOCATION_MODIFIERS)
-    this._useArmorDivisor = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_APPLY_DIVISOR)
+    this._useBluntTrauma = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLUNT_TRAUMA)
+    this._useLocationModifiers = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_LOCATION_MODIFIERS)
+    this._useArmorDivisor = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_APPLY_DIVISOR)
 
     this._defender = defender
 
@@ -58,12 +59,16 @@ export class CompositeDamageCalculator {
     if (Object.keys(this._defaultWoundingModifiers).includes(damageData[0].damageType))
       this._damageType = damageData[0].damageType
     else {
-      let temp = DamageTables.damageTypeMap[damageData[0].damageType]
+      let temp = DamageTables.translate(damageData[0].damageType)
       if (temp) this._damageType = temp
       else this._damageType = 'none'
     }
 
-    this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
+    if (!!CompositeDamageCalculator.isResourceDamageType(this._damageType)) {
+      this.applyTo = this._damageType
+    } else {
+      this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
+    }
 
     this._armorDivisor = damageData[0].armorDivisor
     if (this._armorDivisor === 0) {
@@ -72,7 +77,7 @@ export class CompositeDamageCalculator {
 
     this._hitLocation = this._defender.defaultHitLocation
     this._previousHitLocation = this._hitLocation
-    this._userEnteredDR = 0
+    this._userEnteredDR = null
 
     // the wounding modifier selected using the radio buttons
     this._userEnteredWoundModifier = 1
@@ -98,6 +103,11 @@ export class CompositeDamageCalculator {
     this._shotgunRofMultiplier = 9
   }
 
+  static isResourceDamageType(damageType) {
+    let modifier = DamageTables.woundModifiers[damageType]
+    return !!modifier && !!DamageTables.woundModifiers[damageType].resource
+  }
+
   get(viewId) {
     if (viewId === 'all') return this
     return this._calculators[viewId]
@@ -121,6 +131,10 @@ export class CompositeDamageCalculator {
 
   set armorDivisor(value) {
     this._armorDivisor = value
+  }
+
+  get useArmorDivisor() {
+    return this._useArmorDivisor
   }
 
   get applyTo() {
@@ -170,9 +184,11 @@ export class CompositeDamageCalculator {
 
   // return the DR indicated by the Hit Location
   get DR() {
+    if (this._userEnteredDR !== null) return this._userEnteredDR
+
     if (this._hitLocation === 'Random') return 0
 
-    if (this._hitLocation === 'User Entered') return this._userEnteredDR
+    // if (this._hitLocation === 'User Entered') return this._userEnteredDR
 
     if (this._hitLocation === 'Large-Area') {
       let lowestDR = Number.POSITIVE_INFINITY
@@ -257,13 +273,11 @@ export class CompositeDamageCalculator {
     // Armor Divisors do not apply to Explosions, (B414)
     if (this._isExplosion) return 1
 
-    if (this._armorDivisor > 1 && this._isHardenedDR) {
+    if ((this._armorDivisor > 1 || this._armorDivisor === -1) && this._isHardenedDR) {
       let maxIndex = armorDivisorSteps.length - 1
       let index = armorDivisorSteps.indexOf(this._armorDivisor)
-      if (index !== -1) {
-        index = Math.min(index + this._hardenedDRLevel, maxIndex)
-        return armorDivisorSteps[index]
-      }
+      index = Math.min(index + this._hardenedDRLevel, maxIndex)
+      return armorDivisorSteps[index]
     }
     return this._armorDivisor
   }
@@ -288,10 +302,11 @@ export class CompositeDamageCalculator {
 
     if (this._useArmorDivisor && !!this._armorDivisor) {
       // -1 divisor means "Ignore DR"
-      if (this.effectiveArmorDivisor === -1) return 0
+      let armorDivisor = this.effectiveArmorDivisor
+      if (armorDivisor === -1) return 0
+      if (armorDivisor < 1 && dr === 0) return 1
 
-      let tempDR = this.effectiveArmorDivisor < 1 && dr === 0 ? 1 : dr
-      return Math.floor(tempDR / this.effectiveArmorDivisor)
+      return Math.floor(dr / armorDivisor)
     }
     return dr
   }
@@ -323,7 +338,7 @@ export class CompositeDamageCalculator {
           break
 
         default: {
-          if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this.hitLocationRole))
+          if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this.hitLocationRole))
             table = this._extremityWoundModifiers
           else table = this.defaultWoundModifiers
         }
@@ -455,7 +470,7 @@ export class CompositeDamageCalculator {
   }
 
   get isCrippleableLocation() {
-    return [HitLocation.EXTREMITY, HitLocation.LIMB].includes(this.hitLocationRole) || this._hitLocation === 'Eye'
+    return [hitlocation.EXTREMITY, hitlocation.LIMB].includes(this.hitLocationRole) || this._hitLocation === 'Eye'
   }
 
   get isBluntTraumaInjury() {
@@ -561,8 +576,8 @@ export class CompositeDamageCalculator {
   }
 
   get locationMaxHP() {
-    if (this.hitLocationRole === HitLocation.LIMB) return this.HP.max / 2 + 1
-    if (this.hitLocationRole === HitLocation.EXTREMITY) return this.HP.max / 3 + 1
+    if (this.hitLocationRole === hitlocation.LIMB) return this.HP.max / 2 + 1
+    if (this.hitLocationRole === hitlocation.EXTREMITY) return this.HP.max / 3 + 1
     if (this.hitLocation === 'Eye') return this.HP.max / 10 + 1
     return this.HP.max
   }
@@ -583,6 +598,35 @@ export class CompositeDamageCalculator {
 
   get pointsToApply() {
     return this._calculators.map(it => it.pointsToApply).reduce((acc, value) => acc + value)
+  }
+
+  get resource() {
+    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
+      let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+      let tracker = null
+      let index = null
+      trackers.forEach((t, i) => {
+        if (t.alias === this._applyTo) {
+          index = i
+          tracker = t
+          return
+        }
+      })
+      return [tracker, `data.additionalresources.tracker.${index}`]
+    }
+
+    if (this._applyTo === 'fat') return [this._defender.data.data.FP, 'data.FP']
+    return [this._defender.data.data.HP, 'data.HP']
+  }
+
+  get resourceType() {
+    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
+      let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+      return trackers.find(it => it.alias === this._applyTo).name
+    }
+
+    if (this._applyTo === 'fat') return 'FP'
+    return 'HP'
   }
 
   get shotgunDamageMultiplier() {
@@ -867,7 +911,7 @@ class DamageCalculator {
   get pointsToApply() {
     let pointsToApply = this.unmodifiedPointsToApply
     if (this._parent.useLocationModifiers) {
-      if ([HitLocation.EXTREMITY, HitLocation.LIMB].includes(this._parent.hitLocationRole)) {
+      if ([hitlocation.EXTREMITY, hitlocation.LIMB].includes(this._parent.hitLocationRole)) {
         return Math.min(pointsToApply, Math.floor(this._parent.locationMaxHP))
       }
     }

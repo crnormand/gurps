@@ -17,6 +17,8 @@ import { SemanticVersion } from '../lib/semver.js'
 import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
+import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
+import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -69,6 +71,7 @@ GURPS.ClearLastActor = function (actor) {
   if (GURPS.LastActor == actor) {
     console.log('Clearing Last Actor:' + GURPS.LastActor?.name)
     GURPS.LastActor = null
+    GURPS.LastActorName = null
     GURPS.ModifierBucket.refresh()
     if (canvas.tokens.controlled.length > 0) {
       GURPS.SetLastActor(canvas.tokens.controlled[0].actor)
@@ -136,6 +139,14 @@ GURPS.skillTypes = {
 }
 
 GURPS.PARSELINK_MAPPINGS = {
+  ST: 'attributes.ST.value',
+  DX: 'attributes.DX.value',
+  IQ: 'attributes.IQ.value',
+  HT: 'attributes.HT.value',
+  WILL: 'attributes.WILL.value',
+  Will: 'attributes.WILL.value',
+  PER: 'attributes.PER.value',
+  Per: 'attributes.PER.value',
   Vision: 'vision',
   VISION: 'vision',
   FRIGHTCHECK: 'frightcheck',
@@ -153,6 +164,12 @@ GURPS.PARSELINK_MAPPINGS = {
   Smell: 'tastesmell',
   TOUCH: 'touch',
   Touch: 'touch',
+  Dodge: 'currentdodge',
+  DODGE: 'currentdodge',
+  Parry: 'equippedparry',
+  PARRY: 'equippedparry',
+  Block: 'equippedblock',
+  BLOCK: 'equippedblock',
 }
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects
@@ -440,6 +457,7 @@ GURPS.SJGProductMappings = {
   DFE: 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
   DR: 'http://www.warehouse23.com/products/gurps-dragons-1',
   F: 'http://www.warehouse23.com/products/gurps-fantasy',
+  FDG: 'https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/',
   GUL: 'https://www.gamesdiner.com/gulliver/',
   H: 'http://www.warehouse23.com/products/gurps-horror-1',
   HF: 'http://www.mygurps.com/historical_folks_4e.pdf',
@@ -476,6 +494,34 @@ GURPS.SJGProductMappings = {
 
 GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 
+function escapeUnicode(str) {
+    return str.replace(/[^\0-~]/g, function(ch) {
+        return "&#x" + (("0000" + ch.charCodeAt().toString(16).toUpperCase()).slice(-4)) + ";"
+    });
+}
+GURPS.escapeUnicode = escapeUnicode
+
+/**
+ * Read text data from a user provided File object
+ * Stolen from Foundry, and replaced 'readAsText' with 'readAsBinaryString' to save unicode characters.
+ * @param {File} file           A File object
+ * @return {Promise.<String>}   A Promise which resolves to the loaded text data
+ */
+function readTextFromFile(file) {
+  const reader = new FileReader();
+  return new Promise((resolve, reject) => {
+    reader.onload = ev => {
+      resolve(reader.result);
+    };
+    reader.onerror = ev => {
+      reader.abort();
+      reject();
+    };
+    reader.readAsBinaryString(file);
+  });
+}
+GURPS.readTextFromFile = readTextFromFile
+
 // This is an ugly hack to clean up the "formatted text" output from GCS FG XML.
 // First we have to remove non-printing characters, and then we want to replace
 // all <p>...</p> with .../n before we try to convert to JSON.   Also, for some reason,
@@ -483,7 +529,8 @@ GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 // we will base64 encode it, and the decode it in the Named subclass setNotes()
 function cleanUpP(xml) {
   // First, remove non-ascii characters
-  xml = xml.replace(/[^ -~]+/g, '')
+  // xml = xml.replace(/[^ -~]+/g, '')
+  xml = GURPS.escapeUnicode(xml)
 
   // Now try to remove any lone " & " in names, etc.  Will only occur in GCA output
   xml = xml.replace(/ & /g, ' &amp; ')
@@ -547,6 +594,16 @@ function trim(s) {
 }
 GURPS.trim = trim
 
+function executeOTF(string, priv = false) {
+  if (!string) return
+  string = string.trim()
+  if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
+  let action = parselink(string)
+  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv })
+  else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
+}
+GURPS.executeOTF = executeOTF
+
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
 async function performAction(action, actor, event, targets) {
   if (!action) return
@@ -595,7 +652,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    GURPS.damageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
+    DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
     return true
   }
 
@@ -608,12 +665,12 @@ async function performAction(action, actor, event, targets) {
       }
       formula = df + action.formula
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      GURPS.damageChat.create(
+      DamageChat.create(
         actor || game.user,
         formula,
         action.damagetype,
         event,
-        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, "$1"),  // Just keep the +/- mod
+        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
         targets
       )
       return true
@@ -642,28 +699,45 @@ async function performAction(action, actor, event, targets) {
     let bestLvl = 0
     var bestAction, besttrue
     let attempts = []
+    var th
     while (!!tempAction) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
-        let t = parseInt(action.target)
-        if (!t && !!actor) t = parseInt(this.resolve(tempAction.path, actordata.data))
+        th = this.i18n(tempAction.path)
+        let t = parseInt(tempAction.target) // is it pre-targeted (ST12)
+        if (!t && !!actor) {
+          if (!!tempAction.melee) {
+            // Is it trying to match to an attack name (should only occur with Parry: & Block:
+            let m = GURPS.findAttack(actordata, tempAction.melee)
+            if (!!m) {
+              th += ' for ' + m.name
+              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode + ')'
+              t = parseInt(m[tempAction.attribute.toLowerCase()]) // should only occur with parry & block
+            }
+            if (!m || !t) attempts.push(tempAction.attribute + ':' + tempAction.melee)
+          } else {
+            t = parseInt(this.resolve(tempAction.path, actordata.data))
+            if (!t) attempts.push(tempAction.attribute)
+          }
+        }
         let sl = t
         if (!!tempAction.mod) sl += parseInt(tempAction.mod)
         if (sl > bestLvl) {
           bestLvl = parseInt(sl)
           bestAction = tempAction
-          thing = this.i18n(tempAction.path)
           prefix = 'Roll vs '
           target = t
+          thing = th
           if (!!tempAction.truetext) besttrue = tempAction
         }
       } else {
         // skill
         var skill
-        if (!!tempAction.target) { // Skill-12
-          skill = { 
+        if (!!tempAction.target) {
+          // Skill-12
+          skill = {
             name: tempAction.name,
-            level: parseInt(tempAction.target)
+            level: parseInt(tempAction.target),
           }
         } else skill = GURPS.findSkillSpell(actordata, tempAction.name)
         if (!skill) {
@@ -678,7 +752,7 @@ async function performAction(action, actor, event, targets) {
           if (!!tempAction.floatingAttribute)
             if (!!actor) {
               getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
-  
+
               let value = this.resolve(tempAction.floatingAttribute, actordata.data)
               getLevel = skill => {
                 let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
@@ -714,83 +788,51 @@ async function performAction(action, actor, event, targets) {
 
   // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
   if (action.type === 'skill-spell' || action.type === 'attribute') {
-      const [bestAction, attempts] = processLinked(action)
-      if (!bestAction) {
-        ui.notifications.warn(
-          "No skill or spell named '" + attempts.join("' or '").replace('<', '&lt;') + "' found on " + actor.name
-        )
-        return false
-      }
-      if (!bestAction.target && !actor) {
-        ui.notifications.warn('You must have a character selected')
-        return false
-      }
-      formula = '3d6'
-      opt.action = bestAction
-      if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
-      else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>(" + bestAction.desc + ')</span>'
+    const [bestAction, attempts] = processLinked(action)
+    if (!actor && (!bestAction || !bestAction.target)) {
+      ui.notifications.warn('You must have a character selected')
+      return false
+    }
+    if (!bestAction) {
+      ui.notifications.warn("Unable to find '" + attempts.join("' or '").replace('<', '&lt;') + "' on " + actor.name)
+      return false
+    }
+    formula = '3d6'
+    opt.action = bestAction
+    if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
+    else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
   }
 
   if (action.type === 'attack')
     if (!!actor) {
       let att = null
       prefix = ''
-      thing = action.name
-      att = GURPS.findAttack(actordata, thing)
+      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
         )
         return false
       }
-      thing = att.name
-      target = parseInt(att.level)
+      thing = att.name  // get real name of attack
+      let t = att.level
+      if (!!t) {
+        let a = t.trim().split(' ')
+        t = a[0]
+        if (!!t) target = parseInt(t)
+        if (isNaN(target)) target = 0
+        // Can't roll against a non-integer
+        else {
+          a.shift()
+          let m = a.join(' ')
+          if (!!m) ui.modifierbucket.addModifier(0, m)    //  Level may have "*Costs xFP"
+        }
+      }
       formula = '3d6'
+      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
-    } else ui.notifications.warn('You must have a character selected')
-
-  if (action.type === 'dodge')
-    if (!!actor) {
-      target = parseInt(actor.getCurrentDodge())
-      formula = '3d6'
-      thing = 'Dodge'
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
-    } else ui.notifications.warn('You must have a character selected')
-
-  if (action.type === 'mapped')
-    if (!!actor) {
-      target = actordata.data[action.path]
-      formula = '3d6'
-      thing = action.thing
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
-    } else ui.notifications.warn('You must have a character selected')
-
-  if (action.type === 'block-parry')
-    if (!!actor) {
-      thing = action.desc
-      if (!action.melee) target = actordata.data['equipped' + action.path] // Is there a basic parry or block stored, and we didn't try to identify a melee
-      Object.values(actordata.data.melee).forEach(e => {
-        if (!target || target <= 0) {
-          if (!!e[action.path]) {
-            if (!!action.melee) {
-              let n = '^' + action.melee.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
-              if ((e.name + (!!e.mode ? ' (' + e.mode + ')' : '')).match(n)) {
-                target = parseInt(e[action.path])
-              }
-            } else {
-              target = parseInt(e[action.path])
-            }
-            if (!!target && target > 0) {
-              thing += ' for ' + e.name
-              if (!!e.mode) opt.text = "<span style='font-size:85%'>(" + e.mode + ')</span>'
-            }
-          }
-        }
-      })
-      if (!target) target = parseInt(actordata.data[action.path])
-      if (target > 0) formula = '3d6'
-      else ui.notifications.warn('Unable to find a ' + action.orig.replace('<', '&lt;') + ' to roll on ' + actor.name)
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
@@ -800,9 +842,10 @@ async function performAction(action, actor, event, targets) {
 GURPS.performAction = performAction
 
 function findSkillSpell(actor, sname) {
-  sname = '^' + sname.split('*').join('.*')
-  let best = 0
   var t
+  if (!actor) return t
+  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  let best = 0
   recurselist(actor.data.skills, s => {
     if (s.name.match(sname) && s.level > best) {
       t = s
@@ -821,8 +864,10 @@ function findSkillSpell(actor, sname) {
 GURPS.findSkillSpell = findSkillSpell
 
 function findAttack(actor, sname) {
+  var t
+  if (!actor) return t
   sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
-  let t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
 }
@@ -846,13 +891,18 @@ async function handleRoll(event, actor, targets) {
   let opt = { event: event }
   let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
 
-  if ('path' in element.dataset) {
+  if ('damage' in element.dataset) {
+    // expect text like '2d+1 cut'
+    let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
+    let action = parseForDamage(f)
+    if (!!action.action) performAction(action.action, actor, event, targets)
+    return
+  } else if ('path' in element.dataset) {
     prefix = 'Roll vs '
     thing = this.i18n(element.dataset.path)
     formula = '3d6'
     target = parseInt(element.innerText)
-  }
-  if ('name' in element.dataset || 'otf' in element.dataset) {
+  } else if ('name' in element.dataset || 'otf' in element.dataset) {
     prefix = '' // "Attempting ";
     let text = element.dataset.name || element.dataset.otf
     text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
@@ -862,23 +912,23 @@ async function handleRoll(event, actor, targets) {
     opt.text = text.replace(/.*?\((.*)\)/g, '$1')
 
     if (opt.text === text) opt.text = ''
+    else opt.text = "<span style='font-size:85%'>(" + opt.text + ')</span>'
     if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key) // During the roll, we may want to extract something from the object
     formula = '3d6'
     let t = element.innerText
     if (!!t) {
-      t = t.trim()
+      let a = t.trim().split(' ')
+      t = a[0]
       if (!!t) target = parseInt(t)
-      if (isNaN(target)) target = 0 // Can't roll against a non-integer
+      if (isNaN(target)) target = 0
+      // Can't roll against a non-integer
+      else {
+        a.shift()
+        let m = a.join(' ')
+        if (!!m) ui.modifierbucket.addModifier(0, m)
+      }
     }
-  }
-  if ('damage' in element.dataset) {
-    // expect text like '2d+1 cut'
-    let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
-    let action = parseForDamage(f)
-    if (!!action.action) performAction(action.action, actor, event, targets)
-    return
-  }
-  if ('roll' in element.dataset) {
+  } else if ('roll' in element.dataset) {
     target = -1 // Set flag to indicate a non-targeted roll
     formula = element.innerText
     prefix = 'Rolling ' + formula
@@ -1180,7 +1230,6 @@ GURPS.chatClickGmod = chatClickGmod
 GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
-GURPS.damageChat = new DamageChat(GURPS)
 
 // // Modifier Bucket must be defined after hit locations
 // GURPS.ModifierBucket = new ModifierBucket({
@@ -1217,65 +1266,69 @@ GURPS.onRightClickGurpslink = function (event) {
 }
 
 GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
-  if (!game.user.isGM) return
-  if (!!otf) {
-    otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
-    let canblind = false
-    if (!!blindcheck) {
-      canblind = blindcheck.hasOwnProperty('blindroll')
-      if (canblind && blindcheck.blindroll) {
-        otf = '!' + otf
-        canblind = false
-      }
+  if (!otf) return
+  if (!game.user.isGM) {
+    $(document)
+      .find('#chat-message')
+      .val('[' + otf + ']')
+    return
+  }
+  otf = otf.replace(/ \(\)/g, '') // sent as "name (mode)", and mode is empty (only necessary for attacks)
+  let canblind = false
+  if (!!blindcheck) {
+    canblind = blindcheck == true || blindcheck.hasOwnProperty('blindroll')
+    if (canblind && blindcheck.blindroll) {
+      otf = '!' + otf
+      canblind = false
     }
-    let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-    let botf = '[!' + otf + ']'
-    otf = '[' + otf + ']'
-    let buttons = {}
-    buttons.one = {
-      icon: '<i class="fas fa-users"></i>',
-      label: 'To Everyone',
-      callback: () => GURPS.sendOtfMessage(otf, false),
+  }
+  let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
+  let botf = '[!' + otf + ']'
+  otf = '[' + otf + ']'
+  let buttons = {}
+  buttons.one = {
+    icon: '<i class="fas fa-users"></i>',
+    label: 'To Everyone',
+    callback: () => GURPS.sendOtfMessage(otf, false),
+  }
+  if (canblind)
+    buttons.two = {
+      icon: '<i class="fas fa-users-slash"></i>',
+      label: 'Blindroll to Everyone',
+      callback: () => GURPS.sendOtfMessage(botf, true),
+    }
+  if (users.length > 0) {
+    let nms = users.map(u => u.name).join(' ')
+    buttons.three = {
+      icon: '<i class="fas fa-user"></i>',
+      label: 'Whisper to ' + nms,
+      callback: () => GURPS.sendOtfMessage(otf, false, users),
     }
     if (canblind)
-      buttons.two = {
-        icon: '<i class="fas fa-users-slash"></i>',
-        label: 'Blindroll to Everyone',
-        callback: () => GURPS.sendOtfMessage(botf, true),
+      buttons.four = {
+        icon: '<i class="fas fa-user-slash"></i>',
+        label: 'Whisper Blindroll to ' + nms,
+        callback: () => GURPS.sendOtfMessage(botf, true, users),
       }
-    if (users.length > 0) {
-      let nms = users.map(u => u.name).join(' ')
-      buttons.three = {
-        icon: '<i class="fas fa-user"></i>',
-        label: 'Whisper to ' + nms,
-        callback: () => GURPS.sendOtfMessage(otf, false, users),
-      }
-      if (canblind)
-        buttons.four = {
-          icon: '<i class="fas fa-user-slash"></i>',
-          label: 'Whisper Blindroll to ' + nms,
-          callback: () => GURPS.sendOtfMessage(botf, true, users),
-        }
-    }
-    buttons.def = {
-      icon: '<i class="far fa-copy"></i>',
-      label: 'Copy to chat input',
-      callback: () => {
-        $(document).find('#chat-message').val(otf)
-      },
-    }
-
-    let d = new Dialog(
-      {
-        title: "GM 'Send Formula'",
-        content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
-        buttons: buttons,
-        default: 'def',
-      },
-      { width: 700 }
-    )
-    d.render(true)
   }
+  buttons.def = {
+    icon: '<i class="far fa-copy"></i>',
+    label: 'Copy to chat input',
+    callback: () => {
+      $(document).find('#chat-message').val(otf)
+    },
+  }
+
+  let d = new Dialog(
+    {
+      title: "GM 'Send Formula'",
+      content: `<div style='text-align:center'>How would you like to send the formula:<br><br><div style='font-weight:700'>${otf}<br>&nbsp;</div>`,
+      buttons: buttons,
+      default: 'def',
+    },
+    { width: 700 }
+  )
+  d.render(true)
 }
 
 GURPS.sendOtfMessage = function (content, blindroll, users) {
@@ -1361,11 +1414,16 @@ Hooks.once('init', async function () {
   console.log(GURPS.BANNER)
   console.log(`Initializing GURPS 4e Game Aid`)
   console.log(GURPS.LEGAL)
+
   game.GURPS = GURPS
   CONFIG.GURPS = GURPS
   let src = 'systems/gurps/icons/gurps4e.png'
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
   $('#logo').attr('src', src)
+
+  // set up all hitlocation tables (must be done before MB)
+  HitLocation.init()
+  DamageChat.initSettings()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket({
@@ -1380,9 +1438,6 @@ Hooks.once('init', async function () {
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
   CONFIG.Item.entityClass = GurpsItem
-
-  // set up all hitlocation tables
-  HitLocation.init()
 
   // preload drag-and-drop image
   {
@@ -1432,12 +1487,11 @@ Hooks.once('init', async function () {
 
   ui.modifierbucket = GURPS.ModifierBucket
   ui.modifierbucket.render(true)
-  
-  const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
-
 })
 
 Hooks.once('ready', async function () {
+  initializeDamageTables()
+  ResourceTrackerManager.initSettings()
   GURPS.ModifierBucket.clear()
   GURPS.ThreeD6.refresh()
 
@@ -1461,6 +1515,41 @@ Hooks.once('ready', async function () {
     }
   }
 
+  // get all aliases defined in the resource tracker templates and register them as damage types
+  let resourceTrackers = ResourceTrackerManager.getAllTemplates()
+    .filter(it => !!it.tracker.isDamageType)
+    .filter(it => !!it.tracker.alias)
+    .map(it => it.tracker)
+  resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
+  resourceTrackers.forEach(
+    it =>
+      (DamageTables.woundModifiers[it.alias] = {
+        multiplier: 1,
+        label: it.name,
+        resource: true,
+      })
+  )
+
+  Hooks.on('hotbarDrop', async (bar, data, slot) => {
+    console.log(data)
+    if (!data.otf) return
+    let cmd = `GURPS.executeOTF('${data.otf}')`
+    let name = `OtF: ${data.otf}`
+    if (!!data.actor) {
+      cmd = `let actor = game.actors.get('${data.actor}')
+GURPS.SetLastActor(actor)
+` + cmd
+      name = game.actors.get(data.actor).name + " " + name
+    }
+    let macro = await Macro.create({
+      name: name,
+      type: 'script',
+      command: cmd,
+    })
+    game.user.assignHotbarMacro(macro, slot)
+    return false
+  })
+
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
     if (!html.hasClass('bound')) {
@@ -1472,7 +1561,7 @@ Hooks.once('ready', async function () {
         cc.prepend(
           '<a class="combatant-control" title="<1/3 HP" data-onethird="isReeling"><i class="fas fa-heart-broken"></i></a>'
         )
-  
+
         let t = html.find('[data-onethird]')
         for (let i = 0; i < t.length; i++) {
           let el = t[i]
@@ -1480,7 +1569,7 @@ Hooks.once('ready', async function () {
           let target = game.combat.combatants.filter(c => c._id === combatant)[0]
           if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
-  
+
         html.find('[data-onethird]').click(ev => {
           let el = ev.currentTarget
           let flag = false
@@ -1569,30 +1658,63 @@ Hooks.once('ready', async function () {
   /**
    * Add a listener to handle damage being dropped on a token.
    */
-  Hooks.on('dropCanvasData', function (canvas, dropData) {
-    let grid_size = canvas.scene.data.grid
-    let old = new Set(game.user.targets)
-    let numberTargets = canvas.tokens.targetObjects({
-      x: dropData.x - grid_size / 2,
-      y: dropData.y - grid_size / 2,
-      height: grid_size,
-      width: grid_size,
-      releaseOthers: true,
-    })
-
-    // actual targets are stored in game.user.targets
-    if (game.user.targets.size === 1) {
-      let keys = game.user.targets.keys()
-      let first = keys.next()
-      if (dropData.type === 'damageItem') {
-        for ( let t of game.user.targets ) {
-          t.setTarget(false, {releaseOthers: false, groupSelection: true});
+  Hooks.on('dropCanvasData', async function (canvas, dropData) {
+    if (dropData.type === 'damageItem') {
+      let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
+      let grid_size = canvas.scene.data.grid
+      canvas.tokens.targetObjects({
+        x: dropData.x - grid_size / 2,
+        y: dropData.y - grid_size / 2,
+        height: grid_size,
+        width: grid_size,
+        releaseOthers: true,
+      })
+      
+      let handleDamage = (actor) => {   // Reset selection back to original, and drop damage
+        for (let t of game.user.targets) {
+          t.setTarget(false, { releaseOthers: false, groupSelection: true })
         }
-        old.forEach(t => {
-          t.setTarget(true, {releaseOthers: false, groupSelection: true});
-        });
-        first.value.actor.handleDamageDrop(dropData.payload)
+        oldselection.forEach(t => {
+          t.setTarget(true, { releaseOthers: false, groupSelection: true })
+        })
+        actor.handleDamageDrop(dropData.payload)
       }
+
+      // actual targets are stored in game.user.targets
+      if (game.user.targets.size === 0) return false
+      if (game.user.targets.size === 1) {
+        let targets = [...game.user.targets]
+        handleDamage(targets[0].actor)
+        return false
+      }
+
+      let buttons = {
+        apply: {
+          icon: '<i class="fas fa-check"></i>',
+          label: game.i18n.localize('GURPS.addApply'),
+          callback: html => {
+            let name = html.find('select option:selected').text().trim()
+            let target = [...game.user.targets].find(token => token.name === name)
+            handleDamage(target.actor)
+          },
+        },
+      }
+
+      let d = new Dialog(
+        {
+          title: game.i18n.localize('GURPS.selectToken'),
+          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
+            tokens: game.user.targets,
+          }),
+          buttons: buttons,
+          default: 'apply',
+          tokens: game.user.targets,
+        },
+        { width: 300 }
+      )
+      await d.render(true)
+
+      return false
     }
   })
 

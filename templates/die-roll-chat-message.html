@@ -2,8 +2,9 @@
   <div class='prefix'>
     {{prefix}} {{thing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
   </div>
+  {{#if optlabel}}&nbsp;&nbsp;{{{optlabel}}}{{/if}}
   {{#if targetmods}}
-  <div>{{#if optlabel}}{{{optlabel}}}{{/if}}
+  <div>
     <ul class='modifier-list'>
       {{#each targetmods}}
       <li>{{displayNumber mod}}{{#if desc}} : {{desc}}{{/if}}</li>
@@ -30,7 +31,7 @@
         <span class='success'>Success!</span>
         {{/if}}{{/if}}{{/if}}{{/if}}
         <span class='aside'>
-          {{#if seventeen}}17 & 18 are always failures.
+          {{#if seventeen}}17 & 18 always fail.
           {{else}}
             {{#if (eq margin 0)}}Just made it.{{/if}}
             {{#if (gt margin 0)}}Made it by {{margin}}.{{/if}}

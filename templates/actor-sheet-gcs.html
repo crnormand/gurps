@@ -11,7 +11,7 @@
         <div class="header">{{localize "GURPS.identity"}}</div>
         <div class="fieldblock">
           <div class="label">{{localize "GURPS.identityName"}}:</div>
-          <div class="field">{{actor.name}}</div>
+          <div class="field">{{{actor.name}}}</div>
           <div class="label">{{localize "GURPS.identityTitle"}}:</div>
           <div class="field">{{data.traits.title}}</div>
           <div class="label">{{localize "GURPS.identityPlayer"}}:</div>
@@ -186,6 +186,10 @@
         {{/each}}
 
       </div>
+      <div id='qnotes'>
+        {{#if data.additionalresources.qnotes}}{{{gurpslink data.additionalresources.qnotes}}}{{else}} <span
+          style='color:lightgrey'>double click to edit Quick Note<span>{{/if}}
+      </div>
       <div id="lifting">
         <div class="header">{{localize "GURPS.liftingAndMovingThings"}}</div>
         <div class="lift">{{data.liftingmoving.basiclift}}</div>
@@ -217,7 +221,7 @@
         <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
           {{localizeWithFallback (concat "GURPS.hitLocation" this.where) this.where}}
         </div>
-        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}">
+        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}" data-otf='{{this.penalty}} to hit {{this.where}}'>
           {{hitlocationpenalty this.where this.penalty ../data}}</div>
         <div class="dr">{{this.dr}}
         </div>
@@ -405,11 +409,31 @@
               <button data-operation='resource-inc'><i class="fas fa-plus"></i></button>
               <button data-operation='resource-reset'><i class="fas fa-undo"></i></button>
             </div>
-            <div class='condition-block'>
+            <div class='condition-block tooltip-wrapper'>
+              {{#if thresholds}}
+              {{#with (lookup thresholds (threshold-of thresholds max value))}}
+              <div class='tooltip condition' style='background-color: {{concat this.color "80"}};'>{{this.condition}}
+                <span class="tooltiptext">
+                  <div style="display: grid; grid-template-columns: min-content min-content auto;">
+                    {{#each (thresholdBreakpoints ../this)}}
+                    <div class="field condensed noedit">{{comparison}}</div>
+                    <div class="field condensed noedit">{{breakpoint}}</div>
+                    <div class="label {{style}}">{{label}}</div>
+                    {{/each}}
+                  </div>
+                </span>
+              </div>
+              <div style='display: grid; grid-template-columns: 1fr 1fr;'>
+                <div class='pdflink' style='font-size: 80%;'>{{../pdf}}</div>
+                <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
+              </div>
+              {{/with}}
+              {{else}}
               <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
                 {{#if
                 (gt value max)}}Over{{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}</div>
-              <div class='max'>({{min}}/{{max}})</div>
+              <div class='max'>{{alias}} ({{min}}/{{max}})</div>
+              {{/if}}
             </div>
           </div> <!-- end of resource -->
           {{/each}}
@@ -470,9 +494,9 @@
       <div class="level header">{{localize "GURPS.level"}}</div>
       <div class="acc header">{{localize "GURPS.acc"}}</div>
       <div class="damage header">{{localize "GURPS.damage"}}</div>
-      <div class="range header">{{localize "GURPS.reach"}}</div>
+      <div class="range header">{{localize "GURPS.range"}}</div>
       <div class="rof header">{{localize "GURPS.rof"}}</div>
-      <div class="shots header">{{localize "GURPS.Shots"}}</div>
+      <div class="shots header">{{localize "GURPS.shots"}}</div>
       <div class="bulk header">{{localize "GURPS.bulk"}}</div>
       <div class="rcl header">{{localize "GURPS.rcl"}}</div>
       <div class="st header">{{localize "GURPS.attributesST"}}</div>
@@ -487,13 +511,13 @@
       <div class="usage">{{this.mode}}</div>
       <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
         data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
+      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}' data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
         {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
       <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
       <div class="range">{{this.range}}</div>
       <div class="rof">{{this.rof}}</div>
       <div class="shots">{{this.shots}}</div>
-      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'>{{this.bulk}}
+      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}' data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
       </div>
       <div class="rcl">{{this.rcl}}</div>
       <div class="st">{{this.st}}</div>
@@ -535,7 +559,7 @@
         <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
           @root}}}</div>
       </div>
-      <div class="sl satisfiedY {{#if (gt this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
+      <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
         data-otf='S:"{{this.name}}"'>{{this.level}}
       </div>
       <div class="rsl satisfiedY">{{this.relativelevel}}</div>

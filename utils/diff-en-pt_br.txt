@@ -1,0 +1,115 @@
+------------
+keys in [lang/pt_br.json] that are missing in [lang/en.json]
+[]
+------------
+keys in [lang/en.json] that are missing in [lang/pt_br.json]
+[
+  'GURPS.clickToEdit',
+  'GURPS.color',
+  'GURPS.condition',
+  'GURPS.current',
+  'GURPS.grapplingCPAbbrev',
+  'GURPS.grapplingControlPoints',
+  'GURPS.grapplingControlled',
+  'GURPS.grapplingGrabbed',
+  'GURPS.grapplingGrappled',
+  'GURPS.grapplingPinned',
+  'GURPS.grapplingRestrained',
+  'GURPS.grapplingUnrestrained',
+  'GURPS.max',
+  'GURPS.maximum',
+  'GURPS.minimum',
+  'GURPS.overridden',
+  'GURPS.reference',
+  'GURPS.resourceCopyTemplate',
+  'GURPS.resourceCurrentValue',
+  'GURPS.resourceDamageTracker',
+  'GURPS.resourceDamageType',
+  'GURPS.resourceDeleteTracker',
+  'GURPS.resourceEditTracker',
+  'GURPS.resourceTemplateAlias',
+  'GURPS.resourceTemplateButton',
+  'GURPS.resourceTemplateClickToAdd',
+  'GURPS.resourceTemplateHint',
+  'GURPS.resourceTemplateInitializer',
+  'GURPS.resourceTemplateManager',
+  'GURPS.resourceTemplateName',
+  'GURPS.resourceTemplateSlot',
+  'GURPS.resourceTemplateTitle',
+  'GURPS.resourceTracker',
+  'GURPS.resourceTrackerEditor',
+  'GURPS.resourceUndefined',
+  'GURPS.resourceUpdateTrackerSlot',
+  'GURPS.slotNotUnique',
+  'GURPS.trackerNotUnique',
+  'GURPS.update'
+]
+------------
+values in [lang/en.json] that are the same in [lang/pt_br.json]
+GURPS.FP: FP
+GURPS.addApplyMultipleTimes: Apply multiple times
+GURPS.addApplyOptionsToAll: These options apply to all damage
+GURPS.addShotgunRofMultiplier: RoF Multiplier
+GURPS.addSingleRollSelected: Single damage roll selected
+GURPS.attributesDX: DX
+GURPS.attributesHT: HT
+GURPS.attributesIQ: IQ
+GURPS.attributesPER: Per
+GURPS.attributesST: ST
+GURPS.changelog: README
+GURPS.damageAbbrevburn: burn
+GURPS.damageAbbrevcor: cor
+GURPS.damageAbbrevcr: cr
+GURPS.damageAbbrevcut: cut
+GURPS.damageAbbrevdmg: dmg
+GURPS.damageAbbrevfat: fat
+GURPS.damageAbbrevimp: imp
+GURPS.damageAbbrevpi++: pi++
+GURPS.damageAbbrevpi+: pi+
+GURPS.damageAbbrevpi: pi
+GURPS.damageAbbrevpi-: pi-
+GURPS.damageAbbrevtox: tox
+GURPS.damageTypeCorrosive: Corrosive
+GURPS.damageTypeCrushing: Crushing
+GURPS.damageTypeCutting: Cutting
+GURPS.damageTypeDamage: Damage
+GURPS.damageTypeFatigue: Fatigue
+GURPS.damageTypeHuge Piercing: Huge Piercing
+GURPS.damageTypeImpaling: Impaling
+GURPS.damageTypeLarge Piercing: Large Piercing
+GURPS.damageTypePiercing: Piercing
+GURPS.damageTypeSmall Piercing: Small Piercing
+GURPS.damageTypeToxic: Toxic
+GURPS.highest: Highest
+GURPS.hitLocationArm 1-2: Arm 1-2
+GURPS.hitLocationArm 3-4: Arm 3-4
+GURPS.hitLocationArm 5-6: Arm 5-6
+GURPS.hitLocationArm 7-8: Arm 7-8
+GURPS.hitLocationArm*: Arm
+GURPS.hitLocationArm: Arm
+GURPS.hitLocationBrain: Brain
+GURPS.hitLocationChest: Chest
+GURPS.hitLocationExtremity: Extremity
+GURPS.hitLocationFin*: Fin
+GURPS.hitLocationFin: Fin
+GURPS.hitLocationFoot: Foot
+GURPS.hitLocationForeleg: Foreleg
+GURPS.hitLocationHand: Hand
+GURPS.hitLocationHind Leg: Hind Leg
+GURPS.hitLocationLeft Arm: Left Arm
+GURPS.hitLocationLeft Leg: Left Leg
+GURPS.hitLocationLeg 1-2: Leg 1-2
+GURPS.hitLocationLeg 3-4: Leg 3-4
+GURPS.hitLocationLeg 5-6: Leg 5-6
+GURPS.hitLocationLeg 7-8: Arm 7-8
+GURPS.hitLocationLeg: Leg
+GURPS.hitLocationMid Leg*: Mid Leg
+GURPS.hitLocationMid Leg: Mid Leg
+GURPS.hitLocationNeck: Neck
+GURPS.hitLocationRight Arm: Right Arm
+GURPS.hitLocationRight Leg: Right Leg
+GURPS.hitLocationTail: Tail
+GURPS.hitLocationTorso*: Torso
+GURPS.hitLocationWing: Wing
+GURPS.normal: Normal
+GURPS.title: GURPS

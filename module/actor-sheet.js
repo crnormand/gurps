@@ -1,10 +1,12 @@
 import { GURPS } from './gurps.js'
-import { isNiceDiceEnabled, atou, utoa } from '../lib/utilities.js'
+import { atou } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
+import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
+import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -100,61 +102,45 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('.gmod').contextmenu(this._onRightClickGmod.bind(this))
     html.find('.pdflink').contextmenu(this._onRightClickPdf.bind(this))
 
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: li.getAttribute('data-otf'),
+            actor: this.actor.id,
+          })
+        )
+      })
+    })
+
     const canConfigure = game.user.isGM || this.actor.owner
     if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
 
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
     html.find('.enc').click(this._onClickEnc.bind(this))
-
-    html.find('.eqtdraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'equipment', key: ev.currentTarget.dataset.key })
-        )
+    
+    let makelistdrag = (cls, type) => {
+      html.find(cls).each((i, li) => {
+        li.setAttribute('draggable', true)
+        li.addEventListener('dragstart', ev => {
+          let oldd = ev.dataTransfer.getData('text/plain')
+          let newd = { type: type, key: ev.currentTarget.dataset.key }
+          if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
+          return ev.dataTransfer.setData(
+            'text/plain',
+            JSON.stringify(newd)
+          )
+        })
       })
-    })
+    }
 
-    html.find('.adsdraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'advantage', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
-
-    html.find('.skldraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'skill', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
-
-    html.find('.spldraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'spell', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
-
-    html.find('.notedraggable').each((i, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({ type: 'note', key: ev.currentTarget.dataset.key })
-        )
-      })
-    })
+    makelistdrag('.eqtdraggable', 'equipment')
+    makelistdrag('.adsdraggable', 'advantage')
+    makelistdrag('.skldraggable', 'skill')
+    makelistdrag('.spldraggable', 'spell')
+    makelistdrag('.notedraggable', 'note')
 
     html.find('input[name="data.HP.value"]').keypress(ev => {
       if (ev.which === 13) ev.preventDefault()
@@ -174,8 +160,8 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = tracker.value + (ev.shiftKey ? 5 : 1)
-      if (isNaN(value)) value = tracker.max
+      let value = (tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      if (isNaN(value)) value = tracker.max || 0
 
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
@@ -187,8 +173,8 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = tracker.value - (ev.shiftKey ? 5 : 1)
-      if (isNaN(value)) value = tracker.max
+      let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
+      if (isNaN(value)) value = tracker.max || 0
 
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
@@ -200,56 +186,13 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = tracker.max
+      let value = !!tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
       let json = `{ "data.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
-    html.find('.tracked-resource .header.with-editor').click(async ev => {
-      ev.preventDefault()
-      let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
-      let path = parent.attr('data-gurps-resource')
-      let tracker = getProperty(this.actor.data.data, path)
-
-      let dlgHtml = await renderTemplate('systems/gurps/templates/resource-editor-popup.html', tracker)
-
-      let options = {
-        width: 130,
-        popOut: true,
-        minimizable: false,
-        jQuery: true,
-      }
-
-      let d = new Dialog(
-        {
-          title: 'Resource Editor',
-          content: dlgHtml,
-          buttons: {
-            one: {
-              label: 'Update',
-              callback: async html => {
-                let name = html.find('.name input').val()
-                let current = parseInt(html.find('.current').val())
-                let minimum = parseInt(html.find('.minimum').val())
-                let maximum = parseInt(html.find('.maximum').val())
-
-                let update = {}
-                if (!!name) update[`data.${path}.name`] = name
-                if (!!current) update[`data.${path}.value`] = current
-                if (!!minimum) update[`data.${path}.min`] = minimum
-                if (!!maximum) update[`data.${path}.max`] = maximum
-
-                this.actor.update(update)
-              },
-            },
-          },
-          default: 'one',
-        },
-        options
-      )
-      d.render(true)
-    })
+    html.find('.tracked-resource .header.with-editor').click(this.editTracker.bind(this))
 
     // START CONDITIONAL INJURY
 
@@ -598,6 +541,73 @@ export class GurpsActorSheet extends ActorSheet {
         $(this).find('div').last().remove()
       }
     )
+
+    html.find('#qnotes').dblclick(ex => {
+      const n = this.actor.data.data.additionalresources.qnotes || ''
+      Dialog.prompt({
+        title: 'Edit Quick Note',
+        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><input id="i" type="text" value="${n}" placeholder=""></input><br><br>Examples:
+        <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
+        label: 'OK',
+        callback: html => {
+          const i = html[0].querySelector('#i')
+          this.actor.update({ 'data.additionalresources.qnotes': i.value })
+        },
+      })
+    })
+
+  }
+
+  /**
+   *
+   * @param {*} ev
+   */
+  async editTracker(ev) {
+    ev.preventDefault()
+
+    let path = $(ev.currentTarget).closest('[data-gurps-resource]').attr('data-gurps-resource')
+    let templates = ResourceTrackerManager.getAllTemplates()
+    if (!templates || templates.length == 0) templates = null
+
+    let selectTracker = async function (html) {
+      let name = html.find('select option:selected').text().trim()
+      let template = templates.find(template => template.tracker.name === name)
+      await this.actor.applyTrackerTemplate(path, template)
+    }
+
+    // show dialog asking if they want to apply a standard tracker, or edit this tracker
+    let buttons = {
+      edit: {
+        icon: '<i class="fas fa-edit"></i>',
+        label: game.i18n.localize('GURPS.resourceEditTracker'),
+        callback: () => ResourceTrackerEditor.editForActor(this.actor, path),
+      },
+      remove: {
+        icon: '<i class="fas fa-trash"></i>',
+        label: game.i18n.localize('GURPS.resourceDeleteTracker'),
+        callback: async () => await this.actor.removeTracker(path),
+      },
+    }
+
+    if (!!templates) {
+      buttons.apply = {
+        icon: '<i class="far fa-copy"></i>',
+        label: game.i18n.localize('GURPS.resourceCopyTemplate'),
+        callback: selectTracker.bind(this),
+      }
+    }
+
+    let d = new Dialog(
+      {
+        title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
+        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
+        buttons: buttons,
+        default: 'edit',
+        templates: templates,
+      },
+      { width: 600 }
+    )
+    d.render(true)
   }
 
   async editEquipment(actor, path, obj) {
@@ -641,8 +651,8 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes'],
-      ['level']
+      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'level'],
+      []
     )
   }
 
@@ -653,8 +663,8 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes'],
-      ['level', 'acc', 'bulk']
+      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'level'],
+      ['acc', 'bulk']
     )
   }
 
@@ -677,8 +687,8 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'relativelevel', 'pageref', 'notes'],
-      ['level', 'points']
+      ['name', 'level', 'relativelevel', 'pageref', 'notes'],
+      ['points']
     )
   }
 
@@ -691,6 +701,7 @@ export class GurpsActorSheet extends ActorSheet {
       'Spell Editor',
       [
         'name',
+        'level',
         'difficulty',
         'pageref',
         'notes',
@@ -702,7 +713,7 @@ export class GurpsActorSheet extends ActorSheet {
         'duration',
         'college',
       ],
-      ['level', 'points']
+      ['points']
     )
   }
 
@@ -1028,7 +1039,7 @@ export class GurpsActorSheet extends ActorSheet {
                 return ui.notifications.error('You did not upload a data file!')
               } else {
                 file = files[0]
-                readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
+                GURPS.readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
               }
             },
           },

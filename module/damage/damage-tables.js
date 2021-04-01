@@ -1,10 +1,6 @@
 'use strict'
 
-export const parseDmg = (dmg) => {
-  return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, '$1~$2~$3~$4~$5~$6')
-} // Allow opt '6' after 1d
-
-export const woundModifiers = {
+const woundModifiers = {
   burn: { multiplier: 1, label: 'Burning' },
   cor: { multiplier: 1, label: 'Corrosive' },
   cr: { multiplier: 1, label: 'Crushing' },
@@ -16,11 +12,11 @@ export const woundModifiers = {
   'pi+': { multiplier: 1.5, label: 'Large Piercing' },
   'pi++': { multiplier: 2, label: 'Huge Piercing' },
   tox: { multiplier: 1, label: 'Toxic' },
-  dmg: { multiplier: 1, label: 'Damage', nodisplay: false },    // This needs to be collected in the default list of hit locations... maybe remove "nodisplay"?
+  dmg: { multiplier: 1, label: 'Damage', nodisplay: false }, // This needs to be collected in the default list of hit locations... maybe remove "nodisplay"?
 }
 
 // Map possible damage types to the allowed GURPS dmage types (plus support for dmg)
-export const damageTypeMap = {
+const damageTypeMap = {
   dmg: 'dmg',
   burn: 'burn',
   cor: 'cor',
@@ -49,4 +45,49 @@ export const damageTypeMap = {
   'huge piercing': 'pi++',
   'piercing++': 'pi++',
   toxic: 'tox',
+}
+
+export let DamageTables = null
+export function initializeDamageTables() {
+  DamageTables = new DamageTable()
+}
+
+class DamageTable {
+  constructor() {
+    let translationTable = {}
+    translationTable[game.i18n.localize('GURPS.damageAbbrevburn')] = 'burn'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevcor')] = 'cor'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevcr')] = 'cr'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevcut')] = 'cut'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevfat')] = 'fat'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevimp')] = 'imp'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevpi-')] = 'pi-'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevpi')] = 'pi'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevpi+')] = 'pi+'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevpi++')] = 'pi++'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevtox')] = 'tox'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevdmg')] = 'dmg'
+
+    this.translationTable = translationTable
+  }
+
+  translate(alias) {
+    let result = damageTypeMap[alias]
+    if (!!result) return result
+
+    // otherwise try a translation
+    return this.translationTable[alias]
+  }
+
+  get damageTypeMap() {
+    return damageTypeMap
+  }
+
+  get woundModifiers() {
+    return woundModifiers
+  }
+
+  parseDmg(dmg) {
+    return dmg.replace(/^(\d+)d6?([-+]\d+)?([xX\*]\d+)? ?(\([.\d]+\))?(!)? ?(.*)$/g, '$1~$2~$3~$4~$5~$6')
+  }
 }

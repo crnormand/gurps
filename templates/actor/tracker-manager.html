@@ -1,0 +1,52 @@
+<form class="{{cssClass}}" tracker-manager autocomplete="off">
+  <div class='resource-editor' style='border: none; position: relative'>
+    <div style='display: flex; flex-flow: column nowrap;'>
+      <div class='section'>
+        <h3>{{localize "GURPS.resourceTemplateTitle"}}</h3>
+        <div><a id='template-add' class='button icon'><i class="fas fa-plus"></i></a></div>
+      </div>
+      <div style='overflow-y: auto; height: 250px;'>
+        <div class='tracker-manager table'>
+          {{#if templates}}
+          <div class='label'>{{localize "GURPS.resourceTemplateName"}}</div>
+          <div class='label'>{{localize "GURPS.resourceTemplateAlias"}}</div>
+          <div class='label'>{{localize "GURPS.resourceTemplateSlot"}}</div>
+          <div class='label'>{{localize "GURPS.resourceTemplateInitializer"}}</div>
+          <div></div>
+          {{else}}
+          <div
+            style='grid-column: 1 / 6; justify-content: center; font: italic bold larger Roboto; color: darkslateblue;'>
+            {{localize "GURPS.resourceTemplateClickToAdd"}}
+          </div>
+          {{/if}}
+
+          {{#each templates}}
+          <!-- tracker.name -->
+          <input name='name' data='{{@index}}' class='gcs-input clickable' type='text' readonly value='{{tracker.name}}'
+            placeholder='{{localize "GURPS.clickToEdit"}}' />
+          <!-- tracker.alias -->
+          <input name='alias' data='{{@index}}' class='gcs-input' type='text' readonly value='{{tracker.alias}}' />
+          <!-- slot -->
+          <select name='tracker-instance' data='{{@index}}'>
+            <option value='' {{select-if slot '' }}></option>
+            <option value='0' {{select-if slot '0' }}>{{localize "GURPS.resourceTracker"}} 0</option>
+            <option value='1' {{select-if slot '1' }}>{{localize "GURPS.resourceTracker"}} 1</option>
+            <option value='2' {{select-if slot '2' }}>{{localize "GURPS.resourceTracker"}} 2</option>
+            <option value='3' {{select-if slot '3' }}>{{localize "GURPS.resourceTracker"}} 3</option>
+          </select>
+          <!-- initialValue -->
+          <input name='initial-value' data='{{@index}}' class='gcs-input' type='text' value='{{initialValue}}' />
+
+          <div class='vertical-center'>
+            <a name='delete-template' data='{{@index}}' class='button icon'><i class="fas fa-trash"></i></a>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+      <div
+        style='width: -webkit-fill-available; padding-top: 0.5rem; margin: 0 -8px; padding-left: 8px; padding-right: 8px;'>
+        <button id='update'><i class="fas fa-save"></i>{{localize "GURPS.update"}}</button>
+      </div>
+    </div>
+  </div>
+</form>

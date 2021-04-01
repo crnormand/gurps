@@ -313,7 +313,7 @@ export class HitLocation {
       vermiform: vermiformHitLocations,
       vermiformWinged: wingedSerpentHitLocations,
       'winged vermiform': wingedSerpentHitLocations, // GCA
-      snakeman: snakeManHitLocations,
+      snakeman: snakeManHitLocations, // what we expected from GCS
       octopod: octopodHitLocations,
       squid: squidHitLocations,
       cancroid: cancroidHitLocations,
