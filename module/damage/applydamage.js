@@ -465,7 +465,8 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       message = await this._renderTemplate('chat-majorwound.html', {
         name: this.actor.data.name,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+        htCheck:
+          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
       })
     }
 
@@ -473,7 +474,8 @@ export default class ApplyDamageDialog extends Application {
       message = await this._renderTemplate('chat-headvitalshit.html', {
         name: this.actor.data.name,
         location: object.detail,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+        htCheck:
+          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
       })
     }
 
