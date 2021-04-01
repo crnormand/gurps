@@ -8,6 +8,7 @@ This is what we are currently working on:
 - Merged @Exxar's Damage Reduction code into ADD
 - Adjust ADD results to show +3 bonus to HT checks when damage is Ranged, 1/2D.
 - Fixed drag and drop macros to be compatible with The Furnace
+- Initial implementation of a Slam calculator. Access via the chat message '/slam'.
 
 ## History
 
