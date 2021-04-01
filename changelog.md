@@ -170,12 +170,11 @@ This is what we are currently working on:
 - OtF formula [/<chat command>] execute chat command as a button
 - Fixed GCA export, ranged attacks in the melee list and sanitize pagerefs
 - Enhanced the import error warnings
-
+  
   0.8.10 - 1/30/2021
 
 - @Tratz equipment bug fix, portrait fix and logo fix!
 - Bug fix for OtF formulas in Skills/Spells in containers
-
   0.8.9 - 1/29/2021
 
 - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
