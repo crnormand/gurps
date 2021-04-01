@@ -1,0 +1,17 @@
+<div class='roll-message'>
+  <div class='prefix'>
+    {{attacker}} <i>{{localize "GURPS.slams"}} <i style="font-size: 80%;color: grey;" class="fas fa-align-right"></i><i
+        class="fas fa-running"></i></i>
+    {{target}}.
+  </div>
+  <div>
+    <ul class='modifier-list'>
+      {{#if isAoAStrong}}
+      <li>+2 {{localize "GURPS.damage"}} {{localize "GURPS.for"}}{{localize "GURPS.slamAOAStrong"}}</li>
+      {{/if}}
+    </ul>
+  </div>
+  <div class='roll-result'>
+    {{result}}
+  </div>
+</div>

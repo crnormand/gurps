@@ -484,19 +484,21 @@
             </ul>
           </div>
 
-          <div class='apply-results'>
-            <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
-              class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
+          <div class='apply-results'
+            style='height: 100%; display: flex; flex-flow: column; justify-content:space-between; gap: inherit'>
+            <div style='display: flex; flex-flow: column; gap: inherit'>
+              <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
+                class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
 
-            <div class="grid grid-2col flex-between" style='grid-template-columns: max-content 1fr;'>
-              <label for='apply-multiple'>{{localize "GURPS.addApplyMultipleTimes"}}:</label>
-              <div style='position: relative;'>
-                <input type="number" class="digits-only" id="apply-multiple" value="{{timesToApply}}"
-                  style='padding-left: 1.5rem;'>
-                <span style='position: absolute; text-align: center; width: 1.5rem; color: dimgray;'>×</span>
+              <div class="grid grid-2col flex-between" style='grid-template-columns: max-content 1fr;'>
+                <label for='apply-multiple'>{{localize "GURPS.addApplyMultipleTimes"}}:</label>
+                <div style='position: relative;'>
+                  <input type="number" class="digits-only" id="apply-multiple" value="{{timesToApply}}"
+                    style='padding-left: 1.5rem;'>
+                  <span style='position: absolute; text-align: center; width: 1.5rem; color: dimgray;'>×</span>
+                </div>
               </div>
             </div>
-
             <div style='display: grid; grid-template-columns: 1fr min-content; margin-top: 1rem;'>
               <button id='apply-injury-publicly' class='split-button'>{{localize "GURPS.addApplyInjury"}}</button>
               <div class='dropdown'>
