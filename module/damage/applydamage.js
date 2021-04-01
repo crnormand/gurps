@@ -60,9 +60,7 @@ export default class ApplyDamageDialog extends Application {
       resizable: true,
       minimizable: false,
       width: 800,
-      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
-        ? simpleDialogHeight
-        : standardDialogHeight,
+      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
       title: game.i18n.localize('GURPS.addApplyDamageDialog'),
     })
   }
@@ -271,21 +269,18 @@ export default class ApplyDamageDialog extends Application {
       .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'injuryToleranceType'))
 
     // if checked, target has Injury Tolerance (Damage Reduction)
-    html
-        .find('#damage-reduction')
-        .click(ev => {
-          if (!$(ev.currentTarget).is(':checked')) {
-            this._calculator.damageReductionLevel = null
-            this.updateUI()
-          }
-          this._updateModelFromBooleanElement($(ev.currentTarget), 'useDamageReduction')
-        })
+    html.find('#damage-reduction').click(ev => {
+      if (!$(ev.currentTarget).is(':checked')) {
+        this._calculator.damageReductionLevel = null
+        this.updateUI()
+      }
+      this._updateModelFromBooleanElement($(ev.currentTarget), 'useDamageReduction')
+    })
 
     // damage reduction level field
-    html.find('#damage-reduction-field input')
-        .on('change', ev =>
-            this._updateModelFromInputText($(ev.currentTarget), 'damageReductionLevel', parseIntFrom)
-        )
+    html
+      .find('#damage-reduction-field input')
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageReductionLevel', parseIntFrom))
 
     // clear the damage reduction level field
     html.find('#damage-reduction-field button').click(() => {

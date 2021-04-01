@@ -94,6 +94,7 @@ export class CompositeDamageCalculator {
 
     this._isInjuryTolerance = false
     this._injuryToleranceType = null
+
     // Injury Tolerance (Damage Reduction) is handled separately from other types of IT
     this._useDamageReduction = false
     this._damageReductionLevel = null
@@ -477,6 +478,7 @@ export class CompositeDamageCalculator {
   }
 
   set useDamageReduction(value) {
+    this._damageReductionLevel = value ? 2 : null
     this._useDamageReduction = value
   }
 
@@ -485,6 +487,8 @@ export class CompositeDamageCalculator {
   }
 
   set damageReductionLevel(value) {
+    if (value === null) this._useDamageReduction = false
+    if (!!value && value < 2) value = 2
     this._damageReductionLevel = value
   }
 
@@ -883,7 +887,7 @@ class DamageCalculator {
 
     if (this._parent._damageReductionLevel !== null && this._parent._damageReductionLevel != 0) {
       // Injury Tolerance (Damage Reduction) can't reduce damage below 1
-      injury = Math.max(1, Math.floor(injury / this._parent._damageReductionLevel));
+      injury = Math.max(1, Math.floor(injury / this._parent._damageReductionLevel))
     }
 
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
