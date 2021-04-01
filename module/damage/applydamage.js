@@ -270,6 +270,29 @@ export default class ApplyDamageDialog extends Application {
       .find('input[name="injury-tolerance"]')
       .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'injuryToleranceType'))
 
+    // if checked, target has Injury Tolerance (Damage Reduction)
+    html
+        .find('#damage-reduction')
+        .click(ev => {
+          if (!$(ev.currentTarget).is(':checked')) {
+            this._calculator.damageReductionLevel = null
+            this.updateUI()
+          }
+          this._updateModelFromBooleanElement($(ev.currentTarget), 'useDamageReduction')
+        })
+
+    // damage reduction level field
+    html.find('#damage-reduction-field input')
+        .on('change', ev =>
+            this._updateModelFromInputText($(ev.currentTarget), 'damageReductionLevel', parseIntFrom)
+        )
+
+    // clear the damage reduction level field
+    html.find('#damage-reduction-field button').click(() => {
+      this._calculator.damageReductionLevel = null
+      this.updateUI()
+    })
+
     // if checked, target has flexible armor; check for blunt trauma
     html
       .find('#flexible-armor')
