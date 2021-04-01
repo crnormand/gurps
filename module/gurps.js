@@ -1669,22 +1669,20 @@ GURPS.SetLastActor(actor)
         width: grid_size,
         releaseOthers: true,
       })
-      
-      let handleDamage = (actor) => {   // Reset selection back to original, and drop damage
-        for (let t of game.user.targets) {
-          t.setTarget(false, { releaseOthers: false, groupSelection: true })
-        }
-        oldselection.forEach(t => {
-          t.setTarget(true, { releaseOthers: false, groupSelection: true })
-        })
-        actor.handleDamageDrop(dropData.payload)
+      let targets = [...game.user.targets]
+
+      // Now that we have the list of targets, reset the target selection back to whatever the user had
+      for (let t of game.user.targets) {
+        t.setTarget(false, { releaseOthers: false, groupSelection: true })
       }
+      oldselection.forEach(t => {
+        t.setTarget(true, { releaseOthers: false, groupSelection: true })
+      })
 
       // actual targets are stored in game.user.targets
-      if (game.user.targets.size === 0) return false
-      if (game.user.targets.size === 1) {
-        let targets = [...game.user.targets]
-        handleDamage(targets[0].actor)
+      if (targets.length === 0) return false
+      if (targets.length === 1) {
+        targets[0].actor.handleDamageDrop(dropData.payload)
         return false
       }
 
@@ -1694,8 +1692,8 @@ GURPS.SetLastActor(actor)
           label: game.i18n.localize('GURPS.addApply'),
           callback: html => {
             let name = html.find('select option:selected').text().trim()
-            let target = [...game.user.targets].find(token => token.name === name)
-            handleDamage(target.actor)
+            let target = targets.find(token => token.name === name)
+            target.actor.handleDamageDrop(dropData.payload)
           },
         },
       }
@@ -1704,11 +1702,11 @@ GURPS.SetLastActor(actor)
         {
           title: game.i18n.localize('GURPS.selectToken'),
           content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
-            tokens: game.user.targets,
+            tokens: targets,
           }),
           buttons: buttons,
           default: 'apply',
-          tokens: game.user.targets,
+          tokens: targets,
         },
         { width: 300 }
       )
