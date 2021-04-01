@@ -808,15 +808,14 @@ async function performAction(action, actor, event, targets) {
     if (!!actor) {
       let att = null
       prefix = ''
-      thing = action.name
-      att = GURPS.findAttack(actordata, thing)
+      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
         )
         return false
       }
-      thing = att.name
+      thing = att.name  // get real name of attack
       let t = att.level
       if (!!t) {
         let a = t.trim().split(' ')
@@ -827,7 +826,7 @@ async function performAction(action, actor, event, targets) {
         else {
           a.shift()
           let m = a.join(' ')
-          if (!!m) ui.modifierbucket.addModifier(0, m)
+          if (!!m) ui.modifierbucket.addModifier(0, m)    //  Level may have "*Costs xFP"
         }
       }
       formula = '3d6'
@@ -1535,12 +1534,18 @@ Hooks.once('ready', async function () {
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
     if (!data.otf) return
-    let macro = await Macro.create({
-      name: `OtF: ${data.otf}`,
-      type: 'script',
-      command: `let actor = game.actors.get('${data.actor}')
+    let cmd = `GURPS.executeOTF('${data.otf}')`
+    let name = `OtF: ${data.otf}`
+    if (!!data.actor) {
+      cmd = `let actor = game.actors.get('${data.actor}')
 GURPS.SetLastActor(actor)
-GURPS.executeOTF('${data.otf}')`,
+` + cmd
+      name = game.actors.get(data.actor).name + " " + name
+    }
+    let macro = await Macro.create({
+      name: name,
+      type: 'script',
+      command: cmd,
     })
     game.user.assignHotbarMacro(macro, slot)
     return false
@@ -1656,6 +1661,7 @@ GURPS.executeOTF('${data.otf}')`,
    */
   Hooks.on('dropCanvasData', async function (canvas, dropData) {
     if (dropData.type === 'damageItem') {
+      let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene.data.grid
       canvas.tokens.targetObjects({
         x: dropData.x - grid_size / 2,
@@ -1664,11 +1670,19 @@ GURPS.executeOTF('${data.otf}')`,
         width: grid_size,
         releaseOthers: true,
       })
+      let targets = [...game.user.targets]
+
+      // Now that we have the list of targets, reset the target selection back to whatever the user had
+      for (let t of game.user.targets) {
+        t.setTarget(false, { releaseOthers: false, groupSelection: true })
+      }
+      oldselection.forEach(t => {
+        t.setTarget(true, { releaseOthers: false, groupSelection: true })
+      })
 
       // actual targets are stored in game.user.targets
-      if (game.user.targets.size === 0) return false
-      if (game.user.targets.size === 1) {
-        let targets = [...game.user.targets]
+      if (targets.length === 0) return false
+      if (targets.length === 1) {
         targets[0].actor.handleDamageDrop(dropData.payload)
         return false
       }
@@ -1679,7 +1693,7 @@ GURPS.executeOTF('${data.otf}')`,
           label: game.i18n.localize('GURPS.addApply'),
           callback: html => {
             let name = html.find('select option:selected').text().trim()
-            let target = [...game.user.targets].find(token => token.name === name)
+            let target = targets.find(token => token.name === name)
             target.actor.handleDamageDrop(dropData.payload)
           },
         },
@@ -1689,11 +1703,11 @@ GURPS.executeOTF('${data.otf}')`,
         {
           title: game.i18n.localize('GURPS.selectToken'),
           content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
-            tokens: game.user.targets,
+            tokens: targets,
           }),
           buttons: buttons,
           default: 'apply',
-          tokens: game.user.targets,
+          tokens: targets,
         },
         { width: 300 }
       )

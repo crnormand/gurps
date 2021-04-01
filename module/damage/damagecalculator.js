@@ -95,6 +95,10 @@ export class CompositeDamageCalculator {
     this._isInjuryTolerance = false
     this._injuryToleranceType = null
 
+    // Injury Tolerance (Damage Reduction) is handled separately from other types of IT
+    this._useDamageReduction = false
+    this._damageReductionLevel = null
+
     this._isExplosion = false
     this._hexesFromExplosion = 1
     this._explosionDivisor = 1
@@ -256,15 +260,15 @@ export class CompositeDamageCalculator {
 
     // process crippling -- just keep one of them
     let crippling = effects.find(it => it.type === 'crippling')
-    if (!!crippling) {
-      results.push(crippling)
-    }
+    if (!!crippling) results.push(crippling)
 
     // process major wound -- just keep one of them
     let majorwound = effects.find(it => it.type === 'majorwound')
-    if (!!majorwound) {
-      results.push(majorwound)
-    }
+    if (!!majorwound) results.push(majorwound)
+
+    // process headvitalshit -- just keep one of them
+    let headvitalshit = effects.find(it => it.type === 'headvitalshit')
+    if (!!headvitalshit) results.push(headvitalshit)
 
     return results
   }
@@ -467,6 +471,25 @@ export class CompositeDamageCalculator {
 
   set injuryToleranceType(value) {
     this._injuryToleranceType = value
+  }
+
+  get useDamageReduction() {
+    return this._useDamageReduction
+  }
+
+  set useDamageReduction(value) {
+    this._damageReductionLevel = value ? 2 : null
+    this._useDamageReduction = value
+  }
+
+  get damageReductionLevel() {
+    return this._damageReductionLevel
+  }
+
+  set damageReductionLevel(value) {
+    if (value === null) this._useDamageReduction = false
+    if (!!value && value < 2) value = 2
+    this._damageReductionLevel = value
   }
 
   get isCrippleableLocation() {
@@ -862,6 +885,11 @@ class DamageCalculator {
       (this.penetratingDamage * this._parent.totalWoundingModifier) / this._parent.explosionDivisor
     )
 
+    if (this._parent._damageReductionLevel !== null && this._parent._damageReductionLevel != 0) {
+      // Injury Tolerance (Damage Reduction) can't reduce damage below 1
+      injury = Math.max(1, Math.floor(injury / this._parent._damageReductionLevel))
+    }
+
     // B380: A target with Injury Tolerance (Diffuse) is even harder to damage!
     if (this._parent.isInjuryTolerance && this._parent.injuryToleranceType === DIFFUSE) {
       // ...Impaling and piercing attacks (of any size) never do more than 1 HP of injury,
@@ -916,6 +944,10 @@ class DamageCalculator {
       }
     }
     return pointsToApply
+  }
+
+  get bonusToHTRollForHalfDamage() {
+    return this._parent.isRangedHalfDamage ? 3 : 0
   }
 
   get calculatedShock() {
@@ -983,17 +1015,17 @@ class DamageCalculator {
       }
 
       let isMajorWound = false
-      if (this.isMajorWound) {
-        isMajorWound = true
-        _effects.push({
-          type: 'majorwound',
-          modifier: this.penaltyToHTRollForStunning,
-        })
-      } else if ([...head, 'Vitals'].includes(this._parent.hitLocation) && shock > 0) {
+      if ([...head, 'Vitals'].includes(this._parent.hitLocation) && shock > 0) {
         _effects.push({
           type: 'headvitalshit',
           detail: this._parent.hitLocation,
-          modifier: this.penaltyToHTRollForStunning,
+          modifier: this.penaltyToHTRollForStunning - this.bonusToHTRollForHalfDamage,
+        })
+      } else if (this.isMajorWound) {
+        isMajorWound = true
+        _effects.push({
+          type: 'majorwound',
+          modifier: this.penaltyToHTRollForStunning - this.bonusToHTRollForHalfDamage,
         })
       }
 
@@ -1008,7 +1040,7 @@ class DamageCalculator {
         if (!isMajorWound)
           _effects.push({
             type: 'majorwound',
-            modifier: this.penaltyToHTRollForStunning,
+            modifier: this.penaltyToHTRollForStunning - this.bonusToHTRollForHalfDamage,
           })
       }
     }
@@ -1025,17 +1057,6 @@ class DamageCalculator {
       }
     }
 
-    // if (this.injury === 0 && this._isFlexibleArmor && this._useBluntTrauma) {
-    //     let trauma = this.effectiveBluntTrauma
-    //     if (trauma > 0) {
-    //         _effects.push({
-    //             type: 'blunttrauma',
-    //             amount: trauma
-    //         })
-    //     }
-    // }
-
-    console.log(this)
     return _effects
   }
 

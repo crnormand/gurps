@@ -60,9 +60,7 @@ export default class ApplyDamageDialog extends Application {
       resizable: true,
       minimizable: false,
       width: 800,
-      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
-        ? simpleDialogHeight
-        : standardDialogHeight,
+      height: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE) ? simpleDialogHeight : 'auto',
       title: game.i18n.localize('GURPS.addApplyDamageDialog'),
     })
   }
@@ -270,6 +268,26 @@ export default class ApplyDamageDialog extends Application {
       .find('input[name="injury-tolerance"]')
       .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'injuryToleranceType'))
 
+    // if checked, target has Injury Tolerance (Damage Reduction)
+    html.find('#damage-reduction').click(ev => {
+      if (!$(ev.currentTarget).is(':checked')) {
+        this._calculator.damageReductionLevel = null
+        this.updateUI()
+      }
+      this._updateModelFromBooleanElement($(ev.currentTarget), 'useDamageReduction')
+    })
+
+    // damage reduction level field
+    html
+      .find('#damage-reduction-field input')
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageReductionLevel', parseIntFrom))
+
+    // clear the damage reduction level field
+    html.find('#damage-reduction-field button').click(() => {
+      this._calculator.damageReductionLevel = null
+      this.updateUI()
+    })
+
     // if checked, target has flexible armor; check for blunt trauma
     html
       .find('#flexible-armor')
@@ -447,7 +465,8 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       message = await this._renderTemplate('chat-majorwound.html', {
         name: this.actor.data.name,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+        htCheck:
+          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
       })
     }
 
@@ -455,7 +474,8 @@ export default class ApplyDamageDialog extends Application {
       message = await this._renderTemplate('chat-headvitalshit.html', {
         name: this.actor.data.name,
         location: object.detail,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+        htCheck:
+          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
       })
     }
 

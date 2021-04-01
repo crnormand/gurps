@@ -156,6 +156,8 @@
   "GURPS.addShotgunCloseRange": "Shotgun, Extremely Close",
   "GURPS.addShotgunRofMultiplier": "RoF Multiplier",
   "GURPS.addShotgunDamage": "Shotgun Damage",
+  "GURPS.addExplosion": "Explosion",
+  "GURPS.addDamageReduction": "Damage Reduction",
 
   "GURPS.addSingleRollSelected": "Single damage roll selected",
   "GURPS.addApplyOptionsToAll": "These options apply to all damage",

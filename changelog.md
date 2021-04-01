@@ -2,7 +2,15 @@
 
 This is what we are currently working on:
 
-0.8.22
+  0.8.23
+  
+- Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
+- Merged @Exxar's Damage Reduction code into ADD
+- Adjust ADD results to show +3 bonus to HT checks when damage is Ranged, 1/2D.
+
+## History
+
+  0.8.22 - 3/31/2021
 
 - Updated German/Deutsch translation
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
@@ -20,16 +28,17 @@ This is what we are currently working on:
 - Added /rolltable
 - Added /ev [OtF] (except PDF, Chat and Modifier)
 - Fixed import of unicode characters in names (and elsewhere)
-- Fixed damage to resources to allow HP or FP damage to apply to a resource.
+- Fixed damage to resources to allow HP or FP damage to apply to a resource
+- Added support for [A:Attack *Costs 1FP]
+- Fixed [A:Attack] where skill level includes "*Costs 1FP"
+- Added Drag and drop OtF from chat
 
-## History
-
-0.8.21
+  0.8.21 - 3/22/2021
 
 - Fixed parse bug where roll has no damage type or comment [3d]
 - Added German/Deutsch translation
 
-  0.8.20
+  0.8.20 - 3/22/2021
 
 - Fixed description of modifier for Skill OtF
 - Fixed GM Send to allow blind rolls
@@ -165,12 +174,11 @@ This is what we are currently working on:
 - OtF formula [/<chat command>] execute chat command as a button
 - Fixed GCA export, ranged attacks in the melee list and sanitize pagerefs
 - Enhanced the import error warnings
-
+  
   0.8.10 - 1/30/2021
 
 - @Tratz equipment bug fix, portrait fix and logo fix!
 - Bug fix for OtF formulas in Skills/Spells in containers
-
   0.8.9 - 1/29/2021
 
 - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
