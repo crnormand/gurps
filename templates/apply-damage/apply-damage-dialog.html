@@ -277,6 +277,19 @@
             </div>
           </div>
 
+          <div style='display: flex; flex-direction: column; justify-content: center;'>
+            <div id='damage-reduction-container' class='gurps-3col'>
+              <input id='damage-reduction' type='checkbox' value='damage-reduction' {{checked CALC.useDamageReduction}}>
+              <label for='damage-reduction'>Damage Reduction</label>
+              <div id='damage-reduction-field' class='with-button'>
+                <input type='text' id='damage-reduction-level' class='digits-only'
+                       value='{{CALC.damageReductionLevel}}' {{#unless CALC.useDamageReduction}}disabled{{/unless}}
+                style='border: 1px solid #7a7971;'>
+                <button name='clear'><span class='fas fa-times-circle'></button>
+              </div>
+            </div>
+          </div>
+
           <div class='collapsible-wrapper options-drawer'>
             <input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{checked
               CALC.isExplosion}}></input>
