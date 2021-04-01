@@ -2853,6 +2853,7 @@ ul#result-effects li {
   justify-content: center;
 }
 
+.gurps-group .vertical-center,
 .resource-editor .vertical-center {
   display: flex;
   align-items: center;

@@ -277,23 +277,24 @@
             </div>
           </div>
 
-          <div style='display: flex; flex-direction: column; justify-content: center;'>
-            <div id='damage-reduction-container' class='gurps-3col'>
-              <input id='damage-reduction' type='checkbox' value='damage-reduction' {{checked CALC.useDamageReduction}}>
-              <label for='damage-reduction'>Damage Reduction</label>
+          <div id='damage-reduction-container' class='gurps-3col'>
+            <input id='damage-reduction' type='checkbox' value='damage-reduction' {{checked CALC.useDamageReduction}}>
+            <label for='damage-reduction'>{{localize "GURPS.addDamageReduction"}}: </label>
+            <div style='display: grid; grid-template-columns: auto min-content; gap: 3px; margin-left: 3px;'>
               <div id='damage-reduction-field' class='with-button'>
-                <input type='text' id='damage-reduction-level' class='digits-only'
-                       value='{{CALC.damageReductionLevel}}' {{#unless CALC.useDamageReduction}}disabled{{/unless}}
-                style='border: 1px solid #7a7971;'>
+                <input type='text' id='damage-reduction-level' class='digits-only' value='{{CALC.damageReductionLevel}}'
+                  {{#unless CALC.useDamageReduction}}disabled{{/unless}} style='border: 1px solid #7a7971;'>
                 <button name='clear'><span class='fas fa-times-circle'></button>
               </div>
+              <div class='vertical-center pdflink'>P53</div>
             </div>
           </div>
 
           <div class='collapsible-wrapper options-drawer'>
             <input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{checked
               CALC.isExplosion}}></input>
-            <label for='explosion-damage' class='label-toggle'>Explosion:<span class='pdflink'>B414</span></label>
+            <label for='explosion-damage' class='label-toggle'>{{localize "GURPS.addExplosion"}}:<span
+                class='pdflink'>B414</span></label>
             <div class='collapsible-content continuation'>
               <div style='display: flex; padding: 3px;'><label for='explosion-yards'
                   style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>Hexes from
@@ -417,27 +418,44 @@
             <div>{{localize "GURPS.modifier"}}</div>
             <div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
             <div>
-              <span>= {{woundModifierText CALC}}{{#if (isWoundModAdjForLocation CALC)}}* ({{CALC.hitLocation}}) <span
-                  class="pdflink">B398</span>{{/if}}{{#if (isWoundModAdjForInjuryTol CALC)}}*
-                <span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span> <span
-                  class="pdflink">B380</span>{{/if}}
+              <span>{{woundModifierText CALC}}
+                {{#if (isWoundModAdjForLocation CALC)}}*
+                ({{CALC.hitLocation}})
+                <span class="pdflink">B398</span>
+                {{/if}}
+                {{#if (isWoundModAdjForInjuryTol CALC)}}*
+                <span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span>
+                <span class="pdflink">B380</span>
+                {{/if}}
               </span>
             </div>
 
             {{#if CALC.isExplosion}}
-            <div>EXPLOSION</div>
+            <div>{{localize "GURPS.addExplosion"}}</div>
             <div><span>×<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span></div>
             <div><span>({{CALC.hexesFromExplosion}} {{pluralize 'hex' CALC.hexesFromExplosion}} from center)</span>
             </div>
             {{/if}}
 
+            {{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
+            <div>{{localize "GURPS.addDamageReduction"}}</div>
+            <div>&divide;{{CALC.damageReductionLevel}}</div>
+            <div></div>
+            {{/if}}
+
             <div>{{localize "GURPS.addInjury"}}</div>
             <div>{{CALC.injury}}</div>
-            <div><span>= {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize
-                  CALC.totalWoundingModifier 2}}{{#if CALC.isExplosion}}<span> ×<sup>
-                      1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>{{/if}}</span>{{#if
-                CALC.maxInjuryForDiffuse}} ({{localize "GURPS.addDiffuseMax"}} {{CALC.maxInjuryForDiffuse}})* <span
-                  class="pdflink">B380</span>{{/if}}
+            <div><span>=
+                {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}
+                  {{#if CALC.isExplosion}}
+                  <span> ×<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>
+                  {{/if}}</span>
+                {{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
+                &divide; {{CALC.damageReductionLevel}}
+                {{/if}}
+                {{#if CALC.maxInjuryForDiffuse}}
+                ({{localize "GURPS.addDiffuseMax"}} {{CALC.maxInjuryForDiffuse}})* <span class="pdflink">B380</span>
+                {{/if}}
             </div>
 
             {{#if CALC.isBluntTraumaInjury}}
