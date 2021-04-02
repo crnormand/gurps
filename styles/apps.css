@@ -1,0 +1,42 @@
+.single-column-form {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 0.25rem;
+}
+
+.single-column-form .inputs {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 5px;
+  align-self: center;
+  margin: 0 0.5rem;
+}
+
+.single-column-form .inputs label {
+  font-size: 80%;
+  justify-self: end;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.single-column-form .inputs input {
+  text-align: center;
+}
+
+.single-column-form .inputs input[type='checkbox'] {
+  margin: 0;
+}
+
+.single-column-form .button-bar {
+  margin-top: 1rem;
+}
+
+.single-column-form .vertical-gap {
+  margin-top: 0.5rem;
+}
+
+.subtle {
+  color: grey;
+  font-size: 80%;
+}

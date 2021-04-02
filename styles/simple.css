@@ -2211,25 +2211,25 @@ body {
 .gurps-group .results-table {
   justify-self: stretch;
   width: 100%;
-  grid-template-columns: auto min-content 1fr;
+  grid-template-columns: auto auto 1fr;
   min-height: 130px;
   font-size: 12px;
 }
 
 .gurps-group .results-table > div:nth-child(3n + 1) {
   text-transform: uppercase;
+  font-size: smaller;
 }
 
 .gurps-group .results-table > div:nth-child(3n + 1),
 .gurps-group .results-table > div:nth-child(3n + 2) {
   text-align: end;
   padding-right: 0.5em;
-  font-size: smaller;
 }
 
 .gurps-group .results-table > div:nth-child(3n + 2) {
   font-weight: bolder;
-  font-size: larger;
+  font-size: small;
 }
 
 .gurps-group .results-table > div:nth-child(3n + 3) {
@@ -2237,6 +2237,7 @@ body {
   justify-content: center;
   padding-left: 1em;
   text-indent: -1em;
+  font-size: smaller;
 }
 
 .with-button {
@@ -3156,38 +3157,4 @@ ul#result-effects li {
 
 .shaded-group > div:nth-child(odd) {
   background-color: rgba(0, 0, 0, 0.1);
-}
-
-.single-column-form {
-  display: flex;
-  flex-flow: column nowrap;
-  margin: 0.25rem;
-}
-
-.single-column-form .inputs {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 5px;
-  align-self: center;
-  margin: 0 0.5rem;
-}
-
-.single-column-form .inputs label {
-  font-size: 80%;
-  justify-self: end;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-}
-
-.single-column-form .inputs input {
-  text-align: center;
-}
-
-.single-column-form .inputs input[type='checkbox'] {
-  margin: 0;
-}
-
-.single-column-form .button-bar {
-  margin-top: 1rem;
 }

@@ -451,5 +451,8 @@
   "GURPS.slamRelativeVelocity": "Relative Velocity",
   "GURPS.target": "Target",
   "GURPS.fallsDown": "falls down!",
-  "GURPS.notAffected": "is not affected"
+  "GURPS.notAffected": "is not affected.",
+  "GURPS.dxCheckOrFall": "must roll... [DX to avoid falling]",
+
+  "GURPS.Dice": "Dice"
 }

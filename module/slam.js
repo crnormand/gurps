@@ -2,7 +2,7 @@
 
 import { ChatProcessors, ChatProcessor } from '../module/chat.js'
 import selectTarget from '../module/select-target.js'
-import { isNiceDiceEnabled } from '../lib/utilities.js'
+import { isNiceDiceEnabled, generateUniqueId } from '../lib/utilities.js'
 
 /**
  * Handle the '/slam' command. Must have a selected actor. The
@@ -82,7 +82,7 @@ class SlamCalculator extends FormApplication {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/slam.html',
+      template: 'systems/gurps/templates/slam-calculator.html',
       classes: ['single-column-form'],
       popOut: true,
       minimizable: false,
@@ -143,39 +143,62 @@ class _SlamCalculator {
 
     let attackerRoll = Roll.create(`${attackerDice.dice}d6! + ${attackerDice.adds}`)
     attackerRoll.evaluate()
+    let attackerResult = Math.max(attackerRoll.total, 1)
 
     let targetRoll = Roll.create(`${targetDice.dice}d6! + ${targetDice.adds}`)
     targetRoll.evaluate()
+    let targetResult = Math.max(targetRoll.total, 1)
 
-    let message = `${data.target} ${game.i18n.localize('GURPS.notAffected')}.`
-    if (attackerRoll.total >= targetRoll.total * 2) {
-      message = `${data.target} ${game.i18n.localize('GURPS.fallsDown')}!`
-    } else if (attackerRoll.total >= targetRoll.total) {
-      message = `${data.target}: ${game.i18n.localize('GURPS.roll')} [${game.i18n.localize(
-        'GURPS.attributesDX'
-      )}${game.i18n.localize('GURPS.toAvoidFalling')}]`
-    } else if (targetRoll.total >= attackerRoll.total * 2) {
-      message = `${data.attacker} ${game.i18n.localize('GURPS.fallsDown')}!`
+    let effects = {
+      unaffected: 'GURPS.notAffected',
+      fallsDown: 'GURPS.fallsDown',
+      dxCheck: 'GURPS.dxCheckOrFall',
+    }
+    let effect = effects.unaffected
+
+    if (attackerResult >= targetResult * 2) {
+      effect = effects.fallsDown
+    } else if (attackerResult >= targetResult) {
+      effect = effects.dxCheck
+    } else if (targetResult >= attackerResult * 2) {
+      effect = effects.fallsDown
     }
 
+    let message = `${data.target} ${game.i18n.localize(effect)}`
+
     let html = await renderTemplate('systems/gurps/templates/slam-results.html', {
+      id: generateUniqueId(),
       attacker: data.attacker,
+      attackerHp: data.attackerHp,
+      attackerRaw: rawDamageAttacker,
+      attackerDice: attackerDice,
+      attackerResult: attackerResult,
+      attackerExplain: this.explainDieRoll(attackerRoll),
+      // ---
       target: data.target,
+      targetHp: data.targetHp,
+      targetRaw: rawDamageTarget,
+      targetDice: targetDice,
+      targetResult: targetResult,
+      targetExplain: this.explainDieRoll(targetRoll),
+      // ---
+      effect: effect,
       isAoAStrong: data.isAoAStrong,
+      relativeSpeed: data.relativeSpeed,
       result: message,
     })
 
-    const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
+    // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
     let messageData = {
       user: game.user._id,
-      speaker: speaker,
+      // speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       roll: attackerRoll,
       sound: this.rollThemBones([targetRoll]),
     }
 
-    CONFIG.ChatMessage.entityClass.create(messageData).then(arg => {
+    ChatMessage.create(messageData).then(arg => {
       console.log(arg)
       // let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
       // $(`[data-message-id='${messageId}']`).click(ev => game.GURPS.handleOnPdf(ev))
@@ -278,5 +301,13 @@ class _SlamCalculator {
     if (dice.length > 0) {
       game.dice3d.show({ throws: [{ dice: dice }] })
     }
+  }
+
+  explainDieRoll(roll) {
+    let diceArray = roll.dice
+    let resultsArray = diceArray.flatMap(it => it.results)
+    let results = resultsArray.map(it => it.result)
+
+    return roll.terms.length > 1 ? `Rolled (${results}) ${roll.terms[1]} ${roll.terms[2]}` : `Rolled ${results}`
   }
 }
