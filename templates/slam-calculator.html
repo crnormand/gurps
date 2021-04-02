@@ -1,0 +1,28 @@
+<form class='{{cssClass}}' slam-calculator autocomplete='off'>
+  <h2>
+    {{attacker}} <i>{{localize "GURPS.slams"}}
+      <i class='subtle fas fa-align-right'></i><i class='fas fa-running'></i></i>
+    {{target}}
+  </h2>
+  <div class='inputs vertical-gap'>
+    <label>{{attacker}} {{localize "GURPS.HP"}}:</label>
+    <input id='attacker-hp' type='text' value='{{attackerHp}}' data-dtype='Number' />
+    <label>{{attacker}} {{localize "GURPS.slamVelocity"}}:</label>
+    <input id='attacker-speed' type='text' value='{{attackerSpeed}}' data-dtype='Number' />
+    <label for='aoa'>{{localize "GURPS.slamAOAStrong"}}:</label>
+    <input id='aoa' type='checkbox'>
+    <div class='vertical-gap'></div>
+    <div></div>
+    <label>{{target}} {{localize "GURPS.HP"}}:</label>
+    <input id='target-hp' type='text' value='{{targetHp}}' data-dtype='Number' />
+    <label>{{target}} {{localize "GURPS.slamVelocity"}}:</label>
+    <input id='target-speed' type='text' value='{{targetSpeed}}' data-dtype='Number' />
+    <div class='vertical-gap'></div>
+    <div></div>
+    <label>{{localize "GURPS.slamRelativeVelocity"}}:</label>
+    <input id='relative-speed' type='text' value='{{relativeSpeed}}' readonly disabled>
+  </div>
+  <div class='button-bar'>
+    <button><i class='fas fa-check'></i> {{localize "GURPS.resolve"}}</button>
+  </div>
+</form>
