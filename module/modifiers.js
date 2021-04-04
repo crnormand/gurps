@@ -250,7 +250,7 @@ export class ModifierBucket extends Application {
   refresh() {
     this.render(true)
   }
-  
+
   async sendToPlayer(action, user) {
     const saved = this.modifierStack.modifierList
     this.modifierStack.modifierList = []
@@ -331,7 +331,7 @@ export class ModifierBucketEditor extends Application {
     super.render(force, options)
     this.bucket.SHOWING = true
   }
-  
+
   close() {
     this.bucket.SHOWING = false
     super.close()
@@ -343,19 +343,19 @@ export class ModifierBucketEditor extends Application {
     data.isTooltip = !this.options.popOut
     data.gmod = this
     data.stack = this.bucket.modifierStack
-    data.meleemods = MeleeMods.split('\n')
-    data.rangedmods = RangedMods.split('\n')
-    data.defensemods = DefenseMods.split('\n')
+    data.meleemods = ModifierLiterals.MeleeMods.split('\n')
+    data.rangedmods = ModifierLiterals.RangedMods.split('\n')
+    data.defensemods = ModifierLiterals.DefenseMods.split('\n')
     data.speedrangemods = ['Speed / Range'].concat(game.GURPS.rangeObject.modifiers)
     data.actorname = !!game.GURPS.LastActor ? game.GURPS.LastActor.name : 'No active character!'
-    data.othermods = OtherMods.split('\n')
+    data.othermods = ModifierLiterals.OtherMods.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
     data.users = game.users?.filter(u => u._id != game.user._id) || []
     if (data.users.length > 1) data.users.push({ name: 'Everyone!' })
-    data.taskdificulties = TaskDifficultyModifiers
-    data.lightingmods = LightingModifiers
-    data.eqtqualitymods = EqtQualifyModifiers
-    data.rofmods = RateOfFireModifiers
+    data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
+    data.lightingmods = ModifierLiterals.LightingModifiers
+    data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
+    data.rofmods = ModifierLiterals.RateOfFireModifiers
     data.statusmods = makeSelect(StatusModifiers)
     data.covermods = makeSelect(CoverPostureModifiers)
     data.sizemods = SizeModifiers
@@ -581,102 +581,119 @@ const SizeModifiers = [
 
 let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
 
-// Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
-const MeleeMods = `[+4 to hit (Determined Attack)] [PDF:B365]
-[+4 to hit (Telegraphic Attack)] [PDF:MA113]
-[-2 to hit (Deceptive Attack)] [PDF:B369]
-[-4 to hit (Charge Attack) *Max:9] [PDF:B365]
-[+2 dmg (Strong Attack)] [PDF:B365]
-${horiz('Extra Effort')} [PDF:B357]
-[+2 dmg (Mighty Blow) *Cost 1FP] [PDF:MA131]
-[+0 Heroic Charge *Cost 1FP] [PDF:MA131]`
+const ModifierLiterals = {
+  // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
+  get MeleeMods() {
+    return `[+4 ${game.i18n.localize('GURPS.modifierDeterminedAttack')}] [PDF:B365]
+    [+4 ${game.i18n.localize('GURPS.modifierTelegraphicAttack')}] [PDF:MA113]
+    [-2 ${game.i18n.localize('GURPS.modifierDeceptiveAttack')}] [PDF:B369]
+    [-4 ${game.i18n.localize('GURPS.modifierMoveAttack')} *Max:9] [PDF:B365]
+    [+2 ${game.i18n.localize('GURPS.modifierStrongAttack')}] [PDF:B365]
+    ${horiz(game.i18n.localize('GURPS.modifierExtraEffort'))} [PDF:B357]
+    [+2 ${game.i18n.localize('GURPS.modifierMightyBlow')} *Cost 1FP] [PDF:MA131]
+    [+0 ${game.i18n.localize('GURPS.modifierHeroicCharge')} *Cost 1FP] [PDF:MA131]`
+  },
 
-const RangedMods = `[+1 Aim]
-[+1 to hit (Determined Attack)] [PDF:B365]
-${horiz('Actions')}
-[WILL check to maintain Aim]`
+  get RangedMods() {
+    return `[+1 ${game.i18n.localize('GURPS.aim')}]
+    [+1 ${game.i18n.localize('GURPS.modifierDeterminedAttack')}] [PDF:B365]
+    ${horiz(game.i18n.localize('GURPS.actions'))}
+    [${game.i18n.localize('GURPS.modifierWillCheck')}]`
+  },
 
-const DefenseMods = `[+2 All-Out Defense] [PDF:B365]
-[+1 to dodge (Shield)] [PDF:B374]
-[+2 to dodge (Acrobatics)] [PDF:B374]
-[+3 to dodge (Dive)] [PDF:B377]
-[+3 to dodge (Retreat)] [PDF:B375]
-[+1 block/parry (Retreat)] [PDF:B377]
+  get DefenseMods() {
+    return `[+2 ${game.i18n.localize('GURPS.allOutDefense')}] [PDF:B365]
+    [+1 ${game.i18n.localize('GURPS.modifierShieldDB')}] [PDF:B374]
+    [+2 ${game.i18n.localize('GURPS.modifierDodgeAcrobatic')}] [PDF:B374]
+    [+3 ${game.i18n.localize('GURPS.modifierDodgeDive')}] [PDF:B377]
+    [+3 ${game.i18n.localize('GURPS.modifierDodgeRetreat')}] [PDF:B375]
+    [+1 ${game.i18n.localize('GURPS.modifierBlockRetreat')}] [PDF:B377]
+    [-2 ${game.i18n.localize('GURPS.modifierDodgeFailedAcro')}] [PDF:B375]
+    [-2 ${game.i18n.localize('GURPS.modifierDodgeSide')}] [PDF:B390]
+    [-4 ${game.i18n.localize('GURPS.modifierDodgeRear')}] [PDF:B391]
+    ${horiz(game.i18n.localize('GURPS.modifierExtraEffort'))}
+    [+2 ${game.i18n.localize('GURPS.modifierFeverishDef')} *Cost 1FP]
+    ${horiz(game.i18n.localize('GURPS.actions'))}
+    [WILL-3 ${game.i18n.localize('GURPS.concentrationCheck')}]`
+  },
 
-[-2 to dodge (Failed Acrobatics)] [PDF:B375]
-[-2 to dodge (Attacked from side)] [PDF:B390]
-[-4 to dodge (Attacked from rear)] [PDF:B391]
-${horiz('Extra Effort')}
-[+2 Feverish Defense *Cost 1FP]
-${horiz('Actions')}
-[WILL-3 Concentration check]`
+  get OtherMods() {
+    return `[+1]
+    [+2]
+    [+3]
+    [+4]
+    [+5]
+    [-1]
+    [-2]
+    [-3]
+    [-4]
+    [-5]
+    [+1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
+    [-1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
+    [+4 ${game.i18n.localize('GURPS.modifierGMBlessed')}]
+    [-4 ${game.i18n.localize('GURPS.modifierGMDontTry')}]`
+  },
 
-const OtherMods = `[+1]
-[+2]
-[+3]
-[+4]
-[+5]
-[-1]
-[-2]
-[-3]
-[-4]
-[-5]
-[+1 GM said so]
-[-1 GM said so]
-[+4 GM Blessed]
-[-4 GM don't try it]`
+  get TaskDifficultyModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierTaskDifficulty'),
+      `+10 ${game.i18n.localize('GURPS.modifierAutomatic')}`,
+      `+8 ${game.i18n.localize('GURPS.modifierTrivial')}`,
+      `+6 ${game.i18n.localize('GURPS.modifierVeryEasy')}`,
+      `+4 ${game.i18n.localize('GURPS.modifierEasy')}`,
+      `+2 ${game.i18n.localize('GURPS.modifierVeryFavorable')}`,
+      `+1 ${game.i18n.localize('GURPS.modifierFavorable')}`,
+      `-1 ${game.i18n.localize('GURPS.modifierUnfavorable')}`,
+      `-2 ${game.i18n.localize('GURPS.modifierVeryUnfavorable')}`,
+      `-4 ${game.i18n.localize('GURPS.modifierHard')}`,
+      `-6 ${game.i18n.localize('GURPS.modifierVeryHard')}`,
+      `-8 ${game.i18n.localize('GURPS.modifierDangerous')}`,
+      `-10 ${game.i18n.localize('GURPS.modifierImpossible')}`,
+    ]
+  },
 
-const TaskDifficultyModifiers = [
-  'Task Difficulty',
-  '+10 Automatic',
-  '+8 Trivial',
-  '+6 Very Easy',
-  '+4 Easy',
-  '+2 Very Favorable',
-  '+1 Favorable',
-  '-1 Unfavorable',
-  '-2 Very Unfavorable',
-  '-4 Hard',
-  '-6 Very hard',
-  '-8 Dangerous',
-  '-10 Impossible',
-]
+  get LightingModifiers() {
+    return [
+      game.i18n.localize('GURPS.lighting'),
+      `-1 ${game.i18n.localize('GURPS.modifierLightDim')}`,
+      `-2 ${game.i18n.localize('GURPS.modifierLightTwilight')}`,
+      `-3 ${game.i18n.localize('GURPS.modifierLightTorch')}`,
+      `-4 ${game.i18n.localize('GURPS.modifierLightFullMoon')}`,
+      `-5 ${game.i18n.localize('GURPS.modifierLightCandle')}`,
+      `-6 ${game.i18n.localize('GURPS.modifierLightHalfMoon')}`,
+      `-7 ${game.i18n.localize('GURPS.modifierLightQuarterMoon')}`,
+      `-8 ${game.i18n.localize('GURPS.modifierLightStarlight')}`,
+      `-9 ${game.i18n.localize('GURPS.modifierLightMoonless')}`,
+      `-10 ${game.i18n.localize('GURPS.modifierLightNone')}`,
+    ]
+  },
 
-const LightingModifiers = [
-  'Lighting',
-  '-1 Sunrise / sunset / torch / flashlight',
-  '-2 Twilight / gaslight / cell-phone',
-  '-3 Deep twlight / candlelight',
-  '-4 Full moon',
-  '-5 Half moon',
-  '-6 Quarter moon',
-  '-7 Starlight',
-  '-8 Starlight through clouds',
-  '-9 Overcast moonless night',
-  '-10 Total darkness',
-]
+  get RateOfFireModifiers() {
+    return [
+      game.i18n.localize('GURPS.rateOfFire'),
+      `+1 ${game.i18n.localize('GURPS.rof')}: 5-8`,
+      `+2 ${game.i18n.localize('GURPS.rof')}: 9-12`,
+      `+3 ${game.i18n.localize('GURPS.rof')}: 13-16`,
+      `+4 ${game.i18n.localize('GURPS.rof')}: 17-24`,
+      `+5 ${game.i18n.localize('GURPS.rof')}: 25-49`,
+      `+6 ${game.i18n.localize('GURPS.rof')}: 50-99`,
+    ]
+  },
 
-const RateOfFireModifiers = [
-  'Rate of Fire',
-  '+1 RoF: 5-8',
-  '+2 RoF: 9-12',
-  '+3 RoF: 13-16',
-  '+4 RoF: 17-24',
-  '+5 RoF: 25-49',
-  '+6 RoF: 50-99',
-]
-
-const EqtQualifyModifiers = [
-  'Equipment Quality',
-  '+4 Best Possible Equipment',
-  '+2 Fine Quality Equipment (20x cost)',
-  '+1 Good Quality Equipment (5x cost)',
-  '-2 Improvised Equipment (non-tech task)',
-  '-5 Improvised Equipment (tech task)',
-  '-1 Missing / Damaged item',
-  '-5 No Equipment (none-tech task)',
-  '-10 No Equipment (tech task)',
-]
+  get EqtQualifyModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierQuality'),
+      `+4 ${game.i18n.localize('GURPS.modifierQualityBest')}`,
+      `+2 ${game.i18n.localize('GURPS.modifierQualityFine')}`,
+      `+1 ${game.i18n.localize('GURPS.modifierQualityGood')}`,
+      `-2 ${game.i18n.localize('GURPS.modifierQualityImprovised')}`,
+      `-5 ${game.i18n.localize('GURPS.modifierQualityImprovTech')}`,
+      `-1 ${game.i18n.localize('GURPS.modifierQualityMissing')}`,
+      `-5 ${game.i18n.localize('GURPS.modifierQualityNone')}`,
+      `-10 ${game.i18n.localize('GURPS.modifierQualityNoneTech')}`,
+    ]
+  },
+}
 
 const ModifiersForStatus = {
   grapple: {
