@@ -130,8 +130,13 @@
         </select>
 
         <select id="modsize">
-          {{#each sizemods}}
-          <option value="{{this}}">{{this}}</option>
+          <option>{{sizemods.title}}</option>
+          {{#each sizemods.groups}}
+          <optgroup label='{{this.group}}'>
+            {{#each this.options}}
+            <option value='{{this}}'>{{this}}</option>
+            {{/each}}
+          </optgroup>
           {{/each}}
         </select>
 

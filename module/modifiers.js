@@ -300,16 +300,6 @@ export class ModifierBucketEditor extends Application {
       top: 296,
     }
 
-    for (let loc in HitLocations.hitlocationRolls) {
-      let hit = HitLocations.hitlocationRolls[loc]
-      if (!hit.skip) {
-        // Only include the items in the menu is skip is false (or empty)
-        let mod = displayMod(hit.penalty) + ' to hit ' + loc
-        if (!!hit.desc) mod += ' (' + hit.desc + ')'
-        HitlocationModifiers.push(mod)
-      }
-    }
-
     // stupid Javascript
     this._onleave.bind(this)
     this._onenter.bind(this)
@@ -357,9 +347,9 @@ export class ModifierBucketEditor extends Application {
     data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
     data.rofmods = ModifierLiterals.RateOfFireModifiers
     data.statusmods = makeSelect(StatusModifiers)
-    data.covermods = makeSelect(CoverPostureModifiers)
-    data.sizemods = SizeModifiers
-    data.hitlocationmods = HitlocationModifiers
+    data.covermods = makeSelect(ModifierLiterals.CoverPostureModifiers)
+    data.sizemods = makeSelect(ModifierLiterals.SizeModifiers)
+    data.hitlocationmods = ModifierLiterals.HitlocationModifiers
     data.currentmods = []
 
     if (!!game.GURPS.LastActor) {
@@ -529,59 +519,88 @@ const StatusModifiers = [
   '-5 to IQ/DX/PER checks (Retching)',
 ]
 
-const CoverPostureModifiers = [
-  'Cover & Posture',
-  '*Cover',
-  '-5 to hit, Head only',
-  '-4 to hit, Head and shoulders exposed',
-  '-3 to hit, Body half exposed',
-  '-2 to hit, Behind light cover',
-  '-4 to hit, Behind same-sized figure',
-  '-4 to hit, Prone without cover',
-  '-5 to hit, Prone some cover, head up',
-  '-7 to hit, Prone some cover, head down',
-  '-2 to hit, Crouching/kneeling no cover',
-  '-4 to hit, firing through occupied hex',
-  '*Posture',
-  '-4 to hit Melee (Prone)',
-  '-2 to hit Ranged (Prone)',
-  '-3 to active defenses (Prone)',
-  '-2 to hit Melee (Crouch)',
-  '-2 to hit Ranged (Crouch)',
-  '-2 to hit Melee (Kneel/Sit)',
-  '-2 to active defenses (Kneel/Sit)',
-]
-
-const SizeModifiers = [
-  'Size Modifier (melee diff, ranged abs)',
-  '-10  Size 0.05 yard (1.8")',
-  '-9  Size 0.07 yard (2.5")',
-  '-8  Size 0.1 yard (3.5")',
-  '-7  Size 0.15 yard (5")',
-  '-6  Size 0.2 yard (7")',
-  '-5  Size 0.3 yard (10")',
-  '-4  Size 0.5 yard (18")',
-  "-3  Size 0.7 yard (2')",
-  "-2  Size 1 yard (3')",
-  "-1  Size 1.5 yards (4.5')",
-  "+0  Size 2 yards (6')",
-
-  "+1  Size 3 yards (9')",
-  "+2  Size 5 yards (15')",
-  "+3  Size 7 yards (21')",
-  "+4  Size 10 yards (30')",
-  "+5  Size 15 yards (45')",
-  "+6  Size 20 yards (60')",
-  "+7  Size 30 yards (90')",
-  "+8  Size 50 yards (150')",
-  "+9  Size 70 yards (210')",
-  "+10 Size 100 yards (300')",
-  "+11 Size 150 yards (450')",
-]
-
-let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
-
 const ModifierLiterals = {
+  get CoverPostureModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierCoverPosture'),
+      '*' + game.i18n.localize('GURPS.modifierCover'),
+      game.i18n.localize('GURPS.modifierCoverHead'),
+      game.i18n.localize('GURPS.modifierCoverHeadShoulder'),
+      game.i18n.localize('GURPS.modifierCoverHalfExposed'),
+      game.i18n.localize('GURPS.modifierCoverLight'),
+      game.i18n.localize('GURPS.modifierCoverBehindFigure'),
+      game.i18n.localize('GURPS.modifierCoverProne'),
+      game.i18n.localize('GURPS.modifierCoverProneHeadUp'),
+      game.i18n.localize('GURPS.modifierCoverProneHeadDown'),
+      game.i18n.localize('GURPS.modifierCoverCrouch'),
+      game.i18n.localize('GURPS.modifierCoverThroughHex'),
+      '*' + game.i18n.localize('GURPS.modifierPosture'),
+      game.i18n.localize('GURPS.modifierPostureProneMelee'),
+      game.i18n.localize('GURPS.modifierPostureProneRanged'),
+      game.i18n.localize('GURPS.modifierPostureProneDefend'),
+      game.i18n.localize('GURPS.modifierPostureCrouchMelee'),
+      game.i18n.localize('GURPS.modifierPostureCrouchRanged'),
+      game.i18n.localize('GURPS.modifierPostureKneelMelee'),
+      game.i18n.localize('GURPS.modifierPostureKneelDefend'),
+    ]
+  },
+
+  get SizeModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierSize'),
+      '*' + game.i18n.localize('GURPS.modifierSizeDetail'),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: '-10', us: '1.5 inches', metric: '5 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -9', us: '  2 inches', metric: '7 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -8', us: '  3 inches', metric: '10 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -7', us: '  5 inches', metric: '15 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -6', us: '  8 inches', metric: '20 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -5', us: '  1 foot', metric: '30 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -4', us: '1.5 feet', metric: '50 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -3', us: '  2 feet', metric: '70 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -2', us: '  1 yard/3 feet', metric: '1 meter' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -1', us: '1.5 yards/4.5 feet', metric: '1.5 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +0', us: '  2 yards/6 feet', metric: '2 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +1', us: '  3 yards/9 feet', metric: '3 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +2', us: '  5 yards/15 feet', metric: '5 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +3', us: '  7 yards/21 feet', metric: '7 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +4', us: ' 10 yards/30 feet', metric: '10 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +5', us: ' 15 yards/45 feet', metric: '15 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +6', us: ' 20 yards/60 feet', metric: '20 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +7', us: ' 30 yards/90 feet', metric: '30 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +8', us: ' 50 yards/150 feet', metric: '50 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +9', us: ' 70 yards/210 feet', metric: '70 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+10', us: '100 yards/300 feet', metric: '100 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+11', us: '150 yards/450 feet', metric: '150 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+12', us: '200 yards/600 feet', metric: '200 meters' }),
+    ]
+  },
+
+  _HitLocationModifiers: [],
+
+  get HitlocationModifiers() {
+    if (this._HitLocationModifiers.length === 0) {
+      this._HitLocationModifiers.push(game.i18n.localize('GURPS.modifierHitLocation'))
+
+      for (let loc in HitLocations.hitlocationRolls) {
+        let hit = HitLocations.hitlocationRolls[loc]
+        // Only include the items in the menu is skip is false (or empty)
+        if (!hit.skip) {
+          let parts = [
+            displayMod(hit.penalty),
+            game.i18n.localize('GURPS.modifierToHit'),
+            game.i18n.localize('GURPS.hitLocation' + loc),
+          ]
+
+          if (!!hit.desc) {
+            parts.push(`[${hit.desc.map(it => game.i18n.localize(it)).join(', ')}]`)
+          }
+          this._HitLocationModifiers.push(parts.join(' '))
+        }
+      }
+    }
+    return this._HitLocationModifiers
+  },
+
   // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
   get MeleeMods() {
     return `[+4 ${game.i18n.localize('GURPS.modifierDeterminedAttack')}] [PDF:B365]

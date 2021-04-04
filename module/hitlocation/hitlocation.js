@@ -35,6 +35,12 @@ export class HitLocation {
   }
 
   static init() {
+    // README: The keys in this object literal (Eye, Eyes, Skull, etc...) are directly used in
+    // README: the language files for i18n, with the prefix 'GURPS.hitLocation' (example:
+    // README: 'GURPS.hitLocationEyes'). DO NOT EDIT the keys here, but instead update them in
+    // README: the langauge file.
+    //
+    // README: I'm also updating the desc property to be an array of i18n keys.
     hitlocationRolls = {
       Eye: { roll: '-', penalty: -9, skip: true },
       Eyes: { roll: '-', penalty: -9 }, // GCA
@@ -42,10 +48,10 @@ export class HitLocation {
       'Skull, from behind': { penalty: -5 },
       Face: { roll: '5', penalty: -5 },
       'Face, from behind': { penalty: -7 },
-      Nose: { penalty: -7, desc: 'front only, *hit chest' },
-      Jaw: { penalty: -6, desc: 'front only, *hit chest' },
-      'Neck Vein/Artery': { penalty: -8, desc: '*hit neck' },
-      'Limb Vein/Artery': { penalty: -5, desc: '*hit limb' },
+      Nose: { penalty: -7, desc: ['GURPS.hitLocationDescFront', 'GURPS.hitLocationDescChest'] },
+      Jaw: { penalty: -6, desc: ['GURPS.hitLocationDescFront', 'GURPS.hitLocationDescChest'] },
+      'Neck Vein/Artery': { penalty: -8, desc: ['GURPS.hitLocationDescNeck'] },
+      'Limb Vein/Artery': { penalty: -5, desc: ['GURPS.hitLocationDescLimb'] },
       'Right Leg': { roll: '6-7', penalty: -2, skip: true },
       'Right Arm': { roll: '8', penalty: -2, skip: true },
       'Right Arm, holding shield': { penalty: -4, skip: true },
@@ -53,8 +59,8 @@ export class HitLocation {
       Arm: { roll: '8 & 12', penalty: -2 }, // GCA
       Arms: { roll: '8 & 12', penalty: -2, skip: true }, // GCA
       Torso: { roll: '9-10', penalty: 0 },
-      Vitals: { roll: '-', penalty: -3, desc: 'IMP/PI[any] only' },
-      'Vitals, Heart': { penalty: -5, desc: 'IMP/PI[any] only' },
+      Vitals: { roll: '-', penalty: -3, desc: ['GURPS.hitLocationDescImp'] },
+      'Vitals, Heart': { penalty: -5, desc: ['GURPS.hitLocationDescImp'] },
       Groin: { roll: '11', penalty: -3 },
       'Left Arm': { roll: '12', penalty: -2, skip: true },
       'Left Arm, holding shield': { penalty: -4, skip: true },
@@ -66,8 +72,8 @@ export class HitLocation {
       Foot: { roll: '16', penalty: -4 },
       Feet: { roll: '16', penalty: -4, skip: true }, // GCA
       Neck: { roll: '17-18', penalty: -5 },
-      'Chinks in Torso': { penalty: -8, desc: 'Halves DR' },
-      'Chinks in Other': { penalty: -10, desc: 'Halves DR' },
+      'Chinks in Torso': { penalty: -8, desc: ['GURPS.hitLocationDescHalfDR'] },
+      'Chinks in Other': { penalty: -10, desc: ['GURPS.hitLocationDescHalfDR'] },
     }
 
     hitLocationAlias = {
