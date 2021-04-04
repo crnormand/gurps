@@ -1,7 +1,7 @@
 <form id='modttt' class="{{cssClass}} overflowy {{#if isTooltip}}modttt{{/if}}" autocomplete="off">
   <div id="modtooltip">
     <div id="modtooltiplefttop">
-      <div class="modttlabel">Current Effects on</div>
+      <div class="modttlabel">{{localize "GURPS.modifierCurrentEffects"}}</div>
       <div style="color:blue">{{actorname}}</div>
       {{#each currentmods}}
       <div>{{{gurpslink this true}}}</div>
@@ -9,7 +9,8 @@
     </div>
 
     <div id="modtooltipleftbottom">
-      <div class="modttlabel">Current Modifiers <span style="font-size:75%"><i>(click to remove)</i></span></div>
+      <div class="modttlabel">{{localize "GURPS.modifierCurrentModifiers"}} <span style="font-size:75%"><i>({{localize
+            "GURPS.clickToRemove"}})</i></span></div>
       <div>&nbsp;</div>
       {{#each stack.modifierList}}
       <div class="removemod" data-index="{{@index}}" {{#if this.plus}}style="color: green;" {{else}}style="color: red;"
@@ -20,21 +21,21 @@
     </div>
 
     <div id="modtooltipcentertop">
-      <div class="modttlabel">Melee Attack:</div>
+      <div class="modttlabel">{{localize "GURPS.meleeAttack"}}</div>
       {{#each meleemods}}
       <div>{{{gurpslink this true}}}</div>
       {{/each}}
     </div>
 
     <div id="modtooltipleftcenter">
-      <div {{#if cansend}}style="display: none;" {{else}}style="display: block" {{/if}}>Click on modifiers above and to
-        the right to add to your next roll.<br><br>
-        They will appear in the Current Modifiers list below.<br><br>
-        <small><i>Move the mouse off of the window to close it.</i></small>
+      <div style='display: {{#if cansend}}none;{{else}}block;{{/if}}'>
+        {{localize "GURPS.modifierClickToAdd"}}<br><br>
+        {{localize "GURPS.modifierAppearBelow"}}<br><br>
+        <small><i>{{localize "GURPS.modifierMouseOff"}}</i></small>
       </div>
 
       <div style="background-color:gold; align-content: end; display: {{#if cansend}}block;{{else}}none;{{/if}}">
-        <div class="modttlabel">Send your Modifier Bucket to:</div>
+        <div class="modttlabel">{{localize "GURPS.modifierSendTo"}}</div>
         <div style="position: relative; text-align: center; display: flex; justify-content: center; flex-wrap: wrap; ">
           {{#each users}}
           <button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
@@ -45,34 +46,34 @@
     </div>
 
     <div id="modtooltipcentercenter">
-      <div class="modttlabel">Ranged:</div>
+      <div class="modttlabel">{{localize "GURPS.ranged"}}</div>
       {{#each rangedmods}}
       <div>{{{gurpslink this true}}}</div>
       {{/each}}
     </div>
 
     <div id="modtooltiprighttop">
-      <div class="modttlabel">Defense:</div>
+      <div class="modttlabel">{{localize "GURPS.defense"}}</div>
       {{#each defensemods}}
       <div>{{{gurpslink this true}}}</div>
       {{/each}}
     </div>
 
     <div id="modtooltipcenterbottom">
-      <div class="modttlabel">Other Modifiers</div>
+      <div class="modttlabel">{{localize "GURPS.modifierOthers"}}</div>
       <div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap; ">
         {{#each othermods}}
         <div style="display:inline-block;text-align: center;width: fit-content;margin:2px">{{{gurpslink this true}}}
         </div>
         {{/each}}
       </div>
-      <div class="modttlabel">Or you can type in a modifier:</div>
+      <div class="modttlabel">{{localize "GURPS.modifierUserEntered"}}:</div>
       <input type="text" id="modmanualentry"><br>
 
     </div>
 
     <div id="modtooltiprightbottom">
-      <div class="modttlabel">Commonly used Modifiers</div>
+      <div class="modttlabel">{{localize "GURPS.modifierCommon"}}</div>
 
       <div style="font-size:60%">
 
