@@ -346,7 +346,7 @@ export class ModifierBucketEditor extends Application {
     data.lightingmods = ModifierLiterals.LightingModifiers
     data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
     data.rofmods = ModifierLiterals.RateOfFireModifiers
-    data.statusmods = makeSelect(StatusModifiers)
+    data.statusmods = makeSelect(ModifierLiterals.StatusModifiers)
     data.covermods = makeSelect(ModifierLiterals.CoverPostureModifiers)
     data.sizemods = makeSelect(ModifierLiterals.SizeModifiers)
     data.hitlocationmods = ModifierLiterals.HitlocationModifiers
@@ -491,35 +491,46 @@ export class ModifierBucketEditor extends Application {
   }
 }
 
-const StatusModifiers = [
-  'Status & Afflictions',
-  '*Status',
-  '-1 to IQ/DX checks (Shock 1)',
-  '-2 to IQ/DX checks (Shock 2)',
-  '-3 to IQ/DX checks (Shock 3)',
-  '-4 to IQ/DX checks (Shock 4)',
-  '-4 to active defenses (Stunned)',
-  '*Afflictions',
-  '-3 to DX checks (Coughing)',
-  '-1 to IQ checks (Coughing)',
-  '-2 to IQ/DX/CR rolls (Drowsy)',
-  '-2 to IQ/DX checks (Drunk)',
-  '-4 to CR rolls (Drunk)',
-  '-1 to IQ/DX checks (Tipsy)',
-  '-2 to CR rolls (Tipsy)',
-  '-3 to IQ/DX/CR rolls (Euphoria)',
-  '-2 to All attributes (Nauseated)',
-  '-1 to active defense (Nauseated)',
-  '-2 to IQ/DX/CR rolls (Moderate Pain)',
-  '-4 to IQ/DX/CR rolls (Severe Pain)',
-  '-6 to IQ/DX/CR rolls (Terrible Pain)',
-  '-1 to IQ/DX/CR rolls (Moderate Pain /w HPT)',
-  '-2 to IQ/DX/CR rolls (Severe Pain /w HPT)',
-  '-3 to IQ/DX/CR rolls (Terrible Pain /w HPT)',
-  '-5 to IQ/DX/PER checks (Retching)',
-]
-
+/**
+ * These constants were moved to an object literal to allow for delayed instantiation.
+ * This allows us to i18n the values.
+ */
 const ModifierLiterals = {
+  _statusModifiers: null,
+
+  get StatusModifiers() {
+    if (this._statusModifiers === null) {
+      this._statusModifiers = [
+        game.i18n.localize('GURPS.modifierStatusAffliction'),
+        '*' + game.i18n.localize('GURPS.modifierStatus'),
+        game.i18n.localize('GURPS.modifierStatusShock1'),
+        game.i18n.localize('GURPS.modifierStatusShock2'),
+        game.i18n.localize('GURPS.modifierStatusShock3'),
+        game.i18n.localize('GURPS.modifierStatusShock4'),
+        game.i18n.localize('GURPS.modifierStatusStunned'),
+        '*' + game.i18n.localize('GURPS.modifierAffliction'),
+        game.i18n.localize('GURPS.modifierAfflictionCough'),
+        game.i18n.localize('GURPS.modifierAfflictionCoughIQ'),
+        game.i18n.localize('GURPS.modifierAfflictionDrowsy'),
+        game.i18n.localize('GURPS.modifierAfflictionDrunk'),
+        game.i18n.localize('GURPS.modifierAfflictionDrunkCR'),
+        game.i18n.localize('GURPS.modifierAfflictionTipsy'),
+        game.i18n.localize('GURPS.modifierAfflictionTipsyCR'),
+        game.i18n.localize('GURPS.modifierAfflictionEuphoria'),
+        game.i18n.localize('GURPS.modifierAfflictionNausea'),
+        game.i18n.localize('GURPS.modifierAfflictionNauseaDef'),
+        game.i18n.localize('GURPS.modifierAfflictionModerate'),
+        game.i18n.localize('GURPS.modifierAfflictionModerateHPT'),
+        game.i18n.localize('GURPS.modifierAfflictionSevere'),
+        game.i18n.localize('GURPS.modifierAfflictionSevereHPT'),
+        game.i18n.localize('GURPS.modifierAfflictionTerrible'),
+        game.i18n.localize('GURPS.modifierAfflictionTerribleHPT'),
+        game.i18n.localize('GURPS.modifierAfflictionRetch'),
+      ]
+    }
+    return this._statusModifiers
+  },
+
   get CoverPostureModifiers() {
     return [
       game.i18n.localize('GURPS.modifierCoverPosture'),
