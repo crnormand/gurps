@@ -40,3 +40,1404 @@
   color: grey;
   font-size: 80%;
 }
+
+/* ========================= */
+/* Modifier Bucket           */
+/* ========================= */
+#modtooltip {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 2fr 4fr;
+  gap: 5px;
+  justify-items: stretch;
+  justify-content: stretch;
+  align-items: stretch;
+  text-align: left;
+  background: url(/ui/parchment.jpg) repeat;
+}
+
+#modtooltipbucket {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 4fr 2fr 4fr;
+}
+
+#modtooltiplefttop {
+  grid-row: 1;
+
+  display: grid;
+  justify-self: stretch;
+  justify-content: stretch;
+  align-content: start;
+  border: 5px;
+  margin: 5px;
+  color: black;
+  background-color: white;
+  row-gap: 3px;
+  padding: 5px;
+}
+
+#modtooltipleftcenter {
+  grid-row: 2;
+
+  display: grid;
+  justify-self: stretch;
+  justify-content: stretch;
+  align-content: start;
+  border: 5px;
+  margin: 5px;
+  color: yellow;
+  background-color: rgb(64, 64, 64);
+  padding: 5px;
+}
+
+#modtooltipleftbottom {
+  grid-row: 3;
+
+  display: grid;
+  justify-self: stretch;
+  justify-content: stretch;
+  align-content: start;
+  border: 5px solid green;
+  margin: 5px;
+  color: black;
+  background-color: white;
+  row-gap: 2px;
+  padding: 5px;
+}
+
+#modtooltipcenter {
+  grid-column: 2;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  align-content: start;
+  border: 5px;
+  padding: 0 5px;
+}
+
+#modtooltipright > div > *,
+#modtooltipcenter > div > * {
+  margin-top: 5px;
+}
+
+#modtooltipright {
+  grid-column: 3;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  align-content: start;
+  border: 5px;
+  padding: 0 5px;
+}
+
+.modtooltipgroup {
+  border: 5px;
+  margin-bottom: 5px;
+}
+
+.modtooltipgroup > * {
+  padding-left: 10px;
+}
+
+.removemod {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.removemod:hover {
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 1px 1px grey;
+  background-color: yellow;
+}
+
+.gmbutton {
+  display: inline-block;
+  text-align: center;
+  font-size: 90%;
+  padding: 2 px;
+  width: fit-content;
+}
+
+.modttlabel {
+  margin: unset;
+  font-size: 120%;
+  color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.1);
+  text-shadow: 1px 1px rgba(255, 255, 255, 0.5);
+  text-indent: 5px;
+  margin-top: 0;
+}
+
+.modttt {
+  text-align: center;
+  border-radius: 10px;
+  width: 900px;
+  height: 700px;
+  position: absolute;
+  /* padding: 5px 10px 5px 10px; */
+  z-index: 100;
+}
+
+.modttt::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -300px;
+  border-width: 37px 300px;
+  border-style: solid;
+  border-color: grey transparent transparent transparent;
+  pointer-events: none;
+}
+
+.modtooltip .collapsible-wrapper {
+  margin-top: 3px;
+}
+
+.modtooltip .collapsible-wrapper > input {
+  display: none;
+}
+
+.modtooltip .collapsible-wrapper .label-toggle,
+.modtooltip .collapsible-wrapper > label {
+  -webkit-appearance: menulist-button;
+  border: 1px solid rgb(122, 121, 113);
+  padding: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 240, 0.8);
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
+.modtooltip .collapsible-wrapper > label:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f078';
+  float: right;
+}
+
+.modtooltip .collapsible-wrapper > input:checked + label {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.modtooltip .collapsible-wrapper > input:checked + label:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f077';
+  float: right;
+}
+
+.modtooltip .collapsible-wrapper .collapsible-content {
+  /* border: 1px solid rgb(122, 121, 113); */
+  border-top: none;
+  background: rgba(0, 0, 0, 0.01);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  font-size: 90%;
+}
+
+.modtooltip .collapsible-wrapper .content-inner {
+  padding: 5px 8px;
+  overflow-y: auto;
+}
+
+.modtooltip .collapsible-wrapper .content-inner .selectable {
+  min-height: 1.2em;
+  padding-left: 1.2rem;
+  text-indent: -0.7rem;
+}
+
+.modtooltip .collapsible-wrapper .content-inner .selectable:hover {
+  text-shadow: 0 0 10px red;
+}
+
+.modtooltip .collapsible-wrapper .content-inner .subtitle {
+  color: rgb(64, 64, 64);
+  padding-left: 0.5rem;
+  font-weight: 500;
+}
+
+/* =================================================== */
+/* Copy of glink and gurpslink from simple.css         */
+/* =================================================== */
+
+.modtooltip .glinkmodplus,
+.modtooltip .glinkmodminus,
+.modtooltip .gurpslink {
+  background-color: unset !important;
+  padding: 1px 2px;
+  border: 1px solid rgb(122, 121, 113);
+  border-radius: 3px;
+  margin: 0;
+}
+
+.modtooltip .glinkmodplus:hover,
+.modtooltip .glinkmodminus:hover,
+.modtooltip .gurpslink:hover {
+  cursor: pointer;
+  text-shadow: none;
+  font-weight: unset;
+  background-color: rgba(255, 255, 240, 0.8) !important;
+  padding: 1px 2px;
+  border-radius: 3px;
+  margin: 0;
+}
+
+.modtooltip .glinkmodplus:active,
+.modtooltip .glinkmodminus:active,
+.modtooltip .gurpslink:active {
+  border: none !important;
+  background-color: rgba(255, 255, 240, 0.6) !important;
+}
+
+.modtooltip .glinkmodplus {
+  color: darkgreen;
+}
+
+.modtooltip .glinkmodminus {
+  color: darkred;
+}
+
+.modtooltip .gurpslink {
+  color: slategrey;
+}
+
+/* ========================= */
+/* GURPS Applications        */
+/* ========================= */
+/* GURPS App CSS */
+.gurps-app {
+  justify-items: center;
+}
+
+/* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
+.gurps-meta-group {
+  align-items: center;
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #999;
+}
+
+/* using h3 elements as a row label -- remove margin */
+.gurps-app h3 {
+  margin-bottom: 0;
+}
+
+/* prefer center text in input fields */
+.gurps-app input.digits-only,
+.gurps-app input.decimal-digits-only {
+  text-align: center;
+}
+
+/* remove this item from display  */
+.gurps-chat-message .invisible,
+.gurps-app .invisible {
+  display: none;
+}
+
+/* special override, 'cause I can't get the space any other way*/
+#apply-damage-advanced {
+  margin-top: 1em;
+}
+
+/* a group is a section of a form with a header */
+.gurps-group {
+  display: flex;
+  flex-direction: column;
+  border: solid black 1px;
+  padding: 0.5em;
+  padding-top: 0;
+  text-align: left;
+  vertical-align: middle;
+  justify-content: start;
+}
+
+.gurps-space-between {
+  height: 100%;
+  justify-content: space-between;
+}
+
+.gurps-group header {
+  font-weight: bold;
+}
+
+.gurps-group .pdflink {
+  font-size: smaller;
+}
+
+.gurps-group h4 {
+  background-color: black;
+  color: lightgrey;
+  margin-bottom: 0.5em;
+  font-size: larger;
+  margin-left: -0.5em;
+  margin-right: -0.5em;
+  padding-left: 0.5em;
+  margin-top: 0.5em;
+  text-transform: uppercase;
+}
+
+.gurps-group h4:first-child {
+  margin-top: 0;
+}
+
+.gurps-group aside {
+  font-size: smaller;
+  font-style: italic;
+  margin-bottom: 0.5em;
+}
+
+.gurps-group h4 + aside {
+  margin-top: -0.5em;
+}
+
+.gurps-group .grid {
+  align-items: start;
+  justify-items: stretch;
+  margin: 0;
+}
+
+/* striped table row appearance */
+.gurps-group .shaded {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.gurps-2col {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto;
+  gap: 5px;
+  justify-items: stretch;
+  text-align: left;
+}
+
+/* grid with 3 colums; center is fixed */
+.gurps-3col {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-auto-rows: auto;
+  border: none;
+  justify-items: stretch;
+  text-align: left;
+}
+
+.grid-2col > *,
+.gurps-3col > * {
+  align-self: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: start;
+}
+
+/* striped table row appearance */
+.gurps-2col > *:nth-child(4n + 3),
+.gurps-2col > *:nth-child(4n + 4),
+.gurps-3col > *:nth-of-type(6n + 4),
+.gurps-3col > *:nth-of-type(6n + 5),
+.gurps-3col > *:nth-of-type(6n + 6) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* useful classes for showing a 'table' of checkboxes or radio buttons */
+.gurps-checkbox-col,
+.gurps-radio-col {
+  grid-template-columns: auto 1fr min-content;
+}
+
+.gurps-radio-col > *:nth-child(3n + 3) {
+  text-align: end;
+  padding-right: 0.5em;
+  flex-flow: nowrap;
+  justify-content: flex-end;
+}
+
+.gurps-radio-col > *:nth-child(3n + 2) {
+  text-align: center;
+}
+
+/* Apply Damage Dialog: Apply buttons panel */
+.gurps-group .apply-results > * {
+  margin-bottom: 0.2em;
+}
+
+.gurps-group .apply-results > *:last-child {
+  margin-bottom: 0;
+}
+
+.gurps-group .user-entered {
+  color: darkred;
+  font-style: italic;
+}
+
+/* Apply Damage Dialog: Results Table panel */
+.gurps-group .results-table {
+  justify-self: stretch;
+  width: 100%;
+  grid-template-columns: auto auto 1fr;
+  min-height: 130px;
+  font-size: 12px;
+}
+
+.gurps-group .results-table > div:nth-child(3n + 1) {
+  text-transform: uppercase;
+  font-size: smaller;
+}
+
+.gurps-group .results-table > div:nth-child(3n + 1),
+.gurps-group .results-table > div:nth-child(3n + 2) {
+  text-align: end;
+  padding-right: 0.5em;
+}
+
+.gurps-group .results-table > div:nth-child(3n + 2) {
+  font-weight: bolder;
+  font-size: small;
+}
+
+.gurps-group .results-table > div:nth-child(3n + 3) {
+  text-align: start;
+  justify-content: center;
+  padding-left: 1em;
+  text-indent: -1em;
+  font-size: smaller;
+}
+
+.with-button {
+  position: relative;
+}
+
+.with-button input {
+  padding-right: 1.5em;
+}
+
+.with-button button {
+  position: absolute;
+  right: 0.35em;
+  line-height: 28px;
+  z-index: 2;
+  color: dimgrey;
+  border: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0);
+}
+
+ul#result-effects {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul#result-effects li {
+  margin: 0 0 6px 0;
+}
+
+.with-button button,
+[name='result-effect'] button {
+  width: fit-content;
+  height: fit-content;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+[name='result-effect'] button {
+  position: relative;
+  background-color: rgba(255, 255, 240, 0.8);
+  border: 1px solid #b5b3a4;
+  border-radius: 3px;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  padding-left: 5.5px;
+  padding-right: 5.5px;
+  margin-right: 4px;
+}
+
+[name='result-effect'] .with-send-button {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
+[name='result-effect'] > div {
+  display: flex;
+  align-items: center;
+}
+
+[name='result-effect'] > div div:first-child {
+  flex-grow: 1;
+}
+
+[name='result-effect'] aside {
+  font-style: normal;
+  margin: 0;
+}
+
+#wound-modifier-table aside {
+  text-align: end;
+  margin-bottom: 0;
+}
+
+#wound-modifier-table .hitlocation {
+  color: darkred;
+}
+
+#wound-modifier-table .hitlocation:after {
+  content: '*';
+  color: black;
+}
+
+#wound-modifier-table .injury-tolerance {
+  color: darkviolet;
+}
+
+#wound-modifier-table .injury-tolerance:after {
+  content: '†';
+  color: black;
+}
+
+.chat-message .gurps-group {
+  font-size: smaller;
+  border: none;
+  padding: 0;
+}
+
+.chat-message .results-table {
+  gap: 0;
+  min-height: fit-content;
+  margin: 0;
+}
+
+.offscreen-only {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* remove the top margin and indent */
+.gurps-group .continuation {
+  margin-top: 0;
+  margin-left: 2em;
+}
+
+/* EXAMPLE ON HOW TO CREATE A COLLAPSIBLE PANEL IN HTML/CSS ONLY
+    <div class='collapsible-wrapper'>
+        <input id='collapsible' class='toggle offscreen-only' type='checkbox' checked>
+        <label for='collapsible' class='label-toggle'>Show the math</label>
+        <div class='collapsible-content'>
+            <div class='content-inner'>
+                {{{resultsTable}}}
+            </div>
+        </div>
+    </div> 
+  */
+.collapsible-wrapper .label-toggle {
+  display: block;
+  cursor: pointer;
+  text-align: left;
+}
+
+.collapsible-wrapper .collapsible-content {
+  max-height: 0px;
+  overflow: hidden;
+  /* transition: all 0.25s ease-in-out; */
+}
+
+.toggle:checked + .label-toggle + .collapsible-content {
+  max-height: 130vh;
+}
+
+.damage-message .label-toggle {
+  font-size: small;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
+.damage-message .label-toggle:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f078';
+  float: right;
+}
+
+.damage-message .toggle:checked + .label-toggle:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f077';
+  float: right;
+}
+
+.gurps-chat-message * {
+  /* font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /* TODO removed because it messed up Font Awesome rendering */
+}
+
+.gurps-chat-message .label-toggle {
+  font-size: x-small;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  padding: 0.25em;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin-top: 4px;
+  color: lightgray;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.gurps-chat-message .label-toggle:hover {
+  background-color: rgb(0, 0, 0, 0.7);
+}
+
+.gurps-chat-message .label-toggle:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f078';
+  color: lightgray;
+  float: right;
+}
+
+.gurps-chat-message .toggle:checked + .label-toggle:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f077';
+  color: lightgray;
+  float: right;
+}
+
+.gurps-group .options-drawer {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-auto-rows: auto;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.gurps-group .collapsible-content {
+  grid-column: 1 / span 2;
+  background: rgba(0, 0, 0, 0.1);
+  margin-bottom: 0;
+  padding-right: 4px;
+}
+
+.gurps-app .collapsible-wrapper .collapsible-content .content-inner > *:nth-child(even),
+.gurps-group .collapsible-content > *:nth-child(even) {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.gurps-group .options-drawer label {
+  padding-top: 2px;
+}
+
+.gurps-group .options-drawer label .pdflink {
+  float: right;
+  padding-top: 2px;
+}
+
+.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
+.gurps-app .collapsible-wrapper .collapsible-content {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
+    0px 1px 3px rgba(0, 0, 0, 0.3) inset;
+  /* padding-bottom: 2px;
+  margin-bottom: 5px; */
+}
+
+.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
+  max-height: 130vh;
+}
+
+.gurps-app button {
+  text-transform: uppercase;
+}
+
+.gurps-app button.with-icon > i > span {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  font-weight: 400;
+}
+
+.gurps-app * {
+  font-family: Roboto, sans-serif;
+}
+
+.gurps-app .fa,
+.gurps-app .fab,
+.gurps-app .fad,
+.gurps-app .fal,
+.gurps-app .far,
+.gurps-app .fas {
+  font-family: 'Font Awesome 5 Free' !important;
+}
+
+.gurps-app #blunt-trauma-field {
+  margin-left: 6px;
+}
+
+.gurps .ranged_options {
+  display: flex;
+  flex-wrap: no-wrap;
+}
+
+.dragging {
+  outline: 5px auto -webkit-focus-ring-color;
+  box-shadow: 0 0 2px 3px #78aeda, 0 0 2px #78aeda inset;
+  border-radius: 3px;
+  background-color: rgba(240, 128, 128, 0.6);
+}
+
+#combat-sheet .resource-spinner button {
+  height: 21px;
+}
+
+#combat-sheet .resource-spinner input {
+  height: 21px;
+  font-size: 80%;
+}
+
+#combat-sheet .tracked-resource {
+  border: 1px solid black;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted grey;
+  /* If you want dots under the hoverable text */
+  /* text-transform: uppercase; */
+  /* color: darkgrey */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  min-width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: medium;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  transition-property: visibility;
+  transition-delay: 0.5s;
+  opacity: 1;
+}
+
+.fieldblock3 .tooltip-wrapper {
+  grid-column: 1 / span 2;
+}
+
+.tooltip .fieldblock .field {
+  border: none !important;
+}
+
+.field select {
+  height: min-content;
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: 90%;
+  cursor: inherit;
+  line-height: inherit;
+}
+
+.field textarea {
+  font-family: inherit;
+  font-size: 80%;
+  border-radius: 0;
+  border: 1px solid lightgrey;
+  padding: 3px;
+  resize: none;
+  /* background-color: transparent; */
+  margin-top: 3px;
+}
+
+.field textarea:read-only {
+  background-color: transparent;
+}
+
+.label.textarea {
+  align-self: start;
+  margin-top: 6px;
+}
+
+/* Resource Trackers and Editors */
+
+#trackers {
+  grid-area: trackers;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0fr auto 0fr;
+  grid-gap: 0.05in;
+}
+
+#trackers > * {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 0.05in;
+}
+
+#trackers > *:first-child {
+  grid-template: 'combat-hit combat-fat';
+}
+
+#trackers > *:last-child {
+  grid-template-rows: 0fr 1fr 1fr;
+  grid-gap: 0;
+}
+
+#resources {
+  grid-template-rows: 0fr 0fr;
+}
+
+#resources .tracked-resource .header:hover {
+  outline: none;
+  box-shadow: 0 0 5px red;
+}
+
+#resources > *:first-child {
+  border-bottom: 1px solid white;
+}
+
+.tracked-resource:nth-child(even) .header {
+  border-right: 1px solid white;
+}
+
+.tracked-resource:nth-child(odd) .header {
+  border-left: none;
+}
+
+.resource-editor,
+.tracked-resource {
+  display: flex;
+  flex-flow: column nowrap;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.tracked-resource:nth-child(odd) {
+  border-right: 1px solid black;
+}
+
+.resource-editor > *,
+.tracked-resource > * {
+  margin: 0 0.25rem 0.25rem 0.25rem;
+}
+
+.resource-editor .header,
+.tracked-resource .header {
+  color: white;
+  background-color: black;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px solid black;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.tracked-resource .header .edit {
+  float: right;
+  margin-right: 0.25em;
+}
+
+.resource-editor .name,
+.tracked-resource .spinner {
+  display: flex;
+  flex-flow: row nowrap;
+  line-height: unset;
+  align-items: center;
+}
+
+.tracked-resource button i {
+  font-size: 67%;
+  margin: 0;
+  padding-bottom: 9px;
+}
+
+.resource-editor input,
+.tracked-resource .spinner input {
+  height: 1.2rem;
+  min-width: 2rem;
+  border: 1px solid grey;
+  border-radius: 0;
+  font-size: inherit;
+  text-align: center;
+}
+
+.tracked-resource .spinner > button:first-of-type {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.tracked-resource .spinner > button:nth-of-type(2) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
+}
+
+.tracked-resource .tooltip-wrapper {
+  margin-bottom: 0.15rem;
+}
+
+.tracked-resource .spinner > button:last-of-type:not(.no-gap) {
+  margin-left: 0.15rem;
+}
+
+.tracked-resource .condition-block {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: stretch;
+}
+
+#combat-trackers .tracked-resource .condition-block {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: stretch;
+  align-items: baseline;
+}
+
+.tracked-resource .condition-block .max {
+  font-size: 80%;
+  text-align: end;
+  margin-left: 0.15rem;
+}
+
+.tracked-resource .condition-block .condition {
+  text-align: center;
+  width: 100%;
+}
+
+.tracked-resource .condition.normal {
+  background-color: rgba(144, 238, 144, 0.6);
+}
+
+.tracked-resource .condition.below {
+  background-color: rgba(240, 128, 128, 0.6);
+}
+
+.tracked-resource .condition.above {
+  background-color: rgba(238, 130, 238, 0.6);
+}
+
+.resource-editor ::placeholder,
+.tracked-resource ::placeholder {
+  color: grey;
+}
+
+.resource-editor .name {
+  font-size: 120%;
+}
+
+.resource-editor .inputs {
+  display: grid;
+  grid-template-columns: 4.5rem auto;
+  grid-template-rows: auto;
+  grid-gap: 0.15rem;
+  justify-content: center;
+  align-items: baseline;
+  margin: 0.5rem 1rem 1rem;
+}
+
+.resource-editor .inputsv2 {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto;
+  grid-gap: 0.15rem;
+}
+
+.resource-editor .inputs .label {
+  font-size: 80%;
+}
+
+.resource-editor button i {
+  margin-right: 0.15rem;
+}
+
+.resource-editor button {
+  font-size: inherit;
+  padding: 0 0.15rem;
+}
+
+.resource-editor .section {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.resource-editor .button.icon {
+  color: #4b4a44;
+  padding: 0 20px 0 10px;
+}
+
+.resource-editor .threshold.table {
+  display: grid;
+  grid-template-columns: min-content min-content min-content 1fr auto min-content;
+  gap: 0.15rem;
+  justify-items: center;
+  max-height: max-content;
+}
+
+.resource-editor .tracker-manager.table {
+  display: grid;
+  grid-template-columns: 3fr 1fr min-content 4fr min-content;
+  gap: 0.15rem;
+  justify-items: center;
+}
+
+.resource-editor .table .span3 {
+  grid-column: 1 / 4;
+  justify-content: center;
+}
+
+.gurps-group .vertical-center,
+.resource-editor .vertical-center {
+  display: flex;
+  align-items: center;
+}
+
+.resource-editor input:read-only {
+  color: rgb(64, 64, 64);
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+}
+
+.resource-editor .clickable:hover {
+  cursor: pointer;
+  box-shadow: 0 0 5px red;
+}
+
+.tracked-resource .spinner button {
+  line-height: unset;
+  margin: 0;
+  height: 1.2rem;
+  flex: 0;
+  border: 1px solid grey;
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
+.tracked-resource.inactive .condition-block > * {
+  color: grey;
+}
+
+.tracked-resource.inactive .header {
+  color: whitesmoke;
+  background-color: grey;
+}
+
+.tracked-resource .fieldblock3 {
+  grid-template-columns: 0fr 1fr 1fr;
+}
+
+.gentle-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1ch;
+}
+
+.condition-block .fieldblock3 {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.tracked-resource .name {
+  text-align: center !important;
+}
+
+#combat-sheet .tracked-resource .spinner button {
+  padding: 0 2px 2px 2px;
+}
+
+#combat-sheet .fieldblock .field {
+  text-align: right;
+}
+
+.spinner details {
+  position: relative;
+}
+
+.spinner details summary input {
+  width: 100%;
+}
+
+.spinner details .popup {
+  display: flex;
+  flex-flow: row nowrap;
+  position: absolute;
+  z-index: 10;
+  margin-left: -150%;
+  font-size: 80%;
+  min-inline-size: max-content;
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  border: none;
+  border-radius: 3px;
+}
+
+.spinner .button-ribbon button {
+  margin: 0;
+  font-size: inherit;
+}
+
+.spinner .button-ribbon button:first-of-type {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.spinner .button-ribbon button:last-of-type {
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.spinner .button-ribbon button:not(:first-of-type):not(:last-of-type) {
+  border-radius: 0;
+  border-left: none;
+}
+
+.spinner .button-ribbon button:hover {
+  box-shadow: 0 0 5px red;
+}
+
+.spinner .button-ribbon button.restore {
+  color: darkred;
+  font-weight: bold;
+}
+
+.tracked-resource .spinner details {
+  min-width: 2rem;
+}
+
+.tracked-resource .spinner summary {
+  line-height: 1.2;
+  list-style: none;
+}
+
+.tracked-resource .spinner summary::-webkit-details-marker {
+  display: none;
+}
+
+.equipmentbutton {
+  text-align: center;
+  line-height: 0.5;
+  font-size: inherit;
+  margin: 0;
+  height: 0.75rem;
+  min-width: 0.75rem;
+  flex: 0;
+  /*  border: 1px solid grey;  */
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  padding: 0px 0px 0px 0px;
+}
+
+.equipmentbutton.bold {
+  font-weight: bold;
+}
+
+.equipmentlist .qty {
+  display: flex;
+  flex-flow: row nowrap;
+  line-height: unset;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.equipped {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination {
+  display: inline-block;
+}
+
+.pagination div {
+  color: black;
+  float: left;
+  padding: 4px 8px;
+  text-decoration: none;
+  border: 1px solid #7a7971;
+  border-right: none;
+}
+
+.pagination div.active {
+  background-color: #686868;
+  color: white;
+}
+
+.pagination div:hover:not(.active) {
+  background-color: rgba(104, 104, 104, 0.3);
+}
+
+.pagination div:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background-color: rgba(255, 255, 240, 0.8);
+}
+
+.pagination div:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-right: 1px solid #7a7971;
+  background-color: rgba(255, 255, 240, 0.8);
+}
+
+.navigate-bar {
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 5px;
+  margin-left: -5px;
+  margin-right: -5px;
+  position: sticky;
+  left: 0;
+  bottom: 0;
+  box-shadow: 0px 5px 5px black;
+  display: flex;
+  padding-left: 5px;
+  align-items: center;
+  justify-content: center;
+}
+
+.navigation-link {
+  border-radius: 3px;
+  background-color: black;
+  color: white;
+  margin-right: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.navigation-link:hover {
+  outline: none;
+  box-shadow: 0 0 5px red;
+}
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  /* display: inline-block; */
+}
+
+/* Dropdown Content */
+.dropdown-content {
+  display: block;
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  min-width: max-content;
+  text-align: left;
+  background-color: #fffff0;
+  box-shadow: 0px 5px 8px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Links inside the dropdown */
+.dropdown-content div {
+  color: black;
+  padding: 1px 6px;
+  line-height: 28px;
+  text-decoration: none;
+  text-transform: uppercase;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content div:hover {
+  background-color: #ccccc0;
+}
+
+.split-button {
+  border-radius: 3px 0 0 3px;
+  border: 1px solid #b5b3a4;
+  border-right: 2px solid rgba(0, 0, 0, 0.25);
+  margin-right: 0;
+  background: rgba(255, 255, 240, 0.5);
+}
+
+.dropdown .split-button {
+  border-radius: 0 3px 3px 0;
+  border: 1px solid #b5b3a4;
+  border-left: 2px solid rgba(255, 255, 240, 0.5);
+  margin-left: 0;
+}
+
+.buttongrey {
+  color: grey;
+}
+
+.buttongrey:hover {
+  box-shadow: 0 0 5px red;
+}
+
+.buttonpulsatingred {
+  animation: pulsered 1.5s infinite;
+}
+
+@keyframes pulsered {
+  0% {
+    color: black;
+  }
+  60% {
+    color: rgb(255, 64, 64);
+  }
+  100% {
+    color: black;
+  }
+}
+
+.buttonpulsatingred:hover {
+  box-shadow: 0 0 5px red;
+}
+
+.shaded-group > div:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.gurps-sparse-list {
+  line-height: 1.2rem;
+}

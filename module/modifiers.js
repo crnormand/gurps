@@ -309,6 +309,7 @@ export class ModifierBucketEditor extends Application {
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
+      classes: ['gurps-app', 'modtooltip'],
       width: 900,
       height: 800,
       resizeable: false,
@@ -346,9 +347,12 @@ export class ModifierBucketEditor extends Application {
     data.lightingmods = ModifierLiterals.LightingModifiers
     data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
     data.rofmods = ModifierLiterals.RateOfFireModifiers
-    data.statusmods = makeSelect(ModifierLiterals.StatusModifiers)
-    data.covermods = makeSelect(ModifierLiterals.CoverPostureModifiers)
-    data.sizemods = makeSelect(ModifierLiterals.SizeModifiers)
+    // data.statusmods = makeSelect(ModifierLiterals.StatusModifiers)
+    data.statusmods = ModifierLiterals.StatusModifiers
+    // data.covermods = makeSelect(ModifierLiterals.CoverPostureModifiers)
+    data.covermods = ModifierLiterals.CoverPostureModifiers
+    // data.sizemods = makeSelect(ModifierLiterals.SizeModifiers)
+    data.sizemods = ModifierLiterals.SizeModifiers
     data.hitlocationmods = ModifierLiterals.HitlocationModifiers
     data.currentmods = []
 
@@ -411,15 +415,40 @@ export class ModifierBucketEditor extends Application {
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))
-    html.find('#modtaskdifficulty').change(this._onTaskDifficulty.bind(this))
-    html.find('#modlighting').change(this._onLighting.bind(this))
-    html.find('#modspeedrange').change(this._onList.bind(this))
-    html.find('#modeqtquality').change(this._onList.bind(this))
-    html.find('#modrof').change(this._onList.bind(this))
-    html.find('#modstatus').change(this._onList.bind(this))
-    html.find('#modcover').change(this._onList.bind(this))
-    html.find('#modsize').change(this._onList.bind(this))
-    html.find('#modhitlocations').change(this._onList.bind(this))
+    // html.find('#modtaskdifficulty').change(this._onTaskDifficulty.bind(this))
+    // html.find('#modlighting').change(this._onLighting.bind(this))
+    // html.find('#modspeedrange').change(this._onList.bind(this))
+    // html.find('#modeqtquality').change(this._onList.bind(this))
+    // html.find('#modrof').change(this._onList.bind(this))
+    // html.find('#modstatus').change(this._onList.bind(this))
+    // html.find('#modcover').change(this._onList.bind(this))
+    // html.find('#modsize').change(this._onList.bind(this))
+    // html.find('#modhitlocations').change(this._onList.bind(this))
+
+    html.find('.collapsible-content .content-inner .selectable').click(this._onSelect.bind(this))
+    html.find('.collapsible-wrapper > input').click(this._onClickClose.bind(this))
+  }
+
+  _onClickClose(ev) {
+    let name = ev.currentTarget.id
+    if (name === this._currentlyShowing) {
+      ev.currentTarget.checked = false
+      this._currentlyShowing = null
+    } else {
+      this._currentlyShowing = name
+    }
+  }
+
+  /**
+   * A 'selectable' div in a collapsible was clicked.
+   * @param {*} ev
+   */
+  _onSelect(ev) {
+    // find the toggle input above this element and remove the checked property
+    let div = $(ev.currentTarget).parent().closest('.collapsible-content')
+    let toggle = div.siblings('input')
+    $(toggle).prop('checked', false)
+    this._onSimpleList(ev, '')
   }
 
   _onleave(ev) {
@@ -465,6 +494,7 @@ export class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let v = element.value
+    if (!v) v = element.textContent
     let i = v.indexOf(' ')
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
     this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
@@ -581,8 +611,6 @@ const ModifierLiterals = {
       game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +8', us: ' 50 yards/150 feet', metric: '50 meters' }),
       game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +9', us: ' 70 yards/210 feet', metric: '70 meters' }),
       game.i18n.format('GURPS.modifierSizeEntry', { SM: '+10', us: '100 yards/300 feet', metric: '100 meters' }),
-      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+11', us: '150 yards/450 feet', metric: '150 meters' }),
-      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+12', us: '200 yards/600 feet', metric: '200 meters' }),
     ]
   },
 
