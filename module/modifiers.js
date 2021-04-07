@@ -43,7 +43,6 @@ export class ModifierBucket extends Application {
 
     this.editor = new ModifierBucketEditor(this, {
       popOut: !this.isTooltip,
-      //height: this.isTooltip ? 835 : 800,
     })
 
     // whether the ModifierBucketEditor is visible
@@ -324,6 +323,8 @@ export class ModifierBucketEditor extends Application {
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
       width: 872,
       height: 749,
+      top: 400,
+      left: 390,
       resizeable: false,
       minimizable: false,
       popOut: false,

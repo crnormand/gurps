@@ -1,4 +1,4 @@
-<form id='modttt' class="{{cssClass}} overflowy" autocomplete="off">
+<form id='modttt' class="{{cssClass}} overflowy {{#if isTooltip}}modttt{{/if}}" autocomplete="off">
   <div class='modtooltip gurps-app'>
     <div id="modtooltip" class='gurps-meta-group'>
       <div id='modtooltipbucket'>
@@ -75,7 +75,8 @@
         <div class="gurps-group gurps-space-between gurps-sparse-list">
           <div>
             <h4>{{localize "GURPS.modifierCommon"}}</h4>
-            <div class='overflowy' style='max-height: 595px;'>
+            <div class='overflowy' {{#if isTooltip}} style='max-height: 535px;' {{else}} style='max-height: 595px;'
+              {{/if}}>
               {{collapsible-content 'speedrangemods' speedrangemods 'commonmods'}}
               {{collapsible-content 'hitlocationmods' hitlocationmods 'commonmods'}}
               {{collapsible-content 'modcover' covermods 'commonmods'}}
