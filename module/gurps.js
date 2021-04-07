@@ -495,9 +495,9 @@ GURPS.SJGProductMappings = {
 GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 
 function escapeUnicode(str) {
-    return str.replace(/[^\0-~]/g, function(ch) {
-        return "&#x" + (("0000" + ch.charCodeAt().toString(16).toUpperCase()).slice(-4)) + ";"
-    });
+  return str.replace(/[^\0-~]/g, function (ch) {
+    return '&#x' + ('0000' + ch.charCodeAt().toString(16).toUpperCase()).slice(-4) + ';'
+  })
 }
 GURPS.escapeUnicode = escapeUnicode
 
@@ -508,17 +508,17 @@ GURPS.escapeUnicode = escapeUnicode
  * @return {Promise.<String>}   A Promise which resolves to the loaded text data
  */
 function readTextFromFile(file) {
-  const reader = new FileReader();
+  const reader = new FileReader()
   return new Promise((resolve, reject) => {
     reader.onload = ev => {
-      resolve(reader.result);
-    };
+      resolve(reader.result)
+    }
     reader.onerror = ev => {
-      reader.abort();
-      reject();
-    };
-    reader.readAsBinaryString(file);
-  });
+      reader.abort()
+      reject()
+    }
+    reader.readAsBinaryString(file)
+  })
 }
 GURPS.readTextFromFile = readTextFromFile
 
@@ -815,7 +815,7 @@ async function performAction(action, actor, event, targets) {
         )
         return false
       }
-      thing = att.name  // get real name of attack
+      thing = att.name // get real name of attack
       let t = att.level
       if (!!t) {
         let a = t.trim().split(' ')
@@ -826,7 +826,7 @@ async function performAction(action, actor, event, targets) {
         else {
           a.shift()
           let m = a.join(' ')
-          if (!!m) ui.modifierbucket.addModifier(0, m)    //  Level may have "*Costs xFP"
+          if (!!m) ui.modifierbucket.addModifier(0, m) //  Level may have "*Costs xFP"
         }
       }
       formula = '3d6'
@@ -1427,14 +1427,7 @@ Hooks.once('init', async function () {
   SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
-  GURPS.ModifierBucket = new ModifierBucket({
-    popOut: false,
-    minimizable: false,
-    resizable: false,
-    id: 'ModifierBucket',
-    template: 'systems/gurps/templates/modifier-bucket.html',
-    classes: [],
-  })
+  GURPS.ModifierBucket = new ModifierBucket()
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
@@ -1534,12 +1527,13 @@ Hooks.once('ready', async function () {
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
     if (!data.otf) return
-    let cmd = "GURPS.executeOTF(`" + data.otf + "`)"    // Surround OTF in backticks... to allow single and double quotes in OtF
+    let cmd = 'GURPS.executeOTF(`' + data.otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
     let name = `OtF: ${data.otf}`
     if (!!data.actor) {
-      cmd = `GURPS.SetLastActor(game.actors.get('${data.actor}'))
+      cmd =
+        `GURPS.SetLastActor(game.actors.get('${data.actor}'))
 ` + cmd
-      name = game.actors.get(data.actor).name + " " + name
+      name = game.actors.get(data.actor).name + ' ' + name
     }
     let macro = await Macro.create({
       name: name,

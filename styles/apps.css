@@ -44,6 +44,62 @@
 /* ========================= */
 /* Modifier Bucket           */
 /* ========================= */
+.modifierbucket #modifierbucket {
+  border: 5px solid darkred;
+  position: fixed;
+  bottom: 10px;
+  left: 805px;
+  width: 70px;
+  height: 52px;
+  margin: 0px;
+  padding: 0px 2px;
+  cursor: pointer;
+  z-index: auto;
+  background: rgb(28, 32, 36);
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 3px;
+  align-items: center;
+  /* justify-content: space-between; */
+}
+
+.modifierbucket #current-actor {
+  position: fixed;
+  bottom: 60px;
+  left: 745px;
+  width: 190px;
+  height: 20px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modifierbucket #current-actor > span {
+  color: yellow;
+  background-color: black;
+}
+
+.modifierbucket #globalmodifier {
+  font-size: 20px;
+  text-align: center;
+  width: 55px;
+}
+
+.modifierbucket #trash {
+  color: lightgrey;
+}
+
+.modtooltip .plus,
+.modifierbucket .plus {
+  color: lightgreen;
+}
+
+.modtooltip .minus,
+.modifierbucket .minus {
+  color: orange;
+}
+
 #modtooltip {
   width: 100%;
   height: 100%;
@@ -61,6 +117,8 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 4fr 2fr 4fr;
+  gap: 3px;
+  height: 100%;
 }
 
 #modtooltiplefttop {
@@ -70,41 +128,56 @@
   justify-self: stretch;
   justify-content: stretch;
   align-content: start;
-  border: 5px;
-  margin: 5px;
   color: black;
-  background-color: white;
-  row-gap: 3px;
-  padding: 5px;
+  border-color: darkslategray;
+}
+
+#modtooltiplefttop .actorname {
+  font-size: 110%;
+}
+
+#modtooltipleftcenter h4,
+#modtooltiplefttop h4 {
+  background-color: darkslategray;
 }
 
 #modtooltipleftcenter {
   grid-row: 2;
 
-  display: grid;
+  display: flex;
+  flex-flow: column nowrap;
   justify-self: stretch;
-  justify-content: stretch;
-  align-content: start;
-  border: 5px;
-  margin: 5px;
-  color: yellow;
-  background-color: rgb(64, 64, 64);
-  padding: 5px;
+  justify-content: start;
+  color: black;
+  border-color: darkslategray;
+}
+
+#modtooltipleftcenter .everyone {
+  height: 100%;
+  display: inline-flex;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.button-row {
+  display: flex;
+  flex-flow: row wrap;
 }
 
 #modtooltipleftbottom {
   grid-row: 3;
 
-  display: grid;
-  justify-self: stretch;
-  justify-content: stretch;
-  align-content: start;
-  border: 5px solid green;
-  margin: 5px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
   color: black;
-  background-color: white;
-  row-gap: 2px;
-  padding: 5px;
+  border: 5px solid darkred;
+  border-radius: 5px;
+}
+
+#modtooltipleftbottom .shaded-group > h4 {
+  background-color: darkred;
 }
 
 #modtooltipcenter {
@@ -115,7 +188,6 @@
   justify-content: space-between;
   align-items: stretch;
   align-content: start;
-  border: 5px;
   padding: 0 5px;
 }
 
@@ -146,42 +218,59 @@
 }
 
 .removemod {
-  font-weight: bold;
   cursor: pointer;
 }
 
 .removemod:hover {
   font-weight: bold;
   cursor: pointer;
-  text-shadow: 1px 1px grey;
-  background-color: yellow;
+  text-shadow: 0 0 10px red;
+}
+
+.removemod:hover::after {
+  font-family: 'Font Awesome 5 Free';
+  content: '\f1f8';
+  display: inline-block;
+  padding-right: 3px;
+  vertical-align: middle;
+  font-weight: 900;
+  color: dimgrey;
 }
 
 .gmbutton {
   display: inline-block;
   text-align: center;
   font-size: 90%;
-  padding: 2 px;
+  padding: 3px;
   width: fit-content;
+  background: rgba(255, 255, 240, 0.8);
+  line-height: unset;
+  min-width: 60px;
 }
 
 .modttlabel {
-  margin: unset;
-  font-size: 120%;
-  color: rgba(0, 0, 0, 0.8);
-  background-color: rgba(0, 0, 0, 0.1);
-  text-shadow: 1px 1px rgba(255, 255, 255, 0.5);
-  text-indent: 5px;
-  margin-top: 0;
+  font-size: 20px;
+  text-align: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.modttlabel > div {
+  color: #f0f0e0;
+  background-color: rgb(28, 32, 36);
+  border: 0 solid rgb(28, 32, 36);
+  border-radius: 3px;
+  padding: 5px 0;
+  min-width: 55px;
 }
 
 .modttt {
   text-align: center;
   border-radius: 10px;
   width: 900px;
-  height: 700px;
   position: absolute;
-  /* padding: 5px 10px 5px 10px; */
   z-index: 100;
 }
 
@@ -237,9 +326,7 @@
 }
 
 .modtooltip .collapsible-wrapper .collapsible-content {
-  /* border: 1px solid rgb(122, 121, 113); */
   border-top: none;
-  /* background: rgba(0, 0, 0, 0.01); */
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   font-size: 90%;
@@ -265,15 +352,6 @@
   font-weight: bold;
   width: 100%;
 }
-
-/* .modtooltip .subtitle:before,
-.modtooltip .subtitle:after {
-  content: '\2501\2501';
-  display: inline-block;
-  vertical-align: middle;
-  font-weight: 900;
-  color: grey;
-} */
 
 /* =================================================== */
 /* Copy of glink and gurpslink from simple.css         */
@@ -303,14 +381,15 @@
 .modtooltip .glinkmodplus:active,
 .modtooltip .glinkmodminus:active,
 .modtooltip .gurpslink:active {
-  border: none !important;
   background-color: rgba(255, 255, 240, 0.6) !important;
 }
 
+.removemod.plus,
 .modtooltip .glinkmodplus {
   color: darkgreen;
 }
 
+.removemod.minus,
 .modtooltip .glinkmodminus {
   color: darkred;
 }
@@ -408,6 +487,7 @@
   margin-bottom: 0.5em;
 }
 
+.gurps-group .shaded-group h4 + aside,
 .gurps-group h4 + aside {
   margin-top: -0.5em;
 }
@@ -1451,7 +1531,7 @@ ul#result-effects li {
 }
 
 .gurps-sparse-list {
-  line-height: 1.3rem;
+  line-height: 1.2rem;
 }
 
 .modtooltip .modifier-row,

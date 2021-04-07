@@ -192,20 +192,6 @@
   z-index: 102;
 }
 
-.modifierbucket {
-  border: 5px solid rgb(255, 0, 0);
-  position: fixed;
-  bottom: 10px;
-  left: 805px;
-  width: 70px;
-  height: 52px;
-  background-color: rgb(200, 200, 180);
-  margin: 0px;
-  padding: 0px;
-  cursor: pointer;
-  z-index: auto;
-}
-
 .pdflink {
   text-shadow: none;
   color: blue;

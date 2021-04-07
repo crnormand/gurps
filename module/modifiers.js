@@ -2,6 +2,7 @@ import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
+import { DamageTables } from './damage/damage-tables.js'
 
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
@@ -42,6 +43,7 @@ export class ModifierBucket extends Application {
 
     this.editor = new ModifierBucketEditor(this, {
       popOut: !this.isTooltip,
+      //height: this.isTooltip ? 835 : 800,
     })
 
     // whether the ModifierBucketEditor is visible
@@ -58,9 +60,20 @@ export class ModifierBucket extends Application {
     }
   }
 
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      popOut: false,
+      minimizable: false,
+      resizable: false,
+      id: 'ModifierBucket',
+      template: 'systems/gurps/templates/modifier-bucket.html',
+    })
+  }
+
   getData(options) {
     const data = super.getData(options)
     data.stack = this.modifierStack
+    data.cssClass = 'modifierbucket'
     let ca = ''
     if (game.user?.isGM && !!GURPS.LastActor) {
       ca = GURPS.LastActor.displayname
@@ -309,9 +322,8 @@ export class ModifierBucketEditor extends Application {
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
-      classes: ['gurps-app', 'modtooltip'],
-      width: 900,
-      height: 800,
+      width: 872,
+      height: 749,
       resizeable: false,
       minimizable: false,
       popOut: false,
@@ -343,7 +355,7 @@ export class ModifierBucketEditor extends Application {
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
     data.users = game.users?.filter(u => u._id != game.user._id) || []
-    if (data.users.length > 1) data.users.push({ name: 'Everyone!' })
+    data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
     data.lightingmods = ModifierLiterals.LightingModifiers
     data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
