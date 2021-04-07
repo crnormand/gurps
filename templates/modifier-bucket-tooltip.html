@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class='gurps-meta-group gurps-2col'>
+    <div class='gurps-2col'>
       <div class="gurps-group gurps-space-between gurps-sparse-list">
         <div class='shaded-group'>
           <h4>{{localize "GURPS.meleeAttack"}}</h4>
@@ -65,7 +65,7 @@
       <div class="gurps-group gurps-space-between gurps-sparse-list">
         <div>
           <h4>{{localize "GURPS.modifierCommon"}}</h4>
-          <div class='overflowy' style='max-height: 580px;'>
+          <div class='overflowy' style='max-height: 595px;'>
             {{collapsible-content 'speedrangemods' speedrangemods 'commonmods'}}
             {{collapsible-content 'hitlocationmods' hitlocationmods 'commonmods'}}
             {{collapsible-content 'modcover' covermods 'commonmods'}}
@@ -77,16 +77,20 @@
             {{collapsible-content 'modrof' rofmods 'commonmods'}}
           </div>
         </div>
-        <div class='shaded-group'>
+        <div>
           <h4>{{localize "GURPS.modifierOthers"}}</h4>
-          <div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap; ">
-            {{#each othermods}}
-            <div style="display:inline-block;text-align: center;width: fit-content;margin:2px">{{{gurpslink this true}}}
-            </div>
+          <div class='modifier-row'>
+            {{#each othermods1}}
+            <div>{{{gurpslink this true}}}</div>
+            {{/each}}
+            {{#each othermods2}}
+            <div>{{{gurpslink this true}}}</div>
             {{/each}}
           </div>
-          <div class="modttlabel">{{localize "GURPS.modifierUserEntered"}}:</div>
-          <input type="text" id="modmanualentry"><br>
+          <div style='display: flex; flex-flow: column;'>
+            <aside>{{localize "GURPS.modifierUserEntered"}}:</aside>
+            <input type="text" id="modmanualentry" />
+          </div>
         </div>
       </div>
     </div>

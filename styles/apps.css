@@ -239,7 +239,7 @@
 .modtooltip .collapsible-wrapper .collapsible-content {
   /* border: 1px solid rgb(122, 121, 113); */
   border-top: none;
-  background: rgba(0, 0, 0, 0.01);
+  /* background: rgba(0, 0, 0, 0.01); */
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   font-size: 90%;
@@ -260,16 +260,24 @@
   text-shadow: 0 0 10px red;
 }
 
-.modtooltip .collapsible-wrapper .content-inner .subtitle {
+.modtooltip .subtitle {
   color: rgb(64, 64, 64);
-  padding-left: 0.5rem;
-  font-weight: 500;
+  font-weight: bold;
+  width: 100%;
 }
+
+/* .modtooltip .subtitle:before,
+.modtooltip .subtitle:after {
+  content: '\2501\2501';
+  display: inline-block;
+  vertical-align: middle;
+  font-weight: 900;
+  color: grey;
+} */
 
 /* =================================================== */
 /* Copy of glink and gurpslink from simple.css         */
 /* =================================================== */
-
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
 .modtooltip .gurpslink {
@@ -277,7 +285,8 @@
   padding: 1px 2px;
   border: 1px solid rgb(122, 121, 113);
   border-radius: 3px;
-  margin: 0;
+  margin: 1px 0;
+  font-size: 90%;
 }
 
 .modtooltip .glinkmodplus:hover,
@@ -289,7 +298,6 @@
   background-color: rgba(255, 255, 240, 0.8) !important;
   padding: 1px 2px;
   border-radius: 3px;
-  margin: 0;
 }
 
 .modtooltip .glinkmodplus:active,
@@ -308,7 +316,11 @@
 }
 
 .modtooltip .gurpslink {
-  color: slategrey;
+  color: darkblue;
+}
+
+.modtooltip .modifier-row {
+  flex-flow: row wrap !important;
 }
 
 /* ========================= */
@@ -371,7 +383,7 @@
 }
 
 .gurps-group .pdflink {
-  font-size: smaller;
+  font-size: 80%;
 }
 
 .gurps-group h4 {
@@ -726,7 +738,7 @@ ul#result-effects li {
 
 .gurps-group .collapsible-content {
   grid-column: 1 / span 2;
-  background: rgba(0, 0, 0, 0.1);
+  /* background: rgba(0, 0, 0, 0.1); */
   margin-bottom: 0;
   padding-right: 4px;
 }
@@ -1435,9 +1447,21 @@ ul#result-effects li {
 }
 
 .shaded-group > div:nth-child(odd) {
-  background-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .gurps-sparse-list {
-  line-height: 1.2rem;
+  line-height: 1.3rem;
+}
+
+.modtooltip .modifier-row,
+.modtooltip .shaded-group > div {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modtooltip .gurps-group aside {
+  margin: 0;
 }

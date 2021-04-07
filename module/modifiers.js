@@ -339,7 +339,8 @@ export class ModifierBucketEditor extends Application {
     data.defensemods = ModifierLiterals.DefenseMods.split('\n')
     data.speedrangemods = ['Speed / Range'].concat(game.GURPS.rangeObject.modifiers)
     data.actorname = !!game.GURPS.LastActor ? game.GURPS.LastActor.name : 'No active character!'
-    data.othermods = ModifierLiterals.OtherMods.split('\n')
+    data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
+    data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
     data.users = game.users?.filter(u => u._id != game.user._id) || []
     if (data.users.length > 1) data.users.push({ name: 'Everyone!' })
@@ -347,11 +348,8 @@ export class ModifierBucketEditor extends Application {
     data.lightingmods = ModifierLiterals.LightingModifiers
     data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
     data.rofmods = ModifierLiterals.RateOfFireModifiers
-    // data.statusmods = makeSelect(ModifierLiterals.StatusModifiers)
     data.statusmods = ModifierLiterals.StatusModifiers
-    // data.covermods = makeSelect(ModifierLiterals.CoverPostureModifiers)
     data.covermods = ModifierLiterals.CoverPostureModifiers
-    // data.sizemods = makeSelect(ModifierLiterals.SizeModifiers)
     data.sizemods = ModifierLiterals.SizeModifiers
     data.hitlocationmods = ModifierLiterals.HitlocationModifiers
     data.currentmods = []
@@ -415,16 +413,6 @@ export class ModifierBucketEditor extends Application {
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))
-    // html.find('#modtaskdifficulty').change(this._onTaskDifficulty.bind(this))
-    // html.find('#modlighting').change(this._onLighting.bind(this))
-    // html.find('#modspeedrange').change(this._onList.bind(this))
-    // html.find('#modeqtquality').change(this._onList.bind(this))
-    // html.find('#modrof').change(this._onList.bind(this))
-    // html.find('#modstatus').change(this._onList.bind(this))
-    // html.find('#modcover').change(this._onList.bind(this))
-    // html.find('#modsize').change(this._onList.bind(this))
-    // html.find('#modhitlocations').change(this._onList.bind(this))
-
     html.find('.collapsible-content .content-inner .selectable').click(this._onSelect.bind(this))
     html.find('.collapsible-wrapper > input').click(this._onClickClose.bind(this))
   }
@@ -675,7 +663,7 @@ const ModifierLiterals = {
     [WILL-3 ${game.i18n.localize('GURPS.concentrationCheck')}]`
   },
 
-  get OtherMods() {
+  get OtherMods1() {
     return `[+1]
     [+2]
     [+3]
@@ -685,8 +673,11 @@ const ModifierLiterals = {
     [-2]
     [-3]
     [-4]
-    [-5]
-    [+1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
+    [-5]`
+  },
+
+  get OtherMods2() {
+    return `[+1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
     [-1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
     [+4 ${game.i18n.localize('GURPS.modifierGMBlessed')}]
     [-4 ${game.i18n.localize('GURPS.modifierGMDontTry')}]`
