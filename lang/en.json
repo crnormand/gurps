@@ -390,7 +390,7 @@
   "GURPS.hitLocationDescLimb": "*hit limb",
   "GURPS.hitLocationDescNeck": "*hit neck",
   "GURPS.hitLocationDescImp": "imp or pi(any) only",
-  "GURPS.hitLocationDescHalfDR": "halves DR",
+  "GURPS.hitLocationDescHalfDR": "&half; DR",
 
   "GURPS.damageTypeBurning": "Burning",
   "GURPS.damageTypeCorrosive": "Corrosive",

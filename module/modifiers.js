@@ -2,6 +2,7 @@ import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
+import { DamageTables } from './damage/damage-tables.js'
 
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
@@ -58,9 +59,20 @@ export class ModifierBucket extends Application {
     }
   }
 
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      popOut: false,
+      minimizable: false,
+      resizable: false,
+      id: 'ModifierBucket',
+      template: 'systems/gurps/templates/modifier-bucket.html',
+    })
+  }
+
   getData(options) {
     const data = super.getData(options)
     data.stack = this.modifierStack
+    data.cssClass = 'modifierbucket'
     let ca = ''
     if (game.user?.isGM && !!GURPS.LastActor) {
       ca = GURPS.LastActor.displayname
@@ -309,8 +321,10 @@ export class ModifierBucketEditor extends Application {
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
-      width: 900,
-      height: 800,
+      width: 872,
+      height: 749,
+      top: 400,
+      left: 390,
       resizeable: false,
       minimizable: false,
       popOut: false,
@@ -338,17 +352,18 @@ export class ModifierBucketEditor extends Application {
     data.defensemods = ModifierLiterals.DefenseMods.split('\n')
     data.speedrangemods = ['Speed / Range'].concat(game.GURPS.rangeObject.modifiers)
     data.actorname = !!game.GURPS.LastActor ? game.GURPS.LastActor.name : 'No active character!'
-    data.othermods = ModifierLiterals.OtherMods.split('\n')
+    data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
+    data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
     data.users = game.users?.filter(u => u._id != game.user._id) || []
-    if (data.users.length > 1) data.users.push({ name: 'Everyone!' })
+    data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
     data.lightingmods = ModifierLiterals.LightingModifiers
     data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
     data.rofmods = ModifierLiterals.RateOfFireModifiers
-    data.statusmods = makeSelect(ModifierLiterals.StatusModifiers)
-    data.covermods = makeSelect(ModifierLiterals.CoverPostureModifiers)
-    data.sizemods = makeSelect(ModifierLiterals.SizeModifiers)
+    data.statusmods = ModifierLiterals.StatusModifiers
+    data.covermods = ModifierLiterals.CoverPostureModifiers
+    data.sizemods = ModifierLiterals.SizeModifiers
     data.hitlocationmods = ModifierLiterals.HitlocationModifiers
     data.currentmods = []
 
@@ -411,15 +426,30 @@ export class ModifierBucketEditor extends Application {
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))
-    html.find('#modtaskdifficulty').change(this._onTaskDifficulty.bind(this))
-    html.find('#modlighting').change(this._onLighting.bind(this))
-    html.find('#modspeedrange').change(this._onList.bind(this))
-    html.find('#modeqtquality').change(this._onList.bind(this))
-    html.find('#modrof').change(this._onList.bind(this))
-    html.find('#modstatus').change(this._onList.bind(this))
-    html.find('#modcover').change(this._onList.bind(this))
-    html.find('#modsize').change(this._onList.bind(this))
-    html.find('#modhitlocations').change(this._onList.bind(this))
+    html.find('.collapsible-content .content-inner .selectable').click(this._onSelect.bind(this))
+    html.find('.collapsible-wrapper > input').click(this._onClickClose.bind(this))
+  }
+
+  _onClickClose(ev) {
+    let name = ev.currentTarget.id
+    if (name === this._currentlyShowing) {
+      ev.currentTarget.checked = false
+      this._currentlyShowing = null
+    } else {
+      this._currentlyShowing = name
+    }
+  }
+
+  /**
+   * A 'selectable' div in a collapsible was clicked.
+   * @param {*} ev
+   */
+  _onSelect(ev) {
+    // find the toggle input above this element and remove the checked property
+    let div = $(ev.currentTarget).parent().closest('.collapsible-content')
+    let toggle = div.siblings('input')
+    $(toggle).prop('checked', false)
+    this._onSimpleList(ev, '')
   }
 
   _onleave(ev) {
@@ -465,6 +495,7 @@ export class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let v = element.value
+    if (!v) v = element.textContent
     let i = v.indexOf(' ')
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
     this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
@@ -581,8 +612,6 @@ const ModifierLiterals = {
       game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +8', us: ' 50 yards/150 feet', metric: '50 meters' }),
       game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +9', us: ' 70 yards/210 feet', metric: '70 meters' }),
       game.i18n.format('GURPS.modifierSizeEntry', { SM: '+10', us: '100 yards/300 feet', metric: '100 meters' }),
-      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+11', us: '150 yards/450 feet', metric: '150 meters' }),
-      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+12', us: '200 yards/600 feet', metric: '200 meters' }),
     ]
   },
 
@@ -647,7 +676,7 @@ const ModifierLiterals = {
     [WILL-3 ${game.i18n.localize('GURPS.concentrationCheck')}]`
   },
 
-  get OtherMods() {
+  get OtherMods1() {
     return `[+1]
     [+2]
     [+3]
@@ -657,8 +686,11 @@ const ModifierLiterals = {
     [-2]
     [-3]
     [-4]
-    [-5]
-    [+1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
+    [-5]`
+  },
+
+  get OtherMods2() {
+    return `[+1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
     [-1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
     [+4 ${game.i18n.localize('GURPS.modifierGMBlessed')}]
     [-4 ${game.i18n.localize('GURPS.modifierGMDontTry')}]`

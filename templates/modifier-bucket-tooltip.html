@@ -1,150 +1,109 @@
 <form id='modttt' class="{{cssClass}} overflowy {{#if isTooltip}}modttt{{/if}}" autocomplete="off">
-  <div id="modtooltip">
-    <div id="modtooltiplefttop">
-      <div class="modttlabel">{{localize "GURPS.modifierCurrentEffects"}}</div>
-      <div style="color:blue">{{actorname}}</div>
-      {{#each currentmods}}
-      <div>{{{gurpslink this true}}}</div>
-      {{/each}}
-    </div>
-
-    <div id="modtooltipleftbottom">
-      <div class="modttlabel">{{localize "GURPS.modifierCurrentModifiers"}} <span style="font-size:75%"><i>({{localize
-            "GURPS.clickToRemove"}})</i></span></div>
-      <div>&nbsp;</div>
-      {{#each stack.modifierList}}
-      <div class="removemod" data-index="{{@index}}" {{#if this.plus}}style="color: green;" {{else}}style="color: red;"
-        {{/if}}>
-        {{this.mod}} : {{this.desc}}</div>
-      {{/each}}
-      <div class="modttlabel"><br>Total: {{stack.displaySum}}</div>
-    </div>
-
-    <div id="modtooltipcentertop">
-      <div class="modttlabel">{{localize "GURPS.meleeAttack"}}</div>
-      {{#each meleemods}}
-      <div>{{{gurpslink this true}}}</div>
-      {{/each}}
-    </div>
-
-    <div id="modtooltipleftcenter">
-      <div style='display: {{#if cansend}}none;{{else}}block;{{/if}}'>
-        {{localize "GURPS.modifierClickToAdd"}}<br><br>
-        {{localize "GURPS.modifierAppearBelow"}}<br><br>
-        <small><i>{{localize "GURPS.modifierMouseOff"}}</i></small>
-      </div>
-
-      <div style="background-color:gold; align-content: end; display: {{#if cansend}}block;{{else}}none;{{/if}}">
-        <div class="modttlabel">{{localize "GURPS.modifierSendTo"}}</div>
-        <div style="position: relative; text-align: center; display: flex; justify-content: center; flex-wrap: wrap; ">
-          {{#each users}}
-          <button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
+  <div class='modtooltip gurps-app'>
+    <div id="modtooltip" class='gurps-meta-group'>
+      <div id='modtooltipbucket'>
+        <div id="modtooltiplefttop" class='gurps-group gurps-sparse-list'>
+          <h4>{{localize "GURPS.modifierCurrentEffects"}}</h4>
+          <div class='actorname'>{{actorname}}</div>
+          {{#each currentmods}}
+          <div>{{{gurpslink this true}}}</div>
           {{/each}}
+        </div>
+
+        {{#unless cansend}}
+        <div id="modtooltipleftcenter" class='gurps-group' style='justify-content: center;'>
+          <p>{{localize "GURPS.modifierClickToAdd"}}</p>
+          <p>{{localize "GURPS.modifierAppearBelow"}}</p>
+        </div>
+        {{else}}
+        <div id="modtooltipleftcenter" class='gurps-group'>
+          <h4>{{localize "GURPS.modifierSendTo"}}</h4>
+          <div class='button-row'>
+            {{#each users}}
+            <button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
+            {{/each}}
+          </div>
+          {{#if everyone}}
+          {{debug this}}
+          <div class='everyone'>
+            <button class="gmbutton" data-id="{{everyone.id}}" type="button">{{everyone.name}}</button>
+          </div>
+          {{/if}}
+        </div>
+        {{/unless}}
+
+        <div id="modtooltipleftbottom" class='gurps-group gurps-sparse-list'>
+          <div class='shaded-group'>
+            <h4>{{localize "GURPS.modifierCurrentModifiers"}}</h4>
+            <aside>({{localize "GURPS.clickToRemove"}})</aside>
+            {{#each stack.modifierList}}
+            <div class="removemod {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}">
+              {{this.mod}} : {{this.desc}}</div>
+            {{/each}}
+          </div>
+          <div class='modttlabel'>Total:&nbsp;
+            <div {{#if (gt stack.displaySum 0)}}class='plus' {{/if}}{{#if (lt stack.displaySum 0)}}class='minus'
+              {{/if}}>
+              {{stack.displaySum}}
+            </div>
+          </div>
         </div>
       </div>
 
-    </div>
-
-    <div id="modtooltipcentercenter">
-      <div class="modttlabel">{{localize "GURPS.ranged"}}</div>
-      {{#each rangedmods}}
-      <div>{{{gurpslink this true}}}</div>
-      {{/each}}
-    </div>
-
-    <div id="modtooltiprighttop">
-      <div class="modttlabel">{{localize "GURPS.defense"}}</div>
-      {{#each defensemods}}
-      <div>{{{gurpslink this true}}}</div>
-      {{/each}}
-    </div>
-
-    <div id="modtooltipcenterbottom">
-      <div class="modttlabel">{{localize "GURPS.modifierOthers"}}</div>
-      <div style="position: relative;text-align: center;display: inline-flex;flex-wrap: wrap; ">
-        {{#each othermods}}
-        <div style="display:inline-block;text-align: center;width: fit-content;margin:2px">{{{gurpslink this true}}}
+      <div class='gurps-2col'>
+        <div class="gurps-group gurps-space-between gurps-sparse-list">
+          <div class='shaded-group'>
+            <h4>{{localize "GURPS.meleeAttack"}}</h4>
+            {{#each meleemods}}
+            <div>{{{gurpslink this true}}}</div>
+            {{/each}}
+          </div>
+          <div class='shaded-group'>
+            <h4>{{localize "GURPS.ranged"}}</h4>
+            {{#each rangedmods}}
+            <div>{{{gurpslink this true}}}</div>
+            {{/each}}
+          </div>
+          <div class='shaded-group'>
+            <h4>{{localize "GURPS.defense"}}</h4>
+            {{#each defensemods}}
+            <div>{{{gurpslink this true}}}</div>
+            {{/each}}
+          </div>
         </div>
-        {{/each}}
-      </div>
-      <div class="modttlabel">{{localize "GURPS.modifierUserEntered"}}:</div>
-      <input type="text" id="modmanualentry"><br>
 
-    </div>
-
-    <div id="modtooltiprightbottom">
-      <div class="modttlabel">{{localize "GURPS.modifierCommon"}}</div>
-
-      <div style="font-size:60%">
-
-        <select id="modspeedrange">
-          {{#each speedrangemods}}
-          <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-
-        <select id="modhitlocations">
-          {{#each hitlocationmods}}
-          <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-
-        <select id="modcover">
-          <option>{{covermods.title}}</option>
-          {{#each covermods.groups}}
-          <optgroup label="{{this.group}}">
-            {{#each this.options}}
-            <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </optgroup>
-          {{/each}}
-        </select>
-
-        <select id="modstatus">
-          <option>{{statusmods.title}}</option>
-          {{#each statusmods.groups}}
-          <optgroup label="{{this.group}}">
-            {{#each this.options}}
-            <option value="{{this}}">{{this}}</option>
-            {{/each}}
-          </optgroup>
-          {{/each}}
-        </select>
-
-        <select id="modtaskdifficulty">
-          {{#each taskdificulties}}
-          <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-
-        <select id="modeqtquality">
-          {{#each eqtqualitymods}}
-          <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-
-        <select id="modlighting">
-          {{#each lightingmods}}
-          <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
-
-        <select id="modsize">
-          <option>{{sizemods.title}}</option>
-          {{#each sizemods.groups}}
-          <optgroup label='{{this.group}}'>
-            {{#each this.options}}
-            <option value='{{this}}'>{{this}}</option>
-            {{/each}}
-          </optgroup>
-          {{/each}}
-        </select>
-
-        <select id="modrof">
-          {{#each rofmods}}
-          <option value="{{this}}">{{this}}</option>
-          {{/each}}
-        </select>
+        <div class="gurps-group gurps-space-between gurps-sparse-list">
+          <div>
+            <h4>{{localize "GURPS.modifierCommon"}}</h4>
+            <div class='overflowy' {{#if isTooltip}} style='max-height: 535px;' {{else}} style='max-height: 595px;'
+              {{/if}}>
+              {{collapsible-content 'speedrangemods' speedrangemods 'commonmods'}}
+              {{collapsible-content 'hitlocationmods' hitlocationmods 'commonmods'}}
+              {{collapsible-content 'modcover' covermods 'commonmods'}}
+              {{collapsible-content 'modstatus' statusmods 'commonmods'}}
+              {{collapsible-content 'modtaskdifficulty' taskdificulties 'commonmods'}}
+              {{collapsible-content 'modeqtquality' eqtqualitymods 'commonmods'}}
+              {{collapsible-content 'modlighting' lightingmods 'commonmods'}}
+              {{collapsible-content 'modsize' sizemods 'commonmods'}}
+              {{collapsible-content 'modrof' rofmods 'commonmods'}}
+            </div>
+          </div>
+          <div>
+            <h4>{{localize "GURPS.modifierOthers"}}</h4>
+            <div class='modifier-row'>
+              {{#each othermods1}}
+              <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+              {{#each othermods2}}
+              <div>{{{gurpslink this true}}}</div>
+              {{/each}}
+            </div>
+            <div style='display: flex; flex-flow: column;'>
+              <aside>{{localize "GURPS.modifierUserEntered"}}:</aside>
+              <input type="text" id="modmanualentry" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
