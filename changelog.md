@@ -10,6 +10,7 @@ This is what we are currently working on:
 - Fixed drag and drop macros to be compatible with The Furnace
 - Initial implementation of a Slam calculator. Access via the chat message '/slam'.
 - Added i18n tags to most of modifier bucket popup. Just need folks to submit translations!
+- Re-skinned the modifier bucket UI.
 
 ## History
 
