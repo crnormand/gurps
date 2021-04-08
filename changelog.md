@@ -11,6 +11,7 @@ This is what we are currently working on:
 - Initial implementation of a Slam calculator. Access via the chat message '/slam'.
 - Added i18n tags to most of modifier bucket popup. Just need folks to submit translations!
 - Re-skinned the modifier bucket UI.
+- Fixed the problem of some browsers causing the Modifier Bucket tooltip to close when selecting something from a dropdown menu.
 
 ## History
 
