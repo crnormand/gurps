@@ -43,6 +43,9 @@ export class ModifierBucket extends Application {
 
     this.editor = new ModifierBucketEditor(this, {
       popOut: !this.isTooltip,
+      left: this.isTooltip ? 390 : 400,
+      top: this.isTooltip ? 400 : 260,
+      resizeable: true,
     })
 
     // whether the ModifierBucketEditor is visible
@@ -322,10 +325,8 @@ export class ModifierBucketEditor extends Application {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
       width: 872,
-      height: 749,
-      top: 400,
-      left: 390,
-      resizeable: false,
+      height: 722,
+      resizeable: true,
       minimizable: false,
       popOut: false,
     })
@@ -410,8 +411,8 @@ export class ModifierBucketEditor extends Application {
     console.log('activatelisteners')
 
     html.removeClass('overflowy')
-    html.css('top', `${this._position.top}px`)
-    html.css('left', `${this._position.left}px`)
+    // html.css('top', `${this._position.top}px`)
+    // html.css('left', `${this._position.left}px`)
 
     this.bringToTop()
 
