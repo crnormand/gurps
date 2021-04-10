@@ -24,7 +24,8 @@ import SlamChatProcessor from '../module/slam.js'
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 
-GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
+GURPS.BANNER = `
+   __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
  / /      ____ _   _ ____  ____  ____    \\ \\  
  | |     / ___| | | |  _ \\|  _ \\/ ___|    | | 

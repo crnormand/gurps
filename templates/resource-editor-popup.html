@@ -6,11 +6,14 @@
       </div>
       <div class='grid grid-2col'>
         <div class='inputs' style='margin: 0;'>
-          <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
+          <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" {{disabled (not
+            isActor)}} />
           <div class="label">{{localize "GURPS.current"}}</div>
-          <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
+          <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" {{disabled (not
+            isActor)}} />
           <div class="label">{{localize "GURPS.minimum"}}</div>
-          <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
+          <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" {{disabled (not
+            isActor)}} />
           <div class="label">{{localize "GURPS.maximum"}}</div>
         </div>
         <div class='inputs' style='margin: 0;'>

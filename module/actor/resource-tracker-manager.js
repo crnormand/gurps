@@ -1,6 +1,7 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { arrayToObject, objectToArray } from '../../lib/utilities.js'
+import { DamageTables } from '../../module/damage/damage-tables.js'
 
 export class ResourceTrackerManager extends FormApplication {
   static initSettings() {
@@ -227,5 +228,28 @@ export class ResourceTrackerManager extends FormApplication {
     // convert the array into an object:
     let data = arrayToObject(this._templates)
     game.settings.set(settings.SYSTEM_NAME, settings.SETTING_TRACKER_TEMPLATES, data)
+
+    // remove all resources from the two objects:
+    let entries = Object.entries(DamageTables.woundModifiers).filter(([k, v]) => !!v.resource)
+    entries.forEach(([key, _]) => delete DamageTables.woundModifiers[key])
+    entries.forEach(([key, _]) => {
+      let toDelete = Object.entries(DamageTables.damageTypeMap).filter(([k, v]) => v === key)
+      toDelete.forEach(([k, v]) => delete DamageTables.damageTypeMap[k])
+    })
+
+    // get all aliases defined in the resource tracker templates and register them as damage types
+    let resourceTrackers = ResourceTrackerManager.getAllTemplates()
+      .filter(it => !!it.tracker.isDamageType)
+      .filter(it => !!it.tracker.alias)
+      .map(it => it.tracker)
+    resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
+    resourceTrackers.forEach(
+      it =>
+        (DamageTables.woundModifiers[it.alias] = {
+          multiplier: 1,
+          label: it.name,
+          resource: true,
+        })
+    )
   }
 }
