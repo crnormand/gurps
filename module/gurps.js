@@ -1231,16 +1231,6 @@ GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 
-// // Modifier Bucket must be defined after hit locations
-// GURPS.ModifierBucket = new ModifierBucket({
-//   popOut: false,
-//   minimizable: false,
-//   resizable: false,
-//   id: 'ModifierBucket',
-//   template: 'systems/gurps/templates/modifier-bucket.html',
-//   classes: [],
-// })
-
 GURPS.ThreeD6 = new ThreeD6({
   popOut: false,
   minimizable: false,
@@ -1427,6 +1417,7 @@ Hooks.once('init', async function () {
   SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
+
   GURPS.ModifierBucket = new ModifierBucket()
 
   // Define custom Entity classes

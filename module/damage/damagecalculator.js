@@ -65,7 +65,7 @@ export class CompositeDamageCalculator {
     }
 
     if (!!CompositeDamageCalculator.isResourceDamageType(this._damageType)) {
-      this.applyTo = this._damageType
+      this._applyTo = this._damageType
     } else {
       this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
     }
@@ -624,31 +624,32 @@ export class CompositeDamageCalculator {
   }
 
   get resource() {
-    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-      let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
-      let tracker = null
-      let index = null
-      trackers.forEach((t, i) => {
-        if (t.alias === this._applyTo) {
-          index = i
-          tracker = t
-          return
-        }
-      })
-      return [tracker, `data.additionalresources.tracker.${index}`]
-    }
+    // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
+    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let tracker = null
+    let index = null
+    trackers.forEach((t, i) => {
+      if (t.alias === this._applyTo) {
+        index = i
+        tracker = t
+        return
+      }
+    })
+    if (!!tracker) return [tracker, `data.additionalresources.tracker.${index}`]
+    // }
 
-    if (this._applyTo === 'fat') return [this._defender.data.data.FP, 'data.FP']
+    if (this._applyTo === 'FP') return [this._defender.data.data.FP, 'data.FP']
     return [this._defender.data.data.HP, 'data.HP']
   }
 
   get resourceType() {
-    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-      let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
-      return trackers.find(it => it.alias === this._applyTo).name
-    }
+    // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
+    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let tracker = trackers.find(it => it.alias === this._applyTo)
+    if (!!tracker) return tracker.name
+    // }
 
-    if (this._applyTo === 'fat') return 'FP'
+    if (this._applyTo === 'FP') return 'FP'
     return 'HP'
   }
 
