@@ -8,7 +8,7 @@ This is what we are currently working on:
 - Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
 - Adjust ADD results to show +3 bonus to HT checks when damage is Ranged, 1/2D.
 - Fixed drag and drop macros to be compatible with The Furnace
-- Initial implementation of a Slam calculator. Access via the chat message '/slam'.
+- Initial implementation of a Slam calculator. Access via the chat message '/slam'. There must be a selected character, and it will fill in the HP and Velocity fields based on that character's HP and Basic Speed fields. If the user has a targeted token, that character's HP will be automatically entered.
 - Added i18n tags to most of modifier bucket popup. Just need folks to submit translations!
 - Re-skinned the modifier bucket UI.
 - Fixed the problem of some browsers causing the Modifier Bucket tooltip to close when selecting something from a dropdown menu.
