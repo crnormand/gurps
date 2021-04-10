@@ -14,6 +14,7 @@ This is what we are currently working on:
 - Fixed the problem of some browsers causing the Modifier Bucket tooltip to close when selecting something from a dropdown menu.
 - Allow any damage type to be applied to a resource tracker. (Resource must be named, have a unique alias, and "Use as Damage Tracker" is checked.)
 - Disabled the Min/Max/Current fields from a Resource Tracker editor if opened from the Tracker Manager.
+- New/Updated Resource Tracker templates no longer need a Foundry restart to take effect.
 
 ## History
 
