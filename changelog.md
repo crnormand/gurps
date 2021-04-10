@@ -5,7 +5,7 @@ This is what we are currently working on:
   0.8.23
   
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
-- Merged @Exxar's Damage Reduction code into ADD
+- Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
 - Adjust ADD results to show +3 bonus to HT checks when damage is Ranged, 1/2D.
 - Fixed drag and drop macros to be compatible with The Furnace
 - Initial implementation of a Slam calculator. Access via the chat message '/slam'.
