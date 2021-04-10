@@ -271,7 +271,7 @@
   border-radius: 10px;
   width: 872px;
   height: 664px;
-  top: 300px !important;
+  bottom: 100px !important;
   left: 405px !important;
   position: absolute;
   z-index: 100;
@@ -506,6 +506,7 @@
 }
 
 /* striped table row appearance */
+.shaded-group > div:nth-child(odd),
 .gurps-group .shaded {
   background-color: rgba(0, 0, 0, 0.1);
 }
@@ -1534,7 +1535,7 @@ ul#result-effects li {
 }
 
 .shaded-group > div:nth-child(odd) {
-  background: rgba(255, 255, 255, 0.25);
+  /* background: rgba(255, 255, 255, 0.25); */
 }
 
 .gurps-sparse-list {
