@@ -473,7 +473,8 @@ export default function addChatHooks() {
           if (!!m && (!!m[3] || !!m[4])) {
             if (game.user.isGM) {
               let any = false
-              game.actors.entities.forEach(actor => {
+              canvas.tokens.ownedTokens.forEach(t => {
+                let actor = t.actor
                 if (actor.hasPlayerOwner) {
                   any = true
                   let mod = m[4] || ''
@@ -530,7 +531,8 @@ export default function addChatHooks() {
           if (!!m) {
             if (game.user.isGM) {
               let any = false
-              game.actors.entities.forEach(actor => {
+              canvas.tokens.ownedTokens.forEach(t => {
+                let actor = t.actor
                 if (actor.hasPlayerOwner) {
                   any = true
                   let attr = m[2].toUpperCase()
@@ -552,7 +554,8 @@ export default function addChatHooks() {
               let action = parselink(m[2].trim())
               if (!!action.action) {
                 if (!['modifier', 'chat', 'pdf'].includes(action.action.type)) {
-                  game.actors.entities.forEach(actor => {
+                  canvas.tokens.ownedTokens.forEach(t => {
+                    let actor = t.actor
                     if (actor.hasPlayerOwner) {
                       any = true
                       GURPS.performAction(action.action, actor)
