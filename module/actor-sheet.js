@@ -543,17 +543,25 @@ export class GurpsActorSheet extends ActorSheet {
     )
 
     html.find('#qnotes').dblclick(ex => {
-      const n = this.actor.data.data.additionalresources.qnotes || ''
-      Dialog.prompt({
+      let n = this.actor.data.data.additionalresources.qnotes || ''
+      n = n.replace(/<br>/g, "\n")
+      let actor = this.actor
+      new Dialog({
         title: 'Edit Quick Note',
-        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><input id="i" type="text" value="${n}" placeholder=""></input><br><br>Examples:
+        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><textarea rows="4" id="i">${n}</textarea><br><br>Examples:
         <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
-        label: 'OK',
-        callback: html => {
-          const i = html[0].querySelector('#i')
-          this.actor.update({ 'data.additionalresources.qnotes': i.value })
+        buttons: {
+          save: {
+            icon: '<i class="fas fa-save"></i>',
+            label: "Save",
+            callback: html => {
+              const i = html[0].querySelector('#i')
+              actor.update({ 'data.additionalresources.qnotes': i.value.replace(/\n/g, "<br>") })
+            }
+          },
         },
-      })
+        render: true,
+      }).render(true);
     })
 
   }
