@@ -20,6 +20,7 @@ This is what we are currently working on:
 - Allow multi-line entries in QuickNotes
 - Added Initiative system setting
 - Added GURPS.findAdDisad(), and updated GURPS.findSkillSpell() and GURPS.findAttack() for script macros
+- Fixed Explosion damage calculation.
 
 
 ## History
