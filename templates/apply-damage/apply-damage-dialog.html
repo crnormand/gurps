@@ -383,7 +383,12 @@
             <div name='result-effective-dmg'>{{localize "GURPS.addExplosion"}}</div>
             <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
             <div name='result-effective-dmg'><span>= {{CALC.basicDamage}} &times;
-                <sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>
+                <sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub> {{#if (eq CALC.hexesFromExplosion 1)}}
+                ({{localize "GURPS.addExplosionHex" hex=CALC.hexesFromExplosion}})
+                {{else}}
+                ({{localize "GURPS.addExplosionHexes" hex=CALC.hexesFromExplosion}})
+                {{/if}}
+              </span>
             </div>
             {{/if}}
 

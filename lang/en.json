@@ -163,6 +163,9 @@
   "GURPS.addApplyOptionsToAll": "These options apply to all damage",
   "GURPS.addApplyMultipleTimes": "Apply multiple times",
 
+  "GURPS.addExplosionHex": "{hex} hex from center",
+  "GURPS.addExplosionHexes": "{hex} hexes from center",
+
   "GURPS.crippling": "Crippling Injury, ",
   "GURPS.damageAbove": "Damage above ",
   "GURPS.hpIgnored": " HP ignored.",
