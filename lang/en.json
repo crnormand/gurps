@@ -49,11 +49,17 @@
   "GURPS.attributesHT": "HT",
   "GURPS.attributesWILL": "Will",
   "GURPS.attributesPER": "Per",
+  
 
   "GURPS.HP": "HP",
   "GURPS.FP": "FP",
   "GURPS.attributesHPNAME": "Hit Points",
   "GURPS.attributesFPNAME": "Fatigue",
+
+  "GURPS.attributesQN": "QN",
+  "GURPS.QP":"QP",
+  "GURPS.attributesQPNAME": "Quintessence Points",
+  "GURPS.attributesQNNAME": "Quintessence",
 
   "GURPS.attributesSTNAME": "Strength",
   "GURPS.attributesDXNAME": "Dexterity",

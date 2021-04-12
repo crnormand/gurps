@@ -55,6 +55,10 @@
   "GURPS.attributesHPNAME": "Trefferpunkte",
   "GURPS.attributesFPNAME": "Ausdauerpunkte",
 
+  "GURPS.QP":"QP",
+  "GURPS.attributesQPNAME": "Quintessenzpunkte ",
+  "GURPS.attributesQNNAME": "Quintessenz",
+
   "GURPS.attributesSTNAME": "Stärke",
   "GURPS.attributesDXNAME": "Geschicklichkeit",
   "GURPS.attributesIQNAME": "Intelligenz",

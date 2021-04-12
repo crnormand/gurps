@@ -873,7 +873,7 @@ class DamageCalculator {
   }
 
   get penetratingDamage() {
-    return Math.max(0, this.effectiveDamage - this._parent.effectiveDR)
+    return Math.max(0, this.effectiveDamage / this._parent.explosionDivisor - this._parent.effectiveDR)
   }
 
   /**
@@ -882,7 +882,7 @@ class DamageCalculator {
   get injury() {
     this._maxInjuryForDiffuse = null
     let injury = Math.floor(
-      (this.penetratingDamage * this._parent.totalWoundingModifier) / this._parent.explosionDivisor
+      (this.penetratingDamage * this._parent.totalWoundingModifier) 
     )
 
     if (this._parent._damageReductionLevel !== null && this._parent._damageReductionLevel != 0) {

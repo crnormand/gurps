@@ -55,6 +55,11 @@
   "GURPS.attributesHPNAME": "Единицы жизни",
   "GURPS.attributesFPNAME": "Единицы усталости",
 
+  "GURPS.attributesQN": "КН",
+  "GURPS.QP":"ОК",
+  "GURPS.attributesQPNAME": "Очки квинтэссенции ",
+  "GURPS.attributesQNNAME": "Квинтэссенция",
+
   "GURPS.attributesSTNAME": "Сила",
   "GURPS.attributesDXNAME": "Ловкость",
   "GURPS.attributesIQNAME": "Интеллект",

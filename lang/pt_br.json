@@ -55,6 +55,11 @@
   "GURPS.attributesHPNAME": "Pontos de Vida",
   "GURPS.attributesFPNAME": "Pontos de Fadiga",
 
+  "GURPS.attributesQN": "QN",
+  "GURPS.QP":"QP",
+  "GURPS.attributesQPNAME": "Pontos de Quintessência",
+  "GURPS.attributesQNNAME": "Quintessência ",
+
   "GURPS.attributesSTNAME": "Força",
   "GURPS.attributesDXNAME": "Destreza",
   "GURPS.attributesIQNAME": "Inteligência",
