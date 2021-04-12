@@ -907,6 +907,11 @@ export class GurpsActor extends Actor {
     att.WILL.points = i(json.will_points)
     att.PER.value = i(json.perception)
     att.PER.points = i(json.perception_points)
+    att.QN.value= i(json.quintessence)
+    att.QN.points=i(json.quintessence_points)
+    data.QP.max = i(json.quintessencepoints)
+    data.QP.points = i(json.quintessencepoints_points)
+
 
     data.HP.max = i(json.hitpoints)
     data.HP.points = i(json.hitpoints_points)
