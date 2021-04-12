@@ -220,8 +220,8 @@ export class GurpsActor extends Actor {
     }
     commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.data.data.additionalresources || {}
-    ar.importname = importname
-    ar.importpath = importpath
+    ar.importname = importname || ar.importnam
+    ar.importpath = importpath || ar.importpath
     ar.importversion = ra.version
     commit = { ...commit, ...{ 'data.additionalresources': ar } }
 
