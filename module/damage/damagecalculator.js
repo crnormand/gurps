@@ -509,6 +509,10 @@ export class CompositeDamageCalculator {
     if (value && !this._isExplosion) {
       this._previousHitLocation = this._hitLocation
       this._hitLocation = 'Large-Area'
+
+      // Explosion is mutually exclusive with Ranged 1/2D and Shotgun ... ?
+      this._isShotgun = false
+      this._isRangedHalfDamage = false
     } else if (!value && this._isExplosion) {
       this._hitLocation = this._previousHitLocation
     }
@@ -552,6 +556,7 @@ export class CompositeDamageCalculator {
     this._isRangedHalfDamage = value
     if (value) {
       this._isShotgun = false
+      this._isExplosion = false
     }
   }
 
@@ -563,6 +568,7 @@ export class CompositeDamageCalculator {
     this._isShotgun = value
     if (value) {
       this._isRangedHalfDamage = false
+      this._isExplosion = false
     }
   }
 
@@ -868,6 +874,8 @@ class DamageCalculator {
       return Math.floor(this._basicDamage / 2)
     } else if (this._parent.isShotgun) {
       return this._basicDamage * this._parent.shotgunDamageMultiplier
+    } else if (this._parent.isExplosion) {
+      return Math.floor(this._basicDamage / this._parent.explosionDivisor)
     } else {
       return this._basicDamage
     }
@@ -882,9 +890,7 @@ class DamageCalculator {
    */
   get injury() {
     this._maxInjuryForDiffuse = null
-    let injury = Math.floor(
-      (this.penetratingDamage * this._parent.totalWoundingModifier) / this._parent.explosionDivisor
-    )
+    let injury = Math.floor(this.penetratingDamage * this._parent.totalWoundingModifier)
 
     if (this._parent._damageReductionLevel !== null && this._parent._damageReductionLevel != 0) {
       // Injury Tolerance (Damage Reduction) can't reduce damage below 1
