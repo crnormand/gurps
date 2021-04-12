@@ -2,6 +2,7 @@ import { displayMod, makeSelect, horiz } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
+import { DamageTables } from './damage/damage-tables.js'
 
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
@@ -42,6 +43,9 @@ export class ModifierBucket extends Application {
 
     this.editor = new ModifierBucketEditor(this, {
       popOut: !this.isTooltip,
+      left: this.isTooltip ? 390 : 400,
+      top: this.isTooltip ? 400 : 260,
+      resizeable: true,
     })
 
     // whether the ModifierBucketEditor is visible
@@ -58,9 +62,20 @@ export class ModifierBucket extends Application {
     }
   }
 
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      popOut: false,
+      minimizable: false,
+      resizable: false,
+      id: 'ModifierBucket',
+      template: 'systems/gurps/templates/modifier-bucket.html',
+    })
+  }
+
   getData(options) {
     const data = super.getData(options)
     data.stack = this.modifierStack
+    data.cssClass = 'modifierbucket'
     let ca = ''
     if (game.user?.isGM && !!GURPS.LastActor) {
       ca = GURPS.LastActor.displayname
@@ -250,7 +265,7 @@ export class ModifierBucket extends Application {
   refresh() {
     this.render(true)
   }
-  
+
   async sendToPlayer(action, user) {
     const saved = this.modifierStack.modifierList
     this.modifierStack.modifierList = []
@@ -300,16 +315,6 @@ export class ModifierBucketEditor extends Application {
       top: 296,
     }
 
-    for (let loc in HitLocations.hitlocationRolls) {
-      let hit = HitLocations.hitlocationRolls[loc]
-      if (!hit.skip) {
-        // Only include the items in the menu is skip is false (or empty)
-        let mod = displayMod(hit.penalty) + ' to hit ' + loc
-        if (!!hit.desc) mod += ' (' + hit.desc + ')'
-        HitlocationModifiers.push(mod)
-      }
-    }
-
     // stupid Javascript
     this._onleave.bind(this)
     this._onenter.bind(this)
@@ -319,9 +324,9 @@ export class ModifierBucketEditor extends Application {
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
-      width: 900,
-      height: 800,
-      resizeable: false,
+      width: 872,
+      height: 722,
+      resizeable: true,
       minimizable: false,
       popOut: false,
     })
@@ -331,7 +336,7 @@ export class ModifierBucketEditor extends Application {
     super.render(force, options)
     this.bucket.SHOWING = true
   }
-  
+
   close() {
     this.bucket.SHOWING = false
     super.close()
@@ -343,23 +348,24 @@ export class ModifierBucketEditor extends Application {
     data.isTooltip = !this.options.popOut
     data.gmod = this
     data.stack = this.bucket.modifierStack
-    data.meleemods = MeleeMods.split('\n')
-    data.rangedmods = RangedMods.split('\n')
-    data.defensemods = DefenseMods.split('\n')
+    data.meleemods = ModifierLiterals.MeleeMods.split('\n')
+    data.rangedmods = ModifierLiterals.RangedMods.split('\n')
+    data.defensemods = ModifierLiterals.DefenseMods.split('\n')
     data.speedrangemods = ['Speed / Range'].concat(game.GURPS.rangeObject.modifiers)
     data.actorname = !!game.GURPS.LastActor ? game.GURPS.LastActor.name : 'No active character!'
-    data.othermods = OtherMods.split('\n')
+    data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
+    data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
     data.users = game.users?.filter(u => u._id != game.user._id) || []
-    if (data.users.length > 1) data.users.push({ name: 'Everyone!' })
-    data.taskdificulties = TaskDifficultyModifiers
-    data.lightingmods = LightingModifiers
-    data.eqtqualitymods = EqtQualifyModifiers
-    data.rofmods = RateOfFireModifiers
-    data.statusmods = makeSelect(StatusModifiers)
-    data.covermods = makeSelect(CoverPostureModifiers)
-    data.sizemods = SizeModifiers
-    data.hitlocationmods = HitlocationModifiers
+    data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
+    data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
+    data.lightingmods = ModifierLiterals.LightingModifiers
+    data.eqtqualitymods = ModifierLiterals.EqtQualifyModifiers
+    data.rofmods = ModifierLiterals.RateOfFireModifiers
+    data.statusmods = ModifierLiterals.StatusModifiers
+    data.covermods = ModifierLiterals.CoverPostureModifiers
+    data.sizemods = ModifierLiterals.SizeModifiers
+    data.hitlocationmods = ModifierLiterals.HitlocationModifiers
     data.currentmods = []
 
     if (!!game.GURPS.LastActor) {
@@ -405,8 +411,8 @@ export class ModifierBucketEditor extends Application {
     console.log('activatelisteners')
 
     html.removeClass('overflowy')
-    html.css('top', `${this._position.top}px`)
-    html.css('left', `${this._position.left}px`)
+    // html.css('top', `${this._position.top}px`)
+    // html.css('left', `${this._position.left}px`)
 
     this.bringToTop()
 
@@ -421,15 +427,30 @@ export class ModifierBucketEditor extends Application {
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))
-    html.find('#modtaskdifficulty').change(this._onTaskDifficulty.bind(this))
-    html.find('#modlighting').change(this._onLighting.bind(this))
-    html.find('#modspeedrange').change(this._onList.bind(this))
-    html.find('#modeqtquality').change(this._onList.bind(this))
-    html.find('#modrof').change(this._onList.bind(this))
-    html.find('#modstatus').change(this._onList.bind(this))
-    html.find('#modcover').change(this._onList.bind(this))
-    html.find('#modsize').change(this._onList.bind(this))
-    html.find('#modhitlocations').change(this._onList.bind(this))
+    html.find('.collapsible-content .content-inner .selectable').click(this._onSelect.bind(this))
+    html.find('.collapsible-wrapper > input').click(this._onClickClose.bind(this))
+  }
+
+  _onClickClose(ev) {
+    let name = ev.currentTarget.id
+    if (name === this._currentlyShowing) {
+      ev.currentTarget.checked = false
+      this._currentlyShowing = null
+    } else {
+      this._currentlyShowing = name
+    }
+  }
+
+  /**
+   * A 'selectable' div in a collapsible was clicked.
+   * @param {*} ev
+   */
+  _onSelect(ev) {
+    // find the toggle input above this element and remove the checked property
+    let div = $(ev.currentTarget).parent().closest('.collapsible-content')
+    let toggle = div.siblings('input')
+    $(toggle).prop('checked', false)
+    this._onSimpleList(ev, '')
   }
 
   _onleave(ev) {
@@ -475,6 +496,7 @@ export class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let v = element.value
+    if (!v) v = element.textContent
     let i = v.indexOf(' ')
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
     this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
@@ -501,182 +523,240 @@ export class ModifierBucketEditor extends Application {
   }
 }
 
-const StatusModifiers = [
-  'Status & Afflictions',
-  '*Status',
-  '-1 to IQ/DX checks (Shock 1)',
-  '-2 to IQ/DX checks (Shock 2)',
-  '-3 to IQ/DX checks (Shock 3)',
-  '-4 to IQ/DX checks (Shock 4)',
-  '-4 to active defenses (Stunned)',
-  '*Afflictions',
-  '-3 to DX checks (Coughing)',
-  '-1 to IQ checks (Coughing)',
-  '-2 to IQ/DX/CR rolls (Drowsy)',
-  '-2 to IQ/DX checks (Drunk)',
-  '-4 to CR rolls (Drunk)',
-  '-1 to IQ/DX checks (Tipsy)',
-  '-2 to CR rolls (Tipsy)',
-  '-3 to IQ/DX/CR rolls (Euphoria)',
-  '-2 to All attributes (Nauseated)',
-  '-1 to active defense (Nauseated)',
-  '-2 to IQ/DX/CR rolls (Moderate Pain)',
-  '-4 to IQ/DX/CR rolls (Severe Pain)',
-  '-6 to IQ/DX/CR rolls (Terrible Pain)',
-  '-1 to IQ/DX/CR rolls (Moderate Pain /w HPT)',
-  '-2 to IQ/DX/CR rolls (Severe Pain /w HPT)',
-  '-3 to IQ/DX/CR rolls (Terrible Pain /w HPT)',
-  '-5 to IQ/DX/PER checks (Retching)',
-]
+/**
+ * These constants were moved to an object literal to allow for delayed instantiation.
+ * This allows us to i18n the values.
+ */
+const ModifierLiterals = {
+  _statusModifiers: null,
 
-const CoverPostureModifiers = [
-  'Cover & Posture',
-  '*Cover',
-  '-5 to hit, Head only',
-  '-4 to hit, Head and shoulders exposed',
-  '-3 to hit, Body half exposed',
-  '-2 to hit, Behind light cover',
-  '-4 to hit, Behind same-sized figure',
-  '-4 to hit, Prone without cover',
-  '-5 to hit, Prone some cover, head up',
-  '-7 to hit, Prone some cover, head down',
-  '-2 to hit, Crouching/kneeling no cover',
-  '-4 to hit, firing through occupied hex',
-  '*Posture',
-  '-4 to hit Melee (Prone)',
-  '-2 to hit Ranged (Prone)',
-  '-3 to active defenses (Prone)',
-  '-2 to hit Melee (Crouch)',
-  '-2 to hit Ranged (Crouch)',
-  '-2 to hit Melee (Kneel/Sit)',
-  '-2 to active defenses (Kneel/Sit)',
-]
+  get StatusModifiers() {
+    if (this._statusModifiers === null) {
+      this._statusModifiers = [
+        game.i18n.localize('GURPS.modifierStatusAffliction'),
+        '*' + game.i18n.localize('GURPS.modifierStatus'),
+        game.i18n.localize('GURPS.modifierStatusShock1'),
+        game.i18n.localize('GURPS.modifierStatusShock2'),
+        game.i18n.localize('GURPS.modifierStatusShock3'),
+        game.i18n.localize('GURPS.modifierStatusShock4'),
+        game.i18n.localize('GURPS.modifierStatusStunned'),
+        '*' + game.i18n.localize('GURPS.modifierAffliction'),
+        game.i18n.localize('GURPS.modifierAfflictionCough'),
+        game.i18n.localize('GURPS.modifierAfflictionCoughIQ'),
+        game.i18n.localize('GURPS.modifierAfflictionDrowsy'),
+        game.i18n.localize('GURPS.modifierAfflictionDrunk'),
+        game.i18n.localize('GURPS.modifierAfflictionDrunkCR'),
+        game.i18n.localize('GURPS.modifierAfflictionTipsy'),
+        game.i18n.localize('GURPS.modifierAfflictionTipsyCR'),
+        game.i18n.localize('GURPS.modifierAfflictionEuphoria'),
+        game.i18n.localize('GURPS.modifierAfflictionNausea'),
+        game.i18n.localize('GURPS.modifierAfflictionNauseaDef'),
+        game.i18n.localize('GURPS.modifierAfflictionModerate'),
+        game.i18n.localize('GURPS.modifierAfflictionModerateHPT'),
+        game.i18n.localize('GURPS.modifierAfflictionSevere'),
+        game.i18n.localize('GURPS.modifierAfflictionSevereHPT'),
+        game.i18n.localize('GURPS.modifierAfflictionTerrible'),
+        game.i18n.localize('GURPS.modifierAfflictionTerribleHPT'),
+        game.i18n.localize('GURPS.modifierAfflictionRetch'),
+      ]
+    }
+    return this._statusModifiers
+  },
 
-const SizeModifiers = [
-  'Size Modifier (melee diff, ranged abs)',
-  '-10  Size 0.05 yard (1.8")',
-  '-9  Size 0.07 yard (2.5")',
-  '-8  Size 0.1 yard (3.5")',
-  '-7  Size 0.15 yard (5")',
-  '-6  Size 0.2 yard (7")',
-  '-5  Size 0.3 yard (10")',
-  '-4  Size 0.5 yard (18")',
-  "-3  Size 0.7 yard (2')",
-  "-2  Size 1 yard (3')",
-  "-1  Size 1.5 yards (4.5')",
-  "+0  Size 2 yards (6')",
+  get CoverPostureModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierCoverPosture'),
+      '*' + game.i18n.localize('GURPS.modifierCover'),
+      game.i18n.localize('GURPS.modifierCoverHead'),
+      game.i18n.localize('GURPS.modifierCoverHeadShoulder'),
+      game.i18n.localize('GURPS.modifierCoverHalfExposed'),
+      game.i18n.localize('GURPS.modifierCoverLight'),
+      game.i18n.localize('GURPS.modifierCoverBehindFigure'),
+      game.i18n.localize('GURPS.modifierCoverProne'),
+      game.i18n.localize('GURPS.modifierCoverProneHeadUp'),
+      game.i18n.localize('GURPS.modifierCoverProneHeadDown'),
+      game.i18n.localize('GURPS.modifierCoverCrouch'),
+      game.i18n.localize('GURPS.modifierCoverThroughHex'),
+      '*' + game.i18n.localize('GURPS.modifierPosture'),
+      game.i18n.localize('GURPS.modifierPostureProneMelee'),
+      game.i18n.localize('GURPS.modifierPostureProneRanged'),
+      game.i18n.localize('GURPS.modifierPostureProneDefend'),
+      game.i18n.localize('GURPS.modifierPostureCrouchMelee'),
+      game.i18n.localize('GURPS.modifierPostureCrouchRanged'),
+      game.i18n.localize('GURPS.modifierPostureKneelMelee'),
+      game.i18n.localize('GURPS.modifierPostureKneelDefend'),
+    ]
+  },
 
-  "+1  Size 3 yards (9')",
-  "+2  Size 5 yards (15')",
-  "+3  Size 7 yards (21')",
-  "+4  Size 10 yards (30')",
-  "+5  Size 15 yards (45')",
-  "+6  Size 20 yards (60')",
-  "+7  Size 30 yards (90')",
-  "+8  Size 50 yards (150')",
-  "+9  Size 70 yards (210')",
-  "+10 Size 100 yards (300')",
-  "+11 Size 150 yards (450')",
-]
+  get SizeModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierSize'),
+      '*' + game.i18n.localize('GURPS.modifierSizeDetail'),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: '-10', us: '1.5 inches', metric: '5 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -9', us: '  2 inches', metric: '7 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -8', us: '  3 inches', metric: '10 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -7', us: '  5 inches', metric: '15 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -6', us: '  8 inches', metric: '20 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -5', us: '  1 foot', metric: '30 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -4', us: '1.5 feet', metric: '50 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -3', us: '  2 feet', metric: '70 cm' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -2', us: '  1 yard/3 feet', metric: '1 meter' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' -1', us: '1.5 yards/4.5 feet', metric: '1.5 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +0', us: '  2 yards/6 feet', metric: '2 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +1', us: '  3 yards/9 feet', metric: '3 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +2', us: '  5 yards/15 feet', metric: '5 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +3', us: '  7 yards/21 feet', metric: '7 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +4', us: ' 10 yards/30 feet', metric: '10 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +5', us: ' 15 yards/45 feet', metric: '15 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +6', us: ' 20 yards/60 feet', metric: '20 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +7', us: ' 30 yards/90 feet', metric: '30 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +8', us: ' 50 yards/150 feet', metric: '50 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: ' +9', us: ' 70 yards/210 feet', metric: '70 meters' }),
+      game.i18n.format('GURPS.modifierSizeEntry', { SM: '+10', us: '100 yards/300 feet', metric: '100 meters' }),
+    ]
+  },
 
-let HitlocationModifiers = ['Hit Locations (if miss by 1, then *)']
+  _HitLocationModifiers: [],
 
-// Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
-const MeleeMods = `[+4 to hit (Determined Attack)] [PDF:B365]
-[+4 to hit (Telegraphic Attack)] [PDF:MA113]
-[-2 to hit (Deceptive Attack)] [PDF:B369]
-[-4 to hit (Charge Attack) *Max:9] [PDF:B365]
-[+2 dmg (Strong Attack)] [PDF:B365]
-${horiz('Extra Effort')} [PDF:B357]
-[+2 dmg (Mighty Blow) *Cost 1FP] [PDF:MA131]
-[+0 Heroic Charge *Cost 1FP] [PDF:MA131]`
+  get HitlocationModifiers() {
+    if (this._HitLocationModifiers.length === 0) {
+      this._HitLocationModifiers.push(game.i18n.localize('GURPS.modifierHitLocation'))
 
-const RangedMods = `[+1 Aim]
-[+1 to hit (Determined Attack)] [PDF:B365]
-${horiz('Actions')}
-[WILL check to maintain Aim]`
+      for (let loc in HitLocations.hitlocationRolls) {
+        let hit = HitLocations.hitlocationRolls[loc]
+        // Only include the items in the menu is skip is false (or empty)
+        if (!hit.skip) {
+          let parts = [
+            displayMod(hit.penalty),
+            game.i18n.localize('GURPS.modifierToHit'),
+            game.i18n.localize('GURPS.hitLocation' + loc),
+          ]
 
-const DefenseMods = `[+2 All-Out Defense] [PDF:B365]
-[+1 to dodge (Shield)] [PDF:B374]
-[+2 to dodge (Acrobatics)] [PDF:B374]
-[+3 to dodge (Dive)] [PDF:B377]
-[+3 to dodge (Retreat)] [PDF:B375]
-[+1 block/parry (Retreat)] [PDF:B377]
+          if (!!hit.desc) {
+            parts.push(`[${hit.desc.map(it => game.i18n.localize(it)).join(', ')}]`)
+          }
+          this._HitLocationModifiers.push(parts.join(' '))
+        }
+      }
+    }
+    return this._HitLocationModifiers
+  },
 
-[-2 to dodge (Failed Acrobatics)] [PDF:B375]
-[-2 to dodge (Attacked from side)] [PDF:B390]
-[-4 to dodge (Attacked from rear)] [PDF:B391]
-${horiz('Extra Effort')}
-[+2 Feverish Defense *Cost 1FP]
-${horiz('Actions')}
-[WILL-3 Concentration check]`
+  // Using back quote to allow \n in the string.  Will make it easier to edit later (instead of array of strings)
+  get MeleeMods() {
+    return `[+4 ${game.i18n.localize('GURPS.modifierDeterminedAttack')}] [PDF:B365]
+    [+4 ${game.i18n.localize('GURPS.modifierTelegraphicAttack')}] [PDF:MA113]
+    [-2 ${game.i18n.localize('GURPS.modifierDeceptiveAttack')}] [PDF:B369]
+    [-4 ${game.i18n.localize('GURPS.modifierMoveAttack')} *Max:9] [PDF:B365]
+    [+2 ${game.i18n.localize('GURPS.modifierStrongAttack')}] [PDF:B365]
+    ${horiz(game.i18n.localize('GURPS.modifierExtraEffort'))} [PDF:B357]
+    [+2 ${game.i18n.localize('GURPS.modifierMightyBlow')} *Cost 1FP] [PDF:MA131]
+    [+0 ${game.i18n.localize('GURPS.modifierHeroicCharge')} *Cost 1FP] [PDF:MA131]`
+  },
 
-const OtherMods = `[+1]
-[+2]
-[+3]
-[+4]
-[+5]
-[-1]
-[-2]
-[-3]
-[-4]
-[-5]
-[+1 GM said so]
-[-1 GM said so]
-[+4 GM Blessed]
-[-4 GM don't try it]`
+  get RangedMods() {
+    return `[+1 ${game.i18n.localize('GURPS.aim')}]
+    [+1 ${game.i18n.localize('GURPS.modifierDeterminedAttack')}] [PDF:B365]
+    ${horiz(game.i18n.localize('GURPS.actions'))}
+    [${game.i18n.localize('GURPS.modifierWillCheck')}]`
+  },
 
-const TaskDifficultyModifiers = [
-  'Task Difficulty',
-  '+10 Automatic',
-  '+8 Trivial',
-  '+6 Very Easy',
-  '+4 Easy',
-  '+2 Very Favorable',
-  '+1 Favorable',
-  '-1 Unfavorable',
-  '-2 Very Unfavorable',
-  '-4 Hard',
-  '-6 Very hard',
-  '-8 Dangerous',
-  '-10 Impossible',
-]
+  get DefenseMods() {
+    return `[+2 ${game.i18n.localize('GURPS.allOutDefense')}] [PDF:B365]
+    [+1 ${game.i18n.localize('GURPS.modifierShieldDB')}] [PDF:B374]
+    [+2 ${game.i18n.localize('GURPS.modifierDodgeAcrobatic')}] [PDF:B374]
+    [+3 ${game.i18n.localize('GURPS.modifierDodgeDive')}] [PDF:B377]
+    [+3 ${game.i18n.localize('GURPS.modifierDodgeRetreat')}] [PDF:B375]
+    [+1 ${game.i18n.localize('GURPS.modifierBlockRetreat')}] [PDF:B377]
+    [-2 ${game.i18n.localize('GURPS.modifierDodgeFailedAcro')}] [PDF:B375]
+    [-2 ${game.i18n.localize('GURPS.modifierDodgeSide')}] [PDF:B390]
+    [-4 ${game.i18n.localize('GURPS.modifierDodgeRear')}] [PDF:B391]
+    ${horiz(game.i18n.localize('GURPS.modifierExtraEffort'))}
+    [+2 ${game.i18n.localize('GURPS.modifierFeverishDef')} *Cost 1FP]
+    ${horiz(game.i18n.localize('GURPS.actions'))}
+    [WILL-3 ${game.i18n.localize('GURPS.concentrationCheck')}]`
+  },
 
-const LightingModifiers = [
-  'Lighting',
-  '-1 Sunrise / sunset / torch / flashlight',
-  '-2 Twilight / gaslight / cell-phone',
-  '-3 Deep twlight / candlelight',
-  '-4 Full moon',
-  '-5 Half moon',
-  '-6 Quarter moon',
-  '-7 Starlight',
-  '-8 Starlight through clouds',
-  '-9 Overcast moonless night',
-  '-10 Total darkness',
-]
+  get OtherMods1() {
+    return `[+1]
+    [+2]
+    [+3]
+    [+4]
+    [+5]
+    [-1]
+    [-2]
+    [-3]
+    [-4]
+    [-5]`
+  },
 
-const RateOfFireModifiers = [
-  'Rate of Fire',
-  '+1 RoF: 5-8',
-  '+2 RoF: 9-12',
-  '+3 RoF: 13-16',
-  '+4 RoF: 17-24',
-  '+5 RoF: 25-49',
-  '+6 RoF: 50-99',
-]
+  get OtherMods2() {
+    return `[+1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
+    [-1 ${game.i18n.localize('GURPS.modifierGMSaidSo')}]
+    [+4 ${game.i18n.localize('GURPS.modifierGMBlessed')}]
+    [-4 ${game.i18n.localize('GURPS.modifierGMDontTry')}]`
+  },
 
-const EqtQualifyModifiers = [
-  'Equipment Quality',
-  '+4 Best Possible Equipment',
-  '+2 Fine Quality Equipment (20x cost)',
-  '+1 Good Quality Equipment (5x cost)',
-  '-2 Improvised Equipment (non-tech task)',
-  '-5 Improvised Equipment (tech task)',
-  '-1 Missing / Damaged item',
-  '-5 No Equipment (none-tech task)',
-  '-10 No Equipment (tech task)',
-]
+  get TaskDifficultyModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierTaskDifficulty'),
+      `+10 ${game.i18n.localize('GURPS.modifierAutomatic')}`,
+      `+8 ${game.i18n.localize('GURPS.modifierTrivial')}`,
+      `+6 ${game.i18n.localize('GURPS.modifierVeryEasy')}`,
+      `+4 ${game.i18n.localize('GURPS.modifierEasy')}`,
+      `+2 ${game.i18n.localize('GURPS.modifierVeryFavorable')}`,
+      `+1 ${game.i18n.localize('GURPS.modifierFavorable')}`,
+      `-1 ${game.i18n.localize('GURPS.modifierUnfavorable')}`,
+      `-2 ${game.i18n.localize('GURPS.modifierVeryUnfavorable')}`,
+      `-4 ${game.i18n.localize('GURPS.modifierHard')}`,
+      `-6 ${game.i18n.localize('GURPS.modifierVeryHard')}`,
+      `-8 ${game.i18n.localize('GURPS.modifierDangerous')}`,
+      `-10 ${game.i18n.localize('GURPS.modifierImpossible')}`,
+    ]
+  },
+
+  get LightingModifiers() {
+    return [
+      game.i18n.localize('GURPS.lighting'),
+      `-1 ${game.i18n.localize('GURPS.modifierLightDim')}`,
+      `-2 ${game.i18n.localize('GURPS.modifierLightTwilight')}`,
+      `-3 ${game.i18n.localize('GURPS.modifierLightTorch')}`,
+      `-4 ${game.i18n.localize('GURPS.modifierLightFullMoon')}`,
+      `-5 ${game.i18n.localize('GURPS.modifierLightCandle')}`,
+      `-6 ${game.i18n.localize('GURPS.modifierLightHalfMoon')}`,
+      `-7 ${game.i18n.localize('GURPS.modifierLightQuarterMoon')}`,
+      `-8 ${game.i18n.localize('GURPS.modifierLightStarlight')}`,
+      `-9 ${game.i18n.localize('GURPS.modifierLightMoonless')}`,
+      `-10 ${game.i18n.localize('GURPS.modifierLightNone')}`,
+    ]
+  },
+
+  get RateOfFireModifiers() {
+    return [
+      game.i18n.localize('GURPS.rateOfFire'),
+      `+1 ${game.i18n.localize('GURPS.rof')}: 5-8`,
+      `+2 ${game.i18n.localize('GURPS.rof')}: 9-12`,
+      `+3 ${game.i18n.localize('GURPS.rof')}: 13-16`,
+      `+4 ${game.i18n.localize('GURPS.rof')}: 17-24`,
+      `+5 ${game.i18n.localize('GURPS.rof')}: 25-49`,
+      `+6 ${game.i18n.localize('GURPS.rof')}: 50-99`,
+    ]
+  },
+
+  get EqtQualifyModifiers() {
+    return [
+      game.i18n.localize('GURPS.modifierQuality'),
+      `+4 ${game.i18n.localize('GURPS.modifierQualityBest')}`,
+      `+2 ${game.i18n.localize('GURPS.modifierQualityFine')}`,
+      `+1 ${game.i18n.localize('GURPS.modifierQualityGood')}`,
+      `-2 ${game.i18n.localize('GURPS.modifierQualityImprovised')}`,
+      `-5 ${game.i18n.localize('GURPS.modifierQualityImprovTech')}`,
+      `-1 ${game.i18n.localize('GURPS.modifierQualityMissing')}`,
+      `-5 ${game.i18n.localize('GURPS.modifierQualityNone')}`,
+      `-10 ${game.i18n.localize('GURPS.modifierQualityNoneTech')}`,
+    ]
+  },
+}
 
 const ModifiersForStatus = {
   grapple: {

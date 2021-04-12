@@ -45,7 +45,7 @@ export class GurpsActor extends Actor {
       }
       for (let enckey in encs) {
         let enc = encs[enckey]
-        let t = 1.0 - (0.2 * parseInt(enc.level))
+        let t = 1.0 - 0.2 * parseInt(enc.level)
         enc.currentmove = Math.max(1, Math.floor(m * t))
         enc.currentdodge = Math.max(1, d - parseInt(enc.level))
         if (enc.current) {
@@ -220,8 +220,8 @@ export class GurpsActor extends Actor {
     }
     commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.data.data.additionalresources || {}
-    ar.importname = importname
-    ar.importpath = importpath
+    ar.importname = importname || ar.importnam
+    ar.importpath = importpath || ar.importpath
     ar.importversion = ra.version
     commit = { ...commit, ...{ 'data.additionalresources': ar } }
 
@@ -1318,7 +1318,7 @@ export class GurpsActor extends Actor {
         else msg += 'is no longer reeling.'
       }
       if (option === 'isTired') {
-        if (flag) msg += 'is Tired.   Move, Dodge and ST are halved. [PDF:B426]'
+        if (flag) msg += 'is Tired. Move, Dodge and ST are halved. [PDF:B426]'
         else msg += 'is no longer tired.'
       }
       let users = this.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)

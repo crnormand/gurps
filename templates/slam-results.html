@@ -1,0 +1,50 @@
+<div class='roll-message gurps-chat-message'>
+  <div class='prefix'>
+    {{attacker}} <i>{{localize "GURPS.slams"}} <i class="subtle fas fa-align-right"></i><i
+        class="fas fa-running"></i></i>
+    {{target}}.
+  </div>
+  <div>
+    <ul class='modifier-list'>
+      {{#if isAoAStrong}}
+      <li>+2 {{localize "GURPS.damage"}} {{localize "GURPS.for"}}{{localize "GURPS.slamAOAStrong"}}</li>
+      {{/if}}
+    </ul>
+  </div>
+  <div class='roll-result'>
+    {{result}}
+  </div>
+  <div class='collapsible-wrapper'>
+    <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox' {{showTheMath}}>
+    <label for='collapsible-{{id}}' class='label-toggle'>{{localize "GURPS.chatDamageResultShowMath"}}</label>
+    <div class='gurps-group collapsible-content'>
+      <div class='grid gurps-3col results-table content-inner'>
+        <div>{{attacker}}</div>
+        <div>{{attackerRaw}}</div>
+        <div>= {{localize "GURPS.HP"}} ({{attackerHp}}) &times; {{localize "GURPS.slamVelocity"}}
+          ({{relativeSpeed}}) &divide; 100</div>
+
+        <div></div>
+        <div>{{attackerDice.dice}}d{{#if attackerDice.adds}}{{displayNumber attackerDice.adds}}{{/if}}</div>
+        <div>{{localize "GURPS.Dice"}} {{#if isAoAStrong}}(+2 {{localize "GURPS.slamAOAStrong"}}){{/if}}</div>
+
+        <div></div>
+        <div>{{attackerResult}}</div>
+        <div>= {{attackerExplain}}</div>
+
+        <div>{{target}}</div>
+        <div>{{targetRaw}}</div>
+        <div>= {{localize "GURPS.HP"}} ({{targetHp}}) &times; {{localize "GURPS.slamVelocity"}}
+          ({{relativeSpeed}}) &divide; 100</div>
+
+        <div></div>
+        <div>{{targetDice.dice}}d{{#if targetDice.adds}}{{displayNumber targetDice.adds}}{{/if}}</div>
+        <div>{{localize "GURPS.Dice"}}</div>
+
+        <div></div>
+        <div>{{targetResult}}</div>
+        <div>= {{targetExplain}}</div>
+      </div>
+    </div>
+  </div>
+</div>

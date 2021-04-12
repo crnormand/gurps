@@ -19,11 +19,13 @@ import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
+import SlamChatProcessor from '../module/slam.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 
-GURPS.BANNER = `   __ ____ _____ _____ _____ _____ ____ __    
+GURPS.BANNER = `
+   __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
  / /      ____ _   _ ____  ____  ____    \\ \\  
  | |     / ___| | | |  _ \\|  _ \\/ ___|    | | 
@@ -43,7 +45,6 @@ import DamageChat from './damage/damagechat.js'
 import handlebarHelpers from '../lib/moustachewax.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import jqueryHelpers from '../lib/jquery-helper.js'
-import { NpcInput } from '../lib/npc-input.js'
 import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
@@ -140,36 +141,54 @@ GURPS.skillTypes = {
 
 GURPS.PARSELINK_MAPPINGS = {
   ST: 'attributes.ST.value',
+  st: 'attributes.ST.value',
   DX: 'attributes.DX.value',
+  dx: 'attributes.DX.value',
   IQ: 'attributes.IQ.value',
+  iq: 'attributes.IQ.value',
   HT: 'attributes.HT.value',
+  ht: 'attributes.HT.value',
   WILL: 'attributes.WILL.value',
   Will: 'attributes.WILL.value',
+  will: 'attributes.WILL.value',
   PER: 'attributes.PER.value',
   Per: 'attributes.PER.value',
+  per: 'attributes.PER.value',
   Vision: 'vision',
   VISION: 'vision',
+  vision: 'vision',
   FRIGHTCHECK: 'frightcheck',
   Frightcheck: 'frightcheck',
+  frightcheck: 'frightcheck',
   'Fright check': 'frightcheck',
   'Fright Check': 'frightcheck',
+  'fright check': 'frightcheck',
   Hearing: 'hearing',
   HEARING: 'hearing',
+  hearing: 'hearing',
   TASTESMELL: 'tastesmell',
+  tastesmell: 'tastesmell',
   'Taste Smell': 'tastesmell',
   'TASTE SMELL': 'tastesmell',
+  'taste mmell': 'tastesmell',
   TASTE: 'tastesmell',
   SMELL: 'tastesmell',
   Taste: 'tastesmell',
   Smell: 'tastesmell',
+  taste: 'tastesmell',
+  smell: 'tastesmell',
   TOUCH: 'touch',
   Touch: 'touch',
+  touch: 'touch',
   Dodge: 'currentdodge',
   DODGE: 'currentdodge',
+  dodge: 'currentdodge',
   Parry: 'equippedparry',
   PARRY: 'equippedparry',
+  parry: 'equippedparry',
   Block: 'equippedblock',
   BLOCK: 'equippedblock',
+  block: 'equippedblock',
 }
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects
@@ -495,9 +514,9 @@ GURPS.SJGProductMappings = {
 GURPS.USER_GUIDE_URL = 'https://bit.ly/2JaSlQd'
 
 function escapeUnicode(str) {
-    return str.replace(/[^\0-~]/g, function(ch) {
-        return "&#x" + (("0000" + ch.charCodeAt().toString(16).toUpperCase()).slice(-4)) + ";"
-    });
+  return str.replace(/[^\0-~]/g, function (ch) {
+    return '&#x' + ('0000' + ch.charCodeAt().toString(16).toUpperCase()).slice(-4) + ';'
+  })
 }
 GURPS.escapeUnicode = escapeUnicode
 
@@ -508,17 +527,17 @@ GURPS.escapeUnicode = escapeUnicode
  * @return {Promise.<String>}   A Promise which resolves to the loaded text data
  */
 function readTextFromFile(file) {
-  const reader = new FileReader();
+  const reader = new FileReader()
   return new Promise((resolve, reject) => {
     reader.onload = ev => {
-      resolve(reader.result);
-    };
+      resolve(reader.result)
+    }
     reader.onerror = ev => {
-      reader.abort();
-      reject();
-    };
-    reader.readAsBinaryString(file);
-  });
+      reader.abort()
+      reject()
+    }
+    reader.readAsBinaryString(file)
+  })
 }
 GURPS.readTextFromFile = readTextFromFile
 
@@ -815,7 +834,7 @@ async function performAction(action, actor, event, targets) {
         )
         return false
       }
-      thing = att.name  // get real name of attack
+      thing = att.name // get real name of attack
       let t = att.level
       if (!!t) {
         let a = t.trim().split(' ')
@@ -826,7 +845,7 @@ async function performAction(action, actor, event, targets) {
         else {
           a.shift()
           let m = a.join(' ')
-          if (!!m) ui.modifierbucket.addModifier(0, m)    //  Level may have "*Costs xFP"
+          if (!!m) ui.modifierbucket.addModifier(0, m) //  Level may have "*Costs xFP"
         }
       }
       formula = '3d6'
@@ -844,6 +863,7 @@ GURPS.performAction = performAction
 function findSkillSpell(actor, sname) {
   var t
   if (!actor) return t
+  if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
   let best = 0
   recurselist(actor.data.skills, s => {
@@ -863,9 +883,25 @@ function findSkillSpell(actor, sname) {
 }
 GURPS.findSkillSpell = findSkillSpell
 
+function findAdDisad(actor, sname) {
+  var t
+  if (!actor) return t
+  if (!!actor.data?.data?.additionalresources) actor = actor.data
+  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  recurselist(actor.data.ads, s => {
+    if (s.name.match(sname)) {
+      t = s
+    }
+  })
+  return t
+}
+GURPS.findAdDisad = findAdDisad
+
+
 function findAttack(actor, sname) {
   var t
   if (!actor) return t
+  if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
   t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
@@ -1231,16 +1267,6 @@ GURPS.rangeObject = new GURPSRange()
 GURPS.initiative = new Initiative()
 GURPS.hitpoints = new HitFatPoints()
 
-// // Modifier Bucket must be defined after hit locations
-// GURPS.ModifierBucket = new ModifierBucket({
-//   popOut: false,
-//   minimizable: false,
-//   resizable: false,
-//   id: 'ModifierBucket',
-//   template: 'systems/gurps/templates/modifier-bucket.html',
-//   classes: [],
-// })
-
 GURPS.ThreeD6 = new ThreeD6({
   popOut: false,
   minimizable: false,
@@ -1424,16 +1450,11 @@ Hooks.once('init', async function () {
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
+  SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
-  GURPS.ModifierBucket = new ModifierBucket({
-    popOut: false,
-    minimizable: false,
-    resizable: false,
-    id: 'ModifierBucket',
-    template: 'systems/gurps/templates/modifier-bucket.html',
-    classes: [],
-  })
+
+  GURPS.ModifierBucket = new ModifierBucket()
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
@@ -1533,13 +1554,13 @@ Hooks.once('ready', async function () {
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
     if (!data.otf) return
-    let cmd = `GURPS.executeOTF('${data.otf}')`
+    let cmd = 'GURPS.executeOTF(`' + data.otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
     let name = `OtF: ${data.otf}`
     if (!!data.actor) {
-      cmd = `let actor = game.actors.get('${data.actor}')
-GURPS.SetLastActor(actor)
+      cmd =
+        `GURPS.SetLastActor(game.actors.get('${data.actor}'))
 ` + cmd
-      name = game.actors.get(data.actor).name + " " + name
+      name = game.actors.get(data.actor).name + ' ' + name
     }
     let macro = await Macro.create({
       name: name,
@@ -1669,22 +1690,20 @@ GURPS.SetLastActor(actor)
         width: grid_size,
         releaseOthers: true,
       })
-      
-      let handleDamage = (actor) => {   // Reset selection back to original, and drop damage
-        for (let t of game.user.targets) {
-          t.setTarget(false, { releaseOthers: false, groupSelection: true })
-        }
-        oldselection.forEach(t => {
-          t.setTarget(true, { releaseOthers: false, groupSelection: true })
-        })
-        actor.handleDamageDrop(dropData.payload)
+      let targets = [...game.user.targets]
+
+      // Now that we have the list of targets, reset the target selection back to whatever the user had
+      for (let t of game.user.targets) {
+        t.setTarget(false, { releaseOthers: false, groupSelection: true })
       }
+      oldselection.forEach(t => {
+        t.setTarget(true, { releaseOthers: false, groupSelection: true })
+      })
 
       // actual targets are stored in game.user.targets
-      if (game.user.targets.size === 0) return false
-      if (game.user.targets.size === 1) {
-        let targets = [...game.user.targets]
-        handleDamage(targets[0].actor)
+      if (targets.length === 0) return false
+      if (targets.length === 1) {
+        targets[0].actor.handleDamageDrop(dropData.payload)
         return false
       }
 
@@ -1694,8 +1713,8 @@ GURPS.SetLastActor(actor)
           label: game.i18n.localize('GURPS.addApply'),
           callback: html => {
             let name = html.find('select option:selected').text().trim()
-            let target = [...game.user.targets].find(token => token.name === name)
-            handleDamage(target.actor)
+            let target = targets.find(token => token.name === name)
+            target.actor.handleDamageDrop(dropData.payload)
           },
         },
       }
@@ -1704,11 +1723,11 @@ GURPS.SetLastActor(actor)
         {
           title: game.i18n.localize('GURPS.selectToken'),
           content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
-            tokens: game.user.targets,
+            tokens: targets,
           }),
           buttons: buttons,
           default: 'apply',
-          tokens: game.user.targets,
+          tokens: targets,
         },
         { width: 300 }
       )

@@ -65,7 +65,7 @@ export class CompositeDamageCalculator {
     }
 
     if (!!CompositeDamageCalculator.isResourceDamageType(this._damageType)) {
-      this.applyTo = this._damageType
+      this._applyTo = this._damageType
     } else {
       this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
     }
@@ -260,15 +260,15 @@ export class CompositeDamageCalculator {
 
     // process crippling -- just keep one of them
     let crippling = effects.find(it => it.type === 'crippling')
-    if (!!crippling) {
-      results.push(crippling)
-    }
+    if (!!crippling) results.push(crippling)
 
     // process major wound -- just keep one of them
     let majorwound = effects.find(it => it.type === 'majorwound')
-    if (!!majorwound) {
-      results.push(majorwound)
-    }
+    if (!!majorwound) results.push(majorwound)
+
+    // process headvitalshit -- just keep one of them
+    let headvitalshit = effects.find(it => it.type === 'headvitalshit')
+    if (!!headvitalshit) results.push(headvitalshit)
 
     return results
   }
@@ -624,31 +624,32 @@ export class CompositeDamageCalculator {
   }
 
   get resource() {
-    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-      let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
-      let tracker = null
-      let index = null
-      trackers.forEach((t, i) => {
-        if (t.alias === this._applyTo) {
-          index = i
-          tracker = t
-          return
-        }
-      })
-      return [tracker, `data.additionalresources.tracker.${index}`]
-    }
+    // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
+    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let tracker = null
+    let index = null
+    trackers.forEach((t, i) => {
+      if (t.alias === this._applyTo) {
+        index = i
+        tracker = t
+        return
+      }
+    })
+    if (!!tracker) return [tracker, `data.additionalresources.tracker.${index}`]
+    // }
 
-    if (this._applyTo === 'fat') return [this._defender.data.data.FP, 'data.FP']
+    if (this._applyTo === 'FP') return [this._defender.data.data.FP, 'data.FP']
     return [this._defender.data.data.HP, 'data.HP']
   }
 
   get resourceType() {
-    if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-      let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
-      return trackers.find(it => it.alias === this._applyTo).name
-    }
+    // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
+    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let tracker = trackers.find(it => it.alias === this._applyTo)
+    if (!!tracker) return tracker.name
+    // }
 
-    if (this._applyTo === 'fat') return 'FP'
+    if (this._applyTo === 'FP') return 'FP'
     return 'HP'
   }
 
@@ -946,6 +947,10 @@ class DamageCalculator {
     return pointsToApply
   }
 
+  get bonusToHTRollForHalfDamage() {
+    return this._parent.isRangedHalfDamage ? 3 : 0
+  }
+
   get calculatedShock() {
     let factor = Math.max(1, Math.floor(this._parent.HP.max / 10))
     let shock = Math.min(4, Math.floor(this.pointsToApply / factor))
@@ -1011,17 +1016,17 @@ class DamageCalculator {
       }
 
       let isMajorWound = false
-      if (this.isMajorWound) {
-        isMajorWound = true
-        _effects.push({
-          type: 'majorwound',
-          modifier: this.penaltyToHTRollForStunning,
-        })
-      } else if ([...head, 'Vitals'].includes(this._parent.hitLocation) && shock > 0) {
+      if ([...head, 'Vitals'].includes(this._parent.hitLocation) && shock > 0) {
         _effects.push({
           type: 'headvitalshit',
           detail: this._parent.hitLocation,
-          modifier: this.penaltyToHTRollForStunning,
+          modifier: this.penaltyToHTRollForStunning - this.bonusToHTRollForHalfDamage,
+        })
+      } else if (this.isMajorWound) {
+        isMajorWound = true
+        _effects.push({
+          type: 'majorwound',
+          modifier: this.penaltyToHTRollForStunning - this.bonusToHTRollForHalfDamage,
         })
       }
 
@@ -1036,7 +1041,7 @@ class DamageCalculator {
         if (!isMajorWound)
           _effects.push({
             type: 'majorwound',
-            modifier: this.penaltyToHTRollForStunning,
+            modifier: this.penaltyToHTRollForStunning - this.bonusToHTRollForHalfDamage,
           })
       }
     }
@@ -1053,17 +1058,6 @@ class DamageCalculator {
       }
     }
 
-    // if (this.injury === 0 && this._isFlexibleArmor && this._useBluntTrauma) {
-    //     let trauma = this.effectiveBluntTrauma
-    //     if (trauma > 0) {
-    //         _effects.push({
-    //             type: 'blunttrauma',
-    //             amount: trauma
-    //         })
-    //     }
-    // }
-
-    console.log(this)
     return _effects
   }
 

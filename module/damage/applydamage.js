@@ -1,7 +1,14 @@
 'use strict'
 
 import { CompositeDamageCalculator } from './damagecalculator.js'
-import { isNiceDiceEnabled, parseFloatFrom, parseIntFrom, generateUniqueId } from '../../lib/utilities.js'
+import {
+  isNiceDiceEnabled,
+  parseFloatFrom,
+  parseIntFrom,
+  generateUniqueId,
+  arrayToObject,
+  objectToArray,
+} from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
 import { GurpsActor } from '../actor.js'
@@ -43,12 +50,16 @@ export default class ApplyDamageDialog extends Application {
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
 
-    this._resourceLabels = ResourceTrackerManager.getAllTemplates()
-      .filter(it => !!it.tracker.alias)
-      .filter(it => !!it.tracker.isDamageType)
-      .map(it => {
-        return { name: it.tracker.name, alias: it.tracker.alias }
-      })
+    // this._resourceLabels = ResourceTrackerManager.getAllTemplates()
+    //   .filter(it => !!it.tracker.alias)
+    //   .filter(it => !!it.tracker.isDamageType)
+    //   .map(it => {
+    //     return { name: it.tracker.name, alias: it.tracker.alias }
+    //   })
+
+    let trackers = objectToArray(actor._additionalResources.tracker)
+    this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
+
     console.log(this._resourceLabels)
   }
 
@@ -465,7 +476,8 @@ export default class ApplyDamageDialog extends Application {
     if (object.type === 'majorwound') {
       message = await this._renderTemplate('chat-majorwound.html', {
         name: this.actor.data.name,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+        htCheck:
+          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
       })
     }
 
@@ -473,7 +485,8 @@ export default class ApplyDamageDialog extends Application {
       message = await this._renderTemplate('chat-headvitalshit.html', {
         name: this.actor.data.name,
         location: object.detail,
-        htCheck: object.modifier === 0 ? 'HT' : `HT-${object.modifier}`,
+        htCheck:
+          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
       })
     }
 
@@ -561,7 +574,7 @@ export default class ApplyDamageDialog extends Application {
       injury: injury,
       defender: this.actor.data.name,
       current: resource.value,
-      location: this._calculator.hitLocation,
+      location: this._calculator.resourceType === 'HP' ? this._calculator.hitLocation : null,
       type: this._calculator.resourceType,
       resultsTable: results,
     }

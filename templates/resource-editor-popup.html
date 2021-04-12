@@ -6,11 +6,14 @@
       </div>
       <div class='grid grid-2col'>
         <div class='inputs' style='margin: 0;'>
-          <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" />
+          <input class="current gcs-input" type="text" value="{{tracker.value}}" data-dtype="Number" {{disabled (not
+            isActor)}} />
           <div class="label">{{localize "GURPS.current"}}</div>
-          <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" />
+          <input class="minimum gcs-input" type="text" value="{{tracker.min}}" data-dtype="Number" {{disabled (not
+            isActor)}} />
           <div class="label">{{localize "GURPS.minimum"}}</div>
-          <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" />
+          <input class="maximum gcs-input" type="text" value="{{tracker.max}}" data-dtype="Number" {{disabled (not
+            isActor)}} />
           <div class="label">{{localize "GURPS.maximum"}}</div>
         </div>
         <div class='inputs' style='margin: 0;'>
@@ -20,7 +23,7 @@
           <div class='label'>{{localize "GURPS.reference"}}</div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
             <label class='label' style='display: block; padding-left: 15px; text-indent: -15px;'>
-              <input name='damage-type' type='checkbox' {{checked tracker.isDamageType}} {{disabled isActor}}
+              <input name='damage-type' type='checkbox' {{checked tracker.isDamageType}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;' />
               {{localize "GURPS.resourceDamageType"}}
             </label>

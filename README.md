@@ -1,6 +1,6 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
-# Current Release Version 0.8.21
+# Current Release Version 0.8.22
 
 [If you like our work...](https://ko-fi.com/crnormand)
 
@@ -12,10 +12,6 @@ To install the latest stable release, use this manifest URL:
 [Getting Started video](https://youtu.be/FUqtOkdyBCo) / [Players Guide video](https://youtu.be/x-xD39x_JQw)
 
 Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
-
-## We are converting to a new build process and the use of Typescript.   The 'main' branch may become unusable in the near future.  Once we complete the conversion, we will provide details on how you can use the new build.
-
-Until then, we will continue to develop 0.8.XX builds on the 'pre-release' and 'release' branches.
 
 ### If you are looking for the latest stable release, use the manifest URL above.
 

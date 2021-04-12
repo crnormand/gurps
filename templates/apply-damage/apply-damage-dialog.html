@@ -6,7 +6,7 @@
       {{#if (and CALC.useArmorDivisor CALC.armorDivisor)}}
       ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
       {{/if}}
-      {{#if (and (ne CALC.damageType 'dmg') (ne CALC.damageType 'none'))}}{{CALC.damageType}}{{/if}}
+      {{#if (and (ne CALC.damageType 'dmg') (ne CALC.damageType 'none'))}}'{{CALC.damageType}}'{{/if}}
       {{localize "GURPS.addTitleConcat1" name=actor.data.name}}
     </h2>
 
@@ -58,10 +58,9 @@
           </div>
         </div>
       </div>
-
-      <!-- <button id='apply-secretly'>{{localize "GURPS.addApplyQuietly"}}</button> -->
     </div>
 
+    {{#unless isSimpleDialog}}
     <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>
       <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%;'>
         <h3>{{localize "GURPS.addApplyDamageOptions"}}:</h3>
@@ -482,24 +481,27 @@
           <div id="result-extrastuff">
             <ul id='result-effects'>
               {{#each CALC.effects}}
+              {{debug this}}
               {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
               {{/each}}
             </ul>
           </div>
 
-          <div class='apply-results'>
-            <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
-              class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
+          <div class='apply-results'
+            style='height: 100%; display: flex; flex-flow: column; justify-content:space-between; gap: inherit'>
+            <div style='display: flex; flex-flow: column; gap: inherit'>
+              <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
+                class='decimal-digits-only' id='result-apply-injury' name='damage' value='{{CALC.pointsToApply}}'>
 
-            <div class="grid grid-2col flex-between" style='grid-template-columns: max-content 1fr;'>
-              <label for='apply-multiple'>{{localize "GURPS.addApplyMultipleTimes"}}:</label>
-              <div style='position: relative;'>
-                <input type="number" class="digits-only" id="apply-multiple" value="{{timesToApply}}"
-                  style='padding-left: 1.5rem;'>
-                <span style='position: absolute; text-align: center; width: 1.5rem; color: dimgray;'>×</span>
+              <div class="grid grid-2col flex-between" style='grid-template-columns: max-content 1fr; margin-top: 3px;'>
+                <label for='apply-multiple'>{{localize "GURPS.addApplyMultipleTimes"}}:</label>
+                <div style='position: relative;'>
+                  <input type="number" class="digits-only" id="apply-multiple" value="{{timesToApply}}"
+                    style='padding-left: 1.5rem;'>
+                  <span style='position: absolute; text-align: center; width: 1.5rem; color: dimgray;'>×</span>
+                </div>
               </div>
             </div>
-
             <div style='display: grid; grid-template-columns: 1fr min-content; margin-top: 1rem;'>
               <button id='apply-injury-publicly' class='split-button'>{{localize "GURPS.addApplyInjury"}}</button>
               <div class='dropdown'>
@@ -518,5 +520,6 @@
         </div>
       </div>
     </div>
+    {{/unless}}
   </div>
 </div>

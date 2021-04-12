@@ -543,17 +543,25 @@ export class GurpsActorSheet extends ActorSheet {
     )
 
     html.find('#qnotes').dblclick(ex => {
-      const n = this.actor.data.data.additionalresources.qnotes || ''
-      Dialog.prompt({
+      let n = this.actor.data.data.additionalresources.qnotes || ''
+      n = n.replace(/<br>/g, "\n")
+      let actor = this.actor
+      new Dialog({
         title: 'Edit Quick Note',
-        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><input id="i" type="text" value="${n}" placeholder=""></input><br><br>Examples:
+        content: `Enter a Quick Note (a great place to put an On-the-Fly formula!):<br><br><textarea rows="4" id="i">${n}</textarea><br><br>Examples:
         <br>[+1 due to shield]<br>[Dodge +3 retreat]<br>[Dodge +2 Feverish Defense *Cost 1FP]`,
-        label: 'OK',
-        callback: html => {
-          const i = html[0].querySelector('#i')
-          this.actor.update({ 'data.additionalresources.qnotes': i.value })
+        buttons: {
+          save: {
+            icon: '<i class="fas fa-save"></i>',
+            label: "Save",
+            callback: html => {
+              const i = html[0].querySelector('#i')
+              actor.update({ 'data.additionalresources.qnotes': i.value.replace(/\n/g, "<br>") })
+            }
+          },
         },
-      })
+        render: true,
+      }).render(true);
     })
 
   }
@@ -612,6 +620,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
+    obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
     let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
 
     let d = new Dialog(
@@ -1020,41 +1029,66 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onFileImport(event) {
     event.preventDefault()
-    let element = event.currentTarget
+    let p = this.actor.data.data.additionalresources.importpath
+    if (!!p) {
+      let m = p.match(/.*[/\\]Data[/\\](.*)/)
+      if (!!m) {
+        let f = m[1]
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = "arraybuffer";
+        xhr.open("GET", f);
+
+        let promise = new Promise(resolve => {
+          xhr.onload = () => {
+            if (xhr.status === 200) { 
+              let s = String.fromCharCode.apply(null, new Uint8Array(xhr.response));
+              this.actor.importFromGCSv1(s, m[1], p)
+            } else this._openImportDialog()
+            resolve(this)
+          };
+        });
+        xhr.send(null);
+      }
+      else this._openImportDialog()
+    }
+    else this._openImportDialog()
+  }
+  
+  async _openImportDialog() {
     new Dialog(
-      {
-        title: `Import character data for: ${this.actor.name}`,
-        content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
-          name: '"' + this.actor.name + '"',
-        }),
-        buttons: {
-          import: {
-            icon: '<i class="fas fa-file-import"></i>',
-            label: 'Import',
-            callback: html => {
-              const form = html.find('form')[0]
-              let files = form.data.files
-              let file = null
-              if (!files.length) {
-                return ui.notifications.error('You did not upload a data file!')
-              } else {
-                file = files[0]
-                GURPS.readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
-              }
-            },
-          },
-          no: {
-            icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel',
+    {
+      title: `Import character data for: ${this.actor.name}`,
+      content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
+        name: '"' + this.actor.name + '"',
+      }),
+      buttons: {
+        import: {
+          icon: '<i class="fas fa-file-import"></i>',
+          label: 'Import',
+          callback: html => {
+            const form = html.find('form')[0]
+            let files = form.data.files
+            let file = null
+            if (!files.length) {
+              return ui.notifications.error('You did not upload a data file!')
+            } else {
+              file = files[0]
+              GURPS.readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
+            }
           },
         },
-        default: 'import',
+        no: {
+          icon: '<i class="fas fa-times"></i>',
+          label: 'Cancel',
+        },
       },
-      {
-        width: 400,
-      }
-    ).render(true)
-  }
+      default: 'import',
+    },
+    {
+      width: 400,
+    }
+  ).render(true)
+}
 
   async _onToggleSheet(event) {
     event.preventDefault()
