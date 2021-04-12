@@ -379,6 +379,13 @@
             <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
             <div name='result-effective-dmg'>= {{CALC.basicDamage}} &times; {{CALC.shotgunDamageMultiplier}}</div>
             {{/if}}
+            {{#if CALC.isExplosion}}
+            <div name='result-effective-dmg'>{{localize "GURPS.addExplosion"}}</div>
+            <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+            <div name='result-effective-dmg'><span>= {{CALC.basicDamage}} &times;
+                <sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>
+            </div>
+            {{/if}}
 
             <div id='result-dr'>{{localize "GURPS.hitLocationDR"}}</div>
             <div>{{CALC.DR}}</div>
@@ -386,7 +393,6 @@
               "GURPS.overridden"}}){{/unless}}</div>
 
             {{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
-            {{#unless CALC.isExplosion}}
             <div>{{localize "GURPS.hitLocationDRWithDivisor"}}</div>
             <div>{{CALC.effectiveDR}}</div>
             <!-- This is a big messy looking block, but it prints either:
@@ -407,7 +413,6 @@
                 {{/unless}}</span>
               {{/if}}
             </div>
-            {{/unless}}
             {{/if}}
 
             <div id='result-penetrating'>{{localize "GURPS.addPenetrating"}}</div>
@@ -429,13 +434,6 @@
               </span>
             </div>
 
-            {{#if CALC.isExplosion}}
-            <div>{{localize "GURPS.addExplosion"}}</div>
-            <div><span>×<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span></div>
-            <div><span>({{CALC.hexesFromExplosion}} {{pluralize 'hex' CALC.hexesFromExplosion}} from center)</span>
-            </div>
-            {{/if}}
-
             {{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
             <div>{{localize "GURPS.addDamageReduction"}}</div>
             <div>&divide;{{CALC.damageReductionLevel}}</div>
@@ -446,9 +444,7 @@
             <div>{{CALC.injury}}</div>
             <div><span>=
                 {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}
-                  {{#if CALC.isExplosion}}
-                  <span> ×<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub></span>
-                  {{/if}}</span>
+                </span>
                 {{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
                 &divide; {{CALC.damageReductionLevel}}
                 {{/if}}
