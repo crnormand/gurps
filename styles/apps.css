@@ -271,7 +271,7 @@
   border-radius: 10px;
   width: 872px;
   height: 664px;
-  bottom: 100px !important;
+  bottom: 140px !important;
   left: 405px !important;
   position: absolute;
   z-index: 100;
@@ -280,7 +280,7 @@
 .modttt::after {
   content: '';
   position: absolute;
-  top: 100%;
+  /* top: 100%; */
   left: 50%;
   margin-left: -300px;
   border-width: 37px 300px;
