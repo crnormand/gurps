@@ -110,6 +110,11 @@
               <div class="field noedit rollable" data-path="attributes.HT.value " data-otf='HT'>
                 {{data.attributes.HT.value}}</div>
               <div class="label">{{localize "GURPS.attributesHT"}}</div>
+              {{#if useQN}}
+              <div class="field noedit rollable" data-path="attributes.QN.value " data-otf='QN'>
+                {{data.attributes.QN.value}}</div>
+              <div class="label">{{localize "GURPS.attributesQN"}}</div>
+              {{/if}}
               <hr>
               <div class="field noedit rollable" data-path="attributes.PER.value" data-otf='PER'>
                 {{data.attributes.PER.value}}</div>
