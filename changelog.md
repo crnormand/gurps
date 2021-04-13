@@ -22,6 +22,7 @@ This is what we are currently working on:
 - Added GURPS.findAdDisad(), and updated GURPS.findSkillSpell() and GURPS.findAttack() for script macros
 - Fixed Explosion damage calculation.
 - Added ability to override the text of the OtF buttons ["New Text" Dodge]
+- Auto import when in Foundry Data (GCS export includes Portrait)
 
 
 ## History
