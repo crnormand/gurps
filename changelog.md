@@ -2,7 +2,9 @@
 
 This is what we are currently working on:
 
-0.8.23
+## History
+
+0.8.23 - 4/13/2021
   
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 - Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
@@ -23,9 +25,6 @@ This is what we are currently working on:
 - Fixed Explosion damage calculation.
 - Added ability to override the text of the OtF buttons ["New Text" Dodge]
 - Auto import when in Foundry Data (GCS export includes Portrait)
-
-
-## History
 
 0.8.22 - 3/31/2021
 
