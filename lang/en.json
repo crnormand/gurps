@@ -610,5 +610,9 @@
   "GURPS.modifierAfflictionModerateHPT": "-1 to IQ/DX/CR checks (Moderate Pain w/HPT)",
   "GURPS.modifierAfflictionSevereHPT": "-2 to IQ/DX/CR checks (Severe Pain w/HPT)",
   "GURPS.modifierAfflictionTerribleHPT": "-3 to IQ/DX/CR checks (Terrible Pain w/HPT)",
-  "GURPS.modifierAfflictionRetch": "-5 to IQ/DX/Per checks (Retching)"
+  "GURPS.modifierAfflictionRetch": "-5 to IQ/DX/Per checks (Retching)",
+
+  "GURPS.QUINTESSENCENormal":"Normal",
+  "GURPS.QUINTESSENCETired":"Drained",
+  "GURPS.QUINTESSENCEExhausted":"Exhausted"
 }
