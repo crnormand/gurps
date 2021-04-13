@@ -386,51 +386,6 @@
 
         <div id='resources'>
           <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
-          <div id='combat-qp' class='tracked-resource' data-gurps-resource='QP'>
-            <div class='header'>{{localize "GURPS.attributesQPNAME"}}</div>
-            <div class='spinner'>
-              <button data-operation='resource-dec'><i class="fas fa-minus"></i></button>
-              <details>
-                <summary>
-                  <input class="gcs-attr-input" name="data.QP.value" type="text" value="{{data.QP.value}}"
-                    placeholder="{{data.QP.max}}" data-dtype="Number" />
-                </summary>
-                <div class='popup button-ribbon'>
-                  <button data-operation='resource-update' data-value='-10'>-10</button>
-                  <button data-operation='resource-update' data-value='-5'>-5</button>
-                  <button data-operation='resource-update' data-value='-1'>-1</button>
-                  <button data-operation='resource-update' data-value='0'>0</button>
-                  <button class='restore' data-operation='resource-update' data-value=''></button>
-                  <button data-operation='resource-update' data-value='+1'>+1</button>
-                  <button data-operation='resource-update' data-value='+5'>+5</button>
-                  <button data-operation='resource-update' data-value='+10'>+10</button>
-                </div>
-              </details>
-              <button data-operation='resource-inc'><i class="fas fa-plus"></i></button>
-              <button data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-            </div>
-            <div class='condition-block'>
-              <div class='tooltip-wrapper'>
-                <div class='tooltip condition {{qpCondition data.QP "style"}}'>{{qpCondition data.QP 'label'}}
-                  &nbsp; <i class='fas fa-heartbeat {{optionSetStyle data.additionalresources.isTired}}'
-                    data-onethird='isTired'></i>
-                  <span class="tooltiptext">
-                    <div class="fieldblock">
-                      {{#qpBreakpoints data.QP}}
-                      <div class="field condensed noedit">{{breakpoint}}</div>
-                      <div class="label {{style}}">{{label}}</div>
-                      {{/qpBreakpoints}}
-                    </div>
-                  </span>
-                </div>
-              </div>
-              <div class='basic-value fieldblock3'>
-                <div class="points">[{{data.QP.points}}]</div>
-                <div class='field'>{{data.QP.max}}</div>
-                <div class='label'>{{localize "GURPS.basic"}}</div>
-              </div>
-            </div>
-          </div> <!-- combat-qp -->
           {{#each data.additionalresources.tracker}}
           <div class='tracked-resource {{#unless name}}inactive{{/unless}}'
             data-gurps-resource='additionalresources.tracker.{{@index}}'>
