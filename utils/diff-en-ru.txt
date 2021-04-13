@@ -1,18 +1,190 @@
 ------------
 keys in [lang/ru.json] that are missing in [lang/en.json]
-[]
 ------------
 keys in [lang/en.json] that are missing in [lang/ru.json]
-[
-  'GURPS.resourceCopyTemplate',
-  'GURPS.resourceDeleteTracker',
-  'GURPS.resourceEditTracker',
-  'GURPS.resourceUndefined',
-  'GURPS.resourceUpdateTrackerSlot'
-]
+  GURPS.Dice
+  GURPS.actions
+  GURPS.addApplyTo
+  GURPS.addDamageReduction
+  GURPS.addExplosion
+  GURPS.addExplosionHex
+  GURPS.addExplosionHexes
+  GURPS.aim
+  GURPS.allOutDefense
+  GURPS.allOutDefenseRef
+  GURPS.clickToRemove
+  GURPS.concentrationCheck
+  GURPS.defense
+  GURPS.dxCheckOrFall
+  GURPS.fallsDown
+  GURPS.hitLocationArm, holding shield
+  GURPS.hitLocationChinks in Other
+  GURPS.hitLocationChinks in Torso
+  GURPS.hitLocationDescChest
+  GURPS.hitLocationDescFront
+  GURPS.hitLocationDescHalfDR
+  GURPS.hitLocationDescImp
+  GURPS.hitLocationDescLimb
+  GURPS.hitLocationDescNeck
+  GURPS.hitLocationEyes
+  GURPS.hitLocationFace, from behind
+  GURPS.hitLocationJaw
+  GURPS.hitLocationLeft Arm, holding shield
+  GURPS.hitLocationLimb Vein/Artery
+  GURPS.hitLocationNeck Vein/Artery
+  GURPS.hitLocationNose
+  GURPS.hitLocationRight Arm, holding shield
+  GURPS.hitLocationSkull, from behind
+  GURPS.hitLocationVitals, Heart
+  GURPS.lighting
+  GURPS.meleeAttack
+  GURPS.modifierAffliction
+  GURPS.modifierAfflictionCough
+  GURPS.modifierAfflictionCoughIQ
+  GURPS.modifierAfflictionDrowsy
+  GURPS.modifierAfflictionDrunk
+  GURPS.modifierAfflictionDrunkCR
+  GURPS.modifierAfflictionEuphoria
+  GURPS.modifierAfflictionModerate
+  GURPS.modifierAfflictionModerateHPT
+  GURPS.modifierAfflictionNausea
+  GURPS.modifierAfflictionNauseaDef
+  GURPS.modifierAfflictionRetch
+  GURPS.modifierAfflictionSevere
+  GURPS.modifierAfflictionSevereHPT
+  GURPS.modifierAfflictionTerrible
+  GURPS.modifierAfflictionTerribleHPT
+  GURPS.modifierAfflictionTipsy
+  GURPS.modifierAfflictionTipsyCR
+  GURPS.modifierAppearBelow
+  GURPS.modifierAutomatic
+  GURPS.modifierBlockRetreat
+  GURPS.modifierBlockRetreatRef
+  GURPS.modifierClickToAdd
+  GURPS.modifierCommon
+  GURPS.modifierCover
+  GURPS.modifierCoverBehindFigure
+  GURPS.modifierCoverCrouch
+  GURPS.modifierCoverHalfExposed
+  GURPS.modifierCoverHead
+  GURPS.modifierCoverHeadShoulder
+  GURPS.modifierCoverLight
+  GURPS.modifierCoverPosture
+  GURPS.modifierCoverProne
+  GURPS.modifierCoverProneHeadDown
+  GURPS.modifierCoverProneHeadUp
+  GURPS.modifierCoverThroughHex
+  GURPS.modifierCurrentEffects
+  GURPS.modifierCurrentModifiers
+  GURPS.modifierDangerous
+  GURPS.modifierDeceptiveAttack
+  GURPS.modifierDeceptiveAttackRef
+  GURPS.modifierDeterminedAttack
+  GURPS.modifierDeterminedAttackRef
+  GURPS.modifierDodgeAcrobatic
+  GURPS.modifierDodgeAcrobaticRef
+  GURPS.modifierDodgeDive
+  GURPS.modifierDodgeDiveRef
+  GURPS.modifierDodgeFailedAcro
+  GURPS.modifierDodgeFailedAcroRef
+  GURPS.modifierDodgeRear
+  GURPS.modifierDodgeRearRef
+  GURPS.modifierDodgeRetreat
+  GURPS.modifierDodgeRetreatRef
+  GURPS.modifierDodgeSide
+  GURPS.modifierDodgeSideRef
+  GURPS.modifierEasy
+  GURPS.modifierExtraEffort
+  GURPS.modifierExtraEffortRef
+  GURPS.modifierFavorable
+  GURPS.modifierFeverishDef
+  GURPS.modifierGMBlessed
+  GURPS.modifierGMDontTry
+  GURPS.modifierGMSaidSo
+  GURPS.modifierHard
+  GURPS.modifierHeroicCharge
+  GURPS.modifierHeroicChargeRef
+  GURPS.modifierHitLocation
+  GURPS.modifierImpossible
+  GURPS.modifierLightCandle
+  GURPS.modifierLightDim
+  GURPS.modifierLightFullMoon
+  GURPS.modifierLightHalfMoon
+  GURPS.modifierLightMoonless
+  GURPS.modifierLightNone
+  GURPS.modifierLightQuarterMoon
+  GURPS.modifierLightStarlight
+  GURPS.modifierLightTorch
+  GURPS.modifierLightTwilight
+  GURPS.modifierMightyBlow
+  GURPS.modifierMightyBlowRef
+  GURPS.modifierMouseOff
+  GURPS.modifierMoveAttack
+  GURPS.modifierMoveAttackRef
+  GURPS.modifierOthers
+  GURPS.modifierPosture
+  GURPS.modifierPostureCrouchMelee
+  GURPS.modifierPostureCrouchRanged
+  GURPS.modifierPostureKneelDefend
+  GURPS.modifierPostureKneelMelee
+  GURPS.modifierPostureProneDefend
+  GURPS.modifierPostureProneMelee
+  GURPS.modifierPostureProneRanged
+  GURPS.modifierQuality
+  GURPS.modifierQualityBest
+  GURPS.modifierQualityFine
+  GURPS.modifierQualityGood
+  GURPS.modifierQualityImprovTech
+  GURPS.modifierQualityImprovised
+  GURPS.modifierQualityMissing
+  GURPS.modifierQualityNone
+  GURPS.modifierQualityNoneTech
+  GURPS.modifierSendTo
+  GURPS.modifierShieldDB
+  GURPS.modifierShieldDBRef
+  GURPS.modifierSize
+  GURPS.modifierSizeDetail
+  GURPS.modifierSizeEntry
+  GURPS.modifierStatus
+  GURPS.modifierStatusAffliction
+  GURPS.modifierStatusShock1
+  GURPS.modifierStatusShock2
+  GURPS.modifierStatusShock3
+  GURPS.modifierStatusShock4
+  GURPS.modifierStatusStunned
+  GURPS.modifierStrongAttack
+  GURPS.modifierStrongAttackRef
+  GURPS.modifierTaskDifficulty
+  GURPS.modifierTelegraphicAttack
+  GURPS.modifierTelegraphicAttackRef
+  GURPS.modifierToHit
+  GURPS.modifierTrivial
+  GURPS.modifierUnfavorable
+  GURPS.modifierUserEntered
+  GURPS.modifierVeryEasy
+  GURPS.modifierVeryFavorable
+  GURPS.modifierVeryHard
+  GURPS.modifierVeryUnfavorable
+  GURPS.modifierWillCheck
+  GURPS.notAffected
+  GURPS.ranged
+  GURPS.rateOfFire
+  GURPS.resolve
+  GURPS.resourceCopyTemplate
+  GURPS.resourceDeleteTracker
+  GURPS.resourceEditTracker
+  GURPS.resourceUndefined
+  GURPS.resourceUpdateTrackerSlot
+  GURPS.selectToken
+  GURPS.slamAOAStrong
+  GURPS.slamCalculator
+  GURPS.slamRelativeVelocity
+  GURPS.slamVelocity
+  GURPS.slams
+  GURPS.target
 ------------
 values in [lang/en.json] that are the same in [lang/ru.json]
-GURPS.changelog: README
-GURPS.highest: Highest
-GURPS.of: of 
-GURPS.title: GURPS
+  GURPS.changelog: README
+  GURPS.highest: Highest
+  GURPS.of: of 
+  GURPS.title: GURPS

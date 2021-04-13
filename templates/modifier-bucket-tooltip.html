@@ -75,15 +75,15 @@
         <div class="gurps-group gurps-space-between gurps-sparse-list">
           <div>
             <h4>{{localize "GURPS.modifierCommon"}}</h4>
-            <div class='overflowy' style='max-height: 535px;'>
+            <div class='overflowy' style='max-height: 510px;'>
+              {{collapsible-content 'modstatus' statusmods 'commonmods'}}
               {{collapsible-content 'speedrangemods' speedrangemods 'commonmods'}}
+              {{collapsible-content 'modsize' sizemods 'commonmods'}}
               {{collapsible-content 'hitlocationmods' hitlocationmods 'commonmods'}}
               {{collapsible-content 'modcover' covermods 'commonmods'}}
-              {{collapsible-content 'modstatus' statusmods 'commonmods'}}
               {{collapsible-content 'modtaskdifficulty' taskdificulties 'commonmods'}}
               {{collapsible-content 'modeqtquality' eqtqualitymods 'commonmods'}}
               {{collapsible-content 'modlighting' lightingmods 'commonmods'}}
-              {{collapsible-content 'modsize' sizemods 'commonmods'}}
               {{collapsible-content 'modrof' rofmods 'commonmods'}}
             </div>
           </div>

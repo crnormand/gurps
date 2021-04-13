@@ -1,104 +1,263 @@
 ------------
 keys in [lang/de.json] that are missing in [lang/en.json]
-[ 'EFFECT.StatusShocked' ]
+  EFFECT.StatusShocked
 ------------
 keys in [lang/en.json] that are missing in [lang/de.json]
-[
-  'GURPS.FP',
-  'GURPS.HP',
-  'GURPS.SkillDXA',
-  'GURPS.SkillDXE',
-  'GURPS.SkillDXH',
-  'GURPS.SkillDXVH',
-  'GURPS.SkillHTA',
-  'GURPS.SkillHTE',
-  'GURPS.SkillHTH',
-  'GURPS.SkillHTVH',
-  'GURPS.SkillIQA',
-  'GURPS.SkillIQE',
-  'GURPS.SkillIQH',
-  'GURPS.SkillIQVH',
-  'GURPS.SkillPerA',
-  'GURPS.SkillPerE',
-  'GURPS.SkillPerH',
-  'GURPS.SkillPerVH',
-  'GURPS.SkillWillA',
-  'GURPS.SkillWillE',
-  'GURPS.SkillWillH',
-  'GURPS.SkillWillVH',
-  'GURPS.attributesDX',
-  'GURPS.attributesHT',
-  'GURPS.attributesIQ',
-  'GURPS.attributesPER',
-  'GURPS.attributesST',
-  'GURPS.attributesWILL',
-  'GURPS.clickToEdit',
-  'GURPS.copyright',
-  'GURPS.copyrightGCS',
-  'GURPS.damageAbbrevburn',
-  'GURPS.damageAbbrevcor',
-  'GURPS.damageAbbrevcr',
-  'GURPS.damageAbbrevcut',
-  'GURPS.damageAbbrevdmg',
-  'GURPS.damageAbbrevfat',
-  'GURPS.damageAbbrevimp',
-  'GURPS.damageAbbrevpi',
-  'GURPS.damageAbbrevpi+',
-  'GURPS.damageAbbrevpi++',
-  'GURPS.damageAbbrevpi-',
-  'GURPS.damageAbbrevtox',
-  'GURPS.resourceCopyTemplate',
-  'GURPS.resourceCurrentValue',
-  'GURPS.resourceDamageTracker',
-  'GURPS.resourceDamageType',
-  'GURPS.resourceDeleteTracker',
-  'GURPS.resourceEditTracker',
-  'GURPS.resourceTracker',
-  'GURPS.resourceUndefined',
-  'GURPS.resourceUpdateTrackerSlot',
-  'GURPS.slotNotUnique',
-  'GURPS.title',
-  'GURPS.trackerNotUnique'
-]
+  GURPS.Dice
+  GURPS.actions
+  GURPS.addDamageReduction
+  GURPS.addExplosion
+  GURPS.addExplosionHex
+  GURPS.addExplosionHexes
+  GURPS.aim
+  GURPS.allOutDefense
+  GURPS.allOutDefenseRef
+  GURPS.clickToRemove
+  GURPS.concentrationCheck
+  GURPS.defense
+  GURPS.dxCheckOrFall
+  GURPS.fallsDown
+  GURPS.hitLocationArm, holding shield
+  GURPS.hitLocationChinks in Other
+  GURPS.hitLocationChinks in Torso
+  GURPS.hitLocationDescChest
+  GURPS.hitLocationDescFront
+  GURPS.hitLocationDescHalfDR
+  GURPS.hitLocationDescImp
+  GURPS.hitLocationDescLimb
+  GURPS.hitLocationDescNeck
+  GURPS.hitLocationEyes
+  GURPS.hitLocationFace, from behind
+  GURPS.hitLocationJaw
+  GURPS.hitLocationLeft Arm, holding shield
+  GURPS.hitLocationLimb Vein/Artery
+  GURPS.hitLocationNeck Vein/Artery
+  GURPS.hitLocationNose
+  GURPS.hitLocationRight Arm, holding shield
+  GURPS.hitLocationSkull, from behind
+  GURPS.hitLocationVitals, Heart
+  GURPS.lighting
+  GURPS.meleeAttack
+  GURPS.modifierAffliction
+  GURPS.modifierAfflictionCough
+  GURPS.modifierAfflictionCoughIQ
+  GURPS.modifierAfflictionDrowsy
+  GURPS.modifierAfflictionDrunk
+  GURPS.modifierAfflictionDrunkCR
+  GURPS.modifierAfflictionEuphoria
+  GURPS.modifierAfflictionModerate
+  GURPS.modifierAfflictionModerateHPT
+  GURPS.modifierAfflictionNausea
+  GURPS.modifierAfflictionNauseaDef
+  GURPS.modifierAfflictionRetch
+  GURPS.modifierAfflictionSevere
+  GURPS.modifierAfflictionSevereHPT
+  GURPS.modifierAfflictionTerrible
+  GURPS.modifierAfflictionTerribleHPT
+  GURPS.modifierAfflictionTipsy
+  GURPS.modifierAfflictionTipsyCR
+  GURPS.modifierAppearBelow
+  GURPS.modifierAutomatic
+  GURPS.modifierBlockRetreat
+  GURPS.modifierBlockRetreatRef
+  GURPS.modifierClickToAdd
+  GURPS.modifierCommon
+  GURPS.modifierCover
+  GURPS.modifierCoverBehindFigure
+  GURPS.modifierCoverCrouch
+  GURPS.modifierCoverHalfExposed
+  GURPS.modifierCoverHead
+  GURPS.modifierCoverHeadShoulder
+  GURPS.modifierCoverLight
+  GURPS.modifierCoverPosture
+  GURPS.modifierCoverProne
+  GURPS.modifierCoverProneHeadDown
+  GURPS.modifierCoverProneHeadUp
+  GURPS.modifierCoverThroughHex
+  GURPS.modifierCurrentEffects
+  GURPS.modifierCurrentModifiers
+  GURPS.modifierDangerous
+  GURPS.modifierDeceptiveAttack
+  GURPS.modifierDeceptiveAttackRef
+  GURPS.modifierDeterminedAttack
+  GURPS.modifierDeterminedAttackRef
+  GURPS.modifierDodgeAcrobatic
+  GURPS.modifierDodgeAcrobaticRef
+  GURPS.modifierDodgeDive
+  GURPS.modifierDodgeDiveRef
+  GURPS.modifierDodgeFailedAcro
+  GURPS.modifierDodgeFailedAcroRef
+  GURPS.modifierDodgeRear
+  GURPS.modifierDodgeRearRef
+  GURPS.modifierDodgeRetreat
+  GURPS.modifierDodgeRetreatRef
+  GURPS.modifierDodgeSide
+  GURPS.modifierDodgeSideRef
+  GURPS.modifierEasy
+  GURPS.modifierExtraEffort
+  GURPS.modifierExtraEffortRef
+  GURPS.modifierFavorable
+  GURPS.modifierFeverishDef
+  GURPS.modifierGMBlessed
+  GURPS.modifierGMDontTry
+  GURPS.modifierGMSaidSo
+  GURPS.modifierHard
+  GURPS.modifierHeroicCharge
+  GURPS.modifierHeroicChargeRef
+  GURPS.modifierHitLocation
+  GURPS.modifierImpossible
+  GURPS.modifierLightCandle
+  GURPS.modifierLightDim
+  GURPS.modifierLightFullMoon
+  GURPS.modifierLightHalfMoon
+  GURPS.modifierLightMoonless
+  GURPS.modifierLightNone
+  GURPS.modifierLightQuarterMoon
+  GURPS.modifierLightStarlight
+  GURPS.modifierLightTorch
+  GURPS.modifierLightTwilight
+  GURPS.modifierMightyBlow
+  GURPS.modifierMightyBlowRef
+  GURPS.modifierMouseOff
+  GURPS.modifierMoveAttack
+  GURPS.modifierMoveAttackRef
+  GURPS.modifierOthers
+  GURPS.modifierPosture
+  GURPS.modifierPostureCrouchMelee
+  GURPS.modifierPostureCrouchRanged
+  GURPS.modifierPostureKneelDefend
+  GURPS.modifierPostureKneelMelee
+  GURPS.modifierPostureProneDefend
+  GURPS.modifierPostureProneMelee
+  GURPS.modifierPostureProneRanged
+  GURPS.modifierQuality
+  GURPS.modifierQualityBest
+  GURPS.modifierQualityFine
+  GURPS.modifierQualityGood
+  GURPS.modifierQualityImprovTech
+  GURPS.modifierQualityImprovised
+  GURPS.modifierQualityMissing
+  GURPS.modifierQualityNone
+  GURPS.modifierQualityNoneTech
+  GURPS.modifierSendTo
+  GURPS.modifierShieldDB
+  GURPS.modifierShieldDBRef
+  GURPS.modifierSize
+  GURPS.modifierSizeDetail
+  GURPS.modifierSizeEntry
+  GURPS.modifierStatus
+  GURPS.modifierStatusAffliction
+  GURPS.modifierStatusShock1
+  GURPS.modifierStatusShock2
+  GURPS.modifierStatusShock3
+  GURPS.modifierStatusShock4
+  GURPS.modifierStatusStunned
+  GURPS.modifierStrongAttack
+  GURPS.modifierStrongAttackRef
+  GURPS.modifierTaskDifficulty
+  GURPS.modifierTelegraphicAttack
+  GURPS.modifierTelegraphicAttackRef
+  GURPS.modifierToHit
+  GURPS.modifierTrivial
+  GURPS.modifierUnfavorable
+  GURPS.modifierUserEntered
+  GURPS.modifierVeryEasy
+  GURPS.modifierVeryFavorable
+  GURPS.modifierVeryHard
+  GURPS.modifierVeryUnfavorable
+  GURPS.modifierWillCheck
+  GURPS.notAffected
+  GURPS.ranged
+  GURPS.rateOfFire
+  GURPS.resolve
+  GURPS.slamAOAStrong
+  GURPS.slamCalculator
+  GURPS.slamRelativeVelocity
+  GURPS.slamVelocity
+  GURPS.slams
+  GURPS.target
 ------------
 values in [lang/en.json] that are the same in [lang/de.json]
-GURPS.BODYPLANcentaur: Centaur
-GURPS.BODYPLANhumanoid expanded: Humanoid, Expanded (GCA)
-GURPS.BODYPLANhumanoid: Humanoid
-GURPS.acc: Acc
-GURPS.addArmorDivisor: Armor Divisor
-GURPS.addHardenedDRLevel: Hardened DR Level
-GURPS.addInjuryTolerance: Injury Tolerance
-GURPS.addLargeAreaInjury: Large-Area Injury
-GURPS.addLocationMax: Location Max
-GURPS.addWHard: w/Hard
-GURPS.bulk: Bulk
-GURPS.damageTypeHuge Piercing: Huge Piercing
-GURPS.damageTypeLarge Piercing: Large Piercing
-GURPS.damageTypePiercing: Piercing
-GURPS.damageTypeSmall Piercing: Small Piercing
-GURPS.grapplingCPAbbrev: ctrl
-GURPS.highPainThreshold: High Pain Threshold
-GURPS.highest: Highest
-GURPS.hitLocationArm 1-2: Arm 1-2
-GURPS.hitLocationArm 3-4: Arm 3-4
-GURPS.hitLocationArm 5-6: Arm 5-6
-GURPS.hitLocationArm 7-8: Arm 7-8
-GURPS.hitLocationArm*: Arm
-GURPS.hitLocationArm: Arm
-GURPS.hitLocationHand: Hand
-GURPS.hitLocationLeg 7-8: Arm 7-8
-GURPS.identityName: Name
-GURPS.level: Level
-GURPS.lowPainThreshold: Low Pain Threshold
-GURPS.max: Max
-GURPS.maximum: Maximum
-GURPS.minimum: Minimum
-GURPS.normal: Normal
-GURPS.overridden: overridden
-GURPS.perfectBalance: Perfect Balance
-GURPS.portrait: Portrait
-GURPS.rcl: Rcl
-GURPS.resourceTemplateAlias: Alias
-GURPS.rof: RoF
-GURPS.yards:  yards
+  GURPS.BODYPLANcentaur: Centaur
+  GURPS.BODYPLANhumanoid expanded: Humanoid, Expanded (GCA)
+  GURPS.BODYPLANhumanoid: Humanoid
+  GURPS.FP: FP
+  GURPS.HP: HP
+  GURPS.SkillDXA: DX/A
+  GURPS.SkillDXE: DX/E
+  GURPS.SkillDXH: DX/H
+  GURPS.SkillDXVH: DX/VH
+  GURPS.SkillHTA: HT/A
+  GURPS.SkillHTE: HT/E
+  GURPS.SkillHTH: HT/H
+  GURPS.SkillHTVH: HT/VH
+  GURPS.SkillIQA: IQ/A
+  GURPS.SkillIQE: IQ/E
+  GURPS.SkillIQH: IQ/H
+  GURPS.SkillIQVH: IQ/VH
+  GURPS.SkillPerA: Per/A
+  GURPS.SkillPerE: Per/E
+  GURPS.SkillPerH: Per/H
+  GURPS.SkillPerVH: Per/VH
+  GURPS.SkillWillA: Will/A
+  GURPS.SkillWillE: Will/E
+  GURPS.SkillWillH: Will/H
+  GURPS.SkillWillVH: Will/VH
+  GURPS.acc: Acc
+  GURPS.addArmorDivisor: Armor Divisor
+  GURPS.addHardenedDRLevel: Hardened DR Level
+  GURPS.addInjuryTolerance: Injury Tolerance
+  GURPS.addLargeAreaInjury: Large-Area Injury
+  GURPS.addLocationMax: Location Max
+  GURPS.addWHard: w/Hard
+  GURPS.attributesDX: DX
+  GURPS.attributesHT: HT
+  GURPS.attributesIQ: IQ
+  GURPS.attributesPER: Per
+  GURPS.attributesST: ST
+  GURPS.attributesWILL: Will
+  GURPS.bulk: Bulk
+  GURPS.copyright: GURPS© is copyrighted by Steve Jackson Games
+  GURPS.copyrightGCS: GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved 
+  GURPS.damageAbbrevburn: burn
+  GURPS.damageAbbrevcor: cor
+  GURPS.damageAbbrevcr: cr
+  GURPS.damageAbbrevcut: cut
+  GURPS.damageAbbrevdmg: dmg
+  GURPS.damageAbbrevfat: fat
+  GURPS.damageAbbrevimp: imp
+  GURPS.damageAbbrevpi++: pi++
+  GURPS.damageAbbrevpi+: pi+
+  GURPS.damageAbbrevpi: pi
+  GURPS.damageAbbrevpi-: pi-
+  GURPS.damageAbbrevtox: tox
+  GURPS.damageTypeHuge Piercing: Huge Piercing
+  GURPS.damageTypeLarge Piercing: Large Piercing
+  GURPS.damageTypePiercing: Piercing
+  GURPS.damageTypeSmall Piercing: Small Piercing
+  GURPS.grapplingCPAbbrev: ctrl
+  GURPS.highPainThreshold: High Pain Threshold
+  GURPS.highest: Highest
+  GURPS.hitLocationArm 1-2: Arm 1-2
+  GURPS.hitLocationArm 3-4: Arm 3-4
+  GURPS.hitLocationArm 5-6: Arm 5-6
+  GURPS.hitLocationArm 7-8: Arm 7-8
+  GURPS.hitLocationArm*: Arm
+  GURPS.hitLocationArm: Arm
+  GURPS.hitLocationHand: Hand
+  GURPS.hitLocationLeg 7-8: Arm 7-8
+  GURPS.identityName: Name
+  GURPS.level: Level
+  GURPS.lowPainThreshold: Low Pain Threshold
+  GURPS.max: Max
+  GURPS.maximum: Maximum
+  GURPS.minimum: Minimum
+  GURPS.normal: Normal
+  GURPS.overridden: overridden
+  GURPS.perfectBalance: Perfect Balance
+  GURPS.portrait: Portrait
+  GURPS.rcl: Rcl
+  GURPS.resourceTemplateAlias: Alias
+  GURPS.rof: RoF
+  GURPS.title: GURPS
+  GURPS.yards:  yards

@@ -269,10 +269,10 @@
 .modttt {
   text-align: center;
   border-radius: 10px;
-  width: 900px;
-  height: 700px;
-  top: 400px !important;
-  left: 390px !important;
+  width: 872px;
+  height: 664px;
+  bottom: 140px !important;
+  left: 405px !important;
   position: absolute;
   z-index: 100;
 }
@@ -280,7 +280,7 @@
 .modttt::after {
   content: '';
   position: absolute;
-  top: 100%;
+  /* top: 100%; */
   left: 50%;
   margin-left: -300px;
   border-width: 37px 300px;
@@ -405,6 +405,10 @@
   flex-flow: row wrap !important;
 }
 
+.modtooltip .modifier-row > div {
+  margin-bottom: 3px;
+}
+
 /* ========================= */
 /* GURPS Applications        */
 /* ========================= */
@@ -465,29 +469,29 @@
 }
 
 .gurps-group .pdflink {
+  margin-left: 3px;
   font-size: 80%;
 }
 
 .gurps-group h4 {
   background-color: black;
   color: lightgrey;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.25rem;
   font-size: larger;
-  margin-left: -0.5em;
-  margin-right: -0.5em;
-  padding-left: 0.5em;
-  margin-top: 0.5em;
-  text-transform: uppercase;
-}
-
-.gurps-group h4:first-child {
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  padding-left: 0.5rem;
   margin-top: 0;
+  text-transform: uppercase;
+  line-height: 1.2rem;
 }
-
 .gurps-group aside {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 0.5em;
+}
+.gurps-group .shaded-group {
+  padding-bottom: 0.5rem;
 }
 
 .gurps-group .shaded-group h4 + aside,
@@ -502,6 +506,7 @@
 }
 
 /* striped table row appearance */
+.shaded-group > div:nth-child(odd),
 .gurps-group .shaded {
   background-color: rgba(0, 0, 0, 0.1);
 }
@@ -1530,11 +1535,11 @@ ul#result-effects li {
 }
 
 .shaded-group > div:nth-child(odd) {
-  background: rgba(255, 255, 255, 0.25);
+  /* background: rgba(255, 255, 255, 0.25); */
 }
 
 .gurps-sparse-list {
-  line-height: 1.2rem;
+  line-height: 1.1rem;
 }
 
 .modtooltip .modifier-row,

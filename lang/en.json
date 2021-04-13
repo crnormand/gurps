@@ -163,6 +163,9 @@
   "GURPS.addApplyOptionsToAll": "These options apply to all damage",
   "GURPS.addApplyMultipleTimes": "Apply multiple times",
 
+  "GURPS.addExplosionHex": "{hex} hex from center",
+  "GURPS.addExplosionHexes": "{hex} hexes from center",
+
   "GURPS.crippling": "Crippling Injury, ",
   "GURPS.damageAbove": "Damage above ",
   "GURPS.hpIgnored": " HP ignored.",
@@ -604,5 +607,23 @@
   "GURPS.modifierAfflictionModerateHPT": "-1 to IQ/DX/CR checks (Moderate Pain w/HPT)",
   "GURPS.modifierAfflictionSevereHPT": "-2 to IQ/DX/CR checks (Severe Pain w/HPT)",
   "GURPS.modifierAfflictionTerribleHPT": "-3 to IQ/DX/CR checks (Terrible Pain w/HPT)",
-  "GURPS.modifierAfflictionRetch": "-5 to IQ/DX/Per checks (Retching)"
+  "GURPS.modifierAfflictionRetch": "-5 to IQ/DX/Per checks (Retching)",
+
+  "GURPS.modifierDeterminedAttackRef": "B365",
+  "GURPS.modifierTelegraphicAttackRef": "MA113",
+  "GURPS.modifierDeceptiveAttackRef": "B369",
+  "GURPS.modifierMoveAttackRef": "B365",
+  "GURPS.modifierStrongAttackRef": "B365",
+  "GURPS.modifierMightyBlowRef": "MA131",
+  "GURPS.modifierHeroicChargeRef": "MA131",
+  "GURPS.allOutDefenseRef": "B365",
+  "GURPS.modifierShieldDBRef": "B374",
+  "GURPS.modifierDodgeAcrobaticRef": "B374",
+  "GURPS.modifierDodgeDiveRef": "B377",
+  "GURPS.modifierDodgeRetreatRef": "B375",
+  "GURPS.modifierBlockRetreatRef": "B377",
+  "GURPS.modifierDodgeFailedAcroRef": "B375",
+  "GURPS.modifierDodgeSideRef": "B390",
+  "GURPS.modifierDodgeRearRef": "B391",
+  "GURPS.modifierExtraEffortRef": "B357"
 }
