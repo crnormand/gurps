@@ -894,6 +894,12 @@ export class GurpsActor extends Actor {
     let t = this.textFrom
     let data = this.data.data
     let att = data.attributes
+    //Create Quintessence entry
+    att.QN = {
+      "value": 10,
+      "points": 0,
+      "dtype": "Number"
+    },
 
     att.ST.value = i(json.strength)
     att.ST.points = i(json.strength_points)
@@ -907,11 +913,19 @@ export class GurpsActor extends Actor {
     att.WILL.points = i(json.will_points)
     att.PER.value = i(json.perception)
     att.PER.points = i(json.perception_points)
-    att.QN.value= i(json.quintessence)
+    att.QN.value = i(json.quintessence)
     att.QN.points=i(json.quintessence_points)
-    
-    //data.QP.max = i(json.quintessencepoints)
-    //data.QP.points = i(json.quintessencepoints_points)
+    //quintessence points
+    data.QP ={
+      "value": 0,
+      "min": 0,
+      "max": 0,
+      "points": 0
+    }
+
+    data.QP.max = i(json.quintessencepoints)
+    data.QP.points = i(json.quintessencepoints_points)
+    let qp = i(json.qps)
 
     data.HP.max = i(json.hitpoints)
     data.HP.points = i(json.hitpoints_points)
@@ -920,7 +934,7 @@ export class GurpsActor extends Actor {
     let hp = i(json.hps)
     let fp = i(json.fps)
     let saveCurrent = false
-    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
+    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp || data.QP.value != qp)) {
       let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)
       if (option == 0) {
         saveCurrent = true
@@ -952,6 +966,7 @@ export class GurpsActor extends Actor {
     if (!saveCurrent) {
       data.HP.value = hp
       data.FP.value = fp
+      data.QP.value= qp
     }
 
     let lm = {}
@@ -981,6 +996,7 @@ export class GurpsActor extends Actor {
       'data.attributes': att,
       'data.HP': data.HP,
       'data.FP': data.FP,
+      'data.HP': data.QP,
       'data.basiclift': data.basiclift,
       'data.basicmove': data.basicmove,
       'data.basicspeed': data.basicspeed,
