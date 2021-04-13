@@ -11,6 +11,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.addExplosionHexes
   GURPS.aim
   GURPS.allOutDefense
+  GURPS.allOutDefenseRef
   GURPS.clickToRemove
   GURPS.concentrationCheck
   GURPS.defense
@@ -58,6 +59,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierAppearBelow
   GURPS.modifierAutomatic
   GURPS.modifierBlockRetreat
+  GURPS.modifierBlockRetreatRef
   GURPS.modifierClickToAdd
   GURPS.modifierCommon
   GURPS.modifierCover
@@ -76,15 +78,24 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierCurrentModifiers
   GURPS.modifierDangerous
   GURPS.modifierDeceptiveAttack
+  GURPS.modifierDeceptiveAttackRef
   GURPS.modifierDeterminedAttack
+  GURPS.modifierDeterminedAttackRef
   GURPS.modifierDodgeAcrobatic
+  GURPS.modifierDodgeAcrobaticRef
   GURPS.modifierDodgeDive
+  GURPS.modifierDodgeDiveRef
   GURPS.modifierDodgeFailedAcro
+  GURPS.modifierDodgeFailedAcroRef
   GURPS.modifierDodgeRear
+  GURPS.modifierDodgeRearRef
   GURPS.modifierDodgeRetreat
+  GURPS.modifierDodgeRetreatRef
   GURPS.modifierDodgeSide
+  GURPS.modifierDodgeSideRef
   GURPS.modifierEasy
   GURPS.modifierExtraEffort
+  GURPS.modifierExtraEffortRef
   GURPS.modifierFavorable
   GURPS.modifierFeverishDef
   GURPS.modifierGMBlessed
@@ -92,6 +103,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierGMSaidSo
   GURPS.modifierHard
   GURPS.modifierHeroicCharge
+  GURPS.modifierHeroicChargeRef
   GURPS.modifierHitLocation
   GURPS.modifierImpossible
   GURPS.modifierLightCandle
@@ -105,8 +117,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierLightTorch
   GURPS.modifierLightTwilight
   GURPS.modifierMightyBlow
+  GURPS.modifierMightyBlowRef
   GURPS.modifierMouseOff
   GURPS.modifierMoveAttack
+  GURPS.modifierMoveAttackRef
   GURPS.modifierOthers
   GURPS.modifierPosture
   GURPS.modifierPostureCrouchMelee
@@ -127,6 +141,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierQualityNoneTech
   GURPS.modifierSendTo
   GURPS.modifierShieldDB
+  GURPS.modifierShieldDBRef
   GURPS.modifierSize
   GURPS.modifierSizeDetail
   GURPS.modifierSizeEntry
@@ -138,8 +153,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierStatusShock4
   GURPS.modifierStatusStunned
   GURPS.modifierStrongAttack
+  GURPS.modifierStrongAttackRef
   GURPS.modifierTaskDifficulty
   GURPS.modifierTelegraphicAttack
+  GURPS.modifierTelegraphicAttackRef
   GURPS.modifierToHit
   GURPS.modifierTrivial
   GURPS.modifierUnfavorable
