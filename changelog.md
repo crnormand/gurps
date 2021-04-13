@@ -16,11 +16,12 @@ This is what we are currently working on:
 - Disabled the Min/Max/Current fields from a Resource Tracker editor if opened from the Tracker Manager.
 - New/Updated Resource Tracker templates no longer need a Foundry restart to take effect.
 - /ev now affects player owned tokens on current scene (and not all Player Characters)
-- Added lowercase versions of mapped attributes (ex: 'will', 'per', 'vision', etc.)
+- Made mapped attributes (ex: 'will', 'per', 'vision', etc.) case insensitive
 - Allow multi-line entries in QuickNotes
 - Added Initiative system setting
 - Added GURPS.findAdDisad(), and updated GURPS.findSkillSpell() and GURPS.findAttack() for script macros
 - Fixed Explosion damage calculation.
+- Added ability to override the text of the OtF buttons ["New Text" Dodge]
 
 
 ## History
