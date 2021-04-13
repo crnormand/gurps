@@ -1,9 +1,9 @@
-import * as QN from '../domain/Quintessence.js'
+//import * as QN from '../domain/Quintessence.js'
 
 const SYSTEM_NAME = 'gurps'
 const SETTING_NAME = 'useQuintessence'
 
-export default class GURPSConditionalInjury {
+export default class GURPSQuintessence {
     constructor() {
       let self = this
   

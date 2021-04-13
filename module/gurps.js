@@ -48,6 +48,7 @@ import jqueryHelpers from '../lib/jquery-helper.js'
 import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
+import GURPSQuintessence from './quintessence/foundry/quintessence.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 
 addChatHooks()
@@ -1277,6 +1278,7 @@ GURPS.ThreeD6 = new ThreeD6({
 })
 
 GURPS.ConditionalInjury = new GURPSConditionalInjury()
+GURPS.Quintessence = new GURPSQuintessence()
 
 GURPS.onRightClickGurpslink = function (event) {
   event.preventDefault()

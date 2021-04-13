@@ -4,7 +4,7 @@ import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } fro
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
-import * as QN from './injury/domain/quintessence.js'
+//import * as QN from './quintessence/domain/Quintessence.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -59,6 +59,7 @@ export class GurpsActorSheet extends ActorSheet {
     const sheetData = super.getData()
     sheetData.ranges = game.GURPS.rangeObject.ranges
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse()
+    sheetData.useQN = game.GURPS.Quintessence.isInUse()
     sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable()
     game.GURPS.SetLastActor(this.actor)
     let eqt = this.actor.data.data.equipment || {}
