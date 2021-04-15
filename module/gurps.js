@@ -594,7 +594,7 @@ function executeOTF(string, priv = false) {
 GURPS.executeOTF = executeOTF
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-async function performAction(action, actor, event, targets) {
+function performAction(action, actor, event, targets) {
   if (!action) return
   let actordata = actor?.data
   let prefix = ''
@@ -615,7 +615,7 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'modifier') {
     while (!!action && action.type === 'modifier') {
       let mod = parseInt(action.mod)
-      await GURPS.ModifierBucket.addModifier(mod, action.desc)
+      GURPS.addModifier(mod, action.desc)
       action = action.next
     }
     return true
@@ -640,7 +640,7 @@ async function performAction(action, actor, event, targets) {
   }
 
   if (action.type === 'damage') {
-    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!action.costs) GURPS.addModifier(0, action.costs)
     DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
     return true
   }
@@ -653,7 +653,7 @@ async function performAction(action, actor, event, targets) {
         return true
       }
       formula = df + action.formula
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+      if (!!action.costs) GURPS.addModifier(0, action.costs)
       DamageChat.create(
         actor || game.user,
         formula,
@@ -788,8 +788,8 @@ async function performAction(action, actor, event, targets) {
     }
     formula = '3d6'
     opt.action = bestAction
-    if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
+    if (!!bestAction.costs) GURPS.addModifier(0, action.costs)
+    if (!!bestAction.mod) GURPS.addModifier(bestAction.mod, bestAction.desc, targetmods)
     else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
   }
 
@@ -815,12 +815,12 @@ async function performAction(action, actor, event, targets) {
         else {
           a.shift()
           let m = a.join(' ')
-          if (!!m) ui.modifierbucket.addModifier(0, m) //  Level may have "*Costs xFP"
+          if (!!m) GURPS.addModifier(0, m) //  Level may have "*Costs xFP"
         }
       }
       formula = '3d6'
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
+      if (!!action.costs) GURPS.addModifier(0, action.costs)
+      if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
 
@@ -829,6 +829,11 @@ async function performAction(action, actor, event, targets) {
   return true
 }
 GURPS.performAction = performAction
+
+function addModifier(mod, desc, list) {
+  GURPS.ModifierBucket.addModifier(mod, desc, list) 
+}
+GURPS.addModifier = addModifier
 
 function findSkillSpell(actor, sname) {
   var t
@@ -1233,21 +1238,6 @@ function chatClickGmod(event) {
 }
 GURPS.chatClickGmod = chatClickGmod
 
-GURPS.rangeObject = new GURPSRange()
-GURPS.initiative = new Initiative()
-GURPS.hitpoints = new HitFatPoints()
-
-GURPS.ThreeD6 = new ThreeD6({
-  popOut: false,
-  minimizable: false,
-  resizable: false,
-  id: 'ThreeD6',
-  template: 'systems/gurps/templates/threed6.html',
-  classes: [],
-})
-
-GURPS.ConditionalInjury = new GURPSConditionalInjury()
-
 GURPS.onRightClickGurpslink = function (event) {
   event.preventDefault()
   event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
@@ -1423,8 +1413,14 @@ Hooks.once('init', async function () {
   SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
-
   GURPS.ModifierBucket = new ModifierBucket()
+  ui.modifierbucket = GURPS.ModifierBucket
+  ui.modifierbucket.render(true)
+  
+  GURPS.rangeObject = new GURPSRange()
+  GURPS.initiative = new Initiative()
+  GURPS.hitpoints = new HitFatPoints()
+  GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
@@ -1476,15 +1472,21 @@ Hooks.once('init', async function () {
     entity.data.img = 'systems/gurps/icons/single-die.png'
   })
 
-  ui.modifierbucket = GURPS.ModifierBucket
-  ui.modifierbucket.render(true)
+  
 })
 
 Hooks.once('ready', async function () {
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
   GURPS.ModifierBucket.clear()
-  GURPS.ThreeD6.refresh()
+  new ThreeD6({
+    popOut: false,
+    minimizable: false,
+    resizable: false,
+    id: 'ThreeD6',
+    template: 'systems/gurps/templates/threed6.html',
+    classes: [],
+  }).render(true)
 
   // Show changelog
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
@@ -1610,13 +1612,15 @@ Hooks.once('ready', async function () {
       }
     }
   })
+  
+ game.socket.on('system.gurps', (resp) => {
+    if (resp.type = 'updatebucket') {
+      if (resp.users.includes(game.user._id))
+        game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
+    } 
+  });
 
-  /*		// Should not need this hook, if we are watching controlToken
-    Hooks.on('createActiveEffect', (...args) => {
-      if (!!args && args.length >= 4)
-        GURPS.SetLastActor(args[0]);
-    });
-  */
+
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on('controlToken', (...args) => {

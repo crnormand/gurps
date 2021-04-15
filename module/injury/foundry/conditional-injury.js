@@ -1,29 +1,11 @@
 import * as CI from '../domain/ConditionalInjury.js'
-
-const SYSTEM_NAME = 'gurps'
-const SETTING_NAME = 'useConditionalInjury'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
 
 export default class GURPSConditionalInjury {
   constructor() {
     let self = this
-
-    Hooks.once('init', async function () {
-      game.GURPS = GURPS
-
-      Handlebars.registerHelper('ciSeveritiesTooltip', self.severitiesTooltip)
-      Handlebars.registerHelper('ciCurrentGrossEffects', self.currentGrossEffects)
-
-      game.settings.register(SYSTEM_NAME, SETTING_NAME, {
-        name: 'Options: Conditional Injury',
-        hint:
-          'From Pyramid #3/120: Conditional Injury removes Hit Points from the game as the basis for wound tracking, and replaces them with an effects based method for injury.',
-        scope: 'world',
-        config: true,
-        type: Boolean,
-        default: false,
-        onChange: value => self.update(),
-      })
-    })
+    Handlebars.registerHelper('ciSeveritiesTooltip', self.severitiesTooltip)
+    Handlebars.registerHelper('ciCurrentGrossEffects', self.currentGrossEffects)
   }
 
   async update() {
@@ -33,7 +15,7 @@ export default class GURPSConditionalInjury {
       .forEach(app => app.render(true))
   }
 
-  isInUse = () => game.settings.get(SYSTEM_NAME, SETTING_NAME)
+  isInUse = () => game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY)
 
   conditionalEffectsTable = () => {
     return CI.conditionalEffectsTable

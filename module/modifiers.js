@@ -28,6 +28,80 @@ export class GurpsRoll extends Roll {
   }
 }
 CONFIG.Dice.rolls[0] = GurpsRoll
+
+class ModifierStack {
+  constructor() {
+    this.modifierList = []
+    this.currentSum = 0
+    this.displaySum = '+0'
+    this.plus = false 
+    this.minus = false
+  }
+  
+  sum() {
+    this.currentSum = 0
+    for (let m of this.modifierList) {
+      this.currentSum += m.modint
+    }
+    this.displaySum = displayMod(this.currentSum)
+    this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
+    this.minus = this.currentSum < 0
+    game.user.setFlag('gurps', 'modifierstack', this)   // Set the shared flags, so the GM can look at it sometime later.   Not used in the local calculations
+  }
+  
+  _makeModifier(mod, reason) {
+    let n = displayMod(mod)
+    return {
+      mod: n,
+      modint: parseInt(n),
+      desc: reason,
+      plus: n[0] != '-',
+    }
+  }
+
+  add(mod, reason, replace = false) {
+    this._add(this.modifierList, mod, reason, replace)
+    this.sum()
+  }
+  
+  _add(list, mod, reason, replace = false) {
+    var oldmod
+    let i = list.findIndex(e => e.desc == reason) 
+    if (i > -1) {
+      if (replace)
+        list.splice(i, 1) // Must modify list (cannot use filter())
+      else 
+        oldmod = list[i]
+    }
+    if (!!oldmod) {
+      let m = oldmod.modint + parseInt(mod)
+      oldmod.mod = displayMod(m)
+      oldmod.modint = m
+    } else {
+      list.push(this._makeModifier(mod, reason))
+    }
+  }
+  
+    // Called during the dice roll to return a list of modifiers and then clear
+  applyMods(targetmods = []) {
+    let answer = !!targetmods ? targetmods : []
+    answer = answer.concat(this.modifierList)
+    this.reset()
+    return answer
+  }
+    
+  reset(otherstacklist = []) {
+    this.modifierList = otherstacklist
+    this.sum()
+  }
+  
+  removeIndex(index) {
+    this.modifierList.splice(index, 1)
+    this.sum();
+  }
+
+}
+
 /**
  * ModifierBucket is the always-present widget at the bottom of the
  * Foundry UI, that display the current total modifier and a 'trashcan'
@@ -54,15 +128,86 @@ export class ModifierBucket extends Application {
 
     this._tempRangeMod = null
 
-    this.modifierStack = {
-      modifierList: [], // { "mod": +/-N, "desc": "" }
-      currentSum: 0,
-      displaySum: '+0',
-      plus: false,
-      minus: false,
-    }
+    this.modifierStack = new ModifierStack()
   }
 
+  // Start GLOBALLY ACCESSED METHODS (used to update the contents of the MB)
+      // Called from Range Ruler to hold the current range mod
+      setTempRangeMod(mod) {
+        this._tempRangeMod = mod
+      }
+    
+      // Called from Range Ruler after measurement ends, to possible add range to stack
+      addTempRangeMod() {
+        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
+          this.modifierStack.addModifier(this._tempRangeMod, 'for range', true)       // Only allow 1 measured range, for the moment.
+        }
+      }
+      
+      // Called by GURPS for various reasons.    This is the primary way to add new modifiers to the public bucket (or to a temporary list)
+      addModifier(mod, reason, list) {
+        if (!!list)
+          this.modifierStack._add(list, mod, reason)
+        else
+          this.modifierStack.add(mod, reason)
+        this.refresh()
+      }
+      
+      currentSum() {
+        return this.modifierStack.currentSum
+      }
+    
+      // Called during the dice roll to return a list of modifiers and then clear
+      applyMods(targetmods = []) {
+        let answer = this.modifierStack.applyMods(targetmods)
+        this.refresh()
+        return answer
+      }
+    
+      // A GM has set this player's modifier bucket.  Get the new data from the socket and refresh.
+      updateModifierBucket(changed) {
+        this.modifierStack.reset(changed.modifierList)
+        this.refresh()
+      }
+    
+      clear() {
+        this.modifierStack.reset()
+        this.refresh()
+      }
+    
+      // Called by the chat command /sendmb
+      sendToPlayer(action, user) {
+        const saved = this.modifierStack.modifierList
+        this.modifierStack.modifierList = []
+        GURPS.performAction(action)
+        this.sendBucketToPlayer(user)
+        this.modifierStack.reset(saved)
+        //this.refresh()
+      }
+    
+      // Called by the chat command /sendmb
+      sendBucketToPlayer(name) {
+        if (!name) {
+          this._sendBucket(game.users.filter(u => u.id != game.user.id))
+        } else {
+          let users = game.users.players.filter(u => u.name == name) || []
+          if (users.length > 0) this._sendBucket(users)
+          else ui.notifications.warn("No player named '" + name + "'")
+        }
+      }
+    
+  // End GLOBALLY ACCESSED METHODS
+      _sendBucket(users) {
+        game.socket.emit("system.gurps", 
+          { 
+            type: 'updatebucket',
+            users: users.map(u => u.id), 
+            bucket: GURPS.ModifierBucket.modifierStack
+          } 
+        )
+      }
+
+  // BELOW are the methods for the MB user interface
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       popOut: false,
@@ -78,30 +223,12 @@ export class ModifierBucket extends Application {
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
     let ca = ''
-    if (game.user?.isGM && !!GURPS.LastActor) {
+    if (!!GURPS.LastActor) {
       ca = GURPS.LastActor.displayname
       if (ca.length > 25) ca = ca.substring(0, 22) + '...'
     }
     data.currentActor = ca
     return data
-  }
-
-  setTempRangeMod(mod) {
-    this._tempRangeMod = mod
-  }
-
-  addTempRangeMod() {
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
-      // Only allow 1 measured range, for the moment.
-      let d = 'for range'
-      this.modifierStack.modifierList = this.modifierStack.modifierList.filter(m => m.desc != d)
-      if (this._tempRangeMod == 0) {
-        this.sum()
-        this.updateBucket()
-      } else {
-        this.addModifier(this._tempRangeMod, d)
-      }
-    }
   }
 
   activateListeners(html) {
@@ -175,71 +302,12 @@ export class ModifierBucket extends Application {
     this.showOthers()
   }
 
-  // Public method. Used by GURPS to create a temporary modifer for an action.
-  makeModifier(mod, reason) {
-    let m = displayMod(mod)
-    return {
-      mod: m,
-      modint: parseInt(m),
-      desc: reason,
-      plus: m[0] == '+',
-    }
-  }
 
-  sum() {
-    let stack = this.modifierStack
-    stack.currentSum = 0
-    for (let m of stack.modifierList) {
-      stack.currentSum += m.modint
-    }
-    stack.displaySum = displayMod(stack.currentSum)
-    stack.plus = stack.currentSum > 0 || stack.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
-    stack.minus = stack.currentSum < 0
-  }
-
-  currentSum() {
-    return this.modifierStack.currentSum
-  }
-
-  addModifier(mod, reason) {
-    let stack = this.modifierStack
-    let oldmod = stack.modifierList.find(m => m.desc == reason)
-    if (!!oldmod) {
-      let m = oldmod.modint + parseInt(mod)
-      oldmod.mod = displayMod(m)
-      oldmod.modint = m
-    } else {
-      stack.modifierList.push(this.makeModifier(mod, reason))
-    }
-    this.sum()
-    this.updateBucket()
-  }
-
-  // Called during the dice roll to return a list of modifiers and then clear
-  async applyMods(targetmods = []) {
-    let stack = this.modifierStack
-    let answer = !!targetmods ? targetmods : []
-    answer = answer.concat(stack.modifierList)
-    await this.clear()
-    return answer
-  }
-
-  async updateBucket() {
-    this.refresh()
+  refresh() {
+    this.render(true)
     if (this.SHOWING) {
       this.editor.render(true)
     }
-    await game.user.setFlag('gurps', 'modifierstack', this.modifierStack)
-  }
-
-  // A GM has set this player's modifier bucket.  Get the new data from the user flags and refresh.
-  async updateDisplay(changed) {
-    this.modifierStack = game.user.getFlag('gurps', 'modifierstack')
-    this.sum()
-    if (this.SHOWING) {
-      this.editor.render(true)
-    }
-    this.refresh()
   }
 
   chatString(modst, name = '') {
@@ -253,52 +321,6 @@ export class ModifierBucket extends Application {
     return content
   }
 
-  async clear() {
-    await game.user.setFlag('gurps', 'modifierstack', null)
-    this.modifierStack = {
-      modifierList: [], // { "mod": +/-N, "desc": "" }
-      currentSum: 0,
-      displaySum: '+0',
-    }
-    this.updateBucket()
-  }
-
-  refresh() {
-    this.render(true)
-  }
-
-  async sendToPlayer(action, user) {
-    const saved = this.modifierStack.modifierList
-    this.modifierStack.modifierList = []
-    await GURPS.performAction(action)
-    await this.sendBucketToPlayer(user)
-    this.modifierStack.modifierList = saved
-    this.sum()
-    this.updateBucket()
-  }
-
-  async sendBucketToPlayer(name) {
-    if (!name) {
-      await this.sendBucket()
-    } else {
-      let users = game.users.players.filter(u => u.name == name) || []
-      if (users.length > 0) await this.sendBucket(users[0])
-      else ui.notifications.warn("No player named '" + name + "'")
-    }
-  }
-
-  async sendBucket(user) {
-    let set = !!user ? [user] : game.users?.filter(u => u._id != game.user._id) || []
-    let d = Date.now()
-    {
-      for (const u of set) {
-        await u.setFlag('gurps', 'modifierstack', game.GURPS.ModifierBucket.modifierStack)
-      }
-      for (const u of set) {
-        await u.setFlag('gurps', 'modifierchanged', d)
-      }
-    }
-  }
 }
 
 /**
@@ -352,8 +374,8 @@ export class ModifierBucketEditor extends Application {
     data.meleemods = ModifierLiterals.MeleeMods.split('\n')
     data.rangedmods = ModifierLiterals.RangedMods.split('\n')
     data.defensemods = ModifierLiterals.DefenseMods.split('\n')
-    data.speedrangemods = ['Speed / Range'].concat(game.GURPS.rangeObject.modifiers)
-    data.actorname = !!game.GURPS.LastActor ? game.GURPS.LastActor.name : 'No active character!'
+    data.speedrangemods = ['Speed / Range'].concat(GURPS.rangeObject.modifiers)
+    data.actorname = !!GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
@@ -369,13 +391,13 @@ export class ModifierBucketEditor extends Application {
     data.hitlocationmods = ModifierLiterals.HitlocationModifiers
     data.currentmods = []
 
-    if (!!game.GURPS.LastActor) {
+    if (!!GURPS.LastActor) {
       let melee = []
       let ranged = []
       let defense = []
       let gen = []
 
-      let effects = game.GURPS.LastActor.effects.filter(e => !e.data.disabled)
+      let effects = GURPS.LastActor.effects.filter(e => !e.data.disabled)
       for (let effect of effects) {
         let type = effect.data.flags.core.statusId
         let m = ModifiersForStatus[type]
@@ -509,7 +531,7 @@ export class ModifierBucketEditor extends Application {
     let id = element.dataset.id
     let user = game.users.get(id)
 
-    this.bucket.sendBucket(user)
+    this.bucket.sendBucket([user])
     setTimeout(() => this.bucket.showOthers(), 1000) // Need time for clients to update...and
   }
 
@@ -517,10 +539,9 @@ export class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let index = element.dataset.index
-    this.bucket.modifierStack.modifierList.splice(index, 1)
-    this.bucket.sum()
+    this.bucket.modifierStack.removeIndex(index)
     this.bucket.refresh()
-    this.render(false)
+//    this.render(false)
   }
 }
 

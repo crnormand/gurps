@@ -1033,7 +1033,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!p) {
       let m = p.match(/.*[/\\]Data[/\\](.*)/)
       if (!!m) {
-        let f = m[1]
+        let f = m[1].replace(/\\/g, "/");
         let xhr = new XMLHttpRequest();
         xhr.responseType = "arraybuffer";
         xhr.open("GET", f);
