@@ -39,7 +39,7 @@ export default class SlamChatProcessor extends ChatProcessor {
       if (targets.length === 1) target = [...targets][0]
       SlamCalculator.process(actor, target)
     }
-    this.addToPrivate('Opening Slam Calculator', msgs)
+    this.priv('Opening Slam Calculator', msgs)
     return true
   }
 }

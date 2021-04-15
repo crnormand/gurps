@@ -85,19 +85,19 @@ export class ChatProcessor {
   }
   
   // Dump everything we have saved in messages
-  sendAllMsgs(msgs) {
+  send(msgs) {
     this._sendPriv(msgs.priv)
     this._sendPub(msgs.pub, msgs.data)
   }
   
   // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
   priv(txt, msgs) {
-    if (msgs.pub.length > 0) this.sendAllMsgs(msgs)
+    if (msgs.pub.length > 0) this.send(msgs)
     msgs.priv.push(txt)
   }
   // Stack up as many public messages as we can, until we need to print a private one (to reduce the number of chat messages)
   pub(txt, msgs) {
-  if (msgs.priv.length > 0) this.sendAllMsgs(msgs)
+  if (msgs.priv.length > 0) this.send(msgs)
   msgs.pub.push(txt)
 }
 }
@@ -529,62 +529,7 @@ export default function addChatHooks() {
             return
           }
 
-          // /everyone fp/hp reset
-          m = line.match(/\/(everyone|ev) ([fh]p) reset/i)
-          if (!!m) {
-            if (game.user.isGM) {
-              let any = false
-              canvas.tokens.ownedTokens.forEach(t => {
-                let actor = t.actor
-                if (actor.hasPlayerOwner) {
-                  any = true
-                  let attr = m[2].toUpperCase()
-                  let max = actor.data.data[attr].max
-                  actor.update({ ['data.' + attr + '.value']: max })
-                  priv(`${actor.displayname} ${attr} reset to ${max}`, msgs)
-                }
-              })
-              if (!any) priv(`There are no player owned characters!`, msgs)
-            } else priv(`You must be a GM to execute '${line}'`, msgs)
-            handled = true
-            return
-          }
 
-          m = line.match(/\/(everyone|ev) \[(.*)\]/i)
-          if (!!m) {
-            if (game.user.isGM) {
-              let any = false
-              let action = parselink(m[2].trim())
-              if (!!action.action) {
-                if (!['modifier', 'chat', 'pdf'].includes(action.action.type)) {
-                  canvas.tokens.ownedTokens.forEach(t => {
-                    let actor = t.actor
-                    if (actor.hasPlayerOwner) {
-                      any = true
-                      GURPS.performAction(action.action, actor)
-                    }
-                  })
-                  if (!any) priv(`There are no player owned characters!`, msgs)
-                } else priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`, msgs)
-              } else priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`, msgs)
-            } else priv(`You must be a GM to execute '${line}'`, msgs)
-            handled = true
-            return
-          }
-
-          m = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
-          if (!!m && !!m[2]) {
-            let action = parselink(m[2])
-            if (!!action.action) {
-              if (action.action.type === 'modifier')
-                // only need to show modifiers, everything else does something.
-                priv(line, msgs)
-              else send(msgs) // send what we have
-              GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') }) // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
-              handled = true
-              return
-            } // Looks like a /roll OtF, but didn't parse as one
-          }
 
           handled = ChatProcessors.handle(line, msgs, data)
           if (handled) return
