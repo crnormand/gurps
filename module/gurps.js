@@ -19,7 +19,9 @@ import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
-import SlamChatProcessor from '../module/slam.js'
+import SlamChatProcessor from '../module/chat/slam.js'
+import RegisterChatProcessors from '../module/chat/chat-processors.js'
+
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -1410,7 +1412,9 @@ Hooks.once('init', async function () {
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
+  RegisterChatProcessors()
   SlamChatProcessor.initialize()
+  RegisterChatProcessors()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket()

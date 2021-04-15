@@ -35,6 +35,73 @@ function send(priv, pub, data) {
   this.chat(pub, data)
 }
 
+/**
+ * Base class for a chat message processor.
+ */
+export class ChatProcessor {
+  /**
+   * Override
+   * @param {*} line - chat command
+   * @returns true if this processor will handle this chat command
+   */
+  matches(line) {}
+
+  /**
+   * Override to process a chat command
+   * @param {*} line
+   */
+  process(line, msgs) {}
+  
+  /**
+   * Override to return the '/help' display string
+   * @param {*} isGMOnly
+   */
+  help() { return "/help cmd" }
+  
+  /**
+   * Override to true if this chat command only works for GMs
+   */
+  isGMOnly() { return false }
+  
+  _sendPriv(priv) {
+    if (priv.length == 0) return
+    ChatMessage.create({
+      alreadyProcessed: true,
+      content: priv.join('<br>'),
+      user: game.user._id,
+      type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+      whisper: [game.user._id],
+    })
+    priv.length = 0
+  }
+  
+  _sendPub(pub, chatData) {
+    if (pub.length == 0) return
+    let d = duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
+    d.alreadyProcessed = true
+    d.content = pub.join('<br>')
+    ChatMessage.create(d)
+    pub.length = 0
+  }
+  
+  // Dump everything we have saved in messages
+  sendAllMsgs(msgs) {
+    this._sendPriv(msgs.priv)
+    this._sendPub(msgs.pub, msgs.data)
+  }
+  
+  // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
+  priv(txt, msgs) {
+    if (msgs.pub.length > 0) this.sendAllMsgs(msgs)
+    msgs.priv.push(txt)
+  }
+  // Stack up as many public messages as we can, until we need to print a private one (to reduce the number of chat messages)
+  pub(txt, msgs) {
+  if (msgs.priv.length > 0) this.sendAllMsgs(msgs)
+  msgs.pub.push(txt)
+}
+}
+
 class ChatProcessorRegistry {
   constructor() {
     this._processors = []
@@ -47,7 +114,7 @@ class ChatProcessorRegistry {
    */
   handle(line, msgs) {
     let processor = this._processors.find(it => it.matches(line))
-    if (!!processor) return processor.process(line, msgs)
+    if (!!processor) return processor.process(line, msgs) == true // don't require processors to return false.  But they MUST return true if they processed the chat
     return false
   }
 
@@ -58,6 +125,7 @@ class ChatProcessorRegistry {
   registerProcessor(processor) {
     this._processors.push(processor)
   }
+  
 }
 
 export let ChatProcessors = new ChatProcessorRegistry()
@@ -79,38 +147,8 @@ let prnt = (text, msgs) => {
   else pub(text, msgs)
 }
 
-/**
- * Base class for a chat message processor.
- */
-export class ChatProcessor {
-  /**
-   * Override
-   * @param {*} line - chat command
-   * @returns true if this processor will handle this chat command
-   */
-  matches(line) {}
-
-  /**
-   * Override to process a chat command
-   * @param {*} line
-   */
-  process(line, msgs) {}
-
-  sendPublicMessage(text, msgs) {
-    pub(text, msgs)
-  }
-
-  sendPrivateMessage(text, msgs) {
-    priv(text, msgs)
-  }
-
-  printMessage(text, msgs) {
-    prnt(text, msgs)
-  }
-}
-
 export default function addChatHooks() {
-  Hooks.once('init', async function () {
+  Hooks.once('init', async function () {  
     let send = msgs => {
       if (msgs.priv.length > 0) {
         ChatMessage.create({
@@ -175,41 +213,6 @@ export default function addChatHooks() {
               c += '<br>/sendmb &lt;OtF&gt &lt;playername(s)&gt'
             }
             priv(c, msgs)
-            handled = true
-            return
-          }
-          if (line === '/mook' && game.user.isGM) {
-            new NpcInput().render(true)
-            priv('Opening Mook Generator', msgs)
-            handled = true
-            return
-          }
-
-          m = line.match(/\/(select|sel) ?([^!]*)(!)?/)
-          if (!!m) {
-            if (!m[2]) {
-              GURPS.ClearLastActor(GURPS.LastActor)
-              priv('Clearing Last Actor', msgs)
-            } else {
-              let pat = m[2].split('*').join('.*')
-              pat = '^' + pat.trim() + '$'
-              let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
-              if (!!m[3]) list = game.actors.entities
-              let a = list.filter(a => a.name.match(pat))
-              let msg = "More than one Actor found matching '" + m[2] + "': " + a.map(e => e.name).join(', ')
-              if (a.length == 0 || a.length > 1) {
-                // No good match on actors, try token names
-                a = canvas.tokens.placeables.filter(t => t.name.match(pat))
-                msg = "More than one Token found matching '" + m[2] + "': " + a.map(e => e.name).join(', ')
-                a = a.map(t => t.actor)
-              }
-              if (a.length == 0) ui.notifications.warn("No Actor/Token found matching '" + m[2] + "'")
-              else if (a.length > 1) ui.notifications.warn(msg)
-              else {
-                GURPS.SetLastActor(a[0])
-                priv('Selecting ' + a[0].displayname, msgs)
-              }
-            }
             handled = true
             return
           }
@@ -583,17 +586,7 @@ export default function addChatHooks() {
             } // Looks like a /roll OtF, but didn't parse as one
           }
 
-          m = line.match(/([\.\/]p?ra) +(\w+-)?(\d+)/i)
-          if (!!m) {
-            let skill = m[2] || 'Default='
-            let action = parselink('S:' + skill.replace('-', '=') + m[3])
-            send(msgs) // send what we have
-            GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.substr(1).startsWith('pra') }) // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
-            handled = true
-            return
-          }
-
-          handled = ChatProcessors.handle(line, msgs)
+          handled = ChatProcessors.handle(line, msgs, data)
           if (handled) return
 
           if (line === '/clearmb') {
