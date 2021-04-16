@@ -8,7 +8,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
   isGMOnly() { return true }
 
   matches(line) {
-    this.match = line.match(/\/(fc|frightcheck)/)
+    this.match = line.match(/^\/(fc|frightcheck)/)
     return !!this.match
   }
   process(line, msgs) {
