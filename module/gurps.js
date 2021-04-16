@@ -1407,6 +1407,27 @@ GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf 
   dlg.render(true)
 }
 
+GURPS.setInitiativeFormula = function(broadcast) {
+  let formula = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_INITIATIVE_FORMULA)
+  if (!formula) {
+    formula = Initiative.defaultFormula()
+    if (game.user.isGM) game.settings.set(settings.SYSTEM_NAME, settings.SETTING_INITIATIVE_FORMULA, formula)
+  }
+  let m = formula.match(/([^:]*):?(\d)?/)
+  let d = !!m[2] ? parseInt(m[2]) : 5
+  CONFIG.Combat.initiative = {
+    formula: m[1],
+    decimals: d   // Important to be able to maintain resolution
+  }
+  if (broadcast)
+    game.socket.emit("system.gurps",
+      {
+        type: 'initiativeChanged',
+        formula: m[1],
+        decimals: d
+      })
+}
+
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
    make it work like an Array. 
@@ -1624,7 +1645,12 @@ Hooks.once('ready', async function () {
       if (resp.users.includes(game.user._id))
         game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
     } 
-    
+    if (resp.type == 'initiativeChanged') {
+      CONFIG.Combat.initiative = {
+        formula: resp.formula,
+        decimals: resp.decimals   
+      }
+    }    
     /* Currently not used.    But could be with:
          let action = parselink(text)
          game.socket.emit("system.gurps",
@@ -1633,7 +1659,6 @@ Hooks.once('ready', async function () {
               actorIds: actors.map(a => a.id),
               action: action.action
             })
-
     */
     if (resp.type == 'executeOtF') {
       let action = resp.action
@@ -1747,4 +1772,5 @@ Hooks.once('ready', async function () {
     __dirname + '/apply-damage/effect-majorwound.html',
     __dirname + '/apply-damage/effect-shock.html',
   ])
+  GURPS.setInitiativeFormula()
 })
