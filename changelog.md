@@ -7,6 +7,7 @@ This is what we are currently working on:
 - refactor Chat command parsing
 - Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
 - Added OtF [D:AttackName].   Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
+- Fixed GM Send now also transfers the OtF label (ex: "Acrobatic Dodge" from above)
 
 ## History
 

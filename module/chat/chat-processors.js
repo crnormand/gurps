@@ -137,7 +137,7 @@ class FpHpChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
     return !!this.match
   }
-  process(line, msgs) {
+  async process(line, msgs) {
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn('You must have a character selected')
@@ -147,7 +147,7 @@ class FpHpChatProcessor extends ChatProcessor {
       const max = actor.data.data[attr].max
       let reset = ''
       if (!!m[5]) {
-        actor.update({ ['data.' + attr + '.value']: max })
+        await actor.update({ ['data.' + attr + '.value']: max })
         this.prnt(`${actor.displayname} reset to ${max} ${attr}`, msgs)
       } else if (isNaN(delta) && !!m[3]) {
         // only happens with '='
@@ -159,7 +159,7 @@ class FpHpChatProcessor extends ChatProcessor {
             delta = max
             mtxt = ` (max: ${max})`
           }
-          actor.update({ ['data.' + attr + '.value']: delta })
+          await actor.update({ ['data.' + attr + '.value']: delta })
           this.prnt(`${actor.displayname} set to ${delta} ${attr}${mtxt}`, msgs)
         }
       } else if (!!m[2] || !!m[3]) {
@@ -190,7 +190,7 @@ class FpHpChatProcessor extends ChatProcessor {
           delta = max
           mtxt = ` (max: ${max})`
         }
-        actor.update({ ['data.' + attr + '.value']: delta })
+        await actor.update({ ['data.' + attr + '.value']: delta })
         this.prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
       } else ui.notifications.warn(`Unrecognized format for '${line}'`)
     }
