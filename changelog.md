@@ -2,6 +2,11 @@
 
 This is what we are currently working on:
 
+0.9.0
+- rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
+- refactor Chat command parsing
+- new /if chat command
+
 ## History
 
 0.8.23 - 4/13/2021

@@ -596,7 +596,7 @@ function executeOTF(string, priv = false) {
 GURPS.executeOTF = executeOTF
 
 //	"modifier", "attribute", "selfcontrol", "roll", "damage", "skill", "pdf"
-function performAction(action, actor, event, targets) {
+async function performAction(action, actor, event, targets) {
   if (!action) return
   let actordata = actor?.data
   let prefix = ''
@@ -687,7 +687,7 @@ function performAction(action, actor, event, targets) {
   }
 
   let processLinked = tempAction => {
-    let bestLvl = 0
+    let bestLvl = -99999
     var bestAction, besttrue
     let attempts = []
     var th
@@ -827,8 +827,7 @@ function performAction(action, actor, event, targets) {
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-  doRoll(actor, formula, targetmods, prefix, thing, target, opt)
-  return true
+  return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
 }
 GURPS.performAction = performAction
 

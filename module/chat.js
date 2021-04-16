@@ -122,15 +122,50 @@ class ChatProcessorRegistry {
     return this._processors.filter(it => it.isGMOnly())
   }
 
+  // Make a pre-emptive decision if we are going to handle any of the lines in this message
+  willTryToHandle(lines) {
+    for (const line of lines)
+      for (const p of this._processorsForUser())
+        if (p.matches(line))
+          return true
+    return false
+  }
+  
+  /* At this point, we just have to assume that we are going to handle some (if not all) of the messages in lines.
+   * From this point on, we want to be in a single thread... so we await any async methods to ensure that
+   * we get a response. 
+   */
+  async processLines(lines, chatmsgData) {
+    let msgs = { pub: [], priv: [], data: chatmsgData }
+
+    for (const line of lines) { // use for loop to ensure single thread
+      let handled = await this.handle(line, msgs)
+      if (!handled) {
+        if (line.trim().startsWith('/')) {
+          // immediately flush our stored msgs, and execute the slash command using the default parser
+          this.send(msgs)
+          GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
+          ui.chat.processMessage(line).catch(err => {
+            ui.notifications.error(err)
+            console.error(err)
+          })
+        } else this.pub(line, msgs) // If not handled, must just be public text
+      } 
+    } // end for loop
+    this.send(msgs)
+  }
 
   /**
    * Handle the chat message
    * @param {String} line - chat input
    * @returns true, if handled
    */
-  handle(line, msgs) {
+  async handle(line, msgs) {
     let processor = this._processorsForUser().find(it => it.matches(line))
-    if (!!processor) return processor.process(line, msgs) != false // Assume true... but processors can return 'false'
+    if (!!processor) {
+      await processor.process(line, msgs)
+      return true
+    }
     return false
   }
 
@@ -139,7 +174,7 @@ class ChatProcessorRegistry {
    * @param {*} processor
    */
   registerProcessor(processor) {
-    processor.registry = this
+    processor.registry = this   // Provide a back pointer so that processors can get access to the message structure
     this._processors.push(processor)
   }
     
@@ -181,42 +216,26 @@ export let ChatProcessors = new ChatProcessorRegistry()
 
 export default function addChatHooks() {
   Hooks.once('init', async function () {  
-    Hooks.on('chatMessage', (log, message, data) => {
-      if (!!data.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
+    Hooks.on('chatMessage', (log, message, chatmsgData) => {
+      if (!!chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
+      
       if (GURPS.ChatCommandsInProcess.includes(message)) {
         GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(item => item !== message)
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
       }
 
-      let msgs = { pub: [], priv: [], data: data }
-
-      let handled = false // have we handled at least one message
-      message
+      let lines = message
         .replace(/\\\\/g, '\n')   // Allow \\ to ack as newline (useful for combining multiple chat commands on a single line
         .split('\n')
-        .forEach(line => {
-          if (ChatProcessors.handle(line, msgs)) {
-            handled = true
-            return
-          }
- 
-          // It isn't one of our commands...
-          if (line.trim().startsWith('/')) {
-            // immediately flush our stored msgs, and execute the slash command using the default parser
-            send(msgs)
-            GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
-            ui.chat.processMessage(line).catch(err => {
-              ui.notifications.error(err)
-              console.error(err)
-            })
-            handled = true
-          } else ChatProcessors.pub(line, msgs) // If not handled, must just be public text
-        }) // end split
-      if (handled) {
-        // If we handled 'some' messages, then send the remaining messages, and return false (so the default handler doesn't try)
-        ChatProcessors.send(msgs)
-        return false // Don't display this chat message, since we have handled it with others
-      } else return true
+      
+      // Due to Foundry's non-async way of handling the 'chatMessage' response, we have to decide beforehand
+      // if we are going to process this message, and if so, return false so Foundry doesn't
+      if (ChatProcessors.willTryToHandle(lines)) {
+        // Now we can handle the processing of each line in an async method, so we can ensure a single thread
+        ChatProcessors.processLines(lines, chatmsgData)
+        return false
+      } else
+        return true
     })
 
     // Look for blind messages with .message-results and remove them

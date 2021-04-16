@@ -62,7 +62,7 @@ class SlamCalculator extends FormApplication {
     // find out the token name for a given actor
     let activeScene = game.scenes.active
     let tokens = activeScene.data.tokens
-    let name = tokens.find(it => it.actorId === attacker.id).name
+    let name = tokens.find(it => it.actorId === attacker.id)?.name
 
     this._attacker = attacker
     this._name = !!name ? name : attacker.name
