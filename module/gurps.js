@@ -1414,7 +1414,6 @@ Hooks.once('init', async function () {
   DamageChat.initSettings()
   RegisterChatProcessors()
   SlamChatProcessor.initialize()
-  RegisterChatProcessors()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket()
@@ -1482,7 +1481,6 @@ Hooks.once('init', async function () {
 Hooks.once('ready', async function () {
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
-  GURPS.ModifierBucket.clear()
   new ThreeD6({
     popOut: false,
     minimizable: false,

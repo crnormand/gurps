@@ -292,7 +292,7 @@ export class ModifierBucket extends Application {
       content: content,
       whisper: [game.user._id],
     }
-    CONFIG.ChatMessage.entityClass.create(chatData, {})
+    ChatMessage.create(chatData)
   }
 
   // If the GM right clicks on the modifier bucket, it will print the raw text data driving the tooltip
@@ -529,9 +529,7 @@ export class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let id = element.dataset.id
-    let user = game.users.get(id)
-
-    this.bucket.sendBucket([user])
+    this.bucket.sendBucketToPlayer(id)
     setTimeout(() => this.bucket.showOthers(), 1000) // Need time for clients to update...and
   }
 
