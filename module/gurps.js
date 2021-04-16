@@ -1264,14 +1264,14 @@ GURPS.onRightClickGurpslink = function (event) {
   if (!!action) {
     action = JSON.parse(atou(action))
     if (action.type === 'damage' || action.type === 'deriveddamage')
-      GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
-    else GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+      GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
+    else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
 }
 
-GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
+GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) {
   if (!otf) return
-  if (!game.user.isGM) {
+  if (!game.user.isGM) {  // If not the GM, just send the text to the chat input window (so the user can copy it)
     $(document)
       .find('#chat-message')
       .val('[' + otf + ']')
@@ -1286,9 +1286,15 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
       canblind = false
     }
   }
+  if (!!overridetxt) {
+    if (overridetxt.includes('"'))
+      overridetxt = "'" + overridetxt + "'"
+    else
+      overridetxt = '"' + overridetxt + '"'
+  } else overridetxt = ''
   let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-  let botf = '[!' + otf + ']'
-  otf = '[' + otf + ']'
+  let botf = '[' + overridetxt + '!' + otf + ']'
+  otf = '[' + overridetxt + otf + ']'
   let buttons = {}
   buttons.one = {
     icon: '<i class="fas fa-users"></i>',
@@ -1350,7 +1356,7 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
   ChatMessage.create(msgData)
 }
 
-GURPS.resolveDamageRoll = function (event, actor, otf, isGM, isOtf = false) {
+GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf = false) {
   let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
   let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
   let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
@@ -1363,7 +1369,7 @@ GURPS.resolveDamageRoll = function (event, actor, otf, isGM, isOtf = false) {
     buttons.send = {
       icon: '<i class="fas fa-paper-plane"></i>',
       label: `${sendTo}`,
-      callback: () => GURPS.whisperOtfToOwner(otf, event, false, actor), // Can't blind roll damages (yet)
+      callback: () => GURPS.whisperOtfToOwner(otf, overridetxt, event, false, actor), // Can't blind roll damages (yet)
     }
   }
 
@@ -1665,7 +1671,7 @@ Hooks.once('ready', async function () {
       html.find('.pdflink').contextmenu(event => {
         event.preventDefault()
         let el = event.currentTarget
-        GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false, GURPS.LastActor)
+        GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
       })
     }
   })
