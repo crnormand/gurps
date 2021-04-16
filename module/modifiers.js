@@ -198,6 +198,8 @@ export class ModifierBucket extends Application {
     
   // End GLOBALLY ACCESSED METHODS
       _sendBucket(users) {
+        let mb = GURPS.ModifierBucket.modifierStack
+        users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only necessary for /showmbs.   Not used by local users.
         game.socket.emit("system.gurps", 
           { 
             type: 'updatebucket',

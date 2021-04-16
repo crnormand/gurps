@@ -1562,7 +1562,7 @@ Hooks.once('ready', async function () {
           let el = t[i]
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
           let target = game.combat.combatants.filter(c => c._id === combatant)[0]
-          if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
+          if (!!target.actor?.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
 
         html.find('[data-onethird]').click(ev => {
