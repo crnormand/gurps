@@ -14,6 +14,7 @@ To install the latest stable release, use this manifest URL:
 Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 ### If you are looking for the latest stable release, use the manifest URL above.
+We are actively developing on the 'main' branch, and sometimes things break ;-)
 
 [Current GCA Export version: 'GCA-7' 2/18/2021 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 

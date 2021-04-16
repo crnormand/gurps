@@ -1,8 +1,8 @@
 'use strict'
 
-import { ChatProcessors, ChatProcessor } from '../module/chat.js'
-import selectTarget from '../module/select-target.js'
-import { isNiceDiceEnabled, generateUniqueId } from '../lib/utilities.js'
+import { ChatProcessors, ChatProcessor } from '../../module/chat.js'
+import selectTarget from '../../module/select-target.js'
+import { isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.js'
 
 /**
  * Handle the '/slam' command. Must have a selected actor. The
@@ -15,16 +15,17 @@ export default class SlamChatProcessor extends ChatProcessor {
   constructor() {
     super()
   }
+  help() { return "/slam" }
 
   matches(line) {
     return line.startsWith('/slam')
   }
 
-  async process(line, msgs) {
+  process(line, msgs) {
     let actor = GURPS.LastActor
     if (!actor) {
       ui.notifications.warn('You must have a character selected')
-      return true
+      return
     }
 
     // see if there are any targets
@@ -39,8 +40,7 @@ export default class SlamChatProcessor extends ChatProcessor {
       if (targets.length === 1) target = [...targets][0]
       SlamCalculator.process(actor, target)
     }
-
-    return true
+    this.priv('Opening Slam Calculator', msgs)
   }
 }
 
