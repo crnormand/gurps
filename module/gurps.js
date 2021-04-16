@@ -969,13 +969,13 @@ async function handleRoll(event, actor, targets) {
 GURPS.handleRoll = handleRoll
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
-function applyModifierDesc(actor, desc) {
+async function applyModifierDesc(actor, desc) {
   if (!desc) return null
   let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
   if (parse != desc && !!actor && !actor.isSelf) {
     let fp = parseInt(parse)
     fp = actor.data.data.FP.value - fp
-    actor.update({ 'data.FP.value': fp })
+    await actor.update({ 'data.FP.value': fp })
   }
   parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {

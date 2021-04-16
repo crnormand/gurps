@@ -12,19 +12,19 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) reset/i)
     return !!this.match
   }
-  process(line, msgs) {
+  async process(line, msgs) {
     let m = this.match  
     let any = false
-    canvas.tokens.ownedTokens.forEach(t => {
+    for (const t of canvas.tokens.ownedTokens) {
       let actor = t.actor
       if (actor.hasPlayerOwner) {
         any = true
         let attr = m[2].toUpperCase()
         let max = actor.data.data[attr].max
-        actor.update({ ['data.' + attr + '.value']: max })
+        await actor.update({ ['data.' + attr + '.value']: max })
         this.priv(`${actor.displayname} ${attr} reset to ${max}`, msgs)
       }
-    })
+    }
     if (!any) this.priv(`There are no player owned characters!`, msgs)
   }
 }
@@ -65,11 +65,11 @@ export class EveryoneCChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
     return !!this.match
   }
-  process(line, msgs) {
+  async process(line, msgs) {
     let m = this.match  
     if (!!m[3] || !!m[4]) {
       let any = false
-      canvas.tokens.ownedTokens.forEach(t => {
+      for (const t of canvas.tokens.ownedTokens) {
         let actor = t.actor
         if (actor.hasPlayerOwner) {
           any = true
@@ -110,10 +110,10 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             newval = max
             mtxt = `(max: ${max})`
           }
-          actor.update({ ['data.' + attr + '.value']: newval })
+          await actor.update({ ['data.' + attr + '.value']: newval })
           this.priv(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
         }
-      })
+      }
       if (!any) this.priv(`There are no player owned characters!`, msgs)
     } else  // Didn't provide dice or scalar, so maybe someone else wants to handle it
      ui.notification.warn(`There was no dice or number formula to apply '${line}'`)
