@@ -1596,30 +1596,32 @@ Hooks.once('ready', async function () {
       })
     }
   })
-
-  // This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
-  Hooks.on('updateUser', (...args) => {
-    if (!!args) {
-      if (args.length >= 4) {
-        let source = args[3]
-        let target = args[1]._id
-        //				console.log("Update for: " + game.users.get(target).name + " from: " + game.users.get(source).name);
-        if (target == game.user.id) {
-          if (source != target) {
-            // Someone else (a GM) is updating your data.
-            let date = args[1].flags?.gurps?.modifierchanged // Just look for the "modifierchanged" data (which will be a date in ms... something that won't be the same)
-            if (!!date) game.GURPS.ModifierBucket.updateDisplay(date)
-          }
-        }
-      }
-    }
-  })
   
  game.socket.on('system.gurps', (resp) => {
-    if (resp.type = 'updatebucket') {
+    if (resp.type == 'updatebucket') {
       if (resp.users.includes(game.user._id))
         game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
     } 
+    
+    /* Currently not used.    But could be with:
+         let action = parselink(text)
+         game.socket.emit("system.gurps",
+            {
+              type: 'executeOtF',
+              actorIds: actors.map(a => a.id),
+              action: action.action
+            })
+
+    */
+    if (resp.type == 'executeOtF') {
+      let action = resp.action
+      resp.actorIds.forEach(id => {
+        let actor = game.actors.get(id)
+        if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER)
+          // Return true if the current game user has observer or owner rights to an actor
+          GURPS.performAction(action, actor)
+      })
+    }
   });
 
 

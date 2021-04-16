@@ -260,8 +260,8 @@ class EveryoneBChatProcessor extends ChatProcessor {
           if (actor.hasPlayerOwner) {
             any = true
             GURPS.performAction(action.action, actor)
-          }
-        })
+           }
+         })
         if (!any) this.priv(`There are no player owned characters!`, msgs)
       } else this.priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`, msgs)
     } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`, msgs)
