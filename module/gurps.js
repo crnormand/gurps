@@ -624,7 +624,9 @@ async function performAction(action, actor, event, targets) {
   }
 
   if (action.type === 'chat') {
-    ui.chat.processMessage(action.orig)
+    let chat = action.orig
+    if (!!event.shiftKey) chat = "/setwhisper\n"+chat
+    ui.chat.processMessage(chat)
     return true
   }
 
@@ -825,6 +827,21 @@ async function performAction(action, actor, event, targets) {
       if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
+    
+  if (action.type === 'attackdamage')
+    if (!!actor) {
+      let att = null
+      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
+      if (!att) {
+        ui.notifications.warn(
+          "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+        )
+        return false
+      }
+      let dam = parseForDamage(att.damage)
+      if (!!dam.action) await performAction(dam.action, actor, event, targets)
+    } else ui.notifications.warn('You must have a character selected')
+
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)

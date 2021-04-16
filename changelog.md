@@ -5,7 +5,8 @@ This is what we are currently working on:
 0.9.0
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
-- new /if chat command
+- Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
+- Added OtF [D:AttackName].   Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
 
 ## History
 

@@ -6,26 +6,51 @@ import { parselink } from '../../lib/parselink.js'
 export class IfChatProcessor extends ChatProcessor {
   help() { return "/if [OtF] one /else two" }
   matches(line) {
-    this.match = line.match(/\/if (!)?\[([^\]]+)\] (.*)/)
+    this.match = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
     return !!this.match
   }
+  
+  async _handleResult(then, msgs) {
+    let m = then.match(/^\[([^\]]+)\]/)
+    if (!!m) {
+      let action = parselink(m[1].trim())
+      if (!!action.action) {
+        if (action.action.type === 'modifier')
+        // only need to show modifiers, everything else does something.
+          this.priv(then, msgs)
+        else this.send(msgs) // send what we have
+        await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
+      }
+    } else if (then.startsWith('/')) {
+      await this.registry.processLine(then, msgs)
+    } else 
+      this.registry.pub(then, msgs)
+  }
+  
   async process(line, msgs) {
     let m = this.match
     const invert = !!m[1] // !
     const otf = m[2]
-    let than = m[3]
+    let then = m[3].trim()
     var other
-    if (than.includes(' /else ')) {
-      m = than.match(/(.*) \/else (.*)/)
-      than = m[1]
-      other = m[2]
+    if (then.includes('/else ')) {
+      m = then.match(/(.*)\/else (.*)/)
+      then = m[1].trim()
+      other = m[2].trim()
     }    
     let action = parselink(otf)
     if (!!action.action) {
-      if (await GURPS.performAction(action.action, GURPS.LastActor)) {
-        console.log("HOLLY SHIT!")
-      }
-        else  console.log("FAIL!")
+      if (['skill-spell', 'attribute', 'attack', 'controlroll'].includes(action.action.type)) {
+        this.priv(line, msgs)
+        this.send(msgs)
+        let pass = await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
+        if (invert) pass = !pass
+        if (pass) {
+          if (!!then) this._handleResult(then, msgs)
+        } else 
+          if (!!other) this._handleResult(other, msgs)
+      } else
+        this.priv(`The On-the-Fly formula must be some kind of check: [${otf}]`, msgs)
     } else
       this.priv(`Unable to parse On-the-Fly formula: [${otf}]`, msgs)
   }

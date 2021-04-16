@@ -80,8 +80,8 @@ export class ChatProcessor {
   // Uncertain if these should be priv or pub
   prnt(text, msgs) {
     let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
-    if (game.user.isGM || p_setting) priv(text, msgs)
-    else pub(text, msgs)
+    if (game.user.isGM || p_setting) this.priv(text, msgs)
+    else this.pub(text, msgs)
   }
 }
 
@@ -139,20 +139,25 @@ class ChatProcessorRegistry {
     let msgs = { pub: [], priv: [], data: chatmsgData }
 
     for (const line of lines) { // use for loop to ensure single thread
-      let handled = await this.handle(line, msgs)
-      if (!handled) {
-        if (line.trim().startsWith('/')) {
-          // immediately flush our stored msgs, and execute the slash command using the default parser
-          this.send(msgs)
-          GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
-          ui.chat.processMessage(line).catch(err => {
-            ui.notifications.error(err)
-            console.error(err)
-          })
-        } else this.pub(line, msgs) // If not handled, must just be public text
-      } 
-    } // end for loop
+      await this.processLine(line, msgs)
+    } 
     this.send(msgs)
+  }
+  
+  async processLine(line, msgs) {
+    line = line.trim()
+    let handled = await this.handle(line, msgs)
+    if (!handled) {
+      if (line.trim().startsWith('/')) {
+        // immediately flush our stored msgs, and execute the slash command using the default parser
+        this.send(msgs)
+        GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
+        ui.chat.processMessage(line).catch(err => {
+          ui.notifications.error(err)
+          console.error(err)
+        })
+      } else this.pub(line, msgs) // If not handled, must just be public text
+    }
   }
 
   /**

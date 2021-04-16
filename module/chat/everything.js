@@ -2,13 +2,14 @@
 
 import { ChatProcessor } from '../chat.js'
 import { parselink } from '../../lib/parselink.js'
+import { isNiceDiceEnabled } from '../../lib/utilities.js'
 
 export class EveryoneAChatProcessor extends ChatProcessor {
   help() { return "/everyone (or /ev) &lt;formula&gt;" }
   isGMOnly() { return true }
 
   matches(line) {
-    this.match = line.match(/\/(everyone|ev) ([fh]p) reset/i)
+    this.match = line.match(/^\/(everyone|ev) ([fh]p) reset/i)
     return !!this.match
   }
   process(line, msgs) {
@@ -33,7 +34,7 @@ export class EveryoneBChatProcessor extends ChatProcessor {
   isGMOnly() { return true }
 
   matches(line) {
-    this.match = line.match(/\/(everyone|ev) \[(.*)\]/i)
+    this.match = line.match(/^\/(everyone|ev) \[(.*)\]/i)
     return !!this.match
   }
   
@@ -61,7 +62,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
   isGMOnly() { return true }
 
   matches(line) { // /everyone +1 fp or /everyone -2d-1 fp
-    this.match = line.match(/\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
+    this.match = line.match(/^\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
     return !!this.match
   }
   process(line, msgs) {

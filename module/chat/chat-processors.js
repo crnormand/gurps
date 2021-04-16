@@ -5,10 +5,10 @@ import { parselink } from '../../lib/parselink.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { Equipment } from '../actor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { isNiceDiceEnabled } from '../../lib/utilities.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import { EveryoneAChatProcessor, EveryoneBChatProcessor, EveryoneCChatProcessor } from './everything.js'
 import { IfChatProcessor } from './if.js'
+import { isNiceDiceEnabled } from '../../lib/utilities.js'
 
 export default function RegisterChatProcessors() {
     ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -28,6 +28,19 @@ export default function RegisterChatProcessors() {
     ChatProcessors.registerProcessor(new ChatExecuteChatProcessor())
     ChatProcessors.registerProcessor(new TrackerChatProcessor())
     ChatProcessors.registerProcessor(new IfChatProcessor())
+    ChatProcessors.registerProcessor(new SetWhisperChatProcessor())
+}
+
+class SetWhisperChatProcessor extends ChatProcessor {
+  help() { return null }
+  matches(line) {
+    return line === '/setwhisper'
+  }
+  process(line, msgs) {
+    msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    msgs.data.whisper = [game.user.id]
+    msgs.event = { shiftKey: true }
+  }
 }
 
 class ClearMBsChatProcessor extends ChatProcessor {
@@ -55,7 +68,7 @@ class ShowMBsChatProcessor extends ChatProcessor {
 class RollAgainstChatProcessor extends ChatProcessor {
   help() { return "/ra N | Skillname-N" }
   matches(line) {
-    this.match = line.match(/([\.\/]p?ra) +(\w+-)?(\d+)/i)
+    this.match = line.match(/^([\.\/]p?ra) +(\w+-)?(\d+)/i)
     return !!this.match
   }
   process(line, msgs) {
@@ -63,7 +76,7 @@ class RollAgainstChatProcessor extends ChatProcessor {
     let skill = m[2] || 'Default='
     let action = parselink('S:' + skill.replace('-', '=') + m[3])
     this.send(msgs) // send what we have
-    GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.substr(1).startsWith('pra') }) 
+    GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.substr(1).startsWith('pra') || msgs.event?.shiftKey }) 
   }
 }
 
@@ -71,7 +84,7 @@ class MookChatProcessor extends ChatProcessor {
   isGMOnly() { return true }
   help() { return "/mook" }
   matches(line) {
-    this.match = line.match(/\/mook/i)
+    this.match = line.match(/^\/mook/i)
     return !!this.match
   }
   process(line, msgs) {
@@ -103,7 +116,7 @@ class SendMBChatProcessor extends ChatProcessor {
   }
   process(line, msgs) {
     this.priv(line, msgs)
-    let user = line.replace(/\/sendmb/, '').trim()
+    let user = line.replace(/^\/sendmb/, '').trim()
     let m = user.match(/\[(.*)\](.*)/)
     if (!!m) {
       let otf = m[1]
@@ -121,7 +134,7 @@ class SendMBChatProcessor extends ChatProcessor {
 class FpHpChatProcessor extends ChatProcessor {
   help() { return "/fp (or /hp) &lt;formula&gt;" }
   matches(line) {
-    this.match = line.match(/\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
+    this.match = line.match(/^\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
     return !!this.match
   }
   process(line, msgs) {
@@ -160,7 +173,7 @@ class FpHpChatProcessor extends ChatProcessor {
           let d = dice.match(/[+-](\d+)d(\d*)/)
           let r = d[1] + 'd' + (!!d[2] ? d[2] : '6')
           let roll = Roll.create(r).evaluate()
-          if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, data.whisper)
+          if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, msgs.data.whisper)
           delta = roll.total
           if (!!mod)
             if (isNaN(mod)) {
@@ -188,7 +201,7 @@ class FpHpChatProcessor extends ChatProcessor {
 class SelectChatProcessor extends ChatProcessor {
   help() { return "/select &lt;Actor name&gt" }
   matches(line) {
-    this.match = line.match(/\/(select|sel) ?([^!]*)(!)?/)
+    this.match = line.match(/^\/(select|sel) ?([^!]*)(!)?/)
     return !!this.match
   }
   process(line, msgs) {
@@ -244,7 +257,7 @@ class RollChatProcessor extends ChatProcessor {
 class UsesChatProcessor extends ChatProcessor {
   help() { return '/uses &lt;formula&gt; &lt;equipment name&gt;' }   
   matches(line) {
-    this.match = line.match(/\/uses *([\+-=]\w+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/uses *([\+-=]\w+)?(reset)?(.*)/i)
     return !!this.match
   }
   process(line, msgs) {
@@ -290,7 +303,7 @@ class UsesChatProcessor extends ChatProcessor {
 class QtyChatProcessor extends ChatProcessor {
   help() { return '/qty &lt;formula&gt; &lt;equipment name&gt;' }   
   matches(line) {
-    this.match == line.match(/\/qty *([\+-=]\d+)(.*)/i)
+    this.match == line.match(/^\/qty *([\+-=]\d+)(.*)/i)
     return !!this.match
   }
   process(line, msgs) {
@@ -332,7 +345,7 @@ class QtyChatProcessor extends ChatProcessor {
 class TrackerChatProcessor extends ChatProcessor {
   help() { return '/tr&lt;N&gt; (or /tr &lt;name&gt;) &lt;formula&gt;' }   
   matches(line) {
-    this.match = line.match(/\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
     return !!this.match
   }
   process(line, msgs) {
@@ -388,7 +401,7 @@ class TrackerChatProcessor extends ChatProcessor {
 class StatusProcessor extends ChatProcessor {
   help() { return '/status on|off|t|toggle|clear &lt;status&gt;' }   
   matches(line) {
-    this.match = line.match(/\/(st|status) +(t|toggle|on|off|\+|-|clear|set|unset) *([^\@ ]+)? *(\@self)?/i)
+    this.match = line.match(/^\/(st|status) +(t|toggle|on|off|\+|-|clear|set|unset) *([^\@ ]+)? *(\@self)?/i)
     return !!this.match
   }
   process(line, msgs) {
