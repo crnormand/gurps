@@ -110,7 +110,6 @@
   justify-content: stretch;
   align-items: stretch;
   text-align: left;
-  background: url(/ui/parchment.jpg) repeat;
 }
 
 #modtooltipbucket {
@@ -415,6 +414,8 @@
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
+  background-color: #dcdcd0;
+  background-image: url(/ui/parchment.jpg);
 }
 
 /* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
