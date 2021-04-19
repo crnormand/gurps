@@ -397,16 +397,16 @@ class TrackerChatProcessor extends ChatProcessor {
  
           
 class StatusProcessor extends ChatProcessor {
-  help() { return '/status on|off|t|toggle|clear &lt;status&gt;' }   
+  help() { return '/status on|off|t|clear|list &lt;status&gt;' }   
   matches(line) {
     this.match = line.match(/^\/(st|status) +(t|toggle|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
     return !!this.match
   }
-  process(line) {
+  async process(line) {
     let m = this.match  
     let pattern = !m[3]
       ? '.*'
-      : new RegExp('^' + m[3].trim().split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)'), 'i') // Make string into a RegEx pattern
+      : new RegExp('^' + m[3].trim().split('*').join('.*?').replace(/\(/g, '\\(').replace(/\)/g, '\\)') + '$') // Make string into a RegEx pattern
     let any = false
     let on = false
     let set = m[2].toLowerCase() == 'on' || m[2] == '+' || m[2] == 'set'
@@ -430,42 +430,42 @@ class StatusProcessor extends ChatProcessor {
           msg = 'Your character does not have any tokens.   We require a token to set statuses'
         else {
           any = true
-          GURPS.LastActor.effects.forEach(e => {
+          for (const e of GURPS.LastActor.effects) {
             if (clear)
-              Object.values(CONFIG.statusEffects).forEach(s => {
+              for (const s of Object.values(CONFIG.statusEffects)) {
                 if (s.id == e.getFlag('core', 'statusId')) {
-                  tokens[0].toggleEffect(s)
-                  this.prnt(`Clearing ${e.data.label} for ${GURPS.LastActor.displayname}`)
+                  await tokens[0].toggleEffect(s)
+                  this.prnt(`Clearing ${s.id}:'${e.data.label}' for ${GURPS.LastActor.displayname}`)
                 }
-              })
+              }
             else if (effect.id == e.getFlag('core', 'statusId')) on = true
-          })
+          }
           if (on & !set || (!on && set) || toggle) {
-            this.prnt(`Toggling ${game.i18n.localize(effect.label)} for ${GURPS.LastActor.displayname}`)
-            tokens[0].toggleEffect(effect)
+            this.prnt(`Toggling ${effect.id}:'${game.i18n.localize(effect.label)}' for ${GURPS.LastActor.displayname}`)
+            await tokens[0].toggleEffect(effect)
           }
         }
       } else msg = 'You must select a character to apply status effects'
     } else {
       msg = 'You must select tokens (or use @self) to apply status effects'
-      canvas.tokens.controlled.forEach(t => {
+      for (const t of canvas.tokens.controlled) {
         any = true
         if (!!t.actor)
-          t.actor.effects.forEach(e => {
+          for (const e of t.actor.effects) {
             if (clear)
-              Object.values(CONFIG.statusEffects).forEach(s => {
+              for (const s of Object.values(CONFIG.statusEffects)) {
                 if (s.id == e.getFlag('core', 'statusId')) {
-                  t.toggleEffect(s)
-                  this.prnt(`Clearing ${e.data.label} for ${t.actor.displayname}`)
+                  await t.toggleEffect(s)
+                  this.prnt(`Clearing ${s.id}: '${e.data.label}' for ${t.actor.displayname}`)
                 }
-              })
+              }
             else if (effect.id == e.getFlag('core', 'statusId')) on = true
-          })
+          }
         if (on & !set || (!on && set) || toggle) {
-          this.prnt(`Toggling ${game.i18n.localize(effect.label)} for ${t.actor.displayname}`)
-          t.toggleEffect(effect)
+          this.prnt(`Toggling ${effect.id}:'${game.i18n.localize(effect.label)}' for ${t.actor.displayname}`)
+          await t.toggleEffect(effect)
         }
-      })
+      }
     }
     if (!any) ui.notifications.warn(msg)
   }
