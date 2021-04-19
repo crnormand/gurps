@@ -63,25 +63,16 @@ export class ChatProcessor {
    */
   isGMOnly() { return false }
   
-  send(msgs) {
-    this.registry.send(msgs)
-  }
+  send() { this.registry.send() }
+  priv(txt) { this.registry.priv(txt) }
+  pub(txt) { this.registry.pub(txt) }
+  prnt(txt) { this.registry.prnt(txt) }
   
-  // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
-  priv(txt, msgs) {
-    if (msgs.pub.length > 0) this.send(msgs)
-    msgs.priv.push(txt)
-  }
-  // Stack up as many public messages as we can, until we need to print a private one (to reduce the number of chat messages)
-  pub(txt, msgs) {
-    if (msgs.priv.length > 0) this.send(msgs)
-    msgs.pub.push(txt)
-  }
-  // Uncertain if these should be priv or pub
-  prnt(text, msgs) {
-    let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
-    if (game.user.isGM || p_setting) this.priv(text, msgs)
-    else this.pub(text, msgs)
+  // Attempt to convert original chat data into a whisper (for use when play presses SHIFT key to make roll private)
+  setWhisper() {
+    this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    this.msgs.data.whisper = [game.user.id]
+    this.msgs.event = { shiftKey: true }
   }
 }
 
@@ -101,7 +92,7 @@ class HelpChatProcessor extends ChatProcessor {
       t += '<br>--- GM only ---<br>'
       t += gmonly.join('<br>')
     }
-    this.priv(t, msgs)
+    this.priv(t)
   }
 }
 
@@ -109,6 +100,7 @@ class ChatProcessorRegistry {
   constructor() {
     this._processors = []
     this.registerProcessor(new HelpChatProcessor())
+    this.msgs = { pub: [], priv: [], data: null }
   }
   
   _processorsForUser() {
@@ -136,27 +128,27 @@ class ChatProcessorRegistry {
    * we get a response. 
    */
   async processLines(lines, chatmsgData) {
-    let msgs = { pub: [], priv: [], data: chatmsgData }
+    this.msgs.data = chatmsgData
 
     for (const line of lines) { // use for loop to ensure single thread
-      await this.processLine(line, msgs)
+      await this.processLine(line)
     } 
-    this.send(msgs)
+    this.send()
   }
   
-  async processLine(line, msgs) {
+  async processLine(line) {
     line = line.trim()
-    let handled = await this.handle(line, msgs)
+    let handled = await this.handle(line)
     if (!handled) {
       if (line.trim().startsWith('/')) {
         // immediately flush our stored msgs, and execute the slash command using the default parser
-        this.send(msgs)
+        this.send()
         GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
         ui.chat.processMessage(line).catch(err => {
           ui.notifications.error(err)
           console.error(err)
         })
-      } else this.pub(line, msgs) // If not handled, must just be public text
+      } else this.pub(line) // If not handled, must just be public text
     }
   }
 
@@ -165,10 +157,10 @@ class ChatProcessorRegistry {
    * @param {String} line - chat input
    * @returns true, if handled
    */
-  async handle(line, msgs) {
+  async handle(line) {
     let processor = this._processorsForUser().find(it => it.matches(line))
     if (!!processor) {
-      await processor.process(line, msgs)
+      await processor.process(line)
       return true
     }
     return false
@@ -205,16 +197,28 @@ class ChatProcessorRegistry {
   }
   
   // Dump everything we have saved in messages
-  send(msgs) {
-    this._sendPriv(msgs.priv)
-    this._sendPub(msgs.pub, msgs.data)
+  send() {
+    this._sendPriv(this.msgs.priv)
+    this._sendPub(this.msgs.pub, this.msgs.data)
   }
   // Stack up as many public messages as we can, until we need to print a private one (to reduce the number of chat messages)
-  pub(txt, msgs) {
-    if (msgs.priv.length > 0) this.send(msgs)
-    msgs.pub.push(txt)
+  pub(txt) {
+    if (this.msgs.priv.length > 0) this.send()
+    this.msgs.pub.push(txt)
   }
 
+  // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
+  priv(txt) {
+    if (this.msgs.pub.length > 0) this.send()
+    this.msgs.priv.push(txt)
+  }
+
+  // Uncertain if these should be priv or pub
+  prnt(txt) {
+    let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
+    if (game.user.isGM || p_setting) this.priv(txt)
+    else this.pub(txt)
+  }
 }
 
 export let ChatProcessors = new ChatProcessorRegistry()

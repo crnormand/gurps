@@ -12,7 +12,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) reset/i)
     return !!this.match
   }
-  async process(line, msgs) {
+  async process(line) {
     let m = this.match  
     let any = false
     for (const t of canvas.tokens.ownedTokens) {
@@ -22,10 +22,10 @@ export class EveryoneAChatProcessor extends ChatProcessor {
         let attr = m[2].toUpperCase()
         let max = actor.data.data[attr].max
         await actor.update({ ['data.' + attr + '.value']: max })
-        this.priv(`${actor.displayname} ${attr} reset to ${max}`, msgs)
+        this.priv(`${actor.displayname} ${attr} reset to ${max}`)
       }
     }
-    if (!any) this.priv(`There are no player owned characters!`, msgs)
+    if (!any) this.priv(`There are no player owned characters!`)
   }
 }
 
@@ -38,7 +38,7 @@ export class EveryoneBChatProcessor extends ChatProcessor {
     return !!this.match
   }
   
-  async process(line, msgs) {
+  async process(line) {
     let m = this.match  
     let any = false
     let action = parselink(m[2].trim())
@@ -51,9 +51,9 @@ export class EveryoneBChatProcessor extends ChatProcessor {
             await GURPS.performAction(action.action, actor)
            }
          }
-        if (!any) this.priv(`There are no player owned characters!`, msgs)
-      } else this.priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`, msgs)
-    } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`, msgs)
+        if (!any) this.priv(`There are no player owned characters!`)
+      } else this.priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`)
+    } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`)
   }
 }
 
@@ -65,7 +65,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
     return !!this.match
   }
-  async process(line, msgs) {
+  async process(line) {
     let m = this.match  
     if (!!m[3] || !!m[4]) {
       let any = false
@@ -111,10 +111,10 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             mtxt = `(max: ${max})`
           }
           await actor.update({ ['data.' + attr + '.value']: newval })
-          this.priv(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`, msgs)
+          this.priv(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
         }
       }
-      if (!any) this.priv(`There are no player owned characters!`, msgs)
+      if (!any) this.priv(`There are no player owned characters!`)
     } else  // Didn't provide dice or scalar, so maybe someone else wants to handle it
      ui.notification.warn(`There was no dice or number formula to apply '${line}'`)
   }
