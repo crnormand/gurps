@@ -625,5 +625,11 @@
   "GURPS.modifierDodgeFailedAcroRef": "B375",
   "GURPS.modifierDodgeSideRef": "B390",
   "GURPS.modifierDodgeRearRef": "B391",
-  "GURPS.modifierExtraEffortRef": "B357"
+  "GURPS.modifierExtraEffortRef": "B357",
+  
+  "GURPS.chatUnableToFindMacro": "Unable to find macro named",
+  "GURPS.chatYouMustHaveACharacterSelected": "You must have a character selected",
+  "GURPS.chatSetTo": "set to",
+  "GURPS.chatUnrecognizedFormat": "Unrecognized format",
+  "GURPS.chatClearingLastActor": "Clearing Last Actor"
 }

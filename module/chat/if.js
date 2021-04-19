@@ -10,24 +10,24 @@ export class IfChatProcessor extends ChatProcessor {
     return !!this.match
   }
   
-  async _handleResult(then, msgs) {
+  async _handleResult(then) {
     let m = then.match(/^\[([^\]]+)\]/)
     if (!!m) {
       let action = parselink(m[1].trim())
       if (!!action.action) {
         if (action.action.type === 'modifier')
         // only need to show modifiers, everything else does something.
-          this.priv(then, msgs)
-        else this.send(msgs) // send what we have
+          this.priv(then)
+        else this.send() // send what we have
         await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
       }
     } else if (then.startsWith('/')) {
-      await this.registry.processLine(then, msgs)
+      await this.registry.processLine(then)
     } else 
-      this.registry.pub(then, msgs)
+      this.pub(then)
   }
   
-  async process(line, msgs) {
+  async process(line,) {
     let m = this.match
     const invert = !!m[1] // !
     const otf = m[2]
@@ -41,17 +41,17 @@ export class IfChatProcessor extends ChatProcessor {
     let action = parselink(otf)
     if (!!action.action) {
       if (['skill-spell', 'attribute', 'attack', 'controlroll'].includes(action.action.type)) {
-        this.priv(line, msgs)
-        this.send(msgs)
+        this.priv(line)
+        this.send()
         let pass = await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
         if (invert) pass = !pass
         if (pass) {
-          if (!!then) this._handleResult(then, msgs)
+          if (!!then) this._handleResult(then)
         } else 
-          if (!!other) this._handleResult(other, msgs)
+          if (!!other) this._handleResult(other)
       } else
-        this.priv(`The On-the-Fly formula must be some kind of check: [${otf}]`, msgs)
+        this.priv(`The On-the-Fly formula must be some kind of check: [${otf}]`)
     } else
-      this.priv(`Unable to parse On-the-Fly formula: [${otf}]`, msgs)
+      this.priv(`Unable to parse On-the-Fly formula: [${otf}]`)
   }
 }

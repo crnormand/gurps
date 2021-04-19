@@ -21,10 +21,10 @@ export default class SlamChatProcessor extends ChatProcessor {
     return line.startsWith('/slam')
   }
 
-  process(line, msgs) {
+  process(line) {
     let actor = GURPS.LastActor
     if (!actor) {
-      ui.notifications.warn('You must have a character selected')
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected', 'You must have a character selected'))
       return
     }
 
@@ -40,7 +40,7 @@ export default class SlamChatProcessor extends ChatProcessor {
       if (targets.length === 1) target = [...targets][0]
       SlamCalculator.process(actor, target)
     }
-    this.priv('Opening Slam Calculator', msgs)
+    this.priv('Opening Slam Calculator')
   }
 }
 

@@ -11,7 +11,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(fc|frightcheck)/)
     return !!this.match
   }
-  process(line, msgs) {
+  process(line) {
     if (!GURPS.LastActor) {
       ui.notifications.error('Please select a token/character.')
       return
