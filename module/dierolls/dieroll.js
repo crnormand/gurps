@@ -27,7 +27,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
 
   for (let m of targetmods) {
     modifier += m.modint;
-    maxtarget = GURPS.applyModifierDesc(actor, m.desc) || maxtarget
+    maxtarget = await GURPS.applyModifierDesc(actor, m.desc) || maxtarget
   }
 
   let roll = null;  // Will be the Roll
@@ -133,9 +133,10 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
       whisper: ids
     };
     if (!failure && !!optionalArgs.action.truetext) messageData.content = optionalArgs.action.truetext
-    if (!!failure && !!optionalArgs.action.falsetext) messageData.content = optionalArgs.action.falsetext
+    if (failure && !!optionalArgs.action.falsetext) messageData.content = optionalArgs.action.falsetext
     if (!!messageData.content) ChatMessage.create(messageData);
   }
+  return !failure
 }
 
 //  GURPS.doRoll = doRoll; YOU don't need this -- just import the function wherever it is needed.

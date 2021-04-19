@@ -1033,7 +1033,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!p) {
       let m = p.match(/.*[/\\]Data[/\\](.*)/)
       if (!!m) {
-        let f = m[1]
+        let f = m[1].replace(/\\/g, "/");
         let xhr = new XMLHttpRequest();
         xhr.responseType = "arraybuffer";
         xhr.open("GET", f);
@@ -1133,9 +1133,9 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!action) {
       action = JSON.parse(atou(action))
       if (action.type === 'damage' || action.type === 'deriveddamage') {
-        GURPS.resolveDamageRoll(event, this.actor, action.orig, game.user.isGM, true)
+        GURPS.resolveDamageRoll(event, this.actor, action.orig, action.overridetxt, game.user.isGM, true)
       } else {
-        GURPS.whisperOtfToOwner(action.orig, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+        GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       }
     }
   }
@@ -1143,7 +1143,7 @@ export class GurpsActorSheet extends ActorSheet {
   async _onRightClickPdf(event) {
     event.preventDefault()
     let el = event.currentTarget
-    GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false, this.actor)
+    GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, this.actor)
   }
 
   async _onRightClickGmod(event) {
@@ -1151,7 +1151,7 @@ export class GurpsActorSheet extends ActorSheet {
     let el = event.currentTarget
     let n = el.dataset.name
     let t = el.innerText
-    GURPS.whisperOtfToOwner(t + ' ' + n, event, false, this.actor)
+    GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
   }
 
   async _onRightClickOtf(event) {
@@ -1161,9 +1161,9 @@ export class GurpsActorSheet extends ActorSheet {
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {
-      GURPS.resolveDamageRoll(event, this.actor, otf, game.user.isGM)
+      GURPS.resolveDamageRoll(event, this.actor, otf, null, game.user.isGM)
     } else {
-      GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
+      GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, null, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
   }
 

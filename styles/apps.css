@@ -110,7 +110,10 @@
   justify-content: stretch;
   align-items: stretch;
   text-align: left;
+<<<<<<< HEAD
   /* background: url(/ui/parchment.jpg) repeat; */
+=======
+>>>>>>> main
 }
 
 #modtooltipbucket {

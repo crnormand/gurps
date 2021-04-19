@@ -2,7 +2,17 @@
 
 This is what we are currently working on:
 
-0.8.23
+0.9.0
+- rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
+- refactor Chat command parsing
+- Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
+- Added OtF [D:AttackName].   Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
+- Fixed GM Send now also transfers the OtF label (ex: "Acrobatic Dodge" from above)
+- Fixed Initiative formula propagating to client VMs
+
+## History
+
+0.8.23 - 4/13/2021
   
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 - Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
@@ -23,9 +33,6 @@ This is what we are currently working on:
 - Fixed Explosion damage calculation.
 - Added ability to override the text of the OtF buttons ["New Text" Dodge]
 - Auto import when in Foundry Data (GCS export includes Portrait)
-
-
-## History
 
 0.8.22 - 3/31/2021
 

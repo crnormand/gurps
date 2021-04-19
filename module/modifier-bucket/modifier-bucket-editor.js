@@ -61,8 +61,8 @@ export default class ModifierBucketEditor extends Application {
     data.meleemods = ModifierLiterals.MeleeMods.split('\n')
     data.rangedmods = ModifierLiterals.RangedMods.split('\n')
     data.defensemods = ModifierLiterals.DefenseMods.split('\n')
-    data.speedrangemods = ['Speed / Range'].concat(game.GURPS.rangeObject.modifiers)
-    data.actorname = !!game.GURPS.LastActor ? game.GURPS.LastActor.name : 'No active character!'
+    data.speedrangemods = ['Speed / Range'].concat(GURPS.rangeObject.modifiers)
+    data.actorname = !!GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
@@ -78,13 +78,13 @@ export default class ModifierBucketEditor extends Application {
     data.hitlocationmods = ModifierLiterals.HitlocationModifiers
     data.currentmods = []
 
-    if (!!game.GURPS.LastActor) {
+    if (!!GURPS.LastActor) {
       let melee = []
       let ranged = []
       let defense = []
       let gen = []
 
-      let effects = game.GURPS.LastActor.effects.filter(e => !e.data.disabled)
+      let effects = GURPS.LastActor.effects.filter(e => !e.data.disabled)
       for (let effect of effects) {
         let type = effect.data.flags.core.statusId
         let m = ModifiersForStatus[type]
@@ -250,9 +250,7 @@ export default class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let id = element.dataset.id
-    let user = game.users.get(id)
-
-    this.bucket.sendBucket(user)
+    this.bucket.sendBucketToPlayer(id)
     setTimeout(() => this.bucket.showOthers(), 1000) // Need time for clients to update...and
   }
 
@@ -260,10 +258,9 @@ export default class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let index = element.dataset.index
-    this.bucket.modifierStack.modifierList.splice(index, 1)
-    this.bucket.sum()
+    this.bucket.modifierStack.removeIndex(index)
     this.bucket.refresh()
-    this.render(false)
+    //    this.render(false)
   }
 }
 

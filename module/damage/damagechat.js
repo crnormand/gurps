@@ -114,7 +114,7 @@ export default class DamageChat {
     targetmods
       .filter(it => !!it.desc)
       .map(it => it.desc)
-      .forEach(it => game.GURPS.applyModifierDesc(actor, it))
+      .forEach(it => GURPS.applyModifierDesc(actor, it))
   }
 
   /**

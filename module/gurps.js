@@ -19,7 +19,9 @@ import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
-import SlamChatProcessor from '../module/slam.js'
+import SlamChatProcessor from '../module/chat/slam.js'
+import RegisterChatProcessors from '../module/chat/chat-processors.js'
+
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -615,14 +617,16 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'modifier') {
     while (!!action && action.type === 'modifier') {
       let mod = parseInt(action.mod)
-      await GURPS.ModifierBucket.addModifier(mod, action.desc)
+      GURPS.addModifier(mod, action.desc)
       action = action.next
     }
     return true
   }
 
   if (action.type === 'chat') {
-    ui.chat.processMessage(action.orig)
+    let chat = action.orig
+    if (!!event.shiftKey) chat = "/setwhisper\n"+chat
+    ui.chat.processMessage(chat)
     return true
   }
 
@@ -640,7 +644,7 @@ async function performAction(action, actor, event, targets) {
   }
 
   if (action.type === 'damage') {
-    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!action.costs) GURPS.addModifier(0, action.costs)
     DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
     return true
   }
@@ -653,7 +657,7 @@ async function performAction(action, actor, event, targets) {
         return true
       }
       formula = df + action.formula
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+      if (!!action.costs) GURPS.addModifier(0, action.costs)
       DamageChat.create(
         actor || game.user,
         formula,
@@ -685,7 +689,7 @@ async function performAction(action, actor, event, targets) {
   }
 
   let processLinked = tempAction => {
-    let bestLvl = 0
+    let bestLvl = -99999
     var bestAction, besttrue
     let attempts = []
     var th
@@ -788,8 +792,8 @@ async function performAction(action, actor, event, targets) {
     }
     formula = '3d6'
     opt.action = bestAction
-    if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    if (!!bestAction.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(bestAction.mod, bestAction.desc))
+    if (!!bestAction.costs) GURPS.addModifier(0, action.costs)
+    if (!!bestAction.mod) GURPS.addModifier(bestAction.mod, bestAction.desc, targetmods)
     else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
   }
 
@@ -815,20 +819,39 @@ async function performAction(action, actor, event, targets) {
         else {
           a.shift()
           let m = a.join(' ')
-          if (!!m) ui.modifierbucket.addModifier(0, m) //  Level may have "*Costs xFP"
+          if (!!m) GURPS.addModifier(0, m) //  Level may have "*Costs xFP"
         }
       }
       formula = '3d6'
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (!!action.mod) targetmods.push(GURPS.ModifierBucket.makeModifier(action.mod, action.desc))
+      if (!!action.costs) GURPS.addModifier(0, action.costs)
+      if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
+    
+  if (action.type === 'attackdamage')
+    if (!!actor) {
+      let att = null
+      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
+      if (!att) {
+        ui.notifications.warn(
+          "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+        )
+        return false
+      }
+      let dam = parseForDamage(att.damage)
+      if (!!dam.action) await performAction(dam.action, actor, event, targets)
+    } else ui.notifications.warn('You must have a character selected')
+
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-  doRoll(actor, formula, targetmods, prefix, thing, target, opt)
-  return true
+  return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
 }
 GURPS.performAction = performAction
+
+function addModifier(mod, desc, list) {
+  GURPS.ModifierBucket.addModifier(mod, desc, list) 
+}
+GURPS.addModifier = addModifier
 
 function findSkillSpell(actor, sname) {
   var t
@@ -945,13 +968,13 @@ async function handleRoll(event, actor, targets) {
 GURPS.handleRoll = handleRoll
 
 // If the desc contains *Cost ?FP or *Max:9 then perform action
-function applyModifierDesc(actor, desc) {
+async function applyModifierDesc(actor, desc) {
   if (!desc) return null
   let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
   if (parse != desc && !!actor && !actor.isSelf) {
     let fp = parseInt(parse)
     fp = actor.data.data.FP.value - fp
-    actor.update({ 'data.FP.value': fp })
+    await actor.update({ 'data.FP.value': fp })
   }
   parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {
@@ -1232,21 +1255,6 @@ function chatClickGmod(event) {
 }
 GURPS.chatClickGmod = chatClickGmod
 
-GURPS.rangeObject = new GURPSRange()
-GURPS.initiative = new Initiative()
-GURPS.hitpoints = new HitFatPoints()
-
-GURPS.ThreeD6 = new ThreeD6({
-  popOut: false,
-  minimizable: false,
-  resizable: false,
-  id: 'ThreeD6',
-  template: 'systems/gurps/templates/threed6.html',
-  classes: [],
-})
-
-GURPS.ConditionalInjury = new GURPSConditionalInjury()
-
 GURPS.onRightClickGurpslink = function (event) {
   event.preventDefault()
   event.stopImmediatePropagation() // Since this may occur in note or a list (which has its own RMB handler)
@@ -1255,14 +1263,14 @@ GURPS.onRightClickGurpslink = function (event) {
   if (!!action) {
     action = JSON.parse(atou(action))
     if (action.type === 'damage' || action.type === 'deriveddamage')
-      GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, game.user.isGM, true)
-    else GURPS.whisperOtfToOwner(action.orig, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+      GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
+    else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
   }
 }
 
-GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
+GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) {
   if (!otf) return
-  if (!game.user.isGM) {
+  if (!game.user.isGM) {  // If not the GM, just send the text to the chat input window (so the user can copy it)
     $(document)
       .find('#chat-message')
       .val('[' + otf + ']')
@@ -1277,9 +1285,15 @@ GURPS.whisperOtfToOwner = function (otf, event, blindcheck, actor) {
       canblind = false
     }
   }
+  if (!!overridetxt) {
+    if (overridetxt.includes('"'))
+      overridetxt = "'" + overridetxt + "'"
+    else
+      overridetxt = '"' + overridetxt + '"'
+  } else overridetxt = ''
   let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
-  let botf = '[!' + otf + ']'
-  otf = '[' + otf + ']'
+  let botf = '[' + overridetxt + '!' + otf + ']'
+  otf = '[' + overridetxt + otf + ']'
   let buttons = {}
   buttons.one = {
     icon: '<i class="fas fa-users"></i>',
@@ -1341,7 +1355,7 @@ GURPS.sendOtfMessage = function (content, blindroll, users) {
   ChatMessage.create(msgData)
 }
 
-GURPS.resolveDamageRoll = function (event, actor, otf, isGM, isOtf = false) {
+GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf = false) {
   let title = game.i18n.localize('GURPS.RESOLVEDAMAGETitle')
   let prompt = game.i18n.localize('GURPS.RESOLVEDAMAGEPrompt')
   let quantity = game.i18n.localize('GURPS.RESOLVEDAMAGEQuantity')
@@ -1354,7 +1368,7 @@ GURPS.resolveDamageRoll = function (event, actor, otf, isGM, isOtf = false) {
     buttons.send = {
       icon: '<i class="fas fa-paper-plane"></i>',
       label: `${sendTo}`,
-      callback: () => GURPS.whisperOtfToOwner(otf, event, false, actor), // Can't blind roll damages (yet)
+      callback: () => GURPS.whisperOtfToOwner(otf, overridetxt, event, false, actor), // Can't blind roll damages (yet)
     }
   }
 
@@ -1392,6 +1406,27 @@ GURPS.resolveDamageRoll = function (event, actor, otf, isGM, isOtf = false) {
   dlg.render(true)
 }
 
+GURPS.setInitiativeFormula = function(broadcast) {
+  let formula = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_INITIATIVE_FORMULA)
+  if (!formula) {
+    formula = Initiative.defaultFormula()
+    if (game.user.isGM) game.settings.set(settings.SYSTEM_NAME, settings.SETTING_INITIATIVE_FORMULA, formula)
+  }
+  let m = formula.match(/([^:]*):?(\d)?/)
+  let d = !!m[2] ? parseInt(m[2]) : 5
+  CONFIG.Combat.initiative = {
+    formula: m[1],
+    decimals: d   // Important to be able to maintain resolution
+  }
+  if (broadcast)
+    game.socket.emit("system.gurps",
+      {
+        type: 'initiativeChanged',
+        formula: m[1],
+        decimals: d
+      })
+}
+
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
    make it work like an Array. 
@@ -1419,11 +1454,18 @@ Hooks.once('init', async function () {
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
+  RegisterChatProcessors()
   SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
-
   GURPS.ModifierBucket = new ModifierBucket()
+  ui.modifierbucket = GURPS.ModifierBucket
+  ui.modifierbucket.render(true)
+  
+  GURPS.rangeObject = new GURPSRange()
+  GURPS.initiative = new Initiative()
+  GURPS.hitpoints = new HitFatPoints()
+  GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
   // Define custom Entity classes
   CONFIG.Actor.entityClass = GurpsActor
@@ -1475,15 +1517,20 @@ Hooks.once('init', async function () {
     entity.data.img = 'systems/gurps/icons/single-die.png'
   })
 
-  ui.modifierbucket = GURPS.ModifierBucket
-  ui.modifierbucket.render(true)
+  
 })
 
 Hooks.once('ready', async function () {
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
-  GURPS.ModifierBucket.clear()
-  GURPS.ThreeD6.refresh()
+  new ThreeD6({
+    popOut: false,
+    minimizable: false,
+    resizable: false,
+    id: 'ThreeD6',
+    template: 'systems/gurps/templates/threed6.html',
+    classes: [],
+  }).render(true)
 
   // Show changelog
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
@@ -1557,7 +1604,7 @@ Hooks.once('ready', async function () {
           let el = t[i]
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
           let target = game.combat.combatants.filter(c => c._id === combatant)[0]
-          if (!!target.actor.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
+          if (!!target.actor?.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
 
         html.find('[data-onethird]').click(ev => {
@@ -1591,31 +1638,39 @@ Hooks.once('ready', async function () {
       })
     }
   })
-
-  // This hook is currently only used for the GM Push feature of the Modifier Bucket.    Of course, we can add more later.
-  Hooks.on('updateUser', (...args) => {
-    if (!!args) {
-      if (args.length >= 4) {
-        let source = args[3]
-        let target = args[1]._id
-        //				console.log("Update for: " + game.users.get(target).name + " from: " + game.users.get(source).name);
-        if (target == game.user.id) {
-          if (source != target) {
-            // Someone else (a GM) is updating your data.
-            let date = args[1].flags?.gurps?.modifierchanged // Just look for the "modifierchanged" data (which will be a date in ms... something that won't be the same)
-            if (!!date) game.GURPS.ModifierBucket.updateDisplay(date)
-          }
-        }
+  
+ game.socket.on('system.gurps', (resp) => {
+    if (resp.type == 'updatebucket') {
+      if (resp.users.includes(game.user._id))
+        game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
+    } 
+    if (resp.type == 'initiativeChanged') {
+      CONFIG.Combat.initiative = {
+        formula: resp.formula,
+        decimals: resp.decimals   
       }
+    }    
+    /* Currently not used.    But could be with:
+         let action = parselink(text)
+         game.socket.emit("system.gurps",
+            {
+              type: 'executeOtF',
+              actorIds: actors.map(a => a.id),
+              action: action.action
+            })
+    */
+    if (resp.type == 'executeOtF') {
+      let action = resp.action
+      resp.actorIds.forEach(id => {
+        let actor = game.actors.get(id)
+        if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER)
+          // Return true if the current game user has observer or owner rights to an actor
+          GURPS.performAction(action, actor)
+      })
     }
-  })
+  });
 
-  /*		// Should not need this hook, if we are watching controlToken
-    Hooks.on('createActiveEffect', (...args) => {
-      if (!!args && args.length >= 4)
-        GURPS.SetLastActor(args[0]);
-    });
-  */
+
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on('controlToken', (...args) => {
@@ -1640,7 +1695,7 @@ Hooks.once('ready', async function () {
       html.find('.pdflink').contextmenu(event => {
         event.preventDefault()
         let el = event.currentTarget
-        GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false, GURPS.LastActor)
+        GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
       })
     }
   })
@@ -1716,4 +1771,5 @@ Hooks.once('ready', async function () {
     __dirname + '/apply-damage/effect-majorwound.html',
     __dirname + '/apply-damage/effect-shock.html',
   ])
+  GURPS.setInitiativeFormula()
 })
