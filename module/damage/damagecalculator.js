@@ -1053,7 +1053,7 @@ class DamageCalculator {
     }
 
     if (this.isKnockbackEligible) {
-      let knockback = Math.floor(this._basicDamage / (this._parent.attributes.ST.value - 2))
+      let knockback = Math.floor(this.effectiveDamage / (this._parent.attributes.ST.value - 2))
       if (knockback > 0) {
         let modifier = knockback - 1
         _effects.push({
