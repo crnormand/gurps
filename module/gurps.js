@@ -11,7 +11,7 @@ import {
   GurpsActorSimplifiedSheet,
   GurpsActorNpcSheet,
 } from './actor-sheet.js'
-import { ModifierBucket } from './modifiers.js'
+import { ModifierBucket } from './modifier-bucket/modifiers.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
 import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../lib/utilities.js'
@@ -866,7 +866,6 @@ function findAdDisad(actor, sname) {
   return t
 }
 GURPS.findAdDisad = findAdDisad
-
 
 function findAttack(actor, sname) {
   var t
