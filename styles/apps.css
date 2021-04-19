@@ -359,6 +359,7 @@
 /* =================================================== */
 /* Copy of glink and gurpslink from simple.css         */
 /* =================================================== */
+.modtooltip .glinkmod,
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
 .modtooltip .gurpslink {
@@ -371,6 +372,7 @@
 }
 
 .modtooltip .glinkmodplus:hover,
+.modtooltip .glinkmod:hover,
 .modtooltip .glinkmodminus:hover,
 .modtooltip .gurpslink:hover {
   cursor: pointer;
@@ -382,6 +384,7 @@
 }
 
 .modtooltip .glinkmodplus:active,
+.modtooltip .glinkmod:active,
 .modtooltip .glinkmodminus:active,
 .modtooltip .gurpslink:active {
   background-color: rgba(255, 255, 240, 0.6) !important;
@@ -407,6 +410,23 @@
 
 .modtooltip .modifier-row > div {
   margin-bottom: 3px;
+}
+
+.modtooltip .modifier-row,
+.modtooltip .shaded-group > div {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modtooltip .gurps-group aside {
+  margin: 0;
+}
+
+/* tighten spacing for the modifier bucket when displaying a Journal entry */
+.modtooltip p {
+  margin: 0.25rem 0;
 }
 
 /* ========================= */
@@ -507,6 +527,7 @@
 
 /* striped table row appearance */
 .shaded-group > div:nth-child(odd),
+.modtooltip p:nth-child(odd),
 .gurps-group .shaded {
   background-color: rgba(0, 0, 0, 0.1);
 }
@@ -1534,22 +1555,28 @@ ul#result-effects li {
   box-shadow: 0 0 5px red;
 }
 
-.shaded-group > div:nth-child(odd) {
-  /* background: rgba(255, 255, 255, 0.25); */
-}
-
 .gurps-sparse-list {
   line-height: 1.1rem;
 }
 
-.modtooltip .modifier-row,
-.modtooltip .shaded-group > div {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
+.tabbed .back {
+  padding-right: 5px;
+  vertical-align: middle;
+  color: rgb(247, 247, 239);
+  float: left;
 }
 
-.modtooltip .gurps-group aside {
-  margin: 0;
+.tabbed .forward {
+  padding-right: 5px;
+  vertical-align: middle;
+  color: rgb(247, 247, 239);
+  float: right;
+}
+
+.tabbedcontent {
+  overflow-y: auto;
+}
+
+#common-modifiers .tabbedcontent {
+  max-height: 510px;
 }

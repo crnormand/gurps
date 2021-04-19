@@ -73,9 +73,13 @@
         </div>
 
         <div class="gurps-group gurps-space-between gurps-sparse-list">
-          <div>
-            <h4>{{localize "GURPS.modifierCommon"}}</h4>
-            <div class='overflowy' style='max-height: 510px;'>
+          <div id='common-modifiers'>
+            <h4 class='tabbed'>
+              <span class='back'><i class="fas fa-caret-square-left"></i></span>
+              {{localize "GURPS.modifierCommon"}}
+              <span class='forward'><i class="fas fa-caret-square-right"></i></span>
+            </h4>
+            <div class='tabbedcontent'>
               {{collapsible-content 'modstatus' statusmods 'commonmods'}}
               {{collapsible-content 'speedrangemods' speedrangemods 'commonmods'}}
               {{collapsible-content 'modsize' sizemods 'commonmods'}}
@@ -85,6 +89,15 @@
               {{collapsible-content 'modeqtquality' eqtqualitymods 'commonmods'}}
               {{collapsible-content 'modlighting' lightingmods 'commonmods'}}
               {{collapsible-content 'modrof' rofmods 'commonmods'}}
+            </div>
+            {{#each journals}}
+            <div class='tabbedcontent'>
+              <h2>{{this.name}}</h2>
+              {{{gurpslink this.content true}}}
+            </div>
+            {{/each}}
+            <div class='tabbedcontent'>
+              <div>Use System Settings to define Journal Entries to display here.</div>
             </div>
           </div>
           <div>

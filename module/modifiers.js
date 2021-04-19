@@ -37,6 +37,8 @@ CONFIG.Dice.rolls[0] = GurpsRoll
  * modifies it.
  */
 export class ModifierBucket extends Application {
+  static initializeSettings() {}
+
   constructor(options = {}) {
     super(options)
 
@@ -311,10 +313,14 @@ export class ModifierBucketEditor extends Application {
 
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
     this.inside = false
-    this._position = {
-      left: 375,
-      top: 296,
-    }
+    this.tabIndex = 0
+
+    // TODO in the real implementation, store the ID of the journal
+    let journals = game.data.journal
+    let j1 = journals.find(it => it.name === 'Thiefly Skills')
+
+    this.journals = []
+    this.journals.push(j1)
 
     // stupid Javascript
     this._onleave.bind(this)
@@ -348,6 +354,8 @@ export class ModifierBucketEditor extends Application {
 
     data.isTooltip = !this.options.popOut
     data.gmod = this
+    data.tabIndex = this.tabIndex
+    data.journals = this.journals
     data.stack = this.bucket.modifierStack
     data.meleemods = ModifierLiterals.MeleeMods.split('\n')
     data.rangedmods = ModifierLiterals.RangedMods.split('\n')
@@ -412,8 +420,6 @@ export class ModifierBucketEditor extends Application {
     console.log('activatelisteners')
 
     html.removeClass('overflowy')
-    // html.css('top', `${this._position.top}px`)
-    // html.css('left', `${this._position.left}px`)
 
     this.bringToTop()
 
@@ -430,6 +436,42 @@ export class ModifierBucketEditor extends Application {
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))
     html.find('.collapsible-content .content-inner .selectable').click(this._onSelect.bind(this))
     html.find('.collapsible-wrapper > input').click(this._onClickClose.bind(this))
+
+    // get the tabs
+    let tabs = html.find('.tabbedcontent')
+    this.numberOfTabs = tabs.length
+
+    // make the current tab visible
+    for (let index = 0; index < tabs.length; index++) {
+      const element = tabs[index]
+      if (index === this.tabIndex) {
+        element.classList.remove('invisible')
+      } else {
+        element.classList.add('invisible')
+      }
+    }
+
+    // on click, change the current tab
+    html.find('.tabbed .forward').click(this._clickTabForward.bind(this))
+    html.find('.tabbed .back').click(this._clickTabBack.bind(this))
+  }
+
+  _clickTabBack() {
+    if (this.tabIndex === 0) {
+      this.tabIndex = this.numberOfTabs - 1
+    } else {
+      this.tabIndex--
+    }
+    this.render(false)
+  }
+
+  _clickTabForward() {
+    if (this.tabIndex < this.numberOfTabs - 1) {
+      this.tabIndex++
+    } else {
+      this.tabIndex = 0
+    }
+    this.render(false)
   }
 
   _onClickClose(ev) {
