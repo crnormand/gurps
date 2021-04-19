@@ -103,7 +103,6 @@ export class ResourceTrackerManager extends FormApplication {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: 'tracker-manager',
-      // classes: ['sheet', 'actor', 'form'],
       template: 'systems/gurps/templates/actor/tracker-manager.html',
       resizable: false,
       minimizable: false,
