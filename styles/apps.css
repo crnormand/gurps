@@ -110,7 +110,7 @@
   justify-content: stretch;
   align-items: stretch;
   text-align: left;
-  background: url(/ui/parchment.jpg) repeat;
+  /* background: url(/ui/parchment.jpg) repeat; */
 }
 
 #modtooltipbucket {
@@ -435,8 +435,8 @@
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
-  /* background: url(/ui/parchment.jpg) #dcdcd0; */
-  background: radial-gradient(ellipse at bottom, #5091dd 0%, #030617 100%);
+  background: url(/ui/parchment.jpg) #dcdcd0;
+  /* background: radial-gradient(ellipse at bottom, #5091dd 0%, #030617 100%); */
 }
 
 /* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
