@@ -677,8 +677,8 @@
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
       </div>
-      <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (ne this.maxuses
-        "0")}}{{this.uses}}{{/if}}</div>
+      <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
+        (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
       <div class="cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
       <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
