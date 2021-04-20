@@ -9,6 +9,7 @@ This is what we are currently working on:
 - Added OtF [D:AttackName].   Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
 - Fixed GM Send now also transfers the OtF label (ex: "Acrobatic Dodge" from above)
 - Fixed Initiative formula propagating to client VMs
+- /tracker (/tr) now resets "damage trackers" to zero, instead of max
 
 ## History
 

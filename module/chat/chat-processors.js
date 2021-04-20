@@ -23,6 +23,7 @@ export default function RegisterChatProcessors() {
     ChatProcessors.registerProcessor(new StatusProcessor())
     ChatProcessors.registerProcessor(new FrightCheckChatProcessor())
     ChatProcessors.registerProcessor(new UsesChatProcessor())
+    ChatProcessors.registerProcessor(new QtyChatProcessor())
     ChatProcessors.registerProcessor(new FpHpChatProcessor())
     ChatProcessors.registerProcessor(new SendMBChatProcessor())
     ChatProcessors.registerProcessor(new ChatExecuteChatProcessor())
@@ -69,12 +70,12 @@ class RollAgainstChatProcessor extends ChatProcessor {
     this.match = line.match(/^([\.\/]p?ra) +(\w+-)?(\d+)/i)
     return !!this.match
   }
-  process(line) {
+  async process(line) {
     let m = this.match
     let skill = m[2] || 'Default='
     let action = parselink('S:' + skill.replace('-', '=') + m[3])
     this.send() // send what we have
-    GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.substr(1).startsWith('pra') || msgs.event?.shiftKey }) 
+    await GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.substr(1).startsWith('pra') || this.msgs().event?.shiftKey }) 
   }
 }
 
@@ -237,7 +238,7 @@ class RollChatProcessor extends ChatProcessor {
     this.match = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
     return !!this.match
   }
-  process(line) {
+  async process(line) {
     let m = this.match  
     let action = parselink(m[2])
     if (!!action.action) {
@@ -245,7 +246,7 @@ class RollChatProcessor extends ChatProcessor {
         // only need to show modifiers, everything else does something.
         this.priv(line)
       else this.send() // send what we have
-      GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') }) // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
+      await GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') }) // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
       return true
     } else  // Looks like a /roll OtF, but didn't parse as one
      ui.notifications.warn(`Unrecognized On-the-Fly formula '[${m[2]}]'`)
@@ -258,7 +259,7 @@ class UsesChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/uses *([\+-=]\w+)?(reset)?(.*)/i)
     return !!this.match
   }
-  process(line) {
+  async process(line) {
     let m = this.match  
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn('You must have a character selected')
@@ -270,15 +271,15 @@ class UsesChatProcessor extends ChatProcessor {
         eqt = duplicate(eqt)
         let delta = parseInt(m[1])
         if (!!m[2]) {
-          this.prnt(`${pattern} USES reset to MAX USES (${eqt.maxuses})`)
+          this.prnt(`${eqt.name} USES reset to MAX USES (${eqt.maxuses})`)
           eqt.uses = eqt.maxuses
-          actor.update({ [key]: eqt })
+          await actor.update({ [key]: eqt })
         } else if (isNaN(delta)) {
           // only happens with '='
           delta = m[1].substr(1)
           eqt.uses = delta
-          actor.update({ [key]: eqt })
-          this.prnt(`${pattern} USES set to ${delta}`)
+          await actor.update({ [key]: eqt })
+          this.prnt(`${eqt.name} USES set to ${delta}`)
         } else {
           let q = parseInt(eqt.uses) + delta
           let max = parseInt(eqt.maxuses)
@@ -287,9 +288,9 @@ class UsesChatProcessor extends ChatProcessor {
           else if (!isNaN(max) && max > 0 && q > max)
             ui.notifications.warn(`Exceeded max uses (${max}) for ` + eqt.name)
           else {
-            this.prnt(`${pattern} USES ${m[1]} = ${q}`)
+            this.prnt(`${eqt.name} USES ${m[1]} = ${q}`)
             eqt.uses = q
-            actor.update({ [key]: eqt })
+            await actor.update({ [key]: eqt })
           }
         }
       }
@@ -301,10 +302,10 @@ class UsesChatProcessor extends ChatProcessor {
 class QtyChatProcessor extends ChatProcessor {
   help() { return '/qty &lt;formula&gt; &lt;equipment name&gt;' }   
   matches(line) {
-    this.match == line.match(/^\/qty *([\+-=]\d+)(.*)/i)
+    this.match = line.match(/^\/qty *([\+-=]\d+)(.*)/i)
     return !!this.match
   }
-  process(line) {
+  async process(line) {
     let m = this.match  
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn('You must have a character selected')
@@ -322,16 +323,16 @@ class QtyChatProcessor extends ChatProcessor {
           if (isNaN(delta)) ui.notifications.warn(`Unrecognized format '${m[1]}'`)
           else {
             eqt.count = delta
-            actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
-            this.prnt(`${pattern} set to ${delta}`)
+            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+            this.prnt(`${eqt.name} QTY set to ${delta}`)
           }
         } else {
           let q = parseInt(eqt.count) + delta
           if (q < 0) ui.notifications.warn("You do not have enough '" + eqt.name + "'")
           else {
-            this.prnt(`${pattern} QTY ${m[1]}`)
+            this.prnt(`${eqt.name} QTY ${m[1]}`)
             eqt.count = q
-            actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
           }
         }
       }
@@ -341,12 +342,12 @@ class QtyChatProcessor extends ChatProcessor {
 
 
 class TrackerChatProcessor extends ChatProcessor {
-  help() { return '/tr&lt;N&gt; (or /tr &lt;name&gt;) &lt;formula&gt;' }   
+  help() { return '/tr&lt;N&gt; (or /tr (&lt;name&gt;)) &lt;formula&gt;' }   
   matches(line) {
-    this.match = line.match(/^\/(tracker|tr|rt|resource)([0123])?(\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/(tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
     return !!this.match
   }
-  process(line) {
+  async process(line) {
     let m = this.match  
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn('You must have a character selected')
@@ -354,9 +355,10 @@ class TrackerChatProcessor extends ChatProcessor {
       let tracker = parseInt(m[2])
       let display = tracker
       if (!!m[3]) {
+        let pattern = '^' + m[3].trim()
         tracker = -1
         for (const [key, value] of Object.entries(actor.data.data.additionalresources.tracker)) {
-          if (value.name.match(m[4])) {
+          if (value.name.match(pattern)) {
             tracker = key
             display = '(' + value.name + ')'
           }
@@ -369,15 +371,16 @@ class TrackerChatProcessor extends ChatProcessor {
       let delta = parseInt(m[5])
       let reset = ''
       let max = actor.data.data.additionalresources.tracker[tracker].max
-      if (!!m[6]) {
-        actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: max })
+      if (!!m[6]) { // reset
+        if (!!actor.data.data.additionalresources.tracker[tracker].isDamageTracker) max = 0 // Damage Tracker's reset to zero
+        await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: max })
         this.prnt(`Resource Tracker${display} reset to ${max}`)
       } else if (isNaN(delta)) {
         // only happens with '='
         delta = parseInt(m[5].substr(1))
         if (isNaN(delta)) ui.notifications.warn(`Unrecognized format for '${line}'`)
         else {
-          actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: delta })
+          await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: delta })
           this.prnt(`Resource Tracker${display} set to ${delta}`)
         }
       } else if (!!m[5]) {
@@ -387,7 +390,7 @@ class TrackerChatProcessor extends ChatProcessor {
           ui.notifications.warn(`Exceeded MAX:${max} for Resource Tracker${tracker}`)
           v = max
         }
-        actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: v })
+        await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: v })
         this.prnt(`Resource Tracker${display} ${m[5]} = ${v}`)
       } else ui.notifications.warn(`Unrecognized format for '${line}'`)
     }

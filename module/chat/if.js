@@ -19,7 +19,7 @@ export class IfChatProcessor extends ChatProcessor {
         // only need to show modifiers, everything else does something.
           this.priv(then)
         else this.send() // send what we have
-        await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
+        await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
       }
     } else if (then.startsWith('/')) {
       await this.registry.processLine(then)
@@ -43,7 +43,7 @@ export class IfChatProcessor extends ChatProcessor {
       if (['skill-spell', 'attribute', 'attack', 'controlroll'].includes(action.action.type)) {
         this.priv(line)
         this.send()
-        let pass = await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
+        let pass = await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
         if (invert) pass = !pass
         if (pass) {
           if (!!then) this._handleResult(then)
