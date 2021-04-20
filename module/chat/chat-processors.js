@@ -387,8 +387,12 @@ class TrackerChatProcessor extends ChatProcessor {
         if (max == 0) max = Number.MAX_SAFE_INTEGER
         let v = actor.data.data.additionalresources.tracker[tracker].value + delta
         if (v > max) {
-          ui.notifications.warn(`Exceeded MAX:${max} for Resource Tracker${tracker}`)
+          ui.notifications.warn(`Exceeded MAX:${max} for Resource Tracker${display}`)
           v = max
+        }
+        if (!!actor.data.data.additionalresources.tracker[tracker].isDamageTracker && v < 0) {
+          ui.notifications.warn(`Result below zero for Resource Tracker${display}`)
+          v = 0        
         }
         await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: v })
         this.prnt(`Resource Tracker${display} ${m[5]} = ${v}`)
