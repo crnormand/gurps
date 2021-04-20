@@ -68,6 +68,8 @@ export class ChatProcessor {
   pub(txt) { this.registry.pub(txt) }
   prnt(txt) { this.registry.prnt(txt) }
   
+  msgs() { return this.registry.msgs }
+  
   // Attempt to convert original chat data into a whisper (for use when play presses SHIFT key to make roll private)
   setWhisper() {
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
