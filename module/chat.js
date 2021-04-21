@@ -68,15 +68,7 @@ export class ChatProcessor {
   priv(txt) { this.registry.priv(txt) }
   pub(txt) { this.registry.pub(txt) }
   prnt(txt) { this.registry.prnt(txt) }
-  
   msgs() { return this.registry.msgs }
-  
-  // Attempt to convert original chat data into a whisper (for use when play presses SHIFT key to make roll private)
-  setWhisper() {
-    this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
-    this.msgs.data.whisper = [game.user.id]
-    this.msgs.event = { shiftKey: true }
-  }
 }
 
 class HelpChatProcessor extends ChatProcessor {
@@ -128,7 +120,8 @@ class ChatProcessorRegistry {
    */
   async processLines(lines, chatmsgData) {
     this.msgs.data = chatmsgData
-
+    delete this.msgs.event
+    
     for (const line of lines) { // use for loop to ensure single thread
       await this.processLine(line)
     } 
@@ -221,6 +214,13 @@ class ChatProcessorRegistry {
     let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
     if (game.user.isGM || p_setting) this.priv(txt)
     else this.pub(txt)
+  }
+  
+  // Attempt to convert original chat data into a whisper (for use when play presses SHIFT key to make roll private)
+  setWhisper() {
+    this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    this.msgs.data.whisper = [game.user.id]
+    this.msgs.event = { shiftKey: true }
   }
 }
 
