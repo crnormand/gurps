@@ -13,6 +13,7 @@ This is what we are currently working on:
 - Continued i18n work on chat processors
 - /remote GM only command.   Execute OtF on the remote client
 - Press SHIFT key to make OtF rolls private
+- Show Move/Flight Move checkbox in Editor
 
 ## History
 
