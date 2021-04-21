@@ -57,12 +57,12 @@ class ModifierStack {
     }
   }
 
-  add(mod, reason, replace = false) {
-    this._add(this.modifierList, mod, reason, replace)
+  add(modifier, reason, replace = false) {
+    this._add(this.modifierList, modifier, reason, replace)
     this.sum()
   }
 
-  _add(list, mod, reason, replace = false) {
+  _add(list, modifier, reason, replace = false) {
     var oldmod
     let i = list.findIndex(e => e.desc == reason)
     if (i > -1) {
@@ -71,11 +71,11 @@ class ModifierStack {
       else oldmod = list[i]
     }
     if (!!oldmod) {
-      let m = oldmod.modint + parseInt(mod)
+      let m = oldmod.modint + parseInt(modifier)
       oldmod.mod = displayMod(m)
       oldmod.modint = m
     } else {
-      list.push(this._makeModifier(mod, reason))
+      list.push(this._makeModifier(modifier, reason))
     }
   }
 
@@ -512,6 +512,7 @@ export class ModifierBucketEditor extends Application {
     let element = event.currentTarget
     let v = element.value
     if (!v) v = element.textContent
+    v = v.trim()
     let i = v.indexOf(' ')
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
     this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))
