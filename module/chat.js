@@ -3,6 +3,7 @@ import { parselink } from '../lib/parselink.js'
 import { NpcInput } from '../lib/npc-input.js'
 import { Equipment } from './actor.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
+import { isNiceDiceEnabled, i18n } from '../lib/utilities.js'
 
 /**
  *  This holds functions for all things chat related
@@ -56,7 +57,7 @@ export class ChatProcessor {
    * Override to return the '/help' display string
    * @param {*} isGMOnly
    */
-  help() { return "Must return help string or null" }
+  help() { return "Must return help string or null" }  // This does not need to be i18n
   
   /**
    * Override to true if this chat command only works for GMs
@@ -84,7 +85,7 @@ class HelpChatProcessor extends ChatProcessor {
     return line.match(/[!\/]help/i)
   }
   process(line, msgs) {
-    let t = "<a href='" + GURPS.USER_GUIDE_URL + "'>GURPS 4e Game Aid USERS GUIDE</a><br>"
+    let t = "<a href='" + GURPS.USER_GUIDE_URL + "'>" + i18n("GURPS.chatGameAidUsersGuide", 'GURPS 4e Game Aid USERS GUIDE') + "</a><br>"
     let all = ChatProcessors.processorsForAll().filter(it => !!it.help()).map(it => it.help())
     let gmonly = ChatProcessors.processorsForGMOnly().filter(it => !!it.help()).map(it => it.help())
     all.sort()
@@ -104,11 +105,7 @@ class ChatProcessorRegistry {
     this.registerProcessor(new HelpChatProcessor())
     this.msgs = { pub: [], priv: [], data: null }
   }
-  
-  _processorsForUser() {
-    return this._processors.filter(it => !it.isGMOnly() || game.user.isGM)
-  }
-  
+    
   processorsForAll() {
     return this._processors.filter(it => !it.isGMOnly())
   }
@@ -119,7 +116,7 @@ class ChatProcessorRegistry {
   // Make a pre-emptive decision if we are going to handle any of the lines in this message
   willTryToHandle(lines) {
     for (const line of lines)
-      for (const p of this._processorsForUser())
+      for (const p of this._processors)
         if (p.matches(line))
           return true
     return false
@@ -160,10 +157,14 @@ class ChatProcessorRegistry {
    * @returns true, if handled
    */
   async handle(line) {
-    let processor = this._processorsForUser().find(it => it.matches(line))
+    let processor = this._processors.find(it => it.matches(line))
     if (!!processor) {
-      await processor.process(line)
-      return true
+      if (processor.isGMOnly() && !game.user.isGM)
+        ui.notifications.warn(i18n("GURPS.chatYouMustBeGM"))
+      else {
+        await processor.process(line)
+        return true
+      }
     }
     return false
   }
