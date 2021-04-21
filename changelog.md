@@ -12,6 +12,7 @@ This is what we are currently working on:
 - /tracker (/tr) now resets "damage trackers" to zero, instead of max
 - Continued i18n work on chat processors
 - /remote GM only command.   Execute OtF on the remote client
+- Press SHIFT key to make OtF rolls private
 
 ## History
 
