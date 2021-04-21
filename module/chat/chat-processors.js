@@ -6,7 +6,7 @@ import { NpcInput } from '../../lib/npc-input.js'
 import { Equipment } from '../actor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
-import { EveryoneAChatProcessor, EveryoneBChatProcessor, EveryoneCChatProcessor } from './everything.js'
+import { EveryoneAChatProcessor, EveryoneBChatProcessor, EveryoneCChatProcessor, RemoteChatProcessor } from './everything.js'
 import { IfChatProcessor } from './if.js'
 import { isNiceDiceEnabled, i18n } from '../../lib/utilities.js'
 
@@ -30,6 +30,7 @@ export default function RegisterChatProcessors() {
     ChatProcessors.registerProcessor(new TrackerChatProcessor())
     ChatProcessors.registerProcessor(new IfChatProcessor())
     ChatProcessors.registerProcessor(new SetWhisperChatProcessor())
+    ChatProcessors.registerProcessor(new RemoteChatProcessor())
 }
 
 class SetWhisperChatProcessor extends ChatProcessor {
@@ -200,28 +201,38 @@ class FpHpChatProcessor extends ChatProcessor {
 class SelectChatProcessor extends ChatProcessor {
   help() { return "/select &lt;Actor name&gt" }
   matches(line) {
-    this.match = line.match(/^\/(select|sel) ?([^!]*)(!)?/)
+    this.match = line.match(/^\/(select|sel) ?(\@self)?([^!]*)(!)?/)
     return !!this.match
   }
   process(line) {
     let m = this.match
-    if (!m[2]) {
+    if (!!m[2]) { // @self
+      for (const a of game.actors.entities) {
+      
+        let users = a.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM).map(u => u.id)
+        if (users.includes(game.user.id)) {
+          GURPS.SetLastActor(a)
+          this.priv('Selecting ' + a.displayname)
+          return
+        }
+      }
+    } else if (!m[3]) {
       GURPS.ClearLastActor(GURPS.LastActor)
       this.priv(i18n('GURPS.chatClearingLastActor', 'Clearing Last Actor'))
     } else {
-      let pat = m[2].split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+      let pat = m[3].split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
       pat = '^' + pat.trim() + '$'
       let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
-      if (!!m[3]) list = game.actors.entities
+      if (!!m[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
       let a = list.filter(a => a?.name?.match(pat))
-      let msg = i18n("GURPS.chatMoreThanOneActor", "More than one Actor found matching") + " '" + m[2] + "': " + a.map(e => e.name).join(', ')
+      let msg = i18n("GURPS.chatMoreThanOneActor", "More than one Actor found matching") + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
       if (a.length == 0 || a.length > 1) {
         // No good match on actors, try token names
         a = canvas.tokens.placeables.filter(t => t.name.match(pat))
-        msg = i18n("GURPS.chatMoreThanOneToken", "More than one Token found matching") + " '" + m[2] + "': " + a.map(e => e.name).join(', ')
+        msg = i18n("GURPS.chatMoreThanOneToken", "More than one Token found matching") + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
         a = a.map(t => t.actor)
       }
-      if (a.length == 0) ui.notifications.warn(i18n("GURPS.chatNoActorFound", "No Actor/Token found matching") + " '" + m[2] + "'")
+      if (a.length == 0) ui.notifications.warn(i18n("GURPS.chatNoActorFound", "No Actor/Token found matching") + " '" + m[3] + "'")
       else if (a.length > 1) ui.notifications.warn(msg)
       else {
         GURPS.SetLastActor(a[0])
