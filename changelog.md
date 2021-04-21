@@ -10,6 +10,8 @@ This is what we are currently working on:
 - Fixed GM Send now also transfers the OtF label (ex: "Acrobatic Dodge" from above)
 - Fixed Initiative formula propagating to client VMs
 - /tracker (/tr) now resets "damage trackers" to zero, instead of max
+- Continued i18n work on chat processors
+- /remote GM only command.   Execute OtF on the remote client
 
 ## History
 

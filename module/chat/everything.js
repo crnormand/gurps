@@ -2,7 +2,7 @@
 
 import { ChatProcessor } from '../chat.js'
 import { parselink } from '../../lib/parselink.js'
-import { isNiceDiceEnabled } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
 
 export class EveryoneAChatProcessor extends ChatProcessor {
   help() { return "/everyone (or /ev) &lt;formula&gt;" }
@@ -117,6 +117,32 @@ export class EveryoneCChatProcessor extends ChatProcessor {
       if (!any) this.priv(`There are no player owned characters!`)
     } else  // Didn't provide dice or scalar, so maybe someone else wants to handle it
      ui.notifications.warn(`There was no dice or number formula to apply '${line}'`)
+  }
+}
+
+
+export class RemoteChatProcessor extends ChatProcessor {
+  help() { return "/remote &lt;user list&gt; [OtF]" }    
+  isGMOnly() { return true }
+
+  matches(line) {
+    this.match = line.match(/^\/(remote|rem) ([^\[]*) *\[(.*)\]/i)
+    return !!this.match
+  }
+  
+  process(line) {
+    let m = this.match  
+    let action = parselink(m[3].trim())
+    if (!!action.action) {
+      let users = !!m[2] ? splitArgs(m[2]) : []
+      this.priv(line)
+      game.socket.emit("system.gurps",
+        {
+          type: 'executeOtF',
+          action: action.action,
+          users: users
+        })
+    } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`)
   }
 }
 
