@@ -116,7 +116,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
       }
       if (!any) this.priv(`There are no player owned characters!`)
     } else  // Didn't provide dice or scalar, so maybe someone else wants to handle it
-     ui.notification.warn(`There was no dice or number formula to apply '${line}'`)
+     ui.notifications.warn(`There was no dice or number formula to apply '${line}'`)
   }
 }
 

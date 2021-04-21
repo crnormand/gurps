@@ -2,9 +2,11 @@
 
 import { ChatProcessor } from '../chat.js'
 import { parselink } from '../../lib/parselink.js'
+import { i18n } from '../../lib/utilities.js'
+
 
 export class IfChatProcessor extends ChatProcessor {
-  help() { return "/if [OtF] one /else two" }
+  help() { return "/if [OtF] &lt;one&gt; /else &lt;two&gt;" }
   matches(line) {
     this.match = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
     return !!this.match
@@ -50,8 +52,8 @@ export class IfChatProcessor extends ChatProcessor {
         } else 
           if (!!other) this._handleResult(other)
       } else
-        this.priv(`The On-the-Fly formula must be some kind of check: [${otf}]`)
+        this.priv(`${i18n("GURPS.chatMustBeACheck", "The On-the-Fly formula must be some kind of check")}: [${otf}]`)
     } else
-      this.priv(`Unable to parse On-the-Fly formula: [${otf}]`)
+      this.priv(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
   }
 }
