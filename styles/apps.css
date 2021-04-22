@@ -1595,3 +1595,7 @@ ul#result-effects li {
 .modtooltip p {
   margin: 0.25rem 0;
 }
+
+.modifier-journals #entry-list {
+  max-height: 25vh;
+}

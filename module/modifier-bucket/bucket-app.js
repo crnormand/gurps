@@ -127,7 +127,7 @@ export class ModifierBucket extends Application {
 
     game.settings.registerMenu(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SELECT_JOURNALS, {
       name: i18n('GURPS.modifierSelectJournals', 'Bucket: Journal Entries'),
-      hint: i18n('GURPS.modifierSelectJournalsHint', 'Select the Journals to Display in the Modifier Bucket.'),
+      hint: i18n('GURPS.modifierSelectJournalsHint', 'Select the Journal entries to display in the Modifier Bucket.'),
       label: i18n('GURPS.modifierSelectJournalButton', 'Select Bucket Journals'),
       type: ModifierBucketJournals,
       restricted: false,
