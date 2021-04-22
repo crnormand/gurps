@@ -1,8 +1,7 @@
-import { displayMod, horiz, localizeWithFallback } from '../../lib/utilities.js'
+import { displayMod, horiz, i18n } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
-
-let i18n = localizeWithFallback
+import * as Settings from '../../lib/miscellaneous-settings.js'
 
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
@@ -29,27 +28,44 @@ export default class ModifierBucketEditor extends Application {
   }
 
   static get defaultOptions() {
+    let scale = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
+
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
-      template: 'systems/gurps/templates/modifier-bucket-tooltip.html',
-      width: 872,
-      height: 722,
+      template: 'systems/gurps/templates/modifier-bucket/tooltip-window.html',
       resizeable: true,
       minimizable: false,
+      width: 820,
+      height: 643,
+      scale: scale,
       popOut: false,
+      classes: ['modifier-bucket'],
     })
   }
 
+  /**
+   * @override
+   * @param {*} force
+   * @param {*} options
+   */
   render(force, options = {}) {
     super.render(force, options)
     this.bucket.SHOWING = true
   }
 
+  /**
+   * @override
+   */
   close() {
     this.bucket.SHOWING = false
     super.close()
   }
 
+  /**
+   * @override
+   * @param {*} options
+   * @returns
+   */
   getData(options) {
     const data = super.getData(options)
 
@@ -115,13 +131,32 @@ export default class ModifierBucketEditor extends Application {
     return data
   }
 
+  /**
+   * @override
+   * @param {*} html
+   */
   activateListeners(html) {
     super.activateListeners(html)
 
-    console.log('activatelisteners')
+    // if this is a tooltip, scale and position
+    let scale = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE)
+
+    if (!this.options.popOut) {
+      html.css('font-size', `${13 * scale}px`)
+
+      let height = parseFloat(html.css('height').replace('px', ''))
+      let top = window.innerHeight - height - 65
+      html.css('top', `${top}px`)
+
+      let right = parseFloat(html.css('right').replace('px', ''))
+      if (right < 0) {
+        let width = parseFloat(html.css('width').replace('px', ''))
+        let left = window.innerWidth - width - 10
+        html.css('left', `${left}px`)
+      }
+    }
 
     html.removeClass('overflowy')
-
     this.bringToTop()
 
     html.find('#modtooltip').off('mouseleave')
