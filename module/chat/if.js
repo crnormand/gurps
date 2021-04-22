@@ -2,9 +2,11 @@
 
 import { ChatProcessor } from '../chat.js'
 import { parselink } from '../../lib/parselink.js'
+import { i18n } from '../../lib/utilities.js'
+
 
 export class IfChatProcessor extends ChatProcessor {
-  help() { return "/if [OtF] one /else two" }
+  help() { return "/if [OtF] &lt;one&gt; /else &lt;two&gt;" }
   matches(line) {
     this.match = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
     return !!this.match
@@ -19,7 +21,7 @@ export class IfChatProcessor extends ChatProcessor {
         // only need to show modifiers, everything else does something.
           this.priv(then)
         else this.send() // send what we have
-        await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
+        await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
       }
     } else if (then.startsWith('/')) {
       await this.registry.processLine(then)
@@ -43,15 +45,15 @@ export class IfChatProcessor extends ChatProcessor {
       if (['skill-spell', 'attribute', 'attack', 'controlroll'].includes(action.action.type)) {
         this.priv(line)
         this.send()
-        let pass = await GURPS.performAction(action.action, GURPS.LastActor, msgs.event)
+        let pass = await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
         if (invert) pass = !pass
         if (pass) {
           if (!!then) this._handleResult(then)
         } else 
           if (!!other) this._handleResult(other)
       } else
-        this.priv(`The On-the-Fly formula must be some kind of check: [${otf}]`)
+        this.priv(`${i18n("GURPS.chatMustBeACheck", "The On-the-Fly formula must be some kind of check")}: [${otf}]`)
     } else
-      this.priv(`Unable to parse On-the-Fly formula: [${otf}]`)
+      this.priv(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
   }
 }

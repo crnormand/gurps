@@ -625,7 +625,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'chat') {
     let chat = action.orig
-    if (!!event.shiftKey) chat = '/setwhisper\n' + chat
+    if (!!event?.shiftKey) chat = '/setwhisper\n' + chat
     ui.chat.processMessage(chat)
     return true
   }
@@ -1645,23 +1645,9 @@ Hooks.once('ready', async function () {
         decimals: resp.decimals,
       }
     }
-    /* Currently not used.    But could be with:
-         let action = parselink(text)
-         game.socket.emit("system.gurps",
-            {
-              type: 'executeOtF',
-              actorIds: actors.map(a => a.id),
-              action: action.action
-            })
-    */
     if (resp.type == 'executeOtF') {
-      let action = resp.action
-      resp.actorIds.forEach(id => {
-        let actor = game.actors.get(id)
-        if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER)
-          // Return true if the current game user has observer or owner rights to an actor
-          GURPS.performAction(action, actor)
-      })
+      if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name))) return
+      GURPS.performAction(resp.action, GURPS.LastActor)
     }
   })
 

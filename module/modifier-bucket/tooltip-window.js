@@ -276,6 +276,7 @@ export default class ModifierBucketEditor extends Application {
     let element = event.currentTarget
     let v = element.value
     if (!v) v = element.textContent
+    v = v.trim()
     let i = v.indexOf(' ')
     this.SHOWING = true // Firefox seems to need this reset when showing a pulldown
     this.bucket.addModifier(v.substring(0, i), prefix + v.substr(i + 1))

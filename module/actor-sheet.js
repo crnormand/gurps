@@ -1290,7 +1290,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
-      width: 800,
+      width: 880,
       height: 800,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
@@ -1323,6 +1323,13 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     super.activateListeners(html)
 
     html.find('#ignoreinputbodyplan').click(this._onClickBodyPlan.bind(this))
+    
+    html.find('#showflightmove').click(ev => {
+      ev.preventDefault()
+      let element = ev.currentTarget
+      let show = element.checked
+      this.actor.update({ 'data.additionalresources.showflightmove': show })
+    })
 
     this.makeHeaderMenu(html, '.hlhead', 'Hit Location', new HitLocation('???'), 'data.hitlocations')
     this.makeAddDeleteMenu(html, '.hlmenu', new HitLocation('???'))

@@ -2,6 +2,8 @@
 
 This is what we are currently working on:
 
+## History
+
 0.9.0
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
@@ -9,8 +11,11 @@ This is what we are currently working on:
 - Added OtF [D:AttackName].   Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
 - Fixed GM Send now also transfers the OtF label (ex: "Acrobatic Dodge" from above)
 - Fixed Initiative formula propagating to client VMs
-
-## History
+- /tracker (/tr) now resets "damage trackers" to zero, instead of max
+- Continued i18n work on chat processors
+- /remote GM only command.   Execute OtF on the remote client
+- Press SHIFT key to make OtF rolls private
+- Show Move/Flight Move checkbox in Editor
 
 0.8.23 - 4/13/2021
   
