@@ -1692,7 +1692,7 @@ Hooks.once('ready', async function () {
    * Add a listener to handle damage being dropped on a token.
    */
   Hooks.on('dropCanvasData', async function (canvas, dropData) {
-    if (dropData.type === 'damageItem') {
+    if (dropData.type === 'damageItem' || dropData.type === 'Item') {
       let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene.data.grid
       canvas.tokens.targetObjects({
@@ -1712,13 +1712,17 @@ Hooks.once('ready', async function () {
         t.setTarget(true, { releaseOthers: false, groupSelection: true })
       })
 
+      let handle = (actor) => { actor.handleDamageDrop(dropData.payload) }
+      if (dropData.type === 'Item') handle = (actor) => { actor.createOwnedItem(game.items.get(dropData.id)) }
+
       // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
       if (targets.length === 1) {
-        targets[0].actor.handleDamageDrop(dropData.payload)
+        handle(targets[0].actor)
         return false
       }
 
+      
       let buttons = {
         apply: {
           icon: '<i class="fas fa-check"></i>',
@@ -1726,7 +1730,7 @@ Hooks.once('ready', async function () {
           callback: html => {
             let name = html.find('select option:selected').text().trim()
             let target = targets.find(token => token.name === name)
-            target.actor.handleDamageDrop(dropData.payload)
+            handle(target.actor)
           },
         },
       }
@@ -1746,7 +1750,7 @@ Hooks.once('ready', async function () {
       await d.render(true)
 
       return false
-    }
+    } 
   })
 
   // define Handlebars partials for ADD:
