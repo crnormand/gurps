@@ -1,6 +1,6 @@
 <form id='modttt' class="{{cssClass}} overflowy {{#if isTooltip}}modttt{{/if}}" autocomplete="off">
   <div class='modtooltip gurps-app'>
-    <div id="modtooltip" class='gurps-meta-group'>
+    <div id="modtooltip">
       <div id='modtooltipbucket'>
         <div id="modtooltiplefttop" class='gurps-group gurps-sparse-list'>
           <h4>{{localize "GURPS.modifierCurrentEffects"}}</h4>
@@ -33,8 +33,8 @@
         {{/unless}}
 
         <div id="modtooltipleftbottom" class='gurps-group gurps-sparse-list'>
-          <div class='shaded-group'>
-            <h4>{{localize "GURPS.modifierCurrentModifiers"}}</h4>
+          <h4>{{localize "GURPS.modifierCurrentModifiers"}}</h4>
+          <div class='shaded-group overflowy'>
             <aside>({{localize "GURPS.clickToRemove"}})</aside>
             {{#each stack.modifierList}}
             <div class="removemod {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}">
@@ -73,9 +73,13 @@
         </div>
 
         <div class="gurps-group gurps-space-between gurps-sparse-list">
-          <div>
-            <h4>{{localize "GURPS.modifierCommon"}}</h4>
-            <div class='overflowy' style='max-height: 510px;'>
+          <div id='common-modifiers'>
+            <h4 class='tabbed'>
+              <span class='back'><i class="fas fa-caret-square-left"></i></span>
+              {{localize "GURPS.modifierCommon"}}
+              <span class='forward'><i class="fas fa-caret-square-right"></i></span>
+            </h4>
+            <div class='tabbedcontent'>
               {{collapsible-content 'modstatus' statusmods 'commonmods'}}
               {{collapsible-content 'speedrangemods' speedrangemods 'commonmods'}}
               {{collapsible-content 'modsize' sizemods 'commonmods'}}
@@ -85,6 +89,15 @@
               {{collapsible-content 'modeqtquality' eqtqualitymods 'commonmods'}}
               {{collapsible-content 'modlighting' lightingmods 'commonmods'}}
               {{collapsible-content 'modrof' rofmods 'commonmods'}}
+            </div>
+            {{#each journals}}
+            <div class='tabbedcontent'>
+              <h2>{{this.name}}</h2>
+              {{{gurpslink this.content true}}}
+            </div>
+            {{/each}}
+            <div class='tabbedcontent'>
+              <aside>{{i18n 'GURPS.modifierTabAside'}} </aside>
             </div>
           </div>
           <div>
