@@ -2,6 +2,8 @@
 
 This is what we are currently working on:
 
+## History
+
 0.9.0
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
@@ -14,8 +16,6 @@ This is what we are currently working on:
 - /remote GM only command.   Execute OtF on the remote client
 - Press SHIFT key to make OtF rolls private
 - Show Move/Flight Move checkbox in Editor
-
-## History
 
 0.8.23 - 4/13/2021
   
