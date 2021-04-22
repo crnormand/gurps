@@ -56,8 +56,12 @@
   justify-content: space-between;
 }
 
-.gurps-group header {
+.gurps-app header {
   font-weight: bold;
+}
+
+.gurps-app header:first-child {
+  margin-right: 0.35em;
 }
 
 .gurps-group .pdflink {
@@ -77,7 +81,7 @@
   text-transform: uppercase;
   line-height: 1.2em;
 }
-.gurps-group aside {
+.gurps-app aside {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 0.5em;
@@ -513,7 +517,7 @@ ul#result-effects li {
   visibility: hidden;
   min-width: 120px;
   background-color: #555;
-  color: #fff;
+  color: white;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
@@ -1598,4 +1602,13 @@ ul#result-effects li {
 
 .modifier-journals #entry-list {
   max-height: 25vh;
+}
+
+.modifier-journals #entry-list > div:nth-child(3n + 3) {
+  color: #555;
+  font-size: 80%;
+}
+
+.gurps-app .section {
+  margin-top: 0.5em;
 }
