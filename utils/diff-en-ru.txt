@@ -3,6 +3,7 @@ keys in [lang/ru.json] that are missing in [lang/en.json]
 ------------
 keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.Dice
+  GURPS.ID
   GURPS.actions
   GURPS.addApplyTo
   GURPS.addDamageReduction
@@ -12,6 +13,38 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.aim
   GURPS.allOutDefense
   GURPS.allOutDefenseRef
+  GURPS.chatClearing
+  GURPS.chatClearingLastActor
+  GURPS.chatDoesNotHaveEnough
+  GURPS.chatExceededMax
+  GURPS.chatExceededMaxUses
+  GURPS.chatGameAidUsersGuide
+  GURPS.chatMoreThanOneActor
+  GURPS.chatMoreThanOneToken
+  GURPS.chatMustBeACheck
+  GURPS.chatNoActorFound
+  GURPS.chatNoEquipmentMatched
+  GURPS.chatNoResourceTracker
+  GURPS.chatNoStatusMatched
+  GURPS.chatNoTokens
+  GURPS.chatQty
+  GURPS.chatQtySetTo
+  GURPS.chatResetTo
+  GURPS.chatResourceTracker
+  GURPS.chatResultBelowZero
+  GURPS.chatSetTo
+  GURPS.chatToApplyEffects
+  GURPS.chatToggling
+  GURPS.chatUnableToFindMacro
+  GURPS.chatUnrecognizedFormat
+  GURPS.chatUses
+  GURPS.chatUsesIsNaN
+  GURPS.chatUsesReset
+  GURPS.chatUsesSet
+  GURPS.chatYouDoNotHaveEnough
+  GURPS.chatYouMustBeGM
+  GURPS.chatYouMustHaveACharacterSelected
+  GURPS.chatYouMustSelectTokens
   GURPS.clickToRemove
   GURPS.concentrationCheck
   GURPS.defense
@@ -38,6 +71,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.hitLocationVitals, Heart
   GURPS.lighting
   GURPS.meleeAttack
+  GURPS.modifierAddRangeRuler
+  GURPS.modifierAddRangeRulerHint
   GURPS.modifierAffliction
   GURPS.modifierAfflictionCough
   GURPS.modifierAfflictionCoughIQ
@@ -106,6 +141,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierHeroicChargeRef
   GURPS.modifierHitLocation
   GURPS.modifierImpossible
+  GURPS.modifierJournalManager
+  GURPS.modifierJournals
   GURPS.modifierLightCandle
   GURPS.modifierLightDim
   GURPS.modifierLightFullMoon
@@ -139,9 +176,21 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierQualityMissing
   GURPS.modifierQualityNone
   GURPS.modifierQualityNoneTech
+  GURPS.modifierScaleLarge
+  GURPS.modifierScaleNormal
+  GURPS.modifierScaleSmall
+  GURPS.modifierScaleVeryLarge
+  GURPS.modifierScaleVerySmall
+  GURPS.modifierSelectJournalButton
+  GURPS.modifierSelectJournals
+  GURPS.modifierSelectJournalsAside
+  GURPS.modifierSelectJournalsHint
+  GURPS.modifierSelectJournalsTitle
   GURPS.modifierSendTo
   GURPS.modifierShieldDB
   GURPS.modifierShieldDBRef
+  GURPS.modifierShowOnMouseOver
+  GURPS.modifierShowOnMouseOverHint
   GURPS.modifierSize
   GURPS.modifierSizeDetail
   GURPS.modifierSizeEntry
@@ -154,6 +203,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierStatusStunned
   GURPS.modifierStrongAttack
   GURPS.modifierStrongAttackRef
+  GURPS.modifierTabAside
   GURPS.modifierTaskDifficulty
   GURPS.modifierTelegraphicAttack
   GURPS.modifierTelegraphicAttackRef
@@ -165,7 +215,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierVeryFavorable
   GURPS.modifierVeryHard
   GURPS.modifierVeryUnfavorable
+  GURPS.modifierViewScale
+  GURPS.modifierViewScaleHint
   GURPS.modifierWillCheck
+  GURPS.name
   GURPS.notAffected
   GURPS.ranged
   GURPS.rateOfFire
@@ -176,6 +229,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.resourceUndefined
   GURPS.resourceUpdateTrackerSlot
   GURPS.selectToken
+  GURPS.showQuestion
   GURPS.slamAOAStrong
   GURPS.slamCalculator
   GURPS.slamRelativeVelocity

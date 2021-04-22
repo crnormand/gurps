@@ -2,7 +2,7 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import { i18n, arrayToObject, objectToArray } from '../../lib/utilities.js'
 
 export default class ModifierBucketJournals extends FormApplication {
-  static getAllJournals() {
+  static getJournalIds() {
     let journals = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BUCKET_JOURNALS)
     return objectToArray(journals)
   }
@@ -19,7 +19,7 @@ export default class ModifierBucketJournals extends FormApplication {
       minimizable: false,
       width: 550,
       height: 'auto',
-      title: i18n('GURPS.bucketJournalManager', 'Modifier Bucket Journals'),
+      title: i18n('GURPS.modifierJournalManager'),
       closeOnSubmit: true,
     })
   }
@@ -29,7 +29,7 @@ export default class ModifierBucketJournals extends FormApplication {
    */
   getData(options) {
     const data = super.getData(options)
-    data.journals = ModifierBucketJournals.getAllJournals()
+    data.journals = ModifierBucketJournals.getJournalIds()
     data.allJournals = this._htmlJournals
     return data
   }

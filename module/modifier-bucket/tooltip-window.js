@@ -2,6 +2,7 @@ import { displayMod, horiz, i18n } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import ModifierBucketJournals from './select-journals.js'
 
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
@@ -15,16 +16,8 @@ export default class ModifierBucketEditor extends Application {
     this.inside = false
     this.tabIndex = 0
 
-    // TODO in the real implementation, store the ID of the journal
-    let journals = game.data.journal
-    let j1 = journals.find(it => it.name === 'Thiefly Skills')
-
-    this.journals = []
-    this.journals.push(j1)
-
-    // stupid Javascript
-    this._onleave.bind(this)
-    this._onenter.bind(this)
+    let journalIds = ModifierBucketJournals.getJournalIds()
+    this.journals = game.data.journal.filter(it => journalIds.includes(it._id))
   }
 
   static get defaultOptions() {
@@ -162,7 +155,7 @@ export default class ModifierBucketEditor extends Application {
     html.find('#modtooltip').off('mouseleave')
     html.find('#modtooltip').off('mouseenter')
     this.inside = false
-    html.find('#modtooltip').mouseenter(ev => this._onenter(ev))
+    html.find('#modtooltip').mouseenter(this._onenter.bind(this))
 
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
 

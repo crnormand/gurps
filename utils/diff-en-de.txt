@@ -3,6 +3,60 @@ keys in [lang/de.json] that are missing in [lang/en.json]
   EFFECT.StatusShocked
 ------------
 keys in [lang/en.json] that are missing in [lang/de.json]
+  GURPS.ID
+  GURPS.chatClearing
+  GURPS.chatClearingLastActor
+  GURPS.chatDoesNotHaveEnough
+  GURPS.chatExceededMax
+  GURPS.chatExceededMaxUses
+  GURPS.chatGameAidUsersGuide
+  GURPS.chatMoreThanOneActor
+  GURPS.chatMoreThanOneToken
+  GURPS.chatMustBeACheck
+  GURPS.chatNoActorFound
+  GURPS.chatNoEquipmentMatched
+  GURPS.chatNoResourceTracker
+  GURPS.chatNoStatusMatched
+  GURPS.chatNoTokens
+  GURPS.chatQty
+  GURPS.chatQtySetTo
+  GURPS.chatResetTo
+  GURPS.chatResourceTracker
+  GURPS.chatResultBelowZero
+  GURPS.chatSetTo
+  GURPS.chatToApplyEffects
+  GURPS.chatToggling
+  GURPS.chatUnableToFindMacro
+  GURPS.chatUnrecognizedFormat
+  GURPS.chatUses
+  GURPS.chatUsesIsNaN
+  GURPS.chatUsesReset
+  GURPS.chatUsesSet
+  GURPS.chatYouDoNotHaveEnough
+  GURPS.chatYouMustBeGM
+  GURPS.chatYouMustHaveACharacterSelected
+  GURPS.chatYouMustSelectTokens
+  GURPS.modifierAddRangeRuler
+  GURPS.modifierAddRangeRulerHint
+  GURPS.modifierJournalManager
+  GURPS.modifierJournals
+  GURPS.modifierScaleLarge
+  GURPS.modifierScaleNormal
+  GURPS.modifierScaleSmall
+  GURPS.modifierScaleVeryLarge
+  GURPS.modifierScaleVerySmall
+  GURPS.modifierSelectJournalButton
+  GURPS.modifierSelectJournals
+  GURPS.modifierSelectJournalsAside
+  GURPS.modifierSelectJournalsHint
+  GURPS.modifierSelectJournalsTitle
+  GURPS.modifierShowOnMouseOver
+  GURPS.modifierShowOnMouseOverHint
+  GURPS.modifierTabAside
+  GURPS.modifierViewScale
+  GURPS.modifierViewScaleHint
+  GURPS.name
+  GURPS.showQuestion
 ------------
 values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.BODYPLANcentaur: Centaur

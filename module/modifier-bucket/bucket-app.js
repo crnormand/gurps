@@ -107,49 +107,6 @@ class ModifierStack {
  * modifies it.
  */
 export class ModifierBucket extends Application {
-  static initSettings() {
-    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE, {
-      name: i18n('GURPS.modifierViewScale', 'Bucket: Scale Factor (EXPERIMENTAL)'),
-      hint: i18n('GURPS.modifierViewScaleHint', 'Use this to scale up or down the size of the Modifier Bucket.'),
-      scope: 'client',
-      config: true,
-      default: 1.0,
-      type: Number,
-      choices: {
-        0.8: i18n('GURPS.modifierScaleVerySmall', 'Very Small'),
-        0.9: i18n('GURPS.modifierScaleSmall', 'Small'),
-        1.0: i18n('GURPS.modifierScaleNormal', 'Normal'),
-        1.1: i18n('GURPS.modifierScaleLarge', 'Large'),
-        1.2: i18n('GURPS.modifierScaleVeryLarge', 'Very Large'),
-      },
-      onChange: value => console.log(`Modifier Bucket Scale: ${value}`),
-    })
-
-    game.settings.registerMenu(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SELECT_JOURNALS, {
-      name: i18n('GURPS.modifierSelectJournals', 'Bucket: Journal Entries'),
-      hint: i18n('GURPS.modifierSelectJournalsHint', 'Select the Journal entries to display in the Modifier Bucket.'),
-      label: i18n('GURPS.modifierSelectJournalButton', 'Select Bucket Journals'),
-      type: ModifierBucketJournals,
-      restricted: false,
-    })
-
-    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS, {
-      name: i18n('GURPS.modifierJournals', 'Modifier Bucket Journal List'),
-      scope: 'client',
-      config: false,
-      type: Object,
-      default: {},
-      onChange: value => console.log(`Updated Modifier Bucket Journals: ${JSON.stringify(value)}`),
-    })
-
-    Hooks.on('renderApplication', async function (app, html, data) {
-      if (app instanceof ModifierBucketEditor) {
-        return false // return false if you want to stop other hooks from being called
-      }
-      return true
-    })
-  }
-
   constructor(options = {}) {
     super(options)
 
@@ -354,5 +311,62 @@ export class ModifierBucket extends Application {
       }
     }
     return content
+  }
+
+  // BELOW are the items that should be initialized at Foundry startup
+  static initSettings() {
+    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP, {
+      name: i18n('GURPS.modifierShowOnMouseOver'),
+      hint: i18n('GURPS.modifierShowOnMouseOverHint'),
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: value => console.log(`Modifier Tooltip on hover : ${value}`),
+    })
+
+    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET, {
+      name: i18n('GURPS.modifierAddRangeRuler'),
+      hint: i18n('GURPS.modifierAddRangeRulerHint'),
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: value => console.log(`Automatically add range ruler mod to bucket : ${value}`),
+    })
+
+    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SCALE, {
+      name: i18n('GURPS.modifierViewScale'),
+      hint: i18n('GURPS.modifierViewScaleHint'),
+      scope: 'client',
+      config: true,
+      default: 1.0,
+      type: Number,
+      choices: {
+        0.8: i18n('GURPS.modifierScaleVerySmall'),
+        0.9: i18n('GURPS.modifierScaleSmall'),
+        1.0: i18n('GURPS.modifierScaleNormal'),
+        1.1: i18n('GURPS.modifierScaleLarge'),
+        1.2: i18n('GURPS.modifierScaleVeryLarge'),
+      },
+      onChange: value => console.log(`Modifier Bucket Scale: ${value}`),
+    })
+
+    game.settings.registerMenu(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_SELECT_JOURNALS, {
+      name: i18n('GURPS.modifierSelectJournals'),
+      hint: i18n('GURPS.modifierSelectJournalsHint'),
+      label: i18n('GURPS.modifierSelectJournalButton'),
+      type: ModifierBucketJournals,
+      restricted: false,
+    })
+
+    game.settings.register(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS, {
+      name: i18n('GURPS.modifierJournals'),
+      scope: 'client',
+      config: false,
+      type: Object,
+      default: {},
+      onChange: value => console.log(`Updated Modifier Bucket Journals: ${JSON.stringify(value)}`),
+    })
   }
 }
