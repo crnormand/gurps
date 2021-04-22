@@ -39,16 +39,16 @@ export class GurpsActorSheet extends ActorSheet {
     return !!str ? parseFloat(str) : 0
   }
 
-  sum(dict, type) {
+  sum(dict, type, checkEquipped = false) {
     if (!dict) return 0.0
     let sum = 0
     for (let k in dict) {
       let e = dict[k]
       let c = this.flt(e.count)
       let t = this.flt(e[type])
-      sum += c * t
-      sum += this.sum(e.contains, type)
-      sum += this.sum(e.collapsed, type)
+      if (!checkEquipped || !!e.equipped) sum += c * t
+      sum += this.sum(e.contains, type, checkEquipped)
+      sum += this.sum(e.collapsed, type, checkEquipped)
     }
     return parseInt(sum * 100) / 100
   }
@@ -63,7 +63,7 @@ export class GurpsActorSheet extends ActorSheet {
     let eqt = this.actor.data.data.equipment || {}
     sheetData.eqtsummary = {
       eqtcost: this.sum(eqt.carried, 'cost'),
-      eqtlbs: this.sum(eqt.carried, 'weight'),
+      eqtlbs: this.sum(eqt.carried, 'weight', game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)),
       othercost: this.sum(eqt.other, 'cost'),
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
