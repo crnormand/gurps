@@ -126,15 +126,15 @@ export class RemoteChatProcessor extends ChatProcessor {
   isGMOnly() { return true }
 
   matches(line) {
-    this.match = line.match(/^\/(remote|rem) ([^\[]*) *\[(.*)\]/i)
+    this.match = line.match(/^\/(remote|rem) \[(.*)\](.*)/i)
     return !!this.match
   }
   
   process(line) {
     let m = this.match  
-    let action = parselink(m[3].trim())
+    let action = parselink(m[2].trim())
     if (!!action.action) {
-      let users = !!m[2] ? splitArgs(m[2]) : []
+      let users = !!m[3] ? splitArgs(m[3]) : []
       this.priv(line)
       game.socket.emit("system.gurps",
         {

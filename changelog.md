@@ -10,6 +10,7 @@ This is what we are currently working on:
 - System setting to check for equipped status when determining weight (players can use equipped flag to indicate a 'dropped' item)
 - OtF now supports [Sk:Skillname] or [Sp:Spellname]
 - Added support for the Drag Ruler module to display move, sprint and fly distances. (but you also need to load the Hex Token Size Support module, due to an error with Drag Ruler)
+- changed parameter order of /rem [otf] optionalusernames to match /sendmb
 
 ## History
 
