@@ -1751,4 +1751,36 @@ Hooks.once('ready', async function () {
     __dirname + '/apply-damage/effect-shock.html',
   ])
   GURPS.setInitiativeFormula()
+  
+  
+  //Add support for the Drag Ruler module: https://foundryvtt.com/packages/drag-ruler
+  Hooks.once("dragRuler.ready", (SpeedProvider) => {
+    class GURPSSpeedProvider extends SpeedProvider {
+        get colors() {
+            return [
+                {id: "walk", default: 0x00FF00, name: "GURPS.dragrulerWalk"},
+                {id: "sprint", default: 0xFFFF00, name: "GURPS.dragrulerSprint"},
+                {id: "fly", default: 0xFF8000, name: "GURPS.dragrulerFly"}
+            ]
+        }
+
+        getRanges(token) {
+          const baseMove = token.actor.data.data.currentmove
+
+          // A character can always walk it's base speed and sprint at 1.2X
+          const ranges = [
+            {range: baseMove, color: "walk"},
+            {range: Math.floor(baseMove * 1.2), color: "sprint"}
+          ]
+    
+          // Character is showing flight move
+          if (!!token.actor.data.data.additionalresources.showflightmove)
+            ranges.push({range: token.actor.data.data.currentflight, color: "fly"})
+          return ranges
+        }
+    }
+    dragRuler.registerSystem("gurps", GURPSSpeedProvider)
+})
+  
+  // End of syetem "READY" hook.
 })
