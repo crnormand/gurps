@@ -135,7 +135,7 @@ export class ModifierBucket extends Application {
   // Called from Range Ruler after measurement ends, to possible add range to stack
   addTempRangeMod() {
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
-      this.modifierStack.addModifier(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
+      this.modifierStack.add(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
     }
   }
 

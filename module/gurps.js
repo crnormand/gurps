@@ -731,7 +731,7 @@ async function performAction(action, actor, event, targets) {
             name: tempAction.name,
             level: parseInt(tempAction.target),
           }
-        } else skill = GURPS.findSkillSpell(actordata, tempAction.name)
+        } else skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkill, !!tempAction.isSpell)
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
@@ -851,20 +851,21 @@ function addModifier(mod, desc, list) {
 }
 GURPS.addModifier = addModifier
 
-function findSkillSpell(actor, sname) {
+// Find the skill or spell.   if isSkillOnly or isSpellOnly set, only check that list
+function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) {
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
   let best = 0
-  recurselist(actor.data.skills, s => {
+  if (!isSpellOnly) recurselist(actor.data.skills, s => {
     if (s.name.match(sname) && s.level > best) {
       t = s
       best = parseInt(s.level)
     }
   })
   if (!t)
-    recurselist(actor.data.spells, s => {
+    if (!isSkillOnly) recurselist(actor.data.spells, s => {
       if (s.name.match(sname) && s.level > best) {
         t = s
         best = parseInt(s.level)
@@ -1754,4 +1755,36 @@ Hooks.once('ready', async function () {
     __dirname + '/apply-damage/effect-shock.html',
   ])
   GURPS.setInitiativeFormula()
+  
+  
+  //Add support for the Drag Ruler module: https://foundryvtt.com/packages/drag-ruler
+  Hooks.once("dragRuler.ready", (SpeedProvider) => {
+    class GURPSSpeedProvider extends SpeedProvider {
+        get colors() {
+            return [
+                {id: "walk", default: 0x00FF00, name: "GURPS.dragrulerWalk"},
+                {id: "sprint", default: 0xFFFF00, name: "GURPS.dragrulerSprint"},
+                {id: "fly", default: 0xFF8000, name: "GURPS.dragrulerFly"}
+            ]
+        }
+
+        getRanges(token) {
+          const baseMove = token.actor.data.data.currentmove
+
+          // A character can always walk it's base speed and sprint at 1.2X
+          const ranges = [
+            {range: baseMove, color: "walk"},
+            {range: Math.floor(baseMove * 1.2), color: "sprint"}
+          ]
+    
+          // Character is showing flight move
+          if (!!token.actor.data.data.additionalresources.showflightmove)
+            ranges.push({range: token.actor.data.data.currentflight, color: "fly"})
+          return ranges
+        }
+    }
+    dragRuler.registerSystem("gurps", GURPSSpeedProvider)
+})
+  
+  // End of syetem "READY" hook.
 })
