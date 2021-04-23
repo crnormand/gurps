@@ -1782,5 +1782,5 @@ Hooks.once('ready', async function () {
     dragRuler.registerSystem("gurps", GURPSSpeedProvider)
 })
   
-  // End of syetem "READY" hook.
+  // End of system "READY" hook.
 })
