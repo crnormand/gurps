@@ -678,6 +678,10 @@
   "GURPS.chatYouMustSelectTokens": "You must select tokens (or use",
   "GURPS.chatToggling": "Toggling",
   "GURPS.chatMustBeACheck": "The On-the-Fly formula must be some kind of check",
+  
+  "GURPS.dragrulerWalk": "Walk",
+  "GURPS.dragrulerSprint": "Sprint",
+  "GURPS.dragrulerFly": "Fly",
 
   "GURPS.showQuestion": "Show?",
   "GURPS.name": "Name",
