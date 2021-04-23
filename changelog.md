@@ -2,6 +2,10 @@
 
 This is what we are currently working on:
 
+0.9.1
+- System setting to check for equipped status when determining weight (players can use equipped flag to indicate a 'dropped' item)
+- POC of Items
+
 ## History
 
 0.9.0
