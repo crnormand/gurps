@@ -11,17 +11,16 @@ import {
   GurpsActorSimplifiedSheet,
   GurpsActorNpcSheet,
 } from './actor-sheet.js'
-import { ModifierBucket } from './modifiers.js'
+import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, getAllActorsInActiveScene, atou, utoa } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import SlamChatProcessor from '../module/chat/slam.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
-
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -625,7 +624,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'chat') {
     let chat = action.orig
-    if (!!event?.shiftKey) chat = "/setwhisper\n"+chat
+    if (!!event?.shiftKey) chat = '/setwhisper\n' + chat
     ui.chat.processMessage(chat)
     return true
   }
@@ -827,7 +826,7 @@ async function performAction(action, actor, event, targets) {
       if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
       if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications.warn('You must have a character selected')
-    
+
   if (action.type === 'attackdamage')
     if (!!actor) {
       let att = null
@@ -842,14 +841,13 @@ async function performAction(action, actor, event, targets) {
       if (!!dam.action) await performAction(dam.action, actor, event, targets)
     } else ui.notifications.warn('You must have a character selected')
 
-
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
 }
 GURPS.performAction = performAction
 
 function addModifier(mod, desc, list) {
-  GURPS.ModifierBucket.addModifier(mod, desc, list) 
+  GURPS.ModifierBucket.addModifier(mod, desc, list)
 }
 GURPS.addModifier = addModifier
 
@@ -889,7 +887,6 @@ function findAdDisad(actor, sname) {
   return t
 }
 GURPS.findAdDisad = findAdDisad
-
 
 function findAttack(actor, sname) {
   var t
@@ -1271,7 +1268,8 @@ GURPS.onRightClickGurpslink = function (event) {
 
 GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) {
   if (!otf) return
-  if (!game.user.isGM) {  // If not the GM, just send the text to the chat input window (so the user can copy it)
+  if (!game.user.isGM) {
+    // If not the GM, just send the text to the chat input window (so the user can copy it)
     $(document)
       .find('#chat-message')
       .val('[' + otf + ']')
@@ -1287,10 +1285,8 @@ GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) 
     }
   }
   if (!!overridetxt) {
-    if (overridetxt.includes('"'))
-      overridetxt = "'" + overridetxt + "'"
-    else
-      overridetxt = '"' + overridetxt + '"'
+    if (overridetxt.includes('"')) overridetxt = "'" + overridetxt + "'"
+    else overridetxt = '"' + overridetxt + '"'
   } else overridetxt = ''
   let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
   let botf = '[' + overridetxt + '!' + otf + ']'
@@ -1407,7 +1403,7 @@ GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf 
   dlg.render(true)
 }
 
-GURPS.setInitiativeFormula = function(broadcast) {
+GURPS.setInitiativeFormula = function (broadcast) {
   let formula = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_INITIATIVE_FORMULA)
   if (!formula) {
     formula = Initiative.defaultFormula()
@@ -1417,15 +1413,14 @@ GURPS.setInitiativeFormula = function(broadcast) {
   let d = !!m[2] ? parseInt(m[2]) : 5
   CONFIG.Combat.initiative = {
     formula: m[1],
-    decimals: d   // Important to be able to maintain resolution
+    decimals: d, // Important to be able to maintain resolution
   }
   if (broadcast)
-    game.socket.emit("system.gurps",
-      {
-        type: 'initiativeChanged',
-        formula: m[1],
-        decimals: d
-      })
+    game.socket.emit('system.gurps', {
+      type: 'initiativeChanged',
+      formula: m[1],
+      decimals: d,
+    })
 }
 
 /*********************  HACK WARNING!!!! *************************/
@@ -1462,7 +1457,7 @@ Hooks.once('init', async function () {
   GURPS.ModifierBucket = new ModifierBucket()
   ui.modifierbucket = GURPS.ModifierBucket
   ui.modifierbucket.render(true)
-  
+
   GURPS.rangeObject = new GURPSRange()
   GURPS.initiative = new Initiative()
   GURPS.hitpoints = new HitFatPoints()
@@ -1517,13 +1512,12 @@ Hooks.once('init', async function () {
     await entity.update({ img: 'systems/gurps/icons/single-die.png' })
     entity.data.img = 'systems/gurps/icons/single-die.png'
   })
-
-  
 })
 
 Hooks.once('ready', async function () {
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
+
   new ThreeD6({
     popOut: false,
     minimizable: false,
@@ -1639,26 +1633,22 @@ Hooks.once('ready', async function () {
       })
     }
   })
-  
- game.socket.on('system.gurps', (resp) => {
+
+  game.socket.on('system.gurps', resp => {
     if (resp.type == 'updatebucket') {
-      if (resp.users.includes(game.user._id))
-        game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
-    } 
+      if (resp.users.includes(game.user._id)) game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
+    }
     if (resp.type == 'initiativeChanged') {
       CONFIG.Combat.initiative = {
         formula: resp.formula,
-        decimals: resp.decimals   
+        decimals: resp.decimals,
       }
-    }    
+    }
     if (resp.type == 'executeOtF') {
-      if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name)))
-        return
+      if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name))) return
       GURPS.performAction(resp.action, GURPS.LastActor)
     }
-  });
-
-
+  })
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on('controlToken', (...args) => {
