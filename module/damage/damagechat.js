@@ -73,10 +73,8 @@ export default class DamageChat {
               // get actor from id
               let token = canvas.tokens.get(transfer.userTarget) // ...
               // get payload; its either the "all damage" payload or ...
-              if (!!token) 
-                token.actor.handleDamageDrop(payload)
-              else
-                ui.notifications.warn("Unable to find token with ID:" + transfer.userTarget);
+              if (!!token) token.actor.handleDamageDrop(payload)
+              else ui.notifications.warn('Unable to find token with ID:' + transfer.userTarget)
             })
           }
         }
@@ -92,12 +90,12 @@ export default class DamageChat {
    * @param {Event} event that triggered this action
    * @param {String} overrideDiceText ??
    */
-  static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
+  static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames, extdamagetype) {
     let message = new DamageChat()
 
     const targetmods = await game.GURPS.ModifierBucket.applyMods() // append any global mods
 
-    let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText)
+    let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText, extdamagetype)
 
     if (!tokenNames) tokenNames = []
     if (tokenNames.length == 0) tokenNames.push('')
@@ -134,7 +132,7 @@ export default class DamageChat {
    * @param {*} damageType
    * @param {*} overrideDiceText
    */
-  _getDiceData(diceText, damageType, targetmods, overrideDiceText) {
+  _getDiceData(diceText, damageType, targetmods, overrideDiceText, extdamagetype) {
     // format for diceText:
     //
     // '<dice>d+<adds1>+<adds2>x<multiplier>(<divisor>)'
@@ -212,13 +210,13 @@ export default class DamageChat {
       modifier: modifier,
       diceText: displayText + additionalText,
       damageType: damageType,
+      extdamagetype: extdamagetype,
       multiplier: multiplier,
       divisor: divisor,
       adds1: adds1,
       adds2: adds2,
       min: min,
     }
-    console.log(diceData)
     return diceData
   }
 
