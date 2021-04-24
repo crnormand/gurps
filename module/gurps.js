@@ -644,7 +644,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.addModifier(0, action.costs)
-    DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets)
+    DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets, action.extdamagetype)
     return true
   }
 
