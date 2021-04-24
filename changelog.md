@@ -11,6 +11,8 @@ This is what we are currently working on:
 - OtF now supports [Sk:Skillname] or [Sp:Spellname]
 - Added support for the Drag Ruler module to display move, sprint and fly distances. (but you also need to load the Hex Token Size Support module, due to an error with Drag Ruler)
 - changed parameter order of /rem [otf] optionalusernames to match /sendmb
+- Holding down CTRL (CMD on Macs) will make a roll BLIND
+- System setting "SHIFT Click does a Blind roll for players, and a Self roll for GMs"
 
 ## History
 

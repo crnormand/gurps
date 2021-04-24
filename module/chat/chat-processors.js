@@ -29,17 +29,18 @@ export default function RegisterChatProcessors() {
     ChatProcessors.registerProcessor(new ChatExecuteChatProcessor())
     ChatProcessors.registerProcessor(new TrackerChatProcessor())
     ChatProcessors.registerProcessor(new IfChatProcessor())
-    ChatProcessors.registerProcessor(new SetWhisperChatProcessor())
+    ChatProcessors.registerProcessor(new SetEventFlagsChatProcessor())
     ChatProcessors.registerProcessor(new RemoteChatProcessor())
 }
 
-class SetWhisperChatProcessor extends ChatProcessor {
+class SetEventFlagsChatProcessor extends ChatProcessor {
   help() { return null }
   matches(line) {
-    return line === '/setwhisper'
+    return line.startsWith('/setEventFlags')
   }
   process(line) {
-    this.registry.setWhisper()
+    let m = line.match(/\/setEventFlags (\w+) (\w+)/)
+    this.registry.setEventFlags(m[1] == 'true', m[2] == 'true')
   }
 }
 
