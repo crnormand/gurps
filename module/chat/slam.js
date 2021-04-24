@@ -15,7 +15,9 @@ export default class SlamChatProcessor extends ChatProcessor {
   constructor() {
     super()
   }
-  help() { return "/slam" }
+  help() {
+    return '/slam'
+  }
 
   matches(line) {
     return line.startsWith('/slam')
@@ -24,7 +26,7 @@ export default class SlamChatProcessor extends ChatProcessor {
   process(line) {
     let actor = GURPS.LastActor
     if (!actor) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected', 'You must have a character selected'))
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
       return
     }
 
