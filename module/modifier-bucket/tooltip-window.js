@@ -65,7 +65,8 @@ export default class ModifierBucketEditor extends Application {
     data.isTooltip = !this.options.popOut
     data.gmod = this
     data.tabIndex = this.tabIndex
-    data.journals = this.journals
+    data.journals = game.data.journal.filter(it => ModifierBucketJournals.getJournalIds().includes(it._id))
+    //    this.journals
     data.stack = this.bucket.modifierStack
     data.meleemods = ModifierLiterals.MeleeMods.split('\n')
     data.rangedmods = ModifierLiterals.RangedMods.split('\n')
