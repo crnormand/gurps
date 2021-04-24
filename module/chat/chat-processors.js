@@ -8,7 +8,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import { EveryoneAChatProcessor, EveryoneBChatProcessor, EveryoneCChatProcessor, RemoteChatProcessor } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs } from '../../lib/utilities.js'
 
 export default function RegisterChatProcessors() {
     ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -116,17 +116,17 @@ class SendMBChatProcessor extends ChatProcessor {
   }
   process(line) {
     this.priv(line)
-    let user = line.replace(/^\/sendmb/, '').trim()
-    let m = user.match(/\[(.*)\](.*)/)
+    let users = line.replace(/^\/sendmb/, '').trim()
+    let m = users.match(/\[(.*)\](.*)/)
     if (!!m) {
       let otf = m[1]
       let t = parselink(otf)
       if (!!t.action && t.action.type == 'modifier') {
-        GURPS.ModifierBucket.sendToPlayer(t.action, m[2].trim())
+        GURPS.ModifierBucket.sendToPlayers(t.action, splitArgs(m[2]))
         return
-      }
-    }
-    GURPS.ModifierBucket.sendBucketToPlayer(user)
+      } else ui.notifications.warn(i18n('GURPS.chatYouMayOnlySendMod', 'You may only send a modifier OtF'))
+    } else
+      GURPS.ModifierBucket.sendToPlayers(null, splitArgs(users))
   } 
 }
 
@@ -275,8 +275,9 @@ class UsesChatProcessor extends ChatProcessor {
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
     else {
-      let pattern = m[3].trim()
-      let [eqt, key] = actor.findEquipmentByName(pattern)
+      let m2 = m[3].trim().match(/^(o[\.:])?(.*)/i)
+      let pattern = m2[2]
+      let [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
       if (!eqt) ui.notifications.warn(i18n("GURPS.chatNoEquipmentMatched", "No equipment matched") + " '" + pattern + "'")
       else {
         if (!m[1]) {
@@ -382,6 +383,10 @@ class TrackerChatProcessor extends ChatProcessor {
           ui.notifications.warn(`${i18n("GURPS.chatNoResourceTracker", "No Resource Tracker matched")} '${m[3]}'`)
           return
         }
+      }
+      if (!m[5]) {
+        ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+        return
       }
       let delta = parseInt(m[5])
       let reset = ''
