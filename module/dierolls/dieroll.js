@@ -1,3 +1,4 @@
+import * as Settings from '../../lib/miscellaneous-settings.js'
 /*
   This is the BIG method that does the roll and prepares the chat message.
   unfortunately, it has a lot fo hard coded junk in it.
@@ -116,7 +117,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     messageData.whisper = [game.user._id];
   }
 
-  if (!!optionalArgs.blind) {
+  if (!!optionalArgs.blind || (!!optionalArgs.event && (game.keyboard.isCtrl(optionalArgs.event)) || (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey) )) {
     messageData.whisper = ChatMessage.getWhisperRecipients("GM");
     messageData.blind = true;
   }

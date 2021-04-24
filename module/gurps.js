@@ -624,7 +624,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'chat') {
     let chat = action.orig
-    if (!!event?.shiftKey) chat = '/setwhisper\n' + chat
+    if (!!event?.shiftKey || game.keyboard.isCtrl(event)) chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
     ui.chat.processMessage(chat)
     return true
   }
@@ -1786,5 +1786,5 @@ Hooks.once('ready', async function () {
     dragRuler.registerSystem("gurps", GURPSSpeedProvider)
 })
   
-  // End of syetem "READY" hook.
+  // End of system "READY" hook.
 })

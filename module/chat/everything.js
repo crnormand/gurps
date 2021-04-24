@@ -122,19 +122,19 @@ export class EveryoneCChatProcessor extends ChatProcessor {
 
 
 export class RemoteChatProcessor extends ChatProcessor {
-  help() { return "/remote &lt;user list&gt; [OtF]" }    
+  help() { return "/remote [OtF] &lt;user list&gt;" }    
   isGMOnly() { return true }
 
   matches(line) {
-    this.match = line.match(/^\/(remote|rem) ([^\[]*) *\[(.*)\]/i)
+    this.match = line.match(/^\/(remote|rem) \[(.*)\](.*)/i)
     return !!this.match
   }
   
   process(line) {
     let m = this.match  
-    let action = parselink(m[3].trim())
+    let action = parselink(m[2].trim())
     if (!!action.action) {
-      let users = !!m[2] ? splitArgs(m[2]) : []
+      let users = !!m[3] ? splitArgs(m[3]) : []   // empty array means everyone
       this.priv(line)
       game.socket.emit("system.gurps",
         {

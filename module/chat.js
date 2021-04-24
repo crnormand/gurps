@@ -216,11 +216,11 @@ class ChatProcessorRegistry {
     else this.pub(txt)
   }
   
-  // Attempt to convert original chat data into a whisper (for use when play presses SHIFT key to make roll private)
-  setWhisper() {
+  // Attempt to convert original chat data into a whisper (for use when the player presses SHIFT key to make roll private)
+  setEventFlags(shift, ctrl) {
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
     this.msgs.data.whisper = [game.user.id]
-    this.msgs.event = { shiftKey: true }
+    this.msgs.event = { shiftKey: shift, ctrlKey: ctrl }
   }
 }
 
