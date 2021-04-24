@@ -170,18 +170,21 @@ export class ModifierBucket extends Application {
   }
 
   // Called by the chat command /sendmb
-  sendToPlayer(action, user) {
+  sendToPlayers(action, usernames) {
     const saved = this.modifierStack.modifierList
-    this.modifierStack.modifierList = []
-    GURPS.performAction(action)
-    this.sendBucketToPlayer(user)
+    if (!!action) {
+      this.modifierStack.modifierList = []
+      GURPS.performAction(action)
+    }
+    let users = game.users.players
+    if (usernames.length > 0) 
+      users = game.users.players.filter(u => usernames.includes(u.name))
+    this._sendBucket(users)
     this.modifierStack.reset(saved)
-    //this.refresh()
   }
 
-  // Called by the chat command /sendmb
-  sendBucketToPlayer(name) {
-    if (!name) {
+   sendBucketToPlayer(name) {
+    if (!name) { // Only occurs if the GM clicks on 'everyone'
       this._sendBucket(game.users.filter(u => u.id != game.user.id))
     } else {
       let users = game.users.players.filter(u => u.name == name) || []
@@ -192,6 +195,10 @@ export class ModifierBucket extends Application {
 
   // End GLOBALLY ACCESSED METHODS
   _sendBucket(users) {
+    if (users.length == 0) {
+      ui.notifications.warn("No users to send to.")
+      return
+    }
     let mb = GURPS.ModifierBucket.modifierStack
     users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only necessary for /showmbs.   Not used by local users.
     game.socket.emit('system.gurps', {
