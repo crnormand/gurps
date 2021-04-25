@@ -1,7 +1,7 @@
 import { generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
 
 export class SlamCalculator {
-  constructor(dependencies = {}) {
+  constructor(dependencies) {
     if (!!dependencies) {
       this._generateUniqueId = dependencies.generateUniqueId
     } else {
