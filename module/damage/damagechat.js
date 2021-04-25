@@ -73,7 +73,7 @@ export default class DamageChat {
               // get actor from id
               let token = canvas.tokens.get(transfer.userTarget) // ...
               // get payload; its either the "all damage" payload or ...
-              if (!!token) token.actor.handleDamageDrop(payload)
+              if (!!token) token.actor.handleDamageDrop(transfer.payload)
               else ui.notifications.warn('Unable to find token with ID:' + transfer.userTarget)
             })
           }
