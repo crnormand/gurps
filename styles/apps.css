@@ -1533,8 +1533,11 @@ ul#result-effects li {
 .modtooltip .glinkmod,
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
-.modtooltip .gurpslink {
-  background-color: unset !important;
+.modtooltip .gurpslink,
+.gurps-chat-message .glinkmod,
+.gurps-chat-message .glinkmodplus,
+.gurps-chat-message .glinkmodminus,
+.gurps-chat-message .gurpslink {
   padding: 0.0825em 0.165em;
   border: 0.0825em solid rgb(122, 121, 113);
   border-radius: 0.25em;
@@ -1542,23 +1545,50 @@ ul#result-effects li {
   font-size: 90%;
 }
 
+.modtooltip .glinkmod,
+.modtooltip .glinkmodplus,
+.modtooltip .glinkmodminus,
+.modtooltip .gurpslink {
+  background-color: unset !important;
+}
+
+.gurps-chat-message .glinkmod,
+.gurps-chat-message .glinkmodplus,
+.gurps-chat-message .glinkmodminus,
+.gurps-chat-message .gurpslink {
+  background-color: rgba(255, 255, 240, 0.8) !important;
+}
+
 .modtooltip .glinkmodplus:hover,
 .modtooltip .glinkmod:hover,
 .modtooltip .glinkmodminus:hover,
-.modtooltip .gurpslink:hover {
+.modtooltip .gurpslink:hover,
+.gurps-chat-message .glinkmodplus:hover,
+.gurps-chat-message .glinkmod:hover,
+.gurps-chat-message .glinkmodminus:hover,
+.gurps-chat-message .gurpslink:hover {
   cursor: pointer;
   text-shadow: none;
   font-weight: unset;
   background-color: rgba(255, 255, 240, 0.8) !important;
-  padding: 0.0825em 0.165em;
-  border-radius: 0.25em;
+}
+
+.gurps-chat-message .glinkmodplus:hover,
+.gurps-chat-message .glinkmod:hover,
+.gurps-chat-message .glinkmodminus:hover,
+.gurps-chat-message .gurpslink:hover {
+  box-shadow: 0 0 5px red;
 }
 
 .modtooltip .glinkmodplus:active,
 .modtooltip .glinkmod:active,
 .modtooltip .glinkmodminus:active,
-.modtooltip .gurpslink:active {
-  background-color: rgba(255, 255, 240, 0.6) !important;
+.modtooltip .gurpslink:active,
+.gurps-chat-message .glinkmodplus:active,
+.gurps-chat-message .glinkmod:active,
+.gurps-chat-message .glinkmodminus:active,
+.gurps-chat-message .gurpslink:active {
+  background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
 .removemod.plus,
@@ -1571,7 +1601,8 @@ ul#result-effects li {
   color: darkred;
 }
 
-.modtooltip .gurpslink {
+.modtooltip .gurpslink,
+.gurps-chat-message .gurpslink {
   color: darkblue;
 }
 
