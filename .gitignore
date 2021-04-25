@@ -6,3 +6,5 @@
 .settings/
 Thumbs.db
 scripts/foundry.js
+node_modules
+coverage
