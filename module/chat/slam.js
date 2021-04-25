@@ -118,14 +118,17 @@ class SlamCalculatorForm extends FormApplication {
     return this._attackerSpeed + this._targetSpeed
   }
 
-  _updateObject(event, html) {
-    this._isAoAStrong = $(event.target).find('#aoa').is(':checked')
+  _updateObject(event) {
     this._calculator.process(this.getData(), this._attacker, this._target)
   }
 
   /** @override */
   activateListeners(html) {
     super.activateListeners(html)
+
+    html.find('#aoa').click(ev => {
+      this._isAoAStrong = $(ev.currentTarget).is(':checked')
+    })
 
     html.find('#attacker-speed').change(ev => {
       this._attackerSpeed = parseInt(ev.currentTarget.value)
@@ -135,6 +138,14 @@ class SlamCalculatorForm extends FormApplication {
     html.find('#target-speed').change(ev => {
       this._targetSpeed = parseInt(ev.currentTarget.value)
       this.render(false)
+    })
+
+    html.find('#attacker-hp').change(ev => {
+      this._attackerHp = parseInt(ev.currentTarget.value)
+    })
+
+    html.find('#target-hp').change(ev => {
+      this._targetHp = parseInt(ev.currentTarget.value)
     })
   }
 }
