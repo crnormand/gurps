@@ -13,6 +13,8 @@ This is what we are currently working on:
 - changed parameter order of /rem [otf] optionalusernames to match /sendmb
 - Holding down CTRL (CMD on Macs) will make a roll BLIND
 - System setting "SHIFT Click does a Blind roll for players, and a Self roll for GMs"
+- Fixed broken "Apply All Damage To <Targeted Actor>" functionality
+- Fixed Slam Calculator's always printing that the Target was knocked down, even if it was the Attacker who was knocked down.
 
 ## History
 
