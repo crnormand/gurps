@@ -629,11 +629,11 @@
         &nbsp; {{this.count}} &nbsp;
         <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
       </div>
-      <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
+      <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu"
         data-key="data.equipment.carried.{{@key}}">
         {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
         {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{{gurpslink this.name}}}
+        {{{gurpslink this.name}}} {{#if (isUserCreated this)}} &nbsp; <i class="far fa-save"></i>{{/if}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
       </div>
@@ -669,11 +669,11 @@
         &nbsp; {{this.count}} &nbsp;
         <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
       </div>
-      <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
+      <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu"
         data-key="data.equipment.other.{{@key}}">
         {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
         {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{{gurpslink this.name}}}
+        {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp; <i class="far fa-save"></i>{{/if}}
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
       </div>
@@ -695,7 +695,7 @@
       <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div>
       <div class="ref header">Ref</div>
       {{#listeqt data.notes}}
-      <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if this.save}}user-created{{/if}}" data-key="data.notes.{{@key}}">
+      <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}" data-key="data.notes.{{@key}}">
         {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
         {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
         {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}</div>
