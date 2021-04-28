@@ -1845,12 +1845,11 @@ body {
 }
 
 .user-created {
-   color: blue;
    /* padding-left: 10px; */
 }
 
 .user-created::before {
-    content: "\f007"; /* this is your text. You can also use UTF-8 character codes as I do here */
+    content: "\f0c7"; /* this is your text. You can also use UTF-8 character codes as I do here */
     font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
     top:0;
     left: 0px;
