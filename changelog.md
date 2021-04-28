@@ -2,7 +2,9 @@
 
 This is what we are currently working on:
 
-0.9.1
+## History
+
+0.9.1 - 4/28/2021
 - Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x640 monitor. Tiny laptop users, rejoice!!
 - The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096) 
 - Fixed a bug so that the ADD will use "effective damage" instead of "basic damage" to calculate knockback. This fixes the problems with explosions and knockback.
@@ -15,10 +17,9 @@ This is what we are currently working on:
 - System setting "SHIFT Click does a Blind roll for players, and a Self roll for GMs"
 - Fixed broken "Apply All Damage To <Targeted Actor>" functionality
 - Fixed Slam Calculator's always printing that the Target was knocked down, even if it was the Attacker who was knocked down.
+- Added System setting to show 'saved' icon next to user created equipment and notes.
 
-## History
-
-0.9.0
+0.9.0 - 4/22/2021
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
 - Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
