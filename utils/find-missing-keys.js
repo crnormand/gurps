@@ -9,8 +9,10 @@
 //
 // typical: ./find-missing-keys.js templates module lib
 
-const fs = require('fs')
-const path = require('path')
+// const fs = require('fs')
+import fs from 'fs'
+// const path = require('path')
+import path from 'path'
 
 let rootPath = process.argv.slice(2)
 console.log(rootPath)

@@ -1,4 +1,4 @@
-import { generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
+import { generateUniqueId, isNiceDiceEnabled, i18n, diceToFormula as diceToFormula } from '../../lib/utilities.js'
 
 export class SlamCalculator {
   constructor(dependencies) {
@@ -13,16 +13,18 @@ export class SlamCalculator {
     // If you hit, you and your foe each inflict dice of
     // crushing damage on the other equal to (HP x velocity)/100.
     let rawDamageAttacker = (data.attackerHp * data.relativeSpeed) / 100
-    let attackerDice = this._getDicePlusAdds(rawDamageAttacker, data.isAoAStrong)
+    let attackerDice = this._getDicePlusAdds(rawDamageAttacker)
 
     let rawDamageTarget = (data.targetHp * data.relativeSpeed) / 100
     let targetDice = this._getDicePlusAdds(rawDamageTarget)
 
-    let attackerRoll = Roll.create(`${attackerDice.dice}d6! + ${attackerDice.adds}`)
+    let attackerRoll = Roll.create(diceToFormula(attackerDice, true))
     attackerRoll.evaluate()
-    let attackerResult = Math.max(attackerRoll.total, 1)
 
-    let targetRoll = Roll.create(`${targetDice.dice}d6! + ${targetDice.adds}`)
+    let adds = (data.isAoAStrong ? 2 : 0) + (data.shieldDB || 0)
+    let attackerResult = Math.max(attackerRoll.total + adds, 1)
+
+    let targetRoll = Roll.create(diceToFormula(targetDice, true))
     targetRoll.evaluate()
     let targetResult = Math.max(targetRoll.total, 1)
 
@@ -51,7 +53,7 @@ export class SlamCalculator {
       attackerRaw: rawDamageAttacker,
       attackerDice: attackerDice,
       attackerResult: attackerResult,
-      attackerExplain: this.explainDieRoll(attackerRoll),
+      attackerExplain: this.explainDieRoll(attackerRoll, data.isAoAStrong, data.shieldDB),
       // ---
       target: data.target,
       targetHp: data.targetHp,
@@ -64,6 +66,7 @@ export class SlamCalculator {
       isAoAStrong: data.isAoAStrong,
       relativeSpeed: data.relativeSpeed,
       result: message,
+      shieldDB: data.shieldDB,
     })
 
     // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
@@ -77,60 +80,26 @@ export class SlamCalculator {
     }
 
     ChatMessage.create(messageData)
-
-    // Chat message:
-    // Slam Attack
-    // Attacker _____ slams [target|____].
-    //   [Target|____] must roll [DX or fall down].
-    // OR
-    //   [Target|____] falls down! (set condition 'Prone')
-    // OR
-    //   [Target|____] is not affected.
-    // OR [Attacker] falls down! (set condition 'Prone')
-    // SHOW THE MATH
-    // Bjorn:
-    //   HP (17) x Speed (8) / 100 = 1.36
-    //   Dice: 1d -> Roll: 4
-    // Zombie:
-    //   HP: (11)  Speed: (8) / 100 = 0.88
-    //   Dice: 1d-1 -> Roll: 2
-    //
-    // attackerDice = Roll.create('1d6-1!')
-    console.log(
-      `Slam Attack
-  ${data.attacker} slams ${data.target}.
-  ---
-  Relative Speed: ${data.relativeSpeed}
-  ${data.attacker}:
-    HP (${data.attackerHp}) x Speed (${data.relativeSpeed}) / 100 = ${rawDamageAttacker}
-    Dice: ${attackerDice.dice}d${attackerDice.adds >= 0 ? '+' : ''}${attackerDice.adds}
-
-  ${data.target}:
-    HP (${data.targetHp}) x Speed (${data.relativeSpeed}) / 100 = ${rawDamageTarget}
-    Dice: ${targetDice.dice}d${targetDice.adds >= 0 ? '+' : ''}${targetDice.adds}
-`
-    )
   }
 
   /**
    * Calculate the dice roll from the rawDamage value.
    *
    * @param {Number} rawDamage
-   * @param {Boolean} isAoAStrong
    * @returns an Object literal with two attributes: dice (integer) and adds (integer)
    */
-  _getDicePlusAdds(rawDamage, isAoAStrong = false) {
-    let bonusForAoA = isAoAStrong ? 2 : 0
+  _getDicePlusAdds(rawDamage) {
+    // let bonusForAoA = isAoAStrong ? 2 : 0
     // If damage is less than 1d, ...
     if (rawDamage < 1) {
       // treat fractions up to 0.25 as 1d-3, ...
-      if (rawDamage <= 0.25) return { dice: 1, adds: -3 + bonusForAoA }
+      if (rawDamage <= 0.25) return { dice: 1, adds: -3 }
 
       // fractions up to 0.5 as 1d-2, ...
-      if (rawDamage <= 0.5) return { dice: 1, adds: -2 + bonusForAoA }
+      if (rawDamage <= 0.5) return { dice: 1, adds: -2 }
 
       // and any larger fraction as 1d-1.
-      return { dice: 1, adds: -1 + bonusForAoA }
+      return { dice: 1, adds: -1 }
     }
 
     // Otherwise, round fractions of 0.5 or more up to a full die.
@@ -139,10 +108,10 @@ export class SlamCalculator {
 
     // You can use All-Out Attack (Strong) to increase your damage!
     // you get +2 to damage – or +1 damage per die, if that would be better.
-    let adds = 0
-    if (isAoAStrong) adds = dice > 1 ? dice : 2
+    // let adds = 0
+    // if (isAoAStrong) adds = dice > 1 ? dice : 2
 
-    return { dice: dice, adds: adds }
+    return { dice: dice, adds: 0 }
   }
 
   /**
@@ -177,11 +146,17 @@ export class SlamCalculator {
     }
   }
 
-  explainDieRoll(roll) {
+  explainDieRoll(roll, isAoAStrong = false, shieldDB = 0) {
     let diceArray = roll.dice
     let resultsArray = diceArray.flatMap(it => it.results)
     let results = resultsArray.map(it => it.result)
 
-    return roll.terms.length > 1 ? `Rolled (${results}) ${roll.terms[1]} ${roll.terms[2]}` : `Rolled ${results}`
+    let explanation =
+      roll.terms.length > 1 ? `${i18n('GURPS.rolled')} (${results})` : `${i18n('GURPS.rolled')} ${results}`
+    if (roll.terms[2] !== '0') explanation += ` ${roll.terms[1]} ${roll.terms[2]}`
+
+    if (!!isAoAStrong) explanation += ` + 2 (${i18n('GURPS.slamAOAStrong')})`
+    if (!!shieldDB) explanation += ` + ${shieldDB} (${i18n('GURPS.slamShieldDB')})`
+    return explanation
   }
 }

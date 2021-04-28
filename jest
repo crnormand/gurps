@@ -1,3 +1,4 @@
 #!/usr/bin/env zsh
 
+# node node_modules/.bin/jest $1
 node --experimental-vm-modules node_modules/.bin/jest $1

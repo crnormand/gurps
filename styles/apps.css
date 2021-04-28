@@ -209,6 +209,44 @@
   font-size: smaller;
 }
 
+.gurps-group + .gurps-group {
+  margin-top: 5px;
+}
+
+.modtooltip .gurps-group + .gurps-group {
+  margin: unset;
+}
+
+.gurps-group.inputs label {
+  font-size: 80%;
+  justify-self: stretch;
+  text-align: end;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding-right: 0.15em;
+}
+
+.gurps-group.inputs input {
+  text-align: center;
+  margin: 0.15em 0;
+}
+
+.gurps-group .label-value-row {
+  gap: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.gurps-group .label-value-row > *:nth-child(4n + 3),
+.gurps-group .label-value-row > *:nth-child(4n + 4) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.button-bar {
+  margin-top: 0.35em;
+}
+
 .with-button {
   position: relative;
 }
@@ -1154,44 +1192,6 @@ ul#result-effects li {
   max-height: 35em;
 }
 
-.single-column-form {
-  display: flex;
-  flex-flow: column nowrap;
-  margin: 0.25rem;
-}
-
-.single-column-form .inputs {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 5px;
-  align-self: center;
-  margin: 0 0.5rem;
-}
-
-.single-column-form .inputs label {
-  font-size: 80%;
-  justify-self: end;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-}
-
-.single-column-form .inputs input {
-  text-align: center;
-}
-
-.single-column-form .inputs input[type='checkbox'] {
-  margin: 0;
-}
-
-.single-column-form .button-bar {
-  margin-top: 1rem;
-}
-
-.single-column-form .vertical-gap {
-  margin-top: 0.5rem;
-}
-
 .subtle {
   color: grey;
   font-size: 80%;
@@ -1448,6 +1448,7 @@ ul#result-effects li {
 
 .modttt .modtooltip {
   padding: 0.35em;
+  box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .modtooltip .plus,

@@ -1,26 +1,36 @@
-<form class='{{cssClass}}' slam-calculator autocomplete='off'>
+<form class='gurps-app' slam-calculator autocomplete='off'>
   <h2>
     {{attacker}} <i>{{localize "GURPS.slams"}}
       <i class='subtle fas fa-align-right'></i><i class='fas fa-running'></i></i>
     {{target}}
   </h2>
-  <div class='inputs vertical-gap'>
-    <label>{{attacker}} {{localize "GURPS.HP"}}:</label>
-    <input id='attacker-hp' type='text' value='{{attackerHp}}' data-dtype='Number' />
-    <label>{{attacker}} {{localize "GURPS.slamVelocity"}}:</label>
-    <input id='attacker-speed' type='text' value='{{attackerSpeed}}' data-dtype='Number' />
-    <label for='aoa'>{{localize "GURPS.slamAOAStrong"}}:</label>
-    <input id='aoa' type='checkbox'>
-    <div class='vertical-gap'></div>
-    <div></div>
-    <label>{{target}} {{localize "GURPS.HP"}}:</label>
-    <input id='target-hp' type='text' value='{{targetHp}}' data-dtype='Number' />
-    <label>{{target}} {{localize "GURPS.slamVelocity"}}:</label>
-    <input id='target-speed' type='text' value='{{targetSpeed}}' data-dtype='Number' />
-    <div class='vertical-gap'></div>
-    <div></div>
-    <label>{{localize "GURPS.slamRelativeVelocity"}}:</label>
-    <input id='relative-speed' type='text' value='{{relativeSpeed}}' readonly disabled>
+  <div class='gurps-group inputs'>
+    <h4>{{attacker}}</h4>
+    <div class='label-value-row' style='grid-template-columns: 1fr 1fr;'>
+      <label>{{localize "GURPS.HP"}}:</label>
+      <div><input id='attacker-hp' type='text' value='{{attackerHp}}' data-dtype='Number' /></div>
+      <label>{{localize "GURPS.slamVelocity"}}:</label>
+      <div><input id='attacker-speed' type='text' value='{{attackerSpeed}}' data-dtype='Number' /></div>
+      <label for='aoa'>{{localize "GURPS.slamAOAStrong"}}:</label>
+      <div><input id='aoa' type='checkbox'></div>
+      <label>{{i18n "GURPS.slamShieldDB"}}:</label>
+      <div><input id='db' type='text' value='{{shieldDB}}' data-dtype='Number' /></div>
+    </div>
+  </div>
+  <div class='gurps-group inputs'>
+    <h4>{{target}}</h4>
+    <div class='label-value-row' style='grid-template-columns: 1fr 1fr;'>
+      <label>{{localize "GURPS.HP"}}:</label>
+      <input id='target-hp' type='text' value='{{targetHp}}' data-dtype='Number' />
+      <label>{{localize "GURPS.slamVelocity"}}:</label>
+      <div><input id='target-speed' type='text' value='{{targetSpeed}}' data-dtype='Number' /></div>
+    </div>
+  </div>
+  <div class='gurps-group inputs' style='border: none;'>
+    <div class='label-value-row' style='grid-template-columns: 1fr 1fr;'>
+      <label><strong>{{localize "GURPS.slamRelativeVelocity"}}:</strong></label>
+      <input id='relative-speed' type='text' value='{{relativeSpeed}}' readonly disabled>
+    </div>
   </div>
   <div class='button-bar'>
     <button><i class='fas fa-check'></i> {{localize "GURPS.resolve"}}</button>

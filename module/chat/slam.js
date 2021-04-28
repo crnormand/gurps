@@ -85,13 +85,13 @@ class SlamCalculatorForm extends FormApplication {
     this._targetSpeed = 0
 
     this._isAoAStrong = false
+    this._shieldDB = 0
   }
 
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/slam-calculator.html',
-      classes: ['single-column-form'],
       popOut: true,
       minimizable: false,
       jQuery: true,
@@ -102,7 +102,6 @@ class SlamCalculatorForm extends FormApplication {
 
   getData(options) {
     const data = super.getData(options)
-    data.cssClass = 'single-column-form'
     data.attackerHp = this._attackerHp
     data.attackerSpeed = this._attackerSpeed
     data.targetHp = this._targetHp
@@ -110,6 +109,7 @@ class SlamCalculatorForm extends FormApplication {
     data.relativeSpeed = this.relativeSpeed
     data.attacker = this._name
     data.isAoAStrong = this._isAoAStrong
+    data.shieldDB = this._shieldDB
     data.target = !!this._target ? this._target.data.name : `(${game.i18n.localize('GURPS.target')})`
     return data
   }
@@ -119,7 +119,7 @@ class SlamCalculatorForm extends FormApplication {
   }
 
   _updateObject(event) {
-    this._calculator.process(this.getData(), this._attacker, this._target)
+    this._calculator.process(this.getData())
   }
 
   /** @override */
@@ -128,6 +128,10 @@ class SlamCalculatorForm extends FormApplication {
 
     html.find('#aoa').click(ev => {
       this._isAoAStrong = $(ev.currentTarget).is(':checked')
+    })
+
+    html.find('#db').change(ev => {
+      this._shieldDB = parseInt(ev.currentTarget.value)
     })
 
     html.find('#attacker-speed').change(ev => {
