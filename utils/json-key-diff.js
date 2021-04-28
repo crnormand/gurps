@@ -1,5 +1,6 @@
 #! /usr/local/bin/node
-const fs = require('fs')
+//const fs = require('fs')
+import fs from 'fs'
 
 let args = process.argv.slice(2)
 

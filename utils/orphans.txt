@@ -1,3 +1,3 @@
-[ 'module', 'lib', 'templates' ]
+[ 'templates', 'module', 'lib' ]
 ===== ORPHANS =====
 []

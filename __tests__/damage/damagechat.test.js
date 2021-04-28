@@ -197,9 +197,9 @@ describe('DamageChat', () => {
       expect(chat._getDiceData('1d', 'dmg', [{ modint: 2 }, { modint: 3 }, { modint: 4 }]).modifier).toBe(9)
     })
 
-    test.skip('diceText with a minus (#8722) instead of a dash (-)', () => {
-      expect(chat._getDiceData('2d−2', null, []).formula).toBe('2d6-2')
-    })
+    // test.skip('diceText with a minus (#8722) instead of a dash (-)', () => {
+    //   expect(chat._getDiceData('2d−2', null, []).formula).toBe('2d6-2')
+    // })
   })
 
   describe('_createDraggableSection', () => {
