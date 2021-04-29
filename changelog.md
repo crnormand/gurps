@@ -4,6 +4,9 @@ This is what we are currently working on:
 
 ## History
 
+0.9.2 - 4/29/201
+- CTRL-roll was broken for certain keyboard events, causing chat commands to fail (ex: /ra)
+
 0.9.1 - 4/28/2021
 - Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x640 monitor. Tiny laptop users, rejoice!!
 - The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096) 
