@@ -1,49 +1,9 @@
 <form class='{{cssClass}} overflowy' autocomplete='off'>
   <div id='responsive' class="gurpsactorsheet">
     <div id='combat-sheet'>
-
       <div id='combat-hitfat'>
-        <div id='combat-hit' class='tracked-resource' data-gurps-resource='HP'>
-          <div class='header'>Hit Points</div>
-          <div class='spinner'>
-            <button class='decrement' data-operation='resource-dec'><i class="fas fa-minus"></i></button>
-            <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
-              placeholder="{{data.HP.max}}" data-dtype="Number" />
-            <button class='increment' data-operation='resource-inc'><i class="fas fa-plus"></i></button>
-            <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-          </div>
-          <div class='condition-block'>
-            <div class='basic-value fieldblock'>
-              <div class='field'>{{data.HP.max}}</div>
-              <div class='label'>Basic</div>
-            </div>
-            <div class='condition {{hpCondition data.HP "style"}}'>{{hpCondition data.HP "label"}}
-              &nbsp; <i class='fas fa-heart-broken {{optionSetStyle data.additionalresources.isReeling}}'
-                data-onethird='isReeling'></i>
-            </div>
-          </div>
-        </div> <!-- end of combat-hit -->
-
-        <div id='combat-fat' class='tracked-resource' data-gurps-resource='FP'>
-          <div class='header'>Fatigue</div>
-          <div class='spinner'>
-            <button class='decrement' data-operation='resource-dec'><i class="fas fa-minus"></i></button>
-            <input class="gcs-attr-input" name="data.FP.value" type="text" value="{{data.FP.value}}"
-              placeholder="{{data.FP.max}}" data-dtype="Number" />
-            <button class='increment' data-operation='resource-inc'><i class="fas fa-plus"></i></button>
-            <button class='reset' data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-          </div>
-          <div class='condition-block'>
-            <div class='basic-value fieldblock'>
-              <div class='field'>{{data.FP.max}}</div>
-              <div class='label'>Basic</div>
-            </div>
-            <div class='condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}
-              &nbsp; <i class='fas fa-heartbeat {{optionSetStyle data.additionalresources.isTired}}'
-                data-onethird='isTired'></i>
-            </div>
-          </div>
-        </div> <!-- combat-fat -->
+        {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' compact=true}}
+        {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' compact=true}}
       </div>
 
       <div id='combat-trackers'>

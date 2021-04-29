@@ -624,7 +624,8 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'chat') {
     let chat = action.orig
-    if (!!event?.shiftKey || game.keyboard.isCtrl(event)) chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
+    if (!!event?.shiftKey || game.keyboard.isCtrl(event))
+      chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
     ui.chat.processMessage(chat)
     return true
   }
@@ -858,19 +859,21 @@ function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) 
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
   let best = 0
-  if (!isSpellOnly) recurselist(actor.data.skills, s => {
-    if (s.name.match(sname) && s.level > best) {
-      t = s
-      best = parseInt(s.level)
-    }
-  })
-  if (!t)
-    if (!isSkillOnly) recurselist(actor.data.spells, s => {
+  if (!isSpellOnly)
+    recurselist(actor.data.skills, s => {
       if (s.name.match(sname) && s.level > best) {
         t = s
         best = parseInt(s.level)
       }
     })
+  if (!t)
+    if (!isSkillOnly)
+      recurselist(actor.data.spells, s => {
+        if (s.name.match(sname) && s.level > best) {
+          t = s
+          best = parseInt(s.level)
+        }
+      })
   return t
 }
 GURPS.findSkillSpell = findSkillSpell
@@ -1751,36 +1754,35 @@ Hooks.once('ready', async function () {
     __dirname + '/apply-damage/effect-shock.html',
   ])
   GURPS.setInitiativeFormula()
-  
-  
+
   //Add support for the Drag Ruler module: https://foundryvtt.com/packages/drag-ruler
-  Hooks.once("dragRuler.ready", (SpeedProvider) => {
+  Hooks.once('dragRuler.ready', SpeedProvider => {
     class GURPSSpeedProvider extends SpeedProvider {
-        get colors() {
-            return [
-                {id: "walk", default: 0x00FF00, name: "GURPS.dragrulerWalk"},
-                {id: "sprint", default: 0xFFFF00, name: "GURPS.dragrulerSprint"},
-                {id: "fly", default: 0xFF8000, name: "GURPS.dragrulerFly"}
-            ]
-        }
+      get colors() {
+        return [
+          { id: 'walk', default: 0x00ff00, name: 'GURPS.dragrulerWalk' },
+          { id: 'sprint', default: 0xffff00, name: 'GURPS.dragrulerSprint' },
+          { id: 'fly', default: 0xff8000, name: 'GURPS.dragrulerFly' },
+        ]
+      }
 
-        getRanges(token) {
-          const baseMove = token.actor.data.data.currentmove
+      getRanges(token) {
+        const baseMove = token.actor.data.data.currentmove
 
-          // A character can always walk it's base speed and sprint at 1.2X
-          const ranges = [
-            {range: baseMove, color: "walk"},
-            {range: Math.floor(baseMove * 1.2), color: "sprint"}
-          ]
-    
-          // Character is showing flight move
-          if (!!token.actor.data.data.additionalresources.showflightmove)
-            ranges.push({range: token.actor.data.data.currentflight, color: "fly"})
-          return ranges
-        }
+        // A character can always walk it's base speed and sprint at 1.2X
+        const ranges = [
+          { range: baseMove, color: 'walk' },
+          { range: Math.floor(baseMove * 1.2), color: 'sprint' },
+        ]
+
+        // Character is showing flight move
+        if (!!token.actor.data.data.additionalresources.showflightmove)
+          ranges.push({ range: token.actor.data.data.currentflight, color: 'fly' })
+        return ranges
+      }
     }
-    dragRuler.registerSystem("gurps", GURPSSpeedProvider)
-})
-  
+    dragRuler.registerSystem('gurps', GURPSSpeedProvider)
+  })
+
   // End of system "READY" hook.
 })

@@ -1412,9 +1412,6 @@ body {
   grid-template-columns: 1fr;
   grid-template-rows: auto auto;
   grid-gap: 0.05in;
-  grid-template-areas:
-    'combat-hit'
-    'combat-fat';
 }
 
 #combat-trackers {
@@ -1434,7 +1431,6 @@ body {
 
 #combat-identity,
 #combat-hit,
-#combat-fat,
 #combat-attrs,
 #combat-location {
   border: 1px solid black;
@@ -1462,15 +1458,6 @@ body {
   grid-area: combat-identity;
 }
 
-#combat-hit {
-  grid-area: combat-hit;
-}
-
-#combat-fat {
-  grid-area: combat-fat;
-}
-
-#combat-fat .field,
 #combat-hit .field,
 .tracked-resource .field {
   text-align: end;
@@ -1487,27 +1474,6 @@ body {
 #editorsheet .tracked-resource .tooltip .field {
   border: none !important;
 }
-
-/* .gurps #combat-sheet .condition-block {
-  font-size: 80%;
-  grid-template-columns: 0fr 1fr 0fr;
-  grid-template-areas:
-    "basic-value basic-label reset"
-    "condition   condition   condition";
-} */
-
-/* .gurps .condition-block .basic-value {
-  grid-area: basic-value;
-}
-
-.gurps .condition-block .basic-label {
-  grid-area: basic-label;
-  text-align: left;
-  padding-left: .2em;
-  padding-right: .2em;
-  white-space: nowrap;
-  align-self: center;
-} */
 
 .conditional-injury .condition-block .basic-value .label {
   text-align: right;
@@ -1845,13 +1811,13 @@ body {
 }
 
 .user-created {
-   color: blue;
-   /* padding-left: 10px; */
+  color: blue;
+  /* padding-left: 10px; */
 }
 
 .user-created::before {
-    content: "\f007"; /* this is your text. You can also use UTF-8 character codes as I do here */
-    font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
-    top:0;
-    left: 0px;
+  content: '\f007'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  top: 0;
+  left: 0px;
 }

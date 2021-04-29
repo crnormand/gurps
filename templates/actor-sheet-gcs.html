@@ -282,99 +282,10 @@
             </div>
           </div>
           {{else}}
-          <div id='combat-hit' class='tracked-resource' data-gurps-resource='HP'>
-            <div class='header'>{{localize "GURPS.attributesHPNAME"}}</div>
-            <div class='spinner'>
-              <button data-operation='resource-dec'><i class="fas fa-minus"></i></button>
-              <details>
-                <summary>
-                  <input class="gcs-attr-input" name="data.HP.value" type="text" value="{{data.HP.value}}"
-                    placeholder="{{data.HP.max}}" data-dtype="Number" />
-                </summary>
-                <div class='popup button-ribbon'>
-                  <button data-operation='resource-update' data-value='-10'>-10</button>
-                  <button data-operation='resource-update' data-value='-5'>-5</button>
-                  <button data-operation='resource-update' data-value='-1'>-1</button>
-                  <button data-operation='resource-update' data-value='0'>0</button>
-                  <button class='restore' data-operation='resource-update' data-value=''></button>
-                  <button data-operation='resource-update' data-value='+1'>+1</button>
-                  <button data-operation='resource-update' data-value='+5'>+5</button>
-                  <button data-operation='resource-update' data-value='+10'>+10</button>
-                </div>
-              </details>
-              <button data-operation='resource-inc'><i class="fas fa-plus"></i></button>
-              <button data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-            </div>
-            <div class='condition-block'>
-              <div class='tooltip-wrapper'>
-                <div class='tooltip condition {{fpCondition data.HP "style"}}'>{{hpCondition data.HP 'label'}}
-                  &nbsp; <i class='fas fa-heart-broken {{optionSetStyle data.additionalresources.isReeling}}'
-                    data-onethird='isReeling'></i>
-                  <span class="tooltiptext">
-                    <div class="fieldblock">
-                      {{#hpBreakpoints data.HP}}
-                      <div class="field condensed noedit">{{breakpoint}}</div>
-                      <div class="label {{style}}">{{label}}</div>
-                      {{/hpBreakpoints}}
-                    </div>
-                  </span>
-                </div>
-              </div>
-              <div class='basic-value fieldblock3'>
-                <div class="points">[{{data.HP.points}}]</div>
-                <div class='field'>{{data.HP.max}}</div>
-                <div class='label'>{{localize "GURPS.basic"}}</div>
-              </div>
-            </div>
-          </div>
+          {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME'}}
+          {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME'}}
           {{/if}}
           <!-- end of combat-hit -->
-
-          <div id='combat-fat' class='tracked-resource' data-gurps-resource='FP'>
-            <div class='header'>{{localize "GURPS.attributesFPNAME"}}</div>
-            <div class='spinner'>
-              <button data-operation='resource-dec'><i class="fas fa-minus"></i></button>
-              <details>
-                <summary>
-                  <input class="gcs-attr-input" name="data.FP.value" type="text" value="{{data.FP.value}}"
-                    placeholder="{{data.FP.max}}" data-dtype="Number" />
-                </summary>
-                <div class='popup button-ribbon'>
-                  <button data-operation='resource-update' data-value='-10'>-10</button>
-                  <button data-operation='resource-update' data-value='-5'>-5</button>
-                  <button data-operation='resource-update' data-value='-1'>-1</button>
-                  <button data-operation='resource-update' data-value='0'>0</button>
-                  <button class='restore' data-operation='resource-update' data-value=''></button>
-                  <button data-operation='resource-update' data-value='+1'>+1</button>
-                  <button data-operation='resource-update' data-value='+5'>+5</button>
-                  <button data-operation='resource-update' data-value='+10'>+10</button>
-                </div>
-              </details>
-              <button data-operation='resource-inc'><i class="fas fa-plus"></i></button>
-              <button data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-            </div>
-            <div class='condition-block'>
-              <div class='tooltip-wrapper'>
-                <div class='tooltip condition {{fpCondition data.FP "style"}}'>{{fpCondition data.FP 'label'}}
-                  &nbsp; <i class='fas fa-heartbeat {{optionSetStyle data.additionalresources.isTired}}'
-                    data-onethird='isTired'></i>
-                  <span class="tooltiptext">
-                    <div class="fieldblock">
-                      {{#fpBreakpoints data.FP}}
-                      <div class="field condensed noedit">{{breakpoint}}</div>
-                      <div class="label {{style}}">{{label}}</div>
-                      {{/fpBreakpoints}}
-                    </div>
-                  </span>
-                </div>
-              </div>
-              <div class='basic-value fieldblock3'>
-                <div class="points">[{{data.FP.points}}]</div>
-                <div class='field'>{{data.FP.max}}</div>
-                <div class='label'>{{localize "GURPS.basic"}}</div>
-              </div>
-            </div>
-          </div> <!-- combat-fat -->
         </div>
 
         <div></div>
@@ -629,7 +540,8 @@
         &nbsp; {{this.count}} &nbsp;
         <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
       </div>
-      <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
+      <div
+        class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
         data-key="data.equipment.carried.{{@key}}">
         {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
         {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -669,7 +581,8 @@
         &nbsp; {{this.count}} &nbsp;
         <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
       </div>
-      <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
+      <div
+        class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
         data-key="data.equipment.other.{{@key}}">
         {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
         {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -695,7 +608,8 @@
       <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div>
       <div class="ref header">Ref</div>
       {{#listeqt data.notes}}
-      <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if this.save}}user-created{{/if}}" data-key="data.notes.{{@key}}">
+      <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if this.save}}user-created{{/if}}"
+        data-key="data.notes.{{@key}}">
         {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
         {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
         {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}</div>

@@ -564,7 +564,7 @@ ul#result-effects li {
   /* Position the tooltip text */
   position: absolute;
   z-index: 1;
-  bottom: 125%;
+  top: 1.4em;
   left: 50%;
   margin-left: -60px;
 
@@ -577,19 +577,19 @@ ul#result-effects li {
 .tooltip .tooltiptext::after {
   content: '';
   position: absolute;
-  top: 100%;
+  top: -10px;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: transparent transparent #555 transparent;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
   visibility: visible;
   transition-property: visibility;
-  transition-delay: 0.5s;
+  transition-delay: 0.67s;
   opacity: 1;
 }
 
@@ -650,10 +650,6 @@ ul#result-effects li {
   grid-gap: 0.05in;
 }
 
-#trackers > *:first-child {
-  grid-template: 'combat-hit combat-fat';
-}
-
 #trackers > *:last-child {
   grid-template-rows: 0fr 1fr 1fr;
   grid-gap: 0;
@@ -672,23 +668,27 @@ ul#result-effects li {
   border-bottom: 1px solid white;
 }
 
-.tracked-resource:nth-child(even) .header {
-  border-right: 1px solid white;
-}
-
-.tracked-resource:nth-child(odd) .header {
-  border-left: none;
-}
-
 .resource-editor,
 .tracked-resource {
   display: flex;
   flex-flow: column nowrap;
-  border-left: 1px solid black;
-  border-bottom: 1px solid black;
+  border: 1px solid black;
 }
 
-.tracked-resource:nth-child(odd) {
+#resources .tracked-resource:nth-child(even) .header {
+  border-right: 1px solid white;
+}
+
+#resources .tracked-resource:nth-child(odd) .header {
+  border-left: none;
+}
+
+#resources .tracked-resource {
+  border-right: none;
+  border-top: none;
+}
+
+#resources .tracked-resource:nth-of-type(odd) {
   border-right: 1px solid black;
 }
 
