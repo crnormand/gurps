@@ -116,8 +116,13 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     whoCanSeeDice = [game.user._id];
     messageData.whisper = [game.user._id];
   }
+  
+  let isCtrl = false
+  try { 
+    isCtrl = !!optionalArgs.event && (game.keyboard.isCtrl(optionalArgs.event)) 
+  } catch {}
 
-  if (!!optionalArgs.blind || (!!optionalArgs.event && (game.keyboard.isCtrl(optionalArgs.event)) || (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey) )) {
+  if (!!optionalArgs.blind || isCtrl || (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)) {
     messageData.whisper = ChatMessage.getWhisperRecipients("GM");
     messageData.blind = true;
   }
