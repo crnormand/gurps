@@ -58,21 +58,21 @@
         </div>
         <div class="fieldblock">
           {{#if data.traits.eyes}}
-          <div class="label">{{localize "GURPS.descriptionHair"}}:</div>
-          <div class="field">{{data.traits.hair}}</div>
-          <div class="label">{{localize "GURPS.descriptionEyes"}}:</div>
-          <div class="field">{{data.traits.eyes}}</div>
-          <div class="label">{{localize "GURPS.descriptionSkin"}}:</div>
-          <div class="field">{{data.traits.skin}}</div>
-          <div class="label">{{localize "GURPS.descriptionHand"}}:</div>
-          <div class="field">{{data.traits.hand}}</div>
+            <div class="label">{{localize "GURPS.descriptionHair"}}:</div>
+            <div class="field">{{data.traits.hair}}</div>
+            <div class="label">{{localize "GURPS.descriptionEyes"}}:</div>
+            <div class="field">{{data.traits.eyes}}</div>
+            <div class="label">{{localize "GURPS.descriptionSkin"}}:</div>
+            <div class="field">{{data.traits.skin}}</div>
+            <div class="label">{{localize "GURPS.descriptionHand"}}:</div>
+            <div class="field">{{data.traits.hand}}</div>
           {{else}}
-          <div class="label textarea">{{localize "GURPS.descriptionAppearance"}}:</div>
-          <div class="label"></div>
+            <div class="label textarea">{{localize "GURPS.descriptionAppearance"}}:</div>
+            <div class="label"></div>
 
-          <div class="field" style="border: none; grid-column: 1 / span 2;">
-            <textarea readonly rows="4">{{data.traits.appearance}}</textarea>
-          </div>
+            <div class="field" style="border: none; grid-column: 1 / span 2;">
+              <textarea readonly rows="4">{{data.traits.appearance}}</textarea>
+            </div>
           {{/if}}
         </div>
       </div>
@@ -104,28 +104,34 @@
         <div class="fieldblock3">
           <div class="points">[{{data.attributes.ST.points}}]</div>
           <div class="field rollable" data-path="attributes.ST.value" data-otf='ST'>
-            {{data.attributes.ST.currentvalue}}</div>
+            {{data.attributes.ST.currentvalue}}
+          </div>
           <div class="label">{{localize "GURPS.attributesSTNAME"}} ({{localize "GURPS.attributesST"}})</div>
           <div class="points">[{{data.attributes.DX.points}}]</div>
           <div class="field rollable" data-path="attributes.DX.value" data-otf='DX'>
-            {{data.attributes.DX.value}}</div>
+            {{data.attributes.DX.value}}
+          </div>
           <div class="label">{{localize "GURPS.attributesDXNAME"}} ({{localize "GURPS.attributesDX"}})</div>
           <div class="points">[{{data.attributes.IQ.points}}]</div>
           <div class="field rollable" data-path="attributes.IQ.value" data-otf='IQ'>
-            {{data.attributes.IQ.value}}</div>
+            {{data.attributes.IQ.value}}
+          </div>
           <div class="label">{{localize "GURPS.attributesIQNAME"}} ({{localize "GURPS.attributesIQ"}})</div>
           <div class="points">[{{data.attributes.HT.points}}]</div>
           <div class="field rollable" data-path="attributes.HT.value" data-otf='HT'>
-            {{data.attributes.HT.value}}</div>
+            {{data.attributes.HT.value}}
+          </div>
           <div class="label">{{localize "GURPS.attributesHTNAME"}} ({{localize "GURPS.attributesHT"}})</div>
           <hr>
           <div class="points">[{{data.attributes.WILL.points}}]</div>
           <div class="field rollable" data-path="attributes.WILL.value" data-otf='WILL'>
-            {{data.attributes.WILL.value}}</div>
+            {{data.attributes.WILL.value}}
+          </div>
           <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
           <div class="points"></div>
           <div class="field noedit rollable" data-path="frightcheck" data-otf='Fright Check'>
-            {{data.frightcheck}}</div>
+            {{data.frightcheck}}
+          </div>
           <div class="label">{{localize "GURPS.frightcheck"}}</div>
           <hr>
           <div class="points">[{{data.basicspeed.points}}]</div>
@@ -137,7 +143,8 @@
           <hr>
           <div class="points">[{{data.attributes.PER.points}}]</div>
           <div class="field rollable" data-path="attributes.PER.value" data-otf='PER'>
-            {{data.attributes.PER.value}}</div>
+            {{data.attributes.PER.value}}
+          </div>
           <div class="label">{{localize "GURPS.attributesPERNAME"}} ({{localize "GURPS.attributesPER"}})</div>
           <div class="points"></div>
           <div class="field noedit rollable" data-path="vision" data-otf='Vision'>{{data.vision}}</div>
@@ -170,25 +177,25 @@
         <div class="dodgeh header">{{localize "GURPS.dodge"}}</div>
 
         {{#each data.encumbrance as | this key |}}
-        {{#if this.current}}
-        <div class="encmarker current"></div>
-        <div class="enc current {{this.key}}" data-key="{{key}}"></div>
-        <div class="load current">{{this.weight}}</div>
-        <div class="move current">{{this.currentmovedisplay}}</div>
-        <div class="dodge current rollable" data-otf='Dodge' data-path="dodge">{{this.currentdodge}}</div>
-        {{else}}
-        <div class="encmarker "></div>
-        <div class="enc {{this.key}}" data-key="{{key}}"></div>
-        <div class="load ">{{this.weight}}</div>
-        <div class="move ">{{this.currentmovedisplay}}</div>
-        <div class="dodge" data-path="dodge">{{this.currentdodge}}</div>
-        {{/if}}
+          {{#if this.current}}
+            <div class="encmarker current"></div>
+            <div class="enc current {{this.key}}" data-key="{{key}}"></div>
+            <div class="load current">{{this.weight}}</div>
+            <div class="move current">{{this.currentmovedisplay}}</div>
+            <div class="dodge current rollable" data-otf='Dodge' data-path="dodge">{{this.currentdodge}}</div>
+          {{else}}
+            <div class="encmarker "></div>
+            <div class="enc {{this.key}}" data-key="{{key}}"></div>
+            <div class="load ">{{this.weight}}</div>
+            <div class="move ">{{this.currentmovedisplay}}</div>
+            <div class="dodge" data-path="dodge">{{this.currentdodge}}</div>
+          {{/if}}
         {{/each}}
 
       </div>
       <div id='qnotes'>
         {{#if data.additionalresources.qnotes}}{{{gurpslink data.additionalresources.qnotes}}}{{else}} <span
-          style='color:lightgrey'>double click to edit Quick Note<span>{{/if}}
+            style='color:lightgrey'>double click to edit Quick Note<span>{{/if}}
       </div>
       <div id="lifting">
         <div class="header">{{localize "GURPS.liftingAndMovingThings"}}</div>
@@ -201,8 +208,8 @@
         <div class="lift">{{data.liftingmoving.shove}}</div>
         <div class="liftdesc">{{localize "GURPS.shoveAndKnockOver"}}</div>
         {{#if data.liftingmoving.runningshove}}
-        <div class="lift">{{data.liftingmoving.runningshove}}</div>
-        <div class="liftdesc">{{localize "GURPS.runningShoveAndKnockOver"}}</div>
+          <div class="lift">{{data.liftingmoving.runningshove}}</div>
+          <div class="liftdesc">{{localize "GURPS.runningShoveAndKnockOver"}}</div>
         {{/if}}
         <div class="lift">{{data.liftingmoving.carryonback}}</div>
         <div class="liftdesc">{{localize "GURPS.carryOnBack"}}</div>
@@ -217,15 +224,16 @@
         <div class="dr header">{{localize "GURPS.hitLocationDR"}}</div>
 
         {{#each data.hitlocations}}
-        <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
-        <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
-          {{i18n (concat "GURPS.hitLocation" this.where) this.where}}
-        </div>
-        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}"
-          data-otf='{{this.penalty}} to hit {{this.where}}'>
-          {{hitlocationpenalty this.where this.penalty ../data}}</div>
-        <div class="dr">{{this.dr}}
-        </div>
+          <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
+          <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
+            {{i18n (concat "GURPS.hitLocation" this.where) this.where}}
+          </div>
+          <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}"
+            data-otf='{{this.penalty}} to hit {{this.where}}'>
+            {{hitlocationpenalty this.where this.penalty ../data}}
+          </div>
+          <div class="dr">{{this.dr}}
+          </div>
         {{/each}}
 
 
@@ -233,210 +241,156 @@
       <div id="trackers">
         <div>
           {{#if useCI}}
-          <div id='combat-hit' class='conditional-injury'>
-            <div class='header major-heading'>Injury</div>
-            <div class="tracked-resource no-border">
-              <div class="header minor-heading">Severity</div>
-              <div class='spinner'>
-                <button data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
+            <div id='combat-hit' class='conditional-injury'>
+              <div class='header major-heading'>Injury</div>
+              <div class="tracked-resource no-border">
+                <div class="header minor-heading">Severity</div>
+                <div class='spinner'>
+                  <button data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
 
-                <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
-                  value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
-                  data-operation="ci-severity-set" />
+                  <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
+                    value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
+                    data-operation="ci-severity-set" />
 
-                <button data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
-                <button data-operation='ci-reset'><i class="fas fa-undo"></i></button>
-              </div>
-              <div class="header minor-heading">Time to Heal</div>
-              <div class='spinner'>
-                <button data-operation='ci-days-dec'><i class="fas fa-minus"></i></button>
-                <input class="gcs-attr-input" name="injury.daystoheal" type="text"
-                  value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
-                  data-operation="ci-days-set" />
-                <button class='no-gap' data-operation='ci-days-inc'><i class="fas fa-plus"></i></button>
-                <div style='font-size: 85%;'>&nbsp;Days</div>
-              </div>
-              <div class='condition-block'>
-                <div class='tooltip-wrapper'>
-                  <div
-                    class='tooltip condition {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "style"}}'>
-                    {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "label"}}
-                    <span class="tooltiptext">
-                      <div class="fieldblock">
-                        {{#ciSeveritiesTooltip}}
-                        <div class="field condensed noedit">{{severity}}</div>
-                        <div class="label">{{label}}</div>
-                        {{/ciSeveritiesTooltip}}
-                      </div>
-                    </span>
-                  </div>
+                  <button data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
+                  <button data-operation='ci-reset'><i class="fas fa-undo"></i></button>
                 </div>
-                <div class='basic-value fieldblock3'>
-                  <div class="points">[{{#if
-                    data.conditionalinjury.RT.points}}{{data.conditionalinjury.RT.points}}{{else}}{{data.HP.points}}{{/if}}]
+                <div class="header minor-heading">Time to Heal</div>
+                <div class='spinner'>
+                  <button data-operation='ci-days-dec'><i class="fas fa-minus"></i></button>
+                  <input class="gcs-attr-input" name="injury.daystoheal" type="text"
+                    value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
+                    data-operation="ci-days-set" />
+                  <button class='no-gap' data-operation='ci-days-inc'><i class="fas fa-plus"></i></button>
+                  <div style='font-size: 85%;'>&nbsp;Days</div>
+                </div>
+                <div class='condition-block'>
+                  <div class='tooltip-wrapper'>
+                    <div
+                      class='tooltip condition {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "style"}}'>
+                      {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "label"}}
+                      <span class="tooltiptext">
+                        <div class="fieldblock">
+                          {{#ciSeveritiesTooltip}}
+                            <div class="field condensed noedit">{{severity}}</div>
+                            <div class="label">{{label}}</div>
+                          {{/ciSeveritiesTooltip}}
+                        </div>
+                      </span>
+                    </div>
                   </div>
-                  <div class='field'>{{data.conditionalinjury.RT.value}}&nbsp;RT</div>
-                  <div class='label'>{{data.HP.max}}&nbsp;HP</div>
+                  <div class='basic-value fieldblock3'>
+                    <div class="points">[{{#if
+                    data.conditionalinjury.RT.points}}{{data.conditionalinjury.RT.points}}
+                      {{else}}{{data.HP.points}}{{/if}}]
+                    </div>
+                    <div class='field'>{{data.conditionalinjury.RT.value}}&nbsp;RT</div>
+                    <div class='label'>{{data.HP.max}}&nbsp;HP</div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           {{else}}
-          {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME'}}
-          {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME'}}
+            {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' editable=false}}
+            {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false}}
           {{/if}}
-          <!-- end of combat-hit -->
         </div>
 
         <div></div>
 
         <div id='resources'>
           <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
-
           {{#each data.additionalresources.tracker}}
-          <div class='tracked-resource {{#unless name}}inactive{{/unless}}'
-            data-gurps-resource='additionalresources.tracker.{{@index}}'>
-            <div class='header with-editor'>
-              {{#if name}}{{name}}{{else}}Resource {{@index}}{{/if}}<span class='edit'><i
-                  class='fas fa-pencil-alt'></i></span>
-            </div>
-            <div class='spinner'>
-              <button data-operation='resource-dec'><i class="fas fa-minus"></i></button>
-              <details>
-                <summary>
-                  <input class="gcs-attr-input" name="data.additionalresources.tracker.{{@index}}.value" type="text"
-                    value="{{value}}" placeholder="0" data-dtype="Number" />
-                </summary>
-                <div class='popup button-ribbon'>
-                  <button data-operation='resource-update' data-value='-10'>-10</button>
-                  <button data-operation='resource-update' data-value='-5'>-5</button>
-                  <button data-operation='resource-update' data-value='-1'>-1</button>
-                  <button data-operation='resource-update' data-value='0'>0</button>
-                  <button class='restore' data-operation='resource-update' data-value=''></button>
-                  <button data-operation='resource-update' data-value='+1'>+1</button>
-                  <button data-operation='resource-update' data-value='+5'>+5</button>
-                  <button data-operation='resource-update' data-value='+10'>+10</button>
-                </div>
-              </details>
-              <button data-operation='resource-inc'><i class="fas fa-plus"></i></button>
-              <button data-operation='resource-reset'><i class="fas fa-undo"></i></button>
-            </div>
-            <div class='condition-block tooltip-wrapper'>
-              {{#if thresholds}}
-              {{#with (lookup thresholds (threshold-of thresholds max value))}}
-              <div class='tooltip condition' style='background-color: {{concat this.color "80"}};'>{{this.condition}}
-                <span class="tooltiptext">
-                  <div style="display: grid; grid-template-columns: min-content min-content auto;">
-                    {{#each (thresholdBreakpoints ../this)}}
-                    <div class="field condensed noedit">{{comparison}}</div>
-                    <div class="field condensed noedit">{{breakpoint}}</div>
-                    <div class="label {{style}}">{{label}}</div>
-                    {{/each}}
-                  </div>
-                </span>
-              </div>
-              <div style='display: grid; grid-template-columns: auto auto;'>
-                <div class='pdflink' style='font-size: 80%;'>{{../pdf}}</div>
-                <div class='max'>{{../alias}} ({{../min}}/{{../max}})</div>
-              </div>
-              {{/with}}
-              {{else}}
-              <div class='condition {{#if (gt value max)}}above{{else}}{{#if (lt value min)}}below{{/if}}{{/if}}'>
-                {{#if
-                (gt value max)}}Over{{else}}{{#if (lt value min)}}Below{{else}}Normal{{/if}}{{/if}}</div>
-              <div class='max'>{{alias}} ({{min}}/{{max}})</div>
-              {{/if}}
-            </div>
-          </div> <!-- end of resource -->
+            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
           {{/each}}
-
         </div>
       </div>
     </div>
 
     {{#if (notEmpty data.reactions)}}
-    <div id="reactions">
-      <div class="modifier header">{{localize "GURPS.modifier"}}</div>
-      <div class="situation header">{{localize "GURPS.reaction"}}</div>
-      <div></div>
-      {{#each data.reactions}}
-      <div class="modifier gmod" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
-      <div class="situation">{{{gurpslink this.situation}}}</div>
-      <div></div>
-      {{/each}}
+      <div id="reactions">
+        <div class="modifier header">{{localize "GURPS.modifier"}}</div>
+        <div class="situation header">{{localize "GURPS.reaction"}}</div>
+        <div></div>
+        {{#each data.reactions}}
+          <div class="modifier gmod" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
+          <div class="situation">{{{gurpslink this.situation}}}</div>
+          <div></div>
+        {{/each}}
 
-    </div>
+      </div>
     {{/if}}
 
     {{#if (notEmpty data.melee)}}
-    <div id="melee">
-      <div class="desc header">{{localize "GURPS.meleeWeapons"}}</div>
-      <div class="usage header">{{localize "GURPS.usage"}}</div>
-      <div class="level header">{{localize "GURPS.level"}}</div>
-      <div class="parry header">{{localize "GURPS.parry"}}</div>
-      <div class="block header">{{localize "GURPS.block"}}</div>
-      <div class="damage header">{{localize "GURPS.damage"}}</div>
-      <div class="reach header">{{localize "GURPS.reach"}}</div>
-      <div class="st header">{{localize "GURPS.attributesST"}}</div>
-      <div></div>
+      <div id="melee">
+        <div class="desc header">{{localize "GURPS.meleeWeapons"}}</div>
+        <div class="usage header">{{localize "GURPS.usage"}}</div>
+        <div class="level header">{{localize "GURPS.level"}}</div>
+        <div class="parry header">{{localize "GURPS.parry"}}</div>
+        <div class="block header">{{localize "GURPS.block"}}</div>
+        <div class="damage header">{{localize "GURPS.damage"}}</div>
+        <div class="reach header">{{localize "GURPS.reach"}}</div>
+        <div class="st header">{{localize "GURPS.attributesST"}}</div>
+        <div></div>
 
-      {{#each data.melee as | this key |}}
-      <div class="desc gcs-edit dblclkedit" data-key="data.melee.{{@key}}" data-path="data.melee">{{{gurpslink
+        {{#each data.melee as | this key |}}
+          <div class="desc gcs-edit dblclkedit" data-key="data.melee.{{@key}}" data-path="data.melee">{{{gurpslink
         this.name}}}
-        <div class="list_note">{{{gurpslink this.notes}}}</div>
-      </div>
-      <div class="usage">{{this.mode}}</div>
-      <div class="level rollable" data-name="{{this.name}} ({{this.mode}})"
-        data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-      <div class="parry rollable" data-otf="Parry">{{this.parry}}</div>
-      <div class="block rollable" data-otf="Block">{{this.block}}</div>
-      <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
-      <div class="reach">{{this.reach}}</div>
-      <div class="st">{{this.st}}</div>
-      <div></div>
-      {{/each}}
+            <div class="list_note">{{{gurpslink this.notes}}}</div>
+          </div>
+          <div class="usage">{{this.mode}}</div>
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})"
+            data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+          <div class="parry rollable" data-otf="Parry">{{this.parry}}</div>
+          <div class="block rollable" data-otf="Block">{{this.block}}</div>
+          <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+          <div class="reach">{{this.reach}}</div>
+          <div class="st">{{this.st}}</div>
+          <div></div>
+        {{/each}}
 
-    </div>
+      </div>
     {{/if}}
 
     {{#if (notEmpty data.ranged)}}
-    <div id="ranged">
-      <div class="desc header">{{localize "GURPS.rangedWeapons"}}</div>
-      <div class="usage header">{{localize "GURPS.usage"}}</div>
-      <div class="level header">{{localize "GURPS.level"}}</div>
-      <div class="acc header">{{localize "GURPS.acc"}}</div>
-      <div class="damage header">{{localize "GURPS.damage"}}</div>
-      <div class="range header">{{localize "GURPS.range"}}</div>
-      <div class="rof header">{{localize "GURPS.rof"}}</div>
-      <div class="shots header">{{localize "GURPS.shots"}}</div>
-      <div class="bulk header">{{localize "GURPS.bulk"}}</div>
-      <div class="rcl header">{{localize "GURPS.rcl"}}</div>
-      <div class="st header">{{localize "GURPS.attributesST"}}</div>
+      <div id="ranged">
+        <div class="desc header">{{localize "GURPS.rangedWeapons"}}</div>
+        <div class="usage header">{{localize "GURPS.usage"}}</div>
+        <div class="level header">{{localize "GURPS.level"}}</div>
+        <div class="acc header">{{localize "GURPS.acc"}}</div>
+        <div class="damage header">{{localize "GURPS.damage"}}</div>
+        <div class="range header">{{localize "GURPS.range"}}</div>
+        <div class="rof header">{{localize "GURPS.rof"}}</div>
+        <div class="shots header">{{localize "GURPS.shots"}}</div>
+        <div class="bulk header">{{localize "GURPS.bulk"}}</div>
+        <div class="rcl header">{{localize "GURPS.rcl"}}</div>
+        <div class="st header">{{localize "GURPS.attributesST"}}</div>
 
 
-      {{#each data.ranged as | this key |}}
-      <div class="desc dblclkedit" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
-        <div class="list_note">{{{gurpslink this.notes}}}</div>
-        {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
+        {{#each data.ranged as | this key |}}
+          <div class="desc dblclkedit" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
+            <div class="list_note">{{{gurpslink this.notes}}}</div>
+            {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
         </div> }}
+          </div>
+          <div class="usage">{{this.mode}}</div>
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
+            data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+          <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'
+            data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
+            {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}
+          </div>
+          <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+          <div class="range">{{this.range}}</div>
+          <div class="rof">{{this.rof}}</div>
+          <div class="shots">{{this.shots}}</div>
+          <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'
+            data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
+          </div>
+          <div class="rcl">{{this.rcl}}</div>
+          <div class="st">{{this.st}}</div>
+        {{/each}}
       </div>
-      <div class="usage">{{this.mode}}</div>
-      <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
-        data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'
-        data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
-        {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
-      <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
-      <div class="range">{{this.range}}</div>
-      <div class="rof">{{this.rof}}</div>
-      <div class="shots">{{this.shots}}</div>
-      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'
-        data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
-      </div>
-      <div class="rcl">{{this.rcl}}</div>
-      <div class="st">{{this.st}}</div>
-      {{/each}}
-    </div>
     {{/if}}
 
     <div id="advantages">
@@ -444,16 +398,16 @@
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
       {{#listeqt data.ads}}
-      <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{@key}}">
-        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{{gurpslink this.name}}}
-        <div class="list_note satisfiedY"></div>
-        <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">{{{gurpslinkbr this.notes}}}
+        <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{@key}}">
+          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+          {{{gurpslink this.name}}}
+          <div class="list_note satisfiedY"></div>
+          <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">{{{gurpslinkbr this.notes}}}
+          </div>
         </div>
-      </div>
-      <div class="pts satisfiedY">{{this.points}}</div>
-      <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
+        <div class="pts satisfiedY">{{this.points}}</div>
+        <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
       {{/listeqt}}
     </div>
 
@@ -465,60 +419,60 @@
       <div class="ref header">Ref</div>
 
       {{#listeqt data.skills}}
-      <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit" data-key="data.skills.{{@key}}">
-        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{{gurpslink this.name}}}
-        <div class="list_note satisfiedY"></div>
-        <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
+        <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit" data-key="data.skills.{{@key}}">
+          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+          {{{gurpslink this.name}}}
+          <div class="list_note satisfiedY"></div>
+          <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
           @root}}}</div>
-      </div>
-      <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
-        data-otf='S:"{{this.name}}"'>{{this.level}}
-      </div>
-      <div class="rsl satisfiedY">{{this.relativelevel}}</div>
-      <div class="pts satisfiedY">{{this.points}}</div>
-      <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
+        </div>
+        <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
+          data-otf='S:"{{this.name}}"'>{{this.level}}
+        </div>
+        <div class="rsl satisfiedY">{{this.relativelevel}}</div>
+        <div class="pts satisfiedY">{{this.points}}</div>
+        <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
       {{/listeqt}}
     </div>
 
     {{#if (notEmpty data.spells)}}
-    <div id="spells">
-      <div class="desc header dblclksort" data-key="data.spells">{{localize "GURPS.spells"}}</div>
-      <div class="cls header">{{localize "GURPS.spellClass"}}</div>
-      <div class="college header">{{localize "GURPS.spellCollege"}}</div>
-      <div class="mana header">{{localize "GURPS.spellCost"}}</div>
-      <div class="mana_maintain header">{{localize "GURPS.spellMaintain"}}</div>
-      <div class="time header">{{localize "GURPS.spellTime"}}</div>
-      <div class="duration header">{{localize "GURPS.spellDuration"}}</div>
-      <div class="sl header">{{localize "GURPS.sl"}}</div>
-      <div class="rsl header">{{localize "GURPS.rsl"}}</div>
-      <div class="pts header">Pts</div>
-      <div class="ref header">Ref</div>
+      <div id="spells">
+        <div class="desc header dblclksort" data-key="data.spells">{{localize "GURPS.spells"}}</div>
+        <div class="cls header">{{localize "GURPS.spellClass"}}</div>
+        <div class="college header">{{localize "GURPS.spellCollege"}}</div>
+        <div class="mana header">{{localize "GURPS.spellCost"}}</div>
+        <div class="mana_maintain header">{{localize "GURPS.spellMaintain"}}</div>
+        <div class="time header">{{localize "GURPS.spellTime"}}</div>
+        <div class="duration header">{{localize "GURPS.spellDuration"}}</div>
+        <div class="sl header">{{localize "GURPS.sl"}}</div>
+        <div class="rsl header">{{localize "GURPS.rsl"}}</div>
+        <div class="pts header">Pts</div>
+        <div class="ref header">Ref</div>
 
-      {{#listeqt data.spells}}
-      <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit" data-key="data.spells.{{@key}}">
-        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{{gurpslink this.name}}}
-        <div class="list_note satisfiedY"></div>
-        <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{@key}}">{{{gurpslink this.notes}}}
-        </div>
-      </div>
-      <div class="cls satisfiedY">{{this.class}}</div>
-      <div class="college satisfiedY">{{this.college}}</div>
-      <div class="mana satisfiedY">{{this.cost}}</div>
-      <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
-      <div class="time satisfiedY">{{this.casttime}}</div>
-      <div class="duration satisfiedY">{{this.duration}}</div>
-      <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}
-      </div>
-      <div class="rsl satisfiedY">{{this.difficulty}}</div>
-      <div class="pts satisfiedY">{{this.points}}</div>
-      <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
-      {{/listeqt}}
+        {{#listeqt data.spells}}
+          <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit" data-key="data.spells.{{@key}}">
+            {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+            {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            {{{gurpslink this.name}}}
+            <div class="list_note satisfiedY"></div>
+            <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{@key}}">{{{gurpslink this.notes}}}
+            </div>
+          </div>
+          <div class="cls satisfiedY">{{this.class}}</div>
+          <div class="college satisfiedY">{{this.college}}</div>
+          <div class="mana satisfiedY">{{this.cost}}</div>
+          <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
+          <div class="time satisfiedY">{{this.casttime}}</div>
+          <div class="duration satisfiedY">{{this.duration}}</div>
+          <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}
+          </div>
+          <div class="rsl satisfiedY">{{this.difficulty}}</div>
+          <div class="pts satisfiedY">{{this.points}}</div>
+          <div class="ref satisfiedY">{{{pdflink this.pageref}}}</div>
+        {{/listeqt}}
 
-    </div>
+      </div>
     {{/if}}
     <div id="equipment" class="equipmentlist">
       <div class="equipped header">E</div>
@@ -533,30 +487,31 @@
       <div class="ref header">Ref</div>
 
       {{#listeqt data.equipment.carried }}
-      <div class="equipped satisfiedY changeequip equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if
+        <div class="equipped satisfiedY changeequip equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if
         this.equipped}}X{{/if}}</div>
-      <div class="qty satisfiedY eqtdraggable equipmenu" data-key="data.equipment.carried.{{@key}}">
-        <button class="equipmentbutton bold" data-operation='equipment-dec'>-</button>
-        &nbsp; {{this.count}} &nbsp;
-        <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
-      </div>
-      <div
-        class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
-        data-key="data.equipment.carried.{{@key}}">
-        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{{gurpslink this.name}}}
-        <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
+        <div class="qty satisfiedY eqtdraggable equipmenu" data-key="data.equipment.carried.{{@key}}">
+          <button class="equipmentbutton bold" data-operation='equipment-dec'>-</button>
+          &nbsp; {{this.count}} &nbsp;
+          <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
+        </div>
+        <div
+          class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
+          data-key="data.equipment.carried.{{@key}}">
+          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+          {{{gurpslink this.name}}}
+          <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
-      </div>
-      <div class="uses satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if (or (ne this.maxuses "0")
+        </div>
+        <div class="uses satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if (or (ne this.maxuses "0")
         (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
-      <div class="cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.cost}}</div>
-      <div class="weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
-      <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}</div>
-      <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.weightsum}}
-        lb</div>
-      <div class="ref satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{{pdflinkext this.pageref
+        <div class="cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.cost}}</div>
+        <div class="weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
+        <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}
+        </div>
+        <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.weightsum}}
+          lb</div>
+        <div class="ref satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{{pdflinkext this.pageref
         this.externallink}}}</div>
       {{/listeqt}}
 
@@ -576,30 +531,31 @@
 
 
       {{#listeqt data.equipment.other }}
-      <div class="qty satisfiedY eqtdraggable equipmenu" data-key="data.equipment.other.{{@key}}">
-        <button class="equipmentbutton bold" data-operation='equipment-dec'>-</i></button>
-        &nbsp; {{this.count}} &nbsp;
-        <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
-      </div>
-      <div
-        class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
-        data-key="data.equipment.other.{{@key}}">
-        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{{gurpslink this.name}}}
-        <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
+        <div class="qty satisfiedY eqtdraggable equipmenu" data-key="data.equipment.other.{{@key}}">
+          <button class="equipmentbutton bold" data-operation='equipment-dec'>-</i></button>
+          &nbsp; {{this.count}} &nbsp;
+          <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
+        </div>
+        <div
+          class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu {{#if this.save}}user-created{{/if}}"
+          data-key="data.equipment.other.{{@key}}">
+          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+          {{{gurpslink this.name}}}
+          <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
-      </div>
-      <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
+        </div>
+        <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
         (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
-      <div class="cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
-      <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
-      <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
-      <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}} lb
-      </div>
-      <div class="ref satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref
+        <div class="cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
+        <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
+        <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
+        <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}}
+          lb
+        </div>
+        <div class="ref satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref
         this.externallink}}}</div>
-      <div></div>
+        <div></div>
 
       {{/listeqt}}
 
@@ -608,12 +564,13 @@
       <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div>
       <div class="ref header">Ref</div>
       {{#listeqt data.notes}}
-      <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if this.save}}user-created{{/if}}"
-        data-key="data.notes.{{@key}}">
-        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-        {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}</div>
-      <div class="ref">{{{pdflink this.pageref}}}</div>
+        <div class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if this.save}}user-created{{/if}}"
+          data-key="data.notes.{{@key}}">
+          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+          {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}
+        </div>
+        <div class="ref">{{{pdflink this.pageref}}}</div>
       {{/listeqt}}
       <div></div>
     </div>
@@ -622,17 +579,17 @@
     <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
   </div>
   {{#if navigateVisible}}
-  <div class='navigate-bar'>
-    <div class='navigation-link' data-value="personal">TOP</div>
-    <div class='navigation-link' data-value="stats">STATS</div>
-    <div class='navigation-link' data-value="melee">MELEE</div>
-    <div class='navigation-link' data-value="ranged">RANGED</div>
-    <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
-    <div class='navigation-link' data-value="skills">SKILLS</div>
-    <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
-    <div class='navigation-link' data-value="other_equipment">OTHER</div>
-    <div class='navigation-link' data-value="notes">NOTES</div>
-    <div class='navigation-link' data-value="CLOSE"><i class="fas fa-times"></i></div>
-  </div>
+    <div class='navigate-bar'>
+      <div class='navigation-link' data-value="personal">TOP</div>
+      <div class='navigation-link' data-value="stats">STATS</div>
+      <div class='navigation-link' data-value="melee">MELEE</div>
+      <div class='navigation-link' data-value="ranged">RANGED</div>
+      <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
+      <div class='navigation-link' data-value="skills">SKILLS</div>
+      <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
+      <div class='navigation-link' data-value="other_equipment">OTHER</div>
+      <div class='navigation-link' data-value="notes">NOTES</div>
+      <div class='navigation-link' data-value="CLOSE"><i class="fas fa-times"></i></div>
+    </div>
   {{/if}}
 </form>

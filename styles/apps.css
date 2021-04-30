@@ -560,6 +560,7 @@ ul#result-effects li {
   padding: 5px 0;
   border-radius: 6px;
   font-size: medium;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 
   /* Position the tooltip text */
   position: absolute;
@@ -570,7 +571,7 @@ ul#result-effects li {
 
   /* Fade in tooltip */
   opacity: 0;
-  transition: opacity 0.4s;
+  transition: opacity 0.67s;
 }
 
 /* Tooltip arrow */
