@@ -1,6 +1,7 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
 This is what we are currently working on:
+ - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
 
 ## History
 
