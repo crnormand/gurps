@@ -1815,8 +1815,11 @@ body {
 }
 
 .user-created::before {
-  content: '\f0c7'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  content: '\f02e'; /* this is your text. You can also use UTF-8 character codes as I do here */
   font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
-  top: 0;
-  left: 0px;
+  font-weight: 900;
+  float: left;
+  color: steelblue;
+  padding-right: 0.35em;
+  padding-top: 2px;
 }
