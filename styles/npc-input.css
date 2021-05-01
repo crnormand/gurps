@@ -38,6 +38,12 @@
   overflow: auto;
 }
 
+.npc-sheet-ci{
+  grid-area: ci;
+  height: 100%
+  width:100%;
+}
+
 .npc-input-grid-container {
   width: 100% !important;
   height: 100% !important;
@@ -53,6 +59,23 @@
 		"equip equip spells"
     "import import create";
 }
+
+
+.npc-sheet-grid-container-ci {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid;
+  grid-template-columns: 245px 1fr 50%;
+  grid-template-rows: auto 125px auto auto auto;
+  gap: 5px 5px;
+  grid-template-areas:
+    "top top top"
+    "attr ci notes"
+    "melee melee ranged"
+    "traits traits skills"
+    "equip equip spells"
+}
+
 
 .npc-sheet-grid-container {
   width: 100% !important;
