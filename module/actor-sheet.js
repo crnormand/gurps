@@ -4,7 +4,7 @@ import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } fro
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
-//import * as QN from './quintessence/domain/Quintessence.js'
+import * as QN from './quintessence/domain/Quintessence.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'

@@ -1,28 +1,16 @@
 //import * as QN from '../domain/Quintessence.js'
+import * as Settings from '../../../lib/miscellaneous-settings.js'
 
-const SYSTEM_NAME = 'gurps'
-const SETTING_NAME = 'useQuintessence'
+
 
 export default class GURPSQuintessence {
+  SYSTEM_NAME = 'gurps'
+  SETTING_NAME = 'useQuintessence'
+  isInUse = () => game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_QUINTESSENCE)
+
     constructor() {
       let self = this
-  
-      Hooks.once('init', async function () {
-        game.GURPS = GURPS
 
-        Handlebars.registerHelper('qnCurrentEffects', self.currentGrossEffects)
-  
-        game.settings.register(SYSTEM_NAME, SETTING_NAME, {
-          name: 'Options: Quintessence',
-          hint:
-            'From Pyramid #3/120: The Fifth Attribute adds Quintessence, a fifth attribute for supernatural effects suitable for supernatural and magical campaigns.',
-          scope: 'world',
-          config: true,
-          type: Boolean,
-          default: false,
-          onChange: value => self.update(),
-        })
-      })
     }
     async update() {
         // FYI render all open apps
@@ -30,8 +18,4 @@ export default class GURPSQuintessence {
           .filter(it => it.rendered)
           .forEach(app => app.render(true))
       }
-    
-      isInUse = () => game.settings.get(SYSTEM_NAME, SETTING_NAME)
-
-    
 }
