@@ -1,193 +1,167 @@
 ------------
 keys in [lang/de.json] that are missing in [lang/en.json]
-[ 'EFFECT.StatusShocked' ]
+  EFFECT.StatusShocked
 ------------
 keys in [lang/en.json] that are missing in [lang/de.json]
-[
-  'GURPS.Dice',
-  'GURPS.actions',
-  'GURPS.addDamageReduction',
-  'GURPS.addExplosion',
-  'GURPS.aim',
-  'GURPS.allOutDefense',
-  'GURPS.clickToRemove',
-  'GURPS.concentrationCheck',
-  'GURPS.defense',
-  'GURPS.dxCheckOrFall',
-  'GURPS.fallsDown',
-  'GURPS.hitLocationArm, holding shield',
-  'GURPS.hitLocationChinks in Other',
-  'GURPS.hitLocationChinks in Torso',
-  'GURPS.hitLocationDescChest',
-  'GURPS.hitLocationDescFront',
-  'GURPS.hitLocationDescHalfDR',
-  'GURPS.hitLocationDescImp',
-  'GURPS.hitLocationDescLimb',
-  'GURPS.hitLocationDescNeck',
-  'GURPS.hitLocationEyes',
-  'GURPS.hitLocationFace, from behind',
-  'GURPS.hitLocationJaw',
-  'GURPS.hitLocationLeft Arm, holding shield',
-  'GURPS.hitLocationLimb Vein/Artery',
-  'GURPS.hitLocationNeck Vein/Artery',
-  'GURPS.hitLocationNose',
-  'GURPS.hitLocationRight Arm, holding shield',
-  'GURPS.hitLocationSkull, from behind',
-  'GURPS.hitLocationVitals, Heart',
-  'GURPS.lighting',
-  'GURPS.meleeAttack',
-  'GURPS.modifierAffliction',
-  'GURPS.modifierAfflictionCough',
-  'GURPS.modifierAfflictionCoughIQ',
-  'GURPS.modifierAfflictionDrowsy',
-  'GURPS.modifierAfflictionDrunk',
-  'GURPS.modifierAfflictionDrunkCR',
-  'GURPS.modifierAfflictionEuphoria',
-  'GURPS.modifierAfflictionModerate',
-  'GURPS.modifierAfflictionModerateHPT',
-  'GURPS.modifierAfflictionNausea',
-  'GURPS.modifierAfflictionNauseaDef',
-  'GURPS.modifierAfflictionRetch',
-  'GURPS.modifierAfflictionSevere',
-  'GURPS.modifierAfflictionSevereHPT',
-  'GURPS.modifierAfflictionTerrible',
-  'GURPS.modifierAfflictionTerribleHPT',
-  'GURPS.modifierAfflictionTipsy',
-  'GURPS.modifierAfflictionTipsyCR',
-  'GURPS.modifierAppearBelow',
-  'GURPS.modifierAutomatic',
-  'GURPS.modifierBlockRetreat',
-  'GURPS.modifierClickToAdd',
-  'GURPS.modifierCommon',
-  'GURPS.modifierCover',
-  'GURPS.modifierCoverBehindFigure',
-  'GURPS.modifierCoverCrouch',
-  'GURPS.modifierCoverHalfExposed',
-  'GURPS.modifierCoverHead',
-  'GURPS.modifierCoverHeadShoulder',
-  'GURPS.modifierCoverLight',
-  'GURPS.modifierCoverPosture',
-  'GURPS.modifierCoverProne',
-  'GURPS.modifierCoverProneHeadDown',
-  'GURPS.modifierCoverProneHeadUp',
-  'GURPS.modifierCoverThroughHex',
-  'GURPS.modifierCurrentEffects',
-  'GURPS.modifierCurrentModifiers',
-  'GURPS.modifierDangerous',
-  'GURPS.modifierDeceptiveAttack',
-  'GURPS.modifierDeterminedAttack',
-  'GURPS.modifierDodgeAcrobatic',
-  'GURPS.modifierDodgeDive',
-  'GURPS.modifierDodgeFailedAcro',
-  'GURPS.modifierDodgeRear',
-  'GURPS.modifierDodgeRetreat',
-  'GURPS.modifierDodgeSide',
-  'GURPS.modifierEasy',
-  'GURPS.modifierExtraEffort',
-  'GURPS.modifierFavorable',
-  'GURPS.modifierFeverishDef',
-  'GURPS.modifierGMBlessed',
-  'GURPS.modifierGMDontTry',
-  'GURPS.modifierGMSaidSo',
-  'GURPS.modifierHard',
-  'GURPS.modifierHeroicCharge',
-  'GURPS.modifierHitLocation',
-  'GURPS.modifierImpossible',
-  'GURPS.modifierLightCandle',
-  'GURPS.modifierLightDim',
-  'GURPS.modifierLightFullMoon',
-  'GURPS.modifierLightHalfMoon',
-  'GURPS.modifierLightMoonless',
-  'GURPS.modifierLightNone',
-  'GURPS.modifierLightQuarterMoon',
-  'GURPS.modifierLightStarlight',
-  'GURPS.modifierLightTorch',
-  'GURPS.modifierLightTwilight',
-  'GURPS.modifierMightyBlow',
-  ... 54 more items
-]
+  GURPS.ID
+  GURPS.chatClearing
+  GURPS.chatClearingLastActor
+  GURPS.chatDoesNotHaveEnough
+  GURPS.chatExceededMax
+  GURPS.chatExceededMaxUses
+  GURPS.chatGameAidUsersGuide
+  GURPS.chatMoreThanOneActor
+  GURPS.chatMoreThanOneToken
+  GURPS.chatMustBeACheck
+  GURPS.chatNoActorFound
+  GURPS.chatNoEquipmentMatched
+  GURPS.chatNoResourceTracker
+  GURPS.chatNoStatusMatched
+  GURPS.chatNoTokens
+  GURPS.chatQty
+  GURPS.chatQtySetTo
+  GURPS.chatResetTo
+  GURPS.chatResourceTracker
+  GURPS.chatResultBelowZero
+  GURPS.chatSetTo
+  GURPS.chatToApplyEffects
+  GURPS.chatToggling
+  GURPS.chatUnableToFindMacro
+  GURPS.chatUnrecognizedFormat
+  GURPS.chatUses
+  GURPS.chatUsesIsNaN
+  GURPS.chatUsesReset
+  GURPS.chatUsesSet
+  GURPS.chatYouDoNotHaveEnough
+  GURPS.chatYouMustBeGM
+  GURPS.chatYouMustHaveACharacterSelected
+  GURPS.chatYouMustSelectTokens
+  GURPS.modifierAddRangeRuler
+  GURPS.modifierAddRangeRulerHint
+  GURPS.modifierJournalManager
+  GURPS.modifierJournals
+  GURPS.modifierScaleLarge
+  GURPS.modifierScaleNormal
+  GURPS.modifierScaleSmall
+  GURPS.modifierScaleVeryLarge
+  GURPS.modifierScaleVerySmall
+  GURPS.modifierSelectJournalButton
+  GURPS.modifierSelectJournals
+  GURPS.modifierSelectJournalsAside
+  GURPS.modifierSelectJournalsHint
+  GURPS.modifierSelectJournalsTitle
+  GURPS.modifierShowOnMouseOver
+  GURPS.modifierShowOnMouseOverHint
+  GURPS.modifierTabAside
+  GURPS.modifierViewScale
+  GURPS.modifierViewScaleHint
+  GURPS.name
+  GURPS.showQuestion
 ------------
 values in [lang/en.json] that are the same in [lang/de.json]
-GURPS.BODYPLANcentaur: Centaur
-GURPS.BODYPLANhumanoid expanded: Humanoid, Expanded (GCA)
-GURPS.BODYPLANhumanoid: Humanoid
-GURPS.FP: FP
-GURPS.HP: HP
-GURPS.SkillDXA: DX/A
-GURPS.SkillDXE: DX/E
-GURPS.SkillDXH: DX/H
-GURPS.SkillDXVH: DX/VH
-GURPS.SkillHTA: HT/A
-GURPS.SkillHTE: HT/E
-GURPS.SkillHTH: HT/H
-GURPS.SkillHTVH: HT/VH
-GURPS.SkillIQA: IQ/A
-GURPS.SkillIQE: IQ/E
-GURPS.SkillIQH: IQ/H
-GURPS.SkillIQVH: IQ/VH
-GURPS.SkillPerA: Per/A
-GURPS.SkillPerE: Per/E
-GURPS.SkillPerH: Per/H
-GURPS.SkillPerVH: Per/VH
-GURPS.SkillWillA: Will/A
-GURPS.SkillWillE: Will/E
-GURPS.SkillWillH: Will/H
-GURPS.SkillWillVH: Will/VH
-GURPS.acc: Acc
-GURPS.addArmorDivisor: Armor Divisor
-GURPS.addHardenedDRLevel: Hardened DR Level
-GURPS.addInjuryTolerance: Injury Tolerance
-GURPS.addLargeAreaInjury: Large-Area Injury
-GURPS.addLocationMax: Location Max
-GURPS.addWHard: w/Hard
-GURPS.attributesDX: DX
-GURPS.attributesHT: HT
-GURPS.attributesIQ: IQ
-GURPS.attributesPER: Per
-GURPS.attributesST: ST
-GURPS.attributesWILL: Will
-GURPS.bulk: Bulk
-GURPS.copyright: GURPS© is copyrighted by Steve Jackson Games
-GURPS.copyrightGCS: GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved 
-GURPS.damageAbbrevburn: burn
-GURPS.damageAbbrevcor: cor
-GURPS.damageAbbrevcr: cr
-GURPS.damageAbbrevcut: cut
-GURPS.damageAbbrevdmg: dmg
-GURPS.damageAbbrevfat: fat
-GURPS.damageAbbrevimp: imp
-GURPS.damageAbbrevpi++: pi++
-GURPS.damageAbbrevpi+: pi+
-GURPS.damageAbbrevpi: pi
-GURPS.damageAbbrevpi-: pi-
-GURPS.damageAbbrevtox: tox
-GURPS.damageTypeHuge Piercing: Huge Piercing
-GURPS.damageTypeLarge Piercing: Large Piercing
-GURPS.damageTypePiercing: Piercing
-GURPS.damageTypeSmall Piercing: Small Piercing
-GURPS.grapplingCPAbbrev: ctrl
-GURPS.highPainThreshold: High Pain Threshold
-GURPS.highest: Highest
-GURPS.hitLocationArm 1-2: Arm 1-2
-GURPS.hitLocationArm 3-4: Arm 3-4
-GURPS.hitLocationArm 5-6: Arm 5-6
-GURPS.hitLocationArm 7-8: Arm 7-8
-GURPS.hitLocationArm*: Arm
-GURPS.hitLocationArm: Arm
-GURPS.hitLocationHand: Hand
-GURPS.hitLocationLeg 7-8: Arm 7-8
-GURPS.identityName: Name
-GURPS.level: Level
-GURPS.lowPainThreshold: Low Pain Threshold
-GURPS.max: Max
-GURPS.maximum: Maximum
-GURPS.minimum: Minimum
-GURPS.normal: Normal
-GURPS.overridden: overridden
-GURPS.perfectBalance: Perfect Balance
-GURPS.portrait: Portrait
-GURPS.rcl: Rcl
-GURPS.resourceTemplateAlias: Alias
-GURPS.rof: RoF
-GURPS.title: GURPS
-GURPS.yards:  yards
+  GURPS.BODYPLANcentaur: Centaur
+  GURPS.BODYPLANhumanoid expanded: Humanoid, Expanded (GCA)
+  GURPS.BODYPLANhumanoid: Humanoid
+  GURPS.FP: FP
+  GURPS.HP: HP
+  GURPS.SkillDXA: DX/A
+  GURPS.SkillDXE: DX/E
+  GURPS.SkillDXH: DX/H
+  GURPS.SkillDXVH: DX/VH
+  GURPS.SkillHTA: HT/A
+  GURPS.SkillHTE: HT/E
+  GURPS.SkillHTH: HT/H
+  GURPS.SkillHTVH: HT/VH
+  GURPS.SkillIQA: IQ/A
+  GURPS.SkillIQE: IQ/E
+  GURPS.SkillIQH: IQ/H
+  GURPS.SkillIQVH: IQ/VH
+  GURPS.SkillPerA: Per/A
+  GURPS.SkillPerE: Per/E
+  GURPS.SkillPerH: Per/H
+  GURPS.SkillPerVH: Per/VH
+  GURPS.SkillWillA: Will/A
+  GURPS.SkillWillE: Will/E
+  GURPS.SkillWillH: Will/H
+  GURPS.SkillWillVH: Will/VH
+  GURPS.acc: Acc
+  GURPS.addArmorDivisor: Armor Divisor
+  GURPS.addExplosion: Explosion
+  GURPS.addHardenedDRLevel: Hardened DR Level
+  GURPS.addInjuryTolerance: Injury Tolerance
+  GURPS.addLargeAreaInjury: Large-Area Injury
+  GURPS.addWHard: w/Hard
+  GURPS.allOutDefense: All-Out Defense
+  GURPS.allOutDefenseRef: B365
+  GURPS.attributesDX: DX
+  GURPS.attributesHT: HT
+  GURPS.attributesIQ: IQ
+  GURPS.attributesPER: Per
+  GURPS.attributesST: ST
+  GURPS.attributesWILL: Will
+  GURPS.bulk: Bulk
+  GURPS.copyright: GURPS© is copyrighted by Steve Jackson Games
+  GURPS.copyrightGCS: GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved 
+  GURPS.damageAbbrevburn: burn
+  GURPS.damageAbbrevcor: cor
+  GURPS.damageAbbrevcr: cr
+  GURPS.damageAbbrevcut: cut
+  GURPS.damageAbbrevdmg: dmg
+  GURPS.damageAbbrevfat: fat
+  GURPS.damageAbbrevimp: imp
+  GURPS.damageAbbrevpi++: pi++
+  GURPS.damageAbbrevpi+: pi+
+  GURPS.damageAbbrevpi: pi
+  GURPS.damageAbbrevpi-: pi-
+  GURPS.damageAbbrevtox: tox
+  GURPS.damageTypeHuge Piercing: Huge Piercing
+  GURPS.damageTypeLarge Piercing: Large Piercing
+  GURPS.damageTypePiercing: Piercing
+  GURPS.damageTypeSmall Piercing: Small Piercing
+  GURPS.grapplingCPAbbrev: ctrl
+  GURPS.highPainThreshold: High Pain Threshold
+  GURPS.highest: Highest
+  GURPS.hitLocationArm 1-2: Arm 1-2
+  GURPS.hitLocationArm 3-4: Arm 3-4
+  GURPS.hitLocationArm 5-6: Arm 5-6
+  GURPS.hitLocationArm 7-8: Arm 7-8
+  GURPS.hitLocationArm*: Arm
+  GURPS.hitLocationArm: Arm
+  GURPS.hitLocationHand: Hand
+  GURPS.hitLocationLeg 7-8: Arm 7-8
+  GURPS.identityName: Name
+  GURPS.level: Level
+  GURPS.lowPainThreshold: Low Pain Threshold
+  GURPS.max: Max
+  GURPS.maximum: Maximum
+  GURPS.minimum: Minimum
+  GURPS.modifierBlockRetreatRef: B377
+  GURPS.modifierDeceptiveAttackRef: B369
+  GURPS.modifierDeterminedAttackRef: B365
+  GURPS.modifierDodgeAcrobaticRef: B374
+  GURPS.modifierDodgeDiveRef: B377
+  GURPS.modifierDodgeFailedAcroRef: B375
+  GURPS.modifierDodgeRearRef: B391
+  GURPS.modifierDodgeRetreatRef: B375
+  GURPS.modifierDodgeSideRef: B390
+  GURPS.modifierExtraEffortRef: B357
+  GURPS.modifierFeverishDef: Feverish Defense
+  GURPS.modifierHeroicCharge: Heroic Charge
+  GURPS.modifierHeroicChargeRef: MA131
+  GURPS.modifierMightyBlowRef: MA131
+  GURPS.modifierMoveAttackRef: B365
+  GURPS.modifierShieldDBRef: B374
+  GURPS.modifierStrongAttackRef: B365
+  GURPS.modifierTelegraphicAttackRef: MA113
+  GURPS.modifierTrivial: Trivial
+  GURPS.normal: Normal
+  GURPS.overridden: overridden
+  GURPS.perfectBalance: Perfect Balance
+  GURPS.portrait: Portrait
+  GURPS.rateOfFire: Rate of Fire
+  GURPS.rcl: Rcl
+  GURPS.resourceTemplateAlias: Alias
+  GURPS.rof: RoF
+  GURPS.slamAOAStrong: All-Out Attack (Strong)
+  GURPS.title: GURPS
+  GURPS.yards:  yards

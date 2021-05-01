@@ -40,16 +40,16 @@ export class GurpsActorSheet extends ActorSheet {
     return !!str ? parseFloat(str) : 0
   }
 
-  sum(dict, type) {
+  sum(dict, type, checkEquipped = false) {
     if (!dict) return 0.0
     let sum = 0
     for (let k in dict) {
       let e = dict[k]
       let c = this.flt(e.count)
       let t = this.flt(e[type])
-      sum += c * t
-      sum += this.sum(e.contains, type)
-      sum += this.sum(e.collapsed, type)
+      if (!checkEquipped || !!e.equipped) sum += c * t
+      sum += this.sum(e.contains, type, checkEquipped)
+      sum += this.sum(e.collapsed, type, checkEquipped)
     }
     return parseInt(sum * 100) / 100
   }
@@ -65,7 +65,7 @@ export class GurpsActorSheet extends ActorSheet {
     let eqt = this.actor.data.data.equipment || {}
     sheetData.eqtsummary = {
       eqtcost: this.sum(eqt.carried, 'cost'),
-      eqtlbs: this.sum(eqt.carried, 'weight'),
+      eqtlbs: this.sum(eqt.carried, 'weight', game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)),
       othercost: this.sum(eqt.other, 'cost'),
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
@@ -1035,7 +1035,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!p) {
       let m = p.match(/.*[/\\]Data[/\\](.*)/)
       if (!!m) {
-        let f = m[1]
+        let f = m[1].replace(/\\/g, "/");
         let xhr = new XMLHttpRequest();
         xhr.responseType = "arraybuffer";
         xhr.open("GET", f);
@@ -1135,9 +1135,9 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!action) {
       action = JSON.parse(atou(action))
       if (action.type === 'damage' || action.type === 'deriveddamage') {
-        GURPS.resolveDamageRoll(event, this.actor, action.orig, game.user.isGM, true)
+        GURPS.resolveDamageRoll(event, this.actor, action.orig, action.overridetxt, game.user.isGM, true)
       } else {
-        GURPS.whisperOtfToOwner(action.orig, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+        GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, this.actor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
       }
     }
   }
@@ -1145,7 +1145,7 @@ export class GurpsActorSheet extends ActorSheet {
   async _onRightClickPdf(event) {
     event.preventDefault()
     let el = event.currentTarget
-    GURPS.whisperOtfToOwner('PDF:' + el.innerText, event, false, this.actor)
+    GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, this.actor)
   }
 
   async _onRightClickGmod(event) {
@@ -1153,7 +1153,7 @@ export class GurpsActorSheet extends ActorSheet {
     let el = event.currentTarget
     let n = el.dataset.name
     let t = el.innerText
-    GURPS.whisperOtfToOwner(t + ' ' + n, event, false, this.actor)
+    GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
   }
 
   async _onRightClickOtf(event) {
@@ -1163,9 +1163,9 @@ export class GurpsActorSheet extends ActorSheet {
     let otf = event.currentTarget.dataset.otf
 
     if (isDamageRoll) {
-      GURPS.resolveDamageRoll(event, this.actor, otf, game.user.isGM)
+      GURPS.resolveDamageRoll(event, this.actor, otf, null, game.user.isGM)
     } else {
-      GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
+      GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, null, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
   }
 
@@ -1292,7 +1292,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
-      width: 800,
+      width: 880,
       height: 800,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
@@ -1325,6 +1325,13 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     super.activateListeners(html)
 
     html.find('#ignoreinputbodyplan').click(this._onClickBodyPlan.bind(this))
+    
+    html.find('#showflightmove').click(ev => {
+      ev.preventDefault()
+      let element = ev.currentTarget
+      let show = element.checked
+      this.actor.update({ 'data.additionalresources.showflightmove': show })
+    })
 
     this.makeHeaderMenu(html, '.hlhead', 'Hit Location', new HitLocation('???'), 'data.hitlocations')
     this.makeAddDeleteMenu(html, '.hlmenu', new HitLocation('???'))

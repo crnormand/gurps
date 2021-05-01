@@ -35,24 +35,32 @@ export class GurpsActor extends Actor {
       const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
       let m = parseInt(level0.move)
       let d = parseInt(level0.dodge)
+      let f = parseFloat(this.data.data.basicspeed.value) * 2
       if (isReeling) {
         m = Math.ceil(m / 2)
         d = Math.ceil(d / 2)
+        f = Math.ceil(f / 2)
       }
       if (isTired) {
         m = Math.ceil(m / 2)
         d = Math.ceil(d / 2)
+        f = Math.ceil(f / 2)
       }
       for (let enckey in encs) {
         let enc = encs[enckey]
         let t = 1.0 - 0.2 * parseInt(enc.level)
         enc.currentmove = Math.max(1, Math.floor(m * t))
         enc.currentdodge = Math.max(1, d - parseInt(enc.level))
+        enc.currentflight = Math.max(1, Math.floor(f * t))
+        enc.currentmovedisplay = enc.currentmove
+        if (!!this.data.data.additionalresources.showflightmove)
+          enc.currentmovedisplay = enc.currentmove + '/' + enc.currentflight
         if (enc.current) {
           // Save the global move/dodge
           this.data.data.currentmove = enc.currentmove
           this.data.data.currentdodge = enc.currentdodge
-        }
+          this.data.data.currentflight = enc.currentflight
+       }
       }
     }
     if (!this.data.data.equippedparry) this.data.data.equippedparry = this.getEquippedParry()

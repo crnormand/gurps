@@ -1,119 +1,87 @@
 ------------
 keys in [lang/pt_br.json] that are missing in [lang/en.json]
-[]
 ------------
 keys in [lang/en.json] that are missing in [lang/pt_br.json]
-[
-  'GURPS.Dice',
-  'GURPS.actions',
-  'GURPS.addDamageReduction',
-  'GURPS.addExplosion',
-  'GURPS.aim',
-  'GURPS.allOutDefense',
-  'GURPS.clickToEdit',
-  'GURPS.clickToRemove',
-  'GURPS.color',
-  'GURPS.concentrationCheck',
-  'GURPS.condition',
-  'GURPS.current',
-  'GURPS.defense',
-  'GURPS.dxCheckOrFall',
-  'GURPS.fallsDown',
-  'GURPS.grapplingCPAbbrev',
-  'GURPS.grapplingControlPoints',
-  'GURPS.grapplingControlled',
-  'GURPS.grapplingGrabbed',
-  'GURPS.grapplingGrappled',
-  'GURPS.grapplingPinned',
-  'GURPS.grapplingRestrained',
-  'GURPS.grapplingUnrestrained',
-  'GURPS.hitLocationArm, holding shield',
-  'GURPS.hitLocationChinks in Other',
-  'GURPS.hitLocationChinks in Torso',
-  'GURPS.hitLocationDescChest',
-  'GURPS.hitLocationDescFront',
-  'GURPS.hitLocationDescHalfDR',
-  'GURPS.hitLocationDescImp',
-  'GURPS.hitLocationDescLimb',
-  'GURPS.hitLocationDescNeck',
-  'GURPS.hitLocationEyes',
-  'GURPS.hitLocationFace, from behind',
-  'GURPS.hitLocationJaw',
-  'GURPS.hitLocationLeft Arm, holding shield',
-  'GURPS.hitLocationLimb Vein/Artery',
-  'GURPS.hitLocationNeck Vein/Artery',
-  'GURPS.hitLocationNose',
-  'GURPS.hitLocationRight Arm, holding shield',
-  'GURPS.hitLocationSkull, from behind',
-  'GURPS.hitLocationVitals, Heart',
-  'GURPS.lighting',
-  'GURPS.max',
-  'GURPS.maximum',
-  'GURPS.meleeAttack',
-  'GURPS.minimum',
-  'GURPS.modifierAffliction',
-  'GURPS.modifierAfflictionCough',
-  'GURPS.modifierAfflictionCoughIQ',
-  'GURPS.modifierAfflictionDrowsy',
-  'GURPS.modifierAfflictionDrunk',
-  'GURPS.modifierAfflictionDrunkCR',
-  'GURPS.modifierAfflictionEuphoria',
-  'GURPS.modifierAfflictionModerate',
-  'GURPS.modifierAfflictionModerateHPT',
-  'GURPS.modifierAfflictionNausea',
-  'GURPS.modifierAfflictionNauseaDef',
-  'GURPS.modifierAfflictionRetch',
-  'GURPS.modifierAfflictionSevere',
-  'GURPS.modifierAfflictionSevereHPT',
-  'GURPS.modifierAfflictionTerrible',
-  'GURPS.modifierAfflictionTerribleHPT',
-  'GURPS.modifierAfflictionTipsy',
-  'GURPS.modifierAfflictionTipsyCR',
-  'GURPS.modifierAppearBelow',
-  'GURPS.modifierAutomatic',
-  'GURPS.modifierBlockRetreat',
-  'GURPS.modifierClickToAdd',
-  'GURPS.modifierCommon',
-  'GURPS.modifierCover',
-  'GURPS.modifierCoverBehindFigure',
-  'GURPS.modifierCoverCrouch',
-  'GURPS.modifierCoverHalfExposed',
-  'GURPS.modifierCoverHead',
-  'GURPS.modifierCoverHeadShoulder',
-  'GURPS.modifierCoverLight',
-  'GURPS.modifierCoverPosture',
-  'GURPS.modifierCoverProne',
-  'GURPS.modifierCoverProneHeadDown',
-  'GURPS.modifierCoverProneHeadUp',
-  'GURPS.modifierCoverThroughHex',
-  'GURPS.modifierCurrentEffects',
-  'GURPS.modifierCurrentModifiers',
-  'GURPS.modifierDangerous',
-  'GURPS.modifierDeceptiveAttack',
-  'GURPS.modifierDeterminedAttack',
-  'GURPS.modifierDodgeAcrobatic',
-  'GURPS.modifierDodgeDive',
-  'GURPS.modifierDodgeFailedAcro',
-  'GURPS.modifierDodgeRear',
-  'GURPS.modifierDodgeRetreat',
-  'GURPS.modifierDodgeSide',
-  'GURPS.modifierEasy',
-  'GURPS.modifierExtraEffort',
-  'GURPS.modifierFavorable',
-  'GURPS.modifierFeverishDef',
-  'GURPS.modifierGMBlessed',
-  'GURPS.modifierGMDontTry',
-  'GURPS.modifierGMSaidSo',
-  ... 93 more items
-]
+  GURPS.ID
+  GURPS.chatClearing
+  GURPS.chatClearingLastActor
+  GURPS.chatDoesNotHaveEnough
+  GURPS.chatExceededMax
+  GURPS.chatExceededMaxUses
+  GURPS.chatGameAidUsersGuide
+  GURPS.chatMoreThanOneActor
+  GURPS.chatMoreThanOneToken
+  GURPS.chatMustBeACheck
+  GURPS.chatNoActorFound
+  GURPS.chatNoEquipmentMatched
+  GURPS.chatNoResourceTracker
+  GURPS.chatNoStatusMatched
+  GURPS.chatNoTokens
+  GURPS.chatQty
+  GURPS.chatQtySetTo
+  GURPS.chatResetTo
+  GURPS.chatResourceTracker
+  GURPS.chatResultBelowZero
+  GURPS.chatSetTo
+  GURPS.chatToApplyEffects
+  GURPS.chatToggling
+  GURPS.chatUnableToFindMacro
+  GURPS.chatUnrecognizedFormat
+  GURPS.chatUses
+  GURPS.chatUsesIsNaN
+  GURPS.chatUsesReset
+  GURPS.chatUsesSet
+  GURPS.chatYouDoNotHaveEnough
+  GURPS.chatYouMustBeGM
+  GURPS.chatYouMustHaveACharacterSelected
+  GURPS.chatYouMustSelectTokens
+  GURPS.modifierAddRangeRuler
+  GURPS.modifierAddRangeRulerHint
+  GURPS.modifierJournalManager
+  GURPS.modifierJournals
+  GURPS.modifierScaleLarge
+  GURPS.modifierScaleNormal
+  GURPS.modifierScaleSmall
+  GURPS.modifierScaleVeryLarge
+  GURPS.modifierScaleVerySmall
+  GURPS.modifierSelectJournalButton
+  GURPS.modifierSelectJournals
+  GURPS.modifierSelectJournalsAside
+  GURPS.modifierSelectJournalsHint
+  GURPS.modifierSelectJournalsTitle
+  GURPS.modifierShowOnMouseOver
+  GURPS.modifierShowOnMouseOverHint
+  GURPS.modifierTabAside
+  GURPS.modifierViewScale
+  GURPS.modifierViewScaleHint
+  GURPS.name
+  GURPS.showQuestion
 ------------
 values in [lang/en.json] that are the same in [lang/pt_br.json]
-GURPS.attributesDX: DX
-GURPS.attributesHT: HT
-GURPS.attributesIQ: IQ
-GURPS.attributesPER: Per
-GURPS.attributesST: ST
-GURPS.damageAbbrevcor: cor
-GURPS.damageAbbrevtox: tox
-GURPS.normal: Normal
-GURPS.title: GURPS
+  GURPS.attributesDX: DX
+  GURPS.attributesHT: HT
+  GURPS.attributesIQ: IQ
+  GURPS.attributesPER: Per
+  GURPS.attributesST: ST
+  GURPS.damageAbbrevcor: cor
+  GURPS.damageAbbrevtox: tox
+  GURPS.grapplingCPAbbrev: ctrl
+  GURPS.modifierBlockRetreatRef: B377
+  GURPS.modifierDeceptiveAttackRef: B369
+  GURPS.modifierDeterminedAttackRef: B365
+  GURPS.modifierDodgeAcrobaticRef: B374
+  GURPS.modifierDodgeDiveRef: B377
+  GURPS.modifierDodgeFailedAcroRef: B375
+  GURPS.modifierDodgeRetreatRef: B375
+  GURPS.modifierDodgeSideRef: B390
+  GURPS.modifierExtraEffortRef: B357
+  GURPS.modifierHeroicChargeRef: MA131
+  GURPS.modifierMightyBlowRef: MA131
+  GURPS.modifierMoveAttackRef: B365
+  GURPS.modifierShieldDBRef: B374
+  GURPS.modifierStrongAttackRef: B365
+  GURPS.modifierTelegraphicAttackRef: MA113
+  GURPS.modifierTrivial: Trivial
+  GURPS.normal: Normal
+  GURPS.resourceTemplateAlias: Alias
+  GURPS.title: GURPS

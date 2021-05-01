@@ -2,7 +2,26 @@
 
 This is what we are currently working on:
 
-0.8.23
+## History
+
+0.9.0
+- rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
+- refactor Chat command parsing
+- Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
+- Added OtF [D:AttackName].   Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
+- Fixed GM Send now also transfers the OtF label (ex: "Acrobatic Dodge" from above)
+- Fixed Initiative formula propagating to client VMs
+- /tracker (/tr) now resets "damage trackers" to zero, instead of max
+- Continued i18n work on chat processors
+- /remote GM only command.   Execute OtF on the remote client
+- Press SHIFT key to make OtF rolls private
+- Show Move/Flight Move checkbox in Editor
+- Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x768 monitor. Tiny laptop users, rejoice!!
+- The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting.
+- Fixed a bug so that the ADD will use "effective damage" instead of "basic damage" to calculate knockback. This fixes the problems with explosions and knockback.
+- Add a fallback background color to the modifier bucket to fix the transparent MB bug.
+
+0.8.23 - 4/13/2021
   
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 - Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
@@ -16,13 +35,13 @@ This is what we are currently working on:
 - Disabled the Min/Max/Current fields from a Resource Tracker editor if opened from the Tracker Manager.
 - New/Updated Resource Tracker templates no longer need a Foundry restart to take effect.
 - /ev now affects player owned tokens on current scene (and not all Player Characters)
-- Added lowercase versions of mapped attributes (ex: 'will', 'per', 'vision', etc.)
+- Made mapped attributes (ex: 'will', 'per', 'vision', etc.) case insensitive
 - Allow multi-line entries in QuickNotes
 - Added Initiative system setting
 - Added GURPS.findAdDisad(), and updated GURPS.findSkillSpell() and GURPS.findAttack() for script macros
-
-
-## History
+- Fixed Explosion damage calculation.
+- Added ability to override the text of the OtF buttons ["New Text" Dodge]
+- Auto import when in Foundry Data (GCS export includes Portrait)
 
 0.8.22 - 3/31/2021
 

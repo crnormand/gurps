@@ -180,13 +180,13 @@
         <div class="encmarker current"></div>
         <div class="enc current {{this.key}}" data-key="{{key}}"></div>
         <div class="load current">{{this.weight}}</div>
-        <div class="move current">{{this.currentmove}}</div>
+        <div class="move current">{{this.currentmovedisplay}}</div>
         <div class="dodge current rollable" data-otf='Dodge' data-path="dodge">{{this.currentdodge}}</div>
         {{else}}
         <div class="encmarker "></div>
         <div class="enc {{this.key}}" data-key="{{key}}"></div>
         <div class="load ">{{this.weight}}</div>
-        <div class="move ">{{this.currentmove}}</div>
+        <div class="move ">{{this.currentmovedisplay}}</div>
         <div class="dodge" data-path="dodge">{{this.currentdodge}}</div>
         {{/if}}
         {{/each}}
@@ -225,9 +225,10 @@
         {{#each data.hitlocations}}
         <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
         <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
-          {{localizeWithFallback (concat "GURPS.hitLocation" this.where) this.where}}
+          {{i18n (concat "GURPS.hitLocation" this.where) this.where}}
         </div>
-        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}" data-otf='{{this.penalty}} to hit {{this.where}}'>
+        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}"
+          data-otf='{{this.penalty}} to hit {{this.where}}'>
           {{hitlocationpenalty this.where this.penalty ../data}}</div>
         <div class="dr">{{this.dr}}
         </div>
@@ -516,13 +517,15 @@
       <div class="usage">{{this.mode}}</div>
       <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
         data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}' data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
+      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'
+        data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
         {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
       <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
       <div class="range">{{this.range}}</div>
       <div class="rof">{{this.rof}}</div>
       <div class="shots">{{this.shots}}</div>
-      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}' data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
+      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'
+        data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
       </div>
       <div class="rcl">{{this.rcl}}</div>
       <div class="st">{{this.st}}</div>
@@ -679,8 +682,8 @@
         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
       </div>
-      <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (ne this.maxuses
-        "0")}}{{this.uses}}{{/if}}</div>
+      <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
+        (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
       <div class="cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
       <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
       <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>

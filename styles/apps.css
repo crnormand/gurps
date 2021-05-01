@@ -1,420 +1,12 @@
-.single-column-form {
-  display: flex;
-  flex-flow: column nowrap;
-  margin: 0.25rem;
-}
-
-.single-column-form .inputs {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 5px;
-  align-self: center;
-  margin: 0 0.5rem;
-}
-
-.single-column-form .inputs label {
-  font-size: 80%;
-  justify-self: end;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-}
-
-.single-column-form .inputs input {
-  text-align: center;
-}
-
-.single-column-form .inputs input[type='checkbox'] {
-  margin: 0;
-}
-
-.single-column-form .button-bar {
-  margin-top: 1rem;
-}
-
-.single-column-form .vertical-gap {
-  margin-top: 0.5rem;
-}
-
-.subtle {
-  color: grey;
-  font-size: 80%;
-}
-
-/* ========================= */
-/* Modifier Bucket           */
-/* ========================= */
-.modifierbucket #modifierbucket {
-  border: 5px solid darkred;
-  position: fixed;
-  bottom: 10px;
-  left: 805px;
-  width: 70px;
-  height: 52px;
-  margin: 0px;
-  padding: 0px 2px;
-  cursor: pointer;
-  z-index: auto;
-  background: rgb(28, 32, 36);
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 3px;
-  align-items: center;
-  /* justify-content: space-between; */
-}
-
-.modifierbucket #current-actor {
-  position: fixed;
-  bottom: 60px;
-  left: 745px;
-  width: 190px;
-  height: 20px;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.modifierbucket #current-actor > span {
-  color: yellow;
-  background-color: black;
-}
-
-.modifierbucket #globalmodifier {
-  font-size: 20px;
-  text-align: center;
-  width: 55px;
-}
-
-.modifierbucket #trash {
-  color: lightgrey;
-}
-
-.modtooltip .plus,
-.modifierbucket .plus {
-  color: lightgreen;
-}
-
-.modtooltip .minus,
-.modifierbucket .minus {
-  color: orange;
-}
-
-#modtooltip {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: 2fr 4fr;
-  gap: 5px;
-  justify-items: stretch;
-  justify-content: stretch;
-  align-items: stretch;
-  text-align: left;
-  background: url(/ui/parchment.jpg) repeat;
-}
-
-#modtooltipbucket {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 4fr 2fr 4fr;
-  gap: 3px;
-  height: 100%;
-}
-
-#modtooltiplefttop {
-  grid-row: 1;
-
-  display: grid;
-  justify-self: stretch;
-  justify-content: stretch;
-  align-content: start;
-  color: black;
-  border-color: darkslategray;
-}
-
-#modtooltiplefttop .actorname {
-  font-size: 110%;
-}
-
-#modtooltipleftcenter h4,
-#modtooltiplefttop h4 {
-  background-color: darkslategray;
-}
-
-#modtooltipleftcenter {
-  grid-row: 2;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-self: stretch;
-  justify-content: start;
-  color: black;
-  border-color: darkslategray;
-}
-
-#modtooltipleftcenter .everyone {
-  height: 100%;
-  display: inline-flex;
-  flex-flow: column nowrap;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.button-row {
-  display: flex;
-  flex-flow: row wrap;
-}
-
-#modtooltipleftbottom {
-  grid-row: 3;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
-  color: black;
-  border: 5px solid darkred;
-  border-radius: 5px;
-}
-
-#modtooltipleftbottom .shaded-group > h4 {
-  background-color: darkred;
-}
-
-#modtooltipcenter {
-  grid-column: 2;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
-  align-items: stretch;
-  align-content: start;
-  padding: 0 5px;
-}
-
-#modtooltipright > div > *,
-#modtooltipcenter > div > * {
-  margin-top: 5px;
-}
-
-#modtooltipright {
-  grid-column: 3;
-
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
-  align-items: stretch;
-  align-content: start;
-  border: 5px;
-  padding: 0 5px;
-}
-
-.modtooltipgroup {
-  border: 5px;
-  margin-bottom: 5px;
-}
-
-.modtooltipgroup > * {
-  padding-left: 10px;
-}
-
-.removemod {
-  cursor: pointer;
-}
-
-.removemod:hover {
-  font-weight: bold;
-  cursor: pointer;
-  text-shadow: 0 0 10px red;
-}
-
-.removemod:hover::after {
-  font-family: 'Font Awesome 5 Free';
-  content: '\f1f8';
-  display: inline-block;
-  padding-right: 3px;
-  vertical-align: middle;
-  font-weight: 900;
-  color: dimgrey;
-}
-
-.gmbutton {
-  display: inline-block;
-  text-align: center;
-  font-size: 90%;
-  padding: 3px;
-  width: fit-content;
-  background: rgba(255, 255, 240, 0.8);
-  line-height: unset;
-  min-width: 60px;
-}
-
-.modttlabel {
-  font-size: 20px;
-  text-align: center;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-}
-
-.modttlabel > div {
-  color: #f0f0e0;
-  background-color: rgb(28, 32, 36);
-  border: 0 solid rgb(28, 32, 36);
-  border-radius: 3px;
-  padding: 5px 0;
-  min-width: 55px;
-}
-
-.modttt {
-  text-align: center;
-  border-radius: 10px;
-  width: 872px;
-  height: 664px;
-  bottom: 100px !important;
-  left: 405px !important;
-  position: absolute;
-  z-index: 100;
-}
-
-.modttt::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -300px;
-  border-width: 37px 300px;
-  border-style: solid;
-  border-color: grey transparent transparent transparent;
-  pointer-events: none;
-}
-
-.modtooltip .collapsible-wrapper {
-  margin-top: 3px;
-}
-
-.modtooltip .collapsible-wrapper > input {
-  display: none;
-}
-
-.modtooltip .collapsible-wrapper .label-toggle,
-.modtooltip .collapsible-wrapper > label {
-  -webkit-appearance: menulist-button;
-  border: 1px solid rgb(122, 121, 113);
-  padding: 5px;
-  border-radius: 3px;
-  background: rgba(255, 255, 240, 0.8);
-  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
-}
-
-.modtooltip .collapsible-wrapper > label:after {
-  font: normal normal normal 12px/1;
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
-  content: '\f078';
-  float: right;
-}
-
-.modtooltip .collapsible-wrapper > input:checked + label {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.modtooltip .collapsible-wrapper > input:checked + label:after {
-  font: normal normal normal 12px/1;
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
-  content: '\f077';
-  float: right;
-}
-
-.modtooltip .collapsible-wrapper .collapsible-content {
-  border-top: none;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-  font-size: 90%;
-}
-
-.modtooltip .collapsible-wrapper .content-inner {
-  padding: 5px 8px;
-  overflow-y: auto;
-}
-
-.modtooltip .collapsible-wrapper .content-inner .selectable {
-  min-height: 1.2em;
-  padding-left: 1.2rem;
-  text-indent: -0.7rem;
-}
-
-.modtooltip .collapsible-wrapper .content-inner .selectable:hover {
-  text-shadow: 0 0 10px red;
-}
-
-.modtooltip .subtitle {
-  color: rgb(64, 64, 64);
-  font-weight: bold;
-  width: 100%;
-}
-
-/* =================================================== */
-/* Copy of glink and gurpslink from simple.css         */
-/* =================================================== */
-.modtooltip .glinkmodplus,
-.modtooltip .glinkmodminus,
-.modtooltip .gurpslink {
-  background-color: unset !important;
-  padding: 1px 2px;
-  border: 1px solid rgb(122, 121, 113);
-  border-radius: 3px;
-  margin: 1px 0;
-  font-size: 90%;
-}
-
-.modtooltip .glinkmodplus:hover,
-.modtooltip .glinkmodminus:hover,
-.modtooltip .gurpslink:hover {
-  cursor: pointer;
-  text-shadow: none;
-  font-weight: unset;
-  background-color: rgba(255, 255, 240, 0.8) !important;
-  padding: 1px 2px;
-  border-radius: 3px;
-}
-
-.modtooltip .glinkmodplus:active,
-.modtooltip .glinkmodminus:active,
-.modtooltip .gurpslink:active {
-  background-color: rgba(255, 255, 240, 0.6) !important;
-}
-
-.removemod.plus,
-.modtooltip .glinkmodplus {
-  color: darkgreen;
-}
-
-.removemod.minus,
-.modtooltip .glinkmodminus {
-  color: darkred;
-}
-
-.modtooltip .gurpslink {
-  color: darkblue;
-}
-
-.modtooltip .modifier-row {
-  flex-flow: row wrap !important;
-}
-
-.modtooltip .modifier-row > div {
-  margin-bottom: 3px;
-}
-
 /* ========================= */
 /* GURPS Applications        */
 /* ========================= */
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
+  background: url(/ui/parchment.jpg) #dcdcd0;
+  color: black;
+  /* background: radial-gradient(ellipse at bottom, #5091dd 0%, rgb(3, 6, 23) 100%); */
 }
 
 /* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
@@ -464,8 +56,12 @@
   justify-content: space-between;
 }
 
-.gurps-group header {
+.gurps-app header {
   font-weight: bold;
+}
+
+.gurps-app header:first-child {
+  margin-right: 0.35em;
 }
 
 .gurps-group .pdflink {
@@ -476,22 +72,22 @@
 .gurps-group h4 {
   background-color: black;
   color: lightgrey;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.25em;
   font-size: larger;
-  margin-left: -0.5rem;
-  margin-right: -0.5rem;
-  padding-left: 0.5rem;
+  margin-left: -0.4em;
+  margin-right: -0.5em;
+  padding-left: 0.5em;
   margin-top: 0;
   text-transform: uppercase;
-  line-height: 1.2rem;
+  line-height: 1.2em;
 }
-.gurps-group aside {
+.gurps-app aside {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 0.5em;
 }
 .gurps-group .shaded-group {
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.5em;
 }
 
 .gurps-group .shaded-group h4 + aside,
@@ -849,8 +445,6 @@ ul#result-effects li {
 .gurps-app .collapsible-wrapper .collapsible-content {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
     0px 1px 3px rgba(0, 0, 0, 0.3) inset;
-  /* padding-bottom: 2px;
-  margin-bottom: 5px; */
 }
 
 .gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
@@ -912,8 +506,8 @@ ul#result-effects li {
 .tooltip {
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted grey;
   /* If you want dots under the hoverable text */
+  border-bottom: 1px dotted grey;
   /* text-transform: uppercase; */
   /* color: darkgrey */
 }
@@ -923,7 +517,7 @@ ul#result-effects li {
   visibility: hidden;
   min-width: 120px;
   background-color: #555;
-  color: #fff;
+  color: white;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
@@ -1534,12 +1128,459 @@ ul#result-effects li {
   box-shadow: 0 0 5px red;
 }
 
-.shaded-group > div:nth-child(odd) {
-  /* background: rgba(255, 255, 255, 0.25); */
+.gurps-sparse-list {
+  line-height: 1.2em; /* EXP: change from rem to em */
 }
 
-.gurps-sparse-list {
-  line-height: 1.1rem;
+.tabbed .back {
+  padding-right: 5px;
+  vertical-align: middle;
+  color: rgb(247, 247, 239);
+  float: left;
+}
+
+.tabbed .forward {
+  padding-right: 5px;
+  vertical-align: middle;
+  color: rgb(247, 247, 239);
+  float: right;
+}
+
+.tabbedcontent {
+  overflow-y: auto;
+}
+
+#common-modifiers .tabbedcontent {
+  max-height: 35em;
+}
+
+.single-column-form {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 0.25rem;
+}
+
+.single-column-form .inputs {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 5px;
+  align-self: center;
+  margin: 0 0.5rem;
+}
+
+.single-column-form .inputs label {
+  font-size: 80%;
+  justify-self: end;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.single-column-form .inputs input {
+  text-align: center;
+}
+
+.single-column-form .inputs input[type='checkbox'] {
+  margin: 0;
+}
+
+.single-column-form .button-bar {
+  margin-top: 1rem;
+}
+
+.single-column-form .vertical-gap {
+  margin-top: 0.5rem;
+}
+
+.subtle {
+  color: grey;
+  font-size: 80%;
+}
+
+/* ========================= */
+/* Modifier Bucket           */
+/* ========================= */
+.modifierbucket #modifierbucket {
+  border: 5px solid darkred;
+  position: fixed;
+  bottom: 10px;
+  left: 805px;
+  width: 70px;
+  height: 52px;
+  margin: 0px;
+  padding: 0px 2px;
+  cursor: pointer;
+  z-index: auto;
+  background: rgb(28, 32, 36);
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 3px;
+  align-items: center;
+  /* justify-content: space-between; */
+}
+
+.modifierbucket #current-actor {
+  position: fixed;
+  bottom: 60px;
+  left: 745px;
+  width: 190px;
+  height: 20px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modifierbucket #current-actor > span {
+  color: yellow;
+  background-color: black;
+}
+
+.modifierbucket #globalmodifier {
+  font-size: 20px;
+  text-align: center;
+  width: 55px;
+}
+
+.modifierbucket #trash {
+  color: lightgrey;
+}
+
+#modtooltip {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 2fr 4fr;
+  gap: 0.35em;
+  justify-items: stretch;
+  justify-content: stretch;
+  align-items: stretch;
+  text-align: left;
+}
+
+#modtooltipbucket {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 4fr 2fr 4fr;
+  gap: 0.35em;
+  height: 100%;
+}
+
+#modtooltiplefttop {
+  grid-row: 1;
+
+  display: grid;
+  justify-self: stretch;
+  justify-content: stretch;
+  align-content: start;
+  /* color: black; */
+  border-color: darkslategray;
+}
+
+#modtooltiplefttop .actorname {
+  font-size: 1.1em;
+}
+
+#modtooltipleftcenter h4,
+#modtooltiplefttop h4 {
+  background-color: darkslategray;
+}
+
+#modtooltipleftcenter {
+  grid-row: 2;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-self: stretch;
+  justify-content: start;
+  color: black;
+  border-color: darkslategray;
+}
+
+#modtooltipleftcenter .everyone {
+  height: 100%;
+  display: inline-flex;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.button-row {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#modtooltipleftbottom {
+  grid-row: 3;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  color: black;
+  border: 0.35em solid darkred;
+  border-radius: 0.35em;
+  height: 100%;
+}
+
+#modtooltipleftbottom > h4 {
+  background-color: darkred;
+}
+
+#modtooltipleftbottom .shaded-group {
+  height: 13em;
+}
+
+#modtooltipcenter {
+  grid-column: 2;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  align-content: start;
+  padding: 0 5px;
+}
+
+#modtooltipright > div > *,
+#modtooltipcenter > div > * {
+  margin-top: 5px;
+}
+
+#modtooltipright {
+  grid-column: 3;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+  align-content: start;
+  border: 5px;
+  padding: 0 5px;
+}
+
+.modtooltipgroup {
+  border: 5px;
+  margin-bottom: 5px;
+}
+
+.modtooltipgroup > * {
+  padding-left: 10px;
+}
+
+.removemod {
+  cursor: pointer;
+}
+
+.removemod:hover {
+  font-weight: bold;
+  cursor: pointer;
+  text-shadow: 0 0 10px red;
+}
+
+.removemod:hover::after {
+  font-family: 'Font Awesome 5 Free';
+  content: '\f1f8';
+  display: inline-block;
+  padding-right: 3px;
+  vertical-align: middle;
+  font-weight: 900;
+  color: dimgrey;
+}
+
+.gmbutton {
+  display: inline-block;
+  text-align: center;
+  font-size: 90%;
+  padding: 0.25em;
+  width: fit-content;
+  background: rgba(255, 255, 240, 0.8);
+  line-height: unset;
+  min-width: 5.5em;
+}
+
+.modttlabel {
+  font-size: 1.5em;
+  text-align: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.modttlabel > div {
+  color: #f0f0e0;
+  background-color: rgb(28, 32, 36);
+  border: 0 solid rgb(28, 32, 36);
+  border-radius: 0.25em;
+  padding: 0.35em 0;
+  min-width: 2.5em;
+}
+
+.modifier-bucket {
+  bottom: 100px !important;
+  z-index: 1000;
+}
+
+.modttt {
+  text-align: center;
+  border-radius: 10px;
+  /* width: 820px; */
+  width: 63.5em;
+  /* height: 657px; */
+  height: 50.5em;
+  /* bottom: 50px !important; */
+  left: 430px;
+  position: absolute;
+  z-index: 100;
+}
+
+.modttt::after {
+  content: '';
+  position: absolute;
+  /* top: 100%; */
+  left: 50%;
+  margin-left: -300px;
+  border-width: 37px 300px;
+  border-style: solid;
+  border-color: grey transparent transparent transparent;
+  pointer-events: none;
+}
+
+.modttt .modtooltip {
+  padding: 0.35em;
+}
+
+.modtooltip .plus,
+.modifierbucket .plus {
+  color: lightgreen;
+}
+
+.modtooltip .minus,
+.modifierbucket .minus {
+  color: orange;
+}
+
+.modtooltip .collapsible-wrapper {
+  margin-top: 0.25em;
+}
+
+.modtooltip .collapsible-wrapper > input {
+  display: none;
+}
+
+.modtooltip .collapsible-wrapper .label-toggle,
+.modtooltip .collapsible-wrapper > label {
+  -webkit-appearance: menulist-button;
+  border: 1px solid rgb(122, 121, 113);
+  padding: 0.35em;
+  border-radius: 0.25em;
+  background: rgba(255, 255, 240, 0.8);
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
+.modtooltip .collapsible-wrapper > label:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f078';
+  float: right;
+}
+
+.modtooltip .collapsible-wrapper > input:checked + label {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.modtooltip .collapsible-wrapper > input:checked + label:after {
+  font: normal normal normal 12px/1;
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: '\f077';
+  float: right;
+}
+
+.modtooltip .collapsible-wrapper .collapsible-content {
+  border-top: none;
+  border-bottom-left-radius: 0.25em;
+  border-bottom-right-radius: 0.25em;
+  font-size: 90%;
+}
+
+.modtooltip .collapsible-wrapper .content-inner {
+  padding: 0.35em 0.7em;
+  overflow-y: auto;
+}
+
+.modtooltip .collapsible-wrapper .content-inner .selectable {
+  min-height: 1.1em;
+  padding-left: 1.2em;
+  text-indent: -0.7em;
+}
+
+.modtooltip .collapsible-wrapper .content-inner .selectable:hover {
+  text-shadow: 0 0 0.8em red;
+}
+
+.modtooltip .subtitle {
+  color: rgb(64, 64, 64);
+  font-weight: bold;
+  width: 100%;
+}
+
+/* =================================================== */
+/* Copy of glink and gurpslink from simple.css         */
+/* =================================================== */
+.modtooltip .glinkmod,
+.modtooltip .glinkmodplus,
+.modtooltip .glinkmodminus,
+.modtooltip .gurpslink {
+  background-color: unset !important;
+  padding: 0.0825em 0.165em;
+  border: 0.0825em solid rgb(122, 121, 113);
+  border-radius: 0.25em;
+  margin: 0.0825em 0;
+  font-size: 90%;
+}
+
+.modtooltip .glinkmodplus:hover,
+.modtooltip .glinkmod:hover,
+.modtooltip .glinkmodminus:hover,
+.modtooltip .gurpslink:hover {
+  cursor: pointer;
+  text-shadow: none;
+  font-weight: unset;
+  background-color: rgba(255, 255, 240, 0.8) !important;
+  padding: 0.0825em 0.165em;
+  border-radius: 0.25em;
+}
+
+.modtooltip .glinkmodplus:active,
+.modtooltip .glinkmod:active,
+.modtooltip .glinkmodminus:active,
+.modtooltip .gurpslink:active {
+  background-color: rgba(255, 255, 240, 0.6) !important;
+}
+
+.removemod.plus,
+.modtooltip .glinkmodplus {
+  color: darkgreen;
+}
+
+.removemod.minus,
+.modtooltip .glinkmodminus {
+  color: darkred;
+}
+
+.modtooltip .gurpslink {
+  color: darkblue;
+}
+
+.modtooltip .modifier-row {
+  flex-flow: row wrap !important;
+}
+
+.modtooltip .modifier-row > div {
+  margin-bottom: 0.25em;
 }
 
 .modtooltip .modifier-row,
@@ -1552,4 +1593,22 @@ ul#result-effects li {
 
 .modtooltip .gurps-group aside {
   margin: 0;
+}
+
+/* tighten spacing for the modifier bucket when displaying a Journal entry */
+.modtooltip p {
+  margin: 0.25rem 0;
+}
+
+.modifier-journals #entry-list {
+  max-height: 25vh;
+}
+
+.modifier-journals #entry-list > div:nth-child(3n + 3) {
+  color: #555;
+  font-size: 80%;
+}
+
+.gurps-app .section {
+  margin-top: 0.5em;
 }
