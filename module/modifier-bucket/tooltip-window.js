@@ -15,9 +15,6 @@ export default class ModifierBucketEditor extends Application {
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
     this.inside = false
     this.tabIndex = 0
-
-    let journalIds = ModifierBucketJournals.getJournalIds()
-    this.journals = game.data.journal.filter(it => journalIds.includes(it._id))
   }
 
   static get defaultOptions() {
@@ -54,6 +51,15 @@ export default class ModifierBucketEditor extends Application {
     super.close()
   }
 
+  get journals() {
+    let journals = Array.from(game.journal)
+    journals = game.data.journal
+      .filter(it => ModifierBucketJournals.getJournalIds().includes(it._id))
+      .map(it => game.journal.get(it._id))
+    journals = journals.filter(it => it.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
+    return journals
+  }
+
   /**
    * @override
    * @param {*} options
@@ -65,8 +71,7 @@ export default class ModifierBucketEditor extends Application {
     data.isTooltip = !this.options.popOut
     data.gmod = this
     data.tabIndex = this.tabIndex
-    data.journals = game.data.journal.filter(it => ModifierBucketJournals.getJournalIds().includes(it._id))
-    //    this.journals
+    data.journals = this.journals
     data.stack = this.bucket.modifierStack
     data.meleemods = ModifierLiterals.MeleeMods.split('\n')
     data.rangedmods = ModifierLiterals.RangedMods.split('\n')

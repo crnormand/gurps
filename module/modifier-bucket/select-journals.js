@@ -4,7 +4,8 @@ import { i18n, arrayToObject, objectToArray } from '../../lib/utilities.js'
 export default class ModifierBucketJournals extends FormApplication {
   static getJournalIds() {
     let journals = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BUCKET_JOURNALS)
-    return objectToArray(journals)
+    let results = objectToArray(journals)
+    return results
   }
 
   constructor(options = {}) {
@@ -48,7 +49,13 @@ export default class ModifierBucketJournals extends FormApplication {
    */
   get _htmlJournals() {
     let allJournals = Array.from(game.journal)
+
+    // remove any that don't have "content" -- PDFs for PDFoundry are the only ones I know that don't have content
     let htmlJournals = allJournals.filter(it => !!it.data.content)
+
+    // only keep the journals this user has permissions to see
+    htmlJournals = htmlJournals.filter(it => it.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
+
     let results = htmlJournals.map(it => {
       return { id: it.id, folder: this._folderPath(it.data.folder), name: it.name }
     })
