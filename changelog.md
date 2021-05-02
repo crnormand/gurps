@@ -3,7 +3,7 @@
 This is what we are currently working on:
  - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
  - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
- - Fixed OtF buttons in a journal entry being viewed in the Modifier Bucket from being truncated at the first HTML escaped character (such as '&uuml;').
+ - Fixed OtF buttons in a journal entry being viewed in the Modifier Bucket from being truncated at the first HTML escaped character (such as '\&uuml;').
 
 ## History
 
