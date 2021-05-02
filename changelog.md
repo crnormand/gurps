@@ -2,6 +2,7 @@
 
 This is what we are currently working on:
  - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
+ - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
 
 ## History
 
