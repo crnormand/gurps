@@ -6,30 +6,30 @@
           <h4>{{localize "GURPS.modifierCurrentEffects"}}</h4>
           <div class='actorname'>{{actorname}}</div>
           {{#each currentmods}}
-          <div>{{{gurpslink this true}}}</div>
+            <div>{{{gurpslink this true}}}</div>
           {{/each}}
         </div>
 
         {{#unless cansend}}
-        <div id="modtooltipleftcenter" class='gurps-group' style='justify-content: center;'>
-          <p>{{localize "GURPS.modifierClickToAdd"}}</p>
-          <p>{{localize "GURPS.modifierAppearBelow"}}</p>
-        </div>
+          <div id="modtooltipleftcenter" class='gurps-group' style='justify-content: center;'>
+            <p>{{localize "GURPS.modifierClickToAdd"}}</p>
+            <p>{{localize "GURPS.modifierAppearBelow"}}</p>
+          </div>
         {{else}}
-        <div id="modtooltipleftcenter" class='gurps-group'>
-          <h4>{{localize "GURPS.modifierSendTo"}}</h4>
-          <div class='button-row'>
-            {{#each users}}
-            <button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
-            {{/each}}
+          <div id="modtooltipleftcenter" class='gurps-group'>
+            <h4>{{localize "GURPS.modifierSendTo"}}</h4>
+            <div class='button-row'>
+              {{#each users}}
+                <button class="gmbutton" data-id="{{this.id}}" type="button">{{this.name}}</button>
+              {{/each}}
+            </div>
+            {{#if everyone}}
+              {{debug this}}
+              <div class='everyone'>
+                <button class="gmbutton" data-id="{{everyone.id}}" type="button">{{everyone.name}}</button>
+              </div>
+            {{/if}}
           </div>
-          {{#if everyone}}
-          {{debug this}}
-          <div class='everyone'>
-            <button class="gmbutton" data-id="{{everyone.id}}" type="button">{{everyone.name}}</button>
-          </div>
-          {{/if}}
-        </div>
         {{/unless}}
 
         <div id="modtooltipleftbottom" class='gurps-group gurps-sparse-list'>
@@ -37,8 +37,9 @@
           <div class='shaded-group overflowy'>
             <aside>({{localize "GURPS.clickToRemove"}})</aside>
             {{#each stack.modifierList}}
-            <div class="removemod {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}">
-              {{this.mod}} : {{this.desc}}</div>
+              <div class="removemod {{#if this.plus}}plus{{else}}minus{{/if}}" data-index="{{@index}}">
+                {{this.mod}} : {{this.desc}}
+              </div>
             {{/each}}
           </div>
           <div class='modttlabel'>Total:&nbsp;
@@ -55,19 +56,19 @@
           <div class='shaded-group'>
             <h4>{{localize "GURPS.meleeAttack"}}</h4>
             {{#each meleemods}}
-            <div>{{{gurpslink this true}}}</div>
+              <div>{{{gurpslink this true}}}</div>
             {{/each}}
           </div>
           <div class='shaded-group'>
             <h4>{{localize "GURPS.ranged"}}</h4>
             {{#each rangedmods}}
-            <div>{{{gurpslink this true}}}</div>
+              <div>{{{gurpslink this true}}}</div>
             {{/each}}
           </div>
           <div class='shaded-group'>
             <h4>{{localize "GURPS.defense"}}</h4>
             {{#each defensemods}}
-            <div>{{{gurpslink this true}}}</div>
+              <div>{{{gurpslink this true}}}</div>
             {{/each}}
           </div>
         </div>
@@ -91,10 +92,10 @@
               {{collapsible-content 'modrof' rofmods 'commonmods'}}
             </div>
             {{#each journals}}
-            <div class='tabbedcontent'>
-              <h2>{{this.name}}</h2>
-              {{{gurpslink this.content true}}}
-            </div>
+              <div class='tabbedcontent'>
+                <h2>{{this.name}}</h2>
+                {{{gurpslink this.data.content true}}}
+              </div>
             {{/each}}
             <div class='tabbedcontent'>
               <aside>{{i18n 'GURPS.modifierTabAside'}} </aside>
@@ -104,10 +105,10 @@
             <h4>{{localize "GURPS.modifierOthers"}}</h4>
             <div class='modifier-row'>
               {{#each othermods1}}
-              <div>{{{gurpslink this true}}}</div>
+                <div>{{{gurpslink this true}}}</div>
               {{/each}}
               {{#each othermods2}}
-              <div>{{{gurpslink this true}}}</div>
+                <div>{{{gurpslink this true}}}</div>
               {{/each}}
             </div>
             <div style='display: flex; flex-flow: column;'>
