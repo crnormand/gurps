@@ -16,6 +16,9 @@ export default class GURPSConditionalInjury {
   }
 
   isInUse = () => game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_USE_CONDITIONAL_INJURY)
+  getThreshold = (num) => {
+    return Math.round(-2 + 6 * (Math.log(num) / Math.log(10)))
+  }
 
   conditionalEffectsTable = () => {
     return CI.conditionalEffectsTable
