@@ -30,21 +30,23 @@ export class SlamCalculator {
 
     let effects = {
       unaffected: 'GURPS.notAffected',
-      fallsDown: 'GURPS.fallsDown',
+      targetFallsDown: 'GURPS.fallsDown',
+      attackerFallsDown: 'GURPS.attackerFallsDown',
       dxCheck: 'GURPS.dxCheckOrFall',
     }
     let effect = effects.unaffected
     let affected = data.target
-    if (attackerResult >= targetResult * 2) {
-      effect = effects.fallsDown
-    } else if (attackerResult >= targetResult) {
+    if (this.targetFallsDown(attackerResult, targetResult)) {
+      effect = effects.targetFallsDown
+    } else if (this.targetDXCheck(attackerResult, targetResult)) {
       effect = effects.dxCheck
-    } else if (targetResult >= attackerResult * 2) {
+    } else if (this.attackerFallsDown(attackerResult, targetResult)) {
       affected = data.attacker
-      effect = effects.fallsDown
+      effect = effects.attackerFallsDown
     }
 
-    let message = `${affected} ${game.i18n.localize(effect)}`
+    let text = game.i18n.format(effect, { name: affected })
+    let message = `${affected} ${text}`
 
     let html = await renderTemplate('systems/gurps/templates/slam-results.html', {
       id: this._generateUniqueId(),
@@ -80,6 +82,18 @@ export class SlamCalculator {
     }
 
     ChatMessage.create(messageData)
+  }
+
+  targetFallsDown(attackerResult, targetResult) {
+    return attackerResult >= targetResult * 2
+  }
+
+  attackerFallsDown(attackerResult, targetResult) {
+    return targetResult >= attackerResult * 2
+  }
+
+  targetDXCheck(attackerResult, targetResult) {
+    return attackerResult >= targetResult && !this.targetFallsDown(attackerResult, targetResult)
   }
 
   /**
