@@ -1,6 +1,6 @@
 'use strict'
-
-import { ChatProcessors, ChatProcessor } from '../../module/chat.js'
+import ChatProcessor from './chat-processor.js'
+import { ChatProcessors } from '../../module/chat.js'
 import selectTarget from '../../module/select-target.js'
 import { i18n } from '../../lib/utilities.js'
 import { SlamCalculator } from './slam-calc.js'

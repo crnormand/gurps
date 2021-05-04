@@ -1,85 +1,33 @@
 'use strict'
 import { parselink } from '../lib/parselink.js'
-import { NpcInput } from '../lib/npc-input.js'
-import { Equipment } from './actor.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
-import { isNiceDiceEnabled, i18n } from '../lib/utilities.js'
-
+import { i18n } from '../lib/utilities.js'
+import ChatProcessor from './chat/chat-processor.js'
 /**
  *  This holds functions for all things chat related
  *
  */
 
-function whisper(priv) {
-  if (priv.length == 0) return
-  ChatMessage.create({
-    alreadyProcessed: true,
-    content: priv.join('<br>'),
-    user: game.user._id,
-    type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-    whisper: [game.user._id],
-  })
-  priv.length = 0
-}
-
-function chat(pub, chatData) {
-  if (pub.length == 0) return
-  let d = duplicate(chatData)
-  d.alreadyProcessed = true
-  d.content = pub.join('<br>')
-  ChatMessage.create(d)
-  pub.length = 0
-}
-
-function send(priv, pub, data) {
-  this.whisper(priv)
-  this.chat(pub, data)
-}
-
-/**
- * Base class for a chat message processor.
- */
-export class ChatProcessor {
-  /**
-   * Override
-   * @param {*} line - chat command
-   * @returns true if this processor will handle this chat command
-   */
-  matches(line) {}
-
-  /**
-   * Override to process a chat command
-   * @param {*} line
-   */
-  process(line, msgs) {}
-  
-  /**
-   * Override to return the '/help' display string
-   * @param {*} isGMOnly
-   */
-  help() { return "Must return help string or null" }  // This does not need to be i18n
-  
-  /**
-   * Override to true if this chat command only works for GMs
-   */
-  isGMOnly() { return false }
-  
-  send() { this.registry.send() }
-  priv(txt) { this.registry.priv(txt) }
-  pub(txt) { this.registry.pub(txt) }
-  prnt(txt) { this.registry.prnt(txt) }
-  msgs() { return this.registry.msgs }
-}
-
 class HelpChatProcessor extends ChatProcessor {
-  help() { return null }
+  help() {
+    return null
+  }
   matches(line) {
     return line.match(/[!\/]help/i)
   }
   process(line, msgs) {
-    let t = "<a href='" + GURPS.USER_GUIDE_URL + "'>" + i18n("GURPS.chatGameAidUsersGuide", 'GURPS 4e Game Aid USERS GUIDE') + "</a><br>"
-    let all = ChatProcessors.processorsForAll().filter(it => !!it.help()).map(it => it.help())
-    let gmonly = ChatProcessors.processorsForGMOnly().filter(it => !!it.help()).map(it => it.help())
+    let t =
+      "<a href='" +
+      GURPS.USER_GUIDE_URL +
+      "'>" +
+      i18n('GURPS.chatGameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
+      '</a><br>'
+    let all = ChatProcessors.processorsForAll()
+      .filter(it => !!it.help())
+      .map(it => it.help())
+    let gmonly = ChatProcessors.processorsForGMOnly()
+      .filter(it => !!it.help())
+      .map(it => it.help())
     all.sort()
     t += all.join('<br>')
     if (gmonly.length > 0) {
@@ -97,7 +45,7 @@ class ChatProcessorRegistry {
     this.registerProcessor(new HelpChatProcessor())
     this.msgs = { pub: [], priv: [], data: null }
   }
-    
+
   processorsForAll() {
     return this._processors.filter(it => !it.isGMOnly())
   }
@@ -107,27 +55,25 @@ class ChatProcessorRegistry {
 
   // Make a pre-emptive decision if we are going to handle any of the lines in this message
   willTryToHandle(lines) {
-    for (const line of lines)
-      for (const p of this._processors)
-        if (p.matches(line))
-          return true
+    for (const line of lines) for (const p of this._processors) if (p.matches(line)) return true
     return false
   }
-  
+
   /* At this point, we just have to assume that we are going to handle some (if not all) of the messages in lines.
    * From this point on, we want to be in a single thread... so we await any async methods to ensure that
-   * we get a response. 
+   * we get a response.
    */
   async processLines(lines, chatmsgData) {
     this.msgs.data = chatmsgData
     delete this.msgs.event
-    
-    for (const line of lines) { // use for loop to ensure single thread
+
+    for (const line of lines) {
+      // use for loop to ensure single thread
       await this.processLine(line)
-    } 
+    }
     this.send()
   }
-  
+
   async processLine(line) {
     line = line.trim()
     let handled = await this.handle(line)
@@ -152,8 +98,7 @@ class ChatProcessorRegistry {
   async handle(line) {
     let processor = this._processors.find(it => it.matches(line))
     if (!!processor) {
-      if (processor.isGMOnly() && !game.user.isGM)
-        ui.notifications.warn(i18n("GURPS.chatYouMustBeGM"))
+      if (processor.isGMOnly() && !game.user.isGM) ui.notifications.warn(i18n('GURPS.chatYouMustBeGM'))
       else {
         await processor.process(line)
         return true
@@ -167,10 +112,10 @@ class ChatProcessorRegistry {
    * @param {*} processor
    */
   registerProcessor(processor) {
-    processor.registry = this   // Provide a back pointer so that processors can get access to the message structure
+    processor.registry = this // Provide a back pointer so that processors can get access to the message structure
     this._processors.push(processor)
   }
-    
+
   _sendPriv(priv) {
     if (priv.length == 0) return
     ChatMessage.create({
@@ -182,7 +127,7 @@ class ChatProcessorRegistry {
     })
     priv.length = 0
   }
-  
+
   _sendPub(pub, chatData) {
     if (pub.length == 0) return
     let d = duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
@@ -191,7 +136,7 @@ class ChatProcessorRegistry {
     ChatMessage.create(d)
     pub.length = 0
   }
-  
+
   // Dump everything we have saved in messages
   send() {
     this._sendPriv(this.msgs.priv)
@@ -215,7 +160,7 @@ class ChatProcessorRegistry {
     if (game.user.isGM || p_setting) this.priv(txt)
     else this.pub(txt)
   }
-  
+
   // Attempt to convert original chat data into a whisper (for use when the player presses SHIFT key to make roll private)
   setEventFlags(shift, ctrl) {
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
@@ -227,27 +172,26 @@ class ChatProcessorRegistry {
 export let ChatProcessors = new ChatProcessorRegistry()
 
 export default function addChatHooks() {
-  Hooks.once('init', async function () {  
+  Hooks.once('init', async function () {
     Hooks.on('chatMessage', (log, message, chatmsgData) => {
       if (!!chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
-      
+
       if (GURPS.ChatCommandsInProcess.includes(message)) {
         GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(item => item !== message)
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
       }
 
       let lines = message
-        .replace(/\\\\/g, '\n')   // Allow \\ to ack as newline (useful for combining multiple chat commands on a single line
+        .replace(/\\\\/g, '\n') // Allow \\ to ack as newline (useful for combining multiple chat commands on a single line
         .split('\n')
-      
+
       // Due to Foundry's non-async way of handling the 'chatMessage' response, we have to decide beforehand
       // if we are going to process this message, and if so, return false so Foundry doesn't
       if (ChatProcessors.willTryToHandle(lines)) {
         // Now we can handle the processing of each line in an async method, so we can ensure a single thread
         ChatProcessors.processLines(lines, chatmsgData)
         return false
-      } else
-        return true
+      } else return true
     })
 
     // Look for blind messages with .message-results and remove them
@@ -308,17 +252,16 @@ export default function addChatHooks() {
     Hooks.on('renderChatMessage', (app, html, msg) => {
       GURPS.hookupGurps(html)
       html.find('[data-otf]').each((_, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({
-            otf: li.getAttribute('data-otf')
-          })
-        )
+        li.setAttribute('draggable', true)
+        li.addEventListener('dragstart', ev => {
+          return ev.dataTransfer.setData(
+            'text/plain',
+            JSON.stringify({
+              otf: li.getAttribute('data-otf'),
+            })
+          )
+        })
       })
-    })
-
     })
   }) // End of "ready"
 }

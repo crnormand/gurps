@@ -1,43 +1,19 @@
-import { describe, expect, test } from '@jest/globals'
-import { jest } from '@jest/globals'
-import StatusProcessor from '../../module/chat/status-processor.js'
-import StatusChatProcessor from '../../module/chat/status.js'
+'use strict'
 
-describe('Status Processor', () => {
-  const status2 = new StatusChatProcessor()
-  const status = new StatusProcessor()
+import ChatProcessor from './chat-processor.js'
+import { i18n } from '../../lib/utilities.js'
 
-  test('help', () => {
-    expect(status.help()).toBe('/status on|off|t|clear|list &lt;status&gt;')
-    expect(status2.help()).toBe('/status2 on|off|t|clear|list &lt;status&gt;')
-  })
+export default class StatusChatProcessor extends ChatProcessor {
+  constructor() {
+    super()
+  }
 
-  test('matches', () => {
-    expect(status.matches('/st on foo')).toBe(true)
-    expect(status.matches('/status on foo')).toBe(true)
-    expect(status.matches('/foo on foo')).toBe(false)
-
-    expect(status2.matches('/st2 on foo')).toBe(true)
-    expect(status2.matches('/status2 on foo')).toBe(true)
-    expect(status2.matches('/statuses on foo')).toBe(false)
-
-    const commands = ['t', 'toggle', 'on', 'off', '+', '-', 'clear', 'set', 'unset']
-    commands.forEach(c => expect(status.matches(`/st ${c} bar`)).toBe(true))
-    commands.forEach(c => expect(status2.matches(`/st2 ${c} bar`)).toBe(true))
-
-    expect(status.matches('/status boo foo')).toBe(false)
-    expect(status2.matches('/status2 bad foo')).toBe(false)
-  })
-})
-
-/*
-export class StatusProcessor extends ChatProcessor {
   help() {
-    return '/status on|off|t|clear|list &lt;status&gt;'
+    return '/status2 on|off|t|clear|list &lt;status&gt;'
   }
 
   matches(line) {
-    this.match = line.match(/^\/(st|status) +(t|toggle|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
+    this.match = line.match(/^\/(st2|status2) +(t|toggle|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
     return !!this.match
   }
 
@@ -156,6 +132,3 @@ export class StatusProcessor extends ChatProcessor {
     if (!any) ui.notifications.warn(msg)
   }
 }
-
-
-*/

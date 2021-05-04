@@ -1,6 +1,6 @@
 'use strict'
 
-import { ChatProcessor } from '../chat.js'
+import ChatProcessor from './chat-processor.js'
 import { parselink } from '../../lib/parselink.js'
 import { i18n } from '../../lib/utilities.js'
 
