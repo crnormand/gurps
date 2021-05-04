@@ -7,7 +7,7 @@ This is what we are currently working on:
 
 ## History
 
-0.9.2 - 4/29/201
+0.9.2 - 4/29/2021
 - CTRL-roll was broken for certain keyboard events, causing chat commands to fail (ex: /ra)
 
 0.9.1 - 4/28/2021
