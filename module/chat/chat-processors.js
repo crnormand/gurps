@@ -248,6 +248,10 @@ class SelectChatProcessor extends ChatProcessor {
         }
       }
     } else if (!m[3]) {
+      if (!!GURPS.LastActor) {
+        let tokens = canvas.tokens.placeables.filter(t => t.actor == GURPS.LastActor)
+        if (tokens.length == 1) tokens[0].release()
+      }
       GURPS.ClearLastActor(GURPS.LastActor)
       this.priv(i18n('GURPS.chatClearingLastActor', 'Clearing Last Actor'))
     } else {
@@ -278,6 +282,8 @@ class SelectChatProcessor extends ChatProcessor {
       else if (a.length > 1) ui.notifications.warn(msg)
       else {
         GURPS.SetLastActor(a[0])
+        let tokens = canvas.tokens.placeables.filter(t => t.actor == a[0])
+        if (tokens.length == 1) tokens[0].control({releaseOthers: true}) // Foundry 'select'
         this.priv('Selecting ' + a[0].displayname)
       }
     }

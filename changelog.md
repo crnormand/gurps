@@ -1,9 +1,14 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
 This is what we are currently working on:
+
+0.9.3
+
  - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
  - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
  - Fixed OtF buttons in a journal entry being viewed in the Modifier Bucket from being truncated at the first HTML escaped character (such as '\&uuml;').
+ - /select now also changes Foundry's selection.  /sel Bog \\\\ /status on prone
+ - /sendMB (and MB send) now works for Assistants
 
 ## History
 
