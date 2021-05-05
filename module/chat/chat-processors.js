@@ -13,7 +13,7 @@ import {
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
 import { isNiceDiceEnabled, i18n, splitArgs } from '../../lib/utilities.js'
-import StatusProcessor from '../chat/status-processor.js'
+// import StatusProcessor from '../chat/status-processor.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 
@@ -27,7 +27,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollChatProcessor())
   ChatProcessors.registerProcessor(new ShowMBsChatProcessor())
   ChatProcessors.registerProcessor(new ClearMBsChatProcessor())
-  ChatProcessors.registerProcessor(new StatusProcessor())
+  // ChatProcessors.registerProcessor(new StatusProcessor())
   ChatProcessors.registerProcessor(new StatusChatProcessor())
   ChatProcessors.registerProcessor(new FrightCheckChatProcessor())
   ChatProcessors.registerProcessor(new UsesChatProcessor())
@@ -287,7 +287,7 @@ class SelectChatProcessor extends ChatProcessor {
       else {
         GURPS.SetLastActor(a[0])
         let tokens = canvas.tokens.placeables.filter(t => t.actor == a[0])
-        if (tokens.length == 1) tokens[0].control({releaseOthers: true}) // Foundry 'select'
+        if (tokens.length == 1) tokens[0].control({ releaseOthers: true }) // Foundry 'select'
         this.priv('Selecting ' + a[0].displayname)
       }
     }

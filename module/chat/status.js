@@ -18,11 +18,11 @@ const Command = {
 
 export default class StatusChatProcessor extends ChatProcessor {
   help() {
-    return '/status2 on|off|t|clear|list &lt;status&gt;'
+    return '/status on|off|t|clear|list &lt;status&gt;'
   }
 
   matches(line) {
-    this.match = line.match(/^\/(st2|status2) +(toggle|t|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
+    this.match = line.match(/^\/(st|status) +(toggle|t|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
     return !!this.match
   }
 
@@ -51,8 +51,9 @@ export default class StatusChatProcessor extends ChatProcessor {
     }
 
     if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
-    if (theCommand == Command.set) return await this.set(tokens, effect)
-    if (theCommand == Command.unset) return await this.unset(tokens, effect)
+    else if (theCommand == Command.set) return await this.set(tokens, effect)
+    else if (theCommand == Command.unset) return await this.unset(tokens, effect)
+    else ui.notifications.warn(`Unexpected error: command: ${theCommand} (${this.match})`)
   }
 
   list() {
