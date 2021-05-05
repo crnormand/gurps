@@ -1,15 +1,24 @@
-### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
+### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
+If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
 This is what we are currently working on:
- - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
- - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
 
 ## History
 
-0.9.2 - 4/29/201
+0.9.3 - 5/04/2021
+
+ - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
+ - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
+ - Fixed OtF buttons in a journal entry being viewed in the Modifier Bucket from being truncated at the first HTML escaped character (such as '\&uuml;').
+ - /select now also changes Foundry's selection.  /sel Bog \\\\ /status on prone
+ - /sendMB (and MB send) now works for Assistants
+
+0.9.2 - 4/29/2021
+
 - CTRL-roll was broken for certain keyboard events, causing chat commands to fail (ex: /ra)
 
 0.9.1 - 4/28/2021
+
 - Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x640 monitor. Tiny laptop users, rejoice!!
 - The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096) 
 - Fixed a bug so that the ADD will use "effective damage" instead of "basic damage" to calculate knockback. This fixes the problems with explosions and knockback.
@@ -25,6 +34,7 @@ This is what we are currently working on:
 - Added System setting to show 'saved' icon next to user created equipment and notes.
 
 0.9.0 - 4/22/2021
+
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
 - Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
