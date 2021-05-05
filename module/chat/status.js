@@ -81,7 +81,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     return token.actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
   }
 
-  async _toggle(token, effect, actionText) {
+  async toggleTokenEffect(token, effect, actionText) {
     await token.toggleEffect(effect)
     // TODO You need to turn this into a single string, instead of multiple i18n strings concatenated.
     // This assumes an English-like word order, which may not apply to another language.
@@ -92,7 +92,7 @@ export default class StatusChatProcessor extends ChatProcessor {
 
   async toggle(tokens, effect) {
     for (const token of tokens) {
-      this._toggle(token, effect, 'GURPS.chatToggling')
+      this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
     }
   }
 
@@ -100,7 +100,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     for (const token of tokens) {
       for (const actorEffect of token.actor.effects) {
         if (effect.id == actorEffect.getFlag('core', 'statusId')) {
-          await this._toggle(token, effect, 'GURPS.chatToggling')
+          await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
         }
       }
     }
@@ -108,16 +108,21 @@ export default class StatusChatProcessor extends ChatProcessor {
 
   async set(tokens, effect) {
     for (const token of tokens) {
-      if (!this.isEffectActive(token, effect)) await this._toggle(token, effect, 'GURPS.chatToggling')
+      if (!this.isEffectActive(token, effect)) await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
     }
   }
 
   async clear(tokens) {
-    for (const token of tokens) {
-      for (const actorEffect of token.actor.effects) {
-        await this._toggle(token, actorEffect, 'GURPS.chatClearing')
-      }
-    }
+    for (const token of tokens)
+      for (const actorEffect of token.actor.effects)
+        await this.toggleTokenEffect(token, this.getStatusEffect(actorEffect), 'GURPS.chatClearing')
+  }
+
+  getStatusEffect(actorEffect) {
+    for (const status of Object.values(CONFIG.statusEffects))
+      if (status.id == actorEffect.getFlag('core', 'statusId')) return status
+
+    return null
   }
 
   getSelfTokens() {
