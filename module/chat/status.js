@@ -57,7 +57,14 @@ export default class StatusChatProcessor extends ChatProcessor {
 
   list() {
     let html = `<table style='font-size: smaller;'><tr><th>${i18n('GURPS.ID')}</th><th>${i18n('GURPS.name')}</th></tr>`
-    Object.values(CONFIG.statusEffects).forEach(s => {
+    let sortedEffects = []
+    let effectIds = Object.values(CONFIG.statusEffects.map(it => i18n(it.id)))
+    effectIds.sort()
+    for (const id of effectIds) {
+      sortedEffects.push(CONFIG.statusEffects.find(it => it.id === id))
+    }
+
+    sortedEffects.forEach(s => {
       html += `<tr><td>${s.id}</td><td>'${i18n(s.label)}'</td></tr>`
     })
     return html + '</table>'

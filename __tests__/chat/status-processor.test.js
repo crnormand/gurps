@@ -105,7 +105,7 @@ describe('Status Processor', () => {
 
       expect(privList.length).toBe(1)
       expect(privList[0]).toBe(
-        `<table style='font-size: smaller;'><tr><th>ID</th><th>Name</th></tr><tr><td>FOO</td><td>'Le Foo'</td></tr><tr><td>BAR</td><td>'Ein Bärren'</td></tr></table>`
+        `<table style='font-size: smaller;'><tr><th>ID</th><th>Name</th></tr><tr><td>BAR</td><td>'Ein Bärren'</td></tr><tr><td>FOO</td><td>'Le Foo'</td></tr></table>`
       )
     })
 
