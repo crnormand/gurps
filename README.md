@@ -1,26 +1,18 @@
-### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
+# [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e game aid for Foundry VTT
+If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
+# Current Release Version 0.9.3
+### [Change Log](changelog.md)
+The list was getting just too long, so it has been moved to a separate file.   Click above to see what has changed.
 
-# Current Release Version 0.9.2
-
-[If you like our work...](https://ko-fi.com/crnormand)
-
-<a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
-
-To install the latest stable release, use this manifest URL:  
-[https://raw.githubusercontent.com/crnormand/gurps/release/system.json](https://raw.githubusercontent.com/crnormand/gurps/release/system.json)
-
-[Getting Started video](https://youtu.be/FUqtOkdyBCo) / [Players Guide video](https://youtu.be/x-xD39x_JQw)
+[If you like our work...](https://ko-fi.com/crnormand) <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
 Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
-### If you are looking for the latest stable release, use the manifest URL above.
-We are actively developing on the 'main' branch, and sometimes things break ;-)
-
 [Current GCA Export version: 'GCA-7' 2/18/2021 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
-## [Change Log](changelog.md)
-The list was getting just too long, so it has been moved to a separate file.   Click to see what has changed.
 
+
+#### Legal
 The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
 
 [GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)
