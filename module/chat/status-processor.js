@@ -8,7 +8,7 @@ export default class StatusProcessor extends ChatProcessor {
     return '/status on|off|t|clear|list &lt;status&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/(st|status) +(t|toggle|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
+    this.match = line.match(/^\/(st|status) +(toggle|t|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
     return !!this.match
   }
   async process(line) {
@@ -34,12 +34,9 @@ export default class StatusProcessor extends ChatProcessor {
     if (!effect) ui.notifications.warn(i18n('GURPS.chatNoStatusMatched', 'No status matched') + " '" + pattern + "'")
     else if (!!m[4]) {
       if (!!GURPS.LastActor) {
+        // TODO I can't find a way to return multiple tokens from this -- multiple selections only return one of the selected tokens
         let tokens = !!GURPS.LastActor.token ? [GURPS.LastActor.token] : GURPS.LastActor.getActiveTokens()
-        if (tokens.length == 0)
-          msg = i18n(
-            'GURPS.chatNoTokens',
-            'Your character does not have any tokens.   We require a token to set statuses'
-          )
+        if (tokens.length == 0) msg = i18n('GURPS.chatNoTokens')
         else {
           any = true
           for (const e of GURPS.LastActor.effects) {
@@ -54,7 +51,13 @@ export default class StatusProcessor extends ChatProcessor {
                   )
                 }
               }
-            else if (effect.id == e.getFlag('core', 'statusId')) on = true
+            else {
+              let effectId = effect.id
+              let statusId = e.getFlag('core', 'statusId')
+              if (effectId == statusId) {
+                on = true
+              }
+            }
           }
           if (on & !set || (!on && set) || toggle) {
             this.prnt(
@@ -65,7 +68,7 @@ export default class StatusProcessor extends ChatProcessor {
             await tokens[0].toggleEffect(effect)
           }
         }
-      } else msg = i18n('chatYouMustHaveACharacterSelected') + ' ' + i18n('GURPS.chatToApplyEffects')
+      } else msg = i18n('GURPS.chatYouMustHaveACharacterSelected') + ' ' + i18n('GURPS.chatToApplyEffects')
     } else {
       msg = i18n('GURPS.chatYouMustSelectTokens') + ' @self) ' + i18n('GURPS.chatToApplyEffects')
       for (const t of canvas.tokens.controlled) {

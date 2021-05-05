@@ -3,18 +3,56 @@
 import ChatProcessor from './chat-processor.js'
 import { i18n } from '../../lib/utilities.js'
 
-export default class StatusChatProcessor extends ChatProcessor {
-  constructor() {
-    super()
-  }
+const Command = {
+  on: 'set',
+  '+': 'set',
+  set: 'set',
+  t: 'toggle',
+  toggle: 'toggle',
+  clear: 'clear',
+  off: 'unset',
+  unset: 'unset',
+  '-': 'unset',
+  list: 'list',
+}
 
+export default class StatusChatProcessor extends ChatProcessor {
   help() {
     return '/status2 on|off|t|clear|list &lt;status&gt;'
   }
 
   matches(line) {
-    this.match = line.match(/^\/(st2|status2) +(t|toggle|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
+    this.match = line.match(/^\/(st2|status2) +(toggle|t|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
     return !!this.match
+  }
+
+  async process(_) {
+    let m = this.match
+    let commandText = m[2].trim().toLowerCase()
+    let statusText = m[3]?.trim()
+    let self = !!m[4]
+
+    let theCommand = Command[commandText]
+
+    if (theCommand == Command.list) return this.priv(this.list())
+
+    let tokens = !!self ? this.getSelfTokens() : canvas.tokens.controlled
+    if (!tokens || tokens.length === 0) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustSelectTokens') + ' @self) ' + i18n('GURPS.chatToApplyEffects'))
+      return
+    }
+
+    if (theCommand == Command.clear) return await this.clear(tokens)
+
+    let effect = this.findEffect(statusText)
+    if (!effect) {
+      ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + statusText + "'")
+      return
+    }
+
+    if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
+    if (theCommand == Command.set) return await this.set(tokens, effect)
+    if (theCommand == Command.unset) return await this.unset(tokens, effect)
   }
 
   list() {
@@ -39,96 +77,54 @@ export default class StatusChatProcessor extends ChatProcessor {
     return effect
   }
 
-  async applyToSelf(set, toggle, clear) {
-    let tokens = !!GURPS.LastActor.token ? [GURPS.LastActor.token] : GURPS.LastActor.getActiveTokens()
-    if (tokens.length == 0) {
-      ui.notifications.warn(i18n('GURPS.chatNoTokens'))
-      return
-    }
+  isEffectActive(token, effect) {
+    return token.actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
+  }
 
-    for (const actorEffect of GURPS.LastActor.effects) {
-      if (clear) {
-        for (const statusEffect of Object.values(CONFIG.statusEffects)) {
-          if (statusEffect.id == actorEffect.getFlag('core', 'statusId')) {
-            await tokens[0].toggleEffect(statusEffect)
-            // TODO You need to turn this into a single string, instead of multiple i18n strings concatenated.
-            // This assumes an English-like word order, which may not apply to another language.
-            this.prnt(
-              `${i18n('GURPS.chatClearing')} ${statusEffect.id}:'${actorEffect.data.label}' ${i18n('GURPS.for')} ${
-                GURPS.LastActor.displayname
-              }`
-            )
-          }
-        }
-      } else if (actorEffect.id == actorEffect.getFlag('core', 'statusId')) on = true
-    }
+  async _toggle(token, effect, actionText) {
+    await token.toggleEffect(effect)
+    // TODO You need to turn this into a single string, instead of multiple i18n strings concatenated.
+    // This assumes an English-like word order, which may not apply to another language.
+    this.prnt(
+      `${i18n(actionText)} [${effect.id}:'${i18n(effect.label)}'] ${i18n('GURPS.for')} ${token.actor.displayname}`
+    )
+  }
 
-    if (on & !set || (!on && set) || toggle) {
-      this.prnt(
-        `${i18n('GURPS.chatToggling')} ${effect.id}:'${game.i18n.localize(effect.label)}' ${i18n('GURPS.for')} ${
-          GURPS.LastActor.displayname
-        }`
-      )
-      await tokens[0].toggleEffect(effect)
+  async toggle(tokens, effect) {
+    for (const token of tokens) {
+      this._toggle(token, effect, 'GURPS.chatToggling')
     }
   }
 
-  async process(line) {
-    let m = this.match
-    let command = m[2].trim().toLowerCase()
-    let statusText = m[3]?.trim()
-    let self = !!m[4]
-
-    if (command == 'list') return this.priv(this.list())
-
-    let effect = this.findEffect(statusText)
-    if (!effect) {
-      ui.notifications.warn(i18n('GURPS.chatNoStatusMatched', 'No status matched') + " '" + pattern + "'")
-      return
-    }
-
-    let any = false
-    let on = false
-
-    let set = ['on', '+', 'set'].includes(command)
-    let toggle = ['t', 'toggle'].includes(command)
-    let clear = command == 'clear'
-
-    var msg
-
-    if (self && !GURPS.LastActor) {
-      // TODO You need to turn this into a single string, instead of two i18n strings concatenated.
-      // This assumes an English-like word order, which may not apply to another language.
-      ui.notifications.warn(i18n('chatYouMustHaveACharacterSelected') + ' ' + i18n('GURPS.chatToApplyEffects'))
-      return
-    }
-
-    if (self) {
-      this.applyToSelf(set, toggle, clear)
-      return
-    }
-
-    msg = i18n('GURPS.chatYouMustSelectTokens') + ' @self) ' + i18n('GURPS.chatToApplyEffects')
-    for (const t of canvas.tokens.controlled) {
-      any = true
-      if (!!t.actor)
-        for (const e of t.actor.effects) {
-          if (clear)
-            for (const s of Object.values(CONFIG.statusEffects)) {
-              if (s.id == e.getFlag('core', 'statusId')) {
-                await t.toggleEffect(s)
-                this.prnt(`${i18n('GURPS.chatClearing')} ${s.id}: '${e.data.label}' for ${t.actor.displayname}`)
-              }
-            }
-          else if (effect.id == e.getFlag('core', 'statusId')) on = true
+  async unset(tokens, effect) {
+    for (const token of tokens) {
+      for (const actorEffect of token.actor.effects) {
+        if (effect.id == actorEffect.getFlag('core', 'statusId')) {
+          await this._toggle(token, effect, 'GURPS.chatToggling')
         }
-      if (on & !set || (!on && set) || toggle) {
-        this.prnt(
-          `${i18n('GURPS.chatToggling')} ${effect.id}:'${game.i18n.localize(effect.label)}' for ${t.actor.displayname}`
-        )
-        await t.toggleEffect(effect)
       }
     }
-    if (!any) ui.notifications.warn(msg)
+  }
+
+  async set(tokens, effect) {
+    for (const token of tokens) {
+      if (!this.isEffectActive(token, effect)) await this._toggle(token, effect, 'GURPS.chatToggling')
+    }
+  }
+
+  async clear(tokens) {
+    for (const token of tokens) {
+      for (const actorEffect of token.actor.effects) {
+        await this._toggle(token, actorEffect, 'GURPS.chatClearing')
+      }
+    }
+  }
+
+  getSelfTokens() {
+    return !!GURPS.LastActor
+      ? !!GURPS.LastActor.token
+        ? [GURPS.LastActor.token]
+        : GURPS.LastActor.getActiveTokens()
+      : []
   }
 }
