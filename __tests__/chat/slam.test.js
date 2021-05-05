@@ -8,7 +8,8 @@ const i18n = {
   'GURPS.slamShieldDB': 'Shield DB',
   'GURPS.notAffected': 'is not affected',
   'GURPS.fallsDown': 'falls down!',
-  'GURPS.dxCheckOrFail': '...must make',
+  'GURPS.attackerFallsDown': 'falls down!',
+  'GURPS.dxCheckOrFall': 'must make...[DX check or fall]',
 }
 
 describe('SlamCalculator', () => {
@@ -21,202 +22,440 @@ describe('SlamCalculator', () => {
   const mockRoll = jest.fn()
   const localize = jest.fn()
   const slam = new SlamCalculator({ generateUniqueId: () => 42 })
+  const bonusForAoA = 2
 
   afterEach(() => jest.resetAllMocks())
 
   beforeEach(() => {
-    localize.mockImplementation(key => {
-      return i18n[key]
-    })
-    global.game = { i18n: { localize: localize }, user: { _id: 42 } }
+    localize.mockImplementation(key => i18n[key])
+    global.game = { i18n: { localize: localize, format: localize }, user: { _id: 42 } }
     global.Roll = { create: mockRoll }
   })
 
-  test('has constructor', () => {
+  test('should have constructor', () => {
     expect(slam).not.toBeNull()
   })
 
-  describe('renderTemplate', () => {
-    test(`no bonus`, async () => {
-      let data = {
-        target: 'Boob',
-        attackerHp: 22,
-        relativeSpeed: 7,
-        isAoAStrong: false,
-        targetHp: 14,
-        shieldDB: 0,
-      }
+  describe('should return the correct dice based on velocity and speed', () => {
+    const data = {
+      target: 'Boob',
+      attackerHp: 0,
+      relativeSpeed: 0,
+      isAoAStrong: false,
+      targetHp: 0,
+      shieldDB: 0,
+    }
+
+    test(`1/4 dice damage`, async () => {
+      data.attackerHp = 25
+      data.relativeSpeed = 1
+      data.targetHp = 26
 
       mockRoll //
-        .mockReturnValueOnce(mockRollResult([2, 3], 0))
+        .mockReturnValueOnce(mockRollResult([1], -3))
+        .mockReturnValueOnce(mockRollResult([1], -2))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(25)
+      expect(templateData.attackerRaw).toBe(0.25)
+      expect(templateData.attackerDice).toEqual({ dice: 1, adds: -3 })
+
+      expect(templateData.targetHp).toBe(26)
+      expect(templateData.targetRaw).toBe(0.26)
+      expect(templateData.targetDice).toEqual({ dice: 1, adds: -2 })
+    })
+
+    test(`1/2 dice damage`, async () => {
+      data.attackerHp = 25
+      data.relativeSpeed = 2
+      data.targetHp = 26
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1], -2))
         .mockReturnValueOnce(mockRollResult([1], -1))
 
       await slam.process(data)
 
-      let mock = global.renderTemplate.mock
-      let templateData = mock.calls[0][1]
+      let templateData = global.renderTemplate.mock.calls[0][1]
 
-      expect(templateData.id).toBe(42)
+      expect(templateData.attackerHp).toBe(25)
+      expect(templateData.attackerRaw).toBe(0.5)
+      expect(templateData.attackerDice).toEqual({ dice: 1, adds: -2 })
+
+      expect(templateData.targetHp).toBe(26)
+      expect(templateData.targetRaw).toBe(0.52)
+      expect(templateData.targetDice).toEqual({ dice: 1, adds: -1 })
+    })
+
+    test(`over 1/2 dice damage`, async () => {
+      data.attackerHp = 24
+      data.relativeSpeed = 4
+      data.targetHp = 26
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1], -1))
+        .mockReturnValueOnce(mockRollResult([1], 0))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(24)
+      expect(templateData.attackerRaw).toBe(0.96)
+      expect(templateData.attackerDice).toEqual({ dice: 1, adds: -1 })
+
+      expect(templateData.targetHp).toBe(26)
+      expect(templateData.targetRaw).toBe(1.04)
+      expect(templateData.targetDice).toEqual({ dice: 1, adds: 0 })
+    })
+
+    test(`1 dice damage`, async () => {
+      data.attackerHp = 20
+      data.relativeSpeed = 5
+      data.targetHp = 29
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1], 0))
+        .mockReturnValueOnce(mockRollResult([1], 0))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(20)
+      expect(templateData.attackerRaw).toBe(1.0)
+      expect(templateData.attackerDice).toEqual({ dice: 1, adds: 0 })
+
+      expect(templateData.targetHp).toBe(29)
+      expect(templateData.targetRaw).toBe(1.45)
+      expect(templateData.targetDice).toEqual({ dice: 1, adds: 0 })
+    })
+
+    test(`1.5 dice round up to 2d damage`, async () => {
+      data.attackerHp = 15
+      data.relativeSpeed = 10
+      data.targetHp = 20
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1, 2], 0))
+        .mockReturnValueOnce(mockRollResult([1, 2], 0))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(15)
+      expect(templateData.attackerRaw).toBe(1.5)
+      expect(templateData.attackerDice).toEqual({ dice: 2, adds: 0 })
+
+      expect(templateData.targetHp).toBe(20)
+      expect(templateData.targetRaw).toBe(2)
+      expect(templateData.targetDice).toEqual({ dice: 2, adds: 0 })
+    })
+
+    test(`2.5 dice round up to 3d damage`, async () => {
+      data.attackerHp = 5
+      data.relativeSpeed = 50
+      data.targetHp = 6
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1, 2, 3], 0))
+        .mockReturnValueOnce(mockRollResult([1, 2], 0))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(5)
+      expect(templateData.attackerRaw).toBe(2.5)
+      expect(templateData.attackerDice).toEqual({ dice: 3, adds: 0 })
+
+      expect(templateData.targetHp).toBe(6)
+      expect(templateData.targetRaw).toBe(3)
+      expect(templateData.targetDice).toEqual({ dice: 3, adds: 0 })
+    })
+  })
+
+  describe(`should adjust attacker's dice for All-out Attack`, () => {
+    let resultWithoutBonus = 3
+    const data = {
+      target: 'Boob',
+      attackerHp: 22,
+      relativeSpeed: 7,
+      isAoAStrong: false,
+      targetHp: 14,
+      shieldDB: 0,
+    }
+
+    test(`no bonus`, async () => {
+      data.isAoAStrong = false
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1, 2], 0))
+        .mockReturnValueOnce(mockRollResult([1], -1))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
 
       expect(templateData.attackerHp).toBe(22)
       expect(templateData.attackerRaw).toBe(1.54)
       expect(templateData.attackerDice).toEqual({ dice: 2, adds: 0 })
-      expect(templateData.attackerExplain).toBe(`Rolled (2,3)`)
-      expect(templateData.attackerResult).toBe(5)
+      expect(templateData.isAoAStrong).toBe(false)
       expect(templateData.shieldDB).toBe(0)
 
-      expect(templateData.targetHp).toBe(14)
-      expect(templateData.targetRaw).toBe(0.98)
-      expect(templateData.targetDice).toEqual({ dice: 1, adds: -1 })
-      expect(templateData.targetExplain).toBe(`Rolled (1) - 1`)
-      expect(templateData.targetResult).toBe(1)
+      expect(templateData.attackerResult).toBe(resultWithoutBonus)
+    })
 
+    test(`All-out Attack (Strong) bonus`, async () => {
+      data.isAoAStrong = true
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1, 2], 0))
+        .mockReturnValueOnce(mockRollResult([1], -1))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(22)
+      expect(templateData.attackerRaw).toBe(1.54)
+      expect(templateData.attackerDice).toEqual({ dice: 2, adds: 0 })
+      expect(templateData.isAoAStrong).toBe(true)
+      expect(templateData.shieldDB).toBe(0)
+
+      expect(templateData.attackerResult).toBe(resultWithoutBonus + bonusForAoA)
+    })
+  })
+
+  describe(`should adjust attacker's dice for Shield DB`, () => {
+    let resultWithoutBonus = 3
+    const data = {
+      target: 'Boob',
+      attackerHp: 22,
+      relativeSpeed: 7,
+      isAoAStrong: false,
+      targetHp: 14,
+      shieldDB: 0,
+    }
+
+    test(`Shield DB = 1`, async () => {
+      let shieldDB = 1
+      data.shieldDB = shieldDB
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1, 2], 0))
+        .mockReturnValueOnce(mockRollResult([1], -1))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(22)
+      expect(templateData.attackerRaw).toBe(1.54)
+      expect(templateData.attackerDice).toEqual({ dice: 2, adds: 0 })
       expect(templateData.isAoAStrong).toBe(false)
-      expect(templateData.relativeSpeed).toBe(7)
-      expect(templateData.result).toBe('Boob falls down!')
+      expect(templateData.shieldDB).toBe(1)
+
+      expect(templateData.attackerResult).toBe(resultWithoutBonus + shieldDB)
+    })
+
+    test(`Shield DB = 3`, async () => {
+      let shieldDB = 3
+      data.shieldDB = shieldDB
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([1, 2], 0))
+        .mockReturnValueOnce(mockRollResult([1], -1))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerHp).toBe(22)
+      expect(templateData.attackerRaw).toBe(1.54)
+      expect(templateData.attackerDice).toEqual({ dice: 2, adds: 0 })
+      expect(templateData.isAoAStrong).toBe(false)
+      expect(templateData.shieldDB).toBe(3)
+
+      expect(templateData.attackerResult).toBe(resultWithoutBonus + shieldDB)
+    })
+  })
+
+  test(`Shield DB and All-out Attack are cumulative`, async () => {
+    let resultWithoutBonus = 3
+    let shieldDB = 2
+    let data = {
+      target: 'Boob',
+      attackerHp: 22,
+      relativeSpeed: 7,
+      isAoAStrong: true,
+      targetHp: 14,
+      shieldDB: shieldDB,
+    }
+
+    mockRoll //
+      .mockReturnValueOnce(mockRollResult([1, 2], 0))
+      .mockReturnValueOnce(mockRollResult([1], -1))
+
+    await slam.process(data)
+
+    let mock = global.renderTemplate.mock
+    let templateData = mock.calls[0][1]
+
+    expect(templateData.attackerHp).toBe(22)
+    expect(templateData.attackerRaw).toBe(1.54)
+    expect(templateData.attackerDice).toEqual({ dice: 2, adds: 0 })
+    expect(templateData.isAoAStrong).toBe(true)
+    expect(templateData.shieldDB).toBe(shieldDB)
+
+    expect(templateData.attackerResult).toBe(resultWithoutBonus + shieldDB + bonusForAoA)
+  })
+
+  describe('explain Dice Roll', () => {
+    const data = {
+      target: 'Boob',
+      attackerHp: 22,
+      relativeSpeed: 7,
+      isAoAStrong: false,
+      targetHp: 14,
+      shieldDB: 0,
+    }
+
+    test(`no bonus`, async () => {
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([2, 3], 0))
+        .mockReturnValueOnce(mockRollResult([1], -1))
+
+      await slam.process(data)
+
+      let templateData = global.renderTemplate.mock.calls[0][1]
+
+      expect(templateData.attackerExplain).toBe('Rolled (2,3)')
     })
 
     test(`with shield DB`, async () => {
-      let data = {
-        target: 'Boob',
-        attackerHp: 22,
-        relativeSpeed: 7,
-        isAoAStrong: false,
-        targetHp: 14,
-        shieldDB: 1,
-      }
+      data.shieldDB = 1
+      data.isAoAStrong = false
 
       mockRoll //
-        .mockReturnValueOnce(mockRollResult([2, 3], 0))
+        .mockReturnValueOnce(mockRollResult([4, 4], 0))
         .mockReturnValueOnce(mockRollResult([1], -1))
 
       await slam.process(data)
 
-      let mock = global.renderTemplate.mock
-      let arg = mock.calls[0][1]
+      let arg = global.renderTemplate.mock.calls[0][1]
 
-      expect(arg.id).toBe(42)
-
-      expect(arg.attackerHp).toBe(22)
-      expect(arg.attackerRaw).toBe(1.54)
-      expect(arg.shieldDB).toBe(1)
-      expect(arg.attackerDice).toEqual({ dice: 2, adds: 0 })
-      expect(arg.attackerExplain).toBe('Rolled (2,3) + 1 (Shield DB)')
-      expect(arg.attackerResult).toBe(6)
-
-      expect(arg.targetHp).toBe(14)
-      expect(arg.targetRaw).toBe(0.98)
-      expect(arg.targetDice).toEqual({ dice: 1, adds: -1 })
-      expect(arg.targetExplain).toBe('Rolled (1) - 1')
-      expect(arg.targetResult).toBe(1)
-
-      expect(arg.effect).toBe('GURPS.fallsDown')
-      expect(arg.isAoAStrong).toBe(false)
-      expect(arg.relativeSpeed).toBe(7)
-      expect(arg.result).toBe('Boob falls down!')
+      expect(arg.attackerExplain).toBe('Rolled (4,4) + 1 (Shield DB)')
     })
 
-    test(`with All out Attack`, async () => {
-      let data = {
-        target: 'Boob',
-        attackerHp: 22,
-        relativeSpeed: 7,
-        isAoAStrong: true,
-        targetHp: 14,
-        shieldDB: 0,
-      }
+    test(`with All-out Attack`, async () => {
+      data.isAoAStrong = true
+      data.shieldDB = 0
 
       mockRoll //
-        .mockReturnValueOnce(mockRollResult([2, 3], 0))
+        .mockReturnValueOnce(mockRollResult([5, 1], 0))
         .mockReturnValueOnce(mockRollResult([1], -1))
 
       await slam.process(data)
 
-      let mock = global.renderTemplate.mock
-      let arg = mock.calls[0][1]
-      expect(arg.id).toBe(42)
-      expect(arg.attackerDice).toEqual({ dice: 2, adds: 0 })
-      expect(arg.attackerExplain).toBe('Rolled (2,3) + 2 (All-out Attack (Strong))')
-      expect(arg.attackerHp).toBe(22)
-      expect(arg.attackerRaw).toBe(1.54)
+      let arg = global.renderTemplate.mock.calls[0][1]
+
+      expect(arg.attackerExplain).toBe('Rolled (5,1) + 2 (All-out Attack (Strong))')
+    })
+
+    test(`with All-out Attack and Shield DB`, async () => {
+      data.isAoAStrong = true
+      data.shieldDB = 1
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult([5, 6], 0))
+        .mockReturnValueOnce(mockRollResult([1], -1))
+
+      await slam.process(data)
+
+      let arg = global.renderTemplate.mock.calls[0][1]
+
+      expect(arg.attackerExplain).toBe('Rolled (5,6) + 2 (All-out Attack (Strong)) + 1 (Shield DB)')
+    })
+  })
+
+  describe(`results`, () => {
+    const data = {
+      attacker: 'Doofus',
+      target: 'Boob',
+      attackerHp: 21,
+      relativeSpeed: 7,
+      isAoAStrong: false,
+      targetHp: 16,
+      shieldDB: 0,
+    }
+
+    test(`target wins -- no effect`, async () => {
+      const attackerRolls = [2, 3]
+      const targetRolls = [2, 4]
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult(attackerRolls, 0))
+        .mockReturnValueOnce(mockRollResult(targetRolls, 0))
+
+      await slam.process(data)
+
+      let arg = global.renderTemplate.mock.calls[0][1]
+      expect(arg.attackerResult).toBe(5)
+      expect(arg.targetResult).toBe(6)
+      expect(arg.result).toBe('Boob is not affected')
+    })
+
+    test(`attacker wins -- DX check`, async () => {
+      const attackerRolls = [2, 5]
+      const targetRolls = [2, 4]
+
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult(attackerRolls, 0))
+        .mockReturnValueOnce(mockRollResult(targetRolls, 0))
+
+      await slam.process(data)
+
+      let arg = global.renderTemplate.mock.calls[0][1]
       expect(arg.attackerResult).toBe(7)
-      expect(arg.effect).toBe('GURPS.fallsDown')
-      expect(arg.isAoAStrong).toBe(true)
-      expect(arg.relativeSpeed).toBe(7)
-      expect(arg.result).toBe('Boob falls down!')
-      expect(arg.targetDice).toEqual({ dice: 1, adds: -1 })
-      expect(arg.targetExplain).toBe('Rolled (1) - 1')
-      expect(arg.targetHp).toBe(14)
-      expect(arg.targetRaw).toBe(0.98)
-      expect(arg.targetResult).toBe(1)
+      expect(arg.targetResult).toBe(6)
+      expect(arg.result).toBe('Boob must make...[DX check or fall]')
     })
 
-    test(`test attacker falls down`, async () => {
-      let data = {
-        attacker: 'Helmet',
-        target: 'Boob',
-        attackerHp: 22,
-        relativeSpeed: 7,
-        isAoAStrong: false,
-        targetHp: 14,
-      }
+    test(`attacker wins by double -- target falls`, async () => {
+      const attackerRolls = [6, 4]
+      const targetRolls = [2, 3]
 
-      mockRoll.mockReturnValueOnce(mockRollResult([1, 1], 0)).mockReturnValueOnce(mockRollResult([6], -1))
+      mockRoll //
+        .mockReturnValueOnce(mockRollResult(attackerRolls, 0))
+        .mockReturnValueOnce(mockRollResult(targetRolls, 0))
 
       await slam.process(data)
 
-      let mock = global.renderTemplate.mock
-      let arg = mock.calls[0][1]
-      expect(arg.id).toBe(42)
-      expect(arg.attackerDice).toEqual({ dice: 2, adds: 0 })
-      expect(arg.attackerExplain).toBe('Rolled (1,1)')
-      expect(arg.attackerHp).toBe(22)
-      expect(arg.attackerRaw).toBe(1.54)
-      expect(arg.attackerResult).toBe(2)
-      expect(arg.effect).toBe('GURPS.fallsDown')
-      expect(arg.isAoAStrong).toBe(false)
-      expect(arg.relativeSpeed).toBe(7)
-      expect(arg.result).toBe('Helmet falls down!')
-      expect(arg.targetDice).toEqual({ dice: 1, adds: -1 })
-      expect(arg.targetExplain).toBe('Rolled (6) - 1')
-      expect(arg.targetHp).toBe(14)
-      expect(arg.targetRaw).toBe(0.98)
+      let arg = global.renderTemplate.mock.calls[0][1]
+      expect(arg.attackerResult).toBe(10)
       expect(arg.targetResult).toBe(5)
+      expect(arg.result).toBe('Boob falls down!')
     })
 
-    test('AOA + Shield DB', async () => {
-      let data = {
-        target: 'Boob',
-        attackerHp: 16,
-        relativeSpeed: 6,
-        isAoAStrong: true,
-        targetHp: 10,
-        shieldDB: 1,
-      }
+    test(`target wins by double -- attacker falls`, async () => {
+      const attackerRolls = [1, 3]
+      const targetRolls = [5, 3]
 
       mockRoll //
-        .mockReturnValueOnce(mockRollResult([5], -1))
-        .mockReturnValueOnce(mockRollResult([1], -1))
+        .mockReturnValueOnce(mockRollResult(attackerRolls, 0))
+        .mockReturnValueOnce(mockRollResult(targetRolls, 0))
 
       await slam.process(data)
 
-      let mock = global.renderTemplate.mock
-      let arg = mock.calls[0][1]
-      expect(arg.id).toBe(42)
-      expect(arg.attackerDice).toEqual({ dice: 1, adds: -1 })
-      expect(arg.attackerExplain).toBe('Rolled (5) - 1 + 2 (All-out Attack (Strong)) + 1 (Shield DB)')
-      expect(arg.attackerHp).toBe(16)
-      expect(arg.attackerRaw).toBe(0.96)
-      expect(arg.attackerResult).toBe(7)
-      expect(arg.effect).toBe('GURPS.fallsDown')
-      expect(arg.isAoAStrong).toBe(true)
-      expect(arg.relativeSpeed).toBe(6)
-      expect(arg.result).toBe('Boob falls down!')
-      expect(arg.targetDice).toEqual({ dice: 1, adds: -1 })
-      expect(arg.targetExplain).toBe('Rolled (1) - 1')
-      expect(arg.targetHp).toBe(10)
-      expect(arg.targetRaw).toBe(0.6)
-      expect(arg.targetResult).toBe(1)
+      let arg = global.renderTemplate.mock.calls[0][1]
+      expect(arg.attackerResult).toBe(4)
+      expect(arg.targetResult).toBe(8)
+      expect(arg.result).toBe('Doofus falls down!')
     })
   })
 })

@@ -1,6 +1,6 @@
 'use strict'
-
-import { ChatProcessors, ChatProcessor } from '../../module/chat.js'
+import ChatProcessor from './chat-processor.js'
+import { ChatProcessors } from '../../module/chat.js'
 import selectTarget from '../../module/select-target.js'
 import { i18n } from '../../lib/utilities.js'
 import { SlamCalculator } from './slam-calc.js'
@@ -34,16 +34,11 @@ export default class SlamChatProcessor extends ChatProcessor {
 
     // see if there are any targets
     let targets = actor.getUsers().flatMap(u => [...u.targets])
-    let target = null
-    if (targets.length > 1) {
-      let promise = selectTarget()
-      promise.then(target => {
-        SlamCalculatorForm.process(actor, target)
-      })
-    } else {
-      if (targets.length === 1) target = [...targets][0]
-      SlamCalculatorForm.process(actor, target)
-    }
+
+    if (targets.length === 1) SlamCalculator.process(actor, [...targets][0])
+    else if (targets.length > 1) selectTarget().then(target => SlamCalculatorForm.process(actor, target))
+    else SlamCalculatorForm.process(actor, null)
+
     this.privateMessage('Opening Slam Calculator')
   }
 
@@ -73,7 +68,7 @@ class SlamCalculatorForm extends FormApplication {
     let name = tokens.find(it => it.actorId === attacker.id)?.name
 
     this._attacker = attacker
-    this._name = !!name ? name : attacker.name
+    this._name = name || attacker.name
     this._target = target
 
     this._calculator = new SlamCalculator()
@@ -111,6 +106,7 @@ class SlamCalculatorForm extends FormApplication {
     data.isAoAStrong = this._isAoAStrong
     data.shieldDB = this._shieldDB
     data.target = !!this._target ? this._target.data.name : `(${game.i18n.localize('GURPS.target')})`
+    data.isRealTarget = !!this._target
     return data
   }
 

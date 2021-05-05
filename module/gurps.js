@@ -19,7 +19,6 @@ import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
-import SlamChatProcessor from '../module/chat/slam.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 
 export const GURPS = {}
@@ -1455,7 +1454,6 @@ Hooks.once('init', async function () {
   HitLocation.init()
   DamageChat.initSettings()
   RegisterChatProcessors()
-  SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket()

@@ -1,11 +1,15 @@
 'use strict'
 
-import { ChatProcessor } from '../chat.js'
+import ChatProcessor from './chat-processor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 
 export class FrightCheckChatProcessor extends ChatProcessor {
-  help() { return "/frightcheck (or /fc)" }
-  isGMOnly() { return true }
+  help() {
+    return '/frightcheck (or /fc)'
+  }
+  isGMOnly() {
+    return true
+  }
 
   matches(line) {
     this.match = line.match(/^\/(fc|frightcheck)/)
