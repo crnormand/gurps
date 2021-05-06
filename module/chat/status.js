@@ -1,7 +1,7 @@
 'use strict'
 
 import ChatProcessor from './chat-processor.js'
-import { i18n } from '../../lib/utilities.js'
+import { i18n, i18n_f } from '../../lib/utilities.js'
 
 const Command = {
   on: 'set',
@@ -17,36 +17,41 @@ const Command = {
 }
 
 export default class StatusChatProcessor extends ChatProcessor {
+  static regex() {
+    return /^\/(st|status) +(toggle|t|on|off|\+|-|clear|set|unset|list) *([^\@: ]+)? *(\@self|:\S+)?/i
+  }
+
   help() {
     return '/status on|off|t|clear|list &lt;status&gt;'
   }
 
   matches(line) {
-    this.match = line.match(/^\/(st|status) +(toggle|t|on|off|\+|-|clear|set|unset|list) *([^\@ ]+)? *(\@self)?/i)
+    this.match = line.match(StatusChatProcessor.regex())
     return !!this.match
   }
 
   async process(_) {
     let m = this.match
-    let commandText = m[2].trim().toLowerCase()
-    let statusText = m[3]?.trim()
-    let self = !!m[4]
 
+    let commandText = this.match[2].trim().toLowerCase()
     let theCommand = Command[commandText]
-
     if (theCommand == Command.list) return this.priv(this.list())
 
-    let tokens = !!self ? this.getSelfTokens() : canvas.tokens.controlled
+    let self = this.match[4] === '@self'
+    let tokenName = !self && !!this.match[4] ? this.match[4].replace(/^:(.*)$/, '$1') : null
+
+    let tokens = !!tokenName ? this.getTokensFor(tokenName) : !!self ? this.getSelfTokens() : canvas.tokens.controlled
     if (!tokens || tokens.length === 0) {
-      ui.notifications.warn(i18n('GURPS.chatYouMustSelectTokens') + ' @self) ' + i18n('GURPS.chatToApplyEffects'))
+      ui.notifications.warn(i18n_f('GURPS.chatSelectSelfOrNameTokens', { self: '@self' }))
       return
     }
 
     if (theCommand == Command.clear) return await this.clear(tokens)
 
-    let effect = this.findEffect(statusText)
+    let effectText = this.match[3]?.trim()
+    let effect = !!effectText ? this.findEffect(effectText) : null
     if (!effect) {
-      ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + statusText + "'")
+      ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
       return
     }
 
@@ -71,6 +76,58 @@ export default class StatusChatProcessor extends ChatProcessor {
     return html + '</table>'
   }
 
+  makePatternFrom(text) {
+    let pattern = text.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+    return '^' + pattern.trim() + '$'
+  }
+
+  getTokensFor(name) {
+    let pattern = this.makePatternFrom(name)
+
+    let tokens = canvas.tokens.placeables // all Placeables on canvas
+      .filter(it => it.constructor.name === 'Token') // only Tokens
+
+    let matches = tokens.filter(it => it.name.match(pattern)) // the Tokens which match the pattern
+
+    if (matches.length == 0 || matches.length > 1) {
+      // No good match on tokens, try the associated actor names
+      matches = tokens.filter(it => it.actor.name.match(pattern))
+    }
+
+    if (matches.length !== 1) {
+      let msg =
+        matches.length === 0 //
+          ? i18n_f('GURPS.chatNoTokenFound', { name: name }, 'No Actor/Token found matching {name}')
+          : i18n_f('GURPS.chatMultipleTokensFound', { name: name }, 'More than one Token/Actor found matching {name}')
+      ui.notifications.warn(msg)
+      return null
+    }
+
+    return matches
+  }
+
+  getSelfTokens() {
+    let tokens = canvas.tokens.placeables.filter(it => it.constructor.name === 'Token')
+    let list = tokens.filter(it => it.owned)
+    if (list.length === 1) return list
+
+    let msg =
+      list.length === 0
+        ? i18n('GURPS.chatOwnedTokenFound', 'You do not own any tokens in this scene.')
+        : i18n(
+            'GURPS.chatMultipleOwnedFound',
+            `You own more than one token in this scene. You can either select one and retry this command without the '@self' keyword, or use the ':name' option.`
+          )
+    ui.notifications.warn(msg)
+    return null
+
+    // return !!GURPS.LastActor
+    //   ? !!GURPS.LastActor.token
+    //     ? [GURPS.LastActor.token]
+    //     : GURPS.LastActor.getActiveTokens()
+    //   : []
+  }
+
   findEffect(statusText) {
     let pattern = !statusText
       ? '.*'
@@ -86,7 +143,8 @@ export default class StatusChatProcessor extends ChatProcessor {
   }
 
   isEffectActive(token, effect) {
-    return token.actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
+    let actor = token?.actor || game.actors.get(token.actorId)
+    return actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
   }
 
   async toggleTokenEffect(token, effect, actionText) {
@@ -131,13 +189,5 @@ export default class StatusChatProcessor extends ChatProcessor {
       if (status.id == actorEffect.getFlag('core', 'statusId')) return status
 
     return null
-  }
-
-  getSelfTokens() {
-    return !!GURPS.LastActor
-      ? !!GURPS.LastActor.token
-        ? [GURPS.LastActor.token]
-        : GURPS.LastActor.getActiveTokens()
-      : []
   }
 }

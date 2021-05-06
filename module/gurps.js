@@ -1542,7 +1542,17 @@ Hooks.once('ready', async function () {
     if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
       // If it isn't already in the chat log somewhere
       ChatMessage.create({
-        content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
+        content: `
+<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div>
+<hr>
+<div style='font-size:70%'>
+  <div>${GURPS.LEGAL}</div>
+  <hr/>
+  <div style='text-align: center;'>
+    <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
+    <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.png"></a></div>
+  </div>
+</div>`,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user],
       })

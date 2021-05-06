@@ -240,6 +240,7 @@
   "GURPS.chatResourceTracker": "Resource Tracker",
   "GURPS.chatResultBelowZero": "Result below zero",
   "GURPS.chatSetTo": "set to",
+  "GURPS.chatSelectSelfOrNameTokens": "You must select tokens, use '{self}', or use ':&lt;<i>token-name</i>&gt;' to apply status effects.",
   "GURPS.chatShock": "{name} takes {modifier} points of Shock ",
   "GURPS.chatSuffersCrippling": "{name} suffers a crippling injury",
   "GURPS.chatToApplyEffects": "to apply status effects",
