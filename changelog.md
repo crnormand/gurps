@@ -4,6 +4,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 This is what we are currently working on:
 
 - Fixed /status command to accept either 't' or 'toggle'
+- Added new syntax to /if command to allow nested /ifs
 
 ## History
 
