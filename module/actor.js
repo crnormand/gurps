@@ -65,6 +65,11 @@ export class GurpsActor extends Actor {
     }
     if (!this.data.data.equippedparry) this.data.data.equippedparry = this.getEquippedParry()
     if (!this.data.data.equippedblock) this.data.data.equippedblock = this.getEquippedBlock()
+    // catch for older actors that may not have these values set
+    if (!this.data.data.currentmove) this.data.data.currentmove = parseInt(this.data.data.basicmove.value) 
+    if (!this.data.data.currentdodge) this.data.data.currentdodge = parseInt(this.data.data.dodge.value)
+    if (!this.data.data.currentflight) this.data.data.currentflight = parseFloat(this.data.data.basicspeed.value) * 2
+
   }
 
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
