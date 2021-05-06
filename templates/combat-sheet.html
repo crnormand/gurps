@@ -2,8 +2,8 @@
   <div id='responsive' class="gurpsactorsheet">
     <div id='combat-sheet'>
       <div id='combat-hitfat'>
-        {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' compact=true}}
-        {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' compact=true}}
+        {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' compact=true condition='isReeling' testcondition=data.additionalresources.isReeling}}
+        {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' compact=true condition='isTired' testcondition=data.additionalresources.isTired}}
       </div>
 
       <div id='combat-trackers'>
