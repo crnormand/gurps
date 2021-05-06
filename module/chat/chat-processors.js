@@ -247,6 +247,8 @@ class SelectChatProcessor extends ChatProcessor {
           .map(u => u.id)
         if (users.includes(game.user.id)) {
           GURPS.SetLastActor(a)
+          let tokens = canvas.tokens.placeables.filter(t => t.actor == a)
+          if (tokens.length == 1) tokens[0].control({ releaseOthers: true }) // Foundry 'select'
           this.priv('Selecting ' + a.displayname)
           return
         }

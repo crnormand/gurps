@@ -5,6 +5,8 @@ This is what we are currently working on:
 
 - Fixed /status command to accept either 't' or 'toggle'
 - Added new syntax to /if command to allow nested /ifs
+- forgot to add Foundry selection for /select @self
+- fixed 'reeling' and 'tired' statuses (tired was actually reeling, and you couldn't manually set tired)
 
 ## History
 
