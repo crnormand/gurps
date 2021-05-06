@@ -100,7 +100,12 @@ class ChatProcessorRegistry {
     if (!!processor) {
       if (processor.isGMOnly() && !game.user.isGM) ui.notifications.warn(i18n('GURPS.chatYouMustBeGM'))
       else {
-        await processor.process(line)
+        try {
+          await processor.process(line)
+         } catch (err) {
+          ui.notifications.error(err)
+          console.error(err)
+        }
         return true
       }
     }

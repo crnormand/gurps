@@ -8,9 +8,8 @@ export class IfChatProcessor extends ChatProcessor {
   help() {
     return '/if [OtF] &lt;one&gt; /else &lt;two&gt;'
   }
-  matches(line) {
-    this.match = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
-    return !!this.match
+  matches(line) {  // Since this can get called recursively, we cannot use an instance variable to save the match status
+    return line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)   
   }
 
   async _handleResult(then) {
@@ -30,12 +29,16 @@ export class IfChatProcessor extends ChatProcessor {
   }
 
   async process(line) {
-    let m = this.match
+    let m = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/) // Since this can get called recursively, we cannot use an instance variable to save the match status
     const invert = !!m[1] // !
     const otf = m[2]
     let then = m[3].trim()
     var other
-    if (then.includes('/else ')) {
+    if (then.match(/{.*}/)) {  // using the advanced sytax
+      m = XRegExp.matchRecursive(then, '{', '}', 'g');
+      then = m[0].trim()
+      other = m[1]?.trim()
+    } else if (then.includes('/else ')) {
       m = then.match(/(.*)\/else (.*)/)
       then = m[1].trim()
       other = m[2].trim()
@@ -48,8 +51,8 @@ export class IfChatProcessor extends ChatProcessor {
         let pass = await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
         if (invert) pass = !pass
         if (pass) {
-          if (!!then) this._handleResult(then)
-        } else if (!!other) this._handleResult(other)
+          if (!!then) await this._handleResult(then)
+        } else if (!!other) await this._handleResult(other)
       } else this.priv(`${i18n('GURPS.chatMustBeACheck')}: [${otf}]`)
     } else this.priv(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')}: [${otf}]`)
   }
