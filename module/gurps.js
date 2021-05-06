@@ -625,7 +625,11 @@ async function performAction(action, actor, event, targets) {
     let chat = action.orig
     if (!!event?.shiftKey || game.keyboard.isCtrl(event))
       chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
-    ui.chat.processMessage(chat)
+    ui.chat.processMessage(chat).catch(err => {
+      ui.notifications.error(err)
+      console.error(err)
+      return false
+    })
     return true
   }
 

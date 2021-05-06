@@ -7,7 +7,7 @@
   "compatibleCoreVersion": "0.7.9",
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
-  "esmodules": ["module/gurps.js"],
+  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "styles": [
     "styles/simple.css",
     "styles/css_boilerplate.css",
