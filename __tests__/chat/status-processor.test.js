@@ -2,10 +2,52 @@ import { describe, expect, test } from '@jest/globals'
 import { jest } from '@jest/globals'
 import StatusChatProcessor from '../../module/chat/status.js'
 
+class Token {}
+
 describe('Status Processor', () => {
   const status = new StatusChatProcessor()
   const FooEffect = { label: 'GURPS.Foo', id: 'FOO', data: { label: 'Le Foo' } }
   const BarEffect = { label: 'GURPS.Bar', id: 'BAR', data: { label: 'Ein Bärren' } }
+
+  describe('regex', () => {
+    let regex = StatusChatProcessor.regex()
+
+    test('test 1', () => {
+      let match = '/st + foo @self'.match(regex)
+      expect(match).toHaveLength(5)
+      expect(match[1]).toBe('st')
+      expect(match[2]).toBe('+')
+      expect(match[3]).toBe('foo')
+      expect(match[4]).toBe('@self')
+    })
+
+    test('test 2', () => {
+      let match = '/st + foo'.match(regex)
+      expect(match).toHaveLength(5)
+      expect(match[1]).toBe('st')
+      expect(match[2]).toBe('+')
+      expect(match[3]).toBe('foo')
+      expect(match[4]).toBeUndefined()
+    })
+
+    test('test 3', () => {
+      let match = '/st + @self'.match(regex)
+      expect(match).toHaveLength(5)
+      expect(match[1]).toBe('st')
+      expect(match[2]).toBe('+')
+      expect(match[3]).toBeUndefined()
+      expect(match[4]).toBe('@self')
+    })
+
+    test('test 4', () => {
+      let match = '/st + :john'.match(regex)
+      expect(match).toHaveLength(5)
+      expect(match[1]).toBe('st')
+      expect(match[2]).toBe('+')
+      expect(match[3]).toBeUndefined()
+      expect(match[4]).toBe(':john')
+    })
+  })
 
   test('help', () => {
     expect(status.help()).toBe('/status on|off|t|clear|list &lt;status&gt;')
@@ -38,6 +80,7 @@ describe('Status Processor', () => {
       'GURPS.for': 'for',
       'GURPS.chatYouMustSelectTokens': 'You must select tokens (or use',
       'GURPS.chatNoStatusMatched': 'No status matched',
+      'GURPS.chatSelectSelfOrNameTokens': `You must select tokens, use '@self', or use ':name' to apply effects.`,
     }
     let mockLocalize = jest.fn()
     let mockPriv = jest.fn()
@@ -49,6 +92,7 @@ describe('Status Processor', () => {
     let privList = []
     let prntList = []
     let notifications = []
+    let doofusToken = null
 
     afterEach(() => {
       jest.resetAllMocks()
@@ -65,15 +109,32 @@ describe('Status Processor', () => {
       mockGetFlagBar.mockImplementation((scope, element) => 'BAR')
       mockGetFlagFoo.mockImplementation((scope, element) => 'FOO')
 
-      global.GURPS = { LastActor: null }
       global.CONFIG = { statusEffects: [FooEffect, BarEffect] }
-      global.canvas = { tokens: { controlled: [{}] } }
-      global.game = { i18n: { localize: mockLocalize } }
+      global.game = { i18n: { localize: mockLocalize, has: () => true, format: mockLocalize } }
       global.ui = { notifications: { warn: mockNotify } }
       status.registry = { priv: mockPriv, prnt: mockPrnt }
 
       FooEffect.getFlag = mockGetFlagFoo
       BarEffect.getFlag = mockGetFlagBar
+
+      doofusToken = new Token()
+      doofusToken.name = 'Doofus'
+      let doofusActor = {
+        get name() {
+          return 'Doofus'
+        },
+        token: doofusToken,
+        effects: [],
+        displayname: 'Doofus',
+      }
+      doofusActor.token.actor = doofusActor
+
+      global.canvas = {
+        tokens: {
+          placeables: [],
+        },
+      }
+      global.Token = Token.constructor
     })
 
     test('/st list', async () => {
@@ -88,7 +149,9 @@ describe('Status Processor', () => {
     })
 
     test('/st + BAD', async () => {
-      const input = '/st + BAD'
+      global.canvas.tokens.placeables = [doofusToken]
+
+      const input = '/st + BAD :Doofus'
       status.matches(input)
       await status.process()
       expect(notifications[0]).toBe(`No status matched 'BAD'`)
@@ -98,25 +161,12 @@ describe('Status Processor', () => {
       const input = '/st + Le*Foo @self'
       status.matches(input)
       await status.process()
-      expect(notifications[0]).toBe(`You must select tokens (or use @self) to apply effects`)
-    })
-
-    test('/st + Le*Foo @self -- LastActor has no tokens', async () => {
-      let actor = {
-        getActiveTokens: function () {
-          return []
-        },
-      }
-      global.GURPS = { LastActor: actor }
-
-      const arg = '+ Le*Foo @self'
-      status.matches(`/st ${arg}`)
-      await status.process()
-      expect(notifications[0]).toBe(`You must select tokens (or use @self) to apply effects`)
+      expect(notifications[0]).toBe(`You do not own any tokens in this scene.`)
     })
 
     describe('happy paths', () => {
       const toggle = jest.fn()
+      let boobToken = null
 
       describe('set status @self', () => {
         afterEach(() => {
@@ -124,15 +174,39 @@ describe('Status Processor', () => {
         })
 
         beforeEach(() => {
-          let actor = {
-            token: {
-              toggleEffect: toggle,
+          doofusToken = new Token()
+          doofusToken.name = 'Doofus'
+          let doofusActor = {
+            get name() {
+              return 'Doofus'
             },
+            token: doofusToken,
             effects: [],
-            displayname: 'Boob',
+            displayname: 'Doofus',
           }
-          actor.token.actor = actor
-          global.GURPS = { LastActor: actor }
+          doofusActor.token.actor = doofusActor
+
+          boobToken = new Token()
+          boobToken.name = 'Boob'
+          let boobActor = {
+            get name() {
+              return 'Boob'
+            },
+            token: boobToken,
+            effects: [],
+            displayname: 'Boob One',
+          }
+          boobActor.token.actor = boobActor
+
+          global.canvas = {
+            tokens: {
+              placeables: [],
+            },
+          }
+          global.Token = Token.constructor
+          global.canvas.tokens.placeables = [boobToken]
+          boobToken.owned = true
+          boobToken.toggleEffect = toggle
         })
 
         test('/st + Le*Foo @self', async () => {
@@ -141,9 +215,10 @@ describe('Status Processor', () => {
 
           await status.process()
 
+          expect(notifications).toHaveLength(0)
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(FooEffect)
-          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob`)
+          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob One`)
         })
 
         test('/st on Le*Foo @self', async () => {
@@ -154,7 +229,7 @@ describe('Status Processor', () => {
 
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(FooEffect)
-          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob`)
+          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob One`)
         })
 
         test('/st set Le*Foo @self', async () => {
@@ -165,7 +240,109 @@ describe('Status Processor', () => {
 
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(FooEffect)
-          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob`)
+          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob One`)
+        })
+      })
+
+      describe('set status :Doofus', () => {
+        afterEach(() => {
+          jest.resetAllMocks()
+        })
+
+        beforeEach(() => {
+          let doofusToken = new Token()
+          doofusToken.toggleEffect = toggle
+          doofusToken.name = 'Doofus'
+          let doofusActor = {
+            get name() {
+              return 'Doofus'
+            },
+            token: doofusToken,
+            effects: [],
+            displayname: 'Doofus',
+          }
+          doofusActor.token.actor = doofusActor
+
+          let boob1Token = new Token()
+          boob1Token.toggleEffect = toggle
+          boob1Token.name = 'Boob One'
+          let boob1Actor = {
+            get name() {
+              return 'Boob One'
+            },
+            token: boob1Token,
+            effects: [],
+            displayname: 'Boob One',
+          }
+          boob1Actor.token.actor = boob1Actor
+
+          let boob2Token = new Token()
+          boob2Token.toggleEffect = toggle
+          boob2Token.name = 'Boob One'
+          let boob2Actor = {
+            get name() {
+              return 'Boob Two'
+            },
+            token: boob2Token,
+            effects: [],
+            displayname: 'Boob Two',
+          }
+          boob2Actor.token.actor = boob2Actor
+
+          global.canvas = {
+            tokens: {
+              placeables: [boob2Token, doofusToken, boob1Token],
+            },
+          }
+          global.Token = Token.constructor
+        })
+
+        test('/st + Le*Foo :Gallant -- no match', async () => {
+          const arg = '+ Le*Foo :Gallant'
+          status.matches(`/st ${arg}`)
+
+          await status.process()
+
+          expect(notifications).toHaveLength(2)
+          expect(toggle.mock.calls.length).toBe(0)
+          expect(notifications[0]).toBe(`No Actor/Token found matching {name}`)
+          expect(notifications[1]).toBe(`You must select tokens, use '@self', or use ':name' to apply effects.`)
+        })
+
+        test('/st on Le*Foo :Doofus - single token match', async () => {
+          const arg = 'on Le*Foo :Doofus'
+          status.matches(`/st ${arg}`)
+
+          await status.process()
+
+          expect(notifications).toHaveLength(0)
+          expect(toggle.mock.calls.length).toBe(1)
+          expect(toggle.mock.calls[0][0]).toBe(FooEffect)
+          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Doofus`)
+        })
+
+        test('/st set Le*Foo :Boob* -- multiple token match, multiple actor match', async () => {
+          const arg = 'set Le*Foo :Boob*'
+          status.matches(`/st ${arg}`)
+
+          await status.process()
+
+          expect(notifications).toHaveLength(2)
+          expect(notifications[0]).toBe('More than one Token/Actor found matching {name}')
+          expect(notifications[1]).toBe(`You must select tokens, use '@self', or use ':name' to apply effects.`)
+          expect(toggle.mock.calls.length).toBe(0)
+        })
+
+        test('/st set Le*Foo :Boob* -- multiple token match, single actor match', async () => {
+          const arg = 'set Le*Foo :Boob*One'
+          status.matches(`/st ${arg}`)
+
+          await status.process()
+
+          expect(notifications).toHaveLength(0)
+          expect(toggle.mock.calls.length).toBe(1)
+          expect(toggle.mock.calls[0][0]).toBe(FooEffect)
+          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob One`)
         })
       })
 
@@ -175,16 +352,27 @@ describe('Status Processor', () => {
         })
 
         beforeEach(() => {
-          let actor = {
-            token: {
-              toggleEffect: toggle,
+          boobToken = new Token()
+          boobToken.name = 'Boob'
+          let boobActor = {
+            get name() {
+              return 'Boob'
             },
-            effects: [BarEffect, FooEffect],
-            displayname: 'Boob',
+            token: boobToken,
+            effects: [FooEffect],
+            displayname: 'Boob One',
           }
-          actor.token.actor = actor
+          boobActor.token.actor = boobActor
 
-          global.GURPS = { LastActor: actor }
+          global.canvas = {
+            tokens: {
+              placeables: [],
+            },
+          }
+          global.Token = Token.constructor
+          global.canvas.tokens.placeables = [boobToken]
+          boobToken.owned = true
+          boobToken.toggleEffect = toggle
         })
 
         test('/st set Le*Foo @self', async () => {
@@ -193,6 +381,7 @@ describe('Status Processor', () => {
 
           await status.process()
 
+          expect(notifications).toHaveLength(0)
           expect(toggle.mock.calls.length).toBe(0)
           expect(prntList).toHaveLength(0)
         })
@@ -204,26 +393,38 @@ describe('Status Processor', () => {
         })
 
         beforeEach(() => {
-          let actor = {
-            token: {
-              toggleEffect: toggle,
+          boobToken = new Token()
+          boobToken.name = 'Boob'
+          let boobActor = {
+            get name() {
+              return 'Boob'
             },
-            effects: [BarEffect, FooEffect],
-            displayname: 'Boob',
+            token: boobToken,
+            effects: [BarEffect],
+            displayname: 'Boob One',
           }
-          actor.token.actor = actor
+          boobActor.token.actor = boobActor
 
-          global.GURPS = { LastActor: actor }
+          global.canvas = {
+            tokens: {
+              placeables: [],
+            },
+          }
+          global.Token = Token.constructor
+          global.canvas.tokens.placeables = [boobToken]
+          boobToken.owned = true
+          boobToken.toggleEffect = toggle
         })
 
         test('/st unset Ein*Bärren -- not set', async () => {
-          global.GURPS.LastActor.effects = [FooEffect] // remove BAR
+          boobToken.actor.effects = []
 
           const arg = 'unset Ein*Bärren @self'
           status.matches(`/st ${arg}`)
 
           await status.process()
 
+          expect(notifications).toHaveLength(0)
           expect(toggle.mock.calls.length).toBe(0)
           expect(prntList).toHaveLength(0)
         })
@@ -234,6 +435,7 @@ describe('Status Processor', () => {
 
           await status.process()
 
+          expect(notifications).toHaveLength(0)
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(BarEffect)
           expect(prntList).toHaveLength(1)
@@ -245,6 +447,7 @@ describe('Status Processor', () => {
 
           await status.process()
 
+          expect(notifications).toHaveLength(0)
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(BarEffect)
           expect(prntList).toHaveLength(1)
@@ -256,6 +459,7 @@ describe('Status Processor', () => {
 
           await status.process()
 
+          expect(notifications).toHaveLength(0)
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(BarEffect)
           expect(prntList).toHaveLength(1)
@@ -268,19 +472,31 @@ describe('Status Processor', () => {
         })
 
         beforeEach(() => {
-          let actor = {
-            token: {
-              toggleEffect: toggle,
+          boobToken = new Token()
+          boobToken.name = 'Boob'
+          let boobActor = {
+            get name() {
+              return 'Boob'
             },
+            token: boobToken,
             effects: [BarEffect, FooEffect],
-            displayname: 'Boob',
+            displayname: 'Boob One',
           }
-          actor.token.actor = actor
-          global.GURPS = { LastActor: actor }
+          boobActor.token.actor = boobActor
+
+          global.canvas = {
+            tokens: {
+              placeables: [],
+            },
+          }
+          global.Token = Token.constructor
+          global.canvas.tokens.placeables = [boobToken]
+          boobToken.owned = true
+          boobToken.toggleEffect = toggle
         })
 
         test('/st clear @self -- not set', async () => {
-          global.GURPS.LastActor.effects = [] // remove all
+          boobToken.actor.effects = [] // remove all
 
           const arg = 'clear @self'
           status.matches(`/st ${arg}`)
@@ -298,12 +514,13 @@ describe('Status Processor', () => {
 
           await status.process()
 
+          expect(notifications).toHaveLength(0)
           expect(toggle.mock.calls.length).toBe(2)
           expect(toggle.mock.calls[0][0]).toBe(BarEffect)
           expect(toggle.mock.calls[1][0]).toBe(FooEffect)
           expect(prntList).toHaveLength(2)
-          expect(prntList[0]).toBe(`Clearing [BAR:'Ein Bärren'] for Boob`)
-          expect(prntList[1]).toBe(`Clearing [FOO:'Le Foo'] for Boob`)
+          expect(prntList[0]).toBe(`Clearing [BAR:'Ein Bärren'] for Boob One`)
+          expect(prntList[1]).toBe(`Clearing [FOO:'Le Foo'] for Boob One`)
         })
       })
 
@@ -313,19 +530,31 @@ describe('Status Processor', () => {
         })
 
         beforeEach(() => {
-          let actor = {
-            token: {
-              toggleEffect: toggle,
+          boobToken = new Token()
+          boobToken.name = 'Boob'
+          let boobActor = {
+            get name() {
+              return 'Boob'
             },
+            token: boobToken,
             effects: [BarEffect, FooEffect],
-            displayname: 'Boob',
+            displayname: 'Boob One',
           }
-          actor.token.actor = actor
-          global.GURPS = { LastActor: actor }
+          boobActor.token.actor = boobActor
+
+          global.canvas = {
+            tokens: {
+              placeables: [],
+            },
+          }
+          global.Token = Token.constructor
+          global.canvas.tokens.placeables = [boobToken]
+          boobToken.owned = true
+          boobToken.toggleEffect = toggle
         })
 
         test('/st toggle Le*Foo @self -- not set', async () => {
-          global.GURPS.LastActor.effects = [] // remove all
+          boobToken.actor.effects = [] // remove all
 
           const arg = 'toggle Le*Foo @self'
           status.matches(`/st ${arg}`)
@@ -336,7 +565,7 @@ describe('Status Processor', () => {
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(FooEffect)
           expect(prntList).toHaveLength(1)
-          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob`)
+          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob One`)
         })
 
         test('/st toggle Le*Foo @self', async () => {
@@ -349,7 +578,7 @@ describe('Status Processor', () => {
           expect(toggle.mock.calls.length).toBe(1)
           expect(toggle.mock.calls[0][0]).toBe(FooEffect)
           expect(prntList).toHaveLength(1)
-          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob`)
+          expect(prntList[0]).toBe(`Toggling [FOO:'Le Foo'] for Boob One`)
         })
       })
 
