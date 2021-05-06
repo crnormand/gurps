@@ -4,11 +4,14 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 This is what we are currently working on:
 
 - Fixed /status command to accept either 't' or 'toggle'
-- Added new syntax to /if command to allow nested /ifs
-- forgot to add Foundry selection for /select @self
-- fixed 'reeling' and 'tired' statuses (tired was actually reeling, and you couldn't manually set tired)
+- Added new syntax to /if command to allow nested /ifs {}
+- Fixed synchronization of /if "then" and "else" clauses
+- Forgot to add Foundry selection for /select @self
+- Fixed 'reeling' and 'tired' statuses (tired was actually reeling, and you couldn't manually set tired)
 - Fixed /status command with @self -- now it will toggle a status on a token owned by the user (if there is only one)
 - Added "named token/actor" to /status command (format: `/st + sleep* :Name`). ':Name' may contain a wildcard and will match either a token name or an actor name (first it tries tokens, then actors). The token must be in the active scene. 
+- Fixed older actors not having currentmove/dodge or flight values
+- Add warning if trying to Edit an empty actor
 
 ## History
 
