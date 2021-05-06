@@ -1,8 +1,6 @@
 {
 	"Actor": {
-		"types": [
-			"character"
-		],
+		"types": [ "character" ],
 		"character": {
 			"attributes": {
 				"ST": {
@@ -294,24 +292,34 @@
 					"daystoheal": 0
 				}
 			}
-		},
-		"Item": {
-			"types": [
-				"items"
-			],
-			"items": {
-				"name": "",
-				"quantity": 1,
-				"weight": 0,
-				"cost": "",
-				"location": "",
-				"carried": "",
-				"techlevel": "",
-				"category": "",
-				"identified": "",
-				"notes": "",
-				"pageref": ""
-			}
 		}
-	}
-}
+  },
+  "Item": {
+      "types": [ "equipment" ],
+      "equipment": {
+        "eqt": {
+          "name": "",
+          "notes": "",
+          "pageref": "",
+          "count": 1,
+          "weight": "",
+          "cost": 0,
+          "location": "",
+          "carried": "",
+          "equipped": "",
+          "techlevel": "",
+          "categories": "",
+          "legalityclass": "",
+          "costsum": "",
+          "weightsum": "",
+          "uses": "",
+          "maxuses": ""
+        },
+        "melee": {},
+        "ranged": {},
+        "ads": {},
+        "skills": {},
+        "spells": {}
+      }
+    }
+  }
