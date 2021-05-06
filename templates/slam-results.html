@@ -7,7 +7,11 @@
   <div>
     <ul class='modifier-list'>
       {{#if isAoAStrong}}
-      <li>+2 {{localize "GURPS.damage"}} {{localize "GURPS.for"}}{{localize "GURPS.slamAOAStrong"}}</li>
+      <li>+2 {{localize "GURPS.slamAOAStrong"}}</li>
+      {{/if}}
+      {{#if shieldDB}}
+      <li>+{{shieldDB}} {{i18n "GURPS.slamForShieldDB" "Shield DB (Shield Rush)"}} [PDF:{{i18n
+        "GURPS.pdfShieldRush"}}]</li>
       {{/if}}
     </ul>
   </div>
@@ -26,7 +30,7 @@
 
         <div></div>
         <div>{{attackerDice.dice}}d{{#if attackerDice.adds}}{{displayNumber attackerDice.adds}}{{/if}}</div>
-        <div>{{localize "GURPS.Dice"}} {{#if isAoAStrong}}(+2 {{localize "GURPS.slamAOAStrong"}}){{/if}}</div>
+        <div>{{i18n "GURPS.Dice"}} </div>
 
         <div></div>
         <div>{{attackerResult}}</div>

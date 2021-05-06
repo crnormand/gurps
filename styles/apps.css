@@ -209,6 +209,44 @@
   font-size: smaller;
 }
 
+.gurps-group + .gurps-group {
+  margin-top: 5px;
+}
+
+.modtooltip .gurps-group + .gurps-group {
+  margin: unset;
+}
+
+.gurps-group.inputs label {
+  font-size: 80%;
+  justify-self: stretch;
+  text-align: end;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding-right: 0.15em;
+}
+
+.gurps-group.inputs input {
+  text-align: center;
+  margin: 0.15em 0;
+}
+
+.gurps-group .label-value-row {
+  gap: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.gurps-group .label-value-row > *:nth-child(4n + 3),
+.gurps-group .label-value-row > *:nth-child(4n + 4) {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.button-bar {
+  margin-top: 0.35em;
+}
+
 .with-button {
   position: relative;
 }
@@ -522,36 +560,37 @@ ul#result-effects li {
   padding: 5px 0;
   border-radius: 6px;
   font-size: medium;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 
   /* Position the tooltip text */
   position: absolute;
   z-index: 1;
-  bottom: 125%;
+  top: 1.4em;
   left: 50%;
   margin-left: -60px;
 
   /* Fade in tooltip */
   opacity: 0;
-  transition: opacity 0.4s;
+  transition: opacity 0.67s;
 }
 
 /* Tooltip arrow */
 .tooltip .tooltiptext::after {
   content: '';
   position: absolute;
-  top: 100%;
+  top: -10px;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #555 transparent transparent transparent;
+  border-color: transparent transparent #555 transparent;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
   visibility: visible;
   transition-property: visibility;
-  transition-delay: 0.5s;
+  transition-delay: 0.67s;
   opacity: 1;
 }
 
@@ -612,10 +651,6 @@ ul#result-effects li {
   grid-gap: 0.05in;
 }
 
-#trackers > *:first-child {
-  grid-template: 'combat-hit combat-fat';
-}
-
 #trackers > *:last-child {
   grid-template-rows: 0fr 1fr 1fr;
   grid-gap: 0;
@@ -634,23 +669,27 @@ ul#result-effects li {
   border-bottom: 1px solid white;
 }
 
-.tracked-resource:nth-child(even) .header {
-  border-right: 1px solid white;
-}
-
-.tracked-resource:nth-child(odd) .header {
-  border-left: none;
-}
-
 .resource-editor,
 .tracked-resource {
   display: flex;
   flex-flow: column nowrap;
-  border-left: 1px solid black;
-  border-bottom: 1px solid black;
+  border: 1px solid black;
 }
 
-.tracked-resource:nth-child(odd) {
+#resources .tracked-resource:nth-child(even) .header {
+  border-right: 1px solid white;
+}
+
+#resources .tracked-resource:nth-child(odd) .header {
+  border-left: none;
+}
+
+#resources .tracked-resource {
+  border-right: none;
+  border-top: none;
+}
+
+#resources .tracked-resource:nth-of-type(odd) {
   border-right: 1px solid black;
 }
 
@@ -1154,44 +1193,6 @@ ul#result-effects li {
   max-height: 35em;
 }
 
-.single-column-form {
-  display: flex;
-  flex-flow: column nowrap;
-  margin: 0.25rem;
-}
-
-.single-column-form .inputs {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 5px;
-  align-self: center;
-  margin: 0 0.5rem;
-}
-
-.single-column-form .inputs label {
-  font-size: 80%;
-  justify-self: end;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-}
-
-.single-column-form .inputs input {
-  text-align: center;
-}
-
-.single-column-form .inputs input[type='checkbox'] {
-  margin: 0;
-}
-
-.single-column-form .button-bar {
-  margin-top: 1rem;
-}
-
-.single-column-form .vertical-gap {
-  margin-top: 0.5rem;
-}
-
 .subtle {
   color: grey;
   font-size: 80%;
@@ -1448,6 +1449,7 @@ ul#result-effects li {
 
 .modttt .modtooltip {
   padding: 0.35em;
+  box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
 .modtooltip .plus,
@@ -1533,8 +1535,11 @@ ul#result-effects li {
 .modtooltip .glinkmod,
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
-.modtooltip .gurpslink {
-  background-color: unset !important;
+.modtooltip .gurpslink,
+.gurps-chat-message .glinkmod,
+.gurps-chat-message .glinkmodplus,
+.gurps-chat-message .glinkmodminus,
+.gurps-chat-message .gurpslink {
   padding: 0.0825em 0.165em;
   border: 0.0825em solid rgb(122, 121, 113);
   border-radius: 0.25em;
@@ -1542,23 +1547,50 @@ ul#result-effects li {
   font-size: 90%;
 }
 
+.modtooltip .glinkmod,
+.modtooltip .glinkmodplus,
+.modtooltip .glinkmodminus,
+.modtooltip .gurpslink {
+  background-color: unset !important;
+}
+
+.gurps-chat-message .glinkmod,
+.gurps-chat-message .glinkmodplus,
+.gurps-chat-message .glinkmodminus,
+.gurps-chat-message .gurpslink {
+  background-color: rgba(255, 255, 240, 0.8) !important;
+}
+
 .modtooltip .glinkmodplus:hover,
 .modtooltip .glinkmod:hover,
 .modtooltip .glinkmodminus:hover,
-.modtooltip .gurpslink:hover {
+.modtooltip .gurpslink:hover,
+.gurps-chat-message .glinkmodplus:hover,
+.gurps-chat-message .glinkmod:hover,
+.gurps-chat-message .glinkmodminus:hover,
+.gurps-chat-message .gurpslink:hover {
   cursor: pointer;
   text-shadow: none;
   font-weight: unset;
   background-color: rgba(255, 255, 240, 0.8) !important;
-  padding: 0.0825em 0.165em;
-  border-radius: 0.25em;
+}
+
+.gurps-chat-message .glinkmodplus:hover,
+.gurps-chat-message .glinkmod:hover,
+.gurps-chat-message .glinkmodminus:hover,
+.gurps-chat-message .gurpslink:hover {
+  box-shadow: 0 0 5px red;
 }
 
 .modtooltip .glinkmodplus:active,
 .modtooltip .glinkmod:active,
 .modtooltip .glinkmodminus:active,
-.modtooltip .gurpslink:active {
-  background-color: rgba(255, 255, 240, 0.6) !important;
+.modtooltip .gurpslink:active,
+.gurps-chat-message .glinkmodplus:active,
+.gurps-chat-message .glinkmod:active,
+.gurps-chat-message .glinkmodminus:active,
+.gurps-chat-message .gurpslink:active {
+  background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
 .removemod.plus,
@@ -1571,7 +1603,8 @@ ul#result-effects li {
   color: darkred;
 }
 
-.modtooltip .gurpslink {
+.modtooltip .gurpslink,
+.gurps-chat-message .gurpslink {
   color: darkblue;
 }
 

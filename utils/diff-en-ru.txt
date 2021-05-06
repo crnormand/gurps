@@ -12,7 +12,6 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.addExplosionHexes
   GURPS.aim
   GURPS.allOutDefense
-  GURPS.allOutDefenseRef
   GURPS.chatClearing
   GURPS.chatClearingLastActor
   GURPS.chatDoesNotHaveEnough
@@ -48,6 +47,9 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.clickToRemove
   GURPS.concentrationCheck
   GURPS.defense
+  GURPS.dragrulerFly
+  GURPS.dragrulerSprint
+  GURPS.dragrulerWalk
   GURPS.dxCheckOrFall
   GURPS.fallsDown
   GURPS.hitLocationArm, holding shield
@@ -94,7 +96,6 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierAppearBelow
   GURPS.modifierAutomatic
   GURPS.modifierBlockRetreat
-  GURPS.modifierBlockRetreatRef
   GURPS.modifierClickToAdd
   GURPS.modifierCommon
   GURPS.modifierCover
@@ -113,24 +114,15 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierCurrentModifiers
   GURPS.modifierDangerous
   GURPS.modifierDeceptiveAttack
-  GURPS.modifierDeceptiveAttackRef
   GURPS.modifierDeterminedAttack
-  GURPS.modifierDeterminedAttackRef
   GURPS.modifierDodgeAcrobatic
-  GURPS.modifierDodgeAcrobaticRef
   GURPS.modifierDodgeDive
-  GURPS.modifierDodgeDiveRef
   GURPS.modifierDodgeFailedAcro
-  GURPS.modifierDodgeFailedAcroRef
   GURPS.modifierDodgeRear
-  GURPS.modifierDodgeRearRef
   GURPS.modifierDodgeRetreat
-  GURPS.modifierDodgeRetreatRef
   GURPS.modifierDodgeSide
-  GURPS.modifierDodgeSideRef
   GURPS.modifierEasy
   GURPS.modifierExtraEffort
-  GURPS.modifierExtraEffortRef
   GURPS.modifierFavorable
   GURPS.modifierFeverishDef
   GURPS.modifierGMBlessed
@@ -138,7 +130,6 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierGMSaidSo
   GURPS.modifierHard
   GURPS.modifierHeroicCharge
-  GURPS.modifierHeroicChargeRef
   GURPS.modifierHitLocation
   GURPS.modifierImpossible
   GURPS.modifierJournalManager
@@ -154,10 +145,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierLightTorch
   GURPS.modifierLightTwilight
   GURPS.modifierMightyBlow
-  GURPS.modifierMightyBlowRef
   GURPS.modifierMouseOff
   GURPS.modifierMoveAttack
-  GURPS.modifierMoveAttackRef
   GURPS.modifierOthers
   GURPS.modifierPosture
   GURPS.modifierPostureCrouchMelee
@@ -188,7 +177,6 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierSelectJournalsTitle
   GURPS.modifierSendTo
   GURPS.modifierShieldDB
-  GURPS.modifierShieldDBRef
   GURPS.modifierShowOnMouseOver
   GURPS.modifierShowOnMouseOverHint
   GURPS.modifierSize
@@ -202,11 +190,9 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierStatusShock4
   GURPS.modifierStatusStunned
   GURPS.modifierStrongAttack
-  GURPS.modifierStrongAttackRef
   GURPS.modifierTabAside
   GURPS.modifierTaskDifficulty
   GURPS.modifierTelegraphicAttack
-  GURPS.modifierTelegraphicAttackRef
   GURPS.modifierToHit
   GURPS.modifierTrivial
   GURPS.modifierUnfavorable
@@ -220,6 +206,24 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierWillCheck
   GURPS.name
   GURPS.notAffected
+  GURPS.pdfAllOutDefense
+  GURPS.pdfBlockRetreat
+  GURPS.pdfDeceptiveAttack
+  GURPS.pdfDeterminedAttack
+  GURPS.pdfDodgeAcrobatic
+  GURPS.pdfDodgeDive
+  GURPS.pdfDodgeFailedAcro
+  GURPS.pdfDodgeRear
+  GURPS.pdfDodgeRetreat
+  GURPS.pdfDodgeSide
+  GURPS.pdfExtraEffort
+  GURPS.pdfHeroicCharge
+  GURPS.pdfMightyBlow
+  GURPS.pdfMoveAttack
+  GURPS.pdfShieldDB
+  GURPS.pdfShieldRush
+  GURPS.pdfStrongAttack
+  GURPS.pdfTelegraphicAttack
   GURPS.ranged
   GURPS.rateOfFire
   GURPS.resolve
@@ -228,14 +232,42 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.resourceEditTracker
   GURPS.resourceUndefined
   GURPS.resourceUpdateTrackerSlot
+  GURPS.rolled
   GURPS.selectToken
   GURPS.showQuestion
   GURPS.slamAOAStrong
   GURPS.slamCalculator
+  GURPS.slamForShieldDB
   GURPS.slamRelativeVelocity
+  GURPS.slamShieldDB
   GURPS.slamVelocity
   GURPS.slams
   GURPS.target
+  __ Character AddsDisadsPerksQuirks__
+  __ Character Skills__
+  __Apply Damage Dialog__
+  __Body Plan__
+  __Char Sheet__
+  __Character Attributes__
+  __Character Description__
+  __Character Encumbrance/Lift__
+  __Character Equipment__
+  __Character Points__
+  __Character Sheet Identity__
+  __Character Sheet Miscellaneous__
+  __Character Spells__
+  __Character Weapons__
+  __Chat Messages__
+  __Damage Types__
+  __Drag Ruler__
+  __Fantastic Dungeon Grappling__
+  __Hit Location__
+  __Modifier Bucket__
+  __PDF References__
+  __Resolve Damage Dialog__
+  __Resource Trackers__
+  __Slam Calculator__
+  __Status/Conditions__
 ------------
 values in [lang/en.json] that are the same in [lang/ru.json]
   GURPS.changelog: README

@@ -1,10 +1,31 @@
 ### Users Guide for [GURPS 4e game aid for Foundry VTT](https://bit.ly/2JaSlQd)
 
 This is what we are currently working on:
+ - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
+ - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
+ - Fixed OtF buttons in a journal entry being viewed in the Modifier Bucket from being truncated at the first HTML escaped character (such as '\&uuml;').
 
 ## History
 
-0.9.0
+0.9.2 - 4/29/201
+- CTRL-roll was broken for certain keyboard events, causing chat commands to fail (ex: /ra)
+
+0.9.1 - 4/28/2021
+- Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x640 monitor. Tiny laptop users, rejoice!!
+- The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096) 
+- Fixed a bug so that the ADD will use "effective damage" instead of "basic damage" to calculate knockback. This fixes the problems with explosions and knockback.
+- Add a fallback background color to the modifier bucket to fix the transparent MB bug.
+- System setting to check for equipped status when determining weight (players can use equipped flag to indicate a 'dropped' item)
+- OtF now supports [Sk:Skillname] or [Sp:Spellname]
+- Added support for the Drag Ruler module to display move, sprint and fly distances. (but you also need to load the Hex Token Size Support module, due to an error with Drag Ruler)
+- changed parameter order of /rem [otf] optionalusernames to match /sendmb
+- Holding down CTRL (CMD on Macs) will make a roll BLIND
+- System setting "SHIFT Click does a Blind roll for players, and a Self roll for GMs"
+- Fixed broken "Apply All Damage To <Targeted Actor>" functionality
+- Fixed Slam Calculator's always printing that the Target was knocked down, even if it was the Attacker who was knocked down.
+- Added System setting to show 'saved' icon next to user created equipment and notes.
+
+0.9.0 - 4/22/2021
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
 - Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
@@ -16,10 +37,6 @@ This is what we are currently working on:
 - /remote GM only command.   Execute OtF on the remote client
 - Press SHIFT key to make OtF rolls private
 - Show Move/Flight Move checkbox in Editor
-- Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x768 monitor. Tiny laptop users, rejoice!!
-- The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting.
-- Fixed a bug so that the ADD will use "effective damage" instead of "basic damage" to calculate knockback. This fixes the problems with explosions and knockback.
-- Add a fallback background color to the modifier bucket to fix the transparent MB bug.
 
 0.8.23 - 4/13/2021
   

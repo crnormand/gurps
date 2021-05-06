@@ -10,7 +10,7 @@ import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
  */
 export default class DamageChat {
-  static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
+  // static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
   static initSettings() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
@@ -73,15 +73,17 @@ export default class DamageChat {
               // get actor from id
               let token = canvas.tokens.get(transfer.userTarget) // ...
               // get payload; its either the "all damage" payload or ...
-              if (!!token) 
-                token.actor.handleDamageDrop(payload)
-              else
-                ui.notifications.warn("Unable to find token with ID:" + transfer.userTarget);
+              if (!!token) token.actor.handleDamageDrop(transfer.payload)
+              else ui.notifications.warn('Unable to find token with ID:' + transfer.userTarget)
             })
           }
         }
       } // end-if (damageChatMessage)
     })
+  }
+
+  constructor(dependencies) {
+    this._generateUniqueId = dependencies.generateUniqueId
   }
 
   /**
@@ -92,12 +94,12 @@ export default class DamageChat {
    * @param {Event} event that triggered this action
    * @param {String} overrideDiceText ??
    */
-  static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames) {
-    let message = new DamageChat()
+  static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames, extdamagetype) {
+    let message = new DamageChat({ generateUniqueId: generateUniqueId })
 
     const targetmods = await game.GURPS.ModifierBucket.applyMods() // append any global mods
 
-    let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText)
+    let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText, extdamagetype)
 
     if (!tokenNames) tokenNames = []
     if (tokenNames.length == 0) tokenNames.push('')
@@ -134,7 +136,7 @@ export default class DamageChat {
    * @param {*} damageType
    * @param {*} overrideDiceText
    */
-  _getDiceData(diceText, damageType, targetmods, overrideDiceText) {
+  _getDiceData(originalDiceText, damageType, targetmods, overrideDiceText, extdamagetype) {
     // format for diceText:
     //
     // '<dice>d+<adds1>+<adds2>x<multiplier>(<divisor>)'
@@ -149,14 +151,15 @@ export default class DamageChat {
     // Added support for a second add, such as: 1d-2+3 -- this was to support damage expressed
     // using basic damage syntax, such as "sw+3" (which could translate to '1d-2+3', for exmaple).
 
-    let result = DamageChat.fullRegex.exec(diceText)
+    let result = DamageChat.fullRegex.exec(originalDiceText)
 
     if (!result) {
-      ui.notifications.warn(`Invalid Dice formula: "${diceText}"`)
+      ui.notifications.warn(`Invalid Dice formula: "${originalDiceText}"`)
       return null
     }
 
-    diceText = result.groups.roll
+    let diceText = result.groups.roll
+    if (originalDiceText.slice(-1) === '!') diceText = diceText + '!'
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
     let multiplier = !!result.groups.mult ? parseInt(result.groups.mult) : 1
@@ -185,7 +188,7 @@ export default class DamageChat {
     let displayText = overrideDiceText || diceText // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
     let min = 1
 
-    if (damageType === '') damageType = 'dmg'
+    if (damageType === '' || damageType === null) damageType = 'dmg'
     if (damageType === 'cr') min = 0
 
     if (formula.slice(-1) === '!') {
@@ -212,13 +215,14 @@ export default class DamageChat {
       modifier: modifier,
       diceText: displayText + additionalText,
       damageType: damageType,
+      extdamagetype: extdamagetype,
       multiplier: multiplier,
       divisor: divisor,
       adds1: adds1,
       adds2: adds2,
       min: min,
     }
-    console.log(diceData)
+    // console.log(diceData)
     return diceData
   }
 
@@ -293,7 +297,7 @@ export default class DamageChat {
     }
 
     let contentData = {
-      id: generateUniqueId(),
+      id: this._generateUniqueId(),
       attacker: actor._id,
       dice: diceData.diceText,
       damageType: diceData.damageType,
@@ -307,7 +311,6 @@ export default class DamageChat {
       roll: roll,
       target: tokenName,
     }
-    console.log(contentData)
     return contentData
   }
 
@@ -380,6 +383,8 @@ export default class DamageChat {
     })
   }
 }
+
+DamageChat.fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
 /*
 let transfer = {
