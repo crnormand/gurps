@@ -282,6 +282,11 @@ class SelectChatProcessor extends ChatProcessor {
           a.map(e => e.name).join(', ')
         a = a.map(t => t.actor)
       }
+      if (a.length == 0 || a.length > 1) {
+        // No good match on token names -- is this a token ID?
+        a = canvas.tokens.placeables.filter(t => t._id.match(pat))
+        a = a.map(t => t.actor)
+      }
       if (a.length == 0)
         ui.notifications.warn(i18n('GURPS.chatNoActorFound', 'No Actor/Token found matching') + " '" + m[3] + "'")
       else if (a.length > 1) ui.notifications.warn(msg)
