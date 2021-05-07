@@ -5,6 +5,7 @@ This is what we are currently working on:
 
 - Fixed /status command when token.actor == null
 - Refactor regex pattern matching to utilities.js
+- Added token ID to /select (e.g., `/sel PrPRGwFEiNKewWym`) -- this is mainly done for internal programming, but could be useful in a macro.
 
 ## History
 
