@@ -1,6 +1,6 @@
 'use strict'
 
-import { extractP, xmlTextToJson, objectToArray, convertRollStringToArrayOfInt, recurselist } from '../lib/utilities.js'
+import { extractP, xmlTextToJson, objectToArray, convertRollStringToArrayOfInt, recurselist, makeRegexPatternFrom } from '../lib/utilities.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
@@ -1342,7 +1342,7 @@ export class GurpsActor extends Actor {
   }
 
   findEquipmentByName(pattern, otherFirst = false) {
-    pattern = pattern.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)')
+    pattern = makeRegexPatternFrom(pattern, false)
     let pats = pattern.split('/')
     var eqt, key
     let list1 = otherFirst ? this.data.data.equipment.other : this.data.data.equipment.carried

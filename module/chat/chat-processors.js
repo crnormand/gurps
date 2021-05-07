@@ -12,7 +12,7 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../lib/utilities.js'
 // import StatusProcessor from '../chat/status-processor.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
@@ -261,8 +261,7 @@ class SelectChatProcessor extends ChatProcessor {
       GURPS.ClearLastActor(GURPS.LastActor)
       this.priv(i18n('GURPS.chatClearingLastActor', 'Clearing Last Actor'))
     } else {
-      let pat = m[3].split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
-      pat = '^' + pat.trim() + '$'
+      let pat = makeRegexPatternFrom(m[3])
       let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
       if (!!m[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
       let a = list.filter(a => a?.name?.match(pat))
