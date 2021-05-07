@@ -3,6 +3,10 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 This is what we are currently working on:
 
+## History
+
+0.9.4 - 5/06/2021
+
 - Fixed /status command to accept either 't' or 'toggle'
 - Added new syntax to /if command to allow nested /ifs {}
 - Fixed synchronization of /if "then" and "else" clauses
@@ -12,8 +16,6 @@ This is what we are currently working on:
 - Added "named token/actor" to /status command (format: `/st + sleep* :Name`). ':Name' may contain a wildcard and will match either a token name or an actor name (first it tries tokens, then actors). The token must be in the active scene. 
 - Fixed older actors not having currentmove/dodge or flight values
 - Add warning if trying to Edit an empty actor
-
-## History
 
 0.9.3 - 5/04/2021
 
