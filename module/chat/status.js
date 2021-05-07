@@ -1,7 +1,7 @@
 'use strict'
 
 import ChatProcessor from './chat-processor.js'
-import { i18n, i18n_f } from '../../lib/utilities.js'
+import { i18n, i18n_f, makeRegexPatternFrom } from '../../lib/utilities.js'
 
 const Command = {
   on: 'set',
@@ -76,13 +76,8 @@ export default class StatusChatProcessor extends ChatProcessor {
     return html + '</table>'
   }
 
-  makePatternFrom(text) {
-    let pattern = text.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
-    return '^' + pattern.trim() + '$'
-  }
-
   getTokensFor(name) {
-    let pattern = this.makePatternFrom(name)
+    let pattern = makeRegexPatternFrom(name)
 
     let tokens = canvas.tokens.placeables // all Placeables on canvas
       .filter(it => it.constructor.name === 'Token') // only Tokens
@@ -91,7 +86,7 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     if (matches.length == 0 || matches.length > 1) {
       // No good match on tokens, try the associated actor names
-      matches = tokens.filter(it => it.actor.name.match(pattern))
+      matches = tokens.filter(it => it.actor?.name.match(pattern))    // Tokens can have null actors
     }
 
     if (matches.length !== 1) {
@@ -131,7 +126,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   findEffect(statusText) {
     let pattern = !statusText
       ? '.*'
-      : new RegExp('^' + statusText.split('*').join('.*?').replace(/\(/g, '\\(').replace(/\)/g, '\\)') + '$') // Make string into a RegEx pattern
+      : new RegExp(makeRegexPatternFrom(statusText)) // Make string into a RegEx pattern
 
     let effect = null
     Object.values(CONFIG.statusEffects).forEach(s => {

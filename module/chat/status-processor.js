@@ -1,5 +1,5 @@
 import ChatProcessor from './chat-processor.js'
-import { i18n } from '../../lib/utilities.js'
+import { i18n, makeRegexPatternFrom } from '../../lib/utilities.js'
 
 // const GURPS = game.GURPS
 
@@ -15,7 +15,7 @@ export default class StatusProcessor extends ChatProcessor {
     let m = this.match
     let pattern = !m[3]
       ? '.*'
-      : new RegExp('^' + m[3].trim().split('*').join('.*?').replace(/\(/g, '\\(').replace(/\)/g, '\\)') + '$') // Make string into a RegEx pattern
+      : new RegExp(makeRegexPatternFrom(m[3]))
     let any = false
     let on = false
     let set = m[2].toLowerCase() == 'on' || m[2] == '+' || m[2] == 'set'

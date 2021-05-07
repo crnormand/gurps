@@ -14,7 +14,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -860,7 +860,7 @@ function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) 
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
-  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = makeRegexPatternFrom(sname, false)
   let best = 0
   if (!isSpellOnly)
     recurselist(actor.data.skills, s => {
@@ -885,7 +885,7 @@ function findAdDisad(actor, sname) {
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
-  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = makeRegexPatternFrom(sname, false)
   recurselist(actor.data.ads, s => {
     if (s.name.match(sname)) {
       t = s
@@ -899,7 +899,7 @@ function findAttack(actor, sname) {
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
-  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = makeRegexPatternFrom(sname, false)
   t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
