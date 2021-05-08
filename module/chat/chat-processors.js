@@ -284,7 +284,7 @@ class SelectChatProcessor extends ChatProcessor {
       }
       if (a.length == 0 || a.length > 1) {
         // No good match on token names -- is this a token ID?
-        a = canvas.tokens.placeables.filter(t => t._id.match(pat))
+        a = canvas.tokens.placeables.filter(t => t.id.match(pat))
         a = a.map(t => t.actor)
       }
       if (a.length == 0)

@@ -86,7 +86,12 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     if (matches.length == 0 || matches.length > 1) {
       // No good match on tokens, try the associated actor names
-      matches = tokens.filter(it => it.actor?.name.match(pattern))    // Tokens can have null actors
+      matches = tokens.filter(it => it.actor?.name.match(pattern)) // Tokens can have null actors
+    }
+
+    if (matches.length == 0 || matches.length > 1) {
+      // No good match on actors, try token IDs
+      matches = tokens.filter(it => it.id.match(pattern)) // Tokens can have null actors
     }
 
     if (matches.length !== 1) {
@@ -124,9 +129,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   }
 
   findEffect(statusText) {
-    let pattern = !statusText
-      ? '.*'
-      : new RegExp(makeRegexPatternFrom(statusText)) // Make string into a RegEx pattern
+    let pattern = !statusText ? '.*' : new RegExp(makeRegexPatternFrom(statusText)) // Make string into a RegEx pattern
 
     let effect = null
     Object.values(CONFIG.statusEffects).forEach(s => {
