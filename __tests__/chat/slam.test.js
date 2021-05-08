@@ -6,10 +6,10 @@ const i18n = {
   'GURPS.rolled': 'Rolled',
   'GURPS.slamAOAStrong': 'All-out Attack (Strong)',
   'GURPS.slamShieldDB': 'Shield DB',
-  'GURPS.notAffected': 'is not affected',
+  'GURPS.notAffected': 'Boob is not affected',
   'GURPS.fallsDown': 'falls down!',
-  'GURPS.attackerFallsDown': 'falls down!',
-  'GURPS.dxCheckOrFall': 'must make...[DX check or fall]',
+  'GURPS.fallsDownApplyProne': 'Boob falls down!',
+  'GURPS.dxCheckOrFallApplyProne': 'Boob must make...[DX check or fall]',
 }
 
 describe('SlamCalculator', () => {
@@ -23,12 +23,33 @@ describe('SlamCalculator', () => {
   const localize = jest.fn()
   const slam = new SlamCalculator({ generateUniqueId: () => 42 })
   const bonusForAoA = 2
+  const attacker = { id: 'AAAaaaddd', name: 'Doofus' }
+  const target = { id: 'TTTtttaaa', name: 'Boob' }
+
+  const data = {
+    attacker: attacker,
+    target: target,
+    attackerHp: 0,
+    relativeSpeed: 0,
+    isAoAStrong: false,
+    targetHp: 0,
+    shieldDB: 0,
+  }
 
   afterEach(() => jest.resetAllMocks())
 
   beforeEach(() => {
     localize.mockImplementation(key => i18n[key])
-    global.game = { i18n: { localize: localize, format: localize }, user: { _id: 42 } }
+    global.game = {
+      i18n: {
+        localize: localize,
+        format: localize,
+        has: function (_) {
+          return true
+        },
+      },
+      user: { _id: 42 },
+    }
     global.Roll = { create: mockRoll }
   })
 
@@ -37,15 +58,6 @@ describe('SlamCalculator', () => {
   })
 
   describe('should return the correct dice based on velocity and speed', () => {
-    const data = {
-      target: 'Boob',
-      attackerHp: 0,
-      relativeSpeed: 0,
-      isAoAStrong: false,
-      targetHp: 0,
-      shieldDB: 0,
-    }
-
     test(`1/4 dice damage`, async () => {
       data.attackerHp = 25
       data.relativeSpeed = 1
@@ -181,17 +193,21 @@ describe('SlamCalculator', () => {
 
   describe(`should adjust attacker's dice for All-out Attack`, () => {
     let resultWithoutBonus = 3
-    const data = {
-      target: 'Boob',
-      attackerHp: 22,
-      relativeSpeed: 7,
-      isAoAStrong: false,
-      targetHp: 14,
-      shieldDB: 0,
-    }
+    // const data = {
+    //   target: 'Boob',
+    //   attackerHp: 22,
+    //   relativeSpeed: 7,
+    //   isAoAStrong: false,
+    //   targetHp: 14,
+    //   shieldDB: 0,
+    //   _targetToken: target,
+    //   _attackerToken: attacker,
+    // }
 
     test(`no bonus`, async () => {
       data.isAoAStrong = false
+      data.attackerHp = 22
+      data.relativeSpeed = 7
 
       mockRoll //
         .mockReturnValueOnce(mockRollResult([1, 2], 0))
@@ -233,18 +249,11 @@ describe('SlamCalculator', () => {
 
   describe(`should adjust attacker's dice for Shield DB`, () => {
     let resultWithoutBonus = 3
-    const data = {
-      target: 'Boob',
-      attackerHp: 22,
-      relativeSpeed: 7,
-      isAoAStrong: false,
-      targetHp: 14,
-      shieldDB: 0,
-    }
 
     test(`Shield DB = 1`, async () => {
       let shieldDB = 1
       data.shieldDB = shieldDB
+      data.isAoAStrong = false
 
       mockRoll //
         .mockReturnValueOnce(mockRollResult([1, 2], 0))
@@ -288,14 +297,8 @@ describe('SlamCalculator', () => {
   test(`Shield DB and All-out Attack are cumulative`, async () => {
     let resultWithoutBonus = 3
     let shieldDB = 2
-    let data = {
-      target: 'Boob',
-      attackerHp: 22,
-      relativeSpeed: 7,
-      isAoAStrong: true,
-      targetHp: 14,
-      shieldDB: shieldDB,
-    }
+    data.isAoAStrong = true
+    data.shieldDB = shieldDB
 
     mockRoll //
       .mockReturnValueOnce(mockRollResult([1, 2], 0))
@@ -316,16 +319,10 @@ describe('SlamCalculator', () => {
   })
 
   describe('explain Dice Roll', () => {
-    const data = {
-      target: 'Boob',
-      attackerHp: 22,
-      relativeSpeed: 7,
-      isAoAStrong: false,
-      targetHp: 14,
-      shieldDB: 0,
-    }
-
     test(`no bonus`, async () => {
+      data.isAoAStrong = false
+      data.shieldDB = 0
+
       mockRoll //
         .mockReturnValueOnce(mockRollResult([2, 3], 0))
         .mockReturnValueOnce(mockRollResult([1], -1))
@@ -392,6 +389,8 @@ describe('SlamCalculator', () => {
       isAoAStrong: false,
       targetHp: 16,
       shieldDB: 0,
+      _targetToken: target,
+      _attackerToken: attacker,
     }
 
     test(`target wins -- no effect`, async () => {
@@ -445,6 +444,7 @@ describe('SlamCalculator', () => {
     test(`target wins by double -- attacker falls`, async () => {
       const attackerRolls = [1, 3]
       const targetRolls = [5, 3]
+      i18n['GURPS.fallsDownApplyProne'] = 'Doofus falls down!'
 
       mockRoll //
         .mockReturnValueOnce(mockRollResult(attackerRolls, 0))
