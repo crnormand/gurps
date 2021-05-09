@@ -119,6 +119,7 @@ describe('Status Processor', () => {
 
       doofusToken = new Token()
       doofusToken.name = 'Doofus'
+      doofusToken.id = 'doofus'
       let doofusActor = {
         get name() {
           return 'Doofus'
@@ -253,6 +254,7 @@ describe('Status Processor', () => {
           let doofusToken = new Token()
           doofusToken.toggleEffect = toggle
           doofusToken.name = 'Doofus'
+          doofusToken.id = 'doofus'
           let doofusActor = {
             get name() {
               return 'Doofus'
@@ -266,6 +268,7 @@ describe('Status Processor', () => {
           let boob1Token = new Token()
           boob1Token.toggleEffect = toggle
           boob1Token.name = 'Boob One'
+          boob1Token.id = 'boob1'
           let boob1Actor = {
             get name() {
               return 'Boob One'
@@ -279,6 +282,7 @@ describe('Status Processor', () => {
           let boob2Token = new Token()
           boob2Token.toggleEffect = toggle
           boob2Token.name = 'Boob One'
+          boob2Token.id = 'boob2'
           let boob2Actor = {
             get name() {
               return 'Boob Two'

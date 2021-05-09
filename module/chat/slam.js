@@ -35,9 +35,12 @@ export default class SlamChatProcessor extends ChatProcessor {
     // see if there are any targets
     let targets = actor.getUsers().flatMap(u => [...u.targets])
 
-    if (targets.length === 1) SlamCalculatorForm.process(actor.token, [...targets][0])
-    else if (targets.length > 1) selectTarget().then(target => SlamCalculatorForm.process(actor.token, target))
-    else SlamCalculatorForm.process(actor.token, null)
+    // try to find the attacker's token
+    let attacker = actor.token || canvas.tokens.placeables.find(it => it.actor === actor)
+
+    if (targets.length === 1) SlamCalculatorForm.process(attacker, [...targets][0])
+    else if (targets.length > 1) selectTarget().then(target => SlamCalculatorForm.process(attacker, target))
+    else SlamCalculatorForm.process(attacker, null)
 
     this.privateMessage('Opening Slam Calculator')
   }

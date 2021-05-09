@@ -9,7 +9,7 @@ const i18n = {
   'GURPS.notAffected': 'Boob is not affected',
   'GURPS.fallsDown': 'falls down!',
   'GURPS.fallsDownApplyProne': 'Boob falls down!',
-  'GURPS.dxCheckOrFallApplyProne': 'Boob must make...[DX check or fall]',
+  'GURPS.dxCheckOrFallApplyProne': 'Boob must roll DX or fall!',
 }
 
 describe('SlamCalculator', () => {
@@ -27,8 +27,8 @@ describe('SlamCalculator', () => {
   const target = { id: 'TTTtttaaa', name: 'Boob' }
 
   const data = {
-    attacker: attacker,
-    target: target,
+    attackerToken: attacker,
+    targetToken: target,
     attackerHp: 0,
     relativeSpeed: 0,
     isAoAStrong: false,
@@ -382,15 +382,13 @@ describe('SlamCalculator', () => {
 
   describe(`results`, () => {
     const data = {
-      attacker: 'Doofus',
-      target: 'Boob',
       attackerHp: 21,
       relativeSpeed: 7,
       isAoAStrong: false,
       targetHp: 16,
       shieldDB: 0,
-      _targetToken: target,
-      _attackerToken: attacker,
+      targetToken: target,
+      attackerToken: attacker,
     }
 
     test(`target wins -- no effect`, async () => {
@@ -422,7 +420,7 @@ describe('SlamCalculator', () => {
       let arg = global.renderTemplate.mock.calls[0][1]
       expect(arg.attackerResult).toBe(7)
       expect(arg.targetResult).toBe(6)
-      expect(arg.result).toBe('Boob must make...[DX check or fall]')
+      expect(arg.result).toContain('Boob must roll [DX] or fall!')
     })
 
     test(`attacker wins by double -- target falls`, async () => {
@@ -438,7 +436,7 @@ describe('SlamCalculator', () => {
       let arg = global.renderTemplate.mock.calls[0][1]
       expect(arg.attackerResult).toBe(10)
       expect(arg.targetResult).toBe(5)
-      expect(arg.result).toBe('Boob falls down!')
+      expect(arg.result).toContain('Boob falls down!')
     })
 
     test(`target wins by double -- attacker falls`, async () => {
@@ -455,7 +453,7 @@ describe('SlamCalculator', () => {
       let arg = global.renderTemplate.mock.calls[0][1]
       expect(arg.attackerResult).toBe(4)
       expect(arg.targetResult).toBe(8)
-      expect(arg.result).toBe('Doofus falls down!')
+      expect(arg.result).toContain('Doofus falls down!')
     })
   })
 })
