@@ -7,9 +7,26 @@ import {
 } from '../../lib/utilities.js'
 
 const effects = {
-  unaffected: 'GURPS.notAffected',
-  fallsDown: 'GURPS.fallsDownApplyProne',
-  dxCheck: 'GURPS.dxCheckOrFallApplyProne',
+  unaffected: {
+    i18n: 'GURPS.notAffected',
+    createButton(label) {
+      return label
+    },
+  },
+  fallsDown: {
+    i18n: 'GURPS.fallsDownApplyProne',
+    createButton(label, data) {
+      return data.isRealTarget ? `["${label}" /st + prone :${data.token.id}]` : label
+    },
+  },
+  dxCheck: {
+    i18n: 'GURPS.dxCheckOrFallApplyProne',
+    createButton(label, data) {
+      return data.isRealTarget
+        ? `["${label}" /sel ${data.token.id} \\\\ /if ! [DX] /st + prone]`
+        : label.replace('DX', '[DX]')
+    },
+  },
 }
 
 export class SlamCalculator {
@@ -56,6 +73,7 @@ export class SlamCalculator {
     let resultData = {
       effect: effects.unaffected,
       token: data.targetToken,
+      isRealTarget: data.isRealTarget,
       get name() {
         return this.token.name
       },
@@ -69,10 +87,13 @@ export class SlamCalculator {
     } else if (this.targetDXCheck(attackerResult, targetResult)) {
       resultData.effect = effects.dxCheck
     } else if (this.attackerFallsDown(attackerResult, targetResult)) {
-      // resultData.name = data.attackerToken.name
       resultData.token = data.attackerToken
       resultData.effect = effects.fallsDown
+      resultData.isRealTarget = true
     }
+
+    let result = i18n_f(resultData.effect.i18n, resultData)
+    result = resultData.effect.createButton(result, resultData)
 
     let html = await renderTemplate('systems/gurps/templates/slam-results.html', {
       id: this._generateUniqueId(),
@@ -93,7 +114,7 @@ export class SlamCalculator {
       effect: resultData.effect,
       isAoAStrong: data.isAoAStrong,
       relativeSpeed: data.relativeSpeed,
-      result: i18n_f(resultData.effect, resultData),
+      result: result,
       shieldDB: data.shieldDB,
     })
 

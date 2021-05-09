@@ -82,16 +82,17 @@ export default class StatusChatProcessor extends ChatProcessor {
     let tokens = canvas.tokens.placeables // all Placeables on canvas
       .filter(it => it.constructor.name === 'Token') // only Tokens
 
-    let matches = tokens.filter(it => it.name.match(pattern)) // the Tokens which match the pattern
+    // try token IDs first
+    let matches = tokens.filter(it => it.id.match(pattern))
 
+    // No good match on token IDs, try token names
     if (matches.length == 0 || matches.length > 1) {
-      // No good match on tokens, try the associated actor names
-      matches = tokens.filter(it => it.actor?.name.match(pattern)) // Tokens can have null actors
+      matches = tokens.filter(it => it.name.match(pattern)) // the Tokens which match the pattern
     }
 
+    // No good match on tokens, try the associated actor names
     if (matches.length == 0 || matches.length > 1) {
-      // No good match on actors, try token IDs
-      matches = tokens.filter(it => it.id.match(pattern)) // Tokens can have null actors
+      matches = tokens.filter(it => it.actor?.name.match(pattern)) // Tokens can have null actors
     }
 
     if (matches.length !== 1) {
