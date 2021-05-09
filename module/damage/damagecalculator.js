@@ -882,7 +882,7 @@ class DamageCalculator {
   }
 
   get penetratingDamage() {
-    return Math.max(0, this.effectiveDamage / this._parent.explosionDivisor - this._parent.effectiveDR)
+    return Math.max(0, this.effectiveDamage - this._parent.effectiveDR)
   }
 
   /**
