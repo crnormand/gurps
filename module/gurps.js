@@ -14,12 +14,11 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
-import SlamChatProcessor from '../module/chat/slam.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 
 export const GURPS = {}
@@ -627,7 +626,11 @@ async function performAction(action, actor, event, targets) {
     let chat = action.orig
     if (!!event?.shiftKey || game.keyboard.isCtrl(event))
       chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
-    ui.chat.processMessage(chat)
+    ui.chat.processMessage(chat).catch(err => {
+      ui.notifications.error(err)
+      console.error(err)
+      return false
+    })
     return true
   }
 
@@ -858,7 +861,7 @@ function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) 
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
-  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = makeRegexPatternFrom(sname, false)
   let best = 0
   if (!isSpellOnly)
     recurselist(actor.data.skills, s => {
@@ -883,7 +886,7 @@ function findAdDisad(actor, sname) {
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
-  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = makeRegexPatternFrom(sname, false)
   recurselist(actor.data.ads, s => {
     if (s.name.match(sname)) {
       t = s
@@ -897,7 +900,7 @@ function findAttack(actor, sname) {
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
-  sname = '^' + sname.split('*').join('.*').replace(/\(/g, '\\(').replace(/\)/g, '\\)') // Make string into a RegEx pattern
+  sname = makeRegexPatternFrom(sname, false)
   t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
@@ -1456,7 +1459,6 @@ Hooks.once('init', async function () {
   HitLocation.init()
   DamageChat.initSettings()
   RegisterChatProcessors()
-  SlamChatProcessor.initialize()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket()
@@ -1542,7 +1544,17 @@ Hooks.once('ready', async function () {
     if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
       // If it isn't already in the chat log somewhere
       ChatMessage.create({
-        content: `<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div><hr><div style='font-size:70%'>${GURPS.LEGAL}</div>`,
+        content: `
+<div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div>
+<hr>
+<div style='font-size:70%'>
+  <div>${GURPS.LEGAL}</div>
+  <hr/>
+  <div style='text-align: center;'>
+    <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
+    <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.png"></a></div>
+  </div>
+</div>`,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user],
       })

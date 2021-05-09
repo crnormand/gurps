@@ -1,12 +1,12 @@
 <form class='gurps-app' slam-calculator autocomplete='off'>
   <h2>
-    {{attacker}} <i>{{localize "GURPS.slams"}}
+    {{attackerToken.name}} <i>{{localize "GURPS.slams"}}
       <i class='subtle fas fa-align-right'></i><i class='fas fa-running'></i></i>
-    {{target}}
+    {{targetToken.name}}
   </h2>
   <div class='gurps-group inputs'>
-    <h4>{{attacker}}</h4>
-    <div class='label-value-row' style='grid-template-columns: 1fr 1fr;'>
+    <h4>{{attackerToken.name}}</h4>
+    <div class='label-value-row'>
       <label>{{localize "GURPS.HP"}}:</label>
       <div><input id='attacker-hp' type='text' value='{{attackerHp}}' data-dtype='Number' /></div>
       <label>{{localize "GURPS.slamVelocity"}}:</label>
@@ -18,8 +18,8 @@
     </div>
   </div>
   <div class='gurps-group inputs'>
-    <h4>{{target}}</h4>
-    <div class='label-value-row' style='grid-template-columns: 1fr 1fr;'>
+    <h4>{{targetToken.name}}</h4>
+    <div class='label-value-row'>
       <label>{{localize "GURPS.HP"}}:</label>
       <input id='target-hp' type='text' value='{{targetHp}}' data-dtype='Number' />
       <label>{{localize "GURPS.slamVelocity"}}:</label>
@@ -27,7 +27,7 @@
     </div>
   </div>
   <div class='gurps-group inputs' style='border: none;'>
-    <div class='label-value-row' style='grid-template-columns: 1fr 1fr;'>
+    <div class='label-value-row'>
       <label><strong>{{localize "GURPS.slamRelativeVelocity"}}:</strong></label>
       <input id='relative-speed' type='text' value='{{relativeSpeed}}' readonly disabled>
     </div>

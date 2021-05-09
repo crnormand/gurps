@@ -1,4 +1,16 @@
-import { generateUniqueId, isNiceDiceEnabled, i18n, diceToFormula as diceToFormula } from '../../lib/utilities.js'
+import {
+  generateUniqueId,
+  isNiceDiceEnabled,
+  i18n,
+  i18n_f,
+  diceToFormula as diceToFormula,
+} from '../../lib/utilities.js'
+
+const effects = {
+  unaffected: 'GURPS.notAffected',
+  fallsDown: 'GURPS.fallsDownApplyProne',
+  dxCheck: 'GURPS.dxCheckOrFallApplyProne',
+}
 
 export class SlamCalculator {
   constructor(dependencies) {
@@ -9,6 +21,19 @@ export class SlamCalculator {
     }
   }
 
+  /*
+    data = {
+    attackerToken: {Token},
+    targetToken: {Token},
+    isRealTarget: {Boolean} - true if target is a selected token
+    attackerHp: {Number}
+    attackerSpeed: {Number},
+    targetHp: {Number},
+    targetSpeed: {Number},
+    relativeSpeed: {Number} - targetSpeed + attackerSpeed,
+    isAoAStrong: {Boolean},
+    shieldDB: {Number},
+  */
   async process(data) {
     // If you hit, you and your foe each inflict dice of
     // crushing damage on the other equal to (HP x velocity)/100.
@@ -28,44 +53,47 @@ export class SlamCalculator {
     targetRoll.evaluate()
     let targetResult = Math.max(targetRoll.total, 1)
 
-    let effects = {
-      unaffected: 'GURPS.notAffected',
-      fallsDown: 'GURPS.fallsDown',
-      dxCheck: 'GURPS.dxCheckOrFall',
-    }
-    let effect = effects.unaffected
-    let affected = data.target
-    if (attackerResult >= targetResult * 2) {
-      effect = effects.fallsDown
-    } else if (attackerResult >= targetResult) {
-      effect = effects.dxCheck
-    } else if (targetResult >= attackerResult * 2) {
-      affected = data.attacker
-      effect = effects.fallsDown
+    let resultData = {
+      effect: effects.unaffected,
+      token: data.targetToken,
+      get name() {
+        return this.token.name
+      },
+      get id() {
+        return this.token.id
+      },
     }
 
-    let message = `${affected} ${game.i18n.localize(effect)}`
+    if (this.targetFallsDown(attackerResult, targetResult)) {
+      resultData.effect = effects.fallsDown
+    } else if (this.targetDXCheck(attackerResult, targetResult)) {
+      resultData.effect = effects.dxCheck
+    } else if (this.attackerFallsDown(attackerResult, targetResult)) {
+      // resultData.name = data.attackerToken.name
+      resultData.token = data.attackerToken
+      resultData.effect = effects.fallsDown
+    }
 
     let html = await renderTemplate('systems/gurps/templates/slam-results.html', {
       id: this._generateUniqueId(),
-      attacker: data.attacker,
+      attacker: data.attackerToken.name,
       attackerHp: data.attackerHp,
       attackerRaw: rawDamageAttacker,
       attackerDice: attackerDice,
       attackerResult: attackerResult,
       attackerExplain: this.explainDieRoll(attackerRoll, data.isAoAStrong, data.shieldDB),
       // ---
-      target: data.target,
+      target: data.targetToken.name,
       targetHp: data.targetHp,
       targetRaw: rawDamageTarget,
       targetDice: targetDice,
       targetResult: targetResult,
       targetExplain: this.explainDieRoll(targetRoll),
       // ---
-      effect: effect,
+      effect: resultData.effect,
       isAoAStrong: data.isAoAStrong,
       relativeSpeed: data.relativeSpeed,
-      result: message,
+      result: i18n_f(resultData.effect, resultData),
       shieldDB: data.shieldDB,
     })
 
@@ -82,6 +110,18 @@ export class SlamCalculator {
     ChatMessage.create(messageData)
   }
 
+  targetFallsDown(attackerResult, targetResult) {
+    return attackerResult >= targetResult * 2
+  }
+
+  attackerFallsDown(attackerResult, targetResult) {
+    return targetResult >= attackerResult * 2
+  }
+
+  targetDXCheck(attackerResult, targetResult) {
+    return attackerResult >= targetResult && !this.targetFallsDown(attackerResult, targetResult)
+  }
+
   /**
    * Calculate the dice roll from the rawDamage value.
    *
@@ -89,7 +129,6 @@ export class SlamCalculator {
    * @returns an Object literal with two attributes: dice (integer) and adds (integer)
    */
   _getDicePlusAdds(rawDamage) {
-    // let bonusForAoA = isAoAStrong ? 2 : 0
     // If damage is less than 1d, ...
     if (rawDamage < 1) {
       // treat fractions up to 0.25 as 1d-3, ...
@@ -105,11 +144,6 @@ export class SlamCalculator {
     // Otherwise, round fractions of 0.5 or more up to a full die.
     let dice = Math.floor(rawDamage)
     if (rawDamage - dice >= 0.5) dice++
-
-    // You can use All-Out Attack (Strong) to increase your damage!
-    // you get +2 to damage – or +1 damage per die, if that would be better.
-    // let adds = 0
-    // if (isAoAStrong) adds = dice > 1 ? dice : 2
 
     return { dice: dice, adds: 0 }
   }

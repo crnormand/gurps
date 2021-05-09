@@ -1297,6 +1297,27 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
+  
+  getData() {
+    let d = this.actor.data.data
+    if (d.HP.max == 0 && d.HP.value == 0 && d.FP.max == 0 & d.FP.value == 0) {
+      ui.notifications.error("You are editing an EMPTY Actor!")
+      setTimeout(() => Dialog.prompt({
+        title: "Empty Actor", 
+        content: "You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.", 
+        label: "Ok",
+        callback: async () => {
+          await this.actor.sheet.close()
+          // Update the Entity-specific override
+          await this.actor.setFlag('core', 'sheetClass', 'gurps.GurpsActorSheet')
+          // Re-draw the updated sheet
+          const updated = this.actor.getFlag('core', 'sheetClass')
+          this.actor.sheet.render(true)
+        }
+      }), 500)
+    }
+    return super.getData()
+  }
 
   makeAddDeleteMenu(html, cssclass, obj) {
     new ContextMenu(html, cssclass, this.addDeleteMenu(obj))

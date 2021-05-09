@@ -3,8 +3,8 @@
 
   <div class='condition-block tooltip-wrapper'>
     <div class='tooltip condition {{hpFpCondition name resource "style"}}'>{{hpFpCondition name resource 'label'}}
-      &nbsp; <i class='fas fa-heart-broken {{optionSetStyle data.additionalresources.isReeling}}'
-        data-onethird='isReeling'></i>
+      &nbsp; <i class='fas fa-heart-broken {{optionSetStyle testcondition}}'
+        data-onethird='{{condition}}'></i>
       <span class="tooltiptext">
         <div class="fieldblock">
           {{#hpFpBreakpoints name resource}}

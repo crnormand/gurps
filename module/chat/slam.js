@@ -1,6 +1,6 @@
 'use strict'
-
-import { ChatProcessors, ChatProcessor } from '../../module/chat.js'
+import ChatProcessor from './chat-processor.js'
+import { ChatProcessors } from '../../module/chat.js'
 import selectTarget from '../../module/select-target.js'
 import { i18n } from '../../lib/utilities.js'
 import { SlamCalculator } from './slam-calc.js'
@@ -34,16 +34,11 @@ export default class SlamChatProcessor extends ChatProcessor {
 
     // see if there are any targets
     let targets = actor.getUsers().flatMap(u => [...u.targets])
-    let target = null
-    if (targets.length > 1) {
-      let promise = selectTarget()
-      promise.then(target => {
-        SlamCalculatorForm.process(actor, target)
-      })
-    } else {
-      if (targets.length === 1) target = [...targets][0]
-      SlamCalculatorForm.process(actor, target)
-    }
+
+    if (targets.length === 1) SlamCalculatorForm.process(actor.token, [...targets][0])
+    else if (targets.length > 1) selectTarget().then(target => SlamCalculatorForm.process(actor.token, target))
+    else SlamCalculatorForm.process(actor.token, null)
+
     this.privateMessage('Opening Slam Calculator')
   }
 
@@ -60,26 +55,20 @@ class SlamCalculatorForm extends FormApplication {
 
   /**
    * Construct the dialog.
-   * @param {Actor} attacker
+   * @param {Token} attacker
    * @param {Token} target
    * @param {*} options
    */
   constructor(attacker, target, options = {}) {
     super(options)
 
-    // find out the token name for a given actor
-    let activeScene = game.scenes.active
-    let tokens = activeScene.data.tokens
-    let name = tokens.find(it => it.actorId === attacker.id)?.name
-
     this._attacker = attacker
-    this._name = !!name ? name : attacker.name
     this._target = target
 
     this._calculator = new SlamCalculator()
 
-    this._attackerHp = !!attacker ? attacker.data.data.HP.max : 10
-    this._attackerSpeed = !!attacker ? parseInt(attacker.data.data.basicmove.value) : 5
+    this._attackerHp = !!attacker ? attacker.actor.data.data.HP.max : 10
+    this._attackerSpeed = !!attacker ? parseInt(attacker.actor.data.data.basicmove.value) : 5
 
     this._targetHp = !!target ? target.actor.data.data.HP.max : 10
     this._targetSpeed = 0
@@ -102,15 +91,22 @@ class SlamCalculatorForm extends FormApplication {
 
   getData(options) {
     const data = super.getData(options)
+
+    data.attackerToken = this._attacker
+    data.targetToken = this._target || { name: i18n('GURPS.target') }
+    data.isRealTarget = !!this._target
+
     data.attackerHp = this._attackerHp
     data.attackerSpeed = this._attackerSpeed
+
     data.targetHp = this._targetHp
     data.targetSpeed = this._targetSpeed
+
     data.relativeSpeed = this.relativeSpeed
-    data.attacker = this._name
+
     data.isAoAStrong = this._isAoAStrong
     data.shieldDB = this._shieldDB
-    data.target = !!this._target ? this._target.data.name : `(${game.i18n.localize('GURPS.target')})`
+
     return data
   }
 

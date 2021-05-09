@@ -1,19 +1,23 @@
 'use strict'
 
-import { ChatProcessor } from '../chat.js'
+import ChatProcessor from './chat-processor.js'
 import { parselink } from '../../lib/parselink.js'
 import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
 
 export class EveryoneAChatProcessor extends ChatProcessor {
-  help() { return "/everyone (or /ev) &lt;formula&gt;" }
-  isGMOnly() { return true }
+  help() {
+    return '/everyone (or /ev) &lt;formula&gt;'
+  }
+  isGMOnly() {
+    return true
+  }
 
   matches(line) {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) reset/i)
     return !!this.match
   }
   async process(line) {
-    let m = this.match  
+    let m = this.match
     let any = false
     for (const t of canvas.tokens.ownedTokens) {
       let actor = t.actor
@@ -30,16 +34,20 @@ export class EveryoneAChatProcessor extends ChatProcessor {
 }
 
 export class EveryoneBChatProcessor extends ChatProcessor {
-  help() { return null }    // Don't display a help line for this processor.  Useful if you have multiple processors for essentially the same command
-  isGMOnly() { return true }
+  help() {
+    return null
+  } // Don't display a help line for this processor.  Useful if you have multiple processors for essentially the same command
+  isGMOnly() {
+    return true
+  }
 
   matches(line) {
     this.match = line.match(/^\/(everyone|ev) \[(.*)\]/i)
     return !!this.match
   }
-  
+
   async process(line) {
-    let m = this.match  
+    let m = this.match
     let any = false
     let action = parselink(m[2].trim())
     if (!!action.action) {
@@ -47,10 +55,10 @@ export class EveryoneBChatProcessor extends ChatProcessor {
         for (const t of canvas.tokens.ownedTokens) {
           let actor = t.actor
           if (actor.hasPlayerOwner) {
-            any = true;
+            any = true
             await GURPS.performAction(action.action, actor)
-           }
-         }
+          }
+        }
         if (!any) this.priv(`There are no player owned characters!`)
       } else this.priv(`Not allowed to execute Modifier, Chat or PDF links [${m[2].trim()}]`)
     } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`)
@@ -58,15 +66,20 @@ export class EveryoneBChatProcessor extends ChatProcessor {
 }
 
 export class EveryoneCChatProcessor extends ChatProcessor {
-  help() { return null }    // Don't display a help line for this processor.  Useful if you have multiple processors for essentially the same command
-  isGMOnly() { return true }
+  help() {
+    return null
+  } // Don't display a help line for this processor.  Useful if you have multiple processors for essentially the same command
+  isGMOnly() {
+    return true
+  }
 
-  matches(line) { // /everyone +1 fp or /everyone -2d-1 fp
+  matches(line) {
+    // /everyone +1 fp or /everyone -2d-1 fp
     this.match = line.match(/^\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
     return !!this.match
   }
   async process(line) {
-    let m = this.match  
+    let m = this.match
     if (!!m[3] || !!m[4]) {
       let any = false
       for (const t of canvas.tokens.ownedTokens) {
@@ -115,34 +128,35 @@ export class EveryoneCChatProcessor extends ChatProcessor {
         }
       }
       if (!any) this.priv(`There are no player owned characters!`)
-    } else  // Didn't provide dice or scalar, so maybe someone else wants to handle it
-     ui.notifications.warn(`There was no dice or number formula to apply '${line}'`)
+    } // Didn't provide dice or scalar, so maybe someone else wants to handle it
+    else ui.notifications.warn(`There was no dice or number formula to apply '${line}'`)
   }
 }
 
-
 export class RemoteChatProcessor extends ChatProcessor {
-  help() { return "/remote [OtF] &lt;user list&gt;" }    
-  isGMOnly() { return true }
+  help() {
+    return '/remote [OtF] &lt;user list&gt;'
+  }
+  isGMOnly() {
+    return true
+  }
 
   matches(line) {
     this.match = line.match(/^\/(remote|rem) \[(.*)\](.*)/i)
     return !!this.match
   }
-  
+
   process(line) {
-    let m = this.match  
+    let m = this.match
     let action = parselink(m[2].trim())
     if (!!action.action) {
-      let users = !!m[3] ? splitArgs(m[3]) : []   // empty array means everyone
+      let users = !!m[3] ? splitArgs(m[3]) : [] // empty array means everyone
       this.priv(line)
-      game.socket.emit("system.gurps",
-        {
-          type: 'executeOtF',
-          action: action.action,
-          users: users
-        })
+      game.socket.emit('system.gurps', {
+        type: 'executeOtF',
+        action: action.action,
+        users: users,
+      })
     } else this.priv(`Unable to parse On-the-Fly formula: [${m[2].trim()}]`)
   }
 }
-
