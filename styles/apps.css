@@ -1186,11 +1186,13 @@ ul#result-effects li {
 }
 
 .tabbedcontent {
-  overflow-y: auto;
+  overflow: scroll;
+  overflow-y: overlay;
+  overflow-x: hidden;
 }
 
 #common-modifiers .tabbedcontent {
-  max-height: 35em;
+  max-height: 32.5em;
 }
 
 .subtle {
@@ -1420,6 +1422,9 @@ ul#result-effects li {
 .modifier-bucket {
   bottom: 100px !important;
   z-index: 1000;
+  overflow: scroll;
+  overflow-y: overlay;
+  overflow-x: hidden;
 }
 
 .modttt {
@@ -1429,7 +1434,7 @@ ul#result-effects li {
   width: 63.5em;
   /* height: 657px; */
   height: 50.5em;
-  /* bottom: 50px !important; */
+  bottom: 100px !important;
   left: 430px;
   position: absolute;
   z-index: 100;
@@ -1510,7 +1515,6 @@ ul#result-effects li {
 
 .modtooltip .collapsible-wrapper .content-inner {
   padding: 0.35em 0.7em;
-  overflow-y: auto;
 }
 
 .modtooltip .collapsible-wrapper .content-inner .selectable {

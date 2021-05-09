@@ -23,12 +23,12 @@ export default class ModifierBucketEditor extends Application {
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket/tooltip-window.html',
-      resizeable: true,
+      // resizeable: true,
       minimizable: false,
       width: 820,
-      height: 643,
+      // height: 'auto',
       scale: scale,
-      popOut: false,
+      // popOut: false,
       classes: ['modifier-bucket'],
     })
   }
@@ -143,16 +143,22 @@ export default class ModifierBucketEditor extends Application {
     if (!this.options.popOut) {
       html.css('font-size', `${13 * scale}px`)
 
-      let height = parseFloat(html.css('height').replace('px', ''))
-      let top = window.innerHeight - height - 65
-      html.css('top', `${top}px`)
+      // let height = parseFloat(html.css('height').replace('px', ''))
+      // let top = window.innerHeight - height - 65
+      // html.css('top', `${top}px`)
 
-      let right = parseFloat(html.css('right').replace('px', ''))
-      if (right < 0) {
-        let width = parseFloat(html.css('width').replace('px', ''))
-        let left = window.innerWidth - width - 10
-        html.css('left', `${left}px`)
-      }
+      // let right = parseFloat(html.css('right').replace('px', ''))
+      // if (right < 0) {
+      let x = $('#modifierbucket')
+      let bucketTop = x.position().top
+      let bucketLeft = x.position().left
+      let bucketWidth = 70
+
+      let width = parseFloat(html.css('width').replace('px', ''))
+      let left = bucketLeft + bucketWidth / 2 - width / 2
+      console.log(`bucketLeft: ${bucketLeft}; width: ${width}; left: ${left}`)
+      html.css('left', `${left}px`)
+      // }
     }
 
     html.removeClass('overflowy')

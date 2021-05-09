@@ -6,15 +6,12 @@ import {
   parseFloatFrom,
   parseIntFrom,
   generateUniqueId,
-  arrayToObject,
   objectToArray,
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
 import { GurpsActor } from '../actor.js'
-import { ResourceTrackerManager } from '../actor/resource-tracker-manager.js'
 
-const standardDialogHeight = 800
 const simpleDialogHeight = 130
 
 /**
@@ -49,13 +46,6 @@ export default class ApplyDamageDialog extends Application {
     this.actor = actor
     this.isSimpleDialog = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SIMPLE_DAMAGE)
     this.timesToApply = 1
-
-    // this._resourceLabels = ResourceTrackerManager.getAllTemplates()
-    //   .filter(it => !!it.tracker.alias)
-    //   .filter(it => !!it.tracker.isDamageType)
-    //   .map(it => {
-    //     return { name: it.tracker.name, alias: it.tracker.alias }
-    //   })
 
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
@@ -172,14 +162,6 @@ export default class ApplyDamageDialog extends Application {
       .find('#override-dr input')
       .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'userEnteredDR', parseIntFrom))
 
-    // Blunt Trauma user override text field
-    // html.find('#blunt-trauma-field input').on('change', ev => {
-    //   let currentValue = $(ev.currentTarget).val()
-    //   this._calculator.bluntTrauma =
-    //     currentValue === '' || currentValue === this._calculator.calculatedBluntTrauma ? null : parseFloat(currentValue)
-    //   this.updateUI()
-    // })
-
     // clear the user override of the Override DR value
     html.find('#override-dr button').click(() => {
       this._calculator.userEnteredDR = null
@@ -226,7 +208,7 @@ export default class ApplyDamageDialog extends Application {
     // use armor divisor rules
     html
       .find('#tactical-armordivisor')
-      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useArmorDivisor'))
+      .click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'useArmorDivisor'))
 
     // armor divisor level
     html
@@ -236,21 +218,21 @@ export default class ApplyDamageDialog extends Application {
     // use blunt trauma rules
     html
       .find('#tactical-blunttrauma')
-      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useBluntTrauma'))
+      .click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'useBluntTrauma'))
 
     // use hit location wounding modifiers rules
     html
       .find('#tactical-locationmodifier')
-      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'useLocationModifiers'))
+      .click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'useLocationModifiers'))
 
     // ==== Other situations ====
     // is a ranged attack and at 1/2 damage or further range
     html
       .find('#specials-range12D')
-      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isRangedHalfDamage'))
+      .click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isRangedHalfDamage'))
 
     // target is vulnerable to this attack
-    html.find('#vulnerable').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isVulnerable'))
+    html.find('#vulnerable').click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isVulnerable'))
 
     // Vulnerability level
     html
@@ -258,7 +240,7 @@ export default class ApplyDamageDialog extends Application {
       .click(ev => this._updateModelFromRadioValue($(ev.currentTarget), 'vulnerabilityMultiple', parseFloat))
 
     // target has Hardened DR
-    html.find('#hardened').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isHardenedDR'))
+    html.find('#hardened').click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isHardenedDR'))
 
     // Hardened DR level
     html
@@ -272,7 +254,7 @@ export default class ApplyDamageDialog extends Application {
     // target has Injury Tolerance
     html
       .find('#injury-tolerance')
-      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isInjuryTolerance'))
+      .click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isInjuryTolerance'))
 
     // type of Injury Tolerance
     html
@@ -285,7 +267,7 @@ export default class ApplyDamageDialog extends Application {
         this._calculator.damageReductionLevel = null
         this.updateUI()
       }
-      this._updateModelFromBooleanElement($(ev.currentTarget), 'useDamageReduction')
+      this._updateModelFromCheckedElement($(ev.currentTarget), 'useDamageReduction')
     })
 
     // damage reduction level field
@@ -302,7 +284,7 @@ export default class ApplyDamageDialog extends Application {
     // if checked, target has flexible armor; check for blunt trauma
     html
       .find('#flexible-armor')
-      .click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isFlexibleArmor'))
+      .click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isFlexibleArmor'))
 
     // Blunt Trauma user override text field
     html.find('#blunt-trauma-field input').on('change', ev => {
@@ -319,7 +301,7 @@ export default class ApplyDamageDialog extends Application {
     })
 
     // if checked, target has flexible armor; check for blunt trauma
-    html.find('#explosion-damage').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isExplosion'))
+    html.find('#explosion-damage').click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isExplosion'))
 
     html.find('#explosion-yards').on('change', ev => {
       let currentValue = $(ev.currentTarget).val()
@@ -327,7 +309,7 @@ export default class ApplyDamageDialog extends Application {
       this.updateUI()
     })
 
-    html.find('#shotgun-damage').click(ev => this._updateModelFromBooleanElement($(ev.currentTarget), 'isShotgun'))
+    html.find('#shotgun-damage').click(ev => this._updateModelFromCheckedElement($(ev.currentTarget), 'isShotgun'))
 
     html.find('#shotgun-rof-multiplier').on('change', ev => {
       let currentValue = $(ev.currentTarget).val()
@@ -418,7 +400,12 @@ export default class ApplyDamageDialog extends Application {
     this.updateUI()
   }
 
-  _updateModelFromBooleanElement(element, property) {
+  /**
+   * Update the damage calculator property from a UI element that has the 'checked' attribute
+   * @param {*} element
+   * @param {*} property
+   */
+  _updateModelFromCheckedElement(element, property) {
     this._calculator[property] = element.is(':checked')
     this.updateUI()
   }
