@@ -31,6 +31,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatResetTo
   GURPS.chatResourceTracker
   GURPS.chatResultBelowZero
+  GURPS.chatSelectSelfOrNameTokens
   GURPS.chatSetTo
   GURPS.chatToApplyEffects
   GURPS.chatToggling
@@ -44,14 +45,21 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatYouMustBeGM
   GURPS.chatYouMustHaveACharacterSelected
   GURPS.chatYouMustSelectTokens
+  GURPS.check1
+  GURPS.check2
+  GURPS.check3
+  GURPS.check4
   GURPS.clickToRemove
+  GURPS.collapse
   GURPS.concentrationCheck
+  GURPS.dead
   GURPS.defense
+  GURPS.destroyed
   GURPS.dragrulerFly
   GURPS.dragrulerSprint
   GURPS.dragrulerWalk
-  GURPS.dxCheckOrFall
-  GURPS.fallsDown
+  GURPS.dxCheckOrFallApplyProne
+  GURPS.fallsDownApplyProne
   GURPS.hitLocationArm, holding shield
   GURPS.hitLocationChinks in Other
   GURPS.hitLocationChinks in Torso
