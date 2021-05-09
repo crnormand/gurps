@@ -295,6 +295,7 @@
                 </div>
               </div>
             </div>
+            {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false condition='isTired' testcondition=data.additionalresources.isTired}}
           {{else}}
             {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' editable=false condition='isReeling' testcondition=data.additionalresources.isReeling}}
             {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false condition='isTired' testcondition=data.additionalresources.isTired}}
