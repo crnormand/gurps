@@ -9,7 +9,7 @@ This is what we are currently working on:
 - Added "apply condition" buttons to slam results chat messages. These buttons will select the affected combatant and either roll DX and apply the Prone condition if failed, or directly apply Prone if appropriate.
 - Updated German language file (thanks to GitHub member @LordOHelmet)
 - Added token ID to /select (e.g., `/sel PrPRGwFEiNKewWym`) -- this is mainly done for internal programming, but could be useful in a macro.
-
+- Various tweaks to fix modifier bucket size/position issues.
 ## History
 
 0.9.4 - 5/06/2021
