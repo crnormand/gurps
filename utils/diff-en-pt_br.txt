@@ -1,103 +1,37 @@
 ------------
 keys in [lang/pt_br.json] that are missing in [lang/en.json]
+  GURPS.dxCheckOrFall
+  GURPS.fallsDown
 ------------
 keys in [lang/en.json] that are missing in [lang/pt_br.json]
-  GURPS.ID
-  GURPS.chatClearing
-  GURPS.chatClearingLastActor
-  GURPS.chatDoesNotHaveEnough
-  GURPS.chatExceededMax
-  GURPS.chatExceededMaxUses
-  GURPS.chatGameAidUsersGuide
-  GURPS.chatMoreThanOneActor
-  GURPS.chatMoreThanOneToken
-  GURPS.chatMustBeACheck
-  GURPS.chatNoActorFound
-  GURPS.chatNoEquipmentMatched
-  GURPS.chatNoResourceTracker
-  GURPS.chatNoStatusMatched
-  GURPS.chatNoTokens
-  GURPS.chatQty
-  GURPS.chatQtySetTo
-  GURPS.chatResetTo
-  GURPS.chatResourceTracker
-  GURPS.chatResultBelowZero
-  GURPS.chatSetTo
-  GURPS.chatToApplyEffects
-  GURPS.chatToggling
-  GURPS.chatUnableToFindMacro
-  GURPS.chatUnrecognizedFormat
-  GURPS.chatUses
-  GURPS.chatUsesIsNaN
-  GURPS.chatUsesReset
-  GURPS.chatUsesSet
-  GURPS.chatYouDoNotHaveEnough
-  GURPS.chatYouMustBeGM
-  GURPS.chatYouMustHaveACharacterSelected
-  GURPS.chatYouMustSelectTokens
-  GURPS.dragrulerFly
-  GURPS.dragrulerSprint
-  GURPS.dragrulerWalk
-  GURPS.modifierAddRangeRuler
-  GURPS.modifierAddRangeRulerHint
-  GURPS.modifierJournalManager
-  GURPS.modifierJournals
-  GURPS.modifierScaleLarge
-  GURPS.modifierScaleNormal
-  GURPS.modifierScaleSmall
-  GURPS.modifierScaleVeryLarge
-  GURPS.modifierScaleVerySmall
-  GURPS.modifierSelectJournalButton
-  GURPS.modifierSelectJournals
-  GURPS.modifierSelectJournalsAside
-  GURPS.modifierSelectJournalsHint
-  GURPS.modifierSelectJournalsTitle
-  GURPS.modifierShowOnMouseOver
-  GURPS.modifierShowOnMouseOverHint
-  GURPS.modifierTabAside
-  GURPS.modifierViewScale
-  GURPS.modifierViewScaleHint
-  GURPS.name
-  GURPS.pdfShieldRush
-  GURPS.rolled
-  GURPS.showQuestion
-  GURPS.slamForShieldDB
-  GURPS.slamShieldDB
-  __ Character AddsDisadsPerksQuirks__
-  __ Character Skills__
-  __Apply Damage Dialog__
-  __Body Plan__
-  __Char Sheet__
-  __Character Attributes__
-  __Character Description__
-  __Character Encumbrance/Lift__
-  __Character Equipment__
-  __Character Points__
-  __Character Sheet Identity__
-  __Character Sheet Miscellaneous__
-  __Character Spells__
-  __Character Weapons__
-  __Chat Messages__
-  __Damage Types__
-  __Drag Ruler__
-  __Fantastic Dungeon Grappling__
-  __Hit Location__
-  __Modifier Bucket__
-  __PDF References__
-  __Resolve Damage Dialog__
-  __Resource Trackers__
-  __Slam Calculator__
-  __Status/Conditions__
+  GURPS.chatSelectSelfOrNameTokens
+  GURPS.check1
+  GURPS.check2
+  GURPS.check3
+  GURPS.check4
+  GURPS.collapse
+  GURPS.dead
+  GURPS.destroyed
+  GURPS.dxCheckOrFallApplyProne
+  GURPS.fallsDownApplyProne
 ------------
 values in [lang/en.json] that are the same in [lang/pt_br.json]
+  GURPS.ID: ID
+  GURPS.addApplyInjuryQuietly: Apply Injury (Quietly)
   GURPS.attributesDX: DX
   GURPS.attributesHT: HT
   GURPS.attributesIQ: IQ
   GURPS.attributesPER: Per
   GURPS.attributesST: ST
+  GURPS.chatMustBeACheck: The On-the-Fly formula must be some kind of check
+  GURPS.chatQty: 'QTY'
+  GURPS.chatUses: 'USES'
   GURPS.damageAbbrevcor: cor
   GURPS.damageAbbrevtox: tox
   GURPS.grapplingCPAbbrev: ctrl
+  GURPS.hitLocationJaw: Jaw
+  GURPS.modifier: Modifier
+  GURPS.modifierScaleNormal: Normal (100%)
   GURPS.modifierTrivial: Trivial
   GURPS.normal: Normal
   GURPS.pdfBlockRetreat: B377
@@ -113,7 +47,33 @@ values in [lang/en.json] that are the same in [lang/pt_br.json]
   GURPS.pdfMightyBlow: MA131
   GURPS.pdfMoveAttack: B365
   GURPS.pdfShieldDB: B374
+  GURPS.pdfShieldRush: B372
   GURPS.pdfStrongAttack: B365
   GURPS.pdfTelegraphicAttack: MA113
   GURPS.resourceTemplateAlias: Alias
   GURPS.title: GURPS
+  __ Character AddsDisadsPerksQuirks__: =========
+  __ Character Skills__: =========
+  __Apply Damage Dialog__: =========
+  __Body Plan__: =========
+  __Char Sheet__: =========
+  __Character Attributes__: =========
+  __Character Description__: =========
+  __Character Encumbrance/Lift__: =========
+  __Character Equipment__: =========
+  __Character Points__: =========
+  __Character Sheet Identity__: =========
+  __Character Sheet Miscellaneous__: =========
+  __Character Spells__: =========
+  __Character Weapons__: =========
+  __Chat Messages__: =========
+  __Damage Types__: =========
+  __Drag Ruler__: =========
+  __Fantastic Dungeon Grappling__: =========
+  __Hit Location__: =========
+  __Modifier Bucket__: =========
+  __PDF References__: =========
+  __Resolve Damage Dialog__: =========
+  __Resource Trackers__: =========
+  __Slam Calculator__: =========
+  __Status/Conditions__: =========
