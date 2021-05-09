@@ -8,6 +8,7 @@ This is what we are currently working on:
 - Refactor regex pattern matching to utilities.js
 - Added "apply condition" buttons to slam results chat messages. These buttons will select the affected combatant and either roll DX and apply the Prone condition if failed, or directly apply Prone if appropriate.
 - Updated German language file (thanks to GitHub member @LordOHelmet)
+- Added token ID to /select (e.g., `/sel PrPRGwFEiNKewWym`) -- this is mainly done for internal programming, but could be useful in a macro.
 
 ## History
 
