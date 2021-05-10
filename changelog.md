@@ -10,6 +10,8 @@ This is what we are currently working on:
 - Updated German language file (thanks to GitHub member @LordOHelmet)
 - Added token ID to /select (e.g., `/sel PrPRGwFEiNKewWym`) -- this is mainly done for internal programming, but could be useful in a macro.
 - Various tweaks to fix modifier bucket size/position issues.
+- Updated /if [Test] { } { } to allow embedded backslashes (to execute multiple commands inside {})
+
 ## History
 
 0.9.4 - 5/06/2021

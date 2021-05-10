@@ -23,9 +23,8 @@ export class IfChatProcessor extends ChatProcessor {
         else this.send() // send what we have
         await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
       }
-    } else if (then.startsWith('/')) {
-      await this.registry.processLine(then)
-    } else this.pub(then)
+    } else
+      await this.registry.processLines(then)
   }
 
   async process(line) {
