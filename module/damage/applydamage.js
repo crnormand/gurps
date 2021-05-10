@@ -459,14 +459,14 @@ export default class ApplyDamageDialog extends Application {
 
     let message = ''
     if (object.type === 'shock') {
-      let button = `/st + shock{object.amount}`
+      let button = `/st + shock${object.amount}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-shock.html', {
-        name: this.actor.data.name,
+        name: !!token ? token.name : this.actor.data.name,
         modifier: object.amount,
         doubled: object.amount * 2,
-        button: `/st + shock{object.amount}`,
+        button: button,
       })
     }
 
