@@ -515,6 +515,7 @@
   "GURPS.pdfMoveAttack": "B365",
   "GURPS.pdfShieldDB": "B374",
   "GURPS.pdfShieldRush": "B372",
+  "GURPS.pdfShock": "B419",
   "GURPS.pdfStrongAttack": "B365",
   "GURPS.pdfTelegraphicAttack": "MA113",
 
@@ -646,7 +647,7 @@
   "GURPS.htCheck": "Roll HT",
   "GURPS.ID": "ID",
   "GURPS.knockback": "Knockback, {amount} {unit}",
-  "GURPS.knockbackCheck": "Roll {dx}, {acrobatics}, or {judo} to avoid falling",
+  "GURPS.knockbackCheck": "{name} must roll {dx}, {acrobatics}, or {judo} or fall!",
   "GURPS.level": "Level",
   "GURPS.lighting": "Lighting",
   "GURPS.location": "Location",
@@ -685,6 +686,8 @@
   "GURPS.rolled": "Rolled",
   "GURPS.selectToken": "Select Token",
   "GURPS.shock": "Shock",
+  "GURPS.shockPenalty": "Penalty (–{amount}) to DX and IQ.",
+  "GURPS.shockPenaltyNextTurnOnly": "Shock: –{modifier} to DX and IQ for next turn only.",
   "GURPS.shots": "Shots",
   "GURPS.showQuestion": "Show?",
 

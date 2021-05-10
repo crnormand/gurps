@@ -69,6 +69,10 @@
   font-size: 80%;
 }
 
+.gurps-chat-message .pdflink {
+  font-size: 90%;
+}
+
 .gurps-group h4 {
   background-color: black;
   color: lightgrey;
@@ -414,6 +418,7 @@ ul#result-effects li {
 
 .gurps-chat-message * {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  font-size: 13px;
 }
 
 .gurps-chat-message .label-toggle {
@@ -1547,6 +1552,12 @@ ul#result-effects li {
   border: 0.0825em solid rgb(122, 121, 113);
   border-radius: 0.25em;
   margin: 0.0825em 0;
+}
+
+.modtooltip .glinkmod,
+.modtooltip .glinkmodplus,
+.modtooltip .glinkmodminus,
+.modtooltip .gurpslink {
   font-size: 90%;
 }
 
@@ -1597,11 +1608,13 @@ ul#result-effects li {
 }
 
 .removemod.plus,
+.gurps-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
   color: darkgreen;
 }
 
 .removemod.minus,
+.gurps-chat-message .glinkmodminus,
 .modtooltip .glinkmodminus {
   color: darkred;
 }

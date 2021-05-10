@@ -1740,6 +1740,7 @@ body {
 
 .roll-message .modifier-list {
   list-style-type: none;
+  padding-left: 1em;
 }
 
 .chat-message .modifier-list li,

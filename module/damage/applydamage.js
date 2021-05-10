@@ -454,12 +454,19 @@ export default class ApplyDamageDialog extends Application {
     let stringified = ev.currentTarget.attributes['data-struct'].value
     let object = JSON.parse(stringified)
 
+    let tokens = locateToken(this.actor.id)
+    let token = tokens.length === 1 ? tokens[0] : null
+
     let message = ''
     if (object.type === 'shock') {
+      let button = `/st + shock{object.amount}`
+      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
+
       message = await this._renderTemplate('chat-shock.html', {
         name: this.actor.data.name,
         modifier: object.amount,
         doubled: object.amount * 2,
+        button: `/st + shock{object.amount}`,
       })
     }
 
@@ -482,27 +489,24 @@ export default class ApplyDamageDialog extends Application {
 
     if (object.type === 'knockback') {
       let dx = i18n('GURPS.attributesDX')
-      let acro = i18n('GURPS.skillAcrobatics')
-      let judo = i18n('GURPS.skillJudo')
       let dxCheck = object.modifier === 0 ? dx : `${dx}-${object.modifier}`
+      let acro = i18n('GURPS.skillAcrobatics')
       let acroCheck = object.modifier === 0 ? acro : `${acro}-${object.modifier}`
+      let judo = i18n('GURPS.skillJudo')
       let judoCheck = object.modifier === 0 ? judo : `${judo}-${object.modifier}`
 
       let button = `/if ! [${dxCheck}|Sk:${acroCheck}|Sk:${judoCheck}] /st + prone`
-
-      let tokens = locateToken(this.actor.id)
-      let token = tokens.length === 1 ? tokens[0].id : null
-      if (!!token) button = `/sel ${token} \\\\ ${button}`
+      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       let templateData = {
-        name: this.actor.data.name,
+        name: !!token ? token.name : this.actor.data.name,
         button: button,
         yards: object.amount,
         pdfref: i18n('GURPS.pdfKnockback'),
         unit: object.amount > 1 ? i18n('GURPS.yards') : i18n('GURPS.yard'),
-        dx: dxCheck,
-        acrobatics: acroCheck,
-        judo: judoCheck,
+        dx: dxCheck.replace('-', '−'),
+        acrobatics: acroCheck.replace('-', '−'),
+        judo: judoCheck.replace('-', '−'),
         classStart: '<span class="pdflink">',
         classEnd: '</span>',
       }
