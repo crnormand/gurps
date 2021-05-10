@@ -510,10 +510,12 @@
   "GURPS.pdfDodgeSide": "B390",
   "GURPS.pdfExtraEffort": "B357",
   "GURPS.pdfHeroicCharge": "MA131",
+  "GURPS.pdfKnockback": "B378",
   "GURPS.pdfMightyBlow": "MA131",
   "GURPS.pdfMoveAttack": "B365",
   "GURPS.pdfShieldDB": "B374",
   "GURPS.pdfShieldRush": "B372",
+  "GURPS.pdfShock": "B419",
   "GURPS.pdfStrongAttack": "B365",
   "GURPS.pdfTelegraphicAttack": "MA113",
 
@@ -547,6 +549,10 @@
   "GURPS.resourceUpdateTrackerSlot": "Update Tracker Slot",
   "GURPS.slotNotUnique": "There is already a tracker assigned to slot Tracker {value}.",
   "GURPS.trackerNotUnique": "Tracker name ({name}) or alias ({alias}) is not unique.",
+
+  "Skill Names__": "=========",
+  "GURPS.skillAcrobatics": "Acrobatics",
+  "GURPS.skillJudo": "Judo",
 
   "__Slam Calculator__": "=========",
   "GURPS.slamAOAStrong": "All-Out Attack (Strong)",
@@ -620,6 +626,7 @@
   "GURPS.Dice": "Dice",
   "GURPS.dxCheckOrFallApplyProne": "{name} must roll DX or fall!",
   "GURPS.dxJudoAcrobaticsCheck": "Roll [DX, Judo, or Acrobatics]",
+  "GURPS.dxJudoAcrobaticsCheckToRemainStanding": "Roll [DX, Judo, or Acrobatics] {modifierText} to remain standing.",
   "GURPS.effectsDoubles": "doubles",
   "GURPS.effectsNotApplicableDefenses": "Does not apply to Active Defenses or other defensive reactions. See ",
   "GURPS.effectsTemporaryAttributePenalties": "Temporary Attribute Penalties",
@@ -628,6 +635,7 @@
   "GURPS.equippedparry": "Parry",
   "GURPS.fallsDownApplyProne": "{name} falls down!",
   "GURPS.for": "for",
+  "GURPS.forPerfectBalance": "for Perfect Balance",
   "GURPS.forTurns": "for {turns} turns",
   "GURPS.groundCreatures": "Ground creatures",
   "GURPS.groundCreaturesSuffer": "Ground creatures suffer",
@@ -638,7 +646,8 @@
   "GURPS.hpIgnored": " HP ignored.",
   "GURPS.htCheck": "Roll HT",
   "GURPS.ID": "ID",
-  "GURPS.knockback": "Knockback, ",
+  "GURPS.knockback": "Knockback, {amount} {unit}",
+  "GURPS.knockbackCheck": "{name} must roll {dx}, {acrobatics}, or {judo} or fall!",
   "GURPS.level": "Level",
   "GURPS.lighting": "Lighting",
   "GURPS.location": "Location",
@@ -677,9 +686,14 @@
   "GURPS.rolled": "Rolled",
   "GURPS.selectToken": "Select Token",
   "GURPS.shock": "Shock",
+  "GURPS.shockPenalty": "Penalty (–{amount}) to DX and IQ.",
+  "GURPS.shockPenaltyNextTurnOnly": "Shock: –{modifier} to DX and IQ for next turn only.",
   "GURPS.shots": "Shots",
   "GURPS.showQuestion": "Show?",
+
   "GURPS.suffersA": "suffers a",
+  "GURPS.suffersKnockback": "{name} suffers Knockback {classStart}([PDF:{pdfref}]){classEnd} of {yards} {unit}.",
+
   "GURPS.swimmerFlyer": "Swimmer / Flyer",
   "GURPS.swimmersOrFlyersSuffer": "Swimmers Flyers",
   "GURPS.target": "Target",
@@ -690,5 +704,6 @@
   "GURPS.usage": "Usage",
   "GURPS.wasStruckIn": "was struck in",
   "GURPS.withShockPenalty": "with Shock penalty",
-  "GURPS.yards": " yards"
+  "GURPS.yard": "yard",
+  "GURPS.yards": "yards"
 }

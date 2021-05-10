@@ -3,7 +3,7 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
-import { objectToArray } from '../../lib/utilities.js'
+import { i18n, objectToArray } from '../../lib/utilities.js'
 
 /* 
   Crippling injury:
@@ -255,6 +255,8 @@ export class CompositeDamageCalculator {
         type: 'knockback',
         amount: knockbackValue,
         modifier: knockbackMods,
+        unit: knockbackValue === 1 ? i18n('GURPS.yard') : i18n('GURPS.yards'),
+        modifierText: !!knockbackMods ? `–${knockbackMods}` : '',
       })
     }
 
