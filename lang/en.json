@@ -625,6 +625,7 @@
   "GURPS.Dice": "Dice",
   "GURPS.dxCheckOrFallApplyProne": "{name} must roll DX or fall!",
   "GURPS.dxJudoAcrobaticsCheck": "Roll [DX, Judo, or Acrobatics]",
+  "GURPS.dxJudoAcrobaticsCheckToRemainStanding": "Roll [DX, Judo, or Acrobatics] {modifierText} to remain standing.",
   "GURPS.effectsDoubles": "doubles",
   "GURPS.effectsNotApplicableDefenses": "Does not apply to Active Defenses or other defensive reactions. See ",
   "GURPS.effectsTemporaryAttributePenalties": "Temporary Attribute Penalties",
@@ -644,8 +645,8 @@
   "GURPS.hpIgnored": " HP ignored.",
   "GURPS.htCheck": "Roll HT",
   "GURPS.ID": "ID",
-  "GURPS.knockback": "Knockback, ",
-  "GURPS.knockbackCheck": "Roll against the highest of {DX}{modifier}, {Acrobatics}{modifier}, or {Judo}{modifier} to avoid falling!",
+  "GURPS.knockback": "Knockback, {amount} {unit}",
+  "GURPS.knockbackCheck": "Roll {dx}, {acrobatics}, or {judo} to avoid falling",
   "GURPS.level": "Level",
   "GURPS.lighting": "Lighting",
   "GURPS.location": "Location",
@@ -688,7 +689,7 @@
   "GURPS.showQuestion": "Show?",
 
   "GURPS.suffersA": "suffers a",
-  "GURPS.suffersKnockback": "{name} suffers Knockback ([PDF:{pdfref}]) of {yards} {unit}.",
+  "GURPS.suffersKnockback": "{name} suffers Knockback {classStart}([PDF:{pdfref}]){classEnd} of {yards} {unit}.",
 
   "GURPS.swimmerFlyer": "Swimmer / Flyer",
   "GURPS.swimmersOrFlyersSuffer": "Swimmers Flyers",

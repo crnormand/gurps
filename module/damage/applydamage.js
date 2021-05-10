@@ -9,6 +9,7 @@ import {
   objectToArray,
   i18n,
   displayMod,
+  locateToken,
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
@@ -480,23 +481,33 @@ export default class ApplyDamageDialog extends Application {
     }
 
     if (object.type === 'knockback') {
-      let dxCheck = object.modifier === 0 ? 'DX' : `DX-${object.modifier}`
-      let acroCheck = object.modifier === 0 ? 'S:Acrobatics' : `S:Acrobatics-${object.modifier}`
-      let judoCheck = object.modifier === 0 ? 'S:Judo' : `S:Judo-${object.modifier}`
+      let dx = i18n('GURPS.attributesDX')
+      let acro = i18n('GURPS.skillAcrobatics')
+      let judo = i18n('GURPS.skillJudo')
+      let dxCheck = object.modifier === 0 ? dx : `${dx}-${object.modifier}`
+      let acroCheck = object.modifier === 0 ? acro : `${acro}-${object.modifier}`
+      let judoCheck = object.modifier === 0 ? judo : `${judo}-${object.modifier}`
 
-      let mod = `${object.modifier < 0 ? '-' : '+'}${Math.abs(object.modifier)}`
+      let button = `/if ! [${dxCheck}|Sk:${acroCheck}|Sk:${judoCheck}] /st + prone`
 
-      message = await this._renderTemplate('chat-knockback.html', {
+      let tokens = locateToken(this.actor.id)
+      let token = tokens.length === 1 ? tokens[0].id : null
+      if (!!token) button = `/sel ${token} \\\\ ${button}`
+
+      let templateData = {
         name: this.actor.data.name,
+        button: button,
         yards: object.amount,
-        modifier: object.modifier,
-        modifierText: this._getModifierText(object.modifier),
         pdfref: i18n('GURPS.pdfKnockback'),
         unit: object.amount > 1 ? i18n('GURPS.yards') : i18n('GURPS.yard'),
-        dx: i18n('GURPS.DX'),
-        acrobatics: i18n('skillAcrobatics'),
-        judo: i18n('GURPS.skillJudo'),
-      })
+        dx: dxCheck,
+        acrobatics: acroCheck,
+        judo: judoCheck,
+        classStart: '<span class="pdflink">',
+        classEnd: '</span>',
+      }
+
+      message = await this._renderTemplate('chat-knockback.html', templateData)
     }
 
     if (object.type === 'crippling') {

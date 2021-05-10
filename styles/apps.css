@@ -413,8 +413,7 @@ ul#result-effects li {
 }
 
 .gurps-chat-message * {
-  /* font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
-  /* TODO removed because it messed up Font Awesome rendering */
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
 }
 
 .gurps-chat-message .label-toggle {

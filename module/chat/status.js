@@ -1,7 +1,7 @@
 'use strict'
 
 import ChatProcessor from './chat-processor.js'
-import { i18n, i18n_f, makeRegexPatternFrom } from '../../lib/utilities.js'
+import { i18n, i18n_f, locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
 
 const Command = {
   on: 'set',
@@ -77,23 +77,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   }
 
   getTokensFor(name) {
-    let pattern = makeRegexPatternFrom(name)
-
-    let tokens = canvas.tokens.placeables // all Placeables on canvas
-      .filter(it => it.constructor.name === 'Token') // only Tokens
-
-    // try token IDs first
-    let matches = tokens.filter(it => it.id.match(pattern))
-
-    // No good match on token IDs, try token names
-    if (matches.length == 0 || matches.length > 1) {
-      matches = tokens.filter(it => it.name.match(pattern)) // the Tokens which match the pattern
-    }
-
-    // No good match on tokens, try the associated actor names
-    if (matches.length == 0 || matches.length > 1) {
-      matches = tokens.filter(it => it.actor?.name.match(pattern)) // Tokens can have null actors
-    }
+    let matches = locateToken(name)
 
     if (matches.length !== 1) {
       let msg =

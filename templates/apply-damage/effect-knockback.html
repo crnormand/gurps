@@ -1,12 +1,16 @@
 <li name='result-effect'>
+  {{debug this}}
   <div>
     <div>
-      <header>{{localize "GURPS.knockback"}}{{amount}}{{localize "GURPS.yards"}}</header>
-      <aside>{{localize "GURPS.dxJudoAcrobaticsCheck"}}{{#if modifier}}&minus;{{modifier}}{{/if}}{{localize "GURPS.remainStanding"}}</aside>
+      <header>
+        {{i18n_f "GURPS.knockback" this}}
+      </header>
+      <aside>{{i18n_f "GURPS.dxJudoAcrobaticsCheckToRemainStanding" this}}</aside>
     </div>
     <div class='with-send-button'>
-      <button name='send-knockback' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
+      <button name='send-knockback' data-struct='{{jsonStringify this}}'><span
+          class='fa fa-comment-alt'></span></button>
     </div>
-    <div><span class='pdflink'>B378</span></div>
+    <div><span class='pdflink'>{{i18n "GURPS.pdfKnockback"}}</span></div>
   </div>
 </li>
