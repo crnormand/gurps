@@ -7,6 +7,8 @@ import {
   parseIntFrom,
   generateUniqueId,
   objectToArray,
+  i18n,
+  displayMod,
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
@@ -481,10 +483,19 @@ export default class ApplyDamageDialog extends Application {
       let dxCheck = object.modifier === 0 ? 'DX' : `DX-${object.modifier}`
       let acroCheck = object.modifier === 0 ? 'S:Acrobatics' : `S:Acrobatics-${object.modifier}`
       let judoCheck = object.modifier === 0 ? 'S:Judo' : `S:Judo-${object.modifier}`
+
+      let mod = `${object.modifier < 0 ? '-' : '+'}${Math.abs(object.modifier)}`
+
       message = await this._renderTemplate('chat-knockback.html', {
         name: this.actor.data.name,
         yards: object.amount,
-        combinedCheck: `${dxCheck}|${acroCheck}|${judoCheck}`,
+        modifier: object.modifier,
+        modifierText: this._getModifierText(object.modifier),
+        pdfref: i18n('GURPS.pdfKnockback'),
+        unit: object.amount > 1 ? i18n('GURPS.yards') : i18n('GURPS.yard'),
+        dx: i18n('GURPS.DX'),
+        acrobatics: i18n('skillAcrobatics'),
+        judo: i18n('GURPS.skillJudo'),
       })
     }
 
@@ -510,6 +521,12 @@ export default class ApplyDamageDialog extends Application {
     }
 
     ChatMessage.create(msgData)
+  }
+
+  _getModifierText(value) {
+    let result = displayMod(value)
+    if (result === '0') result = ''
+    return result
   }
 
   /**

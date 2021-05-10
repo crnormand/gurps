@@ -1,13 +1,20 @@
 <div>
-  {{name}} {{localize "GURPS.suffersA"}} {{localize "GURPS.knockback"}} <span style='font-size: smaller;'>([PDF:B378])</span> {{localize "GURPS.of"}} {{yards}}
-  {{pluralize 'yard' yards}}.<br />
-  <span style='font-size:small;'>{{localize "GURPS.roll"}} <i>{{localize "GURPS.highest"}}</i> {{localize "GURPS.of"}}:
-    <ul>
-      <li>[{{combinedCheck}}]<br>{{localize "GURPS.toAvoidFalling"}}</li>
-    </ul>
+  {{i18n_f "GURPS.suffersKnockback" this }}
+  <!-- {{name}} {{localize "GURPS.suffersA"}} {{localize "GURPS.knockback"}} <span
+    style='font-size: smaller;'>([PDF:B378])</span> {{localize "GURPS.of"}} {{yards}}
+  {{pluralize 'yard' yards}}.<br /> -->
+  <span style='font-size:small;'>
+    ["{{i18n_f "GURPS.knockbackCheck" this}}" /if !
+    [{{dx}}{{modifierText}}|Sk:{{acrobatics}}{{modifierText}}|Sk:{{judo}}{{modifierText}}]
+    /st + prone]
+    <!-- <ul>
+      <li>
+        format "GURPS.knockbackCheck" DX:dx, Acrobatics: acrobatics, Judo: judo, modifier: modifierText
+      </li>
+    </ul> -->
     <hr />
     <ul>
-      <li>[+4 {{localize "GURPS.for"}} {{localize "GURPS.perfectBalance"}}]</li>
+      <li>[+4 {{localize "GURPS.forPerfectBalance"}}]</li>
     </ul>
   </span>
 </div>
