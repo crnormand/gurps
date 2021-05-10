@@ -183,13 +183,13 @@ export class ModifierBucket extends Application {
     this.modifierStack.reset(saved)
   }
 
-   sendBucketToPlayer(name) {
-    if (!name) { // Only occurs if the GM clicks on 'everyone'
+   sendBucketToPlayer(id) {
+    if (!id) { // Only occurs if the GM clicks on 'everyone'
       this._sendBucket(game.users.filter(u => u.id != game.user.id))
     } else {
-      let users = game.users.players.filter(u => u.name == name) || []
+      let users = game.users.players.filter(u => u.id == id) || []
       if (users.length > 0) this._sendBucket(users)
-      else ui.notifications.warn("No player named '" + name + "'")
+      else ui.notifications.warn("No player with ID '" + id + "'")
     }
   }
 
