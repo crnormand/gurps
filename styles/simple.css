@@ -1740,9 +1740,9 @@ body {
 
 .roll-message .modifier-list {
   list-style-type: none;
+  padding-left: 1em;
 }
 
-.chat-message .modifier-list li,
 .roll-message .modifier-list li {
   font-size: 85%;
   font-style: italic;

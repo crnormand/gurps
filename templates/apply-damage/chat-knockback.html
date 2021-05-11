@@ -1,13 +1,13 @@
-<div>
-  {{name}} {{localize "GURPS.suffersA"}} {{localize "GURPS.knockback"}} <span style='font-size: smaller;'>([PDF:B378])</span> {{localize "GURPS.of"}} {{yards}}
-  {{pluralize 'yard' yards}}.<br />
-  <span style='font-size:small;'>{{localize "GURPS.roll"}} <i>{{localize "GURPS.highest"}}</i> {{localize "GURPS.of"}}:
-    <ul>
-      <li>[{{combinedCheck}}]<br>{{localize "GURPS.toAvoidFalling"}}</li>
+<div class='gurps-chat-message'>
+  <div class='prefix'>
+    {{{i18n_f "GURPS.suffersKnockback" this}}}
+  </div>
+  <hr />
+  <div class='roll-result'>
+    ["{{i18n_f "GURPS.knockbackCheck" this}}" {{button}}]
+    <strong>Modifiers:</strong>
+    <ul class='modifier-list'>
+      <li>[+4 {{localize "GURPS.forPerfectBalance"}}]</li>
     </ul>
-    <hr />
-    <ul>
-      <li>[+4 {{localize "GURPS.for"}} {{localize "GURPS.perfectBalance"}}]</li>
-    </ul>
-  </span>
+  </div>
 </div>

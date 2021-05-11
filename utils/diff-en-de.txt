@@ -1,94 +1,12 @@
 ------------
 keys in [lang/de.json] that are missing in [lang/en.json]
-  EFFECT.StatusShocked
+  GURPS.dxCheckOrFall
+  GURPS.fallsDown
 ------------
 keys in [lang/en.json] that are missing in [lang/de.json]
-  GURPS.ID
-  GURPS.chatClearing
-  GURPS.chatClearingLastActor
-  GURPS.chatDoesNotHaveEnough
-  GURPS.chatExceededMax
-  GURPS.chatExceededMaxUses
-  GURPS.chatGameAidUsersGuide
-  GURPS.chatMoreThanOneActor
-  GURPS.chatMoreThanOneToken
-  GURPS.chatMustBeACheck
-  GURPS.chatNoActorFound
-  GURPS.chatNoEquipmentMatched
-  GURPS.chatNoResourceTracker
-  GURPS.chatNoStatusMatched
-  GURPS.chatNoTokens
-  GURPS.chatQty
-  GURPS.chatQtySetTo
-  GURPS.chatResetTo
-  GURPS.chatResourceTracker
-  GURPS.chatResultBelowZero
-  GURPS.chatSetTo
-  GURPS.chatToApplyEffects
-  GURPS.chatToggling
-  GURPS.chatUnableToFindMacro
-  GURPS.chatUnrecognizedFormat
-  GURPS.chatUses
-  GURPS.chatUsesIsNaN
-  GURPS.chatUsesReset
-  GURPS.chatUsesSet
-  GURPS.chatYouDoNotHaveEnough
-  GURPS.chatYouMustBeGM
-  GURPS.chatYouMustHaveACharacterSelected
-  GURPS.chatYouMustSelectTokens
-  GURPS.dragrulerFly
-  GURPS.dragrulerSprint
-  GURPS.dragrulerWalk
-  GURPS.modifierAddRangeRuler
-  GURPS.modifierAddRangeRulerHint
-  GURPS.modifierJournalManager
-  GURPS.modifierJournals
-  GURPS.modifierScaleLarge
-  GURPS.modifierScaleNormal
-  GURPS.modifierScaleSmall
-  GURPS.modifierScaleVeryLarge
-  GURPS.modifierScaleVerySmall
-  GURPS.modifierSelectJournalButton
-  GURPS.modifierSelectJournals
-  GURPS.modifierSelectJournalsAside
-  GURPS.modifierSelectJournalsHint
-  GURPS.modifierSelectJournalsTitle
-  GURPS.modifierShowOnMouseOver
-  GURPS.modifierShowOnMouseOverHint
-  GURPS.modifierTabAside
-  GURPS.modifierViewScale
-  GURPS.modifierViewScaleHint
-  GURPS.name
-  GURPS.pdfShieldRush
-  GURPS.rolled
-  GURPS.showQuestion
-  GURPS.slamForShieldDB
-  GURPS.slamShieldDB
-  __ Character AddsDisadsPerksQuirks__
-  __ Character Skills__
-  __Apply Damage Dialog__
-  __Body Plan__
-  __Char Sheet__
-  __Character Attributes__
-  __Character Description__
-  __Character Encumbrance/Lift__
-  __Character Equipment__
-  __Character Points__
-  __Character Sheet Identity__
-  __Character Sheet Miscellaneous__
-  __Character Spells__
-  __Character Weapons__
-  __Chat Messages__
-  __Damage Types__
-  __Drag Ruler__
-  __Fantastic Dungeon Grappling__
-  __Hit Location__
-  __Modifier Bucket__
-  __PDF References__
-  __Resolve Damage Dialog__
-  __Resource Trackers__
-  __Slam Calculator__
-  __Status/Conditions__
+  GURPS.chatSelectSelfOrNameTokens
+  GURPS.dxCheckOrFallApplyProne
+  GURPS.fallsDownApplyProne
 ------------
 values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.BODYPLANcentaur: Centaur
@@ -96,6 +14,7 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.BODYPLANhumanoid: Humanoid
   GURPS.FP: FP
   GURPS.HP: HP
+  GURPS.ID: ID
   GURPS.SkillDXA: DX/A
   GURPS.SkillDXE: DX/E
   GURPS.SkillDXH: DX/H
@@ -116,7 +35,6 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.SkillWillE: Will/E
   GURPS.SkillWillH: Will/H
   GURPS.SkillWillVH: Will/VH
-  GURPS.acc: Acc
   GURPS.addArmorDivisor: Armor Divisor
   GURPS.addExplosion: Explosion
   GURPS.addHardenedDRLevel: Hardened DR Level
@@ -131,6 +49,14 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.attributesST: ST
   GURPS.attributesWILL: Will
   GURPS.bulk: Bulk
+  GURPS.chatGameAidUsersGuide: GURPS 4e Game Aid USERS GUIDE
+  GURPS.chatQty: 'QTY'
+  GURPS.chatUses: 'USES'
+  GURPS.check1: Check #1
+  GURPS.check2: Check #2
+  GURPS.check3: Check #3
+  GURPS.check4: Check #4
+  GURPS.collapse: Collapse
   GURPS.copyright: GURPSÂ© is copyrighted by Steve Jackson Games
   GURPS.copyrightGCS: GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved 
   GURPS.damageAbbrevburn: burn
@@ -168,7 +94,9 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.minimum: Minimum
   GURPS.modifierFeverishDef: Feverish Defense
   GURPS.modifierHeroicCharge: Heroic Charge
+  GURPS.modifierScaleNormal: Normal (100%)
   GURPS.modifierTrivial: Trivial
+  GURPS.name: Name
   GURPS.normal: Normal
   GURPS.overridden: overridden
   GURPS.pdfAllOutDefense: B365
@@ -186,6 +114,7 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.pdfMightyBlow: MA131
   GURPS.pdfMoveAttack: B365
   GURPS.pdfShieldDB: B374
+  GURPS.pdfShieldRush: B372
   GURPS.pdfStrongAttack: B365
   GURPS.pdfTelegraphicAttack: MA113
   GURPS.perfectBalance: Perfect Balance
@@ -197,3 +126,28 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.slamAOAStrong: All-Out Attack (Strong)
   GURPS.title: GURPS
   GURPS.yards:  yards
+  __ Character AddsDisadsPerksQuirks__: =========
+  __ Character Skills__: =========
+  __Apply Damage Dialog__: =========
+  __Body Plan__: =========
+  __Char Sheet__: =========
+  __Character Attributes__: =========
+  __Character Description__: =========
+  __Character Encumbrance/Lift__: =========
+  __Character Equipment__: =========
+  __Character Points__: =========
+  __Character Sheet Identity__: =========
+  __Character Sheet Miscellaneous__: =========
+  __Character Spells__: =========
+  __Character Weapons__: =========
+  __Chat Messages__: =========
+  __Damage Types__: =========
+  __Drag Ruler__: =========
+  __Fantastic Dungeon Grappling__: =========
+  __Hit Location__: =========
+  __Modifier Bucket__: =========
+  __PDF References__: =========
+  __Resolve Damage Dialog__: =========
+  __Resource Trackers__: =========
+  __Slam Calculator__: =========
+  __Status/Conditions__: =========
