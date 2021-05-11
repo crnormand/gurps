@@ -12,6 +12,7 @@ This is what we are currently working on:
 - Various tweaks to fix modifier bucket size/position issues.
 - Updated /if [Test] { } { } to allow embedded backslashes (to execute multiple commands inside {})
 - Fixed Send Modifier bucket buttons on tooltip
+- Fixed display of FP tracker when using Conditional Injury.
 
 ## History
 
