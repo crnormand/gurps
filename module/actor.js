@@ -1232,6 +1232,16 @@ export class GurpsActor extends Actor {
       new ApplyDamageDialog(this, damageData).render(true)
     else ui.notifications.warn('Only GMs are allowed to Apply Damage.')
   }
+  
+  handleItemDrop(dragData) {
+    let itemId = dragData.id
+    let item = this.data.data.additionalresources.foundryitems[itemId]
+    if (!!item)
+      ui.notifications.warn(this.name + " already has " + item.name)
+    else {
+    
+    }
+  }
 
   // This function merges the 'where' and 'dr' properties of this actor's hitlocations
   // with the roll value from the  HitLocations.hitlocationRolls, converting the

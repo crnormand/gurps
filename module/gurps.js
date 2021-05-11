@@ -1580,9 +1580,13 @@ Hooks.once('ready', async function () {
 
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
-    if (!data.otf) return
-    let cmd = 'GURPS.executeOTF(`' + data.otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
-    let name = `OtF: ${data.otf}`
+    if (!data.otf && !data.bucket) return
+    let otf = data.otf || data.bucket
+    let cmd = ''
+    if (!!data.bucket) cmd += `GURPS.ModifierBucket.clear()
+`
+    cmd += 'GURPS.executeOTF(`' + otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
+    let name = `${data.name||'OtF'}: ${otf}`
     if (!!data.actor) {
       cmd =
         `GURPS.SetLastActor(game.actors.get('${data.actor}'))

@@ -240,6 +240,18 @@ export class ModifierBucket extends Application {
     let e = html.find('#globalmodifier')
     e.click(this._onClick.bind(this))
     e.contextmenu(this.onRightClick.bind(this))
+    e.each((_, li) => {
+      li.addEventListener('dragstart', ev => {
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`).join(' & ') 
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            name: 'Modifier Bucket',
+            bucket: bucket,
+          })
+        )
+      })
+    })
 
     if (this.isTooltip) {
       e.mouseenter(ev => this._onenter(ev))
