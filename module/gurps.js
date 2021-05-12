@@ -1737,7 +1737,7 @@ Hooks.once('ready', async function () {
       }
       if (dropData.type === 'Item')
         handle = actor => {
-          actor.createOwnedItem(game.items.get(dropData.id))
+          actor.handleItemDrop(dropData)
         }
 
       // actual targets are stored in game.user.targets
