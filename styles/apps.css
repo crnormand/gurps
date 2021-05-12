@@ -1665,3 +1665,7 @@ ul#result-effects li {
 .gurps-app .section {
   margin-top: 0.5em;
 }
+
+.gurps-chat-message .modifier-list li {
+  margin-top: 0.35em;
+}

@@ -1,17 +1,19 @@
-<div>
-  {{localize "GURPS.chatSuffersCrippling" name=name}} <span style='font-size: smaller;'>([PDF:B422])</span> {{localize "GURPS.chatToLocation" location=location}}.<br />
+<div class='gurps-chat-message'>
+  <div class='prefix'>
+    {{localize "GURPS.chatSuffersCripplingInjury" name=name location=location pdfref=pdfref classStart="<span class='pdflink'>" classEnd="</span>"}}.
+  </div>
   {{#if (eq location 'Tail')}}
-  <hr />
-  <span style='font-size:small;'>
-    {{localize "GURPS.groundCreaturesSuffer"}}:
-    <ul>
-      <li>[-1 {{localize "GURPS.toAllDXBasedRolls}}]. </li>
-    </ul>
-    {{localize "GURPS.swimmersOrFlyersSuffer"}}:
-    <ul>
-      <li>[-2 {{localize "GURPS.toAllDXBasedRolls}}], </li>
-      <li>{{localize "GURPS.moveReducedToHalf}}.</li>
-    </ul>
-  </span>
+    <hr />
+    <div class='roll-result'>
+      {{localize "GURPS.groundCreaturesSuffer"}}:
+      <ul class='modifier-list'>
+        <li>[-1 {{localize "GURPS.toAllDXBasedRolls}}]. </li>
+      </ul>
+      {{localize "GURPS.swimmersOrFlyersSuffer"}}:
+      <ul class='modifier-list'>
+        <li>[-2 {{localize "GURPS.toAllDXBasedRolls}}], </li>
+        <li>{{localize "GURPS.moveReducedToHalf}}.</li>
+      </ul>
+    </div>
   {{/if}}
 </div>
