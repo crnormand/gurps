@@ -1,7 +1,7 @@
 <form class="{{cssClass}}" autocomplete="off">
 <div class='resource-editor' style='border: none;'>
   <div>
-    <input class="name gcs-input" type="text" value="{{name}}" name="name" placeholder="Equipment Name">
+    <input id="itemname" class="name gcs-input" type="text" value="{{name}}" name="name" placeholder="Equipment Name">
   </div>
   <div class='inputs'>
     <div class="label">Count</div>
@@ -72,6 +72,8 @@
 
 <div>Skills:</div><div></div>
 {{#each data.skills as | this key |}}
+    <div class="label">Name of Skill</div>
+    <input class="name gcs-input" type="text" value="{{this.name}}" name="data.skills.{{key}}.name">
     <div class="label">On-the-Fly</div>
     <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.skills.{{key}}.otf" />]</span>
     <div class="label">Level</div>
