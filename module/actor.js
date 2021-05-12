@@ -1,6 +1,7 @@
 'use strict'
 
 import { extractP, xmlTextToJson, objectToArray, convertRollStringToArrayOfInt, recurselist, makeRegexPatternFrom } from '../lib/utilities.js'
+import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
@@ -1268,6 +1269,13 @@ export class GurpsActor extends Actor {
       let e = duplicate(item.data[key][k])
       e.itemid = item._id
       e.uuid = key + "-" + i++ + "-" + item._id
+      if (!!e.otf) {
+        let action = parselink(e.otf)
+        if (!!action.action) {
+          action.action.calcOnly = true
+          e.level = await GURPS.performAction(action.action, this)
+        }
+      }
       GURPS.put(list, e)
     }
     await this.update({ ['data.-=' + key]: null })

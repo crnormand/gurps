@@ -848,6 +848,10 @@ async function performAction(action, actor, event, targets) {
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+  if (!!action.calcOnly) {
+    for (let m of targetmods) target += m.modint;
+    return target
+  }
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
 }
 GURPS.performAction = performAction
