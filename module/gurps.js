@@ -1729,7 +1729,7 @@ Hooks.once('ready', async function () {
       })
 
       let handle = (actor) => { actor.handleDamageDrop(dropData.payload) }
-      if (dropData.type === 'Item') handle = (actor) => { actor.createOwnedItem(game.items.get(dropData.id)) }
+      if (dropData.type === 'Item') handle = (actor) => { actor.handleItemDrop(dropData) }
 
       // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
