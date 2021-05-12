@@ -1,6 +1,7 @@
 'use strict'
 
 import { extractP, xmlTextToJson, objectToArray, convertRollStringToArrayOfInt, recurselist, makeRegexPatternFrom } from '../lib/utilities.js'
+import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
 import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
@@ -20,6 +21,14 @@ export class GurpsActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData()
     this.calculateDerivedValues()
+  }
+  
+  // execute after every import. 
+  async postImport() {
+      this.calculateDerivedValues()
+      for (const item of this.items.entries) await this.addItem(item.data)
+      // Set custom trackers based on templates.  should be last because it may need other data to initialize...
+      await this.setResourceTrackers()
   }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
@@ -69,7 +78,6 @@ export class GurpsActor extends Actor {
     if (!this.data.data.currentmove) this.data.data.currentmove = parseInt(this.data.data.basicmove.value) 
     if (!this.data.data.currentdodge) this.data.data.currentdodge = parseInt(this.data.data.dodge.value)
     if (!this.data.data.currentflight) this.data.data.currentflight = parseFloat(this.data.data.basicspeed.value) * 2
-
   }
 
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
@@ -278,17 +286,11 @@ export class GurpsActor extends Actor {
 
     try {
       await this.update(deletes)
-      await this.update(adds) //.then(() => {
+      await this.update(adds) 
       // This has to be done after everything is loaded
-      this.calculateDerivedValues()
-
-      // ... set custom trackers based on templates
-      // should be last because it may need other data to initialize...
-      await this.setResourceTrackers()
-
+      await this.postImport()
       console.log('Done importing.  You can inspect the character data below:')
       console.log(this)
-      //})
     } catch (err) {
       let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
       if (err.message == 'Maximum depth exceeded')
@@ -1232,6 +1234,84 @@ export class GurpsActor extends Actor {
       new ApplyDamageDialog(this, damageData).render(true)
     else ui.notifications.warn('Only GMs are allowed to Apply Damage.')
   }
+  
+  async handleItemDrop(dragData) {
+    let global = game.items.get(dragData.id)
+    let item = await this.createOwnedItem(global)   // add a local Foundry Item based on the global Item
+    await this.addItem(item)
+  } 
+  
+  // Add a local Foundry Item (and the various parts)
+  async addItem(item) {
+    await this._addItemEquipment(item)
+    await this._addItemElement(item, "melee")
+    await this._addItemElement(item, "ranged")
+    await this._addItemElement(item, "ads")
+    await this._addItemElement(item, "skills")
+    await this._addItemElement(item, "spells")
+  }
+  
+  async _addItemEquipment(item) {
+    let list = this.data.data.equipment.carried
+    let eqt = item.data.eqt
+    eqt.itemid = item._id
+    eqt.uuid = "item-" + item._id
+    Equipment.calc(eqt)
+    GURPS.put(list, eqt)
+    await this.update({ 'data.equipment.-=carried': null })
+    await this.update({ 'data.equipment.carried': list })
+  }
+    
+  async _addItemElement(item, key) {
+    let list = this.data.data[key]
+    let i = 0
+    for (const k in item.data[key]) {
+      let e = duplicate(item.data[key][k])
+      e.itemid = item._id
+      e.uuid = key + "-" + i++ + "-" + item._id
+      if (!!e.otf) {
+        let action = parselink(e.otf)
+        if (!!action.action) {
+          action.action.calcOnly = true
+          e.level = await GURPS.performAction(action.action, this)
+        }
+      }
+      GURPS.put(list, e)
+    }
+    await this.update({ ['data.-=' + key]: null })
+    await this.update({ ['data.' + key]: list })
+  }
+
+  
+  async deleteEquipment(eqt, path) {
+    if (!!eqt.itemid) this._removeItemEquipment(eqt)
+    await GURPS.removeKey(this, path)
+  }
+  
+  async _removeItemEquipment(eqt) {
+    await this.deleteOwnedItem(eqt.itemid)
+    await this._removeItemElement(eqt.itemid, "melee")
+    await this._removeItemElement(eqt.itemid, "ranged")
+    await this._removeItemElement(eqt.itemid, "ads")
+    await this._removeItemElement(eqt.itemid, "skills")
+    await this._removeItemElement(eqt.itemid, "spells")
+  }
+  
+  async _removeItemElement(itemid, key) {
+    let found = true
+    while (!!found) {
+      found = null
+      let list = this.data.data[key]
+      recurselist(list, (e, k, d) => {
+        if (e.itemid == itemid) {
+          console.log(e + " " + k + " " +d)
+          found = k
+        }  
+      })
+      if (!!found) 
+        await GURPS.removeKey(this, "data." + key + "." + found)
+    }
+  }
 
   // This function merges the 'where' and 'dr' properties of this actor's hitlocations
   // with the roll value from the  HitLocations.hitlocationRolls, converting the
@@ -1380,15 +1460,6 @@ export class GurpsActor extends Actor {
     return [eqt, key]
   }
 
-  async updateParentOf(srckey, pindex = 4) {
-    // pindex = 4 for equipment, 3 for everything else.
-    let sp = srckey.split('.').slice(0, pindex).join('.')
-    if (sp != srckey) {
-      let eqt = GURPS.decode(this.data, sp)
-      await Equipment.calcUpdate(this, eqt, sp)
-    }
-  }
-
   checkEncumbance(currentWeight) {
     let encs = this.data.data.encumbrance
     let last = GURPS.genkey(0) // if there are encumbrances, there will always be a level0
@@ -1421,6 +1492,14 @@ export class GurpsActor extends Actor {
         }
       }
     }
+  }
+  
+  async updateParentOf(srckey) {
+    // pindex = 4 for equipment 
+    let pindex = 4
+    let sp = srckey.split('.').slice(0, pindex).join('.') // find the top level key in this list
+    let eqt = GURPS.decode(this.data, sp)
+    if (!!eqt) await Equipment.calcUpdate(this, eqt, sp) // and re-calc cost and weight sums
   }
 }
 

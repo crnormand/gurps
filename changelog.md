@@ -13,6 +13,7 @@ This is what we are currently working on:
 - Updated /if [Test] { } { } to allow embedded backslashes (to execute multiple commands inside {})
 - Fixed Send Modifier bucket buttons on tooltip
 - Fixed display of FP tracker when using Conditional Injury.
+- Can drag and drop Modifier Bucket onto macro bar
 
 ## History
 

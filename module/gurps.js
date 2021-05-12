@@ -24,6 +24,8 @@ import RegisterChatProcessors from '../module/chat/chat-processors.js'
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 
+GURPS.DEBUG = false
+
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -846,6 +848,10 @@ async function performAction(action, actor, event, targets) {
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
+  if (!!action.calcOnly) {
+    for (let m of targetmods) target += m.modint;
+    return target
+  }
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
 }
 GURPS.performAction = performAction
@@ -1580,9 +1586,13 @@ Hooks.once('ready', async function () {
 
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
-    if (!data.otf) return
-    let cmd = 'GURPS.executeOTF(`' + data.otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
-    let name = `OtF: ${data.otf}`
+    if (!data.otf && !data.bucket) return
+    let otf = data.otf || data.bucket
+    let cmd = ''
+    if (!!data.bucket) cmd += `GURPS.ModifierBucket.clear()
+`
+    cmd += 'GURPS.executeOTF(`' + otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
+    let name = `${data.name||'OtF'}: ${otf}`
     if (!!data.actor) {
       cmd =
         `GURPS.SetLastActor(game.actors.get('${data.actor}'))
@@ -1698,7 +1708,7 @@ Hooks.once('ready', async function () {
    * Add a listener to handle damage being dropped on a token.
    */
   Hooks.on('dropCanvasData', async function (canvas, dropData) {
-    if (dropData.type === 'damageItem') {
+    if (dropData.type === 'damageItem' || dropData.type === 'Item') {
       let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene.data.grid
       canvas.tokens.targetObjects({
@@ -1718,13 +1728,17 @@ Hooks.once('ready', async function () {
         t.setTarget(true, { releaseOthers: false, groupSelection: true })
       })
 
+      let handle = (actor) => { actor.handleDamageDrop(dropData.payload) }
+      if (dropData.type === 'Item') handle = (actor) => { actor.createOwnedItem(game.items.get(dropData.id)) }
+
       // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
       if (targets.length === 1) {
-        targets[0].actor.handleDamageDrop(dropData.payload)
+        handle(targets[0].actor)
         return false
       }
 
+      
       let buttons = {
         apply: {
           icon: '<i class="fas fa-check"></i>',
@@ -1732,7 +1746,7 @@ Hooks.once('ready', async function () {
           callback: html => {
             let name = html.find('select option:selected').text().trim()
             let target = targets.find(token => token.name === name)
-            target.actor.handleDamageDrop(dropData.payload)
+            handle(target.actor)
           },
         },
       }
@@ -1752,7 +1766,7 @@ Hooks.once('ready', async function () {
       await d.render(true)
 
       return false
-    }
+    } 
   })
 
   // define Handlebars partials for ADD:

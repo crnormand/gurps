@@ -1,64 +1,98 @@
 <form class="{{cssClass}}" autocomplete="off">
-    <header class="sheet-header">
-        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
-        <div class="header-fields">
-            <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
-            <div class="resource">
-            	<label>Quantity</label>
-                <input type="text" name="data.quantity" value="{{data.quantity}}" data-dtype="Number"/>
-            </div>
-            <div class="resource">
-            	<label>Weight</label>
-                <input type="text" name="data.weight" value="{{data.weight}}" data-dtype="Number"/>
-            </div>
-        </div>
-    </header>
+<div class='resource-editor' style='border: none;'>
+  <div>
+    <input id="itemname" class="name gcs-input" type="text" value="{{name}}" name="name" placeholder="Equipment Name">
+  </div>
+  <div class='inputs'>
+    <div class="label">Count</div>
+    <input class="count gcs-input-sm5" type="text" value="{{data.eqt.f_count}}" name="data.eqt.f_count" data-dtype="Number" />
+    <div class="label">Cost $</div>
+    <input class="cost gcs-input-sm5" type="text" value="{{data.eqt.cost}}" name="data.eqt.cost" data-dtype="Number" />
+    <div class="label">Weight</div>
+      <div><input class="weight gcs-input-sm5" type="text" value="{{data.eqt.weight}}" name="data.eqt.weight" data-dtype="Number" /> lb</div>
+    <div class="label">Uses</div>
+    <input class="uses gcs-input-sm5" type="text" value="{{data.eqt.uses}}" name="data.eqt.uses"/>
+    <div class="label">Max Uses</div>
+    <input class="maxuses gcs-input-sm5" type="text" value="{{data.eqt.maxuses}}" name="data.eqt.maxuses"/>
+    <div class="label">Notes</div>
+    <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5" name="data.eqt.notes">{{data.eqt.notes}}</textarea>
+    <div class="label">Page Ref</div>
+    <input class="pageref gcs-input-sm5" type="text" value="{{data.eqt.pageref}}" name="data.eqt.pageref"/>
 
-    {{!-- Sheet Tab Navigation --}}
-    <nav class="sheet-tabs tabs" data-group="primary">
-        <a class="item" data-tab="description">Description</a>
-        <a class="item" data-tab="attributes">Attributes</a>
-    </nav>
+<div>Melee:</div><div></div>
+{{#each data.melee as | this key |}}
+    <div class="label">Melee Weapon</div><div></div>
+    <div class="label">Usage</div>
+    <input class="gcs-input-sm8" type="text" value="{{mode}}" name="data.melee.{{key}}.mode" />
+    <div class="label">On-the-Fly</div>
+    <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.melee.{{key}}.otf" />]</span>
+    <div class="label">Skill lvl</div>
+    <input class="gcs-input-sm8" type="text" value="{{level}}" data-dtype="Number" name="data.melee.{{key}}.level"/>
+    <div class="label">Parry</div>
+    <div><input class="parry gcs-input-sm8" type="text" value="{{parry}}" name="data.melee.{{key}}.parry"/></div>
+    <div class="label">Block</div>
+    <div><input class="block gcs-input-sm8" type="text" value="{{block}}" name="data.melee.{{key}}.block"/></div>
+    <div class="label">Damage</div>
+    <div><span><input class="damage gcs-input-sm8" type="text" value="{{damage}}" name="data.melee.{{key}}.damage"/> Dmg types: burn, cor, cr, cut, fat, imp, pi-, pi, pi+, pi++, tox, dmg</span></div>
+    <div class="label">Reach</div>
+    <div><input class="reach gcs-input-sm8" type="text" value="{{reach}}" name="data.melee.{{key}}.reach"/></div>
+    <div class="label">ST</div>
+    <div><input class="st gcs-input-sm8" type="text" value="{{st}}" name="data.melee.{{key}}.st"/></div>
+    <div class="label">Notes</div>
+    <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5" name="data.melee.{{key}}.notes">{{notes}}</textarea>
+{{/each}}
 
-    {{!-- Sheet Body --}}
-    <section class="sheet-body">
+<div>Ranged:</div><div></div>
+{{#each data.ranged as | this key |}}
+    <div class="label">Usage</div>
+    <input class="usage gcs-input-sm8" type="text" value="{{mode}}" name="data.ranged.{{key}}.mode"/>
+    <div class="label">On-the-Fly</div>
+    <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.ranged.{{key}}.otf" />]</span>
+    <div class="label">Skill lvl</div>
+    <input class="level gcs-input-sm8" type="text" value="{{level}}" data-dtype="Number" name="data.ranged.{{key}}.level" />
+    <div class="label">Acc</div>
+    <div><input class="acc gcs-input-sm8" type="text" value="{{acc}}" data-dtype="Number" name="data.ranged.{{key}}.acc" /></div>
+    <div class="label">Damage</div>
+    <div><input class="damage gcs-input-sm8" type="text" value="{{damage}}"  name="data.ranged.{{key}}.damage"/> Dmg types: burn, cor, cr, cut, fat, imp, pi-, pi, pi+, pi++, tox, dmg</div>
+    <div class="label">Range</div>
+    <div><input class="range gcs-input-sm8" type="text" value="{{range}}"  name="data.ranged.{{key}}.range"/></div>
+    <div class="label">RoF</div>
+    <div><input class="rof gcs-input-sm8" type="text" value="{{rof}}"  name="data.ranged.{{key}}.rof" /></div>
+    <div class="label">Shots</div>
+    <div><input class="shots gcs-input-sm8" type="text" value="{{shots}}"  name="data.ranged.{{key}}.shots"/></div>
+    <div class="label">Bulk</div>
+    <div><input class="bulk gcs-input-sm8" type="text" value="{{bulk}}" data-dtype="Number"  name="data.ranged.{{key}}.bulk"/></div>
+    <div class="label">Rcl</div>
+    <div><input class="rcl gcs-input-sm8" type="text" value="{{rcl}}"  name="data.ranged.{{key}}.rcl" /></div>
+    <div class="label">ST</div>
+    <div><input class="st gcs-input-sm8" type="text" value="{{st}}"  name="data.ranged.{{key}}.st"/></div>
+    <div class="label">Notes</div>
+    <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5"  name="data.ranged.{{key}}.notes">{{notes}}</textarea>
+{{/each}}
 
-        {{!-- Description Tab --}}
-        <div class="tab" data-group="primary" data-tab="description">
-            {{editor content=data.description target="data.description" button=true owner=owner editable=editable}}
-        </div>
+<div>Skills:</div><div></div>
+{{#each data.skills as | this key |}}
+    <div class="label">Name of Skill</div>
+    <input class="name gcs-input" type="text" value="{{this.name}}" name="data.skills.{{key}}.name">
+    <div class="label">On-the-Fly</div>
+    <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.skills.{{key}}.otf" />]</span>
+    <div class="label">Level</div>
+    <input class="level gcs-input-sm8" type="text" value="{{level}}" name="data.skills.{{key}}.level"/>
+    <div class="label">RSL</div>
+    <div><input class="relativelevel gcs-input-sm5" type="text" value="{{relativelevel}}" name="data.skills.{{key}}.relativelevel"/></div>
+    <div class="label">Pts</div>
+    <input class="points gcs-input-sm3" type="text" value="{{points}}" data-dtype="Number" name="data.skills.{{key}}.points"/>
+     <div class="label">Notes</div>
+    <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5" name="data.skills.{{key}}.notes">{{notes}}</textarea>
+    <div class="label">Page Ref</div>
+    <input class="pageref gcs-input-sm5" type="text" value="{{pageref}}" name="data.skills.{{key}}.pageref"/>
+{{/each}}
 
-        {{!-- Attributes Tab --}}
-        <div class="tab attributes" data-group="primary" data-tab="attributes">
-            <header class="attributes-header flexrow">
-                <span class="attribute-key">Attribute Key</span>
-                <span class="attribute-value">Value</span>
-                <span class="attribute-label">Label</span>
-                <span class="attribute-dtype">Data Type</span>
-                <a class="attribute-control" data-action="create"><i class="fas fa-plus"></i></a>
-            </header>
 
-            <ol class="attributes-list">
-            {{#each data.attributes as |attr key|}}
-                <li class="attribute flexrow" data-attribute="{{key}}">
-                    <input class="attribute-key" type="text" name="data.attributes.{{key}}.key" value="{{key}}"/>
-                    {{#if attr.isCheckbox}}
-                    <label class="attribute-value checkbox"><input type="checkbox" name="data.attributes.{{key}}.value" {{checked attr.value}}/></label>
-                    {{else}}
-                    <input class="attribute-value" type="text" name="data.attributes.{{key}}.value" value="{{attr.value}}" data-dtype="{{attr.dtype}}"/>
-                    {{/if}}
-                    <input class="attribute-label" type="text" name="data.attributes.{{key}}.label" value="{{attr.label}}"/>
-                    <select class="attribute-dtype" name="data.attributes.{{key}}.dtype">
-                        {{#select attr.dtype}}
-                        {{#each ../dtypes as |t|}}
-                        <option value="{{t}}">{{t}}</option>
-                        {{/each}}
-                        {{/select}}
-                    </select>
-                    <a class="attribute-control" data-action="delete"><i class="fas fa-trash"></i></a>
-                </li>
-            {{/each}}
-            </ol>
-        </div>
-    </section>
+</div>
+  <div style="display:flex">
+    <div class="npc-input-create"><button id="item1" type="button">Add Melee Weapon</button></div>
+    <div class="npc-input-create"><button id="item2" type="button">Add Ranged Weapon</button></div>
+    <div class="npc-input-create"><button id="item3" type="button">Add Skill</button></div>
+  </div>
 </form>
