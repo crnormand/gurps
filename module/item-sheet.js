@@ -31,8 +31,10 @@ export class GurpsItemSheet extends ItemSheet {
     this.html = html
     super.activateListeners(html);
     
-    html.find('#itemname').change(ev => 
-      this.item.update({ "data.eqt.name": ev.currentTarget.value }))
+    html.find('#itemname').change(ev =>
+      this.item.update({ 
+        "data.eqt.name": ev.currentTarget.value,
+        "name": ev.currentTarget.value }))
     html.find('.count').change(ev => 
       this.item.update({ "data.eqt.count": parseInt(ev.currentTarget.value) }))
 
