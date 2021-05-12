@@ -5,18 +5,18 @@
   </div>
   <hr />
   <div class='roll-result'>
-    ["{{{localize "GURPS.shockPenaltyNextTurnOnly" modifier=modifier}}}" {{button}}]
+    ["{{{localize "GURPS.shockPenaltyNextTurnOnly" name=name modifier=modifier}}}" {{button}}]
     <ul class='modifier-list'>
-      <li>{{localize "GURPS.highPainThresholdNoPenalty"}} <span
-          class='pdflink'>([PDF:{{i18n "GURPS.pdfHPT" "B59"}}])</span>.</li>
-      <li>{{localize "GURPS.lowPainThreshold"}} <i>{{localize "GURPS.effectsDoubles"}}:</i> &minus;{{doubled}}
-        {{localize "GURPS.toDXAndIQ"}} <span class='pdflink'>([PDF:{{i18n "GURPS.pdfLPT" "B142"}}])</span>.
+      <li>{{localize "GURPS.highPainThresholdNoPenalty"}} <span class='pdflink'>([PDF:{{i18n "GURPS.pdfHPT"}}])</span>.
+      </li>
+      <li>{{{localize "GURPS.lowPainThresholdDoubles"}}} <span class='pdflink'>([PDF:{{i18n "GURPS.pdfLPT"}}])</span>.
       </li>
     </ul>
 
     <div class='aside'>
       {{localize "GURPS.effectsNotApplicableDefenses"}}
-      {{localize "GURPS.effectsTemporaryAttributePenalties"}}, <span class='pdflink'>([PDF:B421])</span>.
+      {{localize "GURPS.effectsTemporaryAttributePenalties"}}, <span
+        class='pdflink'>([PDF:{{i18n "GURPS.pdfTempAttribPenalties"}}])</span>.
     </div>
   </div>
 </div>

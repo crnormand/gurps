@@ -454,10 +454,16 @@ export default class ApplyDamageDialog extends Application {
     let stringified = ev.currentTarget.attributes['data-struct'].value
     let object = JSON.parse(stringified)
 
-    let tokens = locateToken(this.actor.id)
-    let token = tokens.length === 1 ? tokens[0] : null
+    let token = null
+    if (this.actor.isToken) {
+      token = this.actor?.token
+    } else {
+      let tokens = locateToken(this.actor.id)
+      token = tokens.length === 1 ? tokens[0] : null
+    }
 
     let message = ''
+
     if (object.type === 'shock') {
       let button = `/st + shock${object.amount}`
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
@@ -471,19 +477,29 @@ export default class ApplyDamageDialog extends Application {
     }
 
     if (object.type === 'majorwound') {
+      let htCheck =
+        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+      let button = `/if ! [${htCheck}] {/st + stun \\\\ /st + prone}`
+      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
+
       message = await this._renderTemplate('chat-majorwound.html', {
-        name: this.actor.data.name,
-        htCheck:
-          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
+        name: !!token ? token.name : this.actor.data.name,
+        button: button,
+        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
       })
     }
 
     if (object.type === 'headvitalshit') {
+      let htCheck =
+        object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`
+      let button = `/if ! [${htCheck}] {/st + stun \\\\ /st + prone}`
+      if (!!token) button = `/sel ${token.id} \\\\ ${button}`
+
       message = await this._renderTemplate('chat-headvitalshit.html', {
-        name: this.actor.data.name,
+        name: !!token ? token.name : this.actor.data.name,
+        button: button,
         location: object.detail,
-        htCheck:
-          object.modifier === 0 ? 'HT' : object.modifier < 0 ? `HT+${-object.modifier}` : `HT-${object.modifier}`,
+        htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
       })
     }
 

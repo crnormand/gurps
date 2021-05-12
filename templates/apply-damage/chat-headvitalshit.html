@@ -1,11 +1,14 @@
-<div>
-  {{name}} {{localize "GURPS.wasStruckIn"}} {{location}} {{localize "GURPS.withShockPenalty"}} <span style='font-size: smaller;'>([PDF:B420])</span>.
-  {{localize "GURPS.roll"}}:<br />
-  <span style='font-size:small;'>[{{htCheck}} {{localize "GURPS.majorWoundEffect"}}]
-    <hr />
-    <ul>
-      <li>[-4 {{localize "GURPS.for"}} {{localize "GURPS.lowPainThreshold"}}]</li>
-      <li>[+3 {{localize "GURPS.for"}} {{localize "GURPS.highPainThreshold"}}]</li>
+<div class='gurps-chat-message'>
+  <div class='prefix'>
+    {{localize "GURPS.suffersHeadVitalsWound" name=name location=location}} <span
+      class='pdflink'>([PDF:{{localize "GURPS.pdfKnockdownStun"}}])</span>.
+  </div>
+  <hr />
+  <div class='roll-result'>
+    ["{{localize "GURPS.majorWoundEffectLabel" name=name htCheck=htCheck}}" {{button}}]
+    <ul class='modifier-list'>
+      <li>[{{localize "GURPS.forLowPainThreshold" mod="-4"}}]</li>
+      <li>[{{localize "GURPS.forHighPainThreshold" mod="+3"}}]</li>
     </ul>
-  </span>
+  </div>
 </div>
