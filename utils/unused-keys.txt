@@ -1,0 +1,175 @@
+[ 'templates', 'module', 'lib' ]
+Keys that do not match expected pattern
+=======================================
+__Char Sheet__
+__Character Sheet Identity__
+__Character Sheet Miscellaneous__
+__Character Description__
+__Character Points__
+__Character Attributes__
+__ Character AddsDisadsPerksQuirks__
+__ Character Skills__
+__Character Spells__
+__Character Equipment__
+__Character Encumbrance/Lift__
+__Character Weapons__
+__Apply Damage Dialog__
+__Body Plan__
+__Chat Messages__
+__Damage Types__
+__Drag Ruler__
+__Fantastic Dungeon Grappling__
+__Hit Location__
+__Modifier Bucket__
+__PDF References__
+__Resolve Damage Dialog__
+__Resource Trackers__
+Skill Names__
+__Slam Calculator__
+__Status/Conditions__
+__Potentially Removable__
+KEYS NOT FOUND
+===========================
+GURPS.BODYPLANarachnoid
+GURPS.BODYPLANavian
+GURPS.BODYPLANcancroid
+GURPS.BODYPLANcentaur
+GURPS.BODYPLANhexapod
+GURPS.BODYPLANhexapodWinged
+GURPS.BODYPLANhumanoid
+GURPS.BODYPLANhumanoid expanded
+GURPS.BODYPLANichthyoid
+GURPS.BODYPLANoctopod
+GURPS.BODYPLANquadrupedWinged
+GURPS.BODYPLANscorpion
+GURPS.BODYPLANsnakeman
+GURPS.BODYPLANsquid
+GURPS.BODYPLANvermiform
+GURPS.BODYPLANvermiformWinged
+GURPS.BODYPLANwinged humanoid
+GURPS.FP
+GURPS.addEnterDR
+GURPS.chatSuffersCrippling
+GURPS.chatSuffersCripplingInjury
+GURPS.chatToLocation
+GURPS.check1
+GURPS.check2
+GURPS.check3
+GURPS.check4
+GURPS.collapse
+GURPS.currentdodge
+GURPS.damageTypeBurning
+GURPS.damageTypeCorrosive
+GURPS.damageTypeCrushing
+GURPS.damageTypeCutting
+GURPS.damageTypeDamage
+GURPS.damageTypeFatigue
+GURPS.damageTypeHuge Piercing
+GURPS.damageTypeImpaling
+GURPS.damageTypeLarge Piercing
+GURPS.damageTypePiercing
+GURPS.damageTypeSmall Piercing
+GURPS.damageTypeToxic
+GURPS.dead
+GURPS.destroyed
+GURPS.dxJudoAcrobaticsCheck
+GURPS.effectsDoubles
+GURPS.equippedblock
+GURPS.equippedparry
+GURPS.forTurns
+GURPS.groundCreaturesSuffer
+GURPS.highPainThreshold
+GURPS.highest
+GURPS.hitLocationArm
+GURPS.hitLocationArm 1-2
+GURPS.hitLocationArm 3-4
+GURPS.hitLocationArm 5-6
+GURPS.hitLocationArm 7-8
+GURPS.hitLocationArm*
+GURPS.hitLocationArm, holding shield
+GURPS.hitLocationBrain
+GURPS.hitLocationChest
+GURPS.hitLocationChinks in Other
+GURPS.hitLocationChinks in Torso
+GURPS.hitLocationExtremity
+GURPS.hitLocationEye
+GURPS.hitLocationFace
+GURPS.hitLocationFace, from behind
+GURPS.hitLocationFin
+GURPS.hitLocationFin*
+GURPS.hitLocationFoot
+GURPS.hitLocationForeleg
+GURPS.hitLocationGroin
+GURPS.hitLocationHand
+GURPS.hitLocationHind Leg
+GURPS.hitLocationJaw
+GURPS.hitLocationLeft Arm
+GURPS.hitLocationLeft Arm, holding shield
+GURPS.hitLocationLeft Leg
+GURPS.hitLocationLeg
+GURPS.hitLocationLeg 1-2
+GURPS.hitLocationLeg 3-4
+GURPS.hitLocationLeg 5-6
+GURPS.hitLocationLeg 7-8
+GURPS.hitLocationLimb Vein/Artery
+GURPS.hitLocationMid Leg
+GURPS.hitLocationMid Leg*
+GURPS.hitLocationNeck
+GURPS.hitLocationNeck Vein/Artery
+GURPS.hitLocationNose
+GURPS.hitLocationRight Arm
+GURPS.hitLocationRight Arm, holding shield
+GURPS.hitLocationRight Leg
+GURPS.hitLocationSkull
+GURPS.hitLocationSkull, from behind
+GURPS.hitLocationTail
+GURPS.hitLocationTorso
+GURPS.hitLocationTorso*
+GURPS.hitLocationVitals
+GURPS.hitLocationVitals, Heart
+GURPS.hitLocationWing
+GURPS.lowPainThreshold
+GURPS.meters
+GURPS.modifierMouseOff
+GURPS.moveReducedToHalf
+GURPS.nextTurnOnly
+GURPS.of
+GURPS.penalty
+GURPS.perfectBalance
+GURPS.point
+GURPS.pointsUnspent
+GURPS.remainStanding
+GURPS.suffersA
+GURPS.swimmersOrFlyersSuffer
+GURPS.toAllDXBasedRolls
+GURPS.toAvoidFalling
+GURPS.toDXAndIQ
+GURPS.wasStruckIn
+GURPS.withShockPenalty
+Skill Names__
+__ Character AddsDisadsPerksQuirks__
+__ Character Skills__
+__Apply Damage Dialog__
+__Body Plan__
+__Char Sheet__
+__Character Attributes__
+__Character Description__
+__Character Encumbrance/Lift__
+__Character Equipment__
+__Character Points__
+__Character Sheet Identity__
+__Character Sheet Miscellaneous__
+__Character Spells__
+__Character Weapons__
+__Chat Messages__
+__Damage Types__
+__Drag Ruler__
+__Fantastic Dungeon Grappling__
+__Hit Location__
+__Modifier Bucket__
+__PDF References__
+__Potentially Removable__
+__Resolve Damage Dialog__
+__Resource Trackers__
+__Slam Calculator__
+__Status/Conditions__

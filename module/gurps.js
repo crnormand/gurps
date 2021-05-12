@@ -590,7 +590,8 @@ function executeOTF(string, priv = false) {
   string = string.trim()
   if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv, ctrlKey: false })
+  if (!!action.action)
+    GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv, ctrlKey: false })
   else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
 }
 GURPS.executeOTF = executeOTF
@@ -849,7 +850,7 @@ async function performAction(action, actor, event, targets) {
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
-    for (let m of targetmods) target += m.modint;
+    for (let m of targetmods) target += m.modint
     return target
   }
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
@@ -1450,6 +1451,8 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
 Hooks.once('init', async function () {
+  GURPS.LEGAL = game.i18n.localize('GURPS.copyrightGURPS')
+
   console.log(GURPS.BANNER)
   console.log(`Initializing GURPS 4e Game Aid`)
   console.log(GURPS.LEGAL)
@@ -1589,10 +1592,11 @@ Hooks.once('ready', async function () {
     if (!data.otf && !data.bucket) return
     let otf = data.otf || data.bucket
     let cmd = ''
-    if (!!data.bucket) cmd += `GURPS.ModifierBucket.clear()
+    if (!!data.bucket)
+      cmd += `GURPS.ModifierBucket.clear()
 `
     cmd += 'GURPS.executeOTF(`' + otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
-    let name = `${data.name||'OtF'}: ${otf}`
+    let name = `${data.name || 'OtF'}: ${otf}`
     if (!!data.actor) {
       cmd =
         `GURPS.SetLastActor(game.actors.get('${data.actor}'))
@@ -1728,8 +1732,13 @@ Hooks.once('ready', async function () {
         t.setTarget(true, { releaseOthers: false, groupSelection: true })
       })
 
-      let handle = (actor) => { actor.handleDamageDrop(dropData.payload) }
-      if (dropData.type === 'Item') handle = (actor) => { actor.createOwnedItem(game.items.get(dropData.id)) }
+      let handle = actor => {
+        actor.handleDamageDrop(dropData.payload)
+      }
+      if (dropData.type === 'Item')
+        handle = actor => {
+          actor.createOwnedItem(game.items.get(dropData.id))
+        }
 
       // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
@@ -1738,7 +1747,6 @@ Hooks.once('ready', async function () {
         return false
       }
 
-      
       let buttons = {
         apply: {
           icon: '<i class="fas fa-check"></i>',
@@ -1766,7 +1774,7 @@ Hooks.once('ready', async function () {
       await d.render(true)
 
       return false
-    } 
+    }
   })
 
   // define Handlebars partials for ADD:

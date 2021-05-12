@@ -1,19 +1,47 @@
 ------------
 keys in [lang/pt_br.json] that are missing in [lang/en.json]
+  GURPS.copyright
   GURPS.dxCheckOrFall
   GURPS.fallsDown
 ------------
 keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.chatSelectSelfOrNameTokens
+  GURPS.chatSuffersCripplingInjury
   GURPS.check1
   GURPS.check2
   GURPS.check3
   GURPS.check4
   GURPS.collapse
+  GURPS.copyrightGURPS
   GURPS.dead
   GURPS.destroyed
   GURPS.dxCheckOrFallApplyProne
+  GURPS.dxJudoAcrobaticsCheckToRemainStanding
   GURPS.fallsDownApplyProne
+  GURPS.forHighPainThreshold
+  GURPS.forLowPainThreshold
+  GURPS.forPerfectBalance
+  GURPS.knockbackCheck
+  GURPS.lowPainThresholdDoubles
+  GURPS.majorWoundEffectLabel
+  GURPS.pdfCrippling
+  GURPS.pdfHPT
+  GURPS.pdfKnockback
+  GURPS.pdfKnockdownStun
+  GURPS.pdfLPT
+  GURPS.pdfMajorWound
+  GURPS.pdfShock
+  GURPS.pdfTempAttribPenalties
+  GURPS.shockPenalty
+  GURPS.shockPenaltyNextTurnOnly
+  GURPS.skillAcrobatics
+  GURPS.skillJudo
+  GURPS.suffersAMajorWound
+  GURPS.suffersHeadVitalsWound
+  GURPS.suffersKnockback
+  GURPS.yard
+  Skill Names__
+  __Potentially Removable__
 ------------
 values in [lang/en.json] that are the same in [lang/pt_br.json]
   GURPS.ID: ID
