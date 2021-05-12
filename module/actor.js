@@ -1256,6 +1256,7 @@ export class GurpsActor extends Actor {
     let eqt = item.data.eqt
     eqt.itemid = item._id
     eqt.uuid = "item-" + item._id
+    eqt.item = item
     Equipment.calc(eqt)
     GURPS.put(list, eqt)
     await this.update({ 'data.equipment.-=carried': null })
@@ -1284,17 +1285,21 @@ export class GurpsActor extends Actor {
 
   
   async deleteEquipment(eqt, path) {
-    if (!!eqt.itemid) this._removeItemEquipment(eqt)
+    var item
+    if (!!eqt.itemid) item = await this._removeItemEquipment(eqt.itemid)
     await GURPS.removeKey(this, path)
+    return item
   }
   
-  async _removeItemEquipment(eqt) {
-    await this.deleteOwnedItem(eqt.itemid)
-    await this._removeItemElement(eqt.itemid, "melee")
-    await this._removeItemElement(eqt.itemid, "ranged")
-    await this._removeItemElement(eqt.itemid, "ads")
-    await this._removeItemElement(eqt.itemid, "skills")
-    await this._removeItemElement(eqt.itemid, "spells")
+  async _removeItemEquipment(itemid) {
+    let item = await this.getOwnedItem(itemid)
+    await this._removeItemElement(itemid, "melee")
+    await this._removeItemElement(itemid, "ranged")
+    await this._removeItemElement(itemid, "ads")
+    await this._removeItemElement(itemid, "skills")
+    await this._removeItemElement(itemid, "spells")
+    await this.deleteOwnedItem(itemid)
+    return item
   }
   
   async _removeItemElement(itemid, key) {

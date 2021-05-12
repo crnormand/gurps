@@ -126,7 +126,12 @@ export class GurpsActorSheet extends ActorSheet {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
-          let newd = { type: type, key: ev.currentTarget.dataset.key }
+          let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
+          let newd = {
+            actor: this.actor.id, 
+            type: type, 
+            key: ev.currentTarget.dataset.key, 
+            itemid: eqt.itemid }
           if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
           return ev.dataTransfer.setData(
             'text/plain',
@@ -835,6 +840,21 @@ export class GurpsActorSheet extends ActorSheet {
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
 
     if (dragData.type === 'equipment') {
+      if (dragData.actor != this.actor.id && !dragData.itemid) {
+        ui.notifications.warn("You cannot drag non-Foundry equipment to another character")
+        return
+      }
+      if (!!dragData.itemid && dragData.actor != this.actor.id) { // char to char transfer
+        let srcActor = game.actors.get(dragData.actor)
+        if (!!this.actor.owner && !!srcActor.owner) {
+          let item = await srcActor.deleteEquipment({ itemid: dragData.itemid }, dragData.key)
+          this.actor.addItem(item)
+          return
+        } else {
+          ui.notifications.warn("You do not have permission to add/remove the Item from both characters")
+          return
+        }
+      }
       let element = event.target
       let classes = $(element).attr('class') || ''
       if (!classes.includes('eqtdraggable') && !classes.includes('eqtdragtarget')) return
