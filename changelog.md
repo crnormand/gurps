@@ -14,6 +14,8 @@ This is what we are currently working on:
 - Fixed Send Modifier bucket buttons on tooltip
 - Fixed display of FP tracker when using Conditional Injury.
 - Can drag and drop Modifier Bucket onto macro bar
+- Fixed bug when trying to execute chat commands using GURPS.executeOTF()
+- Prototype of Foundry Item framework
 
 ## History
 
