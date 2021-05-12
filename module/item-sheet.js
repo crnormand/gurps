@@ -1,5 +1,5 @@
 'use strict'
-import { Melee } from './actor.js'
+import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
 
 
 export class GurpsItemSheet extends ItemSheet {
@@ -19,8 +19,8 @@ export class GurpsItemSheet extends ItemSheet {
   /** @override */
   getData() {
     const data = super.getData();
-    data.data.eqt.f_count = data.data.eqt.count
-    data.name = data.item.name
+    data.data.eqt.f_count = this.item.data.data.eqt.count   // hack for Furnace module
+    data.name = this.item.name
      return data;
   }
 
@@ -30,32 +30,57 @@ export class GurpsItemSheet extends ItemSheet {
 	activateListeners(html) {
     this.html = html
     super.activateListeners(html);
+    
+    html.find('.name').change(ev => 
+      this.item.update({ "data.eqt.name": ev.currentTarget.value }))
+    html.find('.count').change(ev => 
+      this.item.update({ "data.eqt.count": parseInt(ev.currentTarget.value) }))
 
     html.find('#item1').click(ev => {
       ev.preventDefault()
       let m = new Melee('Test Melee Weapon 1', 14, '2d cut')
       m.mode = 'swing'
-      m.weight = '99 lbs'
+      m.otf = 'DX-1'
+      m.weight = 99
       m.techlevel = 'tl99'
-      m.cost = '99'
+      m.cost = 99
       m.reach = '99'
       m.parry = '9'
       m.block = '8'
       let melee = this.object.data.data.melee
       GURPS.put(melee, m)
-      this.object.update({ "data.melee" : melee })
+      this.item.update({ "data.melee" : melee })
     })
-
-    html.find('#save').click(ev => {
+    html.find('#item2').click(ev => {
       ev.preventDefault()
-      this.save()
+      let r = new Ranged()
+      r.name = "Test ranged"
+      r.otf = 'DX-2'
+      r.type = 'DX/E'
+      r.bulk = 1
+      r.legalityclass = "lc"
+      r.ammo = ""
+      r.mode = ""
+      r.level = 13
+      r.damage = "1d+1 imp"
+      r.acc = 3
+      r.rof = 1
+      r.shots = ""
+      r.rcl = ""
+      let list = this.object.data.data.ranged
+      GURPS.put(list, r)
+      this.item.update({ "data.ranged" : list })
     })
-
+    html.find('#item3').click(ev => {
+      ev.preventDefault()
+      let r = new Skill()
+      r.name = "Test skill"
+      r.otf = 'IQ-4|Traps-2'
+      r.level = 11
+      r.relativelevel = "IQ-4"
+      let list = this.object.data.data.skills
+      GURPS.put(list, r)
+      this.item.update({ "data.skills" : list })
+    })
   }
-
-  save() {
-    //this.object.update({ "name": obj.name })
-    this.close()
-  }
-
 }

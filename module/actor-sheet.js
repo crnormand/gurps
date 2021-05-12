@@ -439,7 +439,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       eqt.count = value
       await this.actor.update({ [path]: eqt })
-      await this.actor.updateParentOf(path, 4)
+      await this.actor.updateParentOf(path)
     })
     html.find('button[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault()
@@ -454,13 +454,13 @@ export class GurpsActorSheet extends ActorSheet {
           content: `Do you want to delete "${eqt.name}" from the list?`,
           yes: () => (agree = true),
         })
-        if (agree) GURPS.removeKey(actor, path)
+        if (agree) actor.deleteEquipment(eqt, path)
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
         eqt.count = value
         await this.actor.update({ [path]: eqt })
-        await this.actor.updateParentOf(path, 4)
+        await this.actor.updateParentOf(path)
       }
     })
 
@@ -635,9 +635,8 @@ export class GurpsActorSheet extends ActorSheet {
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
-              Equipment.calc(obj)
               await actor.update({ [path]: obj })
-              await actor.updateParentOf(path, 4)
+              await actor.updateParentOf(path)
             },
           },
         },

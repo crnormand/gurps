@@ -66,6 +66,14 @@
   padding: 1px !important;
 }
 
+.gcs-input-sm25 {
+  border-width: 0px !important;
+  border: none !important;
+  height: 100% !important;
+  max-width: 25em;
+  padding: 1px !important;
+}
+
 .gcs-input-2 {
   border-width: 0px !important;
   border: none !important;

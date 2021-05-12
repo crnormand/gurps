@@ -24,6 +24,8 @@ import RegisterChatProcessors from '../module/chat/chat-processors.js'
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 
+GURPS.DEBUG = false
+
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
