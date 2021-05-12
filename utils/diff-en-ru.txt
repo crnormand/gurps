@@ -1,5 +1,6 @@
 ------------
 keys in [lang/ru.json] that are missing in [lang/en.json]
+  GURPS.copyright
 ------------
 keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.Dice
@@ -33,6 +34,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatResultBelowZero
   GURPS.chatSelectSelfOrNameTokens
   GURPS.chatSetTo
+  GURPS.chatSuffersCripplingInjury
   GURPS.chatToApplyEffects
   GURPS.chatToggling
   GURPS.chatUnableToFindMacro
@@ -52,6 +54,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.clickToRemove
   GURPS.collapse
   GURPS.concentrationCheck
+  GURPS.copyrightGURPS
   GURPS.dead
   GURPS.defense
   GURPS.destroyed
@@ -59,7 +62,11 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.dragrulerSprint
   GURPS.dragrulerWalk
   GURPS.dxCheckOrFallApplyProne
+  GURPS.dxJudoAcrobaticsCheckToRemainStanding
   GURPS.fallsDownApplyProne
+  GURPS.forHighPainThreshold
+  GURPS.forLowPainThreshold
+  GURPS.forPerfectBalance
   GURPS.hitLocationArm, holding shield
   GURPS.hitLocationChinks in Other
   GURPS.hitLocationChinks in Torso
@@ -79,7 +86,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.hitLocationRight Arm, holding shield
   GURPS.hitLocationSkull, from behind
   GURPS.hitLocationVitals, Heart
+  GURPS.knockbackCheck
   GURPS.lighting
+  GURPS.lowPainThresholdDoubles
+  GURPS.majorWoundEffectLabel
   GURPS.meleeAttack
   GURPS.modifierAddRangeRuler
   GURPS.modifierAddRangeRulerHint
@@ -216,6 +226,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.notAffected
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
+  GURPS.pdfCrippling
   GURPS.pdfDeceptiveAttack
   GURPS.pdfDeterminedAttack
   GURPS.pdfDodgeAcrobatic
@@ -225,13 +236,20 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.pdfDodgeRetreat
   GURPS.pdfDodgeSide
   GURPS.pdfExtraEffort
+  GURPS.pdfHPT
   GURPS.pdfHeroicCharge
+  GURPS.pdfKnockback
+  GURPS.pdfKnockdownStun
+  GURPS.pdfLPT
+  GURPS.pdfMajorWound
   GURPS.pdfMightyBlow
   GURPS.pdfMoveAttack
   GURPS.pdfShieldDB
   GURPS.pdfShieldRush
+  GURPS.pdfShock
   GURPS.pdfStrongAttack
   GURPS.pdfTelegraphicAttack
+  GURPS.pdfTempAttribPenalties
   GURPS.ranged
   GURPS.rateOfFire
   GURPS.resolve
@@ -242,7 +260,11 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.resourceUpdateTrackerSlot
   GURPS.rolled
   GURPS.selectToken
+  GURPS.shockPenalty
+  GURPS.shockPenaltyNextTurnOnly
   GURPS.showQuestion
+  GURPS.skillAcrobatics
+  GURPS.skillJudo
   GURPS.slamAOAStrong
   GURPS.slamCalculator
   GURPS.slamForShieldDB
@@ -250,7 +272,12 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.slamShieldDB
   GURPS.slamVelocity
   GURPS.slams
+  GURPS.suffersAMajorWound
+  GURPS.suffersHeadVitalsWound
+  GURPS.suffersKnockback
   GURPS.target
+  GURPS.yard
+  Skill Names__
   __ Character AddsDisadsPerksQuirks__
   __ Character Skills__
   __Apply Damage Dialog__
@@ -272,6 +299,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   __Hit Location__
   __Modifier Bucket__
   __PDF References__
+  __Potentially Removable__
   __Resolve Damage Dialog__
   __Resource Trackers__
   __Slam Calculator__

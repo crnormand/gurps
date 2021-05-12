@@ -1,12 +1,40 @@
 ------------
 keys in [lang/de.json] that are missing in [lang/en.json]
+  GURPS.copyright
   GURPS.dxCheckOrFall
   GURPS.fallsDown
 ------------
 keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.chatSelectSelfOrNameTokens
+  GURPS.chatSuffersCripplingInjury
+  GURPS.copyrightGURPS
   GURPS.dxCheckOrFallApplyProne
+  GURPS.dxJudoAcrobaticsCheckToRemainStanding
   GURPS.fallsDownApplyProne
+  GURPS.forHighPainThreshold
+  GURPS.forLowPainThreshold
+  GURPS.forPerfectBalance
+  GURPS.knockbackCheck
+  GURPS.lowPainThresholdDoubles
+  GURPS.majorWoundEffectLabel
+  GURPS.pdfCrippling
+  GURPS.pdfHPT
+  GURPS.pdfKnockback
+  GURPS.pdfKnockdownStun
+  GURPS.pdfLPT
+  GURPS.pdfMajorWound
+  GURPS.pdfShock
+  GURPS.pdfTempAttribPenalties
+  GURPS.shockPenalty
+  GURPS.shockPenaltyNextTurnOnly
+  GURPS.skillAcrobatics
+  GURPS.skillJudo
+  GURPS.suffersAMajorWound
+  GURPS.suffersHeadVitalsWound
+  GURPS.suffersKnockback
+  GURPS.yard
+  Skill Names__
+  __Potentially Removable__
 ------------
 values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.BODYPLANcentaur: Centaur
@@ -57,7 +85,6 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.check3: Check #3
   GURPS.check4: Check #4
   GURPS.collapse: Collapse
-  GURPS.copyright: GURPSÂ© is copyrighted by Steve Jackson Games
   GURPS.copyrightGCS: GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved 
   GURPS.damageAbbrevburn: burn
   GURPS.damageAbbrevcor: cor
@@ -125,7 +152,7 @@ values in [lang/en.json] that are the same in [lang/de.json]
   GURPS.rof: RoF
   GURPS.slamAOAStrong: All-Out Attack (Strong)
   GURPS.title: GURPS
-  GURPS.yards:  yards
+  GURPS.yards: yards
   __ Character AddsDisadsPerksQuirks__: =========
   __ Character Skills__: =========
   __Apply Damage Dialog__: =========
