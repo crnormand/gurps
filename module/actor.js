@@ -1312,7 +1312,19 @@ export class GurpsActor extends Actor {
         let action = parselink(e.otf)
         if (!!action.action) {
           action.action.calcOnly = true
-          e.level = await GURPS.performAction(action.action, this)
+          e.level = await GURPS.performAction(action.action, this)  // collapse the OtF formula into a value
+          if (key == "melee") {
+            if (e.parry != "") {
+              let m = e.parry.match(/([+-]\d+)(.*)/)
+              if (!!m) e.parry = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
+              if (!!m && !!m[2]) e.parry = `${e.parry} ${m[2]}`
+            }
+            if (e.block != "") {
+              let m = e.block.match(/([+-]\d+)(.*)/)
+              if (!!m) e.block = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
+              if (!!m && !!m[2]) e.block = `${e.block} ${m[2]}`
+            }
+          }
         }
       }
       GURPS.put(list, e)
