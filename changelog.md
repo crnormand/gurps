@@ -17,7 +17,8 @@ This is what we are currently working on:
 - Fixed bug when trying to execute chat commands using GURPS.executeOTF()
 - Prototype of Foundry Item framework, can drop on player chars
 - Added "apply condition" buttons to damage effects chat messages.
-- Fix mook generation to include resource trackers
+- Fix mook generation to include resource trackers.
+- Fix layout problems with Equipment and Other Equipment in the editor sheet.
 
 ## History
 
