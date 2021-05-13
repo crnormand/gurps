@@ -128,7 +128,7 @@ export class GurpsActorSheet extends ActorSheet {
           let oldd = ev.dataTransfer.getData('text/plain')
           let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
           let newd = {
-            actor: this.actor.id, 
+            actorid: this.actor.id, 
             type: type, 
             key: ev.currentTarget.dataset.key, 
             itemid: eqt.itemid }
@@ -459,7 +459,7 @@ export class GurpsActorSheet extends ActorSheet {
           content: `Do you want to delete "${eqt.name}" from the list?`,
           yes: () => (agree = true),
         })
-        if (agree) actor.deleteEquipment(eqt, path)
+        if (agree) actor.deleteEquipment(path)
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
@@ -840,21 +840,8 @@ export class GurpsActorSheet extends ActorSheet {
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
 
     if (dragData.type === 'equipment') {
-      if (dragData.actor != this.actor.id && !dragData.itemid) {
-        ui.notifications.warn("You cannot drag non-Foundry equipment to another character")
-        return
-      }
-      if (!!dragData.itemid && dragData.actor != this.actor.id) { // char to char transfer
-        let srcActor = game.actors.get(dragData.actor)
-        if (!!this.actor.owner && !!srcActor.owner) {
-          let item = await srcActor.deleteEquipment({ itemid: dragData.itemid }, dragData.key)
-          this.actor.addItem(item)
-          return
-        } else {
-          ui.notifications.warn("You do not have permission to add/remove the Item from both characters")
-          return
-        }
-      }
+      if (await this.actor.handleEquipmentDrop(dragData) != false) return    // handle external drag/drop
+      // drag/drop in same character sheet
       let element = event.target
       let classes = $(element).attr('class') || ''
       if (!classes.includes('eqtdraggable') && !classes.includes('eqtdragtarget')) return
