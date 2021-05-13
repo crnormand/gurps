@@ -206,6 +206,10 @@
   text-decoration: underline;
 }
 
+#sheet.gurpsactorsheet .pdflink {
+  font-size: 80%;
+}
+
 .pdflink:hover {
   /*font-size: 115%;
   font-weight: bold;*/
@@ -987,7 +991,7 @@ body {
 }
 
 #other_equipment {
-  grid-template-columns: auto 1fr repeat(7, auto);
+  grid-template-columns: auto 1fr repeat(6, auto);
   grid-area: other_equipment;
 }
 

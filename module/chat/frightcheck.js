@@ -23,6 +23,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     let actor = GURPS.LastActor
     let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
 
+    // TODO reskin frightcheck UI
     let p = renderTemplate('systems/gurps/templates/frightcheck-macro.html', { tblname: tblname })
     p.then(dialogTemplate =>
       new Dialog(

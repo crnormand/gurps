@@ -77,6 +77,7 @@ class ShowMBsChatProcessor extends ChatProcessor {
   }
   process(line) {
     this.priv(line)
+    // TODO Go to ModifierBucket and use chat-processor.html there too
     setTimeout(() => GURPS.ModifierBucket.showOthers(), 1000) // Need time for clients to update...and
   }
 }
