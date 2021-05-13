@@ -438,6 +438,17 @@ export class GurpsActorSheet extends ActorSheet {
         this.editEquipment(this.actor, path, o)
       },
     })
+    let temp = duplicate(opts)
+    temp.push({
+      name: 'Edit',
+      icon: "<i class='fas fa-level-down-alt'></i>",
+      callback: e => {
+        let path = e[0].dataset.key
+        let o = duplicate(GURPS.decode(this.actor.data, path))
+        //
+      },
+    })
+   
     new ContextMenu(html, '.equipmenu', opts)
 
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
@@ -875,6 +886,7 @@ export class GurpsActorSheet extends ActorSheet {
           let target = GURPS.decode(this.actor.data, targetkey)
           if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
           GURPS.put(target, object)
+          await this.actor.updateItemAdditionsBasedOn(object, srckey, targetkey)
           await this.actor.update({ [targetkey]: target })
           if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
         } else {
@@ -890,6 +902,7 @@ export class GurpsActorSheet extends ActorSheet {
                     await GURPS.removeKey(this.actor, srckey)
                     await this.actor.updateParentOf(srckey)
                   }
+                  await this.actor.updateItemAdditionsBasedOn(object, srckey, targetkey)
                   await GURPS.insertBeforeKey(this.actor, targetkey, object)
                   await this.actor.updateParentOf(targetkey)
                   if (isSrcFirst) {
@@ -907,6 +920,7 @@ export class GurpsActorSheet extends ActorSheet {
                     await this.actor.updateParentOf(srckey)
                   }
                   let k = targetkey + '.contains.' + GURPS.genkey(0)
+                  await this.actor.updateItemAdditionsBasedOn(object, srckey, targetkey)
                   await GURPS.insertBeforeKey(this.actor, k, object)
                   await this.actor.updateParentOf(k)
                   if (isSrcFirst) {

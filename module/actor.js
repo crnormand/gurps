@@ -26,7 +26,7 @@ export class GurpsActor extends Actor {
   // execute after every import. 
   async postImport() {
       this.calculateDerivedValues()
-      for (const item of this.items.entries) await this._addItemData(item.data)
+      for (const item of this.items.entries) await this.addItemData(item.data)
       // Set custom trackers based on templates.  should be last because it may need other data to initialize...
       await this.setResourceTrackers()
   }
@@ -1277,25 +1277,53 @@ export class GurpsActor extends Actor {
     }
   }
   
-  // create a new embedded item based on this item data
+  // create a new embedded item based on this item data and place in the carried list
   async addNewItem(item) {
     let i = await this.createOwnedItem(item)   // add a local Foundry Item based on some Item data
-    await this._addItemData(i)
+    await this.addItemData(i)
   }
   
   // Add a new equipment based on this Item data
-  async _addItemData(item) {
+  async addItemData(item) {
     let commit = {}
-    commit =  {...commit, ...this._addItemEquipment(item)}
+    commit = {...commit, ...this._addNewItemEquipment(item)}
+    commit = {...commit, ...await this._addItemAdditions(item)}
+    await this.update(commit)
+  }
+  
+  async _addItemAdditions(item) {
+    let commit = {}
     commit =  {...commit, ...await this._addItemElement(item, "melee")}
     commit =  {...commit, ...await this._addItemElement(item, "ranged")}
     commit =  {...commit, ...await this._addItemElement(item, "ads")}
     commit =  {...commit, ...await this._addItemElement(item, "skills")}
     commit =  {...commit, ...await this._addItemElement(item, "spells")}
-    await this.update(commit)
+    return commit
   }
   
-  _addItemEquipment(item) {
+  // called when equipment is being moved
+  async updateItemAdditionsBasedOn(eqt, sourcePath, targetPath) {
+    if (sourcePath.includes('.carried') && targetPath.includes('.other'))
+      await this._removeItemAdditionsBasedOn(eqt)
+    if (sourcePath.includes('.other') && targetPath.includes('.carried'))
+      await this._addItemAdditionsBasedOn(eqt)
+    }
+  
+  // moving from other to carried
+  async _addItemAdditionsBasedOn(eqt) {
+    if (!eqt.item) return
+    let item = JSON.parse(atou(eqt.item))
+    await this.update(this._addItemAdditions(item))
+  }
+
+  // moving from carried to other
+  async _removeItemAdditionsBasedOn(eqt) {
+    if (!!eqt.itemid)
+      await this._removeItemAdditions(eqt.itemid)
+  }
+  
+  // Make the initial equipment object (in the carried list)
+  _addNewItemEquipment(item) {
     let list = duplicate(this.data.data.equipment.carried)
     let eqt = item.data.eqt
     eqt.itemid = item._id
@@ -1322,12 +1350,12 @@ export class GurpsActor extends Actor {
             if (e.parry != "") {
               let m = e.parry.match(/([+-]\d+)(.*)/)
               if (!!m) e.parry = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
-              if (!!m && !!m[2]) e.parry = `${e.parry} ${m[2]}`
+              if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
             }
             if (e.block != "") {
               let m = e.block.match(/([+-]\d+)(.*)/)
               if (!!m) e.block = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
-              if (!!m && !!m[2]) e.block = `${e.block} ${m[2]}`
+              if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
             }
           }
         }
@@ -1338,24 +1366,29 @@ export class GurpsActor extends Actor {
   }
 
   // return the item data that was deleted (since it might be transferred)  
-  async deleteEquipment(path) {
-    this.ignoreRender = true
+  async deleteEquipment(path) {    
     let eqt = GURPS.decode(this.data, path)
-    if (!!eqt.itemid) await this._removeItemEquipment(eqt.itemid)
-    this.ignoreRender = false
+    if (!!eqt.itemid) {
+      this.deleteOwnedItem(eqt.itemid)
+      await this._removeItemAdditions(eqt.itemid)
+    }
     await GURPS.removeKey(this, path)
     return (!!eqt.item) ? JSON.parse(atou(eqt.item)) : undefined
   }
   
-  async _removeItemEquipment(itemid) {
+  async _removeItemAdditions(itemid) {
+    this.ignoreRender = true
     await this._removeItemElement(itemid, "melee")
     await this._removeItemElement(itemid, "ranged")
     await this._removeItemElement(itemid, "ads")
     await this._removeItemElement(itemid, "skills")
     await this._removeItemElement(itemid, "spells")
-    await this.deleteOwnedItem(itemid)
+    this.ignoreRender = false
   }
   
+  // We have to remove matching items after we searched through the list
+  // because we cannot safely modify the list why iterating over it
+  // and as such, we can only remove 1 key at a time and must use thw while loop to check again
   async _removeItemElement(itemid, key) {
     let found = true
     while (!!found) {
