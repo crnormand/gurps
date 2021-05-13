@@ -1339,8 +1339,10 @@ export class GurpsActor extends Actor {
 
   // return the item data that was deleted (since it might be transferred)  
   async deleteEquipment(path) {
+    this.ignoreRender = true
     let eqt = GURPS.decode(this.data, path)
     if (!!eqt.itemid) await this._removeItemEquipment(eqt.itemid)
+    this.ignoreRender = false
     await GURPS.removeKey(this, path)
     return (!!eqt.item) ? JSON.parse(atou(eqt.item)) : undefined
   }

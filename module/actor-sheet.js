@@ -34,6 +34,12 @@ export class GurpsActorSheet extends ActorSheet {
     await super.close(options)
     game.GURPS.ClearLastActor(this.actor)
   }
+  
+  // Hack to keep sheet from flashing during multiple DB updates
+  async _render(...args){
+    if (!!this.object?.ignoreRender) return
+    super._render(...args)
+  }
 
   flt(str) {
     return !!str ? parseFloat(str) : 0
