@@ -1246,7 +1246,11 @@ export class GurpsActorSheet extends ActorSheet {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key)
+          let key = e[0].dataset.key
+          if (key.includes('.equipment.'))
+            this.actor.deleteEquipment(key)
+          else
+            GURPS.removeKey(this.actor, key)
         },
       },
       {

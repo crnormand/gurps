@@ -1697,7 +1697,6 @@ Hooks.once('ready', async function () {
            })
           },
           no: () => {
-            destactor.addItem(resp.item)
             game.socket.emit('system.gurps', {
               type: 'dragEquipment3',
               srcuserid: resp.srcuserid,
