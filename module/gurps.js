@@ -1686,7 +1686,7 @@ Hooks.once('ready', async function () {
           title: `Gift for ${destactor.name}!`,
           content: `<p>${srcActor.name} wants to give you ${resp.item.name},</p><br>Ok?`,
           yes: () => {
-            destactor.addItem(resp.item)
+            destactor.addNewItem(resp.item)
             game.socket.emit('system.gurps', {
               type: 'dragEquipment2',
               srckey: resp.srckey,
@@ -1697,7 +1697,6 @@ Hooks.once('ready', async function () {
            })
           },
           no: () => {
-            destactor.addItem(resp.item)
             game.socket.emit('system.gurps', {
               type: 'dragEquipment3',
               srcuserid: resp.srcuserid,
@@ -1712,12 +1711,12 @@ Hooks.once('ready', async function () {
       let srcActor = game.actors.get(resp.srcactorid)
       srcActor.deleteEquipment(resp.srckey)
       let destActor = game.actors.get(resp.destactorid)
-      ui.notifications.info(`${destActor.name} accepted the ${resp.itemname}`)
+      ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
     }
     if (resp.type == 'dragEquipment3') {
       if (resp.srcuserid != game.user.id) return
       let destActor = game.actors.get(resp.destactorid)
-      ui.notifications.info(`${destActor.name} did not want the ${resp.itemname}`)
+      ui.notifications.info(`${destActor.name} did not want ${resp.itemname}`)
     }
 
   })
