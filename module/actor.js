@@ -26,7 +26,7 @@ export class GurpsActor extends Actor {
   // execute after every import. 
   async postImport() {
       this.calculateDerivedValues()
-      for (const item of this.items.entries) await this.addItem(item.data)
+      for (const item of this.items.entries) await this._addItemData(item.data)
       // Set custom trackers based on templates.  should be last because it may need other data to initialize...
       await this.setResourceTrackers()
   }
@@ -1243,8 +1243,7 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + " => " + this.name)
-    let item = await this.createOwnedItem(global)   // add a local Foundry Item based on the global Item
-    await this.addItem(item)
+    await this.addNewItem(global)
   } 
   
   // Drag and drop from an equipment list
@@ -1257,7 +1256,7 @@ export class GurpsActor extends Actor {
     let srcActor = game.actors.get(dragData.actorid)
     if (!!this.owner && !!srcActor.owner) {
       let item = await srcActor.deleteEquipment(dragData.key)
-      await this.addItem(item)
+      await this.addNewItem(item)
     } else {
       //ui.notifications.warn(i18n("GURPS.youDoNotHavePermssion"))
       let eqt = GURPS.decode(srcActor.data, dragData.key)
@@ -1274,12 +1273,18 @@ export class GurpsActor extends Actor {
           item: JSON.parse(atou(eqt.item))
         })
       } else
-        ui.notifications.warn(`No one owns ${this.name}`)
+        ui.notifications.warn(i18n("GURPS.youDoNotHavePermssion"))
     }
   }
   
-  // Add a local Foundry Item (and the various parts)
-  async addItem(item) {
+  // create a new embedded item based on this item data
+  async addNewItem(item) {
+    let i = await this.createOwnedItem(item)   // add a local Foundry Item based on some Item data
+    await this._addItemData(i)
+  }
+  
+  // Add a new equipment based on this Item data
+  async _addItemData(item) {
     let commit = {}
     commit =  {...commit, ...this._addItemEquipment(item)}
     commit =  {...commit, ...await this._addItemElement(item, "melee")}
