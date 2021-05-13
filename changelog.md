@@ -15,8 +15,9 @@ This is what we are currently working on:
 - Fixed display of FP tracker when using Conditional Injury.
 - Can drag and drop Modifier Bucket onto macro bar
 - Fixed bug when trying to execute chat commands using GURPS.executeOTF()
-- Prototype of Foundry Item framework
+- Prototype of Foundry Item framework, can drop on player chars
 - Added "apply condition" buttons to damage effects chat messages.
+- Fix mook generation to include resource trackers
 
 ## History
 
