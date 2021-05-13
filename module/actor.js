@@ -3,10 +3,12 @@
 import {
   extractP,
   xmlTextToJson,
-  objectToArray,
   convertRollStringToArrayOfInt,
   recurselist,
   makeRegexPatternFrom,
+  utoa,
+  atou,
+  i18n,
 } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
@@ -33,7 +35,7 @@ export class GurpsActor extends Actor {
   // execute after every import.
   async postImport() {
     this.calculateDerivedValues()
-    for (const item of this.items.entries) await this.addItem(item.data)
+    for (const item of this.items.entries) await this._addItemData(item.data)
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
   }
@@ -1242,35 +1244,78 @@ export class GurpsActor extends Actor {
     else ui.notifications.warn('Only GMs are allowed to Apply Damage.')
   }
 
+  // Drag and drop from Item colletion
   async handleItemDrop(dragData) {
+    if (!this.owner) {
+      ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
+      return
+    }
     let global = game.items.get(dragData.id)
-    let item = await this.createOwnedItem(global) // add a local Foundry Item based on the global Item
-    await this.addItem(item)
+    ui.notifications.info(global.name + ' => ' + this.name)
+    await this.addNewItem(global)
   }
 
-  // Add a local Foundry Item (and the various parts)
-  async addItem(item) {
-    await this._addItemEquipment(item)
-    await this._addItemElement(item, 'melee')
-    await this._addItemElement(item, 'ranged')
-    await this._addItemElement(item, 'ads')
-    await this._addItemElement(item, 'skills')
-    await this._addItemElement(item, 'spells')
+  // Drag and drop from an equipment list
+  async handleEquipmentDrop(dragData) {
+    if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
+    if (!dragData.itemid) {
+      ui.notifications.warn('GURPS.cannotDragNonFoundryEqt')
+      return
+    }
+    let srcActor = game.actors.get(dragData.actorid)
+    if (!!this.owner && !!srcActor.owner) {
+      let item = await srcActor.deleteEquipment(dragData.key)
+      await this.addNewItem(item)
+    } else {
+      //ui.notifications.warn(i18n("GURPS.youDoNotHavePermssion"))
+      let eqt = GURPS.decode(srcActor.data, dragData.key)
+      let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
+      if (!!destowner) {
+        ui.notifications.info(`Asking ${this.name} if they want ${eqt.name}`)
+        game.socket.emit('system.gurps', {
+          type: 'dragEquipment1',
+          srckey: dragData.key,
+          srcuserid: game.user.id,
+          srcactorid: dragData.actorid,
+          destuserid: destowner.id,
+          destactorid: this.id,
+          item: JSON.parse(atou(eqt.item)),
+        })
+      } else ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
+    }
   }
 
-  async _addItemEquipment(item) {
-    let list = this.data.data.equipment.carried
+  // create a new embedded item based on this item data
+  async addNewItem(item) {
+    let i = await this.createOwnedItem(item) // add a local Foundry Item based on some Item data
+    await this._addItemData(i)
+  }
+
+  // Add a new equipment based on this Item data
+  async _addItemData(item) {
+    let commit = {}
+    commit = { ...commit, ...this._addItemEquipment(item) }
+    commit = { ...commit, ...(await this._addItemElement(item, 'melee')) }
+    commit = { ...commit, ...(await this._addItemElement(item, 'ranged')) }
+    commit = { ...commit, ...(await this._addItemElement(item, 'ads')) }
+    commit = { ...commit, ...(await this._addItemElement(item, 'skills')) }
+    commit = { ...commit, ...(await this._addItemElement(item, 'spells')) }
+    await this.update(commit)
+  }
+
+  _addItemEquipment(item) {
+    let list = duplicate(this.data.data.equipment.carried)
     let eqt = item.data.eqt
     eqt.itemid = item._id
     eqt.uuid = 'item-' + item._id
+    eqt.item = utoa(JSON.stringify(item)) // save the item data in case we transfer
     Equipment.calc(eqt)
     GURPS.put(list, eqt)
-    await this.update({ 'data.equipment.-=carried': null })
-    await this.update({ 'data.equipment.carried': list })
+    return { 'data.equipment.carried': list }
   }
 
   async _addItemElement(item, key) {
-    let list = this.data.data[key]
+    let list = duplicate(this.data.data[key])
     let i = 0
     for (const k in item.data[key]) {
       let e = duplicate(item.data[key][k])
@@ -1280,39 +1325,50 @@ export class GurpsActor extends Actor {
         let action = parselink(e.otf)
         if (!!action.action) {
           action.action.calcOnly = true
-          e.level = await GURPS.performAction(action.action, this)
+          e.level = await GURPS.performAction(action.action, this) // collapse the OtF formula into a value
+          if (key == 'melee') {
+            if (e.parry != '') {
+              let m = e.parry.match(/([+-]\d+)(.*)/)
+              if (!!m) e.parry = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
+              if (!!m && !!m[2]) e.parry = `${e.parry} ${m[2]}`
+            }
+            if (e.block != '') {
+              let m = e.block.match(/([+-]\d+)(.*)/)
+              if (!!m) e.block = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
+              if (!!m && !!m[2]) e.block = `${e.block} ${m[2]}`
+            }
+          }
         }
       }
       GURPS.put(list, e)
     }
-    await this.update({ ['data.-=' + key]: null })
-    await this.update({ ['data.' + key]: list })
+    return { ['data.' + key]: list }
   }
 
-  async deleteEquipment(eqt, path) {
-    if (!!eqt.itemid) this._removeItemEquipment(eqt)
+  // return the item data that was deleted (since it might be transferred)
+  async deleteEquipment(path) {
+    let eqt = GURPS.decode(this.data, path)
+    if (!!eqt.itemid) await this._removeItemEquipment(eqt.itemid)
     await GURPS.removeKey(this, path)
+    return !!eqt.item ? JSON.parse(atou(eqt.item)) : undefined
   }
 
-  async _removeItemEquipment(eqt) {
-    await this.deleteOwnedItem(eqt.itemid)
-    await this._removeItemElement(eqt.itemid, 'melee')
-    await this._removeItemElement(eqt.itemid, 'ranged')
-    await this._removeItemElement(eqt.itemid, 'ads')
-    await this._removeItemElement(eqt.itemid, 'skills')
-    await this._removeItemElement(eqt.itemid, 'spells')
+  async _removeItemEquipment(itemid) {
+    await this._removeItemElement(itemid, 'melee')
+    await this._removeItemElement(itemid, 'ranged')
+    await this._removeItemElement(itemid, 'ads')
+    await this._removeItemElement(itemid, 'skills')
+    await this._removeItemElement(itemid, 'spells')
+    await this.deleteOwnedItem(itemid)
   }
 
   async _removeItemElement(itemid, key) {
     let found = true
     while (!!found) {
-      found = null
+      found = false
       let list = this.data.data[key]
       recurselist(list, (e, k, d) => {
-        if (e.itemid == itemid) {
-          console.log(e + ' ' + k + ' ' + d)
-          found = k
-        }
+        if (e.itemid == itemid) found = k
       })
       if (!!found) await GURPS.removeKey(this, 'data.' + key + '.' + found)
     }

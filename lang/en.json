@@ -257,6 +257,10 @@
   "GURPS.chatYouMustBeGM": "You must be a GM to execute this command",
   "GURPS.chatYouMustHaveACharacterSelected": "You must have a character selected",
   "GURPS.chatYouMustSelectTokens": "You must select tokens (or use",
+  
+  "__Permissions__": "=========",
+  "GURPS.youDoNotHavePermssion": "You do not have permission to do that.",
+  "GURPS.cannotDragNonFoundryEqt": "You cannot drag non-Foundry equipment to another character.",
 
   "__Damage Types__": "=========",
   "GURPS.damage": "Damage",

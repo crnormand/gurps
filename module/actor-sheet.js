@@ -126,7 +126,12 @@ export class GurpsActorSheet extends ActorSheet {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
-          let newd = { type: type, key: ev.currentTarget.dataset.key }
+          let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
+          let newd = {
+            actorid: this.actor.id, 
+            type: type, 
+            key: ev.currentTarget.dataset.key, 
+            itemid: eqt.itemid }
           if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
           return ev.dataTransfer.setData(
             'text/plain',
@@ -454,7 +459,7 @@ export class GurpsActorSheet extends ActorSheet {
           content: `Do you want to delete "${eqt.name}" from the list?`,
           yes: () => (agree = true),
         })
-        if (agree) actor.deleteEquipment(eqt, path)
+        if (agree) actor.deleteEquipment(path)
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
@@ -835,6 +840,8 @@ export class GurpsActorSheet extends ActorSheet {
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
 
     if (dragData.type === 'equipment') {
+      if (await this.actor.handleEquipmentDrop(dragData) != false) return    // handle external drag/drop
+      // drag/drop in same character sheet
       let element = event.target
       let classes = $(element).attr('class') || ''
       if (!classes.includes('eqtdraggable') && !classes.includes('eqtdragtarget')) return
@@ -1239,7 +1246,11 @@ export class GurpsActorSheet extends ActorSheet {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key)
+          let key = e[0].dataset.key
+          if (key.includes('.equipment.'))
+            this.actor.deleteEquipment(key)
+          else
+            GURPS.removeKey(this.actor, key)
         },
       },
       {

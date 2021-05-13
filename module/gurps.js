@@ -1678,6 +1678,47 @@ Hooks.once('ready', async function () {
       if (game.users.isGM || (resp.users.length > 0 && !resp.users.includes(game.user.name))) return
       GURPS.performAction(resp.action, GURPS.LastActor)
     }
+    if (resp.type == 'dragEquipment1') {
+      if (resp.destuserid != game.user.id) return
+        let destactor = game.actors.get(resp.destactorid)
+        let srcActor = game.actors.get(resp.srcactorid)
+        Dialog.confirm({
+          title: `Gift for ${destactor.name}!`,
+          content: `<p>${srcActor.name} wants to give you ${resp.item.name},</p><br>Ok?`,
+          yes: () => {
+            destactor.addNewItem(resp.item)
+            game.socket.emit('system.gurps', {
+              type: 'dragEquipment2',
+              srckey: resp.srckey,
+              srcuserid: resp.srcuserid,
+              srcactorid: resp.srcactorid,
+              destactorid: resp.destactorid,
+              itemname: resp.item.name
+           })
+          },
+          no: () => {
+            game.socket.emit('system.gurps', {
+              type: 'dragEquipment3',
+              srcuserid: resp.srcuserid,
+              destactorid: resp.destactorid,
+              itemname: resp.item.name
+           })
+          }
+        })
+    }
+    if (resp.type == 'dragEquipment2') {
+      if (resp.srcuserid != game.user.id) return
+      let srcActor = game.actors.get(resp.srcactorid)
+      srcActor.deleteEquipment(resp.srckey)
+      let destActor = game.actors.get(resp.destactorid)
+      ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
+    }
+    if (resp.type == 'dragEquipment3') {
+      if (resp.srcuserid != game.user.id) return
+      let destActor = game.actors.get(resp.destactorid)
+      ui.notifications.info(`${destActor.name} did not want ${resp.itemname}`)
+    }
+
   })
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
@@ -1712,7 +1753,7 @@ Hooks.once('ready', async function () {
    * Add a listener to handle damage being dropped on a token.
    */
   Hooks.on('dropCanvasData', async function (canvas, dropData) {
-    if (dropData.type === 'damageItem' || dropData.type === 'Item') {
+    if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
       let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene.data.grid
       canvas.tokens.targetObjects({
@@ -1732,13 +1773,11 @@ Hooks.once('ready', async function () {
         t.setTarget(true, { releaseOthers: false, groupSelection: true })
       })
 
-      let handle = actor => {
-        actor.handleDamageDrop(dropData.payload)
-      }
-      if (dropData.type === 'Item')
-        handle = actor => {
-          actor.handleItemDrop(dropData)
-        }
+      let handle = actor => actor.handleDamageDrop(dropData.payload)
+      if (dropData.type === 'Item') 
+        handle = actor => actor.handleItemDrop(dropData)
+      if (dropData.type === 'equipment') 
+        handle = actor => actor.handleEquipmentDrop(dropData)
 
       // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
