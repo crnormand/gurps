@@ -438,18 +438,27 @@ export class GurpsActorSheet extends ActorSheet {
         this.editEquipment(this.actor, path, o)
       },
     })
-    let temp = duplicate(opts)
-    temp.push({
-      name: 'Edit',
+    let mcar = Array.from(opts)
+    mcar.push({
+      name: "Move to 'Other Equipment'",
       icon: "<i class='fas fa-level-down-alt'></i>",
       callback: e => {
         let path = e[0].dataset.key
-        let o = duplicate(GURPS.decode(this.actor.data, path))
-        //
+        this.actor.moveEquipment(path, 'data.equipment.other')
+      },
+    })   
+    new ContextMenu(html, '.equipmenucarried', mcar)
+    
+    opts.push({
+      name: "Move to 'Equipment'",
+      icon: "<i class='fas fa-level-up-alt'></i>",
+      callback: e => {
+        let path = e[0].dataset.key
+        this.actor.moveEquipment(path, 'data.equipment.carried')
       },
     })
-   
-    new ContextMenu(html, '.equipmenu', opts)
+    new ContextMenu(html, '.equipmenuother', opts)
+
 
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault()
@@ -865,75 +874,7 @@ export class GurpsActorSheet extends ActorSheet {
       let targetkey = element.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-
-        if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
-          ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
-          return
-        }
-        let object = GURPS.decode(this.actor.data, srckey)
-        // Because we may be modifing the same list, we have to check the order of the keys and
-        // apply the operation that occurs later in the list, first (to keep the indexes the same)
-        let srca = srckey.split('.')
-        srca.splice(0, 3)
-        let tara = targetkey.split('.')
-        tara.splice(0, 3)
-        let max = Math.min(srca.length, tara.length)
-        let isSrcFirst = false
-        for (let i = 0; i < max; i++) {
-          if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
-        }
-        if (targetkey.endsWith('.other') || targetkey.endsWith('.carried')) {
-          let target = GURPS.decode(this.actor.data, targetkey)
-          if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
-          GURPS.put(target, object)
-          await this.actor.updateItemAdditionsBasedOn(object, srckey, targetkey)
-          await this.actor.update({ [targetkey]: target })
-          if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
-        } else {
-          let d = new Dialog({
-            title: object.name,
-            content: '<p>Where do you want to drop this?</p>',
-            buttons: {
-              one: {
-                icon: '<i class="fas fa-level-up-alt"></i>',
-                label: 'Before',
-                callback: async () => {
-                  if (!isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                  await this.actor.updateItemAdditionsBasedOn(object, srckey, targetkey)
-                  await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                  await this.actor.updateParentOf(targetkey)
-                  if (isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                },
-              },
-              two: {
-                icon: '<i class="fas fa-sign-in-alt"></i>',
-                label: 'In',
-                callback: async () => {
-                  if (!isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                  let k = targetkey + '.contains.' + GURPS.genkey(0)
-                  await this.actor.updateItemAdditionsBasedOn(object, srckey, targetkey)
-                  await GURPS.insertBeforeKey(this.actor, k, object)
-                  await this.actor.updateParentOf(k)
-                  if (isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                },
-              },
-            },
-            default: 'one',
-          })
-          d.render(true)
-        }
+        this.actor.moveEquipment(srckey, targetkey)
       }
     }
   }
@@ -1257,7 +1198,7 @@ export class GurpsActorSheet extends ActorSheet {
     return [
       {
         name: 'Add Before',
-        icon: "<i class='fas fa-level-up-alt'></i>",
+        icon: "<i class='fas fa-chevron-up'></i>",
         callback: e => {
           GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj))
         },

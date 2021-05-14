@@ -491,14 +491,14 @@
       <div class="ref header">Ref</div>
 
       {{#listeqt data.equipment.carried }}
-        <div class="equipped satisfiedY changeequip equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if
+        <div class="equipped satisfiedY changeequip equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{#if
         this.equipped}}X{{/if}}</div>
-        <div class="qty satisfiedY eqtdraggable equipmenu" data-key="data.equipment.carried.{{@key}}">
+        <div class="qty satisfiedY eqtdraggable equipmenucarried" data-key="data.equipment.carried.{{@key}}">
           <button class="equipmentbutton bold" data-operation='equipment-dec'>-</button>
           &nbsp; {{this.count}} &nbsp;
           <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
         </div>
-        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu"
+        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried"
           data-key="data.equipment.carried.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -509,15 +509,15 @@
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
         </div>
-        <div class="uses satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{#if (or (ne this.maxuses "0")
+        <div class="uses satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{#if (or (ne this.maxuses "0")
         (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
-        <div class="cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.cost}}</div>
-        <div class="weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
-        <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}
+        <div class="cost satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{this.cost}}</div>
+        <div class="weight satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{this.weight}} lb</div>
+        <div class="sum_cost satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{round this.costsum}}
         </div>
-        <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{round this.weightsum}}
+        <div class="sum_weight satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{round this.weightsum}}
           lb</div>
-        <div class="ref satisfiedY equipmenu" data-key="data.equipment.carried.{{@key}}">{{{pdflinkext this.pageref
+        <div class="ref satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{{pdflinkext this.pageref
         this.externallink}}}</div>
       {{/listeqt}}
 
@@ -537,12 +537,12 @@
 
 
       {{#listeqt data.equipment.other }}
-        <div class="qty satisfiedY eqtdraggable equipmenu" data-key="data.equipment.other.{{@key}}">
+        <div class="qty satisfiedY eqtdraggable equipmenuother" data-key="data.equipment.other.{{@key}}">
           <button class="equipmentbutton bold" data-operation='equipment-dec'>-</i></button>
           &nbsp; {{this.count}} &nbsp;
           <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
         </div>
-        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenu"
+        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother"
           data-key="data.equipment.other.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -553,15 +553,15 @@
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
           this.notes}}}</div>
         </div>
-        <div class="uses satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
+        <div class="uses satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
         (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
-        <div class="cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
-        <div class="weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
-        <div class="sum_cost satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
-        <div class="sum_weight satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}}
+        <div class="cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
+        <div class="weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
+        <div class="sum_cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
+        <div class="sum_weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}}
           lb
         </div>
-        <div class="ref satisfiedY equipmenu" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref
+        <div class="ref satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref
         this.externallink}}}</div>
         <div></div>
 

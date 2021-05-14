@@ -1313,7 +1313,8 @@ export class GurpsActor extends Actor {
   async _addItemAdditionsBasedOn(eqt) {
     if (!eqt.item) return
     let item = JSON.parse(atou(eqt.item))
-    await this.update(this._addItemAdditions(item))
+    let commit = await this._addItemAdditions(item)
+    await this.update(commit)
   }
 
   // moving from carried to other
@@ -1362,7 +1363,7 @@ export class GurpsActor extends Actor {
       }
       GURPS.put(list, e)
     }
-    return { ['data.' + key]: list }
+    return i == 0 ? {} : { ['data.' + key]: list }
   }
 
   // return the item data that was deleted (since it might be transferred)  
@@ -1399,6 +1400,77 @@ export class GurpsActor extends Actor {
       })
       if (!!found) 
         await GURPS.removeKey(this, "data." + key + "." + found)
+    }
+  }
+  
+  async moveEquipment(srckey, targetkey) {
+    if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
+      ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
+      return
+    }
+    let object = GURPS.decode(this.data, srckey)
+    // Because we may be modifing the same list, we have to check the order of the keys and
+    // apply the operation that occurs later in the list, first (to keep the indexes the same)
+    let srca = srckey.split('.')
+    srca.splice(0, 3)
+    let tara = targetkey.split('.')
+    tara.splice(0, 3)
+    let max = Math.min(srca.length, tara.length)
+    let isSrcFirst = false
+    for (let i = 0; i < max; i++) {
+      if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
+    }
+    if (targetkey.endsWith('.other') || targetkey.endsWith('.carried')) {
+      let target = duplicate(GURPS.decode(this.data, targetkey))
+      if (!isSrcFirst) await GURPS.removeKey(this, srckey)
+      GURPS.put(target, object)
+      await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+      await this.update({ [targetkey]: target })
+      if (isSrcFirst) await GURPS.removeKey(this, srckey)
+    } else {
+      let d = new Dialog({
+        title: object.name,
+        content: '<p>Where do you want to drop this?</p>',
+        buttons: {
+          one: {
+            icon: '<i class="fas fa-level-up-alt"></i>',
+            label: 'Before',
+            callback: async () => {
+              if (!isSrcFirst) {
+                await GURPS.removeKey(this, srckey)
+                await this.updateParentOf(srckey)
+              }
+              await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+              await GURPS.insertBeforeKey(this, targetkey, object)
+              await this.updateParentOf(targetkey)
+              if (isSrcFirst) {
+                await GURPS.removeKey(this, srckey)
+                await this.updateParentOf(srckey)
+              }
+            },
+          },
+          two: {
+            icon: '<i class="fas fa-sign-in-alt"></i>',
+            label: 'In',
+            callback: async () => {
+              if (!isSrcFirst) {
+                await GURPS.removeKey(this, srckey)
+                await this.updateParentOf(srckey)
+              }
+              let k = targetkey + '.contains.' + GURPS.genkey(0)
+              await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+              await GURPS.insertBeforeKey(this, k, object)
+              await this.updateParentOf(k)
+              if (isSrcFirst) {
+                await GURPS.removeKey(this, srckey)
+                await this.updateParentOf(srckey)
+              }
+            },
+          },
+        },
+        default: 'one',
+      })
+      d.render(true)
     }
   }
 
