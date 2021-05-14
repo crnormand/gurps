@@ -1285,16 +1285,31 @@ export class GurpsActor extends Actor {
     }
   }
   
+  async updateItem(item) {
+    delete item.editingActor
+    let itemData = item.data
+    await this._removeItemAdditions(itemData._id)
+    this.ignoreRender = true
+    let other = await this._removeItemElement(itemData._id, 'equipment.other') // try to remove from other
+    if (!other) { // if not in other, remove from carried, and then re-add everything
+      await this._removeItemElement(itemData._id, 'equipment.carried')
+      await this.addItemData(itemData)
+    } else  // If was in other... just add back to other (and forget addons)
+      await this.update(this._addNewItemEquipment(itemData, 'equipment.other'))
+    this.ignoreRender = false
+    this.sheet.render(true)
+  }
+  
   // create a new embedded item based on this item data and place in the carried list
   async addNewItem(item) {
-    let i = await this.createOwnedItem(item)   // add a local Foundry Item based on some Item data
-    await this.addItemData(i)
+    let itemData = await this.createOwnedItem(item)   // add a local Foundry Item based on some Item data
+    await this.addItemData(itemData)
   }
 
   // Add a new equipment based on this Item data
-  async addItemData(item) {
+  async addItemData(item, path = 'carried') {
     let commit = {}
-    commit = {...commit, ...this._addNewItemEquipment(item)}
+    commit = {...commit, ...this._addNewItemEquipment(item, path)}
     commit = {...commit, ...await this._addItemAdditions(item)}
     await this.update(commit)
   }
@@ -1332,15 +1347,16 @@ export class GurpsActor extends Actor {
   }
   
   // Make the initial equipment object (in the carried list)
-  _addNewItemEquipment(item) {
-    let list = duplicate(this.data.data.equipment.carried)
+  _addNewItemEquipment(item, path = 'carried') {
+    let list = duplicate(this.data.data.equipment[path])
     let eqt = item.data.eqt
     eqt.itemid = item._id
     eqt.uuid = 'item-' + item._id
+    delete eqt.item
     eqt.item = utoa(JSON.stringify(item)) // save the item data in case we transfer
     Equipment.calc(eqt)
     GURPS.put(list, eqt)
-    return { 'data.equipment.carried': list }
+    return { ['data.equipment.' + path]: list }
   }
 
   async _addItemElement(item, key) {
@@ -1400,14 +1416,19 @@ export class GurpsActor extends Actor {
   // and as such, we can only remove 1 key at a time and must use thw while loop to check again
   async _removeItemElement(itemid, key) {
     let found = true
+    let any = false
     while (!!found) {
       found = false
-      let list = this.data.data[key]
+      let list = getProperty(this.data.data, key)
       recurselist(list, (e, k, d) => {
         if (e.itemid == itemid) found = k
       })
-      if (!!found) await GURPS.removeKey(this, 'data.' + key + '.' + found)
+      if (!!found) {
+        any = true
+        await GURPS.removeKey(this, 'data.' + key + '.' + found)
+      }
     }
+    return any
   }
   
   async moveEquipment(srckey, targetkey) {
