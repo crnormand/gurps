@@ -817,7 +817,7 @@ async function performAction(action, actor, event, targets) {
       thing = att.name // get real name of attack
       let t = att.level
       if (!!t) {
-        let a = t.trim().split(' ')
+        let a = (t + '').trim().split(' ')
         t = a[0]
         if (!!t) target = parseInt(t)
         if (isNaN(target)) target = 0
