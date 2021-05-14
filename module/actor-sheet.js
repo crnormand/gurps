@@ -409,6 +409,12 @@ export class GurpsActorSheet extends ActorSheet {
       let path = element.dataset.key
       let actor = this.actor
       let obj = duplicate(getProperty(actor.data, path)) // must dup so difference can be detected when updated
+      if (!!obj.itemid) {
+        let item = this.actor.items.get(obj.itemid)
+        item.editingActor = this.actor
+        item.sheet.render(true)
+        return
+      }
       if (path.includes('equipment')) this.editEquipment(actor, path, obj)
       if (path.includes('melee')) this.editMelee(actor, path, obj)
       if (path.includes('ranged')) this.editRanged(actor, path, obj)

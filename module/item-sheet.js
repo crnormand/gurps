@@ -87,4 +87,9 @@ export class GurpsItemSheet extends ItemSheet {
       this.item.update({ 'data.skills': list })
     })
   }
+  
+  close() {
+    super.close()
+    if (!!this.object.editingActor) this.object.editingActor.updateItem(this.object)
+  }
 }
