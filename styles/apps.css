@@ -4,7 +4,8 @@
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
-  background: url(/ui/parchment.jpg) #dcdcd0;
+  /* background: url(/ui/parchment.jpg) #dcdcd0; */
+  background: url(/systems/gurps/icons/hex2.png) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
   /* background: radial-gradient(ellipse at bottom, #5091dd 0%, rgb(3, 6, 23) 100%); */
 }
@@ -32,6 +33,40 @@
 .gurps-chat-message .invisible,
 .gurps-app .invisible {
   display: none;
+}
+
+.gurps-app .icon-prefix {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.gurps-app .icon-prefix > input {
+  padding-left: 2em;
+}
+
+.gurps-app .icon-prefix > span {
+  position: absolute;
+  left: 0;
+  width: 2em;
+  text-align: center;
+  color: dimgray;
+}
+
+.gurps-app .img-display {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 11.2em;
+  height: 16.8em;
+}
+
+.gurps-app .img-display > img {
+  display: block;
+  height: 100%;
+  opacity: 0;
+  width: 100%;
 }
 
 /* special override, 'cause I can't get the space any other way*/
@@ -225,6 +260,7 @@
   margin: unset;
 }
 
+.label-value-row label,
 .gurps-group.inputs label {
   font-size: 80%;
   justify-self: stretch;
@@ -235,7 +271,7 @@
   padding-right: 0.15em;
 }
 
-.gurps-group.inputs input {
+.gurps-group input {
   text-align: center;
   margin: 0.15em 0;
 }

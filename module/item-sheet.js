@@ -5,7 +5,7 @@ export class GurpsItemSheet extends ItemSheet {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      classes: ['gurps', 'sheet', 'item'],
+      classes: ['sheet', 'item'],
       template: 'systems/gurps/templates/item-sheet.html',
       width: 620,
       height: 200,
@@ -87,7 +87,7 @@ export class GurpsItemSheet extends ItemSheet {
       this.item.update({ 'data.skills': list })
     })
   }
-  
+
   close() {
     super.close()
     if (!!this.object.editingActor) this.object.editingActor.updateItem(this.object)
