@@ -1294,8 +1294,10 @@ export class GurpsActor extends Actor {
     if (!other) { // if not in other, remove from carried, and then re-add everything
       await this._removeItemElement(itemData._id, 'equipment.carried')
       await this.addItemData(itemData)
-    } else  // If was in other... just add back to other (and forget addons)
-      await this.update(this._addNewItemEquipment(itemData, 'equipment.other'))
+    } else { // If was in other... just add back to other (and forget addons)
+      let commit = this._addNewItemEquipment(itemData, false)
+      await this.update(commit)
+    }
     this.ignoreRender = false
     this.sheet.render(true)
   }
@@ -1307,9 +1309,9 @@ export class GurpsActor extends Actor {
   }
 
   // Add a new equipment based on this Item data
-  async addItemData(item, path = 'carried') {
+  async addItemData(item) {
     let commit = {}
-    commit = {...commit, ...this._addNewItemEquipment(item, path)}
+    commit = {...commit, ...this._addNewItemEquipment(item)}
     commit = {...commit, ...await this._addItemAdditions(item)}
     await this.update(commit)
   }
@@ -1347,7 +1349,8 @@ export class GurpsActor extends Actor {
   }
   
   // Make the initial equipment object (in the carried list)
-  _addNewItemEquipment(item, path = 'carried') {
+  _addNewItemEquipment(item, carried = true) {
+    let path = carried ? 'carried' : 'other'
     let list = duplicate(this.data.data.equipment[path])
     let eqt = item.data.eqt
     eqt.itemid = item._id
