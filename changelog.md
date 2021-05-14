@@ -280,7 +280,7 @@ This is what we are currently working on:
 - Added drag and drop menu 'before' and 'in' for all lists so you can create containers
 - Allow user created notes & equipment to survive import
 
-  0.8.8 - 1/24/2021
+0.8.8 - 1/24/2021
 
 - Fixed [Parry] bug (if Parry column has "No" in it)
 - Added "Send to 'Everyone'" GM option in modifier bucket
