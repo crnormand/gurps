@@ -35,7 +35,7 @@ This is what we are currently working on:
 - Fixed older actors not having currentmove/dodge or flight values
 - Add warning if trying to Edit an empty actor
 
-  0.9.3 - 5/04/2021
+0.9.3 - 5/04/2021
 
 - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
 - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
@@ -43,11 +43,11 @@ This is what we are currently working on:
 - /select now also changes Foundry's selection. /sel Bog \\\\ /status on prone
 - /sendMB (and MB send) now works for Assistants
 
-  0.9.2 - 4/29/2021
+0.9.2 - 4/29/2021
 
 - CTRL-roll was broken for certain keyboard events, causing chat commands to fail (ex: /ra)
 
-  0.9.1 - 4/28/2021
+0.9.1 - 4/28/2021
 
 - Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x640 monitor. Tiny laptop users, rejoice!!
 - The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096)
@@ -63,7 +63,7 @@ This is what we are currently working on:
 - Fixed Slam Calculator's always printing that the Target was knocked down, even if it was the Attacker who was knocked down.
 - Added System setting to show 'saved' icon next to user created equipment and notes.
 
-  0.9.0 - 4/22/2021
+0.9.0 - 4/22/2021
 
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
@@ -77,7 +77,7 @@ This is what we are currently working on:
 - Press SHIFT key to make OtF rolls private
 - Show Move/Flight Move checkbox in Editor
 
-  0.8.23 - 4/13/2021
+0.8.23 - 4/13/2021
 
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 - Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
