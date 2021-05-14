@@ -591,7 +591,7 @@ function executeOTF(string, priv = false) {
   if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
   if (!!action.action)
-    GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv, ctrlKey: false })
+    GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
   else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
 }
 GURPS.executeOTF = executeOTF
@@ -817,7 +817,7 @@ async function performAction(action, actor, event, targets) {
       thing = att.name // get real name of attack
       let t = att.level
       if (!!t) {
-        let a = t.trim().split(' ')
+        let a = (t + '').trim().split(' ')
         t = a[0]
         if (!!t) target = parseInt(t)
         if (isNaN(target)) target = 0
@@ -1591,17 +1591,19 @@ Hooks.once('ready', async function () {
     console.log(data)
     if (!data.otf && !data.bucket) return
     let otf = data.otf || data.bucket
+    otf = otf.split('\\').join('\\\\')  // must double backslashes since this is a 'script' macro
     let cmd = ''
     if (!!data.bucket)
       cmd += `GURPS.ModifierBucket.clear()
 `
     cmd += 'GURPS.executeOTF(`' + otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
-    let name = `${data.name || 'OtF'}: ${otf}`
+    let name = otf
+    if (!!data.displayname) name = data.displayname
     if (!!data.actor) {
       cmd =
         `GURPS.SetLastActor(game.actors.get('${data.actor}'))
 ` + cmd
-      name = game.actors.get(data.actor).name + ' ' + name
+      name = game.actors.get(data.actor).name + ': ' + name
     }
     let macro = await Macro.create({
       name: name,
@@ -1747,6 +1749,22 @@ Hooks.once('ready', async function () {
         GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
       })
     }
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action)
+          display = ev.currentTarget.innerText
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: li.getAttribute('data-otf'),
+            displayname: display
+          })
+        )
+      })
+    })
+
   })
 
   /**

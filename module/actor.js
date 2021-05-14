@@ -1373,7 +1373,7 @@ export class GurpsActor extends Actor {
         let action = parselink(e.otf)
         if (!!action.action) {
           action.action.calcOnly = true
-          e.level = await GURPS.performAction(action.action, this) // collapse the OtF formula into a value
+          e.level = '' + await GURPS.performAction(action.action, this) // collapse the OtF formula into a string
           if (key == 'melee') {
             if (e.parry != '') {
               let m = e.parry.match(/([+-]\d+)(.*)/)

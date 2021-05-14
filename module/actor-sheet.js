@@ -111,11 +111,15 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action)
+          display = ev.currentTarget.innerText
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
             actor: this.actor.id,
+            displayname: display
           })
         )
       })

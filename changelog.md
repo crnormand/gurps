@@ -17,8 +17,10 @@ This is what we are currently working on:
 - Fixed bug when trying to execute chat commands using GURPS.executeOTF()
 - Prototype of Foundry Item framework, can drop on player chars
 - Added "apply condition" buttons to damage effects chat messages.
-- Fix mook generation to include resource trackers.
-- Fix layout problems with Equipment and Other Equipment in the editor sheet.
+- Fixed mook generation to include resource trackers.
+- Fixed layout problems with Equipment and Other Equipment in the editor sheet.
+- Fixed \\ in OtF macros
+- Otf Macros now use their override text as the macro name
 - Fixed bug where Sum Weights on Equipment and Other Equipment displayed as 'NaN'.
 
 ## History
