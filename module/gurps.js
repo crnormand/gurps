@@ -1591,6 +1591,7 @@ Hooks.once('ready', async function () {
     console.log(data)
     if (!data.otf && !data.bucket) return
     let otf = data.otf || data.bucket
+    otf = otf.split('\\').join('\\\\')  // must double backslashes since this is a 'script' macro
     let cmd = ''
     if (!!data.bucket)
       cmd += `GURPS.ModifierBucket.clear()
