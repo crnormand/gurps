@@ -23,6 +23,7 @@ This is what we are currently working on:
 - Otf Macros now use their override text as the macro name
 - Added [M:attack] for only melee and [R:attack] for only ranged
 - Fixed bug where Sum Weights on Equipment and Other Equipment displayed as 'NaN'.
+- Fixed bug(s) where pasted text may contain unicode single and double quotes (OtF and Mook generator)
 
 ## History
 

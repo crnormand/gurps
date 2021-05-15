@@ -77,8 +77,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     // TODO get this from system property
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
-    sheetData.actor = this.actor
-    return sheetData
+     return sheetData
   }
 
   /* -------------------------------------------- */
