@@ -19,6 +19,7 @@ export class GurpsItemSheet extends ItemSheet {
     const data = super.getData()
     data.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
     data.name = this.item.name
+
     return data
   }
 
@@ -36,6 +37,15 @@ export class GurpsItemSheet extends ItemSheet {
       })
     )
     html.find('.count').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
+    
+    html.find('#item4').click(ev => {
+      this.item.update({ 
+        'data.equipped': true,
+        'data.bonuses': `DX+10
+S:Fast*+20
+iq+30`})
+}
+)
 
     html.find('#item1').click(ev => {
       ev.preventDefault()

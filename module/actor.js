@@ -1252,7 +1252,7 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
-    await this.addNewItem(global)
+    await this.addNewItemData(global.data)
   }
 
   // Drag and drop from an equipment list
@@ -1263,11 +1263,10 @@ export class GurpsActor extends Actor {
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
-    if (!!this.owner && !!srcActor.owner) {
+    if (!!this.owner && !!srcActor.owner) {  // same owner
       let item = await srcActor.deleteEquipment(dragData.key)
       await this.addNewItem(item)
-    } else {
-      //ui.notifications.warn(i18n("GURPS.youDoNotHavePermssion"))
+    } else {  // different owners
       let eqt = GURPS.decode(srcActor.data, dragData.key)
       let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
       if (!!destowner) {
@@ -1279,12 +1278,13 @@ export class GurpsActor extends Actor {
           srcactorid: dragData.actorid,
           destuserid: destowner.id,
           destactorid: this.id,
-          item: JSON.parse(atou(eqt.item)),
+          itemData: dragData.itemData,
         })
       } else ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
     }
   }
   
+  // Called from the ItemEditor to let us know our personal Item has been modified
   async updateItem(item) {
     delete item.editingActor
     let itemData = item.data
@@ -1303,26 +1303,27 @@ export class GurpsActor extends Actor {
   }
   
   // create a new embedded item based on this item data and place in the carried list
-  async addNewItem(item) {
-    let itemData = await this.createOwnedItem(item)   // add a local Foundry Item based on some Item data
-    await this.addItemData(itemData)
+  async addNewItemData(itemData) {
+    itemData.data.equipped = true
+    let localItemData = await this.createOwnedItem(itemData)   // add a local Foundry Item based on some Item data
+    await this.addItemData(localItemData)
   }
 
   // Add a new equipment based on this Item data
-  async addItemData(item) {
+  async addItemData(itemData) {
     let commit = {}
-    commit = {...commit, ...this._addNewItemEquipment(item)}
-    commit = {...commit, ...await this._addItemAdditions(item)}
+    commit = {...commit, ...this._addNewItemEquipment(itemData)}
+    commit = {...commit, ...await this._addItemAdditions(itemData)}
     await this.update(commit)
   }
   
-  async _addItemAdditions(item) {
+  async _addItemAdditions(itemData) {
     let commit = {}
-    commit =  {...commit, ...await this._addItemElement(item, "melee")}
-    commit =  {...commit, ...await this._addItemElement(item, "ranged")}
-    commit =  {...commit, ...await this._addItemElement(item, "ads")}
-    commit =  {...commit, ...await this._addItemElement(item, "skills")}
-    commit =  {...commit, ...await this._addItemElement(item, "spells")}
+    commit =  {...commit, ...await this._addItemElement(itemData, "melee")}
+    commit =  {...commit, ...await this._addItemElement(itemData, "ranged")}
+    commit =  {...commit, ...await this._addItemElement(itemData, "ads")}
+    commit =  {...commit, ...await this._addItemElement(itemData, "skills")}
+    commit =  {...commit, ...await this._addItemElement(itemData, "spells")}
     return commit
   }
   
@@ -1336,39 +1337,42 @@ export class GurpsActor extends Actor {
   
   // moving from other to carried
   async _addItemAdditionsBasedOn(eqt) {
-    if (!eqt.item) return
-    let item = JSON.parse(atou(eqt.item))
-    let commit = await this._addItemAdditions(item)
+    if (!eqt.itemid) return
+    let item = await this.getOwnedItem(eqt.itemid)
+    item.data.data.equipped = true
+    await this.updateOwnedItem(item.data)
+    let commit = await this._addItemAdditions(item.data)
     await this.update(commit)
   }
 
   // moving from carried to other
   async _removeItemAdditionsBasedOn(eqt) {
-    if (!!eqt.itemid)
-      await this._removeItemAdditions(eqt.itemid)
+    if (!eqt.itemid) return
+    await this._removeItemAdditions(eqt.itemid)
+    let item = await this.getOwnedItem(eqt.itemid)
+    item.data.data.equipped = false
+    await this.updateOwnedItem(item.data)
   }
   
   // Make the initial equipment object (in the carried list)
-  _addNewItemEquipment(item, carried = true) {
+  _addNewItemEquipment(itemData, carried = true) {
     let path = carried ? 'carried' : 'other'
-    let list = duplicate(this.data.data.equipment[path])
-    let eqt = item.data.eqt
-    eqt.itemid = item._id
-    eqt.uuid = 'item-' + item._id
-    delete eqt.item
-    eqt.item = utoa(JSON.stringify(item)) // save the item data in case we transfer
+    let list = { ...this.data.data.equipment[path]} // shallow copy the list
+    let eqt = itemData.data.eqt
+    eqt.itemid = itemData._id
+    eqt.uuid = 'item-' + itemData._id
     Equipment.calc(eqt)
     GURPS.put(list, eqt)
     return { ['data.equipment.' + path]: list }
   }
 
-  async _addItemElement(item, key) {
-    let list = duplicate(this.data.data[key])
+  async _addItemElement(itemData, key) {
+    let list = { ...this.data.data[key]} // shallow copy
     let i = 0
-    for (const k in item.data[key]) {
-      let e = duplicate(item.data[key][k])
-      e.itemid = item._id
-      e.uuid = key + '-' + i++ + '-' + item._id
+    for (const k in itemData.data[key]) {
+      let e = duplicate(itemData.data[key][k])
+      e.itemid = itemData._id
+      e.uuid = key + '-' + i++ + '-' + itemData._id
       if (!!e.otf) {
         let action = parselink(e.otf)
         if (!!action.action) {
@@ -1396,12 +1400,14 @@ export class GurpsActor extends Actor {
   // return the item data that was deleted (since it might be transferred)  
   async deleteEquipment(path) {    
     let eqt = GURPS.decode(this.data, path)
+    var item
     if (!!eqt.itemid) {
-      this.deleteOwnedItem(eqt.itemid)
+      item = await this.getOwnedItem(eqt.itemid)
+      await this.deleteOwnedItem(eqt.itemid)
       await this._removeItemAdditions(eqt.itemid)
     }
     await GURPS.removeKey(this, path)
-    return !!eqt.item ? JSON.parse(atou(eqt.item)) : undefined
+    return item
   }
   
   async _removeItemAdditions(itemid) {
@@ -1503,6 +1509,25 @@ export class GurpsActor extends Actor {
       })
       d.render(true)
     }
+  }
+  
+  applyLevelBonus(objectWithLevel) {
+    let level = parseInt(objectWithLevel.level)
+    for (const item of this.items.entries) {
+      if (item.data.data.equipped != false && !!item.data.data.bonuses) {
+        let bonuses = item.data.data.bonuses.split('\n')
+        for (const bonus of bonuses) {
+          let action = parselink(bonus)
+          if (!!action.action) {
+            if (action.action.type == 'attribute') {
+              if (objectWithLevel.relativelevel?.toUpperCase().startsWith(action.action.attrkey))
+                level += parseInt(action.action.mod)
+            }
+          }
+        }
+      }
+    }
+    return level
   }
 
   // This function merges the 'where' and 'dr' properties of this actor's hitlocations

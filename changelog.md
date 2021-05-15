@@ -21,6 +21,7 @@ This is what we are currently working on:
 - Fixed layout problems with Equipment and Other Equipment in the editor sheet.
 - Fixed \\ in OtF macros
 - Otf Macros now use their override text as the macro name
+- Added [M:attack] for only melee and [R:attack] for only ranged
 
 ## History
 
