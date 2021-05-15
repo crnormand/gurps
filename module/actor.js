@@ -1520,7 +1520,7 @@ export class GurpsActor extends Actor {
     }
   }
   
-  applyLevelBonus(objectWithLevel) {
+  applyLevelBonus(objectWithLevel, attr) {
     let level = parseInt(objectWithLevel.level)
     for (const item of this.items.entries) {
       if (item.data.data.equipped != false && !!item.data.data.bonuses) {
@@ -1528,8 +1528,14 @@ export class GurpsActor extends Actor {
         for (const bonus of bonuses) {
           let action = parselink(bonus)
           if (!!action.action) {
-            if (action.action.type == 'attribute') {
+            if (action.action.type == 'attribute') {  // skills affected by attribute changes
               if (objectWithLevel.relativelevel?.toUpperCase().startsWith(action.action.attrkey))
+                level += parseInt(action.action.mod)
+              if (attr == action.action.attrkey)    // allow melee and ranged to match to attr ('DX')
+                level += parseInt(action.action.mod) // attr could be string... or html junk... on string will match
+            }
+            if (action.action.type == 'skill-spell') {
+              if (objectWithLevel.name.match(makeRegexPatternFrom(action.action.name, false)))
                 level += parseInt(action.action.mod)
             }
           }
@@ -1538,6 +1544,27 @@ export class GurpsActor extends Actor {
     }
     return level
   }
+  applyAttributeBonus(path) {
+    let attr = getProperty(this.data, path)
+    let level = (!!attr.currentvalue) ? attr.currentvalue : attr.value
+    level = parseInt(level)
+    for (const item of this.items.entries) {
+      if (item.data.data.equipped != false && !!item.data.data.bonuses) {
+        let bonuses = item.data.data.bonuses.split('\n')
+        for (const bonus of bonuses) {
+          let action = parselink(bonus)
+          if (!!action.action) {
+            if (action.action.type == 'attribute') {  // skills affected by attribute changes
+              if (path.endsWith(action.action.attrkey))
+                level += parseInt(action.action.mod)
+            }
+          }
+        }
+      }
+    }
+    return level
+  }
+
 
   // This function merges the 'where' and 'dr' properties of this actor's hitlocations
   // with the roll value from the  HitLocations.hitlocationRolls, converting the

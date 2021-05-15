@@ -24,6 +24,7 @@ This is what we are currently working on:
 - Added [M:attack] for only melee and [R:attack] for only ranged
 - Fixed bug where Sum Weights on Equipment and Other Equipment displayed as 'NaN'.
 - Fixed bug(s) where pasted text may contain unicode single and double quotes (OtF and Mook generator)
+- Foundry Item bonuses can affect Attributes and Skills.  DX changes also affect melee and ranged skills
 
 ## History
 

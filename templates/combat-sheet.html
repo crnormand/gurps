@@ -111,32 +111,32 @@
           <div id='combat-attrs-1'>
             <div class="fieldblock">
               <div class="field noedit rollable" data-path="attributes.ST.value" data-otf='ST'>
-                {{data.attributes.ST.currentvalue}}
+                {{AttributeWithBonus @root 'data.attributes.ST'}}
               </div>
               <div class="label">{{localize "GURPS.attributesST"}}</div>
 
               <div class="field noedit rollable" data-path="attributes.DX.value" data-otf='DX'>
-                {{data.attributes.DX.value}}
+                {{AttributeWithBonus @root 'data.attributes.DX'}}
               </div>
               <div class="label">{{localize "GURPS.attributesDX"}}</div>
 
               <div class="field noedit rollable" data-path="attributes.IQ.value" data-otf='IQ'>
-                {{data.attributes.IQ.value}}
+                {{AttributeWithBonus @root 'data.attributes.IQ'}}
               </div>
               <div class="label">{{localize "GURPS.attributesIQ"}}</div>
 
               <div class="field noedit rollable" data-path="attributes.HT.value " data-otf='HT'>
-                {{data.attributes.HT.value}}
+               {{AttributeWithBonus @root 'data.attributes.HT'}}
               </div>
               <div class="label">{{localize "GURPS.attributesHT"}}</div>
               <hr>
               <div class="field noedit rollable" data-path="attributes.PER.value" data-otf='PER'>
-                {{data.attributes.PER.value}}
+                {{AttributeWithBonus @root 'data.attributes.PER'}}
               </div>
               <div class="label">{{localize "GURPS.attributesPER"}}</div>
 
               <div class="field rollable" data-path="attributes.WILL.value" data-otf='WILL'>
-                {{data.attributes.WILL.value}}
+                {{AttributeWithBonus @root 'data.attributes.WILL'}}
               </div>
               <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
               <hr>
@@ -247,7 +247,7 @@
               </div>
               <div class="usage">{{this.mode}}</div>
               <div class="level rollable" data-name="{{this.name}} ({{this.mode}})"
-                data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+                data-otf='A:"{{this.name}} ({{this.mode}})"'>{{LevelWithBonus @root this 'DX'}}</div>
               <div class="parry rollable" data-otf="Parry">{{this.parry}}</div>
               <div class="block rollable" data-otf="Block">{{this.block}}</div>
               <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
@@ -279,7 +279,7 @@
               </div>
               <div class="usage">{{this.mode}}</div>
               <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
-                data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+                data-otf='A:"{{this.name}} ({{this.mode}})"'>{{LevelWithBonus @root this 'DX'}}</div>
               <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'
                 data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
                 {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}

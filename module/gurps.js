@@ -683,7 +683,7 @@ async function performAction(action, actor, event, targets) {
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
     } else ui.notifications.warn('You must have a character selected')
 
-  let attr = action => {
+/*  let attr = action => {
     let target = action.target
     if (!target) target = this.resolve(action.path, actordata.data)
     target = parseInt(target)
@@ -692,7 +692,7 @@ async function performAction(action, actor, event, targets) {
       thing: this.i18n(action.path),
       target: target,
     }
-  }
+  } */
 
   let processLinked = tempAction => {
     let bestLvl = -99999

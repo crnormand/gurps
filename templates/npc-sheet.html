@@ -11,21 +11,21 @@
   </div>
   <div class="npc-input-attr gurps">
     <div class="npc-input-st npc-input-label">ST:</div>
-    <div class="npc-input-st-val rollable npc-sheet-centered" data-path="attributes.ST.currentvalue" data-otf='ST'>{{data.attributes.ST.currentvalue}}</div>
+    <div class="npc-input-st-val rollable npc-sheet-centered" data-path="attributes.ST.currentvalue" data-otf='ST'>{{AttributeWithBonus @root 'data.attributes.ST'}}</div>
     <div class="npc-input-dx npc-input-label">DX:</div>
-    <div class="npc-input-dx-val rollable npc-sheet-centered" data-path="attributes.DX.value" data-otf='DX'>{{data.attributes.DX.value}}</div>
+    <div class="npc-input-dx-val rollable npc-sheet-centered" data-path="attributes.DX.value" data-otf='DX'>{{AttributeWithBonus @root 'data.attributes.DX'}}</div>
     <div class="npc-input-iq npc-input-label">IQ:</div>
-    <div class="npc-input-iq-val rollable npc-sheet-centered" data-path="attributes.IQ.value" data-otf='IQ'>{{data.attributes.IQ.value}}</div>
+    <div class="npc-input-iq-val rollable npc-sheet-centered" data-path="attributes.IQ.value" data-otf='IQ'>{{AttributeWithBonus @root 'data.attributes.IQ'}</div>
     <div class="npc-input-ht npc-input-label">HT:</div>
-    <div class="npc-input-ht-val rollable npc-sheet-centered" data-path="attributes.HT.value" data-otf='HT'>{{data.attributes.HT.value}}</div>
+    <div class="npc-input-ht-val rollable npc-sheet-centered" data-path="attributes.HT.value" data-otf='HT'>{{AttributeWithBonus @root 'data.attributes.HT'}</div>
     <div class="npc-input-dmg npc-input-labelr">Dmg:</div>
     <div class="npc-input-dmg-val rollable npc-sheet-centered" data-path="swing" data-damage data-otf='{{data.swing}} dmg'">{{data.swing}}</div>
     <div class="npc-input-hp npc-input-label">HP:</div>
     <div class="npc-input-hp-val condition-block"><input class="npc-input-2 {{hpCondition data.HP "style"}}" name="data.HP.value" type="text" value="{{data.HP.value}}" data-dtype="Number" /></div>
     <div class="npc-input-will npc-input-label">Will:</div>
-    <div class="npc-input-will-val rollable npc-sheet-centered" data-path="attributes.WILL.value" data-otf='WILL'>{{data.attributes.WILL.value}}</div>
+    <div class="npc-input-will-val rollable npc-sheet-centered" data-path="attributes.WILL.value" data-otf='WILL'>{{AttributeWithBonus @root 'data.attributes.WILL'}</div>
     <div class="npc-input-per npc-input-label">PER:</div>
-    <div class="npc-input-per-val rollable npc-sheet-centered" data-path="attributes.PER.value" data-otf='PER'>{{data.attributes.PER.value}}</div>
+    <div class="npc-input-per-val rollable npc-sheet-centered" data-path="attributes.PER.value" data-otf='PER'>{{AttributeWithBonus @root 'data.attributes.PER'}</div>
     <div class="npc-input-fp npc-input-label">FP:</div>
     <div class="npc-input-fp-val condition-block"><input class="npc-input-2 {{fpCondition data.FP "style"}}" name="data.FP.value" type="text" value="{{data.FP.value}}" data-dtype="Number" /></div>
     <div class="npc-input-dodge npc-input-labelr">Dodge:</div>
@@ -65,7 +65,7 @@
       <div class="desc indent0 satisfiedY skldraggable dblclkedit" data-key="data.skills.{{@key}}">{{{gurpslink this.name}}}
         <div class="list_note satisfiedY skldraggable" data-key="data.skills.{{@key}}">{{{gurpslink this.notes @root}}}</div>
       </div>
-      <div class="sl satisfiedY rollable npc-sheet-centered" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
+      <div class="sl satisfiedY rollable npc-sheet-centered" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{LevelWithBonus @root this}}</div>
       <div></div>
       {{/each}}
     </div>
@@ -77,7 +77,7 @@
       <div class="desc gcs-edit dblclkedit" data-path="data.melee" data-key="data.melee.{{@key}}">{{{gurpslink this.name}}}
           <div class="list_note">{{{gurpslink this.notes}}}</div>
       </div>
-      <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+      <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{LevelWithBonus @root this 'DX'}}</div>
       <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
       {{/each}}
     </div>
@@ -90,7 +90,7 @@
         {{#if this.rof}} Rof:{{this.rof}}{{/if}}{{#if this.rcl}} Rcl:{{this.rcl}}{{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>
         </div>
-        <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+        <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{LevelWithBonus @root this 'DX'}}</div>
         <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
             {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}</div>
         <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
@@ -105,7 +105,7 @@
       <div class="desc indent0 spldraggable dblclkedit" data-key="data.spells.{{@key}}">{{{gurpslink this.name}}}
         <div class="list_note spldraggable" data-key="data.spells.{{@key}}">{{{gurpslink this.notes @root}}}</div>
       </div>
-      <div class="sl rollable npc-sheet-centered" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
+      <div class="sl rollable npc-sheet-centered" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{LevelWithBonus @root this}}</div>
       <div></div>
       {{/each}}
     </div>
