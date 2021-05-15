@@ -738,7 +738,7 @@ async function performAction(action, actor, event, targets) {
             name: tempAction.name,
             level: parseInt(tempAction.target),
           }
-        } else skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkill, !!tempAction.isSpell)
+        } else skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkillOnly, !!tempAction.isSpellOnly)
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
@@ -807,7 +807,7 @@ async function performAction(action, actor, event, targets) {
     if (!!actor) {
       let att = null
       prefix = ''
-      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
+      att = GURPS.findAttack(actordata, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
@@ -837,7 +837,7 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'attackdamage')
     if (!!actor) {
       let att = null
-      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
+      att = GURPS.findAttack(actordata, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
@@ -902,13 +902,13 @@ function findAdDisad(actor, sname) {
 }
 GURPS.findAdDisad = findAdDisad
 
-function findAttack(actor, sname) {
+function findAttack(actor, sname, isMelee = true, isRanged = true) {
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
-  t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
-  if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (isMelee) t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (isRanged && !t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
 }
 GURPS.findAttack = findAttack
@@ -1686,16 +1686,16 @@ Hooks.once('ready', async function () {
         let srcActor = game.actors.get(resp.srcactorid)
         Dialog.confirm({
           title: `Gift for ${destactor.name}!`,
-          content: `<p>${srcActor.name} wants to give you ${resp.item.name},</p><br>Ok?`,
+          content: `<p>${srcActor.name} wants to give you ${resp.itemData.name},</p><br>Ok?`,
           yes: () => {
-            destactor.addNewItem(resp.item)
+            destactor.addNewItemData(resp.itemData)
             game.socket.emit('system.gurps', {
               type: 'dragEquipment2',
               srckey: resp.srckey,
               srcuserid: resp.srcuserid,
               srcactorid: resp.srcactorid,
               destactorid: resp.destactorid,
-              itemname: resp.item.name
+              itemname: resp.itemData.name
            })
           },
           no: () => {
@@ -1703,7 +1703,7 @@ Hooks.once('ready', async function () {
               type: 'dragEquipment3',
               srcuserid: resp.srcuserid,
               destactorid: resp.destactorid,
-              itemname: resp.item.name
+              itemname: resp.itemData.name
            })
           }
         })

@@ -77,7 +77,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     // TODO get this from system property
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
-
+    sheetData.actor = this.actor
     return sheetData
   }
 
@@ -137,11 +137,14 @@ export class GurpsActorSheet extends ActorSheet {
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
           let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
+          var itemData
+          if (!!eqt.itemid) itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
           let newd = {
             actorid: this.actor.id, 
             type: type, 
             key: ev.currentTarget.dataset.key, 
-            itemid: eqt.itemid }
+            itemid: eqt.itemid,
+            itemData: itemData }
           if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
           return ev.dataTransfer.setData(
             'text/plain',
