@@ -58,8 +58,8 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  width: 11.2em;
-  height: 16.8em;
+  width: 10em;
+  height: 15em;
 }
 
 .gurps-app .img-display > img {
@@ -180,8 +180,8 @@
 }
 
 /* striped table row appearance */
-.gurps-2col > *:nth-child(4n + 3),
-.gurps-2col > *:nth-child(4n + 4),
+/* .gurps-2col > *:nth-child(4n + 3),
+.gurps-2col > *:nth-child(4n + 4), */
 .gurps-3col > *:nth-of-type(6n + 4),
 .gurps-3col > *:nth-of-type(6n + 5),
 .gurps-3col > *:nth-of-type(6n + 6) {
@@ -307,7 +307,7 @@
   color: dimgrey;
   border: none;
   border-radius: 0;
-  background: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0) !important;
 }
 
 ul#result-effects {
@@ -535,6 +535,7 @@ ul#result-effects li {
 
 .gurps-app button {
   text-transform: uppercase;
+  background: rgba(255, 255, 240, 0.8);
 }
 
 .gurps-app button.with-icon > i > span {
@@ -1726,4 +1727,44 @@ ul#result-effects li {
   font-size: unset;
   color: unset;
   text-shadow: 0 0 10px red;
+}
+
+.label-value-row label {
+  padding-left: 0.5em;
+  min-width: 8em;
+}
+
+.gurps-app h4.with-button {
+  padding-right: 1em;
+}
+
+.gurps-app h4.with-button .button {
+  float: right;
+  font-size: small;
+}
+
+.gurps-app h4.with-button .button:hover {
+  text-shadow: 0 0 10px gold;
+  color: red;
+}
+
+.gurps-2col.right-bias,
+.label-value-row.right-bias {
+  grid-template-columns: auto 1fr;
+}
+
+.gurps-2col .full-width {
+  grid-column: 1 / span 2;
+}
+
+.gurps-2col.no-gap {
+  gap: 0;
+}
+
+.item-editor input.title {
+  font-size: large;
+}
+
+.gurps-app .vertical-gap {
+  height: 1em;
 }

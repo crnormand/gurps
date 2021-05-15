@@ -1,5 +1,6 @@
 'use strict'
 import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
+import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
@@ -30,32 +31,17 @@ export class GurpsItemSheet extends ItemSheet {
     this.html = html
     super.activateListeners(html)
 
-    html.find('#itemname').change(ev =>
-      this.item.update({
-        'data.eqt.name': ev.currentTarget.value,
-        name: ev.currentTarget.value,
-      })
-    )
-    html.find('.count').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
+    html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
+    html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
-    html.find('#item1').click(ev => {
+    html.find('#add-melee').click(ev => {
       ev.preventDefault()
       let m = new Melee()
-      m.name = this.item.name
-      m.level = 14
-      m.damage = '2d cut'
-      m.mode = 'swing'
-      m.otf = 'DX-1'
-      m.weight = 99
-      m.techlevel = 'tl99'
-      m.cost = 99
-      m.reach = '99'
-      m.parry = '9'
-      m.block = '8'
       let melee = this.item.data.data.melee
       GURPS.put(melee, m)
       this.item.update({ 'data.melee': melee })
     })
+
     html.find('#item2').click(ev => {
       ev.preventDefault()
       let r = new Ranged()
@@ -76,6 +62,7 @@ export class GurpsItemSheet extends ItemSheet {
       GURPS.put(list, r)
       this.item.update({ 'data.ranged': list })
     })
+
     html.find('#item3').click(ev => {
       ev.preventDefault()
       let r = new Skill()
