@@ -135,13 +135,19 @@ export class GurpsActorSheet extends ActorSheet {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
-          let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
+          let eqtkey = ev.currentTarget.dataset.key
+          let eqt = GURPS.decode(this.actor.data, eqtkey)   // FYI, may not actually be Equipment
+          if (!!eqt.eqtkey) {
+            eqtkey = eqt.eqtkey
+            eqt = GURPS.decode(this.actor.data, eqtkey)   // Features added by equipment will point to the equipment
+            type = 'equipment'
+          }
           var itemData
           if (!!eqt.itemid) itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
           let newd = {
             actorid: this.actor.id, 
             type: type, 
-            key: ev.currentTarget.dataset.key, 
+            key: eqtkey, 
             itemid: eqt.itemid,
             itemData: itemData }
           if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
@@ -158,6 +164,9 @@ export class GurpsActorSheet extends ActorSheet {
     makelistdrag('.skldraggable', 'skill')
     makelistdrag('.spldraggable', 'spell')
     makelistdrag('.notedraggable', 'note')
+
+    makelistdrag('.meleedraggable', 'melee')
+    makelistdrag('.rangeddraggable', 'ranged')
 
     html.find('input[name="data.HP.value"]').keypress(ev => {
       if (ev.which === 13) ev.preventDefault()

@@ -332,7 +332,7 @@
         <div></div>
 
         {{#each data.melee as | this key |}}
-          <div class="desc gcs-edit dblclkedit" data-key="data.melee.{{@key}}" data-path="data.melee">
+          <div class="desc gcs-edit dblclkedit meleedraggable" data-key="data.melee.{{@key}}" data-path="data.melee">
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
@@ -366,7 +366,7 @@
         <div class="st header">{{localize "GURPS.attributesST"}}</div>
 
         {{#each data.ranged as | this key |}}
-          <div class="desc dblclkedit" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
+          <div class="desc dblclkedit rangeddraggable" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>

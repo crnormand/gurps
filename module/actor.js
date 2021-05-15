@@ -1265,7 +1265,7 @@ export class GurpsActor extends Actor {
     let srcActor = game.actors.get(dragData.actorid)
     if (!!this.owner && !!srcActor.owner) {  // same owner
       let item = await srcActor.deleteEquipment(dragData.key)
-      await this.addNewItem(item)
+      await this.addNewItemData(item)
     } else {  // different owners
       let eqt = GURPS.decode(srcActor.data, dragData.key)
       let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
@@ -1304,7 +1304,8 @@ export class GurpsActor extends Actor {
   
   // create a new embedded item based on this item data and place in the carried list
   async addNewItemData(itemData) {
-    itemData.data.equipped = true
+    if (!!itemData.data.data) itemData.data.data.equipped = true
+    else itemData.data.equipped = true
     let localItemData = await this.createOwnedItem(itemData)   // add a local Foundry Item based on some Item data
     await this.addItemData(localItemData)
   }
@@ -1312,18 +1313,19 @@ export class GurpsActor extends Actor {
   // Add a new equipment based on this Item data
   async addItemData(itemData) {
     let commit = {}
-    commit = {...commit, ...this._addNewItemEquipment(itemData)}
-    commit = {...commit, ...await this._addItemAdditions(itemData)}
+    let { eqtkey, eqtcommit } = this._addNewItemEquipment(itemData)
+    commit = {...commit, ...eqtcommit}
+    commit = {...commit, ...await this._addItemAdditions(itemData, eqtkey)}
     await this.update(commit)
   }
   
-  async _addItemAdditions(itemData) {
+  async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
-    commit =  {...commit, ...await this._addItemElement(itemData, "melee")}
-    commit =  {...commit, ...await this._addItemElement(itemData, "ranged")}
-    commit =  {...commit, ...await this._addItemElement(itemData, "ads")}
-    commit =  {...commit, ...await this._addItemElement(itemData, "skills")}
-    commit =  {...commit, ...await this._addItemElement(itemData, "spells")}
+    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "melee")}
+    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "ranged")}
+    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "ads")}
+    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "skills")}
+    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "spells")}
     return commit
   }
   
@@ -1331,17 +1333,19 @@ export class GurpsActor extends Actor {
   async updateItemAdditionsBasedOn(eqt, sourcePath, targetPath) {
     if (sourcePath.includes('.carried') && targetPath.includes('.other'))
       await this._removeItemAdditionsBasedOn(eqt)
-    if (sourcePath.includes('.other') && targetPath.includes('.carried'))
-      await this._addItemAdditionsBasedOn(eqt)
+    if (sourcePath.includes('.other') && targetPath.includes('.carried')) {
+      await this._addItemAdditionsBasedOn(eqt, targetPath)
+    }
     }
   
   // moving from other to carried
-  async _addItemAdditionsBasedOn(eqt) {
+  async _addItemAdditionsBasedOn(eqt, eqtkey) {
     if (!eqt.itemid) return
     let item = await this.getOwnedItem(eqt.itemid)
-    item.data.data.equipped = true
+    if (!!item.data.data) item.data.data.equipped = true
+    else item.data.equipped = true
     await this.updateOwnedItem(item.data)
-    let commit = await this._addItemAdditions(item.data)
+    let commit = await this._addItemAdditions(item.data, eqtkey)
     await this.update(commit)
   }
 
@@ -1350,7 +1354,8 @@ export class GurpsActor extends Actor {
     if (!eqt.itemid) return
     await this._removeItemAdditions(eqt.itemid)
     let item = await this.getOwnedItem(eqt.itemid)
-    item.data.data.equipped = false
+    if (!!item.data.data) item.data.data.equipped = false
+    else item.data.equipped = false
     await this.updateOwnedItem(item.data)
   }
   
@@ -1362,17 +1367,21 @@ export class GurpsActor extends Actor {
     eqt.itemid = itemData._id
     eqt.uuid = 'item-' + itemData._id
     Equipment.calc(eqt)
-    GURPS.put(list, eqt)
-    return { ['data.equipment.' + path]: list }
+    let eqtkey = GURPS.put(list, eqt)
+    return { 
+      eqtkey: 'data.equipment.' + path + '.' + eqtkey,
+      eqtcommit:  { ['data.equipment.' + path]: list }
+    }
   }
 
-  async _addItemElement(itemData, key) {
+  async _addItemElement(itemData, eqtkey, key) {
     let list = { ...this.data.data[key]} // shallow copy
     let i = 0
     for (const k in itemData.data[key]) {
       let e = duplicate(itemData.data[key][k])
       e.itemid = itemData._id
       e.uuid = key + '-' + i++ + '-' + itemData._id
+      e.eqtkey = eqtkey
       if (!!e.otf) {
         let action = parselink(e.otf)
         if (!!action.action) {
@@ -1460,8 +1469,8 @@ export class GurpsActor extends Actor {
     if (targetkey.endsWith('.other') || targetkey.endsWith('.carried')) {
       let target = duplicate(GURPS.decode(this.data, targetkey))
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
-      GURPS.put(target, object)
-      await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+      let eqtkey = GURPS.put(target, object)
+      await this.updateItemAdditionsBasedOn(object, srckey, targetkey  + "." + eqtkey)
       await this.update({ [targetkey]: target })
       if (isSrcFirst) await GURPS.removeKey(this, srckey)
     } else {
