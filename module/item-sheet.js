@@ -8,7 +8,8 @@ export class GurpsItemSheet extends ItemSheet {
       classes: ['sheet', 'item'],
       template: 'systems/gurps/templates/item-sheet.html',
       width: 620,
-      height: 200,
+      height: 'auto',
+      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
     })
   }
 

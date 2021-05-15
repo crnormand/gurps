@@ -1705,3 +1705,25 @@ ul#result-effects li {
 .gurps-chat-message .modifier-list li {
   margin-top: 0.35em;
 }
+
+.sheet nav.gurps-tabs {
+  border-top: none;
+}
+
+.sheet nav.gurps-tabs a {
+  font-weight: bold;
+}
+
+.gurps-tabs .item {
+  font-size: 90%;
+  color: dimgrey;
+  text-overflow: clip;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.gurps-tabs .item.active {
+  font-size: unset;
+  color: unset;
+  text-shadow: 0 0 10px red;
+}

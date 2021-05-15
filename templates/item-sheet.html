@@ -1,156 +1,321 @@
-<form class='gurps-app' autocomplete='off'>
-  <div style='border: none;'>
-    <h2><i class='fa fa-cogs' aria-hidden='true'></i> {{i18n "GURPS.equipmentEditor" "Equipment Editor"}}</h2>
+<form class="gurps-app" autocomplete="off">
+  <div style="border: none">
+    <h2><i class="fa fa-cogs" aria-hidden="true"></i> {{i18n "GURPS.itemEditor" "Equipment Editor"}}</h2>
 
-    <div style='display: grid; grid-template-columns: auto 1fr; gap: 0.5em;'>
-      <div style='grid-column: 1 / span 2;'>
-        <input id='itemname' type='text' value='{{name}}' name=' name'
-          placeholder='{{i18n "GURPS.equipmentName" "Equipment Name"}}' />
+    <div style="display: grid; grid-template-columns: auto 1fr; gap: 0.5em">
+      <div style="grid-column: 1 / span 2">
+        <input id="itemname" type="text" value="{{name}}" name="name" style="font-size: large"
+          placeholder='{{i18n "GURPS.itemName" "Equipment Name"}}' />
       </div>
 
-      <div class='img-display' style='background-image: url({{image}}); border: solid 1px black;'>
-        <img class='profile-img' src='{{ image }}' data-edit='image' title='{{#if name}}{{name}}{{else}}Image{{/if}}' />
+      <div class="img-display" style="background-image: url({{image}}); border: solid 1px black;">
+        <img class="profile-img" src="{{ image }}" data-edit="image" title="{{#if name}}{{name}}{{else}}Image{{/if}}" />
       </div>
 
-      <div class='gurps-group'>
-        <h4>{{i18n "GURPS.equipmentAttributes" "Attributes"}}</h4>
+      <div class="gurps-group">
+        <h4>{{i18n "GURPS.itemAttributes" "Attributes"}}</h4>
 
-        <div style='display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em;'>
-          <div class='label-value-row' style='grid-template-columns: auto 1fr;'>
-            <label>{{i18n "GURPS.equipmentQuantity" "Quantity"}}: </label>
-            <div class='icon-prefix'>
-              <input id='quantity' class='digits-only' type='text' value='{{data.eqt.f_count}}'
-                name='data.eqt.f_count' />
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5em">
+          <div class="label-value-row" style="grid-template-columns: auto 1fr">
+            <label>{{i18n "GURPS.itemQuantity" "Quantity"}}: </label>
+            <div class="icon-prefix">
+              <input id="quantity" class="digits-only" type="text" value="{{data.eqt.f_count}}"
+                name="data.eqt.f_count" />
             </div>
-            <label>{{i18n "GURPS.equipmentCost" "Cost"}}: </label>
-            <div class='icon-prefix'>
-              <input id='cost' type='number' class='digits-only' value='{{data.eqt.cost}}' />
+            <label>{{i18n "GURPS.itemCost" "Cost"}}: </label>
+            <div class="icon-prefix">
+              <input id="cost" type="number" class="digits-only" value="{{data.eqt.cost}}" />
               <span>$</span>
             </div>
-            <label>{{i18n "GURPS.equipmentWeight" "Weight"}}: </label>
-            <div class='icon-prefix'>
-              <input id='weight' type='number' class='digits-only' value='{{data.eqt.weight}}' />
+            <label>{{i18n "GURPS.itemWeight" "Weight"}}: </label>
+            <div class="icon-prefix">
+              <input id="weight" type="number" class="digits-only" value="{{data.eqt.weight}}" />
               <span><i class="fas fa-weight-hanging"></i></span>
             </div>
           </div>
-          <div class='label-value-row' style='grid-template-columns: auto 1fr;'>
-            <label>{{i18n "GURPS.equipmentUses" "Uses"}}: </label>
-            <div class='icon-prefix'>
-              <input id='uses' type="number" class="digits-only" value="{{data.eqt.uses}}" name="data.eqt.uses" />
+          <div class="label-value-row" style="grid-template-columns: auto 1fr">
+            <label>{{i18n "GURPS.itemUses" "Uses"}}: </label>
+            <div class="icon-prefix">
+              <input id="uses" type="number" class="digits-only" value="{{data.eqt.uses}}" name="data.eqt.uses" />
             </div>
-            <label>{{i18n "GURPS.equipmentMaxUses" "Max Uses"}}: </label>
-            <div class='icon-prefix'>
-              <input id='maxuses' type="number" class='digits-only' value="{{data.eqt.maxuses}}"
+            <label>{{i18n "GURPS.itemMaxUses" "Max Uses"}}: </label>
+            <div class="icon-prefix">
+              <input id="maxuses" type="number" class="digits-only" value="{{data.eqt.maxuses}}"
                 name="data.eqt.maxuses" />
             </div>
-            <label>{{i18n "GURPS.equipmentPageRef" "Page Ref"}}: </label>
-            <div class='icon-prefix'>
+            <label>{{i18n "GURPS.itemPageRef" "Page Ref"}}: </label>
+            <div class="icon-prefix">
               <input id="pageref" type="text" value="{{data.eqt.pageref}}" name="data.eqt.pageref" />
             </div>
           </div>
-          <div style='grid-column: 1 / span 2;'>
+          <div style="grid-column: 1 / span 2">
             <strong>{{i18n "GURPS.notes" "Notes"}}</strong>
-            <textarea id='notes' rows="4" name="data.eqt.notes" style='width: 100%;'>{{data.eqt.notes}}</textarea>
+            <textarea id="notes" rows="4" name="data.eqt.notes" style="width: 100%">{{data.eqt.notes}}</textarea>
           </div>
         </div>
       </div>
     </div>
 
-    <div class='inputs'>
+    <hr />
 
-      <div>Melee:</div>
-      <div></div>
-      {{#each data.melee as | this key |}}
-        <div class="label">Melee Weapon</div>
-        <div></div>
-        <div class="label">Usage</div>
-        <input class="gcs-input-sm8" type="text" value="{{mode}}" name="data.melee.{{key}}.mode" />
-        <div class="label">On-the-Fly</div>
-        <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.melee.{{key}}.otf" />]</span>
-        <div class="label">Skill lvl</div>
-        <input class="gcs-input-sm8" type="text" value="{{level}}" data-dtype="Number"
-          name="data.melee.{{key}}.level" />
-        <div class="label">Parry</div>
-        <div><input class="parry gcs-input-sm8" type="text" value="{{parry}}" name="data.melee.{{key}}.parry" /></div>
-        <div class="label">Block</div>
-        <div><input class="block gcs-input-sm8" type="text" value="{{block}}" name="data.melee.{{key}}.block" /></div>
-        <div class="label">Damage</div>
-        <div><span><input class="damage gcs-input-sm8" type="text" value="{{damage}}"
-              name="data.melee.{{key}}.damage" />
-            Dmg types: burn, cor, cr, cut, fat, imp, pi-, pi, pi+, pi++, tox, dmg</span></div>
-        <div class="label">Reach</div>
-        <div><input class="reach gcs-input-sm8" type="text" value="{{reach}}" name="data.melee.{{key}}.reach" /></div>
-        <div class="label">ST</div>
-        <div><input class="st gcs-input-sm8" type="text" value="{{st}}" name="data.melee.{{key}}.st" /></div>
-        <div class="label">Notes</div>
-        <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5"
-          name="data.melee.{{key}}.notes">{{notes}}</textarea>
-      {{/each}}
+    <div class="gurps-group">
+      <h4>{{i18n "GURPS.itemFeatures" "Features"}}</h4>
 
-      <div>Ranged:</div>
-      <div></div>
-      {{#each data.ranged as | this key |}}
-        <div class="label">Usage</div>
-        <input class="usage gcs-input-sm8" type="text" value="{{mode}}" name="data.ranged.{{key}}.mode" />
-        <div class="label">On-the-Fly</div>
-        <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.ranged.{{key}}.otf" />]</span>
-        <div class="label">Skill lvl</div>
-        <input class="level gcs-input-sm8" type="text" value="{{level}}" data-dtype="Number"
-          name="data.ranged.{{key}}.level" />
-        <div class="label">Acc</div>
-        <div><input class="acc gcs-input-sm8" type="text" value="{{acc}}" data-dtype="Number"
-            name="data.ranged.{{key}}.acc" /></div>
-        <div class="label">Damage</div>
-        <div><input class="damage gcs-input-sm8" type="text" value="{{damage}}" name="data.ranged.{{key}}.damage" />
-          Dmg
-          types: burn, cor, cr, cut, fat, imp, pi-, pi, pi+, pi++, tox, dmg</div>
-        <div class="label">Range</div>
-        <div><input class="range gcs-input-sm8" type="text" value="{{range}}" name="data.ranged.{{key}}.range" />
+      <div class='flexcol'>
+        <nav class='sheet-tabs tabs gurps-tabs' data-group='sections'>
+          <a class='item' data-tab='melee-tab'><i class="fas fa-fist-raised"></i> Melee Attacks
+            {{#if (length data.melee)}}({{length data.melee}}){{/if}}</a>
+          <a class='item' data-tab='range-tab'><i class="fas fa-fighter-jet"></i> Ranged Attacks</a>
+          <a class='item' data-tab='bonus-tab'><i class="fas fa-plus"></i> Bonuses</a>
+          <a class='item' data-tab='spell-tab'><i class="fas fa-magic"></i> Spells</a>
+          <a class='item' data-tab='skill-tab'><i class="fas fa-snowboarding"></i> Skills
+            {{#if (length data.skills)}}({{length data.skills}}){{/if}}</a>
+        </nav>
+
+        <section id='config-tabs' class='content'>
+          <!-- melee tab -->
+          <div class='tab' data-tab='melee-tab' data-group='sections'>
+            <div>
+              {{#each data.melee as | this key |}}
+                <div class="label">Melee Weapon</div>
+                <div></div>
+                <div class="label">Usage</div>
+                <input class="gcs-input-sm8" type="text" value="{{mode}}" name="data.melee.{{key}}.mode" />
+                <div class="label">On-the-Fly</div>
+                <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}"
+                    name="data.melee.{{key}}.otf" />]</span>
+                <div class="label">Skill lvl</div>
+                <input class="gcs-input-sm8" type="text" value="{{level}}" data-dtype="Number"
+                  name="data.melee.{{key}}.level" />
+                <div class="label">Parry</div>
+                <div>
+                  <input class="parry gcs-input-sm8" type="text" value="{{parry}}" name="data.melee.{{key}}.parry" />
+                </div>
+                <div class="label">Block</div>
+                <div>
+                  <input class="block gcs-input-sm8" type="text" value="{{block}}" name="data.melee.{{key}}.block" />
+                </div>
+                <div class="label">Damage</div>
+                <div>
+                  <span><input class="damage gcs-input-sm8" type="text" value="{{damage}}"
+                      name="data.melee.{{key}}.damage" />
+                    Dmg types: burn, cor, cr, cut, fat, imp, pi-, pi, pi+, pi++, tox, dmg</span>
+                </div>
+                <div class="label">Reach</div>
+                <div>
+                  <input class="reach gcs-input-sm8" type="text" value="{{reach}}" name="data.melee.{{key}}.reach" />
+                </div>
+                <div class="label">ST</div>
+                <div><input class="st gcs-input-sm8" type="text" value="{{st}}" name="data.melee.{{key}}.st" /></div>
+                <div class="label">Notes</div>
+                <textarea class="notes gcs-input-ta" style="width: 460px; height: 90px !important" rows="5"
+                  name="data.melee.{{key}}.notes">
+                {{notes}}</textarea>
+              {{/each}}
+
+            </div>
+          </div>
+
+          <!-- range tab -->
+          <div class='tab' data-tab='range-tab' data-group='sections'>
+            <div>Range Stuff</div>
+          </div>
+
+          <!-- bonus -->
+          <div class='tab' data-tab='bonus-tab' data-group='sections'>
+            <div>Bonus Stuff</div>
+          </div>
+
+          <!-- Spells -->
+          <div class='tab' data-tab='spell-tab' data-group='sections'>
+            <div>Spell Stuff</div>
+          </div>
+
+          <!-- Skills -->
+          <div class='tab' data-tab='skill-tab' data-group='sections'>
+            <div>Skill Stuff</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- <div class="tabs">
+        <div class="tab">
+          <input type="radio" id="melee-tab" name="tab-group-1" checked />
+          <label for="melee-tab">{{i18n "GURPS.itemMeleeAttacks" "Melee Attacks"}}</label>
+          <div class="content">
+            {{#each data.melee as | this key |}}
+            <div class="label">Melee Weapon</div>
+            <div></div>
+            <div class="label">Usage</div>
+            <input class="gcs-input-sm8" type="text" value="{{mode}}" name="data.melee.{{key}}.mode" />
+            <div class="label">On-the-Fly</div>
+            <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.melee.{{key}}.otf" />]</span>
+            <div class="label">Skill lvl</div>
+            <input
+              class="gcs-input-sm8"
+              type="text"
+              value="{{level}}"
+              data-dtype="Number"
+              name="data.melee.{{key}}.level"
+            />
+            <div class="label">Parry</div>
+            <div>
+              <input class="parry gcs-input-sm8" type="text" value="{{parry}}" name="data.melee.{{key}}.parry" />
+            </div>
+            <div class="label">Block</div>
+            <div>
+              <input class="block gcs-input-sm8" type="text" value="{{block}}" name="data.melee.{{key}}.block" />
+            </div>
+            <div class="label">Damage</div>
+            <div>
+              <span
+                ><input class="damage gcs-input-sm8" type="text" value="{{damage}}" name="data.melee.{{key}}.damage" />
+                Dmg types: burn, cor, cr, cut, fat, imp, pi-, pi, pi+, pi++, tox, dmg</span
+              >
+            </div>
+            <div class="label">Reach</div>
+            <div>
+              <input class="reach gcs-input-sm8" type="text" value="{{reach}}" name="data.melee.{{key}}.reach" />
+            </div>
+            <div class="label">ST</div>
+            <div><input class="st gcs-input-sm8" type="text" value="{{st}}" name="data.melee.{{key}}.st" /></div>
+            <div class="label">Notes</div>
+            <textarea
+              class="notes gcs-input-ta"
+              style="width: 460px; height: 90px !important"
+              rows="5"
+              name="data.melee.{{key}}.notes"
+            >
+{{notes}}</textarea
+            >
+            {{/each}}
+          </div>
         </div>
-        <div class="label">RoF</div>
-        <div><input class="rof gcs-input-sm8" type="text" value="{{rof}}" name="data.ranged.{{key}}.rof" /></div>
-        <div class="label">Shots</div>
-        <div><input class="shots gcs-input-sm8" type="text" value="{{shots}}" name="data.ranged.{{key}}.shots" />
+
+        <div class="tab">
+          <input type="radio" id="ranged-tab" name="tab-group-1" />
+          <label for="ranged-tab">{{i18n "GURPS.itemRangedAttacks" "Ranged Attacks"}}</label>
+          <div class="content">
+            {{#each data.ranged as | this key |}}
+            <div class="label">Usage</div>
+            <input class="usage gcs-input-sm8" type="text" value="{{mode}}" name="data.ranged.{{key}}.mode" />
+            <div class="label">On-the-Fly</div>
+            <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.ranged.{{key}}.otf" />]</span>
+            <div class="label">Skill lvl</div>
+            <input
+              class="level gcs-input-sm8"
+              type="text"
+              value="{{level}}"
+              data-dtype="Number"
+              name="data.ranged.{{key}}.level"
+            />
+            <div class="label">Acc</div>
+            <div>
+              <input
+                class="acc gcs-input-sm8"
+                type="text"
+                value="{{acc}}"
+                data-dtype="Number"
+                name="data.ranged.{{key}}.acc"
+              />
+            </div>
+            <div class="label">Damage</div>
+            <div>
+              <input class="damage gcs-input-sm8" type="text" value="{{damage}}" name="data.ranged.{{key}}.damage" />
+              Dmg types: burn, cor, cr, cut, fat, imp, pi-, pi, pi+, pi++, tox, dmg
+            </div>
+            <div class="label">Range</div>
+            <div>
+              <input class="range gcs-input-sm8" type="text" value="{{range}}" name="data.ranged.{{key}}.range" />
+            </div>
+            <div class="label">RoF</div>
+            <div><input class="rof gcs-input-sm8" type="text" value="{{rof}}" name="data.ranged.{{key}}.rof" /></div>
+            <div class="label">Shots</div>
+            <div>
+              <input class="shots gcs-input-sm8" type="text" value="{{shots}}" name="data.ranged.{{key}}.shots" />
+            </div>
+            <div class="label">Bulk</div>
+            <div>
+              <input
+                class="bulk gcs-input-sm8"
+                type="text"
+                value="{{bulk}}"
+                data-dtype="Number"
+                name="data.ranged.{{key}}.bulk"
+              />
+            </div>
+            <div class="label">Rcl</div>
+            <div><input class="rcl gcs-input-sm8" type="text" value="{{rcl}}" name="data.ranged.{{key}}.rcl" /></div>
+            <div class="label">ST</div>
+            <div><input class="st gcs-input-sm8" type="text" value="{{st}}" name="data.ranged.{{key}}.st" /></div>
+            <div class="label">Notes</div>
+            <textarea
+              class="notes gcs-input-ta"
+              style="width: 460px; height: 90px !important"
+              rows="5"
+              name="data.ranged.{{key}}.notes"
+            >
+{{notes}}</textarea
+            >
+            {{/each}}
+          </div>
         </div>
-        <div class="label">Bulk</div>
-        <div><input class="bulk gcs-input-sm8" type="text" value="{{bulk}}" data-dtype="Number"
-            name="data.ranged.{{key}}.bulk" /></div>
-        <div class="label">Rcl</div>
-        <div><input class="rcl gcs-input-sm8" type="text" value="{{rcl}}" name="data.ranged.{{key}}.rcl" /></div>
-        <div class="label">ST</div>
-        <div><input class="st gcs-input-sm8" type="text" value="{{st}}" name="data.ranged.{{key}}.st" /></div>
-        <div class="label">Notes</div>
-        <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5"
-          name="data.ranged.{{key}}.notes">{{notes}}</textarea>
-      {{/each}}
 
-      <div>Skills:</div>
-      <div></div>
-      {{#each data.skills as | this key |}}
-        <div class="label">Name of Skill</div>
-        <input class="name gcs-input" type="text" value="{{this.name}}" name="data.skills.{{key}}.name">
-        <div class="label">On-the-Fly</div>
-        <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.skills.{{key}}.otf" />]</span>
-        <div class="label">Level</div>
-        <input class="level gcs-input-sm8" type="text" value="{{level}}" name="data.skills.{{key}}.level" />
-        <div class="label">RSL</div>
-        <div><input class="relativelevel gcs-input-sm5" type="text" value="{{relativelevel}}"
-            name="data.skills.{{key}}.relativelevel" /></div>
-        <div class="label">Pts</div>
-        <input class="points gcs-input-sm3" type="text" value="{{points}}" data-dtype="Number"
-          name="data.skills.{{key}}.points" />
-        <div class="label">Notes</div>
-        <textarea class="notes gcs-input-ta" style="width: 460px; height:90px !important;" rows="5"
-          name="data.skills.{{key}}.notes">{{notes}}</textarea>
-        <div class="label">Page Ref</div>
-        <input class="pageref gcs-input-sm5" type="text" value="{{pageref}}" name="data.skills.{{key}}.pageref" />
-      {{/each}}
+        <div class="tab">
+          <input type="radio" id="bonuses-tab" name="tab-group-1" />
+          <label for="bonuses-tab">{{i18n "GURPS.itemBonuses" "Bonuses"}}</label>
+          <div class="content">stuff</div>
+        </div>
 
+        <div class="tab">
+          <input type="radio" id="skills-tab" name="tab-group-1" />
+          <label for="skills-tab">{{i18n "GURPS.itemSkills" "Skills"}}</label>
+          <div class="content">
+            {{#each data.skills as | this key |}}
+            <div class="label">Name of Skill</div>
+            <input class="name gcs-input" type="text" value="{{this.name}}" name="data.skills.{{key}}.name" />
+            <div class="label">On-the-Fly</div>
+            <span>[<input class="gcs-input-sm25" type="text" value="{{otf}}" name="data.skills.{{key}}.otf" />]</span>
+            <div class="label">Level</div>
+            <input class="level gcs-input-sm8" type="text" value="{{level}}" name="data.skills.{{key}}.level" />
+            <div class="label">RSL</div>
+            <div>
+              <input
+                class="relativelevel gcs-input-sm5"
+                type="text"
+                value="{{relativelevel}}"
+                name="data.skills.{{key}}.relativelevel"
+              />
+            </div>
+            <div class="label">Pts</div>
+            <input
+              class="points gcs-input-sm3"
+              type="text"
+              value="{{points}}"
+              data-dtype="Number"
+              name="data.skills.{{key}}.points"
+            />
+            <div class="label">Notes</div>
+            <textarea
+              class="notes gcs-input-ta"
+              style="width: 460px; height: 90px !important"
+              rows="5"
+              name="data.skills.{{key}}.notes"
+            >
+{{notes}}</textarea
+            >
+            <div class="label">Page Ref</div>
+            <input class="pageref gcs-input-sm5" type="text" value="{{pageref}}" name="data.skills.{{key}}.pageref" />
+            {{/each}}
+          </div>
+        </div>
 
+        <div class="tab">
+          <input type="radio" id="spells-tab" name="tab-group-1" />
+          <label for="spells-tab">{{i18n "GURPS.itemSpells" "Spells"}}</label>
+          <div class="content">stuff</div>
+        </div> -->
     </div>
-    <div style="display:flex">
-      <div class="npc-input-create"><button id="item1" type="button">Add Melee Weapon</button></div>
-      <div class="npc-input-create"><button id="item2" type="button">Add Ranged Weapon</button></div>
-      <div class="npc-input-create"><button id="item3" type="button">Add Skill</button></div>
-    </div>
+  </div>
+  </div>
 </form>
