@@ -11,6 +11,7 @@ export class GurpsItemSheet extends ItemSheet {
       template: 'systems/gurps/templates/item-sheet.html',
       width: 620,
       height: 'auto',
+      resizable: false,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
     })
   }

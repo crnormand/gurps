@@ -1724,7 +1724,7 @@ ul#result-effects li {
 }
 
 .gurps-tabs .item.active {
-  font-size: unset;
+  font-size: large;
   color: unset;
   text-shadow: 0 0 10px red;
 }
@@ -1744,7 +1744,7 @@ ul#result-effects li {
 }
 
 .gurps-app h4.with-button .button:hover {
-  text-shadow: 0 0 10px gold;
+  text-shadow: 0 0 10px white;
   color: red;
 }
 
