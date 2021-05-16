@@ -1,6 +1,7 @@
 'use strict'
 import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
+import { objectToArray, arrayToObject } from '../lib/utilities.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
@@ -37,28 +38,20 @@ export class GurpsItemSheet extends ItemSheet {
     html.find('#add-melee').click(ev => {
       ev.preventDefault()
       let m = new Melee()
-      let melee = this.item.data.data.melee
+      m.name = this.item.name
+      let melee = this.item.data.data.melee || {}
       GURPS.put(melee, m)
       this.item.update({ 'data.melee': melee })
     })
 
-    html.find('#item2').click(ev => {
+    html.find('.delete.button').click(this._deleteKey.bind(this))
+
+    html.find('#add-ranged').click(ev => {
       ev.preventDefault()
       let r = new Ranged()
       r.name = this.item.name
-      r.otf = 'DX-2'
-      r.type = 'DX/E'
-      r.bulk = 1
       r.legalityclass = 'lc'
-      r.ammo = ''
-      r.mode = ''
-      r.level = 13
-      r.damage = '1d+1 imp'
-      r.acc = 3
-      r.rof = 1
-      r.shots = ''
-      r.rcl = ''
-      let list = this.item.data.data.ranged
+      let list = this.item.data.data.ranged || {}
       GURPS.put(list, r)
       this.item.update({ 'data.ranged': list })
     })
@@ -74,6 +67,33 @@ export class GurpsItemSheet extends ItemSheet {
       GURPS.put(list, r)
       this.item.update({ 'data.skills': list })
     })
+  }
+
+  async _deleteKey(ev) {
+    let key = ev.currentTarget.getAttribute('name')
+    let path = ev.currentTarget.getAttribute('data-path')
+    let temp = path.split('.').reduce(function (a, b) {
+      return a && a[b]
+    }, this.item.data)
+
+    // make a copy
+    let feature = { ...temp }
+
+    // remove the key
+    delete feature[`${key}`]
+
+    // reorder the keys
+    feature = arrayToObject(objectToArray(feature), 5)
+
+    // delete
+    let toDelete = path.substr(0, path.lastIndexOf('.')) + '.-=' + path.substr(path.lastIndexOf('.') + 1)
+    let update = { [toDelete]: null }
+    await this.item.update(update)
+
+    // update
+    update = { [path]: feature }
+    await this.item.update(update)
+    this.render(false)
   }
 
   close() {

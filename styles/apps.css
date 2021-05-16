@@ -1751,6 +1751,7 @@ ul#result-effects li {
 .gurps-2col.right-bias,
 .label-value-row.right-bias {
   grid-template-columns: auto 1fr;
+  align-content: start;
 }
 
 .gurps-2col .full-width {
