@@ -257,7 +257,7 @@
   "GURPS.chatYouMustBeGM": "You must be a GM to execute this command",
   "GURPS.chatYouMustHaveACharacterSelected": "You must have a character selected",
   "GURPS.chatYouMustSelectTokens": "You must select tokens (or use",
-  
+
   "__Permissions__": "=========",
   "GURPS.youDoNotHavePermssion": "You do not have permission to do that.",
   "GURPS.cannotDragNonFoundryEqt": "You cannot drag non-Foundry equipment to another character.",
@@ -674,6 +674,7 @@
   "GURPS.notAffected": "{name} is not affected.",
   "GURPS.overridden": "overridden",
   "GURPS.parry": "Parry",
+  "GURPS.pdfPageReference": "Page Reference",
   "GURPS.range": "Range",
   "GURPS.ranged": "Ranged",
   "GURPS.rangedWeapons": "Ranged Weapons",
