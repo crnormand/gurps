@@ -590,8 +590,7 @@ function executeOTF(string, priv = false) {
   string = string.trim()
   if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action)
-    GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
+  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
   else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
 }
 GURPS.executeOTF = executeOTF
@@ -683,7 +682,7 @@ async function performAction(action, actor, event, targets) {
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
     } else ui.notifications.warn('You must have a character selected')
 
-/*  let attr = action => {
+  /*  let attr = action => {
     let target = action.target
     if (!target) target = this.resolve(action.path, actordata.data)
     target = parseInt(target)
@@ -738,7 +737,8 @@ async function performAction(action, actor, event, targets) {
             name: tempAction.name,
             level: parseInt(tempAction.target),
           }
-        } else skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkillOnly, !!tempAction.isSpellOnly)
+        } else
+          skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkillOnly, !!tempAction.isSpellOnly)
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
@@ -907,8 +907,10 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
-  if (isMelee) t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
-  if (isRanged && !t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (isMelee)
+    t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (isRanged && !t)
+    t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
 }
 GURPS.findAttack = findAttack
@@ -1451,8 +1453,6 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
 Hooks.once('init', async function () {
-  GURPS.LEGAL = game.i18n.localize('GURPS.copyrightGURPS')
-
   console.log(GURPS.BANNER)
   console.log(`Initializing GURPS 4e Game Aid`)
   console.log(GURPS.LEGAL)
@@ -1555,7 +1555,7 @@ Hooks.once('ready', async function () {
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div>
 <hr>
 <div style='font-size:70%'>
-  <div>${GURPS.LEGAL}</div>
+  <div>${game.i18n.localize('GURPS.copyrightGURPS')}</div>
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
@@ -1591,7 +1591,7 @@ Hooks.once('ready', async function () {
     console.log(data)
     if (!data.otf && !data.bucket) return
     let otf = data.otf || data.bucket
-    otf = otf.split('\\').join('\\\\')  // must double backslashes since this is a 'script' macro
+    otf = otf.split('\\').join('\\\\') // must double backslashes since this is a 'script' macro
     let cmd = ''
     if (!!data.bucket)
       cmd += `GURPS.ModifierBucket.clear()
@@ -1682,31 +1682,31 @@ Hooks.once('ready', async function () {
     }
     if (resp.type == 'dragEquipment1') {
       if (resp.destuserid != game.user.id) return
-        let destactor = game.actors.get(resp.destactorid)
-        let srcActor = game.actors.get(resp.srcactorid)
-        Dialog.confirm({
-          title: `Gift for ${destactor.name}!`,
-          content: `<p>${srcActor.name} wants to give you ${resp.itemData.name},</p><br>Ok?`,
-          yes: () => {
-            destactor.addNewItemData(resp.itemData)
-            game.socket.emit('system.gurps', {
-              type: 'dragEquipment2',
-              srckey: resp.srckey,
-              srcuserid: resp.srcuserid,
-              srcactorid: resp.srcactorid,
-              destactorid: resp.destactorid,
-              itemname: resp.itemData.name
-           })
-          },
-          no: () => {
-            game.socket.emit('system.gurps', {
-              type: 'dragEquipment3',
-              srcuserid: resp.srcuserid,
-              destactorid: resp.destactorid,
-              itemname: resp.itemData.name
-           })
-          }
-        })
+      let destactor = game.actors.get(resp.destactorid)
+      let srcActor = game.actors.get(resp.srcactorid)
+      Dialog.confirm({
+        title: `Gift for ${destactor.name}!`,
+        content: `<p>${srcActor.name} wants to give you ${resp.itemData.name},</p><br>Ok?`,
+        yes: () => {
+          destactor.addNewItemData(resp.itemData)
+          game.socket.emit('system.gurps', {
+            type: 'dragEquipment2',
+            srckey: resp.srckey,
+            srcuserid: resp.srcuserid,
+            srcactorid: resp.srcactorid,
+            destactorid: resp.destactorid,
+            itemname: resp.itemData.name,
+          })
+        },
+        no: () => {
+          game.socket.emit('system.gurps', {
+            type: 'dragEquipment3',
+            srcuserid: resp.srcuserid,
+            destactorid: resp.destactorid,
+            itemname: resp.itemData.name,
+          })
+        },
+      })
     }
     if (resp.type == 'dragEquipment2') {
       if (resp.srcuserid != game.user.id) return
@@ -1720,7 +1720,6 @@ Hooks.once('ready', async function () {
       let destActor = game.actors.get(resp.destactorid)
       ui.notifications.info(`${destActor.name} did not want ${resp.itemname}`)
     }
-
   })
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
@@ -1753,18 +1752,16 @@ Hooks.once('ready', async function () {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
         let display = ''
-        if (!!ev.currentTarget.dataset.action)
-          display = ev.currentTarget.innerText
+        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
-            displayname: display
+            displayname: display,
           })
         )
       })
     })
-
   })
 
   /**
@@ -1792,10 +1789,8 @@ Hooks.once('ready', async function () {
       })
 
       let handle = actor => actor.handleDamageDrop(dropData.payload)
-      if (dropData.type === 'Item') 
-        handle = actor => actor.handleItemDrop(dropData)
-      if (dropData.type === 'equipment') 
-        handle = actor => actor.handleEquipmentDrop(dropData)
+      if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
+      if (dropData.type === 'equipment') handle = actor => actor.handleEquipmentDrop(dropData)
 
       // actual targets are stored in game.user.targets
       if (targets.length === 0) return false

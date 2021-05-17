@@ -1,14 +1,18 @@
 'use strict'
 import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
+import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
+import { objectToArray, arrayToObject } from '../lib/utilities.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      classes: ['gurps', 'sheet', 'item'],
+      classes: ['sheet', 'item'],
       template: 'systems/gurps/templates/item-sheet.html',
       width: 620,
-      height: 200,
+      height: 'auto',
+      resizable: false,
+      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
     })
   }
 
@@ -30,6 +34,8 @@ export class GurpsItemSheet extends ItemSheet {
     this.html = html
     super.activateListeners(html)
 
+    html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
+    html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
     html.find('#itemname').change(ev =>
       this.item.update({
         'data.eqt.name': ev.currentTarget.value,
@@ -37,57 +43,40 @@ export class GurpsItemSheet extends ItemSheet {
       })
     )
     html.find('.count').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
-    
+
     html.find('#item4').click(ev => {
-      this.item.update({ 
+      this.item.update({
         'data.equipped': true,
         'data.bonuses': `DX+10
 S:Fast*+20
 iq+30
 PER+1
 HT-8
-A:Rapier+99`})
-}
-)
+A:Rapier+99`,
+      })
+    })
 
-    html.find('#item1').click(ev => {
+    html.find('#add-melee').click(ev => {
       ev.preventDefault()
       let m = new Melee()
       m.name = this.item.name
-      m.level = 14
-      m.damage = '2d cut'
-      m.mode = 'swing'
-      m.otf = 'DX-1'
-      m.weight = 99
-      m.techlevel = 'tl99'
-      m.cost = 99
-      m.reach = '99'
-      m.parry = '9'
-      m.block = '8'
-      let melee = this.item.data.data.melee
+      let melee = this.item.data.data.melee || {}
       GURPS.put(melee, m)
       this.item.update({ 'data.melee': melee })
     })
-    html.find('#item2').click(ev => {
+
+    html.find('.delete.button').click(this._deleteKey.bind(this))
+
+    html.find('#add-ranged').click(ev => {
       ev.preventDefault()
       let r = new Ranged()
       r.name = this.item.name
-      r.otf = 'DX-2'
-      r.type = 'DX/E'
-      r.bulk = 1
       r.legalityclass = 'lc'
-      r.ammo = ''
-      r.mode = ''
-      r.level = 13
-      r.damage = '1d+1 imp'
-      r.acc = 3
-      r.rof = 1
-      r.shots = ''
-      r.rcl = ''
-      let list = this.item.data.data.ranged
+      let list = this.item.data.data.ranged || {}
       GURPS.put(list, r)
       this.item.update({ 'data.ranged': list })
     })
+
     html.find('#item3').click(ev => {
       ev.preventDefault()
       let r = new Skill()
@@ -100,7 +89,34 @@ A:Rapier+99`})
       this.item.update({ 'data.skills': list })
     })
   }
-  
+
+  async _deleteKey(ev) {
+    let key = ev.currentTarget.getAttribute('name')
+    let path = ev.currentTarget.getAttribute('data-path')
+    let temp = path.split('.').reduce(function (a, b) {
+      return a && a[b]
+    }, this.item.data)
+
+    // make a copy
+    let feature = { ...temp }
+
+    // remove the key
+    delete feature[`${key}`]
+
+    // reorder the keys
+    feature = arrayToObject(objectToArray(feature), 5)
+
+    // delete
+    let toDelete = path.substr(0, path.lastIndexOf('.')) + '.-=' + path.substr(path.lastIndexOf('.') + 1)
+    let update = { [toDelete]: null }
+    await this.item.update(update)
+
+    // update
+    update = { [path]: feature }
+    await this.item.update(update)
+    this.render(false)
+  }
+
   close() {
     super.close()
     if (!!this.object.editingActor) this.object.editingActor.updateItem(this.object)
