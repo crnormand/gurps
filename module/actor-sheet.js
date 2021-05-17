@@ -168,9 +168,9 @@ export class GurpsActorSheet extends ActorSheet {
     }
 
     makelistdrag('.eqtdraggable', 'equipment')
-    makelistdrag('.adsdraggable', 'advantage')
-    makelistdrag('.skldraggable', 'skill')
-    makelistdrag('.spldraggable', 'spell')
+    makelistdrag('.adsdraggable', 'ads')
+    makelistdrag('.skldraggable', 'skills')
+    makelistdrag('.spldraggable', 'spells')
     makelistdrag('.notedraggable', 'note')
 
     makelistdrag('.meleedraggable', 'melee')
@@ -889,9 +889,9 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') this.actor.handleItemDrop(dragData) 
 
-    this.handleDragFor(event, dragData, 'advantage', 'adsdraggable')
-    this.handleDragFor(event, dragData, 'skill', 'skldraggable')
-    this.handleDragFor(event, dragData, 'spell', 'spldraggable')
+    this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
+    this.handleDragFor(event, dragData, 'skills', 'skldraggable')
+    this.handleDragFor(event, dragData, 'spells', 'spldraggable')
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
 
     if (dragData.type === 'equipment') {
