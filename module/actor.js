@@ -1521,7 +1521,7 @@ export class GurpsActor extends Actor {
       e.uuid = key + '-' + i++ + '-' + itemData._id
       e.eqtkey = eqtkey
       if (!!e.otf) {
-        if (e.otf.match(/^ *\d+ *$/) {
+        if (e.otf.match(/^ *\d+ *$/)) {
           e.import = parseInt(e.otf)
         } else {
           let action = parselink(e.otf)
