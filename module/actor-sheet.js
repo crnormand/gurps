@@ -143,7 +143,15 @@ export class GurpsActorSheet extends ActorSheet {
             type = 'equipment'
           }
           var itemData
-          if (!!eqt.itemid) itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+          if (!!eqt.itemid) {
+            itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+            let img = new Image
+            img.src = itemData.img  
+            const w = 50;
+            const h = 50;
+            const preview = DragDrop.createDragImage(img, w, h);
+            ev.dataTransfer.setDragImage(preview, w/2, h/2); 
+          }
           let newd = {
             actorid: this.actor.id, 
             type: type, 

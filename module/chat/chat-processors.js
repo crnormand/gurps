@@ -16,6 +16,7 @@ import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../
 // import StatusProcessor from '../chat/status-processor.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
+import JB2AChatProcessor from '../chat/jb2a.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -40,7 +41,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new SetEventFlagsChatProcessor())
   ChatProcessors.registerProcessor(new RemoteChatProcessor())
   ChatProcessors.registerProcessor(new SlamChatProcessor())
-  //ChatProcessors.registerProcessor(new JB2AChatProcessor())
+  ChatProcessors.registerProcessor(new JB2AChatProcessor())
 }
 
 class SetEventFlagsChatProcessor extends ChatProcessor {
@@ -510,36 +511,3 @@ class TrackerChatProcessor extends ChatProcessor {
   }
 }
 
-class JB2AChatProcessor extends ChatProcessor {
-  help() {
-    return '/jb2a &lt;animation macro name&gt;'
-  }
-  matches(line) {
-    this.match = line.match(/^\/jb2a +(\d*) *(.*)/i)
-    return !!this.match
-  }
-  async process(line) {
-    let otigons = game.packs.entries.filter(c => c.metadata.module?.startsWith("otigons"))
-    if (otigons.length == 0) {
-      ui.notifications.warn('You must have https://github.com/otigon/otigons-animation-macros loaded')
-      return
-    }
-    const wait = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
-    let t = !!this.match[1] ? parseInt(this.match[1]) : 0
-    let pat = new RegExp(makeRegexPatternFrom(this.match[2], false), 'i')
-    for (const c of otigons) {
-      let found = c.index.find(e => {console.log(e.name); return e.name.match(pat)})
-      if (found) {
-        c.getEntity(found._id).then(async m => {
-          if (!!m) {
-            await wait(t)
-            m.execute()
-          } else
-            ui.notifications.warn(`Entry found for '${this.match[2]}', but no macro`)
-        })
-        return
-      }
-    }
-    ui.notifications.warn(`No macro found for '${this.match[2]}'`)
-  }
-}

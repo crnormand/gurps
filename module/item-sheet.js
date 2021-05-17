@@ -86,28 +86,7 @@ export class GurpsItemSheet extends ItemSheet {
   async _deleteKey(ev) {
     let key = ev.currentTarget.getAttribute('name')
     let path = ev.currentTarget.getAttribute('data-path')
-    let temp = path.split('.').reduce(function (a, b) {
-      return a && a[b]
-    }, this.item.data)
-
-    // make a copy
-    let feature = { ...temp }
-
-    // remove the key
-    delete feature[`${key}`]
-
-    // reorder the keys
-    feature = arrayToObject(objectToArray(feature), 5)
-
-    // delete all existing melee attackes
-    let toDelete = path.substr(0, path.lastIndexOf('.')) + '.-=' + path.substr(path.lastIndexOf('.') + 1)
-    let update = { [toDelete]: null }
-    await this.item.update(update)
-
-    // update with the reordered list of melee attacks
-    update = { [path]: feature }
-    await this.item.update(update)
-    this.render(false)
+    GURPS.removeKey(this.item, path + '.' + key)
   }
 
   close() {
