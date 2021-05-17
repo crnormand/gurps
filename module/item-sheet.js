@@ -45,7 +45,8 @@ export class GurpsItemSheet extends ItemSheet {
 S:Fast*+20
 iq+30
 PER+1
-ST-8`})
+HT-8
+A:Rapier+99`})
 }
 )
 

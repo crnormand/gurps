@@ -31,23 +31,141 @@ export class GurpsActor extends Actor {
     super.prepareDerivedData()
     this.calculateDerivedValues()
   }
-
-  // execute after every import.
+  
+    // execute after every import.
   async postImport() {
+      for (const item of this.items.entries) await this.addItemData(item.data) // re-add the item equipment and features
       this.calculateDerivedValues()
-      for (const item of this.items.entries) await this.addItemData(item.data)
       // Set custom trackers based on templates.  should be last because it may need other data to initialize...
       await this.setResourceTrackers()
   }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
   calculateDerivedValues() {
+    this._initCurrents()
+    this._calculateEncumbranceIssues()
+    this._applyItemBonuses()
+  }
+     
+  // Initialize the attribute current values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
+  // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
+  // If import keys don't exist, set them to the current value and commit to upgrade older actors
+  _initCurrents() {
+    // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
+    let commit = {}
+    for (const attr in this.data.data.attributes) {
+      if (this.data.data.attributes[attr].import == null) 
+        commit = {...commit, ...{ ['data.attributes.'+attr+'.import']: this.data.data.attributes[attr].value }} // backward compat
+      else
+        this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
+    }
+    recurselist(this.data.data.skills, (e, k, d) => {
+      if (e.import == null) 
+        commit = {...commit, ...{['data.skills.' + k + '.import']:e.level}}
+      else
+        e.level = parseInt(e.import)
+    })
+    recurselist(this.data.data.spells, (e, k, d) => {
+      if (e.import == null) 
+        commit = {...commit, ...{['data.spells.' + k + '.import']:e.level}}
+      else
+        e.level = parseInt(e.import)
+    })
+    recurselist(this.data.data.melee, (e, k, d) => {
+      if (e.import == null) 
+        commit = {...commit, ...{['data.melee.' + k + '.import']:e.level}}
+      else
+        e.level = parseInt(e.import)
+    })
+    recurselist(this.data.data.ranged, (e, k, d) => {
+      if (e.import == null) 
+        commit = {...commit, ...{['data.ranged.' + k + '.import']:e.level}}
+      else
+        e.level = parseInt(e.import)
+    })
+    // We must delay the upgrade of older actor's 'import' keys, since upon startup, the actor may not know which collection it belongs to
+    if (Object.keys(commit).length > 0) setTimeout(() => this.update(commit), 1000) 
+  }
+  
+  _applyItemBonuses() {
+    let pi = (n) => (!!n) ? parseInt(n) : 0
+    for (const item of this.items.entries) {
+      if (item.data.data.equipped != false && !!item.data.data.bonuses) {
+        let bonuses = item.data.data.bonuses.split('\n')
+        for (const bonus of bonuses) {
+          let action = parselink(bonus) // ATM, we only support attribute and skill
+          if (!!action.action) {
+            recurselist(this.data.data.melee, (e, k, d) => {
+              e.level = pi(e.level)
+              if (action.action.type == 'attribute') {  // All melee attack skills affected by DX
+                if (action.action.attrkey == 'DX') {
+                  e.level += pi(action.action.mod)
+                  if (!isNaN(parseInt(e.parry))) {
+                    let m = (e.parry+'').match(/(\d+)(.*)/)
+                    e.parry = 3 + Math.floor(e.level / 2)
+                    if (!!e.parrybonus) e.parry += e.parrybonus
+                    if (!!m) e.parry += m[2]
+                  }
+                  if (!isNaN(e.block)) {
+                    e.block = 3 + Math.floor(e.level / 2)
+                    if (!!e.blockbonus) e.block += e.blockbonus
+                  }
+                }
+              }
+              if (action.action.type == 'attack' && !!action.action.isMelee) {
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
+                  e.level += pi(action.action.mod)
+              }
+            })
+            recurselist(this.data.data.ranged, (e, k, d) => {
+              e.level = pi(e.level)
+              if (action.action.type == 'attribute') {  //All ranged attack skills affected by DX
+                if (action.action.attrkey == 'DX')
+                  e.level += pi(action.action.mod)
+              }
+              if (action.action.type == 'attack' && !!action.action.isRanged) {
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
+                  e.level += pi(action.action.mod)
+              }
+            })
+            recurselist(this.data.data.skills, (e, k, d) => {
+              e.level = pi(e.level)
+              if (action.action.type == 'attribute') {  // skills affected by attribute changes
+                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey))
+                  e.level += pi(action.action.mod)
+              }
+              if (action.action.type == 'skill-spell' && !action.action.isSpellOnly) {
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
+                  e.level += pi(action.action.mod)
+              }
+            })
+            recurselist(this.data.data.spells, (e, k, d) => {
+              e.level = pi(e.level)
+              if (action.action.type == 'attribute') {  // spells affected by attribute changes
+                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey))
+                  e.level += pi(action.action.mod)
+              }
+              if (action.action.type == 'skill-spell' && !action.action.isSkillOnly) {
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
+                  e.level += pi(action.action.mod)
+              }
+            })
+            if (action.action.type == 'attribute')
+              this.data.data.attributes[action.action.attrkey].value = pi(this.data.data.attributes[action.action.attrkey].value) + pi(action.action.mod)
+          }
+          // parse bonus for other forms, DR+x?
+        }
+      }
+    }
+  }
+  
+
+  _calculateEncumbranceIssues() {
     const encs = this.data.data.encumbrance
     const isReeling = !!this.data.data.additionalresources.isReeling
     const isTired = !!this.data.data.additionalresources.isTired
-    this.data.data.attributes.ST.currentvalue = isTired
-      ? Math.ceil(parseInt(this.data.data.attributes.ST.value) / 2)
-      : this.data.data.attributes.ST.value
+    const initialSTvalue = this.data.data.attributes.ST.value
+    this.data.data.attributes.ST.value = isTired ? Math.ceil(parseInt(initialSTvalue) / 2) : initialSTvalue
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
       const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
@@ -795,7 +913,7 @@ export class GurpsActor extends Actor {
                 console.log(t(j.text))
               }
             m.mode = t(j2.name)
-            m.level = t(j2.level)
+            m.import = t(j2.level)
             m.damage = t(j2.damage)
             m.reach = t(j2.reach)
             m.parry = t(j2.parry)
@@ -841,7 +959,7 @@ export class GurpsActor extends Actor {
                 console.log(t(j.text))
               }
             r.mode = t(j2.name)
-            r.level = t(j2.level)
+            r.import = t(j2.level)
             r.damage = t(j2.damage)
             r.acc = t(j2.acc)
             r.rof = t(j2.rof)
@@ -919,17 +1037,18 @@ export class GurpsActor extends Actor {
     let data = this.data.data
     let att = data.attributes
 
-    att.ST.value = i(json.strength)
+    // attribute.values will be calculated in calculateDerivedValues()
+    att.ST.import = i(json.strength)
     att.ST.points = i(json.strength_points)
-    att.DX.value = i(json.dexterity)
+    att.DX.import = i(json.dexterity)
     att.DX.points = i(json.dexterity_points)
-    att.IQ.value = i(json.intelligence)
+    att.IQ.import = i(json.intelligence)
     att.IQ.points = i(json.intelligence_points)
-    att.HT.value = i(json.health)
+    att.HT.import = i(json.health)
     att.HT.points = i(json.health_points)
-    att.WILL.value = i(json.will)
+    att.WILL.import = i(json.will)
     att.WILL.points = i(json.will_points)
-    att.PER.value = i(json.perception)
+    att.PER.import = i(json.perception)
     att.PER.points = i(json.perception_points)
 
     data.HP.max = i(json.hitpoints)
@@ -1029,7 +1148,7 @@ export class GurpsActor extends Actor {
         let sk = new Skill()
         sk.name = t(j.name)
         sk.type = t(j.type)
-        sk.level = t(j.level)
+        sk.import = t(j.level)
         if (sk.level == 0) sk.level = ''
         sk.points = this.intFrom(j.points)
         sk.relativelevel = t(j.relativelevel)
@@ -1084,7 +1203,7 @@ export class GurpsActor extends Actor {
         sp.duration = t(j.duration)
         sp.points = t(j.points)
         sp.casttime = t(j.time)
-        sp.level = t(j.level)
+        sp.import = t(j.level)
         sp.duration = t(j.duration)
         sp.uuid = t(j.uuid)
         sp.parentuuid = t(j.parentuuid)
@@ -1303,6 +1422,7 @@ export class GurpsActor extends Actor {
   }
   
   // create a new embedded item based on this item data and place in the carried list
+  // This is how all Items are added originally.
   async addNewItemData(itemData) {
     if (!!itemData.data.data) itemData.data.data.equipped = true
     else itemData.data.equipped = true
@@ -1310,7 +1430,7 @@ export class GurpsActor extends Actor {
     await this.addItemData(localItemData)
   }
 
-  // Add a new equipment based on this Item data
+  // Once the Items has been added to our items list, add the equipment and any features
   async addItemData(itemData) {
     let commit = {}
     let { eqtkey, eqtcommit } = this._addNewItemEquipment(itemData)
@@ -1390,12 +1510,18 @@ export class GurpsActor extends Actor {
           if (key == 'melee') {
             if (e.parry != '') {
               let m = e.parry.match(/([+-]\d+)(.*)/)
-              if (!!m) e.parry = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
+              if (!!m) {
+                e.parrybonus = parseInt(m[1])
+                e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
+              }
               if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
             }
             if (e.block != '') {
               let m = e.block.match(/([+-]\d+)(.*)/)
-              if (!!m) e.block = parseInt(m[1]) + 3 + Math.floor(e.level / 2)
+              if (!!m) {
+                e.blockbonus = parseInt(m[1])
+                e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
+              }
               if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
             }
           }
@@ -1798,10 +1924,8 @@ export class NamedCost extends Named {
 export class Leveled extends NamedCost {
   constructor(n1, lvl) {
     super(n1)
-    this.level = lvl
+    this.import = lvl
   }
-
-  level = 1
 }
 
 export class Skill extends Leveled {
@@ -1832,7 +1956,7 @@ export class Attack extends Named {
   damage = ''
   constructor(n1, lvl, dmg) {
     super(n1)
-    this.level = lvl
+    this.import = lvl
     this.damage = dmg
   }
 }
