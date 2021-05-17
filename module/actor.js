@@ -335,7 +335,7 @@ export class GurpsActor extends Actor {
         }
         if (vernum < 8) {
           msg +=
-            'This file was created with an older version of the GCA Export which ignored the 'hide' flag for ads/disads/quirks/perks<br>'
+            "This file was created with an older version of the GCA Export which ignored the 'hide' flag for ads/disads/quirks/perks<br>"
         }
      }
       if (isFoundryGCS) {

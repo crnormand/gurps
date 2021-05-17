@@ -200,7 +200,9 @@ export class ModifierBucket extends Application {
       return
     }
     let mb = GURPS.ModifierBucket.modifierStack
-    //users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
+    try {
+      users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
+    } catch (err) []  // Assistant's can't set user flags
     game.socket.emit('system.gurps', {
       type: 'updatebucket',
       users: users.map(u => u.id),
