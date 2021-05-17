@@ -88,13 +88,15 @@ class RollAgainstChatProcessor extends ChatProcessor {
     return '/ra N | Skillname-N'
   }
   matches(line) {
-    this.match = line.match(/^([\.\/]p?ra) +(\w+-)?(\d+)/i)
+    this.match = line.match(/^([\.\/]p?ra) +([\w-'" ]+-)?(\d+)/i)
     return !!this.match
   }
   async process(line) {
     let m = this.match
     let skill = m[2] || 'Default='
-    let action = parselink('S:' + skill.replace('-', '=') + m[3])
+    skill = skill.replace('-', '=') + m[3]
+    if (skill.includes(' ')) skill = '"' + skill + '"'
+    let action = parselink('S:' + skill)
     this.send() // send what we have
     await GURPS.performAction(action.action, GURPS.LastActor, {
       shiftKey: line.substr(1).startsWith('pra') || this.msgs().event?.shiftKey,

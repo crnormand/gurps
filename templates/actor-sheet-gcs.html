@@ -104,7 +104,7 @@
         <div class="fieldblock3">
           <div class="points">[{{data.attributes.ST.points}}]</div>
           <div class="field rollable" data-path="attributes.ST.value" data-otf='ST'>
-            {{data.attributes.ST.currentvalue}}
+            {{data.attributes.ST.value}}
           </div>
           <div class="label">{{localize "GURPS.attributesSTNAME"}} ({{localize "GURPS.attributesST"}})</div>
           <div class="points">[{{data.attributes.DX.points}}]</div>
@@ -432,7 +432,7 @@
           @root}}}</div>
         </div>
         <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
-          data-otf='S:"{{this.name}}"'>{{LevelWithBonus @root this}}
+          data-otf='S:"{{this.name}}"'>{{this.level}}
         </div>
         <div class="rsl satisfiedY">{{this.relativelevel}}</div>
         <div class="pts satisfiedY">{{this.points}}</div>

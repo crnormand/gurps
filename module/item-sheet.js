@@ -43,7 +43,10 @@ export class GurpsItemSheet extends ItemSheet {
         'data.equipped': true,
         'data.bonuses': `DX+10
 S:Fast*+20
-iq+30`})
+iq+30
+PER+1
+HT-8
+A:Rapier+99`})
 }
 )
 
