@@ -31,13 +31,13 @@ export class GurpsActor extends Actor {
     super.prepareDerivedData()
     this.calculateDerivedValues()
   }
-  
-    // execute after every import.
+
+  // execute after every import.
   async postImport() {
-      for (const item of this.items.entries) await this.addItemData(item.data) // re-add the item equipment and features
-      this.calculateDerivedValues()
-      // Set custom trackers based on templates.  should be last because it may need other data to initialize...
-      await this.setResourceTrackers()
+    for (const item of this.items.entries) await this.addItemData(item.data) // re-add the item equipment and features
+    this.calculateDerivedValues()
+    // Set custom trackers based on templates.  should be last because it may need other data to initialize...
+    await this.setResourceTrackers()
   }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
@@ -46,7 +46,7 @@ export class GurpsActor extends Actor {
     this._calculateEncumbranceIssues()
     this._applyItemBonuses()
   }
-     
+
   // Initialize the attribute current values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
   // If import keys don't exist, set them to the current value and commit to upgrade older actors
@@ -54,55 +54,48 @@ export class GurpsActor extends Actor {
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     let commit = {}
     for (const attr in this.data.data.attributes) {
-      if (this.data.data.attributes[attr].import == null) 
-        commit = {...commit, ...{ ['data.attributes.'+attr+'.import']: this.data.data.attributes[attr].value }} // backward compat
-      else
-        this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
+      if (this.data.data.attributes[attr].import == null)
+        commit = { ...commit, ...{ ['data.attributes.' + attr + '.import']: this.data.data.attributes[attr].value } }
+      // backward compat
+      else this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
     }
     recurselist(this.data.data.skills, (e, k, d) => {
-      if (e.import == null) 
-        commit = {...commit, ...{['data.skills.' + k + '.import']:e.level}}
-      else
-        e.level = parseInt(e.import)
+      if (e.import == null) commit = { ...commit, ...{ ['data.skills.' + k + '.import']: e.level } }
+      else e.level = parseInt(e.import)
     })
     recurselist(this.data.data.spells, (e, k, d) => {
-      if (e.import == null) 
-        commit = {...commit, ...{['data.spells.' + k + '.import']:e.level}}
-      else
-        e.level = parseInt(e.import)
+      if (e.import == null) commit = { ...commit, ...{ ['data.spells.' + k + '.import']: e.level } }
+      else e.level = parseInt(e.import)
     })
     recurselist(this.data.data.melee, (e, k, d) => {
-      if (e.import == null) 
-        commit = {...commit, ...{['data.melee.' + k + '.import']:e.level}}
-      else
-        e.level = parseInt(e.import)
-      if (!isNaN(parseInt(e.parry))) { // allows for '14f' and 'no'
+      if (e.import == null) commit = { ...commit, ...{ ['data.melee.' + k + '.import']: e.level } }
+      else e.level = parseInt(e.import)
+      if (!isNaN(parseInt(e.parry))) {
+        // allows for '14f' and 'no'
         let base = 3 + Math.floor(e.level / 2)
         let bonus = parseInt(e.parry) - base
         if (bonus != 0) {
-          e.parrybonus = ((bonus > 0) ? "+" : "") + bonus
+          e.parrybonus = (bonus > 0 ? '+' : '') + bonus
         }
       }
       if (!isNaN(e.block)) {
         let base = 3 + Math.floor(e.level / 2)
         let bonus = parseInt(e.block) - base
         if (bonus != 0) {
-          e.blockbonus = ((bonus > 0) ? "+" : "") + bonus
+          e.blockbonus = (bonus > 0 ? '+' : '') + bonus
         }
       }
     })
     recurselist(this.data.data.ranged, (e, k, d) => {
-      if (e.import == null) 
-        commit = {...commit, ...{['data.ranged.' + k + '.import']:e.level}}
-      else
-        e.level = parseInt(e.import)
+      if (e.import == null) commit = { ...commit, ...{ ['data.ranged.' + k + '.import']: e.level } }
+      else e.level = parseInt(e.import)
     })
     // We must delay the upgrade of older actor's 'import' keys, since upon startup, the actor may not know which collection it belongs to
-    if (Object.keys(commit).length > 0) setTimeout(() => this.update(commit), 1000) 
+    if (Object.keys(commit).length > 0) setTimeout(() => this.update(commit), 1000)
   }
-  
+
   _applyItemBonuses() {
-    let pi = (n) => (!!n) ? parseInt(n) : 0
+    let pi = n => (!!n ? parseInt(n) : 0)
     for (const item of this.items.entries) {
       if (item.data.data.equipped != false && !!item.data.data.bonuses) {
         let bonuses = item.data.data.bonuses.split('\n')
@@ -111,68 +104,67 @@ export class GurpsActor extends Actor {
           if (!!action.action) {
             recurselist(this.data.data.melee, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {  // All melee attack skills affected by DX
+              if (action.action.type == 'attribute') {
+                // All melee attack skills affected by DX
                 if (action.action.attrkey == 'DX') {
                   e.level += pi(action.action.mod)
-                  if (!isNaN(parseInt(e.parry))) { // handles '11f'
-                    let m = (e.parry+'').match(/(\d+)(.*)/)
+                  if (!isNaN(parseInt(e.parry))) {
+                    // handles '11f'
+                    let m = (e.parry + '').match(/(\d+)(.*)/)
                     e.parry = 3 + Math.floor(e.level / 2)
                     if (!!e.parrybonus) e.parry += pi(e.parrybonus)
                     if (!!m) e.parry += m[2]
                   }
-                  if (!isNaN(e.block)) {  // handles 'no'
+                  if (!isNaN(e.block)) {
+                    // handles 'no'
                     e.block = 3 + Math.floor(e.level / 2)
                     if (!!e.blockbonus) e.block += pi(e.blockbonus)
                   }
                 }
               }
               if (action.action.type == 'attack' && !!action.action.isMelee) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
-                  e.level += pi(action.action.mod)
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
             })
             recurselist(this.data.data.ranged, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {  //All ranged attack skills affected by DX
-                if (action.action.attrkey == 'DX')
-                  e.level += pi(action.action.mod)
+              if (action.action.type == 'attribute') {
+                //All ranged attack skills affected by DX
+                if (action.action.attrkey == 'DX') e.level += pi(action.action.mod)
               }
               if (action.action.type == 'attack' && !!action.action.isRanged) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
-                  e.level += pi(action.action.mod)
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
             })
             recurselist(this.data.data.skills, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {  // skills affected by attribute changes
-                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey))
-                  e.level += pi(action.action.mod)
+              if (action.action.type == 'attribute') {
+                // skills affected by attribute changes
+                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey)) e.level += pi(action.action.mod)
               }
               if (action.action.type == 'skill-spell' && !action.action.isSpellOnly) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
-                  e.level += pi(action.action.mod)
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
             })
             recurselist(this.data.data.spells, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {  // spells affected by attribute changes
-                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey))
-                  e.level += pi(action.action.mod)
+              if (action.action.type == 'attribute') {
+                // spells affected by attribute changes
+                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey)) e.level += pi(action.action.mod)
               }
               if (action.action.type == 'skill-spell' && !action.action.isSkillOnly) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false)))
-                  e.level += pi(action.action.mod)
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
             })
             if (action.action.type == 'attribute')
-              this.data.data.attributes[action.action.attrkey].value = pi(this.data.data.attributes[action.action.attrkey].value) + pi(action.action.mod)
+              this.data.data.attributes[action.action.attrkey].value =
+                pi(this.data.data.attributes[action.action.attrkey].value) + pi(action.action.mod)
           }
           // parse bonus for other forms, DR+x?
         }
       }
     }
   }
-  
 
   _calculateEncumbranceIssues() {
     const encs = this.data.data.encumbrance
@@ -337,7 +329,7 @@ export class GurpsActor extends Actor {
           msg +=
             "This file was created with an older version of the GCA Export which ignored the 'hide' flag for ads/disads/quirks/perks<br>"
         }
-     }
+      }
       if (isFoundryGCS) {
         let vernum = 1
         if (!!v[1]) vernum = parseInt(v[1])
@@ -1400,10 +1392,12 @@ export class GurpsActor extends Actor {
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
-    if (!!this.owner && !!srcActor.owner) {  // same owner
+    if (!!this.owner && !!srcActor.owner) {
+      // same owner
       let item = await srcActor.deleteEquipment(dragData.key)
       await this.addNewItemData(item)
-    } else {  // different owners
+    } else {
+      // different owners
       let eqt = GURPS.decode(srcActor.data, dragData.key)
       let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
       if (!!destowner) {
@@ -1420,7 +1414,7 @@ export class GurpsActor extends Actor {
       } else ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
     }
   }
-  
+
   // Called from the ItemEditor to let us know our personal Item has been modified
   async updateItem(item) {
     delete item.editingActor
@@ -1428,23 +1422,25 @@ export class GurpsActor extends Actor {
     await this._removeItemAdditions(itemData._id)
     this.ignoreRender = true
     let other = await this._removeItemElement(itemData._id, 'equipment.other') // try to remove from other
-    if (!other) { // if not in other, remove from carried, and then re-add everything
+    if (!other) {
+      // if not in other, remove from carried, and then re-add everything
       await this._removeItemElement(itemData._id, 'equipment.carried')
       await this.addItemData(itemData)
-    } else { // If was in other... just add back to other (and forget addons)
+    } else {
+      // If was in other... just add back to other (and forget addons)
       let commit = this._addNewItemEquipment(itemData, false)
       await this.update(commit)
     }
     this.ignoreRender = false
     this.sheet.render(true)
   }
-  
+
   // create a new embedded item based on this item data and place in the carried list
   // This is how all Items are added originally.
   async addNewItemData(itemData) {
     if (!!itemData.data.data) itemData.data.data.equipped = true
     else itemData.data.equipped = true
-    let localItemData = await this.createOwnedItem(itemData)   // add a local Foundry Item based on some Item data
+    let localItemData = await this.createOwnedItem(itemData) // add a local Foundry Item based on some Item data
     await this.addItemData(localItemData)
   }
 
@@ -1452,30 +1448,29 @@ export class GurpsActor extends Actor {
   async addItemData(itemData) {
     let commit = {}
     let { eqtkey, eqtcommit } = this._addNewItemEquipment(itemData)
-    commit = {...commit, ...eqtcommit}
-    commit = {...commit, ...await this._addItemAdditions(itemData, eqtkey)}
+    commit = { ...commit, ...eqtcommit }
+    commit = { ...commit, ...(await this._addItemAdditions(itemData, eqtkey)) }
     await this.update(commit)
   }
-  
+
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
-    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "melee")}
-    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "ranged")}
-    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "ads")}
-    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "skills")}
-    commit =  {...commit, ...await this._addItemElement(itemData, eqtkey, "spells")}
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'melee')) }
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ranged')) }
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
     return commit
   }
-  
+
   // called when equipment is being moved
   async updateItemAdditionsBasedOn(eqt, sourcePath, targetPath) {
-    if (sourcePath.includes('.carried') && targetPath.includes('.other'))
-      await this._removeItemAdditionsBasedOn(eqt)
+    if (sourcePath.includes('.carried') && targetPath.includes('.other')) await this._removeItemAdditionsBasedOn(eqt)
     if (sourcePath.includes('.other') && targetPath.includes('.carried')) {
       await this._addItemAdditionsBasedOn(eqt, targetPath)
     }
-    }
-  
+  }
+
   // moving from other to carried
   async _addItemAdditionsBasedOn(eqt, eqtkey) {
     if (!eqt.itemid) return
@@ -1496,24 +1491,24 @@ export class GurpsActor extends Actor {
     else item.data.equipped = false
     await this.updateOwnedItem(item.data)
   }
-  
+
   // Make the initial equipment object (in the carried list)
   _addNewItemEquipment(itemData, carried = true) {
     let path = carried ? 'carried' : 'other'
-    let list = { ...this.data.data.equipment[path]} // shallow copy the list
+    let list = { ...this.data.data.equipment[path] } // shallow copy the list
     let eqt = itemData.data.eqt
     eqt.itemid = itemData._id
     eqt.uuid = 'item-' + itemData._id
     Equipment.calc(eqt)
     let eqtkey = GURPS.put(list, eqt)
-    return { 
+    return {
       eqtkey: 'data.equipment.' + path + '.' + eqtkey,
-      eqtcommit:  { ['data.equipment.' + path]: list }
+      eqtcommit: { ['data.equipment.' + path]: list },
     }
   }
 
   async _addItemElement(itemData, eqtkey, key) {
-    let list = { ...this.data.data[key]} // shallow copy
+    let list = { ...this.data.data[key] } // shallow copy
     let i = 0
     for (const k in itemData.data[key]) {
       let e = duplicate(itemData.data[key][k])
@@ -1527,7 +1522,7 @@ export class GurpsActor extends Actor {
           let action = parselink(e.otf)
           if (!!action.action) {
             action.action.calcOnly = true
-            e.import = '' + await GURPS.performAction(action.action, this) // collapse the OtF formula into a string
+            e.import = '' + (await GURPS.performAction(action.action, this)) // collapse the OtF formula into a string
           }
         }
       }
@@ -1554,8 +1549,8 @@ export class GurpsActor extends Actor {
     return i == 0 ? {} : { ['data.' + key]: list }
   }
 
-  // return the item data that was deleted (since it might be transferred)  
-  async deleteEquipment(path) {    
+  // return the item data that was deleted (since it might be transferred)
+  async deleteEquipment(path) {
     let eqt = GURPS.decode(this.data, path)
     var item
     if (!!eqt.itemid) {
@@ -1566,17 +1561,17 @@ export class GurpsActor extends Actor {
     await GURPS.removeKey(this, path)
     return item
   }
-  
+
   async _removeItemAdditions(itemid) {
     this.ignoreRender = true
-    await this._removeItemElement(itemid, "melee")
-    await this._removeItemElement(itemid, "ranged")
-    await this._removeItemElement(itemid, "ads")
-    await this._removeItemElement(itemid, "skills")
-    await this._removeItemElement(itemid, "spells")
+    await this._removeItemElement(itemid, 'melee')
+    await this._removeItemElement(itemid, 'ranged')
+    await this._removeItemElement(itemid, 'ads')
+    await this._removeItemElement(itemid, 'skills')
+    await this._removeItemElement(itemid, 'spells')
     this.ignoreRender = false
   }
-  
+
   // We have to remove matching items after we searched through the list
   // because we cannot safely modify the list why iterating over it
   // and as such, we can only remove 1 key at a time and must use thw while loop to check again
@@ -1596,7 +1591,7 @@ export class GurpsActor extends Actor {
     }
     return any
   }
-  
+
   async moveEquipment(srckey, targetkey) {
     if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
       ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
@@ -1618,7 +1613,7 @@ export class GurpsActor extends Actor {
       let target = duplicate(GURPS.decode(this.data, targetkey))
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
       let eqtkey = GURPS.put(target, object)
-      await this.updateItemAdditionsBasedOn(object, srckey, targetkey  + "." + eqtkey)
+      await this.updateItemAdditionsBasedOn(object, srckey, targetkey + '.' + eqtkey)
       await this.update({ [targetkey]: target })
       if (isSrcFirst) await GURPS.removeKey(this, srckey)
     } else {
@@ -1861,11 +1856,10 @@ export class GurpsActor extends Actor {
 export class Named {
   constructor(n1) {
     this.name = n1
+    this.notes = ''
+    this.pageref = ''
+    this.contains = {}
   }
-  name = ''
-  notes = ''
-  pageref = ''
-  contains = {}
 
   pageRef(r) {
     this.pageref = r
@@ -1894,7 +1888,10 @@ export class Named {
 }
 
 export class NamedCost extends Named {
-  points = 0
+  constructor() {
+    super()
+    this.points = 0
+  }
 }
 
 export class Leveled extends NamedCost {
@@ -1905,56 +1902,72 @@ export class Leveled extends NamedCost {
 }
 
 export class Skill extends Leveled {
-  type = '' // "DX/E";
-  relativelevel = '' // "DX+1";
+  constructor() {
+    super()
+    this.type = '' // "DX/E";
+    this.relativelevel = '' // "DX+1";
+  }
 }
 
 export class Spell extends Leveled {
-  class = ''
-  college = ''
-  cost = ''
-  maintain = ''
-  duration = ''
-  resist = ''
-  casttime = ''
-  difficulty = ''
+  constructor() {
+    super()
+    this.class = ''
+    this.college = ''
+    this.cost = ''
+    this.maintain = ''
+    this.duration = ''
+    this.resist = ''
+    this.casttime = ''
+    this.difficulty = ''
+  }
 }
 
 export class Advantage extends NamedCost {
-  userdesc = ''
-  note = ''
+  constructor() {
+    super()
+    this.userdesc = ''
+    this.note = ''
+  }
 }
 
 export class Attack extends Named {
-  st = ''
-  mode = ''
-  level = ''
-  damage = ''
   constructor(n1, lvl, dmg) {
     super(n1)
     this.import = lvl
     this.damage = dmg
+    this.st = ''
+    this.mode = ''
+    this.level = ''
   }
 }
 
 export class Melee extends Attack {
-  weight = ''
-  techlevel = ''
-  cost = ''
-  reach = ''
-  parry = ''
-  block = ''
+  constructor() {
+    super()
+
+    this.weight = ''
+    this.techlevel = ''
+    this.cost = ''
+    this.reach = ''
+    this.parry = ''
+    this.block = ''
+  }
 }
 
 export class Ranged extends Attack {
-  bulk = ''
-  legalityclass = ''
-  ammo = ''
-  acc = ''
-  range = ''
-  rof = ''
-  shots = ''
-  rcl = ''
+  constructor() {
+    super()
+
+    this.bulk = ''
+    this.legalityclass = ''
+    this.ammo = ''
+    this.acc = ''
+    this.range = ''
+    this.rof = ''
+    this.shots = ''
+    this.rcl = ''
+  }
   checkRange() {
     if (!!this.halfd) this.range = this.halfd
     if (!!this.max) this.range = this.max
@@ -1963,18 +1976,20 @@ export class Ranged extends Attack {
 }
 
 export class Encumbrance {
-  key = ''
-  level = 0
-  dodge = 9
-  weight = ''
-  move = ''
-  current = false
+  constructor() {
+    this.key = ''
+    this.level = 0
+    this.dodge = 9
+    this.weight = ''
+    this.move = ''
+    this.current = false
+  }
 }
 
 export class Note extends Named {
   constructor(n, ue) {
     super()
-    this.notes = n
+    this.notes = n || ''
     this.save = ue
   }
 }
@@ -1983,20 +1998,20 @@ export class Equipment extends Named {
   constructor(nm, ue) {
     super(nm)
     this.save = ue
+    this.equipped = false
+    this.carried = false
+    this.count = 0
+    this.cost = 0
+    this.weight = 0
+    this.location = ''
+    this.techlevel = ''
+    this.legalityclass = ''
+    this.categories = ''
+    this.costsum = ''
+    this.weightsum = ''
+    this.uses = ''
+    this.maxuses = ''
   }
-  equipped = false
-  carried = false
-  count = 0
-  cost = 0
-  weight = 0
-  location = ''
-  techlevel = ''
-  legalityclass = ''
-  categories = ''
-  costsum = ''
-  weightsum = ''
-  uses = ''
-  maxuses = ''
 
   static calc(eqt) {
     Equipment.calcUpdate(null, eqt, '')
@@ -2044,10 +2059,8 @@ export class Equipment extends Named {
   }
 }
 export class Reaction {
-  modifier = ''
-  situation = ''
   constructor(m, s) {
-    this.modifier = m
-    this.situation = s
+    this.modifier = m || ''
+    this.situation = s || ''
   }
 }
