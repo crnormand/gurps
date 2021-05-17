@@ -17,9 +17,15 @@ This is what we are currently working on:
 - Fixed bug when trying to execute chat commands using GURPS.executeOTF()
 - Prototype of Foundry Item framework, can drop on player chars
 - Added "apply condition" buttons to damage effects chat messages.
-- Fix mook generation to include resource trackers.
-- Fix layout problems with Equipment and Other Equipment in the editor sheet.
+- Fixed mook generation to include resource trackers.
+- Fixed layout problems with Equipment and Other Equipment in the editor sheet.
+- Fixed \\ in OtF macros
+- Otf Macros now use their override text as the macro name
+- Added [M:attack] for only melee and [R:attack] for only ranged
 - Fixed bug where Sum Weights on Equipment and Other Equipment displayed as 'NaN'.
+- Fixed bug(s) where pasted text may contain unicode single and double quotes (OtF and Mook generator)
+- Foundry Item bonuses can affect Attributes, Skills and Attacks.  DX changes also affect melee (w/ parry/block) and ranged skills
+- Fix for DragRuler users... range mod is NOT added when token is moved
 
 ## History
 

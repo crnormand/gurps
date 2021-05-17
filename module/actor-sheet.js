@@ -77,8 +77,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     // TODO get this from system property
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
-
-    return sheetData
+     return sheetData
   }
 
   /* -------------------------------------------- */
@@ -111,11 +110,15 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action)
+          display = ev.currentTarget.innerText
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
             actor: this.actor.id,
+            displayname: display
           })
         )
       })
@@ -132,12 +135,21 @@ export class GurpsActorSheet extends ActorSheet {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
-          let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
+          let eqtkey = ev.currentTarget.dataset.key
+          let eqt = GURPS.decode(this.actor.data, eqtkey)   // FYI, may not actually be Equipment
+          if (!!eqt.eqtkey) {
+            eqtkey = eqt.eqtkey
+            eqt = GURPS.decode(this.actor.data, eqtkey)   // Features added by equipment will point to the equipment
+            type = 'equipment'
+          }
+          var itemData
+          if (!!eqt.itemid) itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
           let newd = {
             actorid: this.actor.id, 
             type: type, 
-            key: ev.currentTarget.dataset.key, 
-            itemid: eqt.itemid }
+            key: eqtkey, 
+            itemid: eqt.itemid,
+            itemData: itemData }
           if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
           return ev.dataTransfer.setData(
             'text/plain',
@@ -152,6 +164,9 @@ export class GurpsActorSheet extends ActorSheet {
     makelistdrag('.skldraggable', 'skill')
     makelistdrag('.spldraggable', 'spell')
     makelistdrag('.notedraggable', 'note')
+
+    makelistdrag('.meleedraggable', 'melee')
+    makelistdrag('.rangeddraggable', 'ranged')
 
     html.find('input[name="data.HP.value"]').keypress(ev => {
       if (ev.which === 13) ev.preventDefault()

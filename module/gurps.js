@@ -590,8 +590,7 @@ function executeOTF(string, priv = false) {
   string = string.trim()
   if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action)
-    GURPS.performAction(action.action, GURPS.LastActor || game.user, { shiftKey: priv, ctrlKey: false })
+  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
   else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
 }
 GURPS.executeOTF = executeOTF
@@ -683,7 +682,7 @@ async function performAction(action, actor, event, targets) {
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
     } else ui.notifications.warn('You must have a character selected')
 
-  let attr = action => {
+  /*  let attr = action => {
     let target = action.target
     if (!target) target = this.resolve(action.path, actordata.data)
     target = parseInt(target)
@@ -692,7 +691,7 @@ async function performAction(action, actor, event, targets) {
       thing: this.i18n(action.path),
       target: target,
     }
-  }
+  } */
 
   let processLinked = tempAction => {
     let bestLvl = -99999
@@ -738,7 +737,8 @@ async function performAction(action, actor, event, targets) {
             name: tempAction.name,
             level: parseInt(tempAction.target),
           }
-        } else skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkill, !!tempAction.isSpell)
+        } else
+          skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkillOnly, !!tempAction.isSpellOnly)
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
@@ -807,7 +807,7 @@ async function performAction(action, actor, event, targets) {
     if (!!actor) {
       let att = null
       prefix = ''
-      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
+      att = GURPS.findAttack(actordata, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
@@ -817,7 +817,7 @@ async function performAction(action, actor, event, targets) {
       thing = att.name // get real name of attack
       let t = att.level
       if (!!t) {
-        let a = t.trim().split(' ')
+        let a = (t + '').trim().split(' ')
         t = a[0]
         if (!!t) target = parseInt(t)
         if (isNaN(target)) target = 0
@@ -837,7 +837,7 @@ async function performAction(action, actor, event, targets) {
   if (action.type === 'attackdamage')
     if (!!actor) {
       let att = null
-      att = GURPS.findAttack(actordata, action.name) // find attack possibly using wildcards
+      att = GURPS.findAttack(actordata, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
@@ -902,13 +902,15 @@ function findAdDisad(actor, sname) {
 }
 GURPS.findAdDisad = findAdDisad
 
-function findAttack(actor, sname) {
+function findAttack(actor, sname, isMelee = true, isRanged = true) {
   var t
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
-  t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
-  if (!t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (isMelee)
+    t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (isRanged && !t)
+    t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
 }
 GURPS.findAttack = findAttack
@@ -1589,17 +1591,19 @@ Hooks.once('ready', async function () {
     console.log(data)
     if (!data.otf && !data.bucket) return
     let otf = data.otf || data.bucket
+    otf = otf.split('\\').join('\\\\') // must double backslashes since this is a 'script' macro
     let cmd = ''
     if (!!data.bucket)
       cmd += `GURPS.ModifierBucket.clear()
 `
     cmd += 'GURPS.executeOTF(`' + otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
-    let name = `${data.name || 'OtF'}: ${otf}`
+    let name = otf
+    if (!!data.displayname) name = data.displayname
     if (!!data.actor) {
       cmd =
         `GURPS.SetLastActor(game.actors.get('${data.actor}'))
 ` + cmd
-      name = game.actors.get(data.actor).name + ' ' + name
+      name = game.actors.get(data.actor).name + ': ' + name
     }
     let macro = await Macro.create({
       name: name,
@@ -1682,16 +1686,16 @@ Hooks.once('ready', async function () {
       let srcActor = game.actors.get(resp.srcactorid)
       Dialog.confirm({
         title: `Gift for ${destactor.name}!`,
-        content: `<p>${srcActor.name} wants to give you ${resp.item.name},</p><br>Ok?`,
+        content: `<p>${srcActor.name} wants to give you ${resp.itemData.name},</p><br>Ok?`,
         yes: () => {
-          destactor.addNewItem(resp.item)
+          destactor.addNewItemData(resp.itemData)
           game.socket.emit('system.gurps', {
             type: 'dragEquipment2',
             srckey: resp.srckey,
             srcuserid: resp.srcuserid,
             srcactorid: resp.srcactorid,
             destactorid: resp.destactorid,
-            itemname: resp.item.name,
+            itemname: resp.itemData.name,
           })
         },
         no: () => {
@@ -1699,7 +1703,7 @@ Hooks.once('ready', async function () {
             type: 'dragEquipment3',
             srcuserid: resp.srcuserid,
             destactorid: resp.destactorid,
-            itemname: resp.item.name,
+            itemname: resp.itemData.name,
           })
         },
       })
@@ -1744,6 +1748,20 @@ Hooks.once('ready', async function () {
         GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
       })
     }
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: li.getAttribute('data-otf'),
+            displayname: display,
+          })
+        )
+      })
+    })
   })
 
   /**

@@ -23,6 +23,7 @@ export class GurpsItemSheet extends ItemSheet {
     const data = super.getData()
     data.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
     data.name = this.item.name
+
     return data
   }
 
@@ -35,6 +36,25 @@ export class GurpsItemSheet extends ItemSheet {
 
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
+    html.find('#itemname').change(ev =>
+      this.item.update({
+        'data.eqt.name': ev.currentTarget.value,
+        name: ev.currentTarget.value,
+      })
+    )
+    html.find('.count').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
+
+    html.find('#item4').click(ev => {
+      this.item.update({
+        'data.equipped': true,
+        'data.bonuses': `DX+10
+S:Fast*+20
+iq+30
+PER+1
+HT-8
+A:Rapier+99`,
+      })
+    })
 
     html.find('#add-melee').click(ev => {
       ev.preventDefault()

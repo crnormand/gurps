@@ -322,7 +322,9 @@
         "ranged": {},
         "ads": {},
         "skills": {},
-        "spells": {}
+        "spells": {},
+        "bonuses": "",
+        "equipped": true
       }
     }
   }
