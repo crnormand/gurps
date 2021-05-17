@@ -76,6 +76,20 @@ export class GurpsActor extends Actor {
         commit = {...commit, ...{['data.melee.' + k + '.import']:e.level}}
       else
         e.level = parseInt(e.import)
+      if (!isNaN(parseInt(e.parry))) { // allows for '14f' and 'no'
+        let base = 3 + Math.floor(e.level / 2)
+        let bonus = parseInt(e.parry) - base
+        if (bonus != 0) {
+          e.parrybonus = ((bonus > 0) ? "+" : "") + bonus
+        }
+      }
+      if (!isNaN(e.block)) {
+        let base = 3 + Math.floor(e.level / 2)
+        let bonus = parseInt(e.block) - base
+        if (bonus != 0) {
+          e.blockbonus = ((bonus > 0) ? "+" : "") + bonus
+        }
+      }
     })
     recurselist(this.data.data.ranged, (e, k, d) => {
       if (e.import == null) 
@@ -100,15 +114,15 @@ export class GurpsActor extends Actor {
               if (action.action.type == 'attribute') {  // All melee attack skills affected by DX
                 if (action.action.attrkey == 'DX') {
                   e.level += pi(action.action.mod)
-                  if (!isNaN(parseInt(e.parry))) {
+                  if (!isNaN(parseInt(e.parry))) { // handles '11f'
                     let m = (e.parry+'').match(/(\d+)(.*)/)
                     e.parry = 3 + Math.floor(e.level / 2)
-                    if (!!e.parrybonus) e.parry += e.parrybonus
+                    if (!!e.parrybonus) e.parry += pi(e.parrybonus)
                     if (!!m) e.parry += m[2]
                   }
-                  if (!isNaN(e.block)) {
+                  if (!isNaN(e.block)) {  // handles 'no'
                     e.block = 3 + Math.floor(e.level / 2)
-                    if (!!e.blockbonus) e.block += e.blockbonus
+                    if (!!e.blockbonus) e.block += pi(e.blockbonus)
                   }
                 }
               }
@@ -1503,28 +1517,32 @@ export class GurpsActor extends Actor {
       e.uuid = key + '-' + i++ + '-' + itemData._id
       e.eqtkey = eqtkey
       if (!!e.otf) {
-        let action = parselink(e.otf)
-        if (!!action.action) {
-          action.action.calcOnly = true
-          e.level = '' + await GURPS.performAction(action.action, this) // collapse the OtF formula into a string
-          if (key == 'melee') {
-            if (e.parry != '') {
-              let m = e.parry.match(/([+-]\d+)(.*)/)
-              if (!!m) {
-                e.parrybonus = parseInt(m[1])
-                e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
-              }
-              if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
-            }
-            if (e.block != '') {
-              let m = e.block.match(/([+-]\d+)(.*)/)
-              if (!!m) {
-                e.blockbonus = parseInt(m[1])
-                e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
-              }
-              if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
-            }
+        if (e.otf.match(/^ *\d+ *$/) {
+          e.import = parseInt(e.otf)
+        } else {
+          let action = parselink(e.otf)
+          if (!!action.action) {
+            action.action.calcOnly = true
+            e.import = '' + await GURPS.performAction(action.action, this) // collapse the OtF formula into a string
           }
+        }
+      }
+      if (key == 'melee') {
+        if (!isNaN(parseInt(e.parry)) {
+          let m = e.parry.match(/([+-]\d+)(.*)/)
+          if (!!m) {
+            e.parrybonus = parseInt(m[1])
+            e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
+          }
+          if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
+        }
+        if (!isNaN(e.block)) {
+          let m = e.block.match(/([+-]\d+)(.*)/)
+          if (!!m) {
+            e.blockbonus = parseInt(m[1])
+            e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
+          }
+          if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
         }
       }
       GURPS.put(list, e)
@@ -1645,52 +1663,6 @@ export class GurpsActor extends Actor {
       d.render(true)
     }
   }
-  
-  applyLevelBonus(objectWithLevel, attr) {
-    let level = parseInt(objectWithLevel.level)
-    for (const item of this.items.entries) {
-      if (item.data.data.equipped != false && !!item.data.data.bonuses) {
-        let bonuses = item.data.data.bonuses.split('\n')
-        for (const bonus of bonuses) {
-          let action = parselink(bonus)
-          if (!!action.action) {
-            if (action.action.type == 'attribute') {  // skills affected by attribute changes
-              if (objectWithLevel.relativelevel?.toUpperCase().startsWith(action.action.attrkey))
-                level += parseInt(action.action.mod)
-              if (attr == action.action.attrkey)    // allow melee and ranged to match to attr ('DX')
-                level += parseInt(action.action.mod) // attr could be string... or html junk... on string will match
-            }
-            if (action.action.type == 'skill-spell') {
-              if (objectWithLevel.name.match(makeRegexPatternFrom(action.action.name, false)))
-                level += parseInt(action.action.mod)
-            }
-          }
-        }
-      }
-    }
-    return level
-  }
-  applyAttributeBonus(path) {
-    let attr = getProperty(this.data, path)
-    let level = (!!attr.currentvalue) ? attr.currentvalue : attr.value
-    level = parseInt(level)
-    for (const item of this.items.entries) {
-      if (item.data.data.equipped != false && !!item.data.data.bonuses) {
-        let bonuses = item.data.data.bonuses.split('\n')
-        for (const bonus of bonuses) {
-          let action = parselink(bonus)
-          if (!!action.action) {
-            if (action.action.type == 'attribute') {  // skills affected by attribute changes
-              if (path.endsWith(action.action.attrkey))
-                level += parseInt(action.action.mod)
-            }
-          }
-        }
-      }
-    }
-    return level
-  }
-
 
   // This function merges the 'where' and 'dr' properties of this actor's hitlocations
   // with the roll value from the  HitLocations.hitlocationRolls, converting the
