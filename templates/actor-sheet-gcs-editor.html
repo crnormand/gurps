@@ -137,29 +137,29 @@
         <div class="fieldblock3">
           <div class="points"><input name="data.attributes.ST.points" class="gcs-input-sm2" type="text"
               value="{{data.attributes.ST.points}}" /></div>
-          <div class="field"><input name="data.attributes.ST.value" class="gcs-input" type="text"
-              value="{{data.attributes.ST.value}}" /></div>
+          <div class="field"><input name="data.attributes.ST.import" class="gcs-input" type="text"
+              value="{{data.attributes.ST.import}}" /></div>
           <div class="label">{{localize "GURPS.attributesSTNAME"}} ({{localize "GURPS.attributesST"}})</div>
           <div class="points"><input name="data.attributes.DX.points" class="gcs-input-sm2" type="text"
               value="{{data.attributes.DX.points}}" /></div>
-          <div class="field"><input name="data.attributes.DX.value" class="gcs-input" type="text"
-              value="{{data.attributes.DX.value}}" /></div>
+          <div class="field"><input name="data.attributes.DX.import" class="gcs-input" type="text"
+              value="{{data.attributes.DX.import}}" /></div>
           <div class="label">{{localize "GURPS.attributesDXNAME"}} ({{localize "GURPS.attributesDX"}})</div>
           <div class="points"><input name="data.attributes.IQ.points" class="gcs-input-sm2" type="text"
               value="{{data.attributes.IQ.points}}" /></div>
-          <div class="field"><input name="data.attributes.IQ.value" class="gcs-input" type="text"
-              value="{{data.attributes.IQ.value}}" /></div>
+          <div class="field"><input name="data.attributes.IQ.import" class="gcs-input" type="text"
+              value="{{data.attributes.IQ.import}}" /></div>
           <div class="label">{{localize "GURPS.attributesIQNAME"}} ({{localize "GURPS.attributesIQ"}})</div>
           <div class="points"><input name="data.attributes.HT.points" class="gcs-input-sm2" type="text"
               value="{{data.attributes.HT.points}}" /></div>
-          <div class="field"><input name="data.attributes.HT.value" class="gcs-input" type="text"
-              value="{{data.attributes.HT.value}}" /></div>
+          <div class="field"><input name="data.attributes.HT.import" class="gcs-input" type="text"
+              value="{{data.attributes.HT.import}}" /></div>
           <div class="label">{{localize "GURPS.attributesHTNAME"}} ({{localize "GURPS.attributesHT"}})</div>
           <hr>
           <div class="points"><input name="data.attributes.WILL.points" class="gcs-input-sm2" type="text"
               value="{{data.attributes.WILL.points}}" /></div>
-          <div class="field"><input name="data.attributes.WILL.value" class="gcs-input" type="text"
-              value="{{data.attributes.WILL.value}}" /></div>
+          <div class="field"><input name="data.attributes.WILL.import" class="gcs-input" type="text"
+              value="{{data.attributes.WILL.import}}" /></div>
           <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
           <div class="points"></div>
           <div class="field"><input name="data.frightcheck" class="gcs-input" type="text"
@@ -517,8 +517,8 @@
         </div>
         <div class="usage meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.mode"
             class="gcs-input" type="text" value="{{this.mode}}" /></div>
-        <div class="level meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.level"
-            class="gcs-input-sm2" type="text" value="{{this.level}}" /></div>
+        <div class="level meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.import"
+            class="gcs-input-sm2" type="text" value="{{this.import}}" /></div>
         <div class="parry meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.parry"
             class="gcs-input-sm4" type="text" value="{{this.parry}}" /></div>
         <div class="block meleemenu" data-key="data.melee.{{key}}"><input name="data.melee.{{key}}.block"
@@ -556,8 +556,8 @@
         </div>
         <div class="usage rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.mode"
             class="gcs-input" type="text" value="{{this.mode}}" /></div>
-        <div class="level rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.level"
-            class="gcs-input-sm2" type="text" value="{{this.level}}" /></div>
+        <div class="level rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.import"
+            class="gcs-input-sm2" type="text" value="{{this.import}}" /></div>
         <div class="acc rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.acc"
             class="gcs-input-sm2" type="text" value="{{this.acc}}" /></div>
         <div class="damage rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.damage"
@@ -612,8 +612,8 @@
               value="{{this.notes}}" /></div>
           <div></div>
         </div>
-        <div class="sl satisfiedY skillmenu" data-key="data.skills.{{key}}"><input name="data.skills.{{key}}.level"
-            class="gcs-input-sm3" type="text" value="{{this.level}}" /></div>
+        <div class="sl satisfiedY skillmenu" data-key="data.skills.{{key}}"><input name="data.skills.{{key}}.import"
+            class="gcs-input-sm3" type="text" value="{{this.import}}" /></div>
         <div class="rsl satisfiedY skillmenu" data-key="data.skills.{{key}}"><input
             name="data.skills.{{key}}.relativelevel" class="gcs-input-sm4" type="text" value="{{this.relativelevel}}" />
         </div>
@@ -658,8 +658,8 @@
             class="gcs-input-sm5" type="text" value="{{this.casttime}}" /></div>
         <div class="duration satisfiedY spellmenu" data-key="data.spells.{{key}}"><input
             name="data.spells.{{key}}.duration" class="gcs-input-sm5" type="text" value="{{this.duration}}" /></div>
-        <div class="sl satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.level"
-            class="gcs-input-sm2" type="text" value="{{this.level}}" /></div>
+        <div class="sl satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.import"
+            class="gcs-input-sm2" type="text" value="{{this.import}}" /></div>
         <div class="rsl satisfiedY spellmenu" data-key="data.spells.{{key}}"><input
             name="data.spells.{{key}}.difficulty" class="gcs-input-sm3" type="text" value="{{this.difficulty}}" /></div>
         <div class="pts satisfiedY spellmenu" data-key="data.spells.{{key}}"><input name="data.spells.{{key}}.points"
