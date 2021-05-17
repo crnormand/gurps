@@ -1532,7 +1532,7 @@ export class GurpsActor extends Actor {
         }
       }
       if (key == 'melee') {
-        if (!isNaN(parseInt(e.parry)) {
+        if (!isNaN(parseInt(e.parry))) {
           let m = e.parry.match(/([+-]\d+)(.*)/)
           if (!!m) {
             e.parrybonus = parseInt(m[1])

@@ -187,7 +187,7 @@ export class ModifierBucket extends Application {
     if (!id) { // Only occurs if the GM clicks on 'everyone'
       this._sendBucket(game.users.filter(u => u.id != game.user.id))
     } else {
-      let users = game.users.players.filter(u => u.id == id) || []
+      let users = game.users.filter(u => u.id == id) || []
       if (users.length > 0) this._sendBucket(users)
       else ui.notifications.warn("No player with ID '" + id + "'")
     }
@@ -200,9 +200,8 @@ export class ModifierBucket extends Application {
       return
     }
     let mb = GURPS.ModifierBucket.modifierStack
-    try {
+    if (game.user.hasRole("GAMEMASTER"))  // Only actual GMs can update other user's flags
       users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
-    } catch (err) []  // Assistant's can't set user flags
     game.socket.emit('system.gurps', {
       type: 'updatebucket',
       users: users.map(u => u.id),
