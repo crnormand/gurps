@@ -75,6 +75,9 @@
           <a class='item' data-tab='spell-tab'><i
               class='fas fa-magic'></i>&nbsp;{{i18n "GURPS.spells" "Spells"}}&nbsp;<span
               style='font-size: 80%;'>{{#if (length data.spells)}}({{length data.spells}}){{/if}}</span></a>
+          <a class='item' data-tab='ads-tab'><i
+              class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages" "Advantages"}}&nbsp;<span
+              style='font-size: 80%;'>{{#if (length data.ads)}}({{length data.ads}}){{/if}}</span></a>
           <a class='item' data-tab='skill-tab'><i
               class='fas fa-snowboarding'></i>&nbsp;{{i18n "GURPS.skills"}}&nbsp;<span
               style='font-size: 80%;'>{{#if (length data.skills)}}({{length data.skills}}){{/if}}</span></a>
@@ -315,6 +318,43 @@
             <div class='button-bar'>
               <button id='add-skill'><i class='fas fa-check'></i>
                 {{i18n "GURPS.addSkill"}}</button>
+            </div>
+          </div>
+
+          <!-- Advantages -->
+          <div class='tab' data-tab='ads-tab' data-group='sections'>
+            {{#each data.ads as | this key |}}
+              <div class='gurps-group inputs'>
+                <h4 class='with-button'>{{i18n "GURPS.advantage" "Advantage"}}
+                  {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='data.ads' name='{{key}}'><i
+                      class='fas fa-trash'></i></span>
+                </h4>
+
+                <div class='gurps-3col'>
+                  <div class='label-value-row right-bias'>
+                    <label>{{i18n "GURPS.name"}}</label>
+                    <div><input type='text' value='{{name}}' name='data.ads.{{key}}.name' /></div>
+                  </div>
+                  <div class='label-value-row right-bias'>
+                  </div>
+                  <div class='label-value-row right-bias'>
+                    <label>{{i18n "GURPS.pdfPageReference"}}</label>
+                    <div><input type='text' value='{{pageref}}' name='data.ads.{{key}}.pageref' />
+                    </div>
+                  </div>
+                </div>
+                <div class='label-value-row right-bias'>
+                  <div></div>
+                  <div></div>
+                  <label>{{i18n "GURPS.notes" "Notes"}}</label>
+                  <div><textarea class='notes' rows='2' name='data.ads.{{key}}.notes'>{{notes}}</textarea></div>
+                </div>
+              </div>
+              <div class='vertical-gap'></div>
+            {{/each}}
+            <div class='button-bar'>
+              <button id='add-ads'><i class='fas fa-check'></i>
+                {{i18n "GURPS.addAdvantage" "Add an Advantage/Disadvantage"}}</button>
             </div>
           </div>
         </section>

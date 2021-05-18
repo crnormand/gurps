@@ -1728,7 +1728,6 @@ ul#result-effects li {
 }
 
 .gurps-tabs .item {
-  font-size: 90%;
   color: dimgrey;
   text-overflow: clip;
   overflow: hidden;
@@ -1736,7 +1735,6 @@ ul#result-effects li {
 }
 
 .gurps-tabs .item.active {
-  font-size: large;
   color: unset;
   text-shadow: 0 0 10px red;
 }
