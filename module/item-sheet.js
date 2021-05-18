@@ -1,7 +1,6 @@
 'use strict'
-import { Melee, Ranged, Skill, Spell } from './actor.js'
+import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
-import { objectToArray, arrayToObject } from '../lib/utilities.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
@@ -9,7 +8,7 @@ export class GurpsItemSheet extends ItemSheet {
     return mergeObject(super.defaultOptions, {
       classes: ['sheet', 'item'],
       template: 'systems/gurps/templates/item-sheet.html',
-      width: 620,
+      width: 680,
       height: 'auto',
       resizable: false,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
@@ -73,6 +72,12 @@ export class GurpsItemSheet extends ItemSheet {
       ev.preventDefault()
       let r = new Spell()
       this._addToList('spells', r)
+    })
+
+    html.find('#add-ads').click(ev => {
+      ev.preventDefault()
+      let r = new Advantage()
+      this._addToList('ads', r)
     })
   }
 
