@@ -28,6 +28,7 @@ This is what we are currently working on:
 - Fix for DragRuler users... range mod is NOT added when token is moved
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
 - Item editor UI is complete.
+- Added chat command /light (thanks Boifubá!)
 
 ## History
 

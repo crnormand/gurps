@@ -1394,20 +1394,41 @@ export class GurpsActor extends Actor {
     let srcActor = game.actors.get(dragData.actorid)
     if (!!this.owner && !!srcActor.owner) {
       // same owner
-      let eqt = getProperty(srcActor, dragData.key)
+      let eqt = getProperty(srcActor.data, dragData.key)
       if (eqt.count < 2) {
         let item = await srcActor.deleteEquipment(dragData.key)
         await this.addNewItemData(item)
       } else {
-        let qty = 1
-        await srcActor.update({ [dragData.key + '.count']: (eqt.count - qty) })
-        let item = this.getOwnedItem(eqt.itemid)
-        item.data.eqt.count = qty
-        await this.addNewItemData(item)
+        let content = `
+        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
+          <p style='font-size: large;'><strong>${eqt.name}</strong></p>
+          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
+            <label>${i18n('GURPS.chatQty')}</label>
+            <input type='text' id='qty' class='digits-only' style='text-align: center;' value='${eqt.count}'>
+          </div>
+          <p/>
+        </div>
+        `
+        let yes = async (html) => {
+          let qty = parseInt(html.find('#qty').val())
+          if (qty >= eqt.count) {
+            let item = await srcActor.deleteEquipment(dragData.key)
+            await this.addNewItemData(item)
+          } else { 
+            await srcActor.update({ [dragData.key + '.count']: (eqt.count - qty) })
+            let item = srcActor.getOwnedItem(eqt.itemid)
+            item.data.data.eqt.count = qty
+            await this.addNewItemData(item)
+          }
+        }
+        Dialog.confirm({
+          title:'Transfer', 
+          content: content, 
+          yes: yes })
       }
     } else {
       // different owners
-      let eqt = GURPS.decode(srcActor.data, dragData.key)
+      let eqt = getProperty(srcActor.data, dragData.key)
       let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
       if (!!destowner) {
         ui.notifications.info(`Asking ${this.name} if they want ${eqt.name}`)
@@ -1856,9 +1877,15 @@ export class GurpsActor extends Actor {
   async updateParentOf(srckey) {
     // pindex = 4 for equipment
     let pindex = 4
+    let eqt = getProperty(this.data, srckey)
     let sp = srckey.split('.').slice(0, pindex).join('.') // find the top level key in this list
-    let eqt = GURPS.decode(this.data, sp)
-    if (!!eqt) await Equipment.calcUpdate(this, eqt, sp) // and re-calc cost and weight sums
+    let parent = GURPS.decode(this.data, sp)
+    if (!!parent) await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums
+    if (!!eqt.itemid) {
+      let item = this.getOwnedItem(eqt.itemid)
+      item.data.data.eqt.count = eqt.count
+      this.updateOwnedItem(item.data)
+    }
   }
 }
 
