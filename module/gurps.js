@@ -1152,7 +1152,8 @@ function put(obj, value, index = -1) {
 }
 GURPS.put = put
 
-// Convolutions to remove a key from an object and fill in the gaps, necessary because the default add behavior just looks for the first open gap
+// Convolutions to remove a key from an object and fill in the gaps, necessary
+// because the default add behavior just looks for the first open gap
 async function removeKey(actor, path) {
   let i = path.lastIndexOf('.')
   let objpath = path.substring(0, i)
