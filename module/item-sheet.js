@@ -1,5 +1,5 @@
 'use strict'
-import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
+import { Melee, Ranged, Skill, Spell } from './actor.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
 import { objectToArray, arrayToObject } from '../lib/utilities.js'
 
@@ -107,7 +107,6 @@ export class GurpsItemSheet extends ItemSheet {
     // update with the reordered list of melee attacks
     update = { [path]: feature }
     await this.item.update(update)
-    this.render(false)
   }
 
   close() {

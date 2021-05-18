@@ -26,7 +26,7 @@
 /* prefer center text in input fields */
 .gurps-app input.digits-only,
 .gurps-app input.decimal-digits-only {
-  text-align: center;
+  text-align: left;
 }
 
 /* remove this item from display  */
@@ -43,7 +43,7 @@
 }
 
 .gurps-app .icon-prefix > input {
-  padding-left: 2em;
+  padding-left: 2.2em;
 }
 
 .gurps-app .icon-prefix > span {
@@ -52,6 +52,14 @@
   width: 2em;
   text-align: center;
   color: dimgray;
+  height: 26px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.35);
+  border: 1px solid #7a7971;
+  border-radius: 3px 0 0 3px;
 }
 
 .gurps-app .img-display {
@@ -252,9 +260,9 @@
   font-size: smaller;
 }
 
-.gurps-group + .gurps-group {
+/* .gurps-group + .gurps-group {
   margin-top: 5px;
-}
+} */
 
 .modtooltip .gurps-group + .gurps-group {
   margin: unset;
@@ -272,8 +280,12 @@
 }
 
 .gurps-group input {
-  text-align: center;
+  text-align: left;
   margin: 0.15em 0;
+}
+
+.gurps-app input.centered {
+  text-align: center !important;
 }
 
 .gurps-group .label-value-row {

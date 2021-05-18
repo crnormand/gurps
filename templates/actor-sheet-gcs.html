@@ -46,7 +46,7 @@
         <div class="fieldblock">
           <div class="label">{{localize "GURPS.descriptionHeight"}}:</div>
           <div class="field">{{data.traits.height}}</div>
-          <div class="label">{{localize "GURPS.descriptionWeight"}}:</div>
+          <div class="label">{{localize "GURPS.weight"}}:</div>
           <div class="field">{{data.traits.weight}}</div>
           <div class="label">{{localize "GURPS.descriptionSizeModifier"}}:</div>
           <div class="field">{{data.traits.sizemod}}</div>
@@ -481,21 +481,21 @@
       </div>
     {{/if}}
     <div id="equipment" class="equipmentlist">
-      <div class="equipped header">{{i18n "GURPS.equipmentEquipped" "E"}}</div>
+      <div class="equipped header">{{i18n "GURPS.equipmentEquipped"}}</div>
       <div class="qty header eqtdragtarget" data-key="data.equipment.carried">
-        {{i18n "GURPS.equipmentQuantity" "Qty"}}
+        {{i18n "GURPS.equipmentQuantity"}}
       </div>
       <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried">
         {{localize "GURPS.equipment"}}
         ({{toLocaleString eqtsummary.eqtlbs}} lb; ${{toLocaleString eqtsummary.eqtcost}}) &nbsp; <i
           class='fas fa-plus addequipmenticon'></i>
       </div>
-      <div class="uses header">{{i18n "GURPS.equipmentUses" "Uses"}}</div>
+      <div class="uses header">{{i18n "GURPS.equipmentUses"}}</div>
       <div class="cost header">$</div>
       <div class="weight header"><i class="fas fa-weight-hanging"></i></div>
       <div class="sum_cost header">&sum; $</div>
       <div class="sum_weight header">&sum; <i class="fas fa-weight-hanging"></i></div>
-      <div class="ref header">{{i18n "GURPS.pdfRef" "Ref"}}</div>
+      <div class="ref header">{{i18n "GURPS.pdfRef"}}</div>
 
       {{#listeqt data.equipment.carried }}
         <div class="equipped satisfiedY changeequip equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{#if
@@ -545,18 +545,18 @@
 
     <div id="other_equipment" class="equipmentlist">
       <div class="qty header eqtdragtarget" data-key="data.equipment.other">
-        {{i18n "GURPS.equipmentQuantity" "Qty"}}
+        {{i18n "GURPS.equipmentQuantity"}}
       </div>
       <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.other">
         {{localize "GURPS.otherEquipment"}} (${{toLocaleString eqtsummary.othercost}}) &nbsp; <i
           class='fas fa-plus addequipmenticon'></i>
       </div>
-      <div class="uses header">{{i18n "GURPS.equipmentUses" "Uses"}}</div>
+      <div class="uses header">{{i18n "GURPS.equipmentUses"}}</div>
       <div class="cost header">$</div>
       <div class="weight header"><i class="fas fa-weight-hanging"></i></div>
       <div class="sum_cost header">&sum; $</div>
       <div class="sum_weight header">&sum; <i class="fas fa-weight-hanging"></i></div>
-      <div class="ref header">{{i18n "GURPS.pdfRef" "Ref"}}</div>
+      <div class="ref header">{{i18n "GURPS.pdfRef"}}</div>
       <div></div>
 
       {{#listeqt data.equipment.other }}
@@ -580,8 +580,10 @@
         (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
         <div class="cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
         <div class="weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
-        <div class="sum_cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}</div>
-        <div class="sum_weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{round this.weightsum}}
+        <div class="sum_cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}
+        </div>
+        <div class="sum_weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">
+          {{round this.weightsum}}
           lb
         </div>
         <div class="ref satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref

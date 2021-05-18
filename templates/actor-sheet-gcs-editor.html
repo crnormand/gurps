@@ -671,20 +671,20 @@
     </div>
 
     <div id="equipment" class="equipmentlist">
-      <div class="equipped header carhead">{{i18n "GURPS.equipmentEquipped" "E"}}</div>
-      <div class="qty header carhead">{{i18n "GURPS.equipmentQuantity" "Qty"}}</div>
+      <div class="equipped header carhead">{{i18n "GURPS.equipmentEquipped"}}</div>
+      <div class="qty header carhead">{{i18n "GURPS.equipmentQuantity"}}</div>
       <div class="desc header carhead" data-key="data.equipment.carried">
         {{localize "GURPS.equipment"}} (<i class="fas fa-weight-hanging"></i> {{toLocaleString eqtsummary.eqtlbs}};
         ${{toLocaleString eqtsummary.eqtcost}})
         &nbsp;
         <i class='fas fa-plus addequipmenticon'></i>
       </div>
-      <div class="uses header carhead">{{i18n "GURPS.equipmentUses" "Uses"}}</div>
+      <div class="uses header carhead">{{i18n "GURPS.equipmentUses"}}</div>
       <div class="cost header carhead">$</div>
       <div class="weight header carhead"><i class="fas fa-weight-hanging"></i></div>
       <div class="sum_cost header carhead">&sum; $</div>
       <div class="sum_weight header carhead">&sum; <i class="fas fa-weight-hanging"></i></div>
-      <div class="ref header carhead">{{i18n "GURPS.pdfRef" "Ref"}}</div>
+      <div class="ref header carhead">{{i18n "GURPS." "Ref"}}</div>
 
       {{#listeqt data.equipment.carried }}
         <div class="equipped satisfiedY changeequip equipmenu" data-key="data.equipment.carried.{{@key}}">

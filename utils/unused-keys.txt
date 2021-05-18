@@ -1,33 +1,5 @@
 [ 'templates', 'module', 'lib' ]
-Keys that do not match expected pattern
-=======================================
-__Char Sheet__
-__Character Sheet Identity__
-__Character Sheet Miscellaneous__
-__Character Description__
-__Character Points__
-__Character Attributes__
-__ Character AddsDisadsPerksQuirks__
-__ Character Skills__
-__Character Spells__
-__Character Equipment__
-__Character Encumbrance/Lift__
-__Character Weapons__
-__Apply Damage Dialog__
-__Body Plan__
-__Chat Messages__
-__Damage Types__
-__Drag Ruler__
-__Fantastic Dungeon Grappling__
-__Hit Location__
-__Modifier Bucket__
-__PDF References__
-__Resolve Damage Dialog__
-__Resource Trackers__
-Skill Names__
-__Slam Calculator__
-__Status/Conditions__
-__Potentially Removable__
+
 KEYS NOT FOUND
 ===========================
 GURPS.BODYPLANarachnoid
@@ -48,10 +20,7 @@ GURPS.BODYPLANvermiform
 GURPS.BODYPLANvermiformWinged
 GURPS.BODYPLANwinged humanoid
 GURPS.FP
-GURPS.addEnterDR
-GURPS.chatSuffersCrippling
 GURPS.chatSuffersCripplingInjury
-GURPS.chatToLocation
 GURPS.check1
 GURPS.check2
 GURPS.check3
@@ -72,14 +41,10 @@ GURPS.damageTypeSmall Piercing
 GURPS.damageTypeToxic
 GURPS.dead
 GURPS.destroyed
-GURPS.dxJudoAcrobaticsCheck
-GURPS.effectsDoubles
 GURPS.equippedblock
 GURPS.equippedparry
-GURPS.forTurns
 GURPS.groundCreaturesSuffer
 GURPS.highPainThreshold
-GURPS.highest
 GURPS.hitLocationArm
 GURPS.hitLocationArm 1-2
 GURPS.hitLocationArm 3-4
@@ -130,46 +95,8 @@ GURPS.hitLocationVitals, Heart
 GURPS.hitLocationWing
 GURPS.lowPainThreshold
 GURPS.meters
-GURPS.modifierMouseOff
-GURPS.moveReducedToHalf
-GURPS.nextTurnOnly
-GURPS.of
-GURPS.penalty
 GURPS.perfectBalance
 GURPS.point
 GURPS.pointsUnspent
-GURPS.remainStanding
-GURPS.suffersA
 GURPS.swimmersOrFlyersSuffer
 GURPS.toAllDXBasedRolls
-GURPS.toAvoidFalling
-GURPS.toDXAndIQ
-GURPS.wasStruckIn
-GURPS.withShockPenalty
-Skill Names__
-__ Character AddsDisadsPerksQuirks__
-__ Character Skills__
-__Apply Damage Dialog__
-__Body Plan__
-__Char Sheet__
-__Character Attributes__
-__Character Description__
-__Character Encumbrance/Lift__
-__Character Equipment__
-__Character Points__
-__Character Sheet Identity__
-__Character Sheet Miscellaneous__
-__Character Spells__
-__Character Weapons__
-__Chat Messages__
-__Damage Types__
-__Drag Ruler__
-__Fantastic Dungeon Grappling__
-__Hit Location__
-__Modifier Bucket__
-__PDF References__
-__Potentially Removable__
-__Resolve Damage Dialog__
-__Resource Trackers__
-__Slam Calculator__
-__Status/Conditions__

@@ -7,7 +7,6 @@ const i18n = {
   'GURPS.slamAOAStrong': 'All-out Attack (Strong)',
   'GURPS.slamShieldDB': 'Shield DB',
   'GURPS.notAffected': 'Boob is not affected',
-  'GURPS.fallsDown': 'falls down!',
   'GURPS.fallsDownApplyProne': 'Boob falls down!',
   'GURPS.dxCheckOrFallApplyProne': 'Boob must roll DX or fall!',
 }
