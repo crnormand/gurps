@@ -13,6 +13,7 @@ export class GurpsItemSheet extends ItemSheet {
       height: 'auto',
       resizable: false,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
 
@@ -48,9 +49,7 @@ export class GurpsItemSheet extends ItemSheet {
       ev.preventDefault()
       let m = new Melee()
       m.name = this.item.name
-      let melee = this.item.data.data.melee || {}
-      GURPS.put(melee, m)
-      this.item.update({ 'data.melee': melee })
+      this._addToList('melee', m)
     })
 
     html.find('.delete.button').click(this._deleteKey.bind(this))
@@ -60,53 +59,48 @@ export class GurpsItemSheet extends ItemSheet {
       let r = new Ranged()
       r.name = this.item.name
       r.legalityclass = 'lc'
-      let list = this.item.data.data.ranged || {}
-      GURPS.put(list, r)
-      this.item.update({ 'data.ranged': list })
+      this._addToList('ranged', r)
     })
 
     html.find('#add-skill').click(ev => {
       ev.preventDefault()
       let r = new Skill()
       r.rsl = '-'
-      let list = this.item.data.data.skills
-      GURPS.put(list, r)
-      this.item.update({ 'data.skills': list })
+      this._addToList('skills', r)
     })
 
     html.find('#add-spell').click(ev => {
       ev.preventDefault()
       let r = new Spell()
-      let list = this.item.data.data.skills
-      GURPS.put(list, r)
-      this.item.update({ 'data.spells': list })
+      this._addToList('spells', r)
     })
   }
 
   async _deleteKey(ev) {
     let key = ev.currentTarget.getAttribute('name')
     let path = ev.currentTarget.getAttribute('data-path')
-    let temp = path.split('.').reduce(function (a, b) {
-      return a && a[b]
-    }, this.item.data)
+    GURPS.removeKey(this.item, path + '.' + key)
+  }
 
-    // make a copy
-    let feature = { ...temp }
+  async _onDrop(event) {
+    let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
+    if (!['melee', 'ranged', 'skills', 'spells', 'ads', 'equipment'].includes(dragData.type)) return
+    let srcActor = game.actors.get(dragData.actorid)
+    let srcData = getProperty(srcActor.data, dragData.key)
+    if (dragData.type == 'equipment') {
+      this.item.update({
+        name: srcData.name,
+        'data.eqt': srcData,
+      })
+      return
+    }
+    this._addToList(dragData.type, srcData)
+  }
 
-    // remove the key
-    delete feature[`${key}`]
-
-    // reorder the keys
-    feature = arrayToObject(objectToArray(feature), 5)
-
-    // delete all existing melee attackes
-    let toDelete = path.substr(0, path.lastIndexOf('.')) + '.-=' + path.substr(path.lastIndexOf('.') + 1)
-    let update = { [toDelete]: null }
-    await this.item.update(update)
-
-    // update with the reordered list of melee attacks
-    update = { [path]: feature }
-    await this.item.update(update)
+  _addToList(key, data) {
+    let list = this.item.data.data[key] || {}
+    GURPS.put(list, data)
+    this.item.update({ ['data.' + key]: list })
   }
 
   close() {

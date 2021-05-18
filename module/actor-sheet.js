@@ -143,7 +143,15 @@ export class GurpsActorSheet extends ActorSheet {
             type = 'equipment'
           }
           var itemData
-          if (!!eqt.itemid) itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+          if (!!eqt.itemid) {
+            itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+            let img = new Image
+            img.src = itemData.img  
+            const w = 50;
+            const h = 50;
+            const preview = DragDrop.createDragImage(img, w, h);
+            ev.dataTransfer.setDragImage(preview, w/2, h/2); 
+          }
           let newd = {
             actorid: this.actor.id, 
             type: type, 
@@ -160,9 +168,9 @@ export class GurpsActorSheet extends ActorSheet {
     }
 
     makelistdrag('.eqtdraggable', 'equipment')
-    makelistdrag('.adsdraggable', 'advantage')
-    makelistdrag('.skldraggable', 'skill')
-    makelistdrag('.spldraggable', 'spell')
+    makelistdrag('.adsdraggable', 'ads')
+    makelistdrag('.skldraggable', 'skills')
+    makelistdrag('.spldraggable', 'spells')
     makelistdrag('.notedraggable', 'note')
 
     makelistdrag('.meleedraggable', 'melee')
@@ -881,9 +889,9 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') this.actor.handleItemDrop(dragData) 
 
-    this.handleDragFor(event, dragData, 'advantage', 'adsdraggable')
-    this.handleDragFor(event, dragData, 'skill', 'skldraggable')
-    this.handleDragFor(event, dragData, 'spell', 'spldraggable')
+    this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
+    this.handleDragFor(event, dragData, 'skills', 'skldraggable')
+    this.handleDragFor(event, dragData, 'spells', 'spldraggable')
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
 
     if (dragData.type === 'equipment') {
