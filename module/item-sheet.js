@@ -1,5 +1,5 @@
 'use strict'
-import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
+import { Melee, Ranged, Skill, Spell } from './actor.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
 import { objectToArray, arrayToObject } from '../lib/utilities.js'
 
@@ -81,7 +81,7 @@ export class GurpsItemSheet extends ItemSheet {
     let path = ev.currentTarget.getAttribute('data-path')
     GURPS.removeKey(this.item, path + '.' + key)
   }
-  
+
   async _onDrop(event) {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
     if (!['melee', 'ranged', 'skills', 'spells', 'ads', 'equipment'].includes(dragData.type)) return
@@ -89,14 +89,14 @@ export class GurpsItemSheet extends ItemSheet {
     let srcData = getProperty(srcActor.data, dragData.key)
     if (dragData.type == 'equipment') {
       this.item.update({
-        'name': srcData.name, 
-        'data.eqt': srcData
-       })
+        name: srcData.name,
+        'data.eqt': srcData,
+      })
       return
     }
     this._addToList(dragData.type, srcData)
   }
-  
+
   _addToList(key, data) {
     let list = this.item.data.data[key] || {}
     GURPS.put(list, data)

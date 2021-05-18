@@ -1075,16 +1075,16 @@ GURPS.handlePdf = handlePdf
 
 // Return the i18n string for this data path (note en.json must match up to the data paths).
 // special case, drop ".value" from end of path (and append "NAME"), usually used for attributes
-function i18n(path, suffix) {
-  let i = path.indexOf('.value')
-  if (i >= 0) {
-    path = path.substr(0, i) + 'NAME' // used for the attributes
-  }
+// function _i18n(path, suffix) {
+//   let i = path.indexOf('.value')
+//   if (i >= 0) {
+//     path = path.substr(0, i) + 'NAME' // used for the attributes
+//   }
 
-  path = path.replace(/\./g, '') // remove periods
-  return game.i18n.localize('GURPS.' + path)
-}
-GURPS.i18n = i18n
+//   path = path.replace(/\./g, '') // remove periods
+//   return game.i18n.localize('GURPS.' + path)
+// }
+// GURPS._i18n = _i18n
 
 // Given a string path "x.y.z", use it to resolve down an object heiracrhy
 function resolve(path, obj = self, separator = '.') {
@@ -1152,7 +1152,8 @@ function put(obj, value, index = -1) {
 }
 GURPS.put = put
 
-// Convolutions to remove a key from an object and fill in the gaps, necessary because the default add behavior just looks for the first open gap
+// Convolutions to remove a key from an object and fill in the gaps, necessary
+// because the default add behavior just looks for the first open gap
 async function removeKey(actor, path) {
   let i = path.lastIndexOf('.')
   let objpath = path.substring(0, i)
