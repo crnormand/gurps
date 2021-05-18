@@ -1687,7 +1687,7 @@ Hooks.once('ready', async function () {
       let srcActor = game.actors.get(resp.srcactorid)
       Dialog.confirm({
         title: `Gift for ${destactor.name}!`,
-        content: `<p>${srcActor.name} wants to give you ${resp.itemData.name},</p><br>Ok?`,
+        content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
         yes: () => {
           destactor.addNewItemData(resp.itemData)
           game.socket.emit('system.gurps', {
@@ -1697,6 +1697,7 @@ Hooks.once('ready', async function () {
             srcactorid: resp.srcactorid,
             destactorid: resp.destactorid,
             itemname: resp.itemData.name,
+            count: resp.count
           })
         },
         no: () => {
@@ -1712,7 +1713,12 @@ Hooks.once('ready', async function () {
     if (resp.type == 'dragEquipment2') {
       if (resp.srcuserid != game.user.id) return
       let srcActor = game.actors.get(resp.srcactorid)
-      srcActor.deleteEquipment(resp.srckey)
+      let eqt = getProperty(srcActor.data, resp.srckey)
+      if (resp.count >= eqt.count) {
+        srcActor.deleteEquipment(resp.srckey)
+      } else { 
+        srcActor.update({ [resp.srckey + '.count']: (eqt.count - resp.count) }).then((v) => srcActor.updateParentOf(resp.srckey))
+      }
       let destActor = game.actors.get(resp.destactorid)
       ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
     }

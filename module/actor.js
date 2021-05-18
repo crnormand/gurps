@@ -1381,6 +1381,7 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
+    global.data.data.globalid = dragData.id
     await this.addNewItemData(global.data)
   }
 
@@ -1399,17 +1400,8 @@ export class GurpsActor extends Actor {
         let item = await srcActor.deleteEquipment(dragData.key)
         await this.addNewItemData(item)
       } else {
-        let content = `
-        <div style='display: flex; flex-flow: column nowrap; place-items: center;'>
-          <p style='font-size: large;'><strong>${eqt.name}</strong></p>
-          <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
-            <label>${i18n('GURPS.chatQty')}</label>
-            <input type='text' id='qty' class='digits-only' style='text-align: center;' value='${eqt.count}'>
-          </div>
-          <p/>
-        </div>
-        `
-        let yes = async (html) => {
+        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', {eqt: eqt})
+        let callback = async (html) => {
           let qty = parseInt(html.find('#qty').val())
           if (qty >= eqt.count) {
             let item = await srcActor.deleteEquipment(dragData.key)
@@ -1421,17 +1413,30 @@ export class GurpsActor extends Actor {
             await this.addNewItemData(item)
           }
         }
-        Dialog.confirm({
-          title:'Transfer', 
+        Dialog.prompt({
+          title: i18n("GURPS.TransferTo") + " " + this.name, 
+          label: i18n("GURPS.ok"),
           content: content, 
-          yes: yes })
+          callback: callback })
       }
     } else {
       // different owners
       let eqt = getProperty(srcActor.data, dragData.key)
+      let count = eqt.count
+      if (eqt.count > 1) {
+        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', {eqt: eqt})
+        let callback = async (html) => count = parseInt(html.find('#qty').val())
+        await Dialog.prompt({
+          title: i18n("GURPS.TransferTo") + " " + this.name, 
+          label: i18n("GURPS.ok"),
+          content: content, 
+          callback: callback })
+      }
+      if (count > eqt.count) count = eqt.count
       let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
       if (!!destowner) {
         ui.notifications.info(`Asking ${this.name} if they want ${eqt.name}`)
+        dragData.itemData.data.eqt.count = count // They may not have given all of them
         game.socket.emit('system.gurps', {
           type: 'dragEquipment1',
           srckey: dragData.key,
@@ -1440,6 +1445,7 @@ export class GurpsActor extends Actor {
           destuserid: destowner.id,
           destactorid: this.id,
           itemData: dragData.itemData,
+          count: count
         })
       } else ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
     }
@@ -1468,8 +1474,8 @@ export class GurpsActor extends Actor {
   // create a new embedded item based on this item data and place in the carried list
   // This is how all Items are added originally.
   async addNewItemData(itemData) {
-    if (!!itemData.data.data) itemData.data.data.equipped = true
-    else itemData.data.equipped = true
+    if (!!itemData.data.data) itemData = itemData.data
+    itemData.data.equipped = true
     let localItemData = await this.createOwnedItem(itemData) // add a local Foundry Item based on some Item data
     await this.addItemData(localItemData)
   }
@@ -1802,8 +1808,9 @@ export class GurpsActor extends Actor {
   }
 
   findEquipmentByName(pattern, otherFirst = false) {
+    while (pattern[0] == '/') pattern = pattern.substr(1)
     pattern = makeRegexPatternFrom(pattern, false)
-    let pats = pattern.split('/')
+    let pats = pattern.substr(1).split('/').map(e => new RegExp(e, "i")) // remove the ^
     var eqt, key
     let list1 = otherFirst ? this.data.data.equipment.other : this.data.data.equipment.carried
     let list2 = otherFirst ? this.data.data.equipment.carried : this.data.data.equipment.other

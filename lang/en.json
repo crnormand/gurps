@@ -257,8 +257,8 @@
   "GURPS.chatNoStatusMatched": "No status matched",
   "GURPS.chatNoOwnedTokenFound": "You do not own any tokens in this scene.",
   "GURPS.chatNoTokens": "Your character does not have any tokens. We require a token to set statuses",
-  "GURPS.chatQty": "'QTY'",
-  "GURPS.chatQtySetTo": "'QTY' set to",
+  "GURPS.chatQty": "QTY",
+  "GURPS.chatQtySetTo": "QTY set to",
   "GURPS.chatResetTo": "reset to",
   "GURPS.chatResourceTracker": "Resource Tracker",
   "GURPS.chatResultBelowZero": "Result below zero",
@@ -278,6 +278,8 @@
   "GURPS.chatYouMustBeGM": "You must be a GM to execute this command",
   "GURPS.chatYouMustHaveACharacterSelected": "You must have a character selected",
   "GURPS.chatYouMustSelectTokens": "You must select tokens (or use",
+  "GURPS.chatTokenLightPicker": "Token Light Picker",
+  "GURPS.chatLightSource": "Pick the light source the selected token is holding.",
 
   "__Permissions__": "=========",
   "GURPS.cannotDragNonFoundryEqt": "You cannot drag non-Foundry equipment to another character.",
@@ -728,5 +730,7 @@
   "GURPS.toAllDXBasedRolls": "to all DX-based rolls",
   "GURPS.update": "Update",
   "GURPS.yard": "yard",
-  "GURPS.yards": "yards"
+  "GURPS.yards": "yards",
+  "GURPS.ok": "OK",
+  "GURPS.TransferTo": "Transfer to"
 }
