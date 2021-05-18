@@ -1,7 +1,7 @@
 'use strict'
 import { Melee, Ranged, Skill, Spell } from './actor.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
-import { objectToArray, arrayToObject } from '../lib/utilities.js'
+import { recurselist } from '../lib/utilities.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
@@ -37,13 +37,21 @@ export class GurpsItemSheet extends ItemSheet {
 
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
-    html.find('#itemname').change(ev =>
-      this.item.update({
-        'data.eqt.name': ev.currentTarget.value,
-        name: ev.currentTarget.value,
+    html.find('#itemname').change(ev => {
+      let nm = ev.currentTarget.value
+      let commit = {
+        'data.eqt.name': nm,
+        name: nm
+      }
+      recurselist(this.item.data.data.melee, (e, k, d) => {
+        commit = {...commit, ...{ ['data.melee.' + k + ".name"]: nm }}
       })
-    )
-    html.find('.count').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
+      recurselist(this.item.data.data.ranged, (e, k, d) => {
+        commit = {...commit, ...{ ['data.melee.' + k + ".name"]: nm }}
+      })
+      this.item.update(commit)
+    })
+    html.find('#quantity').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
 
     html.find('#add-melee').click(ev => {
       ev.preventDefault()

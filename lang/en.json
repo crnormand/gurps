@@ -675,7 +675,7 @@
   "GURPS.hpIgnored": " HP ignored.",
   "GURPS.htCheck": "Roll HT",
   "GURPS.ID": "ID",
-  "GURPS.itemBonusText": "Enter as many On-the-Fly 'Bonus' Formulas as you'd like to modify values of attributes, skills, DR, etc.",
+  "GURPS.itemBonusText": "Enter On-the-Fly 'Bonus' Formulas (one per line) to modify values of attributes, skills, etc.",
   "GURPS.itemEditor": "Item Editor",
   "GURPS.itemFeatures": "Features",
   "GURPS.knockback": "Knockback, {amount} {unit}",

@@ -1394,8 +1394,17 @@ export class GurpsActor extends Actor {
     let srcActor = game.actors.get(dragData.actorid)
     if (!!this.owner && !!srcActor.owner) {
       // same owner
-      let item = await srcActor.deleteEquipment(dragData.key)
-      await this.addNewItemData(item)
+      let eqt = getProperty(srcActor, dragData.key)
+      if (eqt.count < 2) {
+        let item = await srcActor.deleteEquipment(dragData.key)
+        await this.addNewItemData(item)
+      } else {
+        let qty = 1
+        await srcActor.update({ [dragData.key + '.count']: (eqt.count - qty) })
+        let item = this.getOwnedItem(eqt.itemid)
+        item.data.eqt.count = qty
+        await this.addNewItemData(item)
+      }
     } else {
       // different owners
       let eqt = GURPS.decode(srcActor.data, dragData.key)
