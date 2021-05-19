@@ -29,6 +29,7 @@ This is what we are currently working on:
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
 - Item editor UI ver 1 is complete.
 - Added chat command /light (thanks Boifubá!)
+- Fixed import on bad actor (used to have to delete actor and then reimport)
 
 ## History
 

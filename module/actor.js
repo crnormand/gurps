@@ -1548,7 +1548,7 @@ export class GurpsActor extends Actor {
   async _addNewItemEquipment(itemData, targetkey ) {
     if (targetkey == null || targetkey == true) targetkey = 'data.equipment.carried'
     if (targetkey == false) targetkey = 'data.equipment.other' 
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += GURPS.genkey(0)
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += "." + GURPS.genkey(0)
     let eqt = itemData.data.eqt
     eqt.itemid = itemData._id
     eqt.globalid = itemData.data.globalid
@@ -1644,6 +1644,16 @@ export class GurpsActor extends Actor {
   }
 
   async moveEquipment(srckey, targetkey, shiftkey) {
+    if (shiftkey && await this._splitEquipment(srckey, targetkey)) return
+    if (await this._checkForMerging(srckey, targetkey)) return
+    if (targetkey.match(/^data\.equipment\.\w+$/)) {
+      let target = {...GURPS.decode(this.data, targetkey)} // shallow copy the list
+      if (!isSrcFirst) await GURPS.removeKey(this, srckey)
+      let eqtkey = GURPS.put(target, object)
+      await this.updateItemAdditionsBasedOn(object, srckey, targetkey + '.' + eqtkey)
+      await this.update({ [targetkey]: target })
+      if (isSrcFirst) await GURPS.removeKey(this, srckey)
+    } 
     if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
       ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
       return
@@ -1660,60 +1670,49 @@ export class GurpsActor extends Actor {
     for (let i = 0; i < max; i++) {
       if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
     }
-    if (shiftkey && await this._splitEquipment(srckey, targetkey)) return
-    if (await this._checkForMerging(srckey, targetkey)) return
-    if (targetkey.endsWith('.other') || targetkey.endsWith('.carried')) {
-      let target = {...GURPS.decode(this.data, targetkey)} // shallow copy the list
-      if (!isSrcFirst) await GURPS.removeKey(this, srckey)
-      let eqtkey = GURPS.put(target, object)
-      await this.updateItemAdditionsBasedOn(object, srckey, targetkey + '.' + eqtkey)
-      await this.update({ [targetkey]: target })
-      if (isSrcFirst) await GURPS.removeKey(this, srckey)
-    } else {
-      let d = new Dialog({
-        title: object.name,
-        content: '<p>Where do you want to drop this?</p>',
-        buttons: {
-          one: {
-            icon: '<i class="fas fa-level-up-alt"></i>',
-            label: 'Before',
-            callback: async () => {
-              if (!isSrcFirst) {
-                await GURPS.removeKey(this, srckey)
-                await this.updateParentOf(srckey)
-              }
-              await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
-              await GURPS.insertBeforeKey(this, targetkey, object)
-              await this.updateParentOf(targetkey)
-              if (isSrcFirst) {
-                await GURPS.removeKey(this, srckey)
-                await this.updateParentOf(srckey)
-              }
-            },
-          },
-          two: {
-            icon: '<i class="fas fa-sign-in-alt"></i>',
-            label: 'In',
-            callback: async () => {
-              if (!isSrcFirst) {
-                await GURPS.removeKey(this, srckey)
-                await this.updateParentOf(srckey)
-              }
-              let k = targetkey + '.contains.' + GURPS.genkey(0)
-              await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
-              await GURPS.insertBeforeKey(this, k, object)
-              await this.updateParentOf(k)
-              if (isSrcFirst) {
-                await GURPS.removeKey(this, srckey)
-                await this.updateParentOf(srckey)
-              }
-            },
+    let d = new Dialog({
+      title: object.name,
+      content: '<p>Where do you want to drop this?</p>',
+      buttons: {
+        one: {
+          icon: '<i class="fas fa-level-up-alt"></i>',
+          label: 'Before',
+          callback: async () => {
+            if (!isSrcFirst) {
+              await GURPS.removeKey(this, srckey)
+              await this.updateParentOf(srckey)
+            }
+            await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+            await GURPS.insertBeforeKey(this, targetkey, object)
+            await this.updateParentOf(targetkey)
+            if (isSrcFirst) {
+              await GURPS.removeKey(this, srckey)
+              await this.updateParentOf(srckey)
+            }
           },
         },
-        default: 'one',
-      })
-      d.render(true)
-    }
+        two: {
+          icon: '<i class="fas fa-sign-in-alt"></i>',
+          label: 'In',
+          callback: async () => {
+            if (!isSrcFirst) {
+              await GURPS.removeKey(this, srckey)
+              await this.updateParentOf(srckey)
+            }
+            let k = targetkey + '.contains.' + GURPS.genkey(0)
+            await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+            await GURPS.insertBeforeKey(this, k, object)
+            await this.updateParentOf(k)
+            if (isSrcFirst) {
+              await GURPS.removeKey(this, srckey)
+              await this.updateParentOf(srckey)
+            }
+          },
+        },
+      },
+      default: 'one',
+    })
+    d.render(true)
   }
   
   async _splitEquipment(srckey, targetkey) {
@@ -1729,6 +1728,7 @@ export class GurpsActor extends Actor {
       callback: callback })
     if (count <= 0) return true // didn't want to split
     if (count >= srceqt.count) return false // not a split, but a move
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += "." + GURPS.genkey(0)
     if (!!srceqt.globalid) {
       await this.updateEqtCount(srckey, srceqt.count - count)
       let item = this.getOwnedItem(srceqt.itemid)
