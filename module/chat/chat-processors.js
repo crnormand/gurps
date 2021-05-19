@@ -131,11 +131,15 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     return line.startsWith('/:')
   }
   process(line) {
-    let m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)))
+    GURPS.chatreturn = false
+    let args = splitArgs(line.substr(2))
+    GURPS.chatargs = args
+    let m = Object.values(game.macros.entries).filter(m => m.name.startsWith(args[0]))
     if (m.length > 0) {
       this.send()
       m[0].execute()
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro', 'Unable to find macro named')} '${line.substr(2)}'`)
+    return GURPS.chatreturn
   }
 }
 
