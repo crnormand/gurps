@@ -60,15 +60,15 @@ export class GurpsActor extends Actor {
       else this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
     }
     recurselist(this.data.data.skills, (e, k, d) => {
-      if (e.import == null) commit = { ...commit, ...{ ['data.skills.' + k + '.import']: e.level } }
+      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.skills.' + k + '.import']: e.level } }
       else e.level = parseInt(e.import)
     })
     recurselist(this.data.data.spells, (e, k, d) => {
-      if (e.import == null) commit = { ...commit, ...{ ['data.spells.' + k + '.import']: e.level } }
+      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.spells.' + k + '.import']: e.level } }
       else e.level = parseInt(e.import)
     })
     recurselist(this.data.data.melee, (e, k, d) => {
-      if (e.import == null) commit = { ...commit, ...{ ['data.melee.' + k + '.import']: e.level } }
+      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.melee.' + k + '.import']: e.level } }
       else e.level = parseInt(e.import)
       if (!isNaN(parseInt(e.parry))) {
         // allows for '14f' and 'no'
@@ -87,7 +87,7 @@ export class GurpsActor extends Actor {
       }
     })
     recurselist(this.data.data.ranged, (e, k, d) => {
-      if (e.import == null) commit = { ...commit, ...{ ['data.ranged.' + k + '.import']: e.level } }
+      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.ranged.' + k + '.import']: e.level } }
       else e.level = parseInt(e.import)
     })
     // We must delay the upgrade of older actor's 'import' keys, since upon startup, the actor may not know which collection it belongs to
@@ -2033,8 +2033,8 @@ export class Named {
 }
 
 export class NamedCost extends Named {
-  constructor() {
-    super()
+  constructor(n1) {
+    super(n1)
     this.points = 0
   }
 }
@@ -2047,16 +2047,16 @@ export class Leveled extends NamedCost {
 }
 
 export class Skill extends Leveled {
-  constructor() {
-    super()
+  constructor(n1, lvl) {
+    super(n1, lvl)
     this.type = '' // "DX/E";
     this.relativelevel = '' // "DX+1";
   }
 }
 
 export class Spell extends Leveled {
-  constructor() {
-    super()
+  constructor(n1, lvl) {
+    super(n1, lvl)
     this.class = ''
     this.college = ''
     this.cost = ''
@@ -2069,8 +2069,8 @@ export class Spell extends Leveled {
 }
 
 export class Advantage extends NamedCost {
-  constructor() {
-    super()
+  constructor(n1) {
+    super(n1)
     this.userdesc = ''
     this.note = ''
   }
@@ -2088,8 +2088,8 @@ export class Attack extends Named {
 }
 
 export class Melee extends Attack {
-  constructor() {
-    super()
+  constructor(n1, lvl, dmg) {
+    super(n1, lvl, dmg)
 
     this.weight = ''
     this.techlevel = ''
@@ -2101,8 +2101,8 @@ export class Melee extends Attack {
 }
 
 export class Ranged extends Attack {
-  constructor() {
-    super()
+  constructor(n1, lvl, dmg) {
+    super(n1, lvl, dmg)
 
     this.bulk = ''
     this.legalityclass = ''
