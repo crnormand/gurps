@@ -1163,6 +1163,8 @@ async function removeKey(actor, path) {
   let objkey = objpath.substr(i + 1)
   let object = GURPS.decode(actor.data, objpath)
   let t = parentpath + '.-=' + objkey
+  let oldRender = actor.ignoreRender
+  actor.ignoreRender = true
   await actor.update({ [t]: null }) // Delete the whole object
   delete object[key]
   i = parseInt(key)
@@ -1181,6 +1183,7 @@ async function removeKey(actor, path) {
       a[v] = object[v]
       return a
     }, {}) // Enforced key order
+  actor.ignoreRender = oldRender
   await actor.update({ [objpath]: sorted })
 }
 GURPS.removeKey = removeKey
@@ -1689,7 +1692,14 @@ Hooks.once('ready', async function () {
         title: `Gift for ${destactor.name}!`,
         content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
         yes: () => {
-          destactor.addNewItemData(resp.itemData)
+        
+          let destKey = destactor._findEqtkeyForGlobalItem(resp.itemData.data.globalid)
+          if (!!destKey) {    // already have some
+            let destEqt = getProperty(destactor.data, destKey)
+            destactor.updateEqtCount(destKey, destEqt.count + resp.count)
+          } else {
+            destactor.addNewItemData(resp.itemData)
+          }
           game.socket.emit('system.gurps', {
             type: 'dragEquipment2',
             srckey: resp.srckey,
