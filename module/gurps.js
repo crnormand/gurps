@@ -1717,7 +1717,7 @@ Hooks.once('ready', async function () {
       if (resp.count >= eqt.count) {
         srcActor.deleteEquipment(resp.srckey)
       } else { 
-        srcActor.update({ [resp.srckey + '.count']: (eqt.count - resp.count) }).then((v) => srcActor.updateParentOf(resp.srckey))
+        srcActor.updateEqtCount(resp.srckey, eqt.count - resp.count)
       }
       let destActor = game.actors.get(resp.destactorid)
       ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
