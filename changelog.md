@@ -33,6 +33,7 @@ This is what we are currently working on:
 - Less "flashing" during imports/updates
 - Added support for /if [/qty -?] /hp +1d]
 - Added support for /qty detecting the current equipment
+- Added support for parameters and return values from script macros (GURPS.chatargs & GURPS.chatreturn)
 
 ## History
 
