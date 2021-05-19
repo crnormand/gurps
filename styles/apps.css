@@ -659,6 +659,7 @@ ul#result-effects li {
   border: none !important;
 }
 
+#npc-sheet .field select,
 #combat-sheet .field select,
 #sheet .field select {
   height: min-content;
