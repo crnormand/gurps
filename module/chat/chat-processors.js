@@ -394,13 +394,27 @@ class QtyChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
+    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
     else {
+      var eqt, key
       let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
       let pattern = m2[2]
-      let [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
+      if (this.msgs().event?.currentTarget) {
+        let t = this.msgs().event?.currentTarget
+        let k = $(t).closest("[data-key]").attr('data-key')
+        if (!!k) {
+          key = k
+          eqt = getProperty(actor.data, key)
+          if (eqt.count == null) 
+            eqt = null // wasn't an equipment
+          else
+            pattern = 'Current Equipment'
+        }
+      }
+      if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
       if (!eqt || !pattern)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
@@ -412,8 +426,8 @@ class QtyChatProcessor extends ChatProcessor {
           if (isNaN(delta))
             ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${m[1]}'`)
           else {
-            eqt.count = delta
-            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+            answer = true
+            await actor.updateEqtCount(key, delta)
             this.prnt(`${eqt.name} ${i18n('GURPS.chatQtySetTo', "'QTY' set to")} ${delta}`)
           }
         } else {
@@ -423,13 +437,14 @@ class QtyChatProcessor extends ChatProcessor {
               i18n('GURPS.chatYouDoNotHaveEnough', 'You do not have enough') + " '" + eqt.name + "'"
             )
           else {
+            answer = true
             this.prnt(`${eqt.name} ${i18n('GURPS.chatQty', "'QTY'")} ${m[1]}`)
-            eqt.count = q
-            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+             await actor.updateEqtCount(key, q)
           }
         }
       }
     }
+    return answer
   }
 }
 

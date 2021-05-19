@@ -31,6 +31,8 @@ This is what we are currently working on:
 - Added chat command /light (thanks Boifubá!)
 - Fixed import on bad actor (used to have to delete actor and then reimport)
 - Less "flashing" during imports/updates
+- Added support for /if [/qty -?] /hp +1d]
+- Added support for /qty detecting the current equipment
 
 ## History
 
