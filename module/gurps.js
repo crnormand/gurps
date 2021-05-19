@@ -1163,6 +1163,8 @@ async function removeKey(actor, path) {
   let objkey = objpath.substr(i + 1)
   let object = GURPS.decode(actor.data, objpath)
   let t = parentpath + '.-=' + objkey
+  let oldRender = actor.ignoreRender
+  actor.ignoreRender = true
   await actor.update({ [t]: null }) // Delete the whole object
   delete object[key]
   i = parseInt(key)
@@ -1181,6 +1183,7 @@ async function removeKey(actor, path) {
       a[v] = object[v]
       return a
     }, {}) // Enforced key order
+  actor.ignoreRender = oldRender
   await actor.update({ [objpath]: sorted })
 }
 GURPS.removeKey = removeKey
@@ -1687,9 +1690,16 @@ Hooks.once('ready', async function () {
       let srcActor = game.actors.get(resp.srcactorid)
       Dialog.confirm({
         title: `Gift for ${destactor.name}!`,
-        content: `<p>${srcActor.name} wants to give you ${resp.itemData.name},</p><br>Ok?`,
+        content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
         yes: () => {
-          destactor.addNewItemData(resp.itemData)
+        
+          let destKey = destactor._findEqtkeyForGlobalItem(resp.itemData.data.globalid)
+          if (!!destKey) {    // already have some
+            let destEqt = getProperty(destactor.data, destKey)
+            destactor.updateEqtCount(destKey, destEqt.count + resp.count)
+          } else {
+            destactor.addNewItemData(resp.itemData)
+          }
           game.socket.emit('system.gurps', {
             type: 'dragEquipment2',
             srckey: resp.srckey,
@@ -1697,6 +1707,7 @@ Hooks.once('ready', async function () {
             srcactorid: resp.srcactorid,
             destactorid: resp.destactorid,
             itemname: resp.itemData.name,
+            count: resp.count
           })
         },
         no: () => {
@@ -1712,7 +1723,12 @@ Hooks.once('ready', async function () {
     if (resp.type == 'dragEquipment2') {
       if (resp.srcuserid != game.user.id) return
       let srcActor = game.actors.get(resp.srcactorid)
-      srcActor.deleteEquipment(resp.srckey)
+      let eqt = getProperty(srcActor.data, resp.srckey)
+      if (resp.count >= eqt.count) {
+        srcActor.deleteEquipment(resp.srckey)
+      } else { 
+        srcActor.updateEqtCount(resp.srckey, eqt.count - resp.count)
+      }
       let destActor = game.actors.get(resp.destactorid)
       ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
     }

@@ -27,7 +27,10 @@ This is what we are currently working on:
 - Foundry Item bonuses can affect Attributes, Skills and Attacks.  DX changes also affect melee (w/ parry/block) and ranged skills
 - Fix for DragRuler users... range mod is NOT added when token is moved
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
-- Item editor UI is complete.
+- Item editor UI ver 1 is complete.
+- Added chat command /light (thanks Boifubá!)
+- Fixed import on bad actor (used to have to delete actor and then reimport)
+- Less "flashing" during imports/updates
 
 ## History
 

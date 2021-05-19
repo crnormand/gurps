@@ -493,20 +493,17 @@ export class GurpsActorSheet extends ActorSheet {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
-
-      let eqt = duplicate(getProperty(this.actor.data, path))
+      let eqt = getProperty(this.actor.data, path)
       let value = parseInt(eqt.count) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = 0
-      eqt.count = value
-      await this.actor.update({ [path]: eqt })
-      await this.actor.updateParentOf(path)
+      await this.actor.updateEqtCount(path, value)
     })
     html.find('button[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
       let actor = this.actor
-      let eqt = duplicate(getProperty(actor.data, path))
+      let eqt = getProperty(actor.data, path)
       if (eqt.count == 0) {
         let agree = false
         await Dialog.confirm({
@@ -518,9 +515,7 @@ export class GurpsActorSheet extends ActorSheet {
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
-        eqt.count = value
-        await this.actor.update({ [path]: eqt })
-        await this.actor.updateParentOf(path)
+        await this.actor.updateEqtCount(path, value)
       }
     })
 
@@ -903,7 +898,7 @@ export class GurpsActorSheet extends ActorSheet {
       let targetkey = element.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-        this.actor.moveEquipment(srckey, targetkey)
+        this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
       }
     }
   }
