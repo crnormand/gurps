@@ -704,7 +704,7 @@ async function performAction(action, actor, event, targets) {
     while (!!tempAction) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
-        th = this.i18n(tempAction.path)
+        th = this._mapAttributePath(tempAction.path)
         let t = parseInt(tempAction.target) // is it pre-targeted (ST12)
         if (!t && !!actor) {
           if (!!tempAction.melee) {
@@ -944,7 +944,7 @@ async function handleRoll(event, actor, targets) {
     return
   } else if ('path' in element.dataset) {
     prefix = 'Roll vs '
-    thing = this.i18n(element.dataset.path)
+    thing = this._mapAttributePath(element.dataset.path)
     formula = '3d6'
     target = parseInt(element.innerText)
   } else if ('name' in element.dataset || 'otf' in element.dataset) {
@@ -1078,16 +1078,15 @@ GURPS.handlePdf = handlePdf
 
 // Return the i18n string for this data path (note en.json must match up to the data paths).
 // special case, drop ".value" from end of path (and append "NAME"), usually used for attributes
-// function _i18n(path, suffix) {
-//   let i = path.indexOf('.value')
-//   if (i >= 0) {
-//     path = path.substr(0, i) + 'NAME' // used for the attributes
-//   }
-
-//   path = path.replace(/\./g, '') // remove periods
-//   return game.i18n.localize('GURPS.' + path)
-// }
-// GURPS._i18n = _i18n
+ function _mapAttributePath(path, suffix) {
+   let i = path.indexOf('.value')
+   if (i >= 0) {
+     path = path.substr(0, i) + 'NAME' // used for the attributes
+   }
+   path = path.replace(/\./g, '') // remove periods
+   return game.i18n.localize('GURPS.' + path)
+ }
+ GURPS._mapAttributePath = _mapAttributePath
 
 // Given a string path "x.y.z", use it to resolve down an object heiracrhy
 function resolve(path, obj = self, separator = '.') {

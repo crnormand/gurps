@@ -1411,7 +1411,7 @@ export class GurpsActor extends Actor {
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
-      ui.notifications.warn('GURPS.cannotDragNonFoundryEqt')
+      ui.notifications.warn(i18n('GURPS.cannotDragNonFoundryEqt'))
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
@@ -1518,9 +1518,31 @@ export class GurpsActor extends Actor {
 
   // Once the Items has been added to our items list, add the equipment and any features
   async addItemData(itemData, targetkey) {
-    let eqtkey = await this._addNewItemEquipment(itemData, targetkey)
-    let commit = await this._addItemAdditions(itemData, eqtkey)
-    await this.update(commit)
+    let [ eqtkey, carried ] = await this._addNewItemEquipment(itemData, targetkey)
+    if (carried) {
+      let commit = await this._addItemAdditions(itemData, eqtkey)
+      await this.update(commit)
+    }
+  }
+
+  // Make the initial equipment object (in the carried list)
+  async _addNewItemEquipment(itemData, targetkey ) {
+    if (targetkey == null || targetkey == true) { // new carried items go at the end
+      targetkey = 'data.equipment.carried'
+      let index = 0
+      let carried = getProperty(this.data, targetkey)
+      while (carried.hasOwnProperty(GURPS.genkey(index))) index++
+      targetkey += "." + GURPS.genkey(index)
+    }
+    if (targetkey == false) targetkey = 'data.equipment.other' // new other items go at the beginning (personal choice)
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += "." + GURPS.genkey(0)
+    let eqt = itemData.data.eqt
+    eqt.itemid = itemData._id
+    eqt.globalid = itemData.data.globalid
+    eqt.uuid = 'item-' + itemData._id
+    await GURPS.insertBeforeKey(this, targetkey, eqt)
+    await this.updateParentOf(targetkey)
+    return [targetkey, targetkey.includes('.carried') ]
   }
 
   async _addItemAdditions(itemData, eqtkey) {
@@ -1560,26 +1582,6 @@ export class GurpsActor extends Actor {
     if (!!item.data.data) item = item.data
     item.data.equipped = false
     await this.updateOwnedItem(item)
-  }
-
-  // Make the initial equipment object (in the carried list)
-  async _addNewItemEquipment(itemData, targetkey ) {
-    if (targetkey == null || targetkey == true) {
-      targetkey = 'data.equipment.carried'
-      let index = 0
-      let carried = getProperty(this.data, targetkey)
-      while (carried.hasOwnProperty(GURPS.genkey(index))) index++
-      targetkey += "." + GURPS.genkey(index)
-    }
-    if (targetkey == false) targetkey = 'data.equipment.other' 
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += "." + GURPS.genkey(0)
-    let eqt = itemData.data.eqt
-    eqt.itemid = itemData._id
-    eqt.globalid = itemData.data.globalid
-    eqt.uuid = 'item-' + itemData._id
-    await GURPS.insertBeforeKey(this, targetkey, eqt)
-    await this.updateParentOf(targetkey)
-    return targetkey
   }
 
   async _addItemElement(itemData, eqtkey, key) {
