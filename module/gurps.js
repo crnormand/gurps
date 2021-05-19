@@ -627,12 +627,15 @@ async function performAction(action, actor, event, targets) {
     let chat = action.orig
     if (!!event?.shiftKey || game.keyboard.isCtrl(event))
       chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
-    ui.chat.processMessage(chat).catch(err => {
+      
+    return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+/*    ui.chat.processMessage(chat).catch(err => {
       ui.notifications.error(err)
       console.error(err)
       return false
     })
     return true
+    */
   }
 
   if (action.type === 'controlroll') {
