@@ -119,6 +119,7 @@ export class GurpsItemSheet extends ItemSheet {
 
   close() {
     super.close()
+    this.item.update({"data.eqt.name": this.item.name})
     if (!!this.object.editingActor) this.object.editingActor.updateItem(this.object)
   }
 }
