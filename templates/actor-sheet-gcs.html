@@ -236,7 +236,6 @@
           </div>
         {{/each}}
       </div>
-
       <div id="trackers">
         <div>
           {{#if useCI}}
@@ -303,6 +302,23 @@
           {{/each}}
         </div>
       </div>
+      <div id='condition'>
+        <div class="header">{{i18n "GURPS.conditions" "Conditions"}}</div>
+        <div class="fieldblock">
+          <div class="label">{{i18n "GURPS.maneuver" "Maneuver"}}</div>
+          <div class="field" style='padding-top: 3px; border: none;'>
+            <select id='maneuver' name="data.conditions.maneuver">
+              {{#each (listAllManeuvers) as | this key |}}
+                {debug key}
+                <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
+                  {{localize this.label}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     {{#if (notEmpty data.reactions)}}
@@ -579,8 +595,10 @@
         <div class="uses satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
         (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
         <div class="cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
-        <div class="weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
-        <div class="sum_cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}
+        <div class="weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb
+        </div>
+        <div class="sum_cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">
+          {{round this.costsum}}
         </div>
         <div class="sum_weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">
           {{round this.weightsum}}

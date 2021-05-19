@@ -659,7 +659,16 @@ ul#result-effects li {
   border: none !important;
 }
 
-.field select {
+#combat-sheet .field select,
+#sheet .field select {
+  height: min-content;
+  margin: 0;
+  width: 100%;
+  font-size: 90%;
+  cursor: pointer;
+}
+
+#editorsheet .field select {
   height: min-content;
   background-color: transparent;
   border: none;
