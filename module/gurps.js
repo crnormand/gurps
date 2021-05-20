@@ -1557,7 +1557,7 @@ Hooks.once('ready', async function () {
   console.log("Migration version: " + mv)
   const migrationVersion = SemanticVersion.fromString(mv)
   const v096 = SemanticVersion.fromString('0.9.6')
-  //if (migrationVersion.isLowerThan(v096)) setTimeout(() => Migration.migrateTo096(), 5000)
+  if (migrationVersion.isLowerThan(v096)) Migration.migrateTo096()
 
   // Show changelog
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'

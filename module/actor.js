@@ -53,7 +53,7 @@ export class GurpsActor extends Actor {
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     let commit = {}
     for (const attr in this.data.data.attributes) {
-      if (!this.data.data.attributes[attr].import) this.data.data.attributes[attr].import = this.data.data.attributes[attr].import
+      if (!this.data.data.attributes[attr].import) this.data.data.attributes[attr].import = this.data.data.attributes[attr].value
       this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
     }
     recurselist(this.data.data.skills, (e, k, d) => {
