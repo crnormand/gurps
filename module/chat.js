@@ -263,7 +263,7 @@ export default function addChatHooks() {
       // this is a fucking hack
       let wrapper = html.find('.collapsible-wrapper')
       if (wrapper.length > 0) {
-        console.log($(wrapper).html())
+        //console.log($(wrapper).html())
         let input = $(wrapper).find('input.toggle')[0]
         let label = $(input).siblings('label.label-toggle')[0]
         let id = input.id
@@ -271,7 +271,7 @@ export default function addChatHooks() {
         if (labelFor !== id) {
           $(label).attr('for', id)
         }
-        console.log($(wrapper).html())
+        //console.log($(wrapper).html())
       }
     })
 
