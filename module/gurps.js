@@ -20,6 +20,7 @@ import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
+import { Migration } from '../lib/migration.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -871,6 +872,7 @@ function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) 
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
+  sname = new RegExp(sname, "i");
   let best = 0
   if (!isSpellOnly)
     recurselist(actor.data.skills, s => {
@@ -896,6 +898,7 @@ function findAdDisad(actor, sname) {
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
+  sname = new RegExp(sname, "i");
   recurselist(actor.data.ads, s => {
     if (s.name.match(sname)) {
       t = s
@@ -910,6 +913,7 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
+  sname = new RegExp(sname, "i");
   if (isMelee)
     t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (isRanged && !t)
@@ -1547,6 +1551,13 @@ Hooks.once('ready', async function () {
     template: 'systems/gurps/templates/threed6.html',
     classes: [],
   }).render(true)
+  
+  // Test for migration
+  const mv = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION) || '0.0.1'
+  console.log("Migration version: " + mv)
+  const migrationVersion = SemanticVersion.fromString(mv)
+  const v096 = SemanticVersion.fromString('0.9.6')
+  if (migrationVersion.isLowerThan(v096)) Migration.migrateTo096()
 
   // Show changelog
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'

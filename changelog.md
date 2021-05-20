@@ -4,6 +4,15 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 This is what we are currently working on:
 
+## History
+
+0.9.6 - 5/20/2021
+
+- Update migration code to remove possible infinite loop issue
+- Make Skill/Spell/Attack (Melee/Ranged/Damage) OtF formulas case insensitive
+
+0.9.5 - 5/19/2021
+
 - Fixed /status command when token.actor == null
 - Refactor regex pattern matching to utilities.js
 - Added "apply condition" buttons to slam results chat messages. These buttons will select the affected combatant and either roll DX and apply the Prone condition if failed, or directly apply Prone if appropriate.
@@ -34,8 +43,6 @@ This is what we are currently working on:
 - Added support for /if [/qty -?] /hp +1d]
 - Added support for /qty detecting the current equipment
 - Added support for parameters and return values from script macros (GURPS.chatargs & GURPS.chatreturn)
-
-## History
 
 0.9.4 - 5/06/2021
 
