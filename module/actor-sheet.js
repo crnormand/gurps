@@ -150,7 +150,7 @@ export class GurpsActorSheet extends ActorSheet {
             const w = 50;
             const h = 50;
             const preview = DragDrop.createDragImage(img, w, h);
-            ev.dataTransfer.setDragImage(preview, w/2, h/2); 
+            ev.dataTransfer.setDragImage(preview, 0, 0); 
           }
           let newd = {
             actorid: this.actor.id, 
