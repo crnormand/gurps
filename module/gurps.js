@@ -1556,7 +1556,6 @@ Hooks.once('ready', async function () {
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
   const changelogVersion = SemanticVersion.fromString(v)
   const curVersion = SemanticVersion.fromString(game.system.data.version)
-  const v096 = SemanticVersion.fromString('0.9.6')
 
   if (curVersion.isHigherThan(changelogVersion)) {
     if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
@@ -1581,7 +1580,11 @@ Hooks.once('ready', async function () {
       app.render(true)
       game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString())
     }
-    if (changelogVersion.isLowerThan(v096)) Migration.migrateTo096()
+    
+    // Test for migration
+    const mig = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION) || '0.0.1'
+    const v096 = SemanticVersion.fromString('0.9.6')
+    if (mig.isLowerThan(v096)) Migration.migrateTo096()
   }
 
   // get all aliases defined in the resource tracker templates and register them as damage types
