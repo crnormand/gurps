@@ -9,6 +9,7 @@ import {
   utoa,
   atou,
   i18n,
+  splitArgs,
 } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
@@ -39,6 +40,7 @@ export class GurpsActor extends Actor {
     this.calculateDerivedValues()
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
+    await this.update({"data.migrationversion" : game.system.data.version})
   }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
@@ -53,6 +55,7 @@ export class GurpsActor extends Actor {
   _initCurrents() {
     let v = this.data.data.migrationversion
     if (!v) return // currently, only need to check for the initial version, but in the future, we might need to check against SemanticVersion.fromString(v)
+    v = SemanticVersion.fromString(v)
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     let commit = {}
     for (const attr in this.data.data.attributes) {
@@ -64,6 +67,8 @@ export class GurpsActor extends Actor {
     recurselist(this.data.data.spells, (e, k, d) => {
       e.level = parseInt(e.import)
     })
+    
+    // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
     recurselist(this.data.data.melee, (e, k, d) => {
       e.level = parseInt(e.import)
       if (!isNaN(parseInt(e.parry))) {
@@ -85,6 +90,12 @@ export class GurpsActor extends Actor {
     recurselist(this.data.data.ranged, (e, k, d) => {
        e.level = parseInt(e.import)
     })
+    
+    // Only prep hitlocation DRs from v0.9.7 or higher (we don't really need to use recurselist... but who knows, hitlocations may become hierarchical in the future)
+    if (!v.isLowerThan(settings.VERSION_097))
+      recurselist(this.data.data.hitlocations, (e, k, d) => {
+         e.dr = e.import
+      })
   }
 
   _applyItemBonuses() {
@@ -94,7 +105,9 @@ export class GurpsActor extends Actor {
       if (item.data.data.equipped != false && !!item.data.data.bonuses && !gids.includes(item.data.data.globalid)) {
         gids.push(item.data.data.globalid)
         let bonuses = item.data.data.bonuses.split('\n')
-        for (const bonus of bonuses) {
+        for (let bonus of bonuses) {
+          let m = bonus.match(/\[(.*)\]/)
+          if (!!m) bonus = m[1] // remove extranious  [ ]
           let action = parselink(bonus) // ATM, we only support attribute and skill
           if (!!action.action) {
             recurselist(this.data.data.melee, (e, k, d) => {
@@ -156,6 +169,29 @@ export class GurpsActor extends Actor {
                 pi(this.data.data.attributes[action.action.attrkey].value) + pi(action.action.mod)
           }
           // parse bonus for other forms, DR+x?
+          m = bonus.match(/DR([+-]\d+) *(.*)/)  // DR+1 *Arms "Left Leg" ...
+          if (!!m) {
+            let delta = parseInt(m[1])
+            var locpatterns
+            if (!!m[2]) {
+              let locs = splitArgs(m[2])
+              locpatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), "i"))
+            }
+            recurselist(this.data.data.hitlocations, (e, k, d) => {
+              if (locpatterns == null || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
+                let dr = e.dr ?? ''
+                dr += ''
+                let m = dr.match(/(\d+) *([/\|]) *(\d+)/) // check for split DR 5|3 or 5/3
+                if (!!m) {
+                  dr = parseInt(m[1]) + delta
+                  let dr2 = parseInt(m[3]) + delta
+                  e.dr = dr + m[2] + dr2
+                } else 
+                  if (!isNaN(parseInt(dr)))
+                    e.dr = parseInt(dr) + delta
+              }
+            })          
+          }
         }
       }
     }
@@ -365,7 +401,7 @@ export class GurpsActor extends Actor {
     console.log("Importing '" + nm + "'")
     // this is how you have to update the domain object so that it is synchronized.
 
-    let commit = { "data.migrationversion" : game.system.data.version }
+    let commit = {}
 
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
       commit = { ...commit, ...{ name: nm } }
@@ -572,7 +608,7 @@ export class GurpsActor extends Actor {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let hl = new HitLocations.HitLocation(t(j.location))
-        hl.dr = t(j.dr)
+        hl.import = t(j.dr)
         hl.penalty = t(j.db)
         hl.setEquipment(t(j.text))
 
@@ -591,7 +627,7 @@ export class GurpsActor extends Actor {
       let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
       hl.penalty = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].penalty
       hl.roll = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].roll
-      hl.dr = '0'
+      hl.import = '0'
       locations.push(hl)
     }
 
@@ -645,13 +681,13 @@ export class GurpsActor extends Actor {
           let d = ''
           var last
           results.forEach(r => {
-            if (r.dr != last) {
-              d += '|' + r.dr
-              last = r.dr
+            if (r.import != last) {
+              d += '|' + r.import
+              last = r.import
             }
           })
           if (!!d) d = d.substr(1)
-          results[0].dr = d
+          results[0].import = d
         }
         temp.push(results[0])
         locations = locations.filter(it => it.where !== key)
@@ -1585,11 +1621,14 @@ export class GurpsActor extends Actor {
       e.itemid = itemData._id
       e.uuid = key + '-' + i++ + '-' + itemData._id
       e.eqtkey = eqtkey
-      if (!!e.otf) {
-        if (e.otf.match(/^ *\d+ *$/)) {
-          e.import = parseInt(e.otf)
+      let otf = e.otf
+      if (!!otf) {
+        let m = otf.match(/\[(.*)\]/)
+        if (!!m) otf = m[1] // remove extranious  [ ]
+        if (otf.match(/^ *\d+ *$/)) { // just a number
+          e.import = parseInt(otf)
         } else {
-          let action = parselink(e.otf)
+          let action = parselink(otf)
           if (!!action.action) {
             action.action.calcOnly = true
             e.import = '' + (await GURPS.performAction(action.action, this)) // collapse the OtF formula into a string
@@ -1601,7 +1640,7 @@ export class GurpsActor extends Actor {
           let m = e.parry.match(/([+-]\d+)(.*)/)
           if (!!m) {
             e.parrybonus = parseInt(m[1])
-            e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
+            e.parry = e.parrybonus + 3 + Math.floor(e.import / 2)
           }
           if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
         }
@@ -1609,7 +1648,7 @@ export class GurpsActor extends Actor {
           let m = e.block.match(/([+-]\d+)(.*)/)
           if (!!m) {
             e.blockbonus = parseInt(m[1])
-            e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
+            e.block = e.blockbonus + 3 + Math.floor(e.import / 2)
           }
           if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
         }

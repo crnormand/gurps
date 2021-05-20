@@ -6,6 +6,12 @@ This is what we are currently working on:
 
 ## History
 
+0.9.7
+
+- More leanient handling of OtF formulas on items (may have [ ] or not)
+- Added DR+X {hitlocations} bonus to Items
+- Required migration to allow DR changes
+
 0.9.6 - 5/20/2021
 
 - Update migration code to remove possible infinite loop issue

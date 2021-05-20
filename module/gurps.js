@@ -1552,19 +1552,22 @@ Hooks.once('ready', async function () {
     classes: [],
   }).render(true)
   
+  GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)
   // Test for migration
   const mv = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION) || '0.0.1'
-  console.log("Migration version: " + mv)
+  console.log("Current Version: " + GURPS.currentVersion + ", Migration version: " + mv)
   const migrationVersion = SemanticVersion.fromString(mv)
-  const v096 = SemanticVersion.fromString('0.9.6')
-  if (migrationVersion.isLowerThan(v096)) Migration.migrateTo096()
+  if (migrationVersion.isLowerThan(GURPS.currentVersion)) { // check which migrations are needed
+    if (migrationVersion.isLowerThan(settings.VERSION_096)) await Migration.migrateTo096()
+    if (migrationVersion.isLowerThan(settings.VERSION_097)) await Migration.migrateTo097()
+    game.settings.set(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION, game.system.data.version)
+  }
 
   // Show changelog
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
   const changelogVersion = SemanticVersion.fromString(v)
-  const curVersion = SemanticVersion.fromString(game.system.data.version)
 
-  if (curVersion.isHigherThan(changelogVersion)) {
+  if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
     if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
       // If it isn't already in the chat log somewhere
       ChatMessage.create({
