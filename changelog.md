@@ -6,7 +6,7 @@ This is what we are currently working on:
 
 ## History
 
-0.9.7
+0.9.7 - 5/20/2021
 
 - More leanient handling of OtF formulas on items (may have [ ] or not)
 - Added DR+X {hitlocations} bonus to Items
