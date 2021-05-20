@@ -20,6 +20,7 @@ import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
+import { Migration } from '../lib/migration.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -1555,6 +1556,7 @@ Hooks.once('ready', async function () {
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
   const changelogVersion = SemanticVersion.fromString(v)
   const curVersion = SemanticVersion.fromString(game.system.data.version)
+  const v096 = SemanticVersion.fromString('0.9.6')
 
   if (curVersion.isHigherThan(changelogVersion)) {
     if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
@@ -1579,6 +1581,7 @@ Hooks.once('ready', async function () {
       app.render(true)
       game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString())
     }
+    if (changelogVersion.isLowerThan(v096)) Migration.migrateTo096()
   }
 
   // get all aliases defined in the resource tracker templates and register them as damage types

@@ -8,7 +8,8 @@ This is what we are currently working on:
 
 0.9.6 
 
-- Updating migration code to remove possible infinite loop issue.
+- Update migration code to remove possible infinite loop issue
+- Make Skill/Spell/Attack (Melee/Ranged/Damage) OtF formulas case insensitive
 
 0.9.5 - 5/19/2021
 

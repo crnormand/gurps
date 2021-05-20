@@ -49,27 +49,20 @@ export class GurpsActor extends Actor {
 
   // Initialize the attribute current values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
-  // If import keys don't exist, set them to the current value and commit to upgrade older actors
   _initCurrents() {
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     let commit = {}
     for (const attr in this.data.data.attributes) {
-      if (this.data.data.attributes[attr].import == null)
-        commit = { ...commit, ...{ ['data.attributes.' + attr + '.import']: this.data.data.attributes[attr].value } }
-      // backward compat
-      else this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
+      this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
     }
     recurselist(this.data.data.skills, (e, k, d) => {
-      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.skills.' + k + '.import']: e.level } }
-      else e.level = parseInt(e.import)
+      e.level = parseInt(e.import)
     })
     recurselist(this.data.data.spells, (e, k, d) => {
-      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.spells.' + k + '.import']: e.level } }
-      else e.level = parseInt(e.import)
+      e.level = parseInt(e.import)
     })
     recurselist(this.data.data.melee, (e, k, d) => {
-      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.melee.' + k + '.import']: e.level } }
-      else e.level = parseInt(e.import)
+      e.level = parseInt(e.import)
       if (!isNaN(parseInt(e.parry))) {
         // allows for '14f' and 'no'
         let base = 3 + Math.floor(e.level / 2)
@@ -87,11 +80,8 @@ export class GurpsActor extends Actor {
       }
     })
     recurselist(this.data.data.ranged, (e, k, d) => {
-      if (e.import == null && e.level != null) commit = { ...commit, ...{ ['data.ranged.' + k + '.import']: e.level } }
-      else e.level = parseInt(e.import)
+      e.level = parseInt(e.import)
     })
-    // We must delay the upgrade of older actor's 'import' keys, since upon startup, the actor may not know which collection it belongs to
-    if (Object.keys(commit).length > 0) setTimeout(() => this.update(commit), 1000)
   }
 
   _applyItemBonuses() {
