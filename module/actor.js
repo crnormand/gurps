@@ -15,6 +15,7 @@ import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager
 import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
+import { SemanticVersion } from '../lib/semver.js'
 
 export class GurpsActor extends Actor {
   /** @override */
@@ -50,22 +51,20 @@ export class GurpsActor extends Actor {
   // Initialize the attribute current values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
   _initCurrents() {
+    let v = this.data.data.migrationversion
+    if (!v) return // currently, only need to check for the initial version, but in the future, we might need to check against SemanticVersion.fromString(v)
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     let commit = {}
     for (const attr in this.data.data.attributes) {
-      if (!this.data.data.attributes[attr].import) this.data.data.attributes[attr].import = this.data.data.attributes[attr].value
       this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
     }
     recurselist(this.data.data.skills, (e, k, d) => {
-      if (!e.import) e.import = e.level
       e.level = parseInt(e.import)
     })
     recurselist(this.data.data.spells, (e, k, d) => {
-      if (!e.import) e.import = e.level
       e.level = parseInt(e.import)
     })
     recurselist(this.data.data.melee, (e, k, d) => {
-      if (!e.import) e.import = e.level
       e.level = parseInt(e.import)
       if (!isNaN(parseInt(e.parry))) {
         // allows for '14f' and 'no'
@@ -84,8 +83,7 @@ export class GurpsActor extends Actor {
       }
     })
     recurselist(this.data.data.ranged, (e, k, d) => {
-      if (!e.import) e.import = e.level
-      e.level = parseInt(e.import)
+       e.level = parseInt(e.import)
     })
   }
 
