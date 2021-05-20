@@ -6,7 +6,7 @@ This is what we are currently working on:
 
 ## History
 
-0.9.6 
+0.9.6 - 5/20/2021
 
 - Update migration code to remove possible infinite loop issue
 - Make Skill/Spell/Attack (Melee/Ranged/Damage) OtF formulas case insensitive
