@@ -365,7 +365,7 @@ export class GurpsActor extends Actor {
     console.log("Importing '" + nm + "'")
     // this is how you have to update the domain object so that it is synchronized.
 
-    let commit = {}
+    let commit = { "data.migrationversion" : game.system.data.version }
 
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
       commit = { ...commit, ...{ name: nm } }
