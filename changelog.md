@@ -4,6 +4,32 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 This is what we are currently working on:
 
+0.9.9
+
+- Adding @neck/rinickolous's inventory sheet
+
+## History
+
+0.9.8 - 5/20/2021
+
+- Adding DODGE to Item bonus parsing
+- Fixed spelling of dis-bled status (to disabled)
+- /uses command can now be used with /if
+- fixed error during startup if Show Read me is true
+
+0.9.7 - 5/20/2021
+
+- More lenient handling of OtF formulas on items (may have [ ] or not)
+- Added DR+X {hitlocations} bonus to Items
+- Required migration to allow DR changes
+
+0.9.6 - 5/20/2021
+
+- Update migration code to remove possible infinite loop issue
+- Make Skill/Spell/Attack (Melee/Ranged/Damage) OtF formulas case insensitive
+
+0.9.5 - 5/19/2021
+
 - Fixed /status command when token.actor == null
 - Refactor regex pattern matching to utilities.js
 - Added "apply condition" buttons to slam results chat messages. These buttons will select the affected combatant and either roll DX and apply the Prone condition if failed, or directly apply Prone if appropriate.
@@ -27,9 +53,13 @@ This is what we are currently working on:
 - Foundry Item bonuses can affect Attributes, Skills and Attacks.  DX changes also affect melee (w/ parry/block) and ranged skills
 - Fix for DragRuler users... range mod is NOT added when token is moved
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
-- Item editor UI is complete.
-
-## History
+- Item editor UI ver 1 is complete.
+- Added chat command /light (thanks Boifubá!)
+- Fixed import on bad actor (used to have to delete actor and then reimport)
+- Less "flashing" during imports/updates
+- Added support for /if [/qty -?] /hp +1d]
+- Added support for /qty detecting the current equipment
+- Added support for parameters and return values from script macros (GURPS.chatargs & GURPS.chatreturn)
 
 0.9.4 - 5/06/2021
 

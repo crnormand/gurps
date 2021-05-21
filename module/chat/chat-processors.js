@@ -42,6 +42,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RemoteChatProcessor())
   ChatProcessors.registerProcessor(new SlamChatProcessor())
   ChatProcessors.registerProcessor(new JB2AChatProcessor())
+  ChatProcessors.registerProcessor(new LightChatProcessor())
 }
 
 class SetEventFlagsChatProcessor extends ChatProcessor {
@@ -130,11 +131,15 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     return line.startsWith('/:')
   }
   process(line) {
-    let m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)))
+    GURPS.chatreturn = false
+    let args = splitArgs(line.substr(2))
+    GURPS.chatargs = args
+    let m = Object.values(game.macros.entries).filter(m => m.name.startsWith(args[0]))
     if (m.length > 0) {
       this.send()
       m[0].execute()
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro', 'Unable to find macro named')} '${line.substr(2)}'`)
+    return GURPS.chatreturn
   }
 }
 
@@ -337,6 +342,7 @@ class UsesChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
+    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -356,12 +362,14 @@ class UsesChatProcessor extends ChatProcessor {
             this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesReset', "'USES' reset to 'MAX USES'")} (${eqt.maxuses})`)
             eqt.uses = eqt.maxuses
             await actor.update({ [key]: eqt })
+            answer = true
           } else if (isNaN(delta)) {
             // only happens with '='
             delta = m[1].substr(1)
             eqt.uses = delta
             await actor.update({ [key]: eqt })
             this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesSet', "'USES' set to")} ${delta}`)
+            answer = true
           } else {
             let q = parseInt(eqt.uses) + delta
             let max = parseInt(eqt.maxuses)
@@ -376,11 +384,13 @@ class UsesChatProcessor extends ChatProcessor {
               this.prnt(`${eqt.name} ${i18n('GURPS.chatUses', "'USES'")} ${m[1]} = ${q}`)
               eqt.uses = q
               await actor.update({ [key]: eqt })
+              answer = true
             }
           }
         }
       }
     }
+    return answer
   }
 }
 
@@ -393,13 +403,27 @@ class QtyChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
+    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
     else {
+      var eqt, key
       let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
       let pattern = m2[2]
-      let [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
+      if (this.msgs().event?.currentTarget) {
+        let t = this.msgs().event?.currentTarget
+        let k = $(t).closest("[data-key]").attr('data-key')
+        if (!!k) {
+          key = k
+          eqt = getProperty(actor.data, key)
+          if (eqt.count == null) 
+            eqt = null // wasn't an equipment
+          else
+            pattern = 'Current Equipment'
+        }
+      }
+      if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
       if (!eqt || !pattern)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
@@ -411,8 +435,8 @@ class QtyChatProcessor extends ChatProcessor {
           if (isNaN(delta))
             ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${m[1]}'`)
           else {
-            eqt.count = delta
-            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+            answer = true
+            await actor.updateEqtCount(key, delta)
             this.prnt(`${eqt.name} ${i18n('GURPS.chatQtySetTo', "'QTY' set to")} ${delta}`)
           }
         } else {
@@ -422,13 +446,14 @@ class QtyChatProcessor extends ChatProcessor {
               i18n('GURPS.chatYouDoNotHaveEnough', 'You do not have enough') + " '" + eqt.name + "'"
             )
           else {
+            answer = true
             this.prnt(`${eqt.name} ${i18n('GURPS.chatQty', "'QTY'")} ${m[1]}`)
-            eqt.count = q
-            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+             await actor.updateEqtCount(key, q)
           }
         }
       }
     }
+    return answer
   }
 }
 
@@ -511,3 +536,124 @@ class TrackerChatProcessor extends ChatProcessor {
   }
 }
 
+class LightChatProcessor extends ChatProcessor {
+  help() {
+    return '/light &lt;setting&gt;'
+  }
+  matches(line) {
+    return line.match(/^\/(light|li) *(.*)/i)
+  }
+  async process(line) {
+    let m = line.match(/^\/(light|li) *(.*)/i)
+    if (canvas.tokens.controlled.length == 0) {
+      ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
+      return;
+    }
+    let tokenUpdate = (data) => canvas.tokens.controlled.map(token => token.update(data));
+    let torchAnimation = {"type": "torch", "speed": 1, "intensity": 1};
+    let self = this
+    let dialogEditor = new Dialog({
+      title: i18n("GURPS.chatTokenLightPicker"),
+      content: i18n("GURPS.chatLightSource"),
+      buttons: {
+        none: {
+          label: `None`,
+          callback: () => {
+            self.process("/light none")
+            dialogEditor.render(true);
+          }
+        },
+        torch: {
+          label: `Torch`,
+          callback: () => {
+            self.process("/light torch")
+            dialogEditor.render(true);
+          }
+        },
+        light: {
+          label: `Light cantrip`,
+          callback: () => {
+            self.process("/light cantrip")
+            dialogEditor.render(true);
+          }
+        },
+        lamp: {
+          label: `Lamp`,
+          callback: () => {
+            self.process("/light lamp")
+            dialogEditor.render(true);
+          }
+        },
+        bullseye: {
+          label: `Bullseye Lantern`,
+          callback: () => {
+            self.process("/light bullseye")
+            dialogEditor.render(true);
+          }
+        },
+        hoodedOpen: {
+          label: `Hooded Lantern (Open)`,
+          callback: () => {
+            self.process("/light hooded open")
+            dialogEditor.render(true);
+          }
+        },
+        hoodedClosed: {
+          label: `Hooded Lantern (Closed)`,
+          callback: () => {
+            self.process("/light hooded closed")
+            dialogEditor.render(true);
+          }
+        },
+        darkness: {
+          label: `Darkness spell`,
+          callback: () => {
+            self.process("/light darkness")
+            dialogEditor.render(true);
+          }
+        },
+        close: {
+          icon: "<i class='fas fa-tick'></i>",
+          label: `Close`
+        },
+      }
+    });
+    if (!!m[2]) {
+      switch (m[2].toLowerCase()) {
+        case "none": 
+          tokenUpdate({"dimLight": null, "brightLight": null, "lightAngle": 360,});
+          break;
+        case "torch":
+          tokenUpdate({"dimLight": 13, "brightLight": 6, "lightAngle": 360, "lightAnimation": torchAnimation});
+          break;
+        case "light cantrip":
+        case "cantrip":
+          tokenUpdate({"dimLight": 13, "brightLight": 6, "lightAngle": 360, "lightAnimation": {"type": "none"}});
+          break;
+        case "lamp":
+          tokenUpdate({"dimLight": 15, "brightLight": 5, "lightAngle": 360, "lightAnimation": torchAnimation});
+          break;
+        case "bullseye lantern":
+        case "bullseye":
+          tokenUpdate({"dimLight": 3, "brightLight": 6, "lightAngle": 45, "lightAnimation": torchAnimation});
+          break;
+        case "hooded lantern (open)":
+        case "hooded lantern open":
+        case "hooded open":
+          tokenUpdate({"dimLight": 20, "brightLight": 10, "lightAngle": 360, "lightAnimation": torchAnimation});
+          break;
+        case "hooded lantern (closed)":
+        case "hooded lantern closed":
+        case "hooded closed":
+          tokenUpdate({"dimLight": 1, "brightLight": 0, "lightAngle": 360, "lightAnimation": torchAnimation});
+          break;
+        case "darkness":
+          tokenUpdate({"dimLight": 0, "brightLight": -3, "lightAngle": 360, "lightAnimation": {"type": "none"}});
+          break;
+        default:
+          dialogEditor.render(true)
+      }
+    } else
+       dialogEditor.render(true)
+  }
+}

@@ -573,8 +573,8 @@
               style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
           {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-          <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{{gurpslink
-          this.notes}}}</div>
+          <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
+            {{{gurpslink this.notes}}}</div>
         </div>
         <div class="uses satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
         (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
