@@ -2,14 +2,13 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-This is what we are currently working on:
-
 0.9.9
 
 - Adding @neck/rinickolous's inventory sheet
+- Replaced /light dialog with parameters torch = /light 6 2 torch (or candle = /light 1 0 t)
+- Fixed changelog viewer to actually STOP after current version
+- Fixed calculations of Item skill levels when there is a +/-
 - Fixed the /qty command so that if defined in one piece of equipment, it can name another piece of equipment and modify that.
-
-## History
 
 0.9.8 - 5/20/2021
 

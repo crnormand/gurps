@@ -1512,8 +1512,8 @@ export class GurpsInventorySheet extends GurpsActorSheet {
         return mergeObject(super.defaultOptions, {
             classes: ['gurps', 'sheet', 'actor'],
             template: 'systems/gurps/templates/inventory-sheet.html',
-            width: 800,
-            height: 800,
+            width: 700,
+            height: 400,
             tabs: [],
             scrollY: [],
             dragDrop: [{ dragSelector: 'item-list .item', dropSelector: null}]
