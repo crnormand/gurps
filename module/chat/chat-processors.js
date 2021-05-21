@@ -342,6 +342,7 @@ class UsesChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
+    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -361,12 +362,14 @@ class UsesChatProcessor extends ChatProcessor {
             this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesReset', "'USES' reset to 'MAX USES'")} (${eqt.maxuses})`)
             eqt.uses = eqt.maxuses
             await actor.update({ [key]: eqt })
+            answer = true
           } else if (isNaN(delta)) {
             // only happens with '='
             delta = m[1].substr(1)
             eqt.uses = delta
             await actor.update({ [key]: eqt })
             this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesSet', "'USES' set to")} ${delta}`)
+            answer = true
           } else {
             let q = parseInt(eqt.uses) + delta
             let max = parseInt(eqt.maxuses)
@@ -381,11 +384,13 @@ class UsesChatProcessor extends ChatProcessor {
               this.prnt(`${eqt.name} ${i18n('GURPS.chatUses', "'USES'")} ${m[1]} = ${q}`)
               eqt.uses = q
               await actor.update({ [key]: eqt })
+              answer = true
             }
           }
         }
       }
     }
+    return answer
   }
 }
 
