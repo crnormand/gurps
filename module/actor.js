@@ -1578,8 +1578,7 @@ export class GurpsActor extends Actor {
   async addItemData(itemData, targetkey) {
     let [ eqtkey, carried ] = await this._addNewItemEquipment(itemData, targetkey)
     if (carried) {
-      let commit = await this._addItemAdditions(itemData, eqtkey)
-      await this.update(commit)
+      await this._addItemAdditions(itemData, eqtkey)
     }
   }
 
@@ -1610,7 +1609,7 @@ export class GurpsActor extends Actor {
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
-    return commit
+    await this.update(commit)
   }
 
   // called when equipment is being moved
@@ -1628,8 +1627,7 @@ export class GurpsActor extends Actor {
     if (!!item.data.data) item = item.data
     item.data.equipped = true
     await this.updateOwnedItem(item)
-    let commit = await this._addItemAdditions(item, eqtkey)
-    await this.update(commit)
+    await this._addItemAdditions(item, eqtkey)
   }
 
   // moving from carried to other

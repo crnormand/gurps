@@ -610,7 +610,8 @@ async function performAction(action, actor, event, targets) {
     blind: action.blindroll,
     event: event,
   } // Ok, I am slowly learning this Javascrip thing ;-)
-
+  let savedBucket = GURPS.ModifierBucket.modifierStack.modifierList.slice()  // may need to reset the state of the MB
+  
   if (action.type === 'pdf') {
     GURPS.handlePdf(action.link)
     return true
@@ -856,6 +857,7 @@ async function performAction(action, actor, event, targets) {
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
     for (let m of targetmods) target += m.modint
+    GURPS.ModifierBucket.modifierStack.modifierList = savedBucket
     return target
   }
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
