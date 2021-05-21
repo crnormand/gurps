@@ -588,7 +588,7 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
-    Migration.migrateTo096()
-    Migration.migrateTo097()
+    await Migration.migrateTo096()
+    await Migration.migrateTo097()
   }
 }
