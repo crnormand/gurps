@@ -17,6 +17,8 @@ import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import JB2AChatProcessor from '../chat/jb2a.js'
+import { Migration } from '../../lib/migration.js'
+
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -43,6 +45,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new SlamChatProcessor())
   ChatProcessors.registerProcessor(new JB2AChatProcessor())
   ChatProcessors.registerProcessor(new LightChatProcessor())
+  ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
 }
 
 class SetEventFlagsChatProcessor extends ChatProcessor {
@@ -411,16 +414,23 @@ class QtyChatProcessor extends ChatProcessor {
       var eqt, key
       let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
       let pattern = m2[2]
+
       if (this.msgs().event?.currentTarget) {
         let t = this.msgs().event?.currentTarget
-        let k = $(t).closest("[data-key]").attr('data-key')
+        let k = $(t).closest('[data-key]').attr('data-key')
+        // if we find a data-key, then we assume that we are on the character sheet, and if the target
+        // is equipment, apply to that equipment. Except that the user might have specified the name of
+        // another piece of equipment in the command, in which case we should honor his request.
         if (!!k) {
           key = k
           eqt = getProperty(actor.data, key)
-          if (eqt.count == null) 
-            eqt = null // wasn't an equipment
-          else
-            pattern = 'Current Equipment'
+
+          // if its not equipment, ignore.
+          if (eqt.count == null) eqt = null
+          // if it is equipment and the name matches, use it
+          else if (eqt.name.match(pattern)) pattern = 'Current Equipment'
+          // if the name does not match, keep looking (see next block)
+          else eqt = null
         }
       }
       if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
@@ -448,7 +458,7 @@ class QtyChatProcessor extends ChatProcessor {
           else {
             answer = true
             this.prnt(`${eqt.name} ${i18n('GURPS.chatQty', "'QTY'")} ${m[1]}`)
-             await actor.updateEqtCount(key, q)
+            await actor.updateEqtCount(key, q)
           }
         }
       }
@@ -546,8 +556,8 @@ class LightChatProcessor extends ChatProcessor {
   }
   async process(line) {
     if (canvas.tokens.controlled.length == 0) {
-      ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
-      return;
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return
     }
     let noAnimation = {"type": ""}
     let torchAnimation = {"type": "torch", "speed": parseInt(this.match[7]) || 1, "intensity": parseInt(this.match[8]) || 1}
@@ -569,5 +579,16 @@ class LightChatProcessor extends ChatProcessor {
         data.lightAnimation = noAnimation
     }
     canvas.tokens.controlled.map(token => token.update(data));
+  }
+}
+
+class ForceMigrateChatProcessor extends ChatProcessor {
+  matches(line) {
+    this.match = line.match(/^\/forcemigrate/i)
+    return !!this.match
+  }
+  async process(line) {
+    Migration.migrateTo096()
+    Migration.migrateTo097()
   }
 }

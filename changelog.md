@@ -8,6 +8,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Replaced /light dialog with parameters torch = /light 6 2 torch (or candle = /light 1 0 t)
 - Fixed changelog viewer to actually STOP after current version
 - Fixed calculations of Item skill levels when there is a +/-
+- Fixed the /qty command so that if defined in one piece of equipment, it can name another piece of equipment and modify that.
 
 0.9.8 - 5/20/2021
 
@@ -53,7 +54,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fix for DragRuler users... range mod is NOT added when token is moved
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
 - Item editor UI ver 1 is complete.
-- Added chat command /light (thanks Boifub�!)
+- Added chat command /light (thanks Boifubá!)
 - Fixed import on bad actor (used to have to delete actor and then reimport)
 - Less "flashing" during imports/updates
 - Added support for /if [/qty -?] /hp +1d]
@@ -144,7 +145,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
 - Drag and drop now works for any OTF on character sheet
 - Added sanity check on Resource Tracker alias input.
-- Added initial Russian/русский translation (thanks to Discord user @Weirdy)!
+- Added initial Russian/ÑÑÑÑÐºÐ¸Ð¹ translation (thanks to Discord user @Weirdy)!
 - Bugfix for multiple damage drag-and-drop.
 - OtF damage types are now case-insensitive (e.g., 'Cut' and 'CUT' become 'cut').
 - Dropping the damage chat onto a hex with multiple tokens will now prompt the user to select which token to apply it to.
