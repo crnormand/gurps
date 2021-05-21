@@ -17,6 +17,12 @@ import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { SemanticVersion } from '../lib/semver.js'
 
+
+// Ensure that ALL actors has the current version loaded into them (for migration purposes)
+Hooks.on('createActor', async function (actor) {
+  await actor.update({"data.migrationversion" : game.system.data.version})
+})
+
 export class GurpsActor extends Actor {
   /** @override */
   getRollData() {
@@ -55,9 +61,9 @@ export class GurpsActor extends Actor {
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
   _initializeStartingValues() {
     const data = this.data.data
-    data.currentdodge = 0 // start at zero, and bonuses will add, and then they will be finalized later
-
-    let v = this.data.data.migrationversion
+    data.currentdodge = 0   // start at zero, and bonuses will add, and then they will be finalized later
+  
+    let v = data.migrationversion
     if (!v) return // Prior to v0.9.6, this did not exist
     v = SemanticVersion.fromString(v)
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)

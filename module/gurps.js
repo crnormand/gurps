@@ -834,6 +834,7 @@ async function performAction(action, actor, event, targets) {
           if (!!m) GURPS.addModifier(0, m) //  Level may have "*Costs xFP"
         }
       }
+      opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
       formula = '3d6'
       if (!!action.costs) GURPS.addModifier(0, action.costs)
       if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
