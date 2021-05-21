@@ -339,7 +339,7 @@ CONFIG.statusEffects = [
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-unconscious.png',
-    id: 'disbled',
+    id: 'disabled',
     label: 'GURPS.STATUSDisable',
   },
   {
@@ -1588,7 +1588,7 @@ Hooks.once('ready', async function () {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHANGELOG)) {
       const app = new ChangeLogWindow(changelogVersion)
       app.render(true)
-      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString())
+      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
     }
   }
 

@@ -45,31 +45,38 @@ export class GurpsActor extends Actor {
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
   calculateDerivedValues() {
-    this._initCurrents()
-    this._calculateEncumbranceIssues()
+    this._initializeStartingValues()
     this._applyItemBonuses()
+    
+    // Must be done at end
+    this._calculateEncumbranceIssues()
   }
 
-  // Initialize the attribute current values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
+  // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
-  _initCurrents() {
+  _initializeStartingValues() {
+    const data = this.data.data
+    data.currentdodge = 0   // start at zero, and bonuses will add, and then they will be finalized later
+  
     let v = this.data.data.migrationversion
-    if (!v) return // currently, only need to check for the initial version, but in the future, we might need to check against SemanticVersion.fromString(v)
+    if (!v) return // Prior to v0.9.6, this did not exist
     v = SemanticVersion.fromString(v)
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     let commit = {}
-    for (const attr in this.data.data.attributes) {
-      this.data.data.attributes[attr].value = this.data.data.attributes[attr].import
+    for (const attr in data.attributes) {
+      data.attributes[attr].value = data.attributes[attr].import
     }
-    recurselist(this.data.data.skills, (e, k, d) => {
+    // After all of the attributes are copied over, apply tired to ST
+    if (!!data.additionalresources.isTired) data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value) / 2)
+    recurselist(data.skills, (e, k, d) => {
       e.level = parseInt(e.import)
     })
-    recurselist(this.data.data.spells, (e, k, d) => {
+    recurselist(data.spells, (e, k, d) => {
       e.level = parseInt(e.import)
     })
     
     // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
-    recurselist(this.data.data.melee, (e, k, d) => {
+    recurselist(data.melee, (e, k, d) => {
       e.level = parseInt(e.import)
       if (!isNaN(parseInt(e.parry))) {
         // allows for '14f' and 'no'
@@ -87,13 +94,13 @@ export class GurpsActor extends Actor {
         }
       }
     })
-    recurselist(this.data.data.ranged, (e, k, d) => {
+    recurselist(data.ranged, (e, k, d) => {
        e.level = parseInt(e.import)
     })
     
     // Only prep hitlocation DRs from v0.9.7 or higher (we don't really need to use recurselist... but who knows, hitlocations may become hierarchical in the future)
     if (!v.isLowerThan(settings.VERSION_097))
-      recurselist(this.data.data.hitlocations, (e, k, d) => {
+      recurselist(data.hitlocations, (e, k, d) => {
          e.dr = e.import
       })
   }
@@ -101,6 +108,7 @@ export class GurpsActor extends Actor {
   _applyItemBonuses() {
     let pi = n => (!!n ? parseInt(n) : 0)
     let gids = [] //only allow each global bonus to add once
+    const data = this.data.data
     for (const item of this.items.entries) {
       if (item.data.data.equipped != false && !!item.data.data.bonuses && !gids.includes(item.data.data.globalid)) {
         gids.push(item.data.data.globalid)
@@ -109,8 +117,8 @@ export class GurpsActor extends Actor {
           let m = bonus.match(/\[(.*)\]/)
           if (!!m) bonus = m[1] // remove extranious  [ ]
           let action = parselink(bonus) // ATM, we only support attribute and skill
-          if (!!action.action) {
-            recurselist(this.data.data.melee, (e, k, d) => {
+          if (!!action.action) { // start OTF
+            recurselist(data.melee, (e, k, d) => {
               e.level = pi(e.level)
               if (action.action.type == 'attribute') {
                 // All melee attack skills affected by DX
@@ -131,10 +139,24 @@ export class GurpsActor extends Actor {
                 }
               }
               if (action.action.type == 'attack' && !!action.action.isMelee) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
+                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) {
+                  e.level += pi(action.action.mod)
+                  if (!isNaN(parseInt(e.parry))) {
+                    // handles '11f'
+                    let m = (e.parry + '').match(/(\d+)(.*)/)
+                    e.parry = 3 + Math.floor(e.level / 2)
+                    if (!!e.parrybonus) e.parry += pi(e.parrybonus)
+                    if (!!m) e.parry += m[2]
+                  }
+                  if (!isNaN(e.block)) {
+                    // handles 'no'
+                    e.block = 3 + Math.floor(e.level / 2)
+                    if (!!e.blockbonus) e.block += pi(e.blockbonus)
+                  }
+                }
               }
-            })
-            recurselist(this.data.data.ranged, (e, k, d) => {
+            })  // end melee
+            recurselist(data.ranged, (e, k, d) => {
               e.level = pi(e.level)
               if (action.action.type == 'attribute') {
                 //All ranged attack skills affected by DX
@@ -143,8 +165,8 @@ export class GurpsActor extends Actor {
               if (action.action.type == 'attack' && !!action.action.isRanged) {
                 if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
-            })
-            recurselist(this.data.data.skills, (e, k, d) => {
+            })  // end ranged
+            recurselist(data.skills, (e, k, d) => {
               e.level = pi(e.level)
               if (action.action.type == 'attribute') {
                 // skills affected by attribute changes
@@ -153,8 +175,8 @@ export class GurpsActor extends Actor {
               if (action.action.type == 'skill-spell' && !action.action.isSpellOnly) {
                 if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
-            })
-            recurselist(this.data.data.spells, (e, k, d) => {
+            })  // end skills
+            recurselist(data.spells, (e, k, d) => {
               e.level = pi(e.level)
               if (action.action.type == 'attribute') {
                 // spells affected by attribute changes
@@ -163,13 +185,21 @@ export class GurpsActor extends Actor {
               if (action.action.type == 'skill-spell' && !action.action.isSkillOnly) {
                 if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
-            })
-            if (action.action.type == 'attribute')
-              this.data.data.attributes[action.action.attrkey].value =
-                pi(this.data.data.attributes[action.action.attrkey].value) + pi(action.action.mod)
-          }
+            })  // end spells
+            if (action.action.type == 'attribute') {
+              let paths = action.action.path.split('.')
+              let last = paths.pop()
+              let data = this.data.data
+              if (paths.length > 0)
+                data = getProperty(data, paths.join('.')) // regular attributes have a path
+              else { // only accept DODGE
+                if (action.action.attrkey != "DODGE") break;
+              }
+              data[last] += pi(action.action.mod)
+            } // end attributes & Dodge
+          } // end OTF
           // parse bonus for other forms, DR+x?
-          m = bonus.match(/DR([+-]\d+) *(.*)/)  // DR+1 *Arms "Left Leg" ...
+          m = bonus.match(/DR *([+-]\d+) *(.*)/)  // DR+1 *Arms "Left Leg" ...
           if (!!m) {
             let delta = parseInt(m[1])
             var locpatterns
@@ -177,7 +207,7 @@ export class GurpsActor extends Actor {
               let locs = splitArgs(m[2])
               locpatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), "i"))
             }
-            recurselist(this.data.data.hitlocations, (e, k, d) => {
+            recurselist(data.hitlocations, (e, k, d) => {
               if (locpatterns == null || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
                 let dr = e.dr ?? ''
                 dr += ''
@@ -191,24 +221,23 @@ export class GurpsActor extends Actor {
                     e.dr = parseInt(dr) + delta
               }
             })          
-          }
+          } // end DR
         }
       }
     }
   }
-
+  
   _calculateEncumbranceIssues() {
-    const encs = this.data.data.encumbrance
-    const isReeling = !!this.data.data.additionalresources.isReeling
-    const isTired = !!this.data.data.additionalresources.isTired
-    const initialSTvalue = this.data.data.attributes.ST.value
-    this.data.data.attributes.ST.value = isTired ? Math.ceil(parseInt(initialSTvalue) / 2) : initialSTvalue
+    const data = this.data.data
+    const encs = data.encumbrance
+    const isReeling = !!data.additionalresources.isReeling
+    const isTired = !!data.additionalresources.isTired
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
       const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
       let m = parseInt(level0.move)
-      let d = parseInt(level0.dodge)
-      let f = parseFloat(this.data.data.basicspeed.value) * 2
+      let d = parseInt(level0.dodge) + data.currentdodge
+      let f = parseFloat(data.basicspeed.value) * 2
       if (isReeling) {
         m = Math.ceil(m / 2)
         d = Math.ceil(d / 2)
@@ -226,22 +255,22 @@ export class GurpsActor extends Actor {
         enc.currentdodge = Math.max(1, d - parseInt(enc.level))
         enc.currentflight = Math.max(1, Math.floor(f * t))
         enc.currentmovedisplay = enc.currentmove
-        if (!!this.data.data.additionalresources.showflightmove)
+        if (!!data.additionalresources.showflightmove)
           enc.currentmovedisplay = enc.currentmove + '/' + enc.currentflight
         if (enc.current) {
           // Save the global move/dodge
-          this.data.data.currentmove = enc.currentmove
-          this.data.data.currentdodge = enc.currentdodge
-          this.data.data.currentflight = enc.currentflight
+          data.currentmove = enc.currentmove
+          data.currentdodge = enc.currentdodge
+          data.currentflight = enc.currentflight
         }
       }
     }
-    if (!this.data.data.equippedparry) this.data.data.equippedparry = this.getEquippedParry()
-    if (!this.data.data.equippedblock) this.data.data.equippedblock = this.getEquippedBlock()
+    if (!data.equippedparry) data.equippedparry = this.getEquippedParry()
+    if (!data.equippedblock) data.equippedblock = this.getEquippedBlock()
     // catch for older actors that may not have these values set
-    if (!this.data.data.currentmove) this.data.data.currentmove = parseInt(this.data.data.basicmove.value)
-    if (!this.data.data.currentdodge) this.data.data.currentdodge = parseInt(this.data.data.dodge.value)
-    if (!this.data.data.currentflight) this.data.data.currentflight = parseFloat(this.data.data.basicspeed.value) * 2
+    if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value)
+    if (!data.currentdodge) data.currentdodge = parseInt(data.dodge.value)
+    if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value) * 2
   }
 
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
