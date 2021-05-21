@@ -537,123 +537,37 @@ class TrackerChatProcessor extends ChatProcessor {
 }
 
 class LightChatProcessor extends ChatProcessor {
-  help() {
-    return '/light &lt;setting&gt;'
+  help() { 
+    return '/li torch|t|off &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt;'
   }
   matches(line) {
-    return line.match(/^\/(light|li) *(.*)/i)
+    this.match = line.match(/^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(torch|t)? *(\d+)? *(\d+)?/i)
+    return !!this.match
   }
   async process(line) {
-    let m = line.match(/^\/(light|li) *(.*)/i)
     if (canvas.tokens.controlled.length == 0) {
       ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
       return;
     }
-    let tokenUpdate = (data) => canvas.tokens.controlled.map(token => token.update(data));
-    let torchAnimation = {"type": "torch", "speed": 1, "intensity": 1};
-    let self = this
-    let dialogEditor = new Dialog({
-      title: i18n("GURPS.chatTokenLightPicker"),
-      content: i18n("GURPS.chatLightSource"),
-      buttons: {
-        none: {
-          label: `None`,
-          callback: () => {
-            self.process("/light none")
-            dialogEditor.render(true);
-          }
-        },
-        torch: {
-          label: `Torch`,
-          callback: () => {
-            self.process("/light torch")
-            dialogEditor.render(true);
-          }
-        },
-        light: {
-          label: `Light cantrip`,
-          callback: () => {
-            self.process("/light cantrip")
-            dialogEditor.render(true);
-          }
-        },
-        lamp: {
-          label: `Lamp`,
-          callback: () => {
-            self.process("/light lamp")
-            dialogEditor.render(true);
-          }
-        },
-        bullseye: {
-          label: `Bullseye Lantern`,
-          callback: () => {
-            self.process("/light bullseye")
-            dialogEditor.render(true);
-          }
-        },
-        hoodedOpen: {
-          label: `Hooded Lantern (Open)`,
-          callback: () => {
-            self.process("/light hooded open")
-            dialogEditor.render(true);
-          }
-        },
-        hoodedClosed: {
-          label: `Hooded Lantern (Closed)`,
-          callback: () => {
-            self.process("/light hooded closed")
-            dialogEditor.render(true);
-          }
-        },
-        darkness: {
-          label: `Darkness spell`,
-          callback: () => {
-            self.process("/light darkness")
-            dialogEditor.render(true);
-          }
-        },
-        close: {
-          icon: "<i class='fas fa-tick'></i>",
-          label: `Close`
-        },
+    let noAnimation = {"type": ""}
+    let torchAnimation = {"type": "torch", "speed": parseInt(this.match[7]) || 1, "intensity": parseInt(this.match[8]) || 1}
+    let data = {
+      "dimLight": null, 
+      "brightLight": null, 
+      "lightAngle": 360,
+      "lightAnimation": noAnimation
+    }
+  
+    if (!this.match[2]) {
+      data.dimLight = parseInt(this.match[3] || 3)
+      data.brightLight = parseInt(this.match[4] || 5)
+      data.lightAngle = parseInt(this.match[5] || 360)
+      if (!!this.match[6]) {
+        data.lightAnimation = torchAnimation
       }
-    });
-    if (!!m[2]) {
-      switch (m[2].toLowerCase()) {
-        case "none": 
-          tokenUpdate({"dimLight": null, "brightLight": null, "lightAngle": 360,});
-          break;
-        case "torch":
-          tokenUpdate({"dimLight": 13, "brightLight": 6, "lightAngle": 360, "lightAnimation": torchAnimation});
-          break;
-        case "light cantrip":
-        case "cantrip":
-          tokenUpdate({"dimLight": 13, "brightLight": 6, "lightAngle": 360, "lightAnimation": {"type": "none"}});
-          break;
-        case "lamp":
-          tokenUpdate({"dimLight": 15, "brightLight": 5, "lightAngle": 360, "lightAnimation": torchAnimation});
-          break;
-        case "bullseye lantern":
-        case "bullseye":
-          tokenUpdate({"dimLight": 3, "brightLight": 6, "lightAngle": 45, "lightAnimation": torchAnimation});
-          break;
-        case "hooded lantern (open)":
-        case "hooded lantern open":
-        case "hooded open":
-          tokenUpdate({"dimLight": 20, "brightLight": 10, "lightAngle": 360, "lightAnimation": torchAnimation});
-          break;
-        case "hooded lantern (closed)":
-        case "hooded lantern closed":
-        case "hooded closed":
-          tokenUpdate({"dimLight": 1, "brightLight": 0, "lightAngle": 360, "lightAnimation": torchAnimation});
-          break;
-        case "darkness":
-          tokenUpdate({"dimLight": 0, "brightLight": -3, "lightAngle": 360, "lightAnimation": {"type": "none"}});
-          break;
-        default:
-          dialogEditor.render(true)
-      }
-    } else
-       dialogEditor.render(true)
+      else
+        data.lightAnimation = noAnimation
+    }
+    canvas.tokens.controlled.map(token => token.update(data));
   }
 }
