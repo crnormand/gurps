@@ -2,6 +2,12 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+0.9.10
+
+- Ensure that empty Actors are initialized correctly
+- Added Rcl/RoF information to [A:..] and [R:...] OTF rolls
+- More i18n work, we are getting there!
+
 0.9.9
 
 - Adding @neck/rinickolous's inventory sheet
