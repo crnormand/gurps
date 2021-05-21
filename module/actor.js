@@ -1665,6 +1665,7 @@ export class GurpsActor extends Actor {
       if (key == 'melee') {
         if (!isNaN(parseInt(e.parry))) {
           let m = e.parry.match(/([+-]\d+)(.*)/)
+          if (!m && e.parry.trim() == '0') m = [ 0, 0 ]  // allow '0' to mean 'no bonus', not skill level = 0
           if (!!m) {
             e.parrybonus = parseInt(m[1])
             e.parry = e.parrybonus + 3 + Math.floor(e.import / 2)
@@ -1673,6 +1674,7 @@ export class GurpsActor extends Actor {
         }
         if (!isNaN(e.block)) {
           let m = e.block.match(/([+-]\d+)(.*)/)
+          if (!m && e.block.trim() == '0') m = [ 0, 0 ]  // allow '0' to mean 'no bonus', not skill level = 0
           if (!!m) {
             e.blockbonus = parseInt(m[1])
             e.block = e.blockbonus + 3 + Math.floor(e.import / 2)
