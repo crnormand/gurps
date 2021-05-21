@@ -320,45 +320,21 @@ export class GurpsActor extends Actor {
     let version = 'unknown'
     let exit = false
     if (!r) {
-      if (importname.endsWith('.gcs'))
-        msg.push(
-          i18n(
-            'GURPS.chatCannotImportGCSDirectly',
-            'We cannot import a GCS file directly. Please export the file using the "Foundry VTT" output template.'
-          )
-        )
-      else if (importname.endsWith('.gca4'))
-        msg.push(
-          i18n(
-            'GURPS.chatCannotImportGCADirectly',
-            'We cannot import a GCA file directly. Please export the file using the "export to Foundry VTT.gce" script.'
-          )
-        )
-      else if (!xml.startsWith('<?xml'))
-        msg.push(i18n('GURPS.chatNoXMLDetected', 'No XML detected. Are you importing the correct XML file?'))
+      if (importname.endsWith('.gcs')) msg.push(i18n('GURPS.importCannotImportGCSDirectly'))
+      else if (importname.endsWith('.gca4')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
+      else if (!xml.startsWith('<?xml')) msg.push(i18n('GURPS.importNoXMLDetected'))
       exit = true
     } else {
       // The character object starts here
       c = r.character
       if (!c) {
-        msg.push(
-          i18n(
-            'GURPS.chatNoCharacterFormat',
-            'Unable to detect the "character" format. Most likely you are trying to import the "npc" format.'
-          )
-        )
+        msg.push(i18n('GURPS.importNoCharacterFormat'))
         exit = true
       }
 
       let parsererror = r.parsererror
       if (!!parsererror) {
-        msg.push(
-          i18n_f(
-            'GURPS.chatErrorParsingXML',
-            { text: this.textFrom(parsererror.div) },
-            'Error parsing XML: ' + this.textFrom(parsererror.div)
-          )
-        )
+        msg.push(i18n_f('GURPS.importErrorParsingXML', { text: this.textFrom(parsererror.div) }))
         exit = true
       }
 
@@ -367,91 +343,68 @@ export class GurpsActor extends Actor {
       isFoundryGCS = !!ra && ra.release == 'Foundry' && (ra.version == '1' || ra.version.startsWith('GCS'))
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       if (!(isFoundryGCS || isFoundryGCA)) {
-        msg.push(i18n('GURPS.chatFantasyGroundUnsupported', 'We no longer support the Fantasy Grounds import.'))
+        msg.push(i18n('GURPS.importFantasyGroundUnsupported'))
         exit = true
       }
       version = ra?.version || ''
       const v = !!ra?.version ? ra.version.split('-') : []
       if (isFoundryGCA) {
         if (!v[1]) {
-          msg.push(
-            i18n(
-              'GURPS.chatNoBodyPlan',
-              'This file was created with an older version of the GCA Export which does not contain the "Body Plan" attribute. We will try to guess the "Body Plan", but we may get it wrong.'
-            )
-          )
+          msg.push(i18n('GURPS.importGCANoBodyPlan'))
         }
         let vernum = 1
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
-          msg.push(
-            i18n(
-              'GURPS.chatNoInnateRangedAndParent',
-              'This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the "Parent" Attribute for equipment.' +
-                ' You may be missing ranged attacks or equipment may not appear in the correct container.'
-            )
-          )
+          msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
         }
         if (vernum < 3) {
-          msg.push(
-            i18n(
-              'GURPS.chatNoSanitizedEquipmentPageRefs',
-              'This file was created with an older version of the GCA Export that may' +
-                ' incorrectly put ranged attacks in the melee list and does not sanitize equipment page refs.'
-            )
-          ) // Equipment Page ref's sanitized
+          msg.push(i18n('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
         }
         if (vernum < 4) {
-          msg +=
-            "This file was created with an older version of the GCA Export which does not contain the 'Parent' attributes for Ads/Disads, Skills or Spells<br>"
+          msg.push(i18n('GURPS.importGCANoParent'))
         }
         if (vernum < 5) {
-          msg +=
-            'This file was created with an older version of the GCA Export which does not sanitize Notes or Ad/Disad names<br>'
+          msg.push(i18n('GURPS.importGCANoSanitizeNotes'))
         }
         if (vernum < 6) {
-          msg +=
-            'This file was created with an older version of the GCA Export which may not export a melee attack if it also exists in ranged attacks (e.g. Spears)<br>'
+          msg.push(i18n('GURPS.importGCANoMeleeIfAlsoRanged'))
         }
         if (vernum < 7) {
-          msg +=
-            'This file was created with an older version of the GCA Export which incorrectly calculates Block value for items with DB (e.g. Shields)<br>'
+          msg.push(i18n('GURPS.importGCABadBlockForDB'))
         }
         if (vernum < 8) {
-          msg +=
-            "This file was created with an older version of the GCA Export which ignored the 'hide' flag for ads/disads/quirks/perks<br>"
+          msg.push(i18n('GURPS.importGCANoHideFlag'))
         }
       }
       if (isFoundryGCS) {
         let vernum = 1
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
-          msg +=
-            "This file was created with an older version of the GCS Export which does not contain the 'Parent' attributes.   Items will not appear in their containers.<br>"
+          msg.push(i18n('GURPS.importGCSNoParent'))
         }
         if (vernum < 3) {
-          msg +=
-            'This file was created with an older version of the GCS Export which does not contain the Self Control rolls for Disadvantages (ex: [CR: 9 Bad Temper]).<br>'
+          msg.push(i18n('GURPS.importGCSNoSelfControl'))
         }
         if (vernum < 4) {
-          msg +=
-            "This file was created with an older version of the GCS Export which does not contain the 'Uses' column for Equipment.<br>"
+          msg.push(i18n('GURPS.importGCSNoUses'))
         }
         if (vernum < 5) {
-          msg +=
-            'This file was created with an older version of the GCS Export which does not export individual Melee and Ranged attack notes created by the same item.<br>'
+          msg.push(i18n('GURPS.importGCSNoMeleeRangedNotesForSameItem'))
         }
       }
     }
-    if (!!msg) {
-      ui.notifications.error(msg)
-      msg = `WARNING:<br>${msg}<br>The file version: '${version}'<br>Current Versions: '${GCAVersion}' & '${GCSVersion}'`
+    if (msg.length > 0) {
+      ui.notifications.error(msg.join('<br>'))
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+        lines: msg,
+        version: version,
+        GCAVersion: GCAVersion,
+        GCSVersion: GCSVersion,
+        url: GURPS.USER_GUIDE_URL,
+      })
+
       ChatMessage.create({
-        content:
-          msg +
-          "<br>Check the Users Guide for details on where to get the latest version.<br><a href='" +
-          GURPS.USER_GUIDE_URL +
-          "'>GURPS 4e Game Aid USERS GUIDE</a>",
+        content: content,
         user: game.user._id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user.id],
@@ -497,12 +450,20 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryGCS) }
       commit = { ...commit, ...(await this.importProtectionFromGCSv1(c.combat?.protectionlist, isFoundryGCA)) }
     } catch (err) {
-      let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
+      let msg = i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+        lines: [msg],
+        version: version,
+        GCAVersion: GCAVersion,
+        GCSVersion: GCSVersion,
+        url: GURPS.USER_GUIDE_URL,
+      })
+
       ui.notifications.warn(msg)
       let chatData = {
         user: game.user._id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        content: msg,
+        content: content,
         whisper: [game.user._id],
       }
       CONFIG.ChatMessage.entityClass.create(chatData, {})
@@ -520,19 +481,25 @@ export class GurpsActor extends Actor {
       // This has to be done after everything is loaded
       await this.postImport()
       this._forceRender()
-      ui.notifications.info(this.name + ' imported sucessfully.')
+      ui.notifications.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
       console.log('Done importing.  You can inspect the character data below:')
       console.log(this)
     } catch (err) {
-      let msg = 'An error occured while importing ' + nm + ', ' + err.name + ':' + err.message
-      if (err.message == 'Maximum depth exceeded')
-        msg =
-          'You have too many levels of containers.  The Foundry import only supports up to 3 levels of sub-containers'
-      ui.notifications.warn(msg)
+      let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+      if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
+      ui.notifications.warn(msg.join('<br>'))
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+        lines: msg,
+        version: version,
+        GCAVersion: GCAVersion,
+        GCSVersion: GCSVersion,
+        url: GURPS.USER_GUIDE_URL,
+      })
+
       let chatData = {
         user: game.user._id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        content: msg,
+        content: content,
         whisper: [game.user._id],
       }
       CONFIG.ChatMessage.entityClass.create(chatData, {})

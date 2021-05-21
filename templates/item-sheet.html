@@ -76,7 +76,7 @@
               class='fas fa-magic'></i>&nbsp;{{i18n "GURPS.spells" "Spells"}}&nbsp;<span
               style='font-size: 80%;'>{{#if (length data.spells)}}({{length data.spells}}){{/if}}</span></a>
           <a class='item' data-tab='ads-tab'><i
-              class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages" "Advantages"}}&nbsp;<span
+              class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages"}}&nbsp;<span
               style='font-size: 80%;'>{{#if (length data.ads)}}({{length data.ads}}){{/if}}</span></a>
           <a class='item' data-tab='skill-tab'><i
               class='fas fa-snowboarding'></i>&nbsp;{{i18n "GURPS.skills"}}&nbsp;<span
@@ -325,7 +325,7 @@
           <div class='tab' data-tab='ads-tab' data-group='sections'>
             {{#each data.ads as | this key |}}
               <div class='gurps-group inputs'>
-                <h4 class='with-button'>{{i18n "GURPS.advantage" "Advantage"}}
+                <h4 class='with-button'>{{i18n "GURPS.advantage"}}
                   {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='data.ads' name='{{key}}'><i
                       class='fas fa-trash'></i></span>
                 </h4>
