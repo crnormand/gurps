@@ -1506,17 +1506,18 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   }
 }
 
-let _getProperty = function (object, key) {
-  let target = object
+export class GurpsInventorySheet extends GurpsActorSheet {
+    /** @override */
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ['gurps', 'sheet', 'actor'],
+            template: 'systems/gurps/templates/inventory-sheet.html',
+            width: 800,
+            height: 800,
+            tabs: [],
+            scrollY: [],
+            dragDrop: [{ dragSelector: 'item-list .item', dropSelector: null}]
+        })
 
-  // Convert the key to an object reference if it contains dot notation
-  if (key.indexOf('.') !== -1) {
-    let parts = key.split('.')
-    key = parts.pop()
-    target = parts.reduce((o, i) => {
-      if (!o.hasOwnProperty(i)) o[i] = {}
-      return o[i]
-    }, object)
-  }
-  return target
+    }
 }

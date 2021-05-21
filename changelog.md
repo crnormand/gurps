@@ -4,6 +4,10 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 This is what we are currently working on:
 
+0.9.9
+
+- Adding @neck/rinickolous's inventory sheet
+
 ## History
 
 0.9.8 - 5/20/2021
@@ -15,7 +19,7 @@ This is what we are currently working on:
 
 0.9.7 - 5/20/2021
 
-- More leanient handling of OtF formulas on items (may have [ ] or not)
+- More lenient handling of OtF formulas on items (may have [ ] or not)
 - Added DR+X {hitlocations} bonus to Items
 - Required migration to allow DR changes
 

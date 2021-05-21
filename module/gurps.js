@@ -10,6 +10,7 @@ import {
   GurpsActorEditorSheet,
   GurpsActorSimplifiedSheet,
   GurpsActorNpcSheet,
+  GurpsInventorySheet
 } from './actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -1527,6 +1528,10 @@ Hooks.once('init', async function () {
   Actors.registerSheet('gurps', GurpsActorNpcSheet, {
     label: 'NPC/mini',
     makeDefault: false,
+  })
+  Actors.registerSheet('gurps', GurpsInventorySheet, {
+      label: 'Inventory Only',
+      makeDefault: false,
   })
 
   Items.unregisterSheet('core', ItemSheet)
