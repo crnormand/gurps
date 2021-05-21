@@ -20,7 +20,7 @@ class HelpChatProcessor extends ChatProcessor {
       "<a href='" +
       GURPS.USER_GUIDE_URL +
       "'>" +
-      i18n('GURPS.chatGameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
+      i18n('GURPS.gameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
       '</a><br>'
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
@@ -65,12 +65,13 @@ class ChatProcessorRegistry {
    * we get a response.
    */
   async startProcessingLines(message, chatmsgData, event) {
-    if (!chatmsgData) chatmsgData = {
-      "user": game.user.id,
-      "speaker":{
-        "actor":(!!GURPS.LastActor ? GURPS.LastActor.id : undefined)
+    if (!chatmsgData)
+      chatmsgData = {
+        user: game.user.id,
+        speaker: {
+          actor: !!GURPS.LastActor ? GURPS.LastActor.id : undefined,
+        },
       }
-    }
     this.msgs.data = chatmsgData
     this.msgs.event = event || { shiftKey: false, ctrlKey: false, data: {} }
     let answer = await this.processLines(message)
@@ -145,7 +146,7 @@ class ChatProcessorRegistry {
           ui.notifications.error(err)
           console.error(err)
         }
-        return [true, (answer != false)]
+        return [true, answer != false]
       }
     }
     return [false, false]

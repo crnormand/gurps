@@ -5,7 +5,9 @@ keys in [lang/ru.json] that are missing in [lang/en.json]
 keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.Dice
   GURPS.ID
+  GURPS.TransferTo
   GURPS.actions
+  GURPS.addAdvantage
   GURPS.addApplyTo
   GURPS.addDamageReduction
   GURPS.addExplosion
@@ -15,6 +17,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.addRangedAttack
   GURPS.addSkill
   GURPS.addSpell
+  GURPS.advantage
+  GURPS.advantages
   GURPS.aim
   GURPS.allOutDefense
   GURPS.bonuses
@@ -25,7 +29,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatDoesNotHaveEnough
   GURPS.chatExceededMax
   GURPS.chatExceededMaxUses
-  GURPS.chatGameAidUsersGuide
+  GURPS.chatLightSource
   GURPS.chatMoreThanOneActor
   GURPS.chatMoreThanOneToken
   GURPS.chatMultipleOwnedFound
@@ -46,6 +50,11 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatSuffersCripplingInjury
   GURPS.chatToApplyEffects
   GURPS.chatToggling
+  GURPS.chatTokenLightPicker
+  GURPS.chatTurnOffReeling
+  GURPS.chatTurnOffTired
+  GURPS.chatTurnOnReeling
+  GURPS.chatTurnOnTired
   GURPS.chatUnableToFindMacro
   GURPS.chatUnrecognizedFormat
   GURPS.chatUses
@@ -83,6 +92,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.forHighPainThreshold
   GURPS.forLowPainThreshold
   GURPS.forPerfectBalance
+  GURPS.gameAidUsersGuide
   GURPS.hitLocationArm, holding shield
   GURPS.hitLocationChinks in Other
   GURPS.hitLocationChinks in Torso
@@ -102,6 +112,30 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.hitLocationRight Arm, holding shield
   GURPS.hitLocationSkull, from behind
   GURPS.hitLocationVitals, Heart
+  GURPS.importCannotImportGCADirectly
+  GURPS.importCannotImportGCSDirectly
+  GURPS.importCurrentVersions
+  GURPS.importErrorParsingXML
+  GURPS.importFantasyGroundUnsupported
+  GURPS.importFileVersion
+  GURPS.importGCABadBlockForDB
+  GURPS.importGCANoBodyPlan
+  GURPS.importGCANoHideFlag
+  GURPS.importGCANoInnateRangedAndParent
+  GURPS.importGCANoMeleeIfAlsoRanged
+  GURPS.importGCANoParent
+  GURPS.importGCANoSanitizeNotes
+  GURPS.importGCANoSanitizedEquipmentPageRefs
+  GURPS.importGCSNoMeleeRangedNotesForSameItem
+  GURPS.importGCSNoParent
+  GURPS.importGCSNoSelfControl
+  GURPS.importGCSNoUses
+  GURPS.importGenericError
+  GURPS.importNoCharacterFormat
+  GURPS.importNoXMLDetected
+  GURPS.importSeeUsersGuide
+  GURPS.importSuccessful
+  GURPS.importTooManyContainers
   GURPS.itemBonusText
   GURPS.itemEditor
   GURPS.itemFeatures
@@ -244,6 +278,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.name
   GURPS.notAffected
   GURPS.notes
+  GURPS.ok
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
@@ -265,6 +300,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.pdfMightyBlow
   GURPS.pdfMoveAttack
   GURPS.pdfPageReference
+  GURPS.pdfReeling
   GURPS.pdfRef
   GURPS.pdfShieldDB
   GURPS.pdfShieldRush
@@ -272,6 +308,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.pdfStrongAttack
   GURPS.pdfTelegraphicAttack
   GURPS.pdfTempAttribPenalties
+  GURPS.pdfTired
   GURPS.quantity
   GURPS.ranged
   GURPS.rangedAttack
@@ -307,9 +344,11 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.suffersKnockback
   GURPS.target
   GURPS.title
+  GURPS.warning
   GURPS.weight
   GURPS.yard
   GURPS.youDoNotHavePermssion
+  __Import Messages__
 ------------
 values in [lang/en.json] that are the same in [lang/ru.json]
   Skill Names__: =========

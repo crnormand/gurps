@@ -1,5 +1,34 @@
 [ 'templates', 'module', 'lib' ]
-
+Keys that do not match expected pattern
+=======================================
+__Char Sheet__
+__Character Sheet Identity__
+__Character Sheet Miscellaneous__
+__Character Description__
+__Character Points__
+__Character Attributes__
+__ Character AddsDisadsPerksQuirks__
+__ Character Skills__
+__Character Spells__
+__Character Equipment__
+__Character Encumbrance/Lift__
+__Character Weapons__
+__Apply Damage Dialog__
+__Body Plan__
+__Chat Messages__
+__Permissions__
+__Damage Types__
+__Drag Ruler__
+__Fantastic Dungeon Grappling__
+__Hit Location__
+__Modifier Bucket__
+__PDF References__
+__Resolve Damage Dialog__
+__Resource Trackers__
+Skill Names__
+__Slam Calculator__
+__Status/Conditions__
+__Import Messages__
 KEYS NOT FOUND
 ===========================
 GURPS.BODYPLANarachnoid
@@ -100,3 +129,31 @@ GURPS.point
 GURPS.pointsUnspent
 GURPS.swimmersOrFlyersSuffer
 GURPS.toAllDXBasedRolls
+Skill Names__
+__ Character AddsDisadsPerksQuirks__
+__ Character Skills__
+__Apply Damage Dialog__
+__Body Plan__
+__Char Sheet__
+__Character Attributes__
+__Character Description__
+__Character Encumbrance/Lift__
+__Character Equipment__
+__Character Points__
+__Character Sheet Identity__
+__Character Sheet Miscellaneous__
+__Character Spells__
+__Character Weapons__
+__Chat Messages__
+__Damage Types__
+__Drag Ruler__
+__Fantastic Dungeon Grappling__
+__Hit Location__
+__Import Messages__
+__Modifier Bucket__
+__PDF References__
+__Permissions__
+__Resolve Damage Dialog__
+__Resource Trackers__
+__Slam Calculator__
+__Status/Conditions__
