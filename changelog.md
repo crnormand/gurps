@@ -4,14 +4,14 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 This is what we are currently working on:
 
-0.9.8
+## History
+
+0.9.8 - 5/20/2021
 
 - Adding DODGE to Item bonus parsing
 - Fixed spelling of dis-bled status (to disabled)
 - /uses command can now be used with /if
 - fixed error during startup if Show Read me is true
-
-## History
 
 0.9.7 - 5/20/2021
 
