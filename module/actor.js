@@ -6,9 +6,8 @@ import {
   convertRollStringToArrayOfInt,
   recurselist,
   makeRegexPatternFrom,
-  utoa,
-  atou,
   i18n,
+  i18n_f,
 } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
@@ -257,29 +256,49 @@ export class GurpsActor extends Actor {
     let origx = game.GURPS.cleanUpP(xml)
     let x = xmlTextToJson(origx)
     let r = x.root
-    let msg = ''
+    let msg = []
     let version = 'unknown'
     let exit = false
     if (!r) {
       if (importname.endsWith('.gcs'))
-        msg +=
-          "We cannot import a GCS file directly. Please export the file using the 'Foundry VTT' output template.<br>"
+        msg.push(
+          i18n(
+            'GURPS.chatCannotImportGCSDirectly',
+            'We cannot import a GCS file directly. Please export the file using the "Foundry VTT" output template.'
+          )
+        )
       else if (importname.endsWith('.gca4'))
-        msg +=
-          "We cannot import a GCA file directly. Please export the file using the 'export to Foundry VTT.gce' script.<br>"
-      else if (!xml.startsWith('<?xml')) msg += 'No XML detected.  Are you importing the correct XML file?<br>'
+        msg.push(
+          i18n(
+            'GURPS.chatCannotImportGCADirectly',
+            'We cannot import a GCA file directly. Please export the file using the "export to Foundry VTT.gce" script.'
+          )
+        )
+      else if (!xml.startsWith('<?xml'))
+        msg.push(i18n('GURPS.chatNoXMLDetected', 'No XML detected. Are you importing the correct XML file?'))
       exit = true
     } else {
       // The character object starts here
       c = r.character
       if (!c) {
-        msg += "Unable to detect the 'character' format.   Most likely you are trying to import the 'npc' format.<br>"
+        msg.push(
+          i18n(
+            'GURPS.chatNoCharacterFormat',
+            'Unable to detect the "character" format. Most likely you are trying to import the "npc" format.'
+          )
+        )
         exit = true
       }
 
       let parsererror = r.parsererror
       if (!!parsererror) {
-        msg += 'Error parsing XML: ' + this.textFrom(parsererror.div)
+        msg.push(
+          i18n_f(
+            'GURPS.chatErrorParsingXML',
+            { text: this.textFrom(parsererror.div) },
+            'Error parsing XML: ' + this.textFrom(parsererror.div)
+          )
+        )
         exit = true
       }
 
@@ -288,26 +307,39 @@ export class GurpsActor extends Actor {
       isFoundryGCS = !!ra && ra.release == 'Foundry' && (ra.version == '1' || ra.version.startsWith('GCS'))
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
       if (!(isFoundryGCS || isFoundryGCA)) {
-        msg += 'We no longer support the Fantasy Grounds import.<br>'
+        msg.push(i18n('GURPS.chatFantasyGroundUnsupported', 'We no longer support the Fantasy Grounds import.'))
         exit = true
       }
       version = ra?.version || ''
       const v = !!ra?.version ? ra.version.split('-') : []
       if (isFoundryGCA) {
         if (!v[1]) {
-          msg +=
-            "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute.   We will try to guess the 'Body Plan', but we may get it wrong.<br>"
+          msg.push(
+            i18n(
+              'GURPS.chatNoBodyPlan',
+              'This file was created with an older version of the GCA Export which does not contain the "Body Plan" attribute. We will try to guess the "Body Plan", but we may get it wrong.'
+            )
+          )
         }
         let vernum = 1
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
-          msg +=
-            "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the 'Parent' Attribute for equipment." +
-            '  You may be missing ranged attacks or equipment may not appear in the correct container.<br>'
+          msg.push(
+            i18n(
+              'GURPS.chatNoInnateRangedAndParent',
+              'This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the "Parent" Attribute for equipment.' +
+                ' You may be missing ranged attacks or equipment may not appear in the correct container.'
+            )
+          )
         }
         if (vernum < 3) {
-          msg +=
-            'This file was created with an older version of the GCA Export that may incorrectly put ranged attacks in the melee list and does not sanitize equipment page refs.<br>' // Equipment Page ref's sanitized
+          msg.push(
+            i18n(
+              'GURPS.chatNoSanitizedEquipmentPageRefs',
+              'This file was created with an older version of the GCA Export that may' +
+                ' incorrectly put ranged attacks in the melee list and does not sanitize equipment page refs.'
+            )
+          ) // Equipment Page ref's sanitized
         }
         if (vernum < 4) {
           msg +=
@@ -1750,24 +1782,35 @@ export class GurpsActor extends Actor {
   changeOneThirdStatus(option, flag) {
     this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
       this.calculateDerivedValues()
-      let msg = this.displayname + ' '
-      if (option === 'isReeling') {
-        if (flag) msg += 'is Reeling. Move and Dodge are halved. [PDF:B419]'
-        else msg += 'is no longer reeling.'
-      }
-      if (option === 'isTired') {
-        if (flag) msg += 'is Tired. Move, Dodge and ST are halved. [PDF:B426]'
-        else msg += 'is no longer tired.'
-      }
-      let users = this.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
-      let ids = users.map(it => it._id)
-      let messageData = {
-        content: msg,
-        whisper: ids,
-        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-      }
-      ChatMessage.create(messageData)
-      ui.combat.render()
+
+      let i18nMessage =
+        option === 'isReeling'
+          ? flag
+            ? 'GURPS.chatTurnOnReeling'
+            : 'GURPS.chatTurnOffReeling'
+          : flag
+          ? 'GURPS.chatTurnOnTired'
+          : 'GURPS.chatTurnOffTired'
+
+      let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling', 'B419') : i18n('GURPS.pdfTired', 'B426')
+      let msg = i18n_f(i18nMessage, {
+        name: this.displayname,
+        classStart: '<span class="pdflink">',
+        classEnd: '</span>',
+        pdfref: pdfref,
+      })
+
+      renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+        let users = this.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
+        let ids = users.map(it => it._id)
+        let messageData = {
+          content: content,
+          whisper: ids,
+          type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        }
+        ChatMessage.create(messageData)
+        ui.combat.render()
+      })
     })
   }
 
