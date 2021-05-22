@@ -20,7 +20,7 @@ class HelpChatProcessor extends ChatProcessor {
       "<a href='" +
       GURPS.USER_GUIDE_URL +
       "'>" +
-      i18n('GURPS.chatGameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
+      i18n('GURPS.gameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
       '</a><br>'
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
@@ -64,11 +64,19 @@ class ChatProcessorRegistry {
    * From this point on, we want to be in a single thread... so we await any async methods to ensure that
    * we get a response.
    */
-  async startProcessingLines(message, chatmsgData) {
+  async startProcessingLines(message, chatmsgData, event) {
+    if (!chatmsgData)
+      chatmsgData = {
+        user: game.user.id,
+        speaker: {
+          actor: !!GURPS.LastActor ? GURPS.LastActor.id : undefined,
+        },
+      }
     this.msgs.data = chatmsgData
-    delete this.msgs.event
-    await this.processLines(message)
+    this.msgs.event = event || { shiftKey: false, ctrlKey: false, data: {} }
+    let answer = await this.processLines(message)
     this.send()
+    return answer
   }
 
   async processLines(message) {
@@ -96,16 +104,17 @@ class ChatProcessorRegistry {
       }
     }
     if (start < message.length) lines.push(message.substr(start))
-
+    let answer = false
     for (const line of lines) {
       // use for loop to ensure single thread
-      await this.processLine(line)
+      answer = await this.processLine(line)
     }
+    return answer
   }
 
   async processLine(line) {
     line = line.trim()
-    let handled = await this.handle(line)
+    let [handled, answer] = await this.handle(line)
     if (!handled) {
       if (line.trim().startsWith('/')) {
         // immediately flush our stored msgs, and execute the slash command using the default parser
@@ -117,6 +126,7 @@ class ChatProcessorRegistry {
         })
       } else this.pub(line) // If not handled, must just be public text
     }
+    return answer
   }
 
   /**
@@ -125,20 +135,21 @@ class ChatProcessorRegistry {
    * @returns true, if handled
    */
   async handle(line) {
+    let answer = false
     let processor = this._processors.find(it => it.matches(line))
     if (!!processor) {
       if (processor.isGMOnly() && !game.user.isGM) ui.notifications.warn(i18n('GURPS.chatYouMustBeGM'))
       else {
         try {
-          await processor.process(line)
+          answer = await processor.process(line)
         } catch (err) {
           ui.notifications.error(err)
           console.error(err)
         }
-        return true
+        return [true, answer != false]
       }
     }
-    return false
+    return [false, false]
   }
 
   /**
@@ -152,9 +163,9 @@ class ChatProcessorRegistry {
 
   _sendPriv(priv) {
     if (priv.length == 0) return
-
+    let lines = priv.slice()
     renderTemplate('systems/gurps/templates/chat-processing.html', {
-      lines: priv,
+      lines: lines,
     }).then(content => {
       ChatMessage.create({
         alreadyProcessed: true,
@@ -163,8 +174,8 @@ class ChatProcessorRegistry {
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user._id],
       })
-      priv.length = 0
     })
+    priv.length = 0
   }
 
   _sendPub(pub, chatData) {
@@ -172,14 +183,14 @@ class ChatProcessorRegistry {
 
     let d = duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
     d.alreadyProcessed = true
-
+    let lines = pub.slice()
     renderTemplate('systems/gurps/templates/chat-processing.html', {
-      lines: pub,
+      lines: lines,
     }).then(content => {
       d.content = content
       ChatMessage.create(d)
-      pub.length = 0
     })
+    pub.length = 0
   }
 
   // Dump everything we have saved in messages
@@ -210,7 +221,7 @@ class ChatProcessorRegistry {
   setEventFlags(shift, ctrl) {
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
     this.msgs.data.whisper = [game.user.id]
-    this.msgs.event = { shiftKey: shift, ctrlKey: ctrl }
+    mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
   }
 }
 
@@ -218,6 +229,7 @@ export let ChatProcessors = new ChatProcessorRegistry()
 
 export default function addChatHooks() {
   Hooks.once('init', async function () {
+    GURPS.ChatProcessors = ChatProcessors
     Hooks.on('chatMessage', (log, message, chatmsgData) => {
       if (!!chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
 
@@ -252,7 +264,7 @@ export default function addChatHooks() {
       // this is a fucking hack
       let wrapper = html.find('.collapsible-wrapper')
       if (wrapper.length > 0) {
-        console.log($(wrapper).html())
+        //console.log($(wrapper).html())
         let input = $(wrapper).find('input.toggle')[0]
         let label = $(input).siblings('label.label-toggle')[0]
         let id = input.id
@@ -260,7 +272,7 @@ export default function addChatHooks() {
         if (labelFor !== id) {
           $(label).attr('for', id)
         }
-        console.log($(wrapper).html())
+        //console.log($(wrapper).html())
       }
     })
 

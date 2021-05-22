@@ -2,7 +2,34 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-This is what we are currently working on:
+0.9.9
+
+- Adding @neck/rinickolous's inventory sheet
+- Replaced /light dialog with parameters torch = /light 6 2 torch (or candle = /light 1 0 t)
+- Fixed changelog viewer to actually STOP after current version
+- Fixed calculations of Item skill levels when there is a +/-
+- Fixed the /qty command so that if defined in one piece of equipment, it can name another piece of equipment and modify that.
+- Added /forcemigrate command for players who's actors didn't quite make it.
+
+0.9.8 - 5/20/2021
+
+- Adding DODGE to Item bonus parsing
+- Fixed spelling of dis-bled status (to disabled)
+- /uses command can now be used with /if
+- fixed error during startup if Show Read me is true
+
+0.9.7 - 5/20/2021
+
+- More lenient handling of OtF formulas on items (may have [ ] or not)
+- Added DR+X {hitlocations} bonus to Items
+- Required migration to allow DR changes
+
+0.9.6 - 5/20/2021
+
+- Update migration code to remove possible infinite loop issue
+- Make Skill/Spell/Attack (Melee/Ranged/Damage) OtF formulas case insensitive
+
+0.9.5 - 5/19/2021
 
 - Fixed /status command when token.actor == null
 - Refactor regex pattern matching to utilities.js
@@ -27,9 +54,13 @@ This is what we are currently working on:
 - Foundry Item bonuses can affect Attributes, Skills and Attacks.  DX changes also affect melee (w/ parry/block) and ranged skills
 - Fix for DragRuler users... range mod is NOT added when token is moved
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
-- Item editor UI is complete.
-
-## History
+- Item editor UI ver 1 is complete.
+- Added chat command /light (thanks Boifubá!)
+- Fixed import on bad actor (used to have to delete actor and then reimport)
+- Less "flashing" during imports/updates
+- Added support for /if [/qty -?] /hp +1d]
+- Added support for /qty detecting the current equipment
+- Added support for parameters and return values from script macros (GURPS.chatargs & GURPS.chatreturn)
 
 0.9.4 - 5/06/2021
 
@@ -115,7 +146,7 @@ This is what we are currently working on:
 - Implemented drag-and-drop for OtFs on character sheets onto the macro bar.
 - Drag and drop now works for any OTF on character sheet
 - Added sanity check on Resource Tracker alias input.
-- Added initial Russian/русский translation (thanks to Discord user @Weirdy)!
+- Added initial Russian/ÑÑÑÑÐºÐ¸Ð¹ translation (thanks to Discord user @Weirdy)!
 - Bugfix for multiple damage drag-and-drop.
 - OtF damage types are now case-insensitive (e.g., 'Cut' and 'CUT' become 'cut').
 - Dropping the damage chat onto a hex with multiple tokens will now prompt the user to select which token to apply it to.

@@ -17,6 +17,8 @@ import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import JB2AChatProcessor from '../chat/jb2a.js'
+import { Migration } from '../../lib/migration.js'
+
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -42,6 +44,8 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RemoteChatProcessor())
   ChatProcessors.registerProcessor(new SlamChatProcessor())
   ChatProcessors.registerProcessor(new JB2AChatProcessor())
+  ChatProcessors.registerProcessor(new LightChatProcessor())
+  ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
 }
 
 class SetEventFlagsChatProcessor extends ChatProcessor {
@@ -130,11 +134,15 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     return line.startsWith('/:')
   }
   process(line) {
-    let m = Object.values(game.macros.entries).filter(m => m.name.startsWith(line.substr(2)))
+    GURPS.chatreturn = false
+    let args = splitArgs(line.substr(2))
+    GURPS.chatargs = args
+    let m = Object.values(game.macros.entries).filter(m => m.name.startsWith(args[0]))
     if (m.length > 0) {
       this.send()
       m[0].execute()
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro', 'Unable to find macro named')} '${line.substr(2)}'`)
+    return GURPS.chatreturn
   }
 }
 
@@ -337,6 +345,7 @@ class UsesChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
+    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -356,12 +365,14 @@ class UsesChatProcessor extends ChatProcessor {
             this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesReset', "'USES' reset to 'MAX USES'")} (${eqt.maxuses})`)
             eqt.uses = eqt.maxuses
             await actor.update({ [key]: eqt })
+            answer = true
           } else if (isNaN(delta)) {
             // only happens with '='
             delta = m[1].substr(1)
             eqt.uses = delta
             await actor.update({ [key]: eqt })
             this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesSet', "'USES' set to")} ${delta}`)
+            answer = true
           } else {
             let q = parseInt(eqt.uses) + delta
             let max = parseInt(eqt.maxuses)
@@ -376,11 +387,13 @@ class UsesChatProcessor extends ChatProcessor {
               this.prnt(`${eqt.name} ${i18n('GURPS.chatUses', "'USES'")} ${m[1]} = ${q}`)
               eqt.uses = q
               await actor.update({ [key]: eqt })
+              answer = true
             }
           }
         }
       }
     }
+    return answer
   }
 }
 
@@ -393,13 +406,34 @@ class QtyChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
+    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
     else {
+      var eqt, key
       let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
       let pattern = m2[2]
-      let [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
+
+      if (this.msgs().event?.currentTarget) {
+        let t = this.msgs().event?.currentTarget
+        let k = $(t).closest('[data-key]').attr('data-key')
+        // if we find a data-key, then we assume that we are on the character sheet, and if the target
+        // is equipment, apply to that equipment. Except that the user might have specified the name of
+        // another piece of equipment in the command, in which case we should honor his request.
+        if (!!k) {
+          key = k
+          eqt = getProperty(actor.data, key)
+
+          // if its not equipment, ignore.
+          if (eqt.count == null) eqt = null
+          // if it is equipment and the name matches, use it
+          else if (eqt.name.match(pattern)) pattern = 'Current Equipment'
+          // if the name does not match, keep looking (see next block)
+          else eqt = null
+        }
+      }
+      if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
       if (!eqt || !pattern)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
@@ -411,8 +445,8 @@ class QtyChatProcessor extends ChatProcessor {
           if (isNaN(delta))
             ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${m[1]}'`)
           else {
-            eqt.count = delta
-            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+            answer = true
+            await actor.updateEqtCount(key, delta)
             this.prnt(`${eqt.name} ${i18n('GURPS.chatQtySetTo', "'QTY' set to")} ${delta}`)
           }
         } else {
@@ -422,13 +456,14 @@ class QtyChatProcessor extends ChatProcessor {
               i18n('GURPS.chatYouDoNotHaveEnough', 'You do not have enough') + " '" + eqt.name + "'"
             )
           else {
+            answer = true
             this.prnt(`${eqt.name} ${i18n('GURPS.chatQty', "'QTY'")} ${m[1]}`)
-            eqt.count = q
-            await actor.update({ [key]: eqt }).then(() => actor.updateParentOf(key))
+            await actor.updateEqtCount(key, q)
           }
         }
       }
     }
+    return answer
   }
 }
 
@@ -511,3 +546,49 @@ class TrackerChatProcessor extends ChatProcessor {
   }
 }
 
+class LightChatProcessor extends ChatProcessor {
+  help() { 
+    return '/li torch|t|off &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt;'
+  }
+  matches(line) {
+    this.match = line.match(/^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(torch|t)? *(\d+)? *(\d+)?/i)
+    return !!this.match
+  }
+  async process(line) {
+    if (canvas.tokens.controlled.length == 0) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return
+    }
+    let noAnimation = {"type": ""}
+    let torchAnimation = {"type": "torch", "speed": parseInt(this.match[7]) || 1, "intensity": parseInt(this.match[8]) || 1}
+    let data = {
+      "dimLight": null, 
+      "brightLight": null, 
+      "lightAngle": 360,
+      "lightAnimation": noAnimation
+    }
+  
+    if (!this.match[2]) {
+      data.dimLight = parseInt(this.match[3] || 3)
+      data.brightLight = parseInt(this.match[4] || 5)
+      data.lightAngle = parseInt(this.match[5] || 360)
+      if (!!this.match[6]) {
+        data.lightAnimation = torchAnimation
+      }
+      else
+        data.lightAnimation = noAnimation
+    }
+    canvas.tokens.controlled.map(token => token.update(data));
+  }
+}
+
+class ForceMigrateChatProcessor extends ChatProcessor {
+  matches(line) {
+    this.match = line.match(/^\/forcemigrate/i)
+    return !!this.match
+  }
+  async process(line) {
+    await Migration.migrateTo096()
+    await Migration.migrateTo097()
+  }
+}

@@ -44,10 +44,12 @@ export class IfChatProcessor extends ChatProcessor {
     }
     let action = parselink(otf)
     if (!!action.action) {
-      if (['skill-spell', 'attribute', 'attack', 'controlroll'].includes(action.action.type)) {
+      if (['skill-spell', 'attribute', 'attack', 'controlroll', 'chat'].includes(action.action.type)) {
         this.priv(line)
         this.send()
-        let pass = await GURPS.performAction(action.action, GURPS.LastActor, this.msgs().event)
+        let event = this.msgs().event
+        event.chatmsgData = this.msgs().data
+        let pass = await GURPS.performAction(action.action, GURPS.LastActor, event)
         if (invert) pass = !pass
         if (pass) {
           if (!!then) await this._handleResult(then)
