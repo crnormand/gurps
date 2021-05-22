@@ -7,6 +7,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Ensure that empty Actors are initialized correctly
 - Added Rcl/RoF information to [A:..] and [R:...] OTF rolls
 - More i18n work, we are getting there!
+- /tr (/rt) now returns false if the value is less than 0.   So it can be used as an ammo tracker /if [/tr(ammo) -1] do some attack]
 
 0.9.9
 
