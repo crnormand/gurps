@@ -1,12 +1,12 @@
 .npc-input {
-/*  width: 100% !important;
+  /*  width: 100% !important;
   height: 100% !important;	*/
-	padding: 0;
-	margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .npc-sheet {
- /* width: 100% !important;
+  /* width: 100% !important;
   height: 100% !important;  */
   padding: 0;
   margin: 0;
@@ -16,7 +16,6 @@
   padding: 5px;
   background: url(../../../ui/parchment.jpg) repeat !important;
 }
-
 
 .npc-sheet .window-content {
   padding: 5px;
@@ -46,12 +45,13 @@
   grid-template-rows: 60px 130px 2fr 2fr 2fr 45px;
   gap: 5px 5px;
   grid-template-areas:
-    "top top top"
-    "attr notes notes"
-    "melee melee ranged"
-    "traits traits skills"
-		"equip equip spells"
-    "import import create";
+    'top       top    top'
+    'attr      notes  notes'
+    'condition notes  notes'
+    'melee     melee  ranged'
+    'traits    traits skills'
+    'equip     equip  spells'
+    'import    import create';
 }
 
 .npc-sheet-grid-container {
@@ -62,25 +62,25 @@
   grid-template-rows: auto 125px auto auto auto;
   gap: 5px 5px;
   grid-template-areas:
-    "top top top"
-    "attr notes notes"
-    "melee melee ranged"
-    "traits traits skills"
-		"equip equip spells"
+    'top top top'
+    'attr notes notes'
+    'condition notes notes'
+    'melee melee ranged'
+    'traits traits skills'
+    'equip equip spells';
 }
 
-.npc-input-create { 
-	grid-area: create;
-	align-self:center;
-	padding: 5px 50px 5px 50px;
+.npc-input-create {
+  grid-area: create;
+  align-self: center;
+  padding: 5px 50px 5px 50px;
 }
 
-.npc-input-import { 
-	grid-area: import;
-	align-self:center;
-	padding: 5px 50px 5px 50px;
+.npc-input-import {
+  grid-area: import;
+  align-self: center;
+  padding: 5px 50px 5px 50px;
 }
-
 
 .npc-input-top {
   display: grid;
@@ -88,38 +88,52 @@
   grid-template-rows: 0fr 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "nm nm-val title title-val"
-    "desc desc-val desc-val desc-val";
+    'nm nm-val title title-val'
+    'desc desc-val desc-val desc-val';
   grid-area: top;
 }
 
-.npc-input-nm { grid-area: nm; }
+.npc-input-nm {
+  grid-area: nm;
+}
 
-.npc-input-nm-val { grid-area: nm-val; }
+.npc-input-nm-val {
+  grid-area: nm-val;
+}
 
-.npc-input-title { grid-area: title; }
+.npc-input-title {
+  grid-area: title;
+}
 
-.npc-input-title-val { grid-area: title-val; }
+.npc-input-title-val {
+  grid-area: title-val;
+}
 
-.npc-input-desc-val { grid-area: desc-val; }
+.npc-input-desc-val {
+  grid-area: desc-val;
+}
 
-.npc-input-desc { grid-area: desc; }
+.npc-input-desc {
+  grid-area: desc;
+}
 
 .npc-input-notes {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
   gap: 0px 0px;
-  grid-template-areas:
-    "nt-val";
+  grid-template-areas: 'nt-val';
   grid-area: notes;
   border: 1px solid rgb(125, 125, 125);
   margin: 0px 0px 0px 5px;
 }
 
-.npc-input-nt { grid-area: nt; align-self:end }
+.npc-input-nt {
+  grid-area: nt;
+  align-self: end;
+}
 
-.npc-input-nt-val { 
+.npc-input-nt-val {
   grid-area: nt-val;
   height: 100%;
   overflow: var(--of);
@@ -131,22 +145,25 @@
   grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "tr"
-    "tr-val";
+    'tr'
+    'tr-val';
   grid-area: traits;
   border: 1px solid rgb(125, 125, 125);
 }
 
-.npc-input-tr { grid-area: tr; align-self:end }
-
-.npc-header {
-	background-color: black;
-	color: white;
-	height: 100%;
+.npc-input-tr {
+  grid-area: tr;
+  align-self: end;
 }
 
-.npc-input-tr-val { 
-	grid-area: tr-val; 
+.npc-header {
+  background-color: black;
+  color: white;
+  height: 100%;
+}
+
+.npc-input-tr-val {
+  grid-area: tr-val;
 }
 
 .npc-input-skills {
@@ -155,15 +172,20 @@
   grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "sk"
-    "sk-val";
+    'sk'
+    'sk-val';
   grid-area: skills;
   border: 1px solid rgb(125, 125, 125);
 }
 
-.npc-input-sk { grid-area: sk; align-self:end }
+.npc-input-sk {
+  grid-area: sk;
+  align-self: end;
+}
 
-.npc-input-sk-val { grid-area: sk-val; }
+.npc-input-sk-val {
+  grid-area: sk-val;
+}
 
 .npc-input-spells {
   display: grid;
@@ -171,8 +193,8 @@
   grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "sp"
-    "sp-val";
+    'sp'
+    'sp-val';
   grid-area: spells;
   border: 1px solid rgb(125, 125, 125);
 }
@@ -183,22 +205,32 @@
   grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "eqt"
-    "eqt-val";
+    'eqt'
+    'eqt-val';
   grid-area: equip;
   border: 1px solid rgb(125, 125, 125);
 }
 
-.npc-input-sp { grid-area: sp; align-self:end }
+.npc-input-sp {
+  grid-area: sp;
+  align-self: end;
+}
 
-.npc-input-sp-val { grid-area: sp-val; }
+.npc-input-sp-val {
+  grid-area: sp-val;
+}
 
-.npc-input-eqt { grid-area: eqt; align-self:end }
+.npc-input-eqt {
+  grid-area: eqt;
+  align-self: end;
+}
 
-.npc-input-eqt-val { grid-area: eqt-val; }
+.npc-input-eqt-val {
+  grid-area: eqt-val;
+}
 
-.npc-sheet-sk-val { 
-	grid-area: sk-val; 
+.npc-sheet-sk-val {
+  grid-area: sk-val;
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 1fr 2em 0fr;
@@ -206,8 +238,8 @@
   gap: 5px 5px;
 }
 
-.npc-sheet-sp-val { 
-	grid-area: sp-val; 
+.npc-sheet-sp-val {
+  grid-area: sp-val;
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 1fr 2em 0fr;
@@ -215,8 +247,8 @@
   gap: 5px 5px;
 }
 
-.npc-sheet-eqt-val { 
-	grid-area: eqt-val; 
+.npc-sheet-eqt-val {
+  grid-area: eqt-val;
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 1em 1em 1fr 3em 3em;
@@ -239,18 +271,23 @@
   grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "me"
-    "me-val";
+    'me'
+    'me-val';
   grid-area: melee;
   border: 1px solid rgb(125, 125, 125);
 }
 
-.npc-input-me { grid-area: me; align-self:end }
+.npc-input-me {
+  grid-area: me;
+  align-self: end;
+}
 
-.npc-input-me-val { grid-area: me-val; }
+.npc-input-me-val {
+  grid-area: me-val;
+}
 
-.npc-sheet-me-val { 
-  grid-area: me-val; 
+.npc-sheet-me-val {
+  grid-area: me-val;
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 5fr 2em 1.5fr;
@@ -264,18 +301,23 @@
   grid-template-rows: 1.5em 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "ra"
-    "ra-val";
+    'ra'
+    'ra-val';
   grid-area: ranged;
   border: 1px solid rgb(125, 125, 125);
 }
 
-.npc-input-ra { grid-area: ra; align-self:end }
+.npc-input-ra {
+  grid-area: ra;
+  align-self: end;
+}
 
-.npc-input-ra-val { grid-area: ra-val; }
+.npc-input-ra-val {
+  grid-area: ra-val;
+}
 
-.npc-sheet-ra-val { 
-  grid-area: ra-val; 
+.npc-sheet-ra-val {
+  grid-area: ra-val;
   display: grid;
   grid-auto-flow: row;
   grid-template-columns: 5fr 2em 2em 1.5fr;
@@ -283,56 +325,59 @@
   gap: 5px 5px;
 }
 
-
 .npc-input-attr {
-	padding: 5px 0px 0px 0px;
-	border: 1px solid black;
-	border-radius: 3px;   
-	background-color: rgb(235, 235, 255);
+  padding: 5px 0px 0px 0px;
+  border: 1px solid black;
+  border-radius: 3px;
+  background-color: rgb(235, 235, 255);
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(5, 1.5em);
   gap: 2px 3px;
   grid-template-areas:
-    "st st-val hp hp-val spd spd-val"
-    "dx dx-val will will-val mov mov-val"
-    "iq iq-val per per-val sm sm-val"
-    "ht ht-val fp fp-val dr dr-val"
-    "dmg dmg-val parry parry-val dodge dodge-val";
+    'st st-val hp hp-val spd spd-val'
+    'dx dx-val will will-val mov mov-val'
+    'iq iq-val per per-val sm sm-val'
+    'ht ht-val fp fp-val dr dr-val'
+    'dmg dmg-val parry parry-val dodge dodge-val';
   grid-area: attr;
   font-size: 110%;
 }
 
-.npc-input-label { 
-	align-self: center; 
-	text-align: center;
-	padding: 0px 2px 0px 0px;
+.npc-input-label {
+  align-self: center;
+  text-align: center;
+  padding: 0px 2px 0px 0px;
 }
 
-.npc-input-labelr { 
-  align-self: center; 
+.npc-input-labelr {
+  align-self: center;
   text-align: right;
   padding: 0px 2px 0px 0px;
 }
 
 .npc-sheet-centered {
-  align-self: center; 
+  align-self: center;
   text-align: center;
   padding: 0px 1px 0px 0px;
 }
 
-.npc-sheet-label { 
-  align-self: center; 
+.npc-sheet-label {
+  align-self: center;
   text-align: left;
   padding: 0px 1px 0px 0px;
 }
 
-.npc-input-st { grid-area: st; }
+.npc-input-st {
+  grid-area: st;
+}
 
-.npc-input-st-val { grid-area: st-val; }
+.npc-input-st-val {
+  grid-area: st-val;
+}
 
-.npc-input-hp-val { 
-  grid-area: hp-val; 
+.npc-input-hp-val {
+  grid-area: hp-val;
 }
 
 .npc-input-hp-val,
@@ -342,63 +387,117 @@
   text-align: center !important;
 }
 
-.npc-input-hp { grid-area: hp; }
+.npc-input-hp {
+  grid-area: hp;
+}
 
-.npc-input-spd { grid-area: spd; }
+.npc-input-spd {
+  grid-area: spd;
+}
 
-.npc-input-spd-val { grid-area: spd-val; }
+.npc-input-spd-val {
+  grid-area: spd-val;
+}
 
-.npc-input-dx { grid-area: dx; }
+.npc-input-dx {
+  grid-area: dx;
+}
 
-.npc-input-dx-val { grid-area: dx-val; }
+.npc-input-dx-val {
+  grid-area: dx-val;
+}
 
-.npc-input-will { grid-area: will; }
+.npc-input-will {
+  grid-area: will;
+}
 
-.npc-input-will-val { grid-area: will-val; }
+.npc-input-will-val {
+  grid-area: will-val;
+}
 
-.npc-input-mov { grid-area: mov; }
+.npc-input-mov {
+  grid-area: mov;
+}
 
-.npc-input-mov-val { grid-area: mov-val; }
+.npc-input-mov-val {
+  grid-area: mov-val;
+}
 
-.npc-input-iq { grid-area: iq; }
+.npc-input-iq {
+  grid-area: iq;
+}
 
-.npc-input-iq-val { grid-area: iq-val; }
+.npc-input-iq-val {
+  grid-area: iq-val;
+}
 
-.npc-input-per { grid-area: per; }
+.npc-input-per {
+  grid-area: per;
+}
 
-.npc-input-per-val { grid-area: per-val; }
+.npc-input-per-val {
+  grid-area: per-val;
+}
 
-.npc-input-ht { grid-area: ht; }
+.npc-input-ht {
+  grid-area: ht;
+}
 
-.npc-input-ht-val { grid-area: ht-val; }
+.npc-input-ht-val {
+  grid-area: ht-val;
+}
 
-.npc-input-fp { grid-area: fp; }
+.npc-input-fp {
+  grid-area: fp;
+}
 
-.npc-input-fp-val { grid-area: fp-val; }
+.npc-input-fp-val {
+  grid-area: fp-val;
+}
 
-.npc-input-sm { grid-area: sm; }
+.npc-input-sm {
+  grid-area: sm;
+}
 
-.npc-input-sm-val { grid-area: sm-val; }
+.npc-input-sm-val {
+  grid-area: sm-val;
+}
 
-.npc-input-dodge { grid-area: dodge; }
+.npc-input-dodge {
+  grid-area: dodge;
+}
 
-.npc-input-dodge-val { grid-area: dodge-val; }
+.npc-input-dodge-val {
+  grid-area: dodge-val;
+}
 
-.npc-input-parry { grid-area: parry; }
+.npc-input-parry {
+  grid-area: parry;
+}
 
-.npc-input-parry-val { grid-area: parry-val; }
+.npc-input-parry-val {
+  grid-area: parry-val;
+}
 
-.npc-input-dr { grid-area: dr; }
+.npc-input-dr {
+  grid-area: dr;
+}
 
-.npc-input-dr-val { grid-area: dr-val; }
+.npc-input-dr-val {
+  grid-area: dr-val;
+}
 
-.npc-input-dmg { grid-area: dmg; }
+.npc-input-dmg {
+  grid-area: dmg;
+}
 
-.npc-input-dmg-val { grid-area: dmg-val; }
+.npc-input-dmg-val {
+  grid-area: dmg-val;
+}
 
-.npc-input-img { 
-	grid-area: img; 
-  align-self:center;
+.npc-input-img {
+  grid-area: img;
+  align-self: center;
 }
 
 .npc-input-sm2 {
@@ -425,7 +524,6 @@
   padding: 1px !important;
   font-weight: 700;
   /* font-size: 120% !important;; */
-  font-family: "Roboto", sans-serif !important;; 
+  font-family: 'Roboto', sans-serif !important;
   width: 100% !important;
 }
-

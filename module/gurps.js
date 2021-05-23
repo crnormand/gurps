@@ -10,7 +10,7 @@ import {
   GurpsActorEditorSheet,
   GurpsActorSimplifiedSheet,
   GurpsActorNpcSheet,
-  GurpsInventorySheet
+  GurpsInventorySheet,
 } from './actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -21,10 +21,12 @@ import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
+import { Maneuvers } from '../module/actor/maneuver.js'
 import { Migration } from '../lib/migration.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
+GURPS.Maneuvers = Maneuvers
 
 GURPS.DEBUG = false
 
@@ -610,8 +612,8 @@ async function performAction(action, actor, event, targets) {
     blind: action.blindroll,
     event: event,
   } // Ok, I am slowly learning this Javascrip thing ;-)
-  let savedBucket = GURPS.ModifierBucket.modifierStack.modifierList.slice()  // may need to reset the state of the MB
-  
+  let savedBucket = GURPS.ModifierBucket.modifierStack.modifierList.slice() // may need to reset the state of the MB
+
   if (action.type === 'pdf') {
     GURPS.handlePdf(action.link)
     return true
@@ -630,9 +632,9 @@ async function performAction(action, actor, event, targets) {
     let chat = action.orig
     if (!!event?.shiftKey || game.keyboard.isCtrl(event))
       chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
-      
+
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
-/*    ui.chat.processMessage(chat).catch(err => {
+    /*    ui.chat.processMessage(chat).catch(err => {
       ui.notifications.error(err)
       console.error(err)
       return false
@@ -876,7 +878,7 @@ function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) 
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
-  sname = new RegExp(sname, "i");
+  sname = new RegExp(sname, 'i')
   let best = 0
   if (!isSpellOnly)
     recurselist(actor.data.skills, s => {
@@ -902,7 +904,7 @@ function findAdDisad(actor, sname) {
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
-  sname = new RegExp(sname, "i");
+  sname = new RegExp(sname, 'i')
   recurselist(actor.data.ads, s => {
     if (s.name.match(sname)) {
       t = s
@@ -917,7 +919,7 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
-  sname = new RegExp(sname, "i");
+  sname = new RegExp(sname, 'i')
   if (isMelee)
     t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   if (isRanged && !t)
@@ -1086,15 +1088,15 @@ GURPS.handlePdf = handlePdf
 
 // Return the i18n string for this data path (note en.json must match up to the data paths).
 // special case, drop ".value" from end of path (and append "NAME"), usually used for attributes
- function _mapAttributePath(path, suffix) {
-   let i = path.indexOf('.value')
-   if (i >= 0) {
-     path = path.substr(0, i) + 'NAME' // used for the attributes
-   }
-   path = path.replace(/\./g, '') // remove periods
-   return game.i18n.localize('GURPS.' + path)
- }
- GURPS._mapAttributePath = _mapAttributePath
+function _mapAttributePath(path, suffix) {
+  let i = path.indexOf('.value')
+  if (i >= 0) {
+    path = path.substr(0, i) + 'NAME' // used for the attributes
+  }
+  path = path.replace(/\./g, '') // remove periods
+  return game.i18n.localize('GURPS.' + path)
+}
+GURPS._mapAttributePath = _mapAttributePath
 
 // Given a string path "x.y.z", use it to resolve down an object heiracrhy
 function resolve(path, obj = self, separator = '.') {
@@ -1533,8 +1535,8 @@ Hooks.once('init', async function () {
     makeDefault: false,
   })
   Actors.registerSheet('gurps', GurpsInventorySheet, {
-      label: 'Inventory Only',
-      makeDefault: false,
+    label: 'Inventory Only',
+    makeDefault: false,
   })
 
   Items.unregisterSheet('core', ItemSheet)
@@ -1559,13 +1561,14 @@ Hooks.once('ready', async function () {
     template: 'systems/gurps/templates/threed6.html',
     classes: [],
   }).render(true)
-  
+
   GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)
   // Test for migration
   const mv = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION) || '0.0.1'
-  console.log("Current Version: " + GURPS.currentVersion + ", Migration version: " + mv)
+  console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + mv)
   const migrationVersion = SemanticVersion.fromString(mv)
-  if (migrationVersion.isLowerThan(GURPS.currentVersion)) { // check which migrations are needed
+  if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
+    // check which migrations are needed
     if (migrationVersion.isLowerThan(settings.VERSION_096)) await Migration.migrateTo096()
     if (migrationVersion.isLowerThan(settings.VERSION_097)) await Migration.migrateTo097()
     game.settings.set(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION, game.system.data.version)
@@ -1716,9 +1719,9 @@ Hooks.once('ready', async function () {
         title: `Gift for ${destactor.name}!`,
         content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
         yes: () => {
-        
           let destKey = destactor._findEqtkeyForGlobalItem(resp.itemData.data.globalid)
-          if (!!destKey) {    // already have some
+          if (!!destKey) {
+            // already have some
             let destEqt = getProperty(destactor.data, destKey)
             destactor.updateEqtCount(destKey, destEqt.count + resp.count)
           } else {
@@ -1731,7 +1734,7 @@ Hooks.once('ready', async function () {
             srcactorid: resp.srcactorid,
             destactorid: resp.destactorid,
             itemname: resp.itemData.name,
-            count: resp.count
+            count: resp.count,
           })
         },
         no: () => {
@@ -1750,7 +1753,7 @@ Hooks.once('ready', async function () {
       let eqt = getProperty(srcActor.data, resp.srckey)
       if (resp.count >= eqt.count) {
         srcActor.deleteEquipment(resp.srckey)
-      } else { 
+      } else {
         srcActor.updateEqtCount(resp.srckey, eqt.count - resp.count)
       }
       let destActor = game.actors.get(resp.destactorid)
