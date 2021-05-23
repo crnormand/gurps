@@ -2047,9 +2047,9 @@ export class GurpsActor extends Actor {
     while (pattern[0] == '/') pattern = pattern.substr(1)
     pattern = makeRegexPatternFrom(pattern, false)
     let pats = pattern
-      .substr(1)
+      .substr(1) // remove the ^ from the beginning of the string
       .split('/')
-      .map(e => new RegExp(e, 'i')) // remove the ^
+      .map(e => new RegExp("^" + e, 'i')) // and apply it to each pattern 
     var eqt, key
     let list1 = otherFirst ? this.data.data.equipment.other : this.data.data.equipment.carried
     let list2 = otherFirst ? this.data.data.equipment.carried : this.data.data.equipment.other

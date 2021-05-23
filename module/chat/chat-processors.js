@@ -353,22 +353,16 @@ class UsesChatProcessor extends ChatProcessor {
       var eqt, key
       let m2 = m[3].trim().match(/^(o[\.:])?(.*)/i)
       let pattern = m2[2]
-      if (this.msgs().event?.currentTarget) {
+      if (!pattern && this.msgs().event?.currentTarget) {
         let t = this.msgs().event?.currentTarget
         let k = $(t).closest('[data-key]').attr('data-key')
         // if we find a data-key, then we assume that we are on the character sheet, and if the target
-        // is equipment, apply to that equipment. Except that the user might have specified the name of
-        // another piece of equipment in the command, in which case we should honor his request.
+        // is equipment, apply to that equipment. 
         if (!!k) {
           key = k
           eqt = getProperty(actor.data, key)
-
           // if its not equipment, ignore.
           if (eqt.count == null) eqt = null
-          // if it is equipment and the name matches, use it
-          else if (eqt.name.match(pattern)) pattern = 'Current Equipment'
-          // if the name does not match, keep looking (see next block)
-          else eqt = null
         }
       }
       if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
@@ -433,23 +427,17 @@ class QtyChatProcessor extends ChatProcessor {
       var eqt, key
       let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
       let pattern = m2[2]
-
-      if (this.msgs().event?.currentTarget) {
+      if (!pattern && this.msgs().event?.currentTarget) {
         let t = this.msgs().event?.currentTarget
         let k = $(t).closest('[data-key]').attr('data-key')
         // if we find a data-key, then we assume that we are on the character sheet, and if the target
-        // is equipment, apply to that equipment. Except that the user might have specified the name of
-        // another piece of equipment in the command, in which case we should honor his request.
+        // is equipment, apply to that equipment. 
         if (!!k) {
           key = k
           eqt = getProperty(actor.data, key)
 
           // if its not equipment, ignore.
           if (eqt.count == null) eqt = null
-          // if it is equipment and the name matches, use it
-          else if (eqt.name.match(pattern)) pattern = 'Current Equipment'
-          // if the name does not match, keep looking (see next block)
-          else eqt = null
         }
       }
       if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
