@@ -7,6 +7,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Equipment name searches for /qty and /use now start at the front of the name for matching
 - Fixed /uses /qty when equipment name is being used
 - Only show max the last 5 changes (for new users on browsers)
+- Add GM command /reimport to ask all player characters to import
 
 0.9.11
 

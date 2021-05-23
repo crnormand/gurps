@@ -46,6 +46,32 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new JB2AChatProcessor())
   ChatProcessors.registerProcessor(new LightChatProcessor())
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
+  ChatProcessors.registerProcessor(new ReimportChatProcessor())
+}
+
+class ReimportChatProcessor extends ChatProcessor {
+  isGMOnly() {
+    return true
+  }
+  help() {
+    return '/reimport &lt;optional character names&gt;'
+  }
+  matches(line) {
+    return line.startsWith('/reimport')
+  }
+  process(line) {
+    this.priv(line)
+    let actornames = line.replace(/^\/reimport/, '').trim()
+    actornames = splitArgs(actornames)
+    let allPlayerActors = game.actors.entities.filter(a => a.hasPlayerOwner)
+    let actors = []
+    for (const name of actornames) {
+      let actor = allPlayerActors.find(a => a.name.match(makeRegexPattern(name, false)))
+      if (!!actor) actors.push(actor)
+    }
+    if (actornames.length == 0) actors = allPlayerActors
+    actors.forEach(e => e.importCharacter())
+  }
 }
 
 class SetEventFlagsChatProcessor extends ChatProcessor {
@@ -352,8 +378,11 @@ class UsesChatProcessor extends ChatProcessor {
     else {
       var eqt, key
       let m2 = m[3].trim().match(/^(o[\.:])?(.*)/i)
-      let pattern = m2[2]
-      if (!pattern && this.msgs().event?.currentTarget) {
+      let pattern = m2[2].trim()
+      if (!!pattern) 
+        [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
+      else if (this.msgs().event?.currentTarget) {
+        pattern = '&lt;current equipment&gt;'
         let t = this.msgs().event?.currentTarget
         let k = $(t).closest('[data-key]').attr('data-key')
         // if we find a data-key, then we assume that we are on the character sheet, and if the target
@@ -362,11 +391,11 @@ class UsesChatProcessor extends ChatProcessor {
           key = k
           eqt = getProperty(actor.data, key)
           // if its not equipment, ignore.
-          if (eqt.count == null) eqt = null
+          if (eqt.count == null)
+            eqt = null
         }
       }
-      if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
-      if (!eqt && !pattern)
+      if (!eqt)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
         if (!m[1]) {
@@ -426,8 +455,11 @@ class QtyChatProcessor extends ChatProcessor {
     else {
       var eqt, key
       let m2 = m[2].trim().match(/^(o[\.:])?(.*)/i)
-      let pattern = m2[2]
-      if (!pattern && this.msgs().event?.currentTarget) {
+      let pattern = m2[2].trim()
+      if (!!pattern) 
+        [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
+      else if (this.msgs().event?.currentTarget) {
+        pattern = '&lt;current equipment&gt;'
         let t = this.msgs().event?.currentTarget
         let k = $(t).closest('[data-key]').attr('data-key')
         // if we find a data-key, then we assume that we are on the character sheet, and if the target
@@ -435,13 +467,12 @@ class QtyChatProcessor extends ChatProcessor {
         if (!!k) {
           key = k
           eqt = getProperty(actor.data, key)
-
           // if its not equipment, ignore.
-          if (eqt.count == null) eqt = null
-        }
+          if (eqt.count == null)
+            eqt = null
+          }
       }
-      if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
-      if (!eqt && !pattern)
+      if (!eqt)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
         eqt = duplicate(eqt)

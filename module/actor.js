@@ -310,6 +310,71 @@ export class GurpsActor extends Actor {
     if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
     return n
   }
+  
+  async importCharacter() {
+    let p = this.data.data.additionalresources.importpath
+    if (!!p) {
+      let m = p.match(/.*[/\\]Data[/\\](.*)/)
+      if (!!m) {
+        let f = m[1].replace(/\\/g, '/')
+        let xhr = new XMLHttpRequest()
+        xhr.responseType = 'arraybuffer'
+        xhr.open('GET', f)
+
+        let promise = new Promise(resolve => {
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              let s = String.fromCharCode.apply(null, new Uint8Array(xhr.response))
+              this.importFromGCSv1(s, m[1], p)
+            } else this._openImportDialog()
+            resolve(this)
+          }
+        })
+        xhr.send(null)
+      } else this._openImportDialog()
+    } else this._openImportDialog()
+  }
+
+  
+  async _openImportDialog() {
+    setTimeout(async () => {
+    new Dialog(
+      {
+        title: `Import character data for: ${this.name}`,
+        content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
+          name: '"' + this.name + '"',
+        }),
+        buttons: {
+          import: {
+            icon: '<i class="fas fa-file-import"></i>',
+            label: 'Import',
+            callback: html => {
+              const form = html.find('form')[0]
+              let files = form.data.files
+              let file = null
+              if (!files.length) {
+                return ui.notifications.error('You did not upload a data file!')
+              } else {
+                file = files[0]
+                GURPS.readTextFromFile(file).then(text => this.importFromGCSv1(text, file.name, file.path))
+              }
+            },
+          },
+          no: {
+            icon: '<i class="fas fa-times"></i>',
+            label: 'Cancel',
+          },
+        },
+        default: 'import',
+      },
+      {
+        width: 400,
+      }
+    ).render(true)
+    }, 200)
+  }
+
+
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
@@ -539,7 +604,7 @@ export class GurpsActor extends Actor {
     var foundkey
     let l = getProperty(this.data.data, list)
     recurselist(l, (e, k, d) => {
-      if (e.uuid == uuid || (e.name.startsWith(name) && e.mode == mode))
+      if (e.uuid == uuid || (!!e.name && e.name.startsWith(name) && e.mode == mode))
         foundkey = k
     })
     return foundkey == null ? foundkey : getProperty(this.data.data, list + "." + foundkey)
