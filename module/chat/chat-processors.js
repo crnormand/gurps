@@ -607,6 +607,10 @@ class LightChatProcessor extends ChatProcessor {
 }
 
 class ForceMigrateChatProcessor extends ChatProcessor {
+ help() {
+    return null
+  }
+
   matches(line) {
     this.match = line.match(/^\/forcemigrate/i)
     return !!this.match
