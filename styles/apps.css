@@ -1378,6 +1378,10 @@ ul#result-effects li {
 .button-row {
   display: flex;
   flex-flow: row wrap;
+  height: 5em;
+  overflow: scroll;
+  overflow-y: overlay;
+  overflow-x: hidden;
 }
 
 #modtooltipleftbottom {
@@ -1465,6 +1469,7 @@ ul#result-effects li {
   width: fit-content;
   background: rgba(255, 255, 240, 0.8);
   line-height: unset;
+  height: fit-content;
   min-width: 5.5em;
 }
 

@@ -350,10 +350,29 @@ class UsesChatProcessor extends ChatProcessor {
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
     else {
+      var eqt, key
       let m2 = m[3].trim().match(/^(o[\.:])?(.*)/i)
       let pattern = m2[2]
-      let [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
-      if (!eqt)
+      if (this.msgs().event?.currentTarget) {
+        let t = this.msgs().event?.currentTarget
+        let k = $(t).closest('[data-key]').attr('data-key')
+        // if we find a data-key, then we assume that we are on the character sheet, and if the target
+        // is equipment, apply to that equipment. Except that the user might have specified the name of
+        // another piece of equipment in the command, in which case we should honor his request.
+        if (!!k) {
+          key = k
+          eqt = getProperty(actor.data, key)
+
+          // if its not equipment, ignore.
+          if (eqt.count == null) eqt = null
+          // if it is equipment and the name matches, use it
+          else if (eqt.name.match(pattern)) pattern = 'Current Equipment'
+          // if the name does not match, keep looking (see next block)
+          else eqt = null
+        }
+      }
+      if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
+      if (!eqt || !pattern)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
         if (!m[1]) {
@@ -476,6 +495,7 @@ class TrackerChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
+    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -513,6 +533,7 @@ class TrackerChatProcessor extends ChatProcessor {
             'reset to'
           )} ${max}`
         )
+        answer = true
       } else if (isNaN(delta)) {
         // only happens with '='
         delta = parseInt(m[5].substr(1))
@@ -521,11 +542,12 @@ class TrackerChatProcessor extends ChatProcessor {
         else {
           await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: delta })
           this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} set to ${delta}`)
+          answer = true
         }
       } else if (!!m[5]) {
         if (max == 0) max = Number.MAX_SAFE_INTEGER
         let v = actor.data.data.additionalresources.tracker[tracker].value + delta
-        if (v > max) {
+         if (v > max) {
           ui.notifications.warn(
             `${i18n('GURPS.chatExceededMax', 'Exceeded MAX')}:${max} ${i18n('GURPS.for')} ${i18n(
               'GURPS.chatResourceTracker'
@@ -541,8 +563,10 @@ class TrackerChatProcessor extends ChatProcessor {
         }
         await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: v })
         this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} ${m[5]} = ${v}`)
+        answer = (v >= 0)
       } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
     }
+    return answer
   }
 }
 
@@ -583,6 +607,10 @@ class LightChatProcessor extends ChatProcessor {
 }
 
 class ForceMigrateChatProcessor extends ChatProcessor {
+ help() {
+    return null
+  }
+
   matches(line) {
     this.match = line.match(/^\/forcemigrate/i)
     return !!this.match

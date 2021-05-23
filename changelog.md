@@ -2,6 +2,19 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+0.9.11
+
+- Allow user additions to names or notes survive an import (if changes occur at END of imported data)!
+- Added /uses can now automatically detect if it is being run on equipment (like /qty)
+- Add scroll bars to the "Send Modifiers to Players" part of the modifier bucket window.
+
+0.9.10
+
+- Ensure that empty Actors are initialized correctly
+- Added Rcl/RoF information to [A:..] and [R:...] OTF rolls
+- More i18n work, we are getting there!
+- /tr (/rt) now returns false if the value is less than 0.   So it can be used as an ammo tracker /if [/tr(ammo) -1] do some attack]
+
 0.9.9
 
 - Adding @neck/rinickolous's inventory sheet
