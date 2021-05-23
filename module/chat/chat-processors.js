@@ -366,7 +366,7 @@ class UsesChatProcessor extends ChatProcessor {
         }
       }
       if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
-      if (!eqt || !pattern)
+      if (!eqt && !pattern)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
         if (!m[1]) {
@@ -441,7 +441,7 @@ class QtyChatProcessor extends ChatProcessor {
         }
       }
       if (!eqt) [eqt, key] = actor.findEquipmentByName(pattern, !!m2[1])
-      if (!eqt || !pattern)
+      if (!eqt && !pattern)
         ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
       else {
         eqt = duplicate(eqt)

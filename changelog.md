@@ -5,7 +5,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 0.9.12
 
 - Equipment name searches for /qty and /use now start at the front of the name for matching
-- Fixed /uses /qty when equipment name is being usedi
+- Fixed /uses /qty when equipment name is being used
+- Only show max the last 5 changes (for new users on browsers)
 
 0.9.11
 
