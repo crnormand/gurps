@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 0.9.11
 
 - Allow user additions to names or notes survive an import (if changes occur at END of imported data)!
+- Added /uses can now automatically detect if it is being run on equipment (like /qty)
 
 0.9.10
 
