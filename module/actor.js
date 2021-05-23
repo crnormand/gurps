@@ -1638,14 +1638,15 @@ export class GurpsActor extends Actor {
 
   // Once the Items has been added to our items list, add the equipment and any features
   async addItemData(itemData, targetkey) {
-    let [eqtkey, carried] = await this._addNewItemEquipment(itemData, targetkey)
-    if (carried) {
+    let [eqtkey, equipped] = await this._addNewItemEquipment(itemData, targetkey)
+    if (equipped) {
       await this._addItemAdditions(itemData, eqtkey)
     }
   }
 
   // Make the initial equipment object (in the carried list)
   async _addNewItemEquipment(itemData, targetkey) {
+    let carried = false
     if (targetkey == null || targetkey == true) {
       // new carried items go at the end
       targetkey = 'data.equipment.carried'
@@ -1653,6 +1654,7 @@ export class GurpsActor extends Actor {
       let carried = getProperty(this.data, targetkey)
       while (carried.hasOwnProperty(GURPS.genkey(index))) index++
       targetkey += '.' + GURPS.genkey(index)
+      carried = true
     }
     if (targetkey == false) targetkey = 'data.equipment.other' // new other items go at the beginning (personal choice)
     if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)
@@ -1662,7 +1664,7 @@ export class GurpsActor extends Actor {
     eqt.uuid = 'item-' + itemData._id
     await GURPS.insertBeforeKey(this, targetkey, eqt)
     await this.updateParentOf(targetkey)
-    return [targetkey, targetkey.includes('.carried')]
+    return [targetkey, carried && eqt.equipped ]
   }
 
   async _addItemAdditions(itemData, eqtkey) {
@@ -1676,11 +1678,9 @@ export class GurpsActor extends Actor {
   }
 
   // called when equipment is being moved
-  async updateItemAdditionsBasedOn(eqt, sourcePath, targetPath) {
-    if (sourcePath.includes('.carried') && targetPath.includes('.other')) await this._removeItemAdditionsBasedOn(eqt)
-    if (sourcePath.includes('.other') && targetPath.includes('.carried')) {
-      await this._addItemAdditionsBasedOn(eqt, targetPath)
-    }
+  async updateItemAdditionsBasedOn(eqt, targetPath) {
+    if (targetPath.includes('.other') || !eqt.equipped) await this._removeItemAdditionsBasedOn(eqt)
+    if (targetPath.includes('.carried') && eqt.equipped) await this._addItemAdditionsBasedOn(eqt, targetPath)
   }
 
   // moving from other to carried
@@ -1814,7 +1814,7 @@ export class GurpsActor extends Actor {
       let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
       let eqtkey = GURPS.put(target, object)
-      await this.updateItemAdditionsBasedOn(object, srckey, targetkey + '.' + eqtkey)
+      await this.updateItemAdditionsBasedOn(object, targetkey + '.' + eqtkey)
       await this.update({ [targetkey]: target })
       if (isSrcFirst) await GURPS.removeKey(this, srckey)
       return
@@ -1835,7 +1835,7 @@ export class GurpsActor extends Actor {
               await GURPS.removeKey(this, srckey)
               await this.updateParentOf(srckey)
             }
-            await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+            await this.updateItemAdditionsBasedOn(object, targetkey)
             await GURPS.insertBeforeKey(this, targetkey, object)
             await this.updateParentOf(targetkey)
             if (isSrcFirst) {
@@ -1853,7 +1853,7 @@ export class GurpsActor extends Actor {
               await this.updateParentOf(srckey)
             }
             let k = targetkey + '.contains.' + GURPS.genkey(0)
-            await this.updateItemAdditionsBasedOn(object, srckey, targetkey)
+            await this.updateItemAdditionsBasedOn(object, targetkey)
             await GURPS.insertBeforeKey(this, k, object)
             await this.updateParentOf(k)
             if (isSrcFirst) {

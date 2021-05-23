@@ -1210,6 +1210,7 @@ export class GurpsActorSheet extends ActorSheet {
     let eqt = duplicate(GURPS.decode(this.actor.data, key))
     eqt.equipped = !eqt.equipped
     await this.actor.update({ [key]: eqt })
+    await this.actor.updateItemAdditionsBasedOn(eqt, key)
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
     await this.actor.update({
