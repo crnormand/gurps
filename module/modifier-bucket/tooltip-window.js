@@ -23,12 +23,9 @@ export default class ModifierBucketEditor extends Application {
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket/tooltip-window.html',
-      // resizeable: true,
       minimizable: false,
       width: 820,
-      // height: 'auto',
       scale: scale,
-      // popOut: false,
       classes: ['modifier-bucket'],
     })
   }
