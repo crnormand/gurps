@@ -534,6 +534,23 @@ export class GurpsActor extends Actor {
     if (!f) return 0
     return parseFloat(f)
   }
+  
+  _findElementIn(list, uuid, name = '', mode = '') {
+    var foundkey
+    let l = getProperty(this.data.data, list)
+    recurselist(l, (e, k, d) => {
+      if (e.uuid == uuid || (e.name.startsWith(name) && e.mode == mode))
+        foundkey = k
+    })
+    return foundkey == null ? foundkey : getProperty(this.data.data, list + "." + foundkey)
+  }
+  
+  _tryToMerge(nst, ost) {
+    if (ost.startsWith(nst))
+      return ost
+    else 
+      return nst
+  }
 
   importReactionsFromGCSv2(json) {
     if (!json) return
@@ -618,6 +635,10 @@ export class GurpsActor extends Actor {
         n.uuid = t(j.uuid)
         n.parentuuid = t(j.parentuuid)
         n.pageref = t(j.pageref)
+        let old = this._findElementIn('notes', n.uuid)
+        if (!!old) {
+          n.notes = this._tryToMerge(n.notes, old.notes)
+        }
         temp.push(n)
       }
     }
@@ -830,7 +851,7 @@ export class GurpsActor extends Actor {
 
     return name
   }
-
+  
   importEquipmentFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let t = this.textFrom
@@ -865,6 +886,12 @@ export class GurpsActor extends Actor {
         }
         eqt.pageRef(t(j.pageref))
         temp.push(eqt)
+        let old = this._findElementIn('equipment.carried', eqt.uuid)
+        if (!old) old = this._findElementIn('equipment.other', eqt.uuid)
+        if (!!old) {
+          eqt.notes = this._tryToMerge(eqt.notes, old.notes)
+          eqt.name = this._tryToMerge(eqt.name, old.name)
+        }
       }
     }
 
@@ -960,7 +987,7 @@ export class GurpsActor extends Actor {
       'data.encumbrance': es,
     }
   }
-
+  
   importCombatMeleeFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let t = this.textFrom
@@ -996,7 +1023,12 @@ export class GurpsActor extends Actor {
             m.reach = t(j2.reach)
             m.parry = t(j2.parry)
             m.block = t(j2.block)
-            game.GURPS.put(melee, m, index++)
+            let old = this._findElementIn('melee', false, m.name, m.mode)
+            if (!!old) {
+              m.name = this._tryToMerge(m.name, old.name)
+              m.notes = this._tryToMerge(m.notes, old.notes)
+            }
+            GURPS.put(melee, m, index++)
           }
         }
       }
@@ -1056,6 +1088,11 @@ export class GurpsActor extends Actor {
               }
             }
             r.range = rng
+            let old = this._findElementIn('ranged', false, r.name, r.mode)
+            if (!!old) {
+              r.name = this._tryToMerge(r.name, old.name)
+              r.notes = this._tryToMerge(r.notes, old.notes)
+            }
             game.GURPS.put(ranged, r, index++)
           }
         }
@@ -1237,6 +1274,11 @@ export class GurpsActor extends Actor {
         if (!!j.pageref) sk.pageref = t(j.pageref)
         sk.uuid = t(j.uuid)
         sk.parentuuid = t(j.parentuuid)
+        let old = this._findElementIn('skills', sk.uuid)
+        if (!!old) {
+          sk.name = this._tryToMerge(sk.name, old.name)
+          sk.notes = this._tryToMerge(sk.notes, old.notes)
+        }
         temp.push(sk)
       }
     }
@@ -1285,6 +1327,11 @@ export class GurpsActor extends Actor {
         sp.duration = t(j.duration)
         sp.uuid = t(j.uuid)
         sp.parentuuid = t(j.parentuuid)
+        let old = this._findElementIn('spells', sp.uuid)
+        if (!!old) {
+          sp.name = this._tryToMerge(sp.name, old.name)
+          sp.notes = this._tryToMerge(sp.notes, old.notes)
+        }
         temp.push(sp)
       }
     }
@@ -1318,6 +1365,11 @@ export class GurpsActor extends Actor {
         a.pageref = t(j.pageref) || a.pageref
         a.uuid = t(j.uuid)
         a.parentuuid = t(j.parentuuid)
+        let old = this._findElementIn('ads', a.uuid)
+        if (!!old) {
+          a.name = this._tryToMerge(a.name, old.name)
+          a.notes = this._tryToMerge(a.notes, old.notes)
+        }
         datalist.push(a)
       }
     }
@@ -1343,6 +1395,11 @@ export class GurpsActor extends Actor {
         a.pageref = t(j.pageref)
         a.uuid = t(j.uuid)
         a.parentuuid = t(j.parentuuid)
+        let old = this._findElementIn('ads', a.uuid)
+        if (!!old) {
+          a.name = this._tryToMerge(a.name, old.name)
+          a.notes = this._tryToMerge(a.notes, old.notes)
+        }
         temp.push(a)
       }
     }

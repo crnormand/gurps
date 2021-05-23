@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+0.9.11
+
+- Allow user additions to names or notes survive an import (if changes occur at END of imported data)!
+
 0.9.10
 
 - Ensure that empty Actors are initialized correctly
