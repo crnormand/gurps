@@ -28,7 +28,7 @@ export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 GURPS.Maneuvers = Maneuvers
 
-GURPS.DEBUG = false
+GURPS.DEBUG = true
 
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
@@ -1495,8 +1495,8 @@ Hooks.once('init', async function () {
   GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
   // Define custom Entity classes
-  CONFIG.Actor.entityClass = GurpsActor
-  CONFIG.Item.entityClass = GurpsItem
+  CONFIG.Actor.documentClass = GurpsActor
+  CONFIG.Item.documentClass = GurpsItem
 
   // preload drag-and-drop image
   {

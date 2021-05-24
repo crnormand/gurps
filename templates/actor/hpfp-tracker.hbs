@@ -1,15 +1,16 @@
-<div class='tracked-resource {{#unless name}}inactive{{/unless}}' data-gurps-resource='{{name}}'>
+<div class='tracked-resource {{#unless name}} inactive {{/unless}}' data-gurps-resource='{{name}}'>
   {{> resource-controls}}
-
+  {{debug '+++' }}
+  {{debug resource }}
+  {{debug name }}
   <div class='condition-block tooltip-wrapper'>
-    <div class='tooltip condition {{hpFpCondition name resource "style"}}'>{{hpFpCondition name resource 'label'}}
-      &nbsp; <i class='fas fa-heart-broken {{optionSetStyle testcondition}}'
-        data-onethird='{{condition}}'></i>
+    <div class='tooltip condition {{hpFpCondition name resource "style" }}'>{{hpFpCondition name resource 'label'}}
+      &nbsp; <i class='fas fa-heart-broken {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
       <span class="tooltiptext">
         <div class="fieldblock">
           {{#hpFpBreakpoints name resource}}
-          <div class="field condensed noedit">{{breakpoint}}</div>
-          <div class="label {{style}}">{{label}}</div>
+            <div class="field condensed noedit">{{breakpoint}}</div>
+            <div class="label {{style}}">{{label}}</div>
           {{/hpFpBreakpoints}}
         </div>
       </span>

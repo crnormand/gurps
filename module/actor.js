@@ -17,10 +17,9 @@ import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { SemanticVersion } from '../lib/semver.js'
 
-
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (actor) {
-  await actor.update({"data.migrationversion" : game.system.data.version})
+  await actor.update({ 'data.migrationversion': game.system.data.version })
 })
 
 export class GurpsActor extends Actor {
@@ -54,7 +53,7 @@ export class GurpsActor extends Actor {
     this._applyItemBonuses()
 
     this._calculateWeights()
-     // Must be done at end
+    // Must be done at end
     this._calculateEncumbranceIssues()
   }
 
@@ -62,8 +61,8 @@ export class GurpsActor extends Actor {
   // we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
   _initializeStartingValues() {
     const data = this.data.data
-    data.currentdodge = 0   // start at zero, and bonuses will add, and then they will be finalized later
-  
+    data.currentdodge = 0 // start at zero, and bonuses will add, and then they will be finalized later
+
     let v = data.migrationversion
     if (!v) return // Prior to v0.9.6, this did not exist
     v = SemanticVersion.fromString(v)
@@ -115,7 +114,7 @@ export class GurpsActor extends Actor {
     let pi = n => (!!n ? parseInt(n) : 0)
     let gids = [] //only allow each global bonus to add once
     const data = this.data.data
-    for (const item of this.items.entries) {
+    for (const item of this.items.contents) {
       if (item.data.data.equipped != false && !!item.data.data.bonuses && !gids.includes(item.data.data.globalid)) {
         gids.push(item.data.data.globalid)
         let bonuses = item.data.data.bonuses.split('\n')
@@ -232,11 +231,10 @@ export class GurpsActor extends Actor {
       }
     }
   }
-  
-  
+
   _sumeqt(dict, type, checkEquipped = false) {
     if (!dict) return 0.0
-    let flt = (str) => !!str ? parseFloat(str) : 0
+    let flt = str => (!!str ? parseFloat(str) : 0)
     let sum = 0
     for (let k in dict) {
       let e = dict[k]
@@ -248,12 +246,16 @@ export class GurpsActor extends Actor {
     }
     return parseInt(sum * 100) / 100
   }
-  
+
   _calculateWeights() {
     let eqt = this.data.data.equipment || {}
     let eqtsummary = {
       eqtcost: this._sumeqt(eqt.carried, 'cost'),
-      eqtlbs: this._sumeqt(eqt.carried, 'weight', game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)),
+      eqtlbs: this._sumeqt(
+        eqt.carried,
+        'weight',
+        game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)
+      ),
       othercost: this._sumeqt(eqt.other, 'cost'),
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
@@ -339,7 +341,7 @@ export class GurpsActor extends Actor {
     if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
     return n
   }
-  
+
   async importCharacter() {
     let p = this.data.data.additionalresources.importpath
     if (!!p) {
@@ -364,46 +366,43 @@ export class GurpsActor extends Actor {
     } else this._openImportDialog()
   }
 
-  
   async _openImportDialog() {
     setTimeout(async () => {
-    new Dialog(
-      {
-        title: `Import character data for: ${this.name}`,
-        content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
-          name: '"' + this.name + '"',
-        }),
-        buttons: {
-          import: {
-            icon: '<i class="fas fa-file-import"></i>',
-            label: 'Import',
-            callback: html => {
-              const form = html.find('form')[0]
-              let files = form.data.files
-              let file = null
-              if (!files.length) {
-                return ui.notifications.error('You did not upload a data file!')
-              } else {
-                file = files[0]
-                GURPS.readTextFromFile(file).then(text => this.importFromGCSv1(text, file.name, file.path))
-              }
+      new Dialog(
+        {
+          title: `Import character data for: ${this.name}`,
+          content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
+            name: '"' + this.name + '"',
+          }),
+          buttons: {
+            import: {
+              icon: '<i class="fas fa-file-import"></i>',
+              label: 'Import',
+              callback: html => {
+                const form = html.find('form')[0]
+                let files = form.data.files
+                let file = null
+                if (!files.length) {
+                  return ui.notifications.error('You did not upload a data file!')
+                } else {
+                  file = files[0]
+                  GURPS.readTextFromFile(file).then(text => this.importFromGCSv1(text, file.name, file.path))
+                }
+              },
+            },
+            no: {
+              icon: '<i class="fas fa-times"></i>',
+              label: 'Cancel',
             },
           },
-          no: {
-            icon: '<i class="fas fa-times"></i>',
-            label: 'Cancel',
-          },
+          default: 'import',
         },
-        default: 'import',
-      },
-      {
-        width: 400,
-      }
-    ).render(true)
+        {
+          width: 400,
+        }
+      ).render(true)
     }, 200)
   }
-
-
 
   // First attempt at import GCS FG XML export data.
   async importFromGCSv1(xml, importname, importpath) {
@@ -628,22 +627,19 @@ export class GurpsActor extends Actor {
     if (!f) return 0
     return parseFloat(f)
   }
-  
+
   _findElementIn(list, uuid, name = '', mode = '') {
     var foundkey
     let l = getProperty(this.data.data, list)
     recurselist(l, (e, k, d) => {
-      if (e.uuid == uuid || (!!e.name && e.name.startsWith(name) && e.mode == mode))
-        foundkey = k
+      if (e.uuid == uuid || (!!e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
     })
-    return foundkey == null ? foundkey : getProperty(this.data.data, list + "." + foundkey)
+    return foundkey == null ? foundkey : getProperty(this.data.data, list + '.' + foundkey)
   }
-  
+
   _tryToMerge(nst, ost) {
-    if (ost.startsWith(nst))
-      return ost
-    else 
-      return nst
+    if (ost.startsWith(nst)) return ost
+    else return nst
   }
 
   importReactionsFromGCSv2(json) {
@@ -945,7 +941,7 @@ export class GurpsActor extends Actor {
 
     return name
   }
-  
+
   importEquipmentFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let t = this.textFrom
@@ -1081,7 +1077,7 @@ export class GurpsActor extends Actor {
       'data.encumbrance': es,
     }
   }
-  
+
   importCombatMeleeFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let t = this.textFrom
@@ -1602,7 +1598,7 @@ export class GurpsActor extends Actor {
     ui.notifications.info(global.name + ' => ' + this.name)
     global.data.data.globalid = dragData.id
     this.ignoreRender = true
-    global.data.data.equipped = true // assume new items are equipped 
+    global.data.data.equipped = true // assume new items are equipped
     await this.addNewItemData(global.data)
     this._forceRender()
   }
@@ -1758,11 +1754,11 @@ export class GurpsActor extends Actor {
     eqt.itemid = itemData._id
     eqt.globalid = itemData.data.globalid
     eqt.uuid = 'item-' + itemData._id
-    eqt.equipped = itemData.data.equipped  
+    eqt.equipped = itemData.data.equipped
     eqt.carried = carried
     await GURPS.insertBeforeKey(this, targetkey, eqt)
     await this.updateParentOf(targetkey)
-    return [targetkey, carried && eqt.equipped ]
+    return [targetkey, carried && eqt.equipped]
   }
 
   async _addItemAdditions(itemData, eqtkey) {
@@ -1827,7 +1823,7 @@ export class GurpsActor extends Actor {
       if (key == 'melee') {
         if (!isNaN(parseInt(e.parry))) {
           let m = e.parry.match(/([+-]\d+)(.*)/)
-          if (!m && e.parry.trim() == '0') m = [ 0, 0 ]  // allow '0' to mean 'no bonus', not skill level = 0
+          if (!m && e.parry.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
           if (!!m) {
             e.parrybonus = parseInt(m[1])
             e.parry = e.parrybonus + 3 + Math.floor(e.import / 2)
@@ -1836,7 +1832,7 @@ export class GurpsActor extends Actor {
         }
         if (!isNaN(e.block)) {
           let m = e.block.match(/([+-]\d+)(.*)/)
-          if (!m && e.block.trim() == '0') m = [ 0, 0 ]  // allow '0' to mean 'no bonus', not skill level = 0
+          if (!m && e.block.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
           if (!!m) {
             e.blockbonus = parseInt(m[1])
             e.block = e.blockbonus + 3 + Math.floor(e.import / 2)
@@ -2147,7 +2143,7 @@ export class GurpsActor extends Actor {
     let pats = pattern
       .substr(1) // remove the ^ from the beginning of the string
       .split('/')
-      .map(e => new RegExp("^" + e, 'i')) // and apply it to each pattern 
+      .map(e => new RegExp('^' + e, 'i')) // and apply it to each pattern
     var eqt, key
     let list1 = otherFirst ? this.data.data.equipment.other : this.data.data.equipment.carried
     let list2 = otherFirst ? this.data.data.equipment.carried : this.data.data.equipment.other
