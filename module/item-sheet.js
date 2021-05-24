@@ -21,11 +21,12 @@ export class GurpsItemSheet extends ItemSheet {
 
   /** @override */
   getData() {
-    const data = super.getData()
-    data.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
-    data.name = this.item.name
-    console.log(data)
-    return data
+    const sheetData = super.getData()
+    sheetData.data = sheetData.data.data
+    sheetData.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
+    sheetData.name = this.item.name
+    console.log(sheetData)
+    return sheetData
   }
 
   /* -------------------------------------------- */
