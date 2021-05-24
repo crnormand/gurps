@@ -16,7 +16,6 @@ import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../
 // import StatusProcessor from '../chat/status-processor.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
-import JB2AChatProcessor from '../chat/jb2a.js'
 import { Migration } from '../../lib/migration.js'
 
 
@@ -43,7 +42,6 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new SetEventFlagsChatProcessor())
   ChatProcessors.registerProcessor(new RemoteChatProcessor())
   ChatProcessors.registerProcessor(new SlamChatProcessor())
-  ChatProcessors.registerProcessor(new JB2AChatProcessor())
   ChatProcessors.registerProcessor(new LightChatProcessor())
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
