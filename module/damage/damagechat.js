@@ -336,7 +336,7 @@ export default class DamageChat {
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: draggableData[0].roll,
+      roll: JSON.stringify(draggableData[0].roll)
     }
 
     if (event?.shiftKey) {
