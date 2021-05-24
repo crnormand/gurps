@@ -32,7 +32,12 @@ export class GurpsActor extends Actor {
   prepareData() {
     super.prepareData()
   }
-
+  
+  // Return collection os Users that have ownership on this actor
+  getOwners() {
+    return game.users.contents.filter(u => this.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
+  }
+  
   prepareDerivedData() {
     super.prepareDerivedData()
     this.calculateDerivedValues()
@@ -2124,7 +2129,7 @@ export class GurpsActor extends Actor {
       })
 
       renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
-        let users = this.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
+        let users = this.getOwners()
         let ids = users.map(it => it._id)
         let messageData = {
           content: content,

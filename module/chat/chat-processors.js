@@ -278,7 +278,7 @@ class SelectChatProcessor extends ChatProcessor {
       // @self
       for (const a of game.actors.entities) {
         let users = a
-          .getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
+          .getOwners()
           .filter(u => !u.isGM)
           .map(u => u.id)
         if (users.includes(game.user.id)) {

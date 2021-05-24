@@ -1320,7 +1320,7 @@ GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) 
     if (overridetxt.includes('"')) overridetxt = "'" + overridetxt + "'"
     else overridetxt = '"' + overridetxt + '"'
   } else overridetxt = ''
-  let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
+  let users = actor?.getOwners().filter(u => !u.isGM) || []
   let botf = '[' + overridetxt + '!' + otf + ']'
   otf = '[' + overridetxt + otf + ']'
   let buttons = {}
