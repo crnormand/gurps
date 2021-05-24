@@ -47,6 +47,8 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   getData() {
     const sheetData = super.getData()
+    sheetData.olddata = sheetData.data
+    sheetData.data = sheetData.data.data
     sheetData.ranges = game.GURPS.rangeObject.ranges
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse()
     sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable()
