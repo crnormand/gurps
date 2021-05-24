@@ -53,7 +53,8 @@ export class GurpsActor extends Actor {
     this._initializeStartingValues()
     this._applyItemBonuses()
 
-    // Must be done at end
+    this._calculateWeights()
+     // Must be done at end
     this._calculateEncumbranceIssues()
   }
 
@@ -230,6 +231,34 @@ export class GurpsActor extends Actor {
         }
       }
     }
+  }
+  
+  
+  _sumeqt(dict, type, checkEquipped = false) {
+    if (!dict) return 0.0
+    let flt = (str) => !!str ? parseFloat(str) : 0
+    let sum = 0
+    for (let k in dict) {
+      let e = dict[k]
+      let c = flt(e.count)
+      let t = flt(e[type])
+      if (!checkEquipped || !!e.equipped) sum += c * t
+      sum += this._sumeqt(e.contains, type, checkEquipped)
+      sum += this._sumeqt(e.collapsed, type, checkEquipped)
+    }
+    return parseInt(sum * 100) / 100
+  }
+  
+  _calculateWeights() {
+    let eqt = this.data.data.equipment || {}
+    let eqtsummary = {
+      eqtcost: this._sumeqt(eqt.carried, 'cost'),
+      eqtlbs: this._sumeqt(eqt.carried, 'weight', game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)),
+      othercost: this._sumeqt(eqt.other, 'cost'),
+    }
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
+      this.checkEncumbance(eqtsummary.eqtlbs)
+    this.data.data.eqtsummary = eqtsummary
   }
 
   _calculateEncumbranceIssues() {
@@ -1573,6 +1602,7 @@ export class GurpsActor extends Actor {
     ui.notifications.info(global.name + ' => ' + this.name)
     global.data.data.globalid = dragData.id
     this.ignoreRender = true
+    global.data.data.equipped = true // assume new items are equipped 
     await this.addNewItemData(global.data)
     this._forceRender()
   }
@@ -1598,6 +1628,10 @@ export class GurpsActor extends Actor {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
       ui.notifications.warn(i18n('GURPS.cannotDragNonFoundryEqt'))
+      return
+    }
+    if (!dragData.isLinked) {
+      ui.notifications.warn("You cannot drag from an un-linked token.   The source must have 'Linked Actor Data'")
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
@@ -1694,17 +1728,14 @@ export class GurpsActor extends Actor {
   // This is how all Items are added originally.
   async addNewItemData(itemData, targetkey) {
     if (!!itemData.data.data) itemData = itemData.data
-    if (targetkey == null || targetkey == true) itemData.data.equipped = true
-    else if (targetkey == false) itemData.data.equipped = false
-    else itemData.data.equipped = targetkey.includes('.carried')
     let localItemData = await this.createOwnedItem(itemData) // add a local Foundry Item based on some Item data
     await this.addItemData(localItemData, targetkey)
   }
 
   // Once the Items has been added to our items list, add the equipment and any features
   async addItemData(itemData, targetkey) {
-    let [eqtkey, equipped] = await this._addNewItemEquipment(itemData, targetkey)
-    if (equipped) {
+    let [eqtkey, addFeatures] = await this._addNewItemEquipment(itemData, targetkey)
+    if (addFeatures) {
       await this._addItemAdditions(itemData, eqtkey)
     }
   }
@@ -1716,8 +1747,8 @@ export class GurpsActor extends Actor {
       // new carried items go at the end
       targetkey = 'data.equipment.carried'
       let index = 0
-      let carried = getProperty(this.data, targetkey)
-      while (carried.hasOwnProperty(GURPS.genkey(index))) index++
+      let list = getProperty(this.data, targetkey)
+      while (list.hasOwnProperty(GURPS.genkey(index))) index++
       targetkey += '.' + GURPS.genkey(index)
       carried = true
     }
@@ -1727,6 +1758,8 @@ export class GurpsActor extends Actor {
     eqt.itemid = itemData._id
     eqt.globalid = itemData.data.globalid
     eqt.uuid = 'item-' + itemData._id
+    eqt.equipped = itemData.data.equipped  
+    eqt.carried = carried
     await GURPS.insertBeforeKey(this, targetkey, eqt)
     await this.updateParentOf(targetkey)
     return [targetkey, carried && eqt.equipped ]
@@ -1745,7 +1778,7 @@ export class GurpsActor extends Actor {
   // called when equipment is being moved
   async updateItemAdditionsBasedOn(eqt, targetPath) {
     if (targetPath.includes('.other') || !eqt.equipped) await this._removeItemAdditionsBasedOn(eqt)
-    if (targetPath.includes('.carried') && eqt.equipped) await this._addItemAdditionsBasedOn(eqt, targetPath)
+    if (targetPath.includes('.carried') && !!eqt.equipped) await this._addItemAdditionsBasedOn(eqt, targetPath)
   }
 
   // moving from other to carried

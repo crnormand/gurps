@@ -8,6 +8,9 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed /uses /qty when equipment name is being used
 - Only show max the last 5 changes (for new users on browsers)
 - Add GM command /reimport to ask all player characters to import
+- Items bonuses only applied when Item-equipment is equipped (like GCS)
+- Refactor weight calculation
+- Protect against dragging Items from unlinked actors
 - Add scroll bars to the "Send Modifiers to Players" part of the modifier bucket window.
 - Show combat maneuver drop-down on character sheet.
 
