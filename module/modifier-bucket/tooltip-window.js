@@ -51,8 +51,8 @@ export default class ModifierBucketEditor extends Application {
   get journals() {
     let journals = Array.from(game.journal)
     journals = game.data.journal
-      .filter(it => ModifierBucketJournals.getJournalIds().includes(it._id))
-      .map(it => game.journal.get(it._id))
+      .filter(it => ModifierBucketJournals.getJournalIds().includes(it.id))
+      .map(it => game.journal.get(it.id))
     journals = journals.filter(it => it.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
     return journals
   }
@@ -78,7 +78,7 @@ export default class ModifierBucketEditor extends Application {
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
-    data.users = game.users?.filter(u => u._id != game.user._id) || []
+    data.users = game.users?.filter(u => u.id != game.user.id) || []
     data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
     data.lightingmods = ModifierLiterals.LightingModifiers
