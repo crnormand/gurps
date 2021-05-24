@@ -236,9 +236,9 @@ export default class DamageChat {
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods) {
     let roll = Roll.create(diceData.formula + `+${diceData.modifier}`)
-    roll.roll()
+    roll.evaluate({ async: false });
 
-    let diceValue = roll.results[0]
+    let diceValue = roll.result.split(" ")[0]
     let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
 
     let rollTotal = roll.total
@@ -298,7 +298,7 @@ export default class DamageChat {
 
     let contentData = {
       id: this._generateUniqueId(),
-      attacker: actor._id,
+      attacker: actor.id,
       dice: diceData.diceText,
       damageType: diceData.damageType,
       damageTypeText: diceData.damageType === 'dmg' ? ' ' : `'${diceData.damageType}' `,
@@ -330,9 +330,9 @@ export default class DamageChat {
       userTarget: userTarget,
     })
 
-    const speaker = { alias: actor.name, _id: actor._id, actor: actor }
+    const speaker = { alias: actor.name, _id: actor.id, id: actor.id }
     let messageData = {
-      user: game.user._id,
+      user: game.user.id,
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -340,7 +340,7 @@ export default class DamageChat {
     }
 
     if (event?.shiftKey) {
-      messageData.whisper = [game.user._id]
+      messageData.whisper = [game.user.id]
     }
 
     messageData['flags.transfer'] = JSON.stringify({
@@ -376,9 +376,9 @@ export default class DamageChat {
     } else {
       messageData.sound = CONFIG.sounds.dice
     }
-    CONFIG.ChatMessage.entityClass.create(messageData).then(arg => {
+    CONFIG.ChatMessage.documentClass.create(messageData).then(arg => {
       console.log(arg)
-      let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
+      let messageId = arg.data.id // 'qHz1QQuzpJiavH3V'
       $(`[data-message-id='${messageId}']`).click(ev => game.GURPS.handleOnPdf(ev))
     })
   }
