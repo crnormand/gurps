@@ -307,15 +307,45 @@
           "value": 4,
           "points": 0
         },
-        "melee": {},
-        "ranged": {},
-        "ads": {},
-        "skills": {},
-        "spells": {},
-        "bonuses": "",
-        "equipped": true,
-        "globalid": ""
+        "injury": {
+          "severity": "",
+          "daystoheal": 0
+        }
       }
+    }
+  },
+  "Item": {
+    "types": ["equipment"],
+    "equipment": {
+      "eqt": {
+        "name": "",
+        "notes": "",
+        "pageref": "",
+        "count": 1,
+        "weight": 0,
+        "cost": 0,
+        "location": "",
+        "carried": true,
+        "equipped": true,
+        "techlevel": "",
+        "categories": "",
+        "legalityclass": "",
+        "costsum": 0,
+        "weightsum": 0,
+        "uses": "",
+        "maxuses": "",
+        "parentuuid": "",
+        "uuid": "",
+        "contains": {}
+      },
+      "melee": {},
+      "ranged": {},
+      "ads": {},
+      "skills": {},
+      "spells": {},
+      "bonuses": "",
+      "equipped": true,
+      "globalid": ""
     }
   }
 }
