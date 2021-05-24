@@ -85,7 +85,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     }
 
     roll = Roll.create(formula + `+${modifier}`);
-    roll.roll();
+    roll.evaluate({ async: false });
     let rtotal = roll.total;
     if (rtotal < min) {
       rtotal = min;
@@ -131,9 +131,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   ChatMessage.create(messageData, {});
   
   if (isTargeted && !!optionalArgs.action) {
-    let u = game.users.entities.filter(u => u.isGM)[0]
-    let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
-    let ids = users.map(it => it._id)    
+    let users = game.users.contents.filter(u => actor.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
+    let ids = users.map(it => it.id)    
     let messageData = {
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       whisper: ids
@@ -144,5 +143,3 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   }
   return !failure
 }
-
-//  GURPS.doRoll = doRoll; YOU don't need this -- just import the function wherever it is needed.
