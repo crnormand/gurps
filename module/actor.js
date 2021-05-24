@@ -40,7 +40,7 @@ export class GurpsActor extends Actor {
 
   // execute after every import.
   async postImport() {
-    for (const item of this.items.entries) await this.addItemData(item.data, item.data.data.equipped) // re-add the item equipment and features
+    for (const item of this.items.contents) await this.addItemData(item.data, item.data.data.equipped) // re-add the item equipment and features
     this.calculateDerivedValues()
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
