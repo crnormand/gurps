@@ -170,9 +170,9 @@ class ChatProcessorRegistry {
       ChatMessage.create({
         alreadyProcessed: true,
         content: content,
-        user: game.user._id,
+        user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [game.user._id],
+        whisper: [game.user.id],
       })
     })
     priv.length = 0

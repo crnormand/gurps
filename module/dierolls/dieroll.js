@@ -108,7 +108,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     speaker: speaker,
     content: message,
     type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-    roll: roll
+    roll: JSON.stringify(roll)
   };
 
   let whoCanSeeDice = null;
