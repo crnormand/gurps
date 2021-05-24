@@ -39,24 +39,6 @@ export class GurpsActorSheet extends ActorSheet {
     super._render(...args)
   }
 
-  flt(str) {
-    return !!str ? parseFloat(str) : 0
-  }
-
-  sum(dict, type, checkEquipped = false) {
-    if (!dict) return 0.0
-    let sum = 0
-    for (let k in dict) {
-      let e = dict[k]
-      let c = this.flt(e.count)
-      let t = this.flt(e[type])
-      if (!checkEquipped || !!e.equipped) sum += c * t
-      sum += this.sum(e.contains, type, checkEquipped)
-      sum += this.sum(e.collapsed, type, checkEquipped)
-    }
-    return parseInt(sum * 100) / 100
-  }
-
   update(data, options) {
     super.update(data, options)
     console.log(data)
@@ -69,16 +51,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse()
     sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable()
     game.GURPS.SetLastActor(this.actor)
-    let eqt = this.actor.data.data.equipment || {}
-    sheetData.eqtsummary = {
-      eqtcost: this.sum(eqt.carried, 'cost'),
-      eqtlbs: this.sum(eqt.carried, 'weight', game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)),
-      othercost: this.sum(eqt.other, 'cost'),
-    }
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
-      this.actor.checkEncumbance(sheetData.eqtsummary.eqtlbs)
-
-    // TODO get this from system property
+    sheetData.eqtsummary = this.actor.data.data.eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
     return sheetData
   }
@@ -132,6 +105,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
     html.find('.enc').click(this._onClickEnc.bind(this))
 
+  
     let makelistdrag = (cls, type) => {
       html.find(cls).each((i, li) => {
         li.setAttribute('draggable', true)
@@ -155,7 +129,9 @@ export class GurpsActorSheet extends ActorSheet {
             ev.dataTransfer.setDragImage(preview, 0, 0)
           }
           let newd = {
-            actorid: this.actor.id,
+            actorid: this.actor.id, // may not be useful if this is an unlinked token
+            actor: this.actor,  // so send the actor,
+            isLinked: !this.actor.isToken,
             type: type,
             key: eqtkey,
             itemid: eqt.itemid,

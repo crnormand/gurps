@@ -53,7 +53,8 @@ export class GurpsActor extends Actor {
     this._initializeStartingValues()
     this._applyItemBonuses()
 
-    // Must be done at end
+    this._calculateWeights()
+     // Must be done at end
     this._calculateEncumbranceIssues()
   }
 
@@ -230,6 +231,34 @@ export class GurpsActor extends Actor {
         }
       }
     }
+  }
+  
+  
+  _sumeqt(dict, type, checkEquipped = false) {
+    if (!dict) return 0.0
+    let flt = (str) => !!str ? parseFloat(str) : 0
+    let sum = 0
+    for (let k in dict) {
+      let e = dict[k]
+      let c = flt(e.count)
+      let t = flt(e[type])
+      if (!checkEquipped || !!e.equipped) sum += c * t
+      sum += this._sumeqt(e.contains, type, checkEquipped)
+      sum += this._sumeqt(e.collapsed, type, checkEquipped)
+    }
+    return parseInt(sum * 100) / 100
+  }
+  
+  _calculateWeights() {
+    let eqt = this.data.data.equipment || {}
+    let eqtsummary = {
+      eqtcost: this._sumeqt(eqt.carried, 'cost'),
+      eqtlbs: this._sumeqt(eqt.carried, 'weight', game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)),
+      othercost: this._sumeqt(eqt.other, 'cost'),
+    }
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
+      this.checkEncumbance(eqtsummary.eqtlbs)
+    this.data.data.eqtsummary = eqtsummary
   }
 
   _calculateEncumbranceIssues() {
@@ -1600,6 +1629,10 @@ export class GurpsActor extends Actor {
       ui.notifications.warn(i18n('GURPS.cannotDragNonFoundryEqt'))
       return
     }
+    if (!dragData.isLinked) {
+      ui.notifications.warn("You cannot drag from an un-linked token.   The source must have 'Linked Actor Data'")
+      return
+    }
     let srcActor = game.actors.get(dragData.actorid)
     if (!!this.owner && !!srcActor.owner) {
       // same owner
@@ -1716,8 +1749,8 @@ export class GurpsActor extends Actor {
       // new carried items go at the end
       targetkey = 'data.equipment.carried'
       let index = 0
-      let carried = getProperty(this.data, targetkey)
-      while (carried.hasOwnProperty(GURPS.genkey(index))) index++
+      let list = getProperty(this.data, targetkey)
+      while (list.hasOwnProperty(GURPS.genkey(index))) index++
       targetkey += '.' + GURPS.genkey(index)
       carried = true
     }
@@ -1727,6 +1760,7 @@ export class GurpsActor extends Actor {
     eqt.itemid = itemData._id
     eqt.globalid = itemData.data.globalid
     eqt.uuid = 'item-' + itemData._id
+    eqt.equipped = carried  // Assume a newly picked up item is equipped (even though it probably isn't... just so they can see the effects)
     await GURPS.insertBeforeKey(this, targetkey, eqt)
     await this.updateParentOf(targetkey)
     return [targetkey, carried && eqt.equipped ]
@@ -2152,6 +2186,8 @@ export class GurpsActor extends Actor {
   }
 
   checkEncumbance(currentWeight) {
+    if (currentWeight == null) currentWeight = this.data.data.currentWeight
+    
     let encs = this.data.data.encumbrance
     let last = GURPS.genkey(0) // if there are encumbrances, there will always be a level0
     var best, prev
