@@ -1,8 +1,5 @@
 <div class='tracked-resource {{#unless name}} inactive {{/unless}}' data-gurps-resource='{{name}}'>
   {{> resource-controls}}
-  {{debug '+++' }}
-  {{debug resource }}
-  {{debug name }}
   <div class='condition-block tooltip-wrapper'>
     <div class='tooltip condition {{hpFpCondition name resource "style" }}'>{{hpFpCondition name resource 'label'}}
       &nbsp; <i class='fas fa-heart-broken {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
