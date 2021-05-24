@@ -36,7 +36,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     let finaltarget = parseInt(origtarget) + modifier;
     if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget;
     roll = Roll.create(formula);		// The formula will always be "3d6" for a "targetted" roll
-    roll.roll();
+    roll.evaluate({ async: false });
     let rtotal = roll.total;
     
     chatdata['rtotal'] = rtotal
@@ -102,9 +102,9 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.html', chatdata)
 
   actor = actor || game.user;
-  const speaker = { alias: actor.name, _id: actor._id, actor: actor }
+  const speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor }
   let messageData = {
-    user: game.user._id,
+    user: game.user.id,
     speaker: speaker,
     content: message,
     type: CONST.CHAT_MESSAGE_TYPES.ROLL,
