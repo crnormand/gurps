@@ -38,6 +38,16 @@ export class GurpsActor extends Actor {
     return game.users.contents.filter(u => this.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
   }
   
+  // 0.8.x added steps necessary to switch sheets
+  async openSheet(newSheet) {
+    const sheet = this.sheet;
+    await sheet.close();
+    this._sheet = null;
+    delete this.apps[sheet.appId];
+    await this.setFlag('core', 'sheetClass', newSheet)
+    this.sheet.render(true)
+  }
+  
   prepareDerivedData() {
     super.prepareDerivedData()
     this.calculateDerivedValues()

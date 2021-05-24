@@ -1015,22 +1015,12 @@ export class GurpsActorSheet extends ActorSheet {
       // Hold down the Ctrl key (Command on Mac) for Simplified
       newSheet = 'gurps.GurpsActorNpcSheet'
 
-    await this.actor.sheet.close()
-
-    // Update the Entity-specific override
-    await this.actor.setFlag('core', 'sheetClass', newSheet)
-
-    // Re-draw the updated sheet
-    const updated = this.actor.getFlag('core', 'sheetClass')
-    console.log('updated: ' + updated)
-    this.actor.sheet.render(true)
+    this.actor.openSheet(newSheet)
   }
 
   async _onOpenEditor(event) {
     event.preventDefault()
-    await this.actor.sheet.close()
-    await this.actor.setFlag('core', 'sheetClass', 'gurps.GurpsActorEditorSheet')
-    this.actor.sheet.render(true)
+    this.actor.openSheet('gurps.GurpsActorEditorSheet')
   }
 
   async _onRightClickGurpslink(event) {
