@@ -15,7 +15,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, splitArgs } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
