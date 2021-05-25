@@ -14,12 +14,12 @@
 
 .npc-input .window-content {
   padding: 5px;
-  background: url(../../../ui/parchment.jpg) repeat !important;
+  background: url(../../../ui/parchment.webp) repeat !important;
 }
 
 .npc-sheet .window-content {
   padding: 5px;
-  background: url(../../../ui/parchment-white.jpg) repeat !important;
+  background: url(../../../ui/parchment-white.webp) repeat !important;
 }
 
 .npc-sheet .gurps-app {
