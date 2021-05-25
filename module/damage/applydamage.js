@@ -645,7 +645,7 @@ export default class ApplyDamageDialog extends Application {
         messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
       }
 
-      CONFIG.ChatMessage.entityClass.create(messageData)
+      ChatMessage.create(messageData)
       if (!keepOpen) this.close()
     })
   }

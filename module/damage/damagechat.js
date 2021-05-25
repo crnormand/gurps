@@ -238,10 +238,9 @@ export default class DamageChat {
     let roll = Roll.create(diceData.formula + `+${diceData.modifier}`)
     roll.roll()
 
-    let diceValue = roll.results[0]
-    let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
-
     let rollTotal = roll.total
+    // let diceValue = roll.results[0]
+    let dicePlusAdds = rollTotal + diceData.adds1 + diceData.adds2
 
     let b378 = false
     if (rollTotal < diceData.min) {
@@ -330,7 +329,8 @@ export default class DamageChat {
       userTarget: userTarget,
     })
 
-    const speaker = { alias: actor.name, _id: actor._id, actor: actor }
+    const speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor }
+
     let messageData = {
       user: game.user._id,
       speaker: speaker,
@@ -376,15 +376,15 @@ export default class DamageChat {
     } else {
       messageData.sound = CONFIG.sounds.dice
     }
-    CONFIG.ChatMessage.entityClass.create(messageData).then(arg => {
-      console.log(arg)
-      let messageId = arg.data._id // 'qHz1QQuzpJiavH3V'
+    ChatMessage.create(messageData).then(arg => {
+      let messageId = arg.data.id // 'qHz1QQuzpJiavH3V'
       $(`[data-message-id='${messageId}']`).click(ev => game.GURPS.handleOnPdf(ev))
     })
   }
 }
 
-DamageChat.fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
+DamageChat.fullRegex =
+  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
 /*
 let transfer = {
