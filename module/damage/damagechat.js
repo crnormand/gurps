@@ -10,8 +10,6 @@ import { d6ify, isNiceDiceEnabled, generateUniqueId } from '../../lib/utilities.
  * specific actor. This object takes care of binding the dragstart and dragend events to that div.
  */
 export default class DamageChat {
-  // static fullRegex = /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
-
   static initSettings() {
     Hooks.on('renderChatMessage', async (app, html, msg) => {
       let isDamageChatMessage = !!html.find('.damage-chat-message').length
@@ -236,11 +234,11 @@ export default class DamageChat {
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods) {
     let roll = Roll.create(diceData.formula + `+${diceData.modifier}`)
-    roll.roll()
+    roll.evaluate({ async: false })
 
+    let diceValue = parseInt(roll.result.split(' ')[0]) // in 0.8.X, result is string, so must make into int
+    let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
     let rollTotal = roll.total
-    // let diceValue = roll.results[0]
-    let dicePlusAdds = rollTotal + diceData.adds1 + diceData.adds2
 
     let b378 = false
     if (rollTotal < diceData.min) {
@@ -297,7 +295,7 @@ export default class DamageChat {
 
     let contentData = {
       id: this._generateUniqueId(),
-      attacker: actor._id,
+      attacker: actor.id,
       dice: diceData.diceText,
       damageType: diceData.damageType,
       damageTypeText: diceData.damageType === 'dmg' ? ' ' : `'${diceData.damageType}' `,
@@ -329,18 +327,17 @@ export default class DamageChat {
       userTarget: userTarget,
     })
 
-    const speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor }
-
+    const speaker = { alias: actor.name, _id: actor.id, id: actor.id }
     let messageData = {
-      user: game.user._id,
+      user: game.user.id,
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: draggableData[0].roll,
+      roll: JSON.stringify(draggableData[0].roll), // only need to stringify when sending to chat
     }
 
     if (event?.shiftKey) {
-      messageData.whisper = [game.user._id]
+      messageData.whisper = [game.user.id]
     }
 
     messageData['flags.transfer'] = JSON.stringify({
