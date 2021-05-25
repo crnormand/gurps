@@ -277,8 +277,8 @@ export default function addChatHooks() {
     })
 
     // Look for RESULTS from a RollTable.   RollTables do not generate regular chat messages
-    Hooks.on('preCreateChatMessage', (data, options, userId) => {
-      let c = data.content
+    Hooks.on('preCreateChatMessage', (chatMessage, options, userId) => {
+      let c = chatMessage.data.content
       try {
         let html = $(c)
         let rt = html.find('.result-text') // Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
@@ -299,7 +299,9 @@ export default function addChatHooks() {
           })
         }
       } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
-      data.content = game.GURPS.gurpslink(c)
+      let newContent = game.GURPS.gurpslink(c)
+      chatMessage.data.update({ content: newContent })
+      return true
     })
 
     Hooks.on('renderChatMessage', (app, html, msg) => {

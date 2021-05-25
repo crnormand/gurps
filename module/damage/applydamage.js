@@ -541,7 +541,7 @@ export default class ApplyDamageDialog extends Application {
 
     let msgData = {
       content: message,
-      user: game.user._id,
+      user: game.user.id,
       type: CONST.CHAT_MESSAGE_TYPES.OOC,
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {
