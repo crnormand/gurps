@@ -290,7 +290,7 @@ export class ModifierBucket extends Application {
   }
 
   async showOthers() {
-    let users = game.users.filter(u => u._id != game.user._id)
+    let users = game.users.filter(u => u.id != game.user.id)
     let content = ''
     let d = ''
     for (let user of users) {
@@ -301,10 +301,10 @@ export class ModifierBucket extends Application {
       else content += user.name + ', No modifiers'
     }
     let chatData = {
-      user: game.user._id,
+      user: game.user.id,
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       content: content,
-      whisper: [game.user._id],
+      whisper: [game.user.id],
     }
     ChatMessage.create(chatData)
   }

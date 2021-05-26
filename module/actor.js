@@ -49,6 +49,7 @@ export class GurpsActor extends Actor {
   }
   
   prepareDerivedData() {
+    console.log("Prepare data for: " + this.name)
     super.prepareDerivedData()
     this.calculateDerivedValues()
   }
@@ -56,10 +57,10 @@ export class GurpsActor extends Actor {
   // execute after every import.
   async postImport() {
     for (const item of this.items.contents) await this.addItemData(item.data, item.data.data.equipped) // re-add the item equipment and features
+    await this.update({ 'data.migrationversion': game.system.data.version }, {diff:false, render:false})
     this.calculateDerivedValues()
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
-    await this.update({ 'data.migrationversion': game.system.data.version })
   }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
@@ -519,7 +520,7 @@ export class GurpsActor extends Actor {
 
       ChatMessage.create({
         content: content,
-        user: game.user._id,
+        user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user.id],
       })
@@ -575,10 +576,10 @@ export class GurpsActor extends Actor {
 
       ui.notifications.warn(msg)
       let chatData = {
-        user: game.user._id,
+        user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         content: content,
-        whisper: [game.user._id],
+        whisper: [game.user.id],
       }
       CONFIG.ChatMessage.entityClass.create(chatData, {})
       // Don't return, because we want to see how much actually gets committed.
@@ -590,8 +591,8 @@ export class GurpsActor extends Actor {
 
     try {
       this.ignoreRender = true
-      await this.update(deletes)
-      await this.update(adds)
+      await this.update(deletes, { diff:false, render:false})
+      await this.update(adds, { diff:false, render:false})
       // This has to be done after everything is loaded
       await this.postImport()
       this._forceRender()
@@ -611,10 +612,10 @@ export class GurpsActor extends Actor {
       })
 
       let chatData = {
-        user: game.user._id,
+        user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         content: content,
-        whisper: [game.user._id],
+        whisper: [game.user.id],
       }
       CONFIG.ChatMessage.entityClass.create(chatData, {})
     }
@@ -1721,12 +1722,12 @@ export class GurpsActor extends Actor {
   async updateItem(item) {
     delete item.editingActor
     let itemData = item.data
-    await this._removeItemAdditions(itemData._id)
+    await this._removeItemAdditions(itemData.id)
     this.ignoreRender = true
-    let other = await this._removeItemElement(itemData._id, 'equipment.other') // try to remove from other
+    let other = await this._removeItemElement(itemData.id, 'equipment.other') // try to remove from other
     if (!other) {
       // if not in other, remove from carried, and then re-add everything
-      await this._removeItemElement(itemData._id, 'equipment.carried')
+      await this._removeItemElement(itemData.id, 'equipment.carried')
       await this.addItemData(itemData)
     } else {
       // If was in other... just add back to other (and forget addons)
@@ -1766,9 +1767,9 @@ export class GurpsActor extends Actor {
     if (targetkey == false) targetkey = 'data.equipment.other' // new other items go at the beginning (personal choice)
     if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)
     let eqt = itemData.data.eqt
-    eqt.itemid = itemData._id
+    eqt.itemid = itemData.id
     eqt.globalid = itemData.data.globalid
-    eqt.uuid = 'item-' + itemData._id
+    eqt.uuid = 'item-' + itemData.id
     eqt.equipped = itemData.data.equipped
     eqt.carried = carried
     await GURPS.insertBeforeKey(this, targetkey, eqt)
@@ -1783,7 +1784,7 @@ export class GurpsActor extends Actor {
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
-    await this.update(commit)
+    await this.update(commit, {diff:false, render:false})
   }
 
   // called when equipment is being moved
@@ -1817,8 +1818,8 @@ export class GurpsActor extends Actor {
     let i = 0
     for (const k in itemData.data[key]) {
       let e = duplicate(itemData.data[key][k])
-      e.itemid = itemData._id
-      e.uuid = key + '-' + i++ + '-' + itemData._id
+      e.itemid = itemData.id
+      e.uuid = key + '-' + i++ + '-' + itemData.id
       e.eqtkey = eqtkey
       let otf = e.otf
       if (!!otf) {
@@ -2140,7 +2141,7 @@ export class GurpsActor extends Actor {
 
       renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
         let users = this.getOwners()
-        let ids = users.map(it => it._id)
+        let ids = users.map(it => it.id)
         let messageData = {
           content: content,
           whisper: ids,
