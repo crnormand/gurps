@@ -99,7 +99,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     chatdata['modifier'] = modifier
   }
 
-  let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.html', chatdata)
+  let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 
   actor = actor || game.user;
   const speaker = { alias: actor.name, _id: actor._id, actor: actor }

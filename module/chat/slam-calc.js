@@ -95,7 +95,7 @@ export class SlamCalculator {
     let result = i18n_f(resultData.effect.i18n, resultData)
     result = resultData.effect.createButton(result, resultData)
 
-    let html = await renderTemplate('systems/gurps/templates/slam-results.html', {
+    let html = await renderTemplate('systems/gurps/templates/slam-results.hbs', {
       id: this._generateUniqueId(),
       attacker: data.attackerToken.name,
       attackerHp: data.attackerHp,

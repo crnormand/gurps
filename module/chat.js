@@ -164,7 +164,7 @@ class ChatProcessorRegistry {
   _sendPriv(priv) {
     if (priv.length == 0) return
     let lines = priv.slice()
-    renderTemplate('systems/gurps/templates/chat-processing.html', {
+    renderTemplate('systems/gurps/templates/chat-processing.hbs', {
       lines: lines,
     }).then(content => {
       ChatMessage.create({
@@ -184,7 +184,7 @@ class ChatProcessorRegistry {
     let d = duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
     d.alreadyProcessed = true
     let lines = pub.slice()
-    renderTemplate('systems/gurps/templates/chat-processing.html', {
+    renderTemplate('systems/gurps/templates/chat-processing.hbs', {
       lines: lines,
     }).then(content => {
       d.content = content

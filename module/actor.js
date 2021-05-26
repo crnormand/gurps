@@ -370,7 +370,7 @@ export class GurpsActor extends Actor {
     new Dialog(
       {
         title: `Import character data for: ${this.name}`,
-        content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
+        content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.hbs', {
           name: '"' + this.name + '"',
         }),
         buttons: {
@@ -495,7 +495,7 @@ export class GurpsActor extends Actor {
     }
     if (msg.length > 0) {
       ui.notifications.error(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
@@ -551,7 +551,7 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...(await this.importProtectionFromGCSv1(c.combat?.protectionlist, isFoundryGCA)) }
     } catch (err) {
       let msg = i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: [msg],
         version: version,
         GCAVersion: GCAVersion,
@@ -588,7 +588,7 @@ export class GurpsActor extends Actor {
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
       ui.notifications.warn(msg.join('<br>'))
-      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.hbs', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
@@ -1650,7 +1650,7 @@ export class GurpsActor extends Actor {
           await this.addNewItemData(item)
         }
       } else {
-        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: eqt })
+        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
         let callback = async html => {
           let qty = parseInt(html.find('#qty').val())
           let destKey = this._findEqtkeyForGlobalItem(eqt.globalid)
@@ -1678,7 +1678,7 @@ export class GurpsActor extends Actor {
       let eqt = getProperty(srcActor.data, dragData.key)
       let count = eqt.count
       if (eqt.count > 1) {
-        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: eqt })
+        let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: eqt })
         let callback = async html => (count = parseInt(html.find('#qty').val()))
         await Dialog.prompt({
           title: i18n('GURPS.TransferTo') + ' ' + this.name,
@@ -1969,7 +1969,7 @@ export class GurpsActor extends Actor {
   async _splitEquipment(srckey, targetkey) {
     let srceqt = getProperty(this.data, srckey)
     if (srceqt.count <= 1) return false // nothing to split
-    let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: srceqt })
+    let content = await renderTemplate('systems/gurps/templates/transfer-equipment.hbs', { eqt: srceqt })
     let count = 0
     let callback = async html => (count = parseInt(html.find('#qty').val()))
     await Dialog.prompt({
@@ -2127,7 +2127,7 @@ export class GurpsActor extends Actor {
         pdfref: pdfref,
       })
 
-      renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+      renderTemplate('systems/gurps/templates/chat-processing.hbs', { lines: [msg] }).then(content => {
         let users = this.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
         let ids = users.map(it => it._id)
         let messageData = {

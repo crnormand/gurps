@@ -15,7 +15,7 @@ export class GurpsActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor-sheet-gcs.html',
+      template: 'systems/gurps/templates/actor-sheet-gcs.hbs',
       width: 800,
       height: 800,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -341,7 +341,7 @@ export class GurpsActorSheet extends ActorSheet {
       let eqtlist = duplicate(getProperty(actor.data, path))
       let eqt = new Equipment('', true)
       eqt.carried = path.includes('carried')
-      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
+      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.hbs', eqt)
 
       let options = {
         // NOTE:  This code is duplicated below.  Haven't refactored yet
@@ -500,7 +500,7 @@ export class GurpsActorSheet extends ActorSheet {
       let actor = this.actor
       let list = duplicate(getProperty(actor.data, path))
       let obj = new Note('', true)
-      let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
+      let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.hbs', obj)
 
       let d = new Dialog(
         {
@@ -637,7 +637,7 @@ export class GurpsActorSheet extends ActorSheet {
     let d = new Dialog(
       {
         title: game.i18n.localize('GURPS.resourceUpdateTrackerSlot'),
-        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.html', { templates: templates }),
+        content: await renderTemplate('systems/gurps/templates/actor/update-tracker.hbs', { templates: templates }),
         buttons: buttons,
         default: 'edit',
         templates: templates,
@@ -650,7 +650,7 @@ export class GurpsActorSheet extends ActorSheet {
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
     obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
-    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', obj)
+    let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.hbs', obj)
 
     let d = new Dialog(
       {
@@ -686,7 +686,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/melee-editor-popup.html',
+      'systems/gurps/templates/melee-editor-popup.hbs',
       'Melee Weapon Editor',
       ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'level'],
       []
@@ -698,7 +698,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/ranged-editor-popup.html',
+      'systems/gurps/templates/ranged-editor-popup.hbs',
       'Ranged Weapon Editor',
       ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'level'],
       ['acc', 'bulk']
@@ -710,7 +710,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/advantage-editor-popup.html',
+      'systems/gurps/templates/advantage-editor-popup.hbs',
       'Advantage / Disadvantage / Perk / Quirk Editor',
       ['name', 'notes'],
       ['points']
@@ -722,7 +722,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/skill-editor-popup.html',
+      'systems/gurps/templates/skill-editor-popup.hbs',
       'Skill Editor',
       ['name', 'level', 'relativelevel', 'pageref', 'notes'],
       ['points']
@@ -734,7 +734,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/spell-editor-popup.html',
+      'systems/gurps/templates/spell-editor-popup.hbs',
       'Spell Editor',
       [
         'name',
@@ -759,7 +759,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor,
       path,
       obj,
-      'systems/gurps/templates/note-editor-popup.html',
+      'systems/gurps/templates/note-editor-popup.hbs',
       'Note Editor',
       ['pageref', 'notes'],
       [],
@@ -1181,7 +1181,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/combat-sheet.html',
+      template: 'systems/gurps/templates/combat-sheet.hbs',
       width: 600,
       height: 275,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -1195,7 +1195,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'gurpsactorsheet', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor-sheet-gcs-editor.html',
+      template: 'systems/gurps/templates/actor-sheet-gcs-editor.hbs',
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
@@ -1353,7 +1353,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/simplified.html',
+      template: 'systems/gurps/templates/simplified.hbs',
       width: 820,
       height: 900,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -1387,7 +1387,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['npc-sheet', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/npc-sheet.html',
+      template: 'systems/gurps/templates/npc-sheet.hbs',
       width: 650,
       height: 450,
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
@@ -1431,7 +1431,7 @@ export class GurpsInventorySheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/inventory-sheet.html',
+      template: 'systems/gurps/templates/inventory-sheet.hbs',
       width: 700,
       height: 400,
       tabs: [],

@@ -83,7 +83,7 @@ class SlamCalculatorForm extends FormApplication {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/slam-calculator.html',
+      template: 'systems/gurps/templates/slam-calculator.hbs',
       popOut: true,
       minimizable: false,
       jQuery: true,

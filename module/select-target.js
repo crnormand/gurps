@@ -3,7 +3,7 @@
  * which target to apply some function to.
  */
 export default async function selectTarget() {
-  let html = await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
+  let html = await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
     tokens: game.user.targets,
   })
 

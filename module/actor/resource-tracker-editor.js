@@ -33,7 +33,7 @@ export class ResourceTrackerEditor extends Application {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/resource-editor-popup.html',
+      template: 'systems/gurps/templates/resource-editor-popup.hbs',
       width: 360,
       height: 468,
       popOut: true,

@@ -1558,7 +1558,7 @@ Hooks.once('ready', async function () {
     minimizable: false,
     resizable: false,
     id: 'ThreeD6',
-    template: 'systems/gurps/templates/threed6.html',
+    template: 'systems/gurps/templates/threed6.hbs',
     classes: [],
   }).render(true)
 
@@ -1858,7 +1858,7 @@ Hooks.once('ready', async function () {
       let d = new Dialog(
         {
           title: game.i18n.localize('GURPS.selectToken'),
-          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
+          content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.hbs', {
             tokens: targets,
           }),
           buttons: buttons,
@@ -1876,12 +1876,12 @@ Hooks.once('ready', async function () {
   // define Handlebars partials for ADD:
   const __dirname = 'systems/gurps/templates'
   loadTemplates([
-    __dirname + '/apply-damage/effect-blunttrauma.html',
-    __dirname + '/apply-damage/effect-crippling.html',
-    __dirname + '/apply-damage/effect-headvitalshit.html',
-    __dirname + '/apply-damage/effect-knockback.html',
-    __dirname + '/apply-damage/effect-majorwound.html',
-    __dirname + '/apply-damage/effect-shock.html',
+    __dirname + '/apply-damage/effect-blunttrauma.hbs',
+    __dirname + '/apply-damage/effect-crippling.hbs',
+    __dirname + '/apply-damage/effect-headvitalshit.hbs',
+    __dirname + '/apply-damage/effect-knockback.hbs',
+    __dirname + '/apply-damage/effect-majorwound.hbs',
+    __dirname + '/apply-damage/effect-shock.hbs',
   ])
   GURPS.setInitiativeFormula()
 

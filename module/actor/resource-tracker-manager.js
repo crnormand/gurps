@@ -103,7 +103,7 @@ export class ResourceTrackerManager extends FormApplication {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: 'tracker-manager',
-      template: 'systems/gurps/templates/actor/tracker-manager.html',
+      template: 'systems/gurps/templates/actor/tracker-manager.hbs',
       resizable: false,
       minimizable: false,
       width: 520,
