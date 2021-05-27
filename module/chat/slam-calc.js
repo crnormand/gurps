@@ -61,13 +61,13 @@ export class SlamCalculator {
     let targetDice = this._getDicePlusAdds(rawDamageTarget)
 
     let attackerRoll = Roll.create(diceToFormula(attackerDice, true))
-    attackerRoll.evaluate({async: false})
+    attackerRoll.evaluate({ async: false })
 
     let adds = (data.isAoAStrong ? 2 : 0) + (data.shieldDB || 0)
     let attackerResult = Math.max(attackerRoll.total + adds, 1)
 
     let targetRoll = Roll.create(diceToFormula(targetDice, true))
-    targetRoll.evaluate({async: false})
+    targetRoll.evaluate({ async: false })
     let targetResult = Math.max(targetRoll.total, 1)
 
     let resultData = {
@@ -117,6 +117,9 @@ export class SlamCalculator {
       result: result,
       shieldDB: data.shieldDB,
     })
+
+    // Either this, or parselink needs to deal with '&quot;' inside an OtF
+    html = html.replaceAll('&quot;', '"')
 
     // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
     let messageData = {
