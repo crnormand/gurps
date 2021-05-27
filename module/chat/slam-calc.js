@@ -118,9 +118,6 @@ export class SlamCalculator {
       shieldDB: data.shieldDB,
     })
 
-    // Either this, or parselink needs to deal with '&quot;' inside an OtF
-    html = html.replaceAll('&quot;', '"')
-
     // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
     let messageData = {
       user: game.user._id,
