@@ -795,5 +795,12 @@
   "GURPS.yard": "yard",
   "GURPS.yards": "yards",
   "GURPS.ok": "OK",
-  "GURPS.TransferTo": "Transfer to"
+  "GURPS.TransferTo": "Transfer to",
+
+  "GURPS.statsTab": "Stats",
+  "GURPS.combatTab": "Combat",
+  "GURPS.advantagesTab": "Advantages and Disadvantages",
+  "GURPS.skillsTab": "Skills",
+  "GURPS.spellsTab": "Spells",
+  "GURPS.equipmentTab": "Equipments"
 }

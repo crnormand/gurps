@@ -738,6 +738,13 @@ body {
   grid-gap: 0.05in;
 }
 
+#sheet-tab {
+  display: grid;
+  grid-template:
+    'personal'
+    'nav-tabs';
+}
+
 #editorsheet {
   display: grid;
   grid-template:
@@ -1849,4 +1856,54 @@ body {
   color: steelblue;
   padding-right: 0.35em;
   padding-top: 2px;
+}
+
+.sheet-body,
+.sheet-body .tab,
+.sheet-body .tab .editor {
+  height: 100%;
+}
+
+.sheet-tabs {
+  display: block;
+  height: 40px;
+  border-top: 1px solid #AAA;
+  border-bottom: 1px solid #AAA;
+}
+
+.sheet-tabs li {
+  display: inline-block;
+  margin: 0 10px 0 10px;
+}
+
+.tab-item {
+  line-height: 32px;
+  font-weight: normal;
+}
+
+.tab-item.active {
+  text-decoration: underline;
+  text-shadow: none;
+  font-weight: bold;
+}
+
+.table-column {
+  padding: 3px;
+  justify-content: center;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-column .list_note {
+  font-size: 85%;
+  display: block;
+}
+
+.table-column.center {
+  text-align: center;
+}
+
+.table-column span {
+  pointer-events: none;
 }
