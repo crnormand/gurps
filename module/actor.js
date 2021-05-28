@@ -1893,8 +1893,8 @@ export class GurpsActor extends Actor {
   }
 
   async moveEquipment(srckey, targetkey, shiftkey) {
-    if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
     if (srckey == targetkey) return
+    if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
     if (await this._checkForMerging(srckey, targetkey)) return
     // Because we may be modifing the same list, we have to check the order of the keys and
     // apply the operation that occurs later in the list, first (to keep the indexes the same)
@@ -1919,6 +1919,11 @@ export class GurpsActor extends Actor {
     }
     if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
       ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
+      return
+    }
+    let targetObj = getProperty(this.data, targetkey)
+    if (!!targetObj.itemid) {
+      ui.notifications.warn("Foundry Items cannot contain other items.")
       return
     }
     let d = new Dialog({
@@ -2206,13 +2211,11 @@ export class GurpsActor extends Actor {
         let enc = encs[key]
         let t = 'data.encumbrance.' + key + '.current'
         if (key === best) {
-          this.update({
-            [t]: true,
-            'data.currentmove': parseInt(enc.currentmove),
-            'data.currentdodge': parseInt(enc.currentdodge),
-          })
+          enc.current = true
+          this.data.data.currentmove = parseInt(enc.currentmove)
+          this.data.data.currentdodge = parseInt(enc.currentdodge)
         } else if (enc.current) {
-          this.update({ [t]: false })
+          enc.current = false
         }
       }
     }

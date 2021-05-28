@@ -2,9 +2,13 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+0.9.14
+- Fixed element editors (melee, ranged, skills, spells) for level
+- Restrict Foundry items from containing other items
+- Fixed Actor startup on encumbrance
+
 0.9.13
  - Fixed the data model (template.json) for items 
-
 
 0.9.12
 
