@@ -583,7 +583,7 @@ export class GurpsActor extends Actor {
         content: content,
         whisper: [game.user.id],
       }
-      CONFIG.ChatMessage.entityClass.create(chatData, {})
+      ChatMessage.create(chatData, {})
       // Don't return, because we want to see how much actually gets committed.
     }
     console.log('Starting commit')
@@ -1702,7 +1702,7 @@ export class GurpsActor extends Actor {
         })
       }
       if (count > eqt.count) count = eqt.count
-      let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
+      let destowner = game.users.players.find(p => this.testUserPermission(p, 'OWNER'))
       if (!!destowner) {
         ui.notifications.info(`Asking ${this.name} if they want ${eqt.name}`)
         dragData.itemData.data.eqt.count = count // They may not have given all of them
