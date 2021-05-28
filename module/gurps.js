@@ -1553,14 +1553,15 @@ Hooks.once('ready', async function () {
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
 
-  new ThreeD6({
-    popOut: false,
-    minimizable: false,
-    resizable: false,
-    id: 'ThreeD6',
-    template: 'systems/gurps/templates/threed6.html',
-    classes: [],
-  }).render(true)
+  if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_3D6))
+    new ThreeD6({
+      popOut: false,
+      minimizable: false,
+      resizable: false,
+      id: 'ThreeD6',
+      template: 'systems/gurps/templates/threed6.html',
+      classes: [],
+    }).render(true)
 
   GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)
   // Test for migration
