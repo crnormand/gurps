@@ -2211,13 +2211,11 @@ export class GurpsActor extends Actor {
         let enc = encs[key]
         let t = 'data.encumbrance.' + key + '.current'
         if (key === best) {
-          this.update({
-            [t]: true,
-            'data.currentmove': parseInt(enc.currentmove),
-            'data.currentdodge': parseInt(enc.currentdodge),
-          })
+          enc.current = true
+          this.data.data.currentmove = parseInt(enc.currentmove)
+          this.data.data.currentdodge = parseInt(enc.currentdodge)
         } else if (enc.current) {
-          this.update({ [t]: false })
+          enc.current = false
         }
       }
     }
