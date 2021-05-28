@@ -54,7 +54,7 @@ export default class ModifierBucketJournals extends FormApplication {
     let htmlJournals = allJournals.filter(it => !!it.data.content)
 
     // only keep the journals this user has permissions to see
-    htmlJournals = htmlJournals.filter(it => it.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
+    htmlJournals = htmlJournals.filter(it => it.testUserPermission(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
 
     let results = htmlJournals.map(it => {
       return { id: it.id, folder: this._folderPath(it.data.folder), name: it.name }

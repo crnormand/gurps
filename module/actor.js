@@ -1701,7 +1701,7 @@ export class GurpsActor extends Actor {
         })
       }
       if (count > eqt.count) count = eqt.count
-      let destowner = game.users.players.find(p => this.hasPerm(p, 'OWNER'))
+      let destowner = game.users.players.find(p => this.testUserPermission(p, 'OWNER'))
       if (!!destowner) {
         ui.notifications.info(`Asking ${this.name} if they want ${eqt.name}`)
         dragData.itemData.data.eqt.count = count // They may not have given all of them

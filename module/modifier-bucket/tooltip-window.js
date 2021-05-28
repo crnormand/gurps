@@ -49,11 +49,11 @@ export default class ModifierBucketEditor extends Application {
   }
 
   get journals() {
+    let modifierJournalIds = ModifierBucketJournals.getJournalIds()
     let journals = Array.from(game.journal)
-    journals = game.data.journal
-      .filter(it => ModifierBucketJournals.getJournalIds().includes(it.id))
+      .filter(it => modifierJournalIds.includes(it.id))
       .map(it => game.journal.get(it.id))
-    journals = journals.filter(it => it.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
+    journals = journals.filter(it => it.testUserPermission(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
     return journals
   }
 
