@@ -122,7 +122,7 @@ export class GurpsActorSheet extends ActorSheet {
           }
           var itemData
           if (!!eqt.itemid) {
-            itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+            itemData = this.actor.items.get(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
             let img = new Image()
             img.src = itemData.img
             const w = 50

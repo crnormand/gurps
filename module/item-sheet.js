@@ -52,7 +52,7 @@ export class GurpsItemSheet extends ItemSheet {
       })
       this.item.update(commit)
     })
-    html.find('#quantity').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
+//    html.find('#quantity').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
 
     html.find('#add-melee').click(ev => {
       ev.preventDefault()
