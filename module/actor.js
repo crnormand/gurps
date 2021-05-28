@@ -32,24 +32,24 @@ export class GurpsActor extends Actor {
   prepareData() {
     super.prepareData()
   }
-  
+
   // Return collection os Users that have ownership on this actor
   getOwners() {
     return game.users.contents.filter(u => this.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
   }
-  
+
   // 0.8.x added steps necessary to switch sheets
   async openSheet(newSheet) {
-    const sheet = this.sheet;
-    await sheet.close();
-    this._sheet = null;
-    delete this.apps[sheet.appId];
+    const sheet = this.sheet
+    await sheet.close()
+    this._sheet = null
+    delete this.apps[sheet.appId]
     await this.setFlag('core', 'sheetClass', newSheet)
     this.sheet.render(true)
   }
-  
+
   prepareDerivedData() {
-    console.log("Prepare data for: " + this.name)
+    console.log('Prepare data for: ' + this.name)
     super.prepareDerivedData()
     this.calculateDerivedValues()
   }
@@ -57,7 +57,7 @@ export class GurpsActor extends Actor {
   // execute after every import.
   async postImport() {
     for (const item of this.items.contents) await this.addItemData(item.data, item.data.data.equipped) // re-add the item equipment and features
-    await this.update({ 'data.migrationversion': game.system.data.version }, {diff:false, render:false})
+    await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     this.calculateDerivedValues()
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
@@ -591,8 +591,8 @@ export class GurpsActor extends Actor {
 
     try {
       this.ignoreRender = true
-      await this.update(deletes, { diff:false, render:false})
-      await this.update(adds, { diff:false, render:false})
+      await this.update(deletes, { diff: false, render: false })
+      await this.update(adds, { diff: false, render: false })
       // This has to be done after everything is loaded
       await this.postImport()
       this._forceRender()
@@ -617,7 +617,7 @@ export class GurpsActor extends Actor {
         content: content,
         whisper: [game.user.id],
       }
-      CONFIG.ChatMessage.entityClass.create(chatData, {})
+      ChatMessage.create(chatData, {})
     }
   }
 
@@ -1612,9 +1612,10 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
-    global.data.data.globalid = dragData.id
+    await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true })
+    //global.data.data.globalid = dragData.id
+    // global.data.data.equipped = true // assume new items are equipped
     this.ignoreRender = true
-    global.data.data.equipped = true // assume new items are equipped
     await this.addNewItemData(global.data)
     this._forceRender()
   }
@@ -1740,8 +1741,12 @@ export class GurpsActor extends Actor {
   // This is how all Items are added originally.
   async addNewItemData(itemData, targetkey) {
     if (!!itemData.data.data) itemData = itemData.data
-    let localItemData = await this.createOwnedItem(itemData) // add a local Foundry Item based on some Item data
-    await this.addItemData(localItemData, targetkey)
+
+    // this call returns an array in Foundry 0.8.x
+    let localItemDataArray = await this.createOwnedItem(itemData) // add a local Foundry Item based on some Item data
+
+    // for now, only handle a single item from the array:
+    await this.addItemData(localItemDataArray[0], targetkey)
   }
 
   // Once the Items has been added to our items list, add the equipment and any features
@@ -1766,11 +1771,11 @@ export class GurpsActor extends Actor {
     }
     if (targetkey == false) targetkey = 'data.equipment.other' // new other items go at the beginning (personal choice)
     if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)
-    let eqt = itemData.data.eqt
+    let eqt = itemData.data.data.eqt
     eqt.itemid = itemData.id
-    eqt.globalid = itemData.data.globalid
+    eqt.globalid = itemData.data.data.globalid
     eqt.uuid = 'item-' + itemData.id
-    eqt.equipped = itemData.data.equipped
+    eqt.equipped = itemData.data.data.equipped
     eqt.carried = carried
     await GURPS.insertBeforeKey(this, targetkey, eqt)
     await this.updateParentOf(targetkey)
@@ -1784,7 +1789,7 @@ export class GurpsActor extends Actor {
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
-    await this.update(commit, {diff:false, render:false})
+    await this.update(commit, { diff: false, render: false })
   }
 
   // called when equipment is being moved
