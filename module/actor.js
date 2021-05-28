@@ -1606,7 +1606,7 @@ export class GurpsActor extends Actor {
 
   // Drag and drop from Item colletion
   async handleItemDrop(dragData) {
-    if (!this.owner) {
+    if (!this.isOwner) {
       ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
     }
@@ -1743,7 +1743,10 @@ export class GurpsActor extends Actor {
     if (!!itemData.data.data) itemData = itemData.data
 
     // this call returns an array in Foundry 0.8.x
-    let localItemDataArray = await this.createOwnedItem(itemData) // add a local Foundry Item based on some Item data
+    let localItemDataArray = await this.createEmbeddedDocuments(
+      'Item',
+      itemData instanceof Array ? itemData : [itemData]
+    )
 
     // for now, only handle a single item from the array:
     await this.addItemData(localItemDataArray[0], targetkey)
