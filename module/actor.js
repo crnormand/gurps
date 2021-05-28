@@ -581,7 +581,7 @@ export class GurpsActor extends Actor {
         content: content,
         whisper: [game.user.id],
       }
-      CONFIG.ChatMessage.entityClass.create(chatData, {})
+      ChatMessage.create(chatData, {})
       // Don't return, because we want to see how much actually gets committed.
     }
     console.log('Starting commit')
