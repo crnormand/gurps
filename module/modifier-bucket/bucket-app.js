@@ -183,13 +183,13 @@ export class ModifierBucket extends Application {
     this.modifierStack.reset(saved)
   }
 
-   sendBucketToPlayer(name) {
-    if (!name) { // Only occurs if the GM clicks on 'everyone'
+   sendBucketToPlayer(id) {
+    if (!id) { // Only occurs if the GM clicks on 'everyone'
       this._sendBucket(game.users.filter(u => u.id != game.user.id))
     } else {
-      let users = game.users.players.filter(u => u.name == name) || []
+      let users = game.users.players.filter(u => u.id == id) || []
       if (users.length > 0) this._sendBucket(users)
-      else ui.notifications.warn("No player named '" + name + "'")
+      else ui.notifications.warn("No player with ID '" + id + "'")
     }
   }
 
@@ -240,6 +240,18 @@ export class ModifierBucket extends Application {
     let e = html.find('#globalmodifier')
     e.click(this._onClick.bind(this))
     e.contextmenu(this.onRightClick.bind(this))
+    e.each((_, li) => {
+      li.addEventListener('dragstart', ev => {
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`).join(' & ') 
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            name: 'Modifier Bucket',
+            bucket: bucket,
+          })
+        )
+      })
+    })
 
     if (this.isTooltip) {
       e.mouseenter(ev => this._onenter(ev))

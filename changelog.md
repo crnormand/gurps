@@ -1,11 +1,28 @@
 ### [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
+
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
 This is what we are currently working on:
 
 - Fixed /status command when token.actor == null
 - Refactor regex pattern matching to utilities.js
+- Added "apply condition" buttons to slam results chat messages. These buttons will select the affected combatant and either roll DX and apply the Prone condition if failed, or directly apply Prone if appropriate.
+- Updated German language file (thanks to GitHub member @LordOHelmet)
 - Added token ID to /select (e.g., `/sel PrPRGwFEiNKewWym`) -- this is mainly done for internal programming, but could be useful in a macro.
+- Various tweaks to fix modifier bucket size/position issues.
+- Updated /if [Test] { } { } to allow embedded backslashes (to execute multiple commands inside {})
+- Fixed Send Modifier bucket buttons on tooltip
+- Fixed display of FP tracker when using Conditional Injury.
+- Can drag and drop Modifier Bucket onto macro bar
+- Fixed bug when trying to execute chat commands using GURPS.executeOTF()
+- Prototype of Foundry Item framework, can drop on player chars
+- Added "apply condition" buttons to damage effects chat messages.
+- Fixed mook generation to include resource trackers.
+- Fixed layout problems with Equipment and Other Equipment in the editor sheet.
+- Fixed \\ in OtF macros
+- Otf Macros now use their override text as the macro name
+- Added [M:attack] for only melee and [R:attack] for only ranged
+- Fixed bug where Sum Weights on Equipment and Other Equipment displayed as 'NaN'.
 
 ## History
 
@@ -17,7 +34,7 @@ This is what we are currently working on:
 - Forgot to add Foundry selection for /select @self
 - Fixed 'reeling' and 'tired' statuses (tired was actually reeling, and you couldn't manually set tired)
 - Fixed /status command with @self -- now it will toggle a status on a token owned by the user (if there is only one)
-- Added "named token/actor" to /status command (format: `/st + sleep* :Name`). ':Name' may contain a wildcard and will match either a token name or an actor name (first it tries tokens, then actors). The token must be in the active scene. 
+- Added "named token/actor" to /status command (format: `/st + sleep* :Name`). ':Name' may contain a wildcard and will match either a token name or an actor name (first it tries tokens, then actors). The token must be in the active scene.
 - Fixed older actors not having currentmove/dodge or flight values
 - Add warning if trying to Edit an empty actor
 
@@ -26,7 +43,7 @@ This is what we are currently working on:
 - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
 - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
 - Fixed OtF buttons in a journal entry being viewed in the Modifier Bucket from being truncated at the first HTML escaped character (such as '\&uuml;').
-- /select now also changes Foundry's selection.  /sel Bog \\\\ /status on prone
+- /select now also changes Foundry's selection. /sel Bog \\\\ /status on prone
 - /sendMB (and MB send) now works for Assistants
 
 0.9.2 - 4/29/2021
@@ -36,7 +53,7 @@ This is what we are currently working on:
 0.9.1 - 4/28/2021
 
 - Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x640 monitor. Tiny laptop users, rejoice!!
-- The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096) 
+- The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096)
 - Fixed a bug so that the ADD will use "effective damage" instead of "basic damage" to calculate knockback. This fixes the problems with explosions and knockback.
 - Add a fallback background color to the modifier bucket to fix the transparent MB bug.
 - System setting to check for equipped status when determining weight (players can use equipped flag to indicate a 'dropped' item)
@@ -53,18 +70,18 @@ This is what we are currently working on:
 
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
-- Added /if chat command  ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
-- Added OtF [D:AttackName].   Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
+- Added /if chat command ["Acrobatic Dodge"/if [S:Acrobatics] /r [+2 Acrobatics] /else [-2 Failed Acrobatics]\\/r [Dodge]]
+- Added OtF [D:AttackName]. Roll the Damage for attack (similiar to [A:AttackName], which rolls the skill)
 - Fixed GM Send now also transfers the OtF label (ex: "Acrobatic Dodge" from above)
 - Fixed Initiative formula propagating to client VMs
 - /tracker (/tr) now resets "damage trackers" to zero, instead of max
 - Continued i18n work on chat processors
-- /remote GM only command.   Execute OtF on the remote client
+- /remote GM only command. Execute OtF on the remote client
 - Press SHIFT key to make OtF rolls private
 - Show Move/Flight Move checkbox in Editor
 
 0.8.23 - 4/13/2021
-  
+
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 - Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
 - Adjust ADD results to show +3 bonus to HT checks when damage is Ranged, 1/2D.
@@ -105,7 +122,7 @@ This is what we are currently working on:
 - Fixed import of unicode characters in names (and elsewhere)
 - Fixed damage to resources to allow HP or FP damage to apply to a resource
 - Added support for [A:Attack *Costs 1FP]
-- Fixed [A:Attack] where skill level includes "*Costs 1FP"
+- Fixed [A:Attack] where skill level includes "\*Costs 1FP"
 - Added Drag and drop OtF from chat
 
 0.8.21 - 3/22/2021
@@ -249,12 +266,12 @@ This is what we are currently working on:
 - OtF formula [/<chat command>] execute chat command as a button
 - Fixed GCA export, ranged attacks in the melee list and sanitize pagerefs
 - Enhanced the import error warnings
-  
+
 0.8.10 - 1/30/2021
 
 - @Tratz equipment bug fix, portrait fix and logo fix!
 - Bug fix for OtF formulas in Skills/Spells in containers
-  
+
 0.8.9 - 1/29/2021
 
 - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").

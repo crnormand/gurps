@@ -12,10 +12,18 @@ function uint8arrayToString(myUint8Arr) {
 }
 
 let script = dir + '/find-missing-keys.js'
-let outfile = dir + '/orphans.txt'
-const child = spawnSync(script, ['templates', 'module', 'lib'])
-console.error(uint8arrayToString(child.stderr))
-let output = uint8arrayToString(child.stdout)
+let outfile = dir + '/missing-keys.txt'
+const child1 = spawnSync(script, ['templates', 'module', 'lib'])
+console.error(uint8arrayToString(child1.stderr))
+let output = uint8arrayToString(child1.stdout)
+console.log(output)
+fs.writeFileSync(outfile, output)
+
+script = dir + '/find-unused-keys.js'
+outfile = dir + '/unused-keys.txt'
+const child2 = spawnSync(script, ['templates', 'module', 'lib'])
+console.error(uint8arrayToString(child2.stderr))
+output = uint8arrayToString(child2.stdout)
 console.log(output)
 fs.writeFileSync(outfile, output)
 

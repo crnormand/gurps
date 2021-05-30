@@ -54,7 +54,8 @@ class ChatProcessorRegistry {
   }
 
   // Make a pre-emptive decision if we are going to handle any of the lines in this message
-  willTryToHandle(lines) {
+  willTryToHandle(message) {
+    let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
     for (const line of lines) for (const p of this._processors) if (p.matches(line)) return true
     return false
   }
@@ -63,15 +64,43 @@ class ChatProcessorRegistry {
    * From this point on, we want to be in a single thread... so we await any async methods to ensure that
    * we get a response.
    */
-  async processLines(lines, chatmsgData) {
+  async startProcessingLines(message, chatmsgData) {
     this.msgs.data = chatmsgData
     delete this.msgs.event
+    await this.processLines(message)
+    this.send()
+  }
+
+  async processLines(message) {
+    // Look for non-escaped { } double backslash "\\" and convert to newlines.  I just couldn't figure out a good regex pattern... so I just did it manually.
+    let lines = []
+    let start = 0
+    let escaped = 0
+    let backslash = false
+    for (let i = 0; i < message.length; i++) {
+      const c = message[i]
+      if (c == '\\') {
+        if (escaped == 0) {
+          if (backslash) {
+            lines.push(message.substring(start, i - 1))
+            start = i + 1
+            backslash = false
+          } else backslash = true
+        }
+      } else backslash = false
+      if (c == '{') escaped++
+      if (c == '}') escaped--
+      if (c == '\n') {
+        lines.push(message.substring(start, i))
+        start = i + 1
+      }
+    }
+    if (start < message.length) lines.push(message.substr(start))
 
     for (const line of lines) {
       // use for loop to ensure single thread
       await this.processLine(line)
     }
-    this.send()
   }
 
   async processLine(line) {
@@ -102,7 +131,7 @@ class ChatProcessorRegistry {
       else {
         try {
           await processor.process(line)
-         } catch (err) {
+        } catch (err) {
           ui.notifications.error(err)
           console.error(err)
         }
@@ -123,23 +152,34 @@ class ChatProcessorRegistry {
 
   _sendPriv(priv) {
     if (priv.length == 0) return
-    ChatMessage.create({
-      alreadyProcessed: true,
-      content: priv.join('<br>'),
-      user: game.user._id,
-      type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-      whisper: [game.user._id],
+
+    renderTemplate('systems/gurps/templates/chat-processing.html', {
+      lines: priv,
+    }).then(content => {
+      ChatMessage.create({
+        alreadyProcessed: true,
+        content: content,
+        user: game.user._id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [game.user._id],
+      })
+      priv.length = 0
     })
-    priv.length = 0
   }
 
   _sendPub(pub, chatData) {
     if (pub.length == 0) return
+
     let d = duplicate(chatData) // duplicate the original chat data (to maintain speaker, etc.)
     d.alreadyProcessed = true
-    d.content = pub.join('<br>')
-    ChatMessage.create(d)
-    pub.length = 0
+
+    renderTemplate('systems/gurps/templates/chat-processing.html', {
+      lines: pub,
+    }).then(content => {
+      d.content = content
+      ChatMessage.create(d)
+      pub.length = 0
+    })
   }
 
   // Dump everything we have saved in messages
@@ -186,15 +226,11 @@ export default function addChatHooks() {
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
       }
 
-      let lines = message
-        .replace(/\\\\/g, '\n') // Allow \\ to ack as newline (useful for combining multiple chat commands on a single line
-        .split('\n')
-
       // Due to Foundry's non-async way of handling the 'chatMessage' response, we have to decide beforehand
       // if we are going to process this message, and if so, return false so Foundry doesn't
-      if (ChatProcessors.willTryToHandle(lines)) {
+      if (ChatProcessors.willTryToHandle(message)) {
         // Now we can handle the processing of each line in an async method, so we can ensure a single thread
-        ChatProcessors.processLines(lines, chatmsgData)
+        ChatProcessors.startProcessingLines(message, chatmsgData)
         return false
       } else return true
     })

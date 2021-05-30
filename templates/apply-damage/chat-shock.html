@@ -1,13 +1,22 @@
-<div>
-  {{localize "GURPS.chatShock" name=name modifier=modifier}}<span style='font-size: smaller;'>([PDF:B419])</span>.<br />
-  <span style='font-size:small;'>[-{{modifier}} {{localize "GURPS.toDXAndIQ"}}] <i>{{localize "GURPS.nextTurnOnly"}}</i>.
-    <hr />
-    <ul>
-      <li>{{localize "GURPS.highPainThresholdNoPenalty"}}. <span style='font-size: smaller;'>([PDF:B59])</span></li>
-      <li>{{localize "GURPS.lowPainThreshold"}} <i>{{localize "GURPS.effectsDoubles"}}:</i> [-{{doubled}} {{localize "GURPS.toDXAndIQ"}}]. <span
-          style='font-size: smaller;'>([PDF:B142])</span></li>
+<div class='gurps-chat-message'>
+  <div class='prefix'>
+    {{localize "GURPS.chatShock" name=name modifier=modifier}}<span
+      class='pdflink'>([PDF:{{localize "GURPS.pdfShock"}}])</span>.
+  </div>
+  <hr />
+  <div class='roll-result'>
+    ["{{{localize "GURPS.shockPenaltyNextTurnOnly" name=name modifier=modifier}}}" {{button}}]
+    <ul class='modifier-list'>
+      <li>{{localize "GURPS.highPainThresholdNoPenalty"}} <span class='pdflink'>([PDF:{{i18n "GURPS.pdfHPT"}}])</span>.
+      </li>
+      <li>{{{localize "GURPS.lowPainThresholdDoubles"}}} <span class='pdflink'>([PDF:{{i18n "GURPS.pdfLPT"}}])</span>.
+      </li>
     </ul>
-    <span style='font-size: smaller;'>{{localize "GURPS.effectsNotApplicableDefenses"}}
-      <i>{{localize "GURPS.effectsTemporaryAttributePenalties"}}</i>, <span style='font-size: smaller;'>([PDF:B421])</span>.</span>
-  </span>
+
+    <div class='aside'>
+      {{localize "GURPS.effectsNotApplicableDefenses"}}
+      {{localize "GURPS.effectsTemporaryAttributePenalties"}}, <span
+        class='pdflink'>([PDF:{{i18n "GURPS.pdfTempAttribPenalties"}}])</span>.
+    </div>
+  </div>
 </div>

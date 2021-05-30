@@ -1,12 +1,13 @@
 <li name='result-effect'>
+  {{debug this}}
   <div>
     <div>
-      <header>{{localize "GURPS.shock"}}</header>
-      <aside>{{localize "GURPS.penalty"}}(&minus;{{amount}}){{localize "GURPS.toDXAndIQ"}}.</aside>
+      <header>{{i18n "GURPS.shock"}}</header>
+      <aside>{{i18n_f "GURPS.shockPenalty" this}}.</aside>
     </div>
     <div class='with-send-button'>
       <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
     </div>
-    <div class='pdflink'>B419</div>
+    <div class='pdflink'>{{i18n "GURPS.pdfShock"}}</div>
   </div>
 </li>

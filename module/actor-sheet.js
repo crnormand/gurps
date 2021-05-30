@@ -34,6 +34,12 @@ export class GurpsActorSheet extends ActorSheet {
     await super.close(options)
     game.GURPS.ClearLastActor(this.actor)
   }
+  
+  // Hack to keep sheet from flashing during multiple DB updates
+  async _render(...args){
+    if (!!this.object?.ignoreRender) return
+    super._render(...args)
+  }
 
   flt(str) {
     return !!str ? parseFloat(str) : 0
@@ -72,7 +78,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     // TODO get this from system property
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
-
+    sheetData.actor = this.actor
     return sheetData
   }
 
@@ -106,11 +112,15 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action)
+          display = ev.currentTarget.innerText
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
             actor: this.actor.id,
+            displayname: display
           })
         )
       })
@@ -127,7 +137,15 @@ export class GurpsActorSheet extends ActorSheet {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
-          let newd = { type: type, key: ev.currentTarget.dataset.key }
+          let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
+          var itemData
+          if (!!eqt.itemid) itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+          let newd = {
+            actorid: this.actor.id, 
+            type: type, 
+            key: ev.currentTarget.dataset.key, 
+            itemid: eqt.itemid,
+            itemData: itemData }
           if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
           return ev.dataTransfer.setData(
             'text/plain',
@@ -399,6 +417,12 @@ export class GurpsActorSheet extends ActorSheet {
       let path = element.dataset.key
       let actor = this.actor
       let obj = duplicate(getProperty(actor.data, path)) // must dup so difference can be detected when updated
+      if (!!obj.itemid) {
+        let item = this.actor.items.get(obj.itemid)
+        item.editingActor = this.actor
+        item.sheet.render(true)
+        return
+      }
       if (path.includes('equipment')) this.editEquipment(actor, path, obj)
       if (path.includes('melee')) this.editMelee(actor, path, obj)
       if (path.includes('ranged')) this.editRanged(actor, path, obj)
@@ -428,7 +452,27 @@ export class GurpsActorSheet extends ActorSheet {
         this.editEquipment(this.actor, path, o)
       },
     })
-    new ContextMenu(html, '.equipmenu', opts)
+    let mcar = Array.from(opts)
+    mcar.push({
+      name: "Move to 'Other Equipment'",
+      icon: "<i class='fas fa-level-down-alt'></i>",
+      callback: e => {
+        let path = e[0].dataset.key
+        this.actor.moveEquipment(path, 'data.equipment.other')
+      },
+    })   
+    new ContextMenu(html, '.equipmenucarried', mcar)
+    
+    opts.push({
+      name: "Move to 'Equipment'",
+      icon: "<i class='fas fa-level-up-alt'></i>",
+      callback: e => {
+        let path = e[0].dataset.key
+        this.actor.moveEquipment(path, 'data.equipment.carried')
+      },
+    })
+    new ContextMenu(html, '.equipmenuother', opts)
+
 
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault()
@@ -440,7 +484,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       eqt.count = value
       await this.actor.update({ [path]: eqt })
-      await this.actor.updateParentOf(path, 4)
+      await this.actor.updateParentOf(path)
     })
     html.find('button[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault()
@@ -455,13 +499,13 @@ export class GurpsActorSheet extends ActorSheet {
           content: `Do you want to delete "${eqt.name}" from the list?`,
           yes: () => (agree = true),
         })
-        if (agree) GURPS.removeKey(actor, path)
+        if (agree) actor.deleteEquipment(path)
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
         eqt.count = value
         await this.actor.update({ [path]: eqt })
-        await this.actor.updateParentOf(path, 4)
+        await this.actor.updateParentOf(path)
       }
     })
 
@@ -636,9 +680,8 @@ export class GurpsActorSheet extends ActorSheet {
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
-              Equipment.calc(obj)
               await actor.update({ [path]: obj })
-              await actor.updateParentOf(path, 4)
+              await actor.updateParentOf(path)
             },
           },
         },
@@ -828,9 +871,8 @@ export class GurpsActorSheet extends ActorSheet {
   async _onDrop(event) {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
-    if (dragData.type === 'damageItem') {
-      this.actor.handleDamageDrop(dragData.payload)
-    }
+    if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
+    if (dragData.type === 'Item') this.actor.handleItemDrop(dragData) 
 
     this.handleDragFor(event, dragData, 'advantage', 'adsdraggable')
     this.handleDragFor(event, dragData, 'skill', 'skldraggable')
@@ -838,78 +880,15 @@ export class GurpsActorSheet extends ActorSheet {
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
 
     if (dragData.type === 'equipment') {
+      if (await this.actor.handleEquipmentDrop(dragData) != false) return    // handle external drag/drop
+      // drag/drop in same character sheet
       let element = event.target
       let classes = $(element).attr('class') || ''
       if (!classes.includes('eqtdraggable') && !classes.includes('eqtdragtarget')) return
       let targetkey = element.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-
-        if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
-          ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
-          return
-        }
-        let object = GURPS.decode(this.actor.data, srckey)
-        // Because we may be modifing the same list, we have to check the order of the keys and
-        // apply the operation that occurs later in the list, first (to keep the indexes the same)
-        let srca = srckey.split('.')
-        srca.splice(0, 3)
-        let tara = targetkey.split('.')
-        tara.splice(0, 3)
-        let max = Math.min(srca.length, tara.length)
-        let isSrcFirst = false
-        for (let i = 0; i < max; i++) {
-          if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
-        }
-        if (targetkey.endsWith('.other') || targetkey.endsWith('.carried')) {
-          let target = GURPS.decode(this.actor.data, targetkey)
-          if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
-          GURPS.put(target, object)
-          await this.actor.update({ [targetkey]: target })
-          if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
-        } else {
-          let d = new Dialog({
-            title: object.name,
-            content: '<p>Where do you want to drop this?</p>',
-            buttons: {
-              one: {
-                icon: '<i class="fas fa-level-up-alt"></i>',
-                label: 'Before',
-                callback: async () => {
-                  if (!isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                  await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                  await this.actor.updateParentOf(targetkey)
-                  if (isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                },
-              },
-              two: {
-                icon: '<i class="fas fa-sign-in-alt"></i>',
-                label: 'In',
-                callback: async () => {
-                  if (!isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                  let k = targetkey + '.contains.' + GURPS.genkey(0)
-                  await GURPS.insertBeforeKey(this.actor, k, object)
-                  await this.actor.updateParentOf(k)
-                  if (isSrcFirst) {
-                    await GURPS.removeKey(this.actor, srckey)
-                    await this.actor.updateParentOf(srckey)
-                  }
-                },
-              },
-            },
-            default: 'one',
-          })
-          d.render(true)
-        }
+        this.actor.moveEquipment(srckey, targetkey)
       }
     }
   }
@@ -1233,7 +1212,7 @@ export class GurpsActorSheet extends ActorSheet {
     return [
       {
         name: 'Add Before',
-        icon: "<i class='fas fa-level-up-alt'></i>",
+        icon: "<i class='fas fa-chevron-up'></i>",
         callback: e => {
           GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj))
         },
@@ -1242,7 +1221,11 @@ export class GurpsActorSheet extends ActorSheet {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
-          GURPS.removeKey(this.actor, e[0].dataset.key)
+          let key = e[0].dataset.key
+          if (key.includes('.equipment.'))
+            this.actor.deleteEquipment(key)
+          else
+            GURPS.removeKey(this.actor, key)
         },
       },
       {

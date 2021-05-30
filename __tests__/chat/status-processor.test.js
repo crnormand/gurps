@@ -3,6 +3,39 @@ import { jest } from '@jest/globals'
 import StatusChatProcessor from '../../module/chat/status.js'
 
 class Token {}
+global.Token = Token.constructor
+
+const i18n = {
+  'GURPS.Foo': 'Le Foo',
+  'GURPS.Bar': 'Ein Bärren',
+  'GURPS.ID': 'ID',
+  'GURPS.name': 'Name',
+  'GURPS.chatYouMustHaveACharacterSelected': 'You must have a character selected',
+  'GURPS.chatToApplyEffects': 'to apply effects',
+  'GURPS.chatNoTokens': 'Your character does not have any tokens. We require a token to set a status.',
+  'GURPS.chatToggling': 'Toggling',
+  'GURPS.chatClearing': 'Clearing',
+  'GURPS.for': 'for',
+  'GURPS.chatYouMustSelectTokens': 'You must select tokens (or use',
+  'GURPS.chatNoStatusMatched': 'No status matched',
+  'GURPS.chatSelectSelfOrNameTokens': `You must select tokens, use '@self', or use ':name' to apply effects.`,
+}
+
+const doofusToken = new Token()
+
+doofusToken.name = 'Doofus'
+doofusToken.id = 'doofus'
+
+const doofusActor = {
+  get name() {
+    return 'Doofus'
+  },
+  token: doofusToken,
+  effects: [],
+  displayname: 'Doofus',
+  id: 'doofusActor',
+}
+doofusActor.token.actor = doofusActor
 
 describe('Status Processor', () => {
   const status = new StatusChatProcessor()
@@ -67,21 +100,6 @@ describe('Status Processor', () => {
   })
 
   describe('process line', () => {
-    const i18n = {
-      'GURPS.Foo': 'Le Foo',
-      'GURPS.Bar': 'Ein Bärren',
-      'GURPS.ID': 'ID',
-      'GURPS.name': 'Name',
-      'GURPS.chatYouMustHaveACharacterSelected': 'You must have a character selected',
-      'GURPS.chatToApplyEffects': 'to apply effects',
-      'GURPS.chatNoTokens': 'Your character does not have any tokens. We require a token to set a status.',
-      'GURPS.chatToggling': 'Toggling',
-      'GURPS.chatClearing': 'Clearing',
-      'GURPS.for': 'for',
-      'GURPS.chatYouMustSelectTokens': 'You must select tokens (or use',
-      'GURPS.chatNoStatusMatched': 'No status matched',
-      'GURPS.chatSelectSelfOrNameTokens': `You must select tokens, use '@self', or use ':name' to apply effects.`,
-    }
     let mockLocalize = jest.fn()
     let mockPriv = jest.fn()
     let mockNotify = jest.fn()
@@ -92,7 +110,6 @@ describe('Status Processor', () => {
     let privList = []
     let prntList = []
     let notifications = []
-    let doofusToken = null
 
     afterEach(() => {
       jest.resetAllMocks()
@@ -117,25 +134,11 @@ describe('Status Processor', () => {
       FooEffect.getFlag = mockGetFlagFoo
       BarEffect.getFlag = mockGetFlagBar
 
-      doofusToken = new Token()
-      doofusToken.name = 'Doofus'
-      doofusToken.id = 'doofus'
-      let doofusActor = {
-        get name() {
-          return 'Doofus'
-        },
-        token: doofusToken,
-        effects: [],
-        displayname: 'Doofus',
-      }
-      doofusActor.token.actor = doofusActor
-
       global.canvas = {
         tokens: {
           placeables: [],
         },
       }
-      global.Token = Token.constructor
     })
 
     test('/st list', async () => {
@@ -175,18 +178,6 @@ describe('Status Processor', () => {
         })
 
         beforeEach(() => {
-          doofusToken = new Token()
-          doofusToken.name = 'Doofus'
-          let doofusActor = {
-            get name() {
-              return 'Doofus'
-            },
-            token: doofusToken,
-            effects: [],
-            displayname: 'Doofus',
-          }
-          doofusActor.token.actor = doofusActor
-
           boobToken = new Token()
           boobToken.name = 'Boob'
           let boobActor = {
@@ -262,6 +253,7 @@ describe('Status Processor', () => {
             token: doofusToken,
             effects: [],
             displayname: 'Doofus',
+            id: 'doofusActor',
           }
           doofusActor.token.actor = doofusActor
 
@@ -276,6 +268,7 @@ describe('Status Processor', () => {
             token: boob1Token,
             effects: [],
             displayname: 'Boob One',
+            id: 'boob1Actor',
           }
           boob1Actor.token.actor = boob1Actor
 
@@ -290,6 +283,7 @@ describe('Status Processor', () => {
             token: boob2Token,
             effects: [],
             displayname: 'Boob Two',
+            id: 'boob2Actor',
           }
           boob2Actor.token.actor = boob2Actor
 
@@ -406,6 +400,7 @@ describe('Status Processor', () => {
             token: boobToken,
             effects: [BarEffect],
             displayname: 'Boob One',
+            id: 'boob1Actor',
           }
           boobActor.token.actor = boobActor
 
