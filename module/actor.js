@@ -68,10 +68,12 @@ export class GurpsActor extends Actor {
   calculateDerivedValues() {
     this._initializeStartingValues()
     this._applyItemBonuses()
-
-    this._calculateWeights()
-    // Must be done at end
+    
+    // Must be done after bonuses, but before weights
     this._calculateEncumbranceIssues()
+
+     // Must be done at end
+    this._calculateWeights()
   }
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
