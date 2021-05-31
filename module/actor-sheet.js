@@ -1210,12 +1210,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
               'You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.',
             label: 'Ok',
             callback: async () => {
-              await this.actor.sheet.close()
-              // Update the Entity-specific override
-              await this.actor.setFlag('core', 'sheetClass', 'gurps.GurpsActorSheet')
-              // Re-draw the updated sheet
-              const updated = this.actor.getFlag('core', 'sheetClass')
-              this.actor.sheet.render(true)
+              this.actor.openSheet('gurps.GurpsActorSheet')
             },
           }),
         500

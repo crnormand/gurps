@@ -593,8 +593,8 @@ export class GurpsActor extends Actor {
 
     try {
       this.ignoreRender = true
-      await this.update(deletes, { diff: false, render: false })
-      await this.update(adds, { diff: false, render: false })
+      await this.update(deletes, { diff: false })
+      await this.update(adds, { diff: false })
       // This has to be done after everything is loaded
       await this.postImport()
       this._forceRender()
@@ -1940,7 +1940,7 @@ export class GurpsActor extends Actor {
 //    if (!!targetObj.itemid) {
 //      ui.notifications.warn("Foundry Items cannot contain other items.")
 //      return
-    }
+//    }
     let d = new Dialog({
       title: object.name,
       content: '<p>Where do you want to drop this?</p>',
