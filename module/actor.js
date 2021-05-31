@@ -52,10 +52,11 @@ export class GurpsActor extends Actor {
   calculateDerivedValues() {
     this._initializeStartingValues()
     this._applyItemBonuses()
-
-    this._calculateWeights()
-     // Must be done at end
+    // Must be done after bonuses, but before weights
     this._calculateEncumbranceIssues()
+
+     // Must be done at end
+    this._calculateWeights()
   }
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
@@ -92,7 +93,7 @@ export class GurpsActor extends Actor {
           e.parrybonus = (bonus > 0 ? '+' : '') + bonus
         }
       }
-      if (!isNaN(e.block)) {
+      if (!isNaN(parseInt(e.block))) {
         let base = 3 + Math.floor(e.level / 2)
         let bonus = parseInt(e.block) - base
         if (bonus != 0) {
@@ -138,7 +139,7 @@ export class GurpsActor extends Actor {
                     if (!!e.parrybonus) e.parry += pi(e.parrybonus)
                     if (!!m) e.parry += m[2]
                   }
-                  if (!isNaN(e.block)) {
+                  if (!isNaN(parseInt(e.block))) {
                     // handles 'no'
                     e.block = 3 + Math.floor(e.level / 2)
                     if (!!e.blockbonus) e.block += pi(e.blockbonus)
@@ -155,7 +156,7 @@ export class GurpsActor extends Actor {
                     if (!!e.parrybonus) e.parry += pi(e.parrybonus)
                     if (!!m) e.parry += m[2]
                   }
-                  if (!isNaN(e.block)) {
+                  if (!isNaN(parseInt(e.block))) {
                     // handles 'no'
                     e.block = 3 + Math.floor(e.level / 2)
                     if (!!e.blockbonus) e.block += pi(e.blockbonus)
@@ -203,7 +204,7 @@ export class GurpsActor extends Actor {
                 // only accept DODGE
                 if (action.action.attrkey != 'DODGE') break
               }
-              data[last] += pi(action.action.mod)
+              data[last] = pi(data[last]) + pi(action.action.mod)  // enforce that attribute is int
             } // end attributes & Dodge
           } // end OTF
           // parse bonus for other forms, DR+x?
