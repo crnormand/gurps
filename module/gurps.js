@@ -1726,6 +1726,7 @@ Hooks.once('ready', async function () {
             let destEqt = getProperty(destactor.data, destKey)
             destactor.updateEqtCount(destKey, destEqt.count + resp.count)
           } else {
+            resp.itemData.data.equipped = true
             destactor.addNewItemData(resp.itemData)
           }
           game.socket.emit('system.gurps', {

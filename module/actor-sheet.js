@@ -101,7 +101,7 @@ export class GurpsActorSheet extends ActorSheet {
       })
     })
 
-    const canConfigure = game.user.isGM || this.actor.owner
+    const canConfigure = game.user.isGM || this.actor.isOwner
     if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
 
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))

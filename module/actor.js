@@ -81,6 +81,8 @@ export class GurpsActor extends Actor {
   _initializeStartingValues() {
     const data = this.data.data
     data.currentdodge = 0 // start at zero, and bonuses will add, and then they will be finalized later
+    if (!!data.equipment && !data.equipment.carried) data.equipment.carried = {}  // data protection
+    if (!!data.equipment && !data.equipment.other) data.equipment.other = {}
 
     let v = data.migrationversion
     if (!v) return // Prior to v0.9.6, this did not exist
@@ -1663,7 +1665,7 @@ export class GurpsActor extends Actor {
           await srcActor.deleteEquipment(dragData.key)
         } else {
           let item = await srcActor.deleteEquipment(dragData.key)
-          await this.addNewItemData(item)
+          await this.addNewItemData(item.data)
         }
       } else {
         let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: eqt })
