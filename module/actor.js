@@ -1681,9 +1681,9 @@ export class GurpsActor extends Actor {
             let destEqt = getProperty(this.data, destKey)
             await this.updateEqtCount(destKey, destEqt.count + qty)
           } else {
-            let item = srcActor.getOwnedItem(eqt.itemid)
+            let item = srcActor.items.get(eqt.itemid)
             item.data.data.eqt.count = qty
-            await this.addNewItemData(item)
+            await this.addNewItemData(item.data)
           }
           if (qty >= eqt.count) await srcActor.deleteEquipment(dragData.key)
           else await srcActor.updateEqtCount(dragData.key, eqt.count - qty)
@@ -1693,6 +1693,7 @@ export class GurpsActor extends Actor {
           label: i18n('GURPS.ok'),
           content: content,
           callback: callback,
+          rejectClose: false
         })
       }
     } else {
@@ -2021,10 +2022,9 @@ export class GurpsActor extends Actor {
     if (!!srceqt.globalid) {
       this.ignoreRender = true
       await this.updateEqtCount(srckey, srceqt.count - count)
-      let item = this.getOwnedItem(srceqt.itemid)
-      if (item.data.data) item = item.data
-      item.data.eqt.count = count
-      await this.addNewItemData(item, targetkey)
+      let item = this.items.get(srceqt.itemid)
+      item.data.data.eqt.count = count
+      await this.addNewItemData(item.data, targetkey)
       await this.updateParentOf(targetkey)
       this._forceRender()
       return true
@@ -2259,9 +2259,8 @@ export class GurpsActor extends Actor {
     let eqt = getProperty(this.data, eqtkey)
     await this.updateParentOf(eqtkey)
     if (!!eqt.itemid) {
-      let item = this.getOwnedItem(eqt.itemid)
-      item.data.data.eqt.count = eqt.count
-      await this.updateOwnedItem(item.data)
+      let item = this.items.get(eqt.itemid)
+      await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.count': count }])
     }
   }
 
@@ -2270,7 +2269,7 @@ export class GurpsActor extends Actor {
     // pindex = 4 for equipment
     let pindex = 4
     let sp = srckey.split('.').slice(0, pindex).join('.') // find the top level key in this list
-    if (srckey == sp) return // no parent for this eqt
+    // But count may have changed... if (srckey == sp) return // no parent for this eqt
     let parent = GURPS.decode(this.data, sp)
     if (!!parent) await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums from the top down
   }
