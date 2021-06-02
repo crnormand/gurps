@@ -345,6 +345,7 @@
       "spells": {},
       "bonuses": "",
       "equipped": true,
+      "carried": true,
       "globalid": ""
     }
   }
