@@ -101,7 +101,7 @@ export class GurpsActorSheet extends ActorSheet {
       })
     })
 
-    const canConfigure = game.user.isGM || this.actor.owner
+    const canConfigure = game.user.isGM || this.actor.isOwner
     if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
 
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
@@ -114,7 +114,8 @@ export class GurpsActorSheet extends ActorSheet {
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
           let eqtkey = ev.currentTarget.dataset.key
-          let eqt = GURPS.decode(this.actor.data, eqtkey) // FYI, may not actually be Equipment
+          let eqt = getProperty(this.actor.data, eqtkey) // FYI, may not actually be Equipment
+          if (!eqt) return
           if (!!eqt.eqtkey) {
             eqtkey = eqt.eqtkey
             eqt = GURPS.decode(this.actor.data, eqtkey) // Features added by equipment will point to the equipment
@@ -964,7 +965,7 @@ export class GurpsActorSheet extends ActorSheet {
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.owner
+    const canConfigure = game.user.isGM || this.actor.isOwner
     if (this.options.editable && canConfigure) {
       let b = [
         {
