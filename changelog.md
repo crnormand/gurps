@@ -2,6 +2,22 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+0.10.0
+
+- Foundry 0.8.x compatible!
+
+0.9.15
+
+- Fixed dodge values when encumbrence greater than 'none'
+
+0.9.14
+- Fixed element editors (melee, ranged, skills, spells) for level
+- Restrict Foundry items from containing other items
+- Fixed Actor startup on encumbrance
+
+0.9.13
+ - Fixed the data model (template.json) for items 
+
 0.9.12
 
 - Equipment name searches for /qty and /use now start at the front of the name for matching

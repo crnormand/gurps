@@ -134,7 +134,7 @@ export class GurpsActor extends Actor {
     let gids = [] //only allow each global bonus to add once
     const data = this.data.data
     for (const item of this.items.contents) {
-      if (item.data.data.equipped != false && !!item.data.data.bonuses && !gids.includes(item.data.data.globalid)) {
+      if (item.data.data.equipped && item.data.data.carried && !!item.data.data.bonuses && !gids.includes(item.data.data.globalid)) {
         gids.push(item.data.data.globalid)
         let bonuses = item.data.data.bonuses.split('\n')
         for (let bonus of bonuses) {
@@ -1798,10 +1798,20 @@ export class GurpsActor extends Actor {
   async updateItemAdditionsBasedOn(eqt, targetPath) {
     if (targetPath.includes('.other') || !eqt.equipped) await this._removeItemAdditionsBasedOn(eqt)
     if (targetPath.includes('.carried') && !!eqt.equipped) await this._addItemAdditionsBasedOn(eqt, targetPath)
-     if (!!eqt.itemid) {
+    await this._updateEqtStatus(eqt, targetPath.includes('.carried'))
+  }
+  
+  // Equipment may carry other eqt, so we must adjust the carried status all the way down.
+  async _updateEqtStatus(eqt, carried) {
+    eqt.carried = carried
+    if (!!eqt.itemid) {
       let item = await this.items.get(eqt.itemid)
-      this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.equipped': eqt.equipped, 'data.carried': (targetPath.includes('.carried')) }])
+      await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried }])
     } 
+    for (const k in eqt.contains)
+      await this._updateEqtStatus(eqt.contains[k], carried)
+    for (const k in eqt.collapsed)
+      await this._updateEqtStatus(eqt.collapsed[k], carried)
   }
 
   // moving from other to carried
@@ -1912,7 +1922,6 @@ export class GurpsActor extends Actor {
   async moveEquipment(srckey, targetkey, shiftkey) {
     if (srckey == targetkey) return
     if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
-    if (await this._checkForMerging(srckey, targetkey)) return
     // Because we may be modifing the same list, we have to check the order of the keys and
     // apply the operation that occurs later in the list, first (to keep the indexes the same)
     let srca = srckey.split('.')
@@ -1934,6 +1943,7 @@ export class GurpsActor extends Actor {
       if (isSrcFirst) await GURPS.removeKey(this, srckey)
       return
     }
+    if (await this._checkForMerging(srckey, targetkey)) return
     if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
       ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
       return
@@ -2255,6 +2265,7 @@ export class GurpsActor extends Actor {
     // pindex = 4 for equipment
     let pindex = 4
     let sp = srckey.split('.').slice(0, pindex).join('.') // find the top level key in this list
+    if (srckey == sp) return // no parent for this eqt
     let parent = GURPS.decode(this.data, sp)
     if (!!parent) await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums from the top down
   }
