@@ -1653,9 +1653,13 @@ export class GurpsActor extends Actor {
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
+    let eqt = getProperty(srcActor.data, dragData.key)
+    if ((!!eqt.contains && Object.keys(eqt.contains).length > 0) || (!!eqt.collapsed && Object.keys(eqt.collapsed).length > 0)) {
+      ui.notifications.warn("You cannot transfer an Item that contains other equipment.")
+      return    
+    }
     if (!!this.owner && !!srcActor.owner) {
       // same owner
-      let eqt = getProperty(srcActor.data, dragData.key)
       if (eqt.count < 2) {
         let destKey = this._findEqtkeyForGlobalItem(eqt.globalid)
         if (!!destKey) {
@@ -1693,7 +1697,6 @@ export class GurpsActor extends Actor {
       }
     } else {
       // different owners
-      let eqt = getProperty(srcActor.data, dragData.key)
       let count = eqt.count
       if (eqt.count > 1) {
         let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: eqt })
