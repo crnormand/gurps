@@ -584,10 +584,10 @@ class TrackerChatProcessor extends ChatProcessor {
 
 class LightChatProcessor extends ChatProcessor {
   help() {
-    return '/li torch|t|off &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt;'
+    return '/li &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off '
   }
   matches(line) {
-    this.match = line.match(/^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(torch|t)? *(\d+)? *(\d+)?/i)
+    this.match = line.match(/^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(\w+)? *(\d+)? *(\d+)?/i)
     return !!this.match
   }
   async process(line) {
@@ -595,24 +595,33 @@ class LightChatProcessor extends ChatProcessor {
       ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
       return
     }
-    let noAnimation = { type: '' }
-    let torchAnimation = { type: 'torch', speed: parseInt(this.match[7]) || 1, intensity: parseInt(this.match[8]) || 1 }
+    if (line.match(/^\/(light|li) *$/)) {
+      this.priv("Possible animations: " + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
+      return
+    }
+    let type = this.match[6] || ''
+    if (!!type) {
+      let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.startsWith(type))
+      if (!m) {
+        ui.notifications.warn("Unknown light animation '" + type + "'.  Expected: " + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
+        return
+      }
+      type = m
+    }
+    let anim = { type: type, speed: parseInt(this.match[7]) || 1, intensity: parseInt(this.match[8]) || 1 }
     let data = {
-      dimLight: null,
-      brightLight: null,
+      dimLight: 0,
+      brightLight: 0,
       lightAngle: 360,
-      lightAnimation: noAnimation,
+      lightAnimation: anim,
     }
 
     if (!this.match[2]) {
-      data.dimLight = parseInt(this.match[3] || 3)
-      data.brightLight = parseInt(this.match[4] || 5)
+      data.dimLight = parseInt(this.match[3] || 0)
+      data.brightLight = parseInt(this.match[4] || 0)
       data.lightAngle = parseInt(this.match[5] || 360)
-      if (!!this.match[6]) {
-        data.lightAnimation = torchAnimation
-      } else data.lightAnimation = noAnimation
     }
-    canvas.tokens.controlled.map(token => token.update(data))
+    for (const t of canvas.tokens.controlled) await t.update(data)
   }
 }
 

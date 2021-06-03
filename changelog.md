@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 0.10.0
 
 - Foundry 0.8.x compatible!
+- Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
 
 0.9.15
 
