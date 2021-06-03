@@ -8,6 +8,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
 - Added \*Costs X trN and \*Costs X tr(*name*)
 - Added support for translated attributes in OtF formulas (Will == Vonte in Portuguese)
+- Added Ignore QTY/Count/Uses from import
+- Remember carried, parent and equipped status from previous import
 
 0.9.15
 

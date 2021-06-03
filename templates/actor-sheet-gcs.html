@@ -529,8 +529,11 @@
           {{#if (isUserCreated this)}}&nbsp;
             <i class="far fa-bookmark" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
+          {{#if this.ignoreImportQty}}&nbsp;
+            <i class="fas fa-flag-checkered" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+          {{/if}}
           {{#if (isFoundryItem this)}}&nbsp;
-            <i class="far fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
+            <i class="fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
             {{{gurpslink this.notes}}}
@@ -587,7 +590,10 @@
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
               style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-          {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+           {{#if this.ignoreImportQty}}&nbsp;
+            <i class="far fa-flag-checkered" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+          {{/if}}
+         {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
             {{{gurpslink this.notes}}}

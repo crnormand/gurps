@@ -1010,25 +1010,24 @@ export class GurpsActor extends Actor {
           eqt.setNotes(t(j.notes))
         }
         eqt.pageRef(t(j.pageref))
-        temp.push(eqt)
         let old = this._findElementIn('equipment.carried', eqt.uuid)
         if (!old) old = this._findElementIn('equipment.other', eqt.uuid)
         if (!!old) {
           eqt.notes = this._tryToMerge(eqt.notes, old.notes)
           eqt.name = this._tryToMerge(eqt.name, old.name)
+          eqt.carried = old.carried
+          eqt.equipped = old.equipped
+          eqt.parentuuid = old.parentuuid
+          if (old.ignoreImportQty) {
+            eqt.count = old.count
+            eqt.uses = old.uses
+            eqt.maxuses = old.maxuses
+            eqt.ignoreImportQty = true
+          }
         }
+        temp.push(eqt)
       }
     }
-
-    // Put everything in it container (if found), otherwise at the top level
-    temp.forEach(eqt => {
-      if (!!eqt.parentuuid) {
-        let parent = null
-        parent = temp.find(e => e.uuid === eqt.parentuuid)
-        if (!!parent) game.GURPS.put(parent.contains, eqt)
-        else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
-      }
-    })
 
     // Save the old User Entered Notes.
     recurselist(this.data.data.equipment?.carried, t => {
@@ -1038,6 +1037,21 @@ export class GurpsActor extends Actor {
     recurselist(this.data.data.equipment?.other, t => {
       t.carried = false
       if (!!t.save) temp.push(t)
+    })
+    
+    temp.forEach(eqt => {  // Remove all entries from inside items because if they still exist, they will be added back in
+      eqt.contains = {}
+      eqt.collapsed = {}
+    })
+
+    // Put everything in it container (if found), otherwise at the top level
+    temp.forEach(eqt => {
+      if (!!eqt.parentuuid) {
+        let parent = null
+        parent = temp.find(e => e.uuid === eqt.parentuuid)
+        if (!!parent) game.GURPS.put(parent.contains, eqt)
+        else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
+      }
     })
 
     let equipment = {
@@ -1947,6 +1961,7 @@ export class GurpsActor extends Actor {
     }
     let object = getProperty(this.data, srckey)
     if (targetkey.match(/^data\.equipment\.\w+$/)) {
+      object.parentuuid = ''
       let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
       let eqtkey = GURPS.put(target, object)
@@ -2274,10 +2289,19 @@ export class GurpsActor extends Actor {
   async updateParentOf(srckey) {
     // pindex = 4 for equipment
     let pindex = 4
-    let sp = srckey.split('.').slice(0, pindex).join('.') // find the top level key in this list
+    let paths = srckey.split('.')
+    let sp = paths.slice(0, pindex).join('.') // find the top level key in this list
     // But count may have changed... if (srckey == sp) return // no parent for this eqt
-    let parent = GURPS.decode(this.data, sp)
-    if (!!parent) await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums from the top down
+    let parent = getProperty(this.data, sp)
+    if (!!parent) {   // data protection
+      await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums from the top down
+      let puuid = ''
+      if (paths.length >= 6) {
+        sp = paths.slice(0, -2).join('.')
+        puuid = getProperty(this.data, sp).uuid
+      }
+      await this.update({[srckey + '.parentuuid']: puuid}) 
+    }
   }
 }
 
@@ -2439,6 +2463,7 @@ export class Equipment extends Named {
     this.weightsum = ''
     this.uses = ''
     this.maxuses = ''
+    this.ignoreImportQty = false
   }
 
   static calc(eqt) {
