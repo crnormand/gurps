@@ -621,7 +621,7 @@ class LightChatProcessor extends ChatProcessor {
       data.brightLight = parseInt(this.match[4] || 0)
       data.lightAngle = parseInt(this.match[5] || 360)
     }
-    for (const t of canvas.tokens.controlled) await t.update(data)
+    for (const t of canvas.tokens.controlled) await t.document.update(data)
   }
 }
 

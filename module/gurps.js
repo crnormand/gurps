@@ -1478,7 +1478,7 @@ Hooks.once('init', async function () {
   let src = 'systems/gurps/icons/gurps4e.png'
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
   $('#logo').attr('src', src)
-
+  
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
@@ -1915,6 +1915,30 @@ Hooks.once('ready', async function () {
     }
     dragRuler.registerSystem('gurps', GURPSSpeedProvider)
   })
+  
+  // Translate attribute mappings if not in English
+  if (game.i18n.lang != 'en') {
+    console.log("Mapping " + game.i18n.lang + " translations into PARSELINK_MAPPINGS")
+    let mappings = {}
+    for (let k in GURPS.PARSELINK_MAPPINGS) {
+      let v = GURPS.PARSELINK_MAPPINGS[k]
+      let i = v.indexOf('.value')
+      let nk = v
+      if (i >= 0) {
+        nk = nk.substr(0, i)
+      }
+      nk = nk.replace(/\./g, '') // remove periods
+      nk = game.i18n.localize('GURPS.' + nk).toUpperCase()
+      if (!GURPS.PARSELINK_MAPPINGS[nk]) {
+        console.log(`Mapping '${k}' -> '${nk}'`)
+        mappings[nk] = GURPS.PARSELINK_MAPPINGS[k]
+      }
+    }
+    mappings = {...mappings, ...GURPS.PARSELINK_MAPPINGS}
+    GURPS.PARSELINK_MAPPINGS = mappings
+  }
+
+
 
   // End of system "READY" hook.
 })
