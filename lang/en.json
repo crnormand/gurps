@@ -752,6 +752,9 @@
   "GURPS.settingHintPlayerBlindRoll": "If not checked, holding down the SHIFT key when you are making a roll will make a Self roll (only you can see it, no matter who you are). If checked, when players hold down the SHIFT key, it will make it a Blind Roll instead (GMs still get a Self roll).",
   "GURPS.settingPlayerChatPrivate": "Player Chat commands private",
   "GURPS.settingHintPlayerChatPrivate": "If checked, most of the chat commands (e.g. /hp, /fp, /qty, etc.) will display as a whisper to the player (instead of an Out Of Character message).   If you trust your players, and don't like to see the chat fill up with their chat commands, turn this on.",
+  "GURPS.settingMookGenerator": "Mook Generator Defaults",
+  "GURPS.settingLabelMookGenerator": "Mook Generator Default Editor",
+  "GURPS.settingHintMookGenerator": "Edit the initial values of the Mook Generator",
 
   "GURPS.actions": "Actions",
   "GURPS.addAdvantage": "Add an Advantage",

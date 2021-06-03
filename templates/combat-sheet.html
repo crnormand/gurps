@@ -113,7 +113,7 @@
               {{#each (listAllManeuvers) as | this key |}}
                 {debug key}
                 <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
-                  {{localize this.label}}
+                  {{i18n this.label}}
                 </option>
               {{/each}}
             </select>
