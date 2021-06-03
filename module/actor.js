@@ -1880,7 +1880,12 @@ export class GurpsActor extends Actor {
 
   // return the item data that was deleted (since it might be transferred)
   async deleteEquipment(path) {
-    let eqt = GURPS.decode(this.data, path)
+   let eqt = getProperty(this.data, path)
+    for (const k in eqt.contains)
+      await this.deleteEquipment(path + ".contains." + k)
+    for (const k in eqt.collapsed)
+      await this.deleteEquipment(path + ".collapsed." + k)
+ 
     var item
     if (!!eqt.itemid) {
       item = await this.items.get(eqt.itemid)
