@@ -16,9 +16,7 @@ let contents = fs.readFileSync(filename, 'utf8')
 
 console.log('\n\n=== New Entries for en.json ===')
 // let regex = /(i18n\(['"`](.+)['"`],\s*['"`](.+)['"`]\))/g
-let regexJS = /i18n\((?:\r?\n)?\s*['"`](?<tag>.+)['"`],(?:\r?\n)?\s*['"`](?<text>.+)['"`](?:\r?\n)?\s*\)/g
-let regexHB = /\{\{i18n(?:\r?\n)?\s+['"`](?<tag>.*)['"`](?:\r?\n)?\s+['"`](?<text>.*)['"`](?:\r?\n)?\s*\}\}/g
-
+let regexJS = /i18n\((?:\r?\n)?\s*['"`](?<tag>.+?)['"`],(?:\r?\n)?\s*['"`](?<text>.+?)['"`](?:\r?\n)?\s*\)/g
 {
   const matches = contents.matchAll(regexJS)
   let m = [...matches]
@@ -27,6 +25,7 @@ let regexHB = /\{\{i18n(?:\r?\n)?\s+['"`](?<tag>.*)['"`](?:\r?\n)?\s+['"`](?<tex
   })
 }
 
+let regexHB = /\{\{i18n(?:\r?\n)?\s+['"`](?<tag>.+?)['"`](?:\r?\n)?\s+['"`](?<text>.+?)['"`](?:\r?\n)?\s*\}\}/g
 {
   const matches = contents.matchAll(regexHB)
   let m = [...matches]
@@ -34,8 +33,23 @@ let regexHB = /\{\{i18n(?:\r?\n)?\s+['"`](?<tag>.*)['"`](?:\r?\n)?\s+['"`](?<tex
     console.log(`"${e.groups.tag}": "${e.groups.text}",`)
   })
 }
+
+let regexHBf =
+  /\{\{i18n_f(?:\r?\n)?\s+['"`](?<tag>.+?)['"`](?:\r?\n)?\s+(?<data>\S+)(?:\r?\n)?\s+['"`](?<text>.+?)['"`](?:\r?\n)?\s*\}\}/g
+{
+  const matches = contents.matchAll(regexHBf)
+  let m = [...matches]
+  m.forEach(e => {
+    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
+  })
+}
 console.log('=== end of entries ===\n')
 fs.writeFileSync(filename + '.old', contents)
-const replacement = contents.replaceAll(regexJS, "i18n('$1')").replaceAll(regexHB, '{{i18n "$1"}}')
+
+const replacement = contents
+  .replaceAll(regexJS, "i18n('$1')")
+  .replaceAll(regexHB, '{{i18n "$1"}}')
+  .replace(regexHBf, '{{i18n_f "$1" $2}}')
 fs.writeFileSync(filename, replacement)
+
 console.log(`Written: ${filename}`)
