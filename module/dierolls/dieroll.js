@@ -113,8 +113,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
 
   let whoCanSeeDice = null;
   if (optionalArgs.event?.shiftKey) {
-    whoCanSeeDice = [game.user._id];
-    messageData.whisper = [game.user._id];
+    whoCanSeeDice = [game.user.id];
+    messageData.whisper = [game.user.id];
   }
   
   let isCtrl = false

@@ -1372,12 +1372,12 @@ GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) 
 GURPS.sendOtfMessage = function (content, blindroll, users) {
   let msgData = {
     content: content,
-    user: game.user._id,
+    user: game.user.id,
     blind: blindroll,
   }
   if (!!users) {
     msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
-    msgData.whisper = users.map(it => it._id)
+    msgData.whisper = users.map(it => it.id)
   } else {
     msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC
   }
@@ -1662,7 +1662,7 @@ Hooks.once('ready', async function () {
         for (let i = 0; i < t.length; i++) {
           let el = t[i]
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
           if (!!target.actor?.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
 
@@ -1675,7 +1675,7 @@ Hooks.once('ready', async function () {
             flag = true
           }
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
           target.actor.changeOneThirdStatus($(el).attr('data-onethird'), flag)
         })
       }
@@ -1687,7 +1687,7 @@ Hooks.once('ready', async function () {
         let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
 
         let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-        let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+        let target = game.combat.combatants.filter(c => c.id === combatant)[0]
 
         let event = ev.originalEvent
         let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -1700,7 +1700,7 @@ Hooks.once('ready', async function () {
 
   game.socket.on('system.gurps', resp => {
     if (resp.type == 'updatebucket') {
-      if (resp.users.includes(game.user._id)) game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
+      if (resp.users.includes(game.user.id)) game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
     }
     if (resp.type == 'initiativeChanged') {
       CONFIG.Combat.initiative = {
