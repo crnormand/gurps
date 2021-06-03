@@ -21,6 +21,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.advantages
   GURPS.aim
   GURPS.allOutDefense
+  GURPS.blockbonus
   GURPS.bonuses
   GURPS.cannotDragNonFoundryEqt
   GURPS.changelog
@@ -72,6 +73,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.clickToRemove
   GURPS.collapse
   GURPS.concentrationCheck
+  GURPS.conditions
   GURPS.copyrightGURPS
   GURPS.dead
   GURPS.defense
@@ -143,6 +145,29 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.lighting
   GURPS.lowPainThresholdDoubles
   GURPS.majorWoundEffectLabel
+  GURPS.maneuver
+  GURPS.maneuverAim
+  GURPS.maneuverAllOutAttack
+  GURPS.maneuverAllOutAttackDetermined
+  GURPS.maneuverAllOutAttackDouble
+  GURPS.maneuverAllOutAttackFeint
+  GURPS.maneuverAllOutAttackStrong
+  GURPS.maneuverAllOutAttackSuppressFire
+  GURPS.maneuverAllOutDefense
+  GURPS.maneuverAllOutDefenseBlock
+  GURPS.maneuverAllOutDefenseDodge
+  GURPS.maneuverAllOutDefenseDouble
+  GURPS.maneuverAllOutDefenseParry
+  GURPS.maneuverAttack
+  GURPS.maneuverChangePosture
+  GURPS.maneuverConcentrate
+  GURPS.maneuverDoNothing
+  GURPS.maneuverEvaluate
+  GURPS.maneuverFeint
+  GURPS.maneuverMove
+  GURPS.maneuverMoveAttack
+  GURPS.maneuverReady
+  GURPS.maneuverWait
   GURPS.melee
   GURPS.meleeAttack
   GURPS.modifierAddRangeRuler
@@ -279,6 +304,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.notAffected
   GURPS.notes
   GURPS.ok
+  GURPS.parrybonus
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
@@ -322,6 +348,68 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.resourceUpdateTrackerSlot
   GURPS.rolled
   GURPS.selectToken
+  GURPS.settingBasicPDFs
+  GURPS.settingBasicPDFsCombined
+  GURPS.settingBasicPDFsSeparate
+  GURPS.settingCalculateEnc
+  GURPS.settingCombatInitiative
+  GURPS.settingDamageAD
+  GURPS.settingDamageBluntTrauma
+  GURPS.settingDamageCondInjury
+  GURPS.settingDamageLocation
+  GURPS.settingDamageLocationMods
+  GURPS.settingDamageMath
+  GURPS.settingDamageRestrictADD
+  GURPS.settingDamageSimpleADD
+  GURPS.settingEnhancedInput
+  GURPS.settingFlagItems
+  GURPS.settingFlagUserCreated
+  GURPS.settingHintBasicPDFs
+  GURPS.settingHintCalculateEnc
+  GURPS.settingHintCombatInitiative
+  GURPS.settingHintDamagCondInjury
+  GURPS.settingHintDamageAD
+  GURPS.settingHintDamageBluntTrauma
+  GURPS.settingHintDamageLocation
+  GURPS.settingHintDamageLocationMods
+  GURPS.settingHintDamageMath
+  GURPS.settingHintDamageRestrictADD
+  GURPS.settingHintDamageSimpleADD
+  GURPS.settingHintEnhancedInput
+  GURPS.settingHintFlagItems
+  GURPS.settingHintFlagUserCreated
+  GURPS.settingHintImportHPAndFP
+  GURPS.settingHintImportIgnoreName
+  GURPS.settingHintPlayerBlindRoll
+  GURPS.settingHintPlayerChatPrivate
+  GURPS.settingHintRangeStrategy
+  GURPS.settingHintShowDiceRoller
+  GURPS.settingHintShowNavigation
+  GURPS.settingHintShowReadMe
+  GURPS.settingHintStatusReeling
+  GURPS.settingHintStatusWhisper
+  GURPS.settingHintUseEquipped
+  GURPS.settingImportBodyPlan
+  GURPS.settingImportBodyPlanAsk
+  GURPS.settingImportBodyPlanIgnore
+  GURPS.settingImportBodyPlanUseFile
+  GURPS.settingImportHPAndFP
+  GURPS.settingImportHPAndFPAsk
+  GURPS.settingImportHPAndFPIgnore
+  GURPS.settingImportHPAndFPUseFile
+  GURPS.settingImportHintBodyPlan
+  GURPS.settingImportIgnoreName
+  GURPS.settingPlayerBlindRoll
+  GURPS.settingPlayerChatPrivate
+  GURPS.settingRangeStrategy
+  GURPS.settingRangeStrategyRangeBands
+  GURPS.settingRangeStrategyStandard
+  GURPS.settingShowDiceRoller
+  GURPS.settingShowNavigation
+  GURPS.settingShowReadMe
+  GURPS.settingStatusReeling
+  GURPS.settingStatusWhisper
+  GURPS.settingUseEquipped
   GURPS.shockPenalty
   GURPS.shockPenaltyNextTurnOnly
   GURPS.showQuestion
@@ -343,12 +431,16 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.suffersHeadVitalsWound
   GURPS.suffersKnockback
   GURPS.target
+  GURPS.tired
   GURPS.title
+  GURPS.unconscious
   GURPS.warning
   GURPS.weight
   GURPS.yard
   GURPS.youDoNotHavePermssion
   __Import Messages__
+  __Maneuvers__
+  __System Settings__
 ------------
 values in [lang/en.json] that are the same in [lang/ru.json]
   Skill Names__: =========

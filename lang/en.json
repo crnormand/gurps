@@ -639,6 +639,7 @@
   "GURPS.STATUSWait": "Waiting",
 
   "__Maneuvers__": "=========",
+  "GURPS.maneuver": "Maneuver",
   "GURPS.maneuverDoNothing": "Do Nothing",
   "GURPS.maneuverMove": "Move",
   "GURPS.maneuverAim": "Aim",
