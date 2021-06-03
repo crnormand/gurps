@@ -58,6 +58,7 @@ export class GurpsActor extends Actor {
   // execute after every import.
   async postImport() {
     for (const item of this.items.contents) await this.addItemData(item.data) // re-add the item equipment and features
+
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     this.calculateDerivedValues()
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
@@ -251,6 +252,17 @@ export class GurpsActor extends Actor {
         }
       }
     }
+  }
+  
+  _findEqtkeyForId(key, id) {
+    var eqtkey
+    recurselist(this.data.data.equipment.carried, (e, k, d) => {
+      if (e[key] == id) eqtkey = 'data.equipment.carried.' + k
+    })
+    if (!eqtkey)
+      recurselist(this.data.data.equipment.other, (e, k, d) => {
+        if (e[key] == id) eqtkey = "data.equipment.other." + k })
+    return eqtkey
   }
 
   _sumeqt(dict, type, checkEquipped = false) {
@@ -1630,17 +1642,6 @@ export class GurpsActor extends Actor {
     this.render()
   }
 
-  _findEqtkeyForGlobalItem(globalid) {
-    var eqtkey
-    recurselist(this.data.data.equipment.carried, (e, k, d) => {
-      if (e.globalid == globalid) eqtkey = 'data.equipment.carried.' + k
-    })
-    //if (!eqtkey)
-    //  recurselist(this.data.data.equipment.other, (e, k, d) => {
-    //    if (e.globalid == globalid) eqtkey = "data.equipment.other." + k })
-    return eqtkey
-  }
-
   // Drag and drop from an equipment list
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
@@ -1658,10 +1659,10 @@ export class GurpsActor extends Actor {
       ui.notifications.warn("You cannot transfer an Item that contains other equipment.")
       return    
     }
-    if (!!this.owner && !!srcActor.owner) {
+    if (!!this.isOwner && !!srcActor.isOwner) {
       // same owner
       if (eqt.count < 2) {
-        let destKey = this._findEqtkeyForGlobalItem(eqt.globalid)
+        let destKey = this._findEqtkeyForId('globalid', eqt.globalid)
         if (!!destKey) {
           // already have some
           let destEqt = getProperty(this.data, destKey)
@@ -1675,7 +1676,7 @@ export class GurpsActor extends Actor {
         let content = await renderTemplate('systems/gurps/templates/transfer-equipment.html', { eqt: eqt })
         let callback = async html => {
           let qty = parseInt(html.find('#qty').val())
-          let destKey = this._findEqtkeyForGlobalItem(eqt.globalid)
+          let destKey = this._findEqtkeyForId('globalid', eqt.globalid)
           if (!!destKey) {
             // already have some
             let destEqt = getProperty(this.data, destKey)
@@ -1757,22 +1758,29 @@ export class GurpsActor extends Actor {
     let [eqtkey, addFeatures] = await this._addNewItemEquipment(itemData, targetkey)
     if (addFeatures) {
       await this._addItemAdditions(itemData, eqtkey)
+      this._forceRender()
     }
   }
 
-  // Make the initial equipment object (in the carried list)
+  // Make the initial equipment object (unless it already exists, saved in a user equipment)
   async _addNewItemEquipment(itemData, targetkey) {
+    let existing = this._findEqtkeyForId('itemid', itemData._id)
+    if (!!existing) {
+      let eqt = getProperty(this.data, existing)
+      return [ existing, eqt.carried && eqt.equipped ]
+    }   
     let carried = false
-    if (!!itemData.carried || targetkey == null) {
-      // new carried items go at the end
-      targetkey = 'data.equipment.carried'
-      let index = 0
-      let list = getProperty(this.data, targetkey)
-      while (list.hasOwnProperty(GURPS.genkey(index))) index++
-      targetkey += '.' + GURPS.genkey(index)
-      carried = true
-    }
-     if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)  //if just 'carried' or 'other'
+    if (targetkey == null)
+      if (itemData.data.carried) {
+        // new carried items go at the end
+        targetkey = 'data.equipment.carried'
+        let index = 0
+        let list = getProperty(this.data, targetkey)
+        while (list.hasOwnProperty(GURPS.genkey(index))) index++
+        targetkey += '.' + GURPS.genkey(index)
+        carried = true
+      } else targetkey = 'data.equipment.other'
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)  //if just 'carried' or 'other'
     let eqt = itemData.data.eqt
     if (!eqt) {
       ui.notifications.warn("Item: " + itemData.id + " (Global:" + itemData.globalid + ") missing equipment")
@@ -1802,35 +1810,23 @@ export class GurpsActor extends Actor {
 
   // called when equipment is being moved
   async updateItemAdditionsBasedOn(eqt, targetPath) {
-    if (targetPath.includes('.other') || !eqt.equipped) await this._removeItemAdditionsBasedOn(eqt)
-    if (targetPath.includes('.carried') && !!eqt.equipped) await this._addItemAdditionsBasedOn(eqt, targetPath)
-    await this._updateEqtStatus(eqt, targetPath.includes('.carried'))
+    await this._updateEqtStatus(eqt, targetPath, targetPath.includes('.carried'))
+    this._forceRender()
   }
   
   // Equipment may carry other eqt, so we must adjust the carried status all the way down.
-  async _updateEqtStatus(eqt, carried) {
+  async _updateEqtStatus(eqt, eqtkey, carried) {
     eqt.carried = carried
     if (!!eqt.itemid) {
       let item = await this.items.get(eqt.itemid)
       await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried }])
+      if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid) 
+      if (carried && eqt.equipped) await this._addItemAdditions(item.data, eqtkey)
     } 
     for (const k in eqt.contains)
-      await this._updateEqtStatus(eqt.contains[k], carried)
+      await this._updateEqtStatus(eqt.contains[k], eqtkey + ".contains." + k, carried)
     for (const k in eqt.collapsed)
-      await this._updateEqtStatus(eqt.collapsed[k], carried)
-  }
-
-  // moving from other to carried
-  async _addItemAdditionsBasedOn(eqt, eqtkey) {
-    if (!eqt.itemid) return
-    let item = await this.items.get(eqt.itemid)
-    await this._addItemAdditions(item.data, eqtkey)
-  }
-
-  // moving from carried to other
-  async _removeItemAdditionsBasedOn(eqt) {
-    if (!eqt.itemid) return
-    await this._removeItemAdditions(eqt.itemid)
+      await this._updateEqtStatus(eqt.collapsed[k], eqtkey + ".collapsed." + k, carried)
   }
 
   async _addItemElement(itemData, eqtkey, key) {

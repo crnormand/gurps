@@ -169,6 +169,17 @@ export default class ModifierBucketEditor extends Application {
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
 
     GURPS.hookupGurps(html, this)
+    // Support RMB on Tooltip window
+    html.find('.gurpslink').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.glinkmod').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.glinkmodplus').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.glinkmodminus').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.pdflink').contextmenu(event => {
+      event.preventDefault()
+      let el = event.currentTarget
+      GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
+    })
+
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))
