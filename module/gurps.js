@@ -680,7 +680,7 @@ async function performAction(action, actor, event, targets) {
         targets
       )
       return true
-    } else ui.notifications.warn('You must have a character selected')
+    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
 
   if (action.type === 'derivedroll')
     if (!!actor) {
@@ -688,7 +688,7 @@ async function performAction(action, actor, event, targets) {
       formula = d6ify(df + action.formula)
       prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
-    } else ui.notifications.warn('You must have a character selected')
+    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
 
   /*  let attr = action => {
     let target = action.target
