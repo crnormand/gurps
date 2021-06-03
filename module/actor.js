@@ -1779,11 +1779,22 @@ export class GurpsActor extends Actor {
   // Make the initial equipment object (unless it already exists, saved in a user equipment)
   async _addNewItemEquipment(itemData, targetkey) {
     let existing = this._findEqtkeyForId('itemid', itemData._id)
-    if (!!existing) {
+    if (!!existing) { // it may already exist (due to qty updates), so don't add it again
       let eqt = getProperty(this.data, existing)
       return [ existing, eqt.carried && eqt.equipped ]
     }   
-    let carried = false
+    if (!!itemData.data.eqt.parentuuid) {
+      var found
+      recurselist(this.data.data.equipment.carried, (e, k, d) => {
+        if (e.uuid == itemData.data.eqt.parentuuid) found = 'data.equipment.carried.' + k 
+      })
+      if (!found) recurselist(this.data.data.equipment.other, (e, k, d) => {
+        if (e.uuid == itemData.data.eqt.parentuuid) found = 'data.equipment.other.' + k
+      })
+      if (!!found) {
+        targetkey = found + ".contains." + GURPS.genkey(0)
+      }
+    }
     if (targetkey == null)
       if (itemData.data.carried) {
         // new carried items go at the end
@@ -1792,7 +1803,6 @@ export class GurpsActor extends Actor {
         let list = getProperty(this.data, targetkey)
         while (list.hasOwnProperty(GURPS.genkey(index))) index++
         targetkey += '.' + GURPS.genkey(index)
-        carried = true
       } else targetkey = 'data.equipment.other'
     if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)  //if just 'carried' or 'other'
     let eqt = itemData.data.eqt
@@ -1805,10 +1815,10 @@ export class GurpsActor extends Actor {
       eqt.uuid = 'item-' + eqt.itemid
       eqt.equipped = itemData.data.equipped
       eqt.img = itemData.img
-      eqt.carried = carried
+      eqt.carried = itemData.data.carried
       await GURPS.insertBeforeKey(this, targetkey, eqt)
-      await this.updateParentOf(targetkey)
-      return [targetkey, carried && eqt.equipped]
+      await this.updateParentOf(targetkey, true)
+      return [targetkey, eqt.carried && eqt.equipped]
     }
   }
 
@@ -1962,7 +1972,11 @@ export class GurpsActor extends Actor {
     let object = getProperty(this.data, srckey)
     if (targetkey.match(/^data\.equipment\.\w+$/)) {
       object.parentuuid = ''
-      let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
+      if (!!object.itemid) {
+        let item = this.items.get(object.itemid)
+        await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.eqt.parentuuid': '' }])
+      }
+     let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
       let eqtkey = GURPS.put(target, object)
       await this.updateItemAdditionsBasedOn(object, targetkey + '.' + eqtkey)
@@ -2286,7 +2300,7 @@ export class GurpsActor extends Actor {
   }
 
   // Used to recalculate weight and cost sums for a whole tree.
-  async updateParentOf(srckey) {
+  async updateParentOf(srckey, updatePuuid = false) {
     // pindex = 4 for equipment
     let pindex = 4
     let paths = srckey.split('.')
@@ -2295,12 +2309,19 @@ export class GurpsActor extends Actor {
     let parent = getProperty(this.data, sp)
     if (!!parent) {   // data protection
       await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums from the top down
-      let puuid = ''
-      if (paths.length >= 6) {
-        sp = paths.slice(0, -2).join('.')
-        puuid = getProperty(this.data, sp).uuid
+      if (updatePuuid) {
+        let puuid = ''
+        if (paths.length >= 6) {
+          sp = paths.slice(0, -2).join('.')
+          puuid = getProperty(this.data, sp).uuid
+        }
+        await this.update({[srckey + '.parentuuid']: puuid}) 
+        let eqt =  getProperty(this.data, srckey)
+        if (!!eqt.itemid) {
+          let item = this.items.get(eqt.itemid)
+          await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.eqt.parentuuid': puuid }])
+        }
       }
-      await this.update({[srckey + '.parentuuid']: puuid}) 
     }
   }
 }
