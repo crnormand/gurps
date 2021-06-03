@@ -112,7 +112,7 @@ export class GurpsActor extends Actor {
           e.parrybonus = (bonus > 0 ? '+' : '') + bonus
         }
       }
-      if (!isNaN(e.block)) {
+      if (!isNaN(parseInt(e.block))) {
         let base = 3 + Math.floor(e.level / 2)
         let bonus = parseInt(e.block) - base
         if (bonus != 0) {
@@ -223,7 +223,7 @@ export class GurpsActor extends Actor {
                 // only accept DODGE
                 if (action.action.attrkey != 'DODGE') break
               }
-              data[last] = +data[last] + pi(action.action.mod)  // enforce that attribute is int
+              data[last] = pi(data[last]) + pi(action.action.mod)  // enforce that attribute is int
             } // end attributes & Dodge
           } // end OTF
           // parse bonus for other forms, DR+x?

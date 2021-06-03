@@ -28,7 +28,7 @@ export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 GURPS.Maneuvers = Maneuvers
 
-GURPS.DEBUG = true
+GURPS.DEBUG = false
 
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
