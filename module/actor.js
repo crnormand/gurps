@@ -1830,6 +1830,11 @@ export class GurpsActor extends Actor {
   }
 
   async _addItemElement(itemData, eqtkey, key) {
+    let found = false
+    recurselist(this.data.data[key], (e, k, d) => {
+      if (e.itemid == itemData._id) found = true
+    })
+    if (found) return
     let list = { ...this.data.data[key] } // shallow copy
     let i = 0
     for (const k in itemData.data[key]) {
