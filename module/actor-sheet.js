@@ -670,7 +670,7 @@ export class GurpsActorSheet extends ActorSheet {
               let v = html.find('.ignoreImportQty') // Should only find in equipment
               if (!!v) obj.ignoreImportQty = v.is(':checked')
               await actor.update({ [path]: obj })
-              await actor.updateParentOf(path)
+              await actor.updateParentOf(path, false)
             },
           },
         },
