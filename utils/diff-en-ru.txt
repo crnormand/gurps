@@ -20,7 +20,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.advantage
   GURPS.advantages
   GURPS.aim
+  GURPS.allDamage
   GURPS.allOutDefense
+  GURPS.allTheDamage
+  GURPS.applyAllToTarget
   GURPS.blockbonus
   GURPS.bonuses
   GURPS.cannotDragNonFoundryEqt
@@ -30,6 +33,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatDoesNotHaveEnough
   GURPS.chatExceededMax
   GURPS.chatExceededMaxUses
+  GURPS.chatFixedDamage
   GURPS.chatLightSource
   GURPS.chatMoreThanOneActor
   GURPS.chatMoreThanOneToken
@@ -46,6 +50,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatResetTo
   GURPS.chatResourceTracker
   GURPS.chatResultBelowZero
+  GURPS.chatRollingDamage
   GURPS.chatSelectSelfOrNameTokens
   GURPS.chatSetTo
   GURPS.chatSuffersCripplingInjury
@@ -170,6 +175,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.maneuverWait
   GURPS.melee
   GURPS.meleeAttack
+  GURPS.minimumDamageRule
   GURPS.modifierAddRangeRuler
   GURPS.modifierAddRangeRulerHint
   GURPS.modifierAffliction
@@ -308,6 +314,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
+  GURPS.pdfDamageRoll
   GURPS.pdfDeceptiveAttack
   GURPS.pdfDeterminedAttack
   GURPS.pdfDodgeAcrobatic
@@ -335,6 +342,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.pdfTelegraphicAttack
   GURPS.pdfTempAttribPenalties
   GURPS.pdfTired
+  GURPS.pointDamage
+  GURPS.pointsDamage
   GURPS.quantity
   GURPS.ranged
   GURPS.rangedAttack
@@ -344,6 +353,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.resourceCopyTemplate
   GURPS.resourceDeleteTracker
   GURPS.resourceEditTracker
+  GURPS.resourceInvalidAlias
   GURPS.resourceUndefined
   GURPS.resourceUpdateTrackerSlot
   GURPS.rolled
@@ -380,6 +390,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingHintFlagUserCreated
   GURPS.settingHintImportHPAndFP
   GURPS.settingHintImportIgnoreName
+  GURPS.settingHintMookGenerator
   GURPS.settingHintPlayerBlindRoll
   GURPS.settingHintPlayerChatPrivate
   GURPS.settingHintRangeStrategy
@@ -399,6 +410,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingImportHPAndFPUseFile
   GURPS.settingImportHintBodyPlan
   GURPS.settingImportIgnoreName
+  GURPS.settingLabelMookGenerator
+  GURPS.settingMookGenerator
   GURPS.settingPlayerBlindRoll
   GURPS.settingPlayerChatPrivate
   GURPS.settingRangeStrategy
@@ -431,6 +444,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.suffersHeadVitalsWound
   GURPS.suffersKnockback
   GURPS.target
+  GURPS.targeting
   GURPS.tired
   GURPS.title
   GURPS.unconscious

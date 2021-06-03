@@ -13,6 +13,7 @@ let filename = process.argv.slice(2)[0]
 console.log(filename)
 
 let contents = fs.readFileSync(filename, 'utf8')
+let entries = new Set()
 
 console.log('\n\n=== New Entries for en.json ===')
 // let regex = /(i18n\(['"`](.+)['"`],\s*['"`](.+)['"`]\))/g
@@ -21,7 +22,8 @@ let regexJS = /i18n\((?:\r?\n)?\s*['"`](?<tag>.+?)['"`],(?:\r?\n)?\s*['"`](?<tex
   const matches = contents.matchAll(regexJS)
   let m = [...matches]
   m.forEach(e => {
-    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
+    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+    //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
   })
 }
 
@@ -30,7 +32,8 @@ let regexHB = /\{\{i18n(?:\r?\n)?\s+['"`](?<tag>.+?)['"`](?:\r?\n)?\s+['"`](?<te
   const matches = contents.matchAll(regexHB)
   let m = [...matches]
   m.forEach(e => {
-    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
+    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+    //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
   })
 }
 
@@ -40,9 +43,12 @@ let regexHBf =
   const matches = contents.matchAll(regexHBf)
   let m = [...matches]
   m.forEach(e => {
-    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
+    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+    //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
   })
 }
+
+entries.forEach(it => console.log(it))
 console.log('=== end of entries ===\n')
 fs.writeFileSync(filename + '.old', contents)
 

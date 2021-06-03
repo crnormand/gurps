@@ -4,8 +4,18 @@ keys in [lang/pt_br.json] that are missing in [lang/en.json]
   __NOTE TO TRANSLATOR__
 ------------
 keys in [lang/en.json] that are missing in [lang/pt_br.json]
+  GURPS.allDamage
+  GURPS.allTheDamage
+  GURPS.applyAllToTarget
+  GURPS.chatFixedDamage
+  GURPS.chatRollingDamage
   GURPS.gameAidUsersGuide
   GURPS.maneuver
+  GURPS.minimumDamageRule
+  GURPS.pdfDamageRoll
+  GURPS.pointDamage
+  GURPS.pointsDamage
+  GURPS.resourceInvalidAlias
   GURPS.settingBasicPDFs
   GURPS.settingBasicPDFsCombined
   GURPS.settingBasicPDFsSeparate
@@ -38,6 +48,7 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingHintFlagUserCreated
   GURPS.settingHintImportHPAndFP
   GURPS.settingHintImportIgnoreName
+  GURPS.settingHintMookGenerator
   GURPS.settingHintPlayerBlindRoll
   GURPS.settingHintPlayerChatPrivate
   GURPS.settingHintRangeStrategy
@@ -57,6 +68,8 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingImportHPAndFPUseFile
   GURPS.settingImportHintBodyPlan
   GURPS.settingImportIgnoreName
+  GURPS.settingLabelMookGenerator
+  GURPS.settingMookGenerator
   GURPS.settingPlayerBlindRoll
   GURPS.settingPlayerChatPrivate
   GURPS.settingRangeStrategy
@@ -68,6 +81,7 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingStatusReeling
   GURPS.settingStatusWhisper
   GURPS.settingUseEquipped
+  GURPS.targeting
   GURPS.tired
   GURPS.unconscious
   __System Settings__
