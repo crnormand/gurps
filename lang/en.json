@@ -830,6 +830,7 @@
   "GURPS.normal": "Normal",
   "GURPS.notAffected": "{name} is not affected.",
   "GURPS.notes": "Notes",
+  "GURPS.ok": "OK",
   "GURPS.overridden": "overridden",
   "GURPS.pdfPageReference": "Page Ref",
   "GURPS.pdfRef": "Ref",
@@ -859,11 +860,10 @@
   "GURPS.target": "Target",
   "GURPS.tired": "Tired",
   "GURPS.toAllDXBasedRolls": "to all DX-based rolls",
+  "GURPS.TransferTo": "Transfer to",
   "GURPS.unconscious": "Unconscious",
   "GURPS.update": "Update",
   "GURPS.warning": "WARNING",
   "GURPS.yard": "yard",
-  "GURPS.yards": "yards",
-  "GURPS.ok": "OK",
-  "GURPS.TransferTo": "Transfer to"
+  "GURPS.yards": "yards"
 }
