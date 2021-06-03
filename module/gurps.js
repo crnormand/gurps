@@ -997,11 +997,18 @@ GURPS.handleRoll = handleRoll
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 async function applyModifierDesc(actor, desc) {
   if (!desc) return null
-  let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
-  if (parse != desc && !!actor && !actor.isSelf) {
-    let fp = parseInt(parse)
-    fp = actor.data.data.FP.value - fp
-    await actor.update({ 'data.FP.value': fp })
+  let m = desc.match(/.*\* ?Costs? (\d+) ?([\w\(\)]+)/i)
+  if (!!m && !!actor && !actor.isSelf) {
+    let delta = parseInt(m[1])
+    let target = m[2]
+    if (target.match(/^[hf]p/i)) {
+      let k = target.toUpperCase()
+      delta = actor.data.data[k].value - delta
+      await actor.update({ ['data.' + k + '.value']: delta })
+    } 
+    if (target.match(/^tr/i)) {
+      return await GURPS.ChatProcessors.startProcessingLines('/' + target + " -" + delta)
+    }
   }
   parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {
