@@ -1111,6 +1111,7 @@ export class GurpsActorSheet extends ActorSheet {
       'data.equippedparry': p,
       'data.equippedblock': b,
     })
+    this.actor._forceRender()
   }
 
   addDeleteMenu(obj) {
