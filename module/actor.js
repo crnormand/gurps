@@ -91,7 +91,7 @@ export class GurpsActor extends Actor {
   calculateDerivedValues() {
     this._initializeStartingValues()
     this._applyItemBonuses()
-    
+
     // Must be done after bonuses, but before weights
     this._calculateEncumbranceIssues()
 
