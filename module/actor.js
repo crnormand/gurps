@@ -58,8 +58,10 @@ export class GurpsActor extends Actor {
   // execute after every import.
   async postImport() {
     let items = this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name))  // in case items are in the same list... add them alphabetically
+    this.ignoreRender = true
     for (const item of items) await this.addItemData(item.data) // re-add the item equipment and features
-
+    this.ignoreRender = false
+    
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     this.calculateDerivedValues()
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
@@ -1773,7 +1775,6 @@ export class GurpsActor extends Actor {
     let [eqtkey, addFeatures] = await this._addNewItemEquipment(itemData, targetkey)
     if (addFeatures) {
       await this._addItemAdditions(itemData, eqtkey)
-      this._forceRender()
     }
   }
 
@@ -1912,10 +1913,14 @@ export class GurpsActor extends Actor {
     let eqt = getProperty(this.data, path)
     if (!eqt) return eqt
     if (depth == 0) this.ignoreRender = true
-    for (const k in eqt.contains)
-      await this.deleteEquipment(path + ".contains." + k, depth+1)
-    for (const k in eqt.collapsed)
-      await this.deleteEquipment(path + ".collapsed." + k, depth+1)
+   
+    // Delete in reverse order so the keys don't get messed up 
+    if (!!eqt.contains) 
+      for (const k of Object.keys(eqt.contains).sort().reverse())
+        await this.deleteEquipment(path + ".contains." + k, depth+1)
+    if (!!eqt.collpased)
+      for (const k of Object.keys(eqt.collapsed).sort().reverse())
+        await this.deleteEquipment(path + ".collapsed." + k, depth+1)
  
     var item
     if (!!eqt.itemid) {
@@ -1993,6 +1998,7 @@ export class GurpsActor extends Actor {
       ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
       return
     }
+    this.toggleExpand(targetkey, true)
     let d = new Dialog({
       title: object.name,
       content: '<p>Where do you want to drop this?</p>',
@@ -2026,6 +2032,8 @@ export class GurpsActor extends Actor {
               await this.updateParentOf(srckey, false)
             }
             let k = targetkey + '.contains.' + GURPS.genkey(0)
+            let targ = getProperty(this.data, targetkey)
+            
             await this.updateItemAdditionsBasedOn(object, targetkey)
             await GURPS.insertBeforeKey(this, k, object)
             await this.updateParentOf(k, true)
@@ -2040,6 +2048,27 @@ export class GurpsActor extends Actor {
       default: 'one',
     })
     d.render(true)
+  }
+  
+  async toggleExpand(path, expandOnly = false)  {
+    let obj = getProperty(this.data, path)
+    if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
+      let temp = {...obj.contains, ...obj.collapsed }
+      let update = {
+        [path + '.-=collapsed']: null,
+        [path + '.collapsed']: {},
+        [path + '.contains']: temp,
+      }
+      await this.update(update)
+    } else if (!expandOnly && !!obj.contains && Object.keys(obj.contains).length > 0) {
+      let temp = {...obj.contains, ...obj.collapsed }
+      let update = {
+        [path + '.-=contains']: null,
+        [path + '.contains']: {},
+        [path + '.collapsed']: temp,
+      }
+      await this.update(update)
+    } 
   }
 
   async _splitEquipment(srckey, targetkey) {

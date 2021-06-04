@@ -386,24 +386,7 @@ export class GurpsActorSheet extends ActorSheet {
       let element = ev.currentTarget
       let parent = $(element).closest('[data-key]')
       let path = parent.attr('data-key')
-      let obj = getProperty(actor.data, path)
-      if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
-        let temp = {...obj.contains, ...obj.collapsed }
-        let update = {
-          [path + '.-=collapsed']: null,
-          [path + '.collapsed']: {},
-          [path + '.contains']: temp,
-        }
-        actor.update(update)
-      } else if (!!obj.contains && Object.keys(obj.contains).length > 0) {
-        let temp = {...obj.contains, ...obj.collapsed }
-        let update = {
-          [path + '.-=contains']: null,
-          [path + '.contains']: {},
-          [path + '.collapsed']: temp,
-        }
-        actor.update(update)
-      } 
+      actor.toggleExpand(path)
     })
 
     html.find('.dblclkedit').dblclick(async ev => {
