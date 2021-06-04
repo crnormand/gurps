@@ -2,6 +2,15 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+0.10.0
+
+- Foundry 0.8.x compatible!
+- Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
+- Added \*Costs X trN and \*Costs X tr(*name*)
+- Added support for translated attributes in OtF formulas (Will == Vonte in Portuguese)
+- Added Ignore QTY/Count/Uses from import
+- Remember carried, parent and equipped status from previous import
+
 0.9.15
 
 - Fixed dodge values when encumbrence greater than 'none'

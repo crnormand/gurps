@@ -177,14 +177,14 @@ export class ModifierBucket extends Application {
       GURPS.performAction(action)
     }
     let users = game.users.players
-    if (usernames.length > 0) 
-      users = game.users.players.filter(u => usernames.includes(u.name))
+    if (usernames.length > 0) users = game.users.players.filter(u => usernames.includes(u.name))
     this._sendBucket(users)
     this.modifierStack.reset(saved)
   }
 
-   sendBucketToPlayer(id) {
-    if (!id) { // Only occurs if the GM clicks on 'everyone'
+  sendBucketToPlayer(id) {
+    if (!id) {
+      // Only occurs if the GM clicks on 'everyone'
       this._sendBucket(game.users.filter(u => u.id != game.user.id))
     } else {
       let users = game.users.filter(u => u.id == id) || []
@@ -196,11 +196,12 @@ export class ModifierBucket extends Application {
   // End GLOBALLY ACCESSED METHODS
   _sendBucket(users) {
     if (users.length == 0) {
-      ui.notifications.warn("No users to send to.")
+      ui.notifications.warn('No users to send to.')
       return
     }
     let mb = GURPS.ModifierBucket.modifierStack
-    if (game.user.hasRole("GAMEMASTER"))  // Only actual GMs can update other user's flags
+    if (game.user.hasRole('GAMEMASTER'))
+      // Only actual GMs can update other user's flags
       users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
     game.socket.emit('system.gurps', {
       type: 'updatebucket',
@@ -243,7 +244,7 @@ export class ModifierBucket extends Application {
     e.contextmenu(this.onRightClick.bind(this))
     e.each((_, li) => {
       li.addEventListener('dragstart', ev => {
-        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`).join(' & ') 
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`).join(' & ')
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
@@ -284,13 +285,13 @@ export class ModifierBucket extends Application {
           content: this.chatString(this.modifierStack),
           type: CONST.CHAT_MESSAGE_TYPES.OOC,
         }
-        CONFIG.ChatMessage.entityClass.create(messageData, {})
+        ChatMessage.create(messageData, {})
       } else this.showOthers()
     } else this._onenter(event)
   }
 
   async showOthers() {
-    let users = game.users.filter(u => u._id != game.user._id)
+    let users = game.users.filter(u => u.id != game.user.id)
     let content = ''
     let d = ''
     for (let user of users) {
@@ -301,10 +302,10 @@ export class ModifierBucket extends Application {
       else content += user.name + ', No modifiers'
     }
     let chatData = {
-      user: game.user._id,
+      user: game.user.id,
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       content: content,
-      whisper: [game.user._id],
+      whisper: [game.user.id],
     }
     ChatMessage.create(chatData)
   }

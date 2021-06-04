@@ -67,7 +67,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
                 WILLVar = parseInt(WILLVar, 10)
 
                 let rollString = `3d6`
-                let roll = Roll.create(rollString).roll()
+                let roll = Roll.create(rollString).evaluate({async: false})
                 let fearMod = 0
 
                 let chatContent = ``
@@ -160,12 +160,12 @@ export class FrightCheckChatProcessor extends ChatProcessor {
               <span class='success'>Fright Check SUCCESS!</span></div></div>`
                 }
                 ChatMessage.create({
-                  type: CHAT_MESSAGE_TYPES.ROLL,
+                  type: CONST.CHAT_MESSAGE_TYPES.ROLL,
                   speaker: {
                     alias: actor.name,
                   },
                   content: chatContent,
-                  roll: roll,
+                  roll: JSON.stringify(roll),
                   rollMode: game.settings.get('core', 'rollMode'),
                 })
               },
