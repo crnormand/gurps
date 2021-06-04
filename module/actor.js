@@ -66,7 +66,7 @@ export class GurpsActor extends Actor {
       for (const i of orig) {
         if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid)) {
           one = true
-          good.push(i)
+          good.push(i)    // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
         } else
           left.push(i)
       }
@@ -2547,6 +2547,7 @@ export class Equipment extends Named {
   // OMG, do NOT fuck around with this method.   So many gotchas...
   // the worst being that you cannot use array.forEach.   You must use a for loop
   static async calcUpdate(actor, eqt, objkey) {
+    if (!eqt) return
     const num = s => {
       return isNaN(s) ? 0 : Number(s)
     }
@@ -2569,7 +2570,7 @@ export class Equipment extends Named {
     }
     if (!!eqt.collapsed) {
       for (let k in eqt.collapsed) {
-        let e = eqt.contains[k]
+        let e = eqt.collapsed[k]
         await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
         cs += e.costsum
         ws += e.weightsum

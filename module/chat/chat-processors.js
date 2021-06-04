@@ -587,7 +587,7 @@ class LightChatProcessor extends ChatProcessor {
     return '/li &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off '
   }
   matches(line) {
-    this.match = line.match(/^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(\w+)? *(\d+)? *(\d+)?/i)
+    this.match = line.match(/^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i)
     return !!this.match
   }
   async process(line) {
@@ -599,7 +599,7 @@ class LightChatProcessor extends ChatProcessor {
       this.priv("Possible animations: " + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
       return
     }
-    let type = this.match[6] || ''
+    let type = this.match[7] || ''
     if (!!type) {
       let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.startsWith(type))
       if (!m) {
@@ -608,15 +608,17 @@ class LightChatProcessor extends ChatProcessor {
       }
       type = m
     }
-    let anim = { type: type, speed: parseInt(this.match[7]) || 1, intensity: parseInt(this.match[8]) || 1 }
+    let anim = { type: type, speed: parseInt(this.match[8]) || 1, intensity: parseInt(this.match[9]) || 1 }
     let data = {
       dimLight: 0,
       brightLight: 0,
       lightAngle: 360,
       lightAnimation: anim,
+      '-=lightColor': null
     }
 
     if (!this.match[2]) {
+      if (this.match[6]) data.lightColor = this.match[6]
       data.dimLight = parseInt(this.match[3] || 0)
       data.brightLight = parseInt(this.match[4] || 0)
       data.lightAngle = parseInt(this.match[5] || 360)
