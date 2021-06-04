@@ -4,7 +4,7 @@
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
   "version": "0.10.0",
   "minimumCoreVersion": "0.8.5",
-  "compatibleCoreVersion": "0.8.5",
+  "compatibleCoreVersion": "0.8.6",
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
