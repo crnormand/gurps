@@ -9,6 +9,7 @@ import {
   i18n,
   i18n_f,
   splitArgs,
+  generateUniqueId
 } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
@@ -57,9 +58,20 @@ export class GurpsActor extends Actor {
 
   // execute after every import.
   async postImport() {
-    let items = this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name))  // in case items are in the same list... add them alphabetically
+    let orig = this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name))  // in case items are in the same list... add them alphabetically
+    let good = []
+    while (orig.length > 0) {
+      let left = []
+      for (const i of orig) {
+        if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid))
+          good.push(i)
+        else
+          left.push(i)
+      }
+      orig = left
+    }
     this.ignoreRender = true
-    for (const item of items) await this.addItemData(item.data) // re-add the item equipment and features
+    for (const item of good) await this.addItemData(item.data) // re-add the item equipment and features
     this.ignoreRender = false
     
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
@@ -1648,7 +1660,7 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
-    await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
+   await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
     this.ignoreRender = true
     await this.addNewItemData(global.data)
     this._forceRender()
@@ -1767,7 +1779,9 @@ export class GurpsActor extends Actor {
   // This is how all Items are added originally.
   async addNewItemData(itemData, targetkey) {
     let localItems= await this.createEmbeddedDocuments("Item", [itemData]) // add a local Foundry Item based on some Item data
-    await this.addItemData(localItems[0].data, targetkey) // only created 1 item
+    let localItem = localItems[0]
+    await this.updateEmbeddedDocuments("Item", [{_id: localItem.id, 'data.eqt.uuid': generateUniqueId() }])
+    await this.addItemData(localItem.data, targetkey) // only created 1 item
    }
 
   // Once the Items has been added to our items list, add the equipment and any features
@@ -1814,7 +1828,7 @@ export class GurpsActor extends Actor {
     } else {
       eqt.itemid = itemData._id
       eqt.globalid = itemData.data.globalid
-      eqt.uuid = 'item-' + eqt.itemid
+      //eqt.uuid = 'item-' + eqt.itemid
       eqt.equipped = itemData.data.equipped
       eqt.img = itemData.img
       eqt.carried = itemData.data.carried

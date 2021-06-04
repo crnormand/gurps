@@ -1007,7 +1007,8 @@ async function applyModifierDesc(actor, desc) {
       await actor.update({ ['data.' + k + '.value']: delta })
     } 
     if (target.match(/^tr/i)) {
-      return await GURPS.ChatProcessors.startProcessingLines('/' + target + " -" + delta)
+      await GURPS.ChatProcessors.startProcessingLines('/' + target + " -" + delta)
+      return null
     }
   }
   parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
