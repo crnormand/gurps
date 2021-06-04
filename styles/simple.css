@@ -1850,3 +1850,20 @@ body {
   padding-right: 0.35em;
   padding-top: 2px;
 }
+
+.desc {
+  position: relative;
+  }
+
+.desc .tooltippic {
+  visibility: hidden;
+  position: absolute;
+  z-index:999;
+  bottom: 20px;
+  left: 85%;
+}
+
+.desc:hover .tooltippic {
+  visibility: visible;
+}
+

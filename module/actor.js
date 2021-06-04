@@ -62,13 +62,20 @@ export class GurpsActor extends Actor {
     let good = []
     while (orig.length > 0) {
       let left = []
+      let one = false
       for (const i of orig) {
-        if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid))
+        if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid)) {
+          one = true
           good.push(i)
-        else
+        } else
           left.push(i)
       }
-      orig = left
+      if (one)  
+        orig = left
+      else {
+        good = [...good, ...left]
+        orig = []
+      }
     }
     this.ignoreRender = true
     for (const item of good) await this.addItemData(item.data) // re-add the item equipment and features
