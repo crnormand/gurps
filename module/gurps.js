@@ -1011,7 +1011,7 @@ async function applyModifierDesc(actor, desc) {
       return null
     }
   }
-  parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
+  let parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {
     return parseInt(parse)
   }
