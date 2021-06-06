@@ -752,6 +752,9 @@
   "GURPS.settingPlayerChatPrivate": "Player Chat commands private",
   "GURPS.settingHintPlayerChatPrivate": "If checked, most of the chat commands (e.g. /hp, /fp, /qty, etc.) will display as a whisper to the player (instead of an Out Of Character message).   If you trust your players, and don't like to see the chat fill up with their chat commands, turn this on.",
 
+  "GURPS.settingQuintessence": "Attributes: Quintessence",
+  "GURPS.settingHintQuintessence": "From Pyramid #3/120: Adds Quintessence, the Fifth Attribute",
+
   "GURPS.actions": "Actions",
   "GURPS.addAdvantage": "Add an Advantage",
   "GURPS.addMeleeAttack": "Add a Melee Attack",
