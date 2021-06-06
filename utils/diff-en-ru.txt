@@ -1,29 +1,42 @@
 ------------
 keys in [lang/ru.json] that are missing in [lang/en.json]
-  GURPS.copyright
+  __NOTE TO TRANSLATOR__
 ------------
 keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.Dice
   GURPS.ID
+  GURPS.TransferTo
   GURPS.actions
+  GURPS.addAdvantage
   GURPS.addApplyTo
   GURPS.addDamageReduction
   GURPS.addExplosion
   GURPS.addExplosionHex
   GURPS.addExplosionHexes
+  GURPS.addMeleeAttack
+  GURPS.addRangedAttack
+  GURPS.addSkill
+  GURPS.addSpell
+  GURPS.advantage
+  GURPS.advantages
   GURPS.aim
   GURPS.allOutDefense
+  GURPS.bonuses
+  GURPS.cannotDragNonFoundryEqt
+  GURPS.changelog
   GURPS.chatClearing
   GURPS.chatClearingLastActor
   GURPS.chatDoesNotHaveEnough
   GURPS.chatExceededMax
   GURPS.chatExceededMaxUses
-  GURPS.chatGameAidUsersGuide
+  GURPS.chatLightSource
   GURPS.chatMoreThanOneActor
   GURPS.chatMoreThanOneToken
+  GURPS.chatMultipleOwnedFound
   GURPS.chatMustBeACheck
   GURPS.chatNoActorFound
   GURPS.chatNoEquipmentMatched
+  GURPS.chatNoOwnedTokenFound
   GURPS.chatNoResourceTracker
   GURPS.chatNoStatusMatched
   GURPS.chatNoTokens
@@ -37,6 +50,11 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatSuffersCripplingInjury
   GURPS.chatToApplyEffects
   GURPS.chatToggling
+  GURPS.chatTokenLightPicker
+  GURPS.chatTurnOffReeling
+  GURPS.chatTurnOffTired
+  GURPS.chatTurnOnReeling
+  GURPS.chatTurnOnTired
   GURPS.chatUnableToFindMacro
   GURPS.chatUnrecognizedFormat
   GURPS.chatUses
@@ -63,10 +81,18 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.dragrulerWalk
   GURPS.dxCheckOrFallApplyProne
   GURPS.dxJudoAcrobaticsCheckToRemainStanding
+  GURPS.effectsNotApplicableDefenses
+  GURPS.effectsTemporaryAttributePenalties
+  GURPS.equipmentCost
+  GURPS.equipmentEquipped
+  GURPS.equipmentMaxUses
+  GURPS.equipmentQuantity
+  GURPS.equipmentUses
   GURPS.fallsDownApplyProne
   GURPS.forHighPainThreshold
   GURPS.forLowPainThreshold
   GURPS.forPerfectBalance
+  GURPS.gameAidUsersGuide
   GURPS.hitLocationArm, holding shield
   GURPS.hitLocationChinks in Other
   GURPS.hitLocationChinks in Torso
@@ -86,10 +112,38 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.hitLocationRight Arm, holding shield
   GURPS.hitLocationSkull, from behind
   GURPS.hitLocationVitals, Heart
+  GURPS.importCannotImportGCADirectly
+  GURPS.importCannotImportGCSDirectly
+  GURPS.importCurrentVersions
+  GURPS.importErrorParsingXML
+  GURPS.importFantasyGroundUnsupported
+  GURPS.importFileVersion
+  GURPS.importGCABadBlockForDB
+  GURPS.importGCANoBodyPlan
+  GURPS.importGCANoHideFlag
+  GURPS.importGCANoInnateRangedAndParent
+  GURPS.importGCANoMeleeIfAlsoRanged
+  GURPS.importGCANoParent
+  GURPS.importGCANoSanitizeNotes
+  GURPS.importGCANoSanitizedEquipmentPageRefs
+  GURPS.importGCSNoMeleeRangedNotesForSameItem
+  GURPS.importGCSNoParent
+  GURPS.importGCSNoSelfControl
+  GURPS.importGCSNoUses
+  GURPS.importGenericError
+  GURPS.importNoCharacterFormat
+  GURPS.importNoXMLDetected
+  GURPS.importSeeUsersGuide
+  GURPS.importSuccessful
+  GURPS.importTooManyContainers
+  GURPS.itemBonusText
+  GURPS.itemEditor
+  GURPS.itemFeatures
   GURPS.knockbackCheck
   GURPS.lighting
   GURPS.lowPainThresholdDoubles
   GURPS.majorWoundEffectLabel
+  GURPS.melee
   GURPS.meleeAttack
   GURPS.modifierAddRangeRuler
   GURPS.modifierAddRangeRulerHint
@@ -163,7 +217,6 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierLightTorch
   GURPS.modifierLightTwilight
   GURPS.modifierMightyBlow
-  GURPS.modifierMouseOff
   GURPS.modifierMoveAttack
   GURPS.modifierOthers
   GURPS.modifierPosture
@@ -224,6 +277,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierWillCheck
   GURPS.name
   GURPS.notAffected
+  GURPS.notes
+  GURPS.ok
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
@@ -244,15 +299,22 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.pdfMajorWound
   GURPS.pdfMightyBlow
   GURPS.pdfMoveAttack
+  GURPS.pdfPageReference
+  GURPS.pdfReeling
+  GURPS.pdfRef
   GURPS.pdfShieldDB
   GURPS.pdfShieldRush
   GURPS.pdfShock
   GURPS.pdfStrongAttack
   GURPS.pdfTelegraphicAttack
   GURPS.pdfTempAttribPenalties
+  GURPS.pdfTired
+  GURPS.quantity
   GURPS.ranged
+  GURPS.rangedAttack
   GURPS.rateOfFire
   GURPS.resolve
+  GURPS.resource
   GURPS.resourceCopyTemplate
   GURPS.resourceDeleteTracker
   GURPS.resourceEditTracker
@@ -263,8 +325,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.shockPenalty
   GURPS.shockPenaltyNextTurnOnly
   GURPS.showQuestion
+  GURPS.skill
   GURPS.skillAcrobatics
   GURPS.skillJudo
+  GURPS.skillLevel
   GURPS.slamAOAStrong
   GURPS.slamCalculator
   GURPS.slamForShieldDB
@@ -272,41 +336,45 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.slamShieldDB
   GURPS.slamVelocity
   GURPS.slams
+  GURPS.spell
+  GURPS.spellDifficulty
+  GURPS.spellResist
   GURPS.suffersAMajorWound
   GURPS.suffersHeadVitalsWound
   GURPS.suffersKnockback
   GURPS.target
+  GURPS.title
+  GURPS.warning
+  GURPS.weight
   GURPS.yard
-  Skill Names__
-  __ Character AddsDisadsPerksQuirks__
-  __ Character Skills__
-  __Apply Damage Dialog__
-  __Body Plan__
-  __Char Sheet__
-  __Character Attributes__
-  __Character Description__
-  __Character Encumbrance/Lift__
-  __Character Equipment__
-  __Character Points__
-  __Character Sheet Identity__
-  __Character Sheet Miscellaneous__
-  __Character Spells__
-  __Character Weapons__
-  __Chat Messages__
-  __Damage Types__
-  __Drag Ruler__
-  __Fantastic Dungeon Grappling__
-  __Hit Location__
-  __Modifier Bucket__
-  __PDF References__
-  __Potentially Removable__
-  __Resolve Damage Dialog__
-  __Resource Trackers__
-  __Slam Calculator__
-  __Status/Conditions__
+  GURPS.youDoNotHavePermssion
+  __Import Messages__
 ------------
 values in [lang/en.json] that are the same in [lang/ru.json]
-  GURPS.changelog: README
-  GURPS.highest: Highest
-  GURPS.of: of 
-  GURPS.title: GURPS
+  Skill Names__: =========
+  __ Character AddsDisadsPerksQuirks__: =========
+  __ Character Skills__: =========
+  __Apply Damage Dialog__: =========
+  __Body Plan__: =========
+  __Char Sheet__: =========
+  __Character Attributes__: =========
+  __Character Description__: =========
+  __Character Encumbrance/Lift__: =========
+  __Character Equipment__: =========
+  __Character Points__: =========
+  __Character Sheet Identity__: =========
+  __Character Sheet Miscellaneous__: =========
+  __Character Spells__: =========
+  __Character Weapons__: =========
+  __Chat Messages__: =========
+  __Damage Types__: =========
+  __Drag Ruler__: =========
+  __Fantastic Dungeon Grappling__: =========
+  __Hit Location__: =========
+  __Modifier Bucket__: =========
+  __PDF References__: =========
+  __Permissions__: =========
+  __Resolve Damage Dialog__: =========
+  __Resource Trackers__: =========
+  __Slam Calculator__: =========
+  __Status/Conditions__: =========

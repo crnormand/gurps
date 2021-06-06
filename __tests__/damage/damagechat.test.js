@@ -208,8 +208,7 @@ describe('DamageChat', () => {
 
     test('id is set to unique ID', () => {
       // create mocks
-      results.mockReturnValueOnce([4])
-      create.mockReturnValueOnce({ roll: () => {}, results: results, dice: [{ results: [] }] })
+      create.mockReturnValueOnce({ evaluate: () => {}, result: '4', dice: [{ results: [] }] })
       global.Roll = { create: create }
 
       let diceData = { formula: '1d6' }

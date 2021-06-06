@@ -7,7 +7,7 @@
 'By Brian Ronnle, enhanced for Foundry VTT by Chris Normand/Nose66
 'Based on the original export filter by Graham Brand (Spyke)
 '
-Const LastUpdated = 20210217
+Const LastUpdated = 20210517
 ' Last Updated: Nov 25, 2020
 ' v1
 '
@@ -41,7 +41,7 @@ Sub Main()
 
     ' begin the xml file
     Paragraph = "<?xml version=""1.0"" encoding=""iso-8859-1""?>"
-    Paragraph = "<root release=""Foundry"" version=""GCA-7"">"
+    Paragraph = "<root release=""Foundry"" version=""GCA-8"">"
     Paragraph = "<character>"
 
     ' in Fantasy Grounds the <name> field must be at the top level
@@ -631,8 +631,7 @@ Sub PrintAds()
     ' print the templates, metatraits, etc
     If Char.Count(Packages) > 0 Then
         For i = 1 To Char.Items.Count
-            If Char.Items(i).ItemType = Packages Then
-			    ' And Char.Items(i).TagItem("hide") = "yes" Then
+            If Char.Items(i).ItemType = Packages And Char.Items(i).TagItem("hide") = "" Then
                 ' it's a package and not hidden
                 ads_index = ads_index + 1
 
@@ -667,8 +666,7 @@ Sub PrintAds()
     If Char.Count(Ads) > 0 Then
 
         For i = 1 To Char.Items.Count
-            If Char.Items(i).ItemType = Ads Then
-			    ' And Char.Items(i).TagItem("hide") = "yes" Then
+            If Char.Items(i).ItemType = Ads And Char.Items(i).TagItem("hide") = "" Then
                 ' it's an advantage and not hidden
                 Okay = True
                 If Okay Then
@@ -711,8 +709,7 @@ Sub PrintAds()
     If Char.Count(Perks) > 0 Then
 
         For i = 1 To Char.Items.Count
-            If Char.Items(i).ItemType = Perks Then
-				' And Char.Items(i).TagItem("hide") = "" Then
+            If Char.Items(i).ItemType = Perks And Char.Items(i).TagItem("hide") = "" Then
                 ' it's a perk and not hidden
                 ads_index = ads_index + 1
 
@@ -767,8 +764,7 @@ Sub PrintDisads()
     If Char.Count(Disads) > 0 Then
 
         For i = 1 To Char.Items.Count
-            If Char.Items(i).ItemType = Disads Then
-			    ' And Char.Items(i).TagItem("hide") = "yes" Then
+            If Char.Items(i).ItemType = Disads And Char.Items(i).TagItem("hide") = "" Then
                 ' it's a disadvantage and not hidden
 
                 ads_index = ads_index + 1
@@ -808,8 +804,7 @@ Sub PrintDisads()
     If Char.Count(Quirks) > 0 Then
 
         For i = 1 To Char.Items.Count
-            If Char.Items(i).ItemType = Quirks Then 
-			    ' And Char.Items(i).TagItem("hide") = "" Then
+            If Char.Items(i).ItemType = Quirks And Char.Items(i).TagItem("hide") = "" Then
                 ' it's a quirk and not hidden
                 ads_index = ads_index + 1
 

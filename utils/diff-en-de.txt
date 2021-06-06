@@ -1,158 +1,209 @@
 ------------
 keys in [lang/de.json] that are missing in [lang/en.json]
-  GURPS.copyright
-  GURPS.dxCheckOrFall
-  GURPS.fallsDown
+  __NOTE TO TRANSLATOR__
+  __Skill Names__
 ------------
 keys in [lang/en.json] that are missing in [lang/de.json]
-  GURPS.chatSelectSelfOrNameTokens
+  GURPS.BODYPLANcentaur
+  GURPS.BODYPLANhumanoid
+  GURPS.BODYPLANhumanoid expanded
+  GURPS.FP
+  GURPS.HP
+  GURPS.ID
+  GURPS.SkillDXA
+  GURPS.SkillDXE
+  GURPS.SkillDXH
+  GURPS.SkillDXVH
+  GURPS.SkillHTA
+  GURPS.SkillHTE
+  GURPS.SkillHTH
+  GURPS.SkillHTVH
+  GURPS.SkillIQA
+  GURPS.SkillIQE
+  GURPS.SkillIQH
+  GURPS.SkillIQVH
+  GURPS.SkillPerA
+  GURPS.SkillPerE
+  GURPS.SkillPerH
+  GURPS.SkillPerVH
+  GURPS.SkillWillA
+  GURPS.SkillWillE
+  GURPS.SkillWillH
+  GURPS.SkillWillVH
+  GURPS.TransferTo
+  GURPS.addAdvantage
+  GURPS.addArmorDivisor
+  GURPS.addExplosion
+  GURPS.addHardenedDRLevel
+  GURPS.addInjuryTolerance
+  GURPS.addLargeAreaInjury
+  GURPS.addMeleeAttack
+  GURPS.addRangedAttack
+  GURPS.addSkill
+  GURPS.addSpell
+  GURPS.addWHard
+  GURPS.advantage
+  GURPS.advantages
+  GURPS.allOutDefense
+  GURPS.attributesDX
+  GURPS.attributesHT
+  GURPS.attributesIQ
+  GURPS.attributesPER
+  GURPS.attributesST
+  GURPS.attributesWILL
+  GURPS.bonuses
+  GURPS.bulk
+  GURPS.chatLightSource
+  GURPS.chatMultipleOwnedFound
+  GURPS.chatNoOwnedTokenFound
+  GURPS.chatQty
   GURPS.chatSuffersCripplingInjury
+  GURPS.chatTokenLightPicker
+  GURPS.chatTurnOffReeling
+  GURPS.chatTurnOffTired
+  GURPS.chatTurnOnReeling
+  GURPS.chatTurnOnTired
+  GURPS.chatUses
+  GURPS.check1
+  GURPS.check2
+  GURPS.check3
+  GURPS.check4
+  GURPS.collapse
+  GURPS.copyrightGCS
   GURPS.copyrightGURPS
-  GURPS.dxCheckOrFallApplyProne
-  GURPS.dxJudoAcrobaticsCheckToRemainStanding
-  GURPS.fallsDownApplyProne
-  GURPS.forHighPainThreshold
-  GURPS.forLowPainThreshold
-  GURPS.forPerfectBalance
-  GURPS.knockbackCheck
+  GURPS.damageAbbrevburn
+  GURPS.damageAbbrevcor
+  GURPS.damageAbbrevcr
+  GURPS.damageAbbrevcut
+  GURPS.damageAbbrevdmg
+  GURPS.damageAbbrevfat
+  GURPS.damageAbbrevimp
+  GURPS.damageAbbrevpi
+  GURPS.damageAbbrevpi+
+  GURPS.damageAbbrevpi++
+  GURPS.damageAbbrevpi-
+  GURPS.damageAbbrevtox
+  GURPS.damageTypeHuge Piercing
+  GURPS.damageTypeLarge Piercing
+  GURPS.damageTypePiercing
+  GURPS.damageTypeSmall Piercing
+  GURPS.effectsNotApplicableDefenses
+  GURPS.effectsTemporaryAttributePenalties
+  GURPS.equipmentCost
+  GURPS.equipmentEquipped
+  GURPS.equipmentMaxUses
+  GURPS.equipmentQuantity
+  GURPS.equipmentUses
+  GURPS.gameAidUsersGuide
+  GURPS.grapplingCPAbbrev
+  GURPS.highPainThreshold
+  GURPS.hitLocationArm
+  GURPS.hitLocationArm 1-2
+  GURPS.hitLocationArm 3-4
+  GURPS.hitLocationArm 5-6
+  GURPS.hitLocationArm 7-8
+  GURPS.hitLocationArm*
+  GURPS.hitLocationHand
+  GURPS.identityName
+  GURPS.importCannotImportGCADirectly
+  GURPS.importCannotImportGCSDirectly
+  GURPS.importCurrentVersions
+  GURPS.importErrorParsingXML
+  GURPS.importFantasyGroundUnsupported
+  GURPS.importFileVersion
+  GURPS.importGCABadBlockForDB
+  GURPS.importGCANoBodyPlan
+  GURPS.importGCANoHideFlag
+  GURPS.importGCANoInnateRangedAndParent
+  GURPS.importGCANoMeleeIfAlsoRanged
+  GURPS.importGCANoParent
+  GURPS.importGCANoSanitizeNotes
+  GURPS.importGCANoSanitizedEquipmentPageRefs
+  GURPS.importGCSNoMeleeRangedNotesForSameItem
+  GURPS.importGCSNoParent
+  GURPS.importGCSNoSelfControl
+  GURPS.importGCSNoUses
+  GURPS.importGenericError
+  GURPS.importNoCharacterFormat
+  GURPS.importNoXMLDetected
+  GURPS.importSeeUsersGuide
+  GURPS.importSuccessful
+  GURPS.importTooManyContainers
+  GURPS.itemBonusText
+  GURPS.itemEditor
+  GURPS.itemFeatures
+  GURPS.level
+  GURPS.lowPainThreshold
   GURPS.lowPainThresholdDoubles
-  GURPS.majorWoundEffectLabel
+  GURPS.max
+  GURPS.maximum
+  GURPS.melee
+  GURPS.minimum
+  GURPS.modifierFeverishDef
+  GURPS.modifierHeroicCharge
+  GURPS.modifierScaleNormal
+  GURPS.modifierTrivial
+  GURPS.name
+  GURPS.normal
+  GURPS.notes
+  GURPS.ok
+  GURPS.overridden
+  GURPS.pdfAllOutDefense
+  GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
+  GURPS.pdfDeceptiveAttack
+  GURPS.pdfDeterminedAttack
+  GURPS.pdfDodgeAcrobatic
+  GURPS.pdfDodgeDive
+  GURPS.pdfDodgeFailedAcro
+  GURPS.pdfDodgeRear
+  GURPS.pdfDodgeRetreat
+  GURPS.pdfDodgeSide
+  GURPS.pdfExtraEffort
   GURPS.pdfHPT
+  GURPS.pdfHeroicCharge
   GURPS.pdfKnockback
   GURPS.pdfKnockdownStun
   GURPS.pdfLPT
   GURPS.pdfMajorWound
+  GURPS.pdfMightyBlow
+  GURPS.pdfMoveAttack
+  GURPS.pdfPageReference
+  GURPS.pdfReeling
+  GURPS.pdfRef
+  GURPS.pdfShieldDB
+  GURPS.pdfShieldRush
   GURPS.pdfShock
+  GURPS.pdfStrongAttack
+  GURPS.pdfTelegraphicAttack
   GURPS.pdfTempAttribPenalties
-  GURPS.shockPenalty
-  GURPS.shockPenaltyNextTurnOnly
+  GURPS.pdfTired
+  GURPS.perfectBalance
+  GURPS.portrait
+  GURPS.quantity
+  GURPS.rangedAttack
+  GURPS.rateOfFire
+  GURPS.rcl
+  GURPS.resource
+  GURPS.resourceTemplateAlias
+  GURPS.rof
+  GURPS.skill
   GURPS.skillAcrobatics
   GURPS.skillJudo
+  GURPS.skillLevel
+  GURPS.slamAOAStrong
+  GURPS.spell
+  GURPS.spellDifficulty
+  GURPS.spellResist
   GURPS.suffersAMajorWound
-  GURPS.suffersHeadVitalsWound
-  GURPS.suffersKnockback
+  GURPS.title
+  GURPS.warning
+  GURPS.weight
   GURPS.yard
   Skill Names__
-  __Potentially Removable__
+  __Import Messages__
 ------------
 values in [lang/en.json] that are the same in [lang/de.json]
-  GURPS.BODYPLANcentaur: Centaur
-  GURPS.BODYPLANhumanoid expanded: Humanoid, Expanded (GCA)
-  GURPS.BODYPLANhumanoid: Humanoid
-  GURPS.FP: FP
-  GURPS.HP: HP
-  GURPS.ID: ID
-  GURPS.SkillDXA: DX/A
-  GURPS.SkillDXE: DX/E
-  GURPS.SkillDXH: DX/H
-  GURPS.SkillDXVH: DX/VH
-  GURPS.SkillHTA: HT/A
-  GURPS.SkillHTE: HT/E
-  GURPS.SkillHTH: HT/H
-  GURPS.SkillHTVH: HT/VH
-  GURPS.SkillIQA: IQ/A
-  GURPS.SkillIQE: IQ/E
-  GURPS.SkillIQH: IQ/H
-  GURPS.SkillIQVH: IQ/VH
-  GURPS.SkillPerA: Per/A
-  GURPS.SkillPerE: Per/E
-  GURPS.SkillPerH: Per/H
-  GURPS.SkillPerVH: Per/VH
-  GURPS.SkillWillA: Will/A
-  GURPS.SkillWillE: Will/E
-  GURPS.SkillWillH: Will/H
-  GURPS.SkillWillVH: Will/VH
-  GURPS.addArmorDivisor: Armor Divisor
-  GURPS.addExplosion: Explosion
-  GURPS.addHardenedDRLevel: Hardened DR Level
-  GURPS.addInjuryTolerance: Injury Tolerance
-  GURPS.addLargeAreaInjury: Large-Area Injury
-  GURPS.addWHard: w/Hard
-  GURPS.allOutDefense: All-Out Defense
-  GURPS.attributesDX: DX
-  GURPS.attributesHT: HT
-  GURPS.attributesIQ: IQ
-  GURPS.attributesPER: Per
-  GURPS.attributesST: ST
-  GURPS.attributesWILL: Will
-  GURPS.bulk: Bulk
-  GURPS.chatGameAidUsersGuide: GURPS 4e Game Aid USERS GUIDE
-  GURPS.chatQty: 'QTY'
-  GURPS.chatUses: 'USES'
-  GURPS.check1: Check #1
-  GURPS.check2: Check #2
-  GURPS.check3: Check #3
-  GURPS.check4: Check #4
-  GURPS.collapse: Collapse
-  GURPS.copyrightGCS: GCS is copyrighted 1998-2020 by Richard A. Wilkes. All rights reserved 
-  GURPS.damageAbbrevburn: burn
-  GURPS.damageAbbrevcor: cor
-  GURPS.damageAbbrevcr: cr
-  GURPS.damageAbbrevcut: cut
-  GURPS.damageAbbrevdmg: dmg
-  GURPS.damageAbbrevfat: fat
-  GURPS.damageAbbrevimp: imp
-  GURPS.damageAbbrevpi++: pi++
-  GURPS.damageAbbrevpi+: pi+
-  GURPS.damageAbbrevpi: pi
-  GURPS.damageAbbrevpi-: pi-
-  GURPS.damageAbbrevtox: tox
-  GURPS.damageTypeHuge Piercing: Huge Piercing
-  GURPS.damageTypeLarge Piercing: Large Piercing
-  GURPS.damageTypePiercing: Piercing
-  GURPS.damageTypeSmall Piercing: Small Piercing
-  GURPS.grapplingCPAbbrev: ctrl
-  GURPS.highPainThreshold: High Pain Threshold
-  GURPS.highest: Highest
-  GURPS.hitLocationArm 1-2: Arm 1-2
-  GURPS.hitLocationArm 3-4: Arm 3-4
-  GURPS.hitLocationArm 5-6: Arm 5-6
-  GURPS.hitLocationArm 7-8: Arm 7-8
-  GURPS.hitLocationArm*: Arm
-  GURPS.hitLocationArm: Arm
-  GURPS.hitLocationHand: Hand
-  GURPS.hitLocationLeg 7-8: Arm 7-8
-  GURPS.identityName: Name
-  GURPS.level: Level
-  GURPS.lowPainThreshold: Low Pain Threshold
-  GURPS.max: Max
-  GURPS.maximum: Maximum
-  GURPS.minimum: Minimum
-  GURPS.modifierFeverishDef: Feverish Defense
-  GURPS.modifierHeroicCharge: Heroic Charge
-  GURPS.modifierScaleNormal: Normal (100%)
-  GURPS.modifierTrivial: Trivial
-  GURPS.name: Name
-  GURPS.normal: Normal
-  GURPS.overridden: overridden
-  GURPS.pdfAllOutDefense: B365
-  GURPS.pdfBlockRetreat: B377
-  GURPS.pdfDeceptiveAttack: B369
-  GURPS.pdfDeterminedAttack: B365
-  GURPS.pdfDodgeAcrobatic: B374
-  GURPS.pdfDodgeDive: B377
-  GURPS.pdfDodgeFailedAcro: B375
-  GURPS.pdfDodgeRear: B391
-  GURPS.pdfDodgeRetreat: B375
-  GURPS.pdfDodgeSide: B390
-  GURPS.pdfExtraEffort: B357
-  GURPS.pdfHeroicCharge: MA131
-  GURPS.pdfMightyBlow: MA131
-  GURPS.pdfMoveAttack: B365
-  GURPS.pdfShieldDB: B374
-  GURPS.pdfShieldRush: B372
-  GURPS.pdfStrongAttack: B365
-  GURPS.pdfTelegraphicAttack: MA113
-  GURPS.perfectBalance: Perfect Balance
-  GURPS.portrait: Portrait
-  GURPS.rateOfFire: Rate of Fire
-  GURPS.rcl: Rcl
-  GURPS.resourceTemplateAlias: Alias
-  GURPS.rof: RoF
-  GURPS.slamAOAStrong: All-Out Attack (Strong)
-  GURPS.title: GURPS
-  GURPS.yards: yards
   __ Character AddsDisadsPerksQuirks__: =========
   __ Character Skills__: =========
   __Apply Damage Dialog__: =========
@@ -174,6 +225,7 @@ values in [lang/en.json] that are the same in [lang/de.json]
   __Hit Location__: =========
   __Modifier Bucket__: =========
   __PDF References__: =========
+  __Permissions__: =========
   __Resolve Damage Dialog__: =========
   __Resource Trackers__: =========
   __Slam Calculator__: =========

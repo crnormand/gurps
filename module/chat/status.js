@@ -96,21 +96,9 @@ export default class StatusChatProcessor extends ChatProcessor {
     let list = tokens.filter(it => it.owned)
     if (list.length === 1) return list
 
-    let msg =
-      list.length === 0
-        ? i18n('GURPS.chatOwnedTokenFound', 'You do not own any tokens in this scene.')
-        : i18n(
-            'GURPS.chatMultipleOwnedFound',
-            `You own more than one token in this scene. You can either select one and retry this command without the '@self' keyword, or use the ':name' option.`
-          )
+    let msg = list.length === 0 ? i18n('GURPS.chatNoOwnedTokenFound') : i18n('GURPS.chatMultipleOwnedFound')
     ui.notifications.warn(msg)
     return null
-
-    // return !!GURPS.LastActor
-    //   ? !!GURPS.LastActor.token
-    //     ? [GURPS.LastActor.token]
-    //     : GURPS.LastActor.getActiveTokens()
-    //   : []
   }
 
   findEffect(statusText) {

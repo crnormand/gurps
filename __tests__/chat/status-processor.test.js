@@ -16,6 +16,7 @@ const i18n = {
   'GURPS.chatToggling': 'Toggling',
   'GURPS.chatClearing': 'Clearing',
   'GURPS.for': 'for',
+  'GURPS.chatNoOwnedTokenFound': 'You do not own any tokens in this scene.',
   'GURPS.chatYouMustSelectTokens': 'You must select tokens (or use',
   'GURPS.chatNoStatusMatched': 'No status matched',
   'GURPS.chatSelectSelfOrNameTokens': `You must select tokens, use '@self', or use ':name' to apply effects.`,

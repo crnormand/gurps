@@ -1,14 +1,19 @@
 'use strict'
 import { Melee, Ranged, Skill, Spell, Advantage } from './actor.js'
+import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
+import { recurselist } from '../lib/utilities.js'
 
 export class GurpsItemSheet extends ItemSheet {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      classes: ['gurps', 'sheet', 'item'],
+      classes: ['sheet', 'item'],
       template: 'systems/gurps/templates/item-sheet.html',
-      width: 620,
-      height: 200,
+      width: 680,
+      height: 'auto',
+      resizable: false,
+      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
 
@@ -16,11 +21,12 @@ export class GurpsItemSheet extends ItemSheet {
 
   /** @override */
   getData() {
-    const data = super.getData()
-    data.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
-    data.name = this.item.name
-
-    return data
+    const sheetData = super.getData()
+    sheetData.data = sheetData.data.data
+    sheetData.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
+    sheetData.name = this.item.name
+    console.log(sheetData)
+    return sheetData
   }
 
   /* -------------------------------------------- */
@@ -30,76 +36,91 @@ export class GurpsItemSheet extends ItemSheet {
     this.html = html
     super.activateListeners(html)
 
-    html.find('#itemname').change(ev =>
-      this.item.update({
-        'data.eqt.name': ev.currentTarget.value,
-        name: ev.currentTarget.value,
+    html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
+    html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
+    html.find('#itemname').change(ev => {
+      let nm = ev.currentTarget.value
+      let commit = {
+        'data.eqt.name': nm,
+        name: nm
+      }
+      recurselist(this.item.data.data.melee, (e, k, d) => {
+        commit = {...commit, ...{ ['data.melee.' + k + ".name"]: nm }}
       })
-    )
-    html.find('.count').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
-    
-    html.find('#item4').click(ev => {
-      this.item.update({ 
-        'data.equipped': true,
-        'data.bonuses': `DX+10
-S:Fast*+20
-iq+30`})
-}
-)
+      recurselist(this.item.data.data.ranged, (e, k, d) => {
+        commit = {...commit, ...{ ['data.melee.' + k + ".name"]: nm }}
+      })
+      this.item.update(commit)
+    })
+//    html.find('#quantity').change(ev => this.item.update({ 'data.eqt.count': parseInt(ev.currentTarget.value) }))
 
-    html.find('#item1').click(ev => {
+    html.find('#add-melee').click(ev => {
       ev.preventDefault()
       let m = new Melee()
       m.name = this.item.name
-      m.level = 14
-      m.damage = '2d cut'
-      m.mode = 'swing'
-      m.otf = 'DX-1'
-      m.weight = 99
-      m.techlevel = 'tl99'
-      m.cost = 99
-      m.reach = '99'
-      m.parry = '9'
-      m.block = '8'
-      let melee = this.item.data.data.melee
-      GURPS.put(melee, m)
-      this.item.update({ 'data.melee': melee })
+      this._addToList('melee', m)
     })
-    html.find('#item2').click(ev => {
+
+    html.find('.delete.button').click(this._deleteKey.bind(this))
+
+    html.find('#add-ranged').click(ev => {
       ev.preventDefault()
       let r = new Ranged()
       r.name = this.item.name
-      r.otf = 'DX-2'
-      r.type = 'DX/E'
-      r.bulk = 1
       r.legalityclass = 'lc'
-      r.ammo = ''
-      r.mode = ''
-      r.level = 13
-      r.damage = '1d+1 imp'
-      r.acc = 3
-      r.rof = 1
-      r.shots = ''
-      r.rcl = ''
-      let list = this.item.data.data.ranged
-      GURPS.put(list, r)
-      this.item.update({ 'data.ranged': list })
+      this._addToList('ranged', r)
     })
-    html.find('#item3').click(ev => {
+
+    html.find('#add-skill').click(ev => {
       ev.preventDefault()
       let r = new Skill()
-      r.name = 'Skill for ' + this.item.name
-      r.otf = 'IQ-4|Traps-2'
-      r.level = 11
-      r.relativelevel = 'IQ-4'
-      let list = this.item.data.data.skills
-      GURPS.put(list, r)
-      this.item.update({ 'data.skills': list })
+      r.rsl = '-'
+      this._addToList('skills', r)
+    })
+
+    html.find('#add-spell').click(ev => {
+      ev.preventDefault()
+      let r = new Spell()
+      this._addToList('spells', r)
+    })
+
+    html.find('#add-ads').click(ev => {
+      ev.preventDefault()
+      let r = new Advantage()
+      this._addToList('ads', r)
     })
   }
-  
+
+  async _deleteKey(ev) {
+    let key = ev.currentTarget.getAttribute('name')
+    let path = ev.currentTarget.getAttribute('data-path')
+    GURPS.removeKey(this.item, path + '.' + key)
+  }
+
+  async _onDrop(event) {
+    let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
+    if (!['melee', 'ranged', 'skills', 'spells', 'ads', 'equipment'].includes(dragData.type)) return
+    let srcActor = game.actors.get(dragData.actorid)
+    let srcData = getProperty(srcActor.data, dragData.key)
+    if (dragData.type == 'equipment') {
+      this.item.update({
+        name: srcData.name,
+        'data.eqt': srcData,
+      })
+      return
+    }
+    this._addToList(dragData.type, srcData)
+  }
+
+  _addToList(key, data) {
+    let list = this.item.data.data[key] || {}
+    GURPS.put(list, data)
+    this.item.update({ ['data.' + key]: list })
+  }
+
   close() {
     super.close()
+    this.item.update({"data.eqt.name": this.item.name})
     if (!!this.object.editingActor) this.object.editingActor.updateItem(this.object)
   }
 }

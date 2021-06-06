@@ -23,12 +23,9 @@ export default class ModifierBucketEditor extends Application {
     return mergeObject(super.defaultOptions, {
       id: 'ModifierBucketEditor',
       template: 'systems/gurps/templates/modifier-bucket/tooltip-window.html',
-      // resizeable: true,
       minimizable: false,
       width: 820,
-      // height: 'auto',
       scale: scale,
-      // popOut: false,
       classes: ['modifier-bucket'],
     })
   }
@@ -52,11 +49,11 @@ export default class ModifierBucketEditor extends Application {
   }
 
   get journals() {
+    let modifierJournalIds = ModifierBucketJournals.getJournalIds()
     let journals = Array.from(game.journal)
-    journals = game.data.journal
-      .filter(it => ModifierBucketJournals.getJournalIds().includes(it._id))
-      .map(it => game.journal.get(it._id))
-    journals = journals.filter(it => it.hasPerm(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
+      .filter(it => modifierJournalIds.includes(it.id))
+      .map(it => game.journal.get(it.id))
+    journals = journals.filter(it => it.testUserPermission(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
     return journals
   }
 
@@ -81,7 +78,7 @@ export default class ModifierBucketEditor extends Application {
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
     data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
-    data.users = game.users?.filter(u => u._id != game.user._id) || []
+    data.users = game.users?.filter(u => u.id != game.user.id) || []
     data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
     data.lightingmods = ModifierLiterals.LightingModifiers
@@ -172,6 +169,17 @@ export default class ModifierBucketEditor extends Application {
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
 
     GURPS.hookupGurps(html, this)
+    // Support RMB on Tooltip window
+    html.find('.gurpslink').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.glinkmod').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.glinkmodplus').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.glinkmodminus').contextmenu(GURPS.onRightClickGurpslink)
+    html.find('.pdflink').contextmenu(event => {
+      event.preventDefault()
+      let el = event.currentTarget
+      GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
+    })
+
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))

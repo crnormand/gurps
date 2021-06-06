@@ -10,19 +10,23 @@ import {
   GurpsActorEditorSheet,
   GurpsActorSimplifiedSheet,
   GurpsActorNpcSheet,
+  GurpsInventorySheet,
 } from './actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, splitArgs } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
+import { Maneuvers } from '../module/actor/maneuver.js'
+import { Migration } from '../lib/migration.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
+GURPS.Maneuvers = Maneuvers
 
 GURPS.DEBUG = false
 
@@ -339,7 +343,7 @@ CONFIG.statusEffects = [
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-unconscious.png',
-    id: 'disbled',
+    id: 'disabled',
     label: 'GURPS.STATUSDisable',
   },
   {
@@ -591,8 +595,7 @@ function executeOTF(string, priv = false) {
   string = string.trim()
   if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action)
-    GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
+  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
   else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
 }
 GURPS.executeOTF = executeOTF
@@ -610,6 +613,7 @@ async function performAction(action, actor, event, targets) {
     blind: action.blindroll,
     event: event,
   } // Ok, I am slowly learning this Javascrip thing ;-)
+  let savedBucket = GURPS.ModifierBucket.modifierStack.modifierList.slice() // may need to reset the state of the MB
 
   if (action.type === 'pdf') {
     GURPS.handlePdf(action.link)
@@ -629,12 +633,15 @@ async function performAction(action, actor, event, targets) {
     let chat = action.orig
     if (!!event?.shiftKey || game.keyboard.isCtrl(event))
       chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
-    ui.chat.processMessage(chat).catch(err => {
+
+    return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+    /*    ui.chat.processMessage(chat).catch(err => {
       ui.notifications.error(err)
       console.error(err)
       return false
     })
     return true
+    */
   }
 
   if (action.type === 'controlroll') {
@@ -674,7 +681,7 @@ async function performAction(action, actor, event, targets) {
         targets
       )
       return true
-    } else ui.notifications.warn('You must have a character selected')
+    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
 
   if (action.type === 'derivedroll')
     if (!!actor) {
@@ -682,9 +689,9 @@ async function performAction(action, actor, event, targets) {
       formula = d6ify(df + action.formula)
       prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
-    } else ui.notifications.warn('You must have a character selected')
+    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
 
-  let attr = action => {
+  /*  let attr = action => {
     let target = action.target
     if (!target) target = this.resolve(action.path, actordata.data)
     target = parseInt(target)
@@ -693,7 +700,7 @@ async function performAction(action, actor, event, targets) {
       thing: this.i18n(action.path),
       target: target,
     }
-  }
+  } */
 
   let processLinked = tempAction => {
     let bestLvl = -99999
@@ -703,7 +710,7 @@ async function performAction(action, actor, event, targets) {
     while (!!tempAction) {
       if (!!tempAction.truetext && !besttrue) besttrue = tempAction
       if (tempAction.type == 'attribute') {
-        th = this.i18n(tempAction.path)
+        th = this._mapAttributePath(tempAction.path)
         let t = parseInt(tempAction.target) // is it pre-targeted (ST12)
         if (!t && !!actor) {
           if (!!tempAction.melee) {
@@ -739,7 +746,8 @@ async function performAction(action, actor, event, targets) {
             name: tempAction.name,
             level: parseInt(tempAction.target),
           }
-        } else skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkillOnly, !!tempAction.isSpellOnly)
+        } else
+          skill = GURPS.findSkillSpell(actordata, tempAction.name, !!tempAction.isSkillOnly, !!tempAction.isSpellOnly)
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
@@ -829,6 +837,7 @@ async function performAction(action, actor, event, targets) {
           if (!!m) GURPS.addModifier(0, m) //  Level may have "*Costs xFP"
         }
       }
+      opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
       formula = '3d6'
       if (!!action.costs) GURPS.addModifier(0, action.costs)
       if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
@@ -852,6 +861,7 @@ async function performAction(action, actor, event, targets) {
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
     for (let m of targetmods) target += m.modint
+    GURPS.ModifierBucket.modifierStack.modifierList = savedBucket
     return target
   }
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
@@ -869,6 +879,7 @@ function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) 
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
+  sname = new RegExp(sname, 'i')
   let best = 0
   if (!isSpellOnly)
     recurselist(actor.data.skills, s => {
@@ -894,6 +905,7 @@ function findAdDisad(actor, sname) {
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
+  sname = new RegExp(sname, 'i')
   recurselist(actor.data.ads, s => {
     if (s.name.match(sname)) {
       t = s
@@ -908,8 +920,11 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   if (!actor) return t
   if (!!actor.data?.data?.additionalresources) actor = actor.data
   sname = makeRegexPatternFrom(sname, false)
-  if (isMelee) t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
-  if (isRanged && !t) t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  sname = new RegExp(sname, 'i')
+  if (isMelee)
+    t = actor.data.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
+  if (isRanged && !t)
+    t = actor.data.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(sname))
   return t
 }
 GURPS.findAttack = findAttack
@@ -940,7 +955,7 @@ async function handleRoll(event, actor, targets) {
     return
   } else if ('path' in element.dataset) {
     prefix = 'Roll vs '
-    thing = this.i18n(element.dataset.path)
+    thing = this._mapAttributePath(element.dataset.path)
     formula = '3d6'
     target = parseInt(element.innerText)
   } else if ('name' in element.dataset || 'otf' in element.dataset) {
@@ -983,13 +998,21 @@ GURPS.handleRoll = handleRoll
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 async function applyModifierDesc(actor, desc) {
   if (!desc) return null
-  let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
-  if (parse != desc && !!actor && !actor.isSelf) {
-    let fp = parseInt(parse)
-    fp = actor.data.data.FP.value - fp
-    await actor.update({ 'data.FP.value': fp })
+  let m = desc.match(/.*\* ?Costs? (\d+) ?([\w\(\)]+)/i)
+  if (!!m && !!actor && !actor.isSelf) {
+    let delta = parseInt(m[1])
+    let target = m[2]
+    if (target.match(/^[hf]p/i)) {
+      let k = target.toUpperCase()
+      delta = actor.data.data[k].value - delta
+      await actor.update({ ['data.' + k + '.value']: delta })
+    } 
+    if (target.match(/^tr/i)) {
+      await GURPS.ChatProcessors.startProcessingLines('/' + target + " -" + delta)
+      return null
+    }
   }
-  parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
+  let parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {
     return parseInt(parse)
   }
@@ -1074,16 +1097,15 @@ GURPS.handlePdf = handlePdf
 
 // Return the i18n string for this data path (note en.json must match up to the data paths).
 // special case, drop ".value" from end of path (and append "NAME"), usually used for attributes
-function i18n(path, suffix) {
+function _mapAttributePath(path, suffix) {
   let i = path.indexOf('.value')
   if (i >= 0) {
     path = path.substr(0, i) + 'NAME' // used for the attributes
   }
-
   path = path.replace(/\./g, '') // remove periods
   return game.i18n.localize('GURPS.' + path)
 }
-GURPS.i18n = i18n
+GURPS._mapAttributePath = _mapAttributePath
 
 // Given a string path "x.y.z", use it to resolve down an object heiracrhy
 function resolve(path, obj = self, separator = '.') {
@@ -1151,7 +1173,8 @@ function put(obj, value, index = -1) {
 }
 GURPS.put = put
 
-// Convolutions to remove a key from an object and fill in the gaps, necessary because the default add behavior just looks for the first open gap
+// Convolutions to remove a key from an object and fill in the gaps, necessary
+// because the default add behavior just looks for the first open gap
 async function removeKey(actor, path) {
   let i = path.lastIndexOf('.')
   let objpath = path.substring(0, i)
@@ -1161,6 +1184,8 @@ async function removeKey(actor, path) {
   let objkey = objpath.substr(i + 1)
   let object = GURPS.decode(actor.data, objpath)
   let t = parentpath + '.-=' + objkey
+  let oldRender = actor.ignoreRender
+  actor.ignoreRender = true
   await actor.update({ [t]: null }) // Delete the whole object
   delete object[key]
   i = parseInt(key)
@@ -1179,6 +1204,7 @@ async function removeKey(actor, path) {
       a[v] = object[v]
       return a
     }, {}) // Enforced key order
+  actor.ignoreRender = oldRender
   await actor.update({ [objpath]: sorted })
 }
 GURPS.removeKey = removeKey
@@ -1303,7 +1329,7 @@ GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) 
     if (overridetxt.includes('"')) overridetxt = "'" + overridetxt + "'"
     else overridetxt = '"' + overridetxt + '"'
   } else overridetxt = ''
-  let users = actor?.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true).filter(u => !u.isGM) || []
+  let users = actor?.getOwners().filter(u => !u.isGM) || []
   let botf = '[' + overridetxt + '!' + otf + ']'
   otf = '[' + overridetxt + otf + ']'
   let buttons = {}
@@ -1355,12 +1381,12 @@ GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) 
 GURPS.sendOtfMessage = function (content, blindroll, users) {
   let msgData = {
     content: content,
-    user: game.user._id,
+    user: game.user.id,
     blind: blindroll,
   }
   if (!!users) {
     msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
-    msgData.whisper = users.map(it => it._id)
+    msgData.whisper = users.map(it => it.id)
   } else {
     msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC
   }
@@ -1452,8 +1478,6 @@ Object.defineProperty(Object.prototype, 'findInProperties', {
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
 Hooks.once('init', async function () {
-  GURPS.LEGAL = game.i18n.localize('GURPS.copyrightGURPS')
-
   console.log(GURPS.BANNER)
   console.log(`Initializing GURPS 4e Game Aid`)
   console.log(GURPS.LEGAL)
@@ -1463,7 +1487,7 @@ Hooks.once('init', async function () {
   let src = 'systems/gurps/icons/gurps4e.png'
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
   $('#logo').attr('src', src)
-
+  
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
@@ -1481,8 +1505,8 @@ Hooks.once('init', async function () {
   GURPS.Quintessence = new GURPSQuintessence()
 
   // Define custom Entity classes
-  CONFIG.Actor.entityClass = GurpsActor
-  CONFIG.Item.entityClass = GurpsItem
+  CONFIG.Actor.documentClass = GurpsActor
+  CONFIG.Item.documentClass = GurpsItem
 
   // preload drag-and-drop image
   {
@@ -1520,6 +1544,10 @@ Hooks.once('init', async function () {
     label: 'NPC/mini',
     makeDefault: false,
   })
+  Actors.registerSheet('gurps', GurpsInventorySheet, {
+    label: 'Inventory Only',
+    makeDefault: false,
+  })
 
   Items.unregisterSheet('core', ItemSheet)
   Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
@@ -1535,21 +1563,33 @@ Hooks.once('ready', async function () {
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
 
-  new ThreeD6({
-    popOut: false,
-    minimizable: false,
-    resizable: false,
-    id: 'ThreeD6',
-    template: 'systems/gurps/templates/threed6.html',
-    classes: [],
-  }).render(true)
+  if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_3D6))
+    new ThreeD6({
+      popOut: false,
+      minimizable: false,
+      resizable: false,
+      id: 'ThreeD6',
+      template: 'systems/gurps/templates/threed6.html',
+      classes: [],
+    }).render(true)
+
+  GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)
+  // Test for migration
+  const mv = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION) || '0.0.1'
+  console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + mv)
+  const migrationVersion = SemanticVersion.fromString(mv)
+  if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
+    // check which migrations are needed
+    if (migrationVersion.isLowerThan(settings.VERSION_096)) await Migration.migrateTo096()
+    if (migrationVersion.isLowerThan(settings.VERSION_097)) await Migration.migrateTo097()
+    game.settings.set(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION, game.system.data.version)
+  }
 
   // Show changelog
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
   const changelogVersion = SemanticVersion.fromString(v)
-  const curVersion = SemanticVersion.fromString(game.system.data.version)
 
-  if (curVersion.isHigherThan(changelogVersion)) {
+  if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
     if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
       // If it isn't already in the chat log somewhere
       ChatMessage.create({
@@ -1557,7 +1597,7 @@ Hooks.once('ready', async function () {
 <div id="GURPS-LEGAL" style='font-size:85%'>${game.system.data.title}</div>
 <hr>
 <div style='font-size:70%'>
-  <div>${GURPS.LEGAL}</div>
+  <div>${game.i18n.localize('GURPS.copyrightGURPS')}</div>
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
@@ -1570,7 +1610,7 @@ Hooks.once('ready', async function () {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHANGELOG)) {
       const app = new ChangeLogWindow(changelogVersion)
       app.render(true)
-      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, curVersion.toString())
+      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
     }
   }
 
@@ -1593,7 +1633,7 @@ Hooks.once('ready', async function () {
     console.log(data)
     if (!data.otf && !data.bucket) return
     let otf = data.otf || data.bucket
-    otf = otf.split('\\').join('\\\\')  // must double backslashes since this is a 'script' macro
+    otf = otf.split('\\').join('\\\\') // must double backslashes since this is a 'script' macro
     let cmd = ''
     if (!!data.bucket)
       cmd += `GURPS.ModifierBucket.clear()
@@ -1632,7 +1672,7 @@ Hooks.once('ready', async function () {
         for (let i = 0; i < t.length; i++) {
           let el = t[i]
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
           if (!!target.actor?.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
 
@@ -1645,7 +1685,7 @@ Hooks.once('ready', async function () {
             flag = true
           }
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
           target.actor.changeOneThirdStatus($(el).attr('data-onethird'), flag)
         })
       }
@@ -1657,7 +1697,7 @@ Hooks.once('ready', async function () {
         let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
 
         let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-        let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+        let target = game.combat.combatants.filter(c => c.id === combatant)[0]
 
         let event = ev.originalEvent
         let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -1670,7 +1710,7 @@ Hooks.once('ready', async function () {
 
   game.socket.on('system.gurps', resp => {
     if (resp.type == 'updatebucket') {
-      if (resp.users.includes(game.user._id)) game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
+      if (resp.users.includes(game.user.id)) game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
     }
     if (resp.type == 'initiativeChanged') {
       CONFIG.Combat.initiative = {
@@ -1684,36 +1724,50 @@ Hooks.once('ready', async function () {
     }
     if (resp.type == 'dragEquipment1') {
       if (resp.destuserid != game.user.id) return
-        let destactor = game.actors.get(resp.destactorid)
-        let srcActor = game.actors.get(resp.srcactorid)
-        Dialog.confirm({
-          title: `Gift for ${destactor.name}!`,
-          content: `<p>${srcActor.name} wants to give you ${resp.itemData.name},</p><br>Ok?`,
-          yes: () => {
+      let destactor = game.actors.get(resp.destactorid)
+      let srcActor = game.actors.get(resp.srcactorid)
+      Dialog.confirm({
+        title: `Gift for ${destactor.name}!`,
+        content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
+        yes: () => {
+          let destKey = destactor._findEqtkeyForGlobalItem(resp.itemData.data.globalid)
+          if (!!destKey) {
+            // already have some
+            let destEqt = getProperty(destactor.data, destKey)
+            destactor.updateEqtCount(destKey, destEqt.count + resp.count)
+          } else {
+            resp.itemData.data.equipped = true
             destactor.addNewItemData(resp.itemData)
-            game.socket.emit('system.gurps', {
-              type: 'dragEquipment2',
-              srckey: resp.srckey,
-              srcuserid: resp.srcuserid,
-              srcactorid: resp.srcactorid,
-              destactorid: resp.destactorid,
-              itemname: resp.itemData.name
-           })
-          },
-          no: () => {
-            game.socket.emit('system.gurps', {
-              type: 'dragEquipment3',
-              srcuserid: resp.srcuserid,
-              destactorid: resp.destactorid,
-              itemname: resp.itemData.name
-           })
           }
-        })
+          game.socket.emit('system.gurps', {
+            type: 'dragEquipment2',
+            srckey: resp.srckey,
+            srcuserid: resp.srcuserid,
+            srcactorid: resp.srcactorid,
+            destactorid: resp.destactorid,
+            itemname: resp.itemData.name,
+            count: resp.count,
+          })
+        },
+        no: () => {
+          game.socket.emit('system.gurps', {
+            type: 'dragEquipment3',
+            srcuserid: resp.srcuserid,
+            destactorid: resp.destactorid,
+            itemname: resp.itemData.name,
+          })
+        },
+      })
     }
     if (resp.type == 'dragEquipment2') {
       if (resp.srcuserid != game.user.id) return
       let srcActor = game.actors.get(resp.srcactorid)
-      srcActor.deleteEquipment(resp.srckey)
+      let eqt = getProperty(srcActor.data, resp.srckey)
+      if (resp.count >= eqt.count) {
+        srcActor.deleteEquipment(resp.srckey)
+      } else {
+        srcActor.updateEqtCount(resp.srckey, eqt.count - resp.count)
+      }
       let destActor = game.actors.get(resp.destactorid)
       ui.notifications.info(`${destActor.name} accepted ${resp.itemname}`)
     }
@@ -1722,7 +1776,6 @@ Hooks.once('ready', async function () {
       let destActor = game.actors.get(resp.destactorid)
       ui.notifications.info(`${destActor.name} did not want ${resp.itemname}`)
     }
-
   })
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
@@ -1755,18 +1808,16 @@ Hooks.once('ready', async function () {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
         let display = ''
-        if (!!ev.currentTarget.dataset.action)
-          display = ev.currentTarget.innerText
+        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
-            displayname: display
+            displayname: display,
           })
         )
       })
     })
-
   })
 
   /**
@@ -1794,10 +1845,8 @@ Hooks.once('ready', async function () {
       })
 
       let handle = actor => actor.handleDamageDrop(dropData.payload)
-      if (dropData.type === 'Item') 
-        handle = actor => actor.handleItemDrop(dropData)
-      if (dropData.type === 'equipment') 
-        handle = actor => actor.handleEquipmentDrop(dropData)
+      if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
+      if (dropData.type === 'equipment') handle = actor => actor.handleEquipmentDrop(dropData)
 
       // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
@@ -1876,6 +1925,30 @@ Hooks.once('ready', async function () {
     }
     dragRuler.registerSystem('gurps', GURPSSpeedProvider)
   })
+  
+  // Translate attribute mappings if not in English
+  if (game.i18n.lang != 'en') {
+    console.log("Mapping " + game.i18n.lang + " translations into PARSELINK_MAPPINGS")
+    let mappings = {}
+    for (let k in GURPS.PARSELINK_MAPPINGS) {
+      let v = GURPS.PARSELINK_MAPPINGS[k]
+      let i = v.indexOf('.value')
+      let nk = v
+      if (i >= 0) {
+        nk = nk.substr(0, i)
+      }
+      nk = nk.replace(/\./g, '') // remove periods
+      nk = game.i18n.localize('GURPS.' + nk).toUpperCase()
+      if (!GURPS.PARSELINK_MAPPINGS[nk]) {
+        console.log(`Mapping '${k}' -> '${nk}'`)
+        mappings[nk] = GURPS.PARSELINK_MAPPINGS[k]
+      }
+    }
+    mappings = {...mappings, ...GURPS.PARSELINK_MAPPINGS}
+    GURPS.PARSELINK_MAPPINGS = mappings
+  }
+
+
 
   // End of system "READY" hook.
 })

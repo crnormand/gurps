@@ -7,13 +7,11 @@ const i18n = {
   'GURPS.slamAOAStrong': 'All-out Attack (Strong)',
   'GURPS.slamShieldDB': 'Shield DB',
   'GURPS.notAffected': 'Boob is not affected',
-  'GURPS.fallsDown': 'falls down!',
   'GURPS.fallsDownApplyProne': 'Boob falls down!',
   'GURPS.dxCheckOrFallApplyProne': 'Boob must roll DX or fall!',
 }
 
 describe('SlamCalculator', () => {
-  global.renderTemplate = jest.fn((template, result) => {})
   global.CONST = { CHAT_MESSAGE_TYPES: { ROLL: '' } }
   global.CONFIG = { sounds: { dice: null } }
   global.ChatMessage = { create: jest.fn(data => {}) }
@@ -40,6 +38,9 @@ describe('SlamCalculator', () => {
 
   beforeEach(() => {
     localize.mockImplementation(key => i18n[key])
+    global.renderTemplate = jest.fn((template, result) => {
+      return ''
+    })
     global.game = {
       i18n: {
         localize: localize,

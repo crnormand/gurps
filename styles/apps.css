@@ -4,7 +4,8 @@
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
-  background: url(/ui/parchment.jpg) #dcdcd0;
+  /* background: url(/ui/parchment.jpg) #dcdcd0; */
+  background: url(/systems/gurps/icons/hex2.png) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
   /* background: radial-gradient(ellipse at bottom, #5091dd 0%, rgb(3, 6, 23) 100%); */
 }
@@ -25,13 +26,55 @@
 /* prefer center text in input fields */
 .gurps-app input.digits-only,
 .gurps-app input.decimal-digits-only {
-  text-align: center;
+  text-align: left;
 }
 
 /* remove this item from display  */
 .gurps-chat-message .invisible,
 .gurps-app .invisible {
   display: none;
+}
+
+.gurps-app .icon-prefix {
+  position: relative;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
+.gurps-app .icon-prefix > input {
+  padding-left: 2.2em;
+}
+
+.gurps-app .icon-prefix > span {
+  position: absolute;
+  left: 0;
+  width: 2em;
+  text-align: center;
+  color: dimgray;
+  height: 26px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.35);
+  border: 1px solid #7a7971;
+  border-radius: 3px 0 0 3px;
+}
+
+.gurps-app .img-display {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 10em;
+  height: 15em;
+}
+
+.gurps-app .img-display > img {
+  display: block;
+  height: 100%;
+  opacity: 0;
+  width: 100%;
 }
 
 /* special override, 'cause I can't get the space any other way*/
@@ -145,8 +188,8 @@
 }
 
 /* striped table row appearance */
-.gurps-2col > *:nth-child(4n + 3),
-.gurps-2col > *:nth-child(4n + 4),
+/* .gurps-2col > *:nth-child(4n + 3),
+.gurps-2col > *:nth-child(4n + 4), */
 .gurps-3col > *:nth-of-type(6n + 4),
 .gurps-3col > *:nth-of-type(6n + 5),
 .gurps-3col > *:nth-of-type(6n + 6) {
@@ -217,14 +260,15 @@
   font-size: smaller;
 }
 
-.gurps-group + .gurps-group {
+/* .gurps-group + .gurps-group {
   margin-top: 5px;
-}
+} */
 
 .modtooltip .gurps-group + .gurps-group {
   margin: unset;
 }
 
+.label-value-row label,
 .gurps-group.inputs label {
   font-size: 80%;
   justify-self: stretch;
@@ -235,9 +279,13 @@
   padding-right: 0.15em;
 }
 
-.gurps-group.inputs input {
-  text-align: center;
+.gurps-group input {
+  text-align: left;
   margin: 0.15em 0;
+}
+
+.gurps-app input.centered {
+  text-align: center !important;
 }
 
 .gurps-group .label-value-row {
@@ -271,7 +319,7 @@
   color: dimgrey;
   border: none;
   border-radius: 0;
-  background: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0) !important;
 }
 
 ul#result-effects {
@@ -499,6 +547,7 @@ ul#result-effects li {
 
 .gurps-app button {
   text-transform: uppercase;
+  background: rgba(255, 255, 240, 0.8);
 }
 
 .gurps-app button.with-icon > i > span {
@@ -610,7 +659,17 @@ ul#result-effects li {
   border: none !important;
 }
 
-.field select {
+#npc-sheet .field select,
+#combat-sheet .field select,
+#sheet .field select {
+  height: min-content;
+  margin: 0;
+  width: 100%;
+  font-size: 90%;
+  cursor: pointer;
+}
+
+#editorsheet .field select {
   height: min-content;
   background-color: transparent;
   border: none;
@@ -1319,6 +1378,10 @@ ul#result-effects li {
 .button-row {
   display: flex;
   flex-flow: row wrap;
+  height: 5em;
+  overflow: scroll;
+  overflow-y: overlay;
+  overflow-x: hidden;
 }
 
 #modtooltipleftbottom {
@@ -1406,6 +1469,7 @@ ul#result-effects li {
   width: fit-content;
   background: rgba(255, 255, 240, 0.8);
   line-height: unset;
+  height: fit-content;
   min-width: 5.5em;
 }
 
@@ -1668,4 +1732,65 @@ ul#result-effects li {
 
 .gurps-chat-message .modifier-list li {
   margin-top: 0.35em;
+}
+
+.sheet nav.gurps-tabs {
+  border-top: none;
+}
+
+.sheet nav.gurps-tabs a {
+  font-weight: bold;
+}
+
+.gurps-tabs .item {
+  color: dimgrey;
+  text-overflow: clip;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.gurps-tabs .item.active {
+  color: unset;
+  text-shadow: 0 0 10px red;
+}
+
+.label-value-row label {
+  padding-left: 0.5em;
+  min-width: 8em;
+}
+
+.gurps-app h4.with-button {
+  padding-right: 1em;
+}
+
+.gurps-app h4.with-button .button {
+  float: right;
+  font-size: small;
+}
+
+.gurps-app h4.with-button .button:hover {
+  text-shadow: 0 0 10px white;
+  color: red;
+}
+
+.gurps-2col.right-bias,
+.label-value-row.right-bias {
+  grid-template-columns: auto 1fr;
+  align-content: start;
+}
+
+.gurps-2col .full-width {
+  grid-column: 1 / span 2;
+}
+
+.gurps-2col.no-gap {
+  gap: 0;
+}
+
+.item-editor input.title {
+  font-size: large;
+}
+
+.gurps-app .vertical-gap {
+  height: 1em;
 }

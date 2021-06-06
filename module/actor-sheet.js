@@ -1,5 +1,4 @@
-import { GURPS } from './gurps.js'
-import { atou } from '../lib/utilities.js'
+import { atou, generateUniqueId } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
@@ -7,7 +6,6 @@ import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
-
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -34,51 +32,30 @@ export class GurpsActorSheet extends ActorSheet {
     await super.close(options)
     game.GURPS.ClearLastActor(this.actor)
   }
-  
+
   // Hack to keep sheet from flashing during multiple DB updates
-  async _render(...args){
+  async _render(...args) {
     if (!!this.object?.ignoreRender) return
     super._render(...args)
   }
 
-  flt(str) {
-    return !!str ? parseFloat(str) : 0
-  }
-
-  sum(dict, type, checkEquipped = false) {
-    if (!dict) return 0.0
-    let sum = 0
-    for (let k in dict) {
-      let e = dict[k]
-      let c = this.flt(e.count)
-      let t = this.flt(e[type])
-      if (!checkEquipped || !!e.equipped) sum += c * t
-      sum += this.sum(e.contains, type, checkEquipped)
-      sum += this.sum(e.collapsed, type, checkEquipped)
-    }
-    return parseInt(sum * 100) / 100
+  update(data, options) {
+    super.update(data, options)
+    console.log(data)
   }
 
   /** @override */
   getData() {
     const sheetData = super.getData()
+    sheetData.olddata = sheetData.data
+    sheetData.data = sheetData.data.data
     sheetData.ranges = game.GURPS.rangeObject.ranges
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse()
     sheetData.useQN = game.GURPS.Quintessence.isInUse()
     sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable()
     game.GURPS.SetLastActor(this.actor)
-    let eqt = this.actor.data.data.equipment || {}
-    sheetData.eqtsummary = {
-      eqtcost: this.sum(eqt.carried, 'cost'),
-      eqtlbs: this.sum(eqt.carried, 'weight', game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)),
-      othercost: this.sum(eqt.other, 'cost'),
-    }
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
-      this.actor.checkEncumbance(sheetData.eqtsummary.eqtlbs)
-
-    // TODO get this from system property
+    sheetData.eqtsummary = this.actor.data.data.eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
-    sheetData.actor = this.actor
     return sheetData
   }
 
@@ -113,53 +90,71 @@ export class GurpsActorSheet extends ActorSheet {
       li.setAttribute('draggable', true)
       li.addEventListener('dragstart', ev => {
         let display = ''
-        if (!!ev.currentTarget.dataset.action)
-          display = ev.currentTarget.innerText
+        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
         return ev.dataTransfer.setData(
           'text/plain',
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
             actor: this.actor.id,
-            displayname: display
+            displayname: display,
           })
         )
       })
     })
 
-    const canConfigure = game.user.isGM || this.actor.owner
+    const canConfigure = game.user.isGM || this.actor.isOwner
     if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
 
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
     html.find('.enc').click(this._onClickEnc.bind(this))
-    
+
+  
     let makelistdrag = (cls, type) => {
       html.find(cls).each((i, li) => {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
-          let eqt = GURPS.decode(this.actor.data, ev.currentTarget.dataset.key)
+          let eqtkey = ev.currentTarget.dataset.key
+          let eqt = getProperty(this.actor.data, eqtkey) // FYI, may not actually be Equipment
+          if (!eqt) return
+          if (!!eqt.eqtkey) {
+            eqtkey = eqt.eqtkey
+            eqt = GURPS.decode(this.actor.data, eqtkey) // Features added by equipment will point to the equipment
+            type = 'equipment'
+          }
           var itemData
-          if (!!eqt.itemid) itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+          if (!!eqt.itemid) {
+            itemData = this.actor.items.get(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+            let img = new Image()
+            img.src = itemData.img
+            const w = 50
+            const h = 50
+            const preview = DragDrop.createDragImage(img, w, h)
+            ev.dataTransfer.setDragImage(preview, 0, 0)
+          }
           let newd = {
-            actorid: this.actor.id, 
-            type: type, 
-            key: ev.currentTarget.dataset.key, 
+            actorid: this.actor.id, // may not be useful if this is an unlinked token
+            actor: this.actor,  // so send the actor,
+            isLinked: !this.actor.isToken,
+            type: type,
+            key: eqtkey,
             itemid: eqt.itemid,
-            itemData: itemData }
-          if (!!oldd) mergeObject(newd, JSON.parse(oldd));  // May need to merge in OTF drag info
-          return ev.dataTransfer.setData(
-            'text/plain',
-            JSON.stringify(newd)
-          )
+            itemData: itemData,
+          }
+          if (!!oldd) mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
+          return ev.dataTransfer.setData('text/plain', JSON.stringify(newd))
         })
       })
     }
 
     makelistdrag('.eqtdraggable', 'equipment')
-    makelistdrag('.adsdraggable', 'advantage')
-    makelistdrag('.skldraggable', 'skill')
-    makelistdrag('.spldraggable', 'spell')
+    makelistdrag('.adsdraggable', 'ads')
+    makelistdrag('.skldraggable', 'skills')
+    makelistdrag('.spldraggable', 'spells')
     makelistdrag('.notedraggable', 'note')
+
+    makelistdrag('.meleedraggable', 'melee')
+    makelistdrag('.rangeddraggable', 'ranged')
 
     html.find('input[name="data.HP.value"]').keypress(ev => {
       if (ev.which === 13) ev.preventDefault()
@@ -349,6 +344,7 @@ export class GurpsActorSheet extends ActorSheet {
       let actor = this.actor
       let eqtlist = duplicate(getProperty(actor.data, path))
       let eqt = new Equipment('', true)
+      eqt.uuid = generateUniqueId()
       eqt.carried = path.includes('carried')
       let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
 
@@ -391,25 +387,7 @@ export class GurpsActorSheet extends ActorSheet {
       let element = ev.currentTarget
       let parent = $(element).closest('[data-key]')
       let path = parent.attr('data-key')
-      let obj = getProperty(actor.data, path)
-      let update = {}
-      if (!!obj.contains && Object.keys(obj.contains).length > 0) {
-        let temp = obj.contains
-        update = {
-          [path + '.-=contains']: null,
-          [path + '.contains']: {},
-          [path + '.collapsed']: temp,
-        }
-        actor.update(update)
-      } else if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
-        let temp = obj.collapsed
-        update = {
-          [path + '.-=collapsed']: null,
-          [path + '.collapsed']: {},
-          [path + '.contains']: temp,
-        }
-        actor.update(update)
-      }
+      actor.toggleExpand(path)
     })
 
     html.find('.dblclkedit').dblclick(async ev => {
@@ -460,9 +438,9 @@ export class GurpsActorSheet extends ActorSheet {
         let path = e[0].dataset.key
         this.actor.moveEquipment(path, 'data.equipment.other')
       },
-    })   
+    })
     new ContextMenu(html, '.equipmenucarried', mcar)
-    
+
     opts.push({
       name: "Move to 'Equipment'",
       icon: "<i class='fas fa-level-up-alt'></i>",
@@ -473,25 +451,21 @@ export class GurpsActorSheet extends ActorSheet {
     })
     new ContextMenu(html, '.equipmenuother', opts)
 
-
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
-
-      let eqt = duplicate(getProperty(this.actor.data, path))
+      let eqt = getProperty(this.actor.data, path)
       let value = parseInt(eqt.count) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = 0
-      eqt.count = value
-      await this.actor.update({ [path]: eqt })
-      await this.actor.updateParentOf(path)
+      await this.actor.updateEqtCount(path, value)
     })
     html.find('button[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
       let path = parent.attr('data-key')
       let actor = this.actor
-      let eqt = duplicate(getProperty(actor.data, path))
+      let eqt = getProperty(actor.data, path)
       if (eqt.count == 0) {
         let agree = false
         await Dialog.confirm({
@@ -503,9 +477,7 @@ export class GurpsActorSheet extends ActorSheet {
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
-        eqt.count = value
-        await this.actor.update({ [path]: eqt })
-        await this.actor.updateParentOf(path)
+        await this.actor.updateEqtCount(path, value)
       }
     })
 
@@ -589,7 +561,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('#qnotes').dblclick(ex => {
       let n = this.actor.data.data.additionalresources.qnotes || ''
-      n = n.replace(/<br>/g, "\n")
+      n = n.replace(/<br>/g, '\n')
       let actor = this.actor
       new Dialog({
         title: 'Edit Quick Note',
@@ -598,17 +570,16 @@ export class GurpsActorSheet extends ActorSheet {
         buttons: {
           save: {
             icon: '<i class="fas fa-save"></i>',
-            label: "Save",
+            label: 'Save',
             callback: html => {
               const i = html[0].querySelector('#i')
-              actor.update({ 'data.additionalresources.qnotes': i.value.replace(/\n/g, "<br>") })
-            }
+              actor.update({ 'data.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
+            },
           },
         },
         render: true,
-      }).render(true);
+      }).render(true)
     })
-
   }
 
   /**
@@ -679,9 +650,11 @@ export class GurpsActorSheet extends ActorSheet {
               ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
-              if (!!u) obj.save = u.is(':checked')
+              if (!!u && obj.save != null) obj.save = u.is(':checked')  // only set 'saved' if it was already defined
+              let v = html.find('.ignoreImportQty') // Should only find in equipment
+              if (!!v) obj.ignoreImportQty = v.is(':checked')
               await actor.update({ [path]: obj })
-              await actor.updateParentOf(path)
+              await actor.updateParentOf(path, false)
             },
           },
         },
@@ -704,7 +677,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'level'],
+      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import'],
       []
     )
   }
@@ -716,7 +689,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'level'],
+      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import'],
       ['acc', 'bulk']
     )
   }
@@ -740,7 +713,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'level', 'relativelevel', 'pageref', 'notes'],
+      ['name', 'import', 'relativelevel', 'pageref', 'notes'],
       ['points']
     )
   }
@@ -754,7 +727,7 @@ export class GurpsActorSheet extends ActorSheet {
       'Spell Editor',
       [
         'name',
-        'level',
+        'import',
         'difficulty',
         'pageref',
         'notes',
@@ -872,15 +845,15 @@ export class GurpsActorSheet extends ActorSheet {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
 
     if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
-    if (dragData.type === 'Item') this.actor.handleItemDrop(dragData) 
+    if (dragData.type === 'Item') this.actor.handleItemDrop(dragData)
 
-    this.handleDragFor(event, dragData, 'advantage', 'adsdraggable')
-    this.handleDragFor(event, dragData, 'skill', 'skldraggable')
-    this.handleDragFor(event, dragData, 'spell', 'spldraggable')
+    this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
+    this.handleDragFor(event, dragData, 'skills', 'skldraggable')
+    this.handleDragFor(event, dragData, 'spells', 'spldraggable')
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
 
     if (dragData.type === 'equipment') {
-      if (await this.actor.handleEquipmentDrop(dragData) != false) return    // handle external drag/drop
+      if ((await this.actor.handleEquipmentDrop(dragData)) != false) return // handle external drag/drop
       // drag/drop in same character sheet
       let element = event.target
       let classes = $(element).attr('class') || ''
@@ -888,7 +861,7 @@ export class GurpsActorSheet extends ActorSheet {
       let targetkey = element.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
-        this.actor.moveEquipment(srckey, targetkey)
+        this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
       }
     }
   }
@@ -978,7 +951,7 @@ export class GurpsActorSheet extends ActorSheet {
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.owner
+    const canConfigure = game.user.isGM || this.actor.isOwner
     if (this.options.editable && canConfigure) {
       let b = [
         {
@@ -1009,66 +982,8 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onFileImport(event) {
     event.preventDefault()
-    let p = this.actor.data.data.additionalresources.importpath
-    if (!!p) {
-      let m = p.match(/.*[/\\]Data[/\\](.*)/)
-      if (!!m) {
-        let f = m[1].replace(/\\/g, "/");
-        let xhr = new XMLHttpRequest();
-        xhr.responseType = "arraybuffer";
-        xhr.open("GET", f);
-
-        let promise = new Promise(resolve => {
-          xhr.onload = () => {
-            if (xhr.status === 200) { 
-              let s = String.fromCharCode.apply(null, new Uint8Array(xhr.response));
-              this.actor.importFromGCSv1(s, m[1], p)
-            } else this._openImportDialog()
-            resolve(this)
-          };
-        });
-        xhr.send(null);
-      }
-      else this._openImportDialog()
-    }
-    else this._openImportDialog()
+    this.actor.importCharacter()
   }
-  
-  async _openImportDialog() {
-    new Dialog(
-    {
-      title: `Import character data for: ${this.actor.name}`,
-      content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
-        name: '"' + this.actor.name + '"',
-      }),
-      buttons: {
-        import: {
-          icon: '<i class="fas fa-file-import"></i>',
-          label: 'Import',
-          callback: html => {
-            const form = html.find('form')[0]
-            let files = form.data.files
-            let file = null
-            if (!files.length) {
-              return ui.notifications.error('You did not upload a data file!')
-            } else {
-              file = files[0]
-              GURPS.readTextFromFile(file).then(text => this.actor.importFromGCSv1(text, file.name, file.path))
-            }
-          },
-        },
-        no: {
-          icon: '<i class="fas fa-times"></i>',
-          label: 'Cancel',
-        },
-      },
-      default: 'import',
-    },
-    {
-      width: 400,
-    }
-  ).render(true)
-}
 
   async _onToggleSheet(event) {
     event.preventDefault()
@@ -1087,22 +1002,12 @@ export class GurpsActorSheet extends ActorSheet {
       // Hold down the Ctrl key (Command on Mac) for Simplified
       newSheet = 'gurps.GurpsActorNpcSheet'
 
-    await this.actor.sheet.close()
-
-    // Update the Entity-specific override
-    await this.actor.setFlag('core', 'sheetClass', newSheet)
-
-    // Re-draw the updated sheet
-    const updated = this.actor.getFlag('core', 'sheetClass')
-    console.log('updated: ' + updated)
-    this.actor.sheet.render(true)
+    this.actor.openSheet(newSheet)
   }
 
   async _onOpenEditor(event) {
     event.preventDefault()
-    await this.actor.sheet.close()
-    await this.actor.setFlag('core', 'sheetClass', 'gurps.GurpsActorEditorSheet')
-    this.actor.sheet.render(true)
+    this.actor.openSheet('gurps.GurpsActorEditorSheet')
   }
 
   async _onRightClickGurpslink(event) {
@@ -1200,12 +1105,14 @@ export class GurpsActorSheet extends ActorSheet {
     let eqt = duplicate(GURPS.decode(this.actor.data, key))
     eqt.equipped = !eqt.equipped
     await this.actor.update({ [key]: eqt })
+    await this.actor.updateItemAdditionsBasedOn(eqt, key)
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
     await this.actor.update({
       'data.equippedparry': p,
       'data.equippedblock': b,
     })
+    this.actor._forceRender()
   }
 
   addDeleteMenu(obj) {
@@ -1222,10 +1129,8 @@ export class GurpsActorSheet extends ActorSheet {
         icon: "<i class='fas fa-trash'></i>",
         callback: e => {
           let key = e[0].dataset.key
-          if (key.includes('.equipment.'))
-            this.actor.deleteEquipment(key)
-          else
-            GURPS.removeKey(this.actor, key)
+          if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+          else GURPS.removeKey(this.actor, key)
         },
       },
       {
@@ -1280,24 +1185,24 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
-  
+
   getData() {
     let d = this.actor.data.data
-    if (d.HP.max == 0 && d.HP.value == 0 && d.FP.max == 0 & d.FP.value == 0) {
-      ui.notifications.error("You are editing an EMPTY Actor!")
-      setTimeout(() => Dialog.prompt({
-        title: "Empty Actor", 
-        content: "You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.", 
-        label: "Ok",
-        callback: async () => {
-          await this.actor.sheet.close()
-          // Update the Entity-specific override
-          await this.actor.setFlag('core', 'sheetClass', 'gurps.GurpsActorSheet')
-          // Re-draw the updated sheet
-          const updated = this.actor.getFlag('core', 'sheetClass')
-          this.actor.sheet.render(true)
-        }
-      }), 500)
+    if (d.HP.max == 0 && d.HP.value == 0 && (d.FP.max == 0) & (d.FP.value == 0)) {
+      ui.notifications.error('You are editing an EMPTY Actor!')
+      setTimeout(
+        () =>
+          Dialog.prompt({
+            title: 'Empty Actor',
+            content:
+              'You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.',
+            label: 'Ok',
+            callback: async () => {
+              this.actor.openSheet('gurps.GurpsActorSheet')
+            },
+          }),
+        500
+      )
     }
     return super.getData()
   }
@@ -1328,7 +1233,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     super.activateListeners(html)
 
     html.find('#ignoreinputbodyplan').click(this._onClickBodyPlan.bind(this))
-    
+
     html.find('#showflightmove').click(ev => {
       ev.preventDefault()
       let element = ev.currentTarget
@@ -1496,17 +1401,17 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   }
 }
 
-let _getProperty = function (object, key) {
-  let target = object
-
-  // Convert the key to an object reference if it contains dot notation
-  if (key.indexOf('.') !== -1) {
-    let parts = key.split('.')
-    key = parts.pop()
-    target = parts.reduce((o, i) => {
-      if (!o.hasOwnProperty(i)) o[i] = {}
-      return o[i]
-    }, object)
+export class GurpsInventorySheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ['gurps', 'sheet', 'actor'],
+      template: 'systems/gurps/templates/inventory-sheet.html',
+      width: 700,
+      height: 400,
+      tabs: [],
+      scrollY: [],
+      dragDrop: [{ dragSelector: 'item-list .item', dropSelector: null }],
+    })
   }
-  return target
 }

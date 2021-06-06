@@ -3,57 +3,57 @@
     <div id='combat-sheet'>
       <div id='combat-hitfat'>
         {{#if useCI}}
-            <div id='combat-hit' class='conditional-injury'>
-              <div class='header major-heading'>Injury</div>
-              <div class="tracked-resource no-border">
-                <div class="header minor-heading">Severity</div>
-                <div class='spinner'>
-                  <button data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
+          <div id='combat-hit' class='conditional-injury'>
+            <div class='header major-heading'>Injury</div>
+            <div class="tracked-resource no-border">
+              <div class="header minor-heading">Severity</div>
+              <div class='spinner'>
+                <button data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
 
-                  <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
-                    value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
-                    data-operation="ci-severity-set" />
+                <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
+                  value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
+                  data-operation="ci-severity-set" />
 
-                  <button data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
-                  <button data-operation='ci-reset'><i class="fas fa-undo"></i></button>
-                </div>
-                <div class="header minor-heading">Time to Heal</div>
-                <div class='spinner'>
-                  <button data-operation='ci-days-dec'><i class="fas fa-minus"></i></button>
-                  <input class="gcs-attr-input" name="injury.daystoheal" type="text"
-                    value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
-                    data-operation="ci-days-set" />
-                  <button class='no-gap' data-operation='ci-days-inc'><i class="fas fa-plus"></i></button>
-                  <div style='font-size: 85%;'>&nbsp;Days</div>
-                </div>
-                <div class='condition-block'>
-                  <div class='tooltip-wrapper'>
-                    <div
-                      class='tooltip condition {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "style"}}'>
-                      {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "label"}}
-                      <span class="tooltiptext">
-                        <div class="fieldblock">
-                          {{#ciSeveritiesTooltip}}
-                            <div class="field condensed noedit">{{severity}}</div>
-                            <div class="label">{{label}}</div>
-                          {{/ciSeveritiesTooltip}}
-                        </div>
-                      </span>
-                    </div>
+                <button data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
+                <button data-operation='ci-reset'><i class="fas fa-undo"></i></button>
+              </div>
+              <div class="header minor-heading">Time to Heal</div>
+              <div class='spinner'>
+                <button data-operation='ci-days-dec'><i class="fas fa-minus"></i></button>
+                <input class="gcs-attr-input" name="injury.daystoheal" type="text"
+                  value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
+                  data-operation="ci-days-set" />
+                <button class='no-gap' data-operation='ci-days-inc'><i class="fas fa-plus"></i></button>
+                <div style='font-size: 85%;'>&nbsp;Days</div>
+              </div>
+              <div class='condition-block'>
+                <div class='tooltip-wrapper'>
+                  <div
+                    class='tooltip condition {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "style"}}'>
+                    {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "label"}}
+                    <span class="tooltiptext">
+                      <div class="fieldblock">
+                        {{#ciSeveritiesTooltip}}
+                          <div class="field condensed noedit">{{severity}}</div>
+                          <div class="label">{{label}}</div>
+                        {{/ciSeveritiesTooltip}}
+                      </div>
+                    </span>
                   </div>
-                  <div class='basic-value fieldblock3'>
-                    <div class="points">[{{#if
+                </div>
+                <div class='basic-value fieldblock3'>
+                  <div class="points">[{{#if
                     data.conditionalinjury.RT.points}}{{data.conditionalinjury.RT.points}}
-                      {{else}}{{data.HP.points}}{{/if}}]
-                    </div>
-                    <div class='field'>{{data.conditionalinjury.RT.value}}&nbsp;RT</div>
-                    <div class='label'>{{data.HP.max}}&nbsp;HP</div>
+                    {{else}}{{data.HP.points}}{{/if}}]
                   </div>
+                  <div class='field'>{{data.conditionalinjury.RT.value}}&nbsp;RT</div>
+                  <div class='label'>{{data.HP.max}}&nbsp;HP</div>
                 </div>
               </div>
             </div>
-            {{else}}
-        {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' compact=true condition='isReeling' testcondition=data.additionalresources.isReeling}}
+          </div>
+        {{else}}
+          {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' compact=true condition='isReeling' testcondition=data.additionalresources.isReeling}}
         {{/if}}
         {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' compact=true condition='isTired' testcondition=data.additionalresources.isTired}}
       </div>
@@ -104,6 +104,22 @@
         {{/each}}
       </div>
 
+      <div id='condition'>
+        <div class="header">{{i18n "GURPS.conditions" "Conditions"}}</div>
+        <div class="fieldblock">
+          <div class="label">{{i18n "GURPS.maneuver" "Maneuver"}}</div>
+          <div class="field" style='padding-top: 3px; border: none;'>
+            <select id='maneuver' name="data.conditions.maneuver">
+              {{#each (listAllManeuvers) as | this key |}}
+                {debug key}
+                <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
+                  {{localize this.label}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+      </div>
 
       <div id='combat-attrs'>
         <div class='header'>Attributes</div>
@@ -111,7 +127,7 @@
           <div id='combat-attrs-1'>
             <div class="fieldblock">
               <div class="field noedit rollable" data-path="attributes.ST.value" data-otf='ST'>
-                {{data.attributes.ST.currentvalue}}
+                {{data.attributes.ST.value}}
               </div>
               <div class="label">{{localize "GURPS.attributesST"}}</div>
 
@@ -233,6 +249,7 @@
         {{/each}}
 
       </div> <!-- end of combat-location -->
+
       <div id='combat-weapons'>
         {{#if (notEmpty data.melee)}}
           <div id="melee">

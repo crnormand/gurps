@@ -1,85 +1,155 @@
 ------------
 keys in [lang/pt_br.json] that are missing in [lang/en.json]
-  GURPS.copyright
-  GURPS.dxCheckOrFall
-  GURPS.fallsDown
+  GURPS.chatGameAidUsersGuide
+  __NOTE TO TRANSLATOR__
 ------------
 keys in [lang/en.json] that are missing in [lang/pt_br.json]
+  GURPS.ID
+  GURPS.TransferTo
+  GURPS.addAdvantage
+  GURPS.addApplyInjuryQuietly
+  GURPS.addMeleeAttack
+  GURPS.addRangedAttack
+  GURPS.addSkill
+  GURPS.addSpell
+  GURPS.advantage
+  GURPS.advantages
+  GURPS.attributesDX
+  GURPS.attributesHT
+  GURPS.attributesIQ
+  GURPS.attributesPER
+  GURPS.attributesST
+  GURPS.bonuses
+  GURPS.cannotDragNonFoundryEqt
+  GURPS.chatLightSource
+  GURPS.chatMultipleOwnedFound
+  GURPS.chatMustBeACheck
+  GURPS.chatNoOwnedTokenFound
+  GURPS.chatQty
   GURPS.chatSelectSelfOrNameTokens
   GURPS.chatSuffersCripplingInjury
+  GURPS.chatTokenLightPicker
+  GURPS.chatTurnOffReeling
+  GURPS.chatTurnOffTired
+  GURPS.chatTurnOnReeling
+  GURPS.chatTurnOnTired
+  GURPS.chatUses
   GURPS.check1
   GURPS.check2
   GURPS.check3
   GURPS.check4
   GURPS.collapse
   GURPS.copyrightGURPS
+  GURPS.damageAbbrevcor
+  GURPS.damageAbbrevtox
   GURPS.dead
   GURPS.destroyed
   GURPS.dxCheckOrFallApplyProne
   GURPS.dxJudoAcrobaticsCheckToRemainStanding
+  GURPS.effectsNotApplicableDefenses
+  GURPS.effectsTemporaryAttributePenalties
+  GURPS.equipmentCost
+  GURPS.equipmentEquipped
+  GURPS.equipmentMaxUses
+  GURPS.equipmentQuantity
+  GURPS.equipmentUses
   GURPS.fallsDownApplyProne
   GURPS.forHighPainThreshold
   GURPS.forLowPainThreshold
   GURPS.forPerfectBalance
+  GURPS.gameAidUsersGuide
+  GURPS.grapplingCPAbbrev
+  GURPS.hitLocationJaw
+  GURPS.importCannotImportGCADirectly
+  GURPS.importCannotImportGCSDirectly
+  GURPS.importCurrentVersions
+  GURPS.importErrorParsingXML
+  GURPS.importFantasyGroundUnsupported
+  GURPS.importFileVersion
+  GURPS.importGCABadBlockForDB
+  GURPS.importGCANoBodyPlan
+  GURPS.importGCANoHideFlag
+  GURPS.importGCANoInnateRangedAndParent
+  GURPS.importGCANoMeleeIfAlsoRanged
+  GURPS.importGCANoParent
+  GURPS.importGCANoSanitizeNotes
+  GURPS.importGCANoSanitizedEquipmentPageRefs
+  GURPS.importGCSNoMeleeRangedNotesForSameItem
+  GURPS.importGCSNoParent
+  GURPS.importGCSNoSelfControl
+  GURPS.importGCSNoUses
+  GURPS.importGenericError
+  GURPS.importNoCharacterFormat
+  GURPS.importNoXMLDetected
+  GURPS.importSeeUsersGuide
+  GURPS.importSuccessful
+  GURPS.importTooManyContainers
+  GURPS.itemBonusText
+  GURPS.itemEditor
+  GURPS.itemFeatures
   GURPS.knockbackCheck
   GURPS.lowPainThresholdDoubles
   GURPS.majorWoundEffectLabel
+  GURPS.melee
+  GURPS.modifier
+  GURPS.modifierScaleNormal
+  GURPS.modifierTrivial
+  GURPS.normal
+  GURPS.notes
+  GURPS.ok
+  GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
+  GURPS.pdfDeceptiveAttack
+  GURPS.pdfDeterminedAttack
+  GURPS.pdfDodgeAcrobatic
+  GURPS.pdfDodgeDive
+  GURPS.pdfDodgeFailedAcro
+  GURPS.pdfDodgeRetreat
+  GURPS.pdfDodgeSide
+  GURPS.pdfExtraEffort
   GURPS.pdfHPT
+  GURPS.pdfHeroicCharge
   GURPS.pdfKnockback
   GURPS.pdfKnockdownStun
   GURPS.pdfLPT
   GURPS.pdfMajorWound
+  GURPS.pdfMightyBlow
+  GURPS.pdfMoveAttack
+  GURPS.pdfPageReference
+  GURPS.pdfReeling
+  GURPS.pdfRef
+  GURPS.pdfShieldDB
+  GURPS.pdfShieldRush
   GURPS.pdfShock
+  GURPS.pdfStrongAttack
+  GURPS.pdfTelegraphicAttack
   GURPS.pdfTempAttribPenalties
+  GURPS.pdfTired
+  GURPS.quantity
+  GURPS.rangedAttack
+  GURPS.resource
+  GURPS.resourceTemplateAlias
   GURPS.shockPenalty
   GURPS.shockPenaltyNextTurnOnly
+  GURPS.skill
   GURPS.skillAcrobatics
   GURPS.skillJudo
+  GURPS.skillLevel
+  GURPS.spell
+  GURPS.spellDifficulty
+  GURPS.spellResist
   GURPS.suffersAMajorWound
   GURPS.suffersHeadVitalsWound
   GURPS.suffersKnockback
+  GURPS.title
+  GURPS.warning
+  GURPS.weight
   GURPS.yard
-  Skill Names__
-  __Potentially Removable__
+  GURPS.youDoNotHavePermssion
+  __Import Messages__
 ------------
 values in [lang/en.json] that are the same in [lang/pt_br.json]
-  GURPS.ID: ID
-  GURPS.addApplyInjuryQuietly: Apply Injury (Quietly)
-  GURPS.attributesDX: DX
-  GURPS.attributesHT: HT
-  GURPS.attributesIQ: IQ
-  GURPS.attributesPER: Per
-  GURPS.attributesST: ST
-  GURPS.chatMustBeACheck: The On-the-Fly formula must be some kind of check
-  GURPS.chatQty: 'QTY'
-  GURPS.chatUses: 'USES'
-  GURPS.damageAbbrevcor: cor
-  GURPS.damageAbbrevtox: tox
-  GURPS.grapplingCPAbbrev: ctrl
-  GURPS.hitLocationJaw: Jaw
-  GURPS.modifier: Modifier
-  GURPS.modifierScaleNormal: Normal (100%)
-  GURPS.modifierTrivial: Trivial
-  GURPS.normal: Normal
-  GURPS.pdfBlockRetreat: B377
-  GURPS.pdfDeceptiveAttack: B369
-  GURPS.pdfDeterminedAttack: B365
-  GURPS.pdfDodgeAcrobatic: B374
-  GURPS.pdfDodgeDive: B377
-  GURPS.pdfDodgeFailedAcro: B375
-  GURPS.pdfDodgeRetreat: B375
-  GURPS.pdfDodgeSide: B390
-  GURPS.pdfExtraEffort: B357
-  GURPS.pdfHeroicCharge: MA131
-  GURPS.pdfMightyBlow: MA131
-  GURPS.pdfMoveAttack: B365
-  GURPS.pdfShieldDB: B374
-  GURPS.pdfShieldRush: B372
-  GURPS.pdfStrongAttack: B365
-  GURPS.pdfTelegraphicAttack: MA113
-  GURPS.resourceTemplateAlias: Alias
-  GURPS.title: GURPS
+  Skill Names__: =========
   __ Character AddsDisadsPerksQuirks__: =========
   __ Character Skills__: =========
   __Apply Damage Dialog__: =========
@@ -101,6 +171,7 @@ values in [lang/en.json] that are the same in [lang/pt_br.json]
   __Hit Location__: =========
   __Modifier Bucket__: =========
   __PDF References__: =========
+  __Permissions__: =========
   __Resolve Damage Dialog__: =========
   __Resource Trackers__: =========
   __Slam Calculator__: =========
