@@ -120,7 +120,7 @@ export class SlamCalculator {
 
     // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
     let messageData = {
-      user: game.user._id,
+      user: game.user.id,
       // speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,

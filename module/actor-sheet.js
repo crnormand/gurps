@@ -1,4 +1,4 @@
-import { atou } from '../lib/utilities.js'
+import { atou, generateUniqueId } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
@@ -343,6 +343,7 @@ export class GurpsActorSheet extends ActorSheet {
       let actor = this.actor
       let eqtlist = duplicate(getProperty(actor.data, path))
       let eqt = new Equipment('', true)
+      eqt.uuid = generateUniqueId()
       eqt.carried = path.includes('carried')
       let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
 
@@ -385,25 +386,7 @@ export class GurpsActorSheet extends ActorSheet {
       let element = ev.currentTarget
       let parent = $(element).closest('[data-key]')
       let path = parent.attr('data-key')
-      let obj = getProperty(actor.data, path)
-      let update = {}
-      if (!!obj.contains && Object.keys(obj.contains).length > 0) {
-        let temp = obj.contains
-        update = {
-          [path + '.-=contains']: null,
-          [path + '.contains']: {},
-          [path + '.collapsed']: temp,
-        }
-        actor.update(update)
-      } else if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
-        let temp = obj.collapsed
-        update = {
-          [path + '.-=collapsed']: null,
-          [path + '.collapsed']: {},
-          [path + '.contains']: temp,
-        }
-        actor.update(update)
-      }
+      actor.toggleExpand(path)
     })
 
     html.find('.dblclkedit').dblclick(async ev => {
@@ -666,9 +649,11 @@ export class GurpsActorSheet extends ActorSheet {
               ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
-              if (!!u) obj.save = u.is(':checked')
+              if (!!u && obj.save != null) obj.save = u.is(':checked')  // only set 'saved' if it was already defined
+              let v = html.find('.ignoreImportQty') // Should only find in equipment
+              if (!!v) obj.ignoreImportQty = v.is(':checked')
               await actor.update({ [path]: obj })
-              await actor.updateParentOf(path)
+              await actor.updateParentOf(path, false)
             },
           },
         },
@@ -1126,6 +1111,7 @@ export class GurpsActorSheet extends ActorSheet {
       'data.equippedparry': p,
       'data.equippedblock': b,
     })
+    this.actor._forceRender()
   }
 
   addDeleteMenu(obj) {

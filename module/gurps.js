@@ -28,7 +28,7 @@ export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 GURPS.Maneuvers = Maneuvers
 
-GURPS.DEBUG = true
+GURPS.DEBUG = false
 
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
@@ -997,13 +997,21 @@ GURPS.handleRoll = handleRoll
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 async function applyModifierDesc(actor, desc) {
   if (!desc) return null
-  let parse = desc.replace(/.*\* ?[Cc]osts? (\d+) ?[Ff][Pp].*/g, '$1')
-  if (parse != desc && !!actor && !actor.isSelf) {
-    let fp = parseInt(parse)
-    fp = actor.data.data.FP.value - fp
-    await actor.update({ 'data.FP.value': fp })
+  let m = desc.match(/.*\* ?Costs? (\d+) ?([\w\(\)]+)/i)
+  if (!!m && !!actor && !actor.isSelf) {
+    let delta = parseInt(m[1])
+    let target = m[2]
+    if (target.match(/^[hf]p/i)) {
+      let k = target.toUpperCase()
+      delta = actor.data.data[k].value - delta
+      await actor.update({ ['data.' + k + '.value']: delta })
+    } 
+    if (target.match(/^tr/i)) {
+      await GURPS.ChatProcessors.startProcessingLines('/' + target + " -" + delta)
+      return null
+    }
   }
-  parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
+  let parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
   if (parse != desc) {
     return parseInt(parse)
   }
@@ -1372,12 +1380,12 @@ GURPS.whisperOtfToOwner = function (otf, overridetxt, event, blindcheck, actor) 
 GURPS.sendOtfMessage = function (content, blindroll, users) {
   let msgData = {
     content: content,
-    user: game.user._id,
+    user: game.user.id,
     blind: blindroll,
   }
   if (!!users) {
     msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
-    msgData.whisper = users.map(it => it._id)
+    msgData.whisper = users.map(it => it.id)
   } else {
     msgData.type = CONST.CHAT_MESSAGE_TYPES.OOC
   }
@@ -1478,7 +1486,7 @@ Hooks.once('init', async function () {
   let src = 'systems/gurps/icons/gurps4e.png'
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.png'
   $('#logo').attr('src', src)
-
+  
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
@@ -1662,7 +1670,7 @@ Hooks.once('ready', async function () {
         for (let i = 0; i < t.length; i++) {
           let el = t[i]
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
           if (!!target.actor?.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
         }
 
@@ -1675,7 +1683,7 @@ Hooks.once('ready', async function () {
             flag = true
           }
           let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
           target.actor.changeOneThirdStatus($(el).attr('data-onethird'), flag)
         })
       }
@@ -1687,7 +1695,7 @@ Hooks.once('ready', async function () {
         let elementMouseIsOver = document.elementFromPoint(ev.clientX, ev.clientY)
 
         let combatant = $(elementMouseIsOver).parents('.combatant').attr('data-combatant-id')
-        let target = game.combat.combatants.filter(c => c._id === combatant)[0]
+        let target = game.combat.combatants.filter(c => c.id === combatant)[0]
 
         let event = ev.originalEvent
         let dropData = JSON.parse(event.dataTransfer.getData('text/plain'))
@@ -1700,7 +1708,7 @@ Hooks.once('ready', async function () {
 
   game.socket.on('system.gurps', resp => {
     if (resp.type == 'updatebucket') {
-      if (resp.users.includes(game.user._id)) game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
+      if (resp.users.includes(game.user.id)) game.GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
     }
     if (resp.type == 'initiativeChanged') {
       CONFIG.Combat.initiative = {
@@ -1915,6 +1923,30 @@ Hooks.once('ready', async function () {
     }
     dragRuler.registerSystem('gurps', GURPSSpeedProvider)
   })
+  
+  // Translate attribute mappings if not in English
+  if (game.i18n.lang != 'en') {
+    console.log("Mapping " + game.i18n.lang + " translations into PARSELINK_MAPPINGS")
+    let mappings = {}
+    for (let k in GURPS.PARSELINK_MAPPINGS) {
+      let v = GURPS.PARSELINK_MAPPINGS[k]
+      let i = v.indexOf('.value')
+      let nk = v
+      if (i >= 0) {
+        nk = nk.substr(0, i)
+      }
+      nk = nk.replace(/\./g, '') // remove periods
+      nk = game.i18n.localize('GURPS.' + nk).toUpperCase()
+      if (!GURPS.PARSELINK_MAPPINGS[nk]) {
+        console.log(`Mapping '${k}' -> '${nk}'`)
+        mappings[nk] = GURPS.PARSELINK_MAPPINGS[k]
+      }
+    }
+    mappings = {...mappings, ...GURPS.PARSELINK_MAPPINGS}
+    GURPS.PARSELINK_MAPPINGS = mappings
+  }
+
+
 
   // End of system "READY" hook.
 })
