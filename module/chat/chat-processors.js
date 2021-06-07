@@ -537,7 +537,7 @@ class TrackerChatProcessor extends ChatProcessor {
       if (isNaN(value))
         ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
       else {
-        value = this.getRestrictedValue(theTracker)
+        value = this.getRestrictedValue(theTracker, value)
 
         await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: value })
         this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} set to ${value}`)
