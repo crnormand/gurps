@@ -28,7 +28,9 @@ __Resource Trackers__
 Skill Names__
 __Slam Calculator__
 __Status/Conditions__
+__Maneuvers__
 __Import Messages__
+__System Settings__
 KEYS NOT FOUND
 ===========================
 GURPS.BODYPLANarachnoid
@@ -41,6 +43,7 @@ GURPS.BODYPLANhumanoid
 GURPS.BODYPLANhumanoid expanded
 GURPS.BODYPLANichthyoid
 GURPS.BODYPLANoctopod
+GURPS.BODYPLANquadruped
 GURPS.BODYPLANquadrupedWinged
 GURPS.BODYPLANscorpion
 GURPS.BODYPLANsnakeman
@@ -49,12 +52,12 @@ GURPS.BODYPLANvermiform
 GURPS.BODYPLANvermiformWinged
 GURPS.BODYPLANwinged humanoid
 GURPS.FP
+GURPS.chatLightSource
+GURPS.chatNoTokens
 GURPS.chatSuffersCripplingInjury
-GURPS.check1
-GURPS.check2
-GURPS.check3
-GURPS.check4
-GURPS.collapse
+GURPS.chatToApplyEffects
+GURPS.chatTokenLightPicker
+GURPS.chatYouMustSelectTokens
 GURPS.currentdodge
 GURPS.damageTypeBurning
 GURPS.damageTypeCorrosive
@@ -68,8 +71,6 @@ GURPS.damageTypeLarge Piercing
 GURPS.damageTypePiercing
 GURPS.damageTypeSmall Piercing
 GURPS.damageTypeToxic
-GURPS.dead
-GURPS.destroyed
 GURPS.equippedblock
 GURPS.equippedparry
 GURPS.groundCreaturesSuffer
@@ -150,6 +151,7 @@ __Drag Ruler__
 __Fantastic Dungeon Grappling__
 __Hit Location__
 __Import Messages__
+__Maneuvers__
 __Modifier Bucket__
 __PDF References__
 __Permissions__
@@ -157,3 +159,4 @@ __Resolve Damage Dialog__
 __Resource Trackers__
 __Slam Calculator__
 __Status/Conditions__
+__System Settings__

@@ -178,9 +178,9 @@ export default class DamageChat {
     }
 
     let formula = diceText
-    let verb = ''
+    let rolled = false
     if (!!result.groups.D) {
-      verb = 'Rolling '
+      rolled = true
       if (result.groups.D === 'd') formula = d6ify(diceText) // GURPS dice (assume 6)
     }
     let displayText = overrideDiceText || diceText // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
@@ -209,7 +209,7 @@ export default class DamageChat {
 
     let diceData = {
       formula: formula,
-      verb: verb, // Rolling (if we have dice) or nothing
+      rolled: rolled,
       modifier: modifier,
       diceText: displayText + additionalText,
       damageType: damageType,
@@ -320,7 +320,7 @@ export default class DamageChat {
     const damageType = diceData.damageType
     let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
       draggableData: draggableData,
-      verb: diceData.verb,
+      rolled: diceData.rolled,
       dice: diceData.diceText,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
