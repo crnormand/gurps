@@ -36,7 +36,7 @@ export class ResourceTrackerEditor extends Application {
     return mergeObject(super.defaultOptions, {
       template: 'systems/gurps/templates/resource-editor-popup.html',
       width: 360,
-      height: 468,
+      height: 472,
       popOut: true,
       minimizable: false,
       jQuery: true,
@@ -80,6 +80,18 @@ export class ResourceTrackerEditor extends Application {
     html.find('[name="damage-type"]').click(ev => {
       let element = $(ev.currentTarget)
       this._tracker.isDamageType = element.is(':checked')
+      this.render(false)
+    })
+
+    html.find('[name="enforce-minimum"]').click(ev => {
+      let element = $(ev.currentTarget)
+      this._tracker.isMinimumEnforced = element.is(':checked')
+      this.render(false)
+    })
+
+    html.find('[name="enforce-maximum"]').click(ev => {
+      let element = $(ev.currentTarget)
+      this._tracker.isMaximumEnforced = element.is(':checked')
       this.render(false)
     })
 

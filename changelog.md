@@ -3,6 +3,7 @@
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
 - Fixed Apply Injury dropdown on ADD window.
+- Added Min and Max enforcement option on Resource Trackers
 
   0.10.2
 
@@ -35,7 +36,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 - Fixed the data model (template.json) for items
 
-0.9.12
+  0.9.12
 
 - Equipment name searches for /qty and /use now start at the front of the name for matching
 - Fixed /uses /qty when equipment name is being used
