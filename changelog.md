@@ -2,34 +2,38 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-0.10.2
+- Fixed Apply Injury dropdown on ADD window.
+
+  0.10.2
 
 - Fixed parse bug in bucket
 
-0.10.1
+  0.10.1
 
 - Fix for dragging Items on to unlinked tokens
 
-0.10.0
+  0.10.0
 
 - Foundry 0.8.x compatible!
 - Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
-- Added \*Costs X trN and \*Costs X tr(*name*)
+- Added \*Costs X trN and \*Costs X tr(_name_)
 - Added support for translated attributes in OtF formulas (Will == Vonte in Portuguese)
 - Added Ignore QTY/Count/Uses from import
 - Remember carried, parent and equipped status from previous import
 
-0.9.15
+  0.9.15
 
 - Fixed dodge values when encumbrence greater than 'none'
 
-0.9.14
+  0.9.14
+
 - Fixed element editors (melee, ranged, skills, spells) for level
 - Restrict Foundry items from containing other items
 - Fixed Actor startup on encumbrance
 
-0.9.13
- - Fixed the data model (template.json) for items 
+  0.9.13
+
+- Fixed the data model (template.json) for items
 
 0.9.12
 
@@ -43,19 +47,19 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Add scroll bars to the "Send Modifiers to Players" part of the modifier bucket window.
 - Show combat maneuver drop-down on character sheet.
 
-0.9.11
+  0.9.11
 
 - Allow user additions to names or notes survive an import (if changes occur at END of imported data)!
 - Added /uses can now automatically detect if it is being run on equipment (like /qty)
 
-0.9.10
+  0.9.10
 
 - Ensure that empty Actors are initialized correctly
 - Added Rcl/RoF information to [A:..] and [R:...] OTF rolls
 - More i18n work, we are getting there!
-- /tr (/rt) now returns false if the value is less than 0.   So it can be used as an ammo tracker /if [/tr(ammo) -1] do some attack]
+- /tr (/rt) now returns false if the value is less than 0. So it can be used as an ammo tracker /if [/tr(ammo) -1] do some attack]
 
-0.9.9
+  0.9.9
 
 - Adding @neck/rinickolous's inventory sheet
 - Replaced /light dialog with parameters torch = /light 6 2 torch (or candle = /light 1 0 t)
@@ -64,25 +68,25 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed the /qty command so that if defined in one piece of equipment, it can name another piece of equipment and modify that.
 - Added /forcemigrate command for players who's actors didn't quite make it.
 
-0.9.8 - 5/20/2021
+  0.9.8 - 5/20/2021
 
 - Adding DODGE to Item bonus parsing
 - Fixed spelling of dis-bled status (to disabled)
 - /uses command can now be used with /if
 - fixed error during startup if Show Read me is true
 
-0.9.7 - 5/20/2021
+  0.9.7 - 5/20/2021
 
 - More lenient handling of OtF formulas on items (may have [ ] or not)
 - Added DR+X {hitlocations} bonus to Items
 - Required migration to allow DR changes
 
-0.9.6 - 5/20/2021
+  0.9.6 - 5/20/2021
 
 - Update migration code to remove possible infinite loop issue
 - Make Skill/Spell/Attack (Melee/Ranged/Damage) OtF formulas case insensitive
 
-0.9.5 - 5/19/2021
+  0.9.5 - 5/19/2021
 
 - Fixed /status command when token.actor == null
 - Refactor regex pattern matching to utilities.js
@@ -104,7 +108,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added [M:attack] for only melee and [R:attack] for only ranged
 - Fixed bug where Sum Weights on Equipment and Other Equipment displayed as 'NaN'.
 - Fixed bug(s) where pasted text may contain unicode single and double quotes (OtF and Mook generator)
-- Foundry Item bonuses can affect Attributes, Skills and Attacks.  DX changes also affect melee (w/ parry/block) and ranged skills
+- Foundry Item bonuses can affect Attributes, Skills and Attacks. DX changes also affect melee (w/ parry/block) and ranged skills
 - Fix for DragRuler users... range mod is NOT added when token is moved
 - Fix GCA export to check 'hide' flag on ads/disads/quirks/perks
 - Item editor UI ver 1 is complete.
@@ -115,7 +119,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added support for /qty detecting the current equipment
 - Added support for parameters and return values from script macros (GURPS.chatargs & GURPS.chatreturn)
 
-0.9.4 - 5/06/2021
+  0.9.4 - 5/06/2021
 
 - Fixed /status command to accept either 't' or 'toggle'
 - Added new syntax to /if command to allow nested /ifs {}
@@ -127,7 +131,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed older actors not having currentmove/dodge or flight values
 - Add warning if trying to Edit an empty actor
 
-0.9.3 - 5/04/2021
+  0.9.3 - 5/04/2021
 
 - Changed the 'persistent' equipment and notes (those that survive a GCS/GCA import) icon to a blue bookmark and right-justified the icon for equipment.
 - Fixed modifier bucket to respect permissions on journal entries selected for viewing.
@@ -135,11 +139,11 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - /select now also changes Foundry's selection. /sel Bog \\\\ /status on prone
 - /sendMB (and MB send) now works for Assistants
 
-0.9.2 - 4/29/2021
+  0.9.2 - 4/29/2021
 
 - CTRL-roll was broken for certain keyboard events, causing chat commands to fail (ex: /ra)
 
-0.9.1 - 4/28/2021
+  0.9.1 - 4/28/2021
 
 - Modifier bucket is now scalable in the system settings. Its a client setting so every user can have a different scale factor. At its smallest size (80%) it fits on a 1024x640 monitor. Tiny laptop users, rejoice!!
 - The "Common Modifiers" pane of the Modifier Bucket is now a tabbed interface and the user can set any number of journal entries to display in that pane. Use journals to customize your MB!!! Which journal entries to use is a client setting. See this GitHub issue for more info: [#434](https://github.com/crnormand/gurps/issues/434#issuecomment-825715096)
@@ -155,7 +159,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed Slam Calculator's always printing that the Target was knocked down, even if it was the Attacker who was knocked down.
 - Added System setting to show 'saved' icon next to user created equipment and notes.
 
-0.9.0 - 4/22/2021
+  0.9.0 - 4/22/2021
 
 - rewrite of Modifier Bucket communication system, now commands are guaranteed to be sequential
 - refactor Chat command parsing
@@ -169,7 +173,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Press SHIFT key to make OtF rolls private
 - Show Move/Flight Move checkbox in Editor
 
-0.8.23 - 4/13/2021
+  0.8.23 - 4/13/2021
 
 - Fixed Equipment editing when using The Furnace, because I guess they never thought people might use {{count}} in their own dialogs.
 - Merged @Exxar's Damage Reduction: Injury Tolerance code into ADD
@@ -191,7 +195,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added ability to override the text of the OtF buttons ["New Text" Dodge]
 - Auto import when in Foundry Data (GCS export includes Portrait)
 
-0.8.22 - 3/31/2021
+  0.8.22 - 3/31/2021
 
 - Updated German/Deutsch translation
 - Add dialog to resource tracker editors on actor's sheets to apply a template, edit the tracker, or remove the tracker.
@@ -214,12 +218,12 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed [A:Attack] where skill level includes "\*Costs 1FP"
 - Added Drag and drop OtF from chat
 
-0.8.21 - 3/22/2021
+  0.8.21 - 3/22/2021
 
 - Fixed parse bug where roll has no damage type or comment [3d]
 - Added German/Deutsch translation
 
-0.8.20 - 3/22/2021
+  0.8.20 - 3/22/2021
 
 - Fixed description of modifier for Skill OtF
 - Fixed GM Send to allow blind rolls
@@ -232,7 +236,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed parsing for damage with extraneous text '1d-1 burn/2 points'
 - Added GURPS.executeOTF()
 
-0.8.19 - 3/17/2021
+  0.8.19 - 3/17/2021
 
 - Translated status effects to German
 - Added all RAW armor divisors to ADD (0.1, 0.2., 0.5, 2, 3, 5, 10, 100, Ignores DR)
@@ -246,7 +250,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed "\*Max: 9" if not the last modifier
 - Create and apply standard resource trackers across the world. Instructions: https://github.com/crnormand/gurps/issues/380#issuecomment-801357042
 
-0.8.18 - 3/14/2021
+  0.8.18 - 3/14/2021
 
 - Converted 'mapped' to 'attribute' so [S:Trap|Vision-5] works
 - Add blindroll to CR
@@ -266,7 +270,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added system setting to make player chat commands private (GM's chat commands are already private)
 - Fixed Skill names that included '(' and ')'
 
-0.8.17 - 3/8/2021
+  0.8.17 - 3/8/2021
 
 - Bug fix for names/names containing '%'
 - Bug fix for resource tracker mis-alignment (due to arrow)
@@ -276,7 +280,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Bug fix for GCS import individual melee and ranged notes
 - /hp /fp now support dice roll /hp +1d
 
-0.8.16 - 3/6/2021
+  0.8.16 - 3/6/2021
 
 - Bug fix for GCA exports. Now equipment with melee & ranged attacks appear in both (Spears)
 - Bug fix for GCA exports (with Armin's help!) Block is calculated correctly for items with DB (shields)
@@ -302,7 +306,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added /qty /uses /status /tracker(name) chat commands
 - Added .ra /sendmbs multiline chat msgs \\
 
-0.8.15 - 2/17/2021
+  0.8.15 - 2/17/2021
 
 - Bug fix for 3D6 roll icon (at bottom of screen)
 - Bug fix for costs, counts, weights that contain commas ","
@@ -313,7 +317,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Allow full damage types, e.g. 'crush', 'cutting', etc.
 - Bug fix for NPC bodyplan changes
 
-0.8.14 - 2/11/2021
+  0.8.14 - 2/11/2021
 
 - Added Explosion damage calculation to Damage Calculator
   - either as a single damage roll applied multiple times to different targets, or right-click on the damage roll to be prompted for the number of rolls to generate
@@ -328,18 +332,18 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Rewrite of damage parser, more uniform handling of multipliers/divisors, etc. support for const damage [1 cut]
 - Don't tell anyone, but we now support any sided dice for non-targeted, non-derived damage rolls [3d4], [2d20 cut]
 
-0.8.13 - 2/6/2021
+  0.8.13 - 2/6/2021
 
 - @Tratz engaged [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) to upgrade our icons.
 - Allow mook parry to show up in tooltip alt
 - Fixed Parry/Blook OtF for mooks
 - Fixed more /chat handler bugs
 
-0.8.12 - 2/5/2021
+  0.8.12 - 2/5/2021
 
 - Bug fix for chat commands, e.g. "/r 3d6", etc.
 
-0.8.11 - 2/4/2021
+  0.8.11 - 2/4/2021
 
 - Fixed the z-index of the modifier bucket (it no longer displays on top of everything!)
 - Ongoing internationalization effort by @Gus
@@ -356,12 +360,12 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed GCA export, ranged attacks in the melee list and sanitize pagerefs
 - Enhanced the import error warnings
 
-0.8.10 - 1/30/2021
+  0.8.10 - 1/30/2021
 
 - @Tratz equipment bug fix, portrait fix and logo fix!
 - Bug fix for OtF formulas in Skills/Spells in containers
 
-0.8.9 - 1/29/2021
+  0.8.9 - 1/29/2021
 
 - Added individual die results to Roll Chat messages (e.g., "Rolled (3, 6, 1) = 10").
 - Fixed GCA export to correctly export ranged innate attacks.
@@ -372,7 +376,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added drag and drop menu 'before' and 'in' for all lists so you can create containers
 - Allow user created notes & equipment to survive import
 
-0.8.8 - 1/24/2021
+  0.8.8 - 1/24/2021
 
 - Fixed [Parry] bug (if Parry column has "No" in it)
 - Added "Send to 'Everyone'" GM option in modifier bucket
@@ -387,11 +391,11 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Updated chat commands (/help - to see them all)
 - Support limited multiline chat macros
 
-0.8.7 - 1/20/2021
+  0.8.7 - 1/20/2021
 
 - Bug fix for multiple PDF links (and GCA import failure)
 
-0.8.6 - 1/20/2021
+  0.8.6 - 1/20/2021
 
 - Yet more updates to Mook Generator stat block importer
 - Support for OtF [Dodge+/-mod text] and [<mapped>+/-mod text] (Vision, Hearing, Fright Check, etc.)
@@ -400,7 +404,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed "lost" Automatic Encumbrance system setting
 - Support opening multiple PDF links "B101, MA105"
 
-0.8.5 - 1/17/2021
+  0.8.5 - 1/17/2021
 
 - Add popup buttons (-10/-5/+5/+10/etc...) to resource tracker current value fields (including HP and FP) and system setting.
 - Added @Exxar's wonderful work on Conditional Injury (Pyramid 3/120)
@@ -418,7 +422,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - added system setting for 'SHOW THE MATH'
 - Encumbrance level automatically set based on carried equipment weight and system setting
 
-0.8.4 - 1/5/2021
+  0.8.4 - 1/5/2021
 
 - Enhanced the Mook Generator to use tabs as a delimiter.
 - Added pain penalties for characters with High Pain Threshold (HPT) to the modifier bucket (thanks, @Exxar!)
@@ -434,7 +438,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - System setting to ignore 'name' attribute during import
 - More flexible parsing for stat block attacks
 
-0.8.3 - 12/22/2020
+  0.8.3 - 12/22/2020
 
 - Direct roll of On-the-Fly formulas in chat. e.g. /r [Per] or /roll [3d-2 cr]
 - Direct roll of On-the-Fly formulas in Rolltables
@@ -447,7 +451,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Drag and drop damage onto Combat Tracker
 - General Resource trackers! Full and Combat sheets
 
-0.8.2 - 12/14/2020
+  0.8.2 - 12/14/2020
 
 - Rearrange npc sheet (attacks over traits/skills)
 - Added notes for Melee, Ranged, Skills and Traits in Mook Generator
@@ -463,7 +467,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Import can now keep current HP & FP
 - fix for combined Basic Set PDF link for pages > 336
 
-0.8.1 - 12/6/2020
+  0.8.1 - 12/6/2020
 
 - Basic Speed no longer truncates
 - Major upgrade to Apply Damage Dialog!
@@ -517,14 +521,14 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Can edit character sheet
 - Started work on drag and drop damage!
 
-0.6.5 - 11/9/2020
+  0.6.5 - 11/9/2020
 
 - Removed "+0" range modifiers
 - Enabled Full/Combat view for Players
 - Fixed font color to be more readable
 - Major overhaul of the Modifier Bucket "tool tip"!!
 
-0.6.4 - 11/6/2020
+  0.6.4 - 11/6/2020
 
 - HP & FP editable, and Conditions change color.
 - ACC and Bulk ranged modifiers work.
@@ -532,7 +536,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Started work for Monster Hunters 2 range modifiers.
 - Refactored dice rolling so that modifiers now add to damage.
 
-0.6.3 - 11/5/2020
+  0.6.3 - 11/5/2020
 
 - Hot toggle between "full" and "combat" character sheets
 - template.json changes. You must delete all Actors created prior to v0.6.3
@@ -540,7 +544,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - tooltips for Hit Location equipment
 - GM Mod push!
 
-0.6.2 - 11/4/2020
+  0.6.2 - 11/4/2020
 
 - Support for stackable modifiers (clicking [-1 for range] multiple times)
 - Fixed display of desktop Modifier Bucket
@@ -548,12 +552,12 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added critical success/failure calculations
 - Added SJG notifications, as per the SJG Online Policy
 
-0.6.1 - 11/3/2020
+  0.6.1 - 11/3/2020
 
 - Started User Guide and added README popup
 - Imported skill points
 
-0.6.0 - 11/2/2020
+  0.6.0 - 11/2/2020
 
 - Imported Notes & Equipment
 - Incorporated new "combat-focused" character sheet.
@@ -562,27 +566,27 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Continuing work on editable entries.
 - Reworked template.json to remove arrays (All characters prior to 0.6.0 must be deleted and reimported!)
 
-0.5.1 - 10/31/2020
+  0.5.1 - 10/31/2020
 
 - Due to overwhelming pressure (3 people), I did my best to fix the "jumpy" buttons that cause the page to constantly shift.
 
-0.5.0 - 10/30/2020
+  0.5.0 - 10/30/2020
 
 - Atropos fixed my persistance issue. Youtube demo made.
 
-0.4.0 - 10/28/2020
+  0.4.0 - 10/28/2020
 
 - Rollables and PDF (pagerefs) work
 
-0.3.0 - 10/27/2020
+  0.3.0 - 10/27/2020
 
 - Introduction of GCS character sheet
 
-0.2.0 - 10/25/2020
+  0.2.0 - 10/25/2020
 
 - Renamed system
 
-0.1.0 - 10/21/2020
+  0.1.0 - 10/21/2020
 
 - Started GCS Import
 
