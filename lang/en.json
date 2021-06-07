@@ -876,5 +876,12 @@
   "GURPS.update": "Update",
   "GURPS.warning": "WARNING",
   "GURPS.yard": "yard",
-  "GURPS.yards": "yards"
+  "GURPS.yards": "yards",
+
+  "GURPS.statsTab": "Stats",
+  "GURPS.combatTab": "Combat",
+  "GURPS.advantagesTab": "Advantages and Disadvantages",
+  "GURPS.skillsTab": "Skills",
+  "GURPS.spellsTab": "Spells",
+  "GURPS.equipmentTab": "Equipments"
 }

@@ -1,0 +1,673 @@
+<form class="{{cssClass}}" autocomplete="off" style='scroll-padding-top: 5px;'>
+    <div id="sheet-tab" class="gurpsactorsheet">
+        <div id="personal">
+            <div id="portrait">
+                <div class="header">{{localize "GURPS.portrait"}}</div>
+                <div class="img-display" style="background-image: url({{actor.img}});">
+                    <img class="profile-img" src="{{ actor.img }}" data-edit="img" title="{{actor.name}}" />
+                </div>
+            </div>
+            <div id="identity">
+                <div class="header">{{localize "GURPS.identity"}}</div>
+                <div class="fieldblock">
+                    <div class="label">{{localize "GURPS.identityName"}}:</div>
+                    <div class="field">{{{actor.name}}}</div>
+                    <div class="label">{{localize "GURPS.identityTitle"}}:</div>
+                    <div class="field">{{data.traits.title}}</div>
+                    <div class="label">{{localize "GURPS.identityPlayer"}}:</div>
+                    <div class="field">{{data.traits.player}}</div>
+                </div>
+            </div>
+            <div id="miscellaneous">
+                <div class="header">{{localize "GURPS.miscellaneous"}}</div>
+                <div class="fieldblock">
+                    <div class="label">{{localize "GURPS.miscellaneousCreated"}}:</div>
+                    <div class="field">{{data.traits.createdon}}</div>
+                    <div class="label">{{localize "GURPS.miscellaneousModified"}}:</div>
+                    <div class="field">{{data.traits.modifiedon}}</div>
+                    <div class="label">{{localize "GURPS.miscellaneousOptions"}}:</div>
+                    <div class="field"></div>
+                </div>
+            </div>
+            <div id="description">
+                <div class="header">{{localize "GURPS.description"}}</div>
+                <div class="fieldblock">
+                    <div class="label">{{localize "GURPS.descriptionGender"}}:</div>
+                    <div class="field">{{data.traits.gender}}</div>
+                    <div class="label">{{localize "GURPS.descriptionAge"}}:</div>
+                    <div class="field">{{data.traits.age}}</div>
+                    <div class="label">{{localize "GURPS.descriptionBirthday"}}:</div>
+                    <div class="field">{{data.traits.birthday}}</div>
+                    <div class="label">{{localize "GURPS.descriptionReligion"}}:</div>
+                    <div class="field">{{data.traits.religion}}</div>
+                    <div class="label">&nbsp;</div>
+                    <div class="field"></div>
+                </div>
+                <div class="fieldblock">
+                    <div class="label">{{localize "GURPS.descriptionHeight"}}:</div>
+                    <div class="field">{{data.traits.height}}</div>
+                    <div class="label">{{localize "GURPS.weight"}}:</div>
+                    <div class="field">{{data.traits.weight}}</div>
+                    <div class="label">{{localize "GURPS.descriptionSizeModifier"}}:</div>
+                    <div class="field">{{data.traits.sizemod}}</div>
+                    <div class="label">{{localize "GURPS.descriptionTechLevel"}}:</div>
+                    <div class="field">{{data.traits.techlevel}}</div>
+                    <div class="label">{{localize "GURPS.descriptionBodyPlan"}}:</div>
+                    <div class="field">{{localize (concat 'GURPS.BODYPLAN'
+                        data.additionalresources.bodyplan)}}</div>
+                </div>
+                <div class="fieldblock">
+                    {{#if data.traits.eyes}}
+                    <div class="label">{{localize "GURPS.descriptionHair"}}:</div>
+                    <div class="field">{{data.traits.hair}}</div>
+                    <div class="label">{{localize "GURPS.descriptionEyes"}}:</div>
+                    <div class="field">{{data.traits.eyes}}</div>
+                    <div class="label">{{localize "GURPS.descriptionSkin"}}:</div>
+                    <div class="field">{{data.traits.skin}}</div>
+                    <div class="label">{{localize "GURPS.descriptionHand"}}:</div>
+                    <div class="field">{{data.traits.hand}}</div>
+                    {{else}}
+                    <div class="label textarea">{{localize "GURPS.descriptionAppearance"}}:</div>
+                    <div class="label"></div>
+
+                    <div class="field" style="border: none; grid-column: 1 / span 2;">
+                        <textarea readonly rows="4">{{data.traits.appearance}}</textarea>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            <div id="points">
+                <div class="header">{{data.totalpoints.total}} {{localize "GURPS.points"}}</div>
+                <div class="fieldblock">
+                    <div class="field">{{data.totalpoints.unspent}}</div>
+                    <div class="label">{{localize "GURPS.points"}}</div>
+                    <div class="field noedit"></div>
+                    <div class="label">{{localize "GURPS.pointsRace"}}</div>
+                    <div class="field noedit">{{data.totalpoints.attributes}}</div>
+                    <div class="label">{{localize "GURPS.pointsAttributes"}}</div>
+                    <div class="field noedit">{{data.totalpoints.ads}}</div>
+                    <div class="label">{{localize "GURPS.pointsAdvantages"}}</div>
+                    <div class="field noedit">{{data.totalpoints.disads}}</div>
+                    <div class="label">{{localize "GURPS.pointsDisadvantages"}}</div>
+                    <div class="field noedit">{{data.totalpoints.quirks}}</div>
+                    <div class="label">{{localize "GURPS.pointsQuirks"}}</div>
+                    <div class="field noedit">{{data.totalpoints.skills}}</div>
+                    <div class="label">{{localize "GURPS.pointsSkills"}}</div>
+                    <div class="field noedit">{{data.totalpoints.spells}}</div>
+                    <div class="label">{{localize "GURPS.pointsSpells"}}</div>
+                </div>
+            </div>
+        </div>
+        <nav id="nav-tabs" class="sheet-tabs" data-group="primary-tabs">
+            <li><a class="tab-item" data-tab="stats">{{localize "GURPS.statsTab"}}</a></li>
+            <li><a class="tab-item" data-tab="combat">{{localize "GURPS.combatTab"}}</a></li>
+            <li><a class="tab-item" data-tab="advantages">{{localize "GURPS.advantagesTab"}}</a></li>
+            <li><a class="tab-item" data-tab="skills">{{localize "GURPS.skillsTab"}}</a></li>
+            {{#if (notEmpty data.spells)}}
+            <li><a class="tab-item" data-tab="spells">{{localize "GURPS.spellsTab"}}</a></li>
+            {{/if}}
+            <li><a class="tab-item" data-tab="equipment">{{localize "GURPS.equipmentTab"}}</a></li>
+        </nav>
+        <section class="sheet-body">
+            <div class="tab" data-tab="stats" data-group="primary-tabs">
+                <div id="stats">
+                    <div id="attributes">
+                        <div class="header">{{localize "GURPS.attributes"}}</div>
+                        <div class="fieldblock3">
+                            <div class="points">[{{data.attributes.ST.points}}]</div>
+                            <div class="field rollable" data-path="attributes.ST.value" data-otf='ST'>
+                                {{data.attributes.ST.value}}
+                            </div>
+                            <div class="label">{{localize "GURPS.attributesSTNAME"}} ({{localize "GURPS.attributesST"}})</div>
+                            <div class="points">[{{data.attributes.DX.points}}]</div>
+                            <div class="field rollable" data-path="attributes.DX.value" data-otf='DX'>
+                                {{data.attributes.DX.value}}
+                            </div>
+                            <div class="label">{{localize "GURPS.attributesDXNAME"}} ({{localize "GURPS.attributesDX"}})</div>
+                            <div class="points">[{{data.attributes.IQ.points}}]</div>
+                            <div class="field rollable" data-path="attributes.IQ.value" data-otf='IQ'>
+                                {{data.attributes.IQ.value}}
+                            </div>
+                            <div class="label">{{localize "GURPS.attributesIQNAME"}} ({{localize "GURPS.attributesIQ"}})</div>
+                            <div class="points">[{{data.attributes.HT.points}}]</div>
+                            <div class="field rollable" data-path="attributes.HT.value" data-otf='HT'>
+                                {{data.attributes.HT.value}}
+                            </div>
+                            <div class="label">{{localize "GURPS.attributesHTNAME"}} ({{localize "GURPS.attributesHT"}})</div>
+                            <hr>
+                            <div class="points">[{{data.attributes.WILL.points}}]</div>
+                            <div class="field rollable" data-path="attributes.WILL.value" data-otf='WILL'>
+                                {{data.attributes.WILL.value}}
+                            </div>
+                            <div class="label">{{localize "GURPS.attributesWILLNAME"}}</div>
+                            <div class="points"></div>
+                            <div class="field noedit rollable" data-path="frightcheck" data-otf='Fright Check'>
+                                {{data.frightcheck}}
+                            </div>
+                            <div class="label">{{localize "GURPS.frightcheck"}}</div>
+                            <hr>
+                            <div class="points">[{{data.basicspeed.points}}]</div>
+                            <div class="field">{{data.basicspeed.value}}</div>
+                            <div class="label">{{localize "GURPS.basicspeed"}}</div>
+                            <div class="points">[{{data.basicmove.points}}]</div>
+                            <div class="field">{{data.basicmove.value}}</div>
+                            <div class="label">{{localize "GURPS.basicmove"}}</div>
+                            <hr>
+                            <div class="points">[{{data.attributes.PER.points}}]</div>
+                            <div class="field rollable" data-path="attributes.PER.value" data-otf='PER'>
+                                {{data.attributes.PER.value}}
+                            </div>
+                            <div class="label">{{localize "GURPS.attributesPERNAME"}} ({{localize "GURPS.attributesPER"}})</div>
+                            <div class="points"></div>
+                            <div class="field noedit rollable" data-path="vision" data-otf='Vision'>{{data.vision}}</div>
+                            <div class="label">{{localize "GURPS.vision"}}</div>
+                            <div class="points"></div>
+                            <div class="field noedit rollable" data-path="hearing" data-otf='Hearing'>{{data.hearing}}</div>
+                            <div class="label">{{localize "GURPS.hearing"}}</div>
+                            <div class="points"></div>
+                            <div class="field noedit rollable" data-path="tastesmell" data-otf='Taste Smell'>{{data.tastesmell}}
+                            </div>
+                            <div class="label">{{localize "GURPS.tastesmell"}}</div>
+                            <div class="points"></div>
+                            <div class="field noedit rollable" data-path="touch" data-otf='Touch'>{{data.touch}}</div>
+                            <div class="label">{{localize "GURPS.touch"}}</div>
+                            <hr>
+                            <div class="points"></div>
+                            <div class="field noedit rollable" data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
+                            <div class="label">{{localize "GURPS.thrust"}}</div>
+                            <div class="points"></div>
+                            <div class="field noedit rollable" data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
+                            <div class="label">{{localize "GURPS.swing"}}</div>
+                        </div>
+                    </div>
+                    <div id="encumbrance">
+                        <div class="header table-column">{{localize "GURPS.encumbranceMoveDodge"}}</div>
+                        <div class="encmarkerh header table-column"></div>
+                        <div class="ench header table-column">{{localize "GURPS.level"}}</div>
+                        <div class="loadh header table-column">{{localize "GURPS.maxload"}}</div>
+                        <div class="moveh header table-column">{{localize "GURPS.move"}}</div>
+                        <div class="dodgeh header table-column">{{localize "GURPS.dodge"}}</div>
+
+                        {{#each data.encumbrance as | this key |}}
+                        {{#if this.current}}
+                        <div class="encmarker current table-column"></div>
+                        <div class="enc current {{this.key}} table-column" data-key="{{key}}"></div>
+                        <div class="load current table-column">{{this.weight}}</div>
+                        <div class="move current table-column">{{this.currentmovedisplay}}</div>
+                        <div class="dodge current rollable table-column" data-otf='Dodge' data-path="dodge">{{this.currentdodge}}</div>
+                        {{else}}
+                        <div class="encmarker table-column"></div>
+                        <div class="enc {{this.key}} table-column" data-key="{{key}}"></div>
+                        <div class="load table-column">{{this.weight}}</div>
+                        <div class="move table-column">{{this.currentmovedisplay}}</div>
+                        <div class="dodge table-column" data-path="dodge">{{this.currentdodge}}</div>
+                        {{/if}}
+                        {{/each}}
+
+                    </div>
+                    <div id='qnotes'>
+                        {{#if data.additionalresources.qnotes}}{{{gurpslink data.additionalresources.qnotes}}}{{else}} <span
+                            style='color:lightgrey'>double click to edit Quick Note</span>{{/if}}
+                    </div>
+                    <div id="lifting">
+                        <div class="header table-column">{{localize "GURPS.liftingAndMovingThings"}}</div>
+                        <div class="lift table-column">{{data.liftingmoving.basiclift}}</div>
+                        <div class="liftdesc table-column">{{localize "GURPS.basicLift"}}</div>
+                        <div class="lift table-column">{{data.liftingmoving.onehandedlift}}</div>
+                        <div class="liftdesc table-column">{{localize "GURPS.oneHandLift"}}</div>
+                        <div class="lift table-column">{{data.liftingmoving.twohandedlift}}</div>
+                        <div class="liftdesc table-column">{{localize "GURPS.twoHandLift"}}</div>
+                        <div class="lift table-column">{{data.liftingmoving.shove}}</div>
+                        <div class="liftdesc table-column">{{localize "GURPS.shoveAndKnockOver"}}</div>
+                        {{#if data.liftingmoving.runningshove}}
+                        <div class="lift table-column">{{data.liftingmoving.runningshove}}</div>
+                        <div class="liftdesc table-column">{{localize "GURPS.runningShoveAndKnockOver"}}</div>
+                        {{/if}}
+                        <div class="lift table-column">{{data.liftingmoving.carryonback}}</div>
+                        <div class="liftdesc table-column">{{localize "GURPS.carryOnBack"}}</div>
+                        <div class="lift table-column">{{data.liftingmoving.shiftslightly}}</div>
+                        <div class="liftdesc table-column">{{localize "GURPS.shiftSlightly"}}</div>
+                    </div>
+                    <div id="location">
+                        <div class="header table-column">{{localize "GURPS.hitLocation"}}</div>
+                        <div class="roll header table-column">{{localize "GURPS.roll"}}</div>
+                        <div class="where header table-column">{{localize "GURPS.hitLocationWhere"}}</div>
+                        <div class="penalty header table-column">{{localize "GURPS.hitLocationPenalty"}}</div>
+                        <div class="dr header table-column">{{localize "GURPS.hitLocationDR"}}</div>
+
+                        {{#each data.hitlocations}}
+                        <div class="roll table-column center">{{hitlocationroll this.where this.roll ../data}}</div>
+                        <div class="where {{gurpstippable}} table-column" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
+                            {{i18n (concat "GURPS.hitLocation" this.where) this.where}}
+                        </div>
+                        <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}} table-column center" data-name="to hit {{this.where}}"
+                             data-otf='{{this.penalty}} to hit {{this.where}}'>
+                            {{hitlocationpenalty this.where this.penalty ../data}}
+                        </div>
+                        <div class="dr table-column center">{{this.dr}}
+                        </div>
+                        {{/each}}
+                    </div>
+                    <div id="trackers">
+                        <div>
+                            {{#if useCI}}
+                            <div id='combat-hit' class='conditional-injury'>
+                                <div class='header major-heading'>Injury</div>
+                                <div class="tracked-resource no-border">
+                                    <div class="header minor-heading">Severity</div>
+                                    <div class='spinner'>
+                                        <button data-operation='ci-severity-dec'><i class="fas fa-minus"></i></button>
+
+                                        <input class="gcs-attr-input" name="data.conditionalinjury.injury.severity" type="text"
+                                               value="{{data.conditionalinjury.injury.severity}}" data-dtype="String"
+                                               data-operation="ci-severity-set" />
+
+                                        <button data-operation='ci-severity-inc'><i class="fas fa-plus"></i></button>
+                                        <button data-operation='ci-reset'><i class="fas fa-undo"></i></button>
+                                    </div>
+                                    <div class="header minor-heading">Time to Heal</div>
+                                    <div class='spinner'>
+                                        <button data-operation='ci-days-dec'><i class="fas fa-minus"></i></button>
+                                        <input class="gcs-attr-input" name="injury.daystoheal" type="text"
+                                               value="{{data.conditionalinjury.injury.daystoheal}}" placeholder="" data-dtype="Number"
+                                               data-operation="ci-days-set" />
+                                        <button class='no-gap' data-operation='ci-days-inc'><i class="fas fa-plus"></i></button>
+                                        <div style='font-size: 85%;'>&nbsp;Days</div>
+                                    </div>
+                                    <div class='condition-block'>
+                                        <div class='tooltip-wrapper'>
+                                            <div
+                                                    class='tooltip condition {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "style"}}'>
+                                                {{ciCurrentGrossEffects data.conditionalinjury.injury.severity "label"}}
+                                                <span class="tooltiptext">
+                        <div class="fieldblock">
+                          {{#ciSeveritiesTooltip}}
+                            <div class="field condensed noedit">{{severity}}</div>
+                            <div class="label">{{label}}</div>
+                          {{/ciSeveritiesTooltip}}
+                        </div>
+                      </span>
+                                            </div>
+                                        </div>
+                                        <div class='basic-value fieldblock3'>
+                                            <div class="points">[{{#if
+                                                data.conditionalinjury.RT.points}}{{data.conditionalinjury.RT.points}}
+                                                {{else}}{{data.HP.points}}{{/if}}]
+                                            </div>
+                                            <div class='field'>{{data.conditionalinjury.RT.value}}&nbsp;RT</div>
+                                            <div class='label'>{{data.HP.max}}&nbsp;HP</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{else}}
+                            {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' editable=false condition='isReeling' testcondition=data.additionalresources.isReeling}}
+                            {{/if}}
+                            {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false condition='isTired' testcondition=data.additionalresources.isTired}}
+
+                        </div>
+                        <div></div>
+                        <div id='resources'>
+                            <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
+                            {{#each data.additionalresources.tracker}}
+                            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
+                            {{/each}}
+                        </div>
+                    </div>
+                    <div id='condition'>
+                        <div class="header">{{i18n "GURPS.conditions" "Conditions"}}</div>
+                        <div class="fieldblock">
+                            <div class="label">{{i18n "GURPS.maneuver" "Maneuver"}}</div>
+                            <div class="field" style='padding-top: 3px; border: none;'>
+                                <select id='maneuver' name="data.conditions.maneuver">
+                                    {{#each (listAllManeuvers) as | this key |}}
+                                    {debug key}
+                                    <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
+                                    {{localize this.label}}
+                                    </option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {{#if (notEmpty data.reactions)}}
+                <div id="reactions">
+                    <div class="modifier header table-column">{{localize "GURPS.modifier"}}</div>
+                    <div class="situation header table-column">{{localize "GURPS.reaction"}}</div>
+                    <div></div>
+                    {{#each data.reactions}}
+                    <div class="modifier gmod table-column center" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
+                    <div class="situation table-column">{{{gurpslink this.situation}}}</div>
+                    <div></div>
+                    {{/each}}
+
+                </div>
+                {{/if}}
+                <br/>
+                <div id="notes">
+                    <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div>
+                    <div class="ref header">Ref</div>
+                    {{#listeqt data.notes}}
+                    <div
+                            class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}"
+                            data-key="data.notes.{{@key}}">
+                        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                        {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}
+                    </div>
+                    <div class="ref">{{{pdflink this.pageref}}}</div>
+                    {{/listeqt}}
+                    <div></div>
+                </div>
+            </div>
+            <div class="tab" data-tab="combat" data-group="primary-tabs">
+                {{#if (notEmpty data.melee)}}
+                <div id="melee">
+                    <div class="desc table-column header">{{localize "GURPS.meleeWeapons"}}</div>
+                    <div class="usage table-column header">{{localize "GURPS.usage"}}</div>
+                    <div class="level table-column header">{{localize "GURPS.level"}}</div>
+                    <div class="parry table-column header">{{localize "GURPS.parry"}}</div>
+                    <div class="block table-column header">{{localize "GURPS.block"}}</div>
+                    <div class="damage table-column header">{{localize "GURPS.damage"}}</div>
+                    <div class="reach table-column header">{{localize "GURPS.reach"}}</div>
+                    <div class="st table-column header">{{localize "GURPS.attributesST"}}</div>
+                    <div></div>
+
+                    {{#each data.melee as | this key |}}
+                    <div class="desc gcs-edit dblclkedit meleedraggable table-column" data-key="data.melee.{{@key}}" data-path="data.melee">
+                        {{{gurpslink this.name}}}
+                        {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+                                                             style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        <div class="list_note">{{{gurpslink this.notes}}}</div>
+                    </div>
+                    <div class="usage table-column center">{{this.mode}}</div>
+                    <div class="level rollable table-column center" data-name="{{this.name}} ({{this.mode}})"
+                         data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+                    <div class="parry rollable table-column center" data-otf="Parry">{{this.parry}}</div>
+                    <div class="block rollable table-column center" data-otf="Block">{{this.block}}</div>
+                    <div class="damage rollable table-column center" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+                    <div class="reach table-column center">{{this.reach}}</div>
+                    <div class="st table-column center">{{this.st}}</div>
+                    <div></div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if (notEmpty data.ranged)}}
+                <div id="ranged">
+                    <div class="desc table-column header">{{localize "GURPS.rangedWeapons"}}</div>
+                    <div class="usage table-column header">{{localize "GURPS.usage"}}</div>
+                    <div class="level table-column header">{{localize "GURPS.level"}}</div>
+                    <div class="acc table-column header">{{localize "GURPS.acc"}}</div>
+                    <div class="damage table-column header">{{localize "GURPS.damage"}}</div>
+                    <div class="range table-column header">{{localize "GURPS.range"}}</div>
+                    <div class="rof table-column header">{{localize "GURPS.rof"}}</div>
+                    <div class="shots table-column header">{{localize "GURPS.shots"}}</div>
+                    <div class="bulk table-column header">{{localize "GURPS.bulk"}}</div>
+                    <div class="rcl table-column header">{{localize "GURPS.rcl"}}</div>
+                    <div class="st table-column header">{{localize "GURPS.attributesST"}}</div>
+
+                    {{#each data.ranged as | this key |}}
+                    <div class="desc dblclkedit rangeddraggable table-column" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
+                        {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+                                                             style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        <div class="list_note">{{{gurpslink this.notes}}}</div>
+                        {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
+                        </div> }}
+                    </div>
+                    <div class="usage table-column center">{{this.mode}}</div>
+                    <div class="level rollable table-column center" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
+                         data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+                    <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}} table-column center" data-name='Acc for {{this.name}}'
+                         data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
+                        {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}
+                    </div>
+                    <div class="damage rollable table-column center" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+                    <div class="range table-column center">{{this.range}}</div>
+                    <div class="rof table-column center">{{this.rof}}</div>
+                    <div class="shots table-column center">{{this.shots}}</div>
+                    <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}} table-column center" data-name='Bulk for {{this.name}}'
+                         data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
+                    </div>
+                    <div class="rcl table-column center">{{this.rcl}}</div>
+                    <div class="st table-column center">{{this.st}}</div>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+            <div class="tab" data-tab="advantages" data-group="primary-tabs">
+                <div id="advantages">
+                    <div class="desc header dblclksort table-column" data-key="data.ads">{{localize "GURPS.advDisadvPerkQuirks"}}</div>
+                    <div class="pts header table-column">Pts</div>
+                    <div class="ref header table-column">Ref</div>
+                    {{#listeqt data.ads}}
+                    <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit table-column" data-key="data.ads.{{@key}}">
+                        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                        {{{gurpslink this.name}}}
+                        {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+                                                             style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        <div class="list_note satisfiedY"></div>
+                        <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">{{{gurpslinkbr this.notes}}}
+                        </div>
+                    </div>
+                    <div class="pts satisfiedY table-column center">{{this.points}}</div>
+                    <div class="ref satisfiedY table-column center">{{{pdflink this.pageref}}}</div>
+                    {{/listeqt}}
+                </div>
+            </div>
+            <div class="tab" data-tab="skills" data-group="primary-tabs">
+                <div id="skills">
+                    <div class="desc header dblclksort table-column" data-key="data.skills">{{localize "GURPS.skills"}}</div>
+                    <div class="sl header table-column">{{localize "GURPS.sl"}}</div>
+                    <div class="rsl header table-column">{{localize "GURPS.rsl"}}</div>
+                    <div class="pts header table-column">Pts</div>
+                    <div class="ref header table-column">Ref</div>
+
+                    {{#listeqt data.skills}}
+                    <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit table-column" data-key="data.skills.{{@key}}">
+                        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                        {{{gurpslink this.name}}}
+                        {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+                                                             style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        <div class="list_note satisfiedY"></div>
+                        <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
+                            @root}}}</div>
+                    </div>
+                    <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}  table-column center" data-name="{{this.name}}"
+                         data-otf='S:"{{this.name}}"'>{{this.level}}
+                    </div>
+                    <div class="rsl satisfiedY table-column center">{{this.relativelevel}}</div>
+                    <div class="pts satisfiedY table-column center">{{this.points}}</div>
+                    <div class="ref satisfiedY table-column center">{{{pdflink this.pageref}}}</div>
+                    {{/listeqt}}
+                </div>
+            </div>
+            {{#if (notEmpty data.spells)}}
+            <div class="tab" data-tab="spells" data-group="primary-tabs">
+                <div id="spells">
+                    <div class="desc header dblclksort table-column" data-key="data.spells">{{localize "GURPS.spells"}}</div>
+                    <div class="cls header table-column">{{localize "GURPS.spellClass"}}</div>
+                    <div class="college header table-column">{{localize "GURPS.spellCollege"}}</div>
+                    <div class="mana header table-column">{{localize "GURPS.spellCost"}}</div>
+                    <div class="mana_maintain header table-column">{{localize "GURPS.spellMaintain"}}</div>
+                    <div class="time header table-column">{{localize "GURPS.spellTime"}}</div>
+                    <div class="duration header table-column">{{localize "GURPS.spellDuration"}}</div>
+                    <div class="sl header table-column">{{localize "GURPS.sl"}}</div>
+                    <div class="rsl header table-column">{{localize "GURPS.rsl"}}</div>
+                    <div class="pts header table-column">Pts</div>
+                    <div class="ref header table-column">Ref</div>
+
+                    {{#listeqt data.spells}}
+                    <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit table-column" data-key="data.spells.{{@key}}">
+                        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                        {{{gurpslink this.name}}}
+                        {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+                                                             style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        <div class="list_note satisfiedY"></div>
+                        <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{@key}}">{{{gurpslink this.notes}}}
+                        </div>
+                    </div>
+                    <div class="cls satisfiedY table-column center">{{this.class}}</div>
+                    <div class="college satisfiedY table-column center">{{this.college}}</div>
+                    <div class="mana satisfiedY table-column center">{{this.cost}}</div>
+                    <div class="mana_maintain satisfiedY table-column center">{{this.maintain}}</div>
+                    <div class="time satisfiedY table-column center">{{this.casttime}}</div>
+                    <div class="duration satisfiedY table-column center">{{this.duration}}</div>
+                    <div class="sl satisfiedY rollable table-column center" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}
+                    </div>
+                    <div class="rsl satisfiedY table-column center">{{this.difficulty}}</div>
+                    <div class="pts satisfiedY table-column center">{{this.points}}</div>
+                    <div class="ref satisfiedY table-column center">{{{pdflink this.pageref}}}</div>
+                    {{/listeqt}}
+
+                </div>
+            </div>
+            {{/if}}
+            <div class="tab" data-tab="equipment" data-group="primary-tabs">
+                <div id="equipment" class="equipmentlist">
+                    <div class="equipped header table-column">{{i18n "GURPS.equipmentEquipped"}}</div>
+                    <div class="qty header table-column" data-key="data.equipment.carried">
+                        {{i18n "GURPS.equipmentQuantity"}}
+                    </div>
+                    <div class="desc header eqtdragtarget dblclksort table-column" data-key="data.equipment.carried">
+                        <span>
+                            {{localize "GURPS.equipment"}} ({{toLocaleString eqtsummary.eqtlbs}} lb; ${{toLocaleString eqtsummary.eqtcost}}) &nbsp;
+                            <i class='fas fa-plus addequipmenticon'></i>
+                        </span>
+                    </div>
+                    <div class="uses header table-column">{{i18n "GURPS.equipmentUses"}}</div>
+                    <div class="cost header table-column">$</div>
+                    <div class="weight header table-column"><i class="fas fa-weight-hanging"></i></div>
+                    <div class="sum_cost header table-column">&sum; $</div>
+                    <div class="sum_weight header table-column"><span>&sum; <i class="fas fa-weight-hanging"></i></span></div>
+                    <div class="ref header table-column">{{i18n "GURPS.pdfRef"}}</div>
+
+                    {{#listeqt data.equipment.carried }}
+                    <div class="equipped satisfiedY changeequip equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">{{#if
+                        this.equipped}}&check;{{/if}}</div>
+                    <div class="qty satisfiedY eqtdraggable equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">
+                        <button class="equipmentbutton bold" data-operation='equipment-dec'>-</button>
+                        &nbsp; {{this.count}} &nbsp;
+                        <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
+                    </div>
+                    <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried table-column"
+                         data-key="data.equipment.carried.{{@key}}">
+                        <span>
+                        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                        {{{gurpslink this.name}}}
+                        {{#if (isUserCreated this)}}&nbsp;
+                        <i class="far fa-bookmark" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+                        {{/if}}
+                        {{#if (isFoundryItem this)}}&nbsp;
+                        <i class="far fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
+                        {{/if}}
+                        </span>
+                        <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
+                            {{{gurpslink this.notes}}}
+                        </div>
+                    </div>
+
+                    <div class="uses satisfiedY equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">
+                        {{#if (or (ne this.maxuses "0") (ne this.uses "0"))}}{{this.uses}}{{/if}}
+                    </div>
+                    <div class="cost satisfiedY equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">
+                        {{toLocaleString this.cost}}
+                    </div>
+                    <div class="weight satisfiedY equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">
+                        {{toLocaleString this.weight}} lb
+                    </div>
+                    <div class="sum_cost satisfiedY equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">
+                        {{toLocaleString (round this.costsum)}}
+                    </div>
+                    <div class="sum_weight satisfiedY equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">
+                        {{toLocaleString (round this.weightsum)}} lb
+                    </div>
+                    <div class="ref satisfiedY equipmenucarried table-column center" data-key="data.equipment.carried.{{@key}}">
+                        {{{pdflinkext this.pageref this.externallink}}}
+                    </div>
+
+                    {{/listeqt}}
+                </div>
+
+                <div id="other_equipment" class="equipmentlist">
+                    <div class="qty header eqtdragtarget table-column" data-key="data.equipment.other">
+                        {{i18n "GURPS.equipmentQuantity"}}
+                    </div>
+                    <div class="desc header eqtdragtarget dblclksort table-column" data-key="data.equipment.other">
+                        <span>
+                            {{localize "GURPS.otherEquipment"}} (${{toLocaleString eqtsummary.othercost}}) &nbsp;
+                            <i class='fas fa-plus addequipmenticon'></i>
+                        </span>
+                    </div>
+                    <div class="uses header table-column">{{i18n "GURPS.equipmentUses"}}</div>
+                    <div class="cost header table-column">$</div>
+                    <div class="weight header table-column"><i class="fas fa-weight-hanging"></i></div>
+                    <div class="sum_cost header table-column">&sum; $</div>
+                    <div class="sum_weight header table-column"><span>&sum; <i class="fas fa-weight-hanging"></i></span></div>
+                    <div class="ref header table-column">{{i18n "GURPS.pdfRef"}}</div>
+                    <div></div>
+
+                    {{#listeqt data.equipment.other }}
+                    <div class="qty satisfiedY eqtdraggable equipmenuother table-column center" data-key="data.equipment.other.{{@key}}">
+                        <button class="equipmentbutton bold" data-operation='equipment-dec'>-</i></button>
+                        &nbsp; {{this.count}} &nbsp;
+                        <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
+                    </div>
+                    <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother table-column"
+                         data-key="data.equipment.other.{{@key}}">
+                        <span>
+                        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+                        {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
+                                                                                       style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+                                                             style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        </span>
+                        <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
+                            {{{gurpslink this.notes}}}</div>
+                    </div>
+                    <div class="uses satisfiedY equipmenuother table-column center" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
+                        (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
+                    <div class="cost satisfiedY equipmenuother table-column center" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
+                    <div class="weight satisfiedY equipmenuother table-column center" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb
+                    </div>
+                    <div class="sum_cost satisfiedY equipmenuother table-column center" data-key="data.equipment.other.{{@key}}">
+                        {{round this.costsum}}
+                    </div>
+                    <div class="sum_weight satisfiedY equipmenuother table-column center" data-key="data.equipment.other.{{@key}}">
+                        {{round this.weightsum}}
+                        lb
+                    </div>
+                    <div class="ref satisfiedY equipmenuother table-column center" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref
+                        this.externallink}}}</div>
+                    <div></div>
+                    {{/listeqt}}
+                </div>
+            </div>
+        </section>
+    </div>
+    <div id="footer">{{localize "GURPS.copyrightGCS"}}
+        <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
+    </div>
+    {{#if navigateVisible}}
+    <div class='navigate-bar'>
+        <div class='navigation-link' data-value="personal">TOP</div>
+        <div class='navigation-link' data-value="stats">STATS</div>
+        <div class='navigation-link' data-value="melee">MELEE</div>
+        <div class='navigation-link' data-value="ranged">RANGED</div>
+        <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
+        <div class='navigation-link' data-value="skills">SKILLS</div>
+        <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
+        <div class='navigation-link' data-value="other_equipment">OTHER</div>
+        <div class='navigation-link' data-value="notes">NOTES</div>
+        <div class='navigation-link' data-value="CLOSE"><i class="fas fa-times"></i></div>
+    </div>
+    {{/if}}
+</form>
