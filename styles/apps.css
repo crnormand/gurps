@@ -1168,7 +1168,7 @@ ul#result-effects li {
 .dropdown-content {
   display: block;
   position: absolute;
-  right: 0;
+  right: 2em;
   z-index: 1;
   min-width: max-content;
   text-align: left;

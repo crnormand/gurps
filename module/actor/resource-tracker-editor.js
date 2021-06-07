@@ -1,3 +1,4 @@
+import { i18n_f } from '../../lib/utilities.js'
 export class ResourceTrackerEditor extends Application {
   /**
    * Create a new Resource Tracker Editor
@@ -71,10 +72,7 @@ export class ResourceTrackerEditor extends Application {
       let alias = ev.currentTarget.value
       if (/^[A-Za-z0-9_+-]+$/.test(alias)) this._tracker.alias = alias
       else {
-        ui.notifications.warn(
-          `Invalid alias [${alias}].<br/>Only alphabet and number characters, plus ('+', '_', and '-'), are allowed.`
-        )
-
+        ui.notifications.warn(i18n_f('GURPS.resourceInvalidAlias', { alias: alias }))
         ev.currentTarget.value = this._tracker.alias
       }
     })

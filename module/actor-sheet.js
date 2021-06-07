@@ -1,4 +1,4 @@
-import { atou } from '../lib/utilities.js'
+import { atou, generateUniqueId } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
@@ -47,6 +47,8 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   getData() {
     const sheetData = super.getData()
+    sheetData.olddata = sheetData.data
+    sheetData.data = sheetData.data.data
     sheetData.ranges = game.GURPS.rangeObject.ranges
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse()
     sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable()
@@ -99,7 +101,7 @@ export class GurpsActorSheet extends ActorSheet {
       })
     })
 
-    const canConfigure = game.user.isGM || this.actor.owner
+    const canConfigure = game.user.isGM || this.actor.isOwner
     if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
 
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
@@ -112,7 +114,8 @@ export class GurpsActorSheet extends ActorSheet {
         li.addEventListener('dragstart', ev => {
           let oldd = ev.dataTransfer.getData('text/plain')
           let eqtkey = ev.currentTarget.dataset.key
-          let eqt = GURPS.decode(this.actor.data, eqtkey) // FYI, may not actually be Equipment
+          let eqt = getProperty(this.actor.data, eqtkey) // FYI, may not actually be Equipment
+          if (!eqt) return
           if (!!eqt.eqtkey) {
             eqtkey = eqt.eqtkey
             eqt = GURPS.decode(this.actor.data, eqtkey) // Features added by equipment will point to the equipment
@@ -120,7 +123,7 @@ export class GurpsActorSheet extends ActorSheet {
           }
           var itemData
           if (!!eqt.itemid) {
-            itemData = this.actor.getOwnedItem(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+            itemData = this.actor.items.get(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
             let img = new Image()
             img.src = itemData.img
             const w = 50
@@ -340,6 +343,7 @@ export class GurpsActorSheet extends ActorSheet {
       let actor = this.actor
       let eqtlist = duplicate(getProperty(actor.data, path))
       let eqt = new Equipment('', true)
+      eqt.uuid = generateUniqueId()
       eqt.carried = path.includes('carried')
       let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
 
@@ -382,25 +386,7 @@ export class GurpsActorSheet extends ActorSheet {
       let element = ev.currentTarget
       let parent = $(element).closest('[data-key]')
       let path = parent.attr('data-key')
-      let obj = getProperty(actor.data, path)
-      let update = {}
-      if (!!obj.contains && Object.keys(obj.contains).length > 0) {
-        let temp = obj.contains
-        update = {
-          [path + '.-=contains']: null,
-          [path + '.contains']: {},
-          [path + '.collapsed']: temp,
-        }
-        actor.update(update)
-      } else if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
-        let temp = obj.collapsed
-        update = {
-          [path + '.-=collapsed']: null,
-          [path + '.collapsed']: {},
-          [path + '.contains']: temp,
-        }
-        actor.update(update)
-      }
+      actor.toggleExpand(path)
     })
 
     html.find('.dblclkedit').dblclick(async ev => {
@@ -663,9 +649,11 @@ export class GurpsActorSheet extends ActorSheet {
               ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
-              if (!!u) obj.save = u.is(':checked')
+              if (!!u && obj.save != null) obj.save = u.is(':checked')  // only set 'saved' if it was already defined
+              let v = html.find('.ignoreImportQty') // Should only find in equipment
+              if (!!v) obj.ignoreImportQty = v.is(':checked')
               await actor.update({ [path]: obj })
-              await actor.updateParentOf(path)
+              await actor.updateParentOf(path, false)
             },
           },
         },
@@ -688,7 +676,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'level'],
+      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import'],
       []
     )
   }
@@ -700,7 +688,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'level'],
+      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import'],
       ['acc', 'bulk']
     )
   }
@@ -724,7 +712,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'level', 'relativelevel', 'pageref', 'notes'],
+      ['name', 'import', 'relativelevel', 'pageref', 'notes'],
       ['points']
     )
   }
@@ -738,7 +726,7 @@ export class GurpsActorSheet extends ActorSheet {
       'Spell Editor',
       [
         'name',
-        'level',
+        'import',
         'difficulty',
         'pageref',
         'notes',
@@ -962,7 +950,7 @@ export class GurpsActorSheet extends ActorSheet {
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.owner
+    const canConfigure = game.user.isGM || this.actor.isOwner
     if (this.options.editable && canConfigure) {
       let b = [
         {
@@ -1013,22 +1001,12 @@ export class GurpsActorSheet extends ActorSheet {
       // Hold down the Ctrl key (Command on Mac) for Simplified
       newSheet = 'gurps.GurpsActorNpcSheet'
 
-    await this.actor.sheet.close()
-
-    // Update the Entity-specific override
-    await this.actor.setFlag('core', 'sheetClass', newSheet)
-
-    // Re-draw the updated sheet
-    const updated = this.actor.getFlag('core', 'sheetClass')
-    console.log('updated: ' + updated)
-    this.actor.sheet.render(true)
+    this.actor.openSheet(newSheet)
   }
 
   async _onOpenEditor(event) {
     event.preventDefault()
-    await this.actor.sheet.close()
-    await this.actor.setFlag('core', 'sheetClass', 'gurps.GurpsActorEditorSheet')
-    this.actor.sheet.render(true)
+    this.actor.openSheet('gurps.GurpsActorEditorSheet')
   }
 
   async _onRightClickGurpslink(event) {
@@ -1133,6 +1111,7 @@ export class GurpsActorSheet extends ActorSheet {
       'data.equippedparry': p,
       'data.equippedblock': b,
     })
+    this.actor._forceRender()
   }
 
   addDeleteMenu(obj) {
@@ -1232,12 +1211,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
               'You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.',
             label: 'Ok',
             callback: async () => {
-              await this.actor.sheet.close()
-              // Update the Entity-specific override
-              await this.actor.setFlag('core', 'sheetClass', 'gurps.GurpsActorSheet')
-              // Re-draw the updated sheet
-              const updated = this.actor.getFlag('core', 'sheetClass')
-              this.actor.sheet.render(true)
+              this.actor.openSheet('gurps.GurpsActorSheet')
             },
           }),
         500

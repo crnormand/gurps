@@ -61,13 +61,13 @@ export class SlamCalculator {
     let targetDice = this._getDicePlusAdds(rawDamageTarget)
 
     let attackerRoll = Roll.create(diceToFormula(attackerDice, true))
-    attackerRoll.evaluate()
+    attackerRoll.evaluate({ async: false })
 
     let adds = (data.isAoAStrong ? 2 : 0) + (data.shieldDB || 0)
     let attackerResult = Math.max(attackerRoll.total + adds, 1)
 
     let targetRoll = Roll.create(diceToFormula(targetDice, true))
-    targetRoll.evaluate()
+    targetRoll.evaluate({ async: false })
     let targetResult = Math.max(targetRoll.total, 1)
 
     let resultData = {
@@ -97,7 +97,7 @@ export class SlamCalculator {
 
     let html = await renderTemplate('systems/gurps/templates/slam-results.html', {
       id: this._generateUniqueId(),
-      attacker: data.attackerToken.name,
+      attacker: data.attackerToken?.name,
       attackerHp: data.attackerHp,
       attackerRaw: rawDamageAttacker,
       attackerDice: attackerDice,
@@ -120,11 +120,11 @@ export class SlamCalculator {
 
     // const speaker = { alias: attacker.name, _id: attacker._id, actor: attacker }
     let messageData = {
-      user: game.user._id,
+      user: game.user.id,
       // speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: attackerRoll,
+      roll: JSON.stringify(attackerRoll),
       sound: this.rollThemBones([targetRoll]),
     }
 

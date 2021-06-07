@@ -541,12 +541,12 @@ export default class ApplyDamageDialog extends Application {
 
     let msgData = {
       content: message,
-      user: game.user._id,
+      user: game.user.id,
       type: CONST.CHAT_MESSAGE_TYPES.OOC,
     }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_WHISPER_STATUS_EFFECTS)) {
-      let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
-      let ids = users.map(it => it._id)
+      let users = this.actor.getOwners()
+      let ids = users.map(it => it.id)
       msgData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
       msgData.whisper = ids
     }
@@ -623,29 +623,29 @@ export default class ApplyDamageDialog extends Application {
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = {
         alias: game.user.data.name,
-        _id: game.user._id,
+        _id: game.user.id,
       }
       if (!!attackingActor)
         speaker = {
           alias: attackingActor.data.name,
-          _id: attackingActor._id,
+          _id: attackingActor.id,
           actor: attackingActor,
         }
       let messageData = {
-        user: game.user._id,
+        user: game.user.id,
         speaker: speaker,
         content: html,
         type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       }
 
       if (!publicly) {
-        let users = this.actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
-        let ids = users.map(it => it._id)
+        let users = this.actor.getOwners()
+        let ids = users.map(it => it.id)
         messageData.whisper = ids
         messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
       }
 
-      CONFIG.ChatMessage.entityClass.create(messageData)
+      ChatMessage.create(messageData)
       if (!keepOpen) this.close()
     })
   }

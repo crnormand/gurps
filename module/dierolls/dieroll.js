@@ -36,7 +36,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     let finaltarget = parseInt(origtarget) + modifier;
     if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget;
     roll = Roll.create(formula);		// The formula will always be "3d6" for a "targetted" roll
-    roll.roll();
+    roll.evaluate({ async: false });
     let rtotal = roll.total;
     
     chatdata['rtotal'] = rtotal
@@ -85,7 +85,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     }
 
     roll = Roll.create(formula + `+${modifier}`);
-    roll.roll();
+    roll.evaluate({ async: false });
     let rtotal = roll.total;
     if (rtotal < min) {
       rtotal = min;
@@ -102,19 +102,19 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.html', chatdata)
 
   actor = actor || game.user;
-  const speaker = { alias: actor.name, _id: actor._id, actor: actor }
+  const speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor }
   let messageData = {
-    user: game.user._id,
+    user: game.user.id,
     speaker: speaker,
     content: message,
     type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-    roll: roll
+    roll: JSON.stringify(roll)
   };
 
   let whoCanSeeDice = null;
   if (optionalArgs.event?.shiftKey) {
-    whoCanSeeDice = [game.user._id];
-    messageData.whisper = [game.user._id];
+    whoCanSeeDice = [game.user.id];
+    messageData.whisper = [game.user.id];
   }
   
   let isCtrl = false
@@ -131,9 +131,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   ChatMessage.create(messageData, {});
   
   if (isTargeted && !!optionalArgs.action) {
-    let u = game.users.entities.filter(u => u.isGM)[0]
-    let users = actor.getUsers(CONST.ENTITY_PERMISSIONS.OWNER, true)
-    let ids = users.map(it => it._id)    
+    let users = actor.getOwners()
+    let ids = users.map(it => it.id)    
     let messageData = {
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       whisper: ids
@@ -144,5 +143,3 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   }
   return !failure
 }
-
-//  GURPS.doRoll = doRoll; YOU don't need this -- just import the function wherever it is needed.
