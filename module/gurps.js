@@ -690,17 +690,6 @@ async function performAction(action, actor, event, targets) {
       if (!!action.costs) targetmods.push(GURPS.ModifierBucket.makeModifier(0, action.costs))
     } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
 
-  /*  let attr = action => {
-    let target = action.target
-    if (!target) target = this.resolve(action.path, actordata.data)
-    target = parseInt(target)
-    return {
-      prefix: 'Roll vs ',
-      thing: this.i18n(action.path),
-      target: target,
-    }
-  } */
-
   let processLinked = tempAction => {
     let bestLvl = -99999
     var bestAction, besttrue
@@ -801,7 +790,8 @@ async function performAction(action, actor, event, targets) {
       return false
     }
     if (!bestAction) {
-      ui.notifications.warn("Unable to find '" + attempts.join("' or '").replace('<', '&lt;') + "' on " + actor.name)
+      if (!action.calcOnly)
+        ui.notifications.warn("Unable to find '" + attempts.join("' or '").replace('<', '&lt;') + "' on " + actor.name)
       return false
     }
     formula = '3d6'
@@ -817,9 +807,10 @@ async function performAction(action, actor, event, targets) {
       prefix = ''
       att = GURPS.findAttack(actordata, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
       if (!att) {
-        ui.notifications.warn(
-          "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
-        )
+        if (!action.calcOnly)
+          ui.notifications.warn(
+            "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+          )
         return false
       }
       thing = att.name // get real name of attack
