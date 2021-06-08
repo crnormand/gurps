@@ -480,8 +480,12 @@ class LightChatProcessor extends ChatProcessor {
     return '/li &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off '
   }
   matches(line) {
+    // Could be this:
+    // /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+
     this.match = line.match(
-      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
+      //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
+      /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
     return !!this.match
   }
@@ -494,7 +498,7 @@ class LightChatProcessor extends ChatProcessor {
       this.priv('Possible animations: ' + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
       return
     }
-    let type = this.match[7] || ''
+    let type = this.match.groups.type || ''
     if (!!type) {
       let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.startsWith(type))
       if (!m) {
@@ -505,7 +509,11 @@ class LightChatProcessor extends ChatProcessor {
       }
       type = m
     }
-    let anim = { type: type, speed: parseInt(this.match[8]) || 1, intensity: parseInt(this.match[9]) || 1 }
+    let anim = {
+      type: type,
+      speed: parseInt(this.match.groups.speed) || 1,
+      intensity: parseInt(this.match.groups.intensity) || 1,
+    }
     let data = {
       dimLight: 0,
       brightLight: 0,
@@ -514,11 +522,11 @@ class LightChatProcessor extends ChatProcessor {
       '-=lightColor': null,
     }
 
-    if (!this.match[2]) {
-      if (this.match[6]) data.lightColor = this.match[6]
-      data.dimLight = parseInt(this.match[3] || 0)
-      data.brightLight = parseInt(this.match[4] || 0)
-      data.lightAngle = parseInt(this.match[5] || 360)
+    if (!this.match.groups.off) {
+      if (this.match.groups.color) data.lightColor = this.match.groups.color
+      data.dimLight = parseInt(this.match.groups.dim || 0)
+      data.brightLight = parseInt(this.match.groups.bright || 0)
+      data.lightAngle = parseInt(this.match.groups.angle || 360)
     }
     for (const t of canvas.tokens.controlled) await t.document.update(data)
   }
