@@ -478,10 +478,12 @@ class TrackerChatProcessor extends ChatProcessor {
   help() {
     return '/tr&lt;N&gt; (or /tr (&lt;name&gt;)) &lt;formula&gt;'
   }
+
   matches(line) {
     this.match = line.match(/^\/(tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
     return !!this.match
   }
+
   async process(line) {
     let answer = false
     let m = this.match
@@ -510,15 +512,7 @@ class TrackerChatProcessor extends ChatProcessor {
       }
     }
 
-    if (!m[5]) {
-      ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
-      return
-    }
-
-    let delta = parseInt(m[5])
-
     let theTracker = actor.data.data.additionalresources.tracker[tracker]
-
     if (!!m[6]) {
       // reset -- Damage Tracker's reset to zero
       let value = !!theTracker.isDamageTracker ? theTracker.min : theTracker.max
@@ -530,8 +524,16 @@ class TrackerChatProcessor extends ChatProcessor {
           'reset to'
         )} ${value}`
       )
-      answer = true
-    } else if (isNaN(delta)) {
+      return true
+    }
+
+    if (!m[5]) {
+      ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+      return
+    }
+
+    let delta = parseInt(m[5])
+    if (isNaN(delta)) {
       // only happens with '='
       let value = parseInt(m[5].substr(1))
       if (isNaN(value))
