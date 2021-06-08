@@ -8,6 +8,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added Min and Max enforcement option on Resource Trackers
 - Added system setting to hide QTY equipment icon
 - Added system setting to restrict imports to Trusted or above
+- Drag and drop on to 3d6 or Modifier Bucket for Blind roll
 
   0.10.2
 

@@ -2,6 +2,7 @@ import { displayMod, i18n } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import ModifierBucketJournals from './select-journals.js'
+import { parselink } from '../../lib/parselink.js'
 
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
@@ -258,6 +259,18 @@ export class ModifierBucket extends Application {
     if (this.isTooltip) {
       e.mouseenter(ev => this._onenter(ev))
     }
+    
+    html.on("drop", function(event) {
+      event.preventDefault();  
+      event.stopPropagation();
+      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain'))
+      if (!!dragData && !!dragData.actor && !!dragData.otf) {
+        let action = parselink(dragData.otf)
+        action.action.blindroll = true
+        GURPS.performAction(action.action, game.actors.get(dragData.actor))
+      }
+    });
+
   }
 
   _onenter(ev) {
