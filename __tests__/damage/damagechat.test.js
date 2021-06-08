@@ -165,14 +165,14 @@ describe('DamageChat', () => {
     })
 
     describe('verb', () => {
-      test('specifying a die roll sets verb to "Rolling"', () => {
-        expect(chat._getDiceData('1d', 'dmg', []).verb).toBe('Rolling ')
-        expect(chat._getDiceData('2d-2+3', null, []).verb).toBe('Rolling ')
-        expect(chat._getDiceData('3d-3+1*5(-1)', null, []).verb).toBe('Rolling ')
+      test('specifying a die roll sets "rolled"', () => {
+        expect(chat._getDiceData('1d', 'dmg', []).rolled).toBe(true)
+        expect(chat._getDiceData('2d-2+3', null, []).rolled).toBe(true)
+        expect(chat._getDiceData('3d-3+1*5(-1)', null, []).rolled).toBe(true)
       })
 
       test('Just specifying an amount leaves verb blank', () => {
-        expect(chat._getDiceData('21', 'dmg', []).verb).toBe('')
+        expect(chat._getDiceData('21', 'dmg', []).rolled).toBe(false)
       })
     })
 
