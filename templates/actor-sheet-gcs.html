@@ -534,7 +534,7 @@
           {{#if (isUserCreated this)}}&nbsp;
             <i class="far fa-bookmark" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
-          {{#if this.ignoreImportQty}}&nbsp;
+          {{#if (ignoreImportQty this)}}&nbsp;
             <i class="fas fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
           {{#if (isFoundryItem this)}}&nbsp;
@@ -596,7 +596,7 @@
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
               style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-           {{#if this.ignoreImportQty}}&nbsp;
+           {{#if (ignoreImportQty this)}}&nbsp;
             <i class="far fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
          {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"

@@ -959,13 +959,16 @@ export class GurpsActorSheet extends ActorSheet {
           icon: 'fas fa-exchange-alt',
           onclick: ev => this._onToggleSheet(ev),
         },
-        {
-          label: 'Import',
-          class: 'import',
-          icon: 'fas fa-file-import',
-          onclick: ev => this._onFileImport(ev),
-        },
       ]
+      
+      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
+        b.push( {
+            label: 'Import',
+            class: 'import',
+            icon: 'fas fa-file-import',
+            onclick: ev => this._onFileImport(ev),
+          })
+
       if (!isEditor) {
         b.push({
           label: 'Editor',
