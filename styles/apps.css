@@ -5,7 +5,7 @@
 .gurps-app {
   justify-items: center;
   /* background: url(/ui/parchment.webp) #dcdcd0; */
-  background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.webp) repeat, #dcdcd0;
+  background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
   /* background: radial-gradient(ellipse at bottom, #5091dd 0%, rgb(3, 6, 23) 100%); */
 }
