@@ -12,6 +12,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - /show skillnames or attributes - show best for all actors in a scene
 - [!/chat command] will now disable private report back messages
 - Added Tabbed charactersheet
+- Fixed GCA export to correctly handle children weights
 - Fixed GM "Send to" area to provide more room to see buttons
 
 Release 0.10.2

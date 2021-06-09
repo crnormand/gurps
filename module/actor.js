@@ -1770,8 +1770,11 @@ export class GurpsActor extends Actor {
   // Called from the ItemEditor to let us know our personal Item has been modified
   async updateItem(item) {
     delete item.editingActor
-    await this._removeItemAdditions(item.id)
     this.ignoreRender = true
+    await this._removeItemAdditions(item.id)
+    let oldkey = this._findEqtkeyForId('globalid', item.data.data.globalid)
+    var oldeqt
+    if (!!oldkey) oldeqt = getProperty(this.data, oldkey)
     let other = await this._removeItemElement(item.id, 'equipment.other') // try to remove from other
     if (!other) {
       // if not in other, remove from carried, and then re-add everything
@@ -1780,6 +1783,13 @@ export class GurpsActor extends Actor {
     } else {
       // If was in other... just add back to other (and forget addons)
       await this._addNewItemEquipment(item.data, 'data.equipment.other.' + GURPS.genkey(0))
+    }
+    let newkey = this._findEqtkeyForId('globalid', item.data.data.globalid)
+    if (!!oldeqt && (!!oldeqt.contains || !!oldeqt.collapsed)) {
+      this.update({ 
+        [newkey + ".contains"] : oldeqt.contains,
+        [newkey + ".collapsed"] : oldeqt.collapsed
+      })
     }
     this._forceRender()
   }

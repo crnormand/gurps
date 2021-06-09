@@ -651,6 +651,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.addModifier(0, action.costs)
+    if (!!action.mod) GURPS.addModifier(action.mod, action.desc)  // special case where Damage comes from [D:attack + mod]
     DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets, action.extdamagetype)
     return true
   }
@@ -840,7 +841,12 @@ async function performAction(action, actor, event, targets) {
         return false
       }
       let dam = parseForDamage(att.damage)
-      if (!!dam.action) await performAction(dam.action, actor, event, targets)
+      if (!!dam.action) {
+        dam.action.costs = action.costs
+        dam.action.mod = action.mod
+        dam.action.desc = action.desc
+        await performAction(dam.action, actor, event, targets)
+      }
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
