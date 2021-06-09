@@ -630,19 +630,12 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'chat') {
     let chat = action.orig
-    if (!!event?.shiftKey || game.keyboard.isCtrl(event))
-      chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
+    //if (!!event?.shiftKey || game.keyboard.isCtrl(event))
+    chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
 
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
-    /*    ui.chat.processMessage(chat).catch(err => {
-      ui.notifications.error(err)
-      console.error(err)
-      return false
-    })
-    return true
-    */
   }
-
+ 
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
     thing = action.desc
@@ -723,6 +716,7 @@ async function performAction(action, actor, event, targets) {
           prefix = 'Roll vs '
           target = t
           thing = th
+          tempAction.thing = thing
           if (!!tempAction.truetext) besttrue = tempAction
         }
       } else {
@@ -767,6 +761,7 @@ async function performAction(action, actor, event, targets) {
             bestLvl = skillLevel
             bestAction = tempAction
             thing = getSkillName(skill)
+            tempAction.thing = thing
             target = getLevel(skill) // target is without mods
             prefix = ''
             if (!!tempAction.truetext) besttrue = tempAction
@@ -852,7 +847,7 @@ async function performAction(action, actor, event, targets) {
   if (!!action.calcOnly) {
     for (let m of targetmods) target += m.modint
     GURPS.ModifierBucket.modifierStack.modifierList = savedBucket
-    return target
+    return { target: target, thing: thing }
   }
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
 }

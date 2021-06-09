@@ -1902,7 +1902,8 @@ export class GurpsActor extends Actor {
           let action = parselink(otf)
           if (!!action.action) {
             action.action.calcOnly = true
-            e.import = '' + (await GURPS.performAction(action.action, this)) // collapse the OtF formula into a string
+            let ret = await GURPS.performAction(action.action, this)
+            e.import = '' + ret.target // collapse the OtF formula into a string
           }
         }
       }
