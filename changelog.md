@@ -8,20 +8,21 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added Min and Max enforcement option on Resource Trackers
 - Added system setting to hide QTY equipment icon
 - Added system setting to restrict imports to Trusted or above
-- Drag and drop on to 3d6 or Modifier Bucket for Blind roll
+- Drag and drop on to 3d6 or Modifier Bucket for Blind roll (FG)
 - /show skillnames or attributes -  show best for all actors in a scene
 - [!/chat command] will now disable private report back messages
 - Added Tabbed charactersheet (not certain when)
+- Fixed GCA export to correctly handle children weights
 
-  0.10.2
+  0.10.2 - 6/5/2021
 
 - Fixed parse bug in bucket
 
-  0.10.1
+  0.10.1 - 6/4/2021
 
 - Fix for dragging Items on to unlinked tokens
 
-  0.10.0
+  0.10.0 - 6/4/2021
 
 - Foundry 0.8.x compatible!
 - Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
@@ -30,21 +31,21 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added Ignore QTY/Count/Uses from import
 - Remember carried, parent and equipped status from previous import
 
-  0.9.15
+  0.9.15 - 5/30/2021
 
 - Fixed dodge values when encumbrance greater than 'none'
 
-  0.9.14
+  0.9.14 - 5/28/2021
 
 - Fixed element editors (melee, ranged, skills, spells) for level
 - Restrict Foundry items from containing other items
 - Fixed Actor startup on encumbrance
 
-  0.9.13
+  0.9.13 - 5/24/2021
 
 - Fixed the data model (template.json) for items
 
-  0.9.12
+  0.9.12 - 5/23/2021
 
 - Equipment name searches for /qty and /use now start at the front of the name for matching
 - Fixed /uses /qty when equipment name is being used
@@ -56,19 +57,19 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Add scroll bars to the "Send Modifiers to Players" part of the modifier bucket window.
 - Show combat maneuver drop-down on character sheet.
 
-  0.9.11
+  0.9.11 - 5/22/2021
 
 - Allow user additions to names or notes survive an import (if changes occur at END of imported data)!
 - Added /uses can now automatically detect if it is being run on equipment (like /qty)
 
-  0.9.10
+  0.9.10 - 5/22/2021
 
 - Ensure that empty Actors are initialized correctly
 - Added Rcl/RoF information to [A:..] and [R:...] OTF rolls
 - More i18n work, we are getting there!
 - /tr (/rt) now returns false if the value is less than 0. So it can be used as an ammo tracker /if [/tr(ammo) -1] do some attack]
 
-  0.9.9
+  0.9.9 - 5/21/2021
 
 - Adding @neck/rinickolous's inventory sheet
 - Replaced /light dialog with parameters torch = /light 6 2 torch (or candle = /light 1 0 t)
