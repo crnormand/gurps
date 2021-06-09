@@ -567,18 +567,19 @@ class ShowChatProcessor extends ChatProcessor {
       this.priv("<hr>")
       let label = false
       if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) arg = "S:" + arg
-      for (const actor of canvas.tokens.placeables.map(t => t.actor)) {
+      for (const token of canvas.tokens.placeables) {
+        let actor = token.actor
         let action = parselink(arg)
         if (!!action.action) {
-          if (!label) {
-            this.priv('[' + arg + ']')
-            label = true
-          }
           action.action.calcOnly = true
           let n = await GURPS.performAction(action.action, actor)
-          if (n != false) this.priv(n + ": " + actor.name)
+          if (n != false) {
+            let lbl = `["${arg} (${n}) : ${actor.name}"/sel ${token.id}\\\\/r [${arg}]]`
+            this.priv(lbl)
+          }
         }
       }
     }    
   }
+
 }

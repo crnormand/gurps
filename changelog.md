@@ -9,6 +9,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added system setting to hide QTY equipment icon
 - Added system setting to restrict imports to Trusted or above
 - Drag and drop on to 3d6 or Modifier Bucket for Blind roll
+- /show skillnames or attributes -  show best for all actors in a scene
 
   0.10.2
 
