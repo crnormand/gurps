@@ -43,6 +43,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new LightChatProcessor())
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
+  ChatProcessors.registerProcessor(new ShowChatProcessor())
 }
 
 class ReimportChatProcessor extends ChatProcessor {
@@ -545,4 +546,40 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     await Migration.migrateTo096()
     await Migration.migrateTo097()
   }
+}
+
+class ShowChatProcessor extends ChatProcessor {
+  isGMOnly() {
+    return true
+  }
+  
+  help() {
+    return "/show &lt;skills or attributes&gt"
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/(show|sh) (.*)/i)
+    return !!this.match
+  }
+  async process(line) {
+    let args = splitArgs(this.match[2]);
+    for (let arg of args) {
+      this.priv("<hr>")
+      let label = false
+      if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) arg = "S:" + arg
+      for (const token of canvas.tokens.placeables) {
+        let actor = token.actor
+        let action = parselink(arg)
+        if (!!action.action) {
+          action.action.calcOnly = true
+          let n = await GURPS.performAction(action.action, actor)
+          if (n != false) {
+            let lbl = `["${arg} (${n}) : ${actor.name}"/sel ${token.id}\\\\/r [${arg}]]`
+            this.priv(lbl)
+          }
+        }
+      }
+    }    
+  }
+
 }
