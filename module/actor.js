@@ -563,7 +563,7 @@ export class GurpsActor extends Actor {
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user.id],
       })
-      if (exit) return // Some errors cannot be forgiven ;-)
+      if (exit) return false; // Some errors cannot be forgiven ;-)
     }
     let nm = this.textFrom(c.name)
     console.log("Importing '" + nm + "'")
@@ -639,6 +639,7 @@ export class GurpsActor extends Actor {
       ui.notifications.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
       console.log('Done importing.  You can inspect the character data below:')
       console.log(this)
+      return true;
     } catch (err) {
       console.log(err.stack);
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
@@ -659,6 +660,7 @@ export class GurpsActor extends Actor {
         whisper: [game.user.id],
       }
       ChatMessage.create(chatData, {})
+      return false;
     }
   }
 
