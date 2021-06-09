@@ -564,18 +564,22 @@ class ShowChatProcessor extends ChatProcessor {
   async process(line) {
     let args = splitArgs(this.match[2]);
     this.priv(line)
-    for (let arg of args) {
+    for (const orig of args) {
       this.priv("<hr>")
       let label = false
-      if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) arg = "S:" + arg
       for (const token of canvas.tokens.placeables) {
+        let arg = orig
         let actor = token.actor
+        if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) {
+          if (arg.includes(' ')) arg = '"' + arg + '"'
+          arg = "S:" + arg
+        }
         let action = parselink(arg)
         if (!!action.action) {
           action.action.calcOnly = true
           let n = await GURPS.performAction(action.action, actor)
           if (n != false) {
-            let lbl = `["${arg} (${n}) : ${actor.name}"/sel ${token.id}\\\\/r [${arg}]]`
+            let lbl = `['${arg} (${n}) : ${actor.name}'/sel ${token.id}\\\\/r [${arg}]]`
             this.priv(lbl)
           }
         }
