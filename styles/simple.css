@@ -1921,5 +1921,5 @@ body {
 }
 
 .desc:hover .tooltippic {
-  /* visibility: visible; */
+  visibility: visible; 
 }
