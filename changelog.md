@@ -10,6 +10,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added system setting to restrict imports to Trusted or above
 - Drag and drop on to 3d6 or Modifier Bucket for Blind roll
 - /show skillnames or attributes -  show best for all actors in a scene
+- [!/chat command] will now disable private report back messages
+- Added Tabbed charactersheet (not certain when)
 
   0.10.2
 
@@ -30,7 +32,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
   0.9.15
 
-- Fixed dodge values when encumbrence greater than 'none'
+- Fixed dodge values when encumbrance greater than 'none'
 
   0.9.14
 

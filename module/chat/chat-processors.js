@@ -79,8 +79,8 @@ class SetEventFlagsChatProcessor extends ChatProcessor {
     return line.startsWith('/setEventFlags')
   }
   process(line) {
-    let m = line.match(/\/setEventFlags (\w+) (\w+)/)
-    this.registry.setEventFlags(m[1] == 'true', m[2] == 'true')
+    let m = line.match(/\/setEventFlags (\w+) (\w+) (\w+)/)
+    this.registry.setEventFlags(m[1] == 'true', m[2] == 'true', m[3] == 'true')
   }
 }
 
@@ -577,9 +577,9 @@ class ShowChatProcessor extends ChatProcessor {
         let action = parselink(arg)
         if (!!action.action) {
           action.action.calcOnly = true
-          let n = await GURPS.performAction(action.action, actor)
-          if (n != false) {
-            let lbl = `['${arg} (${n}) : ${actor.name}'/sel ${token.id}\\\\/r [${arg}]]`
+          let ret = await GURPS.performAction(action.action, actor)
+          if (!!ret.target) {
+            let lbl = `['${ret.thing} (${ret.target}) : ${actor.name}'/sel ${token.id}\\\\/r [${arg}]]`
             this.priv(lbl)
           }
         }
