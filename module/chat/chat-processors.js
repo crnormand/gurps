@@ -563,6 +563,7 @@ class ShowChatProcessor extends ChatProcessor {
   }
   async process(line) {
     let args = splitArgs(this.match[2]);
+    this.priv(line)
     for (let arg of args) {
       this.priv("<hr>")
       let label = false
