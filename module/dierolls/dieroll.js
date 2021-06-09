@@ -137,22 +137,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
       whisper: ids
     };
-    if (!failure && !!optionalArgs.action.truetext) {
-      let m = optionalArgs.action.truetext.match(/^ *\[([\]]+)\] *$/)
-      if (!!m) {
-        let action = parselink(m[1])
-        if (!!action.action) await GURPS.performAction(action.action, actor, optionalArgs.event)
-      } else
-        messageData.content = optionalArgs.action.truetext.replace(/\\\\/g, "<br>")
-    }
-    if (failure && !!optionalArgs.action.falsetext) {
-      let m = optionalArgs.action.falsetext.match(/^ *\[([\]]+)\] *$/)
-      if (!!m) {
-        let action = parselink(m[1])
-        if (!!action.action) await GURPS.performAction(action.action, actor, optionalArgs.event)
-      } else
-        messageData.content = optionalArgs.action.falsetext.replace(/\\\\/g, "<br>")
-    }
+    if (!failure && !!optionalArgs.action.truetext) messageData.content = optionalArgs.action.truetext
+    if (failure && !!optionalArgs.action.falsetext) messageData.content = optionalArgs.action.falsetext
     if (!!messageData.content) ChatMessage.create(messageData);
   }
   return !failure

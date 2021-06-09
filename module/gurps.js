@@ -630,19 +630,12 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'chat') {
     let chat = action.orig
-    if (!!event?.shiftKey || game.keyboard.isCtrl(event))
-      chat = `/setEventFlags ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
+    //if (!!event?.shiftKey || game.keyboard.isCtrl(event))
+    chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isCtrl(event)}\n${chat}`
 
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
-    /*    ui.chat.processMessage(chat).catch(err => {
-      ui.notifications.error(err)
-      console.error(err)
-      return false
-    })
-    return true
-    */
   }
-
+ 
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
     thing = action.desc
@@ -658,6 +651,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.addModifier(0, action.costs)
+    if (!!action.mod) GURPS.addModifier(action.mod, action.desc)  // special case where Damage comes from [D:attack + mod]
     DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets, action.extdamagetype)
     return true
   }
@@ -723,6 +717,7 @@ async function performAction(action, actor, event, targets) {
           prefix = 'Roll vs '
           target = t
           thing = th
+          tempAction.thing = thing
           if (!!tempAction.truetext) besttrue = tempAction
         }
       } else {
@@ -767,6 +762,7 @@ async function performAction(action, actor, event, targets) {
             bestLvl = skillLevel
             bestAction = tempAction
             thing = getSkillName(skill)
+            tempAction.thing = thing
             target = getLevel(skill) // target is without mods
             prefix = ''
             if (!!tempAction.truetext) besttrue = tempAction
@@ -845,14 +841,19 @@ async function performAction(action, actor, event, targets) {
         return false
       }
       let dam = parseForDamage(att.damage)
-      if (!!dam.action) await performAction(dam.action, actor, event, targets)
+      if (!!dam.action) {
+        dam.action.costs = action.costs
+        dam.action.mod = action.mod
+        dam.action.desc = action.desc
+        await performAction(dam.action, actor, event, targets)
+      }
     } else ui.notifications.warn('You must have a character selected')
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
     for (let m of targetmods) target += m.modint
     GURPS.ModifierBucket.modifierStack.modifierList = savedBucket
-    return target
+    return { target: target, thing: thing }
   }
   return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
 }
