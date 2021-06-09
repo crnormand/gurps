@@ -271,8 +271,8 @@ export default function addChatHooks() {
         let labelFor = $(label).attr('for')
         if (labelFor !== id) {
           $(label).attr('for', id)
+          console.log(`add the 'for' attribute if needed: ${$(wrapper).html()}`)
         }
-        //console.log($(wrapper).html())
       }
     })
 
