@@ -568,7 +568,10 @@
                         {{#if (isFoundryItem this)}}&nbsp;
                         <i class="far fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
                         {{/if}}
-                        </span>
+                        {{#if (ignoreImportQty this)}}&nbsp;
+                        <i class="far fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+                        {{/if}}
+                       </span>
                         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
                             {{{gurpslink this.notes}}}
                         </div>
@@ -629,6 +632,9 @@
                                                                                        style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
                         {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                                                              style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+                        {{#if (ignoreImportQty this)}}&nbsp;
+                        <i class="far fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+                        {{/if}}
                         </span>
                         <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
                             {{{gurpslink this.notes}}}</div>
