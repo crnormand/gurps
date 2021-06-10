@@ -16,6 +16,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Items (and Item features) will hover display the Item icon (very basic... would love CSS help!)
 - Fixed GM "Send to" area to provide more room to see buttons
 - Fixed bug in Item creation.  Equipment can no longer contain other hidden equipment
+- Added OtF buttons for margin of success (Rolltable formula "3d6 + @gmodc")
 
 Release 0.10.2
 
