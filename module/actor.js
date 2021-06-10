@@ -58,21 +58,24 @@ export class GurpsActor extends Actor {
 
   // execute after every import.
   async postImport() {
+    this.calculateDerivedValues()
+    
+    // Convoluted code to add Items (and features) into the equipment list
     let orig = this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name))  // in case items are in the same list... add them alphabetically
     let good = []
-    while (orig.length > 0) {
+    while (orig.length > 0) { // We are trying to place 'parent' items before we place 'children' items
       let left = []
-      let one = false
+      let atLeastOne = false
       for (const i of orig) {
         if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid)) {
-          one = true
+          atLeastOne = true
           good.push(i)    // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
         } else
           left.push(i)
       }
-      if (one)  
+      if (atLeastOne)  
         orig = left
-      else {
+      else {  // if unable to move at least one, just copy the rest and hope for the best
         good = [...good, ...left]
         orig = []
       }
@@ -82,7 +85,6 @@ export class GurpsActor extends Actor {
     this.ignoreRender = false
     
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
-    this.calculateDerivedValues()
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
   }
@@ -1672,6 +1674,16 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
+   
+/*    let existingEqtKey = this._findEqtkeyForId('globalid', global.id) 
+    if (!!existingEqtKey) {
+      let existingEqt = getProperty(this.data, existingEqtKey)
+      this.ignoreRender = true
+      await this.updateEqtCount(existingEqtKey, existingEqt.count + global.data.data.eqt.count)
+      this._forceRender()
+      return 
+    }
+*/
     await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
     this.ignoreRender = true
     await this.addNewItemData(global.data)
@@ -1862,11 +1874,14 @@ export class GurpsActor extends Actor {
 
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
+    await this.update(commit, { diff: false, render: false })
+    this.calculateDerivedValues() // new skills may affect melee and ranged
+    commit = {}
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'melee')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ranged')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
     await this.update(commit, { diff: false, render: false })
   }
 
