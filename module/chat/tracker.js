@@ -12,12 +12,11 @@ export default class TrackerChatProcessor extends ChatProcessor {
   }
 
   async process(line) {
-    let answer = false
     let m = this.match
     let actor = GURPS.LastActor
     if (!actor) {
       ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
-      return
+      return false
     }
 
     let tracker = parseInt(m[2])
@@ -35,7 +34,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
       }
       if (tracker == -1) {
         ui.notifications.warn(`${i18n('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} '${m[3]}'`)
-        return
+        return false
       }
     }
 
@@ -56,55 +55,48 @@ export default class TrackerChatProcessor extends ChatProcessor {
 
     if (!m[5]) {
       ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
-      return
+      return false
     }
 
     let delta = parseInt(m[5])
     if (isNaN(delta)) {
       // only happens with '='
       let value = parseInt(m[5].substr(1))
-      if (isNaN(value))
+      if (isNaN(value)) {
         ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
-      else {
-        value = this.getRestrictedValue(theTracker, value)
-
+        return false
+      } else {
+        value = theTracker.isMaximumEnforced && value > theTracker.max ? theTracker.max : value
+        value = theTracker.isMinimumEnforced && value < theTracker.min ? theTracker.min : value
         await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: value })
         this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} set to ${value}`)
-        answer = true
+        return true
       }
     } else if (!!m[5]) {
       let max = theTracker.max == 0 ? Number.MAX_SAFE_INTEGER : theTracker.max
-      let value = this.getRestrictedValue(theTracker, theTracker.value + delta)
+      let min = theTracker.min
+      let value = theTracker.value + delta
 
       if (value > max) {
-        // This only happens if the value exceeds max, but Maximum is NOT enforced for this tracker.
-        // Allow it, but give the user a warning.
         ui.notifications.warn(
           `${i18n('GURPS.chatExceededMax', 'Exceeded MAX')}:${max} ${i18n('GURPS.for')} ${i18n(
             'GURPS.chatResourceTracker'
           )}${display}`
         )
-        // Allow it: value = max
+        if (theTracker.isMaximumEnforced) return false
       }
-      if (!!theTracker.isDamageTracker && value < 0) {
-        // This only happens if the value is under min, but Minimum is NOT enforced for this tracker.
-        // Allow it, but give the user a warning.
+      if (value < min) {
         ui.notifications.warn(
           `${i18n('GURPS.chatResultBelowZero', 'Result below zero')}: ${i18n('GURPS.chatResourceTracker')}${display}`
         )
-        // Allow it: value = 0
+        if (theTracker.isMinimumEnforced) return false
       }
       await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: value })
       this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} ${m[5]} = ${value}`)
-      answer = value >= 0
-    } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
-
-    return answer
-  }
-
-  getRestrictedValue(theTracker, value) {
-    value = theTracker.isMaximumEnforced && value > theTracker.max ? theTracker.max : value
-    value = theTracker.isMinimumEnforced && value < theTracker.min ? theTracker.min : value
-    return value
+      return true
+    } else {
+      ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+      return false
+    }    
   }
 }
