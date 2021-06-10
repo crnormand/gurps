@@ -30,12 +30,12 @@
         {{else}}{{#if (not failure)}}
         <span class='success'>Success!</span>
         {{/if}}{{/if}}{{/if}}{{/if}}
-        <span class='aside'>
+        <span class='aside' {{#if isDraggable}}' data-otf="{{otf}}"{{/if}}>
           {{#if seventeen}}17 & 18 always fail.
           {{else}}
             {{#if (eq margin 0)}}Just made it.{{/if}}
-            {{#if (gt margin 0)}}Made it by {{margin}}.{{/if}}
-            {{#if (lt margin 0)}}Missed it by {{abs margin}}.{{/if}}
+            {{#if (gt margin 0)}}["Made it by {{margin}}."{{otf}}]{{/if}}
+            {{#if (lt margin 0)}}["Missed it by {{abs margin}}."{{otf}}]{{/if}}
           {{/if}}
         </span>
       </span>

@@ -264,10 +264,11 @@ export class ModifierBucket extends Application {
       event.preventDefault();  
       event.stopPropagation();
       let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain'))
-      if (!!dragData && !!dragData.actor && !!dragData.otf) {
+      if (!!dragData && !!dragData.otf) {
         let action = parselink(dragData.otf)
         action.action.blindroll = true
-        GURPS.performAction(action.action, game.actors.get(dragData.actor))
+        if (action.action.type == "modifier" || !!dragData.actor)
+          GURPS.performAction(action.action, game.actors.get(dragData.actor))
       }
     });
 
