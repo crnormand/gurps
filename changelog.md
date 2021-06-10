@@ -13,6 +13,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - [!/chat command] will now disable private report back messages
 - Added Tabbed charactersheet (not certain when)
 - Fixed GCA export to correctly handle children weights
+- Items (and Item features) will hover display the Item icon (very basic... would love CSS help!)
 
   0.10.2 - 6/5/2021
 

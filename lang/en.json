@@ -677,6 +677,7 @@
   "GURPS.importGCABadBlockForDB": "This file was created with an older version of the GCA Export which incorrectly calculates Block value for items with DB (e.g. Shields).",
   "GURPS.importGCANoBodyPlan": "This file was created with an older version of the GCA Export which does not contain the 'Body Plan' attribute. We will try to guess the Body Plan, but we may get it wrong.",
   "GURPS.importGCANoHideFlag": "This file was created with an older version of the GCA Export which ignored the 'hide' flag for ads/disads/quirks/perks.",
+  "GURPS.importGCAChildrenWeights": "This file was created with an older version of the GCA Export which incorrectly calculated the weights for equipment that contain other equipment.",
   "GURPS.importGCANoInnateRangedAndParent": "This file was created with an older version of the GCA Export which does not export Innate Ranged attacks and does not contain the 'Parent' Attribute for equipment. You may be missing ranged attacks or equipment may not appear in the correct container.",
   "GURPS.importGCANoMeleeIfAlsoRanged": "This file was created with an older version of the GCA Export which may not export a melee attack if it also exists in ranged attacks (e.g. Spears).",
   "GURPS.importGCSNoMeleeRangedNotesForSameItem": "This file was created with an older version of the GCS Export which does not export individual Melee and Ranged attack notes created by the same item.",
