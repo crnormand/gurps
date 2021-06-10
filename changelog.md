@@ -15,6 +15,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed GCA export to correctly handle children weights
 - Items (and Item features) will hover display the Item icon (very basic... would love CSS help!)
 - Fixed GM "Send to" area to provide more room to see buttons
+- Fixed bug in Item creation.  Equipment can no longer contain other hidden equipment
 
 Release 0.10.2
 
