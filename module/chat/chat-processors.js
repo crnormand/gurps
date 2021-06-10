@@ -486,7 +486,7 @@ class LightChatProcessor extends ChatProcessor {
 
     this.match = line.match(
       //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
-      /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})?(?<colorint>:[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
     return !!this.match
   }
@@ -520,16 +520,20 @@ class LightChatProcessor extends ChatProcessor {
       brightLight: 0,
       lightAngle: 360,
       lightAnimation: anim,
-      '-=lightColor': null,
     }
 
-    if (!this.match.groups.off) {
+    if (this.match.groups.off) {
+      data['-=lightColor'] = null
+    } else {
       if (this.match.groups.color) data.lightColor = this.match.groups.color
+      if (this.match.groups.colorint) data.lightAlpha = parseFloat(this.match.groups.colorint.substr(1))
       data.dimLight = parseInt(this.match.groups.dim || 0)
       data.brightLight = parseInt(this.match.groups.bright || 0)
       data.lightAngle = parseInt(this.match.groups.angle || 360)
     }
+    console.log("Token Light update: " + GURPS.objToString(data))
     for (const t of canvas.tokens.controlled) await t.document.update(data)
+    this.priv(line)
   }
 }
 
