@@ -1196,7 +1196,7 @@ async function removeKey(actor, path) {
       return a
     }, {}) // Enforced key order
   actor.ignoreRender = oldRender
-  await actor.update({ [objpath]: sorted })
+  await actor.update({ [objpath]: sorted }, { diff: false })
 }
 GURPS.removeKey = removeKey
 
