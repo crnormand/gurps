@@ -9,7 +9,8 @@ import {
   i18n,
   i18n_f,
   splitArgs,
-  generateUniqueId
+  generateUniqueId,
+  locateToken,
 } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
@@ -17,6 +18,7 @@ import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { SemanticVersion } from '../lib/semver.js'
+import { Maneuvers } from './actor/maneuver.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (actor) {
@@ -50,8 +52,8 @@ export class GurpsActor extends Actor {
   }
 
   prepareDerivedData() {
-//    console.log('Prepare data for: ' + this.name)
-//    console.trace()
+    //    console.log('Prepare data for: ' + this.name)
+    //    console.trace()
     super.prepareDerivedData()
     this.calculateDerivedValues()
   }
@@ -59,23 +61,23 @@ export class GurpsActor extends Actor {
   // execute after every import.
   async postImport() {
     this.calculateDerivedValues()
-    
+
     // Convoluted code to add Items (and features) into the equipment list
-    let orig = this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name))  // in case items are in the same list... add them alphabetically
+    let orig = this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name)) // in case items are in the same list... add them alphabetically
     let good = []
-    while (orig.length > 0) { // We are trying to place 'parent' items before we place 'children' items
+    while (orig.length > 0) {
+      // We are trying to place 'parent' items before we place 'children' items
       let left = []
       let atLeastOne = false
       for (const i of orig) {
         if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid)) {
           atLeastOne = true
-          good.push(i)    // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
-        } else
-          left.push(i)
+          good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
+        } else left.push(i)
       }
-      if (atLeastOne)  
-        orig = left
-      else {  // if unable to move at least one, just copy the rest and hope for the best
+      if (atLeastOne) orig = left
+      else {
+        // if unable to move at least one, just copy the rest and hope for the best
         good = [...good, ...left]
         orig = []
       }
@@ -83,7 +85,7 @@ export class GurpsActor extends Actor {
     this.ignoreRender = true
     for (const item of good) await this.addItemData(item.data) // re-add the item equipment and features
     this.ignoreRender = false
-    
+
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
@@ -97,7 +99,7 @@ export class GurpsActor extends Actor {
     // Must be done after bonuses, but before weights
     this._calculateEncumbranceIssues()
 
-     // Must be done at end
+    // Must be done at end
     this._calculateWeights()
   }
 
@@ -106,7 +108,7 @@ export class GurpsActor extends Actor {
   _initializeStartingValues() {
     const data = this.data.data
     data.currentdodge = 0 // start at zero, and bonuses will add, and then they will be finalized later
-    if (!!data.equipment && !data.equipment.carried) data.equipment.carried = {}  // data protection
+    if (!!data.equipment && !data.equipment.carried) data.equipment.carried = {} // data protection
     if (!!data.equipment && !data.equipment.other) data.equipment.other = {}
 
     let v = data.migrationversion
@@ -161,7 +163,12 @@ export class GurpsActor extends Actor {
     let gids = [] //only allow each global bonus to add once
     const data = this.data.data
     for (const item of this.items.contents) {
-      if (item.data.data.equipped && item.data.data.carried && !!item.data.data.bonuses && !gids.includes(item.data.data.globalid)) {
+      if (
+        item.data.data.equipped &&
+        item.data.data.carried &&
+        !!item.data.data.bonuses &&
+        !gids.includes(item.data.data.globalid)
+      ) {
         gids.push(item.data.data.globalid)
         let bonuses = item.data.data.bonuses.split('\n')
         for (let bonus of bonuses) {
@@ -248,7 +255,7 @@ export class GurpsActor extends Actor {
                 // only accept DODGE
                 if (action.action.attrkey != 'DODGE') break
               }
-              data[last] = pi(data[last]) + pi(action.action.mod)  // enforce that attribute is int
+              data[last] = pi(data[last]) + pi(action.action.mod) // enforce that attribute is int
             } // end attributes & Dodge
           } // end OTF
           // parse bonus for other forms, DR+x?
@@ -277,7 +284,7 @@ export class GurpsActor extends Actor {
       }
     }
   }
-  
+
   _findEqtkeyForId(key, id) {
     var eqtkey
     recurselist(this.data.data.equipment.carried, (e, k, d) => {
@@ -285,7 +292,8 @@ export class GurpsActor extends Actor {
     })
     if (!eqtkey)
       recurselist(this.data.data.equipment.other, (e, k, d) => {
-        if (e[key] == id) eqtkey = "data.equipment.other." + k })
+        if (e[key] == id) eqtkey = 'data.equipment.other.' + k
+      })
     return eqtkey
   }
 
@@ -366,14 +374,9 @@ export class GurpsActor extends Actor {
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value) * 2
   }
 
-  /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
-  async update(data, options) {
-    console.log(this.name + " UPDATE: "+ GURPS.objToString(data))
-    await super.update(data, options)
-  } */
-
+  /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING */
   /** @override */
-  _onUpdate(data, options, userId, context) {
+  async update(data, options) {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (!isNaN(data.data?.HP?.value)) {
         let flag = data.data.HP.value < this.data.data.HP.max / 3
@@ -384,9 +387,69 @@ export class GurpsActor extends Actor {
         if (!!this.data.data.additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
+    if (data.hasOwnProperty('data.conditions.maneuver')) {
+      let oldManeuver = this.data.data.conditions.maneuver
+      let newManeuver = data['data.conditions.maneuver']
+      if (oldManeuver !== newManeuver) {
+        this.updateManeuverStatus(oldManeuver, newManeuver)
+      }
+    }
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
-    super._onUpdate(data, options, userId, context)
+    super.update(data, options)
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
+  } /* */
+
+  updateManeuverStatus(oldManeuver, newManeuver) {
+    let oldEffect = Maneuvers[oldManeuver]
+    let newEffect = Maneuvers[newManeuver]
+    this.removeEffect(oldEffect)
+    this.setEffect(newEffect)
+  }
+
+  setEffect(effect) {
+    if (!this.isEffectActive(effect)) {
+      this.toggleEffect(effect)
+    }
+  }
+
+  toggleEffect(effect) {
+    let tokens = this.getActiveTokens()
+    if (tokens.length === 1) {
+      tokens[0].toggleEffect(effect)
+      return
+    }
+
+    console.error(`unexpected: more than one token: id: ${this.id}, tokens: ${tokens}`)
+  }
+
+  removeEffect(effect) {
+    if (this.isEffectActive(effect)) {
+      this.toggleEffect(effect)
+    }
+  }
+
+  isEffectActive(effect) {
+    return this.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
+  }
+
+  /** @override */
+  _onUpdate(data, options, userId, context) {
+    // moved this code to the update(data, options) method, as that is the intended design
+    // TODO remove commented out code when we know there's no reason to roll this back
+
+    // if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
+    //   if (!isNaN(data.data?.HP?.value)) {
+    //     let flag = data.data.HP.value < this.data.data.HP.max / 3
+    //     if (!!this.data.data.additionalresources.isReeling != flag) this.changeOneThirdStatus('isReeling', flag)
+    //   }
+    //   if (!isNaN(data.data?.FP?.value)) {
+    //     let flag = data.data.FP.value < this.data.data.FP.max / 3
+    //     if (!!this.data.data.additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
+    //   }
+    // }
+    // //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
+    super._onUpdate(data, options, userId, context)
+    // game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
 
   get _additionalResources() {
@@ -568,7 +631,7 @@ export class GurpsActor extends Actor {
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user.id],
       })
-      if (exit) return false; // Some errors cannot be forgiven ;-)
+      if (exit) return false // Some errors cannot be forgiven ;-)
     }
     let nm = this.textFrom(c.name)
     console.log("Importing '" + nm + "'")
@@ -609,7 +672,7 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...this.importEquipmentFromGCSv1(c.inventorylist, isFoundryGCS) }
       commit = { ...commit, ...(await this.importProtectionFromGCSv1(c.combat?.protectionlist, isFoundryGCA)) }
     } catch (err) {
-      console.log(err.stack);
+      console.log(err.stack)
       let msg = i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: [msg],
@@ -644,9 +707,9 @@ export class GurpsActor extends Actor {
       ui.notifications.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
       console.log('Done importing.  You can inspect the character data below:')
       console.log(this)
-      return true;
+      return true
     } catch (err) {
-      console.log(err.stack);
+      console.log(err.stack)
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
       ui.notifications.warn(msg.join('<br>'))
@@ -665,7 +728,7 @@ export class GurpsActor extends Actor {
         whisper: [game.user.id],
       }
       ChatMessage.create(chatData, {})
-      return false;
+      return false
     }
   }
 
@@ -1067,8 +1130,9 @@ export class GurpsActor extends Actor {
       t.carried = false
       if (!!t.save) temp.push(t)
     })
-    
-    temp.forEach(eqt => {  // Remove all entries from inside items because if they still exist, they will be added back in
+
+    temp.forEach(eqt => {
+      // Remove all entries from inside items because if they still exist, they will be added back in
       eqt.contains = {}
       eqt.collapsed = {}
     })
@@ -1674,8 +1738,8 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
-   
-/*    let existingEqtKey = this._findEqtkeyForId('globalid', global.id) 
+
+    /*    let existingEqtKey = this._findEqtkeyForId('globalid', global.id) 
     if (!!existingEqtKey) {
       let existingEqt = getProperty(this.data, existingEqtKey)
       this.ignoreRender = true
@@ -1708,9 +1772,12 @@ export class GurpsActor extends Actor {
     }
     let srcActor = game.actors.get(dragData.actorid)
     let eqt = getProperty(srcActor.data, dragData.key)
-    if ((!!eqt.contains && Object.keys(eqt.contains).length > 0) || (!!eqt.collapsed && Object.keys(eqt.collapsed).length > 0)) {
-      ui.notifications.warn("You cannot transfer an Item that contains other equipment.")
-      return    
+    if (
+      (!!eqt.contains && Object.keys(eqt.contains).length > 0) ||
+      (!!eqt.collapsed && Object.keys(eqt.collapsed).length > 0)
+    ) {
+      ui.notifications.warn('You cannot transfer an Item that contains other equipment.')
+      return
     }
     if (!!this.isOwner && !!srcActor.isOwner) {
       // same owner
@@ -1747,7 +1814,7 @@ export class GurpsActor extends Actor {
           label: i18n('GURPS.ok'),
           content: content,
           callback: callback,
-          rejectClose: false
+          rejectClose: false,
         })
       }
     } else {
@@ -1801,9 +1868,9 @@ export class GurpsActor extends Actor {
     }
     let newkey = this._findEqtkeyForId('globalid', item.data.data.globalid)
     if (!!oldeqt && (!!oldeqt.contains || !!oldeqt.collapsed)) {
-      this.update({ 
-        [newkey + ".contains"] : oldeqt.contains,
-        [newkey + ".collapsed"] : oldeqt.collapsed
+      this.update({
+        [newkey + '.contains']: oldeqt.contains,
+        [newkey + '.collapsed']: oldeqt.collapsed,
       })
     }
     this._forceRender()
@@ -1812,11 +1879,11 @@ export class GurpsActor extends Actor {
   // create a new embedded item based on this item data and place in the carried list
   // This is how all Items are added originally.
   async addNewItemData(itemData, targetkey) {
-    let localItems= await this.createEmbeddedDocuments("Item", [itemData.toObject()]) // add a local Foundry Item based on some Item data
+    let localItems = await this.createEmbeddedDocuments('Item', [itemData.toObject()]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
-    await this.updateEmbeddedDocuments("Item", [{_id: localItem.id, 'data.eqt.uuid': generateUniqueId() }])
+    await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'data.eqt.uuid': generateUniqueId() }])
     await this.addItemData(localItem.data, targetkey) // only created 1 item
-   }
+  }
 
   // Once the Items has been added to our items list, add the equipment and any features
   async addItemData(itemData, targetkey) {
@@ -1829,20 +1896,22 @@ export class GurpsActor extends Actor {
   // Make the initial equipment object (unless it already exists, saved in a user equipment)
   async _addNewItemEquipment(itemData, targetkey) {
     let existing = this._findEqtkeyForId('itemid', itemData._id)
-    if (!!existing) { // it may already exist (due to qty updates), so don't add it again
+    if (!!existing) {
+      // it may already exist (due to qty updates), so don't add it again
       let eqt = getProperty(this.data, existing)
-      return [ existing, eqt.carried && eqt.equipped ]
-    }   
+      return [existing, eqt.carried && eqt.equipped]
+    }
     if (!!itemData.data.eqt.parentuuid) {
       var found
       recurselist(this.data.data.equipment.carried, (e, k, d) => {
-        if (e.uuid == itemData.data.eqt.parentuuid) found = 'data.equipment.carried.' + k 
+        if (e.uuid == itemData.data.eqt.parentuuid) found = 'data.equipment.carried.' + k
       })
-      if (!found) recurselist(this.data.data.equipment.other, (e, k, d) => {
-        if (e.uuid == itemData.data.eqt.parentuuid) found = 'data.equipment.other.' + k
-      })
+      if (!found)
+        recurselist(this.data.data.equipment.other, (e, k, d) => {
+          if (e.uuid == itemData.data.eqt.parentuuid) found = 'data.equipment.other.' + k
+        })
       if (!!found) {
-        targetkey = found + ".contains." + GURPS.genkey(0)
+        targetkey = found + '.contains.' + GURPS.genkey(0)
       }
     }
     if (targetkey == null)
@@ -1854,11 +1923,11 @@ export class GurpsActor extends Actor {
         while (list.hasOwnProperty(GURPS.genkey(index))) index++
         targetkey += '.' + GURPS.genkey(index)
       } else targetkey = 'data.equipment.other'
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)  //if just 'carried' or 'other'
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0) //if just 'carried' or 'other'
     let eqt = itemData.data.eqt
     if (!eqt) {
-      ui.notifications.warn("Item: " + itemData.id + " (Global:" + itemData.globalid + ") missing equipment")
-      return [ '', false ]
+      ui.notifications.warn('Item: ' + itemData.id + ' (Global:' + itemData.globalid + ') missing equipment')
+      return ['', false]
     } else {
       eqt.itemid = itemData._id
       eqt.globalid = itemData.data.globalid
@@ -1889,20 +1958,20 @@ export class GurpsActor extends Actor {
   async updateItemAdditionsBasedOn(eqt, targetPath) {
     await this._updateEqtStatus(eqt, targetPath, targetPath.includes('.carried'))
   }
-  
+
   // Equipment may carry other eqt, so we must adjust the carried status all the way down.
   async _updateEqtStatus(eqt, eqtkey, carried) {
     eqt.carried = carried
     if (!!eqt.itemid) {
       let item = await this.items.get(eqt.itemid)
-      await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried }])
-      if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid) 
+      await this.updateEmbeddedDocuments('Item', [
+        { _id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried },
+      ])
+      if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid)
       if (carried && eqt.equipped) await this._addItemAdditions(item.data, eqtkey)
-    } 
-    for (const k in eqt.contains)
-      await this._updateEqtStatus(eqt.contains[k], eqtkey + ".contains." + k, carried)
-    for (const k in eqt.collapsed)
-      await this._updateEqtStatus(eqt.collapsed[k], eqtkey + ".collapsed." + k, carried)
+    }
+    for (const k in eqt.contains) await this._updateEqtStatus(eqt.contains[k], eqtkey + '.contains.' + k, carried)
+    for (const k in eqt.collapsed) await this._updateEqtStatus(eqt.collapsed[k], eqtkey + '.collapsed.' + k, carried)
   }
 
   async _addItemElement(itemData, eqtkey, key) {
@@ -1965,15 +2034,15 @@ export class GurpsActor extends Actor {
     let eqt = getProperty(this.data, path)
     if (!eqt) return eqt
     if (depth == 0) this.ignoreRender = true
-   
-    // Delete in reverse order so the keys don't get messed up 
-    if (!!eqt.contains) 
+
+    // Delete in reverse order so the keys don't get messed up
+    if (!!eqt.contains)
       for (const k of Object.keys(eqt.contains).sort().reverse())
-        await this.deleteEquipment(path + ".contains." + k, depth+1)
+        await this.deleteEquipment(path + '.contains.' + k, depth + 1)
     if (!!eqt.collpased)
       for (const k of Object.keys(eqt.collapsed).sort().reverse())
-        await this.deleteEquipment(path + ".collapsed." + k, depth+1)
- 
+        await this.deleteEquipment(path + '.collapsed.' + k, depth + 1)
+
     var item
     if (!!eqt.itemid) {
       item = await this.items.get(eqt.itemid)
@@ -2035,7 +2104,7 @@ export class GurpsActor extends Actor {
       object.parentuuid = ''
       if (!!object.itemid) {
         let item = this.items.get(object.itemid)
-        await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.eqt.parentuuid': '' }])
+        await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.parentuuid': '' }])
       }
       let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
@@ -2045,7 +2114,7 @@ export class GurpsActor extends Actor {
       if (isSrcFirst) await GURPS.removeKey(this, srckey)
       return this._forceRender()
     }
-    if (await this._checkForMerging(srckey, targetkey)) return 
+    if (await this._checkForMerging(srckey, targetkey)) return
     if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
       ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
       return
@@ -2085,7 +2154,7 @@ export class GurpsActor extends Actor {
             }
             let k = targetkey + '.contains.' + GURPS.genkey(0)
             let targ = getProperty(this.data, targetkey)
-            
+
             await this.updateItemAdditionsBasedOn(object, targetkey)
             await GURPS.insertBeforeKey(this, k, object)
             await this.updateParentOf(k, true)
@@ -2101,11 +2170,11 @@ export class GurpsActor extends Actor {
     })
     d.render(true)
   }
-  
-  async toggleExpand(path, expandOnly = false)  {
+
+  async toggleExpand(path, expandOnly = false) {
     let obj = getProperty(this.data, path)
     if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
-      let temp = {...obj.contains, ...obj.collapsed }
+      let temp = { ...obj.contains, ...obj.collapsed }
       let update = {
         [path + '.-=collapsed']: null,
         [path + '.collapsed']: {},
@@ -2113,14 +2182,14 @@ export class GurpsActor extends Actor {
       }
       await this.update(update)
     } else if (!expandOnly && !!obj.contains && Object.keys(obj.contains).length > 0) {
-      let temp = {...obj.contains, ...obj.collapsed }
+      let temp = { ...obj.contains, ...obj.collapsed }
       let update = {
         [path + '.-=contains']: null,
         [path + '.contains']: {},
         [path + '.collapsed']: temp,
       }
       await this.update(update)
-    } 
+    }
   }
 
   async _splitEquipment(srckey, targetkey) {
@@ -2379,7 +2448,7 @@ export class GurpsActor extends Actor {
     await this.updateParentOf(eqtkey, false)
     if (!!eqt.itemid) {
       let item = this.items.get(eqt.itemid)
-      await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.count': count }])
+      await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.count': count }])
     }
   }
 
@@ -2391,7 +2460,8 @@ export class GurpsActor extends Actor {
     let sp = paths.slice(0, pindex).join('.') // find the top level key in this list
     // But count may have changed... if (srckey == sp) return // no parent for this eqt
     let parent = getProperty(this.data, sp)
-    if (!!parent) {   // data protection
+    if (!!parent) {
+      // data protection
       await Equipment.calcUpdate(this, parent, sp) // and re-calc cost and weight sums from the top down
       if (updatePuuid) {
         let puuid = ''
@@ -2399,11 +2469,11 @@ export class GurpsActor extends Actor {
           sp = paths.slice(0, -2).join('.')
           puuid = getProperty(this.data, sp).uuid
         }
-        await this.update({[srckey + '.parentuuid']: puuid}) 
-        let eqt =  getProperty(this.data, srckey)
+        await this.update({ [srckey + '.parentuuid']: puuid })
+        let eqt = getProperty(this.data, srckey)
         if (!!eqt.itemid) {
           let item = this.items.get(eqt.itemid)
-          await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.eqt.parentuuid': puuid }])
+          await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.parentuuid': puuid }])
         }
       }
     }

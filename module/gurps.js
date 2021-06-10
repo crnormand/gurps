@@ -1,3 +1,6 @@
+// Testing
+import ShowArt from '../__tests__/artbutton.js'
+
 // Import Modules
 import { parselink, parseForDamage } from '../lib/parselink.js'
 
@@ -10,7 +13,8 @@ import {
   GurpsActorEditorSheet,
   GurpsActorSimplifiedSheet,
   GurpsActorNpcSheet,
-  GurpsInventorySheet, GurpsActorTabSheet,
+  GurpsInventorySheet,
+  GurpsActorTabSheet,
 } from './actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -21,15 +25,13 @@ import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
-import { Maneuvers } from '../module/actor/maneuver.js'
 import { Migration } from '../lib/migration.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-GURPS.Maneuvers = Maneuvers
+// GURPS.Maneuvers = Maneuvers
 
 GURPS.DEBUG = false
-
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -635,7 +637,7 @@ async function performAction(action, actor, event, targets) {
 
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
   }
- 
+
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
     thing = action.desc
@@ -651,7 +653,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.addModifier(0, action.costs)
-    if (!!action.mod) GURPS.addModifier(action.mod, action.desc)  // special case where Damage comes from [D:attack + mod]
+    if (!!action.mod) GURPS.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
     DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets, action.extdamagetype)
     return true
   }
@@ -997,9 +999,9 @@ async function applyModifierDesc(actor, desc) {
       let k = target.toUpperCase()
       delta = actor.data.data[k].value - delta
       await actor.update({ ['data.' + k + '.value']: delta })
-    } 
+    }
     if (target.match(/^tr/i)) {
-      await GURPS.ChatProcessors.startProcessingLines('/' + target + " -" + delta)
+      await GURPS.ChatProcessors.startProcessingLines('/' + target + ' -' + delta)
       return null
     }
   }
@@ -1478,7 +1480,7 @@ Hooks.once('init', async function () {
   let src = 'systems/gurps/icons/gurps4e.webp'
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.webp'
   $('#logo').attr('src', src)
-  
+
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
@@ -1551,6 +1553,9 @@ Hooks.once('init', async function () {
     await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
     entity.data.img = 'systems/gurps/icons/single-die.webp'
   })
+
+  Hooks.on('controlToken', (...args) => ShowArt.prepTokenKeybinding(...args))
+  Hooks.on('renderTokenHUD', (...args) => ShowArt.prepTokenHUD(...args))
 })
 
 Hooks.once('ready', async function () {
@@ -1919,10 +1924,10 @@ Hooks.once('ready', async function () {
     }
     dragRuler.registerSystem('gurps', GURPSSpeedProvider)
   })
-  
+
   // Translate attribute mappings if not in English
   if (game.i18n.lang != 'en') {
-    console.log("Mapping " + game.i18n.lang + " translations into PARSELINK_MAPPINGS")
+    console.log('Mapping ' + game.i18n.lang + ' translations into PARSELINK_MAPPINGS')
     let mappings = {}
     for (let k in GURPS.PARSELINK_MAPPINGS) {
       let v = GURPS.PARSELINK_MAPPINGS[k]
@@ -1938,11 +1943,9 @@ Hooks.once('ready', async function () {
         mappings[nk] = GURPS.PARSELINK_MAPPINGS[k]
       }
     }
-    mappings = {...mappings, ...GURPS.PARSELINK_MAPPINGS}
+    mappings = { ...mappings, ...GURPS.PARSELINK_MAPPINGS }
     GURPS.PARSELINK_MAPPINGS = mappings
   }
-
-
 
   // End of system "READY" hook.
 })
