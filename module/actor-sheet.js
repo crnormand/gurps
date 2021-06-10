@@ -1233,7 +1233,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
         name: 'Add ' + name + ' at the end',
         icon: "<i class='fas fa-edit'></i>",
         callback: e => {
-          let o = GURPS.decode(this.actor.data, path)
+          let o = GURPS.decode(this.actor.data, path) || {}
           GURPS.put(o, duplicate(obj))
           this.actor.update({ [path]: o })
         },
