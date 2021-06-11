@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-0.10.3
+Release 0.10.3 - 6/11/2021
 
 - Fixed Apply Injury dropdown on ADD window.
 - Added Min and Max enforcement option on Resource Trackers
@@ -19,15 +19,15 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added OtF buttons for margin of success (Rolltable formula "3d6 + @gmodc")
 - Enhance /light to include intensity
 
-Release 0.10.2
+Release 0.10.2 - 6/5/2021
 
 - Fixed parse bug in bucket
 
-Release 0.10.1
+Release 0.10.1 - 6/4/2021
 
 - Fix for dragging Items on to unlinked tokens
 
-Release 0.10.0
+Release 0.10.0 - 6/4/2021
 
 - Foundry 0.8.x compatible!
 - Updated /light &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off where anim can be: torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole
@@ -36,21 +36,21 @@ Release 0.10.0
 - Added Ignore QTY/Count/Uses from import
 - Remember carried, parent and equipped status from previous import
 
-Release 0.9.15
+Release 0.9.15 - 5/30/2021
 
 - Fixed dodge values when encumbrance greater than 'none'
 
-Release 0.9.14
+Release 0.9.14 - 5/28/2021
 
 - Fixed element editors (melee, ranged, skills, spells) for level
 - Restrict Foundry items from containing other items
 - Fixed Actor startup on encumbrance
 
-Release 0.9.13
+Release 0.9.13 - 5/24/2021
 
 - Fixed the data model (template.json) for items
 
-Release 0.9.12
+Release 0.9.12 - 5/23/2021
 
 - Equipment name searches for /qty and /use now start at the front of the name for matching
 - Fixed /uses /qty when equipment name is being used
@@ -62,19 +62,19 @@ Release 0.9.12
 - Add scroll bars to the "Send Modifiers to Players" part of the modifier bucket window.
 - Show combat maneuver drop-down on character sheet.
 
-Release 0.9.11
+Release 0.9.11 - 5/22/2021
 
 - Allow user additions to names or notes survive an import (if changes occur at END of imported data)!
 - Added /uses can now automatically detect if it is being run on equipment (like /qty)
 
-Release 0.9.10
+Release 0.9.10 - 5/22/2021
 
 - Ensure that empty Actors are initialized correctly
 - Added Rcl/RoF information to [A:..] and [R:...] OTF rolls
 - More i18n work, we are getting there!
 - /tr (/rt) now returns false if the value is less than 0. So it can be used as an ammo tracker /if [/tr(ammo) -1] do some attack]
 
-Release 0.9.9
+Release 0.9.9 - 5/21/2021
 
 - Adding @neck/rinickolous's inventory sheet
 - Replaced /light dialog with parameters torch = /light 6 2 torch (or candle = /light 1 0 t)
