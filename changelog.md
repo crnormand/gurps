@@ -2,10 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-0.10.4
+Release 0.10.4 - 6/11/2021
 
-- Fixed changelog parsing (again!)
 - Built 0.10.4 migration (for status icon name changes)
+- Fixed changelog parsing (again!)
 
 Release 0.10.3 - 6/11/2021
 
