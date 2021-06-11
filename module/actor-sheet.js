@@ -1165,7 +1165,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
       classes: ['gurps', 'sheet', 'actor'],
       template: 'systems/gurps/templates/actor-tab-sheet.html',
       width: 860,
-      height: 800,
+      height: 600,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
