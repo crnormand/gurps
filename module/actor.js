@@ -1676,17 +1676,7 @@ export class GurpsActor extends Actor {
     }
     let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
-   
-/*    let existingEqtKey = this._findEqtkeyForId('globalid', global.id) 
-    if (!!existingEqtKey) {
-      let existingEqt = getProperty(this.data, existingEqtKey)
-      this.ignoreRender = true
-      await this.updateEqtCount(existingEqtKey, existingEqt.count + global.data.data.eqt.count)
-      this._forceRender()
-      return 
-    }
-*/
-    await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
+       await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
     this.ignoreRender = true
     await this.addNewItemData(global.data)
     this._forceRender()
@@ -2381,7 +2371,7 @@ export class GurpsActor extends Actor {
     await this.updateParentOf(eqtkey, false)
     if (!!eqt.itemid) {
       let item = this.items.get(eqt.itemid)
-      await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.count': count }])
+      await this.updateEmbeddedDocuments("Item", [{_id: item.id, 'data.eqt.count': count }])
     }
   }
 
