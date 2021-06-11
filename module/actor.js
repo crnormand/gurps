@@ -255,13 +255,13 @@ export class GurpsActor extends Actor {
           m = bonus.match(/DR *([+-]\d+) *(.*)/) // DR+1 *Arms "Left Leg" ...
           if (!!m) {
             let delta = parseInt(m[1])
-            var locpatterns
+            let locpatterns = false
             if (!!m[2]) {
               let locs = splitArgs(m[2])
               locpatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             }
             recurselist(data.hitlocations, (e, k, d) => {
-              if (locpatterns == null || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
+              if (locpatterns == false || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
                 let dr = e.dr ?? ''
                 dr += ''
                 let m = dr.match(/(\d+) *([/\|]) *(\d+)/) // check for split DR 5|3 or 5/3
@@ -1244,15 +1244,17 @@ export class GurpsActor extends Actor {
             r.shots = t(j2.shots)
             r.rcl = t(j2.rcl)
             let rng = t(j2.range)
-            let m = rng.match(/^ *x(\d+) $/)
-            if (m) {
-              rng = parseInt(m[1]) * this.data.data.attributes.ST.value
-            } else {
-              m = rng.match(/^ *x(\d+) *\/ *x(\d+) *$/)
+            if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) {
+              let m = rng.match(/^ *[xX]([\d\.]+) *$/)
               if (m) {
-                rng = `${parseInt(m[1]) * this.data.data.attributes.ST.value}/${
-                  parseInt(m[2]) * this.data.data.attributes.ST.value
-                }`
+                rng = parseFloat(m[1]) * this.data.data.attributes.ST.value
+              } else {
+                m = rng.match(/^ *[xX]([\d\.]+) *\/ *[xX]([\d\.]+) *$/)
+                if (m) {
+                  rng = `${parseFloat(m[1]) * this.data.data.attributes.ST.value}/${
+                    parseFloat(m[2]) * this.data.data.attributes.ST.value
+                  }`
+                }
               }
             }
             r.range = rng
@@ -2169,7 +2171,7 @@ export class GurpsActor extends Actor {
       (!srceqt.globalid && srceqt.name == desteqt.name)
     ) {
       this.ignoreRender = true
-      await this.updateEqtCount(targetkey, srceqt.count + desteqt.count)
+      await this.updateEqtCount(targetkey, parseInt(srceqt.count) + parseInt(desteqt.count))
       //if (srckey.includes('.carried') && targetkey.includes('.other')) await this._removeItemAdditionsBasedOn(desteqt)
       await this.deleteEquipment(srckey)
       this._forceRender()

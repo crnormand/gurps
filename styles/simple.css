@@ -1908,12 +1908,12 @@ body {
 }
 
 .table-column span {
-  /* pointer-events: none; */ /* We need pointer events to know how to expand/collapse items */
+  pointer-events: none; /* We need pointer events to know how to expand/collapse items */
 }
 
 .desc {
   position: relative;
-  }
+}
 
 .desc .tooltippic {
   visibility: hidden;
