@@ -8,7 +8,9 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added Sort Contents menu option for equipment
 - Fixed range column multiplication by ST
 - Added system setting to control if range column automatically multiplied by ST
-- Fixed Item count update (count now saved during update/import)
+- Fixed Foundry Item count update (count now saved during update/import)
+- Item DR bonus calculation fixed.
+- Data protect 0.10.3 migration against bad tokens
 
 Release 0.10.4 - 6/11/2021
 
