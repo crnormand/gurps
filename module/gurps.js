@@ -1,6 +1,5 @@
 // Testing
-import ShowArt from '../__tests__/artbutton.js'
-
+import ShowArt from '../module/actor/artbutton.js'
 // Import Modules
 import { parselink, parseForDamage } from '../lib/parselink.js'
 
@@ -26,6 +25,7 @@ import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
+import { Maneuvers } from './actor/maneuver.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -66,7 +66,7 @@ settings.initializeSettings()
 // Use the target d6 icon for rolltable entries
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
 
-//CONFIG.debug.hooks = true;
+// CONFIG.debug.hooks = true
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null
@@ -362,11 +362,11 @@ CONFIG.statusEffects = [
     id: 'silence',
     label: 'GURPS.STATUSSilence',
   },
-  {
-    icon: 'systems/gurps/icons/statuses/cth-condition-readied.webp',
-    id: 'aim',
-    label: 'GURPS.STATUSAim',
-  },
+  // {
+  //   icon: 'systems/gurps/icons/statuses/cth-condition-readied.webp',
+  //   id: 'aim',
+  //   label: 'GURPS.STATUSAim',
+  // },
   {
     icon: 'systems/gurps/icons/statuses/x-stealth.webp',
     id: 'stealth',
@@ -433,6 +433,10 @@ CONFIG.statusEffects = [
     label: 'GURPS.STATUSCounter',
   },
 ]
+
+// for (const m in Maneuvers) {
+//   CONFIG.statusEffects.push(m)
+// }
 
 GURPS.SJGProductMappings = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
@@ -1477,8 +1481,9 @@ Hooks.once('init', async function () {
 
   game.GURPS = GURPS
   CONFIG.GURPS = GURPS
-  let src = 'systems/gurps/icons/gurps4e.webp'
-  if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.webp'
+
+  let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
+
   $('#logo').attr('src', src)
 
   // set up all hitlocation tables (must be done before MB)
@@ -1946,6 +1951,5 @@ Hooks.once('ready', async function () {
     mappings = { ...mappings, ...GURPS.PARSELINK_MAPPINGS }
     GURPS.PARSELINK_MAPPINGS = mappings
   }
-
   // End of system "READY" hook.
 })

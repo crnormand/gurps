@@ -387,6 +387,7 @@ export class GurpsActor extends Actor {
         if (!!this.data.data.additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
+
     if (data.hasOwnProperty('data.conditions.maneuver')) {
       let oldManeuver = this.data.data.conditions.maneuver
       let newManeuver = data['data.conditions.maneuver']
@@ -394,6 +395,7 @@ export class GurpsActor extends Actor {
         this.updateManeuverStatus(oldManeuver, newManeuver)
       }
     }
+
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
     super.update(data, options)
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
@@ -422,6 +424,15 @@ export class GurpsActor extends Actor {
     console.error(`unexpected: more than one token: id: ${this.id}, tokens: ${tokens}`)
   }
 
+  removeAllEffects(effect) {
+    let keys = Object.keys(Maneuvers)
+    for (const effect of this.effects) {
+      if (keys.includes(effect.getFlag('core', 'statusId'))) {
+        this.removeEffect(effect)
+      }
+    }
+  }
+
   removeEffect(effect) {
     if (this.isEffectActive(effect)) {
       this.toggleEffect(effect)
@@ -429,7 +440,12 @@ export class GurpsActor extends Actor {
   }
 
   isEffectActive(effect) {
-    return this.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
+    for (const it of this.effects) {
+      let statusId = it.getFlag('core', 'statusId')
+      if (statusId === effect.id) return true
+    }
+
+    return false
   }
 
   /** @override */

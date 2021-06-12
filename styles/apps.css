@@ -1798,3 +1798,24 @@ ul#result-effects li {
 .gurps-app .vertical-gap {
   height: 1em;
 }
+
+token-hud .status-maneuvers.active {
+  visibility: visible;
+}
+
+#token-hud .status-maneuvers {
+  visibility: hidden;
+  position: absolute;
+  left: 65px;
+  top: 0;
+  display: grid;
+  padding: 3px;
+  box-sizing: content-box;
+  width: 100px;
+  grid-template-columns: 50px 50px;
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 15px #000;
+  border: 1px solid #333;
+  border-radius: 4px;
+  pointer-events: all;
+}

@@ -1,4 +1,4 @@
-import { i18n } from '../lib/utilities.js'
+import { i18n } from '../../lib/utilities.js'
 
 /**
  * This class is used as a namespace for Show Art
@@ -136,9 +136,15 @@ export default class ShowArt {
     let button = document.createElement('div')
 
     button.classList.add('control-icon')
-    button.classList.add('artwork-open')
+    button.classList.add('maneuver-open')
+    button.setAttribute('data-action', 'maneuver')
     button.innerHTML = `<i class="fas fa-user-shield"></i>`
     button.title = i18n('GURPS.setManeuver', 'Set Maneuver')
+
+    let grid = document.createElement('div')
+    grid.classList.add('status-maneuver')
+
+    button.append(grid)
 
     return button
   }

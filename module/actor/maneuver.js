@@ -47,7 +47,7 @@ export const Maneuvers = {
     id: 'attack',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/maneuvers/man-move-attack.png',
+    icon: 'systems/gurps/icons/maneuvers/man-attack.png',
     label: 'GURPS.maneuverAttack',
   },
   feint: {
