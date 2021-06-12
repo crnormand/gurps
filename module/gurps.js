@@ -1480,6 +1480,7 @@ GURPS.importItems = async function(text, filename, filepath) {
 }
 
 GURPS.importItem = async function(i, filename) {
+  console.log(i);
   if (i.children?.length) for (let ch of i.children) {
     await GURPS.importItem(ch,filename);
   }
@@ -1518,7 +1519,7 @@ GURPS.importItem = async function(i, filename) {
     if (w.defaults) for (let d of w.defaults) {
       let mod = (!!d.modifier)? ((d.modifier > -1) ? `+${d.modifier}` : d.modifier.toString()) : "";
       if (d.type === "skill") {
-        otf_list.push(`S:${d.name.replace(" ","*")}`+(d.specialization?` (${d.specialization.replace(" ","*")})`:"")+mod);
+        otf_list.push(`S:${d.name.replace(/ /g,"*")}`+(d.specialization?`*(${d.specialization.replace(/ /g,"*")})`:"")+mod);
       } else if (["10","st","dx","iq","ht","per","will","vision","hearing","taste_smell","touch","parry","block"].includes(d.type)) {
         otf_list.push(d.type.replace("_"," ")+mod)
       }
@@ -1567,27 +1568,29 @@ GURPS.importItem = async function(i, filename) {
     } else if (f.type === "skill_bonus") {
       if (f.selection_type === "skills_with_name" && f.name.compare === "is") {
         if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")}${(f.specialization.qualifier||"").replace(" ","*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         }
       } else if (f.selection_type === "weapons_with_name" && f.name.compare === "is") {
         if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")}${(f.specialization.qualifier||"").replace(" ","*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         }
       }
     } else if (f.type === "spell_bonus") {
       if (f.match === "spell_name" && f.name.compare === "is") {
-        bonus_list.push(`S:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+        bonus_list.push(`S:${(f.name.qualifier||"").replace(/ /g,"*")} ${bonus}`);
       }
     } else if (f.type === "weapon_bonus") {
-      if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")}${(f.specialization.qualifier||"").replace(" ","*")} ${bonus}`);
+      if (f.selection_type === "weapons_with_name") {
+        if (f.specialization?.compare === "is") {
+          bonus_list.push(`A:${(f.name?.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name?.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         }
+      }
     }
   }
   itemData.data.bonuses = bonus_list.join("\n");
