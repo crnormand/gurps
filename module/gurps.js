@@ -1557,7 +1557,16 @@ GURPS.importItem = async function(i, filename) {
     }
   }
   let bonus_list = []
+  let feat_list = []
   if (i.features?.length) for (let f of i.features) {
+    feat_list.push(f);
+  }
+  if (i.modifiers?.length) for (let m of i.modifiers) {
+    if (!m.disabled && m.features?.length) for (let f of m.features) {
+      feat_list.push(f);
+    } 
+  }
+  if (feat_list.length) for (let f of feat_list) {
     let bonus = (!!f.amount) ? ((f.amount > -1) ? `+${f.amount}` : f.amount.toString()) : "";
     if (f.type === "attribute_bonus") {
       bonus_list.push(`${f.attribute} ${bonus}`);
