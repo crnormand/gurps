@@ -1571,7 +1571,7 @@ GURPS.importItem = async function(i, filename) {
     if (f.type === "attribute_bonus") {
       bonus_list.push(`${f.attribute} ${bonus}`);
     } else if (f.type === "dr_bonus") {
-      bonus_list.push(`DR ${bonus} ${f.location}`);
+      bonus_list.push(`DR ${bonus} *${f.location}`);
     } else if (f.type === "skill_bonus") {
       if (f.selection_type === "skills_with_name" && f.name.compare === "is") {
         if (f.specialization?.compare === "is") {
