@@ -1692,7 +1692,7 @@ Hooks.once('init', async function () {
 
   Hooks.on("renderSidebarTab", async (app, html) => {
     if (app.options.id === "compendium") {
-      let button = $('<button class="import-items"><i class="fas fa-file-import"></i>' + game.i18n.localize("gurps.item-import") + '</button>')
+      let button = $('<button class="import-items"><i class="fas fa-file-import"></i>' + game.i18n.localize("GURPS.itemImport") + '</button>')
 
       button.click(function () {
         setTimeout(async () => {
