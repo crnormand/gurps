@@ -1475,13 +1475,14 @@ GURPS.importItems = async function(text, filename, filepath) {
     package: "world",
   });
   for (let i of j.rows) {
-    let itemData = await GURPS.importItem(i);
-    await Item.create(itemData,{pack:`world.${filename}`});
+    await GURPS.importItem(i,filename);
   }
 }
 
-GURPS.importItem = async function(i) {
-  console.log(i);
+GURPS.importItem = async function(i, filename) {
+  if (i.children?.length) for (let ch of i.children) {
+    await GURPS.importItem(ch,filename);
+  }
   let itemData = {
     name: i.description,
     type: "equipment",
@@ -1558,7 +1559,7 @@ GURPS.importItem = async function(i) {
   }
   let bonus_list = []
   if (i.features?.length) for (let f of i.features) {
-    let bonus = (f.amount > -1) ? `+${f.amount}` : f.amount.toString();
+    let bonus = (!!f.amount) ? ((f.amount > -1) ? `+${f.amount}` : f.amount.toString()) : "";
     if (f.type === "attribute_bonus") {
       bonus_list.push(`${f.attribute} ${bonus}`);
     } else if (f.type === "dr_bonus") {
@@ -1590,7 +1591,7 @@ GURPS.importItem = async function(i) {
     }
   }
   itemData.data.bonuses = bonus_list.join("\n");
-  return itemData;
+  return Item.create(itemData,{pack:`world.${filename}`});
 }
 
 /*********************  HACK WARNING!!!! *************************/
