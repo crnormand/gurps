@@ -206,6 +206,7 @@ class ChatProcessorRegistry {
 
   // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
   priv(txt) {
+    if (this.msgs.quiet) return;
     if (this.msgs.pub.length > 0) this.send()
     this.msgs.priv.push(txt)
   }
@@ -218,7 +219,8 @@ class ChatProcessorRegistry {
   }
 
   // Attempt to convert original chat data into a whisper (for use when the player presses SHIFT key to make roll private)
-  setEventFlags(shift, ctrl) {
+  setEventFlags(quiet, shift, ctrl) {
+    this.msgs.quiet = quiet
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
     this.msgs.data.whisper = [game.user.id]
     mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })

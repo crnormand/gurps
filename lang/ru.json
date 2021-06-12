@@ -424,6 +424,14 @@
   "GURPS.toAllDXBasedRolls": "Ко всем проверкам, основанным на ЛВ",
   "GURPS.update": "Обновить",
   "GURPS.yards": "ярды",
+
+  "GURPS.statsTab": "Stats",
+  "GURPS.combatTab": "Combat",
+  "GURPS.advantagesTab": "Преимущества и Недостатки",
+  "GURPS.skillsTab": "Навыки",
+  "GURPS.spellsTab": "Заклинания",
+  "GURPS.equipmentTab": "Снаряжение",
+
   "GURPS.attributesQN": "КН",
   "GURPS.QP":"ОК",
   "GURPS.attributesQPNAME": "Очки квинтэссенции ",

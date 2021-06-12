@@ -309,9 +309,9 @@
         </div>
       </div>
       <div id='condition'>
-        <div class="header">{{i18n "GURPS.conditions" "Conditions"}}</div>
+        <div class="header">{{i18n "GURPS.conditions"}}</div>
         <div class="fieldblock">
-          <div class="label">{{i18n "GURPS.maneuver" "Maneuver"}}</div>
+          <div class="label">{{i18n "GURPS.maneuver"}}</div>
           <div class="field" style='padding-top: 3px; border: none;'>
             <select id='maneuver' name="data.conditions.maneuver">
               {{#each (listAllManeuvers) as | this key |}}
@@ -358,7 +358,7 @@
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-                <div class="tooltippic"><img src="{{this.img}}"/></div>
+                {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>
           </div>
           <div class="usage">{{this.mode}}</div>
@@ -392,7 +392,7 @@
           <div class="desc dblclkedit rangeddraggable" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-                <div class="tooltippic"><img src="{{this.img}}"/></div>
+                {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>
             {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
         </div> }}
@@ -428,7 +428,7 @@
           {{{gurpslink this.name}}}
           {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-              <div class="tooltippic"><img src="{{this.img}}"/></div>
+              {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
           <div class="list_note satisfiedY"></div>
           <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">{{{gurpslinkbr this.notes}}}
           </div>
@@ -452,7 +452,7 @@
           {{{gurpslink this.name}}}
           {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-              <div class="tooltippic"><img src="{{this.img}}"/></div>
+              {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
           <div class="list_note satisfiedY"></div>
           <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
           @root}}}</div>
@@ -487,7 +487,7 @@
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-                <div class="tooltippic"><img src="{{this.img}}"/></div>
+                {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
             <div class="list_note satisfiedY"></div>
             <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{@key}}">{{{gurpslink this.notes}}}
             </div>
@@ -540,13 +540,13 @@
           {{#if (isUserCreated this)}}&nbsp;
             <i class="far fa-bookmark" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
-          {{#if this.ignoreImportQty}}&nbsp;
+          {{#if (ignoreImportQty this)}}&nbsp;
             <i class="fas fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
           {{#if (isFoundryItem this)}}&nbsp;
             <i class="fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
-          <div class="tooltippic"><img src="{{this.img}}"/></div>
+          {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
             {{{gurpslink this.notes}}}
           </div>
@@ -602,7 +602,7 @@
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
               style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-           {{#if this.ignoreImportQty}}&nbsp;
+           {{#if (ignoreImportQty this)}}&nbsp;
             <i class="far fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
          {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"

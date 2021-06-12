@@ -798,6 +798,14 @@
   "GURPS.yards": "jardas",
   "GURPS.ok": "OK",
   "GURPS.TransferTo": "Transferir para",
+
+  "GURPS.statsTab": "Características",
+  "GURPS.combatTab": "Combate",
+  "GURPS.advantagesTab": "Vantagens e Desvantagens",
+  "GURPS.skillsTab": "Perícias",
+  "GURPS.spellsTab": "Mágicas",
+  "GURPS.equipmentTab": "Equipamentos",
+
   "GURPS.attributesQN": "QN",
   "GURPS.QP":"QP",
   "GURPS.attributesQPNAME": "Pontos de Quintessência",

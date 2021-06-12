@@ -4,8 +4,8 @@
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
-  /* background: url(/ui/parchment.jpg) #dcdcd0; */
-  background: url(/systems/gurps/icons/hex2.png) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
+  /* background: url(/ui/parchment.webp) #dcdcd0; */
+  background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
   /* background: radial-gradient(ellipse at bottom, #5091dd 0%, rgb(3, 6, 23) 100%); */
 }
@@ -1168,7 +1168,7 @@ ul#result-effects li {
 .dropdown-content {
   display: block;
   position: absolute;
-  right: 0;
+  right: 2em;
   z-index: 1;
   min-width: max-content;
   text-align: left;
@@ -1368,7 +1368,7 @@ ul#result-effects li {
 }
 
 #modtooltipleftcenter .everyone {
-  height: 100%;
+  height: fit-content;
   display: inline-flex;
   flex-flow: column nowrap;
   justify-content: flex-end;
@@ -1378,7 +1378,7 @@ ul#result-effects li {
 .button-row {
   display: flex;
   flex-flow: row wrap;
-  height: 5em;
+  height: 4.8em;
   overflow: scroll;
   overflow-y: overlay;
   overflow-x: hidden;
@@ -1470,7 +1470,11 @@ ul#result-effects li {
   background: rgba(255, 255, 240, 0.8);
   line-height: unset;
   height: fit-content;
-  min-width: 5.5em;
+  min-width: 5.2em;
+  max-width: 7.5em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .modttlabel {

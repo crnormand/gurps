@@ -13,15 +13,49 @@ let filename = process.argv.slice(2)[0]
 console.log(filename)
 
 let contents = fs.readFileSync(filename, 'utf8')
+let entries = new Set()
 
-console.log('=== New Entries for en.json ===')
-let regex = /(i18n\(['"`](.+)['"`],\s*['"`](.+)['"`]\))/g
-const matches = contents.matchAll(regex)
-let m = [...matches]
-m.forEach(e => {
-  console.log(`"${e[2]}": "${e[3]}"`)
-})
-console.log('=== end of entries ===')
-const replacement = contents.replaceAll(regex, "i18n('$2')")
-fs.writeFileSync(filename + '.new', replacement)
-console.log(`Written: ${filename}.new`)
+console.log('\n\n=== New Entries for en.json ===')
+// let regex = /(i18n\(['"`](.+)['"`],\s*['"`](.+)['"`]\))/g
+let regexJS = /i18n\((?:\r?\n)?\s*['"`](?<tag>.+?)['"`],(?:\r?\n)?\s*['"`](?<text>.+?)['"`](?:\r?\n)?\s*\)/g
+{
+  const matches = contents.matchAll(regexJS)
+  let m = [...matches]
+  m.forEach(e => {
+    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+    //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
+  })
+}
+
+let regexHB = /\{\{i18n(?:\r?\n)?\s+['"`](?<tag>.+?)['"`](?:\r?\n)?\s+['"`](?<text>.+?)['"`](?:\r?\n)?\s*\}\}/g
+{
+  const matches = contents.matchAll(regexHB)
+  let m = [...matches]
+  m.forEach(e => {
+    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+    //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
+  })
+}
+
+let regexHBf =
+  /\{\{i18n_f(?:\r?\n)?\s+['"`](?<tag>.+?)['"`](?:\r?\n)?\s+(?<data>\S+)(?:\r?\n)?\s+['"`](?<text>.+?)['"`](?:\r?\n)?\s*\}\}/g
+{
+  const matches = contents.matchAll(regexHBf)
+  let m = [...matches]
+  m.forEach(e => {
+    entries.add(`"${e.groups.tag}": "${e.groups.text}",`)
+    //    console.log(`"${e.groups.tag}": "${e.groups.text}",`)
+  })
+}
+
+entries.forEach(it => console.log(it))
+console.log('=== end of entries ===\n')
+fs.writeFileSync(filename + '.old', contents)
+
+const replacement = contents
+  .replaceAll(regexJS, "i18n('$1')")
+  .replaceAll(regexHB, '{{i18n "$1"}}')
+  .replace(regexHBf, '{{i18n_f "$1" $2}}')
+fs.writeFileSync(filename, replacement)
+
+console.log(`Written: ${filename}`)

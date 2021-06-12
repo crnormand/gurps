@@ -157,7 +157,7 @@
 
 .simple_Shield {
   grid-area: Shield;
-  background-image: url("../ui/ri_1.png");
+  background-image: url("../ui/ri_1.webp");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -169,7 +169,7 @@
 .simple_Body {
   grid-area: Body;
   text-align: center;
-  background-image: url("../ui/ri_3.png");
+  background-image: url("../ui/ri_3.webp");
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -191,7 +191,7 @@
   width: 100%;
   height: 100%;
   text-align: center;
-  background-image: url("../ui/ri_2t.png");
+  background-image: url("../ui/ri_2t.webp");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

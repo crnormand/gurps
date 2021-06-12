@@ -13,9 +13,9 @@ import {
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
 import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../lib/utilities.js'
-// import StatusProcessor from '../chat/status-processor.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
+import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
 
 export default function RegisterChatProcessors() {
@@ -28,7 +28,6 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollChatProcessor())
   ChatProcessors.registerProcessor(new ShowMBsChatProcessor())
   ChatProcessors.registerProcessor(new ClearMBsChatProcessor())
-  // ChatProcessors.registerProcessor(new StatusProcessor())
   ChatProcessors.registerProcessor(new StatusChatProcessor())
   ChatProcessors.registerProcessor(new FrightCheckChatProcessor())
   ChatProcessors.registerProcessor(new UsesChatProcessor())
@@ -44,6 +43,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new LightChatProcessor())
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
+  ChatProcessors.registerProcessor(new ShowChatProcessor())
 }
 
 class ReimportChatProcessor extends ChatProcessor {
@@ -79,8 +79,8 @@ class SetEventFlagsChatProcessor extends ChatProcessor {
     return line.startsWith('/setEventFlags')
   }
   process(line) {
-    let m = line.match(/\/setEventFlags (\w+) (\w+)/)
-    this.registry.setEventFlags(m[1] == 'true', m[2] == 'true')
+    let m = line.match(/\/setEventFlags (\w+) (\w+) (\w+)/)
+    this.registry.setEventFlags(m[1] == 'true', m[2] == 'true', m[3] == 'true')
   }
 }
 
@@ -164,7 +164,7 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     if (m.length > 0) {
       this.send()
       m[0].execute()
-    } else this.priv(`${i18n('GURPS.chatUnableToFindMacro', 'Unable to find macro named')} '${line.substr(2)}'`)
+    } else this.priv(`${i18n('GURPS.chatUnableToFindMacro')} '${line.substr(2)}'`)
     return GURPS.chatreturn
   }
 }
@@ -205,8 +205,7 @@ class FpHpChatProcessor extends ChatProcessor {
   async process(line) {
     let m = this.match
     let actor = GURPS.LastActor
-    if (!actor)
-      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected', 'You must have a character selected'))
+    if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
     else {
       let attr = m[1].toUpperCase()
       let delta = parseInt(m[3])
@@ -218,8 +217,7 @@ class FpHpChatProcessor extends ChatProcessor {
       } else if (isNaN(delta) && !!m[3]) {
         // only happens with '='
         delta = parseInt(m[3].substr(1))
-        if (isNaN(delta))
-          ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+        if (isNaN(delta)) ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
         else {
           let mtxt = ''
           if (delta > max) {
@@ -227,7 +225,7 @@ class FpHpChatProcessor extends ChatProcessor {
             mtxt = ` (max: ${max})`
           }
           await actor.update({ ['data.' + attr + '.value']: delta })
-          this.prnt(`${actor.displayname} ${i18n('GURPS.chatSetTo', 'set to')} ${delta} ${attr}${mtxt}`)
+          this.prnt(`${actor.displayname} ${i18n('GURPS.chatSetTo')} ${delta} ${attr}${mtxt}`)
         }
       } else if (!!m[2] || !!m[3]) {
         let mtxt = ''
@@ -244,7 +242,7 @@ class FpHpChatProcessor extends ChatProcessor {
           delta = roll.total
           if (!!mod)
             if (isNaN(mod)) {
-              ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+              ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
               return
             } else delta += parseInt(mod)
           delta = Math.max(delta, !!m[4] ? 1 : 0)
@@ -259,7 +257,7 @@ class FpHpChatProcessor extends ChatProcessor {
         }
         await actor.update({ ['data.' + attr + '.value']: delta })
         this.prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
-      } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
+      } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
     }
   }
 }
@@ -295,27 +293,17 @@ class SelectChatProcessor extends ChatProcessor {
         if (tokens.length == 1) tokens[0].release()
       }
       GURPS.ClearLastActor(GURPS.LastActor)
-      this.priv(i18n('GURPS.chatClearingLastActor', 'Clearing Last Actor'))
+      this.priv(i18n('GURPS.chatClearingLastActor'))
     } else {
       let pat = makeRegexPatternFrom(m[3])
       let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
       if (!!m[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
       let a = list.filter(a => a?.name?.match(pat))
-      let msg =
-        i18n('GURPS.chatMoreThanOneActor', 'More than one Actor found matching') +
-        " '" +
-        m[3] +
-        "': " +
-        a.map(e => e.name).join(', ')
+      let msg = i18n('GURPS.chatMoreThanOneActor') + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
       if (a.length == 0 || a.length > 1) {
         // No good match on actors, try token names
         a = canvas.tokens.placeables.filter(t => t.name.match(pat))
-        msg =
-          i18n('GURPS.chatMoreThanOneToken', 'More than one Token found matching') +
-          " '" +
-          m[3] +
-          "': " +
-          a.map(e => e.name).join(', ')
+        msg = i18n('GURPS.chatMoreThanOneToken') + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
         a = a.map(t => t.actor)
       }
       if (a.length == 0 || a.length > 1) {
@@ -323,8 +311,7 @@ class SelectChatProcessor extends ChatProcessor {
         a = canvas.tokens.placeables.filter(t => t.id.match(pat))
         a = a.map(t => t.actor)
       }
-      if (a.length == 0)
-        ui.notifications.warn(i18n('GURPS.chatNoActorFound', 'No Actor/Token found matching') + " '" + m[3] + "'")
+      if (a.length == 0) ui.notifications.warn(i18n('GURPS.chatNoActorFound') + " '" + m[3] + "'")
       else if (a.length > 1) ui.notifications.warn(msg)
       else {
         GURPS.SetLastActor(a[0])
@@ -390,8 +377,7 @@ class UsesChatProcessor extends ChatProcessor {
           if (eqt.count == null) eqt = null
         }
       }
-      if (!eqt)
-        ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
+      if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
       else {
         if (!m[1]) {
           ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
@@ -399,7 +385,7 @@ class UsesChatProcessor extends ChatProcessor {
           eqt = duplicate(eqt)
           let delta = parseInt(m[1])
           if (!!m[2]) {
-            this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesReset', "'USES' reset to 'MAX USES'")} (${eqt.maxuses})`)
+            this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesReset')} (${eqt.maxuses})`)
             eqt.uses = eqt.maxuses
             await actor.update({ [key]: eqt })
             answer = true
@@ -408,20 +394,17 @@ class UsesChatProcessor extends ChatProcessor {
             delta = m[1].substr(1)
             eqt.uses = delta
             await actor.update({ [key]: eqt })
-            this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesSet', "'USES' set to")} ${delta}`)
+            this.prnt(`${eqt.name} ${i18n('GURPS.chatUsesSet')} ${delta}`)
             answer = true
           } else {
             let q = parseInt(eqt.uses) + delta
             let max = parseInt(eqt.maxuses)
-            if (isNaN(q)) ui.notifications.warn(eqt.name + ' ' + i18n('GURPS.chatUsesIsNaN', "'USES' is not a number"))
-            else if (q < 0)
-              ui.notifications.warn(eqt.name + ' ' + i18n('GURPS.chatDoesNotHaveEnough', "does not have enough 'USES'"))
+            if (isNaN(q)) ui.notifications.warn(eqt.name + ' ' + i18n('GURPS.chatUsesIsNaN'))
+            else if (q < 0) ui.notifications.warn(eqt.name + ' ' + i18n('GURPS.chatDoesNotHaveEnough'))
             else if (!isNaN(max) && max > 0 && q > max)
-              ui.notifications.warn(
-                `${i18n('GURPS.chatExceededMaxUses', "Exceeded 'MAX USES'")} (${max}) ${i18n('GURPS.for')} ` + eqt.name
-              )
+              ui.notifications.warn(`${i18n('GURPS.chatExceededMaxUses')} (${max}) ${i18n('GURPS.for')} ` + eqt.name)
             else {
-              this.prnt(`${eqt.name} ${i18n('GURPS.chatUses', "'USES'")} ${m[1]} = ${q}`)
+              this.prnt(`${eqt.name} ${i18n('GURPS.chatUses')} ${m[1]} = ${q}`)
               eqt.uses = q
               await actor.update({ [key]: eqt })
               answer = true
@@ -465,118 +448,29 @@ class QtyChatProcessor extends ChatProcessor {
           if (eqt.count == null) eqt = null
         }
       }
-      if (!eqt)
-        ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched', 'No equipment matched') + " '" + pattern + "'")
+      if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
       else {
         eqt = duplicate(eqt)
         let delta = parseInt(m[1])
         if (isNaN(delta)) {
           // only happens with '='
           delta = parseInt(m[1].substr(1))
-          if (isNaN(delta))
-            ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${m[1]}'`)
+          if (isNaN(delta)) ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${m[1]}'`)
           else {
             answer = true
             await actor.updateEqtCount(key, delta)
-            this.prnt(`${eqt.name} ${i18n('GURPS.chatQtySetTo', "'QTY' set to")} ${delta}`)
+            this.prnt(`${eqt.name} ${i18n('GURPS.chatQtySetTo')} ${delta}`)
           }
         } else {
           let q = parseInt(eqt.count) + delta
-          if (q < 0)
-            ui.notifications.warn(
-              i18n('GURPS.chatYouDoNotHaveEnough', 'You do not have enough') + " '" + eqt.name + "'"
-            )
+          if (q < 0) ui.notifications.warn(i18n('GURPS.chatYouDoNotHaveEnough') + " '" + eqt.name + "'")
           else {
             answer = true
-            this.prnt(`${eqt.name} ${i18n('GURPS.chatQty', "'QTY'")} ${m[1]}`)
+            this.prnt(`${eqt.name} ${i18n('GURPS.chatQty')} ${m[1]}`)
             await actor.updateEqtCount(key, q)
           }
         }
       }
-    }
-    return answer
-  }
-}
-
-class TrackerChatProcessor extends ChatProcessor {
-  help() {
-    return '/tr&lt;N&gt; (or /tr (&lt;name&gt;)) &lt;formula&gt;'
-  }
-  matches(line) {
-    this.match = line.match(/^\/(tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
-    return !!this.match
-  }
-  async process(line) {
-    let answer = false
-    let m = this.match
-    let actor = GURPS.LastActor
-    if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
-    else {
-      let tracker = parseInt(m[2])
-      let display = tracker
-      if (!!m[3]) {
-        let pattern = '^' + m[3].trim()
-        tracker = -1
-        for (const [key, value] of Object.entries(actor.data.data.additionalresources.tracker)) {
-          if (value.name.match(pattern)) {
-            tracker = key
-            display = '(' + value.name + ')'
-          }
-        }
-        if (tracker == -1) {
-          ui.notifications.warn(`${i18n('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} '${m[3]}'`)
-          return
-        }
-      }
-      if (!m[5]) {
-        ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
-        return
-      }
-      let delta = parseInt(m[5])
-      let reset = ''
-      let max = actor.data.data.additionalresources.tracker[tracker].max
-      if (!!m[6]) {
-        // reset
-        if (!!actor.data.data.additionalresources.tracker[tracker].isDamageTracker) max = 0 // Damage Tracker's reset to zero
-        await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: max })
-        this.prnt(
-          `${i18n('GURPS.chatResourceTracker', 'Resource Tracker')}${display} ${i18n(
-            'GURPS.chatResetTo',
-            'reset to'
-          )} ${max}`
-        )
-        answer = true
-      } else if (isNaN(delta)) {
-        // only happens with '='
-        delta = parseInt(m[5].substr(1))
-        if (isNaN(delta))
-          ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
-        else {
-          await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: delta })
-          this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} set to ${delta}`)
-          answer = true
-        }
-      } else if (!!m[5]) {
-        if (max == 0) max = Number.MAX_SAFE_INTEGER
-        let v = actor.data.data.additionalresources.tracker[tracker].value + delta
-        if (v > max) {
-          ui.notifications.warn(
-            `${i18n('GURPS.chatExceededMax', 'Exceeded MAX')}:${max} ${i18n('GURPS.for')} ${i18n(
-              'GURPS.chatResourceTracker'
-            )}${display}`
-          )
-          v = max
-        }
-        if (!!actor.data.data.additionalresources.tracker[tracker].isDamageTracker && v < 0) {
-          ui.notifications.warn(
-            `${i18n('GURPS.chatResultBelowZero', 'Result below zero')}: ${i18n('GURPS.chatResourceTracker')}${display}`
-          )
-          v = 0
-        }
-        await actor.update({ ['data.additionalresources.tracker.' + tracker + '.value']: v })
-        this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} ${m[5]} = ${v}`)
-        answer = v >= 0
-      } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat', 'Unrecognized format')} '${line}'`)
     }
     return answer
   }
@@ -587,7 +481,13 @@ class LightChatProcessor extends ChatProcessor {
     return '/li &lt;dim dist&gt; &lt;bright dist&gt; &lt;angle&gt; &lt;anim&gt;|off '
   }
   matches(line) {
-    this.match = line.match(/^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i)
+    // Could be this:
+    // /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+
+    this.match = line.match(
+      //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
+      /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})?(?<colorint>:[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+    )
     return !!this.match
   }
   async process(line) {
@@ -596,34 +496,44 @@ class LightChatProcessor extends ChatProcessor {
       return
     }
     if (line.match(/^\/(light|li) *$/)) {
-      this.priv("Possible animations: " + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
+      this.priv('Possible animations: ' + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
       return
     }
-    let type = this.match[7] || ''
+    let type = this.match.groups.type || ''
     if (!!type) {
       let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.startsWith(type))
       if (!m) {
-        ui.notifications.warn("Unknown light animation '" + type + "'.  Expected: " + Object.keys(CONFIG.Canvas.lightAnimations).join(', '))
+        ui.notifications.warn(
+          "Unknown light animation '" + type + "'.  Expected: " + Object.keys(CONFIG.Canvas.lightAnimations).join(', ')
+        )
         return
       }
       type = m
     }
-    let anim = { type: type, speed: parseInt(this.match[8]) || 1, intensity: parseInt(this.match[9]) || 1 }
+    let anim = {
+      type: type,
+      speed: parseInt(this.match.groups.speed) || 1,
+      intensity: parseInt(this.match.groups.intensity) || 1,
+    }
     let data = {
       dimLight: 0,
       brightLight: 0,
       lightAngle: 360,
       lightAnimation: anim,
-      '-=lightColor': null
     }
 
-    if (!this.match[2]) {
-      if (this.match[6]) data.lightColor = this.match[6]
-      data.dimLight = parseInt(this.match[3] || 0)
-      data.brightLight = parseInt(this.match[4] || 0)
-      data.lightAngle = parseInt(this.match[5] || 360)
+    if (this.match.groups.off) {
+      data['-=lightColor'] = null
+    } else {
+      if (this.match.groups.color) data.lightColor = this.match.groups.color
+      if (this.match.groups.colorint) data.lightAlpha = parseFloat(this.match.groups.colorint.substr(1))
+      data.dimLight = parseInt(this.match.groups.dim || 0)
+      data.brightLight = parseInt(this.match.groups.bright || 0)
+      data.lightAngle = parseInt(this.match.groups.angle || 360)
     }
+    console.log("Token Light update: " + GURPS.objToString(data))
     for (const t of canvas.tokens.controlled) await t.document.update(data)
+    this.priv(line)
   }
 }
 
@@ -639,5 +549,47 @@ class ForceMigrateChatProcessor extends ChatProcessor {
   async process(line) {
     await Migration.migrateTo096()
     await Migration.migrateTo097()
+    await Migration.migrateTo0104()
   }
+}
+
+class ShowChatProcessor extends ChatProcessor {
+  isGMOnly() {
+    return true
+  }
+  
+  help() {
+    return "/show &lt;skills or attributes&gt"
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/(show|sh) (.*)/i)
+    return !!this.match
+  }
+  async process(line) {
+    let args = splitArgs(this.match[2]);
+    this.priv(line)
+    for (const orig of args) {
+      this.priv("<hr>")
+      let label = false
+      for (const token of canvas.tokens.placeables) {
+        let arg = orig
+        let actor = token.actor
+        if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) {
+          if (arg.includes(' ')) arg = '"' + arg + '"'
+          arg = "S:" + arg
+        }
+        let action = parselink(arg)
+        if (!!action.action) {
+          action.action.calcOnly = true
+          let ret = await GURPS.performAction(action.action, actor)
+          if (!!ret.target) {
+            let lbl = `['${ret.thing} (${ret.target}) : ${actor.name}'/sel ${token.id}\\\\/r [${arg}]]`
+            this.priv(lbl)
+          }
+        }
+      }
+    }    
+  }
+
 }

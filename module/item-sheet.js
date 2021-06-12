@@ -102,6 +102,8 @@ export class GurpsItemSheet extends ItemSheet {
     if (!['melee', 'ranged', 'skills', 'spells', 'ads', 'equipment'].includes(dragData.type)) return
     let srcActor = game.actors.get(dragData.actorid)
     let srcData = getProperty(srcActor.data, dragData.key)
+    srcData.contains = {} // don't include any contained/collapsed items from source
+    srcData.collapsed = {}
     if (dragData.type == 'equipment') {
       this.item.update({
         name: srcData.name,

@@ -411,7 +411,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     let opts = this.addDeleteMenu(new Equipment('New Equipment', true))
-    opts.push({
+/*    opts.push({
       name: 'Add In',
       icon: "<i class='fas fa-sign-in-alt'></i>",
       callback: e => {
@@ -421,6 +421,7 @@ export class GurpsActorSheet extends ActorSheet {
         this.actor.update({ [k]: o })
       },
     })
+*/
     opts.push({
       name: 'Edit',
       icon: "<i class='fas fa-edit'></i>",
@@ -429,6 +430,50 @@ export class GurpsActorSheet extends ActorSheet {
         let o = duplicate(GURPS.decode(this.actor.data, path))
         this.editEquipment(this.actor, path, o)
       },
+    })
+    opts.push({
+      icon: '<i class="fas fa-sort-alpha-up"></i>',
+      name: 'Sort Contents (Ascending)',
+      callback: async (data) => {
+        let parentpath = data[0].dataset.key
+        let objkey = 'contains'
+        let key = parentpath +'.' + objkey
+        let list = getProperty(this.actor.data, key)
+        if (!Object.keys(list).length) {
+          ui.notifications.info("Nothing to sort")
+          return
+        }
+        let t = parentpath + '.-=' + objkey
+        await this.actor.update({ [t]: null }) // Delete the whole object
+        let sortedobj = {}
+        let index = 0
+        Object.values(list)
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .forEach(o => game.GURPS.put(sortedobj, o, index++))
+        await this.actor.update({ [key]: sortedobj })
+      }
+    })
+    opts.push({
+      icon: '<i class="fas fa-sort-alpha-down"></i>',
+      name: 'Sort Contents (Descending)',
+      callback: async (data) => {
+        let parentpath = data[0].dataset.key
+        let objkey = 'contains'
+        let key = parentpath +'.' + objkey
+        let list = getProperty(this.actor.data, key)
+        if (!Object.keys(list).length) {
+          ui.notifications.info("Nothing to sort")
+          return
+        }
+        let t = parentpath + '.-=' + objkey
+        await this.actor.update({ [t]: null }) // Delete the whole object
+        let sortedobj = {}
+        let index = 0
+        Object.values(list)
+          .sort((a, b) => b.name.localeCompare(a.name))
+          .forEach(o => game.GURPS.put(sortedobj, o, index++))
+        await this.actor.update({ [key]: sortedobj })
+      }
     })
     let mcar = Array.from(opts)
     mcar.push({
@@ -960,13 +1005,16 @@ export class GurpsActorSheet extends ActorSheet {
           icon: 'fas fa-exchange-alt',
           onclick: ev => this._onToggleSheet(ev),
         },
-        {
-          label: 'Import',
-          class: 'import',
-          icon: 'fas fa-file-import',
-          onclick: ev => this._onFileImport(ev),
-        },
       ]
+      
+      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
+        b.push( {
+            label: 'Import',
+            class: 'import',
+            icon: 'fas fa-file-import',
+            onclick: ev => this._onFileImport(ev),
+          })
+
       if (!isEditor) {
         b.push({
           label: 'Editor',
@@ -1117,13 +1165,14 @@ export class GurpsActorSheet extends ActorSheet {
 
   addDeleteMenu(obj) {
     return [
-      {
+/*      {
         name: 'Add Before',
         icon: "<i class='fas fa-chevron-up'></i>",
         callback: e => {
           GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj))
         },
       },
+*/
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
@@ -1133,6 +1182,7 @@ export class GurpsActorSheet extends ActorSheet {
           else GURPS.removeKey(this.actor, key)
         },
       },
+/*
       {
         name: 'Add at the end',
         icon: "<i class='fas fa-fast-forward'></i>",
@@ -1145,6 +1195,7 @@ export class GurpsActorSheet extends ActorSheet {
           this.actor.update({ [objpath]: o })
         },
       },
+*/
     ]
   }
 
@@ -1153,6 +1204,20 @@ export class GurpsActorSheet extends ActorSheet {
   /** @override */
   _updateObject(event, formData) {
     return super._updateObject(event, formData)
+  }
+}
+
+export class GurpsActorTabSheet extends GurpsActorSheet {
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ['gurps', 'sheet', 'actor'],
+      template: 'systems/gurps/templates/actor-tab-sheet.html',
+      width: 860,
+      height: 600,
+      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
+    })
   }
 }
 
@@ -1217,7 +1282,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
         name: 'Add ' + name + ' at the end',
         icon: "<i class='fas fa-edit'></i>",
         callback: e => {
-          let o = GURPS.decode(this.actor.data, path)
+          let o = GURPS.decode(this.actor.data, path) || {}
           GURPS.put(o, duplicate(obj))
           this.actor.update({ [path]: o })
         },
