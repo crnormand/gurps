@@ -1585,6 +1585,8 @@ GURPS.importItem = async function(i, filename) {
         } else if (!f.specialization) {
           bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         }
+      } else if (f.selection_type === "this_weapon") {
+        bonus_list.push(`A:${(itemData.name).replace(/ /g,"*")} ${bonus}`);
       }
     } else if (f.type === "spell_bonus") {
       if (f.match === "spell_name" && f.name.compare === "is") {
@@ -1593,10 +1595,12 @@ GURPS.importItem = async function(i, filename) {
     } else if (f.type === "weapon_bonus") {
       if (f.selection_type === "weapons_with_name") {
         if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name?.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`D:${(f.name?.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name?.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`D:${(f.name?.qualifier||"").replace(/ /g,"*")} ${bonus}`);
         }
+      } else if (f.selection_type === "this_weapon") {
+        bonus_list.push(`D:${(itemData.name).replace(/ /g,"*")} ${bonus}`);
       }
     }
   }
