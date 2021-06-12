@@ -1513,8 +1513,6 @@ GURPS.importItem = async function(i, filename) {
     }
   }
   if (i.weapons?.length) for (let w of i.weapons) {
-    console.log(w);
-    
     let otf_list = [];
     if (w.defaults) for (let d of w.defaults) {
       let mod = (!!d.modifier)? ((d.modifier > -1) ? `+${d.modifier}` : d.modifier.toString()) : "";
@@ -1717,7 +1715,7 @@ Hooks.once('init', async function () {
                   } else {
                     file = files[0];
                     console.log(file);
-                    readTextFromFile(file).then(text => GURPS.importItems(text, file.name.split(".").slice(0,-1).join("."), file.path));
+                    GURPS.readTextFromFile(file).then(text => GURPS.importItems(text, file.name.split(".").slice(0,-1).join("."), file.path));
                   }
                 }
               },
