@@ -635,7 +635,7 @@ async function performAction(action, actor, event, targets) {
 
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
   }
- 
+
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
     thing = action.desc
@@ -997,7 +997,7 @@ async function applyModifierDesc(actor, desc) {
       let k = target.toUpperCase()
       delta = actor.data.data[k].value - delta
       await actor.update({ ['data.' + k + '.value']: delta })
-    } 
+    }
     if (target.match(/^tr/i)) {
       await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + " -" + delta) // Make the tracker command quiet
       return null
@@ -1455,6 +1455,144 @@ GURPS.setInitiativeFormula = function (broadcast) {
     })
 }
 
+GURPS.importItems = async function(text, filename, filepath) {
+  let j = {};
+  try {
+    j = JSON.parse(text);
+  } catch {
+    return ui.notifications.error('The file you uploaded was not of the right format!');
+  }
+  if (j.type !== "equipment_list") {
+    return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!');
+  }
+  if (j.version !== 2) {
+    return ui.notifications.error('The file you uploaded is not of the right version!')
+  }
+  await CompendiumCollection.createCompendium({
+    entity: "Item",
+    label: filename,
+    name: filename,
+    package: "world",
+  });
+  for (let i of j.rows) {
+    let itemData = await GURPS.importItem(i);
+    await Item.create(itemData,{pack:`world.${filename}`});
+  }
+}
+
+GURPS.importItem = async function(i) {
+  console.log(i);
+  let itemData = {
+    name: i.description,
+    type: "equipment",
+    data: {
+      eqt: {
+        name: i.description,
+        notes: i.notes,
+        pageref: i.reference,
+        count: i.quantity,
+        cost: (!!i.value) ? parseFloat(i.value) : 0,
+        weight: (!!i.weight) ? parseFloat(i.weight) : 0,
+        carried: true,
+        equipped: true,
+        techlevel: i.tech_level || "",
+        categories: i.categories || "",
+        legalityclass: i.legality_class || "",
+        costsum: (!!i.value) ? parseFloat(i.value) : 0,
+        weightsum: (!!i.weight) ? parseFloat(i.weight) : 0,
+        uses: (!!i.max_uses) ? i.max_uses.toString() : "",
+        maxuses: (!!i.max_uses) ? i.max_uses.toString() : 0,
+      },
+      melee: {},
+      ranged: {},
+      bonuses: "",
+      equipped: true,
+      carried: true,
+    }
+  }
+  if (i.weapons?.length) for (let w of i.weapons) {
+    console.log(w);
+    
+    let otf_list = [];
+    if (w.defaults) for (let d of w.defaults) {
+      let mod = (!!d.modifier)? ((d.modifier > -1) ? `+${d.modifier}` : d.modifier.toString()) : "";
+      if (d.type === "skill") {
+        otf_list.push(`S:${d.name.replace(" ","*")}`+(d.specialization?` (${d.specialization.replace(" ","*")})`:"")+mod);
+      } else if (["10","st","dx","iq","ht","per","will","vision","hearing","taste_smell","touch","parry","block"].includes(d.type)) {
+        otf_list.push(d.type.replace("_"," ")+mod)
+      }
+    }
+    if (w.type === "melee_weapon") {
+      let wep = {
+        block: w.block || "",
+        damage: w.calc.damage || "",
+        mode: w.usage || "",
+        name: itemData.name,
+        notes: itemData.data.eqt.notes || "",
+        pageref: itemData.data.eqt.pageref || "",
+        parry: w.parry || "",
+        reach: w.reach || "",
+        st: w.strength || "",
+        otf: otf_list.join("|") || ""
+      }
+      itemData.data.melee[(Object.keys(itemData.data.melee).length + 1).toString().padStart(5,"0")] = wep;
+    } else if (w.type === "ranged_weapon") {
+      let wep = {
+        acc: w.accuracy || "",
+        ammo: "",
+        bulk: w.bulk || "",
+        damage: w.calc.damage || "",
+        mode: w.usage,
+        name: itemData.name,
+        notes: itemData.data.eqt.notes || "",
+        pageref: itemData.data.eqt.pageref || "",
+        range: w.range,
+        rcl: w.recoil,
+        rof: w.rof,
+        shots: w.shots,
+        st: w.strength,
+        otf: otf_list.join("|") || ""
+      }
+      itemData.data.ranged[(Object.keys(itemData.data.ranged).length + 1).toString().padStart(5,"0")] = wep;
+    }
+  }
+  let bonus_list = []
+  if (i.features?.length) for (let f of i.features) {
+    let bonus = (f.amount > -1) ? `+${f.amount}` : f.amount.toString();
+    if (f.type === "attribute_bonus") {
+      bonus_list.push(`${f.attribute} ${bonus}`);
+    } else if (f.type === "dr_bonus") {
+      bonus_list.push(`DR ${bonus} ${f.location}`);
+    } else if (f.type === "skill_bonus") {
+      if (f.selection_type === "skills_with_name" && f.name.compare === "is") {
+        if (f.specialization?.compare === "is") {
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")}${(f.specialization.qualifier||"").replace(" ","*")} ${bonus}`);
+        } else if (!f.specialization) {
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+        }
+      } else if (f.selection_type === "weapons_with_name" && f.name.compare === "is") {
+        if (f.specialization?.compare === "is") {
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")}${(f.specialization.qualifier||"").replace(" ","*")} ${bonus}`);
+        } else if (!f.specialization) {
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+        }
+      }
+    } else if (f.type === "spell_bonus") {
+      if (f.match === "spell_name" && f.name.compare === "is") {
+        bonus_list.push(`S:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+      }
+    } else if (f.type === "weapon_bonus") {
+      if (f.specialization?.compare === "is") {
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")}${(f.specialization.qualifier||"").replace(" ","*")} ${bonus}`);
+        } else if (!f.specialization) {
+          bonus_list.push(`A:${(f.name.qualifier||"").replace(" ","*")} ${bonus}`);
+        }
+    }
+  }
+  itemData.data.bonuses = bonus_list.join("\n");
+  return itemData;
+}
+
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
    make it work like an Array. 
@@ -1478,7 +1616,7 @@ Hooks.once('init', async function () {
   let src = 'systems/gurps/icons/gurps4e.webp'
   if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.webp'
   $('#logo').attr('src', src)
-  
+
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
   DamageChat.initSettings()
@@ -1551,6 +1689,51 @@ Hooks.once('init', async function () {
     await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
     entity.data.img = 'systems/gurps/icons/single-die.webp'
   })
+
+  Hooks.on("renderSidebarTab", async (app, html) => {
+    if (app.options.id === "compendium") {
+      let button = $('<button class="import-items"><i class="fas fa-file-import"></i>' + game.i18n.localize("gurps.item-import") + '</button>')
+
+      button.click(function () {
+        setTimeout(async () => {
+        new Dialog(
+          {
+            title: 'Import Item Compendium',
+            content: await renderTemplate('systems/gurps/templates/item-import.html'),
+            buttons: {
+              import: {
+                icon: '<i class="fas fa-file-import"></i>',
+                label: 'Import',
+                callback: html => {
+                  const form = html.find('form')[0]
+                  let files = form.data.files;
+                  let file = null;
+                  if (!files.length) {
+                    return ui.notifications.error('You did not upload a data file!');
+                  } else {
+                    file = files[0];
+                    console.log(file);
+                    readTextFromFile(file).then(text => GURPS.importItems(text, file.name.split(".").slice(0,-1).join("."), file.path));
+                  }
+                }
+              },
+              no: {
+                icon: '<i class="fas fa-times"></i>',
+                label: 'Cancel'
+              }
+            },
+            default: 'import',
+          },
+          {
+            width: 400
+          }
+        ).render(true);
+      }, 200)
+    });
+
+      html.find(".directory-footer").append(button);
+    }
+  })
 })
 
 Hooks.once('ready', async function () {
@@ -1571,7 +1754,7 @@ Hooks.once('ready', async function () {
   // Test for migration
   let mv = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION)
   let quiet = false
-  if (!mv) { 
+  if (!mv) {
     mv = '0.0.1'
     quiet = true
   }
@@ -1582,7 +1765,7 @@ Hooks.once('ready', async function () {
     if (migrationVersion.isLowerThan(settings.VERSION_096)) await Migration.migrateTo096(quiet)
     if (migrationVersion.isLowerThan(settings.VERSION_097)) await Migration.migrateTo097(quiet)
     if (migrationVersion.isLowerThan(settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
-    
+
     game.settings.set(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION, game.system.data.version)
   }
 
@@ -1623,11 +1806,11 @@ Hooks.once('ready', async function () {
   resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
   resourceTrackers.forEach(
     it =>
-      (DamageTables.woundModifiers[it.alias] = {
-        multiplier: 1,
-        label: it.name,
-        resource: true,
-      })
+    (DamageTables.woundModifiers[it.alias] = {
+      multiplier: 1,
+      label: it.name,
+      resource: true,
+    })
   )
 
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
@@ -1926,7 +2109,7 @@ Hooks.once('ready', async function () {
     }
     dragRuler.registerSystem('gurps', GURPSSpeedProvider)
   })
-  
+
   // Translate attribute mappings if not in English
   if (game.i18n.lang != 'en') {
     console.log("Mapping " + game.i18n.lang + " translations into PARSELINK_MAPPINGS")
@@ -1945,7 +2128,7 @@ Hooks.once('ready', async function () {
         mappings[nk] = GURPS.PARSELINK_MAPPINGS[k]
       }
     }
-    mappings = {...mappings, ...GURPS.PARSELINK_MAPPINGS}
+    mappings = { ...mappings, ...GURPS.PARSELINK_MAPPINGS }
     GURPS.PARSELINK_MAPPINGS = mappings
   }
 
