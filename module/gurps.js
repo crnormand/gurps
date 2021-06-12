@@ -995,7 +995,7 @@ GURPS.handleRoll = handleRoll
 // If the desc contains *Cost ?FP or *Max:9 then perform action
 async function applyModifierDesc(actor, desc) {
   if (!desc) return null
-  let m = desc.match(/.*\* ?Costs? (\d+) ?([\w\(\)]+)/i)
+  let m = desc.match(/.*\* ?Costs? (\d+) ?([ \w\(\)]+)/i)
   if (!!m && !!actor && !actor.isSelf) {
     let delta = parseInt(m[1])
     let target = m[2]
@@ -1005,7 +1005,7 @@ async function applyModifierDesc(actor, desc) {
       await actor.update({ ['data.' + k + '.value']: delta })
     }
     if (target.match(/^tr/i)) {
-      await GURPS.ChatProcessors.startProcessingLines('/' + target + ' -' + delta)
+      await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
       return null
     }
   }
@@ -1579,13 +1579,20 @@ Hooks.once('ready', async function () {
 
   GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)
   // Test for migration
-  const mv = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION) || '0.0.1'
+  let mv = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION)
+  let quiet = false
+  if (!mv) {
+    mv = '0.0.1'
+    quiet = true
+  }
   console.log('Current Version: ' + GURPS.currentVersion + ', Migration version: ' + mv)
   const migrationVersion = SemanticVersion.fromString(mv)
   if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
     // check which migrations are needed
-    if (migrationVersion.isLowerThan(settings.VERSION_096)) await Migration.migrateTo096()
-    if (migrationVersion.isLowerThan(settings.VERSION_097)) await Migration.migrateTo097()
+    if (migrationVersion.isLowerThan(settings.VERSION_096)) await Migration.migrateTo096(quiet)
+    if (migrationVersion.isLowerThan(settings.VERSION_097)) await Migration.migrateTo097(quiet)
+    if (migrationVersion.isLowerThan(settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
+
     game.settings.set(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION, game.system.data.version)
   }
 

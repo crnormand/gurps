@@ -103,6 +103,11 @@
       <div id="points">
         <div class="header">{{data.totalpoints.total}} Points</div>
         <div class="fieldblock">
+        
+         <div class="label">Total Points</div>
+         <div class="field noedit"><input name="data.totalpoints.total" class="gcs-input" type="text"
+              value="{{data.totalpoints.total}}" /></div>
+ 
           <div class="field"><input name="data.totalpoints.unspent" class="gcs-input" type="text"
               value="{{data.totalpoints.unspent}}" /></div>
           <div class="label">Unspent</div>
@@ -177,7 +182,7 @@
           <hr>
           <div class="points"><input name="data.attributes.PER.points" class="gcs-input-sm2" type="text"
               value="{{data.attributes.PER.points}}" /></div>
-          <div class="field"><input name="data.attributes.PER.value" class="gcs-input" type="text"
+          <div class="field"><input name="data.attributes.PER.import" class="gcs-input" type="text"
               value="{{data.attributes.PER.value}}" /></div>
           <div class="label">{{localize "GURPS.attributesPERNAME"}} ({{localize "GURPS.attributesPER"}})</div>
           <div class="points"></div>
