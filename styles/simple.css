@@ -532,6 +532,10 @@
   overflow: hidden;
 }
 
+.gurps .sheet-body.tabbed-sheet {
+  height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
+}
+
 .gurps .sheet-body .tab {
   height: 100%;
   overflow-y: auto;
