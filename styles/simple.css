@@ -1916,15 +1916,19 @@ body {
 }
 
 .desc {
-  position: relative;
+  /* position: relative; needed so that the tooltip was not limited to the tab area. */
 }
 
 .desc .tooltippic {
   visibility: hidden;
   position: absolute;
   z-index:999;
-  bottom: 20px;
-  left: 85%;
+  left: 60%;
+  margin-top: -102px;
+}
+
+.desc .tooltippic img {
+  max-height: 100px;
 }
 
 .desc:hover .tooltippic {
