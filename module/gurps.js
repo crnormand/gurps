@@ -1455,7 +1455,7 @@ GURPS.setInitiativeFormula = function (broadcast) {
     })
 }
 
-GURPS.importItems = async function(text, filename, filepath) {
+GURPS.importItems = async function (text, filename, filepath) {
   let j = {};
   try {
     j = JSON.parse(text);
@@ -1468,21 +1468,21 @@ GURPS.importItems = async function(text, filename, filepath) {
   if (j.version !== 2) {
     return ui.notifications.error('The file you uploaded is not of the right version!')
   }
-  await CompendiumCollection.createCompendium({
+  if (!game.packs.find(p => p.metadata.name === filename)) await CompendiumCollection.createCompendium({
     entity: "Item",
     label: filename,
     name: filename,
     package: "world",
   });
+  let timestamp = new Date();
   for (let i of j.rows) {
-    await GURPS.importItem(i,filename);
+    await GURPS.importItem(i, filename, timestamp);
   }
 }
 
-GURPS.importItem = async function(i, filename) {
-  console.log(i);
+GURPS.importItem = async function (i, filename, timestamp) {
   if (i.children?.length) for (let ch of i.children) {
-    await GURPS.importItem(ch,filename);
+    await GURPS.importItem(ch, filename, timestamp);
   }
   let itemData = {
     name: i.description,
@@ -1504,6 +1504,8 @@ GURPS.importItem = async function(i, filename) {
         weightsum: (!!i.weight) ? parseFloat(i.weight) : 0,
         uses: (!!i.max_uses) ? i.max_uses.toString() : "",
         maxuses: (!!i.max_uses) ? i.max_uses.toString() : 0,
+        last_import: timestamp,
+        uuid: i.id
       },
       melee: {},
       ranged: {},
@@ -1515,11 +1517,11 @@ GURPS.importItem = async function(i, filename) {
   if (i.weapons?.length) for (let w of i.weapons) {
     let otf_list = [];
     if (w.defaults) for (let d of w.defaults) {
-      let mod = (!!d.modifier)? ((d.modifier > -1) ? `+${d.modifier}` : d.modifier.toString()) : "";
+      let mod = (!!d.modifier) ? ((d.modifier > -1) ? `+${d.modifier}` : d.modifier.toString()) : "";
       if (d.type === "skill") {
-        otf_list.push(`S:${d.name.replace(/ /g,"*")}`+(d.specialization?`*(${d.specialization.replace(/ /g,"*")})`:"")+mod);
-      } else if (["10","st","dx","iq","ht","per","will","vision","hearing","taste_smell","touch","parry","block"].includes(d.type)) {
-        otf_list.push(d.type.replace("_"," ")+mod)
+        otf_list.push(`S:${d.name.replace(/ /g, "*")}` + (d.specialization ? `*(${d.specialization.replace(/ /g, "*")})` : "") + mod);
+      } else if (["10", "st", "dx", "iq", "ht", "per", "will", "vision", "hearing", "taste_smell", "touch", "parry", "block"].includes(d.type)) {
+        otf_list.push(d.type.replace("_", " ") + mod)
       }
     }
     if (w.type === "melee_weapon") {
@@ -1535,7 +1537,7 @@ GURPS.importItem = async function(i, filename) {
         st: w.strength || "",
         otf: otf_list.join("|") || ""
       }
-      itemData.data.melee[(Object.keys(itemData.data.melee).length + 1).toString().padStart(5,"0")] = wep;
+      itemData.data.melee[(Object.keys(itemData.data.melee).length + 1).toString().padStart(5, "0")] = wep;
     } else if (w.type === "ranged_weapon") {
       let wep = {
         acc: w.accuracy || "",
@@ -1553,7 +1555,7 @@ GURPS.importItem = async function(i, filename) {
         st: w.strength,
         otf: otf_list.join("|") || ""
       }
-      itemData.data.ranged[(Object.keys(itemData.data.ranged).length + 1).toString().padStart(5,"0")] = wep;
+      itemData.data.ranged[(Object.keys(itemData.data.ranged).length + 1).toString().padStart(5, "0")] = wep;
     }
   }
   let bonus_list = []
@@ -1564,7 +1566,7 @@ GURPS.importItem = async function(i, filename) {
   if (i.modifiers?.length) for (let m of i.modifiers) {
     if (!m.disabled && m.features?.length) for (let f of m.features) {
       feat_list.push(f);
-    } 
+    }
   }
   if (feat_list.length) for (let f of feat_list) {
     let bonus = (!!f.amount) ? ((f.amount > -1) ? `+${f.amount}` : f.amount.toString()) : "";
@@ -1575,37 +1577,49 @@ GURPS.importItem = async function(i, filename) {
     } else if (f.type === "skill_bonus") {
       if (f.selection_type === "skills_with_name" && f.name.compare === "is") {
         if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")}${(f.specialization.qualifier || "").replace(/ /g, "*")} ${bonus}`);
         } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")} ${bonus}`);
         }
       } else if (f.selection_type === "weapons_with_name" && f.name.compare === "is") {
         if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")}${(f.specialization.qualifier || "").replace(/ /g, "*")} ${bonus}`);
         } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")} ${bonus}`);
         }
       } else if (f.selection_type === "this_weapon") {
-        bonus_list.push(`A:${(itemData.name).replace(/ /g,"*")} ${bonus}`);
+        bonus_list.push(`A:${(itemData.name).replace(/ /g, "*")} ${bonus}`);
       }
     } else if (f.type === "spell_bonus") {
       if (f.match === "spell_name" && f.name.compare === "is") {
-        bonus_list.push(`S:${(f.name.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+        bonus_list.push(`S:${(f.name.qualifier || "").replace(/ /g, "*")} ${bonus}`);
       }
     } else if (f.type === "weapon_bonus") {
       if (f.selection_type === "weapons_with_name") {
         if (f.specialization?.compare === "is") {
-          bonus_list.push(`D:${(f.name?.qualifier||"").replace(/ /g,"*")}${(f.specialization.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`D:${(f.name?.qualifier || "").replace(/ /g, "*")}${(f.specialization.qualifier || "").replace(/ /g, "*")} ${bonus}`);
         } else if (!f.specialization) {
-          bonus_list.push(`D:${(f.name?.qualifier||"").replace(/ /g,"*")} ${bonus}`);
+          bonus_list.push(`D:${(f.name?.qualifier || "").replace(/ /g, "*")} ${bonus}`);
         }
       } else if (f.selection_type === "this_weapon") {
-        bonus_list.push(`D:${(itemData.name).replace(/ /g,"*")} ${bonus}`);
+        bonus_list.push(`D:${(itemData.name).replace(/ /g, "*")} ${bonus}`);
       }
     }
   }
   itemData.data.bonuses = bonus_list.join("\n");
-  return Item.create(itemData,{pack:`world.${filename}`});
+  let c = game.packs.find(p => p.metadata.name === filename);
+  let oi = c.find(p => p.data.data.eqt.uuid === itemData.data.eqt.uuid);
+  if (!!oi) {
+    let oldData = duplicate(oi.data.data);
+    let newData = duplicate(itemData.data);
+    delete oldData.eqt.uuid;
+    delete newData.eqt.uuid;
+    if (oldData != newData) {
+      return oi.update(itemData);
+    }
+  } else {
+    return Item.create(itemData, { pack: `world.${filename}` });
+  }
 }
 
 /*********************  HACK WARNING!!!! *************************/
@@ -1711,40 +1725,40 @@ Hooks.once('init', async function () {
 
       button.click(function () {
         setTimeout(async () => {
-        new Dialog(
-          {
-            title: 'Import Item Compendium',
-            content: await renderTemplate('systems/gurps/templates/item-import.html'),
-            buttons: {
-              import: {
-                icon: '<i class="fas fa-file-import"></i>',
-                label: 'Import',
-                callback: html => {
-                  const form = html.find('form')[0]
-                  let files = form.data.files;
-                  let file = null;
-                  if (!files.length) {
-                    return ui.notifications.error('You did not upload a data file!');
-                  } else {
-                    file = files[0];
-                    console.log(file);
-                    GURPS.readTextFromFile(file).then(text => GURPS.importItems(text, file.name.split(".").slice(0,-1).join("."), file.path));
+          new Dialog(
+            {
+              title: 'Import Item Compendium',
+              content: await renderTemplate('systems/gurps/templates/item-import.html'),
+              buttons: {
+                import: {
+                  icon: '<i class="fas fa-file-import"></i>',
+                  label: 'Import',
+                  callback: html => {
+                    const form = html.find('form')[0]
+                    let files = form.data.files;
+                    let file = null;
+                    if (!files.length) {
+                      return ui.notifications.error('You did not upload a data file!');
+                    } else {
+                      file = files[0];
+                      console.log(file);
+                      GURPS.readTextFromFile(file).then(text => GURPS.importItems(text, file.name.split(".").slice(0, -1).join("."), file.path));
+                    }
                   }
+                },
+                no: {
+                  icon: '<i class="fas fa-times"></i>',
+                  label: 'Cancel'
                 }
               },
-              no: {
-                icon: '<i class="fas fa-times"></i>',
-                label: 'Cancel'
-              }
+              default: 'import',
             },
-            default: 'import',
-          },
-          {
-            width: 400
-          }
-        ).render(true);
-      }, 200)
-    });
+            {
+              width: 400
+            }
+          ).render(true);
+        }, 200)
+      });
 
       html.find(".directory-footer").append(button);
     }
