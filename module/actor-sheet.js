@@ -107,7 +107,6 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
     html.find('.enc').click(this._onClickEnc.bind(this))
 
-  
     let makelistdrag = (cls, type) => {
       html.find(cls).each((i, li) => {
         li.setAttribute('draggable', true)
@@ -133,7 +132,7 @@ export class GurpsActorSheet extends ActorSheet {
           }
           let newd = {
             actorid: this.actor.id, // may not be useful if this is an unlinked token
-            actor: this.actor,  // so send the actor,
+            actor: this.actor, // so send the actor,
             isLinked: !this.actor.isToken,
             type: type,
             key: eqtkey,
@@ -410,7 +409,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     let opts = this.addDeleteMenu(new Equipment('New Equipment', true))
-/*    opts.push({
+    /*    opts.push({
       name: 'Add In',
       icon: "<i class='fas fa-sign-in-alt'></i>",
       callback: e => {
@@ -433,13 +432,13 @@ export class GurpsActorSheet extends ActorSheet {
     opts.push({
       icon: '<i class="fas fa-sort-alpha-up"></i>',
       name: 'Sort Contents (Ascending)',
-      callback: async (data) => {
+      callback: async data => {
         let parentpath = data[0].dataset.key
         let objkey = 'contains'
-        let key = parentpath +'.' + objkey
+        let key = parentpath + '.' + objkey
         let list = getProperty(this.actor.data, key)
         if (!Object.keys(list).length) {
-          ui.notifications.info("Nothing to sort")
+          ui.notifications.info('Nothing to sort')
           return
         }
         let t = parentpath + '.-=' + objkey
@@ -450,18 +449,18 @@ export class GurpsActorSheet extends ActorSheet {
           .sort((a, b) => a.name.localeCompare(b.name))
           .forEach(o => game.GURPS.put(sortedobj, o, index++))
         await this.actor.update({ [key]: sortedobj })
-      }
+      },
     })
     opts.push({
       icon: '<i class="fas fa-sort-alpha-down"></i>',
       name: 'Sort Contents (Descending)',
-      callback: async (data) => {
+      callback: async data => {
         let parentpath = data[0].dataset.key
         let objkey = 'contains'
-        let key = parentpath +'.' + objkey
+        let key = parentpath + '.' + objkey
         let list = getProperty(this.actor.data, key)
         if (!Object.keys(list).length) {
-          ui.notifications.info("Nothing to sort")
+          ui.notifications.info('Nothing to sort')
           return
         }
         let t = parentpath + '.-=' + objkey
@@ -472,7 +471,7 @@ export class GurpsActorSheet extends ActorSheet {
           .sort((a, b) => b.name.localeCompare(a.name))
           .forEach(o => game.GURPS.put(sortedobj, o, index++))
         await this.actor.update({ [key]: sortedobj })
-      }
+      },
     })
     let mcar = Array.from(opts)
     mcar.push({
@@ -603,6 +602,11 @@ export class GurpsActorSheet extends ActorSheet {
       }
     )
 
+    html.find('#maneuver').change(async ev => {
+      let value = ev.currentTarget.value
+      await this.actor.updateManeuverStatus(value)
+    })
+
     html.find('#qnotes').dblclick(ex => {
       let n = this.actor.data.data.additionalresources.qnotes || ''
       n = n.replace(/<br>/g, '\n')
@@ -694,7 +698,7 @@ export class GurpsActorSheet extends ActorSheet {
               ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
-              if (!!u && obj.save != null) obj.save = u.is(':checked')  // only set 'saved' if it was already defined
+              if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
               let v = html.find('.ignoreImportQty') // Should only find in equipment
               if (!!v) obj.ignoreImportQty = v.is(':checked')
               await actor.update({ [path]: obj })
@@ -1005,14 +1009,14 @@ export class GurpsActorSheet extends ActorSheet {
           onclick: ev => this._onToggleSheet(ev),
         },
       ]
-      
+
       if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
-        b.push( {
-            label: 'Import',
-            class: 'import',
-            icon: 'fas fa-file-import',
-            onclick: ev => this._onFileImport(ev),
-          })
+        b.push({
+          label: 'Import',
+          class: 'import',
+          icon: 'fas fa-file-import',
+          onclick: ev => this._onFileImport(ev),
+        })
 
       if (!isEditor) {
         b.push({
@@ -1164,7 +1168,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   addDeleteMenu(obj) {
     return [
-/*      {
+      /*      {
         name: 'Add Before',
         icon: "<i class='fas fa-chevron-up'></i>",
         callback: e => {
@@ -1181,7 +1185,7 @@ export class GurpsActorSheet extends ActorSheet {
           else GURPS.removeKey(this.actor, key)
         },
       },
-/*
+      /*
       {
         name: 'Add at the end',
         icon: "<i class='fas fa-fast-forward'></i>",

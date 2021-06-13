@@ -389,11 +389,7 @@ export class GurpsActor extends Actor {
     }
 
     if (data.hasOwnProperty('data.conditions.maneuver')) {
-      let oldManeuver = this.data.data.conditions.maneuver
-      let newManeuver = data['data.conditions.maneuver']
-      if (oldManeuver !== newManeuver) {
-        this.updateManeuverStatus(oldManeuver, newManeuver)
-      }
+      console.log(data)
     }
 
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
@@ -401,42 +397,11 @@ export class GurpsActor extends Actor {
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   } /* */
 
-  updateManeuverStatus(oldManeuver, newManeuver) {
-    let oldEffect = Maneuvers[oldManeuver]
+  async updateManeuverStatus(newManeuver) {
+    let oldEffect = Maneuvers[this.data.data.conditions.maneuver]
     let newEffect = Maneuvers[newManeuver]
-    this.removeEffect(oldEffect)
-    this.setEffect(newEffect)
-  }
-
-  setEffect(effect) {
-    if (!this.isEffectActive(effect)) {
-      this.toggleEffect(effect)
-    }
-  }
-
-  toggleEffect(effect) {
-    let tokens = this.getActiveTokens()
-    if (tokens.length === 1) {
-      tokens[0].toggleEffect(effect)
-      return
-    }
-
-    console.error(`unexpected: more than one token: id: ${this.id}, tokens: ${tokens}`)
-  }
-
-  removeAllEffects(effect) {
-    let keys = Object.keys(Maneuvers)
-    for (const effect of this.effects) {
-      if (keys.includes(effect.getFlag('core', 'statusId'))) {
-        this.removeEffect(effect)
-      }
-    }
-  }
-
-  removeEffect(effect) {
-    if (this.isEffectActive(effect)) {
-      this.toggleEffect(effect)
-    }
+    this.toggleEffect(oldEffect, false)
+    this.toggleEffect(newEffect, true)
   }
 
   isEffectActive(effect) {

@@ -1958,5 +1958,10 @@ Hooks.once('ready', async function () {
     mappings = { ...mappings, ...GURPS.PARSELINK_MAPPINGS }
     GURPS.PARSELINK_MAPPINGS = mappings
   }
+
+  Hooks.on('preCreateToken', async function (token, d, options, userId) {
+    console.log(`test`)
+  })
+
   // End of system "READY" hook.
 })
