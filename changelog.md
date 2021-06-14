@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 0.10.6
 
 - Merged in Rinickolous/neck's GCS Equipment importer!
+- Fixed ST based ranged calc so it will also apply to Items
 
 Release 0.10.5 - 6/12/2021
 
