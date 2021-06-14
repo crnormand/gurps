@@ -890,5 +890,7 @@
   "GURPS.advantagesTab": "Advantages and Disadvantages",
   "GURPS.skillsTab": "Skills",
   "GURPS.spellsTab": "Spells",
-  "GURPS.equipmentTab": "Equipment"
+  "GURPS.equipmentTab": "Equipment",
+
+  "GURPS.itemImport": "Import Equipment Library"
 }

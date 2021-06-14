@@ -572,5 +572,7 @@
   "GURPS.toAllDXBasedRolls": "auf alle DX-basierten Würfe",
   "GURPS.update": "Aktualisieren",
   "GURPS.usage": "Nutzung",
-  "GURPS.yards": " yards"
+  "GURPS.yards": " yards",
+
+  "GURPS.itemImport": "Artikelsammlung Importieren"
 }
