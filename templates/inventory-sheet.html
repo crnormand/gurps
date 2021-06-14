@@ -49,7 +49,7 @@
             &nbsp; {{this.count}} &nbsp;
             <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
           </div>
-          <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried"
+          <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried tooltip-manager"
             data-key="data.equipment.carried.{{@key}}">
             {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
             {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -113,7 +113,7 @@
             &nbsp; {{this.count}} &nbsp;
             <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
           </div>
-          <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother"
+          <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother tooltip-manager"
             data-key="data.equipment.other.{{@key}}">
             {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
             {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -122,8 +122,9 @@
              {{#if (ignoreImportQty this)}}&nbsp;
               <i class="far fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
             {{/if}}
-           {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"
+            {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+            {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
             <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
               {{{gurpslink this.notes}}}
             </div>

@@ -17,6 +17,7 @@ import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
+import { AnimChatProcessor } from '../chat/anim.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())

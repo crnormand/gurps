@@ -103,14 +103,12 @@ export class AnimChatProcessor extends ChatProcessor {
     await sleepNow(900);
     TokenMagic.addUpdateFiltersOnTargeted(params);
     */
-    }
-    Cast ()
-
+  }
 }
 
 
 
-JB2A_FREE_LIBRARY =`1st_Level/Cure_Wounds/CureWounds_01_Blue_200x200.webm
+const JB2A_FREE_LIBRARY =`1st_Level/Cure_Wounds/CureWounds_01_Blue_200x200.webm
 1st_Level/Cure_Wounds/CureWounds_01_Blue_400x400.webm
 1st_Level/Entangle/Entangle_01_Brown_400x400.webm
 1st_Level/Entangle/Entangle_01_Green_400x400.webm
