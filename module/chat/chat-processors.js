@@ -44,6 +44,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
   ChatProcessors.registerProcessor(new ShowChatProcessor())
+  ChatProcessors.registerProcessor(new AnimChatProcessor())
 }
 
 class ReimportChatProcessor extends ChatProcessor {
