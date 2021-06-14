@@ -1921,16 +1921,10 @@ body {
 
 .desc .tooltippic {
   visibility: hidden;
-  position: absolute;
+  position: fixed;
   z-index:999;
-  left: 60%;
-  margin-top: -102px;
 }
 
 .desc .tooltippic img {
   max-height: 100px;
-}
-
-.desc:hover .tooltippic {
-  visibility: visible; 
 }

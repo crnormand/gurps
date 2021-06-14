@@ -316,7 +316,39 @@ export class GurpsActorSheet extends ActorSheet {
         ev.preventDefault()
       })
 
-      // update the text input field, but do not update the actor's data
+      html.find('.tooltip-manager').mouseover(ev => {
+        ev.preventDefault()
+
+        let target = $(ev.currentTarget);
+        if (target.hasNoChildren) {
+          return;
+        }
+
+        let tooltip = target.children('.tooltippic')
+        if (tooltip)
+        {
+            // tooltip placement according to parent placement
+            let top = target.offset().top - tooltip.height() * 0.85
+            let left = target.offset().left + target.width() * 0.8
+            tooltip.css({top: top, left: left, visibility: 'visible'})
+        }
+      })
+
+      html.find('.tooltip-manager').mouseout(ev => {
+        ev.preventDefault()
+        let target = $(ev.currentTarget);
+        if (target.hasNoChildren) {
+          return;
+        }
+
+        let tooltip = target.children('.tooltippic')
+        if (tooltip) {
+          tooltip.css({visibility: 'hidden'})
+        }
+
+      })
+
+        // update the text input field, but do not update the actor's data
       html.find('button[data-operation="resource-update"]').click(ev => {
         let dataValue = $(ev.currentTarget).attr('data-value')
         let details = $(ev.currentTarget).closest('details')
