@@ -315,7 +315,39 @@ export class GurpsActorSheet extends ActorSheet {
         ev.preventDefault()
       })
 
-      // update the text input field, but do not update the actor's data
+      html.find('.tooltip-manager').mouseover(ev => {
+        ev.preventDefault()
+
+        let target = $(ev.currentTarget);
+        if (target.hasNoChildren) {
+          return;
+        }
+
+        let tooltip = target.children('.tooltippic')
+        if (tooltip)
+        {
+            // tooltip placement according to parent placement
+            let top = target.offset().top - tooltip.height() * 0.85
+            let left = target.offset().left + target.width() * 0.8
+            tooltip.css({top: top, left: left, visibility: 'visible'})
+        }
+      })
+
+      html.find('.tooltip-manager').mouseout(ev => {
+        ev.preventDefault()
+        let target = $(ev.currentTarget);
+        if (target.hasNoChildren) {
+          return;
+        }
+
+        let tooltip = target.children('.tooltippic')
+        if (tooltip) {
+          tooltip.css({visibility: 'hidden'})
+        }
+
+      })
+
+        // update the text input field, but do not update the actor's data
       html.find('button[data-operation="resource-update"]').click(ev => {
         let dataValue = $(ev.currentTarget).attr('data-value')
         let details = $(ev.currentTarget).closest('details')
@@ -362,7 +394,7 @@ export class GurpsActorSheet extends ActorSheet {
             one: {
               label: 'Create',
               callback: async html => {
-                ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (eqt[a] = html.find(`.${a}`).val()))
+                ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(a => (eqt[a] = html.find(`.${a}`).val()))
                 ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
                 let u = html.find('.save') // Should only find in Note (or equipment)
                 if (!!u) eqt.save = u.is(':checked')
@@ -695,7 +727,7 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              ;['name', 'uses', 'maxuses', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined

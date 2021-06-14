@@ -127,6 +127,7 @@
   "GURPS.equipmentUses": "Uses",
   "GURPS.equipmentCost": "Cost",
   "GURPS.equipmentMaxUses": "Max Uses",
+  "GURPS.equipmentTechlevel": "Tech Level",
 
   "__Character Encumbrance/Lift__": "=========",
   "GURPS.basicLift": "Basic Lift",
