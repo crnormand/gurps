@@ -1968,7 +1968,6 @@ export class GurpsActor extends Actor {
       e.uuid = key + '-' + i++ + '-' + e.itemid
       e.eqtkey = eqtkey
       e.img = itemData.img
-      let otf = e.otf
       GURPS.put(list, e)
     }
     return i == 0 ? {} : { ['data.' + key]: list }
