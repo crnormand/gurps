@@ -41,6 +41,7 @@ export const Maneuvers = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-evaluate.png',
+    alt: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverEvaluate',
   },
   attack: {
@@ -55,6 +56,7 @@ export const Maneuvers = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-feint.png',
+    alt: 'systems/gurps/icons/maneuvers/man-attack.png',
     label: 'GURPS.maneuverFeint',
   },
   allout_attack: {
@@ -69,6 +71,7 @@ export const Maneuvers = {
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
     icon: 'systems/gurps/icons/maneuvers/man-aoa-determined.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackDetermined',
   },
   aoa_double: {
@@ -76,6 +79,7 @@ export const Maneuvers = {
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
     icon: 'systems/gurps/icons/maneuvers/man-aoa-double.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackDouble',
   },
   aoa_feint: {
@@ -83,6 +87,7 @@ export const Maneuvers = {
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
     icon: 'systems/gurps/icons/maneuvers/man-aoa-feint.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackFeint',
   },
   aoa_strong: {
@@ -90,6 +95,7 @@ export const Maneuvers = {
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
     icon: 'systems/gurps/icons/maneuvers/man-aoa-strong.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackStrong',
   },
   aoa_suppress: {
@@ -97,6 +103,7 @@ export const Maneuvers = {
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
     icon: 'systems/gurps/icons/maneuvers/man-aoa-suppress.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackSuppressFire',
   },
   move_and_attack: {
@@ -118,6 +125,7 @@ export const Maneuvers = {
     move: MOVE_HALF,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-def-dodge.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDodge',
   },
   aod_parry: {
@@ -125,6 +133,7 @@ export const Maneuvers = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-def-parry.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseParry',
   },
   aod_block: {
@@ -132,6 +141,7 @@ export const Maneuvers = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-def-block.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseBlock',
   },
   aod_double: {
@@ -139,6 +149,7 @@ export const Maneuvers = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-def-double.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDouble',
   },
   ready: {
@@ -153,6 +164,7 @@ export const Maneuvers = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-concentrate.png',
+    alt: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverConcentrate',
   },
   wait: {
@@ -160,6 +172,7 @@ export const Maneuvers = {
     move: MOVE_NONE,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-wait.png',
+    alt: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverWait',
   },
 }

@@ -602,10 +602,10 @@ export class GurpsActorSheet extends ActorSheet {
       }
     )
 
-    html.find('#maneuver').change(async ev => {
-      let value = ev.currentTarget.value
-      await this.actor.updateManeuverStatus(value)
-    })
+    // html.find('#maneuver').change(async ev => {
+    //   let value = ev.currentTarget.value
+    //   await this.actor.updateManeuverStatus(value)
+    // })
 
     html.find('#qnotes').dblclick(ex => {
       let n = this.actor.data.data.additionalresources.qnotes || ''

@@ -4,10 +4,7 @@
   <div class='collapsible-content maneuver-content'>
     <div class='status-maneuvers'>
       {{#each this}}
-        <div class='effect-control'>
-          <img class='effect-control' src='{{this.icon}}' title='{{i18n this.label}}' data-status-id='{{@key}}' />
-          <label>{{i18n this.label}}</label>
-        </div>
+        <img class='effect-control' src='{{this.icon}}' title='{{i18n this.label}}' data-status-id='{{@key}}' />
       {{/each}}
     </div>
   </div>

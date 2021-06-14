@@ -1,30 +1,9 @@
 import { i18n } from '../../lib/utilities.js'
 import { Maneuvers } from './maneuver.js'
 
-const innerHtml = `
-<div class='collapsible-wrapper'>
-  <input id='collapsible-hud' class='toggle offscreen-only' type='checkbox'>
-  <label for='collapsible-hud' class='label-toggle'><i class='fas fa-user-shield'></i></label>
-  <div class='collapsible-content maneuver-content'>
-    <div class='status-maneuvers'>
-    <div class='effect-control'>
-      <img class='effect-control' src='systems/gurps/icons/maneuvers/man-aim.png' title='aim' data-status-id='aim'>
-      <label>Aim</label>
-    </div>
-    <div class='effect-control'>
-      <img class='effect-control' src='systems/gurps/icons/maneuvers/man-allout-attack.png' title='All-out Attack' data-status-id='all-out-attack'>
-      <label>All-out Attack</label>
-    </div>
-    <div class='effect-control'>
-      <img class='effect-control' src='systems/gurps/icons/maneuvers/man-aoa-determined.png' title='All-out Attack (Determined)' data-status-id='aim'>
-      <label>All-out Attack (Determined)</label>
-    </div>
-  </div>
-  </div>
-</div>
-`
-
+// lazy-initialized varaible for the html template
 let html = null
+
 /**
  * This class is used as a namespace for Show Art
  * static methods. It has no constructor.
@@ -179,33 +158,12 @@ export default class ManeuverHUDButton {
     //   .contextmenu(event => this.buttonEventHandler(event, images.token, titles.token))
 
     html.find('div.right').append(artButton)
+
+    html.find('.status-maneuvers .effect-control').click(ev => {
+      let key = $(ev.currentTarget).attr('data-status-id')
+      console.log(key)
+
+      actor.updateManeuver(key)
+    })
   }
 }
-
-// Hooks.on('controlTile', (...args) => ShowArt.prepTileKeybinding(...args))
-// Hooks.on('controlToken', (...args) => ShowArt.prepTokenKeybinding(...args))
-
-// Hooks.on('renderTileHUD', (...args) => ShowArt.prepTileHUD(...args))
-// Hooks.on('renderTokenHUD', (...args) => ShowArt.prepTokenHUD(...args))
-
-/*
-token-hud .status-maneuvers.active {
-    visibility: visible;
-}
-#token-hud .status-maneuvers {
-    visibility: hidden;
-    position: absolute;
-    left: 65px;
-    top: 0;
-    display: grid;
-    padding: 3px;
-    box-sizing: content-box;
-    width: 100px;
-    grid-template-columns: 25px 25px 25px 25px;
-    background: rgba(0, 0, 0, 0.6);
-    box-shadow: 0 0 15px #000;
-    border: 1px solid #333;
-    border-radius: 4px;
-    pointer-events: all;
-}
-*/

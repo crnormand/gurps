@@ -28,7 +28,7 @@ import { ItemImporter } from '../module/item-import.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-// GURPS.Maneuvers = Maneuvers
+GURPS.Migration = Migration
 
 GURPS.DEBUG = false
 GURPS.BANNER = `

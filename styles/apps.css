@@ -1806,15 +1806,15 @@ ul#result-effects li {
 #token-hud .maneuver-content {
   position: absolute;
   left: 65px;
-  top: 0;
+  top: 50px;
 }
 
 #token-hud .status-maneuvers {
   display: grid;
   padding: 3px;
   box-sizing: content-box;
-  grid-template-columns: 200px;
-  grid-template-rows: repeat(2, 25px);
+  grid-template-columns: 25px 25px 25px 25px;
+  grid-template-rows: repeat(5, 25px);
   background: rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 15px #000;
   border: 1px solid #333;
@@ -1839,4 +1839,8 @@ ul#result-effects li {
   overflow: hidden;
   white-space: nowrap;
   line-height: 25px;
+}
+
+#token-hud div.right .control-icon {
+  margin: 5px 0;
 }

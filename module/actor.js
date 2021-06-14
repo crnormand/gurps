@@ -462,7 +462,7 @@ export class GurpsActor extends Actor {
     }
 
     if (data.hasOwnProperty('data.conditions.maneuver')) {
-      console.log(data)
+      this.updateManeuverStatusIcon(data[`data.conditions.maneuver`])
     }
 
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
@@ -471,12 +471,29 @@ export class GurpsActor extends Actor {
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   } /* */
 
-  async updateManeuverStatus(newManeuver) {
-    let oldEffect = Maneuvers[this.data.data.conditions.maneuver]
-    let newEffect = Maneuvers[newManeuver]
-    this.toggleEffect(oldEffect, false)
-    this.toggleEffect(newEffect, true)
+  updateManeuver(maneuverText) {
+    this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true })
+    //    this.updateManeuverStatus(maneuverText)
   }
+
+  async updateManeuverStatusIcon(maneuverText) {
+    let tokens = this.getActiveTokens()
+    if (tokens.length === 1) {
+      let token = tokens[0]
+      let maneuvers = token.data.effects.filter(it => it.startsWith('systems/gurps/icons/maneuvers/'))
+      for (const m of maneuvers) {
+        await token.toggleEffect(m)
+      }
+      await token.toggleEffect(Maneuvers[maneuverText].icon)
+    }
+  }
+
+  // async updateManeuverStatus(newManeuver) {
+  //   let oldEffect = Maneuvers[this.data.data.conditions.maneuver]
+  //   let newEffect = Maneuvers[newManeuver]
+  //   this.toggleEffect(oldEffect, false)
+  //   this.toggleEffect(newEffect, true)
+  // }
 
   async toggleEffect(effect, show) {
     let tokens = this.getActiveTokens()
