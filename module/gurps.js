@@ -23,6 +23,7 @@ import { DamageTables, initializeDamageTables } from '../module/damage/damage-ta
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Maneuvers } from '../module/actor/maneuver.js'
 import { Migration } from '../lib/migration.js'
+import { ItemImporter } from '../module/item-import.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -1455,173 +1456,6 @@ GURPS.setInitiativeFormula = function (broadcast) {
     })
 }
 
-GURPS.importItems = async function (text, filename, filepath) {
-  let j = {};
-  try {
-    j = JSON.parse(text);
-  } catch {
-    return ui.notifications.error('The file you uploaded was not of the right format!');
-  }
-  if (j.type !== "equipment_list") {
-    return ui.notifications.error('The file you uploaded is not a GCS Equipment Library!');
-  }
-  if (j.version !== 2) {
-    return ui.notifications.error('The file you uploaded is not of the right version!')
-  }
-  if (!game.packs.find(p => p.metadata.name === filename)) await CompendiumCollection.createCompendium({
-    entity: "Item",
-    label: filename,
-    name: filename,
-    package: "world",
-  });
-  let timestamp = new Date();
-  for (let i of j.rows) {
-    await GURPS.importItem(i, filename, timestamp);
-  }
-}
-
-GURPS.importItem = async function (i, filename, timestamp) {
-  if (i.children?.length) for (let ch of i.children) {
-    await GURPS.importItem(ch, filename, timestamp);
-  }
-  let itemData = {
-    name: i.description,
-    type: "equipment",
-    data: {
-      eqt: {
-        name: i.description,
-        notes: i.notes,
-        pageref: i.reference,
-        count: i.quantity,
-        cost: (!!i.value) ? parseFloat(i.value) : 0,
-        weight: (!!i.weight) ? parseFloat(i.weight) : 0,
-        carried: true,
-        equipped: true,
-        techlevel: i.tech_level || "",
-        categories: i.categories || "",
-        legalityclass: i.legality_class || "",
-        costsum: (!!i.value) ? parseFloat(i.value) : 0,
-        weightsum: (!!i.weight) ? parseFloat(i.weight) : 0,
-        uses: (!!i.max_uses) ? i.max_uses.toString() : "",
-        maxuses: (!!i.max_uses) ? i.max_uses.toString() : 0,
-        last_import: timestamp,
-        uuid: i.id
-      },
-      melee: {},
-      ranged: {},
-      bonuses: "",
-      equipped: true,
-      carried: true,
-    }
-  }
-  if (i.weapons?.length) for (let w of i.weapons) {
-    let otf_list = [];
-    if (w.defaults) for (let d of w.defaults) {
-      let mod = (!!d.modifier) ? ((d.modifier > -1) ? `+${d.modifier}` : d.modifier.toString()) : "";
-      if (d.type === "skill") {
-        otf_list.push(`S:${d.name.replace(/ /g, "*")}` + (d.specialization ? `*(${d.specialization.replace(/ /g, "*")})` : "") + mod);
-      } else if (["10", "st", "dx", "iq", "ht", "per", "will", "vision", "hearing", "taste_smell", "touch", "parry", "block"].includes(d.type)) {
-        otf_list.push(d.type.replace("_", " ") + mod)
-      }
-    }
-    if (w.type === "melee_weapon") {
-      let wep = {
-        block: w.block || "",
-        damage: w.calc.damage || "",
-        mode: w.usage || "",
-        name: itemData.name,
-        notes: itemData.data.eqt.notes || "",
-        pageref: itemData.data.eqt.pageref || "",
-        parry: w.parry || "",
-        reach: w.reach || "",
-        st: w.strength || "",
-        otf: otf_list.join("|") || ""
-      }
-      itemData.data.melee[(Object.keys(itemData.data.melee).length + 1).toString().padStart(5, "0")] = wep;
-    } else if (w.type === "ranged_weapon") {
-      let wep = {
-        acc: w.accuracy || "",
-        ammo: "",
-        bulk: w.bulk || "",
-        damage: w.calc.damage || "",
-        mode: w.usage,
-        name: itemData.name,
-        notes: itemData.data.eqt.notes || "",
-        pageref: itemData.data.eqt.pageref || "",
-        range: w.range,
-        rcl: w.recoil,
-        rof: w.rof,
-        shots: w.shots,
-        st: w.strength,
-        otf: otf_list.join("|") || ""
-      }
-      itemData.data.ranged[(Object.keys(itemData.data.ranged).length + 1).toString().padStart(5, "0")] = wep;
-    }
-  }
-  let bonus_list = []
-  let feat_list = []
-  if (i.features?.length) for (let f of i.features) {
-    feat_list.push(f);
-  }
-  if (i.modifiers?.length) for (let m of i.modifiers) {
-    if (!m.disabled && m.features?.length) for (let f of m.features) {
-      feat_list.push(f);
-    }
-  }
-  if (feat_list.length) for (let f of feat_list) {
-    let bonus = (!!f.amount) ? ((f.amount > -1) ? `+${f.amount}` : f.amount.toString()) : "";
-    if (f.type === "attribute_bonus") {
-      bonus_list.push(`${f.attribute} ${bonus}`);
-    } else if (f.type === "dr_bonus") {
-      bonus_list.push(`DR ${bonus} *${f.location}`);
-    } else if (f.type === "skill_bonus") {
-      if (f.selection_type === "skills_with_name" && f.name.compare === "is") {
-        if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")}${(f.specialization.qualifier || "").replace(/ /g, "*")} ${bonus}`);
-        } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")} ${bonus}`);
-        }
-      } else if (f.selection_type === "weapons_with_name" && f.name.compare === "is") {
-        if (f.specialization?.compare === "is") {
-          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")}${(f.specialization.qualifier || "").replace(/ /g, "*")} ${bonus}`);
-        } else if (!f.specialization) {
-          bonus_list.push(`A:${(f.name.qualifier || "").replace(/ /g, "*")} ${bonus}`);
-        }
-      } else if (f.selection_type === "this_weapon") {
-        bonus_list.push(`A:${(itemData.name).replace(/ /g, "*")} ${bonus}`);
-      }
-    } else if (f.type === "spell_bonus") {
-      if (f.match === "spell_name" && f.name.compare === "is") {
-        bonus_list.push(`S:${(f.name.qualifier || "").replace(/ /g, "*")} ${bonus}`);
-      }
-    } else if (f.type === "weapon_bonus") {
-      if (f.selection_type === "weapons_with_name") {
-        if (f.specialization?.compare === "is") {
-          bonus_list.push(`D:${(f.name?.qualifier || "").replace(/ /g, "*")}${(f.specialization.qualifier || "").replace(/ /g, "*")} ${bonus}`);
-        } else if (!f.specialization) {
-          bonus_list.push(`D:${(f.name?.qualifier || "").replace(/ /g, "*")} ${bonus}`);
-        }
-      } else if (f.selection_type === "this_weapon") {
-        bonus_list.push(`D:${(itemData.name).replace(/ /g, "*")} ${bonus}`);
-      }
-    }
-  }
-  itemData.data.bonuses = bonus_list.join("\n");
-  let c = game.packs.find(p => p.metadata.name === filename);
-  let oi = c.find(p => p.data.data.eqt.uuid === itemData.data.eqt.uuid);
-  if (!!oi) {
-    let oldData = duplicate(oi.data.data);
-    let newData = duplicate(itemData.data);
-    delete oldData.eqt.uuid;
-    delete newData.eqt.uuid;
-    if (oldData != newData) {
-      return oi.update(itemData);
-    }
-  } else {
-    return Item.create(itemData, { pack: `world.${filename}` });
-  }
-}
-
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
    make it work like an Array. 
@@ -1742,7 +1576,7 @@ Hooks.once('init', async function () {
                     } else {
                       file = files[0];
                       console.log(file);
-                      GURPS.readTextFromFile(file).then(text => GURPS.importItems(text, file.name.split(".").slice(0, -1).join("."), file.path));
+                      GURPS.readTextFromFile(file).then(text => ItemImporter.importItems(text, file.name.split(".").slice(0, -1).join("."), file.path));
                     }
                   }
                 },
