@@ -1799,23 +1799,44 @@ ul#result-effects li {
   height: 1em;
 }
 
-token-hud .status-maneuvers.active {
+/* token-hud .status-maneuvers {
   visibility: visible;
-}
+} */
 
-#token-hud .status-maneuvers {
-  visibility: hidden;
+#token-hud .maneuver-content {
   position: absolute;
   left: 65px;
   top: 0;
+}
+
+#token-hud .status-maneuvers {
   display: grid;
   padding: 3px;
   box-sizing: content-box;
-  width: 100px;
-  grid-template-columns: 50px 50px;
+  grid-template-columns: 200px;
+  grid-template-rows: repeat(2, 25px);
   background: rgba(0, 0, 0, 0.6);
   box-shadow: 0 0 15px #000;
   border: 1px solid #333;
   border-radius: 4px;
   pointer-events: all;
+}
+
+#token-hud .effect-control {
+  display: inline-flex;
+  align-items: center;
+}
+
+#token-hud .effect-control img {
+  max-height: 25px;
+}
+
+#token-hud .effect-control label {
+  color: white;
+  font-size: small;
+  max-height: 25px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 25px;
 }

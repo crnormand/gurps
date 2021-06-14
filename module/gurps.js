@@ -1,5 +1,3 @@
-// Testing
-import ShowArt from '../module/actor/artbutton.js'
 // Import Modules
 import { parselink, parseForDamage } from '../lib/parselink.js'
 
@@ -25,7 +23,7 @@ import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
-import { Maneuvers } from './actor/maneuver.js'
+import ManeuverHUDButton from './actor/maneuver-button.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
@@ -1559,8 +1557,8 @@ Hooks.once('init', async function () {
     entity.data.img = 'systems/gurps/icons/single-die.webp'
   })
 
-  Hooks.on('controlToken', (...args) => ShowArt.prepTokenKeybinding(...args))
-  Hooks.on('renderTokenHUD', (...args) => ShowArt.prepTokenHUD(...args))
+  // Hooks.on('controlToken', (...args) => ManeuverHUDButton.prepTokenKeybinding(...args))
+  Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
 })
 
 Hooks.once('ready', async function () {

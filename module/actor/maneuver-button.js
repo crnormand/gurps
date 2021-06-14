@@ -1,27 +1,42 @@
 import { i18n } from '../../lib/utilities.js'
+import { Maneuvers } from './maneuver.js'
 
+const innerHtml = `
+<div class='collapsible-wrapper'>
+  <input id='collapsible-hud' class='toggle offscreen-only' type='checkbox'>
+  <label for='collapsible-hud' class='label-toggle'><i class='fas fa-user-shield'></i></label>
+  <div class='collapsible-content maneuver-content'>
+    <div class='status-maneuvers'>
+    <div class='effect-control'>
+      <img class='effect-control' src='systems/gurps/icons/maneuvers/man-aim.png' title='aim' data-status-id='aim'>
+      <label>Aim</label>
+    </div>
+    <div class='effect-control'>
+      <img class='effect-control' src='systems/gurps/icons/maneuvers/man-allout-attack.png' title='All-out Attack' data-status-id='all-out-attack'>
+      <label>All-out Attack</label>
+    </div>
+    <div class='effect-control'>
+      <img class='effect-control' src='systems/gurps/icons/maneuvers/man-aoa-determined.png' title='All-out Attack (Determined)' data-status-id='aim'>
+      <label>All-out Attack (Determined)</label>
+    </div>
+  </div>
+  </div>
+</div>
+`
+
+let html = null
 /**
  * This class is used as a namespace for Show Art
  * static methods. It has no constructor.
  *
- * @namespace ShowArt
+ * @namespace ManeuverHUDButton
  */
-export default class ShowArt {
-  /**
-   * Handles the keydown events for tile and token keybindings
-   *
-   * @static
-   * @param {Event} event - The triggering event.
-   * @param {string} image - The file path of the image to display.
-   * @param {string} title - The name to display in the popup title bar.
-   * @memberof ShowArt
-   */
-  static keyEventHandler(event, image, title) {
-    if (event.target.id == 'chat-message') return
-    if (event.shiftKey && (event.key == 'Z' || event.key == 'X')) {
-      const pop = this.createImagePopup(image, title)
-      if (!event.altKey && game.user.isGM) pop.shareImage()
+export default class ManeuverHUDButton {
+  static async getInnerHtml() {
+    if (html == null) {
+      html = await renderTemplate('systems/gurps/templates/maneuver-hud.hbs', Maneuvers)
     }
+    return html
   }
   /**
    * Handles the click or contextmenu events for tile/token art buttons
@@ -132,65 +147,17 @@ export default class ShowArt {
    * @return {Element} The `<div>` element that is used as the HUD button.
    * @memberof ShowArt
    */
-  static createButton() {
+  static async createButton() {
     let button = document.createElement('div')
 
     button.classList.add('control-icon')
     button.classList.add('maneuver-open')
     button.setAttribute('data-action', 'maneuver')
-    button.innerHTML = `<i class="fas fa-user-shield"></i>`
     button.title = i18n('GURPS.setManeuver', 'Set Maneuver')
-
-    let grid = document.createElement('div')
-    grid.classList.add('status-maneuver')
-
-    button.append(grid)
-
+    button.innerHTML = await ManeuverHUDButton.getInnerHtml()
     return button
   }
 
-  /**
-   * Adds the keybinding to the selected tile.
-   *
-   * @static
-   * @param {Tile} tile - The selected Tile.
-   * @param {Boolean} control - Whether or not this Tile is being selected, or deselected.
-   * @return {null} Early return if control is false.
-   * @memberof ShowArt
-   */
-  static prepTileKeybinding(tile, control) {
-    const doc = $(document)
-    doc.off('keydown.showArt')
-    if (!control) return
-
-    doc.on('keydown.showArt', event => this.keyEventHandler(event, tile.data.img, game.i18n.localize('TKNHAB.TileImg')))
-  }
-  /**
-   * Adds the keybinding to the selected token.
-   *
-   * @static
-   * @param {Token} token - The selected Token.
-   * @param {Boolean} control - Whether or not this Token is being selected, or deselected.
-   * @return {null} Early return if control is false.
-   * @memberof ShowArt
-   */
-  static prepTokenKeybinding(token, control) {
-    const doc = $(document)
-    doc.off('keydown.showArt')
-    if (!control) return
-
-    const actor = this.getTokenActor(token.data)
-    const images = this.getTokenImages(token.data, actor)
-    const titles = this.getTokenTitles(token.data, actor)
-
-    doc.on('keydown.showArt', event =>
-      this.keyEventHandler(
-        event,
-        event.key == 'Z' ? images.token : images.actor,
-        event.key == 'Z' ? titles.token : titles.actor
-      )
-    )
-  }
   /**
    * Adds the button to the Token HUD,
    * and attaches event listeners.
@@ -201,99 +168,19 @@ export default class ShowArt {
    * @param {Token} token - The data for the Token.
    * @memberof ShowArt
    */
-  static prepTokenHUD(hud, html, token) {
+  static async prepTokenHUD(hud, html, token) {
     const actor = this.getTokenActor(token)
     const images = this.getTokenImages(token, actor)
     const titles = this.getTokenTitles(token, actor)
-    const artButton = this.createButton()
+    const artButton = await this.createButton()
 
-    $(artButton)
-      .click(event => this.buttonEventHandler(event, images.actor, titles.actor))
-      .contextmenu(event => this.buttonEventHandler(event, images.token, titles.token))
+    // $(artButton)
+    //   .click(event => this.buttonEventHandler(event, images.actor, titles.actor))
+    //   .contextmenu(event => this.buttonEventHandler(event, images.token, titles.token))
 
     html.find('div.right').append(artButton)
   }
-  /**
-   * Adds the button to the Tile HUD,
-   * and attaches event listeners.
-   *
-   * @static
-   * @param {TileHUD} hud - The HUD object, not used.
-   * @param {jQuery} html - The jQuery reference to the HUD HTML.
-   * @param {Tile} token - The data for the Tile.
-   * @memberof ShowArt
-   */
-  static prepTileHUD(hud, html, tile) {
-    const artButton = this.createButton()
-
-    $(artButton).click(event => this.buttonEventHandler(event, tile.img, game.i18n.localize('TKNHAB.TileImg')))
-    html.find('div.left').append(artButton)
-  }
 }
-
-/**
- * Capable of handling images, as well as .mp4 and .webm video
- * not very sophisticated.
- *
- * @class MultiMediaPopout
- * @extends {ImagePopout}
- */
-class MultiMediaPopout extends ImagePopout {
-  /**
-   * Creates an instance of MultiMediaPopout.
-   *
-   * @param {string} src
-   * @param {object} [options={}]
-   * @memberof MultiMediaPopout
-   */
-  constructor(src, options = {}) {
-    super(src, options)
-
-    this.video = ['.mp4', 'webm'].includes(src.slice(-4).toLowerCase())
-
-    this.options.template = 'modules/token-hud-art-button/media-popout.html'
-  }
-
-  /** @override */
-  async getData(options) {
-    let data = await super.getData()
-    data.isVideo = this.video
-    return data
-  }
-  /**
-   * Share the displayed image with other connected Users
-   */
-  shareImage() {
-    game.socket.emit('module.token-hud-art-button', {
-      image: this.object,
-      title: this.options.title,
-      uuid: this.options.uuid,
-    })
-  }
-
-  /**
-   * Handle a received request to display media.
-   *
-   * @override
-   * @param {string} image - The path to the image/media resource.
-   * @param {string} title - The title for the popout title bar.
-   * @param {string} uuid
-   * @return {MultiMediaPopout}
-   * @private
-   */
-  static _handleShareMedia({ image, title, uuid } = {}) {
-    return new MultiMediaPopout(image, {
-      title: title,
-      uuid: uuid,
-      shareable: false,
-      editable: false,
-    }).render(true)
-  }
-}
-
-// Hooks.once('ready', () => {
-//   game.socket.on('module.token-hud-art-button', MultiMediaPopout._handleShareMedia)
-// })
 
 // Hooks.on('controlTile', (...args) => ShowArt.prepTileKeybinding(...args))
 // Hooks.on('controlToken', (...args) => ShowArt.prepTokenKeybinding(...args))

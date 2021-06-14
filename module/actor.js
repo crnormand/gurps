@@ -393,6 +393,7 @@ export class GurpsActor extends Actor {
     }
 
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
+
     super.update(data, options)
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   } /* */
@@ -402,6 +403,17 @@ export class GurpsActor extends Actor {
     let newEffect = Maneuvers[newManeuver]
     this.toggleEffect(oldEffect, false)
     this.toggleEffect(newEffect, true)
+  }
+
+  async toggleEffect(effect, show) {
+    let tokens = this.getActiveTokens()
+    if (tokens.length === 1) {
+      if (show && !tokens[0].data.effects.includes(effect.icon)) await tokens[0].toggleEffect(effect.icon)
+      else if (!show && tokens[0].data.effects.includes(effect.icon)) await tokens[0].toggleEffect(effect.icon)
+      return
+    }
+
+    console.error(`unexpected: more than one token: id: ${this.id}, tokens: ${tokens}`)
   }
 
   isEffectActive(effect) {
