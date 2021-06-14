@@ -97,6 +97,9 @@ export class GurpsActor extends Actor {
     // Must be done after bonuses, but before weights
     this._calculateEncumbranceIssues()
 
+    // Must be after bonuses and encumbrance effects on ST
+    this._calculateRangedRanges()
+    
      // Must be done at end
     this._calculateWeights()
   }
@@ -364,6 +367,23 @@ export class GurpsActor extends Actor {
     if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value)
     if (!data.currentdodge) data.currentdodge = parseInt(data.dodge.value)
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value) * 2
+  }
+  
+  _calculateRangedRanges() {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) return
+    let st = +this.data.data.attributes.ST.value
+    recurselist(this.data.data.ranged, (r) => {
+      let rng = r.range
+      let m = rng.match(/^ *[xX]([\d\.]+) *$/)
+      if (m) {stthis.data.data.attributes.ST.value
+      } else {
+        m = rng.match(/^ *[xX]([\d\.]+) *\/ *[xX]([\d\.]+) *$/)
+        if (m) {
+          rng = `${parseFloat(m[1]) * st}/${parseFloat(m[2]) * st}`
+        }
+      }
+      r.range = rng
+    })
   }
 
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING
@@ -1244,19 +1264,6 @@ export class GurpsActor extends Actor {
             r.shots = t(j2.shots)
             r.rcl = t(j2.rcl)
             let rng = t(j2.range)
-            if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) {
-              let m = rng.match(/^ *[xX]([\d\.]+) *$/)
-              if (m) {
-                rng = parseFloat(m[1]) * this.data.data.attributes.ST.value
-              } else {
-                m = rng.match(/^ *[xX]([\d\.]+) *\/ *[xX]([\d\.]+) *$/)
-                if (m) {
-                  rng = `${parseFloat(m[1]) * this.data.data.attributes.ST.value}/${
-                    parseFloat(m[2]) * this.data.data.attributes.ST.value
-                  }`
-                }
-              }
-            }
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             if (!!old) {

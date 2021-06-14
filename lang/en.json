@@ -734,7 +734,7 @@
   "GURPS.settingQtyItems": "Actor: Display QTY/Count saved Flag",
   "GURPS.settingHintQtyItems": "If checked, a small icon will appear after equipment where the QTY/Count will be saved during imports",
   "GURPS.settingConvertRanged": "Actor: Convert 'x2/x5' style ranged modifiers to actual distance",
-  "GURPS.settingHintConvertRanged": "If checked, range fields in the form 'xN' or 'xN/xM' will be multiplied by the character's ST to determine the actual range for a thrown weapon.",
+  "GURPS.settingHintConvertRanged": "If checked, range fields in the form 'xN' or 'xN/xM' will be multiplied by the character's ST to determine the actual range for a thrown weapon.  NOTE: This only occurs during import.",
   "GURPS.settingShowDiceRoller": "UI: Show 3D6 (next to Modifier Bucket)",
   "GURPS.settingHintShowDiceRoller": "If checked, the system will display the dice roller shortcut to the right of the Modifier Bucket. You must reload for this change to take effect.",
   "GURPS.settingCombatInitiative": "Combat: Initiative Formula",
