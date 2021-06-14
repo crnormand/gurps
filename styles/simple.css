@@ -532,6 +532,10 @@
   overflow: hidden;
 }
 
+.gurps .sheet-body.tabbed-sheet {
+  height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
+}
+
 .gurps .sheet-body .tab {
   height: 100%;
   overflow-y: auto;
@@ -1912,15 +1916,19 @@ body {
 }
 
 .desc {
-  position: relative;
+  /* position: relative; needed so that the tooltip was not limited to the tab area. */
 }
 
 .desc .tooltippic {
   visibility: hidden;
   position: absolute;
   z-index:999;
-  bottom: 20px;
-  left: 85%;
+  left: 60%;
+  margin-top: -102px;
+}
+
+.desc .tooltippic img {
+  max-height: 100px;
 }
 
 .desc:hover .tooltippic {
