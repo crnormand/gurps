@@ -2,13 +2,20 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-0.10.5
+0.10.6
+
+- Merged in Rinickolous/neck's GCS Equipment importer!
+- Fixed ST based ranged calc so it will also apply to Items
+
+Release 0.10.5 - 6/12/2021
 
 - Remove superfluous "add" menu options for equipment (and just rely on "+")
 - Added Sort Contents menu option for equipment
 - Fixed range column multiplication by ST
 - Added system setting to control if range column automatically multiplied by ST
-- Fixed Item count update (count now saved during update/import)
+- Fixed Foundry Item count update (count now saved during update/import)
+- Item DR bonus calculation fixed.
+- Data protect 0.10.3 migration against bad tokens
 
 Release 0.10.4 - 6/11/2021
 

@@ -99,6 +99,10 @@ export class GurpsActor extends Actor {
     // Must be done after bonuses, but before weights
     this._calculateEncumbranceIssues()
 
+    // Must be after bonuses and encumbrance effects on ST
+    this._recalcItemFeatures()
+    this._calculateRangedRanges()
+
     // Must be done at end
     this._calculateWeights()
   }
@@ -372,6 +376,75 @@ export class GurpsActor extends Actor {
     if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value)
     if (!data.currentdodge) data.currentdodge = parseInt(data.dodge.value)
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value) * 2
+  }
+
+  _calculateRangedRanges() {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) return
+    let st = +this.data.data.attributes.ST.value
+    recurselist(this.data.data.ranged, r => {
+      let rng = r.range
+      let m = rng.match(/^ *[xX]([\d\.]+) *$/)
+      if (m) {
+        rng = parseFloat(m[1]) * st
+      } else {
+        m = rng.match(/^ *[xX]([\d\.]+) *\/ *[xX]([\d\.]+) *$/)
+        if (m) {
+          rng = `${parseFloat(m[1]) * st}/${parseFloat(m[2]) * st}`
+        }
+      }
+      r.range = rng
+    })
+  }
+
+  // Once all of the bonuses are applied, determine the actual level for each feature
+  _recalcItemFeatures() {
+    this._collapseQuantumEq(this.data.data.melee, true)
+    this._collapseQuantumEq(this.data.data.ranged)
+    this._collapseQuantumEq(this.data.data.skills)
+    this._collapseQuantumEq(this.data.data.spells)
+  }
+
+  // convert Item feature OTF formulas into actual skill levels.
+  _collapseQuantumEq(list, isMelee = false) {
+    recurselist(list, async e => {
+      let otf = e.otf
+      if (!!otf) {
+        let m = otf.match(/\[(.*)\]/)
+        if (!!m) otf = m[1] // remove extranious  [ ]
+        if (otf.match(/^ *\d+ *$/)) {
+          // just a number
+          e.import = parseInt(otf)
+        } else {
+          let action = parselink(otf)
+          if (!!action.action) {
+            action.action.calcOnly = true
+            GURPS.performAction(action.action, this).then(ret => (e.level = '' + ret.target)) // collapse the OtF formula into a string
+          }
+        }
+      }
+      if (isMelee) {
+        if (!isNaN(parseInt(e.parry))) {
+          let p = '' + e.parry
+          let m = p.match(/([+-]\d+)(.*)/)
+          if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
+          if (!!m) {
+            e.parrybonus = parseInt(m[1])
+            e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
+          }
+          if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
+        }
+        if (!isNaN(parseInt(e.block))) {
+          let b = '' + e.block
+          let m = b.match(/([+-]\d+)(.*)/)
+          if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
+          if (!!m) {
+            e.blockbonus = parseInt(m[1])
+            e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
+          }
+          if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
+        }
+      }
+    })
   }
 
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING */
@@ -1301,19 +1374,6 @@ export class GurpsActor extends Actor {
             r.shots = t(j2.shots)
             r.rcl = t(j2.rcl)
             let rng = t(j2.range)
-            if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) {
-              let m = rng.match(/^ *[xX]([\d\.]+) *$/)
-              if (m) {
-                rng = parseFloat(m[1]) * this.data.data.attributes.ST.value
-              } else {
-                m = rng.match(/^ *[xX]([\d\.]+) *\/ *[xX]([\d\.]+) *$/)
-                if (m) {
-                  rng = `${parseFloat(m[1]) * this.data.data.attributes.ST.value}/${
-                    parseFloat(m[2]) * this.data.data.attributes.ST.value
-                  }`
-                }
-              }
-            }
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             if (!!old) {
@@ -1928,15 +1988,13 @@ export class GurpsActor extends Actor {
 
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
-    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
-    await this.update(commit, { diff: false, render: false })
-    this.calculateDerivedValues() // new skills may affect melee and ranged
-    commit = {}
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'melee')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ranged')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
+    commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
     await this.update(commit, { diff: false, render: false })
+    this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
 
   // called when equipment is being moved
@@ -1974,41 +2032,6 @@ export class GurpsActor extends Actor {
       e.eqtkey = eqtkey
       e.img = itemData.img
       let otf = e.otf
-      if (!!otf) {
-        let m = otf.match(/\[(.*)\]/)
-        if (!!m) otf = m[1] // remove extranious  [ ]
-        if (otf.match(/^ *\d+ *$/)) {
-          // just a number
-          e.import = parseInt(otf)
-        } else {
-          let action = parselink(otf)
-          if (!!action.action) {
-            action.action.calcOnly = true
-            let ret = await GURPS.performAction(action.action, this)
-            e.import = '' + ret.target // collapse the OtF formula into a string
-          }
-        }
-      }
-      if (key == 'melee') {
-        if (!isNaN(parseInt(e.parry))) {
-          let m = e.parry.match(/([+-]\d+)(.*)/)
-          if (!m && e.parry.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
-          if (!!m) {
-            e.parrybonus = parseInt(m[1])
-            e.parry = e.parrybonus + 3 + Math.floor(e.import / 2)
-          }
-          if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
-        }
-        if (!isNaN(parseInt(e.block))) {
-          let m = e.block.match(/([+-]\d+)(.*)/)
-          if (!m && e.block.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
-          if (!!m) {
-            e.blockbonus = parseInt(m[1])
-            e.block = e.blockbonus + 3 + Math.floor(e.import / 2)
-          }
-          if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
-        }
-      }
       GURPS.put(list, e)
     }
     return i == 0 ? {} : { ['data.' + key]: list }
