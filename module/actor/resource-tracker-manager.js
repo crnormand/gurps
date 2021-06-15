@@ -82,6 +82,42 @@ export class ResourceTrackerManager extends FormApplication {
         },
         initialValue: 'attributes.ST.value',
       },
+      '0001': {
+        tracker: {
+          name: game.i18n.localize('GURPS.attributesQPNAME'),
+          alias: game.i18n.localize('GURPS.QP'),
+          pdf: 'PY120',
+          max: 10,
+          min: -50,
+          value: 10,
+          isDamageType: true,
+          isDamageTracker: false,
+          thresholds: [
+            {
+              comparison: '≥',
+              operator: '×',
+              value: 0.3,
+              condition: game.i18n.localize('GURPS.QUINTESSENCENormal'),
+              color: '#90ee90',
+            },
+            {
+              comparison: '<',
+              operator: '×',
+              value: 0.3,
+              condition: game.i18n.localize('GURPS.QUINTESSENCETired'),
+              color: '#ffff00',
+            },
+            {
+                comparison: '<',
+                operator: '×',
+                value: 0,
+                condition: game.i18n.localize('GURPS.QUINTESSENCEExhausted'),
+                color: '#900000',
+              },
+          ],
+        },
+        initialValue: 'data.QP.value',
+      },
     }
   }
 
