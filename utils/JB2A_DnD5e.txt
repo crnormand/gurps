@@ -1,5 +1,3 @@
-
-FREE_LIBRARY =`
 1st_Level/Cure_Wounds/CureWounds_01_Blue_200x200.webm
 1st_Level/Cure_Wounds/CureWounds_01_Blue_400x400.webm
 1st_Level/Entangle/Entangle_01_Brown_400x400.webm
@@ -369,4 +367,3 @@ TMFX/Runes/Circle/EvocationSimple_01_Circle_Normal_500.webm
 TMFX/Runes/Circle/IllusionSimple_01_Circle_Normal_500.webm
 TMFX/Runes/Circle/NecromancySimple_01_Circle_Normal_500.webm
 TMFX/Runes/Circle/TransmutationSimple_01_Circle_Normal_500.webm
-`
