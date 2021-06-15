@@ -806,5 +806,9 @@
   "GURPS.spellsTab": "Mágicas",
   "GURPS.equipmentTab": "Equipamentos",
 
-  "GURPS.itemImport": "Importar Catálogo De Equipamento"
+  "GURPS.itemImport": "Importar Catálogo De Equipamento",
+  "GURPS.attributesQN": "QN",
+  "GURPS.QP":"QP",
+  "GURPS.attributesQPNAME": "Pontos de Quintessência",
+  "GURPS.attributesQNNAME": "Quintessência"
 }

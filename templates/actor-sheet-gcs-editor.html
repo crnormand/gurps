@@ -158,6 +158,13 @@
           <div class="field"><input name="data.attributes.HT.import" class="gcs-input" type="text"
               value="{{data.attributes.HT.import}}" /></div>
           <div class="label">{{localize "GURPS.attributesHTNAME"}} ({{localize "GURPS.attributesHT"}})</div>
+          {{#if useQN}}
+          <div class="points"><input name="data.attributes.QN.points" class="gcs-input-sm2" type="text"
+            value="{{data.attributes.QN.points}}" /></div>
+        <div class="field"><input name="data.attributes.QN.value" class="gcs-input" type="text"
+            value="{{data.attributes.QN.value}}" /></div>
+        <div class="label">{{localize "GURPS.attributesQNNAME"}} ({{localize "GURPS.attributesQN"}})</div>
+          {{/if}}
           <hr>
           <div class="points"><input name="data.attributes.WILL.points" class="gcs-input-sm2" type="text"
               value="{{data.attributes.WILL.points}}" /></div>

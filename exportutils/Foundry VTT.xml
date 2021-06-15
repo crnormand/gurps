@@ -53,6 +53,11 @@
       <hitpoints type="number">@BASIC_HP</hitpoints>
       <hitpoints_points type="number">@HP_POINTS</hitpoints_points>
       <hps type="number">@HP</hps> 
+      <quintessence type="number">@QN</quintessence>
+      <quintessence_points type="number">@QN_POINTS</quintessence_points>
+      <quintessencepoints type="number">@BASIC_QP</quintessencepoints>
+      <quintessencepoints_points type="number">@QP_POINTS</quintessencepoints_points>
+      <qps type="number">@QP</qps>
       <will type="number">@WILL</will>
       <will_points type="number">@WILL_POINTS</will_points>
       <perception type="number">@PERCEPTION</perception>

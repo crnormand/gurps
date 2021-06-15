@@ -432,5 +432,9 @@
   "GURPS.spellsTab": "Заклинания",
   "GURPS.equipmentTab": "Снаряжение",
 
-  "GURPS.itemImport": "Импортой Сбор Оборудования"
+  "GURPS.itemImport": "Импортой Сбор Оборудования",
+  "GURPS.attributesQN": "КН",
+  "GURPS.QP":"ОК",
+  "GURPS.attributesQPNAME": "Очки квинтэссенции ",
+  "GURPS.attributesQNNAME": "Квинтэссенция"
 }

@@ -574,5 +574,8 @@
   "GURPS.usage": "Nutzung",
   "GURPS.yards": " yards",
 
-  "GURPS.itemImport": "Artikelsammlung Importieren"
+  "GURPS.itemImport": "Artikelsammlung Importieren",
+  "GURPS.QP":"QP",
+  "GURPS.attributesQPNAME": "Quintessenzpunkte ",
+  "GURPS.attributesQNNAME": "Quintessenz"
 }

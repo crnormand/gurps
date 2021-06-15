@@ -51,6 +51,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.data = sheetData.data.data
     sheetData.ranges = game.GURPS.rangeObject.ranges
     sheetData.useCI = game.GURPS.ConditionalInjury.isInUse()
+    sheetData.useQN = game.GURPS.Quintessence.isInUse()
     sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable()
     game.GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.data.data.eqtsummary

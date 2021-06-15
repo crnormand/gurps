@@ -55,6 +55,7 @@ import jqueryHelpers from '../lib/jquery-helper.js'
 import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
+import GURPSQuintessence from './quintessence/foundry/quintessence.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
 
 addChatHooks()
@@ -1494,6 +1495,7 @@ Hooks.once('init', async function () {
   GURPS.initiative = new Initiative()
   GURPS.hitpoints = new HitFatPoints()
   GURPS.ConditionalInjury = new GURPSConditionalInjury()
+  GURPS.Quintessence = new GURPSQuintessence()
 
   // Define custom Entity classes
   CONFIG.Actor.documentClass = GurpsActor

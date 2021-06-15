@@ -768,6 +768,9 @@
   "GURPS.settingLabelMookGenerator": "Mook Generator Default Editor",
   "GURPS.settingHintMookGenerator": "Edit the initial values of the Mook Generator",
 
+  "GURPS.settingQuintessence": "Attributes: Quintessence",
+  "GURPS.settingHintQuintessence": "From Pyramid #3/120: Adds Quintessence, the Fifth Attribute",
+
   "GURPS.actions": "Actions",
   "GURPS.addAdvantage": "Add an Advantage",
   "GURPS.addMeleeAttack": "Add a Melee Attack",
@@ -893,5 +896,12 @@
   "GURPS.spellsTab": "Spells",
   "GURPS.equipmentTab": "Equipment",
 
-  "GURPS.itemImport": "Import Equipment Library"
+  "GURPS.itemImport": "Import Equipment Library",
+  "GURPS.attributesQN": "QN",
+  "GURPS.QP":"QP",
+  "GURPS.attributesQPNAME": "Quintessence Points",
+  "GURPS.attributesQNNAME": "Quintessence",
+  "GURPS.QUINTESSENCENormal":"Normal",
+  "GURPS.QUINTESSENCETired":"Drained",
+  "GURPS.QUINTESSENCEExhausted":"Exhausted"
 }
