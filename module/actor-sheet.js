@@ -1536,6 +1536,18 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
     GURPS.performAction(parsed.action, this.actor, ev)
   }
 }
+export class GurpsActorNpcSheetCI extends GurpsActorNpcSheet {
+    /** @override */
+    static get defaultOptions() {
+      return mergeObject(super.defaultOptions, {
+        classes: ['npc-sheet', 'sheet', 'actor'],
+        template: 'systems/gurps/templates/npc-sheet-ci.html',
+        width: 650,
+        height: 450,
+        dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
+      })
+    }
+}
 
 export class GurpsInventorySheet extends GurpsActorSheet {
   /** @override */
