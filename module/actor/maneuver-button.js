@@ -11,24 +11,14 @@ let html = null
  * @namespace ManeuverHUDButton
  */
 export default class ManeuverHUDButton {
-  static async getInnerHtml() {
+  static async getInnerHtml(effects) {
     if (html == null) {
-      html = await renderTemplate('systems/gurps/templates/maneuver-hud.hbs', Maneuvers)
+      html = await renderTemplate('systems/gurps/templates/maneuver-hud.hbs', {
+        maneuvers: Maneuvers,
+        effects: effects,
+      })
     }
     return html
-  }
-  /**
-   * Handles the click or contextmenu events for tile/token art buttons
-   *
-   * @static
-   * @param {Event} event - The triggering event.
-   * @param {string} image - The file path of the image to display.
-   * @param {string} title - The name to display in the popup title bar.
-   * @memberof ManeuverHUDButton
-   */
-  static buttonEventHandler(event, image, title) {
-    const pop = this.createImagePopup(image, title)
-    if (event.shiftKey && game.user.isGM) pop.shareImage()
   }
 
   /**
@@ -51,14 +41,14 @@ export default class ManeuverHUDButton {
    * @return {Element} The `<div>` element that is used as the HUD button.
    * @memberof ManeuverHUDButton
    */
-  static async createButton() {
+  static async createButton(effects) {
     let button = document.createElement('div')
 
     button.classList.add('control-icon')
     button.classList.add('maneuver-open')
     button.setAttribute('data-action', 'maneuver')
     button.title = i18n('GURPS.setManeuver', 'Set Maneuver')
-    button.innerHTML = await ManeuverHUDButton.getInnerHtml()
+    button.innerHTML = await ManeuverHUDButton.getInnerHtml(effects)
     return button
   }
 
@@ -74,11 +64,7 @@ export default class ManeuverHUDButton {
    */
   static async prepTokenHUD(hud, html, token) {
     const actor = this.getTokenActor(token)
-    const button = await this.createButton()
-
-    // $(artButton)
-    //   .click(event => this.buttonEventHandler(event, images.actor, titles.actor))
-    //   .contextmenu(event => this.buttonEventHandler(event, images.token, titles.token))
+    const button = await this.createButton(token.effects)
 
     html.find('div.right').append(button)
 
@@ -90,6 +76,9 @@ export default class ManeuverHUDButton {
     html.find('.status-maneuvers .effect-control').click(ev => {
       let key = $(ev.currentTarget).attr('data-status-id')
       actor.updateManeuver(key)
+
+      html.find('.status-maneuvers .effect-control').removeClass('active')
+      $(ev.currentTarget).addClass('active')
     })
   }
 }

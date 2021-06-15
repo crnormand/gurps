@@ -1845,6 +1845,9 @@ ul#result-effects li {
   margin: 5px 0;
 }
 
+#token-hud .status-maneuvers .effect-control.active {
+  opacity: 1;
+}
 /* 
 // if #collapsible-hud is checked, set border of .maneuver-open
 #token-hud .maneuver-open 
