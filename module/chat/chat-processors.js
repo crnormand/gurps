@@ -12,12 +12,12 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
-import { AnimChatProcessor } from '../chat/anim.js'
+import { JB2AChatProcessor } from '../chat/jb2a.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -45,7 +45,8 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
   ChatProcessors.registerProcessor(new ShowChatProcessor())
-  ChatProcessors.registerProcessor(new AnimChatProcessor())
+  ChatProcessors.registerProcessor(new JB2AChatProcessor())
+  ChatProcessors.registerProcessor(new WaitChatProcessor())  
 }
 
 class ReimportChatProcessor extends ChatProcessor {
@@ -70,6 +71,20 @@ class ReimportChatProcessor extends ChatProcessor {
     }
     if (actornames.length == 0) actors = allPlayerActors
     actors.forEach(e => e.importCharacter())
+  }
+}
+
+class WaitChatProcessor extends ChatProcessor {
+  help() {
+    return '/wait &lt;milliseconds&gt;'
+  }
+  matches(line) {
+    this.match = line.match(/^\/wait +(\d+)/)
+    return this.match
+  }
+  async process(line) {
+    this.priv(line)
+    await wait(+this.match[1])
   }
 }
 
