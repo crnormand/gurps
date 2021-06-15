@@ -59,8 +59,8 @@ export class AnimChatProcessor extends ChatProcessor {
       let file = this.randFile(possible)[0]
       if (possible.length == 0) possible = [...effect.files]
       effect.file = file
-      let m = file.match(/(?<w>\d+)x\d+\.webm$/)
-      if (!m) m = file.match(/(?<w>\d+)\.webm$/)
+      let m = file.match(/(?<w>\d+)x\d+\.webm/)
+      if (!m) m = file.match(/(?<w>\d+)\.webm/)
       const origin = {
         x: tok1.position.x + tok1.w / 2,
         y: tok1.position.y + tok1.h / 2
@@ -82,8 +82,8 @@ export class AnimChatProcessor extends ChatProcessor {
   
       effectData.distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) // - (1 - effectData.anchor.x) * tok2.width;
       if (!effectData.centered && !!m) {
+        effectData.fileWidth = m.groups.w
         let s = (effectData.distance + effectData.fudge) / ((1 - effectData.anchor.x) * m.groups.w) 
-        s = Math.min(1.0, s)
         effectData.scale.x = s
         effectData.scale.y = s
       }
@@ -106,7 +106,7 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<count>[xX][\d\.]+)?(?<delay>:[\d\.]+)? *(?<scale>[\*][\d\.]+)? *(?<x>[\d\.]+)? *(?<y>[\d\.]+)? *(?<fudge>\+[\d]+)? *(?<file>.*)/)   
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<scale>[\*][\d\.]+)? *(?<x>[\d\.]+)? *(?<y>[\d\.]+)? *(?<fudge>[\+-][\d]+)? *(?<file>.*)/)   
     return !!this.match
   }
 
@@ -146,7 +146,7 @@ export class AnimChatProcessor extends ChatProcessor {
     let count = 1
     let delay = 1000
     if (!!m.scale) scale = parseFloat(m.scale.substr(1))  
-    if (!!m.count) count = parseInt(m.count.substr(1))
+    if (!!m.count) count = parseInt(m.count.slice(0, -1))
     if (!!m.delay) delay = 1000 * parseFloat(m.delay.substr(1))
   
     if (!!m.x) { 
@@ -166,13 +166,12 @@ export class AnimChatProcessor extends ChatProcessor {
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
  
     let destTokens = Array.from(game.user.targets)
-    if (destTokens.size == 0) destTokens = canvas.tokens.controlled
-    if (destTokens.size == 0)
+    if (destTokens.length == 0) destTokens = canvas.tokens.controlled
+    if (destTokens.length == 0)
       if (srcToken)
         destTokens = [ srcToken ]
-      else return errorExit("You must select or target at least one token")
-
-    if (centered) srcToken = destTokens[0]    // centered anims should show on target (or selection)
+      else return this.errorExit("You must select or target at least one token")
+    if (!srcToken || centered) srcToken = destTokens[0]    // centered anims should show on target (or selection)
         
     let effect = {
       files: files,
