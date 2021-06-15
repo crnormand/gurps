@@ -7,7 +7,7 @@ export const MOVE_NONE = 'none'
 export const MOVE_FULL = 'full'
 export const MOVE_HALF = 'half'
 
-export const Maneuvers = {
+export const ManeuverData = {
   do_nothing: {
     id: 'do_nothing',
     move: MOVE_NONE,
@@ -175,4 +175,36 @@ export const Maneuvers = {
     alt: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverWait',
   },
+}
+
+export class Maneuvers {
+  /**
+   * Return true if the text represents a maneuver icon path.
+   * @param {String} text
+   * @returns true if the text represents a maneuver icon path.
+   * @memberof Maneuvers
+   */
+  static isManeuverIcon(text) {
+    return Object.values(ManeuverData)
+      .map(m => m.icon)
+      .includes(text)
+  }
+
+  /**
+   * Return the sublist that are Maneuver icon paths.
+   * @param {Array<String>} list of icon pathnames
+   * @returns Array<String> the pathnames that represent Maneuvers
+   * @memberof Maneuvers
+   */
+  static getManeuverIcons(list) {
+    return list.filter(it => Maneuvers.isManeuverIcon(it))
+  }
+
+  static getIcon(maneuverText) {
+    return ManeuverData[maneuverText].icon
+  }
+
+  static getData() {
+    return ManeuverData
+  }
 }

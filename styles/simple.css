@@ -1868,11 +1868,14 @@ body {
   height: 100%;
 }
 
+/*
+ * display: block breaks the Foundry's handling of tabs. Find another solution or rename this style.
+ */
 .sheet-tabs {
-  display: block;
+  /* display: block; */
   height: 40px;
-  border-top: 1px solid #AAA;
-  border-bottom: 1px solid #AAA;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
 }
 
 .sheet-tabs li {
@@ -1922,7 +1925,7 @@ body {
 .desc .tooltippic {
   visibility: hidden;
   position: fixed;
-  z-index:999;
+  z-index: 999;
 }
 
 .desc .tooltippic img {

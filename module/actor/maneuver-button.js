@@ -14,7 +14,7 @@ export default class ManeuverHUDButton {
   static async getInnerHtml(effects) {
     if (html == null) {
       html = await renderTemplate('systems/gurps/templates/maneuver-hud.hbs', {
-        maneuvers: Maneuvers,
+        maneuvers: Maneuvers.getData(),
         effects: effects,
       })
     }
@@ -81,4 +81,17 @@ export default class ManeuverHUDButton {
       $(ev.currentTarget).addClass('active')
     })
   }
+
+  // TODO add a migration to set the maneuver token effect for all tokens
+  // TODO figure out how to remove maneuver from other status effects OR make clicking it add the "do nothing" maneuver
+  // TODO implement the various options: \
+  //      - full detail: exact maneuver and subtype
+  //      - general detail: maneuver name w/o subtype
+  // TODO implement visibility: \
+  //      - everyone
+  //      - GM and Owner only
+  //      - same Disposition [Friendly, Neutral, Hostile]
+  //      - per token [Always for Everyone, Same Disposition, Only When Controlled, etc...]
+  // TODO Ultimately turn this into an Active Effect - and actually adjust Move and/or other conditions
+  // TODO Add status hint text to modifier bucket
 }

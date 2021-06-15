@@ -461,6 +461,7 @@ export class GurpsActor extends Actor {
       }
     }
 
+    // if changing the maneuver, update the icons
     if (data.hasOwnProperty('data.conditions.maneuver')) {
       this.updateManeuverStatusIcon(data[`data.conditions.maneuver`])
     }
@@ -469,41 +470,34 @@ export class GurpsActor extends Actor {
 
     super.update(data, options)
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
-  } /* */
+  }
 
+  /**
+   * Calling this will also trigger it being added to the token status icons.
+   * @param {*} maneuverText
+   */
   updateManeuver(maneuverText) {
     this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true })
-    //    this.updateManeuverStatus(maneuverText)
   }
 
+  /**
+   * This method is called when "data.conditions.maneuver" changes on the actor (via the update method)
+   * @param {*} maneuverText
+   */
   async updateManeuverStatusIcon(maneuverText) {
     let tokens = this.getActiveTokens()
+
     if (tokens.length === 1) {
       let token = tokens[0]
-      let maneuvers = token.data.effects.filter(it => it.startsWith('systems/gurps/icons/maneuvers/'))
+      let maneuvers = Maneuvers.getManeuverIcons(token.data.effects)
+
       for (const m of maneuvers) {
-        await token.toggleEffect(m)
+        await token.toggleEffect(m, { active: false }) // turn all of them off!
       }
-      await token.toggleEffect(Maneuvers[maneuverText].icon)
+      await token.toggleEffect(Maneuvers.getIcon(maneuverText), { active: true }) // turn it on!
+    } else {
+      if (tokens.length > 1) console.error(`unexpected: more than one token: id: ${this.id}, tokens: ${tokens}`)
     }
-  }
-
-  // async updateManeuverStatus(newManeuver) {
-  //   let oldEffect = Maneuvers[this.data.data.conditions.maneuver]
-  //   let newEffect = Maneuvers[newManeuver]
-  //   this.toggleEffect(oldEffect, false)
-  //   this.toggleEffect(newEffect, true)
-  // }
-
-  async toggleEffect(effect, show) {
-    let tokens = this.getActiveTokens()
-    if (tokens.length === 1) {
-      if (show && !tokens[0].data.effects.includes(effect.icon)) await tokens[0].toggleEffect(effect.icon)
-      else if (!show && tokens[0].data.effects.includes(effect.icon)) await tokens[0].toggleEffect(effect.icon)
-      return
-    }
-
-    console.error(`unexpected: more than one token: id: ${this.id}, tokens: ${tokens}`)
   }
 
   isEffectActive(effect) {

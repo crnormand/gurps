@@ -433,10 +433,6 @@ CONFIG.statusEffects = [
   },
 ]
 
-// for (const m in Maneuvers) {
-//   CONFIG.statusEffects.push(m)
-// }
-
 GURPS.SJGProductMappings = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
   ACT3: 'http://www.warehouse23.com/products/gurps-action-3-furious-fists',
@@ -1642,8 +1638,6 @@ Hooks.once('ready', async function () {
     if (migrationVersion.isLowerThan(settings.VERSION_096)) await Migration.migrateTo096(quiet)
     if (migrationVersion.isLowerThan(settings.VERSION_097)) await Migration.migrateTo097(quiet)
     if (migrationVersion.isLowerThan(settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
-
-    // TODO add a migration to set the maneuver token effect for all tokens
 
     game.settings.set(settings.SYSTEM_NAME, settings.SETTING_MIGRATION_VERSION, game.system.data.version)
   }
