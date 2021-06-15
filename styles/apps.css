@@ -1844,3 +1844,10 @@ ul#result-effects li {
 #token-hud div.right .control-icon {
   margin: 5px 0;
 }
+
+/* 
+// if #collapsible-hud is checked, set border of .maneuver-open
+#token-hud .maneuver-open 
+{
+  border: 1px solid #ff6400;
+} */
