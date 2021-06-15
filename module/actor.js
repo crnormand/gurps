@@ -1424,7 +1424,7 @@ export class GurpsActor extends Actor {
       'data.attributes': att,
       'data.HP': data.HP,
       'data.FP': data.FP,
-      'data.HP': data.QP,
+      'data.QP': data.QP,
       'data.basiclift': data.basiclift,
       'data.basicmove': data.basicmove,
       'data.basicspeed': data.basicspeed,
