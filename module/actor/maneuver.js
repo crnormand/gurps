@@ -208,3 +208,18 @@ export class Maneuvers {
     return ManeuverData
   }
 }
+
+export class GURPSTokenHUD extends TokenHUD {
+  getData(options) {
+    let data = super.getData(options)
+    console.log('GURPSTokenHUD')
+
+    // edit data.statusEffects to remove maneuver icons -- statusEffects is an Object, properties are the icon path
+    for (const key in data.statusEffects) {
+      if (Maneuvers.isManeuverIcon(key)) {
+        delete data.statusEffects[key]
+      }
+    }
+    return data
+  }
+}

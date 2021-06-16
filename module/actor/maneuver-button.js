@@ -1,9 +1,6 @@
 import { i18n } from '../../lib/utilities.js'
 import { Maneuvers } from './maneuver.js'
 
-// lazy-initialized varaible for the html template
-let html = null
-
 /**
  * This class is used as a namespace for Show Art
  * static methods. It has no constructor.
@@ -12,13 +9,10 @@ let html = null
  */
 export default class ManeuverHUDButton {
   static async getInnerHtml(effects) {
-    if (html == null) {
-      html = await renderTemplate('systems/gurps/templates/maneuver-hud.hbs', {
-        maneuvers: Maneuvers.getData(),
-        effects: effects,
-      })
-    }
-    return html
+    return await renderTemplate('systems/gurps/templates/maneuver-hud.hbs', {
+      maneuvers: Maneuvers.getData(),
+      effects: effects,
+    })
   }
 
   /**
@@ -75,15 +69,15 @@ export default class ManeuverHUDButton {
 
     html.find('.status-maneuvers .effect-control').click(ev => {
       let key = $(ev.currentTarget).attr('data-status-id')
-      actor.updateManeuver(key)
+      actor.updateManeuver(key, token._id)
 
       html.find('.status-maneuvers .effect-control').removeClass('active')
       $(ev.currentTarget).addClass('active')
     })
   }
 
-  // TODO add a migration to set the maneuver token effect for all tokens
-  // TODO figure out how to remove maneuver from other status effects OR make clicking it add the "do nothing" maneuver
+  // DONE: add a migration to set the maneuver token effect for all tokens
+  // DONE figure out how to remove maneuver from other status effects OR make clicking it add the "do nothing" maneuver
   // TODO implement the various options: \
   //      - full detail: exact maneuver and subtype
   //      - general detail: maneuver name w/o subtype
@@ -94,4 +88,5 @@ export default class ManeuverHUDButton {
   //      - per token [Always for Everyone, Same Disposition, Only When Controlled, etc...]
   // TODO Ultimately turn this into an Active Effect - and actually adjust Move and/or other conditions
   // TODO Add status hint text to modifier bucket
+  // TODO Make sure Tokens are initialized with a Maneuver
 }

@@ -25,10 +25,10 @@ import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ItemImporter } from '../module/item-import.js'
+import { Maneuvers, GURPSTokenHUD } from '../module/actor/maneuver.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-GURPS.Migration = Migration
 
 GURPS.DEBUG = false
 GURPS.BANNER = `
@@ -1554,7 +1554,6 @@ Hooks.once('init', async function () {
     entity.data.img = 'systems/gurps/icons/single-die.webp'
   })
 
-  // Hooks.on('controlToken', (...args) => ManeuverHUDButton.prepTokenKeybinding(...args))
   Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
 
   Hooks.on('renderSidebarTab', async (app, html) => {
@@ -1610,6 +1609,9 @@ Hooks.once('init', async function () {
 })
 
 Hooks.once('ready', async function () {
+  // reset the TokenHUD to our version
+  canvas.hud.token = new GURPSTokenHUD()
+
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
 
@@ -2005,8 +2007,14 @@ Hooks.once('ready', async function () {
     GURPS.PARSELINK_MAPPINGS = mappings
   }
 
-  Hooks.on('preCreateToken', async function (token, d, options, userId) {
-    console.log(`test`)
+  Hooks.on('createToken', async function (token, d, options, userId) {
+    console.log(`create Token`)
+    let actor = token.actor
+    // data protect against bad tokens
+    if (!!actor) {
+      let maneuverText = actor.data.data.conditions.maneuver
+      actor.updateManeuver(maneuverText, token._id)
+    }
   })
 
   // End of system "READY" hook.
