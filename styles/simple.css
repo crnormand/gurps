@@ -1868,14 +1868,14 @@ body {
   height: 100%;
 }
 
-.sheet-tabs {
+.gurps-sheet-tabs {
   display: block;
   height: 40px;
   border-top: 1px solid #AAA;
   border-bottom: 1px solid #AAA;
 }
 
-.sheet-tabs li {
+.gurps-sheet-tabs li {
   display: inline-block;
   margin: 0 10px 0 10px;
 }
