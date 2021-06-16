@@ -56,7 +56,9 @@ class ChatProcessorRegistry {
   // Make a pre-emptive decision if we are going to handle any of the lines in this message
   willTryToHandle(message) {
     let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
-    for (const line of lines) for (const p of this._processors) if (p.matches(line)) return true
+    for (const line of lines) 
+      for (const p of this._processors) 
+        if (line[0] == '!' ? p.matches(line.substr(1)) : p.matches(line)) return true
     return false
   }
 
@@ -114,6 +116,11 @@ class ChatProcessorRegistry {
 
   async processLine(line) {
     line = line.trim()
+    let oldQuiet = this.msgs.quiet
+    if (line[0] == '!') {
+      this.msgs.quiet = true
+      line = line.substr(1)
+    }
     let [handled, answer] = await this.handle(line)
     if (!handled) {
       if (line.trim().startsWith('/')) {
@@ -126,6 +133,7 @@ class ChatProcessorRegistry {
         })
       } else this.pub(line) // If not handled, must just be public text
     }
+    this.msgs.quiet = oldQuiet
     return answer
   }
 
@@ -205,8 +213,8 @@ class ChatProcessorRegistry {
   }
 
   // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
-  priv(txt) {
-    if (this.msgs.quiet) return;
+  priv(txt, force = false) {
+    if (this.msgs.quiet && ! force) return;
     if (this.msgs.pub.length > 0) this.send()
     this.msgs.priv.push(txt)
   }

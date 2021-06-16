@@ -590,13 +590,17 @@ function trim(s) {
 }
 GURPS.trim = trim
 
-function executeOTF(string, priv = false) {
-  if (!string) return
+async function executeOTF(string, priv = false, event) {
+  if (!string) return false
   string = string.trim()
   if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
-  else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
+  let answer = false
+  if (!!action.action) {
+    if (!event) event = { shiftKey: priv, ctrlKey: false, data:{} }
+    answer = await GURPS.performAction(action.action, GURPS.LastActor, event)
+  } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
+  return answer
 }
 GURPS.executeOTF = executeOTF
 
@@ -961,7 +965,14 @@ async function handleRoll(event, actor, targets) {
 
     if (opt.text === text) opt.text = ''
     else opt.text = "<span style='font-size:85%'>(" + opt.text + ')</span>'
-    if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key) // During the roll, we may want to extract something from the object
+    let k = $(element).closest('[data-key]').attr('data-key')
+    if (!k) k = element.dataset.key
+    if (!!k) {
+      opt.obj = getProperty(actor.data, k) // During the roll, we may want to extract something from the object
+      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event))
+        return
+      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+    }
     formula = '3d6'
     let t = element.innerText
     if (!!t) {

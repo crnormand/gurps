@@ -124,10 +124,10 @@ export class GurpsActor extends Actor {
     // After all of the attributes are copied over, apply tired to ST
     if (!!data.additionalresources.isTired) data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value) / 2)
     recurselist(data.skills, (e, k, d) => {
-      e.level = parseInt(e.import)
+      e.level = parseInt(+e.import)
     })
     recurselist(data.spells, (e, k, d) => {
-      e.level = parseInt(e.import)
+      e.level = parseInt(+e.import)
     })
 
     // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future

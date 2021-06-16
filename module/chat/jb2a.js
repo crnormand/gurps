@@ -20,7 +20,7 @@ Hooks.on('ready', async () => {
     xhr.onload = function () {
       if (xhr.readyState === xhr.DONE) {
         if (xhr.status === 200) {
-          JB2A_PATREON_LIBRARY = xhr.responseText.split('\n')
+          JB2A_PATREON_LIBRARY = xhr.responseText.split('\n').map(s => s.replace(/^\.\//, ""))
           console.log(`Loaded ${JB2A_PATREON_LIBRARY.length} JB2A PATREON records`)
         }
       }
@@ -33,7 +33,7 @@ Hooks.on('ready', async () => {
     xhr2.onload = function () {
       if (xhr2.readyState === xhr2.DONE) {
         if (xhr2.status === 200) {
-          JB2A_FREE_LIBRARY = xhr2.responseText.split('\n')
+          JB2A_FREE_LIBRARY = xhr2.responseText.split('\n').map(s => s.replace(/^\.\//, ""))
           console.log(`Loaded ${JB2A_FREE_LIBRARY.length} JB2A FREE records`)
         }
       }
@@ -163,6 +163,7 @@ export class JB2AChatProcessor extends ChatProcessor {
         line = line + " @" + pt.x + "," + pt.y
         this.matches(line)
         this.process(line)
+        this.send()
         resolve()
       }, {once: true})
     })
@@ -173,7 +174,12 @@ export class JB2AChatProcessor extends ChatProcessor {
     let files = []
     let m = this.match.groups
     if (m.click) {
-      ui.notifications.info("Please click the target location")
+//      if (this.msgs().quiet)
+//        ui.notifications.info("Please click the target location")
+//      else {
+        this.priv("Please click the target location", true)
+        this.send()
+ //     }
       await this.awaitClick(line.replace('@',''))
       return true;
     }

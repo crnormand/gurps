@@ -753,7 +753,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import'],
+      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       []
     )
   }
@@ -765,7 +765,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import'],
+      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       ['acc', 'bulk']
     )
   }
@@ -789,7 +789,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'import', 'relativelevel', 'pageref', 'notes'],
+      ['name', 'import', 'relativelevel', 'pageref', 'notes', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       ['points']
     )
   }
@@ -813,7 +813,7 @@ export class GurpsActorSheet extends ActorSheet {
         'maintain',
         'casttime',
         'duration',
-        'college',
+        'college', 'checkotf', 'duringotf', 'passotf', 'failotf'
       ],
       ['points']
     )
@@ -832,7 +832,7 @@ export class GurpsActorSheet extends ActorSheet {
     )
   }
 
-  async editItem(actor, path, obj, html, title, strprops, numprops, width = 550) {
+  async editItem(actor, path, obj, html, title, strprops, numprops, width = 560) {
     let dlgHtml = await renderTemplate(html, obj)
 
     let d = new Dialog(

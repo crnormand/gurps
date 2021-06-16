@@ -30,8 +30,8 @@ export default class ChatProcessor {
   send() {
     this.registry.send()
   }
-  priv(txt) {
-    this.registry.priv(txt)
+  priv(txt, force) {
+    this.registry.priv(txt, force)
   }
   pub(txt) {
     this.registry.pub(txt)

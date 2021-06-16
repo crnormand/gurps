@@ -76,6 +76,10 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     }
 
     chatdata['optlabel'] = optionalArgs.text || "";
+    if (failure)
+      if (opt.obj?.failotf) GURPS.executeOTF(opt.obj.failotf, optionalArgs.event)
+    else
+      if (opt.obj?.passotf) GURPS.executeOTF(opt.obj.passotf, optionalArgs.event)
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
