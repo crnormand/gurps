@@ -11,6 +11,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added /jb2a command
 - Fixed NaN skill levels for containers
 - Promoted tabbed view
+- Added /w @ to whisper to selected character(s)
 
 Release 0.10.5 - 6/12/2021
 

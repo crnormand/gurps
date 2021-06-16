@@ -89,6 +89,7 @@ GURPS.ClearLastActor = function (actor) {
 
 GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
 GURPS.PendingOTFs = []
+GURPS.IgnoreTokenSelect = false
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -740,6 +741,7 @@ async function performAction(action, actor, event, targets) {
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
+          tempAction.obj = skill
           // on a normal skill check, look for the skill with the highest level
           let getLevel = skill => parseInt(skill.level)
 
@@ -798,6 +800,10 @@ async function performAction(action, actor, event, targets) {
     }
     formula = '3d6'
     opt.action = bestAction
+    opt.obj = bestAction.obj
+    if (opt.obj?.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+    if (opt.obj?.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
+
     if (!!bestAction.costs) GURPS.addModifier(0, action.costs)
     if (!!bestAction.mod) GURPS.addModifier(bestAction.mod, bestAction.desc, targetmods)
     else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
@@ -830,6 +836,8 @@ async function performAction(action, actor, event, targets) {
         }
       }
       opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
+      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+      if (opt.obj.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
       formula = '3d6'
       if (!!action.costs) GURPS.addModifier(0, action.costs)
       if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
@@ -943,6 +951,7 @@ async function handleRoll(event, actor, targets) {
   let thing = ''
   let opt = { event: event }
   let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
+  if (!!actor) GURPS.SetLastActor(actor)
 
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
@@ -1839,6 +1848,7 @@ Hooks.once('ready', async function () {
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on('controlToken', (...args) => {
+    if (GURPS.IgnoreTokenSelect) return
     if (args.length > 1) {
       let a = args[0]?.actor
       if (!!a) {

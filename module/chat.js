@@ -74,6 +74,8 @@ class ChatProcessorRegistry {
           actor: !!GURPS.LastActor ? GURPS.LastActor.id : undefined,
         },
       }
+    this.msgs.quiet = false
+    this.msgs.oldQuiet = false
     this.msgs.data = chatmsgData
     this.msgs.event = event || { shiftKey: false, ctrlKey: false, data: {} }
     let answer = await this.processLines(message)
@@ -340,5 +342,5 @@ export default function addChatHooks() {
       }
     })
     
-  }) // End of "ready"
+  }) // End of "init"
 }

@@ -17,7 +17,7 @@ import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
-import { JB2AChatProcessor } from '../chat/jb2a.js'
+import { AnimChatProcessor } from '../chat/anim.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -45,8 +45,33 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
   ChatProcessors.registerProcessor(new ShowChatProcessor())
-  ChatProcessors.registerProcessor(new JB2AChatProcessor())
+  ChatProcessors.registerProcessor(new AnimChatProcessor())
   ChatProcessors.registerProcessor(new WaitChatProcessor())  
+  ChatProcessors.registerProcessor(new WhisperChatProcessor())  
+}
+
+class WhisperChatProcessor extends ChatProcessor {
+  help() {
+    return '/w &lt;players, characters or @&gt;'
+  }
+  matches(line) {
+    this.match = line.match(/^\/w +@ +(.+)$/)
+    return !!this.match
+  }
+  process(line) {
+    let destTokens = Array.from(game.user.targets)
+    if (destTokens.length == 0) destTokens = canvas.tokens.controlled
+    if (destTokens.length == 0) return false
+    let users = []
+    for (const token of destTokens) {
+      let owners = game.users.contents.filter(u => token.actor.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
+      for (const user of owners) 
+        if (!user.isGM) 
+          users.push(user)
+    }
+    if (users.length == 0) return false
+    this.registry.processLine('/w [' + users.map(u => u.name).join(',') + '] ' + this.match[1])
+  }
 }
 
 class ReimportChatProcessor extends ChatProcessor {

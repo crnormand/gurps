@@ -57,7 +57,7 @@ function getMousePos(foundryCanvas) {
   };
 }
 
-export class JB2AChatProcessor extends ChatProcessor {
+export class AnimChatProcessor extends ChatProcessor {
   help() {
     return '/anim &lt;stuff&gt;'
   }
@@ -161,10 +161,13 @@ export class JB2AChatProcessor extends ChatProcessor {
   }
   
   async awaitClick(line) {
+    GURPS.IgnoreTokenSelect = true
     return new Promise( (resolve, reject) => {
       window.addEventListener('mousedown', (e) => { 
         let pt = getMousePos(game.canvas)
         e.preventDefault()
+        e.stopPropagation()
+        GURPS.IgnoreTokenSelect = false
         line = line + " @" + parseInt(pt.x) + "," + parseInt(pt.y)
         this.registry.processLine(line)
         resolve()
@@ -176,12 +179,7 @@ export class JB2AChatProcessor extends ChatProcessor {
     if (!canvas.fxmaster) return this.errorExit("This macro depends on the FXMaster module. Make sure it is installed and enabled")
     let files = []
     let m = this.match.groups
-    if (m.click) {
-      this.priv("Please click the target location", true)
-      this.send()
-      await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/,''))
-      return true;
-    }
+    
     if (!!m.list) {
       if (game.modules.get(JB2A_PATREON)) {
         ui.notifications.info("Opening JB2A PATREON Animation list...")
@@ -230,7 +228,6 @@ export class JB2AChatProcessor extends ChatProcessor {
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
     if (destTokens.length == 0) destTokens = canvas.tokens.controlled
-    if (destTokens.length == 0 && srcToken) destTokens = [ srcToken ]
     if (m.self) destTokens = [ srcToken ]
     if (m.dest) {
       let d = m.dest.substr(1).split(',')
@@ -243,7 +240,15 @@ export class JB2AChatProcessor extends ChatProcessor {
         }
       }]
     }
-    if (destTokens.length == 0) return this.errorExit("You must select or target at least one token")
+    if (destTokens.length == 0) {
+      if (m.click) {
+        ui.notifications.info("Please click the target location")
+        this.send()
+        await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/,''))
+        return true;
+      } else
+        return this.errorExit("You must select or target at least one token")
+    }
     if (!srcToken) srcToken = destTokens[0]    // centered anims should show on target (or selection)
     let effect = {
       files: files,
@@ -264,7 +269,8 @@ export class JB2AChatProcessor extends ChatProcessor {
      }
     this.priv("Src:" + srcToken?.name)
     this.priv("Dest:" + destTokens.map(e => e.name))
-    this.priv("Possible:\n" + anim.map(e => e.split('/').pop()).join('\n'))
+    this.priv("Possible:")
+    this.priv(anim.map(e => e.split('/').pop()).join('\n'))
     let used = await this.drawEffect(effect, srcToken, destTokens)
     this.priv("Used:\n")
     this.priv(used.join("\n"))
