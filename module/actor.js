@@ -1227,6 +1227,13 @@ export class GurpsActor extends Actor {
       'data.encumbrance': es,
     }
   }
+  
+  _migrateOtfs(oldobj, newobj) {
+    newobj.checkotf = oldobj.checkotf
+    newobj.duringotf = oldobj.duringotf
+    newobj.passotf = oldobj.passotf
+    newobj.failotf = oldobj.failotf
+  }
 
   importCombatMeleeFromGCSv1(json, isFoundryGCS) {
     if (!json) return
@@ -1267,6 +1274,7 @@ export class GurpsActor extends Actor {
             if (!!old) {
               m.name = this._tryToMerge(m.name, old.name)
               m.notes = this._tryToMerge(m.notes, old.notes)
+              this._migrateOtfs(old, m)
             }
             GURPS.put(melee, m, index++)
           }
@@ -1321,6 +1329,7 @@ export class GurpsActor extends Actor {
             if (!!old) {
               r.name = this._tryToMerge(r.name, old.name)
               r.notes = this._tryToMerge(r.notes, old.notes)
+              this._migrateOtfs(old, r)
             }
             game.GURPS.put(ranged, r, index++)
           }
@@ -1507,7 +1516,8 @@ export class GurpsActor extends Actor {
         if (!!old) {
           sk.name = this._tryToMerge(sk.name, old.name)
           sk.notes = this._tryToMerge(sk.notes, old.notes)
-        }
+          this._migrateOtfs(old, sk)
+       }
         temp.push(sk)
       }
     }
@@ -1560,6 +1570,7 @@ export class GurpsActor extends Actor {
         if (!!old) {
           sp.name = this._tryToMerge(sp.name, old.name)
           sp.notes = this._tryToMerge(sp.notes, old.notes)
+          this._migrateOtfs(old, sp)
         }
         temp.push(sp)
       }

@@ -116,7 +116,7 @@ class ChatProcessorRegistry {
 
   async processLine(line) {
     line = line.trim()
-    let oldQuiet = this.msgs.quiet
+    this.msgs.oldQuiet = this.msgs.quiet
     if (line[0] == '!') {
       this.msgs.quiet = true
       line = line.substr(1)
@@ -133,7 +133,7 @@ class ChatProcessorRegistry {
         })
       } else this.pub(line) // If not handled, must just be public text
     }
-    this.msgs.quiet = oldQuiet
+    this.msgs.quiet = this.msgs.oldQuiet
     return answer
   }
 
@@ -229,6 +229,7 @@ class ChatProcessorRegistry {
   // Attempt to convert original chat data into a whisper (for use when the player presses SHIFT key to make roll private)
   setEventFlags(quiet, shift, ctrl) {
     this.msgs.quiet = quiet
+    this.msgs.oldQuiet = quiet
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
     this.msgs.data.whisper = [game.user.id]
     mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
@@ -310,7 +311,8 @@ export default function addChatHooks() {
         }
       } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
       let newContent = game.GURPS.gurpslink(c)
-      chatMessage.data.update({ content: newContent })
+      let update = { content: newContent }
+      chatMessage.data.update(update)
       return true
     })
 
@@ -328,5 +330,15 @@ export default function addChatHooks() {
         })
       })
     })
+    
+    Hooks.on('diceSoNiceRollComplete', async (app, html, msg) => {
+      let otf = GURPS.PendingOTFs.pop()
+      while (otf) {
+        let action = parselink(otf)
+        if (!!action.action) await GURPS.performAction(action.action, GURPS.LastActor || game.user)
+        otf = GURPS.PendingOTFs.pop()
+      }
+    })
+    
   }) // End of "ready"
 }

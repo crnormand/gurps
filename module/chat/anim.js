@@ -42,6 +42,7 @@ Hooks.on('ready', async () => {
   }
 })
 
+// stolen from the Ping module
 function getMousePos(foundryCanvas) {
   const mouse = foundryCanvas.app.renderer.plugins.interaction.mouse.global;
   const t = foundryCanvas.stage.worldTransform;
@@ -58,15 +59,17 @@ function getMousePos(foundryCanvas) {
 
 export class JB2AChatProcessor extends ChatProcessor {
   help() {
-    return '/jb2a &lt;stuff&gt;'
+    return '/anim &lt;stuff&gt;'
   }
 
-  drawEffect(effect, fromToken, toTokensArray) {
+  async drawEffect(effect, fromToken, toTokensArray) {
+    let used = []
     for (const to of toTokensArray)
       if (effect.centered) 
-        this.drawSpecialToward(effect, to, fromToken);
+        used = [...used, await this.drawSpecialToward(effect, to, fromToken)]
       else
-        this.drawSpecialToward(effect, fromToken, to);
+        used = [...used, await this.drawSpecialToward(effect, fromToken, to)]
+    return used
   }
   
   randFile(list) {
@@ -112,6 +115,7 @@ export class JB2AChatProcessor extends ChatProcessor {
     
     let possible = [...files]
     let count = effect.count
+    let used = []
     while (count > 0) {
       count --
       const effectData = foundry.utils.mergeObject(effect, {
@@ -135,10 +139,11 @@ export class JB2AChatProcessor extends ChatProcessor {
       game.socket.emit('module.fxmaster', effectData);
       // Throw effect locally
       canvas.fxmaster.playVideo(effectData)
-      this.priv(effectData.file.split('/').pop())
+      used.push(effectData.file.split('/').pop())
       console.log(GURPS.objToString(effectData))
       if (count > 0) await wait(effectData.delay)
     }
+    return used
   }
   
   errorExit(str) {
@@ -151,7 +156,7 @@ export class JB2AChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/jb2a *(?<list>list)? *(?<center>c|center)? *(?<scale>[\*][\d\.]+)? *(?<x>[\d\.]+)? *(?<y>[\d\.]+)? *(?<fudge>[\+-][\d]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@self)? *(?<dest>@\d+,\d+)? *(?<click>@)?/)   
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c|center)? *(?<scale>[\*][\d\.]+)? *(?<x>[\d\.]+)? *(?<y>[\d\.]+)? *(?<fudge>[\+-][\d]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@self)? *(?<dest>@\d+,\d+)? *(?<click>@)? *$/)   
     return !!this.match
   }
   
@@ -160,10 +165,8 @@ export class JB2AChatProcessor extends ChatProcessor {
       window.addEventListener('mousedown', (e) => { 
         let pt = getMousePos(game.canvas)
         e.preventDefault()
-        line = line + " @" + pt.x + "," + pt.y
-        this.matches(line)
-        this.process(line)
-        this.send()
+        line = line + " @" + parseInt(pt.x) + "," + parseInt(pt.y)
+        this.registry.processLine(line)
         resolve()
       }, {once: true})
     })
@@ -174,13 +177,9 @@ export class JB2AChatProcessor extends ChatProcessor {
     let files = []
     let m = this.match.groups
     if (m.click) {
-//      if (this.msgs().quiet)
-//        ui.notifications.info("Please click the target location")
-//      else {
-        this.priv("Please click the target location", true)
-        this.send()
- //     }
-      await this.awaitClick(line.replace('@',''))
+      this.priv("Please click the target location", true)
+      this.send()
+      await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/,''))
       return true;
     }
     if (!!m.list) {
@@ -266,7 +265,9 @@ export class JB2AChatProcessor extends ChatProcessor {
     this.priv("Src:" + srcToken?.name)
     this.priv("Dest:" + destTokens.map(e => e.name))
     this.priv("Possible:\n" + anim.map(e => e.split('/').pop()).join('\n'))
+    let used = await this.drawEffect(effect, srcToken, destTokens)
     this.priv("Used:\n")
-    this.drawEffect(effect, srcToken, destTokens)
+    this.priv(used.join("\n"))
+    this.send()
   }
 }

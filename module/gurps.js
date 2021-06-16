@@ -88,6 +88,7 @@ GURPS.ClearLastActor = function (actor) {
 }
 
 GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
+GURPS.PendingOTFs = []
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',

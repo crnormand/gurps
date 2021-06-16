@@ -30,6 +30,14 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     modifier += m.modint;
     maxtarget = await GURPS.applyModifierDesc(actor, m.desc) || maxtarget
   }
+  
+  actor = actor || game.user;
+  const speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor }
+  let messageData = {
+    user: game.user.id,
+    speaker: speaker,
+    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+  };
 
   let roll = null;  // Will be the Roll
   if (isTargeted) {		// This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
@@ -76,10 +84,14 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     }
 
     chatdata['optlabel'] = optionalArgs.text || "";
-    if (failure)
-      if (opt.obj?.failotf) GURPS.executeOTF(opt.obj.failotf, optionalArgs.event)
-    else
-      if (opt.obj?.passotf) GURPS.executeOTF(opt.obj.passotf, optionalArgs.event)
+
+    if (game.dice3d && !game.dice3d.messageHookDisabled) {
+      if (failure && optionalArgs.obj?.failotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.failotf)
+      if (!failure && optionalArgs.obj?.passotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.passotf)
+    } else {
+      if (failure && optionalArgs.obj?.failotf) GURPS.executeOTF(optionalArgs.obj.failotf, optionalArgs.event)
+      if (!failure && optionalArgs.obj?.passotf) GURPS.executeOTF(optionalArgs.obj.passotf, optionalArgs.event)
+    }
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
@@ -107,15 +119,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.html', chatdata)
 
-  actor = actor || game.user;
-  const speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor }
-  let messageData = {
-    user: game.user.id,
-    speaker: speaker,
-    content: message,
-    type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-    roll: JSON.stringify(roll)
-  };
+  messageData.content = message,
+  messageData.roll = JSON.stringify(roll)
 
   let whoCanSeeDice = null;
   if (optionalArgs.event?.shiftKey) {

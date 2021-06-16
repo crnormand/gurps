@@ -1031,7 +1031,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (this.options.editable && canConfigure) {
       let b = [
         {
-          label: isFull ? 'Combat View' : 'Full View',
+          label: isFull ? 'Tabbed View' : 'Full View',
           class: 'toggle',
           icon: 'fas fa-exchange-alt',
           onclick: ev => this._onToggleSheet(ev),
@@ -1066,7 +1066,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onToggleSheet(event) {
     event.preventDefault()
-    let newSheet = 'gurps.GurpsActorCombatSheet'
+    let newSheet = 'gurps.GurpsActorTabSheet'
 
     const original =
       this.actor.getFlag('core', 'sheetClass') ||
