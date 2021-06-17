@@ -2287,6 +2287,7 @@ export class GurpsActor extends Actor {
   }
 
   changeOneThirdStatus(option, flag) {
+    if (this.isOwner)
     this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
       this.calculateDerivedValues()
 

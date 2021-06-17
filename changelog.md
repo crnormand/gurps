@@ -12,6 +12,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed NaN skill levels for containers
 - Promoted tabbed view
 - Added /w @ to whisper to selected character(s)
+- Fixed "user does not have permission to update" when tired/reeling status changes
 
 Release 0.10.5 - 6/12/2021
 

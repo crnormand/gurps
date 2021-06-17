@@ -66,9 +66,9 @@ export class AnimChatProcessor extends ChatProcessor {
     let used = []
     for (const to of toTokensArray)
       if (effect.centered) 
-        used = [...used, await this.drawSpecialToward(effect, to, fromToken)]
+        used = [...used, ...await this.drawSpecialToward(effect, to, fromToken)]
       else
-        used = [...used, await this.drawSpecialToward(effect, fromToken, to)]
+        used = [...used, ...await this.drawSpecialToward(effect, fromToken, to)]
     return used
   }
   
@@ -135,7 +135,7 @@ export class AnimChatProcessor extends ChatProcessor {
         effectData.scale.x = s
         effectData.scale.y = s
       }
-      if (Math.random() < 0.5) effectData.scale.y *= -1 // randomly flip vert orientation
+      if (!effect.centered && Math.random() < 0.5) effectData.scale.y *= -1 // randomly flip vert orientation
       game.socket.emit('module.fxmaster', effectData);
       // Throw effect locally
       canvas.fxmaster.playVideo(effectData)
@@ -191,7 +191,7 @@ export class AnimChatProcessor extends ChatProcessor {
       return true
     }
     let anim = m.file
-    if (!anim) return errorExit("Must provide animation name")
+    if (!anim) return this.errorExit("Must provide animation name")
     if (anim[0] == '/') 
       files = [anim.substr(1)]
     else {
@@ -272,8 +272,7 @@ export class AnimChatProcessor extends ChatProcessor {
     this.priv("Possible:")
     this.priv(anim.map(e => e.split('/').pop()).join('\n'))
     let used = await this.drawEffect(effect, srcToken, destTokens)
-    this.priv("Used:\n")
-    this.priv(used.join("\n"))
+    this.priv("Used:\n" + used.join('\n'))
     this.send()
   }
 }
