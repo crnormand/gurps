@@ -131,7 +131,7 @@ export class AnimChatProcessor extends ChatProcessor {
       effectData.filedata = file
       effectData.file = file.file
       if (!effectData.centered) {
-        let s = (effectData.distance + effectData.fudge) / ((1 - effectData.anchor.x) * file.width) 
+        let s = (effectData.distance * (1 + effectData.fudge)) / ((1 - effectData.anchor.x) * file.width) 
         effectData.scale.x = s
         effectData.scale.y = s
       }
@@ -156,7 +156,7 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c|center)? *(?<scale>[\*][\d\.]+)? *(?<x>[\d\.]+)? *(?<y>[\d\.]+)? *(?<fudge>[\+-][\d]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@self)? *(?<dest>@\d+,\d+)? *(?<click>@)? *$/)   
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c|center)? *(?<scale>[\*][\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@self)? *(?<dest>@\d+,\d+)? *(?<click>@)? *$/)   
     return !!this.match
   }
   
@@ -209,6 +209,7 @@ export class AnimChatProcessor extends ChatProcessor {
       files = anim.map(e => path + e) 
     }
         
+    let opts = []
     let scale = 1.0
     let centered = !!m.center
     let x = centered ? 0.5 : 0
@@ -216,14 +217,26 @@ export class AnimChatProcessor extends ChatProcessor {
     let fudge = 0
     let count = 1
     let delay = 1000
-    if (!!m.scale) scale = parseFloat(m.scale.substr(1))  
-    if (!!m.count) count = parseInt(m.count.slice(0, -1))
-    if (!!m.delay) delay = 1000 * parseFloat(m.delay.substr(1))
-  
-    if (!!m.x) x = parseFloat(m.x)
-    if (!!m.y) y = parseFloat(m.y)
-    if (!!m.fudge) fudge = parseInt(m.fudge)
-
+    if (!!m.scale) { 
+      scale = parseFloat(m.scale.substr(1))  
+      opts.push("Scale:" + scale)
+    }
+    if (!!m.count) {
+      count = parseInt(m.count.slice(0, -1))
+      opts.push("Count:" + count)
+    }
+    if (!!m.delay) {
+      delay = 1000 * parseFloat(m.delay.substr(1))
+      opts.push("Delay:" + m.delay.substr(1))
+    }
+    if (!!m.x) {
+      x = parseFloat(m.x.substr(1))
+      opts.push("Start:-" + x)
+    }
+    if (!!m.fudge) {
+      fudge = parseFloat(m.fudge.substr(1))
+      opts.push("End:+" + fudge)
+    } 
     let srcToken = canvas.tokens.placeables.find(e => e.actor == GURPS.LastActor)
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
@@ -269,6 +282,7 @@ export class AnimChatProcessor extends ChatProcessor {
      }
     this.priv("Src:" + srcToken?.name)
     this.priv("Dest:" + destTokens.map(e => e.name))
+    this.priv("Opts: " + opts.join(', '))
     this.priv("Possible:")
     this.priv(anim.map(e => e.split('/').pop()).join('\n'))
     let used = await this.drawEffect(effect, srcToken, destTokens)
