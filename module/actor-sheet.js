@@ -18,7 +18,7 @@ export class GurpsActorSheet extends ActorSheet {
       template: 'systems/gurps/templates/actor-sheet-gcs.html',
       width: 800,
       height: 800,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
@@ -1246,7 +1246,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/actor-tab-sheet.html',
       width: 860,
       height: 600,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1260,7 +1260,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/combat-sheet.html',
       width: 600,
       height: 275,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1277,7 +1277,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       ],
       width: 880,
       height: 800,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1427,7 +1427,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/simplified.html',
       width: 820,
       height: 900,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
