@@ -25,10 +25,11 @@ import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ItemImporter } from '../module/item-import.js'
-import { Maneuvers, GURPSTokenHUD } from '../module/actor/maneuver.js'
+import { GURPSTokenHUD } from '../module/actor/maneuver.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
+GURPS.Migration = Migration
 
 GURPS.DEBUG = false
 GURPS.BANNER = `
@@ -599,7 +600,7 @@ async function executeOTF(string, priv = false, event) {
   let action = parselink(string)
   let answer = false
   if (!!action.action) {
-    if (!event) event = { shiftKey: priv, ctrlKey: false, data:{} }
+    if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
     answer = await GURPS.performAction(action.action, GURPS.LastActor, event)
   } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
   return answer
@@ -801,7 +802,7 @@ async function performAction(action, actor, event, targets) {
     formula = '3d6'
     opt.action = bestAction
     opt.obj = bestAction.obj
-    if (opt.obj?.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+    if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
     if (opt.obj?.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
 
     if (!!bestAction.costs) GURPS.addModifier(0, action.costs)
@@ -836,7 +837,7 @@ async function performAction(action, actor, event, targets) {
         }
       }
       opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
-      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
       formula = '3d6'
       if (!!action.costs) GURPS.addModifier(0, action.costs)
@@ -979,8 +980,7 @@ async function handleRoll(event, actor, targets) {
     if (!k) k = element.dataset.key
     if (!!k) {
       opt.obj = getProperty(actor.data, k) // During the roll, we may want to extract something from the object
-      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event))
-        return
+      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
     }
     formula = '3d6'

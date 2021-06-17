@@ -7,7 +7,17 @@ export const MOVE_NONE = 'none'
 export const MOVE_FULL = 'full'
 export const MOVE_HALF = 'half'
 
-export const ManeuverData = {
+class Maneuver {
+  constructor(data) {
+    this.id = data.id
+    this.move = data.move
+    this.defense = data.defense
+    this.icon = data.icon
+    this.label = data.label
+  }
+}
+
+const ManeuverData = {
   do_nothing: {
     id: 'do_nothing',
     move: MOVE_NONE,
@@ -200,8 +210,12 @@ export class Maneuvers {
     return list.filter(it => Maneuvers.isManeuverIcon(it))
   }
 
+  static getManeuver(maneuverText) {
+    return ManeuverData[maneuverText]
+  }
+
   static getIcon(maneuverText) {
-    return ManeuverData[maneuverText].icon
+    return this.getManeuver(maneuverText).icon
   }
 
   static getData() {

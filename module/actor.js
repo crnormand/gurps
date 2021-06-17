@@ -504,7 +504,7 @@ export class GurpsActor extends Actor {
    */
   async _setManeuverEffect(token, maneuverText) {
     let icon = Maneuvers.getIcon(maneuverText)
-    let maneuvers = Maneuvers.getManeuverIcons(token.data.effects).filter(it => it !== icon)
+    let maneuvers = Maneuvers.getManeuverIcons(token.data.effects)
     for (const m of maneuvers) {
       await token.toggleEffect(m, { active: false }) // turn all of them off!
     }
@@ -1307,7 +1307,7 @@ export class GurpsActor extends Actor {
       'data.encumbrance': es,
     }
   }
-  
+
   _migrateOtfs(oldobj, newobj) {
     newobj.checkotf = oldobj.checkotf
     newobj.duringotf = oldobj.duringotf
@@ -1597,7 +1597,7 @@ export class GurpsActor extends Actor {
           sk.name = this._tryToMerge(sk.name, old.name)
           sk.notes = this._tryToMerge(sk.notes, old.notes)
           this._migrateOtfs(old, sk)
-       }
+        }
         temp.push(sk)
       }
     }
@@ -2373,38 +2373,38 @@ export class GurpsActor extends Actor {
 
   changeOneThirdStatus(option, flag) {
     if (this.isOwner)
-    this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
-      this.calculateDerivedValues()
+      this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
+        this.calculateDerivedValues()
 
-      let i18nMessage =
-        option === 'isReeling'
-          ? flag
-            ? 'GURPS.chatTurnOnReeling'
-            : 'GURPS.chatTurnOffReeling'
-          : flag
-          ? 'GURPS.chatTurnOnTired'
-          : 'GURPS.chatTurnOffTired'
+        let i18nMessage =
+          option === 'isReeling'
+            ? flag
+              ? 'GURPS.chatTurnOnReeling'
+              : 'GURPS.chatTurnOffReeling'
+            : flag
+            ? 'GURPS.chatTurnOnTired'
+            : 'GURPS.chatTurnOffTired'
 
-      let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling', 'B419') : i18n('GURPS.pdfTired', 'B426')
-      let msg = i18n_f(i18nMessage, {
-        name: this.displayname,
-        classStart: '<span class="pdflink">',
-        classEnd: '</span>',
-        pdfref: pdfref,
+        let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling', 'B419') : i18n('GURPS.pdfTired', 'B426')
+        let msg = i18n_f(i18nMessage, {
+          name: this.displayname,
+          classStart: '<span class="pdflink">',
+          classEnd: '</span>',
+          pdfref: pdfref,
+        })
+
+        renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+          let users = this.getOwners()
+          let ids = users.map(it => it.id)
+          let messageData = {
+            content: content,
+            whisper: ids,
+            type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+          }
+          ChatMessage.create(messageData)
+          ui.combat.render()
+        })
       })
-
-      renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
-        let users = this.getOwners()
-        let ids = users.map(it => it.id)
-        let messageData = {
-          content: content,
-          whisper: ids,
-          type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        }
-        ChatMessage.create(messageData)
-        ui.combat.render()
-      })
-    })
   }
 
   findEquipmentByName(pattern, otherFirst = false) {
