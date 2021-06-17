@@ -1868,17 +1868,14 @@ body {
   height: 100%;
 }
 
-/*
- * display: block breaks the Foundry's handling of tabs. Find another solution or rename this style.
- */
-.sheet-tabs {
-  /* display: block; */
+.gurps-sheet-tabs {
+  display: block;
   height: 40px;
   border-top: 1px solid #aaa;
   border-bottom: 1px solid #aaa;
 }
 
-.sheet-tabs li {
+.gurps-sheet-tabs li {
   display: inline-block;
   margin: 0 10px 0 10px;
 }

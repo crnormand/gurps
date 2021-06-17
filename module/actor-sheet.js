@@ -18,7 +18,7 @@ export class GurpsActorSheet extends ActorSheet {
       template: 'systems/gurps/templates/actor-sheet-gcs.html',
       width: 800,
       height: 800,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
@@ -754,7 +754,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import'],
+      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       []
     )
   }
@@ -766,7 +766,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import'],
+      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       ['acc', 'bulk']
     )
   }
@@ -790,7 +790,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'import', 'relativelevel', 'pageref', 'notes'],
+      ['name', 'import', 'relativelevel', 'pageref', 'notes', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       ['points']
     )
   }
@@ -814,7 +814,7 @@ export class GurpsActorSheet extends ActorSheet {
         'maintain',
         'casttime',
         'duration',
-        'college',
+        'college', 'checkotf', 'duringotf', 'passotf', 'failotf'
       ],
       ['points']
     )
@@ -833,7 +833,7 @@ export class GurpsActorSheet extends ActorSheet {
     )
   }
 
-  async editItem(actor, path, obj, html, title, strprops, numprops, width = 550) {
+  async editItem(actor, path, obj, html, title, strprops, numprops, width = 560) {
     let dlgHtml = await renderTemplate(html, obj)
 
     let d = new Dialog(
@@ -1032,7 +1032,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (this.options.editable && canConfigure) {
       let b = [
         {
-          label: isFull ? 'Combat View' : 'Full View',
+          label: isFull ? 'Tabbed View' : 'Full View',
           class: 'toggle',
           icon: 'fas fa-exchange-alt',
           onclick: ev => this._onToggleSheet(ev),
@@ -1067,7 +1067,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onToggleSheet(event) {
     event.preventDefault()
-    let newSheet = 'gurps.GurpsActorCombatSheet'
+    let newSheet = 'gurps.GurpsActorTabSheet'
 
     const original =
       this.actor.getFlag('core', 'sheetClass') ||
@@ -1247,7 +1247,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/actor-tab-sheet.html',
       width: 860,
       height: 600,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1261,7 +1261,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/combat-sheet.html',
       width: 600,
       height: 275,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1278,7 +1278,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       ],
       width: 880,
       height: 800,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1428,7 +1428,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/simplified.html',
       width: 820,
       height: 900,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }

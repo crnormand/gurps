@@ -12,11 +12,12 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
+import { AnimChatProcessor } from '../chat/anim.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -44,6 +45,33 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new ForceMigrateChatProcessor())
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
   ChatProcessors.registerProcessor(new ShowChatProcessor())
+  ChatProcessors.registerProcessor(new AnimChatProcessor())
+  ChatProcessors.registerProcessor(new WaitChatProcessor())  
+  ChatProcessors.registerProcessor(new WhisperChatProcessor())  
+}
+
+class WhisperChatProcessor extends ChatProcessor {
+  help() {
+    return '/w &lt;players, characters or @&gt;'
+  }
+  matches(line) {
+    this.match = line.match(/^\/w +@ +(.+)$/)
+    return !!this.match
+  }
+  process(line) {
+    let destTokens = Array.from(game.user.targets)
+    if (destTokens.length == 0) destTokens = canvas.tokens.controlled
+    if (destTokens.length == 0) return false
+    let users = []
+    for (const token of destTokens) {
+      let owners = game.users.contents.filter(u => token.actor.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
+      for (const user of owners) 
+        if (!user.isGM) 
+          users.push(user)
+    }
+    if (users.length == 0) return false
+    this.registry.processLine('/w [' + users.map(u => u.name).join(',') + '] ' + this.match[1])
+  }
 }
 
 class ReimportChatProcessor extends ChatProcessor {
@@ -68,6 +96,20 @@ class ReimportChatProcessor extends ChatProcessor {
     }
     if (actornames.length == 0) actors = allPlayerActors
     actors.forEach(e => e.importCharacter())
+  }
+}
+
+class WaitChatProcessor extends ChatProcessor {
+  help() {
+    return '/wait &lt;milliseconds&gt;'
+  }
+  matches(line) {
+    this.match = line.match(/^\/wait +(\d+)/)
+    return this.match
+  }
+  async process(line) {
+    this.priv(line)
+    await wait(+this.match[1])
   }
 }
 
@@ -339,10 +381,10 @@ class RollChatProcessor extends ChatProcessor {
         // only need to show modifiers, everything else does something.
         this.priv(line)
       else this.send() // send what we have
-      await GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr') }) // We can't await this until we rewrite Modifiers.js to use sockets to update stacks
-      return true
-    } // Looks like a /roll OtF, but didn't parse as one
+      return await GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr'), ctrlKey: false, data:{} }) 
+     } // Looks like a /roll OtF, but didn't parse as one
     else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '[${m[2]}]'`)
+    return false
   }
 }
 
@@ -444,8 +486,8 @@ class QtyChatProcessor extends ChatProcessor {
         if (!!k) {
           key = k
           eqt = getProperty(actor.data, key)
-          // if its not equipment, ignore.
-          if (eqt.count == null) eqt = null
+          // if its not equipment, try to find equipment with that name
+          if (eqt.count == null) [eqt, key] = actor.findEquipmentByName(pattern = eqt.name, !!m2[1])
         }
       }
       if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
