@@ -156,7 +156,7 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c|center)? *(?<scale>[\*][\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@self)? *(?<dest>@\d+,\d+)? *(?<click>@)? *$/)   
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c|center)? *(?<scale>[\*][\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@(s|self|src))? *(?<dest>@\d+,\d+)? *(?<click>@)? *$/)   
     return !!this.match
   }
   
@@ -254,7 +254,7 @@ export class AnimChatProcessor extends ChatProcessor {
       }]
     }
     if (destTokens.length == 0) {
-      if (m.click) {
+      if (m.click || true) {
         ui.notifications.info("Please click the target location")
         this.send()
         await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/,''))
