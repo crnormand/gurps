@@ -385,7 +385,7 @@
                         <div class="list_note">{{{gurpslink this.notes}}}</div>
                     </div>
                     <div class="usage  center">{{this.mode}}</div>
-                    <div class="level rollable  center" data-name="{{this.name}} ({{this.mode}})"
+                    <div class="level rollable  center" data-name="{{this.name}} ({{this.mode}})" data-key="data.melee.{{@key}}"
                          data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
                     <div class="parry rollable  center" data-otf="Parry">{{this.parry}}</div>
                     <div class="block rollable  center" data-otf="Block">{{this.block}}</div>
@@ -482,7 +482,7 @@
                         <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
                             @root}}}</div>
                     </div>
-                    <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}   center" data-name="{{this.name}}"
+                    <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}   center" data-name="{{this.name}}" data-key="data.skills.{{@key}}"
                          data-otf='S:"{{this.name}}"'>{{this.level}}
                     </div>
                     <div class="rsl satisfiedY  center">{{this.relativelevel}}</div>
@@ -524,7 +524,7 @@
                     <div class="mana_maintain satisfiedY  center">{{this.maintain}}</div>
                     <div class="time satisfiedY  center">{{this.casttime}}</div>
                     <div class="duration satisfiedY  center">{{this.duration}}</div>
-                    <div class="sl satisfiedY rollable  center" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}
+                    <div class="sl satisfiedY rollable  center" data-name="{{this.name}}" data-otf='S:"{{this.name}}"' data-key="data.spells.{{@key}}">{{this.level}}
                     </div>
                     <div class="rsl satisfiedY  center">{{this.difficulty}}</div>
                     <div class="pts satisfiedY  center">{{this.points}}</div>

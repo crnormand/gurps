@@ -88,6 +88,8 @@ GURPS.ClearLastActor = function (actor) {
 }
 
 GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
+GURPS.PendingOTFs = []
+GURPS.IgnoreTokenSelect = false
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -590,13 +592,17 @@ function trim(s) {
 }
 GURPS.trim = trim
 
-function executeOTF(string, priv = false) {
-  if (!string) return
+async function executeOTF(string, priv = false, event) {
+  if (!string) return false
   string = string.trim()
   if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
   let action = parselink(string)
-  if (!!action.action) GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: priv, ctrlKey: false })
-  else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
+  let answer = false
+  if (!!action.action) {
+    if (!event) event = { shiftKey: priv, ctrlKey: false, data:{} }
+    answer = await GURPS.performAction(action.action, GURPS.LastActor, event)
+  } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
+  return answer
 }
 GURPS.executeOTF = executeOTF
 
@@ -735,6 +741,7 @@ async function performAction(action, actor, event, targets) {
         if (!skill) {
           attempts.push(tempAction.name)
         } else {
+          tempAction.obj = skill
           // on a normal skill check, look for the skill with the highest level
           let getLevel = skill => parseInt(skill.level)
 
@@ -793,6 +800,10 @@ async function performAction(action, actor, event, targets) {
     }
     formula = '3d6'
     opt.action = bestAction
+    opt.obj = bestAction.obj
+    if (opt.obj?.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+    if (opt.obj?.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
+
     if (!!bestAction.costs) GURPS.addModifier(0, action.costs)
     if (!!bestAction.mod) GURPS.addModifier(bestAction.mod, bestAction.desc, targetmods)
     else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
@@ -825,6 +836,8 @@ async function performAction(action, actor, event, targets) {
         }
       }
       opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
+      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+      if (opt.obj.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
       formula = '3d6'
       if (!!action.costs) GURPS.addModifier(0, action.costs)
       if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
@@ -938,6 +951,7 @@ async function handleRoll(event, actor, targets) {
   let thing = ''
   let opt = { event: event }
   let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
+  if (!!actor) GURPS.SetLastActor(actor)
 
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
@@ -961,7 +975,14 @@ async function handleRoll(event, actor, targets) {
 
     if (opt.text === text) opt.text = ''
     else opt.text = "<span style='font-size:85%'>(" + opt.text + ')</span>'
-    if (!!element.dataset.key) opt.obj = GURPS.decode(actor.data, element.dataset.key) // During the roll, we may want to extract something from the object
+    let k = $(element).closest('[data-key]').attr('data-key')
+    if (!k) k = element.dataset.key
+    if (!!k) {
+      opt.obj = getProperty(actor.data, k) // During the roll, we may want to extract something from the object
+      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event))
+        return
+      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+    }
     formula = '3d6'
     let t = element.innerText
     if (!!t) {
@@ -1827,6 +1848,7 @@ Hooks.once('ready', async function () {
 
   // Keep track of which token has been activated, so we can determine the last actor for the Modifier Bucket
   Hooks.on('controlToken', (...args) => {
+    if (GURPS.IgnoreTokenSelect) return
     if (args.length > 1) {
       let a = args[0]?.actor
       if (!!a) {

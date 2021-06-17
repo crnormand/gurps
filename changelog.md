@@ -6,6 +6,13 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 - Merged in Rinickolous/neck's GCS Equipment importer!
 - Fixed ST based ranged calc so it will also apply to Items
+- Fixed order dependency when applying Item bonuses
+- Kirlian Silvestre/3darkman, fixed Item icon hover picture
+- Added /jb2a command
+- Fixed NaN skill levels for containers
+- Promoted tabbed view
+- Added /w @ to whisper to selected character(s)
+- Fixed "user does not have permission to update" when tired/reeling status changes
 
 Release 0.10.5 - 6/12/2021
 

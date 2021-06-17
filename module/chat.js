@@ -56,7 +56,9 @@ class ChatProcessorRegistry {
   // Make a pre-emptive decision if we are going to handle any of the lines in this message
   willTryToHandle(message) {
     let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
-    for (const line of lines) for (const p of this._processors) if (p.matches(line)) return true
+    for (const line of lines) 
+      for (const p of this._processors) 
+        if (line[0] == '!' ? p.matches(line.substr(1)) : p.matches(line)) return true
     return false
   }
 
@@ -72,6 +74,8 @@ class ChatProcessorRegistry {
           actor: !!GURPS.LastActor ? GURPS.LastActor.id : undefined,
         },
       }
+    this.msgs.quiet = false
+    this.msgs.oldQuiet = false
     this.msgs.data = chatmsgData
     this.msgs.event = event || { shiftKey: false, ctrlKey: false, data: {} }
     let answer = await this.processLines(message)
@@ -114,6 +118,11 @@ class ChatProcessorRegistry {
 
   async processLine(line) {
     line = line.trim()
+    this.msgs.oldQuiet = this.msgs.quiet
+    if (line[0] == '!') {
+      this.msgs.quiet = true
+      line = line.substr(1)
+    }
     let [handled, answer] = await this.handle(line)
     if (!handled) {
       if (line.trim().startsWith('/')) {
@@ -126,6 +135,7 @@ class ChatProcessorRegistry {
         })
       } else this.pub(line) // If not handled, must just be public text
     }
+    this.msgs.quiet = this.msgs.oldQuiet
     return answer
   }
 
@@ -205,8 +215,8 @@ class ChatProcessorRegistry {
   }
 
   // Stack up as many private messages as we can, until we need to print a public one (to reduce the number of chat messages)
-  priv(txt) {
-    if (this.msgs.quiet) return;
+  priv(txt, force = false) {
+    if (this.msgs.quiet && ! force) return;
     if (this.msgs.pub.length > 0) this.send()
     this.msgs.priv.push(txt)
   }
@@ -221,6 +231,7 @@ class ChatProcessorRegistry {
   // Attempt to convert original chat data into a whisper (for use when the player presses SHIFT key to make roll private)
   setEventFlags(quiet, shift, ctrl) {
     this.msgs.quiet = quiet
+    this.msgs.oldQuiet = quiet
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
     this.msgs.data.whisper = [game.user.id]
     mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
@@ -302,7 +313,8 @@ export default function addChatHooks() {
         }
       } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
       let newContent = game.GURPS.gurpslink(c)
-      chatMessage.data.update({ content: newContent })
+      let update = { content: newContent }
+      chatMessage.data.update(update)
       return true
     })
 
@@ -320,5 +332,15 @@ export default function addChatHooks() {
         })
       })
     })
-  }) // End of "ready"
+    
+    Hooks.on('diceSoNiceRollComplete', async (app, html, msg) => {
+      let otf = GURPS.PendingOTFs.pop()
+      while (otf) {
+        let action = parselink(otf)
+        if (!!action.action) await GURPS.performAction(action.action, GURPS.LastActor || game.user)
+        otf = GURPS.PendingOTFs.pop()
+      }
+    })
+    
+  }) // End of "init"
 }
