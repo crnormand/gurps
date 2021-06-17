@@ -6,41 +6,49 @@ import { i18n, makeRegexPatternFrom, splitArgs, wait} from '../../lib/utilities.
 
 const JB2A_PATREON = 'jb2a_patreon'
 const JB2A_FREE = 'JB2A_DnD5e'
-const JB2A_PATREON_DATA = `systems/gurps/utils/${JB2A_PATREON}.txt`
-const JB2A_FREE_DATA = `systems/gurps/utils/${JB2A_FREE}.txt`
-let JB2A_PATREON_LIBRARY = []
-let JB2A_FREE_LIBRARY = []
+const JK_ANIM_SPELL = 'animated-spell-effects'
+const JK_ANIM_SPELL_CARTOON = 'animated-spell-effects-cartoon'
+const JAAMOD = 'jaamod'
+
+let ANIM_LIBRARY = []
 
 Hooks.on('ready', async () => {
+  if (!addToLibrary(JB2A_PATREON)) 
+    addToLibrary(JB2A_FREE)
+  addToLibrary(JK_ANIM_SPELL)
+  addToLibrary(JK_ANIM_SPELL_CARTOON)
+  addToLibrary(JAAMOD)
+})
 
-  if (game.modules.get(JB2A_PATREON)) {
+function addToLibrary(module) {
+  if (game.modules.get(module)) {
     let xhr = new XMLHttpRequest();
-    xhr.open('GET', JB2A_PATREON_DATA, true);
+    xhr.open('GET', 'systems/gurps/utils/' + module + '.txt', true);
     xhr.responseType = 'text';
     xhr.onload = function () {
       if (xhr.readyState === xhr.DONE) {
         if (xhr.status === 200) {
-          JB2A_PATREON_LIBRARY = xhr.responseText.split('\n').map(s => s.replace(/^\.\//, ""))
-          console.log(`Loaded ${JB2A_PATREON_LIBRARY.length} JB2A PATREON records`)
+          let list = xhr.responseText.split('\n').map(s => s.replace(/^\.\//, ""))
+          list = list.map(s => s.replace(/,width=/, ",W:"))
+          list = list.map(s => `modules/${module}/${s}`)
+          list = list.filter(f => fileWidth(f).width > 0)
+          console.log(`Loaded ${list.length} ${module} records`)
+          ANIM_LIBRARY = [...ANIM_LIBRARY, ...list]
         }
       }
     }
-    xhr.send(null);
-  } else if (game.modules.get(JB2A_FREE)) {
-    let xhr2 = new XMLHttpRequest();
-    xhr2.open('GET', JB2A_FREE_DATA, true);
-    xhr2.responseType = 'text';
-    xhr2.onload = function () {
-      if (xhr2.readyState === xhr2.DONE) {
-        if (xhr2.status === 200) {
-          JB2A_FREE_LIBRARY = xhr2.responseText.split('\n').map(s => s.replace(/^\.\//, ""))
-          console.log(`Loaded ${JB2A_FREE_LIBRARY.length} JB2A FREE records`)
-        }
-      }
-    }
-    xhr2.send(null);
+    xhr.send(null)
+    return true
   }
-})
+  return false
+}
+
+function fileWidth(entry) {
+  let m = entry.match(/\.webm,W:(\d+)/)
+  if (!!m) return { file: entry.split(",")[0], width: m[1] }
+  console.log("Unknown format: " + entry)
+  return { file: '', width: 0 }
+}
 
 // stolen from the Ping module
 function getMousePos(foundryCanvas) {
@@ -76,6 +84,7 @@ export class AnimChatProcessor extends ChatProcessor {
     let i = Math.floor(Math.random() * list.length)
     return list.splice(i,1)
   }
+  
     
   async drawSpecialToward(effect, tok1, tok2) {
     const origin = {
@@ -89,19 +98,19 @@ export class AnimChatProcessor extends ChatProcessor {
     // Compute angle
     const deltaX = target.x - origin.x
     const deltaY = target.y - origin.y
-    let rotation = Math.atan2(deltaY, deltaX)
+    let rotation = effect.centered ? (effect.rotation * Math.PI / 180) : Math.atan2(deltaY, deltaX)
     let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) 
     
     let files = []
     if (effect.centered) 
-      files = effect.files.map(f => { return { file: f }})
+      files = effect.files.map(f => fileWidth(f))
     else {
       let best = 0
       for (const file of effect.files) {
-        let m = file.match(/(?<w>\d+)x\d+\.webm/)
-        if (!m) m = file.match(/(?<w>\d+)\.webm/)
-        let s = distance / m.groups.w
-        files.push({ file: file, scale: s, width: m.groups.w})
+        let f = fileWidth(file)
+        let s = distance / f.width
+        f.scale = s
+        files.push(f)
         if (s >= best && s < 1.0) best = s
       }
       if (best == 0) {
@@ -140,6 +149,7 @@ export class AnimChatProcessor extends ChatProcessor {
       // Throw effect locally
       canvas.fxmaster.playVideo(effectData)
       used.push(effectData.file.split('/').pop())
+      //used.push(effectData.file)
       console.log(GURPS.objToString(effectData))
       if (count > 0) await wait(effectData.delay)
     }
@@ -155,11 +165,6 @@ export class AnimChatProcessor extends ChatProcessor {
     return Math.random() < 0.5 ? -1 * y: y  // used to randomize Y scale (give different 'looks' for animation)
   }
 
-  matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c|center)? *(?<scale>[\*][\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@(s|self|src))? *(?<dest>@\d+,\d+)? *(?<click>@)? *$/)   
-    return !!this.match
-  }
-  
   async awaitClick(line) {
     GURPS.IgnoreTokenSelect = true
     return new Promise( (resolve, reject) => {
@@ -174,44 +179,64 @@ export class AnimChatProcessor extends ChatProcessor {
       }, {once: true})
     })
   }
+  
+  async displaylist() {
+    let list = ANIM_LIBRARY.map(s => s.replace(/modules\//,""))
+    list = [ "Total: " + ANIM_LIBRARY.length, ...list]
+    
+    let t = await renderTemplate('systems/gurps/templates/import-stat-block.html', { block: list.join('\n') })
+    //let t = await renderTemplate('systems/gurps/templates/chat-processing.html', { lines: list })
+    let d = new Dialog(
+      {
+        title: `Anim library`,
+        content: t,
+        buttons: {
+           no: {
+            icon: '<i class="fas fa-check"></i>',
+            label: 'OK',
+          },
+        },
+        default: false,
+      },
+      {
+        width: 1200,
+        height: 800,
+      }
+    )
+    d.render(true)
+  }
 
+  matches(line) { 
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c\d*)? *(?<scale>\*[-\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@(s|self|src))? *(?<dest>@\d+,\d+)?/)   
+    return !!this.match
+  }
+  
   async process(line) {
     if (!canvas.fxmaster) return this.errorExit("This macro depends on the FXMaster module. Make sure it is installed and enabled")
     let files = []
     let m = this.match.groups
-    
+    if (ANIM_LIBRARY.length == 0) return this.errorExit("This macro depends on one of the JB2A modules (free or patreon) or Animated Spell Effects. Make sure at least one is installed.")
     if (!!m.list) {
-      if (game.modules.get(JB2A_PATREON)) {
-        ui.notifications.info("Opening JB2A PATREON Animation list...")
-        window.open(new URL(JB2A_PATREON_DATA, window.location.origin))
-      } else if (game.modules.get(JB2A_FREE)) {
-        ui.notifications.info("Opening JB2A FREE Animation list...")
-        window.open(new URL(JB2A_FREE_DATA, window.location.origin))
-      } else return this.errorExit("This macro depends on one of the JB2A modules (free or patreon). Make sure at least one is installed.")     
-      return true
+      this.displaylist()
+      return true;
     }
-    let anim = m.file
-    if (!anim) return this.errorExit("Must provide animation name")
-    if (anim[0] == '/') 
-      files = [anim.substr(1)]
+    if (!m.file) return this.errorExit("Must provide animation name")
+    if (m.file[0] == '/') 
+      files = [m.file.substr(1)]
     else {
-      var path, lib
-      if (game.modules.get(JB2A_PATREON)) {
-        path = `modules/${JB2A_PATREON}/Library/`
-        lib = JB2A_PATREON_LIBRARY
-      } else if (game.modules.get(JB2A_FREE)) {
-        path = `modules/${JB2A_FREE}/Library/`
-        lib = JB2A_FREE_LIBRARY
-      } else return this.errorExit("This macro depends on one of the JB2A modules (free or patreon). Make sure at least one is installed.")
-      let pat = new RegExp(anim.split('*').join('.*?'), 'i')
-      anim = lib.filter(e => e.match(pat))
-      if (anim.length == 0) return this.errorExit(`Unable to find animation for '${pat}'`)
-      files = anim.map(e => path + e) 
+      let pat = new RegExp(m.file.split('*').join('.*?').replace(/\//g, '\\/'), 'i')
+      files = ANIM_LIBRARY.filter(e => e.match(pat))
+      if (files.length == 0) return this.errorExit(`Unable to find animation for '${pat}'`)
     }
         
     let opts = []
     let scale = 1.0
-    let centered = !!m.center
+    let centered = false
+    var rotation
+    if (!!m.center) {
+      centered = true
+      rotation = +m.center.substr(1)
+    }
     let x = centered ? 0.5 : 0
     let y = 0.5
     let fudge = 0
@@ -254,15 +279,13 @@ export class AnimChatProcessor extends ChatProcessor {
       }]
     }
     if (destTokens.length == 0) {
-      if (m.click || true) {
-        ui.notifications.info("Please click the target location")
-        this.send()
-        await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/,''))
-        return true;
-      } else
-        return this.errorExit("You must select or target at least one token")
+      ui.notifications.info("Please click the target location")
+      this.send()
+      await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/,''))
+      return true;
     }
     if (!srcToken) srcToken = destTokens[0]    // centered anims should show on target (or selection)
+    if (!centered && destTokens.length == 1 && destTokens[0] == srcToken) return this.errorExit("Source and Destination cannot be the same token with using a Targeted animation")
     let effect = {
       files: files,
       anchor: {
@@ -277,6 +300,7 @@ export class AnimChatProcessor extends ChatProcessor {
       },
       fudge: fudge,
       centered: centered,
+      rotation: rotation,
       count: count,
       delay: delay
      }
@@ -284,9 +308,9 @@ export class AnimChatProcessor extends ChatProcessor {
     this.priv("Dest:" + destTokens.map(e => e.name))
     this.priv("Opts: " + opts.join(', '))
     this.priv("Possible:")
-    this.priv(anim.map(e => e.split('/').pop()).join('\n'))
+    this.priv(files.map(e => e.split('/').pop()).join('<br>'))
     let used = await this.drawEffect(effect, srcToken, destTokens)
-    this.priv("Used:\n" + used.join('\n'))
+    this.priv("Used:<br>" + used.join('<br>'))
     this.send()
   }
 }
