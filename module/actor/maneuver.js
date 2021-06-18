@@ -1,3 +1,5 @@
+import { SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME, SETTING_MANEUVER_DETAIL } from '../../lib/miscellaneous-settings.js'
+
 export const DEFENSE_ANY = 'any'
 export const DEFENSE_NONE = 'none'
 export const DEFENSE_DODGEBLOCK = 'dodge-block'
@@ -7,137 +9,284 @@ export const MOVE_NONE = 'none'
 export const MOVE_FULL = 'full'
 export const MOVE_HALF = 'half'
 
-export const Maneuvers = {
+class Maneuver {
+  constructor(data) {
+    this.id = data.id
+    this.move = data.move
+    this.defense = data.defense
+    this.icon = data.icon
+    this.label = data.label
+  }
+}
+
+const ManeuverData = {
   do_nothing: {
+    id: 'do_nothing',
     move: MOVE_NONE,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_do_nothing.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverDoNothing',
   },
   move: {
+    id: 'move',
     move: MOVE_FULL,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_move.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-move.png',
     label: 'GURPS.maneuverMove',
   },
   aim: {
+    id: 'aim',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_aim.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-aim.png',
     label: 'GURPS.maneuverAim',
   },
   change_posture: {
+    id: 'change_posture',
     move: MOVE_NONE,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_change_posture.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-change-posture.png',
     label: 'GURPS.maneuverChangePosture',
   },
   evaluate: {
+    id: 'evaluate',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_evaluate.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-evaluate.png',
     label: 'GURPS.maneuverEvaluate',
   },
   attack: {
+    id: 'attack',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-attack.png',
     label: 'GURPS.maneuverAttack',
   },
   feint: {
+    id: 'feint',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-feint.png',
+    alt: 'systems/gurps/icons/maneuvers/man-attack.png',
     label: 'GURPS.maneuverFeint',
   },
   allout_attack: {
+    id: 'allout_attack',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'systems/gurps/icons/statuses/_allout_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttack',
   },
   aoa_determined: {
+    id: 'aoa_determined',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'systems/gurps/icons/statuses/_allout_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-aoa-determined.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackDetermined',
   },
   aoa_double: {
+    id: 'aoa_double',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'systems/gurps/icons/statuses/_allout_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-aoa-double.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackDouble',
   },
   aoa_feint: {
+    id: 'aoa_feint',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'systems/gurps/icons/statuses/_allout_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-aoa-feint.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackFeint',
   },
   aoa_strong: {
+    id: 'aoa_strong',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'systems/gurps/icons/statuses/_allout_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-aoa-strong.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackStrong',
   },
   aoa_suppress: {
+    id: 'aoa_suppress',
     move: MOVE_HALF,
     defense: DEFENSE_NONE,
-    icon: 'systems/gurps/icons/statuses/_allout_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-aoa-suppress.png',
+    alt: 'systems/gurps/icons/maneuvers/man-allout-attack.png',
     label: 'GURPS.maneuverAllOutAttackSuppressFire',
   },
   move_and_attack: {
+    id: 'move_and_attack',
     move: MOVE_FULL,
     defense: DEFENSE_DODGEBLOCK,
-    icon: 'systems/gurps/icons/statuses/_move_attack.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-move-attack.png',
     label: 'GURPS.maneuverMoveAttack',
   },
   allout_defense: {
+    id: 'allout_defense',
     move: MOVE_HALF,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_allout_defense.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefense',
   },
   aod_dodge: {
+    id: 'aod_dodge',
     move: MOVE_HALF,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_allout_defense.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-def-dodge.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDodge',
   },
   aod_parry: {
+    id: 'aod_parry',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_allout_defense.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-def-parry.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseParry',
   },
   aod_block: {
+    id: 'aod_block',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_allout_defense.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-def-block.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseBlock',
   },
   aod_double: {
+    id: 'aod_double',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_allout_defense.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-def-double.png',
+    alt: 'systems/gurps/icons/maneuvers/man-defense.png',
     label: 'GURPS.maneuverAllOutDefenseDouble',
   },
   ready: {
+    id: 'ready',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_ready.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-ready.png',
     label: 'GURPS.maneuverReady',
   },
   concentrate: {
+    id: 'concentrate',
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_concentrate.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-concentrate.png',
     label: 'GURPS.maneuverConcentrate',
   },
   wait: {
+    id: 'wait',
     move: MOVE_NONE,
     defense: DEFENSE_ANY,
-    icon: 'systems/gurps/icons/statuses/_wait.webp',
+    icon: 'systems/gurps/icons/maneuvers/man-wait.png',
     label: 'GURPS.maneuverWait',
   },
 }
+
+export class Maneuvers {
+  /**
+   * @param {String} text
+   * @returns true if the text represents a maneuver icon path.
+   * @memberof Maneuvers
+   */
+  static isManeuverIcon(text) {
+    return Object.values(ManeuverData)
+      .map(m => m.icon)
+      .includes(text)
+  }
+
+  /**
+   * Return the sublist that are Maneuver icon paths.
+   * @param {Array<String>} list of icon pathnames
+   * @returns Array<String> the pathnames that represent Maneuvers
+   * @memberof Maneuvers
+   */
+  static getManeuverIcons(list) {
+    return list.filter(it => Maneuvers.isManeuverIcon(it))
+  }
+
+  static getManeuver(maneuverText) {
+    return ManeuverData[maneuverText]
+  }
+
+  static getIcon(maneuverText) {
+    return this.getManeuver(maneuverText).icon
+  }
+
+  static getData() {
+    return ManeuverData
+  }
+
+  static getByIcon(icon) {
+    return Object.values(ManeuverData).find(it => it.icon === icon)
+  }
+
+  static getIconForPlayer(token, icon) {
+    if (game.user.isGM) return icon
+    if (token.isOwner) return icon
+
+    return icon
+  }
+}
+
+export class GURPSTokenHUD extends TokenHUD {
+  getData(options) {
+    let data = super.getData(options)
+    console.log('GURPSTokenHUD')
+
+    // edit data.statusEffects to remove maneuver icons -- statusEffects is an Object, properties are the icon path
+    for (const key in data.statusEffects) {
+      if (Maneuvers.isManeuverIcon(key)) {
+        delete data.statusEffects[key]
+      }
+    }
+    return data
+  }
+}
+
+Hooks.once('init', () => {
+  const original_Token_drawEffects = Token.prototype.drawEffects
+  Token.prototype.drawEffects = async function (...args) {
+    const tokenEffects = this.data.effects
+
+    // modify this.data.effects based on maneuver settings
+    const visibility = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
+    if (visibility === 'NoOne') {
+      this.data.effects = this.data.effects.filter(icon => !Maneuvers.isManeuverIcon(icon))
+    } else if (visibility === 'GMAndOwner') {
+      if (!game.user.isGM && !this.isOwner)
+        this.data.effects = this.data.effects.filter(icon => !Maneuvers.isManeuverIcon(icon))
+    }
+
+    if (!game.user.isGM && !this.isOwner) {
+      const detail = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_DETAIL)
+      // Replace 'Feint' with 'Attack'
+      if (this.data.effects.includes(ManeuverData.feint.icon) && detail !== 'Full') {
+        for (let i = 0; i < this.data.effects.length; i++) {
+          if (this.data.effects[i] === ManeuverData.feint.icon) this.data.effects[i] = ManeuverData.feint.alt
+        }
+      }
+      // replace others
+      if (detail === 'General') {
+        for (let i = 0; i < this.data.effects.length; i++) {
+          let icon = this.data.effects[i]
+          if (Maneuvers.isManeuverIcon(icon)) {
+            let m = Maneuvers.getByIcon(icon)
+            if (m.hasOwnProperty('alt')) this.data.effects[i] = m.alt
+          }
+        }
+      }
+    }
+
+    const result = original_Token_drawEffects.apply(this, args)
+
+    this.data.effects = tokenEffects
+
+    return result
+  }
+})
+
+// export function Token_drawEffect(src, i, bg, w, tint)

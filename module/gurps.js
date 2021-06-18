@@ -10,7 +10,8 @@ import {
   GurpsActorEditorSheet,
   GurpsActorSimplifiedSheet,
   GurpsActorNpcSheet,
-  GurpsInventorySheet, GurpsActorTabSheet,
+  GurpsInventorySheet,
+  GurpsActorTabSheet,
 } from './actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -21,16 +22,16 @@ import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
-import { Maneuvers } from '../module/actor/maneuver.js'
 import { Migration } from '../lib/migration.js'
+import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ItemImporter } from '../module/item-import.js'
+import { GURPSTokenHUD } from '../module/actor/maneuver.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-GURPS.Maneuvers = Maneuvers
+GURPS.Migration = Migration
 
 GURPS.DEBUG = false
-
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -65,7 +66,7 @@ settings.initializeSettings()
 // Use the target d6 icon for rolltable entries
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
 
-//CONFIG.debug.hooks = true;
+// CONFIG.debug.hooks = true
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null
@@ -363,11 +364,11 @@ CONFIG.statusEffects = [
     id: 'silence',
     label: 'GURPS.STATUSSilence',
   },
-  {
-    icon: 'systems/gurps/icons/statuses/cth-condition-readied.webp',
-    id: 'aim',
-    label: 'GURPS.STATUSAim',
-  },
+  // {
+  //   icon: 'systems/gurps/icons/statuses/cth-condition-readied.webp',
+  //   id: 'aim',
+  //   label: 'GURPS.STATUSAim',
+  // },
   {
     icon: 'systems/gurps/icons/statuses/x-stealth.webp',
     id: 'stealth',
@@ -599,7 +600,7 @@ async function executeOTF(string, priv = false, event) {
   let action = parselink(string)
   let answer = false
   if (!!action.action) {
-    if (!event) event = { shiftKey: priv, ctrlKey: false, data:{} }
+    if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
     answer = await GURPS.performAction(action.action, GURPS.LastActor, event)
   } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
   return answer
@@ -658,7 +659,7 @@ async function performAction(action, actor, event, targets) {
 
   if (action.type === 'damage') {
     if (!!action.costs) GURPS.addModifier(0, action.costs)
-    if (!!action.mod) GURPS.addModifier(action.mod, action.desc)  // special case where Damage comes from [D:attack + mod]
+    if (!!action.mod) GURPS.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
     DamageChat.create(actor || game.user, action.formula, action.damagetype, event, null, targets, action.extdamagetype)
     return true
   }
@@ -801,7 +802,7 @@ async function performAction(action, actor, event, targets) {
     formula = '3d6'
     opt.action = bestAction
     opt.obj = bestAction.obj
-    if (opt.obj?.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+    if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
     if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
 
     if (!!bestAction.costs) GURPS.addModifier(0, action.costs)
@@ -836,7 +837,7 @@ async function performAction(action, actor, event, targets) {
         }
       }
       opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
-      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
+      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
       formula = '3d6'
       if (!!action.costs) GURPS.addModifier(0, action.costs)
@@ -979,8 +980,7 @@ async function handleRoll(event, actor, targets) {
     if (!k) k = element.dataset.key
     if (!!k) {
       opt.obj = getProperty(actor.data, k) // During the roll, we may want to extract something from the object
-      if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event))
-        return
+      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
     }
     formula = '3d6'
@@ -1021,7 +1021,7 @@ async function applyModifierDesc(actor, desc) {
       await actor.update({ ['data.' + k + '.value']: delta })
     }
     if (target.match(/^tr/i)) {
-      await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + " -" + delta) // Make the tracker command quiet
+      await GURPS.ChatProcessors.startProcessingLines('/setEventFlags true false false\\\\/' + target + ' -' + delta) // Make the tracker command quiet
       return null
     }
   }
@@ -1497,8 +1497,9 @@ Hooks.once('init', async function () {
 
   game.GURPS = GURPS
   CONFIG.GURPS = GURPS
-  let src = 'systems/gurps/icons/gurps4e.webp'
-  if (game.i18n.lang == 'pt_br') src = 'systems/gurps/icons/gurps4e-pt_br.webp'
+
+  let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
+
   $('#logo').attr('src', src)
 
   // set up all hitlocation tables (must be done before MB)
@@ -1574,9 +1575,15 @@ Hooks.once('init', async function () {
     entity.data.img = 'systems/gurps/icons/single-die.webp'
   })
 
-  Hooks.on("renderSidebarTab", async (app, html) => {
-    if (app.options.id === "compendium") {
-      let button = $('<button class="import-items"><i class="fas fa-file-import"></i>' + game.i18n.localize("GURPS.itemImport") + '</button>')
+  Hooks.on('renderTokenHUD', (...args) => ManeuverHUDButton.prepTokenHUD(...args))
+
+  Hooks.on('renderSidebarTab', async (app, html) => {
+    if (app.options.id === 'compendium') {
+      let button = $(
+        '<button class="import-items"><i class="fas fa-file-import"></i>' +
+          game.i18n.localize('GURPS.itemImport') +
+          '</button>'
+      )
 
       button.click(function () {
         setTimeout(async () => {
@@ -1590,37 +1597,42 @@ Hooks.once('init', async function () {
                   label: 'Import',
                   callback: html => {
                     const form = html.find('form')[0]
-                    let files = form.data.files;
-                    let file = null;
+                    let files = form.data.files
+                    let file = null
                     if (!files.length) {
-                      return ui.notifications.error('You did not upload a data file!');
+                      return ui.notifications.error('You did not upload a data file!')
                     } else {
-                      file = files[0];
-                      console.log(file);
-                      GURPS.readTextFromFile(file).then(text => ItemImporter.importItems(text, file.name.split(".").slice(0, -1).join("."), file.path));
+                      file = files[0]
+                      console.log(file)
+                      GURPS.readTextFromFile(file).then(text =>
+                        ItemImporter.importItems(text, file.name.split('.').slice(0, -1).join('.'), file.path)
+                      )
                     }
-                  }
+                  },
                 },
                 no: {
                   icon: '<i class="fas fa-times"></i>',
-                  label: 'Cancel'
-                }
+                  label: 'Cancel',
+                },
               },
               default: 'import',
             },
             {
-              width: 400
+              width: 400,
             }
-          ).render(true);
+          ).render(true)
         }, 200)
-      });
+      })
 
-      html.find(".directory-footer").append(button);
+      html.find('.directory-footer').append(button)
     }
   })
 })
 
 Hooks.once('ready', async function () {
+  // reset the TokenHUD to our version
+  canvas.hud.token = new GURPSTokenHUD()
+
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
 
@@ -1690,11 +1702,11 @@ Hooks.once('ready', async function () {
   resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
   resourceTrackers.forEach(
     it =>
-    (DamageTables.woundModifiers[it.alias] = {
-      multiplier: 1,
-      label: it.name,
-      resource: true,
-    })
+      (DamageTables.woundModifiers[it.alias] = {
+        multiplier: 1,
+        label: it.name,
+        resource: true,
+      })
   )
 
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
@@ -1997,7 +2009,7 @@ Hooks.once('ready', async function () {
 
   // Translate attribute mappings if not in English
   if (game.i18n.lang != 'en') {
-    console.log("Mapping " + game.i18n.lang + " translations into PARSELINK_MAPPINGS")
+    console.log('Mapping ' + game.i18n.lang + ' translations into PARSELINK_MAPPINGS')
     let mappings = {}
     for (let k in GURPS.PARSELINK_MAPPINGS) {
       let v = GURPS.PARSELINK_MAPPINGS[k]
@@ -2017,7 +2029,15 @@ Hooks.once('ready', async function () {
     GURPS.PARSELINK_MAPPINGS = mappings
   }
 
-
+  Hooks.on('createToken', async function (token, d, options, userId) {
+    console.log(`create Token`)
+    let actor = token.actor
+    // data protect against bad tokens
+    if (!!actor) {
+      let maneuverText = actor.data.data.conditions.maneuver
+      actor.updateManeuver(maneuverText, token._id)
+    }
+  })
 
   // End of system "READY" hook.
 })
