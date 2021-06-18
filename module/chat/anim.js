@@ -105,21 +105,29 @@ export class AnimChatProcessor extends ChatProcessor {
     if (effect.centered) 
       files = effect.files.map(f => fileWidth(f))
     else {
+      let bestWidth = 0
       let best = 0
       for (const file of effect.files) {
         let f = fileWidth(file)
         let s = distance / f.width
         f.scale = s
         files.push(f)
-        if (s >= best && s < 1.0) best = s
+        if (s >= best && s < 1.0) {
+          best = s
+          bestWidth = f.width
+        }
       }
       if (best == 0) {
         best = Number.MAX_SAFE_INTEGER
         for (const file of files) {
-          if (file.scale < best) best = file.scale
+          if (file.scale < best) {
+            best = file.scale
+            bestWidth = file.width
+          }
         }
       }
-      files = files.filter(f => f.scale == best)
+      files = files.filter(f => f.width == bestWidth)
+      this.priv(`Best fit (width:${bestWidth})<br>` + files.map(f => f.file.split('/').pop()).join('<br'))
     }
     
     let possible = [...files]
@@ -139,12 +147,13 @@ export class AnimChatProcessor extends ChatProcessor {
       if (possible.length == 0) possible = [...files]
       effectData.filedata = file
       effectData.file = file.file
-      if (!effectData.centered) {
+      if (effectData.centered) {
+        if (effectData.flip) effectData.scale.x *= -1
+      } else {
         let s = (effectData.distance * (1 + effectData.fudge)) / ((1 - effectData.anchor.x) * file.width) 
         effectData.scale.x = s
-        effectData.scale.y = s
+        effectData.scale.y = s * (Math.random() < 0.5 ? -1 : 1) // randomly flip vert orientation
       }
-      if (!effect.centered && Math.random() < 0.5) effectData.scale.y *= -1 // randomly flip vert orientation
       game.socket.emit('module.fxmaster', effectData);
       // Throw effect locally
       canvas.fxmaster.playVideo(effectData)
@@ -172,6 +181,14 @@ export class AnimChatProcessor extends ChatProcessor {
         let pt = getMousePos(game.canvas)
         e.preventDefault()
         e.stopPropagation()
+        let grid_size = canvas.scene.data.grid
+        canvas.tokens.targetObjects({
+          x: pt.x - grid_size / 2,
+          y: pt.y - grid_size / 2,
+          height: grid_size,
+          width: grid_size,
+        releaseOthers: true,
+        })
         GURPS.IgnoreTokenSelect = false
         line = line + " @" + parseInt(pt.x) + "," + parseInt(pt.y)
         this.registry.processLine(line)
@@ -207,7 +224,7 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>c\d*)? *(?<scale>\*[-\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<file>[\S]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<self>@(s|self|src))? *(?<dest>@\d+,\d+)?/)   
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>cf?\d*)? +(?<file>[\S]+)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
     return !!this.match
   }
   
@@ -231,12 +248,17 @@ export class AnimChatProcessor extends ChatProcessor {
         
     let opts = []
     let scale = 1.0
+    let flip = false
     let centered = false
     var rotation
     if (!!m.center) {
       centered = true
-      rotation = +m.center.substr(1)
-    }
+      let t = m.center.match(/c(f)?(\d*)/)
+      flip = !!t[1]
+      rotation = !!t[2] ? +t[2] : 0
+      opts.push("C" + (flip ? "flip":"") + ":" + rotation)
+    } else opts.push("T")
+
     let x = centered ? 0.5 : 0
     let y = 0.5
     let fudge = 0
@@ -265,7 +287,7 @@ export class AnimChatProcessor extends ChatProcessor {
     let srcToken = canvas.tokens.placeables.find(e => e.actor == GURPS.LastActor)
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
-    if (destTokens.length == 0) destTokens = canvas.tokens.controlled
+    if (destTokens.length == 0  && game.user.isGM) destTokens = canvas.tokens.controlled
     if (m.self) destTokens = [ srcToken ]
     if (m.dest) {
       let d = m.dest.substr(1).split(',')
@@ -301,6 +323,7 @@ export class AnimChatProcessor extends ChatProcessor {
       fudge: fudge,
       centered: centered,
       rotation: rotation,
+      flip: flip,
       count: count,
       delay: delay
      }
