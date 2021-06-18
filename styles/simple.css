@@ -1871,8 +1871,8 @@ body {
 .gurps-sheet-tabs {
   display: block;
   height: 40px;
-  border-top: 1px solid #AAA;
-  border-bottom: 1px solid #AAA;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
 }
 
 .gurps-sheet-tabs li {
@@ -1922,7 +1922,7 @@ body {
 .desc .tooltippic {
   visibility: hidden;
   position: fixed;
-  z-index:999;
+  z-index: 999;
 }
 
 .desc .tooltippic img {
