@@ -57,7 +57,8 @@ export default class ManeuverHUDButton {
    * @memberof ManeuverHUDButton
    */
   static async prepTokenHUD(hud, html, token) {
-    const actor = this.getTokenActor(token)
+    // const actor = this.getTokenActor(token)
+    const actor = hud.object?.actor
     const button = await this.createButton(token.effects)
 
     html.find('div.right').append(button)

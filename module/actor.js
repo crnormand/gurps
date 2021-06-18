@@ -463,7 +463,11 @@ export class GurpsActor extends Actor {
 
     // if changing the maneuver, update the icons
     if (data.hasOwnProperty('data.conditions.maneuver')) {
-      let tokenId = options?.tokenId
+      let tokenId = null
+      if (!!options && options.hasOwnProperty('tokenId')) {
+        tokenId = options?.tokenId
+        delete options.tokenId
+      }
       let maneuverText = data[`data.conditions.maneuver`]
       this.updateManeuverStatusIcon(maneuverText, tokenId)
     }
@@ -480,13 +484,14 @@ export class GurpsActor extends Actor {
    */
   updateManeuver(maneuverText, tokenId) {
     this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true, tokenId: tokenId })
+    Object.values(this.apps).forEach(it => it.render(false))
   }
 
   /**
    * This method is called when "data.conditions.maneuver" changes on the actor (via the update method)
    * @param {*} maneuverText
    */
-  async updateManeuverStatusIcon(maneuverText, tokenId) {
+  updateManeuverStatusIcon(maneuverText, tokenId) {
     let tokens = this.getActiveTokens()
     let token = null
 
@@ -494,7 +499,8 @@ export class GurpsActor extends Actor {
     else if (tokens.length === 1) token = tokens[0]
 
     if (!!token) this._setManeuverEffect(token, maneuverText)
-    else console.warn(`could not update maneuver: actor: ${this.id}, tokenId: ${tokenId}, maneuver: ${maneuverText}`)
+    else
+      console.warn(`could not update maneuver; actor: [${this.id}], tokenId: [${tokenId}], maneuver: [${maneuverText}]`)
   }
 
   /**

@@ -1,3 +1,5 @@
+import { SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME, SETTING_MANEUVER_DETAIL } from '../../lib/miscellaneous-settings.js'
+
 export const DEFENSE_ANY = 'any'
 export const DEFENSE_NONE = 'none'
 export const DEFENSE_DODGEBLOCK = 'dodge-block'
@@ -51,7 +53,6 @@ const ManeuverData = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-evaluate.png',
-    alt: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverEvaluate',
   },
   attack: {
@@ -174,7 +175,6 @@ const ManeuverData = {
     move: MOVE_STEP,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-concentrate.png',
-    alt: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverConcentrate',
   },
   wait: {
@@ -182,14 +182,12 @@ const ManeuverData = {
     move: MOVE_NONE,
     defense: DEFENSE_ANY,
     icon: 'systems/gurps/icons/maneuvers/man-wait.png',
-    alt: 'systems/gurps/icons/maneuvers/man-nothing.png',
     label: 'GURPS.maneuverWait',
   },
 }
 
 export class Maneuvers {
   /**
-   * Return true if the text represents a maneuver icon path.
    * @param {String} text
    * @returns true if the text represents a maneuver icon path.
    * @memberof Maneuvers
@@ -221,6 +219,17 @@ export class Maneuvers {
   static getData() {
     return ManeuverData
   }
+
+  static getByIcon(icon) {
+    return Object.values(ManeuverData).find(it => it.icon === icon)
+  }
+
+  static getIconForPlayer(token, icon) {
+    if (game.user.isGM) return icon
+    if (token.isOwner) return icon
+
+    return icon
+  }
 }
 
 export class GURPSTokenHUD extends TokenHUD {
@@ -237,3 +246,47 @@ export class GURPSTokenHUD extends TokenHUD {
     return data
   }
 }
+
+Hooks.once('init', () => {
+  const original_Token_drawEffects = Token.prototype.drawEffects
+  Token.prototype.drawEffects = async function (...args) {
+    const tokenEffects = this.data.effects
+
+    // modify this.data.effects based on maneuver settings
+    const visibility = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
+    if (visibility === 'NoOne') {
+      this.data.effects = this.data.effects.filter(icon => !Maneuvers.isManeuverIcon(icon))
+    } else if (visibility === 'GMAndOwner') {
+      if (!game.user.isGM && !this.isOwner)
+        this.data.effects = this.data.effects.filter(icon => !Maneuvers.isManeuverIcon(icon))
+    }
+
+    if (!game.user.isGM && !this.isOwner) {
+      const detail = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_DETAIL)
+      // Replace 'Feint' with 'Attack'
+      if (this.data.effects.includes(ManeuverData.feint.icon) && detail !== 'Full') {
+        for (let i = 0; i < this.data.effects.length; i++) {
+          if (this.data.effects[i] === ManeuverData.feint.icon) this.data.effects[i] = ManeuverData.feint.alt
+        }
+      }
+      // replace others
+      if (detail === 'General') {
+        for (let i = 0; i < this.data.effects.length; i++) {
+          let icon = this.data.effects[i]
+          if (Maneuvers.isManeuverIcon(icon)) {
+            let m = Maneuvers.getByIcon(icon)
+            if (m.hasOwnProperty('alt')) this.data.effects[i] = m.alt
+          }
+        }
+      }
+    }
+
+    const result = original_Token_drawEffects.apply(this, args)
+
+    this.data.effects = tokenEffects
+
+    return result
+  }
+})
+
+// export function Token_drawEffect(src, i, bg, w, tint)
