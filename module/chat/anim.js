@@ -45,7 +45,7 @@ function addToLibrary(module) {
 
 function fileWidth(entry) {
   let m = entry.match(/\.webm,W:(\d+)/)
-  if (!!m) return { file: entry.split(",")[0], width: m[1] }
+  if (!!m) return { file: entry.split(",")[0], width: +m[1] }
   console.log("Unknown format: " + entry)
   return { file: '', width: 0 }
 }
@@ -127,22 +127,23 @@ export class AnimChatProcessor extends ChatProcessor {
         }
       }
       files = files.filter(f => f.width == bestWidth)
-      this.priv(`Best fit (width:${bestWidth})<br>` + files.map(f => f.file.split('/').pop()).join('<br'))
+      this.priv(`Best fit (width:${bestWidth})`)
+      files.forEach(f => {
+        let p = f.file.split('/').pop()
+        this.priv(p)
+      })
     }
-    
     let possible = [...files]
-    let count = effect.count
     let used = []
-    while (count > 0) {
-      count --
-      const effectData = foundry.utils.mergeObject(effect, {
-        position: {
+    let effects = []
+    for (let i = 0; i < effect.count; i++) {
+      const effectData = {...effect}
+      effectData.position = {
           x: origin.x,
           y: origin.y
-        },
-        rotation: rotation,
-        distance: distance
-      });
+        }
+      effectData.rotation = rotation
+      effectData.distance = distance
       let file = this.randFile(possible)[0]
       if (possible.length == 0) possible = [...files]
       effectData.filedata = file
@@ -151,18 +152,24 @@ export class AnimChatProcessor extends ChatProcessor {
         if (effectData.flip) effectData.scale.x *= -1
       } else {
         let s = (effectData.distance * (1 + effectData.fudge)) / ((1 - effectData.anchor.x) * file.width) 
-        effectData.scale.x = s
-        effectData.scale.y = s * (Math.random() < 0.5 ? -1 : 1) // randomly flip vert orientation
+        effectData.scale = {x: s, y: s * (Math.random() < 0.5 ? -1 : 1)} // randomly flip vert orientation
       }
+      effects.push(effectData)
+      used.push(effectData.file.split('/').pop())
+    }
+    this.executeEffects(effect.count, effects) // do NOT await this.
+    return used
+  }
+  
+  async executeEffects(count, effects) {
+    for (let effectData of effects) {
+      count--
       game.socket.emit('module.fxmaster', effectData);
       // Throw effect locally
       canvas.fxmaster.playVideo(effectData)
-      used.push(effectData.file.split('/').pop())
-      //used.push(effectData.file)
       console.log(GURPS.objToString(effectData))
       if (count > 0) await wait(effectData.delay)
     }
-    return used
   }
   
   errorExit(str) {
@@ -224,7 +231,7 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<center>cf?\d*)? +(?<file>[\S]+)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
     return !!this.match
   }
   
@@ -267,6 +274,7 @@ export class AnimChatProcessor extends ChatProcessor {
     if (!!m.scale) { 
       scale = parseFloat(m.scale.substr(1))  
       opts.push("Scale:" + scale)
+      this.priv("Scale option only valid on Centered animation")
     }
     if (!!m.count) {
       count = parseInt(m.count.slice(0, -1))
@@ -279,11 +287,13 @@ export class AnimChatProcessor extends ChatProcessor {
     if (!!m.x) {
       x = parseFloat(m.x.substr(1))
       opts.push("Start:-" + x)
-    }
+      this.priv("Start option only valid on Targeted animation")
+   }
     if (!!m.fudge) {
       fudge = parseFloat(m.fudge.substr(1))
       opts.push("End:+" + fudge)
-    } 
+      this.priv("End option only valid on Targeted animation")
+   } 
     let srcToken = canvas.tokens.placeables.find(e => e.actor == GURPS.LastActor)
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
