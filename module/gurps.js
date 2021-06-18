@@ -802,7 +802,7 @@ async function performAction(action, actor, event, targets) {
     opt.action = bestAction
     opt.obj = bestAction.obj
     if (opt.obj?.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
-    if (opt.obj?.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
+    if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
 
     if (!!bestAction.costs) GURPS.addModifier(0, action.costs)
     if (!!bestAction.mod) GURPS.addModifier(bestAction.mod, bestAction.desc, targetmods)
@@ -837,7 +837,7 @@ async function performAction(action, actor, event, targets) {
       }
       opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
       if (opt.obj.checkotf && ! await GURPS.executeOTF(opt.obj.checkotf, false, event)) return false
-      if (opt.obj.duringotf) GURPS.executeOTF(opt.obj.duringotf, false, event)
+      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
       formula = '3d6'
       if (!!action.costs) GURPS.addModifier(0, action.costs)
       if (!!action.mod) GURPS.addModifier(action.mod, action.desc, targetmods)
