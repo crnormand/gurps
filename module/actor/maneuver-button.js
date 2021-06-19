@@ -80,8 +80,8 @@ export default class ManeuverHUDButton {
   // DONE add a migration to set the maneuver token effect for all tokens
   // DONE figure out how to remove maneuver from other status effects OR make clicking it add the "do nothing" maneuver
   // DONE implement the various options: \
-  //      - full detail: exact maneuver and subtype
-  //      - general detail: maneuver name w/o subtype
+  //      √ full detail: exact maneuver and option
+  //      √ general detail: maneuver name w/o option
   // TODO implement visibility: \
   //      √ everyone
   //      √ GM and Owner only
@@ -90,5 +90,5 @@ export default class ManeuverHUDButton {
   // TODO Ultimately turn this into an Active Effect - and actually adjust Move and/or other conditions
   // TODO Add status hint text to modifier bucket
   // DONE Make sure Tokens are initialized with a Maneuver
-  // TODO Add maneuver when token enters combat; remove when not in combat
+  // DONE Add maneuver when token enters combat; remove when not in combat
 }

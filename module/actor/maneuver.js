@@ -331,4 +331,9 @@ Hooks.on('deleteCombatant', (combat, options, id) => {
   actor.removeManeuver(token.id)
 })
 
+Hooks.on('deleteCombat', (combat, options, id) => {
+  let combatants = combat.data.combatants.contents
+  combatants.forEach(it => it.actor.removeManeuver(it.token.id))
+})
+
 // TODO consider subtracting 1 FP from every combatant that leaves combat
