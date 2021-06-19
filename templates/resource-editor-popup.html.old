@@ -24,14 +24,14 @@
             <label class='label' style='display: block; padding-left: 15px; text-indent: -15px;'>
               <input name='enforce-minimum' type='checkbox' {{checked tracker.isMinimumEnforced}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;' />
-              {{i18n "GURPS.resourceEnforceMinimum"}}
+              {{i18n "GURPS.resourceEnforceMinimum" "Enforce Minimum"}}
             </label>
           </div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
             <label class='label' style='display: block; padding-left: 15px; text-indent: -15px;'>
               <input name='enforce-maximum' type='checkbox' {{checked tracker.isMaximumEnforced}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;' />
-              {{i18n "GURPS.resourceEnforceMaximum"}}
+              {{i18n "GURPS.resourceEnforceMinimum" "Enforce Maximum"}}
             </label>
           </div>
           <div style='grid-column: 1 / span 2; white-space: normal'>
