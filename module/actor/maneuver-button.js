@@ -58,6 +58,8 @@ export default class ManeuverHUDButton {
    */
   static async prepTokenHUD(hud, html, token) {
     // const actor = this.getTokenActor(token)
+    if (!hud.object?.combatant) return
+
     const actor = hud.object?.actor
     const button = await this.createButton(token.effects)
 
