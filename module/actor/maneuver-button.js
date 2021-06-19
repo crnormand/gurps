@@ -70,7 +70,7 @@ export default class ManeuverHUDButton {
 
     html.find('.status-maneuvers .effect-control').click(ev => {
       let key = $(ev.currentTarget).attr('data-status-id')
-      actor.updateManeuver(key, token._id)
+      actor.updateManeuver(key, token.id)
 
       html.find('.status-maneuvers .effect-control').removeClass('active')
       $(ev.currentTarget).addClass('active')
@@ -90,4 +90,5 @@ export default class ManeuverHUDButton {
   // TODO Ultimately turn this into an Active Effect - and actually adjust Move and/or other conditions
   // TODO Add status hint text to modifier bucket
   // DONE Make sure Tokens are initialized with a Maneuver
+  // TODO Add maneuver when token enters combat; remove when not in combat
 }

@@ -468,8 +468,8 @@ export class GurpsActor extends Actor {
         tokenId = options?.tokenId
         delete options.tokenId
       }
-      let maneuverText = data[`data.conditions.maneuver`]
-      this.updateManeuverStatusIcon(maneuverText, tokenId)
+      let maneuverText = data[`data.conditions.maneuver`] || 'do_nothing'
+      this._updateManeuverStatusIcon(maneuverText, tokenId)
     }
 
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
@@ -487,16 +487,33 @@ export class GurpsActor extends Actor {
     Object.values(this.apps).forEach(it => it.render(false))
   }
 
+  removeManeuver(tokenId) {
+    let token = this._findToken(tokenId)
+
+    if (!!token) this._removeAllManeuvers(token)
+    else
+      console.warn(`could not update maneuver; actor: [${this.id}], tokenId: [${tokenId}], maneuver: [${maneuverText}]`)
+  }
+
+  _findToken(tokenId) {
+    let tokens = this.getActiveTokens()
+
+    if (!!tokenId) return tokens.find(it => it.id === tokenId)
+    else if (tokens.length === 1) return tokens[0]
+    return null
+  }
+
+  async _removeAllManeuvers(token) {
+    let maneuvers = Maneuvers.getManeuverIcons(token.data.effects)
+    for (const m of maneuvers) await token.toggleEffect(m, { active: false }) // turn all of them off!
+  }
+
   /**
    * This method is called when "data.conditions.maneuver" changes on the actor (via the update method)
    * @param {*} maneuverText
    */
-  updateManeuverStatusIcon(maneuverText, tokenId) {
-    let tokens = this.getActiveTokens()
-    let token = null
-
-    if (!!tokenId) token = tokens.find(it => it.id === tokenId)
-    else if (tokens.length === 1) token = tokens[0]
+  _updateManeuverStatusIcon(maneuverText, tokenId) {
+    let token = this._findToken(tokenId)
 
     if (!!token) this._setManeuverEffect(token, maneuverText)
     else
@@ -509,11 +526,8 @@ export class GurpsActor extends Actor {
    * @param {*} maneuverText
    */
   async _setManeuverEffect(token, maneuverText) {
+    await this._removeAllManeuvers(token)
     let icon = Maneuvers.getIcon(maneuverText)
-    let maneuvers = Maneuvers.getManeuverIcons(token.data.effects)
-    for (const m of maneuvers) {
-      await token.toggleEffect(m, { active: false }) // turn all of them off!
-    }
     await token.toggleEffect(icon, { active: true }) // turn it on!
   }
 

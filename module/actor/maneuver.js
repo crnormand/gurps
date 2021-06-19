@@ -232,6 +232,7 @@ export class Maneuvers {
   }
 }
 
+// Our override of the TokenHUD; it removes the maneuver tokens from the list of status effects
 export class GURPSTokenHUD extends TokenHUD {
   getData(options) {
     let data = super.getData(options)
@@ -248,6 +249,7 @@ export class GURPSTokenHUD extends TokenHUD {
 }
 
 Hooks.once('init', () => {
+  // Patch the method Token#drawEffects so we can monkey with the token effects before drawing
   const original_Token_drawEffects = Token.prototype.drawEffects
   Token.prototype.drawEffects = async function (...args) {
     const tokenEffects = this.data.effects
@@ -281,12 +283,30 @@ Hooks.once('init', () => {
       }
     }
 
+    // call the original method
     const result = original_Token_drawEffects.apply(this, args)
 
+    // restore the original token effects
     this.data.effects = tokenEffects
 
     return result
   }
 })
 
-// export function Token_drawEffect(src, i, bg, w, tint)
+// on create combatant, set the maneuver
+Hooks.on('createCombatant', (combat, options, id) => {
+  console.log(id)
+  let token = combat.token
+  let actor = combat.actor
+  actor.updateManeuver('do_nothing', token.id)
+})
+
+// on delete combatant, remove the maneuver
+Hooks.on('deleteCombatant', (combat, options, id) => {
+  console.log(id)
+  let token = combat.token
+  let actor = combat.actor
+  actor.removeManeuver(token.id)
+})
+
+// TODO consider subtracting 1 FP from every combatant that leaves combat
