@@ -1,4 +1,4 @@
-import { atou, generateUniqueId } from '../lib/utilities.js'
+import { atou, generateUniqueId, i18n } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
@@ -1139,8 +1139,14 @@ export class GurpsActorSheet extends ActorSheet {
   async _onNavigate(event) {
     let dataValue = $(event.currentTarget).attr('data-value')
     if (dataValue == 'CLOSE') {
-      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
-      this.render()
+      Dialog.confirm({
+        title: 'Close Navigation',
+        content: 'Are you sure you want to hide the Navigation buttons?   To show them again, you will need to go to the System Settings and turn on ' + i18n('GURPS.settingShowNavigation'),
+        yes: () => {
+          game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
+          this.render()
+        }
+      })
     } else {
       let windowContent = event.currentTarget.closest('.window-content')
       let target = windowContent.querySelector(`#${dataValue}`)
