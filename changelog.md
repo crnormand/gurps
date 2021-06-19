@@ -13,6 +13,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Promoted tabbed view
 - Added /w @ to whisper to selected character(s)
 - Fixed "user does not have permission to update" when tired/reeling status changes
+- Added combat maneuver icons to all tokens in a combat. Two new settings control the appearance of the maneuver icons.
 
 Release 0.10.5 - 6/12/2021
 
