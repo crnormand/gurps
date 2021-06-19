@@ -70,7 +70,7 @@ export default class ManeuverHUDButton {
 
     html.find('.status-maneuvers .effect-control').click(ev => {
       let key = $(ev.currentTarget).attr('data-status-id')
-      actor.updateManeuver(key, token.id)
+      actor.updateManeuver(key, token._id)
 
       html.find('.status-maneuvers .effect-control').removeClass('active')
       $(ev.currentTarget).addClass('active')
