@@ -205,7 +205,7 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     let m = Object.values(game.macros.contents).filter(m => m.name.startsWith(args[0]))
     if (m.length > 0) {
       this.send()
-      m[0].execute(args.slice(1))
+      GURPS.chatreturn = m[0].execute(args.slice(1)) ?? GURPS.chatreturn;
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro')} '${line.substr(2)}'`)
     return GURPS.chatreturn
   }
