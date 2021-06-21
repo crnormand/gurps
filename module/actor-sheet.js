@@ -1,4 +1,4 @@
-import { atou, generateUniqueId } from '../lib/utilities.js'
+import { atou, generateUniqueId, i18n } from '../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
@@ -18,7 +18,7 @@ export class GurpsActorSheet extends ActorSheet {
       template: 'systems/gurps/templates/actor-sheet-gcs.html',
       width: 800,
       height: 800,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
@@ -108,7 +108,6 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
     html.find('.enc').click(this._onClickEnc.bind(this))
 
-  
     let makelistdrag = (cls, type) => {
       html.find(cls).each((i, li) => {
         li.setAttribute('draggable', true)
@@ -134,7 +133,7 @@ export class GurpsActorSheet extends ActorSheet {
           }
           let newd = {
             actorid: this.actor.id, // may not be useful if this is an unlinked token
-            actor: this.actor,  // so send the actor,
+            actor: this.actor, // so send the actor,
             isLinked: !this.actor.isToken,
             type: type,
             key: eqtkey,
@@ -320,36 +319,34 @@ export class GurpsActorSheet extends ActorSheet {
       html.find('.tooltip-manager').mouseover(ev => {
         ev.preventDefault()
 
-        let target = $(ev.currentTarget);
+        let target = $(ev.currentTarget)
         if (target.hasNoChildren) {
-          return;
+          return
         }
 
         let tooltip = target.children('.tooltippic')
-        if (tooltip)
-        {
-            // tooltip placement according to parent placement
-            let top = target.offset().top - tooltip.height() * 0.85
-            let left = target.offset().left + target.width() * 0.8
-            tooltip.css({top: top, left: left, visibility: 'visible'})
+        if (tooltip) {
+          // tooltip placement according to parent placement
+          let top = target.offset().top - tooltip.height() * 0.85
+          let left = target.offset().left + target.width() * 0.8
+          tooltip.css({ top: top, left: left, visibility: 'visible' })
         }
       })
 
       html.find('.tooltip-manager').mouseout(ev => {
         ev.preventDefault()
-        let target = $(ev.currentTarget);
+        let target = $(ev.currentTarget)
         if (target.hasNoChildren) {
-          return;
+          return
         }
 
         let tooltip = target.children('.tooltippic')
         if (tooltip) {
-          tooltip.css({visibility: 'hidden'})
+          tooltip.css({ visibility: 'hidden' })
         }
-
       })
 
-        // update the text input field, but do not update the actor's data
+      // update the text input field, but do not update the actor's data
       html.find('button[data-operation="resource-update"]').click(ev => {
         let dataValue = $(ev.currentTarget).attr('data-value')
         let details = $(ev.currentTarget).closest('details')
@@ -396,7 +393,9 @@ export class GurpsActorSheet extends ActorSheet {
             one: {
               label: 'Create',
               callback: async html => {
-                ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(a => (eqt[a] = html.find(`.${a}`).val()))
+                ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
+                  a => (eqt[a] = html.find(`.${a}`).val())
+                )
                 ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
                 let u = html.find('.save') // Should only find in Note (or equipment)
                 if (!!u) eqt.save = u.is(':checked')
@@ -443,7 +442,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     let opts = this.addDeleteMenu(new Equipment('New Equipment', true))
-/*    opts.push({
+    /*    opts.push({
       name: 'Add In',
       icon: "<i class='fas fa-sign-in-alt'></i>",
       callback: e => {
@@ -466,13 +465,13 @@ export class GurpsActorSheet extends ActorSheet {
     opts.push({
       icon: '<i class="fas fa-sort-alpha-up"></i>',
       name: 'Sort Contents (Ascending)',
-      callback: async (data) => {
+      callback: async data => {
         let parentpath = data[0].dataset.key
         let objkey = 'contains'
-        let key = parentpath +'.' + objkey
+        let key = parentpath + '.' + objkey
         let list = getProperty(this.actor.data, key)
         if (!Object.keys(list).length) {
-          ui.notifications.info("Nothing to sort")
+          ui.notifications.info('Nothing to sort')
           return
         }
         let t = parentpath + '.-=' + objkey
@@ -483,18 +482,18 @@ export class GurpsActorSheet extends ActorSheet {
           .sort((a, b) => a.name.localeCompare(b.name))
           .forEach(o => game.GURPS.put(sortedobj, o, index++))
         await this.actor.update({ [key]: sortedobj })
-      }
+      },
     })
     opts.push({
       icon: '<i class="fas fa-sort-alpha-down"></i>',
       name: 'Sort Contents (Descending)',
-      callback: async (data) => {
+      callback: async data => {
         let parentpath = data[0].dataset.key
         let objkey = 'contains'
-        let key = parentpath +'.' + objkey
+        let key = parentpath + '.' + objkey
         let list = getProperty(this.actor.data, key)
         if (!Object.keys(list).length) {
-          ui.notifications.info("Nothing to sort")
+          ui.notifications.info('Nothing to sort')
           return
         }
         let t = parentpath + '.-=' + objkey
@@ -505,7 +504,7 @@ export class GurpsActorSheet extends ActorSheet {
           .sort((a, b) => b.name.localeCompare(a.name))
           .forEach(o => game.GURPS.put(sortedobj, o, index++))
         await this.actor.update({ [key]: sortedobj })
-      }
+      },
     })
     let mcar = Array.from(opts)
     mcar.push({
@@ -724,10 +723,12 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Update',
             callback: async html => {
-              ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
+                a => (obj[a] = html.find(`.${a}`).val())
+              )
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
-              if (!!u && obj.save != null) obj.save = u.is(':checked')  // only set 'saved' if it was already defined
+              if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
               let v = html.find('.ignoreImportQty') // Should only find in equipment
               if (!!v) obj.ignoreImportQty = v.is(':checked')
               await actor.update({ [path]: obj })
@@ -754,7 +755,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import'],
+      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       []
     )
   }
@@ -766,7 +767,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import'],
+      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       ['acc', 'bulk']
     )
   }
@@ -790,7 +791,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
-      ['name', 'import', 'relativelevel', 'pageref', 'notes'],
+      ['name', 'import', 'relativelevel', 'pageref', 'notes', 'checkotf', 'duringotf', 'passotf', 'failotf'],
       ['points']
     )
   }
@@ -814,7 +815,7 @@ export class GurpsActorSheet extends ActorSheet {
         'maintain',
         'casttime',
         'duration',
-        'college',
+        'college', 'checkotf', 'duringotf', 'passotf', 'failotf'
       ],
       ['points']
     )
@@ -833,7 +834,7 @@ export class GurpsActorSheet extends ActorSheet {
     )
   }
 
-  async editItem(actor, path, obj, html, title, strprops, numprops, width = 550) {
+  async editItem(actor, path, obj, html, title, strprops, numprops, width = 560) {
     let dlgHtml = await renderTemplate(html, obj)
 
     let d = new Dialog(
@@ -1032,20 +1033,20 @@ export class GurpsActorSheet extends ActorSheet {
     if (this.options.editable && canConfigure) {
       let b = [
         {
-          label: isFull ? 'Combat View' : 'Full View',
+          label: isFull ? 'Tabbed View' : 'Full View',
           class: 'toggle',
           icon: 'fas fa-exchange-alt',
           onclick: ev => this._onToggleSheet(ev),
         },
       ]
-      
+
       if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
-        b.push( {
-            label: 'Import',
-            class: 'import',
-            icon: 'fas fa-file-import',
-            onclick: ev => this._onFileImport(ev),
-          })
+        b.push({
+          label: 'Import',
+          class: 'import',
+          icon: 'fas fa-file-import',
+          onclick: ev => this._onFileImport(ev),
+        })
 
       if (!isEditor) {
         b.push({
@@ -1067,7 +1068,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onToggleSheet(event) {
     event.preventDefault()
-    let newSheet = 'gurps.GurpsActorCombatSheet'
+    let newSheet = 'gurps.GurpsActorTabSheet'
 
     const original =
       this.actor.getFlag('core', 'sheetClass') ||
@@ -1139,8 +1140,14 @@ export class GurpsActorSheet extends ActorSheet {
   async _onNavigate(event) {
     let dataValue = $(event.currentTarget).attr('data-value')
     if (dataValue == 'CLOSE') {
-      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
-      this.render()
+      Dialog.confirm({
+        title: 'Close Navigation',
+        content: 'Are you sure you want to hide the Navigation buttons?   To show them again, you will need to go to the System Settings and turn on ' + i18n('GURPS.settingShowNavigation'),
+        yes: () => {
+          game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
+          this.render()
+        }
+      })
     } else {
       let windowContent = event.currentTarget.closest('.window-content')
       let target = windowContent.querySelector(`#${dataValue}`)
@@ -1197,7 +1204,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   addDeleteMenu(obj) {
     return [
-/*      {
+      /*      {
         name: 'Add Before',
         icon: "<i class='fas fa-chevron-up'></i>",
         callback: e => {
@@ -1214,7 +1221,7 @@ export class GurpsActorSheet extends ActorSheet {
           else GURPS.removeKey(this.actor, key)
         },
       },
-/*
+      /*
       {
         name: 'Add at the end',
         icon: "<i class='fas fa-fast-forward'></i>",
@@ -1247,7 +1254,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/actor-tab-sheet.html',
       width: 860,
       height: 600,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1261,7 +1268,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/combat-sheet.html',
       width: 600,
       height: 275,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1278,7 +1285,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       ],
       width: 880,
       height: 800,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
@@ -1428,7 +1435,7 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
       template: 'systems/gurps/templates/simplified.html',
       width: 820,
       height: 900,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }

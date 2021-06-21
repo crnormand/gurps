@@ -115,16 +115,19 @@ export default class StatusChatProcessor extends ChatProcessor {
 
   isEffectActive(token, effect) {
     let actor = token?.actor || game.actors.get(token.actorId)
-    return actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
+    return actor.isEffectActive(effect)
+    // return actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
   }
 
   async toggleTokenEffect(token, effect, actionText) {
-    await token.toggleEffect(effect)
-    // TODO You need to turn this into a single string, instead of multiple i18n strings concatenated.
-    // This assumes an English-like word order, which may not apply to another language.
-    this.prnt(
-      `${i18n(actionText)} [${effect.id}:'${i18n(effect.label)}'] ${i18n('GURPS.for')} ${token.actor.displayname}`
-    )
+    if (!!effect) {
+      await token.toggleEffect(effect)
+      // TODO We need to turn this into a single string, instead of multiple i18n strings concatenated.
+      // This assumes an English-like word order, which may not apply to another language.
+      this.prnt(
+        `${i18n(actionText)} [${effect.id}:'${i18n(effect.label)}'] ${i18n('GURPS.for')} ${token.actor.displayname}`
+      )
+    }
   }
 
   async toggle(tokens, effect) {

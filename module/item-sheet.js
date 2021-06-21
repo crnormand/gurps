@@ -12,7 +12,7 @@ export class GurpsItemSheet extends ItemSheet {
       width: 680,
       height: 'auto',
       resizable: false,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.content', initial: 'melee-tab' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
   }
