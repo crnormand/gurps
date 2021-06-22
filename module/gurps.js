@@ -1272,15 +1272,13 @@ function listeqtrecurse(eqts, options, level, data, parentkey = '') {
   let i = 0
   for (let key in eqts) {
     let eqt = eqts[key]
-    if (!!eqt) {
-      if (data) {
-        data.indent = level
-        data.key = parentkey + key
-        data.count = eqt.count
-      }
-      ret = ret + options.fn(eqt, { data: data })
-      ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
+    if (data) {
+      data.indent = level
+      data.key = parentkey + key
+      data.count = eqt.count
     }
+    ret = ret + options.fn(eqt, { data: data })
+    ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
   }
   return ret
 }

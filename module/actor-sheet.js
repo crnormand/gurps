@@ -36,7 +36,6 @@ export class GurpsActorSheet extends ActorSheet {
   // Hack to keep sheet from flashing during multiple DB updates
   async _render(...args) {
     if (!!this.object?.ignoreRender) return
-    console.trace();
     super._render(...args)
   }
 
