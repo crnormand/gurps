@@ -9,7 +9,9 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.applyAllToTarget
   GURPS.chatFixedDamage
   GURPS.chatRollingDamage
+  GURPS.equipmentTechlevel
   GURPS.gameAidUsersGuide
+  GURPS.importGCAChildrenWeights
   GURPS.maneuver
   GURPS.minimumDamageRule
   GURPS.pdfDamageRoll
@@ -19,8 +21,10 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingBasicPDFs
   GURPS.settingBasicPDFsCombined
   GURPS.settingBasicPDFsSeparate
+  GURPS.settingBlockImport
   GURPS.settingCalculateEnc
   GURPS.settingCombatInitiative
+  GURPS.settingConvertRanged
   GURPS.settingDamageAD
   GURPS.settingDamageBluntTrauma
   GURPS.settingDamageCondInjury
@@ -33,8 +37,10 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingFlagItems
   GURPS.settingFlagUserCreated
   GURPS.settingHintBasicPDFs
+  GURPS.settingHintBlockImport
   GURPS.settingHintCalculateEnc
   GURPS.settingHintCombatInitiative
+  GURPS.settingHintConvertRanged
   GURPS.settingHintDamagCondInjury
   GURPS.settingHintDamageAD
   GURPS.settingHintDamageBluntTrauma
@@ -48,9 +54,12 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingHintFlagUserCreated
   GURPS.settingHintImportHPAndFP
   GURPS.settingHintImportIgnoreName
+  GURPS.settingHintManeuverDetail
+  GURPS.settingHintManeuverVisibility
   GURPS.settingHintMookGenerator
   GURPS.settingHintPlayerBlindRoll
   GURPS.settingHintPlayerChatPrivate
+  GURPS.settingHintQtyItems
   GURPS.settingHintRangeStrategy
   GURPS.settingHintShowDiceRoller
   GURPS.settingHintShowNavigation
@@ -69,9 +78,18 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingImportHintBodyPlan
   GURPS.settingImportIgnoreName
   GURPS.settingLabelMookGenerator
+  GURPS.settingManeuverDetail
+  GURPS.settingManeuverDetailFull
+  GURPS.settingManeuverDetailGeneral
+  GURPS.settingManeuverDetailNoFeint
+  GURPS.settingManeuverEveryone
+  GURPS.settingManeuverGMOnly
+  GURPS.settingManeuverNoOne
+  GURPS.settingManeuverVisibility
   GURPS.settingMookGenerator
   GURPS.settingPlayerBlindRoll
   GURPS.settingPlayerChatPrivate
+  GURPS.settingQtyItems
   GURPS.settingRangeStrategy
   GURPS.settingRangeStrategyRangeBands
   GURPS.settingRangeStrategyStandard

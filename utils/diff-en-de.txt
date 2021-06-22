@@ -44,6 +44,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.addWHard
   GURPS.advantage
   GURPS.advantages
+  GURPS.advantagesTab
   GURPS.allDamage
   GURPS.allOutDefense
   GURPS.allTheDamage
@@ -75,6 +76,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.check3
   GURPS.check4
   GURPS.collapse
+  GURPS.combatTab
   GURPS.conditions
   GURPS.copyrightGCS
   GURPS.copyrightGURPS
@@ -100,6 +102,8 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.equipmentEquipped
   GURPS.equipmentMaxUses
   GURPS.equipmentQuantity
+  GURPS.equipmentTab
+  GURPS.equipmentTechlevel
   GURPS.equipmentUses
   GURPS.gameAidUsersGuide
   GURPS.grapplingCPAbbrev
@@ -119,6 +123,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.importFantasyGroundUnsupported
   GURPS.importFileVersion
   GURPS.importGCABadBlockForDB
+  GURPS.importGCAChildrenWeights
   GURPS.importGCANoBodyPlan
   GURPS.importGCANoHideFlag
   GURPS.importGCANoInnateRangedAndParent
@@ -226,8 +231,10 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingBasicPDFs
   GURPS.settingBasicPDFsCombined
   GURPS.settingBasicPDFsSeparate
+  GURPS.settingBlockImport
   GURPS.settingCalculateEnc
   GURPS.settingCombatInitiative
+  GURPS.settingConvertRanged
   GURPS.settingDamageAD
   GURPS.settingDamageBluntTrauma
   GURPS.settingDamageCondInjury
@@ -240,8 +247,10 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingFlagItems
   GURPS.settingFlagUserCreated
   GURPS.settingHintBasicPDFs
+  GURPS.settingHintBlockImport
   GURPS.settingHintCalculateEnc
   GURPS.settingHintCombatInitiative
+  GURPS.settingHintConvertRanged
   GURPS.settingHintDamagCondInjury
   GURPS.settingHintDamageAD
   GURPS.settingHintDamageBluntTrauma
@@ -255,9 +264,12 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingHintFlagUserCreated
   GURPS.settingHintImportHPAndFP
   GURPS.settingHintImportIgnoreName
+  GURPS.settingHintManeuverDetail
+  GURPS.settingHintManeuverVisibility
   GURPS.settingHintMookGenerator
   GURPS.settingHintPlayerBlindRoll
   GURPS.settingHintPlayerChatPrivate
+  GURPS.settingHintQtyItems
   GURPS.settingHintRangeStrategy
   GURPS.settingHintShowDiceRoller
   GURPS.settingHintShowNavigation
@@ -276,9 +288,18 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingImportHintBodyPlan
   GURPS.settingImportIgnoreName
   GURPS.settingLabelMookGenerator
+  GURPS.settingManeuverDetail
+  GURPS.settingManeuverDetailFull
+  GURPS.settingManeuverDetailGeneral
+  GURPS.settingManeuverDetailNoFeint
+  GURPS.settingManeuverEveryone
+  GURPS.settingManeuverGMOnly
+  GURPS.settingManeuverNoOne
+  GURPS.settingManeuverVisibility
   GURPS.settingMookGenerator
   GURPS.settingPlayerBlindRoll
   GURPS.settingPlayerChatPrivate
+  GURPS.settingQtyItems
   GURPS.settingRangeStrategy
   GURPS.settingRangeStrategyRangeBands
   GURPS.settingRangeStrategyStandard
@@ -292,10 +313,13 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.skillAcrobatics
   GURPS.skillJudo
   GURPS.skillLevel
+  GURPS.skillsTab
   GURPS.slamAOAStrong
   GURPS.spell
   GURPS.spellDifficulty
   GURPS.spellResist
+  GURPS.spellsTab
+  GURPS.statsTab
   GURPS.suffersAMajorWound
   GURPS.targeting
   GURPS.tired

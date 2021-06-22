@@ -529,8 +529,13 @@ export class GurpsActor extends Actor {
    */
   async _setManeuverEffect(token, maneuverText) {
     await this._removeAllManeuvers(token)
-    let icon = Maneuvers.getIcon(maneuverText)
-    await token.toggleEffect(icon, { active: true }) // turn it on!
+
+    if (!!game.combat) {
+      if (game.combat.combatants.contents.some(it => it.token.id === token.id)) {
+        let icon = Maneuvers.getIcon(maneuverText)
+        await token.toggleEffect(icon, { active: true }) // turn it on!
+      }
+    }
   }
 
   isEffectActive(effect) {
