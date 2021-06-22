@@ -274,7 +274,7 @@ export class AnimChatProcessor extends ChatProcessor {
     if (!!m.scale) { 
       scale = parseFloat(m.scale.substr(1))  
       opts.push("Scale:" + scale)
-      this.priv("Scale option only valid on Centered animation")
+      if (!centered) this.priv("Scale option only valid on Centered animation")
     }
     if (!!m.count) {
       count = parseInt(m.count.slice(0, -1))
@@ -287,12 +287,12 @@ export class AnimChatProcessor extends ChatProcessor {
     if (!!m.x) {
       x = parseFloat(m.x.substr(1))
       opts.push("Start:-" + x)
-      this.priv("Start option only valid on Targeted animation")
+      if (centered) this.priv("Start option only valid on Targeted animation")
    }
     if (!!m.fudge) {
       fudge = parseFloat(m.fudge.substr(1))
       opts.push("End:+" + fudge)
-      this.priv("End option only valid on Targeted animation")
+      if (centered) this.priv("End option only valid on Targeted animation")
    } 
     let srcToken = canvas.tokens.placeables.find(e => e.actor == GURPS.LastActor)
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
@@ -302,6 +302,7 @@ export class AnimChatProcessor extends ChatProcessor {
     if (m.dest) {
       let d = m.dest.substr(1).split(',')
       destTokens = [ {
+        name: "User click",
         w: 0,
         h: 0,
         position: {
