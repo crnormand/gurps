@@ -1540,10 +1540,6 @@ Hooks.once('init', async function () {
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet)
-  Actors.registerSheet('gurps', GurpsActorSheet, {
-    label: 'Full (GCS)',
-    makeDefault: true,
-  })
   Actors.registerSheet('gurps', GurpsActorCombatSheet, {
     label: 'Combat',
     makeDefault: false,
@@ -1571,6 +1567,10 @@ Hooks.once('init', async function () {
   Actors.registerSheet('gurps', GurpsActorTabSheet, {
     label: 'Tabbed Sheet',
     makeDefault: false,
+  })
+  Actors.registerSheet('gurps', GurpsActorSheet, {    // Add this sheet last 
+    label: 'Full (GCS)',
+    makeDefault: true,
   })
 
   Items.unregisterSheet('core', ItemSheet)
