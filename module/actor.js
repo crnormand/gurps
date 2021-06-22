@@ -2134,7 +2134,7 @@ export class GurpsActor extends Actor {
     await this._removeItemElement(itemid, 'ads')
     await this._removeItemElement(itemid, 'skills')
     await this._removeItemElement(itemid, 'spells')
-//    this.ignoreRender = false
+    this.ignoreRender = false
   }
 
   // We have to remove matching items after we searched through the list
