@@ -307,11 +307,13 @@ export class GurpsActor extends Actor {
     let sum = 0
     for (let k in dict) {
       let e = dict[k]
-      let c = flt(e.count)
-      let t = flt(e[type])
-      if (!checkEquipped || !!e.equipped) sum += c * t
-      sum += this._sumeqt(e.contains, type, checkEquipped)
-      sum += this._sumeqt(e.collapsed, type, checkEquipped)
+      if (!!e) {
+        let c = flt(e.count)
+        let t = flt(e[type])
+        if (!checkEquipped || !!e.equipped) sum += c * t
+        sum += this._sumeqt(e.contains, type, checkEquipped)
+        sum += this._sumeqt(e.collapsed, type, checkEquipped)
+      }
     }
     return parseInt(sum * 100) / 100
   }
@@ -1844,7 +1846,9 @@ export class GurpsActor extends Actor {
       ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
     }
-    let global = game.items.get(dragData.id)
+    const uuid = typeof dragData.pack === 'string' ? `Compendium.${dragData.pack}.${dragData.id}` : `${dragData.type}.${dragData.id}`;
+    let global = await fromUuid(uuid)
+    //let global = game.items.get(dragData.id)
     ui.notifications.info(global.name + ' => ' + this.name)
     await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
     this.ignoreRender = true
@@ -2372,8 +2376,8 @@ export class GurpsActor extends Actor {
     let val = 0
     if (!!this.data.data.melee && !!this.data.data.equipment?.carried)
       Object.values(this.data.data.melee).forEach(melee => {
-        recurselist(this.data.data.equipment.carried, e => {
-          if (!val && e.equipped && e.name == melee.name) {
+        recurselist(this.data.data.equipment.carried, (e, k, d) => {
+          if (!!e && !val && e.equipped && e.name == melee.name) {
             let t = parseInt(melee[key])
             if (!isNaN(t)) val = t
           }
