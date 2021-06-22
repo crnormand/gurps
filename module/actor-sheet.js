@@ -754,7 +754,21 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
+      [
+        'name',
+        'mode',
+        'parry',
+        'block',
+        'damage',
+        'reach',
+        'st',
+        'notes',
+        'import',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
+      ],
       []
     )
   }
@@ -766,7 +780,22 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
+      [
+        'name',
+        'mode',
+        'range',
+        'rof',
+        'damage',
+        'shots',
+        'rcl',
+        'st',
+        'notes',
+        'import',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
+      ],
       ['acc', 'bulk']
     )
   }
@@ -814,7 +843,11 @@ export class GurpsActorSheet extends ActorSheet {
         'maintain',
         'casttime',
         'duration',
-        'college', 'checkotf', 'duringotf', 'passotf', 'failotf'
+        'college',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
       ],
       ['points']
     )
@@ -1145,9 +1178,18 @@ export class GurpsActorSheet extends ActorSheet {
       let windowContent = event.currentTarget.closest('.window-content')
       let target = windowContent.querySelector(`#${dataValue}`)
 
+      // add the glowing class to target AND to event.currentTarget, then remove it
+      $(target).addClass('glowing')
+      $(event.currentTarget).addClass('glowing')
+
       // The '33' represents the hieght of the window title bar + a bit of margin
       // TODO: we should really look this up and use the actual values as found in the DOM.
       windowContent.scrollTop = target.offsetTop - 33
+
+      setTimeout(function () {
+        $(target).removeClass('glowing')
+        $(event.currentTarget).removeClass('glowing')
+      }, 2000)
     }
   }
 
