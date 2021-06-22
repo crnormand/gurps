@@ -307,14 +307,12 @@ export class GurpsActor extends Actor {
     let sum = 0
     for (let k in dict) {
       let e = dict[k]
-      if (!!e) {
-        let c = flt(e.count)
-        let t = flt(e[type])
-        if (!checkEquipped || !!e.equipped) sum += c * t
-        sum += this._sumeqt(e.contains, type, checkEquipped)
-        sum += this._sumeqt(e.collapsed, type, checkEquipped)
-      }
-    }
+      let c = flt(e.count)
+      let t = flt(e[type])
+      if (!checkEquipped || !!e.equipped) sum += c * t
+      sum += this._sumeqt(e.contains, type, checkEquipped)
+      sum += this._sumeqt(e.collapsed, type, checkEquipped)
+     }
     return parseInt(sum * 100) / 100
   }
 
@@ -451,6 +449,8 @@ export class GurpsActor extends Actor {
 
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING */
   /** @override */
+  
+  
   async update(data, options) {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (!isNaN(data.data?.HP?.value)) {
@@ -476,9 +476,10 @@ export class GurpsActor extends Actor {
 
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
 
-    super.update(data, options)
+    await super.update(data, options)
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
+
 
   /**
    * Calling this will also trigger it being added to the token status icons.
@@ -551,20 +552,23 @@ export class GurpsActor extends Actor {
   _onUpdate(data, options, userId, context) {
     // moved this code to the update(data, options) method, as that is the intended design
     // TODO remove commented out code when we know there's no reason to roll this back
+    
+    /*
 
-    // if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
-    //   if (!isNaN(data.data?.HP?.value)) {
-    //     let flag = data.data.HP.value < this.data.data.HP.max / 3
-    //     if (!!this.data.data.additionalresources.isReeling != flag) this.changeOneThirdStatus('isReeling', flag)
-    //   }
-    //   if (!isNaN(data.data?.FP?.value)) {
-    //     let flag = data.data.FP.value < this.data.data.FP.max / 3
-    //     if (!!this.data.data.additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
-    //   }
-    // }
-    // //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
+     if (!isNaN(data.data?.HP?.value)) {
+       let flag = data.data.HP.value < this.data.data.HP.max / 3
+       if (!!this.data.data.additionalresources.isReeling != flag) this.changeOneThirdStatus('isReeling', flag)
+     }
+     if (!isNaN(data.data?.FP?.value)) {
+       let flag = data.data.FP.value < this.data.data.FP.max / 3
+       if (!!this.data.data.additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
+     }
+    }
+    */
+    //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
     super._onUpdate(data, options, userId, context)
-    // game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
+    //game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
 
   get _additionalResources() {
