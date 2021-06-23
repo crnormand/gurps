@@ -643,6 +643,22 @@ async function performAction(action, actor, event, targets) {
 
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
   }
+  
+  if (action.type === 'dragdrop') {
+    let drop = action.orig
+    if (action.orig == 'JournalEntry') {
+      game.journal.get(action.id).show()
+    }
+    if (action.orig == 'Actor') {
+      game.actors.get(action.id).sheet.render(true)
+    }
+    if (action.orig == 'RollTable') {
+      game.tables.get(action.id).sheet.render(true)
+    }
+    if (action.orig == 'Item') {
+      game.items.get(action.id).sheet.render(true)
+    }
+  }
 
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '

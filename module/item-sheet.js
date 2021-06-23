@@ -89,7 +89,35 @@ export class GurpsItemSheet extends ItemSheet {
       let r = new Advantage()
       this._addToList('ads', r)
     })
+    
+    html.find('textarea').on('drop', this.dropFoundryLinks)
+    html.find('input').on('drop', this.dropFoundryLinks)
   }
+  
+  dropFoundryLinks(ev) {
+    if (!!ev.originalEvent) ev = ev.originalEvent
+    let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
+    var n
+    if (dragData.type == 'JournalEntry') {
+      n = game.journal.get(dragData.id).name
+    }
+    if (dragData.type == 'Actor') {
+      n = game.actors.get(dragData.id).name
+    }
+    if (dragData.type == 'RollTable') {
+      n = game.tables.get(dragData.id).name
+    }
+    if (dragData.type == 'Item') {
+      n = game.items.get(dragData.id).name
+    }
+    if (!!n) {
+      let add = ` [@${dragData.type}[${dragData.id}]` + '{' + n + '}]'    
+      $(ev.currentTarget).val($(ev.currentTarget).val() + add)
+    }
+ }
+
+
+
 
   async _deleteKey(ev) {
     let key = ev.currentTarget.getAttribute('name')
