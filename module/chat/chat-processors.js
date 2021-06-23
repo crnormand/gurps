@@ -193,7 +193,7 @@ class MookChatProcessor extends ChatProcessor {
 
 class ChatExecuteChatProcessor extends ChatProcessor {
   help() {
-    return '/:&lt;macro name&gt'
+    return '/:&lt;macro name&gt args (arguments require "Advanced Macros" module)'
   }
   matches(line) {
     return line.startsWith('/:')
@@ -205,7 +205,7 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     let m = Object.values(game.macros.contents).filter(m => m.name.startsWith(args[0]))
     if (m.length > 0) {
       this.send()
-      m[0].execute()
+      GURPS.chatreturn = m[0].execute(args) ?? GURPS.chatreturn;
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro')} '${line.substr(2)}'`)
     return GURPS.chatreturn
   }
