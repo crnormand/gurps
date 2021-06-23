@@ -119,7 +119,6 @@ export class GurpsActor extends Actor {
     if (!v) return // Prior to v0.9.6, this did not exist
     v = SemanticVersion.fromString(v)
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
-    let commit = {}
     for (const attr in data.attributes) {
       data.attributes[attr].value = data.attributes[attr].import
     }
