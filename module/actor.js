@@ -1833,11 +1833,16 @@ export class GurpsActor extends Actor {
     }
     const uuid = typeof dragData.pack === 'string' ? `Compendium.${dragData.pack}.${dragData.id}` : `${dragData.type}.${dragData.id}`;
     let global = await fromUuid(uuid)
-    //let global = game.items.get(dragData.id)
-    ui.notifications.info(global.name + ' => ' + this.name)
-    await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
+    let data = !!global ? global.data : dragData.data
+    if (!data) {
+      ui.notificitions.warn("NO ITEM DATA!")
+      return
+    }
+    ui.notifications.info(data.name + ' => ' + this.name)
+    if (!data.data.globalid)
+      await data.update({ _id: data._id, 'data.globalid': uuid })
     this.ignoreRender = true
-    await this.addNewItemData(global.data)
+    await this.addNewItemData(data)
     this._forceRender()
   }
 
@@ -1966,7 +1971,9 @@ export class GurpsActor extends Actor {
   // create a new embedded item based on this item data and place in the carried list
   // This is how all Items are added originally.
   async addNewItemData(itemData, targetkey) {
-    let localItems = await this.createEmbeddedDocuments('Item', [itemData.toObject()]) // add a local Foundry Item based on some Item data
+    let d = itemData
+    if (itemData.toObject === 'function') d = itemData.toObject()
+    let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'data.eqt.uuid': generateUniqueId() }])
     await this.addItemData(localItem.data, targetkey) // only created 1 item
@@ -2019,9 +2026,9 @@ export class GurpsActor extends Actor {
       eqt.itemid = itemData._id
       eqt.globalid = itemData.data.globalid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = itemData.data.equipped
+      eqt.equipped = itemData.data.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = itemData.data.carried
+      eqt.carried = itemData.data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
       return [targetkey, eqt.carried && eqt.equipped]

@@ -16,7 +16,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added combat maneuver icons to all tokens in a combat. Two new settings control the appearance of the maneuver icons.
 - reinstate /rolltable command
 - Added support Advanced Macros module argument passing
-- Added support for drag and drop Journal entries, Actors and Rolltables as OtFs
+- Added support for drag and drop Journal entries, Actors, Items and Rolltables as OtFs
+- Added support to drag and drop Items from compendiums and Item sheet
 
 Release 0.10.5 - 6/12/2021
 
