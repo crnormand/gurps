@@ -1502,7 +1502,7 @@ export class GurpsActor extends Actor {
     let att = data.attributes
     //Create Quintessence entry
     att.QN = {
-      "value": 10,
+      "import": 10,
       "points": 0,
       "dtype": "Number"
     },
@@ -1520,7 +1520,7 @@ export class GurpsActor extends Actor {
     att.WILL.points = i(json.will_points)
     att.PER.import = i(json.perception)
     att.PER.points = i(json.perception_points)
-    att.QN.value = i(json.quintessence)
+    att.QN.import = i(json.quintessence)
     att.QN.points=i(json.quintessence_points)
     //quintessence points
     data.QP ={
