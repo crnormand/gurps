@@ -48,6 +48,38 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new AnimChatProcessor())
   ChatProcessors.registerProcessor(new WaitChatProcessor())  
   ChatProcessors.registerProcessor(new WhisperChatProcessor())  
+  ChatProcessors.registerProcessor(new RolltableChatProcessor())  
+}
+
+
+class RolltableChatProcessor extends ChatProcessor {
+
+  help() {
+    return '/rolltable &lt;tablename&gt;'
+  }
+  matches(line) {
+    this.match = line.match(/\/rolltable(.*)/)
+    return !!this.match
+  }
+
+  process(line) {
+    let tblname = this.match[1].trim()
+    let pat = new RegExp(makeRegexPatternFrom(tblname, false), 'i')
+    let tables = game.tables.contents.filter(t => t.name.match(pat))
+    if (tables.length == 0) {
+      ui.notifications.error("No table found for '" + tblname + "'")
+      return
+    }
+    if (tables.length > 1) {
+      ui.notifications.error("More than one table matched '" + tblname + "'")
+      return
+    }
+    let table = tables[0]
+    let r = table.roll()
+    table.draw({roll:r})
+    GURPS.ModifierBucket.clear()
+    return
+  }
 }
 
 class WhisperChatProcessor extends ChatProcessor {
@@ -543,7 +575,8 @@ class LightChatProcessor extends ChatProcessor {
     }
     let type = this.match.groups.type || ''
     if (!!type) {
-      let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.startsWith(type))
+      let pat = new RegEx(makeRegexPatternFrom(type, false), 'i')
+      let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.match(pat))
       if (!m) {
         ui.notifications.warn(
           "Unknown light animation '" + type + "'.  Expected: " + Object.keys(CONFIG.Canvas.lightAnimations).join(', ')
