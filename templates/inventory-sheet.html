@@ -1,171 +1,168 @@
 <form class="{{cssClass}}" autocomplete="off" style='scroll-padding-top: 5px;'>
-  <div id="inv-sheet" class="gurpsactorsheet">
-    <div id="personal">
-      <div id="identity">
-        <div class="header">{{localize "GURPS.identity"}}</div>
-        <div class="fieldblock">
-          <div class="label">{{localize "GURPS.identityName"}}:</div>
-          <div class="field">{{{actor.name}}}</div>
-          <div class="label">{{localize "GURPS.identityTitle"}}:</div>
-          <div class="field">{{data.traits.title}}</div>
-          <div class="label">{{localize "GURPS.identityPlayer"}}:</div>
-          <div class="field">{{data.traits.player}}</div>
-        </div>
-      </div>
-      <div id="miscellaneous">
-        <div class="header">{{localize "GURPS.miscellaneous"}}</div>
-        <div class="fieldblock">
-          <div class="label">{{localize "GURPS.miscellaneousCreated"}}:</div>
-          <div class="field">{{data.traits.createdon}}</div>
-          <div class="label">{{localize "GURPS.miscellaneousModified"}}:</div>
-          <div class="field">{{data.traits.modifiedon}}</div>
-          <div class="label">{{localize "GURPS.miscellaneousOptions"}}:</div>
-          <div class="field"></div>
-        </div>
-      </div>
-    </div>
-    <div id="equipment" class="equipmentlist">
-      <div class="equipped header">{{i18n "GURPS.equipmentEquipped"}}</div>
-      <div class="qty header eqtdragtarget" data-key="data.equipment.carried">
-        {{i18n "GURPS.equipmentQuantity"}}
-      </div>
-      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried">
-        {{localize "GURPS.equipment"}}
-        ({{toLocaleString eqtsummary.eqtlbs}} lb; ${{toLocaleString eqtsummary.eqtcost}}) &nbsp; <i
-          class='fas fa-plus addequipmenticon'></i>
-      </div>
-      <div class="uses header">{{i18n "GURPS.equipmentUses"}}</div>
-      <div class="cost header">$</div>
-      <div class="weight header"><i class="fas fa-weight-hanging"></i></div>
-      <div class="sum_cost header">&sum; $</div>
-      <div class="sum_weight header">&sum; <i class="fas fa-weight-hanging"></i></div>
-      <div class="ref header">{{i18n "GURPS.pdfRef"}}</div>
-
-      {{#listeqt data.equipment.carried }}
-        <div class="equipped satisfiedY changeequip equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{#if
-        this.equipped}}&check;{{/if}}</div>
-        <div class="qty satisfiedY eqtdraggable equipmenucarried" data-key="data.equipment.carried.{{@key}}">
-          <button class="equipmentbutton bold" data-operation='equipment-dec'>-</button>
-          &nbsp; {{this.count}} &nbsp;
-          <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
-        </div>
-        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried"
-          data-key="data.equipment.carried.{{@key}}">
-          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-          {{{gurpslink this.name}}}
-          {{#if (isUserCreated this)}}&nbsp;
-            <i class="far fa-bookmark" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
-          {{/if}}
-          {{#if (isFoundryItem this)}}&nbsp;
-            <i class="far fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
-          {{/if}}
-          <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
-            {{{gurpslink this.notes}}}
+    <div id="inv-sheet" class="gurpsactorsheet">
+      <div id="personal">
+        <div id="identity">
+          <div class="header">{{localize "GURPS.identity"}}</div>
+          <div class="fieldblock">
+            <div class="label">{{localize "GURPS.identityName"}}:</div>
+            <div class="field">{{{actor.name}}}</div>
+            <div class="label">{{localize "GURPS.identityTitle"}}:</div>
+            <div class="field">{{data.traits.title}}</div>
+            <div class="label">{{localize "GURPS.identityPlayer"}}:</div>
+            <div class="field">{{data.traits.player}}</div>
           </div>
         </div>
-
-        <div class="uses satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
-          {{#if (or (ne this.maxuses "0") (ne this.uses "0"))}}{{this.uses}}{{/if}}
+        <div id="miscellaneous">
+          <div class="header">{{localize "GURPS.miscellaneous"}}</div>
+          <div class="fieldblock">
+            <div class="label">{{localize "GURPS.miscellaneousCreated"}}:</div>
+            <div class="field">{{data.traits.createdon}}</div>
+            <div class="label">{{localize "GURPS.miscellaneousModified"}}:</div>
+            <div class="field">{{data.traits.modifiedon}}</div>
+            <div class="label">{{localize "GURPS.miscellaneousOptions"}}:</div>
+            <div class="field"></div>
+          </div>
         </div>
-        <div class="cost satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
-          {{toLocaleString this.cost}}
+      </div> 
+      <div id="equipment" class="equipmentlist">
+        <div class="equipped header">{{i18n "GURPS.equipmentEquipped"}}</div>
+        <div class="qty header eqtdragtarget" data-key="data.equipment.carried">
+          {{i18n "GURPS.equipmentQuantity"}}
         </div>
-        <div class="weight satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
-          {{toLocaleString this.weight}} lb
+        <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.carried">
+          {{localize "GURPS.equipment"}}
+          ({{toLocaleString eqtsummary.eqtlbs}} lb; ${{toLocaleString eqtsummary.eqtcost}}) &nbsp; <i
+            class='fas fa-plus addequipmenticon'></i>
         </div>
-        <div class="sum_cost satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
-          {{toLocaleString (round this.costsum)}}
-        </div>
-        <div class="sum_weight satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
-          {{toLocaleString (round this.weightsum)}} lb
-        </div>
-        <div class="ref satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
-          {{{pdflinkext this.pageref this.externallink}}}
-        </div>
-
-      {{/listeqt}}
-    </div>
-
-    <div id="other_equipment" class="equipmentlist">
-      <div class="qty header eqtdragtarget" data-key="data.equipment.other">
-        {{i18n "GURPS.equipmentQuantity"}}
+        <div class="uses header">{{i18n "GURPS.equipmentUses"}}</div>
+        <div class="cost header">$</div>
+        <div class="weight header"><i class="fas fa-weight-hanging"></i></div>
+        <div class="sum_cost header">&sum; $</div>
+        <div class="sum_weight header">&sum; <i class="fas fa-weight-hanging"></i></div>
+        <div class="ref header">{{i18n "GURPS.pdfRef"}}</div>
+  
+        {{#listeqt data.equipment.carried }}
+          <div class="equipped satisfiedY changeequip equipmenucarried" data-key="data.equipment.carried.{{@key}}">{{#if
+          this.equipped}}&check;{{/if}}</div>
+          <div class="qty satisfiedY eqtdraggable equipmenucarried" data-key="data.equipment.carried.{{@key}}">
+            <button class="equipmentbutton bold" data-operation='equipment-dec'>-</button>
+            &nbsp; {{this.count}} &nbsp;
+            <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
+          </div>
+          <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried tooltip-manager"
+            data-key="data.equipment.carried.{{@key}}">
+            {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+            {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            {{{gurpslink this.name}}}
+            {{#if (isUserCreated this)}}&nbsp;
+              <i class="far fa-bookmark" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+            {{/if}}
+            {{#if (ignoreImportQty this)}}&nbsp;
+              <i class="fas fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+            {{/if}}
+            {{#if (isFoundryItem this)}}&nbsp;
+              <i class="fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
+            {{/if}}
+            {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+            <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
+              {{{gurpslink this.notes}}}
+            </div>
+          </div>
+  
+          <div class="uses satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
+            {{#if (or (ne this.maxuses "0") (ne this.uses "0"))}}{{this.uses}}{{/if}}
+          </div>
+          <div class="cost satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
+            {{toLocaleString this.cost}}
+          </div>
+          <div class="weight satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
+            {{toLocaleString this.weight}} lb
+          </div>
+          <div class="sum_cost satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
+            {{toLocaleString (round this.costsum)}}
+          </div>
+          <div class="sum_weight satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
+            {{toLocaleString (round this.weightsum)}} lb
+          </div>
+          <div class="ref satisfiedY equipmenucarried" data-key="data.equipment.carried.{{@key}}">
+            {{{pdflinkext this.pageref this.externallink}}}
+          </div>
+  
+        {{/listeqt}}
       </div>
-      <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.other">
-        {{localize "GURPS.otherEquipment"}} (${{toLocaleString eqtsummary.othercost}}) &nbsp; <i
-          class='fas fa-plus addequipmenticon'></i>
-      </div>
-      <div class="uses header">{{i18n "GURPS.equipmentUses"}}</div>
-      <div class="cost header">$</div>
-      <div class="weight header"><i class="fas fa-weight-hanging"></i></div>
-      <div class="sum_cost header">&sum; $</div>
-      <div class="sum_weight header">&sum; <i class="fas fa-weight-hanging"></i></div>
-      <div class="ref header">{{i18n "GURPS.pdfRef"}}</div>
-      <div></div>
-
-      {{#listeqt data.equipment.other }}
-        <div class="qty satisfiedY eqtdraggable equipmenuother" data-key="data.equipment.other.{{@key}}">
-          <button class="equipmentbutton bold" data-operation='equipment-dec'>-</i></button>
-          &nbsp; {{this.count}} &nbsp;
-          <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
+  
+      <div id="other_equipment" class="equipmentlist">
+        <div class="qty header eqtdragtarget" data-key="data.equipment.other">
+          {{i18n "GURPS.equipmentQuantity"}}
         </div>
-        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother"
-          data-key="data.equipment.other.{{@key}}">
-          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-          {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
-              style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-          {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
-              style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-          <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
-            {{{gurpslink this.notes}}}</div>
+        <div class="desc header eqtdragtarget dblclksort" data-key="data.equipment.other">
+          {{localize "GURPS.otherEquipment"}} (${{toLocaleString eqtsummary.othercost}}) &nbsp; <i
+            class='fas fa-plus addequipmenticon'></i>
         </div>
-        <div class="uses satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
-        (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
-        <div class="cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
-        <div class="weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb</div>
-        <div class="sum_cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{round this.costsum}}
-        </div>
-        <div class="sum_weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">
-          {{round this.weightsum}}
-          lb
-        </div>
-        <div class="ref satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref
-        this.externallink}}}</div>
+        <div class="uses header">{{i18n "GURPS.equipmentUses"}}</div>
+        <div class="cost header">$</div>
+        <div class="weight header"><i class="fas fa-weight-hanging"></i></div>
+        <div class="sum_cost header">&sum; $</div>
+        <div class="sum_weight header">&sum; <i class="fas fa-weight-hanging"></i></div>
+        <div class="ref header">{{i18n "GURPS.pdfRef"}}</div>
         <div></div>
-      {{/listeqt}}
+  
+        {{#listeqt data.equipment.other }}
+          <div class="qty satisfiedY eqtdraggable equipmenuother" data-key="data.equipment.other.{{@key}}">
+            <button class="equipmentbutton bold" data-operation='equipment-dec'>-</i></button>
+            &nbsp; {{this.count}} &nbsp;
+            <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
+          </div>
+          <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother tooltip-manager"
+            data-key="data.equipment.other.{{@key}}">
+            {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+            {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
+                style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+             {{#if (ignoreImportQty this)}}&nbsp;
+              <i class="far fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
+            {{/if}}
+            {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"
+                style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+            {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+            <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
+              {{{gurpslink this.notes}}}
+            </div>
+          </div>
+          <div class="uses satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{#if (or (ne this.maxuses "0")
+          (ne this.uses "0"))}}{{this.uses}}{{/if}}</div>
+          <div class="cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.cost}}</div>
+          <div class="weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{this.weight}} lb
+          </div>
+          <div class="sum_cost satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">
+            {{round this.costsum}}
+          </div>
+          <div class="sum_weight satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">
+            {{round this.weightsum}}
+            lb
+          </div>
+          <div class="ref satisfiedY equipmenuother" data-key="data.equipment.other.{{@key}}">{{{pdflinkext this.pageref
+          this.externallink}}}</div>
+          <div></div>
+        {{/listeqt}}
+      </div>
+      <div id="notes">
+        <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div>
+        <div class="ref header">Ref</div>
+        {{#listeqt data.notes}}
+          <div
+            class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}"
+            data-key="data.notes.{{@key}}">
+            {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+            {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}
+          </div>
+          <div class="ref">{{{pdflink this.pageref}}}</div>
+        {{/listeqt}}
+        <div></div>
+      </div>
     </div>
-    <div id="notes">
-      <div class="desc header" data-key="data.notes">Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div>
-      <div class="ref header">Ref</div>
-      {{#listeqt data.notes}}
-        <div
-          class="desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}"
-          data-key="data.notes.{{@key}}">
-          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-          {{#if this.notes}}{{{gurpslinkbr this.notes}}}{{else}}this note was intentionally left blank ;-){{/if}}
-        </div>
-        <div class="ref">{{{pdflink this.pageref}}}</div>
-      {{/listeqt}}
-      <div></div>
+    <div id="footer">{{localize "GURPS.copyrightGCS"}}
+      <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
     </div>
-  </div>
-  <div id="footer">{{localize "GURPS.copyrightGCS"}}
-    <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
-  </div>
-  {{#if navigateVisible}}
-    <div class='navigate-bar'>
-      <div class='navigation-link' data-value="personal">TOP</div>
-      <div class='navigation-link' data-value="stats">STATS</div>
-      <div class='navigation-link' data-value="melee">MELEE</div>
-      <div class='navigation-link' data-value="ranged">RANGED</div>
-      <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
-      <div class='navigation-link' data-value="skills">SKILLS</div>
-      <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
-      <div class='navigation-link' data-value="other_equipment">OTHER</div>
-      <div class='navigation-link' data-value="notes">NOTES</div>
-      <div class='navigation-link' data-value="CLOSE"><i class="fas fa-times"></i></div>
-    </div>
-  {{/if}}
-</form>
+  </form>

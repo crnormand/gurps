@@ -46,6 +46,11 @@
               <input id='maxuses' type='number' class='digits-only' value='{{data.eqt.maxuses}}'
                 name='data.eqt.maxuses' />
             </div>
+            <label>{{i18n "GURPS.equipmentTechlevel"}}</label>
+            <div>
+              <input id='techlevel' type='text' value='{{data.eqt.techlevel}}'
+                name='data.eqt.techlevel' />
+            </div>
             <label>{{i18n "GURPS.pdfPageReference"}}</label>
             <div><input id='pageref' type='text' value='{{data.eqt.pageref}}' name='data.eqt.pageref' /></div>
           </div>
@@ -66,7 +71,7 @@
       <h2>{{i18n "GURPS.itemFeatures"}}</h2>
 
       <div class='flexcol'>
-        <nav class='sheet-tabs tabs gurps-tabs' data-group='sections'>
+        <nav class='gurps-sheet-tabs tabs gurps-tabs' data-group='sections'>
           <a class='item' data-tab='melee-tab'><i class='fas fa-fist-raised'></i>&nbsp;{{i18n "GURPS.melee"}}&nbsp;<span
               style='font-size: 80%;'>{{#if (length data.melee)}}({{length data.melee}}){{/if}}</span></a>
           <a class='item' data-tab='range-tab'><i

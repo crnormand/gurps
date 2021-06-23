@@ -2,6 +2,22 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+0.11.0
+
+- Merged in Rinickolous/neck's GCS Equipment importer!
+- Fixed ST based ranged calc so it will also apply to Items
+- Fixed order dependency when applying Item bonuses
+- Kirlian Silvestre/3darkman, fixed Item icon hover picture
+- Added /anim command
+- Fixed NaN skill levels for containers
+- Promoted tabbed view
+- Added /w @ to whisper to selected character(s)
+- Fixed "user does not have permission to update" when tired/reeling status changes
+- Added combat maneuver icons to all tokens in a combat. Two new settings control the appearance of the maneuver icons.
+- reinstate /rolltable command
+- Added support Advanced Macros module argument passing
+- Added support for drag and drop Journal entries, Actors and Rolltables as OtFs
+
 Release 0.10.5 - 6/12/2021
 
 - Remove superfluous "add" menu options for equipment (and just rely on "+")

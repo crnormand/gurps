@@ -348,15 +348,17 @@
         <div></div>
 
         {{#each data.melee as | this key |}}
-          <div class="desc gcs-edit dblclkedit meleedraggable" data-key="data.melee.{{@key}}" data-path="data.melee">
+          <div class="desc gcs-edit dblclkedit meleedraggable tooltip-manager" data-key="data.melee.{{@key}}" data-path="data.melee">
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-                {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+            {{#if (displayItemHover this)}}
+              <div class="tooltippic"><img src="{{this.img}}" /></div>
+            {{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>
           </div>
           <div class="usage">{{this.mode}}</div>
-          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})"
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.melee.{{@key}}"
             data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
           <div class="parry rollable" data-otf="Parry">{{this.parry}}</div>
           <div class="block rollable" data-otf="Block">{{this.block}}</div>
@@ -383,10 +385,12 @@
         <div class="st header">{{localize "GURPS.attributesST"}}</div>
 
         {{#each data.ranged as | this key |}}
-          <div class="desc dblclkedit rangeddraggable" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
+          <div class="desc dblclkedit rangeddraggable tooltip-manager" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-                {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+            {{#if (displayItemHover this)}}
+              <div class="tooltippic"><img src="{{this.img}}" /></div>
+            {{/if}}
             <div class="list_note">{{{gurpslink this.notes}}}</div>
             {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
         </div> }}
@@ -416,13 +420,15 @@
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
       {{#listeqt data.ads}}
-        <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{@key}}">
+        <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit tooltip-manager" data-key="data.ads.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}
           {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-              {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+          {{#if (displayItemHover this)}}
+            <div class="tooltippic"><img src="{{this.img}}" /></div>
+          {{/if}}
           <div class="list_note satisfiedY"></div>
           <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">{{{gurpslinkbr this.notes}}}
           </div>
@@ -440,18 +446,20 @@
       <div class="ref header">Ref</div>
 
       {{#listeqt data.skills}}
-        <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit" data-key="data.skills.{{@key}}">
+        <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit tooltip-manager" data-key="data.skills.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}
           {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-              {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+          {{#if (displayItemHover this)}}
+            <div class="tooltippic"><img src="{{this.img}}" /></div>
+          {{/if}}
           <div class="list_note satisfiedY"></div>
           <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
           @root}}}</div>
         </div>
-        <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
+        <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}" data-key="data.skills.{{@key}}"
           data-otf='S:"{{this.name}}"'>{{this.level}}
         </div>
         <div class="rsl satisfiedY">{{this.relativelevel}}</div>
@@ -475,13 +483,15 @@
         <div class="ref header">Ref</div>
 
         {{#listeqt data.spells}}
-          <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit" data-key="data.spells.{{@key}}">
+          <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit tooltip-manager" data-key="data.spells.{{@key}}">
             {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
             {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-                {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+            {{#if (displayItemHover this)}}
+              <div class="tooltippic"><img src="{{this.img}}" /></div>
+            {{/if}}
             <div class="list_note satisfiedY"></div>
             <div class="list_note satisfiedY spldraggable" data-key="data.spells.{{@key}}">{{{gurpslink this.notes}}}
             </div>
@@ -492,7 +502,7 @@
           <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
           <div class="time satisfiedY">{{this.casttime}}</div>
           <div class="duration satisfiedY">{{this.duration}}</div>
-          <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>{{this.level}}
+          <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"' data-key="data.spells.{{@key}}">{{this.level}}
           </div>
           <div class="rsl satisfiedY">{{this.difficulty}}</div>
           <div class="pts satisfiedY">{{this.points}}</div>
@@ -526,7 +536,7 @@
           &nbsp; {{this.count}} &nbsp;
           <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
         </div>
-        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried"
+        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried tooltip-manager"
           data-key="data.equipment.carried.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -540,7 +550,9 @@
           {{#if (isFoundryItem this)}}&nbsp;
             <i class="fas fa-star" style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
-          {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+          {{#if (displayItemHover this)}}
+            <div class="tooltippic"><img src="{{this.img}}" /></div>
+          {{/if}}
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
             {{{gurpslink this.notes}}}
           </div>
@@ -590,17 +602,18 @@
           &nbsp; {{this.count}} &nbsp;
           <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
         </div>
-        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother"
+        <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother tooltip-manager"
           data-key="data.equipment.other.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
               style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-           {{#if (ignoreImportQty this)}}&nbsp;
+          {{#if (ignoreImportQty this)}}&nbsp;
             <i class="far fa-file" style="float: right; color: steelblue; font-weight: 900; padding-top: 3px;"></i>
           {{/if}}
-         {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"
+          {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+          {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
             {{{gurpslink this.notes}}}
           </div>
