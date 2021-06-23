@@ -2095,7 +2095,7 @@ export class GurpsActor extends Actor {
     var item
     if (!!eqt.itemid) {
       item = await this.items.get(eqt.itemid)
-      await item.delete()
+      if (!!item) await item.delete() // data protect for messed up mooks
       await this._removeItemAdditions(eqt.itemid)
     }
     await GURPS.removeKey(this, path)
@@ -2498,7 +2498,12 @@ export class GurpsActor extends Actor {
     await this.updateParentOf(eqtkey, false)
     if (!!eqt.itemid) {
       let item = this.items.get(eqt.itemid)
-      await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.count': count }])
+      if (!!item)
+        await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.count': count }])
+      else {
+        ui.notifications.warn("Invalid Item in Actor... removing all features")
+        this._removeItemAdditions(eqt.itemid)
+      }
     }
   }
 

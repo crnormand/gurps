@@ -15,7 +15,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Fixed "user does not have permission to update" when tired/reeling status changes
 - Added combat maneuver icons to all tokens in a combat. Two new settings control the appearance of the maneuver icons.
 - reinstate /rolltable command
-- Support Advanced Macros module argument passing
+- Added support Advanced Macros module argument passing
+- Added support for drag and drop Journal entries, Actors and Rolltables as OtFs
 
 Release 0.10.5 - 6/12/2021
 

@@ -652,10 +652,36 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         },
-        render: true,
+        render: (h) => {
+          $(h).find('textarea').on('drop', this.dropFoundryLinks)
+          $(h).find('input').on('drop', this.dropFoundryLinks)
+        },
       }).render(true)
     })
   }
+  
+  dropFoundryLinks(ev) {
+    if (!!ev.originalEvent) ev = ev.originalEvent
+    let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
+    var n
+    if (dragData.type == 'JournalEntry') {
+      n = game.journal.get(dragData.id).name
+    }
+    if (dragData.type == 'Actor') {
+      n = game.actors.get(dragData.id).name
+    }
+    if (dragData.type == 'RollTable') {
+      n = game.tables.get(dragData.id).name
+    }
+    if (dragData.type == 'Item') {
+      n = game.items.get(dragData.id).name
+    }
+    if (!!n) {
+      let add = ` [@${dragData.type}[${dragData.id}]` + '{' + n + '}]'    
+      $(ev.currentTarget).val($(ev.currentTarget).val() + add)
+    }
+ }
+
 
   /**
    *
@@ -734,6 +760,10 @@ export class GurpsActorSheet extends ActorSheet {
               await actor.updateParentOf(path, false)
             },
           },
+        },
+        render: (h) => {
+          $(h).find('textarea').on('drop', this.dropFoundryLinks)
+          $(h).find('input').on('drop', this.dropFoundryLinks)
         },
         default: 'one',
       },
@@ -835,7 +865,6 @@ export class GurpsActorSheet extends ActorSheet {
 
   async editItem(actor, path, obj, html, title, strprops, numprops, width = 560) {
     let dlgHtml = await renderTemplate(html, obj)
-
     let d = new Dialog(
       {
         title: title,
@@ -853,6 +882,10 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         },
+        render: (h) => {
+          $(h).find('textarea').on('drop', this.dropFoundryLinks)
+          $(h).find('input').on('drop', this.dropFoundryLinks)
+        }
       },
       {
         width: width,
