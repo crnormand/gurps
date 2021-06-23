@@ -1826,7 +1826,7 @@ Hooks.once('ready', async function () {
         title: `Gift for ${destactor.name}!`,
         content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
         yes: () => {
-          let destKey = destactor._findEqtkeyForGlobalItem(resp.itemData.data.globalid)
+          let destKey = destactor._findEqtkeyForId('globalid', resp.itemData.data.globalid)
           if (!!destKey) {
             // already have some
             let destEqt = getProperty(destactor.data, destKey)

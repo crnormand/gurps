@@ -25,7 +25,8 @@ export class GurpsItemSheet extends ItemSheet {
     sheetData.data = sheetData.data.data
     sheetData.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
     sheetData.name = this.item.name
-    console.log(sheetData)
+    if (!this.item.data.data.globalid && !this.item.parent)
+      this.item.update({ 'data.globalid': this.item.id, '_id': this.item.id })
     return sheetData
   }
 
@@ -92,6 +93,28 @@ export class GurpsItemSheet extends ItemSheet {
     
     html.find('textarea').on('drop', this.dropFoundryLinks)
     html.find('input').on('drop', this.dropFoundryLinks)
+    
+    html.find('.itemdraggable').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        let img = new Image()
+        img.src = this.item.img
+        const w = 50
+        const h = 50
+        const preview = DragDrop.createDragImage(img, w, h)
+        ev.dataTransfer.setDragImage(preview, 0, 0)
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            type: 'Item',
+            id: this.item.id,
+            pack: this.item.pack,
+            data: this.item.data
+          })
+        )
+      })
+    })
+
   }
   
   dropFoundryLinks(ev) {
