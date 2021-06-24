@@ -645,17 +645,16 @@ async function performAction(action, actor, event, targets) {
   }
   
   if (action.type === 'dragdrop') {
-    let drop = action.orig
-    if (action.orig == 'JournalEntry') {
+    if (action.link == 'JournalEntry') {
       game.journal.get(action.id).show()
     }
-    if (action.orig == 'Actor') {
+    if (action.link == 'Actor') {
       game.actors.get(action.id).sheet.render(true)
     }
-    if (action.orig == 'RollTable') {
+    if (action.link == 'RollTable') {
       game.tables.get(action.id).sheet.render(true)
     }
-    if (action.orig == 'Item') {
+    if (action.link == 'Item') {
       game.items.get(action.id).sheet.render(true)
     }
   }

@@ -134,7 +134,7 @@ export class GurpsItemSheet extends ItemSheet {
       n = game.items.get(dragData.id).name
     }
     if (!!n) {
-      let add = ` [@${dragData.type}[${dragData.id}]` + '{' + n + '}]'    
+      let add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'    
       $(ev.currentTarget).val($(ev.currentTarget).val() + add)
     }
  }
