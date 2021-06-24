@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-0.11.0
+Release 0.11.0
 
 - Merged in Rinickolous/neck's GCS Equipment importer!
 - Fixed ST based ranged calc so it will also apply to Items
@@ -20,6 +20,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added support to drag and drop Items from compendiums and Item sheet
 - Support opening and closing the navigation bar (Full Sheet) without going to the system settings.
 - Provide UI feedback when doing navigation via the navigation bar.
+- Fixed wounding modifiers for imp and pi types on Injury Tolerance: Unliving.
 
 Release 0.10.5 - 6/12/2021
 
@@ -49,7 +50,7 @@ Release 0.10.3 - 6/11/2021
 - Fixed GCA export to correctly handle children weights
 - Items (and Item features) will hover display the Item icon (very basic... would love CSS help!)
 - Fixed GM "Send to" area to provide more room to see buttons
-- Fixed bug in Item creation.  Equipment can no longer contain other hidden equipment
+- Fixed bug in Item creation. Equipment can no longer contain other hidden equipment
 - Added OtF buttons for margin of success (Rolltable formula "3d6 + @gmodc")
 - Enhance /light to include intensity
 

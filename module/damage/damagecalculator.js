@@ -354,6 +354,9 @@ export class CompositeDamageCalculator {
     if (this._isInjuryTolerance) {
       switch (this._injuryToleranceType) {
         case 'unliving':
+          // if Eye, Skull, or Vitals, don't modify wounding modifier
+          if (['Eye', 'Skull', 'Vitals'].includes(this._hitLocation)) break
+
           table = JSON.parse(JSON.stringify(table))
           this._modifyForInjuryTolerance(table['imp'], 1)
           this._modifyForInjuryTolerance(table['pi++'], 1)
@@ -370,6 +373,7 @@ export class CompositeDamageCalculator {
 
         // No Vitals: You have no vital organs (such as a heart or engine) that attackers can
         // target for extra damage. Treat hits to the 'vitals' or 'groin' as torso hits.
+
         case HOMOGENOUS:
           // Homogenous: Ignore all wounding modifiers for hit location.
           table = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
