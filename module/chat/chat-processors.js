@@ -62,23 +62,22 @@ class RolltableChatProcessor extends ChatProcessor {
     return !!this.match
   }
 
-  process(line) {
+  async process(line) {
     let tblname = this.match[1].trim()
     let pat = new RegExp(makeRegexPatternFrom(tblname, false), 'i')
     let tables = game.tables.contents.filter(t => t.name.match(pat))
     if (tables.length == 0) {
       ui.notifications.error("No table found for '" + tblname + "'")
-      return
+      return false
     }
     if (tables.length > 1) {
       ui.notifications.error("More than one table matched '" + tblname + "'")
-      return
+      return false
     }
     let table = tables[0]
-    let r = table.roll()
-    table.draw({roll:r})
-    GURPS.ModifierBucket.clear()
-    return
+    let r = await table.roll()
+    table.draw(r)
+    return true
   }
 }
 

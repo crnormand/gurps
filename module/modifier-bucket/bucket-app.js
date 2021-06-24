@@ -19,7 +19,7 @@ export class GurpsRoll extends Roll {
         get: () => {
           let m = GURPS.ModifierBucket.currentSum()
           GURPS.ModifierBucket.clear()
-          return m
+          return parseInt(m)
         },
       })
     d.gmod = GURPS.ModifierBucket.currentSum()
