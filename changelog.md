@@ -18,6 +18,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added support Advanced Macros module argument passing
 - Added support for drag and drop Journal entries, Actors, Items and Rolltables as OtFs
 - Added support to drag and drop Items from compendiums and Item sheet
+- Support opening and closing the navigation bar (Full Sheet) without going to the system settings.
+- Provide UI feedback when doing navigation via the navigation bar.
 
 Release 0.10.5 - 6/12/2021
 
