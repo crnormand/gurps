@@ -120,7 +120,7 @@ export class GurpsActor extends Actor {
     v = SemanticVersion.fromString(v)
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     for (const attr in data.attributes) {
-      data.attributes[attr].value = data.attributes[attr].import
+      data.attributes[attr].value = +data.attributes[attr].import
     }
     // After all of the attributes are copied over, apply tired to ST
     if (!!data.additionalresources.isTired) data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value) / 2)
@@ -133,23 +133,29 @@ export class GurpsActor extends Actor {
 
     // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
     recurselist(data.melee, (e, k, d) => {
-      e.level = parseInt(e.import)
-      if (!isNaN(parseInt(e.parry))) {
-        // allows for '14f' and 'no'
-        let base = 3 + Math.floor(e.level / 2)
-        let bonus = parseInt(e.parry) - base
-        if (bonus != 0) {
-          e.parrybonus = (bonus > 0 ? '+' : '') + bonus
+      if (!!e.import) {
+        e.level = parseInt(e.import)
+        if (!isNaN(parseInt(e.parry))) {
+          // allows for '14f' and 'no'
+          let base = 3 + Math.floor(e.level / 2)
+          let bonus = parseInt(e.parry) - base
+          if (bonus != 0) {
+            e.parrybonus = (bonus > 0 ? '+' : '') + bonus
+          }
         }
-      }
-      if (!isNaN(parseInt(e.block))) {
-        let base = 3 + Math.floor(e.level / 2)
-        let bonus = parseInt(e.block) - base
-        if (bonus != 0) {
-          e.blockbonus = (bonus > 0 ? '+' : '') + bonus
+        if (!isNaN(parseInt(e.block))) {
+          let base = 3 + Math.floor(e.level / 2)
+          let bonus = parseInt(e.block) - base
+          if (bonus != 0) {
+            e.blockbonus = (bonus > 0 ? '+' : '') + bonus
+          }
         }
-      }
+      } else {
+        e.parrybonus = e.parry
+        e.blockbonus = e.block
+      }        
     })
+
     recurselist(data.ranged, (e, k, d) => {
       e.level = parseInt(e.import)
     })
@@ -182,22 +188,19 @@ export class GurpsActor extends Actor {
             // start OTF
             recurselist(data.melee, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {
-                // All melee attack skills affected by DX
-                if (action.action.attrkey == 'DX') {
-                  e.level += pi(action.action.mod)
-                  if (!isNaN(parseInt(e.parry))) {
-                    // handles '11f'
-                    let m = (e.parry + '').match(/(\d+)(.*)/)
-                    e.parry = 3 + Math.floor(e.level / 2)
-                    if (!!e.parrybonus) e.parry += pi(e.parrybonus)
-                    if (!!m) e.parry += m[2]
-                  }
-                  if (!isNaN(parseInt(e.block))) {
-                    // handles 'no'
-                    e.block = 3 + Math.floor(e.level / 2)
-                    if (!!e.blockbonus) e.block += pi(e.blockbonus)
-                  }
+              if (action.action.type == 'attribute' && action.action.attrkey == 'DX') { // All melee attack skills affected by DX
+                e.level += pi(action.action.mod)
+                if (!isNaN(parseInt(e.parry))) {
+                  // handles '11f'
+                  let m = (e.parry + '').match(/(\d+)(.*)/)
+                  e.parry = 3 + Math.floor(e.level / 2)
+                  if (!!e.parrybonus) e.parry += pi(e.parrybonus)
+                  if (!!m) e.parry += m[2]
+                }
+                if (!isNaN(parseInt(e.block))) {
+                  // handles 'no'
+                  e.block = 3 + Math.floor(e.level / 2)
+                  if (!!e.blockbonus) e.block += pi(e.blockbonus)
                 }
               }
               if (action.action.type == 'attack' && !!action.action.isMelee) {
@@ -220,10 +223,7 @@ export class GurpsActor extends Actor {
             }) // end melee
             recurselist(data.ranged, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {
-                //All ranged attack skills affected by DX
-                if (action.action.attrkey == 'DX') e.level += pi(action.action.mod)
-              }
+              if (action.action.type == 'attribute' && action.action.attrkey == 'DX') e.level += pi(action.action.mod)
               if (action.action.type == 'attack' && !!action.action.isRanged) {
                 if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
               }
@@ -417,39 +417,40 @@ export class GurpsActor extends Actor {
           let action = parselink(otf)
           if (!!action.action) {
             action.action.calcOnly = true
-            GURPS.performAction(action.action, this).then(ret => (e.level = '' + ret.target)) // collapse the OtF formula into a string
+            GURPS.performAction(action.action, this).then(ret => {
+            
+              e.level = ret.target
+              if (isMelee) {
+                if (!isNaN(parseInt(e.parry))) {
+                  let p = '' + e.parry
+                  let m = p.match(/([+-]\d+)(.*)/)
+                  if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
+                  if (!!m) {
+                    e.parrybonus = parseInt(m[1])
+                    e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
+                  }
+                  if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
+                }
+                if (!isNaN(parseInt(e.block))) {
+                  let b = '' + e.block
+                  let m = b.match(/([+-]\d+)(.*)/)
+                  if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
+                  if (!!m) {
+                    e.blockbonus = parseInt(m[1])
+                    e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
+                  }
+                  if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
+                }
+              }
+             
+            })
           }
-        }
-      }
-      if (isMelee) {
-        if (!isNaN(parseInt(e.parry))) {
-          let p = '' + e.parry
-          let m = p.match(/([+-]\d+)(.*)/)
-          if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
-          if (!!m) {
-            e.parrybonus = parseInt(m[1])
-            e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
-          }
-          if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
-        }
-        if (!isNaN(parseInt(e.block))) {
-          let b = '' + e.block
-          let m = b.match(/([+-]\d+)(.*)/)
-          if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
-          if (!!m) {
-            e.blockbonus = parseInt(m[1])
-            e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
-          }
-          if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
         }
       }
     })
   }
 
-  /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING */
   /** @override */
-  
-  
   async update(data, options) {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('data.HP.value')) {
