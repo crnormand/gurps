@@ -652,14 +652,14 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         },
-        render: (h) => {
+        render: h => {
           $(h).find('textarea').on('drop', this.dropFoundryLinks)
           $(h).find('input').on('drop', this.dropFoundryLinks)
         },
       }).render(true)
     })
   }
-  
+
   dropFoundryLinks(ev) {
     if (!!ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
@@ -677,11 +677,10 @@ export class GurpsActorSheet extends ActorSheet {
       n = game.items.get(dragData.id).name
     }
     if (!!n) {
-      let add = ` [@${dragData.type}[${dragData.id}]` + '{' + n + '}]'    
+      let add = ` [@${dragData.type}[${dragData.id}]` + '{' + n + '}]'
       $(ev.currentTarget).val($(ev.currentTarget).val() + add)
     }
- }
-
+  }
 
   /**
    *
@@ -761,7 +760,7 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         },
-        render: (h) => {
+        render: h => {
           $(h).find('textarea').on('drop', this.dropFoundryLinks)
           $(h).find('input').on('drop', this.dropFoundryLinks)
         },
@@ -784,7 +783,21 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/melee-editor-popup.html',
       'Melee Weapon Editor',
-      ['name', 'mode', 'parry', 'block', 'damage', 'reach', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
+      [
+        'name',
+        'mode',
+        'parry',
+        'block',
+        'damage',
+        'reach',
+        'st',
+        'notes',
+        'import',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
+      ],
       []
     )
   }
@@ -796,7 +809,22 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/ranged-editor-popup.html',
       'Ranged Weapon Editor',
-      ['name', 'mode', 'range', 'rof', 'damage', 'shots', 'rcl', 'st', 'notes', 'import', 'checkotf', 'duringotf', 'passotf', 'failotf'],
+      [
+        'name',
+        'mode',
+        'range',
+        'rof',
+        'damage',
+        'shots',
+        'rcl',
+        'st',
+        'notes',
+        'import',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
+      ],
       ['acc', 'bulk']
     )
   }
@@ -844,7 +872,11 @@ export class GurpsActorSheet extends ActorSheet {
         'maintain',
         'casttime',
         'duration',
-        'college', 'checkotf', 'duringotf', 'passotf', 'failotf'
+        'college',
+        'checkotf',
+        'duringotf',
+        'passotf',
+        'failotf',
       ],
       ['points']
     )
@@ -882,10 +914,10 @@ export class GurpsActorSheet extends ActorSheet {
             },
           },
         },
-        render: (h) => {
+        render: h => {
           $(h).find('textarea').on('drop', this.dropFoundryLinks)
           $(h).find('input').on('drop', this.dropFoundryLinks)
-        }
+        },
       },
       {
         width: width,
@@ -1171,23 +1203,26 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onNavigate(event) {
     let dataValue = $(event.currentTarget).attr('data-value')
-    if (dataValue == 'CLOSE') {
-      Dialog.confirm({
-        title: 'Close Navigation',
-        content: 'Are you sure you want to hide the Navigation buttons?   To show them again, you will need to go to the System Settings and turn on ' + i18n('GURPS.settingShowNavigation'),
-        yes: () => {
-          game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
-          this.render()
-        }
-      })
-    } else {
-      let windowContent = event.currentTarget.closest('.window-content')
-      let target = windowContent.querySelector(`#${dataValue}`)
+    // if (dataValue == 'CLOSE') {
+    //   game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
+    //   this.render()
+    // } else {
+    let windowContent = event.currentTarget.closest('.window-content')
+    let target = windowContent.querySelector(`#${dataValue}`)
 
-      // The '33' represents the hieght of the window title bar + a bit of margin
-      // TODO: we should really look this up and use the actual values as found in the DOM.
-      windowContent.scrollTop = target.offsetTop - 33
-    }
+    // add the glowing class to target AND to event.currentTarget, then remove it
+    $(target).addClass('glowing')
+    $(event.currentTarget).addClass('glowing')
+
+    // The '33' represents the hieght of the window title bar + a bit of margin
+    // TODO: we should really look this up and use the actual values as found in the DOM.
+    windowContent.scrollTop = target.offsetTop - 33
+
+    setTimeout(function () {
+      $(target).removeClass('glowing')
+      $(event.currentTarget).removeClass('glowing')
+    }, 2000)
+    // }
   }
 
   async _onClickEnc(ev) {

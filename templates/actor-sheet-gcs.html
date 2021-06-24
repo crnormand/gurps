@@ -348,7 +348,8 @@
         <div></div>
 
         {{#each data.melee as | this key |}}
-          <div class="desc gcs-edit dblclkedit meleedraggable tooltip-manager" data-key="data.melee.{{@key}}" data-path="data.melee">
+          <div class="desc gcs-edit dblclkedit meleedraggable tooltip-manager" data-key="data.melee.{{@key}}"
+            data-path="data.melee">
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
@@ -385,7 +386,8 @@
         <div class="st header">{{localize "GURPS.attributesST"}}</div>
 
         {{#each data.ranged as | this key |}}
-          <div class="desc dblclkedit rangeddraggable tooltip-manager" data-key="data.ranged.{{@key}}">{{{gurpslink this.name}}}
+          <div class="desc dblclkedit rangeddraggable tooltip-manager" data-key="data.ranged.{{@key}}">
+            {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
                 style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
             {{#if (displayItemHover this)}}
@@ -420,7 +422,8 @@
       <div class="pts header">Pts</div>
       <div class="ref header">Ref</div>
       {{#listeqt data.ads}}
-        <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit tooltip-manager" data-key="data.ads.{{@key}}">
+        <div class="desc indent{{@indent}} satisfiedY adsdraggable dblclkedit tooltip-manager"
+          data-key="data.ads.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}
@@ -446,7 +449,8 @@
       <div class="ref header">Ref</div>
 
       {{#listeqt data.skills}}
-        <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit tooltip-manager" data-key="data.skills.{{@key}}">
+        <div class="desc indent{{@indent}} satisfiedY skldraggable dblclkedit tooltip-manager"
+          data-key="data.skills.{{@key}}">
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}
@@ -459,8 +463,8 @@
           <div class="list_note satisfiedY skldraggable" data-key="data.ads.{{@key}}">{{{gurpslink this.notes
           @root}}}</div>
         </div>
-        <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}" data-key="data.skills.{{@key}}"
-          data-otf='S:"{{this.name}}"'>{{this.level}}
+        <div class="sl satisfiedY {{#if (ne this.level 0)}}rollable{{/if}}" data-name="{{this.name}}"
+          data-key="data.skills.{{@key}}" data-otf='S:"{{this.name}}"'>{{this.level}}
         </div>
         <div class="rsl satisfiedY">{{this.relativelevel}}</div>
         <div class="pts satisfiedY">{{this.points}}</div>
@@ -483,7 +487,8 @@
         <div class="ref header">Ref</div>
 
         {{#listeqt data.spells}}
-          <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit tooltip-manager" data-key="data.spells.{{@key}}">
+          <div class="desc indent{{@indent}} satisfiedY spldraggable dblclkedit tooltip-manager"
+            data-key="data.spells.{{@key}}">
             {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
             {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
             {{{gurpslink this.name}}}
@@ -502,7 +507,8 @@
           <div class="mana_maintain satisfiedY">{{this.maintain}}</div>
           <div class="time satisfiedY">{{this.casttime}}</div>
           <div class="duration satisfiedY">{{this.duration}}</div>
-          <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"' data-key="data.spells.{{@key}}">{{this.level}}
+          <div class="sl satisfiedY rollable" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'
+            data-key="data.spells.{{@key}}">{{this.level}}
           </div>
           <div class="rsl satisfiedY">{{this.difficulty}}</div>
           <div class="pts satisfiedY">{{this.points}}</div>
@@ -613,7 +619,9 @@
           {{/if}}
           {{#if (isFoundryItem this)}}&nbsp;<i class="fas fa-star"
               style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
-          {{#if (displayItemHover this)}}<div class="tooltippic"><img src="{{this.img}}"/></div>{{/if}}
+          {{#if (displayItemHover this)}}
+            <div class="tooltippic"><img src="{{this.img}}" /></div>
+          {{/if}}
           <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.other.{{@key}}">
             {{{gurpslink this.notes}}}
           </div>
@@ -655,17 +663,22 @@
     <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
   </div>
   {{#if navigateVisible}}
-    <div class='navigate-bar'>
-      <div class='navigation-link' data-value="personal">TOP</div>
-      <div class='navigation-link' data-value="stats">STATS</div>
-      <div class='navigation-link' data-value="melee">MELEE</div>
-      <div class='navigation-link' data-value="ranged">RANGED</div>
-      <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
-      <div class='navigation-link' data-value="skills">SKILLS</div>
-      <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
-      <div class='navigation-link' data-value="other_equipment">OTHER</div>
-      <div class='navigation-link' data-value="notes">NOTES</div>
-      <div class='navigation-link' data-value="CLOSE"><i class="fas fa-times"></i></div>
+    <div class='navigate-area'>
+      <input id='navigate-toggle' class='toggle offscreen-only' type='checkbox'>
+      <div class='navigate-bar'>
+        <label class='navigation-view' for="navigate-toggle"><span class='icon'></span></label>
+        <div class='navigate-container'>
+          <div class='navigation-link' data-value="personal">TOP</div>
+          <div class='navigation-link' data-value="stats">STATS</div>
+          <div class='navigation-link' data-value="melee">MELEE</div>
+          <div class='navigation-link' data-value="ranged">RANGED</div>
+          <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
+          <div class='navigation-link' data-value="skills">SKILLS</div>
+          <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
+          <div class='navigation-link' data-value="other_equipment">OTHER</div>
+          <div class='navigation-link' data-value="notes">NOTES</div>
+        </div>
+      </div>
     </div>
   {{/if}}
 </form>
