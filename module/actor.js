@@ -119,7 +119,6 @@ export class GurpsActor extends Actor {
     if (!v) return // Prior to v0.9.6, this did not exist
     v = SemanticVersion.fromString(v)
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
-    let commit = {}
     for (const attr in data.attributes) {
       data.attributes[attr].value = data.attributes[attr].import
     }
@@ -312,7 +311,7 @@ export class GurpsActor extends Actor {
       if (!checkEquipped || !!e.equipped) sum += c * t
       sum += this._sumeqt(e.contains, type, checkEquipped)
       sum += this._sumeqt(e.collapsed, type, checkEquipped)
-    }
+     }
     return parseInt(sum * 100) / 100
   }
 
@@ -449,14 +448,16 @@ export class GurpsActor extends Actor {
 
   /* Uncomment to see all of the data being 'updated' to this actor  DEBUGGING */
   /** @override */
+  
+  
   async update(data, options) {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
-      if (!isNaN(data.data?.HP?.value)) {
-        let flag = data.data.HP.value < this.data.data.HP.max / 3
+      if (data.hasOwnProperty('data.HP.value')) {
+        let flag = data['data.HP.value'] < this.data.data.HP.max / 3
         if (!!this.data.data.additionalresources.isReeling != flag) this.changeOneThirdStatus('isReeling', flag)
       }
-      if (!isNaN(data.data?.FP?.value)) {
-        let flag = data.data.FP.value < this.data.data.FP.max / 3
+      if (data.hasOwnProperty('data.FP.value')) {
+        let flag = data['data.FP.value'] < this.data.data.FP.max / 3
         if (!!this.data.data.additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
@@ -474,9 +475,10 @@ export class GurpsActor extends Actor {
 
     //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
 
-    super.update(data, options)
+    await super.update(data, options)
     game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
+
 
   /**
    * Calling this will also trigger it being added to the token status icons.
@@ -543,26 +545,6 @@ export class GurpsActor extends Actor {
     }
 
     return false
-  }
-
-  /** @override */
-  _onUpdate(data, options, userId, context) {
-    // moved this code to the update(data, options) method, as that is the intended design
-    // TODO remove commented out code when we know there's no reason to roll this back
-
-    // if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
-    //   if (!isNaN(data.data?.HP?.value)) {
-    //     let flag = data.data.HP.value < this.data.data.HP.max / 3
-    //     if (!!this.data.data.additionalresources.isReeling != flag) this.changeOneThirdStatus('isReeling', flag)
-    //   }
-    //   if (!isNaN(data.data?.FP?.value)) {
-    //     let flag = data.data.FP.value < this.data.data.FP.max / 3
-    //     if (!!this.data.data.additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
-    //   }
-    // }
-    // //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
-    super._onUpdate(data, options, userId, context)
-    // game.GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
 
   get _additionalResources() {
@@ -1849,11 +1831,18 @@ export class GurpsActor extends Actor {
       ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
     }
-    let global = game.items.get(dragData.id)
-    ui.notifications.info(global.name + ' => ' + this.name)
-    await global.data.update({ 'data.globalid': dragData.id, 'data.equipped': true, 'data.carried': true }) // assume new items are equipped and carried
+    const uuid = typeof dragData.pack === 'string' ? `Compendium.${dragData.pack}.${dragData.id}` : `${dragData.type}.${dragData.id}`;
+    let global = await fromUuid(uuid)
+    let data = !!global ? global.data : dragData.data
+    if (!data) {
+      ui.notificitions.warn("NO ITEM DATA!")
+      return
+    }
+    ui.notifications.info(data.name + ' => ' + this.name)
+    if (!data.data.globalid)
+      await data.update({ _id: data._id, 'data.globalid': uuid })
     this.ignoreRender = true
-    await this.addNewItemData(global.data)
+    await this.addNewItemData(data)
     this._forceRender()
   }
 
@@ -1982,7 +1971,9 @@ export class GurpsActor extends Actor {
   // create a new embedded item based on this item data and place in the carried list
   // This is how all Items are added originally.
   async addNewItemData(itemData, targetkey) {
-    let localItems = await this.createEmbeddedDocuments('Item', [itemData.toObject()]) // add a local Foundry Item based on some Item data
+    let d = itemData
+    if (itemData.toObject === 'function') d = itemData.toObject()
+    let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'data.eqt.uuid': generateUniqueId() }])
     await this.addItemData(localItem.data, targetkey) // only created 1 item
@@ -2035,9 +2026,9 @@ export class GurpsActor extends Actor {
       eqt.itemid = itemData._id
       eqt.globalid = itemData.data.globalid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = itemData.data.equipped
+      eqt.equipped = itemData.data.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = itemData.data.carried
+      eqt.carried = itemData.data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
       return [targetkey, eqt.carried && eqt.equipped]
@@ -2111,7 +2102,7 @@ export class GurpsActor extends Actor {
     var item
     if (!!eqt.itemid) {
       item = await this.items.get(eqt.itemid)
-      await item.delete()
+      if (!!item) await item.delete() // data protect for messed up mooks
       await this._removeItemAdditions(eqt.itemid)
     }
     await GURPS.removeKey(this, path)
@@ -2377,8 +2368,8 @@ export class GurpsActor extends Actor {
     let val = 0
     if (!!this.data.data.melee && !!this.data.data.equipment?.carried)
       Object.values(this.data.data.melee).forEach(melee => {
-        recurselist(this.data.data.equipment.carried, e => {
-          if (!val && e.equipped && e.name == melee.name) {
+        recurselist(this.data.data.equipment.carried, (e, k, d) => {
+          if (!!e && !val && e.equipped && e.name == melee.name) {
             let t = parseInt(melee[key])
             if (!isNaN(t)) val = t
           }
@@ -2514,7 +2505,12 @@ export class GurpsActor extends Actor {
     await this.updateParentOf(eqtkey, false)
     if (!!eqt.itemid) {
       let item = this.items.get(eqt.itemid)
-      await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.count': count }])
+      if (!!item)
+        await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.count': count }])
+      else {
+        ui.notifications.warn("Invalid Item in Actor... removing all features")
+        this._removeItemAdditions(eqt.itemid)
+      }
     }
   }
 

@@ -643,6 +643,22 @@ async function performAction(action, actor, event, targets) {
 
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
   }
+  
+  if (action.type === 'dragdrop') {
+    let drop = action.orig
+    if (action.orig == 'JournalEntry') {
+      game.journal.get(action.id).show()
+    }
+    if (action.orig == 'Actor') {
+      game.actors.get(action.id).sheet.render(true)
+    }
+    if (action.orig == 'RollTable') {
+      game.tables.get(action.id).sheet.render(true)
+    }
+    if (action.orig == 'Item') {
+      game.items.get(action.id).sheet.render(true)
+    }
+  }
 
   if (action.type === 'controlroll') {
     prefix = 'Control Roll, '
@@ -1537,10 +1553,6 @@ Hooks.once('init', async function () {
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet)
-  Actors.registerSheet('gurps', GurpsActorSheet, {
-    label: 'Full (GCS)',
-    makeDefault: true,
-  })
   Actors.registerSheet('gurps', GurpsActorCombatSheet, {
     label: 'Combat',
     makeDefault: false,
@@ -1564,6 +1576,10 @@ Hooks.once('init', async function () {
   Actors.registerSheet('gurps', GurpsActorTabSheet, {
     label: 'Tabbed Sheet',
     makeDefault: false,
+  })
+  Actors.registerSheet('gurps', GurpsActorSheet, {    // Add this sheet last 
+    label: 'Full (GCS)',
+    makeDefault: true,
   })
 
   Items.unregisterSheet('core', ItemSheet)
@@ -1810,7 +1826,7 @@ Hooks.once('ready', async function () {
         title: `Gift for ${destactor.name}!`,
         content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
         yes: () => {
-          let destKey = destactor._findEqtkeyForGlobalItem(resp.itemData.data.globalid)
+          let destKey = destactor._findEqtkeyForId('globalid', resp.itemData.data.globalid)
           if (!!destKey) {
             // already have some
             let destEqt = getProperty(destactor.data, destKey)

@@ -1,6 +1,6 @@
 <form class='gurps-app item-editor' autocomplete='off'>
   <div>
-    <h2><i class='fa fa-cogs'></i> {{i18n "GURPS.itemEditor"}}</h2>
+    <h2><i class='fa fa-cogs itemdraggable'></i> {{i18n "GURPS.itemEditor"}}</h2>
 
     <div class='gurps-2col right-bias'>
       <div class='full-width'>
@@ -8,8 +8,8 @@
           name='data.eqt.name' />
       </div>
 
-      <div class='img-display' style='background-image: url({{item.img}}); border: solid 1px black;'>
-        <img class='profile-img' src='{{ item.img }}' data-edit='img'
+      <div class='img-display itemdraggable' style='background-image: url({{item.img}}); border: solid 1px black;'>
+        <img class='profile-img itemdraggable' src='{{ item.img }}' data-edit='img'
           title='{{#if name}}{{name}}{{else}}Image{{/if}}' />
       </div>
 
