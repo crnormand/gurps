@@ -266,7 +266,7 @@ export default class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let v = element.value
-    let parsed = parselink(element.value, game.GURPS.LastActor)
+    let parsed = parselink(element.value)
     if (!!parsed.action && parsed.action.type === 'modifier') {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else this.editor.refresh()
