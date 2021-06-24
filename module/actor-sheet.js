@@ -1402,6 +1402,9 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
   activateListeners(html) {
     super.activateListeners(html)
+    html.find('textarea').on('drop', this.dropFoundryLinks)
+    html.find('input').on('drop', this.dropFoundryLinks)
+
 
     html.find('#ignoreinputbodyplan').click(this._onClickBodyPlan.bind(this))
 
