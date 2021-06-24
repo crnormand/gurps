@@ -1171,26 +1171,26 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onNavigate(event) {
     let dataValue = $(event.currentTarget).attr('data-value')
-    if (dataValue == 'CLOSE') {
-      game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
-      this.render()
-    } else {
-      let windowContent = event.currentTarget.closest('.window-content')
-      let target = windowContent.querySelector(`#${dataValue}`)
+    // if (dataValue == 'CLOSE') {
+    //   game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
+    //   this.render()
+    // } else {
+    let windowContent = event.currentTarget.closest('.window-content')
+    let target = windowContent.querySelector(`#${dataValue}`)
 
-      // add the glowing class to target AND to event.currentTarget, then remove it
-      $(target).addClass('glowing')
-      $(event.currentTarget).addClass('glowing')
+    // add the glowing class to target AND to event.currentTarget, then remove it
+    $(target).addClass('glowing')
+    $(event.currentTarget).addClass('glowing')
 
-      // The '33' represents the hieght of the window title bar + a bit of margin
-      // TODO: we should really look this up and use the actual values as found in the DOM.
-      windowContent.scrollTop = target.offsetTop - 33
+    // The '33' represents the hieght of the window title bar + a bit of margin
+    // TODO: we should really look this up and use the actual values as found in the DOM.
+    windowContent.scrollTop = target.offsetTop - 33
 
-      setTimeout(function () {
-        $(target).removeClass('glowing')
-        $(event.currentTarget).removeClass('glowing')
-      }, 2000)
-    }
+    setTimeout(function () {
+      $(target).removeClass('glowing')
+      $(event.currentTarget).removeClass('glowing')
+    }, 2000)
+    // }
   }
 
   async _onClickEnc(ev) {

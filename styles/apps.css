@@ -1129,22 +1129,36 @@ ul#result-effects li {
   background-color: rgba(255, 255, 240, 0.8);
 }
 
+.navigate-area {
+  position: sticky;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  display: flex;
+  flex-flow: nowrap row;
+  justify-content: flex-end;
+}
+
 .navigate-bar {
   height: 24px;
   background-color: rgba(0, 0, 0, 0.6);
   margin-bottom: 5px;
   margin-left: -5px;
   margin-right: -5px;
-  position: sticky;
-  left: 0;
-  bottom: 0;
   box-shadow: 0px 5px 5px black;
   display: flex;
-  padding-left: 5px;
   align-items: center;
-  justify-content: center;
+  width: 100%;
 }
 
+.navigate-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.navigation-view,
 .navigation-link {
   border-radius: 3px;
   background-color: black;
@@ -1154,10 +1168,43 @@ ul#result-effects li {
   padding-right: 5px;
 }
 
+.navigation-view {
+  margin-right: 16px;
+  margin-left: 8px;
+}
+
+.navigation-view > span:before {
+  content: '\f101'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-weight: 900;
+  color: white;
+}
+
+#navigate-toggle:checked + .navigate-bar > .navigation-view > span:before {
+  content: '\f100';
+  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-weight: 900;
+  color: white;
+}
+
+#navigate-toggle:checked + .navigate-bar {
+  width: fit-content;
+}
+
+#navigate-toggle:checked + .navigate-bar > .navigate-container {
+  width: 0;
+  overflow: hidden;
+}
+
+/* #navigate-toggle:checked + .navigate-bar {
+  width: 24px;
+} */
+
 .navigation-link:hover {
   outline: none;
   box-shadow: 0 0 5px red;
 }
+
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
   position: relative;
@@ -1857,19 +1904,16 @@ ul#result-effects li {
 
 @keyframes glowing {
   0% {
-    /* background-color: #2ba805; */
     box-shadow: 0px 0px 5px red;
   }
   50% {
-    /* background-color: #49e819; */
     box-shadow: 0px 0px 20px 5px red;
   }
   100% {
-    /* background-color: #2ba805; */
     box-shadow: 0 0 5px red;
   }
 }
 
 .glowing {
-  animation: glowing 500ms 6;
+  animation: glowing 500ms 3;
 }
