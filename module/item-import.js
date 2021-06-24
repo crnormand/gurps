@@ -78,7 +78,8 @@ export class ItemImporter {
         if (w.defaults) for (let d of w.defaults) {
           let mod = (!!d.modifier) ? ((d.modifier > -1) ? `+${d.modifier}` : d.modifier.toString()) : "";
           if (d.type === "skill") {
-            otf_list.push(`S:${d.name.replace(/ /g, "*")}` + (d.specialization ? `*(${d.specialization.replace(/ /g, "*")})` : "") + mod);
+            //otf_list.push(`S:${d.name.replace(/ /g, "*")}` + (d.specialization ? `*(${d.specialization.replace(/ /g, "*")})` : "") + mod);
+            otf_list.push(`S:"${d.name}` + (d.specialization ? `*(${d.specialization})` : "") + '"' + mod);
           } else if (["10", "st", "dx", "iq", "ht", "per", "will", "vision", "hearing", "taste_smell", "touch", "parry", "block"].includes(d.type)) {
             otf_list.push(d.type.replace("_", " ") + mod)
           }
