@@ -1974,7 +1974,7 @@ export class GurpsActor extends Actor {
   // This is how all Items are added originally.
   async addNewItemData(itemData, targetkey) {
     let d = itemData
-    if (itemData.toObject === 'function') d = itemData.toObject()
+    if (typeof itemData.toObject === 'function') d = itemData.toObject()
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'data.eqt.uuid': generateUniqueId() }])
@@ -2502,7 +2502,10 @@ export class GurpsActor extends Actor {
 
   // Set the equipment count to 'count' and then recalc sums
   async updateEqtCount(eqtkey, count) {
-    await this.update({ [eqtkey + '.count']: count })
+    let update = { [eqtkey + '.count']: count }
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
+      update[eqtkey + '.ignoreImportQty'] = true
+    await this.update(update)
     let eqt = getProperty(this.data, eqtkey)
     await this.updateParentOf(eqtkey, false)
     if (!!eqt.itemid) {

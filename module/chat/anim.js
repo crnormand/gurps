@@ -166,7 +166,11 @@ export class AnimChatProcessor extends ChatProcessor {
       count--
       game.socket.emit('module.fxmaster', effectData);
       // Throw effect locally
-      canvas.fxmaster.playVideo(effectData)
+      try {
+        canvas.specials.playVideo(effectData)
+      } catch (e) { //in case people have older versions of fxmaster
+        canvas.fxmaster.playVideo(effectData)
+      }
       console.log(GURPS.objToString(effectData))
       if (count > 0) await wait(effectData.delay)
     }

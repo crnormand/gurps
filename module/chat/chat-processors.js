@@ -49,7 +49,44 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new WaitChatProcessor())  
   ChatProcessors.registerProcessor(new WhisperChatProcessor())  
   ChatProcessors.registerProcessor(new RolltableChatProcessor())  
+  ChatProcessors.registerProcessor(new RefreshItemsChatProcessor())  
 }
+
+class RefreshItemsChatProcessor extends ChatProcessor {
+  help() {
+    return null
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/refreshitems/i)
+    return !!this.match
+  }
+  async process(line) {
+    ui.notifications.info("Starting Item refresh...")
+    for (const a of game.actors.contents) {
+      console.log("Executeing postImport() on " + a.name)
+      await a.postImport()
+    }
+    ui.notifications.info("Item refresh done.")
+  }
+}
+
+class ForceMigrateChatProcessor extends ChatProcessor {
+  help() {
+    return null
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/forcemigrate/i)
+    return !!this.match
+  }
+  async process(line) {
+    await Migration.migrateTo096()
+    await Migration.migrateTo097()
+    await Migration.migrateTo0104()
+  }
+}
+
 
 
 class RolltableChatProcessor extends ChatProcessor {
@@ -608,22 +645,6 @@ class LightChatProcessor extends ChatProcessor {
     console.log("Token Light update: " + GURPS.objToString(data))
     for (const t of canvas.tokens.controlled) await t.document.update(data)
     this.priv(line)
-  }
-}
-
-class ForceMigrateChatProcessor extends ChatProcessor {
-  help() {
-    return null
-  }
-
-  matches(line) {
-    this.match = line.match(/^\/forcemigrate/i)
-    return !!this.match
-  }
-  async process(line) {
-    await Migration.migrateTo096()
-    await Migration.migrateTo097()
-    await Migration.migrateTo0104()
   }
 }
 
