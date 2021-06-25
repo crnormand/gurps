@@ -382,7 +382,7 @@ export class GurpsActor extends Actor {
     let st = +this.data.data.attributes.ST.value
     recurselist(this.data.data.ranged, r => {
       let rng = r.range || ''   // Data protection
-      rng = rng + '' //I  (convert to string)
+      rng = rng + '' // force to string
       let m = rng.match(/^ *[xX]([\d\.]+) *$/)
       if (m) {
         rng = parseFloat(m[1]) * st
