@@ -574,7 +574,7 @@ class LightChatProcessor extends ChatProcessor {
     }
     let type = this.match.groups.type || ''
     if (!!type) {
-      let pat = new RegEx(makeRegexPatternFrom(type, false), 'i')
+      let pat = new RegExp(makeRegexPatternFrom(type, false), 'i')
       let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.match(pat))
       if (!m) {
         ui.notifications.warn(
