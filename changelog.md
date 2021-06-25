@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.11.2 - 6/25/2021
+
+- Fixed error when /light animation type is provided "/li 6 2 torch"
+
 Release 0.11.1 - 6/25/2021
 
 - Fixed error that could occur during import "TypeError: rng.match is not a function"
