@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.11.0
+Release 0.11.0 - 6/25/2021
 
 - Merged in Rinickolous/neck's GCS Equipment importer!
 - Fixed ST based ranged calc so it will also apply to Items
