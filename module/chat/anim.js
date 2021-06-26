@@ -99,12 +99,12 @@ export class AnimChatProcessor extends ChatProcessor {
     const deltaX = target.x - origin.x
     const deltaY = target.y - origin.y
     let rotation = effect.centered ? (effect.rotation * Math.PI / 180) : Math.atan2(deltaY, deltaX)
-    let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) 
+    let distance = effect.centered ? 0 : Math.sqrt(deltaX * deltaX + deltaY * deltaY) 
     
     let files = []
-    if (effect.centered) 
+    if (effect.centered) {
       files = effect.files.map(f => fileWidth(f))
-    else {
+    } else {
       let bestWidth = 0
       let best = 0
       for (const file of effect.files) {
@@ -143,16 +143,15 @@ export class AnimChatProcessor extends ChatProcessor {
           y: origin.y
         }
       effectData.rotation = rotation
-      effectData.distance = distance
       let file = this.randFile(possible)[0]
       if (possible.length == 0) possible = [...files]
-      effectData.filedata = file
+//      effectData.filedata = file
       effectData.file = file.file
       if (effectData.centered) {
         if (effectData.flip) effectData.scale.x *= -1
       } else {
-        let s = (effectData.distance * (1 + effectData.fudge)) / ((1 - effectData.anchor.x) * file.width) 
-        effectData.scale = {x: s, y: s * (Math.random() < 0.5 ? -1 : 1)} // randomly flip vert orientation
+        let s = distance * (1 + effectData.stretch) / file.width 
+        effectData.scale = {x: s, y: (Math.random() < 0.5 ? -1 : 1)} // randomly flip vert orientation
       }
       effects.push(effectData)
       used.push(effectData.file.split('/').pop())
@@ -181,10 +180,6 @@ export class AnimChatProcessor extends ChatProcessor {
     return false
   }
   
-  randomInvert(y) {
-    return Math.random() < 0.5 ? -1 * y: y  // used to randomize Y scale (give different 'looks' for animation)
-  }
-
   async awaitClick(line) {
     GURPS.IgnoreTokenSelect = true
     return new Promise( (resolve, reject) => {
@@ -235,7 +230,8 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
+//   this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>[-+][\d\.]+)? *(?<fudge>[-+][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
+    this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<stretch>\+[\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
     return !!this.match
   }
   
@@ -272,7 +268,7 @@ export class AnimChatProcessor extends ChatProcessor {
 
     let x = centered ? 0.5 : 0
     let y = 0.5
-    let fudge = 0
+    let stretch = 0
     let count = 1
     let delay = 1000
     if (!!m.scale) { 
@@ -292,12 +288,13 @@ export class AnimChatProcessor extends ChatProcessor {
       x = parseFloat(m.x.substr(1))
       opts.push("Start:-" + x)
       if (centered) this.priv("Start option only valid on Targeted animation")
-   }
-    if (!!m.fudge) {
-      fudge = parseFloat(m.fudge.substr(1))
-      opts.push("End:+" + fudge)
+    }
+    if (!!m.stretch) {
+      stretch = parseFloat(m.stretch.substr(1)) 
+      opts.push("End:-" + stretch)
       if (centered) this.priv("End option only valid on Targeted animation")
-   } 
+    }
+ 
     let srcToken = canvas.tokens.placeables.find(e => e.actor == GURPS.LastActor)
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
@@ -329,13 +326,12 @@ export class AnimChatProcessor extends ChatProcessor {
         x: x,
         y: y,
       },
-      speed: 0,
       angle: 0,
       scale: {
         x: scale,
         y: scale,
       },
-      fudge: fudge,
+      stretch: stretch,
       centered: centered,
       rotation: rotation,
       flip: flip,
