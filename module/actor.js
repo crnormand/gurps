@@ -417,9 +417,9 @@ export class GurpsActor extends Actor {
         } else {
           let action = parselink(otf)
           if (!!action.action) {
+            this.ignoreRender = true
             action.action.calcOnly = true
             GURPS.performAction(action.action, this).then(ret => {
-            
               e.level = ret.target
               if (isMelee) {
                 if (!isNaN(parseInt(e.parry))) {
@@ -443,7 +443,9 @@ export class GurpsActor extends Actor {
                   if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
                 }
               }
-             
+              setTimeout(() => {
+                this._forceRender()  // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
+              }, 50)  
             })
           }
         }
