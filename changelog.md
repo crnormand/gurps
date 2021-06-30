@@ -2,6 +2,14 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.11.4
+
+- Fixed Fright Check /fc table roll
+- Added "move" to centered animations, scale affect targeted Y, c:xp,yp set offset
+- System setting to automatically save QTY/count on equipment
+- Fixed "Level" column in melee/ranged weapons goes blank or NaN after using resource tracker
+- Support for JB2A "Raishan" release (which includes new bullet and snipe animations)
+
 Release 0.11.3 - 6/25/2021
 
 - Added "trigger" input fields for features (melee, ranged, etc.) in Item editor

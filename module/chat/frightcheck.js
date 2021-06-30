@@ -1,5 +1,6 @@
 'use strict'
 
+import { makeRegexPatternFrom } from '../../lib/utilities.js'
 import ChatProcessor from './chat-processor.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 
@@ -142,10 +143,18 @@ export class FrightCheckChatProcessor extends ChatProcessor {
                   //let frightEntry = fearMod + rollMod.total;
 
                   // Draw results using a custom roll formula
-                  let table = game.tables.entities.find(t => t.name === tblname)
-                  let tableRoll = new Roll('3d6 + @rollvar', { rollvar: fearMod })
-                  if (!!table) table.draw({ roll: tableRoll })
-
+                  
+                  let pat = new RegExp(makeRegexPatternFrom(tblname, false), 'i')
+                  let tables = game.tables.contents.filter(t => t.name.match(pat))
+                  if (tables.length == 0) {
+                    ui.notifications.error("No table found for '" + tblname + "'")
+                  } else if (tables.length > 1) {
+                    ui.notifications.error("More than one table matched '" + tblname + "'")
+                  } else {
+                    let table = tables[0]
+                    let tableRoll = Roll.create('3d6 + @rollvar', { rollvar: fearMod })
+                    table.draw({ roll: tableRoll.evaluate() })
+                  }
                   chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
               ${g13}
               <span><span class='fa fa-dice' />&nbsp;<span class='fa fa-long-arrow-alt-right' />
