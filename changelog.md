@@ -9,6 +9,7 @@ Release 0.11.4
 - System setting to automatically save QTY/count on equipment
 - Fixed "Level" column in melee/ranged weapons goes blank or NaN after using resource tracker
 - Support for JB2A "Raishan" release (which includes new bullet and snipe animations)
+- Fixed speaker token for dice rolls, so that modules that are expecting a token can use it, i.e. Cautious Gamemaster's Pack
 
 Release 0.11.3 - 6/25/2021
 

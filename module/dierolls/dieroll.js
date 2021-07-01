@@ -32,7 +32,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   }
   
   actor = actor || game.user;
-  const speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor }
+  let speaker = { alias: actor.name, _id: actor.id, id: actor.id, actor: actor, token: actor.token?.id }
+  //speaker = ChatMessage.getSpeaker(actor)
   let messageData = {
     user: game.user.id,
     speaker: speaker,
