@@ -2,7 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { ChatProcessors } from '../../module/chat.js'
-import { parselink } from '../../lib/parselink.js'
+import { parselink, parseForDamage } from '../../lib/parselink.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import {
@@ -50,7 +50,27 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new WhisperChatProcessor())  
   ChatProcessors.registerProcessor(new RolltableChatProcessor())  
   ChatProcessors.registerProcessor(new RefreshItemsChatProcessor())  
+  ChatProcessors.registerProcessor(new QuickDamageChatProcessor())  
 }
+
+class QuickDamageChatProcessor extends ChatProcessor {
+  help() {
+    return '/&lt;damage formula&gt;'
+  }
+
+  matches(line) {
+    let m = line.match(/^[\.\/](.*)/)
+    if (!!m) {
+      this.match = parseForDamage(m[1])
+      return true
+    }
+    return false
+  }
+  async process(line) {
+    await GURPS.performAction(this.match.action, GURPS.LastActor)
+  }
+}
+
 
 class RefreshItemsChatProcessor extends ChatProcessor {
   help() {
