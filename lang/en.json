@@ -783,6 +783,8 @@
   "GURPS.settingManeuverDetailGeneral": "General",
   "GURPS.settingAutoIgnoreQty": "Actor: Automatically set 'Save current QTY/Count on import'",
   "GURPS.settingHintAutoIgnoreQty": "If checked, this will automatically set the 'Save current QTY/Count on import' flag on a peice of equipment when the user changes the QTY/Count (and it will display the little blue file icon).   NOTE:   This does not detect changes in 'Uses'.   If you need to remember 'Uses' between imports, you will need to manually set the flag for that equipment.",
+  "GURPS.settingSheetDetail": "Quick Sheet",
+  "GURPS.settingHintSheetDetail": "Select the character sheet that you want as the 'Quick Sheet'.   It will be displayed in the title bar, and the user can click between it and the 'Full (GCS)' sheet",
 
   "GURPS.actions": "Actions",
   "GURPS.addAdvantage": "Add an Advantage",

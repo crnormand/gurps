@@ -48,6 +48,7 @@ export class GurpsActor extends Actor {
     this._sheet = null
     delete this.apps[sheet.appId]
     await this.setFlag('core', 'sheetClass', newSheet)
+    this.ignoreRender = false
     this.sheet.render(true)
   }
 

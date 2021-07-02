@@ -1091,16 +1091,17 @@ export class GurpsActorSheet extends ActorSheet {
     const sheet = this.actor.getFlag('core', 'sheetClass')
     const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
+    const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
 
     // Token Configuration
     const canConfigure = game.user.isGM || this.actor.isOwner
     if (this.options.editable && canConfigure) {
       let b = [
         {
-          label: isFull ? 'Tabbed View' : 'Full View',
+          label: isFull ? altsheet : 'Full View',
           class: 'toggle',
           icon: 'fas fa-exchange-alt',
-          onclick: ev => this._onToggleSheet(ev),
+          onclick: ev => this._onToggleSheet(ev, altsheet),
         },
       ]
 
@@ -1130,9 +1131,9 @@ export class GurpsActorSheet extends ActorSheet {
     this.actor.importCharacter()
   }
 
-  async _onToggleSheet(event) {
+  async _onToggleSheet(event, altsheet) {
     event.preventDefault()
-    let newSheet = 'gurps.GurpsActorTabSheet'
+    let newSheet = Object.values(CONFIG.Actor.sheetClasses['character']).filter(s => s.label == altsheet)[0].id
 
     const original =
       this.actor.getFlag('core', 'sheetClass') ||

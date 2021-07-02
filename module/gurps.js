@@ -17,7 +17,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, splitArgs } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, splitArgs, i18n } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -1588,6 +1588,7 @@ Hooks.once('init', async function () {
 
   Items.unregisterSheet('core', ItemSheet)
   Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+    
 
   // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
   Hooks.on('createRollTable', async function (entity, options, userId) {
@@ -2048,6 +2049,23 @@ Hooks.once('ready', async function () {
     mappings = { ...mappings, ...GURPS.PARSELINK_MAPPINGS }
     GURPS.PARSELINK_MAPPINGS = mappings
   }
+  
+  // This system setting must be built AFTER all of the character sheets have been registered
+  let sheets = {}
+  Object.values(CONFIG.Actor.sheetClasses["character"]).forEach(e => {
+    if (e.id.startsWith(settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet')
+      sheets[e.label] = e.label
+  })
+  game.settings.register(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET, {
+    name: i18n('GURPS.settingSheetDetail'),
+    hint: i18n('GURPS.settingHintSheetDetail'),
+    scope: 'world',
+    config: true,
+    type: String,
+    choices: sheets,
+    default: 'Tabbed Sheet',
+    onChange: value => console.log(`${settings.SETTING_ALT_SHEET}: ${value}`)
+  })
 
   Hooks.on('createToken', async function (token, d, options, userId) {
     console.log(`create Token`)
