@@ -7,6 +7,7 @@ Release 0.11.5
 - Fix mook parsing issue (for mooks with no Traits)
 - Update tooltip mods to include "-1 due to deceptive attack"
 - Added 'Quick Sheet' system setting
+- Added quick roll for damage /dmg-formula or .dmg-formula
 
 Release 0.11.4 - 7/01/2021
 
