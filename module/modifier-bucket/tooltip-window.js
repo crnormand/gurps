@@ -457,10 +457,12 @@ const ModifierLiterals = {
     [-2 ${i18n('GURPS.modifierDodgeFailedAcro')}] [PDF:${i18n('GURPS.pdfDodgeFailedAcro')}]
     [-2 ${i18n('GURPS.modifierDodgeSide')}] [PDF:${i18n('GURPS.pdfDodgeSide')}]
     [-4 ${i18n('GURPS.modifierDodgeRear')}] [PDF:${i18n('GURPS.pdfDodgeRear')}]
+    [-1 ${i18n('GURPS.modifierDefDeceptiveAttack')}]
+    [-3 ${i18n('GURPS.modifierMaintainConcentration')}]
     ${horiz(i18n('GURPS.modifierExtraEffort'))}
-    [+2 ${i18n('GURPS.modifierFeverishDef')} *Cost 1FP]
-    ${horiz(i18n('GURPS.actions'))}
-    [WILL-3 ${i18n('GURPS.concentrationCheck')}]`
+    [+2 ${i18n('GURPS.modifierFeverishDef')} *Cost 1FP]`
+//    ${horiz(i18n('GURPS.actions'))}
+//    [WILL-3 ${i18n('GURPS.concentrationCheck')}]`
   },
 
   get OtherMods1() {
