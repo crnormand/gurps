@@ -451,6 +451,8 @@
   "GURPS.modifierExtraEffort": "Extra Effort",
   "GURPS.modifierFavorable": "Favorable",
   "GURPS.modifierFeverishDef": "Feverish Defense",
+  "GURPS.modifierDefDeceptiveAttack": "to defenses due to Deceptive attack",
+  "GURPS.modifierMaintainConcentration": "to Will Check, to maintain concentration",
   "GURPS.modifierGMBlessed": "GM blessed",
   "GURPS.modifierGMDontTry": "GM don't try it",
   "GURPS.modifierGMSaidSo": "GM said so",
