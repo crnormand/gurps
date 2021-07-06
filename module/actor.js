@@ -980,7 +980,8 @@ export class GurpsActor extends Actor {
         // Allows us to skip over junk elements created by xml->json code, and only select the skills.
         let j = json[key]
         let hl = new HitLocations.HitLocation(t(j.location))
-        hl.import = t(j.dr)
+        let i = eval(t(j.dr)) // supports "0 + 8"
+        hl.import = !i ? 0 : i
         hl.penalty = t(j.db)
         hl.setEquipment(t(j.text))
 
