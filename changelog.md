@@ -9,6 +9,7 @@ Release 0.11.5
 - Added 'Quick Sheet' system setting
 - Added quick roll for damage /dmg-formula or .dmg-formula
 - Fixed compendium import for ROF field
+- Fixed import DRs like "0 + 8" and correctly handles "Arms" to "Left Arm/Right Arm" mapping again.
 
 Release 0.11.4 - 7/01/2021
 
