@@ -1,7 +1,6 @@
-import { displayMod, i18n } from '../../lib/utilities.js'
+import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
-import ModifierBucketJournals from './select-journals.js'
 import { parselink } from '../../lib/parselink.js'
 
 Hooks.once('init', async function () {
@@ -10,25 +9,26 @@ Hooks.once('init', async function () {
   })
 })
 
-// Custom Die wrapper
-class GurpsDie extends Die {
-  constructor(die) {
-    super({
-      number: die.number,
-      faces: die.faces,
-      modifiers: die.modifiers,
-      results: die.results,
-      options: die.options,
-    })
+let baseExpression = function () {
+  const x = this.constructor.DENOMINATION === 'd' ? this.faces : this.constructor.DENOMINATION
+  return `${this.number}d${x}`
+}
+
+let roll = function ({ minimize = false, maximize = false } = {}) {
+  if (this._loaded?.length) {
+    if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression}] -- values: ${this._loaded}`)
+    const roll = { result: undefined, active: true }
+    roll.result = this._loaded.pop()
+    this.results.push(roll)
+    return roll
   }
 
-  /**
-   * @override
-   */
-  roll(options) {
-    super.roll(options)
-    console.log('overriding Die.roll()!')
-  }
+  const roll = { result: undefined, active: true }
+  if (minimize) roll.result = Math.min(1, this.faces)
+  else if (maximize) roll.result = this.faces
+  else roll.result = Math.ceil(CONFIG.Dice.randomUniform() * this.faces)
+  this.results.push(roll)
+  return roll
 }
 
 // Install Custom Roll to support global modifier access (@gmod & @gmodc)
@@ -39,8 +39,12 @@ export class GurpsRoll extends Roll {
     // wrap all Die terms in our wrapper
     let myTerms = []
     this.terms.forEach(term => {
-      if (term instanceof Die) myTerms.push(new GurpsDie(term))
-      else myTerms.push(term)
+      if (term instanceof Die) {
+        term.id = generateUniqueId()
+        term.baseExpression = baseExpression.bind(term)
+        term.roll = roll.bind(term)
+      }
+      myTerms.push(term)
     })
     this.terms = myTerms
   }
@@ -59,11 +63,75 @@ export class GurpsRoll extends Roll {
     return d
   }
 
-  evaluate(options) {
-    super.evaluate(options)
+  /**
+   * @inheritdoc
+   * @override
+   */
+  async evaluate(options) {
     console.log('override RollTerm.evaluate()!!')
+
+    // TODO get only the DiceTerms from the roll
+    let diceTerms = this.terms.filter(term => term instanceof Die)
+    let physicalDice = true // TODO Replace with system settings check
+
+    if (physicalDice && diceTerms.length > 0) {
+      return await this._promptForDiceResultsAndEvaluate(options, diceTerms)
+    } else {
+      return await super.evaluate(options)
+    }
+  }
+
+  /**
+   * @param {*} options as for Roll#evaluate
+   * @param {[GurpsRoll]} diceTerms
+   */
+  async _promptForDiceResultsAndEvaluate(options, diceTerms) {
+    return new Promise(async (resolve, reject) => {
+      let buttons = {
+        apply: {
+          icon: '<i class="fas fa-check"></i>',
+          label: i18n('GURPS.addApply'),
+          callback: async html => {
+            let inputs = html.find('input')
+            for (let input of inputs) {
+              let id = input.id
+              let diceTerm = diceTerms.find(term => term.id === id)
+              let text = input.value
+              if (diceTerm.number === 1) diceTerm._loaded = parseInt(text)
+              else diceTerm._loaded = text.split(',').map(it => parseInt(it.trim()))
+            }
+            // get DiceResults as a list of die values: [2, 3, 4]
+            // set it into the GurpsRoll#loaded
+            let roll = await super.evaluate(options)
+            resolve(roll)
+          },
+        },
+        roll: {
+          icon: '<i class="fas fa-dice"></i>',
+          label: i18n('GURPS.rollForMe', 'Roll For Me'),
+          callback: async html => {
+            let roll = await super.evaluate(options)
+            resolve(roll)
+          },
+        },
+      }
+
+      let d = new Dialog(
+        {
+          title: i18n('GURPS.resolveDiceRoll', 'Resolve Dice Roll'),
+          content: await renderTemplate('systems/gurps/templates/resolve-diceroll.hbs', {
+            diceTerm: diceTerms, // TODO replace with actual dice rolls
+          }),
+          buttons: buttons,
+          default: 'apply',
+        },
+        { width: 300 }
+      )
+      d.render(true)
+    })
   }
 }
+
 CONFIG.Dice.rolls[0] = GurpsRoll
 
 class ModifierStack {

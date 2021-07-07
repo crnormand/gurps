@@ -34,7 +34,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
           buttons: {
             rollFrightCheck: {
               label: 'Roll Fright Check',
-              callback: html => {
+              callback: async html => {
                 let mod1 = html.find('#mod1')[0].value
                 mod1 = parseInt(mod1, 10)
                 let mod2 = html.find('#mod2')[0].value
@@ -68,7 +68,8 @@ export class FrightCheckChatProcessor extends ChatProcessor {
                 WILLVar = parseInt(WILLVar, 10)
 
                 let rollString = `3d6`
-                let roll = Roll.create(rollString).evaluate({async: false})
+                let roll = Roll.create(rollString)
+                await roll.evaluate({ async: true })
                 let fearMod = 0
 
                 let chatContent = ``
@@ -143,7 +144,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
                   //let frightEntry = fearMod + rollMod.total;
 
                   // Draw results using a custom roll formula
-                  
+
                   let pat = new RegExp(makeRegexPatternFrom(tblname, false), 'i')
                   let tables = game.tables.contents.filter(t => t.name.match(pat))
                   if (tables.length == 0) {
@@ -153,7 +154,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
                   } else {
                     let table = tables[0]
                     let tableRoll = Roll.create('3d6 + @rollvar', { rollvar: fearMod })
-                    table.draw({ roll: tableRoll.evaluate() })
+                    table.draw({ roll: await tableRoll.evaluate({ async: true }) })
                   }
                   chatContent = `<div class='roll-result'><div class='roll-detail'><p>Fright Check is ${WILLVar}${tm} = ${targetRoll}</p>
               ${g13}

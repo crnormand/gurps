@@ -1,0 +1,9 @@
+<div style='text-align: center; margin: 1.5rem 0;'>
+  {{i18n 'GURPS.enterDieResults' 'What did you roll?'}}:
+  {{#each diceTerm}}
+    <div style='display: flex'>
+      <label for='{{this.id}}'>{{this.baseExpression}}:</label>
+      <input id='{{this.id}}' type='text' />
+    </div>
+  {{/each}}
+</div>

@@ -94,7 +94,8 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             let sign = dice[0] == '-' ? -1 : 1
             let d = dice.match(/[+-](\d+)d(\d*)/)
             let r = d[1] + 'd' + (!!d[2] ? d[2] : '6')
-            let roll = Roll.create(r).evaluate()
+            let roll = Roll.create(r)
+            await roll.evaluate({ async: true })
             if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)
             value = roll.total
             if (!!mod)

@@ -46,11 +46,11 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
   ChatProcessors.registerProcessor(new ShowChatProcessor())
   ChatProcessors.registerProcessor(new AnimChatProcessor())
-  ChatProcessors.registerProcessor(new WaitChatProcessor())  
-  ChatProcessors.registerProcessor(new WhisperChatProcessor())  
-  ChatProcessors.registerProcessor(new RolltableChatProcessor())  
-  ChatProcessors.registerProcessor(new RefreshItemsChatProcessor())  
-  ChatProcessors.registerProcessor(new QuickDamageChatProcessor())  
+  ChatProcessors.registerProcessor(new WaitChatProcessor())
+  ChatProcessors.registerProcessor(new WhisperChatProcessor())
+  ChatProcessors.registerProcessor(new RolltableChatProcessor())
+  ChatProcessors.registerProcessor(new RefreshItemsChatProcessor())
+  ChatProcessors.registerProcessor(new QuickDamageChatProcessor())
 }
 
 class QuickDamageChatProcessor extends ChatProcessor {
@@ -71,7 +71,6 @@ class QuickDamageChatProcessor extends ChatProcessor {
   }
 }
 
-
 class RefreshItemsChatProcessor extends ChatProcessor {
   help() {
     return null
@@ -82,12 +81,12 @@ class RefreshItemsChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
-    ui.notifications.info("Starting Item refresh...")
+    ui.notifications.info('Starting Item refresh...')
     for (const a of game.actors.contents) {
-      console.log("Executeing postImport() on " + a.name)
+      console.log('Executeing postImport() on ' + a.name)
       await a.postImport()
     }
-    ui.notifications.info("Item refresh done.")
+    ui.notifications.info('Item refresh done.')
   }
 }
 
@@ -107,10 +106,7 @@ class ForceMigrateChatProcessor extends ChatProcessor {
   }
 }
 
-
-
 class RolltableChatProcessor extends ChatProcessor {
-
   help() {
     return '/rolltable &lt;tablename&gt;'
   }
@@ -153,9 +149,7 @@ class WhisperChatProcessor extends ChatProcessor {
     let users = []
     for (const token of destTokens) {
       let owners = game.users.contents.filter(u => token.actor.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
-      for (const user of owners) 
-        if (!user.isGM) 
-          users.push(user)
+      for (const user of owners) if (!user.isGM) users.push(user)
     }
     if (users.length == 0) return false
     this.registry.processLine('/w [' + users.map(u => u.name).join(',') + '] ' + this.match[1])
@@ -293,7 +287,7 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     let m = Object.values(game.macros.contents).filter(m => m.name.startsWith(args[0]))
     if (m.length > 0) {
       this.send()
-      GURPS.chatreturn = m[0].execute(args) ?? GURPS.chatreturn;    // if Advanced macros is loaded, take advantage of the return value
+      GURPS.chatreturn = m[0].execute(args) ?? GURPS.chatreturn // if Advanced macros is loaded, take advantage of the return value
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro')} '${line.substr(2)}'`)
     return GURPS.chatreturn
   }
@@ -332,6 +326,7 @@ class FpHpChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
     return !!this.match
   }
+
   async process(line) {
     let m = this.match
     let actor = GURPS.LastActor
@@ -367,7 +362,8 @@ class FpHpChatProcessor extends ChatProcessor {
           let sign = dice[0] == '-' ? -1 : 1
           let d = dice.match(/[+-](\d+)d(\d*)/)
           let r = d[1] + 'd' + (!!d[2] ? d[2] : '6')
-          let roll = Roll.create(r).evaluate()
+          let roll = Roll.create(r)
+          await roll.evaluate({ async: true })
           if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)
           delta = roll.total
           if (!!mod)
@@ -469,8 +465,12 @@ class RollChatProcessor extends ChatProcessor {
         // only need to show modifiers, everything else does something.
         this.priv(line)
       else this.send() // send what we have
-      return await GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr'), ctrlKey: false, data:{} }) 
-     } // Looks like a /roll OtF, but didn't parse as one
+      return await GURPS.performAction(action.action, GURPS.LastActor, {
+        shiftKey: line.startsWith('/pr'),
+        ctrlKey: false,
+        data: {},
+      })
+    } // Looks like a /roll OtF, but didn't parse as one
     else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '[${m[2]}]'`)
     return false
   }
@@ -575,7 +575,7 @@ class QtyChatProcessor extends ChatProcessor {
           key = k
           eqt = getProperty(actor.data, key)
           // if its not equipment, try to find equipment with that name
-          if (eqt.count == null) [eqt, key] = actor.findEquipmentByName(pattern = eqt.name, !!m2[1])
+          if (eqt.count == null) [eqt, key] = actor.findEquipmentByName((pattern = eqt.name), !!m2[1])
         }
       }
       if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
@@ -662,7 +662,7 @@ class LightChatProcessor extends ChatProcessor {
       data.brightLight = parseInt(this.match.groups.bright || 0)
       data.lightAngle = parseInt(this.match.groups.angle || 360)
     }
-    console.log("Token Light update: " + GURPS.objToString(data))
+    console.log('Token Light update: ' + GURPS.objToString(data))
     for (const t of canvas.tokens.controlled) await t.document.update(data)
     this.priv(line)
   }
@@ -672,9 +672,9 @@ class ShowChatProcessor extends ChatProcessor {
   isGMOnly() {
     return true
   }
-  
+
   help() {
-    return "/show &lt;skills or attributes&gt"
+    return '/show &lt;skills or attributes&gt'
   }
 
   matches(line) {
@@ -682,17 +682,17 @@ class ShowChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
-    let args = splitArgs(this.match[2]);
+    let args = splitArgs(this.match[2])
     this.priv(line)
     for (const orig of args) {
-      this.priv("<hr>")
+      this.priv('<hr>')
       let label = false
       for (const token of canvas.tokens.placeables) {
         let arg = orig
         let actor = token.actor
         if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) {
           if (arg.includes(' ')) arg = '"' + arg + '"'
-          arg = "S:" + arg
+          arg = 'S:' + arg
         }
         let action = parselink(arg)
         if (!!action.action) {
@@ -704,7 +704,6 @@ class ShowChatProcessor extends ChatProcessor {
           }
         }
       }
-    }    
+    }
   }
-
 }
