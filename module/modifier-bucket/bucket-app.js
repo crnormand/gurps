@@ -309,6 +309,13 @@ export class ModifierBucket extends Application {
           GURPS.performAction(action.action, game.actors.get(dragData.actor))
       }
     })
+    
+    html.on('wheel', (event) => {
+      event.preventDefault()
+      if (!!event.originalEvent) event = event.originalEvent
+      let s = event.deltaY / -100
+      this.addModifier(s, "")
+    })
   }
 
   _onenter(ev) {
