@@ -507,7 +507,7 @@ GURPS.escapeUnicode = escapeUnicode
  * @param {File} file           A File object
  * @return {Promise.<String>}   A Promise which resolves to the loaded text data
  */
-function readTextFromFile(file) {
+async function readTextFromFile(file) {
   const reader = new FileReader()
   return new Promise((resolve, reject) => {
     reader.onload = ev => {
@@ -517,7 +517,10 @@ function readTextFromFile(file) {
       reader.abort()
       reject()
     }
-    reader.readAsBinaryString(file)
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_FILE_ENCODING) == 1) 
+      reader.readAsText(file, "UTF-8")
+    else
+      reader.readAsText(file, "ISO-8859-1")
   })
 }
 GURPS.readTextFromFile = readTextFromFile
