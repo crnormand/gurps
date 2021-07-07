@@ -1185,7 +1185,6 @@ export class GurpsActor extends Actor {
         eqt.name = t(j.name)
         eqt.count = t(j.count)
         eqt.cost = t(j.cost)
-        eqt.weight = t(j.weight)
         eqt.location = t(j.location)
         let cstatus = i(j.carried)
         eqt.carried = cstatus >= 1
@@ -1199,8 +1198,10 @@ export class GurpsActor extends Actor {
         eqt.parentuuid = t(j.parentuuid)
         if (isFoundryGCS) {
           eqt.notes = t(j.notes)
+          eqt.weight = t(j.weight)
         } else {
           eqt.setNotes(t(j.notes))
+          eqt.weight = t(j.weightsum) // GCA sends calculated weight in 'weightsum'
         }
         eqt.pageRef(t(j.pageref))
         let old = this._findElementIn('equipment.carried', eqt.uuid)
