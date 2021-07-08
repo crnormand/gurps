@@ -12,6 +12,7 @@ Release 0.11.5
 - Fixed import DRs like "0 + 8" and correctly handles "Arms" to "Left Arm/Right Arm" mapping again.
 - Added system setting for UTF-8 import encoding
 - Mouse wheel over Modifier Bucket adds modifier
+- Added /sound chat command
 
 Release 0.11.4 - 7/01/2021
 
