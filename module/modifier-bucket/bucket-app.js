@@ -16,20 +16,12 @@ let baseExpression = function () {
 }
 
 let roll = function ({ minimize = false, maximize = false } = {}) {
-  if (this._loaded?.length) {
-    if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
-    const roll = { result: undefined, active: true }
-    roll.result = this._loaded.pop()
-    this.results.push(roll)
-    return roll
-  }
+  if (!this._loaded || !this._loaded.length) return this._originalRoll({ minimize, maximize })
 
+  if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
   const roll = { result: undefined, active: true }
-  if (minimize) roll.result = Math.min(1, this.faces)
-  else if (maximize) roll.result = this.faces
-  else roll.result = Math.ceil(CONFIG.Dice.randomUniform() * this.faces)
+  roll.result = this._loaded.pop()
   this.results.push(roll)
-  return roll
 }
 
 // Install Custom Roll to support global modifier access (@gmod & @gmodc)
@@ -43,6 +35,7 @@ export class GurpsRoll extends Roll {
       if (term instanceof Die) {
         term.id = generateUniqueId()
         term.baseExpression = baseExpression.bind(term)
+        term._originalRoll = term.roll
         term.roll = roll.bind(term)
       }
       myTerms.push(term)
@@ -76,9 +69,9 @@ export class GurpsRoll extends Roll {
     let physicalDice = true // TODO Replace with system settings check
 
     if (physicalDice && diceTerms.length > 0) {
-      return await this._promptForDiceResultsAndEvaluate(options, diceTerms)
+      return this._promptForDiceResultsAndEvaluate(options, diceTerms)
     } else {
-      return await super.evaluate(options)
+      return super.evaluate(options)
     }
   }
 
@@ -88,12 +81,18 @@ export class GurpsRoll extends Roll {
    */
   async _promptForDiceResultsAndEvaluate(options, diceTerms) {
     return new Promise(async (resolve, reject) => {
+      let dialog = new ResolveDiceRoll(diceTerms)
+
       let callback = async () => {
         let roll = await super.evaluate(options)
+        dialog.close()
         resolve(roll)
       }
-      let d = new ResolveDiceRoll(diceTerms, callback, callback)
-      d.render(true)
+
+      dialog.applyCallback = callback
+      dialog.rollCallback = callback
+
+      await dialog.render(true)
     })
   }
 }

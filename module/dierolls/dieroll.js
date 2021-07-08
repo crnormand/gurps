@@ -121,7 +121,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.html', chatdata)
 
-  ;(messageData.content = message), (messageData.roll = JSON.stringify(roll))
+  messageData.content = message
+  messageData.roll = JSON.stringify(roll)
 
   let whoCanSeeDice = null
   if (optionalArgs.event?.shiftKey) {

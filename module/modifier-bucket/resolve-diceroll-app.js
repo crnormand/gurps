@@ -3,7 +3,7 @@ import { i18n } from '../../lib/utilities.js'
 export const commaSeparatedNumbers = /^\d*([,0-9])*$/
 
 export default class ResolveDiceRoll extends Application {
-  constructor(diceTerms, applyCallback, rollCallback, options = {}) {
+  constructor(diceTerms, options = {}) {
     super(options)
 
     this.diceTerms = diceTerms.map(it => {
@@ -11,10 +11,11 @@ export default class ResolveDiceRoll extends Application {
     })
 
     this.applyEnabled = false
-    this.applyCallback = applyCallback
-    this.rollCallback = rollCallback
   }
 
+  /**
+   * @inheritdoc
+   */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: 'resolve-dierolls',
@@ -28,12 +29,20 @@ export default class ResolveDiceRoll extends Application {
     })
   }
 
+  /**
+   * @override
+   * @inheritdoc
+   */
   getData(options) {
     const data = super.getData(options)
     data.diceTerm = this.diceTerms
     return data
   }
 
+  /**
+   * @override
+   * @inheritdoc
+   */
   activateListeners(html) {
     super.activateListeners(html)
 
@@ -82,13 +91,11 @@ export default class ResolveDiceRoll extends Application {
         let result = this.getValues(diceTerm)
         diceTerm.term._loaded = result
       }
-      this.applyCallback()
-      this.close()
+      await this.applyCallback()
     })
 
-    html.find('#roll').click(() => {
-      this.rollCallback()
-      this.close()
+    html.find('#roll').click(async () => {
+      await this.rollCallback()
     })
   }
 
