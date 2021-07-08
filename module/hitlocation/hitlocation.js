@@ -27,7 +27,7 @@ export class HitLocation {
 
   constructor(loc = '', dr = '0', penalty = '', roll = HitLocation.DEFAULT, equipment = '') {
     this.where = loc
-    this.dr = dr
+    this.import = dr    // With the introduction of Items, the starting hit location DR level is stored in 'import', and then 'dr' is calculated by the actor
     this.equipment = equipment
     this.penalty = penalty
     this.roll = roll
@@ -393,6 +393,7 @@ export class HitLocation {
       if (includeself) locations.push(this)
       entry.prefix.forEach(it => {
         let location = new HitLocation()
+        location.import = this.import
         location.dr = this.dr
         location.equipment = this.equipment
         location.where = `${it} ${this.where}`
