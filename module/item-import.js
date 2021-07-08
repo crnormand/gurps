@@ -110,7 +110,7 @@ export class ItemImporter {
             pageref: itemData.data.eqt.pageref || "",
             range: w.range,
             rcl: w.recoil,
-            rof: w.rof,
+            rof: w.rate_of_fire,
             shots: w.shots,
             st: w.strength,
             otf: otf_list.join("|") || ""
