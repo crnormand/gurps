@@ -10,41 +10,8 @@ Hooks.once('init', async function () {
   })
 })
 
-// Custom Die wrapper
-class GurpsDie extends Die {
-  constructor(die) {
-    super({
-      number: die.number,
-      faces: die.faces,
-      modifiers: die.modifiers,
-      results: die.results,
-      options: die.options,
-    })
-  }
-
-  /**
-   * @override
-   */
-  roll(options) {
-    super.roll(options)
-    console.log('overriding Die.roll()!')
-  }
-}
-
 // Install Custom Roll to support global modifier access (@gmod & @gmodc)
 export class GurpsRoll extends Roll {
-  constructor(formula, data = {}, options = {}) {
-    super(formula, data, options)
-
-    // wrap all Die terms in our wrapper
-    let myTerms = []
-    this.terms.forEach(term => {
-      if (term instanceof Die) myTerms.push(new GurpsDie(term))
-      else myTerms.push(term)
-    })
-    this.terms = myTerms
-  }
-
   _prepareData(data) {
     let d = super._prepareData(data)
     if (!d.hasOwnProperty('gmodc'))
@@ -57,11 +24,6 @@ export class GurpsRoll extends Roll {
       })
     d.gmod = GURPS.ModifierBucket.currentSum()
     return d
-  }
-
-  evaluate(options) {
-    super.evaluate(options)
-    console.log('override RollTerm.evaluate()!!')
   }
 }
 CONFIG.Dice.rolls[0] = GurpsRoll
@@ -306,15 +268,19 @@ export class ModifierBucket extends Application {
         let action = parselink(dragData.otf)
         action.action.blindroll = true
         if (action.action.type == 'modifier' || !!dragData.actor)
-          GURPS.performAction(action.action, game.actors.get(dragData.actor), { shiftKey: game.user.isGM, ctrlKey: false, data:{}})
+          GURPS.performAction(action.action, game.actors.get(dragData.actor), {
+            shiftKey: game.user.isGM,
+            ctrlKey: false,
+            data: {},
+          })
       }
     })
-    
-    html.on('wheel', (event) => {
+
+    html.on('wheel', event => {
       event.preventDefault()
       if (!!event.originalEvent) event = event.originalEvent
       let s = event.deltaY / -100
-      this.addModifier(s, "")
+      this.addModifier(s, '')
     })
   }
 
