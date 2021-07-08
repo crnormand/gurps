@@ -2,6 +2,7 @@ import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
+import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
 
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
@@ -16,7 +17,7 @@ let baseExpression = function () {
 
 let roll = function ({ minimize = false, maximize = false } = {}) {
   if (this._loaded?.length) {
-    if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression}] -- values: ${this._loaded}`)
+    if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
     const roll = { result: undefined, active: true }
     roll.result = this._loaded.pop()
     this.results.push(roll)
@@ -87,46 +88,11 @@ export class GurpsRoll extends Roll {
    */
   async _promptForDiceResultsAndEvaluate(options, diceTerms) {
     return new Promise(async (resolve, reject) => {
-      let buttons = {
-        apply: {
-          icon: '<i class="fas fa-check"></i>',
-          label: i18n('GURPS.addApply'),
-          callback: async html => {
-            let inputs = html.find('input')
-            for (let input of inputs) {
-              let id = input.id
-              let diceTerm = diceTerms.find(term => term.id === id)
-              let text = input.value
-              if (diceTerm.number === 1) diceTerm._loaded = parseInt(text)
-              else diceTerm._loaded = text.split(',').map(it => parseInt(it.trim()))
-            }
-            // get DiceResults as a list of die values: [2, 3, 4]
-            // set it into the GurpsRoll#loaded
-            let roll = await super.evaluate(options)
-            resolve(roll)
-          },
-        },
-        roll: {
-          icon: '<i class="fas fa-dice"></i>',
-          label: i18n('GURPS.rollForMe', 'Roll For Me'),
-          callback: async html => {
-            let roll = await super.evaluate(options)
-            resolve(roll)
-          },
-        },
+      let callback = async () => {
+        let roll = await super.evaluate(options)
+        resolve(roll)
       }
-
-      let d = new Dialog(
-        {
-          title: i18n('GURPS.resolveDiceRoll', 'Resolve Dice Roll'),
-          content: await renderTemplate('systems/gurps/templates/resolve-diceroll.hbs', {
-            diceTerm: diceTerms, // TODO replace with actual dice rolls
-          }),
-          buttons: buttons,
-          default: 'apply',
-        },
-        { width: 300 }
-      )
+      let d = new ResolveDiceRoll(diceTerms, callback, callback)
       d.render(true)
     })
   }

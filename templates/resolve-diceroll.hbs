@@ -1,9 +1,18 @@
-<div style='text-align: center; margin: 1.5rem 0;'>
-  {{i18n 'GURPS.enterDieResults' 'What did you roll?'}}:
-  {{#each diceTerm}}
-    <div style='display: flex'>
-      <label for='{{this.id}}'>{{this.baseExpression}}:</label>
-      <input id='{{this.id}}' type='text' />
+<form class='{{cssClass}}' tracker-manager autocomplete='off'>
+  <div style='text-align: center; margin: 1.5rem 0;'>
+    <div>{{i18n 'GURPS.enterDieResults' 'What did you roll?'}}:</div>
+    {{#each diceTerm}}
+      <div style='display: flex'>
+        <label for='{{this.term.id}}'>{{this.term.baseExpression}}:</label>
+        <input id='{{this.term.id}}' type='text' class='gurps-invalid' value='{{this.text}}' />
+      </div>
+    {{/each}}
+    <div>
+      <div style='display: flex'>
+        <button id='apply' disabled><i class='fas fa-check'></i>
+          {{i18n 'GURPS.addApply'}}</button>
+        <button id='roll'><i class='fas fa-dice'></i> {{i18n 'GURPS.rollForMe' 'Roll For Me'}}</button>
+      </div>
     </div>
-  {{/each}}
-</div>
+  </div>
+</form>

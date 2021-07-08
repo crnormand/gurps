@@ -1917,3 +1917,7 @@ ul#result-effects li {
 .glowing {
   animation: glowing 500ms 3;
 }
+
+.gurps-invalid {
+  background-color: lightpink !important;
+}
