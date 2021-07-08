@@ -154,7 +154,7 @@ export default class ResolveDiceRoll extends Application {
 
       results.push(value)
 
-      generate(dice, target - value, results)
+      this.generate(dice, target - value, results)
     }
     return results
   }
