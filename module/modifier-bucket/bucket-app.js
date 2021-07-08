@@ -82,9 +82,9 @@ export class GurpsRoll extends Roll {
   async _promptForDiceResultsAndEvaluate(options, diceTerms) {
     return new Promise(async (resolve, reject) => {
       let dialog = new ResolveDiceRoll(diceTerms)
-
+      
       let callback = async () => {
-        let roll = await super.evaluate(options)
+        let roll = super.evaluate(options)
         dialog.close()
         resolve(roll)
       }
@@ -92,7 +92,7 @@ export class GurpsRoll extends Roll {
       dialog.applyCallback = callback
       dialog.rollCallback = callback
 
-      await dialog.render(true)
+      dialog.render(true)
     })
   }
 }

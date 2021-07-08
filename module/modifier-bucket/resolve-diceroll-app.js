@@ -2,7 +2,7 @@ import { i18n } from '../../lib/utilities.js'
 
 export const commaSeparatedNumbers = /^\d*([,0-9])*$/
 
-export default class ResolveDiceRoll extends Application {
+export default class ResolveDiceRoll extends FormApplication {
   constructor(diceTerms, options = {}) {
     super(options)
 
@@ -11,6 +11,10 @@ export default class ResolveDiceRoll extends Application {
     })
 
     this.applyEnabled = false
+  }
+  
+  async _updateObject(event, formData) {
+    //throw new Error("A subclass of the FormApplication must implement the _updateObject method.");
   }
 
   /**
@@ -25,7 +29,7 @@ export default class ResolveDiceRoll extends Application {
       width: 250,
       height: 'auto',
       title: i18n('GURPS.resolveDiceRoll', 'Resolve Dice Roll'),
-      closeOnSubmit: true,
+//      closeOnSubmit: true,
     })
   }
 
@@ -91,11 +95,11 @@ export default class ResolveDiceRoll extends Application {
         let result = this.getValues(diceTerm)
         diceTerm.term._loaded = result
       }
-      await this.applyCallback()
+      this.applyCallback()
     })
 
     html.find('#roll').click(async () => {
-      await this.rollCallback()
+      this.rollCallback()
     })
   }
 
@@ -154,7 +158,7 @@ export default class ResolveDiceRoll extends Application {
 
       results.push(value)
 
-      generate(dice, target - value, results)
+      this.generate(dice, target - value, results)
     }
     return results
   }
