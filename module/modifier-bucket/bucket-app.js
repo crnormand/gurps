@@ -306,7 +306,7 @@ export class ModifierBucket extends Application {
         let action = parselink(dragData.otf)
         action.action.blindroll = true
         if (action.action.type == 'modifier' || !!dragData.actor)
-          GURPS.performAction(action.action, game.actors.get(dragData.actor))
+          GURPS.performAction(action.action, game.actors.get(dragData.actor), { shiftKey: game.user.isGM, ctrlKey: false, data:{}})
       }
     })
     
