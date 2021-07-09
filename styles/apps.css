@@ -1,6 +1,12 @@
 /* ========================= */
 /* GURPS Applications        */
 /* ========================= */
+
+/* Global Override */
+body {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
@@ -120,6 +126,11 @@
   font-size: 90%;
 }
 
+.roll-message .aside .aside-text {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  font-weight: normal;
+}
+
 .gurps-group h4 {
   background-color: black;
   color: lightgrey;
@@ -132,11 +143,13 @@
   text-transform: uppercase;
   line-height: 1.2em;
 }
+
 .gurps-app aside {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 0.5em;
 }
+
 .gurps-group .shaded-group {
   padding-bottom: 0.5em;
 }

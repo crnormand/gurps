@@ -24,10 +24,22 @@ let roll = function ({ minimize = false, maximize = false } = {}) {
   this.results.push(roll)
 }
 
-// Install Custom Roll to support global modifier access (@gmod & @gmodc)
+// TODO Beautify the ResolveDiceRollApp UI
+// TODO Show an indicator on all Roll chat messages if using Physical Dice
+// TODO Test all die rolls
+
+/**
+ * Install Custom Roll to support global modifier access (@gmod & @gmodc) and
+ * custom die-rolling behaviors, like the "Phyical Dice" feature.
+ *
+ * Code can check for the GurpsRoll#isLoaded flag to know that the user entered
+ * his dice roll values via the physical dice feature.
+ */
 export class GurpsRoll extends Roll {
   constructor(formula, data = {}, options = {}) {
     super(formula, data, options)
+
+    this.isLoaded = false
 
     // wrap all Die terms in our wrapper
     let myTerms = []
@@ -62,11 +74,12 @@ export class GurpsRoll extends Roll {
    * @override
    */
   async evaluate(options) {
-    console.log('override RollTerm.evaluate()!!')
+    if (!options.async) console.warn('All calls to GurpsRoll.evaluate must include the async flag!!')
 
-    // TODO get only the DiceTerms from the roll
+    if (CONFIG.debug.dice) console.log('override RollTerm.evaluate()!!')
+
     let diceTerms = this.terms.filter(term => term instanceof Die)
-    let physicalDice = true // TODO Replace with system settings check
+    let physicalDice = game.user.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     if (physicalDice && diceTerms.length > 0) {
       return this._promptForDiceResultsAndEvaluate(options, diceTerms)
@@ -82,8 +95,9 @@ export class GurpsRoll extends Roll {
   async _promptForDiceResultsAndEvaluate(options, diceTerms) {
     return new Promise(async (resolve, reject) => {
       let dialog = new ResolveDiceRoll(diceTerms)
-      
-      let callback = async () => {
+
+      let callback = async isLoaded => {
+        this.isLoaded = isLoaded
         let roll = super.evaluate(options)
         dialog.close()
         resolve(roll)

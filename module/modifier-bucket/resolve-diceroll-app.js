@@ -1,6 +1,6 @@
 import { i18n } from '../../lib/utilities.js'
 
-export const commaSeparatedNumbers = /^\d*([,0-9])*$/
+export const commaSeparatedNumbers = /^\d*([ ,0-9])*$/
 
 export default class ResolveDiceRoll extends FormApplication {
   constructor(diceTerms, options = {}) {
@@ -12,7 +12,7 @@ export default class ResolveDiceRoll extends FormApplication {
 
     this.applyEnabled = false
   }
-  
+
   async _updateObject(event, formData) {
     //throw new Error("A subclass of the FormApplication must implement the _updateObject method.");
   }
@@ -29,7 +29,7 @@ export default class ResolveDiceRoll extends FormApplication {
       width: 250,
       height: 'auto',
       title: i18n('GURPS.resolveDiceRoll', 'Resolve Dice Roll'),
-//      closeOnSubmit: true,
+      //      closeOnSubmit: true,
     })
   }
 
@@ -86,7 +86,6 @@ export default class ResolveDiceRoll extends FormApplication {
 
       // enable the apply button if all inputs have valid entries
       let inputs = html.find('input.gurps-invalid')
-      console.log(inputs.length)
       html.find('#apply').prop('disabled', !!inputs.length)
     })
 
@@ -95,11 +94,11 @@ export default class ResolveDiceRoll extends FormApplication {
         let result = this.getValues(diceTerm)
         diceTerm.term._loaded = result
       }
-      this.applyCallback()
+      this.applyCallback(true)
     })
 
     html.find('#roll').click(async () => {
-      this.rollCallback()
+      this.rollCallback(false)
     })
   }
 
@@ -108,14 +107,14 @@ export default class ResolveDiceRoll extends FormApplication {
     let maxPerDie = term.faces
 
     // if the value does not contain a comma, it must be between min and max
-    if (!text.includes(',')) {
+    if (!this.isIndividualDieResults(text)) {
       let value = parseInt(text)
       return value >= minPerDie * term.number && value <= maxPerDie * term.number
     }
 
-    let values = text.split(',').map(it => parseInt(it))
+    let values = this.convertToArryOfInt(text)
+
     if (values.length === term.number) {
-      console.log(values)
       for (const value of values) {
         if (value !== value) return false // NaN
         if (value < minPerDie || value > maxPerDie) return false
@@ -126,11 +125,25 @@ export default class ResolveDiceRoll extends FormApplication {
   }
 
   getValues(diceTerm) {
-    // if text includes a comma, split on the comma and convert to an array of int
-    if (diceTerm.text.includes(',')) return diceTerm.text.split(',').map(it => parseInt(it))
+    let text = diceTerm.text
 
-    let target = parseInt(diceTerm.text)
+    // if text includes a comma, split on the comma and convert to an array of int
+    if (this.isIndividualDieResults(text)) return this.convertToArryOfInt(text)
+
+    let target = parseInt(text)
     return this.generate({ number: diceTerm.term.number, faces: diceTerm.term.faces }, target)
+  }
+
+  isIndividualDieResults(text) {
+    return text.includes(',') || text.includes(' ')
+  }
+
+  convertToArryOfInt(text) {
+    return text
+      .replaceAll(' ', ',') // replace spaces with commas
+      .replaceAll(',,', ',') // replace two consecutive commas with one
+      .split(',') // split on comma to create array of String
+      .map(it => parseInt(it)) // convert to array of int
   }
 
   /**
@@ -141,13 +154,10 @@ export default class ResolveDiceRoll extends FormApplication {
    *    Example: 3d6 = {number: 3, faces: 6}
    * @param {int} target - what the sum of the dice in the roll should equal
    * @param {*} results - intermediate results (see return value)
-   * @returns Array<int> - an array of values, one per diceExpression#number,
+   * @returns Array<int> - an array of values, one per dice#number,
    *    representing what was rolled to add up to the target.
    */
   generate(dice, target, results = []) {
-    // let min = 1
-    let max = dice.faces
-
     if (dice.number === 1) results.push(target)
     else {
       dice.number--

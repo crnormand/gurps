@@ -1,0 +1,64 @@
+<div class='roll-message'>
+  <div class='prefix'>
+    {{prefix}}
+    {{thing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
+  </div>
+  {{#if optlabel}}&nbsp;&nbsp;{{{optlabel}}}{{/if}}
+  {{#if targetmods}}
+    <div>
+      <ul class='modifier-list'>
+        {{#each targetmods}}
+          <li>{{displayNumber mod}}{{#if desc}} : {{desc}}{{/if}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{#if (gt finaltarget 0)}}
+      New Target: ({{finaltarget}})
+    {{/if}}
+  {{/if}}
+  <div class='roll-result'>
+    {{#if (not (eq origtarget -1))}}
+      <div>
+        <span class='roll-value'>{{rtotal}}</span>
+        <span class='roll-detail'>
+          {{#if isCritSuccess}}
+            <span class='crit success'>Critical Success!</span>
+          {{else if isCritFailure}}
+            <span class='crit failure'>Critical Failure!</span>
+          {{else if failure}}
+            <span class='failure'>Failure.</span>
+          {{else if (not failure)}}
+            <span class='success'>Success!</span>
+          {{/if}}
+          <span class='aside'>
+            {{#if seventeen}}17 & 18 always fail.
+            {{else}}
+              {{#if (eq margin 0)}}Just made it.{{/if}}
+              {{#if (gt margin 0)}}["Made it by {{margin}}."{{otf}}]{{/if}}
+              {{#if (lt margin 0)}}["Missed it by {{abs margin}}."{{otf}}]{{/if}}
+            {{/if}}
+          </span>
+        </span>
+      </div>
+    {{/if}}
+    <div>
+      <hr />
+      {{#if (gt rofrcl 1)}}
+        <div>
+          <span class='fa fa-bullseye'></span>
+          <span class='note'>
+            Total possible hits ({{{gurpslink '[PDF:B373]'}}})<br />&nbsp;&nbsp;&nbsp;&nbsp;due to RoF({{rof}}) & Rcl({{rcl}})
+            is
+            <span class='roll-value'>{{rofrcl}}</span>
+          </span>
+        </div>
+        <hr />
+      {{/if}}
+      <div class='aside'>
+        {{#if loaded}}<i style='color:darkred' class='fas fa-user'></i>{{else}}<i class='fas fa-dice'></i>{{/if}}
+        <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
+        <span class='aside-text'>Rolled ({{rolls}}) = {{rtotal}}.</span>
+      </div>
+    </div>
+  </div>
+</div>

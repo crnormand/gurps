@@ -13,19 +13,17 @@ let fillArray = function (count, value) {
    faces: Integer
  } 
  */
-let generate = function (term, target, results = []) {
-  // let min = 1
-  let max = term.faces
-
-  if (term.number === 1) results.push(target)
+let generate = function (dice, target, results = []) {
+  if (dice.number === 1) results.push(target)
   else {
-    term.number--
-    let offset = Math.max(0, target - 1 - term.faces * term.number)
-    let range = Math.min(term.faces, target - term.number) - offset
+    dice.number--
+    let offset = Math.max(0, target - 1 - dice.faces * dice.number)
+    let range = Math.min(dice.faces, target - dice.number) - offset
+
     let value = Math.ceil(MersenneTwister.random() * range) + offset
+
     results.push(value)
-    let newTarget = target - value
-    generate(term, newTarget, results)
+    generate(dice, target - value, results)
   }
   return results
 }
@@ -59,7 +57,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 4', () => {
@@ -71,7 +68,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 5', () => {
@@ -83,7 +79,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 6', () => {
@@ -95,7 +90,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 7', () => {
@@ -107,7 +101,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 8', () => {
@@ -119,7 +112,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 9', () => {
@@ -131,7 +123,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 10', () => {
@@ -143,7 +134,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 11', () => {
@@ -155,7 +145,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
 
     test('2d6, 12', () => {
@@ -167,7 +156,6 @@ describe('DamageChat', () => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
-      console.log(results)
     })
   })
 
@@ -175,7 +163,6 @@ describe('DamageChat', () => {
     test('3d6, 3', () => {
       let target = 3
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -187,7 +174,6 @@ describe('DamageChat', () => {
     test('3d6, 4', () => {
       let target = 4
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -199,7 +185,6 @@ describe('DamageChat', () => {
     test('3d6, 5', () => {
       let target = 5
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -211,7 +196,6 @@ describe('DamageChat', () => {
     test('3d6, 6', () => {
       let target = 6
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -223,7 +207,6 @@ describe('DamageChat', () => {
     test('3d6, 7', () => {
       let target = 7
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -235,7 +218,6 @@ describe('DamageChat', () => {
     test('3d6, 8', () => {
       let target = 8
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -247,7 +229,6 @@ describe('DamageChat', () => {
     test('3d6, 9', () => {
       let target = 9
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -259,7 +240,6 @@ describe('DamageChat', () => {
     test('3d6, 10', () => {
       let target = 10
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -271,7 +251,6 @@ describe('DamageChat', () => {
     test('3d6, 11', () => {
       let target = 11
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -283,7 +262,6 @@ describe('DamageChat', () => {
     test('3d6, 12', () => {
       let target = 12
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -295,7 +273,6 @@ describe('DamageChat', () => {
     test('3d6, 13', () => {
       let target = 13
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -307,7 +284,6 @@ describe('DamageChat', () => {
     test('3d6, 14', () => {
       let target = 14
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -319,7 +295,6 @@ describe('DamageChat', () => {
     test('3d6, 15', () => {
       let target = 15
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -331,7 +306,6 @@ describe('DamageChat', () => {
     test('3d6, 16', () => {
       let target = 16
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -343,7 +317,6 @@ describe('DamageChat', () => {
     test('3d6, 17', () => {
       let target = 17
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
@@ -355,13 +328,34 @@ describe('DamageChat', () => {
     test('3d6, 18', () => {
       let target = 18
       let results = generate({ number: 3, faces: 6 }, target)
-      console.log(results)
       expect(results.length).toBe(3)
       expect(results.reduce((a, b) => a + b, 0)).toBe(target)
       results.forEach(it => {
         expect(it).toBeGreaterThanOrEqual(1)
         expect(it).toBeLessThanOrEqual(6)
       })
+    })
+  })
+
+  test('5d10, 23', () => {
+    let target = 23
+    let results = generate({ number: 5, faces: 10 }, target)
+    expect(results.length).toBe(5)
+    expect(results.reduce((a, b) => a + b, 0)).toBe(target)
+    results.forEach(it => {
+      expect(it).toBeGreaterThanOrEqual(1)
+      expect(it).toBeLessThanOrEqual(10)
+    })
+  })
+
+  test('20d20, 200', () => {
+    let target = 200
+    let results = generate({ number: 20, faces: 20 }, target)
+    expect(results.length).toBe(20)
+    expect(results.reduce((a, b) => a + b, 0)).toBe(target)
+    results.forEach(it => {
+      expect(it).toBeGreaterThanOrEqual(1)
+      expect(it).toBeLessThanOrEqual(20)
     })
   })
 })

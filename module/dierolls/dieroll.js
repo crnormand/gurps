@@ -49,6 +49,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     let rtotal = roll.total
 
     chatdata['rtotal'] = rtotal
+    chatdata['loaded'] = !!roll.isLoaded
     chatdata['rolls'] = roll.dice[0].results.map(it => it.result.toString()).join(',')
     chatdata['modifier'] = modifier
     chatdata['finaltarget'] = finaltarget
@@ -114,12 +115,12 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     if (rtotal == 1) thing = thing.replace('points', 'point')
 
     chatdata['rtotal'] = rtotal
-
+    chatdata['loaded'] = !!roll.isLoaded
     chatdata['rolls'] = roll.dice[0].results.map(it => it.result).join()
     chatdata['modifier'] = modifier
   }
 
-  let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.html', chatdata)
+  let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 
   messageData.content = message
   messageData.roll = JSON.stringify(roll)

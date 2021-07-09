@@ -103,10 +103,10 @@ export default class DamageChat {
     if (tokenNames.length == 0) tokenNames.push('')
 
     let draggableData = []
-    await tokenNames.forEach(async tokenName => {
+    for (const tokenName of tokenNames) {
       let data = await message._createDraggableSection(actor, dice, tokenName, targetmods)
       draggableData.push(data)
-    })
+    }
 
     message._createChatMessage(actor, dice, targetmods, draggableData, event)
 
@@ -239,6 +239,7 @@ export default class DamageChat {
     let diceValue = parseInt(roll.result.split(' ')[0]) // in 0.8.X, result is string, so must make into int
     let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
     let rollTotal = roll.total
+    diceData.loaded = roll.isLoaded
 
     let b378 = false
     if (rollTotal < diceData.min) {
@@ -318,10 +319,11 @@ export default class DamageChat {
     }
 
     const damageType = diceData.damageType
-    let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
+    let html = await renderTemplate('systems/gurps/templates/damage-message.hbs', {
       draggableData: draggableData,
       rolled: diceData.rolled,
       dice: diceData.diceText,
+      loaded: diceData.loaded,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,
