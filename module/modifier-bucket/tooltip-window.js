@@ -665,7 +665,7 @@ const ModifiersForStatus = {
     gen: [],
     melee: ['[-4 to hit Melee (Prone)]'],
     ranged: ['[-2 to hit Ranged (Prone)]'],
-    defense: ['[-2 to active defenses (Prone)]'],
+    defense: ['[-3 to active defenses (Prone)]'],
   },
   stun: {
     gen: [],
