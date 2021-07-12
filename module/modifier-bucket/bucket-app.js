@@ -8,21 +8,36 @@ Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
+
+  class GurpsDie extends Die {
+    constructor(termData = {}) {
+      super(termData)
+
+      this.id = generateUniqueId()
+      this.baseExpression = this.baseExpression.bind(this)
+      this.roll = this.roll.bind(this)
+    }
+
+    baseExpression() {
+      const x = this.constructor.DENOMINATION === 'd' ? this.faces : this.constructor.DENOMINATION
+      return `${this.number}d${x}`
+    }
+
+    roll({ minimize = false, maximize = false } = {}) {
+      if (!this._loaded || !this._loaded.length) return super.roll({ minimize, maximize })
+
+      if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
+
+      const roll = { result: undefined, active: true }
+      roll.result = this._loaded.pop()
+      this.results.push(roll)
+    }
+  }
+
+  // CONFIG.Dice.terms['d'] = GurpsDie
+  CONFIG.Dice.terms['6'] = GurpsDie
+  CONFIG.Dice.types.push(GurpsDie)
 })
-
-let baseExpression = function () {
-  const x = this.constructor.DENOMINATION === 'd' ? this.faces : this.constructor.DENOMINATION
-  return `${this.number}d${x}`
-}
-
-let roll = function ({ minimize = false, maximize = false } = {}) {
-  if (!this._loaded || !this._loaded.length) return this._originalRoll({ minimize, maximize })
-
-  if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
-  const roll = { result: undefined, active: true }
-  roll.result = this._loaded.pop()
-  this.results.push(roll)
-}
 
 // TODO Beautify the ResolveDiceRollApp UI
 // TODO Show an indicator on all Roll chat messages if using Physical Dice
@@ -36,23 +51,25 @@ let roll = function ({ minimize = false, maximize = false } = {}) {
  * his dice roll values via the physical dice feature.
  */
 export class GurpsRoll extends Roll {
+  static dieOverride = false
+
   constructor(formula, data = {}, options = {}) {
     super(formula, data, options)
 
     this.isLoaded = false
 
     // wrap all Die terms in our wrapper
-    let myTerms = []
-    this.terms.forEach(term => {
-      if (term instanceof Die) {
-        term.id = generateUniqueId()
-        term.baseExpression = baseExpression.bind(term)
-        term._originalRoll = term.roll
-        term.roll = roll.bind(term)
-      }
-      myTerms.push(term)
-    })
-    this.terms = myTerms
+    // let myTerms = []
+    // this.terms.forEach(term => {
+    //   if (term instanceof Die) {
+    //     term.id = generateUniqueId()
+    //     term.baseExpression = baseExpression.bind(term)
+    //     term._originalRoll = term.roll
+    //     term.roll = roll.bind(term)
+    //   }
+    //   myTerms.push(term)
+    // })
+    // this.terms = myTerms
   }
 
   _prepareData(data) {
@@ -73,7 +90,7 @@ export class GurpsRoll extends Roll {
    * @inheritdoc
    * @override
    */
-  async evaluate(options) {
+  evaluate(options) {
     if (!options.async) console.warn('All calls to GurpsRoll.evaluate must include the async flag!!')
 
     if (CONFIG.debug.dice) console.log('override RollTerm.evaluate()!!')
@@ -81,7 +98,8 @@ export class GurpsRoll extends Roll {
     let diceTerms = this.terms.filter(term => term instanceof Die)
     let physicalDice = game.user.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
-    if (physicalDice && diceTerms.length > 0) {
+    // We can only do this if called asynchronously
+    if (options.async && physicalDice && diceTerms.length > 0) {
       return this._promptForDiceResultsAndEvaluate(options, diceTerms)
     } else {
       return super.evaluate(options)
@@ -110,6 +128,41 @@ export class GurpsRoll extends Roll {
     })
   }
 }
+
+// let Die = CONFIG.Dice.terms['d']
+// let originalRoll = Die.prototype.roll
+// let baseExpression = function () {
+//   const x = this.DENOMINATION === 'd' ? this.faces : this.DENOMINATION
+//   return `${this.number}d${x}`
+// }
+
+// let roll = function ({ minimize = false, maximize = false } = {}) {
+//   if (!this._loaded || !this._loaded.length) return originalRoll.roll({ minimize, maximize })
+
+//   if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
+
+//   const roll = { result: undefined, active: true }
+//   roll.result = this._loaded.pop()
+//   this.results.push(roll)
+// }
+
+// Object.defineProperty(Die.prototype, 'baseExpression', {
+//   value: function () {
+//     const x = this.DENOMINATION === 'd' ? this.faces : this.DENOMINATION
+//     return `${this.number}d${x}`
+//   },
+// })
+// Object.defineProperty(Die.prototype, 'roll', {
+//   value: function ({ minimize = false, maximize = false } = {}) {
+//     if (!this._loaded || !this._loaded.length) return originalRoll.roll({ minimize, maximize })
+
+//     if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
+
+//     const roll = { result: undefined, active: true }
+//     roll.result = this._loaded.pop()
+//     this.results.push(roll)
+//   },
+// })
 
 CONFIG.Dice.rolls[0] = GurpsRoll
 
