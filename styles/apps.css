@@ -1851,6 +1851,10 @@ ul#result-effects li {
   gap: 0;
 }
 
+.gurps-2col.no-bias {
+  grid-template-columns: 1fr 1fr;
+}
+
 .item-editor input.title {
   font-size: large;
 }
@@ -1933,4 +1937,9 @@ ul#result-effects li {
 
 .gurps-invalid {
   background-color: lightpink !important;
+}
+
+#fright-check label {
+  display: flex;
+  align-items: center;
 }

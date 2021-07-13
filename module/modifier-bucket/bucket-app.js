@@ -91,15 +91,13 @@ export class GurpsRoll extends Roll {
    * @override
    */
   evaluate(options) {
-    if (!options.async) console.warn('All calls to GurpsRoll.evaluate must include the async flag!!')
-
     if (CONFIG.debug.dice) console.log('override RollTerm.evaluate()!!')
 
     let diceTerms = this.terms.filter(term => term instanceof Die)
     let physicalDice = game.user.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     // We can only do this if called asynchronously
-    if (options.async && physicalDice && diceTerms.length > 0) {
+    if (options?.async && physicalDice && diceTerms.length > 0) {
       return this._promptForDiceResultsAndEvaluate(options, diceTerms)
     } else {
       return super.evaluate(options)
