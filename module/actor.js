@@ -19,6 +19,7 @@ import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { SemanticVersion } from '../lib/semver.js'
 import { Maneuvers } from './actor/maneuver.js'
+import { SmartImporter } from './smart-importer.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (actor) {
@@ -587,41 +588,15 @@ export class GurpsActor extends Actor {
   }
 
   async _openImportDialog() {
-    setTimeout(async () => {
-      new Dialog(
-        {
-          title: `Import character data for: ${this.name}`,
-          content: await renderTemplate('systems/gurps/templates/import-gcs-v1-data.html', {
-            name: '"' + this.name + '"',
-          }),
-          buttons: {
-            import: {
-              icon: '<i class="fas fa-file-import"></i>',
-              label: 'Import',
-              callback: html => {
-                const form = html.find('form')[0]
-                let files = form.data.files
-                let file = null
-                if (!files.length) {
-                  return ui.notifications.error('You did not upload a data file!')
-                } else {
-                  file = files[0]
-                  GURPS.readTextFromFile(file).then(text => this.importFromGCSv1(text, file.name, file.path))
-                }
-              },
-            },
-            no: {
-              icon: '<i class="fas fa-times"></i>',
-              label: 'Cancel',
-            },
-          },
-          default: 'import',
-        },
-        {
-          width: 400,
-        }
-      ).render(true)
-    }, 200)
+    try {
+      const file = await SmartImporter.getFileForActor(this);
+      const res = await this.importFromGCSv1(await file.text(), file.name);
+      if (res) SmartImporter.setFileForActor(this, file);
+    }
+    catch (e) {
+      ui.notifications.error(e);
+      throw e;
+    }
   }
 
   // First attempt at import GCS FG XML export data.
