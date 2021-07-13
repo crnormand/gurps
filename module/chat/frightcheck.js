@@ -95,6 +95,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
     let roll = Roll.create('3d6')
     await roll.evaluate({ async: true })
+    let rtotal = roll.total
 
     let failure = roll.total > finaltarget
 
@@ -103,7 +104,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       targetmods: targetmods,
       finaltarget: finaltarget,
       ruleOf14: ruleOf14,
-      rtotal: roll.total,
+      rtotal: rtotal,
       failure: failure,
       margin: finaltarget - roll.total,
       loaded: roll.isLoaded,
@@ -124,10 +125,10 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       console.log('Fright Check FAIL')
 
       // Draw results using a custom roll formula
-      let tableRoll = Roll.create('3d6 + @rollvar', { rollvar: roll.total - finaltarget })
+      let tableRoll = Roll.create(`3d6 + ${rtotal - finaltarget}`)
 
       let table = this._findFrightCheckTable(tblname)
-      table.draw({ roll: tableRoll.evaluate({ async: true }) })
+      table.draw({ roll: await tableRoll.evaluate({ async: true }) })
     }
   }
 
