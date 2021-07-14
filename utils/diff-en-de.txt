@@ -71,6 +71,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.chatTurnOnReeling
   GURPS.chatTurnOnTired
   GURPS.chatUses
+  GURPS.check
   GURPS.check1
   GURPS.check2
   GURPS.check3
@@ -96,6 +97,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.damageTypeLarge Piercing
   GURPS.damageTypePiercing
   GURPS.damageTypeSmall Piercing
+  GURPS.during
   GURPS.effectsNotApplicableDefenses
   GURPS.effectsTemporaryAttributePenalties
   GURPS.equipmentCost
@@ -105,6 +107,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.equipmentTab
   GURPS.equipmentTechlevel
   GURPS.equipmentUses
+  GURPS.fail
   GURPS.gameAidUsersGuide
   GURPS.grapplingCPAbbrev
   GURPS.highPainThreshold
@@ -175,8 +178,10 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.melee
   GURPS.minimum
   GURPS.minimumDamageRule
+  GURPS.modifierDefDeceptiveAttack
   GURPS.modifierFeverishDef
   GURPS.modifierHeroicCharge
+  GURPS.modifierMaintainConcentration
   GURPS.modifierScaleNormal
   GURPS.modifierTrivial
   GURPS.name
@@ -185,6 +190,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.ok
   GURPS.overridden
   GURPS.parrybonus
+  GURPS.pass
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
@@ -225,9 +231,12 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.rateOfFire
   GURPS.rcl
   GURPS.resource
+  GURPS.resourceEnforceMaximum
+  GURPS.resourceEnforceMinimum
   GURPS.resourceInvalidAlias
   GURPS.resourceTemplateAlias
   GURPS.rof
+  GURPS.settingAutoIgnoreQty
   GURPS.settingBasicPDFs
   GURPS.settingBasicPDFsCombined
   GURPS.settingBasicPDFsSeparate
@@ -246,6 +255,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingEnhancedInput
   GURPS.settingFlagItems
   GURPS.settingFlagUserCreated
+  GURPS.settingHintAutoIgnoreQty
   GURPS.settingHintBasicPDFs
   GURPS.settingHintBlockImport
   GURPS.settingHintCalculateEnc
@@ -271,6 +281,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingHintPlayerChatPrivate
   GURPS.settingHintQtyItems
   GURPS.settingHintRangeStrategy
+  GURPS.settingHintSheetDetail
   GURPS.settingHintShowDiceRoller
   GURPS.settingHintShowNavigation
   GURPS.settingHintShowReadMe
@@ -303,6 +314,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingRangeStrategy
   GURPS.settingRangeStrategyRangeBands
   GURPS.settingRangeStrategyStandard
+  GURPS.settingSheetDetail
   GURPS.settingShowDiceRoller
   GURPS.settingShowNavigation
   GURPS.settingShowReadMe

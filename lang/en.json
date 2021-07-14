@@ -880,6 +880,7 @@
   "GURPS.resolve": "Resolve",
   "GURPS.roll": "Roll",
   "GURPS.rolled": "Rolled",
+  "GURPS.rollForMe": "Roll for me",
   "GURPS.selectToken": "Select Token",
   "GURPS.shock": "Shock",
   "GURPS.shockPenalty": "Penalty (–{amount}) to DX and IQ.",

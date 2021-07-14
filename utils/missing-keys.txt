@@ -1,3 +1,9 @@
 [ 'templates', 'module', 'lib' ]
 ===== ORPHANS =====
-[ 'GURPS.', 'GURPS.resourceEnforceMinimum', 'GURPS.setManeuver' ]
+[
+  'GURPS.',
+  'GURPS.resolveDiceRoll',
+  'GURPS.rollForMe',
+  'GURPS.setManeuver',
+  'GURPS.settingUsePhysicalDice'
+]
