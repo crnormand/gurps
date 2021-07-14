@@ -39,10 +39,6 @@ Hooks.once('init', async function () {
   CONFIG.Dice.types.push(GurpsDie)
 })
 
-// TODO Beautify the ResolveDiceRollApp UI
-// TODO Show an indicator on all Roll chat messages if using Physical Dice
-// TODO Test all die rolls
-
 /**
  * Install Custom Roll to support global modifier access (@gmod & @gmodc) and
  * custom die-rolling behaviors, like the "Phyical Dice" feature.

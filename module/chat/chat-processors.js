@@ -51,6 +51,29 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RolltableChatProcessor())
   ChatProcessors.registerProcessor(new RefreshItemsChatProcessor())
   ChatProcessors.registerProcessor(new QuickDamageChatProcessor())
+  ChatProcessors.registerProcessor(new SoundChatProcessor())
+}
+
+class SoundChatProcessor extends ChatProcessor {
+  help() {
+    return '/sound &lt;path-to-sound&gt;'
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/sound *(?<wait>w[\d\.]+)? *(?<vol>v[\d\.]+)? *(?<file>.*)/i)
+    return !!this.match
+  }
+  async process(line) {
+    let v = 0.8
+    if (this.match.groups.vol) v = parseFloat(this.match.groups.vol.substr(1))
+    if (this.match.groups.wait) await wait(parseFloat(this.match.groups.wait.substr(1)) * 1000)
+    let data = {
+      src: this.match.groups.file.trim(),
+      volume: v,
+      loop: false,
+    }
+    AudioHelper.play(data, true)
+  }
 }
 
 class QuickDamageChatProcessor extends ChatProcessor {
@@ -62,7 +85,7 @@ class QuickDamageChatProcessor extends ChatProcessor {
     let m = line.match(/^[\.\/](.*)/)
     if (!!m) {
       this.match = parseForDamage(m[1])
-      return true
+      return !!this.match
     }
     return false
   }
