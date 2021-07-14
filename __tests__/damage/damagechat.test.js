@@ -21,42 +21,42 @@ describe('DamageChat', () => {
 
     describe('formula', () => {
       test('dice plus mods', () => {
-        expect(chat._getDiceData('1d', null, []).formula).toBe('1d6')
-        expect(chat._getDiceData('3d+1', null, []).formula).toBe('3d6+1')
-        expect(chat._getDiceData('2d-2', null, []).formula).toBe('2d6-2')
-        expect(chat._getDiceData('1d6', null, []).formula).toBe('1d6')
+        expect(chat._getDiceData('1d', null, []).formula).toMatch(/1d6(\[.*\])?/)
+        expect(chat._getDiceData('3d+1', null, []).formula).toMatch(/^3d6(\[.*\])?\+1$/)
+        expect(chat._getDiceData('2d-2', null, []).formula).toMatch(/^2d6(\[.*\])?-2$/)
+        expect(chat._getDiceData('1d6', null, []).formula).toMatch(/^1d6(\[.*\])?$/)
       })
 
       test('dice plus mods plus mods', () => {
-        expect(chat._getDiceData('3d+1-2', null, []).formula).toBe('3d6+1-2')
-        expect(chat._getDiceData('2d-2+3', null, []).formula).toBe('2d6-2+3')
+        expect(chat._getDiceData('3d+1-2', null, []).formula).toMatch(/^3d6(\[.*\])?\+1-2$/)
+        expect(chat._getDiceData('2d-2+3', null, []).formula).toMatch(/^2d6(\[.*\])?-2\+3$/)
       })
 
       test('multipliers', () => {
-        expect(chat._getDiceData('1dx5', null, []).formula).toBe('1d6')
-        expect(chat._getDiceData('3d*1', null, []).formula).toBe('3d6')
-        expect(chat._getDiceData('2d×2', null, []).formula).toBe('2d6')
-        expect(chat._getDiceData('1d6X3', null, []).formula).toBe('1d6')
+        expect(chat._getDiceData('1dx5', null, []).formula).toMatch(/^1d6(\[.*\])?$/)
+        expect(chat._getDiceData('3d*1', null, []).formula).toMatch(/^3d6(\[.*\])?$/)
+        expect(chat._getDiceData('2d×2', null, []).formula).toMatch(/^2d6(\[.*\])?$/)
+        expect(chat._getDiceData('1d6X3', null, []).formula).toMatch(/^1d6(\[.*\])?$/)
       })
 
       test('mods plus multipliers', () => {
-        expect(chat._getDiceData('1d+2x5', null, []).formula).toBe('1d6+2')
-        expect(chat._getDiceData('3d-2+5*1', null, []).formula).toBe('3d6-2+5')
+        expect(chat._getDiceData('1d+2x5', null, []).formula).toMatch(/^1d6(\[.*\])?\+2$/)
+        expect(chat._getDiceData('3d-2+5*1', null, []).formula).toMatch(/^3d6(\[.*\])?-2\+5$/)
       })
 
       test('armor divisors', () => {
-        expect(chat._getDiceData('1d(2)', null, []).formula).toBe('1d6')
-        expect(chat._getDiceData('3d(0.2)', null, []).formula).toBe('3d6')
+        expect(chat._getDiceData('1d(2)', null, []).formula).toMatch(/^1d6(\[.*\])?$/)
+        expect(chat._getDiceData('3d(0.2)', null, []).formula).toMatch(/^3d6(\[.*\])?$/)
       })
 
       test('mods plus armor divisors', () => {
-        expect(chat._getDiceData('1d+3(2)', null, []).formula).toBe('1d6+3')
-        expect(chat._getDiceData('3d-3+1(0.2)', null, []).formula).toBe('3d6-3+1')
+        expect(chat._getDiceData('1d+3(2)', null, []).formula).toMatch(/^1d6(\[.*\])?\+3$/)
+        expect(chat._getDiceData('3d-3+1(0.2)', null, []).formula).toMatch(/^3d6(\[.*\])?-3\+1$/)
       })
 
       test('mods plus multipliers plus armor divisors', () => {
-        expect(chat._getDiceData('1d+3x4(2)', null, []).formula).toBe('1d6+3')
-        expect(chat._getDiceData('3d-3+1*5(0.2)', null, []).formula).toBe('3d6-3+1')
+        expect(chat._getDiceData('1d+3x4(2)', null, []).formula).toMatch(/^1d6(\[.*\])?\+3$/)
+        expect(chat._getDiceData('3d-3+1*5(0.2)', null, []).formula).toMatch(/^3d6(\[.*\])?-3\+1$/)
       })
 
       test('bad dice text', () => {
@@ -68,8 +68,8 @@ describe('DamageChat', () => {
       })
 
       test('ignored text', () => {
-        expect(chat._getDiceData('1d+a', null, []).formula).toBe('1d6')
-        expect(chat._getDiceData('1d-a', null, []).formula).toBe('1d6')
+        expect(chat._getDiceData('1d+a', null, []).formula).toMatch(/^1d6.*$/)
+        expect(chat._getDiceData('1d-a', null, []).formula).toMatch(/^1d6(\[.*\])?$/)
       })
     })
 
@@ -198,7 +198,7 @@ describe('DamageChat', () => {
     })
 
     // test.skip('diceText with a minus (#8722) instead of a dash (-)', () => {
-    //   expect(chat._getDiceData('2d−2', null, []).formula).toBe('2d6-2')
+    //   expect(chat._getDiceData('2d−2', null, []).formula).toMatch(/^2d6(\[.*\])?-2$/)
     // })
   })
 
