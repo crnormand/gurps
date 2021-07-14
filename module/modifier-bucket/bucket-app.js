@@ -57,19 +57,6 @@ export class GurpsRoll extends Roll {
     super(formula, data, options)
 
     this.isLoaded = false
-
-    // wrap all Die terms in our wrapper
-    // let myTerms = []
-    // this.terms.forEach(term => {
-    //   if (term instanceof Die) {
-    //     term.id = generateUniqueId()
-    //     term.baseExpression = baseExpression.bind(term)
-    //     term._originalRoll = term.roll
-    //     term.roll = roll.bind(term)
-    //   }
-    //   myTerms.push(term)
-    // })
-    // this.terms = myTerms
   }
 
   _prepareData(data) {
@@ -97,7 +84,8 @@ export class GurpsRoll extends Roll {
     let physicalDice = game.user.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     // We can only do this if called asynchronously
-    if (options?.async && physicalDice && diceTerms.length > 0) {
+    let noLoaded = this.options?.noLoaded
+    if (options?.async && physicalDice && diceTerms.length > 0 && !noLoaded) {
       return this._promptForDiceResultsAndEvaluate(options, diceTerms)
     } else {
       return super.evaluate(options)
@@ -115,7 +103,7 @@ export class GurpsRoll extends Roll {
       let callback = async isLoaded => {
         this.isLoaded = isLoaded
         let roll = super.evaluate(options)
-        dialog.close()
+        await dialog.close()
         resolve(roll)
       }
 
@@ -126,41 +114,6 @@ export class GurpsRoll extends Roll {
     })
   }
 }
-
-// let Die = CONFIG.Dice.terms['d']
-// let originalRoll = Die.prototype.roll
-// let baseExpression = function () {
-//   const x = this.DENOMINATION === 'd' ? this.faces : this.DENOMINATION
-//   return `${this.number}d${x}`
-// }
-
-// let roll = function ({ minimize = false, maximize = false } = {}) {
-//   if (!this._loaded || !this._loaded.length) return originalRoll.roll({ minimize, maximize })
-
-//   if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
-
-//   const roll = { result: undefined, active: true }
-//   roll.result = this._loaded.pop()
-//   this.results.push(roll)
-// }
-
-// Object.defineProperty(Die.prototype, 'baseExpression', {
-//   value: function () {
-//     const x = this.DENOMINATION === 'd' ? this.faces : this.DENOMINATION
-//     return `${this.number}d${x}`
-//   },
-// })
-// Object.defineProperty(Die.prototype, 'roll', {
-//   value: function ({ minimize = false, maximize = false } = {}) {
-//     if (!this._loaded || !this._loaded.length) return originalRoll.roll({ minimize, maximize })
-
-//     if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
-
-//     const roll = { result: undefined, active: true }
-//     roll.result = this._loaded.pop()
-//     this.results.push(roll)
-//   },
-// })
 
 CONFIG.Dice.rolls[0] = GurpsRoll
 

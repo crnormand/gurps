@@ -1,9 +1,9 @@
-import { i18n } from '../../lib/utilities.js'
+import { generateUniqueId, i18n } from '../../lib/utilities.js'
 
 export const commaSeparatedNumbers = /^\d*([ ,0-9])*$/
 
-export default class ResolveDiceRoll extends FormApplication {
-  constructor(diceTerms, options = {}) {
+export default class ResolveDiceRoll extends Application {
+  constructor(diceTerms, options = {}, id = generateUniqueId()) {
     super(options)
 
     this.diceTerms = diceTerms.map(it => {
@@ -11,11 +11,12 @@ export default class ResolveDiceRoll extends FormApplication {
     })
 
     this.applyEnabled = false
+    this.fakeId = id
   }
 
-  async _updateObject(event, formData) {
-    //throw new Error("A subclass of the FormApplication must implement the _updateObject method.");
-  }
+  // async _updateObject(event, formData) {
+  //   //throw new Error("A subclass of the FormApplication must implement the _updateObject method.");
+  // }
 
   /**
    * @inheritdoc
@@ -26,9 +27,9 @@ export default class ResolveDiceRoll extends FormApplication {
       template: 'systems/gurps/templates/resolve-diceroll.hbs',
       resizeable: false,
       minimizable: false,
-      width: 250,
+      width: 350,
       height: 'auto',
-      title: i18n('GURPS.resolveDiceRoll', 'Resolve Dice Roll'),
+      title: i18n('GURPS.resolveDiceRoll', 'What Did You Roll?'),
       //      closeOnSubmit: true,
     })
   }
@@ -89,17 +90,28 @@ export default class ResolveDiceRoll extends FormApplication {
       html.find('#apply').prop('disabled', !!inputs.length)
     })
 
-    html.find('#apply').click(async () => {
-      for (const diceTerm of this.diceTerms) {
-        let result = this.getValues(diceTerm)
-        diceTerm.term._loaded = result
+    html.find('input').on('keypress', ev => {
+      if (ev.keyCode == 13) {
+        let apply = $(html.find('#apply'))
+        if (apply.is(':disabled')) return
+        apply.click()
       }
-      this.applyCallback(true)
     })
 
-    html.find('#roll').click(async () => {
-      this.rollCallback(false)
-    })
+    html.find('#apply').click(() => this._applyCallback())
+    html.find('#roll').click(() => this._rollCallback())
+  }
+
+  _applyCallback() {
+    for (const diceTerm of this.diceTerms) {
+      let result = this.getValues(diceTerm)
+      diceTerm.term._loaded = result
+    }
+    this.applyCallback(true)
+  }
+
+  _rollCallback() {
+    this.rollCallback(false)
   }
 
   isValid(term, text) {

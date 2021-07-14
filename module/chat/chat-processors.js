@@ -361,7 +361,7 @@ class FpHpChatProcessor extends ChatProcessor {
         if (!!dice) {
           let sign = dice[0] == '-' ? -1 : 1
           let d = dice.match(/[+-](\d+)d(\d*)/)
-          let r = d[1] + 'd' + (!!d[2] ? d[2] : '6')
+          let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/${attr}]`
           let roll = Roll.create(r)
           await roll.evaluate({ async: true })
           if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)

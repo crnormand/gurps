@@ -90,10 +90,12 @@ export class EveryoneCChatProcessor extends ChatProcessor {
           let value = mod
           let dice = m[3] || ''
           let txt = ''
+          let attr = m[2].toUpperCase()
+
           if (!!dice) {
             let sign = dice[0] == '-' ? -1 : 1
             let d = dice.match(/[+-](\d+)d(\d*)/)
-            let r = d[1] + 'd' + (!!d[2] ? d[2] : '6')
+            let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/ev ${attr}]`
             let roll = Roll.create(r)
             await roll.evaluate({ async: true })
             if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)
@@ -107,7 +109,6 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             value *= sign
             txt = `(${value}) `
           }
-          let attr = m[2].toUpperCase()
           let cur = actor.data.data[attr].value
           let newval = parseInt(value)
           if (isNaN(newval)) {

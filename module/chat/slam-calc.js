@@ -60,13 +60,13 @@ export class SlamCalculator {
     let rawDamageTarget = (data.targetHp * data.relativeSpeed) / 100
     let targetDice = this._getDicePlusAdds(rawDamageTarget)
 
-    let attackerRoll = Roll.create(diceToFormula(attackerDice, true))
+    let attackerRoll = Roll.create(diceToFormula(attackerDice, `[Slam Attacker's roll]`, true))
     await attackerRoll.evaluate({ async: true })
 
     let adds = (data.isAoAStrong ? 2 : 0) + (data.shieldDB || 0)
     let attackerResult = Math.max(attackerRoll.total + adds, 1)
 
-    let targetRoll = Roll.create(diceToFormula(targetDice, true))
+    let targetRoll = Roll.create(diceToFormula(targetDice, `[Slam Defender's roll]`, true))
     await targetRoll.evaluate({ async: true })
     let targetResult = Math.max(targetRoll.total, 1)
 
@@ -208,7 +208,7 @@ export class SlamCalculator {
 
     let explanation =
       roll.terms.length > 1 ? `${i18n('GURPS.rolled')} (${results})` : `${i18n('GURPS.rolled')} ${results}`
-    if (roll.terms[2] !== '0') explanation += ` ${roll.terms[1]} ${roll.terms[2]}`
+    if (roll.terms[2] !== '0') explanation += `${roll.terms[1].formula}${roll.terms[2].formula}`
 
     if (!!isAoAStrong) explanation += ` + 2 (${i18n('GURPS.slamAOAStrong')})`
     if (!!shieldDB) explanation += ` + ${shieldDB} (${i18n('GURPS.slamShieldDB')})`

@@ -157,6 +157,7 @@ export default class DamageChat {
     }
 
     let diceText = result.groups.roll
+
     if (originalDiceText.slice(-1) === '!') diceText = diceText + '!'
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
@@ -181,7 +182,7 @@ export default class DamageChat {
     let rolled = false
     if (!!result.groups.D) {
       rolled = true
-      if (result.groups.D === 'd') formula = d6ify(diceText) // GURPS dice (assume 6)
+      if (result.groups.D === 'd') formula = d6ify(diceText, '[Damage]') // GURPS dice (assume 6)
     }
     let displayText = overrideDiceText || diceText // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
     let min = 1

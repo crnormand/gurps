@@ -25,8 +25,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     let tblname = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE) || 'Fright Check'
 
     // TODO reskin frightcheck UI
-    let p = renderTemplate('systems/gurps/templates/frightcheck-macro.html', { tblname: tblname })
-    p.then(dialogTemplate =>
+    renderTemplate('systems/gurps/templates/frightcheck-macro.html', { tblname: tblname }).then(dialogTemplate =>
       new Dialog(
         {
           title: 'Fright Check',
@@ -93,25 +92,25 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     let tblname = html.find('#tblname')[0].value
     game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_FRIGHT_CHECK_TABLE, tblname)
 
-    let roll = Roll.create('3d6')
+    let roll = Roll.create('3d6[Fright Check]')
     await roll.evaluate({ async: true })
-    let rtotal = roll.total
 
     let failure = roll.total > finaltarget
+    let table = this._findFrightCheckTable(tblname)
 
     let content = await renderTemplate('systems/gurps/templates/frightcheck-results.hbs', {
       WILLVar: WILLVar,
       targetmods: targetmods,
       finaltarget: finaltarget,
       ruleOf14: ruleOf14,
-      rtotal: rtotal,
+      rtotal: roll.total,
       failure: failure,
       margin: finaltarget - roll.total,
       loaded: roll.isLoaded,
       rolls: roll.dice[0].results.map(it => it.result).join(),
     })
 
-    ChatMessage.create({
+    await ChatMessage.create({
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       speaker: {
         alias: actor.name,
@@ -119,17 +118,15 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       content: content,
       roll: JSON.stringify(roll),
       rollMode: game.settings.get('core', 'rollMode'),
+    }).then(async () => {
+      if (failure) {
+        // Draw results using a custom roll formula
+        let tableRoll = Roll.create(`3d6[Fright Check table roll] + @marginOfFailure`, {
+          marginOfFailure: roll.total - finaltarget,
+        })
+        table.draw({ roll: tableRoll }) // don't evaluate before passing
+      }
     })
-
-    if (failure) {
-      console.log('Fright Check FAIL')
-
-      // Draw results using a custom roll formula
-      let tableRoll = Roll.create(`3d6 + ${rtotal - finaltarget}`)
-
-      let table = this._findFrightCheckTable(tblname)
-      table.draw({ roll: await tableRoll.evaluate({ async: true }) })
-    }
   }
 
   _getMod(html, id) {
