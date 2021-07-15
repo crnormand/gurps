@@ -1,6 +1,12 @@
 /* ========================= */
 /* GURPS Applications        */
 /* ========================= */
+
+/* Global Override */
+body {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
@@ -120,6 +126,11 @@
   font-size: 90%;
 }
 
+.roll-message .aside .aside-text {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  font-weight: normal;
+}
+
 .gurps-group h4 {
   background-color: black;
   color: lightgrey;
@@ -132,11 +143,13 @@
   text-transform: uppercase;
   line-height: 1.2em;
 }
+
 .gurps-app aside {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 0.5em;
 }
+
 .gurps-group .shaded-group {
   padding-bottom: 0.5em;
 }
@@ -933,7 +946,7 @@ ul#result-effects li {
   justify-content: center;
 }
 
-.gurps-group .vertical-center,
+.gurps-app .vertical-center,
 .resource-editor .vertical-center {
   display: flex;
   align-items: center;
@@ -1838,6 +1851,10 @@ ul#result-effects li {
   gap: 0;
 }
 
+.gurps-2col.no-bias {
+  grid-template-columns: 1fr 1fr;
+}
+
 .item-editor input.title {
   font-size: large;
 }
@@ -1916,4 +1933,13 @@ ul#result-effects li {
 
 .glowing {
   animation: glowing 500ms 3;
+}
+
+.gurps-invalid {
+  background-color: lightpink !important;
+}
+
+#fright-check label {
+  display: flex;
+  align-items: center;
 }

@@ -280,7 +280,7 @@ export class CompositeDamageCalculator {
     if (this._isExplosion) return 1
 
     if ((this._armorDivisor > 1 || this._armorDivisor === -1) && this._isHardenedDR) {
-      let _divisor = (this._armorDivisor == 4) ? 3 : this._armorDivisor //If you're using survivable guns check if it's (4) because it's not part of the regular progression, thus we treat it as 3.
+      let _divisor = this._armorDivisor == 4 ? 3 : this._armorDivisor //If you're using survivable guns check if it's (4) because it's not part of the regular progression, thus we treat it as 3.
       let maxIndex = armorDivisorSteps.length - 1
       let index = armorDivisorSteps.indexOf(_divisor)
       index = Math.min(index + this._hardenedDRLevel, maxIndex)
@@ -819,9 +819,9 @@ export class CompositeDamageCalculator {
     }
   }
 
-  randomizeHitLocation() {
-    let roll3d = Roll.create('3d6')
-    roll3d.roll()
+  async randomizeHitLocation() {
+    let roll3d = Roll.create('3d6[Hit Location]')
+    await roll3d.roll({ async: true })
     let total = roll3d.total
 
     let loc = this._defender.hitLocationsWithDR.filter(it => it.roll.includes(total))

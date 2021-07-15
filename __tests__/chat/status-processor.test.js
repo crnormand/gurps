@@ -188,6 +188,7 @@ describe('Status Processor', () => {
             token: boobToken,
             effects: [],
             displayname: 'Boob One',
+            isEffectActive: () => false,
           }
           boobActor.token.actor = boobActor
 
@@ -255,6 +256,7 @@ describe('Status Processor', () => {
             effects: [],
             displayname: 'Doofus',
             id: 'doofusActor',
+            isEffectActive: () => false,
           }
           doofusActor.token.actor = doofusActor
 
@@ -270,6 +272,7 @@ describe('Status Processor', () => {
             effects: [],
             displayname: 'Boob One',
             id: 'boob1Actor',
+            isEffectActive: () => false,
           }
           boob1Actor.token.actor = boob1Actor
 
@@ -285,6 +288,7 @@ describe('Status Processor', () => {
             effects: [],
             displayname: 'Boob Two',
             id: 'boob2Actor',
+            isEffectActive: () => false,
           }
           boob2Actor.token.actor = boob2Actor
 
@@ -360,6 +364,7 @@ describe('Status Processor', () => {
             token: boobToken,
             effects: [FooEffect],
             displayname: 'Boob One',
+            isEffectActive: () => true,
           }
           boobActor.token.actor = boobActor
 
@@ -594,6 +599,7 @@ describe('Status Processor', () => {
               actor: {
                 effects: [FooEffect],
                 displayname: 'Boob',
+                isEffectActive: () => false,
               },
             },
             {
@@ -601,6 +607,7 @@ describe('Status Processor', () => {
               actor: {
                 effects: [BarEffect, FooEffect],
                 displayname: 'Doofus',
+                isEffectActive: () => true,
               },
             },
           ]

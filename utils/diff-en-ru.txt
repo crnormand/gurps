@@ -71,6 +71,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatYouMustBeGM
   GURPS.chatYouMustHaveACharacterSelected
   GURPS.chatYouMustSelectTokens
+  GURPS.check
   GURPS.check1
   GURPS.check2
   GURPS.check3
@@ -86,6 +87,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.dragrulerFly
   GURPS.dragrulerSprint
   GURPS.dragrulerWalk
+  GURPS.during
   GURPS.dxCheckOrFallApplyProne
   GURPS.dxJudoAcrobaticsCheckToRemainStanding
   GURPS.effectsNotApplicableDefenses
@@ -96,6 +98,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.equipmentQuantity
   GURPS.equipmentTechlevel
   GURPS.equipmentUses
+  GURPS.fail
   GURPS.fallsDownApplyProne
   GURPS.forHighPainThreshold
   GURPS.forLowPainThreshold
@@ -219,6 +222,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierCurrentModifiers
   GURPS.modifierDangerous
   GURPS.modifierDeceptiveAttack
+  GURPS.modifierDefDeceptiveAttack
   GURPS.modifierDeterminedAttack
   GURPS.modifierDodgeAcrobatic
   GURPS.modifierDodgeDive
@@ -249,6 +253,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierLightStarlight
   GURPS.modifierLightTorch
   GURPS.modifierLightTwilight
+  GURPS.modifierMaintainConcentration
   GURPS.modifierMightyBlow
   GURPS.modifierMoveAttack
   GURPS.modifierOthers
@@ -313,6 +318,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.notes
   GURPS.ok
   GURPS.parrybonus
+  GURPS.pass
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
@@ -355,11 +361,14 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.resourceCopyTemplate
   GURPS.resourceDeleteTracker
   GURPS.resourceEditTracker
+  GURPS.resourceEnforceMaximum
+  GURPS.resourceEnforceMinimum
   GURPS.resourceInvalidAlias
   GURPS.resourceUndefined
   GURPS.resourceUpdateTrackerSlot
   GURPS.rolled
   GURPS.selectToken
+  GURPS.settingAutoIgnoreQty
   GURPS.settingBasicPDFs
   GURPS.settingBasicPDFsCombined
   GURPS.settingBasicPDFsSeparate
@@ -378,6 +387,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingEnhancedInput
   GURPS.settingFlagItems
   GURPS.settingFlagUserCreated
+  GURPS.settingHintAutoIgnoreQty
   GURPS.settingHintBasicPDFs
   GURPS.settingHintBlockImport
   GURPS.settingHintCalculateEnc
@@ -403,6 +413,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingHintPlayerChatPrivate
   GURPS.settingHintQtyItems
   GURPS.settingHintRangeStrategy
+  GURPS.settingHintSheetDetail
   GURPS.settingHintShowDiceRoller
   GURPS.settingHintShowNavigation
   GURPS.settingHintShowReadMe
@@ -435,6 +446,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingRangeStrategy
   GURPS.settingRangeStrategyRangeBands
   GURPS.settingRangeStrategyStandard
+  GURPS.settingSheetDetail
   GURPS.settingShowDiceRoller
   GURPS.settingShowNavigation
   GURPS.settingShowReadMe

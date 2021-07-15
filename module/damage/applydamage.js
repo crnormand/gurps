@@ -417,7 +417,7 @@ export default class ApplyDamageDialog extends Application {
    * Ask the calculator to randomly select a hit location, and return the roll used.
    */
   async _randomizeHitLocation() {
-    let roll3d = this._calculator.randomizeHitLocation()
+    let roll3d = await this._calculator.randomizeHitLocation()
 
     if (isNiceDiceEnabled()) {
       game.dice3d.showForRoll(roll3d).then(display => this.updateUI())

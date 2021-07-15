@@ -103,10 +103,10 @@ export default class DamageChat {
     if (tokenNames.length == 0) tokenNames.push('')
 
     let draggableData = []
-    await tokenNames.forEach(async tokenName => {
+    for (const tokenName of tokenNames) {
       let data = await message._createDraggableSection(actor, dice, tokenName, targetmods)
       draggableData.push(data)
-    })
+    }
 
     message._createChatMessage(actor, dice, targetmods, draggableData, event)
 
@@ -157,6 +157,7 @@ export default class DamageChat {
     }
 
     let diceText = result.groups.roll
+
     if (originalDiceText.slice(-1) === '!') diceText = diceText + '!'
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
@@ -181,7 +182,7 @@ export default class DamageChat {
     let rolled = false
     if (!!result.groups.D) {
       rolled = true
-      if (result.groups.D === 'd') formula = d6ify(diceText) // GURPS dice (assume 6)
+      if (result.groups.D === 'd') formula = d6ify(diceText, '[Damage]') // GURPS dice (assume 6)
     }
     let displayText = overrideDiceText || diceText // overrideDiceText used when actual formula isn't 'pretty' SW+2 vs 1d6+1+2
     let min = 1
@@ -234,11 +235,12 @@ export default class DamageChat {
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods) {
     let roll = Roll.create(diceData.formula + `+${diceData.modifier}`)
-    roll.evaluate({ async: false })
+    await roll.evaluate({ async: true })
 
     let diceValue = parseInt(roll.result.split(' ')[0]) // in 0.8.X, result is string, so must make into int
     let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
     let rollTotal = roll.total
+    diceData.loaded = roll.isLoaded
 
     let b378 = false
     if (rollTotal < diceData.min) {
@@ -318,10 +320,11 @@ export default class DamageChat {
     }
 
     const damageType = diceData.damageType
-    let html = await renderTemplate('systems/gurps/templates/damage-message-wrapper.html', {
+    let html = await renderTemplate('systems/gurps/templates/damage-message.hbs', {
       draggableData: draggableData,
       rolled: diceData.rolled,
       dice: diceData.diceText,
+      loaded: diceData.loaded,
       damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,

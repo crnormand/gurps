@@ -9,15 +9,24 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.applyAllToTarget
   GURPS.chatFixedDamage
   GURPS.chatRollingDamage
+  GURPS.check
+  GURPS.during
   GURPS.equipmentTechlevel
+  GURPS.fail
   GURPS.gameAidUsersGuide
   GURPS.importGCAChildrenWeights
   GURPS.maneuver
   GURPS.minimumDamageRule
+  GURPS.modifierDefDeceptiveAttack
+  GURPS.modifierMaintainConcentration
+  GURPS.pass
   GURPS.pdfDamageRoll
   GURPS.pointDamage
   GURPS.pointsDamage
+  GURPS.resourceEnforceMaximum
+  GURPS.resourceEnforceMinimum
   GURPS.resourceInvalidAlias
+  GURPS.settingAutoIgnoreQty
   GURPS.settingBasicPDFs
   GURPS.settingBasicPDFsCombined
   GURPS.settingBasicPDFsSeparate
@@ -36,6 +45,7 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingEnhancedInput
   GURPS.settingFlagItems
   GURPS.settingFlagUserCreated
+  GURPS.settingHintAutoIgnoreQty
   GURPS.settingHintBasicPDFs
   GURPS.settingHintBlockImport
   GURPS.settingHintCalculateEnc
@@ -61,6 +71,7 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingHintPlayerChatPrivate
   GURPS.settingHintQtyItems
   GURPS.settingHintRangeStrategy
+  GURPS.settingHintSheetDetail
   GURPS.settingHintShowDiceRoller
   GURPS.settingHintShowNavigation
   GURPS.settingHintShowReadMe
@@ -93,6 +104,7 @@ keys in [lang/en.json] that are missing in [lang/pt_br.json]
   GURPS.settingRangeStrategy
   GURPS.settingRangeStrategyRangeBands
   GURPS.settingRangeStrategyStandard
+  GURPS.settingSheetDetail
   GURPS.settingShowDiceRoller
   GURPS.settingShowNavigation
   GURPS.settingShowReadMe

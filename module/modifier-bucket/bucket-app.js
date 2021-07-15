@@ -1,17 +1,60 @@
-import { displayMod, i18n } from '../../lib/utilities.js'
+import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
-import ModifierBucketJournals from './select-journals.js'
 import { parselink } from '../../lib/parselink.js'
+import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
 
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (editor, element) => {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
+
+  class GurpsDie extends Die {
+    constructor(termData = {}) {
+      super(termData)
+
+      this.id = generateUniqueId()
+      this.baseExpression = this.baseExpression.bind(this)
+      this.roll = this.roll.bind(this)
+    }
+
+    baseExpression() {
+      const x = this.constructor.DENOMINATION === 'd' ? this.faces : this.constructor.DENOMINATION
+      return `${this.number}d${x}`
+    }
+
+    roll({ minimize = false, maximize = false } = {}) {
+      if (!this._loaded || !this._loaded.length) return super.roll({ minimize, maximize })
+
+      if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
+
+      const roll = { result: undefined, active: true }
+      roll.result = this._loaded.pop()
+      this.results.push(roll)
+    }
+  }
+
+  // CONFIG.Dice.terms['d'] = GurpsDie
+  CONFIG.Dice.terms['6'] = GurpsDie
+  CONFIG.Dice.types.push(GurpsDie)
 })
 
-// Install Custom Roll to support global modifier access (@gmod & @gmodc)
+/**
+ * Install Custom Roll to support global modifier access (@gmod & @gmodc) and
+ * custom die-rolling behaviors, like the "Phyical Dice" feature.
+ *
+ * Code can check for the GurpsRoll#isLoaded flag to know that the user entered
+ * his dice roll values via the physical dice feature.
+ */
 export class GurpsRoll extends Roll {
+  static dieOverride = false
+
+  constructor(formula, data = {}, options = {}) {
+    super(formula, data, options)
+
+    this.isLoaded = false
+  }
+
   _prepareData(data) {
     let d = super._prepareData(data)
     if (!d.hasOwnProperty('gmodc'))
@@ -25,7 +68,49 @@ export class GurpsRoll extends Roll {
     d.gmod = GURPS.ModifierBucket.currentSum()
     return d
   }
+
+  /**
+   * @inheritdoc
+   * @override
+   */
+  evaluate(options) {
+    if (CONFIG.debug.dice) console.log('override RollTerm.evaluate()!!')
+
+    let diceTerms = this.terms.filter(term => term instanceof Die)
+    let physicalDice = game.user.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
+
+    // We can only do this if called asynchronously
+    let noLoaded = this.options?.noLoaded
+    if (options?.async && physicalDice && diceTerms.length > 0 && !noLoaded) {
+      return this._promptForDiceResultsAndEvaluate(options, diceTerms)
+    } else {
+      return super.evaluate(options)
+    }
+  }
+
+  /**
+   * @param {*} options as for Roll#evaluate
+   * @param {[GurpsRoll]} diceTerms
+   */
+  async _promptForDiceResultsAndEvaluate(options, diceTerms) {
+    return new Promise(async (resolve, reject) => {
+      let dialog = new ResolveDiceRoll(diceTerms)
+
+      let callback = async isLoaded => {
+        this.isLoaded = isLoaded
+        let roll = super.evaluate(options)
+        await dialog.close()
+        resolve(roll)
+      }
+
+      dialog.applyCallback = callback
+      dialog.rollCallback = callback
+
+      dialog.render(true)
+    })
+  }
 }
+
 CONFIG.Dice.rolls[0] = GurpsRoll
 
 class ModifierStack {
@@ -268,19 +353,8 @@ export class ModifierBucket extends Application {
         let action = parselink(dragData.otf)
         action.action.blindroll = true
         if (action.action.type == 'modifier' || !!dragData.actor)
-          GURPS.performAction(action.action, game.actors.get(dragData.actor), {
-            shiftKey: game.user.isGM,
-            ctrlKey: false,
-            data: {},
-          })
+          GURPS.performAction(action.action, game.actors.get(dragData.actor))
       }
-    })
-
-    html.on('wheel', event => {
-      event.preventDefault()
-      if (!!event.originalEvent) event = event.originalEvent
-      let s = event.deltaY / -100
-      this.addModifier(s, '')
     })
   }
 

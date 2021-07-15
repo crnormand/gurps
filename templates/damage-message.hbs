@@ -19,7 +19,7 @@
         {{#each modifiers}}
           <li>{{this}}</li>
         {{/each}}
-      </ul>
+      </ul> 
     {{/if}}
   </div>
   <div class='damage-chat-message'>
@@ -30,8 +30,13 @@
           <div class='collapsible-wrapper'>
             <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox'>
             <label for='collapsible-{{id}}' class='roll-result {{#if hasExplanation}}label-toggle{{/if}}'>
-              <span>{{#if target}}&nbsp;{{target}}:{{/if}}
-                <i class='fa fa-dice'></i><i style='color: dimgrey;' class='fa fa-long-arrow-alt-right'></i>
+              <span>{{#if target}}&nbsp;{{target}}:{{/if}} 
+                {{#if ../loaded}}
+                  <i style='color:darkred' class='fas fa-user'></i>
+                {{else}}
+                  <i class='fas fa-dice'></i>
+                {{/if}}
+                <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
                 <span class='roll-detail'>
                   {{#if (eq damage 1)}}
                     {{{i18n_f "GURPS.pointDamage" this}}}

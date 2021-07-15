@@ -1204,26 +1204,21 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onNavigate(event) {
     let dataValue = $(event.currentTarget).attr('data-value')
-    // if (dataValue == 'CLOSE') {
-    //   game.settings.set(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION, false)
-    //   this.render()
-    // } else {
     let windowContent = event.currentTarget.closest('.window-content')
     let target = windowContent.querySelector(`#${dataValue}`)
+
+    // The '33' represents the height of the window title bar + a bit of margin
+    // TODO: we should really look this up and use the actual values as found in the DOM.
+    windowContent.scrollTop = target.offsetTop - 33
 
     // add the glowing class to target AND to event.currentTarget, then remove it
     $(target).addClass('glowing')
     $(event.currentTarget).addClass('glowing')
 
-    // The '33' represents the hieght of the window title bar + a bit of margin
-    // TODO: we should really look this up and use the actual values as found in the DOM.
-    windowContent.scrollTop = target.offsetTop - 33
-
     setTimeout(function () {
       $(target).removeClass('glowing')
       $(event.currentTarget).removeClass('glowing')
     }, 2000)
-    // }
   }
 
   async _onClickEnc(ev) {
@@ -1406,7 +1401,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     html.find('textarea').on('drop', this.dropFoundryLinks)
     html.find('input').on('drop', this.dropFoundryLinks)
 
-
     html.find('#ignoreinputbodyplan').click(this._onClickBodyPlan.bind(this))
 
     html.find('#showflightmove').click(ev => {
@@ -1576,16 +1570,16 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   }
 }
 export class GurpsActorNpcSheetCI extends GurpsActorNpcSheet {
-    /** @override */
-    static get defaultOptions() {
-      return mergeObject(super.defaultOptions, {
-        classes: ['npc-sheet', 'sheet', 'actor'],
-        template: 'systems/gurps/templates/npc-sheet-ci.html',
-        width: 650,
-        height: 450,
-        dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-      })
-    }
+  /** @override */
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ['npc-sheet', 'sheet', 'actor'],
+      template: 'systems/gurps/templates/npc-sheet-ci.html',
+      width: 650,
+      height: 450,
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
+    })
+  }
 }
 
 export class GurpsInventorySheet extends GurpsActorSheet {
