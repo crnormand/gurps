@@ -13,6 +13,8 @@ Release 0.11.5
 - Added system setting for UTF-8 import encoding
 - Mouse wheel over Modifier Bucket adds modifier
 - Added /sound chat command
+- Reskinned the Fright Check UI
+- Added the ability for Trusted players or GM to roll physical dice and enter the results into the game aid.
 
 Release 0.11.4 - 7/01/2021
 
