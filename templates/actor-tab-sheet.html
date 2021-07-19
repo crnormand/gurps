@@ -582,9 +582,9 @@
               &nbsp; {{this.count}} &nbsp;
               <button class="equipmentbutton" data-operation='equipment-inc'>+</button>
             </div>
-            <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried tooltip-manager"
+            <div class="desc indent{{@indent}} satisfiedY dblclkedit eqtdraggable equipmenucarried tooltip-manager"
               data-key="data.equipment.carried.{{@key}}">
-              <span>
+              <span class="eqtdragtarget" data-key="data.equipment.carried.{{@key}}">
                 {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
                 {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
                 {{{gurpslink this.name}}}
@@ -655,9 +655,9 @@
               &nbsp; {{this.count}} &nbsp;
               <button class="equipmentbutton" data-operation='equipment-inc'>+</i></button>
             </div>
-            <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenuother tooltip-manager "
+            <div class="desc indent{{@indent}} satisfiedY dblclkedit eqtdraggable equipmenuother tooltip-manager "
               data-key="data.equipment.other.{{@key}}">
-              <span>
+              <span class="eqtdragtarget" data-key="data.equipment.other.{{@key}}">
                 {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
                 {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
                 {{{gurpslink this.name}}}{{#if (isUserCreated this)}} &nbsp;<i class="far fa-bookmark"
