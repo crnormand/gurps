@@ -76,7 +76,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     ]
     let targetmods = []
     for (const id of selectIds) {
-      console.log(id)
+      //console.log(id)
       targetmods.push(this._getMod(html, id))
     }
     targetmods = targetmods.filter(it => it != null)
@@ -112,9 +112,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
 
     await ChatMessage.create({
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      speaker: {
-        alias: actor.name,
-      },
+      speaker: ChatMessage.getSpeaker(actor),
       content: content,
       roll: JSON.stringify(roll),
       rollMode: game.settings.get('core', 'rollMode'),

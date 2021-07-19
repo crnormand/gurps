@@ -330,7 +330,7 @@ export default class DamageChat {
       userTarget: userTarget,
     })
 
-    const speaker = { alias: actor.name, _id: actor.id, id: actor.id }
+    const speaker = ChatMessage.getSpeaker(actor)
     let messageData = {
       user: game.user.id,
       speaker: speaker,
