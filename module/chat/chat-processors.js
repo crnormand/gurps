@@ -722,7 +722,7 @@ class ShowChatProcessor extends ChatProcessor {
           action.action.calcOnly = true
           let ret = await GURPS.performAction(action.action, actor)
           if (!!ret.target) {
-            let lbl = `['${ret.thing} (${ret.target}) : ${actor.name}'/sel ${token.id}\\\\/r [${arg}]]`
+            let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"/sel ${token.id}\\\\/r [${arg}]]`
             this.priv(lbl)
           }
         }

@@ -19,6 +19,8 @@ Release 0.11.5
 - Support for JB2A "Scanlan" release
 - Don't display Item icon if it is the default "icons/svg/item-bag.svg"
 - Added Dodge and Move to Combat tab of tabbed sheet
+- Fixed /light command now accepts decimals /light 2.9 0.7
+- Fixed /show skill where skill name contains a single quote
 
 Release 0.11.4 - 7/01/2021
 
