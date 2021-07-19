@@ -1337,6 +1337,26 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
   }
 }
 
+Hooks.on('getGurpsActorEditorSheetHeaderButtons', (sheet) => {
+    if (sheet.actor.isEmptyActor()) {
+      ui.notifications.error('You are editing an EMPTY Actor!')
+      setTimeout(
+        () =>
+          Dialog.prompt({
+            title: 'Empty Actor',
+            content:
+              'You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.',
+            label: 'Ok',
+            callback: async () => {
+              sheet.actor.openSheet('gurps.GurpsActorSheet')
+            },
+            rejectClose: false
+          }),
+        500
+      )
+    }
+})
+
 export class GurpsActorEditorSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
@@ -1351,27 +1371,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
-  }
-
-  getData() {
-    let d = this.actor.data.data
-    if (d.HP.max == 0 && d.HP.value == 0 && (d.FP.max == 0) & (d.FP.value == 0)) {
-      ui.notifications.error('You are editing an EMPTY Actor!')
-      setTimeout(
-        () =>
-          Dialog.prompt({
-            title: 'Empty Actor',
-            content:
-              'You are editing an EMPTY Actor!<br><br>Either use the <b>Import</b> button to enter data, or delete this Actor and use the <b>/mook</b> chat command to create NPCs.<br><br>Press Ok to open the Full View.',
-            label: 'Ok',
-            callback: async () => {
-              this.actor.openSheet('gurps.GurpsActorSheet')
-            },
-          }),
-        500
-      )
-    }
-    return super.getData()
   }
 
   makeAddDeleteMenu(html, cssclass, obj) {

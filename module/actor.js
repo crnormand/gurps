@@ -2550,6 +2550,24 @@ export class GurpsActor extends Actor {
       }
     }
   }
+  
+  isEmptyActor() { 
+    let d = this.data.data
+    let chkAttr = (attr) => { return d.attributes[attr].import != 10 }
+    
+    if (d.HP.max != 0) return false
+    if (d.HP.value != 0) return false
+    if (d.FP.max != 0) return false
+    if (d.FP.value != 0) return false
+    if (chkAttr('ST')) return false
+    if (chkAttr('DX')) return false
+    if (chkAttr('IQ')) return false
+    if (chkAttr('HT')) return false
+    if (chkAttr('WILL')) return false
+    if (chkAttr('PER')) return false
+    
+    return true
+  }
 }
 
 export class Named {

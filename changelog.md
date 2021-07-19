@@ -13,8 +13,14 @@ Release 0.11.5
 - Added system setting for UTF-8 import encoding
 - Mouse wheel over Modifier Bucket adds modifier
 - Added /sound chat command
-- Reskinned the Fright Check UI
+- Reskinned the Fright Check UI, added clickable margins of success/failure
 - Added the ability for Trusted players or GM to roll physical dice and enter the results into the game aid.
+- Shorten Foundry name so that it doesn't wrap on Game Settings tab
+- Support for JB2A "Scanlan" release
+- Don't display Item icon if it is the default "icons/svg/item-bag.svg"
+- Added Dodge and Move to Combat tab of tabbed sheet
+- Fixed /light command now accepts decimals /light 2.9 0.7
+- Fixed /show skill where skill name contains a single quote
 
 Release 0.11.4 - 7/01/2021
 

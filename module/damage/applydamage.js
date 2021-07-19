@@ -621,16 +621,9 @@ export default class ApplyDamageDialog extends Application {
     await this.actor.update(update)
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
-      let speaker = {
-        alias: game.user.data.name,
-        _id: game.user.id,
-      }
+      let speaker = ChatMessage.getSpeaker(game.user)
       if (!!attackingActor)
-        speaker = {
-          alias: attackingActor.data.name,
-          _id: attackingActor.id,
-          actor: attackingActor,
-        }
+        speaker = ChatMessage.getSpeaker(attackingActor)
       let messageData = {
         user: game.user.id,
         speaker: speaker,
