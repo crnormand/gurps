@@ -85,7 +85,7 @@ class QuickDamageChatProcessor extends ChatProcessor {
     let m = line.match(/^[\.\/](.*)/)
     if (!!m) {
       this.match = parseForDamage(m[1])
-      return !!this.match
+      return !!this.match && this.match.action.type == 'damage'
     }
     return false
   }

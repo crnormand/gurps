@@ -4,7 +4,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.11.5
 
-- Fix mook parsing issue (for mooks with no Traits)
+- Fixed mook parsing issue (for mooks with no Traits)
 - Update tooltip mods to include "-1 due to deceptive attack"
 - Added 'Quick Sheet' system setting
 - Added quick roll for damage /dmg-formula or .dmg-formula
