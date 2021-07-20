@@ -1,6 +1,6 @@
 import { generateUniqueId, i18n } from '../../lib/utilities.js'
 
-export const commaSeparatedNumbers = /^\d*([ ,0-9])*$/
+export const commaSeparatedNumbers = /^\d*([ ,0-9\.\+-])*$/
 
 export default class ResolveDiceRoll extends Application {
   constructor(diceTerms, options = {}, id = generateUniqueId()) {
@@ -100,6 +100,8 @@ export default class ResolveDiceRoll extends Application {
 
     html.find('#apply').click(() => this._applyCallback())
     html.find('#roll').click(() => this._rollCallback())
+    
+    html.find('input').focus()
   }
 
   _applyCallback() {
@@ -147,11 +149,14 @@ export default class ResolveDiceRoll extends Application {
   }
 
   isIndividualDieResults(text) {
-    return text.includes(',') || text.includes(' ')
+    return text.includes(',') || text.includes(' ') || text.includes('.') || text.includes('+') || text.includes('-')
   }
 
   convertToArryOfInt(text) {
     return text
+      .replaceAll('-', ',') // replace minus with commas
+      .replaceAll('+', ',') // replace plus with commas
+      .replaceAll('.', ',') // replace periods with commas
       .replaceAll(' ', ',') // replace spaces with commas
       .replaceAll(',,', ',') // replace two consecutive commas with one
       .split(',') // split on comma to create array of String
