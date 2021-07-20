@@ -21,6 +21,7 @@ Release 0.11.5
 - Added Dodge and Move to Combat tab of tabbed sheet
 - Fixed /light command now accepts decimals /light 2.9 0.7
 - Fixed /show skill where skill name contains a single quote
+- Fixed drag and drop EQT in tabbed view
 
 Release 0.11.4 - 7/01/2021
 

@@ -348,7 +348,7 @@
         <div class="st header">{{localize "GURPS.attributesST"}}</div>
         <div></div>
 
-        {{#each data.melee as | this key |}}
+        {{#listeqt data.melee}}
           <div class="desc gcs-edit dblclkedit meleedraggable tooltip-manager" data-key="data.melee.{{@key}}"
             data-path="data.melee">
             {{{gurpslink this.name}}}
@@ -368,7 +368,7 @@
           <div class="reach">{{this.reach}}</div>
           <div class="st">{{this.st}}</div>
           <div></div>
-        {{/each}}
+        {{/listeqt}}
       </div>
     {{/if}}
 
@@ -386,7 +386,7 @@
         <div class="rcl header">{{localize "GURPS.rcl"}}</div>
         <div class="st header">{{localize "GURPS.attributesST"}}</div>
 
-        {{#each data.ranged as | this key |}}
+        {{#listeqt data.ranged}}
           <div class="desc dblclkedit rangeddraggable tooltip-manager" data-key="data.ranged.{{@key}}">
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
@@ -399,7 +399,7 @@
         </div> }}
           </div>
           <div class="usage">{{this.mode}}</div>
-          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
+          <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{@key}}"
             data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
           <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'
             data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
@@ -414,7 +414,7 @@
           </div>
           <div class="rcl">{{this.rcl}}</div>
           <div class="st">{{this.st}}</div>
-        {{/each}}
+        {{/listeqt}}
       </div>
     {{/if}}
 
