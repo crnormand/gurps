@@ -34,8 +34,8 @@ Hooks.once('init', async function () {
     }
   }
 
-  // CONFIG.Dice.terms['d'] = GurpsDie
   CONFIG.Dice.terms['6'] = GurpsDie
+  //[ 2, 3, 4, 5, 6, 8, 10, 12, 20].forEach(s => CONFIG.Dice.terms[s] = GurpsDie)
   CONFIG.Dice.types.push(GurpsDie)
 })
 

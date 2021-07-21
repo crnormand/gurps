@@ -149,7 +149,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   ChatMessage.create(messageData, {})
 
   if (isTargeted && !!optionalArgs.action) {
-    let users = actor?.getOwners() || []
+    let users = actor.isSelf ? [] : actor.getOwners()
     let ids = users.map(it => it.id)
     let messageData = {
       type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
