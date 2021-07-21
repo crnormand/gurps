@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.11.5
+Release 0.11.5 - 7/21/2021
 
 - Fixed mook parsing issue (for mooks with no Traits)
 - Update tooltip mods to include "-1 due to deceptive attack"
