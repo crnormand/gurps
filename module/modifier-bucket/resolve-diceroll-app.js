@@ -70,7 +70,7 @@ export default class ResolveDiceRoll extends Application {
       let target = ev.currentTarget
       let id = target.id
       let diceTerm = this.diceTerms.find(it => it.term.id === id)
-      let valid = this.isValid(diceTerm.term, target.value)
+      let valid = !!diceTerm && this.isValid(diceTerm.term, target.value)
       if (valid) {
         target.oldValue = target.value
         target.oldSelectionStart = target.oldSelectionStart
