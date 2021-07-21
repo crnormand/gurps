@@ -43,7 +43,10 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     // This is a roll "against a target number", e.g. roll vs skill/attack/attribute/etc.
     let finaltarget = parseInt(origtarget) + modifier
     if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
-    if (!!thing) formula = formula.replace(/^(\d+d6)/, `$1[${thing.trim()}]`)
+    if (!!thing) {
+      let flav = thing.replace(/\[.*\] */,'') // Flavor text cannot handle internal []
+      formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
+    }
     roll = Roll.create(formula) // The formula will always be "3d6" for a "targetted" roll
     await roll.evaluate({ async: true })
     let rtotal = roll.total
