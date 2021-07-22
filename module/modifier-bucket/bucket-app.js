@@ -3,41 +3,45 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+// import { ChatMessageData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs'
+
+/**
+ * Define some Typescript types.
+ * @typedef {{_loaded: Array<Number>, baseExpression: Function, id: String}} GurpsDie
+ * @typedef {{mod: String, modint: Number, desc: String, plus: Boolean}} Modifier
+ */
 
 Hooks.once('init', async function () {
-  Hooks.on('closeModifierBucketEditor', (editor, element) => {
+  Hooks.on('closeModifierBucketEditor', (/** @type {any} */ _, /** @type {JQuery} */ element) => {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
-
-  class GurpsDie extends Die {
-    constructor(termData = {}) {
-      super(termData)
-
-      this.id = generateUniqueId()
-      this.baseExpression = this.baseExpression.bind(this)
-      this.roll = this.roll.bind(this)
-    }
-
-    baseExpression() {
-      const x = this.constructor.DENOMINATION === 'd' ? this.faces : this.constructor.DENOMINATION
-      return `${this.number}d${x}`
-    }
-
-    roll({ minimize = false, maximize = false } = {}) {
-      if (!this._loaded || !this._loaded.length) return super.roll({ minimize, maximize })
-
-      if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
-
-      const roll = { result: undefined, active: true }
-      roll.result = this._loaded.pop()
-      this.results.push(roll)
-    }
-  }
-
-  CONFIG.Dice.terms['6'] = GurpsDie
-  //[ 2, 3, 4, 5, 6, 8, 10, 12, 20].forEach(s => CONFIG.Dice.terms[s] = GurpsDie)
-  CONFIG.Dice.types.push(GurpsDie)
 })
+
+/**
+ * @this {Die} - It's really a Die
+ */
+function _baseExpression() {
+  const x = Die.DENOMINATION === 'd' ? this.faces : Die.DENOMINATION
+  return `${this.number}d${x}`
+}
+
+/**
+ * @this {Die & GurpsDie}
+ * @param {Function} originalRoll
+ * @param {*} param1
+ */
+function _roll(originalRoll, { minimize = false, maximize = false } = {}) {
+  let loaded = this._loaded
+
+  if (!loaded || !loaded.length) return originalRoll({ minimize, maximize })
+
+  let baseExpression = this.baseExpression()
+  if (CONFIG.debug.dice) console.log(`Loaded Die [${baseExpression}] -- values: ${loaded}`)
+
+  /** @type {DiceTerm.Result} */
+  const roll = { active: true, result: loaded.pop() || 0 }
+  this.results.push(roll)
+}
 
 /**
  * Install Custom Roll to support global modifier access (@gmod & @gmodc) and
@@ -49,37 +53,68 @@ Hooks.once('init', async function () {
 export class GurpsRoll extends Roll {
   static dieOverride = false
 
+  /**
+   * @param {String} formula
+   * @param {*} data
+   * @param {*} options
+   */
   constructor(formula, data = {}, options = {}) {
     super(formula, data, options)
 
     this.isLoaded = false
   }
 
+  /**
+   * @param {string} term
+   * @param {*} param1
+   * @returns {RollTerm}
+   */
+  static _classifyStringTerm(term, { intermediate = true, prior, next } = {}) {
+    let result = Roll._classifyStringTerm(term, { intermediate: intermediate, prior: prior, next: next })
+    console.log(result)
+    if (result instanceof Die) {
+      // do the JSDoc gymnastics to allow casting
+      let gurpsDie = /** @type {Die & GurpsDie}  */ (/** @type {unknown}*/ (result))
+
+      gurpsDie.id = generateUniqueId()
+      gurpsDie.baseExpression = _baseExpression.bind(result)
+      gurpsDie.roll = _roll.bind(result, result.roll.bind(result))
+    }
+    return result
+  }
+
+  /**
+   * @inheritdoc
+   * @param {*} data
+   * @returns {*}
+   */
   _prepareData(data) {
     let d = super._prepareData(data)
     if (!d.hasOwnProperty('gmodc'))
       Object.defineProperty(d, 'gmodc', {
         get: () => {
-          let m = GURPS.ModifierBucket.currentSum()
-          GURPS.ModifierBucket.clear()
+          let m = _GURPS().ModifierBucket.currentSum()
+          _GURPS().ModifierBucket.clear()
           return parseInt(m)
         },
       })
-    d.gmod = GURPS.ModifierBucket.currentSum()
+    d.gmod = _GURPS().ModifierBucket.currentSum()
     return d
   }
 
   /**
-   * @inheritdoc
-   * @override
+   * @param {Partial<RollTerm.EvaluationOptions & { async: false; }> | undefined} options
    */
+  // @ts-ignore
   evaluate(options) {
     if (CONFIG.debug.dice) console.log('override RollTerm.evaluate()!!')
 
     let diceTerms = this.terms.filter(term => term instanceof Die)
-    let physicalDice = game.user.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
+    let physicalDice =
+      _game().user?.isTrusted && _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     // We can only do this if called asynchronously
+    // @ts-ignore
     let noLoaded = this.options?.noLoaded
     if (options?.async && physicalDice && diceTerms.length > 0 && !noLoaded) {
       return this._promptForDiceResultsAndEvaluate(options, diceTerms)
@@ -90,13 +125,13 @@ export class GurpsRoll extends Roll {
 
   /**
    * @param {*} options as for Roll#evaluate
-   * @param {[GurpsRoll]} diceTerms
+   * @param {RollTerm[]} diceTerms
    */
   async _promptForDiceResultsAndEvaluate(options, diceTerms) {
     return new Promise(async (resolve, reject) => {
       let dialog = new ResolveDiceRoll(diceTerms)
 
-      let callback = async isLoaded => {
+      let callback = async (/** @type {boolean} */ isLoaded) => {
         this.isLoaded = isLoaded
         let roll = super.evaluate(options)
         await dialog.close()
@@ -105,17 +140,19 @@ export class GurpsRoll extends Roll {
 
       dialog.applyCallback = callback
       dialog.rollCallback = callback
-
       dialog.render(true)
     })
   }
 }
 
+// @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
 CONFIG.Dice.rolls[0] = GurpsRoll
 
 class ModifierStack {
   constructor() {
+    /** @type {Array<Modifier>} */
     this.modifierList = []
+
     this.currentSum = 0
     this.displaySum = '+0'
     this.plus = false
@@ -130,9 +167,14 @@ class ModifierStack {
     this.displaySum = displayMod(this.currentSum)
     this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     this.minus = this.currentSum < 0
-    game.user.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later.   Not used in the local calculations
+    _game().user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
   }
 
+  /**
+   * @param {string} mod
+   * @param {any} reason
+   * @returns {Modifier}
+   */
   _makeModifier(mod, reason) {
     let n = displayMod(mod)
     return {
@@ -143,19 +185,29 @@ class ModifierStack {
     }
   }
 
+  /**
+   * @param {string} reason
+   * @param {string} mod
+   */
   add(mod, reason, replace = false) {
     this._add(this.modifierList, mod, reason, replace)
     this.sum()
   }
 
+  /**
+   * @param {Modifier[]} list
+   * @param {string} mod
+   * @param {string} reason
+   */
   _add(list, mod, reason, replace = false) {
+    /** @type {Modifier|undefined} */
     var oldmod
     let i = list.findIndex(e => e.desc == reason)
     if (i > -1) {
       if (replace) list.splice(i, 1)
-      // Must modify list (cannot use filter())
-      else oldmod = list[i]
+      else oldmod = list[i] // Must modify list (cannot use filter())
     }
+
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
       oldmod.mod = displayMod(m)
@@ -165,7 +217,11 @@ class ModifierStack {
     }
   }
 
-  // Called during the dice roll to return a list of modifiers and then clear
+  /**
+   * Called during the dice roll to return a list of modifiers and then clear
+   * @param {Modifier[]} targetmods
+   * @returns {Modifier[]}
+   */
   applyMods(targetmods = []) {
     let answer = !!targetmods ? targetmods : []
     answer = answer.concat(this.modifierList)
@@ -173,11 +229,17 @@ class ModifierStack {
     return answer
   }
 
+  /**
+   * @param {Modifier[]} otherstacklist
+   */
   reset(otherstacklist = []) {
     this.modifierList = otherstacklist
     this.sum()
   }
 
+  /**
+   * @param {number} index
+   */
   removeIndex(index) {
     this.modifierList.splice(index, 1)
     this.sum()
@@ -196,7 +258,7 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
-    this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
+    this.isTooltip = _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
 
     this.editor = new ModifierBucketEditor(this, {
       popOut: !this.isTooltip,
@@ -207,29 +269,39 @@ export class ModifierBucket extends Application {
     // whether the ModifierBucketEditor is visible
     this.SHOWING = false
 
+    /** @type {string|null} */
     this._tempRangeMod = null
 
     this.modifierStack = new ModifierStack()
   }
 
   // Start GLOBALLY ACCESSED METHODS (used to update the contents of the MB)
-  // Called from Range Ruler to hold the current range mod
+
+  /**
+   * Called from Range Ruler to hold the current range mod
+   * @param {string} mod
+   */
   setTempRangeMod(mod) {
     this._tempRangeMod = mod
   }
 
   // Called from Range Ruler after measurement ends, to possible add range to stack
   addTempRangeMod() {
-    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
-      this.modifierStack.add(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
+    if (_game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
+      if (!!this._tempRangeMod) this.modifierStack.add(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
       this.refresh()
     }
   }
 
   // Called by GURPS for various reasons.    This is the primary way to add new modifiers to the public bucket (or to a temporary list)
+  /**
+   * @param {string} reason
+   * @param {Modifier[] | undefined} [list]
+   * @param {string | number} mod
+   */
   addModifier(mod, reason, list) {
-    if (!!list) this.modifierStack._add(list, mod, reason)
-    else this.modifierStack.add(mod, reason)
+    if (!!list) this.modifierStack._add(list, mod.toString(), reason)
+    else this.modifierStack.add(mod.toString(), reason)
     this.refresh()
   }
 
@@ -237,14 +309,21 @@ export class ModifierBucket extends Application {
     return this.modifierStack.currentSum
   }
 
-  // Called during the dice roll to return a list of modifiers and then clear
+  /**
+   * Called during the dice roll to return a list of modifiers and then clear.
+   * @param {Modifier[]} targetmods
+   * @returns {Modifier[]}
+   */
   applyMods(targetmods = []) {
     let answer = this.modifierStack.applyMods(targetmods)
     this.refresh()
     return answer
   }
 
-  // A GM has set this player's modifier bucket.  Get the new data from the socket and refresh.
+  /**
+   * A GM has set this player's modifier bucket.  Get the new data from the socket and refresh.
+   * @param {{ modifierList: Modifier[] | undefined; }} changed
+   */
   updateModifierBucket(changed) {
     this.modifierStack.reset(changed.modifierList)
     this.refresh()
@@ -255,44 +334,62 @@ export class ModifierBucket extends Application {
     this.refresh()
   }
 
-  // Called by the chat command /sendmb
+  /**
+   *  Called by the chat command /sendmb
+   * @param {any} action
+   * @param {string[]} usernames
+   */
   sendToPlayers(action, usernames) {
     const saved = this.modifierStack.modifierList
     if (!!action) {
       this.modifierStack.modifierList = []
-      GURPS.performAction(action)
+      _GURPS().performAction(action)
     }
-    let users = game.users.players
-    if (usernames.length > 0) users = game.users.players.filter(u => usernames.includes(u.name))
-    this._sendBucket(users)
-    this.modifierStack.reset(saved)
+    let _users = _game().users
+    if (_users) {
+      let players = _users.players
+      if (usernames.length > 0) players = players.filter(u => u.name && usernames.includes(u.name))
+      if (!!players) this._sendBucket(players)
+      this.modifierStack.reset(saved)
+    }
   }
 
+  /**
+   * @param {string | null} id
+   */
   sendBucketToPlayer(id) {
     if (!id) {
       // Only occurs if the GM clicks on 'everyone'
-      this._sendBucket(game.users.filter(u => u.id != game.user.id))
+      let _users = _game().users
+      if (!!_users) {
+        let everyone = _users.filter(u => u.id != _game().user?.id)
+        if (!!everyone) this._sendBucket(everyone)
+      }
     } else {
-      let users = game.users.filter(u => u.id == id) || []
+      let users = _game().users?.filter(u => u.id == id) || []
       if (users.length > 0) this._sendBucket(users)
-      else ui.notifications.warn("No player with ID '" + id + "'")
+      else _ui().notifications?.warn("No player with ID '" + id + "'")
     }
   }
 
   // End GLOBALLY ACCESSED METHODS
+
+  /**
+   * @param {Array<User>} users
+   */
   _sendBucket(users) {
     if (users.length == 0) {
-      ui.notifications.warn('No users to send to.')
+      _ui().notifications?.warn('No users to send to.')
       return
     }
-    let mb = GURPS.ModifierBucket.modifierStack
-    if (game.user.hasRole('GAMEMASTER'))
+    let mb = _GURPS().ModifierBucket.modifierStack
+    if (_game().user?.hasRole('GAMEMASTER'))
       // Only actual GMs can update other user's flags
       users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
-    game.socket.emit('system.gurps', {
+    _game().socket?.emit('system.gurps', {
       type: 'updatebucket',
       users: users.map(u => u.id),
-      bucket: GURPS.ModifierBucket.modifierStack,
+      bucket: _GURPS().ModifierBucket.modifierStack,
     })
   }
 
@@ -307,31 +404,45 @@ export class ModifierBucket extends Application {
     })
   }
 
+  /**
+   * @typedef {Application.RenderOptions & {stack: ModifierStack, cssClass: string, currentActor: string}} ModifierBucket.Data
+   * @param {Application.RenderOptions | undefined} [options]
+   */
   getData(options) {
-    const data = super.getData(options)
+    const data = /** @type {ModifierBucket.Data} */ (/** @type {unknown} */ (super.getData(options)))
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
+
     let ca = ''
-    if (!!GURPS.LastActor) {
-      ca = GURPS.LastActor.displayname
-      if (ca.length > 25) ca = ca.substring(0, 22) + '...'
+    if (!!_GURPS().LastActor) {
+      ca = _GURPS().LastActor.displayname
+      if (ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
     data.currentActor = ca
     return data
   }
 
+  /**
+   * @param {JQuery<HTMLElement>} html
+   */
   activateListeners(html) {
     super.activateListeners(html)
 
-    html.find('#trash').click(this._onClickTrash.bind(this))
+    html.find('#trash').on('click', this._onClickTrash.bind(this))
 
     let e = html.find('#globalmodifier')
-    e.click(this._onClick.bind(this))
-    e.contextmenu(this.onRightClick.bind(this))
+
+    e.on('click', this._onClick.bind(this))
+
+    // @ts-ignore -- apparently 'contextmenu' isn't a thing
+    e.on('contextmenu', this.onRightClick.bind(this))
+
     e.each((_, li) => {
       li.addEventListener('dragstart', ev => {
-        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`).join(' & ')
-        return ev.dataTransfer.setData(
+        let bucket = _ModifierBucket()
+          .modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+          .join(' & ')
+        return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
             name: 'Modifier Bucket',
@@ -341,84 +452,100 @@ export class ModifierBucket extends Application {
       })
     })
 
-    if (this.isTooltip) {
-      e.mouseenter(ev => this._onenter(ev))
-    }
+    if (this.isTooltip) e.on('mouseenter', ev => this._onenter(ev))
 
-    html.on('drop', function (event) {
+    html.on('drop', function (/** @type {JQuery.DropEvent} */ event) {
       event.preventDefault()
       event.stopPropagation()
-      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain'))
+      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain') || '')
       if (!!dragData && !!dragData.otf) {
         let action = parselink(dragData.otf)
         action.action.blindroll = true
         if (action.action.type == 'modifier' || !!dragData.actor)
-          GURPS.performAction(action.action, game.actors.get(dragData.actor))
+          _GURPS().performAction(action.action, _game().actors?.get(dragData.actor))
       }
     })
-    
-    html.on('wheel', (event) => {
+
+    html.on('wheel', (/** @type {JQuery.TriggeredEvent} */ event) => {
       event.preventDefault()
-      if (!!event.originalEvent) event = event.originalEvent
-      let s = event.deltaY / -100
-      this.addModifier(s, "")
+      let originalEvent = event.originalEvent
+      if (originalEvent instanceof WheelEvent) {
+        let s = originalEvent.deltaY / -100
+        this.addModifier(s, '')
+      }
     })
   }
 
+  /**
+   * @param {JQuery.MouseEnterEvent} ev
+   */
   _onenter(ev) {
     this.SHOWING = true
     // The location of bucket is hardcoded in the css #modifierbucket, so I'm ok with hardcoding it here.
     let position = {
+      // @ts-ignore
       left: 805 + 70 / 2 - this.editor.position.width / 2,
+      // @ts-ignore
       top: window.innerHeight - this.editor.position.height - 4,
     }
+    // @ts-ignore
     this.editor._position = position
     this.editor.render(true)
   }
 
+  /**
+   * @param {JQuery.ClickEvent} event
+   */
   async _onClickTrash(event) {
     event.preventDefault()
     this.clear()
   }
 
+  /**
+   * @param {JQuery.ClickEvent} event
+   */
   async _onClick(event) {
     event.preventDefault()
     if (event.shiftKey) {
       // If not the GM, just broadcast our mods to the chat
-      if (!game.user.isGM) {
+      if (!_game().user?.isGM) {
         let messageData = {
           content: this.chatString(this.modifierStack),
           type: CONST.CHAT_MESSAGE_TYPES.OOC,
         }
         ChatMessage.create(messageData, {})
       } else this.showOthers()
-    } else this._onenter(event)
+    } // TODO else this._onenter(event) -- remove this if nothing breaks
   }
 
   async showOthers() {
-    let users = game.users.filter(u => u.id != game.user.id)
+    let users = _game().users?.filter(u => u.id != _game().user?.id)
     let content = ''
     let d = ''
-    for (let user of users) {
+    for (let user of users || []) {
       content += d
       d = '<hr>'
       let stack = await user.getFlag('gurps', 'modifierstack')
-      if (!!stack) content += this.chatString(stack, user.name + ', ')
+      if (!!stack && stack instanceof ModifierStack) content += this.chatString(stack, user.name + ', ')
       else content += user.name + ', No modifiers'
     }
-    let chatData = {
-      user: game.user.id,
-      type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-      content: content,
-      whisper: [game.user.id],
-    }
+
+    let chatData = {}
+    chatData.user = _game().user?.id || null
+    chatData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+    chatData.content = content
+    chatData.whisper = [_game().user?.id || '']
+
     ChatMessage.create(chatData)
   }
 
   // If the GM right clicks on the modifier bucket, it will print the raw text data driving the tooltip
+  /**
+   * @param {JQuery.ClickEvent} event
+   */
   async onRightClick(event) {
     event.preventDefault()
-    if (!game.user.isGM) return
+    if (!_game().user?.isGM) return
     this.showOthers()
   }
 
@@ -429,6 +556,9 @@ export class ModifierBucket extends Application {
     }
   }
 
+  /**
+   * @param {ModifierStack} modst
+   */
   chatString(modst, name = '') {
     let content = name + 'No modifiers'
     if (modst.modifierList.length > 0) {
@@ -439,4 +569,28 @@ export class ModifierBucket extends Application {
     }
     return content
   }
+}
+
+// -- Functions to get type-safe global references (for TS) --
+
+function _GURPS() {
+  // @ts-ignore
+  return GURPS
+}
+
+function _game() {
+  if (game instanceof Game) return game
+  throw new Error('game is not initialized yet!')
+}
+
+function _ui() {
+  if (!!ui) return ui
+  throw new Error('ui is not initialized yet!')
+}
+
+/**
+ * @returns {ModifierBucket}
+ */
+function _ModifierBucket() {
+  return /** type {ModifierBucket} */ _GURPS().ModifierBucket
 }
