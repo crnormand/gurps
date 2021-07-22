@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.11.7 - 7/22/2021
+
+- Added GURPS.recurselist()
+
 Release 0.11.6 - 7/22/2021
 
 - Fixed bug when trying to roll skill that contained [ ] in the name

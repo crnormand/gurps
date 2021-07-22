@@ -1496,6 +1496,8 @@ GURPS.setInitiativeFormula = function (broadcast) {
     })
 }
 
+GURPS.recurselist=recurselist
+
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
    make it work like an Array. 
