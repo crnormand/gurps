@@ -2160,7 +2160,7 @@ export class GurpsActor extends Actor {
     this.toggleExpand(targetkey, true)
     let d = new Dialog({
       title: object.name,
-      content: '<p>Where do you want to drop this?</p>',
+      content: '<p>Where do you want to place this?</p>',
       buttons: {
         one: {
           icon: '<i class="fas fa-level-up-alt"></i>',

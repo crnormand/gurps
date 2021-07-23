@@ -1285,7 +1285,7 @@ GURPS.decode = decode
 
 /*  Funky helper function to be able to list hierarchical equipment in a linear list (with appropriate keys for editing)
  */
-function listeqtrecurse(eqts, options, level, data, parentkey = '') {
+function listeqtrecurse(eqts, options, level, data, parentkey = '', src) {
   if (!eqts) return ''
   let ret = ''
   let i = 0
@@ -1296,7 +1296,13 @@ function listeqtrecurse(eqts, options, level, data, parentkey = '') {
       data.key = parentkey + key
       data.count = eqt.count
     }
-    ret = ret + options.fn(eqt, { data: data })
+    let display = true
+    if (!!src && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_REMOVE_UNEQUIPPED)) {  // if an optional src is provided (which == actor.data.data) assume we are checking attacks to see if they are equipped
+      recurselist(src.equipment.carried, e => {
+        if (eqt.name.startsWith(e.name) && !e.equipped) display = false
+      })
+    }
+    if (display) ret = ret + options.fn(eqt, { data: data })
     ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
   }
   return ret

@@ -258,7 +258,7 @@
             <div class="st header">ST</div>
             <div></div>
 
-            {{#each data.melee}}
+            {{#listattack data "melee"}}
               <div class="desc">{{{gurpslink this.name}}}
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
               </div>
@@ -271,7 +271,7 @@
               <div class="reach">{{this.reach}}</div>
               <div class="st">{{this.st}}</div>
               <div></div>
-            {{/each}}
+            {{/listattack}}
 
           </div>
         {{/if}}
@@ -290,12 +290,12 @@
             <div class="st header">ST</div>
 
 
-            {{#each data.ranged as | this key |}}
+            {{#listattack data "ranged"}}
               <div class="desc">{{{gurpslink this.name}}}
                 <div class="list_note">{{{gurpslink this.notes}}}</div>
               </div>
               <div class="usage">{{this.mode}}</div>
-              <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{key}}"
+              <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{@key}}"
                 data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
               <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'
                 data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
@@ -309,7 +309,7 @@
                 data-otf='{{this.bulk}} Bulk'>{{this.bulk}}</div>
               <div class="rcl">{{this.rcl}}</div>
               <div class="st">{{this.st}}</div>
-            {{/each}}
+            {{/listattack}}
           </div>
         {{/if}}
         <div id='speed-range-table'>
