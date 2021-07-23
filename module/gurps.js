@@ -1695,7 +1695,7 @@ Hooks.once('ready', async function () {
   const v = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHANGELOG_VERSION) || '0.0.1'
   const changelogVersion = SemanticVersion.fromString(v)
 
-  if (GURPS.currentVersion.isHigherThan(changelogVersion) || true) {
+  if (GURPS.currentVersion.isHigherThan(changelogVersion)) {
     if ($(ui.chat.element).find('#GURPS-LEGAL').length == 0)
       // If it isn't already in the chat log somewhere
       ChatMessage.create({
