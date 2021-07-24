@@ -348,7 +348,7 @@
         <div class="st header">{{localize "GURPS.attributesST"}}</div>
         <div></div>
 
-        {{#listeqt data.melee}}
+        {{#listattack data "melee"}}
           <div class="desc gcs-edit dblclkedit meleedraggable tooltip-manager" data-key="data.melee.{{@key}}"
             data-path="data.melee">
             {{{gurpslink this.name}}}
@@ -368,7 +368,7 @@
           <div class="reach">{{this.reach}}</div>
           <div class="st">{{this.st}}</div>
           <div></div>
-        {{/listeqt}}
+        {{/listattack}}
       </div>
     {{/if}}
 
@@ -386,7 +386,7 @@
         <div class="rcl header">{{localize "GURPS.rcl"}}</div>
         <div class="st header">{{localize "GURPS.attributesST"}}</div>
 
-        {{#listeqt data.ranged}}
+        {{#listattack data "ranged"}}
           <div class="desc dblclkedit rangeddraggable tooltip-manager" data-key="data.ranged.{{@key}}">
             {{{gurpslink this.name}}}
             {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
@@ -414,7 +414,7 @@
           </div>
           <div class="rcl">{{this.rcl}}</div>
           <div class="st">{{this.st}}</div>
-        {{/listeqt}}
+        {{/listattack}}
       </div>
     {{/if}}
 

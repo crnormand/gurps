@@ -789,6 +789,8 @@
   "GURPS.settingImportHintEncoding": "If you are importing a character and the unicode characters are not displaying correctly, change this setting to UTF-8 encoding.",
   "GURPS.settingImportEncodingISO8859": "ISO-8859-1 (default)",
   "GURPS.settingImportEncodingUTF8": "UTF-8",
+  "GURPS.settingRemoveUnequipped": "Actor: Remove Unequipped weapons from Melee and Ranged lists",
+  "GURPS.settingHintRemoveUnequipped": "If checked, the names of the Melee and Ranged attacks will be compared to the carried equipment list, and if a name match is found, the attack will only be listed if the equipment is Equipped",
 
   "GURPS.actions": "Actions",
   "GURPS.addAdvantage": "Add an Advantage",

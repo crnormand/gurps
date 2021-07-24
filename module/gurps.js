@@ -1285,7 +1285,7 @@ GURPS.decode = decode
 
 /*  Funky helper function to be able to list hierarchical equipment in a linear list (with appropriate keys for editing)
  */
-function listeqtrecurse(eqts, options, level, data, parentkey = '') {
+function listeqtrecurse(eqts, options, level, data, parentkey = '', src) {
   if (!eqts) return ''
   let ret = ''
   let i = 0
@@ -1296,7 +1296,13 @@ function listeqtrecurse(eqts, options, level, data, parentkey = '') {
       data.key = parentkey + key
       data.count = eqt.count
     }
-    ret = ret + options.fn(eqt, { data: data })
+    let display = true
+    if (!!src && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_REMOVE_UNEQUIPPED)) {  // if an optional src is provided (which == actor.data.data) assume we are checking attacks to see if they are equipped
+      recurselist(src.equipment.carried, e => {
+        if (eqt.name.startsWith(e.name) && !e.equipped) display = false
+      })
+    }
+    if (display) ret = ret + options.fn(eqt, { data: data })
     ret = ret + GURPS.listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
   }
   return ret
@@ -1707,6 +1713,7 @@ Hooks.once('ready', async function () {
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
+    <iframe src="https://github.com/sponsors/crnormand/button" title="Sponsor crnormand" height="35" width="116" style="border: 0;"></iframe>
     <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
   </div>
 </div>`,
