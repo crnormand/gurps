@@ -3,11 +3,9 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
-// import { ChatMessageData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs'
 
 /**
  * Define some Typescript types.
- * @typedef {{_loaded: Array<Number>, baseExpression: Function, id: String}} GurpsDie
  * @typedef {{mod: String, modint: Number, desc: String, plus: Boolean}} Modifier
  */
 
@@ -19,20 +17,13 @@ Hooks.once('init', async function () {
   // @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
   CONFIG.Dice.rolls[0] = GurpsRoll
 
-  // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch thme to
+  // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch them to
   // include the properties we need to support Physical Dice
   if (!!DiceTerm.fromMatch) {
     let _fromMatch = DiceTerm.fromMatch
-    let newFromMatch = function (match) {
+    let newFromMatch = function (/** @type {RegExpMatchArray} */ match) {
       let result = _fromMatch(match)
-      if (result instanceof Die) {
-        // do the JSDoc gymnastics to allow casting
-        let gurpsDie = /** @type {Die & GurpsDie}  */ (/** @type {unknown}*/ (result))
-
-        gurpsDie.id = generateUniqueId()
-        gurpsDie.baseExpression = _baseExpression.bind(result)
-        gurpsDie.roll = _roll.bind(result, result.roll.bind(result))
-      }
+      if (result instanceof Die) result = new GurpsDie(result).asDiceTerm()
       return result
     }
 
@@ -40,32 +31,108 @@ Hooks.once('init', async function () {
   }
 })
 
-class GurpsDie extends Die {}
+export class GurpsDie extends Die {
+  /**
+   * @param {Die} die
+   */
+  constructor(die) {
+    super({
+      number: die.number,
+      faces: die.faces,
+      // @ts-ignore
+      modifiers: die.modifiers,
+      results: die.results,
+      options: die.options,
+    })
 
-/**
- * @this {Die} - It's really a Die
- */
-function _baseExpression() {
-  const x = Die.DENOMINATION === 'd' ? this.faces : Die.DENOMINATION
-  return `${this.number}d${x}`
-}
+    this.id = generateUniqueId()
+    /**
+     * @type {number[]|null}
+     */
+    this._loaded = null
 
-/**
- * @this {Die & GurpsDie}
- * @param {Function} originalRoll
- * @param {*} param1
- */
-function _roll(originalRoll, { minimize = false, maximize = false } = {}) {
-  let loaded = this._loaded
+    // baseExpression is called from a closure elsewhere so need to bind it
+    this.baseExpression = this.baseExpression.bind(this)
+    this.evaluate = this.evaluate.bind(this)
+  }
 
-  if (!loaded || !loaded.length) return originalRoll({ minimize, maximize })
+  /**
+   *
+   * @returns {DiceTerm}
+   */
+  asDiceTerm() {
+    if (this instanceof DiceTerm) return this
+    throw new Error('Unexpected: GurpsDie is not a DiceTerm')
+  }
 
-  let baseExpression = this.baseExpression()
-  if (CONFIG.debug.dice) console.log(`Loaded Die [${baseExpression}] -- values: ${loaded}`)
+  baseExpression() {
+    const x = Die.DENOMINATION === 'd' ? this.faces : Die.DENOMINATION
+    return `${this.number}d${x}`
+  }
 
-  /** @type {DiceTerm.Result} */
-  const roll = { active: true, result: loaded.pop() || 0 }
-  this.results.push(roll)
+  /**
+   * @inheritdoc
+   */
+  roll({ minimize = false, maximize = false } = {}) {
+    if (!this._loaded || !this._loaded.length) return super.roll({ minimize, maximize })
+
+    if (CONFIG.debug.dice) console.log(`Loaded Die [${this.baseExpression()}] -- values: ${this._loaded}`)
+
+    // Preserve the order: set value to the first element in _loaded, and update
+    // _loaded to contain the remaining elements.
+    let [value, ...remainder] = this._loaded
+    this._loaded = remainder
+
+    /** @type {DiceTerm.Result} */
+    const roll = { active: true, result: value }
+    this.results.push(roll)
+    return roll
+  }
+
+  /**
+   * @inheritdoc
+   */
+  // @ts-ignore
+  evaluate({ minimize = false, maximize = false, async = false } = {}) {
+    if (this._evaluated) {
+      throw new Error(`The ${this.constructor.name} has already been evaluated and is now immutable`)
+    }
+    this._evaluated = true
+
+    return async ? this._evaluate({ minimize, maximize }) : this._evaluateSync({ minimize, maximize })
+  }
+
+  /**
+   * Evaluate the term.
+   * @param {object} [options={}]           Options which modify how the RollTerm is evaluated, see RollTerm#evaluate
+   * @param {boolean} [options.minimize=false]    Minimize the result, obtaining the smallest possible value.
+   * @param {boolean} [options.maximize=false]    Maximize the result, obtaining the largest possible value.
+   * @returns {Promise<RollTerm>}
+   */
+  // @ts-ignore
+  async _evaluate({ minimize = false, maximize = false } = {}) {
+    let physicalDice =
+      _game().user?.isTrusted && _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
+
+    if (physicalDice) {
+      return new Promise(async resolve => {
+        let dialog = new ResolveDiceRoll(this)
+
+        let callback = async () => {
+          let die = this._evaluateSync({ minimize, maximize }).asDiceTerm()
+          await dialog.close()
+          resolve(die)
+        }
+
+        dialog.applyCallback = callback
+        dialog.rollCallback = callback
+        dialog.render(true)
+      })
+    } else {
+      // @ts-ignore
+      return await super._evaluate({ minimize, maximize })
+    }
+  }
 }
 
 /**
@@ -85,8 +152,13 @@ export class GurpsRoll extends Roll {
    */
   constructor(formula, data = {}, options = {}) {
     super(formula, data, options)
+  }
 
-    this.isLoaded = false
+  /**
+   * The Roll is "loaded" if any term has the _loaded property.
+   */
+  get isLoaded() {
+    return this.terms.find(term => term instanceof GurpsDie && !!term._loaded)
   }
 
   /**
@@ -106,48 +178,6 @@ export class GurpsRoll extends Roll {
       })
     d.gmod = _GURPS().ModifierBucket.currentSum()
     return d
-  }
-
-  /**
-   * @param {Partial<RollTerm.EvaluationOptions & { async: false; }> | undefined} options
-   */
-  // @ts-ignore
-  evaluate(options) {
-    if (CONFIG.debug.dice) console.log('override RollTerm.evaluate()!!')
-
-    let diceTerms = this.terms.filter(term => term instanceof Die)
-    let physicalDice =
-      _game().user?.isTrusted && _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
-
-    // We can only do this if called asynchronously
-    // @ts-ignore
-    let noLoaded = this.options?.noLoaded
-    if (options?.async && physicalDice && diceTerms.length > 0 && !noLoaded) {
-      return this._promptForDiceResultsAndEvaluate(options, diceTerms)
-    } else {
-      return super.evaluate(options)
-    }
-  }
-
-  /**
-   * @param {*} options as for Roll#evaluate
-   * @param {RollTerm[]} diceTerms
-   */
-  async _promptForDiceResultsAndEvaluate(options, diceTerms) {
-    return new Promise(async (resolve, reject) => {
-      let dialog = new ResolveDiceRoll(diceTerms)
-
-      let callback = async (/** @type {boolean} */ isLoaded) => {
-        this.isLoaded = isLoaded
-        let roll = super.evaluate(options)
-        await dialog.close()
-        resolve(roll)
-      }
-
-      dialog.applyCallback = callback
-      dialog.rollCallback = callback
-      dialog.render(true)
-    })
   }
 }
 
@@ -522,7 +552,7 @@ export class ModifierBucket extends Application {
         }
         ChatMessage.create(messageData, {})
       } else this.showOthers()
-    } // TODO else this._onenter(event) -- remove this if nothing breaks
+    }
   }
 
   async showOthers() {

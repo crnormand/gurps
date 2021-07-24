@@ -1,16 +1,16 @@
 import { generateUniqueId, i18n } from '../../lib/utilities.js'
 import { GurpsDie } from './bucket-app.js'
 
-export const commaSeparatedNumbers = /^\d*([ ,0-9])*$/
+export const commaSeparatedNumbers = /^\d*([ ,0-9\.\+-])*$/
 
 /**
- * @typedef {{term: GurpsDie & Die, text: string}} RollResult
+ * @typedef {{term: GurpsDie, text: string}} RollResult
  * @typedef {{oldValue?: string, oldSelectionStart?: number|null, oldSelectionEnd?: number|null}} SelectionHistory
  */
 
 export default class ResolveDiceRoll extends Application {
   /**
-   * @param {GurpsDie & Die} diceTerm
+   * @param {GurpsDie} diceTerm
    */
   constructor(diceTerm, options = {}, id = generateUniqueId()) {
     super(options)
@@ -113,6 +113,7 @@ export default class ResolveDiceRoll extends Application {
 
     html.find('#apply').on('click', () => this._applyCallback())
     html.find('#roll').on('click', () => this._rollCallback())
+    html.find('input').focus()
   }
 
   _applyCallback() {
@@ -130,7 +131,7 @@ export default class ResolveDiceRoll extends Application {
   }
 
   /**
-   * @param {GurpsDie & Die} term
+   * @param {GurpsDie} term
    * @param {string} text
    */
   isValid(term, text) {
@@ -172,7 +173,7 @@ export default class ResolveDiceRoll extends Application {
    * @param {string} text
    */
   isIndividualDieResults(text) {
-    return text.includes(',') || text.includes(' ')
+    return text.includes(',') || text.includes(' ') || text.includes('.') || text.includes('+') || text.includes('-')
   }
 
   /**
@@ -180,22 +181,25 @@ export default class ResolveDiceRoll extends Application {
    */
   convertToArryOfInt(text) {
     return text
-      .replace(/' '/g, ',') // replace spaces with commas
-      .replace(/',,'/g, ',') // replace two consecutive commas with one
+      .replace(/-/g, ',') // replace minus with commas
+      .replace(/\+/g, ',') // replace plus with commas
+      .replace(/\./g, ',') // replace periods with commas
+      .replace(/ /g, ',') // replace spaces with commas
+      .replace(/,,/g, ',') // replace two consecutive commas with one
       .split(',') // split on comma to create array of String
       .map(it => parseInt(it)) // convert to array of int
   }
 
   /**
-   * Given a dice expression like 5d10, randomly select values for each die so
-   * that the total is equal to the target value.
+   * Given a dice expression like 5d10 and a target value, randomly select
+   * values for each die so that the total is equal to the target value.
    *
-   * @param {{number: number, faces: number}} dice - an object literal that describes a dice roll;
-   *    Example: 3d6 = {number: 3, faces: 6}
-   * @param {number} target - what the sum of the dice in the roll should equal
+   * @param {{number: number, faces: number}} dice - an object literal that
+   *    describes a dice roll; Example: 3d6 = {number: 3, faces: 6}
+   * @param {number} target - what the sum of dice in the roll should equal
    * @param {number[]} results - intermediate results (see return value)
-   * @returns {number[]} - an array of values, one per dice#number,
-   *    representing what was rolled to add up to the target.
+   * @returns {number[]} - the array of values, one per dice.number, that
+   *    add up to the target value.
    */
   generate(dice, target, results = []) {
     if (dice.number === 1) results.push(target)
@@ -208,7 +212,7 @@ export default class ResolveDiceRoll extends Application {
 
       results.push(value)
 
-      this.generate(dice, target - value, results)
+      this.generate(dice, target - value, results) // recurse!
     }
     return results
   }
