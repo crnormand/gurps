@@ -1,22 +1,29 @@
 import { generateUniqueId, i18n } from '../../lib/utilities.js'
+import { GurpsDie } from './bucket-app.js'
 
-export const commaSeparatedNumbers = /^\d*([ ,0-9\.\+-])*$/
+export const commaSeparatedNumbers = /^\d*([ ,0-9])*$/
+
+/**
+ * @typedef {{term: GurpsDie & Die, text: string}} RollResult
+ * @typedef {{oldValue?: string, oldSelectionStart?: number|null, oldSelectionEnd?: number|null}} SelectionHistory
+ */
 
 export default class ResolveDiceRoll extends Application {
-  constructor(diceTerms, options = {}, id = generateUniqueId()) {
+  /**
+   * @param {GurpsDie & Die} diceTerm
+   */
+  constructor(diceTerm, options = {}, id = generateUniqueId()) {
     super(options)
 
-    this.diceTerms = diceTerms.map(it => {
-      return { term: it, text: '' }
-    })
+    this.diceTerms = []
+    this.diceTerms.push({ term: diceTerm, text: '' })
 
     this.applyEnabled = false
     this.fakeId = id
-  }
 
-  // async _updateObject(event, formData) {
-  //   //throw new Error("A subclass of the FormApplication must implement the _updateObject method.");
-  // }
+    this.applyCallback = () => {}
+    this.rollCallback = () => {}
+  }
 
   /**
    * @inheritdoc
@@ -30,57 +37,63 @@ export default class ResolveDiceRoll extends Application {
       width: 350,
       height: 'auto',
       title: i18n('GURPS.resolveDiceRoll', 'What Did You Roll?'),
-      //      closeOnSubmit: true,
     })
   }
 
   /**
-   * @override
    * @inheritdoc
+   * @typedef {{diceTerm: RollResult[]}} ResolveDiceRollData
+   * @param {Application.RenderOptions | undefined} [options]
+   * @returns {ResolveDiceRollData}
    */
   getData(options) {
-    const data = super.getData(options)
+    const data = /** @type {ResolveDiceRollData}*/ (/** type {undefined} */ super.getData(options))
     data.diceTerm = this.diceTerms
     return data
   }
 
   /**
-   * @override
    * @inheritdoc
+   * @param {JQuery<HTMLElement>} html
    */
   activateListeners(html) {
     super.activateListeners(html)
 
     // accept only digits and commas
+    // @ts-ignore
     html.find('input').inputFilter(value => commaSeparatedNumbers.test(value))
 
-    html.find('input').change(ev => {
+    html.find('input').on('change', ev => {
       let inputs = html.find('input.invalid')
       this.applyEnabled = !inputs.length
     })
 
     // update the diceTerm text
-    html.find('input').change(ev => {
+    html.find('input').on('change', ev => {
       let diceTerm = this.diceTerms.find(it => it.term.id === ev.currentTarget.id)
-      diceTerm.text = ev.currentTarget.value
+      if (!!diceTerm) diceTerm.text = ev.currentTarget.value
     })
 
     // set/remove invalid from an input
     html.find('input').on('input keydown keyup mousedown mouseup select contextmenu drop', ev => {
+      /** @type {HTMLInputElement & SelectionHistory} */
       let target = ev.currentTarget
       let id = target.id
       let diceTerm = this.diceTerms.find(it => it.term.id === id)
-      let valid = !!diceTerm && this.isValid(diceTerm.term, target.value)
-      if (valid) {
-        target.oldValue = target.value
-        target.oldSelectionStart = target.oldSelectionStart
-        target.oldSelectionEnd = target.selectionEnd
-        diceTerm.text = target.value
-      } else if (target.hasOwnProperty('oldValue')) {
-        target.value = target.oldValue
-        target.setSelectionRange(target.oldSelectionStart, target.oldSelectionEnd)
-      } else {
-        target.value = ''
+      let valid = !!diceTerm ? this.isValid(diceTerm.term, target.value) : false
+
+      if (!!diceTerm) {
+        if (valid) {
+          target.oldValue = target.value
+          target.oldSelectionStart = target.selectionStart
+          target.oldSelectionEnd = target.selectionEnd
+          diceTerm.text = target.value
+        } else if (target.hasOwnProperty('oldValue')) {
+          target.value = target.oldValue || target.value
+          target.setSelectionRange(target.oldSelectionStart || null, target.oldSelectionEnd || null)
+        } else {
+          target.value = ''
+        }
       }
 
       valid ? $(target).removeClass('gurps-invalid') : $(target).addClass('gurps-invalid')
@@ -94,14 +107,12 @@ export default class ResolveDiceRoll extends Application {
       if (ev.keyCode == 13) {
         let apply = $(html.find('#apply'))
         if (apply.is(':disabled')) return
-        apply.click()
+        apply.trigger('click')
       }
     })
 
-    html.find('#apply').click(() => this._applyCallback())
-    html.find('#roll').click(() => this._rollCallback())
-    
-    html.find('input').focus()
+    html.find('#apply').on('click', () => this._applyCallback())
+    html.find('#roll').on('click', () => this._rollCallback())
   }
 
   _applyCallback() {
@@ -109,13 +120,19 @@ export default class ResolveDiceRoll extends Application {
       let result = this.getValues(diceTerm)
       diceTerm.term._loaded = result
     }
+    // @ts-ignore
     this.applyCallback(true)
   }
 
   _rollCallback() {
+    // @ts-ignore
     this.rollCallback(false)
   }
 
+  /**
+   * @param {GurpsDie & Die} term
+   * @param {string} text
+   */
   isValid(term, text) {
     let minPerDie = Math.min(1, term.faces)
     let maxPerDie = term.faces
@@ -138,6 +155,9 @@ export default class ResolveDiceRoll extends Application {
     return false
   }
 
+  /**
+   * @param {RollResult} diceTerm
+   */
   getValues(diceTerm) {
     let text = diceTerm.text
 
@@ -148,17 +168,20 @@ export default class ResolveDiceRoll extends Application {
     return this.generate({ number: diceTerm.term.number, faces: diceTerm.term.faces }, target)
   }
 
+  /**
+   * @param {string} text
+   */
   isIndividualDieResults(text) {
-    return text.includes(',') || text.includes(' ') || text.includes('.') || text.includes('+') || text.includes('-')
+    return text.includes(',') || text.includes(' ')
   }
 
+  /**
+   * @param {string} text
+   */
   convertToArryOfInt(text) {
     return text
-      .replaceAll('-', ',') // replace minus with commas
-      .replaceAll('+', ',') // replace plus with commas
-      .replaceAll('.', ',') // replace periods with commas
-      .replaceAll(' ', ',') // replace spaces with commas
-      .replaceAll(',,', ',') // replace two consecutive commas with one
+      .replace(/' '/g, ',') // replace spaces with commas
+      .replace(/',,'/g, ',') // replace two consecutive commas with one
       .split(',') // split on comma to create array of String
       .map(it => parseInt(it)) // convert to array of int
   }
@@ -167,11 +190,11 @@ export default class ResolveDiceRoll extends Application {
    * Given a dice expression like 5d10, randomly select values for each die so
    * that the total is equal to the target value.
    *
-   * @param {*} dice - an object literal that describes a dice roll;
+   * @param {{number: number, faces: number}} dice - an object literal that describes a dice roll;
    *    Example: 3d6 = {number: 3, faces: 6}
-   * @param {int} target - what the sum of the dice in the roll should equal
-   * @param {*} results - intermediate results (see return value)
-   * @returns Array<int> - an array of values, one per dice#number,
+   * @param {number} target - what the sum of the dice in the roll should equal
+   * @param {number[]} results - intermediate results (see return value)
+   * @returns {number[]} - an array of values, one per dice#number,
    *    representing what was rolled to add up to the target.
    */
   generate(dice, target, results = []) {

@@ -15,7 +15,32 @@ Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (/** @type {any} */ _, /** @type {JQuery} */ element) => {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
+
+  // @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
+  CONFIG.Dice.rolls[0] = GurpsRoll
+
+  // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch thme to
+  // include the properties we need to support Physical Dice
+  if (!!DiceTerm.fromMatch) {
+    let _fromMatch = DiceTerm.fromMatch
+    let newFromMatch = function (match) {
+      let result = _fromMatch(match)
+      if (result instanceof Die) {
+        // do the JSDoc gymnastics to allow casting
+        let gurpsDie = /** @type {Die & GurpsDie}  */ (/** @type {unknown}*/ (result))
+
+        gurpsDie.id = generateUniqueId()
+        gurpsDie.baseExpression = _baseExpression.bind(result)
+        gurpsDie.roll = _roll.bind(result, result.roll.bind(result))
+      }
+      return result
+    }
+
+    DiceTerm.fromMatch = newFromMatch
+  }
 })
+
+class GurpsDie extends Die {}
 
 /**
  * @this {Die} - It's really a Die
@@ -62,25 +87,6 @@ export class GurpsRoll extends Roll {
     super(formula, data, options)
 
     this.isLoaded = false
-  }
-
-  /**
-   * @param {string} term
-   * @param {*} param1
-   * @returns {RollTerm}
-   */
-  static _classifyStringTerm(term, { intermediate = true, prior, next } = {}) {
-    let result = Roll._classifyStringTerm(term, { intermediate: intermediate, prior: prior, next: next })
-    console.log(result)
-    if (result instanceof Die) {
-      // do the JSDoc gymnastics to allow casting
-      let gurpsDie = /** @type {Die & GurpsDie}  */ (/** @type {unknown}*/ (result))
-
-      gurpsDie.id = generateUniqueId()
-      gurpsDie.baseExpression = _baseExpression.bind(result)
-      gurpsDie.roll = _roll.bind(result, result.roll.bind(result))
-    }
-    return result
   }
 
   /**
@@ -145,8 +151,9 @@ export class GurpsRoll extends Roll {
   }
 }
 
-// @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
-CONFIG.Dice.rolls[0] = GurpsRoll
+// Maybe a final, complete fix for Physical Dice?
+// CONFIG.Dice.termTypes.DiceTerm = GurpsDiceTerm
+// GurpsDiceTerm.fromMatch() -- add needed Die enhancements
 
 class ModifierStack {
   constructor() {
