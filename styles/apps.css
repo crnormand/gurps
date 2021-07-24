@@ -563,6 +563,15 @@ ul#result-effects li {
   background: rgba(255, 255, 240, 0.8);
 }
 
+.gurps-app button.default {
+  border: 2px solid #6b6857;
+}
+
+.gurps-app button:disabled {
+  color: lightslategray;
+  background: rgba(255, 255, 240, 0.3);
+}
+
 .gurps-app button.with-icon > i > span {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   font-weight: 400;
