@@ -1,4 +1,5 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
+import { GURPS } from '../gurps.js'
 /*
   This is the BIG method that does the roll and prepares the chat message.
   unfortunately, it has a lot fo hard coded junk in it.
@@ -44,7 +45,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     let finaltarget = parseInt(origtarget) + modifier
     if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
     if (!!thing) {
-      let flav = thing.replace(/\[.*\] */,'') // Flavor text cannot handle internal []
+      let flav = thing.replace(/\[.*\] */, '') // Flavor text cannot handle internal []
       formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
     }
     roll = Roll.create(formula) // The formula will always be "3d6" for a "targetted" roll
@@ -122,6 +123,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     chatdata['rolls'] = roll.dice[0].results.map(it => it.result).join()
     chatdata['modifier'] = modifier
   }
+
+  if (isTargeted) GURPS.lastTargetedRoll[actor.id] = chatdata
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 
