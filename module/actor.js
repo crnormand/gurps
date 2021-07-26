@@ -461,6 +461,23 @@ export class GurpsActor extends Actor {
     })
   }
 
+  /**
+   * Calling this will also trigger it being added to the token status icons.
+   * @param {string} maneuverText
+   * @param {string} tokenId
+   */
+  updateManeuver(maneuverText, tokenId) {
+    this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true, tokenId: tokenId })
+    this._renderAllApps()
+  }
+
+  /**
+   * For every application associated to this actor, refresh it to reflect any updates.
+   */
+  _renderAllApps() {
+    Object.values(this.apps).forEach(it => it.render(false))
+  }
+
   /** @override */
   async update(data, options) {
     if (_game().settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
@@ -485,27 +502,8 @@ export class GurpsActor extends Actor {
       this._updateManeuverStatusIcon(maneuverText, tokenId)
     }
 
-    //console.log(this.name + " _onUPDATE: "+ GURPS.objToString(data))
-
     await super.update(data, options)
     _game().GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
-  }
-
-  /**
-   * Calling this will also trigger it being added to the token status icons.
-   * @param {string} maneuverText
-   * @param {string} tokenId
-   */
-  updateManeuver(maneuverText, tokenId) {
-    this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true, tokenId: tokenId })
-    this._renderAllApps()
-  }
-
-  /**
-   * For every application associated to this actor, refresh it to reflect any updates.
-   */
-  _renderAllApps() {
-    Object.values(this.apps).forEach(it => it.render(false))
   }
 
   /**
@@ -515,7 +513,7 @@ export class GurpsActor extends Actor {
   removeManeuver(tokenId) {
     let token = this._findToken(tokenId)
 
-    if (!!token) this._removeAllManeuvers(token)
+    if (!!token) this._removeManeuver(token)
     else
       console.warn(`could not update maneuver; actor: [${this.id}], tokenId: [${tokenId}], maneuver: [${maneuverText}]`)
   }
@@ -535,18 +533,13 @@ export class GurpsActor extends Actor {
   /**
    * @param {Token} token
    */
-  async _removeAllManeuvers(token) {
-    // Maneuvers are now Active Effects...
-    let effects = token.actor?.effects.contents || []
-    effects = effects.filter(effect => Maneuvers.isActiveEffectManeuver(effect))
-
-    for (const effect of effects) {
-      let id = /** @type {string} */ (effect.getFlag('core', 'statusId'))
-      /** @type {any} */
-      let maneuver = Maneuvers.get(id)
-      // maneuver.flags = { 'gurps.maneuver': maneuver }
-      await token.toggleEffect(maneuver, { active: false }) // turn all of them off!}
+  async _removeManeuver(token) {
+    // create a new maneuver effect
+    let maneuverData = {
+      id: 'maneuver',
+      icon: 'dummy',
     }
+    token.toggleEffect(maneuverData, { active: false })
   }
 
   /**
@@ -568,17 +561,31 @@ export class GurpsActor extends Actor {
    * @param {*} maneuverText
    */
   async _setManeuverEffect(token, maneuverText) {
-    await this._removeAllManeuvers(token)
-
     let combat = _game().combat
-    if (!!combat) {
-      if (combat.combatants.contents.some(it => it.token?.id === token.id)) {
-        let data = Maneuvers.getManeuver(maneuverText)
-        // @ts-ignore
-        data._icon = data.icon
-        data.flags = { 'gurps.icon': data.icon }
 
-        await token.toggleEffect(data, { active: true }) // turn it on!
+    // maneuver effects only apply in combat:
+    if (!!combat) {
+      // is this token in combat?
+      if (combat.combatants.contents.some(it => it.token?.id === token.id)) {
+        // fetch the maneuver data
+        let data = Maneuvers.getManeuver(maneuverText)
+        let maneuverData = {
+          id: 'maneuver',
+          changes: [],
+          disabled: false,
+          icon: data.icon,
+          duration: {},
+          flags: { gurps: { icon: data.icon, alt: data.alt, name: data.id } },
+        }
+
+        // find an existing effect
+        const existing = token.actor.effects.find(e => e.getFlag('core', 'statusId') === 'maneuver')
+        if (existing) {
+          await token.toggleEffect(maneuverData, { active: false })
+        }
+
+        // create a new maneuver effect
+        await token.toggleEffect(maneuverData, { active: true })
       }
     }
   }

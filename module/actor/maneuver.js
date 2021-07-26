@@ -292,7 +292,6 @@ export class Maneuvers {
    */
   static isActiveEffectManeuver(activeEffect) {
     let id = /** @type {string} */ (activeEffect.getFlag('core', 'statusId'))
-    console.log(id)
     // @ts-ignore
     return Object.getOwnPropertyNames(_data).includes(id)
   }
@@ -302,7 +301,7 @@ export class Maneuvers {
    * @return {ActiveEffect[]} just the ActiveEffects that are also Maneuvers
    */
   static getActiveEffectManeuvers(effects) {
-    return effects ? effects.filter(it => Maneuvers.isActiveEffectManeuver(it)) : []
+    return effects ? effects.filter(it => it.getFlag('core', 'statusId') === 'maneuver') : []
   }
 }
 
@@ -347,14 +346,14 @@ class GurpsToken extends Token {
           // Replace 'Feint' with 'Attack'
           if (detail !== 'Full') {
             effects
-              .filter(it => 'feint' === /** @type {string} */ (it.getFlag('core', 'statusId')))
+              .filter(it => 'feint' === /** @type {string} */ (it.getFlag('gurps', 'name')))
               // @ts-ignore
-              .forEach(it => (it.data.icon = it.data.alt))
+              .forEach(it => (it.data.icon = it.getFlag('gurps', 'alt')))
           }
 
           // replace others
           // @ts-ignore
-          if (detail === 'General') effects.forEach(it => (it.data.icon = it.data.alt))
+          if (detail === 'General') effects.forEach(it => (it.icon = it.getFlag('gurps', 'alt')))
         }
       }
     } // tokenEffects
@@ -364,7 +363,7 @@ class GurpsToken extends Token {
 
     // restore the original token effects
     // @ts-ignore
-    effects.forEach(it => (it.data.icon = it.data._icon))
+    effects.forEach(it => it.data.icon == null && (it.data.icon = it.getFlag('gurps', 'alt')))
 
     return result
   }
@@ -381,10 +380,10 @@ Hooks.once('init', () => {
 
       if (!!results && results.length > 1) {
         // get the active temporary effects that are also maneuvers
-        const effects = Maneuvers.getActiveEffectManeuvers(results)
-        if (!!effects && effects.length > 0) {
-          let remaining = results.filter(it => !effects.includes(it))
-          results = [...effects, ...remaining]
+        const existing = this.effects.find(e => e.getFlag('core', 'statusId') === 'maneuver')
+        if (existing) {
+          let remaining = results.filter(e => e.getFlag('core', 'statusId') !== 'maneuver')
+          results = [existing, ...remaining]
         }
       }
       return results
