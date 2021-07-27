@@ -12,7 +12,7 @@ Release 0.11.8
 Example:
 ```js
 let actor = game.actors.getName("Arne Arneson");
-let data = GURPS.lastTargetedRoll["wmi8nrPojlOriOY4"];
+let data = GURPS.lastTargetedRoll[actor.id];
 console.log(`check: [${data.thing}], modified target: [${data.finaltarget}], roll total: [${data.rtotal}], margin of success: [${data.margin}]`);
 ```
 This prints: `check: [Broadsword ], modified target: [15], roll total: [13], margin of success: [2]`
