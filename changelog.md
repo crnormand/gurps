@@ -7,7 +7,7 @@ Release 0.11.8
 - Added system setting, unequipped items not displayed in melee or ranged attacks
 - Rewrote the Maneuver system to be Foundry ActiveEffects.
 - Resolved several bugs with Maneuvers (randomly not clearing, UI warnings when changing Maneuver settings, keeping Maneuver as the first icon in the list).
-- Store the last targeted roll in the GURPS object (`GURPS.lastTargetedRoll`). Use the actor's ID to fetch a data object with the results of that roll. This might be used in a macro to get and use margin of success, for example.
+- Store the last targeted roll for every actor in the GURPS object (`GURPS.lastTargetedRoll`). Use the actor's ID to fetch a data object with the results of that roll. This might be used in a macro to get and use margin of success, for example.
 
 Example:
 ```js
