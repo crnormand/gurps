@@ -7,6 +7,15 @@ Release 0.11.8
 - Added system setting, unequipped items not displayed in melee or ranged attacks
 - Rewrote the Maneuver system to be Foundry ActiveEffects.
 - Resolved several bugs with Maneuvers (randomly not clearing, UI warnings when changing Maneuver settings, keeping Maneuver as the first icon in the list).
+- Store the last targeted roll in the GURPS object (`GURPS.lastTargetedRoll`). Use the actor's ID to fetch a data object with the results of that roll. This might be used in a macro to get and use margin of success, for example.
+
+Example:
+```js
+let actor = game.actors.getName("Arne Arneson");
+let data = GURPS.lastTargetedRoll["wmi8nrPojlOriOY4"];
+console.log(`check: [${data.thing}], modified target: [${data.finaltarget}], roll total: [${data.rtotal}], margin of success: [${data.margin}]`);
+```
+This prints: `check: [Broadsword ], modified target: [15], roll total: [13], margin of success: [2]`
 
 Release 0.11.7 - 7/22/2021
 
