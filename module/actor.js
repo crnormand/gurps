@@ -20,6 +20,7 @@ import * as settings from '../lib/miscellaneous-settings.js'
 import { SemanticVersion } from '../lib/semver.js'
 import { Maneuvers } from './actor/maneuver.js'
 import { SmartImporter } from './smart-importer.js'
+import { GurpsItem } from './item.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -39,6 +40,7 @@ export class GurpsActor extends Actor {
 
   // Return collection os Users that have ownership on this actor
   getOwners() {
+    // @ts-ignore
     return _game().users?.contents.filter(u => this.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
   }
 
@@ -70,13 +72,18 @@ export class GurpsActor extends Actor {
     this.calculateDerivedValues()
 
     // Convoluted code to add Items (and features) into the equipment list
-    let orig = this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name)) // in case items are in the same list... add them alphabetically
+    // @ts-ignore
+    let orig = /** @type {GurpsItem[]} */ (this.items.contents.slice().sort((a, b) => b.name.localeCompare(a.name))) // in case items are in the same list... add them alphabetically
+    /**
+     * @type {any[]}
+     */
     let good = []
     while (orig.length > 0) {
       // We are trying to place 'parent' items before we place 'children' items
       let left = []
       let atLeastOne = false
       for (const i of orig) {
+        // @ts-ignore
         if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid)) {
           atLeastOne = true
           good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
@@ -514,8 +521,7 @@ export class GurpsActor extends Actor {
     let token = this._findToken(tokenId)
 
     if (!!token) this._removeManeuver(token)
-    else
-      console.warn(`could not update maneuver; actor: [${this.id}], tokenId: [${tokenId}], maneuver: [${maneuverText}]`)
+    else console.warn(`could not update maneuver; actor: [${this.id}], tokenId: [${tokenId}]`)
   }
 
   /**
@@ -531,15 +537,10 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Token} token
+   * @param {GurpsToken} token
    */
   async _removeManeuver(token) {
-    // create a new maneuver effect
-    let maneuverData = {
-      id: 'maneuver',
-      icon: 'dummy',
-    }
-    token.toggleEffect(maneuverData, { active: false })
+    await token.turnOffGurpsEffect('maneuver')
   }
 
   /**
@@ -557,7 +558,7 @@ export class GurpsActor extends Actor {
 
   /**
    * Set the given maneuver on the token, clearing any other maneuver.
-   * @param {Token} token
+   * @param {GurpsToken} token
    * @param {*} maneuverText
    */
   async _setManeuverEffect(token, maneuverText) {
@@ -578,14 +579,7 @@ export class GurpsActor extends Actor {
           flags: { gurps: { icon: data.icon, alt: data.alt, name: data.id } },
         }
 
-        // find an existing effect
-        const existing = token.actor.effects.find(e => e.getFlag('core', 'statusId') === 'maneuver')
-        if (existing) {
-          await token.toggleEffect(maneuverData, { active: false })
-        }
-
-        // create a new maneuver effect
-        await token.toggleEffect(maneuverData, { active: true })
+        token.turnOnGurpsEffect(maneuverData)
       }
     }
   }

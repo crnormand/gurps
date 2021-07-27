@@ -325,45 +325,77 @@ export class GURPSTokenHUD extends TokenHUD {
 
 class GurpsToken extends Token {
   /**
+   * @param {ActiveEffectData & {id: string}} effect
+   */
+  async turnOnGurpsEffect(effect, overlay = false) {
+    await this.turnOffGurpsEffect(effect.id)
+    return await this.toggleEffect(effect, { active: true, overlay: overlay })
+  }
+
+  /**
+   * @param {string} id
+   * @param {boolean} overlay
+   */
+  async turnOffGurpsEffect(id, overlay = false) {
+    let existing = this.actor?.effects.find(e => e.getFlag('core', 'statusId') === id)
+
+    // try to clear an existing effect
+    if (existing && existing.id) {
+      let icon = /** @type {string} */ (existing.data.icon || existing.getFlag('gurps', 'icon'))
+      await this.actor?.deleteEmbeddedDocuments('ActiveEffect', [existing.id])
+      await this.toggleEffect(icon, { active: false, overlay: overlay })
+    }
+
+    existing = this.actor?.effects.find(e => e.getFlag('core', 'statusId') === id)
+    if (existing) throw new Error(`Could not remove existing effect, [${id}]`)
+  }
+
+  /**
    * @override
    */
   async drawEffects() {
     // get only the Maneuvers
     const effects = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects) || []
 
-    if (effects) {
-      const visibility = _game().settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
+    if (effects && effects.length > 0) {
+      // restore the original token effects in case we've changed them
+      // @ts-ignore
+      effects.forEach(it => (it.data.icon = it.getFlag('gurps', 'icon')))
 
-      if (visibility === 'NoOne') {
-        effects.forEach(it => (it.data.icon = null))
-      } else if (visibility === 'GMAndOwner') {
-        if (!_game().user?.isGM && !this.isOwner) effects.forEach(it => (it.data.icon = null))
-      } else {
-        // visibility === 'Everyone'
-        if (!_game().user?.isGM && !this.isOwner) {
-          const detail = _game().settings.get(SYSTEM_NAME, SETTING_MANEUVER_DETAIL)
+      // GM and Owner always see the exact maneuver.. Otherwise:
+      if (!_game().user?.isGM && !this.isOwner) {
+        const detail = _game().settings.get(SYSTEM_NAME, SETTING_MANEUVER_DETAIL)
 
-          // Replace 'Feint' with 'Attack'
-          if (detail !== 'Full') {
-            effects
-              .filter(it => 'feint' === /** @type {string} */ (it.getFlag('gurps', 'name')))
-              // @ts-ignore
-              .forEach(it => (it.data.icon = it.getFlag('gurps', 'alt')))
+        if (detail !== 'Full') {
+          // if detail is not 'Full', always replace Feint with Attack
+          effects
+            .filter(it => 'feint' === /** @type {string} */ (it.getFlag('gurps', 'name')))
+            // @ts-ignore
+            .forEach(it => (it.data.icon = it.getFlag('gurps', 'alt')))
+
+          if (detail === 'General') {
+            // replace every maneuver that has an alternate appearance with it
+            effects.forEach(it => {
+              let alt = it.getFlag('gurps', 'alt')
+              if (alt) it.data.icon = /** @type {string} */ (alt)
+            })
           }
-
-          // replace others
-          // @ts-ignore
-          if (detail === 'General') effects.forEach(it => (it.icon = it.getFlag('gurps', 'alt')))
         }
       }
-    } // tokenEffects
+
+      // Remove any icons based on visibility
+      const visibility = _game().settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
+
+      // set all icons to null
+      if (visibility === 'NoOne') effects.forEach(it => (it.data.icon = null))
+      else if (visibility === 'GMAndOwner')
+        if (!_game().user?.isGM && !this.isOwner)
+          // set icon to null if neither GM nor owner
+          effects.forEach(it => (it.data.icon = null))
+    } // if (effects)
 
     // call the original method
-    const result = super.drawEffects()
-
-    // restore the original token effects
-    // @ts-ignore
-    effects.forEach(it => it.data.icon == null && (it.data.icon = it.getFlag('gurps', 'alt')))
+    const result = await super.drawEffects()
 
     return result
   }
@@ -376,13 +408,17 @@ Hooks.once('init', () => {
   Object.defineProperty(Actor.prototype, 'temporaryEffects', {
     get: function () {
       // get all active temporary effects
-      let results = this.effects.filter(e => e.isTemporary && !e.data.disabled)
+      let results = this.effects.filter((/** @type {ActiveEffect} */ e) => e.isTemporary && !e.data.disabled)
 
       if (!!results && results.length > 1) {
         // get the active temporary effects that are also maneuvers
-        const existing = this.effects.find(e => e.getFlag('core', 'statusId') === 'maneuver')
+        const existing = this.effects.find(
+          (/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') === 'maneuver'
+        )
         if (existing) {
-          let remaining = results.filter(e => e.getFlag('core', 'statusId') !== 'maneuver')
+          let remaining = results.filter(
+            (/** @type {ActiveEffect} */ e) => e.getFlag('core', 'statusId') !== 'maneuver'
+          )
           results = [existing, ...remaining]
         }
       }
@@ -393,25 +429,32 @@ Hooks.once('init', () => {
 
 // on create combatant, set the maneuver
 Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  console.log(id)
-  let token = combat.token
-  let actor = /** @type {GurpsActor} */ (combat.actor)
-  if (!!actor && !!token && token.id) actor.updateManeuver('do_nothing', token.id)
+  if (_game().user?.isGM) {
+    console.log(id)
+    let token = combat.token
+    let actor = /** @type {GurpsActor} */ (combat.actor)
+    if (!!actor && !!token && token.id) actor.updateManeuver('do_nothing', token.id)
+  }
 })
 
 // on delete combatant, remove the maneuver
 Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  console.log(id)
-  let token = combat.token
-  let actor = /** @type {GurpsActor} */ (combat.actor)
-  if (!!actor && !!token && token.id) actor.removeManeuver(token.id)
+  if (_game().user?.isGM) {
+    console.log(id)
+    let token = combat.token
+    let actor = /** @type {GurpsActor} */ (combat.actor)
+    if (!!actor && !!token && token.id) actor.removeManeuver(token.id)
+  }
 })
 
 Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _options, /** @type {any} */ _id) => {
-  let combatants = combat.data.combatants.contents
-  combatants.forEach(
-    it => it.actor instanceof GurpsActor && it.token && it.token.id && it.actor.removeManeuver(it.token.id)
-  )
+  if (_game().user?.isGM) {
+    let combatants = combat.data.combatants.contents
+    for (const combatant of combatants) {
+      let actor = /** @type GurpsActor */ (combatant.actor)
+      if (combatant?.token?.id) actor?.removeManeuver(combatant.token.id)
+    }
+  }
 })
 
 // TODO consider subtracting 1 FP from every combatant that leaves combat
