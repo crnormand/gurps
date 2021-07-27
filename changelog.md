@@ -5,6 +5,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.11.8
 
 - Added system setting, unequipped items not displayed in melee or ranged attacks
+- Rewrote the Maneuver system to be Foundry ActiveEffects.
+- Resolved several bugs with Maneuvers (randomly not clearing, UI warnings when changing Maneuver settings, keeping Maneuver as the first icon in the list).
 
 Release 0.11.7 - 7/22/2021
 
