@@ -17,7 +17,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, splitArgs, i18n } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -64,6 +64,7 @@ import addChatHooks from './chat.js'
 
 import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
 import { HitLocation } from './hitlocation/hitlocation.js'
+import initActiveEffects from './effects/active-effect.js'
 
 addChatHooks()
 jqueryHelpers()
@@ -72,6 +73,7 @@ settings.initializeSettings()
 
 // Use the target d6 icon for rolltable entries
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
+CONFIG.time.roundTime = 1
 
 // CONFIG.debug.hooks = true
 
@@ -1539,6 +1541,7 @@ Hooks.once('init', async function () {
   HitLocation.init()
   DamageChat.initSettings()
   RegisterChatProcessors()
+  initActiveEffects()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket()

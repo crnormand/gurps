@@ -445,7 +445,15 @@ class SelectChatProcessor extends ChatProcessor {
       this.priv(i18n('GURPS.chatClearingLastActor'))
     } else {
       let pat = makeRegexPatternFrom(m[3])
-      let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
+
+      let list =
+        game.scenes.viewed?.data.tokens.map(t => {
+          // get the token's actor which might be a synthetic actor
+          if (t.actor) return t.actor
+          // otherwise, get the 'canonical' actor (non-synthetic)
+          return game.actors.get(t.actorId)
+        }) || []
+
       if (!!m[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
       let a = list.filter(a => a?.name?.match(pat))
       let msg = i18n('GURPS.chatMoreThanOneActor') + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
