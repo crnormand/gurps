@@ -31,6 +31,12 @@ import { GURPSTokenHUD } from '../module/actor/maneuver.js'
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 GURPS.Migration = Migration
+/**
+ * This object literal holds the results of the last targeted roll by an actor.
+ * The property key is the actor's ID. The value is literally the chatdata from
+ * the doRoll() function, which has close to anything anyone would want.
+ */
+GURPS.lastTargetedRoll = {}
 
 GURPS.DEBUG = false
 GURPS.BANNER = `
@@ -517,10 +523,9 @@ async function readTextFromFile(file) {
       reader.abort()
       reject()
     }
-    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_FILE_ENCODING) == 1) 
-      reader.readAsText(file, "UTF-8")
-    else
-      reader.readAsText(file, "ISO-8859-1")
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_FILE_ENCODING) == 1)
+      reader.readAsText(file, 'UTF-8')
+    else reader.readAsText(file, 'ISO-8859-1')
   })
 }
 GURPS.readTextFromFile = readTextFromFile
@@ -647,7 +652,7 @@ async function performAction(action, actor, event, targets) {
 
     return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
   }
-  
+
   if (action.type === 'dragdrop') {
     if (action.link == 'JournalEntry') {
       game.journal.get(action.id).show()
@@ -1297,7 +1302,8 @@ function listeqtrecurse(eqts, options, level, data, parentkey = '', src) {
       data.count = eqt.count
     }
     let display = true
-    if (!!src && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_REMOVE_UNEQUIPPED)) {  // if an optional src is provided (which == actor.data.data) assume we are checking attacks to see if they are equipped
+    if (!!src && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_REMOVE_UNEQUIPPED)) {
+      // if an optional src is provided (which == actor.data.data) assume we are checking attacks to see if they are equipped
       recurselist(src.equipment.carried, e => {
         if (eqt.name.startsWith(e.name) && !e.equipped) display = false
       })
@@ -1502,7 +1508,7 @@ GURPS.setInitiativeFormula = function (broadcast) {
     })
 }
 
-GURPS.recurselist=recurselist
+GURPS.recurselist = recurselist
 
 /*********************  HACK WARNING!!!! *************************/
 /* The following method has been secretly added to the Object class/prototype to
@@ -1592,14 +1598,14 @@ Hooks.once('init', async function () {
     label: 'Tabbed Sheet',
     makeDefault: false,
   })
-  Actors.registerSheet('gurps', GurpsActorSheet, {    // Add this sheet last 
+  Actors.registerSheet('gurps', GurpsActorSheet, {
+    // Add this sheet last
     label: 'Full (GCS)',
     makeDefault: true,
   })
 
   Items.unregisterSheet('core', ItemSheet)
   Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
-    
 
   // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
   Hooks.on('createRollTable', async function (entity, options, userId) {
@@ -2061,12 +2067,11 @@ Hooks.once('ready', async function () {
     mappings = { ...mappings, ...GURPS.PARSELINK_MAPPINGS }
     GURPS.PARSELINK_MAPPINGS = mappings
   }
-  
+
   // This system setting must be built AFTER all of the character sheets have been registered
   let sheets = {}
-  Object.values(CONFIG.Actor.sheetClasses["character"]).forEach(e => {
-    if (e.id.startsWith(settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet')
-      sheets[e.label] = e.label
+  Object.values(CONFIG.Actor.sheetClasses['character']).forEach(e => {
+    if (e.id.startsWith(settings.SYSTEM_NAME) && e.id != 'gurps.GurpsActorSheet') sheets[e.label] = e.label
   })
   game.settings.register(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET, {
     name: i18n('GURPS.settingSheetDetail'),
@@ -2076,7 +2081,7 @@ Hooks.once('ready', async function () {
     type: String,
     choices: sheets,
     default: 'Tabbed Sheet',
-    onChange: value => console.log(`${settings.SETTING_ALT_SHEET}: ${value}`)
+    onChange: value => console.log(`${settings.SETTING_ALT_SHEET}: ${value}`),
   })
 
   Hooks.on('createToken', async function (token, d, options, userId) {
