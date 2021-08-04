@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.11.8
 
 - Added system setting, unequipped items not displayed in melee or ranged attacks
+- Added danialrab's browser support to remember the last import location
 
 Release 0.11.7 - 7/22/2021
 
