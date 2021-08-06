@@ -10,7 +10,6 @@ import {
   i18n_f,
   splitArgs,
   generateUniqueId,
-  locateToken,
 } from '../lib/utilities.js'
 import { parselink } from '../lib/parselink.js'
 import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
@@ -18,7 +17,7 @@ import ApplyDamageDialog from './damage/applydamage.js'
 import * as HitLocations from '../module/hitlocation/hitlocation.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { Maneuvers } from './actor/maneuver.js'
+import Maneuvers from './actor/maneuver.js'
 import { SmartImporter } from './smart-importer.js'
 import { GurpsItem } from './item.js'
 
@@ -473,8 +472,8 @@ export class GurpsActor extends Actor {
    * @param {string} maneuverText
    * @param {string} tokenId
    */
-  updateManeuver(maneuverText, tokenId) {
-    this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true, tokenId: tokenId })
+  async updateManeuver(maneuverText) {
+    await this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true })
     this._renderAllApps()
   }
 
@@ -498,90 +497,37 @@ export class GurpsActor extends Actor {
       }
     }
 
+    await super.update(data, options)
+
     // if changing the maneuver, update the icons
     if (data.hasOwnProperty('data.conditions.maneuver')) {
-      let tokenId = null
-      if (!!options && options.hasOwnProperty('tokenId')) {
-        tokenId = options?.tokenId
-        delete options.tokenId
-      }
       let maneuverText = data[`data.conditions.maneuver`] || 'do_nothing'
-      this._updateManeuverStatusIcon(maneuverText, tokenId)
+      await this._updateManeuverStatusIcon(maneuverText)
     }
 
-    await super.update(data, options)
     _game().GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
   }
 
   /**
-   * Removes any maneuver already on the token.
    * @param {string} tokenId
+   * @returns {Token|null}
    */
-  removeManeuver(tokenId) {
-    let token = this._findToken(tokenId)
+  _findTokens() {
+    if (this.isToken) return this.token.object
 
-    if (!!token) this._removeManeuver(token)
-    else console.warn(`could not update maneuver; actor: [${this.id}], tokenId: [${tokenId}]`)
-  }
-
-  /**
-   * @param {string} tokenId
-   * @returns {Token|undefined}
-   */
-  _findToken(tokenId) {
     let tokens = /** @type {Token[]} */ (/** @type {unknown} */ (this.getActiveTokens(false, false)))
-
-    if (!!tokenId) {
-      return tokens.find(it => it.id === tokenId)
-    } else if (tokens.length === 1) return tokens[0]
-  }
-
-  /**
-   * @param {GurpsToken} token
-   */
-  async _removeManeuver(token) {
-    await token.turnOffGurpsEffect('maneuver')
+    if (tokens && tokens.length > 0) return tokens[0]
+    return null
   }
 
   /**
    * This method is called when "data.conditions.maneuver" changes on the actor (via the update method)
    * @param {string} maneuverText
-   * @param {string} tokenId
    */
-  _updateManeuverStatusIcon(maneuverText, tokenId) {
-    let token = this._findToken(tokenId)
-
-    if (!!token) this._setManeuverEffect(token, maneuverText)
-    else
-      console.warn(`could not update maneuver; actor: [${this.id}], tokenId: [${tokenId}], maneuver: [${maneuverText}]`)
-  }
-
-  /**
-   * Set the given maneuver on the token, clearing any other maneuver.
-   * @param {GurpsToken} token
-   * @param {*} maneuverText
-   */
-  async _setManeuverEffect(token, maneuverText) {
-    let combat = _game().combat
-
-    // maneuver effects only apply in combat:
-    if (!!combat) {
-      // is this token in combat?
-      if (combat.combatants.contents.some(it => it.token?.id === token.id)) {
-        // fetch the maneuver data
-        let data = Maneuvers.getManeuver(maneuverText)
-        let maneuverData = {
-          id: 'maneuver',
-          changes: [],
-          disabled: false,
-          icon: data.icon,
-          duration: {},
-          flags: { gurps: { icon: data.icon, alt: data.alt, name: data.id } },
-        }
-
-        token.turnOnGurpsEffect(maneuverData)
-      }
-    }
+  async _updateManeuverStatusIcon(maneuverText) {
+    let token = this._findTokens()
+    if (token) await token.setManeuver(maneuverText)
+    else console.warn('no tokens found')
   }
 
   /**
