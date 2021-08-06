@@ -43,13 +43,13 @@ export default class StatusChatProcessor extends ChatProcessor {
   async process(_) {
     if (!this.match) throw new Error('match does not exist! Did you call ChatProcessor.matches()?')
 
-    let commandText = this.match.groups.command // this.match[2].trim().toLowerCase()
+    let commandText = this.match.groups?.command
     // @ts-ignore
     let theCommand = Command[commandText]
     if (theCommand == Command.list) return this.priv(this.list())
 
-    let self = this.match.groups.target /* this.match[4] */ === '@self'
-    let tokenName = !self && !!this.match.groups.target ? this.match.groups.target.replace(/^:(.*)$/, '$1') : null
+    let self = this.match.groups?.target /* this.match[4] */ === '@self'
+    let tokenName = !self && !!this.match.groups?.target ? this.match.groups.target.replace(/^:(.*)$/, '$1') : null
 
     let tokens = !!tokenName
       ? this.getTokensFor(tokenName)
@@ -64,17 +64,16 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     if (theCommand == Command.clear) return await this.clear(tokens)
 
-    let effectText = this.match.groups.name?.trim() //this.match[3]?.trim()
+    let effectText = this.match.groups?.name?.trim() //this.match[3]?.trim()
     let effect = !!effectText ? this.findEffect(effectText) : null
     if (!effect) {
       _ui().notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
       return
     }
 
-    if (this.match.groups.data) {
+    if (this.match.groups?.data) {
       let data = JSON.parse(this.match.groups.data)
-      data.duration.combat = game.combats.active.id
-      data['flags.gurps.skipConfig'] = true
+      data.duration.combat = _game().combats?.active?.id
       mergeObject(effect, data)
     }
 
@@ -169,11 +168,10 @@ export default class StatusChatProcessor extends ChatProcessor {
   async toggleTokenEffect(token, effect, actionText) {
     if (!!effect) {
       await token.toggleEffect(effect)
+      let actor = /** @type {GurpsActor} */ (token.actor)
       // TODO We need to turn this into a single string, instead of multiple i18n strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.
-      this.prnt(
-        `${i18n(actionText)} [${effect.id}:'${i18n(effect.label)}'] ${i18n('GURPS.for')} ${token.actor?.displayname}`
-      )
+      this.prnt(`${i18n(actionText)} [${effect.id}:'${i18n(effect.label)}'] ${i18n('GURPS.for')} ${actor.displayname}`)
     }
   }
 
