@@ -49,6 +49,10 @@ class Maneuver {
     return Maneuver.filepath + this._data.icon
   }
 
+  get move() {
+    return this._data.move
+  }
+
   /** @returns {ManeuverData} */
   get data() {
     return {
@@ -71,14 +75,19 @@ class Maneuver {
 
   /** @returns {change[]} */
   get changes() {
-    return [
-      {
-        key: 'data.conditions.maneuver',
-        value: this._data.name,
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-        priority: 10,
-      },
-    ]
+    let changes = []
+
+    changes.push({
+      key: 'data.conditions.maneuver',
+      value: this._data.name,
+      mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      priority: 10,
+    })
+
+    if (this.move === MOVE_NONE)
+      changes.push({ key: 'data.currentmove', value: '0', mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, priority: 10 })
+
+    return changes
   }
 }
 
@@ -316,8 +325,6 @@ export default class Maneuvers {
     return effects ? effects.filter(it => Maneuvers.isActiveEffectManeuver(it)) : []
   }
 }
-
-Hooks.once('init', () => {})
 
 // on create combatant, set the maneuver
 Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {

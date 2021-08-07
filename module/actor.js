@@ -33,10 +33,6 @@ export class GurpsActor extends Actor {
     return data
   }
 
-  prepareData() {
-    super.prepareData()
-  }
-
   // Return collection os Users that have ownership on this actor
   getOwners() {
     // @ts-ignore
@@ -59,9 +55,19 @@ export class GurpsActor extends Actor {
     }
   }
 
+  prepareEmbeddedEntities() {
+    let current = this.data.data.conditions.maneuver
+
+    super.prepareEmbeddedEntities()
+
+    let newValue = this.data.data.conditions.maneuver
+    // if the current value was modified by an ActiveEffect, update the effect icon
+    if (current !== newValue) {
+      this._updateManeuverStatusIcon(newValue)
+    }
+  }
+
   prepareDerivedData() {
-    //    console.log('Prepare data for: ' + this.name)
-    //    console.trace()
     super.prepareDerivedData()
     this.calculateDerivedValues()
   }
@@ -513,11 +519,9 @@ export class GurpsActor extends Actor {
    * @returns {Token|null}
    */
   _findTokens() {
-    if (this.isToken) return this.token.object
+    if (this.isToken && this.token.layer) return [this.token.object]
 
-    let tokens = /** @type {Token[]} */ (/** @type {unknown} */ (this.getActiveTokens(false, false)))
-    if (tokens && tokens.length > 0) return tokens[0]
-    return null
+    return /** @type {Token[]} */ (/** @type {unknown} */ (this.getActiveTokens(false, false)))
   }
 
   /**
@@ -525,9 +529,8 @@ export class GurpsActor extends Actor {
    * @param {string} maneuverText
    */
   async _updateManeuverStatusIcon(maneuverText) {
-    let token = this._findTokens()
-    if (token) await token.setManeuver(maneuverText)
-    else console.warn('no tokens found')
+    let tokens = this._findTokens()
+    if (tokens) for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
   /**

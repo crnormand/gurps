@@ -25,11 +25,12 @@ export default class GurpsActiveEffect extends ActiveEffect {
           let dialog = new ActiveEffectConfig(effect)
           await dialog.render(true)
         }
+        // effect.parent.applyActiveEffects()
       }
     )
 
-    Hooks.on('applyActiveEffect', (...args) => {
-      console.log('apply ' + args)
+    Hooks.on('applyActiveEffect', (actor, change, options, user) => {
+      console.log([actor, change, options, user])
     })
 
     Hooks.on(
@@ -41,6 +42,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
         /** @type {any} */ _userId
       ) => {
         console.log('update ' + effect)
+        // effect.parent.applyActiveEffects()
       }
     )
 
@@ -50,6 +52,11 @@ export default class GurpsActiveEffect extends ActiveEffect {
         console.log('delete ' + effect)
       }
     )
+
+    Hooks.on('updateActor', (actor, data, options, user) => {
+      // console.log(JSON.stringify(data))
+      //actor.applyActiveEffects()
+    })
 
     Hooks.on(
       'updateCombat',

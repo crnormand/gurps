@@ -61,9 +61,10 @@ export default class GurpsToken extends Token {
   async setManeuver(maneuverName) {
     let maneuver = Maneuvers.get(maneuverName)
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
+
     if (maneuvers && maneuvers.length === 1) {
       // @ts-ignore
-      maneuvers[0].update(maneuver)
+      if (maneuvers[0].getFlag('gurps', 'name') !== maneuverName) maneuvers[0].update(maneuver)
     } else if (!maneuvers || maneuvers.length === 0) {
       // @ts-ignore
       await this.toggleEffect(maneuver, { active: true })

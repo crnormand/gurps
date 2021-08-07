@@ -38,7 +38,7 @@ GURPS.Migration = Migration
  */
 GURPS.lastTargetedRoll = {}
 
-GURPS.DEBUG = false
+// GURPS.DEBUG = false
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
