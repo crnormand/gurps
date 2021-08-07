@@ -32,7 +32,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
   }
 
   actor = actor || game.user
-  let speaker = ChatMessage.getSpeaker(actor)
+  let speaker = ChatMessage.getSpeaker({ actor: actor })
   let messageData = {
     user: game.user.id,
     speaker: speaker,
