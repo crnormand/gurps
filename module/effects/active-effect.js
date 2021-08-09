@@ -1,5 +1,7 @@
 'use strict'
 
+import Maneuvers, { MOVE_HALF, MOVE_NONE, MOVE_STEP, MOVE_FULL, PROPERTY_MOVEOVERRIDE } from '../actor/maneuver.js'
+
 export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
@@ -25,26 +27,22 @@ export default class GurpsActiveEffect extends ActiveEffect {
           let dialog = new ActiveEffectConfig(effect)
           await dialog.render(true)
         }
-        // effect.parent.applyActiveEffects()
       }
     )
 
-    Hooks.on('applyActiveEffect', (actor, change, options, user) => {
-      console.log([actor, change, options, user])
+    Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
+      if (change.key === PROPERTY_MOVEOVERRIDE) actor._updateCurrentMoveOverride(change)
     })
 
-    Hooks.on(
-      'updateActiveEffect',
-      (
-        /** @type {ActiveEffect} */ effect,
-        /** @type {any} */ _data,
-        /** @type {any} */ _options,
-        /** @type {any} */ _userId
-      ) => {
-        console.log('update ' + effect)
-        // effect.parent.applyActiveEffects()
-      }
-    )
+    // Hooks.on(
+    //   'updateActiveEffect',
+    //   (
+    //     /** @type {ActiveEffect} */ effect,
+    //     /** @type {any} */ _data,
+    //     /** @type {any} */ _options,
+    //     /** @type {any} */ _userId
+    //   ) => {}
+    // )
 
     Hooks.on(
       'deleteActiveEffect',
@@ -52,11 +50,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
         console.log('delete ' + effect)
       }
     )
-
-    Hooks.on('updateActor', (actor, data, options, user) => {
-      // console.log(JSON.stringify(data))
-      //actor.applyActiveEffects()
-    })
 
     Hooks.on(
       'updateCombat',
@@ -106,6 +99,21 @@ export default class GurpsActiveEffect extends ActiveEffect {
     let data = /** @type {ActiveEffectData} */ (this.getFlag('gurps', 'effect.followup'))
     return new GurpsActiveEffect(data, this.context)
   }
+
+  /**
+   * @override
+   * @param {GurpsActor} actor
+   * @param {data.EffectChangeData} change
+   * @return {*}                            The resulting applied value
+   */
+  // apply(actor, change) {
+  //   if (Maneuvers.isActiveEffectManeuver(this)) {
+  //     if (change.value === MOVE_NONE) change.value = 0
+  //     if (change.value === MOVE_FULL) return // there's nothing to apply
+  //     if (change.value === MOVE_STEP) change.value = actor._getStep()
+  //     if (change.value === MOVE_HALF) change.value = Math.max(1)
+  //   }
+  // }
 
   /**
    * @param {ActiveEffect} effect

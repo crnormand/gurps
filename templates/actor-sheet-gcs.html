@@ -310,7 +310,6 @@
           <div class="field" style='padding-top: 3px; border: none;'>
             <select id='maneuver' name="data.conditions.maneuver">
               {{#each (listAllManeuvers) as | this key |}}
-                {{debug ../data.conditions.maneuver}}
                 <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
                   {{localize this.label}}
                 </option>
