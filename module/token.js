@@ -59,6 +59,10 @@ export default class GurpsToken extends Token {
    * @param {string} maneuverName
    */
   async setManeuver(maneuverName) {
+    // if not in combat, do nothing
+    if (!_game().combats.active) return
+    if (!_game().combats.active.combatants.find(c => c.token.id === this.id)) return
+
     let maneuver = Maneuvers.get(maneuverName)
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
 
@@ -81,6 +85,7 @@ export default class GurpsToken extends Token {
   }
 
   async removeManeuver() {
+    this.actor.updateManeuver('do_nothing')
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
     for (const m of maneuvers) {
       let data = Maneuvers.get(GurpsActiveEffect.getName(m))
