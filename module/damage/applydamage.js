@@ -13,7 +13,7 @@ import {
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
-import { GurpsActor } from '../actor.js'
+import { GurpsActor } from '../actor/actor.js'
 
 const simpleDialogHeight = 130
 
@@ -622,8 +622,7 @@ export default class ApplyDamageDialog extends Application {
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = ChatMessage.getSpeaker(game.user)
-      if (!!attackingActor)
-        speaker = ChatMessage.getSpeaker(attackingActor)
+      if (!!attackingActor) speaker = ChatMessage.getSpeaker(attackingActor)
       let messageData = {
         user: game.user.id,
         speaker: speaker,

@@ -101,25 +101,23 @@ export default class GurpsActiveEffect extends ActiveEffect {
   }
 
   /**
-   * @override
-   * @param {GurpsActor} actor
-   * @param {data.EffectChangeData} change
-   * @return {*}                            The resulting applied value
-   */
-  // apply(actor, change) {
-  //   if (Maneuvers.isActiveEffectManeuver(this)) {
-  //     if (change.value === MOVE_NONE) change.value = 0
-  //     if (change.value === MOVE_FULL) return // there's nothing to apply
-  //     if (change.value === MOVE_STEP) change.value = actor._getStep()
-  //     if (change.value === MOVE_HALF) change.value = Math.max(1)
-  //   }
-  // }
-
-  /**
    * @param {ActiveEffect} effect
    */
   static getName(effect) {
     return /** @type {string} */ (effect.getFlag('gurps', 'name'))
+  }
+
+  static async clearEffectsOnSelectedToken() {
+    const effect = _token.actor.effects.contents
+    for (let i = 0; i < effect.length; i++) {
+      let condition = effect[i].data.label
+      let status = effect[i].data.disabled
+      let effect_id = effect[i].data._id
+      console.log(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
+      if (status === false) {
+        await _token.actor.deleteEmbeddedDocuments('ActiveEffect', [effect_id])
+      }
+    }
   }
 }
 

@@ -2,7 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { i18n, i18n_f, locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
-import { GurpsActor } from '../actor.js'
+import { GurpsActor } from '../actor/actor.js'
 
 const Command = {
   on: 'set',

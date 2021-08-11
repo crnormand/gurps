@@ -63,35 +63,50 @@ export default class GurpsToken extends Token {
     if (!_game().combats.active) return
     if (!_game().combats.active.combatants.find(c => c.token.id === this.id)) return
 
+    // get the new maneuver's data
     let maneuver = Maneuvers.get(maneuverName)
+
+    // get all current active effects that are also maneuvers
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
 
     if (maneuvers && maneuvers.length === 1) {
+      // if there is a single active effect maneuver, update its data
       // @ts-ignore
       if (maneuvers[0].getFlag('gurps', 'name') !== maneuverName) maneuvers[0].update(maneuver)
     } else if (!maneuvers || maneuvers.length === 0) {
+      // if there are no active effect maneuvers, add the new one
       // @ts-ignore
       await this.toggleEffect(maneuver, { active: true })
     } else {
+      // if there are more than one active effect maneuvers, that's a problem. Let's remove all of them and add the new one.
       console.warn(`More than one maneuver found -- try to fix...`)
       for (const existing of maneuvers) {
-        await existing.delete()
-        // FIXME: The duplicate call is temporarily needed to de-dupe legacy tokens. Remove in 0.9.0
-        await this.toggleEffect(existing.icon, { active: false })
+        this._toggleManeuverActiveEffect(existing, { active: false })
       }
       // @ts-ignore
       await this.toggleEffect(maneuver, { active: true })
     }
   }
 
+  /**
+   * Assumes that this token is not in combat any more -- if so, updating the manuever will only
+   * update the actor's data model, and not add/update the active effect that represents that
+   * Maneuver.
+   */
   async removeManeuver() {
+    // update the data model
     this.actor.updateManeuver('do_nothing')
+
+    // get all Active Effects that are also Maneuvers
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
     for (const m of maneuvers) {
-      let data = Maneuvers.get(GurpsActiveEffect.getName(m))
-      // @ts-ignore
-      await this.toggleEffect(data, { active: false })
+      this._toggleManeuverActiveEffect(m, { active: false })
     }
+  }
+
+  async _toggleManeuverActiveEffect(effect, options = {}) {
+    let data = Maneuvers.get(GurpsActiveEffect.getName(effect))
+    await this.toggleEffect(data, options)
   }
 }
 

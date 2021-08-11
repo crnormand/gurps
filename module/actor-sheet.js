@@ -1,5 +1,5 @@
 import { atou, generateUniqueId, i18n } from '../lib/utilities.js'
-import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
+import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor/actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
