@@ -10,16 +10,16 @@ import {
   i18n_f,
   splitArgs,
   generateUniqueId,
-} from '../lib/utilities.js'
-import { parselink } from '../lib/parselink.js'
-import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
-import ApplyDamageDialog from './damage/applydamage.js'
-import * as HitLocations from '../module/hitlocation/hitlocation.js'
-import * as settings from '../lib/miscellaneous-settings.js'
-import { SemanticVersion } from '../lib/semver.js'
-import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } from './actor/maneuver.js'
-import { SmartImporter } from './smart-importer.js'
-import { GurpsItem } from './item.js'
+} from '../../lib/utilities.js'
+import { parselink } from '../../lib/parselink.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import ApplyDamageDialog from '../damage/applydamage.js'
+import * as HitLocations from '../hitlocation/hitlocation.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
+import { SemanticVersion } from '../../lib/semver.js'
+import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } from './maneuver.js'
+import { SmartImporter } from '../smart-importer.js'
+import { GurpsItem } from '../item.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
