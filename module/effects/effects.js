@@ -34,7 +34,7 @@ const statusEffects = [
         key: 'data.conditions.maneuver',
         value: 'do_nothing',
         mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-        priority: 1,
+        priority: 10,
       },
     ],
   },

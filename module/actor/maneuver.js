@@ -10,6 +10,8 @@ export const MOVE_NONE = 'none'
 export const MOVE_FULL = 'full'
 export const MOVE_HALF = 'half'
 
+export const PROPERTY_MOVEOVERRIDE = 'data.moveoverride'
+
 CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
 
@@ -36,17 +38,30 @@ Object.defineProperty(Actor.prototype, 'temporaryEffects', {
  */
 
 /** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string}} _data */
+
+/**
+ * The purpose of this class is to help generate data that can be used in an ActiveEffect.
+ */
 class Maneuver {
   static filepath = 'systems/gurps/icons/maneuvers/'
   /**
    * @param {_data} data
    */
   constructor(data) {
+    data.move = data.move || MOVE_STEP
+    data.defense = data.defense || DEFENSE_ANY
+    data.fullturn = !!data.fullturn
+    data.icon = Maneuver.filepath + data.icon
+    data.alt = !!data.alt ? Maneuver.filepath + data.alt : null
     this._data = data
   }
 
   get icon() {
-    return Maneuver.filepath + this._data.icon
+    return this._data.icon
+  }
+
+  get move() {
+    return this._data.move
   }
 
   /** @returns {ManeuverData} */
@@ -54,15 +69,15 @@ class Maneuver {
     return {
       id: MANEUVER,
       label: this._data.label,
-      icon: Maneuver.filepath + this._data.icon,
+      icon: this._data.icon,
       flags: {
         gurps: {
           name: this._data.name,
-          move: this._data.move ? this._data.move : MOVE_STEP,
-          defense: this._data.defense ? this._data.defense : DEFENSE_ANY,
-          fullturn: this._data.fullturn ? this._data.fullturn : false,
-          icon: Maneuver.filepath + this._data.icon,
-          alt: this._data.alt ? Maneuver.filepath + this._data.alt : this._data.alt,
+          move: this._data.move,
+          defense: this._data.defense,
+          fullturn: this._data.fullturn,
+          icon: this._data.icon,
+          alt: this._data.alt,
         },
       },
       changes: this.changes,
@@ -71,14 +86,18 @@ class Maneuver {
 
   /** @returns {change[]} */
   get changes() {
-    return [
-      {
-        key: 'data.conditions.maneuver',
-        value: this._data.name,
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-        priority: 10,
-      },
-    ]
+    let changes = []
+
+    changes.push({
+      key: 'data.conditions.maneuver',
+      value: this._data.name,
+      mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      priority: 10,
+    })
+
+    changes.push({ key: PROPERTY_MOVEOVERRIDE, value: this.move, mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM })
+
+    return changes
   }
 }
 
@@ -317,8 +336,6 @@ export default class Maneuvers {
   }
 }
 
-Hooks.once('init', () => {})
-
 // on create combatant, set the maneuver
 Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
   if (_game().user?.isGM) {
@@ -340,6 +357,7 @@ Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */
   }
 })
 
+// On delete combat, remove the maneuver from every combatant
 Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _options, /** @type {any} */ _id) => {
   if (_game().user?.isGM) {
     let combatants = combat.data.combatants.contents

@@ -10,16 +10,16 @@ import {
   i18n_f,
   splitArgs,
   generateUniqueId,
-} from '../lib/utilities.js'
-import { parselink } from '../lib/parselink.js'
-import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
-import ApplyDamageDialog from './damage/applydamage.js'
-import * as HitLocations from '../module/hitlocation/hitlocation.js'
-import * as settings from '../lib/miscellaneous-settings.js'
-import { SemanticVersion } from '../lib/semver.js'
-import Maneuvers from './actor/maneuver.js'
-import { SmartImporter } from './smart-importer.js'
-import { GurpsItem } from './item.js'
+} from '../../lib/utilities.js'
+import { parselink } from '../../lib/parselink.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import ApplyDamageDialog from '../damage/applydamage.js'
+import * as HitLocations from '../hitlocation/hitlocation.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
+import { SemanticVersion } from '../../lib/semver.js'
+import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } from './maneuver.js'
+import { SmartImporter } from '../smart-importer.js'
+import { GurpsItem } from '../item.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -31,10 +31,6 @@ export class GurpsActor extends Actor {
   getRollData() {
     const data = super.getRollData()
     return data
-  }
-
-  prepareData() {
-    super.prepareData()
   }
 
   // Return collection os Users that have ownership on this actor
@@ -59,9 +55,29 @@ export class GurpsActor extends Actor {
     }
   }
 
+  prepareData() {
+    super.prepareData()
+    // By default, it does this:
+    // this.data.reset()
+    // this.prepareBaseData()
+    // this.prepareEmbeddedEntities()
+    // this.prepareDerivedData()
+  }
+
+  prepareEmbeddedEntities() {
+    let current = this.data.data.conditions.maneuver
+
+    // Calls this.applyActiveEffects()
+    super.prepareEmbeddedEntities()
+
+    let newValue = this.data.data.conditions.maneuver
+    // if the current value was modified by an ActiveEffect, update the effect icon
+    if (current !== newValue) {
+      this._updateManeuverStatusIcon(newValue)
+    }
+  }
+
   prepareDerivedData() {
-    //    console.log('Prepare data for: ' + this.name)
-    //    console.trace()
     super.prepareDerivedData()
     this.calculateDerivedValues()
   }
@@ -369,7 +385,8 @@ export class GurpsActor extends Actor {
       for (let enckey in encs) {
         let enc = encs[enckey]
         let t = 1.0 - 0.2 * parseInt(enc.level)
-        enc.currentmove = Math.max(1, Math.floor(m * t))
+
+        enc.currentmove = this._getCurrentMove(m, t) //Math.max(1, Math.floor(m * t))
         enc.currentdodge = Math.max(1, d - parseInt(enc.level))
         enc.currentflight = Math.max(1, Math.floor(f * t))
         enc.currentmovedisplay = enc.currentmove
@@ -389,6 +406,28 @@ export class GurpsActor extends Actor {
     if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value)
     if (!data.currentdodge) data.currentdodge = parseInt(data.dodge.value)
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value) * 2
+  }
+
+  _getCurrentMove(move, threshold) {
+    if (foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)) {
+      let value = foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)
+      switch (value) {
+        case MOVE_NONE:
+          return 0
+        case MOVE_STEP:
+          return this._getStep()
+        case MOVE_HALF:
+          move = Math.ceil(move / 2)
+        case MOVE_FULL:
+          break
+      }
+    }
+
+    return Math.max(1, Math.floor(move * threshold))
+  }
+
+  _updateCurrentMoveOverride(change) {
+    foundry.utils.setProperty(this.data, change.key, change.value)
   }
 
   _calculateRangedRanges() {
@@ -467,6 +506,11 @@ export class GurpsActor extends Actor {
     })
   }
 
+  _getStep() {
+    let step = Math.ceil(parseInt(this.data.data.basicmove.value) / 10)
+    return Math.max(1, step)
+  }
+
   /**
    * Calling this will also trigger it being added to the token status icons.
    * @param {string} maneuverText
@@ -513,11 +557,9 @@ export class GurpsActor extends Actor {
    * @returns {Token|null}
    */
   _findTokens() {
-    if (this.isToken) return this.token.object
+    if (this.isToken && this.token.layer) return [this.token.object]
 
-    let tokens = /** @type {Token[]} */ (/** @type {unknown} */ (this.getActiveTokens(false, false)))
-    if (tokens && tokens.length > 0) return tokens[0]
-    return null
+    return /** @type {Token[]} */ (/** @type {unknown} */ (this.getActiveTokens(false, false)))
   }
 
   /**
@@ -525,9 +567,8 @@ export class GurpsActor extends Actor {
    * @param {string} maneuverText
    */
   async _updateManeuverStatusIcon(maneuverText) {
-    let token = this._findTokens()
-    if (token) await token.setManeuver(maneuverText)
-    else console.warn('no tokens found')
+    let tokens = this._findTokens()
+    if (tokens) for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
   /**

@@ -1,5 +1,7 @@
 'use strict'
 
+import Maneuvers, { MOVE_HALF, MOVE_NONE, MOVE_STEP, MOVE_FULL, PROPERTY_MOVEOVERRIDE } from '../actor/maneuver.js'
+
 export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
@@ -28,21 +30,19 @@ export default class GurpsActiveEffect extends ActiveEffect {
       }
     )
 
-    Hooks.on('applyActiveEffect', (...args) => {
-      console.log('apply ' + args)
+    Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
+      if (change.key === PROPERTY_MOVEOVERRIDE) actor._updateCurrentMoveOverride(change)
     })
 
-    Hooks.on(
-      'updateActiveEffect',
-      (
-        /** @type {ActiveEffect} */ effect,
-        /** @type {any} */ _data,
-        /** @type {any} */ _options,
-        /** @type {any} */ _userId
-      ) => {
-        console.log('update ' + effect)
-      }
-    )
+    // Hooks.on(
+    //   'updateActiveEffect',
+    //   (
+    //     /** @type {ActiveEffect} */ effect,
+    //     /** @type {any} */ _data,
+    //     /** @type {any} */ _options,
+    //     /** @type {any} */ _userId
+    //   ) => {}
+    // )
 
     Hooks.on(
       'deleteActiveEffect',
@@ -105,6 +105,19 @@ export default class GurpsActiveEffect extends ActiveEffect {
    */
   static getName(effect) {
     return /** @type {string} */ (effect.getFlag('gurps', 'name'))
+  }
+
+  static async clearEffectsOnSelectedToken() {
+    const effect = _token.actor.effects.contents
+    for (let i = 0; i < effect.length; i++) {
+      let condition = effect[i].data.label
+      let status = effect[i].data.disabled
+      let effect_id = effect[i].data._id
+      console.log(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
+      if (status === false) {
+        await _token.actor.deleteEmbeddedDocuments('ActiveEffect', [effect_id])
+      }
+    }
   }
 }
 
