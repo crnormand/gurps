@@ -22,6 +22,7 @@ console.log(
 This prints: `check: [Broadsword ], modified target: [15], roll total: [13], margin of success: [2]`
 
 - Fixed the /li (light) chat command to correctly accept color intensity value
+- Added [Cool Macros](https://github.com/crnormand/gurps/wiki/Cool-Macros) example wiki page.
 
 Release 0.11.7 - 7/22/2021
 
