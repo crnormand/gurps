@@ -1,8 +1,30 @@
 import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } from '../lib/miscellaneous-settings.js'
+import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
+import { _game } from './global-references.js'
 
 export default class GurpsToken extends Token {
+  static ready() {
+    Hooks.on('createToken', GurpsToken._createToken)
+  }
+
+  /**
+   * @param {GurpsToken} token
+   * @param {any} _data
+   * @param {any} _options
+   * @param {any} _userId
+   */
+  static async _createToken(token, _data, _options, _userId) {
+    console.log(`create Token`)
+    let actor = /** @type {GurpsActor} */ (token.actor)
+    // data protect against bad tokens
+    if (!!actor) {
+      let maneuverText = actor.getGurpsActorData().conditions.maneuver
+      actor.updateManeuver(maneuverText)
+    }
+  }
+
   /**
    * This is a decorator on the standard drawEffects method, that sets the maneuver icons based
    * on level of detail and player visibility.
@@ -59,32 +81,33 @@ export default class GurpsToken extends Token {
    * @param {string} maneuverName
    */
   async setManeuver(maneuverName) {
+    const game = _game()
     // if not in combat, do nothing
-    if (!_game().combats.active) return
-    if (!_game().combats.active.combatants.find(c => c.token.id === this.id)) return
+    if (game.combats && game.combats.active) {
+      if (!game.combats.active.combatants.find(c => c.token?.id === this.id)) return
 
-    // get the new maneuver's data
-    let maneuver = Maneuvers.get(maneuverName)
+      // get the new maneuver's data
+      let maneuver = Maneuvers.get(maneuverName)
 
-    // get all current active effects that are also maneuvers
-    let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
+      // get all current active effects that are also maneuvers
+      let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
 
-    if (maneuvers && maneuvers.length === 1) {
-      // if there is a single active effect maneuver, update its data
-      // @ts-ignore
-      if (maneuvers[0].getFlag('gurps', 'name') !== maneuverName) maneuvers[0].update(maneuver)
-    } else if (!maneuvers || maneuvers.length === 0) {
-      // if there are no active effect maneuvers, add the new one
-      // @ts-ignore
-      await this.toggleEffect(maneuver, { active: true })
-    } else {
-      // if there are more than one active effect maneuvers, that's a problem. Let's remove all of them and add the new one.
-      console.warn(`More than one maneuver found -- try to fix...`)
-      for (const existing of maneuvers) {
-        this._toggleManeuverActiveEffect(existing, { active: false })
+      if (maneuvers && maneuvers.length === 1) {
+        // if there is a single active effect maneuver, update its data
+        // @ts-ignore
+        if (maneuvers[0].getFlag('gurps', 'name') !== maneuverName) maneuvers[0].update(maneuver)
+      } else if (!maneuvers || maneuvers.length === 0) {
+        // if there are no active effect maneuvers, add the new one
+        // @ts-ignore
+        await this.toggleEffect(maneuver, { active: true })
+      } else {
+        // if there are more than one active effect maneuvers, that's a problem. Let's remove all of them and add the new one.
+        console.warn(`More than one maneuver found -- try to fix...`)
+        for (const existing of maneuvers) {
+          this._toggleManeuverActiveEffect(existing, { active: false })
+        }
+        await this.toggleEffect(maneuver, { active: true })
       }
-      // @ts-ignore
-      await this.toggleEffect(maneuver, { active: true })
     }
   }
 
@@ -94,8 +117,10 @@ export default class GurpsToken extends Token {
    * Maneuver.
    */
   async removeManeuver() {
+    let actor = /** @type {GurpsActor} */ (this.actor)
+
     // update the data model
-    this.actor.updateManeuver('do_nothing')
+    actor.updateManeuver('do_nothing')
 
     // get all Active Effects that are also Maneuvers
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
@@ -104,15 +129,11 @@ export default class GurpsToken extends Token {
     }
   }
 
+  /**
+   * @param {ActiveEffect} effect
+   */
   async _toggleManeuverActiveEffect(effect, options = {}) {
     let data = Maneuvers.get(GurpsActiveEffect.getName(effect))
     await this.toggleEffect(data, options)
   }
-}
-
-// -- Functions to get type-safe global references (for TS) --
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized yet!')
 }
