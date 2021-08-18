@@ -353,7 +353,7 @@ Release 0.8.20 - 3/22/2021
 - Fixed GM Send to allow blind rolls
 - Fixed OtF coloration on skills
 - Support adding Resources as a custom damage type (https://github.com/crnormand/gurps/issues/386)
-- Allow the ADD to apply resource damage to the actor's resource tracker (https://github.com/crnormand/gurps/issues/385)
+- Allow the ADD to apply resource damage to the actors resource tracker (https://github.com/crnormand/gurps/issues/385)
 - Changed "User Entered DR" in the ADD to override the hit location DR (so you still get the other benefits of hitting a specific body part).
 - Added Control Points (Fantastic Dungeon Grappling: https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/) as a default Resource Tracker.
 - Modified Resource Trackers to optionally _accumulate_ damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
@@ -391,7 +391,7 @@ Release 0.8.18 - 3/14/2021
 - Fixed bug with clearing a resource tracker.
 - Added custom thresholds and condition names for resource trackers. For a description and instructions, see this link: https://github.com/crnormand/gurps/issues/380
 - Fixed Shotgun RoF (3x9)
-- Added system setting to make player chat commands private (GM's chat commands are already private)
+- Added system setting to make player chat commands private (GMs chat commands are already private)
 - Fixed Skill names that included '(' and ')'
 
 Release 0.8.17 - 3/8/2021
@@ -407,7 +407,7 @@ Release 0.8.17 - 3/8/2021
 Release 0.8.16 - 3/6/2021
 
 - Bug fix for GCA exports. Now equipment with melee & ranged attacks appear in both (Spears)
-- Bug fix for GCA exports (with Armin's help!) Block is calculated correctly for items with DB (shields)
+- Bug fix for GCA exports (with Armins help!) Block is calculated correctly for items with DB (shields)
 - Add doubleclick edit to NPC Sheet Notes, Melee, Ranged, Ads, Skill and Spells list
 - Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be _over_ that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes _more than_ 5 points of damage (i.e., 6).
 - High rate of fire weapons damage is supported directly. Right-click on a damage roll to get a menu to enter the number of hits. There will be a new "ALL THE DAMAGE" draggable section of the damage chat message. Dragging that onto a character will apply all damage rolls in the ADD. The ADD has been enhanced to allow each damage calculation to be displayed, while applying the total.
