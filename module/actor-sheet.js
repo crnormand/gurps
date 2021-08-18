@@ -6,6 +6,7 @@ import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
+import GurpsWiring from './gurps-wiring.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -60,7 +61,9 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
-  /** @override */
+  /** @inheritdoc
+   * @param {JQuery} html
+   */
   activateListeners(html) {
     super.activateListeners(html)
 
@@ -76,7 +79,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('.navigation-link').click(this._onNavigate.bind(this))
     html.find('.rollable').click(this._onClickRoll.bind(this))
-    GURPS.hookupGurps(html)
+    GurpsWiring.hookupGurps(html)
+    // TODO verify if this is duplication of GurpsWiring and if so, remove
     html.find('.gurpslink').contextmenu(this._onRightClickGurpslink.bind(this))
     html.find('.glinkmod').contextmenu(this._onRightClickGurpslink.bind(this))
     html.find('.glinkmodplus').contextmenu(this._onRightClickGurpslink.bind(this))

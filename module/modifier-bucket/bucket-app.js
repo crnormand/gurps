@@ -158,7 +158,7 @@ export class GurpsRoll extends Roll {
    * The Roll is "loaded" if any term has the _loaded property.
    */
   get isLoaded() {
-    return this.terms.find(term => term instanceof GurpsDie && !!term._loaded)
+    return this.terms.some(term => term instanceof GurpsDie && !!term._loaded)
   }
 
   /**
@@ -484,7 +484,7 @@ export class ModifierBucket extends Application {
           JSON.stringify({
             name: 'Modifier Bucket',
             bucket: bucket,
-          })
+          }),
         )
       })
     })
@@ -496,10 +496,12 @@ export class ModifierBucket extends Application {
       event.stopPropagation()
       let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain') || '')
       if (!!dragData && !!dragData.otf) {
-        let action = parselink(dragData.otf)
-        action.action.blindroll = true
-        if (action.action.type == 'modifier' || !!dragData.actor)
-          _GURPS().performAction(action.action, _game().actors?.get(dragData.actor))
+        let link = parselink(dragData.otf)
+        if (link.action) {
+          link.action.blindroll = true
+          if (link.action.type == 'modifier' || !!dragData.actor)
+            _GURPS().performAction(link.action, _game().actors?.get(dragData.actor))
+        }
       }
     })
 

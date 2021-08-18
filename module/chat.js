@@ -3,6 +3,7 @@ import { parselink } from '../lib/parselink.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 import { i18n } from '../lib/utilities.js'
 import ChatProcessor from './chat/chat-processor.js'
+import GurpsWiring from './gurps-wiring.js'
 
 /**
  *  This holds functions for all things chat related
@@ -67,8 +68,8 @@ class ChatProcessorRegistry {
     return this._processors.filter(it => it.isGMOnly())
   }
 
-  // Make a pre-emptive decision if we are going to handle any of the lines in this message
   /**
+   * Make a pre-emptive decision if we are going to handle any of the lines in this message
    * @param {string} message
    */
   willTryToHandle(message) {
@@ -78,20 +79,19 @@ class ChatProcessorRegistry {
     return false
   }
 
-  /* At this point, we just have to assume that we are going to handle some (if not all) of the messages in lines.
+  /**
+   * At this point, we just have to assume that we are going to handle some (if not all) of the messages in lines.
    * From this point on, we want to be in a single thread... so we await any async methods to ensure that
    * we get a response.
-   */
-  /**
    * @param {string} message
-   * @param {{ shiftKey: boolean; ctrlKey: boolean; data: {}; } | undefined} [event]
-   * @param {ChatMessageData} chatmsgData
+   * @param {{shiftKey: boolean;ctrlKey: boolean;data: {};} | undefined} [event]
+   * @param {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData').ChatMessageDataConstructorData | { speaker: any}} chatmsgData
+   * @returns {Promise<boolean>}
    */
   async startProcessingLines(message, chatmsgData, event) {
     if (!chatmsgData)
       chatmsgData = {
         user: _game().user?.id || null,
-        // @ts-ignore
         speaker: {
           actor: !!_GURPS().LastActor ? _GURPS().LastActor.id : undefined,
         },
@@ -381,7 +381,7 @@ export default function addChatHooks() {
     )
 
     Hooks.on('renderChatMessage', (_app, html, _msg) => {
-      _GURPS().hookupGurps(html)
+      GurpsWiring.hookupGurps(html)
       html.find('[data-otf]').each((_, li) => {
         li.setAttribute('draggable', 'true')
         li.addEventListener('dragstart', ev => {

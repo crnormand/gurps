@@ -25,7 +25,7 @@ export default class SlamChatProcessor extends ChatProcessor {
     return line.startsWith('/slam')
   }
 
-  process(line) {
+  async process(line) {
     let actor = GURPS.LastActor
     if (!actor) {
       ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
