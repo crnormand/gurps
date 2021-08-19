@@ -1,7 +1,7 @@
 import { asGurpsActor, _canvas, _game, _GURPS, _ui, _user } from './global-references.js'
 
 // Import Modules
-import { parselink, parseForDamage } from '../lib/parselink.js'
+import { parselink, parseForRollOrDamage } from '../lib/parselink.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 import { GurpsActor } from './actor/actor.js'
 import { GurpsItem } from './item.js'
@@ -641,7 +641,7 @@ async function performAction(action, actor, event = null, targets = []) {
         )
         return false
       }
-      let dam = parseForDamage(att.damage)
+      let dam = parseForRollOrDamage(att.damage)
       if (dam?.action) {
         dam.action.costs = action.costs
         dam.action.mod = action.mod
@@ -755,7 +755,7 @@ async function handleRoll(event, actor, targets) {
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
     let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
-    let result = parseForDamage(f)
+    let result = parseForRollOrDamage(f)
     if (result?.action) performAction(result.action, actor, event, targets)
     return
   } else if ('path' in element.dataset) {
