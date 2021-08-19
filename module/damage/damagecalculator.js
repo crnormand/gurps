@@ -4,6 +4,7 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
 import { i18n, objectToArray } from '../../lib/utilities.js'
+import { asGurpsActor } from '../global-references.js'
 
 /* 
   Crippling injury:
@@ -36,7 +37,7 @@ export class CompositeDamageCalculator {
    * damage.
    *
    * @param {*} defender
-   * @param {Array} damageData
+   * @param {DamageData[]} damageData
    */
   constructor(defender, damageData) {
     this._useBluntTrauma = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLUNT_TRAUMA)
@@ -45,6 +46,8 @@ export class CompositeDamageCalculator {
 
     this._defender = defender
 
+    // The CompositeDamageCalculator has multiple DamageCalculators -- create one per DamageData
+    // and give it a back pointer to the Composite.
     this._calculators = damageData.map(data => new DamageCalculator(this, data))
 
     this.viewId = this._calculators.length == 1 ? 0 : 'all'
@@ -69,6 +72,8 @@ export class CompositeDamageCalculator {
     } else {
       this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
     }
+
+    this._damageModifier = damageData[0].damageModifier
 
     this._armorDivisor = damageData[0].armorDivisor
     if (this._armorDivisor === 0) {
@@ -172,6 +177,10 @@ export class CompositeDamageCalculator {
 
   get calculators() {
     return this._calculators
+  }
+
+  get damageModifier() {
+    return this._damageModifier
   }
 
   get damageType() {
@@ -831,6 +840,10 @@ export class CompositeDamageCalculator {
   }
 }
 
+/**
+ * An individual DamageCalculator is responsible for calculating the damage and effects for a single
+ * damage roll.
+ */
 class DamageCalculator {
   /**
    *
@@ -1060,7 +1073,20 @@ class DamageCalculator {
     }
 
     if (this.isKnockbackEligible) {
-      let knockback = Math.floor(this.effectiveDamage / (this._parent.attributes.ST.value - 2))
+      let st = this._parent.attributes.ST.value
+      let hp = asGurpsActor(this._parent._defender).getGurpsActorData().HP.max
+
+      // if the target has no ST score, use its HPs instead (B378)
+      let knockbackResistance = !st || st == 0 ? hp - 2 : st - 2
+      // if ST or HP is less than 3, knockback is one yard per point of damage (B378)
+      knockbackResistance = Math.max(knockbackResistance, 1)
+      // For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker. (B378)
+      let knockback = Math.floor(this.effectiveDamage / knockbackResistance)
+
+      // TODO this is the default behavior; implement Powers P101 (in which knockback is calculated based on double basic damage)
+      // This lets a crushing or cutting attack inflict twice as much knockback as usual. (B104)
+      if (this._parent._damageModifier === 'dkb') knockback *= 2
+
       if (knockback > 0) {
         let modifier = knockback - 1
         _effects.push({

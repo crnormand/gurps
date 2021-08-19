@@ -1,6 +1,6 @@
 'use strict'
 
-import { d6ify, generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
+import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
 import { _canvas, _GURPS, _user, asGurpsActor, _ui, _game } from '../global-references.js'
 import { GurpsRoll } from '../modifier-bucket/bucket-app.js'
@@ -38,7 +38,7 @@ export default class DamageChat {
    * @param {any} payload drag data
    * @param {Element|undefined} dragImage Element to display while dragging
    * @param {[number, number]} offset drag image offets
-   */
+
   static _makeElementDraggable(element, type, cssClass, payload, dragImage, [x, y]) {
     // make the element draggable
     element.setAttribute('draggable', 'true')
@@ -65,6 +65,7 @@ export default class DamageChat {
       if (ev.currentTarget) $(ev.currentTarget).removeClass(cssClass)
     })
   }
+   */
 
   /**
    * @param {{ data: { flags: { transfer: string; }; }; }} app
@@ -83,13 +84,13 @@ export default class DamageChat {
       for (let index = 0; index < damageMessages.length; index++) {
         let message = damageMessages[index]
 
-        DamageChat._makeElementDraggable(
+        makeElementDraggable(
           message,
           'damageItem',
           'dragging',
           transfer.payload[index],
           GURPS.damageDragImage,
-          [30, 30],
+          [30, 30]
         )
       }
     } // end-if (!!damageMessages && damageMessages.length)
@@ -100,14 +101,7 @@ export default class DamageChat {
       let transfer = JSON.parse(app.data.flags.transfer)
       let message = allDamageMessage[0]
 
-      DamageChat._makeElementDraggable(
-        message,
-        'damageItem',
-        'dragging',
-        transfer.payload,
-        GURPS.damageDragImage,
-        [30, 30],
-      )
+      makeElementDraggable(message, 'damageItem', 'dragging', transfer.payload, GURPS.damageDragImage, [30, 30])
     }
 
     // If there was a target, enable the GM's apply button
@@ -144,7 +138,7 @@ export default class DamageChat {
           height: grid_size,
           width: grid_size,
         },
-        { releaseOthers: true },
+        { releaseOthers: true }
       )
       let targets = [..._user().targets]
 
@@ -190,7 +184,7 @@ export default class DamageChat {
           default: 'apply',
           tokens: targets,
         },
-        { width: 300 },
+        { width: 300 }
       )
       await d.render(true)
 
@@ -427,6 +421,7 @@ export default class DamageChat {
       dice: diceData.diceText,
       damageType: diceData.damageType,
       damageTypeText: diceData.damageType === 'dmg' ? ' ' : `'${diceData.damageType}' `,
+      damageModifier: diceData.extdamagetype,
       armorDivisor: diceData.divisor,
       damage: damage,
       hasExplanation: hasExplanation,
@@ -452,13 +447,15 @@ export default class DamageChat {
       userTarget = _user().targets.values().next().value
     }
 
-    const damageType = diceData.damageType
+    let damageType = diceData.damageType === 'dmg' ? '' : diceData.damageType
+    damageType = !!diceData.extdamagetype ? `${damageType} ${diceData.extdamagetype}` : damageType
+
     let html = await renderTemplate('systems/gurps/templates/damage-message.hbs', {
       draggableData: draggableData,
       rolled: diceData.rolled,
       dice: diceData.diceText,
       loaded: diceData.loaded,
-      damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
+      damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,
     })
@@ -504,7 +501,7 @@ export default class DamageChat {
               type: type,
               vectors: [],
               options: {},
-            }),
+            })
           )
         })
       })

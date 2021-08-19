@@ -1,13 +1,16 @@
 <div class='gurps-app {{classes}}'>
   <div classes='flexcol flex-between'>
 
-    <h2>{{localize "GURPS.addTitleConcat0"}} {{CALC.totalBasicDamage}}
+    <h2>
+      <!-- {Apply} {CALC.totalBasicDamage} {point(s) of} {(armor divisor)} {CALC.damageType}{CALC.damageModifier} {damage to {name}}-->
+      {{localize "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=actor.data.name}}
+      <!-- {{localize "GURPS.addTitleConcat0"}} {{CALC.totalBasicDamage}}
       {{localize (chooseplural CALC.totalBasicDamage "GURPS.addTitleConcat01" "GURPS.addTitleConcat0s")}}
       {{#if (and CALC.useArmorDivisor CALC.armorDivisor)}}
         ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
       {{/if}}
       {{#if (and (ne CALC.damageType 'dmg') (ne CALC.damageType 'none'))}}'{{CALC.damageType}}'{{/if}}
-      {{localize "GURPS.addTitleConcat1" name=actor.data.name}}
+      {{localize "GURPS.addTitleConcat1" name=actor.data.name}} -->
     </h2>
 
     {{#if (gt CALC.length 1)}}
