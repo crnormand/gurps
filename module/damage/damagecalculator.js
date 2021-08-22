@@ -80,7 +80,11 @@ export class CompositeDamageCalculator {
       this._useArmorDivisor = false
     }
 
-    this._hitLocation = this._defender.defaultHitLocation
+    let hitlocations = objectToArray(this._defender.getGurpsActorData().hitlocations)
+    let wheres = hitlocations.map(it => it.where)
+    if (wheres.includes(damageData[0].hitlocation)) this._hitLocation = damageData[0].hitlocation
+    else this._hitLocation = this._defender.defaultHitLocation
+
     this._previousHitLocation = this._hitLocation
     this._userEnteredDR = null
 
