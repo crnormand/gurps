@@ -93,7 +93,7 @@ export default class DamageChat {
           height: grid_size,
           width: grid_size,
         },
-        { releaseOthers: true },
+        { releaseOthers: true }
       )
       let targets = [..._user().targets]
 
@@ -139,7 +139,7 @@ export default class DamageChat {
           default: 'apply',
           tokens: targets,
         },
-        { width: 300 },
+        { width: 300 }
       )
       await d.render(true)
 
@@ -186,7 +186,7 @@ export default class DamageChat {
 
     let draggableData = []
     for (const tokenName of tokenNames) {
-      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods)
+      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods, hitlocation)
       draggableData.push(data)
     }
 
@@ -308,7 +308,7 @@ export default class DamageChat {
    * @param {*} tokenName
    * @param {*} targetmods
    */
-  async _createDraggableSection(actor, diceData, tokenName, targetmods) {
+  async _createDraggableSection(actor, diceData, tokenName, targetmods, hitlocation) {
     let roll = /** @type {GurpsRoll} */ (Roll.create(diceData.formula + `+${diceData.modifier}`))
     await roll.evaluate({ async: true })
 
@@ -385,6 +385,7 @@ export default class DamageChat {
       isB378: b378,
       roll: roll,
       target: tokenName,
+      hitlocation: hitlocation,
     }
     return contentData
   }
@@ -456,7 +457,7 @@ export default class DamageChat {
               type: type,
               vectors: [],
               options: {},
-            }),
+            })
           )
         })
       })

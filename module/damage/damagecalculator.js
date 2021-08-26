@@ -4,6 +4,7 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
 import { i18n, objectToArray } from '../../lib/utilities.js'
+import { asGurpsActor } from '../global-references.js'
 
 /* 
   Crippling injury:
