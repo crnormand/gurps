@@ -424,7 +424,16 @@ async function performAction(action, actor, event = null, targets = []) {
     if (!!action.costs) _GURPS().ModifierBucket.addModifier(0, action.costs)
 
     if (!!action.mod) _GURPS().ModifierBucket.addModifier(action.mod, action.desc || '') // special case where Damage comes from [D:attack + mod]
-    DamageChat.create(actor || _user(), action.formula, action.damagetype, event, null, targets, action.extdamagetype)
+    DamageChat.create(
+      actor || _user(),
+      action.formula,
+      action.damagetype,
+      event,
+      null,
+      targets,
+      action.extdamagetype,
+      action.hitlocation
+    )
     return true
   }
 
@@ -443,7 +452,9 @@ async function performAction(action, actor, event = null, targets = []) {
         action.damagetype,
         event,
         action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
-        targets
+        targets,
+        action.extdamagetype,
+        action.hitlocation
       )
       return true
     } else _ui().notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
@@ -1458,6 +1469,7 @@ Hooks.once('ready', async function () {
 
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
+  HitLocation.ready()
 
   if (_game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
     new ThreeD6({

@@ -25,6 +25,8 @@ This prints: `check: [Broadsword ], modified target: [15], roll total: [13], mar
 - Added [Cool Macros](https://github.com/crnormand/gurps/wiki/Cool-Macros) example wiki page.
 - Implemented double knockback (dkb) damage modifier. E.g., `[3d+1 cr dkb]` works.
 - Implemented no knockback (nkb) damage modifier (`[3d+1 cr nkb]` results in no knockback regardless of target's ST).
+- Updated Brazilian Portuguese language file (thanks, Frerol!). Who wants to tackle Russian and German?
+- Optionally allow a damage OTF to include a hit location. E.g., `[3d cr dkb @Vitals]`. Location must exactly match a hit location on the targeted actor.
 
 Release 0.11.7 - 7/22/2021
 

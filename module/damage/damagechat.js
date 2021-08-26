@@ -32,42 +32,6 @@ import { handleOnPdf } from '../pdf-refs.js'
  */
 export default class DamageChat {
   /**
-   * @param {HTMLElement} element
-   * @param {string} type DragEvent data transfer type
-   * @param {string} cssClass CSS class to apply to element while dragging
-   * @param {any} payload drag data
-   * @param {Element|undefined} dragImage Element to display while dragging
-   * @param {[number, number]} offset drag image offets
-
-  static _makeElementDraggable(element, type, cssClass, payload, dragImage, [x, y]) {
-    // make the element draggable
-    element.setAttribute('draggable', 'true')
-
-    // When drag starts:
-    // - set the class of the target to visibly show that its data is being dragged;
-    // - set the drag image;
-    // - add the data to the event.dataTransfer
-    element.addEventListener('dragstart', ev => {
-      if (ev.currentTarget && ev.dataTransfer) {
-        $(ev.currentTarget).addClass(cssClass)
-
-        if (dragImage) ev.dataTransfer.setDragImage(dragImage, x, y)
-        let data = {
-          type: type,
-          payload: payload,
-        }
-        return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
-      }
-    })
-
-    // When drag ends, remove the class on the target.
-    element.addEventListener('dragend', ev => {
-      if (ev.currentTarget) $(ev.currentTarget).removeClass(cssClass)
-    })
-  }
-   */
-
-  /**
    * @param {{ data: { flags: { transfer: string; }; }; }} app
    * @param {JQuery<HTMLElement>} html
    * @param {any} _msg
@@ -206,9 +170,19 @@ export default class DamageChat {
    * @param {String|null} overrideDiceText ??
    * @param {String[]|undefined} tokenNames
    * @param {String|null} extdamagetype
+   * @param {string|null} hitlocation
    * @returns {Promise<void>}
    */
-  static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames, extdamagetype = null) {
+  static async create(
+    actor,
+    diceText,
+    damageType,
+    event,
+    overrideDiceText,
+    tokenNames,
+    extdamagetype = null,
+    hitlocation = null
+  ) {
     let message = new DamageChat()
 
     const targetmods = await _GURPS().ModifierBucket.applyMods() // append any global mods
@@ -221,7 +195,7 @@ export default class DamageChat {
 
     let draggableData = []
     for (const tokenName of tokenNames) {
-      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods)
+      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods, hitlocation)
       draggableData.push(data)
     }
 
@@ -353,7 +327,7 @@ export default class DamageChat {
    * @param {*} tokenName
    * @param {*} targetmods
    */
-  async _createDraggableSection(actor, diceData, tokenName, targetmods) {
+  async _createDraggableSection(actor, diceData, tokenName, targetmods, hitlocation) {
     let roll = /** @type {GurpsRoll} */ (Roll.create(diceData.formula + `+${diceData.modifier}`))
     await roll.evaluate({ async: true })
 
@@ -430,6 +404,7 @@ export default class DamageChat {
       isB378: b378,
       roll: roll,
       target: tokenName,
+      hitlocation: hitlocation,
     }
     return contentData
   }
