@@ -1,9 +1,11 @@
+import { ChatProcessors } from '../chat.js'
+
 export default class ChatProcessor {
   constructor() {
     /** @type {ChatProcessors|null} */
     this.registry = null
   }
-
+  
   /**
    * Override
    * @param {string} line - chat command
@@ -37,7 +39,7 @@ export default class ChatProcessor {
   }
 
   send() {
-    this.registry.send()
+    this.registry?.send()
   }
 
   /**
@@ -45,24 +47,24 @@ export default class ChatProcessor {
    * @param {boolean | undefined} [force]
    */
   priv(txt, force) {
-    this.registry.priv(txt, force)
+    this.registry?.priv(txt, force)
   }
 
   /**
    * @param {string} txt
    */
   pub(txt) {
-    this.registry.pub(txt)
+    this.registry?.pub(txt)
   }
 
   /**
    * @param {string} txt
    */
   prnt(txt) {
-    this.registry.prnt(txt)
+    this.registry?.prnt(txt)
   }
 
   msgs() {
-    return this.registry.msgs
+    return this.registry?.msgs
   }
 }

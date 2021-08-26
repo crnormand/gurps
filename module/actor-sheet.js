@@ -6,6 +6,7 @@ import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
+import GurpsWiring from './gurps-wiring.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}

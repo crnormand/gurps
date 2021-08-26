@@ -40,8 +40,8 @@ export class FrightCheckChatProcessor extends ChatProcessor {
             },
           },
         },
-        { width: 650 }
-      ).render(true)
+        { width: 650 },
+      ).render(true),
     )
   }
 

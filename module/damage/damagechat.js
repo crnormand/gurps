@@ -2,7 +2,6 @@
 
 import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
-import { _canvas, _GURPS, _user, asGurpsActor, _ui, _game } from '../global-references.js'
 import { handleOnPdf } from '../pdf-refs.js'
 
 /**
@@ -197,7 +196,7 @@ export default class DamageChat {
     targetmods
       .filter(it => !!it.desc)
       .map(it => it.desc)
-      .forEach(it => GURPS.applyModifierDesc(actor, it))
+      .forEach(it => _GURPS().applyModifierDesc(actor, it))
   }
 
   /**
@@ -228,27 +227,27 @@ export default class DamageChat {
     let result = DamageChat.fullRegex.exec(originalDiceText)
 
     if (!result) {
-      ui.notifications.warn(`Invalid Dice formula: "${originalDiceText}"`)
+      _ui().notifications?.warn(`Invalid Dice formula: "${originalDiceText}"`)
       return null
     }
 
-    let diceText = result.groups.roll
+    let diceText = result.groups?.roll || ''
 
     if (originalDiceText.slice(-1) === '!') diceText = diceText + '!'
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
-    let multiplier = !!result.groups.mult ? parseInt(result.groups.mult) : 1
-    let divisor = !!result.groups.divisor ? parseFloat(result.groups.divisor) : 0
+    let multiplier = !!result.groups?.mult ? parseInt(result.groups.mult) : 1
+    let divisor = !!result.groups?.divisor ? parseFloat(result.groups.divisor) : 0
 
     let adds1 = 0
-    let temp = !!result.groups.adds1 ? result.groups.adds1 : ''
+    let temp = !!result.groups?.adds1 ? result.groups.adds1 : ''
     if (!!temp && temp !== '') {
       temp = temp.startsWith('+') ? temp.slice(1) : temp
       adds1 = parseInt(temp)
     }
 
     let adds2 = 0
-    temp = !!result.groups.adds2 ? result.groups.adds2 : ''
+    temp = !!result.groups?.adds2 ? result.groups.adds2 : ''
     if (!!temp && temp !== '') {
       temp = temp.startsWith('+') ? temp.slice(1) : temp
       adds2 = parseInt(temp)
@@ -256,7 +255,7 @@ export default class DamageChat {
 
     let formula = diceText
     let rolled = false
-    if (!!result.groups.D) {
+    if (!!result.groups?.D) {
       rolled = true
       if (result.groups.D === 'd') formula = d6ify(diceText, '[Damage]') // GURPS dice (assume 6)
     }
@@ -310,12 +309,12 @@ export default class DamageChat {
    * @param {*} targetmods
    */
   async _createDraggableSection(actor, diceData, tokenName, targetmods) {
-    let roll = Roll.create(diceData.formula + `+${diceData.modifier}`)
+    let roll = /** @type {GurpsRoll} */ (Roll.create(diceData.formula + `+${diceData.modifier}`))
     await roll.evaluate({ async: true })
 
     let diceValue = parseInt(roll.result.split(' ')[0]) // in 0.8.X, result is string, so must make into int
     let dicePlusAdds = diceValue + diceData.adds1 + diceData.adds2
-    let rollTotal = roll.total
+    let rollTotal = roll.total || 0
     diceData.loaded = roll.isLoaded
 
     let b378 = false
@@ -335,7 +334,7 @@ export default class DamageChat {
         tempString = roll.dice[0].results.map(it => it.result).join()
         tempString = `Rolled (${tempString})`
       } else {
-        tempString = diceValue
+        tempString = diceValue.toString()
       }
 
       if (diceData.adds1 !== 0) {
@@ -399,8 +398,8 @@ export default class DamageChat {
    */
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
     let userTarget = null
-    if (!!game.user.targets.size) {
-      userTarget = game.user.targets.values().next().value
+    if (!!_user().targets.size) {
+      userTarget = _user().targets.values().next().value
     }
 
     let damageType = diceData.damageType === 'dmg' ? '' : diceData.damageType
@@ -416,9 +415,11 @@ export default class DamageChat {
       userTarget: userTarget,
     })
 
+    // @ts-ignore
     const speaker = ChatMessage.getSpeaker(actor)
+    /** @type {Record<string,any>} */
     let messageData = {
-      user: game.user.id,
+      user: _user().id,
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -426,7 +427,7 @@ export default class DamageChat {
     }
 
     if (event?.shiftKey) {
-      messageData.whisper = [game.user.id]
+      messageData.whisper = [_user().id]
     }
 
     messageData['flags.transfer'] = JSON.stringify({
@@ -436,9 +437,14 @@ export default class DamageChat {
     })
 
     if (isNiceDiceEnabled()) {
+      /** @type {GurpsRoll[]} */
       let rolls = draggableData.map(d => d.roll)
       let throws = []
+      /**
+       * @type {{ result: any; resultLabel: any; type: string; vectors: never[]; options: {}; }[]}
+       */
       let dice = []
+
       rolls.shift() // The first roll will be handled by DSN's chat handler... the rest we will manually roll
       rolls.forEach(roll => {
         roll.dice.forEach(die => {
@@ -457,7 +463,8 @@ export default class DamageChat {
       throws.push({ dice: dice })
       if (dice.length > 0) {
         // The user made a "multi-damage" roll... let them see the dice!
-        game.dice3d.show({ throws: throws })
+        // @ts-ignore
+        _game().dice3d.show({ throws: throws })
       }
     } else {
       messageData.sound = CONFIG.sounds.dice

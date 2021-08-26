@@ -18,7 +18,7 @@ const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'te
 // Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
 Object.defineProperty(Actor.prototype, 'temporaryEffects', {
   get: function () {
-    let results = oldTemporaryEffects.get.call(this)
+    let results = oldTemporaryEffects?.get?.call(this)
 
     if (!!results && results.length > 1) {
       // get the active temporary effects that are also maneuvers
