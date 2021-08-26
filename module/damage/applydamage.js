@@ -14,6 +14,7 @@ import {
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
 import { GurpsActor } from '../actor/actor.js'
+import { handleOnPdf } from '../pdf-refs.js'
 
 const simpleDialogHeight = 130
 
@@ -86,7 +87,7 @@ export default class ApplyDamageDialog extends Application {
     super.activateListeners(html)
 
     // Activate all PDF links
-    html.find('.pdflink').click(async ev => game.GURPS.handleOnPdf(ev))
+    html.find('.pdflink').on('click', handleOnPdf)
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 

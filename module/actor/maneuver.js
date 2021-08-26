@@ -31,13 +31,11 @@ Object.defineProperty(Actor.prototype, 'temporaryEffects', {
 })
 
 /**
- * @typedef {{key: string, value: string, mode: number, priority: number}} change
- * @typedef {{id: string, icon: string, label: string, changes?: change[]}} StatusEffect
- * @typedef {{flags: { gurps: { name: string, move: string, defense: string, fullturn: Boolean, icon: string, alt?: string} } }} ManeuverEffect
- * @typedef {StatusEffect & ManeuverEffect} ManeuverData
+ * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, icon: string, alt?: string|null} } }} ManeuverEffect
+ * @typedef {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData').ActiveEffectDataConstructorData & ManeuverEffect} ManeuverData
  */
 
-/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string}} _data */
+/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string|null}} _data */
 
 /**
  * The purpose of this class is to help generate data that can be used in an ActiveEffect.
@@ -84,7 +82,7 @@ class Maneuver {
     }
   }
 
-  /** @returns {change[]} */
+  /** @returns {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData').EffectChangeDataConstructorData[]} */
   get changes() {
     let changes = []
 
@@ -288,10 +286,10 @@ export default class Maneuvers {
 
   /**
    * @param {string} maneuverText
-   * @returns {string}
+   * @returns {string|null}
    */
   static getIcon(maneuverText) {
-    return Maneuvers.getManeuver(maneuverText).icon
+    return Maneuvers.getManeuver(maneuverText).icon ?? null
   }
 
   static getAll() {

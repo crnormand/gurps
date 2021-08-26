@@ -90,7 +90,7 @@ function handlePdf(links) {
     }
     const pdf = ui.PDFoundry.findPDFDataByCode(book)
     if (pdf === undefined) {
-      let url = game.GURPS.SJGProductMappings[book]
+      let url = GURPS.SJGProductMappings[book]
       if (!url) url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
       window.open(url, '_blank')
     } else ui.PDFoundry.openPDF(pdf, { page })

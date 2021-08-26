@@ -10,20 +10,21 @@ import {
   i18n_f,
   splitArgs,
   generateUniqueId,
-} from '../lib/utilities.js'
-import { parselink } from '../lib/parselink.js'
-import { ResourceTrackerManager } from '../module/actor/resource-tracker-manager.js'
-import ApplyDamageDialog from './damage/applydamage.js'
-import * as HitLocations from '../module/hitlocation/hitlocation.js'
-import * as settings from '../lib/miscellaneous-settings.js'
-import { SemanticVersion } from '../lib/semver.js'
-import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } from './actor/maneuver.js'
-import { SmartImporter } from './smart-importer.js'
-import { GurpsItem } from './item.js'
+} from '../../lib/utilities.js'
+import { parselink } from '../../lib/parselink.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import ApplyDamageDialog from '../damage/applydamage.js'
+import * as HitLocations from '../hitlocation/hitlocation.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
+import { SemanticVersion } from '../../lib/semver.js'
+import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } from './maneuver.js'
+import { SmartImporter } from '../smart-importer.js'
+import { GurpsItem } from '../item.js'
+import GurpsToken from '../token.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
-  await actor.update({ 'data.migrationversion': _game().system.data.version })
+  await actor.update({ 'data.migrationversion': game.system.data.version })
 })
 
 export class GurpsActor extends Actor {
@@ -33,10 +34,18 @@ export class GurpsActor extends Actor {
     return data
   }
 
+  /**
+   * @returns {GurpsActorData}
+   */
+  getGurpsActorData() {
+    // @ts-ignore
+    return this.data.data
+  }
+
   // Return collection os Users that have ownership on this actor
   getOwners() {
     // @ts-ignore
-    return _game().users?.contents.filter(u => this.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
+    return game.users?.contents.filter(u => this.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
   }
 
   // 0.8.x added steps necessary to switch sheets
@@ -115,7 +124,7 @@ export class GurpsActor extends Actor {
     for (const item of good) await this.addItemData(item.data) // re-add the item equipment and features
     this.ignoreRender = false
 
-    await this.update({ 'data.migrationversion': _game().system.data.version }, { diff: false, render: false })
+    await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
   }
@@ -144,9 +153,9 @@ export class GurpsActor extends Actor {
     if (!!data.equipment && !data.equipment.carried) data.equipment.carried = {} // data protection
     if (!!data.equipment && !data.equipment.other) data.equipment.other = {}
 
-    let v = data.migrationversion
-    if (!v) return // Prior to v0.9.6, this did not exist
-    v = SemanticVersion.fromString(v)
+    if (!data.migrationversion) return // Prior to v0.9.6, this did not exist
+    let v = /** @type {SemanticVersion} */ (SemanticVersion.fromString(data.migrationversion))
+
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     for (const attr in data.attributes) {
       data.attributes[attr].value = +data.attributes[attr].import
@@ -199,27 +208,23 @@ export class GurpsActor extends Actor {
   _applyItemBonuses() {
     let pi = n => (!!n ? parseInt(n) : 0)
     let gids = [] //only allow each global bonus to add once
-    const data = this.data.data
+    const data = this.getGurpsActorData()
     for (const item of this.items.contents) {
-      if (
-        item.data.data.equipped &&
-        item.data.data.carried &&
-        !!item.data.data.bonuses &&
-        !gids.includes(item.data.data.globalid)
-      ) {
-        gids.push(item.data.data.globalid)
-        let bonuses = item.data.data.bonuses.split('\n')
+      let itemData = GurpsItem.asGurpsItem(item).getGurpsItemData()
+      if (itemData.equipped && itemData.carried && !!itemData.bonuses && !gids.includes(itemData.globalid)) {
+        gids.push(itemData.globalid)
+        let bonuses = itemData.bonuses.split('\n')
         for (let bonus of bonuses) {
           let m = bonus.match(/\[(.*)\]/)
           if (!!m) bonus = m[1] // remove extranious  [ ]
-          let action = parselink(bonus) // ATM, we only support attribute and skill
-          if (!!action.action) {
+          let link = parselink(bonus) // ATM, we only support attribute and skill
+          if (!!link.action) {
             // start OTF
             recurselist(data.melee, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute' && action.action.attrkey == 'DX') {
+              if (link.action.type == 'attribute' && link.action.attrkey == 'DX') {
                 // All melee attack skills affected by DX
-                e.level += pi(action.action.mod)
+                e.level += pi(link.action.mod)
                 if (!isNaN(parseInt(e.parry))) {
                   // handles '11f'
                   let m = (e.parry + '').match(/(\d+)(.*)/)
@@ -233,9 +238,9 @@ export class GurpsActor extends Actor {
                   if (!!e.blockbonus) e.block += pi(e.blockbonus)
                 }
               }
-              if (action.action.type == 'attack' && !!action.action.isMelee) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) {
-                  e.level += pi(action.action.mod)
+              if (link.action.type == 'attack' && !!link.action.isMelee) {
+                if (e.name.match(makeRegexPatternFrom(link.action.name, false))) {
+                  e.level += pi(link.action.mod)
                   if (!isNaN(parseInt(e.parry))) {
                     // handles '11f'
                     let m = (e.parry + '').match(/(\d+)(.*)/)
@@ -253,55 +258,55 @@ export class GurpsActor extends Actor {
             }) // end melee
             recurselist(data.ranged, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute' && action.action.attrkey == 'DX') e.level += pi(action.action.mod)
-              if (action.action.type == 'attack' && !!action.action.isRanged) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
+              if (link.action.type == 'attribute' && link.action.attrkey == 'DX') e.level += pi(link.action.mod)
+              if (link.action.type == 'attack' && !!link.action.isRanged) {
+                if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
               }
             }) // end ranged
             recurselist(data.skills, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {
+              if (link.action.type == 'attribute') {
                 // skills affected by attribute changes
-                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey)) e.level += pi(action.action.mod)
+                if (e.relativelevel?.toUpperCase().startsWith(link.action.attrkey)) e.level += pi(link.action.mod)
               }
-              if (action.action.type == 'skill-spell' && !action.action.isSpellOnly) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
+              if (link.action.type == 'skill-spell' && !link.action.isSpellOnly) {
+                if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
               }
             }) // end skills
             recurselist(data.spells, (e, k, d) => {
               e.level = pi(e.level)
-              if (action.action.type == 'attribute') {
+              if (link.action.type == 'attribute') {
                 // spells affected by attribute changes
-                if (e.relativelevel?.toUpperCase().startsWith(action.action.attrkey)) e.level += pi(action.action.mod)
+                if (e.relativelevel?.toUpperCase().startsWith(link.action.attrkey)) e.level += pi(link.action.mod)
               }
-              if (action.action.type == 'skill-spell' && !action.action.isSkillOnly) {
-                if (e.name.match(makeRegexPatternFrom(action.action.name, false))) e.level += pi(action.action.mod)
+              if (link.action.type == 'skill-spell' && !link.action.isSkillOnly) {
+                if (e.name.match(makeRegexPatternFrom(link.action.name, false))) e.level += pi(link.action.mod)
               }
             }) // end spells
-            if (action.action.type == 'attribute') {
-              let paths = action.action.path.split('.')
+            if (link.action.type == 'attribute') {
+              let paths = link.action.path.split('.')
               let last = paths.pop()
-              let data = this.data.data
+              let data = this.getGurpsActorData()
               if (paths.length > 0) data = getProperty(data, paths.join('.'))
               // regular attributes have a path
               else {
                 // only accept DODGE
-                if (action.action.attrkey != 'DODGE') break
+                if (link.action.attrkey != 'DODGE') break
               }
-              data[last] = pi(data[last]) + pi(action.action.mod) // enforce that attribute is int
+              data[last] = pi(data[last]) + pi(link.action.mod) // enforce that attribute is int
             } // end attributes & Dodge
           } // end OTF
           // parse bonus for other forms, DR+x?
           m = bonus.match(/DR *([+-]\d+) *(.*)/) // DR+1 *Arms "Left Leg" ...
           if (!!m) {
             let delta = parseInt(m[1])
-            let locpatterns = false
+            let locpatterns = null
             if (!!m[2]) {
               let locs = splitArgs(m[2])
               locpatterns = locs.map(l => new RegExp(makeRegexPatternFrom(l), 'i'))
             }
             recurselist(data.hitlocations, (e, k, d) => {
-              if (locpatterns == false || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
+              if (!locpatterns || locpatterns.find(p => !!e.where && e.where.match(p)) != null) {
                 let dr = e.dr ?? ''
                 dr += ''
                 let m = dr.match(/(\d+) *([/\|]) *(\d+)/) // check for split DR 5|3 or 5/3
@@ -318,6 +323,11 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {string} key
+   * @param {any} id
+   * @returns {string | undefined}
+   */
   _findEqtkeyForId(key, id) {
     var eqtkey
     recurselist(this.data.data.equipment.carried, (e, k, d) => {
@@ -330,6 +340,11 @@ export class GurpsActor extends Actor {
     return eqtkey
   }
 
+  /**
+   * @param {Record<string,any>} dict
+   * @param {string} type
+   * @returns {number}
+   */
   _sumeqt(dict, type, checkEquipped = false) {
     if (!dict) return 0.0
     let flt = str => (!!str ? parseFloat(str) : 0)
@@ -352,17 +367,17 @@ export class GurpsActor extends Actor {
       eqtlbs: this._sumeqt(
         eqt.carried,
         'weight',
-        _game().settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)
+        game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CHECK_EQUIPPED)
       ),
       othercost: this._sumeqt(eqt.other, 'cost'),
     }
-    if (_game().settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE))
       this.checkEncumbance(eqtsummary.eqtlbs)
     this.data.data.eqtsummary = eqtsummary
   }
 
   _calculateEncumbranceIssues() {
-    const data = this.data.data
+    const data = this.getGurpsActorData()
     const encs = data.encumbrance
     const isReeling = !!data.additionalresources.isReeling
     const isTired = !!data.additionalresources.isTired
@@ -408,6 +423,11 @@ export class GurpsActor extends Actor {
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value) * 2
   }
 
+  /**
+   * @param {number} move
+   * @param {number} threshold
+   * @returns {number}
+   */
   _getCurrentMove(move, threshold) {
     if (foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)) {
       let value = foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)
@@ -426,12 +446,15 @@ export class GurpsActor extends Actor {
     return Math.max(1, Math.floor(move * threshold))
   }
 
+  /**
+   * @param {Record<string,any>} change
+   */
   _updateCurrentMoveOverride(change) {
     foundry.utils.setProperty(this.data, change.key, change.value)
   }
 
   _calculateRangedRanges() {
-    if (!_game().settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) return
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) return
     let st = +this.data.data.attributes.ST.value
     recurselist(this.data.data.ranged, r => {
       let rng = r.range || '' // Data protection
@@ -458,6 +481,9 @@ export class GurpsActor extends Actor {
   }
 
   // convert Item feature OTF formulas into actual skill levels.
+  /**
+   * @param {Object} list
+   */
   _collapseQuantumEq(list, isMelee = false) {
     recurselist(list, async e => {
       let otf = e.otf
@@ -514,7 +540,6 @@ export class GurpsActor extends Actor {
   /**
    * Calling this will also trigger it being added to the token status icons.
    * @param {string} maneuverText
-   * @param {string} tokenId
    */
   async updateManeuver(maneuverText) {
     await this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true })
@@ -528,9 +553,17 @@ export class GurpsActor extends Actor {
     Object.values(this.apps).forEach(it => it.render(false))
   }
 
-  /** @override */
-  async update(data, options) {
-    if (_game().settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
+  /**
+   * Update this Document using incremental data, saving it to the database.
+   * @see {@link Document.updateDocuments}
+   * @param {any} data - Differential update data which modifies the existing values of this document data
+   *                     (default: `{}`)
+   * @param {any} [context] - Additional context which customizes the update workflow (default: `{}`)
+   * @returns {Promise<this | undefined>} The updated Document instance
+   * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
+   */
+  async update(data, context) {
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('data.HP.value')) {
         let flag = data['data.HP.value'] < this.data.data.HP.max / 3
         if (!!this.data.data.additionalresources.isReeling != flag) this.changeOneThirdStatus('isReeling', flag)
@@ -541,7 +574,7 @@ export class GurpsActor extends Actor {
       }
     }
 
-    await super.update(data, options)
+    let result = await super.update(data, context)
 
     // if changing the maneuver, update the icons
     if (data.hasOwnProperty('data.conditions.maneuver')) {
@@ -549,17 +582,19 @@ export class GurpsActor extends Actor {
       await this._updateManeuverStatusIcon(maneuverText)
     }
 
-    _game().GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
+    GURPS.ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
+    return result
   }
 
   /**
-   * @param {string} tokenId
-   * @returns {Token|null}
+   * @returns {GurpsToken[]}
    */
   _findTokens() {
-    if (this.isToken && this.token.layer) return [this.token.object]
-
-    return /** @type {Token[]} */ (/** @type {unknown} */ (this.getActiveTokens(false, false)))
+    if (this.isToken && this.token?.layer) {
+      let token = /** @type {GurpsToken} */ (this.token.object)
+      return [token]
+    }
+    return this.getActiveTokens().map(it => /** @type {GurpsToken} */ (it))
   }
 
   /**
@@ -629,6 +664,11 @@ export class GurpsActor extends Actor {
   }
 
   // First attempt at import GCS FG XML export data.
+  /**
+   * @param {string} xml
+   * @param {string} importname
+   * @param {string | undefined} [importpath]
+   */
   async importFromGCSv1(xml, importname, importpath) {
     const GCAVersion = 'GCA-9'
     const GCSVersion = 'GCS-5'
@@ -636,7 +676,7 @@ export class GurpsActor extends Actor {
     let isFoundryGCS = false
     let isFoundryGCA = false
     // need to remove <p> and replace </p> with newlines from "formatted text"
-    let origx = _game().GURPS.cleanUpP(xml)
+    let origx = GURPS.cleanUpP(xml)
     let x = xmlTextToJson(origx)
     let r = x.root
     let msg = []
@@ -731,9 +771,9 @@ export class GurpsActor extends Actor {
 
       ChatMessage.create({
         content: content,
-        user: _game().user.id,
+        user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [_game().user.id],
+        whisper: [game.user.id],
       })
       if (exit) return false // Some errors cannot be forgiven ;-)
     }
@@ -743,7 +783,7 @@ export class GurpsActor extends Actor {
 
     let commit = {}
 
-    if (!_game().settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
       commit = { ...commit, ...{ name: nm } }
       commit = { ...commit, ...{ 'token.name': nm } }
     }
@@ -788,10 +828,10 @@ export class GurpsActor extends Actor {
 
       ui.notifications.warn(msg)
       let chatData = {
-        user: _game().user.id,
+        user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         content: content,
-        whisper: [_game().user.id],
+        whisper: [game.user.id],
       }
       ChatMessage.create(chatData, {})
       // Don't return, because we want to see how much actually gets committed.
@@ -826,10 +866,10 @@ export class GurpsActor extends Actor {
       })
 
       let chatData = {
-        user: _game().user.id,
+        user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         content: content,
-        whisper: [_game().user.id],
+        whisper: [game.user.id],
       }
       ChatMessage.create(chatData, {})
       return false
@@ -837,6 +877,9 @@ export class GurpsActor extends Actor {
   }
 
   // hack to get to private text element created by xml->json method.
+  /**
+   * @param {Record<string,any>} o
+   */
   textFrom(o) {
     if (!o) return ''
     let t = o['#text']
@@ -845,6 +888,9 @@ export class GurpsActor extends Actor {
   }
 
   // similar hack to get text as integer.
+  /**
+   * @param {Record<string,any>} o
+   */
   intFrom(o) {
     if (!o) return 0
     let i = o['#text']
@@ -852,6 +898,9 @@ export class GurpsActor extends Actor {
     return parseInt(i)
   }
 
+  /**
+   * @param {Record<string,any>} o
+   */
   floatFrom(o) {
     if (!o) return 0
     let f = o['#text']
@@ -859,6 +908,10 @@ export class GurpsActor extends Actor {
     return parseFloat(f)
   }
 
+  /**
+   * @param {string} list
+   * @param {string|boolean} uuid
+   */
   _findElementIn(list, uuid, name = '', mode = '') {
     var foundkey
     let l = getProperty(this.data.data, list)
@@ -868,11 +921,19 @@ export class GurpsActor extends Actor {
     return foundkey == null ? foundkey : getProperty(this.data.data, list + '.' + foundkey)
   }
 
+  /**
+   * This merges equipment based on name.
+   * @param {string | null} nst
+   * @param {string} ost
+   */
   _tryToMerge(nst, ost) {
     if (ost.startsWith(nst)) return ost
     else return nst
   }
 
+  /**
+   * @param {Record<string,any>} json
+   */
   importReactionsFromGCSv2(json) {
     if (!json) return
     let t = this.textFrom
@@ -885,7 +946,7 @@ export class GurpsActor extends Actor {
         let r = new Reaction()
         r.modifier = t(j.modifier)
         r.situation = t(j.situation)
-        _game().GURPS.put(rs, r, index++)
+        GURPS.put(rs, r, index++)
       }
     }
     return {
@@ -894,6 +955,9 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {Record<string,any>} json
+   */
   importReactionsFromGCA(json) {
     if (!json) return
     let text = this.textFrom(json)
@@ -907,7 +971,7 @@ export class GurpsActor extends Actor {
         let mod = t.substring(0, i)
         let sit = t.substr(i + 1)
         let r = new Reaction(mod, sit)
-        _game().GURPS.put(rs, r, index++)
+        GURPS.put(rs, r, index++)
       }
     })
     return {
@@ -916,6 +980,9 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {{ attributes: Record<string, any>; ads: Record<string, any>; disads: Record<string, any>; quirks: Record<string, any>; skills: Record<string, any>; spells: Record<string, any>; unspentpoints: Record<string, any>; totalpoints: Record<string, any>; race: Record<string, any>; }} json
+   */
   importPointTotalsFromGCSv1(json) {
     if (!json) return
 
@@ -933,12 +1000,17 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {Record<string, any>} descjson
+   * @param {Record<string, any>} json
+   */
   importNotesFromGCSv1(descjson, json) {
     if (!json) return
     let t = this.textFrom
     let temp = []
     if (!!descjson) {
       // support for GCA description
+
       let n = new Note()
       n.notes = t(descjson).replace(/\\r/g, '\n')
       n.imported = true
@@ -973,6 +1045,10 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {{ [x: string]: any; bodyplan: Record<string, any>; }} json
+   * @param {boolean} isFoundryGCA
+   */
   async importProtectionFromGCSv1(json, isFoundryGCA) {
     if (!json) return
     let t = this.textFrom
@@ -1056,13 +1132,16 @@ export class GurpsActor extends Actor {
         if (results.length > 1) {
           // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
           let d = ''
-          var last
+
+          /** @type {string | null} */
+          let last = null
           results.forEach(r => {
             if (r.import != last) {
               d += '|' + r.import
               last = r.import
             }
           })
+
           if (!!d) d = d.substr(1)
           results[0].import = d
         }
@@ -1078,11 +1157,11 @@ export class GurpsActor extends Actor {
 
     let prot = {}
     let index = 0
-    temp.forEach(it => _game().GURPS.put(prot, it, index++))
+    temp.forEach(it => GURPS.put(prot, it, index++))
 
     let saveprot = true
     if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
-      let option = _game().settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN)
+      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN)
       if (option == 1) {
         saveprot = false
       }
@@ -1091,10 +1170,10 @@ export class GurpsActor extends Actor {
           let d = new Dialog({
             title: 'Hit Location Body Plan',
             content:
-              `Do you want to <br><br><b>Save</b> the current Body Plan (${_game().i18n.localize(
+              `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
                 'GURPS.BODYPLAN' + data.additionalresources.bodyplan
               )}) or ` +
-              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${_game().i18n.localize(
+              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
                 'GURPS.BODYPLAN' + bodyplan
               )})?<br><br>&nbsp;`,
             buttons: {
@@ -1174,12 +1253,19 @@ export class GurpsActor extends Actor {
     return name
   }
 
+  /**
+   * @param {Record<string,any>} json
+   * @param {boolean} isFoundryGCS
+   */
   importEquipmentFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let t = this.textFrom
     let i = this.intFrom
     let f = this.floatFrom
 
+    /**
+     * @type {Equipment[]}
+     */
     let temp = []
     for (let key in json) {
       if (key.startsWith('id-')) {
@@ -1248,7 +1334,7 @@ export class GurpsActor extends Actor {
       if (!!eqt.parentuuid) {
         let parent = null
         parent = temp.find(e => e.uuid === eqt.parentuuid)
-        if (!!parent) _game().GURPS.put(parent.contains, eqt)
+        if (!!parent) GURPS.put(parent.contains, eqt)
         else eqt.parentuuid = '' // Can't find a parent, so put it in the top list
       }
     })
@@ -1274,13 +1360,16 @@ export class GurpsActor extends Actor {
   }
 
   // Fold a flat array into a hierarchical target object
+  /**
+   * @param {any[]} flat
+   */
   foldList(flat, target = {}) {
     flat.forEach(obj => {
       if (!!obj.parentuuid) {
         const parent = flat.find(o => o.uuid == obj.parentuuid)
         if (!!parent) {
           if (!parent.contains) parent.contains = {} // lazy init for older characters
-          _game().GURPS.put(parent.contains, obj)
+          GURPS.put(parent.contains, obj)
         } else obj.parentuuid = '' // Can't find a parent, so put it in the top list.  should never happen with GCS
       }
     })
@@ -1291,6 +1380,9 @@ export class GurpsActor extends Actor {
     return target
   }
 
+  /**
+   * @param {{ [x: string]: Record<string, any>; }} json
+   */
   importEncumbranceFromGCSv1(json) {
     if (!json) return
     let t = this.textFrom
@@ -1316,7 +1408,7 @@ export class GurpsActor extends Actor {
         cm = e.move
         cd = e.dodge
       }
-      _game().GURPS.put(es, e, index++)
+      GURPS.put(es, e, index++)
     }
     return {
       'data.currentmove': cm,
@@ -1326,6 +1418,10 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {Skill|Spell|Ranged|Melee} oldobj
+   * @param {Skill|Spell|Ranged|Melee} newobj
+   */
   _migrateOtfs(oldobj, newobj) {
     newobj.checkotf = oldobj.checkotf
     newobj.duringotf = oldobj.duringotf
@@ -1333,6 +1429,10 @@ export class GurpsActor extends Actor {
     newobj.failotf = oldobj.failotf
   }
 
+  /**
+   * @param {Record<string,any>} json
+   * @param {boolean} isFoundryGCS
+   */
   importCombatMeleeFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let t = this.textFrom
@@ -1385,6 +1485,10 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {Record<string,any>} json
+   * @param {boolean} isFoundryGCS
+   */
   importCombatRangedFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let t = this.textFrom
@@ -1429,7 +1533,7 @@ export class GurpsActor extends Actor {
               r.notes = this._tryToMerge(r.notes, old.notes)
               this._migrateOtfs(old, r)
             }
-            _game().GURPS.put(ranged, r, index++)
+            GURPS.put(ranged, r, index++)
           }
         }
       }
@@ -1440,6 +1544,9 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {{ race: Record<string, any>; height: Record<string, any>; weight: Record<string, any>; age: Record<string, any>; title: Record<string, any>; player: Record<string, any>; createdon: Record<string, any>; modifiedon: Record<string, any>; religion: Record<string, any>; birthday: Record<string, any>; hand: Record<string, any>; sizemodifier: Record<string, any>; tl: Record<string, any>; appearance: Record<string, any>; }} json
+   */
   importTraitsfromGCSv1(json) {
     if (!json) return
     let t = this.textFrom
@@ -1481,6 +1588,9 @@ export class GurpsActor extends Actor {
   }
 
   // Import the <attributes> section of the GCS FG XML file.
+  /**
+   * @param {Record<string, any>} json
+   */
   async importAttributesFromCGSv1(json) {
     if (!json) return
     let i = this.intFrom // shortcut to make code smaller
@@ -1510,7 +1620,7 @@ export class GurpsActor extends Actor {
     let fp = i(json.fps)
     let saveCurrent = false
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
-      let option = _game().settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)
+      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)
       if (option == 0) {
         saveCurrent = true
       }
@@ -1588,6 +1698,10 @@ export class GurpsActor extends Actor {
   // create/update the skills.
   // NOTE:  For the update to work correctly, no two skills can have the same name.
   // When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
+  /**
+   * @param {Record<string,any>} json
+   * @param {boolean} isFoundryGCS
+   */
   importSkillsFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let temp = []
@@ -1628,6 +1742,10 @@ export class GurpsActor extends Actor {
   // create/update the spells.
   // NOTE:  For the update to work correctly, no two spells can have the same name.
   // When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
+  /**
+   * @param {Record<string,any>} json
+   * @param {boolean} isFoundryGCS
+   */
   importSpellsFromGCSv1(json, isFoundryGCS) {
     if (!json) return
     let temp = []
@@ -1679,6 +1797,10 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {Record<string, any>} adsjson
+   * @param {Record<string, any>} disadsjson
+   */
   importAdsFromGCA(adsjson, disadsjson) {
     let list = []
     this.importBaseAdvantages(list, adsjson)
@@ -1689,6 +1811,10 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {Advantage[]} datalist
+   * @param {Record<string,any>} json
+   */
   importBaseAdvantages(datalist, json) {
     if (!json) return
     let t = this.textFrom /// shortcut to make code smaller
@@ -1714,6 +1840,9 @@ export class GurpsActor extends Actor {
   }
 
   // In the new GCS import, all ads/disad/quirks/perks are in one list.
+  /**
+   * @param {Record<string,any>} json
+   */
   importAdsFromGCSv2(json) {
     let t = this.textFrom /// shortcut to make code smaller
     let temp = []
@@ -1810,7 +1939,7 @@ export class GurpsActor extends Actor {
   async removeTracker(path) {
     // verify that this is a Tracker
     if (!path.startsWith('additionalresources.tracker.'))
-      throw `Invalid actor data path, actor=[${this.actor.id}] path=[${path}]`
+      throw `Invalid actor data path, actor=[${this.id}] path=[${path}]`
 
     let update = {}
     update[`data.${path}`] = {
@@ -1830,13 +1959,19 @@ export class GurpsActor extends Actor {
 
   // --- Functions to handle events on actor ---
 
+  /**
+   * @param {any[]} damageData
+   */
   handleDamageDrop(damageData) {
-    if (_game().user.isGM || !_game().settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD))
+    if (game.user.isGM || !game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD))
       new ApplyDamageDialog(this, damageData).render(true)
     else ui.notifications.warn('Only GMs are allowed to Apply Damage.')
   }
 
   // Drag and drop from Item colletion
+  /**
+   * @param {{ type: any; x?: number; y?: number; payload?: any; pack?: any; id?: any; data?: any; }} dragData
+   */
   async handleItemDrop(dragData) {
     if (!this.isOwner) {
       ui.notifications.warn(i18n('GURPS.youDoNotHavePermssion'))
@@ -1865,6 +2000,9 @@ export class GurpsActor extends Actor {
   }
 
   // Drag and drop from an equipment list
+  /**
+   * @param {{ type?: string; x?: number; y?: number; payload?: any; actorid?: any; itemid?: any; isLinked?: any; key?: any; itemData?: any; }} dragData
+   */
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
@@ -1875,7 +2013,7 @@ export class GurpsActor extends Actor {
       ui.notifications.warn("You cannot drag from an un-linked token.   The source must have 'Linked Actor Data'")
       return
     }
-    let srcActor = _game().actors.get(dragData.actorid)
+    let srcActor = game.actors.get(dragData.actorid)
     let eqt = getProperty(srcActor.data, dragData.key)
     if (
       (!!eqt.contains && Object.keys(eqt.contains).length > 0) ||
@@ -1884,6 +2022,7 @@ export class GurpsActor extends Actor {
       ui.notifications.warn('You cannot transfer an Item that contains other equipment.')
       return
     }
+
     if (!!this.isOwner && !!srcActor.isOwner) {
       // same owner
       if (eqt.count < 2) {
@@ -1914,12 +2053,14 @@ export class GurpsActor extends Actor {
           if (qty >= eqt.count) await srcActor.deleteEquipment(dragData.key)
           else await srcActor.updateEqtCount(dragData.key, eqt.count - qty)
         }
+
         Dialog.prompt({
           title: i18n('GURPS.TransferTo') + ' ' + this.name,
           label: i18n('GURPS.ok'),
           content: content,
           callback: callback,
-          rejectClose: false,
+          // FIXME rejectClose is not a member of Dialog.prompt(). Did you mean Dialog.confirm()?
+          // rejectClose: false,
         })
       }
     } else {
@@ -1936,14 +2077,14 @@ export class GurpsActor extends Actor {
         })
       }
       if (count > eqt.count) count = eqt.count
-      let destowner = _game().users?.players.find(p => this.testUserPermission(p, 'OWNER'))
+      let destowner = game.users?.players.find(p => this.testUserPermission(p, 'OWNER'))
       if (!!destowner) {
         ui.notifications.info(`Asking ${this.name} if they want ${eqt.name}`)
         dragData.itemData.data.eqt.count = count // They may not have given all of them
-        _game().socket.emit('system.gurps', {
+        game.socket.emit('system.gurps', {
           type: 'dragEquipment1',
           srckey: dragData.key,
-          srcuserid: _game().user.id,
+          srcuserid: game.user.id,
           srcactorid: dragData.actorid,
           destuserid: destowner.id,
           destactorid: this.id,
@@ -1955,6 +2096,9 @@ export class GurpsActor extends Actor {
   }
 
   // Called from the ItemEditor to let us know our personal Item has been modified
+  /**
+   * @param {Item} item
+   */
   async updateItem(item) {
     delete item.editingActor
     this.ignoreRender = true
@@ -1983,7 +2127,11 @@ export class GurpsActor extends Actor {
 
   // create a new embedded item based on this item data and place in the carried list
   // This is how all Items are added originally.
-  async addNewItemData(itemData, targetkey) {
+  /**
+   * @param {ItemData} itemData
+   * @param {string | null} [targetkey]
+   */
+  async addNewItemData(itemData, targetkey = null) {
     let d = itemData
     if (typeof itemData.toObject === 'function') d = itemData.toObject()
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
@@ -1993,6 +2141,10 @@ export class GurpsActor extends Actor {
   }
 
   // Once the Items has been added to our items list, add the equipment and any features
+  /**
+   * @param {ItemData} itemData
+   * @param {string | null} [targetkey]
+   */
   async addItemData(itemData, targetkey) {
     let [eqtkey, addFeatures] = await this._addNewItemEquipment(itemData, targetkey)
     if (addFeatures) {
@@ -2001,6 +2153,10 @@ export class GurpsActor extends Actor {
   }
 
   // Make the initial equipment object (unless it already exists, saved in a user equipment)
+  /**
+   * @param {ItemData} itemData
+   * @param {string | null} targetkey
+   */
   async _addNewItemEquipment(itemData, targetkey) {
     let existing = this._findEqtkeyForId('itemid', itemData._id)
     if (!!existing) {
@@ -2039,15 +2195,19 @@ export class GurpsActor extends Actor {
       eqt.itemid = itemData._id
       eqt.globalid = itemData.data.globalid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = itemData.data.equipped ?? true
+      eqt.equipped = !!itemData.data.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = itemData.data.carried ?? true
+      eqt.carried = !!itemData.data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
       return [targetkey, eqt.carried && eqt.equipped]
     }
   }
 
+  /**
+   * @param {GurpsItemData} itemData
+   * @param {string} eqtkey
+   */
   async _addItemAdditions(itemData, eqtkey) {
     let commit = {}
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'melee')) }
@@ -2060,11 +2220,20 @@ export class GurpsActor extends Actor {
   }
 
   // called when equipment is being moved
+  /**
+   * @param {Equipment} eqt
+   * @param {string} targetPath
+   */
   async updateItemAdditionsBasedOn(eqt, targetPath) {
     await this._updateEqtStatus(eqt, targetPath, targetPath.includes('.carried'))
   }
 
   // Equipment may carry other eqt, so we must adjust the carried status all the way down.
+  /**
+   * @param {Equipment} eqt
+   * @param {string} eqtkey
+   * @param {boolean} carried
+   */
   async _updateEqtStatus(eqt, eqtkey, carried) {
     eqt.carried = carried
     if (!!eqt.itemid) {
@@ -2079,6 +2248,11 @@ export class GurpsActor extends Actor {
     for (const k in eqt.collapsed) await this._updateEqtStatus(eqt.collapsed[k], eqtkey + '.collapsed.' + k, carried)
   }
 
+  /**
+   * @param {ItemData} itemData
+   * @param {string} eqtkey
+   * @param {string} key
+   */
   async _addItemElement(itemData, eqtkey, key) {
     let found = false
     recurselist(this.data.data[key], (e, k, d) => {
@@ -2099,6 +2273,9 @@ export class GurpsActor extends Actor {
   }
 
   // return the item data that was deleted (since it might be transferred)
+  /**
+   * @param {string} path
+   */
   async deleteEquipment(path, depth = 0) {
     let eqt = getProperty(this.data, path)
     if (!eqt) return eqt
@@ -2123,6 +2300,9 @@ export class GurpsActor extends Actor {
     return item
   }
 
+  /**
+   * @param {string} itemid
+   */
   async _removeItemAdditions(itemid) {
     this.ignoreRender = true
     await this._removeItemElement(itemid, 'melee')
@@ -2136,6 +2316,10 @@ export class GurpsActor extends Actor {
   // We have to remove matching items after we searched through the list
   // because we cannot safely modify the list why iterating over it
   // and as such, we can only remove 1 key at a time and must use thw while loop to check again
+  /**
+   * @param {string} itemid
+   * @param {string} key
+   */
   async _removeItemElement(itemid, key) {
     let found = true
     let any = false
@@ -2143,7 +2327,7 @@ export class GurpsActor extends Actor {
       found = false
       let list = getProperty(this.data.data, key)
       recurselist(list, (e, k, d) => {
-        if (e.itemid == itemid) found = k
+        if (e.itemid == itemid) found = !!k
       })
       if (!!found) {
         any = true
@@ -2153,6 +2337,11 @@ export class GurpsActor extends Actor {
     return any
   }
 
+  /**
+   * @param {string} srckey
+   * @param {string} targetkey
+   * @param {boolean} shiftkey
+   */
   async moveEquipment(srckey, targetkey, shiftkey) {
     if (srckey == targetkey) return
     if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
@@ -2185,7 +2374,7 @@ export class GurpsActor extends Actor {
     }
     if (await this._checkForMerging(srckey, targetkey)) return
     if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
-      ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
+      ui.notifications.error('Unable to drag and drop withing the same hierarchy. Try moving it elsewhere first.')
       return
     }
     this.toggleExpand(targetkey, true)
@@ -2240,6 +2429,9 @@ export class GurpsActor extends Actor {
     d.render(true)
   }
 
+  /**
+   * @param {string} path
+   */
   async toggleExpand(path, expandOnly = false) {
     let obj = getProperty(this.data, path)
     if (!!obj.collapsed && Object.keys(obj.collapsed).length > 0) {
@@ -2261,6 +2453,10 @@ export class GurpsActor extends Actor {
     }
   }
 
+  /**
+   * @param {string} srckey
+   * @param {string} targetkey
+   */
   async _splitEquipment(srckey, targetkey) {
     let srceqt = getProperty(this.data, srckey)
     if (srceqt.count <= 1) return false // nothing to split
@@ -2299,6 +2495,10 @@ export class GurpsActor extends Actor {
     return false
   }
 
+  /**
+   * @param {string} srckey
+   * @param {string} targetkey
+   */
   async _checkForMerging(srckey, targetkey) {
     let srceqt = getProperty(this.data, srckey)
     let desteqt = getProperty(this.data, targetkey)
@@ -2360,7 +2560,7 @@ export class GurpsActor extends Actor {
   // NOTE: could also return 'Large-Area'?
   get defaultHitLocation() {
     // TODO implement a system setting but (potentially) allow it to be overridden
-    return _game().settings.get('gurps', 'default-hitlocation')
+    return game.settings.get('gurps', 'default-hitlocation')
   }
 
   getCurrentDodge() {
@@ -2377,6 +2577,9 @@ export class GurpsActor extends Actor {
     return !!hl ? hl.dr : 0
   }
 
+  /**
+   * @param {string} key
+   */
   getEquipped(key) {
     let val = 0
     if (!!this.data.data.melee && !!this.data.data.equipment?.carried)
@@ -2400,6 +2603,10 @@ export class GurpsActor extends Actor {
     return this.getEquipped('block')
   }
 
+  /**
+   * @param {string} option
+   * @param {boolean} flag
+   */
   changeOneThirdStatus(option, flag) {
     if (this.isOwner)
       this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
@@ -2436,6 +2643,9 @@ export class GurpsActor extends Actor {
       })
   }
 
+  /**
+   * @param {string} pattern
+   */
   findEquipmentByName(pattern, otherFirst = false) {
     while (pattern[0] == '/') pattern = pattern.substr(1)
     pattern = makeRegexPatternFrom(pattern, false)
@@ -2479,6 +2689,9 @@ export class GurpsActor extends Actor {
     return [eqt, key]
   }
 
+  /**
+   * @param {number} currentWeight
+   */
   checkEncumbance(currentWeight) {
     let encs = this.data.data.encumbrance
     let last = GURPS.genkey(0) // if there are encumbrances, there will always be a level0
@@ -2512,9 +2725,13 @@ export class GurpsActor extends Actor {
   }
 
   // Set the equipment count to 'count' and then recalc sums
+  /**
+   * @param {string} eqtkey
+   * @param {number} count
+   */
   async updateEqtCount(eqtkey, count) {
     let update = { [eqtkey + '.count']: count }
-    if (_game().settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
       update[eqtkey + '.ignoreImportQty'] = true
     await this.update(update)
     let eqt = getProperty(this.data, eqtkey)
@@ -2530,6 +2747,9 @@ export class GurpsActor extends Actor {
   }
 
   // Used to recalculate weight and cost sums for a whole tree.
+  /**
+   * @param {string} srckey
+   */
   async updateParentOf(srckey, updatePuuid = true) {
     // pindex = 4 for equipment
     let pindex = 4
@@ -2577,14 +2797,18 @@ export class GurpsActor extends Actor {
   }
 }
 
-export class Named {
-  constructor(n1) {
-    this.name = n1
+export class _Base {
+  constructor() {
     this.notes = ''
     this.pageref = ''
     this.contains = {}
+    this.uuid = ''
+    this.parentuuid = ''
   }
 
+  /**
+   * @param {string} r
+   */
   pageRef(r) {
     this.pageref = r
     if (!!r && r.match(/[hH][tT][Tt][pP][sS]?:\/\//)) {
@@ -2593,7 +2817,10 @@ export class Named {
     }
   }
 
-  // This is an ugly hack to parse the GCS FG Formatted Text entries.   See the method cleanUpP() above.
+  // This is an ugly hack to parse the GCS FG Formatted Text entries. See the method cleanUpP() above.
+  /**
+   * @param {string} n
+   */
   setNotes(n) {
     if (!!n) {
       let v = extractP(n)
@@ -2611,21 +2838,86 @@ export class Named {
   }
 }
 
+export class Named extends _Base {
+  /**
+   * @param {string} [n1]
+   */
+  constructor(n1) {
+    super()
+    this.name = n1
+  }
+}
+
 export class NamedCost extends Named {
+  /**
+   * @param {string} [n1]
+   */
   constructor(n1) {
     super(n1)
     this.points = 0
   }
 }
 
+const _AnimationMixin = {
+  _checkotf: '',
+  _duringotf: '',
+  _passotf: '',
+  _failotf: '',
+
+  get checkotf() {
+    return this._checkotf
+  },
+  set checkotf(value) {
+    this._checkotf = value
+  },
+
+  get duringotf() {
+    return this._duringotf
+  },
+  set duringotf(value) {
+    this._duringotf = value
+  },
+
+  get passotf() {
+    return this._passotf
+  },
+  set passotf(value) {
+    this._passotf = value
+  },
+
+  get failotf() {
+    return this._failotf
+  },
+  set failotf(value) {
+    this._failotf = value
+  },
+}
+
 export class Leveled extends NamedCost {
+  /**
+   * @param {string} [n1]
+   * @param {string} [lvl]
+   */
   constructor(n1, lvl) {
     super(n1)
+
     this.import = lvl
+    /** @type {string|number} */
+    this.level = 0
+
+    Object.assign(Leveled.prototype, _AnimationMixin)
+  }
+
+  get animationData() {
+    return /** @type {_AnimationMixin} */ (/** @type {unknown} */ (this))
   }
 }
 
 export class Skill extends Leveled {
+  /**
+   * @param {string} [n1]
+   * @param {string} [lvl]
+   */
   constructor(n1, lvl) {
     super(n1, lvl)
     this.type = '' // "DX/E";
@@ -2634,6 +2926,10 @@ export class Skill extends Leveled {
 }
 
 export class Spell extends Leveled {
+  /**
+   * @param {string} [n1]
+   * @param {string} [lvl]
+   */
   constructor(n1, lvl) {
     super(n1, lvl)
     this.class = ''
@@ -2648,6 +2944,9 @@ export class Spell extends Leveled {
 }
 
 export class Advantage extends NamedCost {
+  /**
+   * @param {string} [n1]
+   */
   constructor(n1) {
     super(n1)
     this.userdesc = ''
@@ -2656,6 +2955,11 @@ export class Advantage extends NamedCost {
 }
 
 export class Attack extends Named {
+  /**
+   * @param {string} [n1]
+   * @param {string} [lvl]
+   * @param {string} [dmg]
+   */
   constructor(n1, lvl, dmg) {
     super(n1)
     this.import = lvl
@@ -2663,10 +2967,21 @@ export class Attack extends Named {
     this.st = ''
     this.mode = ''
     this.level = ''
+
+    Object.assign(Leveled.prototype, _AnimationMixin)
+  }
+
+  get animationData() {
+    return /** @type {_AnimationMixin} */ (/** @type {unknown} */ (this))
   }
 }
 
 export class Melee extends Attack {
+  /**
+   * @param {string} [n1]
+   * @param {string} [lvl]
+   * @param {string} [dmg]
+   */
   constructor(n1, lvl, dmg) {
     super(n1, lvl, dmg)
 
@@ -2680,6 +2995,11 @@ export class Melee extends Attack {
 }
 
 export class Ranged extends Attack {
+  /**
+   * @param {string} [n1]
+   * @param {string} [lvl]
+   * @param {string} [dmg]
+   */
   constructor(n1, lvl, dmg) {
     super(n1, lvl, dmg)
 
@@ -2691,6 +3011,8 @@ export class Ranged extends Attack {
     this.rof = ''
     this.shots = ''
     this.rcl = ''
+    this.halfd = ''
+    this.max = ''
   }
   checkRange() {
     if (!!this.halfd) this.range = this.halfd
@@ -2705,20 +3027,29 @@ export class Encumbrance {
     this.level = 0
     this.dodge = 9
     this.weight = ''
-    this.move = ''
+    this.move = 0
     this.current = false
   }
 }
 
-export class Note extends Named {
+export class Note extends _Base {
+  /**
+   * @param {string} [n]
+   * @param {boolean} [ue]
+   */
   constructor(n, ue) {
     super()
+
     this.notes = n || ''
     this.save = ue
   }
 }
 
 export class Equipment extends Named {
+  /**
+   * @param {string} [nm]
+   * @param {boolean} [ue]
+   */
   constructor(nm, ue) {
     super(nm)
     this.save = ue
@@ -2731,19 +3062,34 @@ export class Equipment extends Named {
     this.techlevel = ''
     this.legalityclass = ''
     this.categories = ''
-    this.costsum = ''
-    this.weightsum = ''
+    this.costsum = 0
+    this.weightsum = 0
     this.uses = ''
     this.maxuses = ''
     this.ignoreImportQty = false
+    this.uuid = ''
+    this.parentuuid = ''
+    this.itemid = ''
+    /** @type {Record<string,any>} */
+    this.collapsed = {}
+    /** @type {Record<string,any>} */
+    this.contains = {}
   }
 
+  /**
+   * @param {Equipment} eqt
+   */
   static calc(eqt) {
     Equipment.calcUpdate(null, eqt, '')
   }
 
   // OMG, do NOT fuck around with this method.   So many gotchas...
   // the worst being that you cannot use array.forEach.   You must use a for loop
+  /**
+   * @param {Actor | null} actor
+   * @param {Equipment} eqt
+   * @param {string} objkey
+   */
   static async calcUpdate(actor, eqt, objkey) {
     if (!eqt) return
     const num = s => {
@@ -2789,21 +3135,4 @@ export class Reaction {
     this.modifier = m || ''
     this.situation = s || ''
   }
-}
-
-// -- Functions to get type-safe global references (for TS) --
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized yet!')
-}
-
-function _GURPS() {
-  // @ts-ignore
-  return GURPS
-}
-
-function _ui() {
-  if (!!ui) return ui
-  throw new Error('ui is not initialized yet!')
 }
