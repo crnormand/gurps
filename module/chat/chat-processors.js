@@ -2,7 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { ChatProcessors } from '../../module/chat.js'
-import { parselink, parseForDamage } from '../../lib/parselink.js'
+import { parselink, parseForRollOrDamage } from '../../lib/parselink.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import {
@@ -84,7 +84,7 @@ class QuickDamageChatProcessor extends ChatProcessor {
   matches(line) {
     let m = line.match(/^[\.\/](.*)/)
     if (!!m) {
-      this.match = parseForDamage(m[1])
+      this.match = parseForRollOrDamage(m[1])
       return !!this.match && this.match.action.type == 'damage'
     }
     return false
@@ -647,7 +647,7 @@ class LightChatProcessor extends ChatProcessor {
 
     this.match = line.match(
       //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
-      /^\/(light|li) *(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})?(?<colorint>:[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li) *(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<colorint>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
     return !!this.match
   }

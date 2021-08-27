@@ -1,4 +1,6 @@
-GURPS.SJGProductMappings = {
+import * as Settings from '../lib/miscellaneous-settings.js'
+
+export const SJGProductMappings = {
   ACT1: 'http://www.warehouse23.com/products/gurps-action-1-heroes',
   ACT3: 'http://www.warehouse23.com/products/gurps-action-3-furious-fists',
   B: 'http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns',
@@ -54,15 +56,21 @@ GURPS.SJGProductMappings = {
 }
 
 // Convert GCS page refs into PDFoundry book & page.   Special handling for refs like "PU8:12"
-function handleOnPdf(event) {
+/**
+ * @param {JQuery.ClickEvent} event
+ */
+export function handleOnPdf(event) {
   event.preventDefault()
-  GURPS.handlePdf(event.currentTarget.innerText)
+  handlePdf(event.currentTarget.innerText)
 }
-GURPS.handleOnPdf = handleOnPdf
 
-function handlePdf(links) {
+/**
+ * @param {string} links
+ */
+export function handlePdf(links) {
+  // @ts-ignore
   if (!ui.PDFoundry) {
-    ui.notifications.warn('PDFoundry must be installed and configured to use links.')
+    ui.notifications?.warn('PDFoundry must be installed and configured to use links.')
     return
   }
 
@@ -88,12 +96,13 @@ function handlePdf(links) {
           page = page - 335
         } else page += 2
     }
+    // @ts-ignore
     const pdf = ui.PDFoundry.findPDFDataByCode(book)
     if (pdf === undefined) {
-      let url = game.GURPS.SJGProductMappings[book]
+      let url = GURPS.SJGProductMappings[book]
       if (!url) url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
       window.open(url, '_blank')
+      // @ts-ignore
     } else ui.PDFoundry.openPDF(pdf, { page })
   })
 }
-GURPS.handlePdf = handlePdf

@@ -148,7 +148,7 @@ export class RemoteChatProcessor extends ChatProcessor {
     return !!this.match
   }
 
-  process(line) {
+  async process(line) {
     let m = this.match
     let action = parselink(m[2].trim())
     if (!!action.action) {
