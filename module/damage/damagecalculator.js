@@ -4,7 +4,7 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
 import { i18n, objectToArray } from '../../lib/utilities.js'
-import { asGurpsActor } from '../global-references.js'
+import { GurpsActor } from '../actor/actor.js'
 
 /* 
   Crippling injury:
@@ -1081,7 +1081,7 @@ class DamageCalculator {
 
     if (this.isKnockbackEligible) {
       let st = this._parent.attributes.ST.value
-      let hp = asGurpsActor(this._parent._defender).getGurpsActorData().HP.max
+      let hp = this._parent._defender.getGurpsActorData().HP.max
 
       // if the target has no ST score, use its HPs instead (B378)
       let knockbackResistance = !st || st == 0 ? hp - 2 : st - 2

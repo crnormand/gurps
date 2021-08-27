@@ -2,7 +2,6 @@ import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } fro
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
-import { _game } from './global-references.js'
 
 export default class GurpsToken extends Token {
   static ready() {
@@ -81,7 +80,6 @@ export default class GurpsToken extends Token {
    * @param {string} maneuverName
    */
   async setManeuver(maneuverName) {
-    const game = _game()
     // if not in combat, do nothing
     if (game.combats && game.combats.active) {
       if (!game.combats.active.combatants.some(c => c.token?.id === this.id)) return

@@ -1,11 +1,9 @@
-import { ChatProcessors } from '../chat.js'
-
 export default class ChatProcessor {
   constructor() {
     /** @type {ChatProcessors|null} */
     this.registry = null
   }
-  
+
   /**
    * Override
    * @param {string} line - chat command

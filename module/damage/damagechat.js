@@ -37,7 +37,6 @@ export default class DamageChat {
   static async _renderDamageChat(app, html, _msg) {
     if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
 
-    const GURPS = _GURPS()
     let transfer = JSON.parse(app.data.flags.transfer)
 
     // for each damage-message, set the drag-and-drop events and data
@@ -63,16 +62,16 @@ export default class DamageChat {
     let button = html.find(':button.apply-all')
     button.hide()
     if (!!transfer.userTarget && transfer.userTarget != null) {
-      if (_user().isGM) {
+      if (game.user.isGM) {
         button.show()
 
         button.on('click', ev => {
           // get actor from id
-          let token = _canvas().tokens?.get(transfer.userTarget) // ...
+          let token = canvas.tokens?.get(transfer.userTarget) // ...
           // get payload; its either the "all damage" payload or ...
-          let actor = asGurpsActor(token?.actor)
+          let actor = token?.actor
           if (!!actor) actor.handleDamageDrop(transfer.payload)
-          else _ui().notifications?.warn('Unable to find token with ID:' + transfer.userTarget)
+          else ui.notifications?.warn('Unable to find token with ID:' + transfer.userTarget)
         })
       }
     }
@@ -84,7 +83,7 @@ export default class DamageChat {
    */
   static async _dropCanvasData(canvas, dropData) {
     if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
-      let oldselection = new Set(_user().targets) // remember current targets (so we can reselect them afterwards)
+      let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene?.data.grid
       canvas.tokens?.targetObjects(
         {
@@ -95,10 +94,10 @@ export default class DamageChat {
         },
         { releaseOthers: true }
       )
-      let targets = [..._user().targets]
+      let targets = [...game.user.targets]
 
       // Now that we have the list of targets, reset the target selection back to whatever the user had
-      for (let t of _user().targets) {
+      for (let t of game.user.targets) {
         t.setTarget(false, { releaseOthers: false, groupSelection: true })
       }
       oldselection.forEach(t => {
@@ -109,28 +108,28 @@ export default class DamageChat {
       if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
       if (dropData.type === 'equipment') handle = actor => actor.handleEquipmentDrop(dropData)
 
-      // actual targets are stored in _user().targets
+      // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
       if (targets.length === 1) {
-        handle(asGurpsActor(targets[0].actor))
+        handle(targets[0].actor)
         return false
       }
 
       let buttons = {
         apply: {
           icon: '<i class="fas fa-check"></i>',
-          label: _game().i18n.localize('GURPS.addApply'),
+          label: game.i18n.localize('GURPS.addApply'),
           callback: (/** @type {JQuery<HTMLElement>} */ html) => {
             let name = html.find('select option:selected').text().trim()
             let target = targets.find(token => token.name === name)
-            handle(asGurpsActor(target?.actor))
+            handle(target?.actor)
           },
         },
       }
 
       let d = new Dialog(
         {
-          title: _game().i18n.localize('GURPS.selectToken'),
+          title: game.i18n.localize('GURPS.selectToken'),
           content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
             tokens: targets,
           }),
@@ -172,7 +171,7 @@ export default class DamageChat {
     overrideDiceText,
     tokenNames,
     extdamagetype = null,
-    hitlocation = null,
+    hitlocation = null
   ) {
     let message = new DamageChat()
 
@@ -190,13 +189,14 @@ export default class DamageChat {
       draggableData.push(data)
     }
 
+    // TODO add hitlocation to Chat message (e.g, something like 'Rolling 3d cut damage to Neck')
     message._createChatMessage(actor, dice, targetmods, draggableData, event)
 
     // Resolve any modifier descriptors (such as *Costs 1FP)
     targetmods
       .filter(it => !!it.desc)
       .map(it => it.desc)
-      .forEach(it => _GURPS().applyModifierDesc(actor, it))
+      .forEach(it => GURPS.applyModifierDesc(actor, it))
   }
 
   /**
@@ -227,7 +227,7 @@ export default class DamageChat {
     let result = DamageChat.fullRegex.exec(originalDiceText)
 
     if (!result) {
-      _ui().notifications?.warn(`Invalid Dice formula: "${originalDiceText}"`)
+      ui.notifications?.warn(`Invalid Dice formula: "${originalDiceText}"`)
       return null
     }
 
@@ -399,8 +399,8 @@ export default class DamageChat {
    */
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
     let userTarget = null
-    if (!!_user().targets.size) {
-      userTarget = _user().targets.values().next().value
+    if (!!game.user.targets.size) {
+      userTarget = game.user.targets.values().next().value
     }
 
     let damageType = diceData.damageType === 'dmg' ? '' : diceData.damageType
@@ -420,7 +420,7 @@ export default class DamageChat {
     const speaker = ChatMessage.getSpeaker(actor)
     /** @type {Record<string,any>} */
     let messageData = {
-      user: _user().id,
+      user: game.user.id,
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -428,7 +428,7 @@ export default class DamageChat {
     }
 
     if (event?.shiftKey) {
-      messageData.whisper = [_user().id]
+      messageData.whisper = [game.user.id]
     }
 
     messageData['flags.transfer'] = JSON.stringify({
@@ -465,7 +465,7 @@ export default class DamageChat {
       if (dice.length > 0) {
         // The user made a "multi-damage" roll... let them see the dice!
         // @ts-ignore
-        _game().dice3d.show({ throws: throws })
+        game.dice3d.show({ throws: throws })
       }
     } else {
       messageData.sound = CONFIG.sounds.dice

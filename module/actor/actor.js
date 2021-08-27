@@ -35,6 +35,14 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * @returns {GurpsActor}
+   */
+  asGurpsActor() {
+    // @ts-ignore
+    return /** @type {GurpsActor} */ (this)
+  }
+
+  /**
    * @returns {GurpsActorData}
    */
   getGurpsActorData() {
@@ -391,7 +399,7 @@ export class GurpsActor extends Actor {
     const isTired = !!data.additionalresources.isTired
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
-      const level0 = encs[_GURPS().genkey(0)] // if there are encumbrances, there will always be a level0
+      const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
       let m = parseInt(level0.move)
       let d = parseInt(level0.dodge) + data.currentdodge
       let f = parseFloat(data.basicspeed.value.toString()) * 2
@@ -507,39 +515,37 @@ export class GurpsActor extends Actor {
           if (!!action.action) {
             this.ignoreRender = true
             action.action.calcOnly = true
-            _GURPS()
-              .performAction(action.action, this)
-              .then(ret => {
-                // @ts-ignore
-                e.level = ret.target
-                if (isMelee) {
-                  if (!isNaN(parseInt(e.parry))) {
-                    let p = '' + e.parry
-                    let m = p.match(/([+-]\d+)(.*)/)
-                    // @ts-ignore
-                    if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
-                    if (!!m) {
-                      e.parrybonus = parseInt(m[1])
-                      e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
-                    }
-                    if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
+            GURPS.performAction(action.action, this).then(ret => {
+              // @ts-ignore
+              e.level = ret.target
+              if (isMelee) {
+                if (!isNaN(parseInt(e.parry))) {
+                  let p = '' + e.parry
+                  let m = p.match(/([+-]\d+)(.*)/)
+                  // @ts-ignore
+                  if (!m && p.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
+                  if (!!m) {
+                    e.parrybonus = parseInt(m[1])
+                    e.parry = e.parrybonus + 3 + Math.floor(e.level / 2)
                   }
-                  if (!isNaN(parseInt(e.block))) {
-                    let b = '' + e.block
-                    let m = b.match(/([+-]\d+)(.*)/)
-                    // @ts-ignore
-                    if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
-                    if (!!m) {
-                      e.blockbonus = parseInt(m[1])
-                      e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
-                    }
-                    if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
-                  }
+                  if (!!m && !!m[2]) e.parry = `${e.parry}${m[2]}`
                 }
-                setTimeout(() => {
-                  this._forceRender() // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
-                }, 50)
-              })
+                if (!isNaN(parseInt(e.block))) {
+                  let b = '' + e.block
+                  let m = b.match(/([+-]\d+)(.*)/)
+                  // @ts-ignore
+                  if (!m && b.trim() == '0') m = [0, 0] // allow '0' to mean 'no bonus', not skill level = 0
+                  if (!!m) {
+                    e.blockbonus = parseInt(m[1])
+                    e.block = e.blockbonus + 3 + Math.floor(e.level / 2)
+                  }
+                  if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
+                }
+              }
+              setTimeout(() => {
+                this._forceRender() // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
+              }, 50)
+            })
           }
         }
       }
@@ -676,7 +682,7 @@ export class GurpsActor extends Actor {
       const res = await this.importFromGCSv1(await file.text(), file.name)
       if (res) SmartImporter.setFileForActor(this, file)
     } catch (e) {
-      _ui().notifications?.error(e)
+      ui.notifications?.error(e)
       throw e
     }
   }
@@ -779,16 +785,16 @@ export class GurpsActor extends Actor {
       }
     }
     if (msg.length > 0) {
-      _ui().notifications?.error(msg.join('<br>'))
+      ui.notifications?.error(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
         GCSVersion: GCSVersion,
-        url: _GURPS().USER_GUIDE_URL,
+        url: GURPS.USER_GUIDE_URL,
       })
 
-      let user = _user()
+      let user = game.user
       ChatMessage.create({
         content: content,
         user: game.user.id,
@@ -843,11 +849,11 @@ export class GurpsActor extends Actor {
         version: version,
         GCAVersion: GCAVersion,
         GCSVersion: GCSVersion,
-        url: _GURPS().USER_GUIDE_URL,
+        url: GURPS.USER_GUIDE_URL,
       })
 
-      _ui().notifications?.warn(msg)
-      let user = _user()
+      ui.notifications?.warn(msg)
+      let user = game.user
       let chatData = {
         user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
@@ -869,7 +875,7 @@ export class GurpsActor extends Actor {
       // This has to be done after everything is loaded
       await this.postImport()
       this._forceRender()
-      _ui().notifications?.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
+      ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
       console.log('Done importing.  You can inspect the character data below:')
       console.log(this)
       return true
@@ -877,16 +883,16 @@ export class GurpsActor extends Actor {
       console.log(err.stack)
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
-      _ui().notifications?.warn(msg.join('<br>'))
+      ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
         GCSVersion: GCSVersion,
-        url: _GURPS().USER_GUIDE_URL,
+        url: GURPS.USER_GUIDE_URL,
       })
 
-      let user = _user()
+      let user = game.user
       let chatData = {
         user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
@@ -1376,8 +1382,8 @@ export class GurpsActor extends Actor {
     temp.forEach(eqt => {
       Equipment.calc(eqt)
       if (!eqt.parentuuid) {
-        if (eqt.carried) _GURPS().put(equipment.carried, eqt, cindex++)
-        else _GURPS().put(equipment.other, eqt, oindex++)
+        if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
+        else GURPS.put(equipment.other, eqt, oindex++)
       }
     })
     return {
@@ -1402,7 +1408,7 @@ export class GurpsActor extends Actor {
     })
     let index = 0
     flat.forEach(obj => {
-      if (!obj.parentuuid) _GURPS().put(target, obj, index++)
+      if (!obj.parentuuid) GURPS.put(target, obj, index++)
     })
     return target
   }
@@ -1506,7 +1512,7 @@ export class GurpsActor extends Actor {
               m.notes = this._tryToMerge(m.notes, old.notes)
               this._migrateOtfs(old, m)
             }
-            _GURPS().put(melee, m, index++)
+            GURPS.put(melee, m, index++)
           }
         }
       }
@@ -1928,7 +1934,7 @@ export class GurpsActor extends Actor {
 
       // if not blank, don't overwrite
       if (tracker !== null && !!tracker.name) {
-        _ui().notifications?.warn(
+        ui.notifications?.warn(
           `Will not overwrite Tracker ${template.slot} as its name is set to ${tracker.name}. Create Tracker for ${template.tracker.name} failed.`
         )
         return
@@ -2000,7 +2006,7 @@ export class GurpsActor extends Actor {
   handleDamageDrop(damageData) {
     if (game.user.isGM || !game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ONLY_GMS_OPEN_ADD))
       new ApplyDamageDialog(this, damageData).render(true)
-    else _ui().notifications?.warn('Only GMs are allowed to Apply Damage.')
+    else ui.notifications?.warn('Only GMs are allowed to Apply Damage.')
   }
 
   // Drag and drop from Item colletion
@@ -2009,7 +2015,7 @@ export class GurpsActor extends Actor {
    */
   async handleItemDrop(dragData) {
     if (!this.isOwner) {
-      _ui().notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
+      ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
     }
     const uuid =
@@ -2019,10 +2025,10 @@ export class GurpsActor extends Actor {
     let global = await fromUuid(uuid)
     let data = !!global ? global.data : dragData.data
     if (!data) {
-      _ui().notifications?.warn('NO ITEM DATA!')
+      ui.notifications?.warn('NO ITEM DATA!')
       return
     }
-    _ui().notifications?.info(data.name + ' => ' + this.name)
+    ui.notifications?.info(data.name + ' => ' + this.name)
     if (!data.data.globalid) await data.update({ _id: data._id, 'data.globalid': uuid })
     this.ignoreRender = true
     await this.addNewItemData(data)
@@ -2041,11 +2047,11 @@ export class GurpsActor extends Actor {
   async handleEquipmentDrop(dragData) {
     if (dragData.actorid == this.id) return false // same sheet drag and drop handled elsewhere
     if (!dragData.itemid) {
-      _ui().notifications?.warn(i18n('GURPS.cannotDragNonFoundryEqt'))
+      ui.notifications?.warn(i18n('GURPS.cannotDragNonFoundryEqt'))
       return
     }
     if (!dragData.isLinked) {
-      _ui().notifications?.warn("You cannot drag from an un-linked token.   The source must have 'Linked Actor Data'")
+      ui.notifications?.warn("You cannot drag from an un-linked token.   The source must have 'Linked Actor Data'")
       return
     }
     let srcActor = game.actors.get(dragData.actorid)
@@ -2054,7 +2060,7 @@ export class GurpsActor extends Actor {
       (!!eqt.contains && Object.keys(eqt.contains).length > 0) ||
       (!!eqt.collapsed && Object.keys(eqt.collapsed).length > 0)
     ) {
-      _ui().notifications?.warn('You cannot transfer an Item that contains other equipment.')
+      ui.notifications?.warn('You cannot transfer an Item that contains other equipment.')
       return
     }
 
@@ -2117,7 +2123,7 @@ export class GurpsActor extends Actor {
       if (count > eqt.count) count = eqt.count
       let destowner = game.users?.players.find(p => this.testUserPermission(p, 'OWNER'))
       if (!!destowner) {
-        _ui().notifications?.info(`Asking ${this.name} if they want ${eqt.name}`)
+        ui.notifications?.info(`Asking ${this.name} if they want ${eqt.name}`)
         dragData.itemData.data.eqt.count = count // They may not have given all of them
         game.socket.emit('system.gurps', {
           type: 'dragEquipment1',
@@ -2129,7 +2135,7 @@ export class GurpsActor extends Actor {
           itemData: dragData.itemData,
           count: count,
         })
-      } else _ui().notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
+      } else ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
     }
   }
 
@@ -2153,7 +2159,7 @@ export class GurpsActor extends Actor {
       await this.addItemData(item.data)
     } else {
       // If was in other... just add back to other (and forget addons)
-      await this._addNewItemEquipment(item.data, 'data.equipment.other.' + _GURPS().genkey(0))
+      await this._addNewItemEquipment(item.data, 'data.equipment.other.' + GURPS.genkey(0))
     }
     let newkey = this._findEqtkeyForId('globalid', _data.globalid)
     if (!!oldeqt && (!!oldeqt.contains || !!oldeqt.collapsed)) {
@@ -2206,7 +2212,7 @@ export class GurpsActor extends Actor {
       let eqt = getProperty(this.data, existing)
       return [existing, eqt.carried && eqt.equipped]
     }
-    let _data = /** @type {import('../global-references.js').GurpsItemData} */ (itemData.data)
+    let _data = /** @type {GurpsItemData} */ (itemData.data)
     if (!!_data.eqt.parentuuid) {
       var found
       recurselist(this.getGurpsActorData().equipment.carried, (e, k, d) => {
@@ -2217,7 +2223,7 @@ export class GurpsActor extends Actor {
           if (e.uuid == _data.eqt.parentuuid) found = 'data.equipment.other.' + k
         })
       if (!!found) {
-        targetkey = found + '.contains.' + _GURPS().genkey(0)
+        targetkey = found + '.contains.' + GURPS.genkey(0)
       }
     }
     if (targetkey == null)
@@ -2226,13 +2232,13 @@ export class GurpsActor extends Actor {
         targetkey = 'data.equipment.carried'
         let index = 0
         let list = getProperty(this.data, targetkey)
-        while (list.hasOwnProperty(_GURPS().genkey(index))) index++
-        targetkey += '.' + _GURPS().genkey(index)
+        while (list.hasOwnProperty(GURPS.genkey(index))) index++
+        targetkey += '.' + GURPS.genkey(index)
       } else targetkey = 'data.equipment.other'
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + _GURPS().genkey(0) //if just 'carried' or 'other'
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0) //if just 'carried' or 'other'
     let eqt = _data.eqt
     if (!eqt) {
-      _ui().notifications?.warn('Item: ' + itemData._id + ' (Global:' + _data.globalid + ') missing equipment')
+      ui.notifications?.warn('Item: ' + itemData._id + ' (Global:' + _data.globalid + ') missing equipment')
       return ['', false]
     } else {
       eqt.itemid = itemData._id
@@ -2314,7 +2320,7 @@ export class GurpsActor extends Actor {
       e.uuid = key + '-' + i++ + '-' + e.itemid
       e.eqtkey = eqtkey
       e.img = itemData.img
-      _GURPS().put(list, e)
+      GURPS.put(list, e)
     }
     return i == 0 ? {} : { ['data.' + key]: list }
   }
@@ -2342,7 +2348,7 @@ export class GurpsActor extends Actor {
       if (!!item) await item.delete() // data protect for messed up mooks
       await this._removeItemAdditions(eqt.itemid)
     }
-    await _GURPS().removeKey(this, path)
+    await GURPS.removeKey(this, path)
     if (depth == 0) this._forceRender()
     return item
   }
@@ -2374,11 +2380,11 @@ export class GurpsActor extends Actor {
       found = false
       let list = getProperty(this.data.data, key)
       recurselist(list, (e, k, d) => {
-        if (e.itemid == itemid) found = !!k
+        if (e.itemid == itemid) found = k
       })
       if (!!found) {
         any = true
-        await _GURPS().removeKey(this, 'data.' + key + '.' + found)
+        await GURPS.removeKey(this, 'data.' + key + '.' + found)
       }
     }
     return any
@@ -2411,12 +2417,12 @@ export class GurpsActor extends Actor {
         let item = /** @type {Item} */ (this.items.get(object.itemid))
         await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.parentuuid': '' }])
       }
-      let target = { ..._GURPS().decode(this.data, targetkey) } // shallow copy the list
-      if (!isSrcFirst) await _GURPS().removeKey(this, srckey)
-      let eqtkey = _GURPS().put(target, object)
+      let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
+      if (!isSrcFirst) await GURPS.removeKey(this, srckey)
+      let eqtkey = GURPS.put(target, object)
       await this.updateItemAdditionsBasedOn(object, targetkey + '.' + eqtkey)
       await this.update({ [targetkey]: target })
-      if (isSrcFirst) await _GURPS().removeKey(this, srckey)
+      if (isSrcFirst) await GURPS.removeKey(this, srckey)
       return this._forceRender()
     }
     if (await this._checkForMerging(srckey, targetkey)) return
@@ -2435,14 +2441,14 @@ export class GurpsActor extends Actor {
           callback: async () => {
             this.ignoreRender = true
             if (!isSrcFirst) {
-              await _GURPS().removeKey(this, srckey)
+              await GURPS.removeKey(this, srckey)
               await this.updateParentOf(srckey, false)
             }
             await this.updateItemAdditionsBasedOn(object, targetkey)
-            await _GURPS().insertBeforeKey(this, targetkey, object)
+            await GURPS.insertBeforeKey(this, targetkey, object)
             await this.updateParentOf(targetkey, true)
             if (isSrcFirst) {
-              await _GURPS().removeKey(this, srckey)
+              await GURPS.removeKey(this, srckey)
               await this.updateParentOf(srckey, false)
             }
             this._forceRender()
@@ -2454,17 +2460,17 @@ export class GurpsActor extends Actor {
           callback: async () => {
             this.ignoreRender = true
             if (!isSrcFirst) {
-              await _GURPS().removeKey(this, srckey)
+              await GURPS.removeKey(this, srckey)
               await this.updateParentOf(srckey, false)
             }
-            let k = targetkey + '.contains.' + _GURPS().genkey(0)
+            let k = targetkey + '.contains.' + GURPS.genkey(0)
             let targ = getProperty(this.data, targetkey)
 
             await this.updateItemAdditionsBasedOn(object, targetkey)
-            await _GURPS().insertBeforeKey(this, k, object)
+            await GURPS.insertBeforeKey(this, k, object)
             await this.updateParentOf(k, true)
             if (isSrcFirst) {
-              await _GURPS().removeKey(this, srckey)
+              await GURPS.removeKey(this, srckey)
               await this.updateParentOf(srckey, false)
             }
             this._forceRender()
@@ -2519,7 +2525,7 @@ export class GurpsActor extends Actor {
     })
     if (count <= 0) return true // didn't want to split
     if (count >= srceqt.count) return false // not a split, but a move
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + _GURPS().genkey(0)
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)
     if (!!srceqt.globalid) {
       this.ignoreRender = true
       await this.updateEqtCount(srckey, srceqt.count - count)
@@ -2538,7 +2544,7 @@ export class GurpsActor extends Actor {
       neqt.count = count
       this.ignoreRender = true
       await this.updateEqtCount(srckey, srceqt.count - count)
-      await _GURPS().insertBeforeKey(this, targetkey, neqt)
+      await GURPS.insertBeforeKey(this, targetkey, neqt)
       await this.updateParentOf(targetkey, true)
       this._forceRender()
       return true
@@ -2751,7 +2757,7 @@ export class GurpsActor extends Actor {
   checkEncumbance(currentWeight) {
     /** @type {Record<string,any>} */
     let encs = this.getGurpsActorData().encumbrance
-    let last = _GURPS().genkey(0) // if there are encumbrances, there will always be a level0
+    let last = GURPS.genkey(0) // if there are encumbrances, there will always be a level0
     var best, prev
     for (let key in encs) {
       let enc = encs[key]
@@ -2798,7 +2804,7 @@ export class GurpsActor extends Actor {
       let item = this.items.get(eqt.itemid)
       if (!!item) await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'data.eqt.count': count }])
       else {
-        _ui().notifications?.warn('Invalid Item in Actor... removing all features')
+        ui.notifications?.warn('Invalid Item in Actor... removing all features')
         this._removeItemAdditions(eqt.itemid)
       }
     }
@@ -2960,7 +2966,7 @@ export class Leveled extends NamedCost {
     super(n1)
 
     this.import = lvl
-    
+
     /** @type {string|number} */
     this.level = 0
 

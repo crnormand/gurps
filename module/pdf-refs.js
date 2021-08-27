@@ -1,4 +1,3 @@
-import { _game, _ui } from './global-references.js'
 import * as Settings from '../lib/miscellaneous-settings.js'
 
 export const SJGProductMappings = {
@@ -70,8 +69,8 @@ export function handleOnPdf(event) {
  */
 export function handlePdf(links) {
   // @ts-ignore
-  if (!_ui().PDFoundry) {
-    _ui().notifications?.warn('PDFoundry must be installed and configured to use links.')
+  if (!ui.PDFoundry) {
+    ui.notifications?.warn('PDFoundry must be installed and configured to use links.')
     return
   }
 
@@ -90,7 +89,7 @@ export function handlePdf(links) {
     }
     // Special case for Separate Basic Set PDFs
     if (book === 'B') {
-      let s = _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BASICSET_PDF)
+      let s = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BASICSET_PDF)
       if (page > 336)
         if (s === 'Separate') {
           book = 'BX'
@@ -98,12 +97,12 @@ export function handlePdf(links) {
         } else page += 2
     }
     // @ts-ignore
-    const pdf = _ui().PDFoundry.findPDFDataByCode(book)
+    const pdf = ui.PDFoundry.findPDFDataByCode(book)
     if (pdf === undefined) {
       let url = GURPS.SJGProductMappings[book]
       if (!url) url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
       window.open(url, '_blank')
       // @ts-ignore
-    } else _ui().PDFoundry.openPDF(pdf, { page })
+    } else ui.PDFoundry.openPDF(pdf, { page })
   })
 }

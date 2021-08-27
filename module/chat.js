@@ -88,7 +88,7 @@ class ChatProcessorRegistry {
    * @param {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData').ChatMessageDataConstructorData | { speaker: any}} chatmsgData
    * @returns {Promise<boolean>}
    */
-   async startProcessingLines(message, chatmsgData, event) {
+  async startProcessingLines(message, chatmsgData, event) {
     if (!chatmsgData)
       chatmsgData = {
         user: game.user?.id || null,
@@ -160,9 +160,9 @@ class ChatProcessorRegistry {
         // immediately flush our stored msgs, and execute the slash command using the default parser
         this.send()
         GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
-        _ui()
-          // @ts-ignore
-          .chat?.processMessage(line)
+        ui// @ts-ignore
+        .chat
+          ?.processMessage(line)
           .catch(err => {
             ui.notifications?.error(err)
             console.error(err)

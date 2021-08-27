@@ -15,7 +15,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
         /** @type {any} */ _userId
       ) => {
         // Add combat id if necessary
-        if (data.duration && !data.duration.combat && _game().combat) data.duration.combat = _game().combats?.active?.id
+        if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
       }
     )
 
@@ -63,7 +63,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
         // @ts-ignore
         let previous = combat.previous
         if (previous.tokenId) {
-          let token = _canvas().tokens?.get(previous.tokenId)
+          let token = canvas.tokens?.get(previous.tokenId)
 
           // go through all effects, removing those that have expired
           if (token && token.actor) {
@@ -135,14 +135,3 @@ export default class GurpsActiveEffect extends ActiveEffect {
       priority: fields.NUMERIC_FIELD
     }
 */
-// -- Functions to get type-safe global references (for TS) --
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized yet!')
-}
-
-function _canvas() {
-  if (canvas) return canvas
-  throw new Error('canvas is not initialized yet!')
-}

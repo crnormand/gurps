@@ -28,7 +28,7 @@ export default class ManeuverHUDButton {
    * @memberof ManeuverHUDButton
    */
   static getTokenActor(token) {
-    if (_game().actors && token?.actor?.id) return _game().actors?.get(token.actor.id)
+    if (game.actors && token?.actor?.id) return game.actors?.get(token.actor.id)
   }
 
   /**
@@ -99,10 +99,4 @@ export default class ManeuverHUDButton {
   // TODO Add status hint text to modifier bucket
   // DONE Make sure Tokens are initialized with a Maneuver
   // DONE Add maneuver when token enters combat; remove when not in combat
-}
-// -- Functions to get type-safe global references (for TS) --
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized yet!')
 }
