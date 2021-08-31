@@ -927,7 +927,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} o
+   * @param {{[key: string] : any}} o
    */
   floatFrom(o) {
     if (!o) return 0
@@ -1631,7 +1631,7 @@ export class GurpsActor extends Actor {
    */
   async importAttributesFromCGSv1(json) {
     if (!json) return
-    let i = this.intFrom // shortcut to make code smaller
+    let i = this.intFrom // shortcut to make code smaller -- I reject your attempt to make the code smaller. Why does it need to be smaller?
     let t = this.textFrom
     let data = this.getGurpsActorData()
     let att = data.attributes
@@ -1702,7 +1702,9 @@ export class GurpsActor extends Actor {
 
     data.basicmove.value = t(json.basicmove)
     data.basicmove.points = i(json.basicmove_points)
-    data.basicspeed.value = t(json.basicspeed)
+    // data.basicspeed.value = t(json.basicspeed)
+    data.basicspeed.value = this.floatFrom(json.basicspeed)
+
     data.basicspeed.points = i(json.basicspeed_points)
     data.thrust = t(json.thrust)
     data.swing = t(json.swing)

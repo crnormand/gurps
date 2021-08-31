@@ -1,6 +1,5 @@
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
-import { GurpsActor, Skill, Spell } from './actor/actor.js'
-import { ChatProcessors } from './chat.js'
+import { GurpsActor } from './actor/actor.js'
 import GURPSRange from '../lib/ranges.js'
 import Initiative from '../lib/initiative.js'
 import HitFatPoints from '../lib/hitpoints.js'
@@ -185,10 +184,3 @@ import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
  * @property {string} lastImport
  *
  */
-
-/**
- * @param {any} actor
- */
-export function asGurpsActor(actor) {
-  return /** @type {GurpsActor} */ actor
-}
