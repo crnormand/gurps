@@ -1,11 +1,12 @@
 import { atou, generateUniqueId, i18n } from '../lib/utilities.js'
-import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
+import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor/actor.js'
 import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
 import { parselink } from '../lib/parselink.js'
 import * as CI from './injury/domain/ConditionalInjury.js'
 import * as settings from '../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
+import GurpsWiring from './gurps-wiring.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -30,7 +31,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async close(options = {}) {
     await super.close(options)
-    game.GURPS.ClearLastActor(this.actor)
+    GURPS.ClearLastActor(this.actor)
   }
 
   // Hack to keep sheet from flashing during multiple DB updates
@@ -49,10 +50,10 @@ export class GurpsActorSheet extends ActorSheet {
     const sheetData = super.getData()
     sheetData.olddata = sheetData.data
     sheetData.data = sheetData.data.data
-    sheetData.ranges = game.GURPS.rangeObject.ranges
-    sheetData.useCI = game.GURPS.ConditionalInjury.isInUse()
-    sheetData.conditionalEffectsTable = game.GURPS.ConditionalInjury.conditionalEffectsTable()
-    game.GURPS.SetLastActor(this.actor)
+    sheetData.ranges = GURPS.rangeObject.ranges
+    sheetData.useCI = GURPS.ConditionalInjury.isInUse()
+    sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
+    GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.data.data.eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
     return sheetData
@@ -60,7 +61,10 @@ export class GurpsActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
-  /** @override */
+  /**
+   * @inheritdoc
+   * @param {JQuery<HTMLElement>} html
+   */
   activateListeners(html) {
     super.activateListeners(html)
 
@@ -76,7 +80,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('.navigation-link').click(this._onNavigate.bind(this))
     html.find('.rollable').click(this._onClickRoll.bind(this))
-    GURPS.hookupGurps(html)
+    GurpsWiring.hookupGurps(html)
+    // TODO verify if this is duplication of GurpsWiring and if so, remove
     html.find('.gurpslink').contextmenu(this._onRightClickGurpslink.bind(this))
     html.find('.glinkmod').contextmenu(this._onRightClickGurpslink.bind(this))
     html.find('.glinkmodplus').contextmenu(this._onRightClickGurpslink.bind(this))
@@ -96,7 +101,7 @@ export class GurpsActorSheet extends ActorSheet {
             otf: li.getAttribute('data-otf'),
             actor: this.actor.id,
             displayname: display,
-          })
+          }),
         )
       })
     })
@@ -239,14 +244,14 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('button[data-operation="ci-days-inc"]').click(async ev => {
       ev.preventDefault()
       updateActorWithChangedDaysToHeal(
-        CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
+        CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1),
       )
     })
 
     html.find('button[data-operation="ci-days-dec"]').click(ev => {
       ev.preventDefault()
       updateActorWithChangedDaysToHeal(
-        CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
+        CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1),
       )
     })
 
@@ -393,7 +398,7 @@ export class GurpsActorSheet extends ActorSheet {
               label: 'Create',
               callback: async html => {
                 ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                  a => (eqt[a] = html.find(`.${a}`).val())
+                  a => (eqt[a] = html.find(`.${a}`).val()),
                 )
                 ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
                 let u = html.find('.save') // Should only find in Note (or equipment)
@@ -406,7 +411,7 @@ export class GurpsActorSheet extends ActorSheet {
           },
           default: 'one',
         },
-        options
+        options,
       )
       d.render(true)
     })
@@ -479,7 +484,7 @@ export class GurpsActorSheet extends ActorSheet {
         let index = 0
         Object.values(list)
           .sort((a, b) => a.name.localeCompare(b.name))
-          .forEach(o => game.GURPS.put(sortedobj, o, index++))
+          .forEach(o => GURPS.put(sortedobj, o, index++))
         await this.actor.update({ [key]: sortedobj })
       },
     })
@@ -501,7 +506,7 @@ export class GurpsActorSheet extends ActorSheet {
         let index = 0
         Object.values(list)
           .sort((a, b) => b.name.localeCompare(a.name))
-          .forEach(o => game.GURPS.put(sortedobj, o, index++))
+          .forEach(o => GURPS.put(sortedobj, o, index++))
         await this.actor.update({ [key]: sortedobj })
       },
     })
@@ -587,7 +592,7 @@ export class GurpsActorSheet extends ActorSheet {
           popOut: true,
           minimizable: false,
           jQuery: true,
-        }
+        },
       )
       d.render(true)
     })
@@ -625,13 +630,13 @@ export class GurpsActorSheet extends ActorSheet {
         if ($(this).hasClass('buttongrey')) msg = 'Enable&nbsp;' + opt
         $(this).append(
           $(
-            `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`
-          )
+            `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`,
+          ),
         )
       },
       function () {
         $(this).find('div').last().remove()
-      }
+      },
     )
 
     html.find('#qnotes').dblclick(ex => {
@@ -734,7 +739,7 @@ export class GurpsActorSheet extends ActorSheet {
         default: 'edit',
         templates: templates,
       },
-      { width: 600 }
+      { width: 600 },
     )
     d.render(true)
   }
@@ -753,7 +758,7 @@ export class GurpsActorSheet extends ActorSheet {
             label: 'Update',
             callback: async html => {
               ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                a => (obj[a] = html.find(`.${a}`).val())
+                a => (obj[a] = html.find(`.${a}`).val()),
               )
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
@@ -776,7 +781,7 @@ export class GurpsActorSheet extends ActorSheet {
         popOut: true,
         minimizable: false,
         jQuery: true,
-      }
+      },
     )
     d.render(true)
   }
@@ -803,7 +808,7 @@ export class GurpsActorSheet extends ActorSheet {
         'passotf',
         'failotf',
       ],
-      []
+      [],
     )
   }
 
@@ -830,7 +835,7 @@ export class GurpsActorSheet extends ActorSheet {
         'passotf',
         'failotf',
       ],
-      ['acc', 'bulk']
+      ['acc', 'bulk'],
     )
   }
 
@@ -842,7 +847,7 @@ export class GurpsActorSheet extends ActorSheet {
       'systems/gurps/templates/advantage-editor-popup.html',
       'Advantage / Disadvantage / Perk / Quirk Editor',
       ['name', 'notes'],
-      ['points']
+      ['points'],
     )
   }
 
@@ -854,7 +859,7 @@ export class GurpsActorSheet extends ActorSheet {
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
       ['name', 'import', 'relativelevel', 'pageref', 'notes', 'checkotf', 'duringotf', 'passotf', 'failotf'],
-      ['points']
+      ['points'],
     )
   }
 
@@ -883,7 +888,7 @@ export class GurpsActorSheet extends ActorSheet {
         'passotf',
         'failotf',
       ],
-      ['points']
+      ['points'],
     )
   }
 
@@ -896,7 +901,7 @@ export class GurpsActorSheet extends ActorSheet {
       'Note Editor',
       ['pageref', 'notes'],
       [],
-      730
+      730,
     )
   }
 
@@ -929,7 +934,7 @@ export class GurpsActorSheet extends ActorSheet {
         popOut: true,
         minimizable: false,
         jQuery: true,
-      }
+      },
     )
     d.render(true)
   }
@@ -957,7 +962,7 @@ export class GurpsActorSheet extends ActorSheet {
             let index = 0
             Object.values(object)
               .sort((a, b) => a.name.localeCompare(b.name))
-              .forEach(o => game.GURPS.put(sortedobj, o, index++))
+              .forEach(o => GURPS.put(sortedobj, o, index++))
             await self.actor.update({ [key]: sortedobj })
           },
         },
@@ -975,7 +980,7 @@ export class GurpsActorSheet extends ActorSheet {
             let index = 0
             Object.values(object)
               .sort((a, b) => b.name.localeCompare(a.name))
-              .forEach(o => game.GURPS.put(sortedobj, o, index++))
+              .forEach(o => GURPS.put(sortedobj, o, index++))
             await self.actor.update({ [key]: sortedobj })
           },
         },
@@ -1072,7 +1077,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   _onfocus(ev) {
     ev.preventDefault()
-    game.GURPS.SetLastActor(this.actor)
+    GURPS.SetLastActor(this.actor)
   }
 
   /** @override */
@@ -1204,7 +1209,7 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async _onClickRoll(event, targets) {
-    game.GURPS.handleRoll(event, this.actor, targets)
+    GURPS.handleRoll(event, this.actor, targets)
   }
 
   async _onNavigate(event) {
@@ -1248,7 +1253,7 @@ export class GurpsActorSheet extends ActorSheet {
       }
     } else {
       ui.notifications.warn(
-        "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on."
+        "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on.",
       )
     }
   }
@@ -1357,7 +1362,7 @@ Hooks.on('getGurpsActorEditorSheetHeaderButtons', sheet => {
           },
           rejectClose: false,
         }),
-      500
+      500,
     )
   }
 })
@@ -1431,7 +1436,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       '.adshead',
       'Advantage/Disadvantage/Quirk/Perk',
       new Advantage('New Advantage/Disadvantage/Quirk/Perk'),
-      'data.ads'
+      'data.ads',
     )
     this.makeAddDeleteMenu(html, '.adsmenu', new Advantage('New Advantage'))
 
@@ -1449,14 +1454,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       '.carhead',
       'Carried Equipment',
       new Equipment('New Equipment', true),
-      'data.equipment.carried'
+      'data.equipment.carried',
     )
     this.makeHeaderMenu(
       html,
       '.othhead',
       'Other Equipment',
       new Equipment('New Equipment', true),
-      'data.equipment.other'
+      'data.equipment.other',
     )
 
     html.find('#body-plan').change(async e => {
@@ -1475,7 +1480,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             let originalLoc = Object.values(oldlocations).filter(it => it.where === loc)
             let dr = originalLoc.length === 0 ? 0 : originalLoc[0]?.dr
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
-            game.GURPS.put(hitlocations, it, count++)
+            GURPS.put(hitlocations, it, count++)
           }
           await this.actor.update({
             'data.-=hitlocations': null,

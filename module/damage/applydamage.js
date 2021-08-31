@@ -13,7 +13,8 @@ import {
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
-import { GurpsActor } from '../actor.js'
+import { GurpsActor } from '../actor/actor.js'
+import { handleOnPdf } from '../pdf-refs.js'
 
 const simpleDialogHeight = 130
 
@@ -86,7 +87,7 @@ export default class ApplyDamageDialog extends Application {
     super.activateListeners(html)
 
     // Activate all PDF links
-    html.find('.pdflink').click(async ev => game.GURPS.handleOnPdf(ev))
+    html.find('.pdflink').on('click', handleOnPdf)
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
@@ -196,7 +197,7 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('#user-entered-woundmod')
       .on('change', ev =>
-        this._updateModelFromInputText($(ev.currentTarget), 'userEnteredWoundModifier', parseFloatFrom)
+        this._updateModelFromInputText($(ev.currentTarget), 'userEnteredWoundModifier', parseFloatFrom),
       )
 
     // When 'Additional Mods' text changes, save the (numeric) value in this object and
@@ -204,7 +205,7 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('#addmodifier')
       .on('change', ev =>
-        this._updateModelFromInputText($(ev.currentTarget), 'additionalWoundModifier', parseFloatFrom)
+        this._updateModelFromInputText($(ev.currentTarget), 'additionalWoundModifier', parseFloatFrom),
       )
 
     // ==== Tactical Rules ====
@@ -377,7 +378,7 @@ export default class ApplyDamageDialog extends Application {
     property,
     converter = value => {
       return value
-    }
+    },
   ) {
     if (element.is(':checked')) {
       this._calculator[property] = converter(element.val())
@@ -396,7 +397,7 @@ export default class ApplyDamageDialog extends Application {
     property,
     converter = value => {
       return value
-    }
+    },
   ) {
     let valueText = select.find('option:selected').val()
     this._calculator[property] = converter(valueText)
@@ -451,6 +452,7 @@ export default class ApplyDamageDialog extends Application {
    * @param {*} ev
    */
   async _handleEffectButtonClick(ev) {
+    // TODO allow click to automatically apply effect to a selected target
     let stringified = ev.currentTarget.attributes['data-struct'].value
     let object = JSON.parse(stringified)
 
@@ -597,7 +599,7 @@ export default class ApplyDamageDialog extends Application {
 
     if (!resource || !path) {
       ui.notifications.warn(
-        `Actor ${this.actor.data.name} does not have a resource named "${this._calculator.damageType}"!!`
+        `Actor ${this.actor.data.name} does not have a resource named "${this._calculator.damageType}"!!`,
       )
       return
     }
@@ -622,8 +624,7 @@ export default class ApplyDamageDialog extends Application {
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
       let speaker = ChatMessage.getSpeaker(game.user)
-      if (!!attackingActor)
-        speaker = ChatMessage.getSpeaker(attackingActor)
+      if (!!attackingActor) speaker = ChatMessage.getSpeaker(attackingActor)
       let messageData = {
         user: game.user.id,
         speaker: speaker,

@@ -10,13 +10,15 @@ export const MOVE_NONE = 'none'
 export const MOVE_FULL = 'full'
 export const MOVE_HALF = 'half'
 
+export const PROPERTY_MOVEOVERRIDE = 'data.moveoverride'
+
 CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
 
 // Override Actor.temporaryEffects getter to sort maneuvers to the front of the array
 Object.defineProperty(Actor.prototype, 'temporaryEffects', {
   get: function () {
-    let results = oldTemporaryEffects.get.call(this)
+    let results = oldTemporaryEffects?.get?.call(this)
 
     if (!!results && results.length > 1) {
       // get the active temporary effects that are also maneuvers
@@ -29,24 +31,35 @@ Object.defineProperty(Actor.prototype, 'temporaryEffects', {
 })
 
 /**
- * @typedef {{key: string, value: string, mode: number, priority: number}} change
- * @typedef {{id: string, icon: string, label: string, changes?: change[]}} StatusEffect
- * @typedef {{flags: { gurps: { name: string, move: string, defense: string, fullturn: Boolean, icon: string, alt?: string} } }} ManeuverEffect
- * @typedef {StatusEffect & ManeuverEffect} ManeuverData
+ * @typedef {{id: string, flags: { gurps: { name: string, move?: string, defense?: string, fullturn?: Boolean, icon: string, alt?: string|null} } }} ManeuverEffect
+ * @typedef {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData').ActiveEffectDataConstructorData & ManeuverEffect} ManeuverData
  */
 
-/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string}} _data */
+/** @typedef {{name: string, label: string, move?: string, defense?: string, fullturn?: boolean, icon: string, alt?: string|null}} _data */
+
+/**
+ * The purpose of this class is to help generate data that can be used in an ActiveEffect.
+ */
 class Maneuver {
   static filepath = 'systems/gurps/icons/maneuvers/'
   /**
    * @param {_data} data
    */
   constructor(data) {
+    data.move = data.move || MOVE_STEP
+    data.defense = data.defense || DEFENSE_ANY
+    data.fullturn = !!data.fullturn
+    data.icon = Maneuver.filepath + data.icon
+    data.alt = !!data.alt ? Maneuver.filepath + data.alt : null
     this._data = data
   }
 
   get icon() {
-    return Maneuver.filepath + this._data.icon
+    return this._data.icon
+  }
+
+  get move() {
+    return this._data.move
   }
 
   /** @returns {ManeuverData} */
@@ -54,31 +67,35 @@ class Maneuver {
     return {
       id: MANEUVER,
       label: this._data.label,
-      icon: Maneuver.filepath + this._data.icon,
+      icon: this._data.icon,
       flags: {
         gurps: {
           name: this._data.name,
-          move: this._data.move ? this._data.move : MOVE_STEP,
-          defense: this._data.defense ? this._data.defense : DEFENSE_ANY,
-          fullturn: this._data.fullturn ? this._data.fullturn : false,
-          icon: Maneuver.filepath + this._data.icon,
-          alt: this._data.alt ? Maneuver.filepath + this._data.alt : this._data.alt,
+          move: this._data.move,
+          defense: this._data.defense,
+          fullturn: this._data.fullturn,
+          icon: this._data.icon,
+          alt: this._data.alt,
         },
       },
       changes: this.changes,
     }
   }
 
-  /** @returns {change[]} */
+  /** @returns {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData').EffectChangeDataConstructorData[]} */
   get changes() {
-    return [
-      {
-        key: 'data.conditions.maneuver',
-        value: this._data.name,
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-        priority: 10,
-      },
-    ]
+    let changes = []
+
+    changes.push({
+      key: 'data.conditions.maneuver',
+      value: this._data.name,
+      mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      priority: 10,
+    })
+
+    changes.push({ key: PROPERTY_MOVEOVERRIDE, value: this.move, mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM })
+
+    return changes
   }
 }
 
@@ -269,10 +286,10 @@ export default class Maneuvers {
 
   /**
    * @param {string} maneuverText
-   * @returns {string}
+   * @returns {string|null}
    */
   static getIcon(maneuverText) {
-    return Maneuvers.getManeuver(maneuverText).icon
+    return Maneuvers.getManeuver(maneuverText).icon ?? null
   }
 
   static getAll() {
@@ -317,11 +334,9 @@ export default class Maneuvers {
   }
 }
 
-Hooks.once('init', () => {})
-
 // on create combatant, set the maneuver
 Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  if (_game().user?.isGM) {
+  if (game.user?.isGM) {
     console.log(id)
     let token = /** @type {GurpsToken} */ (combat.token?.object)
     if (!!token && token.id) token.setManeuver('do_nothing')
@@ -330,7 +345,7 @@ Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */
 
 // on delete combatant, remove the maneuver
 Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  if (_game().user?.isGM) {
+  if (game.user?.isGM) {
     console.log(id)
     let token = /** @type {GurpsToken} */ (combat.token?.object)
     if (!!token && token.id) {
@@ -340,8 +355,9 @@ Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */
   }
 })
 
+// On delete combat, remove the maneuver from every combatant
 Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _options, /** @type {any} */ _id) => {
-  if (_game().user?.isGM) {
+  if (game.user?.isGM) {
     let combatants = combat.data.combatants.contents
     for (const combatant of combatants) {
       if (combatant?.token) {
@@ -354,10 +370,3 @@ Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _opti
 })
 
 // TODO consider subtracting 1 FP from every combatant that leaves combat
-
-// -- Functions to get type-safe global references (for TS) --
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized yet!')
-}

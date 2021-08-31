@@ -2,7 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { i18n, i18n_f, locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
-import { GurpsActor } from '../actor.js'
+import { GurpsActor } from '../actor/actor.js'
 
 const Command = {
   on: 'set',
@@ -55,10 +55,10 @@ export default class StatusChatProcessor extends ChatProcessor {
       ? this.getTokensFor(tokenName)
       : !!self
       ? this.getSelfTokens()
-      : _canvas().tokens?.controlled
+      : canvas.tokens?.controlled
 
     if (!tokens || tokens.length === 0) {
-      _ui().notifications.warn(i18n_f('GURPS.chatSelectSelfOrNameTokens', { self: '@self' }))
+      ui.notifications.warn(i18n_f('GURPS.chatSelectSelfOrNameTokens', { self: '@self' }))
       return
     }
 
@@ -67,20 +67,20 @@ export default class StatusChatProcessor extends ChatProcessor {
     let effectText = this.match.groups?.name?.trim() //this.match[3]?.trim()
     let effect = !!effectText ? this.findEffect(effectText) : null
     if (!effect) {
-      _ui().notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
+      ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
       return
     }
 
     if (this.match.groups?.data) {
       let data = JSON.parse(this.match.groups.data)
-      data.duration.combat = _game().combats?.active?.id
+      data.duration.combat = game.combats?.active?.id
       mergeObject(effect, data)
     }
 
     if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
     else if (theCommand == Command.set) return await this.set(tokens, effect)
     else if (theCommand == Command.unset) return await this.unset(tokens, effect)
-    else _ui().notifications.warn(`Unexpected error: command: ${theCommand} (${this.match})`)
+    else ui.notifications.warn(`Unexpected error: command: ${theCommand} (${this.match})`)
   }
 
   /**
@@ -114,7 +114,7 @@ export default class StatusChatProcessor extends ChatProcessor {
         matches.length === 0 //
           ? i18n_f('GURPS.chatNoTokenFound', { name: name }, 'No Actor/Token found matching {name}')
           : i18n_f('GURPS.chatMultipleTokensFound', { name: name }, 'More than one Token/Actor found matching {name}')
-      _ui().notifications.warn(msg)
+      ui.notifications.warn(msg)
       return null
     }
 
@@ -122,11 +122,11 @@ export default class StatusChatProcessor extends ChatProcessor {
   }
 
   getSelfTokens() {
-    let list = _canvas().tokens?.placeables.filter(it => it.owner)
+    let list = canvas.tokens?.placeables.filter(it => it.owner)
     if (list && list.length === 1) return list
 
     let msg = list && list.length === 0 ? i18n('GURPS.chatNoOwnedTokenFound') : i18n('GURPS.chatMultipleOwnedFound')
-    _ui().notifications.warn(msg)
+    ui.notifications.warn(msg)
     return null
   }
 
@@ -154,7 +154,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   isEffectActive(token, effect) {
     /** @type {GurpsActor} */
     // @ts-ignore
-    let actor = token?.actor || _game().actors?.get(token.data.actorId)
+    let actor = token?.actor || game.actors?.get(token.data.actorId)
     return actor.isEffectActive(effect)
     // return actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
   }
@@ -231,29 +231,3 @@ export default class StatusChatProcessor extends ChatProcessor {
 }
 
 // ---------------
-
-/**
- *
- * @returns {{notifications: Notifications}}
- */
-function _ui() {
-  // @ts-ignore
-  if (!!globalThis.ui) return ui
-  throw new Error('ui is not in the global namespace yet!')
-}
-
-/**
- * @returns {Canvas}
- */
-function _canvas() {
-  if (canvas instanceof Canvas) return canvas
-  throw new Error('Canvas not initialized yet!')
-}
-
-/**
- * @returns {Game}
- */
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('Game not initialized yet!')
-}

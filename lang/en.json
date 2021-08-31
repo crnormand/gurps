@@ -211,6 +211,7 @@
   "GURPS.addSpecialCombatSituations": "Special Situations",
   "GURPS.addTacticalRules": "Tactical Rules",
   "GURPS.addTacticalRulesDefaults": "Use systems settings to set defaults",
+  "GURPS.addTitle": "Apply {basic} point(s) of {damage} damage to {name}",
   "GURPS.addTitleConcat0": "Apply",
   "GURPS.addTitleConcat01": "point of ",
   "GURPS.addTitleConcat0s": "points of ",
