@@ -1,4 +1,3 @@
-import { _GURPS } from './global-references.js'
 import GurpsWiring from './gurps-wiring.js'
 
 export default class GurpsJournalEntry {
@@ -14,7 +13,7 @@ export default class GurpsJournalEntry {
   static _renderJournalSheet(_app, html, _options) {
     let h = html.find('.editor-content')
     if (!!h) {
-      h.html(_GURPS().gurpslink(h[0].innerHTML))
+      h.html(GURPS.gurpslink(h[0].innerHTML))
       GurpsWiring.hookupGurps(html)
       GurpsWiring.hookupGurpsRightClick(html)
     }
@@ -22,14 +21,13 @@ export default class GurpsJournalEntry {
       li.setAttribute('draggable', 'true')
       li.addEventListener('dragstart', ev => {
         let display = ''
-        // @ts-ignore
         if (!!ev.currentTarget?.dataset.action) display = ev.currentTarget.innerText
         return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
             displayname: display,
-          })
+          }),
         )
       })
     })

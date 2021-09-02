@@ -1,6 +1,5 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import { _game, _GURPS, _ui, _user } from './global-references.js'
 import { handleOnPdf } from './pdf-refs.js'
 
 export default class GurpsWiring {
@@ -29,7 +28,7 @@ export default class GurpsWiring {
     html.find('.pdflink').on('contextmenu', event => {
       event.preventDefault()
       let el = event.currentTarget
-      _GURPS().whisperOtfToOwner('PDF:' + el.innerText, null, event, false, _GURPS().LastActor)
+      GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
     })
   }
 
@@ -37,7 +36,7 @@ export default class GurpsWiring {
    * @param {JQuery.MouseEventBase} event
    */
   static chatClickGurpslink(event) {
-    GurpsWiring.handleGurpslink(event, _GURPS().LastActor)
+    GurpsWiring.handleGurpslink(event, GURPS.LastActor)
   }
 
   /**
@@ -46,7 +45,7 @@ export default class GurpsWiring {
   static chatClickGmod(event) {
     let element = event.currentTarget
     let desc = element.dataset.name
-    GurpsWiring.handleGurpslink(event, _GURPS().LastActor, desc)
+    GurpsWiring.handleGurpslink(event, GURPS.LastActor, desc)
   }
 
   /**
@@ -65,7 +64,7 @@ export default class GurpsWiring {
     let action = element.dataset.action // If we have already parsed
     if (!!action) action = JSON.parse(atou(action))
     else action = parselink(element.innerText, desc).action
-    _GURPS().performAction(action, actor, event, targets)
+    GURPS.performAction(action, actor, event, targets)
   }
 
   /**
@@ -79,8 +78,8 @@ export default class GurpsWiring {
     if (!!action) {
       action = JSON.parse(atou(action))
       if (action.type === 'damage' || action.type === 'deriveddamage')
-        _GURPS().resolveDamageRoll(event, _GURPS().LastActor, action.orig, action.overridetxt, _user().isGM, true)
-      else _GURPS().whisperOtfToOwner(action.orig, action.overridetxt, event, action, _GURPS().LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+        GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
+      else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
     }
   }
 }

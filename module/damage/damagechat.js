@@ -1,9 +1,7 @@
 'use strict'
 
-import { d6ify, generateUniqueId, isNiceDiceEnabled } from '../../lib/utilities.js'
+import { d6ify, generateUniqueId, isNiceDiceEnabled, makeElementDraggable } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
-import { _canvas, _GURPS, _user, asGurpsActor, _ui, _game } from '../global-references.js'
-import { GurpsRoll } from '../modifier-bucket/bucket-app.js'
 import { handleOnPdf } from '../pdf-refs.js'
 
 /**
@@ -32,41 +30,6 @@ import { handleOnPdf } from '../pdf-refs.js'
  */
 export default class DamageChat {
   /**
-   * @param {HTMLElement} element
-   * @param {string} type DragEvent data transfer type
-   * @param {string} cssClass CSS class to apply to element while dragging
-   * @param {any} payload drag data
-   * @param {Element|undefined} dragImage Element to display while dragging
-   * @param {[number, number]} offset drag image offets
-   */
-  static _makeElementDraggable(element, type, cssClass, payload, dragImage, [x, y]) {
-    // make the element draggable
-    element.setAttribute('draggable', 'true')
-
-    // When drag starts:
-    // - set the class of the target to visibly show that its data is being dragged;
-    // - set the drag image;
-    // - add the data to the event.dataTransfer
-    element.addEventListener('dragstart', ev => {
-      if (ev.currentTarget && ev.dataTransfer) {
-        $(ev.currentTarget).addClass(cssClass)
-
-        if (dragImage) ev.dataTransfer.setDragImage(dragImage, x, y)
-        let data = {
-          type: type,
-          payload: payload,
-        }
-        return ev.dataTransfer.setData('text/plain', JSON.stringify(data))
-      }
-    })
-
-    // When drag ends, remove the class on the target.
-    element.addEventListener('dragend', ev => {
-      if (ev.currentTarget) $(ev.currentTarget).removeClass(cssClass)
-    })
-  }
-
-  /**
    * @param {{ data: { flags: { transfer: string; }; }; }} app
    * @param {JQuery<HTMLElement>} html
    * @param {any} _msg
@@ -74,7 +37,6 @@ export default class DamageChat {
   static async _renderDamageChat(app, html, _msg) {
     if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
 
-    const GURPS = _GURPS()
     let transfer = JSON.parse(app.data.flags.transfer)
 
     // for each damage-message, set the drag-and-drop events and data
@@ -82,15 +44,8 @@ export default class DamageChat {
     if (!!damageMessages && damageMessages.length > 0) {
       for (let index = 0; index < damageMessages.length; index++) {
         let message = damageMessages[index]
-
-        DamageChat._makeElementDraggable(
-          message,
-          'damageItem',
-          'dragging',
-          transfer.payload[index],
-          GURPS.damageDragImage,
-          [30, 30],
-        )
+        let payload = transfer.payload[index]
+        makeElementDraggable(message, 'damageItem', 'dragging', payload, GURPS.damageDragImage, [30, 30])
       }
     } // end-if (!!damageMessages && damageMessages.length)
 
@@ -100,30 +55,23 @@ export default class DamageChat {
       let transfer = JSON.parse(app.data.flags.transfer)
       let message = allDamageMessage[0]
 
-      DamageChat._makeElementDraggable(
-        message,
-        'damageItem',
-        'dragging',
-        transfer.payload,
-        GURPS.damageDragImage,
-        [30, 30],
-      )
+      makeElementDraggable(message, 'damageItem', 'dragging', transfer.payload, GURPS.damageDragImage, [30, 30])
     }
 
     // If there was a target, enable the GM's apply button
     let button = html.find(':button.apply-all')
     button.hide()
     if (!!transfer.userTarget && transfer.userTarget != null) {
-      if (_user().isGM) {
+      if (game.user.isGM) {
         button.show()
 
         button.on('click', ev => {
           // get actor from id
-          let token = _canvas().tokens?.get(transfer.userTarget) // ...
+          let token = canvas.tokens?.get(transfer.userTarget) // ...
           // get payload; its either the "all damage" payload or ...
-          let actor = asGurpsActor(token?.actor)
+          let actor = token?.actor
           if (!!actor) actor.handleDamageDrop(transfer.payload)
-          else _ui().notifications?.warn('Unable to find token with ID:' + transfer.userTarget)
+          else ui.notifications?.warn('Unable to find token with ID:' + transfer.userTarget)
         })
       }
     }
@@ -135,7 +83,7 @@ export default class DamageChat {
    */
   static async _dropCanvasData(canvas, dropData) {
     if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
-      let oldselection = new Set(_user().targets) // remember current targets (so we can reselect them afterwards)
+      let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
       let grid_size = canvas.scene?.data.grid
       canvas.tokens?.targetObjects(
         {
@@ -144,12 +92,12 @@ export default class DamageChat {
           height: grid_size,
           width: grid_size,
         },
-        { releaseOthers: true },
+        { releaseOthers: true }
       )
-      let targets = [..._user().targets]
+      let targets = [...game.user.targets]
 
       // Now that we have the list of targets, reset the target selection back to whatever the user had
-      for (let t of _user().targets) {
+      for (let t of game.user.targets) {
         t.setTarget(false, { releaseOthers: false, groupSelection: true })
       }
       oldselection.forEach(t => {
@@ -160,28 +108,28 @@ export default class DamageChat {
       if (dropData.type === 'Item') handle = actor => actor.handleItemDrop(dropData)
       if (dropData.type === 'equipment') handle = actor => actor.handleEquipmentDrop(dropData)
 
-      // actual targets are stored in _user().targets
+      // actual targets are stored in game.user.targets
       if (targets.length === 0) return false
       if (targets.length === 1) {
-        handle(asGurpsActor(targets[0].actor))
+        handle(targets[0].actor)
         return false
       }
 
       let buttons = {
         apply: {
           icon: '<i class="fas fa-check"></i>',
-          label: _game().i18n.localize('GURPS.addApply'),
+          label: game.i18n.localize('GURPS.addApply'),
           callback: (/** @type {JQuery<HTMLElement>} */ html) => {
             let name = html.find('select option:selected').text().trim()
             let target = targets.find(token => token.name === name)
-            handle(asGurpsActor(target?.actor))
+            handle(target?.actor)
           },
         },
       }
 
       let d = new Dialog(
         {
-          title: _game().i18n.localize('GURPS.selectToken'),
+          title: game.i18n.localize('GURPS.selectToken'),
           content: await renderTemplate('systems/gurps/templates/apply-damage/select-token.html', {
             tokens: targets,
           }),
@@ -190,7 +138,7 @@ export default class DamageChat {
           default: 'apply',
           tokens: targets,
         },
-        { width: 300 },
+        { width: 300 }
       )
       await d.render(true)
 
@@ -212,12 +160,22 @@ export default class DamageChat {
    * @param {String|null} overrideDiceText ??
    * @param {String[]|undefined} tokenNames
    * @param {String|null} extdamagetype
+   * @param {string|null} hitlocation
    * @returns {Promise<void>}
    */
-  static async create(actor, diceText, damageType, event, overrideDiceText, tokenNames, extdamagetype = null) {
+  static async create(
+    actor,
+    diceText,
+    damageType,
+    event,
+    overrideDiceText,
+    tokenNames,
+    extdamagetype = null,
+    hitlocation = null
+  ) {
     let message = new DamageChat()
 
-    const targetmods = await _GURPS().ModifierBucket.applyMods() // append any global mods
+    const targetmods = await GURPS.ModifierBucket.applyMods() // append any global mods
 
     let dice = message._getDiceData(diceText, damageType, targetmods, overrideDiceText, extdamagetype)
     if (dice == null) return
@@ -227,39 +185,30 @@ export default class DamageChat {
 
     let draggableData = []
     for (const tokenName of tokenNames) {
-      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods)
+      let data = await message._createDraggableSection(actor, dice, tokenName, targetmods, hitlocation)
       draggableData.push(data)
     }
 
+    // TODO add hitlocation to Chat message (e.g, something like 'Rolling 3d cut damage to Neck')
     message._createChatMessage(actor, dice, targetmods, draggableData, event)
 
     // Resolve any modifier descriptors (such as *Costs 1FP)
     targetmods
       .filter(it => !!it.desc)
       .map(it => it.desc)
-      .forEach(it => _GURPS().applyModifierDesc(actor, it))
+      .forEach(it => GURPS.applyModifierDesc(actor, it))
   }
 
   /**
    * This method is all about interpreting the die roll text.
    *
-     Returns {
-        formula: String, -- Foundry Dice formula
-        modifier: num, -- sum of modifiers
-        diceText: String, -- GURPS die text
-        multiplier: num, -- any multiplier (1 if none)
-        divisor: num, -- any armor divisor (0 if none)
-        adds1: num, -- first add
-        adds2: num, -- second add
-        min: num, -- minimum value of the die roll (0, 1)
-     }
-     @param {string} originalDiceText
-     @param {string} damageType
-     @param {string|null} overrideDiceText
-     @param {string|null} extdamagetype
-     @param {import("../modifier-bucket/bucket-app.js").Modifier[]} targetmods
-     @returns {diceData|null}
-    */
+   *  @param {string} originalDiceText
+   *  @param {string} damageType
+   *  @param {string|null} overrideDiceText
+   *  @param {string|null} extdamagetype
+   *  @param {Modifier[]} targetmods
+   *  @returns {diceData|null}
+   */
   _getDiceData(originalDiceText, damageType, targetmods, overrideDiceText, extdamagetype) {
     // format for diceText:
     //
@@ -278,7 +227,7 @@ export default class DamageChat {
     let result = DamageChat.fullRegex.exec(originalDiceText)
 
     if (!result) {
-      _ui().notifications?.warn(`Invalid Dice formula: "${originalDiceText}"`)
+      ui.notifications?.warn(`Invalid Dice formula: "${originalDiceText}"`)
       return null
     }
 
@@ -359,7 +308,7 @@ export default class DamageChat {
    * @param {*} tokenName
    * @param {*} targetmods
    */
-  async _createDraggableSection(actor, diceData, tokenName, targetmods) {
+  async _createDraggableSection(actor, diceData, tokenName, targetmods, hitlocation) {
     let roll = /** @type {GurpsRoll} */ (Roll.create(diceData.formula + `+${diceData.modifier}`))
     await roll.evaluate({ async: true })
 
@@ -427,6 +376,7 @@ export default class DamageChat {
       dice: diceData.diceText,
       damageType: diceData.damageType,
       damageTypeText: diceData.damageType === 'dmg' ? ' ' : `'${diceData.damageType}' `,
+      damageModifier: diceData.extdamagetype,
       armorDivisor: diceData.divisor,
       damage: damage,
       hasExplanation: hasExplanation,
@@ -435,6 +385,7 @@ export default class DamageChat {
       isB378: b378,
       roll: roll,
       target: tokenName,
+      hitlocation: hitlocation,
     }
     return contentData
   }
@@ -448,17 +399,19 @@ export default class DamageChat {
    */
   async _createChatMessage(actor, diceData, targetmods, draggableData, event) {
     let userTarget = null
-    if (!!_user().targets.size) {
-      userTarget = _user().targets.values().next().value
+    if (!!game.user.targets.size) {
+      userTarget = game.user.targets.values().next().value
     }
 
-    const damageType = diceData.damageType
+    let damageType = diceData.damageType === 'dmg' ? '' : diceData.damageType
+    damageType = !!diceData.extdamagetype ? `${damageType} ${diceData.extdamagetype}` : damageType
+
     let html = await renderTemplate('systems/gurps/templates/damage-message.hbs', {
       draggableData: draggableData,
       rolled: diceData.rolled,
       dice: diceData.diceText,
       loaded: diceData.loaded,
-      damageTypeText: damageType === 'dmg' ? ' ' : `'${damageType}' `,
+      damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,
     })
@@ -467,7 +420,7 @@ export default class DamageChat {
     const speaker = ChatMessage.getSpeaker(actor)
     /** @type {Record<string,any>} */
     let messageData = {
-      user: _user().id,
+      user: game.user.id,
       speaker: speaker,
       content: html,
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
@@ -475,7 +428,7 @@ export default class DamageChat {
     }
 
     if (event?.shiftKey) {
-      messageData.whisper = [_user().id]
+      messageData.whisper = [game.user.id]
     }
 
     messageData['flags.transfer'] = JSON.stringify({
@@ -504,7 +457,7 @@ export default class DamageChat {
               type: type,
               vectors: [],
               options: {},
-            }),
+            })
           )
         })
       })
@@ -512,14 +465,13 @@ export default class DamageChat {
       if (dice.length > 0) {
         // The user made a "multi-damage" roll... let them see the dice!
         // @ts-ignore
-        _game().dice3d.show({ throws: throws })
+        game.dice3d.show({ throws: throws })
       }
     } else {
       messageData.sound = CONFIG.sounds.dice
     }
     ChatMessage.create(messageData).then(arg => {
-      // @ts-ignore
-      let messageId = arg?.data.id // unique id assigned in contentData, above
+      let messageId = arg.data.id // 'qHz1QQuzpJiavH3V'
       $(`[data-message-id='${messageId}']`).on('click', handleOnPdf)
     })
   }

@@ -336,7 +336,7 @@ export default class Maneuvers {
 
 // on create combatant, set the maneuver
 Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  if (_game().user?.isGM) {
+  if (game.user?.isGM) {
     console.log(id)
     let token = /** @type {GurpsToken} */ (combat.token?.object)
     if (!!token && token.id) token.setManeuver('do_nothing')
@@ -345,7 +345,7 @@ Hooks.on('createCombatant', (/** @type {Combatant} */ combat, /** @type {any} */
 
 // on delete combatant, remove the maneuver
 Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */ _options, /** @type {any} */ id) => {
-  if (_game().user?.isGM) {
+  if (game.user?.isGM) {
     console.log(id)
     let token = /** @type {GurpsToken} */ (combat.token?.object)
     if (!!token && token.id) {
@@ -357,7 +357,7 @@ Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */
 
 // On delete combat, remove the maneuver from every combatant
 Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _options, /** @type {any} */ _id) => {
-  if (_game().user?.isGM) {
+  if (game.user?.isGM) {
     let combatants = combat.data.combatants.contents
     for (const combatant of combatants) {
       if (combatant?.token) {
@@ -370,10 +370,3 @@ Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _opti
 })
 
 // TODO consider subtracting 1 FP from every combatant that leaves combat
-
-// -- Functions to get type-safe global references (for TS) --
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized yet!')
-}

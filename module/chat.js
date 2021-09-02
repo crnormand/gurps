@@ -27,9 +27,9 @@ class HelpChatProcessor extends ChatProcessor {
   async process(_line, _msgs) {
     let t =
       "<a href='" +
-      _GURPS().USER_GUIDE_URL +
+      GURPS.USER_GUIDE_URL +
       "'>" +
-      i18n('_GURPS().gameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
+      i18n('GURPS.gameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
       '</a><br>'
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
@@ -91,9 +91,10 @@ class ChatProcessorRegistry {
   async startProcessingLines(message, chatmsgData, event) {
     if (!chatmsgData)
       chatmsgData = {
-        user: _game().user?.id || null,
+        user: game.user?.id || null,
+        // @ts-ignore
         speaker: {
-          actor: !!_GURPS().LastActor ? _GURPS().LastActor.id : undefined,
+          actor: !!GURPS.LastActor ? GURPS.LastActor.id : undefined,
         },
       }
 
@@ -158,12 +159,12 @@ class ChatProcessorRegistry {
       if (line.trim().startsWith('/')) {
         // immediately flush our stored msgs, and execute the slash command using the default parser
         this.send()
-        _GURPS().ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
-        _ui()
-          // @ts-ignore
-          .chat?.processMessage(line)
+        GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
+        ui// @ts-ignore
+        .chat
+          ?.processMessage(line)
           .catch(err => {
-            _ui().notifications?.error(err)
+            ui.notifications?.error(err)
             console.error(err)
           })
       } else this.pub(line) // If not handled, must just be public text
@@ -181,12 +182,12 @@ class ChatProcessorRegistry {
     let answer = false
     let processor = this._processors.find(it => it.matches(line))
     if (!!processor) {
-      if (processor.isGMOnly() && !_game().user?.isGM) _ui().notifications?.warn(i18n('_GURPS().chatYouMustBeGM'))
+      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.chatYouMustBeGM'))
       else {
         try {
           answer = await processor.process(line)
         } catch (err) {
-          _ui().notifications?.error(err)
+          ui.notifications?.error(err)
           console.error(err)
         }
         return [true, answer != false]
@@ -216,9 +217,9 @@ class ChatProcessorRegistry {
       ChatMessage.create({
         alreadyProcessed: true,
         content: content,
-        user: _game().user?.id,
+        user: game.user?.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-        whisper: [_game().user?.id || ''],
+        whisper: [game.user?.id || ''],
       })
     })
     priv.length = 0
@@ -273,8 +274,8 @@ class ChatProcessorRegistry {
    * @param {string} txt
    */
   prnt(txt) {
-    let p_setting = _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
-    if (_game().user?.isGM || p_setting) this.priv(txt)
+    let p_setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PLAYER_CHAT_PRIVATE)
+    if (game.user?.isGM || p_setting) this.priv(txt)
     else this.pub(txt)
   }
 
@@ -288,7 +289,7 @@ class ChatProcessorRegistry {
     this.msgs.quiet = quiet
     this.msgs.oldQuiet = quiet
     this.msgs.data.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
-    this.msgs.data.whisper = [_game().user?.id]
+    this.msgs.data.whisper = [game.user?.id]
     mergeObject(this.msgs.event, { shiftKey: shift, ctrlKey: ctrl })
   }
 }
@@ -297,13 +298,13 @@ export let ChatProcessors = new ChatProcessorRegistry()
 
 export default function addChatHooks() {
   Hooks.once('init', async function () {
-    _GURPS().ChatProcessors = ChatProcessors
+    GURPS.ChatProcessors = ChatProcessors
     Hooks.on('chatMessage', (_log, message, chatmsgData) => {
       // @ts-ignore
       if (!!chatmsgData.alreadyProcessed) return true // The chat message has already been parsed for GURPS commands show it should just be displayed
 
-      if (_GURPS().ChatCommandsInProcess.includes(message)) {
-        _GURPS().ChatCommandsInProcess = _GURPS().ChatCommandsInProcess.filter(
+      if (GURPS.ChatCommandsInProcess.includes(message)) {
+        GURPS.ChatCommandsInProcess = GURPS.ChatCommandsInProcess.filter(
           (/** @type {string} */ item) => item !== message
         )
         return true // Ok. this is a big hack, and only used for singe line chat commands... but since arrays are synchronous and I don't expect chat floods, this is safe
@@ -364,7 +365,7 @@ export default function addChatHooks() {
               if (!!m && !!m[2]) {
                 let action = parselink(m[2])
                 if (!!action.action) {
-                  _GURPS().performAction(action.action, _GURPS().LastActor, {
+                  GURPS.performAction(action.action, GURPS.LastActor, {
                     shiftKey: e.startsWith('/pr'),
                   })
                   //          return false; // Return false if we don't want the rolltable chat message displayed.  But I think we want to display the rolltable result.
@@ -373,7 +374,7 @@ export default function addChatHooks() {
             })
           }
         } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
-        let newContent = _GURPS().gurpslink(c)
+        let newContent = GURPS.gurpslink(c)
         let update = { content: newContent }
         chatMessage.data.update(update)
         return true
@@ -398,28 +399,13 @@ export default function addChatHooks() {
     Hooks.on(
       'diceSoNiceRollComplete',
       async (/** @type {any} */ _app, /** @type {any} */ _html, /** @type {any} */ _msg) => {
-        let otf = _GURPS().PendingOTFs.pop()
+        let otf = GURPS.PendingOTFs.pop()
         while (otf) {
           let action = parselink(otf)
-          if (!!action.action) await _GURPS().performAction(action.action, _GURPS().LastActor || _game().user)
-          otf = _GURPS().PendingOTFs.pop()
+          if (!!action.action) await GURPS.performAction(action.action, GURPS.LastActor || game.user)
+          otf = GURPS.PendingOTFs.pop()
         }
       }
     )
   }) // End of "init"
-}
-
-function _GURPS() {
-  // @ts-ignore
-  if (window.GURPS) return window.GURPS
-}
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized!')
-}
-
-function _ui() {
-  if (!!ui) return ui
-  throw new Error('ui is not initialized yet!')
 }

@@ -2,7 +2,6 @@ import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } fro
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
-import { _game } from './global-references.js'
 
 export default class GurpsToken extends Token {
   static ready() {
@@ -40,8 +39,8 @@ export default class GurpsToken extends Token {
       effects.forEach(it => (it.data.icon = it.getFlag('gurps', 'icon')))
 
       // GM and Owner always see the exact maneuver.. Otherwise:
-      if (!_game().user?.isGM && !this.isOwner) {
-        const detail = _game().settings.get(SYSTEM_NAME, SETTING_MANEUVER_DETAIL)
+      if (!game.user?.isGM && !this.isOwner) {
+        const detail = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_DETAIL)
 
         if (detail !== 'Full') {
           // if detail is not 'Full', always replace Feint with Attack
@@ -61,12 +60,12 @@ export default class GurpsToken extends Token {
       }
 
       // Remove any icons based on visibility
-      const visibility = _game().settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
+      const visibility = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
 
       // set all icons to null
       if (visibility === 'NoOne') effects.forEach(it => (it.data.icon = null))
       else if (visibility === 'GMAndOwner')
-        if (!_game().user?.isGM && !this.isOwner)
+        if (!game.user?.isGM && !this.isOwner)
           // set icon to null if neither GM nor owner
           effects.forEach(it => (it.data.icon = null))
     } // if (effects)
@@ -81,10 +80,9 @@ export default class GurpsToken extends Token {
    * @param {string} maneuverName
    */
   async setManeuver(maneuverName) {
-    const game = _game()
     // if not in combat, do nothing
     if (game.combats && game.combats.active) {
-      if (!game.combats.active.combatants.find(c => c.token?.id === this.id)) return
+      if (!game.combats.active.combatants.some(c => c.token?.id === this.id)) return
 
       // get the new maneuver's data
       let maneuver = Maneuvers.get(maneuverName)
@@ -111,6 +109,7 @@ export default class GurpsToken extends Token {
         for (const existing of maneuvers) {
           this._toggleManeuverActiveEffect(existing, { active: false })
         }
+        // @ts-ignore
         await this.toggleEffect(maneuver, { active: true })
       }
     }

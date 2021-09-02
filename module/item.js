@@ -12,9 +12,9 @@ export class GurpsItem extends Item {
   }
 
   /**
-   * @returns {import("./global-references").GurpsItemData}
+   * @returns {GurpsItemData}
    */
   getGurpsItemData() {
-    return /** @type {import("./global-references").GurpsItemData} */ (this.data.data)
+    return /** @type {GurpsItemData} */ (this.data.data)
   }
 }

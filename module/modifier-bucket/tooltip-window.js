@@ -4,7 +4,6 @@ import * as HitLocations from '../hitlocation/hitlocation.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketJournals from './select-journals.js'
 import GurpsWiring from '../gurps-wiring.js'
-import { _GURPS } from '../global-references.js'
 
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied

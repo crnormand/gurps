@@ -452,6 +452,7 @@ export default class ApplyDamageDialog extends Application {
    * @param {*} ev
    */
   async _handleEffectButtonClick(ev) {
+    // TODO allow click to automatically apply effect to a selected target
     let stringified = ev.currentTarget.attributes['data-struct'].value
     let object = JSON.parse(stringified)
 

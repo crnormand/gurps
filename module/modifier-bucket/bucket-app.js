@@ -111,8 +111,7 @@ export class GurpsDie extends Die {
    */
   // @ts-ignore
   async _evaluate({ minimize = false, maximize = false } = {}) {
-    let physicalDice =
-      _game().user?.isTrusted && _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
+    let physicalDice = game.user?.isTrusted && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_PHYSICAL_DICE)
 
     if (physicalDice) {
       return new Promise(async resolve => {
@@ -171,12 +170,12 @@ export class GurpsRoll extends Roll {
     if (!d.hasOwnProperty('gmodc'))
       Object.defineProperty(d, 'gmodc', {
         get: () => {
-          let m = _GURPS().ModifierBucket.currentSum()
-          _GURPS().ModifierBucket.clear()
+          let m = GURPS.ModifierBucket.currentSum()
+          GURPS.ModifierBucket.clear()
           return parseInt(m)
         },
       })
-    d.gmod = _GURPS().ModifierBucket.currentSum()
+    d.gmod = GURPS.ModifierBucket.currentSum()
     return d
   }
 }
@@ -204,7 +203,7 @@ class ModifierStack {
     this.displaySum = displayMod(this.currentSum)
     this.plus = this.currentSum > 0 || this.modifierList.length > 0 // cheating here... it shouldn't be named "plus", but "green"
     this.minus = this.currentSum < 0
-    _game().user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
+    game.user?.setFlag('gurps', 'modifierstack', this) // Set the shared flags, so the GM can look at it sometime later. Not used in the local calculations
   }
 
   /**
@@ -295,7 +294,7 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
-    this.isTooltip = _game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
+    this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
 
     this.editor = new ModifierBucketEditor(this, {
       popOut: !this.isTooltip,
@@ -324,7 +323,7 @@ export class ModifierBucket extends Application {
 
   // Called from Range Ruler after measurement ends, to possible add range to stack
   addTempRangeMod() {
-    if (_game().settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_RANGE_TO_BUCKET)) {
       if (!!this._tempRangeMod) this.modifierStack.add(this._tempRangeMod, 'for range', true) // Only allow 1 measured range, for the moment.
       this.refresh()
     }
@@ -380,9 +379,9 @@ export class ModifierBucket extends Application {
     const saved = this.modifierStack.modifierList
     if (!!action) {
       this.modifierStack.modifierList = []
-      _GURPS().performAction(action)
+      GURPS.performAction(action)
     }
-    let _users = _game().users
+    let _users = game.users
     if (_users) {
       let players = _users.players
       if (usernames.length > 0) players = players.filter(u => u.name && usernames.includes(u.name))
@@ -397,15 +396,15 @@ export class ModifierBucket extends Application {
   sendBucketToPlayer(id) {
     if (!id) {
       // Only occurs if the GM clicks on 'everyone'
-      let _users = _game().users
+      let _users = game.users
       if (!!_users) {
-        let everyone = _users.filter(u => u.id != _game().user?.id)
+        let everyone = _users.filter(u => u.id != game.user?.id)
         if (!!everyone) this._sendBucket(everyone)
       }
     } else {
-      let users = _game().users?.filter(u => u.id == id) || []
+      let users = game.users?.filter(u => u.id == id) || []
       if (users.length > 0) this._sendBucket(users)
-      else _ui().notifications?.warn("No player with ID '" + id + "'")
+      else ui.notifications?.warn("No player with ID '" + id + "'")
     }
   }
 
@@ -416,17 +415,17 @@ export class ModifierBucket extends Application {
    */
   _sendBucket(users) {
     if (users.length == 0) {
-      _ui().notifications?.warn('No users to send to.')
+      ui.notifications?.warn('No users to send to.')
       return
     }
-    let mb = _GURPS().ModifierBucket.modifierStack
-    if (_game().user?.hasRole('GAMEMASTER'))
+    let mb = GURPS.ModifierBucket.modifierStack
+    if (game.user?.hasRole('GAMEMASTER'))
       // Only actual GMs can update other user's flags
       users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
-    _game().socket?.emit('system.gurps', {
+    game.socket?.emit('system.gurps', {
       type: 'updatebucket',
       users: users.map(u => u.id),
-      bucket: _GURPS().ModifierBucket.modifierStack,
+      bucket: GURPS.ModifierBucket.modifierStack,
     })
   }
 
@@ -451,8 +450,8 @@ export class ModifierBucket extends Application {
     data.cssClass = 'modifierbucket'
 
     let ca = ''
-    if (!!_GURPS().LastActor) {
-      ca = _GURPS().LastActor.displayname
+    if (!!GURPS.LastActor) {
+      ca = GURPS.LastActor.displayname
       if (ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
     data.currentActor = ca
@@ -476,7 +475,7 @@ export class ModifierBucket extends Application {
 
     e.each((_, li) => {
       li.addEventListener('dragstart', ev => {
-        let bucket = _ModifierBucket()
+        let bucket = GURPS.ModifierBucket()
           .modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
           .join(' & ')
         return ev.dataTransfer?.setData(
@@ -484,7 +483,7 @@ export class ModifierBucket extends Application {
           JSON.stringify({
             name: 'Modifier Bucket',
             bucket: bucket,
-          }),
+          })
         )
       })
     })
@@ -500,7 +499,7 @@ export class ModifierBucket extends Application {
         if (link.action) {
           link.action.blindroll = true
           if (link.action.type == 'modifier' || !!dragData.actor)
-            _GURPS().performAction(link.action, _game().actors?.get(dragData.actor))
+            GURPS.performAction(link.action, game.actors?.get(dragData.actor))
         }
       }
     })
@@ -547,7 +546,7 @@ export class ModifierBucket extends Application {
     event.preventDefault()
     if (event.shiftKey) {
       // If not the GM, just broadcast our mods to the chat
-      if (!_game().user?.isGM) {
+      if (!game.user?.isGM) {
         let messageData = {
           content: this.chatString(this.modifierStack),
           type: CONST.CHAT_MESSAGE_TYPES.OOC,
@@ -558,7 +557,7 @@ export class ModifierBucket extends Application {
   }
 
   async showOthers() {
-    let users = _game().users?.filter(u => u.id != _game().user?.id)
+    let users = game.users?.filter(u => u.id != game.user?.id)
     let content = ''
     let d = ''
     for (let user of users || []) {
@@ -570,10 +569,10 @@ export class ModifierBucket extends Application {
     }
 
     let chatData = {}
-    chatData.user = _game().user?.id || null
+    chatData.user = game.user?.id || null
     chatData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
     chatData.content = content
-    chatData.whisper = [_game().user?.id || '']
+    chatData.whisper = [game.user?.id || '']
 
     ChatMessage.create(chatData)
   }
@@ -584,7 +583,7 @@ export class ModifierBucket extends Application {
    */
   async onRightClick(event) {
     event.preventDefault()
-    if (!_game().user?.isGM) return
+    if (!game.user?.isGM) return
     this.showOthers()
   }
 
@@ -608,28 +607,4 @@ export class ModifierBucket extends Application {
     }
     return content
   }
-}
-
-// -- Functions to get type-safe global references (for TS) --
-
-function _GURPS() {
-  // @ts-ignore
-  return GURPS
-}
-
-function _game() {
-  if (game instanceof Game) return game
-  throw new Error('game is not initialized yet!')
-}
-
-function _ui() {
-  if (!!ui) return ui
-  throw new Error('ui is not initialized yet!')
-}
-
-/**
- * @returns {ModifierBucket}
- */
-function _ModifierBucket() {
-  return /** type {ModifierBucket} */ _GURPS().ModifierBucket
 }
