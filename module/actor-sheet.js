@@ -665,7 +665,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('#maneuver').on('change', ev => {
       let target = $(ev.currentTarget)
-      this.actor.updateManeuver(target.val())
+      this.actor.replaceManeuver(target.val())
     })
   }
 

@@ -251,7 +251,7 @@ export default class Maneuvers {
    */
   static get(id) {
     // @ts-ignore
-    return maneuvers[id].data
+    return maneuvers[id]?.data
   }
 
   /**

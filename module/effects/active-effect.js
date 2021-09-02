@@ -32,6 +32,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
     Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
       if (change.key === PROPERTY_MOVEOVERRIDE) actor._updateCurrentMoveOverride(change)
+      if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
+      else console.log(change)
     })
 
     // Hooks.on(
@@ -60,7 +62,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
         /** @type {any} */ _userId
       ) => {
         // get previous combatant { round: 6, turn: 0, combatantId: 'id', tokenId: 'id' }
-        // @ts-ignore
         let previous = combat.previous
         if (previous.tokenId) {
           let token = _canvas().tokens?.get(previous.tokenId)

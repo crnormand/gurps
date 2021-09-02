@@ -75,16 +75,8 @@ export class GurpsActor extends Actor {
   }
 
   prepareEmbeddedEntities() {
-    let current = this.getGurpsActorData().conditions.maneuver
-
     // Calls this.applyActiveEffects()
     super.prepareEmbeddedEntities()
-
-    let newValue = this.getGurpsActorData().conditions.maneuver
-    // if the current value was modified by an ActiveEffect, update the effect icon
-    if (current !== newValue) {
-      this._updateManeuverStatusIcon(newValue)
-    }
   }
 
   prepareDerivedData() {
@@ -144,6 +136,9 @@ export class GurpsActor extends Actor {
 
     // Must be done at end
     this._calculateWeights()
+
+    let maneuver = this.effects.contents.find(it => it.data.flags.core.statusId === 'maneuver')
+    this.getGurpsActorData().conditions.maneuver = !!maneuver ? maneuver.data.flags.gurps.name : 'undefined'
   }
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
@@ -449,12 +444,16 @@ export class GurpsActor extends Actor {
       let value = foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)
       switch (value) {
         case MOVE_NONE:
+          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveNone`, 'None')
           return 0
         case MOVE_STEP:
+          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveStep`, 'Step')
           return this._getStep()
         case MOVE_HALF:
+          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveHalf`, 'Half')
           move = Math.ceil(move / 2)
         case MOVE_FULL:
+          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveFull`, 'Full')
           break
       }
     }
@@ -463,7 +462,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} change
+   * @param {{[key:string]: any}} change
    */
   _updateCurrentMoveOverride(change) {
     foundry.utils.setProperty(this.data, change.key, change.value)
@@ -563,16 +562,6 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * Calling this will also trigger it being added to the token status icons.
-   * @param {string} maneuverText
-   */
-  async updateManeuver(maneuverText) {
-    // @ts-ignore
-    await this.update({ 'data.conditions.maneuver': maneuverText }, { diff: true })
-    this._renderAllApps()
-  }
-
-  /**
    * For every application associated to this actor, refresh it to reflect any updates.
    */
   _renderAllApps() {
@@ -602,15 +591,16 @@ export class GurpsActor extends Actor {
     }
 
     let result = await super.update(data, context)
-
-    // if changing the maneuver, update the icons
-    if (data.hasOwnProperty('data.conditions.maneuver')) {
-      let maneuverText = data[`data.conditions.maneuver`] || 'do_nothing'
-      await this._updateManeuverStatusIcon(maneuverText)
-    }
-
-    _GURPS().ModifierBucket.refresh() // Update the bucket, in case the actor's status effects have changed
     return result
+  }
+
+  /**
+   * This method is called when "data.conditions.maneuver" changes on the actor (via the update method)
+   * @param {string} maneuverText
+   */
+  async replaceManeuver(maneuverText) {
+    let tokens = this._findTokens()
+    if (tokens) for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
   /**
@@ -622,15 +612,6 @@ export class GurpsActor extends Actor {
       return [token]
     }
     return this.getActiveTokens().map(it => /** @type {GurpsToken} */ (it))
-  }
-
-  /**
-   * This method is called when "data.conditions.maneuver" changes on the actor (via the update method)
-   * @param {string} maneuverText
-   */
-  async _updateManeuverStatusIcon(maneuverText) {
-    let tokens = this._findTokens()
-    if (tokens) for (const t of tokens) await t.setManeuver(maneuverText)
   }
 
   /**
