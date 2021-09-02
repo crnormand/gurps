@@ -172,7 +172,7 @@ export class AnimChatProcessor extends ChatProcessor {
       } catch (e) { //in case people have older versions of fxmaster
         canvas.fxmaster.playVideo(effectData)
       }
-      console.log(GURPS.objToString(effectData))
+      //console.log(GURPS.objToString(effectData))
       if (count > 0) await wait(effectData.delay)
     }
   }

@@ -39,7 +39,6 @@ GURPS.Migration = Migration
  * The property key is the actor's ID. The value is literally the chatdata from
  * the doRoll() function, which has close to anything anyone would want.
  */
-GURPS.lastTargetedRoll = {}
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -105,6 +104,24 @@ GURPS.ClearLastActor = function (actor) {
       GURPS.SetLastActor(tokens.controlled[0].actor)
     } // There may still be tokens selected... if so, select one of them
   }
+}
+
+GURPS.lastTargetedRoll = {}
+GURPS.lastTargetedRolls = {}    // mapped by both actor and token id
+
+GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients) {
+  let tmp = { ...chatdata }
+  GURPS.lastTargetedRoll = tmp
+  if (!actorid) GURPS.lastTargetedRolls[actorid] = tmp
+  if (!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
+  if (updateOtherClients)
+    game.socket.emit('system.gurps', {
+      type: 'setLastTargetedRoll',
+      chatdata: tmp,
+      actorid: actorid,
+      tokenid: tokenid
+    })
+  console.log(GURPS.objToString(tmp)  + " A:" + actorid + " T:" + tokenid)
 }
 
 // TODO Why are these global?
@@ -297,6 +314,8 @@ function objToString(obj, ndeep = 1) {
         indent +
         '}]'[+isArray]
       )
+    default:
+      return obj.toString()
   }
 }
 GURPS.objToString = objToString
@@ -726,6 +745,8 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   let attack = new RegExp(sname, 'i')
   if (isMelee)
     // @ts-ignore
+    Object.values(this).find(expression)
+    
     t = actor.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
   if (isRanged && !t)
     // @ts-ignore
@@ -1652,6 +1673,9 @@ Hooks.once('ready', async function () {
       // @ts-ignore
       GURPS.performAction(resp.action, GURPS.LastActor)
     }
+    if (resp.type == 'setLastTargetedRoll') {
+      GURPS.setLastTargetedRoll(resp.chatdata, resp.actorid, resp.tokenid, false)
+    }    
     if (resp.type == 'dragEquipment1') {
       if (resp.destuserid != game.user.id) return
       // @ts-ignore
