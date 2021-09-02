@@ -309,6 +309,9 @@
           <div class="label">{{i18n "GURPS.maneuver"}}</div>
           <div class="field" style='padding-top: 3px; border: none;'>
             <select id='maneuver' name="data.conditions.maneuver">
+              <option value='undefined' {{#if (eq ../data.conditions.maneuver undefined)}}selected{{/if}}>
+                {{i18n 'GURPS.undefined' 'Undefined'}}
+              </option>
               {{#each (listAllManeuvers) as | this key |}}
                 <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
                   {{localize this.label}}
