@@ -124,7 +124,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     chatdata['modifier'] = modifier
   }
 
-  if (isTargeted) GURPS.lastTargetedRoll[actor.id] = chatdata
+  if (isTargeted) GURPS.setLastTargetedRoll(chatdata, speaker.actor, speaker.token, true)
 
   let message = await renderTemplate('systems/gurps/templates/die-roll-chat-message.hbs', chatdata)
 
