@@ -20,7 +20,7 @@ export default class GurpsToken extends Token {
     // data protect against bad tokens
     if (!!actor) {
       let maneuverText = actor.getGurpsActorData().conditions.maneuver
-      actor.updateManeuver(maneuverText)
+      actor.replaceManeuver(maneuverText)
     }
   }
 
@@ -87,6 +87,11 @@ export default class GurpsToken extends Token {
       // get the new maneuver's data
       let maneuver = Maneuvers.get(maneuverName)
 
+      if (!maneuver) {
+        this.actor._renderAllApps()
+        return
+      }
+
       // get all current active effects that are also maneuvers
       let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)
 
@@ -117,9 +122,6 @@ export default class GurpsToken extends Token {
    */
   async removeManeuver() {
     let actor = /** @type {GurpsActor} */ (this.actor)
-
-    // update the data model
-    actor.updateManeuver('do_nothing')
 
     // get all Active Effects that are also Maneuvers
     let maneuvers = Maneuvers.getActiveEffectManeuvers(this.actor?.temporaryEffects)

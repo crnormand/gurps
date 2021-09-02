@@ -188,11 +188,25 @@ class ModifierStack {
   constructor() {
     /** @type {Array<Modifier>} */
     this.modifierList = []
+    
+    /** @type {Array<Modifier>} */
+    this.savedModifierList = []
 
     this.currentSum = 0
     this.displaySum = '+0'
     this.plus = false
     this.minus = false
+  }
+  
+  savelist() {
+    this.savedModifierList = this.modifierList 
+    this.modifierList = []
+    this.sum()
+  }
+
+  restorelist() {
+    this.modifierList = this.savedModifierList
+    this.sum()
   }
 
   sum() {

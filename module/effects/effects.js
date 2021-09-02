@@ -29,11 +29,12 @@ const statusEffects = [
     icon: 'systems/gurps/icons/statuses/dd-condition-stunned.webp',
     id: 'stun',
     label: 'EFFECT.StatusStunned',
+    tint: '', // #FEAEF4 #AEFEAE
     changes: [
       {
         key: 'data.conditions.maneuver',
         value: 'do_nothing',
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
         priority: 10,
       },
     ],
