@@ -321,7 +321,7 @@
               <div class="field" style='padding-top: 3px; border: none;'>
                 <select id='maneuver' name="data.conditions.maneuver" data-path='data.conditions.maneuver'>
                   <option value='undefined' {{#if (eq ../data.conditions.maneuver undefined)}}selected{{/if}}>
-                    {{i18n 'GURPS.undefined' 'Undefined'}}
+                    {{i18n 'GURPS.none' 'None'}}
                   </option>
                   {{#each (listAllManeuvers) as | this key |}}
                     {debug key}

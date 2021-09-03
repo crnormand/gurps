@@ -1779,7 +1779,7 @@ Hooks.once('ready', async function () {
   GURPS.setInitiativeFormula()
 
   //Add support for the Drag Ruler module: https://foundryvtt.com/packages/drag-ruler
-  Hooks.once('dragRuler.ready', (/** @type {any} */ SpeedProvider) => {
+  Hooks.once('dragRuler.ready', (SpeedProvider) => {
     class GURPSSpeedProvider extends SpeedProvider {
       get colors() {
         return [
@@ -1807,7 +1807,7 @@ Hooks.once('ready', async function () {
         return ranges
       }
     }
-    // @ts-ignore
+
     dragRuler.registerSystem('gurps', GURPSSpeedProvider)
   })
 

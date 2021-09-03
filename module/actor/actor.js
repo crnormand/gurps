@@ -21,6 +21,7 @@ import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } fro
 import { SmartImporter } from '../smart-importer.js'
 import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
+import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -908,13 +909,13 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} o
+   * @param {{[key: string] : any}} o
    */
   floatFrom(o) {
     if (!o) return 0
-    let f = o['#text']
+    let f = o['#text'].trim()
     if (!f) return 0
-    return parseFloat(f)
+    return f.includes(',') ? parseDecimalNumber(f, { thousands: '.', decimal: ',' }) : parseDecimalNumber(f)
   }
 
   /**
@@ -1614,7 +1615,7 @@ export class GurpsActor extends Actor {
    */
   async importAttributesFromCGSv1(json) {
     if (!json) return
-    let i = this.intFrom // shortcut to make code smaller
+    let i = this.intFrom // shortcut to make code smaller -- I reject your attempt to make the code smaller. Why does it need to be smaller?
     let t = this.textFrom
     let data = this.getGurpsActorData()
     let att = data.attributes
@@ -1685,7 +1686,9 @@ export class GurpsActor extends Actor {
 
     data.basicmove.value = t(json.basicmove)
     data.basicmove.points = i(json.basicmove_points)
-    data.basicspeed.value = t(json.basicspeed)
+    // data.basicspeed.value = t(json.basicspeed)
+    data.basicspeed.value = this.floatFrom(json.basicspeed)
+
     data.basicspeed.points = i(json.basicspeed_points)
     data.thrust = t(json.thrust)
     data.swing = t(json.swing)
