@@ -21,6 +21,7 @@ import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } fro
 import { SmartImporter } from '../smart-importer.js'
 import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
+import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -912,9 +913,9 @@ export class GurpsActor extends Actor {
    */
   floatFrom(o) {
     if (!o) return 0
-    let f = o['#text']
+    let f = o['#text'].trim()
     if (!f) return 0
-    return parseFloat(f)
+    return f.includes(',') ? parseDecimalNumber(f, { thousands: '.', decimal: ',' }) : parseDecimalNumber(f)
   }
 
   /**
