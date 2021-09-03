@@ -85,7 +85,7 @@ body {
 
 /* special override, 'cause I can't get the space any other way*/
 #apply-damage-advanced {
-  margin-top: 1em;
+  margin-top: 5px;
 }
 
 /* a group is a section of a form with a header */

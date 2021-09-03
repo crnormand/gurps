@@ -1,13 +1,13 @@
 <div class='gurps-app {{classes}}'>
   <div classes='flexcol flex-between'>
 
-    <h2>
+    <h2 style='text-align: center'>
       <!-- TODO Consider adding hitlocation if passed to ADD -->
       {{localize "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=actor.data.name}}
     </h2>
 
     {{#if (gt CALC.length 1)}}
-      <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%'>
+      <div style='display: inline-flex; flex-flow: column; justify-content: center; align-items: center; width: 100%'>
         <nav class='pagination'>
           <div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
           <div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
@@ -18,14 +18,16 @@
           {{/each}}
           <div id='pagination-right'><i class="fas fa-angle-double-right"></i></div>
         </nav>
-        {{#unless (eq CALC.viewId "all")}}
-          <aside id='pagination-single-select' style='font-style: italic;'>{{localize "GURPS.addSingleRollSelected"}}
-          </aside>
-        {{/unless}}
+
+        <aside id='pagination-single-select'
+          style='font-style: italic; float: right; {{#if (eq CALC.viewId "all")}}visibility: hidden{{/if}}'>
+          {{localize "GURPS.addSingleRollSelected"}}
+        </aside>
+
       </div>
     {{/if}}
 
-    <div class='flexrow flex-group-center flex-between'>
+    <div class='flexrow flex-group-center flex-between' style='border: none'>
       <h3>{{localize "GURPS.addDirectlyApply"}}:</h3>
       <input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}' {{#if (eq viewId "all"
         )}}disabled{{/if}}>
@@ -58,7 +60,8 @@
     </div>
 
     {{#unless isSimpleDialog}}
-      <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>
+      <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'
+        style='border: none; border-top: 1px solid #999; padding: 0; padding-top: 5px;'>
         <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%;'>
           <h3>{{localize "GURPS.addApplyDamageOptions"}}:</h3>
           {{#if (gt CALC.length 1)}}
@@ -151,6 +154,10 @@
                 {{#if CALC.isWoundModifierAdjustedForInjuryTolerance}}
                   <aside>{{localize "GURPS.addAdjustedForInjuryTolerance"}}.</aside>
                 {{/if}}
+
+                {{#if CALC.isWoundModifierAdjustedForDamageType}}
+                  <aside>{{i18n "GURPS.addAdjustedForDamageType" "‡ - Adjusted for Damage Modifier."}}.</aside>
+                {{/if}}
               </div>
             </section>
 
@@ -158,6 +165,7 @@
 
             <label><input type='radio' name='woundmodifier' value='none' {{checked (eq CALC.damageType 'none'
               )}}>&nbsp;{{localize "GURPS.noModifier"}}</label>
+
             <div class='grid grid-2col flex-between' style='margin: 10px 0;'>
               <div><label><input type='radio' name='woundmodifier' value='User Entered' {{checked (eq
                   CALC.damageType 'User Entered' )}}>&nbsp;{{localize "GURPS.addEnterModifier"}}:</label>
@@ -165,10 +173,16 @@
               <input type='text' class='decimal-digits-only' id='user-entered-woundmod'
                 value='{{CALC.userEnteredWoundModifier}}'>
             </div>
+
             <div class='grid grid-2col flex-between'>
               <label>{{localize "GURPS.addAdditionalStackingModifier"}}:</label>
               <input type='number' class='decimal-digits-only' id='addmodifier'
                 value='{{CALC.additionalWoundModifier}}'>
+            </div>
+
+            <div class='grid grid-2col flex-between'>
+              <label>{{i18n "GURPS.addDamageModifier" "Damage Modifier"}}:</label>
+              <input type='number' class='decimal-digits-only' id='adddamagemodifier' value='{{CALC.damageModifier}}'>
             </div>
           </div>
 
