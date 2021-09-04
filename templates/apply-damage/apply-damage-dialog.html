@@ -1,13 +1,13 @@
 <div class='gurps-app {{classes}}'>
   <div classes='flexcol flex-between'>
 
-    <h2 style='text-align: center'>
+    <h2>
       <!-- TODO Consider adding hitlocation if passed to ADD -->
       {{localize "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=actor.data.name}}
     </h2>
 
     {{#if (gt CALC.length 1)}}
-      <div style='display: inline-flex; flex-flow: column; justify-content: center; align-items: center; width: 100%'>
+      <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%'>
         <nav class='pagination'>
           <div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
           <div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
@@ -20,10 +20,9 @@
         </nav>
 
         <aside id='pagination-single-select'
-          style='font-style: italic; float: right; {{#if (eq CALC.viewId "all")}}visibility: hidden{{/if}}'>
+          style='font-style: italic; {{#if (eq CALC.viewId "all")}}visibility: hidden{{/if}}'>
           {{localize "GURPS.addSingleRollSelected"}}
         </aside>
-
       </div>
     {{/if}}
 
@@ -69,9 +68,9 @@
           {{/if}}
         </div>
 
-        <div class='grid grid-3col flex-between' style='grid-template-columns: auto auto auto;'>
-          <div class='gurps-group'>
-            <h4>{{localize "GURPS.addHitLocationAndDR"}}</h4>
+        <div class='grid grid-3col flex-between' style='grid-template-columns: auto auto auto; gap: 0'>
+          <div class='gurps-group' style='border: none; padding: 0 1em; border-right: 1px solid #999'>
+            <h4 style='text-align: center;'>{{localize "GURPS.addHitLocationAndDR"}}</h4>
 
             <div class='gurps-3col gurps-radio-col'>
               <header>{{localize "GURPS.location"}}</header>
@@ -124,8 +123,8 @@
 
           </div>
 
-          <div class='gurps-group'>
-            <h4>{{localize "GURPS.addTypeAndWoundingModifiers"}}</h4>
+          <div class='gurps-group' style='border: none; padding: 0 1em; border-right: 1px solid #999'>
+            <h4 style='text-align: center;'>{{localize "GURPS.addTypeAndWoundingModifiers"}}</h4>
 
             <section id='wound-modifier-table'>
               <div name='wounding-modifiers' class='default-wound-modifiers'>
@@ -156,7 +155,7 @@
                 {{/if}}
 
                 {{#if CALC.isWoundModifierAdjustedForDamageType}}
-                  <aside>{{i18n "GURPS.addAdjustedForDamageType" "‡ - Adjusted for Damage Modifier."}}.</aside>
+                  <aside>{{i18n "GURPS.addAdjustedForDamageType" "‡ - Adjusted for Damage Modifier"}}.</aside>
                 {{/if}}
               </div>
             </section>
@@ -182,12 +181,12 @@
 
             <div class='grid grid-2col flex-between'>
               <label>{{i18n "GURPS.addDamageModifier" "Damage Modifier"}}:</label>
-              <input type='number' class='decimal-digits-only' id='adddamagemodifier' value='{{CALC.damageModifier}}'>
+              <input type='text' id='adddamagemodifier' value='{{CALC.damageModifier}}'>
             </div>
           </div>
 
-          <div class='gurps-group shaded-group'>
-            <h4>{{localize "GURPS.addTacticalRules"}}</h4>
+          <div class='gurps-group shaded-group' style='border: none; padding: 0 1em;'>
+            <h4 style='text-align: center;'>{{localize "GURPS.addTacticalRules"}}</h4>
             <aside>{{localize "GURPS.addTacticalRulesDefaults"}}.</aside>
 
             <div class='gurps-3col gurps-checkbox-col'>
@@ -361,12 +360,12 @@
       </div>
 
       <div>
-        <div class='gurps-group'>
-          <h4>{{localize "GURPS.addCalculationAndResults"}}</h4>
+        <div class='gurps-group' style='border: none; padding: 0 1em;'>
+          <h4 style='text-align: center;'>{{localize "GURPS.addCalculationAndResults"}}</h4>
           <div class='grid grid-3col' display='grid-template-columns: 3fr 3fr 2fr;'>
 
             {{#if (eq CALC.viewId "all")}}
-              <div class='overflowy'>
+              <div class='overflowy' style='padding: 0 0.5em; border-right: 1px solid #999; height: 100%'>
                 <aside>Select a damage roll at the top of this window to see its calculation.</aside>
                 <!-- CALC.pointsToApply -->
                 <div style='display: inline-flex; flex-flow: row wrap; max-width: 250px;'>
@@ -492,7 +491,7 @@
           </div>
           {{/if}}
 
-          <div id="result-extrastuff">
+          <div id="result-extrastuff" style='padding: 0 0.5em; border-right: 1px solid #999; height: 100%'>
             <ul id='result-effects'>
               {{#each CALC.effects}}
                 {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
@@ -501,7 +500,7 @@
           </div>
 
           <div class='apply-results'
-            style='height: 100%; display: flex; flex-flow: column; justify-content:space-between; gap: inherit'>
+            style='padding: 0 0.5em; height: 100%; display: flex; flex-flow: column; justify-content:space-between; gap: inherit'>
             <div style='display: flex; flex-flow: column; gap: inherit'>
               <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
                 class='decimal-digits-only centered' id='result-apply-injury' name='damage'

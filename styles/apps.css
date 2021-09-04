@@ -388,6 +388,15 @@ ul#result-effects li {
   margin-bottom: 0;
 }
 
+#wound-modifier-table .damagemodifier {
+  color: darkgreen;
+}
+
+#wound-modifier-table .damagemodifier:after {
+  color: black;
+  content: '‡';
+}
+
 #wound-modifier-table .hitlocation {
   color: darkred;
 }
