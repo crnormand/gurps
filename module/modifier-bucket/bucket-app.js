@@ -188,7 +188,7 @@ class ModifierStack {
   constructor() {
     /** @type {Array<Modifier>} */
     this.modifierList = []
-    
+
     /** @type {Array<Modifier>} */
     this.savedModifierList = []
 
@@ -197,9 +197,9 @@ class ModifierStack {
     this.plus = false
     this.minus = false
   }
-  
+
   savelist() {
-    this.savedModifierList = this.modifierList 
+    this.savedModifierList = this.modifierList
     this.modifierList = []
     this.sum()
   }
@@ -534,14 +534,14 @@ export class ModifierBucket extends Application {
   _onenter(ev) {
     this.SHOWING = true
     // The location of bucket is hardcoded in the css #modifierbucket, so I'm ok with hardcoding it here.
-    let position = {
-      // @ts-ignore
-      left: 805 + 70 / 2 - this.editor.position.width / 2,
-      // @ts-ignore
-      top: window.innerHeight - this.editor.position.height - 4,
-    }
+    // let position = {
+    //   // @ts-ignore
+    //   left: 805 + 70 / 2 - this.editor.position.width / 2,
+    //   // @ts-ignore
+    //   top: window.innerHeight - this.editor.position.height - 4,
+    // }
     // @ts-ignore
-    this.editor._position = position
+    // this.editor._position = position
     this.editor.render(true)
   }
 
@@ -567,6 +567,8 @@ export class ModifierBucket extends Application {
         }
         ChatMessage.create(messageData, {})
       } else this.showOthers()
+    } else if (!this.isTooltip) {
+      this._onenter()
     }
   }
 

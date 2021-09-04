@@ -197,7 +197,7 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('#user-entered-woundmod')
       .on('change', ev =>
-        this._updateModelFromInputText($(ev.currentTarget), 'userEnteredWoundModifier', parseFloatFrom),
+        this._updateModelFromInputText($(ev.currentTarget), 'userEnteredWoundModifier', parseFloatFrom)
       )
 
     // When 'Additional Mods' text changes, save the (numeric) value in this object and
@@ -205,8 +205,12 @@ export default class ApplyDamageDialog extends Application {
     html
       .find('#addmodifier')
       .on('change', ev =>
-        this._updateModelFromInputText($(ev.currentTarget), 'additionalWoundModifier', parseFloatFrom),
+        this._updateModelFromInputText($(ev.currentTarget), 'additionalWoundModifier', parseFloatFrom)
       )
+
+    html
+      .find('#adddamagemodifier')
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageModifier', t => t))
 
     // ==== Tactical Rules ====
     // use armor divisor rules
@@ -378,7 +382,7 @@ export default class ApplyDamageDialog extends Application {
     property,
     converter = value => {
       return value
-    },
+    }
   ) {
     if (element.is(':checked')) {
       this._calculator[property] = converter(element.val())
@@ -397,7 +401,7 @@ export default class ApplyDamageDialog extends Application {
     property,
     converter = value => {
       return value
-    },
+    }
   ) {
     let valueText = select.find('option:selected').val()
     this._calculator[property] = converter(valueText)
@@ -599,7 +603,7 @@ export default class ApplyDamageDialog extends Application {
 
     if (!resource || !path) {
       ui.notifications.warn(
-        `Actor ${this.actor.data.name} does not have a resource named "${this._calculator.damageType}"!!`,
+        `Actor ${this.actor.data.name} does not have a resource named "${this._calculator.damageType}"!!`
       )
       return
     }
