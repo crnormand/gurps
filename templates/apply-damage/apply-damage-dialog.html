@@ -59,8 +59,7 @@
     </div>
 
     {{#unless isSimpleDialog}}
-      <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'
-        style='border: none; border-top: 1px solid #999; padding: 0; padding-top: 5px;'>
+      <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>
         <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%;'>
           <h3>{{localize "GURPS.addApplyDamageOptions"}}:</h3>
           {{#if (gt CALC.length 1)}}
@@ -69,8 +68,8 @@
         </div>
 
         <div class='grid grid-3col flex-between' style='grid-template-columns: auto auto auto; gap: 0'>
-          <div class='gurps-group' style='border: none; padding: 0 1em; border-right: 1px solid #999'>
-            <h4 style='text-align: center;'>{{localize "GURPS.addHitLocationAndDR"}}</h4>
+          <div class='gurps-group'>
+            <h4>{{localize "GURPS.addHitLocationAndDR"}}</h4>
 
             <div class='gurps-3col gurps-radio-col'>
               <header>{{localize "GURPS.location"}}</header>
@@ -123,8 +122,8 @@
 
           </div>
 
-          <div class='gurps-group' style='border: none; padding: 0 1em; border-right: 1px solid #999'>
-            <h4 style='text-align: center;'>{{localize "GURPS.addTypeAndWoundingModifiers"}}</h4>
+          <div class='gurps-group'>
+            <h4>{{localize "GURPS.addTypeAndWoundingModifiers"}}</h4>
 
             <section id='wound-modifier-table'>
               <div name='wounding-modifiers' class='default-wound-modifiers'>
@@ -165,7 +164,7 @@
             <label><input type='radio' name='woundmodifier' value='none' {{checked (eq CALC.damageType 'none'
               )}}>&nbsp;{{localize "GURPS.noModifier"}}</label>
 
-            <div class='grid grid-2col flex-between' style='margin: 10px 0;'>
+            <div class='grid grid-2col flex-between'>
               <div><label><input type='radio' name='woundmodifier' value='User Entered' {{checked (eq
                   CALC.damageType 'User Entered' )}}>&nbsp;{{localize "GURPS.addEnterModifier"}}:</label>
               </div>
@@ -185,8 +184,8 @@
             </div>
           </div>
 
-          <div class='gurps-group shaded-group' style='border: none; padding: 0 1em;'>
-            <h4 style='text-align: center;'>{{localize "GURPS.addTacticalRules"}}</h4>
+          <div class='gurps-group shaded-group'>
+            <h4>{{localize "GURPS.addTacticalRules"}}</h4>
             <aside>{{localize "GURPS.addTacticalRulesDefaults"}}.</aside>
 
             <div class='gurps-3col gurps-checkbox-col'>
@@ -360,12 +359,12 @@
       </div>
 
       <div>
-        <div class='gurps-group' style='border: none; padding: 0 1em;'>
-          <h4 style='text-align: center;'>{{localize "GURPS.addCalculationAndResults"}}</h4>
-          <div class='grid grid-3col' display='grid-template-columns: 3fr 3fr 2fr;'>
+        <div class='gurps-group'>
+          <h4>{{localize "GURPS.addCalculationAndResults"}}</h4>
+          <div id='calculation-results' class='grid grid-3col' style='grid-template-columns: 3fr 3fr 2fr; gap: 0'>
 
             {{#if (eq CALC.viewId "all")}}
-              <div class='overflowy' style='padding: 0 0.5em; border-right: 1px solid #999; height: 100%'>
+              <div class='overflowy'>
                 <aside>Select a damage roll at the top of this window to see its calculation.</aside>
                 <!-- CALC.pointsToApply -->
                 <div style='display: inline-flex; flex-flow: row wrap; max-width: 250px;'>
@@ -491,7 +490,7 @@
           </div>
           {{/if}}
 
-          <div id="result-extrastuff" style='padding: 0 0.5em; border-right: 1px solid #999; height: 100%'>
+          <div id="result-extrastuff">
             <ul id='result-effects'>
               {{#each CALC.effects}}
                 {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
@@ -500,7 +499,7 @@
           </div>
 
           <div class='apply-results'
-            style='padding: 0 0.5em; height: 100%; display: flex; flex-flow: column; justify-content:space-between; gap: inherit'>
+            style='display: flex; flex-flow: column; justify-content:space-between; gap: 0.5em'>
             <div style='display: flex; flex-flow: column; gap: inherit'>
               <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
                 class='decimal-digits-only centered' id='result-apply-injury' name='damage'

@@ -1,8 +1,8 @@
 <form id='modttt' class="{{cssClass}} overflowy {{#if isTooltip}}modttt{{/if}}" autocomplete="off">
   <div class='modtooltip gurps-app'>
     <div id="modtooltip">
-      <div id='modtooltipbucket'>
-        <div id="modtooltiplefttop" class='gurps-group gurps-sparse-list'>
+      <div id='modtooltipbucket' style='border-right: 1px solid #999;'>
+        <div id="modtooltiplefttop" class='gurps-group gurps-sparse-list' style='border: none;'>
           <h4>{{localize "GURPS.modifierCurrentEffects"}}</h4>
           <div class='actorname'>{{actorname}}</div>
           {{#each currentmods}}
@@ -11,12 +11,12 @@
         </div>
 
         {{#unless cansend}}
-          <div id="modtooltipleftcenter" class='gurps-group' style='justify-content: center;'>
+          <div id="modtooltipleftcenter" class='gurps-group' style='justify-content: center; border: none;'>
             <p>{{localize "GURPS.modifierClickToAdd"}}</p>
             <p>{{localize "GURPS.modifierAppearBelow"}}</p>
           </div>
         {{else}}
-          <div id="modtooltipleftcenter" class='gurps-group'>
+          <div id="modtooltipleftcenter" class='gurps-group' style='border: none;'>
             <h4>{{localize "GURPS.modifierSendTo"}}</h4>
             <div class='button-row'>
               {{#each users}}
@@ -31,7 +31,7 @@
           </div>
         {{/unless}}
 
-        <div id="modtooltipleftbottom" class='gurps-group gurps-sparse-list'>
+        <div id="modtooltipleftbottom" class='gurps-group gurps-sparse-list' style='border: none;'>
           <h4>{{localize "GURPS.modifierCurrentModifiers"}}</h4>
           <div class='shaded-group overflowy'>
             <aside>({{localize "GURPS.clickToRemove"}})</aside>
@@ -50,7 +50,7 @@
         </div>
       </div>
 
-      <div class='gurps-2col' style='grid-template-columns: 1fr 1fr;'>
+      <div class='gurps-2col' style='grid-template-columns: 1fr 1fr; gap: 0;'>
         <div class="gurps-group gurps-space-between gurps-sparse-list">
           <div class='shaded-group'>
             <h4>{{localize "GURPS.meleeAttack"}}</h4>
@@ -72,7 +72,7 @@
           </div>
         </div>
 
-        <div class="gurps-group gurps-space-between gurps-sparse-list">
+        <div class="gurps-group gurps-space-between gurps-sparse-list" style="padding: 0 0 0 0.5em;">
           <div id='common-modifiers'>
             <h4 class='tabbed'>
               <span class='back'><i class="fas fa-caret-square-left"></i></span>
