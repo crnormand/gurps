@@ -13,7 +13,7 @@ import {
   GurpsInventorySheet,
   GurpsActorTabSheet,
   GurpsActorNpcSheetCI,
-} from './actor-sheet.js'
+} from './actor/actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
