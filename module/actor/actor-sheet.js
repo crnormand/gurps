@@ -1,12 +1,12 @@
-import { atou, generateUniqueId, i18n } from '../lib/utilities.js'
-import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor/actor.js'
-import { HitLocation, hitlocationDictionary } from '../module/hitlocation/hitlocation.js'
-import { parselink } from '../lib/parselink.js'
-import * as CI from './injury/domain/ConditionalInjury.js'
-import * as settings from '../lib/miscellaneous-settings.js'
-import { ResourceTrackerEditor } from './actor/resource-tracker-editor.js'
-import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
-import GurpsWiring from './gurps-wiring.js'
+import { atou, generateUniqueId, i18n } from '../../lib/utilities.js'
+import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
+import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
+import { parselink } from '../../lib/parselink.js'
+import * as CI from '../injury/domain/ConditionalInjury.js'
+import * as settings from '../../lib/miscellaneous-settings.js'
+import { ResourceTrackerEditor } from './resource-tracker-editor.js'
+import { ResourceTrackerManager } from './resource-tracker-manager.js'
+import GurpsWiring from '../gurps-wiring.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -16,7 +16,7 @@ export class GurpsActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor-sheet-gcs.html',
+      template: 'systems/gurps/templates/actor/actor-sheet-gcs.html',
       width: 800,
       height: 800,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -101,7 +101,7 @@ export class GurpsActorSheet extends ActorSheet {
             otf: li.getAttribute('data-otf'),
             actor: this.actor.id,
             displayname: display,
-          }),
+          })
         )
       })
     })
@@ -244,14 +244,14 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('button[data-operation="ci-days-inc"]').click(async ev => {
       ev.preventDefault()
       updateActorWithChangedDaysToHeal(
-        CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1),
+        CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
       )
     })
 
     html.find('button[data-operation="ci-days-dec"]').click(ev => {
       ev.preventDefault()
       updateActorWithChangedDaysToHeal(
-        CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1),
+        CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
       )
     })
 
@@ -398,7 +398,7 @@ export class GurpsActorSheet extends ActorSheet {
               label: 'Create',
               callback: async html => {
                 ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                  a => (eqt[a] = html.find(`.${a}`).val()),
+                  a => (eqt[a] = html.find(`.${a}`).val())
                 )
                 ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
                 let u = html.find('.save') // Should only find in Note (or equipment)
@@ -411,7 +411,7 @@ export class GurpsActorSheet extends ActorSheet {
           },
           default: 'one',
         },
-        options,
+        options
       )
       d.render(true)
     })
@@ -592,7 +592,7 @@ export class GurpsActorSheet extends ActorSheet {
           popOut: true,
           minimizable: false,
           jQuery: true,
-        },
+        }
       )
       d.render(true)
     })
@@ -630,13 +630,13 @@ export class GurpsActorSheet extends ActorSheet {
         if ($(this).hasClass('buttongrey')) msg = 'Enable&nbsp;' + opt
         $(this).append(
           $(
-            `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`,
-          ),
+            `<div style='position: absolute;z-index: 1;top: 10px;left: 100%;padding: 5px;width=120px;color:#9f0000;background-color:lightgrey;border: 1px solid grey;border-radius:5px'>${msg}</div>`
+          )
         )
       },
       function () {
         $(this).find('div').last().remove()
-      },
+      }
     )
 
     html.find('#qnotes').dblclick(ex => {
@@ -739,7 +739,7 @@ export class GurpsActorSheet extends ActorSheet {
         default: 'edit',
         templates: templates,
       },
-      { width: 600 },
+      { width: 600 }
     )
     d.render(true)
   }
@@ -758,7 +758,7 @@ export class GurpsActorSheet extends ActorSheet {
             label: 'Update',
             callback: async html => {
               ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                a => (obj[a] = html.find(`.${a}`).val()),
+                a => (obj[a] = html.find(`.${a}`).val())
               )
               ;['count', 'cost', 'weight'].forEach(a => (obj[a] = parseFloat(html.find(`.${a}`).val())))
               let u = html.find('.save') // Should only find in Note (or equipment)
@@ -781,7 +781,7 @@ export class GurpsActorSheet extends ActorSheet {
         popOut: true,
         minimizable: false,
         jQuery: true,
-      },
+      }
     )
     d.render(true)
   }
@@ -808,7 +808,7 @@ export class GurpsActorSheet extends ActorSheet {
         'passotf',
         'failotf',
       ],
-      [],
+      []
     )
   }
 
@@ -835,7 +835,7 @@ export class GurpsActorSheet extends ActorSheet {
         'passotf',
         'failotf',
       ],
-      ['acc', 'bulk'],
+      ['acc', 'bulk']
     )
   }
 
@@ -847,7 +847,7 @@ export class GurpsActorSheet extends ActorSheet {
       'systems/gurps/templates/advantage-editor-popup.html',
       'Advantage / Disadvantage / Perk / Quirk Editor',
       ['name', 'notes'],
-      ['points'],
+      ['points']
     )
   }
 
@@ -859,7 +859,7 @@ export class GurpsActorSheet extends ActorSheet {
       'systems/gurps/templates/skill-editor-popup.html',
       'Skill Editor',
       ['name', 'import', 'relativelevel', 'pageref', 'notes', 'checkotf', 'duringotf', 'passotf', 'failotf'],
-      ['points'],
+      ['points']
     )
   }
 
@@ -888,7 +888,7 @@ export class GurpsActorSheet extends ActorSheet {
         'passotf',
         'failotf',
       ],
-      ['points'],
+      ['points']
     )
   }
 
@@ -901,7 +901,7 @@ export class GurpsActorSheet extends ActorSheet {
       'Note Editor',
       ['pageref', 'notes'],
       [],
-      730,
+      730
     )
   }
 
@@ -934,7 +934,7 @@ export class GurpsActorSheet extends ActorSheet {
         popOut: true,
         minimizable: false,
         jQuery: true,
-      },
+      }
     )
     d.render(true)
   }
@@ -1253,7 +1253,7 @@ export class GurpsActorSheet extends ActorSheet {
       }
     } else {
       ui.notifications.warn(
-        "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on.",
+        "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on."
       )
     }
   }
@@ -1324,7 +1324,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor-tab-sheet.html',
+      template: 'systems/gurps/templates/actor/actor-tab-sheet.html',
       width: 860,
       height: 600,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -1338,7 +1338,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/combat-sheet.html',
+      template: 'systems/gurps/templates/actor/combat-sheet.html',
       width: 600,
       height: 275,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -1362,7 +1362,7 @@ Hooks.on('getGurpsActorEditorSheetHeaderButtons', sheet => {
           },
           rejectClose: false,
         }),
-      500,
+      500
     )
   }
 })
@@ -1372,7 +1372,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'gurpsactorsheet', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor-sheet-gcs-editor.html',
+      template: 'systems/gurps/templates/actor/actor-sheet-gcs-editor.html',
       scrollY: [
         '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
       ],
@@ -1436,7 +1436,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       '.adshead',
       'Advantage/Disadvantage/Quirk/Perk',
       new Advantage('New Advantage/Disadvantage/Quirk/Perk'),
-      'data.ads',
+      'data.ads'
     )
     this.makeAddDeleteMenu(html, '.adsmenu', new Advantage('New Advantage'))
 
@@ -1454,14 +1454,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       '.carhead',
       'Carried Equipment',
       new Equipment('New Equipment', true),
-      'data.equipment.carried',
+      'data.equipment.carried'
     )
     this.makeHeaderMenu(
       html,
       '.othhead',
       'Other Equipment',
       new Equipment('New Equipment', true),
-      'data.equipment.other',
+      'data.equipment.other'
     )
 
     html.find('#body-plan').change(async e => {

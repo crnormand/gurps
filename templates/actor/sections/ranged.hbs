@@ -1,0 +1,43 @@
+  <div id="ranged">
+    <div class="desc header">{{localize "GURPS.rangedWeapons"}}</div>
+    <div class="usage header">{{localize "GURPS.usage"}}</div>
+    <div class="level header">{{localize "GURPS.level"}}</div>
+    <div class="acc header">{{localize "GURPS.acc"}}</div>
+    <div class="damage header">{{localize "GURPS.damage"}}</div>
+    <div class="range header">{{localize "GURPS.range"}}</div>
+    <div class="rof header">{{localize "GURPS.rof"}}</div>
+    <div class="shots header">{{localize "GURPS.shots"}}</div>
+    <div class="bulk header">{{localize "GURPS.bulk"}}</div>
+    <div class="rcl header">{{localize "GURPS.rcl"}}</div>
+    <div class="st header">{{localize "GURPS.attributesST"}}</div>
+
+    {{#listattack data "ranged"}}
+      <div class="desc dblclkedit rangeddraggable tooltip-manager" data-key="data.ranged.{{@key}}">
+        {{{gurpslink this.name}}}
+        {{#if (isFoundryItem this)}}&nbsp;<i class="far fas fa-star"
+            style="float: right; color: olivedrab; font-weight: 900; padding-top: 3px;"></i>{{/if}}
+        {{#if (displayItemHover this)}}
+          <div class="tooltippic"><img src="{{this.img}}" /></div>
+        {{/if}}
+        <div class="list_note">{{{gurpslink this.notes}}}</div>
+        {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
+                </div> }}
+      </div>
+      <div class="usage">{{this.mode}}</div>
+      <div class="level rollable" data-name="{{this.name}} ({{this.mode}})"
+        data-key="data.ranged.{{@key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+      <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'
+        data-otf='{{#if (gt this.acc 0)}}+{{/if}}{{this.acc}} Acc'>
+        {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}
+      </div> 
+      <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+      <div class="range">{{this.range}}</div>
+      <div class="rof">{{this.rof}}</div>
+      <div class="shots">{{this.shots}}</div>
+      <div class="bulk {{#if (ne this.bulk '0')}}gmod{{/if}}" data-name='Bulk for {{this.name}}'
+        data-otf='{{this.bulk}} Bulk'>{{this.bulk}}
+      </div>
+      <div class="rcl">{{this.rcl}}</div>
+      <div class="st">{{this.st}}</div>
+    {{/listattack}}
+  </div>

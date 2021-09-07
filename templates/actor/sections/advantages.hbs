@@ -1,0 +1,24 @@
+<div id='advantages'>
+  <div class='desc header dblclksort' data-key='data.ads'>{{localize 'GURPS.advDisadvPerkQuirks'}}</div>
+  <div class='pts header'>Pts</div>
+  <div class='ref header'>Ref</div>
+  {{#listeqt data.ads}}
+    <div class='desc indent{{@indent}} satisfiedY adsdraggable dblclkedit tooltip-manager' data-key='data.ads.{{@key}}'>
+      {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+      {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+      {{{gurpslink this.name}}}
+      {{#if (isFoundryItem this)}}&nbsp;<i
+          class='far fas fa-star'
+          style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'
+        ></i>{{/if}}
+      {{#if (displayItemHover this)}}
+        <div class='tooltippic'><img src='{{this.img}}' /></div>
+      {{/if}}
+      <div class='list_note satisfiedY'></div>
+      <div class='list_note satisfiedY adsdraggable' data-key='data.ads.{{@key}}'>{{{gurpslinkbr this.notes}}}
+      </div>
+    </div>
+    <div class='pts satisfiedY center'>{{this.points}}</div>
+    <div class='ref satisfiedY center'>{{{pdflink this.pageref}}}</div>
+  {{/listeqt}}
+</div>

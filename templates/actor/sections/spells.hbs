@@ -1,0 +1,50 @@
+<div id='spells'>
+  <div class='desc header dblclksort' data-key='data.spells'>{{localize 'GURPS.spells'}}</div>
+  <div class='cls header'>{{localize 'GURPS.spellClass'}}</div>
+  <div class='college header'>{{localize 'GURPS.spellCollege'}}</div>
+  <div class='mana header'>{{localize 'GURPS.spellCost'}}</div>
+  <div class='mana_maintain header'>{{localize 'GURPS.spellMaintain'}}</div>
+  <div class='time header'>{{localize 'GURPS.spellTime'}}</div>
+  <div class='duration header'>{{localize 'GURPS.spellDuration'}}</div>
+  <div class='sl header'>{{localize 'GURPS.sl'}}</div>
+  <div class='rsl header'>{{localize 'GURPS.rsl'}}</div>
+  <div class='pts header'>Pts</div>
+  <div class='ref header'>Ref</div>
+
+  {{#listeqt data.spells}}
+    <div
+      class='desc indent{{@indent}} satisfiedY spldraggable dblclkedit tooltip-manager'
+      data-key='data.spells.{{@key}}'
+    >
+      {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+      {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+      {{{gurpslink this.name}}}
+      {{#if (isFoundryItem this)}}&nbsp;<i
+          class='far fas fa-star'
+          style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'
+        ></i>{{/if}}
+      {{#if (displayItemHover this)}}
+        <div class='tooltippic'><img src='{{this.img}}' /></div>
+      {{/if}}
+      <div class='list_note satisfiedY'></div>
+      <div class='list_note satisfiedY spldraggable' data-key='data.spells.{{@key}}'>{{{gurpslink this.notes}}}
+      </div>
+    </div>
+    <div class='cls satisfiedY center'>{{this.class}}</div>
+    <div class='college satisfiedY center'>{{this.college}}</div>
+    <div class='mana satisfiedY center'>{{this.cost}}</div>
+    <div class='mana_maintain satisfiedY center'>{{this.maintain}}</div>
+    <div class='time satisfiedY center'>{{this.casttime}}</div>
+    <div class='duration satisfiedY center'>{{this.duration}}</div>
+    <div
+      class='sl satisfiedY rollable center'
+      data-name='{{this.name}}'
+      data-otf='S:"{{this.name}}"'
+      data-key='data.spells.{{@key}}'
+    >{{this.level}}
+    </div>
+    <div class='rsl satisfiedY center'>{{this.difficulty}}</div>
+    <div class='pts satisfiedY center'>{{this.points}}</div>
+    <div class='ref satisfiedY center'>{{{pdflink this.pageref}}}</div>
+  {{/listeqt}}
+</div>

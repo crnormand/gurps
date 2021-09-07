@@ -1,0 +1,92 @@
+<form class="{{cssClass}}" autocomplete="off" style='scroll-padding-top: 5px;'>
+  <div id="sheet-tab" class="gurpsactorsheet">
+    <div id="personal">
+      {{> portrait }}
+      {{> identity }}
+      {{> miscellaneous }}
+      {{> description }}
+      {{> points }}
+    </div>
+    <nav id="nav-tabs" class="gurps-sheet-tabs" data-group="primary-tabs">
+      <li><a class="tab-item" data-tab="stats">{{localize "GURPS.statsTab"}}</a></li>
+      <li><a class="tab-item" data-tab="combat">{{localize "GURPS.combatTab"}}</a></li>
+      <li><a class="tab-item" data-tab="advantages">{{localize "GURPS.advantagesTab"}}</a></li>
+      <li><a class="tab-item" data-tab="skills">{{localize "GURPS.skillsTab"}}</a></li>
+      {{#if (notEmpty data.spells)}}
+        <li><a class="tab-item" data-tab="spells">{{localize "GURPS.spellsTab"}}</a></li>
+      {{/if}}
+      <li><a class="tab-item" data-tab="equipment">{{localize "GURPS.equipmentTab"}}</a></li>
+    </nav>
+    <section class="sheet-body tabbed-sheet">
+      <div class="tab" data-tab="stats" data-group="primary-tabs">
+        <div id="stats">
+          {{> attributes }}
+          {{> encumbrance }}
+          {{> quicknote }}
+          {{> lifting }}
+          {{> locations }}
+          <div id="trackers">
+            <div>
+              {{#if useCI}}
+                {{> conditional-injury }}
+              {{else}}
+                {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' editable=false condition='isReeling' testcondition=data.additionalresources.isReeling}}
+              {{/if}}
+              {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false condition='isTired' testcondition=data.additionalresources.isTired}}
+            </div>
+            <div></div>
+            <div id='resources'>
+              <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
+              {{#each data.additionalresources.tracker}}
+                {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
+              {{/each}}
+            </div>
+          </div>
+          {{> conditions }}
+        </div>
+
+        {{#if (notEmpty data.reactions)}}
+          <div id="reactions">
+            <div class="modifier header">{{localize "GURPS.modifier"}}</div>
+            <div class="situation header">{{localize "GURPS.reaction"}}</div>
+            <div></div>
+            {{#each data.reactions}}
+              <div class="modifier gmod" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
+              <div class="situation">{{{gurpslink this.situation}}}</div>
+              <div></div>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        <br />
+        {{> notes }}
+      </div>
+      <div class="tab" data-tab="combat" data-group="primary-tabs">
+        {{{gurpslink '[Dodge]'}}}:{{data.currentdodge}} / Move: {{data.currentmove}}
+        {{#if (notEmpty data.melee)}}
+          {{> melee }}
+        {{/if}}
+
+        {{#if (notEmpty data.ranged)}}
+          {{> ranged }}
+        {{/if}}
+      </div>
+
+      <div class="tab" data-tab="advantages" data-group="primary-tabs">
+        {{> advantages }}
+      </div>
+      <div class="tab" data-tab="skills" data-group="primary-tabs">
+        {{> skills }}
+      </div>
+      {{#if (notEmpty data.spells)}}
+        <div class="tab" data-tab="spells" data-group="primary-tabs">
+          {{> spells }}
+      {{/if}}
+      <div class="tab" data-tab="equipment" data-group="primary-tabs">
+        {{> equipment }}
+        {{> other-equipment }}
+      </div>
+    </section>
+  </div>
+  {{> footer }}
+</form>
