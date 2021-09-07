@@ -29,21 +29,12 @@
             {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
           {{/each}}
         </div>
-</div>
+      </div>
       {{> conditions }}
     </div> 
 
     {{#if (notEmpty data.reactions)}}
-      <div id="reactions">
-        <div class="modifier header">{{localize "GURPS.modifier"}}</div>
-        <div class="situation header">{{localize "GURPS.reaction"}}</div>
-        <div></div>
-        {{#each data.reactions}}
-          <div class="modifier gmod" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
-          <div class="situation">{{{gurpslink this.situation}}}</div>
-          <div></div>
-        {{/each}}
-      </div>
+      {{> reacdtions }}
     {{/if}}
 
     {{#if (notEmpty data.melee)}}
