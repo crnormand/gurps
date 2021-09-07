@@ -1,0 +1,108 @@
+<form class='{{cssClass}} overflowy' autocomplete='off'>
+  <div id='responsive' class='gurpsactorsheet'>
+    <div id='combat-sheet'>
+      <div id='combat-hitfat'>
+        {{#if useCI}}
+          {{> conditional-injury }}
+        {{else}}
+          {{> hpfp-tracker name='HP' resource=data.HP label='GURPS.attributesHPNAME' compact=true condition='isReeling' testcondition=data.additionalresources.isReeling}}
+        {{/if}}
+        {{> hpfp-tracker name='FP' resource=data.FP label='GURPS.attributesFPNAME' compact=true condition='isTired' testcondition=data.additionalresources.isTired}}
+      </div>
+
+      <div id='combat-trackers'>
+        {{#each data.additionalresources.tracker}}
+          {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
+        {{/each}}
+      </div>
+
+      {{> conditions }}
+
+      <div id='combat-attrs'>
+        <div class='header'>Attributes</div>
+        <div id='combat-attrs-container'>
+          <div id='combat-attrs-1'>
+            <div class='fieldblock'>
+              <div class='field noedit rollable' data-path='attributes.ST.value' data-otf='ST'>
+                {{data.attributes.ST.value}}
+              </div>
+              <div class='label'>{{localize 'GURPS.attributesST'}}</div>
+
+              <div class='field noedit rollable' data-path='attributes.DX.value' data-otf='DX'>
+                {{data.attributes.DX.value}}
+              </div>
+              <div class='label'>{{localize 'GURPS.attributesDX'}}</div>
+
+              <div class='field noedit rollable' data-path='attributes.IQ.value' data-otf='IQ'>
+                {{data.attributes.IQ.value}}
+              </div>
+              <div class='label'>{{localize 'GURPS.attributesIQ'}}</div>
+
+              <div class='field noedit rollable' data-path='attributes.HT.value ' data-otf='HT'>
+                {{data.attributes.HT.value}}
+              </div>
+              <div class='label'>{{localize 'GURPS.attributesHT'}}</div>
+              <hr>
+              <div class='field noedit rollable' data-path='attributes.PER.value' data-otf='PER'>
+                {{data.attributes.PER.value}}
+              </div>
+              <div class='label'>{{localize 'GURPS.attributesPER'}}</div>
+
+              <div class='field rollable' data-path='attributes.WILL.value' data-otf='WILL'>
+                {{data.attributes.WILL.value}}
+              </div>
+              <div class='label'>{{localize 'GURPS.attributesWILLNAME'}}</div>
+              <hr>
+              <div class='field'>{{data.basicspeed.value}}</div>
+              <div class='label'>Basic Speed</div>
+
+              <div class='field'>{{data.basicmove.value}}</div>
+              <div class='label'>Basic Move</div>
+            </div>
+          </div>
+          <div id='combat-attrs-2'>
+            <div class='fieldblock'>
+              <div class='field noedit rollable' data-path='vision' data-otf='Vision'>{{data.vision}}</div>
+              <div class='label'>Vision</div>
+
+              <div class='field noedit rollable' data-path='hearing' data-otf='Hearing'>{{data.hearing}}</div>
+              <div class='label'>Hearing</div>
+
+              <div class='field noedit rollable' data-path='tastesmell' data-otf='Taste Smell'>{{data.tastesmell}}</div>
+              <div class='label'>Taste &amp; Smell</div>
+
+              <div class='field noedit rollable' data-path='touch' data-otf='Touch'>{{data.touch}}</div>
+              <div class='label'>Touch</div>
+
+              <div class='label'></div>
+              <div class='label'>&nbsp;</div>
+
+              <div class='field noedit rollable' data-path='frightcheck' data-otf='Fright Check'>{{data.frightcheck}}
+              </div>
+              <div class='label'>Fright Check</div>
+
+              <div class='label'></div>
+              <div class='label'>&nbsp;</div>
+
+              <div class='field rollable noedit' data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
+              <div class='label'>Basic Thrust</div>
+
+              <div class='field rollable noedit' data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
+              <div class='label'>Basic Swing</div>
+            </div>
+          </div>
+        </div>
+      </div> <!-- end of combat-attrs-->
+
+      {{> encumbrance }}
+      {{> locations }}
+      {{#if (notEmpty data.melee)}}
+        {{> melee }}
+      {{/if}}
+      {{#if (notEmpty data.ranged)}}
+        {{> ranged }}
+      {{/if}}
+      {{> speed-range-table }}
+    </div><!-- end of combat-sheet -->
+  </div> <!-- end of responsive -->
+</form>
