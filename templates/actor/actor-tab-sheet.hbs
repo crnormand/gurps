@@ -41,7 +41,7 @@
                 {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
               {{/each}}
             </div>
-          </div>
+          </div> 
           {{> conditions }}
         </div>
 
@@ -62,14 +62,20 @@
         {{> notes }}
       </div>
       <div class="tab" data-tab="combat" data-group="primary-tabs">
-        {{{gurpslink '[Dodge]'}}}:{{data.currentdodge}} / Move: {{data.currentmove}}
-        {{#if (notEmpty data.melee)}}
-          {{> melee }}
-        {{/if}}
-
-        {{#if (notEmpty data.ranged)}}
-          {{> ranged }}
-        {{/if}}
+        <div id='combat-tab'>
+          {{#if (notEmpty data.melee)}}
+            {{> melee }}
+          {{/if}}
+          {{> speed-range-table }}
+          {{#if (notEmpty data.ranged)}}
+            {{> ranged }}
+          {{/if}}
+          <div id='combat-sidebar'>
+            {{> encumbrance}}
+            {{> quicknote}}
+            {{> lifting}}
+          </div>
+        </div>
       </div>
 
       <div class="tab" data-tab="advantages" data-group="primary-tabs">

@@ -1423,6 +1423,22 @@ body {
   overflow-y: auto;
 }
 
+/* ----- tabbed sheet additions ----- */
+.sheet-body.tabbed-sheet #combat-tab {
+  display: grid;
+  grid-gap: 0.05in;
+  grid-template-columns: 1fr min-content;
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas:
+    'melee             combat-sidebar'
+    'speed-range-table combat-sidebar'
+    'ranged            combat-sidebar';
+}
+
+.sheet-body.tabbed-sheet #combat-sidebar {
+  grid-row: 1 / 4;
+}
+
 /* ----- combat sheet additions ----- */
 
 #combat-sheet {

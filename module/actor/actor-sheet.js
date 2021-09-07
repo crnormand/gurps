@@ -16,7 +16,7 @@ export class GurpsActorSheet extends ActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor/actor-sheet-gcs.html',
+      template: 'systems/gurps/templates/actor/actor-sheet-gcs.hbs',
       width: 800,
       height: 800,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -1324,7 +1324,7 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor/actor-tab-sheet.html',
+      template: 'systems/gurps/templates/actor/actor-tab-sheet.hbs',
       width: 860,
       height: 600,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
@@ -1340,7 +1340,7 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
       classes: ['gurps', 'sheet', 'actor'],
       template: 'systems/gurps/templates/actor/combat-sheet.hbs',
       width: 600,
-      height: 275,
+      height: 'auto',
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })

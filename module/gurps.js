@@ -31,7 +31,7 @@ import GurpsJournalEntry from './journal.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-// GURPS.DEBUG = false
+GURPS.DEBUG = false
 
 GURPS.Migration = Migration
 /**
@@ -107,7 +107,7 @@ GURPS.ClearLastActor = function (actor) {
 }
 
 GURPS.lastTargetedRoll = {}
-GURPS.lastTargetedRolls = {}    // mapped by both actor and token id
+GURPS.lastTargetedRolls = {} // mapped by both actor and token id
 
 GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients) {
   let tmp = { ...chatdata }
@@ -119,9 +119,9 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
       type: 'setLastTargetedRoll',
       chatdata: tmp,
       actorid: actorid,
-      tokenid: tokenid
+      tokenid: tokenid,
     })
-  console.log(GURPS.objToString(tmp)  + " A:" + actorid + " T:" + tokenid)
+  console.log(GURPS.objToString(tmp) + ' A:' + actorid + ' T:' + tokenid)
 }
 
 // TODO Why are these global?
@@ -746,8 +746,8 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   if (isMelee)
     // @ts-ignore
     Object.values(this).find(expression)
-    
-    t = actor.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
+
+  t = actor.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
   if (isRanged && !t)
     // @ts-ignore
     t = actor.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
@@ -1675,7 +1675,7 @@ Hooks.once('ready', async function () {
     }
     if (resp.type == 'setLastTargetedRoll') {
       GURPS.setLastTargetedRoll(resp.chatdata, resp.actorid, resp.tokenid, false)
-    }    
+    }
     if (resp.type == 'dragEquipment1') {
       if (resp.destuserid != game.user.id) return
       // @ts-ignore
@@ -1779,7 +1779,7 @@ Hooks.once('ready', async function () {
   GURPS.setInitiativeFormula()
 
   //Add support for the Drag Ruler module: https://foundryvtt.com/packages/drag-ruler
-  Hooks.once('dragRuler.ready', (SpeedProvider) => {
+  Hooks.once('dragRuler.ready', SpeedProvider => {
     class GURPSSpeedProvider extends SpeedProvider {
       get colors() {
         return [
