@@ -1431,10 +1431,12 @@ body {
   /* grid-template-rows: 0fr auto auto; */
   grid-gap: 0.05in;
   grid-template-areas:
-    'combat-attrs     combat-hitfat   combat-trackers combat-location'
-    'condition        condition       combat-trackers combat-location'
-    'combat-encumber  combat-encumber combat-encumber combat-location'
-    'combat-weapons   combat-weapons  combat-weapons  combat-weapons ';
+    'combat-attrs      combat-hitfat     combat-trackers   location         '
+    'condition         condition         combat-trackers   location         '
+    'encumbrance       encumbrance       combat-trackers   location         '
+    'melee             melee             melee             melee            '
+    'ranged            ranged            ranged            ranged           '
+    'speed-range-table speed-range-table speed-range-table speed-range-table';
 }
 
 #combat-hitfat {

@@ -883,12 +883,12 @@ ul#result-effects li {
   justify-content: stretch;
 }
 
-#combat-trackers .tracked-resource .condition-block {
+/* #combat-trackers .tracked-resource .condition-block {
   display: flex;
   flex-flow: row nowrap;
   justify-content: stretch;
   align-items: baseline;
-}
+} */
 
 .tracked-resource .condition-block .max {
   font-size: 80%;

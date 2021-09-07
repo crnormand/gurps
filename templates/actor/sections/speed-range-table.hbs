@@ -1,0 +1,17 @@
+<div id='speed-range-table'>
+  <div class='header'>Speed/Range Table</div>
+  <div id='range-table' style='--count: {{ranges.length}}'>
+    <div class='label'>Measure (yd)</div>
+    {{#each ranges}}
+      <div class='label'>{{this.max}}</div>
+    {{/each}}
+    <div class='label'>Modifier</div>
+    {{#each ranges}}
+      <div
+        class='label {{#if (ne this '0')}}gmod{{/if}}'
+        data-name='{{this.moddesc}}'
+        data-otf='{{this.penalty}} for speed/range {{this.max}} yds'
+      >{{this.penalty}}</div>
+    {{/each}}
+  </div>
+</div>
