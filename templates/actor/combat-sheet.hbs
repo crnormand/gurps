@@ -11,6 +11,7 @@
       </div>
 
       <div id='combat-trackers'>
+        <div class="header">{{localize "GURPS.resourceTrackers"}}</div>
         {{#each data.additionalresources.tracker}}
           {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
         {{/each}}
