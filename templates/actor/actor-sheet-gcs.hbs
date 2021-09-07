@@ -29,9 +29,9 @@
             {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
           {{/each}}
         </div>
-      </div>
+</div>
       {{> conditions }}
-    </div>
+    </div> 
 
     {{#if (notEmpty data.reactions)}}
       <div id="reactions">
@@ -55,7 +55,6 @@
     {{/if}}
 
     {{> advantages }}
-
     {{> skills }}
 
     {{#if (notEmpty data.spells)}}
