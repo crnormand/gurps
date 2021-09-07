@@ -1,0 +1,80 @@
+<div id='equipment' class='equipmentlist'>
+  <div class='equipped header'>{{i18n 'GURPS.equipmentEquipped'}}</div>
+  <div class='qty header eqtdragtarget' data-key='data.equipment.carried'>
+    {{i18n 'GURPS.equipmentQuantity'}}
+  </div>
+  <div class='desc header eqtdragtarget dblclksort' data-key='data.equipment.carried'>
+    <span>
+      {{localize 'GURPS.equipment'}}
+      ({{toLocaleString eqtsummary.eqtlbs}}
+      lb; ${{toLocaleString eqtsummary.eqtcost}}) &nbsp;
+      <i class='fas fa-plus addequipmenticon'></i>
+    </span>
+  </div>
+  <div class='uses header'>{{i18n 'GURPS.equipmentUses'}}</div>
+  <div class='cost header'>$</div>
+  <div class='weight header'><i class='fas fa-weight-hanging'></i></div>
+  <div class='sum_cost header'>&sum; $</div>
+  <div class='sum_weight header'><span>&sum; <i class='fas fa-weight-hanging'></i></span></div>
+  <div class='ref header'>{{i18n 'GURPS.pdfRef'}}</div>
+
+  {{#listeqt data.equipment.carried}}
+    <div
+      class='equipped satisfiedY changeequip equipmenucarried center'
+      data-key='data.equipment.carried.{{@key}}'
+    >{{#if this.equipped}}&check;{{/if}}</div>
+    <div class='qty satisfiedY eqtdraggable equipmenucarried center' data-key='data.equipment.carried.{{@key}}'>
+      <button class='equipmentbutton bold' data-operation='equipment-dec'>-</button>
+      &nbsp;
+      {{this.count}}
+      &nbsp;
+      <button class='equipmentbutton' data-operation='equipment-inc'>+</button>
+    </div>
+    <div
+      class='desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried tooltip-manager'
+      data-key='data.equipment.carried.{{@key}}'
+    >
+      <span class='eqtdragtarget' data-key='data.equipment.carried.{{@key}}'>
+        {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+        {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+        {{{gurpslink this.name}}}
+        {{#if (isUserCreated this)}}&nbsp;
+          <i class='far fa-bookmark' style='float: right; color: steelblue; font-weight: 900; padding-top: 3px;'></i>
+        {{/if}}
+        {{#if (isFoundryItem this)}}&nbsp;
+          <i class='far fa-star' style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'></i>
+        {{/if}}
+        {{#if (ignoreImportQty this)}}&nbsp;
+          <i class='far fa-file' style='float: right; color: steelblue; font-weight: 900; padding-top: 3px;'></i>
+        {{/if}}
+      </span>
+      {{#if (displayItemHover this)}}
+        <div class='tooltippic'><img src='{{this.img}}' /></div>
+      {{/if}}
+      <div class='list_note satisfiedY eqtdraggable' data-key='data.equipment.carried.{{@key}}'>
+        {{{gurpslink this.notes}}}
+      </div>
+    </div>
+
+    <div class='uses satisfiedY equipmenucarried center' data-key='data.equipment.carried.{{@key}}'>
+      {{#if (or (ne this.maxuses '0') (ne this.uses '0'))}}{{this.uses}}{{/if}}
+    </div>
+    <div class='cost satisfiedY equipmenucarried center' data-key='data.equipment.carried.{{@key}}'>
+      {{toLocaleString this.cost}}
+    </div>
+    <div class='weight satisfiedY equipmenucarried center' data-key='data.equipment.carried.{{@key}}'>
+      {{toLocaleString this.weight}}
+      lb
+    </div>
+    <div class='sum_cost satisfiedY equipmenucarried center' data-key='data.equipment.carried.{{@key}}'>
+      {{toLocaleString (round this.costsum)}}
+    </div>
+    <div class='sum_weight satisfiedY equipmenucarried center' data-key='data.equipment.carried.{{@key}}'>
+      {{toLocaleString (round this.weightsum)}}
+      lb
+    </div>
+    <div class='ref satisfiedY equipmenucarried center' data-key='data.equipment.carried.{{@key}}'>
+      {{{pdflinkext this.pageref this.externallink}}}
+    </div>
+  {{/listeqt}}
+</div>

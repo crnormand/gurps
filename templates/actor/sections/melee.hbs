@@ -1,0 +1,42 @@
+<div id='melee'>
+  <div class='desc header'>{{localize 'GURPS.meleeWeapons'}}</div>
+  <div class='usage header'>{{localize 'GURPS.usage'}}</div>
+  <div class='level header'>{{localize 'GURPS.level'}}</div>
+  <div class='parry header'>{{localize 'GURPS.parry'}}</div>
+  <div class='block header'>{{localize 'GURPS.block'}}</div>
+  <div class='damage header'>{{localize 'GURPS.damage'}}</div>
+  <div class='reach header'>{{localize 'GURPS.reach'}}</div>
+  <div class='st header'>{{localize 'GURPS.attributesST'}}</div>
+  <div></div>
+
+  {{#listattack data 'melee'}}
+    <div
+      class='desc gcs-edit dblclkedit meleedraggable tooltip-manager'
+      data-key='data.melee.{{@key}}'
+      data-path='data.melee'
+    >
+      {{{gurpslink this.name}}}
+      {{#if (isFoundryItem this)}}&nbsp;<i
+          class='far fas fa-star'
+          style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'
+        ></i>{{/if}}
+      {{#if (displayItemHover this)}}
+        <div class='tooltippic'><img src='{{this.img}}' /></div>
+      {{/if}}
+      <div class='list_note'>{{{gurpslink this.notes}}}</div>
+    </div>
+    <div class='usage center'>{{this.mode}}</div>
+    <div
+      class='level rollable center'
+      data-name='{{this.name}} ({{this.mode}})'
+      data-key='data.melee.{{@key}}'
+      data-otf='A:"{{this.name}} ({{this.mode}})"'
+    >{{this.level}}</div>
+    <div class='parry rollable center' data-otf='Parry'>{{this.parry}}</div>
+    <div class='block rollable center' data-otf='Block'>{{this.block}}</div>
+    <div class='damage rollable center' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+    <div class='reach center'>{{this.reach}}</div>
+    <div class='st center'>{{this.st}}</div>
+    <div></div>
+  {{/listattack}}
+</div>

@@ -1,0 +1,20 @@
+<div id="location">
+  <div class="header">{{localize "GURPS.hitLocation"}}</div>
+  <div class="roll header">{{localize "GURPS.roll"}}</div>
+  <div class="where header">{{localize "GURPS.hitLocationWhere"}}</div>
+  <div class="penalty header">{{localize "GURPS.hitLocationPenalty"}}</div>
+  <div class="dr header">{{localize "GURPS.hitLocationDR"}}</div>
+
+  {{#each data.hitlocations}}
+    <div class="roll">{{hitlocationroll this.where this.roll ../data}}</div>
+    <div class="where {{gurpstippable}}" data-tooltip="Eqt on {{this.where}}: {{this.equipment}}">
+      {{i18n (concat "GURPS.hitLocation" this.where) this.where}}
+    </div>
+    <div class="penalty {{#if (ne this.penalty '0')}}gmod{{/if}}" data-name="to hit {{this.where}}"
+      data-otf='{{this.penalty}} to hit {{this.where}}'>
+      {{hitlocationpenalty this.where this.penalty ../data}}
+    </div>
+    <div class="dr">{{this.dr}}
+    </div>
+  {{/each}}
+</div>
