@@ -1452,32 +1452,45 @@ body {
 
 #combat-sheet {
   display: grid;
-  grid-template-columns: 0fr 8em 8em auto;
+  grid-template-columns: 0fr 1fr auto;
   /* grid-template-rows: 0fr auto auto; */
   grid-gap: 0.05in;
   grid-template-areas:
-    'combat-attrs      combat-hitfat     combat-trackers   location         '
-    'condition         condition         combat-trackers   location         '
-    'encumbrance       encumbrance       combat-trackers   location         '
-    'melee             melee             melee             melee            '
-    'speed-range-table speed-range-table speed-range-table speed-range-table'
-    'ranged            ranged            ranged            ranged           ';
+    'combat-attrs      encumbrance       location       '
+    'combat-attrs      condition         location       '
+    'combat-hitfat     condition         location       '
+    'combat-trackers   combat-trackers   combat-trackers'
+    'melee             melee             melee          '
+    'speed-range-table speed-range-table speed-range-table'
+    'ranged            ranged            ranged         ';
 }
 
 #combat-hitfat {
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto auto;
+  grid-template-columns: 1fr 1fr;
   grid-gap: 0.05in;
 }
 
 #combat-trackers {
   grid-area: combat-trackers;
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-content: start;
+  display: flex;
+  flex-flow: row nowrap;
   gap: 0.05in;
-  height: fit-content;
+  border: 2px inset grey;
+}
+
+#combat-trackers .tracked-resource {
+  width: min-content;
+}
+
+.header > .header {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+#combat-trackers > .header {
+  width: min-content;
+  padding: 2em 0.05in;
+  margin: -2px;
 }
 
 #combat-weapons,
