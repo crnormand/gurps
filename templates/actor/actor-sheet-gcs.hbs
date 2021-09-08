@@ -1,0 +1,88 @@
+<form class="{{cssClass}}" autocomplete="off" style='scroll-padding-top: 5px;'>
+  <div id="sheet" class="gurpsactorsheet">
+    <div id="personal">
+      {{> portrait }}
+      {{> identity }}
+      {{> miscellaneous }}
+      {{> description }}
+      {{> points }}
+    </div>
+    <div id="stats">
+      {{> attributes }}
+      {{> encumbrance }}
+      {{> quicknote }}
+      {{> lifting }}
+      {{> locations }}
+      <div id="trackers">
+        <div>
+          {{#if useCI}}
+            {{> conditional-injury }}
+          {{else}}
+            {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' editable=false condition='isReeling' testcondition=data.additionalresources.isReeling}}
+          {{/if}}
+          {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false condition='isTired' testcondition=data.additionalresources.isTired}}
+        </div>
+        <div></div>
+        <div id='resources'>
+          <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
+          {{#each data.additionalresources.tracker}}
+            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
+          {{/each}}
+        </div>
+</div>
+      {{> conditions }}
+    </div> 
+
+    {{#if (notEmpty data.reactions)}}
+      <div id="reactions">
+        <div class="modifier header">{{localize "GURPS.modifier"}}</div>
+        <div class="situation header">{{localize "GURPS.reaction"}}</div>
+        <div></div>
+        {{#each data.reactions}}
+          <div class="modifier gmod" data-name="Reaction {{this.situation}}">{{this.modifier}}</div>
+          <div class="situation">{{{gurpslink this.situation}}}</div>
+          <div></div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if (notEmpty data.melee)}}
+      {{> melee }}
+    {{/if}}
+
+    {{#if (notEmpty data.ranged)}}
+      {{> ranged }}
+    {{/if}}
+
+    {{> advantages }}
+    {{> skills }}
+
+    {{#if (notEmpty data.spells)}}
+      {{> spells }}
+    {{/if}}
+
+    {{> equipment }}
+    {{> other-equipment }}
+    {{> notes }}
+  </div>
+  {{> footer }}
+  {{#if navigateVisible}}
+    <div class='navigate-area'>
+      <input id='navigate-toggle' class='toggle offscreen-only' type='checkbox'>
+      <div class='navigate-bar'>
+        <label class='navigation-view' for="navigate-toggle"><span class='icon'></span></label>
+        <div class='navigate-container'>
+          <div class='navigation-link' data-value="personal">TOP</div>
+          <div class='navigation-link' data-value="stats">STATS</div>
+          <div class='navigation-link' data-value="melee">MELEE</div>
+          <div class='navigation-link' data-value="ranged">RANGED</div>
+          <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
+          <div class='navigation-link' data-value="skills">SKILLS</div>
+          <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
+          <div class='navigation-link' data-value="other_equipment">OTHER</div>
+          <div class='navigation-link' data-value="notes">NOTES</div>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</form>

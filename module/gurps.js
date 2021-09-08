@@ -13,7 +13,7 @@ import {
   GurpsInventorySheet,
   GurpsActorTabSheet,
   GurpsActorNpcSheetCI,
-} from './actor-sheet.js'
+} from './actor/actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
@@ -31,7 +31,7 @@ import GurpsJournalEntry from './journal.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-// GURPS.DEBUG = false
+GURPS.DEBUG = false
 
 GURPS.Migration = Migration
 GURPS.BANNER = `
@@ -107,7 +107,7 @@ GURPS.ClearLastActor = function (actor) {
  * the doRoll() function, which has close to anything anyone would want.
  */
 GURPS.lastTargetedRoll = {}
-GURPS.lastTargetedRolls = {}    // mapped by both actor and token id
+GURPS.lastTargetedRolls = {} // mapped by both actor and token id
 
 GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients) {
   let tmp = { ...chatdata }
@@ -119,9 +119,8 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
       type: 'setLastTargetedRoll',
       chatdata: tmp,
       actorid: actorid,
-      tokenid: tokenid
+      tokenid: tokenid,
     })
-  //console.log(GURPS.objToString(tmp)  + " A:" + actorid + " T:" + tokenid)
 }
 
 // TODO Why are these global?
@@ -1682,7 +1681,7 @@ Hooks.once('ready', async function () {
     }
     if (resp.type == 'setLastTargetedRoll') {
       GURPS.setLastTargetedRoll(resp.chatdata, resp.actorid, resp.tokenid, false)
-    }    
+    }
     if (resp.type == 'dragEquipment1') {
       if (resp.destuserid != game.user.id) return
       // @ts-ignore
@@ -1786,7 +1785,7 @@ Hooks.once('ready', async function () {
   GURPS.setInitiativeFormula()
 
   //Add support for the Drag Ruler module: https://foundryvtt.com/packages/drag-ruler
-  Hooks.once('dragRuler.ready', (/** @type {any} */ SpeedProvider) => {
+  Hooks.once('dragRuler.ready', SpeedProvider => {
     class GURPSSpeedProvider extends SpeedProvider {
       get colors() {
         return [
@@ -1814,7 +1813,7 @@ Hooks.once('ready', async function () {
         return ranges
       }
     }
-    // @ts-ignore
+
     dragRuler.registerSystem('gurps', GURPSSpeedProvider)
   })
 

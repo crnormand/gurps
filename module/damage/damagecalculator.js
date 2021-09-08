@@ -187,6 +187,10 @@ export class CompositeDamageCalculator {
     return this._damageModifier
   }
 
+  set damageModifier(value) {
+    this._damageModifier = value
+  }
+
   get damageType() {
     return this._damageType
   }
@@ -341,11 +345,13 @@ export class CompositeDamageCalculator {
     if (this._useLocationModifiers) {
       switch (this._hitLocation) {
         case 'Vitals':
+          // only imp, pi*, and burn tbb can target Vitals
           table = this._vitalsWoundModifiers
           break
 
         case 'Skull':
         case 'Eye':
+          // only inp, pi*, and burn tbb can target Eye
           table = this._skullEyeWoundModifiers
           break
 
@@ -620,6 +626,12 @@ export class CompositeDamageCalculator {
     return entries.length > 0
   }
 
+  get isWoundModifierAdjustedForDamageType() {
+    let table = this.effectiveWoundModifiers
+    let entries = Object.keys(table).filter(key => table[key].changed === 'damagemodifier')
+    return entries.length > 0
+  }
+
   get length() {
     return this._calculators.length
   }
@@ -820,6 +832,13 @@ export class CompositeDamageCalculator {
         results[key].multiplier = 3
         results[key].changed = 'hitlocation'
       })
+
+    // update for [burn tbb]
+    if (this._damageType === 'burn' && this._damageModifier === 'tbb') {
+      results['burn'].multiplier = 3
+      results['burn'].changed = 'damagemodifier'
+    }
+
     return results
   }
 

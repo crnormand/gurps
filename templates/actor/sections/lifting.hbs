@@ -1,0 +1,19 @@
+<div id='lifting'>
+  <div class='header'>{{localize 'GURPS.liftingAndMovingThings'}}</div>
+  <div class='lift'>{{data.liftingmoving.basiclift}}</div>
+  <div class='liftdesc'>{{localize 'GURPS.basicLift'}}</div>
+  <div class='lift'>{{data.liftingmoving.onehandedlift}}</div>
+  <div class='liftdesc'>{{localize 'GURPS.oneHandLift'}}</div>
+  <div class='lift'>{{data.liftingmoving.twohandedlift}}</div>
+  <div class='liftdesc'>{{localize 'GURPS.twoHandLift'}}</div>
+  <div class='lift'>{{data.liftingmoving.shove}}</div>
+  <div class='liftdesc'>{{localize 'GURPS.shoveAndKnockOver'}}</div>
+  {{#if data.liftingmoving.runningshove}}
+    <div class='lift'>{{data.liftingmoving.runningshove}}</div>
+    <div class='liftdesc'>{{localize 'GURPS.runningShoveAndKnockOver'}}</div>
+  {{/if}}
+  <div class='lift'>{{data.liftingmoving.carryonback}}</div>
+  <div class='liftdesc'>{{localize 'GURPS.carryOnBack'}}</div>
+  <div class='lift'>{{data.liftingmoving.shiftslightly}}</div>
+  <div class='liftdesc'>{{localize 'GURPS.shiftSlightly'}}</div>
+</div>

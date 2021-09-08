@@ -1,0 +1,25 @@
+{{debug this}}
+<div id='{{prefix}}encumbrance'>
+  <div class='header'>{{localize 'GURPS.encumbranceMoveDodge'}}</div>
+  <div class='encmarkerh header'></div>
+  <div class='ench header'>{{localize 'GURPS.level'}}</div>
+  <div class='loadh header'>{{localize 'GURPS.maxload'}}</div>
+  <div class='moveh header'>{{localize 'GURPS.move'}}</div>
+  <div class='dodgeh header'>{{localize 'GURPS.dodge'}}</div>
+
+  {{#each data.encumbrance as |this key|}}
+    {{#if this.current}}
+      <div class='encmarker current'></div>
+      <div class='enc current {{this.key}}' data-key='{{key}}'></div>
+      <div class='load current'>{{this.weight}}</div>
+      <div class='move current'>{{this.currentmovedisplay}}</div>
+      <div class='dodge current rollable' data-otf='Dodge' data-path='dodge'>{{this.currentdodge}}</div>
+    {{else}}
+      <div class='encmarker'></div>
+      <div class='enc {{this.key}}' data-key='{{key}}'></div>
+      <div class='load'>{{this.weight}}</div>
+      <div class='move'>{{this.currentmovedisplay}}</div>
+      <div class='dodge' data-path='dodge'>{{this.currentdodge}}</div>
+    {{/if}}
+  {{/each}}
+</div>

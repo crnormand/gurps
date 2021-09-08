@@ -4,7 +4,7 @@
       <i class='subtle fas fa-align-right'></i><i class='fas fa-running'></i></i>
     {{targetToken.name}}
   </h2>
-  <div class='gurps-group inputs'>
+  <div class='gurps-group inputs' style='height: unset; border: none'>
     <h4>{{attackerToken.name}}</h4>
     <div class='label-value-row'>
       <label>{{localize "GURPS.HP"}}:</label>
@@ -17,7 +17,7 @@
       <div><input id='db' type='text' value='{{shieldDB}}' data-dtype='Number' /></div>
     </div>
   </div>
-  <div class='gurps-group inputs'>
+  <div class='gurps-group inputs' style='height: unset; border: none; padding-top: 0.5em'>
     <h4>{{targetToken.name}}</h4>
     <div class='label-value-row'>
       <label>{{localize "GURPS.HP"}}:</label>
@@ -26,7 +26,8 @@
       <div><input id='target-speed' type='text' value='{{targetSpeed}}' data-dtype='Number' /></div>
     </div>
   </div>
-  <div class='gurps-group inputs' style='border: none;'>
+  <div class='gurps-group inputs'
+    style='border: none; border-top: 1px solid #999; height: unset; margin: 0.5em 0; padding-top: 0.5em;'>
     <div class='label-value-row'>
       <label><strong>{{localize "GURPS.slamRelativeVelocity"}}:</strong></label>
       <input id='relative-speed' type='text' value='{{relativeSpeed}}' readonly disabled>

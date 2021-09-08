@@ -29,6 +29,10 @@ This prints: `check: [Broadsword ], modified target: [15], roll total: [13], mar
 - Implemented no knockback (nkb) damage modifier (`[3d+1 cr nkb]` results in no knockback regardless of target's ST).
 - Updated Brazilian Portuguese language file (thanks, Frerol!). Who wants to tackle Russian and German?
 - Optionally allow a damage OTF to include a hit location. E.g., `[3d cr dkb @Vitals]`. Location must exactly match a hit location on the targeted actor.
+- Fixed an issue with Western European style decimals (such as '6,25') in the Basic Speed field during imports. If the value contains a comma (',') character, it is parsed as if it is Western European; otherwise it is parsed as if it is US/UK ('6.25').
+- More maneuver tweaks -- I think it really works correctly now.
+- Implemented tight beam burning from B399. To use this, add the 'tbb' damage modifier with the 'burn' damage type (for example, `[6d burn tbb]`).
+- Added Encumbrance, Move & Dodge and Lifting & Moving Things to Combat tab in the Tabbed Actor sheet.
 
 Release 0.11.7 - 7/22/2021
 

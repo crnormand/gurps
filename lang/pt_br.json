@@ -164,7 +164,7 @@
 
   "__Apply Damage Dialog__": "=========",
   "GURPS.addAbbrev": "Abrev",
-  "GURPS.addAdditionalStackingModifier": "Modificadores adicionais (cumulativos)",
+  "GURPS.addAdditionalStackingModifier": "Modificadores adicionais",
   "GURPS.addAdjustedForHitLocation": "* - Ajustado para Ponto de Impacto",
   "GURPS.addAdjustedForInjuryTolerance": "† - Ajustado para Tolerância a Ferimentos",
   "GURPS.addApply": "Aplicar",

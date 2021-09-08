@@ -85,19 +85,39 @@ body {
 
 /* special override, 'cause I can't get the space any other way*/
 #apply-damage-advanced {
-  margin-top: 1em;
+  margin-top: 5px;
+  border: none;
+  border-top: 1px solid #999;
+  padding: 5px 0 0 0;
 }
 
 /* a group is a section of a form with a header */
 .gurps-group {
   display: flex;
   flex-direction: column;
-  border: solid black 1px;
-  padding: 0.5em;
-  padding-top: 0;
   text-align: left;
   vertical-align: middle;
   justify-content: start;
+}
+
+.gurps-group,
+#calculation-results > div {
+  border-right: 1px solid #999;
+  height: 100%;
+  padding: 0 0.5em;
+}
+
+#calculation-results > div:first-child {
+  padding-left: 0;
+}
+
+#calculation-results > div:last-child {
+  padding-right: 0;
+}
+
+#calculation-results > div:last-child,
+.gurps-group:last-child {
+  border: none;
 }
 
 .gurps-space-between {
@@ -136,10 +156,9 @@ body {
   color: lightgrey;
   margin-bottom: 0.25em;
   font-size: larger;
-  margin-left: -0.4em;
-  margin-right: -0.5em;
   padding-left: 0.5em;
   margin-top: 0;
+  text-align: center;
   text-transform: uppercase;
   line-height: 1.2em;
 }
@@ -386,6 +405,15 @@ ul#result-effects li {
 #wound-modifier-table aside {
   text-align: end;
   margin-bottom: 0;
+}
+
+#wound-modifier-table .damagemodifier {
+  color: darkgreen;
+}
+
+#wound-modifier-table .damagemodifier:after {
+  color: black;
+  content: '‡';
 }
 
 #wound-modifier-table .hitlocation {
@@ -855,12 +883,12 @@ ul#result-effects li {
   justify-content: stretch;
 }
 
-#combat-trackers .tracked-resource .condition-block {
+/* #combat-trackers .tracked-resource .condition-block {
   display: flex;
   flex-flow: row nowrap;
   justify-content: stretch;
   align-items: baseline;
-}
+} */
 
 .tracked-resource .condition-block .max {
   font-size: 80%;
@@ -1355,7 +1383,6 @@ ul#result-effects li {
   flex-flow: row nowrap;
   gap: 3px;
   align-items: center;
-  /* justify-content: space-between; */
 }
 
 .modifierbucket #current-actor {
@@ -1390,7 +1417,7 @@ ul#result-effects li {
   height: 100%;
   display: grid;
   grid-template-columns: 2fr 4fr;
-  gap: 0.35em;
+  /* gap: 0.35em; */
   justify-items: stretch;
   justify-content: stretch;
   align-items: stretch;
@@ -1407,7 +1434,7 @@ ul#result-effects li {
 
 #modtooltiplefttop {
   grid-row: 1;
-
+  padding: 0 0.5em 0 0;
   display: grid;
   justify-self: stretch;
   justify-content: stretch;
@@ -1427,7 +1454,7 @@ ul#result-effects li {
 
 #modtooltipleftcenter {
   grid-row: 2;
-
+  padding: 0 0.5em 0 0;
   display: flex;
   flex-flow: column nowrap;
   justify-self: stretch;
@@ -1455,7 +1482,7 @@ ul#result-effects li {
 
 #modtooltipleftbottom {
   grid-row: 3;
-
+  padding: 0 0.5em 0 0;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
@@ -1575,27 +1602,24 @@ ul#result-effects li {
 .modttt {
   text-align: center;
   border-radius: 10px;
-  /* width: 820px; */
   width: 63.5em;
-  /* height: 657px; */
-  height: 50.5em;
-  bottom: 100px !important;
+  bottom: 90px !important;
   left: 430px;
-  position: absolute;
+  position: fixed;
   z-index: 100;
 }
 
-.modttt::after {
+/* .modttt::after {
   content: '';
   position: absolute;
-  /* top: 100%; */
+  /* top: 100%; 
   left: 50%;
   margin-left: -300px;
   border-width: 37px 300px;
   border-style: solid;
   border-color: grey transparent transparent transparent;
   pointer-events: none;
-}
+} */
 
 .modttt .modtooltip {
   padding: 0.35em;
