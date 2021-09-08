@@ -881,6 +881,7 @@ ul#result-effects li {
   display: flex;
   flex-flow: column nowrap;
   justify-content: stretch;
+  font-size: 80%;
 }
 
 /* #combat-trackers .tracked-resource .condition-block {
@@ -891,7 +892,6 @@ ul#result-effects li {
 } */
 
 .tracked-resource .condition-block .max {
-  font-size: 80%;
   text-align: end;
   margin-left: 0.15rem;
 }

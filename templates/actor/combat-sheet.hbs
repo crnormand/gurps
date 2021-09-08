@@ -100,10 +100,11 @@
       {{#if (notEmpty data.melee)}}
         {{> melee }}
       {{/if}}
+      {{> speed-range-table }}
       {{#if (notEmpty data.ranged)}}
         {{> ranged }}
       {{/if}}
-      {{> speed-range-table }}
     </div><!-- end of combat-sheet -->
   </div> <!-- end of responsive -->
+  {{> footer }}
 </form>

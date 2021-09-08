@@ -534,6 +534,8 @@
 
 .gurps .sheet-body.tabbed-sheet {
   height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
+  padding-top: 4px;
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .gurps .sheet-body .tab {
@@ -1451,8 +1453,8 @@ body {
     'condition         condition         combat-trackers   location         '
     'encumbrance       encumbrance       combat-trackers   location         '
     'melee             melee             melee             melee            '
-    'ranged            ranged            ranged            ranged           '
-    'speed-range-table speed-range-table speed-range-table speed-range-table';
+    'speed-range-table speed-range-table speed-range-table speed-range-table'
+    'ranged            ranged            ranged            ranged           ';
 }
 
 #combat-hitfat {
@@ -1888,9 +1890,9 @@ body {
 
 .gurps-sheet-tabs {
   display: block;
-  height: 40px;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  font-size: 110%;
+  height: 32px;
+  border-bottom: 1px solid #333;
 }
 
 .gurps-sheet-tabs li {
