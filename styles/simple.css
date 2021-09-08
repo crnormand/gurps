@@ -845,12 +845,19 @@ body {
 #identity,
 #miscellaneous,
 #points,
-#attributes,
 #lifting,
+#basic-attributes,
+#secondary-attributes,
 #hitpoints {
   display: grid;
   grid-template-rows: 0fr 1fr;
   border: 1px solid black;
+}
+
+#attributes {
+  display: grid;
+  grid-template-rows: 1fr 0fr;
+  border: none;
 }
 
 #points .field,
@@ -1473,19 +1480,23 @@ body {
   height: fit-content;
 }
 
-#combat-attrs,
 #combat-weapons,
 #combat-condition,
 #combat-location {
-  grid-gap: 0.05in;
+  gap: 0.05in;
   display: grid;
   grid-template-rows: 0fr 1fr;
+}
+
+#combat-attrs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.05in;
 }
 
 #combat-identity,
 #combat-condition,
 #combat-hit,
-#combat-attrs,
 #combat-location {
   border: 1px solid black;
 }
@@ -1646,7 +1657,6 @@ body {
 
 #combat-attrs {
   grid-area: combat-attrs;
-  gap: 0;
 }
 
 #combat-attrs-container {

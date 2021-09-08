@@ -1,0 +1,34 @@
+<div id='secondary-attributes'>
+  <div class='header'>{{i18n 'GURPS.attributesSecondary' 'Secondary Attributes'}}</div>
+  <div class='fieldblock3'>
+    <div class='points'>[{{data.attributes.WILL.points}}]</div>
+    <div class='field rollable' data-path='attributes.WILL.value' data-otf='WILL'>
+      {{data.attributes.WILL.value}}
+    </div>
+    <div class='label'>{{localize 'GURPS.attributesWILLNAME'}}</div>
+    <div class='points'></div>
+    <div class='field noedit rollable' data-path='frightcheck' data-otf='Fright Check'>
+      {{data.frightcheck}}
+    </div>
+    <div class='label'>{{localize 'GURPS.frightcheck'}}</div>
+    <hr />
+    <div class='points'>[{{data.attributes.PER.points}}]</div>
+    <div class='field rollable' data-path='attributes.PER.value' data-otf='PER'>
+      {{data.attributes.PER.value}}
+    </div>
+    <div class='label'>{{localize 'GURPS.attributesPERNAME'}} ({{localize 'GURPS.attributesPER'}})</div>
+    <div class='points'></div>
+    <div class='field noedit rollable' data-path='vision' data-otf='Vision'>{{data.vision}}</div>
+    <div class='label'>{{localize 'GURPS.vision'}}</div>
+    <div class='points'></div>
+    <div class='field noedit rollable' data-path='hearing' data-otf='Hearing'>{{data.hearing}}</div>
+    <div class='label'>{{localize 'GURPS.hearing'}}</div>
+    <div class='points'></div>
+    <div class='field noedit rollable' data-path='tastesmell' data-otf='Taste Smell'>{{data.tastesmell}}
+    </div>
+    <div class='label'>{{localize 'GURPS.tastesmell'}}</div>
+    <div class='points'></div>
+    <div class='field noedit rollable' data-path='touch' data-otf='Touch'>{{data.touch}}</div>
+    <div class='label'>{{localize 'GURPS.touch'}}</div>
+  </div>
+</div>

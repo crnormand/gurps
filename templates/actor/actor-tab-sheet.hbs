@@ -20,7 +20,11 @@
     <section class="sheet-body tabbed-sheet">
       <div class="tab" data-tab="stats" data-group="primary-tabs">
         <div id="stats">
-          {{> attributes }}
+          <div id='attributes'>
+            {{> basic-attributes }}
+            {{> secondary-attributes }}
+          </div>
+
           {{> encumbrance }}
           {{> quicknote }}
           {{> lifting }}

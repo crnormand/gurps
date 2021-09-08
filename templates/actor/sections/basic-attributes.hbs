@@ -1,0 +1,38 @@
+<div id='basic-attributes'>
+  <div class='header'>{{i18n 'GURPS.attributesPrimary' 'Basic Attributes'}}</div>
+  <div class='fieldblock3'>
+    <div class='points'>[{{data.attributes.ST.points}}]</div>
+    <div class='field rollable' data-path='attributes.ST.value' data-otf='ST'>
+      {{data.attributes.ST.value}}
+    </div>
+    <div class='label'>{{localize 'GURPS.attributesSTNAME'}} ({{localize 'GURPS.attributesST'}})</div>
+    <div class='points'>[{{data.attributes.DX.points}}]</div>
+    <div class='field rollable' data-path='attributes.DX.value' data-otf='DX'>
+      {{data.attributes.DX.value}}
+    </div>
+    <div class='label'>{{localize 'GURPS.attributesDXNAME'}} ({{localize 'GURPS.attributesDX'}})</div>
+    <div class='points'>[{{data.attributes.IQ.points}}]</div>
+    <div class='field rollable' data-path='attributes.IQ.value' data-otf='IQ'>
+      {{data.attributes.IQ.value}}
+    </div>
+    <div class='label'>{{localize 'GURPS.attributesIQNAME'}} ({{localize 'GURPS.attributesIQ'}})</div>
+    <div class='points'>[{{data.attributes.HT.points}}]</div>
+    <div class='field rollable' data-path='attributes.HT.value' data-otf='HT'>
+      {{data.attributes.HT.value}}
+    </div>
+    <div class='label'>{{localize 'GURPS.attributesHTNAME'}} ({{localize 'GURPS.attributesHT'}})</div>
+    <hr />
+    <div class='points'></div>
+    <div class='field noedit rollable' data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
+    <div class='label'>{{localize 'GURPS.thrust'}}</div>
+    <div class='points'></div>
+    <div class='field noedit rollable' data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
+    <div class='label'>{{localize 'GURPS.swing'}}</div>
+    <div class='points'>[{{data.basicspeed.points}}]</div>
+    <div class='field'>{{data.basicspeed.value}}</div>
+    <div class='label'>{{localize 'GURPS.basicspeed'}}</div>
+    <div class='points'>[{{data.basicmove.points}}]</div>
+    <div class='field'>{{data.basicmove.value}}</div>
+    <div class='label'>{{localize 'GURPS.basicmove'}}</div>
+  </div>
+</div>
