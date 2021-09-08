@@ -792,6 +792,8 @@
   "GURPS.settingImportEncodingUTF8": "UTF-8",
   "GURPS.settingRemoveUnequipped": "Actor: Remove Unequipped weapons from Melee and Ranged lists",
   "GURPS.settingHintRemoveUnequipped": "If checked, the names of the Melee and Ranged attacks will be compared to the carried equipment list, and if a name match is found, the attack will only be listed if the equipment is Equipped",
+  "GURPS.settingImportBrowserImporter": "Use non-locally hosted import dialog",
+  "GURPS.settingImportHintBrowserImporter": "Check this if you are not hosting your Foundry instance locally (you are hosting externally, i.e. Forge). This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
 
   "GURPS.actions": "Actions",
   "GURPS.addAdvantage": "Add an Advantage",

@@ -4,7 +4,7 @@ export class SmartImporter {
         const file = this.actorToFileMap.get(actor);
         const template = await getTemplate('systems/gurps/templates/import-gcs-or-gca.hbs');
         console.log(template)
-        return file ?? await UniversalFileHandler.getFile({template, templateOptions: {name: actor.name}, extensions:'.xml'});
+        return file ?? await UniversalFileHandler.getFile({template, templateOptions: {name: actor.name}, extensions: ['.xml', '.txt']});
     }
     static setFileForActor(actor, file) {
         this.actorToFileMap.set(actor, file);
