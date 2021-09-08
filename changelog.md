@@ -33,6 +33,7 @@ This prints: `check: [Broadsword ], modified target: [15], roll total: [13], mar
 - More maneuver tweaks -- I think it really works correctly now.
 - Implemented tight beam burning from B399. To use this, add the 'tbb' damage modifier with the 'burn' damage type (for example, `[6d burn tbb]`).
 - Added portrait to NPC and NPC-CI actor sheets.
+- Added Encumbrance, Move & Dodge and Lifting & Moving Things to Combat tab in the Tabbed Actor sheet.
 
 Release 0.11.7 - 7/22/2021
 

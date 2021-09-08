@@ -1,14 +1,14 @@
 <div class='roll-message'>
   <div class='prefix'>
     {{prefix}}
-    {{thing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
+    {{chatthing}}{{#if (not (eq origtarget -1))}} ({{origtarget}}){{/if}}
   </div>
   {{#if optlabel}}&nbsp;&nbsp;{{{optlabel}}}{{/if}}
   {{#if targetmods}}
     <div>
       <ul class='modifier-list'>
         {{#each targetmods}}
-          <li>{{displayNumber mod}}{{#if desc}} : {{desc}}{{/if}}</li>
+          <li>[{{displayNumber mod}}{{#if desc}} {{desc}}{{/if}}]</li>
         {{/each}}
       </ul>
     </div>

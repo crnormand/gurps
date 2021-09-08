@@ -6,13 +6,14 @@ import { GURPS } from '../gurps.js'
   */
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn',
 // target=skill level or -1=damage roll
-export async function doRoll(actor, formula, targetmods, prefix, thing, origtarget, optionalArgs) {
+export async function doRoll(actor, formula, targetmods, prefix, thing, chatthing, origtarget, optionalArgs) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   let isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
   let failure = false
 
   let chatdata = {
     prefix: prefix.trim(),
+    chatthing: chatthing,
     thing: thing,
     origtarget: origtarget,
   }
@@ -45,7 +46,8 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, origtarg
     let finaltarget = parseInt(origtarget) + modifier
     if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
     if (!!thing) {
-      let flav = thing.replace(/\[.*\] */, '') // Flavor text cannot handle internal []
+      //let flav = thing.replace(/\[.*\] */, '') // Flavor text cannot handle internal []
+      let flav = thing.replace(/\[/, '').replace(/\]/, '') // Flavor text cannot handle internal []
       formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
     }
     roll = Roll.create(formula) // The formula will always be "3d6" for a "targetted" roll

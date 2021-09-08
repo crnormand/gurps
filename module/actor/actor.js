@@ -123,15 +123,18 @@ export class GurpsActor extends Actor {
     }
     this.ignoreRender = true
     for (const item of good) await this.addItemData(item.data) // re-add the item equipment and features
-    this.ignoreRender = false
 
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
+    setTimeout(() => {
+      this._forceRender() // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
+    }, 50)
   }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
   calculateDerivedValues() {
+    this.ignoreRender = true
     this._initializeStartingValues()
     this._applyItemBonuses()
 
@@ -147,6 +150,9 @@ export class GurpsActor extends Actor {
 
     let maneuver = this.effects.contents.find(it => it.data.flags.core.statusId === 'maneuver')
     this.getGurpsActorData().conditions.maneuver = !!maneuver ? maneuver.data.flags.gurps.name : 'undefined'
+    setTimeout(() => {
+      this._forceRender() // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
+    }, 50)
   }
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
@@ -542,9 +548,6 @@ export class GurpsActor extends Actor {
                   if (!!m && !!m[2]) e.block = `${e.block}${m[2]}`
                 }
               }
-              setTimeout(() => {
-                this._forceRender() // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
-              }, 50)
             })
           }
         }
@@ -2087,8 +2090,7 @@ export class GurpsActor extends Actor {
           label: i18n('GURPS.ok'),
           content: content,
           callback: callback,
-          // FIXME rejectClose is not a member of Dialog.prompt(). Did you mean Dialog.confirm()?
-          // rejectClose: false,
+          rejectClose: false    // Do not "reject" if the user presses the "close" gadget
         })
       }
     } else {
