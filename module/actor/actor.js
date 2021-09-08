@@ -791,8 +791,7 @@ export class GurpsActor extends Actor {
     }
     let nm = this.textFrom(c.name)
     console.log("Importing '" + nm + "'")
-    // this is how you have to update the domain object so that it is synchronized.
-
+    let starttime = performance.now();
     let commit = {}
 
     commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
@@ -864,7 +863,7 @@ export class GurpsActor extends Actor {
       }
 
       ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
-      console.log('Done importing.  You can inspect the character data below:')
+      console.log('Done importing (' + Math.round( performance.now() - starttime ) + 'ms.)  You can inspect the character data below:')
       console.log(this)
       return true
     } catch (err) {
