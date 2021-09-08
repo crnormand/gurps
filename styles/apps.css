@@ -645,6 +645,7 @@ ul#result-effects li {
 
 #combat-sheet .tracked-resource {
   border: 1px solid black;
+  background: white;
 }
 
 /* Tooltip container */
@@ -850,7 +851,7 @@ ul#result-effects li {
 .resource-editor input,
 .tracked-resource .spinner input {
   height: 1.2rem;
-  min-width: 2rem;
+  min-width: 2.5rem;
   border: 1px solid grey;
   border-radius: 0;
   font-size: inherit;

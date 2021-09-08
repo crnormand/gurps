@@ -5,10 +5,8 @@
         {{> basic-attributes }}
         {{> secondary-attributes }}
       </div> <!-- end of combat-attrs-->
-
       {{> encumbrance }}
       {{> locations }}
-
       <div id='combat-hitfat'>
         {{#if useCI}}
           {{> conditional-injury }}
@@ -17,16 +15,17 @@
         {{/if}}
         {{> hpfp-tracker name='FP' resource=data.FP label='GURPS.attributesFPNAME' compact=true condition='isTired' testcondition=data.additionalresources.isTired}}
       </div>
-
       {{> conditions }}
-
       <div id='combat-trackers'>
         <div class="header">{{localize "GURPS.resourceTrackers"}}</div>
-        {{#each data.additionalresources.tracker}}
-          {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
-        {{/each}}
+        {{#if (notEmpty data.additionalresources.tracker)}}
+        <div id='tracker-scroller'>
+          {{#each data.additionalresources.tracker}}
+            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
+          {{/each}}
+        </div>
+        {{/if}}
       </div>
-
       {{#if (notEmpty data.melee)}}
         {{> melee }}
       {{/if}}

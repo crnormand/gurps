@@ -1471,26 +1471,34 @@ body {
   grid-gap: 0.05in;
 }
 
-#combat-trackers {
-  grid-area: combat-trackers;
+#tracker-scroller {
   display: flex;
   flex-flow: row nowrap;
   gap: 0.05in;
   border: 2px inset grey;
 }
 
+#tracker-scroller .tracked-resource {
+  margin: -2px 0 -2px -2px;
+}
+
+#tracker-scroller .header {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#combat-trackers {
+  grid-area: combat-trackers;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 0fr min-content;
+}
+
 #combat-trackers .tracked-resource {
   width: min-content;
 }
 
-.header > .header {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
 #combat-trackers > .header {
-  width: min-content;
-  padding: 2em 0.05in;
-  margin: -2px;
+  border-bottom: 1px solid white;
 }
 
 #combat-weapons,
