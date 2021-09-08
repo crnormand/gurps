@@ -661,9 +661,15 @@ export class GurpsActor extends Actor {
       } else this._openImportDialog()
     } else this._openImportDialog()
   }
-
-/* browser import extension... not working well for standalone so I fell back to previous version
+  
   async _openImportDialog() {
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_BROWSER_IMPORTER))
+      this._openNonLocallyHostedImportDialog()
+    else
+      this._openLocallyHostedImportDialog()
+  }
+
+  async _openNonLocallyHostedImportDialog() {
     try {
       const file = await SmartImporter.getFileForActor(this)
       const res = await this.importFromGCSv1(await file.text(), file.name)
@@ -673,9 +679,8 @@ export class GurpsActor extends Actor {
       throw e
     }
   }
-*/
   
-  async _openImportDialog() {
+  async _openLocallyHostedImportDialog() {
     setTimeout(async () => {
       new Dialog(
         {
