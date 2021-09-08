@@ -5,7 +5,6 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.11.8
 
 - Added system setting, unequipped items not displayed in melee or ranged attacks
-- Added danialrab's browser support to remember the last import location
 - Updated anim support for JB2A's Vasselheim release (0.2.6)
 - Rewrote the Maneuver system to be Foundry ActiveEffects.
 - Resolved several bugs with Maneuvers (randomly not clearing, UI warnings when changing Maneuver settings, keeping Maneuver as the first icon in the list).
