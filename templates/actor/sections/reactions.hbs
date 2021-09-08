@@ -1,0 +1,10 @@
+<div id='reactions'>
+  <div class='modifier header'>{{localize 'GURPS.modifier'}}</div>
+  <div class='situation header'>{{localize 'GURPS.reaction'}}</div>
+  <div></div>
+  {{#each data.reactions}}
+    <div class='modifier gmod' data-name='Reaction {{this.situation}}'>{{this.modifier}}</div>
+    <div class='situation'>{{{gurpslink this.situation}}}</div>
+    <div></div>
+  {{/each}}
+</div>
