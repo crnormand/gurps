@@ -81,8 +81,10 @@ export class CompositeDamageCalculator {
     }
 
     let hitlocations = objectToArray(this._defender.getGurpsActorData().hitlocations)
-    let wheres = hitlocations.map(it => it.where)
-    if (wheres.includes(damageData[0].hitlocation)) this._hitLocation = damageData[0].hitlocation
+    let wheres = hitlocations.map(it => it.where.toLowerCase())
+    let damageLocation = !!damageData[0].hitlocation ? damageData[0].hitlocation.toLowerCase() : ''
+    let hlIndex = wheres.indexOf(damageLocation)
+    if (hlIndex >=0 ) this._hitLocation = hitlocations[hlIndex].where
     else this._hitLocation = this._defender.defaultHitLocation
 
     this._previousHitLocation = this._hitLocation
