@@ -69,7 +69,7 @@ export class GurpsActor extends Actor {
       delete this.apps[sheet.appId]
       await this.setFlag('core', 'sheetClass', newSheet)
       this.ignoreRender = false
-      sheet.render(true)
+      this.sheet.render(true)
     }
   }
 
@@ -121,19 +121,16 @@ export class GurpsActor extends Actor {
         orig = []
       }
     }
-    this.ignoreRender = true
     for (const item of good) await this.addItemData(item.data) // re-add the item equipment and features
 
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
-    setTimeout(() => {
-      this._forceRender() // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
-    }, 50)
-  }
+}
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
   calculateDerivedValues() {
+    let saved = !!this.ignoreRender
     this.ignoreRender = true
     this._initializeStartingValues()
     this._applyItemBonuses()
@@ -150,9 +147,8 @@ export class GurpsActor extends Actor {
 
     let maneuver = this.effects.contents.find(it => it.data.flags.core.statusId === 'maneuver')
     this.getGurpsActorData().conditions.maneuver = !!maneuver ? maneuver.data.flags.gurps.name : 'undefined'
-    setTimeout(() => {
-      this._forceRender() // ugly hack to get charactersheet to display correctly, since OTFs could not be 'awaited'
-    }, 50)
+    this.ignoreRender = saved
+    if (!saved) setTimeout(() => this._forceRender(), 500)
   }
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
@@ -588,9 +584,14 @@ export class GurpsActor extends Actor {
         if (!!this.getGurpsActorData().additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
-
     let result = await super.update(data, context)
     return result
+  }
+  
+  async internalUpdate(data, context) {
+    let ctx = { render: !this.ignoreRender}
+    if (!!context) ctx = {...context, ...ctx}
+    await this.update(data, ctx)
   }
 
   /**
@@ -790,14 +791,9 @@ export class GurpsActor extends Actor {
     }
     let nm = this.textFrom(c.name)
     console.log("Importing '" + nm + "'")
-    // this is how you have to update the domain object so that it is synchronized.
-
+    let starttime = performance.now();
     let commit = {}
 
-    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
-      commit = { ...commit, ...{ name: nm } }
-      commit = { ...commit, ...{ 'token.name': nm } }
-    }
     commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.getGurpsActorData().additionalresources || {}
     ar.importname = importname || ar.importname
@@ -855,13 +851,19 @@ export class GurpsActor extends Actor {
 
     try {
       this.ignoreRender = true
-      await this.update(deletes, { diff: false })
-      await this.update(adds, { diff: false })
+      await this.internalUpdate(deletes, { diff: false })
+      await this.internalUpdate(adds, { diff: false })
       // This has to be done after everything is loaded
       await this.postImport()
       this._forceRender()
+      
+      // Must update name outside of protection so that Actors list (and other external views) update correctly
+      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {  
+        this.update({ name: nm, 'token.name': nm })
+      }
+
       ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
-      console.log('Done importing.  You can inspect the character data below:')
+      console.log('Done importing (' + Math.round( performance.now() - starttime ) + 'ms.)  You can inspect the character data below:')
       console.log(this)
       return true
     } catch (err) {
@@ -2026,6 +2028,7 @@ export class GurpsActor extends Actor {
 
   _forceRender() {
     this.ignoreRender = false
+    //console.log("Force Render")
     this.render()
   }
 
@@ -2252,7 +2255,7 @@ export class GurpsActor extends Actor {
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'ads')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'skills')) }
     commit = { ...commit, ...(await this._addItemElement(itemData, eqtkey, 'spells')) }
-    await this.update(commit, { diff: false, render: false })
+    await this.internalUpdate(commit, { diff: false })
     this.calculateDerivedValues() // new skills and bonuses may affect other items... force a recalc
   }
 
@@ -2345,13 +2348,14 @@ export class GurpsActor extends Actor {
    * @param {string} itemid
    */
   async _removeItemAdditions(itemid) {
+    let saved = this.ignoreRender 
     this.ignoreRender = true
     await this._removeItemElement(itemid, 'melee')
     await this._removeItemElement(itemid, 'ranged')
     await this._removeItemElement(itemid, 'ads')
     await this._removeItemElement(itemid, 'skills')
     await this._removeItemElement(itemid, 'spells')
-    this.ignoreRender = false
+    this.ignoreRender = saved
   }
 
   // We have to remove matching items after we searched through the list
@@ -2818,7 +2822,7 @@ export class GurpsActor extends Actor {
           sp = paths.slice(0, -2).join('.')
           puuid = getProperty(this.data, sp).uuid
         }
-        await this.update({ [srckey + '.parentuuid']: puuid })
+        await this.internalUpdate({ [srckey + '.parentuuid']: puuid })
         let eqt = getProperty(this.data, srckey)
         if (!!eqt.itemid) {
           let item = this.items.get(eqt.itemid)

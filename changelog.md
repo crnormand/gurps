@@ -9,13 +9,13 @@ Release 0.11.8
 - Updated anim support for JB2A's Vasselheim release (0.2.6)
 - Rewrote the Maneuver system to be Foundry ActiveEffects.
 - Resolved several bugs with Maneuvers (randomly not clearing, UI warnings when changing Maneuver settings, keeping Maneuver as the first icon in the list).
-- Store the last targeted roll for every actor in the GURPS object (`GURPS.lastTargetedRoll`). Use the actor's ID to fetch a data object with the results of that roll. This might be used in a macro to get and use margin of success, for example.
+- Store the last targeted roll for every actor in the GURPS object (`GURPS.lastTargetedRolls`). Use the actor's or token's ID to fetch a data object with the results of that roll. This might be used in a macro to get and use margin of success, for example.
 
 Example:
 
 ```js
 let actor = game.actors.getName('Arne Arneson')
-let data = GURPS.lastTargetedRoll[actor.id]
+let data = GURPS.lastTargetedRolls[actor.id]
 console.log(
   `check: [${data.thing}], modified target: [${data.finaltarget}], roll total: [${data.rtotal}], margin of success: [${data.margin}]`,
 )
@@ -34,6 +34,7 @@ This prints: `check: [Broadsword ], modified target: [15], roll total: [13], mar
 - Implemented tight beam burning from B399. To use this, add the 'tbb' damage modifier with the 'burn' damage type (for example, `[6d burn tbb]`).
 - Added portrait to NPC and NPC-CI actor sheets.
 - Added Encumbrance, Move & Dodge and Lifting & Moving Things to Combat tab in the Tabbed Actor sheet.
+- Report all rolled items as OtF formulas (so they can be re-rolled)
 
 Release 0.11.7 - 7/22/2021
 

@@ -1032,7 +1032,7 @@ async function removeKey(actor, path) {
   let t = parentpath + '.-=' + objkey
   let oldRender = actor.ignoreRender
   actor.ignoreRender = true
-  await actor.update({ [t]: null }) // Delete the whole object
+  await actor.internalUpdate({ [t]: null }) // Delete the whole object
   delete object[key]
   i = parseInt(key)
 
@@ -1052,7 +1052,7 @@ async function removeKey(actor, path) {
       return a
     }, {}) // Enforced key order
   actor.ignoreRender = oldRender
-  await actor.update({ [objpath]: sorted }, { diff: false })
+  await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
 }
 GURPS.removeKey = removeKey
 
@@ -1071,7 +1071,7 @@ async function insertBeforeKey(actor, path, newobj) {
   let objkey = objpath.substr(i + 1)
   let object = GURPS.decode(actor.data, objpath)
   let t = parentpath + '.-=' + objkey
-  await actor.update({ [t]: null }) // Delete the whole object
+  //await actor.internalUpdate({ [t]: null }) // Delete the whole object
   let start = parseInt(key)
 
   i = start + 1
@@ -1088,7 +1088,7 @@ async function insertBeforeKey(actor, path, newobj) {
       a[v] = object[v]
       return a
     }, {}) // Enforced key order
-  await actor.update({ [objpath]: sorted })
+  await actor.internalUpdate({ [objpath]: sorted }, { diff: false })
 }
 GURPS.insertBeforeKey = insertBeforeKey
 
