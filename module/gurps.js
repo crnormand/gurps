@@ -34,11 +34,6 @@ window.GURPS = GURPS // Make GURPS global!
 GURPS.DEBUG = false
 
 GURPS.Migration = Migration
-/**
- * This object literal holds the results of the last targeted roll by an actor.
- * The property key is the actor's ID. The value is literally the chatdata from
- * the doRoll() function, which has close to anything anyone would want.
- */
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
   / /_____|_____|_____|_____|_____|_____\\ \\   
@@ -88,8 +83,8 @@ GURPS.SJGProductMappings = SJGProductMappings
 GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
 
 GURPS.SetLastActor = function (actor) {
+  if (actor != GURPS.LastActor) console.log('Setting Last Actor:' + actor?.name)
   GURPS.LastActor = actor
-  console.log('Setting Last Actor:' + actor?.name)
   setTimeout(() => GURPS.ModifierBucket.refresh(), 100) // Need to make certain the mod bucket refresh occurs later
 }
 
@@ -106,6 +101,11 @@ GURPS.ClearLastActor = function (actor) {
   }
 }
 
+/**
+ * This object literal holds the results of the last targeted roll by an actor.
+ * The property key is the actor's ID. The value is literally the chatdata from
+ * the doRoll() function, which has close to anything anyone would want.
+ */
 GURPS.lastTargetedRoll = {}
 GURPS.lastTargetedRolls = {} // mapped by both actor and token id
 
@@ -121,7 +121,6 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
       actorid: actorid,
       tokenid: tokenid,
     })
-  console.log(GURPS.objToString(tmp) + ' A:' + actorid + ' T:' + tokenid)
 }
 
 // TODO Why are these global?
@@ -361,6 +360,7 @@ async function performAction(action, actor, event = null, targets = []) {
   let actordata = actor?.data
   let prefix = ''
   let thing = ''
+  let chatthing = ''
   let target = -1 // < 0 non-targeted roll, > 0 targeted roll
   let formula = ''
 
@@ -411,22 +411,27 @@ async function performAction(action, actor, event = null, targets = []) {
     if (action.link == 'Item') {
       game.items?.get(action.id)?.sheet?.render(true)
     }
+    return true
   }
 
   if (action.type === 'controlroll') {
-    prefix = 'Control Roll, '
-    thing = action.desc || ''
+    //prefix = 'Control Roll, '
     formula = '3d6'
     // @ts-ignore - action.target is not required; it could be undefined
     target = parseInt(action.target)
+    if (!!action.desc) {
+      thing = action.desc
+      chatthing = '["Control Roll, ' + thing + '"CR:' + target + ' ' + thing + ']'
+    } else {
+      chatthing = '[CR:' + target + ']'
+    }
   }
 
   if (action.type === 'roll') {
-    prefix = 'Rolling ' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc
+    prefix = 'Rolling [' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc + ']'
     // @ts-ignore - formula was defined as string above.
     formula = action.formula
-    // FIXME ModifierBucket.addModifier returns "undefined" -- so nothing is being pushed onto the array.
-    if (!!action.costs) targetmods.push(GURPS.ModifierBucket.addModifier(0, action.costs))
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
   }
 
   if (action.type === 'damage') {
@@ -473,8 +478,7 @@ async function performAction(action, actor, event = null, targets = []) {
       let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.data.data.swing : actor.data.data.thrust
       formula = d6ify(df + action.formula)
       prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
-      // FIXME ModifierBucket.addModifier returns "undefined" -- so nothing is being pushed onto the array.
-      if (!!action.costs) targetmods.push(GURPS.ModifierBucket.addModifier(0, action.costs))
+      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
 
   let processLinked = (/** @type {Action} */ tempAction) => {
@@ -511,7 +515,8 @@ async function performAction(action, actor, event = null, targets = []) {
           bestAction = tempAction
           prefix = 'Roll vs '
           target = t
-          thing = th
+          //thing = th
+          thing = tempAction.orig
           // @ts-ignore
           tempAction.thing = thing
           if (!!tempAction.truetext) besttrue = tempAction
@@ -530,7 +535,7 @@ async function performAction(action, actor, event = null, targets = []) {
         // @ts-ignore
         else
           skill = GURPS.findSkillSpell(
-            actor.data.data,
+            actor?.data?.data,
             tempAction.name,
             !!tempAction.isSkillOnly,
             !!tempAction.isSpellOnly
@@ -606,7 +611,10 @@ async function performAction(action, actor, event = null, targets = []) {
       return false
     }
     formula = '3d6'
-
+    if (bestAction.type === 'skill-spell')
+      chatthing = '[S:' + bestAction.thing + ']'
+    else
+      chatthing= '[' + bestAction.orig + ']'
     opt.action = bestAction
     opt.obj = bestAction.obj
     if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
@@ -630,6 +638,10 @@ async function performAction(action, actor, event = null, targets = []) {
         return false
       }
       thing = att.name // get real name of attack
+      let p = 'A:'
+      if (!!action.isMelee && !action.isRanged) p = 'M:'
+      if (!action.isMelee && !!action.isRanged) p = 'R:'
+      chatthing = '[' + p + '"' + thing + '"]'
       let t = att.level
       if (!!t) {
         let a = (t + '').trim().split(' ')
@@ -677,7 +689,7 @@ async function performAction(action, actor, event = null, targets = []) {
     GURPS.ModifierBucket.modifierStack.modifierList = savedBucket
     return { target: target, thing: thing }
   }
-  return await doRoll(actor, formula, targetmods, prefix, thing, target, opt)
+  return await doRoll(actor, formula, targetmods, prefix, thing, chatthing, target, opt)
 }
 GURPS.performAction = performAction
 
@@ -745,12 +757,10 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   let attack = new RegExp(sname, 'i')
   if (isMelee)
     // @ts-ignore
-    Object.values(this).find(expression)
-
-  t = actor.melee?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
+    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
   if (isRanged && !t)
     // @ts-ignore
-    t = actor.ranged?.findInProperties(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
+    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
   return t
 }
 GURPS.findAttack = findAttack
@@ -769,6 +779,7 @@ async function handleRoll(event, actor, targets) {
   let element = event.currentTarget
   let prefix = ''
   let thing = ''
+  var chatthing
   /** @type {Record<string, any>} */
   let opt = { event: event }
   let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
@@ -785,11 +796,17 @@ async function handleRoll(event, actor, targets) {
     thing = GURPS._mapAttributePath(element.dataset.path)
     formula = '3d6'
     target = parseInt(element.innerText)
+    if ('otf' in element.dataset)
+      if (thing.toUpperCase() != element.dataset.otf.toUpperCase())
+        chatthing = thing + '/[' + element.dataset.otf + ']'
+      else
+        chatthing = '[' + element.dataset.otf + ']'
   } else if ('name' in element.dataset || 'otf' in element.dataset) {
     prefix = '' // "Attempting ";
     let text = /** @type {string} */ (element.dataset.name || element.dataset.otf)
     text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
     thing = text.replace(/(.*?)\(.*\)/g, '$1')
+    if ('otf' in element.dataset) chatthing = '[' + element.dataset.otf.replace(/ \(\)/g, '') + ']'
 
     // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
     opt.text = text.replace(/.*?\((.*)\)/g, '$1')
@@ -825,7 +842,7 @@ async function handleRoll(event, actor, targets) {
     formula = d6ify(formula)
   }
 
-  doRoll(actor, formula, targetmods, prefix, thing, target, opt)
+  doRoll(actor, formula, targetmods, prefix, thing, chatthing, target, opt)
 }
 GURPS.handleRoll = handleRoll
 
@@ -888,7 +905,7 @@ function gurpslink(str, clrdmods = true) {
             action.action.type
           )
         )
-          console.log(action.action)
+      // console.log(action.action)
 
         if (!action.action) output += '['
         output += action.text
@@ -1292,17 +1309,6 @@ GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
 }
 
 GURPS.recurselist = recurselist
-
-/*********************  HACK WARNING!!!! *************************/
-/* The following method has been secretly added to the Object class/prototype to
-   make it work like an Array. 
-*/
-Object.defineProperty(Object.prototype, 'findInProperties', {
-  // @ts-ignore
-  value: function (expression) {
-    return Object.values(this).find(expression)
-  },
-})
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */

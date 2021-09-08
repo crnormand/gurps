@@ -42,7 +42,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   update(data, options) {
     super.update(data, options)
-    console.log(data)
+    //console.log(data)
   }
 
   /** @override */
