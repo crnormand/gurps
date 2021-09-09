@@ -1480,7 +1480,12 @@ body {
   display: flex;
   flex-flow: row nowrap;
   gap: 0.05in;
-  border: 2px inset grey;
+  white-space: nowrap;
+  overflow-y: hidden;
+  overflow-x: auto;
+  padding: 0px 0px 3px 2px;
+  border-left: 1px solid #999;
+  border-right: 1px solid #999;
 }
 
 #tracker-scroller .tracked-resource {

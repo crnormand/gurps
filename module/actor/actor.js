@@ -2050,6 +2050,7 @@ export class GurpsActor extends Actor {
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    */
   async removeTracker(path) {
+    this.ignoreRender = true
     const prefix = 'additionalresources.tracker.'
 
     // verify that this is a Tracker
@@ -2060,14 +2061,19 @@ export class GurpsActor extends Actor {
     delete trackerData[key]
     let trackers = objectToArray(trackerData)
     let data = arrayToObject(trackers)
+
     // remove all trackers
     await this.update({ 'data.additionalresources.-=tracker': null })
     // add the new "array" of trackers
     if (data) this.update({ 'data.additionalresources.tracker': data })
     else this.update('data.additionalresources.tracker', {})
+
+    this._forceRender()
   }
 
   async addTracker() {
+    this.ignoreRender = true
+
     let trackerData = this.data.data.additionalresources.tracker
     if (!trackerData) trackerData = {}
     let trackers = objectToArray(trackerData)
@@ -2075,6 +2081,8 @@ export class GurpsActor extends Actor {
     let data = arrayToObject(trackers)
     await this.update({ 'data.additionalresources.-=tracker': null })
     await this.update({ 'data.additionalresources.tracker': data })
+
+    this._forceRender()
   }
 
   // --- Functions to handle events on actor ---
