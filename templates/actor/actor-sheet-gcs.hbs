@@ -30,7 +30,7 @@
         <div id='resources'>
           <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
           {{#each data.additionalresources.tracker}}
-            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
+            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' (zeroFill @index 4)) editable=true}}
           {{/each}}
         </div>
       </div>

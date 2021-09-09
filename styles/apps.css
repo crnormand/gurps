@@ -802,6 +802,13 @@ ul#result-effects li {
   border-left: none;
 }
 
+.addnoteicon:hover,
+.addtrackericon:hover {
+  cursor: pointer;
+  color: red;
+  text-shadow: 0 0 5px white;
+}
+
 #resources .tracked-resource {
   border-right: none;
   border-top: none;

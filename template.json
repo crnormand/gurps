@@ -270,36 +270,7 @@
       "reactions": {},
       "additionalresources": {
         "bodyplan": "humanoid",
-        "tracker": {
-          "0": {
-            "name": "",
-            "value": 0,
-            "min": 0,
-            "max": 0,
-            "points": 0
-          },
-          "1": {
-            "name": "",
-            "value": 0,
-            "min": 0,
-            "max": 0,
-            "points": 0
-          },
-          "2": {
-            "name": "",
-            "value": 0,
-            "min": 0,
-            "max": 0,
-            "points": 0
-          },
-          "3": {
-            "name": "",
-            "value": 0,
-            "min": 0,
-            "max": 0,
-            "points": 0
-          }
-        }
+        "tracker": {}
       },
       "conditions": {},
       "conditionalinjury": {

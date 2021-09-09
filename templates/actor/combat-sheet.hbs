@@ -17,11 +17,12 @@
       </div>
       {{> conditions }}
       <div id='combat-trackers'>
-        <div class="header">{{localize "GURPS.resourceTrackers"}}</div>
+        <div class='header' data-key='data.additionalresources.tracker'>{{localize "GURPS.resourceTrackers"}} &nbsp;<i class='fas fa-plus addtrackericon'></i></div>
         {{#if (notEmpty data.additionalresources.tracker)}}
         <div id='tracker-scroller'>
           {{#each data.additionalresources.tracker}}
-            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
+            {{debug this}}
+            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' (zeroFill @index 4)) editable=true}}
           {{/each}}
         </div>
         {{/if}}

@@ -1,4 +1,4 @@
-import { atou, generateUniqueId, i18n } from '../../lib/utilities.js'
+import { arrayToObject, atou, generateUniqueId, i18n, objectToArray } from '../../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
@@ -561,41 +561,8 @@ export class GurpsActorSheet extends ActorSheet {
       }
     })
 
-    html.find('.addnoteicon').click(async ev => {
-      let parent = $(ev.currentTarget).closest('.header')
-      let path = parent.attr('data-key')
-      let actor = this.actor
-      let list = duplicate(getProperty(actor.data, path))
-      let obj = new Note('', true)
-      let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
-
-      let d = new Dialog(
-        {
-          title: 'Note Editor',
-          content: dlgHtml,
-          buttons: {
-            one: {
-              label: 'Create',
-              callback: async html => {
-                ;['notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
-                let u = html.find('.save') // Should only find in Note (or equipment)
-                if (!!u) obj.save = u.is(':checked')
-                GURPS.put(list, obj)
-                actor.update({ [path]: list })
-              },
-            },
-          },
-          default: 'one',
-        },
-        {
-          width: 730,
-          popOut: true,
-          minimizable: false,
-          jQuery: true,
-        }
-      )
-      d.render(true)
-    })
+    html.find('.addtrackericon').on('click', this._addTracker.bind(this))
+    html.find('.addnoteicon').on('click', this._addNote.bind(this))
 
     opts = [
       {
@@ -623,6 +590,7 @@ export class GurpsActorSheet extends ActorSheet {
       let b = !!this.actor.data.data.additionalresources[opt]
       this.actor.changeOneThirdStatus(opt, !b)
     })
+
     html.find('[data-onethird]').hover(
       function () {
         let opt = $(this).attr('data-onethird').substr(2)
@@ -668,6 +636,46 @@ export class GurpsActorSheet extends ActorSheet {
       let target = $(ev.currentTarget)
       this.actor.replaceManeuver(target.val())
     })
+  }
+
+  async _addNote(event) {
+    let parent = $(event.currentTarget).closest('.header')
+    let path = parent.attr('data-key')
+    let actor = this.actor
+    let list = duplicate(getProperty(actor.data, path))
+    let obj = new Note('', true)
+    let dlgHtml = await renderTemplate('systems/gurps/templates/note-editor-popup.html', obj)
+
+    let d = new Dialog(
+      {
+        title: 'Note Editor',
+        content: dlgHtml,
+        buttons: {
+          one: {
+            label: 'Create',
+            callback: async html => {
+              ;['notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              let u = html.find('.save') // Should only find in Note (or equipment)
+              if (!!u) obj.save = u.is(':checked')
+              GURPS.put(list, obj)
+              actor.update({ [path]: list })
+            },
+          },
+        },
+        default: 'one',
+      },
+      {
+        width: 730,
+        popOut: true,
+        minimizable: false,
+        jQuery: true,
+      }
+    )
+    d.render(true)
+  }
+
+  async _addTracker(event) {
+    this.actor.addTracker()
   }
 
   dropFoundryLinks(ev) {

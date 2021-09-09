@@ -222,18 +222,21 @@
   cursor: pointer;
 }
 
+.rollable.test,
 .rollable:hover {
   cursor: pointer;
   text-decoration: none;
-  background-color: rgb(255, 255, 128) !important;
+  background-color: rgb(225, 225, 26) !important;
   color: black;
-  padding: 1px 1px 1px 1px;
-  border-top: 2px solid #cccccc;
-  border-right: 2px solid #333333;
-  border-bottom: 2px solid #333333;
-  border-left: 2px solid #cccccc;
-  border-radius: 8px;
-  margin: -2px 2px -3px -2px;
+  /* padding: 2px 3px 2px 3px; */
+  /* border-top: 1px solid #cccccc; */
+  border-right: 1px solid #333300;
+  border-bottom: 1px solid #333300;
+  /* border-left: 1px solid #cccccc; */
+  border-radius: 3px;
+  margin-bottom: -1px;
+  margin-right: -1px;
+  /* margin: -2px -4px -2px -6px;  */
   overflow: visible;
   z-index: 99;
 }
@@ -258,20 +261,21 @@
   margin: -2px -2px -3px -2px;
 }
 
+.gmod.test,
 .gmod:hover {
   cursor: pointer;
   text-decoration: none;
   background-image: none;
-  background-color: rgb(255, 128, 100) !important;
+  background-color: rgb(255, 190, 130) !important;
   color: black;
-  padding: 1px 1px 1px 1px;
-  border-top: 2px solid #cccccc;
-  border-right: 2px solid #333333;
-  border-bottom: 2px solid #333333;
-  border-left: 2px solid #cccccc;
-  border-radius: 8px;
-  margin: -2px 0px -2px 2px;
-  text-align: center;
+  /* padding: 1px 1px 1px 1px; */
+  /* border-top: 2px solid #cccccc; */
+  border-right: 1px solid rgb(128, 95, 65);
+  border-bottom: 1px solid rgb(128, 95, 65);
+  /* border-left: 2px solid #cccccc; */
+  border-radius: 3px;
+  /* margin: -2px 0px -2px 2px; */
+  /* text-align: center; */
 }
 
 .gmod {
@@ -309,7 +313,7 @@
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
   border-left: 2px solid #cccccc;
-  border-radius: 8px;
+  border-radius: 3px;
   margin: -1px -2px -1px -4px;
 }
 
@@ -412,17 +416,18 @@
   font-weight: normal;
 }
 
+.gurpslink.test,
 .gurpslink:hover {
   cursor: pointer;
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
   color: black;
-  padding: 2px 3px 2px 3px;
-  border-top: 2px solid #cccccc;
-  border-right: 2px solid #333333;
-  border-bottom: 2px solid #333333;
-  border-left: 2px solid #cccccc;
-  border-radius: 5px;
+  padding: 2px 3px;
+  border-top: 1px solid #cccccc;
+  border-right: 1px solid #333333;
+  border-bottom: 1px solid #333333;
+  border-left: 1px solid #cccccc;
+  border-radius: 3px;
   margin: -2px -4px -2px -6px;
   overflow: visible;
   z-index: 99;

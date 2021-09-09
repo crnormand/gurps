@@ -34,7 +34,7 @@ export class ResourceTrackerEditor extends Application {
   /** @override */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      template: 'systems/gurps/templates/resource-editor-popup.html',
+      template: 'systems/gurps/templates/resource-editor-popup.hbs',
       width: 360,
       height: 472,
       popOut: true,
@@ -164,5 +164,21 @@ export class ResourceTrackerEditor extends Application {
     })
 
     html.find('#update').click(() => this._updateTracker())
+
+    html.find('#reset').on('click', ev => {
+      this._tracker = {
+        name: '',
+        alias: '',
+        pdf: '',
+        max: 0,
+        min: 0,
+        value: 0,
+        isDamageTracker: false,
+        isDamageType: false,
+        initialValue: '',
+        thresholds: [],
+      }
+      this.render(false)
+    })
   }
 }
