@@ -755,23 +755,11 @@ ul#result-effects li {
 
 /* Resource Trackers and Editors */
 
-#trackers {
-  grid-area: trackers;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 0fr auto 0fr;
-  grid-gap: 0.05in;
-}
-
-#trackers > * {
+#hp-fp {
+  grid-area: hp-fp;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 0.05in;
-}
-
-#trackers > *:last-child {
-  grid-template-rows: 0fr 1fr 1fr;
-  grid-gap: 0;
 }
 
 #resources {

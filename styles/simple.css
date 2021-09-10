@@ -739,6 +739,7 @@ body {
     'personal personal'
     'stats stats'
     'reactions reactions'
+    'combat-trackers combat-trackers'
     'melee melee'
     'ranged ranged'
     'advantages skills'
@@ -869,7 +870,7 @@ body {
 #attributes .field,
 #lifting .field,
 #hitpoints .field,
-#trackers .field {
+#hp-fp .field {
   text-align: right;
 }
 
@@ -895,11 +896,10 @@ body {
   grid-area: stats;
   display: grid;
   grid-template:
-    'attributes trackers location encumbrance'
-    'attributes trackers location qnotes'
-    'attributes trackers location lifting'
-    'attributes condition location lifting';
-  grid-template-columns: 0fr 2fr 0fr 0fr;
+    'attributes      hp-fp           location        encumbrance'
+    'attributes      condition       location        qnotes'
+    'attributes      condition       location        lifting';
+  grid-template-columns: 0fr 1fr 1fr 1fr;
   grid-gap: 0.05in;
 }
 
@@ -1483,9 +1483,6 @@ body {
   white-space: nowrap;
   overflow-y: hidden;
   overflow-x: auto;
-  padding: 0px 0px 3px 2px;
-  border-left: 1px solid #999;
-  border-right: 1px solid #999;
 }
 
 #tracker-scroller .tracked-resource {
@@ -1537,7 +1534,7 @@ body {
 }
 
 .header.minor-heading {
-  background-color: grey !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
   border: none !important;
 }
 

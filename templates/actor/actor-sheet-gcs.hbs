@@ -1,81 +1,105 @@
-<form class="{{cssClass}}" autocomplete="off" style='scroll-padding-top: 5px;'>
-  <div id="sheet" class="gurpsactorsheet">
-    <div id="personal">
-      {{> portrait }}
-      {{> identity }}
-      {{> miscellaneous }}
-      {{> description }}
-      {{> points }}
+<form class='{{cssClass}}' autocomplete='off' style='scroll-padding-top: 5px;'>
+  <div id='sheet' class='gurpsactorsheet'>
+    <div id='personal'>
+      {{>portrait}}
+      {{>identity}}
+      {{>miscellaneous}}
+      {{>description}}
+      {{>points}}
     </div>
-    <div id="stats">
+    <div id='stats'>
       <div id='attributes'>
-        {{> basic-attributes }}
-        {{> secondary-attributes }}
+        {{>basic-attributes}}
+        {{>secondary-attributes}}
       </div>
-      {{> encumbrance }}
-      {{> quicknote }}
-      {{> lifting }}
-      {{> locations }}
-      
-      <div id="trackers">
-        <div>
-          {{#if useCI}}
-            {{> conditional-injury }}
-          {{else}}
-            {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' editable=false condition='isReeling' testcondition=data.additionalresources.isReeling}}
-          {{/if}}
-          {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false condition='isTired' testcondition=data.additionalresources.isTired}}
-        </div>
-        <div></div>
-        <div id='resources'>
-          <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
-          {{#each data.additionalresources.tracker}}
-            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' (zeroFill @index 4)) editable=true}}
-          {{/each}}
-        </div>
+      {{>encumbrance}}
+      {{>quicknote}}
+      {{>lifting}}
+      {{>locations}}
+
+      <div id='hp-fp'>
+        {{#if useCI}}
+          {{>conditional-injury}}
+        {{else}}
+          {{>hpfp-tracker
+            name='HP'
+            resource=data.HP
+            label='GURPS.attributesHPNAME'
+            editable=false
+            condition='isReeling'
+            testcondition=data.additionalresources.isReeling
+          }}
+        {{/if}}
+        {{>hpfp-tracker
+          name='FP'
+          resource=data.FP
+          label='GURPS.attributesFPNAME'
+          editable=false
+          condition='isTired'
+          testcondition=data.additionalresources.isTired
+        }}
       </div>
-      {{> conditions }}
+
+      {{>conditions}}
     </div> 
+    {{!-- end of stats --}}
 
     {{#if (notEmpty data.reactions)}}
-      {{> reacdtions }}
+      {{>reactions}}
     {{/if}}
 
+    <div id='combat-trackers' style='border: 1px solid black;'>
+      <div class='header' data-key='data.additionalresources.tracker'>{{i18n 'GURPS.resourceTrackers'}}
+        &nbsp;<i class='fas fa-plus addtrackericon'></i></div>
+      {{#if (notEmpty data.additionalresources.tracker)}}
+        <div id='tracker-scroller'>
+          {{#each data.additionalresources.tracker}}
+            {{>resource-tracker
+              label=name
+              resource=this
+              name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
+              editable=true
+            }}
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+
     {{#if (notEmpty data.melee)}}
-      {{> melee }}
+      {{>melee}}
     {{/if}}
 
     {{#if (notEmpty data.ranged)}}
-      {{> ranged }}
+      {{>ranged}}
     {{/if}}
 
-    {{> advantages }}
-    {{> skills }}
+    {{>advantages}}
+    {{>skills}}
 
     {{#if (notEmpty data.spells)}}
-      {{> spells }}
+      {{>spells}}
     {{/if}}
 
-    {{> equipment }}
-    {{> other-equipment }}
-    {{> notes }}
+    {{>equipment}}
+    {{>other-equipment}}
+    {{>notes}}
   </div>
-  {{> footer }}
+  {{>footer}}
   {{#if navigateVisible}}
     <div class='navigate-area'>
-      <input id='navigate-toggle' class='toggle offscreen-only' type='checkbox'>
+      <input id='navigate-toggle' class='toggle offscreen-only' type='checkbox' />
       <div class='navigate-bar'>
-        <label class='navigation-view' for="navigate-toggle"><span class='icon'></span></label>
+        <label class='navigation-view' for='navigate-toggle'><span class='icon'></span></label>
         <div class='navigate-container'>
-          <div class='navigation-link' data-value="personal">TOP</div>
-          <div class='navigation-link' data-value="stats">STATS</div>
-          <div class='navigation-link' data-value="melee">MELEE</div>
-          <div class='navigation-link' data-value="ranged">RANGED</div>
-          <div class='navigation-link' data-value="advantages">ADVANTAGES</div>
-          <div class='navigation-link' data-value="skills">SKILLS</div>
-          <div class='navigation-link' data-value="equipment">EQUIPMENT</div>
-          <div class='navigation-link' data-value="other_equipment">OTHER</div>
-          <div class='navigation-link' data-value="notes">NOTES</div>
+          <div class='navigation-link' data-value='personal'>TOP</div>
+          <div class='navigation-link' data-value='stats'>STATS</div>
+          <div class='navigation-link' data-value='melee'>MELEE</div>
+          <div class='navigation-link' data-value='ranged'>RANGED</div>
+          <div class='navigation-link' data-value='advantages'>ADVANTAGES</div>
+          <div class='navigation-link' data-value='skills'>SKILLS</div>
+          <div class='navigation-link' data-value='equipment'>EQUIPMENT</div>
+          <div class='navigation-link' data-value='other_equipment'>OTHER</div>
+          <div class='navigation-link' data-value='notes'>NOTES</div>
         </div>
       </div>
     </div>

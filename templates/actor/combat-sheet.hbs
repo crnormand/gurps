@@ -2,39 +2,60 @@
   <div id='responsive' class='gurpsactorsheet'>
     <div id='combat-sheet'>
       <div id='combat-attrs'>
-        {{> basic-attributes }}
-        {{> secondary-attributes }}
-      </div> <!-- end of combat-attrs-->
-      {{> encumbrance }}
-      {{> locations }}
+        {{>basic-attributes}}
+        {{>secondary-attributes}}
+      </div>
+      <!-- end of combat-attrs-->
+      {{>encumbrance}}
+      {{>locations}}
       <div id='combat-hitfat'>
         {{#if useCI}}
-          {{> conditional-injury }}
+          {{>conditional-injury}}
         {{else}}
-          {{> hpfp-tracker name='HP' resource=data.HP label='GURPS.attributesHPNAME' compact=true condition='isReeling' testcondition=data.additionalresources.isReeling}}
+          {{>hpfp-tracker
+            name='HP'
+            resource=data.HP
+            label='GURPS.attributesHPNAME'
+            compact=true
+            condition='isReeling'
+            testcondition=data.additionalresources.isReeling
+          }}
         {{/if}}
-        {{> hpfp-tracker name='FP' resource=data.FP label='GURPS.attributesFPNAME' compact=true condition='isTired' testcondition=data.additionalresources.isTired}}
+        {{>hpfp-tracker
+          name='FP'
+          resource=data.FP
+          label='GURPS.attributesFPNAME'
+          compact=true
+          condition='isTired'
+          testcondition=data.additionalresources.isTired
+        }}
       </div>
-      {{> conditions }}
-      <div id='combat-trackers'>
-        <div class='header' data-key='data.additionalresources.tracker'>{{localize "GURPS.resourceTrackers"}} &nbsp;<i class='fas fa-plus addtrackericon'></i></div>
+      {{>conditions}}
+      <div id='combat-trackers' style='border: 1px solid black;'>
+        <div class='header' data-key='data.additionalresources.tracker'>{{i18n 'GURPS.resourceTrackers'}}
+          &nbsp;<i class='fas fa-plus addtrackericon'></i></div>
         {{#if (notEmpty data.additionalresources.tracker)}}
-        <div id='tracker-scroller'>
-          {{#each data.additionalresources.tracker}}
-            {{debug this}}
-            {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' (zeroFill @index 4)) editable=true}}
-          {{/each}}
-        </div>
+          <div id='tracker-scroller'>
+            {{#each data.additionalresources.tracker}}
+              {{>resource-tracker
+                label=name
+                resource=this
+                name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
+                editable=true
+              }}
+            {{/each}}
+          </div>
         {{/if}}
       </div>
       {{#if (notEmpty data.melee)}}
-        {{> melee }}
+        {{>melee}}
       {{/if}}
-      {{> speed-range-table }}
+      {{>speed-range-table}}
       {{#if (notEmpty data.ranged)}}
-        {{> ranged }}
+        {{>ranged}}
       {{/if}}
     </div><!-- end of combat-sheet -->
-  </div> <!-- end of responsive -->
-  {{> footer }}
+  </div>
+  <!-- end of responsive -->
+  {{>footer}}
 </form>
