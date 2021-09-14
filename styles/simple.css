@@ -714,7 +714,7 @@
   padding-right: 0.2em;
   /* font-size: 80%; */
   white-space: nowrap;
-  align-self: center;
+  align-self: stretch; /* TODO verify -- it was 'center' */
 }
 
 .gurps .fieldblock .field {
@@ -738,7 +738,7 @@ body {
   grid-template:
     'personal personal'
     'stats stats'
-    'reactions reactions'
+    'reactions conditionalmods'
     'combat-trackers combat-trackers'
     'melee melee'
     'ranged ranged'
@@ -762,7 +762,8 @@ body {
   grid-template:
     'personal personal'
     'stats stats'
-    'reactions reactions'
+    'reactions conditionalmods'
+    'combat-trackers combat-trackers'
     'melee melee'
     'ranged ranged'
     'advantages advantages'
@@ -772,6 +773,7 @@ body {
     'other_equipment other_equipment'
     'notes notes';
   grid-gap: 0.05in;
+  grid-template-columns: 1fr 1fr;
 }
 
 #footer {
@@ -862,7 +864,7 @@ body {
 
 #attributes {
   display: grid;
-  grid-template-rows: 1fr 0fr;
+  grid-template-rows: 1fr 1fr;
   border: none;
 }
 
@@ -910,6 +912,9 @@ body {
 
 #condition {
   grid-area: condition;
+  grid-template-rows: 0fr 1fr;
+  align-items: start;
+  border: 1px solid black;
 }
 
 #attributes {
@@ -944,10 +949,9 @@ body {
 #location {
   grid-area: location;
   grid-template:
-    'header header header header'
-    'roll where penalty dr';
-  grid-template-rows: 0fr 0fr;
-  grid-auto-rows: 1fr;
+    'header   header  header  header header'
+    'itemmenu roll    where   penalty dr   ';
+  grid-template-columns: min-content min-content 1fr min-content min-content;
 }
 
 #encumbrance .header:first-child,
@@ -956,11 +960,32 @@ body {
   border-bottom: 1px solid lightgray;
 }
 
-#encumbrance,
-#lifting,
-#location,
-#condition,
+#conditionalmods .condmodmenu,
+#reactions .reactmenu,
+#location .hlmenu {
+  color: lightgrey;
+}
+
+#conditionalmods .condmodmenu:hover,
+#reactions .reactmenu:hover,
+#location .hlmenu:hover {
+  color: darkred;
+}
+
+#conditionalmods .condmodmenu i,
+#reactions .reactmenu i,
+#location .hlmenu i {
+  color: inherit;
+}
+
+#conditionalmods .condmodmenu i:hover,
+#reactions .reactmenu i:hover,
+#location .hlmenu i:hover {
+  color: inherit;
+}
+
 #reactions,
+#conditionalmods,
 #melee,
 #ranged,
 #advantages,
@@ -974,6 +999,15 @@ body {
   align-content: start;
 }
 
+#encumbrance,
+#lifting,
+#location {
+  display: grid;
+  border: 1px solid black;
+  align-content: stretch;
+}
+
+#conditionalmods,
 #reactions,
 #melee,
 #ranged,
@@ -986,8 +1020,12 @@ body {
   grid-template-rows: repeat(1000, auto) 1fr;
 }
 
+#conditionalmods {
+  grid-template-columns: min-content 0fr 1fr;
+}
+
 #reactions {
-  grid-template-columns: 0fr 1fr;
+  grid-template-columns: min-content 0fr 1fr;
   grid-area: reactions;
 }
 
@@ -1036,7 +1074,8 @@ body {
   padding-left: 0.2em;
   padding-right: 0.2em;
   font-size: 80%;
-  align-self: center;
+  align-self: flex-end;
+  white-space: nowrap;
 }
 
 .points-fp {
@@ -1060,6 +1099,17 @@ body {
 
 .condensed {
   font-size: 80%;
+}
+
+.desc {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.desc .list_note textarea,
+.desc input:last-child {
+  background-color: rgba(0, 0, 0, 0.1);
+  font: inherit;
 }
 
 .field,
@@ -1103,6 +1153,7 @@ body {
 .roll,
 .where,
 .dr,
+.itemmenu,
 .liftdesc,
 .lift,
 .modifier,
@@ -1114,7 +1165,7 @@ body {
 
 .penalty {
   padding-left: 0.2em;
-  padding-right: 1em;
+  padding-right: 0.05in;
   border-bottom: 1px solid lightgray;
 }
 
@@ -1139,12 +1190,17 @@ body {
 #encumbrance .dodge:nth-last-child(10n + 1),
 #lifting .liftdesc:nth-last-child(4n + 1),
 #lifting .lift:nth-last-child(4n + 2),
-#location .roll:nth-last-child(8n + 4),
-#location .where:nth-last-child(8n + 3),
-#location .penalty:nth-last-child(8n + 2),
-#location .dr:nth-last-child(8n + 1),
-#reactions .modifier:nth-child(even),
-#reactions .situation:nth-child(odd),
+#location .itemmenu:nth-last-child(10n + 5),
+#location .roll:nth-last-child(10n + 4),
+#location .where:nth-last-child(10n + 3),
+#location .penalty:nth-last-child(10n + 2),
+#location .dr:nth-last-child(10n + 1),
+#conditionalmods .itemmenu:nth-child(even),
+#conditionalmods .modifier:nth-child(odd),
+#conditionalmods .situation:nth-child(even),
+#reactions .itemmenu:nth-child(even),
+#reactions .modifier:nth-child(odd),
+#reactions .situation:nth-child(even),
 #melee .desc:nth-child(even),
 #melee .usage:nth-child(odd),
 #melee .level:nth-child(even),
@@ -1245,8 +1301,13 @@ body {
 .where,
 .penalty,
 .dr,
+.ench,
+.encmarkerh,
+.roll,
+.modifier,
+.itemmenu,
 .situation {
-  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
 }
 
 .sl,
@@ -1282,6 +1343,7 @@ body {
 .move,
 .dodge,
 .equipped,
+.itemmenu,
 .roll {
   text-align: center;
 }
@@ -1318,6 +1380,7 @@ body {
 }
 
 .header,
+#conditionalmods .header,
 #reactions .header,
 #melee .header,
 #ranged .header,
@@ -1330,10 +1393,11 @@ body {
   font-size: 80%;
 }
 
-#location .header:nth-last-child(8n + 4),
-#location .header:nth-last-child(8n + 3),
-#location .header:nth-last-child(8n + 2),
-#location .header:nth-last-child(8n + 1) {
+#location .header:nth-last-child(10n + 5),
+#location .header:nth-last-child(10n + 4),
+#location .header:nth-last-child(10n + 3),
+#location .header:nth-last-child(10n + 2),
+#location .header:nth-last-child(10n + 1) {
   background-color: black;
 }
 
@@ -1343,6 +1407,7 @@ body {
   border-bottom: none;
 }
 
+#conditionalmods > div:nth-last-child(-n + 3),
 #reactions > div:nth-last-child(-n + 3),
 #melee > div:nth-last-child(-n + 9),
 #ranged > div:nth-last-child(-n + 11),
@@ -1410,7 +1475,10 @@ body {
 }
 
 .encmarker.current:after {
-  content: '>';
+  content: '\f24e'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-weight: 900;
+  padding-right: 0.05in;
 }
 
 .enc0:after {
@@ -1985,4 +2053,27 @@ body {
 
 .desc .tooltippic img {
   max-height: 100px;
+}
+
+input.gcs-input-sm2:disabled,
+input.gcs-input:disabled {
+  background: unset;
+  padding: 0 !important;
+}
+
+.gurpsactorsheet select:disabled {
+  color: black;
+}
+
+.gurpsactorsheet textarea:disabled {
+  color: black;
+  background-color: transparent;
+}
+
+#points input {
+  min-width: 3em;
+}
+
+#attributes input.gcs-input {
+  min-width: 2.5em;
 }

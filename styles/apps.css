@@ -722,8 +722,8 @@ ul#result-effects li {
 
 #editorsheet .field select {
   height: min-content;
-  background-color: transparent;
-  border: none;
+  /* background-color: transparent; */
+  /* border: none; */
   padding: 0 1em 0 0;
   margin: 0;
   width: 100%;

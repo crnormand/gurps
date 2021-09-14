@@ -1,38 +1,141 @@
 <div id='basic-attributes'>
   <div class='header'>{{i18n 'GURPS.attributesPrimary' 'Basic Attributes'}}</div>
   <div class='fieldblock3'>
-    <div class='points'>[{{data.attributes.ST.points}}]</div>
-    <div class='field rollable' data-path='attributes.ST.value' data-otf='ST'>
-      {{data.attributes.ST.value}}
+
+    <div class='points'>
+      {{#if isEditing}}
+        [<input
+          name='data.attributes.ST.points'
+          class='gcs-input-sm2'
+          type='number'
+          value='{{data.attributes.ST.points}}'
+        />]
+      {{else}}
+        [{{data.attributes.ST.points}}]
+      {{/if}}
     </div>
-    <div class='label'>{{localize 'GURPS.attributesSTNAME'}} ({{localize 'GURPS.attributesST'}})</div>
-    <div class='points'>[{{data.attributes.DX.points}}]</div>
-    <div class='field rollable' data-path='attributes.DX.value' data-otf='DX'>
-      {{data.attributes.DX.value}}
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.attributes.ST.import' class='gcs-input' type='number' value='{{data.attributes.ST.import}}' />
+      </div>
+    {{else}}
+      <div class='field rollable' data-path='attributes.ST.value' data-otf='ST'>{{data.attributes.ST.value}}</div>
+    {{/if}}
+    <div class='label'>{{i18n 'GURPS.attributesSTNAME'}} ({{i18n 'GURPS.attributesST'}})</div>
+
+    <div class='points'>
+      {{#if isEditing}}
+        [<input
+          name='data.attributes.DX.points'
+          class='gcs-input-sm2'
+          type='number'
+          value='{{data.attributes.DX.points}}'
+        />]
+      {{else}}
+        [{{data.attributes.DX.points}}]
+      {{/if}}
     </div>
-    <div class='label'>{{localize 'GURPS.attributesDXNAME'}} ({{localize 'GURPS.attributesDX'}})</div>
-    <div class='points'>[{{data.attributes.IQ.points}}]</div>
-    <div class='field rollable' data-path='attributes.IQ.value' data-otf='IQ'>
-      {{data.attributes.IQ.value}}
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.attributes.DX.import' class='gcs-input' type='number' value='{{data.attributes.DX.import}}' />
+      </div>
+    {{else}}
+      <div class='field rollable' data-path='attributes.DX.value' data-otf='DX'>{{data.attributes.DX.value}}</div>
+    {{/if}}
+    <div class='label'>{{i18n 'GURPS.attributesDXNAME'}} ({{i18n 'GURPS.attributesDX'}})</div>
+
+    <div class='points'>
+      {{#if isEditing}}
+        [<input
+          name='data.attributes.IQ.points'
+          class='gcs-input-sm2'
+          type='number'
+          value='{{data.attributes.IQ.points}}'
+        />]
+      {{else}}
+        [{{data.attributes.IQ.points}}]
+      {{/if}}
     </div>
-    <div class='label'>{{localize 'GURPS.attributesIQNAME'}} ({{localize 'GURPS.attributesIQ'}})</div>
-    <div class='points'>[{{data.attributes.HT.points}}]</div>
-    <div class='field rollable' data-path='attributes.HT.value' data-otf='HT'>
-      {{data.attributes.HT.value}}
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.attributes.IQ.import' class='gcs-input' type='number' value='{{data.attributes.IQ.import}}' />
+      </div>
+    {{else}}
+      <div class='field rollable' data-path='attributes.IQ.value' data-otf='IQ'>{{data.attributes.IQ.value}}</div>
+    {{/if}}
+    <div class='label'>{{i18n 'GURPS.attributesIQNAME'}} ({{i18n 'GURPS.attributesIQ'}})</div>
+
+    <div class='points'>
+      {{#if isEditing}}
+        [<input
+          name='data.attributes.HT.points'
+          class='gcs-input-sm2'
+          type='number'
+          value='{{data.attributes.HT.points}}'
+        />]
+      {{else}}
+        [{{data.attributes.HT.points}}]
+      {{/if}}
     </div>
-    <div class='label'>{{localize 'GURPS.attributesHTNAME'}} ({{localize 'GURPS.attributesHT'}})</div>
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.attributes.HT.import' class='gcs-input' type='text' value='{{data.attributes.HT.import}}' />
+      </div>
+    {{else}}
+      <div class='field rollable' data-path='attributes.HT.value' data-otf='HT'>{{data.attributes.HT.value}}</div>
+    {{/if}}
+    <div class='label'>{{i18n 'GURPS.attributesHTNAME'}} ({{i18n 'GURPS.attributesHT'}})</div>
+
     <hr />
+
     <div class='points'></div>
-    <div class='field noedit rollable' data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
-    <div class='label'>{{localize 'GURPS.thrust'}}</div>
+    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
+    <div class='label'>{{i18n 'GURPS.thrust'}}</div>
+
     <div class='points'></div>
-    <div class='field noedit rollable' data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
-    <div class='label'>{{localize 'GURPS.swing'}}</div>
-    <div class='points'>[{{data.basicspeed.points}}]</div>
-    <div class='field'>{{data.basicspeed.value}}</div>
-    <div class='label'>{{localize 'GURPS.basicspeed'}}</div>
-    <div class='points'>[{{data.basicmove.points}}]</div>
-    <div class='field'>{{data.basicmove.value}}</div>
-    <div class='label'>{{localize 'GURPS.basicmove'}}</div>
+    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
+    <div class='label'>{{i18n 'GURPS.swing'}}</div>
+
+    <div class='points'>
+      {{#if isEditing}}
+      [<input
+          name='data.basicspeed.points'
+          class='gcs-input-sm2'
+          type='number'
+          value='{{data.basicspeed.points}}'
+        />]
+      {{else}}
+        [{{data.basicspeed.points}}]
+      {{/if}}
+    </div>
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.basicspeed.value' class='gcs-input' type='number' value='{{data.basicspeed.value}}' />
+      </div>
+    {{else}}
+      <div class='field'>{{data.basicspeed.value}}</div>
+    {{/if}}
+    <div class='label'>{{i18n 'GURPS.basicspeed'}}</div>
+
+    <div class='points'>
+      {{#if isEditing}}
+      [<input
+          name='data.basicmove.points'
+          class='gcs-input-sm2'
+          type='number'
+          value='{{data.basicmove.points}}'
+        />]
+      {{else}}
+      [{{data.basicmove.points}}]
+      {{/if}}
+    </div>
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.basicmove.value' class='gcs-input' type='number' value='{{data.basicmove.value}}' />
+      </div>
+    {{else}}
+      <div class='field'>{{data.basicmove.value}}</div>
+    {{/if}}
+    <div class='label'>{{i18n 'GURPS.basicmove'}}</div>
   </div>
 </div>

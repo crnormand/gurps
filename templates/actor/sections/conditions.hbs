@@ -1,13 +1,13 @@
 <div id='condition'>
-  <div class="header">{{i18n "GURPS.conditions"}}</div>
-  <div class="fieldblock">
-    <div class="label">{{i18n "GURPS.maneuver"}}</div>
-    <div class="field" style='padding-top: 3px; border: none;'>
-      <select id='maneuver' name="data.conditions.maneuver" style='font-size: 90%;'>
+  <div class='header'>{{i18n 'GURPS.conditions'}}</div>
+  <div class='fieldblock'>
+    <div class='label'>{{i18n 'GURPS.maneuver'}}</div>
+    <div class='field' style='padding-top: 3px; border: none;'>
+      <select id='maneuver' name='data.conditions.maneuver' style='font-size: 90%;' {{disabled isEditing}}>
         <option value='undefined' {{select-if ../data.conditions.maneuver 'undefined'}}>
           {{i18n 'GURPS.none' 'None'}}
         </option>
-        {{#each (listAllManeuvers) as | this key |}}
+        {{#each (listAllManeuvers) as |this key|}}
           <option value='{{key}}' {{select-if ../data.conditions.maneuver key}}>
             {{i18n this.label}}
           </option>

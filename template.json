@@ -110,6 +110,7 @@
       },
       "melee": {},
       "ranged": {},
+      "conditionalmods": {},
       "hitlocations": {
         "00000": {
           "import": "0",

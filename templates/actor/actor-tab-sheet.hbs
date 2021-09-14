@@ -27,7 +27,7 @@
           {{>encumbrance}}
           {{>quicknote}}
           {{>lifting}}
-          {{>locations}}
+          {{>locations parent=../data}}
           <div id='hp-fp'>
             {{#if useCI}}
               {{>conditional-injury}}
@@ -56,6 +56,7 @@
         {{#if (notEmpty data.reactions)}}
           {{>reactions}}
         {{/if}}
+        {{>conditionalmods}}
 
         <div id='combat-trackers' style='margin-top: 0.05in; border: 1px solid black;'>
           <div class='header' data-key='data.additionalresources.tracker'>{{i18n 'GURPS.resourceTrackers'}}

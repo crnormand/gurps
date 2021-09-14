@@ -3297,3 +3297,5 @@ export class Reaction {
     this.situation = s || ''
   }
 }
+
+export class Modifier extends Reaction {}

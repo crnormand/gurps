@@ -1,0 +1,30 @@
+<div id='conditionalmods'>
+  <div class='itemmenu header' style='padding: 0;'></div>
+  <div class='modifier header'>{{i18n 'GURPS.modifier'}}</div>
+  {{#if isEditing}}
+    <div class='situation header condmodhead'>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}
+      &nbsp;
+      <i class='fas fa-caret-square-down' style='color: white;'></i>
+    </div>
+  {{else}}
+    <div class='situation header'>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}</div>
+  {{/if}}
+
+  {{#each data.conditionalmods as |this key|}}
+    {{#if ../isEditing}}
+      <div class='itemmenu condmodmenu' style='padding: 0 0.05in;' data-key='data.conditionalmods.{{key}}'>
+        <i class='fas fa-times'></i>
+      </div>
+      <div class='modifier'>
+        <input name='data.conditionalmods.{{key}}.modifier' class='gcs-input-sm4' type='text' value='{{this.modifier}}' />
+      </div>
+      <div class='situation'>
+        <input name='data.conditionalmods.{{key}}.situation' class='gcs-input' type='text' value='{{this.situation}}' />
+      </div>
+    {{else}}
+      <div class='itemmenu' style='padding: 0;'></div>
+      <div class='modifier gmod' data-name='Modifier {{this.situation}}'>{{this.modifier}}</div>
+      <div class='situation'>{{{gurpslink this.situation}}}</div>
+    {{/if}}
+  {{/each}}
+</div>

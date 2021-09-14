@@ -15,7 +15,7 @@
       {{>encumbrance}}
       {{>quicknote}}
       {{>lifting}}
-      {{>locations}}
+      {{>locations parent=../data}}
 
       <div id='hp-fp'>
         {{#if useCI}}
@@ -47,23 +47,9 @@
     {{#if (notEmpty data.reactions)}}
       {{>reactions}}
     {{/if}}
+    {{>conditionalmods}}
 
-    <div id='combat-trackers' style='border: 1px solid black;'>
-      <div class='header' data-key='data.additionalresources.tracker'>{{i18n 'GURPS.resourceTrackers'}}
-        &nbsp;<i class='fas fa-plus addtrackericon'></i></div>
-      {{#if (notEmpty data.additionalresources.tracker)}}
-        <div id='tracker-scroller'>
-          {{#each data.additionalresources.tracker}}
-            {{>resource-tracker
-              label=name
-              resource=this
-              name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
-              editable=true
-            }}
-          {{/each}}
-        </div>
-      {{/if}}
-    </div>
+    {{>trackers}}
 
     {{#if (notEmpty data.melee)}}
       {{>melee}}

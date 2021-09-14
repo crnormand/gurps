@@ -1,5 +1,5 @@
-import { arrayToObject, atou, generateUniqueId, i18n, objectToArray } from '../../lib/utilities.js'
-import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note } from './actor.js'
+import { atou, generateUniqueId } from '../../lib/utilities.js'
+import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
@@ -561,7 +561,8 @@ export class GurpsActorSheet extends ActorSheet {
       }
     })
 
-    html.find('.addtrackericon').on('click', this._addTracker.bind(this))
+    // TODO make me into a menu
+    // html.find('.addtrackericon').on('click', this._addTracker.bind(this))
     html.find('.addnoteicon').on('click', this._addNote.bind(this))
 
     opts = [
@@ -1391,8 +1392,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     })
   }
 
-  makeAddDeleteMenu(html, cssclass, obj) {
-    new ContextMenu(html, cssclass, this.addDeleteMenu(obj))
+  getData() {
+    const sheetData = super.getData()
+    sheetData.isEditing = true
+    return sheetData
+  }
+
+  makeAddDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
+    new ContextMenu(html, cssclass, this.addDeleteMenu(obj), { eventName: eventname })
   }
 
   headerMenu(name, obj, path) {
@@ -1409,8 +1416,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     ]
   }
 
-  makeHeaderMenu(html, cssclass, name, obj, path) {
-    new ContextMenu(html, cssclass, this.headerMenu(name, obj, path))
+  makeHeaderMenu(html, cssclass, name, obj, path, eventname = 'contextmenu') {
+    new ContextMenu(html, cssclass, this.headerMenu(name, obj, path), { eventName: eventname })
   }
 
   activateListeners(html) {
@@ -1427,11 +1434,44 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       this.actor.update({ 'data.additionalresources.showflightmove': show })
     })
 
-    this.makeHeaderMenu(html, '.hlhead', 'Hit Location', new HitLocation('???'), 'data.hitlocations')
-    this.makeAddDeleteMenu(html, '.hlmenu', new HitLocation('???'))
+    this.makeHeaderMenu(
+      html,
+      '#editorsheet #location .header',
+      'Hit Location',
+      new HitLocation('???'),
+      'data.hitlocations',
+      'click contextmenu'
+    )
+    this.makeAddDeleteMenu(html, '.hlmenu', new HitLocation('???'), 'click contextmenu')
 
-    this.makeHeaderMenu(html, '.reacthead', 'Reaction', new Reaction('+0', 'from ...'), 'data.reactions')
-    this.makeAddDeleteMenu(html, '.reactmenu', new Reaction('+0', 'from ...'))
+    this.makeHeaderMenu(
+      html,
+      '.reacthead',
+      'Reaction',
+      new Reaction('+0', 'from ...'),
+      'data.reactions',
+      'click contextmenu'
+    )
+    this.makeAddDeleteMenu(html, '.reactmenu', new Reaction('+0', 'from ...'), 'click contextmenu')
+
+    this.makeHeaderMenu(
+      html,
+      '.condmodhead',
+      'Conditional Modifier',
+      new Modifier('+0', 'from ...'),
+      'data.conditionalmods',
+      'click contextmenu'
+    )
+    this.makeAddDeleteMenu(html, '.condmodmenu', new Modifier('+0', 'from ...'), 'click contextmenu')
+
+    this.makeHeaderMenu(
+      html,
+      '.trackerhead',
+      'Resource Tracker',
+      { name: '', value: 0, min: 0, max: 0, points: 0 },
+      'data.additionalresources.tracker',
+      'click contextmenu'
+    )
 
     this.makeHeaderMenu(html, '.meleehead', 'Melee Attack', new Melee('New Attack'), 'data.melee')
     this.makeAddDeleteMenu(html, '.meleemenu', new Melee('New Attack'))
@@ -1490,11 +1530,13 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
             let it = new HitLocation(loc, dr, hit.penalty, hit.roll)
             GURPS.put(hitlocations, it, count++)
           }
+          this.actor.ignoreRender = true
           await this.actor.update({
             'data.-=hitlocations': null,
             'data.additionalresources.bodyplan': bodyplan,
           })
           await this.actor.update({ 'data.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
+          this.actor.ignoreRender = false
           await this.actor.update({ 'data.hitlocations': hitlocations })
         }
       }

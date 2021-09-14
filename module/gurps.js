@@ -31,7 +31,7 @@ import GurpsJournalEntry from './journal.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-GURPS.DEBUG = false
+GURPS.DEBUG = true
 
 GURPS.Migration = Migration
 GURPS.BANNER = `
@@ -611,10 +611,8 @@ async function performAction(action, actor, event = null, targets = []) {
       return false
     }
     formula = '3d6'
-    if (bestAction.type === 'skill-spell')
-      chatthing = '[S:' + bestAction.thing + ']'
-    else
-      chatthing= '[' + bestAction.orig + ']'
+    if (bestAction.type === 'skill-spell') chatthing = '[S:' + bestAction.thing + ']'
+    else chatthing = '[' + bestAction.orig + ']'
     opt.action = bestAction
     opt.obj = bestAction.obj
     if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
@@ -797,10 +795,8 @@ async function handleRoll(event, actor, targets) {
     formula = '3d6'
     target = parseInt(element.innerText)
     if ('otf' in element.dataset)
-      if (thing.toUpperCase() != element.dataset.otf.toUpperCase())
-        chatthing = thing + '/[' + element.dataset.otf + ']'
-      else
-        chatthing = '[' + element.dataset.otf + ']'
+      if (thing.toUpperCase() != element.dataset.otf.toUpperCase()) chatthing = thing + '/[' + element.dataset.otf + ']'
+      else chatthing = '[' + element.dataset.otf + ']'
   } else if ('name' in element.dataset || 'otf' in element.dataset) {
     prefix = '' // "Attempting ";
     let text = /** @type {string} */ (element.dataset.name || element.dataset.otf)
@@ -905,9 +901,10 @@ function gurpslink(str, clrdmods = true) {
             action.action.type
           )
         )
-      // console.log(action.action)
+          if (!action.action)
+            // console.log(action.action)
 
-        if (!action.action) output += '['
+            output += '['
         output += action.text
         if (!action.action) output += ']'
         str = str.substr(i + 1)

@@ -1,10 +1,30 @@
 <div id='reactions'>
-  <div class='modifier header'>{{localize 'GURPS.modifier'}}</div>
-  <div class='situation header'>{{localize 'GURPS.reaction'}}</div>
-  <div></div>
-  {{#each data.reactions}}
-    <div class='modifier gmod' data-name='Reaction {{this.situation}}'>{{this.modifier}}</div>
-    <div class='situation'>{{{gurpslink this.situation}}}</div>
-    <div></div>
+  <div class='itemmenu header' style='padding: 0;'></div>
+  <div class='modifier header'>{{i18n 'GURPS.modifier'}}</div>
+  {{#if isEditing}}
+    <div class='situation header reacthead'>{{i18n 'GURPS.reaction'}}
+      &nbsp;
+      <i class='fas fa-caret-square-down' style='color: white;'></i>
+    </div>
+  {{else}}
+    <div class='situation header'>{{i18n 'GURPS.reaction'}}</div>
+  {{/if}}
+
+  {{#each data.reactions as |this key|}}
+    {{#if ../isEditing}}
+      <div class='itemmenu reactmenu' style='padding: 0 0.05in;' data-key='data.reactions.{{key}}'>
+        <i class='fas fa-times'></i>
+      </div>
+      <div class='modifier'>
+        <input name='data.reactions.{{key}}.modifier' class='gcs-input-sm4' type='text' value='{{this.modifier}}' />
+      </div>
+      <div class='situation'>
+        <input name='data.reactions.{{key}}.situation' class='gcs-input' type='text' value='{{this.situation}}' />
+      </div>
+    {{else}}
+      <div class='itemmenu' style='padding: 0;'></div>
+      <div class='modifier gmod' data-name='Reaction {{this.situation}}'>{{this.modifier}}</div>
+      <div class='situation'>{{{gurpslink this.situation}}}</div>
+    {{/if}}
   {{/each}}
 </div>
