@@ -1040,7 +1040,7 @@ body {
 }
 
 #advantages {
-  grid-template-columns: 1fr repeat(2, auto);
+  grid-template-columns: min-content 1fr repeat(2, auto);
   grid-area: advantages;
 }
 
@@ -1220,9 +1220,10 @@ body {
 #ranged .bulk:nth-child(even),
 #ranged .rcl:nth-child(odd),
 #ranged .st:nth-child(even),
-#advantages .desc:nth-child(even),
-#advantages .pts:nth-child(odd),
-#advantages .ref:nth-child(even),
+#advantages .itemmenu:nth-last-child(8n + 8),
+#advantages .desc:nth-last-child(8n + 7),
+#advantages .pts:nth-last-child(8n + 6),
+#advantages .ref:nth-last-child(8n + 5),
 #skills .desc:nth-child(even),
 #skills .sl:nth-child(odd),
 #skills .rsl:nth-child(even),
@@ -1411,14 +1412,13 @@ body {
 #reactions > div:nth-last-child(-n + 3),
 #melee > div:nth-last-child(-n + 9),
 #ranged > div:nth-last-child(-n + 11),
-#advantages > div:nth-last-child(-n + 3),
+#advantages > div:nth-last-child(-n + 4),
 #skills > div:nth-last-child(-n + 5),
 #spells > div:nth-last-child(-n + 11),
 #equipment > div:nth-last-child(-n + 9),
 #other_equipment > div:nth-last-child(-n + 9),
 #notes > div:nth-last-child(-n + 1) {
   border-bottom: none;
-  grid-row: 1001;
 }
 
 .indent1 {
@@ -1478,7 +1478,11 @@ body {
   content: '\f24e'; /* this is your text. You can also use UTF-8 character codes as I do here */
   font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
   font-weight: 900;
-  padding-right: 0.05in;
+  padding-right: 2px;
+}
+
+.expandcollapseicon {
+  padding-right: 2px;
 }
 
 .enc0:after {
