@@ -5,7 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.11.8
 
 - Added system setting, unequipped items not displayed in melee or ranged attacks
-- Added danialrab's browser support to remember the last import location
+- Added danialrab's browser support to remember the last import location (and system setting)
 - Updated anim support for JB2A's Vasselheim release (0.2.6)
 - Rewrote the Maneuver system to be Foundry ActiveEffects.
 - Resolved several bugs with Maneuvers (randomly not clearing, UI warnings when changing Maneuver settings, keeping Maneuver as the first icon in the list).
@@ -34,7 +34,7 @@ This prints: `check: [Broadsword ], modified target: [15], roll total: [13], mar
 - Implemented tight beam burning from B399. To use this, add the 'tbb' damage modifier with the 'burn' damage type (for example, `[6d burn tbb]`).
 - Added portrait to NPC and NPC-CI actor sheets.
 - Added Encumbrance, Move & Dodge and Lifting & Moving Things to Combat tab in the Tabbed Actor sheet.
-- Report all rolled items as OtF formulas (so they can be re-rolled)
+- Report all rolled items as OtF formulas (so they can be re-rolled).
 
 Release 0.11.7 - 7/22/2021
 
