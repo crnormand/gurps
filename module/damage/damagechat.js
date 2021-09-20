@@ -414,6 +414,7 @@ export default class DamageChat {
       damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,
+      hitlocation: draggableData[0].hitlocation
     })
 
     // @ts-ignore

@@ -905,16 +905,12 @@ export class GurpsActor extends Actor {
       this._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
-        this.update({ name: nm, 'token.name': nm })
+      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {  
+        await this.update({ name: nm, 'token.name': nm })
       }
 
-      ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: this.name }))
-      console.log(
-        'Done importing (' +
-          Math.round(performance.now() - starttime) +
-          'ms.)  You can inspect the character data below:'
-      )
+      ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      console.log('Done importing (' + Math.round( performance.now() - starttime ) + 'ms.)  You can inspect the character data below:')
       console.log(this)
       return true
     } catch (err) {
