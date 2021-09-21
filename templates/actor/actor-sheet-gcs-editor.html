@@ -31,55 +31,9 @@
     {{>reactions}}
     {{>conditionalmods}}
     {{>trackers}}
-
     {{>melee}}
-
-    <div id="ranged">
-      <div class="desc header rangedhead">Ranged Weapons</div>
-      <div class="usage header rangedhead">Usage</div>
-      <div class="level header rangedhead">Lvl</div>
-      <div class="acc header rangedhead">Acc</div>
-      <div class="damage header rangedhead">Damage</div>
-      <div class="range header rangedhead">Range</div>
-      <div class="rof header rangedhead">RoF</div>
-      <div class="shots header rangedhead">Shots</div>
-      <div class="bulk header rangedhead">Bulk</div>
-      <div class="rcl header rangedhead">Rcl</div>
-      <div class="st header rangedhead">ST</div>
-
-
-      {{#each data.ranged as | this key |}}
-        <div class="desc rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.name"
-            class="gcs-input-25" type="text" value="{{this.name}}" />
-          <div class="list_note"><input name="data.ranged.{{key}}.notes" class="gcs-input-25" type="text"
-              value="{{this.notes}}" /></div>
-        </div>
-        <div class="usage rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.mode"
-            class="gcs-input" type="text" value="{{this.mode}}" /></div>
-        <div class="level rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.import"
-            class="gcs-input-sm2" type="text" value="{{this.import}}" /></div>
-        <div class="acc rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.acc"
-            class="gcs-input-sm2" type="text" value="{{this.acc}}" /></div>
-        <div class="damage rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.damage"
-            class="gcs-input-5" type="text" value="{{this.damage}}" /></div>
-        <div class="range rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.range"
-            class="gcs-input-sm5" type="text" value="{{this.range}}" /></div>
-        <div class="rof rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.rof"
-            class="gcs-input-sm2" type="text" value="{{this.rof}}" /></div>
-        <div class="shots rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.shots"
-            class="gcs-input-sm2" type="text" value="{{this.shots}}" /></div>
-        <div class="bulk rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.bulk"
-            class="gcs-input-sm2" type="text" value="{{this.bulk}}" /></div>
-        <div class="rcl rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.rcl"
-            class="gcs-input-sm2" type="text" value="{{this.rcl}}" /></div>
-        <div class="st rangedmenu" data-key="data.ranged.{{key}}"><input name="data.ranged.{{key}}.st"
-            class="gcs-input-sm2" type="text" value="{{this.st}}" /></div>
-      {{/each}}
-
-    </div>
-
+    {{>ranged}}
     {{>advantages}}
-
 
     <div id="skills">
       <div class="desc header skillhead">Skills</div>

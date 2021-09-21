@@ -115,7 +115,7 @@ export class GurpsActorSheet extends ActorSheet {
       html.find('#advantages'),
       '.dblclksort',
       [this.sortAscendingMenu('data.ads'), this.sortDescendingMenu('data.ads')],
-      'click contextmenu'
+      ClickAndContextMenu
     )
 
     html.find('.enc').click(this._onClickEnc.bind(this))
@@ -956,6 +956,7 @@ export class GurpsActorSheet extends ActorSheet {
     d.render(true)
   }
 
+  // TODO is this still in use?
   async _onDblclickSort(event) {
     event.preventDefault()
     let element = event.currentTarget
@@ -1386,6 +1387,8 @@ Hooks.on('getGurpsActorEditorSheetHeaderButtons', sheet => {
   }
 })
 
+const ClickAndContextMenu = 'click contextmenu'
+
 export class GurpsActorEditorSheet extends GurpsActorSheet {
   /** @override */
   static get defaultOptions() {
@@ -1449,63 +1452,83 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this._makeHeaderMenu(
       html,
       '#editorsheet #location .hlhead',
-      [this.addItemMenu('Hit Location', new HitLocation('???'), 'data.hitlocations')],
-      'click contextmenu'
+      [this.addItemMenu(i18n('GURPS.hitLocation'), new HitLocation('???'), 'data.hitlocations')],
+      ClickAndContextMenu
     )
-    this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), ClickAndContextMenu)
 
     this._makeHeaderMenu(
       html,
       '.reacthead',
-      [this.addItemMenu('Reaction', new Reaction('+0', 'from ...'), 'data.reactions')],
-      'click contextmenu'
+      [
+        this.addItemMenu(
+          i18n('GURPS.reaction'),
+          new Reaction('+0', i18n('GURPS.fromEllipses', 'from ...')),
+          'data.reactions'
+        ),
+      ],
+      ClickAndContextMenu
     )
-    this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', 'from ...'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), ClickAndContextMenu)
 
     this._makeHeaderMenu(
       html,
       '.condmodhead',
-      [this.addItemMenu('Conditional Modifier', new Modifier('+0', 'from ...'), 'data.conditionalmods')],
-      'click contextmenu'
+      [
+        this.addItemMenu(
+          i18n('GURPS.conditionalModifier', 'Conditional Modifier'),
+          new Modifier('+0', i18n('GURPS.fromEllipses', 'from ...')),
+          'data.conditionalmods'
+        ),
+      ],
+      ClickAndContextMenu
     )
-    this.makeDeleteMenu(html, '.condmodmenu', new Modifier('+0', 'from ...'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.condmodmenu', new Modifier('+0', '???'), ClickAndContextMenu)
 
     this._makeHeaderMenu(
       html,
       '.trackerhead',
       [
         this.addItemMenu(
-          'Resource Tracker',
+          i18n('GURPS.chatResourceTracker'),
           { name: '', value: 0, min: 0, max: 0, points: 0 },
           'data.additionalresources.tracker'
         ),
       ],
-      'click contextmenu'
+      ClickAndContextMenu
     )
 
     this._makeHeaderMenu(
       html,
       '.meleehead',
-      [this.addItemMenu('Melee Attack', new Melee('???'), 'data.melee')],
-      'click contextmenu'
+      [this.addItemMenu(i18n('GURPS.meleeAttack'), new Melee(i18n('GURPS.meleeAttack') + '...'), 'data.melee')],
+      ClickAndContextMenu
     )
-    this.makeDeleteMenu(html, '.meleemenu', new Melee('dummy item'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.meleemenu', new Melee('???'), ClickAndContextMenu)
 
-    this.makeHeaderMenu(html, '.rangedhead', 'Ranged Attack', new Ranged('New Attack'), 'data.ranged')
-    this.makeDeleteMenu(html, '.rangedmenu', new Ranged('New Attack'))
+    this._makeHeaderMenu(
+      html,
+      '.rangedhead',
+      [this.addItemMenu(i18n('GURPS.rangedAttack'), new Ranged(`${i18n('GURPS.rangedAttack')}...`), 'data.ranged')],
+      ClickAndContextMenu
+    )
+    this.makeDeleteMenu(html, '.rangedmenu', new Ranged('???'), 'click context')
 
     this._makeHeaderMenu(
       html,
       '.adshead',
       [
-        this.addItemMenu('Advantage/Disadvantage/Quirk/Perk', new Advantage('New item...'), 'data.ads'),
+        this.addItemMenu(
+          i18n('GURPS.adDisadQuirkPerk', 'Advantage/Disadvantage/Quirk/Perk'),
+          new Advantage(`${i18n('GURPS.adDisad', 'Advantage/Disadvantage')}...`),
+          'data.ads'
+        ),
         this.sortAscendingMenu('data.ads'),
         this.sortDescendingMenu('data.ads'),
       ],
-      'click contextmenu'
+      ClickAndContextMenu
     )
-
-    this.makeDeleteMenu(html, '.adsmenu', new Advantage('dummy item'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.adsmenu', new Advantage('???'), ClickAndContextMenu)
 
     this.makeHeaderMenu(html, '.skillhead', 'Skill', new Skill('New Skill'), 'data.skills')
     this.makeDeleteMenu(html, '.skillmenu', new Skill('New Skill'))
