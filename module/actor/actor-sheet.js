@@ -1,4 +1,4 @@
-import { atou, generateUniqueId } from '../../lib/utilities.js'
+import { atou, generateUniqueId, i18n, i18n_f } from '../../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
@@ -109,7 +109,15 @@ export class GurpsActorSheet extends ActorSheet {
     const canConfigure = game.user.isGM || this.actor.isOwner
     if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
 
-    html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
+    // html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
+
+    this._makeHeaderMenu(
+      html.find('#advantages'),
+      '.dblclksort',
+      [this.sortAscendingMenu('data.ads'), this.sortDescendingMenu('data.ads')],
+      'click contextmenu'
+    )
+
     html.find('.enc').click(this._onClickEnc.bind(this))
 
     let makelistdrag = (cls, type) => {
@@ -445,7 +453,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (path.includes('notes')) this.editNotes(actor, path, obj)
     })
 
-    let opts = this.addDeleteMenu(new Equipment('New Equipment', true))
+    let opts = this.deleteItemMenu(new Equipment('New Equipment', true))
     /*    opts.push({
       name: 'Add In',
       icon: "<i class='fas fa-sign-in-alt'></i>",
@@ -960,43 +968,67 @@ export class GurpsActorSheet extends ActorSheet {
         one: {
           icon: '<i class="fas fa-sort-alpha-up"></i>',
           label: 'Ascending',
-          callback: async () => {
-            let i = key.lastIndexOf('.')
-            let parentpath = key.substring(0, i)
-            let objkey = key.substr(i + 1)
-            let object = GURPS.decode(this.actor.data, key)
-            let t = parentpath + '.-=' + objkey
-            await self.actor.update({ [t]: null }) // Delete the whole object
-            let sortedobj = {}
-            let index = 0
-            Object.values(object)
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .forEach(o => GURPS.put(sortedobj, o, index++))
-            await self.actor.update({ [key]: sortedobj })
-          },
+          callback: async () => this.sortAscending(key),
         },
         two: {
           icon: '<i class="fas fa-sort-alpha-down"></i>',
           label: 'Descending',
-          callback: async () => {
-            let i = key.lastIndexOf('.')
-            let parentpath = key.substring(0, i)
-            let objkey = key.substr(i + 1)
-            let object = GURPS.decode(this.actor.data, key)
-            let t = parentpath + '.-=' + objkey
-            await self.actor.update({ [t]: null }) // Delete the whole object
-            let sortedobj = {}
-            let index = 0
-            Object.values(object)
-              .sort((a, b) => b.name.localeCompare(a.name))
-              .forEach(o => GURPS.put(sortedobj, o, index++))
-            await self.actor.update({ [key]: sortedobj })
-          },
+          callback: async () => this.sortDescending(key),
         },
       },
       default: 'one',
     })
     d.render(true)
+  }
+
+  _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
+    new ContextMenu(html, cssclass, menuitems, { eventName: eventname })
+  }
+
+  sortAscendingMenu(key) {
+    return {
+      name: i18n('GURPS.sortAscending', 'Sort Ascending'),
+      icon: '<i class="fas fa-sort-amount-down-alt"></i>',
+      callback: e => this.sortAscending(key),
+    }
+  }
+
+  sortDescendingMenu(key) {
+    return {
+      name: i18n('GURPS.sortDescending', 'Sort Descending'),
+      icon: '<i class="fas fa-sort-amount-down"></i>',
+      callback: e => this.sortDescending(key),
+    }
+  }
+
+  async sortAscending(key) {
+    let i = key.lastIndexOf('.')
+    let parentpath = key.substring(0, i)
+    let objkey = key.substr(i + 1)
+    let object = GURPS.decode(this.actor.data, key)
+    let t = parentpath + '.-=' + objkey
+    await this.actor.update({ [t]: null }) // Delete the whole object
+    let sortedobj = {}
+    let index = 0
+    Object.values(object)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach(o => GURPS.put(sortedobj, o, index++))
+    await this.actor.update({ [key]: sortedobj })
+  }
+
+  async sortDescending(key) {
+    let i = key.lastIndexOf('.')
+    let parentpath = key.substring(0, i)
+    let objkey = key.substr(i + 1)
+    let object = GURPS.decode(this.actor.data, key)
+    let t = parentpath + '.-=' + objkey
+    await this.actor.update({ [t]: null }) // Delete the whole object
+    let sortedobj = {}
+    let index = 0
+    Object.values(object)
+      .sort((a, b) => b.name.localeCompare(a.name))
+      .forEach(o => GURPS.put(sortedobj, o, index++))
+    await this.actor.update({ [key]: sortedobj })
   }
 
   /* -------------------------------------------- */
@@ -1284,16 +1316,8 @@ export class GurpsActorSheet extends ActorSheet {
     this.actor._forceRender()
   }
 
-  addDeleteMenu(obj) {
+  deleteItemMenu(obj) {
     return [
-      /*      {
-        name: 'Add Before',
-        icon: "<i class='fas fa-chevron-up'></i>",
-        callback: e => {
-          GURPS.insertBeforeKey(this.actor, e[0].dataset.key, duplicate(obj))
-        },
-      },
-*/
       {
         name: 'Delete',
         icon: "<i class='fas fa-trash'></i>",
@@ -1303,20 +1327,6 @@ export class GurpsActorSheet extends ActorSheet {
           else GURPS.removeKey(this.actor, key)
         },
       },
-      /*
-      {
-        name: 'Add at the end',
-        icon: "<i class='fas fa-fast-forward'></i>",
-        callback: e => {
-          let p = e[0].dataset.key
-          let i = p.lastIndexOf('.')
-          let objpath = p.substring(0, i)
-          let o = GURPS.decode(this.actor.data, objpath)
-          GURPS.put(o, duplicate(obj))
-          this.actor.update({ [objpath]: o })
-        },
-      },
-*/
     ]
   }
 
@@ -1398,26 +1408,24 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     return sheetData
   }
 
-  makeAddDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
-    new ContextMenu(html, cssclass, this.addDeleteMenu(obj), { eventName: eventname })
+  makeDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
+    new ContextMenu(html, cssclass, this.deleteItemMenu(obj), { eventName: eventname })
   }
 
-  headerMenu(name, obj, path) {
-    return [
-      {
-        name: 'Add ' + name + ' at the end',
-        icon: "<i class='fas fa-edit'></i>",
-        callback: e => {
-          let o = GURPS.decode(this.actor.data, path) || {}
-          GURPS.put(o, duplicate(obj))
-          this.actor.update({ [path]: o })
-        },
+  addItemMenu(name, obj, path) {
+    return {
+      name: i18n_f('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
+      icon: '<i class="fas fa-plus"></i>',
+      callback: e => {
+        let o = GURPS.decode(this.actor.data, path) || {}
+        GURPS.put(o, duplicate(obj))
+        this.actor.update({ [path]: o })
       },
-    ]
+    }
   }
 
   makeHeaderMenu(html, cssclass, name, obj, path, eventname = 'contextmenu') {
-    new ContextMenu(html, cssclass, this.headerMenu(name, obj, path), { eventName: eventname })
+    new ContextMenu(html, cssclass, [this.addItemMenu(name, obj, path)], { eventName: eventname })
   }
 
   activateListeners(html) {
@@ -1425,7 +1433,11 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     html.find('textarea').on('drop', this.dropFoundryLinks)
     html.find('input').on('drop', this.dropFoundryLinks)
 
-    html.find('#ignoreinputbodyplan').click(this._onClickBodyPlan.bind(this))
+    html.find('#ignoreinputbodyplan').on('click', this._onClickIgnoreImportBodyPlan.bind(this))
+    html.find('label[for="ignoreinputbodyplan"]').on('click', this._onClickIgnoreImportBodyPlan.bind(this))
+
+    html.find('#showflightmove').on('click', this._onClickShowFlightMove.bind(this))
+    html.find('label[for="showflightmove"]').on('click', this._onClickShowFlightMove.bind(this))
 
     html.find('#showflightmove').click(ev => {
       ev.preventDefault()
@@ -1434,68 +1446,75 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       this.actor.update({ 'data.additionalresources.showflightmove': show })
     })
 
-    this.makeHeaderMenu(
+    this._makeHeaderMenu(
       html,
-      '#editorsheet #location .header',
-      'Hit Location',
-      new HitLocation('???'),
-      'data.hitlocations',
+      '#editorsheet #location .hlhead',
+      [this.addItemMenu('Hit Location', new HitLocation('???'), 'data.hitlocations')],
       'click contextmenu'
     )
-    this.makeAddDeleteMenu(html, '.hlmenu', new HitLocation('???'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), 'click contextmenu')
 
-    this.makeHeaderMenu(
+    this._makeHeaderMenu(
       html,
       '.reacthead',
-      'Reaction',
-      new Reaction('+0', 'from ...'),
-      'data.reactions',
+      [this.addItemMenu('Reaction', new Reaction('+0', 'from ...'), 'data.reactions')],
       'click contextmenu'
     )
-    this.makeAddDeleteMenu(html, '.reactmenu', new Reaction('+0', 'from ...'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', 'from ...'), 'click contextmenu')
 
-    this.makeHeaderMenu(
+    this._makeHeaderMenu(
       html,
       '.condmodhead',
-      'Conditional Modifier',
-      new Modifier('+0', 'from ...'),
-      'data.conditionalmods',
+      [this.addItemMenu('Conditional Modifier', new Modifier('+0', 'from ...'), 'data.conditionalmods')],
       'click contextmenu'
     )
-    this.makeAddDeleteMenu(html, '.condmodmenu', new Modifier('+0', 'from ...'), 'click contextmenu')
+    this.makeDeleteMenu(html, '.condmodmenu', new Modifier('+0', 'from ...'), 'click contextmenu')
 
-    this.makeHeaderMenu(
+    this._makeHeaderMenu(
       html,
       '.trackerhead',
-      'Resource Tracker',
-      { name: '', value: 0, min: 0, max: 0, points: 0 },
-      'data.additionalresources.tracker',
+      [
+        this.addItemMenu(
+          'Resource Tracker',
+          { name: '', value: 0, min: 0, max: 0, points: 0 },
+          'data.additionalresources.tracker'
+        ),
+      ],
       'click contextmenu'
     )
 
-    this.makeHeaderMenu(html, '.meleehead', 'Melee Attack', new Melee('New Attack'), 'data.melee')
-    this.makeAddDeleteMenu(html, '.meleemenu', new Melee('New Attack'))
+    this._makeHeaderMenu(
+      html,
+      '.meleehead',
+      [this.addItemMenu('Melee Attack', new Melee('???'), 'data.melee')],
+      'click contextmenu'
+    )
+    this.makeDeleteMenu(html, '.meleemenu', new Melee('dummy item'), 'click contextmenu')
 
     this.makeHeaderMenu(html, '.rangedhead', 'Ranged Attack', new Ranged('New Attack'), 'data.ranged')
-    this.makeAddDeleteMenu(html, '.rangedmenu', new Ranged('New Attack'))
+    this.makeDeleteMenu(html, '.rangedmenu', new Ranged('New Attack'))
 
-    this.makeHeaderMenu(
+    this._makeHeaderMenu(
       html,
       '.adshead',
-      'Advantage/Disadvantage/Quirk/Perk',
-      new Advantage('New Advantage/Disadvantage/Quirk/Perk'),
-      'data.ads'
+      [
+        this.addItemMenu('Advantage/Disadvantage/Quirk/Perk', new Advantage('New item...'), 'data.ads'),
+        this.sortAscendingMenu('data.ads'),
+        this.sortDescendingMenu('data.ads'),
+      ],
+      'click contextmenu'
     )
-    this.makeAddDeleteMenu(html, '.adsmenu', new Advantage('New Advantage'))
+
+    this.makeDeleteMenu(html, '.adsmenu', new Advantage('dummy item'), 'click contextmenu')
 
     this.makeHeaderMenu(html, '.skillhead', 'Skill', new Skill('New Skill'), 'data.skills')
-    this.makeAddDeleteMenu(html, '.skillmenu', new Skill('New Skill'))
+    this.makeDeleteMenu(html, '.skillmenu', new Skill('New Skill'))
 
     this.makeHeaderMenu(html, '.spellhead', 'Spell', new Spell('New Spell'), 'data.spells')
-    this.makeAddDeleteMenu(html, '.spellmenu', new Spell('New Spell'))
+    this.makeDeleteMenu(html, '.spellmenu', new Spell('New Spell'))
 
     this.makeHeaderMenu(html, '.notehead', 'Note', new Note('New Note', true), 'data.notes')
-    this.makeAddDeleteMenu(html, '.notemenu', new Note('New Note', true))
+    this.makeDeleteMenu(html, '.notemenu', new Note('New Note', true))
 
     this.makeHeaderMenu(
       html,
@@ -1543,11 +1562,18 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     })
   }
 
-  async _onClickBodyPlan(ev) {
+  async _onClickIgnoreImportBodyPlan(ev) {
     ev.preventDefault()
-    let element = ev.currentTarget
-    let ignore = element.checked
+    let current = this.actor.data.data.additionalresources.ignoreinputbodyplan
+    let ignore = !current
     await this.actor.update({ 'data.additionalresources.ignoreinputbodyplan': ignore })
+  }
+
+  async _onClickShowFlightMove(ev) {
+    ev.preventDefault()
+    let current = this.actor.data.data.additionalresources.showflightmove
+    let show = !current
+    await this.actor.update({ 'data.additionalresources.showflightmove': show })
   }
 }
 

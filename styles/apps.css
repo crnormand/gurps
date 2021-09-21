@@ -7,6 +7,20 @@ body {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
 }
 
+.gurpsactorsheet #context-menu {
+  width: max-content;
+  left: calc(50% - 75px);
+  background-color: rgb(128, 0, 0);
+}
+
+.gurpsactorsheet .itemmenu #context-menu {
+  left: 0;
+}
+
+.list_note > textarea {
+  min-height: 3em;
+}
+
 /* GURPS App CSS */
 .gurps-app {
   justify-items: center;
@@ -825,7 +839,6 @@ ul#result-effects li {
 }
 
 .tracked-resource .header .edit {
-  float: right;
   margin-right: 0.25em;
 }
 

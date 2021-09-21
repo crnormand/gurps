@@ -356,7 +356,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} dict
+   * @param {{ [key: string]: any }} dict
    * @param {string} type
    * @returns {number}
    */
@@ -905,12 +905,16 @@ export class GurpsActor extends Actor {
       this._forceRender()
 
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {  
+      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
         await this.update({ name: nm, 'token.name': nm })
       }
 
       ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
-      console.log('Done importing (' + Math.round( performance.now() - starttime ) + 'ms.)  You can inspect the character data below:')
+      console.log(
+        'Done importing (' +
+          Math.round(performance.now() - starttime) +
+          'ms.)  You can inspect the character data below:'
+      )
       console.log(this)
       return true
     } catch (err) {
@@ -940,7 +944,7 @@ export class GurpsActor extends Actor {
 
   // hack to get to private text element created by xml->json method.
   /**
-   * @param {Record<string,any>} o
+   * @param {{ [key: string]: any }} o
    */
   textFrom(o) {
     if (!o) return ''
@@ -951,7 +955,7 @@ export class GurpsActor extends Actor {
 
   // similar hack to get text as integer.
   /**
-   * @param {Record<string,any>} o
+   * @param {{ [key: string]: any }} o
    */
   intFrom(o) {
     if (!o) return 0
@@ -994,7 +998,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importReactionsFromGCSv2(json) {
     if (!json) return
@@ -1018,7 +1022,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importReactionsFromGCA(json) {
     if (!json) return
@@ -1063,8 +1067,8 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string, any>} descjson
-   * @param {Record<string, any>} json
+   * @param {{ [key: string]: any }} descjson
+   * @param {{ [key: string]: any }} json
    */
   importNotesFromGCSv1(descjson, json) {
     if (!json) return
@@ -1322,7 +1326,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importEquipmentFromGCSv1(json, isFoundryGCS) {
@@ -1503,7 +1507,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importCombatMeleeFromGCSv1(json, isFoundryGCS) {
@@ -1559,7 +1563,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importCombatRangedFromGCSv1(json, isFoundryGCS) {
@@ -1662,7 +1666,7 @@ export class GurpsActor extends Actor {
 
   // Import the <attributes> section of the GCS FG XML file.
   /**
-   * @param {Record<string, any>} json
+   * @param {{ [key: string]: any }} json
    */
   async importAttributesFromCGSv1(json) {
     if (!json) return
@@ -1774,7 +1778,7 @@ export class GurpsActor extends Actor {
   // NOTE:  For the update to work correctly, no two skills can have the same name.
   // When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importSkillsFromGCSv1(json, isFoundryGCS) {
@@ -1818,7 +1822,7 @@ export class GurpsActor extends Actor {
   // NOTE:  For the update to work correctly, no two spells can have the same name.
   // When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importSpellsFromGCSv1(json, isFoundryGCS) {
@@ -1873,8 +1877,8 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string, any>} adsjson
-   * @param {Record<string, any>} disadsjson
+   * @param {{ [key: string]: any }} adsjson
+   * @param {{ [key: string]: any }} disadsjson
    */
   importAdsFromGCA(adsjson, disadsjson) {
     /** @type {Advantage[]} */
@@ -1889,7 +1893,7 @@ export class GurpsActor extends Actor {
 
   /**
    * @param {Advantage[]} datalist
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importBaseAdvantages(datalist, json) {
     if (!json) return
@@ -1917,7 +1921,7 @@ export class GurpsActor extends Actor {
 
   // In the new GCS import, all ads/disad/quirks/perks are in one list.
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importAdsFromGCSv2(json) {
     let t = this.textFrom /// shortcut to make code smaller
@@ -2009,7 +2013,7 @@ export class GurpsActor extends Actor {
     await this.clearTracker(path)
 
     // add the new tracker
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     let update = {}
     update[`data.${path}`] = template.tracker
     await this.update(update)
@@ -2839,7 +2843,7 @@ export class GurpsActor extends Actor {
    * @param {number} currentWeight
    */
   checkEncumbance(currentWeight) {
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     let encs = this.getGurpsActorData().encumbrance
     let last = GURPS.genkey(0) // if there are encumbrances, there will always be a level0
     var best, prev
@@ -2877,7 +2881,7 @@ export class GurpsActor extends Actor {
    * @param {number} count
    */
   async updateEqtCount(eqtkey, count) {
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     let update = { [eqtkey + '.count']: count }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
       update[eqtkey + '.ignoreImportQty'] = true
@@ -3219,9 +3223,9 @@ export class Equipment extends Named {
     this.uuid = ''
     this.parentuuid = ''
     this.itemid = ''
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     this.collapsed = {}
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     this.contains = {}
   }
 

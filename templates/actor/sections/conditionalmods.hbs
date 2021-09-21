@@ -2,9 +2,11 @@
   <div class='itemmenu header' style='padding: 0;'></div>
   <div class='modifier header'>{{i18n 'GURPS.modifier'}}</div>
   {{#if isEditing}}
-    <div class='situation header condmodhead'>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}
-      &nbsp;
-      <i class='fas fa-caret-square-down' style='color: white;'></i>
+    <div class='situation header'>
+      <div class='condmodhead'>
+        <span>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}</span>
+        <i class='fas fa-caret-square-down'></i>
+      </div>
     </div>
   {{else}}
     <div class='situation header'>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}</div>
@@ -12,7 +14,7 @@
 
   {{#each data.conditionalmods as |this key|}}
     {{#if ../isEditing}}
-      <div class='itemmenu condmodmenu' style='padding: 0 0.05in;' data-key='data.conditionalmods.{{key}}'>
+      <div class='itemmenu condmodmenu' data-key='data.conditionalmods.{{key}}'>
         <i class='fas fa-times'></i>
       </div>
       <div class='modifier'>

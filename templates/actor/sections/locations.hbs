@@ -1,15 +1,13 @@
 <div id='location'>
   {{#if isEditing}}
-    <div class='header hlhead'>{{localize 'GURPS.hitLocation'}}
-      &nbsp;
-      <i class='fas fa-caret-square-down' style='color: white;'></i>
-      <div>
-        <input
-          id='ignoreinputbodyplan'
-          type='checkbox'
-          {{checked data.additionalresources.ignoreinputbodyplan}}
-          style='zoom:0.5'
-        />{{i18n 'GURPS.ignoreBodyPlan' 'Ignore Imported Body Plan'}}
+    <div class='header'>
+      <div class='hlhead'>
+        <span>{{localize 'GURPS.hitLocation'}}</span>
+        <i class='fas fa-caret-square-down'></i>
+      </div>
+      <div class='option'>
+        <input id='ignoreinputbodyplan' type='checkbox' {{checked data.additionalresources.ignoreinputbodyplan}}/>
+        <label for='ignoreinputbodyplan'>{{i18n 'GURPS.ignoreBodyPlan' 'Ignore Imported Body Plan'}}</label>
       </div>
     </div>
   {{else}}
@@ -24,9 +22,9 @@
 
   {{#each data.hitlocations as |this key|}}
     {{#if ../isEditing}}
-      <div class='itemmenu hlmenu' style='padding: 0 0.05in;' data-key='data.hitlocations.{{@key}}'><i
-          class='fas fa-times'
-        ></i></div>
+      <div class='itemmenu hlmenu' data-key='data.hitlocations.{{@key}}'>
+        <i class='fas fa-times'></i>
+      </div>
     {{else}}
       <div class='itemmenu' style='padding: 0;'></div>
     {{/if}}

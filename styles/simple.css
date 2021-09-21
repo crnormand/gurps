@@ -954,30 +954,77 @@ body {
   grid-template-columns: min-content min-content 1fr min-content min-content;
 }
 
+#melee .header,
+#advantages .header,
+#combat-trackers .header,
+#conditionalmods .header,
+#reactions .header,
+#encumbrance .header,
+#location .header {
+  display: inline-flex;
+  flex-flow: column nowrap;
+}
+
+#melee .header > div,
+#advantages .header > div,
+#combat-trackers .header > div,
+#conditionalmods .header > div,
+#reactions .header > div,
+#encumbrance .header > div,
+#location .header > div {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-content: center;
+}
+
+#advantages .adshead i,
+#melee .meleehead i,
+#combat-trackers .trackerhead i,
+#conditionalmods .condmodhead i,
+#reactions .reacthead i,
+#location .hlhead i {
+  color: white;
+  margin-left: 1em;
+}
+
+#encumbrance .option input,
+#location .option input {
+  zoom: 0.5;
+}
+
 #encumbrance .header:first-child,
 #location .header:first-child {
   grid-area: header;
   border-bottom: 1px solid lightgray;
 }
 
+#melee .meleemenu,
+#advantages .adsmenu,
 #conditionalmods .condmodmenu,
 #reactions .reactmenu,
 #location .hlmenu {
   color: lightgrey;
 }
 
+#melee .meleemenu:hover,
+#advantages .adsmenu:hover,
 #conditionalmods .condmodmenu:hover,
 #reactions .reactmenu:hover,
 #location .hlmenu:hover {
   color: darkred;
 }
 
+#melee .adsmenu i,
+#advantages .adsmenu i,
 #conditionalmods .condmodmenu i,
 #reactions .reactmenu i,
 #location .hlmenu i {
   color: inherit;
 }
 
+#melee .adsmenu i:hover,
+#advantages .adsmenu i:hover,
 #conditionalmods .condmodmenu i:hover,
 #reactions .reactmenu i:hover,
 #location .hlmenu i:hover {
@@ -1005,6 +1052,7 @@ body {
   display: grid;
   border: 1px solid black;
   align-content: stretch;
+  grid-template-rows: 0fr 0fr auto;
 }
 
 #conditionalmods,
@@ -1030,7 +1078,7 @@ body {
 }
 
 #melee {
-  grid-template-columns: 1fr repeat(8, auto);
+  grid-template-columns: min-content 1fr repeat(8, auto);
   grid-area: melee;
 }
 
@@ -1104,6 +1152,12 @@ body {
 .desc {
   display: flex;
   flex-flow: column nowrap;
+}
+
+.desc.header {
+  align-items: center;
+  flex-flow: row nowrap;
+  justify-content: center;
 }
 
 .desc .list_note textarea,
@@ -1201,14 +1255,15 @@ body {
 #reactions .itemmenu:nth-child(even),
 #reactions .modifier:nth-child(odd),
 #reactions .situation:nth-child(even),
-#melee .desc:nth-child(even),
-#melee .usage:nth-child(odd),
-#melee .level:nth-child(even),
-#melee .parry:nth-child(odd),
-#melee .block:nth-child(even),
-#melee .damage:nth-child(odd),
-#melee .reach:nth-child(even),
-#melee .st:nth-child(odd),
+#melee .itemmenu:nth-child(20n + 11),
+#melee .desc:nth-child(20n + 12),
+#melee .usage:nth-child(20n + 13),
+#melee .level:nth-child(20n + 14),
+#melee .parry:nth-child(20n + 15),
+#melee .block:nth-child(20n + 16),
+#melee .damage:nth-child(20n + 17),
+#melee .reach:nth-child(20n + 18),
+#melee .st:nth-child(20n + 19),
 #ranged .desc:nth-child(even),
 #ranged .usage:nth-child(odd),
 #ranged .level:nth-child(even),
@@ -1220,10 +1275,10 @@ body {
 #ranged .bulk:nth-child(even),
 #ranged .rcl:nth-child(odd),
 #ranged .st:nth-child(even),
-#advantages .itemmenu:nth-last-child(8n + 8),
-#advantages .desc:nth-last-child(8n + 7),
-#advantages .pts:nth-last-child(8n + 6),
-#advantages .ref:nth-last-child(8n + 5),
+#advantages .itemmenu:nth-child(8n + 5),
+#advantages .desc:nth-child(8n + 6),
+#advantages .pts:nth-child(8n + 7),
+#advantages .ref:nth-of-type(8n + 8),
 #skills .desc:nth-child(even),
 #skills .sl:nth-child(odd),
 #skills .rsl:nth-child(even),
@@ -1347,6 +1402,12 @@ body {
 .itemmenu,
 .roll {
   text-align: center;
+}
+
+.itemmenu {
+  padding: 0 0.05in;
+  display: inline-flex;
+  align-items: center;
 }
 
 .liftdesc,
@@ -1475,7 +1536,7 @@ body {
 }
 
 .encmarker.current:after {
-  content: '\f24e'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  content: '\f101'; /* this is your text. You can also use UTF-8 character codes as I do here */
   font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
   font-weight: 900;
   padding-right: 2px;
@@ -1570,6 +1631,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 0fr min-content;
+  border: 1px solid black;
 }
 
 #combat-trackers .tracked-resource {
@@ -1608,6 +1670,8 @@ body {
 .header.minor-heading {
   background-color: rgba(0, 0, 0, 0.7) !important;
   border: none !important;
+  display: grid !important;
+  grid-template-columns: 1fr 0fr;
 }
 
 .no-border {

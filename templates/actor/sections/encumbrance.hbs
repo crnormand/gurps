@@ -1,13 +1,13 @@
 <div id='encumbrance'>
   <div class='header'>
     {{#if isEditing}}
-      {{i18n 'GURPS.encumbranceMoveDodge'}}
-      <div><input
-          id='showflightmove'
-          type='checkbox'
-          {{checked data.additionalresources.showflightmove}}
-          style='zoom:0.5'
-        />{{i18n 'GURPS.showFlightMove' 'Show Move/Flight Move'}}</div>
+      <div class='enchead'>
+        <span>{{i18n 'GURPS.encumbranceMoveDodge'}}</span>
+      </div>
+      <div class='option'>
+        <input id='showflightmove' type='checkbox' {{checked data.additionalresources.showflightmove}}/>
+        <label for='showflightmove'>{{i18n 'GURPS.showFlightMove' 'Show Move/Flight Move'}}</label>
+      </div>
     {{else}}
       {{i18n 'GURPS.encumbranceMoveDodge'}}
     {{/if}}

@@ -1,10 +1,12 @@
 {{#if (or isEditing (notEmpty data.additionalresources.tracker))}}
-  <div id='combat-trackers' style='border: 1px solid black;'>
-    <div class='header trackerhead' data-key='data.additionalresources.tracker'>{{i18n 'GURPS.resourceTrackers'}}
-      {{#if isEditing}}
-        &nbsp;
-        <i class='fas fa-caret-square-down' style='color: white;'></i>
-      {{/if}}
+  <div id='combat-trackers'>
+    <div class='header'>
+      <div class='trackerhead' data-key='data.additionalresources.tracker'>
+        <span>{{i18n 'GURPS.resourceTrackers'}}</span>
+        {{#if isEditing}}
+          <i class='fas fa-caret-square-down' style='color: white;'></i>
+        {{/if}}
+      </div>
     </div>
     <div id='tracker-scroller'>
       {{#each data.additionalresources.tracker}}
