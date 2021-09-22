@@ -111,12 +111,21 @@ export class GurpsActorSheet extends ActorSheet {
 
     // html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
 
-    this._makeHeaderMenu(
-      html.find('#advantages'),
-      '.dblclksort',
-      [this.sortAscendingMenu('data.ads'), this.sortDescendingMenu('data.ads')],
-      ClickAndContextMenu
-    )
+    if (!this.getData().isEditing) {
+      this._makeHeaderMenu(
+        html.find('#advantages'),
+        '.adshead',
+        [this.sortAscendingMenu('data.ads'), this.sortDescendingMenu('data.ads')],
+        ClickAndContextMenu
+      )
+
+      this._makeHeaderMenu(
+        html.find('#skills'),
+        '.skillhead',
+        [this.sortAscendingMenu('data.skills'), this.sortDescendingMenu('data.skills')],
+        ClickAndContextMenu
+      )
+    }
 
     html.find('.enc').click(this._onClickEnc.bind(this))
 
@@ -1530,8 +1539,17 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     )
     this.makeDeleteMenu(html, '.adsmenu', new Advantage('???'), ClickAndContextMenu)
 
-    this.makeHeaderMenu(html, '.skillhead', 'Skill', new Skill('New Skill'), 'data.skills')
-    this.makeDeleteMenu(html, '.skillmenu', new Skill('New Skill'))
+    this._makeHeaderMenu(
+      html,
+      '.skillhead',
+      [
+        this.addItemMenu(i18n('GURPS.skill'), new Skill(`${i18n('GURPS.skill')}...`), 'data.skills'),
+        this.sortAscendingMenu('data.skills'),
+        this.sortDescendingMenu('data.skills'),
+      ],
+      ClickAndContextMenu
+    )
+    this.makeDeleteMenu(html, '.skillmenu', new Skill('???'), ClickAndContextMenu)
 
     this.makeHeaderMenu(html, '.spellhead', 'Spell', new Spell('New Spell'), 'data.spells')
     this.makeDeleteMenu(html, '.spellmenu', new Spell('New Spell'))

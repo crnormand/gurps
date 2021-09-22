@@ -954,6 +954,7 @@ body {
   grid-template-columns: min-content min-content 1fr min-content min-content;
 }
 
+#skills .header,
 #ranged .header,
 #melee .header,
 #advantages .header,
@@ -966,6 +967,7 @@ body {
   flex-flow: column nowrap;
 }
 
+#skills .header > div,
 #ranged .header > div,
 #melee .header > div,
 #advantages .header > div,
@@ -980,6 +982,7 @@ body {
   align-content: center;
 }
 
+#skills .skillhead i,
 #ranged .rangedhead i,
 #advantages .adshead i,
 #melee .meleehead i,
@@ -1002,6 +1005,7 @@ body {
   border-bottom: 1px solid lightgray;
 }
 
+#skills .skillmenu,
 #ranged .rangedmenu,
 #melee .meleemenu,
 #advantages .adsmenu,
@@ -1011,6 +1015,7 @@ body {
   color: lightgrey;
 }
 
+#skills .skillmenu:hover,
 #ranged .rangedmenu:hover,
 #melee .meleemenu:hover,
 #advantages .adsmenu:hover,
@@ -1020,6 +1025,7 @@ body {
   color: darkred;
 }
 
+#skills .skillmenu i,
 #ranged .rangedmenu i,
 #melee .meleemenu i,
 #advantages .adsmenu i,
@@ -1029,6 +1035,7 @@ body {
   color: inherit;
 }
 
+#skills .skillsmenu i:hover,
 #ranged .rangedmenu i:hover,
 #melee .meleemenu i:hover,
 #advantages .adsmenu i:hover,
@@ -1100,7 +1107,7 @@ body {
 }
 
 #skills {
-  grid-template-columns: 1fr repeat(4, auto);
+  grid-template-columns: min-content 1fr repeat(4, auto);
   grid-area: skills;
 }
 
@@ -1287,11 +1294,12 @@ body {
 #advantages .desc:nth-child(8n + 6),
 #advantages .pts:nth-child(8n + 7),
 #advantages .ref:nth-of-type(8n + 8),
-#skills .desc:nth-child(even),
-#skills .sl:nth-child(odd),
-#skills .rsl:nth-child(even),
-#skills .pts:nth-child(odd),
-#skills .ref:nth-child(even),
+#skills .itemmenu:nth-child(12n + 7),
+#skills .desc:nth-child(12n + 8),
+#skills .sl:nth-child(12n + 9),
+#skills .rsl:nth-child(12n + 10),
+#skills .pts:nth-child(12n + 11),
+#skills .ref:nth-child(12n + 12),
 #spells .desc:nth-child(even),
 #spells .cls:nth-child(odd),
 #spells .college:nth-child(even),
