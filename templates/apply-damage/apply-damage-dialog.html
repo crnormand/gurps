@@ -28,13 +28,14 @@
 
     <div class='flexrow flex-group-center flex-between' style='border: none'>
       <h3>{{localize "GURPS.addDirectlyApply"}}:</h3>
-      <input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}' {{#if (eq viewId "all"
-        )}}disabled{{/if}}>
+      {{debug viewId}}
+      <input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}'
+        {{disabled (eq CALC.viewId 'all' )}}>
       <div>
         <select id='apply-to'>
-          <option value='HP' {{#if (eq CALC.applyTo 'HP' )}}selected{{/if}}>{{localize "GURPS.attributesHPNAME"}}
+          <option value='HP' {{select-if CALC.applyTo 'HP' }}>{{localize "GURPS.attributesHPNAME"}}
           </option>
-          <option value='FP' {{#if (eq CALC.applyTo 'FP' )}}selected{{/if}}>{{localize "GURPS.attributesFPNAME"}}
+          <option value='FP' {{select-if CALC.applyTo 'FP' }}>{{localize "GURPS.attributesFPNAME"}}
           </option>
 
           {{#each resourceLabels}}
@@ -296,7 +297,7 @@
               <div style='display: grid; grid-template-columns: auto min-content; gap: 3px; margin-left: 3px;'>
                 <div id='damage-reduction-field' class='with-button'>
                   <input type='text' id='damage-reduction-level' class='digits-only'
-                    value='{{CALC.damageReductionLevel}}' {{#unless CALC.useDamageReduction}}disabled{{/unless}}
+                    value='{{CALC.damageReductionLevel}}' {{disabled (not CALC.useDamageReduction)}}
                     style='border: 1px solid #7a7971;'>
                   <button name='clear'><span class='fas fa-times-circle'></button>
                 </div>

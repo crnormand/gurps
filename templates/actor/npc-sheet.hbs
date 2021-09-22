@@ -75,11 +75,11 @@
           <div class="label">{{i18n "GURPS.maneuver"}}</div>
           <div class="field" style='padding-top: 3px; border: none;'>
             <select id='maneuver' name="data.conditions.maneuver" style='width: 100%; height: fit-content;'>
-              <option value='undefined' {{#if (eq ../data.conditions.maneuver undefined)}}selected{{/if}}>
+              <option value='undefined' {{select-if ../data.conditions.maneuver undefined}}>
                 {{i18n 'GURPS.none' 'None'}}
               </option>
               {{#each (listAllManeuvers) as | this key |}}
-                <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
+                <option value='{{key}}' {{select-if ../data.conditions.maneuver key}}>
                   {{localize this.label}}
                 </option>
               {{/each}}
@@ -140,8 +140,8 @@
             </div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{@key}}"
               data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-            <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
-              {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}
+            <div class="acc {{gmod this.acc}}" data-name='Acc for {{this.name}}'>
+              {{displayNumber this.acc}}
             </div>
             <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
           {{/listattack}}

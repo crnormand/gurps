@@ -31,7 +31,7 @@
     <div class='label'>{{i18n 'GURPS.attributesWILLNAME'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-path='frightcheck' data-otf='Fright Check'>
+    <div class='field noedit {{rollable (not isEditing)}}' data-path='frightcheck' data-otf='Fright Check'>
       {{data.frightcheck}}
     </div>
     <div class='label'>{{i18n 'GURPS.frightcheck'}}</div>
@@ -51,12 +51,7 @@
     </div>
     {{#if isEditing}}
       <div class='field'>
-        <input
-          name='data.attributes.PER.value'
-          class='gcs-input'
-          type='number'
-          value='{{data.attributes.PER.value}}'
-        />
+        <input name='data.attributes.PER.value' class='gcs-input' type='number' value='{{data.attributes.PER.value}}' />
       </div>
     {{else}}
       <div class='field rollable' data-path='attributes.PER.value' data-otf='PER'>
@@ -66,20 +61,24 @@
     <div class='label'>{{i18n 'GURPS.attributesPERNAME'}} ({{i18n 'GURPS.attributesPER'}})</div>
 
     <div class='points'></div>
-    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-path='vision' data-otf='Vision'>{{data.vision}}</div>
+    <div class='field noedit {{rollable (not isEditing)}}' data-path='vision' data-otf='Vision'>{{data.vision}}</div>
     <div class='label'>{{i18n 'GURPS.vision'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-path='hearing' data-otf='Hearing'>{{data.hearing}}</div>
+    <div class='field noedit {{rollable (not isEditing)}}' data-path='hearing' data-otf='Hearing'>{{data.hearing}}</div>
     <div class='label'>{{i18n 'GURPS.hearing'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-path='tastesmell' data-otf='Taste Smell'>{{data.tastesmell}}
+    <div
+      class='field noedit {{rollable (not isEditing)}}'
+      data-path='tastesmell'
+      data-otf='Taste Smell'
+    >{{data.tastesmell}}
     </div>
     <div class='label'>{{i18n 'GURPS.tastesmell'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-path='touch' data-otf='Touch'>{{data.touch}}</div>
+    <div class='field noedit {{rollable (not isEditing)}}' data-path='touch' data-otf='Touch'>{{data.touch}}</div>
     <div class='label'>{{i18n 'GURPS.touch'}}</div>
   </div>
 </div>

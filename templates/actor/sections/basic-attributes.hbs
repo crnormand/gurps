@@ -89,21 +89,24 @@
     <hr />
 
     <div class='points'></div>
-    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-damage data-otf='{{data.thrust}} dmg'>{{data.thrust}}</div>
+    <div
+      class='field noedit {{rollable (not isEditing)}}'
+      data-damage
+      data-otf='{{data.thrust}} dmg'
+    >{{data.thrust}}</div>
     <div class='label'>{{i18n 'GURPS.thrust'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{#unless isEditing}}rollable{{/unless}}' data-damage data-otf='{{data.swing}} dmg'>{{data.swing}}</div>
+    <div
+      class='field noedit {{rollable (not isEditing)}}'
+      data-damage
+      data-otf='{{data.swing}} dmg'
+    >{{data.swing}}</div>
     <div class='label'>{{i18n 'GURPS.swing'}}</div>
 
     <div class='points'>
       {{#if isEditing}}
-      [<input
-          name='data.basicspeed.points'
-          class='gcs-input-sm2'
-          type='number'
-          value='{{data.basicspeed.points}}'
-        />]
+        [<input name='data.basicspeed.points' class='gcs-input-sm2' type='number' value='{{data.basicspeed.points}}' />]
       {{else}}
         [{{data.basicspeed.points}}]
       {{/if}}
@@ -119,14 +122,9 @@
 
     <div class='points'>
       {{#if isEditing}}
-      [<input
-          name='data.basicmove.points'
-          class='gcs-input-sm2'
-          type='number'
-          value='{{data.basicmove.points}}'
-        />]
+        [<input name='data.basicmove.points' class='gcs-input-sm2' type='number' value='{{data.basicmove.points}}' />]
       {{else}}
-      [{{data.basicmove.points}}]
+        [{{data.basicmove.points}}]
       {{/if}}
     </div>
     {{#if isEditing}}

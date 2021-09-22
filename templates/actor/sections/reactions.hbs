@@ -1,19 +1,17 @@
 <div id='reactions'>
   <div class='itemmenu header' style='padding: 0;'></div>
   <div class='modifier header'>{{i18n 'GURPS.modifier'}}</div>
-  {{#if isEditing}}
-    <div class='situation header'>
-      <div class='reacthead'>
-        <span>{{i18n 'GURPS.reaction'}}</span>
+  <div class='situation header'>
+    <div class='reacthead'>
+      <span>{{i18n 'GURPS.reaction'}}</span>
+      {{#if isEditing}}
         <i class='fas fa-caret-square-down'></i>
-      </div>
+      {{/if}}
     </div>
-  {{else}}
-    <div class='situation header'>{{i18n 'GURPS.reaction'}}</div>
-  {{/if}}
+  </div>
 
-  {{#each data.reactions as |this key|}}
-    {{#if ../isEditing}}
+  {{#each data.reactions as |isEditing editing|}}
+    {{#if editing}}
       <div class='itemmenu reactmenu' data-key='data.reactions.{{key}}'>
         <i class='fas fa-times'></i>
       </div>

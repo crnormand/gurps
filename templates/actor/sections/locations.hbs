@@ -57,7 +57,7 @@
         />
       </div>
     {{else}}
-      <div class='penalty {{#if (ne this.penalty '0')}}gmod{{/if}}' data-name='to hit {{this.where}}' data-otf='{{this.penalty}} to hit {{this.where}}'>
+      <div class='penalty {{gmod this.penalty}}' data-name='to hit {{this.where}}' data-otf='{{this.penalty}} to hit {{this.where}}'>
         {{hitlocationpenalty this.where this.penalty parent}}
       </div>
     {{/if}}
