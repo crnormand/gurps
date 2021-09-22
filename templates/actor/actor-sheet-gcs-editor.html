@@ -35,8 +35,8 @@
     {{>ranged}}
     {{>advantages}}
     {{>skills}}
-
-    <div id="spells">
+    {{>spells}}
+    <!-- <div id="spells">
       <div class="desc header spellhead">Spells</div>
       <div class="cls header spellhead">Class</div>
       <div class="college header spellhead">College</div>
@@ -52,8 +52,6 @@
       {{#listeqt data.spells}}
         <div class="desc indent0 satisfiedY spellmenu" data-key="data.spells.{{@key}}"><input
             name="data.spells.{{@key}}.name" class="gcs-input" type="text" value="{{this.name}}" />
-          <!--                <div class="list_note satisfiedY"></div>
--->
           <div class="list_note satisfiedY"><input name="data.spells.{{@key}}.notes" class="gcs-input" type="text"
               value="{{this.notes}}" /></div>
           <div></div>
@@ -81,7 +79,7 @@
             class="gcs-input-sm5" type="text" value="{{this.pageref}}" /></div>
       {{/listeqt}}
 
-    </div>
+    </div> -->
 
     <div id="equipment" class="equipmentlist">
       <div class="equipped header carhead">{{i18n "GURPS.equipmentEquipped"}}</div>

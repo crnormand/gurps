@@ -1551,8 +1551,17 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     )
     this.makeDeleteMenu(html, '.skillmenu', new Skill('???'), ClickAndContextMenu)
 
-    this.makeHeaderMenu(html, '.spellhead', 'Spell', new Spell('New Spell'), 'data.spells')
-    this.makeDeleteMenu(html, '.spellmenu', new Spell('New Spell'))
+    this._makeHeaderMenu(
+      html,
+      '.spellhead',
+      [
+        this.addItemMenu(i18n('GURPS.spell'), new Spell(`${i18n('GURPS.spell')}...`), 'data.spells'),
+        this.sortAscendingMenu('data.spells'),
+        this.sortDescendingMenu('data.spells'),
+      ],
+      ClickAndContextMenu
+    )
+    this.makeDeleteMenu(html, '.spellmenu', new Spell('New Spell'), ClickAndContextMenu)
 
     this.makeHeaderMenu(html, '.notehead', 'Note', new Note('New Note', true), 'data.notes')
     this.makeDeleteMenu(html, '.notemenu', new Note('New Note', true))

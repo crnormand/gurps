@@ -10,20 +10,20 @@
     </div>
   </div>
 
-  {{#each data.reactions as |isEditing editing|}}
-    {{#if editing}}
-      <div class='itemmenu reactmenu' data-key='data.reactions.{{key}}'>
+  {{#each data.reactions}}
+    {{#if ../isEditing}}
+      <div class='itemmenu reactmenu' data-key='data.reactions.{{@key}}'>
         <i class='fas fa-times'></i>
       </div>
       <div class='modifier'>
-        <input name='data.reactions.{{key}}.modifier' class='gcs-input-sm4' type='text' value='{{this.modifier}}' />
+        <input name='data.reactions.{{@key}}.modifier' class='gcs-input-sm4' type='text' value='{{this.modifier}}' />
       </div>
       <div class='situation'>
-        <input name='data.reactions.{{key}}.situation' class='gcs-input' type='text' value='{{this.situation}}' />
+        <input name='data.reactions.{{@key}}.situation' class='gcs-input' type='text' value='{{this.situation}}' />
       </div>
     {{else}}
       <div class='itemmenu' style='padding: 0;'></div>
-      <div class='modifier gmod' data-name='Reaction {{this.situation}}'>{{this.modifier}}</div>
+      <div class='modifier gmod' data-name='Reaction {{this.situation}}'>{{displayNumber this.modifier}}</div>
       <div class='situation'>{{{gurpslink this.situation}}}</div>
     {{/if}}
   {{/each}}
