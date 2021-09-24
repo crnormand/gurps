@@ -1118,14 +1118,13 @@ GURPS.decode = decode
 function listeqtrecurse(eqts, options, level, data, parentkey = '', src = null) {
   if (!eqts) return ''
   let ret = ''
-  // @ts-ignore
   let i = 0
   for (let key in eqts) {
     let eqt = eqts[key]
     if (data) {
       data.indent = level
       data.key = parentkey + key
-      data.count = eqt.count
+      data.count = eqts.count
     }
     let display = true
     if (!!src && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
