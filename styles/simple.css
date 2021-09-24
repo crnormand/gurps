@@ -954,6 +954,7 @@ body {
   grid-template-columns: min-content min-content 1fr min-content min-content;
 }
 
+#equipment .header,
 #spells .header,
 #skills .header,
 #ranged .header,
@@ -968,6 +969,7 @@ body {
   flex-flow: column nowrap;
 }
 
+#equipment .header > div,
 #spells .header > div,
 #skills .header > div,
 #ranged .header > div,
@@ -984,6 +986,7 @@ body {
   align-content: center;
 }
 
+#equipment .equiphead i,
 #spells .spellhead i,
 #skills .skillhead i,
 #ranged .rangedhead i,
@@ -1008,6 +1011,7 @@ body {
   border-bottom: 1px solid lightgray;
 }
 
+#equipment .equipmenu,
 #spells .spellmenu,
 #skills .skillmenu,
 #ranged .rangedmenu,
@@ -1019,6 +1023,7 @@ body {
   color: lightgrey;
 }
 
+#equipment .equipmenu:hover,
 #spells .spellmenu:hover,
 #skills .skillmenu:hover,
 #ranged .rangedmenu:hover,
@@ -1030,6 +1035,7 @@ body {
   color: darkred;
 }
 
+#equipment .equipmenu i,
 #spells .spellmenu i,
 #skills .skillmenu i,
 #ranged .rangedmenu i,
@@ -1041,6 +1047,7 @@ body {
   color: inherit;
 }
 
+#equipment .equipmenu i:hover,
 #spells .spellsmenu i:hover,
 #skills .skillsmenu i:hover,
 #ranged .rangedmenu i:hover,
@@ -1124,12 +1131,12 @@ body {
 }
 
 #equipment {
-  grid-template-columns: auto auto 1fr repeat(6, auto);
+  grid-template-columns: min-content auto auto 1fr repeat(6, auto);
   grid-area: equipment;
 }
 
 #other_equipment {
-  grid-template-columns: auto 1fr repeat(6, auto);
+  grid-template-columns: min-content auto auto 1fr repeat(6, auto);
   grid-area: other_equipment;
 }
 
@@ -1319,23 +1326,26 @@ body {
 #spells .rsl:nth-child(24n + 22),
 #spells .pts:nth-child(24n + 23),
 #spells .ref:nth-child(24n + 24),
-#equipment .equipped:nth-child(even),
-#equipment .qty:nth-child(odd),
-#equipment .desc:nth-child(even),
-#equipment .uses:nth-child(odd),
-#equipment .cost:nth-child(even),
-#equipment .weight:nth-child(odd),
-#equipment .sum_cost:nth-child(even),
-#equipment .sum_weight:nth-child(odd),
-#equipment .ref:nth-child(even),
-#other_equipment .qty:nth-child(even),
-#other_equipment .desc:nth-child(odd),
-#other_equipment .uses:nth-child(even),
-#other_equipment .cost:nth-child(odd),
-#other_equipment .weight:nth-child(even),
-#other_equipment .sum_cost:nth-child(odd),
-#other_equipment .sum_weight:nth-child(even),
-#other_equipment .ref:nth-child(odd),
+#equipment .itemmenu:nth-child(20n + 11),
+#equipment .equipped:nth-child(20n + 12),
+#equipment .qty:nth-child(20n + 13),
+#equipment .desc:nth-child(20n + 14),
+#equipment .uses:nth-child(20n + 15),
+#equipment .cost:nth-child(20n + 16),
+#equipment .weight:nth-child(20n + 17),
+#equipment .sum_cost:nth-child(20n + 18),
+#equipment .sum_weight:nth-child(20n + 19),
+#equipment .ref:nth-child(20n + 20),
+#other_equipment .itemmenu:nth-child(20n + 11),
+#other_equipment .equipped:nth-child(20n + 12),
+#other_equipment .qty:nth-child(20n + 13),
+#other_equipment .desc:nth-child(20n + 14),
+#other_equipment .uses:nth-child(20n + 15),
+#other_equipment .cost:nth-child(20n + 16),
+#other_equipment .weight:nth-child(20n + 17),
+#other_equipment .sum_cost:nth-child(20n + 18),
+#other_equipment .sum_weight:nth-child(20n + 19),
+#other_equipment .ref:nth-child(20n + 20),
 #notes .desc:nth-child(even),
 #notes .ref:nth-child(odd) {
   background-color: #e8ffe8;
@@ -1432,6 +1442,12 @@ body {
   padding: 0 0.05in;
   display: inline-flex;
   align-items: center;
+}
+
+/* TODO Indicate this item has a contextmenu */
+.equipmenucarried:hover {
+  cursor: context-menu;
+  text-shadow: 0px 0px 2px #80ff80;
 }
 
 .liftdesc,

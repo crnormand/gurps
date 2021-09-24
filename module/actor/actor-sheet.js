@@ -462,6 +462,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (path.includes('notes')) this.editNotes(actor, path, obj)
     })
 
+    // TODO implement item menu options
     let opts = this.deleteItemMenu(new Equipment('New Equipment', true))
     /*    opts.push({
       name: 'Add In',
@@ -1458,14 +1459,15 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       this.actor.update({ 'data.additionalresources.showflightmove': show })
     })
 
+    this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), ClickAndContextMenu)
     this._makeHeaderMenu(
       html,
       '#editorsheet #location .hlhead',
       [this.addItemMenu(i18n('GURPS.hitLocation'), new HitLocation('???'), 'data.hitlocations')],
       ClickAndContextMenu
     )
-    this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), ClickAndContextMenu)
 
+    this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), ClickAndContextMenu)
     this._makeHeaderMenu(
       html,
       '.reacthead',
@@ -1478,7 +1480,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       ],
       ClickAndContextMenu
     )
-    this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), ClickAndContextMenu)
 
     this._makeHeaderMenu(
       html,
@@ -1566,13 +1567,45 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeHeaderMenu(html, '.notehead', 'Note', new Note('New Note', true), 'data.notes')
     this.makeDeleteMenu(html, '.notemenu', new Note('New Note', true))
 
-    this.makeHeaderMenu(
+    this._makeHeaderMenu(
       html,
-      '.carhead',
-      'Carried Equipment',
-      new Equipment('New Equipment', true),
-      'data.equipment.carried'
+      '.equiphead',
+      [
+        this.addItemMenu(
+          i18n('GURPS.equipment'),
+          new Equipment(`${i18n('GURPS.equipment')}...`),
+          'data.equipment.carried'
+        ),
+      ],
+      ClickAndContextMenu
     )
+
+    // ===============================
+    // TODO make this available from the full sheet as well
+
+    let opts = [
+      this._createMenu(i18n('GURPS.delete', 'Delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
+      this._createMenu(
+        i18n('GURPS.sortContentsAscending', 'Sort Contents (Ascending)'),
+        '<i class="fas fa-sort-amount-down-alt"></i>',
+        this._sortContentAscending.bind(this),
+        this._isSortable.bind(this)
+      ),
+      this._createMenu(
+        i18n('GURPS.sortContentsDescending', 'Sort Contents (Descending)'),
+        '<i class="fas fa-sort-amount-down"></i>',
+        this._sortContentDescending.bind(this),
+        this._isSortable.bind(this)
+      ),
+      this._createMenu(
+        i18n('GURPS.moveToOtherEquipment', 'Move to Other Equipment'),
+        '<i class="fas fa-level-down-alt"></i>',
+        this._moveEquipment.bind(this)
+      ),
+    ]
+    new ContextMenu(html, '.equipmenu', opts, { eventName: ClickAndContextMenu })
+    // ===============================
+
     this.makeHeaderMenu(
       html,
       '.othhead',
@@ -1610,6 +1643,70 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
         }
       }
     })
+  }
+
+  _createMenu(label, icon, callback, condition = () => true) {
+    return {
+      name: label,
+      icon: icon,
+      callback: callback,
+      condition: condition,
+    }
+  }
+
+  _deleteItem(target) {
+    let key = target[0].dataset.key
+    if (key.includes('.equipment.')) this.actor.deleteEquipment(key)
+    else GURPS.removeKey(this.actor, key)
+  }
+
+  _editEquipment(target) {
+    let path = target[0].dataset.key
+    let o = duplicate(GURPS.decode(this.actor.data, path))
+    this.editEquipment(this.actor, path, o)
+  }
+
+  _sortContentAscending(target) {
+    this._sortContent(target[0].dataset.key, false)
+  }
+
+  async _sortContent(parentpath, reverse) {
+    let objkey = 'contains'
+    let key = parentpath + '.' + objkey
+    let list = getProperty(this.actor.data, key)
+    if (!Object.keys(list).length) {
+      ui.notifications.info('Nothing to sort')
+      return
+    }
+    let t = parentpath + '.-=' + objkey
+    await this.actor.update({ [t]: null }) // Delete the whole object
+    let sortedobj = {}
+    let index = 0
+    Object.values(list)
+      .sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)))
+      .forEach(o => GURPS.put(sortedobj, o, index++))
+    await this.actor.update({ [key]: sortedobj })
+  }
+
+  _sortContentDescending(target) {
+    this._sortContent(target[0].dataset.key, true)
+  }
+
+  _moveEquipment(target) {
+    let path = target[0].dataset.key
+    this.actor.moveEquipment(path, 'data.equipment.other')
+  }
+
+  _hasContents(target) {
+    let path = target[0].dataset.key
+    let elements = $(target).siblings(`.desc[data-key="${path}.contains"]`)
+    return elements.length > 0
+  }
+
+  _isSortable(target) {
+    let path = target[0].dataset.key
+    let elements = $(target).siblings(`.desc[data-key="${path}.contains.00001"]`)
+    return elements.length > 0
   }
 
   async _onClickIgnoreImportBodyPlan(ev) {
