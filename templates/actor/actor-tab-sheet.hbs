@@ -74,7 +74,7 @@
             </div>
           {{/if}}
         </div>
-        <div  style='margin-top: 0.05in;'>
+        <div style='margin-top: 0.05in;'>
           {{>notes}}
         </div>
       </div>
@@ -108,8 +108,8 @@
         </div>
       {{/if}}
       <div class='tab' data-tab='equipment' data-group='primary-tabs'>
-        {{>equipment}}
-        {{>other-equipment}}
+        {{>equipment container='carried' data=this.data}}
+        {{>equipment container='other' data=this.data}}
       </div>
     </section>
   </div>

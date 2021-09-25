@@ -1,5 +1,5 @@
-<div id='melee'>
-  <div class='itemmenu header' style='padding: 0;'></div>
+<div id='melee' class='gga-table'>
+  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
   <div class='desc header'>
     <div class='meleehead'>
       <span>{{i18n 'GURPS.meleeWeapons'}}</span>
@@ -15,7 +15,6 @@
   <div class='damage header'>{{i18n 'GURPS.damage'}}</div>
   <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
   <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
-  <div></div>
 
   {{#unless isEditing}}
     {{#listattack data 'melee'}}
@@ -36,19 +35,18 @@
         <div class='list_note'>{{{gurpslink this.notes}}}</div>
       </div>
 
-      <div class='usage center'>{{this.mode}}</div>
+      <div class='usage flex-center'>{{this.mode}}</div>
       <div
-        class='level rollable center'
+        class='level rollable flex-center'
         data-name='{{this.name}} ({{this.mode}})'
         data-key='data.melee.{{@key}}'
         data-otf='A:"{{this.name}} ({{this.mode}})"'
       >{{this.level}}</div>
-      <div class='parry rollable center' data-otf='Parry'>{{this.parry}}</div>
-      <div class='block rollable center' data-otf='Block'>{{this.block}}</div>
-      <div class='damage rollable center' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
-      <div class='reach center'>{{this.reach}}</div>
-      <div class='st center'>{{this.st}}</div>
-      <div></div>
+      <div class='parry rollable flex-center' data-otf='Parry'>{{this.parry}}</div>
+      <div class='block rollable flex-center' data-otf='Block'>{{this.block}}</div>
+      <div class='damage rollable flex-center' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+      <div class='reach flex-center'>{{this.reach}}</div>
+      <div class='st flex-center'>{{this.st}}</div>
     {{/listattack}}
   {{else}}
     {{#each data.melee as |this key|}}
@@ -75,7 +73,6 @@
         <input name='data.melee.{{key}}.reach' class='gcs-input-sm3' type='text' value='{{this.reach}}' /></div>
       <div class='st' data-key='data.melee.{{key}}'>
         <input name='data.melee.{{key}}.st' class='gcs-input-sm2' type='text' value='{{this.st}}' /></div>
-      <div></div>
     {{/each}}
   {{/unless}}
 </div>

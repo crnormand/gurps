@@ -1138,6 +1138,14 @@ ul#result-effects li {
   font-weight: bold;
 }
 
+button.equipmentbutton:first-child {
+  margin-right: 0.5em;
+}
+
+button.equipmentbutton:last-child {
+  margin-left: 0.5em;
+}
+
 .equipmentlist .qty {
   display: flex;
   flex-flow: row nowrap;

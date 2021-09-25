@@ -1,5 +1,5 @@
 <div id='spells'>
-  <div class='itemmenu header' style='padding: 0;'></div>
+  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
   <div class='desc header'>
     <div class='spellhead'>
       <span>{{i18n 'GURPS.spells'}}</span>
@@ -117,22 +117,22 @@
         <div class='list_note satisfiedY spldraggable' data-key='data.spells.{{@key}}'>{{{gurpslink this.notes}}}
         </div>
       </div>
-      <div class='cls satisfiedY center'>{{this.class}}</div>
-      <div class='college satisfiedY center'>{{this.college}}</div>
-      <div class='mana satisfiedY center'>{{this.cost}}</div>
-      <div class='mana_maintain satisfiedY center'>{{this.maintain}}</div>
-      <div class='time satisfiedY center'>{{this.casttime}}</div>
-      <div class='duration satisfiedY center'>{{this.duration}}</div>
+      <div class='cls satisfiedY flex-center'>{{this.class}}</div>
+      <div class='college satisfiedY flex-center'>{{this.college}}</div>
+      <div class='mana satisfiedY flex-center'>{{this.cost}}</div>
+      <div class='mana_maintain satisfiedY flex-center'>{{this.maintain}}</div>
+      <div class='time satisfiedY flex-center'>{{this.casttime}}</div>
+      <div class='duration satisfiedY flex-center'>{{this.duration}}</div>
       <div
-        class='sl satisfiedY rollable center'
+        class='sl satisfiedY rollable flex-center'
         data-name='{{this.name}}'
         data-otf='S:"{{this.name}}"'
         data-key='data.spells.{{@key}}'
       >{{this.level}}
       </div>
-      <div class='rsl satisfiedY center'>{{this.difficulty}}</div>
-      <div class='pts satisfiedY center'>{{this.points}}</div>
-      <div class='ref satisfiedY center'>{{{pdflink this.pageref}}}</div>
+      <div class='rsl satisfiedY flex-center'>{{this.difficulty}}</div>
+      <div class='pts satisfiedY flex-center'>{{this.points}}</div>
+      <div class='ref satisfiedY flex-center'>{{{pdflink this.pageref}}}</div>
     {{/if}}
   {{/listeqt}}
 </div>

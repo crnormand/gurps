@@ -1,6 +1,6 @@
-<div id='conditionalmods'>
-  <div class='itemmenu header' style='padding: 0;'></div>
-  <div class='modifier header'>{{i18n 'GURPS.modifier'}}</div>
+<div id='conditionalmods' class='gga-table'>
+  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='modifier header gga-right'>{{i18n 'GURPS.modifier'}}</div>
   {{#if isEditing}}
     <div class='situation header'>
       <div class='condmodhead'>
@@ -9,7 +9,7 @@
       </div>
     </div>
   {{else}}
-    <div class='situation header'>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}</div>
+    <div class='situation header' style='border-right: none;'>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}</div>
   {{/if}}
 
   {{#each data.conditionalmods as |this key|}}
@@ -17,16 +17,16 @@
       <div class='itemmenu condmodmenu' data-key='data.conditionalmods.{{key}}'>
         <i class='fas fa-times'></i>
       </div>
-      <div class='modifier'>
+      <div class='modifier gga-right'>
         <input name='data.conditionalmods.{{key}}.modifier' class='gcs-input-sm4' type='text' value='{{this.modifier}}' />
       </div>
-      <div class='situation'>
+      <div class='situation' style='border-right: none;'>
         <input name='data.conditionalmods.{{key}}.situation' class='gcs-input' type='text' value='{{this.situation}}' />
       </div>
     {{else}}
-      <div class='itemmenu' style='padding: 0;'></div>
-      <div class='modifier gmod' data-name='Modifier {{this.situation}}'>{{this.modifier}}</div>
-      <div class='situation'>{{{gurpslink this.situation}}}</div>
+      <div class='itemmenu' style='padding: 0; border-right: none;'></div>
+      <div class='modifier gmod gga-right' data-name='Modifier {{this.situation}}'>{{this.modifier}}</div>
+      <div class='situation' style='border-right: none;'>{{{gurpslink this.situation}}}</div>
     {{/if}}
   {{/each}}
 </div>

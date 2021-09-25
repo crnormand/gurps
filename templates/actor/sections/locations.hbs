@@ -1,4 +1,4 @@
-<div id='location'>
+<div id='location' class='gga-tableheader'>
   {{#if isEditing}}
     <div class='header'>
       <div class='hlhead'>
@@ -14,11 +14,11 @@
     <div class='header'>{{localize 'GURPS.hitLocation'}}</div>
   {{/if}}
 
-  <div class='itemmenu header' style='padding: 0;'></div>
-  <div class='roll header'>{{localize 'GURPS.roll'}}</div>
+  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='roll header flex-center'>{{localize 'GURPS.roll'}}</div>
   <div class='where header'>{{localize 'GURPS.hitLocationWhere'}}</div>
-  <div class='penalty header'>{{localize 'GURPS.hitLocationPenalty'}}</div>
-  <div class='dr header'>{{localize 'GURPS.hitLocationDR'}}</div>
+  <div class='penalty header gga-right'>{{localize 'GURPS.hitLocationPenalty'}}</div>
+  <div class='dr header gga-right'>{{localize 'GURPS.hitLocationDR'}}</div>
 
   {{#each data.hitlocations as |this key|}}
     {{#if ../isEditing}}
@@ -28,7 +28,7 @@
     {{else}}
       <div class='itemmenu' style='padding: 0;'></div>
     {{/if}}
-    <div class='roll'>
+    <div class='roll flex-center'>
       {{#if ../isEditing}}
         <input
           name='data.hitlocations.{{@key}}.roll'
@@ -48,7 +48,7 @@
       {{/if}}
     </div>
     {{#if ../isEditing}}
-      <div class='penalty'>
+      <div class='penalty gga-right'>
         <input
           name='data.hitlocations.{{@key}}.penalty'
           class='gcs-input'
@@ -57,11 +57,11 @@
         />
       </div>
     {{else}}
-      <div class='penalty {{gmod this.penalty}}' data-name='to hit {{this.where}}' data-otf='{{this.penalty}} to hit {{this.where}}'>
+      <div class='penalty gga-right {{gmod this.penalty}}' data-name='to hit {{this.where}}' data-otf='{{this.penalty}} to hit {{this.where}}'>
         {{{displayNumber (hitlocationpenalty this.where this.penalty parent)}}}
       </div>
     {{/if}}
-    <div class='dr'>
+    <div class='dr gga-right'>
       {{#if ../isEditing}}
         <input class='gcs-input' type='text' name='data.hitlocations.{{@key}}.import' value='{{this.import}}' />
       {{else}}

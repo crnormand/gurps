@@ -1,5 +1,5 @@
 <div id='skills'>
-  <div class='itemmenu header' style='padding: 0;'></div>
+  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
   <div class='desc header'>
     <div class='skillhead'>
       <span>{{i18n 'GURPS.skills'}}</span>
@@ -52,7 +52,7 @@
 
   {{else}}
     {{#listeqt data.skills}}
-      <div class='itemmenu header' style='padding: 0;'></div>
+  <div class='itemmenu' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
       <div
         class='desc indent{{@indent}} satisfiedY skldraggable dblclkedit tooltip-manager'
         data-key='data.skills.{{@key}}'
@@ -74,15 +74,15 @@
           }}}</div>
       </div>
       <div
-        class='sl satisfiedY {{rollable this.level}} center'
+        class='sl satisfiedY {{rollable this.level}} flex-center'
         data-name='{{this.name}}'
         data-key='data.skills.{{@key}}'
         data-otf='S:"{{this.name}}"'
       >{{this.level}}
       </div>
-      <div class='rsl satisfiedY center'>{{this.relativelevel}}</div>
-      <div class='pts satisfiedY center'>{{this.points}}</div>
-      <div class='ref satisfiedY center'>{{{pdflink this.pageref}}}</div>
+      <div class='rsl satisfiedY flex-center'>{{this.relativelevel}}</div>
+      <div class='pts satisfiedY flex-center'>{{this.points}}</div>
+      <div class='ref satisfiedY flex-center'>{{{pdflink this.pageref}}}</div>
     {{/listeqt}}
   {{/if}}
 </div>

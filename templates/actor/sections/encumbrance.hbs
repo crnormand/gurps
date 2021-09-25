@@ -1,11 +1,11 @@
-<div id='encumbrance'>
+<div id='encumbrance' class='gga-tableheader'>
   <div class='header'>
     {{#if isEditing}}
       <div class='enchead'>
         <span>{{i18n 'GURPS.encumbranceMoveDodge'}}</span>
       </div>
       <div class='option'>
-        <input id='showflightmove' type='checkbox' {{checked data.additionalresources.showflightmove}}/>
+        <input id='showflightmove' type='checkbox' {{checked data.additionalresources.showflightmove}} />
         <label for='showflightmove'>{{i18n 'GURPS.showFlightMove' 'Show Move/Flight Move'}}</label>
       </div>
     {{else}}
@@ -13,65 +13,37 @@
     {{/if}}
   </div>
 
-  <div class='encmarkerh header'></div>
-  <div class='ench header'>{{i18n 'GURPS.level'}}</div>
-  <div class='loadh header'>{{i18n 'GURPS.maxload'}}</div>
-  <div class='moveh header'>{{i18n 'GURPS.move'}}</div>
-  <div class='dodgeh header'>{{i18n 'GURPS.dodge'}}</div>
+  <div class='encmarker header'></div>
+  <div class='enc header'>{{i18n 'GURPS.level'}}</div>
+  <div class='load header'>{{i18n 'GURPS.maxload'}}</div>
+  <div class='move header'>{{i18n 'GURPS.move'}}</div>
+  <div class='dodge header'>{{i18n 'GURPS.dodge'}}</div>
 
-  {{#each data.encumbrance as |this key|}}
-    {{#if this.current}}
-      <div class='encmarker current'></div>
-      <div class='enc current {{this.key}}' data-key='{{key}}'></div>
-      <div class='load current'>
-        {{#if ../isEditing}}
-          <input name='data.encumbrance.{{key}}.weight' class='gcs-input' type='text' value='{{this.weight}}' />
-        {{else}}
-          {{this.weight}}
-        {{/if}}
-      </div>
-      <div class='move current'>
-        {{#if ../isEditing}}
-          <input name='data.encumbrance.{{key}}.move' class='gcs-input' type='text' value='{{this.move}}' />
-        {{else}}
-          {{this.currentmovedisplay}}
-        {{/if}}
-      </div>
+  {{#each data.encumbrance}}
+    <div class='encmarker {{include-if this.current 'current'}}'></div>
+    <div class='enc {{include-if this.current 'current'}} {{this.key}}' data-key='{{@key}}'></div>
+    <div class='load gga-right {{include-if this.current 'current'}}'>
       {{#if ../isEditing}}
-        <div class='dodge current'>
-          <input name='data.encumbrance.{{key}}.dodge' class='gcs-input' type='text' value='{{this.dodge}}' />
-        </div>
+        <input name='data.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{this.weight}}' />
       {{else}}
-        <div class='dodge current rollable' data-otf='Dodge' data-path='dodge'>
-          {{this.currentdodge}}
-        </div>
+        {{this.weight}}
       {{/if}}
+    </div>
+    <div class='move flex-center {{include-if this.current 'current'}}'>
+      {{#if ../isEditing}}
+        <input name='data.encumbrance.{{@key}}.move' class='gcs-input' type='text' value='{{this.move}}' />
+      {{else}}
+        {{this.currentmovedisplay}}
+      {{/if}}
+    </div>
+    {{#if ../isEditing}}
+      <div class='dodge flex-center {{include-if this.current 'current'}}'>
+        <input name='data.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{this.dodge}}' />
+      </div>
     {{else}}
-      <div class='encmarker'></div>
-      <div class='enc {{this.key}}' data-key='{{key}}'></div>
-      <div class='load'>
-        {{#if ../isEditing}}
-          <input name='data.encumbrance.{{key}}.weight' class='gcs-input' type='text' value='{{this.weight}}' />
-        {{else}}
-          {{this.weight}}
-        {{/if}}
+      <div class='dodge rollable flex-center {{include-if this.current 'current'}}' data-otf='Dodge' data-path='dodge'>
+        {{this.currentdodge}}
       </div>
-      <div class='move'>
-        {{#if ../isEditing}}
-          <input name='data.encumbrance.{{key}}.move' class='gcs-input' type='text' value='{{this.move}}' />
-        {{else}}
-          {{this.currentmovedisplay}}
-        {{/if}}
-      </div>
-      {{#if ../isEditing}}
-        <div class='dodge'>
-          <input name='data.encumbrance.{{key}}.dodge' class='gcs-input' type='text' value='{{this.dodge}}' />
-        </div>
-      {{else}}
-        <div class='dodge rollable' data-otf='Dodge' data-path='dodge'>
-          {{this.currentdodge}}
-        </div>
-      {{/if}}
     {{/if}}
   {{/each}}
 </div>

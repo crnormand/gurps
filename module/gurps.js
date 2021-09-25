@@ -32,7 +32,6 @@ import GurpsJournalEntry from './journal.js'
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 GURPS.DEBUG = true
-
 GURPS.Migration = Migration
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
@@ -62,6 +61,11 @@ import { HitLocation } from './hitlocation/hitlocation.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import GurpsToken from './token.js'
+import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
+
+if (GURPS.DEBUG) {
+  GURPS.parseDecimalNumber = parseDecimalNumber
+}
 
 AddChatHooks()
 JQueryHelpers()

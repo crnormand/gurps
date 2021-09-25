@@ -21,7 +21,7 @@ export class GurpsActorSheet extends ActorSheet {
       height: 800,
       tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
       scrollY: [
-        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
+        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
       ],
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
@@ -1404,9 +1404,9 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['gurps', 'gurpsactorsheet', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor/actor-sheet-gcs-editor.html',
+      template: 'systems/gurps/templates/actor/actor-sheet-gcs-editor.hbs',
       scrollY: [
-        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipment #other_equipment #notes',
+        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
       ],
       width: 880,
       height: 800,

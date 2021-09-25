@@ -66,8 +66,9 @@
       {{>spells}}
     {{/if}}
 
-    {{>equipment}}
-    {{>other-equipment}}
+    {{>equipment container='carried' data=this.data}}
+    {{!>equipment container='other' data=this.data}}
+
     {{>notes}}
   </div>
   {{>footer}}

@@ -1,6 +1,9 @@
 <div id='notes'>
-  <div class='desc header' data-key='data.notes'>Notes &nbsp; <i class='fas fa-plus addnoteicon'></i></div>
-  <div class='ref header'>Ref</div>
+  <div class='desc header' data-key='data.notes'>
+    <span>{{i18n 'GURPS.notes'}}</span>
+    <i class='fas fa-plus addnoteicon'></i>
+  </div>
+  <div class='ref header'>{{i18n 'GURPS.abbrevRef' 'Ref'}}</div>
   {{#listeqt data.notes}}
     <div class='desc indent{{@indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}' data-key='data.notes.{{@key}}'>
       {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}

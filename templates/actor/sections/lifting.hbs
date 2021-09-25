@@ -1,6 +1,6 @@
-<div id='lifting'>
+<div id='lifting' class='gga-tableheader'>
   <div class='header'>{{i18n 'GURPS.liftingAndMovingThings'}}</div>
-  <div class='lift'>
+  <div class='lift gga-right'>
     {{#if isEditing}}
       <input
         name='data.liftingmoving.basiclift'
@@ -15,7 +15,7 @@
   <div class='liftdesc'>
     {{i18n 'GURPS.basicLift'}}
   </div>
-  <div class='lift'>
+  <div class='lift gga-right'>
     {{#if isEditing}}
       <input
         name='data.liftingmoving.onehandedlift'
@@ -30,7 +30,7 @@
   <div class='liftdesc'>
     {{i18n 'GURPS.oneHandLift'}}
   </div>
-  <div class='lift'>
+  <div class='lift gga-right'>
     {{#if isEditing}}
       <input
         name='data.liftingmoving.twohandedlift'
@@ -45,7 +45,7 @@
   <div class='liftdesc'>
     {{i18n 'GURPS.twoHandLift'}}
   </div>
-  <div class='lift'>
+  <div class='lift gga-right'>
     {{#if isEditing}}
       <input name='data.liftingmoving.shove' class='gcs-input-4' type='text' value='{{data.liftingmoving.shove}}' />
     {{else}}
@@ -56,7 +56,7 @@
     {{i18n 'GURPS.shoveAndKnockOver'}}
   </div>
   {{#if data.liftingmoving.runningshove}}
-    <div class='lift'>
+    <div class='lift gga-right'>
       {{#if isEditing}}
         <input
           name='data.liftingmoving.runningshove'
@@ -72,7 +72,7 @@
       {{i18n 'GURPS.runningShoveAndKnockOver'}}
     </div>
   {{/if}}
-  <div class='lift'>
+  <div class='lift gga-right'>
     {{#if isEditing}}
       <input
         name='data.liftingmoving.carryonback'
@@ -87,7 +87,7 @@
   <div class='liftdesc'>
     {{i18n 'GURPS.carryOnBack'}}
   </div>
-  <div class='lift'>
+  <div class='lift gga-right'>
     {{#if isEditing}}
       <input
         name='data.liftingmoving.shiftslightly'

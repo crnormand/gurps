@@ -580,6 +580,60 @@
   flex: 0 0 36px;
 }
 
+.header {
+  background-color: black;
+  border-bottom: 1px solid black;
+  color: white;
+  text-align: center;
+  font-size: 80%;
+}
+
+.gga-table,
+.gga-tableheader {
+  display: grid;
+  border: 1px solid black;
+  align-content: stretch;
+  grid-template-rows: 0fr auto;
+}
+
+.gga-table .header:not(.header:last-of-type) {
+  border-right: 1px solid lightgrey;
+}
+
+.gga-tableheader .header:not(.header:first-child) {
+  border-top: 1px solid lightgrey;
+  border-right: 1px solid lightgrey;
+}
+
+.gga-tableheader.two-header {
+  grid-template-rows: 0fr 0fr auto;
+}
+
+.gga-table > div,
+.gga-tableheader > div {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  padding: 0 0.2em 0 0.2em;
+  white-space: nowrap;
+}
+
+.gga-table > div:not(.header),
+.gga-tableheader > div:not(.header) {
+  border-right: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
+}
+
+.gga-tableheader > .header:first-child {
+  grid-area: header;
+  justify-content: center;
+}
+
+.gga-right {
+  justify-content: flex-end;
+  text-align: end;
+}
+
 .gurps .attributes table {
   /*	  width: 300px;*/
   border: none;
@@ -744,8 +798,8 @@ body {
     'ranged ranged'
     'advantages skills'
     'spells spells'
-    'equipment equipment'
-    'other_equipment other_equipment'
+    'equipmentcarried equipmentcarried'
+    'equipmentother equipmentother'
     'notes notes';
   grid-gap: 0.05in;
 }
@@ -769,8 +823,8 @@ body {
     'advantages advantages'
     'skills skills'
     'spells spells'
-    'equipment equipment'
-    'other_equipment other_equipment'
+    'equipmentcarried equipmentcarried'
+    'equipmentother equipmentother'
     'notes notes';
   grid-gap: 0.05in;
   grid-template-columns: 1fr 1fr;
@@ -853,7 +907,6 @@ body {
 #identity,
 #miscellaneous,
 #points,
-#lifting,
 #basic-attributes,
 #secondary-attributes,
 #hitpoints {
@@ -930,8 +983,8 @@ body {
   grid-area: encumbrance;
   grid-template:
     'header header header header header'
-    'encmarkerh ench loadh moveh dodgeh'
     'encmarker enc load move dodge';
+  grid-template-rows: 0fr 0fr;
 }
 
 #lifting {
@@ -940,10 +993,7 @@ body {
     'header header'
     'desc lift';
   grid-template-columns: 1fr 0fr;
-}
-
-#lifting .header:first-child {
-  grid-area: header;
+  grid-template-rows: 0fr;
 }
 
 #location {
@@ -952,24 +1002,22 @@ body {
     'header   header  header  header header'
     'itemmenu roll    where   penalty dr   ';
   grid-template-columns: min-content min-content 1fr min-content min-content;
+  grid-template-rows: 0fr 0fr;
 }
 
-#equipment .header,
+.equipmentlist .header,
 #spells .header,
 #skills .header,
 #ranged .header,
 #melee .header,
 #advantages .header,
 #combat-trackers .header,
-#conditionalmods .header,
-#reactions .header,
-#encumbrance .header,
-#location .header {
+#conditionalmods .header {
   display: inline-flex;
   flex-flow: column nowrap;
 }
 
-#equipment .header > div,
+.equipmentlist .header > div,
 #spells .header > div,
 #skills .header > div,
 #ranged .header > div,
@@ -986,7 +1034,7 @@ body {
   align-content: center;
 }
 
-#equipment .equiphead i,
+.equipmentlist .equiphead i,
 #spells .spellhead i,
 #skills .skillhead i,
 #ranged .rangedhead i,
@@ -1005,13 +1053,29 @@ body {
   zoom: 0.5;
 }
 
-#encumbrance .header:first-child,
-#location .header:first-child {
-  grid-area: header;
-  border-bottom: 1px solid lightgray;
+/* TODO Consolidate encumbrance */
+
+#location .header:first-child,
+#encumbrance .header:first-child {
+  flex-flow: column nowrap;
 }
 
-#equipment .equipmenu,
+#encumbrance.dodgeh {
+  border-right: none !important;
+}
+
+#condtionalmods > div {
+  border-right: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
+  padding: 0 0.2em 0 0.2em;
+}
+
+#condtionalmods > .header:first-child,
+#condtionalmods > .header:last-of-type {
+  border-right: none;
+}
+
+.equipmentlist .equipmenu,
 #spells .spellmenu,
 #skills .skillmenu,
 #ranged .rangedmenu,
@@ -1023,7 +1087,7 @@ body {
   color: lightgrey;
 }
 
-#equipment .equipmenu:hover,
+.equipmentlist .equipmenu:hover,
 #spells .spellmenu:hover,
 #skills .skillmenu:hover,
 #ranged .rangedmenu:hover,
@@ -1035,7 +1099,7 @@ body {
   color: darkred;
 }
 
-#equipment .equipmenu i,
+.equipmentlist .equipmenu i,
 #spells .spellmenu i,
 #skills .skillmenu i,
 #ranged .rangedmenu i,
@@ -1047,7 +1111,7 @@ body {
   color: inherit;
 }
 
-#equipment .equipmenu i:hover,
+.equipmentlist .equipmenu i:hover,
 #spells .spellsmenu i:hover,
 #skills .skillsmenu i:hover,
 #ranged .rangedmenu i:hover,
@@ -1059,14 +1123,13 @@ body {
   color: inherit;
 }
 
-#reactions,
 #conditionalmods,
 #melee,
 #ranged,
 #advantages,
 #skills,
 #spells,
-#equipment,
+.equipmentlist,
 #other_equipment,
 #notes {
   display: grid;
@@ -1074,23 +1137,13 @@ body {
   align-content: start;
 }
 
-#encumbrance,
-#lifting,
-#location {
-  display: grid;
-  border: 1px solid black;
-  align-content: stretch;
-  grid-template-rows: 0fr 0fr auto;
-}
-
 #conditionalmods,
-#reactions,
 #melee,
 #ranged,
 #advantages,
 #skills,
 #spells,
-#equipment,
+.equipmentlist,
 #other_equipment,
 #notes {
   grid-template-rows: repeat(1000, auto) 1fr;
@@ -1106,7 +1159,7 @@ body {
 }
 
 #melee {
-  grid-template-columns: min-content 1fr repeat(8, auto);
+  grid-template-columns: min-content 1fr repeat(7, auto);
   grid-area: melee;
 }
 
@@ -1130,14 +1183,14 @@ body {
   grid-area: spells;
 }
 
-#equipment {
+#equipmentcarried {
   grid-template-columns: min-content auto auto 1fr repeat(6, auto);
-  grid-area: equipment;
+  grid-area: equipmentcarried;
 }
 
-#other_equipment {
+#equipmentother {
   grid-template-columns: min-content auto auto 1fr repeat(6, auto);
-  grid-area: other_equipment;
+  grid-area: equipmentother;
 }
 
 #notes {
@@ -1225,43 +1278,9 @@ body {
 .rof,
 .shots,
 .bulk,
-.rcl,
-.load,
-.loadh,
-.move,
-.moveh,
-.dodge,
-.dodgeh,
-.roll,
-.where,
-.dr,
-.itemmenu,
-.liftdesc,
-.lift,
-.modifier,
-.situation {
+.rcl {
   padding-left: 0.2em;
   padding-right: 0.2em;
-  border-bottom: 1px solid lightgray;
-}
-
-.penalty {
-  padding-left: 0.2em;
-  padding-right: 0.05in;
-  border-bottom: 1px solid lightgray;
-}
-
-.enc,
-.ench {
-  padding-left: 0;
-  padding-right: 0.2em;
-  border-bottom: 1px solid lightgray;
-}
-
-.encmarker,
-.encmarkerh {
-  padding-left: 0.2em;
-  padding-right: 0;
   border-bottom: 1px solid lightgray;
 }
 
@@ -1283,15 +1302,15 @@ body {
 #reactions .itemmenu:nth-child(even),
 #reactions .modifier:nth-child(odd),
 #reactions .situation:nth-child(even),
-#melee .itemmenu:nth-child(20n + 11),
-#melee .desc:nth-child(20n + 12),
-#melee .usage:nth-child(20n + 13),
-#melee .level:nth-child(20n + 14),
-#melee .parry:nth-child(20n + 15),
-#melee .block:nth-child(20n + 16),
-#melee .damage:nth-child(20n + 17),
-#melee .reach:nth-child(20n + 18),
-#melee .st:nth-child(20n + 19),
+#melee .itemmenu:nth-child(18n + 10),
+#melee .desc:nth-child(18n + 11),
+#melee .usage:nth-child(18n + 12),
+#melee .level:nth-child(18n + 13),
+#melee .parry:nth-child(18n + 14),
+#melee .block:nth-child(18n + 15),
+#melee .damage:nth-child(18n + 16),
+#melee .reach:nth-child(18n + 17),
+#melee .st:nth-child(18n + 18),
 #ranged .itemmenu:nth-child(24n + 13),
 #ranged .desc:nth-child(24n + 14),
 #ranged .usage:nth-child(24n + 15),
@@ -1326,16 +1345,16 @@ body {
 #spells .rsl:nth-child(24n + 22),
 #spells .pts:nth-child(24n + 23),
 #spells .ref:nth-child(24n + 24),
-#equipment .itemmenu:nth-child(20n + 11),
-#equipment .equipped:nth-child(20n + 12),
-#equipment .qty:nth-child(20n + 13),
-#equipment .desc:nth-child(20n + 14),
-#equipment .uses:nth-child(20n + 15),
-#equipment .cost:nth-child(20n + 16),
-#equipment .weight:nth-child(20n + 17),
-#equipment .sum_cost:nth-child(20n + 18),
-#equipment .sum_weight:nth-child(20n + 19),
-#equipment .ref:nth-child(20n + 20),
+.equipmentlist .itemmenu:nth-child(20n + 11),
+.equipmentlist .equipped:nth-child(20n + 12),
+.equipmentlist .qty:nth-child(20n + 13),
+.equipmentlist .desc:nth-child(20n + 14),
+.equipmentlist .uses:nth-child(20n + 15),
+.equipmentlist .cost:nth-child(20n + 16),
+.equipmentlist .weight:nth-child(20n + 17),
+.equipmentlist .sum_cost:nth-child(20n + 18),
+.equipmentlist .sum_weight:nth-child(20n + 19),
+.equipmentlist .ref:nth-child(20n + 20),
 #other_equipment .itemmenu:nth-child(20n + 11),
 #other_equipment .equipped:nth-child(20n + 12),
 #other_equipment .qty:nth-child(20n + 13),
@@ -1351,7 +1370,7 @@ body {
   background-color: #e8ffe8;
 }
 
-#equipment .desc,
+.equipmentlist .desc,
 #other_equipment .desc,
 .cls,
 .college,
@@ -1381,22 +1400,7 @@ body {
 .rof,
 .shots,
 .bulk,
-.rcl,
-.load,
-.loadh,
-.move,
-.moveh,
-.dodge,
-.dodgeh,
-.where,
-.penalty,
-.dr,
-.ench,
-.encmarkerh,
-.roll,
-.modifier,
-.itemmenu,
-.situation {
+.rcl {
   border-right: 1px solid lightgray;
 }
 
@@ -1420,28 +1424,12 @@ body {
 .rof,
 .shots,
 .bulk,
-.rcl,
-.load,
-.where,
-.penalty,
-.dr,
-.lift,
-.modifier {
+.rcl {
   text-align: right;
 }
 
-.move,
-.dodge,
-.equipped,
-.itemmenu,
-.roll {
+.equipped {
   text-align: center;
-}
-
-.itemmenu {
-  padding: 0 0.05in;
-  display: inline-flex;
-  align-items: center;
 }
 
 /* TODO Indicate this item has a contextmenu */
@@ -1450,65 +1438,15 @@ body {
   text-shadow: 0px 0px 2px #80ff80;
 }
 
-.liftdesc,
-.where {
-  text-align: left;
-}
-
-.encmarker,
-.encmarkerh,
-.enc,
-.ench,
-.load,
-.loadh,
-.move,
-.moveh,
-.dodge,
-.dodgeh,
-.roll,
-.where,
-.penalty,
-.dr,
-.liftdesc,
-.lift,
-.modifier {
-  white-space: nowrap;
-}
-
 #lifting .field,
 .noedit {
   white-space: nowrap;
   border: none;
 }
 
-.header,
-#conditionalmods .header,
-#reactions .header,
-#melee .header,
-#ranged .header,
-#equipment .header,
-#other_equipment .header {
-  background-color: black;
-  border-bottom: 1px solid black;
-  color: white;
-  text-align: center;
-  font-size: 80%;
-}
-
-#location .header:nth-last-child(10n + 5),
-#location .header:nth-last-child(10n + 4),
-#location .header:nth-last-child(10n + 3),
-#location .header:nth-last-child(10n + 2),
-#location .header:nth-last-child(10n + 1) {
-  background-color: black;
-}
-
 #encumbrance > div:nth-last-child(-n + 5),
 #lifting > div:nth-last-child(-n + 2),
-#location > div:nth-last-child(-n + 4) {
-  border-bottom: none;
-}
-
+#location > div:nth-last-child(-n + 5),
 #conditionalmods > div:nth-last-child(-n + 3),
 #reactions > div:nth-last-child(-n + 3),
 #melee > div:nth-last-child(-n + 9),
@@ -1516,10 +1454,20 @@ body {
 #advantages > div:nth-last-child(-n + 4),
 #skills > div:nth-last-child(-n + 5),
 #spells > div:nth-last-child(-n + 11),
-#equipment > div:nth-last-child(-n + 9),
+.equipmentlist > div:nth-last-child(-n + 9),
 #other_equipment > div:nth-last-child(-n + 9),
 #notes > div:nth-last-child(-n + 1) {
   border-bottom: none;
+}
+
+#melee .st,
+#location .dr,
+#lifting .liftdesc,
+#encumbrance .dodgeh,
+#encumbrance .dodge,
+#conditionalmods .situation,
+#reactions .situation {
+  border-right: none;
 }
 
 .indent1 {
@@ -1562,13 +1510,8 @@ body {
   color: red;
 }
 
-#encumbrance .current:nth-last-child(10n + 5),
-#encumbrance .current:nth-last-child(10n + 4),
-#encumbrance .current:nth-last-child(10n + 3),
-#encumbrance .current:nth-last-child(10n + 2),
-#encumbrance .current:nth-last-child(10n + 1),
 .current {
-  background-color: lightgoldenrodyellow;
+  background-color: lightgoldenrodyellow !important;
 }
 
 .list_note {
@@ -1900,8 +1843,7 @@ body {
 #combat-encumber .current:nth-last-child(10n + 4),
 #combat-encumber .current:nth-last-child(10n + 3),
 #combat-encumber .current:nth-last-child(10n + 2),
-#combat-encumber .current:nth-last-child(10n + 1),
-.current {
+#combat-encumber .current:nth-last-child(10n + 1) {
   background-color: lightgoldenrodyellow;
 }
 

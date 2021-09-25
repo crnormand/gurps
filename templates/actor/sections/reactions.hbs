@@ -1,7 +1,7 @@
-<div id='reactions'>
-  <div class='itemmenu header' style='padding: 0;'></div>
-  <div class='modifier header'>{{i18n 'GURPS.modifier'}}</div>
-  <div class='situation header'>
+<div id='reactions' class='gga-table'>
+  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='modifier header gga-right'>{{i18n 'GURPS.modifier'}}</div>
+  <div class='situation header' style='border-right: none;'>
     <div class='reacthead'>
       <span>{{i18n 'GURPS.reaction'}}</span>
       {{#if isEditing}}
@@ -15,7 +15,7 @@
       <div class='itemmenu reactmenu' data-key='data.reactions.{{@key}}'>
         <i class='fas fa-times'></i>
       </div>
-      <div class='modifier'>
+      <div class='modifier gga-right'>
         <input name='data.reactions.{{@key}}.modifier' class='gcs-input-sm4' type='text' value='{{this.modifier}}' />
       </div>
       <div class='situation'>
@@ -23,7 +23,7 @@
       </div>
     {{else}}
       <div class='itemmenu' style='padding: 0;'></div>
-      <div class='modifier gmod' data-name='Reaction {{this.situation}}'>{{{displayNumber this.modifier}}}</div>
+      <div class='modifier gmod gga-right' data-name='Reaction {{this.situation}}'>{{{displayNumber this.modifier}}}</div>
       <div class='situation'>{{{gurpslink this.situation}}}</div>
     {{/if}}
   {{/each}}

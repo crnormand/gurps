@@ -1,5 +1,7 @@
+{{debug this}}
+
 <div id='equipment{{container}}' class='equipmentlist'>
-  <div class='itemmenu header' style='padding: 0;'></div>
+  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
   <div class='equipped header'>{{#if (eq container 'carried')}}{{i18n 'GURPS.equipmentEquipped'}}{{/if}}</div>
   <div class='qty header' data-key='data.equipment.{{container}}'>
     {{i18n 'GURPS.equipmentQuantity'}}
@@ -25,96 +27,95 @@
   <div class='sum_cost header'>&sum; $</div>
   <div class='sum_weight header'><span>&sum; <i class='fas fa-weight-hanging'></i></span></div>
   <div class='ref header'>{{i18n 'GURPS.pdfRef'}}</div>
-  <!-- 
-  {{#listeqt (lookup (concat 'data.equipment.' container))}}
+  {{#listeqt (lookup data.equipment container)}}
     {{#if ../isEditing}}
-      <div class='itemmenu equipmenu' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='itemmenu equipmenu' data-key='data.equipment.{{../container}}.{{@key}}'>
         <i class='fas fa-caret-square-down'></i>
       </div>
-      <div class='equipped satisfiedY changeequip' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='equipped satisfiedY changeequip' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{#if (eq container 'carried')}}
           {{#if this.equipped}}&check;{{/if}}
         {{/if}}
       </div>
-      <div class='qty satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='qty satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'>
         <input
-          name='data.equipment.{{container}}.{{@key}}.count'
+          name='data.equipment.{{../container}}.{{@key}}.count'
           class='gcs-input-sm3'
           type='text'
           value='{{this.count}}'
         />
       </div>
-      <div class='desc indent{{@indent}} satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'>
-        <input name='data.equipment.{{container}}.{{@key}}.name' class='gcs-input' type='text' value='{{this.name}}' />
+      <div class='desc indent{{@indent}} satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'>
+        <input name='data.equipment.{{../container}}.{{@key}}.name' class='gcs-input' type='text' value='{{this.name}}' />
         <div class='list_note satisfiedY'>
           <input
-            name='data.equipment.{{container}}.{{@key}}.notes'
+            name='data.equipment.{{../container}}.{{@key}}.notes'
             class='gcs-input'
             type='text'
             value='{{this.notes}}'
           />
         </div>
       </div>
-      <div class='uses satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='uses satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'>
         <input
-          name='data.equipment.{{container}}.{{@key}}.uses'
+          name='data.equipment.{{../container}}.{{@key}}.uses'
           class='gcs-input-sm3'
           type='text'
           value='{{this.uses}}'
         />
       </div>
-      <div class='cost satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='cost satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'>
         <input
-          name='data.equipment.{{container}}.{{@key}}.cost'
+          name='data.equipment.{{../container}}.{{@key}}.cost'
           class='gcs-input-sm5'
           type='text'
           value='{{this.cost}}'
         />
       </div>
-      <div class='weight satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'><input
-          name='data.equipment.{{container}}.{{@key}}.weight'
+      <div class='weight satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'><input
+          name='data.equipment.{{../container}}.{{@key}}.weight'
           class='gcs-input-sm5'
           type='text'
           value='{{this.weight}}'
         />
       </div>
-      <div class='sum_cost satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'><input
-          name='data.equipment.{{container}}.{{@key}}.costsum'
+      <div class='sum_cost satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'><input
+          name='data.equipment.{{../container}}.{{@key}}.costsum'
           class='gcs-input-sm5'
           type='text'
           value='{{this.costsum}}'
         />
       </div>
-      <div class='sum_weight satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'><input
-          name='data.equipment.{{container}}.{{@key}}.weightsum'
+      <div class='sum_weight satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'><input
+          name='data.equipment.{{../container}}.{{@key}}.weightsum'
           class='gcs-input-sm5'
           type='text'
           value='{{this.weightsum}}'
         /></div>
-      <div class='ref satisfiedY' data-key='data.equipment.{{container}}.{{@key}}'><input
-          name='data.equipment.{{container}}.{{@key}}.pageref'
+      <div class='ref satisfiedY' data-key='data.equipment.{{../container}}.{{@key}}'><input
+          name='data.equipment.{{../container}}.{{@key}}.pageref'
           class='gcs-input-sm5'
           type='text'
           value='{{this.pageref}}'
         />
       </div>
     {{else}}
-      <div class='itemmenu header' style='padding: 0;'></div>
-      <div class='equipped satisfiedY changeequip center' data-key='data.equipment.{{container}}.{{@key}}'>
+  <div class='itemmenu' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+      <div class='equipped satisfiedY changeequip flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{#if (eq container 'carried')}}
           {{{include-if this.equipped '&check;' ''}}}
         {{/if}}
       </div>
-      <div class='qty satisfiedY eqtdraggable center' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='qty satisfiedY eqtdraggable flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         <button class='equipmentbutton bold' data-operation='equipment-dec'>&minus;</button>
         {{this.count}}
         <button class='equipmentbutton' data-operation='equipment-inc'>+</button>
       </div>
       <div
         class='desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit equipmenucarried tooltip-manager'
-        data-key='data.equipment.{{container}}.{{@key}}'
+        data-key='data.equipment.{{../container}}.{{@key}}'
       >
-        <span class='eqtdragtarget' data-key='data.equipment.{{container}}.{{@key}}'>
+        <span class='eqtdragtarget' data-key='data.equipment.{{../container}}.{{@key}}'>
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           {{{gurpslink this.name}}}
@@ -131,30 +132,30 @@
         {{#if (displayItemHover this)}}
           <div class='tooltippic'><img src='{{this.img}}' /></div>
         {{/if}}
-        <div class='list_note satisfiedY eqtdraggable' data-key='data.equipment.{{container}}.{{@key}}'>
+        <div class='list_note satisfiedY eqtdraggable' data-key='data.equipment.{{../container}}.{{@key}}'>
           {{{gurpslink this.notes}}}
         </div>
       </div>
-      <div class='uses satisfiedY center' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='uses satisfiedY flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{#if (or (ne this.maxuses '0') (ne this.uses '0'))}}{{this.uses}}{{/if}}
       </div>
-      <div class='cost satisfiedY center' data-key='data.equipment.{{container}}.{{@key}}'>
-        {{toLocaleString this.cost}}
+      <div class='cost satisfiedY flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
+        {{toLocaleString (toNumber this.cost)}}
       </div>
-      <div class='weight satisfiedY center' data-key='data.equipment.{{container}}.{{@key}}'>
-        {{toLocaleString this.weight}}
+      <div class='weight satisfiedY flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
+        {{toLocaleString (toNumber this.weight)}}
         lb
       </div>
-      <div class='sum_cost satisfiedY center' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='sum_cost satisfiedY flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{toLocaleString (round this.costsum)}}
       </div>
-      <div class='sum_weight satisfiedY center' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='sum_weight satisfiedY flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{toLocaleString (round this.weightsum)}}
         lb
       </div>
-      <div class='ref satisfiedY center' data-key='data.equipment.{{container}}.{{@key}}'>
+      <div class='ref satisfiedY flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{{pdflinkext this.pageref this.externallink}}}
       </div>
     {{/if}}
-  {{/listeqt}} -->
+  {{/listeqt}}
 </div>
