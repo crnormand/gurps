@@ -1,5 +1,5 @@
 <div id='other_equipment' class='equipmentlist'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='equipped header'></div>
   <div class='qty header' data-key='data.equipment.other'>
     {{i18n 'GURPS.equipmentQuantity'}}
@@ -66,7 +66,7 @@
         />
       </div>
     {{else}}
-      <div class='itemmenu' style='padding: 0;'></div>
+      <div class='itemmenu' readonly></div>
       <div class='equipped'></div>
       <div class='qty satisfiedY eqtdraggable equipmenuother' data-key='data.equipment.other.{{@key}}'>
         <button class='equipmentbutton bold' data-operation='equipment-dec'>&minus;</button>

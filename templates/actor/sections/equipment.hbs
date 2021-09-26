@@ -1,7 +1,7 @@
 {{debug this}}
 
 <div id='equipment{{container}}' class='equipmentlist'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='equipped header'>{{#if (eq container 'carried')}}{{i18n 'GURPS.equipmentEquipped'}}{{/if}}</div>
   <div class='qty header' data-key='data.equipment.{{container}}'>
     {{i18n 'GURPS.equipmentQuantity'}}
@@ -100,7 +100,7 @@
         />
       </div>
     {{else}}
-  <div class='itemmenu' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu' readonly></div>
       <div class='equipped satisfiedY changeequip flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{#if (eq container 'carried')}}
           {{{include-if this.equipped '&check;' ''}}}

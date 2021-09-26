@@ -1,5 +1,5 @@
 <div id='spells'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='desc header'>
     <div class='spellhead'>
       <span>{{i18n 'GURPS.spells'}}</span>
@@ -98,7 +98,7 @@
           value='{{this.pageref}}'
         /></div>
     {{else}}
-      <div class='itemmenu' style='padding: 0;'></div>
+      <div class='itemmenu' readonly></div>
       <div
         class='desc indent{{@indent}} satisfiedY spldraggable dblclkedit tooltip-manager'
         data-key='data.spells.{{@key}}'

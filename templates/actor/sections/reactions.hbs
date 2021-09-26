@@ -1,7 +1,7 @@
 <div id='reactions' class='gga-table'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='modifier header gga-right'>{{i18n 'GURPS.modifier'}}</div>
-  <div class='situation header' style='border-right: none;'>
+  <div class='situation header'>
     <div class='reacthead'>
       <span>{{i18n 'GURPS.reaction'}}</span>
       {{#if isEditing}}
@@ -22,7 +22,7 @@
         <input name='data.reactions.{{@key}}.situation' class='gcs-input' type='text' value='{{this.situation}}' />
       </div>
     {{else}}
-      <div class='itemmenu' style='padding: 0;'></div>
+      <div class='itemmenu' readonly></div>
       <div class='modifier gmod gga-right' data-name='Reaction {{this.situation}}'>{{{displayNumber this.modifier}}}</div>
       <div class='situation'>{{{gurpslink this.situation}}}</div>
     {{/if}}

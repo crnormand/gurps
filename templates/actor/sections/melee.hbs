@@ -1,5 +1,5 @@
 <div id='melee' class='gga-table'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='desc header'>
     <div class='meleehead'>
       <span>{{i18n 'GURPS.meleeWeapons'}}</span>
@@ -18,7 +18,7 @@
 
   {{#unless isEditing}}
     {{#listattack data 'melee'}}
-      <div class='itemmenu' style='padding: 0;'></div>
+      <div class='itemmenu' readonly></div>
       <div
         class='desc gcs-edit dblclkedit meleedraggable tooltip-manager'
         data-key='data.melee.{{@key}}'

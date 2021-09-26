@@ -584,6 +584,7 @@
   background-color: black;
   border-bottom: 1px solid black;
   color: white;
+  justify-content: center;
   text-align: center;
   font-size: 80%;
 }
@@ -596,7 +597,7 @@
   grid-template-rows: 0fr auto;
 }
 
-.gga-table .header:not(.header:last-of-type) {
+.gga-table .header {
   border-right: 1px solid lightgrey;
 }
 
@@ -626,12 +627,16 @@
 
 .gga-tableheader > .header:first-child {
   grid-area: header;
-  justify-content: center;
 }
 
 .gga-right {
   justify-content: flex-end;
   text-align: end;
+}
+
+.itemmenu[readonly] {
+  padding: 0;
+  border-right: none;
 }
 
 .gurps .attributes table {
@@ -1011,8 +1016,7 @@ body {
 #ranged .header,
 #melee .header,
 #advantages .header,
-#combat-trackers .header,
-#conditionalmods .header {
+#combat-trackers .header {
   display: inline-flex;
   flex-flow: column nowrap;
 }
@@ -1123,7 +1127,6 @@ body {
   color: inherit;
 }
 
-#conditionalmods,
 #melee,
 #ranged,
 #advantages,
@@ -1137,7 +1140,6 @@ body {
   align-content: start;
 }
 
-#conditionalmods,
 #melee,
 #ranged,
 #advantages,
@@ -1151,11 +1153,13 @@ body {
 
 #conditionalmods {
   grid-template-columns: min-content 0fr 1fr;
+  align-content: flex-start;
 }
 
 #reactions {
   grid-template-columns: min-content 0fr 1fr;
   grid-area: reactions;
+  align-content: flex-start;
 }
 
 #melee {
@@ -1447,8 +1451,6 @@ body {
 #encumbrance > div:nth-last-child(-n + 5),
 #lifting > div:nth-last-child(-n + 2),
 #location > div:nth-last-child(-n + 5),
-#conditionalmods > div:nth-last-child(-n + 3),
-#reactions > div:nth-last-child(-n + 3),
 #melee > div:nth-last-child(-n + 9),
 #ranged > div:nth-last-child(-n + 11),
 #advantages > div:nth-last-child(-n + 4),

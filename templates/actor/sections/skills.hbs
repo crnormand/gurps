@@ -1,5 +1,5 @@
 <div id='skills'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='desc header'>
     <div class='skillhead'>
       <span>{{i18n 'GURPS.skills'}}</span>
@@ -52,7 +52,7 @@
 
   {{else}}
     {{#listeqt data.skills}}
-  <div class='itemmenu' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu' readonly></div>
       <div
         class='desc indent{{@indent}} satisfiedY skldraggable dblclkedit tooltip-manager'
         data-key='data.skills.{{@key}}'

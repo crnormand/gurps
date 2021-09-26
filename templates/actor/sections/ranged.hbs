@@ -1,5 +1,5 @@
 <div id='ranged'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='desc header'>
     <div class='rangedhead'>
       <span>{{localize 'GURPS.rangedWeapons'}}</span>
@@ -63,7 +63,7 @@
     {{/each}}
   {{else}}
     {{#listattack data 'ranged'}}
-      <div class='itemmenu' style='padding: 0;'></div>
+      <div class='itemmenu' readonly></div>
       <div class='desc dblclkedit rangeddraggable tooltip-manager' data-key='data.ranged.{{@key}}'>
         {{{gurpslink this.name}}}
         {{#if (isFoundryItem this)}}&nbsp;<i

@@ -1,5 +1,5 @@
 <div id='advantages' class='gurpstable'>
-  <div class='itemmenu header' style='padding: 0; {{#unless isEditing}}border-right: none;{{/unless}}'></div>
+  <div class='itemmenu header' readonly></div>
   <div class='header desc'>
     <div class='adshead' data-key='data.ads'>
       <span>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span>
@@ -27,8 +27,8 @@
         <input name='data.ads.{{@key}}.pageref' class='gcs-input-sm5' type='text' value='{{this.pageref}}' />
       </div>
     {{else}}
-      <div class='itemmenu gurpsrow' style='padding: 0;'></div>
-      <div class='desc gurpsrow indent{{@indent}} adsdraggable dblclkedit tooltip-manager' data-key='data.ads.{{@key}}'>
+      <div class='itemmenu' readonly></div>
+      <div class='desc indent{{@indent}} adsdraggable dblclkedit tooltip-manager' data-key='data.ads.{{@key}}'>
         <div style='display: flex; flex-flow: row nowrap;'>
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
           {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -40,14 +40,14 @@
             <div class='tooltippic'><img src='{{this.img}}' /></div>
           {{/if}}
         </div>
-        <div class='list_note gurpsrow adsdraggable'
+        <div class='list_note adsdraggable'
           {{#if (or (notEmpty this.contains) (notEmpty this.collapsed))}}
             style='padding-left: 1em;'
           {{/if}}
           data-key='data.ads.{{@key}}'>{{{gurpslinkbr this.notes}}}</div>
       </div>
-      <div class='pts gurpsrow flex-center'>{{this.points}}</div>
-      <div class='ref gurpsrow flex-center'>{{{pdflink this.pageref}}}</div>
+      <div class='pts flex-center'>{{this.points}}</div>
+      <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
     {{/if}}
   {{/listeqt}}
 </div>
