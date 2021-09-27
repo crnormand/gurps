@@ -7,6 +7,7 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
+import { isConfigurationAllowed } from '../game-utils.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -71,6 +72,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('.gurpsactorsheet').click(ev => {
       this._onfocus(ev)
     })
+
     html
       .parent('.window-content')
       .siblings('.window-header')
@@ -78,116 +80,76 @@ export class GurpsActorSheet extends ActorSheet {
         this._onfocus(ev)
       })
 
+    // a click on a navigation-link scroll the sheet to that section
     html.find('.navigation-link').click(this._onNavigate.bind(this))
+
+    // enable some fields to be a targeted roll without an OTF
     html.find('.rollable').click(this._onClickRoll.bind(this))
-    GurpsWiring.hookupGurps(html)
+
+    // wire events to all OTFs on the sheet
+    GurpsWiring.hookupAllEvents(html)
+
+    // GurpsWiring.hookupGurps(html)
+    // GurpsWiring.hookupGurpsRightClick(html)
+    // GurpsWiring.hookupGurpsDragAndDrop(html)
     // TODO verify if this is duplication of GurpsWiring and if so, remove
-    html.find('.gurpslink').contextmenu(this._onRightClickGurpslink.bind(this))
-    html.find('.glinkmod').contextmenu(this._onRightClickGurpslink.bind(this))
-    html.find('.glinkmodplus').contextmenu(this._onRightClickGurpslink.bind(this))
-    html.find('.glinkmodminus').contextmenu(this._onRightClickGurpslink.bind(this))
-    html.find('[data-otf]').contextmenu(this._onRightClickOtf.bind(this))
-    html.find('.gmod').contextmenu(this._onRightClickGmod.bind(this))
-    html.find('.pdflink').contextmenu(this._onRightClickPdf.bind(this))
+    // html.find('.gurpslink').contextmenu(this._onRightClickGurpslink.bind(this))
+    // html.find('.glinkmod').contextmenu(this._onRightClickGurpslink.bind(this))
+    // html.find('.glinkmodplus').contextmenu(this._onRightClickGurpslink.bind(this))
+    // html.find('.glinkmodminus').contextmenu(this._onRightClickGurpslink.bind(this))
+    // html.find('[data-otf]').contextmenu(this._onRightClickOtf.bind(this))
+    // html.find('.gmod').contextmenu(this._onRightClickGmod.bind(this))
+    // html.find('.pdflink').contextmenu(this._onRightClickPdf.bind(this))
 
-    html.find('[data-otf]').each((_, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        let display = ''
-        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({
-            otf: li.getAttribute('data-otf'),
-            actor: this.actor.id,
-            displayname: display,
-          })
-        )
-      })
-    })
+    // html.find('[data-otf]').each((_, li) => {
+    //   li.setAttribute('draggable', true)
+    //   li.addEventListener('dragstart', ev => {
+    //     let display = ''
+    //     if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+    //     return ev.dataTransfer.setData(
+    //       'text/plain',
+    //       JSON.stringify({
+    //         otf: li.getAttribute('data-otf'),
+    //         actor: this.actor.id,
+    //         displayname: display,
+    //       })
+    //     )
+    //   })
+    // })
 
-    const canConfigure = game.user.isGM || this.actor.isOwner
-    if (!canConfigure) return // Only allow "owners to be able to edit the sheet, but anyone can roll from the sheet
+    if (!isConfigurationAllowed(this.actor)) return // Only allow "owners" to be able to edit the sheet, but anyone can roll from the sheet
 
-    // html.find('.dblclksort').dblclick(this._onDblclickSort.bind(this))
-
-    if (!this.getData().isEditing) {
-      this._makeHeaderMenu(
-        html.find('#advantages'),
-        '.adshead',
-        [this.sortAscendingMenu('data.ads'), this.sortDescendingMenu('data.ads')],
-        ClickAndContextMenu
-      )
-
-      this._makeHeaderMenu(
-        html.find('#skills'),
-        '.skillhead',
-        [this.sortAscendingMenu('data.skills'), this.sortDescendingMenu('data.skills')],
-        ClickAndContextMenu
-      )
+    // add the default menu items for all tables with a headermenu
+    let tables = html.find('.headermenu').closest('.gga-table')
+    for (const table of tables) {
+      let id = `#${table.id}`
+      let items = this.getMenuItems(id)
+      this._makeHeaderMenu($(table), '.headermenu', items, ClickAndContextMenu)
     }
 
-    html.find('.enc').click(this._onClickEnc.bind(this))
-
-    let makelistdrag = (cls, type) => {
-      html.find(cls).each((i, li) => {
-        li.setAttribute('draggable', true)
-        li.addEventListener('dragstart', ev => {
-          let oldd = ev.dataTransfer.getData('text/plain')
-          let eqtkey = ev.currentTarget.dataset.key
-          let eqt = getProperty(this.actor.data, eqtkey) // FYI, may not actually be Equipment
-          if (!eqt) return
-          if (!!eqt.eqtkey) {
-            eqtkey = eqt.eqtkey
-            eqt = GURPS.decode(this.actor.data, eqtkey) // Features added by equipment will point to the equipment
-            type = 'equipment'
-          }
-          var itemData
-          if (!!eqt.itemid) {
-            itemData = this.actor.items.get(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
-            let img = new Image()
-            img.src = itemData.img
-            const w = 50
-            const h = 50
-            const preview = DragDrop.createDragImage(img, w, h)
-            ev.dataTransfer.setDragImage(preview, 0, 0)
-          }
-          let newd = {
-            actorid: this.actor.id, // may not be useful if this is an unlinked token
-            actor: this.actor, // so send the actor,
-            isLinked: !this.actor.isToken,
-            type: type,
-            key: eqtkey,
-            itemid: eqt.itemid,
-            itemData: itemData,
-          }
-          if (!!oldd) mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
-          return ev.dataTransfer.setData('text/plain', JSON.stringify(newd))
-        })
-      })
+    // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
+      // TODO add feedback that table is clickable.
+      html.find('.enc').click(this._onClickEnc.bind(this))
     }
 
-    makelistdrag('.eqtdraggable', 'equipment')
-    makelistdrag('.adsdraggable', 'ads')
-    makelistdrag('.skldraggable', 'skills')
-    makelistdrag('.spldraggable', 'spells')
-    makelistdrag('.notedraggable', 'note')
+    // allow items in these lists to be draggable
+    // TODO provide feedback about where the cursor is and whether you can drop it there.
+    this.makelistdrag(html, '.eqtdraggable', 'equipment')
+    this.makelistdrag(html, '.adsdraggable', 'ads')
+    this.makelistdrag(html, '.skldraggable', 'skills')
+    this.makelistdrag(html, '.spldraggable', 'spells')
+    this.makelistdrag(html, '.notedraggable', 'note')
+    this.makelistdrag(html, '.meleedraggable', 'melee')
+    this.makelistdrag(html, '.rangeddraggable', 'ranged')
 
-    makelistdrag('.meleedraggable', 'melee')
-    makelistdrag('.rangeddraggable', 'ranged')
-
-    html.find('input[name="data.HP.value"]').keypress(ev => {
-      if (ev.which === 13) ev.preventDefault()
+    // Stop ENTER key in a Resource Tracker (HP, FP, others) from doing anything.
+    // This prevents the inadvertant triggering of the inc/dec buttons.
+    html.find('.spinner details summary input').keypress(ev => {
+      if (ev.key === 'Enter') ev.preventDefault()
     })
 
-    html.find('input[name="data.FP.value"]').keypress(ev => {
-      if (ev.which === 13) ev.preventDefault()
-    })
-
-    html.find('input[name*="data.additionalresources.tracker."]').keypress(ev => {
-      if (ev.which === 13) ev.preventDefault()
-    })
-
+    // Handle resource tracker "+" button.
     html.find('button[data-operation="resource-inc"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
@@ -201,6 +163,7 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.update(JSON.parse(json))
     })
 
+    // Handle resource tracker "-" button.
     html.find('button[data-operation="resource-dec"]').click(ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
@@ -214,6 +177,7 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.update(JSON.parse(json))
     })
 
+    // Handle resource tracker "reset" button.
     html.find('button[data-operation="resource-reset"]').click(ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-gurps-resource]')
@@ -226,6 +190,7 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.update(JSON.parse(json))
     })
 
+    // allow a click on the 'edit' icon to open the resource tracker editor.
     html.find('.tracked-resource .header.with-editor').click(this.editTracker.bind(this))
 
     // START CONDITIONAL INJURY
@@ -292,8 +257,9 @@ export class GurpsActorSheet extends ActorSheet {
 
     // END CONDITIONAL INJURY
 
+    // If using the "enhanced" inputs for trackers, enable the ribbon popup.
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ENHANCED_INPUT)) {
-      // spinner input popup button-ribbon
+      // On Focus, initialize the ribbon popup and show it.
       html.find('.spinner details summary input').focus(ev => {
         let details = ev.currentTarget.closest('details')
 
@@ -307,12 +273,12 @@ export class GurpsActorSheet extends ActorSheet {
           restoreButton.text(tracker.value)
         }
         details.open = true
-        console.log('open')
       })
 
       // Update the actor's data, set the restore button to the new value,
       // and close the popup.
       html.find('.spinner details summary input').focusout(ev => {
+        ev.preventDefault()
         // set the restore button to the new value of the input field
         let details = ev.currentTarget.closest('details')
         let input = $(details).find('input')
@@ -330,13 +296,15 @@ export class GurpsActorSheet extends ActorSheet {
         this.actor.update(JSON.parse(json))
 
         details.open = false
-        console.log('close')
       })
 
+      // Prevent the popup from closing on a click.
       html.find('.spinner details .popup > *').mousedown(ev => {
         ev.preventDefault()
       })
 
+      // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
+      // display the tooltip in the correct position.
       html.find('.tooltip-manager').mouseover(ev => {
         ev.preventDefault()
 
@@ -354,6 +322,7 @@ export class GurpsActorSheet extends ActorSheet {
         }
       })
 
+      // On mouseout, stop displaying the tooltip.
       html.find('.tooltip-manager').mouseout(ev => {
         ev.preventDefault()
         let target = $(ev.currentTarget)
@@ -367,7 +336,7 @@ export class GurpsActorSheet extends ActorSheet {
         }
       })
 
-      // update the text input field, but do not update the actor's data
+      // On a click of the enhanced input popup, update the text input field, but do not update the actor's data.
       html.find('button[data-operation="resource-update"]').click(ev => {
         let dataValue = $(ev.currentTarget).attr('data-value')
         let details = $(ev.currentTarget).closest('details')
@@ -386,54 +355,57 @@ export class GurpsActorSheet extends ActorSheet {
       })
     } // end enhanced input
 
-    // Equipment
+    // Equipment ===
+
+    // On clicking the Equip column, toggle the equipped status of the item.
     html.find('.changeequip').click(this._onClickEquip.bind(this))
-    html.find('.addequipmenticon').click(async ev => {
-      let parent = $(ev.currentTarget).closest('.header')
-      let path = parent.attr('data-key')
-      let actor = this.actor
-      let eqtlist = duplicate(getProperty(actor.data, path))
-      let eqt = new Equipment('', true)
-      eqt.uuid = generateUniqueId()
-      eqt.carried = path.includes('carried')
-      let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
 
-      let options = {
-        // NOTE:  This code is duplicated below.  Haven't refactored yet
-        width: 530,
-        popOut: true,
-        minimizable: false,
-        jQuery: true,
-      }
+    // html.find('.addequipmenticon').click(async ev => {
+    //   let parent = $(ev.currentTarget).closest('.header')
+    //   let path = parent.attr('data-key')
+    //   let actor = this.actor
+    //   let eqtlist = duplicate(getProperty(actor.data, path))
+    //   let eqt = new Equipment('', true)
+    //   eqt.uuid = generateUniqueId()
+    //   eqt.carried = path.includes('carried')
+    //   let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
 
-      let d = new Dialog(
-        {
-          title: 'Equipment Editor',
-          content: dlgHtml,
-          buttons: {
-            one: {
-              label: 'Create',
-              callback: async html => {
-                ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-                  a => (eqt[a] = html.find(`.${a}`).val())
-                )
-                ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
-                let u = html.find('.save') // Should only find in Note (or equipment)
-                if (!!u) eqt.save = u.is(':checked')
-                Equipment.calc(eqt)
-                GURPS.put(eqtlist, eqt)
-                actor.update({ [path]: eqtlist })
-              },
-            },
-          },
-          default: 'one',
-        },
-        options
-      )
-      d.render(true)
-    })
+    //   let options = {
+    //     // NOTE:  This code is duplicated below.  Haven't refactored yet
+    //     width: 530,
+    //     popOut: true,
+    //     minimizable: false,
+    //     jQuery: true,
+    //   }
 
-    // Simple trick, move 'contains' items into 'collapsed' and back.   The html doesn't show 'collapsed'
+    //   let d = new Dialog(
+    //     {
+    //       title: 'Equipment Editor',
+    //       content: dlgHtml,
+    //       buttons: {
+    //         one: {
+    //           label: 'Create',
+    //           callback: async html => {
+    //             ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
+    //               a => (eqt[a] = html.find(`.${a}`).val())
+    //             )
+    //             ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
+    //             let u = html.find('.save') // Should only find in Note (or equipment)
+    //             if (!!u) eqt.save = u.is(':checked')
+    //             Equipment.calc(eqt)
+    //             GURPS.put(eqtlist, eqt)
+    //             actor.update({ [path]: eqtlist })
+    //           },
+    //         },
+    //       },
+    //       default: 'one',
+    //     },
+    //     options
+    //   )
+    //   d.render(true)
+    // })
+
+    // Simple trick, move 'contains' items into 'collapsed' and back. The html doesn't show 'collapsed'.
     html.find('.expandcollapseicon').click(async ev => {
       let actor = this.actor
       let element = ev.currentTarget
@@ -442,6 +414,7 @@ export class GurpsActorSheet extends ActorSheet {
       actor.toggleExpand(path)
     })
 
+    // On double-clicking an item, open its editor.
     html.find('.dblclkedit').dblclick(async ev => {
       let element = ev.currentTarget
       let path = element.dataset.key
@@ -464,7 +437,9 @@ export class GurpsActorSheet extends ActorSheet {
 
     // TODO implement item menu options
     let opts = this.deleteItemMenu(new Equipment('New Equipment', true))
-    /*    opts.push({
+
+    /* 
+    opts.push({
       name: 'Add In',
       icon: "<i class='fas fa-sign-in-alt'></i>",
       callback: e => {
@@ -473,8 +448,8 @@ export class GurpsActorSheet extends ActorSheet {
         GURPS.put(o, duplicate(new Equipment('New Equipment', true)))
         this.actor.update({ [k]: o })
       },
-    })
-*/
+    })*/
+
     opts.push({
       name: 'Edit',
       icon: "<i class='fas fa-edit'></i>",
@@ -549,6 +524,7 @@ export class GurpsActorSheet extends ActorSheet {
     })
     new ContextMenu(html, '.equipmenuother', opts)
 
+    // On clicking equipment quantity increment, increase the amount.
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
@@ -558,6 +534,8 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       await this.actor.updateEqtCount(path, value)
     })
+
+    // On clicking equipment quantity decrement, decrease the amount or remove from list.
     html.find('button[data-operation="equipment-dec"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
@@ -565,13 +543,11 @@ export class GurpsActorSheet extends ActorSheet {
       let actor = this.actor
       let eqt = getProperty(actor.data, path)
       if (eqt.count == 0) {
-        let agree = false
         await Dialog.confirm({
-          title: 'Delete',
-          content: `Do you want to delete "${eqt.name}" from the list?`,
-          yes: () => (agree = true),
+          title: i18n('GURPS.removeItem', 'Remove Item'),
+          content: i18n_f('GURPS.confirmRemoveItem', { name: eqt.name }, 'Remove {name} from the Equipment List?'),
+          yes: () => actor.deleteEquipment(path),
         })
-        if (agree) actor.deleteEquipment(path)
       } else {
         let value = parseInt(eqt.count) - (ev.shiftKey ? 5 : 1)
         if (isNaN(value) || value < 0) value = 0
@@ -654,6 +630,63 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('#maneuver').on('change', ev => {
       let target = $(ev.currentTarget)
       this.actor.replaceManeuver(target.val())
+    })
+  }
+
+  getMenuItems(elementid) {
+    const map = {
+      '#ranged': [this.sortAscendingMenu('data.ranged'), this.sortDescendingMenu('data.ranged')],
+      '#melee': [this.sortAscendingMenu('data.melee'), this.sortDescendingMenu('data.melee')],
+      '#advantages': [this.sortAscendingMenu('data.ads'), this.sortDescendingMenu('data.ads')],
+      '#skills': [this.sortAscendingMenu('data.skills'), this.sortDescendingMenu('data.skills')],
+      '#spells': [this.sortAscendingMenu('data.spells'), this.sortDescendingMenu('data.spells')],
+      '#equipmentcarried': [
+        this.sortAscendingMenu('data.equipment.carried'),
+        this.sortDescendingMenu('ata.equipment.carried'),
+      ],
+      '#equipmentother': [
+        this.sortAscendingMenu('data.equipment.other'),
+        this.sortDescendingMenu('ata.equipment.other'),
+      ],
+    }
+    return map[elementid]
+  }
+
+  makelistdrag(html, cls, type) {
+    html.find(cls).each((i, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        let oldd = ev.dataTransfer.getData('text/plain')
+        let eqtkey = ev.currentTarget.dataset.key
+        let eqt = getProperty(this.actor.data, eqtkey) // FYI, may not actually be Equipment
+        if (!eqt) return
+        if (!!eqt.eqtkey) {
+          eqtkey = eqt.eqtkey
+          eqt = GURPS.decode(this.actor.data, eqtkey) // Features added by equipment will point to the equipment
+          type = 'equipment'
+        }
+        var itemData
+        if (!!eqt.itemid) {
+          itemData = this.actor.items.get(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
+          let img = new Image()
+          img.src = itemData.img
+          const w = 50
+          const h = 50
+          const preview = DragDrop.createDragImage(img, w, h)
+          ev.dataTransfer.setDragImage(preview, 0, 0)
+        }
+        let newd = {
+          actorid: this.actor.id, // may not be useful if this is an unlinked token
+          actor: this.actor, // so send the actor,
+          isLinked: !this.actor.isToken,
+          type: type,
+          key: eqtkey,
+          itemid: eqt.itemid,
+          itemData: itemData,
+        }
+        if (!!oldd) mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
+        return ev.dataTransfer.setData('text/plain', JSON.stringify(newd))
+      })
     })
   }
 
@@ -1156,8 +1189,7 @@ export class GurpsActorSheet extends ActorSheet {
     const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.isOwner
-    if (this.options.editable && canConfigure) {
+    if (this.options.editable && isConfigurationAllowed(this.actor)) {
       let b = [
         {
           label: isFull ? altsheet : 'Full View',
@@ -1510,7 +1542,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     this._makeHeaderMenu(
       html,
-      '.meleehead',
+      '.headermenu',
       [this.addItemMenu(i18n('GURPS.meleeAttack'), new Melee(i18n('GURPS.meleeAttack') + '...'), 'data.melee')],
       ClickAndContextMenu
     )
@@ -1518,7 +1550,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     this._makeHeaderMenu(
       html,
-      '.rangedhead',
+      '.headermenu',
       [this.addItemMenu(i18n('GURPS.rangedAttack'), new Ranged(`${i18n('GURPS.rangedAttack')}...`), 'data.ranged')],
       ClickAndContextMenu
     )
@@ -1526,7 +1558,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     this._makeHeaderMenu(
       html,
-      '.adshead',
+      '.headermenu',
       [
         this.addItemMenu(
           i18n('GURPS.adDisadQuirkPerk', 'Advantage/Disadvantage/Quirk/Perk'),
@@ -1542,7 +1574,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     this._makeHeaderMenu(
       html,
-      '.skillhead',
+      '.headermenu',
       [
         this.addItemMenu(i18n('GURPS.skill'), new Skill(`${i18n('GURPS.skill')}...`), 'data.skills'),
         this.sortAscendingMenu('data.skills'),
@@ -1554,7 +1586,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     this._makeHeaderMenu(
       html,
-      '.spellhead',
+      '.headermenu',
       [
         this.addItemMenu(i18n('GURPS.spell'), new Spell(`${i18n('GURPS.spell')}...`), 'data.spells'),
         this.sortAscendingMenu('data.spells'),
@@ -1569,7 +1601,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     this._makeHeaderMenu(
       html,
-      '.equiphead',
+      '.headermenu',
       [
         this.addItemMenu(
           i18n('GURPS.equipment'),

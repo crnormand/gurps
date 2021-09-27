@@ -1,4 +1,4 @@
-<div class='roll-message gurps-chat-message'>
+<div class='roll-message gga-chat-message'>
   <div class='prefix'>
     {{attacker}} <i>{{localize "GURPS.slams"}} <i class="subtle fas fa-align-right"></i><i
         class="fas fa-running"></i></i>
@@ -7,10 +7,10 @@
   <div>
     <ul class='modifier-list'>
       {{#if isAoAStrong}}
-      <li>+2 {{localize "GURPS.slamAOAStrong"}}</li>
+        <li>+2 {{localize "GURPS.slamAOAStrong"}}</li>
       {{/if}}
       {{#if shieldDB}}
-      <li>+{{shieldDB}} {{i18n "GURPS.slamForShieldDB" "Shield DB (Shield Rush)"}} [PDF:{{i18n
+        <li>+{{shieldDB}} {{i18n "GURPS.slamForShieldDB" "Shield DB (Shield Rush)"}} [PDF:{{i18n
         "GURPS.pdfShieldRush"}}]</li>
       {{/if}}
     </ul>
@@ -21,7 +21,7 @@
   <div class='collapsible-wrapper'>
     <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox' {{showTheMath}}>
     <label for='collapsible-{{id}}' class='label-toggle'>{{localize "GURPS.chatDamageResultShowMath"}}</label>
-    <div class='gurps-group collapsible-content'>
+    <div class='gga-group collapsible-content'>
       <div class='grid gurps-3col results-table content-inner'>
         <div>{{attacker}}</div>
         <div>{{attackerRaw}}</div>

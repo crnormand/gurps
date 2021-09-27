@@ -10,7 +10,8 @@ body {
 .gurpsactorsheet #context-menu {
   width: max-content;
   left: calc(50% - 75px);
-  background-color: rgb(128, 0, 0);
+  font-size: 12px;
+  text-shadow: none;
 }
 
 .gurpsactorsheet .itemmenu #context-menu {
@@ -22,16 +23,15 @@ body {
 }
 
 /* GURPS App CSS */
-.gurps-app {
+.gga-app {
   justify-items: center;
   /* background: url(/ui/parchment.webp) #dcdcd0; */
   background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
-  /* background: radial-gradient(ellipse at bottom, #5091dd 0%, rgb(3, 6, 23) 100%); */
 }
 
 /* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
-.gurps-meta-group {
+.gga-meta-group {
   align-items: center;
   text-align: center;
   padding: 5px;
@@ -39,34 +39,34 @@ body {
 }
 
 /* using h3 elements as a row label -- remove margin */
-.gurps-app h3 {
+.gga-app h3 {
   margin-bottom: 0;
 }
 
 /* prefer center text in input fields */
-.gurps-app input.digits-only,
-.gurps-app input.decimal-digits-only {
+.gga-app input.digits-only,
+.gga-app input.decimal-digits-only {
   text-align: left;
 }
 
 /* remove this item from display  */
-.gurps-chat-message .invisible,
-.gurps-app .invisible {
+.gga-chat-message .invisible,
+.gga-app .invisible {
   display: none;
 }
 
-.gurps-app .icon-prefix {
+.gga-app .icon-prefix {
   position: relative;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
 }
 
-.gurps-app .icon-prefix > input {
+.gga-app .icon-prefix > input {
   padding-left: 2.2em;
 }
 
-.gurps-app .icon-prefix > span {
+.gga-app .icon-prefix > span {
   position: absolute;
   left: 0;
   width: 2em;
@@ -82,7 +82,7 @@ body {
   border-radius: 3px 0 0 3px;
 }
 
-.gurps-app .img-display {
+.gga-app .img-display {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -90,7 +90,7 @@ body {
   height: 15em;
 }
 
-.gurps-app .img-display > img {
+.gga-app .img-display > img {
   display: block;
   height: 100%;
   opacity: 0;
@@ -106,7 +106,7 @@ body {
 }
 
 /* a group is a section of a form with a header */
-.gurps-group {
+.gga-group {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -114,7 +114,7 @@ body {
   justify-content: start;
 }
 
-.gurps-group,
+.gga-group,
 #calculation-results > div {
   border-right: 1px solid #999;
   height: 100%;
@@ -130,7 +130,7 @@ body {
 }
 
 #calculation-results > div:last-child,
-.gurps-group:last-child {
+.gga-group:last-child {
   border: none;
 }
 
@@ -139,24 +139,24 @@ body {
   justify-content: space-between;
 }
 
-.gurps-app header {
+.gga-app header {
   font-weight: bold;
 }
 
-.gurps-app header:first-child {
+.gga-app header:first-child {
   margin-right: 0.35em;
 }
 
-.gurps-group .pdflink {
+.gga-group .pdflink {
   margin-left: 3px;
   font-size: 80%;
 }
 
-.gurps-chat-message .pdflink {
+.gga-chat-message .pdflink {
   font-size: 90%;
 }
 
-.gurps-chat-message .aside {
+.gga-chat-message .aside {
   font-size: 90%;
 }
 
@@ -165,7 +165,7 @@ body {
   font-weight: normal;
 }
 
-.gurps-group h4 {
+.gga-group h4 {
   background-color: black;
   color: lightgrey;
   margin-bottom: 0.25em;
@@ -177,22 +177,22 @@ body {
   line-height: 1.2em;
 }
 
-.gurps-app aside {
+.gga-app aside {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 0.5em;
 }
 
-.gurps-group .shaded-group {
+.gga-group .shaded-group {
   padding-bottom: 0.5em;
 }
 
-.gurps-group .shaded-group h4 + aside,
-.gurps-group h4 + aside {
+.gga-group .shaded-group h4 + aside,
+.gga-group h4 + aside {
   margin-top: -0.5em;
 }
 
-.gurps-group .grid {
+.gga-group .grid {
   align-items: start;
   justify-items: stretch;
   margin: 0;
@@ -200,7 +200,7 @@ body {
 
 /* striped table row appearance */
 .shaded-group > div:nth-child(odd),
-.gurps-group .shaded {
+.gga-group .shaded {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -260,21 +260,21 @@ body {
 }
 
 /* Apply Damage Dialog: Apply buttons panel */
-.gurps-group .apply-results > * {
+.gga-group .apply-results > * {
   margin-bottom: 0.2em;
 }
 
-.gurps-group .apply-results > *:last-child {
+.gga-group .apply-results > *:last-child {
   margin-bottom: 0;
 }
 
-.gurps-group .user-entered {
+.gga-group .user-entered {
   color: darkred;
   font-style: italic;
 }
 
 /* Apply Damage Dialog: Results Table panel */
-.gurps-group .results-table {
+.gga-group .results-table {
   justify-self: stretch;
   width: 100%;
   grid-template-columns: auto auto 1fr;
@@ -282,23 +282,23 @@ body {
   font-size: 12px;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 1) {
+.gga-group .results-table > div:nth-child(3n + 1) {
   text-transform: uppercase;
   font-size: smaller;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 1),
-.gurps-group .results-table > div:nth-child(3n + 2) {
+.gga-group .results-table > div:nth-child(3n + 1),
+.gga-group .results-table > div:nth-child(3n + 2) {
   text-align: end;
   padding-right: 0.5em;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 2) {
+.gga-group .results-table > div:nth-child(3n + 2) {
   font-weight: bolder;
   font-size: small;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 3) {
+.gga-group .results-table > div:nth-child(3n + 3) {
   text-align: start;
   justify-content: center;
   padding-left: 1em;
@@ -306,16 +306,16 @@ body {
   font-size: smaller;
 }
 
-/* .gurps-group + .gurps-group {
+/* .gga-group + .gga-group {
   margin-top: 5px;
 } */
 
-.modtooltip .gurps-group + .gurps-group {
+.modtooltip .gga-group + .gga-group {
   margin: unset;
 }
 
 .label-value-row label,
-.gurps-group.inputs label {
+.gga-group.inputs label {
   font-size: 80%;
   justify-self: stretch;
   text-align: end;
@@ -325,23 +325,23 @@ body {
   padding-right: 0.15em;
 }
 
-.gurps-group input {
+.gga-group input {
   text-align: left;
   margin: 0.15em 0;
 }
 
-.gurps-app input.centered {
+.gga-app input.centered {
   text-align: center !important;
 }
 
-.gurps-group .label-value-row {
+.gga-group .label-value-row {
   gap: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-.gurps-group .label-value-row > *:nth-child(4n + 3),
-.gurps-group .label-value-row > *:nth-child(4n + 4) {
+.gga-group .label-value-row > *:nth-child(4n + 3),
+.gga-group .label-value-row > *:nth-child(4n + 4) {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -448,7 +448,7 @@ ul#result-effects li {
   color: black;
 }
 
-.chat-message .gurps-group {
+.chat-message .gga-group {
   font-size: smaller;
   border: none;
   padding: 0;
@@ -470,7 +470,7 @@ ul#result-effects li {
 }
 
 /* remove the top margin and indent */
-.gurps-group .continuation {
+.gga-group .continuation {
   margin-top: 0;
   margin-left: 2em;
 }
@@ -523,12 +523,12 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-chat-message * {
+.gga-chat-message * {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   font-size: 13px;
 }
 
-.gurps-chat-message .label-toggle {
+.gga-chat-message .label-toggle {
   font-size: x-small;
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding: 0.25em;
@@ -539,11 +539,11 @@ ul#result-effects li {
   text-transform: uppercase;
 }
 
-.gurps-chat-message .label-toggle:hover {
+.gga-chat-message .label-toggle:hover {
   background-color: rgb(0, 0, 0, 0.7);
 }
 
-.gurps-chat-message .label-toggle:after {
+.gga-chat-message .label-toggle:after {
   font: normal normal normal 12px/1;
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
@@ -552,7 +552,7 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-chat-message .toggle:checked + .label-toggle:after {
+.gga-chat-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1;
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
@@ -561,7 +561,7 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-group .options-drawer {
+.gga-group .options-drawer {
   display: grid;
   grid-template-columns: min-content 1fr;
   grid-auto-rows: auto;
@@ -569,70 +569,70 @@ ul#result-effects li {
   margin-bottom: 3px;
 }
 
-.gurps-group .collapsible-content {
+.gga-group .collapsible-content {
   grid-column: 1 / span 2;
   /* background: rgba(0, 0, 0, 0.1); */
   margin-bottom: 0;
   padding-right: 4px;
 }
 
-.gurps-app .collapsible-wrapper .collapsible-content .content-inner > *:nth-child(even),
-.gurps-group .collapsible-content > *:nth-child(even) {
+.gga-app .collapsible-wrapper .collapsible-content .content-inner > *:nth-child(even),
+.gga-group .collapsible-content > *:nth-child(even) {
   background: rgba(255, 255, 255, 0.25);
 }
 
-.gurps-group .options-drawer label {
+.gga-group .options-drawer label {
   padding-top: 2px;
 }
 
-.gurps-group .options-drawer label .pdflink {
+.gga-group .options-drawer label .pdflink {
   float: right;
   padding-top: 2px;
 }
 
-.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
-.gurps-app .collapsible-wrapper .collapsible-content {
+.gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
+.gga-app .collapsible-wrapper .collapsible-content {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
     0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
 
-.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
+.gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
 }
 
-.gurps-app button {
+.gga-app button {
   text-transform: uppercase;
   background: rgba(255, 255, 240, 0.8);
 }
 
-.gurps-app button.default {
+.gga-app button.default {
   border: 2px solid #6b6857;
 }
 
-.gurps-app button:disabled {
+.gga-app button:disabled {
   color: lightslategray;
   background: rgba(255, 255, 240, 0.3);
 }
 
-.gurps-app button.with-icon > i > span {
+.gga-app button.with-icon > i > span {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   font-weight: 400;
 }
 
-.gurps-app * {
+.gga-app * {
   font-family: Roboto, sans-serif;
 }
 
-.gurps-app .fa,
-.gurps-app .fab,
-.gurps-app .fad,
-.gurps-app .fal,
-.gurps-app .far,
-.gurps-app .fas {
+.gga-app .fa,
+.gga-app .fab,
+.gga-app .fad,
+.gga-app .fal,
+.gga-app .far,
+.gga-app .fas {
   font-family: 'Font Awesome 5 Free' !important;
 }
 
-.gurps-app #blunt-trauma-field {
+.gga-app #blunt-trauma-field {
   margin-left: 6px;
 }
 
@@ -992,7 +992,7 @@ ul#result-effects li {
   justify-content: center;
 }
 
-.gurps-app .vertical-center,
+.gga-app .vertical-center,
 .resource-editor .vertical-center {
   display: flex;
   align-items: center;
@@ -1144,21 +1144,6 @@ button.equipmentbutton:first-child {
 
 button.equipmentbutton:last-child {
   margin-left: 0.5em;
-}
-
-.equipmentlist .qty {
-  display: flex;
-  flex-flow: row nowrap;
-  line-height: unset;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.equipped {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .pagination {
@@ -1727,10 +1712,10 @@ button.equipmentbutton:last-child {
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
 .modtooltip .gurpslink,
-.gurps-chat-message .glinkmod,
-.gurps-chat-message .glinkmodplus,
-.gurps-chat-message .glinkmodminus,
-.gurps-chat-message .gurpslink {
+.gga-chat-message .glinkmod,
+.gga-chat-message .glinkmodplus,
+.gga-chat-message .glinkmodminus,
+.gga-chat-message .gurpslink {
   padding: 0.0825em 0.165em;
   border: 0.0825em solid rgb(122, 121, 113);
   border-radius: 0.25em;
@@ -1751,10 +1736,10 @@ button.equipmentbutton:last-child {
   background-color: unset !important;
 }
 
-.gurps-chat-message .glinkmod,
-.gurps-chat-message .glinkmodplus,
-.gurps-chat-message .glinkmodminus,
-.gurps-chat-message .gurpslink {
+.gga-chat-message .glinkmod,
+.gga-chat-message .glinkmodplus,
+.gga-chat-message .glinkmodminus,
+.gga-chat-message .gurpslink {
   background-color: rgba(255, 255, 240, 0.8) !important;
 }
 
@@ -1762,20 +1747,20 @@ button.equipmentbutton:last-child {
 .modtooltip .glinkmod:hover,
 .modtooltip .glinkmodminus:hover,
 .modtooltip .gurpslink:hover,
-.gurps-chat-message .glinkmodplus:hover,
-.gurps-chat-message .glinkmod:hover,
-.gurps-chat-message .glinkmodminus:hover,
-.gurps-chat-message .gurpslink:hover {
+.gga-chat-message .glinkmodplus:hover,
+.gga-chat-message .glinkmod:hover,
+.gga-chat-message .glinkmodminus:hover,
+.gga-chat-message .gurpslink:hover {
   cursor: pointer;
   text-shadow: none;
   font-weight: unset;
   background-color: rgba(255, 255, 240, 0.8) !important;
 }
 
-.gurps-chat-message .glinkmodplus:hover,
-.gurps-chat-message .glinkmod:hover,
-.gurps-chat-message .glinkmodminus:hover,
-.gurps-chat-message .gurpslink:hover {
+.gga-chat-message .glinkmodplus:hover,
+.gga-chat-message .glinkmod:hover,
+.gga-chat-message .glinkmodminus:hover,
+.gga-chat-message .gurpslink:hover {
   box-shadow: 0 0 5px red;
 }
 
@@ -1783,27 +1768,27 @@ button.equipmentbutton:last-child {
 .modtooltip .glinkmod:active,
 .modtooltip .glinkmodminus:active,
 .modtooltip .gurpslink:active,
-.gurps-chat-message .glinkmodplus:active,
-.gurps-chat-message .glinkmod:active,
-.gurps-chat-message .glinkmodminus:active,
-.gurps-chat-message .gurpslink:active {
+.gga-chat-message .glinkmodplus:active,
+.gga-chat-message .glinkmod:active,
+.gga-chat-message .glinkmodminus:active,
+.gga-chat-message .gurpslink:active {
   background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
 .removemod.plus,
-.gurps-chat-message .glinkmodplus,
+.gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
   color: darkgreen;
 }
 
 .removemod.minus,
-.gurps-chat-message .glinkmodminus,
+.gga-chat-message .glinkmodminus,
 .modtooltip .glinkmodminus {
   color: darkred;
 }
 
 .modtooltip .gurpslink,
-.gurps-chat-message .gurpslink {
+.gga-chat-message .gurpslink {
   color: darkblue;
 }
 
@@ -1823,7 +1808,7 @@ button.equipmentbutton:last-child {
   align-items: center;
 }
 
-.modtooltip .gurps-group aside {
+.modtooltip .gga-group aside {
   margin: 0;
 }
 
@@ -1841,11 +1826,11 @@ button.equipmentbutton:last-child {
   font-size: 80%;
 }
 
-.gurps-app .section {
+.gga-app .section {
   margin-top: 0.5em;
 }
 
-.gurps-chat-message .modifier-list li {
+.gga-chat-message .modifier-list li {
   margin-top: 0.35em;
 }
 
@@ -1874,16 +1859,16 @@ button.equipmentbutton:last-child {
   min-width: 8em;
 }
 
-.gurps-app h4.with-button {
+.gga-app h4.with-button {
   padding-right: 1em;
 }
 
-.gurps-app h4.with-button .button {
+.gga-app h4.with-button .button {
   float: right;
   font-size: small;
 }
 
-.gurps-app h4.with-button .button:hover {
+.gga-app h4.with-button .button:hover {
   text-shadow: 0 0 10px white;
   color: red;
 }
@@ -1910,7 +1895,7 @@ button.equipmentbutton:last-child {
   font-size: large;
 }
 
-.gurps-app .vertical-gap {
+.gga-app .vertical-gap {
   height: 1em;
 }
 

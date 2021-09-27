@@ -587,8 +587,8 @@ export class GurpsActor extends Actor {
         if (!!this.getGurpsActorData().additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
-    let result = await super.update(data, context)
-    return result
+
+    return await super.update(data, context)
   }
 
   async internalUpdate(data, context) {

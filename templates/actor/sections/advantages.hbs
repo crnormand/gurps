@@ -1,7 +1,7 @@
-<div id='advantages' class='gurpstable'>
+<div id='advantages' class='gga-table with-notes'>
   <div class='itemmenu header' readonly></div>
   <div class='header desc'>
-    <div class='adshead' data-key='data.ads'>
+    <div class='headermenu' data-key='data.ads'>
       <span>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span>
       <i class='fas fa-caret-square-down'></i>
     </div>
@@ -46,7 +46,7 @@
           {{/if}}
           data-key='data.ads.{{@key}}'>{{{gurpslinkbr this.notes}}}</div>
       </div>
-      <div class='pts flex-center'>{{this.points}}</div>
+      <div class='pts gga-right'>{{{displayNumber this.points false}}}</div>
       <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
     {{/if}}
   {{/listeqt}}

@@ -131,7 +131,6 @@
 }
 
 #threed6 {
-  /*border: 5px solid rgb(255, 123, 0);*/
   position: fixed;
   bottom: 10px;
   left: 880px;
@@ -211,10 +210,7 @@
 }
 
 .pdflink:hover {
-  /*font-size: 115%;
-  font-weight: bold;*/
   text-shadow: none;
-
   color: red;
   text-decoration: underline;
   overflow: visible;
@@ -228,22 +224,17 @@
   text-decoration: none;
   background-color: rgb(225, 225, 26) !important;
   color: black;
-  /* padding: 2px 3px 2px 3px; */
-  /* border-top: 1px solid #cccccc; */
   border-right: 1px solid #333300;
   border-bottom: 1px solid #333300;
-  /* border-left: 1px solid #cccccc; */
   border-radius: 3px;
   margin-bottom: -1px;
   margin-right: -1px;
-  /* margin: -2px -4px -2px -6px;  */
   overflow: visible;
   z-index: 99;
 }
 
 .rollable {
   color: black;
-  /* text-shadow: 2px 2px rgb(255, 255, 128); */
   background-color: rgb(255, 255, 190) !important;
 }
 
@@ -268,21 +259,14 @@
   background-image: none;
   background-color: rgb(255, 190, 130) !important;
   color: black;
-  /* padding: 1px 1px 1px 1px; */
-  /* border-top: 2px solid #cccccc; */
   border-right: 1px solid rgb(128, 95, 65);
   border-bottom: 1px solid rgb(128, 95, 65);
-  /* border-left: 2px solid #cccccc; */
   border-radius: 3px;
-  /* margin: -2px 0px -2px 2px; */
-  /* text-align: center; */
 }
 
 .gmod {
   color: black;
-  /*text-shadow: 2px 2px 8px rgb(255, 0, 0);*/
   background-color: rgb(255, 230, 190) !important;
-  /* background-image: linear-gradient(to right, white , rgb(255, 200, 128)); */
 }
 
 .gmod:active {
@@ -435,7 +419,6 @@
 
 .gurpslink {
   color: black;
-  /* text-shadow: 2px 2px rgb(255, 255, 128); */
   background-color: rgb(255, 255, 175) !important;
 }
 
@@ -488,7 +471,6 @@
 
 .gurps .sheet-header .header-fields {
   flex: 1;
-  /*  height: 100px;*/
 }
 
 .gurps .sheet-header h1.charname {
@@ -635,12 +617,19 @@
 }
 
 .itemmenu[readonly] {
-  padding: 0;
-  border-right: none;
+  padding: 0 !important;
+  border-right: none !important;
+}
+
+.gga-table.with-notes > .desc:not(.header) {
+  display: inline-flex;
+  flex-flow: column;
+  justify-content: stretch;
+  align-items: flex-start;
+  white-space: normal;
 }
 
 .gurps .attributes table {
-  /*	  width: 300px;*/
   border: none;
 }
 
@@ -649,8 +638,6 @@
   margin: 0;
   border-left: none;
   border-bottom: none;
-  /*  border-top: 2px groove #eeede0;
-  border-right: 2px groove #eeede0; */
   border-radius: 0;
   height: auto;
   width: 275px;
@@ -771,9 +758,8 @@
   text-align: left;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  /* font-size: 80%; */
   white-space: nowrap;
-  align-self: stretch; /* TODO verify -- it was 'center' */
+  align-self: stretch;
 }
 
 .gurps .fieldblock .field {
@@ -1010,54 +996,24 @@ body {
   grid-template-rows: 0fr 0fr;
 }
 
-.equipmentlist .header,
-#spells .header,
-#skills .header,
-#ranged .header,
-#melee .header,
-#advantages .header,
-#combat-trackers .header {
-  display: inline-flex;
-  flex-flow: column nowrap;
-}
-
-.equipmentlist .header > div,
-#spells .header > div,
-#skills .header > div,
-#ranged .header > div,
-#melee .header > div,
-#advantages .header > div,
-#combat-trackers .header > div,
-#conditionalmods .header > div,
-#reactions .header > div,
-#encumbrance .header > div,
-#location .header > div {
-  display: inline-flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-content: center;
-}
-
-.equipmentlist .equiphead i,
-#spells .spellhead i,
-#skills .skillhead i,
-#ranged .rangedhead i,
-#advantages .adshead i,
-#melee .meleehead i,
+.equipmentlist .headermenu i,
+#spells .headermenu i,
+#skills .headermenu i,
+#ranged .headermenu i,
+#advantages .headermenu i,
+#melee .headermenu i,
 #combat-trackers .trackerhead i,
 #conditionalmods .condmodhead i,
 #reactions .reacthead i,
 #location .hlhead i {
   color: white;
-  margin-left: 1em;
+  margin-left: 0.5em;
 }
 
 #encumbrance .option input,
 #location .option input {
   zoom: 0.5;
 }
-
-/* TODO Consolidate encumbrance */
 
 #location .header:first-child,
 #encumbrance .header:first-child {
@@ -1066,17 +1022,6 @@ body {
 
 #encumbrance.dodgeh {
   border-right: none !important;
-}
-
-#condtionalmods > div {
-  border-right: 1px solid lightgrey;
-  border-bottom: 1px solid lightgrey;
-  padding: 0 0.2em 0 0.2em;
-}
-
-#condtionalmods > .header:first-child,
-#condtionalmods > .header:last-of-type {
-  border-right: none;
 }
 
 .equipmentlist .equipmenu,
@@ -1127,28 +1072,9 @@ body {
   color: inherit;
 }
 
-#melee,
-#ranged,
-#advantages,
-#skills,
-#spells,
-.equipmentlist,
-#other_equipment,
 #notes {
   display: grid;
   border: 1px solid black;
-  align-content: start;
-}
-
-#melee,
-#ranged,
-#advantages,
-#skills,
-#spells,
-.equipmentlist,
-#other_equipment,
-#notes {
-  grid-template-rows: repeat(1000, auto) 1fr;
 }
 
 #conditionalmods {
@@ -1170,16 +1096,19 @@ body {
 #ranged {
   grid-template-columns: min-content 1fr repeat(10, auto);
   grid-area: ranged;
+  align-content: start;
 }
 
 #advantages {
   grid-template-columns: min-content 1fr repeat(2, auto);
   grid-area: advantages;
+  align-content: start;
 }
 
 #skills {
   grid-template-columns: min-content 1fr repeat(4, auto);
   grid-area: skills;
+  align-content: start;
 }
 
 #spells {
@@ -1234,55 +1163,13 @@ body {
   font-size: 80%;
 }
 
-.desc {
-  display: flex;
-  flex-flow: column nowrap;
-}
-
-.desc.header {
-  align-items: center;
-  flex-flow: row nowrap;
-  justify-content: center;
-}
-
 .desc .list_note textarea,
 .desc input:last-child {
   background-color: rgba(0, 0, 0, 0.1);
   font: inherit;
 }
 
-.field,
-.desc,
-.cls,
-.college,
-.mana,
-.mana_maintain,
-.time,
-.duration,
-.sl,
-.rsl,
-.qty,
-.equipped,
-.uses,
-.cost,
-.sum_cost,
-.weight,
-.sum_weight,
-.pts,
-.ref,
-.usage,
-.level,
-.parry,
-.block,
-.damage,
-.reach,
-.st,
-.acc,
-.range,
-.rof,
-.shots,
-.bulk,
-.rcl {
+.field {
   padding-left: 0.2em;
   padding-right: 0.2em;
   border-bottom: 1px solid lightgray;
@@ -1300,12 +1187,12 @@ body {
 #location .where:nth-last-child(10n + 3),
 #location .penalty:nth-last-child(10n + 2),
 #location .dr:nth-last-child(10n + 1),
-#conditionalmods .itemmenu:nth-child(even),
-#conditionalmods .modifier:nth-child(odd),
-#conditionalmods .situation:nth-child(even),
-#reactions .itemmenu:nth-child(even),
-#reactions .modifier:nth-child(odd),
-#reactions .situation:nth-child(even),
+#conditionalmods .itemmenu:nth-child(6n + 4),
+#conditionalmods .modifier:nth-child(6n + 5),
+#conditionalmods .situation:nth-child(6n + 6),
+#reactions .itemmenu:nth-child(6n + 4),
+#reactions .modifier:nth-child(6n + 5),
+#reactions .situation:nth-child(6n + 6),
 #melee .itemmenu:nth-child(18n + 10),
 #melee .desc:nth-child(18n + 11),
 #melee .usage:nth-child(18n + 12),
@@ -1369,74 +1256,16 @@ body {
 #other_equipment .sum_cost:nth-child(20n + 18),
 #other_equipment .sum_weight:nth-child(20n + 19),
 #other_equipment .ref:nth-child(20n + 20),
-#notes .desc:nth-child(even),
-#notes .ref:nth-child(odd) {
+#notes .desc:nth-child(4n + 3),
+#notes .ref:nth-child(4n + 4) {
   background-color: #e8ffe8;
 }
 
-.equipmentlist .desc,
-#other_equipment .desc,
-.cls,
-.college,
-.mana,
-.mana_maintain,
-.time,
-.duration,
-.sl,
-.rsl,
-.qty,
-.uses,
-.cost,
-.sum_cost,
-.weight,
-.sum_weight,
-.pts,
-.ref,
-.usage,
-.level,
-.parry,
-.block,
-.damage,
-.reach,
-.st,
-.acc,
-.range,
-.rof,
-.shots,
-.bulk,
-.rcl {
-  border-right: 1px solid lightgray;
-}
-
-.sl,
-.rsl,
-.qty,
-.equipped,
-.uses,
-.cost,
-.sum_cost,
-.weight,
-.sum_weight,
-.pts,
-.ref,
-.level,
-.parry,
-.block,
-.reach,
-.st,
-.acc,
-.rof,
-.shots,
-.bulk,
-.rcl {
-  text-align: right;
-}
-
 .equipped {
-  text-align: center;
+  min-width: 1.4em;
 }
 
-/* TODO Indicate this item has a contextmenu */
+/* Indicate this item has a contextmenu */
 .equipmenucarried:hover {
   cursor: context-menu;
   text-shadow: 0px 0px 2px #80ff80;
@@ -1448,21 +1277,13 @@ body {
   border: none;
 }
 
-#encumbrance > div:nth-last-child(-n + 5),
-#lifting > div:nth-last-child(-n + 2),
-#location > div:nth-last-child(-n + 5),
-#melee > div:nth-last-child(-n + 9),
-#ranged > div:nth-last-child(-n + 11),
-#advantages > div:nth-last-child(-n + 4),
-#skills > div:nth-last-child(-n + 5),
-#spells > div:nth-last-child(-n + 11),
-.equipmentlist > div:nth-last-child(-n + 9),
-#other_equipment > div:nth-last-child(-n + 9),
-#notes > div:nth-last-child(-n + 1) {
-  border-bottom: none;
-}
-
+.equipmentlist .ref,
+#notes .ref,
+#skills .ref,
+#spells .ref,
+#advantages .ref,
 #melee .st,
+#ranged .st,
 #location .dr,
 #lifting .liftdesc,
 #encumbrance .dodgeh,
@@ -1473,43 +1294,39 @@ body {
 }
 
 .indent1 {
-  padding-left: 1em;
+  padding-left: 1em !important;
 }
 
 .indent2 {
-  padding-left: 2em;
+  padding-left: 2em !important;
 }
 
 .indent3 {
-  padding-left: 3em;
+  padding-left: 3em !important;
 }
 
 .indent4 {
-  padding-left: 4em;
+  padding-left: 4em !important;
 }
 
 .indent5 {
-  padding-left: 5em;
+  padding-left: 5em !important;
 }
 
 .indent6 {
-  padding-left: 6em;
+  padding-left: 6em !important;
 }
 
 .indent7 {
-  padding-left: 7em;
+  padding-left: 7em !important;
 }
 
 .indent8 {
-  padding-left: 8em;
+  padding-left: 8em !important;
 }
 
 .indent9 {
-  padding-left: 9em;
-}
-
-.satisfiedN {
-  color: red;
+  padding-left: 9em !important;
 }
 
 .current {
@@ -1518,6 +1335,7 @@ body {
 
 .list_note {
   font-size: 80%;
+  width: 100%;
 }
 
 .encmarker.current:after {
@@ -2093,9 +1911,9 @@ body {
   pointer-events: none; /* We need pointer events to know how to expand/collapse items */
 }
 
-.desc {
-  /* position: relative; needed so that the tooltip was not limited to the tab area. */
-}
+/* .desc {
+  position: relative; needed so that the tooltip was not limited to the tab area.
+} */
 
 .desc .tooltippic {
   visibility: hidden;

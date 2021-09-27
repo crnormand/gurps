@@ -3,6 +3,11 @@ import { atou } from '../lib/utilities.js'
 import { handleOnPdf } from './pdf-refs.js'
 
 export default class GurpsWiring {
+  static hookupAllEvents(html) {
+    this.hookupGurps(html)
+    this.hookupGurpsRightClick(html)
+    this.hookupGurpsDragAndDrop(html)
+  }
   /**
    * Given a jquery html, attach all of our listeners to it. No need to call bind(), since they don't use "this".
    * @param {JQuery<HTMLElement>} html
@@ -25,10 +30,31 @@ export default class GurpsWiring {
     html.find('.glinkmod').on('contextmenu', GurpsWiring.onRightClickGurpslink)
     html.find('.glinkmodplus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
     html.find('.glinkmodminus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
+    html.find('.gmod').on('contextmenu', GurpsWiring.onRightClickGmod)
+    html.find('[data-otf]').on('contextmenu', GurpsWiring.onRightClickOtf)
+
     html.find('.pdflink').on('contextmenu', event => {
       event.preventDefault()
       let el = event.currentTarget
       GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
+    })
+  }
+
+  static hookupGurpsDragAndDrop(html) {
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: li.getAttribute('data-otf'),
+            actor: this.actor.id,
+            displayname: display,
+          })
+        )
+      })
     })
   }
 
@@ -80,6 +106,27 @@ export default class GurpsWiring {
       if (action.type === 'damage' || action.type === 'deriveddamage')
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
       else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+    }
+  }
+
+  static async onRightClickGmod(event) {
+    event.preventDefault()
+    let el = event.currentTarget
+    let n = el.dataset.name
+    let t = el.innerText
+    GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
+  }
+
+  static async onRightClickOtf(event) {
+    event.preventDefault()
+    let el = event.currentTarget
+    let isDamageRoll = el.dataset.hasOwnProperty('damage')
+    let otf = event.currentTarget.dataset.otf
+
+    if (isDamageRoll) {
+      GURPS.resolveDamageRoll(event, this.actor, otf, null, game.user.isGM)
+    } else {
+      GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, null, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
   }
 }

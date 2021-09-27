@@ -1,11 +1,9 @@
-<div id='ranged'>
+<div id='ranged' class='gga-table with-notes'>
   <div class='itemmenu header' readonly></div>
   <div class='desc header'>
-    <div class='rangedhead'>
+    <div class='headermenu'>
       <span>{{localize 'GURPS.rangedWeapons'}}</span>
-      {{#if isEditing}}
-        <i class='fas fa-caret-square-down'></i>
-      {{/if}}
+      <i class='fas fa-caret-square-down'></i>
     </div>
   </div>
   <div class='usage header'>{{localize 'GURPS.usage'}}</div>
@@ -75,28 +73,32 @@
         {{/if}}
         <div class='list_note'>{{{gurpslink this.notes}}}</div>
       </div>
-      <div class='usage'>{{this.mode}}</div>
+      <div class='usage flex-center'>{{this.mode}}</div>
       <div
-        class='level rollable'
+        class='level rollable flex-center'
         data-name='{{this.name}} ({{this.mode}})'
         data-key='data.ranged.{{@key}}'
         data-otf='A:"{{this.name}} ({{this.mode}})"'
       >{{this.level}}</div>
-      <div class='acc {{gmod this.acc}}' data-name='Acc for {{this.name}}' data-otf='{{{displayNumber this.acc}}} Acc'>
+      <div
+        class='acc gga-right {{gmod this.acc}}'
+        data-name='Acc for {{this.name}}'
+        data-otf='{{{displayNumber this.acc}}} Acc'
+      >
         {{{displayNumber this.acc}}}
       </div>
-      <div class='damage rollable' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
-      <div class='range'>{{this.range}}</div>
-      <div class='rof'>{{this.rof}}</div>
-      <div class='shots'>{{this.shots}}</div>
+      <div class='damage flex-center rollable' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+      <div class='range flex-center'>{{this.range}}</div>
+      <div class='rof gga-right'>{{this.rof}}</div>
+      <div class='shots flex-center'>{{this.shots}}</div>
       <div
-        class='bulk {{gmod this.bulk}}'
+        class='bulk gga-right {{gmod this.bulk}}'
         data-name='Bulk for {{this.name}}'
         data-otf='{{this.bulk}} Bulk'
-      >{{this.bulk}}
+      >{{{displayNumber this.bulk}}}
       </div>
-      <div class='rcl'>{{this.rcl}}</div>
-      <div class='st'>{{this.st}}</div>
+      <div class='rcl gga-right'>{{this.rcl}}</div>
+      <div class='st flex-center'>{{this.st}}</div>
     {{/listattack}}
   {{/if}}
 </div>
