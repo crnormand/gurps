@@ -1016,6 +1016,7 @@ ul#result-effects li {
   flex: 0;
   border: 1px solid grey;
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  cursor: pointer;
 }
 
 .tracked-resource.inactive .condition-block > * {
@@ -1132,6 +1133,7 @@ ul#result-effects li {
   /*  border: 1px solid grey;  */
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding: 0px 0px 0px 0px;
+  cursor: pointer;
 }
 
 .equipmentbutton.bold {

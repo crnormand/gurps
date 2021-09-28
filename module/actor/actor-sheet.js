@@ -425,21 +425,9 @@ export class GurpsActorSheet extends ActorSheet {
     })
 
     // TODO implement item menu options
-    let opts = this.deleteItemMenu(new Equipment('New Equipment', true))
+    let equipmentMenuItems = this.deleteItemMenu(new Equipment('???', true))
 
-    /* 
-    opts.push({
-      name: 'Add In',
-      icon: "<i class='fas fa-sign-in-alt'></i>",
-      callback: e => {
-        let k = e[0].dataset.key + '.contains'
-        let o = GURPS.decode(this.actor.data, k) || {}
-        GURPS.put(o, duplicate(new Equipment('New Equipment', true)))
-        this.actor.update({ [k]: o })
-      },
-    })*/
-
-    opts.push({
+    equipmentMenuItems.push({
       name: 'Edit',
       icon: "<i class='fas fa-edit'></i>",
       callback: e => {
@@ -448,8 +436,9 @@ export class GurpsActorSheet extends ActorSheet {
         this.editEquipment(this.actor, path, o)
       },
     })
-    opts.push({
-      icon: '<i class="fas fa-sort-alpha-up"></i>',
+
+    equipmentMenuItems.push({
+      icon: '<i class="fas fa-sort-amount-down-alt"></i>',
       name: 'Sort Contents (Ascending)',
       callback: async data => {
         let parentpath = data[0].dataset.key
@@ -470,8 +459,9 @@ export class GurpsActorSheet extends ActorSheet {
         await this.actor.update({ [key]: sortedobj })
       },
     })
-    opts.push({
-      icon: '<i class="fas fa-sort-alpha-down"></i>',
+
+    equipmentMenuItems.push({
+      icon: '<i class="fas fa-sort-amount-down"></i>',
       name: 'Sort Contents (Descending)',
       callback: async data => {
         let parentpath = data[0].dataset.key
@@ -492,8 +482,9 @@ export class GurpsActorSheet extends ActorSheet {
         await this.actor.update({ [key]: sortedobj })
       },
     })
-    let mcar = Array.from(opts)
-    mcar.push({
+
+    let carriedMenuItems = Array.from(equipmentMenuItems)
+    carriedMenuItems.push({
       name: "Move to 'Other Equipment'",
       icon: "<i class='fas fa-level-down-alt'></i>",
       callback: e => {
@@ -501,9 +492,10 @@ export class GurpsActorSheet extends ActorSheet {
         this.actor.moveEquipment(path, 'data.equipment.other')
       },
     })
-    new ContextMenu(html, '.equipmenucarried', mcar)
+    new ContextMenu(html, '.equipmenucarried', carriedMenuItems)
 
-    opts.push({
+    let otherMenuItems = Array.from(equipmentMenuItems)
+    otherMenuItems.push({
       name: "Move to 'Equipment'",
       icon: "<i class='fas fa-level-up-alt'></i>",
       callback: e => {
@@ -511,7 +503,7 @@ export class GurpsActorSheet extends ActorSheet {
         this.actor.moveEquipment(path, 'data.equipment.carried')
       },
     })
-    new ContextMenu(html, '.equipmenuother', opts)
+    new ContextMenu(html, '.equipmenuother', otherMenuItems)
 
     // On clicking equipment quantity increment, increase the amount.
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
@@ -548,7 +540,7 @@ export class GurpsActorSheet extends ActorSheet {
     // html.find('.addtrackericon').on('click', this._addTracker.bind(this))
     html.find('.addnoteicon').on('click', this._addNote.bind(this))
 
-    opts = [
+    let notesMenuItems = [
       {
         name: 'Edit',
         icon: "<i class='fas fa-edit'></i>",
@@ -566,7 +558,7 @@ export class GurpsActorSheet extends ActorSheet {
         },
       },
     ]
-    new ContextMenu(html, '.notesmenu', opts)
+    new ContextMenu(html, '.notesmenu', notesMenuItems)
 
     html.find('[data-onethird]').click(ev => {
       let el = ev.currentTarget

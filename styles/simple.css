@@ -1261,14 +1261,24 @@ body {
   background-color: #e8ffe8;
 }
 
-.equipped {
+#equipmentcarried .equipped {
   min-width: 1.4em;
+  cursor: pointer;
+}
+
+.equipmentlist .qty span {
+  width: 100%;
 }
 
 /* Indicate this item has a contextmenu */
 .equipmenucarried:hover {
   cursor: context-menu;
   text-shadow: 0px 0px 2px #80ff80;
+}
+
+#equipmentother .equipped {
+  padding: 0;
+  border-right: none;
 }
 
 #lifting .field,

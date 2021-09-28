@@ -83,10 +83,10 @@
       </div>
       <div class='qty eqtdraggable flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         <button class='equipmentbutton bold' data-operation='equipment-dec'>&minus;</button>
-        {{this.count}}
+        <span>{{this.count}}</span>
         <button class='equipmentbutton' data-operation='equipment-inc'>+</button>
       </div>
-      <div class='desc indent{{@indent}}  eqtdraggable dblclkedit equipmenucarried tooltip-manager'
+      <div class='desc indent{{@indent}}  eqtdraggable dblclkedit equipmenu{{../container}} tooltip-manager'
         data-key='data.equipment.{{../container}}.{{@key}}'>
         <span class='eqtdragtarget' data-key='data.equipment.{{../container}}.{{@key}}'>
           {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
