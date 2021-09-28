@@ -670,6 +670,7 @@ ul#result-effects li {
   border-bottom: 1px dotted grey;
   /* text-transform: uppercase; */
   /* color: darkgrey */
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
 }
 
 /* Tooltip text */
@@ -681,7 +682,8 @@ ul#result-effects li {
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
-  font-size: medium;
+  font-weight: normal;
+  text-shadow: none;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 
   /* Position the tooltip text */

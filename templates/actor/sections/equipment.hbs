@@ -25,8 +25,10 @@
   <div class='sum_cost header'>&sum; $</div>
   <div class='sum_weight header'><span>&sum; <i class='fas fa-weight-hanging'></i></span></div>
   <div class='ref header'>{{i18n 'GURPS.pdfRef'}}</div>
-  {{#listeqt (lookup data.equipment container)}}
+
+  {{#each (flatlist (lookup data.equipment container)) }}
     {{#if ../isEditing}}
+      {{debug container}}
       <div class='itemmenu equipmenu{{../container}}' data-key='data.equipment.{{../container}}.{{@key}}'>
         <i class='fas fa-caret-square-down'></i>
       </div>
@@ -39,7 +41,7 @@
         <input name='data.equipment.{{../container}}.{{@key}}.count' class='gcs-input-sm3' type='text'
           value='{{this.count}}' />
       </div>
-      <div class='desc indent{{@indent}} ' data-key='data.equipment.{{../container}}.{{@key}}'>
+      <div class='desc indent{{indent}} ' data-key='data.equipment.{{../container}}.{{@key}}'>
         <input name='data.equipment.{{../container}}.{{@key}}.name' class='gcs-input' type='text'
           value='{{this.name}}' />
         <div class='list_note'>
@@ -71,6 +73,7 @@
           value='{{this.pageref}}' />
       </div>
     {{else}}
+      {{#unless isCollapsed}}
       <div class='itemmenu' readonly></div>
       <div class='equipped changeequip flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{#if (eq ../container 'carried')}}
@@ -86,29 +89,42 @@
         <span>{{this.count}}</span>
         <button class='equipmentbutton' data-operation='equipment-inc'>+</button>
       </div>
-      <div class='desc indent{{@indent}}  eqtdraggable dblclkedit equipmenu{{../container}} tooltip-manager'
-        data-key='data.equipment.{{../container}}.{{@key}}'>
-        <span class='eqtdragtarget' data-key='data.equipment.{{../container}}.{{@key}}'>
-          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-          {{{gurpslink this.name}}}
-          {{#if (isUserCreated this)}}&nbsp;
-            <i class='far fa-bookmark' style='float: right; color: steelblue; font-weight: 900; padding-top: 3px;'></i>
-          {{/if}}
-          {{#if (isFoundryItem this)}}&nbsp;
-            <i class='far fa-star' style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'></i>
-          {{/if}}
-          {{#if (ignoreImportQty this)}}&nbsp;
-            <i class='far fa-file' style='float: right; color: steelblue; font-weight: 900; padding-top: 3px;'></i>
-          {{/if}}
-        </span>
-        {{#if (displayItemHover this)}}
-          <div class='tooltippic'><img src='{{this.img}}' /></div>
-        {{/if}}
+
+      <div class='desc indent{{indent}}  eqtdraggable dblclkedit equipmenu{{../container}}' data-key='data.equipment.{{../container}}.{{@key}}'>
+        <div style='display: flex; flex-flow: row nowrap; width: 100%;'>
+          <div>
+            {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+            {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+          </div>
+          <div class='eqtdragtarget tooltip-manager' data-key='data.equipment.{{../container}}.{{@key}}' style='width: 100%;'>
+            {{{gurpslink this.name}}}
+            {{#if (displayItemHover this)}}
+              <div class='tooltippic'><img src='{{this.img}}' /></div>
+            {{/if}}
+          </div>
+          <div>
+            {{#if (isUserCreated this)}}
+              <i class='far fa-bookmark tooltip' style='color: steelblue; font-weight: 900; padding-top: 3px;'>
+                <span='tooltiptext'>{{i18n 'GURPS.equipmentUserCreated' 'User-created'}}</span>
+              </i>
+            {{/if}}
+            {{#if (isFoundryItem this)}}
+              <i class='far fa-star tooltip' style='color: olivedrab; font-weight: 900; padding-top: 3px;'>
+                <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+              </i>
+            {{/if}}
+            {{#if (ignoreImportQty this)}}
+              <i class="fas fa-hashtag tooltip" style='color: steelblue;'>
+                <span class='tooltiptext'>{{i18n 'GURPS.equipmentIgnoreQtyImport' 'Importing does not update quantity.'}} </span>
+              </i>
+            {{/if}}
+          </div>
+        </div>
         <div class='list_note eqtdraggable' data-key='data.equipment.{{../container}}.{{@key}}'>
           {{{gurpslink this.notes}}}
         </div>
       </div>
+      
       <div class='uses flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{#if (or (ne this.maxuses '0') (ne this.uses '0'))}}{{this.uses}}{{/if}}
       </div>
@@ -128,7 +144,8 @@
       </div>
       <div class='ref flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         {{{pdflinkext this.pageref this.externallink}}}
-      </div>
+      </div>    
+      {{/unless}}
     {{/if}}
-  {{/listeqt}}
+  {{/each}}
 </div>

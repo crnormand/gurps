@@ -1,6 +1,7 @@
 <form class='{{cssClass}}' autocomplete='off' style='scroll-padding-top: 5px;'>
   <div id='sheet' class='gurpsactorsheet'>
     <div id='personal'>
+      {{log "personal"}}
       {{>portrait}}
       {{>identity}}
       {{>miscellaneous}}
@@ -8,14 +9,20 @@
       {{>points}}
     </div>
     <div id='stats'>
+      {{log "stats"}}
       <div id='attributes'>
+        {{log "attributes"}}
         {{>basic-attributes}}
         {{>secondary-attributes}}
       </div>
       {{>encumbrance}}
+      {{log "encumbrance"}}
       {{>quicknote}}
+      {{log "quicknote"}}
       {{>lifting}}
+      {{log "lifting"}}
       {{>locations parent=../data}}
+      {{log "locations"}}
 
       <div id='hp-fp'>
         {{#if useCI}}
@@ -38,38 +45,51 @@
           condition='isTired'
           testcondition=data.additionalresources.isTired
         }}
+      {{log "hp/fp"}}
       </div>
 
       {{>conditions}}
+      {{log "conditions"}}
     </div> 
     {{!-- end of stats --}}
 
     {{#if (notEmpty data.reactions)}}
       {{>reactions}}
+      {{log "reactions"}}
     {{/if}}
     {{>conditionalmods}}
+    {{log "conditional modifiers"}}
 
     {{>trackers}}
+      {{log "trackers"}}
 
     {{#if (notEmpty data.melee)}}
       {{>melee}}
+      {{log "melee"}}
     {{/if}}
 
     {{#if (notEmpty data.ranged)}}
       {{>ranged}}
+      {{log "ranged"}}
     {{/if}}
 
     {{>advantages}}
+    {{log "advantages"}}
     {{>skills}}
+    {{log "skills"}}
 
     {{#if (notEmpty data.spells)}}
       {{>spells}}
+      {{log "spells"}}
     {{/if}}
 
     {{>equipment container='carried' data=this.data}}
+    {{log "carried"}}
     {{>equipment container='other' data=this.data}}
+    {{log "other"}}
 
     {{>notes}}
+    {{log "notes"}}
   </div>
   {{>footer}}
   {{#if navigateVisible}}

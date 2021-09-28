@@ -1128,7 +1128,7 @@ function listeqtrecurse(eqts, options, level, data, parentkey = '', src = null) 
     if (data) {
       data.indent = level
       data.key = parentkey + key
-      data.count = eqts.count
+      data.count = eqt.count
     }
     let display = true
     if (!!src && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
@@ -1137,7 +1137,11 @@ function listeqtrecurse(eqts, options, level, data, parentkey = '', src = null) 
         if (eqt.name.startsWith(e.name) && !e.equipped) display = false
       })
     }
-    if (display) ret = ret + options.fn(eqt, { data: data })
+    if (display) {
+      let fragment = options.fn(eqt, { data: data })
+      // if (!!eqt?.equipped) console.log(fragment)
+      ret = ret + fragment
+    }
     ret = ret + listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
   }
   return ret
