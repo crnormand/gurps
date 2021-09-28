@@ -80,42 +80,31 @@ export class GurpsActorSheet extends ActorSheet {
         this._onfocus(ev)
       })
 
-    // a click on a navigation-link scroll the sheet to that section
+    // Click on a navigation-link to scroll the sheet to that section.
     html.find('.navigation-link').click(this._onNavigate.bind(this))
 
-    // enable some fields to be a targeted roll without an OTF
+    // Enable some fields to be a targeted roll without an OTF.
     html.find('.rollable').click(this._onClickRoll.bind(this))
 
-    // wire events to all OTFs on the sheet
+    // Wire events to all OTFs on the sheet.
     GurpsWiring.hookupAllEvents(html)
 
-    // GurpsWiring.hookupGurps(html)
-    // GurpsWiring.hookupGurpsRightClick(html)
-    // GurpsWiring.hookupGurpsDragAndDrop(html)
-    // TODO verify if this is duplication of GurpsWiring and if so, remove
-    // html.find('.gurpslink').contextmenu(this._onRightClickGurpslink.bind(this))
-    // html.find('.glinkmod').contextmenu(this._onRightClickGurpslink.bind(this))
-    // html.find('.glinkmodplus').contextmenu(this._onRightClickGurpslink.bind(this))
-    // html.find('.glinkmodminus').contextmenu(this._onRightClickGurpslink.bind(this))
-    // html.find('[data-otf]').contextmenu(this._onRightClickOtf.bind(this))
-    // html.find('.gmod').contextmenu(this._onRightClickGmod.bind(this))
-    // html.find('.pdflink').contextmenu(this._onRightClickPdf.bind(this))
-
-    // html.find('[data-otf]').each((_, li) => {
-    //   li.setAttribute('draggable', true)
-    //   li.addEventListener('dragstart', ev => {
-    //     let display = ''
-    //     if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
-    //     return ev.dataTransfer.setData(
-    //       'text/plain',
-    //       JSON.stringify({
-    //         otf: li.getAttribute('data-otf'),
-    //         actor: this.actor.id,
-    //         displayname: display,
-    //       })
-    //     )
-    //   })
-    // })
+    // Allow OTFs on this actor sheet to be draggable.
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: li.getAttribute('data-otf'),
+            actor: this.actor.id,
+            displayname: display,
+          })
+        )
+      })
+    })
 
     if (!isConfigurationAllowed(this.actor)) return // Only allow "owners" to be able to edit the sheet, but anyone can roll from the sheet
 

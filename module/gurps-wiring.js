@@ -1,13 +1,15 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
+import { GURPS } from './gurps.js'
 import { handleOnPdf } from './pdf-refs.js'
+import GgaContextMenu from './utilities/contextmenu.js'
 
 export default class GurpsWiring {
   static hookupAllEvents(html) {
     this.hookupGurps(html)
     this.hookupGurpsRightClick(html)
-    this.hookupGurpsDragAndDrop(html)
   }
+
   /**
    * Given a jquery html, attach all of our listeners to it. No need to call bind(), since they don't use "this".
    * @param {JQuery<HTMLElement>} html
@@ -33,29 +35,52 @@ export default class GurpsWiring {
     html.find('.gmod').on('contextmenu', GurpsWiring.onRightClickGmod)
     html.find('[data-otf]').on('contextmenu', GurpsWiring.onRightClickOtf)
 
-    html.find('.pdflink').on('contextmenu', event => {
-      event.preventDefault()
-      let el = event.currentTarget
-      GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
-    })
+    if (html.find('.pdflink').length > 0) {
+      for (const link of html.find('.pdflink')) {
+        this.createPdfLinkMenu(link)
+      }
+    }
+
+    // html.find('.pdflink').on('contextmenu', event => {
+    //   event.preventDefault()
+    //   let el = event.currentTarget
+    //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
+    // })
   }
 
-  static hookupGurpsDragAndDrop(html) {
-    html.find('[data-otf]').each((_, li) => {
-      li.setAttribute('draggable', true)
-      li.addEventListener('dragstart', ev => {
-        let display = ''
-        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
-        return ev.dataTransfer.setData(
-          'text/plain',
-          JSON.stringify({
-            otf: li.getAttribute('data-otf'),
-            actor: this.actor.id,
-            displayname: display,
-          })
-        )
-      })
-    })
+  static createPdfLinkMenu(link) {
+    let text = link.innerText
+    let parent = $(link).parent()
+
+    let actor = GURPS.LastActor
+    let users = actor?.getOwners()?.filter(u => !u.isGM) || []
+    let otf = '[PDF:' + text + ']'
+    let names = users.map(u => u.name).join(' ')
+
+    let container = $(parent).closest('section.window-content')
+
+    new GgaContextMenu(container, parent, '.pdflink', `Send PDF:${text}...`, [
+      {
+        name: 'To Everyone',
+        icon: '<i class="fas fa-user-friends"></i>',
+        callback: () => GURPS.sendOtfMessage(otf, false),
+        condition: () => game.user.isGM,
+      },
+      {
+        name: `Whisper to ${names}`,
+        icon: '<i class="fas fa-user-secret"></i>',
+        callback: () => GURPS.sendOtfMessage(otf, false, users),
+        condition: () => game.user.isGM && users.length > 0,
+      },
+      {
+        name: 'Copy to Chat',
+        icon: '<i class="far fa-comment"></i>',
+        callback: () => {
+          $(document).find('#chat-message').val(otf)
+        },
+        condition: () => true,
+      },
+    ])
   }
 
   /**
