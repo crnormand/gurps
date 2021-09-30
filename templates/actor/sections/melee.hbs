@@ -15,7 +15,40 @@
   <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
   {{#each (flatlist data.melee) }}
-    {{#unless ../isEditing}}
+    {{#if ../isEditing}}
+      <div class='itemmenu meleemenu' data-key='data.melee.{{@key}}'>
+        <i class='fas fa-times'></i>
+      </div>
+
+      <div class='desc indent{{indent}}' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.name' class='gcs-input-25' type='text' value='{{name}}' />
+        <div class='list_note'>
+          <input name='data.melee.{{@key}}.notes' class='gcs-input-25' type='text' value='{{notes}}' />
+        </div>
+      </div>
+      
+      <div class='usage' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.mode' class='gcs-input' type='text' value='{{mode}}' />
+      </div>
+      <div class='level' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.import' class='gcs-input-sm2' type='text' value='{{import}}' />
+      </div>
+      <div class='parry' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.parry' class='gcs-input-sm4' type='text' value='{{parry}}' />
+      </div>
+      <div class='block' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.block' class='gcs-input-sm4' type='text' value='{{block}}' />
+      </div>
+      <div class='damage' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.damage' class='gcs-input' type='text' value='{{damage}}' />
+      </div>
+      <div class='reach' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.reach' class='gcs-input-sm3' type='text' value='{{reach}}' />
+      </div>
+      <div class='st' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.st' class='gcs-input-sm2' type='text' value='{{st}}' />
+      </div>
+    {{else}}
       {{#unless isCollapsed}}
         <div class='itemmenu' readonly></div>
 
@@ -26,9 +59,9 @@
               {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
             </div>
             <div class='tooltip-manager' style='width: 100%;'>
-              {{{gurpslink this.name}}}
+              {{{gurpslink name}}}
               {{#if (displayItemHover this)}}
-                <div class='tooltippic'><img src='{{this.img}}' /></div>
+                <div class='tooltippic'><img src='{{img}}' /></div>
               {{/if}}
             </div>
             <div>
@@ -39,46 +72,22 @@
               {{/if}}
             </div>
           </div>
-          <div class='list_note'>{{{gurpslink this.notes}}}</div>
+          <div class='list_note'>{{{gurpslink notes}}}</div>
         </div>
 
-        <div class='usage flex-center'>{{this.mode}}</div>
+        <div class='usage flex-center'>{{mode}}</div>
         <div
           class='level rollable flex-center'
-          data-name='{{this.name}} ({{this.mode}})'
+          data-name='{{name}} ({{mode}})'
           data-key='data.melee.{{@key}}'
-          data-otf='A:"{{this.name}} ({{this.mode}})"'
-        >{{this.level}}</div>
-        <div class='parry rollable flex-center' data-otf='Parry'>{{this.parry}}</div>
-        <div class='block rollable flex-center' data-otf='Block'>{{this.block}}</div>
-        <div class='damage rollable flex-center' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
-        <div class='reach flex-center'>{{this.reach}}</div>
-        <div class='st flex-center'>{{this.st}}</div>
+          data-otf='A:"{{name}} ({{mode}})"'
+        >{{level}}</div>
+        <div class='parry rollable flex-center' data-otf='Parry'>{{parry}}</div>
+        <div class='block rollable flex-center' data-otf='Block'>{{block}}</div>
+        <div class='damage rollable flex-center' data-damage data-otf='{{damage}}'>{{damage}}</div>
+        <div class='reach flex-center'>{{reach}}</div>
+        <div class='st flex-center'>{{st}}</div>
       {{/unless}}
-    {{else}}
-      <div class='itemmenu meleemenu' data-key='data.melee.{{@key}}'>
-        <i class='fas fa-times'></i>
-      </div>
-      <div class='desc indent{{indent}}' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.name' class='gcs-input-25' type='text' value='{{this.name}}' />
-        <div class='list_note'>
-          <input name='data.melee.{{key}}.notes' class='gcs-input-25' type='text' value='{{this.notes}}' />
-        </div>
-      </div>
-      <div class='usage' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.mode' class='gcs-input' type='text' value='{{this.mode}}' /></div>
-      <div class='level' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.import' class='gcs-input-sm2' type='text' value='{{this.import}}' /></div>
-      <div class='parry' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.parry' class='gcs-input-sm4' type='text' value='{{this.parry}}' /></div>
-      <div class='block' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.block' class='gcs-input-sm4' type='text' value='{{this.block}}' /></div>
-      <div class='damage' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.damage' class='gcs-input' type='text' value='{{this.damage}}' /></div>
-      <div class='reach' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.reach' class='gcs-input-sm3' type='text' value='{{this.reach}}' /></div>
-      <div class='st' data-key='data.melee.{{key}}'>
-        <input name='data.melee.{{key}}.st' class='gcs-input-sm2' type='text' value='{{this.st}}' /></div>
-    {{/unless}}
+    {{/if}}
   {{/each}}
 </div>

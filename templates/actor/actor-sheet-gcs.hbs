@@ -53,15 +53,17 @@
     </div> 
     {{!-- end of stats --}}
 
-    {{#if (notEmpty data.reactions)}}
-      {{>reactions}}
-      {{log "reactions"}}
+    {{#if (or (notEmpty data.reactions) (notEmpty data.conditionalmods))}}
+      <div id='other' style='display: flex; flex-flow: row nowrap;'>
+        {{#if (notEmpty data.reactions)}}{{>reactions}}{{log "reactions"}}{{/if}}
+        {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{log "conditional modifiers"}}{{/if}}
+      </div>
     {{/if}}
-    {{>conditionalmods}}
-    {{log "conditional modifiers"}}
 
-    {{>trackers}}
+    {{#if (notEmpty data.additionalresources.tracker)}}
+      {{>trackers}}
       {{log "trackers"}}
+    {{/if}}
 
     {{#if (notEmpty data.melee)}}
       {{>melee}}
@@ -73,20 +75,27 @@
       {{log "ranged"}}
     {{/if}}
 
-    {{>advantages}}
-    {{log "advantages"}}
-    {{>skills}}
-    {{log "skills"}}
+    {{#if (or (notEmpty data.skills) (notEmpty data.ads))}}
+      <div id='ads-skills'>
+        {{#if (notEmpty data.ads)}}{{>advantages}}{{log "advantages"}}{{/if}}
+        {{#if (notEmpty data.skills)}}{{>skills}}{{log "skills"}}{{/if}}
+      </div>
+    {{/if}}
 
     {{#if (notEmpty data.spells)}}
       {{>spells}}
       {{log "spells"}}
     {{/if}}
 
-    {{>equipment container='carried' data=this.data}}
-    {{log "carried"}}
-    {{>equipment container='other' data=this.data}}
-    {{log "other"}}
+    {{#if (notEmpty data.equipment.carried)}}
+      {{>equipment container='carried' data=this.data}}
+      {{log "carried"}}
+    {{/if}}
+
+    {{#if (notEmpty data.equipment.other)}}
+      {{>equipment container='other' data=this.data}}
+      {{log "other"}}
+    {{/if}}
 
     {{>notes}}
     {{log "notes"}}

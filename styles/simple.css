@@ -1,5 +1,6 @@
 :root {
   --controlhover: 0 0 5px red;
+  --sectiongap: 0.05in;
 }
 
 .gurps {
@@ -784,8 +785,10 @@ body {
 }
 
 #sheet {
-  display: grid;
-  grid-template:
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: start;
+  /* grid-template:
     'personal personal'
     'stats stats'
     'reactions conditionalmods'
@@ -797,7 +800,11 @@ body {
     'equipmentcarried equipmentcarried'
     'equipmentother equipmentother'
     'notes notes';
-  grid-gap: 0.05in;
+  grid-gap: var(--sectiongap); */
+}
+
+#sheet > div {
+  margin-bottom: var(--sectiongap);
 }
 
 #sheet-tab {
@@ -822,7 +829,7 @@ body {
     'equipmentcarried equipmentcarried'
     'equipmentother equipmentother'
     'notes notes';
-  grid-gap: 0.05in;
+  grid-gap: var(--sectiongap);
   grid-template-columns: 1fr 1fr;
 }
 
@@ -874,7 +881,7 @@ body {
     'portrait identity miscellaneous points'
     'portrait description description points';
   grid-template-columns: 0fr 1fr 1fr 0fr;
-  grid-gap: 0.05in;
+  grid-gap: var(--sectiongap);
 }
 
 #portrait {
@@ -943,6 +950,31 @@ body {
   border-left: 1px solid black;
 }
 
+#ads-skills,
+#other {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: stretch;
+}
+
+#other > div {
+  width: 100%;
+  margin-right: var(--sectiongap);
+}
+
+#ads-skills > div {
+  margin-right: var(--sectiongap);
+}
+
+#skills {
+  min-width: max-content;
+}
+
+#ads-skills > div:last-child,
+#other > div:last-child {
+  margin-right: 0;
+}
+
 #stats {
   grid-area: stats;
   display: grid;
@@ -951,7 +983,7 @@ body {
     'attributes      condition       location        qnotes'
     'attributes      condition       location        lifting';
   grid-template-columns: 0fr 1fr 1fr 1fr;
-  grid-gap: 0.05in;
+  grid-gap: var(--sectiongap);
 }
 
 #qnotes {
@@ -1396,7 +1428,7 @@ body {
 /* ----- tabbed sheet additions ----- */
 .sheet-body.tabbed-sheet #combat-tab {
   display: grid;
-  grid-gap: 0.05in;
+  grid-gap: var(--sectiongap);
   grid-template-columns: 1fr min-content;
   grid-template-rows: auto auto 1fr;
   grid-template-areas:
@@ -1415,7 +1447,7 @@ body {
   display: grid;
   grid-template-columns: 0fr 1fr auto;
   /* grid-template-rows: 0fr auto auto; */
-  grid-gap: 0.05in;
+  grid-gap: var(--sectiongap);
   grid-template-areas:
     'combat-attrs      encumbrance       location       '
     'combat-attrs      condition         location       '
@@ -1429,13 +1461,13 @@ body {
 #combat-hitfat {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 0.05in;
+  grid-gap: var(--sectiongap);
 }
 
 #tracker-scroller {
   display: flex;
   flex-flow: row nowrap;
-  gap: 0.05in;
+  gap: var(--sectiongap);
   white-space: nowrap;
   overflow-y: hidden;
   overflow-x: auto;
@@ -1468,7 +1500,7 @@ body {
 #combat-weapons,
 #combat-condition,
 #combat-location {
-  gap: 0.05in;
+  gap: var(--sectiongap);
   display: grid;
   grid-template-rows: 0fr 1fr;
 }
@@ -1476,7 +1508,7 @@ body {
 #combat-attrs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.05in;
+  gap: var(--sectiongap);
 }
 
 #combat-identity,
@@ -1690,7 +1722,7 @@ body {
 #combat-weapons {
   grid-area: combat-weapons;
   display: grid;
-  row-gap: 0.05in;
+  row-gap: var(--sectiongap);
   grid-template-columns: auto;
   grid-template-rows: auto auto auto;
   grid-template-areas:
