@@ -41,23 +41,7 @@
     {{>equipment container='carried' data=this.data}}
     {{>equipment container='other' data=this.data}}
 
-    <div id="notes">
-      <div class="desc header" data-key="data.notes">
-        Notes &nbsp; <i class='fas fa-plus addnoteicon'></i>
-      </div>
-      <div class="ref header">Ref</div>
-      {{#listeqt data.notes}}
-        <div class="desc indent0 notemenu" data-key="data.notes.{{@key}}"><textarea name="data.notes.{{@key}}.notes"
-            class="gcs-input-ta" type="text" style="height:120px !important">{{this.notes}}</textarea></div>
-
-        <div class="ref" data-key="data.notes.{{@key}}"><input name="data.notes.{{@key}}.pageref"
-            class="gcs-input-sm5" type="text" value="{{this.pageref}}" />
-        </div>
-      {{/listeqt}}
-      <div></div>
-    </div>
+    {{>notes}}
   </div>
-  <div id="footer">GCS is copyrighted 1998-2020 by Richard A. Wilkes All rights reserved
-    <a href="https://gurpscharactersheet.com">gurpscharactersheet.com</a>
-  </div>
+  {{>footer}}
 </form>

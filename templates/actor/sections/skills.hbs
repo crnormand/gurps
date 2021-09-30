@@ -11,8 +11,8 @@
   <div class='pts header'>{{i18n 'GURPS.abbrevPts' 'Pts'}}</div>
   <div class='ref header'>{{i18n 'GURPS.abbrevRef' 'Ref'}}</div>
 
-  {{#if isEditing}}
-    {{#listeqt data.skills}}
+  {{#each data.skills}}
+    {{#if isEditing}}
       <div class='itemmenu skillmenu' data-key='data.skills.{{@key}}'>
         <i class='fas fa-times'></i>
       </div>
@@ -48,10 +48,7 @@
           type='text'
           value='{{this.pageref}}'
         /></div>
-    {{/listeqt}}
-
-  {{else}}
-    {{#listeqt data.skills}}
+    {{else}}
       <div class='itemmenu' readonly></div>
       <div class='desc indent{{@indent}} skldraggable dblclkedit tooltip-manager' data-key='data.skills.{{@key}}'>
         {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
@@ -76,6 +73,6 @@
       <div class='rsl flex-center'>{{this.relativelevel}}</div>
       <div class='pts flex-center'>{{this.points}}</div>
       <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
-    {{/listeqt}}
-  {{/if}}
+    {{/if}}
+  {{/each}}
 </div>

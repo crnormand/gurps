@@ -1280,6 +1280,7 @@ body {
 }
 
 /* Indicate this item has a contextmenu */
+.equipmenuother:hover,
 .equipmenucarried:hover {
   cursor: context-menu;
   text-shadow: var(--controlhover);
@@ -1867,7 +1868,7 @@ body {
   /* padding-left: 10px; */
 }
 
-.user-created::before {
+.user-created::after {
   content: '\f02e'; /* this is your text. You can also use UTF-8 character codes as I do here */
   font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
   font-weight: 900;

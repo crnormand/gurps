@@ -4,6 +4,7 @@
   <div class='qty header' data-key='data.equipment.{{container}}'>
     {{i18n 'GURPS.equipmentQuantity'}}
   </div>
+
   <div class='desc header eqtdragtarget' data-key='data.equipment.{{container}}'>
     <div class='headermenu'>
       <span>
@@ -19,6 +20,7 @@
       <i class='fas fa-caret-square-down'></i>
     </div>
   </div>
+
   <div class='uses header'>{{i18n 'GURPS.equipmentUses'}}</div>
   <div class='cost header'>$</div>
   <div class='weight header'><i class='fas fa-weight-hanging'></i></div>
@@ -41,6 +43,7 @@
         <input name='data.equipment.{{../container}}.{{@key}}.count' class='gcs-input-sm3' type='text'
           value='{{this.count}}' />
       </div>
+
       <div class='desc indent{{indent}} ' data-key='data.equipment.{{../container}}.{{@key}}'>
         <input name='data.equipment.{{../container}}.{{@key}}.name' class='gcs-input' type='text'
           value='{{this.name}}' />
@@ -90,8 +93,8 @@
         <button class='equipmentbutton' data-operation='equipment-inc'>+</button>
       </div>
 
-      <div class='desc indent{{indent}}  eqtdraggable dblclkedit equipmenu{{../container}}' data-key='data.equipment.{{../container}}.{{@key}}'>
-        <div style='display: flex; flex-flow: row nowrap; width: 100%;'>
+      <div class='desc indent{{indent}} eqtdraggable dblclkedit equipmenu{{../container}}' data-key='data.equipment.{{../container}}.{{@key}}'>
+        <div class='gga-desc-text' style='display: flex; flex-flow: row nowrap; width: 100%;'>
           <div>
             {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
             {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -104,12 +107,12 @@
           </div>
           <div>
             {{#if (isUserCreated this)}}
-              <i class='far fa-bookmark tooltip' style='color: steelblue; font-weight: 900; padding-top: 3px;'>
+              <i class='far fa-bookmark tooltip' style='color: steelblue; font-weight: 900;'>
                 <span='tooltiptext'>{{i18n 'GURPS.equipmentUserCreated' 'User-created'}}</span>
               </i>
             {{/if}}
             {{#if (isFoundryItem this)}}
-              <i class='far fa-star tooltip' style='color: olivedrab; font-weight: 900; padding-top: 3px;'>
+              <i class='far fa-star tooltip' style='color: olivedrab; font-weight: 900;'>
                 <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
               </i>
             {{/if}}
@@ -123,6 +126,7 @@
         <div class='list_note eqtdraggable' data-key='data.equipment.{{../container}}.{{@key}}'>
           {{{gurpslink this.notes}}}
         </div>
+        
       </div>
       
       <div class='uses flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>

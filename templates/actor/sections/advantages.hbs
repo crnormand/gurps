@@ -9,12 +9,12 @@
   <div class='pts header'>{{i18n 'GURPS.abbrevPoints' 'Pts'}}</div>
   <div class='ref header'>{{i18n 'GURPS.abbrevReference' 'Ref'}}</div>
 
-  {{#listeqt data.ads}}
+  {{#each (flatlist data.ads)}}
     {{#if ../isEditing}}
       <div class='itemmenu adsmenu' data-key='data.ads.{{@key}}'>
         <i class='fas fa-times'></i>
       </div>
-      <div class='desc indent0' data-key='data.ads.{{@key}}'>
+      <div class='desc indent{{indent}}' data-key='data.ads.{{@key}}'>
         <input name='data.ads.{{@key}}.name' class='gcs-input' type='text' value='{{this.name}}' />
         <div class='list_note'>
           <textarea name='data.ads.{{@key}}.notes' class='gcs-input-ta' type='text'>{{this.notes}}</textarea>
@@ -27,27 +27,35 @@
         <input name='data.ads.{{@key}}.pageref' class='gcs-input-sm5' type='text' value='{{this.pageref}}' />
       </div>
     {{else}}
-      <div class='itemmenu' readonly></div>
-      <div class='desc indent{{@indent}} adsdraggable dblclkedit tooltip-manager' data-key='data.ads.{{@key}}'>
-        <div style='display: flex; flex-flow: row nowrap;'>
-          {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-          {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-          {{{gurpslink this.name}}}
-          {{#if (isFoundryItem this)}}
-            <i class='far fas fa-star' style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'></i>
-          {{/if}}
-          {{#if (displayItemHover this)}}
-            <div class='tooltippic'><img src='{{this.img}}' /></div>
-          {{/if}}
+      {{#unless isCollapsed}}
+        <div class='itemmenu' readonly></div>
+
+        <div class='desc indent{{indent}} adsdraggable dblclkedit' data-key='data.ads.{{@key}}'>
+          <div class='gga-desc-text' style='display: flex; flex-flow: row nowrap; width: 100%;'>
+            <div>
+              {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+              {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            </div>
+            <div class='tooltip-manager' data-key='data.ads.{{@key}}' style='width: 100%;'>
+              {{{gurpslink this.name}}}
+              {{#if (displayItemHover this)}}
+                <div class='tooltippic'><img src='{{this.img}}' /></div>
+              {{/if}}
+            </div>
+            <div>
+              {{#if (isFoundryItem this)}}
+                <i class='far fas fa-star' style='color: olivedrab; font-weight: 900;'></i>
+              {{/if}}
+            </div>
+          </div>
+          <div class='list_note adsdraggable' data-key='data.ads.{{@key}}'>
+            {{{gurpslinkbr this.notes}}}
+          </div>
         </div>
-        <div class='list_note adsdraggable'
-          {{#if (or (notEmpty this.contains) (notEmpty this.collapsed))}}
-            style='padding-left: 1em;'
-          {{/if}}
-          data-key='data.ads.{{@key}}'>{{{gurpslinkbr this.notes}}}</div>
-      </div>
-      <div class='pts gga-right'>{{{displayNumber this.points false}}}</div>
-      <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
+
+        <div class='pts gga-right'>{{{displayNumber this.points false}}}</div>
+        <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
+      {{/unless}}
     {{/if}}
-  {{/listeqt}}
+  {{/each}}
 </div>

@@ -60,19 +60,28 @@
       </div>
     {{/each}}
   {{else}}
-    {{#listattack data 'ranged'}}
+    {{#each data.ranged as |this key|}}
       <div class='itemmenu' readonly></div>
-      <div class='desc dblclkedit rangeddraggable tooltip-manager' data-key='data.ranged.{{@key}}'>
-        {{{gurpslink this.name}}}
-        {{#if (isFoundryItem this)}}&nbsp;<i
-            class='far fas fa-star'
-            style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'
-          ></i>{{/if}}
-        {{#if (displayItemHover this)}}
-          <div class='tooltippic'><img src='{{this.img}}' /></div>
-        {{/if}}
+
+      <div class='desc dblclkedit rangeddraggable' data-key='data.ranged.{{@key}}'>
+        <div class='gga-desc-text' style='display: flex; flex-flow: row nowrap; width: 100%;'>
+          <div class='tooltip-manager' style='width: 100%;'>
+            {{{gurpslink this.name}}}
+            {{#if (displayItemHover this)}}
+              <div class='tooltippic'><img src='{{this.img}}' /></div>
+            {{/if}}
+          </div>
+          <div>
+            {{#if (isFoundryItem this)}}
+              <i class='far fas fa-star tooltip' style='color: olivedrab; font-weight: 900;'>
+                <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+              </i>
+            {{/if}}
+          </div>
+        </div>
         <div class='list_note'>{{{gurpslink this.notes}}}</div>
       </div>
+
       <div class='usage flex-center'>{{this.mode}}</div>
       <div
         class='level rollable flex-center'
@@ -99,6 +108,6 @@
       </div>
       <div class='rcl gga-right'>{{this.rcl}}</div>
       <div class='st flex-center'>{{this.st}}</div>
-    {{/listattack}}
+    {{/each}}
   {{/if}}
 </div>

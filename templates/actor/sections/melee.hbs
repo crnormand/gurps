@@ -14,44 +14,52 @@
   <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
   <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
-  {{#unless isEditing}}
-    {{#listattack data 'melee'}}
-      <div class='itemmenu' readonly></div>
-      <div
-        class='desc gcs-edit dblclkedit meleedraggable tooltip-manager'
-        data-key='data.melee.{{@key}}'
-        data-path='data.melee'
-      >
-        {{{gurpslink this.name}}}
-        {{#if (isFoundryItem this)}}&nbsp;<i
-            class='far fas fa-star'
-            style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'
-          ></i>{{/if}}
-        {{#if (displayItemHover this)}}
-          <div class='tooltippic'><img src='{{this.img}}' /></div>
-        {{/if}}
-        <div class='list_note'>{{{gurpslink this.notes}}}</div>
-      </div>
+  {{#each (flatlist data.melee) }}
+    {{#unless ../isEditing}}
+      {{#unless isCollapsed}}
+        <div class='itemmenu' readonly></div>
 
-      <div class='usage flex-center'>{{this.mode}}</div>
-      <div
-        class='level rollable flex-center'
-        data-name='{{this.name}} ({{this.mode}})'
-        data-key='data.melee.{{@key}}'
-        data-otf='A:"{{this.name}} ({{this.mode}})"'
-      >{{this.level}}</div>
-      <div class='parry rollable flex-center' data-otf='Parry'>{{this.parry}}</div>
-      <div class='block rollable flex-center' data-otf='Block'>{{this.block}}</div>
-      <div class='damage rollable flex-center' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
-      <div class='reach flex-center'>{{this.reach}}</div>
-      <div class='st flex-center'>{{this.st}}</div>
-    {{/listattack}}
-  {{else}}
-    {{#each data.melee as |this key|}}
+        <div class='desc dblclkedit meleedraggable indent{{indent}}' data-key='data.melee.{{@key}}' data-path='data.melee'>
+          <div class='gga-desc-text' style='display: flex; flex-flow: row nowrap; width: 100%;'>
+            <div>
+              {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+              {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            </div>
+            <div class='tooltip-manager' style='width: 100%;'>
+              {{{gurpslink this.name}}}
+              {{#if (displayItemHover this)}}
+                <div class='tooltippic'><img src='{{this.img}}' /></div>
+              {{/if}}
+            </div>
+            <div>
+              {{#if (isFoundryItem this)}}
+                <i class='far fa-star tooltip' style='color: olivedrab; font-weight: 900;'>
+                  <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+                </i>
+              {{/if}}
+            </div>
+          </div>
+          <div class='list_note'>{{{gurpslink this.notes}}}</div>
+        </div>
+
+        <div class='usage flex-center'>{{this.mode}}</div>
+        <div
+          class='level rollable flex-center'
+          data-name='{{this.name}} ({{this.mode}})'
+          data-key='data.melee.{{@key}}'
+          data-otf='A:"{{this.name}} ({{this.mode}})"'
+        >{{this.level}}</div>
+        <div class='parry rollable flex-center' data-otf='Parry'>{{this.parry}}</div>
+        <div class='block rollable flex-center' data-otf='Block'>{{this.block}}</div>
+        <div class='damage rollable flex-center' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
+        <div class='reach flex-center'>{{this.reach}}</div>
+        <div class='st flex-center'>{{this.st}}</div>
+      {{/unless}}
+    {{else}}
       <div class='itemmenu meleemenu' data-key='data.melee.{{@key}}'>
         <i class='fas fa-times'></i>
       </div>
-      <div class='desc' data-key='data.melee.{{key}}'>
+      <div class='desc indent{{indent}}' data-key='data.melee.{{key}}'>
         <input name='data.melee.{{key}}.name' class='gcs-input-25' type='text' value='{{this.name}}' />
         <div class='list_note'>
           <input name='data.melee.{{key}}.notes' class='gcs-input-25' type='text' value='{{this.notes}}' />
@@ -71,6 +79,6 @@
         <input name='data.melee.{{key}}.reach' class='gcs-input-sm3' type='text' value='{{this.reach}}' /></div>
       <div class='st' data-key='data.melee.{{key}}'>
         <input name='data.melee.{{key}}.st' class='gcs-input-sm2' type='text' value='{{this.st}}' /></div>
-    {{/each}}
-  {{/unless}}
+    {{/unless}}
+  {{/each}}
 </div>
