@@ -11,7 +11,7 @@
   </div>
 
   {{#each data.conditionalmods as |this key|}}
-    {{#if isEditing}}
+    {{#if ../isEditing}}
       <div class='itemmenu condmodmenu' data-key='data.conditionalmods.{{key}}'>
         <i class='fas fa-times'></i>
       </div>
@@ -29,7 +29,9 @@
     {{else}}
       <div class='itemmenu' readonly></div>
       <div class='modifier gmod gga-right' data-name='Modifier {{this.situation}}'>{{this.modifier}}</div>
-      <div class='situation'>{{{gurpslink this.situation}}}</div>
+      <div class='situation condmoddraggable' data-key='data.conditionalmods.{{key}}'>
+        {{{gurpslink this.situation}}}
+      </div>
     {{/if}}
   {{/each}}
 </div>

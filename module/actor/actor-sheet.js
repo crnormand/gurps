@@ -124,6 +124,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     // allow items in these lists to be draggable
     // TODO provide feedback about where the cursor is and whether you can drop it there.
+    this.makelistdrag(html, '.condmoddraggable', 'condmod')
+    this.makelistdrag(html, '.reactdraggable', 'reactions')
     this.makelistdrag(html, '.eqtdraggable', 'equipment')
     this.makelistdrag(html, '.adsdraggable', 'ads')
     this.makelistdrag(html, '.skldraggable', 'skills')
@@ -525,7 +527,7 @@ export class GurpsActorSheet extends ActorSheet {
       let eqt = getProperty(actor.data, path)
       if (eqt.count == 0) {
         await Dialog.confirm({
-          title: i18n('GURPS.removeItem', 'Remove Item'),
+          title: i18n('GURPS.removeItem'),
           content: i18n_f('GURPS.confirmRemoveItem', { name: eqt.name }, 'Remove {name} from the Equipment List?'),
           yes: () => actor.deleteEquipment(path),
         })
@@ -636,16 +638,19 @@ export class GurpsActorSheet extends ActorSheet {
   makelistdrag(html, cls, type) {
     html.find(cls).each((i, li) => {
       li.setAttribute('draggable', true)
+
       li.addEventListener('dragstart', ev => {
         let oldd = ev.dataTransfer.getData('text/plain')
         let eqtkey = ev.currentTarget.dataset.key
         let eqt = getProperty(this.actor.data, eqtkey) // FYI, may not actually be Equipment
+
         if (!eqt) return
         if (!!eqt.eqtkey) {
           eqtkey = eqt.eqtkey
           eqt = GURPS.decode(this.actor.data, eqtkey) // Features added by equipment will point to the equipment
           type = 'equipment'
         }
+
         var itemData
         if (!!eqt.itemid) {
           itemData = this.actor.items.get(eqt.itemid) // We have to get it now, as the source of the drag, since the target may not be owned by us
@@ -656,6 +661,7 @@ export class GurpsActorSheet extends ActorSheet {
           const preview = DragDrop.createDragImage(img, w, h)
           ev.dataTransfer.setDragImage(preview, 0, 0)
         }
+
         let newd = {
           actorid: this.actor.id, // may not be useful if this is an unlinked token
           actor: this.actor, // so send the actor,
@@ -666,6 +672,7 @@ export class GurpsActorSheet extends ActorSheet {
           itemData: itemData,
         }
         if (!!oldd) mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
+
         return ev.dataTransfer.setData('text/plain', JSON.stringify(newd))
       })
     })
@@ -1012,7 +1019,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   sortAscendingMenu(key) {
     return {
-      name: i18n('GURPS.sortAscending', 'Sort Ascending'),
+      name: i18n('GURPS.sortAscending'),
       icon: '<i class="fas fa-sort-amount-down-alt"></i>',
       callback: e => this.sortAscending(key),
     }
@@ -1020,7 +1027,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   sortDescendingMenu(key) {
     return {
-      name: i18n('GURPS.sortDescending', 'Sort Descending'),
+      name: i18n('GURPS.sortDescending'),
       icon: '<i class="fas fa-sort-amount-down"></i>',
       callback: e => this.sortDescending(key),
     }
@@ -1065,10 +1072,14 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type === 'damageItem') this.actor.handleDamageDrop(dragData.payload)
     if (dragData.type === 'Item') this.actor.handleItemDrop(dragData)
 
+    this.handleDragFor(event, dragData, 'ranged', 'rangeddraggable')
+    this.handleDragFor(event, dragData, 'melee', 'meleedraggable')
     this.handleDragFor(event, dragData, 'ads', 'adsdraggable')
     this.handleDragFor(event, dragData, 'skills', 'skldraggable')
     this.handleDragFor(event, dragData, 'spells', 'spldraggable')
     this.handleDragFor(event, dragData, 'note', 'notedraggable')
+    this.handleDragFor(event, dragData, 'reactions', 'reactdraggable')
+    this.handleDragFor(event, dragData, 'condmod', 'condmoddraggable')
 
     if (dragData.type === 'equipment') {
       if ((await this.actor.handleEquipmentDrop(dragData)) != false) return // handle external drag/drop
@@ -1088,16 +1099,21 @@ export class GurpsActorSheet extends ActorSheet {
   async handleDragFor(event, dragData, type, cls) {
     if (dragData.type === type) {
       let element = event.target
+
+      let x = $(element).closest(`.${cls}`)
+
       let classes = $(element).attr('class') || ''
       if (!classes.includes(cls)) return
+
       let targetkey = element.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
         if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
-          ui.notifications.error('Unable to drag and drop withing the same hierarchy.   Try moving it elsewhere first.')
+          ui.notifications.error('Unable to drag and drop within the same hierarchy. Try moving it elsewhere first.')
           return
         }
         let object = GURPS.decode(this.actor.data, srckey)
+
         // Because we may be modifing the same list, we have to check the order of the keys and
         // apply the operation that occurs later in the list, first (to keep the indexes the same)
         let srca = srckey.split('.')
@@ -1484,13 +1500,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this._makeHeaderMenu(
       html,
       '.reacthead',
-      [
-        this.addItemMenu(
-          i18n('GURPS.reaction'),
-          new Reaction('+0', i18n('GURPS.fromEllipses', 'from ...')),
-          'data.reactions'
-        ),
-      ],
+      [this.addItemMenu(i18n('GURPS.reaction'), new Reaction('+0', i18n('GURPS.fromEllipses')), 'data.reactions')],
       ClickAndContextMenu
     )
 
@@ -1499,8 +1509,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       '.condmodhead',
       [
         this.addItemMenu(
-          i18n('GURPS.conditionalModifier', 'Conditional Modifier'),
-          new Modifier('+0', i18n('GURPS.fromEllipses', 'from ...')),
+          i18n('GURPS.conditionalModifier'),
+          new Modifier('+0', i18n('GURPS.fromEllipses')),
           'data.conditionalmods'
         ),
       ],
@@ -1541,11 +1551,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       html,
       '.headermenu',
       [
-        this.addItemMenu(
-          i18n('GURPS.adDisadQuirkPerk', 'Advantage/Disadvantage/Quirk/Perk'),
-          new Advantage(`${i18n('GURPS.adDisad', 'Advantage/Disadvantage')}...`),
-          'data.ads'
-        ),
+        this.addItemMenu(i18n('GURPS.adDisadQuirkPerk'), new Advantage(`${i18n('GURPS.adDisad')}...`), 'data.ads'),
         this.sortAscendingMenu('data.ads'),
         this.sortDescendingMenu('data.ads'),
       ],
@@ -1597,21 +1603,21 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     // TODO make this available from the full sheet as well
 
     let opts = [
-      this._createMenu(i18n('GURPS.delete', 'Delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
+      this._createMenu(i18n('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
       this._createMenu(
-        i18n('GURPS.sortContentsAscending', 'Sort Contents (Ascending)'),
+        i18n('GURPS.sortContentsAscending'),
         '<i class="fas fa-sort-amount-down-alt"></i>',
         this._sortContentAscending.bind(this),
         this._isSortable.bind(this)
       ),
       this._createMenu(
-        i18n('GURPS.sortContentsDescending', 'Sort Contents (Descending)'),
+        i18n('GURPS.sortContentsDescending'),
         '<i class="fas fa-sort-amount-down"></i>',
         this._sortContentDescending.bind(this),
         this._isSortable.bind(this)
       ),
       this._createMenu(
-        i18n('GURPS.moveToOtherEquipment', 'Move to Other Equipment'),
+        i18n('GURPS.moveToOtherEquipment'),
         '<i class="fas fa-level-down-alt"></i>',
         this._moveEquipment.bind(this)
       ),

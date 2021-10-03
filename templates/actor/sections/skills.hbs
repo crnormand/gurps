@@ -47,7 +47,7 @@
               {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
               {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
             </div>
-            <div class='tooltip-manager' style='width: 100%;'>
+            <div class='tooltip-manager' style='width: 100%; white-space: nowrap;'>
               {{{gurpslink this.name}}}
               {{#if (displayItemHover this)}}
                 <div class='tooltippic'><img src='{{this.img}}' /></div>

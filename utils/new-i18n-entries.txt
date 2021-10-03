@@ -1,0 +1,18 @@
+module/actor/actor-sheet.js
+
+
+=== New Entries for en.json ===
+"GURPS.removeItem": "Remove Item",
+"GURPS.sortAscending": "Sort Ascending",
+"GURPS.sortDescending": "Sort Descending",
+"GURPS.fromEllipses": "from ...",
+"GURPS.conditionalModifier": "Conditional Modifier",
+"GURPS.adDisadQuirkPerk": "Advantage/Disadvantage/Quirk/Perk",
+"GURPS.adDisad": "Advantage/Disadvantage",
+"GURPS.delete": "Delete",
+"GURPS.sortContentsAscending": "Sort Contents (Ascending)",
+"GURPS.sortContentsDescending": "Sort Contents (Descending)",
+"GURPS.moveToOtherEquipment": "Move to Other Equipment",
+=== end of entries ===
+
+Written: module/actor/actor-sheet.js

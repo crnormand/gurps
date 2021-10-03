@@ -20,29 +20,29 @@
   <div class='dodge header'>{{i18n 'GURPS.dodge'}}</div>
 
   {{#each data.encumbrance}}
-    <div class='encmarker {{include-if this.current 'current'}}'></div>
-    <div class='enc {{include-if this.current 'current'}} {{this.key}}' data-key='{{@key}}'></div>
-    <div class='load gga-right {{include-if this.current 'current'}}'>
+    <div class='encmarker {{include-if current 'current'}}'></div>
+    <div class='enc {{include-if current 'current'}} {{key}} {{include-if (not (automaticEncumbrance)) 'clickable'}}' data-key='{{@key}}'></div>
+    <div class='load gga-right {{include-if current 'current'}}'>
       {{#if ../isEditing}}
-        <input name='data.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{this.weight}}' />
+        <input name='data.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' />
       {{else}}
-        {{this.weight}}
+        {{weight}}
       {{/if}}
     </div>
-    <div class='move flex-center {{include-if this.current 'current'}}'>
+    <div class='move flex-center {{include-if current 'current'}}'>
       {{#if ../isEditing}}
-        <input name='data.encumbrance.{{@key}}.move' class='gcs-input' type='text' value='{{this.move}}' />
+        <input name='data.encumbrance.{{@key}}.move' class='gcs-input' type='text' value='{{move}}' />
       {{else}}
-        {{this.currentmovedisplay}}
+        {{currentmovedisplay}}
       {{/if}}
     </div>
     {{#if ../isEditing}}
-      <div class='dodge flex-center {{include-if this.current 'current'}}'>
-        <input name='data.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{this.dodge}}' />
+      <div class='dodge flex-center {{include-if current 'current'}}'>
+        <input name='data.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{dodge}}' />
       </div>
     {{else}}
-      <div class='dodge rollable flex-center {{include-if this.current 'current'}}' data-otf='Dodge' data-path='dodge'>
-        {{this.currentdodge}}
+      <div class='dodge rollable flex-center {{include-if current 'current'}}' data-otf='Dodge' data-path='dodge'>
+        {{currentdodge}}
       </div>
     {{/if}}
   {{/each}}

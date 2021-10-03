@@ -1,6 +1,8 @@
 :root {
   --controlhover: 0 0 5px red;
   --sectiongap: 0.05in;
+  --smallemgap: 0.2em;
+  --fontawesomefamily: 'Font Awesome 5 Free', Roboto, sans-serif;
 }
 
 .gurps {
@@ -966,10 +968,6 @@ body {
   margin-right: var(--sectiongap);
 }
 
-#skills {
-  min-width: max-content;
-}
-
 #ads-skills > div:last-child,
 #other > div:last-child {
   margin-right: 0;
@@ -1231,7 +1229,7 @@ body {
 #reactions .modifier:nth-child(6n + 5),
 #reactions .situation:nth-child(6n + 6),
 #melee .itemmenu:nth-child(18n + 10),
-#melee .desc:nth-child(18n + 11),
+#melee .meleedraggable:nth-child(18n + 11),
 #melee .usage:nth-child(18n + 12),
 #melee .level:nth-child(18n + 13),
 #melee .parry:nth-child(18n + 14),
@@ -1240,7 +1238,7 @@ body {
 #melee .reach:nth-child(18n + 17),
 #melee .st:nth-child(18n + 18),
 #ranged .itemmenu:nth-child(24n + 13),
-#ranged .desc:nth-child(24n + 14),
+#ranged .rangeddraggable:nth-child(24n + 14),
 #ranged .usage:nth-child(24n + 15),
 #ranged .level:nth-child(24n + 16),
 #ranged .acc:nth-child(24n + 17),
@@ -1252,7 +1250,7 @@ body {
 #ranged .rcl:nth-child(24n + 23),
 #ranged .st:nth-child(24n + 24),
 #advantages .itemmenu:nth-child(8n + 5),
-#advantages .desc:nth-child(8n + 6),
+#advantages .adsdraggable:nth-child(8n + 6),
 #advantages .pts:nth-child(8n + 7),
 #advantages .ref:nth-of-type(8n + 8),
 #skills .itemmenu:nth-child(12n + 7),
@@ -1311,6 +1309,46 @@ body {
   width: 100%;
 }
 
+#encumbrance .clickable:hover {
+  cursor: pointer;
+  text-shadow: var(--controlhover);
+}
+
+.gga-desc-text {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  align-items: center;
+}
+
+.adsdraggable,
+.rangeddraggable,
+.meleedraggable,
+.condmoddraggable,
+.reactdraggable {
+  cursor: grab;
+}
+
+.adsdraggable,
+.rangeddraggable,
+.meleedraggable {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.adsdraggable:before,
+.rangeddraggable:before,
+.meleedraggable:before,
+.condmoddraggable:before,
+.reactdraggable:before {
+  content: '\f142';
+  font-family: var(--fontawesomefamily);
+  color: rgba(0, 0, 0, 0.3);
+  font-size: 80%;
+  font-weight: 600;
+  padding-right: calc(2 * var(--smallemgap));
+}
+
 /* Indicate this item has a contextmenu */
 .equipmenuother:hover,
 .equipmenucarried:hover {
@@ -1327,6 +1365,10 @@ body {
 .noedit {
   white-space: nowrap;
   border: none;
+}
+
+.situation {
+  white-space: normal !important;
 }
 
 .equipmentlist .ref,
@@ -1388,11 +1430,12 @@ body {
 .list_note {
   font-size: 80%;
   width: 100%;
+  white-space: normal;
 }
 
 .encmarker.current:after {
   content: '\f101'; /* this is your text. You can also use UTF-8 character codes as I do here */
-  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-family: var(--fontawesomefamily);
   font-weight: 900;
   padding-right: 2px;
 }
@@ -1861,7 +1904,7 @@ body {
 
 .roll-result .roll-value,
 .roll-result .roll-detail {
-  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-family: var(--fontawesomefamily);
 }
 
 .roll-result .roll-detail {
@@ -1902,7 +1945,7 @@ body {
 
 .user-created::after {
   content: '\f02e'; /* this is your text. You can also use UTF-8 character codes as I do here */
-  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-family: var(--fontawesomefamily);
   font-weight: 900;
   float: left;
   color: steelblue;

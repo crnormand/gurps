@@ -14,7 +14,7 @@
   <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
   <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
-  {{#each (flatlist data.melee) }}
+  {{#each (flatlist data.melee)}}
     {{#if ../isEditing}}
       <div class='itemmenu meleemenu' data-key='data.melee.{{@key}}'>
         <i class='fas fa-times'></i>
@@ -26,7 +26,7 @@
           <input name='data.melee.{{@key}}.notes' class='gcs-input-25' type='text' value='{{notes}}' />
         </div>
       </div>
-      
+
       <div class='usage' data-key='data.melee.{{@key}}'>
         <input name='data.melee.{{@key}}.mode' class='gcs-input' type='text' value='{{mode}}' />
       </div>
@@ -52,29 +52,30 @@
       {{#unless isCollapsed}}
         <div class='itemmenu' readonly></div>
 
-        <div class='desc dblclkedit meleedraggable indent{{indent}}' data-key='data.melee.{{@key}}' data-path='data.melee'>
-          <div class='gga-desc-text' style='display: flex; flex-flow: row nowrap; width: 100%;'>
-            <div>
-              {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-              {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+        <div class='meleedraggable dblclkedit' data-key='data.melee.{{@key}}'>
+          <div class='desc indent{{indent}}' data-path='data.melee'>
+            <div class='gga-desc-text'>
+              <div>
+                {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+              </div>
+              <div class='tooltip-manager' style='width: 100%;'>
+                {{{gurpslink name}}}
+                {{#if (displayItemHover this)}}
+                  <div class='tooltippic'><img src='{{img}}' /></div>
+                {{/if}}
+              </div>
+              <div>
+                {{#if (isFoundryItem this)}}
+                  <i class='far fa-star tooltip' style='color: olivedrab; font-weight: 900;'>
+                    <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+                  </i>
+                {{/if}}
+              </div>
             </div>
-            <div class='tooltip-manager' style='width: 100%;'>
-              {{{gurpslink name}}}
-              {{#if (displayItemHover this)}}
-                <div class='tooltippic'><img src='{{img}}' /></div>
-              {{/if}}
-            </div>
-            <div>
-              {{#if (isFoundryItem this)}}
-                <i class='far fa-star tooltip' style='color: olivedrab; font-weight: 900;'>
-                  <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
-                </i>
-              {{/if}}
-            </div>
+            <div class='list_note'>{{{gurpslink notes}}}</div>
           </div>
-          <div class='list_note'>{{{gurpslink notes}}}</div>
         </div>
-
         <div class='usage flex-center'>{{mode}}</div>
         <div
           class='level rollable flex-center'
