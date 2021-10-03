@@ -8,6 +8,7 @@ import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
+import { GURPS } from '../gurps.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -1098,55 +1099,68 @@ export class GurpsActorSheet extends ActorSheet {
   // Non-equipment list drags
   async handleDragFor(event, dragData, type, cls) {
     if (dragData.type === type) {
-      let element = event.target
+      // Validate that the target is valid for the drop.
+      let dropTargetElements = $(event.target).closest(`.${cls}`)
+      if (dropTargetElements?.length === 0) return
 
-      let x = $(element).closest(`.${cls}`)
+      // Get the target element.
+      let dropTarget = dropTargetElements[0]
 
-      let classes = $(element).attr('class') || ''
-      if (!classes.includes(cls)) return
-
-      let targetkey = element.dataset.key
+      // Dropping an item into a container that already contains it does nothing; tell the user and bail.
+      let targetkey = dropTarget.dataset.key
       if (!!targetkey) {
-        let srckey = dragData.key
-        if (srckey.includes(targetkey) || targetkey.includes(srckey)) {
-          ui.notifications.error('Unable to drag and drop within the same hierarchy. Try moving it elsewhere first.')
+        let sourceKey = dragData.key
+        if (sourceKey.includes(targetkey) || targetkey.includes(sourceKey)) {
+          ui.notifications.error(
+            i18n('GURPS.dragSameContainer', 'Cannot add the object to this container, as it is already inside it.')
+          )
           return
         }
-        let object = GURPS.decode(this.actor.data, srckey)
+
+        let object = GURPS.decode(this.actor.data, sourceKey)
 
         // Because we may be modifing the same list, we have to check the order of the keys and
-        // apply the operation that occurs later in the list, first (to keep the indexes the same)
-        let srca = srckey.split('.')
-        srca.splice(0, 2) // Remove data.xxxx
-        let tara = targetkey.split('.')
-        tara.splice(0, 2)
-        let max = Math.min(srca.length, tara.length)
+        // apply the operation that occurs later in the list, first (to keep the indexes the same).
+        let sourceTermsArray = sourceKey.split('.').splice(0, 2) // Remove the first two elements: data.xxxx
+        let targetTermsArray = targetkey.split('.').splice(0, 2)
+        let max = Math.min(sourceTermsArray.length, targetTermsArray.length)
+
         let isSrcFirst = false
         for (let i = 0; i < max; i++) {
-          if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
+          // Could be a term like parseInt('contains') < parseInt('contains'), which in typical JS jankiness, reduces
+          // to NaN < NaN, which is false.
+          if (parseInt(sourceTermsArray[i]) < parseInt(targetTermsArray[i])) {
+            isSrcFirst = true
+            break
+          }
         }
 
         let d = new Dialog({
           title: object.name,
-          content: '<p>Where do you want to drop this?</p>',
+          content: `<p>${i18n('GURPS.dropResolve', 'Where do you want to drop this object?')}</p>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-level-up-alt"></i>',
-              label: 'Before',
+              label: `${i18n('GURPS.dropBefore', 'Before the target')}`,
               callback: async () => {
-                if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
-                await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
+                if (!isSrcFirst)
+                  GURPS.removeKey(this.actor, sourceKey).then(() =>
+                    GURPS.insertBeforeKey(this.actor, targetkey, object)
+                  )
+                else
+                  GURPS.insertBeforeKey(this.actor, targetkey, object).then(() =>
+                    GURPS.removeKey(this.actor, sourceKey)
+                  )
               },
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
-              label: 'In',
+              label: `${i18n('GURPS.dropInside', 'Inside the target')}`,
               callback: async () => {
-                if (!isSrcFirst) await GURPS.removeKey(this.actor, srckey)
                 let k = targetkey + '.contains.' + GURPS.genkey(0)
-                await GURPS.insertBeforeKey(this.actor, k, object)
-                if (isSrcFirst) await GURPS.removeKey(this.actor, srckey)
+                if (!isSrcFirst)
+                  GURPS.removeKey(this.actor, sourceKey).then(() => GURPS.insertBeforeKey(this.actor, k, object))
+                else GURPS.insertBeforeKey(this.actor, k, object).then(() => GURPS.removeKey(this.actor, sourceKey))
               },
             },
           },
