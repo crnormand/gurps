@@ -32,7 +32,7 @@
 
         <div class='adsdraggable dblclkedit' data-key='data.ads.{{@key}}'>
           <div class='desc indent{{indent}}'>
-            <div class='gga-desc-text' style='display: flex; flex-flow: row nowrap; width: 100%;'>
+            <div class='gga-desc-text'>
               <div>
                 {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
@@ -45,15 +45,18 @@
               </div>
               <div>
                 {{#if (isFoundryItem this)}}
-                  <i class='far fas fa-star' style='color: olivedrab; font-weight: 900;'></i>
+                  <i class='far fas fa-star gga-item tooltip' style='color: olivedrab; font-weight: 900;'>
+                    <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+                  </i>
                 {{/if}}
               </div>
             </div>
-            <div class='list_note' data-key='data.ads.{{@key}}'>
+            <div class='list_note'>
               {{{gurpslinkbr this.notes}}}
             </div>
           </div>
         </div>
+
         <div class='pts gga-right'>{{{displayNumber this.points false}}}</div>
         <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
       {{/unless}}

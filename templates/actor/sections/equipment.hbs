@@ -100,10 +100,10 @@
             {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
             {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
           </div>
-          <div class='eqtdragtarget tooltip-manager' data-key='data.equipment.{{../container}}.{{@key}}' style='width: 100%;'>
+          <div class='eqtdragtarget tooltip gga-manual' data-key='data.equipment.{{../container}}.{{@key}}' style='width: 100%;'>
             {{{gurpslink this.name}}}
             {{#if (displayItemHover this)}}
-              <div class='tooltippic'><img src='{{this.img}}' /></div>
+              <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
             {{/if}}
           </div>
           <div>

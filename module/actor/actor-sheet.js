@@ -297,7 +297,7 @@ export class GurpsActorSheet extends ActorSheet {
 
       // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
       // display the tooltip in the correct position.
-      html.find('.tooltip-manager').mouseover(ev => {
+      html.find('.tooltip.gga-manual').mouseover(ev => {
         ev.preventDefault()
 
         let target = $(ev.currentTarget)
@@ -305,24 +305,21 @@ export class GurpsActorSheet extends ActorSheet {
           return
         }
 
-        let tooltip = target.children('.tooltippic')
+        let tooltip = target.children('.tooltiptext.gga-manual')
         if (tooltip) {
-          // tooltip placement according to parent placement
-          let top = target.offset().top - tooltip.height() * 0.85
-          let left = target.offset().left + target.width() * 0.8
-          tooltip.css({ top: top, left: left, visibility: 'visible' })
+          tooltip.css({ visibility: 'visible' })
         }
       })
 
       // On mouseout, stop displaying the tooltip.
-      html.find('.tooltip-manager').mouseout(ev => {
+      html.find('.tooltip.gga-manual').mouseout(ev => {
         ev.preventDefault()
         let target = $(ev.currentTarget)
         if (target.hasNoChildren) {
           return
         }
 
-        let tooltip = target.children('.tooltippic')
+        let tooltip = target.children('.tooltiptext.gga-manual')
         if (tooltip) {
           tooltip.css({ visibility: 'hidden' })
         }
@@ -1143,14 +1140,13 @@ export class GurpsActorSheet extends ActorSheet {
               icon: '<i class="fas fa-level-up-alt"></i>',
               label: `${i18n('GURPS.dropBefore', 'Before the target')}`,
               callback: async () => {
-                if (!isSrcFirst)
-                  GURPS.removeKey(this.actor, sourceKey).then(() =>
-                    GURPS.insertBeforeKey(this.actor, targetkey, object)
-                  )
-                else
-                  GURPS.insertBeforeKey(this.actor, targetkey, object).then(() =>
-                    GURPS.removeKey(this.actor, sourceKey)
-                  )
+                if (!isSrcFirst) {
+                  await GURPS.removeKey(this.actor, sourceKey)
+                  await GURPS.insertBeforeKey(this.actor, targetkey, object)
+                } else {
+                  await GURPS.insertBeforeKey(this.actor, targetkey, object)
+                  await GURPS.removeKey(this.actor, sourceKey)
+                }
               },
             },
             two: {
@@ -1158,9 +1154,13 @@ export class GurpsActorSheet extends ActorSheet {
               label: `${i18n('GURPS.dropInside', 'Inside the target')}`,
               callback: async () => {
                 let k = targetkey + '.contains.' + GURPS.genkey(0)
-                if (!isSrcFirst)
-                  GURPS.removeKey(this.actor, sourceKey).then(() => GURPS.insertBeforeKey(this.actor, k, object))
-                else GURPS.insertBeforeKey(this.actor, k, object).then(() => GURPS.removeKey(this.actor, sourceKey))
+                if (!isSrcFirst) {
+                  await GURPS.removeKey(this.actor, sourceKey)
+                  await GURPS.insertBeforeKey(this.actor, k, object)
+                } else {
+                  await GURPS.insertBeforeKey(this.actor, k, object)
+                  await GURPS.removeKey(this.actor, sourceKey)
+                }
               },
             },
           },

@@ -607,6 +607,7 @@
   align-items: center;
   padding: 0 0.2em 0 0.2em;
   white-space: nowrap;
+  width: 100%;
 }
 
 .gga-table > div:not(.header),
@@ -624,9 +625,8 @@
   text-align: end;
 }
 
-.itemmenu[readonly] {
-  padding: 0 !important;
-  border-right: none !important;
+.desc {
+  width: 100%;
 }
 
 .gga-table.with-notes > .desc:not(.header) {
@@ -635,6 +635,24 @@
   justify-content: stretch;
   align-items: flex-start;
   white-space: normal;
+}
+
+.gga-desc-text {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  align-items: center;
+  position: relative;
+}
+
+.gga-item {
+  color: olivedrab;
+  font-weight: 900;
+}
+
+.itemmenu[readonly] {
+  padding: 0 !important;
+  border-right: none !important;
 }
 
 .gurps .attributes table {
@@ -1312,13 +1330,6 @@ body {
 #encumbrance .clickable:hover {
   cursor: pointer;
   text-shadow: var(--controlhover);
-}
-
-.gga-desc-text {
-  display: flex;
-  flex-flow: row nowrap;
-  width: 100%;
-  align-items: center;
 }
 
 .adsdraggable,
@@ -2010,13 +2021,13 @@ body {
   position: relative; needed so that the tooltip was not limited to the tab area.
 } */
 
-.desc .tooltippic {
+.gga-desc-text .tooltippic {
   visibility: hidden;
   position: fixed;
   z-index: 999;
 }
 
-.desc .tooltippic img {
+.gga-desc-text .tooltippic img {
   max-height: 100px;
 }
 
