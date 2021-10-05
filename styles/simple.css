@@ -3,6 +3,7 @@
   --sectiongap: 0.05in;
   --smallemgap: 0.2em;
   --fontawesomefamily: 'Font Awesome 5 Free', Roboto, sans-serif;
+  --lightgrey: rgba(0, 0, 0, 0.3);
 }
 
 .gurps {
@@ -530,7 +531,7 @@
 .gurps .sheet-body.tabbed-sheet {
   height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
   padding-top: 4px;
-  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  border-top: 1px solid var(--lightgrey);
 }
 
 .gurps .sheet-body .tab {
@@ -645,9 +646,20 @@
   position: relative;
 }
 
+.gga-usercreated {
+  color: steelblue;
+}
+
+.gga-ignoreimport {
+  color: steelblue;
+}
+
 .gga-item {
   color: olivedrab;
-  font-weight: 900;
+}
+
+.gga-inactive {
+  color: var(--lightgrey);
 }
 
 .itemmenu[readonly] {
@@ -1272,13 +1284,13 @@ body {
 #advantages .pts:nth-child(8n + 7),
 #advantages .ref:nth-of-type(8n + 8),
 #skills .itemmenu:nth-child(12n + 7),
-#skills .desc:nth-child(12n + 8),
+#skills .skldraggable:nth-child(12n + 8),
 #skills .sl:nth-child(12n + 9),
 #skills .rsl:nth-child(12n + 10),
 #skills .pts:nth-child(12n + 11),
 #skills .ref:nth-child(12n + 12),
 #spells .itemmenu:nth-child(24n + 13),
-#spells .desc:nth-child(24n + 14),
+#spells .spldraggable:nth-child(24n + 14),
 #spells .cls:nth-child(24n + 15),
 #spells .college:nth-child(24n + 16),
 #spells .mana:nth-child(24n + 17),
@@ -1292,23 +1304,13 @@ body {
 .equipmentlist .itemmenu:nth-child(20n + 11),
 .equipmentlist .equipped:nth-child(20n + 12),
 .equipmentlist .qty:nth-child(20n + 13),
-.equipmentlist .desc:nth-child(20n + 14),
+.equipmentlist .eqtdraggable:nth-child(20n + 14),
 .equipmentlist .uses:nth-child(20n + 15),
 .equipmentlist .cost:nth-child(20n + 16),
 .equipmentlist .weight:nth-child(20n + 17),
 .equipmentlist .sum_cost:nth-child(20n + 18),
 .equipmentlist .sum_weight:nth-child(20n + 19),
 .equipmentlist .ref:nth-child(20n + 20),
-#other_equipment .itemmenu:nth-child(20n + 11),
-#other_equipment .equipped:nth-child(20n + 12),
-#other_equipment .qty:nth-child(20n + 13),
-#other_equipment .desc:nth-child(20n + 14),
-#other_equipment .uses:nth-child(20n + 15),
-#other_equipment .cost:nth-child(20n + 16),
-#other_equipment .weight:nth-child(20n + 17),
-#other_equipment .sum_cost:nth-child(20n + 18),
-#other_equipment .sum_weight:nth-child(20n + 19),
-#other_equipment .ref:nth-child(20n + 20),
 #notes .desc:nth-child(4n + 3),
 #notes .ref:nth-child(4n + 4) {
   background-color: #e8ffe8;
@@ -1327,19 +1329,20 @@ body {
   width: 100%;
 }
 
+/* Indicate this item is clickable, like a control */
+.dblclkedit:hover {
+  box-shadow: 0 0 3px red inset;
+  cursor: default;
+}
+
 #encumbrance .clickable:hover {
   cursor: pointer;
-  text-shadow: var(--controlhover);
+  text-shadow: 0 0 3px red;
 }
 
-.adsdraggable,
-.rangeddraggable,
-.meleedraggable,
-.condmoddraggable,
-.reactdraggable {
-  cursor: grab;
-}
-
+.eqtdraggable,
+.spldraggable,
+.skldraggable,
 .adsdraggable,
 .rangeddraggable,
 .meleedraggable {
@@ -1347,6 +1350,9 @@ body {
   flex-flow: row nowrap;
 }
 
+.eqtdraggable:before,
+.spldraggable:before,
+.skldraggable:before,
 .adsdraggable:before,
 .rangeddraggable:before,
 .meleedraggable:before,
@@ -1354,17 +1360,17 @@ body {
 .reactdraggable:before {
   content: '\f142';
   font-family: var(--fontawesomefamily);
-  color: rgba(0, 0, 0, 0.3);
+  color: var(--lightgrey);
   font-size: 80%;
   font-weight: 600;
   padding-right: calc(2 * var(--smallemgap));
+  cursor: grab;
 }
 
 /* Indicate this item has a contextmenu */
 .equipmenuother:hover,
 .equipmenucarried:hover {
   cursor: context-menu;
-  text-shadow: var(--controlhover);
 }
 
 #equipmentother .equipped {

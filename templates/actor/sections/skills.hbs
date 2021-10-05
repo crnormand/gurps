@@ -1,4 +1,4 @@
-<div id='skills' class='gga-table with-notes'>
+<div id='skills' class='gga-table with-notes' style='min-width: 275px;'>
   <div class='itemmenu header' readonly></div>
   <div class='desc header'>
     <div class='headermenu'>
@@ -45,22 +45,22 @@
       {{#unless isCollapsed}}
         <div class='itemmenu' readonly></div>
 
-        <div class='skldraggable dblclkedit' data-key='data.skills.{{@key}}'>
-          <div class='desc indent{{indent}}'>
+        <div class='skldraggable' data-key='data.skills.{{@key}}'>
+          <div class='desc dblclkedit indent{{indent}}'>
             <div class='gga-desc-text'>
               <div>
                 {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
-              <div class='tooltip-manager' style='width: 100%; white-space: nowrap;'>
+              <div class='tooltip gga-manual'>
                 {{{gurpslink this.name}}}
                 {{#if (displayItemHover this)}}
-                  <div class='tooltippic'><img src='{{this.img}}' /></div>
+                  <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
                 {{/if}}
               </div>
               <div>
                 {{#if (isFoundryItem this)}}
-                  <i class='far fas fa-star gga-item' style='color: olivedrab; font-weight: 900;'>
+                  <i class='fas fa-star tooltip gga-item'>
                     <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
                   </i>
                 {{/if}}

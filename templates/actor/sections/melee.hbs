@@ -52,30 +52,33 @@
       {{#unless isCollapsed}}
         <div class='itemmenu' readonly></div>
 
-        <div class='meleedraggable dblclkedit' data-key='data.melee.{{@key}}'>
-          <div class='desc indent{{indent}}' data-path='data.melee'>
+        <div class='meleedraggable' data-key='data.melee.{{@key}}'>
+          <div class='desc dblclkedit indent{{indent}}'>
             <div class='gga-desc-text'>
               <div>
                 {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
-              <div class='tooltip-manager' style='width: 100%;'>
+              <div class='tooltip gga-manual'>
                 {{{gurpslink name}}}
                 {{#if (displayItemHover this)}}
-                  <div class='tooltippic'><img src='{{img}}' /></div>
+                  <div class='tooltiptext gga-manual'><img src='{{img}}' /></div>
                 {{/if}}
               </div>
               <div>
                 {{#if (isFoundryItem this)}}
-                  <i class='far fa-star tooltip' style='color: olivedrab; font-weight: 900;'>
+                  <i class='fas fa-star tooltip gga-item'>
                     <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
                   </i>
                 {{/if}}
               </div>
             </div>
-            <div class='list_note'>{{{gurpslink notes}}}</div>
+            <div class='list_note'>
+              {{{gurpslink notes}}}
+            </div>
           </div>
         </div>
+
         <div class='usage flex-center'>{{mode}}</div>
         <div
           class='level rollable flex-center'

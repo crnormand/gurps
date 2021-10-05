@@ -1,4 +1,4 @@
-import { atou, generateUniqueId, i18n, i18n_f } from '../../lib/utilities.js'
+import { arrayToObject, atou, generateUniqueId, i18n, i18n_f, objectToArray } from '../../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
@@ -349,51 +349,6 @@ export class GurpsActorSheet extends ActorSheet {
     // On clicking the Equip column, toggle the equipped status of the item.
     html.find('.changeequip').click(this._onClickEquip.bind(this))
 
-    // html.find('.addequipmenticon').click(async ev => {
-    //   let parent = $(ev.currentTarget).closest('.header')
-    //   let path = parent.attr('data-key')
-    //   let actor = this.actor
-    //   let eqtlist = duplicate(getProperty(actor.data, path))
-    //   let eqt = new Equipment('', true)
-    //   eqt.uuid = generateUniqueId()
-    //   eqt.carried = path.includes('carried')
-    //   let dlgHtml = await renderTemplate('systems/gurps/templates/equipment-editor-popup.html', eqt)
-
-    //   let options = {
-    //     // NOTE:  This code is duplicated below.  Haven't refactored yet
-    //     width: 530,
-    //     popOut: true,
-    //     minimizable: false,
-    //     jQuery: true,
-    //   }
-
-    //   let d = new Dialog(
-    //     {
-    //       title: 'Equipment Editor',
-    //       content: dlgHtml,
-    //       buttons: {
-    //         one: {
-    //           label: 'Create',
-    //           callback: async html => {
-    //             ;['name', 'uses', 'maxuses', 'techlevel', 'notes', 'pageref'].forEach(
-    //               a => (eqt[a] = html.find(`.${a}`).val())
-    //             )
-    //             ;['count', 'cost', 'weight'].forEach(a => (eqt[a] = parseFloat(html.find(`.${a}`).val())))
-    //             let u = html.find('.save') // Should only find in Note (or equipment)
-    //             if (!!u) eqt.save = u.is(':checked')
-    //             Equipment.calc(eqt)
-    //             GURPS.put(eqtlist, eqt)
-    //             actor.update({ [path]: eqtlist })
-    //           },
-    //         },
-    //       },
-    //       default: 'one',
-    //     },
-    //     options
-    //   )
-    //   d.render(true)
-    // })
-
     // Simple trick, move 'contains' items into 'collapsed' and back. The html doesn't show 'collapsed'.
     html.find('.expandcollapseicon').click(async ev => {
       let actor = this.actor
@@ -405,8 +360,10 @@ export class GurpsActorSheet extends ActorSheet {
 
     // On double-clicking an item, open its editor.
     html.find('.dblclkedit').dblclick(async ev => {
-      let element = ev.currentTarget
-      let path = element.dataset.key
+      ev.preventDefault()
+      let parent = $(ev.currentTarget).closest('[data-key]')
+
+      let path = parent[0].dataset.key
       let actor = this.actor
       let obj = duplicate(getProperty(actor.data, path)) // must dup so difference can be detected when updated
       if (!!obj.itemid) {
@@ -662,7 +619,7 @@ export class GurpsActorSheet extends ActorSheet {
 
         let newd = {
           actorid: this.actor.id, // may not be useful if this is an unlinked token
-          actor: this.actor, // so send the actor,
+          // actor: this.actor, // so send the actor,
           isLinked: !this.actor.isToken,
           type: type,
           key: eqtkey,
@@ -671,7 +628,9 @@ export class GurpsActorSheet extends ActorSheet {
         }
         if (!!oldd) mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
 
-        return ev.dataTransfer.setData('text/plain', JSON.stringify(newd))
+        let payload = JSON.stringify(newd)
+        console.log(payload)
+        return ev.dataTransfer.setData('text/plain', payload)
       })
     })
   }
@@ -1118,8 +1077,10 @@ export class GurpsActorSheet extends ActorSheet {
 
         // Because we may be modifing the same list, we have to check the order of the keys and
         // apply the operation that occurs later in the list, first (to keep the indexes the same).
-        let sourceTermsArray = sourceKey.split('.').splice(0, 2) // Remove the first two elements: data.xxxx
-        let targetTermsArray = targetkey.split('.').splice(0, 2)
+        let sourceTermsArray = sourceKey.split('.')
+        sourceTermsArray.splice(0, 2) // Remove the first two elements: data.xxxx
+        let targetTermsArray = targetkey.split('.')
+        targetTermsArray.splice(0, 2)
         let max = Math.min(sourceTermsArray.length, targetTermsArray.length)
 
         let isSrcFirst = false
@@ -1141,11 +1102,11 @@ export class GurpsActorSheet extends ActorSheet {
               label: `${i18n('GURPS.dropBefore', 'Before the target')}`,
               callback: async () => {
                 if (!isSrcFirst) {
-                  await GURPS.removeKey(this.actor, sourceKey)
-                  await GURPS.insertBeforeKey(this.actor, targetkey, object)
+                  await this._removeKey(sourceKey)
+                  await this._insertBeforeKey(targetkey, object)
                 } else {
-                  await GURPS.insertBeforeKey(this.actor, targetkey, object)
-                  await GURPS.removeKey(this.actor, sourceKey)
+                  await this._insertBeforeKey(targetkey, object)
+                  await this._removeKey(sourceKey)
                 }
               },
             },
@@ -1153,13 +1114,13 @@ export class GurpsActorSheet extends ActorSheet {
               icon: '<i class="fas fa-sign-in-alt"></i>',
               label: `${i18n('GURPS.dropInside', 'Inside the target')}`,
               callback: async () => {
-                let k = targetkey + '.contains.' + GURPS.genkey(0)
+                let key = targetkey + '.contains.' + GURPS.genkey(0)
                 if (!isSrcFirst) {
-                  await GURPS.removeKey(this.actor, sourceKey)
-                  await GURPS.insertBeforeKey(this.actor, k, object)
+                  await this._removeKey(sourceKey)
+                  await this._insertBeforeKey(key, object)
                 } else {
-                  await GURPS.insertBeforeKey(this.actor, k, object)
-                  await GURPS.removeKey(this.actor, sourceKey)
+                  await this._insertBeforeKey(key, object)
+                  await this._removeKey(sourceKey)
                 }
               },
             },
@@ -1169,6 +1130,56 @@ export class GurpsActorSheet extends ActorSheet {
         d.render(true)
       }
     }
+  }
+
+  async _insertBeforeKey(targetKey, element) {
+    // target key is the whole path, like 'data.melee.00001'
+    let components = targetKey.split('.')
+
+    let index = parseInt(components.pop())
+    let path = components.join('.')
+
+    let object = GURPS.decode(this.actor.data, path)
+    let array = objectToArray(object)
+
+    // Delete the whole object.
+    let last = components.pop()
+    let t = `${components.join('.')}.-=${last}`
+    await this.actor.internalUpdate({ [t]: null })
+
+    // Insert the element into the array.
+    array.splice(index, 0, element)
+
+    // Convert back to an object
+    object = arrayToObject(array, 5)
+
+    // update the actor
+    await this.actor.internalUpdate({ [path]: object }, { diff: false })
+  }
+
+  async _removeKey(sourceKey) {
+    // source key is the whole path, like 'data.melee.00001'
+    let components = sourceKey.split('.')
+
+    let index = parseInt(components.pop())
+    let path = components.join('.')
+
+    let object = GURPS.decode(this.actor.data, path)
+    let array = objectToArray(object)
+
+    // Delete the whole object.
+    let last = components.pop()
+    let t = `${components.join('.')}.-=${last}`
+    await this.actor.internalUpdate({ [t]: null })
+
+    // Remove the element from the array
+    array.splice(index, 1)
+
+    // Convert back to an object
+    object = arrayToObject(array, 5)
+
+    // update the actor
+    await this.actor.internalUpdate({ [path]: object }, { diff: false })
   }
 
   _onfocus(ev) {

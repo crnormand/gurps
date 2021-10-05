@@ -737,17 +737,34 @@ ul#result-effects li {
   opacity: 1;
 }
 
+#ranged .tooltip.gga-manual,
+#melee .tooltip.gga-manual,
+#advantages .tooltip.gga-manual,
+#skills .tooltip.gga-manual,
+#spells .tooltip.gga-manual,
 .equipmentlist .tooltip.gga-manual {
   border: none;
+  width: 100%;
 }
 
+#ranged .tooltiptext.gga-manual,
+#melee .tooltiptext.gga-manual,
+#advantages .tooltiptext.gga-manual,
+#skills .tooltiptext.gga-manual,
+#spells .tooltiptext.gga-manual,
 .equipmentlist .tooltiptext.gga-manual {
   padding: 0;
   top: auto;
   bottom: 100%;
   background: whitesmoke;
+  left: calc(100% - 35px);
 }
 
+#ranged .tooltiptext.gga-manual > img,
+#melee .tooltiptext.gga-manual > img,
+#advantages .tooltiptext.gga-manual > img,
+#skills .tooltiptext.gga-manual > img,
+#spells .tooltiptext.gga-manual > img,
 .equipmentlist .tooltiptext.gga-manual > img {
   border: none;
 }
@@ -926,7 +943,7 @@ ul#result-effects li {
   display: flex;
   flex-flow: column nowrap;
   justify-content: stretch;
-  font-size: 80%;
+  /* font-size: 80%; */
 }
 
 /* #combat-trackers .tracked-resource .condition-block {

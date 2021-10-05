@@ -30,22 +30,22 @@
       {{#unless isCollapsed}}
         <div class='itemmenu' readonly></div>
 
-        <div class='adsdraggable dblclkedit' data-key='data.ads.{{@key}}'>
-          <div class='desc indent{{indent}}'>
+        <div class='adsdraggable' data-key='data.ads.{{@key}}'>
+          <div class='desc dblclkedit indent{{indent}}'>
             <div class='gga-desc-text'>
               <div>
                 {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
                 {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
               </div>
-              <div class='tooltip-manager' data-key='data.ads.{{@key}}' style='width: 100%;'>
+              <div class='tooltip gga-manual'>
                 {{{gurpslink this.name}}}
                 {{#if (displayItemHover this)}}
-                  <div class='tooltippic'><img src='{{this.img}}' /></div>
+                  <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
                 {{/if}}
               </div>
               <div>
                 {{#if (isFoundryItem this)}}
-                  <i class='far fas fa-star gga-item tooltip' style='color: olivedrab; font-weight: 900;'>
+                  <i class='far fas fa-star tooltip gga-item'>
                     <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
                   </i>
                 {{/if}}
