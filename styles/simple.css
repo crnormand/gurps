@@ -1062,6 +1062,7 @@ body {
 }
 
 .equipmentlist .headermenu i,
+#notes .headermenu i,
 #spells .headermenu i,
 #skills .headermenu i,
 #ranged .headermenu i,
@@ -1114,6 +1115,7 @@ body {
 }
 
 .equipmentlist .equipmenu i,
+#notes .spellmenu i,
 #spells .spellmenu i,
 #skills .skillmenu i,
 #ranged .rangedmenu i,
@@ -1126,6 +1128,7 @@ body {
 }
 
 .equipmentlist .equipmenu i:hover,
+#notes .spellsmenu i:hover,
 #spells .spellsmenu i:hover,
 #skills .skillsmenu i:hover,
 #ranged .rangedmenu i:hover,
@@ -1311,7 +1314,7 @@ body {
 .equipmentlist .sum_cost:nth-child(20n + 18),
 .equipmentlist .sum_weight:nth-child(20n + 19),
 .equipmentlist .ref:nth-child(20n + 20),
-#notes .desc:nth-child(4n + 3),
+#notes .notedraggable:nth-child(4n + 3),
 #notes .ref:nth-child(4n + 4) {
   background-color: #e8ffe8;
 }
@@ -1332,7 +1335,7 @@ body {
 /* Indicate this item is clickable, like a control */
 .dblclkedit:hover {
   box-shadow: 0 0 3px red inset;
-  cursor: default;
+  /* cursor: default; */
 }
 
 #encumbrance .clickable:hover {
@@ -1340,6 +1343,7 @@ body {
   text-shadow: 0 0 3px red;
 }
 
+.notedraggable,
 .eqtdraggable,
 .spldraggable,
 .skldraggable,
@@ -1350,6 +1354,7 @@ body {
   flex-flow: row nowrap;
 }
 
+.notedraggable:before,
 .eqtdraggable:before,
 .spldraggable:before,
 .skldraggable:before,
@@ -1370,7 +1375,7 @@ body {
 /* Indicate this item has a contextmenu */
 .equipmenuother:hover,
 .equipmenucarried:hover {
-  cursor: context-menu;
+  cursor: context-menu !important;
 }
 
 #equipmentother .equipped {
@@ -1954,20 +1959,6 @@ body {
 .roll-result .roll-detail .crit.failure {
   color: black;
   text-shadow: 0 0 3px #ff0000;
-}
-
-.user-created {
-  /* padding-left: 10px; */
-}
-
-.user-created::after {
-  content: '\f02e'; /* this is your text. You can also use UTF-8 character codes as I do here */
-  font-family: var(--fontawesomefamily);
-  font-weight: 900;
-  float: left;
-  color: steelblue;
-  padding-right: 0.35em;
-  padding-top: 2px;
 }
 
 .sheet-body,

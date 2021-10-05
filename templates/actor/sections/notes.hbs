@@ -5,7 +5,7 @@
   </div>
   <div class='ref header'>{{i18n 'GURPS.abbrevRef' 'Ref'}}</div>
 
-  {{#each (flatlist (lookup data.equipment container)) }}
+  {{#each (flatlist data.notes) }}
     {{#if ../isEditing}}
       <div class="desc indent{{indent}} notemenu" data-key="data.notes.{{@key}}">
         <textarea name="data.notes.{{@key}}.notes" class="gcs-input-ta" type="text" style="height:120px !important">{{this.notes}}</textarea>
@@ -15,18 +15,27 @@
       </div>    
     {{else}}
       {{#unless isCollapsed}}
-        <div class='desc indent{{indent}} dblclkedit notesmenu notedraggable {{#if (isUserCreated this)}}user-created{{/if}}' data-key='data.notes.{{@key}}'>
-          <div class='gga-desc-text' style='display: flex; flex-flow: row nowrap; width: 100%;'>
-            <div>
-              {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-              {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-            </div>
-            <div style='width: 100%;'>
-              {{#if this.notes}}
-                {{{gurpslinkbr this.notes}}}
-              {{else}}
-                {{i18n 'GURPS.noteBlank' 'This note was intentionally left blank.'}}<i class="far fa-laugh-wink"></i>
-              {{/if}}
+        <div class='notedraggable notesmenu' data-key='data.notes.{{@key}}'>
+          <div class='desc indent{{indent}} dblclkedit'>
+            <div class='gga-desc-text'>
+              <div>
+                {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+              </div>
+              <div class='tooltip gga-manual'>
+                {{#if this.notes}}
+                  {{{gurpslinkbr this.notes}}}
+                {{else}}
+                  {{i18n 'GURPS.noteBlank' 'This note was intentionally left blank.'}}<i class="far fa-laugh-wink"></i>
+                {{/if}}
+              </div>
+              <div>
+                {{#if (isUserCreated this)}}
+                  <i class='fas fa-bookmark tooltip gga-usercreated'>
+                    <span class='tooltiptext'>{{i18n 'GURPS.equipmentUserCreated' 'User-created'}}</span>
+                  </i>
+                {{/if}}
+              </div>
             </div>
           </div>
         </div>

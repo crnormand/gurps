@@ -737,6 +737,7 @@ ul#result-effects li {
   opacity: 1;
 }
 
+#notes .tooltip.gga-manual,
 #ranged .tooltip.gga-manual,
 #melee .tooltip.gga-manual,
 #advantages .tooltip.gga-manual,
@@ -747,6 +748,7 @@ ul#result-effects li {
   width: 100%;
 }
 
+#notes .tooltiptext.gga-manual,
 #ranged .tooltiptext.gga-manual,
 #melee .tooltiptext.gga-manual,
 #advantages .tooltiptext.gga-manual,
@@ -760,6 +762,7 @@ ul#result-effects li {
   left: calc(100% - 35px);
 }
 
+#notes .tooltiptext.gga-manual > img,
 #ranged .tooltiptext.gga-manual > img,
 #melee .tooltiptext.gga-manual > img,
 #advantages .tooltiptext.gga-manual > img,
@@ -767,6 +770,7 @@ ul#result-effects li {
 #spells .tooltiptext.gga-manual > img,
 .equipmentlist .tooltiptext.gga-manual > img {
   border: none;
+  max-height: 100px;
 }
 
 .fieldblock3 .tooltip-wrapper {

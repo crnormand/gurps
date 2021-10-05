@@ -580,14 +580,36 @@ export class GurpsActorSheet extends ActorSheet {
       '#spells': [this.sortAscendingMenu('data.spells'), this.sortDescendingMenu('data.spells')],
       '#equipmentcarried': [
         this.sortAscendingMenu('data.equipment.carried'),
-        this.sortDescendingMenu('ata.equipment.carried'),
+        this.sortDescendingMenu('data.equipment.carried'),
+        this.addItemMenu(
+          i18n('GURPS.equipment'),
+          new Equipment(`${i18n('GURPS.equipment')}...`),
+          'data.equipment.carried'
+        ),
       ],
       '#equipmentother': [
         this.sortAscendingMenu('data.equipment.other'),
-        this.sortDescendingMenu('ata.equipment.other'),
+        this.sortDescendingMenu('data.equipment.other'),
+        this.addItemMenu(
+          i18n('GURPS.equipment'),
+          new Equipment(`${i18n('GURPS.equipment')}...`),
+          'data.equipment.other'
+        ),
       ],
     }
     return map[elementid]
+  }
+
+  addItemMenu(name, obj, path) {
+    return {
+      name: i18n_f('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
+      icon: '<i class="fas fa-plus"></i>',
+      callback: e => {
+        let o = GURPS.decode(this.actor.data, path) || {}
+        GURPS.put(o, duplicate(obj))
+        this.actor.update({ [path]: o })
+      },
+    }
   }
 
   makelistdrag(html, cls, type) {
@@ -655,7 +677,7 @@ export class GurpsActorSheet extends ActorSheet {
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
               GURPS.put(list, obj)
-              actor.update({ [path]: list })
+              await actor.update({ [path]: list })
             },
           },
         },
@@ -1040,11 +1062,16 @@ export class GurpsActorSheet extends ActorSheet {
 
     if (dragData.type === 'equipment') {
       if ((await this.actor.handleEquipmentDrop(dragData)) != false) return // handle external drag/drop
+
       // drag/drop in same character sheet
-      let element = event.target
-      let classes = $(element).attr('class') || ''
-      if (!classes.includes('eqtdraggable') && !classes.includes('eqtdragtarget')) return
-      let targetkey = element.dataset.key
+      // Validate that the target is valid for the drop.
+      let dropTargetElements = $(event.target).closest('.eqtdraggable, .eqtdragtarget')
+      if (dropTargetElements?.length === 0) return
+
+      // Get the target element.
+      let dropTarget = dropTargetElements[0]
+
+      let targetkey = dropTarget.dataset.key
       if (!!targetkey) {
         let srckey = dragData.key
         this.actor.moveEquipment(srckey, targetkey, event.shiftKey)
@@ -1477,18 +1504,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
   makeDeleteMenu(html, cssclass, obj, eventname = 'contextmenu') {
     new ContextMenu(html, cssclass, this.deleteItemMenu(obj), { eventName: eventname })
-  }
-
-  addItemMenu(name, obj, path) {
-    return {
-      name: i18n_f('GURPS.editorAddItem', { name: name }, 'Add {name} at the end'),
-      icon: '<i class="fas fa-plus"></i>',
-      callback: e => {
-        let o = GURPS.decode(this.actor.data, path) || {}
-        GURPS.put(o, duplicate(obj))
-        this.actor.update({ [path]: o })
-      },
-    }
   }
 
   makeHeaderMenu(html, cssclass, name, obj, path, eventname = 'contextmenu') {
