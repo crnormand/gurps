@@ -837,7 +837,7 @@ export class CompositeDamageCalculator {
 
     // update for [burn tbb]
     if (this._damageType === 'burn' && this._damageModifier === 'tbb') {
-      results['burn'].multiplier = 3
+      results['burn'].multiplier = 2
       results['burn'].changed = 'damagemodifier'
     }
 
