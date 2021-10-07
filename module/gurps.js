@@ -1071,7 +1071,7 @@ async function insertBeforeKey(actor, path, newobj) {
   let objkey = objpath.substr(i + 1)
   let object = GURPS.decode(actor.data, objpath)
   let t = parentpath + '.-=' + objkey
-  //await actor.internalUpdate({ [t]: null }) // Delete the whole object
+  await actor.internalUpdate({ [t]: null }) // Delete the whole object
   let start = parseInt(key)
 
   i = start + 1
