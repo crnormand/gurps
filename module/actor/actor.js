@@ -163,8 +163,13 @@ export class GurpsActor extends Actor {
     let v = /** @type {SemanticVersion} */ (SemanticVersion.fromString(data.migrationversion))
 
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
+		// Need to protect against data errors
     for (const attr in data.attributes) {
-      data.attributes[attr].value = +data.attributes[attr].import
+			if (typeof data.attributes[attr] === 'object' && data.attributes[attr] !== null)
+			  if (isNaN(data.attributes[attr].import))
+		      data.attributes[attr].value = 0
+			  else
+					data.attributes[attr].value = parseInt(data.attributes[attr].import)
     }
     // After all of the attributes are copied over, apply tired to ST
     if (!!data.additionalresources.isTired)
