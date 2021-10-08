@@ -53,30 +53,18 @@
           {{>conditions}}
         </div>
 
-        {{#if (notEmpty data.reactions)}}
-          {{>reactions}}
+        {{#if (or (notEmpty data.reactions) (notEmpty data.conditionalmods))}}
+          <div id='other' style='display: flex; flex-flow: row nowrap;'>
+            {{#if (notEmpty data.reactions)}}{{>reactions}}{{log "reactions"}}{{/if}}
+            {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{log "conditional modifiers"}}{{/if}}
+          </div>
         {{/if}}
-        {{>conditionalmods}}
 
-        <div id='combat-trackers' style='margin-top: 0.05in; border: 1px solid black;'>
-          <div class='header' data-key='data.additionalresources.tracker'>{{i18n 'GURPS.resourceTrackers'}}
-            &nbsp;<i class='fas fa-plus addtrackericon'></i></div>
-          {{#if (notEmpty data.additionalresources.tracker)}}
-            <div id='tracker-scroller'>
-              {{#each data.additionalresources.tracker}}
-                {{>resource-tracker
-                  label=name
-                  resource=this
-                  name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
-                  editable=true
-                }}
-              {{/each}}
-            </div>
-          {{/if}}
-        </div>
-        <div style='margin-top: 0.05in;'>
-          {{>notes}}
-        </div>
+        {{#if (notEmpty data.additionalresources.tracker)}}
+          {{>trackers}}
+        {{/if}}
+
+        {{>notes}}
       </div>
 
       <div class='tab' data-tab='combat' data-group='primary-tabs'>

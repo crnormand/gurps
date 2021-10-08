@@ -9,21 +9,14 @@
       {{>points}}
     </div>
     <div id='stats'>
-      {{log "stats"}}
       <div id='attributes'>
-        {{log "attributes"}}
         {{>basic-attributes}}
         {{>secondary-attributes}}
       </div>
       {{>encumbrance}}
-      {{log "encumbrance"}}
       {{>quicknote}}
-      {{log "quicknote"}}
       {{>lifting}}
-      {{log "lifting"}}
       {{>locations parent=../data}}
-      {{log "locations"}}
-
       <div id='hp-fp'>
         {{#if useCI}}
           {{>conditional-injury}}
@@ -49,7 +42,6 @@
       </div>
 
       {{>conditions}}
-      {{log "conditions"}}
     </div> 
     {{!-- end of stats --}}
 
@@ -98,7 +90,6 @@
     {{/if}}
 
     {{>notes}}
-    {{log "notes"}}
   </div>
   {{>footer}}
   {{#if navigateVisible}}

@@ -529,7 +529,8 @@
 }
 
 .gurps .sheet-body.tabbed-sheet {
-  height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
+  flex-grow: 1;
+  /* height: auto !important; */ /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
   padding-top: 4px;
   border-top: 1px solid var(--lightgrey);
 }
@@ -816,34 +817,16 @@ body {
   margin-bottom: calc(0.25in - 1em);
 }
 
+#sheet-tab,
 #sheet {
   display: flex;
   flex-flow: column nowrap;
   justify-content: start;
-  /* grid-template:
-    'personal personal'
-    'stats stats'
-    'reactions conditionalmods'
-    'combat-trackers combat-trackers'
-    'melee melee'
-    'ranged ranged'
-    'advantages skills'
-    'spells spells'
-    'equipmentcarried equipmentcarried'
-    'equipmentother equipmentother'
-    'notes notes';
-  grid-gap: var(--sectiongap); */
 }
 
+#sheet-tab .tab[data-tab='stats'] > div,
 #sheet > div {
   margin-bottom: var(--sectiongap);
-}
-
-#sheet-tab {
-  display: grid;
-  grid-template:
-    'personal'
-    'nav-tabs';
 }
 
 #editorsheet {
@@ -868,6 +851,7 @@ body {
 #footer {
   text-align: center;
   font-size: 80%;
+  flex-grow: 0;
 }
 
 .fieldblock {
@@ -907,6 +891,7 @@ body {
 }
 
 #personal {
+  flex-grow: 0;
   grid-area: personal;
   display: grid;
   grid-template:
@@ -987,6 +972,7 @@ body {
   display: flex;
   flex-flow: row nowrap;
   justify-content: stretch;
+  align-content: stretch;
 }
 
 #other > div {
@@ -1090,7 +1076,8 @@ body {
   border-right: none !important;
 }
 
-.equipmentlist .equipmenu,
+#editorsheet .equipmentlist .equipmenucarried,
+#editorsheet .equipmentlist .equipmenuother,
 #spells .spellmenu,
 #skills .skillmenu,
 #ranged .rangedmenu,
@@ -1171,12 +1158,14 @@ body {
   grid-template-columns: min-content 1fr repeat(2, auto);
   grid-area: advantages;
   align-content: start;
+  flex-grow: 3;
 }
 
 #skills {
   grid-template-columns: min-content 1fr repeat(4, auto);
   grid-area: skills;
   align-content: start;
+  flex-grow: 2;
 }
 
 #spells {
@@ -1972,6 +1961,7 @@ body {
   font-size: 110%;
   height: 32px;
   border-bottom: 1px solid #333;
+  flex-grow: 0;
 }
 
 .gurps-sheet-tabs li {

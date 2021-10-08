@@ -110,8 +110,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (!isConfigurationAllowed(this.actor)) return // Only allow "owners" to be able to edit the sheet, but anyone can roll from the sheet
 
     this._createHeaderMenus(html)
-    this._createEquipmentItemMenus(html, '.equipmenucarried')
-    this._createEquipmentItemMenus(html, '.equipmenuother')
+    this._createEquipmentItemMenus(html)
 
     // if not doing automatic encumbrance calculations, allow a click on the Encumbrance table to set the current value.
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
@@ -575,9 +574,9 @@ export class GurpsActorSheet extends ActorSheet {
     }
   }
 
-  _createEquipmentItemMenus(html, cls, includeCollapsed = false) {
-    // ===============================
-    // TODO verify this worked
+  _createEquipmentItemMenus(html) {
+    let includeCollapsed = this instanceof GurpsActorEditorSheet
+    
     let opts = [
       this._createMenu(i18n('GURPS.edit', 'Edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
@@ -595,23 +594,19 @@ export class GurpsActorSheet extends ActorSheet {
       this._createMenu(i18n('GURPS.delete'), '<i class="fas fa-trash"></i>', this._deleteItem.bind(this)),
     ]
 
-    let move =
-      cls === '.equipmenucarried'
-        ? this._createMenu(
+    let movedown = this._createMenu(
             i18n('GURPS.moveToOtherEquipment'),
             '<i class="fas fa-level-down-alt"></i>',
             this._moveEquipment.bind(this, 'data.equipment.other')
           )
-        : this._createMenu(
+    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: ClickAndContextMenu })
+
+    let moveup = this._createMenu(
             i18n('GURPS.moveToCarriedEquipment', 'Move to Carried Equipment'),
             '<i class="fas fa-level-up-alt"></i>',
             this._moveEquipment.bind(this, 'data.equipment.carried')
           )
-
-    opts.splice(3, 0, move)
-
-    new ContextMenu(html, cls, opts, { eventName: ClickAndContextMenu })
-    // ===============================
+    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: ClickAndContextMenu })
   }
 
   _editEquipment(target) {
@@ -636,19 +631,17 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   _sortContentAscending(target) {
-    this._sortContent(target[0].dataset.key, false)
+    this._sortContent(target[0].dataset.key, 'contains', false)
+    this._sortContent(target[0].dataset.key, 'collapsed', false)
   }
 
-  async _sortContent(parentpath, reverse) {
-    let objkey = 'contains'
+  async _sortContent(parentpath, objkey, reverse) {
     let key = parentpath + '.' + objkey
     let list = getProperty(this.actor.data, key)
-    if (!Object.keys(list).length) {
-      ui.notifications.info('Nothing to sort')
-      return
-    }
     let t = parentpath + '.-=' + objkey
+
     await this.actor.update({ [t]: null }) // Delete the whole object
+    
     let sortedobj = {}
     let index = 0
     Object.values(list)
@@ -658,10 +651,11 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   _sortContentDescending(target) {
-    this._sortContent(target[0].dataset.key, true)
+    this._sortContent(target[0].dataset.key, 'contains', true)
+    this._sortContent(target[0].dataset.key, 'collapsed', true)
   }
 
-  _moveEquipment(target, list) {
+  _moveEquipment(list, target) {
     let path = target[0].dataset.key
     this.actor.moveEquipment(path, list)
   }
@@ -1642,9 +1636,9 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       this.actor.update({ 'data.additionalresources.showflightmove': show })
     })
 
-    this._createHeaderMenus(html)
-    this._createEquipmentItemMenus(html, '.equipmenucarried', true)
-    this._createEquipmentItemMenus(html, '.equipmenuother', true)
+    // this is done in super.activateListeners
+    // this._createHeaderMenus(html)
+    // this._createEquipmentItemMenus(html, true)
 
     this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), ClickAndContextMenu)
     this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), ClickAndContextMenu)
