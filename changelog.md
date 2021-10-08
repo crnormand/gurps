@@ -5,8 +5,9 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.11.9
 
 - Merged in @WeirdBread's fix to the tight beam burning wounding modifier to the vitals (from 3x, which was wrong, to 2x).
+- Data protection around damage parsing and imports
 
-Release 0.11.8
+Release 0.11.8 10/07/2021
 
 - Added system setting, unequipped items not displayed in melee or ranged attacks
 - Added danialrab's browser support to remember the last import location (and system setting)
