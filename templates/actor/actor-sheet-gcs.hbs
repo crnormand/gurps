@@ -38,7 +38,6 @@
           condition='isTired'
           testcondition=data.additionalresources.isTired
         }}
-      {{log "hp/fp"}}
       </div>
 
       {{>conditions}}
@@ -58,12 +57,10 @@
 
     {{#if (notEmpty data.melee)}}
       {{>melee}}
-      {{log "melee"}}
     {{/if}}
 
     {{#if (notEmpty data.ranged)}}
       {{>ranged}}
-      {{log "ranged"}}
     {{/if}}
 
     {{#if (or (notEmpty data.skills) (notEmpty data.ads))}}
@@ -75,17 +72,14 @@
 
     {{#if (notEmpty data.spells)}}
       {{>spells}}
-      {{log "spells"}}
     {{/if}}
 
     {{#if (notEmpty data.equipment.carried)}}
       {{>equipment container='carried' data=this.data}}
-      {{log "carried"}}
     {{/if}}
 
     {{#if (notEmpty data.equipment.other)}}
       {{>equipment container='other' data=this.data}}
-      {{log "other"}}
     {{/if}}
 
     {{>notes}}
