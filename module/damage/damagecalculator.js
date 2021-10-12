@@ -1020,7 +1020,9 @@ class DamageCalculator {
       return 0
     }
 
-    if (['Face', 'Vitals', 'Groin'].includes(this._parent.hitLocation)) return 5
+    // B420 "Knockdown and Stunning" states that HT-5 is a modifier for Major Wound on Face/Vitals/Groin
+    // B399 says "damage rolls at HT-5" but that's just a simplified summary on could happen, should follow B420
+    if (this.isMajorWound && ['Face', 'Vitals', 'Groin'].includes(this._parent.hitLocation)) return 5
 
     // No Brain (Diffuse or Homogenous) - blows to skull or eye are no different than a blow to
     // the face, except that eyes can still be crippled. (Handled earlier in this method.)
