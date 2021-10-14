@@ -1826,7 +1826,6 @@ Hooks.once('ready', async function () {
   if (game.i18n.lang != 'en') {
     console.log('Mapping ' + game.i18n.lang + ' translations into PARSELINK_MAPPINGS')
     let mappings = /** @type {Record<String, string>} */ ({})
-    let GURPS = GURPS
     for (let k in GURPS.PARSELINK_MAPPINGS) {
       let v = GURPS.PARSELINK_MAPPINGS[k]
       let i = v.indexOf('.value')
