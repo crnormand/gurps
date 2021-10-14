@@ -23,7 +23,8 @@
         {{! <div class="ranged_options"><button type="button">Reload</button>TEXT<button type="button">Decr</button>
                 </div> }}
       </div>
-      <div class="usage">{{this.mode}}</div>
+      <div class="usage rollable" data-name="{{this.name}} ({{this.mode}})"
+        data-key="data.ranged.{{@key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.mode}}</div>
       <div class="level rollable" data-name="{{this.name}} ({{this.mode}})"
         data-key="data.ranged.{{@key}}" data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
       <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'

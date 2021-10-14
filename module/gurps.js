@@ -451,7 +451,7 @@ async function performAction(action, actor, event = null, targets = []) {
     return true
   }
 
-  if (action.type === 'deriveddamage' && action.derivedformula && action.damagetype && action.formula)
+  if (action.type === 'deriveddamage' && action.derivedformula && action.damagetype)
     if (!!actor) {
       let df = action.derivedformula.match(/sw/i) ? actor.data.data.swing : actor.data.data.thrust
       if (!df) {
@@ -753,8 +753,11 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   if (!actor) return t
   if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
-  sname = makeRegexPatternFrom(sname, false)
-  let attack = new RegExp(sname, 'i')
+	// Remove empty () from name pattern
+	sname = sname.replace(/ \(\)$/g, '')
+  sname = makeRegexPatternFrom(sname, false, false)
+	sname = '^ *(\\[ ?["\'])?' + sname
+  let attack = new RegExp(sname, 'i') 
   if (isMelee)
     // @ts-ignore
     t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
@@ -785,6 +788,7 @@ async function handleRoll(event, actor, targets) {
   let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
   if (!!actor) GURPS.SetLastActor(actor)
 
+
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
     let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
@@ -801,12 +805,13 @@ async function handleRoll(event, actor, targets) {
         chatthing = thing + '/[' + element.dataset.otf + ']'
       else
         chatthing = '[' + element.dataset.otf + ']'
-  } else if ('name' in element.dataset || 'otf' in element.dataset) {
+	} else if ('otf' in element.dataset) {
+			return GURPS.executeOTF(element.dataset.otf)
+  } else if ('name' in element.dataset) {
     prefix = '' // "Attempting ";
     let text = /** @type {string} */ (element.dataset.name || element.dataset.otf)
     text = text.replace(/ \(\)$/g, '') // sent as "name (mode)", and mode is empty
     thing = text.replace(/(.*?)\(.*\)/g, '$1')
-    if ('otf' in element.dataset) chatthing = '[' + element.dataset.otf.replace(/ \(\)/g, '') + ']'
 
     // opt.text = text.replace(/.*?\((.*)\)/g, "<br>&nbsp;<span style='font-size:85%'>($1)</span>");
     opt.text = text.replace(/.*?\((.*)\)/g, '$1')
