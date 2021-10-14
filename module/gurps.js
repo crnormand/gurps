@@ -497,7 +497,7 @@ async function performAction(action, actor, event = null, targets = []) {
             let m = GURPS.findAttack(actor.data.data, tempAction.melee)
             if (!!m) {
               th += ' for ' + m.name
-              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode + ')'
+//              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode + ')'
               // @ts-ignore
               t = parseInt(m[tempAction.attribute.toLowerCase()]) // should only occur with parry & block
             }
@@ -638,10 +638,21 @@ async function performAction(action, actor, event = null, targets = []) {
         return false
       }
       thing = att.name // get real name of attack
+      let mode = ''
+      if (!!att.mode) mode = ' (' + att.mode + ')'
       let p = 'A:'
       if (!!action.isMelee && !action.isRanged) p = 'M:'
       if (!action.isMelee && !!action.isRanged) p = 'R:'
-      chatthing = '[' + p + '"' + thing + '"]'
+      // Need to finagle chatthing to allow for attack names that include OtFs
+      let m = thing.match(/([^\[]*)\[([^\]]*)\](.*)/)
+      if (!!m) {
+        if (!m[1] && !m[3])
+          chatthing = '[' + m[2] + mode + ']'
+        else
+          chatthing = '[' + p + '"' + m[1].trim() + m[3].trim() + mode + '"]'
+      }
+      else
+        chatthing = '[' + p + '"' + thing + mode + '"]'
       let t = att.level
       if (!!t) {
         let a = (t + '').trim().split(' ')
@@ -661,7 +672,7 @@ async function performAction(action, actor, event = null, targets = []) {
       formula = '3d6'
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
+      //if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications?.warn('You must have a character selected')
 
   if (action.type === 'attackdamage' && action.name)
@@ -749,21 +760,38 @@ GURPS.findAdDisad = findAdDisad
  * @param {string} sname
  */
 function findAttack(actor, sname, isMelee = true, isRanged = true) {
+	const removeOtf = '^ *(\\[ ?["\'])?'  // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
   var t
   if (!actor) return t
   if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
-	// Remove empty () from name pattern
-	sname = sname.replace(/ \(\)$/g, '')
-  sname = makeRegexPatternFrom(sname, false, false)
-	sname = '^ *(\\[ ?["\'])?' + sname
-  let attack = new RegExp(sname, 'i') 
+  let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i') 
+  let smode = ''
+  let m = sname.match(/(.*?)\(([^\)]*)\)$/)
+  if (!!m) {  // Found a mode "(xxx)" in the search name
+	  sname = m[1].trim()
+    smode = m[2].trim().toLowerCase()   
+	}
+  let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i') 
   if (isMelee)
     // @ts-ignore
-    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
+    recurselist(actor.melee, (e, k, d) => {
+      if (!t && e.name.match(nameregex) && (smode == '' || (!!e.mode && e.mode.toLowerCase() == smode)))
+        t = e
+  	  })
+//    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
   if (isRanged && !t)
     // @ts-ignore
-    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(attack))
+    recurselist(actor.ranged, (e, k, d) => {
+      if (!t) {
+        let em = !!e.mode ? e.mode.toLowerCase() : ''
+        if (e.name.match(nameregex) && (smode == '' || em == smode))
+          t = e
+        else if (e.name.match(fullregex))
+          t = e
+      }
+    })
+//    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
   return t
 }
 GURPS.findAttack = findAttack

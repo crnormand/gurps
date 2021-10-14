@@ -2,6 +2,12 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.11.10
+- Fix for non-english character sheets
+- Added 'usage' to OtF reported in chat log
+- Made USAGE column clickable to roll attack
+- Allow OtF formulas to replace Attack names, i.e.["Rapier"A:Rapier] so name of weapon is rollable
+
 Release 0.11.9 10/08/2021
 
 - Merged in @WeirdBread's fix to the tight beam burning wounding modifier to the vitals (from 3x, which was wrong, to 2x).
