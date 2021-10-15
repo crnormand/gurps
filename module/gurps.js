@@ -611,8 +611,16 @@ async function performAction(action, actor, event = null, targets = []) {
       return false
     }
     formula = '3d6'
-    if (bestAction.type === 'skill-spell')
-      chatthing = '[S:' + bestAction.thing + ']'
+    if (bestAction.type === 'skill-spell') {
+//      chatthing = '[S:' + bestAction.thing + ']'
+
+      thing = bestAction.thing.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+      if (thing.length == 0) {
+        chatthing = bestAction.thing
+      } else
+        chatthing = '[S:"' + thing + '"]'
+
+    } 
     else
       chatthing= '[' + bestAction.orig + ']'
     opt.action = bestAction
@@ -644,14 +652,10 @@ async function performAction(action, actor, event = null, targets = []) {
       if (!!action.isMelee && !action.isRanged) p = 'M:'
       if (!action.isMelee && !!action.isRanged) p = 'R:'
       // Need to finagle chatthing to allow for attack names that include OtFs
-      let m = thing.match(/([^\[]*)\[([^\]]*)\](.*)/)
-      if (!!m) {
-        if (!m[1] && !m[3])
-          chatthing = '[' + m[2] + mode + ']'
-        else
-          chatthing = '[' + p + '"' + m[1].trim() + m[3].trim() + mode + '"]'
-      }
-      else
+      thing = thing.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+      if (thing.length == 0) {
+	      chatthing = att.name + mode
+	    } else
         chatthing = '[' + p + '"' + thing + mode + '"]'
       let t = att.level
       if (!!t) {
@@ -710,11 +714,12 @@ GURPS.performAction = performAction
  * @param {string} sname
  */
 function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) {
+  const removeOtf = '^ *(\\[ ?["\'])?'  // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
   var t
   if (!actor) return t
   if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
   // if (!!actor.data?.data?.additionalresources) actor = actor.data
-  let skillRegExp = new RegExp(makeRegexPatternFrom(sname, false), 'i')
+  let skillRegExp = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   let best = 0
   if (!isSpellOnly)
     recurselist(actor.skills, s => {
@@ -776,9 +781,14 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   if (isMelee)
     // @ts-ignore
     recurselist(actor.melee, (e, k, d) => {
-      if (!t && e.name.match(nameregex) && (smode == '' || (!!e.mode && e.mode.toLowerCase() == smode)))
-        t = e
-  	  })
+      if (!t) {
+        let em = !!e.mode ? e.mode.toLowerCase() : ''
+        if (e.name.match(nameregex) && (smode == '' || em == smode))
+          t = e
+        else if (e.name.match(fullregex))
+          t = e
+      }
+ 	  })
 //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
   if (isRanged && !t)
     // @ts-ignore
@@ -833,8 +843,16 @@ async function handleRoll(event, actor, targets) {
         chatthing = thing + '/[' + element.dataset.otf + ']'
       else
         chatthing = '[' + element.dataset.otf + ']'
-	} else if ('otf' in element.dataset) {
-			return GURPS.executeOTF(element.dataset.otf)
+  } else if ('otf' in element.dataset) {
+    // strip out any inner OtFs when coming from the UI.   Mainly attack names
+    let otf = element.dataset.otf.trim()
+    // But there is a special case where the OtF is the first thing
+    // "M:"["Quarterstaff"A:"Quarterstaff (Thrust)"] (Thrust)""
+    let m = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
+    if (!!m) otf = m[1] + ':' + m[2] +  (!!m[4] ? m[4] : '')
+    otf = otf.replace(/\[.*\]/, '')
+    otf = otf.replace(/ +/g, " ") // remove duplicate blanks
+    return GURPS.executeOTF(otf)
   } else if ('name' in element.dataset) {
     prefix = '' // "Attempting ";
     let text = /** @type {string} */ (element.dataset.name || element.dataset.otf)
