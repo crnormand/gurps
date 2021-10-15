@@ -2,9 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.11.10
+Release 0.11.10 10/15/2021
 - Added P & B OtF modifiers for Parry and Block by specific weapon
 - Updated charactersheet to use new P & B OtF formulas
+- Fixed some minor bugs (drag/drop modifier bucket)
 
 Release 0.11.10 10/14/2021
 - Fix for non-english character sheets
