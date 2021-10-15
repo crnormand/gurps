@@ -628,7 +628,7 @@ async function performAction(action, actor, event = null, targets = []) {
     if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
     if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
 
-    if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, bestAction.costs)
     if (!!bestAction.mod) GURPS.ModifierBucket.addModifier(bestAction.mod, bestAction.desc, targetmods)
     else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
   }
@@ -697,6 +697,44 @@ async function performAction(action, actor, event = null, targets = []) {
         await performAction(dam.action, actor, event, targets)
       }
     } else ui.notifications?.warn('You must have a character selected')
+
+  if (action.type.startsWith('weapon-'))   // weapon-parry or weapon-block
+    if (!!actor) {
+      let att = null
+      att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
+      if (!att) {
+        ui.notifications.warn(
+          "No melee attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+        )
+        return false
+      }
+      formula = '3d6'
+      let mode = ''
+      if (!!att.mode) mode = ' (' + att.mode + ')'
+      let p = 'P:'
+      target = parseInt(att.parry)
+      prefix = 'Parry'
+      if (action.type == 'weapon-block') {
+	      target = parseInt(att.block)
+        p = 'B:'
+        prefix = 'Block'
+      }
+      if (isNaN(target) || target == 0) {
+        ui.notifications.warn(
+          "No " + prefix + " for '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+        )
+        return false
+      }
+      prefix += ': '
+      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+      if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+      thing = att.name.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+      if (thing.length == 0) {
+        chatthing = att.name + mode
+      } else
+        chatthing = '[' + p + '"' + thing + mode + '"]'
+    } else ui.notifications?.warn('You must have a character selected')
+
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
