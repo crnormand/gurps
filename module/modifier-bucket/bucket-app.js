@@ -489,7 +489,7 @@ export class ModifierBucket extends Application {
 
     e.each((_, li) => {
       li.addEventListener('dragstart', ev => {
-        let bucket = GURPS.ModifierBucket()
+        let bucket = GURPS.ModifierBucket
           .modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
           .join(' & ')
         return ev.dataTransfer?.setData(
