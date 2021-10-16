@@ -530,14 +530,14 @@
 
 .gurps .sheet-body.tabbed-sheet {
   flex-grow: 1;
-  /* height: auto !important; */ /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
+  height: auto !important; /* hack to avoid the automatic calculation of the tab size in the SetPosition function of the actor-sheet.js file */
   padding-top: 4px;
   border-top: 1px solid var(--lightgrey);
 }
 
 .gurps .sheet-body .tab {
   height: 100%;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 .gurps .editor,
@@ -824,7 +824,7 @@ body {
   justify-content: start;
 }
 
-#sheet-tab .tab[data-tab='stats'] > div,
+#sheet-tab .tab[data-tab] > div,
 #sheet > div {
   margin-bottom: var(--sectiongap);
 }

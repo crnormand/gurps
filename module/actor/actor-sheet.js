@@ -576,7 +576,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   _createEquipmentItemMenus(html) {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
-    
+
     let opts = [
       this._createMenu(i18n('GURPS.edit', 'Edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
@@ -595,17 +595,17 @@ export class GurpsActorSheet extends ActorSheet {
     ]
 
     let movedown = this._createMenu(
-            i18n('GURPS.moveToOtherEquipment'),
-            '<i class="fas fa-level-down-alt"></i>',
-            this._moveEquipment.bind(this, 'data.equipment.other')
-          )
+      i18n('GURPS.moveToOtherEquipment'),
+      '<i class="fas fa-level-down-alt"></i>',
+      this._moveEquipment.bind(this, 'data.equipment.other')
+    )
     new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: ClickAndContextMenu })
 
     let moveup = this._createMenu(
-            i18n('GURPS.moveToCarriedEquipment', 'Move to Carried Equipment'),
-            '<i class="fas fa-level-up-alt"></i>',
-            this._moveEquipment.bind(this, 'data.equipment.carried')
-          )
+      i18n('GURPS.moveToCarriedEquipment', 'Move to Carried Equipment'),
+      '<i class="fas fa-level-up-alt"></i>',
+      this._moveEquipment.bind(this, 'data.equipment.carried')
+    )
     new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: ClickAndContextMenu })
   }
 
@@ -641,7 +641,7 @@ export class GurpsActorSheet extends ActorSheet {
     let t = parentpath + '.-=' + objkey
 
     await this.actor.update({ [t]: null }) // Delete the whole object
-    
+
     let sortedobj = {}
     let index = 0
     Object.values(list)
