@@ -12,12 +12,13 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait, objectToArray, arrayToObject, zeroFill } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
 import { AnimChatProcessor } from '../chat/anim.js'
+import { GurpsActor, Advantage, Skill, Melee, Ranged, Encumbrance, Note, Equipment } from '../../module/actor/actor.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -52,6 +53,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RefreshItemsChatProcessor())
   ChatProcessors.registerProcessor(new QuickDamageChatProcessor())
   ChatProcessors.registerProcessor(new SoundChatProcessor())
+  ChatProcessors.registerProcessor(new DevChatProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {
@@ -739,3 +741,55 @@ class ShowChatProcessor extends ChatProcessor {
     }
   }
 }
+
+class DevChatProcessor extends ChatProcessor {
+  isGMOnly() {
+    return true
+  }
+
+  help() {
+    return "/dev"
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/dev(.*)/i)
+    return !!this.match
+  }
+  async process(line) {
+   let c = 10000
+    var t = c
+    var start = performance.now();
+    while (t-- > 0) {
+       zeroFill(t, 5)
+    }
+    var end = performance.now();
+    console.log("ZeroFill:" + (end - start))
+  
+    t = c
+    start = performance.now();
+    while (t-- > 0) {
+       GURPS.genkey(t)
+    }
+    end = performance.now();
+    console.log("genkey:" + (end - start))
+
+    let actor = GURPS.LastActor
+    if (!actor) {
+      return  
+    }
+
+/*    let c = "data.equipment.carried.00000"
+    let o = "data.equipment.other.00000"
+    
+    let m = 100
+    var t = m
+    var start = performance.now();
+    while (t-- > 0) {
+      GURPS.insertBeforeKey(actor, c, new Equipment("" + c, false))
+    }
+    var end = performance.now();
+    console.log("GURPS.insertBeforeKey:" + (end - start))
+*/
+  }
+}
+
