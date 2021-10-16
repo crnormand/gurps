@@ -28,7 +28,6 @@
 
     <div class='flexrow flex-group-center flex-between' style='border: none'>
       <h3>{{localize "GURPS.addDirectlyApply"}}:</h3>
-      {{debug viewId}}
       <input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}'
         {{disabled (eq CALC.viewId 'all' )}}>
       <div>

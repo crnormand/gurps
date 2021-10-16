@@ -30,7 +30,6 @@
 
   {{#each (flatlist (lookup data.equipment container)) }}
     {{#if ../isEditing}}
-      {{debug container}}
       <div class='itemmenu equipmenu{{../container}}' data-key='data.equipment.{{../container}}.{{@key}}'>
         <i class='fas fa-caret-square-down'></i>
       </div>
