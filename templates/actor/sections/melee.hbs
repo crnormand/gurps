@@ -79,12 +79,17 @@
           </div>
         </div>
 
-        <div class='usage flex-center'>{{mode}}</div>
+        <div
+          class='usage rollable flex-center'
+          data-name='{{name}} ({{mode}})'
+          data-key='data.melee.{{@key}}'
+          data-otf='M:"{{name}} ({{mode}})"'
+        >{{mode}}</div>
         <div
           class='level rollable flex-center'
           data-name='{{name}} ({{mode}})'
           data-key='data.melee.{{@key}}'
-          data-otf='A:"{{name}} ({{mode}})"'
+          data-otf='M:"{{name}} ({{mode}})"'
         >{{level}}</div>
         <div class='parry rollable flex-center' data-otf='Parry'>{{parry}}</div>
         <div class='block rollable flex-center' data-otf='Block'>{{block}}</div>

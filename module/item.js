@@ -7,6 +7,12 @@ export class GurpsItem extends Item {
     return /** @type {GurpsItem} */ (item)
   }
 
+  async internalUpdate(data, context) {
+    let ctx = { render: true }
+    if (!!context) ctx = {...context, ...ctx}
+    await this.update(data, ctx)
+  }
+
   prepareData() {
     super.prepareData()
   }

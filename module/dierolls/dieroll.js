@@ -47,7 +47,9 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, chatthin
     if (!!maxtarget && finaltarget > maxtarget) finaltarget = maxtarget
     if (!!thing) {
       //let flav = thing.replace(/\[.*\] */, '') // Flavor text cannot handle internal []
-      let flav = thing.replace(/\[/, '').replace(/\]/, '') // Flavor text cannot handle internal []
+      const r1 = /\[/g
+      const r2 = /\]/g
+      let flav = thing.replaceAll(r1, '').replaceAll(r2, '') // Flavor text cannot handle internal []
       formula = formula.replace(/^(\d+d6)/, `$1[${flav.trim()}]`)
     }
     roll = Roll.create(formula) // The formula will always be "3d6" for a "targetted" roll

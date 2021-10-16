@@ -64,37 +64,42 @@
       {{#unless isCollapsed}}
         <div class='itemmenu' readonly></div>
 
-      <div class='rangeddraggable' data-key='data.ranged.{{@key}}'>
-        <div class='desc dblclkedit indent{{indent}}'>
-          <div class='gga-desc-text'>
-            <div>
-              {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-              {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+        <div class='rangeddraggable' data-key='data.ranged.{{@key}}'>
+          <div class='desc dblclkedit indent{{indent}}'>
+            <div class='gga-desc-text'>
+              <div>
+                {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+              </div>
+              <div class='tooltip gga-manual'>
+                {{{gurpslink this.name}}}
+                {{#if (displayItemHover this)}}
+                  <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
+                {{/if}}
+              </div>
+              <div>
+                {{#if (isFoundryItem this)}}
+                  <i class='far fas fa-star tooltip gga-item'>
+                    <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem'}}</span>
+                  </i>
+                {{/if}}
+              </div>
             </div>
-            <div class='tooltip gga-manual'>
-              {{{gurpslink this.name}}}
-              {{#if (displayItemHover this)}}
-                <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
-              {{/if}}
-            </div>
-            <div>
-              {{#if (isFoundryItem this)}}
-                <i class='far fas fa-star tooltip gga-item'>
-                  <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
-                </i>
-              {{/if}}
-            </div>
+            <div class='list_note'>{{{gurpslink this.notes}}}</div>
           </div>
-          <div class='list_note'>{{{gurpslink this.notes}}}</div>
         </div>
-      </div>
 
-        <div class='usage flex-center'>{{this.mode}}</div>
+        <div
+          class='usage rollable flex-center'
+          data-name='{{name}} ({{mode}})'
+          data-key='data.ranged.{{@key}}'
+          data-otf='R:"{{name}} ({{mode}})"'
+        >{{mode}}</div>
         <div
           class='level rollable flex-center'
           data-name='{{this.name}} ({{this.mode}})'
           data-key='data.ranged.{{@key}}'
-          data-otf='A:"{{this.name}} ({{this.mode}})"'
+          data-otf='R:"{{this.name}} ({{this.mode}})"'
         >{{this.level}}</div>
         <div
           class='acc gga-right {{gmod this.acc}}'
