@@ -1498,9 +1498,12 @@ body {
 /* ----- combat sheet additions ----- */
 
 #combat-sheet {
-  display: grid;
+  display: inline-flex;
+  flex-flow: column nowrap;
+
+  /* display: grid;
   grid-template-columns: 0fr 1fr auto;
-  /* grid-template-rows: 0fr auto auto; */
+  grid-template-rows: 0fr auto auto;
   grid-gap: var(--sectiongap);
   grid-template-areas:
     'combat-attrs      encumbrance       location       '
@@ -1509,7 +1512,22 @@ body {
     'combat-trackers   combat-trackers   combat-trackers'
     'melee             melee             melee          '
     'speed-range-table speed-range-table speed-range-table'
-    'ranged            ranged            ranged         ';
+    'ranged            ranged            ranged         '; */
+}
+
+#combat-sheet > div {
+    margin-top: var(--sectiongap);
+}
+
+#combat-grid {
+  display: grid;
+  grid-template-columns: 0fr 1fr auto;
+  /* grid-template-rows: 0fr auto auto; */
+  grid-gap: var(--sectiongap);
+  grid-template-areas:
+    'combat-attrs      encumbrance       location'
+    'combat-attrs      condition         location'
+    'combat-hitfat     condition         location';
 }
 
 #combat-hitfat {
