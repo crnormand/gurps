@@ -15,19 +15,27 @@ import { GURPS } from '../gurps.js'
  */
 export class GurpsActorSheet extends ActorSheet {
   /** @override */
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['gurps', 'sheet', 'actor'],
-      template: 'systems/gurps/templates/actor/actor-sheet-gcs.hbs',
-      width: 800,
-      height: 800,
-      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
-      scrollY: [
-        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
-      ],
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    })
-  }
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            classes: ['gurps', 'sheet', 'actor'],
+           // template: 'systems/gurps/templates/actor/actor-sheet-gcs.hbs',
+            width: 800,
+            height: 800,
+            tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+            scrollY: [
+                '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
+            ],
+            dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
+        })
+    }
+
+    /* -------------------------------------------- */
+
+    /** @override */
+    get template() {
+        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
+        return 'systems/gurps/templates/actor/actor-sheet-gcs.hbs';
+    }
 
   /* -------------------------------------------- */
 
