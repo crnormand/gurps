@@ -14,8 +14,8 @@
   <div class='duration header'>{{i18n 'GURPS.spellDuration'}}</div>
   <div class='sl header'>{{i18n 'GURPS.sl'}}</div>
   <div class='rsl header'>{{i18n 'GURPS.rsl'}}</div>
-  <div class='pts header'>{{i18n 'GURPS.abbrevPts' 'Pts'}}</div>
-  <div class='ref header'>{{i18n 'GURPS.abbrevRef' 'Ref'}}</div>
+  <div class='pts header'>{{i18n "GURPS.abbrevPts"}}</div>
+  <div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
 
   {{#each (flatlist data.spells)}}
     {{#if ../isEditing}}
@@ -117,7 +117,7 @@
             <div>
               {{#if (isFoundryItem this)}}
                 <i class='fas fa-star tooltip gga-item'>
-                  <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+                  <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
                 </i>
               {{/if}}
             </div>

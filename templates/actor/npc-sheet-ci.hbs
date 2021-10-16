@@ -131,7 +131,7 @@
           <div class="field" style='padding-top: 3px; border: none;'>
             <select id='maneuver' name="data.conditions.maneuver" style='width: 100%; height: fit-content;'>
               <option value='undefined' {{select-if ../data.conditions.maneuver undefined }}>
-                {{i18n 'GURPS.none' 'None'}}
+                {{i18n "GURPS.none"}}
               </option>
               {{#each (listAllManeuvers) as | this key |}}
                 <option value='{{key}}' {{select-if ../data.conditions.maneuver key }}>

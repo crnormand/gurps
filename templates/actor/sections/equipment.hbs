@@ -9,11 +9,11 @@
     <div class='headermenu'>
       <span>
         {{#if (eq container 'carried')}}
-          {{i18n 'GURPS.equipmentCarried' 'Carried Equipment'}}
+          {{i18n "GURPS.equipmentCarried"}}
           ({{toLocaleString eqtsummary.eqtlbs}}
           lb; ${{toLocaleString eqtsummary.eqtcost}})
         {{else}}
-          {{i18n 'GURPS.equipmentOther' 'Other Equipment'}}
+          {{i18n "GURPS.equipmentOther"}}
           (${{toLocaleString eqtsummary.eqtcost}})
         {{/if}}
       </span>
@@ -109,17 +109,17 @@
             <div>
               {{#if (isUserCreated this)}}
                 <i class='fas fa-bookmark tooltip gga-usercreated'>
-                  <span class='tooltiptext'>{{i18n 'GURPS.equipmentUserCreated' 'User-created'}}</span>
+                  <span class='tooltiptext'>{{i18n "GURPS.equipmentUserCreated"}}</span>
                 </i>
               {{/if}}
               {{#if (isFoundryItem this)}}
                 <i class='fas fa-star tooltip gga-item'>
-                  <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+                  <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
                 </i>
               {{/if}}
               {{#if (ignoreImportQty this)}}
                 <i class="fas fa-hashtag tooltip gga-ignoreimport">
-                  <span class='tooltiptext'>{{i18n 'GURPS.equipmentIgnoreQtyImport' 'Importing does not update quantity.'}} </span>
+                  <span class='tooltiptext'>{{i18n "GURPS.equipmentIgnoreQtyImport"}} </span>
                 </i>
               {{/if}}
             </div>

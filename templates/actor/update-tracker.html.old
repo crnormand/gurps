@@ -1,0 +1,10 @@
+<div style='text-align: center; margin: 1.5rem 0;'>
+  {{localize "GURPS.resourceTemplateTitle"}}:
+  <select {{disabled (not templates)}}>
+    {{#each templates}}
+    <option value='{{tracker.name}}'>{{tracker.name}}</option>
+    {{else}}
+    <option value='none'>{{localize "GURPS.resourceUndefined"}}</option>
+    {{/each}}
+  </select>
+</div>

@@ -498,7 +498,7 @@ export class GurpsActorSheet extends ActorSheet {
       '.headermenu',
       [
         {
-          name: i18n('GURPS.addTracker', 'Add Resource Tracker at the end'),
+          name: i18n('GURPS.addTracker'),
           icon: '<i class="fas fa-plus"></i>',
           callback: e => {
             this._addTracker()
@@ -513,7 +513,7 @@ export class GurpsActorSheet extends ActorSheet {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
     let opts = [
-      this._createMenu(i18n('GURPS.edit', 'Edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
+      this._createMenu(i18n('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
         i18n('GURPS.sortContentsAscending'),
         '<i class="fas fa-sort-amount-down-alt"></i>',
@@ -537,7 +537,7 @@ export class GurpsActorSheet extends ActorSheet {
     new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: ClickAndContextMenu })
 
     let moveup = this._createMenu(
-      i18n('GURPS.moveToCarriedEquipment', 'Move to Carried Equipment'),
+      i18n('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.carried')
     )
@@ -1112,7 +1112,7 @@ export class GurpsActorSheet extends ActorSheet {
         let sourceKey = dragData.key
         if (sourceKey.includes(targetkey) || targetkey.includes(sourceKey)) {
           ui.notifications.error(
-            i18n('GURPS.dragSameContainer', 'Cannot add the object to this container, as it is already inside it.')
+            i18n('GURPS.dragSameContainer')
           )
           return
         }
@@ -1139,11 +1139,11 @@ export class GurpsActorSheet extends ActorSheet {
 
         let d = new Dialog({
           title: object.name,
-          content: `<p>${i18n('GURPS.dropResolve', 'Where do you want to drop this object?')}</p>`,
+          content: `<p>${i18n('GURPS.dropResolve')}</p>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-level-up-alt"></i>',
-              label: `${i18n('GURPS.dropBefore', 'Before the target')}`,
+              label: `${i18n('GURPS.dropBefore')}`,
               callback: async () => {
                 if (!isSrcFirst) {
                   await this._removeKey(sourceKey)
@@ -1156,7 +1156,7 @@ export class GurpsActorSheet extends ActorSheet {
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
-              label: `${i18n('GURPS.dropInside', 'Inside the target')}`,
+              label: `${i18n('GURPS.dropInside')}`,
               callback: async () => {
                 let key = targetkey + '.contains.' + GURPS.genkey(0)
                 if (!isSrcFirst) {

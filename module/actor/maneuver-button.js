@@ -46,7 +46,7 @@ export default class ManeuverHUDButton {
     button.classList.add('control-icon')
     button.classList.add('maneuver-open')
     button.setAttribute('data-action', 'maneuver')
-    button.title = i18n('GURPS.setManeuver', 'Set Maneuver')
+    button.title = i18n('GURPS.setManeuver')
     button.innerHTML = await ManeuverHUDButton.getInnerHtml(effects)
     return button
   }

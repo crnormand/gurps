@@ -7,6 +7,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.ID
   GURPS.TransferTo
   GURPS.actions
+  GURPS.adDisad
+  GURPS.adDisadQuirkPerk
   GURPS.addAdvantage
   GURPS.addApplyTo
   GURPS.addDamageReduction
@@ -80,10 +82,12 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.clickToRemove
   GURPS.collapse
   GURPS.concentrationCheck
+  GURPS.conditionalModifier
   GURPS.conditions
   GURPS.copyrightGURPS
   GURPS.dead
   GURPS.defense
+  GURPS.delete
   GURPS.destroyed
   GURPS.dragrulerFly
   GURPS.dragrulerSprint
@@ -95,6 +99,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.effectsTemporaryAttributePenalties
   GURPS.equipmentCost
   GURPS.equipmentEquipped
+  GURPS.equipmentFoundryItem
   GURPS.equipmentMaxUses
   GURPS.equipmentQuantity
   GURPS.equipmentTechlevel
@@ -104,6 +109,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.forHighPainThreshold
   GURPS.forLowPainThreshold
   GURPS.forPerfectBalance
+  GURPS.fromEllipses
   GURPS.gameAidUsersGuide
   GURPS.hitLocationArm, holding shield
   GURPS.hitLocationChinks in Other
@@ -314,6 +320,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierViewScale
   GURPS.modifierViewScaleHint
   GURPS.modifierWillCheck
+  GURPS.moveToOtherEquipment
   GURPS.name
   GURPS.notAffected
   GURPS.notes
@@ -357,6 +364,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.ranged
   GURPS.rangedAttack
   GURPS.rateOfFire
+  GURPS.removeItem
   GURPS.resolve
   GURPS.resource
   GURPS.resourceCopyTemplate
@@ -477,6 +485,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.slamShieldDB
   GURPS.slamVelocity
   GURPS.slams
+  GURPS.sortAscending
+  GURPS.sortContentsAscending
+  GURPS.sortContentsDescending
+  GURPS.sortDescending
   GURPS.spell
   GURPS.spellDifficulty
   GURPS.spellResist
