@@ -45,8 +45,8 @@
 
     {{#if (or (notEmpty data.reactions) (notEmpty data.conditionalmods))}}
       <div id='other' style='display: flex; flex-flow: row nowrap;'>
-        {{#if (notEmpty data.reactions)}}{{>reactions}}{{log "reactions"}}{{/if}}
-        {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{log "conditional modifiers"}}{{/if}}
+        {{#if (notEmpty data.reactions)}}{{>reactions}}{{/if}}
+        {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{/if}}
       </div>
     {{/if}}
 
@@ -64,8 +64,8 @@
 
     {{#if (or (notEmpty data.skills) (notEmpty data.ads))}}
       <div id='ads-skills'>
-        {{#if (notEmpty data.ads)}}{{>advantages}}{{log "advantages"}}{{/if}}
-        {{#if (notEmpty data.skills)}}{{>skills}}{{log "skills"}}{{/if}}
+        {{#if (notEmpty data.ads)}}{{>advantages}}{{/if}}
+        {{#if (notEmpty data.skills)}}{{>skills}}{{/if}}
       </div>
     {{/if}}
 
