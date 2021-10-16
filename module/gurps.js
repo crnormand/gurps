@@ -31,8 +31,7 @@ import GurpsJournalEntry from './journal.js'
 
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
-GURPS.DEBUG = false
-
+GURPS.DEBUG = true
 GURPS.Migration = Migration
 GURPS.BANNER = `
    __ ____ _____ _____ _____ _____ ____ __    
@@ -62,6 +61,11 @@ import { HitLocation } from './hitlocation/hitlocation.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import GurpsToken from './token.js'
+import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
+
+if (GURPS.DEBUG) {
+  GURPS.parseDecimalNumber = parseDecimalNumber
+}
 
 AddChatHooks()
 JQueryHelpers()
@@ -497,7 +501,7 @@ async function performAction(action, actor, event = null, targets = []) {
             let m = GURPS.findAttack(actor.data.data, tempAction.melee)
             if (!!m) {
               th += ' for ' + m.name
-//              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode + ')'
+              //              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode + ')'
               // @ts-ignore
               t = parseInt(m[tempAction.attribute.toLowerCase()]) // should only occur with parry & block
             }
@@ -612,17 +616,16 @@ async function performAction(action, actor, event = null, targets = []) {
     }
     formula = '3d6'
     if (bestAction.type === 'skill-spell') {
-//      chatthing = '[S:' + bestAction.thing + ']'
+      //      chatthing = '[S:' + bestAction.thing + ']'
 
-      thing = bestAction.thing.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+      thing = bestAction.thing
+        .replace(/\[.*\]/, '')
+        .replace(/ +/g, ' ')
+        .trim()
       if (thing.length == 0) {
         chatthing = bestAction.thing
-      } else
-        chatthing = '[S:"' + thing + '"]'
-
-    } 
-    else
-      chatthing= '[' + bestAction.orig + ']'
+      } else chatthing = '[S:"' + thing + '"]'
+    } else chatthing = '[' + bestAction.orig + ']'
     opt.action = bestAction
     opt.obj = bestAction.obj
     if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
@@ -652,11 +655,13 @@ async function performAction(action, actor, event = null, targets = []) {
       if (!!action.isMelee && !action.isRanged) p = 'M:'
       if (!action.isMelee && !!action.isRanged) p = 'R:'
       // Need to finagle chatthing to allow for attack names that include OtFs
-      thing = thing.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+      thing = thing
+        .replace(/\[.*\]/, '')
+        .replace(/ +/g, ' ')
+        .trim()
       if (thing.length == 0) {
-	      chatthing = att.name + mode
-	    } else
-        chatthing = '[' + p + '"' + thing + mode + '"]'
+        chatthing = att.name + mode
+      } else chatthing = '[' + p + '"' + thing + mode + '"]'
       let t = att.level
       if (!!t) {
         let a = (t + '').trim().split(' ')
@@ -752,7 +757,7 @@ GURPS.performAction = performAction
  * @param {string} sname
  */
 function findSkillSpell(actor, sname, isSkillOnly = false, isSpellOnly = false) {
-  const removeOtf = '^ *(\\[ ?["\'])?'  // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
+  const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
   var t
   if (!actor) return t
   if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
@@ -803,43 +808,40 @@ GURPS.findAdDisad = findAdDisad
  * @param {string} sname
  */
 function findAttack(actor, sname, isMelee = true, isRanged = true) {
-	const removeOtf = '^ *(\\[ ?["\'])?'  // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
+  const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
   var t
   if (!actor) return t
   if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
-  let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i') 
+  let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   let smode = ''
   let m = sname.match(/(.*?)\(([^\)]*)\)$/)
-  if (!!m) {  // Found a mode "(xxx)" in the search name
-	  sname = m[1].trim()
-    smode = m[2].trim().toLowerCase()   
-	}
-  let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i') 
+  if (!!m) {
+    // Found a mode "(xxx)" in the search name
+    sname = m[1].trim()
+    smode = m[2].trim().toLowerCase()
+  }
+  let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   if (isMelee)
     // @ts-ignore
     recurselist(actor.melee, (e, k, d) => {
       if (!t) {
         let em = !!e.mode ? e.mode.toLowerCase() : ''
-        if (e.name.match(nameregex) && (smode == '' || em == smode))
-          t = e
-        else if (e.name.match(fullregex))
-          t = e
+        if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
+        else if (e.name.match(fullregex)) t = e
       }
- 	  })
-//    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
+    })
+  //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
   if (isRanged && !t)
     // @ts-ignore
     recurselist(actor.ranged, (e, k, d) => {
       if (!t) {
         let em = !!e.mode ? e.mode.toLowerCase() : ''
-        if (e.name.match(nameregex) && (smode == '' || em == smode))
-          t = e
-        else if (e.name.match(fullregex))
-          t = e
+        if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
+        else if (e.name.match(fullregex)) t = e
       }
     })
-//    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
+  //    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
   return t
 }
 GURPS.findAttack = findAttack
@@ -864,7 +866,6 @@ async function handleRoll(event, actor, targets) {
   let target = 0 // -1 == damage roll, target = 0 is NO ROLL.
   if (!!actor) GURPS.SetLastActor(actor)
 
-
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut'
     let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
@@ -877,19 +878,17 @@ async function handleRoll(event, actor, targets) {
     formula = '3d6'
     target = parseInt(element.innerText)
     if ('otf' in element.dataset)
-      if (thing.toUpperCase() != element.dataset.otf.toUpperCase())
-        chatthing = thing + '/[' + element.dataset.otf + ']'
-      else
-        chatthing = '[' + element.dataset.otf + ']'
+      if (thing.toUpperCase() != element.dataset.otf.toUpperCase()) chatthing = thing + '/[' + element.dataset.otf + ']'
+      else chatthing = '[' + element.dataset.otf + ']'
   } else if ('otf' in element.dataset) {
     // strip out any inner OtFs when coming from the UI.   Mainly attack names
     let otf = element.dataset.otf.trim()
     // But there is a special case where the OtF is the first thing
     // "M:"["Quarterstaff"A:"Quarterstaff (Thrust)"] (Thrust)""
     let m = otf.match(/^([sSmMrRaA]):"\["([^"]+)([^\]]+)]( *\(\w*\))?/)
-    if (!!m) otf = m[1] + ':' + m[2] +  (!!m[4] ? m[4] : '')
+    if (!!m) otf = m[1] + ':' + m[2] + (!!m[4] ? m[4] : '')
     otf = otf.replace(/\[.*\]/, '')
-    otf = otf.replace(/ +/g, " ") // remove duplicate blanks
+    otf = otf.replace(/ +/g, ' ') // remove duplicate blanks
     return GURPS.executeOTF(otf)
   } else if ('name' in element.dataset) {
     prefix = '' // "Attempting ";
@@ -994,9 +993,10 @@ function gurpslink(str, clrdmods = true) {
             action.action.type
           )
         )
-      // console.log(action.action)
+          if (!action.action)
+            // console.log(action.action)
 
-        if (!action.action) output += '['
+            output += '['
         output += action.text
         if (!action.action) output += ']'
         str = str.substr(i + 1)
@@ -1210,7 +1210,6 @@ GURPS.decode = decode
 function listeqtrecurse(eqts, options, level, data, parentkey = '', src = null) {
   if (!eqts) return ''
   let ret = ''
-  // @ts-ignore
   let i = 0
   for (let key in eqts) {
     let eqt = eqts[key]
@@ -1226,7 +1225,11 @@ function listeqtrecurse(eqts, options, level, data, parentkey = '', src = null) 
         if (eqt.name.startsWith(e.name) && !e.equipped) display = false
       })
     }
-    if (display) ret = ret + options.fn(eqt, { data: data })
+    if (display) {
+      let fragment = options.fn(eqt, { data: data })
+      // if (!!eqt?.equipped) console.log(fragment)
+      ret = ret + fragment
+    }
     ret = ret + listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
   }
   return ret

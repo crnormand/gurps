@@ -17,6 +17,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.addRangedAttack
   GURPS.addSkill
   GURPS.addSpell
+  GURPS.addTitle
   GURPS.advantage
   GURPS.advantages
   GURPS.aim
@@ -366,6 +367,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.resourceInvalidAlias
   GURPS.resourceUndefined
   GURPS.resourceUpdateTrackerSlot
+  GURPS.rollForMe
   GURPS.rolled
   GURPS.selectToken
   GURPS.settingAutoIgnoreQty
@@ -413,6 +415,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingHintPlayerChatPrivate
   GURPS.settingHintQtyItems
   GURPS.settingHintRangeStrategy
+  GURPS.settingHintRemoveUnequipped
   GURPS.settingHintSheetDetail
   GURPS.settingHintShowDiceRoller
   GURPS.settingHintShowNavigation
@@ -424,11 +427,17 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingImportBodyPlanAsk
   GURPS.settingImportBodyPlanIgnore
   GURPS.settingImportBodyPlanUseFile
+  GURPS.settingImportBrowserImporter
+  GURPS.settingImportEncoding
+  GURPS.settingImportEncodingISO8859
+  GURPS.settingImportEncodingUTF8
   GURPS.settingImportHPAndFP
   GURPS.settingImportHPAndFPAsk
   GURPS.settingImportHPAndFPIgnore
   GURPS.settingImportHPAndFPUseFile
   GURPS.settingImportHintBodyPlan
+  GURPS.settingImportHintBrowserImporter
+  GURPS.settingImportHintEncoding
   GURPS.settingImportIgnoreName
   GURPS.settingLabelMookGenerator
   GURPS.settingManeuverDetail
@@ -446,6 +455,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingRangeStrategy
   GURPS.settingRangeStrategyRangeBands
   GURPS.settingRangeStrategyStandard
+  GURPS.settingRemoveUnequipped
   GURPS.settingSheetDetail
   GURPS.settingShowDiceRoller
   GURPS.settingShowNavigation

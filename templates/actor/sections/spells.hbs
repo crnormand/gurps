@@ -1,50 +1,150 @@
-<div id='spells'>
-  <div class='desc header dblclksort' data-key='data.spells'>{{localize 'GURPS.spells'}}</div>
-  <div class='cls header'>{{localize 'GURPS.spellClass'}}</div>
-  <div class='college header'>{{localize 'GURPS.spellCollege'}}</div>
-  <div class='mana header'>{{localize 'GURPS.spellCost'}}</div>
-  <div class='mana_maintain header'>{{localize 'GURPS.spellMaintain'}}</div>
-  <div class='time header'>{{localize 'GURPS.spellTime'}}</div>
-  <div class='duration header'>{{localize 'GURPS.spellDuration'}}</div>
-  <div class='sl header'>{{localize 'GURPS.sl'}}</div>
-  <div class='rsl header'>{{localize 'GURPS.rsl'}}</div>
-  <div class='pts header'>Pts</div>
-  <div class='ref header'>Ref</div>
+<div id='spells' class='gga-table with-notes'>
+  <div class='itemmenu header' readonly></div>
+  <div class='desc header'>
+    <div class='headermenu'>
+      <span>{{i18n 'GURPS.spells'}}</span>
+      <i class='fas fa-caret-square-down'></i>
+    </div>
+  </div>
+  <div class='cls header'>{{i18n 'GURPS.spellClass'}}</div>
+  <div class='college header'>{{i18n 'GURPS.spellCollege'}}</div>
+  <div class='mana header'>{{i18n 'GURPS.spellCost'}}</div>
+  <div class='mana_maintain header'>{{i18n 'GURPS.spellMaintain'}}</div>
+  <div class='time header'>{{i18n 'GURPS.spellTime'}}</div>
+  <div class='duration header'>{{i18n 'GURPS.spellDuration'}}</div>
+  <div class='sl header'>{{i18n 'GURPS.sl'}}</div>
+  <div class='rsl header'>{{i18n 'GURPS.rsl'}}</div>
+  <div class='pts header'>{{i18n 'GURPS.abbrevPts' 'Pts'}}</div>
+  <div class='ref header'>{{i18n 'GURPS.abbrevRef' 'Ref'}}</div>
 
-  {{#listeqt data.spells}}
-    <div
-      class='desc indent{{@indent}} satisfiedY spldraggable dblclkedit tooltip-manager'
-      data-key='data.spells.{{@key}}'
-    >
-      {{#if (notEmpty this.contains)}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
-      {{#if (notEmpty this.collapsed)}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
-      {{{gurpslink this.name}}}
-      {{#if (isFoundryItem this)}}&nbsp;<i
-          class='far fas fa-star'
-          style='float: right; color: olivedrab; font-weight: 900; padding-top: 3px;'
-        ></i>{{/if}}
-      {{#if (displayItemHover this)}}
-        <div class='tooltippic'><img src='{{this.img}}' /></div>
-      {{/if}}
-      <div class='list_note satisfiedY'></div>
-      <div class='list_note satisfiedY spldraggable' data-key='data.spells.{{@key}}'>{{{gurpslink this.notes}}}
+  {{#each (flatlist data.spells)}}
+    {{#if ../isEditing}}
+      <div class='itemmenu spellmenu' data-key='data.spells.{{@key}}'>
+        <i class='fas fa-times'></i>
       </div>
-    </div>
-    <div class='cls satisfiedY center'>{{this.class}}</div>
-    <div class='college satisfiedY center'>{{this.college}}</div>
-    <div class='mana satisfiedY center'>{{this.cost}}</div>
-    <div class='mana_maintain satisfiedY center'>{{this.maintain}}</div>
-    <div class='time satisfiedY center'>{{this.casttime}}</div>
-    <div class='duration satisfiedY center'>{{this.duration}}</div>
-    <div
-      class='sl satisfiedY rollable center'
-      data-name='{{this.name}}'
-      data-otf='S:"{{this.name}}"'
-      data-key='data.spells.{{@key}}'
-    >{{this.level}}
-    </div>
-    <div class='rsl satisfiedY center'>{{this.difficulty}}</div>
-    <div class='pts satisfiedY center'>{{this.points}}</div>
-    <div class='ref satisfiedY center'>{{{pdflink this.pageref}}}</div>
-  {{/listeqt}}
+      <div class='desc indent{{indent}}' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.name'
+          class='gcs-input'
+          type='text'
+          value='{{this.name}}'
+        />
+        <div class='list_note'><input
+            name='data.spells.{{@key}}.notes'
+            class='gcs-input'
+            type='text'
+            value='{{this.notes}}'
+          /></div>
+        <div></div>
+      </div>
+      <div class='cls' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.class'
+          class='gcs-input-sm5'
+          type='text'
+          value='{{this.class}}'
+        /></div>
+      <div class='college' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.college'
+          class='gcs-input-sm5'
+          type='text'
+          value='{{this.college}}'
+        /></div>
+      <div class='mana' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.cost'
+          class='gcs-input-sm3'
+          type='text'
+          value='{{this.cost}}'
+        /></div>
+      <div class='mana_maintain' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.maintain'
+          class='gcs-input-sm4'
+          type='text'
+          value='{{this.maintain}}'
+        /></div>
+      <div class='time' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.casttime'
+          class='gcs-input-sm5'
+          type='text'
+          value='{{this.casttime}}'
+        /></div>
+      <div class='duration' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.duration'
+          class='gcs-input-sm5'
+          type='text'
+          value='{{this.duration}}'
+        /></div>
+      <div class='sl' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.import'
+          class='gcs-input-sm2'
+          type='text'
+          value='{{this.import}}'
+        /></div>
+      <div class='rsl' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.difficulty'
+          class='gcs-input-sm3'
+          type='text'
+          value='{{this.difficulty}}'
+        />
+      </div>
+      <div class='pts' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.points'
+          class='gcs-input-sm2'
+          type='text'
+          value='{{this.points}}'
+        /></div>
+      <div class='ref' data-key='data.spells.{{@key}}'><input
+          name='data.spells.{{@key}}.pageref'
+          class='gcs-input-sm5'
+          type='text'
+          value='{{this.pageref}}'
+        /></div>
+    {{else}}
+      {{#unless isCollapsed}}
+      <div class='itemmenu' readonly></div>
+
+      <div class='spldraggable' data-key='data.spells.{{@key}}'>
+        <div class='desc dblclkedit indent{{indent}}'>
+          <div class='gga-desc-text'>
+            <div>
+              {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+              {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+            </div>
+            <div class='tooltip gga-manual'>
+              {{{gurpslink this.name}}}
+              {{#if (displayItemHover this)}}
+                <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div>
+              {{/if}}          
+            </div>
+            <div>
+              {{#if (isFoundryItem this)}}
+                <i class='fas fa-star tooltip gga-item'>
+                  <span class='tooltiptext'>{{i18n 'GURPS.equipmentFoundryItem' 'Foundry Item'}}</span>
+                </i>
+              {{/if}}
+            </div>
+          </div>
+          <div class='list_note'>
+            {{{gurpslink this.notes}}}
+          </div>
+        </div>
+      </div>
+
+      <div class='cls flex-center'>{{this.class}}</div>
+      <div class='college flex-center'>{{this.college}}</div>
+      <div class='mana flex-center'>{{this.cost}}</div>
+      <div class='mana_maintain flex-center'>{{this.maintain}}</div>
+      <div class='time flex-center'>{{this.casttime}}</div>
+      <div class='duration flex-center'>{{this.duration}}</div>
+      <div
+        class='sl rollable flex-center'
+        data-name='{{this.name}}'
+        data-otf='S:"{{this.name}}"'
+        data-key='data.spells.{{@key}}'
+      >{{this.level}}
+      </div>
+      <div class='rsl flex-center'>{{this.difficulty}}</div>
+      <div class='pts flex-center'>{{this.points}}</div>
+      <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
+      {{/unless}}
+    {{/if}}
+  {{/each}}
 </div>

@@ -1,0 +1,37 @@
+<div id='conditionalmods' class='gga-table'>
+  <div class='itemmenu header' readonly></div>
+  <div class='modifier header gga-right'>{{i18n 'GURPS.modifier'}}</div>
+  <div class='situation header'>
+    <div class='headermenu'>
+      <span>{{i18n 'GURPS.conditionalMods' 'Conditional Modifiers'}}</span>
+      {{#if isEditing}}
+        <i class='fas fa-caret-square-down'></i>
+      {{/if}}
+    </div>
+  </div>
+
+  {{#each data.conditionalmods as |this key|}}
+    {{#if ../isEditing}}
+      <div class='itemmenu condmodmenu' data-key='data.conditionalmods.{{key}}'>
+        <i class='fas fa-times'></i>
+      </div>
+      <div class='modifier gga-right'>
+        <input
+          name='data.conditionalmods.{{key}}.modifier'
+          class='gcs-input-sm4'
+          type='text'
+          value='{{this.modifier}}'
+        />
+      </div>
+      <div class='situation'>
+        <input name='data.conditionalmods.{{key}}.situation' class='gcs-input' type='text' value='{{this.situation}}' />
+      </div>
+    {{else}}
+      <div class='itemmenu' readonly></div>
+      <div class='modifier gmod gga-right' data-name='Modifier {{this.situation}}'>{{this.modifier}}</div>
+      <div class='situation condmoddraggable' data-key='data.conditionalmods.{{key}}'>
+        {{{gurpslink this.situation}}}
+      </div>
+    {{/if}}
+  {{/each}}
+</div>

@@ -1,8 +1,15 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
+import { GURPS } from './gurps.js'
 import { handleOnPdf } from './pdf-refs.js'
+import GgaContextMenu from './utilities/contextmenu.js'
 
 export default class GurpsWiring {
+  static hookupAllEvents(html) {
+    this.hookupGurps(html)
+    this.hookupGurpsRightClick(html)
+  }
+
   /**
    * Given a jquery html, attach all of our listeners to it. No need to call bind(), since they don't use "this".
    * @param {JQuery<HTMLElement>} html
@@ -25,11 +32,55 @@ export default class GurpsWiring {
     html.find('.glinkmod').on('contextmenu', GurpsWiring.onRightClickGurpslink)
     html.find('.glinkmodplus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
     html.find('.glinkmodminus').on('contextmenu', GurpsWiring.onRightClickGurpslink)
-    html.find('.pdflink').on('contextmenu', event => {
-      event.preventDefault()
-      let el = event.currentTarget
-      GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
-    })
+    html.find('.gmod').on('contextmenu', GurpsWiring.onRightClickGmod)
+    html.find('[data-otf]').on('contextmenu', GurpsWiring.onRightClickOtf)
+
+    if (html.find('.pdflink').length > 0) {
+      for (const link of html.find('.pdflink')) {
+        this.createPdfLinkMenu(link)
+      }
+    }
+
+    // html.find('.pdflink').on('contextmenu', event => {
+    //   event.preventDefault()
+    //   let el = event.currentTarget
+    //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
+    // })
+  }
+
+  static createPdfLinkMenu(link) {
+    let text = link.innerText
+    let parent = $(link).parent()
+
+    let actor = GURPS.LastActor
+    let users = actor?.getOwners()?.filter(u => !u.isGM) || []
+    let otf = '[PDF:' + text + ']'
+    let names = users.map(u => u.name).join(' ')
+
+    let container = $(parent).closest('section.window-content')
+
+    new GgaContextMenu(container, parent, '.pdflink', `Send PDF:${text}...`, [
+      {
+        name: 'To Everyone',
+        icon: '<i class="fas fa-user-friends"></i>',
+        callback: () => GURPS.sendOtfMessage(otf, false),
+        condition: () => game.user.isGM,
+      },
+      {
+        name: `Whisper to ${names}`,
+        icon: '<i class="fas fa-user-secret"></i>',
+        callback: () => GURPS.sendOtfMessage(otf, false, users),
+        condition: () => game.user.isGM && users.length > 0,
+      },
+      {
+        name: 'Copy to Chat',
+        icon: '<i class="far fa-comment"></i>',
+        callback: () => {
+          $(document).find('#chat-message').val(otf)
+        },
+        condition: () => true,
+      },
+    ])
   }
 
   /**
@@ -80,6 +131,27 @@ export default class GurpsWiring {
       if (action.type === 'damage' || action.type === 'deriveddamage')
         GURPS.resolveDamageRoll(event, GURPS.LastActor, action.orig, action.overridetxt, game.user.isGM, true)
       else GURPS.whisperOtfToOwner(action.orig, action.overridetxt, event, action, GURPS.LastActor) // only offer blind rolls for things that can be blind, No need to offer blind roll if it is already blind
+    }
+  }
+
+  static async onRightClickGmod(event) {
+    event.preventDefault()
+    let el = event.currentTarget
+    let n = el.dataset.name
+    let t = el.innerText
+    GURPS.whisperOtfToOwner(t + ' ' + n, null, event, false, this.actor)
+  }
+
+  static async onRightClickOtf(event) {
+    event.preventDefault()
+    let el = event.currentTarget
+    let isDamageRoll = el.dataset.hasOwnProperty('damage')
+    let otf = event.currentTarget.dataset.otf
+
+    if (isDamageRoll) {
+      GURPS.resolveDamageRoll(event, this.actor, otf, null, game.user.isGM)
+    } else {
+      GURPS.whisperOtfToOwner(event.currentTarget.dataset.otf, null, event, !isDamageRoll, this.actor) // Can't blind roll damages (yet)
     }
   }
 }

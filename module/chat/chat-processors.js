@@ -128,6 +128,7 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     await Migration.migrateTo096()
     await Migration.migrateTo097()
     await Migration.migrateTo0104()
+    await Migration.fixDataModelProblems()
   }
 }
 

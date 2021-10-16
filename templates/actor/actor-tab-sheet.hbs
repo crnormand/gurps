@@ -1,89 +1,105 @@
-<form class="{{cssClass}}" autocomplete="off" style='scroll-padding-top: 5px;'>
-  <div id="sheet-tab" class="gurpsactorsheet">
-    <div id="personal">
-      {{> portrait }}
-      {{> identity }}
-      {{> miscellaneous }}
-      {{> description }}
-      {{> points }}
+<form class='{{cssClass}}' autocomplete='off' style='scroll-padding-top: 5px;'>
+  <div id='sheet-tab' class='gurpsactorsheet'>
+    <div id='personal'>
+      {{>portrait}}
+      {{>identity}}
+      {{>miscellaneous}}
+      {{>description}}
+      {{>points}}
     </div>
-    <nav id="nav-tabs" class="gurps-sheet-tabs" data-group="primary-tabs">
-      <li><a class="tab-item" data-tab="stats">{{localize "GURPS.statsTab"}}</a></li>
-      <li><a class="tab-item" data-tab="combat">{{localize "GURPS.combatTab"}}</a></li>
-      <li><a class="tab-item" data-tab="advantages">{{localize "GURPS.advantagesTab"}}</a></li>
-      <li><a class="tab-item" data-tab="skills">{{localize "GURPS.skillsTab"}}</a></li>
+    <nav id='nav-tabs' class='gurps-sheet-tabs' data-group='primary-tabs'>
+      <li><a class='tab-item' data-tab='stats'>{{i18n 'GURPS.statsTab'}}</a></li>
+      <li><a class='tab-item' data-tab='combat'>{{i18n 'GURPS.combatTab'}}</a></li>
+      <li><a class='tab-item' data-tab='advantages'>{{i18n 'GURPS.advantagesTab'}}</a></li>
+      <li><a class='tab-item' data-tab='skills'>{{i18n 'GURPS.skillsTab'}}</a></li>
       {{#if (notEmpty data.spells)}}
-        <li><a class="tab-item" data-tab="spells">{{localize "GURPS.spellsTab"}}</a></li>
+        <li><a class='tab-item' data-tab='spells'>{{i18n 'GURPS.spellsTab'}}</a></li>
       {{/if}}
-      <li><a class="tab-item" data-tab="equipment">{{localize "GURPS.equipmentTab"}}</a></li>
+      <li><a class='tab-item' data-tab='equipment'>{{i18n 'GURPS.equipmentTab'}}</a></li>
     </nav>
-    <section class="sheet-body tabbed-sheet">
-      <div class="tab" data-tab="stats" data-group="primary-tabs">
-        <div id="stats">
-          {{> attributes }}
-          {{> encumbrance }}
-          {{> quicknote }}
-          {{> lifting }}
-          {{> locations }}
-          <div id="trackers">
-            <div>
-              {{#if useCI}}
-                {{> conditional-injury }}
-              {{else}}
-                {{> hpfp-tracker name="HP" resource=data.HP label='GURPS.attributesHPNAME' editable=false condition='isReeling' testcondition=data.additionalresources.isReeling}}
-              {{/if}}
-              {{> hpfp-tracker name="FP" resource=data.FP label='GURPS.attributesFPNAME' editable=false condition='isTired' testcondition=data.additionalresources.isTired}}
-            </div>
-            <div></div>
-            <div id='resources'>
-              <div class="header" style="grid-column: 1 / span 2;">{{localize "GURPS.resourceTrackers"}}</div>
-              {{#each data.additionalresources.tracker}}
-                {{> resource-tracker label=name resource=this name=(concat 'additionalresources.tracker.' @index) editable=true}}
-              {{/each}}
-            </div>
-          </div> 
-          {{> conditions }}
+    <section class='sheet-body tabbed-sheet'>
+      <div class='tab' data-tab='stats' data-group='primary-tabs'>
+        <div id='stats'>
+          <div id='attributes'>
+            {{>basic-attributes}}
+            {{>secondary-attributes}}
+          </div>
+          {{>encumbrance}}
+          {{>quicknote}}
+          {{>lifting}}
+          {{>locations parent=../data}}
+          <div id='hp-fp'>
+            {{#if useCI}}
+              {{>conditional-injury}}
+            {{else}}
+              {{>hpfp-tracker
+                name='HP'
+                resource=data.HP
+                label='GURPS.attributesHPNAME'
+                editable=false
+                condition='isReeling'
+                testcondition=data.additionalresources.isReeling
+              }}
+            {{/if}}
+            {{>hpfp-tracker
+              name='FP'
+              resource=data.FP
+              label='GURPS.attributesFPNAME'
+              editable=false
+              condition='isTired'
+              testcondition=data.additionalresources.isTired
+            }}
+          </div>
+          {{>conditions}}
         </div>
 
-        {{#if (notEmpty data.reactions)}}
-          {{> reactions }}
+        {{#if (or (notEmpty data.reactions) (notEmpty data.conditionalmods))}}
+          <div id='other' style='display: flex; flex-flow: row nowrap;'>
+            {{#if (notEmpty data.reactions)}}{{>reactions}}{{log "reactions"}}{{/if}}
+            {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{log "conditional modifiers"}}{{/if}}
+          </div>
         {{/if}}
 
-        <br />
-        {{> notes }}
+        {{#if (notEmpty data.additionalresources.tracker)}}
+          {{>trackers}}
+        {{/if}}
+
+        {{>notes}}
       </div>
-      <div class="tab" data-tab="combat" data-group="primary-tabs">
+
+      <div class='tab' data-tab='combat' data-group='primary-tabs'>
         <div id='combat-tab'>
           {{#if (notEmpty data.melee)}}
-            {{> melee }}
+            {{>melee}}
           {{/if}}
-          {{> speed-range-table }}
+          {{>speed-range-table}}
           {{#if (notEmpty data.ranged)}}
-            {{> ranged }}
+            {{>ranged}}
           {{/if}}
           <div id='combat-sidebar'>
-            {{> encumbrance}}
-            {{> quicknote}}
-            {{> lifting}}
+            {{>encumbrance}}
+            {{>quicknote}}
+            {{>lifting}}
           </div>
         </div>
       </div>
 
-      <div class="tab" data-tab="advantages" data-group="primary-tabs">
-        {{> advantages }}
+      <div class='tab' data-tab='advantages' data-group='primary-tabs'>
+        {{>advantages}}
       </div>
-      <div class="tab" data-tab="skills" data-group="primary-tabs">
-        {{> skills }}
+      <div class='tab' data-tab='skills' data-group='primary-tabs'>
+        {{>skills}}
       </div>
       {{#if (notEmpty data.spells)}}
-        <div class="tab" data-tab="spells" data-group="primary-tabs">
-          {{> spells }}
+        <div class='tab' data-tab='spells' data-group='primary-tabs'>
+          {{>spells}}
+        </div>
       {{/if}}
-      <div class="tab" data-tab="equipment" data-group="primary-tabs">
-        {{> equipment }}
-        {{> other-equipment }}
+      <div class='tab' data-tab='equipment' data-group='primary-tabs'>
+        {{>equipment container='carried' data=this.data}}
+        {{>equipment container='other' data=this.data}}
       </div>
     </section>
   </div>
-  {{> footer }}
+  {{>footer}}
 </form>

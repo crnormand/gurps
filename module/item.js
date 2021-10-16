@@ -23,4 +23,10 @@ export class GurpsItem extends Item {
   getGurpsItemData() {
     return /** @type {GurpsItemData} */ (this.data.data)
   }
+
+  async internalUpdate(data, context) {
+    let ctx = { render: !this.ignoreRender }
+    if (!!context) ctx = { ...context, ...ctx }
+    await this.update(data, ctx)
+  }
 }

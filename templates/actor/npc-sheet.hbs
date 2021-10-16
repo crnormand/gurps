@@ -1,5 +1,5 @@
 <form class="{{cssClass}}" npc-sheet autocomplete="off">
-  <div class='gurps-app {{classes}} npc-sheet'>
+  <div class='gga-app {{classes}} npc-sheet'>
     <div class="npc-sheet-grid-container">
       <div class="npc-input-top">
         <div class="npc-input-nm npc-input-label">Name:</div>
@@ -75,11 +75,11 @@
           <div class="label">{{i18n "GURPS.maneuver"}}</div>
           <div class="field" style='padding-top: 3px; border: none;'>
             <select id='maneuver' name="data.conditions.maneuver" style='width: 100%; height: fit-content;'>
-              <option value='undefined' {{#if (eq ../data.conditions.maneuver undefined)}}selected{{/if}}>
+              <option value='undefined' {{select-if ../data.conditions.maneuver undefined}}>
                 {{i18n 'GURPS.none' 'None'}}
               </option>
               {{#each (listAllManeuvers) as | this key |}}
-                <option value='{{key}}' {{#if (eq ../data.conditions.maneuver key)}}selected{{/if}}>
+                <option value='{{key}}' {{select-if ../data.conditions.maneuver key}}>
                   {{localize this.label}}
                 </option>
               {{/each}}
@@ -91,9 +91,9 @@
         <div class="npc-input-tr dblclksort npc-header" data-key="data.ads">Traits (Ads/Disads/Quirks/Perks)</div>
         <div class="npc-input-tr-val">
           {{#listeqt data.ads}}
-            <div class="desc indent0 satisfiedY adsdraggable dblclkedit" data-key="data.ads.{{@key}}">
+            <div class="desc indent0 adsdraggable dblclkedit" data-key="data.ads.{{@key}}">
               {{{gurpslink this.name}}}
-              <div class="list_note satisfiedY adsdraggable" data-key="data.ads.{{@key}}">
+              <div class="list_note adsdraggable" data-key="data.ads.{{@key}}">
                 {{{gurpslinkbr this.notes}}}
               </div>
             </div>
@@ -104,13 +104,13 @@
         <div class="npc-input-sk dblclksort npc-header" data-key="data.skills">Skills</div>
         <div class="npc-sheet-sk-val">
           {{#listeqt data.skills}}
-            <div class="desc indent0 satisfiedY skldraggable dblclkedit" data-key="data.skills.{{@key}}">
+            <div class="desc indent0 skldraggable dblclkedit" data-key="data.skills.{{@key}}">
               {{{gurpslink this.name}}}
-              <div class="list_note satisfiedY skldraggable" data-key="data.skills.{{@key}}">
+              <div class="list_note skldraggable" data-key="data.skills.{{@key}}">
                 {{{gurpslink this.notes @root}}}
               </div>
             </div>
-            <div class="sl satisfiedY rollable npc-sheet-centered" data-name="{{this.name}}"
+            <div class="sl rollable npc-sheet-centered" data-name="{{this.name}}"
               data-key="data.skills.{{@key}}" data-otf='S:"{{this.name}}"'>{{this.level}}</div>
             <div></div>
           {{/listeqt}}
@@ -140,8 +140,8 @@
             </div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{@key}}"
               data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
-            <div class="acc {{#if (ne this.acc '0')}}gmod{{/if}}" data-name='Acc for {{this.name}}'>
-              {{#if (gt this.acc 0)}}+{{/if}}{{this.acc}}
+            <div class="acc {{gmod this.acc}}" data-name='Acc for {{this.name}}'>
+              {{{displayNumber this.acc}}}
             </div>
             <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
           {{/listattack}}
@@ -170,19 +170,19 @@
         <div class="npc-input-eqt dblclksort npc-header">Equipment</div>
         <div class="npc-sheet-eqt-val">
           {{#listeqt data.equipment.carried }}
-            <div class="equipped satisfiedY">{{#if this.equipped}}X{{/if}}</div>
-            <div class="qty satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{this.count}}
+            <div class="equipped">{{#if this.equipped}}X{{/if}}</div>
+            <div class="qty eqtdraggable" data-key="data.equipment.carried.{{@key}}">{{this.count}}
             </div>
-            <div class="desc indent{{@indent}} satisfiedY eqtdraggable dblclkedit"
+            <div class="desc indent{{@indent}} eqtdraggable dblclkedit"
               data-key="data.equipment.carried.{{@key}}">
               {{{gurpslink this.name}}}
-              <div class="list_note satisfiedY eqtdraggable" data-key="data.equipment.carried.{{@key}}">
+              <div class="list_note eqtdraggable" data-key="data.equipment.carried.{{@key}}">
                 {{{gurpslink this.notes}}}
               </div>
-              <div class="list_note satisfiedY"></div>
+              <div class="list_note"></div>
             </div>
-            <div class="sum_cost satisfiedY">${{this.costsum}}</div>
-            <div class="sum_weight satisfiedY">{{this.weightsum}}</div>
+            <div class="sum_cost">${{this.costsum}}</div>
+            <div class="sum_weight">{{this.weightsum}}</div>
           {{/listeqt}}
         </div>
       </div>

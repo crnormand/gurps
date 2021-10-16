@@ -10,6 +10,9 @@ import {
   i18n_f,
   splitArgs,
   generateUniqueId,
+  objectToArray,
+  arrayToObject,
+  zeroFill,
 } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
@@ -126,7 +129,7 @@ export class GurpsActor extends Actor {
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
-}
+  }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
   calculateDerivedValues() {
@@ -358,7 +361,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} dict
+   * @param {{ [key: string]: any }} dict
    * @param {string} type
    * @returns {number}
    */
@@ -589,13 +592,13 @@ export class GurpsActor extends Actor {
         if (!!this.getGurpsActorData().additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
       }
     }
-    let result = await super.update(data, context)
-    return result
+
+    return await super.update(data, context)
   }
-  
+
   async internalUpdate(data, context) {
-    let ctx = { render: !this.ignoreRender}
-    if (!!context) ctx = {...context, ...ctx}
+    let ctx = { render: !this.ignoreRender }
+    if (!!context) ctx = { ...context, ...ctx }
     await this.update(data, ctx)
   }
 
@@ -666,12 +669,11 @@ export class GurpsActor extends Actor {
       } else this._openImportDialog()
     } else this._openImportDialog()
   }
-  
+
   async _openImportDialog() {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_BROWSER_IMPORTER))
       this._openNonLocallyHostedImportDialog()
-    else
-      this._openLocallyHostedImportDialog()
+    else this._openLocallyHostedImportDialog()
   }
 
   async _openNonLocallyHostedImportDialog() {
@@ -684,7 +686,7 @@ export class GurpsActor extends Actor {
       throw e
     }
   }
-  
+
   async _openLocallyHostedImportDialog() {
     setTimeout(async () => {
       new Dialog(
@@ -722,7 +724,6 @@ export class GurpsActor extends Actor {
       ).render(true)
     }, 200)
   }
-  
 
   // First attempt at import GCS FG XML export data.
   /**
@@ -842,7 +843,7 @@ export class GurpsActor extends Actor {
     }
     let nm = this.textFrom(c.name)
     console.log("Importing '" + nm + "'")
-    let starttime = performance.now();
+    let starttime = performance.now()
     let commit = {}
 
     commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
@@ -907,14 +908,18 @@ export class GurpsActor extends Actor {
       // This has to be done after everything is loaded
       await this.postImport()
       this._forceRender()
-      
+
       // Must update name outside of protection so that Actors list (and other external views) update correctly
-      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {  
+      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
         await this.update({ name: nm, 'token.name': nm })
       }
 
       ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
-      console.log('Done importing (' + Math.round( performance.now() - starttime ) + 'ms.)  You can inspect the character data below:')
+      console.log(
+        'Done importing (' +
+          Math.round(performance.now() - starttime) +
+          'ms.)  You can inspect the character data below:'
+      )
       console.log(this)
       return true
     } catch (err) {
@@ -944,7 +949,7 @@ export class GurpsActor extends Actor {
 
   // hack to get to private text element created by xml->json method.
   /**
-   * @param {Record<string,any>} o
+   * @param {{ [key: string]: any }} o
    */
   textFrom(o) {
     if (!o) return ''
@@ -955,7 +960,7 @@ export class GurpsActor extends Actor {
 
   // similar hack to get text as integer.
   /**
-   * @param {Record<string,any>} o
+   * @param {{ [key: string]: any }} o
    */
   intFrom(o) {
     if (!o) return 0
@@ -998,7 +1003,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importReactionsFromGCSv2(json) {
     if (!json) return
@@ -1022,7 +1027,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importReactionsFromGCA(json) {
     if (!json) return
@@ -1067,8 +1072,8 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string, any>} descjson
-   * @param {Record<string, any>} json
+   * @param {{ [key: string]: any }} descjson
+   * @param {{ [key: string]: any }} json
    */
   importNotesFromGCSv1(descjson, json) {
     if (!json) return
@@ -1129,8 +1134,7 @@ export class GurpsActor extends Actor {
         let j = json[key]
         let hl = new HitLocations.HitLocation(t(j.location))
         let i = t(j.dr)
-        if (i.match(/^\d+ *(\+ *\d+ *)?$/))
-          i = eval(t(j.dr)) // supports "0 + 8"
+        if (i.match(/^\d+ *(\+ *\d+ *)?$/)) i = eval(t(j.dr)) // supports "0 + 8"
         hl.import = !i ? 0 : i
         hl.penalty = t(j.db)
         hl.setEquipment(t(j.text))
@@ -1327,7 +1331,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importEquipmentFromGCSv1(json, isFoundryGCS) {
@@ -1508,7 +1512,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importCombatMeleeFromGCSv1(json, isFoundryGCS) {
@@ -1564,7 +1568,7 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importCombatRangedFromGCSv1(json, isFoundryGCS) {
@@ -1667,7 +1671,7 @@ export class GurpsActor extends Actor {
 
   // Import the <attributes> section of the GCS FG XML file.
   /**
-   * @param {Record<string, any>} json
+   * @param {{ [key: string]: any }} json
    */
   async importAttributesFromCGSv1(json) {
     if (!json) return
@@ -1779,7 +1783,7 @@ export class GurpsActor extends Actor {
   // NOTE:  For the update to work correctly, no two skills can have the same name.
   // When reading data, use "this.data.data.skills", however, when updating, use "data.skills".
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importSkillsFromGCSv1(json, isFoundryGCS) {
@@ -1823,7 +1827,7 @@ export class GurpsActor extends Actor {
   // NOTE:  For the update to work correctly, no two spells can have the same name.
   // When reading data, use "this.data.data.spells", however, when updating, use "data.spells".
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
    */
   importSpellsFromGCSv1(json, isFoundryGCS) {
@@ -1878,8 +1882,8 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {Record<string, any>} adsjson
-   * @param {Record<string, any>} disadsjson
+   * @param {{ [key: string]: any }} adsjson
+   * @param {{ [key: string]: any }} disadsjson
    */
   importAdsFromGCA(adsjson, disadsjson) {
     /** @type {Advantage[]} */
@@ -1894,7 +1898,7 @@ export class GurpsActor extends Actor {
 
   /**
    * @param {Advantage[]} datalist
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importBaseAdvantages(datalist, json) {
     if (!json) return
@@ -1922,7 +1926,7 @@ export class GurpsActor extends Actor {
 
   // In the new GCS import, all ads/disad/quirks/perks are in one list.
   /**
-   * @param {Record<string,any>} json
+   * @param {{ [key: string]: any }} json
    */
   importAdsFromGCSv2(json) {
     let t = this.textFrom /// shortcut to make code smaller
@@ -1964,18 +1968,24 @@ export class GurpsActor extends Actor {
     // find those with non-blank slots
     let templates = ResourceTrackerManager.getAllTemplates().filter(it => !!it.slot)
 
-    templates.forEach(async template => {
+    for (const template of templates) {
       // find the matching data on this actor
-      let path = `additionalresources.tracker.${template.slot}`
+      let index = zeroFill(template.slot, 4)
+      let path = `additionalresources.tracker.${index}`
       let tracker = getProperty(this.data.data, path)
 
+      while (!tracker) {
+        await this.addTracker()
+        tracker = getProperty(this.data.data, path)
+      }
+
       // skip if already set
-      if (tracker !== null && tracker.name === template.tracker.name) {
+      if (!!tracker && tracker.name === template.tracker.name) {
         return
       }
 
       // if not blank, don't overwrite
-      if (tracker !== null && !!tracker.name) {
+      if (!!tracker && !!tracker.name) {
         ui.notifications?.warn(
           `Will not overwrite Tracker ${template.slot} as its name is set to ${tracker.name}. Create Tracker for ${template.tracker.name} failed.`
         )
@@ -1983,7 +1993,7 @@ export class GurpsActor extends Actor {
       }
 
       await this.applyTrackerTemplate(path, template)
-    })
+    }
   }
 
   /**
@@ -2005,10 +2015,10 @@ export class GurpsActor extends Actor {
     template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
 
     // remove whatever is there
-    await this.removeTracker(path)
+    await this.clearTracker(path)
 
     // add the new tracker
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     let update = {}
     update[`data.${path}`] = template.tracker
     await this.update(update)
@@ -2018,12 +2028,12 @@ export class GurpsActor extends Actor {
    * Overwrites the tracker pointed to by the path with default/blank values.
    * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
    */
-  async removeTracker(path) {
+  async clearTracker(path) {
     // verify that this is a Tracker
-    if (!path.startsWith('additionalresources.tracker.'))
-      throw `Invalid actor data path, actor=[${this.id}] path=[${path}]`
+    const prefix = 'additionalresources.tracker.'
+    if (!path.startsWith(prefix)) throw `Invalid actor data path, actor=[${this.id}] path=[${path}]`
 
-    /** @type {Record<string,any>} */
+    /** @type {{[key: string]: string}} */
     let update = {}
     update[`data.${path}`] = {
       name: '',
@@ -2038,6 +2048,46 @@ export class GurpsActor extends Actor {
       thresholds: [],
     }
     await this.update(update)
+  }
+
+  /**
+   * Removes the indicated tracker from the object, reindexing the keys.
+   * @param {String} path JSON data path to the tracker; must start with 'additionalresources.tracker.'
+   */
+  async removeTracker(path) {
+    this.ignoreRender = true
+    const prefix = 'additionalresources.tracker.'
+
+    // verify that this is a Tracker
+    if (!path.startsWith(prefix)) throw `Invalid actor data path, actor=[${this.id}] path=[${path}]`
+
+    let key = path.replace(prefix, '')
+    let trackerData = this.getGurpsActorData().additionalresources.tracker
+    delete trackerData[key]
+    let trackers = objectToArray(trackerData)
+    let data = arrayToObject(trackers)
+
+    // remove all trackers
+    await this.update({ 'data.additionalresources.-=tracker': null })
+    // add the new "array" of trackers
+    if (data) this.update({ 'data.additionalresources.tracker': data })
+    else this.update('data.additionalresources.tracker', {})
+
+    this._forceRender()
+  }
+
+  async addTracker() {
+    this.ignoreRender = true
+
+    let trackerData = this.data.data.additionalresources.tracker
+    if (!trackerData) trackerData = {}
+    let trackers = objectToArray(trackerData)
+    trackers.push({ name: '', value: 0, min: 0, max: 0, points: 0 })
+    let data = arrayToObject(trackers)
+    await this.update({ 'data.additionalresources.-=tracker': null })
+    await this.update({ 'data.additionalresources.tracker': data })
+
+    this._forceRender()
   }
 
   // --- Functions to handle events on actor ---
@@ -2144,7 +2194,7 @@ export class GurpsActor extends Actor {
           label: i18n('GURPS.ok'),
           content: content,
           callback: callback,
-          rejectClose: false    // Do not "reject" if the user presses the "close" gadget
+          rejectClose: false, // Do not "reject" if the user presses the "close" gadget
         })
       }
     } else {
@@ -2399,7 +2449,7 @@ export class GurpsActor extends Actor {
    * @param {string} itemid
    */
   async _removeItemAdditions(itemid) {
-    let saved = this.ignoreRender 
+    let saved = this.ignoreRender
     this.ignoreRender = true
     await this._removeItemElement(itemid, 'melee')
     await this._removeItemElement(itemid, 'ranged')
@@ -2798,7 +2848,7 @@ export class GurpsActor extends Actor {
    * @param {number} currentWeight
    */
   checkEncumbance(currentWeight) {
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     let encs = this.getGurpsActorData().encumbrance
     let last = GURPS.genkey(0) // if there are encumbrances, there will always be a level0
     var best, prev
@@ -2836,7 +2886,7 @@ export class GurpsActor extends Actor {
    * @param {number} count
    */
   async updateEqtCount(eqtkey, count) {
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     let update = { [eqtkey + '.count']: count }
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATICALLY_SET_IGNOREQTY))
       update[eqtkey + '.ignoreImportQty'] = true
@@ -3178,9 +3228,9 @@ export class Equipment extends Named {
     this.uuid = ''
     this.parentuuid = ''
     this.itemid = ''
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     this.collapsed = {}
-    /** @type {Record<string,any>} */
+    /** @type {{ [key: string]: any }} */
     this.contains = {}
   }
 
@@ -3252,3 +3302,5 @@ export class Reaction {
     this.situation = s || ''
   }
 }
+
+export class Modifier extends Reaction {}

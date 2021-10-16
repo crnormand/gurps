@@ -1,11 +1,29 @@
 <div id='identity'>
-  <div class='header'>{{localize 'GURPS.identity'}}</div>
+  <div class='header'>{{i18n 'GURPS.identity'}}</div>
   <div class='fieldblock'>
-    <div class='label'>{{localize 'GURPS.identityName'}}:</div>
-    <div class='field'>{{{actor.name}}}</div>
-    <div class='label'>{{localize 'GURPS.identityTitle'}}:</div>
-    <div class='field'>{{data.traits.title}}</div>
-    <div class='label'>{{localize 'GURPS.identityPlayer'}}:</div>
-    <div class='field'>{{data.traits.player}}</div>
+    <div class='label'>{{i18n 'GURPS.identityName'}}:</div>
+    <div class='field'><input
+        name='name'
+        class='gcs-input'
+        type='text'
+        value='{{actor.name}}'
+        {{disabled (not isEditing)}}
+      /></div>
+    <div class='label'>{{i18n 'GURPS.identityTitle'}}:</div>
+    <div class='field'><input
+        name='data.traits.title'
+        class='gcs-input'
+        type='text'
+        value='{{data.traits.title}}'
+        {{disabled (not isEditing)}}
+      /></div>
+    <div class='label'>{{i18n 'GURPS.identityPlayer'}}:</div>
+    <div class='field'><input
+        name='data.traits.player'
+        class='gcs-input'
+        type='text'
+        value='{{data.traits.player}}'
+        {{disabled (not isEditing)}}
+      /></div>
   </div>
 </div>

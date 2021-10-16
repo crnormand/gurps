@@ -8,10 +8,16 @@
     <div class='label'>Modifier</div>
     {{#each ranges}}
       <div
-        class='label {{#if (ne this '0')}}gmod{{/if}}'
+        class='label {{gmod this}}'
         data-name='{{this.moddesc}}'
-        data-otf='{{this.penalty}} for speed/range {{this.max}} yds'
-      >{{this.penalty}}</div>
+        data-otf='{{i18n_f
+          'GURPS.rangeModifier'
+          (jsonToObject (replace '{ "penalty": "$1", "max": "$2" }' this.penalty this.max))
+          '{penalty} for speed/range {max} yards'
+        }}'
+      >
+        {{{displayNumber this.penalty}}}
+      </div>
     {{/each}}
   </div>
 </div>

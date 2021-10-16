@@ -14,22 +14,22 @@ export default class GurpsJournalEntry {
     let h = html.find('.editor-content')
     if (!!h) {
       h.html(GURPS.gurpslink(h[0].innerHTML))
-      GurpsWiring.hookupGurps(html)
-      GurpsWiring.hookupGurpsRightClick(html)
+      GurpsWiring.hookupAllEvents(html)
+      // GurpsWiring.hookupGurpsRightClick(html)
     }
-    html.find('[data-otf]').each((_, li) => {
-      li.setAttribute('draggable', 'true')
-      li.addEventListener('dragstart', ev => {
-        let display = ''
-        if (!!ev.currentTarget?.dataset.action) display = ev.currentTarget.innerText
-        return ev.dataTransfer?.setData(
-          'text/plain',
-          JSON.stringify({
-            otf: li.getAttribute('data-otf'),
-            displayname: display,
-          }),
-        )
-      })
-    })
+    // html.find('[data-otf]').each((_, li) => {
+    //   li.setAttribute('draggable', 'true')
+    //   li.addEventListener('dragstart', ev => {
+    //     let display = ''
+    //     if (!!ev.currentTarget?.dataset.action) display = ev.currentTarget.innerText
+    //     return ev.dataTransfer?.setData(
+    //       'text/plain',
+    //       JSON.stringify({
+    //         otf: li.getAttribute('data-otf'),
+    //         displayname: display,
+    //       }),
+    //     )
+    //   })
+    // })
   }
 }

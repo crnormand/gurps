@@ -52,6 +52,10 @@ GURPS.BODYPLANvermiform
 GURPS.BODYPLANvermiformWinged
 GURPS.BODYPLANwinged humanoid
 GURPS.FP
+GURPS.addTitleConcat0
+GURPS.addTitleConcat01
+GURPS.addTitleConcat0s
+GURPS.addTitleConcat1
 GURPS.chatLightSource
 GURPS.chatNoTokens
 GURPS.chatSuffersCripplingInjury
@@ -75,59 +79,23 @@ GURPS.equippedblock
 GURPS.equippedparry
 GURPS.groundCreaturesSuffer
 GURPS.highPainThreshold
-GURPS.hitLocationArm
 GURPS.hitLocationArm 1-2
 GURPS.hitLocationArm 3-4
 GURPS.hitLocationArm 5-6
 GURPS.hitLocationArm 7-8
 GURPS.hitLocationArm*
-GURPS.hitLocationArm, holding shield
-GURPS.hitLocationBrain
-GURPS.hitLocationChest
-GURPS.hitLocationChinks in Other
-GURPS.hitLocationChinks in Torso
-GURPS.hitLocationExtremity
-GURPS.hitLocationEye
-GURPS.hitLocationFace
-GURPS.hitLocationFace, from behind
-GURPS.hitLocationFin
 GURPS.hitLocationFin*
-GURPS.hitLocationFoot
-GURPS.hitLocationForeleg
-GURPS.hitLocationGroin
-GURPS.hitLocationHand
-GURPS.hitLocationHind Leg
-GURPS.hitLocationJaw
-GURPS.hitLocationLeft Arm
-GURPS.hitLocationLeft Arm, holding shield
-GURPS.hitLocationLeft Leg
-GURPS.hitLocationLeg
 GURPS.hitLocationLeg 1-2
 GURPS.hitLocationLeg 3-4
 GURPS.hitLocationLeg 5-6
 GURPS.hitLocationLeg 7-8
-GURPS.hitLocationLimb Vein/Artery
-GURPS.hitLocationMid Leg
 GURPS.hitLocationMid Leg*
-GURPS.hitLocationNeck
-GURPS.hitLocationNeck Vein/Artery
-GURPS.hitLocationNose
-GURPS.hitLocationRight Arm
-GURPS.hitLocationRight Arm, holding shield
-GURPS.hitLocationRight Leg
-GURPS.hitLocationSkull
-GURPS.hitLocationSkull, from behind
-GURPS.hitLocationTail
-GURPS.hitLocationTorso
 GURPS.hitLocationTorso*
-GURPS.hitLocationVitals
-GURPS.hitLocationVitals, Heart
-GURPS.hitLocationWing
 GURPS.lowPainThreshold
 GURPS.meters
+GURPS.otherEquipment
 GURPS.perfectBalance
 GURPS.point
-GURPS.pointsUnspent
 GURPS.swimmersOrFlyersSuffer
 GURPS.toAllDXBasedRolls
 Skill Names__

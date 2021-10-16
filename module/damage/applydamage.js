@@ -582,7 +582,7 @@ export default class ApplyDamageDialog extends Application {
   async submitInjuryApply(ev, keepOpen, publicly) {
     let injury = this._calculator.pointsToApply
 
-    let dialog = $(ev.currentTarget).parents('.gurps-app')
+    let dialog = $(ev.currentTarget).parents('.gga-app')
     let results = $(dialog).find('.results-table')
     let clone = results.clone().html()
 

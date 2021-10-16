@@ -160,8 +160,7 @@ class ChatProcessorRegistry {
         // immediately flush our stored msgs, and execute the slash command using the default parser
         this.send()
         GURPS.ChatCommandsInProcess.push(line) // Remember which chat message we are running, so we don't run it again!
-        ui// @ts-ignore
-        .chat
+        ui.chat // @ts-ignore
           ?.processMessage(line)
           .catch(err => {
             ui.notifications?.error(err)
@@ -382,18 +381,18 @@ export default function addChatHooks() {
     )
 
     Hooks.on('renderChatMessage', (_app, html, _msg) => {
-      GurpsWiring.hookupGurps(html)
-      html.find('[data-otf]').each((_, li) => {
-        li.setAttribute('draggable', 'true')
-        li.addEventListener('dragstart', ev => {
-          return ev.dataTransfer?.setData(
-            'text/plain',
-            JSON.stringify({
-              otf: li.getAttribute('data-otf'),
-            })
-          )
-        })
-      })
+      GurpsWiring.hookupAllEvents(html)
+      // html.find('[data-otf]').each((_, li) => {
+      //   li.setAttribute('draggable', 'true')
+      //   li.addEventListener('dragstart', ev => {
+      //     return ev.dataTransfer?.setData(
+      //       'text/plain',
+      //       JSON.stringify({
+      //         otf: li.getAttribute('data-otf'),
+      //       })
+      //     )
+      //   })
+      // })
     })
 
     Hooks.on(

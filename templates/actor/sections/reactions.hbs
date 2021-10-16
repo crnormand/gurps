@@ -1,10 +1,32 @@
-<div id='reactions'>
-  <div class='modifier header'>{{localize 'GURPS.modifier'}}</div>
-  <div class='situation header'>{{localize 'GURPS.reaction'}}</div>
-  <div></div>
+<div id='reactions' class='gga-table'>
+  <div class='itemmenu header' readonly></div>
+  <div class='modifier header gga-right'>{{i18n 'GURPS.modifier'}}</div>
+  <div class='situation header'>
+    <div class='headermenu' data-key='data.reactions'>
+      <span>{{i18n 'GURPS.reaction'}}</span>
+      {{#if isEditing}}
+        <i class='fas fa-caret-square-down'></i>
+      {{/if}}
+    </div>
+  </div>
+
   {{#each data.reactions}}
-    <div class='modifier gmod' data-name='Reaction {{this.situation}}'>{{this.modifier}}</div>
-    <div class='situation'>{{{gurpslink this.situation}}}</div>
-    <div></div>
+    {{#if ../isEditing}}
+      <div class='itemmenu reactmenu' data-key='data.reactions.{{@key}}'>
+        <i class='fas fa-times'></i>
+      </div>
+      <div class='modifier gga-right'>
+        <input name='data.reactions.{{@key}}.modifier' class='gcs-input-sm4' type='text' value='{{modifier}}' />
+      </div>
+      <div class='situation'>
+        <input name='data.reactions.{{@key}}.situation' class='gcs-input' type='text' value='{{situation}}' />
+      </div>
+    {{else}}
+      <div class='itemmenu' readonly></div>
+      <div class='modifier gmod gga-right' data-name='Reaction {{situation}}'>{{{displayNumber modifier}}}</div>
+      <div class='situation reactdraggable' data-key='data.reactions.{{@key}}'>
+        {{{gurpslink situation}}}
+      </div>
+    {{/if}}
   {{/each}}
 </div>

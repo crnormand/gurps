@@ -1,4 +1,4 @@
-<div class="header {{#if editable}}with-editor{{/if}} ">
+<div class="header {{#if editable}}with-editor minor-heading{{/if}}">
   {{#if label}}
     {{i18n label label}}
   {{else}}
@@ -15,14 +15,14 @@
         data-dtype="Number" />
     </summary>
     <div class="popup button-ribbon">
-      <button data-operation="resource-update" data-value="-10">-10</button>
-      <button data-operation="resource-update" data-value="-5">-5</button>
-      <button data-operation="resource-update" data-value="-1">-1</button>
-      <button data-operation="resource-update" data-value="0">0</button>
+      <button data-operation="resource-update" data-value="-10">{{{displayNumber "-10"}}}</button>
+      <button data-operation="resource-update" data-value="-5">{{{displayNumber "-5"}}}</button>
+      <button data-operation="resource-update" data-value="-1">{{{displayNumber "-1"}}}</button>
+      <button data-operation="resource-update" data-value="0">{{{displayNumber "0"}}}</button>
       <button class="restore" data-operation="resource-update" data-value=""></button>
-      <button data-operation="resource-update" data-value="+1">+1</button>
-      <button data-operation="resource-update" data-value="+5">+5</button>
-      <button data-operation="resource-update" data-value="+10">+10</button>
+      <button data-operation="resource-update" data-value="+1">{{{displayNumber "+1"}}}</button>
+      <button data-operation="resource-update" data-value="+5">{{{displayNumber "+5"}}}</button>
+      <button data-operation="resource-update" data-value="+10">{{{displayNumber "+10"}}}</button>
     </div>
   </details>
   <button data-operation="resource-inc"><i class="fas fa-plus"></i></button>
