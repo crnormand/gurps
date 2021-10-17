@@ -65,7 +65,11 @@
       {{#if ../isEditing}}
         <input class='gcs-input' type='text' name='data.hitlocations.{{@key}}.import' value='{{this.import}}' />
       {{else}}
+        {{#if ../document.limited}}
+        ??
+        {{else}}
         {{this.dr}}
+        {{/if}}
       {{/if}}
     </div>
   {{/each}}
