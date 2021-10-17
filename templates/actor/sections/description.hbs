@@ -9,6 +9,7 @@
         value='{{data.traits.gender}}'
         {{disabled (not isEditing)}}
       /></div>
+      {{#unless document.limited}}
     <div class='label'>{{i18n 'GURPS.descriptionAge'}}:</div>
     <div class='field'><input
         name='data.traits.age'
@@ -34,6 +35,7 @@
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>&nbsp;</div>
+      {{/unless}}
     <div class='field'></div>
   </div>
   <div class='fieldblock'>
@@ -61,6 +63,7 @@
         value='{{data.traits.sizemod}}'
         {{disabled (not isEditing)}}
       /></div>
+      {{#unless document.limited}}
     <div class='label'>{{i18n 'GURPS.descriptionTechLevel'}}:</div>
     <div class='field'><input
         name='data.traits.techlevel'
@@ -69,6 +72,7 @@
         value='{{data.traits.techlevel}}'
         {{disabled (not isEditing)}}
       /></div>
+      {{/unless}}
     <div class='label'>{{i18n 'GURPS.descriptionBodyPlan'}}:</div>
 
     <div class='field'>
