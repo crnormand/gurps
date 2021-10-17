@@ -36,7 +36,7 @@ export default class ResolveDiceRoll extends Application {
       minimizable: false,
       width: 350,
       height: 'auto',
-      title: i18n('GURPS.resolveDiceRoll', 'What Did You Roll?'),
+      title: i18n('GURPS.resolveDiceRoll'),
     })
   }
 

@@ -969,5 +969,11 @@
   "GURPS.abbrevRef": "Ref",
   "GURPS.noteBlank": "This note was intentionally left blank.",
   "GURPS.pointsTotal": "Total Points",
-  "GURPS.severities": "Severities"
+  "GURPS.severities": "Severities",
+  "GURPS.addAdjustedForDamageType": "‡ - Adjusted for Damage Modifier",
+  "GURPS.addDamageModifier": "Damage Modifier",
+  "GURPS.reset": "Clear Configuration",
+  "GURPS.resolveDiceRoll": "What Did You Roll?",
+  "GURPS.settingUsePhysicalDice": "Use Physical Dice",
+  "GURPS.settingHintUsePhysicalDice": "If enabled, TRUSTED players will be prompted for all die roll values. This allows players to roll physical dice and enter the results into Foundry."
 }
