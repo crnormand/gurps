@@ -455,16 +455,16 @@ export class GurpsActor extends Actor {
       let value = foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)
       switch (value) {
         case MOVE_NONE:
-          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveNone`, 'None')
+          this.getGurpsActorData().conditions.move = i18n('GURPS.moveNone')
           return 0
         case MOVE_STEP:
-          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveStep`, 'Step')
+          this.getGurpsActorData().conditions.move = i18n('GURPS.moveStep')
           return this._getStep()
         case MOVE_HALF:
-          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveHalf`, 'Half')
+          this.getGurpsActorData().conditions.move = i18n('GURPS.moveHalf')
           move = Math.ceil(move / 2)
         case MOVE_FULL:
-          this.getGurpsActorData().conditions.move = i18n(`GURPS.moveFull`, 'Full')
+          this.getGurpsActorData().conditions.move = i18n('GURPS.moveFull')
           break
       }
     }
@@ -2772,7 +2772,7 @@ export class GurpsActor extends Actor {
             ? 'GURPS.chatTurnOnTired'
             : 'GURPS.chatTurnOffTired'
 
-        let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling', 'B419') : i18n('GURPS.pdfTired', 'B426')
+        let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling') : i18n('GURPS.pdfTired')
         let msg = i18n_f(i18nMessage, {
           name: this.displayname,
           classStart: '<span class="pdflink">',

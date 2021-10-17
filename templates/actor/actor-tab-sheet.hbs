@@ -55,8 +55,8 @@
 
         {{#if (or (notEmpty data.reactions) (notEmpty data.conditionalmods))}}
           <div id='other' style='display: flex; flex-flow: row nowrap;'>
-            {{#if (notEmpty data.reactions)}}{{>reactions}}{{log "reactions"}}{{/if}}
-            {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{log "conditional modifiers"}}{{/if}}
+            {{#if (notEmpty data.reactions)}}{{>reactions}}{{/if}}
+            {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{/if}}
           </div>
         {{/if}}
 

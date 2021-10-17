@@ -28,6 +28,8 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.SkillWillE
   GURPS.SkillWillH
   GURPS.SkillWillVH
+  GURPS.adDisad
+  GURPS.adDisadQuirkPerk
   GURPS.addExplosion
   GURPS.addHardenedDRLevel
   GURPS.addWHard
@@ -38,6 +40,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.attributesST
   GURPS.attributesWILL
   GURPS.chatTokenLightPicker
+  GURPS.conditionalModifier
   GURPS.copyrightGCS
   GURPS.copyrightGURPS
   GURPS.damageAbbrevburn
@@ -52,7 +55,10 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.damageAbbrevpi++
   GURPS.damageAbbrevpi-
   GURPS.damageAbbrevtox
+  GURPS.delete
+  GURPS.equipmentFoundryItem
   GURPS.equipmentTechlevel
+  GURPS.fromEllipses
   GURPS.gameAidUsersGuide
   GURPS.grapplingCPAbbrev
   GURPS.hitLocationArm
@@ -95,6 +101,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.modifierHeroicCharge
   GURPS.modifierScaleNormal
   GURPS.modifierTrivial
+  GURPS.moveToOtherEquipment
   GURPS.name
   GURPS.normal
   GURPS.ok
@@ -129,6 +136,7 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.pdfTempAttribPenalties
   GURPS.pdfTired
   GURPS.portrait
+  GURPS.removeItem
   GURPS.resourceTemplateAlias
   GURPS.settingAutoIgnoreQty
   GURPS.settingBasicPDFs
@@ -225,6 +233,10 @@ keys in [lang/en.json] that are missing in [lang/de.json]
   GURPS.settingUseEquipped
   GURPS.skillJudo
   GURPS.slamAOAStrong
+  GURPS.sortAscending
+  GURPS.sortContentsAscending
+  GURPS.sortContentsDescending
+  GURPS.sortDescending
   GURPS.title
   GURPS.weight
   GURPS.yard

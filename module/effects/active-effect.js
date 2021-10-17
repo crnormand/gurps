@@ -22,7 +22,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
     Hooks.on(
       'createActiveEffect',
       async (/** @type {ActiveEffect} */ effect, /** @type {any} */ _data, /** @type {any} */ _userId) => {
-        console.log('create ' + effect)
         if (effect.getFlag('gurps', 'requiresConfig') === true) {
           let dialog = new ActiveEffectConfig(effect)
           await dialog.render(true)

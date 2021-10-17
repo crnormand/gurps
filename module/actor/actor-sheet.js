@@ -376,87 +376,6 @@ export class GurpsActorSheet extends ActorSheet {
       if (path.includes('notes')) this.editNotes(actor, path, obj)
     })
 
-    // TODO implement item menu options
-    // let equipmentMenuItems = this.deleteItemMenu(new Equipment('???', true))
-
-    // equipmentMenuItems.push({
-    //   name: 'Edit',
-    //   icon: "<i class='fas fa-edit'></i>",
-    //   callback: e => {
-    //     let path = e[0].dataset.key
-    //     let o = duplicate(GURPS.decode(this.actor.data, path))
-    //     this.editEquipment(this.actor, path, o)
-    //   },
-    // })
-
-    // equipmentMenuItems.push({
-    //   icon: '<i class="fas fa-sort-amount-down-alt"></i>',
-    //   name: 'Sort Contents (Ascending)',
-    //   callback: async data => {
-    //     let parentpath = data[0].dataset.key
-    //     let objkey = 'contains'
-    //     let key = parentpath + '.' + objkey
-    //     let list = getProperty(this.actor.data, key)
-    //     if (!Object.keys(list).length) {
-    //       ui.notifications.info('Nothing to sort')
-    //       return
-    //     }
-    //     let t = parentpath + '.-=' + objkey
-    //     await this.actor.update({ [t]: null }) // Delete the whole object
-    //     let sortedobj = {}
-    //     let index = 0
-    //     Object.values(list)
-    //       .sort((a, b) => a.name.localeCompare(b.name))
-    //       .forEach(o => GURPS.put(sortedobj, o, index++))
-    //     await this.actor.update({ [key]: sortedobj })
-    //   },
-    // })
-
-    // equipmentMenuItems.push({
-    //   icon: '<i class="fas fa-sort-amount-down"></i>',
-    //   name: 'Sort Contents (Descending)',
-    //   callback: async data => {
-    //     let parentpath = data[0].dataset.key
-    //     let objkey = 'contains'
-    //     let key = parentpath + '.' + objkey
-    //     let list = getProperty(this.actor.data, key)
-    //     if (!Object.keys(list).length) {
-    //       ui.notifications.info('Nothing to sort')
-    //       return
-    //     }
-    //     let t = parentpath + '.-=' + objkey
-    //     await this.actor.update({ [t]: null }) // Delete the whole object
-    //     let sortedobj = {}
-    //     let index = 0
-    //     Object.values(list)
-    //       .sort((a, b) => b.name.localeCompare(a.name))
-    //       .forEach(o => GURPS.put(sortedobj, o, index++))
-    //     await this.actor.update({ [key]: sortedobj })
-    //   },
-    // })
-
-    // let carriedMenuItems = Array.from(equipmentMenuItems)
-    // carriedMenuItems.push({
-    //   name: "Move to 'Other Equipment'",
-    //   icon: "<i class='fas fa-level-down-alt'></i>",
-    //   callback: e => {
-    //     let path = e[0].dataset.key
-    //     this.actor.moveEquipment(path, 'data.equipment.other')
-    //   },
-    // })
-    // new ContextMenu(html, '.equipmenucarried', carriedMenuItems)
-
-    // let otherMenuItems = Array.from(equipmentMenuItems)
-    // otherMenuItems.push({
-    //   name: "Move to 'Equipment'",
-    //   icon: "<i class='fas fa-level-up-alt'></i>",
-    //   callback: e => {
-    //     let path = e[0].dataset.key
-    //     this.actor.moveEquipment(path, 'data.equipment.carried')
-    //   },
-    // })
-    // new ContextMenu(html, '.equipmenuother', otherMenuItems)
-
     // On clicking equipment quantity increment, increase the amount.
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault()
@@ -572,13 +491,29 @@ export class GurpsActorSheet extends ActorSheet {
       let items = this.getMenuItems(id)
       this._makeHeaderMenu($(table), '.headermenu', items, ClickAndContextMenu)
     }
+
+    let trackermenu = html.find('#combat-trackers')
+    this._makeHeaderMenu(
+      $(trackermenu[0]),
+      '.headermenu',
+      [
+        {
+          name: i18n('GURPS.addTracker'),
+          icon: '<i class="fas fa-plus"></i>',
+          callback: e => {
+            this._addTracker()
+          },
+        },
+      ],
+      ClickAndContextMenu
+    )
   }
 
   _createEquipmentItemMenus(html) {
     let includeCollapsed = this instanceof GurpsActorEditorSheet
 
     let opts = [
-      this._createMenu(i18n('GURPS.edit', 'Edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
+      this._createMenu(i18n('GURPS.edit'), '<i class="fas fa-edit"></i>', this._editEquipment.bind(this)),
       this._createMenu(
         i18n('GURPS.sortContentsAscending'),
         '<i class="fas fa-sort-amount-down-alt"></i>',
@@ -602,7 +537,7 @@ export class GurpsActorSheet extends ActorSheet {
     new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: ClickAndContextMenu })
 
     let moveup = this._createMenu(
-      i18n('GURPS.moveToCarriedEquipment', 'Move to Carried Equipment'),
+      i18n('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.carried')
     )
@@ -1074,32 +1009,6 @@ export class GurpsActorSheet extends ActorSheet {
     d.render(true)
   }
 
-  // TODO is this still in use?
-  // async _onDblclickSort(event) {
-  //   event.preventDefault()
-  //   let element = event.currentTarget
-  //   let key = element.dataset.key
-  //   let self = this
-
-  //   let d = new Dialog({
-  //     title: 'Sort list',
-  //     buttons: {
-  //       one: {
-  //         icon: '<i class="fas fa-sort-alpha-up"></i>',
-  //         label: 'Ascending',
-  //         callback: async () => this.sortAscending(key),
-  //       },
-  //       two: {
-  //         icon: '<i class="fas fa-sort-alpha-down"></i>',
-  //         label: 'Descending',
-  //         callback: async () => this.sortDescending(key),
-  //       },
-  //     },
-  //     default: 'one',
-  //   })
-  //   d.render(true)
-  // }
-
   _makeHeaderMenu(html, cssclass, menuitems, eventname = 'contextmenu') {
     new ContextMenu(html, cssclass, menuitems, { eventName: eventname })
   }
@@ -1203,7 +1112,7 @@ export class GurpsActorSheet extends ActorSheet {
         let sourceKey = dragData.key
         if (sourceKey.includes(targetkey) || targetkey.includes(sourceKey)) {
           ui.notifications.error(
-            i18n('GURPS.dragSameContainer', 'Cannot add the object to this container, as it is already inside it.')
+            i18n('GURPS.dragSameContainer')
           )
           return
         }
@@ -1230,11 +1139,11 @@ export class GurpsActorSheet extends ActorSheet {
 
         let d = new Dialog({
           title: object.name,
-          content: `<p>${i18n('GURPS.dropResolve', 'Where do you want to drop this object?')}</p>`,
+          content: `<p>${i18n('GURPS.dropResolve')}</p>`,
           buttons: {
             one: {
               icon: '<i class="fas fa-level-up-alt"></i>',
-              label: `${i18n('GURPS.dropBefore', 'Before the target')}`,
+              label: `${i18n('GURPS.dropBefore')}`,
               callback: async () => {
                 if (!isSrcFirst) {
                   await this._removeKey(sourceKey)
@@ -1247,7 +1156,7 @@ export class GurpsActorSheet extends ActorSheet {
             },
             two: {
               icon: '<i class="fas fa-sign-in-alt"></i>',
-              label: `${i18n('GURPS.dropInside', 'Inside the target')}`,
+              label: `${i18n('GURPS.dropInside')}`,
               callback: async () => {
                 let key = targetkey + '.contains.' + GURPS.genkey(0)
                 if (!isSrcFirst) {
@@ -1635,10 +1544,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       let show = element.checked
       this.actor.update({ 'data.additionalresources.showflightmove': show })
     })
-
-    // this is done in super.activateListeners
-    // this._createHeaderMenus(html)
-    // this._createEquipmentItemMenus(html, true)
 
     this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), ClickAndContextMenu)
     this.makeDeleteMenu(html, '.reactmenu', new Reaction('+0', '???'), ClickAndContextMenu)

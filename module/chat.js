@@ -25,12 +25,7 @@ class HelpChatProcessor extends ChatProcessor {
    * @param {any} _msgs
    */
   async process(_line, _msgs) {
-    let t =
-      "<a href='" +
-      GURPS.USER_GUIDE_URL +
-      "'>" +
-      i18n('GURPS.gameAidUsersGuide', 'GURPS 4e Game Aid USERS GUIDE') +
-      '</a><br>'
+    let t = `<a href='${GURPS.USER_GUIDE_URL}'>${i18n('GURPS.gameAidUsersGuide')}</a><br>`
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
       .map(it => it.help())

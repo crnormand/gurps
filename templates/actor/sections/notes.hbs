@@ -5,7 +5,7 @@
       <i class='fas fa-plus addnoteicon'></i>
     </div>
   </div>
-  <div class='ref header'>{{i18n 'GURPS.abbrevRef' 'Ref'}}</div>
+  <div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
 
   {{#each (flatlist data.notes)}}
     {{#if ../isEditing}}
@@ -33,13 +33,13 @@
                 {{#if this.notes}}
                   {{{gurpslinkbr this.notes}}}
                 {{else}}
-                  {{i18n 'GURPS.noteBlank' 'This note was intentionally left blank.'}}<i class='far fa-laugh-wink'></i>
+                  {{i18n "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
                 {{/if}}
               </div>
               <div>
                 {{#if (isUserCreated this)}}
                   <i class='fas fa-bookmark tooltip gga-usercreated'>
-                    <span class='tooltiptext'>{{i18n 'GURPS.equipmentUserCreated' 'User-created'}}</span>
+                    <span class='tooltiptext'>{{i18n "GURPS.equipmentUserCreated"}}</span>
                   </i>
                 {{/if}}
               </div>

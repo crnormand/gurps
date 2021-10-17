@@ -28,7 +28,6 @@
 
     <div class='flexrow flex-group-center flex-between' style='border: none'>
       <h3>{{localize "GURPS.addDirectlyApply"}}:</h3>
-      {{debug viewId}}
       <input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}'
         {{disabled (eq CALC.viewId 'all' )}}>
       <div>
@@ -155,7 +154,7 @@
                 {{/if}}
 
                 {{#if CALC.isWoundModifierAdjustedForDamageType}}
-                  <aside>{{i18n "GURPS.addAdjustedForDamageType" "‡ - Adjusted for Damage Modifier"}}.</aside>
+                  <aside>{{i18n "GURPS.addAdjustedForDamageType"}}.</aside>
                 {{/if}}
               </div>
             </section>
@@ -180,7 +179,7 @@
             </div>
 
             <div class='grid grid-2col flex-between'>
-              <label>{{i18n "GURPS.addDamageModifier" "Damage Modifier"}}:</label>
+              <label>{{i18n "GURPS.addDamageModifier"}}:</label>
               <input type='text' id='adddamagemodifier' value='{{CALC.damageModifier}}'>
             </div>
           </div>
