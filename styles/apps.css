@@ -1114,6 +1114,12 @@ ul#result-effects li {
   text-align: right;
 }
 
+#condition .fieldblock .field {
+  text-align: left;
+  margin-top: 3px;
+  min-height: calc(1em + 3px);
+}
+
 .spinner details {
   position: relative;
 }

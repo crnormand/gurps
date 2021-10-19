@@ -450,24 +450,29 @@ export class GurpsActor extends Actor {
    * @returns {number}
    */
   _getCurrentMove(move, threshold) {
+    let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE)
+
     if (foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)) {
       let value = foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)
       switch (value) {
         case MOVE_NONE:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveNone')
-          return 0
+          if (updateMove) return 0
+          break
         case MOVE_STEP:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveStep')
-          return this._getStep()
+          if (updateMove) return this._getStep()
+          break
         case MOVE_HALF:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveHalf')
-          return Math.ceil(move / 2)
+          if (updateMove) move = Math.ceil(move / 2)
+          break
         case MOVE_FULL:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveFull')
           break
       }
     }
-
+    
     return Math.max(1, Math.floor(move * threshold))
   }
 

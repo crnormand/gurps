@@ -1,9 +1,9 @@
 <div id='condition'>
   <div class='header'>{{i18n 'GURPS.conditions'}}</div>
   <div class='fieldblock'>
-    <div class='label'>{{i18n 'GURPS.maneuver'}}:</div>
-    <div class='field' style='padding-top: 3px; border: none;'>
-      <select id='maneuver' name='data.conditions.maneuver' style='font-size: 90%;' {{disabled isEditing}}>
+    <div class='label' style='align-self: center;'>{{i18n 'GURPS.maneuver'}}:</div>
+    <div class='field' style='border: none;'>
+      <select id='maneuver' name='data.conditions.maneuver' style='font-size: 90%;' {{disabled (or isEditing (not (inCombat this)))}}>
         <option value='undefined' {{select-if ../data.conditions.maneuver 'undefined'}}>
           {{i18n "GURPS.none"}}
         </option>
@@ -15,6 +15,6 @@
       </select>
     </div>
     <div class='label'>{{i18n 'GURPS.combatMove' 'Combat Move'}}:</div>
-    <div class='field' name='data.conditions.combatmove'>{{data.conditions.move}}</div>
+    <div class='field' name='data.conditions.combatmove' style="margin-left: 9px;">{{data.conditions.move}}</div>
   </div>
 </div>
