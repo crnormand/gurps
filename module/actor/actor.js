@@ -166,13 +166,11 @@ export class GurpsActor extends Actor {
     let v = /** @type {SemanticVersion} */ (SemanticVersion.fromString(data.migrationversion))
 
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
-		// Need to protect against data errors
+    // Need to protect against data errors
     for (const attr in data.attributes) {
-			if (typeof data.attributes[attr] === 'object' && data.attributes[attr] !== null)
-			  if (isNaN(data.attributes[attr].import))
-		      data.attributes[attr].value = 0
-			  else
-					data.attributes[attr].value = parseInt(data.attributes[attr].import)
+      if (typeof data.attributes[attr] === 'object' && data.attributes[attr] !== null)
+        if (isNaN(data.attributes[attr].import)) data.attributes[attr].value = 0
+        else data.attributes[attr].value = parseInt(data.attributes[attr].import)
     }
     // After all of the attributes are copied over, apply tired to ST
     if (!!data.additionalresources.isTired)
@@ -403,6 +401,7 @@ export class GurpsActor extends Actor {
     const encs = data.encumbrance
     const isReeling = !!data.additionalresources.isReeling
     const isTired = !!data.additionalresources.isTired
+
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
       const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
@@ -451,24 +450,29 @@ export class GurpsActor extends Actor {
    * @returns {number}
    */
   _getCurrentMove(move, threshold) {
+    let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE)
+
     if (foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)) {
       let value = foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)
       switch (value) {
         case MOVE_NONE:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveNone')
-          return 0
+          if (updateMove) return 0
+          break
         case MOVE_STEP:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveStep')
-          return this._getStep()
+          if (updateMove) return this._getStep()
+          break
         case MOVE_HALF:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveHalf')
-          move = Math.ceil(move / 2)
+          if (updateMove) move = Math.ceil(move / 2)
+          break
         case MOVE_FULL:
           this.getGurpsActorData().conditions.move = i18n('GURPS.moveFull')
           break
       }
     }
-
+    
     return Math.max(1, Math.floor(move * threshold))
   }
 
