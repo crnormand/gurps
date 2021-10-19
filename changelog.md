@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.11.13
+- Add 'Combat Move' to Conditions.
+- Allow user to opt-out of Maneuvers updating Move.
+
 Release 0.11.12 10/16/2021
 - Fixed P & B OtF modifiers for Parry and Block by specific weapon ;-)   Thanks danielrab!
 
