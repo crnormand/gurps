@@ -748,7 +748,7 @@ class DevChatProcessor extends ChatProcessor {
   }
 
   help() {
-    return "/dev"
+    return null
   }
 
   matches(line) {
