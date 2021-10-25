@@ -542,6 +542,9 @@ export default class ApplyDamageDialog extends Application {
         location: object.detail,
         groundModifier: 'DX-1',
         swimFlyModifer: 'DX-2',
+        pdfref: i18n('GURPS.pdfCrippling'),
+        classStart: '<span class="pdflink">',
+        classEnd: '</span>',
       })
     }
 
