@@ -5,17 +5,14 @@
       <aside>{{#if reduceInjury}}{{localize "GURPS.damageAbove"}}{{amount}}{{localize "GURPS.hpIgnored"}}{{/if}}</aside>
       {{#if (eq detail 'Tail')}}
         <aside>
-          {{localize "GURPS.groundCreatures"}}: -1 DX.<br />{{localize "GURPS.swimmerFlyer"}}: -2 DX and half Move.
+          {{localize "GURPS.groundCreatures"}}: -1 DX.<br />{{localize "GURPS.swimmerFlyer"}}: -2 DX {{i18n_f "GURPS.andHalfMove" this}}
         </aside>
       {{/if}}
     </div>
 
-    {{#if (eq detail 'Tail')}}
-      <div class='with-send-button'>
-        <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
-      </div>
-    {{/if}}
-
+    <div class='with-send-button'>
+      <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
+    </div>
 
     <div><span class='pdflink'>{{localize "GURPS.pdfCrippling"}}</span></div>
   </div>
