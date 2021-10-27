@@ -5,6 +5,9 @@ export const DEFENSE_ANY = 'any'
 export const DEFENSE_NONE = 'none'
 export const DEFENSE_DODGEBLOCK = 'dodge-block'
 
+export const MOVE_ONE = '1'
+export const MOVE_THIRD = '×1/3'
+export const MOVE_TWOTHIRDS = '×2/3'
 export const MOVE_STEP = 'step'
 export const MOVE_NONE = 'none'
 export const MOVE_FULL = 'full'
@@ -90,7 +93,6 @@ class Maneuver {
       key: 'data.conditions.maneuver',
       value: this._data.name,
       mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-      priority: 10,
     })
 
     changes.push({ key: PROPERTY_MOVEOVERRIDE, value: this.move, mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM })

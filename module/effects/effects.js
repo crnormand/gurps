@@ -1,5 +1,9 @@
+import { MOVE_ONE, MOVE_NONE, MOVE_THIRD, MOVE_TWOTHIRDS } from '../actor/maneuver.js'
+
 export class StatusEffect {
   static effects() {
+    // TODO if active effects are turned on, return the effects with changes, duration, etc...
+
     return statusEffects
   }
 }
@@ -24,6 +28,16 @@ const statusEffects = [
     icon: 'systems/gurps/icons/statuses/condition-shock4.webp',
     id: 'shock4',
     label: 'EFFECT.StatusShocked',
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: '-4 to IQ and DX and skills based on them',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    duration: {
+      rounds: 1,
+    },
   },
   {
     icon: 'systems/gurps/icons/statuses/dd-condition-stunned.webp',
@@ -35,7 +49,6 @@ const statusEffects = [
         key: 'data.conditions.maneuver',
         value: 'do_nothing',
         mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-        priority: 10,
       },
     ],
   },
@@ -120,6 +133,7 @@ const statusEffects = [
     label: 'GURPS.STATUSEuphoria',
   },
   {
+    // README No such condition in Basic -- map to Moderate Pain with HPT?
     icon: 'systems/gurps/icons/statuses/condition-pain1.webp',
     id: 'mild_pain',
     label: 'GURPS.STATUSMildPain',
@@ -130,6 +144,7 @@ const statusEffects = [
     label: 'GURPS.STATUSModeratePain',
   },
   {
+    // README No such condition in Basic -- map to Terrible Pain with HPT?
     icon: 'systems/gurps/icons/statuses/condition-pain3.webp',
     id: 'moderate_pain2',
     label: 'GURPS.STATUSModeratePain',
@@ -275,3 +290,454 @@ const statusEffects = [
     label: 'GURPS.STATUSCounter',
   },
 ]
+
+const activeEffectsData = {
+  shock1: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierStatusShock1',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    duration: {
+      rounds: 1,
+    },
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B419',
+    },
+  },
+  shock2: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierStatusShock2',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    duration: {
+      rounds: 1,
+    },
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B419',
+    },
+  },
+  shock3: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierStatusShock3',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    duration: {
+      rounds: 1,
+    },
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B419',
+    },
+  },
+  shock4: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierStatusShock4',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    duration: {
+      rounds: 1,
+    },
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B419',
+    },
+  },
+  stun: {
+    // tint: maybe set the tint based on physical/mental stun?
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierStatusStunned',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.maneuver',
+        value: 'do_nothing',
+        mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      terminalCondition: 'HT', // may move to 'IQ' (mental stun)
+      pdfref: 'B420',
+    },
+  },
+  grapple: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierGrappling', // '-4 to DX and DX-based skills'
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B370',
+    },
+  },
+  prone: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierPostureProneDefend',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierPostureProneMelee',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        // TODO put this value as a chat message '{token} is [{i18n(value)}]' - example: 'Joe is [-2 to be hit with ranged combat (target is Prone)]'
+        key: 'chat',
+        value: 'GURPS.modifierPostureProneRanged',
+        mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+      },
+      {
+        key: 'data.conditions.move',
+        value: MOVE_ONE,
+        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      type: 'posture',
+      pdfref: 'B551',
+    },
+  },
+  kneel: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierPostureKneelDefend',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierPostureKneelMelee',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'chat',
+        value: 'GURPS.modifierPostureCrouchRanged',
+        mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+      },
+      {
+        key: 'data.conditions.move',
+        value: MOVE_THIRD,
+        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      type: 'posture',
+      pdfref: 'B551',
+    },
+  },
+  crouch: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierPostureCrouchMelee',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'chat',
+        value: 'GURPS.modifierPostureCrouchRanged',
+        mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+      },
+      {
+        key: 'data.conditions.move',
+        value: MOVE_TWOTHIRDS,
+        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      type: 'posture',
+      pdfref: 'B551',
+    },
+  },
+  sit: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierPostureKneelMelee',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierPostureKneelDefend',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'chat',
+        value: 'GURPS.modifierPostureProneRanged',
+        mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+      },
+      {
+        key: 'data.conditions.move',
+        value: MOVE_NONE,
+        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      type: 'posture',
+      pdfref: 'B551',
+    },
+  },
+  nauseated: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionNausea',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionNauseaDef',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  coughing: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionCough',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionCoughIQ',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  retching: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionRetch',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B429',
+      followup: '/fp -1', // TODO put in chat when followups are activated
+    },
+  },
+  drowsy: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionDrowsy',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  tipsy: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionTipsy',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionTipsyCR',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  drunk: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionDrunk',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionDrunkCR',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  euphoria: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionEuphoria',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  mild_pain: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionModerateHPT',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  moderate_pain: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionModerate',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  moderate_pain2: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionTerribleHPT',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  severe_pain: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionSevere',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  terrible_pain: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifierAfflictionTerrible',
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B428',
+    },
+  },
+  reeling: {
+    changes: [
+      {
+        key: 'data.basicmove',
+        value: 0.5,
+        mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+      },
+      {
+        key: 'data.additionalresources.isReeling',
+        value: true,
+        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B380',
+    },
+  },
+  exhausted: {
+    changes: [
+      {
+        key: 'data.additionalresources.isTired',
+        value: true,
+        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+      },
+      {
+        key: 'data.attributes.ST.import',
+        value: 0.5,
+        mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B426',
+    },
+  },
+  suffocate: {
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B426',
+      everyturn: '/fp -1', // TODO implement everyturn
+    },
+  },
+  blind: {
+    changes: [
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifiersBlindAttack', // '[-10 to hit (Blind)]
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+      {
+        key: 'data.conditions.modifiers',
+        value: 'GURPS.modifiersBlindDefend', // '[-4 to dodge (Blind -- cannot see attacker)]
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      },
+    ],
+    gurps: {
+      requiresConfig: true,
+      pdfref: 'B394',
+      configHint: 'GURPS.effectHintBlind' // -6 to hit if accustomed to being blind; Hearing -2 success lowers the to hit penalty to -4
+    },
+  },
+}
