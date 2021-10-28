@@ -62,6 +62,7 @@ import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
+import Maneuvers from './actor/maneuver.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -73,6 +74,9 @@ MoustacheWax()
 Settings.initializeSettings()
 
 // CONFIG.debug.hooks = true
+
+// Expose Maneuvers to make them easier to use in modules
+GURPS.Maneuvers = Maneuvers
 
 // Use the target d6 icon for rolltable entries
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
