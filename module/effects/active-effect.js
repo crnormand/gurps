@@ -1,7 +1,5 @@
 'use strict'
 
-import Maneuvers, { MOVE_HALF, MOVE_NONE, MOVE_STEP, MOVE_FULL, PROPERTY_MOVEOVERRIDE } from '../actor/maneuver.js'
-
 export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
@@ -33,8 +31,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
      * Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM
      */
     Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
-      if (change.key === PROPERTY_MOVEOVERRIDE) actor._updateCurrentMoveOverride(change)
-      else if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
+      if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
       else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
       else if (change.key === 'chat') console.log(`Add message [${change.value}] to chat.`)
       else console.log(change)

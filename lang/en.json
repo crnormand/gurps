@@ -948,10 +948,15 @@
   "GURPS.dropResolve": "Where do you want to drop this object?",
   "GURPS.dropBefore": "Before the target",
   "GURPS.dropInside": "Inside the target",
-  "GURPS.moveNone": "None",
-  "GURPS.moveStep": "Step",
-  "GURPS.moveHalf": "Half",
+
+  "GURPS.moveNone": "None ({reason})",
+  "GURPS.moveConstant": "{value} {unit}/sec ({reason})",
+  "GURPS.moveStep": "Step ({reason})",
+  "GURPS.moveOneThird": "×1/3 ({reason})",
+  "GURPS.moveTwoThirds": "×2/3 ({reason})",
+  "GURPS.moveHalf": "Half ({reason})",
   "GURPS.moveFull": "Full",
+
   "GURPS.setManeuver": "Set Maneuver",
   "GURPS.abbrevPoints": "Pts",
   "GURPS.abbrevReference": "Ref",

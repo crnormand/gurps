@@ -1427,6 +1427,11 @@ Hooks.once('init', async function () {
   GURPS.hitpoints = new HitFatPoints()
   GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
+  // do this only after we've initialized i18n/localize
+  GURPS.Maneuvers = Maneuvers
+  GURPS.StatusEffect = new StatusEffect()
+  CONFIG.statusEffects = GURPS.StatusEffect.effects()
+
   // Define custom Entity classes
   // @ts-ignore
   CONFIG.Actor.documentClass = GurpsActor
@@ -1567,10 +1572,8 @@ Hooks.once('ready', async function () {
   canvas.hud.token = new GURPSTokenHUD()
 
   // do this only after we've initialized i18n/localize
-  GURPS.StatusEffect = new StatusEffect()
-  CONFIG.statusEffects = GURPS.StatusEffect.effects()
-
-  GURPS.Maneuvers = Maneuvers
+  // GURPS.StatusEffect = new StatusEffect()
+  // CONFIG.statusEffects = GURPS.StatusEffect.effects()
 
   initializeDamageTables()
   ResourceTrackerManager.initSettings()

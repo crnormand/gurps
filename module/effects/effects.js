@@ -1,5 +1,4 @@
-import { i18n } from '../../lib/utilities.js'
-import { MOVE_ONE, MOVE_NONE, MOVE_THIRD, MOVE_TWOTHIRDS } from '../actor/maneuver.js'
+import { MOVE_ONE, MOVE_NONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
 export class StatusEffect {
   constructor() {
@@ -42,7 +41,7 @@ export class StatusEffect {
     return postures
   }
 
-  get statusEffects(){
+  get statusEffects() {
     return {
       prone: {
         icon: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
@@ -72,9 +71,10 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           },
           {
-            key: 'data.conditions.move',
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_ONE,
             mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+            priority: 10,
           },
         ],
         flags: {
@@ -104,8 +104,8 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
-            key: 'data.conditions.move',
-            value: MOVE_THIRD,
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
+            value: MOVE_ONETHIRD,
             mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           },
           {
@@ -136,7 +136,7 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
-            key: 'data.conditions.move',
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_TWOTHIRDS,
             mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           },
@@ -173,7 +173,7 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
-            key: 'data.conditions.move',
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_NONE,
             mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           },
@@ -210,8 +210,8 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
-            key: 'data.conditions.move',
-            value: MOVE_THIRD,
+            key: PROPERTY_MOVEOVERRIDE_POSTURE,
+            value: MOVE_ONETHIRD,
             mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           },
           {
