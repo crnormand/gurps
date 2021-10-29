@@ -62,6 +62,7 @@ import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
 import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
+import Maneuvers from './actor/maneuver.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -702,14 +703,13 @@ async function performAction(action, actor, event = null, targets = []) {
       }
     } else ui.notifications?.warn('You must have a character selected')
 
-  if (action.type.startsWith('weapon-'))   // weapon-parry or weapon-block
+  if (action.type.startsWith('weapon-'))
     if (!!actor) {
+      // weapon-parry or weapon-block
       let att = null
       att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
       if (!att) {
-        ui.notifications.warn(
-          "No melee attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
-        )
+        ui.notifications.warn("No melee attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name)
         return false
       }
       formula = '3d6'
@@ -719,26 +719,25 @@ async function performAction(action, actor, event = null, targets = []) {
       target = parseInt(att.parry)
       prefix = 'Parry'
       if (action.type == 'weapon-block') {
-	      target = parseInt(att.block)
+        target = parseInt(att.block)
         p = 'B:'
         prefix = 'Block'
       }
       if (isNaN(target) || target == 0) {
-        ui.notifications.warn(
-          "No " + prefix + " for '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
-        )
+        ui.notifications.warn('No ' + prefix + " for '" + action.name.replace('<', '&lt;') + "' found on " + actor.name)
         return false
       }
       prefix += ': '
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      thing = att.name.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+      thing = att.name
+        .replace(/\[.*\]/, '')
+        .replace(/ +/g, ' ')
+        .trim()
       if (thing.length == 0) {
         chatthing = att.name + mode
-      } else
-        chatthing = '[' + p + '"' + thing + mode + '"]'
+      } else chatthing = '[' + p + '"' + thing + mode + '"]'
     } else ui.notifications?.warn('You must have a character selected')
-
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
@@ -1566,9 +1565,12 @@ Hooks.once('ready', async function () {
   // reset the TokenHUD to our version
   // @ts-ignore
   canvas.hud.token = new GURPSTokenHUD()
-  
+
   // do this only after we've initialized i18n/localize
-  CONFIG.statusEffects = StatusEffect.effects()
+  GURPS.StatusEffect = new StatusEffect()
+  CONFIG.statusEffects = GURPS.StatusEffect.effects()
+
+  GURPS.Maneuvers = Maneuvers
 
   initializeDamageTables()
   ResourceTrackerManager.initSettings()

@@ -488,6 +488,11 @@ export class GurpsActorSheet extends ActorSheet {
       let target = $(ev.currentTarget)
       this.actor.replaceManeuver(target.val())
     })
+
+    html.find('#posture').on('change', ev => {
+      let target = $(ev.currentTarget)
+      this.actor.replacePosture(target.val())
+    })
   }
 
   _createHeaderMenus(html) {

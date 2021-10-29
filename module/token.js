@@ -107,7 +107,7 @@ export default class GurpsToken extends Token {
       // if so, toggle them off:
       for (let e of existing) {
         let id = e.getFlag('core', 'statusId')
-        await super.toggleEffect(StatusEffect.lookup(id))
+        await super.toggleEffect(GURPS.StatusEffect.lookup(id))
       }
     }
     super.toggleEffect(effect, options)
