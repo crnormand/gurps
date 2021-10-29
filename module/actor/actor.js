@@ -1004,7 +1004,7 @@ export class GurpsActor extends Actor {
     var foundkey
     let l = getProperty(this.data.data, list)
     recurselist(l, (e, k, d) => {
-      if (e.uuid == uuid || (!!e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
+      if ((uuid && e.uuid == uuid) || (!!e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
     })
     return foundkey == null ? foundkey : getProperty(this.data.data, list + '.' + foundkey)
   }

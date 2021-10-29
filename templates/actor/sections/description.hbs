@@ -1,42 +1,54 @@
 <div id='description'>
   <div class='header'>{{i18n 'GURPS.description'}}</div>
+    {{#unless document.limited}}
+        <div class='fieldblock'>
+        <div class='label'>{{i18n 'GURPS.descriptionGender'}}:</div>
+        <div class='field'><input
+            name='data.traits.gender'
+            class='gcs-input'
+            type='text'
+            value='{{data.traits.gender}}'
+            {{disabled (not isEditing)}}
+          /></div>
+        <div class='label'>{{i18n 'GURPS.descriptionAge'}}:</div>
+        <div class='field'><input
+            name='data.traits.age'
+            class='gcs-input'
+            type='text'
+            value='{{data.traits.age}}'
+            {{disabled (not isEditing)}}
+          /></div>
+        <div class='label'>{{i18n 'GURPS.descriptionBirthday'}}:</div>
+        <div class='field'><input
+            name='data.traits.birthday'
+            class='gcs-input'
+            type='text'
+            value='{{data.traits.birthday}}'
+            {{disabled (not isEditing)}}
+          /></div>
+        <div class='label'>{{i18n 'GURPS.descriptionReligion'}}:</div>
+        <div class='field'><input
+            name='data.traits.religion'
+            class='gcs-input'
+            type='text'
+            value='{{data.traits.religion}}'
+            {{disabled (not isEditing)}}
+          /></div>
+        <div class='label'>&nbsp;</div>
+    <div class='field'></div>
+  </div>
+    {{/unless}}
   <div class='fieldblock'>
-    <div class='label'>{{i18n 'GURPS.descriptionGender'}}:</div>
+    {{#if document.limited}}
+      <div class='label'>{{i18n 'GURPS.descriptionGender'}}:</div>
     <div class='field'><input
         name='data.traits.gender'
         class='gcs-input'
         type='text'
         value='{{data.traits.gender}}'
         {{disabled (not isEditing)}}
-      /></div>
-    <div class='label'>{{i18n 'GURPS.descriptionAge'}}:</div>
-    <div class='field'><input
-        name='data.traits.age'
-        class='gcs-input'
-        type='text'
-        value='{{data.traits.age}}'
-        {{disabled (not isEditing)}}
-      /></div>
-    <div class='label'>{{i18n 'GURPS.descriptionBirthday'}}:</div>
-    <div class='field'><input
-        name='data.traits.birthday'
-        class='gcs-input'
-        type='text'
-        value='{{data.traits.birthday}}'
-        {{disabled (not isEditing)}}
-      /></div>
-    <div class='label'>{{i18n 'GURPS.descriptionReligion'}}:</div>
-    <div class='field'><input
-        name='data.traits.religion'
-        class='gcs-input'
-        type='text'
-        value='{{data.traits.religion}}'
-        {{disabled (not isEditing)}}
-      /></div>
-    <div class='label'>&nbsp;</div>
-    <div class='field'></div>
-  </div>
-  <div class='fieldblock'>
+        /></div>
+    {{/if}}
     <div class='label'>{{i18n 'GURPS.descriptionHeight'}}:</div>
     <div class='field'><input
         name='data.traits.height'
@@ -61,6 +73,7 @@
         value='{{data.traits.sizemod}}'
         {{disabled (not isEditing)}}
       /></div>
+      {{#unless document.limited}}
     <div class='label'>{{i18n 'GURPS.descriptionTechLevel'}}:</div>
     <div class='field'><input
         name='data.traits.techlevel'
@@ -69,6 +82,7 @@
         value='{{data.traits.techlevel}}'
         {{disabled (not isEditing)}}
       /></div>
+      {{/unless}}
     <div class='label'>{{i18n 'GURPS.descriptionBodyPlan'}}:</div>
 
     <div class='field'>

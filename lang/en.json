@@ -273,6 +273,7 @@
   "GURPS.chatSelectSelfOrNameTokens": "You must select tokens, use '{self}', or use ':&lt;<i>token-name</i>&gt;' to apply status effects.",
   "GURPS.chatShock": "{name} takes {modifier} points of Shock ",
   "GURPS.chatSuffersCripplingInjury": "{name} suffers a crippling injury {classStart}([PDF:{pdfref}]){classEnd} to the location {location}.",
+  "GURPS.andHalfMove": "and half Move.",
   "GURPS.chatToApplyEffects": "to apply status effects",
   "GURPS.chatTokenLightPicker": "Token Light Picker",
   "GURPS.chatToggling": "Toggling",
