@@ -29,9 +29,14 @@ export default class GurpsActiveEffect extends ActiveEffect {
       }
     )
 
+    /**
+     * Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM
+     */
     Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
       if (change.key === PROPERTY_MOVEOVERRIDE) actor._updateCurrentMoveOverride(change)
-      if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
+      else if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
+      else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
+      else if (change.key === 'chat') console.log(`Add message [${change.value}] to chat.`)
       else console.log(change)
     })
 

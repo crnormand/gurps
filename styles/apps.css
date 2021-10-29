@@ -1118,6 +1118,7 @@ ul#result-effects li {
   text-align: left;
   margin-top: 3px;
   min-height: calc(1em + 3px);
+  /* border: none; */
 }
 
 .spinner details {

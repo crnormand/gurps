@@ -1212,6 +1212,11 @@ body {
   white-space: nowrap;
 }
 
+#condition .label {
+  text-align: right;
+  align-self:  center;
+}
+
 .field {
   margin-right: 0.2em;
 }

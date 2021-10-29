@@ -79,7 +79,6 @@ CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
 CONFIG.time.roundTime = 1
 
 GURPS.SavedStatusEffects = CONFIG.statusEffects
-CONFIG.statusEffects = StatusEffect.effects()
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null
@@ -1567,6 +1566,9 @@ Hooks.once('ready', async function () {
   // reset the TokenHUD to our version
   // @ts-ignore
   canvas.hud.token = new GURPSTokenHUD()
+  
+  // do this only after we've initialized i18n/localize
+  CONFIG.statusEffects = StatusEffect.effects()
 
   initializeDamageTables()
   ResourceTrackerManager.initSettings()

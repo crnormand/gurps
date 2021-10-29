@@ -2,6 +2,7 @@ import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } fro
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
+import { StatusEffect } from './effects/effects.js'
 
 export default class GurpsToken extends Token {
   static ready() {
@@ -77,6 +78,47 @@ export default class GurpsToken extends Token {
   }
 
   /**
+   * Only one Posture can be active at any given time; remove a Posture Active Effect that
+   * doesn't have this name.
+   *
+   * @param {*} postureName
+   */
+  async deactiveExistingPostures(changeData) {
+    return
+    // // find all active effects with `flag('gurps', 'type') == 'posture'
+    // let effects = this.actor?.temporaryEffects.filter(it => it.getFlag('gurps', 'effect.type') === 'posture')
+    // // remove those with the same name (`flag('core', 'statusId') == name)
+    // let postureName = changeData.effect.getFlag('core', 'statusId')
+    // effects = effects.filter(it => it.getFlag('core', 'statusId') !== postureName)
+    // // for the remaining active effects, remove them
+    // for (const existing of effects) {
+    //   this.toggleEffect(existing.data, { active: false })
+    // }
+    // @ts-ignore
+    // await this.toggleEffect(posture, { active: true })
+  }
+
+  async toggleEffect(effect, options) {
+    // is this a Posture ActiveEffect?
+    if (effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture') {
+      // see if there are other Posture ActiveEffects active
+      let existing = this.actor.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+      existing = existing.filter(e => e.getFlag('core', 'statusId') !== effect.id)
+      // if so, toggle them off:
+      for (let e of existing) {
+        let id = e.getFlag('core', 'statusId')
+        await super.toggleEffect(StatusEffect.lookup(id))
+      }
+    }
+    super.toggleEffect(effect, options)
+  }
+
+  /**
+   * We use this function because maneuvers are special Active Effects: maneuvers don't apply
+   * outside of combat, and only one maneuver can be active simultaneously. So we really don't
+   * deactivate the old maneuver and then activate the new one -- we simply update the singleton
+   * maneuver data to match the new maneuver's data.
+   *
    * @param {string} maneuverName
    */
   async setManeuver(maneuverName) {

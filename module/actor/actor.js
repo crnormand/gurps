@@ -85,6 +85,13 @@ export class GurpsActor extends Actor {
     // this.prepareDerivedData()
   }
 
+  prepareBaseData() {
+    super.prepareBaseData()
+
+    this.getGurpsActorData().conditions.posture = 'standing'
+    this.getGurpsActorData().conditions.modifiers = []
+  }
+
   prepareEmbeddedEntities() {
     // Calls this.applyActiveEffects()
     super.prepareEmbeddedEntities()
@@ -472,7 +479,7 @@ export class GurpsActor extends Actor {
           break
       }
     }
-    
+
     return Math.max(1, Math.floor(move * threshold))
   }
 
@@ -613,6 +620,12 @@ export class GurpsActor extends Actor {
   async replaceManeuver(maneuverText) {
     let tokens = this._findTokens()
     if (tokens) for (const t of tokens) await t.setManeuver(maneuverText)
+  }
+
+  async replacePosture(changeData) {
+    let tokens = this._findTokens()
+    if (tokens) for (const t of tokens) await t.deactiveExistingPostures(changeData)
+    this.getGurpsActorData().conditions.posture = changeData.value
   }
 
   /**
