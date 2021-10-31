@@ -75,6 +75,9 @@ Settings.initializeSettings()
 
 // CONFIG.debug.hooks = true
 
+// Expose Maneuvers to make them easier to use in modules
+GURPS.Maneuvers = Maneuvers
+
 // Use the target d6 icon for rolltable entries
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
 CONFIG.time.roundTime = 1
