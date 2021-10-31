@@ -3,7 +3,7 @@
   <div class='fieldblock'>
     <div class='label'>{{i18n 'GURPS.maneuver'}}:</div>
     <div class='field' style='border: none;'>
-      <select id='maneuver' name='data.conditions.maneuver' style='font-size: 90%;' {{disabled (or isEditing (not (inCombat this)))}}>
+      <select id='maneuver' name='data.conditions.maneuver' style='font-size: 90%; max-width: 14em;' {{disabled (or isEditing (not (inCombat this)))}}>
         <option value='undefined' {{select-if ../data.conditions.maneuver 'undefined'}}>
           {{i18n "GURPS.none"}}
         </option>
@@ -26,6 +26,6 @@
       </select>
     </div>
     <div class='label'>{{i18n 'GURPS.combatMove' 'Combat Move'}}:</div>
-    <div class='field' name='data.conditions.combatmove' style="margin-left: 9px;">{{data.conditions.move}}</div>
+    <div class='field' name='data.conditions.combatmove'><span>{{data.conditions.move}}</span></div>
   </div>
 </div>

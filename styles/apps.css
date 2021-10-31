@@ -1119,7 +1119,28 @@ ul#result-effects li {
   margin-top: 3px;
   min-height: calc(1em + 3px);
   /* border: none; */
+  /* max-width: 12em; */
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
 }
+
+#condition .fieldblock .field[name='data.conditions.combatmove'] {
+    max-width: 12em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 8px;
+}
+
+select#maneuver option {
+      max-width: 12em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 8px;
+}
+
 
 .spinner details {
   position: relative;
