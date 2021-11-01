@@ -468,102 +468,87 @@ export class GurpsActor extends Actor {
   _getCurrentMove(move, threshold) {
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE)
 
-    let { maneuverMove, maneuverText } = this._getMoveAdjustedForManeuver(move, threshold)
-    let { postureMove, postureText } = this._getMoveAdjustedForPosture(move, threshold)
+    let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
+    let posture = this._getMoveAdjustedForPosture(move, threshold)
 
-    this.getGurpsActorData().conditions.move = maneuverMove < postureMove ? maneuverText : postureText
+    this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
 
     return updateMove
-      ? maneuverMove < postureMove
-        ? maneuverMove
-        : postureMove
+      ? maneuver.move < posture.move
+        ? maneuver.move
+        : posture.move
       : Math.max(1, Math.floor(move * threshold))
   }
 
   _getMoveAdjustedForManeuver(move, threshold) {
+    let adjustment = null
+
     if (foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_MANEUVER)) {
       let value = foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_MANEUVER)
       let reason = i18n(GURPS.Maneuvers.get(this.getGurpsActorData().conditions.maneuver).label)
-      switch (value) {
-        case MOVE_NONE:
-          return { maneuverMove: 0, maneuverText: i18n_f('GURPS.moveNone', { reason: reason }) }
 
-        case MOVE_ONE:
-          return {
-            maneuverMove: 1,
-            maneuverText: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
-          }
-
-        case MOVE_STEP:
-          return { maneuverMove: this._getStep(), maneuverText: i18n_f('GURPS.moveStep', { reason: reason }) }
-
-        case MOVE_ONETHIRD:
-          return {
-            maneuverMove: Math.max(1, Math.ceil((move / 3) * threshold)),
-            maneuverText: i18n_f('GURPS.moveOneThird', { reason: reason }),
-          }
-
-        case MOVE_HALF:
-          return {
-            maneuverMove: Math.max(1, Math.ceil((move / 2) * threshold)),
-            maneuverText: i18n_f('GURPS.moveHalf', { reason: reason }),
-          }
-
-        case MOVE_TWOTHIRDS:
-          return {
-            maneuverMove: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
-            maneuverText: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
-          }
-      }
+      adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
-    return {
-      maneuverMove: Math.max(1, Math.ceil(move * threshold)),
-      maneuverText: i18n('GURPS.moveFull'),
+    return !!adjustment
+      ? adjustment
+      : {
+          move: Math.max(1, Math.ceil(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
+  }
+
+  _adjustMove(move, threshold, value, reason) {
+    switch (value) {
+      case MOVE_NONE:
+        return { move: 0, text: i18n_f('GURPS.moveNone', { reason: reason }) }
+
+      case MOVE_ONE:
+        return {
+          move: 1,
+          text: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
+        }
+
+      case MOVE_STEP:
+        return { move: this._getStep(), text: i18n_f('GURPS.moveStep', { reason: reason }) }
+
+      case MOVE_ONETHIRD:
+        return {
+          move: Math.max(1, Math.ceil((move / 3) * threshold)),
+          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
+        }
+
+      case MOVE_HALF:
+        return {
+          move: Math.max(1, Math.ceil((move / 2) * threshold)),
+          text: i18n_f('GURPS.moveHalf', { reason: reason }),
+        }
+
+      case MOVE_TWOTHIRDS:
+        return {
+          move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
+          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
+        }
     }
+
+    return null
   }
 
   _getMoveAdjustedForPosture(move, threshold) {
+    let adjustment = null
+
     if (foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_POSTURE)) {
       let value = foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_POSTURE)
       let reason = i18n(GURPS.StatusEffect.lookup(this.getGurpsActorData().conditions.posture).label)
-      switch (value) {
-        case MOVE_NONE:
-          return { postureMove: 0, postureText: i18n_f('GURPS.moveNone', { reason: reason }) }
-
-        case MOVE_ONE:
-          return {
-            postureMove: 1,
-            postureText: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
-          }
-
-        case MOVE_STEP:
-          return { postureMove: this._getStep(), postureText: i18n_f('GURPS.moveStep', { reason: reason }) }
-
-        case MOVE_ONETHIRD:
-          return {
-            postureMove: Math.max(1, Math.ceil((move / 3) * threshold)),
-            postureText: i18n_f('GURPS.moveOneThird', { reason: reason }),
-          }
-
-        case MOVE_HALF:
-          return {
-            postureMove: Math.max(1, Math.ceil((move / 2) * threshold)),
-            postureText: i18n_f('GURPS.moveHalf', { reason: reason }),
-          }
-
-        case MOVE_TWOTHIRDS:
-          return {
-            postureMove: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
-            postureText: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
-          }
-      }
+      adjustment = this._adjustMove(move, threshold, value, reason)
     }
 
-    return {
-      postureMove: Math.max(1, Math.ceil(move * threshold)),
-      postureText: i18n('GURPS.moveFull'),
-    }
+    return !!adjustment
+      ? adjustment
+      : {
+          move: Math.max(1, Math.ceil(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {

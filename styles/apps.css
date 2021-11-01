@@ -1133,6 +1133,10 @@ ul#result-effects li {
     margin-left: 8px;
 }
 
+#combat-sheet .fieldblock .field[name='data.conditions.combatmove'] {
+  font-size: 90%;
+}
+
 select#maneuver option {
       max-width: 12em;
     white-space: nowrap;
