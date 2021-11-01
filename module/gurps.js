@@ -364,7 +364,10 @@ const actionFuncs = {
    * @param {string} data.action.link
    */
   pdf({action}) {
-    if (!action.link) return false; // if there's no link action fails
+    if (!action.link) {
+      ui.notifications?.warn('no link was parsed for the pdf')
+      return false; // if there's no link action fails
+    }
     handlePdf(action.link)
     return true
   },
@@ -403,16 +406,16 @@ const actionFuncs = {
    * @param {string} data.action.id
    */
   dragdrop({action}) {
-    if (action.link == 'JournalEntry') {
+    if (action.link === 'JournalEntry') {
       game.journal?.get(action.id)?.show()
     }
-    if (action.link == 'Actor') {
+    if (action.link === 'Actor') {
       game.actors?.get(action.id)?.sheet?.render(true)
     }
-    if (action.link == 'RollTable') {
+    if (action.link === 'RollTable') {
       game.tables?.get(action.id)?.sheet?.render(true)
     }
-    if (action.link == 'Item') {
+    if (action.link === 'Item') {
       game.items?.get(action.id)?.sheet?.render(true)
     }
     return true
@@ -489,7 +492,50 @@ const actionFuncs = {
       action.hitlocation
     )
     return true
-  }
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.name
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.isRanged
+   * @param {string} data.action.costs
+   * @param {string} data.action.mod
+   * @param {string} data.action.desc
+   * 
+   * @param {JQuery.Event|null} data.event
+   * @param {GurpsActor|null} data.actor
+   * @param {string[]} data.targets
+   */
+  attackdamage({action, event, actor, targets}) {
+    // action fails if there's no selected actor
+    if (!actor) {
+      ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    if (!action.name) {
+      ui.notifications?.warn('attack damage action has no name')
+      return false;
+    }
+    let att = null
+    att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+    if (!att) {
+      ui.notifications.warn(
+        "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+      )
+      return false
+    }
+    let dam = parseForRollOrDamage(att.damage)
+    if (!dam.action) {
+      ui.notifications?.warn('parsed damage has no action');
+      return false;
+    }
+    dam.action.costs = action.costs
+    dam.action.mod = action.mod
+    dam.action.desc = action.desc
+    return performAction(dam.action, actor, event, targets)
+  },
 }
 GURPS.actionFuncs = actionFuncs
 
@@ -754,26 +800,6 @@ async function performAction(action, actor, event = null, targets = []) {
     } else ui.notifications?.warn('You must have a character selected')
   }
 
-  if (action.type === 'attackdamage' && action.name) {
-    if (!!actor) {
-      let att = null
-      att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
-      if (!att) {
-        ui.notifications.warn(
-          "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
-        )
-        return false
-      }
-      let dam = parseForRollOrDamage(att.damage)
-      if (!!dam.action) {
-        dam.action.costs = action.costs
-        dam.action.mod = action.mod
-        dam.action.desc = action.desc
-        await performAction(dam.action, actor, event, targets)
-      }
-    } else ui.notifications?.warn('You must have a character selected')
-  }
-
   if (action.type.startsWith('weapon-')) {   // weapon-parry or weapon-block
     if (!!actor) {
       let att = null
@@ -812,7 +838,7 @@ async function performAction(action, actor, event = null, targets = []) {
     } else ui.notifications?.warn('You must have a character selected')
   }
 
-
+  console.log(formula, target)
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
     for (let m of targetmods) target += m.modint
