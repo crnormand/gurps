@@ -356,6 +356,143 @@ async function executeOTF(string, priv = false, event = null) {
 }
 GURPS.executeOTF = executeOTF
 
+
+const actionFuncs = {
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.link
+   */
+  pdf({action}) {
+    if (!action.link) return false; // if there's no link action fails
+    handlePdf(action.link)
+    return true
+  },
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.mod
+   * @param {string} data.action.desc
+   * @param {Object} data.action.next
+   */
+  modifier({action}) {
+    GURPS.ModifierBucket.addModifier(parseInt(action.mod), action.desc)
+    if (action.next && action.next.type === 'modifier') {
+      return this.modifier(action.next); // recursion
+    }
+    return true
+  },
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.orig
+   * @param {boolean} data.action.quiet
+   * @param {JQuery.Event|null} data.event
+   */
+  chat({action, event}) {
+    // @ts-ignore
+    chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard?.isCtrl(event)}\n${action.orig}`
+
+    // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
+    return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+  },
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.link
+   * @param {string} data.action.id
+   */
+  dragdrop({action}) {
+    if (action.link == 'JournalEntry') {
+      game.journal?.get(action.id)?.show()
+    }
+    if (action.link == 'Actor') {
+      game.actors?.get(action.id)?.sheet?.render(true)
+    }
+    if (action.link == 'RollTable') {
+      game.tables?.get(action.id)?.sheet?.render(true)
+    }
+    if (action.link == 'Item') {
+      game.items?.get(action.id)?.sheet?.render(true)
+    }
+    return true
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.costs
+   * @param {string} data.action.mod
+   * @param {string} data.action.desc
+   * @param {string} data.action.formula
+   * @param {string} data.action.damagetype
+   * @param {string} data.action.extdamagetype
+   * @param {string} data.action.hitlocation
+   * 
+   * @param {JQuery.Event|null} data.event
+   * @param {GurpsActor|null} data.actor
+   * @param {string[]} data.targets
+   */
+  damage({action, event, actor, targets}) {
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+
+    if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
+    DamageChat.create(
+      actor || game.user,
+      action.formula,
+      action.damagetype,
+      event,
+      null,
+      targets,
+      action.extdamagetype,
+      action.hitlocation
+    )
+    return true
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.damagetype
+   * @param {string} data.action.formula
+   * @param {string} data.action.costs
+   * @param {string} data.action.derivedformula
+   * @param {string} data.action.extdamagetype
+   * @param {string} data.action.hitlocation
+   * 
+   * @param {JQuery.Event|null} data.event
+   * @param {GurpsActor|null} data.actor
+   * @param {string[]} data.targets
+   */
+  deriveddamage({action, event, actor, targets}) {
+     // action fails if there's no selected actor
+    if (!actor) {
+      ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    let df = action.derivedformula.match(/sw/i) ? actor.data.data.swing : actor.data.data.thrust
+    // action fails if there's no formula
+    if (!df) {
+      ui.notifications?.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
+      return false
+    }
+    let formula = df + action.formula
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    DamageChat.create(
+      actor || game.user,
+      formula,
+      action.damagetype,
+      event,
+      action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
+      targets,
+      action.extdamagetype,
+      action.hitlocation
+    )
+    return true
+  }
+}
+GURPS.actionFuncs = actionFuncs
+
 /**
  * @param {Action} action
  * @param {GurpsActor|null} actor
@@ -364,6 +501,7 @@ GURPS.executeOTF = executeOTF
  * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
  */
 async function performAction(action, actor, event = null, targets = []) {
+  console.log(action)
   if (!action) return false
   let actordata = actor?.data
   let prefix = ''
@@ -383,43 +521,8 @@ async function performAction(action, actor, event = null, targets = []) {
 
   let savedBucket = GURPS.ModifierBucket.modifierStack.modifierList.slice() // may need to reset the state of the MB
 
-  if (action.type === 'pdf' && action.link) {
-    handlePdf(action.link)
-    return true
-  }
-
-  if (action.type === 'modifier') {
-    while (!!action && action.type === 'modifier') {
-      let mod = parseInt(action.mod)
-      GURPS.ModifierBucket.addModifier(mod, action.desc)
-      action = action.next
-    }
-    return true
-  }
-
-  if (action.type === 'chat') {
-    let chat = action.orig
-    // @ts-ignore
-    chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard?.isCtrl(event)}\n${chat}`
-
-    // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
-    return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
-  }
-
-  if (action.type === 'dragdrop' && action.id) {
-    if (action.link == 'JournalEntry') {
-      game.journal?.get(action.id)?.show()
-    }
-    if (action.link == 'Actor') {
-      game.actors?.get(action.id)?.sheet?.render(true)
-    }
-    if (action.link == 'RollTable') {
-      game.tables?.get(action.id)?.sheet?.render(true)
-    }
-    if (action.link == 'Item') {
-      game.items?.get(action.id)?.sheet?.render(true)
-    }
-    return true
+  if (action.type in actionFuncs) {
+    return GURPS.actionFuncs[action.type]({action, event, actor, targets}) // get the processor and return result from it. await is unnecessary when returning from async function.
   }
 
   if (action.type === 'controlroll') {
@@ -442,52 +545,14 @@ async function performAction(action, actor, event = null, targets = []) {
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
   }
 
-  if (action.type === 'damage') {
-    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-
-    if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
-    DamageChat.create(
-      actor || game.user,
-      action.formula,
-      action.damagetype,
-      event,
-      null,
-      targets,
-      action.extdamagetype,
-      action.hitlocation
-    )
-    return true
-  }
-
-  if (action.type === 'deriveddamage' && action.derivedformula && action.damagetype)
-    if (!!actor) {
-      let df = action.derivedformula.match(/sw/i) ? actor.data.data.swing : actor.data.data.thrust
-      if (!df) {
-        ui.notifications?.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
-        return true
-      }
-      formula = df + action.formula
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      DamageChat.create(
-        actor || game.user,
-        formula,
-        action.damagetype,
-        event,
-        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
-        targets,
-        action.extdamagetype,
-        action.hitlocation
-      )
-      return true
-    } else ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
-
-  if (action.type === 'derivedroll' && action.derivedformula)
+  if (action.type === 'derivedroll' && action.derivedformula) {
     if (!!actor) {
       let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.data.data.swing : actor.data.data.thrust
       formula = d6ify(df + action.formula)
       prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+  }
 
   let processLinked = (/** @type {Action} */ tempAction) => {
     let bestLvl = -99999
@@ -640,7 +705,7 @@ async function performAction(action, actor, event = null, targets = []) {
     else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
   }
 
-  if (action.type === 'attack' && action.name)
+  if (action.type === 'attack' && action.name) {
     if (!!actor) {
       let att = null
       prefix = ''
@@ -687,8 +752,9 @@ async function performAction(action, actor, event = null, targets = []) {
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       //if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
     } else ui.notifications?.warn('You must have a character selected')
+  }
 
-  if (action.type === 'attackdamage' && action.name)
+  if (action.type === 'attackdamage' && action.name) {
     if (!!actor) {
       let att = null
       att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
@@ -706,8 +772,9 @@ async function performAction(action, actor, event = null, targets = []) {
         await performAction(dam.action, actor, event, targets)
       }
     } else ui.notifications?.warn('You must have a character selected')
+  }
 
-  if (action.type.startsWith('weapon-'))   // weapon-parry or weapon-block
+  if (action.type.startsWith('weapon-')) {   // weapon-parry or weapon-block
     if (!!actor) {
       let att = null
       att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
@@ -743,6 +810,7 @@ async function performAction(action, actor, event = null, targets = []) {
       } else
         chatthing = '[' + p + '"' + thing + mode + '"]'
     } else ui.notifications?.warn('You must have a character selected')
+  }
 
 
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
