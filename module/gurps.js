@@ -556,7 +556,7 @@ const actionFuncs = {
       actor,
       formula: action.formula,
       prefix,
-      optionalArgs: {blind: action.blindroll, event}
+      optionalArgs: {blind: action.blindroll, event},
     });
   },
   /**
@@ -586,10 +586,28 @@ const actionFuncs = {
       thing,
       chatthing,
       origtarget: target,
-      optionalArgs: {blind: action.blindroll, event}
+      optionalArgs: {blind: action.blindroll, event},
     })
-  }
-  
+  },
+  derivedroll({action, actor, event}) {
+    if (!action.derivedformula) {
+      ui.notifications.warn('derived roll with no derived formula');
+      return false;
+    }
+    if (!actor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.data.data.swing : actor.data.data.thrust
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs);
+    const originalFormula = action.derivedformula + action.formula;
+    return doRoll({
+      actor,
+      formula: d6ify(df + action.formula),
+      prefix: 'Rolling [' + originalFormula + '] ' + action.desc,
+      optionalArgs: {blind: action.blindroll, event},
+    });
+  },
 }
 GURPS.actionFuncs = actionFuncs
 
@@ -601,7 +619,6 @@ GURPS.actionFuncs = actionFuncs
  * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
  */
 async function performAction(action, actor, event = null, targets = []) {
-  console.log(action)
   if (!action) return false
   let actordata = actor?.data
   let prefix = ''
@@ -623,15 +640,6 @@ async function performAction(action, actor, event = null, targets = []) {
 
   if (action.type in actionFuncs) {
     return GURPS.actionFuncs[action.type]({action, event, actor, targets}) // get the processor and return result from it. await is unnecessary when returning from async function.
-  }
-
-  if (action.type === 'derivedroll' && action.derivedformula) {
-    if (!!actor) {
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.data.data.swing : actor.data.data.thrust
-      formula = d6ify(df + action.formula)
-      prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
   }
 
   let processLinked = (/** @type {Action} */ tempAction) => {
