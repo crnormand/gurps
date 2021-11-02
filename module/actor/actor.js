@@ -98,8 +98,8 @@ export class GurpsActor extends Actor {
     super.prepareBaseData()
 
     this.getGurpsActorData().conditions.posture = 'standing'
-    this.getGurpsActorData().conditions.self.modifiers = []
-    this.getGurpsActorData().conditions.target.modifiers = []
+    this.getGurpsActorData().conditions.self = { modifiers: [] }
+    this.getGurpsActorData().conditions.target = { modifiers: [] }
     this.getGurpsActorData().conditions.exhausted = false
     this.getGurpsActorData().conditions.reeling = false
   }
