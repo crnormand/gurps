@@ -406,19 +406,23 @@ const actionFuncs = {
    * @param {string} data.action.id
    */
   dragdrop({action}) {
-    if (action.link === 'JournalEntry') {
-      game.journal?.get(action.id)?.show()
+    switch (action.link) {
+      case 'JournalEntry':
+        game.journal?.get(action.id)?.show();
+        return true;
+      case 'Actor':
+        game.actors?.get(action.id)?.sheet?.render(true);
+        return true;
+      case 'RollTable':
+        game.tables?.get(action.id)?.sheet?.render(true);
+        return true;
+      case 'Item':
+        game.items?.get(action.id)?.sheet?.render(true)
+        return true;
+      default:
+        ui.notifications.warn(`unknown entity type: ${action.link}`);
+        return false;
     }
-    if (action.link === 'Actor') {
-      game.actors?.get(action.id)?.sheet?.render(true)
-    }
-    if (action.link === 'RollTable') {
-      game.tables?.get(action.id)?.sheet?.render(true)
-    }
-    if (action.link === 'Item') {
-      game.items?.get(action.id)?.sheet?.render(true)
-    }
-    return true
   },
   /**
    * @param {Object} data
@@ -476,7 +480,7 @@ const actionFuncs = {
     let df = action.derivedformula.match(/sw/i) ? actor.data.data.swing : actor.data.data.thrust
     // action fails if there's no formula
     if (!df) {
-      ui.notifications?.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
+      ui.notifications?.warn(`${actor.name} does not have a ${action.derivedformula.toUpperCase()} formula`)
       return false
     }
     let formula = df + action.formula
@@ -522,7 +526,7 @@ const actionFuncs = {
     att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
     if (!att) {
       ui.notifications.warn(
-        "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
+        `No melee or ranged attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`
       )
       return false
     }
@@ -550,7 +554,7 @@ const actionFuncs = {
    * @param {JQuery.Event|null} data.event
    */
   roll({action, actor, event}) {
-    const prefix = 'Rolling [' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc + ']';
+    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula} ${action.desc}']`;
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs);
     return doRoll({
       actor,
@@ -576,9 +580,9 @@ const actionFuncs = {
     let chatthing;
     if (!!action.desc) {
       thing = action.desc
-      chatthing = '["Control Roll, ' + thing + '"CR:' + target + ' ' + thing + ']'
+      chatthing = `["Control Roll, ${thing}"CR:${target} ${thing}]`
     } else {
-      chatthing = '[CR:' + target + ']'
+      chatthing = `[CR:${target}]`;
     }
     return doRoll({
       actor,
@@ -604,7 +608,7 @@ const actionFuncs = {
     return doRoll({
       actor,
       formula: d6ify(df + action.formula),
-      prefix: 'Rolling [' + originalFormula + '] ' + action.desc,
+      prefix: `Rolling [${action.derivedformula}${action.formula}] ${action.desc}`,
       optionalArgs: {blind: action.blindroll, event},
     });
   },
