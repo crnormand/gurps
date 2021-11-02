@@ -536,6 +536,24 @@ const actionFuncs = {
     dam.action.desc = action.desc
     return performAction(dam.action, actor, event, targets)
   },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} [data.action.displayformula]
+   * @param {string} data.action.formula
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
+  roll({action, actor, event}) {
+    const prefix = 'Rolling [' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc + ']';
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs);
+    return doRoll({actor, formula: action.formula, prefix, optionalArgs: {blind: action.blindroll, event}});
+  },
 }
 GURPS.actionFuncs = actionFuncs
 
@@ -582,13 +600,6 @@ async function performAction(action, actor, event = null, targets = []) {
     } else {
       chatthing = '[CR:' + target + ']'
     }
-  }
-
-  if (action.type === 'roll') {
-    prefix = 'Rolling [' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc + ']'
-    // @ts-ignore - formula was defined as string above.
-    formula = action.formula
-    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
   }
 
   if (action.type === 'derivedroll' && action.derivedformula) {
@@ -838,14 +849,13 @@ async function performAction(action, actor, event = null, targets = []) {
     } else ui.notifications?.warn('You must have a character selected')
   }
 
-  console.log(formula, target)
   if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   if (!!action.calcOnly) {
     for (let m of targetmods) target += m.modint
     GURPS.ModifierBucket.modifierStack.modifierList = savedBucket
     return { target: target, thing: thing }
   }
-  return await doRoll(actor, formula, targetmods, prefix, thing, chatthing, target, opt)
+  return doRoll({actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt})
 }
 GURPS.performAction = performAction
 
@@ -1028,7 +1038,7 @@ async function handleRoll(event, actor, targets) {
     formula = d6ify(formula)
   }
 
-  doRoll(actor, formula, targetmods, prefix, thing, chatthing, target, opt)
+  doRoll({actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt})
 }
 GURPS.handleRoll = handleRoll
 
