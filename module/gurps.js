@@ -552,8 +552,44 @@ const actionFuncs = {
   roll({action, actor, event}) {
     const prefix = 'Rolling [' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc + ']';
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs);
-    return doRoll({actor, formula: action.formula, prefix, optionalArgs: {blind: action.blindroll, event}});
+    return doRoll({
+      actor,
+      formula: action.formula,
+      prefix,
+      optionalArgs: {blind: action.blindroll, event}
+    });
   },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.target
+   * @param {string} data.action.desc
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
+  controlroll({action, actor, event}) {
+    const target = parseInt(action.target);
+    let thing;
+    let chatthing;
+    if (!!action.desc) {
+      thing = action.desc
+      chatthing = '["Control Roll, ' + thing + '"CR:' + target + ' ' + thing + ']'
+    } else {
+      chatthing = '[CR:' + target + ']'
+    }
+    return doRoll({
+      actor,
+      formula: '3d6',
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: {blind: action.blindroll, event}
+    })
+  }
+  
 }
 GURPS.actionFuncs = actionFuncs
 
@@ -587,19 +623,6 @@ async function performAction(action, actor, event = null, targets = []) {
 
   if (action.type in actionFuncs) {
     return GURPS.actionFuncs[action.type]({action, event, actor, targets}) // get the processor and return result from it. await is unnecessary when returning from async function.
-  }
-
-  if (action.type === 'controlroll') {
-    //prefix = 'Control Roll, '
-    formula = '3d6'
-    // @ts-ignore - action.target is not required; it could be undefined
-    target = parseInt(action.target)
-    if (!!action.desc) {
-      thing = action.desc
-      chatthing = '["Control Roll, ' + thing + '"CR:' + target + ' ' + thing + ']'
-    } else {
-      chatthing = '[CR:' + target + ']'
-    }
   }
 
   if (action.type === 'derivedroll' && action.derivedformula) {
