@@ -3,45 +3,36 @@ import { MOVE_ONE, MOVE_NONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRI
 export class StatusEffect {
   constructor() {
     this.useActiveEffects = true // TODO set based on system setting
-    this.merged = false
-  }
+    this._statusEffects = {}
 
-  _merge() {
-    for (const key in this.statusEffects) {
-      foundry.utils.mergeObject(this.statusEffects[key], _getActiveEffectsData(key))
+    for (const key in this.rawStatusEffects) {
+      let value = this.rawStatusEffects[key]
+      if (this.useActiveEffects) {
+        let activeEffectData = _getActiveEffectsData(key)
+        value = foundry.utils.mergeObject(value, activeEffectData)
+      }
+      this._statusEffects[key] = value
     }
-    this.merged = true
   }
 
   effects() {
-    if (this.useActiveEffects && !this.merged) {
-      this._merge()
-    }
-
-    return Object.values(this.statusEffects)
+    return Object.values(this._statusEffects)
   }
 
   lookup(id) {
-    if (this.useActiveEffects && !this.merged) {
-      this._merge()
-    }
-    return this.statusEffects[id]
+    return this._statusEffects[id]
   }
 
   getAllPostures() {
-    if (this.useActiveEffects && !this.merged) {
-      this._merge()
-    }
-
-    let postures = Object.keys(this.statusEffects).reduce((accumulator, key) => {
-      if (foundry.utils.getProperty(this.statusEffects[key], 'flags.gurps.effect.type') == 'posture')
-        accumulator[key] = this.statusEffects[key]
+    let postures = Object.keys(this._statusEffects).reduce((accumulator, key) => {
+      if (foundry.utils.getProperty(this._statusEffects[key], 'flags.gurps.effect.type') == 'posture')
+        accumulator[key] = this._statusEffects[key]
       return accumulator
     }, {})
     return postures
   }
 
-  get statusEffects() {
+  get rawStatusEffects() {
     return {
       prone: {
         icon: 'systems/gurps/icons/statuses/dd-condition-prone.webp',
@@ -79,7 +70,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { pdfref: 'B551', type: 'posture' },
+            effect: { pdfref: 'GURPS.pdfPostureLyingDown', type: 'posture' },
           },
         },
       },
@@ -116,7 +107,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { pdfref: 'B551', type: 'posture' },
+            effect: { pdfref: 'GURPS.pdfPostureKneeling', type: 'posture' },
           },
         },
       },
@@ -148,7 +139,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'B551' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrouching' },
           },
         },
       },
@@ -185,7 +176,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'B551' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureSitting' },
           },
         },
       },
@@ -222,7 +213,7 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { type: 'posture', pdfref: 'B551' },
+            effect: { type: 'posture', pdfref: 'GURPS.pdfPostureCrawling' },
           },
         },
       },
@@ -236,11 +227,58 @@ export class StatusEffect {
         icon: 'systems/gurps/icons/statuses/cth-condition-major-wound.webp',
         id: 'reeling',
         label: 'GURPS.STATUSReeling',
+        // TODO Need to figure a way to put another chat message when this goes away: GURPS.chatTurnOffReeling
+        changes: [
+          {
+            key: 'chat',
+            value: 'GURPS.chatTurnOnReeling',
+            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          },
+          {
+            key: 'data.conditions.reeling',
+            value: true,
+            mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          },
+        ],
+        flags: {
+          gurps: {
+            effect: { pdfref: 'GURPS.pdfReeling', endChat: 'GURPS.chatTurnOffReeling' },
+          },
+        },
       },
       exhausted: {
         icon: 'systems/gurps/icons/statuses/path-condition-exhausted.webp',
         id: 'exhausted',
         label: 'GURPS.STATUSExhausted',
+        // TODO Need to figure a way to put another chat message when this goes away: GURPS.chatTurnOffTired
+        changes: [
+          {
+            key: 'data.conditions.exhausted',
+            value: true,
+            mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          },
+          {
+            key: 'data.attributes.ST.import',
+            value: 0.5,
+            mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
+          },
+          {
+            key: 'chat',
+            value: 'GURPS.chatTurnOnTired',
+            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          },
+        ],
+        flags: {
+          gurps: {
+            effect: {
+              pdfref: 'GURPS.pdfTired',
+              followup: [
+                { type: 'otf', args: '/fp -1' }, // TODO put in chat when followups are activated
+                { type: 'chat', args: 'GURPS.chatTurnOffTired' },
+              ],
+            },
+          },
+        },
       },
       shock1: {
         icon: 'systems/gurps/icons/statuses/condition-shock1.webp',
@@ -483,7 +521,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'B419' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -500,7 +538,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'B419' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -517,7 +555,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'B419' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -534,7 +572,7 @@ const _getActiveEffectsData = function (id) {
       },
       flags: {
         gurps: {
-          effect: { pdfref: 'B419' },
+          effect: { pdfref: 'GURPS.pdfShock' },
         },
       },
     },
@@ -556,7 +594,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             endCondition: 'HT', // may move to 'IQ' (mental stun)
-            pdfref: 'B420',
+            pdfref: 'GURPS.pdfKnockdownStun',
             requiresConfig: true,
           },
         },
@@ -572,7 +610,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { pdfref: 'B370', requiresConfig: true },
+          effect: { pdfref: 'GURPS.pdfGrappling', requiresConfig: true },
         },
       },
     },
@@ -591,7 +629,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardNausea' },
         },
       },
     },
@@ -610,7 +648,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardCoughing' },
         },
       },
     },
@@ -625,8 +663,8 @@ const _getActiveEffectsData = function (id) {
       flags: {
         gurps: {
           effect: {
-            pdfref: 'B429',
-            followup: '/fp -1', // TODO put in chat when followups are activated
+            pdfref: 'GURPS.pdfHazardRetching',
+            followup: [{ type: 'otf', args: '/fp -1' }], // TODO put in chat when followups are activated
             requiresConfig: true,
           },
         },
@@ -642,7 +680,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardDrowsy' },
         },
       },
     },
@@ -661,7 +699,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardTipsy"' },
         },
       },
     },
@@ -680,7 +718,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardDrunk' },
         },
       },
     },
@@ -694,7 +732,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardEuphoria' },
         },
       },
     },
@@ -708,7 +746,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -722,7 +760,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -736,7 +774,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flag: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -750,7 +788,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -764,45 +802,7 @@ const _getActiveEffectsData = function (id) {
       ],
       flags: {
         gurps: {
-          effect: { requiresConfig: true, pdfref: 'B428' },
-        },
-      },
-    },
-    reeling: {
-      changes: [
-        {
-          key: 'data.basicmove',
-          value: 0.5,
-          mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
-        },
-        {
-          key: 'data.additionalresources.isReeling',
-          value: true,
-          mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-        },
-      ],
-      flags: {
-        gurps: {
-          effect: { pdfref: 'B380' },
-        },
-      },
-    },
-    exhausted: {
-      changes: [
-        {
-          key: 'data.additionalresources.isTired',
-          value: true,
-          mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-        },
-        {
-          key: 'data.attributes.ST.import',
-          value: 0.5,
-          mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
-        },
-      ],
-      flags: {
-        gurps: {
-          effect: { pdfref: 'B426' },
+          effect: { requiresConfig: true, pdfref: 'GURPS.pdfHazardPain' },
         },
       },
     },
@@ -810,8 +810,8 @@ const _getActiveEffectsData = function (id) {
       flags: {
         gurps: {
           effect: {
-            pdfref: 'B426',
-            everyturn: '/fp -1', // TODO implement everyturn
+            pdfref: 'GURPS.pdfSuffocation',
+            everyturn: { type: 'otf', args: '/fp -1' }, // TODO implement everyturn
             requiresConfig: true,
           },
         },
@@ -834,7 +834,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             requiresConfig: true,
-            pdfref: 'B394',
+            pdfref: 'GURPS.pdfVisibility',
             // TODO implement configHint
             configHint: 'GURPS.effectHintBlind',
           },

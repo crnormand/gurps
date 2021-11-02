@@ -943,6 +943,7 @@ body {
 
 #points .field,
 #attributes .field,
+#combat-attrs .field,
 #lifting .field,
 #hitpoints .field,
 #hp-fp .field {

@@ -99,6 +99,8 @@ export class GurpsActor extends Actor {
 
     this.getGurpsActorData().conditions.posture = 'standing'
     this.getGurpsActorData().conditions.modifiers = []
+    this.getGurpsActorData().conditions.exhausted = false
+    this.getGurpsActorData().conditions.reeling = false
   }
 
   prepareEmbeddedEntities() {
@@ -189,7 +191,7 @@ export class GurpsActor extends Actor {
         else data.attributes[attr].value = parseInt(data.attributes[attr].import)
     }
     // After all of the attributes are copied over, apply tired to ST
-    if (!!data.additionalresources.isTired)
+    if (!!data.conditions.exhausted)
       data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, k, d) => {
       // @ts-ignore
@@ -415,32 +417,35 @@ export class GurpsActor extends Actor {
   _calculateEncumbranceIssues() {
     const data = this.getGurpsActorData()
     const encs = data.encumbrance
-    const isReeling = !!data.additionalresources.isReeling
-    const isTired = !!data.additionalresources.isTired
+    const isReeling = !!data.conditions.reeling
+    const isTired = !!data.conditions.exhausted
 
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
       const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
-      let m = parseInt(level0.move)
-      let d = parseInt(level0.dodge) + data.currentdodge
-      let f = parseFloat(data.basicspeed.value.toString()) * 2
+      let effectiveMove = parseInt(level0.move)
+      let effectiveDodge = parseInt(level0.dodge) + data.currentdodge
+      let effectiveFlight = parseFloat(data.basicspeed.value.toString()) * 2
+
       if (isReeling) {
-        m = Math.ceil(m / 2)
-        d = Math.ceil(d / 2)
-        f = Math.ceil(f / 2)
+        effectiveMove = Math.ceil(effectiveMove / 2)
+        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveFlight = Math.ceil(effectiveFlight / 2)
       }
+
       if (isTired) {
-        m = Math.ceil(m / 2)
-        d = Math.ceil(d / 2)
-        f = Math.ceil(f / 2)
+        effectiveMove = Math.ceil(effectiveMove / 2)
+        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveFlight = Math.ceil(effectiveFlight / 2)
       }
+
       for (let enckey in encs) {
         let enc = encs[enckey]
-        let t = 1.0 - 0.2 * parseInt(enc.level)
+        let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
 
-        enc.currentmove = this._getCurrentMove(m, t) //Math.max(1, Math.floor(m * t))
-        enc.currentdodge = Math.max(1, d - parseInt(enc.level))
-        enc.currentflight = Math.max(1, Math.floor(f * t))
+        enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
+        enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
+        enc.currentflight = Math.max(1, Math.floor(effectiveFlight * threshold))
         enc.currentmovedisplay = enc.currentmove
         if (!!data.additionalresources.showflightmove)
           enc.currentmovedisplay = enc.currentmove + '/' + enc.currentflight
@@ -452,6 +457,7 @@ export class GurpsActor extends Actor {
         }
       }
     }
+
     if (!data.equippedparry) data.equippedparry = this.getEquippedParry()
     if (!data.equippedblock) data.equippedblock = this.getEquippedBlock()
     // catch for older actors that may not have these values set
@@ -471,7 +477,8 @@ export class GurpsActor extends Actor {
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
 
-    this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
+    if (threshold == 1.0)
+      this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
 
     return updateMove
       ? maneuver.move < posture.move
@@ -656,12 +663,11 @@ export class GurpsActor extends Actor {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('data.HP.value')) {
         let flag = data['data.HP.value'] < this.getGurpsActorData().HP.max / 3
-        if (!!this.getGurpsActorData().additionalresources.isReeling != flag)
-          this.changeOneThirdStatus('isReeling', flag)
+        if (!!this.getGurpsActorData().conditions.reeling != flag) this.toggleEffectByName('reeling', flag)
       }
       if (data.hasOwnProperty('data.FP.value')) {
         let flag = data['data.FP.value'] < this.getGurpsActorData().FP.max / 3
-        if (!!this.getGurpsActorData().additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
+        if (!!this.getGurpsActorData().conditions.exhausted != flag) this.toggleEffectByName('exhausted', flag)
       }
     }
 
@@ -2836,45 +2842,55 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   *
+   * @param {string} name of the status effect
+   * @param {boolean} active (desired) state - true or false
+   */
+  toggleEffectByName(name, active) {
+    let tokens = this.getActiveTokens(true)
+    for (const token of tokens) {
+      token.setEffectActive(name, active)
+    }
+  }
+
+  /**
+   * Recalculate derived values (updates move, dodge, etc) and add a chat message with the change.
    * @param {string} option
    * @param {boolean} flag
    */
-  changeOneThirdStatus(option, flag) {
-    if (this.isOwner)
-      this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
-        this.calculateDerivedValues()
-
-        let i18nMessage =
-          option === 'isReeling'
-            ? flag
-              ? 'GURPS.chatTurnOnReeling'
-              : 'GURPS.chatTurnOffReeling'
-            : flag
-            ? 'GURPS.chatTurnOnTired'
-            : 'GURPS.chatTurnOffTired'
-
-        let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling') : i18n('GURPS.pdfTired')
-        let msg = i18n_f(i18nMessage, {
-          name: this.displayname,
-          classStart: '<span class="pdflink">',
-          classEnd: '</span>',
-          pdfref: pdfref,
-        })
-
-        renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
-          let users = this.getOwners()
-          let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
-          /** @type {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData').ChatMessageDataConstructorData} */
-          let messageData = {
-            content: content,
-            whisper: ids || null,
-            type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-          }
-          ChatMessage.create(messageData)
-          ui.combat?.render()
-        })
-      })
-  }
+  // changeOneThirdStatus(option, flag) {
+  // if (this.isOwner)
+  //   this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
+  //     this.calculateDerivedValues()
+  //     let i18nMessage =
+  //       option === 'isReeling'
+  //         ? flag
+  //           ? 'GURPS.chatTurnOnReeling'
+  //           : 'GURPS.chatTurnOffReeling'
+  //         : flag
+  //         ? 'GURPS.chatTurnOnTired'
+  //         : 'GURPS.chatTurnOffTired'
+  //     let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling') : i18n('GURPS.pdfTired')
+  //     let msg = i18n_f(i18nMessage, {
+  //       name: this.displayname,
+  //       classStart: '<span class="pdflink">',
+  //       classEnd: '</span>',
+  //       pdfref: pdfref,
+  //     })
+  //     renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+  //       let users = this.getOwners()
+  //       let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+  //       /** @type {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData').ChatMessageDataConstructorData} */
+  //       let messageData = {
+  //         content: content,
+  //         whisper: ids || null,
+  //         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+  //       }
+  //       ChatMessage.create(messageData)
+  //       ui.combat?.render()
+  //     })
+  //   })
+  // }
 
   /**
    * @param {string} pattern

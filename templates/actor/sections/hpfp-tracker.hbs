@@ -2,7 +2,11 @@
   {{> resource-controls editable=false}}
   <div class='condition-block tooltip-wrapper'>
     <div class='tooltip condition {{hpFpCondition name resource "style" }}'>{{i18n (hpFpCondition name resource 'label')}}
-      &nbsp; <i class='fas fa-heart-broken {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
+      {{#if (eq name 'FP')}}
+      <i class='fas fa-lungs {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
+      {{else}}
+      <i class='fas fa-heartbeat {{optionSetStyle testcondition}}' data-onethird='{{condition}}'></i>
+      {{/if}}
       <span class="tooltiptext">
         <div class="fieldblock">
           {{#hpFpBreakpoints name resource}}

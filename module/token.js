@@ -3,6 +3,7 @@ import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
 import { StatusEffect } from './effects/effects.js'
+import { GURPS } from './gurps.js'
 
 export default class GurpsToken extends Token {
   static ready() {
@@ -78,26 +79,10 @@ export default class GurpsToken extends Token {
   }
 
   /**
-   * Only one Posture can be active at any given time; remove a Posture Active Effect that
-   * doesn't have this name.
-   *
-   * @param {*} postureName
+   * @override
+   * @param {*} effect
+   * @param {*} options
    */
-  async deactiveExistingPostures(changeData) {
-    return
-    // // find all active effects with `flag('gurps', 'type') == 'posture'
-    // let effects = this.actor?.temporaryEffects.filter(it => it.getFlag('gurps', 'effect.type') === 'posture')
-    // // remove those with the same name (`flag('core', 'statusId') == name)
-    // let postureName = changeData.effect.getFlag('core', 'statusId')
-    // effects = effects.filter(it => it.getFlag('core', 'statusId') !== postureName)
-    // // for the remaining active effects, remove them
-    // for (const existing of effects) {
-    //   this.toggleEffect(existing.data, { active: false })
-    // }
-    // @ts-ignore
-    // await this.toggleEffect(posture, { active: true })
-  }
-
   async toggleEffect(effect, options) {
     // is this a Posture ActiveEffect?
     if (effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture') {
@@ -111,6 +96,19 @@ export default class GurpsToken extends Token {
       }
     }
     super.toggleEffect(effect, options)
+  }
+
+  async setEffectActive(name, active) {
+    // lookup effect
+    let effect = GURPS.StatusEffect.lookup(name)
+
+    // check to see if it is active
+    let existing = this.actor.effects.find(e => e.getFlag('core', 'statusId') === name)
+
+    if (active && !!existing) return
+    if (!active && !existing) return
+
+    this.toggleEffect(effect)
   }
 
   /**
