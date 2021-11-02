@@ -41,19 +41,32 @@ export class StatusEffect {
         // I'm sneakily using ActiveEffects to implement postures even if the system setting is turned off.
         changes: [
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureProneDefend',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureProneMelee',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            // TODO put this value as a chat message '{token} is [{value}]' - example: 'Joe is [-2 to be hit with ranged combat (target is Prone)]'
-            key: 'chat',
+            key: 'data.conditions.target.modifiers',
             value: 'GURPS.modifierPostureProneRanged',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          },
+          {
+            key: 'chat',
+            value: JSON.stringify({
+              msg: 'GURPS.effectChatRangedModifier',
+              frequency: 'once',
+              args: {
+                // '@' - lookup property on Actor
+                displayName: '@displayname',
+                // '!' - treat as i18n text
+                posture: '!GURPS.STATUSProne',
+              },
+            }),
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
@@ -80,18 +93,30 @@ export class StatusEffect {
         label: 'GURPS.STATUSKneel',
         changes: [
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureKneelDefend',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureKneelMelee',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'chat',
+            key: 'data.conditions.target.modifiers',
             value: 'GURPS.modifierPostureCrouchRanged',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          },
+          {
+            key: 'chat',
+            value: JSON.stringify({
+              msg: 'GURPS.effectChatRangedModifier',
+              frequency: 'once',
+              args: {
+                displayName: '@displayname',
+                posture: '!GURPS.STATUSKneel',
+              },
+            }),
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
@@ -117,7 +142,7 @@ export class StatusEffect {
         label: 'GURPS.STATUSCrouch',
         changes: [
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureCrouchMelee',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
@@ -149,12 +174,12 @@ export class StatusEffect {
         label: 'GURPS.STATUSSit',
         changes: [
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureKneelMelee',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureKneelDefend',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
@@ -186,12 +211,12 @@ export class StatusEffect {
         label: 'GURPS.STATUSCrawling',
         changes: [
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureProneMelee',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'data.conditions.modifiers',
+            key: 'data.conditions.self.modifiers',
             value: 'GURPS.modifierPostureProneDefend',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
@@ -227,11 +252,17 @@ export class StatusEffect {
         icon: 'systems/gurps/icons/statuses/cth-condition-major-wound.webp',
         id: 'reeling',
         label: 'GURPS.STATUSReeling',
-        // TODO Need to figure a way to put another chat message when this goes away: GURPS.chatTurnOffReeling
         changes: [
           {
             key: 'chat',
-            value: 'GURPS.chatTurnOnReeling',
+            value: JSON.stringify({
+              msg: 'GURPS.chatTurnOnReeling',
+              frequency: 'once',
+              args: {
+                name: '@displayname',
+                pdfref: 'GURPS.pdfReeling',
+              },
+            }),
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
@@ -242,7 +273,16 @@ export class StatusEffect {
         ],
         flags: {
           gurps: {
-            effect: { pdfref: 'GURPS.pdfReeling', endChat: 'GURPS.chatTurnOffReeling' },
+            effect: {
+              pdfref: 'GURPS.pdfReeling',
+              terminateActions: [
+                {
+                  type: 'chat',
+                  msg: 'GURPS.chatTurnOffReeling',
+                  args: { name: '@displayname' },
+                },
+              ],
+            },
           },
         },
       },
@@ -250,7 +290,6 @@ export class StatusEffect {
         icon: 'systems/gurps/icons/statuses/path-condition-exhausted.webp',
         id: 'exhausted',
         label: 'GURPS.STATUSExhausted',
-        // TODO Need to figure a way to put another chat message when this goes away: GURPS.chatTurnOffTired
         changes: [
           {
             key: 'data.conditions.exhausted',
@@ -264,7 +303,14 @@ export class StatusEffect {
           },
           {
             key: 'chat',
-            value: 'GURPS.chatTurnOnTired',
+            value: JSON.stringify({
+              msg: 'GURPS.chatTurnOnTired',
+              frequency: 'once',
+              args: {
+                name: '@displayname',
+                pdfref: 'GURPS.pdfTired',
+              },
+            }),
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
         ],
@@ -272,9 +318,14 @@ export class StatusEffect {
           gurps: {
             effect: {
               pdfref: 'GURPS.pdfTired',
-              followup: [
-                { type: 'otf', args: '/fp -1' }, // TODO put in chat when followups are activated
-                { type: 'chat', args: 'GURPS.chatTurnOffTired' },
+              terminateActions: [
+                {
+                  type: 'chat',
+                  msg: 'GURPS.chatTurnOffTired',
+                  args: {
+                    name: '@displayname',
+                  },
+                },
               ],
             },
           },
@@ -511,7 +562,7 @@ const _getActiveEffectsData = function (id) {
     shock1: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock1',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -528,7 +579,7 @@ const _getActiveEffectsData = function (id) {
     shock2: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock2',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -545,7 +596,7 @@ const _getActiveEffectsData = function (id) {
     shock3: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock3',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -562,7 +613,7 @@ const _getActiveEffectsData = function (id) {
     shock4: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierStatusShock4',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -580,7 +631,7 @@ const _getActiveEffectsData = function (id) {
       // TODO tint: maybe set the tint based on physical/mental stun?
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierStatusStunned',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -603,7 +654,7 @@ const _getActiveEffectsData = function (id) {
     grapple: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierGrappling',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -617,12 +668,12 @@ const _getActiveEffectsData = function (id) {
     nauseated: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionNausea',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionNauseaDef',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -636,12 +687,12 @@ const _getActiveEffectsData = function (id) {
     coughing: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionCough',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionCoughIQ',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -655,7 +706,7 @@ const _getActiveEffectsData = function (id) {
     retching: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionRetch',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -664,7 +715,7 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             pdfref: 'GURPS.pdfHazardRetching',
-            followup: [{ type: 'otf', args: '/fp -1' }], // TODO put in chat when followups are activated
+            terminateActions: [{ type: 'otf', args: '/fp -1' }], // TODO put in chat when followups are activated
             requiresConfig: true,
           },
         },
@@ -673,7 +724,7 @@ const _getActiveEffectsData = function (id) {
     drowsy: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrowsy',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -687,12 +738,12 @@ const _getActiveEffectsData = function (id) {
     tipsy: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTipsy',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTipsyCR',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -706,12 +757,12 @@ const _getActiveEffectsData = function (id) {
     drunk: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrunk',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionDrunkCR',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -725,7 +776,7 @@ const _getActiveEffectsData = function (id) {
     euphoria: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionEuphoria',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -739,7 +790,7 @@ const _getActiveEffectsData = function (id) {
     mild_pain: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionModerateHPT',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -753,7 +804,7 @@ const _getActiveEffectsData = function (id) {
     moderate_pain: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionModerate',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -767,7 +818,7 @@ const _getActiveEffectsData = function (id) {
     moderate_pain2: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTerribleHPT',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -781,7 +832,7 @@ const _getActiveEffectsData = function (id) {
     severe_pain: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionSevere',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -795,7 +846,7 @@ const _getActiveEffectsData = function (id) {
     terrible_pain: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifierAfflictionTerrible',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
@@ -820,12 +871,12 @@ const _getActiveEffectsData = function (id) {
     blind: {
       changes: [
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifiersBlindAttack',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
-          key: 'data.conditions.modifiers',
+          key: 'data.conditions.self.modifiers',
           value: 'GURPS.modifiersBlindDefend',
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },

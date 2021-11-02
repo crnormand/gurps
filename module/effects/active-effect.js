@@ -1,5 +1,7 @@
 'use strict'
 
+import { i18n, i18n_f } from '../../lib/utilities.js'
+
 export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
@@ -33,7 +35,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
       if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
       else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
-      else if (change.key === 'chat') console.log(`Add message [${change.value}] to chat.`)
+      else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
       else console.log(change)
     })
 
@@ -51,6 +53,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       'deleteActiveEffect',
       (/** @type {string} */ effect, /** @type {any} */ _data, /** @type {any} */ _userId) => {
         console.log('delete ' + effect)
+        effect.terminateActions.filter(it => it.type === 'chat').forEach(it => effect.chat(effect.parent, it))
       }
     )
 
@@ -83,6 +86,46 @@ export default class GurpsActiveEffect extends ActiveEffect {
     )
   }
 
+  chat(actor, value) {
+    if (!!value?.frequency && value.frequency === 'once') {
+      if (this.chatmessages.includes(value.msg)) {
+        console.log(`Message [${value.msg}] already displayed, do nothing`)
+        return
+      }
+    }
+
+    console.log(`Add message [${value.msg}] to chat.`)
+
+    for (const key in value.args) {
+      let val = value.args[key]
+      if (foundry.utils.getType(val) === 'string' && val.startsWith('@')) {
+        value.args[key] = actor[val.slice(1)]
+      } else if (foundry.utils.getType(val) === 'string' && val.startsWith('!')) {
+        value.args[key] = i18n(val.slice(1))
+      }
+      if (key === 'pdfref') value.args.pdfref = i18n(val)
+    }
+
+    let msg = !!value.args ? i18n_f(value.msg, value.args) : i18n(value.msg)
+    console.log(msg)
+
+    let self = this
+
+    renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+      let users = actor.getOwners()
+      let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+
+      let messageData = {
+        content: content,
+        whisper: ids || null,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+      }
+      ChatMessage.create(messageData)
+      ui.combat?.render()
+      self.chatmessages.push(value.msg)
+    })
+  }
+
   /**
    * @param {ActiveEffectData} data
    * @param {any} context
@@ -91,15 +134,16 @@ export default class GurpsActiveEffect extends ActiveEffect {
     super(data, context)
 
     this.context = context
+    this.chatmessages = []
   }
 
   get endCondition() {
     return this.getFlag('gurps', 'effect.endCondition')
   }
 
-  get followup() {
-    let data = /** @type {ActiveEffectData} */ (this.getFlag('gurps', 'effect.followup'))
-    return new GurpsActiveEffect(data, this.context)
+  get terminateActions() {
+    let data = this.getFlag('gurps', 'effect.terminateActions')
+    return data ?? []
   }
 
   /**

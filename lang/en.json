@@ -277,8 +277,8 @@
   "GURPS.chatToApplyEffects": "to apply status effects",
   "GURPS.chatTokenLightPicker": "Token Light Picker",
   "GURPS.chatToggling": "Toggling",
-  "GURPS.chatTurnOnReeling": "{name} is Reeling. Move and Dodge are halved. {classStart}([PDF:{pdfref}]){classEnd}",
-  "GURPS.chatTurnOnTired": "{name} is Tired. Move, Dodge, and ST are halved. {classStart}([PDF:{pdfref}]){classEnd}",
+  "GURPS.chatTurnOnReeling": "{name} is Reeling. Move and Dodge are halved. ([PDF:{pdfref}])",
+  "GURPS.chatTurnOnTired": "{name} is Tired. Move, Dodge, and ST are halved. ([PDF:{pdfref}])",
   "GURPS.chatTurnOffReeling": "{name} is no longer Reeling.",
   "GURPS.chatTurnOffTired": "{name} is no longer Tired.",
   "GURPS.chatUnableToFindMacro": "Unable to find macro named",
@@ -1006,5 +1006,8 @@
   "GURPS.STATUSCrawling": "Crawling",
   "GURPS.STATUSProne": "Lying Down",
 
-  "GURPS.effectHintBlind": "-6 to hit if accustomed to being blind; Hearing -2 success lowers the to hit penalty to -4."
+  "GURPS.effectHintBlind": "-6 to hit if accustomed to being blind; Hearing -2 success lowers the to hit penalty to -4.",
+
+  "GURPS.effectChatModifiedToHit": "{displayName} is<br>[{modifier}]",
+  "GURPS.effectChatRangedModifier": "{displayName} is<br>[-2 to be hit with ranged combat ({posture})]."
 }

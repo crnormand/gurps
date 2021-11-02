@@ -98,7 +98,8 @@ export class GurpsActor extends Actor {
     super.prepareBaseData()
 
     this.getGurpsActorData().conditions.posture = 'standing'
-    this.getGurpsActorData().conditions.modifiers = []
+    this.getGurpsActorData().conditions.self.modifiers = []
+    this.getGurpsActorData().conditions.target.modifiers = []
     this.getGurpsActorData().conditions.exhausted = false
     this.getGurpsActorData().conditions.reeling = false
   }
@@ -2852,45 +2853,6 @@ export class GurpsActor extends Actor {
       token.setEffectActive(name, active)
     }
   }
-
-  /**
-   * Recalculate derived values (updates move, dodge, etc) and add a chat message with the change.
-   * @param {string} option
-   * @param {boolean} flag
-   */
-  // changeOneThirdStatus(option, flag) {
-  // if (this.isOwner)
-  //   this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
-  //     this.calculateDerivedValues()
-  //     let i18nMessage =
-  //       option === 'isReeling'
-  //         ? flag
-  //           ? 'GURPS.chatTurnOnReeling'
-  //           : 'GURPS.chatTurnOffReeling'
-  //         : flag
-  //         ? 'GURPS.chatTurnOnTired'
-  //         : 'GURPS.chatTurnOffTired'
-  //     let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling') : i18n('GURPS.pdfTired')
-  //     let msg = i18n_f(i18nMessage, {
-  //       name: this.displayname,
-  //       classStart: '<span class="pdflink">',
-  //       classEnd: '</span>',
-  //       pdfref: pdfref,
-  //     })
-  //     renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
-  //       let users = this.getOwners()
-  //       let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
-  //       /** @type {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData').ChatMessageDataConstructorData} */
-  //       let messageData = {
-  //         content: content,
-  //         whisper: ids || null,
-  //         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-  //       }
-  //       ChatMessage.create(messageData)
-  //       ui.combat?.render()
-  //     })
-  //   })
-  // }
 
   /**
    * @param {string} pattern
