@@ -233,8 +233,8 @@
   text-decoration: none;
   background-color: rgb(225, 225, 26) !important;
   color: black;
-  border-right: 1px solid #333300;
-  border-bottom: 1px solid #333300;
+  border-right: 1px solid #333300 !important;
+  border-bottom: 1px solid #333300 !important;
   border-radius: 3px;
   margin-bottom: -1px;
   margin-right: -1px;
@@ -268,8 +268,8 @@
   background-image: none;
   background-color: rgb(255, 190, 130) !important;
   color: black;
-  border-right: 1px solid rgb(128, 95, 65);
-  border-bottom: 1px solid rgb(128, 95, 65);
+  border-right: 1px solid rgb(128, 95, 65) !important;
+  border-bottom: 1px solid rgb(128, 95, 65) !important;
   border-radius: 3px;
 }
 
@@ -1516,7 +1516,7 @@ body {
 }
 
 #combat-sheet > div {
-    margin-top: var(--sectiongap);
+  margin-top: var(--sectiongap);
 }
 
 #combat-grid {
