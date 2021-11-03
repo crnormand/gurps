@@ -854,7 +854,6 @@ const actionFuncs = {
     })
   },
   async ['skill-spell']({action, actor, event, originalAction, calcOnly}) {
-    console.log(calcOnly)
     if (!actor && (!action || !action.target)) {
       ui.notifications?.warn('You must have a character selected')
       return false
