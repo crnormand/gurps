@@ -1,10 +1,11 @@
-import { parselink } from '../../lib/parselink.js'
-import { i18n } from '../../lib/utilities.js'
+import GurpsWiring from '../gurps-wiring.js'
+import { i18n, i18n_f } from '../../lib/utilities.js'
 
 export class EffectModifierPopout extends Application {
-  constructor(token, options = {}) {
+  constructor(token, callback, options = {}) {
     super(options)
     this._token = token
+    this._callback = callback
   }
 
   /** @override */
@@ -13,6 +14,7 @@ export class EffectModifierPopout extends Application {
       template: 'systems/gurps/templates/actor/effect-modifier-popout.hbs',
       classes: ['sidebar-popout effect-modifiers-app'],
       popOut: true,
+      top: 0,
       width: 400,
       height: 'auto',
       minimizable: true,
@@ -24,9 +26,8 @@ export class EffectModifierPopout extends Application {
 
   /** @override */
   getData(options) {
-    let selected = this._token?.name ?? i18n('GURPS.effectModNoTokenSelected')
     return mergeObject(super.getData(options), {
-      selected: selected,
+      selected: this.selectedToken,
       modifiers: this._token
         ? this._token.actor
             .getGurpsActorData()
@@ -36,13 +37,34 @@ export class EffectModifierPopout extends Application {
     })
   }
 
+  get selectedToken() {
+    return this._token?.name ?? i18n('GURPS.effectModNoTokenSelected')
+  }
+
   getToken() {
     return this._token
   }
 
   async setToken(value) {
     this._token = value
-    console.log(value?.id)
     await this.render(false)
   }
+
+  /** @override */
+  activateListeners(html) {
+    GurpsWiring.hookupAllEvents(html)
+    GurpsWiring.hookupGurpsRightClick(html)
+
+    html
+      .closest('div.effect-modifiers-app')
+      .find('.window-title')
+      .text(i18n_f('GURPS.effectModifierPopout', { name: this.selectedToken }, 'Effect Modifiers: {name}'))
+  }
+
+  /** @override */
+  async close(options) {
+    this._callback.close(options)
+  }
+
+  async closeApp(options) { super.close(options) }
 }

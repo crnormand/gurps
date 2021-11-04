@@ -419,6 +419,17 @@
   font-weight: normal;
 }
 
+.gga-popup-window .glinkmodminus:hover {
+  cursor: pointer;
+  /* background: var(--lightgrey); */
+  color: white;
+  text-shadow: var(--controlhover);
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-weight: normal;
+}
+
 .gurpslink.test,
 .gurpslink:hover {
   cursor: pointer;

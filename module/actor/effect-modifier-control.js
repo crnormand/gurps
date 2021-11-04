@@ -7,13 +7,34 @@ export class EffectModifierControl {
   static EffectModName = 'GURPSEffectsMod'
 
   constructor() {
-    this.sharedState = { effectModifier: false, token: null }
+    this._showPopup = false
+    this.token = null
+
     Hooks.once('init', this._registerSetting.bind(this))
     Hooks.on('renderSceneControls', this._createEffectModifierButton.bind(this))
     Hooks.on('controlToken', this._controlToken.bind(this))
     Hooks.on('updateToken', this._updateToken.bind(this))
     Hooks.on('createActiveEffect', this._createActiveEffect.bind(this))
-    Hooks.once('ready', () => (this._ui = new EffectModifierPopout(null)))
+    Hooks.once('ready', () => (this._ui = new EffectModifierPopout(null, this)))
+    Hooks.on('closeEffectModifierPopout', () => (this.showPopup = false))
+  }
+
+  get showPopup() {
+    return this._showPopup
+  }
+
+  set showPopup(b) {
+    if (b !== this.showPopup) this.togglePopup()
+  }
+
+  togglePopup(closeOptions) {
+    this._showPopup = !this._showPopup
+
+    // show the token control as active
+    let toggle = $.find('[data-control=token] ol > li[data-tool=GURPSEffectsMod]')
+    toggle[0].classList.toggle('active')
+
+    this.toggleEffectModifierPopup(closeOptions)
   }
 
   _registerSetting() {
@@ -33,60 +54,63 @@ export class EffectModifierControl {
       const name = EffectModifierControl.EffectModName
       const title = i18n('GURPS.tokenToolsTitle')
       const icon = 'fas fa-list-alt'
-      const active = this.sharedState.effectModifier
+      const active = this.showPopup
       const btn = $(
         `<li class="control-tool toggle ${
           active ? 'active' : ''
         }" title="${title}" data-tool="${name}"><i class="${icon}"></i></li>`
       )
-      btn.on('click', () => this.toggleEffectModifierPopup())
+
+      let self = this
+      btn.on('click', _ => self.togglePopup())
 
       let list = html.find('[data-control=token] ol')
       list.append(btn)
     }
   }
 
-  _createActiveEffect(effect, options, id) {
+  _createActiveEffect(effect, _, __) {
     let effectID = effect?.parent.id
-    let sharedStateID = this.sharedState.token.actor.id
+    let sharedStateID = this.token?.actor.id
     console.log(`_createActiveEffect: effect id: ${effectID}, token actor id: ${sharedStateID}`)
-    if (effect?.parent.id === this.sharedState.token.actor.id) this._ui.render(false)
+    if (effect?.parent.id === this.token.actor.id) this._ui.render(false)
   }
 
   _updateToken(tokenDocument) {
     let tokenID = tokenDocument.object.id
-    let sharedStateID = this.sharedState.token.id
+    let sharedStateID = this.token?.id
     console.log(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
-    if (tokenDocument.object === this.sharedState.token) this._ui.render(false)
+    if (tokenDocument.object === this.token) this._ui.render(false)
   }
 
   _controlToken(token, isControlled) {
-    let sharedStateID = this.sharedState.token?.id
+    let sharedStateID = this.token?.id
     console.log(`controlToken: isControlled: ${isControlled}, token: ${token?.id}, current token: ${sharedStateID}`)
-    if (isControlled) this.sharedState.token = token
-    else if (this.sharedState.token === token) this.sharedState.token = null
+    if (isControlled) this.token = token
+    else if (this.token === token) this.token = null
 
-    this._ui.setToken(this.sharedState.token)
+    this._ui.setToken(this.token)
 
     // FIXME Yet another crappy hack ... no idea why when switching from one token to another we end up in the
     // "no token selected" state. This fixes that problem.
     let self = this
-    setTimeout(function () {
-      self._ui.render(false)
-    }, 500)
+    setTimeout(() => self._ui.render(false), 250)
+  }
+
+  async close(options) {
+    if (this.showPopup) this.togglePopup(options)
   }
 
   shouldUseEffectModifierPopup() {
     return game.settings.get(SYSTEM_NAME, EffectModifierControl.SETTING_SHOW_EFFECTMODIFIERS)
   }
 
-  toggleEffectModifierPopup() {
-    this.sharedState.effectModifier = !this.sharedState.effectModifier
-    if (this.sharedState.effectModifier) {
-      this._ui.setToken(this.sharedState.token)
+  toggleEffectModifierPopup(closeOptions) {
+    if (this.showPopup) {
+      this._ui.setToken(this.token)
       this._ui.render(true)
     } else {
-      this._ui.close()
+      this._ui.closeApp(closeOptions)
     }
   }
 }
