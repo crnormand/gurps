@@ -75,7 +75,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
             for (const effect of token.actor.effects) {
               let duration = effect.duration
               if (duration && !!duration.duration) {
-                if (duration.remaining && duration.remaining <= 1) {
+                if (duration.remaining <= 1) {
                   effect.delete()
                 }
               }

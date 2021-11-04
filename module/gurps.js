@@ -84,7 +84,7 @@ GURPS.Maneuvers = Maneuvers
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
 CONFIG.time.roundTime = 1
 
-GURPS.SavedStatusEffects = CONFIG.statusEffects
+GURPS.StatusEffect = new StatusEffect()
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null
@@ -1434,8 +1434,6 @@ Hooks.once('init', async function () {
 
   // do this only after we've initialized i18n/localize
   GURPS.Maneuvers = Maneuvers
-  GURPS.StatusEffect = new StatusEffect()
-  CONFIG.statusEffects = GURPS.StatusEffect.effects()
 
   // Define custom Entity classes
   // @ts-ignore

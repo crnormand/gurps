@@ -1,8 +1,24 @@
+import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
+import { i18n } from '../../lib/utilities.js'
 import { MOVE_ONE, MOVE_NONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
 
 export class StatusEffect {
+  static SETTING_USE_ACTIVE_EFFECTS = 'use-active-effects'
+
+  static useActiveEffects() {
+    return game.settings.get(SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS)
+  }
+
   constructor() {
-    this.useActiveEffects = true // TODO set based on system setting
+    Hooks.once('init', this._initialize.bind(this))
+  }
+
+  _initialize() {
+    this._registerSetting()
+
+    GURPS.SavedStatusEffects = CONFIG.statusEffects
+
+    this.useActiveEffects = StatusEffect.useActiveEffects()
     this._statusEffects = {}
 
     for (const key in this.rawStatusEffects) {
@@ -13,6 +29,21 @@ export class StatusEffect {
       }
       this._statusEffects[key] = value
     }
+
+    // replace standard effects
+    CONFIG.statusEffects = this.effects()
+  }
+
+  _registerSetting() {
+    game.settings.register(SYSTEM_NAME, StatusEffect.SETTING_USE_ACTIVE_EFFECTS, {
+      name: i18n('GURPS.settingActiveEffects'),
+      hint: i18n('GURPS.settingHintActiveEffects'),
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: value => console.log(`${StatusEffect.SETTING_USE_ACTIVE_EFFECTS} : ${value}`),
+    })
   }
 
   effects() {
@@ -147,8 +178,20 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'chat',
+            key: 'data.conditions.target.modifiers',
             value: 'GURPS.modifierPostureCrouchRanged',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          },
+          {
+            key: 'chat',
+            value: JSON.stringify({
+              msg: 'GURPS.effectChatRangedModifier',
+              frequency: 'once',
+              args: {
+                displayName: '@displayname',
+                posture: '!GURPS.STATUSCrouch',
+              },
+            }),
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
@@ -184,8 +227,20 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'chat',
+            key: 'data.conditions.target.modifiers',
             value: 'GURPS.modifierPostureProneRanged',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          },
+          {
+            key: 'chat',
+            value: JSON.stringify({
+              msg: 'GURPS.effectChatRangedModifier',
+              frequency: 'once',
+              args: {
+                displayName: '@displayname',
+                posture: '!GURPS.STATUSSit',
+              },
+            }),
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {
@@ -221,8 +276,20 @@ export class StatusEffect {
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
           {
-            key: 'chat',
+            key: 'data.conditions.target.modifiers',
             value: 'GURPS.modifierPostureProneRanged',
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          },
+          {
+            key: 'chat',
+            value: JSON.stringify({
+              msg: 'GURPS.effectChatRangedModifier',
+              frequency: 'once',
+              args: {
+                displayName: '@displayname',
+                posture: '!GURPS.STATUSCrawling',
+              },
+            }),
             mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
           },
           {

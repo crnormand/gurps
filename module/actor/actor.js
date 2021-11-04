@@ -102,6 +102,10 @@ export class GurpsActor extends Actor {
     this.getGurpsActorData().conditions.target = { modifiers: [] }
     this.getGurpsActorData().conditions.exhausted = false
     this.getGurpsActorData().conditions.reeling = false
+
+    let attributes = this.getGurpsActorData().attributes
+    if (foundry.utils.getType(attributes.ST.import) === 'string')
+      this.getGurpsActorData().attributes.ST.import = parseInt(attributes.ST.import)
   }
 
   prepareEmbeddedEntities() {
@@ -192,8 +196,8 @@ export class GurpsActor extends Actor {
         else data.attributes[attr].value = parseInt(data.attributes[attr].import)
     }
     // After all of the attributes are copied over, apply tired to ST
-    if (!!data.conditions.exhausted)
-      data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
+    // if (!!data.conditions.exhausted)
+    //   data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, k, d) => {
       // @ts-ignore
       e.level = parseInt(+e.import)
