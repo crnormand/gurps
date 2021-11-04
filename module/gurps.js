@@ -63,6 +63,7 @@ import { StatusEffect } from './effects/effects.js'
 import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import Maneuvers from './actor/maneuver.js'
+import { EffectModifierControl } from './actor/effect-modifier-control.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -72,8 +73,9 @@ AddChatHooks()
 JQueryHelpers()
 MoustacheWax()
 Settings.initializeSettings()
+GURPS.EffectModifierControl = new EffectModifierControl()
 
-// CONFIG.debug.hooks = true
+CONFIG.debug.hooks = true
 
 // Expose Maneuvers to make them easier to use in modules
 GURPS.Maneuvers = Maneuvers

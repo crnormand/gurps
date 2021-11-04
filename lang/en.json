@@ -1009,5 +1009,8 @@
   "GURPS.effectHintBlind": "-6 to hit if accustomed to being blind; Hearing -2 success lowers the to hit penalty to -4.",
 
   "GURPS.effectChatModifiedToHit": "{displayName} is<br>[{modifier}]",
-  "GURPS.effectChatRangedModifier": "{displayName} is<br>[-2 to be hit with ranged combat ({posture})]."
+  "GURPS.effectChatRangedModifier": "{displayName} is<br>[-2 to be hit with ranged combat ({posture})].",
+
+  "GURPS.tokenToolsTitle": "Open Effect Modifier Popup",
+  "GURPS.effectModNoTokenSelected": "No token selected"
 }

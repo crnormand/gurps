@@ -1,4 +1,4 @@
-import { arrayToObject, atou, generateUniqueId, i18n, i18n_f, objectToArray } from '../../lib/utilities.js'
+import { arrayToObject, atou, i18n, i18n_f, objectToArray } from '../../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
@@ -9,6 +9,7 @@ import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import { GURPS } from '../gurps.js'
+import { EffectModifierPopout } from './effect-modifier-popout.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -493,6 +494,8 @@ export class GurpsActorSheet extends ActorSheet {
       let target = $(ev.currentTarget)
       this.actor.replacePosture(target.val())
     })
+
+    html.find('#open-modifier-popup').click(this.showModifierPopup.bind(this))
   }
 
   _createHeaderMenus(html) {
@@ -824,6 +827,11 @@ export class GurpsActorSheet extends ActorSheet {
       { width: 600 }
     )
     d.render(true)
+  }
+
+  async showModifierPopup(ev) {
+    ev.preventDefault()
+    new EffectModifierPopout(this.actor).render(true)
   }
 
   async editEquipment(actor, path, obj) {

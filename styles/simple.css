@@ -391,6 +391,16 @@
   background-color: rgb(255, 175, 175) !important;
 }
 
+.gga-popup-window .glinkmodminus {
+  background-color: transparent !important;
+  color: lightpink;
+}
+
+.gga-popup-window .modifier-list {
+  list-style-type: none;
+}
+
+
 .glinkmodminus:active {
   cursor: pointer;
   text-decoration: none;
@@ -807,6 +817,10 @@
   padding-left: 0.2em;
   padding-right: 0.2em;
   border-bottom: 1px solid lightgray;
+}
+
+.sidebar-popout.effect-modifiers-app {
+  min-height: unset;
 }
 
 body {
