@@ -12,10 +12,8 @@ export class EffectModifierControl {
     Hooks.on('renderSceneControls', this._createEffectModifierButton.bind(this))
     Hooks.on('controlToken', this._controlToken.bind(this))
     Hooks.on('updateToken', this._updateToken.bind(this))
-    Hooks.on('applyActiveEffect', this._applyActiveEffect.bind(this))
-    Hooks.once('ready', () => {
-      this._ui = new EffectModifierPopout(null)
-    })
+    Hooks.on('createActiveEffect', this._createActiveEffect.bind(this))
+    Hooks.once('ready', () => (this._ui = new EffectModifierPopout(null)))
   }
 
   _registerSetting() {
@@ -48,19 +46,34 @@ export class EffectModifierControl {
     }
   }
 
-  _applyActiveEffect(actor, options, id) {
-    if (actor.id === this.sharedState.token.actor.id) this._ui.render(false)
+  _createActiveEffect(effect, options, id) {
+    let effectID = effect?.parent.id
+    let sharedStateID = this.sharedState.token.actor.id
+    console.log(`_createActiveEffect: effect id: ${effectID}, token actor id: ${sharedStateID}`)
+    if (effect?.parent.id === this.sharedState.token.actor.id) this._ui.render(false)
   }
 
   _updateToken(tokenDocument) {
+    let tokenID = tokenDocument.object.id
+    let sharedStateID = this.sharedState.token.id
+    console.log(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
     if (tokenDocument.object === this.sharedState.token) this._ui.render(false)
   }
 
   _controlToken(token, isControlled) {
-    if (isControlled && !!token) this.sharedState.token = token
-    if (!isControlled) this.sharedState.token = null
-    this._ui.token = this.sharedState.token
-    this._ui.render(false)
+    let sharedStateID = this.sharedState.token?.id
+    console.log(`controlToken: isControlled: ${isControlled}, token: ${token?.id}, current token: ${sharedStateID}`)
+    if (isControlled) this.sharedState.token = token
+    else if (this.sharedState.token === token) this.sharedState.token = null
+
+    this._ui.setToken(this.sharedState.token)
+
+    // FIXME Yet another crappy hack ... no idea why when switching from one token to another we end up in the
+    // "no token selected" state. This fixes that problem.
+    let self = this
+    setTimeout(function () {
+      self._ui.render(false)
+    }, 500)
   }
 
   shouldUseEffectModifierPopup() {
@@ -70,8 +83,10 @@ export class EffectModifierControl {
   toggleEffectModifierPopup() {
     this.sharedState.effectModifier = !this.sharedState.effectModifier
     if (this.sharedState.effectModifier) {
-      this._ui.token = this.sharedState.token
+      this._ui.setToken(this.sharedState.token)
       this._ui.render(true)
+    } else {
+      this._ui.close()
     }
   }
 }

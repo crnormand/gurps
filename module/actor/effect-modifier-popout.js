@@ -24,8 +24,9 @@ export class EffectModifierPopout extends Application {
 
   /** @override */
   getData(options) {
+    let selected = this._token?.name ?? i18n('GURPS.effectModNoTokenSelected')
     return mergeObject(super.getData(options), {
-      actor: this._token?.name ?? i18n('GURPS.effectModNoActorSelected'),
+      selected: selected,
       modifiers: this._token
         ? this._token.actor
             .getGurpsActorData()
@@ -35,12 +36,13 @@ export class EffectModifierPopout extends Application {
     })
   }
 
-  get token() {
+  getToken() {
     return this._token
   }
 
-  set token(value) {
+  async setToken(value) {
     this._token = value
-    this.render(false)
+    console.log(value?.id)
+    await this.render(false)
   }
 }
