@@ -1137,6 +1137,12 @@ ul#result-effects li {
   font-size: 90%;
 }
 
+#condition .fieldblock button#open-modifier-popup {
+  font-size: 90%;
+  max-height: fit-content;
+  padding: 0;
+}
+
 select#maneuver option {
       max-width: 12em;
     white-space: nowrap;

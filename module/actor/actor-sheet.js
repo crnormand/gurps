@@ -831,7 +831,7 @@ export class GurpsActorSheet extends ActorSheet {
 
   async showModifierPopup(ev) {
     ev.preventDefault()
-    new EffectModifierPopout(this.actor).render(true)
+    GURPS.EffectModifierControl.showPopup = true
   }
 
   async editEquipment(actor, path, obj) {
