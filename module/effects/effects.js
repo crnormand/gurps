@@ -18,7 +18,7 @@ export class StatusEffect {
 
     GURPS.SavedStatusEffects = CONFIG.statusEffects
 
-    this.useActiveEffects = StatusEffect.useActiveEffects()
+    this.useActiveEffects = true // StatusEffect.useActiveEffects()
     this._statusEffects = {}
 
     for (const key in this.rawStatusEffects) {
@@ -326,6 +326,26 @@ export class StatusEffect {
         label: 'GURPS.StatusStunnedMental',
         tint: '', // #FEAEF4 #AEFEAE
       },
+      shock1: {
+        icon: 'systems/gurps/icons/statuses/condition-shock1.webp',
+        id: 'shock1',
+        label: 'EFFECT.StatusShocked',
+      },
+      shock2: {
+        icon: 'systems/gurps/icons/statuses/condition-shock2.webp',
+        id: 'shock2',
+        label: 'EFFECT.StatusShocked',
+      },
+      shock3: {
+        icon: 'systems/gurps/icons/statuses/condition-shock3.webp',
+        id: 'shock3',
+        label: 'EFFECT.StatusShocked',
+      },
+      shock4: {
+        icon: 'systems/gurps/icons/statuses/condition-shock4.webp',
+        id: 'shock4',
+        label: 'EFFECT.StatusShocked',
+      },
       reeling: {
         icon: 'systems/gurps/icons/statuses/cth-condition-major-wound.webp',
         id: 'reeling',
@@ -408,26 +428,6 @@ export class StatusEffect {
             },
           },
         },
-      },
-      shock1: {
-        icon: 'systems/gurps/icons/statuses/condition-shock1.webp',
-        id: 'shock1',
-        label: 'EFFECT.StatusShocked',
-      },
-      shock2: {
-        icon: 'systems/gurps/icons/statuses/condition-shock2.webp',
-        id: 'shock2',
-        label: 'EFFECT.StatusShocked',
-      },
-      shock3: {
-        icon: 'systems/gurps/icons/statuses/condition-shock3.webp',
-        id: 'shock3',
-        label: 'EFFECT.StatusShocked',
-      },
-      shock4: {
-        icon: 'systems/gurps/icons/statuses/condition-shock4.webp',
-        id: 'shock4',
-        label: 'EFFECT.StatusShocked',
       },
       fly: {
         icon: 'systems/gurps/icons/statuses/x-flying.webp',
