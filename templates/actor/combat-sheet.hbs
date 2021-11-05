@@ -18,8 +18,8 @@
               resource=data.HP
               label='GURPS.attributesHPNAME'
               compact=true
-              condition='isReeling'
-              testcondition=data.additionalresources.isReeling
+              condition='reeling'
+              testcondition=data.conditions.reeling
             }}
           {{/if}}
           {{>hpfp-tracker
@@ -27,8 +27,8 @@
             resource=data.FP
             label='GURPS.attributesFPNAME'
             compact=true
-            condition='isTired'
-            testcondition=data.additionalresources.isTired
+            condition='exhausted'
+            testcondition=data.conditions.exhausted
           }}
         </div>
         {{>conditions}}
