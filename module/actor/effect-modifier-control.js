@@ -39,8 +39,8 @@ export class EffectModifierControl {
 
   _registerSetting() {
     game.settings.register(SYSTEM_NAME, EffectModifierControl.SETTING_SHOW_EFFECTMODIFIERS, {
-      name: i18n('GURPS.settingTokenToolsShowEffectMods'),
-      hint: i18n('GURPS.settingHintTokenToolsShowEffectMods'),
+      name: i18n('GURPS.settingTokenToolsShowEffectMods', 'Show Effect Modifiers'),
+      hint: i18n('GURPS.settingHintTokenToolsShowEffectMods', 'Enable the token Effect Modifiers popup window.'),
       scope: 'client',
       config: true,
       type: Boolean,
@@ -73,7 +73,7 @@ export class EffectModifierControl {
     let effectID = effect?.parent.id
     let sharedStateID = this.token?.actor.id
     console.log(`_createActiveEffect: effect id: ${effectID}, token actor id: ${sharedStateID}`)
-    if (effect?.parent.id === this.token.actor.id) this._ui.render(false)
+    if (effect?.parent.id === this.token?.actor.id) this._ui.render(false)
   }
 
   _updateToken(tokenDocument) {

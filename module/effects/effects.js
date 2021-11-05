@@ -39,9 +39,9 @@ export class StatusEffect {
       name: i18n('GURPS.settingActiveEffects'),
       hint: i18n('GURPS.settingHintActiveEffects'),
       scope: 'world',
-      config: true,
+      config: false, // TODO when everything is ready change this to 'true' to allow end user to configure
       type: Boolean,
-      default: true,
+      default: false,
       onChange: value => console.log(`${StatusEffect.SETTING_USE_ACTIVE_EFFECTS} : ${value}`),
     })
   }
