@@ -8,6 +8,7 @@ Release 0.11.14
 - Added Posture (as an Active Effect) to Conditions.
 - Rewrote Reeling and Exhausted to be Active Effects.
 - Add Effects Modifier popup window.
+- Added "Mental Stun" to status effects.
 
 Release 0.11.13
 
