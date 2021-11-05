@@ -5,12 +5,16 @@ export const DEFENSE_ANY = 'any'
 export const DEFENSE_NONE = 'none'
 export const DEFENSE_DODGEBLOCK = 'dodge-block'
 
-export const MOVE_STEP = 'step'
 export const MOVE_NONE = 'none'
-export const MOVE_FULL = 'full'
+export const MOVE_ONE = '1'
+export const MOVE_STEP = 'step'
+export const MOVE_ONETHIRD = '×1/3'
 export const MOVE_HALF = 'half'
+export const MOVE_TWOTHIRDS = '×2/3'
+export const MOVE_FULL = 'full'
 
-export const PROPERTY_MOVEOVERRIDE = 'data.moveoverride'
+export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'data.moveoverride.maneuver'
+export const PROPERTY_MOVEOVERRIDE_POSTURE = 'data.moveoverride.posture'
 
 CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')
@@ -90,10 +94,9 @@ class Maneuver {
       key: 'data.conditions.maneuver',
       value: this._data.name,
       mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-      priority: 10,
     })
 
-    changes.push({ key: PROPERTY_MOVEOVERRIDE, value: this.move, mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM })
+    changes.push({ key: PROPERTY_MOVEOVERRIDE_MANEUVER, value: this.move, mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE })
 
     return changes
   }

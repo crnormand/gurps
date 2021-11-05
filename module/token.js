@@ -2,6 +2,8 @@ import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } fro
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
+import { StatusEffect } from './effects/effects.js'
+import { GURPS } from './gurps.js'
 
 export default class GurpsToken extends Token {
   static ready() {
@@ -77,6 +79,44 @@ export default class GurpsToken extends Token {
   }
 
   /**
+   * @override
+   * @param {*} effect
+   * @param {*} options
+   */
+  async toggleEffect(effect, options) {
+    // is this a Posture ActiveEffect?
+    if (effect.icon && foundry.utils.getProperty(effect, 'flags.gurps.effect.type') === 'posture') {
+      // see if there are other Posture ActiveEffects active
+      let existing = this.actor.effects.filter(e => e.getFlag('gurps', 'effect.type') === 'posture')
+      existing = existing.filter(e => e.getFlag('core', 'statusId') !== effect.id)
+      // if so, toggle them off:
+      for (let e of existing) {
+        let id = e.getFlag('core', 'statusId')
+        await super.toggleEffect(GURPS.StatusEffect.lookup(id))
+      }
+    }
+    super.toggleEffect(effect, options)
+  }
+
+  async setEffectActive(name, active) {
+    // lookup effect
+    let effect = GURPS.StatusEffect.lookup(name)
+
+    // check to see if it is active
+    let existing = this.actor.effects.find(e => e.getFlag('core', 'statusId') === name)
+
+    if (active && !!existing) return
+    if (!active && !existing) return
+
+    this.toggleEffect(effect)
+  }
+
+  /**
+   * We use this function because maneuvers are special Active Effects: maneuvers don't apply
+   * outside of combat, and only one maneuver can be active simultaneously. So we really don't
+   * deactivate the old maneuver and then activate the new one -- we simply update the singleton
+   * maneuver data to match the new maneuver's data.
+   *
    * @param {string} maneuverName
    */
   async setManeuver(maneuverName) {

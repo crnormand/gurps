@@ -12,13 +12,12 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait, objectToArray, arrayToObject, zeroFill } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait, zeroFill } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
 import { AnimChatProcessor } from '../chat/anim.js'
-import { GurpsActor, Advantage, Skill, Melee, Ranged, Encumbrance, Note, Equipment } from '../../module/actor/actor.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -756,29 +755,29 @@ class DevChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
-   let c = 10000
+    let c = 10000
     var t = c
-    var start = performance.now();
+    var start = performance.now()
     while (t-- > 0) {
-       zeroFill(t, 5)
+      zeroFill(t, 5)
     }
-    var end = performance.now();
-    console.log("ZeroFill:" + (end - start))
-  
+    var end = performance.now()
+    console.log('ZeroFill:' + (end - start))
+
     t = c
-    start = performance.now();
+    start = performance.now()
     while (t-- > 0) {
-       GURPS.genkey(t)
+      GURPS.genkey(t)
     }
-    end = performance.now();
-    console.log("genkey:" + (end - start))
+    end = performance.now()
+    console.log('genkey:' + (end - start))
 
     let actor = GURPS.LastActor
     if (!actor) {
-      return  
+      return
     }
 
-/*    let c = "data.equipment.carried.00000"
+    /*    let c = "data.equipment.carried.00000"
     let o = "data.equipment.other.00000"
     
     let m = 100
@@ -792,4 +791,3 @@ class DevChatProcessor extends ChatProcessor {
 */
   }
 }
-

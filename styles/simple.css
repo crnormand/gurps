@@ -391,6 +391,16 @@
   background-color: rgb(255, 175, 175) !important;
 }
 
+.gga-popup-window .glinkmodminus {
+  background-color: transparent !important;
+  color: lightpink;
+}
+
+.gga-popup-window .modifier-list {
+  list-style-type: none;
+}
+
+
 .glinkmodminus:active {
   cursor: pointer;
   text-decoration: none;
@@ -406,6 +416,17 @@
   border-radius: 8px;
   margin: -1px -3px -1px -3px;
   z-index: 99;
+  font-weight: normal;
+}
+
+.gga-popup-window .glinkmodminus:hover {
+  cursor: pointer;
+  /* background: var(--lightgrey); */
+  color: white;
+  text-shadow: var(--controlhover);
+  border: none;
+  padding: 0;
+  margin: 0;
   font-weight: normal;
 }
 
@@ -618,6 +639,7 @@
   border-bottom: 1px solid lightgrey;
 }
 
+
 .gga-tableheader > .header:first-child {
   grid-area: header;
 }
@@ -808,6 +830,10 @@
   border-bottom: 1px solid lightgray;
 }
 
+.sidebar-popout.effect-modifiers-app {
+  min-height: unset;
+}
+
 body {
   font-family: Verdana, sans-serif;
   font-size: small;
@@ -943,6 +969,7 @@ body {
 
 #points .field,
 #attributes .field,
+#combat-attrs .field,
 #lifting .field,
 #hitpoints .field,
 #hp-fp .field {
@@ -1212,6 +1239,11 @@ body {
   white-space: nowrap;
 }
 
+#condition .label {
+  text-align: right;
+  align-self:  center;
+}
+
 .field {
   margin-right: 0.2em;
 }
@@ -1382,19 +1414,7 @@ body {
   white-space: normal !important;
 }
 
-.equipmentlist .ref,
-#notes .ref,
-#skills .ref,
-#spells .ref,
-#advantages .ref,
-#melee .st,
-#ranged .st,
-#location .dr,
-#lifting .liftdesc,
-#encumbrance .dodgeh,
-#encumbrance .dodge,
-#conditionalmods .situation,
-#reactions .situation {
+.equipmentlist .ref, #notes .ref, #skills .ref, #spells .ref, #advantages .ref, #melee .st, #ranged .st, #location .dr, #lifting .liftdesc, #encumbrance .dodgeh, #encumbrance .dodge:not(:hover), #conditionalmods .situation, #reactions .situation {
   border-right: none;
 }
 
