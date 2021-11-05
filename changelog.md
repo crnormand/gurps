@@ -9,6 +9,7 @@ Release 0.11.14
 - Rewrote Reeling and Exhausted to be Active Effects.
 - Add Effects Modifier popup window.
 - Added "Mental Stun" to status effects.
+- Updated German translation.
 
 Release 0.11.13
 
