@@ -309,10 +309,21 @@ export class StatusEffect {
           },
         },
       },
+      grapple: {
+        icon: 'systems/gurps/icons/statuses/path-condition-grappled.webp',
+        id: 'grapple',
+        label: 'GURPS.STATUSGrapple',
+      },
       stun: {
         icon: 'systems/gurps/icons/statuses/dd-condition-stunned.webp',
         id: 'stun',
         label: 'EFFECT.StatusStunned',
+        tint: '', // #FEAEF4 #AEFEAE
+      },
+      mentalstun: {
+        icon: 'systems/gurps/icons/statuses/dd-condition-stunned-iq.webp',
+        id: 'mentalstun',
+        label: 'GURPS.StatusStunnedMental',
         tint: '', // #FEAEF4 #AEFEAE
       },
       reeling: {
@@ -417,11 +428,6 @@ export class StatusEffect {
         icon: 'systems/gurps/icons/statuses/condition-shock4.webp',
         id: 'shock4',
         label: 'EFFECT.StatusShocked',
-      },
-      grapple: {
-        icon: 'systems/gurps/icons/statuses/path-condition-grappled.webp',
-        id: 'grapple',
-        label: 'GURPS.STATUSGrapple',
       },
       fly: {
         icon: 'systems/gurps/icons/statuses/x-flying.webp',
@@ -695,7 +701,6 @@ const _getActiveEffectsData = function (id) {
       },
     },
     stun: {
-      // TODO tint: maybe set the tint based on physical/mental stun?
       changes: [
         {
           key: 'data.conditions.self.modifiers',
@@ -712,6 +717,29 @@ const _getActiveEffectsData = function (id) {
         gurps: {
           effect: {
             endCondition: 'HT', // may move to 'IQ' (mental stun)
+            pdfref: 'GURPS.pdfKnockdownStun',
+            requiresConfig: true,
+          },
+        },
+      },
+    },
+    mentalstun: {
+      changes: [
+        {
+          key: 'data.conditions.self.modifiers',
+          value: 'GURPS.modifierStatusStunned',
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        },
+        {
+          key: 'data.conditions.maneuver',
+          value: 'do_nothing',
+          mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+        },
+      ],
+      flags: {
+        gurps: {
+          effect: {
+            endCondition: 'IQ', // may move to 'IQ' (mental stun)
             pdfref: 'GURPS.pdfKnockdownStun',
             requiresConfig: true,
           },
