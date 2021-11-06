@@ -1,4 +1,4 @@
-import { arrayToObject, atou, generateUniqueId, i18n, i18n_f, objectToArray } from '../../lib/utilities.js'
+import { arrayToObject, atou, i18n, i18n_f, objectToArray } from '../../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
@@ -9,32 +9,33 @@ import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import { GURPS } from '../gurps.js'
+import { EffectModifierPopout } from './effect-modifier-popout.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
  */
 export class GurpsActorSheet extends ActorSheet {
   /** @override */
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            classes: ['gurps', 'sheet', 'actor'],
-            width: 800,
-            height: 800,
-            tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
-            scrollY: [
-                '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
-            ],
-            dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-        })
-    }
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ['gurps', 'sheet', 'actor'],
+      width: 800,
+      height: 800,
+      tabs: [{ navSelector: '.gurps-sheet-tabs', contentSelector: '.sheet-body', initial: 'description' }],
+      scrollY: [
+        '.gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes',
+      ],
+      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
+    })
+  }
 
-    /* -------------------------------------------- */
+  /* -------------------------------------------- */
 
-    /** @override */
-    get template() {
-        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-        return 'systems/gurps/templates/actor/actor-sheet-gcs.hbs';
-    }
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/actor-sheet-gcs.hbs'
+  }
 
   /* -------------------------------------------- */
 
@@ -439,8 +440,8 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('[data-onethird]').click(ev => {
       let el = ev.currentTarget
       let opt = el.dataset.onethird
-      let b = !!this.actor.data.data.additionalresources[opt]
-      this.actor.changeOneThirdStatus(opt, !b)
+      let active = !!this.actor.data.data.conditions[opt]
+      this.actor.toggleEffectByName(opt, !active)
     })
 
     html.find('[data-onethird]').hover(
@@ -488,6 +489,13 @@ export class GurpsActorSheet extends ActorSheet {
       let target = $(ev.currentTarget)
       this.actor.replaceManeuver(target.val())
     })
+
+    html.find('#posture').on('change', ev => {
+      let target = $(ev.currentTarget)
+      this.actor.replacePosture(target.val())
+    })
+
+    html.find('#open-modifier-popup').click(this.showModifierPopup.bind(this))
   }
 
   _createHeaderMenus(html) {
@@ -821,6 +829,11 @@ export class GurpsActorSheet extends ActorSheet {
     d.render(true)
   }
 
+  async showModifierPopup(ev) {
+    ev.preventDefault()
+    GURPS.EffectModifierControl.showPopup = true
+  }
+
   async editEquipment(actor, path, obj) {
     // NOTE:  This code is duplicated above.  Haven't refactored yet
     obj.f_count = obj.count // Hack to get around The Furnace's "helpful" Handlebar helper {{count}}
@@ -1118,9 +1131,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (!!targetkey) {
         let sourceKey = dragData.key
         if (sourceKey.includes(targetkey) || targetkey.includes(sourceKey)) {
-          ui.notifications.error(
-            i18n('GURPS.dragSameContainer')
-          )
+          ui.notifications.error(i18n('GURPS.dragSameContainer'))
           return
         }
 
@@ -1466,13 +1477,13 @@ export class GurpsActorTabSheet extends GurpsActorSheet {
     })
   }
 
-    /* -------------------------------------------- */
+  /* -------------------------------------------- */
 
-    /** @override */
-    get template() {
-        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-        return 'systems/gurps/templates/actor/actor-tab-sheet.hbs';
-    }
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/actor-tab-sheet.hbs'
+  }
 }
 
 export class GurpsActorCombatSheet extends GurpsActorSheet {
@@ -1487,13 +1498,13 @@ export class GurpsActorCombatSheet extends GurpsActorSheet {
     })
   }
 
-    /* -------------------------------------------- */
+  /* -------------------------------------------- */
 
-    /** @override */
-    get template() {
-        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-        return 'systems/gurps/templates/actor/combat-sheet.hbs';
-    }
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/combat-sheet.hbs'
+  }
 }
 
 Hooks.on('getGurpsActorEditorSheetHeaderButtons', sheet => {
@@ -1537,8 +1548,8 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
   /** @override */
   get template() {
-      if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-      return 'systems/gurps/templates/actor/actor-sheet-gcs-editor.hbs';
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/actor-sheet-gcs-editor.hbs'
   }
 
   //TODO: Don't let user change the sheet in case of user having limited access and the sheet is left in editor mode by someone else
@@ -1724,13 +1735,13 @@ export class GurpsActorSimplifiedSheet extends GurpsActorSheet {
     })
   }
 
-    /* -------------------------------------------- */
+  /* -------------------------------------------- */
 
-    /** @override */
-    get template() {
-        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-        return 'systems/gurps/templates/simplified.html';
-    }
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/simplified.html'
+  }
 
   getData() {
     const data = super.getData()
@@ -1764,13 +1775,13 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
     })
   }
 
-    /* -------------------------------------------- */
+  /* -------------------------------------------- */
 
-    /** @override */
-    get template() {
-        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-        return 'systems/gurps/templates/actor/npc-sheet.hbs';
-    }
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/npc-sheet.hbs'
+  }
 
   getData() {
     const data = super.getData()
@@ -1814,13 +1825,13 @@ export class GurpsActorNpcSheetCI extends GurpsActorNpcSheet {
     })
   }
 
-    /* -------------------------------------------- */
+  /* -------------------------------------------- */
 
-    /** @override */
-    get template() {
-        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-        return 'systems/gurps/templates/actor/npc-sheet-ci.hbs';
-    }
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
+  }
 }
 
 export class GurpsInventorySheet extends GurpsActorSheet {
@@ -1836,11 +1847,11 @@ export class GurpsInventorySheet extends GurpsActorSheet {
     })
   }
 
-    /* -------------------------------------------- */
+  /* -------------------------------------------- */
 
-    /** @override */
-    get template() {
-        if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs';
-        return 'systems/gurps/templates/inventory-sheet.html';
-    }
+  /** @override */
+  get template() {
+    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
+    return 'systems/gurps/templates/inventory-sheet.html'
+  }
 }
