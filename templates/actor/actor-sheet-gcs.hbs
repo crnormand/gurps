@@ -25,8 +25,8 @@
             resource=data.HP
             label='GURPS.attributesHPNAME'
             editable=false
-            condition='isReeling'
-            testcondition=data.additionalresources.isReeling
+            condition='reeling'
+            testcondition=data.conditions.reeling
           }}
         {{/if}}
         {{>hpfp-tracker
@@ -34,8 +34,8 @@
           resource=data.FP
           label='GURPS.attributesFPNAME'
           editable=false
-          condition='isTired'
-          testcondition=data.additionalresources.isTired
+          condition='exhausted'
+          testcondition=data.conditions.exhausted
         }}
       </div>
 

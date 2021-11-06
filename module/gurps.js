@@ -63,6 +63,7 @@ import { StatusEffect } from './effects/effects.js'
 import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import Maneuvers from './actor/maneuver.js'
+import { EffectModifierControl } from './actor/effect-modifier-control.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -72,6 +73,7 @@ AddChatHooks()
 JQueryHelpers()
 MoustacheWax()
 Settings.initializeSettings()
+GURPS.EffectModifierControl = new EffectModifierControl()
 
 // CONFIG.debug.hooks = true
 
@@ -82,8 +84,7 @@ GURPS.Maneuvers = Maneuvers
 CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
 CONFIG.time.roundTime = 1
 
-GURPS.SavedStatusEffects = CONFIG.statusEffects
-CONFIG.statusEffects = StatusEffect.effects()
+GURPS.StatusEffect = new StatusEffect()
 
 // Hack to remember the last Actor sheet that was accessed... for the Modifier Bucket to work
 GURPS.LastActor = null
@@ -1616,6 +1617,9 @@ Hooks.once('init', async function () {
   GURPS.hitpoints = new HitFatPoints()
   GURPS.ConditionalInjury = new GURPSConditionalInjury()
 
+  // do this only after we've initialized i18n/localize
+  GURPS.Maneuvers = Maneuvers
+
   // Define custom Entity classes
   // @ts-ignore
   CONFIG.Actor.documentClass = GurpsActor
@@ -1755,6 +1759,10 @@ Hooks.once('ready', async function () {
   // @ts-ignore
   canvas.hud.token = new GURPSTokenHUD()
 
+  // do this only after we've initialized i18n/localize
+  // GURPS.StatusEffect = new StatusEffect()
+  // CONFIG.statusEffects = GURPS.StatusEffect.effects()
+
   initializeDamageTables()
   ResourceTrackerManager.initSettings()
   HitLocation.ready()
@@ -1883,41 +1891,6 @@ Hooks.once('ready', async function () {
   Hooks.on('renderCombatTracker', function (a, html, c) {
     // use class 'bound' to know if the drop event is already bound
     if (!html.hasClass('bound')) {
-      if (game.user.isGM) {
-        let cc = html.find('.combatant-controls')
-        cc.prepend(
-          '<a class="combatant-control" title="<1/3 FP" data-onethird="isTired"><i class="fas fa-heartbeat"></i></a>'
-        )
-        cc.prepend(
-          '<a class="combatant-control" title="<1/3 HP" data-onethird="isReeling"><i class="fas fa-heart-broken"></i></a>'
-        )
-
-        let t = html.find('[data-onethird]')
-        for (let i = 0; i < t.length; i++) {
-          let el = t[i]
-          let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          // @ts-ignore
-          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
-          // @ts-ignore
-          if (!!target.actor?.data.data.additionalresources[$(el).attr('data-onethird')]) $(el).addClass('active')
-        }
-
-        // @ts-ignore
-        html.find('[data-onethird]').on('click', ev => {
-          let el = ev.currentTarget
-          let flag = false
-          if ($(el).hasClass('active')) $(el).removeClass('active')
-          else {
-            $(el).addClass('active')
-            flag = true
-          }
-          let combatant = $(el).parents('.combatant').attr('data-combatant-id')
-          // @ts-ignore
-          let target = game.combat.combatants.filter(c => c.id === combatant)[0]
-          // @ts-ignore
-          target.actor.changeOneThirdStatus($(el).attr('data-onethird'), flag)
-        })
-      }
       html.addClass('bound')
       // @ts-ignore
       html.on('drop', function (ev) {

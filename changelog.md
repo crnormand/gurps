@@ -2,20 +2,33 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.11.14
+
+- Implemented Active Effects framework.
+- Added Posture (as an Active Effect) to Conditions.
+- Rewrote Reeling and Exhausted to be Active Effects.
+- Add Effects Modifier popup window.
+- Added "Mental Stun" to status effects.
+- Updated German translation.
+
 Release 0.11.13
+
 - Add 'Combat Move' to Conditions.
 - Allow user to opt-out of Maneuvers updating Move.
 - Big rewrite of actor sheets and editor.
 
 Release 0.11.12 10/16/2021
-- Fixed P & B OtF modifiers for Parry and Block by specific weapon ;-)   Thanks danielrab!
+
+- Fixed P & B OtF modifiers for Parry and Block by specific weapon ;-) Thanks danielrab!
 
 Release 0.11.11 10/15/2021
+
 - Added P & B OtF modifiers for Parry and Block by specific weapon
 - Updated charactersheet to use new P & B OtF formulas
 - Fixed some minor bugs (drag/drop modifier bucket)
 
 Release 0.11.10 10/14/2021
+
 - Fix for non-english character sheets
 - Added 'usage' to OtF reported in chat log
 - Made USAGE column clickable to roll attack
@@ -42,7 +55,7 @@ Example:
 let actor = game.actors.getName('Arne Arneson')
 let data = GURPS.lastTargetedRolls[actor.id]
 console.log(
-  `check: [${data.thing}], modified target: [${data.finaltarget}], roll total: [${data.rtotal}], margin of success: [${data.margin}]`,
+  `check: [${data.thing}], modified target: [${data.finaltarget}], roll total: [${data.rtotal}], margin of success: [${data.margin}]`
 )
 ```
 

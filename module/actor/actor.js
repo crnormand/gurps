@@ -20,7 +20,16 @@ import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { SemanticVersion } from '../../lib/semver.js'
-import { MOVE_FULL, MOVE_HALF, MOVE_NONE, MOVE_STEP, PROPERTY_MOVEOVERRIDE } from './maneuver.js'
+import {
+  MOVE_NONE,
+  MOVE_ONE,
+  MOVE_STEP,
+  MOVE_ONETHIRD,
+  MOVE_HALF,
+  MOVE_TWOTHIRDS,
+  PROPERTY_MOVEOVERRIDE_MANEUVER,
+  PROPERTY_MOVEOVERRIDE_POSTURE,
+} from './maneuver.js'
 import { SmartImporter } from '../smart-importer.js'
 import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
@@ -83,6 +92,20 @@ export class GurpsActor extends Actor {
     // this.prepareBaseData()
     // this.prepareEmbeddedEntities()
     // this.prepareDerivedData()
+  }
+
+  prepareBaseData() {
+    super.prepareBaseData()
+
+    this.getGurpsActorData().conditions.posture = 'standing'
+    this.getGurpsActorData().conditions.self = { modifiers: [] }
+    this.getGurpsActorData().conditions.target = { modifiers: [] }
+    this.getGurpsActorData().conditions.exhausted = false
+    this.getGurpsActorData().conditions.reeling = false
+
+    let attributes = this.getGurpsActorData().attributes
+    if (foundry.utils.getType(attributes.ST.import) === 'string')
+      this.getGurpsActorData().attributes.ST.import = parseInt(attributes.ST.import)
   }
 
   prepareEmbeddedEntities() {
@@ -173,8 +196,8 @@ export class GurpsActor extends Actor {
         else data.attributes[attr].value = parseInt(data.attributes[attr].import)
     }
     // After all of the attributes are copied over, apply tired to ST
-    if (!!data.additionalresources.isTired)
-      data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
+    // if (!!data.conditions.exhausted)
+    //   data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, k, d) => {
       // @ts-ignore
       e.level = parseInt(+e.import)
@@ -399,32 +422,35 @@ export class GurpsActor extends Actor {
   _calculateEncumbranceIssues() {
     const data = this.getGurpsActorData()
     const encs = data.encumbrance
-    const isReeling = !!data.additionalresources.isReeling
-    const isTired = !!data.additionalresources.isTired
+    const isReeling = !!data.conditions.reeling
+    const isTired = !!data.conditions.exhausted
 
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
       const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
-      let m = parseInt(level0.move)
-      let d = parseInt(level0.dodge) + data.currentdodge
-      let f = parseFloat(data.basicspeed.value.toString()) * 2
+      let effectiveMove = parseInt(level0.move)
+      let effectiveDodge = parseInt(level0.dodge) + data.currentdodge
+      let effectiveFlight = parseFloat(data.basicspeed.value.toString()) * 2
+
       if (isReeling) {
-        m = Math.ceil(m / 2)
-        d = Math.ceil(d / 2)
-        f = Math.ceil(f / 2)
+        effectiveMove = Math.ceil(effectiveMove / 2)
+        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveFlight = Math.ceil(effectiveFlight / 2)
       }
+
       if (isTired) {
-        m = Math.ceil(m / 2)
-        d = Math.ceil(d / 2)
-        f = Math.ceil(f / 2)
+        effectiveMove = Math.ceil(effectiveMove / 2)
+        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveFlight = Math.ceil(effectiveFlight / 2)
       }
+
       for (let enckey in encs) {
         let enc = encs[enckey]
-        let t = 1.0 - 0.2 * parseInt(enc.level)
+        let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
 
-        enc.currentmove = this._getCurrentMove(m, t) //Math.max(1, Math.floor(m * t))
-        enc.currentdodge = Math.max(1, d - parseInt(enc.level))
-        enc.currentflight = Math.max(1, Math.floor(f * t))
+        enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
+        enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
+        enc.currentflight = Math.max(1, Math.floor(effectiveFlight * threshold))
         enc.currentmovedisplay = enc.currentmove
         if (!!data.additionalresources.showflightmove)
           enc.currentmovedisplay = enc.currentmove + '/' + enc.currentflight
@@ -436,6 +462,7 @@ export class GurpsActor extends Actor {
         }
       }
     }
+
     if (!data.equippedparry) data.equippedparry = this.getEquippedParry()
     if (!data.equippedblock) data.equippedblock = this.getEquippedBlock()
     // catch for older actors that may not have these values set
@@ -452,35 +479,88 @@ export class GurpsActor extends Actor {
   _getCurrentMove(move, threshold) {
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE)
 
-    if (foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)) {
-      let value = foundry.utils.getProperty(this.overrides, PROPERTY_MOVEOVERRIDE)
-      switch (value) {
-        case MOVE_NONE:
-          this.getGurpsActorData().conditions.move = i18n('GURPS.moveNone')
-          if (updateMove) return 0
-          break
-        case MOVE_STEP:
-          this.getGurpsActorData().conditions.move = i18n('GURPS.moveStep')
-          if (updateMove) return this._getStep()
-          break
-        case MOVE_HALF:
-          this.getGurpsActorData().conditions.move = i18n('GURPS.moveHalf')
-          if (updateMove) move = Math.ceil(move / 2)
-          break
-        case MOVE_FULL:
-          this.getGurpsActorData().conditions.move = i18n('GURPS.moveFull')
-          break
-      }
-    }
-    
-    return Math.max(1, Math.floor(move * threshold))
+    let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
+    let posture = this._getMoveAdjustedForPosture(move, threshold)
+
+    if (threshold == 1.0)
+      this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
+
+    return updateMove
+      ? maneuver.move < posture.move
+        ? maneuver.move
+        : posture.move
+      : Math.max(1, Math.floor(move * threshold))
   }
 
-  /**
-   * @param {{[key:string]: any}} change
-   */
-  _updateCurrentMoveOverride(change) {
-    foundry.utils.setProperty(this.data, change.key, change.value)
+  _getMoveAdjustedForManeuver(move, threshold) {
+    let adjustment = null
+
+    if (foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_MANEUVER)) {
+      let value = foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_MANEUVER)
+      let reason = i18n(GURPS.Maneuvers.get(this.getGurpsActorData().conditions.maneuver).label)
+
+      adjustment = this._adjustMove(move, threshold, value, reason)
+    }
+
+    return !!adjustment
+      ? adjustment
+      : {
+          move: Math.max(1, Math.ceil(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
+  }
+
+  _adjustMove(move, threshold, value, reason) {
+    switch (value) {
+      case MOVE_NONE:
+        return { move: 0, text: i18n_f('GURPS.moveNone', { reason: reason }) }
+
+      case MOVE_ONE:
+        return {
+          move: 1,
+          text: i18n_f('GURPS.moveConstant', { value: 1, unit: 'yard', reason: reason }, '1 {unit}/second'),
+        }
+
+      case MOVE_STEP:
+        return { move: this._getStep(), text: i18n_f('GURPS.moveStep', { reason: reason }) }
+
+      case MOVE_ONETHIRD:
+        return {
+          move: Math.max(1, Math.ceil((move / 3) * threshold)),
+          text: i18n_f('GURPS.moveOneThird', { reason: reason }),
+        }
+
+      case MOVE_HALF:
+        return {
+          move: Math.max(1, Math.ceil((move / 2) * threshold)),
+          text: i18n_f('GURPS.moveHalf', { reason: reason }),
+        }
+
+      case MOVE_TWOTHIRDS:
+        return {
+          move: Math.max(1, Math.ceil(((2 * move) / 3) * threshold)),
+          text: i18n_f('GURPS.moveTwoThirds', { reason: reason }),
+        }
+    }
+
+    return null
+  }
+
+  _getMoveAdjustedForPosture(move, threshold) {
+    let adjustment = null
+
+    if (foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_POSTURE)) {
+      let value = foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_POSTURE)
+      let reason = i18n(GURPS.StatusEffect.lookup(this.getGurpsActorData().conditions.posture).label)
+      adjustment = this._adjustMove(move, threshold, value, reason)
+    }
+
+    return !!adjustment
+      ? adjustment
+      : {
+          move: Math.max(1, Math.ceil(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -588,12 +668,11 @@ export class GurpsActor extends Actor {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('data.HP.value')) {
         let flag = data['data.HP.value'] < this.getGurpsActorData().HP.max / 3
-        if (!!this.getGurpsActorData().additionalresources.isReeling != flag)
-          this.changeOneThirdStatus('isReeling', flag)
+        if (!!this.getGurpsActorData().conditions.reeling != flag) this.toggleEffectByName('reeling', flag)
       }
       if (data.hasOwnProperty('data.FP.value')) {
         let flag = data['data.FP.value'] < this.getGurpsActorData().FP.max / 3
-        if (!!this.getGurpsActorData().additionalresources.isTired != flag) this.changeOneThirdStatus('isTired', flag)
+        if (!!this.getGurpsActorData().conditions.exhausted != flag) this.toggleEffectByName('exhausted', flag)
       }
     }
 
@@ -613,6 +692,15 @@ export class GurpsActor extends Actor {
   async replaceManeuver(maneuverText) {
     let tokens = this._findTokens()
     if (tokens) for (const t of tokens) await t.setManeuver(maneuverText)
+  }
+
+  async replacePosture(changeData) {
+    let tokens = this._findTokens()
+    if (tokens)
+      for (const t of tokens) {
+        let id = changeData === 'standing' ? this.getGurpsActorData().conditions.posture : changeData
+        await t.toggleEffect(GURPS.StatusEffect.lookup(id))
+      }
   }
 
   /**
@@ -2759,44 +2847,15 @@ export class GurpsActor extends Actor {
   }
 
   /**
-   * @param {string} option
-   * @param {boolean} flag
+   *
+   * @param {string} name of the status effect
+   * @param {boolean} active (desired) state - true or false
    */
-  changeOneThirdStatus(option, flag) {
-    if (this.isOwner)
-      this.update({ [`data.additionalresources.${option}`]: flag }).then(() => {
-        this.calculateDerivedValues()
-
-        let i18nMessage =
-          option === 'isReeling'
-            ? flag
-              ? 'GURPS.chatTurnOnReeling'
-              : 'GURPS.chatTurnOffReeling'
-            : flag
-            ? 'GURPS.chatTurnOnTired'
-            : 'GURPS.chatTurnOffTired'
-
-        let pdfref = option === 'isReeling' ? i18n('GURPS.pdfReeling') : i18n('GURPS.pdfTired')
-        let msg = i18n_f(i18nMessage, {
-          name: this.displayname,
-          classStart: '<span class="pdflink">',
-          classEnd: '</span>',
-          pdfref: pdfref,
-        })
-
-        renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
-          let users = this.getOwners()
-          let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
-          /** @type {import('@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData').ChatMessageDataConstructorData} */
-          let messageData = {
-            content: content,
-            whisper: ids || null,
-            type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-          }
-          ChatMessage.create(messageData)
-          ui.combat?.render()
-        })
-      })
+  toggleEffectByName(name, active) {
+    let tokens = this.getActiveTokens(true)
+    for (const token of tokens) {
+      token.setEffectActive(name, active)
+    }
   }
 
   /**

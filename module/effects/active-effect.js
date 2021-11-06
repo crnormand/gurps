@@ -1,6 +1,7 @@
 'use strict'
 
-import Maneuvers, { MOVE_HALF, MOVE_NONE, MOVE_STEP, MOVE_FULL, PROPERTY_MOVEOVERRIDE } from '../actor/maneuver.js'
+import { parselink } from '../../lib/parselink.js'
+import { i18n, i18n_f } from '../../lib/utilities.js'
 
 export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
@@ -29,9 +30,13 @@ export default class GurpsActiveEffect extends ActiveEffect {
       }
     )
 
+    /**
+     * Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM
+     */
     Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
-      if (change.key === PROPERTY_MOVEOVERRIDE) actor._updateCurrentMoveOverride(change)
       if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
+      else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
+      else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
       else console.log(change)
     })
 
@@ -49,12 +54,13 @@ export default class GurpsActiveEffect extends ActiveEffect {
       'deleteActiveEffect',
       (/** @type {string} */ effect, /** @type {any} */ _data, /** @type {any} */ _userId) => {
         console.log('delete ' + effect)
+        effect.terminateActions.filter(it => it.type === 'chat').forEach(it => effect.chat(effect.parent, it))
       }
     )
 
     Hooks.on(
       'updateCombat',
-      (
+      async (
         /** @type {Combat} */ combat,
         /** @type {any} */ _data,
         /** @type {any} */ _options,
@@ -68,12 +74,10 @@ export default class GurpsActiveEffect extends ActiveEffect {
           // go through all effects, removing those that have expired
           if (token && token.actor) {
             for (const effect of token.actor.effects) {
-              let duration = effect.duration
-              if (duration && !!duration.duration) {
-                if (duration.remaining && duration.remaining <= 1) {
-                  effect.delete()
-                }
-              }
+              if (await effect.isExpired())
+                ui.notifications.info(
+                  `${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.data.label)}]'`
+                )
             }
           }
         }
@@ -89,15 +93,16 @@ export default class GurpsActiveEffect extends ActiveEffect {
     super(data, context)
 
     this.context = context
+    this.chatmessages = []
   }
 
   get endCondition() {
     return this.getFlag('gurps', 'effect.endCondition')
   }
 
-  get followup() {
-    let data = /** @type {ActiveEffectData} */ (this.getFlag('gurps', 'effect.followup'))
-    return new GurpsActiveEffect(data, this.context)
+  get terminateActions() {
+    let data = this.getFlag('gurps', 'effect.terminateActions')
+    return data ?? []
   }
 
   /**
@@ -118,6 +123,81 @@ export default class GurpsActiveEffect extends ActiveEffect {
         await _token.actor.deleteEmbeddedDocuments('ActiveEffect', [effect_id])
       }
     }
+  }
+
+  chat(actor, value) {
+    if (!!value?.frequency && value.frequency === 'once') {
+      if (this.chatmessages.includes(value.msg)) {
+        console.log(`Message [${value.msg}] already displayed, do nothing`)
+        return
+      }
+    }
+
+    for (const key in value.args) {
+      let val = value.args[key]
+      if (foundry.utils.getType(val) === 'string' && val.startsWith('@')) {
+        value.args[key] = actor[val.slice(1)]
+      } else if (foundry.utils.getType(val) === 'string' && val.startsWith('!')) {
+        value.args[key] = i18n(val.slice(1))
+      }
+      if (key === 'pdfref') value.args.pdfref = i18n(val)
+    }
+
+    let msg = !!value.args ? i18n_f(value.msg, value.args) : i18n(value.msg)
+
+    let self = this
+    renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+      let users = actor.getOwners()
+      let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+
+      let messageData = {
+        content: content,
+        whisper: ids || null,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+      }
+      ChatMessage.create(messageData)
+      ui.combat?.render()
+      self.chatmessages.push(value.msg)
+    })
+  }
+
+  async isExpired() {
+    if (this.duration && !!this.duration.duration) {
+      if (this.duration.remaining <= 1) {
+        return true
+      }
+    }
+
+    // if (!!this.endCondition) {
+    //   let action = parselink(this.endCondition)
+
+    //   if (!!action.action) {
+    //     if (action.action.type === 'modifier') {
+    //       ui.notifications.warn(
+    //         `${i18n(
+    //           'GURPS.effectBadEndCondition',
+    //           'End Condition is not a skill or attribute test: '
+    //         )} '[${endCondition}]'`
+    //       )
+    //       return false
+    //     }
+
+    //     return await GURPS.performAction(action.action, this.parent, {
+    //       shiftKey: false,
+    //       ctrlKey: false,
+    //       data: {},
+    //     })
+    //   } // Looks like a /roll OtF, but didn't parse as one
+    //   else
+    //     ui.notifications.warn(
+    //       `${i18n(
+    //         'GURPS.effectBadEndCondition',
+    //         'End Condition is not a skill or attribute test: '
+    //       )} '[${endCondition}]'`
+    //     )
+    // }
+
+    return false
   }
 }
 
