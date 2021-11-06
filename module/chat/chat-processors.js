@@ -61,8 +61,21 @@ class SoundChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/sound *(?<wait>w[\d\.]+)? *(?<vol>v[\d\.]+)? *(?<file>.*)/i)
+    this.match = line.match(/^\/sound +(?<wait>w[\d\.]+)? *(?<vol>v[\d\.]+)? *(?<file>.*)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^\/sound$/i)
+  }
+  usage() {
+    return `Play a sound in the background<hr>parameters:
+w: wait seconds before starting sound
+v: volume
+&lt;fule path filename&gt; 
+<hr>examples:
+/sound w2.5 /path/filename
+/sound v0.6 /path/filename
+/sound w3 v2 /path/filename`
   }
   async process(line) {
     let v = 0.8
@@ -166,6 +179,18 @@ class WhisperChatProcessor extends ChatProcessor {
   matches(line) {
     this.match = line.match(/^\/w +@ +(.+)$/)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^\/w$/i)
+  }
+  usage() {
+    return `Whisper to players, characters or the owners of the selected tokens<hr>parameters:
+&lt;player or character names&gt; 
+@: whisper to the owners of the selected tokens
+<hr>examples:
+/w Chris msg sent to Player Chris
+/w Bog msg sent to Bog's owner
+/w @ msg sent to owners of selected tokens`
   }
   process(line) {
     let destTokens = Array.from(game.user.targets)
