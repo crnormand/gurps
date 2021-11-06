@@ -672,6 +672,22 @@ const actionFuncs = {
       optionalArgs: {blind: action.blindroll, event},
     });
   },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.isRanged
+   * @param {boolean} data.action.calcOnly
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
   async attack({action, actor, event}) {
     if (!actor) {
       ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
@@ -704,7 +720,7 @@ const actionFuncs = {
       return false;
     }
     if (action.calcOnly) {
-      let modifier = parseInt(tempAction.mod) ?? 0;
+      let modifier = parseInt(action.mod) ?? 0;
       if (isNaN(modifier)) modifier = 0;
       return { target: target + modifier, thing: thing }
     }
@@ -728,6 +744,21 @@ const actionFuncs = {
       optionalArgs: opt,
     });
   },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.calcOnly
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
   ['weapon-block']({action, actor, event}) {
     if (!actor) {
       ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
@@ -746,7 +777,7 @@ const actionFuncs = {
     }
     const thing = att.name.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
     if (action.calcOnly) {
-      let modifier = parseInt(tempAction.mod) ?? 0;
+      let modifier = parseInt(action.mod) ?? 0;
       if (isNaN(modifier)) modifier = 0;
       return { target: target + modifier, thing: thing }
     }
@@ -765,7 +796,23 @@ const actionFuncs = {
       optionalArgs: {blind: action.blindroll, event},
     })
   },
-  ['weapon-parry']({action, actor, event}) {
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.calcOnly
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   * @param {boolean} data.calcOnly
+   */
+  ['weapon-parry']({action, actor, event, calcOnly}) {
     if (!actor) {
       ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
       return false;
@@ -783,7 +830,7 @@ const actionFuncs = {
     }
     const thing = att.name.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
     if (action.calcOnly) {
-      let modifier = parseInt(tempAction.mod) ?? 0;
+      let modifier = parseInt(action.mod) ?? 0;
       if (isNaN(modifier)) modifier = 0;
       return { target: target + modifier, thing: thing }
     }
@@ -802,7 +849,24 @@ const actionFuncs = {
       optionalArgs: {blind: action.blindroll, event},
     })
   },
-  async attribute({action, actor, event, originalAction, calcOnly}) {
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.blindroll
+   * @param {string} [data.action.target]
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   * @param {string} data.originalOtf
+   * @param {boolean} data.calcOnly
+   */
+  async attribute({action, actor, event, originalOtf, calcOnly}) {
     // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
     if (!actor && (!action || !action.target)) {
       ui.notifications?.warn('You must have a character selected')
@@ -830,7 +894,7 @@ const actionFuncs = {
       return { target: target + modifier, thing: thing }
     }
     let targetmods = []
-    const chatthing = `[${originalAction.orig}]`
+    const chatthing = originalOtf? `[${originalOtf}]`: `[${thing}]`;
     let opt = {
       blind: action.blindroll,
       event: event,
@@ -854,7 +918,23 @@ const actionFuncs = {
       optionalArgs: opt
     })
   },
-  async ['skill-spell']({action, actor, event, originalAction, calcOnly}) {
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.blindroll
+   * @param {string} [data.action.target]
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   * @param {string} data.originalOtf
+   * @param {boolean} data.calcOnly
+   */
+  async ['skill-spell']({action, actor, event, originalOtf, calcOnly}) {
     if (!actor && (!action || !action.target)) {
       ui.notifications?.warn('You must have a character selected')
       return false
@@ -873,11 +953,11 @@ const actionFuncs = {
       return { target: target + modifier, thing: thing }
     }
     let targetmods = [];
-    let chatthing = thing === ''? action.thing: `[${originalAction.orig}]`
+    let chatthing = originalOtf? `[${originalOtf}]`: `[S:"${thing}"]`;
     let opt = {
       blind: action.blindroll,
-      event: event,
-      action: action,
+      event,
+      action,
       obj: action.obj
     }
     if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
@@ -900,14 +980,13 @@ async function _performAction(data) {
   return false
 }
 
-async function findBestActionInChain({action, actor, event, targets}) {
-  const originalAction = action;
+async function findBestActionInChain({action, actor, event, targets, originalOtf}) {
   const actions = [];
   while (action) {
     actions.push(action);
     action = action.next;
   }
-  const calculations = await Promise.all(actions.map((a) => _performAction({action: a, actor, event, targets, originalAction, calcOnly: true})))
+  const calculations = await Promise.all(actions.map((a) => _performAction({action: a, actor, event, targets, originalOtf, calcOnly: true})))
   const levels = calculations.map((result) => result ? result.target : 0);
   if (!levels.some(level => level > 0)) {
     ui.notifications.warn(
@@ -927,13 +1006,13 @@ async function findBestActionInChain({action, actor, event, targets}) {
  * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
  */
 async function performAction(action, actor, event = null, targets = []) {
-  const originalAction = action;
+  const originalOtf = action.orig;
   const calcOnly = action.calcOnly;
   if (['attribute', 'skill-spell'].includes(action.type)) {
-    action = await findBestActionInChain({action, event, actor, targets})
+    action = await findBestActionInChain({action, event, actor, targets, originalOtf})
   }
   if (action && action.type in actionFuncs) {
-    return _performAction({action, actor, event, targets, originalAction, calcOnly})
+    return _performAction({action, actor, event, targets, originalOtf, calcOnly})
   }
   return false
 }
