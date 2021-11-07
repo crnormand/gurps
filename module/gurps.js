@@ -972,14 +972,6 @@ const actionFuncs = {
 }
 GURPS.actionFuncs = actionFuncs
 
-async function _performAction(data) {
-  const action = data.action;
-  if (action && action.type in actionFuncs) {
-    return GURPS.actionFuncs[action.type](data) // get the processor and return result from it. await is unnecessary when returning from async function.
-  }
-  return false
-}
-
 async function findBestActionInChain({action, actor, event, targets, originalOtf}) {
   const actions = [];
   while (action) {
@@ -1012,7 +1004,7 @@ async function performAction(action, actor, event = null, targets = []) {
     action = await findBestActionInChain({action, event, actor, targets, originalOtf})
   }
   if (action && action.type in actionFuncs) {
-    return _performAction({action, actor, event, targets, originalOtf, calcOnly})
+    return GURPS.actionFuncs[action.type]({action, actor, event, targets, originalOtf, calcOnly})
   }
   return false
 }
