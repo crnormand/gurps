@@ -978,7 +978,7 @@ async function findBestActionInChain({action, actor, event, targets, originalOtf
     actions.push(action);
     action = action.next;
   }
-  const calculations = await Promise.all(actions.map((a) => _performAction({action: a, actor, event, targets, originalOtf, calcOnly: true})))
+  const calculations = await Promise.all(actions.map((a) => GURPS.actionFuncs[action.type]({action: a, actor, event, targets, originalOtf, calcOnly: true})))
   const levels = calculations.map((result) => result ? result.target : 0);
   if (!levels.some(level => level > 0)) {
     ui.notifications.warn(
@@ -998,15 +998,13 @@ async function findBestActionInChain({action, actor, event, targets, originalOtf
  * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
  */
 async function performAction(action, actor, event = null, targets = []) {
+  if (!action || !(action.type in actionFuncs)) return false
   const originalOtf = action.orig;
   const calcOnly = action.calcOnly;
   if (['attribute', 'skill-spell'].includes(action.type)) {
     action = await findBestActionInChain({action, event, actor, targets, originalOtf})
   }
-  if (action && action.type in actionFuncs) {
-    return GURPS.actionFuncs[action.type]({action, actor, event, targets, originalOtf, calcOnly})
-  }
-  return false
+  return GURPS.actionFuncs[action.type]({action, actor, event, targets, originalOtf, calcOnly})
 }
 GURPS.performAction = performAction
 
