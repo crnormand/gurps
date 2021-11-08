@@ -70,7 +70,9 @@ class ChatProcessorRegistry {
   willTryToHandle(message) {
     let lines = message.split('\n') // Just need a simple split by newline... more advanced splitting will occur later
     for (const line of lines)
-      for (const p of this._processors) if (line[0] == '!' ? p.matches(line.substr(1)) : p.matches(line)) return true
+      for (const p of this._processors) {
+        if (p.usagematches(line) || (line[0] == '!' ? p.matches(line.substr(1)) : p.matches(line))) return true
+       }
     return false
   }
 
@@ -187,6 +189,16 @@ class ChatProcessorRegistry {
         return [true, answer != false]
       }
     }
+    // if nothing matchs, check for chat command without options... and return a help output
+    processor = this._processors.find(it => it.usagematches(line))
+    if (!!processor) {
+      if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.chatYouMustBeGM'))
+      else 
+        this.priv(line)
+        this.priv('<hr>')
+        this.priv(processor.usage().replaceAll('\n', '<br>'))
+        return [true, true]
+      }
     return [false, false]
   }
 

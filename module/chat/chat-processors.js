@@ -61,9 +61,14 @@ class SoundChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/sound *(?<wait>w[\d\.]+)? *(?<vol>v[\d\.]+)? *(?<file>.*)/i)
+    this.match = line.match(/^\/sound +(?<wait>w[\d\.]+)? *(?<vol>v[\d\.]+)? *(?<file>.*)/i)
     return !!this.match
   }
+  usagematches(line) {
+    return line.match(/^[\/\?]sound$/i)
+  }
+  usage() { return i18n("GURPS.chatHelpSound") }
+  
   async process(line) {
     let v = 0.8
     if (this.match.groups.vol) v = parseFloat(this.match.groups.vol.substr(1))
@@ -167,6 +172,12 @@ class WhisperChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/w +@ +(.+)$/)
     return !!this.match
   }
+  usagematches(line) {
+    return line.match(/^[\/\?]w$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpW")
+  }
   process(line) {
     let destTokens = Array.from(game.user.targets)
     if (destTokens.length == 0) destTokens = canvas.tokens.controlled
@@ -213,6 +224,12 @@ class WaitChatProcessor extends ChatProcessor {
   matches(line) {
     this.match = line.match(/^\/wait +(\d+)/)
     return this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?]wait$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpWait")
   }
   async process(line) {
     this.priv(line)
@@ -267,6 +284,12 @@ class RollAgainstChatProcessor extends ChatProcessor {
   matches(line) {
     this.match = line.match(/^([\.\/]p?ra) +([\w-'" ]+-)?(\d+)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?\.]p?ra$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpRa")
   }
   async process(line) {
     let m = this.match
@@ -348,8 +371,14 @@ class FpHpChatProcessor extends ChatProcessor {
     return '/fp (or /hp) &lt;formula&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
+    this.match = line.match(/^\/([fh]p) +([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?][fh]p$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpFpHp");
   }
 
   async process(line) {
@@ -420,6 +449,12 @@ class SelectChatProcessor extends ChatProcessor {
   matches(line) {
     this.match = line.match(/^\/(select|sel) ?(\@self)?([^!]*)(!)?/)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^\?(select|sel)$/i)    // can't match on /select since that is a valid command
+  }
+  usage() {
+    return i18n("GURPS.chatHelpSelect")
   }
   process(line) {
     let m = this.match

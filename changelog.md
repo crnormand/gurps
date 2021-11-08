@@ -16,6 +16,9 @@ Release 0.11.13
 - Add 'Combat Move' to Conditions.
 - Allow user to opt-out of Maneuvers updating Move.
 - Big rewrite of actor sheets and editor.
+- Update to JB2A 3.0
+- Implement chat help
+
 
 Release 0.11.12 10/16/2021
 

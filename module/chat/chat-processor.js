@@ -14,6 +14,15 @@ export default class ChatProcessor {
   }
 
   /**
+   * Override
+   * @param {string} line - chat command
+   * @returns {RegExpMatchArray|null|undefined} true if this processor will report how to use command
+   */
+  usagematches(line) {
+    return null
+  }
+
+  /**
    * Override to process a chat command
    * @param {string} line
    * @param {any|null} msgs
