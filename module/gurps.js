@@ -357,93 +357,138 @@ async function executeOTF(string, priv = false, event = null) {
 }
 GURPS.executeOTF = executeOTF
 
-/**
- * @param {Action} action
- * @param {GurpsActor|null} actor
- * @param {JQuery.Event|null} [event]
- * @param {string[] } [targets]
- * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
- */
-async function performAction(action, actor, event = null, targets = []) {
-  if (!action) return false
+function processSkillSpell({action, actor}) {
   let actordata = actor?.data
-  let prefix = ''
-  let thing = ''
-  let chatthing = ''
-  let target = -1 // < 0 non-targeted roll, > 0 targeted roll
-  let formula = ''
 
-  /** @type {import('./modifier-bucket/bucket-app.js').Modifier[]} */
-  let targetmods = [] // Should get this from the ModifierBucket someday
+  // skill
+  var skill
+  if (!!action.target) {
+    // Skill-12
+    skill = {
+      name: action.name,
+      // @ts-ignore
+      level: parseInt(action.target),
+    }
+  }
+  // @ts-ignore
+  else
+    skill = GURPS.findSkillSpell(
+      actor?.data?.data,
+      action.name,
+      !!action.isSkillOnly,
+      !!action.isSpellOnly
+    )
+  if (!skill) {
+    return 0
+  }
+  let skillLevel = skill.level
+  // @ts-ignore
+  action.obj = skill
 
-  /** @type {Record<string, any>} */
-  let opt = {
-    blind: action.blindroll,
-    event: event,
-  } // Ok, I am slowly learning this Javascrip thing ;-)
+  // on a floating skill check, we want the skill with the highest relative skill level
+  if (!!action.floatingAttribute) {
+    if (!!actor) {
 
-  let savedBucket = GURPS.ModifierBucket.modifierStack.modifierList.slice() // may need to reset the state of the MB
+      let value = GURPS.resolve(action.floatingAttribute, actordata.data)
+      let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
+      console.log(rsl)
+      let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
+      console.log(valueText)
+      skillLevel = valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
+    } else {
+      ui.notifications?.warn('You must have a character selected to use a "Based" Skill')
+    }
+  }
 
-  if (action.type === 'pdf' && action.link) {
+  if (!!action.mod) skillLevel += parseInt(action.mod)
+
+  return skillLevel
+}
+
+const actionFuncs = {
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.link
+   */
+  pdf({action}) {
+    if (!action.link) {
+      ui.notifications?.warn('no link was parsed for the pdf')
+      return false; // if there's no link action fails
+    }
     handlePdf(action.link)
     return true
-  }
-
-  if (action.type === 'modifier') {
-    while (!!action && action.type === 'modifier') {
-      let mod = parseInt(action.mod)
-      GURPS.ModifierBucket.addModifier(mod, action.desc)
-      action = action.next
+  },
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.mod
+   * @param {string} data.action.desc
+   * @param {Object} data.action.next
+   */
+  modifier({action}) {
+    GURPS.ModifierBucket.addModifier(parseInt(action.mod), action.desc)
+    if (action.next && action.next.type === 'modifier') {
+      return this.modifier(action.next); // recursion
     }
     return true
-  }
-
-  if (action.type === 'chat') {
-    let chat = action.orig
+  },
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.orig
+   * @param {boolean} data.action.quiet
+   * @param {JQuery.Event|null} data.event
+   */
+  chat({action, event}) {
     // @ts-ignore
-    chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard?.isCtrl(event)}\n${chat}`
+    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard?.isCtrl(event)}\n${action.orig}`
 
     // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
-    return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
-  }
-
-  if (action.type === 'dragdrop' && action.id) {
-    if (action.link == 'JournalEntry') {
-      game.journal?.get(action.id)?.show()
+    return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+  },
+  /**
+   * @param {Object} data
+   * @param {Object} data.action
+   * @param {string} data.action.link
+   * @param {string} data.action.id
+   */
+  dragdrop({action}) {
+    switch (action.link) {
+      case 'JournalEntry':
+        game.journal?.get(action.id)?.show();
+        return true;
+      case 'Actor':
+        game.actors?.get(action.id)?.sheet?.render(true);
+        return true;
+      case 'RollTable':
+        game.tables?.get(action.id)?.sheet?.render(true);
+        return true;
+      case 'Item':
+        game.items?.get(action.id)?.sheet?.render(true)
+        return true;
+      default:
+        ui.notifications.warn(`unknown entity type: ${action.link}`);
+        return false;
     }
-    if (action.link == 'Actor') {
-      game.actors?.get(action.id)?.sheet?.render(true)
-    }
-    if (action.link == 'RollTable') {
-      game.tables?.get(action.id)?.sheet?.render(true)
-    }
-    if (action.link == 'Item') {
-      game.items?.get(action.id)?.sheet?.render(true)
-    }
-    return true
-  }
-
-  if (action.type === 'controlroll') {
-    //prefix = 'Control Roll, '
-    formula = '3d6'
-    // @ts-ignore - action.target is not required; it could be undefined
-    target = parseInt(action.target)
-    if (!!action.desc) {
-      thing = action.desc
-      chatthing = '["Control Roll, ' + thing + '"CR:' + target + ' ' + thing + ']'
-    } else {
-      chatthing = '[CR:' + target + ']'
-    }
-  }
-
-  if (action.type === 'roll') {
-    prefix = 'Rolling [' + (!!action.displayformula ? action.displayformula : action.formula) + ' ' + action.desc + ']'
-    // @ts-ignore - formula was defined as string above.
-    formula = action.formula
-    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-  }
-
-  if (action.type === 'damage') {
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.costs
+   * @param {string} data.action.mod
+   * @param {string} data.action.desc
+   * @param {string} data.action.formula
+   * @param {string} data.action.damagetype
+   * @param {string} data.action.extdamagetype
+   * @param {string} data.action.hitlocation
+   * 
+   * @param {JQuery.Event|null} data.event
+   * @param {GurpsActor|null} data.actor
+   * @param {string[]} data.targets
+   */
+  damage({action, event, actor, targets}) {
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
 
     if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
@@ -458,299 +503,508 @@ async function performAction(action, actor, event = null, targets = []) {
       action.hitlocation
     )
     return true
-  }
-
-  if (action.type === 'deriveddamage' && action.derivedformula && action.damagetype)
-    if (!!actor) {
-      let df = action.derivedformula.match(/sw/i) ? actor.data.data.swing : actor.data.data.thrust
-      if (!df) {
-        ui.notifications?.warn(actor.name + ' does not have a ' + action.derivedformula.toUpperCase() + ' formula')
-        return true
-      }
-      formula = df + action.formula
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      DamageChat.create(
-        actor || game.user,
-        formula,
-        action.damagetype,
-        event,
-        action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
-        targets,
-        action.extdamagetype,
-        action.hitlocation
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.damagetype
+   * @param {string} data.action.formula
+   * @param {string} data.action.costs
+   * @param {string} data.action.derivedformula
+   * @param {string} data.action.extdamagetype
+   * @param {string} data.action.hitlocation
+   * 
+   * @param {JQuery.Event|null} data.event
+   * @param {GurpsActor|null} data.actor
+   * @param {string[]} data.targets
+   */
+  deriveddamage({action, event, actor, targets}) {
+     // action fails if there's no selected actor
+    if (!actor) {
+      ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    let df = action.derivedformula.match(/sw/i) ? actor.data.data.swing : actor.data.data.thrust
+    // action fails if there's no formula
+    if (!df) {
+      ui.notifications?.warn(`${actor.name} does not have a ${action.derivedformula.toUpperCase()} formula`)
+      return false
+    }
+    let formula = df + action.formula
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    DamageChat.create(
+      actor || game.user,
+      formula,
+      action.damagetype,
+      event,
+      action.derivedformula + action.formula.replace(/([+-]\d+).*/g, '$1'), // Just keep the +/- mod
+      targets,
+      action.extdamagetype,
+      action.hitlocation
+    )
+    return true
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.name
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.isRanged
+   * @param {string} data.action.costs
+   * @param {string} data.action.mod
+   * @param {string} data.action.desc
+   * 
+   * @param {JQuery.Event|null} data.event
+   * @param {GurpsActor|null} data.actor
+   * @param {string[]} data.targets
+   */
+  attackdamage({action, event, actor, targets}) {
+    // action fails if there's no selected actor
+    if (!actor) {
+      ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    if (!action.name) {
+      ui.notifications?.warn('attack damage action has no name')
+      return false;
+    }
+    let att = null
+    att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+    if (!att) {
+      ui.notifications.warn(
+        `No melee or ranged attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`
       )
-      return true
-    } else ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
-
-  if (action.type === 'derivedroll' && action.derivedformula)
-    if (!!actor) {
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.data.data.swing : actor.data.data.thrust
-      formula = d6ify(df + action.formula)
-      prefix = 'Rolling ' + action.derivedformula + action.formula + ' ' + action.desc
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-    } else ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
-
-  let processLinked = (/** @type {Action} */ tempAction) => {
-    let bestLvl = -99999
-    var bestAction, besttrue
-    let attempts = []
-    var th
-    while (!!tempAction) {
-      if (!!tempAction.truetext && !besttrue) besttrue = tempAction
-      if (tempAction.type == 'attribute') {
-        th = GURPS._mapAttributePath(tempAction.path)
-        let t = parseInt(tempAction.target) // is it pre-targeted (ST12)
-        if (!t && !!actor) {
-          if (!!tempAction.melee) {
-            // Is it trying to match to an attack name (should only occur with Parry: & Block:
-            let m = GURPS.findAttack(actor.data.data, tempAction.melee)
-            if (!!m) {
-              th += ' for ' + m.name
-              //              if (!!m.mode && !tempAction.desc) tempAction.desc = '(' + m.mode + ')'
-              // @ts-ignore
-              t = parseInt(m[tempAction.attribute.toLowerCase()]) // should only occur with parry & block
-            }
-            if (!m || !t) attempts.push(tempAction.attribute + ':' + tempAction.melee)
-          } else {
-            t = parseInt(GURPS.resolve(tempAction.path, actordata.data))
-            if (!t) attempts.push(tempAction.attribute)
-          }
-        }
-        let sl = t
-        if (!!tempAction.mod) sl += parseInt(tempAction.mod)
-        if (sl > bestLvl) {
-          // @ts-ignore
-          bestLvl = parseInt(sl)
-          bestAction = tempAction
-          prefix = 'Roll vs '
-          target = t
-          //thing = th
-          thing = tempAction.orig
-          // @ts-ignore
-          tempAction.thing = thing
-          if (!!tempAction.truetext) besttrue = tempAction
-        }
-      } else {
-        // skill
-        var skill
-        if (!!tempAction.target) {
-          // Skill-12
-          skill = {
-            name: tempAction.name,
-            // @ts-ignore
-            level: parseInt(tempAction.target),
-          }
-        }
-        // @ts-ignore
-        else
-          skill = GURPS.findSkillSpell(
-            actor?.data?.data,
-            tempAction.name,
-            !!tempAction.isSkillOnly,
-            !!tempAction.isSpellOnly
-          )
-        if (!skill) {
-          attempts.push(tempAction.name)
-        } else {
-          // @ts-ignore
-          tempAction.obj = skill
-          // on a normal skill check, look for the skill with the highest level
-          let getLevel = (/** @type {{ name: string, level: string; relativelevel: string; }} */ skill) =>
-            parseInt(skill.level)
-
-          let getSkillName = (/** @type {{ name: string; }} */ skill) => skill.name
-
-          // on a floating skill check, we want the skill with the highest relative skill level
-          if (!!tempAction.floatingAttribute)
-            if (!!actor) {
-              getSkillName = skill => `${tempAction.floatingLabel}-based ${skill.name}`
-
-              let value = GURPS.resolve(tempAction.floatingAttribute, actordata.data)
-              getLevel = skill => {
-                let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
-                console.log(rsl)
-                let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
-                console.log(valueText)
-                return valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
-              }
-            } else ui.notifications?.warn('You must have a character selected to use a "Based" Skill')
-
-          let skillLevel = getLevel(skill)
-
-          if (!!tempAction.mod) skillLevel += parseInt(tempAction.mod)
-
-          if (skillLevel > bestLvl) {
-            bestLvl = skillLevel
-            bestAction = tempAction
-            thing = getSkillName(skill)
-            // @ts-ignore
-            tempAction.thing = thing
-            target = getLevel(skill) // target is without mods
-            prefix = ''
-            if (!!tempAction.truetext) besttrue = tempAction
-          }
-        }
+      return false
+    }
+    let dam = parseForRollOrDamage(att.damage)
+    if (!dam.action) {
+      ui.notifications?.warn('parsed damage has no action');
+      return false;
+    }
+    dam.action.costs = action.costs
+    dam.action.mod = action.mod
+    dam.action.desc = action.desc
+    return performAction(dam.action, actor, event, targets)
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} [data.action.displayformula]
+   * @param {string} data.action.formula
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
+  roll({action, actor, event}) {
+    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula} ${action.desc}']`;
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs);
+    return doRoll({
+      actor,
+      formula: action.formula,
+      prefix,
+      optionalArgs: {blind: action.blindroll, event},
+    });
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.target
+   * @param {string} data.action.desc
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
+  controlroll({action, actor, event}) {
+    const target = parseInt(action.target);
+    let thing;
+    let chatthing;
+    if (!!action.desc) {
+      thing = action.desc
+      chatthing = `["Control Roll, ${thing}"CR:${target} ${thing}]`
+    } else {
+      chatthing = `[CR:${target}]`;
+    }
+    return doRoll({
+      actor,
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: {blind: action.blindroll, event},
+    })
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.derivedformula
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.formula
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
+  derivedroll({action, actor, event}) {
+    if (!action.derivedformula) {
+      ui.notifications.warn('derived roll with no derived formula');
+      return false;
+    }
+    if (!actor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.data.data.swing : actor.data.data.thrust
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs);
+    const originalFormula = action.derivedformula + action.formula;
+    return doRoll({
+      actor,
+      formula: d6ify(df + action.formula),
+      prefix: `Rolling [${action.derivedformula}${action.formula}] ${action.desc}`,
+      optionalArgs: {blind: action.blindroll, event},
+    });
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.isRanged
+   * @param {boolean} data.action.calcOnly
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
+  async attack({action, actor, event}) {
+    if (!actor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    if (!action.name) {
+      ui.notifications.warn('attack action without name');
+      return false;
+    }
+    let att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+    if (!att) {
+      if (!action.calcOnly) {
+        ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
       }
-      // @ts-ignore
-      tempAction = tempAction.next
+      return false
     }
-    if (!!bestAction && !!besttrue) {
-      bestAction.truetext = besttrue.truetext
-      bestAction.falsetext = besttrue.falsetext
+    let mode = att.mode? ` (${att.mode})`: ''
+    let p = 'A:'
+    if (!!action.isMelee && !action.isRanged) p = 'M:'
+    if (!action.isMelee && !!action.isRanged) p = 'R:'
+    // Need to finagle chatthing to allow for attack names that include OtFs
+    let thing = att.name
+      .replace(/\[.*\]/, '')
+      .replace(/ +/g, ' ')
+      .trim()
+    const chatthing = thing === ''? att.name + mode: `[${p}"${thing}${mode}"]`
+    let target = att.level;
+    if (!target) {
+      ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`);
+      return false;
     }
+    if (action.calcOnly) {
+      let modifier = parseInt(action.mod) ?? 0;
+      if (isNaN(modifier)) modifier = 0;
+      return { target: target + modifier, thing: thing }
+    }
+    const opt = {
+      blind: action.blindroll,
+      event,
+      obj: att, // save the attack in the optional parameters, in case it has rcl/rof
+    }
+    let targetmods = []
+    if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
+    if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
 
-    return [bestAction, attempts]
-  }
+    return doRoll({
+      actor,
+      targetmods,
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: opt,
+    });
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.calcOnly
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   */
+  ['weapon-block']({action, actor, event}) {
+    if (!actor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    let att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
+    if (!att) {
+      ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+      return false
+    }
+    let mode = att.mode? ` (${att.mode})`: ''
+    const target = parseInt(att.block)
+    if (isNaN(target) || target == 0) {
+      ui.notifications.warn(`No Block for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+      return false
+    }
+    const thing = att.name.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+    if (action.calcOnly) {
+      let modifier = parseInt(action.mod) ?? 0;
+      if (isNaN(modifier)) modifier = 0;
+      return { target: target + modifier, thing: thing }
+    }
+    let targetmods = []
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+    const chatthing = thing === ''? att.name + mode: `[B:"${thing}${mode}"]`
 
-  // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
-  if (action.type === 'skill-spell' || action.type === 'attribute') {
-    const [_best, _atts] = processLinked(action)
-    let bestAction = /** @type {Action | null} */ (_best)
-    let attempts = /** @type {string[]} */ (_atts)
+    return doRoll({
+      actor,
+      targetmods,
+      prefix: 'Block: ',
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: {blind: action.blindroll, event},
+    })
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.calcOnly
+   * @param {boolean} data.action.blindroll
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   * @param {boolean} data.calcOnly
+   */
+  ['weapon-parry']({action, actor, event, calcOnly}) {
+    if (!actor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'));
+      return false;
+    }
+    let att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
+    if (!att) {
+      ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+      return false
+    }
+    let mode = att.mode? ` (${att.mode})`: ''
+    const target = parseInt(att.parry)
+    if (isNaN(target) || target == 0) {
+      ui.notifications.warn(`No Parry for '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
+      return false
+    }
+    const thing = att.name.replace(/\[.*\]/, '').replace(/ +/g, " ").trim()
+    if (action.calcOnly) {
+      let modifier = parseInt(action.mod) ?? 0;
+      if (isNaN(modifier)) modifier = 0;
+      return { target: target + modifier, thing: thing }
+    }
+    let targetmods = []
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+    const chatthing = thing === ''? att.name + mode: `[P:"${thing}${mode}"]`
 
-    if (!actor && (!bestAction || !bestAction.target)) {
+    return doRoll({
+      actor,
+      targetmods,
+      prefix: 'Parry: ',
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: {blind: action.blindroll, event},
+    })
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.isMelee
+   * @param {boolean} data.action.blindroll
+   * @param {string} [data.action.target]
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   * @param {string} data.originalOtf
+   * @param {boolean} data.calcOnly
+   */
+  async attribute({action, actor, event, originalOtf, calcOnly}) {
+    // This can be complicated because Attributes (and Skills) can be pre-targeted (meaning we don't need an actor)
+    if (!actor && (!action || !action.target)) {
       ui.notifications?.warn('You must have a character selected')
       return false
     }
-    if (!bestAction) {
-      if (!action.calcOnly)
-        ui.notifications?.warn(
-          "Unable to find '" + attempts?.join("' or '").replace('<', '&lt;') + "' on " + actor?.name
-        )
+    let target = parseInt(action.target); // is it pre-targeted (ST12)
+    if (!target && !!actor) {
+      if (!!action.melee) {
+        // Is it trying to match to an attack name (should only occur with Parry: & Block:
+        let meleeAttack = GURPS.findAttack(actor.data.data, action.melee)
+        if (!!meleeAttack) {
+          target = parseInt(meleeAttack[action.attribute.toLowerCase()]) // should only occur with parry & block
+        }
+      } else {
+        target = parseInt(GURPS.resolve(action.path, actor.data.data))
+      }
+    }
+    const thing = action.name;
+    if (!target) {
       return false
     }
-    formula = '3d6'
-    if (bestAction.type === 'skill-spell') {
-      //      chatthing = '[S:' + bestAction.thing + ']'
-
-      thing = bestAction.thing
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
-      if (thing.length == 0) {
-        chatthing = bestAction.thing
-      } else chatthing = '[S:"' + thing + '"]'
-    } else chatthing = '[' + bestAction.orig + ']'
-    opt.action = bestAction
-    opt.obj = bestAction.obj
+    if (calcOnly) {
+      let modifier = parseInt(action.mod) ?? 0;
+      if (isNaN(modifier)) modifier = 0;
+      return { target: target + modifier, thing: thing }
+    }
+    let targetmods = []
+    const chatthing = originalOtf? `[${originalOtf}]`: `[${thing}]`;
+    let opt = {
+      blind: action.blindroll,
+      event: event,
+      action: action,
+      obj: action.obj
+    }
     if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
     if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
 
-    if (!!bestAction.costs) GURPS.ModifierBucket.addModifier(0, bestAction.costs)
-    if (!!bestAction.mod) GURPS.ModifierBucket.addModifier(bestAction.mod, bestAction.desc, targetmods)
-    else if (!!bestAction.desc) opt.text = "<span style='font-size:85%'>" + bestAction.desc + '</span>'
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+    else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
+
+    return doRoll({
+      actor,
+      targetmods,
+      prefix: 'Roll vs ',
+      thing,
+      chatthing,
+      origtarget: target,
+      optionalArgs: opt
+    })
+  },
+  /**
+   * @param {Object} data
+   * 
+   * @param {Object} data.action
+   * @param {string} data.action.desc
+   * @param {string} data.action.costs
+   * @param {string} data.action.name
+   * @param {string} data.action.mod
+   * @param {boolean} data.action.blindroll
+   * @param {string} [data.action.target]
+   * 
+   * @param {GurpsActor|null} data.actor
+   * @param {JQuery.Event|null} data.event
+   * @param {string} data.originalOtf
+   * @param {boolean} data.calcOnly
+   */
+  async ['skill-spell']({action, actor, event, originalOtf, calcOnly}) {
+    if (!actor && (!action || !action.target)) {
+      ui.notifications?.warn('You must have a character selected')
+      return false
+    }
+    const target = processSkillSpell({action, actor})
+    if (!action) {
+      return false
+    }
+    let thing = action.name
+      .replace(/\[.*\]/, '')
+      .replace(/ +/g, ' ')
+      .trim()
+    if (calcOnly) {
+      let modifier = parseInt(action.mod) ?? 0;
+      if (isNaN(modifier)) modifier = 0;
+      return { target: target + modifier, thing: thing }
+    }
+    let targetmods = [];
+    let chatthing = originalOtf? `[${originalOtf}]`: `[S:"${thing}"]`;
+    let opt = {
+      blind: action.blindroll,
+      event,
+      action,
+      obj: action.obj
+    }
+    if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
+    if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+
+    if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
+    if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+    else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
+
+    return doRoll({actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt})
   }
+}
+GURPS.actionFuncs = actionFuncs
 
-  if (action.type === 'attack' && action.name)
-    if (!!actor) {
-      let att = null
-      prefix = ''
-      att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
-      if (!att) {
-        if (!action.calcOnly)
-          ui.notifications.warn(
-            "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
-          )
-        return false
-      }
-      thing = att.name // get real name of attack
-      let mode = ''
-      if (!!att.mode) mode = ' (' + att.mode + ')'
-      let p = 'A:'
-      if (!!action.isMelee && !action.isRanged) p = 'M:'
-      if (!action.isMelee && !!action.isRanged) p = 'R:'
-      // Need to finagle chatthing to allow for attack names that include OtFs
-      thing = thing
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
-      if (thing.length == 0) {
-        chatthing = att.name + mode
-      } else chatthing = '[' + p + '"' + thing + mode + '"]'
-      let t = att.level
-      if (!!t) {
-        let a = (t + '').trim().split(' ')
-        t = a[0]
-        if (!!t) target = parseInt(t)
-        if (isNaN(target)) target = 0
-        // Can't roll against a non-integer
-        else {
-          a.shift()
-          let m = a.join(' ')
-          if (!!m) GURPS.ModifierBucket.addModifier(0, m) //  Level may have "*Costs xFP"
-        }
-      }
-      opt.obj = att // save the attack in the optional parameters, in case it has rcl/rof
-      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
-      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
-      formula = '3d6'
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      //if (!!att.mode) opt.text = "<span style='font-size:85%'>(" + att.mode + ')</span>'
-    } else ui.notifications?.warn('You must have a character selected')
-
-  if (action.type === 'attackdamage' && action.name)
-    if (!!actor) {
-      let att = null
-      att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
-      if (!att) {
-        ui.notifications.warn(
-          "No melee or ranged attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name
-        )
-        return false
-      }
-      let dam = parseForRollOrDamage(att.damage)
-      if (!!dam.action) {
-        dam.action.costs = action.costs
-        dam.action.mod = action.mod
-        dam.action.desc = action.desc
-        await performAction(dam.action, actor, event, targets)
-      }
-    } else ui.notifications?.warn('You must have a character selected')
-
-  if (action.type.startsWith('weapon-'))
-    if (!!actor) {
-      // weapon-parry or weapon-block
-      let att = null
-      att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
-      if (!att) {
-        ui.notifications.warn("No melee attack named '" + action.name.replace('<', '&lt;') + "' found on " + actor.name)
-        return false
-      }
-      formula = '3d6'
-      let mode = ''
-      if (!!att.mode) mode = ' (' + att.mode + ')'
-      let p = 'P:'
-      target = parseInt(att.parry)
-      prefix = 'Parry'
-      if (action.type == 'weapon-block') {
-        target = parseInt(att.block)
-        p = 'B:'
-        prefix = 'Block'
-      }
-      if (isNaN(target) || target == 0) {
-        ui.notifications.warn('No ' + prefix + " for '" + action.name.replace('<', '&lt;') + "' found on " + actor.name)
-        return false
-      }
-      prefix += ': '
-      if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
-      if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      thing = att.name
-        .replace(/\[.*\]/, '')
-        .replace(/ +/g, ' ')
-        .trim()
-      if (thing.length == 0) {
-        chatthing = att.name + mode
-      } else chatthing = '[' + p + '"' + thing + mode + '"]'
-    } else ui.notifications?.warn('You must have a character selected')
-
-  if (!formula || target == 0 || isNaN(target)) return false // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
-  if (!!action.calcOnly) {
-    for (let m of targetmods) target += m.modint
-    GURPS.ModifierBucket.modifierStack.modifierList = savedBucket
-    return { target: target, thing: thing }
+async function findBestActionInChain({action, actor, event, targets, originalOtf}) {
+  const actions = [];
+  while (action) {
+    actions.push(action);
+    action = action.next;
   }
-  return await doRoll(actor, formula, targetmods, prefix, thing, chatthing, target, opt)
+  const calculations = await Promise.all(actions.map((a) => GURPS.actionFuncs[a.type]({action: a, actor, event, targets, originalOtf, calcOnly: true})))
+  const levels = calculations.map((result) => result ? result.target : 0);
+  if (!levels.some(level => level > 0)) {
+    ui.notifications.warn(
+      `Unable to find '${calculations.map(result => result.thing).join("' or '").replace('<', '&lt;')}' on ${actor.name}`
+    );
+    return null;
+  }
+  const bestLevel = Math.max(...levels);
+  return actions[levels.indexOf(bestLevel)];
+}
+
+/**
+ * @param {Action} action
+ * @param {GurpsActor|null} actor
+ * @param {JQuery.Event|null} [event]
+ * @param {string[] } [targets]
+ * @returns {Promise<boolean | {target: any, thing: any} | undefined>}
+ */
+async function performAction(action, actor, event = null, targets = []) {
+  if (!action || !(action.type in actionFuncs)) return false
+  const originalOtf = action.orig;
+  const calcOnly = action.calcOnly;
+  if (['attribute', 'skill-spell'].includes(action.type)) {
+    action = await findBestActionInChain({action, event, actor, targets, originalOtf})
+  }
+  return GURPS.actionFuncs[action.type]({action, actor, event, targets, originalOtf, calcOnly})
 }
 GURPS.performAction = performAction
 
@@ -933,7 +1187,7 @@ async function handleRoll(event, actor, targets) {
     formula = d6ify(formula)
   }
 
-  doRoll(actor, formula, targetmods, prefix, thing, chatthing, target, opt)
+  doRoll({actor, formula, targetmods, prefix, thing, chatthing, origtarget: target, optionalArgs: opt})
 }
 GURPS.handleRoll = handleRoll
 
