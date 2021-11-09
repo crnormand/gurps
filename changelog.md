@@ -11,6 +11,8 @@ Release 0.11.14
 - Added "Mental Stun" to status effects.
 - Updated German translation.
 - Added ?chat-command help text
+- Merged @Stevil's custom actor sheet colorization code
+- Added a fix to make GGA compatible with Mythic GM module (may also fix other module compatibilities)
 
 Release 0.11.13
 
