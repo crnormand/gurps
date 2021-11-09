@@ -58,7 +58,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, chatthin
 
     chatdata['rtotal'] = rtotal
     chatdata['loaded'] = !!roll.isLoaded
-    chatdata['rolls'] = roll.dice[0].results.map(it => it.result.toString()).join(',')
+    chatdata['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result.toString()).join(',') : ''
     chatdata['modifier'] = modifier
     chatdata['finaltarget'] = finaltarget
 
@@ -124,7 +124,7 @@ export async function doRoll(actor, formula, targetmods, prefix, thing, chatthin
 
     chatdata['rtotal'] = rtotal
     chatdata['loaded'] = !!roll.isLoaded
-    chatdata['rolls'] = roll.dice[0].results.map(it => it.result).join()
+    chatdata['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
     chatdata['modifier'] = modifier
   }
 

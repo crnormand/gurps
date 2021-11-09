@@ -16,7 +16,7 @@ class HelpChatProcessor extends ChatProcessor {
 
   /** @param {string} line */
   matches(line) {
-    return line.match(/[!\/]help/i)
+    return line.match(/[!\/\?]help/i)
   }
 
   /**
@@ -25,6 +25,9 @@ class HelpChatProcessor extends ChatProcessor {
    * @param {any} _msgs
    */
   async process(_line, _msgs) {
+    let l = _line.split(' ')
+    if (l.length > 1) return this.registry.handle('?' + l[1].trim())
+    
     let t = `<a href='${GURPS.USER_GUIDE_URL}'>${i18n('GURPS.gameAidUsersGuide')}</a><br>`
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
@@ -39,6 +42,7 @@ class HelpChatProcessor extends ChatProcessor {
       t += '<br>--- GM only ---<br>'
       t += gmonly.join('<br>')
     }
+    t += '<br><br>' + i18n("GURPS.chatHelpHelp")
     this.priv(t)
   }
 }

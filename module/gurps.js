@@ -989,17 +989,7 @@ function gurpslink(str, clrdmods = true) {
       if (depth == 0 && found >= 0) {
         output += str.substring(0, found - 1)
         let action = parselink(str.substring(found, i), '', clrdmods)
-
-        if (
-          action.action?.type &&
-          !['pdf', 'controlroll', 'attribute', 'modifier', 'chat', 'damage', 'roll', 'skill-spell'].includes(
-            action.action.type
-          )
-        )
-          if (!action.action)
-            // console.log(action.action)
-
-            output += '['
+        if (!action.action) output += '['
         output += action.text
         if (!action.action) output += ']'
         str = str.substr(i + 1)
