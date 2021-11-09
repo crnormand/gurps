@@ -15,7 +15,8 @@ Hooks.once('init', async function () {
   })
 
   // @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
-  CONFIG.Dice.rolls[0] = GurpsRoll
+  // FIXME Could be disastrously wrong!
+  CONFIG.Dice.rolls.push(GurpsRoll)
 
   // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch them to
   // include the properties we need to support Physical Dice
