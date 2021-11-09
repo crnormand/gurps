@@ -1,0 +1,63 @@
+<!-- Added to color the rollable parts of the character sheet. Stevil... -->
+<form id='color-character-sheet-settings' autocomplete='off' class='gga-app'>
+  <h3>Color Character Sheet</h3>
+  <aside>Color Character Sheet Settings</aside>
+  <div class='section'>
+    <div id='entry-list' class='gurps-sheet-colors overflowy'>
+      <header>Override Color</header>
+      <header>Color Area</header>
+      <header>Custom Color</header>
+      {{#each allColors}}
+      <hr/>
+        <div><input type='checkbox' id='{{rollable_css}}' {{#if color_override}}checked{{/if}} /></div>
+        <div>
+          <div>{{area}} Color</div>
+          <div for='{{rollable_css}}' class='{{rollable_css}}'>
+            <div id='colorPicker'>
+              <a class='color'>
+                <div class='colorInner'></div>
+              </a>
+              <div class='track'></div>
+              <ul class='dropdown'>
+                <li></li>
+              </ul>
+              <input type='hidden' class='default-{{rollable_css}}' value='{{default_background}}' />
+              <input type='hidden' class='colorInput' value='{{background_color}}' />
+            </div>
+          </div>
+          <div>{{area}} Hover Color</div>
+          <div for='{{rollable_css}}' class='{{rollable_css}}-hover'>
+            <div id='colorPicker'>
+              <a class='color'>
+                <div class='colorInner'></div>
+              </a>
+              <div class='track'></div>
+              <ul class='dropdown'>
+                <li></li>
+              </ul>
+              <input type='hidden' class='default-{{rollable_css}}-hover' value='{{default_hover}}' />
+              <input type='hidden' class='colorInput' value='{{background_color}}' />
+            </div>
+          </div>
+          <div>{{area}} Text Color</div>
+          <div for='{{rollable_css}}' class='{{rollable_css}}-text'>
+            <div id='colorPicker'>
+              <a class='color'>
+                <div class='colorInner'></div>
+              </a>
+              <div class='track'></div>
+              <ul class='dropdown'>
+                <li></li>
+              </ul>
+              <input type='hidden' class='default-{{rollable_css}}-text' value='{{default_text}}' />
+              <input type='hidden' class='colorInput' value='{{background_color}}' />
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+  <div class='section'>
+    <button id='update'><i class='fas fa-save'></i>Update Colors</button>
+  </div>
+</form>
