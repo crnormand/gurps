@@ -549,8 +549,14 @@ class UsesChatProcessor extends ChatProcessor {
     return '/uses &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/uses *([\+-=]\w+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/uses +([\+-=]\w+)?(reset)?(.*)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?]uses$/i)   
+  }
+  usage() {
+    return i18n("GURPS.chatHelpUses")
   }
   async process(line) {
     let answer = false
@@ -620,8 +626,14 @@ class QtyChatProcessor extends ChatProcessor {
     return '/qty &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/qty *([\+-=]\d+)(.*)/i)
+    this.match = line.match(/^\/qty +([\+-=]\d+)(.*)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?]qty$/i)   
+  }
+  usage() {
+    return i18n("GURPS.chatHelpQty")
   }
   async process(line) {
     let answer = false
@@ -684,9 +696,15 @@ class LightChatProcessor extends ChatProcessor {
 
     this.match = line.match(
       //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
-      /^\/(light|li) *(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<colorint>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li) +(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<colorint>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?](light|li)$/i)   
+  }
+  usage() {
+    return i18n("GURPS.chatHelpLight")
   }
   async process(line) {
     if (canvas.tokens.controlled.length == 0) {

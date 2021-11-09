@@ -37,6 +37,13 @@ export default class StatusChatProcessor extends ChatProcessor {
     return !!this.match
   }
 
+  usagematches(line) {
+    return line.match(/^[\/\?](st|status)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpStatus");
+  }
+
   /**
    * @param {string} _
    */
@@ -171,7 +178,7 @@ export default class StatusChatProcessor extends ChatProcessor {
       let actor = /** @type {GurpsActor} */ (token.actor)
       // TODO We need to turn this into a single string, instead of multiple i18n strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.
-      this.prnt(`${i18n(actionText)} [${effect.id}:'${i18n(effect.label)}'] ${i18n('GURPS.for')} ${actor.displayname}`)
+      this.prnt(`${i18n(actionText)} <i>${effect.id}:'${i18n(effect.label)}'</i> ${i18n('GURPS.for')} ${actor.displayname}`)
     }
   }
 

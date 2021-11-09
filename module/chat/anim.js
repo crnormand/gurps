@@ -233,10 +233,17 @@ export class AnimChatProcessor extends ChatProcessor {
 
   matches(line) { 
 //   this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>[-+][\d\.]+)? *(?<fudge>[-+][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<wait>w[\d\.]+)? *(?<file>[\S]+)? *(?<center>cf?m?n?\d*(:[\d\.]+,[\d\.]+)?)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<stretch>[\+>][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
+    this.match = line.match(/^\/anim +(?<list>list)? *(?<wait>w[\d\.]+)? *(?<file>[\S]+)? *(?<center>cf?m?n?\d*(:[\d\.]+,[\d\.]+)?)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<stretch>[\+>][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
     return !!this.match
   }
   
+  usagematches(line) {
+    return line.match(/^[\/\?]anim$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpAnim");
+  }
+
   async process(line) {
     if (!canvas.fxmaster) return this.errorExit("This macro depends on the FXMaster module. Make sure it is installed and enabled")
     let files = []

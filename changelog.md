@@ -10,6 +10,7 @@ Release 0.11.14
 - Add Effects Modifier popup window.
 - Added "Mental Stun" to status effects.
 - Updated German translation.
+- Added ?chat-command help text
 
 Release 0.11.13
 

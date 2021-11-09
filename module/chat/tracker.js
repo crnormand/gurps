@@ -7,8 +7,15 @@ export default class TrackerChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/(tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))? *([+-=]\d+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/(tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))? +([+-=]\d+)?(reset)?(.*)/i)
     return !!this.match
+  }
+
+  usagematches(line) {
+    return line.match(/^[\/\?](tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))?$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpTracker");
   }
 
   async process(line) {

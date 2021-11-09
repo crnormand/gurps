@@ -2,7 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { parselink } from '../../lib/parselink.js'
-import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, splitArgs, i18n } from '../../lib/utilities.js'
 
 export class EveryoneAChatProcessor extends ChatProcessor {
   help() {
@@ -16,6 +16,13 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) reset/i)
     return !!this.match
   }
+  usagematches(line) {
+    return line.match(/^[\/\?](everyone|ev)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpEveryone");
+  }
+
   async process(line) {
     let m = this.match
     let any = false
@@ -78,6 +85,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
     return !!this.match
   }
+
   async process(line) {
     let m = this.match
     if (!!m[3] || !!m[4]) {
@@ -146,6 +154,13 @@ export class RemoteChatProcessor extends ChatProcessor {
   matches(line) {
     this.match = line.match(/^\/(remote|rem) \[(.*)\](.*)/i)
     return !!this.match
+  }
+
+  usagematches(line) {
+    return line.match(/^[\/\?](remote|rem)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpRemote");
   }
 
   async process(line) {
