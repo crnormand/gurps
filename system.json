@@ -8,12 +8,16 @@
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
+  "scripts": [
+    "scripts/jquery.tinycolorpicker.js"
+  ],
   "styles": [
     "styles/simple.css",
     "styles/css_boilerplate.css",
     "styles/simplified.css",
     "styles/npc-input.css",
-    "styles/apps.css"
+    "styles/apps.css",
+    "styles/tinycolorpicker.css"
   ],
   "packs": [],
   "languages": [
