@@ -10,7 +10,8 @@ Release 0.11.14
 - Add Effects Modifier popup window.
 - Added "Mental Stun" to status effects.
 - Updated German translation.
-- Added ?chat-command help text
+- Added /help chat-command or ?chat-command help text.
+- Added Stevil's color chooser code.
 
 Release 0.11.13
 
@@ -19,7 +20,6 @@ Release 0.11.13
 - Big rewrite of actor sheets and editor.
 - Update to JB2A 3.0
 - Implement chat help
-
 
 Release 0.11.12 10/16/2021
 
