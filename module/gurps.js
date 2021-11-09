@@ -986,12 +986,7 @@ async function findBestActionInChain({action, actor, event, targets, originalOtf
   }
   const calculations = await Promise.all(actions.map((a) => GURPS.actionFuncs[a.type]({action: a, actor, event, targets, originalOtf, calcOnly: true})))
   const levels = calculations.map((result) => result ? result.target : 0);
-  if (!levels.some(level => level > 0)) {
-    ui.notifications.warn(
-      `Unable to find '${calculations.map(result => result.thing).join("' or '").replace('<', '&lt;')}' on ${actor.name}`
-    );
-    return null;
-  }
+  if (!levels.some(level => level > 0)) return null;  // actor does not have any of these skills
   const bestLevel = Math.max(...levels);
   return actions[levels.indexOf(bestLevel)];
 }
@@ -1005,12 +1000,13 @@ async function findBestActionInChain({action, actor, event, targets, originalOtf
  */
 async function performAction(action, actor, event = null, targets = []) {
   if (!action || !(action.type in actionFuncs)) return false
+  const origAction = action
   const originalOtf = action.orig;
   const calcOnly = action.calcOnly;
   if (['attribute', 'skill-spell'].includes(action.type)) {
     action = await findBestActionInChain({action, event, actor, targets, originalOtf})
   }
-  return GURPS.actionFuncs[action.type]({action, actor, event, targets, originalOtf, calcOnly})
+  return (!action) ? false : GURPS.actionFuncs[action.type]({action, actor, event, targets, originalOtf, calcOnly})
 }
 GURPS.performAction = performAction
 
