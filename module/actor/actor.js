@@ -1938,6 +1938,7 @@ export class GurpsActor extends Actor {
           sp.cost = t(j.cost)
           sp.maintain = t(j.maintain)
           sp.difficulty = t(j.difficulty)
+          sp.relativelevel = t(j.relativelevel)
           sp.notes = t(j.notes)
         } else {
           let cm = t(j.costmaintain)
@@ -3161,6 +3162,7 @@ export class Spell extends Leveled {
     this.resist = ''
     this.casttime = ''
     this.difficulty = ''
+    this.relativelevel = '' // "IQ+1"
   }
 }
 

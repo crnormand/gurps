@@ -446,7 +446,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('[data-onethird]').hover(
       function () {
-        let opt = $(this).attr('data-onethird').substr(2)
+        let opt = $(this).attr('data-onethird')
         let msg = 'Disable&nbsp;' + opt
         if ($(this).hasClass('buttongrey')) msg = 'Enable&nbsp;' + opt
         $(this).append(
