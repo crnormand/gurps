@@ -709,7 +709,7 @@ export class GurpsActorSheet extends ActorSheet {
         if (!!oldd) mergeObject(newd, JSON.parse(oldd)) // May need to merge in OTF drag info
 
         let payload = JSON.stringify(newd)
-        console.log(payload)
+        //console.log(payload)
         return ev.dataTransfer.setData('text/plain', payload)
       })
     })
