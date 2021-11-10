@@ -76,11 +76,11 @@
           class='sl {{rollable this.level}} flex-center'
           data-name='{{this.name}}'
           data-key='data.skills.{{@key}}'
-          data-otf='S:"{{this.name}}"'
+          data-otf='Sk:"{{this.name}}"'
         >
           {{this.level}}
         </div>
-        <div class='rsl flex-center'>{{this.relativelevel}}</div>
+        <div class='rsl {{rollable this.level}} flex-center' data-otf='Sk:"{{this.name}}"'>{{this.relativelevel}}</div>
         <div class='pts flex-center'>{{this.points}}</div>
         <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
       {{/unless}}

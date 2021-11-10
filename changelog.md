@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.11.14
+Release 0.11.13
 
 - Implemented Active Effects framework.
 - Added Posture (as an Active Effect) to Conditions.
@@ -10,18 +10,14 @@ Release 0.11.14
 - Add Effects Modifier popup window.
 - Added "Mental Stun" to status effects.
 - Updated German translation.
-- Added ?chat-command help text
+- Added /help chat-command or ?chat-command help text.
 - Merged @Stevil's custom actor sheet colorization code
 - Added a fix to make GGA compatible with Mythic GM module (may also fix other module compatibilities)
-
-Release 0.11.13
-
+- Made Skill RSL column 'rollable'
 - Add 'Combat Move' to Conditions.
 - Allow user to opt-out of Maneuvers updating Move.
 - Big rewrite of actor sheets and editor.
 - Update to JB2A 3.0
-- Implement chat help
-
 
 Release 0.11.12 10/16/2021
 
