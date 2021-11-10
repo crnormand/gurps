@@ -14,10 +14,10 @@
   cursor: crosshair;
   float: left;
   left: 32px;
-  top: 10px;
+  top: 25px;
   display: none;
   border: 1px solid #ccc;
-  z-index: 10;
+  z-index: 10000;
 }
 
 #colorPicker .color {
@@ -27,7 +27,7 @@
   border: 0px solid #ccc;
   display: block;
   position: relative;
-  z-index: 11;
+  z-index: 10001;
   background-color: #efefef;
   -webkit-border-radius: 27px;
   -moz-border-radius: 27px;

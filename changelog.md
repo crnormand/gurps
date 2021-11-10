@@ -11,12 +11,13 @@ Release 0.11.13
 - Added "Mental Stun" to status effects.
 - Updated German translation.
 - Added /help chat-command or ?chat-command help text.
-- Added Stevil's color chooser code.
+- Merged @Stevil's custom actor sheet colorization code
+- Added a fix to make GGA compatible with Mythic GM module (may also fix other module compatibilities)
+- Made Skill RSL column 'rollable'
 - Add 'Combat Move' to Conditions.
 - Allow user to opt-out of Maneuvers updating Move.
 - Big rewrite of actor sheets and editor.
 - Update to JB2A 3.0
-- Implement chat help
 
 Release 0.11.12 10/16/2021
 
