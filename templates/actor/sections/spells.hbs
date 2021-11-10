@@ -135,13 +135,13 @@
       <div class='time flex-center'>{{this.casttime}}</div>
       <div class='duration flex-center'>{{this.duration}}</div>
       <div
-        class='sl rollable flex-center'
+        class='sl {{rollable this.level}} flex-center'
         data-name='{{this.name}}'
-        data-otf='S:"{{this.name}}"'
+        data-otf='Sp:"{{this.name}}"'
         data-key='data.spells.{{@key}}'
       >{{this.level}}
       </div>
-      <div class='rsl flex-center'>{{this.difficulty}}</div>
+      <div class='rsl {{rollable this.level}} flex-center data-otf='Sp:"{{this.name}}"'>{{this.difficulty}}</div>
       <div class='pts flex-center'>{{this.points}}</div>
       <div class='ref flex-center'>{{{pdflink this.pageref}}}</div>
       {{/unless}}
