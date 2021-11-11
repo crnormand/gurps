@@ -1404,21 +1404,28 @@ export class GurpsActorSheet extends ActorSheet {
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ENCUMBRANCE)) {
       let element = ev.currentTarget
       let key = element.dataset.key
-      let encs = this.actor.data.data.encumbrance
-      if (encs[key].current) return // already selected
-      for (let enckey in encs) {
-        let enc = encs[enckey]
-        let t = 'data.encumbrance.' + enckey + '.current'
-        if (key === enckey) {
-          await this.actor.update({
-            [t]: true,
-            'data.currentmove': parseInt(enc.move),
-            'data.currentdodge': parseInt(enc.dodge),
-          })
-        } else if (enc.current) {
-          await this.actor.update({ [t]: false })
+      //////////
+      // Check for 'undefined' when clicking on Encumbrance Level 'header'. ~Stevil
+      if (key !== undefined){
+      //////////
+        let encs = this.actor.data.data.encumbrance
+        if (encs[key].current) return // already selected
+        for (let enckey in encs) {
+          let enc = encs[enckey]
+          let t = 'data.encumbrance.' + enckey + '.current'
+          if (key === enckey) {
+            await this.actor.update({
+              [t]: true,
+              'data.currentmove': parseInt(enc.move),
+              'data.currentdodge': parseInt(enc.dodge),
+            })
+          } else if (enc.current) {
+            await this.actor.update({ [t]: false })
+          }
         }
+      //////////
       }
+      //////////
     } else {
       ui.notifications.warn(
         "You cannot manually change the Encumbrance level. The 'Automatically calculate Encumbrance Level' setting is turned on."
