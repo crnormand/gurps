@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.1 11/11/2021
+
+- Add data protection code in updateToken()
+
 Release 0.12.0 11/10/2021
 
 - Implemented Active Effects framework.
