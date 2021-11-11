@@ -77,7 +77,7 @@ export class EffectModifierControl {
   }
 
   _updateToken(tokenDocument) {
-    let tokenID = tokenDocument.object.id
+    let tokenID = tokenDocument.object?.id
     let sharedStateID = this.token?.id
     console.log(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
     if (tokenDocument.object === this.token) this._ui.render(false)
