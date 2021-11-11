@@ -50,8 +50,10 @@ export class EffectModifierControl {
   }
 
   _createEffectModifierButton(control, html, data) {
-    if (this.shouldUseEffectModifierPopup()) {
-      const name = EffectModifierControl.EffectModName
+    const name = EffectModifierControl.EffectModName
+    let existing = html.find(`li.control-tool.toggle[data-tool=GURPSEffectsMod]`)
+
+    if (this.shouldUseEffectModifierPopup() && existing.length === 0) {
       const title = i18n('GURPS.tokenToolsTitle')
       const icon = 'fas fa-list-alt'
       const active = this.showPopup
