@@ -743,7 +743,7 @@ class LightChatProcessor extends ChatProcessor {
       data['-=lightColor'] = null
     } else {
       if (this.match.groups.color) data.lightColor = this.match.groups.color
-      if (this.match.groups.colorint) data.lightAlpha = parseFloat(this.match.groups.colorint.substr(1))
+      if (this.match.groups.colorint) data.lightAlpha = parseFloat(this.match.groups.colorint)
       data.dimLight = parseFloat(this.match.groups.dim || 0)
       data.brightLight = parseFloat(this.match.groups.bright || 0)
       data.lightAngle = parseFloat(this.match.groups.angle || 360)
