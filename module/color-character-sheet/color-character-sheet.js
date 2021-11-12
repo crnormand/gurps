@@ -1,16 +1,22 @@
 ////////////////////////////////////////
 // Added to color the rollable parts of the character sheet. Stevil...
 ////////////////////////////////////////
-import { i18n, objectToArray } from '../../lib/utilities.js'
+import { objectToArray } from '../../lib/utilities.js'
 import {
   SYSTEM_NAME,
   SETTING_COLOR_CHARACTER_SHEET_DATA,
+  SETTING_DEFAULT_COLOR_BACKGROUND,
+  SETTING_DEFAULT_COLOR_TEXT,
+  SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
+  SETTING_DEFAULT_COLOR_TEXT_HOVER,
   SETTING_COLOR_ROLLABLE
 } from '../../lib/miscellaneous-settings.js'
 
 export function addColorWheelsToSettings() {
   $('#color-sheets #update').on("click", function () {
     saveColorWheelsToSettings()
+    // Need to wait for change in database to do next function...
+    // Otherwise it won't color the sheet until the next save...
     colorGurpsActorSheet()
   })
 
@@ -80,15 +86,24 @@ export function addColorWheelsToSettings() {
       $(`.${rollableSheetColors}-hover-text .track`).css("z-index", newTrackZindex)
     })
 
-    $(`.${rollableSheetColors} .color`).css("background-color", $(`.${rollableSheetColors} .colorInput`).val())
-    $(`.${rollableSheetColors}-text .color`).css("background-color", $(`.${rollableSheetColors}-text .colorInput`).val())
-    $(`.${rollableSheetColors}-hover .color`).css("background-color", $(`.${rollableSheetColors}-hover .colorInput`).val())
-    $(`.${rollableSheetColors}-hover-text .color`).css("background-color", $(`.${rollableSheetColors}-hover-text .colorInput`).val())
+    if ($(`#${rollableSheetColors}`).prop('checked')) {
+      $(`.${rollableSheetColors} .color`).css("background-color", $(`.${rollableSheetColors} .colorInput`).val())
+      $(`.${rollableSheetColors}-text .color`).css("background-color", $(`.${rollableSheetColors}-text .colorInput`).val())
+      $(`.${rollableSheetColors}-hover .color`).css("background-color", $(`.${rollableSheetColors}-hover .colorInput`).val())
+      $(`.${rollableSheetColors}-hover-text .color`).css("background-color", $(`.${rollableSheetColors}-hover-text .colorInput`).val())
+    } else {
+      $(`.${rollableSheetColors} .color`).css("background-color", SETTING_DEFAULT_COLOR_BACKGROUND)
+      $(`.${rollableSheetColors}-text .color`).css("background-color", SETTING_DEFAULT_COLOR_TEXT)
+      $(`.${rollableSheetColors}-hover .color`).css("background-color", SETTING_DEFAULT_COLOR_BACKGROUND_HOVER)
+      $(`.${rollableSheetColors}-hover-text .color`).css("background-color", SETTING_DEFAULT_COLOR_TEXT_HOVER)
+    }
   })
 }
 
 export function colorGurpsActorSheet() {
   let colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
+  console.log(`Read Character Sheet Colors: ${JSON.stringify(colorData)}`)
+
   let theColorData = objectToArray(colorData.colors)
   ////////////////////////////////////////
   // Atributes
@@ -331,4 +346,6 @@ export function saveColorWheelsToSettings() {
     ]
   }
   game.settings.set(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, data)
+  console.log(`Saved Character Sheet Colors: ${JSON.stringify(data)}`)
+  return
 }
