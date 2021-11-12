@@ -344,5 +344,4 @@ export function saveColorWheelsToSettings() {
   }
   game.settings.set(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, data)
   console.log(`Saved Character Sheet Colors: ${JSON.stringify(data)}`)
-  //return
 }
