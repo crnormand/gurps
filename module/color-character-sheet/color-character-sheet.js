@@ -13,19 +13,11 @@ import {
 } from '../../lib/miscellaneous-settings.js'
 
 export function addColorWheelsToSettings() {
-  $('#color-sheets #update').on("click", function () {
-    saveColorWheelsToSettings()
-    // Need to wait for change in database to do next function...
-    // Otherwise it won't color the sheet until the next save...
-    colorGurpsActorSheet()
-  })
-
   $('#color-sheets input[type="checkbox"]').on("click", function () {
     let overrideColor = $(this).attr('id')
     if ($(this).prop('checked')){
       $(this).attr('checked', 'checked')
     }else{
-      $(this).removeAttr('checked')
       $(`.${overrideColor} .colorInput`).val($(`.default-${overrideColor}`).val())
       $(`.${overrideColor}-text .colorInput`).val($(`.default-${overrideColor}-text `).val())
       $(`.${overrideColor}-hover .colorInput`).val($(`.default-${overrideColor}-hover`).val())
@@ -35,7 +27,9 @@ export function addColorWheelsToSettings() {
       $(`.${overrideColor}-text .color`).css("background-color", $(`.default-${overrideColor}-text`).val())
       $(`.${overrideColor}-hover .color`).css("background-color", $(`.default-${overrideColor}-hover`).val())
       $(`.${overrideColor}-hover-text .color`).css("background-color", $(`.default-${overrideColor}-hover-text`).val())
+      $(this).removeAttr('checked')
     }
+    saveColorWheelsToSettings()
   })
 
   let Zindex = 99999
@@ -84,6 +78,23 @@ export function addColorWheelsToSettings() {
       $("#colorPicker .track").css("z-index", oldTrackZindex)
       $(`.${rollableSheetColors}-hover-text .color`).css("z-index", newColorZindex)
       $(`.${rollableSheetColors}-hover-text .track`).css("z-index", newTrackZindex)
+    })
+
+    $(`.${rollableSheetColors} #colorPicker .track`).on("click", function () {
+      $(`#${rollableSheetColors}`).attr('checked', 'checked')
+      saveColorWheelsToSettings()
+    })
+    $(`.${rollableSheetColors}-text #colorPicker .track`).on("click", function () {
+      $(`#${rollableSheetColors}`).attr('checked', 'checked')
+      saveColorWheelsToSettings()
+    })
+    $(`.${rollableSheetColors}-hover #colorPicker .track`).on("click", function () {
+      $(`#${rollableSheetColors}`).attr('checked', 'checked')
+      saveColorWheelsToSettings()
+    })
+    $(`.${rollableSheetColors}-hover-text #colorPicker .track`).on("click", function () {
+      $(`#${rollableSheetColors}`).attr('checked', 'checked')
+      saveColorWheelsToSettings()
     })
 
     if ($(`#${rollableSheetColors}`).prop('checked')) {
@@ -199,153 +210,139 @@ export function colorGurpsActorSheet() {
 
 export function saveColorWheelsToSettings() {
   let html = jQuery($('#color-sheets').html())
+  let colorOverride = []
+  let colorBackground = []
+  let colorText = []
+  let colorHover = []
+  let colorHoverText = []
 
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[0]}`).prop('checked')) {
-    var colorOverrideAttributes = true
-  } else {
-    var colorOverrideAttributes = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[1]}`).prop('checked')) {
-    var colorOverrideDodge = true
-  } else {
-    var colorOverrideDodge = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[2]}`).prop('checked')) {
-    var colorOverrideDamage = true
-  } else {
-    var colorOverrideDamage = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[3]}`).prop('checked')) {
-    var colorOverrideBlock = true
-  } else {
-    var colorOverrideBlock = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[4]}`).prop('checked')) {
-    var colorOverrideParry = true
-  } else {
-    var colorOverrideParry = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[5]}`).prop('checked')) {
-    var colorOverrideWeapons = true
-  } else {
-    var colorOverrideWeapons = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[6]}`).prop('checked')) {
-    var colorOverrideSkills = true
-  } else {
-    var colorOverrideSkills = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[7]}`).prop('checked')) {
-    var colorOverrideSpells = true
-  } else {
-    var colorOverrideSpells = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[8]}`).prop('checked')) {
-    var colorOverrideOtF = true
-  } else {
-    var colorOverrideOtF = false
-  }
-  if (html.find('.gurps-sheet-colors').find(`#${SETTING_COLOR_ROLLABLE[9]}`).prop('checked')) {
-    var colorOverrideAdsDisads = true
-  } else {
-    var colorOverrideAdsDisads = false
-  }
+  SETTING_COLOR_ROLLABLE.forEach(function(rollableSheetColors) {
+    if (html.find('.gurps-sheet-colors').find(`#${rollableSheetColors}`).prop('checked')) {
+      colorOverride.push(true)
+    } else {
+      colorOverride.push(false)
+    }
+
+    if (html.find('.gurps-sheet-colors').find(`.${rollableSheetColors} .colorInput`).val() == undefined) {
+      colorBackground.push(`${SETTING_DEFAULT_COLOR_BACKGROUND}`)
+    } else {
+      colorBackground.push(html.find('.gurps-sheet-colors').find(`.${rollableSheetColors} .colorInput`).val())
+    }
+
+    if (html.find('.gurps-sheet-colors').find(`.${rollableSheetColors}-text .colorInput`).val() == undefined) {
+      colorText.push(`${SETTING_DEFAULT_COLOR_TEXT}`)
+    } else {
+      colorText.push(html.find('.gurps-sheet-colors').find(`.${rollableSheetColors}-text .colorInput`).val())
+    }
+
+    if (html.find('.gurps-sheet-colors').find(`.${rollableSheetColors}-hover .colorInput`).val() == undefined) {
+      colorHover.push(`${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`)
+    } else {
+      colorHover.push(html.find('.gurps-sheet-colors').find(`.${rollableSheetColors}-hover .colorInput`).val())
+    }
+
+    if (html.find('.gurps-sheet-colors').find(`.${rollableSheetColors}-hover-text .colorInput`).val() == undefined) {
+      colorHoverText.push(`${SETTING_DEFAULT_COLOR_TEXT_HOVER}`)
+    } else {
+      colorHoverText.push(html.find('.gurps-sheet-colors').find(`.${rollableSheetColors}-hover-text .colorInput`).val())
+    }
+  })
 
   let data = {
     'colors':[
       {
-        color_override: colorOverrideAttributes,
+        color_override: colorOverride[0],
         area: 'Attributes',
         rollable_css: `${SETTING_COLOR_ROLLABLE[0]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[0]}`,
+        color_text: `${colorText[0]}`,
+        color_hover: `${colorHover[0]}`,
+        color_hover_text: `${colorHoverText[0]}`,
       },
       {
-        color_override: colorOverrideDodge,
+        color_override: colorOverride[1],
         area: 'Dodge',
         rollable_css: `${SETTING_COLOR_ROLLABLE[1]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[1]}`,
+        color_text: `${colorText[1]}`,
+        color_hover: `${colorHover[1]}`,
+        color_hover_text: `${colorHoverText[1]}`,
       },
       {
-        color_override: colorOverrideDamage,
+        color_override: colorOverride[2],
         area: 'Damage',
         rollable_css: `${SETTING_COLOR_ROLLABLE[2]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[2]}`,
+        color_text: `${colorText[2]}`,
+        color_hover: `${colorHover[2]}`,
+        color_hover_text: `${colorHoverText[2]}`,
       },
       {
-        color_override: colorOverrideBlock,
+        color_override: colorOverride[3],
         area: 'Block',
         rollable_css: `${SETTING_COLOR_ROLLABLE[3]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[3]}`,
+        color_text: `${colorText[3]}`,
+        color_hover: `${colorHover[3]}`,
+        color_hover_text: `${colorHoverText[3]}`,
       },
       {
-        color_override: colorOverrideParry,
+        color_override: colorOverride[4],
         area: 'Parry',
         rollable_css: `${SETTING_COLOR_ROLLABLE[4]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[4]}`,
+        color_text: `${colorText[4]}`,
+        color_hover: `${colorHover[4]}`,
+        color_hover_text: `${colorHoverText[4]}`,
       },
       {
-        color_override: colorOverrideWeapons,
+        color_override: colorOverride[5],
         area: 'Weapons',
         rollable_css: `${SETTING_COLOR_ROLLABLE[5]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[5]}`,
+        color_text: `${colorText[5]}`,
+        color_hover: `${colorHover[5]}`,
+        color_hover_text: `${colorHoverText[5]}`,
       },
       {
-        color_override: colorOverrideSkills,
+        color_override: colorOverride[6],
         area: 'Skills',
         rollable_css: `${SETTING_COLOR_ROLLABLE[6]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[6]}`,
+        color_text: `${colorText[6]}`,
+        color_hover: `${colorHover[6]}`,
+        color_hover_text: `${colorHoverText[6]}`,
       },
       {
-        color_override: colorOverrideSpells,
+        color_override: colorOverride[7],
         area: 'Spells',
         rollable_css: `${SETTING_COLOR_ROLLABLE[7]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[7]}`,
+        color_text: `${colorText[7]}`,
+        color_hover: `${colorHover[7]}`,
+        color_hover_text: `${colorHoverText[7]}`,
       },
       {
-        color_override: colorOverrideOtF,
+        color_override: colorOverride[8],
         area: 'OtF-Notes',
         rollable_css: `${SETTING_COLOR_ROLLABLE[8]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[8]}`,
+        color_text: `${colorText[8]}`,
+        color_hover: `${colorHover[8]}`,
+        color_hover_text: `${colorHoverText[8]}`,
       },
       {
-        color_override: colorOverrideAdsDisads,
+        color_override: colorOverride[9],
         area: 'Ads/Disads',
         rollable_css: `${SETTING_COLOR_ROLLABLE[9]}`,
-        color_background: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]} .colorInput`).val(),
-        color_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]}-text .colorInput`).val(),
-        color_hover: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]}-hover .colorInput`).val(),
-        color_hover_text: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]}-hover-text .colorInput`).val()
+        color_background: `${colorBackground[9]}`,
+        color_text: `${colorText[9]}`,
+        color_hover: `${colorHover[9]}`,
+        color_hover_text: `${colorHoverText[9]}`,
       }
     ]
   }
   game.settings.set(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, data)
   console.log(`Saved Character Sheet Colors: ${JSON.stringify(data)}`)
-  return
+  //return
 }

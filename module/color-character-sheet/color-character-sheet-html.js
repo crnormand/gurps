@@ -2,7 +2,11 @@
 // Added to color the rollable parts of the character sheet. Stevil...
 ////////////////////////////////////////
 import { objectToArray } from '../../lib/utilities.js'
-import { addColorWheelsToSettings } from './color-character-sheet.js'
+import {
+  addColorWheelsToSettings,
+  saveColorWheelsToSettings,
+  colorGurpsActorSheet
+} from './color-character-sheet.js'
 import {
   SYSTEM_NAME,
   SETTING_COLOR_CHARACTER_SHEET_DATA,
@@ -40,7 +44,8 @@ export default class ColorCharacterSheetSettings extends FormApplication {
       title: 'Color Character Sheet',
       closeOnSubmit: true,
       onLoad: addColorWheelsToSettings(),
-      //onclose: value => updateSheets()
+      onClose: saveColorWheelsToSettings(),
+      onClose: colorGurpsActorSheet()
     })
   }
 
@@ -84,5 +89,9 @@ export default class ColorCharacterSheetSettings extends FormApplication {
   * @override
   */
   _updateObject(event, formData) {
+    //saveColorWheelsToSettings()
+    // Need to wait for change in database to do next function...
+    // Otherwise it won't color the sheet until the next save...
+    colorGurpsActorSheet()
   }
 }
