@@ -14,7 +14,7 @@
   <div class='duration header'>{{i18n 'GURPS.spellDuration'}}</div>
   <div class='sl header'>{{i18n 'GURPS.sl'}}</div>
   <div class='rsl header'>{{i18n 'GURPS.rsl'}}</div>
-  <div class='pts header'>{{i18n "GURPS.abbrevPts"}}</div>
+  <div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
   <div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
 
   {{#each (flatlist data.spells)}}
@@ -79,10 +79,10 @@
           value='{{this.import}}'
         /></div>
       <div class='rsl' data-key='data.spells.{{@key}}'><input
-          name='data.spells.{{@key}}.difficulty'
+          name='data.spells.{{@key}}.relativelevel'
           class='gcs-input-sm3'
           type='text'
-          value='{{this.difficulty}}'
+          value='{{this.relativelevel}}'
         />
       </div>
       <div class='pts' data-key='data.spells.{{@key}}'><input
