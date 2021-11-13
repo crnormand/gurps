@@ -139,7 +139,7 @@
         data-name='{{this.name}}'
         data-otf='Sp:"{{this.name}}"'
         data-key='data.spells.{{@key}}'
-      >{{this.level}}
+      >{{#if (eq this.relativelevel '-')}}-{{else}}{{this.level}}{{/if}}
       </div>
       <div class='rsl {{rollable this.level}} flex-center' data-otf='Sp:"{{this.name}}"'>{{this.relativelevel}}</div>
       <div class='pts flex-center'>{{this.points}}</div>
