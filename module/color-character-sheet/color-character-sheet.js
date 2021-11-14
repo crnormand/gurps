@@ -2,15 +2,15 @@
 // Added to color the rollable parts of the character sheet. Stevil...
 ////////////////////////////////////////
 import { objectToArray } from '../../lib/utilities.js'
+import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import {
-  SYSTEM_NAME,
   SETTING_COLOR_CHARACTER_SHEET_DATA,
   SETTING_DEFAULT_COLOR_BACKGROUND,
   SETTING_DEFAULT_COLOR_TEXT,
   SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
   SETTING_DEFAULT_COLOR_TEXT_HOVER,
   SETTING_COLOR_ROLLABLE
-} from '../../lib/miscellaneous-settings.js'
+} from './color-character-sheet-settings.js'
 
 export function addColorWheelsToSettings() {
   $('#color-sheets input[type="checkbox"]').on("click", function () {
@@ -113,7 +113,7 @@ export function addColorWheelsToSettings() {
 
 export function colorGurpsActorSheet() {
   let colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
-  console.log(`Read Character Sheet Colors: ${JSON.stringify(colorData)}`)
+  //console.log(`Read Character Sheet Colors: ${JSON.stringify(colorData)}`)
 
   let theColorData = objectToArray(colorData.colors)
   ////////////////////////////////////////
@@ -343,5 +343,5 @@ export function saveColorWheelsToSettings() {
     ]
   }
   game.settings.set(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, data)
-  console.log(`Saved Character Sheet Colors: ${JSON.stringify(data)}`)
+  //console.log(`Saved Character Sheet Colors: ${JSON.stringify(data)}`)
 }

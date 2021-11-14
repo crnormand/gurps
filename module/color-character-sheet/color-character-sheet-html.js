@@ -2,19 +2,19 @@
 // Added to color the rollable parts of the character sheet. Stevil...
 ////////////////////////////////////////
 import { objectToArray } from '../../lib/utilities.js'
+import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import {
   addColorWheelsToSettings,
   saveColorWheelsToSettings,
   colorGurpsActorSheet
 } from './color-character-sheet.js'
 import {
-  SYSTEM_NAME,
   SETTING_COLOR_CHARACTER_SHEET_DATA,
   SETTING_DEFAULT_COLOR_BACKGROUND,
   SETTING_DEFAULT_COLOR_TEXT,
   SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
   SETTING_DEFAULT_COLOR_TEXT_HOVER
-} from '../../lib/miscellaneous-settings.js'
+} from '../../module/color-character-sheet/color-character-sheet-settings.js'
 
 export let updateSheets = function() {
   for (const actor of game.actors.contents) 
