@@ -10,13 +10,14 @@ import {
   SETTING_DEFAULT_COLOR_BACKGROUND,
   SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
   SETTING_DEFAULT_COLOR_TEXT,
-  SETTING_COLOR_ROLLABLE
- } from '../../lib/miscellaneous-settings.js'
+  SETTING_COLOR_ROLLABLE,
+} from '../../lib/miscellaneous-settings.js'
 
-export let updateSheets = function() {
-  for (const actor of game.actors.contents) 
-    if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER) // Return true if the current game user has observer or owner rights to an actor
-      actor.render()     
+export let updateSheets = function () {
+  for (const actor of game.actors.contents)
+    if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER)
+      // Return true if the current game user has observer or owner rights to an actor
+      actor.render()
 }
 
 export default class ColorCharacterSheetSettings extends FormApplication {
@@ -41,7 +42,7 @@ export default class ColorCharacterSheetSettings extends FormApplication {
       title: 'Color Character Sheet',
       closeOnSubmit: true,
       onLoad: addColorWheelsToSettings(),
-      onChange: value => updateSheets()
+      onChange: value => updateSheets(),
     })
   }
 
@@ -76,16 +77,25 @@ export default class ColorCharacterSheetSettings extends FormApplication {
     let htmlColorCharacterSheet = objectToArray(colorData.colors)
 
     let results = htmlColorCharacterSheet.map(it => {
-      return { color_override: it.color_override, area: it.area, rollable_css: it.rollable_css, background_color: it.background_color, hover_color: it.hover_color, text_color: it.text_color, default_background: SETTING_DEFAULT_COLOR_BACKGROUND, default_hover: SETTING_DEFAULT_COLOR_BACKGROUND_HOVER, default_text: SETTING_DEFAULT_COLOR_TEXT }
+      return {
+        color_override: it.color_override,
+        area: it.area,
+        rollable_css: it.rollable_css,
+        background_color: it.background_color,
+        hover_color: it.hover_color,
+        text_color: it.text_color,
+        default_background: SETTING_DEFAULT_COLOR_BACKGROUND,
+        default_hover: SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
+        default_text: SETTING_DEFAULT_COLOR_TEXT,
+      }
     })
     return results
   }
 
   /**
-  * @override
-  */
-  _updateObject(event, formData) {
-  }
+   * @override
+   */
+  _updateObject(event, formData) {}
 }
 
 export function saveColorWheelsToSettings() {
@@ -143,14 +153,14 @@ export function saveColorWheelsToSettings() {
   }
 
   let data = {
-    'colors':[
+    colors: [
       {
         color_override: colorOverrideAttributes,
         area: 'Attributes',
         rollable_css: `${SETTING_COLOR_ROLLABLE[0]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[0]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideDodge,
@@ -158,7 +168,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[1]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[1]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideDamage,
@@ -166,7 +176,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[2]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[2]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideBlock,
@@ -174,7 +184,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[3]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[3]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideParry,
@@ -182,7 +192,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[4]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[4]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideWeapons,
@@ -190,7 +200,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[5]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[5]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideSkills,
@@ -198,7 +208,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[6]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[6]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideSpells,
@@ -206,7 +216,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[7]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[7]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideAdsDisads,
@@ -214,7 +224,7 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[8]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]}-text .colorInput`).val()
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[8]}-text .colorInput`).val(),
       },
       {
         color_override: colorOverrideOtF,
@@ -222,9 +232,9 @@ export function saveColorWheelsToSettings() {
         rollable_css: `${SETTING_COLOR_ROLLABLE[9]}`,
         background_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]} .colorInput`).val(),
         hover_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]}-hover .colorInput`).val(),
-        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]}-text .colorInput`).val()
-      }
-    ]
+        text_color: html.find('.gurps-sheet-colors').find(`.${SETTING_COLOR_ROLLABLE[9]}-text .colorInput`).val(),
+      },
+    ],
   }
   game.settings.set(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, data)
 }

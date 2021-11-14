@@ -1,6 +1,5 @@
 import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
-import { GURPS } from './gurps.js'
 import { handleOnPdf } from './pdf-refs.js'
 import GgaContextMenu from './utilities/contextmenu.js'
 

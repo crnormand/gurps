@@ -8,8 +8,6 @@ import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
-import { GURPS } from '../gurps.js'
-import { EffectModifierPopout } from './effect-modifier-popout.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -1406,8 +1404,8 @@ export class GurpsActorSheet extends ActorSheet {
       let key = element.dataset.key
       //////////
       // Check for 'undefined' when clicking on Encumbrance Level 'header'. ~Stevil
-      if (key !== undefined){
-      //////////
+      if (key !== undefined) {
+        //////////
         let encs = this.actor.data.data.encumbrance
         if (encs[key].current) return // already selected
         for (let enckey in encs) {
@@ -1423,7 +1421,7 @@ export class GurpsActorSheet extends ActorSheet {
             await this.actor.update({ [t]: false })
           }
         }
-      //////////
+        //////////
       }
       //////////
     } else {
