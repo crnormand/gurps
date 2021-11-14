@@ -29,6 +29,14 @@ import { ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 
+/**
+ * Added to color the rollable parts of the character sheet.
+ * Made this part eslint compatible...
+ * ~Stevil
+ */
+import { registerColorPickerSettings } from '../module/color-character-sheet/color-character-sheet-settings.js'
+import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
+
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 GURPS.DEBUG = true
@@ -64,13 +72,6 @@ import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
-
-////////////////////////////////////////
-// Added to color the rollable parts of the character sheet. Stevil...
-////////////////////////////////////////
-import { registerColorPickerSettings } from '../module/color-character-sheet/color-character-sheet-settings.js'
-import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
-////////////////////////////////////////
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -1814,12 +1815,16 @@ Hooks.once('init', async function () {
       html.find('.directory-footer').append(button)
     }
   })
-  ////////////////////////////////////////
-  // Added to color the rollable parts of the character sheet. Stevil...
-  ////////////////////////////////////////
+  
+  /**
+   * Added to color the rollable parts of the character sheet.
+   * Made this part eslint compatible...
+   * ~Stevil
+   */
   registerColorPickerSettings()
-  Hooks.on("renderActorSheet", (...args) => {
-    colorGurpsActorSheet();
+  // eslint-disable-next-line no-undef
+  Hooks.on('renderActorSheet', (...args) => {
+    colorGurpsActorSheet()
   })
 })
 
