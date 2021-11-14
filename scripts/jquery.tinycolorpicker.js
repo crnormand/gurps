@@ -4,14 +4,27 @@
  * ~Stevil
  */
 
-(function ($) {
+;(function ($) {
   const pluginName = 'tinycolorpicker'
   const defaults = {
-    colors: ['#ffffff', '#A7194B', '#FE2712', '#FB9902', '#FABC02', '#FEFE33', '#D0EA2B', '#66B032', '#0391CE', '#0247FE', '#3D01A5', '#8601AF'],
-    backgroundUrl: null
+    colors: [
+      '#ffffff',
+      '#A7194B',
+      '#FE2712',
+      '#FB9902',
+      '#FABC02',
+      '#FEFE33',
+      '#D0EA2B',
+      '#66B032',
+      '#0391CE',
+      '#0247FE',
+      '#3D01A5',
+      '#8601AF',
+    ],
+    backgroundUrl: null,
   }
 
-  function Plugin ($container, options) {
+  function Plugin($container, options) {
     /**
      * The options of the colorpicker extended with the defaults.
      *
@@ -72,7 +85,7 @@
      * @method _initialize
      * @private
      */
-    function _initialize () {
+    function _initialize() {
       if (hasCanvas) {
         $canvas = $('<canvas></canvas>')
         $track.append($canvas)
@@ -100,10 +113,13 @@
      * @method _setImage
      * @private
      */
-    function _setImage () {
+    function _setImage() {
       // eslint-disable-next-line no-undef
       const colorPicker = new Image()
-      const backgroundUrl = $track.css('background-image').replace(/"/g, '').replace(/url\(|\)$/ig, '')
+      const backgroundUrl = $track
+        .css('background-image')
+        .replace(/"/g, '')
+        .replace(/url\(|\)$/gi, '')
 
       colorPicker.crossOrigin = 'Anonymous'
       $track.css('background-image', 'none')
@@ -122,7 +138,7 @@
      * @method _setEvents
      * @private
      */
-    function _setEvents () {
+    function _setEvents() {
       const eventType = touchEvents ? 'touchstart' : 'mousedown'
 
       if (hasCanvas) {
@@ -203,7 +219,7 @@
      * @method _getColorCanvas
      * @private
      */
-    function _getColorCanvas (event) {
+    function _getColorCanvas(event) {
       if (mouseIsDown) {
         const $target = $(event.target)
         const offset = $target.offset()
@@ -212,10 +228,10 @@
         self.setColor('rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')')
 
         /**
-                 * The change event will trigger when a new color is set.
-                 *
-                 * @event change
-                 */
+         * The change event will trigger when a new color is set.
+         *
+         * @event change
+         */
         $container.trigger('change', [self.colorHex, self.colorRGB])
       }
     }
@@ -272,9 +288,9 @@
     this.rgbToHex = function (rgb) {
       const result = rgb.match(/\d+/g)
 
-      function hex (x) {
+      function hex(x) {
         const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
-        return isNaN(x) ? '00' : digits[(x - x % 16) / 16] + digits[x % 16]
+        return isNaN(x) ? '00' : digits[(x - (x % 16)) / 16] + digits[x % 16]
       }
 
       return '#' + hex(result[0]) + hex(result[1]) + hex(result[2])
