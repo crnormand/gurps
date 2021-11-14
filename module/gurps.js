@@ -68,6 +68,7 @@ import { EffectModifierControl } from './actor/effect-modifier-control.js'
 ////////////////////////////////////////
 // Added to color the rollable parts of the character sheet. Stevil...
 ////////////////////////////////////////
+import { registerColorPickerSettings } from '../module/color-character-sheet/color-character-sheet-settings.js'
 import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
 ////////////////////////////////////////
 
@@ -1816,6 +1817,7 @@ Hooks.once('init', async function () {
   ////////////////////////////////////////
   // Added to color the rollable parts of the character sheet. Stevil...
   ////////////////////////////////////////
+  registerColorPickerSettings()
   Hooks.on("renderActorSheet", (...args) => {
     colorGurpsActorSheet();
   })
