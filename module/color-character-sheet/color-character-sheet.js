@@ -12,10 +12,10 @@ import {
   SETTING_DEFAULT_COLOR_TEXT,
   SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
   SETTING_DEFAULT_COLOR_TEXT_HOVER,
-  SETTING_COLOR_ROLLABLE
+  SETTING_COLOR_ROLLABLE,
 } from './color-character-sheet-settings.js'
 
-export function addColorWheelsToSettings () {
+export function addColorWheelsToSettings() {
   $('#color-sheets input[type="checkbox"]').on('click', function () {
     const overrideColor = $(this).attr('id')
     if ($(this).prop('checked')) {
@@ -102,9 +102,18 @@ export function addColorWheelsToSettings () {
 
     if ($(`#${rollableSheetColors}`).prop('checked')) {
       $(`.${rollableSheetColors} .color`).css('background-color', $(`.${rollableSheetColors} .colorInput`).val())
-      $(`.${rollableSheetColors}-text .color`).css('background-color', $(`.${rollableSheetColors}-text .colorInput`).val())
-      $(`.${rollableSheetColors}-hover .color`).css('background-color', $(`.${rollableSheetColors}-hover .colorInput`).val())
-      $(`.${rollableSheetColors}-hover-text .color`).css('background-color', $(`.${rollableSheetColors}-hover-text .colorInput`).val())
+      $(`.${rollableSheetColors}-text .color`).css(
+        'background-color',
+        $(`.${rollableSheetColors}-text .colorInput`).val()
+      )
+      $(`.${rollableSheetColors}-hover .color`).css(
+        'background-color',
+        $(`.${rollableSheetColors}-hover .colorInput`).val()
+      )
+      $(`.${rollableSheetColors}-hover-text .color`).css(
+        'background-color',
+        $(`.${rollableSheetColors}-hover-text .colorInput`).val()
+      )
     } else {
       $(`.${rollableSheetColors} .color`).css('background-color', SETTING_DEFAULT_COLOR_BACKGROUND)
       $(`.${rollableSheetColors}-text .color`).css('background-color', SETTING_DEFAULT_COLOR_TEXT)
@@ -114,7 +123,7 @@ export function addColorWheelsToSettings () {
   })
 }
 
-export function colorGurpsActorSheet () {
+export function colorGurpsActorSheet() {
   // eslint-disable-next-line no-undef
   const colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
   // console.log(`Read Character Sheet Colors: ${JSON.stringify(colorData)}`)
@@ -124,105 +133,215 @@ export function colorGurpsActorSheet () {
   /**
    * Atributes
    */
-  $('#attributes').on('mouseenter', '.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[0].color_hover + ' !important; color:' + theColorData[0].color_hover_text)
-  }).on('mouseleave', '.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text)
-  })
-  $('#attributes .rollable').attr('style', 'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text)
+  $('#attributes')
+    .on('mouseenter', '.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[0].color_hover + ' !important; color:' + theColorData[0].color_hover_text
+      )
+    })
+    .on('mouseleave', '.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text
+      )
+    })
+  $('#attributes .rollable').attr(
+    'style',
+    'background-color: ' + theColorData[0].color_background + ' !important; color:' + theColorData[0].color_text
+  )
 
   /**
    * Dodge
    */
-  $('#encumbrance').on('mouseenter', '.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[1].color_hover + ' !important; color:' + theColorData[1].color_hover_text)
-  }).on('mouseleave', '.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text)
-  })
-  $('.dodge.rollable').attr('style', 'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text)
+  $('#encumbrance')
+    .on('mouseenter', '.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[1].color_hover + ' !important; color:' + theColorData[1].color_hover_text
+      )
+    })
+    .on('mouseleave', '.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text
+      )
+    })
+  $('.dodge.rollable').attr(
+    'style',
+    'background-color: ' + theColorData[1].color_background + ' !important; color:' + theColorData[1].color_text
+  )
 
   /**
    * Damage
    */
-  $('#melee, #ranged').on('mouseenter', '.damage.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[2].color_hover + ' !important; color:' + theColorData[2].color_hover_text)
-  }).on('mouseleave', '.damage.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text)
-  })
-  $('.damage.rollable').attr('style', 'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text)
+  $('#melee, #ranged')
+    .on('mouseenter', '.damage.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[2].color_hover + ' !important; color:' + theColorData[2].color_hover_text
+      )
+    })
+    .on('mouseleave', '.damage.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text
+      )
+    })
+  $('.damage.rollable').attr(
+    'style',
+    'background-color: ' + theColorData[2].color_background + ' !important; color:' + theColorData[2].color_text
+  )
 
   /**
    * Block
    */
-  $('#melee, #ranged').on('mouseenter', '.block.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[3].color_hover + ' !important; color:' + theColorData[3].color_hover_text)
-  }).on('mouseleave', '.block.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text)
-  })
-  $('.block.rollable').attr('style', 'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text)
+  $('#melee, #ranged')
+    .on('mouseenter', '.block.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[3].color_hover + ' !important; color:' + theColorData[3].color_hover_text
+      )
+    })
+    .on('mouseleave', '.block.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text
+      )
+    })
+  $('.block.rollable').attr(
+    'style',
+    'background-color: ' + theColorData[3].color_background + ' !important; color:' + theColorData[3].color_text
+  )
 
   /**
    * Parry
    */
-  $('#melee, #ranged').on('mouseenter', '.parry.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[4].color_hover + ' !important; color:' + theColorData[4].color_hover_text)
-  }).on('mouseleave', '.parry.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text)
-  })
-  $('.parry.rollable').attr('style', 'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text)
+  $('#melee, #ranged')
+    .on('mouseenter', '.parry.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[4].color_hover + ' !important; color:' + theColorData[4].color_hover_text
+      )
+    })
+    .on('mouseleave', '.parry.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text
+      )
+    })
+  $('.parry.rollable').attr(
+    'style',
+    'background-color: ' + theColorData[4].color_background + ' !important; color:' + theColorData[4].color_text
+  )
 
   /**
    * Melee / Ranged
    */
-  $('#melee, #ranged').on('mouseenter', '.usage.rollable, .level.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[5].color_hover + ' !important; color:' + theColorData[5].color_hover_text)
-  }).on('mouseleave', '.usage.rollable, .level.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text)
-  })
-  $('#melee .usage.rollable, #melee .level.rollable, #ranged .usage.rollable, #ranged .level.rollable').attr('style', 'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text)
+  $('#melee, #ranged')
+    .on('mouseenter', '.usage.rollable, .level.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[5].color_hover + ' !important; color:' + theColorData[5].color_hover_text
+      )
+    })
+    .on('mouseleave', '.usage.rollable, .level.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text
+      )
+    })
+  $('#melee .usage.rollable, #melee .level.rollable, #ranged .usage.rollable, #ranged .level.rollable').attr(
+    'style',
+    'background-color: ' + theColorData[5].color_background + ' !important; color:' + theColorData[5].color_text
+  )
 
   /**
    * Skills
    */
-  $('#skills').on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[6].color_hover + ' !important; color:' + theColorData[6].color_hover_text)
-  }).on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text)
-  })
-  $('#skills .sl.rollable, #skills .rsl.rollable').attr('style', 'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text)
+  $('#skills')
+    .on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[6].color_hover + ' !important; color:' + theColorData[6].color_hover_text
+      )
+    })
+    .on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text
+      )
+    })
+  $('#skills .sl.rollable, #skills .rsl.rollable').attr(
+    'style',
+    'background-color: ' + theColorData[6].color_background + ' !important; color:' + theColorData[6].color_text
+  )
 
   /**
    * Spells
    */
-  $('#spells').on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[7].color_hover + ' !important; color:' + theColorData[7].color_hover_text)
-  }).on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text)
-  })
-  $('#spells .sl.rollable, #spells .rsl.rollable').attr('style', 'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text)
+  $('#spells')
+    .on('mouseenter', '.sl.rollable, .rsl.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[7].color_hover + ' !important; color:' + theColorData[7].color_hover_text
+      )
+    })
+    .on('mouseleave', '.sl.rollable, .rsl.rollable', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text
+      )
+    })
+  $('#spells .sl.rollable, #spells .rsl.rollable').attr(
+    'style',
+    'background-color: ' + theColorData[7].color_background + ' !important; color:' + theColorData[7].color_text
+  )
 
   /**
    * OtF in Qick Notes
    */
-  $('#qnotes').on('mouseenter', '.gurpslink', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[8].color_hover + ' !important; color:' + theColorData[8].color_hover_text)
-  }).on('mouseleave', '.gurpslink', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text)
-  })
-  $('#qnotes .gurpslink').attr('style', 'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text)
+  $('#qnotes')
+    .on('mouseenter', '.gurpslink', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[8].color_hover + ' !important; color:' + theColorData[8].color_hover_text
+      )
+    })
+    .on('mouseleave', '.gurpslink', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
+      )
+    })
+  $('#qnotes .gurpslink').attr(
+    'style',
+    'background-color: ' + theColorData[8].color_background + ' !important; color:' + theColorData[8].color_text
+  )
 
   /**
    * Ads / Disads
    */
-  $('#advantages').on('mouseenter', '.gurpslink', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[9].color_hover + ' !important; color:' + theColorData[9].color_hover_text)
-  }).on('mouseleave', '.gurpslink', function () {
-    $(this).attr('style', 'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text)
-  })
-  $('#advantages .gurpslink').attr('style', 'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text)
+  $('#advantages')
+    .on('mouseenter', '.gurpslink', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[9].color_hover + ' !important; color:' + theColorData[9].color_hover_text
+      )
+    })
+    .on('mouseleave', '.gurpslink', function () {
+      $(this).attr(
+        'style',
+        'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text
+      )
+    })
+  $('#advantages .gurpslink').attr(
+    'style',
+    'background-color: ' + theColorData[9].color_background + ' !important; color:' + theColorData[9].color_text
+  )
 }
 
-export function saveColorWheelsToSettings () {
+export function saveColorWheelsToSettings() {
   const html = jQuery($('#color-sheets').html())
   const colorOverride = []
   const colorBackground = []
@@ -271,7 +390,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[0]}`,
         color_text: `${colorText[0]}`,
         color_hover: `${colorHover[0]}`,
-        color_hover_text: `${colorHoverText[0]}`
+        color_hover_text: `${colorHoverText[0]}`,
       },
       {
         color_override: colorOverride[1],
@@ -280,7 +399,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[1]}`,
         color_text: `${colorText[1]}`,
         color_hover: `${colorHover[1]}`,
-        color_hover_text: `${colorHoverText[1]}`
+        color_hover_text: `${colorHoverText[1]}`,
       },
       {
         color_override: colorOverride[2],
@@ -289,7 +408,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[2]}`,
         color_text: `${colorText[2]}`,
         color_hover: `${colorHover[2]}`,
-        color_hover_text: `${colorHoverText[2]}`
+        color_hover_text: `${colorHoverText[2]}`,
       },
       {
         color_override: colorOverride[3],
@@ -298,7 +417,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[3]}`,
         color_text: `${colorText[3]}`,
         color_hover: `${colorHover[3]}`,
-        color_hover_text: `${colorHoverText[3]}`
+        color_hover_text: `${colorHoverText[3]}`,
       },
       {
         color_override: colorOverride[4],
@@ -307,7 +426,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[4]}`,
         color_text: `${colorText[4]}`,
         color_hover: `${colorHover[4]}`,
-        color_hover_text: `${colorHoverText[4]}`
+        color_hover_text: `${colorHoverText[4]}`,
       },
       {
         color_override: colorOverride[5],
@@ -316,7 +435,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[5]}`,
         color_text: `${colorText[5]}`,
         color_hover: `${colorHover[5]}`,
-        color_hover_text: `${colorHoverText[5]}`
+        color_hover_text: `${colorHoverText[5]}`,
       },
       {
         color_override: colorOverride[6],
@@ -325,7 +444,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[6]}`,
         color_text: `${colorText[6]}`,
         color_hover: `${colorHover[6]}`,
-        color_hover_text: `${colorHoverText[6]}`
+        color_hover_text: `${colorHoverText[6]}`,
       },
       {
         color_override: colorOverride[7],
@@ -334,7 +453,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[7]}`,
         color_text: `${colorText[7]}`,
         color_hover: `${colorHover[7]}`,
-        color_hover_text: `${colorHoverText[7]}`
+        color_hover_text: `${colorHoverText[7]}`,
       },
       {
         color_override: colorOverride[8],
@@ -343,7 +462,7 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[8]}`,
         color_text: `${colorText[8]}`,
         color_hover: `${colorHover[8]}`,
-        color_hover_text: `${colorHoverText[8]}`
+        color_hover_text: `${colorHoverText[8]}`,
       },
       {
         color_override: colorOverride[9],
@@ -352,9 +471,9 @@ export function saveColorWheelsToSettings () {
         color_background: `${colorBackground[9]}`,
         color_text: `${colorText[9]}`,
         color_hover: `${colorHover[9]}`,
-        color_hover_text: `${colorHoverText[9]}`
-      }
-    ]
+        color_hover_text: `${colorHoverText[9]}`,
+      },
+    ],
   }
   // eslint-disable-next-line no-undef
   game.settings.set(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, data)

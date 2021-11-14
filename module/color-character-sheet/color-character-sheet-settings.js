@@ -9,30 +9,30 @@ import { i18n } from '../../lib/utilities.js'
 import ColorCharacterSheetSettings from './color-character-sheet-html.js'
 import { readCSSfile } from '../../lib/parse-css-file/parse-css-file.js'
 
-export const url = '/systems/gurps/styles/simple.css'
+export const url = '../systems/gurps/styles/simple.css'
 export const cssSettings = {
   findCSS: [
     {
       selector: '.rollable',
-      rule: 'background-color'
+      rule: 'background-color',
     },
     {
       selector: '.rollable',
-      rule: 'color'
+      rule: 'color',
     },
     {
       selector: '.rollable:hover',
-      rule: 'background-color'
+      rule: 'background-color',
     },
     {
       selector: '.rollable:hover',
-      rule: 'color'
-    }
-  ]
+      rule: 'color',
+    },
+  ],
 }
 export const cssColors = []
 
-readCSSfile(url, cssSettings)
+const readCSS = await readCSSfile()
 
 export const SETTING_COLOR_CHARACTER_SHEET_MENU = 'color-character-sheet-menu'
 export const SETTING_COLOR_CHARACTER_SHEET_DATA = 'color-character-sheet-data'
@@ -50,7 +50,7 @@ export const SETTING_COLOR_ROLLABLE = [
   'color-skills-rollable',
   'color-spells-rollable',
   'color-otf-notes-rollable',
-  'color-gurpslink-rollable'
+  'color-gurpslink-rollable',
 ]
 
 export const registerColorPickerSettings = function () {
@@ -60,7 +60,7 @@ export const registerColorPickerSettings = function () {
     hint: i18n('GURPS.settingColorSheetMenuHint'),
     label: i18n('GURPS.settingColorSheetMenuTitle'),
     type: ColorCharacterSheetSettings,
-    restricted: false
+    restricted: false,
   })
   // eslint-disable-next-line no-undef
   game.settings.register(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA, {
@@ -77,7 +77,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -86,7 +86,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -95,7 +95,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -104,7 +104,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -113,7 +113,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -122,7 +122,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -131,7 +131,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -140,7 +140,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -149,7 +149,7 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
         },
         {
           color_override: false,
@@ -158,10 +158,10 @@ export const registerColorPickerSettings = function () {
           color_background: `${SETTING_DEFAULT_COLOR_BACKGROUND}`,
           color_text: `${SETTING_DEFAULT_COLOR_TEXT}`,
           color_hover: `${SETTING_DEFAULT_COLOR_BACKGROUND_HOVER}`,
-          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`
-        }
-      ]
-    }
-  // onChange: value => console.log(`Updated Character Sheet Colors: ${JSON.stringify(value)}`),
+          color_hover_text: `${SETTING_DEFAULT_COLOR_TEXT_HOVER}`,
+        },
+      ],
+    },
+    // onChange: value => console.log(`Updated Character Sheet Colors: ${JSON.stringify(value)}`),
   })
 }
