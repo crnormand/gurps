@@ -9,7 +9,7 @@
       <header>{{i18n 'GURPS.colorSheetMenuColorAreas'}}</header>
       {{#each allColors}}
       <hr/>
-        <div class='override-color'><input type='checkbox' id='{{rollable_css}}' {{#if color_override}}checked="checked"{{/if}} /></div>
+        <div class='override-color'><input type='checkbox' id='{{rollable_css}}' {{#if color_override}}checked='checked'{{/if}} /></div>
         <div class='the-colors'>
           <!-- Color for Background -->
           <div for='{{rollable_css}}' class='{{rollable_css}} pick-colors'>
