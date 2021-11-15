@@ -785,7 +785,7 @@ export class GurpsActorSheet extends ActorSheet {
       
     if (!!add) 
       if (!!modelkey) {
-        let t = getProperty(this.actor.data, modelkey)
+        let t = getProperty(this.actor.data, modelkey) || ''
         this.actor.update({[modelkey]: t + add })
       } else $(ev.currentTarget).val($(ev.currentTarget).val() + add)
   }

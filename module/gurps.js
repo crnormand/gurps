@@ -976,7 +976,50 @@ const actionFuncs = {
     else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
 
     return doRoll({actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt})
+  },
+  
+  /*
+    [AMRS][DPK]
+    A: ads & attack (melee & range)
+    AD: ads
+    AT: attack
+    M: melee
+    R: ranged
+    S: skills & spells
+    SK: skills
+    SP: spells
+  */
+  ['test-exists']({action, actor, event, originalOtf, calcOnly}) {
+    switch (action.prefix) {
+      case 'A': 
+        if (!!findAdDisad(actor, action.name)) return true
+        if (!!findAttack(actor, action.name, true, true)) return true
+        return false
+      case 'AD': 
+        if (!!findAdDisad(actor, action.name)) return true
+        return false
+      case 'AT': 
+        if (!!findAttack(actor, action.name, true, true)) return true
+        return false
+      case 'M': 
+        if (!!findAttack(actor, action.name, true, false)) return true
+        return false
+      case 'R': 
+        if (!!findAttack(actor, action.name, false, true)) return true
+        return false
+      case 'S': 
+        if (!!findSkillSpell(actor, action.name, false, false)) return true
+        return false
+      case 'SK': 
+        if (!!findSkillSpell(actor, action.name, false, true)) return true
+        return false
+      case 'SP': 
+        if (!!findSkillSpell(actor, action.name, true, false)) return true
+        return false
+    }
+    return false
   }
+
 }
 GURPS.actionFuncs = actionFuncs
 
