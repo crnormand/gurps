@@ -6,7 +6,7 @@
 }
 
 #colorPicker .track {
-  background: #000 url("images/hex-colormap.gif") no-repeat 50% 50%;
+  background: #000 url('images/hex-colormap.gif') no-repeat 50% 50%;
   height: 201px;
   width: 236px;
   padding: 10px;
@@ -23,8 +23,8 @@
 #colorPicker .color {
   width: 25px;
   height: 25px;
-  padding: 0px;
-  border: 0px solid #ccc;
+  padding: 0;
+  border: 0 solid #ccc;
   display: block;
   position: relative;
   z-index: 10001;
@@ -60,7 +60,7 @@
 }
 
 #colorPicker canvas {
-  left: 0px;
-  top: 0px;
+  left: 0;
+  top: 0;
   position: absolute;
 }

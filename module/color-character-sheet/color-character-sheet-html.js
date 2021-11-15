@@ -1,31 +1,41 @@
-////////////////////////////////////////
-// Added to color the rollable parts of the character sheet. Stevil...
-////////////////////////////////////////
+/**
+ * Added to color the rollable parts of the character sheet.
+ * Rewrote and made file eslint compatible...
+ * ~Stevil
+ */
+
 import { objectToArray } from '../../lib/utilities.js'
+import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
+import { addColorWheelsToSettings, saveColorWheelsToSettings, colorGurpsActorSheet } from './color-character-sheet.js'
 import {
-  addColorWheelsToSettings,
-  saveColorWheelsToSettings,
-  colorGurpsActorSheet
-} from './color-character-sheet.js'
-import {
-  SYSTEM_NAME,
   SETTING_COLOR_CHARACTER_SHEET_DATA,
   SETTING_DEFAULT_COLOR_BACKGROUND,
   SETTING_DEFAULT_COLOR_TEXT,
   SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
-  SETTING_DEFAULT_COLOR_TEXT_HOVER
-} from '../../lib/miscellaneous-settings.js'
+  SETTING_DEFAULT_COLOR_TEXT_HOVER,
+} from '../../module/color-character-sheet/color-character-sheet-settings.js'
 
-export let updateSheets = function() {
-  for (const actor of game.actors.contents) 
-    if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER) // Return true if the current game user has observer or owner rights to an actor
-      actor.render()     
+export const updateSheets = () => {
+  // eslint-disable-next-line no-undef
+  for (const actor of game.actors.contents) {
+    // eslint-disable-next-line no-undef
+    if (actor.permission >= CONST.ENTITY_PERMISSIONS.OBSERVER) {
+      // Return true if the current game user has observer or owner rights to an actor
+      actor.render()
+    }
+  }
 }
 
+export function colorSettingsSaveUpdate() {
+  saveColorWheelsToSettings()
+  colorGurpsActorSheet()
+}
+// eslint-disable-next-line no-undef
 export default class ColorCharacterSheetSettings extends FormApplication {
   static getSheetColors() {
-    let colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
-    let results = objectToArray(colorData.colors)
+    // eslint-disable-next-line no-undef
+    const colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
+    const results = objectToArray(colorData.colors)
     return results
   }
 
@@ -34,9 +44,10 @@ export default class ColorCharacterSheetSettings extends FormApplication {
   }
 
   static get defaultOptions() {
+    // eslint-disable-next-line no-undef
     return mergeObject(super.defaultOptions, {
       id: 'color-sheets',
-      template: 'systems/gurps/templates/color-character-sheet/color-character-sheet.html',
+      template: 'systems/gurps/templates/color-character-sheet/color-character-sheet.hbs',
       resizeable: true,
       minimizable: false,
       width: 550,
@@ -44,8 +55,7 @@ export default class ColorCharacterSheetSettings extends FormApplication {
       title: 'Color Character Sheet',
       closeOnSubmit: true,
       onLoad: addColorWheelsToSettings(),
-      onClose: saveColorWheelsToSettings(),
-      onClose: colorGurpsActorSheet()
+      onClose: colorSettingsSaveUpdate(),
     })
   }
 
@@ -74,24 +84,32 @@ export default class ColorCharacterSheetSettings extends FormApplication {
    * }
    */
   get _htmlColorCharacterSheet() {
-    // let allColors = Array.from(game.journal)
+    // eslint-disable-next-line no-undef
+    const colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
+    const htmlColorCharacterSheet = objectToArray(colorData.colors)
 
-    let colorData = game.settings.get(SYSTEM_NAME, SETTING_COLOR_CHARACTER_SHEET_DATA)
-    let htmlColorCharacterSheet = objectToArray(colorData.colors)
-
-    let results = htmlColorCharacterSheet.map(it => {
-      return { color_override: it.color_override, area: it.area, rollable_css: it.rollable_css, color_background: it.color_background, color_text: it.color_text, color_hover: it.color_hover, color_hover_text: it.color_hover_text, default_color_background: SETTING_DEFAULT_COLOR_BACKGROUND, default_color_text: SETTING_DEFAULT_COLOR_TEXT, default_color_hover: SETTING_DEFAULT_COLOR_BACKGROUND_HOVER, default_color_hover_text: SETTING_DEFAULT_COLOR_TEXT_HOVER }
+    const results = htmlColorCharacterSheet.map(it => {
+      return {
+        color_override: it.color_override,
+        area: it.area,
+        rollable_css: it.rollable_css,
+        color_background: it.color_background,
+        color_text: it.color_text,
+        color_hover: it.color_hover,
+        color_hover_text: it.color_hover_text,
+        default_color_background: SETTING_DEFAULT_COLOR_BACKGROUND,
+        default_color_text: SETTING_DEFAULT_COLOR_TEXT,
+        default_color_hover: SETTING_DEFAULT_COLOR_BACKGROUND_HOVER,
+        default_color_hover_text: SETTING_DEFAULT_COLOR_TEXT_HOVER,
+      }
     })
     return results
   }
 
   /**
-  * @override
-  */
+   * @override
+   */
   _updateObject(event, formData) {
-    //saveColorWheelsToSettings()
-    // Need to wait for change in database to do next function...
-    // Otherwise it won't color the sheet until the next save...
     colorGurpsActorSheet()
   }
 }
