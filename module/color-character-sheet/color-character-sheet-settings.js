@@ -8,7 +8,6 @@ import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import { i18n } from '../../lib/utilities.js'
 import ColorCharacterSheetSettings from './color-character-sheet-html.js'
 
-export const url = '../systems/gurps/styles/simple.css'
 export const cssSettings = {
   findCSS: [
     {
