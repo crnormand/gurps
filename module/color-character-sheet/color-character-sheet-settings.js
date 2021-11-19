@@ -7,7 +7,6 @@
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import { i18n } from '../../lib/utilities.js'
 import ColorCharacterSheetSettings from './color-character-sheet-html.js'
-import { readCSSfile } from '../../lib/parse-css-file/parse-css-file.js'
 
 export const url = '../systems/gurps/styles/simple.css'
 export const cssSettings = {
@@ -30,16 +29,13 @@ export const cssSettings = {
     },
   ],
 }
-export const cssColors = []
-
-const readCSS = await readCSSfile()
 
 export const SETTING_COLOR_CHARACTER_SHEET_MENU = 'color-character-sheet-menu'
 export const SETTING_COLOR_CHARACTER_SHEET_DATA = 'color-character-sheet-data'
-export const SETTING_DEFAULT_COLOR_BACKGROUND = cssColors[0] // Was '#ffffbe'
-export const SETTING_DEFAULT_COLOR_TEXT = cssColors[1] // Was '#000000'
-export const SETTING_DEFAULT_COLOR_BACKGROUND_HOVER = cssColors[2] // Was '#cccc00'
-export const SETTING_DEFAULT_COLOR_TEXT_HOVER = cssColors[3] // Was '#000000'
+export const SETTING_DEFAULT_COLOR_BACKGROUND = '#ffffbe'
+export const SETTING_DEFAULT_COLOR_TEXT = '#000000'
+export const SETTING_DEFAULT_COLOR_BACKGROUND_HOVER '#cccc00'
+export const SETTING_DEFAULT_COLOR_TEXT_HOVER = '#000000'
 export const SETTING_COLOR_ROLLABLE = [
   'color-attributes-rollable',
   'color-dodge-rollable',
