@@ -482,6 +482,9 @@ export class GurpsActorSheet extends ActorSheet {
         },
       }).render(true)
     })
+    
+    html.find('#qnotes').on('drop', this.handleQnoteDrop.bind(this))
+    
 
     html.find('#maneuver').on('change', ev => {
       let target = $(ev.currentTarget)
@@ -752,10 +755,15 @@ export class GurpsActorSheet extends ActorSheet {
   async _addTracker(event) {
     this.actor.addTracker()
   }
+  
+  handleQnoteDrop(ev) {
+    this.dropFoundryLinks(ev, 'data.additionalresources.qnotes')
+  }
 
-  dropFoundryLinks(ev) {
+  dropFoundryLinks(ev, modelkey) {
     if (!!ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
+    let add = ''
     var n
     if (dragData.type == 'JournalEntry') {
       n = game.journal.get(dragData.id).name
@@ -769,10 +777,15 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type == 'Item') {
       n = game.items.get(dragData.id).name
     }
-    if (!!n) {
-      let add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
-      $(ev.currentTarget).val($(ev.currentTarget).val() + add)
-    }
+    if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
+    
+    if (!!dragData.otf) add = ' [' + dragData.otf + ']'
+      
+    if (!!add) 
+      if (!!modelkey) {
+        let t = getProperty(this.actor.data, modelkey) || ''
+        this.actor.update({[modelkey]: t + add })
+      } else $(ev.currentTarget).val($(ev.currentTarget).val() + add)
   }
 
   /**

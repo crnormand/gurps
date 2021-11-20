@@ -2,6 +2,14 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.4 11/16/2021
+
+- Added drag and drop to quick notes
+- Added support for Test function [?XX:nane] where XX is A: ads & attack (melee & range), AD: ads, AT: attack, M: melee, R: ranged, S: skills & spells, SK: skills, SP: spells
+- Updated color selection code (@Stevil)
+- Hopefully fixed skill layour issues (@Stevil)
+- Hopefully fixed "GURPS Instant Defaults" issue.
+
 Release 0.12.3 11/11/2021
 
 - Fixed mispelling of variable name

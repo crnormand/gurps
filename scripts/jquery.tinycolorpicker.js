@@ -1,32 +1,29 @@
-// https://github.com/wieringen/tinycolorpicker
-// Changed line 121. Was .load(function() {... Changed to .on('load', function(){...
-;(function (factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory)
-  } else if (typeof exports === 'object') {
-    module.exports = factory(require('jquery'))
-  } else {
-    factory(jQuery)
+/**
+ * https://github.com/wieringen/tinycolorpicker
+ * Rewrote and made file eslint compatible...
+ * ~Stevil
+ */
+
+;(function ($) {
+  const pluginName = 'tinycolorpicker'
+  const defaults = {
+    colors: [
+      '#ffffff',
+      '#A7194B',
+      '#FE2712',
+      '#FB9902',
+      '#FABC02',
+      '#FEFE33',
+      '#D0EA2B',
+      '#66B032',
+      '#0391CE',
+      '#0247FE',
+      '#3D01A5',
+      '#8601AF',
+    ],
+    backgroundUrl: null,
   }
-})(function ($) {
-  var pluginName = 'tinycolorpicker',
-    defaults = {
-      colors: [
-        '#ffffff',
-        '#A7194B',
-        '#FE2712',
-        '#FB9902',
-        '#FABC02',
-        '#FEFE33',
-        '#D0EA2B',
-        '#66B032',
-        '#0391CE',
-        '#0247FE',
-        '#3D01A5',
-        '#8601AF',
-      ],
-      backgroundUrl: null,
-    }
+
   function Plugin($container, options) {
     /**
      * The options of the colorpicker extended with the defaults.
@@ -53,17 +50,19 @@
      */
     this._name = pluginName
 
-    var self = this,
-      $track = $container.find('.track'),
-      $color = $container.find('.color'),
-      $canvas = null,
-      $colorInput = $container.find('.colorInput'),
-      $dropdown = $container.find('.dropdown'),
-      $dropdownItem = $dropdown.find('li').remove(),
-      context = null,
-      mouseIsDown = false,
-      hasCanvas = !!document.createElement('canvas').getContext,
-      touchEvents = 'ontouchstart' in document.documentElement
+    const self = this
+    const $track = $container.find('.track')
+    const $color = $container.find('.color')
+    let $canvas = null
+    const $colorInput = $container.find('.colorInput')
+    const $dropdown = $container.find('.dropdown')
+    const $dropdownItem = $dropdown.find('li').remove()
+
+    let context = null
+    let mouseIsDown = false
+    const hasCanvas = !!document.createElement('canvas').getContext
+    const touchEvents = 'ontouchstart' in document.documentElement
+
     /**
      * The current active color in hex.
      *
@@ -96,7 +95,7 @@
         _setImage()
       } else {
         $.each(self.options.colors, function (index, color) {
-          var $clone = $dropdownItem.clone()
+          const $clone = $dropdownItem.clone()
 
           $clone.css('backgroundColor', color)
           $clone.attr('data-color', color)
@@ -115,11 +114,13 @@
      * @private
      */
     function _setImage() {
-      var colorPicker = new Image(),
-        backgroundUrl = $track
-          .css('background-image')
-          .replace(/"/g, '')
-          .replace(/url\(|\)$/gi, '')
+      // eslint-disable-next-line no-undef
+      const colorPicker = new Image()
+      const backgroundUrl = $track
+        .css('background-image')
+        .replace(/"/g, '')
+        .replace(/url\(|\)$/gi, '')
+
       colorPicker.crossOrigin = 'Anonymous'
       $track.css('background-image', 'none')
 
@@ -138,7 +139,7 @@
      * @private
      */
     function _setEvents() {
-      var eventType = touchEvents ? 'touchstart' : 'mousedown'
+      const eventType = touchEvents ? 'touchstart' : 'mousedown'
 
       if (hasCanvas) {
         $color.bind(eventType, function (event) {
@@ -205,7 +206,7 @@
           event.preventDefault()
           event.stopImmediatePropagation()
 
-          var color = $(this).attr('data-color')
+          const color = $(this).attr('data-color')
 
           self.setColor(color)
 
@@ -220,9 +221,10 @@
      */
     function _getColorCanvas(event) {
       if (mouseIsDown) {
-        var $target = $(event.target),
-          offset = $target.offset(),
-          colorData = context.getImageData(event.pageX - offset.left, event.pageY - offset.top, 1, 1).data
+        const $target = $(event.target)
+        const offset = $target.offset()
+        const colorData = context.getImageData(event.pageX - offset.left, event.pageY - offset.top, 1, 1).data
+
         self.setColor('rgb(' + colorData[0] + ',' + colorData[1] + ',' + colorData[2] + ')')
 
         /**
@@ -272,7 +274,7 @@
      * @chainable
      */
     this.hexToRgb = function (hex) {
-      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
 
       return 'rgb(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ')'
     }
@@ -284,10 +286,10 @@
      * @chainable
      */
     this.rgbToHex = function (rgb) {
-      var result = rgb.match(/\d+/g)
+      const result = rgb.match(/\d+/g)
 
       function hex(x) {
-        var digits = new Array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+        const digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
         return isNaN(x) ? '00' : digits[(x - (x % 16)) / 16] + digits[x % 16]
       }
 
@@ -298,12 +300,12 @@
   }
 
   /**
-     * @class tinycolorpicker
-     * @constructor
-     * @param {Object} options
-        @param {Array} [options.colors=[]] fallback colors for old browsers (ie8-).
-        @param {String} [options.backgroundUrl=''] It will look for a css image on the track div. If not found it will look if there's a url in this property.
-     */
+   * @class tinycolorpicker
+   * @constructor
+   * @param {Object} options
+   * @param {Array} [options.colors=[]] fallback colors for old browsers (ie8-).
+   * @param {String} [options.backgroundUrl=''] It will look for a css image on the track div. If not found it will look if there's a url in this property.
+   */
   $.fn[pluginName] = function (options) {
     return this.each(function () {
       if (!$.data(this, 'plugin_' + pluginName)) {
@@ -311,4 +313,4 @@
       }
     })
   }
-})
+})(jQuery)

@@ -29,6 +29,14 @@ import { ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 
+/**
+ * Added to color the rollable parts of the character sheet.
+ * Made this part eslint compatible...
+ * ~Stevil
+ */
+import { registerColorPickerSettings } from '../module/color-character-sheet/color-character-sheet-settings.js'
+import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
+
 export const GURPS = {}
 window.GURPS = GURPS // Make GURPS global!
 GURPS.DEBUG = true
@@ -64,12 +72,6 @@ import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
-
-////////////////////////////////////////
-// Added to color the rollable parts of the character sheet. Stevil...
-////////////////////////////////////////
-import { colorGurpsActorSheet } from '../module/color-character-sheet/color-character-sheet.js'
-////////////////////////////////////////
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -974,6 +976,48 @@ const actionFuncs = {
 
     return doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt })
   },
+
+  /*
+    [AMRS][DPK]
+    A: ads & attack (melee & range)
+    AD: ads
+    AT: attack
+    M: melee
+    R: ranged
+    S: skills & spells
+    SK: skills
+    SP: spells
+  */
+  ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
+    switch (action.prefix) {
+      case 'A':
+        if (!!findAdDisad(actor, action.name)) return true
+        if (!!findAttack(actor, action.name, true, true)) return true
+        return false
+      case 'AD':
+        if (!!findAdDisad(actor, action.name)) return true
+        return false
+      case 'AT':
+        if (!!findAttack(actor, action.name, true, true)) return true
+        return false
+      case 'M':
+        if (!!findAttack(actor, action.name, true, false)) return true
+        return false
+      case 'R':
+        if (!!findAttack(actor, action.name, false, true)) return true
+        return false
+      case 'S':
+        if (!!findSkillSpell(actor, action.name, false, false)) return true
+        return false
+      case 'SK':
+        if (!!findSkillSpell(actor, action.name, false, true)) return true
+        return false
+      case 'SP':
+        if (!!findSkillSpell(actor, action.name, true, false)) return true
+        return false
+    }
+    return false
+  },
 }
 GURPS.actionFuncs = actionFuncs
 
@@ -1815,9 +1859,14 @@ Hooks.once('init', async function () {
       html.find('.directory-footer').append(button)
     }
   })
-  ////////////////////////////////////////
-  // Added to color the rollable parts of the character sheet. Stevil...
-  ////////////////////////////////////////
+
+  /**
+   * Added to color the rollable parts of the character sheet.
+   * Made this part eslint compatible...
+   * ~Stevil
+   */
+  registerColorPickerSettings()
+  // eslint-disable-next-line no-undef
   Hooks.on('renderActorSheet', (...args) => {
     colorGurpsActorSheet()
   })

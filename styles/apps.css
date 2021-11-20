@@ -2077,6 +2077,11 @@ button.equipmentbutton:last-child {
   align-items: center;
 }
 
+#spells > div,
 #notes .notesmenu {
   white-space: normal;
+}
+
+#spells .tooltip {
+  min-width: 200px;
 }
