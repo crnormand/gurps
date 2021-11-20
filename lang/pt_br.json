@@ -790,6 +790,7 @@
   "GURPS.settingImportHintEncoding": "Se você estiver importando um personagem e caracteres unicode não estiverem sendo exibidos, modifique esta configuração para codificação UTF-8.",
   "GURPS.settingImportEncodingISO8859": "ISO-8859-1 (default)",
   "GURPS.settingImportEncodingUTF8": "UTF-8",
+
   "GURPS.actions": "Ações",
   "GURPS.addAdvantage": "Adicionar Vantagem",
   "GURPS.addMeleeAttack": "Adicionar Ataque Corpo a Corpo",

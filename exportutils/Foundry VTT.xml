@@ -27,6 +27,7 @@
 	    <maintain type="string">@MANA_MAINTAIN</maintain>
           <duration type="string">@DURATION</duration>
           <level type="number">@SL</level>
+          <relativelevel type="string">@RSL</relativelevel>
           <name type="string">@DESCRIPTION_PRIMARY</name>
           <points type="number">@POINTS</points>
           <resist type="string">@RESIST</resist>
