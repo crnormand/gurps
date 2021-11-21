@@ -86,20 +86,20 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureProneRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          {
-            key: 'chat',
-            value: JSON.stringify({
-              msg: 'GURPS.effectChatRangedModifier',
-              frequency: 'once',
-              args: {
-                // '@' - lookup property on Actor
-                displayName: '@displayname',
-                // '!' - treat as i18n text
-                posture: '!GURPS.STATUSProne',
-              },
-            }),
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          },
+          // {
+          //   key: 'chat',
+          //   value: JSON.stringify({
+          //     msg: 'GURPS.effectChatRangedModifier',
+          //     frequency: 'once',
+          //     args: {
+          //       // '@' - lookup property on Actor
+          //       displayName: '@displayname',
+          //       // '!' - treat as i18n text
+          //       posture: '!GURPS.STATUSProne',
+          //     },
+          //   }),
+          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          // },
           {
             key: 'data.conditions.posture',
             value: 'prone',
@@ -138,18 +138,18 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureCrouchRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          {
-            key: 'chat',
-            value: JSON.stringify({
-              msg: 'GURPS.effectChatRangedModifier',
-              frequency: 'once',
-              args: {
-                displayName: '@displayname',
-                posture: '!GURPS.STATUSKneel',
-              },
-            }),
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          },
+          // {
+          //   key: 'chat',
+          //   value: JSON.stringify({
+          //     msg: 'GURPS.effectChatRangedModifier',
+          //     frequency: 'once',
+          //     args: {
+          //       displayName: '@displayname',
+          //       posture: '!GURPS.STATUSKneel',
+          //     },
+          //   }),
+          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_ONETHIRD,
@@ -182,18 +182,18 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureCrouchRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          {
-            key: 'chat',
-            value: JSON.stringify({
-              msg: 'GURPS.effectChatRangedModifier',
-              frequency: 'once',
-              args: {
-                displayName: '@displayname',
-                posture: '!GURPS.STATUSCrouch',
-              },
-            }),
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          },
+          // {
+          //   key: 'chat',
+          //   value: JSON.stringify({
+          //     msg: 'GURPS.effectChatRangedModifier',
+          //     frequency: 'once',
+          //     args: {
+          //       displayName: '@displayname',
+          //       posture: '!GURPS.STATUSCrouch',
+          //     },
+          //   }),
+          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_TWOTHIRDS,
@@ -231,18 +231,18 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureProneRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          {
-            key: 'chat',
-            value: JSON.stringify({
-              msg: 'GURPS.effectChatRangedModifier',
-              frequency: 'once',
-              args: {
-                displayName: '@displayname',
-                posture: '!GURPS.STATUSSit',
-              },
-            }),
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          },
+          // {
+          //   key: 'chat',
+          //   value: JSON.stringify({
+          //     msg: 'GURPS.effectChatRangedModifier',
+          //     frequency: 'once',
+          //     args: {
+          //       displayName: '@displayname',
+          //       posture: '!GURPS.STATUSSit',
+          //     },
+          //   }),
+          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_NONE,
@@ -280,18 +280,18 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureProneRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          {
-            key: 'chat',
-            value: JSON.stringify({
-              msg: 'GURPS.effectChatRangedModifier',
-              frequency: 'once',
-              args: {
-                displayName: '@displayname',
-                posture: '!GURPS.STATUSCrawling',
-              },
-            }),
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          },
+          // {
+          //   key: 'chat',
+          //   value: JSON.stringify({
+          //     msg: 'GURPS.effectChatRangedModifier',
+          //     frequency: 'once',
+          //     args: {
+          //       displayName: '@displayname',
+          //       posture: '!GURPS.STATUSCrawling',
+          //     },
+          //   }),
+          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
+          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_ONETHIRD,
