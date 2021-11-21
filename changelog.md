@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.12.5
 
 - Fixed a bug with the ADD applying damage to a resource tracker.
+- Remove chat messages for ranged attack modifiers on postures. (Will be replaced by target modifier list window).
 
 Release 0.12.4 11/16/2021
 
