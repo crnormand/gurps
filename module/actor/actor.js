@@ -665,6 +665,17 @@ export class GurpsActor extends Actor {
    * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
    */
   async update(data, context) {
+    // TODO remove when the duplicate resource tracker issue is solved
+    let suspects = Object.keys(data).filter(it => it.startsWith('data.additionalresources.tracker.'))
+    if (!!suspects) {
+      for (let suspect of suspects) {
+        let value = suspect.replace('data.additionalresources.tracker.', '').split('.')[0]
+        if (value.length < 4) {
+          console.trace(suspect)
+        }
+      }
+    }
+
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('data.HP.value')) {
         let flag = data['data.HP.value'] < this.getGurpsActorData().HP.max / 3
