@@ -1,12 +1,20 @@
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import { GURPS } from '../gurps.js'
 /*
   This is the BIG method that does the roll and prepares the chat message.
   unfortunately, it has a lot fo hard coded junk in it.
   */
 // formula="3d6", targetmods="[{ desc:"", mod:+-1 }]", thing="Roll vs 'thing'" or damagetype 'burn',
 // target=skill level or -1=damage roll
-export async function doRoll({actor, formula='3d6', targetmods=[], prefix='', thing='', chatthing='', origtarget=-1, optionalArgs={}}) {
+export async function doRoll({
+  actor,
+  formula = '3d6',
+  targetmods = [],
+  prefix = '',
+  thing = '',
+  chatthing = '',
+  origtarget = -1,
+  optionalArgs = {},
+}) {
   if (origtarget == 0 || isNaN(origtarget)) return // Target == 0, so no roll.  Target == -1 for non-targetted rolls (roll, damage)
   let isTargeted = origtarget > 0 // Roll "against" something (true), or just a roll (false)
   let failure = false

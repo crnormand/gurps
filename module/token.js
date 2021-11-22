@@ -2,8 +2,6 @@ import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } fro
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
-import { StatusEffect } from './effects/effects.js'
-import { GURPS } from './gurps.js'
 
 export default class GurpsToken extends Token {
   static ready() {

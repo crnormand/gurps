@@ -3,7 +3,7 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
-import { i18n, objectToArray } from '../../lib/utilities.js'
+import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
 import { GurpsActor } from '../actor/actor.js'
 
 /* 
@@ -84,7 +84,7 @@ export class CompositeDamageCalculator {
     let wheres = hitlocations.map(it => it.where.toLowerCase())
     let damageLocation = !!damageData[0].hitlocation ? damageData[0].hitlocation.toLowerCase() : ''
     let hlIndex = wheres.indexOf(damageLocation)
-    if (hlIndex >=0 ) this._hitLocation = hitlocations[hlIndex].where
+    if (hlIndex >= 0) this._hitLocation = hitlocations[hlIndex].where
     else this._hitLocation = this._defender.defaultHitLocation
 
     this._previousHitLocation = this._hitLocation
@@ -675,7 +675,7 @@ export class CompositeDamageCalculator {
         return
       }
     })
-    if (!!tracker) return [tracker, `data.additionalresources.tracker.${index}`]
+    if (!!tracker) return [tracker, `data.additionalresources.tracker.${zeroFill(index, 4)}`]
     // }
 
     if (this._applyTo === 'FP') return [this._defender.data.data.FP, 'data.FP']
