@@ -6,6 +6,8 @@ Release 0.12.5
 
 - Fixed a bug with the ADD applying damage to a resource tracker.
 - Remove chat messages for ranged attack modifiers on postures. (Will be replaced by target modifier list window).
+- Updated color picker to speed up GGA load time
+- Added drag and drop of OtFs from chat & journals
 
 Release 0.12.4 11/16/2021
 

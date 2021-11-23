@@ -20,6 +20,23 @@ export default class GurpsWiring {
     html.find('.glinkmodplus').on('click', GurpsWiring.chatClickGmod)
     html.find('.glinkmodminus').on('click', GurpsWiring.chatClickGmod)
     html.find('.pdflink').on('click', handleOnPdf)
+    
+    // Make any OtF element draggable
+    html.find('[data-otf]').each((_, li) => {
+      li.setAttribute('draggable', true)
+      li.addEventListener('dragstart', ev => {
+        let display = ''
+        if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+        return ev.dataTransfer.setData(
+          'text/plain',
+          JSON.stringify({
+            otf: li.getAttribute('data-otf'),
+            displayname: display,
+          })
+        )
+      })
+    })
+
   }
 
   /**
@@ -46,7 +63,7 @@ export default class GurpsWiring {
     //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
     // })
   }
-
+  
   static createPdfLinkMenu(link) {
     let text = link.innerText
     let parent = $(link).parent()
