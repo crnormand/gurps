@@ -1969,39 +1969,60 @@ Hooks.once('ready', async function () {
       })
   )
 
-  // @ts-ignore
+  // Sorry, removed the ts-ignores during editing.
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
-    // @ts-ignore
     if (!data.otf && !data.bucket) return
-    // @ts-ignore
     let otf = data.otf || data.bucket
-    otf = otf.split('\\').join('\\\\') // must double backslashes since this is a 'script' macro
-    let cmd = ''
-    // @ts-ignore
-    if (!!data.bucket)
-      cmd += `GURPS.ModifierBucket.clear()
-`
-    cmd += 'GURPS.executeOTF(`' + otf + '`)' // Surround OTF in backticks... to allow single and double quotes in OtF
     let name = otf
-    // @ts-ignore
     if (!!data.displayname) name = data.displayname
-    // @ts-ignore
+    let cmd = ''
+   
+    if (!!data.bucket) cmd += '!/clearmb no-update\n'
     if (!!data.actor) {
-      cmd =
-        // @ts-ignore
-        `GURPS.SetLastActor(game.actors.get('${data.actor}'))
-` + cmd
-      // @ts-ignore
+      let a = game.actors.get(data.actor)
+      if (!!a) cmd = `!/select ${a.name}\n` + cmd
       name = game.actors.get(data.actor).name + ': ' + name
     }
-    let macro = await Macro.create({
-      name: name,
-      type: 'script',
-      command: cmd,
-    })
-    // @ts-ignore
-    game.user.assignHotbarMacro(macro, slot)
+    
+    if (otf.startsWith('/')) {
+      if (!!data.encodedAction) {
+        let action = JSON.parse(atou(data.encodedAction))
+        if (action.quiet) cmd += '!'
+      }
+      cmd += otf
+    } else cmd += '/r [' + otf + ']'
+    
+    let setmacro = async function(name, cmd) {
+      let macro = await Macro.create({
+        name: name,
+        type: 'chat',
+        command: cmd,
+      })
+      macro.setFlag('gurps', 'drag-drop-otf', true)
+      game.user.assignHotbarMacro(macro, slot)
+    }
+    
+    let oldmacro = game.macros.get(game.user.data.hotbar[slot])
+    if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
+      new Dialog({
+        title: "Merge or Replace On-the-Fly macro",
+        content: `Merge both macros into this:<br><br><mark>${oldmacro.data.command.split('\n').join('<br>')}<br>${cmd.split('\n').join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${cmd.split('\n').join('<br>')}</mark><br>&nbsp;<br>`,
+        buttons: {
+         one: {
+          icon: '<i class="fas fa-angle-double-down"></i>',
+          label: "Merge",
+          callback: () => setmacro(name, oldmacro.data.command + '\n' + cmd)
+         },
+         two: {
+          icon: '<i class="fas fa-angle-down"></i>',
+          label: "Replace",
+          callback: () => setmacro(name, cmd)
+        }
+       },
+       default: "one",
+      }).render(true);
+    } else setmacro(name, cmd)
     return false
   })
 

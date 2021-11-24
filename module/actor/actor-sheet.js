@@ -107,6 +107,7 @@ export class GurpsActorSheet extends ActorSheet {
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
             actor: this.actor.id,
+            encodedAction: ev.currentTarget.dataset.action,
             displayname: display,
           })
         )

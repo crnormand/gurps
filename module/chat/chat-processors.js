@@ -255,11 +255,11 @@ class ClearMBsChatProcessor extends ChatProcessor {
     return '/clearmb'
   }
   matches(line) {
-    return line === '/clearmb'
+    return line.startsWith('/clearmb')
   }
   process(line) {
     this.priv(line)
-    GURPS.ModifierBucket.clear()
+    GURPS.ModifierBucket.clear(!line.endsWith('no-update'))
   }
 }
 

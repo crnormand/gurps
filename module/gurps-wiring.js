@@ -32,6 +32,7 @@ export default class GurpsWiring {
           JSON.stringify({
             otf: li.getAttribute('data-otf'),
             displayname: display,
+            encodedAction: ev.currentTarget.dataset.action,
           })
         )
       })

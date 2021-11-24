@@ -291,7 +291,7 @@
   "GURPS.chatYouMustBeGM": "You must be a GM to execute this command",
   "GURPS.chatYouMustHaveACharacterSelected": "You must have a character selected",
   "GURPS.chatYouMustSelectTokens": "You must select tokens (or use",
-  "GURPS.chatHelpHelp": "/help chat-command: to see help for that cmd\n?chat-command: to see help for that command",
+  "GURPS.chatHelpHelp": "/help chat-command: to see help for that cmd\n\n?chat-command: to see help for that command",
   "GURPS.chatHelpSound": "Play a sound in the background<hr>parameters:\nw: wait seconds before starting sound\nv: volume\n&lt;full path filename&gt;<hr>examples:\n/sound w2.5 /path/filename\n/sound v0.6 /path/filename\n/sound w3 v2 /path/filename",
   "GURPS.chatHelpW": "Whisper to players, characters or the owners of the selected tokens<hr>parameters:\n&lt;player or character names&gt;\n@: whisper to the owners of the selected tokens\n<hr>examples:\n/w Chris msg sent to Player Chris\n/w Bog msg sent to Bog's owner\n/w @ msg sent to owners of selected tokens",
   "GURPS.chatHelpWait": "Wait X milliseconds before executing the next chat command<hr>parameters:\nX: the number of milliseconds to wait\n<hr>examples:\n/wait 500",

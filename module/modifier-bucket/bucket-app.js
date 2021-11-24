@@ -380,9 +380,9 @@ export class ModifierBucket extends Application {
     this.refresh()
   }
 
-  clear() {
+  clear(update = true) {
     this.modifierStack.reset()
-    this.refresh()
+    if (update) this.refresh()
   }
 
   /**
