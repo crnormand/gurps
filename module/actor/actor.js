@@ -1603,15 +1603,17 @@ export class GurpsActor extends Actor {
    * @param {Skill|Spell|Ranged|Melee} newobj
    */
   _migrateOtfs(oldobj, newobj) {
-    if (!!oldobj.animationData) {
-      const n = newobj.animationData
-      const o = oldobj.animationData
+    //if (!!oldobj.animationData) {
+      //const n = newobj.animationData
+      //const o = oldobj.animationData
+      let n = newobj
+      let o = oldobj
 
       n.checkotf = o.checkotf
       n.duringotf = o.duringotf
       n.passotf = o.passotf
       n.failotf = o.failotf
-    }
+    //}
   }
 
   /**
