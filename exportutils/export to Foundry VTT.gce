@@ -46,8 +46,7 @@ Sub Main()
 
     ' in Fantasy Grounds the <name> field must be at the top level
     Paragraph = "<name type=""string"">" & Char.Name & "</name>"
-    ' Paragraph = "<portrait type=""string"">" & Char.Portrait & "</portrait>"
-    Paragraph = "<portrait type=""string""></portrait>"
+    Paragraph = "<portrait type=""string"">" & Char.Portrait & "</portrait>"
 
     ' add the various sections
     Call PrintAbilities()
