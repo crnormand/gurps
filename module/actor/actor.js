@@ -835,7 +835,7 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv1(xml, importname, importpath) {
-    const GCAVersion = 'GCA-9'
+    const GCAVersion = 'GCA-10'
     const GCSVersion = 'GCS-5'
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
@@ -906,6 +906,9 @@ export class GurpsActor extends Actor {
         }
         if (vernum < 9) {
           msg.push(i18n('GURPS.importGCAChildrenWeights'))
+        }
+        if (vernum < 10) {
+          msg.push(i18n('GURPS.importGCAAdvMods'))
         }
       }
       if (isFoundryGCS) {
