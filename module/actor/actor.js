@@ -2486,10 +2486,11 @@ export class GurpsActor extends Actor {
    */
   async _updateEqtStatus(eqt, eqtkey, carried) {
     eqt.carried = carried
+    eqt.equipped = carried
     if (!!eqt.itemid) {
       let item = /** @type {Item} */ (await this.items.get(eqt.itemid))
       await this.updateEmbeddedDocuments('Item', [
-        { _id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried },
+        { _id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried, 'data.equipped': carried },
       ])
       if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid)
       if (carried && eqt.equipped) await this._addItemAdditions(item.data, eqtkey)
