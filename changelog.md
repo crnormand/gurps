@@ -7,6 +7,9 @@ Release 0.12.6
 - Updated 'export to Foundry VTT.gce', moved the modifiers from the 'name' tag to be part of the 'text' tag in the Ads/Disads (@Stevil)
 - Updated GCA export validation to GCA-10
 - Add /maneuver /man chat command to set maneuver
+- Fixed dragging multiple modifier buckets onto the same macro (replace works correctly now)
+- Fixed equipped status mirrors carried status (and all items contained within)
+- Fixed /showmbs command
 
 Release 0.12.5 11/23/2021
 

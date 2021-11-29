@@ -581,7 +581,7 @@ export class ModifierBucket extends Application {
       content += d
       d = '<hr>'
       let stack = await user.getFlag('gurps', 'modifierstack')
-      if (!!stack && stack instanceof ModifierStack) content += this.chatString(stack, user.name + ', ')
+      if (!!stack && !!stack.modifierList) content += this.chatString(stack, user.name + ', ')
       else content += user.name + ', No modifiers'
     }
 
