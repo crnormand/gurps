@@ -1278,14 +1278,9 @@ export class GurpsActorSheet extends ActorSheet {
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons()
 
-    const sheet = this.actor.getFlag('core', 'sheetClass')
-    const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
-    const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
-    const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
-
     // Token Configuration
     if (this.options.editable && isConfigurationAllowed(this.actor)) {
-      buttons = this._customHeaderButtons.concat(buttons)
+      buttons = this.getCustomHeaderButtons().concat(buttons)
     }
     return buttons
   }
@@ -1293,7 +1288,12 @@ export class GurpsActorSheet extends ActorSheet {
   /**
    * Override this to chsange the buttons appended tp the sactor sheet title bar.
    */
-  get _customHeaderButtons() {
+  getCustomHeaderButtons() {
+    const sheet = this.actor.getFlag('core', 'sheetClass')
+    const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
+    const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
+
+    const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
     let b = [
       {
         label: isFull ? altsheet : 'Full View',
