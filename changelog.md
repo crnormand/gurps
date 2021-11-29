@@ -9,6 +9,7 @@ Release 0.12.6
 - Add /maneuver /man chat command to set maneuver
 - Fixed dragging multiple modifier buckets onto the same macro (replace works correctly now)
 - Fixed equipped status mirrors carried status (and all items contained within)
+- Fixed /showmbs command
 
 Release 0.12.5 11/23/2021
 
