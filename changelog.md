@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.6 11/25/2021
+
+- Updated 'export to Foundry VTT.gce', moved the modifiers from the 'name' tag to be part of the 'text' tag in the Ads/Disads (@Stevil)
+
 Release 0.12.5 11/23/2021
 
 - Fixed a bug with the ADD applying damage to a resource tracker.

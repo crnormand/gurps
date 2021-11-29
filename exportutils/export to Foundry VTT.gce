@@ -624,6 +624,7 @@ Sub PrintAds()
 
     Dim ads_index
     Dim tag_index
+    Dim mods_text
 
     Paragraph = ""
     Paragraph = "<adslist>"
@@ -642,7 +643,10 @@ Sub PrintAds()
                     tmp = tmp & " (" & work & ")"
                 End If
 
-                tmp = tmp & Char.Items(i).ExpandedModCaptions(False)
+mods_text = Char.Items(i).ExpandedModCaptions(False)
+if mods_text <> "" Then
+    mods_text = mods_text & "<br>"
+End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -655,7 +659,7 @@ Sub PrintAds()
                     work = work - CInt(Char.Items(i).TagItem("childpoints"))
                 End If
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
-                Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
+                Paragraph = "<text type=""string"">" & mods_text & Char.Items(i).TagItem("usernotes") & "</text>"
                 Paragraph = "</id-" & tag_index & ">"
 
             End If
@@ -680,7 +684,10 @@ Sub PrintAds()
                         tmp = tmp & " (" & work & ")"
                     End If
 
-                    tmp = tmp & Char.Items(i).ExpandedModCaptions(False)
+mods_text = Char.Items(i).ExpandedModCaptions(False)
+if mods_text <> "" Then
+    mods_text = mods_text & "<br>"
+End If
 
                     tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -693,10 +700,10 @@ Sub PrintAds()
                         work = work - CInt(Char.Items(i).TagItem("childpoints"))
                     End If
                     Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
-	              Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
+	                Paragraph = "<text type=""string"">" & mods_text & Char.Items(i).TagItem("usernotes") & "</text>"
                     Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
-            	  Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
-            	  Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
+            	    Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
+            	    Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
                     Paragraph = "</id-" & tag_index & ">"
 
                 End If
@@ -720,7 +727,10 @@ Sub PrintAds()
                     tmp = tmp & " (" & work & ")"
                 End If
 
-                tmp = tmp & Char.Items(i).ExpandedModCaptions(False)
+mods_text = Char.Items(i).ExpandedModCaptions(False)
+if mods_text <> "" Then
+    mods_text = mods_text & "<br>"
+End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -733,7 +743,7 @@ Sub PrintAds()
                     work = work - CInt(Char.Items(i).TagItem("childpoints"))
                 End If
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
-                Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
+                Paragraph = "<text type=""string"">" & mods_text & Char.Items(i).TagItem("usernotes") & "</text>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
                 Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
                 Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
@@ -756,6 +766,7 @@ Sub PrintDisads()
 
     Dim ads_index
     Dim tag_index
+    Dim mods_text
 
     Paragraph = ""
     Paragraph = "<disadslist>"
@@ -776,7 +787,10 @@ Sub PrintDisads()
                     tmp = tmp & " (" & work & ")"
                 End If
 
-                tmp = tmp & Char.Items(i).ExpandedModCaptions(False)
+mods_text = Char.Items(i).ExpandedModCaptions(False)
+if mods_text <> "" Then
+    mods_text = mods_text & "<br>"
+End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -789,7 +803,7 @@ Sub PrintDisads()
                     work = work - CInt(Char.Items(i).TagItem("childpoints"))
                 End If
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
-                Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
+                Paragraph = "<text type=""string"">" & mods_text & Char.Items(i).TagItem("usernotes") & "</text>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
                 Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
                 Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
@@ -815,7 +829,10 @@ Sub PrintDisads()
                     tmp = tmp & " (" & work & ")"
                 End If
 
-                tmp = tmp & Char.Items(i).ExpandedModCaptions(False)
+mods_text = Char.Items(i).ExpandedModCaptions(False)
+if mods_text <> "" Then
+    mods_text = mods_text & "<br>"
+End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -828,7 +845,7 @@ Sub PrintDisads()
                     work = work - CInt(Char.Items(i).TagItem("childpoints"))
                 End If
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
-                Paragraph = "<text type=""string"">" & Char.Items(i).TagItem("usernotes") & "</text>"
+                Paragraph = "<text type=""string"">" & mods_text & Char.Items(i).TagItem("usernotes") & "</text>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
                 Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
                 Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
