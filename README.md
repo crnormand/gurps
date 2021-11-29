@@ -6,11 +6,13 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 ### [Change Log](changelog.md)
 The list was getting just too long, so it has been moved to a separate file.   Click above to see what has changed.
 
-[If you like our work...](https://ko-fi.com/crnormand) <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
+
+
+If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
 Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
-[Current GCA Export version: 'GCA-9' 6/09/2021 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA Export version: 'GCA-10' 11/29/2021 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 
 
