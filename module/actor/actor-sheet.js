@@ -483,9 +483,8 @@ export class GurpsActorSheet extends ActorSheet {
         },
       }).render(true)
     })
-    
+
     html.find('#qnotes').on('drop', this.handleQnoteDrop.bind(this))
-    
 
     html.find('#maneuver').on('change', ev => {
       let target = $(ev.currentTarget)
@@ -756,7 +755,7 @@ export class GurpsActorSheet extends ActorSheet {
   async _addTracker(event) {
     this.actor.addTracker()
   }
-  
+
   handleQnoteDrop(ev) {
     this.dropFoundryLinks(ev, 'data.additionalresources.qnotes')
   }
@@ -779,13 +778,13 @@ export class GurpsActorSheet extends ActorSheet {
       n = game.items.get(dragData.id).name
     }
     if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
-    
+
     if (!!dragData.otf) add = ' [' + dragData.otf + ']'
-      
-    if (!!add) 
+
+    if (!!add)
       if (!!modelkey) {
         let t = getProperty(this.actor.data, modelkey) || ''
-        this.actor.update({[modelkey]: t + add })
+        this.actor.update({ [modelkey]: t + add })
       } else $(ev.currentTarget).val($(ev.currentTarget).val() + add)
   }
 
@@ -1279,41 +1278,48 @@ export class GurpsActorSheet extends ActorSheet {
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons()
 
+    // Token Configuration
+    if (this.options.editable && isConfigurationAllowed(this.actor)) {
+      buttons = this.getCustomHeaderButtons().concat(buttons)
+    }
+    return buttons
+  }
+
+  /**
+   * Override this to chsange the buttons appended tp the sactor sheet title bar.
+   */
+  getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
-    const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
     const isEditor = sheet === 'gurps.GurpsActorEditorSheet'
     const altsheet = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_ALT_SHEET)
 
-    // Token Configuration
-    if (this.options.editable && isConfigurationAllowed(this.actor)) {
-      let b = [
-        {
-          label: isFull ? altsheet : 'Full View',
-          class: 'toggle',
-          icon: 'fas fa-exchange-alt',
-          onclick: ev => this._onToggleSheet(ev, altsheet),
-        },
-      ]
+    const isFull = sheet === undefined || sheet === 'gurps.GurpsActorSheet'
+    let b = [
+      {
+        label: isFull ? altsheet : 'Full View',
+        class: 'toggle',
+        icon: 'fas fa-exchange-alt',
+        onclick: ev => this._onToggleSheet(ev, altsheet),
+      },
+    ]
 
-      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
-        b.push({
-          label: 'Import',
-          class: 'import',
-          icon: 'fas fa-file-import',
-          onclick: ev => this._onFileImport(ev),
-        })
+    if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLOCK_IMPORT) || game.user.isTrusted)
+      b.push({
+        label: 'Import',
+        class: 'import',
+        icon: 'fas fa-file-import',
+        onclick: ev => this._onFileImport(ev),
+      })
 
-      if (!isEditor) {
-        b.push({
-          label: 'Editor',
-          class: 'edit',
-          icon: 'fas fa-edit',
-          onclick: ev => this._onOpenEditor(ev),
-        })
-      }
-      buttons = b.concat(buttons)
+    if (!isEditor) {
+      b.push({
+        label: 'Editor',
+        class: 'edit',
+        icon: 'fas fa-edit',
+        onclick: ev => this._onOpenEditor(ev),
+      })
     }
-    return buttons
+    return b
   }
 
   async _onFileImport(event) {
