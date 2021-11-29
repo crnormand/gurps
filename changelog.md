@@ -6,6 +6,7 @@ Release 0.12.6
 
 - Updated 'export to Foundry VTT.gce', moved the modifiers from the 'name' tag to be part of the 'text' tag in the Ads/Disads (@Stevil)
 - Updated GCA export validation to GCA-10
+- Add /maneuver /man chat command to set maneuver
 
 Release 0.12.5 11/23/2021
 

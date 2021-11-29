@@ -12,12 +12,13 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait, zeroFill } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait, zeroFill, locateToken } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
 import { AnimChatProcessor } from '../chat/anim.js'
+import Maneuvers from '../actor/maneuver.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -53,6 +54,7 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new QuickDamageChatProcessor())
   ChatProcessors.registerProcessor(new SoundChatProcessor())
   ChatProcessors.registerProcessor(new DevChatProcessor())
+  ChatProcessors.registerProcessor(new ManeuverChatProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {
@@ -522,7 +524,7 @@ class RollChatProcessor extends ChatProcessor {
     return '/roll (or /r) [On-the-Fly formula]'
   }
   matches(line) {
-    this.match = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
+    this.match = line.match(/^(\/roll|\/r|\/private|\/pr) \[([^\]]+)\]/)
     return !!this.match
   }
   async process(line) {
@@ -767,6 +769,15 @@ class ShowChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(show|sh) (.*)/i)
     return !!this.match
   }
+
+  usagematches(line) {
+    return line.match(/^\/(show|sh)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpShow")
+  }
+
+  
   async process(line) {
     let args = splitArgs(this.match[2])
     this.priv(line)
@@ -843,4 +854,35 @@ class DevChatProcessor extends ChatProcessor {
     console.log("GURPS.insertBeforeKey:" + (end - start))
 */
   }
+}
+
+class ManeuverChatProcessor extends ChatProcessor {
+  help() {
+    return null
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/(maneuver|man) *(.*)/i)
+    return !!this.match
+  }
+
+  async process(line) {
+    if (!this.match[2]) {
+      this.priv(i18n("GURPS.chatHelpManeuver"))
+      Object.values(Maneuvers.getAll()).map(e => i18n(e.data.label)).forEach(e => this.priv(e))
+      return true
+    }
+    let r = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
+    let m = Object.values(Maneuvers.getAll()).find(e => i18n(e.data.label).toLowerCase().match(r))
+    if (!GURPS.LastActor) {
+      ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
+      return false
+    }
+    if (!m) {
+      ui.notifications.warn(i18n("GURPS.chatUnableToFindManeuver") + " '" + this.match[2] + "'")
+      return false
+    }
+    GURPS.LastActor.replaceManeuver(m._data.name)
+  }
+   
 }
