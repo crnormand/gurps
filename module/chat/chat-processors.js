@@ -168,7 +168,7 @@ class RolltableChatProcessor extends ChatProcessor {
 
 class WhisperChatProcessor extends ChatProcessor {
   help() {
-    return '/w &lt;players, characters or @&gt;'
+    return '/w [players] <i>or</i> @'
   }
   matches(line) {
     this.match = line.match(/^\/w +@ +(.+)$/)
@@ -870,7 +870,7 @@ class DevChatProcessor extends ChatProcessor {
 
 class ManeuverChatProcessor extends ChatProcessor {
   help() {
-    return null
+    return '/man &lt;maneuver&gt'
   }
 
   matches(line) {
