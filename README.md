@@ -1,11 +1,10 @@
 # [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-# Current Release Version 0.12.5 (compatible with Foundry 0.8.x)
+# Current Release Version 0.12.6 (compatible with Foundry 0.8.x)
 
 ### [Change Log](changelog.md)
 The list was getting just too long, so it has been moved to a separate file.   Click above to see what has changed.
-
 
 
 If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
