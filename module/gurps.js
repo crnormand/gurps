@@ -1010,10 +1010,10 @@ const actionFuncs = {
         if (!!findSkillSpell(actor, action.name, false, false)) return true
         return false
       case 'SK':
-        if (!!findSkillSpell(actor, action.name, false, true)) return true
+        if (!!findSkillSpell(actor, action.name, true, false)) return true
         return false
       case 'SP':
-        if (!!findSkillSpell(actor, action.name, true, false)) return true
+        if (!!findSkillSpell(actor, action.name, false, true)) return true
         return false
     }
     return false
