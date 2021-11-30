@@ -15,6 +15,7 @@ Release 0.12.6
 - Fixed +/- buttons on equipment list
 - Added +/- buttons to Uses column in equipment list
 - Added HTTP link support for all lists (not just equipment)
+- Added /show fright move speed
 
 Release 0.12.5 11/23/2021
 
@@ -35,7 +36,7 @@ Release 0.12.4 11/16/2021
 
 Release 0.12.3 11/11/2021
 
-- Fixed mispelling of variable name
+- Fixed misspelling of variable name
 
 Release 0.12.2 11/11/2021
 
