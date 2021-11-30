@@ -2,6 +2,12 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.7 
+
+- Added /man into /help list
+- Fixed /w help information
+- Updated Users Guide (and associated PDF)
+
 Release 0.12.6 11/30/2021
 
 - Updated GCA export to make OtF-able CR: when exporting (@Stevil)
