@@ -401,7 +401,7 @@ function processSkillSpell({ action, actor }) {
     }
   }
 
-  if (!!action.mod) skillLevel += parseInt(action.mod)
+  //if (!!action.mod) skillLevel += parseInt(action.mod)
 
   return skillLevel
 }

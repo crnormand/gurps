@@ -10,6 +10,8 @@ Release 0.12.6
 - Fixed dragging multiple modifier buckets onto the same macro (replace works correctly now)
 - Fixed equipped status mirrors carried status (and all items contained within)
 - Fixed /showmbs command
+- Fixed [S:skill -mod] where mod was being applied twice
+- Fixed +/- buttons on equipment list
 
 Release 0.12.5 11/23/2021
 
