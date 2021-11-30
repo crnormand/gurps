@@ -13,6 +13,7 @@ Release 0.12.6
 - Fixed [S:skill -mod] where mod was being applied twice
 - Fixed +/- buttons on equipment list
 - Fixed GCA import of reaction modifiers (can now correctly separate modifiers)
+- Added +/- buttons to Uses column in equipment list
 
 Release 0.12.5 11/23/2021
 
