@@ -4,7 +4,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.12.6 
 
-- Updated GCA export to make OtF-able CR: when exporting.
+- Updated GCA export to make OtF-able CR: when exporting (@Stevil)
 - Updated 'export to Foundry VTT.gce', moved the modifiers from the 'name' tag to be part of the 'text' tag in the Ads/Disads (@Stevil)
 - Updated GCA export validation to GCA-10
 - Add /maneuver /man chat command to set maneuver
@@ -13,8 +13,8 @@ Release 0.12.6
 - Fixed /showmbs command
 - Fixed [S:skill -mod] where mod was being applied twice
 - Fixed +/- buttons on equipment list
-- Fixed GCA import of reaction modifiers (can now correctly separate modifiers)
 - Added +/- buttons to Uses column in equipment list
+- Added HTTP link support for all lists (not just equipment)
 
 Release 0.12.5 11/23/2021
 
