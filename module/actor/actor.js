@@ -847,6 +847,7 @@ export class GurpsActor extends Actor {
     let r = x.root
     let msg = []
     let version = 'unknown'
+    let vernum = 1
     let exit = false
     if (!r) {
       if (importname.endsWith('.gcs')) msg.push(i18n('GURPS.importCannotImportGCSDirectly'))
@@ -881,8 +882,7 @@ export class GurpsActor extends Actor {
         if (!v[1]) {
           msg.push(i18n('GURPS.importGCANoBodyPlan'))
         }
-        let vernum = 1
-        if (!!v[1]) vernum = parseInt(v[1])
+         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
         }
@@ -912,7 +912,6 @@ export class GurpsActor extends Actor {
         }
       }
       if (isFoundryGCS) {
-        let vernum = 1
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg.push(i18n('GURPS.importGCSNoParent'))
@@ -973,7 +972,7 @@ export class GurpsActor extends Actor {
       }
       if (isFoundryGCA) {
         commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) }
-        commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers) }
+        commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers, vernum) }
       }
       commit = { ...commit, ...this.importEncumbranceFromGCSv1(c.encumbrance) }
       commit = { ...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals) }
@@ -1135,20 +1134,29 @@ export class GurpsActor extends Actor {
   /**
    * @param {{ [key: string]: any }} json
    */
-  importReactionsFromGCA(json) {
+  importReactionsFromGCA(json, vernum) {
     if (!json) return
     let text = this.textFrom(json)
-    let a = text.split(',')
+    let a = (vernum <= 9) ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
     a.forEach((/** @type {string} */ m) => {
       if (!!m) {
         let t = m.trim()
-        let i = t.indexOf(' ')
-        let mod = t.substring(0, i)
-        let sit = t.substr(i + 1)
-        let r = new Reaction(mod, sit)
-        GURPS.put(rs, r, index++)
+        // GCA4 exports may still combine modifiers into a single line, so use a regex pattern to break apart lines by the pattern [+-] *d+
+        let match = t.match(/(.*), *([+-]\d+.*)$/)
+        if (!match) match = [ '', t ]
+        while (!!match[1]) {
+          t = match[1]
+          let i = t.indexOf(' ')
+          let mod = t.substring(0, i)
+          let sit = t.substr(i + 1)
+          let r = new Reaction(mod, sit)
+          GURPS.put(rs, r, index++)
+          let temp = match[2]?.match(/(.*), *([+-]\d+.*)$/)
+          if (!temp) match = [ '', match[2] ]
+          else match = temp
+        }
       }
     })
     return {
