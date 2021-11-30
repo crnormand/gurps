@@ -471,22 +471,22 @@ Sub PrintReactions()
     tmp = "Appealing"
     l1 = Char.ItemPositionByNameAndExt(tmp, Stats)
     If l1 > 0 Then
-       out = out & "," & Char.Items(l1).TagItem("bonuslist")
-     	 out = out & "," & Char.Items(l1).TagItem("conditionallist")
+       out = out & "|" & Char.Items(l1).TagItem("bonuslist")
+     	 out = out & "|" & Char.Items(l1).TagItem("conditionallist")
     End If
 
     tmp = "Status"
     l1 = Char.ItemPositionByNameAndExt(tmp, Stats)
     If l1 > 0 Then
-       out = out & "," & Char.Items(l1).TagItem("bonuslist")
-     	 out = out & "," & Char.Items(l1).TagItem("conditionallist")
+       out = out & "|" & Char.Items(l1).TagItem("bonuslist")
+     	 out = out & "|" & Char.Items(l1).TagItem("conditionallist")
     End If
 
     tmp = "Reaction"
     l1 = Char.ItemPositionByNameAndExt(tmp, Stats)
     If l1 > 0 Then
-       out = out & "," & Char.Items(l1).TagItem("bonuslist")
-     	 out = out & "," & Char.Items(l1).TagItem("conditionallist")
+       out = out & "|" & Char.Items(l1).TagItem("bonuslist")
+     	 out = out & "|" & Char.Items(l1).TagItem("conditionallist")
     End If
 
 
