@@ -1643,7 +1643,7 @@ export class GurpsActor extends Actor {
             m.cost = t(j.cost)
             if (isFoundryGCS) {
               m.notes = t(j2.notes) || oldnote
-              m.pageref = t(j2.pageref)
+              m.pageRef(t(j2.pageref))
             } else
               try {
                 m.setNotes(t(j.text))
@@ -1699,7 +1699,7 @@ export class GurpsActor extends Actor {
             r.ammo = t(j.ammo)
             if (isFoundryGCS) {
               r.notes = t(j2.notes) || oldnote
-              r.pageref = t(j2.pageref)
+              r.pageRef(t(j2.pageref))
             } else
               try {
                 r.setNotes(t(j.text))
@@ -1910,9 +1910,9 @@ export class GurpsActor extends Actor {
         sk.relativelevel = t(j.relativelevel)
         if (isFoundryGCS) {
           sk.notes = t(j.notes)
-          sk.pageref = t(j.pageref)
+          sk.pageRef(t(j.pageref))
         } else sk.setNotes(t(j.text))
-        if (!!j.pageref) sk.pageref = t(j.pageref)
+        if (!!j.pageref) sk.pageRef(t(j.pageref))
         sk.uuid = t(j.uuid)
         sk.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('skills', sk.uuid)
@@ -1966,7 +1966,7 @@ export class GurpsActor extends Actor {
           }
           sp.setNotes(t(j.text))
         }
-        sp.pageref = t(j.pageref)
+        sp.pageRef(t(j.pageref))
         sp.duration = t(j.duration)
         sp.points = t(j.points)
         sp.casttime = t(j.time)
@@ -2019,7 +2019,7 @@ export class GurpsActor extends Actor {
         a.name = t(j.name)
         a.points = this.intFrom(j.points)
         a.setNotes(t(j.text))
-        a.pageref = t(j.pageref) || a.pageref
+        a.pageRef(t(j.pageref) || a.pageref)
         a.uuid = t(j.uuid)
         a.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('ads', a.uuid)
@@ -2052,7 +2052,7 @@ export class GurpsActor extends Actor {
         if (!!a.note && !!a.userdesc) a.notes = a.note + '\n' + a.userdesc
         else if (!!a.note) a.notes = a.note
         else if (!!a.userdesc) a.notes = a.userdesc
-        a.pageref = t(j.pageref)
+        a.pageRef(t(j.pageref))
         a.uuid = t(j.uuid)
         a.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('ads', a.uuid)
@@ -3048,7 +3048,7 @@ export class _Base {
    */
   pageRef(r) {
     this.pageref = r
-    if (!!r && r.match(/[hH][tT][Tt][pP][sS]?:\/\//)) {
+    if (!!r && r.match(/https?:\/\//i)) {
       this.pageref = '*Link'
       this.externallink = r
     }
@@ -3066,7 +3066,7 @@ export class _Base {
       if (i >= 0) {
         this.notes = v.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageref = v.substr(i + k.length).trim()
+        this.pageref(v.substr(i + k.length).trim())
       } else {
         this.notes = v.trim()
         this.pageref = ''
