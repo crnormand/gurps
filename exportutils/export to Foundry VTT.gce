@@ -1504,7 +1504,7 @@ Function CreateControlRoll(ByVal MyString)
     regexLess.Global = True
 
     regexCR.Pattern = "CR: \d{1,2}"
-    regexLess.Pattern = "\(\d{1,2} or less\)"
+    regexLess.Pattern = "\d{1,2} or less"
 
     MyString = Replace(MyString, "[", "") 
     MyString = Replace(MyString, "]", "")
@@ -1522,7 +1522,6 @@ Function CreateControlRoll(ByVal MyString)
         For Each Match In regexLess.Execute(MyString)
             MyString = Replace(MyString, Match.Value, "[CR: " & Match.Value & "] ")
         Next
-'        MyString = Replace(MyString, matchLess.Value, "[CR: " & matchLess.Value & "] ")
         MyString = Replace(MyString, "[CR: (", "[CR: ")
         MyString = Replace(MyString, ")]", "]")
         MyString = Replace(MyString, "] or less", "]")
