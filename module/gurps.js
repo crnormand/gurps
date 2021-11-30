@@ -401,7 +401,7 @@ function processSkillSpell({ action, actor }) {
     }
   }
 
-  if (!!action.mod) skillLevel += parseInt(action.mod)
+  //if (!!action.mod) skillLevel += parseInt(action.mod)
 
   return skillLevel
 }
@@ -1010,10 +1010,10 @@ const actionFuncs = {
         if (!!findSkillSpell(actor, action.name, false, false)) return true
         return false
       case 'SK':
-        if (!!findSkillSpell(actor, action.name, false, true)) return true
+        if (!!findSkillSpell(actor, action.name, true, false)) return true
         return false
       case 'SP':
-        if (!!findSkillSpell(actor, action.name, true, false)) return true
+        if (!!findSkillSpell(actor, action.name, false, true)) return true
         return false
     }
     return false
@@ -1973,26 +1973,27 @@ Hooks.once('ready', async function () {
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     console.log(data)
     if (!data.otf && !data.bucket) return
-    let otf = data.otf || data.bucket
-    let name = otf
-    if (!!data.displayname) name = data.displayname
+    let name = data.otf || data.bucket.join(' & ')
+     if (!!data.displayname) name = data.displayname
     let cmd = ''
    
-    if (!!data.bucket) cmd += '!/clearmb no-update\n'
     if (!!data.actor) {
       let a = game.actors.get(data.actor)
       if (!!a) cmd = `!/select ${a.name}\n` + cmd
       name = game.actors.get(data.actor).name + ': ' + name
     }
     
-    if (otf.startsWith('/')) {
-      if (!!data.encodedAction) {
-        let action = JSON.parse(atou(data.encodedAction))
-        if (action.quiet) cmd += '!'
-      }
-      cmd += otf
-    } else cmd += '/r [' + otf + ']'
-    
+    let otfs = data.bucket || [ data.otf ]
+    otfs.forEach(otf => {
+      if (otf.startsWith('/')) {
+        if (!!data.encodedAction) {
+          let action = JSON.parse(atou(data.encodedAction))
+          if (action.quiet) cmd += '!'
+        }
+        cmd += otf
+      } else cmd += '/r [' + otf + ']'
+      cmd += '\n'
+    })
     let setmacro = async function(name, cmd) {
       let macro = await Macro.create({
         name: name,
@@ -2005,24 +2006,26 @@ Hooks.once('ready', async function () {
     
     let oldmacro = game.macros.get(game.user.data.hotbar[slot])
     if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
+      let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
       new Dialog({
         title: "Merge or Replace On-the-Fly macro",
-        content: `Merge both macros into this:<br><br><mark>${oldmacro.data.command.split('\n').join('<br>')}<br>${cmd.split('\n').join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${cmd.split('\n').join('<br>')}</mark><br>&nbsp;<br>`,
+        content: `Merge both macros into this:<br><br><mark>${oldmacro.data.command.split('\n').join('<br>')}<br>${cmd.split('\n').join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c.split('\n').join('<br>')}</mark><br>&nbsp;<br>`,
         buttons: {
          one: {
           icon: '<i class="fas fa-angle-double-down"></i>',
           label: "Merge",
-          callback: () => setmacro(name, oldmacro.data.command + '\n' + cmd)
+          callback: () => { setmacro(oldmacro.data.name, oldmacro.data.command + '\n' + cmd)
+          }
          },
          two: {
           icon: '<i class="fas fa-angle-down"></i>',
           label: "Replace",
-          callback: () => setmacro(name, cmd)
+          callback: () => setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd)
         }
        },
        default: "one",
       }).render(true);
-    } else setmacro(name, cmd)
+    } else setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd)
     return false
   })
 

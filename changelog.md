@@ -2,6 +2,27 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.7 11/30/2021
+
+- Added /man into /help list
+- Fixed /w help information
+- Updated Users Guide (and associated PDF)
+
+Release 0.12.6 11/30/2021
+
+- Updated GCA export to make OtF-able CR: when exporting (@Stevil)
+- Updated 'export to Foundry VTT.gce', moved the modifiers from the 'name' tag to be part of the 'text' tag in the Ads/Disads (@Stevil)
+- Updated GCA export validation to GCA-10
+- Add /maneuver /man chat command to set maneuver
+- Fixed dragging multiple modifier buckets onto the same macro (replace works correctly now)
+- Fixed equipped status mirrors carried status (and all items contained within)
+- Fixed /showmbs command
+- Fixed [S:skill -mod] where mod was being applied twice
+- Fixed +/- buttons on equipment list
+- Added +/- buttons to Uses column in equipment list
+- Added HTTP link support for all lists (not just equipment)
+- Added /show fright move speed
+
 Release 0.12.5 11/23/2021
 
 - Fixed a bug with the ADD applying damage to a resource tracker.
@@ -21,7 +42,7 @@ Release 0.12.4 11/16/2021
 
 Release 0.12.3 11/11/2021
 
-- Fixed mispelling of variable name
+- Fixed misspelling of variable name
 
 Release 0.12.2 11/11/2021
 

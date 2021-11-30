@@ -393,6 +393,26 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       await this.actor.updateEqtCount(path, value)
     })
+    
+    html.find('button[data-operation="equipment-inc-uses"]').click(async ev => {
+      ev.preventDefault()
+      let parent = $(ev.currentTarget).closest('[data-key]')
+      let path = parent.attr('data-key')
+      let eqt = getProperty(this.actor.data, path)
+      let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
+      if (isNaN(value)) value = eqt.uses
+      await this.actor.update({ [path + '.uses'] : value })
+    })
+    html.find('button[data-operation="equipment-dec-uses"]').click(async ev => {
+      ev.preventDefault()
+      let parent = $(ev.currentTarget).closest('[data-key]')
+      let path = parent.attr('data-key')
+      let eqt = getProperty(this.actor.data, path)
+      let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
+      if (isNaN(value)) value = eqt.uses
+      if (value < 0) value = 0
+      await this.actor.update({ [path + '.uses'] : value })
+    })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
     html.find('button[data-operation="equipment-dec"]').click(async ev => {

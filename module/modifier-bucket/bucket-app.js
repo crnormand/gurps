@@ -253,7 +253,7 @@ class ModifierStack {
   _add(list, mod, reason, replace = false) {
     /** @type {Modifier|undefined} */
     var oldmod
-    let i = list.findIndex(e => e.desc == reason)
+    let i = list.findIndex(e => e.desc == reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
       if (replace) list.splice(i, 1)
       else oldmod = list[i] // Must modify list (cannot use filter())
@@ -492,7 +492,7 @@ export class ModifierBucket extends Application {
       li.addEventListener('dragstart', ev => {
         let bucket = GURPS.ModifierBucket
           .modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
-          .join(' & ')
+          //.join(' & ')
         return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
@@ -581,7 +581,7 @@ export class ModifierBucket extends Application {
       content += d
       d = '<hr>'
       let stack = await user.getFlag('gurps', 'modifierstack')
-      if (!!stack && stack instanceof ModifierStack) content += this.chatString(stack, user.name + ', ')
+      if (!!stack && !!stack.modifierList) content += this.chatString(stack, user.name + ', ')
       else content += user.name + ', No modifiers'
     }
 
@@ -605,7 +605,7 @@ export class ModifierBucket extends Application {
   }
 
   refresh() {
-    this.render(true)
+    setTimeout(() => this.render(true), 100)  // Not certain why the UI element isn't updating immediately, so hacked this
     if (this.SHOWING) {
       this.editor.render(true)
     }

@@ -87,7 +87,7 @@
         {{/if}}
       </div>
       
-      <div class='qty flex-center'>
+      <div class='qty flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
         <button class='equipmentbutton bold' data-operation='equipment-dec'>&minus;</button>
         <span>{{this.count}}</span>
         <button class='equipmentbutton' data-operation='equipment-inc'>+</button>
@@ -130,14 +130,18 @@
         </div>
       </div>
       
-      <div class='uses flex-center'>
-        {{#if (or (ne this.maxuses '0') (ne this.uses '0'))}}{{this.uses}}{{/if}}
+      <div class='uses flex-center' data-key='data.equipment.{{../container}}.{{@key}}'>
+        {{#if (or (gt this.maxuses 0) (ne this.uses '0'))}}
+          {{#if (isNum this.uses)}}<button class='equipmentbutton bold' data-operation='equipment-dec-uses' {{#if (lt this.uses 1)}}disabled{{/if}}>&minus;</button>{{/if}}
+          <span>{{this.uses}}</span>
+          {{#if (isNum this.uses)}}<button class='equipmentbutton' data-operation='equipment-inc-uses'>+</button>{{/if}}
+        {{/if}}
       </div>
       <div class='cost gga-right'>{{toLocaleString (toNumber this.cost)}}</div>
       <div class='weight gga-right'>{{toLocaleString (toNumber this.weight)}} lb</div>
       <div class='sum_cost gga-right'>{{toLocaleString (round this.costsum)}}</div>
       <div class='sum_weight gga-right'>{{toLocaleString (round this.weightsum)}} lb</div>
-      <div class='ref flex-center'>{{{pdflinkext this.pageref this.externallink}}}</div>    
+      <div class='ref flex-center'>{{{pdflinkext this}}}</div>    
       {{/unless}}
     {{/if}}
   {{/each}}

@@ -835,7 +835,7 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv1(xml, importname, importpath) {
-    const GCAVersion = 'GCA-9'
+    const GCAVersion = 'GCA-10'
     const GCSVersion = 'GCS-5'
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
@@ -847,6 +847,7 @@ export class GurpsActor extends Actor {
     let r = x.root
     let msg = []
     let version = 'unknown'
+    let vernum = 1
     let exit = false
     if (!r) {
       if (importname.endsWith('.gcs')) msg.push(i18n('GURPS.importCannotImportGCSDirectly'))
@@ -881,8 +882,7 @@ export class GurpsActor extends Actor {
         if (!v[1]) {
           msg.push(i18n('GURPS.importGCANoBodyPlan'))
         }
-        let vernum = 1
-        if (!!v[1]) vernum = parseInt(v[1])
+         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
         }
@@ -907,9 +907,11 @@ export class GurpsActor extends Actor {
         if (vernum < 9) {
           msg.push(i18n('GURPS.importGCAChildrenWeights'))
         }
+        if (vernum < 10) {
+          msg.push(i18n('GURPS.importGCAAdvMods'))
+        }
       }
       if (isFoundryGCS) {
-        let vernum = 1
         if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg.push(i18n('GURPS.importGCSNoParent'))
@@ -970,7 +972,7 @@ export class GurpsActor extends Actor {
       }
       if (isFoundryGCA) {
         commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) }
-        commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers) }
+        commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers, vernum) }
       }
       commit = { ...commit, ...this.importEncumbranceFromGCSv1(c.encumbrance) }
       commit = { ...commit, ...this.importPointTotalsFromGCSv1(c.pointtotals) }
@@ -1132,10 +1134,10 @@ export class GurpsActor extends Actor {
   /**
    * @param {{ [key: string]: any }} json
    */
-  importReactionsFromGCA(json) {
+  importReactionsFromGCA(json, vernum) {
     if (!json) return
     let text = this.textFrom(json)
-    let a = text.split(',')
+    let a = (vernum <= 9) ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
     a.forEach((/** @type {string} */ m) => {
@@ -1641,7 +1643,7 @@ export class GurpsActor extends Actor {
             m.cost = t(j.cost)
             if (isFoundryGCS) {
               m.notes = t(j2.notes) || oldnote
-              m.pageref = t(j2.pageref)
+              m.pageRef(t(j2.pageref))
             } else
               try {
                 m.setNotes(t(j.text))
@@ -1697,7 +1699,7 @@ export class GurpsActor extends Actor {
             r.ammo = t(j.ammo)
             if (isFoundryGCS) {
               r.notes = t(j2.notes) || oldnote
-              r.pageref = t(j2.pageref)
+              r.pageRef(t(j2.pageref))
             } else
               try {
                 r.setNotes(t(j.text))
@@ -1908,9 +1910,9 @@ export class GurpsActor extends Actor {
         sk.relativelevel = t(j.relativelevel)
         if (isFoundryGCS) {
           sk.notes = t(j.notes)
-          sk.pageref = t(j.pageref)
+          sk.pageRef(t(j.pageref))
         } else sk.setNotes(t(j.text))
-        if (!!j.pageref) sk.pageref = t(j.pageref)
+        if (!!j.pageref) sk.pageRef(t(j.pageref))
         sk.uuid = t(j.uuid)
         sk.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('skills', sk.uuid)
@@ -1964,7 +1966,7 @@ export class GurpsActor extends Actor {
           }
           sp.setNotes(t(j.text))
         }
-        sp.pageref = t(j.pageref)
+        sp.pageRef(t(j.pageref))
         sp.duration = t(j.duration)
         sp.points = t(j.points)
         sp.casttime = t(j.time)
@@ -2017,7 +2019,7 @@ export class GurpsActor extends Actor {
         a.name = t(j.name)
         a.points = this.intFrom(j.points)
         a.setNotes(t(j.text))
-        a.pageref = t(j.pageref) || a.pageref
+        a.pageRef(t(j.pageref) || a.pageref)
         a.uuid = t(j.uuid)
         a.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('ads', a.uuid)
@@ -2050,7 +2052,7 @@ export class GurpsActor extends Actor {
         if (!!a.note && !!a.userdesc) a.notes = a.note + '\n' + a.userdesc
         else if (!!a.note) a.notes = a.note
         else if (!!a.userdesc) a.notes = a.userdesc
-        a.pageref = t(j.pageref)
+        a.pageRef(t(j.pageref))
         a.uuid = t(j.uuid)
         a.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('ads', a.uuid)
@@ -2483,10 +2485,11 @@ export class GurpsActor extends Actor {
    */
   async _updateEqtStatus(eqt, eqtkey, carried) {
     eqt.carried = carried
+    eqt.equipped = carried
     if (!!eqt.itemid) {
       let item = /** @type {Item} */ (await this.items.get(eqt.itemid))
       await this.updateEmbeddedDocuments('Item', [
-        { _id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried },
+        { _id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried, 'data.equipped': carried },
       ])
       if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid)
       if (carried && eqt.equipped) await this._addItemAdditions(item.data, eqtkey)
@@ -3045,7 +3048,7 @@ export class _Base {
    */
   pageRef(r) {
     this.pageref = r
-    if (!!r && r.match(/[hH][tT][Tt][pP][sS]?:\/\//)) {
+    if (!!r && r.match(/https?:\/\//i)) {
       this.pageref = '*Link'
       this.externallink = r
     }
@@ -3063,7 +3066,7 @@ export class _Base {
       if (i >= 0) {
         this.notes = v.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageref = v.substr(i + k.length).trim()
+        this.pageref(v.substr(i + k.length).trim())
       } else {
         this.notes = v.trim()
         this.pageref = ''
