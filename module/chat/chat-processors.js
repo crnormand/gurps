@@ -783,10 +783,22 @@ class ShowChatProcessor extends ChatProcessor {
     this.priv(line)
     for (const orig of args) {
       this.priv('<hr>')
-      let label = false
+      if (orig.toLowerCase() == 'move') this.priv("<b>Basic Move / Current Move</b>")
+      if (orig.toLowerCase() == 'speed') this.priv("<b>Basic Speed</b>")
       for (const token of canvas.tokens.placeables) {
         let arg = orig
         let actor = token.actor
+        switch (orig.toLowerCase()) {
+          case 'move': 
+            this.priv(`${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`)
+            continue;
+          case 'speed': 
+            this.priv(`${actor.name}: ${actor.data.data.basicspeed.value}`)
+            continue;
+          case 'fright':
+            arg = 'frightcheck'
+            break
+        }
         if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) {
           if (arg.includes(' ')) arg = '"' + arg + '"'
           arg = 'S:' + arg
@@ -796,7 +808,7 @@ class ShowChatProcessor extends ChatProcessor {
           action.action.calcOnly = true
           let ret = await GURPS.performAction(action.action, actor)
           if (!!ret.target) {
-            let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"/sel ${token.id}\\\\/r [${arg}]]`
+            let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"!/sel ${token.id}\\\\/r [${arg}]]`
             this.priv(lbl)
           }
         }
