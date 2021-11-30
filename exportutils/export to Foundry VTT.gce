@@ -7,8 +7,8 @@
 'By Brian Ronnle, enhanced for Foundry VTT by Chris Normand/Nose66
 'Based on the original export filter by Graham Brand (Spyke)
 '
-Const LastUpdated = 20210609
-' Last Updated: June 9, 2021
+Const LastUpdated = 20211129
+' Last Updated: November 11, 2021
 ' v1
 '
 Const gcaStat = 1
