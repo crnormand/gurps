@@ -7,7 +7,7 @@
 'By Brian Ronnle, enhanced for Foundry VTT by Chris Normand/Nose66
 'Based on the original export filter by Graham Brand (Spyke)
 '
-Const LastUpdated = 20211129
+Const LastUpdated = 20210609
 ' Last Updated: June 9, 2021
 ' v1
 '
@@ -46,7 +46,6 @@ Sub Main()
 
     ' in Fantasy Grounds the <name> field must be at the top level
     Paragraph = "<name type=""string"">" & Char.Name & "</name>"
-    Paragraph = "<portrait type=""string"">" & Char.Portrait & "</portrait>"
 
     ' add the various sections
     Call PrintAbilities()
@@ -468,27 +467,38 @@ Sub PrintReactions()
     ' ***appearance mods***
     ' print appearance reaction
     out = ""
+    tmp = "Unappealing"
+    l1 = Char.ItemPositionByNameAndExt(tmp, Stats)
+    If l1 > 0 Then
+        out = out & "|" & Char.Items(l1).TagItem("bonuslist")
+     	out = out & "|" & Char.Items(l1).TagItem("conditionallist")
+    End If
+
     tmp = "Appealing"
     l1 = Char.ItemPositionByNameAndExt(tmp, Stats)
     If l1 > 0 Then
-       out = out & "," & Char.Items(l1).TagItem("bonuslist")
-     	 out = out & "," & Char.Items(l1).TagItem("conditionallist")
+        out = out & "|" & Char.Items(l1).TagItem("bonuslist")
+     	out = out & "|" & Char.Items(l1).TagItem("conditionallist")
     End If
 
     tmp = "Status"
     l1 = Char.ItemPositionByNameAndExt(tmp, Stats)
     If l1 > 0 Then
-       out = out & "," & Char.Items(l1).TagItem("bonuslist")
-     	 out = out & "," & Char.Items(l1).TagItem("conditionallist")
+        out = out & "|" & Char.Items(l1).TagItem("bonuslist")
+     	out = out & "|" & Char.Items(l1).TagItem("conditionallist")
     End If
 
     tmp = "Reaction"
     l1 = Char.ItemPositionByNameAndExt(tmp, Stats)
     If l1 > 0 Then
-       out = out & "," & Char.Items(l1).TagItem("bonuslist")
-     	 out = out & "," & Char.Items(l1).TagItem("conditionallist")
+        out = out & "|" & Char.Items(l1).TagItem("bonuslist")
+        out = out & "|" & Char.Items(l1).TagItem("conditionallist")
     End If
 
+    ' Cleanup lists by adding "|" instead of "," between items. ~Stevil
+    out = Replace(out, ", +", "|+")
+    out = Replace(out, ", -", "|-")
+    out = Replace(out, ", 0 ", "|0 ")
 
     ' and print the whole thing
     Paragraph = out
@@ -643,10 +653,10 @@ Sub PrintAds()
                     tmp = tmp & " (" & work & ")"
                 End If
 
-mods_text = Char.Items(i).ExpandedModCaptions(False)
-if mods_text <> "" Then
-    mods_text = mods_text & "<br>"
-End If
+                mods_text = Char.Items(i).ExpandedModCaptions(False)
+                if mods_text <> "" Then
+                    mods_text = mods_text & "<br>"
+                End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -684,10 +694,10 @@ End If
                         tmp = tmp & " (" & work & ")"
                     End If
 
-mods_text = Char.Items(i).ExpandedModCaptions(False)
-if mods_text <> "" Then
-    mods_text = mods_text & "<br>"
-End If
+                    mods_text = Char.Items(i).ExpandedModCaptions(False)
+                    if mods_text <> "" Then
+                        mods_text = mods_text & "<br>"
+                    End If
 
                     tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -727,10 +737,10 @@ End If
                     tmp = tmp & " (" & work & ")"
                 End If
 
-mods_text = Char.Items(i).ExpandedModCaptions(False)
-if mods_text <> "" Then
-    mods_text = mods_text & "<br>"
-End If
+                mods_text = Char.Items(i).ExpandedModCaptions(False)
+                if mods_text <> "" Then
+                    mods_text = mods_text & "<br>"
+                End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -787,10 +797,10 @@ Sub PrintDisads()
                     tmp = tmp & " (" & work & ")"
                 End If
 
-mods_text = Char.Items(i).ExpandedModCaptions(False)
-if mods_text <> "" Then
-    mods_text = mods_text & "<br>"
-End If
+                mods_text = Char.Items(i).ExpandedModCaptions(False)
+                if mods_text <> "" Then
+                    mods_text = mods_text & "<br>"
+                End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -803,7 +813,7 @@ End If
                     work = work - CInt(Char.Items(i).TagItem("childpoints"))
                 End If
                 Paragraph = "<points type=""number"">" & CStr(work) & "</points>"
-                Paragraph = "<text type=""string"">" & mods_text & Char.Items(i).TagItem("usernotes") & "</text>"
+                Paragraph = "<text type=""string"">" & CreateControlRoll(mods_text & Char.Items(i).TagItem("usernotes")) & "</text>"
                 Paragraph = "<pageref type=""string"">" & Char.Items(i).TagItem("page") & "</pageref>"
                 Paragraph = "<parentuuid>" & Char.Items(i).ParentKey & "</parentuuid>"
                 Paragraph = "<uuid>k" & Char.Items(i).idkey & "</uuid>"
@@ -829,10 +839,10 @@ End If
                     tmp = tmp & " (" & work & ")"
                 End If
 
-mods_text = Char.Items(i).ExpandedModCaptions(False)
-if mods_text <> "" Then
-    mods_text = mods_text & "<br>"
-End If
+                mods_text = Char.Items(i).ExpandedModCaptions(False)
+                if mods_text <> "" Then
+                    mods_text = mods_text & "<br>"
+                End If
 
                 tag_index = LeadingZeroes(CStr(ads_index), 5)
 
@@ -1116,7 +1126,6 @@ Sub PrintHandWeapons()
 
                 'print the mode
                 Paragraph = "<name type=""string"">" & Char.Items(i).DamageModeName(CurMode) & "</name>"
-
                 ' print the skill level
                 saved_level = Char.Items(i).DamageModeTagItem(CurMode, "charskillscore")
                 Paragraph = "<level type=""number"">" & saved_level & "</level>"
@@ -1434,10 +1443,11 @@ Sub PrintNotes()
 
     ' NB: need to convert carriage returns to the escape sequence '\r' here
     ' at the moment double carriage returns are treated as a single space
+    ' Changed the '\r' to an HTML '<br>'. ~Stevil
 
     ' first strip out line feeds
     tmp = Replace(PlainText(Char.Notes), Chr(10), "")
-    tmp = Replace(tmp, Chr(13), "\r")
+    tmp = Replace(tmp, Chr(13), "<br>")
 
     ' then print, converting carriage returns to \r
     ' (I've done this in two steps in case the pairs ever come through the other way round, e.g. after editing in a different app)
@@ -1473,6 +1483,54 @@ Sub PrintPointSummary()
     Paragraph = ""
 
 End Sub
+
+
+'****************************************
+'* Function
+'* Added to "export to Foundry VTT.gce"
+'* ~ Stevil
+'****************************************
+Function CreateControlRoll(ByVal MyString)
+    Dim regexCR
+    Dim regexLess
+
+    Set regexCR = New RegExp
+    Set regexLess = New RegExp
+
+    regexCR.IgnoreCase = True
+    regexLess.Global = True
+
+    regexCR.IgnoreCase = True
+    regexLess.Global = True
+
+    regexCR.Pattern = "CR: \d{1,2}"
+    regexLess.Pattern = "\(\d{1,2} or less\)"
+
+    MyString = Replace(MyString, "[", "") 
+    MyString = Replace(MyString, "]", "")
+
+    matchCR = regexCR.Test(MyString)
+    If matchCR Then
+        For Each Match In regexCR.Execute(MyString)
+            MyString = Replace(MyString, Match.Value, "[" & Match.Value & " or less] ")
+        Next
+        MyString = Replace(MyString, "]  or less", "] ")
+    End If
+
+    matchLess = regexLess.Test(MyString)
+    If matchLess Then
+        For Each Match In regexLess.Execute(MyString)
+            MyString = Replace(MyString, Match.Value, "[CR: " & Match.Value & "] ")
+        Next
+'        MyString = Replace(MyString, matchLess.Value, "[CR: " & matchLess.Value & "] ")
+        MyString = Replace(MyString, "[CR: (", "[CR: ")
+        MyString = Replace(MyString, ")]", "]")
+        MyString = Replace(MyString, "] or less", "]")
+    End If
+
+     CreateControlRoll =  MyString
+
+End Function
 
 '****************************************
 'Pad string with leading zeroes
