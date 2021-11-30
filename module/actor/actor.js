@@ -1143,20 +1143,11 @@ export class GurpsActor extends Actor {
     a.forEach((/** @type {string} */ m) => {
       if (!!m) {
         let t = m.trim()
-        // GCA4 exports may still combine modifiers into a single line, so use a regex pattern to break apart lines by the pattern [+-] *d+
-        let match = t.match(/(.*), *([+-]\d+.*)$/)
-        if (!match) match = [ '', t ]
-        while (!!match[1]) {
-          t = match[1]
-          let i = t.indexOf(' ')
-          let mod = t.substring(0, i)
-          let sit = t.substr(i + 1)
-          let r = new Reaction(mod, sit)
-          GURPS.put(rs, r, index++)
-          let temp = match[2]?.match(/(.*), *([+-]\d+.*)$/)
-          if (!temp) match = [ '', match[2] ]
-          else match = temp
-        }
+        let i = t.indexOf(' ')
+        let mod = t.substring(0, i)
+        let sit = t.substr(i + 1)
+        let r = new Reaction(mod, sit)
+        GURPS.put(rs, r, index++)
       }
     })
     return {
