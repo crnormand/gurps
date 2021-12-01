@@ -2844,7 +2844,7 @@ export class GurpsActor extends Actor {
     if (!!this.getGurpsActorData().melee && !!this.getGurpsActorData().equipment?.carried)
       Object.values(this.getGurpsActorData().melee).forEach(melee => {
         recurselist(this.getGurpsActorData().equipment.carried, (e, k, d) => {
-          if (!!e && !val && e.equipped && e.name == melee.name) {
+          if (!!e && !val && e.equipped && !!melee.name.match(makeRegexPatternFrom(e.name, false))) {
             let t = parseInt(melee[key])
             if (!isNaN(t)) val = t
           }

@@ -1858,6 +1858,43 @@ Hooks.once('init', async function () {
 
       html.find('.directory-footer').append(button)
     }
+    
+    // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
+    const hasMeme = game.modules.get('markdown-editor')?.active;
+    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message');
+    
+    const dropHandler = function(event, inLog) {
+      event.preventDefault()
+      if (event.originalEvent) event = event.originalEvent
+      const data = JSON.parse(event.dataTransfer.getData("text/plain"))
+      if (!!data && !!data.otf) {
+        let cmd = ''  
+        if (!!data.encodedAction) {
+          let action = JSON.parse(atou(data.encodedAction))
+          if (action.quiet) cmd += '!'
+        }
+        cmd += data.otf
+        if (!!data.displayname) {
+          let q = '"'
+          if (data.displayname.includes('"')) q = "'"
+          cmd = "'" + data.displayname + "'" + cmd
+        }
+        cmd = '[' + cmd + ']'
+        if (inLog) {
+          let messageData = {
+            user: game.user.id,
+            //speaker: ChatMessage.getSpeaker({ actor: game.user }),
+            type: CONST.CHAT_MESSAGE_TYPES.OOC,
+            content: cmd
+          }
+          ChatMessage.create(messageData, {})
+        } else $(document).find('#chat-message').val(cmd)
+      }
+    }
+    const logDropHandler = (event) => dropHandler(event, true)
+
+    if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
+    html.find('#chat-log').on('drop', event => dropHandler(event, true))
   })
 
   /**
@@ -2250,5 +2287,6 @@ Hooks.once('ready', async function () {
   })
 
   GurpsToken.ready()
+  
   // End of system "READY" hook.
 })
