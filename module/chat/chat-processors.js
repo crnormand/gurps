@@ -827,44 +827,23 @@ class DevChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/dev(.*)/i)
+    this.match = line.match(/^\/dev +(.*)/i)
     return !!this.match
   }
   async process(line) {
-    let c = 10000
-    var t = c
-    var start = performance.now()
-    while (t-- > 0) {
-      zeroFill(t, 5)
+    let m = this.match[1].match(/(\w+)(.*)/)
+    switch (m[1]) {
+      case 'open': {  // Open the full character sheet for an Actor
+        let a = game.actors.getName(m[2].trim())
+        if (a) a.openSheet('gurps.GurpsActorSheet')
+        else ui.notifications.warn("Can't find Actor named '" + m[2] + "'")
+        break
+      } 
+      case 'flush': { // flush the chat log without confirming
+        game.messages.documentClass.deleteDocuments([], {deleteAll: true})
+        break
+      }
     }
-    var end = performance.now()
-    console.log('ZeroFill:' + (end - start))
-
-    t = c
-    start = performance.now()
-    while (t-- > 0) {
-      GURPS.genkey(t)
-    }
-    end = performance.now()
-    console.log('genkey:' + (end - start))
-
-    let actor = GURPS.LastActor
-    if (!actor) {
-      return
-    }
-
-    /*    let c = "data.equipment.carried.00000"
-    let o = "data.equipment.other.00000"
-    
-    let m = 100
-    var t = m
-    var start = performance.now();
-    while (t-- > 0) {
-      GURPS.insertBeforeKey(actor, c, new Equipment("" + c, false))
-    }
-    var end = performance.now();
-    console.log("GURPS.insertBeforeKey:" + (end - start))
-*/
   }
 }
 
