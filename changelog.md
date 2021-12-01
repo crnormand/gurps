@@ -4,7 +4,10 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.12.8
 
-
+- Added drag drop into chat log and chat input field
+- Fixed equipped parry if weapon name contains more info than the equipment
+- Added drag and drop into mook generator (to quickly create entries)
+- Added link to Foundry lighting page for /light help
 
 Release 0.12.7 11/30/2021
 
