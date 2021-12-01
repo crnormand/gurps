@@ -2,12 +2,13 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.12.8
+Release 0.12.8 12/1/2021
 
 - Added drag drop into chat log and chat input field
 - Fixed equipped parry if weapon name contains more info than the equipment
 - Added drag and drop into mook generator (to quickly create entries)
 - Added link to Foundry lighting page for /light help
+- Updated animation list to JB2A 3.2 
 
 Release 0.12.7 11/30/2021
 
