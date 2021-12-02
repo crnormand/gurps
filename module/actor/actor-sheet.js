@@ -799,13 +799,16 @@ export class GurpsActorSheet extends ActorSheet {
     }
     if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
 
-    if (!!dragData.otf) add = ' [' + dragData.otf + ']'
+    if (!!dragData.otf) add = '[' + dragData.otf + ']'
 
     if (!!add)
       if (!!modelkey) {
         let t = getProperty(this.actor.data, modelkey) || ''
-        this.actor.update({ [modelkey]: t + add })
-      } else $(ev.currentTarget).val($(ev.currentTarget).val() + add)
+        this.actor.update({ [modelkey]: t + (t ? ' ': '') + add })
+      } else {
+        let t = $(ev.currentTarget).val()
+        $(ev.currentTarget).val(t + (t ? ' ': '') + add)
+      }
   }
 
   /**
