@@ -2,10 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.12.10 12/1/2021
+Release 0.12.10
 
 - Fixed "crash the world" bug if user enters a bad modifier in tooltip
-
+- Removed unnecessary leading space when dropped in quick note
 
 Release 0.12.9 12/1/2021
 

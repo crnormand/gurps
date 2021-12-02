@@ -1877,7 +1877,7 @@ Hooks.once('init', async function () {
         if (!!data.displayname) {
           let q = '"'
           if (data.displayname.includes('"')) q = "'"
-          cmd = "'" + data.displayname + "'" + cmd
+          cmd = q + data.displayname + q + cmd
         }
         cmd = '[' + cmd + ']'
         if (inLog) {
