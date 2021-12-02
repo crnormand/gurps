@@ -1381,7 +1381,7 @@ GURPS.genkey = genkey
  * and the index set to the next available (i.e, no property exists) key of the same
  * form.
  *
- * TODO should be moved to lib/utilities.js and removed from the GURPS object.
+ * TODO should be moved to lib/utilities.js.
  *
  * @param {Record<string, any>} obj
  * @param {any} value
@@ -1974,16 +1974,16 @@ Hooks.once('ready', async function () {
     console.log(data)
     if (!data.otf && !data.bucket) return
     let name = data.otf || data.bucket.join(' & ')
-     if (!!data.displayname) name = data.displayname
+    if (!!data.displayname) name = data.displayname
     let cmd = ''
-   
+
     if (!!data.actor) {
       let a = game.actors.get(data.actor)
       if (!!a) cmd = `!/select ${a.name}\n` + cmd
       name = game.actors.get(data.actor).name + ': ' + name
     }
-    
-    let otfs = data.bucket || [ data.otf ]
+
+    let otfs = data.bucket || [data.otf]
     otfs.forEach(otf => {
       if (otf.startsWith('/')) {
         if (!!data.encodedAction) {
@@ -1994,7 +1994,7 @@ Hooks.once('ready', async function () {
       } else cmd += '/r [' + otf + ']'
       cmd += '\n'
     })
-    let setmacro = async function(name, cmd) {
+    let setmacro = async function (name, cmd) {
       let macro = await Macro.create({
         name: name,
         type: 'chat',
@@ -2003,28 +2003,33 @@ Hooks.once('ready', async function () {
       macro.setFlag('gurps', 'drag-drop-otf', true)
       game.user.assignHotbarMacro(macro, slot)
     }
-    
+
     let oldmacro = game.macros.get(game.user.data.hotbar[slot])
     if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
       let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
       new Dialog({
-        title: "Merge or Replace On-the-Fly macro",
-        content: `Merge both macros into this:<br><br><mark>${oldmacro.data.command.split('\n').join('<br>')}<br>${cmd.split('\n').join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c.split('\n').join('<br>')}</mark><br>&nbsp;<br>`,
+        title: 'Merge or Replace On-the-Fly macro',
+        content: `Merge both macros into this:<br><br><mark>${oldmacro.data.command.split('\n').join('<br>')}<br>${cmd
+          .split('\n')
+          .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
+          .split('\n')
+          .join('<br>')}</mark><br>&nbsp;<br>`,
         buttons: {
-         one: {
-          icon: '<i class="fas fa-angle-double-down"></i>',
-          label: "Merge",
-          callback: () => { setmacro(oldmacro.data.name, oldmacro.data.command + '\n' + cmd)
-          }
-         },
-         two: {
-          icon: '<i class="fas fa-angle-down"></i>',
-          label: "Replace",
-          callback: () => setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd)
-        }
-       },
-       default: "one",
-      }).render(true);
+          one: {
+            icon: '<i class="fas fa-angle-double-down"></i>',
+            label: 'Merge',
+            callback: () => {
+              setmacro(oldmacro.data.name, oldmacro.data.command + '\n' + cmd)
+            },
+          },
+          two: {
+            icon: '<i class="fas fa-angle-down"></i>',
+            label: 'Replace',
+            callback: () => setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd),
+          },
+        },
+        default: 'one',
+      }).render(true)
     } else setmacro(name, (!!data.bucket ? '/clearmb\n' : '') + cmd)
     return false
   })

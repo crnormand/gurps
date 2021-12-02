@@ -882,7 +882,7 @@ export class GurpsActor extends Actor {
         if (!v[1]) {
           msg.push(i18n('GURPS.importGCANoBodyPlan'))
         }
-         if (!!v[1]) vernum = parseInt(v[1])
+        if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
         }
@@ -1137,7 +1137,7 @@ export class GurpsActor extends Actor {
   importReactionsFromGCA(json, vernum) {
     if (!json) return
     let text = this.textFrom(json)
-    let a = (vernum <= 9) ? text.split(',') : text.split('|')
+    let a = vernum <= 9 ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
     a.forEach((/** @type {string} */ m) => {
@@ -1606,15 +1606,15 @@ export class GurpsActor extends Actor {
    */
   _migrateOtfs(oldobj, newobj) {
     //if (!!oldobj.animationData) {
-      //const n = newobj.animationData
-      //const o = oldobj.animationData
-      let n = newobj
-      let o = oldobj
+    //const n = newobj.animationData
+    //const o = oldobj.animationData
+    let n = newobj
+    let o = oldobj
 
-      n.checkotf = o.checkotf
-      n.duringotf = o.duringotf
-      n.passotf = o.passotf
-      n.failotf = o.failotf
+    n.checkotf = o.checkotf
+    n.duringotf = o.duringotf
+    n.passotf = o.passotf
+    n.failotf = o.failotf
     //}
   }
 
@@ -3197,7 +3197,7 @@ export class Attack extends Named {
   /**
    * @param {string} [n1]
    * @param {string} [lvl]
-   * @param {string} [dmg]
+   * @param {string|Array<string>} [dmg]
    */
   constructor(n1, lvl, dmg) {
     super(n1)
@@ -3214,6 +3214,7 @@ export class Attack extends Named {
     return /** @type {_AnimationMixin} */ (/** @type {unknown} */ (this))
   }
 }
+
 
 export class Melee extends Attack {
   /**
