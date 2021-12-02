@@ -1891,8 +1891,6 @@ Hooks.once('init', async function () {
         } else $(document).find('#chat-message').val(cmd)
       }
     }
-    const logDropHandler = (event) => dropHandler(event, true)
-
     if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
     html.find('#chat-log').on('drop', event => dropHandler(event, true))
   })
