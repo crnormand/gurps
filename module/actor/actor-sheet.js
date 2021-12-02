@@ -64,6 +64,7 @@ export class GurpsActorSheet extends ActorSheet {
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.data.data.eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
+    sheetData.isGM = game.user.isGM
     return sheetData
   }
 
@@ -135,6 +136,18 @@ export class GurpsActorSheet extends ActorSheet {
     this.makelistdrag(html, '.notedraggable', 'note')
     this.makelistdrag(html, '.meleedraggable', 'melee')
     this.makelistdrag(html, '.rangeddraggable', 'ranged')
+    
+    html.find('button[data-operation="share-portrait"]').click(ev => {
+      ev.preventDefault()
+      const ip = new ImagePopout(this.actor.img, {
+        title: this.actor.name,
+        shareable: true,
+        entity: this.actor
+      });
+     
+      // Display the image popout
+      ip.render(true);
+    })
 
     // Stop ENTER key in a Resource Tracker (HP, FP, others) from doing anything.
     // This prevents the inadvertant triggering of the inc/dec buttons.

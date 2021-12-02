@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.12.11
 
 - Update /show help
+- Add Portrait share for GM users
 
 Release 0.12.10 12/1/2021
 
