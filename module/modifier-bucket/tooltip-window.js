@@ -3,6 +3,7 @@ import { parselink } from '../../lib/parselink.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketJournals from './select-journals.js'
+import GurpsWiring from '../gurps-wiring.js'
 
 /**
  * The ModifierBucketEditor displays the popup (tooltip) window where modifiers can be applied
@@ -168,18 +169,8 @@ export default class ModifierBucketEditor extends Application {
 
     html.find('.removemod').click(this._onClickRemoveMod.bind(this))
 
-    GURPS.hookupGurps(html, this)
-    // Support RMB on Tooltip window
-    html.find('.gurpslink').contextmenu(GURPS.onRightClickGurpslink)
-    html.find('.glinkmod').contextmenu(GURPS.onRightClickGurpslink)
-    html.find('.glinkmodplus').contextmenu(GURPS.onRightClickGurpslink)
-    html.find('.glinkmodminus').contextmenu(GURPS.onRightClickGurpslink)
-    html.find('.pdflink').contextmenu(event => {
-      event.preventDefault()
-      let el = event.currentTarget
-      GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
-    })
-
+    GurpsWiring.hookupGurps(html)
+    GurpsWiring.hookupGurpsRightClick(html)
 
     html.find('.gmbutton').click(this._onGMbutton.bind(this))
     html.find('#modmanualentry').change(this._onManualEntry.bind(this))
@@ -266,7 +257,7 @@ export default class ModifierBucketEditor extends Application {
     event.preventDefault()
     let element = event.currentTarget
     let v = element.value
-    let parsed = parselink(element.value, game.GURPS.LastActor)
+    let parsed = parselink(element.value)
     if (!!parsed.action && parsed.action.type === 'modifier') {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else this.editor.refresh()
@@ -457,10 +448,12 @@ const ModifierLiterals = {
     [-2 ${i18n('GURPS.modifierDodgeFailedAcro')}] [PDF:${i18n('GURPS.pdfDodgeFailedAcro')}]
     [-2 ${i18n('GURPS.modifierDodgeSide')}] [PDF:${i18n('GURPS.pdfDodgeSide')}]
     [-4 ${i18n('GURPS.modifierDodgeRear')}] [PDF:${i18n('GURPS.pdfDodgeRear')}]
+    [-1 ${i18n('GURPS.modifierDefDeceptiveAttack')}]
+    [-3 ${i18n('GURPS.modifierMaintainConcentration')}]
     ${horiz(i18n('GURPS.modifierExtraEffort'))}
-    [+2 ${i18n('GURPS.modifierFeverishDef')} *Cost 1FP]
-    ${horiz(i18n('GURPS.actions'))}
-    [WILL-3 ${i18n('GURPS.concentrationCheck')}]`
+    [+2 ${i18n('GURPS.modifierFeverishDef')} *Cost 1FP]`
+    //    ${horiz(i18n('GURPS.actions'))}
+    //    [WILL-3 ${i18n('GURPS.concentrationCheck')}]`
   },
 
   get OtherMods1() {
@@ -663,7 +656,7 @@ const ModifiersForStatus = {
     gen: [],
     melee: ['[-4 to hit Melee (Prone)]'],
     ranged: ['[-2 to hit Ranged (Prone)]'],
-    defense: ['[-2 to active defenses (Prone)]'],
+    defense: ['[-3 to active defenses (Prone)]'],
   },
   stun: {
     gen: [],

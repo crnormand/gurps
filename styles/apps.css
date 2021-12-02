@@ -1,17 +1,37 @@
 /* ========================= */
 /* GURPS Applications        */
 /* ========================= */
+
+/* Global Override */
+body {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+}
+
+.gurpsactorsheet #context-menu {
+  width: max-content;
+  left: calc(50% - 75px);
+  font-size: 12px;
+  text-shadow: none;
+}
+
+.gurpsactorsheet .itemmenu #context-menu {
+  left: 0;
+}
+
+.list_note > textarea {
+  min-height: 3em;
+}
+
 /* GURPS App CSS */
-.gurps-app {
+.gga-app {
   justify-items: center;
   /* background: url(/ui/parchment.webp) #dcdcd0; */
   background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
-  /* background: radial-gradient(ellipse at bottom, #5091dd 0%, rgb(3, 6, 23) 100%); */
 }
 
 /* A Group of Groups - only use if there are two or more logical groupings of groups on an app. */
-.gurps-meta-group {
+.gga-meta-group {
   align-items: center;
   text-align: center;
   padding: 5px;
@@ -19,34 +39,34 @@
 }
 
 /* using h3 elements as a row label -- remove margin */
-.gurps-app h3 {
+.gga-app h3 {
   margin-bottom: 0;
 }
 
 /* prefer center text in input fields */
-.gurps-app input.digits-only,
-.gurps-app input.decimal-digits-only {
+.gga-app input.digits-only,
+.gga-app input.decimal-digits-only {
   text-align: left;
 }
 
 /* remove this item from display  */
-.gurps-chat-message .invisible,
-.gurps-app .invisible {
+.gga-chat-message .invisible,
+.gga-app .invisible {
   display: none;
 }
 
-.gurps-app .icon-prefix {
+.gga-app .icon-prefix {
   position: relative;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
 }
 
-.gurps-app .icon-prefix > input {
+.gga-app .icon-prefix > input {
   padding-left: 2.2em;
 }
 
-.gurps-app .icon-prefix > span {
+.gga-app .icon-prefix > span {
   position: absolute;
   left: 0;
   width: 2em;
@@ -62,7 +82,7 @@
   border-radius: 3px 0 0 3px;
 }
 
-.gurps-app .img-display {
+.gga-app .img-display {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -70,7 +90,7 @@
   height: 15em;
 }
 
-.gurps-app .img-display > img {
+.gga-app .img-display > img {
   display: block;
   height: 100%;
   opacity: 0;
@@ -79,19 +99,39 @@
 
 /* special override, 'cause I can't get the space any other way*/
 #apply-damage-advanced {
-  margin-top: 1em;
+  margin-top: 5px;
+  border: none;
+  border-top: 1px solid #999;
+  padding: 5px 0 0 0;
 }
 
 /* a group is a section of a form with a header */
-.gurps-group {
+.gga-group {
   display: flex;
   flex-direction: column;
-  border: solid black 1px;
-  padding: 0.5em;
-  padding-top: 0;
   text-align: left;
   vertical-align: middle;
   justify-content: start;
+}
+
+.gga-group,
+#calculation-results > div {
+  border-right: 1px solid #999;
+  height: 100%;
+  padding: 0 0.5em;
+}
+
+#calculation-results > div:first-child {
+  padding-left: 0;
+}
+
+#calculation-results > div:last-child {
+  padding-right: 0;
+}
+
+#calculation-results > div:last-child,
+.gga-group:last-child {
+  border: none;
 }
 
 .gurps-space-between {
@@ -99,54 +139,60 @@
   justify-content: space-between;
 }
 
-.gurps-app header {
+.gga-app header {
   font-weight: bold;
 }
 
-.gurps-app header:first-child {
+.gga-app header:first-child {
   margin-right: 0.35em;
 }
 
-.gurps-group .pdflink {
+.gga-group .pdflink {
   margin-left: 3px;
   font-size: 80%;
 }
 
-.gurps-chat-message .pdflink {
+.gga-chat-message .pdflink {
   font-size: 90%;
 }
 
-.gurps-chat-message .aside {
+.gga-chat-message .aside {
   font-size: 90%;
 }
 
-.gurps-group h4 {
+.roll-message .aside .aside-text {
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  font-weight: normal;
+}
+
+.gga-group h4 {
   background-color: black;
   color: lightgrey;
   margin-bottom: 0.25em;
   font-size: larger;
-  margin-left: -0.4em;
-  margin-right: -0.5em;
   padding-left: 0.5em;
   margin-top: 0;
+  text-align: center;
   text-transform: uppercase;
   line-height: 1.2em;
 }
-.gurps-app aside {
+
+.gga-app aside {
   font-size: smaller;
   font-style: italic;
   margin-bottom: 0.5em;
 }
-.gurps-group .shaded-group {
+
+.gga-group .shaded-group {
   padding-bottom: 0.5em;
 }
 
-.gurps-group .shaded-group h4 + aside,
-.gurps-group h4 + aside {
+.gga-group .shaded-group h4 + aside,
+.gga-group h4 + aside {
   margin-top: -0.5em;
 }
 
-.gurps-group .grid {
+.gga-group .grid {
   align-items: start;
   justify-items: stretch;
   margin: 0;
@@ -154,7 +200,7 @@
 
 /* striped table row appearance */
 .shaded-group > div:nth-child(odd),
-.gurps-group .shaded {
+.gga-group .shaded {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -214,21 +260,21 @@
 }
 
 /* Apply Damage Dialog: Apply buttons panel */
-.gurps-group .apply-results > * {
+.gga-group .apply-results > * {
   margin-bottom: 0.2em;
 }
 
-.gurps-group .apply-results > *:last-child {
+.gga-group .apply-results > *:last-child {
   margin-bottom: 0;
 }
 
-.gurps-group .user-entered {
+.gga-group .user-entered {
   color: darkred;
   font-style: italic;
 }
 
 /* Apply Damage Dialog: Results Table panel */
-.gurps-group .results-table {
+.gga-group .results-table {
   justify-self: stretch;
   width: 100%;
   grid-template-columns: auto auto 1fr;
@@ -236,23 +282,23 @@
   font-size: 12px;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 1) {
+.gga-group .results-table > div:nth-child(3n + 1) {
   text-transform: uppercase;
   font-size: smaller;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 1),
-.gurps-group .results-table > div:nth-child(3n + 2) {
+.gga-group .results-table > div:nth-child(3n + 1),
+.gga-group .results-table > div:nth-child(3n + 2) {
   text-align: end;
   padding-right: 0.5em;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 2) {
+.gga-group .results-table > div:nth-child(3n + 2) {
   font-weight: bolder;
   font-size: small;
 }
 
-.gurps-group .results-table > div:nth-child(3n + 3) {
+.gga-group .results-table > div:nth-child(3n + 3) {
   text-align: start;
   justify-content: center;
   padding-left: 1em;
@@ -260,16 +306,16 @@
   font-size: smaller;
 }
 
-/* .gurps-group + .gurps-group {
+/* .gga-group + .gga-group {
   margin-top: 5px;
 } */
 
-.modtooltip .gurps-group + .gurps-group {
+.modtooltip .gga-group + .gga-group {
   margin: unset;
 }
 
 .label-value-row label,
-.gurps-group.inputs label {
+.gga-group.inputs label {
   font-size: 80%;
   justify-self: stretch;
   text-align: end;
@@ -279,23 +325,23 @@
   padding-right: 0.15em;
 }
 
-.gurps-group input {
+.gga-group input {
   text-align: left;
   margin: 0.15em 0;
 }
 
-.gurps-app input.centered {
+.gga-app input.centered {
   text-align: center !important;
 }
 
-.gurps-group .label-value-row {
+.gga-group .label-value-row {
   gap: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-.gurps-group .label-value-row > *:nth-child(4n + 3),
-.gurps-group .label-value-row > *:nth-child(4n + 4) {
+.gga-group .label-value-row > *:nth-child(4n + 3),
+.gga-group .label-value-row > *:nth-child(4n + 4) {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -375,6 +421,15 @@ ul#result-effects li {
   margin-bottom: 0;
 }
 
+#wound-modifier-table .damagemodifier {
+  color: darkgreen;
+}
+
+#wound-modifier-table .damagemodifier:after {
+  color: black;
+  content: '‡';
+}
+
 #wound-modifier-table .hitlocation {
   color: darkred;
 }
@@ -393,7 +448,7 @@ ul#result-effects li {
   color: black;
 }
 
-.chat-message .gurps-group {
+.chat-message .gga-group {
   font-size: smaller;
   border: none;
   padding: 0;
@@ -415,7 +470,7 @@ ul#result-effects li {
 }
 
 /* remove the top margin and indent */
-.gurps-group .continuation {
+.gga-group .continuation {
   margin-top: 0;
   margin-left: 2em;
 }
@@ -468,12 +523,12 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-chat-message * {
+.gga-chat-message * {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   font-size: 13px;
 }
 
-.gurps-chat-message .label-toggle {
+.gga-chat-message .label-toggle {
   font-size: x-small;
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding: 0.25em;
@@ -484,11 +539,11 @@ ul#result-effects li {
   text-transform: uppercase;
 }
 
-.gurps-chat-message .label-toggle:hover {
+.gga-chat-message .label-toggle:hover {
   background-color: rgb(0, 0, 0, 0.7);
 }
 
-.gurps-chat-message .label-toggle:after {
+.gga-chat-message .label-toggle:after {
   font: normal normal normal 12px/1;
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
@@ -497,7 +552,7 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-chat-message .toggle:checked + .label-toggle:after {
+.gga-chat-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1;
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
@@ -506,7 +561,7 @@ ul#result-effects li {
   float: right;
 }
 
-.gurps-group .options-drawer {
+.gga-group .options-drawer {
   display: grid;
   grid-template-columns: min-content 1fr;
   grid-auto-rows: auto;
@@ -514,61 +569,70 @@ ul#result-effects li {
   margin-bottom: 3px;
 }
 
-.gurps-group .collapsible-content {
+.gga-group .collapsible-content {
   grid-column: 1 / span 2;
   /* background: rgba(0, 0, 0, 0.1); */
   margin-bottom: 0;
   padding-right: 4px;
 }
 
-.gurps-app .collapsible-wrapper .collapsible-content .content-inner > *:nth-child(even),
-.gurps-group .collapsible-content > *:nth-child(even) {
+.gga-app .collapsible-wrapper .collapsible-content .content-inner > *:nth-child(even),
+.gga-group .collapsible-content > *:nth-child(even) {
   background: rgba(255, 255, 255, 0.25);
 }
 
-.gurps-group .options-drawer label {
+.gga-group .options-drawer label {
   padding-top: 2px;
 }
 
-.gurps-group .options-drawer label .pdflink {
+.gga-group .options-drawer label .pdflink {
   float: right;
   padding-top: 2px;
 }
 
-.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
-.gurps-app .collapsible-wrapper .collapsible-content {
+.gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content,
+.gga-app .collapsible-wrapper .collapsible-content {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3) inset, 0px 1px 3px rgba(0, 0, 0, 0.3) inset,
     0px 1px 3px rgba(0, 0, 0, 0.3) inset;
 }
 
-.gurps-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
+.gga-group .options-drawer .toggle:checked + .label-toggle + .collapsible-content {
   max-height: 130vh;
 }
 
-.gurps-app button {
+.gga-app button {
   text-transform: uppercase;
   background: rgba(255, 255, 240, 0.8);
 }
 
-.gurps-app button.with-icon > i > span {
+.gga-app button.default {
+  border: 2px solid #6b6857;
+}
+
+.gga-app button:disabled {
+  color: lightslategray;
+  background: rgba(255, 255, 240, 0.3);
+}
+
+.gga-app button.with-icon > i > span {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   font-weight: 400;
 }
 
-.gurps-app * {
+.gga-app * {
   font-family: Roboto, sans-serif;
 }
 
-.gurps-app .fa,
-.gurps-app .fab,
-.gurps-app .fad,
-.gurps-app .fal,
-.gurps-app .far,
-.gurps-app .fas {
+.gga-app .fa,
+.gga-app .fab,
+.gga-app .fad,
+.gga-app .fal,
+.gga-app .far,
+.gga-app .fas {
   font-family: 'Font Awesome 5 Free' !important;
 }
 
-.gurps-app #blunt-trauma-field {
+.gga-app #blunt-trauma-field {
   margin-left: 6px;
 }
 
@@ -595,6 +659,7 @@ ul#result-effects li {
 
 #combat-sheet .tracked-resource {
   border: 1px solid black;
+  background: white;
 }
 
 /* Tooltip container */
@@ -605,6 +670,7 @@ ul#result-effects li {
   border-bottom: 1px dotted grey;
   /* text-transform: uppercase; */
   /* color: darkgrey */
+  font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
 }
 
 /* Tooltip text */
@@ -616,7 +682,8 @@ ul#result-effects li {
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
-  font-size: medium;
+  font-weight: normal;
+  text-shadow: none;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 
   /* Position the tooltip text */
@@ -636,19 +703,74 @@ ul#result-effects li {
   content: '';
   position: absolute;
   top: -10px;
+  bottom: 100%;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
   border-color: transparent transparent #555 transparent;
+
+  /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3); */
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext.gga-manual::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: whitesmoke transparent transparent transparent;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
+.tooltip:hover .tooltiptext:not(.gga-manual) {
   visibility: visible;
+}
+
+.tooltip:hover .tooltiptext {
   transition-property: visibility;
   transition-delay: 0.67s;
   opacity: 1;
+}
+
+#notes .tooltip.gga-manual,
+#ranged .tooltip.gga-manual,
+#melee .tooltip.gga-manual,
+#advantages .tooltip.gga-manual,
+#skills .tooltip.gga-manual,
+#spells .tooltip.gga-manual,
+.equipmentlist .tooltip.gga-manual {
+  border: none;
+  width: 100%;
+}
+
+#notes .tooltiptext.gga-manual,
+#ranged .tooltiptext.gga-manual,
+#melee .tooltiptext.gga-manual,
+#advantages .tooltiptext.gga-manual,
+#skills .tooltiptext.gga-manual,
+#spells .tooltiptext.gga-manual,
+.equipmentlist .tooltiptext.gga-manual {
+  padding: 0;
+  top: auto;
+  bottom: 100%;
+  background: whitesmoke;
+  left: calc(100% - 35px);
+}
+
+#notes .tooltiptext.gga-manual > img,
+#ranged .tooltiptext.gga-manual > img,
+#melee .tooltiptext.gga-manual > img,
+#advantages .tooltiptext.gga-manual > img,
+#skills .tooltiptext.gga-manual > img,
+#spells .tooltiptext.gga-manual > img,
+.equipmentlist .tooltiptext.gga-manual > img {
+  border: none;
+  max-height: 100px;
 }
 
 .fieldblock3 .tooltip-wrapper {
@@ -671,8 +793,8 @@ ul#result-effects li {
 
 #editorsheet .field select {
   height: min-content;
-  background-color: transparent;
-  border: none;
+  /* background-color: transparent; */
+  /* border: none; */
   padding: 0 1em 0 0;
   margin: 0;
   width: 100%;
@@ -704,23 +826,11 @@ ul#result-effects li {
 
 /* Resource Trackers and Editors */
 
-#trackers {
-  grid-area: trackers;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 0fr auto 0fr;
-  grid-gap: 0.05in;
-}
-
-#trackers > * {
+#hp-fp {
+  grid-area: hp-fp;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 0.05in;
-}
-
-#trackers > *:last-child {
-  grid-template-rows: 0fr 1fr 1fr;
-  grid-gap: 0;
 }
 
 #resources {
@@ -751,6 +861,13 @@ ul#result-effects li {
   border-left: none;
 }
 
+.addnoteicon:hover,
+.addtrackericon:hover {
+  cursor: pointer;
+  color: red;
+  text-shadow: 0 0 5px white;
+}
+
 #resources .tracked-resource {
   border-right: none;
   border-top: none;
@@ -779,7 +896,6 @@ ul#result-effects li {
 }
 
 .tracked-resource .header .edit {
-  float: right;
   margin-right: 0.25em;
 }
 
@@ -800,7 +916,7 @@ ul#result-effects li {
 .resource-editor input,
 .tracked-resource .spinner input {
   height: 1.2rem;
-  min-width: 2rem;
+  min-width: 2.5rem;
   border: 1px solid grey;
   border-radius: 0;
   font-size: inherit;
@@ -831,17 +947,17 @@ ul#result-effects li {
   display: flex;
   flex-flow: column nowrap;
   justify-content: stretch;
+  /* font-size: 80%; */
 }
 
-#combat-trackers .tracked-resource .condition-block {
+/* #combat-trackers .tracked-resource .condition-block {
   display: flex;
   flex-flow: row nowrap;
   justify-content: stretch;
   align-items: baseline;
-}
+} */
 
 .tracked-resource .condition-block .max {
-  font-size: 80%;
   text-align: end;
   margin-left: 0.15rem;
 }
@@ -933,7 +1049,7 @@ ul#result-effects li {
   justify-content: center;
 }
 
-.gurps-group .vertical-center,
+.gga-app .vertical-center,
 .resource-editor .vertical-center {
   display: flex;
   align-items: center;
@@ -957,6 +1073,7 @@ ul#result-effects li {
   flex: 0;
   border: 1px solid grey;
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
+  cursor: pointer;
 }
 
 .tracked-resource.inactive .condition-block > * {
@@ -996,6 +1113,44 @@ ul#result-effects li {
 #combat-sheet .fieldblock .field {
   text-align: right;
 }
+
+#condition .fieldblock .field {
+  text-align: left;
+  margin-top: 3px;
+  min-height: calc(1em + 3px);
+  /* border: none; */
+  /* max-width: 12em; */
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
+}
+
+#condition .fieldblock .field[name='data.conditions.combatmove'] {
+    max-width: 12em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 8px;
+}
+
+#combat-sheet .fieldblock .field[name='data.conditions.combatmove'] {
+  font-size: 90%;
+}
+
+#condition .fieldblock button#open-modifier-popup {
+  font-size: 90%;
+  max-height: fit-content;
+  padding: 0;
+}
+
+select#maneuver option {
+      max-width: 12em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 8px;
+}
+
 
 .spinner details {
   position: relative;
@@ -1073,25 +1228,19 @@ ul#result-effects li {
   /*  border: 1px solid grey;  */
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
   padding: 0px 0px 0px 0px;
+  cursor: pointer;
 }
 
 .equipmentbutton.bold {
   font-weight: bold;
 }
 
-.equipmentlist .qty {
-  display: flex;
-  flex-flow: row nowrap;
-  line-height: unset;
-  align-items: center;
-  justify-content: space-between;
+button.equipmentbutton:first-child {
+  margin-right: 0.5em;
 }
 
-.equipped {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+button.equipmentbutton:last-child {
+  margin-left: 0.5em;
 }
 
 .pagination {
@@ -1129,22 +1278,36 @@ ul#result-effects li {
   background-color: rgba(255, 255, 240, 0.8);
 }
 
+.navigate-area {
+  position: sticky;
+  left: 0;
+  bottom: -5px;
+  width: 100%;
+  display: flex;
+  flex-flow: nowrap row;
+  justify-content: flex-end;
+}
+
 .navigate-bar {
   height: 24px;
   background-color: rgba(0, 0, 0, 0.6);
   margin-bottom: 5px;
   margin-left: -5px;
   margin-right: -5px;
-  position: sticky;
-  left: 0;
-  bottom: 0;
   box-shadow: 0px 5px 5px black;
   display: flex;
-  padding-left: 5px;
   align-items: center;
-  justify-content: center;
+  width: 100%;
 }
 
+.navigate-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.navigation-view,
 .navigation-link {
   border-radius: 3px;
   background-color: black;
@@ -1154,10 +1317,43 @@ ul#result-effects li {
   padding-right: 5px;
 }
 
+.navigation-view {
+  margin-right: 16px;
+  margin-left: 8px;
+}
+
+.navigation-view > span:before {
+  content: '\f101'; /* this is your text. You can also use UTF-8 character codes as I do here */
+  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-weight: 900;
+  color: white;
+}
+
+#navigate-toggle:checked + .navigate-bar > .navigation-view > span:before {
+  content: '\f100';
+  font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
+  font-weight: 900;
+  color: white;
+}
+
+#navigate-toggle:checked + .navigate-bar {
+  width: fit-content;
+}
+
+#navigate-toggle:checked + .navigate-bar > .navigate-container {
+  width: 0;
+  overflow: hidden;
+}
+
+/* #navigate-toggle:checked + .navigate-bar {
+  width: 24px;
+} */
+
 .navigation-link:hover {
   outline: none;
   box-shadow: 0 0 5px red;
 }
+
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
   position: relative;
@@ -1286,7 +1482,6 @@ ul#result-effects li {
   flex-flow: row nowrap;
   gap: 3px;
   align-items: center;
-  /* justify-content: space-between; */
 }
 
 .modifierbucket #current-actor {
@@ -1321,7 +1516,7 @@ ul#result-effects li {
   height: 100%;
   display: grid;
   grid-template-columns: 2fr 4fr;
-  gap: 0.35em;
+  /* gap: 0.35em; */
   justify-items: stretch;
   justify-content: stretch;
   align-items: stretch;
@@ -1338,7 +1533,7 @@ ul#result-effects li {
 
 #modtooltiplefttop {
   grid-row: 1;
-
+  padding: 0 0.5em 0 0;
   display: grid;
   justify-self: stretch;
   justify-content: stretch;
@@ -1358,7 +1553,7 @@ ul#result-effects li {
 
 #modtooltipleftcenter {
   grid-row: 2;
-
+  padding: 0 0.5em 0 0;
   display: flex;
   flex-flow: column nowrap;
   justify-self: stretch;
@@ -1386,7 +1581,7 @@ ul#result-effects li {
 
 #modtooltipleftbottom {
   grid-row: 3;
-
+  padding: 0 0.5em 0 0;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
@@ -1506,30 +1701,28 @@ ul#result-effects li {
 .modttt {
   text-align: center;
   border-radius: 10px;
-  /* width: 820px; */
   width: 63.5em;
-  /* height: 657px; */
-  height: 50.5em;
-  bottom: 100px !important;
+  bottom: 90px !important;
   left: 430px;
-  position: absolute;
+  position: fixed;
   z-index: 100;
 }
 
-.modttt::after {
+/* .modttt::after {
   content: '';
   position: absolute;
-  /* top: 100%; */
+  /* top: 100%; 
   left: 50%;
   margin-left: -300px;
   border-width: 37px 300px;
   border-style: solid;
   border-color: grey transparent transparent transparent;
   pointer-events: none;
-}
+} */
 
 .modttt .modtooltip {
   padding: 0.35em;
+  border-radius: 0.75em;
   box-shadow: 0 4px 8px 4px rgba(0, 0, 0, 0.8), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -1616,10 +1809,10 @@ ul#result-effects li {
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
 .modtooltip .gurpslink,
-.gurps-chat-message .glinkmod,
-.gurps-chat-message .glinkmodplus,
-.gurps-chat-message .glinkmodminus,
-.gurps-chat-message .gurpslink {
+.gga-chat-message .glinkmod,
+.gga-chat-message .glinkmodplus,
+.gga-chat-message .glinkmodminus,
+.gga-chat-message .gurpslink {
   padding: 0.0825em 0.165em;
   border: 0.0825em solid rgb(122, 121, 113);
   border-radius: 0.25em;
@@ -1640,10 +1833,10 @@ ul#result-effects li {
   background-color: unset !important;
 }
 
-.gurps-chat-message .glinkmod,
-.gurps-chat-message .glinkmodplus,
-.gurps-chat-message .glinkmodminus,
-.gurps-chat-message .gurpslink {
+.gga-chat-message .glinkmod,
+.gga-chat-message .glinkmodplus,
+.gga-chat-message .glinkmodminus,
+.gga-chat-message .gurpslink {
   background-color: rgba(255, 255, 240, 0.8) !important;
 }
 
@@ -1651,20 +1844,20 @@ ul#result-effects li {
 .modtooltip .glinkmod:hover,
 .modtooltip .glinkmodminus:hover,
 .modtooltip .gurpslink:hover,
-.gurps-chat-message .glinkmodplus:hover,
-.gurps-chat-message .glinkmod:hover,
-.gurps-chat-message .glinkmodminus:hover,
-.gurps-chat-message .gurpslink:hover {
+.gga-chat-message .glinkmodplus:hover,
+.gga-chat-message .glinkmod:hover,
+.gga-chat-message .glinkmodminus:hover,
+.gga-chat-message .gurpslink:hover {
   cursor: pointer;
   text-shadow: none;
   font-weight: unset;
   background-color: rgba(255, 255, 240, 0.8) !important;
 }
 
-.gurps-chat-message .glinkmodplus:hover,
-.gurps-chat-message .glinkmod:hover,
-.gurps-chat-message .glinkmodminus:hover,
-.gurps-chat-message .gurpslink:hover {
+.gga-chat-message .glinkmodplus:hover,
+.gga-chat-message .glinkmod:hover,
+.gga-chat-message .glinkmodminus:hover,
+.gga-chat-message .gurpslink:hover {
   box-shadow: 0 0 5px red;
 }
 
@@ -1672,27 +1865,27 @@ ul#result-effects li {
 .modtooltip .glinkmod:active,
 .modtooltip .glinkmodminus:active,
 .modtooltip .gurpslink:active,
-.gurps-chat-message .glinkmodplus:active,
-.gurps-chat-message .glinkmod:active,
-.gurps-chat-message .glinkmodminus:active,
-.gurps-chat-message .gurpslink:active {
+.gga-chat-message .glinkmodplus:active,
+.gga-chat-message .glinkmod:active,
+.gga-chat-message .glinkmodminus:active,
+.gga-chat-message .gurpslink:active {
   background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
 .removemod.plus,
-.gurps-chat-message .glinkmodplus,
+.gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
   color: darkgreen;
 }
 
 .removemod.minus,
-.gurps-chat-message .glinkmodminus,
+.gga-chat-message .glinkmodminus,
 .modtooltip .glinkmodminus {
   color: darkred;
 }
 
 .modtooltip .gurpslink,
-.gurps-chat-message .gurpslink {
+.gga-chat-message .gurpslink {
   color: darkblue;
 }
 
@@ -1712,7 +1905,7 @@ ul#result-effects li {
   align-items: center;
 }
 
-.modtooltip .gurps-group aside {
+.modtooltip .gga-group aside {
   margin: 0;
 }
 
@@ -1730,11 +1923,11 @@ ul#result-effects li {
   font-size: 80%;
 }
 
-.gurps-app .section {
+.gga-app .section {
   margin-top: 0.5em;
 }
 
-.gurps-chat-message .modifier-list li {
+.gga-chat-message .modifier-list li {
   margin-top: 0.35em;
 }
 
@@ -1763,16 +1956,16 @@ ul#result-effects li {
   min-width: 8em;
 }
 
-.gurps-app h4.with-button {
+.gga-app h4.with-button {
   padding-right: 1em;
 }
 
-.gurps-app h4.with-button .button {
+.gga-app h4.with-button .button {
   float: right;
   font-size: small;
 }
 
-.gurps-app h4.with-button .button:hover {
+.gga-app h4.with-button .button:hover {
   text-shadow: 0 0 10px white;
   color: red;
 }
@@ -1791,11 +1984,15 @@ ul#result-effects li {
   gap: 0;
 }
 
+.gurps-2col.no-bias {
+  grid-template-columns: 1fr 1fr;
+}
+
 .item-editor input.title {
   font-size: large;
 }
 
-.gurps-app .vertical-gap {
+.gga-app .vertical-gap {
   height: 1em;
 }
 
@@ -1854,3 +2051,37 @@ ul#result-effects li {
 {
   border: 1px solid #ff6400;
 } */
+
+@keyframes glowing {
+  0% {
+    box-shadow: 0px 0px 5px red;
+  }
+  50% {
+    box-shadow: 0px 0px 20px 5px red;
+  }
+  100% {
+    box-shadow: 0 0 5px red;
+  }
+}
+
+.glowing {
+  animation: glowing 500ms 3;
+}
+
+.gurps-invalid {
+  background-color: lightpink !important;
+}
+
+#fright-check label {
+  display: flex;
+  align-items: center;
+}
+
+#spells > div,
+#notes .notesmenu {
+  white-space: normal;
+}
+
+#spells .tooltip {
+  min-width: 200px;
+}

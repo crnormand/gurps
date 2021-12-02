@@ -22,11 +22,11 @@
   background: url(../../../ui/parchment-white.jpg) repeat !important;
 }
 
-.npc-sheet .gurps-app {
+.npc-sheet .gga-app {
   height: 100% !important;
 }
 
-.npc-input .gurps-app {
+.npc-input .gga-app {
   height: 100% !important;
 }
 
@@ -37,37 +37,64 @@
   overflow: auto;
 }
 
+.npc-sheet-ci {
+  grid-area: ci;
+  height: 100%;
+  width: 100%;
+}
+
 .npc-input-grid-container {
   width: 100% !important;
   height: 100% !important;
   display: grid;
   grid-template-columns: 250px 1fr 50%;
-  grid-template-rows: 60px 130px 0px 2fr 2fr 2fr 45px;
+  grid-template-rows: 60px 130px 2fr 2fr 2fr 45px;
   gap: 5px 5px;
   grid-template-areas:
-    'top       top    top'
-    'attr      notes  notes'
-    'condition notes  notes'
-    'melee     melee  ranged'
-    'traits    traits skills'
-    'equip     equip  spells'
-    'import    import create';
+    'top     top    top'
+    'attr    notes  notes'
+    'melee   melee  ranged'
+    'traits  traits skills'
+    'equip   equip  spells'
+    'import  import create';
+}
+
+.npc-sheet-grid-container-ci {
+  width: 100% !important;
+  height: 100% !important;
+  display: grid;
+  grid-template-columns: min-content 245px 50%;
+  grid-template-rows: auto 130px 50px auto auto;
+  gap: 5px;
+  grid-template-areas:
+    'portrait   top       top'
+    'portrait   attr      notes'
+    'condition  condition notes'
+    'melee      melee     ranged'
+    'traits     traits    skills'
+    'equip      equip     spells';
 }
 
 .npc-sheet-grid-container {
   width: 100% !important;
   height: 100% !important;
   display: grid;
-  grid-template-columns: 245px 1fr 50%;
-  grid-template-rows: auto 125px auto auto auto;
-  gap: 5px 5px;
+  grid-template-columns: min-content 1fr 50%;
+  grid-template-rows: auto 131px 50px auto auto auto;
+  gap: 5px;
   grid-template-areas:
-    'top top top'
-    'attr notes notes'
-    'condition notes notes'
-    'melee melee ranged'
-    'traits traits skills'
-    'equip equip spells';
+    'portrait  top        top'
+    'portrait  attr       notes'
+    'condition condition  notes'
+    'melee     melee      ranged'
+    'traits    traits     skills'
+    'equip     equip      spells';
+}
+
+.npc-sheet-grid-container-ci #portrait .img-display,
+.npc-sheet-grid-container #portrait .img-display {
+  width: 8em;
+  height: 100%;
 }
 
 .npc-input-create {
@@ -119,13 +146,11 @@
 
 .npc-input-notes {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: min-content 1fr;
   grid-template-rows: 1fr;
-  gap: 0px 0px;
-  grid-template-areas: 'nt-val';
+  gap: 5px;
+  grid-template-areas: 'ci nt-val';
   grid-area: notes;
-  border: 1px solid rgb(125, 125, 125);
-  margin: 0px 0px 0px 5px;
 }
 
 .npc-input-nt {
@@ -137,6 +162,8 @@
   grid-area: nt-val;
   height: 100%;
   overflow: var(--of);
+  border: 1px solid rgb(125, 125, 125);
+  padding: 3px;
 }
 
 .npc-input-traits {

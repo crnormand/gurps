@@ -98,13 +98,13 @@ export class AnimChatProcessor extends ChatProcessor {
     // Compute angle
     const deltaX = target.x - origin.x
     const deltaY = target.y - origin.y
-    let rotation = effect.centered ? (effect.rotation * Math.PI / 180) : Math.atan2(deltaY, deltaX)
-    let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) 
+    let rotation = (effect.noRotate || (effect.centered && !effect.move)) ? 0 : Math.atan2(deltaY, deltaX)
+    let distance = (effect.centered && !effect.move) ? 0 : Math.sqrt(deltaX * deltaX + deltaY * deltaY) 
     
     let files = []
-    if (effect.centered) 
+    if (effect.centered) {
       files = effect.files.map(f => fileWidth(f))
-    else {
+    } else {
       let bestWidth = 0
       let best = 0
       for (const file of effect.files) {
@@ -136,6 +136,7 @@ export class AnimChatProcessor extends ChatProcessor {
     let possible = [...files]
     let used = []
     let effects = []
+    let stretch = 0
     for (let i = 0; i < effect.count; i++) {
       const effectData = {...effect}
       effectData.position = {
@@ -143,22 +144,22 @@ export class AnimChatProcessor extends ChatProcessor {
           y: origin.y
         }
       effectData.rotation = rotation
-      effectData.distance = distance
+      stretch = distance * (1 + effectData.stretch)
       let file = this.randFile(possible)[0]
       if (possible.length == 0) possible = [...files]
-      effectData.filedata = file
       effectData.file = file.file
       if (effectData.centered) {
         if (effectData.flip) effectData.scale.x *= -1
+        if (effectData.move) effectData.distance = stretch
       } else {
-        let s = (effectData.distance * (1 + effectData.fudge)) / ((1 - effectData.anchor.x) * file.width) 
-        effectData.scale = {x: s, y: s * (Math.random() < 0.5 ? -1 : 1)} // randomly flip vert orientation
+        let s = stretch / file.width 
+        effectData.scale = {x: s, y: (Math.random() < 0.5 ? -effectData.scale.y : effectData.scale.y)} // randomly flip vert orientation
       }
       effects.push(effectData)
       used.push(effectData.file.split('/').pop())
     }
     this.executeEffects(effect.count, effects) // do NOT await this.
-    return used
+    return [used, stretch]
   }
   
   async executeEffects(count, effects) {
@@ -166,8 +167,12 @@ export class AnimChatProcessor extends ChatProcessor {
       count--
       game.socket.emit('module.fxmaster', effectData);
       // Throw effect locally
-      canvas.fxmaster.playVideo(effectData)
-      console.log(GURPS.objToString(effectData))
+      try {
+        canvas.specials.playVideo(effectData)
+      } catch (e) { //in case people have older versions of fxmaster
+        canvas.fxmaster.playVideo(effectData)
+      }
+      //console.log(GURPS.objToString(effectData))
       if (count > 0) await wait(effectData.delay)
     }
   }
@@ -177,10 +182,6 @@ export class AnimChatProcessor extends ChatProcessor {
     return false
   }
   
-  randomInvert(y) {
-    return Math.random() < 0.5 ? -1 * y: y  // used to randomize Y scale (give different 'looks' for animation)
-  }
-
   async awaitClick(line) {
     GURPS.IgnoreTokenSelect = true
     return new Promise( (resolve, reject) => {
@@ -231,10 +232,18 @@ export class AnimChatProcessor extends ChatProcessor {
   }
 
   matches(line) { 
-    this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<fudge>\+[\d.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
+//   this.match = line.match(/^\/anim *(?<list>list)? *(?<file>[\S]+)? *(?<center>cf?\d*)? *(?<scale>\*[\d\.]+)? *(?<x>[-+][\d\.]+)? *(?<fudge>[-+][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
+    this.match = line.match(/^\/anim +(?<list>list)? *(?<wait>w[\d\.]+)? *(?<file>[\S]+)? *(?<center>cf?m?n?\d*(:[\d\.]+,[\d\.]+)?)? *(?<scale>\*[\d\.]+)? *(?<x>-[\d\.]+)? *(?<stretch>[\+>][\d\.]+)? *(?<count>[\d\.]+[xX])?(?<delay>:[\d\.]+)? *(?<dest>@\d+,\d+)? *(?<self>@(s|self|src)?)?/)   
     return !!this.match
   }
   
+  usagematches(line) {
+    return line.match(/^[\/\?]anim$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpAnim");
+  }
+
   async process(line) {
     if (!canvas.fxmaster) return this.errorExit("This macro depends on the FXMaster module. Make sure it is installed and enabled")
     let files = []
@@ -252,25 +261,41 @@ export class AnimChatProcessor extends ChatProcessor {
       files = ANIM_LIBRARY.filter(e => e.match(pat))
       if (files.length == 0) return this.errorExit(`Unable to find animation for '${pat}'`)
     }
+    
+    if (!!m.wait) {
+      let s = parseFloat(m.wait.substr(1))
+      await wait(s * 1000)
+    }
         
     let opts = []
     let scale = 1.0
     let flip = false
     let centered = false
-    var rotation
-    if (!!m.center) {
-      centered = true
-      let t = m.center.match(/c(f)?(\d*)/)
-      flip = !!t[1]
-      rotation = !!t[2] ? +t[2] : 0
-      opts.push("C" + (flip ? "flip":"") + ":" + rotation)
-    } else opts.push("T")
-
-    let x = centered ? 0.5 : 0
+    let move = false
+    let x = 0
     let y = 0.5
-    let fudge = 0
+    let angle = 0
+    let noRotate = false
+    let stretch = 0
     let count = 1
     let delay = 1000
+    if (!!m.center) {
+      centered = true
+      x = 0.5
+      let t = m.center.match(/c(f)?(m)?(n)?(\d*)(:[\d\.]+,[\d\.]+)?/)
+      flip = !!t[1]
+      move = !!t[2]
+      if (move) x = 0.5
+      if (!!t[3]) noRotate = true
+      angle = !!t[4] ? +t[4] : 0
+      if (!!t[5]) {
+        let offset = t[5].substr(1).split(',')
+        x = parseFloat(offset[0])
+        y = parseFloat(offset[1])
+      }
+      opts.push("Centered " + (flip ? " flip":"") + (move ? " move":"") + ":" + angle)
+      opts.push("Offset: " + x + "," + y)
+    } else opts.push("Targeted")
     if (!!m.scale) { 
       scale = parseFloat(m.scale.substr(1))  
       opts.push("Scale:" + scale)
@@ -286,14 +311,15 @@ export class AnimChatProcessor extends ChatProcessor {
     }
     if (!!m.x) {
       x = parseFloat(m.x.substr(1))
-      opts.push("Start:-" + x)
-      if (centered) this.priv("Start option only valid on Targeted animation")
-   }
-    if (!!m.fudge) {
-      fudge = parseFloat(m.fudge.substr(1))
-      opts.push("End:+" + fudge)
-      if (centered) this.priv("End option only valid on Targeted animation")
-   } 
+      opts.push("Anchor:-" + x)
+      if (centered) this.priv("Anchor option only valid on Targeted animation")
+    }
+    if (!!m.stretch) {
+      stretch = parseFloat(m.stretch.substr(1)) 
+      opts.push("Stretch:+" + stretch)
+      if (centered && !move) this.priv("Stretch option only valid on moving animations")
+    }
+ 
     let srcToken = canvas.tokens.placeables.find(e => e.actor == GURPS.LastActor)
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
@@ -318,22 +344,27 @@ export class AnimChatProcessor extends ChatProcessor {
       return true;
     }
     if (!srcToken) srcToken = destTokens[0]    // centered anims should show on target (or selection)
-    if (!centered && destTokens.length == 1 && destTokens[0] == srcToken) return this.errorExit("Source and Destination cannot be the same token with using a Targeted animation")
+    if ((!centered || move) && destTokens.length == 1 && destTokens[0] == srcToken) return this.errorExit("Source and Destination cannot be the same token with using a moving animation")
+    if (move) {
+      let temp = srcToken
+      srcToken = destTokens[0] 
+      destTokens = [ temp ]
+    }
     let effect = {
       files: files,
       anchor: {
         x: x,
         y: y,
       },
-      speed: 0,
-      angle: 0,
       scale: {
         x: scale,
         y: scale,
       },
-      fudge: fudge,
+      stretch: stretch,
       centered: centered,
-      rotation: rotation,
+      move: move,
+      angle: angle,
+      noRotate: noRotate,
       flip: flip,
       count: count,
       delay: delay
@@ -343,8 +374,9 @@ export class AnimChatProcessor extends ChatProcessor {
     this.priv("Opts: " + opts.join(', '))
     this.priv("Possible:")
     this.priv(files.map(e => e.split('/').pop()).join('<br>'))
-    let used = await this.drawEffect(effect, srcToken, destTokens)
+    let [used, dist] = await this.drawEffect(effect, srcToken, destTokens)
     this.priv("Used:<br>" + used.join('<br>'))
+    this.priv("Dist: " + dist)
     this.send()
   }
 }

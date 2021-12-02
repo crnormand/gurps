@@ -1,0 +1,20 @@
+<div id='combat-trackers'>
+  <div class='header'>
+    <div class='headermenu' data-key='data.additionalresources.tracker'>
+      <span>{{i18n 'GURPS.resourceTrackers'}}</span>
+      {{#if isEditing}}
+        <i class='fas fa-caret-square-down'></i>
+      {{/if}}
+    </div>
+  </div>
+  <div id='tracker-scroller'>
+    {{#each data.additionalresources.tracker}}
+      {{>resource-tracker
+          label=name
+          resource=this
+          name=(concat 'additionalresources.tracker.' (zeroFill @index 4))
+          editable=true
+        }}
+    {{/each}}
+  </div>
+</div>

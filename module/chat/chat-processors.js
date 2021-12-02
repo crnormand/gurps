@@ -2,7 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { ChatProcessors } from '../../module/chat.js'
-import { parselink } from '../../lib/parselink.js'
+import { parselink, parseForRollOrDamage } from '../../lib/parselink.js'
 import { NpcInput } from '../../lib/npc-input.js'
 import { FrightCheckChatProcessor } from './frightcheck.js'
 import {
@@ -12,12 +12,13 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait, zeroFill, locateToken } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
 import { Migration } from '../../lib/migration.js'
 import { AnimChatProcessor } from '../chat/anim.js'
+import Maneuvers from '../actor/maneuver.js'
 
 export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new RollAgainstChatProcessor())
@@ -46,14 +47,98 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new ReimportChatProcessor())
   ChatProcessors.registerProcessor(new ShowChatProcessor())
   ChatProcessors.registerProcessor(new AnimChatProcessor())
-  ChatProcessors.registerProcessor(new WaitChatProcessor())  
-  ChatProcessors.registerProcessor(new WhisperChatProcessor())  
-  ChatProcessors.registerProcessor(new RolltableChatProcessor())  
+  ChatProcessors.registerProcessor(new WaitChatProcessor())
+  ChatProcessors.registerProcessor(new WhisperChatProcessor())
+  ChatProcessors.registerProcessor(new RolltableChatProcessor())
+  ChatProcessors.registerProcessor(new RefreshItemsChatProcessor())
+  ChatProcessors.registerProcessor(new QuickDamageChatProcessor())
+  ChatProcessors.registerProcessor(new SoundChatProcessor())
+  ChatProcessors.registerProcessor(new DevChatProcessor())
+  ChatProcessors.registerProcessor(new ManeuverChatProcessor())
 }
 
+class SoundChatProcessor extends ChatProcessor {
+  help() {
+    return '/sound &lt;path-to-sound&gt;'
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/sound +(?<wait>w[\d\.]+)? *(?<vol>v[\d\.]+)? *(?<file>.*)/i)
+    return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?]sound$/i)
+  }
+  usage() { return i18n("GURPS.chatHelpSound") }
+  
+  async process(line) {
+    let v = 0.8
+    if (this.match.groups.vol) v = parseFloat(this.match.groups.vol.substr(1))
+    if (this.match.groups.wait) await wait(parseFloat(this.match.groups.wait.substr(1)) * 1000)
+    let data = {
+      src: this.match.groups.file.trim(),
+      volume: v,
+      loop: false,
+    }
+    AudioHelper.play(data, true)
+  }
+}
+
+class QuickDamageChatProcessor extends ChatProcessor {
+  help() {
+    return '/&lt;damage formula&gt;'
+  }
+
+  matches(line) {
+    let m = line.match(/^[\.\/](.*)/)
+    if (!!m) {
+      this.match = parseForRollOrDamage(m[1])
+      return !!this.match && this.match.action.type == 'damage'
+    }
+    return false
+  }
+  async process(line) {
+    await GURPS.performAction(this.match.action, GURPS.LastActor)
+  }
+}
+
+class RefreshItemsChatProcessor extends ChatProcessor {
+  help() {
+    return null
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/refreshitems/i)
+    return !!this.match
+  }
+  async process(line) {
+    ui.notifications.info('Starting Item refresh...')
+    for (const a of game.actors.contents) {
+      console.log('Executeing postImport() on ' + a.name)
+      await a.postImport()
+    }
+    ui.notifications.info('Item refresh done.')
+  }
+}
+
+class ForceMigrateChatProcessor extends ChatProcessor {
+  help() {
+    return null
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/forcemigrate/i)
+    return !!this.match
+  }
+  async process(line) {
+    await Migration.migrateTo096()
+    await Migration.migrateTo097()
+    await Migration.migrateTo0104()
+    await Migration.fixDataModelProblems()
+  }
+}
 
 class RolltableChatProcessor extends ChatProcessor {
-
   help() {
     return '/rolltable &lt;tablename&gt;'
   }
@@ -62,33 +147,38 @@ class RolltableChatProcessor extends ChatProcessor {
     return !!this.match
   }
 
-  process(line) {
+  async process(line) {
     let tblname = this.match[1].trim()
     let pat = new RegExp(makeRegexPatternFrom(tblname, false), 'i')
     let tables = game.tables.contents.filter(t => t.name.match(pat))
     if (tables.length == 0) {
       ui.notifications.error("No table found for '" + tblname + "'")
-      return
+      return false
     }
     if (tables.length > 1) {
       ui.notifications.error("More than one table matched '" + tblname + "'")
-      return
+      return false
     }
     let table = tables[0]
-    let r = table.roll()
-    table.draw({roll:r})
-    GURPS.ModifierBucket.clear()
-    return
+    let r = await table.roll()
+    table.draw(r)
+    return true
   }
 }
 
 class WhisperChatProcessor extends ChatProcessor {
   help() {
-    return '/w &lt;players, characters or @&gt;'
+    return '/w [players] <i>or</i> @'
   }
   matches(line) {
     this.match = line.match(/^\/w +@ +(.+)$/)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?]w$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpW")
   }
   process(line) {
     let destTokens = Array.from(game.user.targets)
@@ -97,9 +187,7 @@ class WhisperChatProcessor extends ChatProcessor {
     let users = []
     for (const token of destTokens) {
       let owners = game.users.contents.filter(u => token.actor.getUserLevel(u) >= CONST.ENTITY_PERMISSIONS.OWNER)
-      for (const user of owners) 
-        if (!user.isGM) 
-          users.push(user)
+      for (const user of owners) if (!user.isGM) users.push(user)
     }
     if (users.length == 0) return false
     this.registry.processLine('/w [' + users.map(u => u.name).join(',') + '] ' + this.match[1])
@@ -139,6 +227,12 @@ class WaitChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/wait +(\d+)/)
     return this.match
   }
+  usagematches(line) {
+    return line.match(/^[\/\?]wait$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpWait")
+  }
   async process(line) {
     this.priv(line)
     await wait(+this.match[1])
@@ -163,11 +257,11 @@ class ClearMBsChatProcessor extends ChatProcessor {
     return '/clearmb'
   }
   matches(line) {
-    return line === '/clearmb'
+    return line.startsWith('/clearmb')
   }
   process(line) {
     this.priv(line)
-    GURPS.ModifierBucket.clear()
+    GURPS.ModifierBucket.clear(!line.endsWith('no-update'))
   }
 }
 
@@ -192,6 +286,12 @@ class RollAgainstChatProcessor extends ChatProcessor {
   matches(line) {
     this.match = line.match(/^([\.\/]p?ra) +([\w-'" ]+-)?(\d+)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?\.]p?ra$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpRa")
   }
   async process(line) {
     let m = this.match
@@ -237,7 +337,7 @@ class ChatExecuteChatProcessor extends ChatProcessor {
     let m = Object.values(game.macros.contents).filter(m => m.name.startsWith(args[0]))
     if (m.length > 0) {
       this.send()
-      GURPS.chatreturn = m[0].execute(args) ?? GURPS.chatreturn;    // if Advanced macros is loaded, take advantage of the return value
+      GURPS.chatreturn = m[0].execute(args) ?? GURPS.chatreturn // if Advanced macros is loaded, take advantage of the return value
     } else this.priv(`${i18n('GURPS.chatUnableToFindMacro')} '${line.substr(2)}'`)
     return GURPS.chatreturn
   }
@@ -273,9 +373,16 @@ class FpHpChatProcessor extends ChatProcessor {
     return '/fp (or /hp) &lt;formula&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
+    this.match = line.match(/^\/([fh]p) +([+-]\d+d\d*)?([+-=]\d+)?(!)?(reset)?(.*)/i)
     return !!this.match
   }
+  usagematches(line) {
+    return line.match(/^[\/\?][fh]p$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpFpHp");
+  }
+
   async process(line) {
     let m = this.match
     let actor = GURPS.LastActor
@@ -310,8 +417,9 @@ class FpHpChatProcessor extends ChatProcessor {
         if (!!dice) {
           let sign = dice[0] == '-' ? -1 : 1
           let d = dice.match(/[+-](\d+)d(\d*)/)
-          let r = d[1] + 'd' + (!!d[2] ? d[2] : '6')
-          let roll = Roll.create(r).evaluate()
+          let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/${attr}]`
+          let roll = Roll.create(r)
+          await roll.evaluate({ async: true })
           if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)
           delta = roll.total
           if (!!mod)
@@ -344,6 +452,12 @@ class SelectChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(select|sel) ?(\@self)?([^!]*)(!)?/)
     return !!this.match
   }
+  usagematches(line) {
+    return line.match(/^\?(select|sel)$/i)    // can't match on /select since that is a valid command
+  }
+  usage() {
+    return i18n("GURPS.chatHelpSelect")
+  }
   process(line) {
     let m = this.match
     if (!!m[2]) {
@@ -370,7 +484,15 @@ class SelectChatProcessor extends ChatProcessor {
       this.priv(i18n('GURPS.chatClearingLastActor'))
     } else {
       let pat = makeRegexPatternFrom(m[3])
-      let list = game.scenes.viewed?.data.tokens.map(t => game.actors.get(t.actorId)) || []
+
+      let list =
+        game.scenes.viewed?.data.tokens.map(t => {
+          // get the token's actor which might be a synthetic actor
+          if (t.actor) return t.actor
+          // otherwise, get the 'canonical' actor (non-synthetic)
+          return game.actors.get(t.actorId)
+        }) || []
+
       if (!!m[4]) list = game.actors.entities // ! means check all actors, not just ones on scene
       let a = list.filter(a => a?.name?.match(pat))
       let msg = i18n('GURPS.chatMoreThanOneActor') + " '" + m[3] + "': " + a.map(e => e.name).join(', ')
@@ -402,7 +524,7 @@ class RollChatProcessor extends ChatProcessor {
     return '/roll (or /r) [On-the-Fly formula]'
   }
   matches(line) {
-    this.match = line.match(/^(\/r|\/roll|\/pr|\/private) \[([^\]]+)\]/)
+    this.match = line.match(/^(\/roll|\/r|\/private|\/pr) \[([^\]]+)\]/)
     return !!this.match
   }
   async process(line) {
@@ -413,8 +535,12 @@ class RollChatProcessor extends ChatProcessor {
         // only need to show modifiers, everything else does something.
         this.priv(line)
       else this.send() // send what we have
-      return await GURPS.performAction(action.action, GURPS.LastActor, { shiftKey: line.startsWith('/pr'), ctrlKey: false, data:{} }) 
-     } // Looks like a /roll OtF, but didn't parse as one
+      return await GURPS.performAction(action.action, GURPS.LastActor, {
+        shiftKey: line.startsWith('/pr'),
+        ctrlKey: false,
+        data: {},
+      })
+    } // Looks like a /roll OtF, but didn't parse as one
     else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '[${m[2]}]'`)
     return false
   }
@@ -425,8 +551,14 @@ class UsesChatProcessor extends ChatProcessor {
     return '/uses &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/uses *([\+-=]\w+)?(reset)?(.*)/i)
+    this.match = line.match(/^\/uses +([\+-=]\w+)?(reset)?(.*)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?]uses$/i)   
+  }
+  usage() {
+    return i18n("GURPS.chatHelpUses")
   }
   async process(line) {
     let answer = false
@@ -496,8 +628,14 @@ class QtyChatProcessor extends ChatProcessor {
     return '/qty &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/qty *([\+-=]\d+)(.*)/i)
+    this.match = line.match(/^\/qty +([\+-=]\d+)(.*)/i)
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?]qty$/i)   
+  }
+  usage() {
+    return i18n("GURPS.chatHelpQty")
   }
   async process(line) {
     let answer = false
@@ -519,7 +657,7 @@ class QtyChatProcessor extends ChatProcessor {
           key = k
           eqt = getProperty(actor.data, key)
           // if its not equipment, try to find equipment with that name
-          if (eqt.count == null) [eqt, key] = actor.findEquipmentByName(pattern = eqt.name, !!m2[1])
+          if (eqt.count == null) [eqt, key] = actor.findEquipmentByName((pattern = eqt.name), !!m2[1])
         }
       }
       if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
@@ -560,9 +698,15 @@ class LightChatProcessor extends ChatProcessor {
 
     this.match = line.match(
       //      /^\/(light|li) *(none|off)? *(\d+)? *(\d+)? *(\d+)? *(#\w\w\w\w\w\w)? *(\w+)? *(\d+)? *(\d+)?/i
-      /^\/(light|li) *(?<off>none|off)? *(?<dim>\d+)? *(?<bright>\d+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})?(?<colorint>:[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
+      /^\/(light|li) +(?<off>none|off)? *(?<dim>[\d\.]+)? *(?<bright>[\d\.]+)? *(?<angle>\d+)? *(?<color>#[0-9a-fA-F]{6})? *(?<colorint>[\d\.]+)? *(?<type>\w+)? *(?<speed>\d+)? *(?<intensity>\d+)?/i
     )
     return !!this.match
+  }
+  usagematches(line) {
+    return line.match(/^[\/\?](light|li)$/i)   
+  }
+  usage() {
+    return i18n("GURPS.chatHelpLight")
   }
   async process(line) {
     if (canvas.tokens.controlled.length == 0) {
@@ -575,7 +719,7 @@ class LightChatProcessor extends ChatProcessor {
     }
     let type = this.match.groups.type || ''
     if (!!type) {
-      let pat = new RegEx(makeRegexPatternFrom(type, false), 'i')
+      let pat = new RegExp(makeRegexPatternFrom(type, false), 'i')
       let m = Object.keys(CONFIG.Canvas.lightAnimations).find(k => k.match(pat))
       if (!m) {
         ui.notifications.warn(
@@ -587,8 +731,8 @@ class LightChatProcessor extends ChatProcessor {
     }
     let anim = {
       type: type,
-      speed: parseInt(this.match.groups.speed) || 1,
-      intensity: parseInt(this.match.groups.intensity) || 1,
+      speed: parseFloat(this.match.groups.speed) || 1,
+      intensity: parseFloat(this.match.groups.intensity) || 1,
     }
     let data = {
       dimLight: 0,
@@ -601,30 +745,14 @@ class LightChatProcessor extends ChatProcessor {
       data['-=lightColor'] = null
     } else {
       if (this.match.groups.color) data.lightColor = this.match.groups.color
-      if (this.match.groups.colorint) data.lightAlpha = parseFloat(this.match.groups.colorint.substr(1))
-      data.dimLight = parseInt(this.match.groups.dim || 0)
-      data.brightLight = parseInt(this.match.groups.bright || 0)
-      data.lightAngle = parseInt(this.match.groups.angle || 360)
+      if (this.match.groups.colorint) data.lightAlpha = parseFloat(this.match.groups.colorint)
+      data.dimLight = parseFloat(this.match.groups.dim || 0)
+      data.brightLight = parseFloat(this.match.groups.bright || 0)
+      data.lightAngle = parseFloat(this.match.groups.angle || 360)
     }
-    console.log("Token Light update: " + GURPS.objToString(data))
+    console.log('Token Light update: ' + GURPS.objToString(data))
     for (const t of canvas.tokens.controlled) await t.document.update(data)
     this.priv(line)
-  }
-}
-
-class ForceMigrateChatProcessor extends ChatProcessor {
-  help() {
-    return null
-  }
-
-  matches(line) {
-    this.match = line.match(/^\/forcemigrate/i)
-    return !!this.match
-  }
-  async process(line) {
-    await Migration.migrateTo096()
-    await Migration.migrateTo097()
-    await Migration.migrateTo0104()
   }
 }
 
@@ -632,39 +760,120 @@ class ShowChatProcessor extends ChatProcessor {
   isGMOnly() {
     return true
   }
-  
+
   help() {
-    return "/show &lt;skills or attributes&gt"
+    return '/show &lt;skills or attributes&gt'
   }
 
   matches(line) {
     this.match = line.match(/^\/(show|sh) (.*)/i)
     return !!this.match
   }
+
+  usagematches(line) {
+    return line.match(/^\/(show|sh)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpShow")
+  }
+
+  
   async process(line) {
-    let args = splitArgs(this.match[2]);
+    let args = splitArgs(this.match[2])
     this.priv(line)
     for (const orig of args) {
-      this.priv("<hr>")
-      let label = false
+      this.priv('<hr>')
+      if (orig.toLowerCase() == 'move') this.priv("<b>Basic Move / Current Move</b>")
+      if (orig.toLowerCase() == 'speed') this.priv("<b>Basic Speed</b>")
       for (const token of canvas.tokens.placeables) {
         let arg = orig
         let actor = token.actor
+        switch (orig.toLowerCase()) {
+          case 'move': 
+            this.priv(`${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`)
+            continue;
+          case 'speed': 
+            this.priv(`${actor.name}: ${actor.data.data.basicspeed.value}`)
+            continue;
+          case 'fright':
+            arg = 'frightcheck'
+            break
+        }
         if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) {
           if (arg.includes(' ')) arg = '"' + arg + '"'
-          arg = "S:" + arg
+          arg = 'S:' + arg
         }
         let action = parselink(arg)
         if (!!action.action) {
           action.action.calcOnly = true
           let ret = await GURPS.performAction(action.action, actor)
           if (!!ret.target) {
-            let lbl = `['${ret.thing} (${ret.target}) : ${actor.name}'/sel ${token.id}\\\\/r [${arg}]]`
+            let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"!/sel ${token.id}\\\\/r [${arg}]]`
             this.priv(lbl)
           }
         }
       }
-    }    
+    }
+  }
+}
+
+class DevChatProcessor extends ChatProcessor {
+  isGMOnly() {
+    return true
   }
 
+  help() {
+    return null
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/dev +(.*)/i)
+    return !!this.match
+  }
+  async process(line) {
+    let m = this.match[1].match(/(\w+)(.*)/)
+    switch (m[1]) {
+      case 'open': {  // Open the full character sheet for an Actor
+        let a = game.actors.getName(m[2].trim())
+        if (a) a.openSheet('gurps.GurpsActorSheet')
+        else ui.notifications.warn("Can't find Actor named '" + m[2] + "'")
+        break
+      } 
+      case 'flush': { // flush the chat log without confirming
+        game.messages.documentClass.deleteDocuments([], {deleteAll: true})
+        break
+      }
+    }
+  }
+}
+
+class ManeuverChatProcessor extends ChatProcessor {
+  help() {
+    return '/man &lt;maneuver&gt'
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/(maneuver|man) *(.*)/i)
+    return !!this.match
+  }
+
+  async process(line) {
+    if (!this.match[2]) {
+      this.priv(i18n("GURPS.chatHelpManeuver"))
+      Object.values(Maneuvers.getAll()).map(e => i18n(e.data.label)).forEach(e => this.priv(e))
+      return true
+    }
+    let r = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
+    let m = Object.values(Maneuvers.getAll()).find(e => i18n(e.data.label).toLowerCase().match(r))
+    if (!GURPS.LastActor) {
+      ui.notifications.warn(i18n("GURPS.chatYouMustHaveACharacterSelected"))
+      return false
+    }
+    if (!m) {
+      ui.notifications.warn(i18n("GURPS.chatUnableToFindManeuver") + " '" + this.match[2] + "'")
+      return false
+    }
+    GURPS.LastActor.replaceManeuver(m._data.name)
+  }
+   
 }

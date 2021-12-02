@@ -13,7 +13,8 @@ import {
 } from '../../lib/utilities.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../../lib/jquery-helper.js'
-import { GurpsActor } from '../actor.js'
+import { GurpsActor } from '../actor/actor.js'
+import { handleOnPdf } from '../pdf-refs.js'
 
 const simpleDialogHeight = 130
 
@@ -86,7 +87,7 @@ export default class ApplyDamageDialog extends Application {
     super.activateListeners(html)
 
     // Activate all PDF links
-    html.find('.pdflink').click(async ev => game.GURPS.handleOnPdf(ev))
+    html.find('.pdflink').on('click', handleOnPdf)
     html.find('.digits-only').inputFilter(value => digitsOnly.test(value))
     html.find('.decimal-digits-only').inputFilter(value => digitsAndDecimalOnly.test(value))
 
@@ -206,6 +207,10 @@ export default class ApplyDamageDialog extends Application {
       .on('change', ev =>
         this._updateModelFromInputText($(ev.currentTarget), 'additionalWoundModifier', parseFloatFrom)
       )
+
+    html
+      .find('#adddamagemodifier')
+      .on('change', ev => this._updateModelFromInputText($(ev.currentTarget), 'damageModifier', t => t))
 
     // ==== Tactical Rules ====
     // use armor divisor rules
@@ -417,7 +422,7 @@ export default class ApplyDamageDialog extends Application {
    * Ask the calculator to randomly select a hit location, and return the roll used.
    */
   async _randomizeHitLocation() {
-    let roll3d = this._calculator.randomizeHitLocation()
+    let roll3d = await this._calculator.randomizeHitLocation()
 
     if (isNiceDiceEnabled()) {
       game.dice3d.showForRoll(roll3d).then(display => this.updateUI())
@@ -451,6 +456,7 @@ export default class ApplyDamageDialog extends Application {
    * @param {*} ev
    */
   async _handleEffectButtonClick(ev) {
+    // TODO allow click to automatically apply effect to a selected target
     let stringified = ev.currentTarget.attributes['data-struct'].value
     let object = JSON.parse(stringified)
 
@@ -536,6 +542,9 @@ export default class ApplyDamageDialog extends Application {
         location: object.detail,
         groundModifier: 'DX-1',
         swimFlyModifer: 'DX-2',
+        pdfref: i18n('GURPS.pdfCrippling'),
+        classStart: '<span class="pdflink">',
+        classEnd: '</span>',
       })
     }
 
@@ -576,7 +585,7 @@ export default class ApplyDamageDialog extends Application {
   async submitInjuryApply(ev, keepOpen, publicly) {
     let injury = this._calculator.pointsToApply
 
-    let dialog = $(ev.currentTarget).parents('.gurps-app')
+    let dialog = $(ev.currentTarget).parents('.gga-app')
     let results = $(dialog).find('.results-table')
     let clone = results.clone().html()
 
@@ -621,16 +630,8 @@ export default class ApplyDamageDialog extends Application {
     await this.actor.update(update)
 
     this._renderTemplate('chat-damage-results.html', data).then(html => {
-      let speaker = {
-        alias: game.user.data.name,
-        _id: game.user.id,
-      }
-      if (!!attackingActor)
-        speaker = {
-          alias: attackingActor.data.name,
-          _id: attackingActor.id,
-          actor: attackingActor,
-        }
+      let speaker = ChatMessage.getSpeaker(game.user)
+      if (!!attackingActor) speaker = ChatMessage.getSpeaker(attackingActor)
       let messageData = {
         user: game.user.id,
         speaker: speaker,

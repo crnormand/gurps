@@ -7,6 +7,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.ID
   GURPS.TransferTo
   GURPS.actions
+  GURPS.adDisad
+  GURPS.adDisadQuirkPerk
   GURPS.addAdvantage
   GURPS.addApplyTo
   GURPS.addDamageReduction
@@ -17,6 +19,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.addRangedAttack
   GURPS.addSkill
   GURPS.addSpell
+  GURPS.addTitle
   GURPS.advantage
   GURPS.advantages
   GURPS.aim
@@ -71,6 +74,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.chatYouMustBeGM
   GURPS.chatYouMustHaveACharacterSelected
   GURPS.chatYouMustSelectTokens
+  GURPS.check
   GURPS.check1
   GURPS.check2
   GURPS.check3
@@ -78,28 +82,34 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.clickToRemove
   GURPS.collapse
   GURPS.concentrationCheck
+  GURPS.conditionalModifier
   GURPS.conditions
   GURPS.copyrightGURPS
   GURPS.dead
   GURPS.defense
+  GURPS.delete
   GURPS.destroyed
   GURPS.dragrulerFly
   GURPS.dragrulerSprint
   GURPS.dragrulerWalk
+  GURPS.during
   GURPS.dxCheckOrFallApplyProne
   GURPS.dxJudoAcrobaticsCheckToRemainStanding
   GURPS.effectsNotApplicableDefenses
   GURPS.effectsTemporaryAttributePenalties
   GURPS.equipmentCost
   GURPS.equipmentEquipped
+  GURPS.equipmentFoundryItem
   GURPS.equipmentMaxUses
   GURPS.equipmentQuantity
   GURPS.equipmentTechlevel
   GURPS.equipmentUses
+  GURPS.fail
   GURPS.fallsDownApplyProne
   GURPS.forHighPainThreshold
   GURPS.forLowPainThreshold
   GURPS.forPerfectBalance
+  GURPS.fromEllipses
   GURPS.gameAidUsersGuide
   GURPS.hitLocationArm, holding shield
   GURPS.hitLocationChinks in Other
@@ -219,6 +229,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierCurrentModifiers
   GURPS.modifierDangerous
   GURPS.modifierDeceptiveAttack
+  GURPS.modifierDefDeceptiveAttack
   GURPS.modifierDeterminedAttack
   GURPS.modifierDodgeAcrobatic
   GURPS.modifierDodgeDive
@@ -249,6 +260,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierLightStarlight
   GURPS.modifierLightTorch
   GURPS.modifierLightTwilight
+  GURPS.modifierMaintainConcentration
   GURPS.modifierMightyBlow
   GURPS.modifierMoveAttack
   GURPS.modifierOthers
@@ -308,11 +320,13 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.modifierViewScale
   GURPS.modifierViewScaleHint
   GURPS.modifierWillCheck
+  GURPS.moveToOtherEquipment
   GURPS.name
   GURPS.notAffected
   GURPS.notes
   GURPS.ok
   GURPS.parrybonus
+  GURPS.pass
   GURPS.pdfAllOutDefense
   GURPS.pdfBlockRetreat
   GURPS.pdfCrippling
@@ -350,16 +364,21 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.ranged
   GURPS.rangedAttack
   GURPS.rateOfFire
+  GURPS.removeItem
   GURPS.resolve
   GURPS.resource
   GURPS.resourceCopyTemplate
   GURPS.resourceDeleteTracker
   GURPS.resourceEditTracker
+  GURPS.resourceEnforceMaximum
+  GURPS.resourceEnforceMinimum
   GURPS.resourceInvalidAlias
   GURPS.resourceUndefined
   GURPS.resourceUpdateTrackerSlot
+  GURPS.rollForMe
   GURPS.rolled
   GURPS.selectToken
+  GURPS.settingAutoIgnoreQty
   GURPS.settingBasicPDFs
   GURPS.settingBasicPDFsCombined
   GURPS.settingBasicPDFsSeparate
@@ -378,6 +397,7 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingEnhancedInput
   GURPS.settingFlagItems
   GURPS.settingFlagUserCreated
+  GURPS.settingHintAutoIgnoreQty
   GURPS.settingHintBasicPDFs
   GURPS.settingHintBlockImport
   GURPS.settingHintCalculateEnc
@@ -403,6 +423,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingHintPlayerChatPrivate
   GURPS.settingHintQtyItems
   GURPS.settingHintRangeStrategy
+  GURPS.settingHintRemoveUnequipped
+  GURPS.settingHintSheetDetail
   GURPS.settingHintShowDiceRoller
   GURPS.settingHintShowNavigation
   GURPS.settingHintShowReadMe
@@ -413,11 +435,17 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingImportBodyPlanAsk
   GURPS.settingImportBodyPlanIgnore
   GURPS.settingImportBodyPlanUseFile
+  GURPS.settingImportBrowserImporter
+  GURPS.settingImportEncoding
+  GURPS.settingImportEncodingISO8859
+  GURPS.settingImportEncodingUTF8
   GURPS.settingImportHPAndFP
   GURPS.settingImportHPAndFPAsk
   GURPS.settingImportHPAndFPIgnore
   GURPS.settingImportHPAndFPUseFile
   GURPS.settingImportHintBodyPlan
+  GURPS.settingImportHintBrowserImporter
+  GURPS.settingImportHintEncoding
   GURPS.settingImportIgnoreName
   GURPS.settingLabelMookGenerator
   GURPS.settingManeuverDetail
@@ -435,6 +463,8 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.settingRangeStrategy
   GURPS.settingRangeStrategyRangeBands
   GURPS.settingRangeStrategyStandard
+  GURPS.settingRemoveUnequipped
+  GURPS.settingSheetDetail
   GURPS.settingShowDiceRoller
   GURPS.settingShowNavigation
   GURPS.settingShowReadMe
@@ -455,6 +485,10 @@ keys in [lang/en.json] that are missing in [lang/ru.json]
   GURPS.slamShieldDB
   GURPS.slamVelocity
   GURPS.slams
+  GURPS.sortAscending
+  GURPS.sortContentsAscending
+  GURPS.sortContentsDescending
+  GURPS.sortDescending
   GURPS.spell
   GURPS.spellDifficulty
   GURPS.spellResist

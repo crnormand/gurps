@@ -3,7 +3,8 @@
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
-import { i18n, objectToArray } from '../../lib/utilities.js'
+import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { GurpsActor } from '../actor/actor.js'
 
 /* 
   Crippling injury:
@@ -36,7 +37,7 @@ export class CompositeDamageCalculator {
    * damage.
    *
    * @param {*} defender
-   * @param {Array} damageData
+   * @param {DamageData[]} damageData
    */
   constructor(defender, damageData) {
     this._useBluntTrauma = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_BLUNT_TRAUMA)
@@ -45,6 +46,8 @@ export class CompositeDamageCalculator {
 
     this._defender = defender
 
+    // The CompositeDamageCalculator has multiple DamageCalculators -- create one per DamageData
+    // and give it a back pointer to the Composite.
     this._calculators = damageData.map(data => new DamageCalculator(this, data))
 
     this.viewId = this._calculators.length == 1 ? 0 : 'all'
@@ -70,12 +73,20 @@ export class CompositeDamageCalculator {
       this._applyTo = this._damageType === 'fat' ? 'FP' : 'HP'
     }
 
+    this._damageModifier = damageData[0].damageModifier
+
     this._armorDivisor = damageData[0].armorDivisor
     if (this._armorDivisor === 0) {
       this._useArmorDivisor = false
     }
 
-    this._hitLocation = this._defender.defaultHitLocation
+    let hitlocations = objectToArray(this._defender.getGurpsActorData().hitlocations)
+    let wheres = hitlocations.map(it => it.where.toLowerCase())
+    let damageLocation = !!damageData[0].hitlocation ? damageData[0].hitlocation.toLowerCase() : ''
+    let hlIndex = wheres.indexOf(damageLocation)
+    if (hlIndex >= 0) this._hitLocation = hitlocations[hlIndex].where
+    else this._hitLocation = this._defender.defaultHitLocation
+
     this._previousHitLocation = this._hitLocation
     this._userEnteredDR = null
 
@@ -172,6 +183,14 @@ export class CompositeDamageCalculator {
 
   get calculators() {
     return this._calculators
+  }
+
+  get damageModifier() {
+    return this._damageModifier
+  }
+
+  set damageModifier(value) {
+    this._damageModifier = value
   }
 
   get damageType() {
@@ -280,8 +299,9 @@ export class CompositeDamageCalculator {
     if (this._isExplosion) return 1
 
     if ((this._armorDivisor > 1 || this._armorDivisor === -1) && this._isHardenedDR) {
+      let _divisor = this._armorDivisor == 4 ? 3 : this._armorDivisor //If you're using survivable guns check if it's (4) because it's not part of the regular progression, thus we treat it as 3.
       let maxIndex = armorDivisorSteps.length - 1
-      let index = armorDivisorSteps.indexOf(this._armorDivisor)
+      let index = armorDivisorSteps.indexOf(_divisor)
       index = Math.min(index + this._hardenedDRLevel, maxIndex)
       return armorDivisorSteps[index]
     }
@@ -327,11 +347,13 @@ export class CompositeDamageCalculator {
     if (this._useLocationModifiers) {
       switch (this._hitLocation) {
         case 'Vitals':
+          // only imp, pi*, and burn tbb can target Vitals
           table = this._vitalsWoundModifiers
           break
 
         case 'Skull':
         case 'Eye':
+          // only inp, pi*, and burn tbb can target Eye
           table = this._skullEyeWoundModifiers
           break
 
@@ -354,6 +376,9 @@ export class CompositeDamageCalculator {
     if (this._isInjuryTolerance) {
       switch (this._injuryToleranceType) {
         case 'unliving':
+          // if Eye, Skull, or Vitals, don't modify wounding modifier
+          if (['Eye', 'Skull', 'Vitals'].includes(this._hitLocation)) break
+
           table = JSON.parse(JSON.stringify(table))
           this._modifyForInjuryTolerance(table['imp'], 1)
           this._modifyForInjuryTolerance(table['pi++'], 1)
@@ -370,6 +395,7 @@ export class CompositeDamageCalculator {
 
         // No Vitals: You have no vital organs (such as a heart or engine) that attackers can
         // target for extra damage. Treat hits to the 'vitals' or 'groin' as torso hits.
+
         case HOMOGENOUS:
           // Homogenous: Ignore all wounding modifiers for hit location.
           table = JSON.parse(JSON.stringify(this.defaultWoundModifiers))
@@ -602,6 +628,12 @@ export class CompositeDamageCalculator {
     return entries.length > 0
   }
 
+  get isWoundModifierAdjustedForDamageType() {
+    let table = this.effectiveWoundModifiers
+    let entries = Object.keys(table).filter(key => table[key].changed === 'damagemodifier')
+    return entries.length > 0
+  }
+
   get length() {
     return this._calculators.length
   }
@@ -643,7 +675,7 @@ export class CompositeDamageCalculator {
         return
       }
     })
-    if (!!tracker) return [tracker, `data.additionalresources.tracker.${index}`]
+    if (!!tracker) return [tracker, `data.additionalresources.tracker.${zeroFill(index, 4)}`]
     // }
 
     if (this._applyTo === 'FP') return [this._defender.data.data.FP, 'data.FP']
@@ -802,6 +834,13 @@ export class CompositeDamageCalculator {
         results[key].multiplier = 3
         results[key].changed = 'hitlocation'
       })
+
+    // update for [burn tbb]
+    if (this._damageType === 'burn' && this._damageModifier === 'tbb') {
+      results['burn'].multiplier = 2
+      results['burn'].changed = 'damagemodifier'
+    }
+
     return results
   }
 
@@ -814,9 +853,9 @@ export class CompositeDamageCalculator {
     }
   }
 
-  randomizeHitLocation() {
-    let roll3d = Roll.create('3d6')
-    roll3d.roll()
+  async randomizeHitLocation() {
+    let roll3d = Roll.create('3d6[Hit Location]')
+    await roll3d.roll({ async: true })
     let total = roll3d.total
 
     let loc = this._defender.hitLocationsWithDR.filter(it => it.roll.includes(total))
@@ -826,6 +865,10 @@ export class CompositeDamageCalculator {
   }
 }
 
+/**
+ * An individual DamageCalculator is responsible for calculating the damage and effects for a single
+ * damage roll.
+ */
 class DamageCalculator {
   /**
    *
@@ -977,7 +1020,9 @@ class DamageCalculator {
       return 0
     }
 
-    if (['Face', 'Vitals', 'Groin'].includes(this._parent.hitLocation)) return 5
+    // B420 "Knockdown and Stunning" states that HT-5 is a modifier for Major Wound on Face/Vitals/Groin
+    // B399 says "damage rolls at HT-5" but that's just a simplified summary on could happen, should follow B420
+    if (this.isMajorWound && ['Face', 'Vitals', 'Groin'].includes(this._parent.hitLocation)) return 5
 
     // No Brain (Diffuse or Homogenous) - blows to skull or eye are no different than a blow to
     // the face, except that eyes can still be crippled. (Handled earlier in this method.)
@@ -998,6 +1043,9 @@ class DamageCalculator {
   }
 
   get isKnockbackEligible() {
+    // Damage modifier 'nkb' means no knockback
+    if (this._parent._damageModifier === 'nkb') return false
+
     if (this._parent.damageType === 'cr' && this._basicDamage > 0) return true
 
     return this._parent.damageType === 'cut' && this._basicDamage > 0 && this.penetratingDamage === 0
@@ -1055,7 +1103,20 @@ class DamageCalculator {
     }
 
     if (this.isKnockbackEligible) {
-      let knockback = Math.floor(this.effectiveDamage / (this._parent.attributes.ST.value - 2))
+      let st = this._parent.attributes.ST.value
+      let hp = this._parent._defender.getGurpsActorData().HP.max
+
+      // if the target has no ST score, use its HPs instead (B378)
+      let knockbackResistance = !st || st == 0 ? hp - 2 : st - 2
+      // if ST or HP is less than 3, knockback is one yard per point of damage (B378)
+      knockbackResistance = Math.max(knockbackResistance, 1)
+      // For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker. (B378)
+      let knockback = Math.floor(this.effectiveDamage / knockbackResistance)
+
+      // TODO this is the default behavior; implement Powers P101 (in which knockback is calculated based on double basic damage)
+      // This lets a crushing or cutting attack inflict twice as much knockback as usual. (B104)
+      if (this._parent._damageModifier === 'dkb') knockback *= 2
+
       if (knockback > 0) {
         let modifier = knockback - 1
         _effects.push({

@@ -1,0 +1,106 @@
+<form class='{{cssClass}}' autocomplete='off' style='scroll-padding-top: 5px;'>
+  <div id='sheet' class='gurpsactorsheet'>
+    <div id='personal'>
+      {{>portrait}}
+      {{>identity}}
+      {{>miscellaneous}}
+      {{>description}}
+      {{>points}}
+    </div>
+    <div id='stats'>
+      <div id='attributes'>
+        {{>basic-attributes}}
+        {{>secondary-attributes}}
+      </div>
+      {{>encumbrance}}
+      {{>quicknote}}
+      {{>lifting}}
+      {{>locations parent=../data}}
+      <div id='hp-fp'>
+        {{#if useCI}}
+          {{>conditional-injury}}
+        {{else}}
+          {{>hpfp-tracker
+            name='HP'
+            resource=data.HP
+            label='GURPS.attributesHPNAME'
+            editable=false
+            condition='reeling'
+            testcondition=data.conditions.reeling
+          }}
+        {{/if}}
+        {{>hpfp-tracker
+          name='FP'
+          resource=data.FP
+          label='GURPS.attributesFPNAME'
+          editable=false
+          condition='exhausted'
+          testcondition=data.conditions.exhausted
+        }}
+      </div>
+
+      {{>conditions}}
+    </div> 
+    {{!-- end of stats --}}
+
+    {{#if (or (notEmpty data.reactions) (notEmpty data.conditionalmods))}}
+      <div id='other' style='display: flex; flex-flow: row nowrap;'>
+        {{#if (notEmpty data.reactions)}}{{>reactions}}{{/if}}
+        {{#if (notEmpty data.conditionalmods)}}{{>conditionalmods}}{{/if}}
+      </div>
+    {{/if}}
+
+    {{#if (notEmpty data.additionalresources.tracker)}}
+      {{>trackers}}
+    {{/if}}
+
+    {{#if (notEmpty data.melee)}}
+      {{>melee}}
+    {{/if}}
+
+    {{#if (notEmpty data.ranged)}}
+      {{>ranged}}
+    {{/if}}
+
+    {{#if (or (notEmpty data.skills) (notEmpty data.ads))}}
+      <div id='ads-skills'>
+        {{#if (notEmpty data.ads)}}{{>advantages}}{{/if}}
+        {{#if (notEmpty data.skills)}}{{>skills}}{{/if}}
+      </div>
+    {{/if}}
+
+    {{#if (notEmpty data.spells)}}
+      {{>spells}}
+    {{/if}}
+
+    {{#if (notEmpty data.equipment.carried)}}
+      {{>equipment container='carried' data=this.data}}
+    {{/if}}
+
+    {{#if (notEmpty data.equipment.other)}}
+      {{>equipment container='other' data=this.data}}
+    {{/if}}
+
+    {{>notes}}
+  </div>
+  {{>footer}}
+  {{#if navigateVisible}}
+    <div class='navigate-area'>
+      <input id='navigate-toggle' class='toggle offscreen-only' type='checkbox' />
+      <div class='navigate-bar'>
+        <label class='navigation-view' for='navigate-toggle'><span class='icon'></span></label>
+        <div class='navigate-container'>
+          <div class='navigation-link' data-value='personal'>TOP</div>
+          <div class='navigation-link' data-value='stats'>STATS</div>
+          <div class='navigation-link' data-value='melee'>MELEE</div>
+          <div class='navigation-link' data-value='ranged'>RANGED</div>
+          <div class='navigation-link' data-value='advantages'>ADVANTAGES</div>
+          <div class='navigation-link' data-value='skills'>SKILLS</div>
+          <div class='navigation-link' data-value='equipmentcarried'>EQUIPMENT</div>
+          <div class='navigation-link' data-value='other_equipment'>OTHER</div>
+          <div class='navigation-link' data-value='notes'>NOTES</div>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+</form>

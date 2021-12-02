@@ -1,0 +1,31 @@
+<div id='miscellaneous'>
+  <div class='header'>{{i18n 'GURPS.miscellaneous'}}</div>
+  <div class='fieldblock'>
+    <div class='label'>{{i18n 'GURPS.miscellaneousCreated'}}:</div>
+    <div class='field'>
+      <input
+        name='data.traits.createdon'
+        class='gcs-input'
+        type='text'
+        value='{{data.traits.createdon}}'
+        {{disabled (not isEditing)}}
+      />
+    </div>
+    <div class='label'>{{i18n 'GURPS.miscellaneousModified'}}:</div>
+    <div class='field'><input
+        name='data.traits.modifiedon'
+        class='gcs-input'
+        type='text'
+        value='{{data.traits.modifiedon}}'
+        {{disabled (not isEditing)}}
+      /></div>
+    <div class='label'>{{i18n 'GURPS.miscellaneousOptions'}}:</div>
+    <div class='field'><input
+        name='data.traits.options'
+        class='gcs-input'
+        type='text'
+        value='{{data.traits.options}}'
+        {{disabled (not isEditing)}}
+      /></div>
+  </div>
+</div>

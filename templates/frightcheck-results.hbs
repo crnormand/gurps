@@ -1,0 +1,45 @@
+<div class='roll-message'>
+  <div class='prefix'>
+    Fright Check ({{WILLVar}})
+  </div>
+  {{#if targetmods}}
+    <div>
+      <ul class='modifier-list'>
+        {{#each targetmods}}
+          <li>{{{displayNumber mod}}}{{#if desc}} : {{desc}}{{/if}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    New Target: ({{finaltarget}})
+    {{#if ruleOf14}}
+      <div class='aside'>(Cannot be greater than 13. See <i>The Rule of 14</i>, [PDF:PDF:B360].)</div>
+    {{/if}}
+  {{/if}}
+
+  <div class='roll-result'>
+    <div>
+      <span class='roll-value'>{{rtotal}}</span>
+      <span class='roll-detail'>
+        {{#if failure}}
+          <span class='failure'>Failure.</span>
+        {{else}}
+          <span class='success'>Success!</span>
+        {{/if}}
+        <span class='aside'>
+          {{#if (eq margin 0)}}Just made it.{{/if}}
+          {{#if (gt margin 0)}}["Made it by {{margin}}."+{{margin}} Fright Check success]{{/if}}
+          {{#if (lt margin 0)}}["Missed it by {{abs margin}}."{{margin}} Fright Check failure]{{/if}}
+        </span>
+      </span>
+    </div>
+    <div>
+      <hr />
+      <div class='aside'>
+        {{#if loaded}}<i style='color:darkred' class='fas fa-user'></i>{{else}}<i class='fas fa-dice'></i>{{/if}}
+        <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
+        <span class='aside-text'>Rolled ({{rolls}}) = {{rtotal}}.</span>
+      </div>
+
+    </div>
+  </div>
+</div>

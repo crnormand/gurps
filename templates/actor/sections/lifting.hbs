@@ -1,0 +1,105 @@
+<div id='lifting' class='gga-tableheader'>
+  <div class='header'>{{i18n 'GURPS.liftingAndMovingThings'}}</div>
+  <div class='lift gga-right'>
+    {{#if isEditing}}
+      <input
+        name='data.liftingmoving.basiclift'
+        class='gcs-input-4'
+        type='text'
+        value='{{data.liftingmoving.basiclift}}'
+      />
+    {{else}}
+      {{data.liftingmoving.basiclift}}
+    {{/if}}
+  </div>
+  <div class='liftdesc'>
+    {{i18n 'GURPS.basicLift'}}
+  </div>
+  <div class='lift gga-right'>
+    {{#if isEditing}}
+      <input
+        name='data.liftingmoving.onehandedlift'
+        class='gcs-input-4'
+        type='text'
+        value='{{data.liftingmoving.onehandedlift}}'
+      />
+    {{else}}
+      {{data.liftingmoving.onehandedlift}}
+    {{/if}}
+  </div>
+  <div class='liftdesc'>
+    {{i18n 'GURPS.oneHandLift'}}
+  </div>
+  <div class='lift gga-right'>
+    {{#if isEditing}}
+      <input
+        name='data.liftingmoving.twohandedlift'
+        class='gcs-input-4'
+        type='text'
+        value='{{data.liftingmoving.twohandedlift}}'
+      />
+    {{else}}
+      {{data.liftingmoving.twohandedlift}}
+    {{/if}}
+  </div>
+  <div class='liftdesc'>
+    {{i18n 'GURPS.twoHandLift'}}
+  </div>
+  <div class='lift gga-right'>
+    {{#if isEditing}}
+      <input name='data.liftingmoving.shove' class='gcs-input-4' type='text' value='{{data.liftingmoving.shove}}' />
+    {{else}}
+      {{data.liftingmoving.shove}}
+    {{/if}}
+  </div>
+  <div class='liftdesc'>
+    {{i18n 'GURPS.shoveAndKnockOver'}}
+  </div>
+  {{#if data.liftingmoving.runningshove}}
+    <div class='lift gga-right'>
+      {{#if isEditing}}
+        <input
+          name='data.liftingmoving.runningshove'
+          class='gcs-input-4'
+          type='text'
+          value='{{data.liftingmoving.runningshove}}'
+        />
+      {{else}}
+        {{data.liftingmoving.runningshove}}
+      {{/if}}
+    </div>
+    <div class='liftdesc'>
+      {{i18n 'GURPS.runningShoveAndKnockOver'}}
+    </div>
+  {{/if}}
+  <div class='lift gga-right'>
+    {{#if isEditing}}
+      <input
+        name='data.liftingmoving.carryonback'
+        class='gcs-input-4'
+        type='text'
+        value='{{data.liftingmoving.carryonback}}'
+      />
+    {{else}}
+      {{data.liftingmoving.carryonback}}
+    {{/if}}
+  </div>
+  <div class='liftdesc'>
+    {{i18n 'GURPS.carryOnBack'}}
+  </div>
+  <div class='lift gga-right'>
+    {{#if isEditing}}
+      <input
+        name='data.liftingmoving.shiftslightly'
+        class='gcs-input-4'
+        type='text'
+        value='{{data.liftingmoving.shiftslightly}}'
+      />
+    {{else}}
+      {{data.liftingmoving.shiftslightly}}
+    {{/if}}
+  </div>
+  <div class='liftdesc'>
+    {{i18n 'GURPS.shiftSlightly'}}
+  </div>
+</div>

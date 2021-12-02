@@ -4,105 +4,25 @@ keys in [lang/pt_br.json] that are missing in [lang/en.json]
   __NOTE TO TRANSLATOR__
 ------------
 keys in [lang/en.json] that are missing in [lang/pt_br.json]
-  GURPS.allDamage
-  GURPS.allTheDamage
-  GURPS.applyAllToTarget
-  GURPS.chatFixedDamage
-  GURPS.chatRollingDamage
-  GURPS.equipmentTechlevel
+  GURPS.adDisad
+  GURPS.adDisadQuirkPerk
+  GURPS.addTitle
+  GURPS.conditionalModifier
+  GURPS.delete
+  GURPS.equipmentFoundryItem
+  GURPS.fromEllipses
   GURPS.gameAidUsersGuide
-  GURPS.importGCAChildrenWeights
-  GURPS.maneuver
-  GURPS.minimumDamageRule
-  GURPS.pdfDamageRoll
-  GURPS.pointDamage
-  GURPS.pointsDamage
-  GURPS.resourceInvalidAlias
-  GURPS.settingBasicPDFs
-  GURPS.settingBasicPDFsCombined
-  GURPS.settingBasicPDFsSeparate
-  GURPS.settingBlockImport
-  GURPS.settingCalculateEnc
-  GURPS.settingCombatInitiative
-  GURPS.settingConvertRanged
-  GURPS.settingDamageAD
-  GURPS.settingDamageBluntTrauma
-  GURPS.settingDamageCondInjury
-  GURPS.settingDamageLocation
-  GURPS.settingDamageLocationMods
-  GURPS.settingDamageMath
-  GURPS.settingDamageRestrictADD
-  GURPS.settingDamageSimpleADD
-  GURPS.settingEnhancedInput
-  GURPS.settingFlagItems
-  GURPS.settingFlagUserCreated
-  GURPS.settingHintBasicPDFs
-  GURPS.settingHintBlockImport
-  GURPS.settingHintCalculateEnc
-  GURPS.settingHintCombatInitiative
-  GURPS.settingHintConvertRanged
-  GURPS.settingHintDamagCondInjury
-  GURPS.settingHintDamageAD
-  GURPS.settingHintDamageBluntTrauma
-  GURPS.settingHintDamageLocation
-  GURPS.settingHintDamageLocationMods
-  GURPS.settingHintDamageMath
-  GURPS.settingHintDamageRestrictADD
-  GURPS.settingHintDamageSimpleADD
-  GURPS.settingHintEnhancedInput
-  GURPS.settingHintFlagItems
-  GURPS.settingHintFlagUserCreated
-  GURPS.settingHintImportHPAndFP
-  GURPS.settingHintImportIgnoreName
-  GURPS.settingHintManeuverDetail
-  GURPS.settingHintManeuverVisibility
-  GURPS.settingHintMookGenerator
-  GURPS.settingHintPlayerBlindRoll
-  GURPS.settingHintPlayerChatPrivate
-  GURPS.settingHintQtyItems
-  GURPS.settingHintRangeStrategy
-  GURPS.settingHintShowDiceRoller
-  GURPS.settingHintShowNavigation
-  GURPS.settingHintShowReadMe
-  GURPS.settingHintStatusReeling
-  GURPS.settingHintStatusWhisper
-  GURPS.settingHintUseEquipped
-  GURPS.settingImportBodyPlan
-  GURPS.settingImportBodyPlanAsk
-  GURPS.settingImportBodyPlanIgnore
-  GURPS.settingImportBodyPlanUseFile
-  GURPS.settingImportHPAndFP
-  GURPS.settingImportHPAndFPAsk
-  GURPS.settingImportHPAndFPIgnore
-  GURPS.settingImportHPAndFPUseFile
-  GURPS.settingImportHintBodyPlan
-  GURPS.settingImportIgnoreName
-  GURPS.settingLabelMookGenerator
-  GURPS.settingManeuverDetail
-  GURPS.settingManeuverDetailFull
-  GURPS.settingManeuverDetailGeneral
-  GURPS.settingManeuverDetailNoFeint
-  GURPS.settingManeuverEveryone
-  GURPS.settingManeuverGMOnly
-  GURPS.settingManeuverNoOne
-  GURPS.settingManeuverVisibility
-  GURPS.settingMookGenerator
-  GURPS.settingPlayerBlindRoll
-  GURPS.settingPlayerChatPrivate
-  GURPS.settingQtyItems
-  GURPS.settingRangeStrategy
-  GURPS.settingRangeStrategyRangeBands
-  GURPS.settingRangeStrategyStandard
-  GURPS.settingShowDiceRoller
-  GURPS.settingShowNavigation
-  GURPS.settingShowReadMe
-  GURPS.settingStatusReeling
-  GURPS.settingStatusWhisper
-  GURPS.settingUseEquipped
-  GURPS.targeting
-  GURPS.tired
-  GURPS.unconscious
-  __System Settings__
+  GURPS.modifierDefDeceptiveAttack
+  GURPS.moveToOtherEquipment
+  GURPS.removeItem
+  GURPS.settingHintRemoveUnequipped
+  GURPS.settingImportBrowserImporter
+  GURPS.settingImportHintBrowserImporter
+  GURPS.settingRemoveUnequipped
+  GURPS.sortAscending
+  GURPS.sortContentsAscending
+  GURPS.sortContentsDescending
+  GURPS.sortDescending
 ------------
 values in [lang/en.json] that are the same in [lang/pt_br.json]
   GURPS.ID: ID
@@ -127,6 +47,7 @@ values in [lang/en.json] that are the same in [lang/pt_br.json]
   GURPS.ok: OK
   GURPS.pdfBlockRetreat: B377
   GURPS.pdfCrippling: B420
+  GURPS.pdfDamageRoll: B378
   GURPS.pdfDeceptiveAttack: B369
   GURPS.pdfDeterminedAttack: B365
   GURPS.pdfDodgeAcrobatic: B374
@@ -150,6 +71,8 @@ values in [lang/en.json] that are the same in [lang/pt_br.json]
   GURPS.pdfTempAttribPenalties: B421
   GURPS.pdfTired: B426
   GURPS.resourceTemplateAlias: Alias
+  GURPS.settingImportEncodingISO8859: ISO-8859-1 (default)
+  GURPS.settingImportEncodingUTF8: UTF-8
   GURPS.title: GURPS
   Skill Names__: =========
   __ Character AddsDisadsPerksQuirks__: =========
@@ -180,3 +103,4 @@ values in [lang/en.json] that are the same in [lang/pt_br.json]
   __Resource Trackers__: =========
   __Slam Calculator__: =========
   __Status/Conditions__: =========
+  __System Settings__: =========

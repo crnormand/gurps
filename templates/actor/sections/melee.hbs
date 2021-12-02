@@ -1,0 +1,102 @@
+<div id='melee' class='gga-table with-notes'>
+  <div class='itemmenu header' readonly></div>
+  <div class='desc header'>
+    <div class='headermenu'>
+      <span>{{i18n 'GURPS.meleeWeapons'}}</span>
+      <i class='fas fa-caret-square-down'></i>
+    </div>
+  </div>
+  <div class='usage header'>{{i18n 'GURPS.usage'}}</div>
+  <div class='level header'>{{i18n 'GURPS.level'}}</div>
+  <div class='parry header'>{{i18n 'GURPS.parry'}}</div>
+  <div class='block header'>{{i18n 'GURPS.block'}}</div>
+  <div class='damage header'>{{i18n 'GURPS.damage'}}</div>
+  <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
+  <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
+
+  {{#each (flatlist data.melee)}}
+    {{#if ../isEditing}}
+      <div class='itemmenu meleemenu' data-key='data.melee.{{@key}}'>
+        <i class='fas fa-times'></i>
+      </div>
+
+      <div class='desc indent{{indent}}' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.name' class='gcs-input-25' type='text' value='{{name}}' />
+        <div class='list_note'>
+          <input name='data.melee.{{@key}}.notes' class='gcs-input-25' type='text' value='{{notes}}' />
+        </div>
+      </div>
+
+      <div class='usage' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.mode' class='gcs-input' type='text' value='{{mode}}' />
+      </div>
+      <div class='level' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.import' class='gcs-input-sm2' type='text' value='{{import}}' />
+      </div>
+      <div class='parry' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.parry' class='gcs-input-sm4' type='text' value='{{parry}}' />
+      </div>
+      <div class='block' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.block' class='gcs-input-sm4' type='text' value='{{block}}' />
+      </div>
+      <div class='damage' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.damage' class='gcs-input' type='text' value='{{damage}}' />
+      </div>
+      <div class='reach' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.reach' class='gcs-input-sm3' type='text' value='{{reach}}' />
+      </div>
+      <div class='st' data-key='data.melee.{{@key}}'>
+        <input name='data.melee.{{@key}}.st' class='gcs-input-sm2' type='text' value='{{st}}' />
+      </div>
+    {{else}}
+      {{#unless isCollapsed}}
+        <div class='itemmenu' readonly></div>
+
+        <div class='meleedraggable' data-key='data.melee.{{@key}}'>
+          <div class='desc dblclkedit indent{{indent}}'>
+            <div class='gga-desc-text'>
+              <div>
+                {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}}
+                {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}}
+              </div>
+              <div class='tooltip gga-manual'>
+                {{{gurpslink name}}}
+                {{#if (displayItemHover this)}}
+                  <div class='tooltiptext gga-manual'><img src='{{img}}' /></div>
+                {{/if}}
+              </div>
+              <div>
+                {{#if (isFoundryItem this)}}
+                  <i class='fas fa-star tooltip gga-item'>
+                    <span class='tooltiptext'>{{i18n "GURPS.equipmentFoundryItem"}}</span>
+                  </i>
+                {{/if}}
+              </div>
+            </div>
+            <div class='list_note'>
+              {{{gurpslink notes}}}
+            </div>
+          </div>
+        </div>
+
+        <div
+          class='usage rollable flex-center'
+          data-name='{{name}} ({{mode}})'
+          data-key='data.melee.{{@key}}'
+          data-otf='M:"{{name}} ({{mode}})"'
+        >{{mode}}</div>
+        <div
+          class='level rollable flex-center'
+          data-name='{{name}} ({{mode}})'
+          data-key='data.melee.{{@key}}'
+          data-otf='M:"{{name}} ({{mode}})"'
+        >{{level}}</div>
+        <div class='parry rollable flex-center' data-otf='P:"{{name}} ({{mode}})"'>{{parry}}</div>
+        <div class='block rollable flex-center' data-otf='B:"{{name}} ({{mode}})"'>{{block}}</div>
+        <div class='damage rollable flex-center' data-damage data-otf='{{damage}}'>{{damage}}</div>
+        <div class='reach flex-center'>{{reach}}</div>
+        <div class='st flex-center'>{{st}}</div>
+      {{/unless}}
+    {{/if}}
+  {{/each}}
+</div>

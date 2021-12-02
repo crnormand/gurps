@@ -2,6 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { i18n, i18n_f, locateToken, makeRegexPatternFrom } from '../../lib/utilities.js'
+import { GurpsActor } from '../actor/actor.js'
 
 const Command = {
   on: 'set',
@@ -16,31 +17,53 @@ const Command = {
   list: 'list',
 }
 
+/** @typedef {{id: string, label: string, icon: string}} EffectData */
+
 export default class StatusChatProcessor extends ChatProcessor {
   static regex() {
-    return /^\/(st|status) +(toggle|t|on|off|\+|-|clear|set|unset|list) *([^\@: ]+)? *(\@self|:\S+)?/i
+    return /^\/(st|status) +(?<command>toggle|t|on|off|\+|-|clear|set|unset|list) *(?<name>[^\@: ]+)? *(?<target>\@self|:\S+)? *(?<data>\{.*\})?/i
   }
 
   help() {
-    return '/status on|off|t|clear|list &lt;status&gt;'
+    return '/status on|off|t|clear|list &lt;status&gt; (@self|:name) ({ turns: x })'
   }
 
+  /**
+   * @param {string} line
+   * @returns
+   */
   matches(line) {
     this.match = line.match(StatusChatProcessor.regex())
     return !!this.match
   }
 
-  async process(_) {
-    let m = this.match
+  usagematches(line) {
+    return line.match(/^[\/\?](st|status)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpStatus");
+  }
 
-    let commandText = this.match[2].trim().toLowerCase()
+  /**
+   * @param {string} _
+   */
+  async process(_) {
+    if (!this.match) throw new Error('match does not exist! Did you call ChatProcessor.matches()?')
+
+    let commandText = this.match.groups?.command
+    // @ts-ignore
     let theCommand = Command[commandText]
     if (theCommand == Command.list) return this.priv(this.list())
 
-    let self = this.match[4] === '@self'
-    let tokenName = !self && !!this.match[4] ? this.match[4].replace(/^:(.*)$/, '$1') : null
+    let self = this.match.groups?.target /* this.match[4] */ === '@self'
+    let tokenName = !self && !!this.match.groups?.target ? this.match.groups.target.replace(/^:(.*)$/, '$1') : null
 
-    let tokens = !!tokenName ? this.getTokensFor(tokenName) : !!self ? this.getSelfTokens() : canvas.tokens.controlled
+    let tokens = !!tokenName
+      ? this.getTokensFor(tokenName)
+      : !!self
+      ? this.getSelfTokens()
+      : canvas.tokens?.controlled
+
     if (!tokens || tokens.length === 0) {
       ui.notifications.warn(i18n_f('GURPS.chatSelectSelfOrNameTokens', { self: '@self' }))
       return
@@ -48,11 +71,17 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     if (theCommand == Command.clear) return await this.clear(tokens)
 
-    let effectText = this.match[3]?.trim()
+    let effectText = this.match.groups?.name?.trim() //this.match[3]?.trim()
     let effect = !!effectText ? this.findEffect(effectText) : null
     if (!effect) {
       ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
       return
+    }
+
+    if (this.match.groups?.data) {
+      let data = JSON.parse(this.match.groups.data)
+      data.duration.combat = game.combats?.active?.id
+      mergeObject(effect, data)
     }
 
     if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
@@ -61,13 +90,18 @@ export default class StatusChatProcessor extends ChatProcessor {
     else ui.notifications.warn(`Unexpected error: command: ${theCommand} (${this.match})`)
   }
 
+  /**
+   * @returns {string} a string containing an HTML fragment that represents a table of possible statuses
+   */
   list() {
     let html = `<table style='font-size: smaller;'><tr><th>${i18n('GURPS.ID')}</th><th>${i18n('GURPS.name')}</th></tr>`
+    /** @type {EffectData[]} */
     let sortedEffects = []
     let effectIds = Object.values(CONFIG.statusEffects.map(it => i18n(it.id)))
     effectIds.sort()
     for (const id of effectIds) {
-      sortedEffects.push(CONFIG.statusEffects.find(it => it.id === id))
+      let effect = CONFIG.statusEffects.find(it => it.id === id)
+      if (effect) sortedEffects.push(effect)
     }
 
     sortedEffects.forEach(s => {
@@ -76,6 +110,9 @@ export default class StatusChatProcessor extends ChatProcessor {
     return html + '</table>'
   }
 
+  /**
+   * @param {string} name
+   */
   getTokensFor(name) {
     let matches = locateToken(name)
 
@@ -92,15 +129,18 @@ export default class StatusChatProcessor extends ChatProcessor {
   }
 
   getSelfTokens() {
-    let tokens = canvas.tokens.placeables.filter(it => it.constructor.name === 'Token')
-    let list = tokens.filter(it => it.owned)
-    if (list.length === 1) return list
+    let list = canvas.tokens?.placeables.filter(it => it.owner)
+    if (list && list.length === 1) return list
 
-    let msg = list.length === 0 ? i18n('GURPS.chatNoOwnedTokenFound') : i18n('GURPS.chatMultipleOwnedFound')
+    let msg = list && list.length === 0 ? i18n('GURPS.chatNoOwnedTokenFound') : i18n('GURPS.chatMultipleOwnedFound')
     ui.notifications.warn(msg)
     return null
   }
 
+  /**
+   * @param {string} statusText
+   * @returns {EffectData|null}
+   */
   findEffect(statusText) {
     let pattern = !statusText ? '.*' : new RegExp(makeRegexPatternFrom(statusText)) // Make string into a RegEx pattern
 
@@ -113,32 +153,52 @@ export default class StatusChatProcessor extends ChatProcessor {
     return effect
   }
 
+  /**
+   * @param {Token} token
+   * @param {EffectData} effect
+   * @returns {boolean}
+   */
   isEffectActive(token, effect) {
-    let actor = token?.actor || game.actors.get(token.actorId)
+    /** @type {GurpsActor} */
+    // @ts-ignore
+    let actor = token?.actor || game.actors?.get(token.data.actorId)
     return actor.isEffectActive(effect)
     // return actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
   }
 
+  /**
+   *
+   * @param {Token} token
+   * @param {EffectData|null} effect
+   * @param {string} actionText
+   */
   async toggleTokenEffect(token, effect, actionText) {
     if (!!effect) {
       await token.toggleEffect(effect)
+      let actor = /** @type {GurpsActor} */ (token.actor)
       // TODO We need to turn this into a single string, instead of multiple i18n strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.
-      this.prnt(
-        `${i18n(actionText)} [${effect.id}:'${i18n(effect.label)}'] ${i18n('GURPS.for')} ${token.actor.displayname}`
-      )
+      this.prnt(`${i18n(actionText)} <i>${effect.id}:'${i18n(effect.label)}'</i> ${i18n('GURPS.for')} ${actor.displayname}`)
     }
   }
 
+  /**
+   * @param {Token[]} tokens
+   * @param {EffectData} effect
+   */
   async toggle(tokens, effect) {
     for (const token of tokens) {
       this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
     }
   }
 
+  /**
+   * @param {Token[]} tokens
+   * @param {EffectData} effect
+   */
   async unset(tokens, effect) {
     for (const token of tokens) {
-      for (const actorEffect of token.actor.effects) {
+      for (const actorEffect of token.actor?.effects || []) {
         if (effect.id == actorEffect.getFlag('core', 'statusId')) {
           await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
         }
@@ -146,22 +206,35 @@ export default class StatusChatProcessor extends ChatProcessor {
     }
   }
 
+  /**
+   * @param {Token[]} tokens
+   * @param {EffectData} effect
+   */
   async set(tokens, effect) {
     for (const token of tokens) {
       if (!this.isEffectActive(token, effect)) await this.toggleTokenEffect(token, effect, 'GURPS.chatToggling')
     }
   }
 
+  /**
+   * @param {Token[]} tokens
+   */
   async clear(tokens) {
     for (const token of tokens)
-      for (const actorEffect of token.actor.effects)
+      for (const actorEffect of token.actor?.effects || [])
         await this.toggleTokenEffect(token, this.getStatusEffect(actorEffect), 'GURPS.chatClearing')
   }
 
+  /**
+   * @param {ActiveEffect} actorEffect
+   * @returns {EffectData|null}
+   */
   getStatusEffect(actorEffect) {
-    for (const status of Object.values(CONFIG.statusEffects))
+    for (const tatus of Object.values(CONFIG.statusEffects))
       if (status.id == actorEffect.getFlag('core', 'statusId')) return status
 
     return null
   }
 }
+
+// ---------------

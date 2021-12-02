@@ -44,7 +44,7 @@ export class IfChatProcessor extends ChatProcessor {
     }
     let action = parselink(otf)
     if (!!action.action) {
-      if (['skill-spell', 'attribute', 'attack', 'controlroll', 'chat'].includes(action.action.type)) {
+      if (['skill-spell', 'attribute', 'attack', 'controlroll', 'chat', 'test-exists'].includes(action.action.type)) {
         this.priv(line)
         this.send()
         let event = this.msgs().event

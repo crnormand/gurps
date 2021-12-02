@@ -1,19 +1,24 @@
 {
   "name": "gurps",
-  "title": "GURPS 4th Edition Game Aid (Unofficial)",
+  "title": "GURPS 4th Ed. Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
-  "version": "0.10.5",
+  "version": "0.12.8",
   "minimumCoreVersion": "0.8.5",
-  "compatibleCoreVersion": "0.8.6",
+  "compatibleCoreVersion": "0.8.9",
   "templateVersion": 2,
   "author": "Chris Normand/Nose66",
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
+  "scripts": [
+    "scripts/jquery.tinycolorpicker.js"
+  ],
   "styles": [
     "styles/simple.css",
     "styles/css_boilerplate.css",
     "styles/simplified.css",
     "styles/npc-input.css",
-    "styles/apps.css"
+    "styles/apps.css",
+    "styles/color-character-sheet.css",
+    "styles/tinycolorpicker.css"
   ],
   "packs": [],
   "languages": [
@@ -44,7 +49,7 @@
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/archive/0.10.5.zip",
+  "download": "https://github.com/crnormand/gurps/archive/0.12.8.zip",
   "socket": true,
   "license": "LICENSE.txt"
 }

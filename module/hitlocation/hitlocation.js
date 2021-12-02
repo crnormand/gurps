@@ -1,6 +1,6 @@
 'use strict'
 
-import { extractP, convertRollStringToArrayOfInt } from '../../lib/utilities.js'
+import { extractP, convertRollStringToArrayOfInt, i18n } from '../../lib/utilities.js'
 
 export const LIMB = 'limb'
 export const EXTREMITY = 'extremity'
@@ -27,13 +27,16 @@ export class HitLocation {
 
   constructor(loc = '', dr = '0', penalty = '', roll = HitLocation.DEFAULT, equipment = '') {
     this.where = loc
-    this.dr = dr
+    this.import = dr // With the introduction of Items, the starting hit location DR level is stored in 'import', and then 'dr' is calculated by the actor
     this.equipment = equipment
     this.penalty = penalty
     this.roll = roll
     return this
   }
 
+  /**
+   * To be called from an 'init' Hook.
+   */
   static init() {
     // README: The keys in this object literal (Eye, Eyes, Skull, etc...) are directly used in
     // README: the language files for i18n, with the prefix 'GURPS.hitLocation' (example:
@@ -330,6 +333,54 @@ export class HitLocation {
   }
 
   /**
+   * To be called on Hook.ready
+   */
+  static ready() {
+    translations[i18n('GURPS.hitLocationArm, holding shield')] = 'Arm, holding shield'
+    translations[i18n('GURPS.hitLocationArm')] = 'Arm'
+    translations[i18n('GURPS.hitLocationBrain')] = 'Brain'
+    translations[i18n('GURPS.hitLocationChest')] = 'Chest'
+    translations[i18n('GURPS.hitLocationChinks in Other')] = 'Chinks in Other'
+    translations[i18n('GURPS.hitLocationChinks in Torso')] = 'Chinks in Torso'
+    translations[i18n('GURPS.hitLocationExtremity')] = 'Extremity'
+    translations[i18n('GURPS.hitLocationEye')] = 'Eye'
+    translations[i18n('GURPS.hitLocationEyes')] = 'Eyes'
+    translations[i18n('GURPS.hitLocationFace, from behind')] = 'Face, from behind'
+    translations[i18n('GURPS.hitLocationFace')] = 'Face'
+    translations[i18n('GURPS.hitLocationFin')] = 'Fin'
+    translations[i18n('GURPS.hitLocationFoot')] = 'Foot'
+    translations[i18n('GURPS.hitLocationForeleg')] = 'Foreleg'
+    translations[i18n('GURPS.hitLocationGroin')] = 'Groin'
+    translations[i18n('GURPS.hitLocationHand')] = 'Hand'
+    translations[i18n('GURPS.hitLocationHind Leg')] = 'Hind Leg'
+    translations[i18n('GURPS.hitLocationJaw')] = 'Jaw'
+    translations[i18n('GURPS.hitLocationLeft Arm, holding shield')] = 'Left Arm, holding shield'
+    translations[i18n('GURPS.hitLocationLeft Arm')] = 'Left Arm'
+    translations[i18n('GURPS.hitLocationLeft Leg')] = 'Left Leg'
+    translations[i18n('GURPS.hitLocationLeg')] = 'Leg'
+    translations[i18n('GURPS.hitLocationLimb Vein/Artery')] = 'Limb Vein/Artery'
+    translations[i18n('GURPS.hitLocationMid Leg')] = 'Mid Leg'
+    translations[i18n('GURPS.hitLocationNeck Vein/Artery')] = 'Neck Vein/Artery'
+    translations[i18n('GURPS.hitLocationNeck')] = 'Neck'
+    translations[i18n('GURPS.hitLocationNose')] = 'Nose'
+    translations[i18n('GURPS.hitLocationRight Arm, holding shield')] = 'Right Arm, holding shield'
+    translations[i18n('GURPS.hitLocationRight Arm')] = 'Right Arm'
+    translations[i18n('GURPS.hitLocationRight Leg')] = 'Right Leg'
+    translations[i18n('GURPS.hitLocationSkull, from behind')] = 'Skull, from behind'
+    translations[i18n('GURPS.hitLocationSkull')] = 'Skull'
+    translations[i18n('GURPS.hitLocationTail')] = 'Tail'
+    translations[i18n('GURPS.hitLocationTorso')] = 'Torso'
+    translations[i18n('GURPS.hitLocationVitals, Heart')] = 'Vitals, Heart'
+    translations[i18n('GURPS.hitLocationVitals')] = 'Vitals'
+    translations[i18n('GURPS.hitLocationWhere')] = 'Where'
+    translations[i18n('GURPS.hitLocationWing')] = 'Wing'
+  }
+
+  static translate(text) {
+    return !!translations[text] ? translations[text] : text
+  }
+
+  /**
    * Given a bodyplan, return the associated hit location table. (Default to 'humanoid').
    *
    * @param {String} bodyplan
@@ -393,6 +444,7 @@ export class HitLocation {
       if (includeself) locations.push(this)
       entry.prefix.forEach(it => {
         let location = new HitLocation()
+        location.import = this.import
         location.dr = this.dr
         location.equipment = this.equipment
         location.where = `${it} ${this.where}`
@@ -431,3 +483,4 @@ var cancroidHitLocations = null
 var scorpionHitLocations = null
 var ichthyoidHitLocations = null
 var arachnoidHitLocations = null
+var translations = {}

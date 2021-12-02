@@ -2,7 +2,191 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-0.11.0
+Release 0.12.8 12/1/2021
+
+- Added drag drop into chat log and chat input field
+- Fixed equipped parry if weapon name contains more info than the equipment
+- Added drag and drop into mook generator (to quickly create entries)
+- Added link to Foundry lighting page for /light help
+- Updated animation list to JB2A 3.2 
+
+Release 0.12.7 11/30/2021
+
+- Added /man into /help list
+- Fixed /w help information
+- Updated Users Guide (and associated PDF)
+
+Release 0.12.6 11/30/2021
+
+- Updated GCA export to make OtF-able CR: when exporting (@Stevil)
+- Updated 'export to Foundry VTT.gce', moved the modifiers from the 'name' tag to be part of the 'text' tag in the Ads/Disads (@Stevil)
+- Updated GCA export validation to GCA-10
+- Add /maneuver /man chat command to set maneuver
+- Fixed dragging multiple modifier buckets onto the same macro (replace works correctly now)
+- Fixed equipped status mirrors carried status (and all items contained within)
+- Fixed /showmbs command
+- Fixed [S:skill -mod] where mod was being applied twice
+- Fixed +/- buttons on equipment list
+- Added +/- buttons to Uses column in equipment list
+- Added HTTP link support for all lists (not just equipment)
+- Added /show fright move speed
+
+Release 0.12.5 11/23/2021
+
+- Fixed a bug with the ADD applying damage to a resource tracker.
+- Remove chat messages for ranged attack modifiers on postures. (Will be replaced by target modifier list window).
+- Updated color picker to speed up GGA load time
+- Added drag and drop of OtFs from chat & journals
+- Changed drag and drop macros to be chat macros (instead of script)
+- Allow OtF macros to be merged on drag and drop
+
+Release 0.12.4 11/16/2021
+
+- Added drag and drop to quick notes
+- Added support for Test function [?XX:nane] where XX is A: ads & attack (melee & range), AD: ads, AT: attack, M: melee, R: ranged, S: skills & spells, SK: skills, SP: spells
+- Updated color selection code (@Stevil)
+- Hopefully fixed skill layout issues (@Stevil)
+- Hopefully fixed "GURPS Instant Defaults" issue.
+
+Release 0.12.3 11/11/2021
+
+- Fixed misspelling of variable name
+
+Release 0.12.2 11/11/2021
+
+- Add data protection code displayNumber and try catch to migration functions
+
+Release 0.12.1 11/11/2021
+
+- Add data protection code in updateToken()
+
+Release 0.12.0 11/10/2021
+
+- Implemented Active Effects framework.
+- Added Posture (as an Active Effect) to Conditions.
+- Rewrote Reeling and Exhausted to be Active Effects.
+- Add Effects Modifier popup window.
+- Added "Mental Stun" to status effects.
+- Updated German translation.
+- Added /help chat-command or ?chat-command help text.
+- Merged @Stevil's custom actor sheet colorization code
+- Added a fix to make GGA compatible with Mythic GM module (may also fix other module compatibilities)
+- Made Skill & Spell RSL column 'rollable'
+- Add 'Combat Move' to Conditions.
+- Allow user to opt-out of Maneuvers updating Move.
+- Big rewrite of actor sheets and editor.
+- Update to JB2A 3.0
+
+Release 0.11.12 10/16/2021
+
+- Fixed P & B OtF modifiers for Parry and Block by specific weapon ;-) Thanks danielrab!
+
+Release 0.11.11 10/15/2021
+
+- Added P & B OtF modifiers for Parry and Block by specific weapon
+- Updated charactersheet to use new P & B OtF formulas
+- Fixed some minor bugs (drag/drop modifier bucket)
+
+Release 0.11.10 10/14/2021
+
+- Fix for non-english character sheets
+- Added 'usage' to OtF reported in chat log
+- Made USAGE column clickable to roll attack
+- Allow OtF formulas to replace Attack/Skill names, i.e.["Rapier"A:Rapier] so name of weapon is rollable
+
+Release 0.11.9 10/08/2021
+
+- Merged in @WeirdBread's fix to the tight beam burning wounding modifier to the vitals (from 3x, which was wrong, to 2x).
+- Fixed Reaction spelling
+- Added data protection clauses
+
+Release 0.11.8 10/07/2021
+
+- Added system setting, unequipped items not displayed in melee or ranged attacks
+- Added danialrab's browser support to remember the last import location (and system setting)
+- Updated anim support for JB2A's Vasselheim release (0.2.6)
+- Rewrote the Maneuver system to be Foundry ActiveEffects.
+- Resolved several bugs with Maneuvers (randomly not clearing, UI warnings when changing Maneuver settings, keeping Maneuver as the first icon in the list).
+- Store the last targeted roll for every actor in the GURPS object (`GURPS.lastTargetedRolls`). Use the actor's or token's ID to fetch a data object with the results of that roll. This might be used in a macro to get and use margin of success, for example.
+
+Example:
+
+```js
+let actor = game.actors.getName('Arne Arneson')
+let data = GURPS.lastTargetedRolls[actor.id]
+console.log(
+  `check: [${data.thing}], modified target: [${data.finaltarget}], roll total: [${data.rtotal}], margin of success: [${data.margin}]`
+)
+```
+
+This prints: `check: [Broadsword ], modified target: [15], roll total: [13], margin of success: [2]`
+
+- Fixed the /li (light) chat command to correctly accept color intensity value
+- Added [Cool Macros](https://github.com/crnormand/gurps/wiki/Cool-Macros) example wiki page.
+- Implemented double knockback (dkb) damage modifier. E.g., `[3d+1 cr dkb]` works.
+- Implemented no knockback (nkb) damage modifier (`[3d+1 cr nkb]` results in no knockback regardless of target's ST).
+- Updated Brazilian Portuguese language file (thanks, Frerol!). Who wants to tackle Russian and German?
+- Optionally allow a damage OTF to include a hit location. E.g., `[3d cr dkb @Vitals]`. Location must exactly match a hit location on the targeted actor.
+- Fixed an issue with Western European style decimals (such as '6,25') in the Basic Speed field during imports. If the value contains a comma (',') character, it is parsed as if it is Western European; otherwise it is parsed as if it is US/UK ('6.25').
+- More maneuver tweaks -- I think it really works correctly now.
+- Implemented tight beam burning from B399. To use this, add the 'tbb' damage modifier with the 'burn' damage type (for example, `[6d burn tbb]`).
+- Added portrait to NPC and NPC-CI actor sheets.
+- Added Encumbrance, Move & Dodge and Lifting & Moving Things to Combat tab in the Tabbed Actor sheet.
+- Report all rolled items as OtF formulas (so they can be re-rolled).
+
+Release 0.11.7 - 7/22/2021
+
+- Added GURPS.recurselist()
+
+Release 0.11.6 - 7/22/2021
+
+- Fixed bug when trying to roll skill that contained [ ] in the name
+
+Release 0.11.5 - 7/21/2021
+
+- Fixed mook parsing issue (for mooks with no Traits)
+- Update tooltip mods to include "-1 due to deceptive attack"
+- Added 'Quick Sheet' system setting
+- Added quick roll for damage /dmg-formula or .dmg-formula
+- Fixed compendium import for ROF field
+- Fixed import DRs like "0 + 8" and correctly handles "Arms" to "Left Arm/Right Arm" mapping again.
+- Added system setting for UTF-8 import encoding
+- Mouse wheel over Modifier Bucket adds modifier
+- Added /sound chat command
+- Reskinned the Fright Check UI, added clickable margins of success/failure
+- Added the ability for Trusted players or GM to roll physical dice and enter the results into the game aid.
+- Shorten Foundry name so that it doesn't wrap on Game Settings tab
+- Support for JB2A "Scanlan" release
+- Don't display Item icon if it is the default "icons/svg/item-bag.svg"
+- Added Dodge and Move to Combat tab of tabbed sheet
+- Fixed /light command now accepts decimals /light 2.9 0.7
+- Fixed /show skill where skill name contains a single quote
+- Fixed drag and drop EQT in tabbed view
+
+Release 0.11.4 - 7/01/2021
+
+- Fixed Fright Check /fc table roll
+- Added "move" to centered animations, scale affect targeted Y, c:xp,yp set offset
+- System setting to automatically save QTY/count on equipment
+- Fixed "Level" column in melee/ranged weapons goes blank or NaN after using resource tracker
+- Support for JB2A "Raishan" release (which includes new bullet and snipe animations)
+- Fixed speaker token for dice rolls, so that modules that are expecting a token can use it, i.e. Cautious Gamemaster's Pack
+- Integrated LegendSmith's NPC CI sheet and Survivable guns Special (4) Armor Divisor
+
+Release 0.11.3 - 6/25/2021
+
+- Added "trigger" input fields for features (melee, ranged, etc.) in Item editor
+- Reworked targeted animation math
+
+Release 0.11.2 - 6/25/2021
+
+- Fixed error when /light animation type is provided "/li 6 2 torch"
+
+Release 0.11.1 - 6/25/2021
+
+- Fixed error that could occur during import "TypeError: rng.match is not a function"
+
+Release 0.11.0 - 6/25/2021
 
 - Merged in Rinickolous/neck's GCS Equipment importer!
 - Fixed ST based ranged calc so it will also apply to Items
@@ -16,7 +200,11 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 - Added combat maneuver icons to all tokens in a combat. Two new settings control the appearance of the maneuver icons.
 - reinstate /rolltable command
 - Added support Advanced Macros module argument passing
-- Added support for drag and drop Journal entries, Actors and Rolltables as OtFs
+- Added support for drag and drop Journal entries, Actors, Items and Rolltables as OtFs
+- Added support to drag and drop Items from compendiums and Item sheet
+- Support opening and closing the navigation bar (Full Sheet) without going to the system settings.
+- Provide UI feedback when doing navigation via the navigation bar.
+- Fixed wounding modifiers for imp and pi types on Injury Tolerance: Unliving.
 
 Release 0.10.5 - 6/12/2021
 
@@ -46,7 +234,7 @@ Release 0.10.3 - 6/11/2021
 - Fixed GCA export to correctly handle children weights
 - Items (and Item features) will hover display the Item icon (very basic... would love CSS help!)
 - Fixed GM "Send to" area to provide more room to see buttons
-- Fixed bug in Item creation.  Equipment can no longer contain other hidden equipment
+- Fixed bug in Item creation. Equipment can no longer contain other hidden equipment
 - Added OtF buttons for margin of success (Rolltable formula "3d6 + @gmodc")
 - Enhance /light to include intensity
 
@@ -275,7 +463,7 @@ Release 0.8.20 - 3/22/2021
 - Fixed GM Send to allow blind rolls
 - Fixed OtF coloration on skills
 - Support adding Resources as a custom damage type (https://github.com/crnormand/gurps/issues/386)
-- Allow the ADD to apply resource damage to the actor's resource tracker (https://github.com/crnormand/gurps/issues/385)
+- Allow the ADD to apply resource damage to the actors resource tracker (https://github.com/crnormand/gurps/issues/385)
 - Changed "User Entered DR" in the ADD to override the hit location DR (so you still get the other benefits of hitting a specific body part).
 - Added Control Points (Fantastic Dungeon Grappling: https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/) as a default Resource Tracker.
 - Modified Resource Trackers to optionally _accumulate_ damage, rather than subtracting damage from a resource. Enabled via the 'Damage Tracker' checkbox in the Resource Tracker editor.
@@ -313,7 +501,7 @@ Release 0.8.18 - 3/14/2021
 - Fixed bug with clearing a resource tracker.
 - Added custom thresholds and condition names for resource trackers. For a description and instructions, see this link: https://github.com/crnormand/gurps/issues/380
 - Fixed Shotgun RoF (3x9)
-- Added system setting to make player chat commands private (GM's chat commands are already private)
+- Added system setting to make player chat commands private (GMs chat commands are already private)
 - Fixed Skill names that included '(' and ')'
 
 Release 0.8.17 - 3/8/2021
@@ -329,7 +517,7 @@ Release 0.8.17 - 3/8/2021
 Release 0.8.16 - 3/6/2021
 
 - Bug fix for GCA exports. Now equipment with melee & ranged attacks appear in both (Spears)
-- Bug fix for GCA exports (with Armin's help!) Block is calculated correctly for items with DB (shields)
+- Bug fix for GCA exports (with Armins help!) Block is calculated correctly for items with DB (shields)
 - Add doubleclick edit to NPC Sheet Notes, Melee, Ranged, Ads, Skill and Spells list
 - Bug fix for limb, extremity, and eye crippling calculation. Originally the calculation was taking "crippling" as 1/2 HP or 1/3 HP exactly, but the RAW say it should be _over_ that threshold. Example: 10 HP character is hit in the arm with 8 points of damage; the arm is crippled if it takes _more than_ 5 points of damage (i.e., 6).
 - High rate of fire weapons damage is supported directly. Right-click on a damage roll to get a menu to enter the number of hits. There will be a new "ALL THE DAMAGE" draggable section of the damage chat message. Dragging that onto a character will apply all damage rolls in the ADD. The ADD has been enhanced to allow each damage calculation to be displayed, while applying the total.

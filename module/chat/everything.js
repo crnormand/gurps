@@ -2,7 +2,7 @@
 
 import ChatProcessor from './chat-processor.js'
 import { parselink } from '../../lib/parselink.js'
-import { isNiceDiceEnabled, splitArgs } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, splitArgs, i18n } from '../../lib/utilities.js'
 
 export class EveryoneAChatProcessor extends ChatProcessor {
   help() {
@@ -16,6 +16,13 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) reset/i)
     return !!this.match
   }
+  usagematches(line) {
+    return line.match(/^[\/\?](everyone|ev)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpEveryone");
+  }
+
   async process(line) {
     let m = this.match
     let any = false
@@ -78,6 +85,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
     this.match = line.match(/^\/(everyone|ev) ([fh]p) *([+-]\d+d\d*)?([+-=]\d+)?(!)?/i)
     return !!this.match
   }
+
   async process(line) {
     let m = this.match
     if (!!m[3] || !!m[4]) {
@@ -90,11 +98,14 @@ export class EveryoneCChatProcessor extends ChatProcessor {
           let value = mod
           let dice = m[3] || ''
           let txt = ''
+          let attr = m[2].toUpperCase()
+
           if (!!dice) {
             let sign = dice[0] == '-' ? -1 : 1
             let d = dice.match(/[+-](\d+)d(\d*)/)
-            let r = d[1] + 'd' + (!!d[2] ? d[2] : '6')
-            let roll = Roll.create(r).evaluate()
+            let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/ev ${attr}]`
+            let roll = Roll.create(r)
+            await roll.evaluate({ async: true })
             if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)
             value = roll.total
             if (!!mod)
@@ -106,7 +117,6 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             value *= sign
             txt = `(${value}) `
           }
-          let attr = m[2].toUpperCase()
           let cur = actor.data.data[attr].value
           let newval = parseInt(value)
           if (isNaN(newval)) {
@@ -146,7 +156,14 @@ export class RemoteChatProcessor extends ChatProcessor {
     return !!this.match
   }
 
-  process(line) {
+  usagematches(line) {
+    return line.match(/^[\/\?](remote|rem)$/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpRemote");
+  }
+
+  async process(line) {
     let m = this.match
     let action = parselink(m[2].trim())
     if (!!action.action) {
