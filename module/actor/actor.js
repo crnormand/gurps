@@ -828,6 +828,183 @@ export class GurpsActor extends Actor {
     }, 200)
   }
 
+  /**
+   * 
+   * @param {{ [key: string]: any}} json 
+   */
+  async importAttributesFromGCSv2(json) {
+    if (!json) return;
+    let data = this.getGurpsActorData();
+    let att = data.attributes;
+
+    att.ST.import = json.find(e => e.attr_id === "st").calc.value;
+    att.ST.points = json.find(e => e.attr_id === "st").calc.points;
+    att.DX.import = json.find(e => e.attr_id === "dx").calc.value;
+    att.DX.points = json.find(e => e.attr_id === "dx").calc.points;
+    att.IQ.import = json.find(e => e.attr_id === "iq").calc.value;
+    att.IQ.points = json.find(e => e.attr_id === "iq").calc.points;
+    att.HT.import = json.find(e => e.attr_id === "ht").calc.value;
+    att.HT.points = json.find(e => e.attr_id === "ht").calc.points;
+    att.WILL.import = json.find(e => e.attr_id === "will").calc.value;
+    att.WILL.points = json.find(e => e.attr_id === "will").calc.points;
+    att.PER.import = json.find(e => e.attr_id === "per").calc.value;
+    att.PER.points = json.find(e => e.attr_id === "per").calc.points;
+
+    data.HP.max = json.find(e => e.attr_id === "hp").calc.value;
+    data.HP.points = json.find(e => e.attr_id === "hp").calc.points;
+    data.FP.max = json.find(e => e.attr_id === "fp").calc.value;
+    data.FP.points = json.find(e => e.attr_id === "fp").calc.points;
+    let hp = json.find(e => e.attr_id === "hp").calc.current;
+    let fp = json.find(e => e.attr_id === "fp").calc.current;
+    let saveCurrent = false;
+    if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
+      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP);
+      if (option == 0) {
+        saveCurrent = true;
+      }
+      if (option == 2) {
+        saveCurrent = await new Promise((resolve, reject) => {
+          let d = new Dialog({
+            title: 'Current HP & FP',
+            content: `Do you want to <br><br><b>Save</b> the current HP (${data.HP.value}) & FP (${data.FP.value}) values or <br><br><b>Overwrite</b> it with the import data, HP (${hp}) & FP (${fp})?<br><br>&nbsp;`,
+            buttons: {
+              save: {
+                icon: '<i class="far fa-square"></i>',
+                label: 'Save',
+                callback: () => resolve(true),
+              },
+              overwrite: {
+                icon: '<i class="fas fa-edit"></i>',
+                label: 'Overwrite',
+                callback: () => resolve(false),
+              },
+            },
+            default: 'save',
+            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
+          })
+          d.render(true)
+        })
+      }
+    }
+    if (!saveCurrent) {
+      data.HP.value = hp;
+      data.FP.value = fp;
+    }
+
+    //todo later
+    let lm = {};
+    
+    data.basicmove.value = json.find(e => e.attr_id === "basic_move").calc.value;
+    data.basicmove.points = json.find(e => e.attr_id === "basic_move").calc.points;
+    data.basicspeed.value = json.find(e => e.attr_id === "basic_speed").calc.value;
+    data.basicspeed.points = json.find(e => e.attr_id === "basic_speed").calc.points;
+
+
+    data.thrust = ""
+    data.swing = ""
+    data.currentmove = ""
+    data.frightcheck = json.find(e => e.attr_id === "fright_check").calc.value;
+
+    data.hearing = json.find(e => e.attr_id === "hearing").calc.value;
+    data.tastesmell = json.find(e => e.attr_id === "taste_smell").calc.value;
+    data.touch = json.find(e => e.attr_id === "touch").calc.value;
+    data.vision = json.find(e => e.attr_id === "vision").calc.value;
+
+    return {
+      'data.attributes': att,
+      'data.HP': data.HP,
+      'data.FP': data.FP,
+      'data.basiclift': data.basiclift,
+      'data.basicmove': data.basicmove,
+      'data.basicspeed': data.basicspeed,
+      'data.thrust': data.thrust,
+      'data.swing': data.swing,
+      'data.currentmove': data.currentmove,
+      'data.frightcheck': data.frightcheck,
+      'data.hearing': data.hearing,
+      'data.tastesmell': data.tastesmell,
+      'data.touch': data.touch,
+      'data.vision': data.vision,
+      'data.liftingmoving': lm,
+    }
+  }
+
+  /**
+   * @param {string} json
+   * @param {string} importname
+   * @param {string | undefined} [importpath]
+   */
+  async importFromGCSv2(json, importname, importpath) {
+    let r = JSON.parse(json)
+    console.log("TEXT",r, importname, importpath);
+    let nm = r["profile"]["name"]
+    console.log("Importing '" + nm + "'");
+    let starttime = performance.now();
+    let commit = {}
+
+    commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ')}};
+    let ar = this.getGurpsActorData().additionalresources || {};
+    ar.importname = importname || ar.importname;
+    ar.importpath = importpath || ar.importpath;
+    commit = { ...commit, ...{ 'data.additionalresources': ar}};
+
+    commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes))};
+    // commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile)};
+    // commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages)};
+    // commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills)};
+    // commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells)};
+    // commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment)}
+    
+    console.log('Starting commit');
+    let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes('.-=')));
+    let adds = Object.fromEntries(Object.entries(commit).filter(([key, value]) => !key.includes('.-=')));
+
+    try {
+      this.ignoreRender = true
+      await this.internalUpdate(deletes, { diff: false })
+      await this.internalUpdate(adds, { diff: false })
+      // This has to be done after everything is loaded
+      await this.postImport()
+      this._forceRender()
+
+      // Must update name outside of protection so that Actors list (and other external views) update correctly
+      if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IGNORE_IMPORT_NAME)) {
+        await this.update({ name: nm, 'token.name': nm })
+      }
+
+      ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      console.log(
+        'Done importing (' +
+          Math.round(performance.now() - starttime) +
+          'ms.)  You can inspect the character data below:'
+      )
+      console.log(this)
+      return true
+    } catch (err) {
+      console.log(err.stack)
+      let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
+      if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
+      ui.notifications?.warn(msg.join('<br>'))
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+        lines: msg,
+        version: version,
+        GCAVersion: GCAVersion,
+        GCSVersion: GCSVersion,
+        url: GURPS.USER_GUIDE_URL,
+      })
+
+      let user = game.user
+      let chatData = {
+        user: game.user.id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        content: content,
+        whisper: [game.user.id],
+      }
+      ChatMessage.create(chatData, {})
+      return false
+    }
+  }
+
   // First attempt at import GCS FG XML export data.
   /**
    * @param {string} xml
@@ -835,6 +1012,7 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv1(xml, importname, importpath) {
+    if (importname.endsWith('.gcs')) return this.importFromGCSv2(xml, importname, importpath);
     const GCAVersion = 'GCA-10'
     const GCSVersion = 'GCS-5'
     var c, ra // The character json, release attributes
@@ -850,6 +1028,7 @@ export class GurpsActor extends Actor {
     let vernum = 1
     let exit = false
     if (!r) {
+      // if (importname.endsWith('.gcs')) this.importFromGCSv2(xml, importname, importpath)
       if (importname.endsWith('.gcs')) msg.push(i18n('GURPS.importCannotImportGCSDirectly'))
       else if (importname.endsWith('.gca4')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
       else if (!xml.startsWith('<?xml')) msg.push(i18n('GURPS.importNoXMLDetected'))
