@@ -172,7 +172,7 @@ export class CompositeDamageCalculator {
    * Override at the individual dice roll level.
    */
   get basicDamage() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return this._calculators.reduce((sum, a) => sum + a._basicDamage, 0)
     return this._calculators[this._viewId].basicDamage
   }
 
