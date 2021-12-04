@@ -2844,7 +2844,7 @@ export class GurpsActor extends Actor {
     if (!!this.getGurpsActorData().melee && !!this.getGurpsActorData().equipment?.carried)
       Object.values(this.getGurpsActorData().melee).forEach(melee => {
         recurselist(this.getGurpsActorData().equipment.carried, (e, k, d) => {
-          if (!!e && !val && e.equipped && e.name == melee.name) {
+          if (!!e && !val && e.equipped && !!melee.name.match(makeRegexPatternFrom(e.name, false))) {
             let t = parseInt(melee[key])
             if (!isNaN(t)) val = t
           }
@@ -3066,7 +3066,7 @@ export class _Base {
       if (i >= 0) {
         this.notes = v.substr(0, i).trim()
         // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
-        this.pageref(v.substr(i + k.length).trim())
+        this.pageRef(v.substr(i + k.length).trim())
       } else {
         this.notes = v.trim()
         this.pageref = ''
@@ -3081,7 +3081,22 @@ export class Named extends _Base {
    */
   constructor(n1) {
     super()
-    this.name = n1
+    this.setName(n1)
+  }
+  
+  setName(n) {
+    if (!!n) {
+      let k = 'Page Ref: '
+      let i = n.indexOf(k)
+      if (i >= 0) {
+        this.name = n.substr(0, i).trim()
+        // Find the "Page Ref" and store it separately (to hopefully someday be used with PDF Foundry)
+        this.pageRef(n.substr(i + k.length).trim())
+      } else {
+        this.name = n.trim()
+        this.pageref = ''
+      }
+    }
   }
 }
 
@@ -3189,7 +3204,7 @@ export class Advantage extends NamedCost {
   constructor(n1) {
     super(n1)
     this.userdesc = ''
-    this.note = ''
+    this.note = ''    // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
   }
 }
 
