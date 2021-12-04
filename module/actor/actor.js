@@ -832,30 +832,30 @@ export class GurpsActor extends Actor {
    * 
    * @param {{ [key: string]: any}} json 
    */
-  async importAttributesFromGCSv2(json) {
-    if (!json) return;
+  async importAttributesFromGCSv2(atts, eqp, calc) {
+    if (!atts) return;
     let data = this.getGurpsActorData();
     let att = data.attributes;
 
-    att.ST.import = json.find(e => e.attr_id === "st").calc.value;
-    att.ST.points = json.find(e => e.attr_id === "st").calc.points;
-    att.DX.import = json.find(e => e.attr_id === "dx").calc.value;
-    att.DX.points = json.find(e => e.attr_id === "dx").calc.points;
-    att.IQ.import = json.find(e => e.attr_id === "iq").calc.value;
-    att.IQ.points = json.find(e => e.attr_id === "iq").calc.points;
-    att.HT.import = json.find(e => e.attr_id === "ht").calc.value;
-    att.HT.points = json.find(e => e.attr_id === "ht").calc.points;
-    att.WILL.import = json.find(e => e.attr_id === "will").calc.value;
-    att.WILL.points = json.find(e => e.attr_id === "will").calc.points;
-    att.PER.import = json.find(e => e.attr_id === "per").calc.value;
-    att.PER.points = json.find(e => e.attr_id === "per").calc.points;
+    att.ST.import = atts.find(e => e.attr_id === "st").calc.value;
+    att.ST.points = atts.find(e => e.attr_id === "st").calc.points;
+    att.DX.import = atts.find(e => e.attr_id === "dx").calc.value;
+    att.DX.points = atts.find(e => e.attr_id === "dx").calc.points;
+    att.IQ.import = atts.find(e => e.attr_id === "iq").calc.value;
+    att.IQ.points = atts.find(e => e.attr_id === "iq").calc.points;
+    att.HT.import = atts.find(e => e.attr_id === "ht").calc.value;
+    att.HT.points = atts.find(e => e.attr_id === "ht").calc.points;
+    att.WILL.import = atts.find(e => e.attr_id === "will").calc.value;
+    att.WILL.points = atts.find(e => e.attr_id === "will").calc.points;
+    att.PER.import = atts.find(e => e.attr_id === "per").calc.value;
+    att.PER.points = atts.find(e => e.attr_id === "per").calc.points;
 
-    data.HP.max = json.find(e => e.attr_id === "hp").calc.value;
-    data.HP.points = json.find(e => e.attr_id === "hp").calc.points;
-    data.FP.max = json.find(e => e.attr_id === "fp").calc.value;
-    data.FP.points = json.find(e => e.attr_id === "fp").calc.points;
-    let hp = json.find(e => e.attr_id === "hp").calc.current;
-    let fp = json.find(e => e.attr_id === "fp").calc.current;
+    data.HP.max = atts.find(e => e.attr_id === "hp").calc.value;
+    data.HP.points = atts.find(e => e.attr_id === "hp").calc.points;
+    data.FP.max = atts.find(e => e.attr_id === "fp").calc.value;
+    data.FP.points = atts.find(e => e.attr_id === "fp").calc.points;
+    let hp = atts.find(e => e.attr_id === "hp").calc.current;
+    let fp = atts.find(e => e.attr_id === "fp").calc.current;
     let saveCurrent = false;
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
       let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP);
@@ -891,24 +891,58 @@ export class GurpsActor extends Actor {
       data.FP.value = fp;
     }
 
-    //todo later
-    let lm = {};
+    let bl_value = parseFloat(calc.basic_lift.match(/[\d\.]+/g));
+    let bl_unit = calc.basic_lift.replace(bl_value+' ','');
+
+    let lm = {}
+    lm.basiclift = (bl_value*1).toString()+" "+bl_unit;
+    lm.carryonback = (bl_value*15).toString()+" "+bl_unit;
+    lm.onehandedlift = (bl_value*2).toString()+" "+bl_unit;
+    lm.runningshove = (bl_value*24).toString()+" "+bl_unit;
+    lm.shiftslightly = (bl_value*50).toString()+" "+bl_unit;
+    lm.shove = (bl_value*12).toString()+" "+bl_unit;
+    lm.twohandedlift = (bl_value*8).toString()+" "+bl_unit;
     
-    data.basicmove.value = json.find(e => e.attr_id === "basic_move").calc.value;
-    data.basicmove.points = json.find(e => e.attr_id === "basic_move").calc.points;
-    data.basicspeed.value = json.find(e => e.attr_id === "basic_speed").calc.value;
-    data.basicspeed.points = json.find(e => e.attr_id === "basic_speed").calc.points;
+    let bm = atts.find(e => e.attr_id === "basic_move").calc.value
+    data.basicmove.value = bm.toString();
+    data.basicmove.points = atts.find(e => e.attr_id === "basic_move").calc.points;
+    let bs = atts.find(e => e.attr_id === "basic_speed").calc.value
+    data.basicspeed.value = bs.toString();
+    data.basicspeed.points = atts.find(e => e.attr_id === "basic_speed").calc.points;
 
 
-    data.thrust = ""
-    data.swing = ""
-    data.currentmove = ""
-    data.frightcheck = json.find(e => e.attr_id === "fright_check").calc.value;
+    data.thrust = calc.thrust;
+    data.swing = calc.swing;
+    data.currentmove = data.basicmove.value;
+    data.frightcheck = atts.find(e => e.attr_id === "fright_check").calc.value;
 
-    data.hearing = json.find(e => e.attr_id === "hearing").calc.value;
-    data.tastesmell = json.find(e => e.attr_id === "taste_smell").calc.value;
-    data.touch = json.find(e => e.attr_id === "touch").calc.value;
-    data.vision = json.find(e => e.attr_id === "vision").calc.value;
+    data.hearing = atts.find(e => e.attr_id === "hearing").calc.value;
+    data.tastesmell = atts.find(e => e.attr_id === "taste_smell").calc.value;
+    data.touch = atts.find(e => e.attr_id === "touch").calc.value;
+    data.vision = atts.find(e => e.attr_id === "vision").calc.value;
+
+    let cm = 0;
+    let cd = 0;
+    let es = {}
+    let ew = [1,2,3,6,10]
+    let index = 0;
+    let total_carried = this.calcTotalCarried(eqp);
+    for (let i = 0; i < 5; i++) {
+      let e = new Encumbrance();
+      e.level = i;
+      e.current = false;
+      e.key = 'enc' + i;
+      let weight_value = bl_value*ew[i];
+      e.current = total_carried >= weight_value && (i == 4 || total_carried < bl_value*ew[i+1]);
+      e.weight = weight_value.toString()+" "+bl_unit;
+      e.move = calc.move[i];
+      e.dodge = calc.dodge[i];
+      if (e.current) {
+        cm = e.move;
+        cd = e.dodge;
+      }
+      GURPS.put(es, e, index++)
+    }
 
     return {
       'data.attributes': att,
@@ -926,7 +960,602 @@ export class GurpsActor extends Actor {
       'data.touch': data.touch,
       'data.vision': data.vision,
       'data.liftingmoving': lm,
+      'data.currentmove': cm,
+      'data.currentdodge': cd,
+      'data.-=encumbrance': null,
+      'data.encumbrance': es
     }
+  }
+
+  calcTotalCarried(eqp) {
+    let t = 0;
+    for (let i of eqp) {
+      let w = 0;
+      w += (parseFloat(i.weight || "0")*(i.type == "equipment_container" ? 1 : i.quantity || 0));
+      if (i.children?.length) w += this.calcTotalCarried(i.children);
+      t += w;
+    }
+    return t;
+  }
+
+  importTraitsFromGCSv2(p,cd,md) {
+    if (!p) return;
+    let ts = {}
+    ts.race = "";
+    ts.height = p.height || "";
+    ts.weight = p.weight || "";
+    ts.age = p.age || "";
+    ts.title = p.title || "";
+    ts.player = p.player_name || "";
+    ts.createdon = cd || "";
+    ts.modifiedon = md || "";
+    ts.religion = p.religion || "";
+    ts.birthday = p.birthday || "";
+    ts.hand = p.handedness || "";
+    if (p.SM && p.SM > -1) ts.sizemod = "+"+p.SM.toString();
+    else if (p.SM) ts.sizemod = p.SM.toString();
+    else ts.sizemod = "+0";
+    ts.techlevel = p.tech_level || "";
+    ts.gender = p.gender || "";
+    ts.eyes = p.eyes || "";
+    ts.hair = p.hair || "";
+    ts.skin = p.skin || "";
+
+    return {
+      'data.-=traits': null,
+      'data.traits': ts
+    }
+  }
+
+  importAdsFromGCSv3(ads) {
+    let temp = []
+    for (let i of ads) {
+      temp = temp.concat(this.importAd(i,""));
+    }
+    return {
+      'data.-=ads': null,
+      'data.ads': this.foldList(temp)
+    };
+  }
+
+  importAd(i,p) {
+    let a = new Advantage();
+      a.name = i.name || "Advantage";
+      a.points = i.calc.points;
+      a.note = i.notes;
+      a.userdesc = i.userdesc;
+      a.notes = '';
+      if (!!a.note && !!a.userdesc) a.notes = a.note + '\n' + a.userdesc;
+      else if (!!a.note) a.notes = a.note;
+      else if (!!a.userdesc) a.notes = a.userdesc;
+      if (i.cr != null) {
+        a.notes = "["+game.i18n.localize("GURPS.CR"+i.cr.toString())+"]\n"+a.notes;
+      }
+      a.pageRef(i.reference);
+      a.uuid = i.id;
+      a.parentuuid = p;
+      let old = this._findElementIn('ads', a.uuid)
+      if (!!old) {
+        a.name = this._tryToMerge(a.name || null,old.name);
+        a.notes = this._tryToMerge(a.notes, old.notes);
+      }
+      let ch = [];
+      if (i.children?.length) {
+        for (let j of i.children) ch = ch.concat(this.importAd(j,i.id));
+      }
+      return [a].concat(ch);
+  }
+
+  importSkillsFromGCSv2(sks) {
+    if (!sks) return;
+    let temp = [];
+    for (let i of sks) {
+      temp = temp.concat(this.importSk(i,""));
+    }
+    return {
+      'data.-=skills': null,
+      'data.skills': this.foldList(temp)
+    };
+  }
+
+  importSk(i,p) {
+    let s = new Skill();
+    s.name = i.name || "Skill";
+    s.type = i.type.toUpperCase();
+    s.import = i.calc?.level || "";
+    if (s.level == 0) s.level = '';
+    s.points = i.points;
+    s.relativelevel = i.calc?.rsl;
+    s.notes = i.notes || ""
+    s.pageRef(i.reference || "");
+    s.uuid = i.id;
+    s.parentuuid = p;
+    let old = this._findElementIn('skills', s.uuid);
+    if (!!old) {
+      s.name = this._tryToMerge(s.name || null, old.name);
+      s.notes = this._tryToMerge(s.notes, old.notes);
+      this._migrateOtfs(old, s);
+    }
+    let ch = [];
+      if (i.children?.length) {
+        for (let j of i.children) ch = ch.concat(this.importSk(j,i.id));
+      }
+      return [s].concat(ch);
+  }
+
+  importSpellsFromGCSv2(sps) {
+    if (!sps) return;
+    let temp = [];
+    for (let i of sps) {
+      temp = temp.concat(this.importSp(i,""));
+    }
+    return {
+      'data.-=spells': null,
+      'data.spells': this.foldList(temp)
+    };
+  }
+
+  importSp(i,p) {
+    let s = new Spell();
+    s.name = i.name || "Spell";
+    s.class = i.spell || "";
+    s.college = i.college || "";
+    s.cost = i.casting_cost || "";
+    s.maintain = i.maintenance_cost || "";
+    s.difficulty = i.difficulty.toUpperCase();
+    s.relativelevel = i.calc?.rsl;
+    s.notes = i.notes || "";
+    s.pageRef(i.reference || "");
+    s.duration = i.duration || "";
+    s.points = i.points || "";
+    s.casttime = i.casting_time || "";
+    s.import = s.calc?.level.toString();
+    s.uuid = i.id;
+    s.parentuuid = p;
+    let old = this._findElementIn('spells', s.uuid);
+    if (!!old) {
+      s.name = this._tryToMerge(s.name || null, old.name);
+      s.notes = this._tryToMerge(s.notes, old.notes);
+      this._migrateOtfs(old, s);
+    }
+    let ch = [];
+    if (i.children?.length) {
+      for (let j of i.children) ch = ch.concat(this.importSp(j,i.id));
+    }
+    return [s].concat(ch);
+  }
+
+  importEquipmentFromGCSv2(eq, oeq) {
+    if (!eq && !oeq) return;
+    let temp = [];
+    if (!!eq) for (let i of eq) {
+      temp = temp.concat(this.importEq(i,"",true));
+    }
+    if (!!oeq) for (let i of oeq) {
+      temp = temp.concat(this.importEq(i,"",false));
+    }
+
+    recurselist(this.getGurpsActorData().equipment?.carried, t => {
+      t.carried = true;
+      if (!!t.save) temp.push(t);
+    });
+    recurselist(this.getGurpsActorData().equipment?.other, t => {
+      t.carried = false;
+      if (!!t.save) temp.push(t);
+    });
+
+    temp.forEach(e => {
+      e.contains = {};
+      e.collapsed = {};
+    });
+
+    temp.forEach(e => {
+      if (!!e.parentuuid) {
+        let parent = null;
+        parent = temp.find(f => f.uuid === e.parentuuid);
+        if (!!parent) GURPS.put(parent.contains, e);
+        else e.parentuuid = "";
+      }
+    });
+
+    let equipment = {
+      carried: {},
+      other: {},
+    }
+    let cindex = 0
+    let oindex = 0
+
+    temp.forEach(eqt => {
+      Equipment.calc(eqt)
+      if (!eqt.parentuuid) {
+        if (eqt.carried) GURPS.put(equipment.carried, eqt, cindex++)
+        else GURPS.put(equipment.other, eqt, oindex++)
+      }
+    })
+    return {
+      'data.-=equipment': null,
+      'data.equipment': equipment,
+    }
+  }
+
+  importEq(i,p,carried) {
+    let e = new Equipment();
+    e.name = i.description || "Equipment";
+    e.count = i.quantity || "0";
+    e.cost = i.cost || "";
+    e.carried = carried;
+    e.equipped = i.equipped;
+    e.techlevel = i.tech_level || "";
+    e.legalityclass = i.legality_class || "4";
+    e.categories = i.categories?.join(", ") || "";
+    e.uses = i.uses || 0;
+    e.maxuses = i.max_uses || 0;
+    e.uuid = i.id;
+    e.parentuuid = p;
+    e.notes = i.notes;
+    e.weight = i.weight || 0;
+    e.pageRef(i.reference || "");
+    let old = this._findElementIn('equipment.carried', e.uuid);
+    if (!old) old = this._findElementIn('equipment.other', e.uuid);
+    if (!!old) {
+      e.notes = this._tryToMerge(e.notes, old.notes);
+      e.name = this._tryToMerge(e.name || null, old.name);
+      e.carried = old.carried;
+      e.equipped = old.equipped;
+      e.parentuuid = old.parentuuid;
+      if (old.ignoreImportQty) {
+        e.count = old.count;
+        e.uses = old.uses;
+        e.maxuses = old.maxuses;
+        e.ignoreImportQty = true;
+      }
+    }
+    let ch = [];
+      if (i.children?.length) {
+        for (let j of i.children) ch = ch.concat(this.importEq(j,i.id,carried));
+      }
+      return [e].concat(ch);
+  }
+
+  importNotesFromGCSv2(notes) {
+    if (!notes) return;
+    let temp = [];
+    for (let i of notes) {
+      temp = temp.concat(this.importNote(i,""));
+    }
+    recurselist(this.getGurpsActorData().notes, t => {
+      if (!!t.save) temp.push(t)
+    })
+    return {
+      'data.-=notes': null,
+      'data.notes': this.foldList(temp),
+    }
+  }
+
+  importNote(i, p) {
+    let n = new Note();
+    n.notes = i.text || "";
+    n.uuid = i.id;
+    n.parentuuid = p;
+    n.pageRef(i.reference || "");
+    let  old = this._findElementIn('notes', n.uuid);
+    if (!!old) {
+      n.notes = this._tryToMerge(n.notes, old.notes);
+    }
+    let ch = [];
+    if (i.children?.length) {
+      for (let j of i.children) ch = ch.concat(this.importNote(j,i.id));
+    }
+    return [n].concat(ch);
+  }
+
+  async importProtectionFromGCSv2(hls) {
+    if (!hls) return;
+    let data = this.getGurpsActorData();
+    if (!!data.additionalresources.ignoreinputbodyplan) return;
+
+    /** @type {HitLocations.HitLocation[]} */
+    let locations = [];
+    for (let i of hls.locations) {
+      let l = new HitLocations.HitLocation(i.table_name);
+      l.import = i.calc.dr.toString();
+      l.penalty = i.hit_penalty.toString();
+      while (locations.filter(it => it.where == l.where).length > 0) {
+        l.where = l.where + '*';
+      }
+      locations.push(l);
+    }
+    let vitals = locations.filter(value => value.where === HitLocations.HitLocation.VITALS)
+    if (vitals.length === 0) {
+      let hl = new HitLocations.HitLocation(HitLocations.HitLocation.VITALS)
+      hl.penalty = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].penalty
+      hl.roll = HitLocations.hitlocationRolls[HitLocations.HitLocation.VITALS].roll
+      hl.import = '0'
+      locations.push(hl)
+    }
+    // Hit Locations MUST come from an existing bodyplan hit location table, or else ADD (and
+    // potentially other features) will not work. Sometime in the future, we will look at
+    // user-entered hit locations.
+    let bodyplan = hls.id // Was a body plan actually in the import?
+    if (bodyplan === 'snakemen') bodyplan = 'snakeman'
+    let table = HitLocations.hitlocationDictionary[bodyplan] // If so, try to use it.
+
+    /** @type {HitLocations.HitLocation[]}  */
+    let locs = []
+    locations.forEach(e => {
+      if (!!table && !!table[e.where]) {
+        // if e.where already exists in table, don't map
+        locs.push(e)
+      } else {
+        // map to new name(s) ... sometimes we map 'Legs' to ['Right Leg', 'Left Leg'], for example.
+        e.locations(false).forEach(l => locs.push(l)) // Map to new names
+      }
+    })
+    locations = locs
+
+    if (!table) {
+      locs = []
+      locations.forEach(e => {
+        e.locations(true).forEach(l => locs.push(l)) // Map to new names, but include original to help match against tables
+      })
+      bodyplan = this._getBodyPlan(locs)
+      table = HitLocations.hitlocationDictionary[bodyplan]
+    }
+    // update location's roll and penalty based on the bodyplan
+
+    if (!!table) {
+      Object.values(locations).forEach(it => {
+        let [lbl, entry] = HitLocations.HitLocation.findTableEntry(table, it.where)
+        if (!!entry) {
+          it.where = lbl // It might be renamed (ex: Skull -> Brain)
+          if (!it.penalty) it.penalty = entry.penalty
+          if (!it.roll || it.roll.length === 0 || it.roll === HitLocations.HitLocation.DEFAULT) it.roll = entry.roll
+        }
+      })
+    }
+
+    // write the hit locations out in bodyplan hit location table order. If there are
+    // other entries, append them at the end.
+    /** @type {HitLocations.HitLocation[]}  */
+    let temp = []
+    Object.keys(table).forEach(key => {
+      let results = Object.values(locations).filter(loc => loc.where === key)
+      if (results.length > 0) {
+        if (results.length > 1) {
+          // If multiple locs have same where, concat the DRs.   Leg 7 & Leg 8 both map to "Leg 7-8"
+          let d = ''
+
+          /** @type {string | null} */
+          let last = null
+          results.forEach(r => {
+            if (r.import != last) {
+              d += '|' + r.import
+              last = r.import
+            }
+          })
+
+          if (!!d) d = d.substr(1)
+          results[0].import = d
+        }
+        temp.push(results[0])
+        locations = locations.filter(it => it.where !== key)
+      } else {
+        // Didn't find loc that should be in the table. Make a default entry
+        temp.push(new HitLocations.HitLocation(key, '0', table[key].penalty, table[key].roll))
+      }
+    })
+    locations.forEach(it => temp.push(it))
+
+    let prot = {}
+    let index = 0
+    temp.forEach(it => GURPS.put(prot, it, index++))
+
+    let saveprot = true
+    if (!!data.lastImport && !!data.additionalresources.bodyplan && bodyplan != data.additionalresources.bodyplan) {
+      let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_BODYPLAN)
+      if (option == 1) {
+        saveprot = false
+      }
+      if (option == 2) {
+        saveprot = await new Promise((resolve, reject) => {
+          let d = new Dialog({
+            title: 'Hit Location Body Plan',
+            content:
+              `Do you want to <br><br><b>Save</b> the current Body Plan (${game.i18n.localize(
+                'GURPS.BODYPLAN' + data.additionalresources.bodyplan
+              )}) or ` +
+              `<br><br><b>Overwrite</b> it with the Body Plan from the import: (${game.i18n.localize(
+                'GURPS.BODYPLAN' + bodyplan
+              )})?<br><br>&nbsp;`,
+            buttons: {
+              save: {
+                icon: '<i class="far fa-square"></i>',
+                label: 'Save',
+                callback: () => resolve(false),
+              },
+              overwrite: {
+                icon: '<i class="fas fa-edit"></i>',
+                label: 'Overwrite',
+                callback: () => resolve(true),
+              },
+            },
+            default: 'save',
+            close: () => resolve(false), // just assume overwrite.   Error handling would be too much work right now.
+          })
+          d.render(true)
+        })
+      }
+    }
+    if (saveprot) {
+      return {
+        'data.-=hitlocations': null,
+        'data.hitlocations': prot,
+        'data.additionalresources.bodyplan': bodyplan,
+      }
+    }
+    else return {};
+  }
+
+  importPointTotalsFromGCSv2(total,atts,ads,skills,spells) {
+    if (!ads) ads = [];
+    if (!skills) skills = [];
+    if (!spells) spells = [];
+    let p_atts = 0;
+    let p_ads = 0;
+    let p_disads = 0;
+    let p_quirks = 0;
+    let p_skills = 0;
+    let p_spells = 0;
+    let p_unspent = total;
+    let p_total = total;
+    let p_race = 0;
+    for (let i of atts) p_atts += i.calc.points;
+    for (let i of ads) [p_ads, p_disads, p_quirks, p_race] = this.adPointCount(i,p_ads, p_disads, p_quirks, p_race);
+    for (let i of skills) p_skills = this.skPointCount(i, p_skills);
+    for (let i of spells) p_spells = this.skPointCount(i, p_spells);
+    p_unspent -= (p_atts + p_ads + p_disads + p_quirks + p_skills + p_spells + p_race);
+    return {
+      'data.totalpoints.attributes': p_atts,
+      'data.totalpoints.ads': p_ads,
+      'data.totalpoints.disads': p_disads,
+      'data.totalpoints.quirks': p_quirks,
+      'data.totalpoints.skills': p_skills,
+      'data.totalpoints.spells': p_spells,
+      'data.totalpoints.unspent': p_unspent,
+      'data.totalpoints.total': p_total,
+      'data.totalpoints.race': p_race
+    };
+  }
+
+  importReactionsFromGCSv3(ads,skills,equipment) {
+    let rs = {};
+    let index = 0;
+    let temp = [].concat(ads,skills,equipment);
+    let all = []
+    for (let i of temp) {all = all.concat(this.recursiveGet(i))};
+    temp = [];
+    for (let i of all) {
+      if (i.features?.length) for (let f of i.features) {
+        if (f.type == "reaction_bonus") {
+          temp.push({
+            modifier: f.amount,
+            situation: f.situation
+          });
+        }
+      }
+    }
+    let temp2 = []
+    for (let i of temp) {
+      let existing_condition = temp2.find(e => e.situation == i.situation)
+      if (!!existing_condition) existing_condition.modifier += i.modifier;
+      else temp2.push(i);
+    }
+    for (let i of temp2) {
+      let r = new Reaction();
+      r.modifier = i.modifier.toString();
+      r.situation = i.situation;
+      GURPS.put(rs, r, index++);
+    }
+    return {
+      'data.-=reactions': null,
+      'data.reactions': rs,
+    };
+  }
+
+  importCombatFromGCSv2(ads,skills,spells,equipment) {
+    let melee = {};
+    let ranged = {};
+    let m_index = 0;
+    let r_index = 0;
+    let temp = [].concat(ads,skills,spells,equipment);
+    let all = [];
+    for (let i of temp) {all = all.concat(this.recursiveGet(i))};
+    for (let i of all) {
+      if (i.weapons?.length) for (let w of i.weapons) {
+        if (w.type == "melee_weapon") {
+          let m = new Melee();
+          m.name = i.name || i.description || "";
+          m.st = w.strength || "";
+          m.weight = i.weight || "";
+          m.techlevel = i.tech_level || "";
+          m.cost = i.value || "";
+          m.notes = i.notes || "";
+          if (m.notes != "") i.notes += "\n";
+          m.notes += w.notes;
+          m.pageRef(i.reference || "");
+          m.mode = w.usage || "";
+          m.import = w.calc.level.toString() || "0";
+          m.damage = w.calc.damage || "";
+          m.reach = w.reach || "";
+          m.parry = w.calc.parry || "";
+          m.block = w.block || "";
+          let old = this._findElementIn('melee', false, m.name, m.mode)
+          if (!!old) {
+            m.name = this._tryToMerge(m.name || null, old.name)
+            m.notes = this._tryToMerge(m.notes, old.notes)
+            this._migrateOtfs(old, m)
+          }
+          GURPS.put(melee, m, m_index++)
+        } else if (w.type == "ranged_weapon") {
+          let r = new Ranged();
+          r.name = i.name || i.description || "";
+          r.st = w.strength || "";
+          r.bulk = w.bulk || "";
+          r.legalityclass = i.legality_class || "4";
+          r.ammo = 0;
+          r.notes = i.notes || "";
+          if (r.notes != "") i.notes += "\n";
+          r.notes += w.notes;
+          r.pageRef(i.reference || "");
+          r.mode = w.usage || "";
+          r.import = w.calc.level || "0";
+          r.damage = w.calc.damage || "";
+          r.acc = w.accuracy || "";
+          r.rof = w.rate_of_fire || "";
+          r.shots = w.shots || "";
+          r.rcl = w.recoil || "";
+          r.range = w.calc.range || "";
+          let old = this._findElementIn('ranged', false, r.name, r.mode)
+          if (!!old) {
+            r.name = this._tryToMerge(r.name || null, old.name)
+            r.notes = this._tryToMerge(r.notes, old.notes)
+            this._migrateOtfs(old, r)
+          }
+          GURPS.put(ranged, r, r_index++)
+        }
+      }
+    }
+    return {
+      'data.-=melee': null,
+      'data.melee': melee,
+      'data.-=ranged': null,
+      'data.ranged': ranged
+    }
+  }
+
+  recursiveGet(i) {
+    if (!i) return [];
+    let ch = [];
+    if (i.children?.length) for (let j of i.children) ch = ch.concat(this.recursiveGet(j));
+    if (i.modifiers?.length) for (let j of i.modifiers) ch = ch.concat(this.recursiveGet(j));
+    if (!!i.disabled || (i.equipped != null && i.equipped == false)) return [];
+    return [i].concat(ch);
+  }
+
+  adPointCount(i, ads, disads, quirks, race) {
+    if (i.type == "advantage_container" && i.container_type == "race") race += i.calc.points
+    else if (i.type == "advantage_container" && i.container_type == "alternative_abilities") ads += i.calc.points;
+    else if (i.type == "advantage_container") for (let j of i.children) [ads, disads, quirks, race] = this.adPointCount(j,ads,disads,quirks,race);
+    else if (i.calc.points == -1) quirks += i.calc.points;
+    else if (i.calc.points > 0) ads += i.calc.points;
+    else disads += i.calc.points;
+    return [ads,disads,quirks,race]
+  }
+
+  skPointCount(i,skills) {
+    if (i.type == ("skill_container" || "spell_container")) for (let j of i.children) skills = this.skPointCount(j,skills);
+    else skills += i.points;
+    return skills;
   }
 
   /**
@@ -936,7 +1565,12 @@ export class GurpsActor extends Actor {
    */
   async importFromGCSv2(json, importname, importpath) {
     let r = JSON.parse(json)
-    console.log("TEXT",r, importname, importpath);
+    
+    if (!r.calc) {
+      ui.notifications?.error(i18n('GURPS.importOldGCSFile'))
+      return false;
+    }
+
     let nm = r["profile"]["name"]
     console.log("Importing '" + nm + "'");
     let starttime = performance.now();
@@ -948,12 +1582,19 @@ export class GurpsActor extends Actor {
     ar.importpath = importpath || ar.importpath;
     commit = { ...commit, ...{ 'data.additionalresources': ar}};
 
-    commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes))};
-    // commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile)};
-    // commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages)};
-    // commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills)};
-    // commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells)};
-    // commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment)}
+    commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc))};
+    commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile,r.created_date,r.modified_date)};
+    commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages)};
+    commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills)};
+    commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells)};
+    commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment)};
+    commit = { ...commit, ...this.importNotesFromGCSv2(r.notes)};
+
+    commit = { ...commit, ...(await this.importProtectionFromGCSv2(r.settings.hit_locations))};
+    commit = { ...commit, ...this.importPointTotalsFromGCSv2(r.total_points,r.attributes,r.advantages,r.skills,r.spells)};
+    commit = { ...commit, ...this.importReactionsFromGCSv3(r.advantages,r.skills,r.equipment)};
+    commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages,r.skills,r.spells)};
+
     
     console.log('Starting commit');
     let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes('.-=')));
@@ -2150,7 +2791,6 @@ export class GurpsActor extends Actor {
         sp.points = t(j.points)
         sp.casttime = t(j.time)
         sp.import = t(j.level)
-        sp.duration = t(j.duration)
         sp.uuid = t(j.uuid)
         sp.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('spells', sp.uuid)
