@@ -837,25 +837,25 @@ export class GurpsActor extends Actor {
     let data = this.getGurpsActorData();
     let att = data.attributes;
 
-    att.ST.import = atts.find(e => e.attr_id === "st").calc.value;
-    att.ST.points = atts.find(e => e.attr_id === "st").calc.points;
-    att.DX.import = atts.find(e => e.attr_id === "dx").calc.value;
-    att.DX.points = atts.find(e => e.attr_id === "dx").calc.points;
-    att.IQ.import = atts.find(e => e.attr_id === "iq").calc.value;
-    att.IQ.points = atts.find(e => e.attr_id === "iq").calc.points;
-    att.HT.import = atts.find(e => e.attr_id === "ht").calc.value;
-    att.HT.points = atts.find(e => e.attr_id === "ht").calc.points;
-    att.WILL.import = atts.find(e => e.attr_id === "will").calc.value;
-    att.WILL.points = atts.find(e => e.attr_id === "will").calc.points;
-    att.PER.import = atts.find(e => e.attr_id === "per").calc.value;
-    att.PER.points = atts.find(e => e.attr_id === "per").calc.points;
+    att.ST.import = atts.find(e => e.attr_id === "st")?.calc.value;
+    att.ST.points = atts.find(e => e.attr_id === "st")?.calc.points;
+    att.DX.import = atts.find(e => e.attr_id === "dx")?.calc.value;
+    att.DX.points = atts.find(e => e.attr_id === "dx")?.calc.points;
+    att.IQ.import = atts.find(e => e.attr_id === "iq")?.calc.value;
+    att.IQ.points = atts.find(e => e.attr_id === "iq")?.calc.points;
+    att.HT.import = atts.find(e => e.attr_id === "ht")?.calc.value;
+    att.HT.points = atts.find(e => e.attr_id === "ht")?.calc.points;
+    att.WILL.import = atts.find(e => e.attr_id === "will")?.calc.value;
+    att.WILL.points = atts.find(e => e.attr_id === "will")?.calc.points;
+    att.PER.import = atts.find(e => e.attr_id === "per")?.calc.value;
+    att.PER.points = atts.find(e => e.attr_id === "per")?.calc.points;
 
-    data.HP.max = atts.find(e => e.attr_id === "hp").calc.value;
-    data.HP.points = atts.find(e => e.attr_id === "hp").calc.points;
-    data.FP.max = atts.find(e => e.attr_id === "fp").calc.value;
-    data.FP.points = atts.find(e => e.attr_id === "fp").calc.points;
-    let hp = atts.find(e => e.attr_id === "hp").calc.current;
-    let fp = atts.find(e => e.attr_id === "fp").calc.current;
+    data.HP.max = atts.find(e => e.attr_id === "hp")?.calc.value;
+    data.HP.points = atts.find(e => e.attr_id === "hp")?.calc.points;
+    data.FP.max = atts.find(e => e.attr_id === "fp")?.calc.value;
+    data.FP.points = atts.find(e => e.attr_id === "fp")?.calc.points;
+    let hp = atts.find(e => e.attr_id === "hp")?.calc.current;
+    let fp = atts.find(e => e.attr_id === "fp")?.calc.current;
     let saveCurrent = false;
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
       let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP);
@@ -969,6 +969,7 @@ export class GurpsActor extends Actor {
 
   calcTotalCarried(eqp) {
     let t = 0;
+    if (!eqp) return t;
     for (let i of eqp) {
       let w = 0;
       w += (parseFloat(i.weight || "0")*(i.type == "equipment_container" ? 1 : i.quantity || 0));
@@ -1553,7 +1554,7 @@ export class GurpsActor extends Actor {
   }
 
   skPointCount(i,skills) {
-    if (i.type == ("skill_container" || "spell_container")) for (let j of i.children) skills = this.skPointCount(j,skills);
+    if (i.type == ("skill_container" || "spell_container") && i.children?.length) for (let j of i.children) skills = this.skPointCount(j,skills);
     else skills += i.points;
     return skills;
   }
@@ -1563,11 +1564,11 @@ export class GurpsActor extends Actor {
    * @param {string} importname
    * @param {string | undefined} [importpath]
    */
-  async importFromGCSv2(json, importname, importpath) {
+  async importFromGCSv2(json, importname, importpath,supressMessage=false) {
     let r = JSON.parse(json)
     
     if (!r.calc) {
-      ui.notifications?.error(i18n('GURPS.importOldGCSFile'))
+      if (!supressMessage) ui.notifications?.error(i18n('GURPS.importOldGCSFile'))
       return false;
     }
 
@@ -1613,7 +1614,7 @@ export class GurpsActor extends Actor {
         await this.update({ name: nm, 'token.name': nm })
       }
 
-      ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      if (!supressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
           Math.round(performance.now() - starttime) +
@@ -1652,8 +1653,8 @@ export class GurpsActor extends Actor {
    * @param {string} importname
    * @param {string | undefined} [importpath]
    */
-  async importFromGCSv1(xml, importname, importpath) {
-    if (importname.endsWith('.gcs')) return this.importFromGCSv2(xml, importname, importpath);
+  async importFromGCSv1(xml, importname, importpath, supressMessage=false) {
+    if (importname.endsWith('.gcs')) return this.importFromGCSv2(xml, importname, importpath,supressMessage);
     const GCAVersion = 'GCA-10'
     const GCSVersion = 'GCS-5'
     var c, ra // The character json, release attributes
@@ -1839,7 +1840,7 @@ export class GurpsActor extends Actor {
         await this.update({ name: nm, 'token.name': nm })
       }
 
-      ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      if (!supressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
           Math.round(performance.now() - starttime) +
@@ -1851,7 +1852,7 @@ export class GurpsActor extends Actor {
       console.log(err.stack)
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
-      ui.notifications?.warn(msg.join('<br>'))
+      if (!supressMessage) ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
         version: version,
