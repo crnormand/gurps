@@ -26,7 +26,6 @@ import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ItemImporter } from '../module/item-import.js'
-import { CharacterImporter } from './character-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
 
@@ -1896,97 +1895,7 @@ Hooks.once('init', async function () {
 
     if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
     html.find('#chat-log').on('drop', event => dropHandler(event, true))
-  });
-
-  // @ts-ignore
-  Hooks.on('renderSidebarTab', async (app, html) => {
-    // Add the import equipment button...
-    if (app.options.id === 'compendium') {
-      let button = $(
-        '<button class="import-items"><i class="fas fa-file-import"></i>' +
-          game.i18n.localize('GURPS.characterImport') +
-          '</button>'
-      )
-
-      button.click(function () {
-        setTimeout(async () => {
-          new Dialog(
-            {
-              title: 'Import Folder of Characters',
-              // @ts-ignore
-              content: await renderTemplate('systems/gurps/templates/character-import.html'),
-              buttons: {
-                import: {
-                  icon: '<i class="fas fa-file-import"></i>',
-                  label: 'Import',
-                  callback: html => {
-                    // @ts-ignore
-                    const form = html.find('form')[0]
-                    let files = form.data.files
-                    // @ts-ignore
-                    let file = null
-                    if (!files.length) {
-                      // @ts-ignore
-                      return ui.notifications.error('You did not upload a data file!')
-                    } else {
-                      CharacterImporter.importCharacters(files);
-                    }
-                  },
-                },
-                no: {
-                  icon: '<i class="fas fa-times"></i>',
-                  label: 'Cancel',
-                },
-              },
-              default: 'import',
-            },
-            {
-              width: 400,
-            }
-          ).render(true)
-        }, 200)
-      })
-
-      html.find('.directory-footer').append(button)
-    }
-    
-    // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
-    const hasMeme = game.modules.get('markdown-editor')?.active;
-    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message');
-    
-    const dropHandler = function(event, inLog) {
-      event.preventDefault()
-      if (event.originalEvent) event = event.originalEvent
-      const data = JSON.parse(event.dataTransfer.getData("text/plain"))
-      if (!!data && !!data.otf) {
-        let cmd = ''  
-        if (!!data.encodedAction) {
-          let action = JSON.parse(atou(data.encodedAction))
-          if (action.quiet) cmd += '!'
-        }
-        cmd += data.otf
-        if (!!data.displayname) {
-          let q = '"'
-          if (data.displayname.includes('"')) q = "'"
-          cmd = "'" + data.displayname + "'" + cmd
-        }
-        cmd = '[' + cmd + ']'
-        if (inLog) {
-          let messageData = {
-            user: game.user.id,
-            //speaker: ChatMessage.getSpeaker({ actor: game.user }),
-            type: CONST.CHAT_MESSAGE_TYPES.OOC,
-            content: cmd
-          }
-          ChatMessage.create(messageData, {})
-        } else $(document).find('#chat-message').val(cmd)
-      }
-    }
-    const logDropHandler = (event) => dropHandler(event, true)
-
-    if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
-    html.find('#chat-log').on('drop', event => dropHandler(event, true))
-  });
+  })
 
   /**
    * Added to color the rollable parts of the character sheet.
