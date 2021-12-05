@@ -1546,7 +1546,7 @@ export class GurpsActor extends Actor {
   adPointCount(i, ads, disads, quirks, race) {
     if (i.type == "advantage_container" && i.container_type == "race") race += i.calc.points
     else if (i.type == "advantage_container" && i.container_type == "alternative_abilities") ads += i.calc.points;
-    else if (i.type == "advantage_container") for (let j of i.children) [ads, disads, quirks, race] = this.adPointCount(j,ads,disads,quirks,race);
+    else if (i.type == "advantage_container" && !!i.children?.length) for (let j of i.children) [ads, disads, quirks, race] = this.adPointCount(j,ads,disads,quirks,race);
     else if (i.calc.points == -1) quirks += i.calc.points;
     else if (i.calc.points > 0) ads += i.calc.points;
     else disads += i.calc.points;
