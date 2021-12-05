@@ -1020,7 +1020,7 @@ export class GurpsActor extends Actor {
 
   importAd(i,p) {
     let a = new Advantage();
-      a.name = i.name || "Advantage";
+      a.name = i.name + (i.levels? " "+i.levels.toString() : "") || "Advantage";
       a.points = i.calc.points;
       a.note = i.notes;
       a.userdesc = i.userdesc;
@@ -1060,7 +1060,7 @@ export class GurpsActor extends Actor {
 
   importSk(i,p) {
     let s = new Skill();
-    s.name = i.name || "Skill";
+    s.name = i.name + (!!i.tech_level? `/TL${i.tech_level}`:"") + (!!i.specialization? ` (${i.specialization})` : "")|| "Skill";
     s.type = i.type.toUpperCase();
     s.import = i.calc?.level || "";
     if (s.level == 0) s.level = '';
@@ -1109,7 +1109,7 @@ export class GurpsActor extends Actor {
     s.duration = i.duration || "";
     s.points = i.points || "";
     s.casttime = i.casting_time || "";
-    s.import = s.calc?.level.toString();
+    s.import = i.calc?.level || 0;
     s.uuid = i.id;
     s.parentuuid = p;
     let old = this._findElementIn('spells', s.uuid);
@@ -1181,8 +1181,8 @@ export class GurpsActor extends Actor {
   importEq(i,p,carried) {
     let e = new Equipment();
     e.name = i.description || "Equipment";
-    e.count = i.quantity || "0";
-    e.cost = i.cost || "";
+    e.count = i.type == "equipment_container"? "1" : i.quantity || "0";
+    e.cost = i.value || "";
     e.carried = carried;
     e.equipped = i.equipped;
     e.techlevel = i.tech_level || "";
@@ -1192,8 +1192,8 @@ export class GurpsActor extends Actor {
     e.maxuses = i.max_uses || 0;
     e.uuid = i.id;
     e.parentuuid = p;
-    e.notes = i.notes;
-    e.weight = i.weight || 0;
+    e.notes = i.notes || "";
+    e.weight = parseFloat(i.weight).toString() || "";
     e.pageRef(i.reference || "");
     let old = this._findElementIn('equipment.carried', e.uuid);
     if (!old) old = this._findElementIn('equipment.other', e.uuid);
@@ -1468,10 +1468,12 @@ export class GurpsActor extends Actor {
     let m_index = 0;
     let r_index = 0;
     let temp = [].concat(ads,skills,spells,equipment);
+    console.log(temp);
     let all = [];
     for (let i of temp) {all = all.concat(this.recursiveGet(i))};
     for (let i of all) {
       if (i.weapons?.length) for (let w of i.weapons) {
+        console.log(i.name || i.description, w);
         if (w.type == "melee_weapon") {
           let m = new Melee();
           m.name = i.name || i.description || "";
@@ -1480,8 +1482,7 @@ export class GurpsActor extends Actor {
           m.techlevel = i.tech_level || "";
           m.cost = i.value || "";
           m.notes = i.notes || "";
-          if (m.notes != "") i.notes += "\n";
-          m.notes += w.notes;
+          if (!!m.notes && w.notes) i.notes += "\n" + w.notes;
           m.pageRef(i.reference || "");
           m.mode = w.usage || "";
           m.import = w.calc.level.toString() || "0";
@@ -1504,8 +1505,7 @@ export class GurpsActor extends Actor {
           r.legalityclass = i.legality_class || "4";
           r.ammo = 0;
           r.notes = i.notes || "";
-          if (r.notes != "") i.notes += "\n";
-          r.notes += w.notes;
+          if (!!r.notes && w.notes) i.notes += "\n" + w.notes;
           r.pageRef(i.reference || "");
           r.mode = w.usage || "";
           r.import = w.calc.level || "0";
@@ -1593,7 +1593,7 @@ export class GurpsActor extends Actor {
     commit = { ...commit, ...(await this.importProtectionFromGCSv2(r.settings.hit_locations))};
     commit = { ...commit, ...this.importPointTotalsFromGCSv2(r.total_points,r.attributes,r.advantages,r.skills,r.spells)};
     commit = { ...commit, ...this.importReactionsFromGCSv3(r.advantages,r.skills,r.equipment)};
-    commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages,r.skills,r.spells)};
+    commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages,r.skills,r.spells,r.equipment)};
 
     
     console.log('Starting commit');
