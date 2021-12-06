@@ -6,6 +6,8 @@ Release 0.12.11
 
 - Update /show help
 - Add Portrait share for GM users
+- Fixed applying basic damage for multiple damage rolls
+- Updated GCS exporter to do Conditional Modifiers (needs a bug fixed in GCS before it works)
 
 Release 0.12.10 12/1/2021
 
@@ -22,7 +24,7 @@ Release 0.12.8 12/1/2021
 - Fixed equipped parry if weapon name contains more info than the equipment
 - Added drag and drop into mook generator (to quickly create entries)
 - Added link to Foundry lighting page for /light help
-- Updated animation list to JB2A 3.2 
+- Updated animation list to JB2A 3.2
 
 Release 0.12.7 11/30/2021
 

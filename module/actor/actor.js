@@ -969,6 +969,7 @@ export class GurpsActor extends Actor {
       if (isFoundryGCS) {
         commit = { ...commit, ...this.importAdsFromGCSv2(c.traits?.adslist) }
         commit = { ...commit, ...this.importReactionsFromGCSv2(c.reactions) }
+        commit = { ...commit, ...this.importConditionalModifiersFromGCSv2(c.conditionalmods) }
       }
       if (isFoundryGCA) {
         commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) }
@@ -1128,6 +1129,22 @@ export class GurpsActor extends Actor {
     return {
       'data.-=reactions': null,
       'data.reactions': rs,
+    }
+  }
+
+  importConditionalModifiersFromGCSv2(json) {
+    if (!json) return
+    let t = this.textFrom
+    let rs = {}
+    let index = 0
+    for (let key in json) {
+      if (key.startsWith('id-')) {
+        let j = json[key]
+        let r = new Reaction() // ConditionalModifiers are the same format
+        r.modifier = t(j.modifier)
+        r.situation = t(j.situation)
+        GURPS.put(rs, r, index++)
+      }
     }
   }
 
@@ -3083,7 +3100,7 @@ export class Named extends _Base {
     super()
     this.setName(n1)
   }
-  
+
   setName(n) {
     if (!!n) {
       let k = 'Page Ref: '
@@ -3204,7 +3221,7 @@ export class Advantage extends NamedCost {
   constructor(n1) {
     super(n1)
     this.userdesc = ''
-    this.note = ''    // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
+    this.note = '' // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
   }
 }
 
