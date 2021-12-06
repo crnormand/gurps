@@ -265,8 +265,15 @@
       <id-@ID>
         <modifier type="string">@MODIFIER</modifier>
         <situation type="string">@SITUATION</situation>
-       </id-@ID>@REACTION_LOOP_END
+      </id-@ID>@REACTION_LOOP_END
     </reactions>
+
+    <conditionalmods>@CONDITIONAL_MODIFIERS_LOOP_START
+      <id-@ID>
+        <modifier type="string">@MODIFIER</modifier>
+        <situation type="string">@SITUATION</situation>
+      </id-@ID>@CONDITIONAL_MODIFIERS_LOOP_END
+    </conditionalmods>
 
   </character>
 </root>

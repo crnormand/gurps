@@ -882,7 +882,7 @@ export class GurpsActor extends Actor {
         if (!v[1]) {
           msg.push(i18n('GURPS.importGCANoBodyPlan'))
         }
-         if (!!v[1]) vernum = parseInt(v[1])
+        if (!!v[1]) vernum = parseInt(v[1])
         if (vernum < 2) {
           msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
         }
@@ -969,6 +969,7 @@ export class GurpsActor extends Actor {
       if (isFoundryGCS) {
         commit = { ...commit, ...this.importAdsFromGCSv2(c.traits?.adslist) }
         commit = { ...commit, ...this.importReactionsFromGCSv2(c.reactions) }
+        commit = { ...commit, ...this.importConditionalModifiersFromGCSv2(c.conditionalmods) }
       }
       if (isFoundryGCA) {
         commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) }
@@ -1131,13 +1132,29 @@ export class GurpsActor extends Actor {
     }
   }
 
+  importConditionalModifiersFromGCSv2(json) {
+    if (!json) return
+    let t = this.textFrom
+    let rs = {}
+    let index = 0
+    for (let key in json) {
+      if (key.startsWith('id-')) {
+        let j = json[key]
+        let r = new Reaction() // ConditionalModifiers are the same format
+        r.modifier = t(j.modifier)
+        r.situation = t(j.situation)
+        GURPS.put(rs, r, index++)
+      }
+    }
+  }
+
   /**
    * @param {{ [key: string]: any }} json
    */
   importReactionsFromGCA(json, vernum) {
     if (!json) return
     let text = this.textFrom(json)
-    let a = (vernum <= 9) ? text.split(',') : text.split('|')
+    let a = vernum <= 9 ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
     a.forEach((/** @type {string} */ m) => {
@@ -1606,15 +1623,15 @@ export class GurpsActor extends Actor {
    */
   _migrateOtfs(oldobj, newobj) {
     //if (!!oldobj.animationData) {
-      //const n = newobj.animationData
-      //const o = oldobj.animationData
-      let n = newobj
-      let o = oldobj
+    //const n = newobj.animationData
+    //const o = oldobj.animationData
+    let n = newobj
+    let o = oldobj
 
-      n.checkotf = o.checkotf
-      n.duringotf = o.duringotf
-      n.passotf = o.passotf
-      n.failotf = o.failotf
+    n.checkotf = o.checkotf
+    n.duringotf = o.duringotf
+    n.passotf = o.passotf
+    n.failotf = o.failotf
     //}
   }
 
@@ -3083,7 +3100,7 @@ export class Named extends _Base {
     super()
     this.setName(n1)
   }
-  
+
   setName(n) {
     if (!!n) {
       let k = 'Page Ref: '
@@ -3204,7 +3221,7 @@ export class Advantage extends NamedCost {
   constructor(n1) {
     super(n1)
     this.userdesc = ''
-    this.note = ''    // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
+    this.note = '' // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
   }
 }
 
