@@ -6,6 +6,7 @@ Release 0.12.11
 
 - Update /show help
 - Add Portrait share for GM users
+- Fixed applying basic damage for multiple damage rolls.
 
 Release 0.12.10 12/1/2021
 
