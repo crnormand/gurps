@@ -969,6 +969,8 @@ export class GurpsActor extends Actor {
 
   calcTotalCarried(eqp) {
     let t = 0;
+    console.log(eqp);
+    if (!eqp) return t;
     for (let i of eqp) {
       let w = 0;
       w += (parseFloat(i.weight || "0")*(i.type == "equipment_container" ? 1 : i.quantity || 0));
@@ -1473,7 +1475,6 @@ export class GurpsActor extends Actor {
     for (let i of temp) {all = all.concat(this.recursiveGet(i))};
     for (let i of all) {
       if (i.weapons?.length) for (let w of i.weapons) {
-        console.log(i.name || i.description, w);
         if (w.type == "melee_weapon") {
           let m = new Melee();
           m.name = i.name || i.description || "";
@@ -1563,7 +1564,7 @@ export class GurpsActor extends Actor {
    * @param {string} importname
    * @param {string | undefined} [importpath]
    */
-  async importFromGCSv2(json, importname, importpath) {
+  async importFromGCSv2(json, importname, importpath,suppressMessage=false) {
     let r = JSON.parse(json)
     
     if (!r.calc) {
@@ -1613,7 +1614,7 @@ export class GurpsActor extends Actor {
         await this.update({ name: nm, 'token.name': nm })
       }
 
-      ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
+      if (!!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
           Math.round(performance.now() - starttime) +
