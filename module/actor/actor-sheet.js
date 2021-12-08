@@ -136,17 +136,17 @@ export class GurpsActorSheet extends ActorSheet {
     this.makelistdrag(html, '.notedraggable', 'note')
     this.makelistdrag(html, '.meleedraggable', 'melee')
     this.makelistdrag(html, '.rangeddraggable', 'ranged')
-    
-    html.find('button[data-operation="share-portrait"]').click(ev => {
+
+    html.find('[data-operation="share-portrait"]').click(ev => {
       ev.preventDefault()
       const ip = new ImagePopout(this.actor.img, {
         title: this.actor.name,
         shareable: true,
-        entity: this.actor
-      });
-     
+        entity: this.actor.name,
+      })
+
       // Display the image popout
-      ip.render(true);
+      ip.render(true)
     })
 
     // Stop ENTER key in a Resource Tracker (HP, FP, others) from doing anything.
@@ -406,7 +406,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       await this.actor.updateEqtCount(path, value)
     })
-    
+
     html.find('button[data-operation="equipment-inc-uses"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
@@ -414,7 +414,7 @@ export class GurpsActorSheet extends ActorSheet {
       let eqt = getProperty(this.actor.data, path)
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      await this.actor.update({ [path + '.uses'] : value })
+      await this.actor.update({ [path + '.uses']: value })
     })
     html.find('button[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
@@ -424,7 +424,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      await this.actor.update({ [path + '.uses'] : value })
+      await this.actor.update({ [path + '.uses']: value })
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
@@ -817,10 +817,10 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!add)
       if (!!modelkey) {
         let t = getProperty(this.actor.data, modelkey) || ''
-        this.actor.update({ [modelkey]: t + (t ? ' ': '') + add })
+        this.actor.update({ [modelkey]: t + (t ? ' ' : '') + add })
       } else {
         let t = $(ev.currentTarget).val()
-        $(ev.currentTarget).val(t + (t ? ' ': '') + add)
+        $(ev.currentTarget).val(t + (t ? ' ' : '') + add)
       }
   }
 

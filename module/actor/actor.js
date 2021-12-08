@@ -467,7 +467,7 @@ export class GurpsActor extends Actor {
     if (!data.equippedblock) data.equippedblock = this.getEquippedBlock()
     // catch for older actors that may not have these values set
     if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value.toString())
-    if (!data.currentdodge) data.currentdodge = parseInt(data.dodge.value.toString())
+    if (!data.currentdodge && data.dodge.value) data.currentdodge = parseInt(data.dodge.value.toString())
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value.toString()) * 2
   }
 
