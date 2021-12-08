@@ -142,7 +142,7 @@ export class GurpsActorSheet extends ActorSheet {
       const ip = new ImagePopout(this.actor.img, {
         title: this.actor.name,
         shareable: true,
-        entity: this.actor.name,
+        entity: this.actor,
       })
 
       // Display the image popout
