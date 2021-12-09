@@ -1579,11 +1579,11 @@ body {
 
 #tracker-scroller {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   gap: var(--sectiongap);
-  white-space: nowrap;
-  overflow-y: hidden;
-  overflow-x: auto;
+  /* white-space: nowrap; */
+  /* overflow-y: hidden; */
+  /* overflow-x: auto; */
 }
 
 #tracker-scroller .tracked-resource {

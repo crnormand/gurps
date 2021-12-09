@@ -676,11 +676,11 @@ ul#result-effects li {
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  min-width: 120px;
+  /* min-width: 120px; */
   background-color: #555;
   color: white;
   text-align: center;
-  padding: 5px 0;
+  padding: 5px;
   border-radius: 6px;
   font-weight: normal;
   text-shadow: none;
@@ -690,8 +690,8 @@ ul#result-effects li {
   position: absolute;
   z-index: 1;
   top: 1.4em;
-  left: 50%;
-  margin-left: -60px;
+  left: 0;
+  /* margin-left: -60px; */
 
   /* Fade in tooltip */
   opacity: 0;

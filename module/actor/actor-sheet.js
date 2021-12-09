@@ -162,7 +162,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = (tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
       let json = `{ "data.${path}.value": ${value} }`
