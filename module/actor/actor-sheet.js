@@ -137,7 +137,7 @@ export class GurpsActorSheet extends ActorSheet {
     this.makelistdrag(html, '.meleedraggable', 'melee')
     this.makelistdrag(html, '.rangeddraggable', 'ranged')
 
-    html.find('button[data-operation="share-portrait"]').click(ev => {
+    html.find('[data-operation="share-portrait"]').click(ev => {
       ev.preventDefault()
       const ip = new ImagePopout(this.actor.img, {
         title: this.actor.name,
