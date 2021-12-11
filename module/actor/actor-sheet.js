@@ -583,14 +583,14 @@ export class GurpsActorSheet extends ActorSheet {
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.other')
     )
-    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: ClickAndContextMenu })
+    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
 
     let moveup = this._createMenu(
       i18n('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.carried')
     )
-    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: ClickAndContextMenu })
+    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: 'contextmenu' })
   }
 
   _editEquipment(target) {

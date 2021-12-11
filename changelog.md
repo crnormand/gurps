@@ -8,6 +8,7 @@ Release 0.12.11
 - Add Portrait share for GM users
 - Fixed applying basic damage for multiple damage rolls
 - Updated GCS exporter to do Conditional Modifiers (needs a bug fixed in GCS before it works)
+- Fixed equipment menus to only open on a contextmenu event.
 
 Release 0.12.10 12/1/2021
 
