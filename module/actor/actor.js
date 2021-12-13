@@ -1431,36 +1431,58 @@ export class GurpsActor extends Actor {
 
   importReactionsFromGCSv3(ads,skills,equipment) {
     let rs = {};
-    let index = 0;
+    let cs = {}
+    let index_r = 0;
+    let index_c = 0;
     let temp = [].concat(ads,skills,equipment);
     let all = []
     for (let i of temp) {all = all.concat(this.recursiveGet(i))};
-    temp = [];
+    let temp_r = [];
+    let temp_c = []
     for (let i of all) {
       if (i.features?.length) for (let f of i.features) {
         if (f.type == "reaction_bonus") {
-          temp.push({
+          temp_r.push({
+            modifier: f.amount,
+            situation: f.situation
+          });
+        } else if (f.type == "conditional_modifier") {
+          temp_c.push({
             modifier: f.amount,
             situation: f.situation
           });
         }
       }
     }
-    let temp2 = []
-    for (let i of temp) {
-      let existing_condition = temp2.find(e => e.situation == i.situation)
+    let temp_r2 = [];
+    let temp_c2 = []
+    for (let i of temp_r) {
+      let existing_condition = temp_r2.find(e => e.situation == i.situation)
       if (!!existing_condition) existing_condition.modifier += i.modifier;
-      else temp2.push(i);
+      else temp_r2.push(i);
     }
-    for (let i of temp2) {
+    for (let i of temp_c) {
+      let existing_condition = temp_c2.find(e => e.situation == i.situation)
+      if (!!existing_condition) existing_condition.modifier += i.modifier;
+      else temp_c2.push(i);
+    }
+    for (let i of temp_r2) {
       let r = new Reaction();
       r.modifier = i.modifier.toString();
       r.situation = i.situation;
-      GURPS.put(rs, r, index++);
+      GURPS.put(rs, r, index_r++);
+    }
+    for (let i of temp_c2) {
+      let c = new Reaction();
+      c.modifier = i.modifier.toString();
+      c.situation = i.situation;
+      GURPS.put(cs, c, index_c++);
     }
     return {
       'data.-=reactions': null,
       'data.reactions': rs,
+      'data.-=conditionalmods': null,
+      'data.conditionalmods': cs,
     };
   }
 
