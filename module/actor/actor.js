@@ -903,10 +903,10 @@ export class GurpsActor extends Actor {
     lm.shove = (bl_value*12).toString()+" "+bl_unit;
     lm.twohandedlift = (bl_value*8).toString()+" "+bl_unit;
     
-    let bm = atts.find(e => e.attr_id === "basic_move")?.calc.value
+    let bm = atts.find(e => e.attr_id === "basic_move")?.calc.value || 0;
     data.basicmove.value = bm.toString();
     data.basicmove.points = atts.find(e => e.attr_id === "basic_move")?.calc.points || 0;
-    let bs = atts.find(e => e.attr_id === "basic_speed")?.calc.value
+    let bs = atts.find(e => e.attr_id === "basic_speed")?.calc.value || 0;
     data.basicspeed.value = bs.toString();
     data.basicspeed.points = atts.find(e => e.attr_id === "basic_speed")?.calc.points || 0;
 
@@ -927,7 +927,7 @@ export class GurpsActor extends Actor {
     let ew = [1,2,3,6,10]
     let index = 0;
     let total_carried = this.calcTotalCarried(eqp);
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i <= 4; i++) {
       let e = new Encumbrance();
       e.level = i;
       e.current = false;
