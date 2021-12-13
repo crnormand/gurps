@@ -1194,7 +1194,9 @@ export class GurpsActor extends Actor {
     e.maxuses = i.max_uses || 0;
     e.uuid = i.id;
     e.parentuuid = p;
-    e.notes = i.notes || "";
+    e.notes = "";
+    if (i.modifiers?.length) for (let m of i.modifiers) if (!m.disabled) e.notes += (m.name || "") + ((!!m.notes)? `(${m.notes})`:"");
+    e.notes += (!!i.notes) ? `\n${i.notes}` : "";
     e.weight = parseFloat(i.weight).toString() || "";
     e.pageRef(i.reference || "");
     let old = this._findElementIn('equipment.carried', e.uuid);
