@@ -103,6 +103,17 @@ export class GurpsActor extends Actor {
     this.getGurpsActorData().conditions.exhausted = false
     this.getGurpsActorData().conditions.reeling = false
 
+    {
+      // Oh how I wish we had a typesafe model!
+      // I hate treating everything as "maybe its a number, maybe its a string...?!"
+      let sizemod = this.getGurpsActorData().traits.sizemod.toString()
+      if (sizemod !== '0' && sizemod !== '+0') {
+        this.getGurpsActorData().conditions.target.modifiers.push(
+          i18n_f('GURPS.modifiersSize', { sm: sizemod }, '{sm} for Size Modifier')
+        )
+      }
+    }
+
     let attributes = this.getGurpsActorData().attributes
     if (foundry.utils.getType(attributes.ST.import) === 'string')
       this.getGurpsActorData().attributes.ST.import = parseInt(attributes.ST.import)
@@ -3246,7 +3257,6 @@ export class Attack extends Named {
     return /** @type {_AnimationMixin} */ (/** @type {unknown} */ (this))
   }
 }
-
 
 export class Melee extends Attack {
   /**

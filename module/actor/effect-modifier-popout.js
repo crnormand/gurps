@@ -28,10 +28,16 @@ export class EffectModifierPopout extends Application {
   getData(options) {
     return mergeObject(super.getData(options), {
       selected: this.selectedToken,
-      modifiers: this._token
+      selfmodifiers: this._token
         ? this._token.actor
             .getGurpsActorData()
             .conditions.self.modifiers.map(it => `[${i18n(it)}]`)
+            .map(it => GURPS.gurpslink(it))
+        : [],
+        targetmodifiers: this._token
+        ? this._token.actor
+            .getGurpsActorData()
+            .conditions.target.modifiers.map(it => `[${i18n(it)}]`)
             .map(it => GURPS.gurpslink(it))
         : [],
     })
