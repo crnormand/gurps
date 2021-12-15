@@ -11,6 +11,7 @@ Release 0.12.11
 - Fixed equipment menus to only open on a contextmenu event.
 - Add target modifiers to Effects Modifier popup window.
 - Add SM to target modifiers.
+- Added another range/speed table (-1 per 10 yards/meters).
 
 Release 0.12.10 12/1/2021
 
