@@ -749,6 +749,7 @@
   "GURPS.settingHintRangeStrategy": "Sets the formula to use to calculate range penalties.",
   "GURPS.settingRangeStrategyStandard": "Size and Speed/Range Table",
   "GURPS.settingRangeStrategyRangeBands": "Monster Hunters 2 Range Bands",
+  "GURPS.settingRangeStrategyTenPenalties": "Penalties for every 10 meters",
   "GURPS.settingBasicPDFs": "Basic Set PDF(s)",
   "GURPS.settingHintBasicPDFs": "Select 'Combined' or 'Separate' and use the associated PDF codes when configuring PDFoundry. Note: If you select 'Separate', the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.",
   "GURPS.settingBasicPDFsCombined": "Combined Basic Set (code 'B')",
