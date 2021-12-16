@@ -1083,5 +1083,8 @@
   "GURPS.tokenToolsTitle": "Open Effect Modifier Popup",
   "GURPS.effectModNoTokenSelected": "No token selected",
   "GURPS.settingActiveEffects": "Turn on Active Effects",
-  "GURPS.settingHintActiveEffects": "Allow the GM to create and apply Active Effects"
+  "GURPS.settingHintActiveEffects": "Allow the GM to create and apply Active Effects",
+
+  "GURPS.modifiersBlindAttack": "-10 to hit (Blind)",
+  "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)"
 }
