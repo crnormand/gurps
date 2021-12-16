@@ -13,6 +13,7 @@ Release 0.12.11
 - Add SM to target modifiers.
 - Added another range/speed table (-1 per 10 yards/meters).
 - Possibly fixed adding two statuses at the same time, such as stun + prone.
+- Fixed Full GCS sheet's navigation widget operating on wrong sheet.
 
 Release 0.12.10 12/1/2021
 
