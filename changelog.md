@@ -15,6 +15,7 @@ Release 0.12.11
 - Possibly fixed adding two statuses at the same time, such as stun + prone.
 - Fixed Full GCS sheet's navigation widget operating on wrong sheet.
 - Added effect modifiers for the "Blind" status.
+- Fixed the Dodge column in Encumbrance to enable 'rollable' only on the current encumbrance level.
 
 Release 0.12.10 12/1/2021
 
