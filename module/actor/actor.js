@@ -1217,8 +1217,10 @@ export class GurpsActor extends Actor {
     let ch = [];
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importEq(j, i.id, carried));
-      e.cost -= j.cost*j.count;
-      e.weight -= j.weight*j.count;
+      for (let j of ch) {
+        e.cost -= j.cost*j.count;
+        e.weight -= j.weight*j.count;
+      }
       // let weight_reduction = 0;
       // if (!!i.modifiers?.length) for (let m of i.modifiers) if (!m.disabled && !!m.features?.length) for (let mf of m.features) if (mf.type == "contained_weight_reduction") weight_reduction += parseFloat(mf.reduction);
       // if (!!i.features?.length) for (let f of i.features) if (f.type == "contained_weight_reduction") weight_reduction += parseFloat(f.reduction);
@@ -1278,7 +1280,8 @@ export class GurpsActor extends Actor {
     let locations = [];
     for (let i of hls.locations) {
       let l = new HitLocations.HitLocation(i.table_name);
-      l.import = i.calc.dr.toString();
+      l.import = i.calc.dr.all.toString();
+      for (let [key, value] of Object.entries(i.calc.dr)) if (key != "all") l.import += `/${(i.calc.dr.all+value).toString()}`;
       l.penalty = i.hit_penalty.toString();
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*';
