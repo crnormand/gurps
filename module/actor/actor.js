@@ -103,6 +103,18 @@ export class GurpsActor extends Actor {
     this.getGurpsActorData().conditions.exhausted = false
     this.getGurpsActorData().conditions.reeling = false
 
+    {
+      // Oh how I wish we had a typesafe model!
+      // I hate treating everything as "maybe its a number, maybe its a string...?!"
+      let sizemod = this.getGurpsActorData().traits?.sizemod.toString() || "+0";
+      if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
+      if (sizemod !== '0' && sizemod !== '+0') {
+        this.getGurpsActorData().conditions.target.modifiers.push(
+          i18n_f('GURPS.modifiersSize', { sm: sizemod }, '{sm} for Size Modifier')
+        )
+      }
+    }
+
     let attributes = this.getGurpsActorData().attributes
     if (foundry.utils.getType(attributes.ST.import) === 'string')
       this.getGurpsActorData().attributes.ST.import = parseInt(attributes.ST.import)
@@ -994,8 +1006,8 @@ export class GurpsActor extends Actor {
     ts.religion = p.religion || "";
     ts.birthday = p.birthday || "";
     ts.hand = p.handedness || "";
-    if (p.SM && p.SM > -1) ts.sizemod = "+" + p.SM.toString();
-    else if (p.SM) ts.sizemod = p.SM.toString();
+    if (!!p.SM && p.SM > -1) ts.sizemod = "+" + p.SM.toString();
+    else if (!!p.SM) ts.sizemod = p.SM.toString();
     else ts.sizemod = "+0";
     ts.techlevel = p.tech_level || "";
     ts.gender = p.gender || "";
@@ -1671,9 +1683,9 @@ export class GurpsActor extends Actor {
       ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
-        version: version,
-        GCAVersion: GCAVersion,
-        GCSVersion: GCSVersion,
+        version: "N/A",
+        GCAVersion: "N/A",
+        GCSVersion: "N/A",
         url: GURPS.USER_GUIDE_URL,
       })
 
