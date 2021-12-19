@@ -93,7 +93,7 @@ export default class GurpsToken extends Token {
         await super.toggleEffect(GURPS.StatusEffect.lookup(id))
       }
     }
-    super.toggleEffect(effect, options)
+    await super.toggleEffect(effect, options)
   }
 
   async setEffectActive(name, active) {

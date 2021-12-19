@@ -107,6 +107,7 @@ export class GurpsActor extends Actor {
       // Oh how I wish we had a typesafe model!
       // I hate treating everything as "maybe its a number, maybe its a string...?!"
       let sizemod = this.getGurpsActorData().traits.sizemod.toString()
+      if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
       if (sizemod !== '0' && sizemod !== '+0') {
         this.getGurpsActorData().conditions.target.modifiers.push(
           i18n_f('GURPS.modifiersSize', { sm: sizemod }, '{sm} for Size Modifier')

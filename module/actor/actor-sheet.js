@@ -65,6 +65,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.eqtsummary = this.actor.data.data.eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
     sheetData.isGM = game.user.isGM
+    sheetData._id = sheetData.olddata._id
     return sheetData
   }
 
