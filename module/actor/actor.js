@@ -1184,7 +1184,7 @@ export class GurpsActor extends Actor {
     let e = new Equipment();
     e.name = i.description || "Equipment";
     e.count = i.type == "equipment_container"? "1" : i.quantity || "0";
-    e.cost = i.value || "";
+    e.cost = i.calc.extended_value || "";
     e.carried = carried;
     e.equipped = i.equipped;
     e.techlevel = i.tech_level || "";
@@ -1197,7 +1197,7 @@ export class GurpsActor extends Actor {
     e.notes = "";
     if (i.modifiers?.length) for (let m of i.modifiers) if (!m.disabled) e.notes += (m.name || "") + ((!!m.notes)? `(${m.notes})`:"");
     e.notes += (!!i.notes) ? `\n${i.notes}` : "";
-    e.weight = parseFloat(i.weight).toString() || "";
+    e.weight = parseFloat(i.calc.extended_weight).toString() || "";
     e.pageRef(i.reference || "");
     let old = this._findElementIn('equipment.carried', e.uuid);
     if (!old) old = this._findElementIn('equipment.other', e.uuid);
