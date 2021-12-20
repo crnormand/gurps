@@ -106,6 +106,7 @@ export class GurpsActor extends Actor {
     {
       // Oh how I wish we had a typesafe model!
       // I hate treating everything as "maybe its a number, maybe its a string...?!"
+
       let sizemod = this.getGurpsActorData().traits?.sizemod.toString() || "+0";
       if (sizemod.match(/^\d/g)) sizemod = `+${sizemod}`
       if (sizemod !== '0' && sizemod !== '+0') {
@@ -479,7 +480,7 @@ export class GurpsActor extends Actor {
     if (!data.equippedblock) data.equippedblock = this.getEquippedBlock()
     // catch for older actors that may not have these values set
     if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value.toString())
-    if (!data.currentdodge) data.currentdodge = parseInt(data.dodge.value.toString())
+    if (!data.currentdodge && data.dodge.value) data.currentdodge = parseInt(data.dodge.value.toString())
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value.toString()) * 2
   }
 
@@ -1844,6 +1845,7 @@ export class GurpsActor extends Actor {
       if (isFoundryGCS) {
         commit = { ...commit, ...this.importAdsFromGCSv2(c.traits?.adslist) }
         commit = { ...commit, ...this.importReactionsFromGCSv2(c.reactions) }
+        commit = { ...commit, ...this.importConditionalModifiersFromGCSv2(c.conditionalmods) }
       }
       if (isFoundryGCA) {
         commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) }
@@ -2006,13 +2008,29 @@ export class GurpsActor extends Actor {
     }
   }
 
+  importConditionalModifiersFromGCSv2(json) {
+    if (!json) return
+    let t = this.textFrom
+    let rs = {}
+    let index = 0
+    for (let key in json) {
+      if (key.startsWith('id-')) {
+        let j = json[key]
+        let r = new Reaction() // ConditionalModifiers are the same format
+        r.modifier = t(j.modifier)
+        r.situation = t(j.situation)
+        GURPS.put(rs, r, index++)
+      }
+    }
+  }
+
   /**
    * @param {{ [key: string]: any }} json
    */
   importReactionsFromGCA(json, vernum) {
     if (!json) return
     let text = this.textFrom(json)
-    let a = (vernum <= 9) ? text.split(',') : text.split('|')
+    let a = vernum <= 9 ? text.split(',') : text.split('|')
     let rs = {}
     let index = 0
     a.forEach((/** @type {string} */ m) => {
@@ -4078,7 +4096,7 @@ export class Advantage extends NamedCost {
   constructor(n1) {
     super(n1)
     this.userdesc = ''
-    this.note = ''    // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
+    this.note = '' // GCS has notes (note) and userdesc for an advantage, so the import code combines note and userdesc into notes
   }
 }
 
@@ -4086,7 +4104,7 @@ export class Attack extends Named {
   /**
    * @param {string} [n1]
    * @param {string} [lvl]
-   * @param {string} [dmg]
+   * @param {string|Array<string>} [dmg]
    */
   constructor(n1, lvl, dmg) {
     super(n1)

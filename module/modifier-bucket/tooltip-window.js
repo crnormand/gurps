@@ -255,12 +255,15 @@ export default class ModifierBucketEditor extends Application {
 
   async _onManualEntry(event) {
     event.preventDefault()
+    event.stopPropagation()
     let element = event.currentTarget
-    let v = element.value
     let parsed = parselink(element.value)
     if (!!parsed.action && parsed.action.type === 'modifier') {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
-    } else this.editor.refresh()
+    } else {
+      setTimeout(() => ui.notifications.info("Unable to determine modifier for '" + element.value + "'"), 200)
+      this.bucket.refresh()   // WARNING: REQUIRED!  or the world will crash... trust me.
+    }
   }
 
   async _onList(event) {

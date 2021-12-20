@@ -4,6 +4,8 @@
   --smallemgap: 0.2em;
   --fontawesomefamily: 'Font Awesome 5 Free', Roboto, sans-serif;
   --lightgrey: rgba(0, 0, 0, 0.3);
+  --headerfontsize: 80%;
+  --standardborder: 1px solid black;
 }
 
 .gurps {
@@ -214,7 +216,7 @@
 }
 
 #sheet.gurpsactorsheet .pdflink {
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 .pdflink:hover {
@@ -396,10 +398,21 @@
   color: lightpink;
 }
 
+.gga-popup-window .glinkmodplus {
+  background-color: transparent !important;
+  color: palegreen;
+}
+
 .gga-popup-window .modifier-list {
   list-style-type: none;
 }
 
+.gga-popup-window .heading {
+  padding-left: 1em;
+  border-bottom: 1px solid dimgrey;
+}
+
+.gga {}
 
 .glinkmodminus:active {
   cursor: pointer;
@@ -419,7 +432,7 @@
   font-weight: normal;
 }
 
-.gga-popup-window .glinkmodminus:hover {
+.gga-popup-window .glinkmodminus:hover, .gga-popup-window .glinkmodplus:hover {
   cursor: pointer;
   /* background: var(--lightgrey); */
   color: white;
@@ -428,6 +441,10 @@
   padding: 0;
   margin: 0;
   font-weight: normal;
+}
+
+.gga-popup-window .glinkmodplus:hover {
+  text-shadow: 0 0 5px green;
 }
 
 .gurpslink.test,
@@ -595,17 +612,17 @@
 
 .header {
   background-color: black;
-  border-bottom: 1px solid black;
+  border-bottom: var(--standardborder);
   color: white;
   justify-content: center;
   text-align: center;
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 .gga-table,
 .gga-tableheader {
   display: grid;
-  border: 1px solid black;
+  border: var(--standardborder);
   align-content: stretch;
   grid-template-rows: 0fr auto;
 }
@@ -638,7 +655,6 @@
   border-right: 1px solid lightgrey;
   border-bottom: 1px solid lightgrey;
 }
-
 
 .gga-tableheader > .header:first-child {
   grid-area: header;
@@ -717,7 +733,7 @@
 }
 
 .gurps .attributes .fill-in {
-  border: 1px solid black;
+  border: var(--standardborder);
   text-align: center;
   transition: color 0.5s;
   font-size: 120%;
@@ -808,7 +824,7 @@
     'block1 block2 block3';
   grid-template-rows: 0fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
-  border: 1px solid black;
+  border: var(--standardborder);
 }
 
 .gurps #description .header {
@@ -876,7 +892,7 @@ body {
 
 #footer {
   text-align: center;
-  font-size: 80%;
+  font-size: var(--headerfontsize);
   flex-grow: 0;
 }
 
@@ -933,9 +949,18 @@ body {
   grid-template:
     'header'
     'portrait';
-  grid-template-rows: 0fr auto;
+  grid-template-rows: 0fr auto min-content;
   grid-template-columns: auto;
-  border: 1px solid black;
+  border: var(--standardborder);
+}
+
+#portrait .sharebutton {
+  font-size: var(--headerfontsize);
+  line-height: normal;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #b5b3a2;
+  border-radius: 0;
 }
 
 #identity {
@@ -958,7 +983,7 @@ body {
 #hitpoints {
   display: grid;
   grid-template-rows: 0fr 1fr;
-  border: 1px solid black;
+  border: var(--standardborder);
 }
 
 #attributes {
@@ -983,7 +1008,7 @@ body {
     'header header header'
     'block1 block2 block3';
   grid-template-rows: 0fr 1fr;
-  border: 1px solid black;
+  border: var(--standardborder);
 }
 
 #description .header {
@@ -991,7 +1016,7 @@ body {
 }
 
 #description .fieldblock:nth-child(1n + 3) {
-  border-left: 1px solid black;
+  border-left: var(--standardborder);
 }
 
 #ads-skills,
@@ -1036,7 +1061,7 @@ body {
   grid-area: condition;
   grid-template-rows: 0fr 1fr;
   align-items: start;
-  border: 1px solid black;
+  border: var(--standardborder);
 }
 
 #attributes {
@@ -1156,7 +1181,7 @@ body {
 
 #notes {
   display: grid;
-  border: 1px solid black;
+  border: var(--standardborder);
 }
 
 #conditionalmods {
@@ -1219,7 +1244,7 @@ body {
   text-align: right;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: 80%;
+  font-size: var(--headerfontsize);
   align-self: flex-end;
   white-space: nowrap;
 }
@@ -1228,20 +1253,20 @@ body {
   text-align: right;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 .label {
   text-align: left;
   padding-left: 0.2em;
   padding-right: 0.2em;
-  font-size: 80%;
+  font-size: var(--headerfontsize);
   white-space: nowrap;
 }
 
 #condition .label {
   text-align: right;
-  align-self:  center;
+  align-self: center;
 }
 
 .field {
@@ -1249,7 +1274,7 @@ body {
 }
 
 .condensed {
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 .desc .list_note textarea,
@@ -1387,7 +1412,7 @@ body {
   content: '\f142';
   font-family: var(--fontawesomefamily);
   color: var(--lightgrey);
-  font-size: 80%;
+  font-size: var(--headerfontsize);
   font-weight: 600;
   padding-right: calc(2 * var(--smallemgap));
   cursor: grab;
@@ -1414,7 +1439,19 @@ body {
   white-space: normal !important;
 }
 
-.equipmentlist .ref, #notes .ref, #skills .ref, #spells .ref, #advantages .ref, #melee .st, #ranged .st, #location .dr, #lifting .liftdesc, #encumbrance .dodgeh, #encumbrance .dodge:not(:hover), #conditionalmods .situation, #reactions .situation {
+.equipmentlist .ref,
+#notes .ref,
+#skills .ref,
+#spells .ref,
+#advantages .ref,
+#melee .st,
+#ranged .st,
+#location .dr,
+#lifting .liftdesc,
+#encumbrance .dodgeh,
+#encumbrance .dodge:not(:hover),
+#conditionalmods .situation,
+#reactions .situation {
   border-right: none;
 }
 
@@ -1459,7 +1496,7 @@ body {
 }
 
 .list_note {
-  font-size: 80%;
+  font-size: var(--headerfontsize);
   width: 100%;
   white-space: normal;
 }
@@ -1578,7 +1615,7 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 0fr min-content;
-  border: 1px solid black;
+  border: var(--standardborder);
 }
 
 #combat-trackers .tracked-resource {
@@ -1607,7 +1644,7 @@ body {
 #combat-condition,
 #combat-hit,
 #combat-location {
-  border: 1px solid black;
+  border: var(--standardborder);
 }
 
 .header.major-heading {
@@ -1626,7 +1663,7 @@ body {
 }
 
 #combat-encumber {
-  border: 1px solid black;
+  border: var(--standardborder);
   align-content: stretch;
 }
 
@@ -1660,7 +1697,7 @@ body {
 }
 
 .gurps #combat-sheet .condition-block .basic-label {
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 #hitpoints .selected {
@@ -1695,7 +1732,7 @@ body {
 #combat-location {
   display: grid;
   gap: 0;
-  border: 1px solid black;
+  border: var(--standardborder);
   align-content: stretch;
   grid-area: combat-location;
   grid-template:
@@ -1714,7 +1751,7 @@ body {
     'header header header header header'
     'encmarkerh ench loadh moveh dodgeh'
     'encmarker enc load move dodge';
-  /* font-size: 80%; */
+  /* font-size: var(--headerfontsize);; */
 }
 
 #combat-encumber-container .encmarkerh,
@@ -1727,7 +1764,7 @@ body {
 #combat-encumber-container .load,
 #combat-encumber-container .move,
 #combat-encumber-container .dodge {
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 #combat-encumber .header:first-child,
@@ -1763,7 +1800,7 @@ body {
 #combat-location .where,
 #combat-location .penalty,
 #combat-location .dr {
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 #combat-attrs {
@@ -1780,7 +1817,7 @@ body {
 
 #combat-attrs-1 {
   grid-area: combat-attrs-1;
-  border-right: 1px solid black;
+  border-right: var(--standardborder);
 }
 
 #combat-attrs-2 {
@@ -1837,7 +1874,7 @@ body {
 #combat-weapons .shots,
 #combat-weapons .bulk,
 #combat-weapons .rcl {
-  font-size: 80%;
+  font-size: var(--headerfontsize);
 }
 
 #combat-attrs-damage-sw {
@@ -1850,7 +1887,7 @@ body {
 
 #speed-range-table {
   grid-area: speed-range-table;
-  border: 1px solid black;
+  border: var(--standardborder);
   align-content: stretch;
   display: grid;
   grid-template-areas:

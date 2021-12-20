@@ -1,4 +1,5 @@
 import GurpsWiring from './gurps-wiring.js'
+import { atou } from '../lib/utilities.js'
 
 export default class GurpsJournalEntry {
   static ready() {
@@ -16,20 +17,32 @@ export default class GurpsJournalEntry {
       h.html(GURPS.gurpslink(h[0].innerHTML))
       GurpsWiring.hookupAllEvents(html)
       // GurpsWiring.hookupGurpsRightClick(html)
+      
+      const dropHandler = function(event, app, options) {
+        event.preventDefault()
+        if (event.originalEvent) event = event.originalEvent
+        const data = JSON.parse(event.dataTransfer.getData("text/plain"))
+        if (!!data && !!data.otf) {
+          let cmd = ''  
+          if (!!data.encodedAction) {
+            let action = JSON.parse(atou(data.encodedAction))
+            if (action.quiet) cmd += '!'
+          }
+          cmd += data.otf
+          if (!!data.displayname) {
+            let q = '"'
+            if (data.displayname.includes('"')) q = "'"
+            cmd = "'" + data.displayname + "'" + cmd
+          }
+          cmd = '[' + cmd + ']'
+          let content = app.object.data.content
+          if (content) cmd = ' ' + cmd
+          app.object.data.update({'content':content + cmd})
+          app.render(true)
+        }
+      }
+      
+      html.find('.editor').on('drop', event => dropHandler(event, _app, _options))
     }
-    // html.find('[data-otf]').each((_, li) => {
-    //   li.setAttribute('draggable', 'true')
-    //   li.addEventListener('dragstart', ev => {
-    //     let display = ''
-    //     if (!!ev.currentTarget?.dataset.action) display = ev.currentTarget.innerText
-    //     return ev.dataTransfer?.setData(
-    //       'text/plain',
-    //       JSON.stringify({
-    //         otf: li.getAttribute('data-otf'),
-    //         displayname: display,
-    //       }),
-    //     )
-    //   })
-    // })
   }
 }

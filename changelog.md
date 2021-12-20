@@ -2,13 +2,37 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.11
+
+- Update /show help
+- Add Portrait share for GM users
+- Fixed applying basic damage for multiple damage rolls
+- Updated GCS exporter to do Conditional Modifiers (needs a bug fixed in GCS before it works)
+- Fixed equipment menus to only open on a contextmenu event.
+- Add target modifiers to Effects Modifier popup window.
+- Add SM to target modifiers.
+- Added another range/speed table (-1 per 10 yards/meters).
+- Possibly fixed adding two statuses at the same time, such as stun + prone.
+- Fixed Full GCS sheet's navigation widget operating on wrong sheet.
+- Added effect modifiers for the "Blind" status.
+- Fixed the Dodge column in Encumbrance to enable 'rollable' only on the current encumbrance level.
+
+Release 0.12.10 12/1/2021
+
+- Fixed "crash the world" bug if user enters a bad modifier in tooltip
+- Removed unnecessary leading space when dropped in quick note
+
+Release 0.12.9 12/1/2021
+
+- Added OtF Drop into Journal (but not editor, sorry https://gitlab.com/foundrynet/foundryvtt/-/issues/6190)
+
 Release 0.12.8 12/1/2021
 
 - Added drag drop into chat log and chat input field
 - Fixed equipped parry if weapon name contains more info than the equipment
 - Added drag and drop into mook generator (to quickly create entries)
 - Added link to Foundry lighting page for /light help
-- Updated animation list to JB2A 3.2 
+- Updated animation list to JB2A 3.2
 
 Release 0.12.7 11/30/2021
 

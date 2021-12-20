@@ -64,6 +64,8 @@ export class GurpsActorSheet extends ActorSheet {
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.data.data.eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
+    sheetData.isGM = game.user.isGM
+    sheetData._id = sheetData.olddata._id
     return sheetData
   }
 
@@ -135,6 +137,18 @@ export class GurpsActorSheet extends ActorSheet {
     this.makelistdrag(html, '.notedraggable', 'note')
     this.makelistdrag(html, '.meleedraggable', 'melee')
     this.makelistdrag(html, '.rangeddraggable', 'ranged')
+
+    html.find('[data-operation="share-portrait"]').click(ev => {
+      ev.preventDefault()
+      const ip = new ImagePopout(this.actor.img, {
+        title: this.actor.name,
+        shareable: true,
+        entity: this.actor,
+      })
+
+      // Display the image popout
+      ip.render(true)
+    })
 
     // Stop ENTER key in a Resource Tracker (HP, FP, others) from doing anything.
     // This prevents the inadvertant triggering of the inc/dec buttons.
@@ -393,7 +407,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       await this.actor.updateEqtCount(path, value)
     })
-    
+
     html.find('button[data-operation="equipment-inc-uses"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
@@ -401,7 +415,7 @@ export class GurpsActorSheet extends ActorSheet {
       let eqt = getProperty(this.actor.data, path)
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      await this.actor.update({ [path + '.uses'] : value })
+      await this.actor.update({ [path + '.uses']: value })
     })
     html.find('button[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
@@ -411,7 +425,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      await this.actor.update({ [path + '.uses'] : value })
+      await this.actor.update({ [path + '.uses']: value })
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
@@ -570,14 +584,14 @@ export class GurpsActorSheet extends ActorSheet {
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.other')
     )
-    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: ClickAndContextMenu })
+    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
 
     let moveup = this._createMenu(
       i18n('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.carried')
     )
-    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: ClickAndContextMenu })
+    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: 'contextmenu' })
   }
 
   _editEquipment(target) {
@@ -799,13 +813,16 @@ export class GurpsActorSheet extends ActorSheet {
     }
     if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
 
-    if (!!dragData.otf) add = ' [' + dragData.otf + ']'
+    if (!!dragData.otf) add = '[' + dragData.otf + ']'
 
     if (!!add)
       if (!!modelkey) {
         let t = getProperty(this.actor.data, modelkey) || ''
-        this.actor.update({ [modelkey]: t + add })
-      } else $(ev.currentTarget).val($(ev.currentTarget).val() + add)
+        this.actor.update({ [modelkey]: t + (t ? ' ' : '') + add })
+      } else {
+        let t = $(ev.currentTarget).val()
+        $(ev.currentTarget).val(t + (t ? ' ' : '') + add)
+      }
   }
 
   /**
