@@ -1893,7 +1893,7 @@ Hooks.once('init', async function () {
     }
     if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
     html.find('#chat-log').on('drop', event => dropHandler(event, true))
-  })
+  });
 
   /**
    * Added to color the rollable parts of the character sheet.
