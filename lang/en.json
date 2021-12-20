@@ -1090,7 +1090,7 @@
   "GURPS.CR6": "CR: 6 (Resist Rarely)",
   "GURPS.CR9": "CR: 9 (Resist Fairly Often)",
   "GURPS.CR12": "CR: 12 (Resist Quite Often)",
-  "GURPS.CR15": "CR: 15 (Resist Almost All The Time)"
+  "GURPS.CR15": "CR: 15 (Resist Almost All The Time)",
   "GURPS.modifiersBlindAttack": "-10 to hit (Blind)",
   "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)"
 }
