@@ -16,6 +16,8 @@ Release 0.12.11
 - Fixed Full GCS sheet's navigation widget operating on wrong sheet.
 - Added effect modifiers for the "Blind" status.
 - Fixed the Dodge column in Encumbrance to enable 'rollable' only on the current encumbrance level.
+- ADD will now automatically select Injury Tolerance (Unliving, Diffuse, or Homogenous) if any of the following exists as an Advantage on the actor sheet: (Name is 'Injury Tolerance (\<type\>)' or '\<type\>') or (Name is 'Injury Tolerance' AND Notes contains '\<type\>') where \<type\> is one of Unliving, Diffuse, or Homogenous.
+- Fix for Foundry v.0.9 layout.
 
 Release 0.12.10 12/1/2021
 
