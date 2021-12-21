@@ -398,9 +398,21 @@
   color: lightpink;
 }
 
+.gga-popup-window .glinkmodplus {
+  background-color: transparent !important;
+  color: palegreen;
+}
+
 .gga-popup-window .modifier-list {
   list-style-type: none;
 }
+
+.gga-popup-window .heading {
+  padding-left: 1em;
+  border-bottom: 1px solid dimgrey;
+}
+
+.gga {}
 
 .glinkmodminus:active {
   cursor: pointer;
@@ -420,7 +432,7 @@
   font-weight: normal;
 }
 
-.gga-popup-window .glinkmodminus:hover {
+.gga-popup-window .glinkmodminus:hover, .gga-popup-window .glinkmodplus:hover {
   cursor: pointer;
   /* background: var(--lightgrey); */
   color: white;
@@ -429,6 +441,10 @@
   padding: 0;
   margin: 0;
   font-weight: normal;
+}
+
+.gga-popup-window .glinkmodplus:hover {
+  text-shadow: 0 0 5px green;
 }
 
 .gurpslink.test,

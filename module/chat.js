@@ -138,6 +138,8 @@ class ChatProcessorRegistry {
     }
     if (start < message.length) lines.push(message.substr(start))
     let answer = false
+
+    // TODO consider Promise.then(Promise)...
     for (const line of lines) {
       // use for loop to ensure single thread
       answer = await this.processLine(line)
