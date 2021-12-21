@@ -16,6 +16,7 @@ Release 0.12.11
 - Fixed Full GCS sheet's navigation widget operating on wrong sheet.
 - Added effect modifiers for the "Blind" status.
 - Fixed the Dodge column in Encumbrance to enable 'rollable' only on the current encumbrance level.
+- Fix for Foundry v.0.9 layout.
 
 Release 0.12.10 12/1/2021
 
