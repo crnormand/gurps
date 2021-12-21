@@ -4,7 +4,6 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
 import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
-import { GurpsActor } from '../actor/actor.js'
 
 /* 
   Crippling injury:
@@ -22,6 +21,7 @@ const piercing = ['pi-', 'pi', 'pi+', 'pi++']
 
 const DIFFUSE = 'diffuse'
 const HOMOGENOUS = 'homogenous'
+const UNLIVING = 'unliving'
 
 // -1 means 'Ignores DR'
 const armorDivisorSteps = [-1, 100, 10, 5, 3, 2, 1]
@@ -116,6 +116,79 @@ export class CompositeDamageCalculator {
 
     this._isShotgun = false
     this._shotgunRofMultiplier = 9
+
+    // look at defender and automatically set things like Unliving, Diffuse, Homogenous
+    // if advantage.name === 'Diffuse' -- DFRPG style
+    // if advantage.name === 'Injury Tolerance' && advantage.notes.startsWith('Diffuse ') -- GCS Basic style
+    //    _isInjuryTolerance = true
+    //    _injuryToleranceType = 'unliving'
+    let values = Object.values(this._defender.data.data.ads)
+    if (this.isUnliving(values, false)) {
+      this._isInjuryTolerance = true
+      this._injuryToleranceType = UNLIVING
+    }
+    if (this.isHomogenous(values)) {
+      this._isInjuryTolerance = true
+      this._injuryToleranceType = HOMOGENOUS
+    }
+    if (this.isDiffuse(values)) {
+      this._isInjuryTolerance = true
+      this._injuryToleranceType = DIFFUSE
+    }
+  }
+
+  isUnliving(values, found) {
+    if (!found) {
+      let self = this
+      found = values.find(value => {
+        let found = !!(
+          ['Injury Tolerance (Unliving)', 'Unliving'].includes(value.name) ||
+          (value.name === 'Injury Tolerance' && value.notes.includes('Unliving'))
+        )
+
+        if (!found && Object.keys(value.contains).length > 0) {
+          found = self.isUnliving(Object.values(value.contains), false)
+        }
+        return found
+      })
+    }
+    return !!found
+  }
+
+  isHomogenous(values, found) {
+    if (!found) {
+      let self = this
+      found = values.find(value => {
+        let found = !!(
+          ['Injury Tolerance (Homogenous)', 'Homogenous'].includes(value.name) ||
+          (value.name === 'Injury Tolerance' && value.notes.includes('Homogenous'))
+        )
+
+        if (!found && Object.keys(value.contains).length > 0) {
+          found = self.isHomogenous(Object.values(value.contains), false)
+        }
+        return found
+      })
+    }
+    return !!found
+  }
+
+  isDiffuse(values, found) {
+    if (!found) {
+      let self = this
+      found = values.find(value => {
+        let found = !!(
+          ['Injury Tolerance (Diffuse)', 'Diffuse'].includes(value.name) ||
+          (value.name === 'Injury Tolerance' && value.notes.includes('Diffuse'))
+        )
+
+        if (!found && Object.keys(value.contains).length > 0) {
+          found = self.isDiffuse(Object.values(value.contains), false)
+        }
+        return found
+      })
+    }
+    return !!found
   }
 
   static isResourceDamageType(damageType) {
@@ -375,7 +448,7 @@ export class CompositeDamageCalculator {
 
     if (this._isInjuryTolerance) {
       switch (this._injuryToleranceType) {
-        case 'unliving':
+        case UNLIVING:
           // if Eye, Skull, or Vitals, don't modify wounding modifier
           if (['Eye', 'Skull', 'Vitals'].includes(this._hitLocation)) break
 
