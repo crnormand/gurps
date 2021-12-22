@@ -430,7 +430,7 @@ const actionFuncs = {
   modifier({ action }) {
     GURPS.ModifierBucket.addModifier(parseInt(action.mod), action.desc)
     if (action.next && action.next.type === 'modifier') {
-      return this.modifier(action.next) // recursion
+      return this.modifier({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
     }
     return true
   },
