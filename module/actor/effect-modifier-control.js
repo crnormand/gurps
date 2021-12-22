@@ -15,6 +15,7 @@ export class EffectModifierControl {
     Hooks.on('controlToken', this._controlToken.bind(this))
     Hooks.on('updateToken', this._updateToken.bind(this))
     Hooks.on('createActiveEffect', this._createActiveEffect.bind(this))
+    Hooks.on('targetToken', this._targetToken.bind(this))
     Hooks.once('ready', () => (this._ui = new EffectModifierPopout(null, this)))
     Hooks.on('closeEffectModifierPopout', () => (this.showPopup = false))
   }
@@ -83,6 +84,10 @@ export class EffectModifierControl {
     let sharedStateID = this.token?.id
     console.log(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
     if (tokenDocument.object === this.token) this._ui.render(false)
+  }
+
+  _targetToken(user, token, targeted) {
+    this._ui.render(false)
   }
 
   _controlToken(token, isControlled) {

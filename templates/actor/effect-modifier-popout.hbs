@@ -5,11 +5,24 @@
     {{/each}}
   </ul>
   {{#if targetmodifiers}}
-    <div class='heading'>{{i18n 'GURPS.targetModifiers' 'Target Modifiers'}}</div>
+    <div class='heading' style='border: none;'>{{i18n 'GURPS.targetedModifiers' 'Targeted Modifiers'}}</div>
     <ul class='modifier-list'>
       {{#each targetmodifiers}}
         <li>{{{this}}}</li>
       {{/each}}
     </ul>
   {{/if}}
+  {{#each targets}}
+    <div class='heading' style='color: orange; border-top: 1px solid dimgrey; border-bottom: none;'>{{i18n
+        'GURPS.targetModifiers'
+        'Target:'
+      }}&ensp;{{name}}</div>
+    <ul class='modifier-list'>
+      {{#each targetmodifiers}}
+        <li>{{{this}}}</li>
+      {{else}}
+        <li style='color: darkgrey;'>None</li>
+      {{/each}}
+    </ul>
+  {{/each}}
 </div>
