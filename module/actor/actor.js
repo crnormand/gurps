@@ -1710,7 +1710,7 @@ export class GurpsActor extends Actor {
    */
   async importFromGCSv1(xml, importname, importpath, suppressMessage = false) {
     if (importname.endsWith('.gcs')) return this.importFromGCSv2(xml, importname, importpath, suppressMessage);
-    const GCAVersion = 'GCA-10'
+    const GCAVersion = 'GCA-11'
     const GCSVersion = 'GCS-5'
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
@@ -1785,6 +1785,9 @@ export class GurpsActor extends Actor {
         }
         if (vernum < 10) {
           msg.push(i18n('GURPS.importGCAAdvMods'))
+        }
+        if (vernum < 11) {
+          msg.push(i18n('GURPS.importGCAConditionalModifiers'))
         }
       }
       if (isFoundryGCS) {
