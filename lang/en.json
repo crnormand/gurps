@@ -735,6 +735,7 @@
   "GURPS.importGCSNoSelfControl": "This file was created with an older version of the GCS Export which does not contain the Self Control rolls for Disadvantages (ex: [CR: 9 Bad Temper]).",
   "GURPS.importGCSNoUses": "This file was created with an older version of the GCS Export which does not contain the 'Uses' column for Equipment.",
   "GURPS.importGCAAdvMods": "This file was created with an older version of the GCA Export which concatenates Advantage modifiers into the Advantage name, which can create very long Advantage names (and affect the character sheet layout)",
+  "GURPS.importGCAConditionalModifiers": "This file was created with an older version of the GCA Export that does not export Conditional Modifiers",
   "GURPS.importGenericError": "An error occured while importing {name}, {error}:{message}.",
   "GURPS.importNoCharacterFormat": "Unable to detect the 'character' format. Most likely you are trying to import the 'npc' format.",
   "GURPS.importNoXMLDetected": "No XML detected. Are you importing the correct XML file?",

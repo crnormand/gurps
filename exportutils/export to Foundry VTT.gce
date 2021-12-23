@@ -41,7 +41,7 @@ Sub Main()
     
     ' begin the xml file
     Paragraph = "<?xml version=""1.0"" encoding=""iso-8859-1""?>"
-    Paragraph = "<root release=""Foundry"" version=""GCA-10"">"
+    Paragraph = "<root release=""Foundry"" version=""GCA-11"">"
     Paragraph = "<character>"
     
     ' in Fantasy Grounds the <name> field must be at the top level
