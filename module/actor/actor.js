@@ -13,6 +13,7 @@ import {
   objectToArray,
   arrayToObject,
   zeroFill,
+  arrayBuffertoBase64
 } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
@@ -770,7 +771,9 @@ export class GurpsActor extends Actor {
           xhr.onload = () => {
             if (xhr.status === 200) {
               // @ts-ignore
-              let s = String.fromCharCode.apply(null, new Uint8Array(xhr.response))
+              // let s = new TextDecoder().decode(new Uint8Array(xhr.respone));
+              let s = arrayBuffertoBase64(xhr.response);
+              // let s = String.fromCharCode.apply(null, new Uint8Array(xhr.response))
               // @ts-ignore
               this.importFromGCSv1(s, m[1], p)
             } else this._openImportDialog()
@@ -1651,6 +1654,7 @@ export class GurpsActor extends Actor {
     let r;
     let msg = [];
     let version = "Direct GCS Import";
+    let exit = false;
     try{
       r = JSON.parse(json);
     } catch(err) {
@@ -1666,14 +1670,13 @@ export class GurpsActor extends Actor {
 
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'));
-      let content = await renderTemplate('systems/gurps/templates/chat-import-errors.html', {
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
         version: version,
-        GCAversion: GCAVersion,
+        GCAVersion: GCAVersion,
         GCSVersion: GCSVersion,
         url: GURPS.USER_GUIDE_URL,
       });
-      let user = game.user;
       ChatMessage.create({
         content: content,
         user: game.user.id,
