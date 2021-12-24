@@ -1076,15 +1076,17 @@ export class GurpsActor extends Actor {
   importSk(i, p) {
     let s = new Skill();
     s.name = i.name + (!!i.tech_level ? `/TL${i.tech_level}` : "") + (!!i.specialization ? ` (${i.specialization})` : "") || "Skill";
-    s.type = i.type.toUpperCase();
-    s.import = i.calc?.level || "";
-    if (s.level == 0) s.level = '';
-    s.points = i.points;
-    s.relativelevel = i.calc?.rsl;
-    s.notes = i.notes || ""
     s.pageRef(i.reference || "");
     s.uuid = i.id;
     s.parentuuid = p;
+    if (["skill","technique"].includes(i.type)) {
+      s.type = i.type.toUpperCase();
+      s.import = i.calc?.level || "";
+      if (s.level == 0) s.level = '';
+      s.points = i.points;
+      s.relativelevel = i.calc?.rsl;
+      s.notes = i.notes || ""
+    }
     let old = this._findElementIn('skills', s.uuid);
     if (!!old) {
       s.name = this._tryToMerge(s.name || null, old.name);
@@ -1113,20 +1115,23 @@ export class GurpsActor extends Actor {
   importSp(i, p) {
     let s = new Spell();
     s.name = i.name || "Spell";
-    s.class = i.spell || "";
-    s.college = i.college || "";
-    s.cost = i.casting_cost || "";
-    s.maintain = i.maintenance_cost || "";
-    s.difficulty = i.difficulty.toUpperCase();
-    s.relativelevel = i.calc?.rsl;
-    s.notes = i.notes || "";
-    s.pageRef(i.reference || "");
-    s.duration = i.duration || "";
-    s.points = i.points || "";
-    s.casttime = i.casting_time || "";
-    s.import = i.calc?.level || 0;
     s.uuid = i.id;
     s.parentuuid = p;
+    s.pageRef(i.reference || "");
+    if (["spell","ritual_magic_spell"].includes(i.type)) {
+      s.class = i.spell || "";
+      s.college = i.college || "";
+      s.cost = i.casting_cost || "";
+      s.maintain = i.maintenance_cost || "";
+      s.difficulty = i.difficulty.toUpperCase();
+      s.relativelevel = i.calc?.rsl;
+      s.notes = i.notes || "";
+      s.duration = i.duration || "";
+      s.points = i.points || "";
+      s.casttime = i.casting_time || "";
+      s.import = i.calc?.level || 0;
+    }
+    
     let old = this._findElementIn('spells', s.uuid);
     if (!!old) {
       s.name = this._tryToMerge(s.name || null, old.name);
@@ -1507,7 +1512,7 @@ export class GurpsActor extends Actor {
       GURPS.put(rs, r, index_r++);
     }
     for (let i of temp_c2) {
-      let c = new Reaction();
+      let c = new Modifier();
       c.modifier = i.modifier.toString();
       c.situation = i.situation;
       GURPS.put(cs, c, index_c++);
@@ -1619,12 +1624,40 @@ export class GurpsActor extends Actor {
    * @param {string} importname
    * @param {string | undefined} [importpath]
    */
-  async importFromGCSv2(json, importname, importpath, suppressMessage = false) {
-    let r = JSON.parse(json)
+  async importFromGCSv2(json, importname, importpath, suppressMessage = false, GCAVersion, GCSVersion) {
+    let r;
+    let msg = [];
+    let version = "Direct GCS Import";
+    try{
+      r = JSON.parse(json);
+    } catch(err) {
+      msg.push(i18n('GURPS.importNoJSONDetected'));
+      exit = true;
+    }
+    if (!!r) {
+      if (!r.calc) {
+        msg.push(i18n('GURPS.importOldGCSFile'));
+        exit = true;
+      }
+    }
 
-    if (!r.calc) {
-      if (!suppressMessage) ui.notifications?.error(i18n('GURPS.importOldGCSFile'));
-      return false;
+    if (msg.length > 0) {
+      ui.notifications?.error(msg.join('<br>'));
+      let content = await renderTemplate('systems/gurps/templates/chat-import-errors.html', {
+        lines: msg,
+        version: version,
+        GCAversion: GCAVersion,
+        GCSVersion: GCSVersion,
+        url: GURPS.USER_GUIDE_URL,
+      });
+      let user = game.user;
+      ChatMessage.create({
+        content: content,
+        user: game.user.id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        whisper: [game.user.id],
+      });
+      if (exit) return false;
     }
 
     let nm = r["profile"]["name"]
@@ -1636,21 +1669,43 @@ export class GurpsActor extends Actor {
     let ar = this.getGurpsActorData().additionalresources || {};
     ar.importname = importname || ar.importname;
     ar.importpath = importpath || ar.importpath;
-    commit = { ...commit, ...{ 'data.additionalresources': ar } };
+    try {
+      commit = { ...commit, ...{ 'data.additionalresources': ar } };
+      commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) };
+      commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date) };
+      commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages) };
+      commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) };
+      commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) };
+      commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment) };
+      commit = { ...commit, ...this.importNotesFromGCSv2(r.notes) };
 
-    commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) };
-    commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date) };
-    commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages) };
-    commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) };
-    commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) };
-    commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment) };
-    commit = { ...commit, ...this.importNotesFromGCSv2(r.notes) };
-
-    commit = { ...commit, ...(await this.importProtectionFromGCSv2(r.settings.hit_locations)) };
-    commit = { ...commit, ...this.importPointTotalsFromGCSv2(r.total_points, r.attributes, r.advantages, r.skills, r.spells) };
-    commit = { ...commit, ...this.importReactionsFromGCSv3(r.advantages, r.skills, r.equipment) };
-    commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages, r.skills, r.spells, r.equipment) };
-
+      commit = { ...commit, ...(await this.importProtectionFromGCSv2(r.settings.hit_locations)) };
+      commit = { ...commit, ...this.importPointTotalsFromGCSv2(r.total_points, r.attributes, r.advantages, r.skills, r.spells) };
+      commit = { ...commit, ...this.importReactionsFromGCSv3(r.advantages, r.skills, r.equipment) };
+      commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages, r.skills, r.spells, r.equipment) };
+    } catch (err) {
+      console.log(err.stack);
+      msg.push(i18n_f("GURPS.importGenericError", {
+        name: nm, error: err.name,
+        message: err.message
+      }));
+      let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
+        lines: [msg],
+        version: version,
+        GCAVersion: GCAVersion,
+        GCSVersion: GCSVersion,
+        url: GURPS.USER_GUIDE_URL,
+      });
+      ui.notifications?.warn(msg)
+      let chatData = {
+        user: game.user.id,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+        content: content,
+        whisper: [game.user.id],
+      }
+      ChatMessage.create(chatData, {})
+      // Don't return
+    }
 
     console.log('Starting commit');
     let deletes = Object.fromEntries(Object.entries(commit).filter(([key, value]) => key.includes('.-=')));
@@ -1709,9 +1764,9 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv1(xml, importname, importpath, suppressMessage = false) {
-    if (importname.endsWith('.gcs')) return this.importFromGCSv2(xml, importname, importpath, suppressMessage);
     const GCAVersion = 'GCA-11'
     const GCSVersion = 'GCS-5'
+    if (importname.endsWith('.gcs')) return this.importFromGCSv2(xml, importname, importpath, suppressMessage, GCAVersion, GCSVersion);
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
