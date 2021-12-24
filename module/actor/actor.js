@@ -458,9 +458,8 @@ export class GurpsActor extends Actor {
       }
 
       for (let enckey in encs) {
-        let enc = encs[enckey]
+        let enc = encs[enckey];
         let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
-
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
         enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
         enc.currentflight = Math.max(1, Math.floor(effectiveFlight * threshold))
@@ -495,9 +494,7 @@ export class GurpsActor extends Actor {
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
 
-    if (threshold == 1.0)
-      this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
-
+    if (threshold == 1.0) this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text;
     return updateMove
       ? maneuver.move < posture.move
         ? maneuver.move
@@ -514,11 +511,10 @@ export class GurpsActor extends Actor {
 
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
-
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.ceil(move * threshold)),
+        move: Math.max(1, Math.floor(move * threshold)),
         text: i18n('GURPS.moveFull'),
       }
   }
@@ -571,7 +567,7 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.ceil(move * threshold)),
+        move: Math.max(1, Math.floor(move * threshold)),
         text: i18n('GURPS.moveFull'),
       }
   }
@@ -867,8 +863,8 @@ export class GurpsActor extends Actor {
     data.HP.points = atts.find(e => e.attr_id === "hp")?.calc.points || 0;
     data.FP.max = atts.find(e => e.attr_id === "fp")?.calc.value || 0;
     data.FP.points = atts.find(e => e.attr_id === "fp")?.calc.points || 0;
-    let hp = atts.find(e => e.attr_id === "hp")?.calc.current;
-    let fp = atts.find(e => e.attr_id === "fp")?.calc.current;
+    let hp = atts.find(e => e.attr_id === "hp")?.calc.current || 0;
+    let fp = atts.find(e => e.attr_id === "fp")?.calc.current || 0;
     let saveCurrent = false;
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
       let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP);
@@ -949,7 +945,7 @@ export class GurpsActor extends Actor {
       // e.current = total_carried <= weight_value && (i == 4 || total_carried < bl_value*ew[i+1]);
       e.current = (((total_carried < weight_value) || (i == 4) || (bl_value == 0)) && (i == 0 || total_carried > bl_value * ew[i - 1]));
       e.weight = weight_value.toString() + " " + bl_unit;
-      e.move = calc.move[i];
+      e.move = calc.move[i].toString();
       e.dodge = calc.dodge[i];
       if (e.current) {
         cm = e.move;
@@ -1007,15 +1003,35 @@ export class GurpsActor extends Actor {
     ts.religion = p.religion || "";
     ts.birthday = p.birthday || "";
     ts.hand = p.handedness || "";
-    if (!!p.SM && p.SM > -1) ts.sizemod = "+" + p.SM.toString();
-    else if (!!p.SM) ts.sizemod = p.SM.toString();
-    else ts.sizemod = "+0";
     ts.techlevel = p.tech_level || "";
     ts.gender = p.gender || "";
     ts.eyes = p.eyes || "";
     ts.hair = p.hair || "";
     ts.skin = p.skin || "";
 
+    return {
+      'data.-=traits': null,
+      'data.traits': ts
+    }
+  }
+
+  signedNum(x) {
+    if (x>=0) return `+${x}`;
+    else return x.toString();
+  }
+
+  importSizeFromGCSv1(commit, profile, ads, skills, equipment) {
+    let ts = commit["data.traits"];
+    let final = profile.SM || 0;
+    let temp = [].concat(ads, skills, equipment);
+    let all = []
+    for (let i of temp) { all = all.concat(this.recursiveGet(i)) };
+    for (let i of all) {
+      if (i.features?.length) for (let f of i.features) {
+        if (f.type == "attribute_bonus" && f.attribute == "sm") final += f.amount * (!!i.levels? parseFloat(i.levels): 1);
+      }
+    }
+    ts.sizemod = this.signedNum(final);
     return {
       'data.-=traits': null,
       'data.traits': ts
@@ -1215,7 +1231,7 @@ export class GurpsActor extends Actor {
     e.notes = "";
     if (i.modifiers?.length) for (let m of i.modifiers) if (!m.disabled) e.notes += (m.name || "") + ((!!m.notes) ? `(${m.notes})` : "");
     e.notes += (!!i.notes) ? `\n${i.notes}` : "";
-    e.weight = (parseFloat(i.calc?.extended_weight)/(i.type == "equipment_container" ? 1 : i.quantity || 1)).toString() || "";
+    e.weight = (parseFloat(i.calc?.extended_weight)/(i.type == "equipment_container" ? 1 : i.quantity || 1)).toString() || "0";
     e.pageRef(i.reference || "");
     let old = this._findElementIn('equipment.carried', e.uuid);
     if (!old) old = this._findElementIn('equipment.other', e.uuid);
@@ -1298,7 +1314,7 @@ export class GurpsActor extends Actor {
     let locations = [];
     for (let i of hls.locations) {
       let l = new HitLocations.HitLocation(i.table_name);
-      l.import = i.calc.dr.all.toString();
+      l.import = i.calc.dr.all?.toString() || "0";
       for (let [key, value] of Object.entries(i.calc.dr)) if (key != "all") l.import += `/${(i.calc.dr.all+value).toString()}`;
       l.penalty = i.hit_penalty.toString();
       while (locations.filter(it => it.where == l.where).length > 0) {
@@ -1673,6 +1689,7 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...{ 'data.additionalresources': ar } };
       commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) };
       commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date) };
+      commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment)};
       commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages) };
       commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) };
       commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) };
@@ -1739,9 +1756,9 @@ export class GurpsActor extends Actor {
       ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
-        version: "N/A",
-        GCAVersion: "N/A",
-        GCSVersion: "N/A",
+        version: "GCS Direct",
+        GCAVersion: GCAVersion,
+        GCSVersion: GCSVersion,
         url: GURPS.USER_GUIDE_URL,
       })
 
