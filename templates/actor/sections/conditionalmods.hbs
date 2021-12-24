@@ -28,7 +28,7 @@
       </div>
     {{else}}
       <div class='itemmenu' readonly></div>
-      <div class='modifier gmod gga-right' data-name='Modifier {{this.situation}}'>{{this.modifier}}</div>
+      <div class='modifier gmod gga-right' data-name='Modifier {{this.situation}}'>{{{displayNumber this.modifier}}}</div>
       <div class='situation condmoddraggable' data-key='data.conditionalmods.{{key}}'>
         {{{gurpslink this.situation}}}
       </div>

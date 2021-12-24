@@ -1056,12 +1056,15 @@ export class GurpsActor extends Actor {
     a.note = i.notes;
     a.userdesc = i.userdesc;
     a.notes = '';
-    if (!!a.note && !!a.userdesc) a.notes = a.note + '\n' + a.userdesc;
-    else if (!!a.note) a.notes = a.note;
-    else if (!!a.userdesc) a.notes = a.userdesc;
+    
     if (i.cr != null) {
-      a.notes = "[" + game.i18n.localize("GURPS.CR" + i.cr.toString()) + "]\n" + a.notes;
+      a.notes = "[" + game.i18n.localize("GURPS.CR" + i.cr.toString()) + "]";
     }
+    if (i.modifiers?.length) {
+      for (let j of i.modifiers) if (!j.disabled) a.notes += `${!!a.notes? "; ":""}${j.name}${!!j.notes?" ("+j.notes+")":""}`
+    }
+    if (!!a.note) a.notes += (!!a.notes?"\n":"") + a.note;
+    if (!!a.userdesc) a.notes += (!!a.notes?"\n":"") + a.userdesc;
     a.pageRef(i.reference);
     a.uuid = i.id;
     a.parentuuid = p;
@@ -1074,6 +1077,7 @@ export class GurpsActor extends Actor {
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importAd(j, i.id));
     }
+    
     return [a].concat(ch);
   }
 
