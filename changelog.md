@@ -5,7 +5,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.12.12
 
 - Always show the sign (+/-) on Conditional Modifiers
-- Monkey-patch "Roll" for Physical Dice (isLoaded) and adding global modifier bucket value. This fixes the issue of Roll Tables not adding the global modifier to the die roll.
+- This fixes the issue of Roll Tables not adding the global modifier to the die roll.
+- Added code to prevent failure to import a character with a spell that has no 'difficulty' value.
 
 Release 0.12.11 12/23/2021
 
