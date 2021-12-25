@@ -33,8 +33,7 @@ export class EffectModifierControl {
 
     // show the token control as active
     let toggle = $.find('[data-control=token] ol > li[data-tool=GURPSEffectsMod]')
-    toggle[0].classList.toggle('active')
-
+    toggle[0]?.classList.toggle('active')
     this.toggleEffectModifierPopup(closeOptions)
   }
 

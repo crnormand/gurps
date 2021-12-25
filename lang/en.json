@@ -743,6 +743,7 @@
   "GURPS.importSuccessful": "{name} imported successfully.",
   "GURPS.importSeeUsersGuide": "Check the Users Guide for details on where to get the latest version.",
   "GURPS.importOldGCSFile": "Your character was saved with an older version of GCS, which does not output some required attributes. Update GCS to at least version 4.36, open and save your character file, then try again.",
+  "GURPS.importNoJSONDetected": "Cannot parse JSON. Your GCS file seems to be corrupted.",
 
   "__System Settings__": "=========",
   "GURPS.settingShowReadMe": "Show 'Read Me' on version change",
