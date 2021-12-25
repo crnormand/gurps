@@ -17,7 +17,7 @@
   <div class='rcl header'>{{localize 'GURPS.rcl'}}</div>
   <div class='st header'>{{localize 'GURPS.attributesST'}}</div>
 
-  {{#each (flatlist data.ranged)}}
+  {{#each (attackflatlist data.ranged)}}
     {{#if ../isEditing}}
       <div class='itemmenu rangedmenu' data-key='data.ranged.{{@key}}'>
         <i class='fas fa-times'></i>
