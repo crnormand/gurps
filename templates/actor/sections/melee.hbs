@@ -14,7 +14,7 @@
   <div class='reach header'>{{i18n 'GURPS.reach'}}</div>
   <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
-  {{#each (flatlist data.melee)}}
+  {{#each (attackflatlist data.melee)}}
     {{#if ../isEditing}}
       <div class='itemmenu meleemenu' data-key='data.melee.{{@key}}'>
         <i class='fas fa-times'></i>
