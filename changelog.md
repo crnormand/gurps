@@ -2,6 +2,12 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.12
+
+- Always show the sign (+/-) on Conditional Modifiers
+- This fixes the issue of Roll Tables not adding the global modifier to the die roll.
+- Added code to prevent failure to import a character with a spell that has no 'difficulty' value.
+
 Release 0.12.11 12/23/2021
 
 - Update /show help
@@ -17,7 +23,10 @@ Release 0.12.11 12/23/2021
 - Added effect modifiers for the "Blind" status.
 - Fixed the Dodge column in Encumbrance to enable 'rollable' only on the current encumbrance level.
 - Added GCS direct import by rinickolous / neck
-- ADD will now automatically select Injury Tolerance (Unliving, Diffuse, or Homogenous) if any of the following exists as an Advantage on the actor sheet: (Name is 'Injury Tolerance (\<type\>)' or '\<type\>') or (Name is 'Injury Tolerance' AND Notes contains '\<type\>') where \<type\> is one of Unliving, Diffuse, or Homogenous.
+- ADD will now automatically select Injury Tolerance (Unliving, Diffuse, or Homogenous) if any of the following exists as an Advantage on the actor sheet, where \<type\> is one of Unliving, Diffuse, or Homogenous:
+  - Name is 'Injury Tolerance (\<type\>)' or
+  - Name is '\<type\>' or
+  - Name is 'Injury Tolerance' AND Notes contains '\<type\>'
 - Fix for Foundry v.0.9 layout.
 - Added targeted token modifiers to Effect Modifier popup.
 - Updated GCA export to GCA-11, supporting Conditional Modifiers
