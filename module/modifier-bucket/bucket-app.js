@@ -42,7 +42,7 @@ Hooks.once('init', async function () {
       let d = Roll.prototype._gurpsOriginalPrepareData(data)
       if (!d.hasOwnProperty('gmodc'))
         Object.defineProperty(d, 'gmodc', {
-          get: () => {
+          get() {
             let m = GURPS.ModifierBucket.currentSum()
             GURPS.ModifierBucket.clear()
             return parseInt(m)
@@ -57,9 +57,8 @@ Hooks.once('init', async function () {
     // Now add the dieOverride static variable and the isLoaded getter:
     Roll.dieOverride = false
     Object.defineProperty(Roll.prototype, 'isLoaded', {
-      get: () => {
-        return this.terms.some(term => term instanceof GurpsDie && !!term._loaded)
-      },
+      // Used alternate define form, which defines 'this'.   get: () => {} does not set 'this'
+      get() { return this.terms.some(term => term instanceof GurpsDie && !!term._loaded) },
     })
   }
 })
@@ -202,7 +201,7 @@ export class GurpsRoll extends Roll {
     let d = super._prepareData(data)
     if (!d.hasOwnProperty('gmodc'))
       Object.defineProperty(d, 'gmodc', {
-        get: () => {
+        get() {
           let m = GURPS.ModifierBucket.currentSum()
           GURPS.ModifierBucket.clear()
           return parseInt(m)
