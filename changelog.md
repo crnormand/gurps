@@ -4,6 +4,10 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.12.14 12/25/2021 Happy Christmas everyone!
 
+- Re-Fixed "Removed Unequipped Weapons" setting
+
+Release 0.12.14 12/25/2021 Happy Christmas everyone!
+
 - Fixed "Removed Unequipped Weapons" setting
 
 Release 0.12.13 12/25/2021 Ho Ho Ho... Merry Christmas!
