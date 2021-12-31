@@ -164,13 +164,16 @@
   overflow: var(--of);
   border: 1px solid rgb(125, 125, 125);
   padding: 3px;
+  display: grid;
+  grid-template-rows: auto;
+  grid-gap: 4px 0;
 }
 
 .npc-input-traits {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1.5em 1fr;
-  gap: 5px 5px;
+  /* gap: 5px 5px; */
   grid-template-areas:
     'tr'
     'tr-val';
@@ -187,17 +190,28 @@
   background-color: black;
   color: white;
   height: 100%;
+  padding-left: 4px;
+  /* padding-top: calc(0.5em / 3); */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .npc-input-tr-val {
   grid-area: tr-val;
 }
 
+.npc-trait-row {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
 .npc-input-skills {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1.5em 1fr;
-  gap: 5px 5px;
+  /* gap: 5px 5px; */
   grid-template-areas:
     'sk'
     'sk-val';
@@ -230,7 +244,7 @@
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1.5em 1fr;
-  gap: 5px 5px;
+  /* gap: 5px 5px; */
   grid-template-areas:
     'eqt'
     'eqt-val';
@@ -262,7 +276,7 @@
   grid-auto-flow: row;
   grid-template-columns: 1fr 2em 0fr;
   grid-auto-rows: fit-content(30px);
-  gap: 5px 5px;
+  gap: 1px 4px;
 }
 
 .npc-sheet-sp-val {
@@ -271,7 +285,7 @@
   grid-auto-flow: row;
   grid-template-columns: 1fr 2em 0fr;
   grid-auto-rows: fit-content(30px);
-  gap: 5px 5px;
+  gap: 1px 4px;
 }
 
 .npc-sheet-eqt-val {
@@ -280,23 +294,42 @@
   grid-auto-flow: row;
   grid-template-columns: 1em 1em 1fr 3em 3em;
   grid-auto-rows: fit-content(30px);
-  gap: 5px 5px;
+  /* gap: 1px 2px; */
 }
 
-.npc-sheet-ra-val .desc:nth-child(odd),
-.npc-sheet-me-val .desc:nth-child(odd),
+.npc-sheet-eqt-val .equipped {
+  padding-left: 2px;
+}
+
+.npc-sheet-eqt-val .qty,
+.npc-sheet-eqt-val .sum_cost,
+.npc-sheet-eqt-val .sum_weight {
+  text-align: right;
+}
+
+.npc-sheet-eqt-val .sum_weight {
+  padding-right: 2px;
+}
+
+.npc-sheet-ra-val .desc:nth-child(8n + 1),
+.npc-sheet-me-val .desc:nth-child(6n + 1),
 .npc-sheet-sk-val .desc:nth-child(odd),
 .npc-sheet-sp-val .desc:nth-child(odd),
-.npc-sheet-eqt-val .desc:nth-child(odd),
-.npc-input-traits .desc:nth-child(odd) {
-  background-color: rgb(240, 240, 255);
+.npc-sheet-eqt-val .desc:nth-child(10n + 3),
+.npc-input-traits .desc:nth-child(odd),
+.npc-input-nt-val .desc:nth-child(even),
+.npc-sheet-eqt-val .sum_cost:nth-child(10n + 4),
+.npc-sheet-eqt-val .sum_weight:nth-child(10n + 5),
+.npc-sheet-eqt-val .qty:nth-child(10n + 2),
+.npc-sheet-eqt-val .equipped:nth-child(10n + 1) {
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 .npc-input-melee {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1.5em 1fr;
-  gap: 5px 5px;
+  /* gap: 1px 4px; */
   grid-template-areas:
     'me'
     'me-val';
@@ -319,14 +352,15 @@
   grid-auto-flow: row;
   grid-template-columns: 5fr 2em 1.5fr;
   grid-auto-rows: fit-content(30px);
-  gap: 5px 5px;
+  gap: 1px 4px;
+  padding-right: 4px;
 }
 
 .npc-input-ranged {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1.5em 1fr;
-  gap: 5px 5px;
+  /* gap: 1px 4px; */
   grid-template-areas:
     'ra'
     'ra-val';
@@ -347,20 +381,21 @@
   grid-area: ra-val;
   display: grid;
   grid-auto-flow: row;
-  grid-template-columns: 5fr 2em 2em 1.5fr;
+  grid-template-columns: 5fr 2em 2em max-content;
   grid-auto-rows: fit-content(30px);
-  gap: 5px 5px;
+  gap: 1px 4px;
+  padding-right: 4px;
 }
 
 .npc-input-attr {
-  padding: 5px 0px 0px 0px;
+  padding: 2px 4px;
   border: 1px solid black;
   border-radius: 3px;
   background-color: rgb(235, 235, 255);
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(5, 1.5em);
-  gap: 2px 3px;
+  /* gap: 2px 3px; */
   grid-template-areas:
     'st st-val hp hp-val spd spd-val'
     'dx dx-val will will-val mov mov-val'
@@ -369,6 +404,9 @@
     'dmg dmg-val parry parry-val dodge dodge-val';
   grid-area: attr;
   font-size: 110%;
+  /* height: 100%; */
+  align-content: space-between;
+  /* justify-content: space-between; */
 }
 
 .npc-input-label {
@@ -520,6 +558,7 @@
 
 .npc-input-dmg-val {
   grid-area: dmg-val;
+  white-space: nowrap;
 }
 
 .npc-input-img {
