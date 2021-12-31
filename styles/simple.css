@@ -247,6 +247,7 @@
 .rollable {
   color: black;
   background-color: rgb(255, 255, 190) !important;
+  min-width: fit-content;
 }
 
 .rollable:active {
@@ -412,7 +413,6 @@
   border-bottom: 1px solid dimgrey;
 }
 
-.gga {}
 
 .glinkmodminus:active {
   cursor: pointer;
@@ -432,7 +432,8 @@
   font-weight: normal;
 }
 
-.gga-popup-window .glinkmodminus:hover, .gga-popup-window .glinkmodplus:hover {
+.gga-popup-window .glinkmodminus:hover,
+.gga-popup-window .glinkmodplus:hover {
   cursor: pointer;
   /* background: var(--lightgrey); */
   color: white;
@@ -1414,6 +1415,7 @@ body {
   color: var(--lightgrey);
   font-size: var(--headerfontsize);
   font-weight: 600;
+  padding-left: var(--smallemgap);
   padding-right: calc(2 * var(--smallemgap));
   cursor: grab;
 }

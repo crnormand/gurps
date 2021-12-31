@@ -2,8 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.12.16 
+Release 0.12.16
 
+- Fixed conditional modifiers from concatenating everything into the final line.
+- Fixed display of the NPC/Mook sheets.
 - Added French language file, thank you Eikhan!!
 
 Release 0.12.15 12/25/2021
