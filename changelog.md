@@ -7,6 +7,7 @@ Release 0.12.16
 - Fixed conditional modifiers from concatenating everything into the final line.
 - Fixed display of the NPC/Mook sheets.
 - Added French language file, thank you Eikhan!!
+- Round fractional numbers in Encumbrance and Lifting tables to 1 decimal place.
 
 Release 0.12.15 12/25/2021
 
