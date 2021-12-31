@@ -26,7 +26,7 @@
       {{#if ../isEditing}}
         <input name='data.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' />
       {{else}}
-        {{weight}}
+        {{displayDecimal weight number=1 removeZeros=true }}
       {{/if}}
     </div>
     <div class='move flex-center {{include-if current 'current'}}'>

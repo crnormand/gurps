@@ -9,7 +9,7 @@
         value='{{data.liftingmoving.basiclift}}'
       />
     {{else}}
-      {{data.liftingmoving.basiclift}}
+      {{displayDecimal data.liftingmoving.basiclift number=1 removeZeros=true}}
     {{/if}}
   </div>
   <div class='liftdesc'>
@@ -24,7 +24,7 @@
         value='{{data.liftingmoving.onehandedlift}}'
       />
     {{else}}
-      {{data.liftingmoving.onehandedlift}}
+      {{displayDecimal data.liftingmoving.onehandedlift number=1 removeZeros=true}}
     {{/if}}
   </div>
   <div class='liftdesc'>
@@ -39,7 +39,7 @@
         value='{{data.liftingmoving.twohandedlift}}'
       />
     {{else}}
-      {{data.liftingmoving.twohandedlift}}
+      {{displayDecimal data.liftingmoving.twohandedlift number=1 removeZeros=true}}
     {{/if}}
   </div>
   <div class='liftdesc'>
@@ -49,7 +49,7 @@
     {{#if isEditing}}
       <input name='data.liftingmoving.shove' class='gcs-input-4' type='text' value='{{data.liftingmoving.shove}}' />
     {{else}}
-      {{data.liftingmoving.shove}}
+      {{displayDecimal data.liftingmoving.shove number=1 removeZeros=true}}
     {{/if}}
   </div>
   <div class='liftdesc'>
@@ -65,7 +65,7 @@
           value='{{data.liftingmoving.runningshove}}'
         />
       {{else}}
-        {{data.liftingmoving.runningshove}}
+        {{displayDecimal data.liftingmoving.runningshove number=1 removeZeros=true}}
       {{/if}}
     </div>
     <div class='liftdesc'>
@@ -81,7 +81,7 @@
         value='{{data.liftingmoving.carryonback}}'
       />
     {{else}}
-      {{data.liftingmoving.carryonback}}
+      {{displayDecimal data.liftingmoving.carryonback number=1 removeZeros=true}}
     {{/if}}
   </div>
   <div class='liftdesc'>
@@ -96,7 +96,7 @@
         value='{{data.liftingmoving.shiftslightly}}'
       />
     {{else}}
-      {{data.liftingmoving.shiftslightly}}
+      {{displayDecimal data.liftingmoving.shiftslightly number=1 removeZeros=true}}
     {{/if}}
   </div>
   <div class='liftdesc'>
