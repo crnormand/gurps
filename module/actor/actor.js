@@ -847,25 +847,25 @@ export class GurpsActor extends Actor {
     let data = this.getGurpsActorData();
     let att = data.attributes;
 
-    att.ST.import = atts.find(e => e.attr_id === "st")?.calc.value || 0;
-    att.ST.points = atts.find(e => e.attr_id === "st")?.calc.points || 0;
-    att.DX.import = atts.find(e => e.attr_id === "dx")?.calc.value || 0;
-    att.DX.points = atts.find(e => e.attr_id === "dx")?.calc.points || 0;
-    att.IQ.import = atts.find(e => e.attr_id === "iq")?.calc.value || 0;
-    att.IQ.points = atts.find(e => e.attr_id === "iq")?.calc.points || 0;
-    att.HT.import = atts.find(e => e.attr_id === "ht")?.calc.value || 0;
-    att.HT.points = atts.find(e => e.attr_id === "ht")?.calc.points || 0;
-    att.WILL.import = atts.find(e => e.attr_id === "will")?.calc.value || 0;
-    att.WILL.points = atts.find(e => e.attr_id === "will")?.calc.points || 0;
-    att.PER.import = atts.find(e => e.attr_id === "per")?.calc.value || 0;
-    att.PER.points = atts.find(e => e.attr_id === "per")?.calc.points || 0;
+    att.ST.import = atts.find(e => e.attr_id === "st")?.calc?.value || 0;
+    att.ST.points = atts.find(e => e.attr_id === "st")?.calc?.points || 0;
+    att.DX.import = atts.find(e => e.attr_id === "dx")?.calc?.value || 0;
+    att.DX.points = atts.find(e => e.attr_id === "dx")?.calc?.points || 0;
+    att.IQ.import = atts.find(e => e.attr_id === "iq")?.calc?.value || 0;
+    att.IQ.points = atts.find(e => e.attr_id === "iq")?.calc?.points || 0;
+    att.HT.import = atts.find(e => e.attr_id === "ht")?.calc?.value || 0;
+    att.HT.points = atts.find(e => e.attr_id === "ht")?.calc?.points || 0;
+    att.WILL.import = atts.find(e => e.attr_id === "will")?.calc?.value || 0;
+    att.WILL.points = atts.find(e => e.attr_id === "will")?.calc?.points || 0;
+    att.PER.import = atts.find(e => e.attr_id === "per")?.calc?.value || 0;
+    att.PER.points = atts.find(e => e.attr_id === "per")?.calc?.points || 0;
 
-    data.HP.max = atts.find(e => e.attr_id === "hp")?.calc.value || 0;
-    data.HP.points = atts.find(e => e.attr_id === "hp")?.calc.points || 0;
-    data.FP.max = atts.find(e => e.attr_id === "fp")?.calc.value || 0;
-    data.FP.points = atts.find(e => e.attr_id === "fp")?.calc.points || 0;
-    let hp = atts.find(e => e.attr_id === "hp")?.calc.current || 0;
-    let fp = atts.find(e => e.attr_id === "fp")?.calc.current || 0;
+    data.HP.max = atts.find(e => e.attr_id === "hp")?.calc?.value || 0;
+    data.HP.points = atts.find(e => e.attr_id === "hp")?.calc?.points || 0;
+    data.FP.max = atts.find(e => e.attr_id === "fp")?.calc?.value || 0;
+    data.FP.points = atts.find(e => e.attr_id === "fp")?.calc?.points || 0;
+    let hp = atts.find(e => e.attr_id === "hp")?.calc?.current || 0;
+    let fp = atts.find(e => e.attr_id === "fp")?.calc?.current || 0;
     let saveCurrent = false;
 
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
@@ -902,8 +902,8 @@ export class GurpsActor extends Actor {
       data.FP.value = fp
     }
 
-    let bl_value = parseFloat(calc.basic_lift.match(/[\d\.]+/g))
-    let bl_unit = calc.basic_lift.replace(bl_value + ' ', '')
+    let bl_value = parseFloat(calc?.basic_lift.match(/[\d\.]+/g))
+    let bl_unit = calc?.basic_lift.replace(bl_value + ' ', '')
 
     let lm = {}
     lm.basiclift = (bl_value * 1).toString() + ' ' + bl_unit
@@ -914,22 +914,22 @@ export class GurpsActor extends Actor {
     lm.shove = (bl_value * 12).toString() + ' ' + bl_unit
     lm.twohandedlift = (bl_value * 8).toString() + ' ' + bl_unit
 
-    let bm = atts.find(e => e.attr_id === 'basic_move')?.calc.value || 0
+    let bm = atts.find(e => e.attr_id === 'basic_move')?.calc?.value || 0
     data.basicmove.value = bm.toString()
-    data.basicmove.points = atts.find(e => e.attr_id === 'basic_move')?.calc.points || 0
-    let bs = atts.find(e => e.attr_id === 'basic_speed')?.calc.value || 0
+    data.basicmove.points = atts.find(e => e.attr_id === 'basic_move')?.calc?.points || 0
+    let bs = atts.find(e => e.attr_id === 'basic_speed')?.calc?.value || 0
     data.basicspeed.value = bs.toString()
-    data.basicspeed.points = atts.find(e => e.attr_id === 'basic_speed')?.calc.points || 0
+    data.basicspeed.points = atts.find(e => e.attr_id === 'basic_speed')?.calc?.points || 0
 
-    data.thrust = calc.thrust
-    data.swing = calc.swing
+    data.thrust = calc?.thrust
+    data.swing = calc?.swing
     data.currentmove = data.basicmove.value
-    data.frightcheck = atts.find(e => e.attr_id === 'fright_check')?.calc.value || 0
+    data.frightcheck = atts.find(e => e.attr_id === 'fright_check')?.calc?.value || 0
 
-    data.hearing = atts.find(e => e.attr_id === 'hearing')?.calc.value || 0
-    data.tastesmell = atts.find(e => e.attr_id === 'taste_smell')?.calc.value || 0
-    data.touch = atts.find(e => e.attr_id === 'touch')?.calc.value || 0
-    data.vision = atts.find(e => e.attr_id === 'vision')?.calc.value || 0
+    data.hearing = atts.find(e => e.attr_id === 'hearing')?.calc?.value || 0
+    data.tastesmell = atts.find(e => e.attr_id === 'taste_smell')?.calc?.value || 0
+    data.touch = atts.find(e => e.attr_id === 'touch')?.calc?.value || 0
+    data.vision = atts.find(e => e.attr_id === 'vision')?.calc?.value || 0
 
     let cm = 0
     let cd = 0
@@ -946,8 +946,8 @@ export class GurpsActor extends Actor {
       // e.current = total_carried <= weight_value && (i == 4 || total_carried < bl_value*ew[i+1]);
       e.current = (((total_carried < weight_value) || (i == 4) || (bl_value == 0)) && (i == 0 || total_carried > bl_value * ew[i - 1]));
       e.weight = weight_value.toString() + " " + bl_unit;
-      e.move = calc.move[i].toString();
-      e.dodge = calc.dodge[i];
+      e.move = calc?.move[i].toString();
+      e.dodge = calc?.dodge[i];
       if (e.current) {
         cm = e.move
         cd = e.dodge
@@ -1053,7 +1053,7 @@ export class GurpsActor extends Actor {
   importAd(i, p) {
     let a = new Advantage();
     a.name = i.name + (i.levels ? " " + i.levels.toString() : "") || "Advantage";
-    a.points = i.calc.points;
+    a.points = i.calc?.points;
     a.note = i.notes;
     a.userdesc = i.userdesc;
     a.notes = '';
@@ -1324,8 +1324,8 @@ export class GurpsActor extends Actor {
     let locations = []
     for (let i of hls.locations) {
       let l = new HitLocations.HitLocation(i.table_name);
-      l.import = i.calc.dr.all?.toString() || "0";
-      for (let [key, value] of Object.entries(i.calc.dr)) if (key != "all") l.import += `/${(i.calc.dr.all+value).toString()}`;
+      l.import = i.calc?.dr.all?.toString() || "0";
+      for (let [key, value] of Object.entries(i.calc?.dr)) if (key != "all") l.import += `/${(i.calc?.dr.all+value).toString()}`;
       l.penalty = i.hit_penalty.toString();
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*'
@@ -1475,7 +1475,7 @@ export class GurpsActor extends Actor {
     let p_unspent = total
     let p_total = total
     let p_race = 0
-    for (let i of atts) p_atts += i.calc.points
+    for (let i of atts) p_atts += i.calc?.points
     for (let i of ads) [p_ads, p_disads, p_quirks, p_race] = this.adPointCount(i, p_ads, p_disads, p_quirks, p_race)
     for (let i of skills) p_skills = this.skPointCount(i, p_skills)
     for (let i of spells) p_spells = this.skPointCount(i, p_spells)
@@ -1577,11 +1577,11 @@ export class GurpsActor extends Actor {
             if (!!m.notes && w.notes) i.notes += '\n' + w.notes
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
-            m.import = w.calc.level.toString() || '0'
-            m.damage = w.calc.damage || ''
+            m.import = w.calc?.level.toString() || '0'
+            m.damage = w.calc?.damage || ''
             m.reach = w.reach || ''
-            m.parry = w.calc.parry || ''
-            m.block = w.block || ''
+            m.parry = w.calc?.parry || ''
+            m.block = w.calc?.block || ''
             let old = this._findElementIn('melee', false, m.name, m.mode)
             if (!!old) {
               m.name = this._tryToMerge(m.name || null, old.name)
@@ -1600,13 +1600,13 @@ export class GurpsActor extends Actor {
             if (!!r.notes && w.notes) i.notes += '\n' + w.notes
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
-            r.import = w.calc.level || '0'
-            r.damage = w.calc.damage || ''
+            r.import = w.calc?.level || '0'
+            r.damage = w.calc?.damage || ''
             r.acc = w.accuracy || ''
             r.rof = w.rate_of_fire || ''
             r.shots = w.shots || ''
             r.rcl = w.recoil || ''
-            r.range = w.calc.range || ''
+            r.range = w.calc?.range || ''
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             if (!!old) {
               r.name = this._tryToMerge(r.name || null, old.name)
@@ -1635,13 +1635,13 @@ export class GurpsActor extends Actor {
   }
 
   adPointCount(i, ads, disads, quirks, race) {
-    if (i.type == 'advantage_container' && i.container_type == 'race') race += i.calc.points
-    else if (i.type == 'advantage_container' && i.container_type == 'alternative_abilities') ads += i.calc.points
+    if (i.type == 'advantage_container' && i.container_type == 'race') race += i.calc?.points
+    else if (i.type == 'advantage_container' && i.container_type == 'alternative_abilities') ads += i.calc?.points
     else if (i.type == 'advantage_container' && !!i.children?.length)
       for (let j of i.children) [ads, disads, quirks, race] = this.adPointCount(j, ads, disads, quirks, race)
-    else if (i.calc.points == -1) quirks += i.calc.points
-    else if (i.calc.points > 0) ads += i.calc.points
-    else disads += i.calc.points
+    else if (i.calc?.points == -1) quirks += i.calc?.points
+    else if (i.calc?.points > 0) ads += i.calc?.points
+    else disads += i.calc?.points
     return [ads, disads, quirks, race]
   }
 
