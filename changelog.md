@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.12.17 
+
+- Updated GCS import to calc block and handle missing 'calc' object @neck
+
 Release 0.12.16 12/31/2021 Happy New Year!
 
 - Fixed conditional modifiers from concatenating everything into the final line.
