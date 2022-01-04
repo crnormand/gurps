@@ -5,6 +5,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.12.17 
 
 - Updated GCS import to calc block and handle missing 'calc' object @neck
+- Updated GCA5 export script to latest version
+- Updated lighting/darkness modifiers
 
 Release 0.12.16 12/31/2021 Happy New Year!
 
