@@ -200,7 +200,7 @@ Public Class ExportToFoundryVTT
         Return "Export To Foundry VTT"
     End Function
     Public Function PluginDescription() As String Implements GCA5.Interfaces.IExportSheet.PluginDescription
-        Return "Exports to an *.xml file, from currently loaded GCA5 Characters. Use the 'UTF-8' setting in the GGA for Foundry VTT before importing this file."
+        Return "Exports the currently selected character to an XML file.  Before importing this file into the GURPS Game Aid for Foundry VTT, set the System Setting 'Import File Encoding' to 'UTF-8'."
     End Function
     Public Function PluginVersion() As String Implements GCA5.Interfaces.IExportSheet.PluginVersion
         Return AutoFindVersion()
