@@ -310,36 +310,6 @@ export class GurpsActorSheet extends ActorSheet {
         ev.preventDefault()
       })
 
-      // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
-      // display the tooltip in the correct position.
-      html.find('.tooltip.gga-manual').mouseover(ev => {
-        ev.preventDefault()
-
-        let target = $(ev.currentTarget)
-        if (target.hasNoChildren) {
-          return
-        }
-
-        let tooltip = target.children('.tooltiptext.gga-manual')
-        if (tooltip) {
-          tooltip.css({ visibility: 'visible' })
-        }
-      })
-
-      // On mouseout, stop displaying the tooltip.
-      html.find('.tooltip.gga-manual').mouseout(ev => {
-        ev.preventDefault()
-        let target = $(ev.currentTarget)
-        if (target.hasNoChildren) {
-          return
-        }
-
-        let tooltip = target.children('.tooltiptext.gga-manual')
-        if (tooltip) {
-          tooltip.css({ visibility: 'hidden' })
-        }
-      })
-
       // On a click of the enhanced input popup, update the text input field, but do not update the actor's data.
       html.find('button[data-operation="resource-update"]').click(ev => {
         let dataValue = $(ev.currentTarget).attr('data-value')
@@ -358,6 +328,44 @@ export class GurpsActorSheet extends ActorSheet {
         }
       })
     } // end enhanced input
+
+    // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
+    // display the tooltip in the correct position.
+    html.find('.tooltip.gga-manual').mouseover(ev => {
+      ev.preventDefault()
+
+      let target = $(ev.currentTarget)
+      if (target.hasNoChildren) {
+        return
+      }
+
+      let tooltip = target.children('.tooltiptext.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'visible' })
+      }
+      tooltip = target.children('.tooltippic.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'visible' })
+      }
+   })
+
+    // On mouseout, stop displaying the tooltip.
+    html.find('.tooltip.gga-manual').mouseout(ev => {
+      ev.preventDefault()
+      let target = $(ev.currentTarget)
+      if (target.hasNoChildren) {
+        return
+      }
+
+      let tooltip = target.children('.tooltiptext.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'hidden' })
+      }
+      tooltip = target.children('.tooltippic.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'hidden' })
+      }
+   })
 
     // Equipment ===
 
@@ -1377,7 +1385,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (event.shiftKey)
       // Hold down the shift key for Simplified
       newSheet = 'gurps.GurpsActorSimplifiedSheet'
-    if (game.keyboard.isCtrl(event))
+    if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
       // Hold down the Ctrl key (Command on Mac) for Simplified
       newSheet = 'gurps.GurpsActorNpcSheet'
 

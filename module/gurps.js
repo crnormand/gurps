@@ -443,7 +443,7 @@ const actionFuncs = {
    */
   chat({ action, event }) {
     // @ts-ignore
-    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard?.isCtrl(event)}\n${action.orig}`
+    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)}\n${action.orig}`
 
     // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
     return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
@@ -2006,7 +2006,6 @@ Hooks.once('ready', async function () {
 
   // Sorry, removed the ts-ignores during editing.
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
-    console.log(data)
     if (!data.otf && !data.bucket) return
     let name = data.otf || data.bucket.join(' & ')
     if (!!data.displayname) name = data.displayname

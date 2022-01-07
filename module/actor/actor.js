@@ -490,7 +490,11 @@ export class GurpsActor extends Actor {
    * @returns {number}
    */
   _getCurrentMove(move, threshold) {
-    let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE)
+    let inCombat = false
+    try {
+      inCombat = !!game.combat?.combatants.filter(c => c.data.actorId == this.id)
+    } catch (err) {}  // During game startup, an exception is being thrown trying to access 'game.combat'
+    let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
