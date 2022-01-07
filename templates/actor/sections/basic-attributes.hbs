@@ -89,19 +89,31 @@
     <hr />
 
     <div class='points'></div>
-    <div
-      class='field noedit {{rollable (not isEditing)}}'
-      data-damage
-      data-otf='{{data.thrust}} dmg'
-    >{{data.thrust}}</div>
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.thrust' class='gcs-input' type='text' value='{{data.thrust}}' />
+      </div>
+    {{else}}
+      <div
+        class='field noedit {{rollable (not isEditing)}}'
+        data-damage
+        data-otf='{{data.thrust}} dmg'
+      >{{data.thrust}}</div>
+    {{/if}}
     <div class='label'>{{i18n 'GURPS.thrust'}}</div>
 
     <div class='points'></div>
-    <div
-      class='field noedit {{rollable (not isEditing)}}'
-      data-damage
-      data-otf='{{data.swing}} dmg'
-    >{{data.swing}}</div>
+    {{#if isEditing}}
+      <div class='field'>
+        <input name='data.swing' class='gcs-input' type='text' value='{{data.swing}}' />
+      </div>
+    {{else}} 
+      <div
+        class='field noedit {{rollable (not isEditing)}}'
+        data-damage
+        data-otf='{{data.swing}} dmg'
+      >{{data.swing}}</div>
+    {{/if}}
     <div class='label'>{{i18n 'GURPS.swing'}}</div>
 
     <div class='points'>
