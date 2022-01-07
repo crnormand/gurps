@@ -585,7 +585,7 @@ class UsesChatProcessor extends ChatProcessor {
       }
       if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
       else {
-        if (!m[1]) {
+        if (!m[1] && !m[2]) { // no +-= or reset
           ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
         } else {
           eqt = duplicate(eqt)
@@ -628,7 +628,7 @@ class QtyChatProcessor extends ChatProcessor {
     return '/qty &lt;formula&gt; &lt;equipment name&gt;'
   }
   matches(line) {
-    this.match = line.match(/^\/qty +([\+-=]\d+)(.*)/i)
+    this.match = line.match(/^\/qty +([\+-=] *\d+)(.*)/i)
     return !!this.match
   }
   usagematches(line) {
@@ -663,10 +663,10 @@ class QtyChatProcessor extends ChatProcessor {
       if (!eqt) ui.notifications.warn(i18n('GURPS.chatNoEquipmentMatched') + " '" + pattern + "'")
       else {
         eqt = duplicate(eqt)
-        let delta = parseInt(m[1])
+        let delta = parseInt(m[1].replace(/ /g, ''))
         if (isNaN(delta)) {
           // only happens with '='
-          delta = parseInt(m[1].substr(1))
+          delta = parseInt(m[1].substr(1).replace(/ /g, ''))
           if (isNaN(delta)) ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${m[1]}'`)
           else {
             answer = true
@@ -735,20 +735,22 @@ class LightChatProcessor extends ChatProcessor {
       intensity: parseFloat(this.match.groups.intensity) || 1,
     }
     let data = {
-      dimLight: 0,
-      brightLight: 0,
-      lightAngle: 360,
-      lightAnimation: anim,
+      light: {
+        dim: 0,
+        bright: 0,
+        angle: 360,
+        animation: anim,
+      }
     }
 
     if (this.match.groups.off) {
-      data['-=lightColor'] = null
+      data.light['-=color'] = null
     } else {
-      if (this.match.groups.color) data.lightColor = this.match.groups.color
-      if (this.match.groups.colorint) data.lightAlpha = parseFloat(this.match.groups.colorint)
-      data.dimLight = parseFloat(this.match.groups.dim || 0)
-      data.brightLight = parseFloat(this.match.groups.bright || 0)
-      data.lightAngle = parseFloat(this.match.groups.angle || 360)
+      if (this.match.groups.color) data.light.color = this.match.groups.color
+      if (this.match.groups.colorint) data.light.alpha = parseFloat(this.match.groups.colorint)
+      data.light.dim = parseFloat(this.match.groups.dim || 0)
+      data.light.bright = parseFloat(this.match.groups.bright || 0)
+      data.light.angle = parseFloat(this.match.groups.angle || 360)
     }
     console.log('Token Light update: ' + GURPS.objToString(data))
     for (const t of canvas.tokens.controlled) await t.document.update(data)
@@ -762,16 +764,16 @@ class ShowChatProcessor extends ChatProcessor {
   }
 
   help() {
-    return '/show &lt;skills or attributes&gt'
+    return '/show (/showa) &lt;skills or attributes&gt'
   }
 
   matches(line) {
-    this.match = line.match(/^\/(show|sh) (.*)/i)
+    this.match = line.match(/^\/(showa?|sha?) (.*)/i)
     return !!this.match
   }
 
   usagematches(line) {
-    return line.match(/^\/(show|sh)$/i)
+    return line.match(/^[\/\?](showa?|sha?)$/i)
   }
   usage() {
     return i18n("GURPS.chatHelpShow")
@@ -785,15 +787,18 @@ class ShowChatProcessor extends ChatProcessor {
       this.priv('<hr>')
       if (orig.toLowerCase() == 'move') this.priv("<b>Basic Move / Current Move</b>")
       if (orig.toLowerCase() == 'speed') this.priv("<b>Basic Speed</b>")
+      let output = []
       for (const token of canvas.tokens.placeables) {
         let arg = orig
         let actor = token.actor
         switch (orig.toLowerCase()) {
           case 'move': 
-            this.priv(`${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`)
+            output.push({ value: actor.data.data.currentmove, text: `${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`, name: actor.name})
+            //this.priv(`${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`)
             continue;
           case 'speed': 
-            this.priv(`${actor.name}: ${actor.data.data.basicspeed.value}`)
+            output.push({ value: actor.data.data.basicspeed.value, text: `${actor.name}: ${actor.data.data.basicspeed.value}`, name: actor.name})
+            //this.priv(`${actor.name}: ${actor.data.data.basicspeed.value}`)
             continue;
           case 'fright':
             arg = 'frightcheck'
@@ -809,10 +814,14 @@ class ShowChatProcessor extends ChatProcessor {
           let ret = await GURPS.performAction(action.action, actor)
           if (!!ret.target) {
             let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"!/sel ${token.id}\\\\/r [${arg}]]`
-            this.priv(lbl)
+            output.push({ value: ret.target, text: lbl, name: actor.name })
+            //this.priv(lbl)
           }
         }
       }
+      let sortfunc = (a,b) => {return a.value < b.value ? 1 : -1}
+      if (!!this.match[1].match(/sho?w?a/)) sortfunc = (a,b) => {return a.name > b.name ? 1 : -1}
+      output.sort(sortfunc).forEach(e => this.priv(e.text))
     }
   }
 }
@@ -863,6 +872,10 @@ class ManeuverChatProcessor extends ChatProcessor {
       Object.values(Maneuvers.getAll()).map(e => i18n(e.data.label)).forEach(e => this.priv(e))
       return true
     }
+    if (!game.combat) {
+      ui.notifications.warn(i18n("GURPS.chatNotInCombat"))
+      return false
+    }
     let r = makeRegexPatternFrom(this.match[2].toLowerCase(), false)
     let m = Object.values(Maneuvers.getAll()).find(e => i18n(e.data.label).toLowerCase().match(r))
     if (!GURPS.LastActor) {
@@ -874,6 +887,7 @@ class ManeuverChatProcessor extends ChatProcessor {
       return false
     }
     GURPS.LastActor.replaceManeuver(m._data.name)
+    return true
   }
    
 }

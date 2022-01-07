@@ -17,7 +17,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -1351,26 +1351,8 @@ function handleGurpslink(event, actor, desc, targets) {
 }
 GURPS.handleGurpslink = handleGurpslink
 
-/* You may be asking yourself, why the hell is he generating fake keys to fit in an object
-  when he could have just used an array. Well, I had TONs of problems with the handlebars and Foundry
-  trying to deal with an array. While is "should" be possible to use it, and some people claim
-  that they could... everything I tried did something wonky. So the 2am fix was just make everything an
-  object with fake indexes. Handlebars deals with this just fine using {{#each someobject}} 
-  and if you really did just want to modify a single entry, you could use {{#each someobject as | obj key |}}
-  which will give you the object, and also the key, such that you could execute someobject.key to get the 
-  correct instance.   */
-/**
- * @param {number} index
- */
-function genkey(index) {
-  let k = ''
-  if (index < 10) k += '0'
-  if (index < 100) k += '0'
-  if (index < 1000) k += '0'
-  if (index < 10000) k += '0'
-  return k + index
-}
-GURPS.genkey = genkey
+// So it can be called from a script macro
+GURPS.genkey = zeroFill
 
 /**
  * Add the value as a property to obj. The key will be a generated value equal
@@ -1390,9 +1372,9 @@ GURPS.genkey = genkey
 function put(obj, value, index = -1) {
   if (index == -1) {
     index = 0
-    while (obj.hasOwnProperty(GURPS.genkey(index))) index++
+    while (obj.hasOwnProperty(zeroFill(index))) index++
   }
-  let k = GURPS.genkey(index)
+  let k = zeroFill(index)
   obj[k] = value
   return k
 }
@@ -1420,8 +1402,8 @@ async function removeKey(actor, path) {
   i = parseInt(key)
 
   i = i + 1
-  while (object.hasOwnProperty(GURPS.genkey(i))) {
-    let k = GURPS.genkey(i)
+  while (object.hasOwnProperty(zeroFill(i))) {
+    let k = zeroFill(i)
     object[key] = object[k]
     delete object[k]
     key = k
@@ -1458,7 +1440,7 @@ async function insertBeforeKey(actor, path, newobj) {
   let start = parseInt(key)
 
   i = start + 1
-  while (object.hasOwnProperty(GURPS.genkey(i))) i++
+  while (object.hasOwnProperty(zeroFill(i))) i++
   i = i - 1
   for (let z = i; z >= start; z--) {
     object[genkey(z + 1)] = object[genkey(z)]

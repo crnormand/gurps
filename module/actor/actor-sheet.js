@@ -1,4 +1,4 @@
-import { arrayToObject, atou, i18n, i18n_f, objectToArray } from '../../lib/utilities.js'
+import { arrayToObject, atou, i18n, i18n_f, objectToArray, zeroFill } from '../../lib/utilities.js'
 import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
@@ -1232,7 +1232,7 @@ export class GurpsActorSheet extends ActorSheet {
               icon: '<i class="fas fa-sign-in-alt"></i>',
               label: `${i18n('GURPS.dropInside')}`,
               callback: async () => {
-                let key = targetkey + '.contains.' + GURPS.genkey(0)
+                let key = targetkey + '.contains.' + zeroFill(0)
                 if (!isSrcFirst) {
                   await this._removeKey(sourceKey)
                   await this._insertBeforeKey(key, object)
