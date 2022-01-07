@@ -1443,7 +1443,7 @@ async function insertBeforeKey(actor, path, newobj) {
   while (object.hasOwnProperty(zeroFill(i))) i++
   i = i - 1
   for (let z = i; z >= start; z--) {
-    object[genkey(z + 1)] = object[genkey(z)]
+    object[zeroFill(z + 1)] = object[zeroFill(z)]
   }
   object[key] = newobj
   let sorted = Object.keys(object)
