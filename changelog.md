@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.0    WARNING!  We are in the middle of V9 testing... I would  NOT recommend pulling from Github until we are done.
+Release 0.13.0  
 
 - Fixed /ra help string
 - Added warning if trying to set maneuver /man when not in combat
@@ -13,6 +13,9 @@ Release 0.13.0    WARNING!  We are in the middle of V9 testing... I would  NOT r
 - Enhanced /tr & /qty commands to allow spaces between +-= and the number
 - Fixed Foundry Item image hover
 - Sorted /show output so highest results appear first, /showa (/sha) shows alphabetically
+- Fixed Attacks that have () in the mode 
+- Updated Effects Modifier Popup button to appear in upper left menu
+- Fixed [ST26] OtFs (fixed target attribute rolls)
 
 Release 0.12.17 1/4/2020
 

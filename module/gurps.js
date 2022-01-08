@@ -1121,7 +1121,7 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
   let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   let smode = ''
-  let m = sname.match(/(.*?)\(([^\)]*)\)$/)
+  let m = sname.match(/(.*?)\((.*)\)$/)
   if (!!m) {
     // Found a mode "(xxx)" in the search name
     sname = m[1].trim()
