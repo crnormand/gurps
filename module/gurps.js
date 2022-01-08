@@ -443,7 +443,9 @@ const actionFuncs = {
    */
   chat({ action, event }) {
     // @ts-ignore
-    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)}\n${action.orig}`
+    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
+      KeyboardManager.MODIFIER_KEYS.CONTROL
+    )}\n${action.orig}`
 
     // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
     return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
@@ -1689,6 +1691,7 @@ Hooks.once('init', async function () {
   let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
 
   $('#logo').attr('src', src)
+  $('#logo').attr('height', '32px')
 
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
@@ -1840,17 +1843,17 @@ Hooks.once('init', async function () {
 
       html.find('.directory-footer').append(button)
     }
-    
+
     // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
-    const hasMeme = game.modules.get('markdown-editor')?.active;
-    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message');
-    
-    const dropHandler = function(event, inLog) {
+    const hasMeme = game.modules.get('markdown-editor')?.active
+    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
+
+    const dropHandler = function (event, inLog) {
       event.preventDefault()
       if (event.originalEvent) event = event.originalEvent
-      const data = JSON.parse(event.dataTransfer.getData("text/plain"))
+      const data = JSON.parse(event.dataTransfer.getData('text/plain'))
       if (!!data && !!data.otf) {
-        let cmd = ''  
+        let cmd = ''
         if (!!data.encodedAction) {
           let action = JSON.parse(atou(data.encodedAction))
           if (action.quiet) cmd += '!'
@@ -1867,7 +1870,7 @@ Hooks.once('init', async function () {
             user: game.user.id,
             //speaker: ChatMessage.getSpeaker({ actor: game.user }),
             type: CONST.CHAT_MESSAGE_TYPES.OOC,
-            content: cmd
+            content: cmd,
           }
           ChatMessage.create(messageData, {})
         } else $(document).find('#chat-message').val(cmd)
@@ -1875,7 +1878,7 @@ Hooks.once('init', async function () {
     }
     if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
     html.find('#chat-log').on('drop', event => dropHandler(event, true))
-  });
+  })
 
   /**
    * Added to color the rollable parts of the character sheet.
@@ -2271,6 +2274,6 @@ Hooks.once('ready', async function () {
   })
 
   GurpsToken.ready()
-  
+
   // End of system "READY" hook.
 })
