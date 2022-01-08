@@ -17,7 +17,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -443,7 +443,9 @@ const actionFuncs = {
    */
   chat({ action, event }) {
     // @ts-ignore
-    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard?.isCtrl(event)}\n${action.orig}`
+    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
+      KeyboardManager.MODIFIER_KEYS.CONTROL
+    )}\n${action.orig}`
 
     // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
     return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
@@ -1351,26 +1353,8 @@ function handleGurpslink(event, actor, desc, targets) {
 }
 GURPS.handleGurpslink = handleGurpslink
 
-/* You may be asking yourself, why the hell is he generating fake keys to fit in an object
-  when he could have just used an array. Well, I had TONs of problems with the handlebars and Foundry
-  trying to deal with an array. While is "should" be possible to use it, and some people claim
-  that they could... everything I tried did something wonky. So the 2am fix was just make everything an
-  object with fake indexes. Handlebars deals with this just fine using {{#each someobject}} 
-  and if you really did just want to modify a single entry, you could use {{#each someobject as | obj key |}}
-  which will give you the object, and also the key, such that you could execute someobject.key to get the 
-  correct instance.   */
-/**
- * @param {number} index
- */
-function genkey(index) {
-  let k = ''
-  if (index < 10) k += '0'
-  if (index < 100) k += '0'
-  if (index < 1000) k += '0'
-  if (index < 10000) k += '0'
-  return k + index
-}
-GURPS.genkey = genkey
+// So it can be called from a script macro
+GURPS.genkey = zeroFill
 
 /**
  * Add the value as a property to obj. The key will be a generated value equal
@@ -1390,9 +1374,9 @@ GURPS.genkey = genkey
 function put(obj, value, index = -1) {
   if (index == -1) {
     index = 0
-    while (obj.hasOwnProperty(GURPS.genkey(index))) index++
+    while (obj.hasOwnProperty(zeroFill(index))) index++
   }
-  let k = GURPS.genkey(index)
+  let k = zeroFill(index)
   obj[k] = value
   return k
 }
@@ -1420,8 +1404,8 @@ async function removeKey(actor, path) {
   i = parseInt(key)
 
   i = i + 1
-  while (object.hasOwnProperty(GURPS.genkey(i))) {
-    let k = GURPS.genkey(i)
+  while (object.hasOwnProperty(zeroFill(i))) {
+    let k = zeroFill(i)
     object[key] = object[k]
     delete object[k]
     key = k
@@ -1458,10 +1442,10 @@ async function insertBeforeKey(actor, path, newobj) {
   let start = parseInt(key)
 
   i = start + 1
-  while (object.hasOwnProperty(GURPS.genkey(i))) i++
+  while (object.hasOwnProperty(zeroFill(i))) i++
   i = i - 1
   for (let z = i; z >= start; z--) {
-    object[genkey(z + 1)] = object[genkey(z)]
+    object[zeroFill(z + 1)] = object[zeroFill(z)]
   }
   object[key] = newobj
   let sorted = Object.keys(object)
@@ -1707,6 +1691,7 @@ Hooks.once('init', async function () {
   let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
 
   $('#logo').attr('src', src)
+  $('#logo').attr('height', '32px')
 
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
@@ -1858,17 +1843,17 @@ Hooks.once('init', async function () {
 
       html.find('.directory-footer').append(button)
     }
-    
+
     // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
-    const hasMeme = game.modules.get('markdown-editor')?.active;
-    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message');
-    
-    const dropHandler = function(event, inLog) {
+    const hasMeme = game.modules.get('markdown-editor')?.active
+    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
+
+    const dropHandler = function (event, inLog) {
       event.preventDefault()
       if (event.originalEvent) event = event.originalEvent
-      const data = JSON.parse(event.dataTransfer.getData("text/plain"))
+      const data = JSON.parse(event.dataTransfer.getData('text/plain'))
       if (!!data && !!data.otf) {
-        let cmd = ''  
+        let cmd = ''
         if (!!data.encodedAction) {
           let action = JSON.parse(atou(data.encodedAction))
           if (action.quiet) cmd += '!'
@@ -1885,7 +1870,7 @@ Hooks.once('init', async function () {
             user: game.user.id,
             //speaker: ChatMessage.getSpeaker({ actor: game.user }),
             type: CONST.CHAT_MESSAGE_TYPES.OOC,
-            content: cmd
+            content: cmd,
           }
           ChatMessage.create(messageData, {})
         } else $(document).find('#chat-message').val(cmd)
@@ -1893,7 +1878,7 @@ Hooks.once('init', async function () {
     }
     if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
     html.find('#chat-log').on('drop', event => dropHandler(event, true))
-  });
+  })
 
   /**
    * Added to color the rollable parts of the character sheet.
@@ -2006,7 +1991,6 @@ Hooks.once('ready', async function () {
 
   // Sorry, removed the ts-ignores during editing.
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
-    console.log(data)
     if (!data.otf && !data.bucket) return
     let name = data.otf || data.bucket.join(' & ')
     if (!!data.displayname) name = data.displayname
@@ -2290,6 +2274,6 @@ Hooks.once('ready', async function () {
   })
 
   GurpsToken.ready()
-  
+
   // End of system "READY" hook.
 })

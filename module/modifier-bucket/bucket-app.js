@@ -553,7 +553,7 @@ export class ModifierBucket extends Application {
       event.preventDefault()
       let originalEvent = event.originalEvent
       if (originalEvent instanceof WheelEvent) {
-        let s = originalEvent.deltaY / -100
+        let s = Math.round(originalEvent.deltaY / -100)
         this.addModifier(s, '')
       }
     })

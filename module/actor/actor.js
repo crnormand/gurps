@@ -441,7 +441,7 @@ export class GurpsActor extends Actor {
 
     // We must assume that the first level of encumbrance has the finally calculated move and dodge settings
     if (!!encs) {
-      const level0 = encs[GURPS.genkey(0)] // if there are encumbrances, there will always be a level0
+      const level0 = encs[zeroFill(0)] // if there are encumbrances, there will always be a level0
       let effectiveMove = parseInt(level0.move)
       let effectiveDodge = parseInt(level0.dodge) + data.currentdodge
       let effectiveFlight = parseFloat(data.basicspeed.value.toString()) * 2
@@ -490,7 +490,11 @@ export class GurpsActor extends Actor {
    * @returns {number}
    */
   _getCurrentMove(move, threshold) {
-    let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE)
+    let inCombat = false
+    try {
+      inCombat = !!game.combat?.combatants.filter(c => c.data.actorId == this.id)
+    } catch (err) {}  // During game startup, an exception is being thrown trying to access 'game.combat'
+    let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
@@ -3343,7 +3347,7 @@ export class GurpsActor extends Actor {
       await this.addItemData(item.data)
     } else {
       // If was in other... just add back to other (and forget addons)
-      await this._addNewItemEquipment(item.data, 'data.equipment.other.' + GURPS.genkey(0))
+      await this._addNewItemEquipment(item.data, 'data.equipment.other.' + zeroFill(0))
     }
     let newkey = this._findEqtkeyForId('globalid', _data.globalid)
     if (!!oldeqt && (!!oldeqt.contains || !!oldeqt.collapsed)) {
@@ -3407,7 +3411,7 @@ export class GurpsActor extends Actor {
           if (e.uuid == _data.eqt.parentuuid) found = 'data.equipment.other.' + k
         })
       if (!!found) {
-        targetkey = found + '.contains.' + GURPS.genkey(0)
+        targetkey = found + '.contains.' + zeroFill(0)
       }
     }
     if (targetkey == null)
@@ -3416,10 +3420,10 @@ export class GurpsActor extends Actor {
         targetkey = 'data.equipment.carried'
         let index = 0
         let list = getProperty(this.data, targetkey)
-        while (list.hasOwnProperty(GURPS.genkey(index))) index++
-        targetkey += '.' + GURPS.genkey(index)
+        while (list.hasOwnProperty(zeroFill(index))) index++
+        targetkey += '.' + zeroFill(index)
       } else targetkey = 'data.equipment.other'
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0) //if just 'carried' or 'other'
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
     let eqt = _data.eqt
     if (!eqt) {
       ui.notifications?.warn('Item: ' + itemData._id + ' (Global:' + _data.globalid + ') missing equipment')
@@ -3649,7 +3653,7 @@ export class GurpsActor extends Actor {
               await GURPS.removeKey(this, srckey)
               await this.updateParentOf(srckey, false)
             }
-            let k = targetkey + '.contains.' + GURPS.genkey(0)
+            let k = targetkey + '.contains.' + zeroFill(0)
             let targ = getProperty(this.data, targetkey)
 
             await this.updateItemAdditionsBasedOn(object, targetkey)
@@ -3711,7 +3715,7 @@ export class GurpsActor extends Actor {
     })
     if (count <= 0) return true // didn't want to split
     if (count >= srceqt.count) return false // not a split, but a move
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + GURPS.genkey(0)
+    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0)
     if (!!srceqt.globalid) {
       this.ignoreRender = true
       await this.updateEqtCount(srckey, srceqt.count - count)
@@ -3914,7 +3918,7 @@ export class GurpsActor extends Actor {
   checkEncumbance(currentWeight) {
     /** @type {{ [key: string]: any }} */
     let encs = this.getGurpsActorData().encumbrance
-    let last = GURPS.genkey(0) // if there are encumbrances, there will always be a level0
+    let last = zeroFill(0) // if there are encumbrances, there will always be a level0
     var best, prev
     for (let key in encs) {
       let enc = encs[key]

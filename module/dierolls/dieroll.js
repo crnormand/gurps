@@ -151,7 +151,7 @@ export async function doRoll({
 
   let isCtrl = false
   try {
-    isCtrl = !!optionalArgs.event && game.keyboard.isCtrl(optionalArgs.event)
+    isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
   } catch {}
 
   if (
