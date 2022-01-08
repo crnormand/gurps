@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.0
+Release 0.13.0    WARNING!  We are in the middle of V9 testing... I would  NOT recommend pulling from Github until we are done.
 
 - Fixed /ra help string
 - Added warning if trying to set maneuver /man when not in combat
