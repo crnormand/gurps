@@ -31,7 +31,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
 
     // find tracker
     if (!!m[3]) {
-      let pattern = '^' + m[3].trim()
+      let pattern = '^' + m[3].trim().replace(/\(\)/, '')
       tracker = -1
       for (const [key, value] of Object.entries(actor.data.data.additionalresources.tracker)) {
         if (value.name.match(pattern)) {
@@ -44,8 +44,14 @@ export default class TrackerChatProcessor extends ChatProcessor {
         return false
       }
     }
+      
     let theTrackerKey = zeroFill(tracker, 4)
     let theTracker = actor.data.data.additionalresources.tracker[theTrackerKey]
+    if (!theTracker) {
+      ui.notifications.warn(`${i18n('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} 'tr${m[2]}'`)
+      return false
+    }
+
     if (!!m[6]) {
       // reset -- Damage Tracker's reset to zero
       let value = !!theTracker.isDamageTracker ? theTracker.min : theTracker.max
