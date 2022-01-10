@@ -17,7 +17,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -144,6 +144,7 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
 GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
 GURPS.PendingOTFs = []
 GURPS.IgnoreTokenSelect = false
+GURPS.wait = wait
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -441,14 +442,14 @@ const actionFuncs = {
    * @param {boolean} data.action.quiet
    * @param {JQuery.Event|null} data.event
    */
-  chat({ action, event }) {
+  async chat({ action, event }) {
     // @ts-ignore
     const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
       KeyboardManager.MODIFIER_KEYS.CONTROL
     )}\n${action.orig}`
 
     // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
-    return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+    return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
   },
   /**
    * @param {Object} data
@@ -1053,7 +1054,7 @@ async function performAction(action, actor, event = null, targets = []) {
   if (['attribute', 'skill-spell'].includes(action.type)) {
     action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
   }
-  return !action ? false : GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+  return !action ? false : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
 }
 GURPS.performAction = performAction
 

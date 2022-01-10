@@ -55,6 +55,8 @@ export default function RegisterChatProcessors() {
   ChatProcessors.registerProcessor(new SoundChatProcessor())
   ChatProcessors.registerProcessor(new DevChatProcessor())
   ChatProcessors.registerProcessor(new ManeuverChatProcessor())
+  ChatProcessors.registerProcessor(new RepeatChatProcessor())
+  ChatProcessors.registerProcessor(new StopChatProcessor())
 }
 
 class SoundChatProcessor extends ChatProcessor {
@@ -890,4 +892,63 @@ class ManeuverChatProcessor extends ChatProcessor {
     return true
   }
    
+}
+
+class RepeatChatProcessor extends ChatProcessor {
+  help() {
+    return '/repeat &lt;anim command&gt'
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/(repeat|rpt) +(\d+) *(.*)/i)
+    return !!this.match
+  }
+  
+  usagematches(line) {
+    return line.match(/^\/(repeat|rpt)/i)
+  }
+  usage() {
+    return i18n("GURPS.chatHelpRepeat")
+  }
+
+  async process(line) {
+    if (!GURPS.LastActor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return false
+    }
+    this.repeatLoop(GURPS.LastActor, this.match[3].trim(), this.match[2]) // We are purposefully NOT waiting for this method, so that it can continue in the background
+  }
+  async repeatLoop(actor, anim, delay) {
+    actor.RepeatAnimation = true
+    const t = canvas.tokens.placeables.find(e => e.actor == actor)
+    while (actor.RepeatAnimation) {
+      let p = {
+            x: t.position.x + t.w / 2,
+            y: t.position.y + t.h / 2
+          }
+      let s = anim + ' @' + p.x + ',' + p.y
+      await GURPS.executeOTF(s)
+      await GURPS.wait(delay)
+    }
+    ui.notifications.info('Stopped annimation for ' + actor.name)
+  }
+}
+
+class StopChatProcessor extends ChatProcessor {
+  help() {
+    return '/stop'
+  }
+
+  matches(line) {
+    this.match = line.match(/^\/stop/i)
+    return !!this.match
+  }
+  
+  async process(line) {
+    if (!GURPS.LastActor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return false
+    }
+    GURPS.LastActor.RepeatAnimation = false
+  }
 }
