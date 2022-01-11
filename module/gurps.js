@@ -28,7 +28,7 @@ import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
-
+import TriggerHappySupport from './effects/triggerhappy.js'
 /**
  * Added to color the rollable parts of the character sheet.
  * Made this part eslint compatible...
@@ -99,9 +99,10 @@ GURPS.LastActor = null
 GURPS.SJGProductMappings = SJGProductMappings
 GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
 
-GURPS.SetLastActor = function (actor) {
+GURPS.SetLastActor = function (actor, token) {
   if (actor != GURPS.LastActor) console.log('Setting Last Actor:' + actor?.name)
   GURPS.LastActor = actor
+  GURPS.LastToken = token
   setTimeout(() => GURPS.ModifierBucket.refresh(), 100) // Need to make certain the mod bucket refresh occurs later
 }
 
@@ -2182,7 +2183,7 @@ Hooks.once('ready', async function () {
     if (args.length > 1) {
       let a = args[0]?.actor
       if (!!a) {
-        if (args[1]) GURPS.SetLastActor(a)
+        if (args[1]) GURPS.SetLastActor(a, args[0])
         else GURPS.ClearLastActor(a)
       }
     }
@@ -2275,6 +2276,7 @@ Hooks.once('ready', async function () {
   })
 
   GurpsToken.ready()
+  TriggerHappySupport.init()
 
   // End of system "READY" hook.
 })
