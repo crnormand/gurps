@@ -1514,12 +1514,12 @@ export class GurpsActor extends Actor {
         for (let f of i.features) {
           if (f.type == 'reaction_bonus') {
             temp_r.push({
-              modifier: f.amount,
+              modifier: f.amount*((f.per_level && !!i.levels)?parseInt(i.levels):1),
               situation: f.situation,
             })
           } else if (f.type == 'conditional_modifier') {
             temp_c.push({
-              modifier: f.amount,
+              modifier: f.amount*((f.per_level && !!i.levels)?parseInt(i.levels):1),
               situation: f.situation,
             })
           }
