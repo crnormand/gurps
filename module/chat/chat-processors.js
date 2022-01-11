@@ -470,9 +470,12 @@ class SelectChatProcessor extends ChatProcessor {
           .filter(u => !u.isGM)
           .map(u => u.id)
         if (users.includes(game.user.id)) {
-          GURPS.SetLastActor(a)
           let tokens = canvas.tokens.placeables.filter(t => t.actor == a)
-          if (tokens.length == 1) tokens[0].control({ releaseOthers: true }) // Foundry 'select'
+          if (tokens.length == 1) {
+            tokens[0].control({ releaseOthers: true }) // Foundry 'select'
+            GURPS.SetLastActor(a, tokens[0])
+          } else
+            GURPS.SetLastActor(a)
           this.priv('Selecting ' + a.displayname)
           return
         }
@@ -850,7 +853,7 @@ class DevChatProcessor extends ChatProcessor {
         else ui.notifications.warn("Can't find Actor named '" + m[2] + "'")
         break
       } 
-      case 'flush': { // flush the chat log without confirming
+      case 'clear': { // flush the chat log without confirming
         game.messages.documentClass.deleteDocuments([], {deleteAll: true})
         break
       }
