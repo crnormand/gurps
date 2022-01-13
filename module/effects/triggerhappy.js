@@ -1,4 +1,4 @@
-import { setupSocket, teleportToDrawingInScene } from './dae.js'
+import { setupSocket, teleport } from './dae.js'
 
 const Teleport = 'Teleport'
 const OTF = 'OTF'
@@ -24,7 +24,7 @@ export default class TriggerHappySupport {
     Hooks.on('TriggerHappy', (key, args) => {
       switch (key) {
         case Teleport: 
-          this.teleport(args)
+          this._teleport(args)
           break;
         case OTF:
           this.otf(args)
@@ -33,16 +33,20 @@ export default class TriggerHappySupport {
       }
     })   
   }
-  teleport(args) {
+  _teleport(args) {
     if (!GURPS.LastToken) {
       ui.notifications.warn("No last token")
       return 
     }
     args = args.join(' ').split('/')
     let sn = args[0]
-    let dn = args[1]
-    if (!sn || !dn) {
-      ui.notifications.warn('Requires  scene name / drawing name')
+    let tn = args[1]
+    if (!tn) {  // If only one name, assume the current scene
+      tn = sn
+      sn = canvas.scene.name 
+    }
+    if (!tn) {
+      ui.notifications.warn('Requires scene name / drawing (or token) name or just drawing (or token) name ')
       return 
     }
     let scene = game.scenes.contents.find(s => s.name == sn)
@@ -50,13 +54,14 @@ export default class TriggerHappySupport {
       ui.notifications.warn("Unable to find scene " + sn)
       return
     }
-    let drawing =  scene.drawings.contents.find(d => d.data.text == dn)
-    if (!drawing) {
-      ui.notifications.warn("Unable to find drawing " + dn + " in scene " + sn)
+    let target =  scene.drawings.contents.find(d => d.data.text == tn)
+    if (!target) target = scene.tokens.find(t => t.name == tn)
+    if (!target) {
+      ui.notifications.warn("Unable to find drawing or token " + tn + " in scene " + sn)
       return
     }
     
-    teleportToDrawingInScene(GURPS.LastToken, drawing, scene)
+    teleport(GURPS.LastToken, scene, target.data.x, target.data.y)
   }
   otf(args) {
     args = args.join(' ')
