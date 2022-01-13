@@ -2,9 +2,14 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.1 
+Release 0.13.1 1/12/2022
 
+- Fixed OTF parsing for "*Costs tr()"
+- @Neck fixed modifier/conditional modifier calculation for .gcs import
 - Added /repeat (/rpt) command for animations
+- Added @Teleport and @OTF verbs if you use Trigger Happy module
+- Fixed Natural Attacks bug (if the attack name contained parenthesis)
+- Change NPC UI 'Dmg' to 'Th/Sw'
 
 Release 0.13.0 1/8/2022
 
