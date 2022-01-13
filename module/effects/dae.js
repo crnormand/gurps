@@ -139,9 +139,6 @@ export let moveToken = async (token, targetTokenName, xGridOffset = 0, yGridOffs
     });
     */
 };
-export let teleportToDrawingInScene = async (token, drawing, scene) => {
-    return teleport(token, scene, drawing.data.x, drawing.data.y);
-};
 export async function createToken(tokenData, x, y) {
     let targetSceneId = canvas.scene.id;
     // requestGMAction(GMAction.actions.createToken, {userId: game.user.id, targetSceneId, tokenData, x, y})
@@ -151,7 +148,7 @@ export let teleport = async (token, targetScene, xpos, ypos) => {
     let x = Number(xpos);
     let y = parseInt(ypos);
     if (isNaN(x) || isNaN(y)) {
-        error("dae| teleport: Invalid co-ords", xpos, ypos);
+        console.error("dae| teleport: Invalid co-ords", xpos, ypos);
         return `Invalid target co-ordinates (${xpos}, ${ypos})`;
     }
     if (!token) {
@@ -163,19 +160,17 @@ export let teleport = async (token, targetScene, xpos, ypos) => {
         //@ts-ignore
         CanvasAnimation.terminateAnimation(`Token.${token.id}.animateMovement`);
         let sourceSceneId = canvas.scene.id;
-        socketlibSocket.executeAsGM("recreateToken", { userId: game.user.id, tokenUuid: token.uuid, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
+        socketlibSocket.executeAsGM("recreateToken", { userId: game.user.id, tokenUuid: token.document.uuid, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
         //requestGMAction(GMAction.actions.recreateToken, { userId: game.user.id, tokenUuid: token.uuid, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
-        canvas.pan({ x: xpos, y: ypos });
+        setTimeout(() => canvas.pan({ x: xpos, y: ypos }), 200)
         return true;
     }
     // deletes and recreates the token
     var sourceSceneId = canvas.scene.id;
     Hooks.once("canvasReady", async () => {
         await socketlibSocket.executeAsGM("createToken", { userId: game.user.id, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
-        // await requestGMAction(GMAction.actions.createToken, { userId: game.user.id, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
-        // canvas.pan({ x: xpos, y: ypos });
         await socketlibSocket.executeAsGM("deleteToken", { userId: game.user.id, tokenUuid: token.document.uuid });
-        // await requestGMAction(GMAction.actions.deleteToken, { userId: game.user.id, tokenUuid: token.uuid});
+        setTimeout(() => canvas.pan({ x: xpos, y: ypos }), 200)
     });
     // Need to stop animation since we are going to delete the token and if that happens before the animation completes we get an error
     //@ts-ignore
