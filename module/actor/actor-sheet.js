@@ -8,6 +8,8 @@ import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
+import { GurpsActiveEffectListSheet } from './active-effect-list.js'
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -66,7 +68,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
-    sheetData.effects = actor.getEmbeddedCollection('ActiveEffects').contents
+    sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
     return sheetData
   }
 
@@ -539,7 +541,7 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.replacePosture(target.val())
     })
 
-    html.find('#open-modifier-popup').click(this.showModifierPopup.bind(this))
+    html.find('#open-modifier-popup').on('click', this.showModifierPopup.bind(this))
   }
 
   _createHeaderMenus(html) {
@@ -888,7 +890,8 @@ export class GurpsActorSheet extends ActorSheet {
 
   async showModifierPopup(ev) {
     ev.preventDefault()
-    GURPS.EffectModifierControl.showPopup = true
+    // GURPS.EffectModifierControl.showPopup = true
+    new GurpsActiveEffectListSheet(this.actor).render(true)
   }
 
   async editEquipment(actor, path, obj) {

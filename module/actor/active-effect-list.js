@@ -1,6 +1,11 @@
-import { i18n } from '../../lib/utilities'
+import { i18n } from '../../lib/utilities.js'
 
-export class GurpsActiveEffectListSheet extends ActorSheet {
+export class GurpsActiveEffectListSheet extends Application {
+  constructor(actor) {
+    super()
+    this.actor = actor
+  }
+
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['sheet'],
@@ -15,9 +20,9 @@ export class GurpsActiveEffectListSheet extends ActorSheet {
   }
 
   getData() {
-    return mergeObject(super.getData, {
-      effects: actor.getEmbeddedCollection('ActiveEffects').contents,
-    })
+    const sheetData = super.getData()
+    sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
+    return sheetData
   }
 
   activateListeners(html) {

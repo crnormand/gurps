@@ -846,8 +846,7 @@ ul#result-effects li {
   border-bottom: 1px solid white;
 }
 
-.resource-editor,
-.tracked-resource {
+.resource-editor, .tracked-resource, .active-effects-list {
   display: flex;
   flex-flow: column nowrap;
   border: 1px solid black;
@@ -1018,7 +1017,7 @@ ul#result-effects li {
   padding: 0 0.15rem;
 }
 
-.resource-editor .section {
+.resource-editor .section, active-effects-list .section {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
