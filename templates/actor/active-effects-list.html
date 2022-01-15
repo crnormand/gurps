@@ -1,0 +1,29 @@
+<form autocomplete="off">
+  <div class='gga-popup-window'>
+    <table class='gga-effects-list'>
+      <tr>
+        <th>Effect</th>
+        <th>
+          <a class='effect-control' data-action='create'>
+            <i class='fas fa-plus'></i>
+          </a>
+        </th>
+      </tr>
+      {{#each effects}}
+        <tr class='effect' data-effect-id='{{id}}'>
+          <td class='effect-name'>
+            <h4>{{data.label}}</h4>
+          </td>
+          <td class='effect-controls'>
+            <a class='effect-control' data-action='edit' title='{{i18n "GURPS.effectEdit"}}'>
+              <i class='fas fa-edit'></i>
+            </a>
+            <a class='effect-control' data-action='delete' title='{{i18n "GURPS.delete"}}'>
+              <i class='fas fa-trash'></i>
+            </a>
+          </td>
+        </tr>
+      {{/each}}
+    </table>
+  </div>
+</form>

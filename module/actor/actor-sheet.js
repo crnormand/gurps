@@ -66,6 +66,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
+    sheetData.effects = actor.getEmbeddedCollection('ActiveEffects').contents
     return sheetData
   }
 
@@ -347,7 +348,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tooltip) {
         tooltip.css({ visibility: 'visible' })
       }
-   })
+    })
 
     // On mouseout, stop displaying the tooltip.
     html.find('.tooltip.gga-manual').mouseout(ev => {
@@ -365,7 +366,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tooltip) {
         tooltip.css({ visibility: 'hidden' })
       }
-   })
+    })
 
     // Equipment ===
 
