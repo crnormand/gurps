@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.2
+
+- Updated Brazilian Portuguese language file. (Hi, Frerol!)
+
 Release 0.13.1 1/12/2022
 
 - Fixed OTF parsing for "*Costs tr()"
