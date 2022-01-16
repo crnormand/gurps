@@ -846,9 +846,16 @@ ul#result-effects li {
   border-bottom: 1px solid white;
 }
 
-.resource-editor, .tracked-resource, .active-effects-list {
+.resource-editor,
+.tracked-resource,
+.active-effects-list {
   display: flex;
   flex-flow: column nowrap;
+  /* border: 1px solid black; */
+  /* justify-items: center; */
+}
+
+.tracked-resource {
   border: 1px solid black;
 }
 
@@ -1017,13 +1024,20 @@ ul#result-effects li {
   padding: 0 0.15rem;
 }
 
-.resource-editor .section, active-effects-list .section {
+.resource-editor .section {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  /* color: white; */
+  /* background: black; */
 }
 
-.resource-editor .button.icon {
+.resource-editor .section h3,
+active-effects-list .section h3 {
+  margin: 0.25rem;
+}
+
+.table .button.icon {
   color: #4b4a44;
   padding: 0 20px 0 10px;
 }
@@ -1032,15 +1046,34 @@ ul#result-effects li {
   display: grid;
   grid-template-columns: min-content min-content min-content 1fr auto min-content;
   gap: 0.15rem;
-  justify-items: center;
+  justify-items: stretch;
   max-height: max-content;
 }
 
-.resource-editor .tracker-manager.table {
+.resource-editor .tracker-manager.table,
+.active-effects-list .gga-effects-list.table {
   display: grid;
-  grid-template-columns: 3fr 1fr min-content 4fr min-content;
   gap: 0.15rem;
-  justify-items: center;
+  justify-items: stretch;
+}
+
+.table .label {
+  text-align: center;
+  color: white;
+  background-color: black;
+}
+
+.gga-effects-list.table input {
+    min-height: calc(var(--form-field-height) + 1px);
+}
+
+.resource-editor .tracker-manager.table {
+  grid-template-columns: 3fr 1fr min-content 4fr min-content;
+}
+
+.active-effects-list .gga-effects-list.table {
+  grid-template-columns: 1fr min-content;
+  margin: 0 0 0.25em 0;
 }
 
 .resource-editor .table .span3 {
@@ -1048,8 +1081,7 @@ ul#result-effects li {
   justify-content: center;
 }
 
-.gga-app .vertical-center,
-.resource-editor .vertical-center {
+.vertical-center {
   display: flex;
   align-items: center;
 }
@@ -1058,9 +1090,11 @@ ul#result-effects li {
   color: rgb(64, 64, 64);
   background-color: rgba(0, 0, 0, 0.1);
   box-shadow: none;
+  margin-left: 2px;
+  /* min-height: calc(var(--form-field-height) + 1px); */
 }
 
-.resource-editor .clickable:hover {
+.resource-editor .clickable:hover, .gga-effects-list .clickable:hover {
   cursor: pointer;
   box-shadow: 0 0 5px red;
 }

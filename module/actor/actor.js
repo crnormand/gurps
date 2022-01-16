@@ -185,7 +185,7 @@ export class GurpsActor extends Actor {
     // Must be done at end
     this._calculateWeights()
 
-    let maneuver = this.effects.contents.find(it => it.data.flags.core.statusId === 'maneuver')
+    let maneuver = this.effects.contents.find(it => it.data.flags?.core?.statusId === 'maneuver')
     this.getGurpsActorData().conditions.maneuver = !!maneuver ? maneuver.data.flags.gurps.name : 'undefined'
     this.ignoreRender = saved
     if (!saved) setTimeout(() => this._forceRender(), 500)

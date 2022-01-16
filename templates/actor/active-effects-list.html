@@ -1,29 +1,19 @@
-<form autocomplete="off">
-  <div class='gga-popup-window'>
-    <table class='gga-effects-list'>
-      <tr>
-        <th>Effect</th>
-        <th>
-          <a class='effect-control' data-action='create'>
-            <i class='fas fa-plus'></i>
+<form class='{{cssClass}}' autocomplete="off">
+  <div class='active-effects-list' style='position: relative;'>
+    <div style='display: flex; flex-flow: column nowrap'>
+      <div class='gga-effects-list table'>
+        <div class='label'>{{i18n "GURPS.effects.Effect" "Effect"}}</div>
+        <div><a id='template-add' class='effect-control button icon' data-action='create'><i
+              class="fas fa-plus"></i></a>
+        </div>
+        {{#each effects}}
+          <input name='effect-name' class='gcs-input clickable effect-control' data-effect-id='{{id}}'
+            data-action='edit' type='text' readonly value='{{data.label}}' />
+          <a class='effect-control' data-effect-id='{{id}}' data-action='delete' title='{{i18n "GURPS.delete"}}'>
+            <i class='fas fa-trash'></i>
           </a>
-        </th>
-      </tr>
-      {{#each effects}}
-        <tr class='effect' data-effect-id='{{id}}'>
-          <td class='effect-name'>
-            <h4>{{data.label}}</h4>
-          </td>
-          <td class='effect-controls'>
-            <a class='effect-control' data-action='edit' title='{{i18n "GURPS.effectEdit"}}'>
-              <i class='fas fa-edit'></i>
-            </a>
-            <a class='effect-control' data-action='delete' title='{{i18n "GURPS.delete"}}'>
-              <i class='fas fa-trash'></i>
-            </a>
-          </td>
-        </tr>
-      {{/each}}
-    </table>
+        {{/each}}
+      </div>
+    </div>
   </div>
 </form>

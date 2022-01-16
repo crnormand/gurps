@@ -8,7 +8,7 @@ import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
-import { GurpsActiveEffectListSheet } from './active-effect-list.js'
+import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications

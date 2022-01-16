@@ -1,8 +1,9 @@
-import { i18n } from '../../lib/utilities.js'
+import { i18n, i18n_f } from '../../lib/utilities.js'
 
-export class GurpsActiveEffectListSheet extends Application {
-  constructor(actor) {
-    super()
+export default class GurpsActiveEffectListSheet extends Application {
+  constructor(actor, options) {
+    super(options)
+
     this.actor = actor
   }
 
@@ -25,28 +26,34 @@ export class GurpsActiveEffectListSheet extends Application {
     return sheetData
   }
 
-  activateListeners(html) {
-    if (this.isEditable) {
-      html.find('.effect-control').on('click', this._onEffectControl.bind(this))
-    }
+  get title() {
+    let name = this.actor?.name || 'UNKNOWN'
+    return i18n_f('GURPS.effects.ListTitle', { name: name }, 'Active Effects for {name}')
   }
 
-  _onEffectControl(event) {
+  activateListeners(html) {
+    super.activateListeners(html)
+
+    html.find('.effect-control').on('click', this._onEffectControl.bind(this))
+  }
+
+  async _onEffectControl(event) {
     event.preventDefault()
     const a = event.currentTarget
-    const tr = a.closest('tr')
-    const effect = tr.dataset.effectId ? actor.effects.get(tr.dataset.effectId) : null
+    const effect = a.dataset.effectId ? this.actor.effects.get(a.dataset.effectId) : null
     switch (a.dataset.action) {
       case 'create':
-        return actor.createEmbeddedDocuments('ActiveEffect', [
+        await this.actor.createEmbeddedDocuments('ActiveEffect', [
           {
             label: i18n('GURPS.effectNew', 'New Effect'),
             icon: 'icons/svg/aura.svg',
             disabled: true,
           },
         ])
+        return this.render()
       case 'delete':
-        return effect.delete()
+        await effect.delete()
+        return this.render(true)
       case 'edit':
         return effect.sheet.render(true)
     }
