@@ -685,7 +685,7 @@ export class GurpsActorSheet extends ActorSheet {
       '#equipmentcarried': [
         this.addItemMenu(
           i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
+          new Equipment(`${i18n('GURPS.equipment')}...`, true),
           'data.equipment.carried'
         ),
         this.sortAscendingMenu('data.equipment.carried'),
@@ -694,7 +694,7 @@ export class GurpsActorSheet extends ActorSheet {
       '#equipmentother': [
         this.addItemMenu(
           i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
+          new Equipment(`${i18n('GURPS.equipment')}...`, true),
           'data.equipment.other'
         ),
         this.sortAscendingMenu('data.equipment.other'),

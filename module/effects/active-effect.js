@@ -36,7 +36,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
       if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
       else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
-      else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
+     // else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
       else console.log(change)
     })
 
@@ -54,7 +54,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       'deleteActiveEffect',
       (/** @type {string} */ effect, /** @type {any} */ _data, /** @type {any} */ _userId) => {
         console.log('delete ' + effect)
-        effect.terminateActions.filter(it => it.type === 'chat').forEach(it => effect.chat(effect.parent, it))
+        // effect.terminateActions.filter(it => it.type === 'chat').forEach(it => effect.chat(effect.parent, it))
       }
     )
 

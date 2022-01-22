@@ -13,7 +13,7 @@ import {
   objectToArray,
   arrayToObject,
   zeroFill,
-  arrayBuffertoBase64
+  arrayBuffertoBase64,
 } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
@@ -459,7 +459,7 @@ export class GurpsActor extends Actor {
       }
 
       for (let enckey in encs) {
-        let enc = encs[enckey];
+        let enc = encs[enckey]
         let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
         enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
@@ -493,13 +493,14 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.data.actorId == this.id)
-    } catch (err) {}  // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
     let posture = this._getMoveAdjustedForPosture(move, threshold)
 
-    if (threshold == 1.0) this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text;
+    if (threshold == 1.0)
+      this.getGurpsActorData().conditions.move = maneuver.move < posture.move ? maneuver.text : posture.text
     return updateMove
       ? maneuver.move < posture.move
         ? maneuver.move
@@ -519,9 +520,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -572,9 +573,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-        move: Math.max(1, Math.floor(move * threshold)),
-        text: i18n('GURPS.moveFull'),
-      }
+          move: Math.max(1, Math.floor(move * threshold)),
+          text: i18n('GURPS.moveFull'),
+        }
   }
 
   _calculateRangedRanges() {
@@ -693,15 +694,55 @@ export class GurpsActor extends Actor {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('data.HP.value')) {
         let flag = data['data.HP.value'] < this.getGurpsActorData().HP.max / 3
-        if (!!this.getGurpsActorData().conditions.reeling != flag) this.toggleEffectByName('reeling', flag)
+        if (!!this.getGurpsActorData().conditions.reeling != flag) {
+          this.toggleEffectByName('reeling', flag)
+
+          if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
+            // send the chat message
+            let tag = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
+            let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
+            this.sendChatMessage(msg)
+          }
+
+          // update the combat tracker to show/remove condition
+          ui.combat?.render()
+        }
       }
       if (data.hasOwnProperty('data.FP.value')) {
         let flag = data['data.FP.value'] < this.getGurpsActorData().FP.max / 3
-        if (!!this.getGurpsActorData().conditions.exhausted != flag) this.toggleEffectByName('exhausted', flag)
+        if (!!this.getGurpsActorData().conditions.exhausted != flag) {
+          this.toggleEffectByName('exhausted', flag)
+
+          // send the chat message
+          if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
+            let tag = flag ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
+            let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfTired') })
+            this.sendChatMessage(msg)
+          }
+
+          // update the combat tracker to show/remove condition
+          ui.combat?.render()
+        }
       }
     }
 
     return await super.update(data, context)
+  }
+
+  sendChatMessage(msg) {
+    let self = this
+
+    renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+      let users = self.getOwners()
+      let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+
+      let messageData = {
+        content: content,
+        whisper: ids || null,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+      }
+      ChatMessage.create(messageData)
+    })
   }
 
   async internalUpdate(data, context) {
@@ -775,7 +816,7 @@ export class GurpsActor extends Actor {
           xhr.onload = () => {
             if (xhr.status === 200) {
               // @ts-ignore
-              let s = arrayBuffertoBase64(xhr.response);
+              let s = arrayBuffertoBase64(xhr.response)
               // @ts-ignore
               this.importFromGCSv1(s, m[1], p)
             } else this._openImportDialog()
@@ -847,30 +888,30 @@ export class GurpsActor extends Actor {
    * @param {{ [key: string]: any}} json
    */
   async importAttributesFromGCSv2(atts, eqp, calc) {
-    if (!atts) return;
-    let data = this.getGurpsActorData();
-    let att = data.attributes;
+    if (!atts) return
+    let data = this.getGurpsActorData()
+    let att = data.attributes
 
-    att.ST.import = atts.find(e => e.attr_id === "st")?.calc?.value || 0;
-    att.ST.points = atts.find(e => e.attr_id === "st")?.calc?.points || 0;
-    att.DX.import = atts.find(e => e.attr_id === "dx")?.calc?.value || 0;
-    att.DX.points = atts.find(e => e.attr_id === "dx")?.calc?.points || 0;
-    att.IQ.import = atts.find(e => e.attr_id === "iq")?.calc?.value || 0;
-    att.IQ.points = atts.find(e => e.attr_id === "iq")?.calc?.points || 0;
-    att.HT.import = atts.find(e => e.attr_id === "ht")?.calc?.value || 0;
-    att.HT.points = atts.find(e => e.attr_id === "ht")?.calc?.points || 0;
-    att.WILL.import = atts.find(e => e.attr_id === "will")?.calc?.value || 0;
-    att.WILL.points = atts.find(e => e.attr_id === "will")?.calc?.points || 0;
-    att.PER.import = atts.find(e => e.attr_id === "per")?.calc?.value || 0;
-    att.PER.points = atts.find(e => e.attr_id === "per")?.calc?.points || 0;
+    att.ST.import = atts.find(e => e.attr_id === 'st')?.calc?.value || 0
+    att.ST.points = atts.find(e => e.attr_id === 'st')?.calc?.points || 0
+    att.DX.import = atts.find(e => e.attr_id === 'dx')?.calc?.value || 0
+    att.DX.points = atts.find(e => e.attr_id === 'dx')?.calc?.points || 0
+    att.IQ.import = atts.find(e => e.attr_id === 'iq')?.calc?.value || 0
+    att.IQ.points = atts.find(e => e.attr_id === 'iq')?.calc?.points || 0
+    att.HT.import = atts.find(e => e.attr_id === 'ht')?.calc?.value || 0
+    att.HT.points = atts.find(e => e.attr_id === 'ht')?.calc?.points || 0
+    att.WILL.import = atts.find(e => e.attr_id === 'will')?.calc?.value || 0
+    att.WILL.points = atts.find(e => e.attr_id === 'will')?.calc?.points || 0
+    att.PER.import = atts.find(e => e.attr_id === 'per')?.calc?.value || 0
+    att.PER.points = atts.find(e => e.attr_id === 'per')?.calc?.points || 0
 
-    data.HP.max = atts.find(e => e.attr_id === "hp")?.calc?.value || 0;
-    data.HP.points = atts.find(e => e.attr_id === "hp")?.calc?.points || 0;
-    data.FP.max = atts.find(e => e.attr_id === "fp")?.calc?.value || 0;
-    data.FP.points = atts.find(e => e.attr_id === "fp")?.calc?.points || 0;
-    let hp = atts.find(e => e.attr_id === "hp")?.calc?.current || 0;
-    let fp = atts.find(e => e.attr_id === "fp")?.calc?.current || 0;
-    let saveCurrent = false;
+    data.HP.max = atts.find(e => e.attr_id === 'hp')?.calc?.value || 0
+    data.HP.points = atts.find(e => e.attr_id === 'hp')?.calc?.points || 0
+    data.FP.max = atts.find(e => e.attr_id === 'fp')?.calc?.value || 0
+    data.FP.points = atts.find(e => e.attr_id === 'fp')?.calc?.points || 0
+    let hp = atts.find(e => e.attr_id === 'hp')?.calc?.current || 0
+    let fp = atts.find(e => e.attr_id === 'fp')?.calc?.current || 0
+    let saveCurrent = false
 
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
       let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)
@@ -948,10 +989,11 @@ export class GurpsActor extends Actor {
       e.key = 'enc' + i
       let weight_value = bl_value * ew[i]
       // e.current = total_carried <= weight_value && (i == 4 || total_carried < bl_value*ew[i+1]);
-      e.current = (((total_carried < weight_value) || (i == 4) || (bl_value == 0)) && (i == 0 || total_carried > bl_value * ew[i - 1]));
-      e.weight = weight_value.toString() + " " + bl_unit;
-      e.move = calc?.move[i].toString();
-      e.dodge = calc?.dodge[i];
+      e.current =
+        (total_carried < weight_value || i == 4 || bl_value == 0) && (i == 0 || total_carried > bl_value * ew[i - 1])
+      e.weight = weight_value.toString() + ' ' + bl_unit
+      e.move = calc?.move[i].toString()
+      e.dodge = calc?.dodge[i]
       if (e.current) {
         cm = e.move
         cd = e.dodge
@@ -997,22 +1039,22 @@ export class GurpsActor extends Actor {
   importTraitsFromGCSv2(p, cd, md) {
     if (!p) return
     let ts = {}
-    ts.race = "";
-    ts.height = p.height || "";
-    ts.weight = p.weight || "";
-    ts.age = p.age || "";
-    ts.title = p.title || "";
-    ts.player = p.player_name || "";
-    ts.createdon = cd || "";
-    ts.modifiedon = md || "";
-    ts.religion = p.religion || "";
-    ts.birthday = p.birthday || "";
-    ts.hand = p.handedness || "";
-    ts.techlevel = p.tech_level || "";
-    ts.gender = p.gender || "";
-    ts.eyes = p.eyes || "";
-    ts.hair = p.hair || "";
-    ts.skin = p.skin || "";
+    ts.race = ''
+    ts.height = p.height || ''
+    ts.weight = p.weight || ''
+    ts.age = p.age || ''
+    ts.title = p.title || ''
+    ts.player = p.player_name || ''
+    ts.createdon = cd || ''
+    ts.modifiedon = md || ''
+    ts.religion = p.religion || ''
+    ts.birthday = p.birthday || ''
+    ts.hand = p.handedness || ''
+    ts.techlevel = p.tech_level || ''
+    ts.gender = p.gender || ''
+    ts.eyes = p.eyes || ''
+    ts.hair = p.hair || ''
+    ts.skin = p.skin || ''
 
     return {
       'data.-=traits': null,
@@ -1021,25 +1063,29 @@ export class GurpsActor extends Actor {
   }
 
   signedNum(x) {
-    if (x>=0) return `+${x}`;
-    else return x.toString();
+    if (x >= 0) return `+${x}`
+    else return x.toString()
   }
 
   importSizeFromGCSv1(commit, profile, ads, skills, equipment) {
-    let ts = commit["data.traits"];
-    let final = profile.SM || 0;
-    let temp = [].concat(ads, skills, equipment);
+    let ts = commit['data.traits']
+    let final = profile.SM || 0
+    let temp = [].concat(ads, skills, equipment)
     let all = []
-    for (let i of temp) { all = all.concat(this.recursiveGet(i)) };
-    for (let i of all) {
-      if (i.features?.length) for (let f of i.features) {
-        if (f.type == "attribute_bonus" && f.attribute == "sm") final += f.amount * (!!i.levels? parseFloat(i.levels): 1);
-      }
+    for (let i of temp) {
+      all = all.concat(this.recursiveGet(i))
     }
-    ts.sizemod = this.signedNum(final);
+    for (let i of all) {
+      if (i.features?.length)
+        for (let f of i.features) {
+          if (f.type == 'attribute_bonus' && f.attribute == 'sm')
+            final += f.amount * (!!i.levels ? parseFloat(i.levels) : 1)
+        }
+    }
+    ts.sizemod = this.signedNum(final)
     return {
       'data.-=traits': null,
-      'data.traits': ts
+      'data.traits': ts,
     }
   }
 
@@ -1055,24 +1101,25 @@ export class GurpsActor extends Actor {
   }
 
   importAd(i, p) {
-    let a = new Advantage();
-    a.name = i.name + (i.levels ? " " + i.levels.toString() : "") || "Advantage";
-    a.points = i.calc?.points;
-    a.note = i.notes;
-    a.userdesc = i.userdesc;
-    a.notes = '';
-    
+    let a = new Advantage()
+    a.name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Advantage'
+    a.points = i.calc?.points
+    a.note = i.notes
+    a.userdesc = i.userdesc
+    a.notes = ''
+
     if (i.cr != null) {
-      a.notes = "[" + game.i18n.localize("GURPS.CR" + i.cr.toString()) + "]";
+      a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ']'
     }
     if (i.modifiers?.length) {
-      for (let j of i.modifiers) if (!j.disabled) a.notes += `${!!a.notes? "; ":""}${j.name}${!!j.notes?" ("+j.notes+")":""}`
+      for (let j of i.modifiers)
+        if (!j.disabled) a.notes += `${!!a.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
     }
-    if (!!a.note) a.notes += (!!a.notes?"\n":"") + a.note;
-    if (!!a.userdesc) a.notes += (!!a.notes?"\n":"") + a.userdesc;
-    a.pageRef(i.reference);
-    a.uuid = i.id;
-    a.parentuuid = p;
+    if (!!a.note) a.notes += (!!a.notes ? '\n' : '') + a.note
+    if (!!a.userdesc) a.notes += (!!a.notes ? '\n' : '') + a.userdesc
+    a.pageRef(i.reference)
+    a.uuid = i.id
+    a.parentuuid = p
 
     let old = this._findElementIn('ads', a.uuid)
     if (!!old) {
@@ -1082,8 +1129,8 @@ export class GurpsActor extends Actor {
     let ch = []
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importAd(j, i.id))
-    }    
-    return [a].concat(ch);
+    }
+    return [a].concat(ch)
   }
 
   importSkillsFromGCSv2(sks) {
@@ -1099,20 +1146,22 @@ export class GurpsActor extends Actor {
   }
 
   importSk(i, p) {
-    let s = new Skill();
-    s.name = i.name + (!!i.tech_level ? `/TL${i.tech_level}` : "") + (!!i.specialization ? ` (${i.specialization})` : "") || "Skill";
-    s.pageRef(i.reference || "");
-    s.uuid = i.id;
-    s.parentuuid = p;
-    if (["skill","technique"].includes(i.type)) {
-      s.type = i.type.toUpperCase();
-      s.import = i.calc?.level || "";
-      if (s.level == 0) s.level = '';
-      s.points = i.points;
-      s.relativelevel = i.calc?.rsl;
-      s.notes = i.notes || ""
+    let s = new Skill()
+    s.name =
+      i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
+      'Skill'
+    s.pageRef(i.reference || '')
+    s.uuid = i.id
+    s.parentuuid = p
+    if (['skill', 'technique'].includes(i.type)) {
+      s.type = i.type.toUpperCase()
+      s.import = i.calc?.level || ''
+      if (s.level == 0) s.level = ''
+      s.points = i.points
+      s.relativelevel = i.calc?.rsl
+      s.notes = i.notes || ''
     }
-    let old = this._findElementIn('skills', s.uuid);
+    let old = this._findElementIn('skills', s.uuid)
     if (!!old) {
       s.name = this._tryToMerge(s.name || null, old.name)
       s.notes = this._tryToMerge(s.notes, old.notes)
@@ -1138,26 +1187,26 @@ export class GurpsActor extends Actor {
   }
 
   importSp(i, p) {
-    let s = new Spell();
-    s.name = i.name || "Spell";
-    s.uuid = i.id;
-    s.parentuuid = p;
-    s.pageRef(i.reference || "");
-    if (["spell","ritual_magic_spell"].includes(i.type)) {
-      s.class = i.spell || "";
-      s.college = i.college || "";
-      s.cost = i.casting_cost || "";
-      s.maintain = i.maintenance_cost || "";
-      s.difficulty = i.difficulty.toUpperCase();
-      s.relativelevel = i.calc?.rsl;
-      s.notes = i.notes || "";
-      s.duration = i.duration || "";
-      s.points = i.points || "";
-      s.casttime = i.casting_time || "";
-      s.import = i.calc?.level || 0;
+    let s = new Spell()
+    s.name = i.name || 'Spell'
+    s.uuid = i.id
+    s.parentuuid = p
+    s.pageRef(i.reference || '')
+    if (['spell', 'ritual_magic_spell'].includes(i.type)) {
+      s.class = i.spell || ''
+      s.college = i.college || ''
+      s.cost = i.casting_cost || ''
+      s.maintain = i.maintenance_cost || ''
+      s.difficulty = i.difficulty.toUpperCase()
+      s.relativelevel = i.calc?.rsl
+      s.notes = i.notes || ''
+      s.duration = i.duration || ''
+      s.points = i.points || ''
+      s.casttime = i.casting_time || ''
+      s.import = i.calc?.level || 0
     }
-    
-    let old = this._findElementIn('spells', s.uuid);
+
+    let old = this._findElementIn('spells', s.uuid)
     if (!!old) {
       s.name = this._tryToMerge(s.name || null, old.name)
       s.notes = this._tryToMerge(s.notes, old.notes)
@@ -1226,29 +1275,32 @@ export class GurpsActor extends Actor {
   }
 
   importEq(i, p, carried) {
-    let e = new Equipment();
-    e.name = i.description || "Equipment";
-    e.count = i.type == "equipment_container" ? "1" : i.quantity || "0";
-    e.cost = (parseFloat(i.calc?.extended_value)/(i.type == "equipment_container" ? 1 : i.quantity || 1)).toString() || "";
-    e.carried = carried;
-    e.equipped = i.equipped;
-    e.techlevel = i.tech_level || "";
-    e.legalityclass = i.legality_class || "4";
-    e.categories = i.categories?.join(", ") || "";
-    e.uses = i.uses || 0;
-    e.maxuses = i.max_uses || 0;
-    e.uuid = i.id;
-    e.parentuuid = p;
-    e.notes = "";
-    e.note = i.notes || "";
+    let e = new Equipment()
+    e.name = i.description || 'Equipment'
+    e.count = i.type == 'equipment_container' ? '1' : i.quantity || '0'
+    e.cost =
+      (parseFloat(i.calc?.extended_value) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || ''
+    e.carried = carried
+    e.equipped = i.equipped
+    e.techlevel = i.tech_level || ''
+    e.legalityclass = i.legality_class || '4'
+    e.categories = i.categories?.join(', ') || ''
+    e.uses = i.uses || 0
+    e.maxuses = i.max_uses || 0
+    e.uuid = i.id
+    e.parentuuid = p
+    e.notes = ''
+    e.note = i.notes || ''
     if (i.modifiers?.length) {
-      for (let j of i.modifiers) if (!j.disabled) e.notes += `${!!e.notes? "; ":""}${j.name}${!!j.notes?" ("+j.notes+")":""}`
+      for (let j of i.modifiers)
+        if (!j.disabled) e.notes += `${!!e.notes ? '; ' : ''}${j.name}${!!j.notes ? ' (' + j.notes + ')' : ''}`
     }
-    if (!!e.note) e.notes += (!!e.notes?"\n":"") + e.note;
-    e.weight = (parseFloat(i.calc?.extended_weight)/(i.type == "equipment_container" ? 1 : i.quantity || 1)).toString() || "0";
-    e.pageRef(i.reference || "");
-    let old = this._findElementIn('equipment.carried', e.uuid);
-    if (!old) old = this._findElementIn('equipment.other', e.uuid);
+    if (!!e.note) e.notes += (!!e.notes ? '\n' : '') + e.note
+    e.weight =
+      (parseFloat(i.calc?.extended_weight) / (i.type == 'equipment_container' ? 1 : i.quantity || 1)).toString() || '0'
+    e.pageRef(i.reference || '')
+    let old = this._findElementIn('equipment.carried', e.uuid)
+    if (!old) old = this._findElementIn('equipment.other', e.uuid)
     if (!!old) {
       e.notes = this._tryToMerge(e.notes, old.notes)
       e.name = this._tryToMerge(e.name || null, old.name)
@@ -1327,10 +1379,11 @@ export class GurpsActor extends Actor {
     /** @type {HitLocations.HitLocation[]} */
     let locations = []
     for (let i of hls.locations) {
-      let l = new HitLocations.HitLocation(i.table_name);
-      l.import = i.calc?.dr.all?.toString() || "0";
-      for (let [key, value] of Object.entries(i.calc?.dr)) if (key != "all") l.import += `/${(i.calc?.dr.all+value).toString()}`;
-      l.penalty = i.hit_penalty.toString();
+      let l = new HitLocations.HitLocation(i.table_name)
+      l.import = i.calc?.dr.all?.toString() || '0'
+      for (let [key, value] of Object.entries(i.calc?.dr))
+        if (key != 'all') l.import += `/${(i.calc?.dr.all + value).toString()}`
+      l.penalty = i.hit_penalty.toString()
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*'
       }
@@ -1514,12 +1567,12 @@ export class GurpsActor extends Actor {
         for (let f of i.features) {
           if (f.type == 'reaction_bonus') {
             temp_r.push({
-              modifier: f.amount*((f.per_level && !!i.levels)?parseInt(i.levels):1),
+              modifier: f.amount * (f.per_level && !!i.levels ? parseInt(i.levels) : 1),
               situation: f.situation,
             })
           } else if (f.type == 'conditional_modifier') {
             temp_c.push({
-              modifier: f.amount*((f.per_level && !!i.levels)?parseInt(i.levels):1),
+              modifier: f.amount * (f.per_level && !!i.levels ? parseInt(i.levels) : 1),
               situation: f.situation,
             })
           }
@@ -1544,10 +1597,10 @@ export class GurpsActor extends Actor {
       GURPS.put(rs, r, index_r++)
     }
     for (let i of temp_c2) {
-      let c = new Modifier();
-      c.modifier = i.modifier.toString();
-      c.situation = i.situation;
-      GURPS.put(cs, c, index_c++);
+      let c = new Modifier()
+      c.modifier = i.modifier.toString()
+      c.situation = i.situation
+      GURPS.put(cs, c, index_c++)
     }
     return {
       'data.-=reactions': null,
@@ -1662,39 +1715,39 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv2(json, importname, importpath, suppressMessage = false, GCAVersion, GCSVersion) {
-    let r;
-    let msg = [];
-    let version = "Direct GCS Import";
-    let exit = false;
-    try{
-      r = JSON.parse(json);
-    } catch(err) {
-      msg.push(i18n('GURPS.importNoJSONDetected'));
-      exit = true;
+    let r
+    let msg = []
+    let version = 'Direct GCS Import'
+    let exit = false
+    try {
+      r = JSON.parse(json)
+    } catch (err) {
+      msg.push(i18n('GURPS.importNoJSONDetected'))
+      exit = true
     }
     if (!!r) {
       if (!r.calc) {
-        msg.push(i18n('GURPS.importOldGCSFile'));
-        exit = true;
+        msg.push(i18n('GURPS.importOldGCSFile'))
+        exit = true
       }
     }
 
     if (msg.length > 0) {
-      ui.notifications?.error(msg.join('<br>'));
+      ui.notifications?.error(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
         version: version,
         GCAVersion: GCAVersion,
         GCSVersion: GCSVersion,
         url: GURPS.USER_GUIDE_URL,
-      });
+      })
       ChatMessage.create({
         content: content,
         user: game.user.id,
         type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
         whisper: [game.user.id],
-      });
-      if (exit) return false;
+      })
+      if (exit) return false
     }
 
     let nm = r['profile']['name']
@@ -1702,38 +1755,44 @@ export class GurpsActor extends Actor {
     let starttime = performance.now()
     let commit = {}
 
-    commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } };
-    let ar = this.getGurpsActorData().additionalresources || {};
-    ar.importname = importname || ar.importname;
-    ar.importpath = importpath || ar.importpath;
+    commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
+    let ar = this.getGurpsActorData().additionalresources || {}
+    ar.importname = importname || ar.importname
+    ar.importpath = importpath || ar.importpath
     try {
-      commit = { ...commit, ...{ 'data.additionalresources': ar } };
-      commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) };
-      commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date) };
-      commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment)};
-      commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages) };
-      commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) };
-      commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) };
-      commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment) };
-      commit = { ...commit, ...this.importNotesFromGCSv2(r.notes) };
+      commit = { ...commit, ...{ 'data.additionalresources': ar } }
+      commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) }
+      commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date) }
+      commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment) }
+      commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages) }
+      commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) }
+      commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) }
+      commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment) }
+      commit = { ...commit, ...this.importNotesFromGCSv2(r.notes) }
 
-      commit = { ...commit, ...(await this.importProtectionFromGCSv2(r.settings.hit_locations)) };
-      commit = { ...commit, ...this.importPointTotalsFromGCSv2(r.total_points, r.attributes, r.advantages, r.skills, r.spells) };
-      commit = { ...commit, ...this.importReactionsFromGCSv3(r.advantages, r.skills, r.equipment) };
-      commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages, r.skills, r.spells, r.equipment) };
+      commit = { ...commit, ...(await this.importProtectionFromGCSv2(r.settings.hit_locations)) }
+      commit = {
+        ...commit,
+        ...this.importPointTotalsFromGCSv2(r.total_points, r.attributes, r.advantages, r.skills, r.spells),
+      }
+      commit = { ...commit, ...this.importReactionsFromGCSv3(r.advantages, r.skills, r.equipment) }
+      commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages, r.skills, r.spells, r.equipment) }
     } catch (err) {
-      console.log(err.stack);
-      msg.push(i18n_f("GURPS.importGenericError", {
-        name: nm, error: err.name,
-        message: err.message
-      }));
+      console.log(err.stack)
+      msg.push(
+        i18n_f('GURPS.importGenericError', {
+          name: nm,
+          error: err.name,
+          message: err.message,
+        })
+      )
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: [msg],
         version: version,
         GCAVersion: GCAVersion,
         GCSVersion: GCSVersion,
         url: GURPS.USER_GUIDE_URL,
-      });
+      })
       ui.notifications?.warn(msg)
       let chatData = {
         user: game.user.id,
@@ -1777,7 +1836,7 @@ export class GurpsActor extends Actor {
       ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
-        version: "GCS Direct",
+        version: 'GCS Direct',
         GCAVersion: GCAVersion,
         GCSVersion: GCSVersion,
         url: GURPS.USER_GUIDE_URL,
@@ -1804,7 +1863,8 @@ export class GurpsActor extends Actor {
   async importFromGCSv1(xml, importname, importpath, suppressMessage = false) {
     const GCAVersion = 'GCA-11'
     const GCSVersion = 'GCS-5'
-    if (importname.endsWith('.gcs')) return this.importFromGCSv2(xml, importname, importpath, suppressMessage, GCAVersion, GCSVersion);
+    if (importname.endsWith('.gcs'))
+      return this.importFromGCSv2(xml, importname, importpath, suppressMessage, GCAVersion, GCSVersion)
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false

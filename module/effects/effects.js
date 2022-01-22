@@ -87,20 +87,6 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureProneRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          // {
-          //   key: 'chat',
-          //   value: JSON.stringify({
-          //     msg: 'GURPS.effectChatRangedModifier',
-          //     frequency: 'once',
-          //     args: {
-          //       // '@' - lookup property on Actor
-          //       displayName: '@displayname',
-          //       // '!' - treat as i18n text
-          //       posture: '!GURPS.STATUSProne',
-          //     },
-          //   }),
-          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          // },
           {
             key: 'data.conditions.posture',
             value: 'prone',
@@ -139,18 +125,6 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureCrouchRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          // {
-          //   key: 'chat',
-          //   value: JSON.stringify({
-          //     msg: 'GURPS.effectChatRangedModifier',
-          //     frequency: 'once',
-          //     args: {
-          //       displayName: '@displayname',
-          //       posture: '!GURPS.STATUSKneel',
-          //     },
-          //   }),
-          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_ONETHIRD,
@@ -183,18 +157,6 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureCrouchRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          // {
-          //   key: 'chat',
-          //   value: JSON.stringify({
-          //     msg: 'GURPS.effectChatRangedModifier',
-          //     frequency: 'once',
-          //     args: {
-          //       displayName: '@displayname',
-          //       posture: '!GURPS.STATUSCrouch',
-          //     },
-          //   }),
-          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_TWOTHIRDS,
@@ -232,18 +194,6 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureProneRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          // {
-          //   key: 'chat',
-          //   value: JSON.stringify({
-          //     msg: 'GURPS.effectChatRangedModifier',
-          //     frequency: 'once',
-          //     args: {
-          //       displayName: '@displayname',
-          //       posture: '!GURPS.STATUSSit',
-          //     },
-          //   }),
-          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_NONE,
@@ -281,18 +231,6 @@ export class StatusEffect {
             value: 'GURPS.modifierPostureProneRanged',
             mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           },
-          // {
-          //   key: 'chat',
-          //   value: JSON.stringify({
-          //     msg: 'GURPS.effectChatRangedModifier',
-          //     frequency: 'once',
-          //     args: {
-          //       displayName: '@displayname',
-          //       posture: '!GURPS.STATUSCrawling',
-          //     },
-          //   }),
-          //   mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          // },
           {
             key: PROPERTY_MOVEOVERRIDE_POSTURE,
             value: MOVE_ONETHIRD,
@@ -353,18 +291,6 @@ export class StatusEffect {
         label: 'GURPS.STATUSReeling',
         changes: [
           {
-            key: 'chat',
-            value: JSON.stringify({
-              msg: 'GURPS.chatTurnOnReeling',
-              frequency: 'once',
-              args: {
-                name: '@displayname',
-                pdfref: 'GURPS.pdfReeling',
-              },
-            }),
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          },
-          {
             key: 'data.conditions.reeling',
             value: true,
             mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
@@ -374,13 +300,13 @@ export class StatusEffect {
           gurps: {
             effect: {
               pdfref: 'GURPS.pdfReeling',
-              terminateActions: [
-                {
-                  type: 'chat',
-                  msg: 'GURPS.chatTurnOffReeling',
-                  args: { name: '@displayname' },
-                },
-              ],
+              // terminateActions: [
+              //   {
+              //     type: 'chat',
+              //     msg: 'GURPS.chatTurnOffReeling',
+              //     args: { name: '@displayname' },
+              //   },
+              // ],
             },
           },
         },
@@ -400,32 +326,11 @@ export class StatusEffect {
             value: 0.5,
             mode: CONST.ACTIVE_EFFECT_MODES.MULTIPLY,
           },
-          {
-            key: 'chat',
-            value: JSON.stringify({
-              msg: 'GURPS.chatTurnOnTired',
-              frequency: 'once',
-              args: {
-                name: '@displayname',
-                pdfref: 'GURPS.pdfTired',
-              },
-            }),
-            mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,
-          },
         ],
         flags: {
           gurps: {
             effect: {
               pdfref: 'GURPS.pdfTired',
-              terminateActions: [
-                {
-                  type: 'chat',
-                  msg: 'GURPS.chatTurnOffTired',
-                  args: {
-                    name: '@displayname',
-                  },
-                },
-              ],
             },
           },
         },
