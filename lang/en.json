@@ -841,6 +841,8 @@
   "GURPS.settingHintRemoveUnequipped": "If checked, the names of the Melee and Ranged attacks will be compared to the carried equipment list, and if a name match is found, the attack will only be listed if the equipment is Equipped",
   "GURPS.settingImportBrowserImporter": "Use non-locally hosted import dialog",
   "GURPS.settingImportHintBrowserImporter": "Check this if you are not hosting your Foundry instance locally (you are hosting externally, i.e. Forge). This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
+  "GURPS.settingShowChatReeling": "Display Reeling/Tired Status in Chat",
+  "GURPS.settingHintShowChatReeling": "When checked, changes to any actor's Reeling or Tired status will be displayed as a chat message.",
 
   "__Color Settings__": "=========",
   "GURPS.settingColorSheetMenuTitle": "Color Character Sheet",

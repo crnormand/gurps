@@ -8,10 +8,14 @@ Release 0.13.2
 - Added support for upcoming vtt_notes from GCS
 - Added /show FP HP
 - Update TriggerHappy teleport to be more selection friendly @Drawing[PortB]@Trigger[move capture]@Teleport[PortA]@OTF[1d-3 burn]@OTF[/wait 500\\/anim flames*orange*200 c270 *2]
+- Updated Brazilian Portuguese language file. (Hi, Frerol!)
+- Fixed spamming chat messages for reeling/exhausted.
+- Fixed the 'user created equipment' flag on equipment creation.
+- Added system setting to turn on/off chat messages for reeling/exhausted.
 
 Release 0.13.1 1/12/2022
 
-- Fixed OTF parsing for "*Costs tr()"
+- Fixed OTF parsing for "\*Costs tr()"
 - @Neck fixed modifier/conditional modifier calculation for .gcs import
 - Added /repeat (/rpt) command for animations
 - Added @Teleport and @OTF verbs if you use Trigger Happy module
@@ -22,14 +26,14 @@ Release 0.13.0 1/8/2022
 
 - Fixed /ra help string
 - Added warning if trying to set maneuver /man when not in combat
-- Replace GURPS.genkey with zeroFill() 
-- Fixed /uses reset eqt 
+- Replace GURPS.genkey with zeroFill()
+- Fixed /uses reset eqt
 - Updated /light command to work with new Foundry V9 lighting model
 - Fixed /tr# (where # = 0-3)
 - Enhanced /tr & /qty commands to allow spaces between +-= and the number
 - Fixed Foundry Item image hover
 - Sorted /show output so highest results appear first, /showa (/sha) shows alphabetically
-- Fixed Attacks that have () in the mode 
+- Fixed Attacks that have () in the mode
 - Updated Effects Modifier Popup button to appear in upper left menu
 - Fixed [ST26] OtFs (fixed target attribute rolls)
 
