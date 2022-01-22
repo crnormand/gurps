@@ -696,48 +696,49 @@ export class GurpsActor extends Actor {
         let flag = data['data.HP.value'] < this.getGurpsActorData().HP.max / 3
         if (!!this.getGurpsActorData().conditions.reeling != flag) {
           this.toggleEffectByName('reeling', flag)
-          let self = this
-          let msg = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
-          msg = i18n_f(msg, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
 
-          renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
-            let users = self.getOwners()
-            let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+          // send the chat message
+          let tag = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
+          let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
+          this.sendChatMessage(msg)
 
-            let messageData = {
-              content: content,
-              whisper: ids || null,
-              type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-            }
-            ChatMessage.create(messageData)
-            ui.combat?.render()
-          })
+          // update the combat tracker to show/remove condition
+          ui.combat?.render()
         }
       }
       if (data.hasOwnProperty('data.FP.value')) {
         let flag = data['data.FP.value'] < this.getGurpsActorData().FP.max / 3
         if (!!this.getGurpsActorData().conditions.exhausted != flag) {
           this.toggleEffectByName('exhausted', flag)
-          let self = this
-          let msg = flag ? 'GURPS.chatTurnOnExhausted' : 'GURPS.chatTurnOffExhausted'
-          msg = i18n_f(msg, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
-          renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
-            let users = self.getOwners()
-            let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
 
-            let messageData = {
-              content: content,
-              whisper: ids || null,
-              type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
-            }
-            ChatMessage.create(messageData)
-            ui.combat?.render()
-          })
+          // send the chat message
+          let tag = flag ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
+          let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfTired') })
+          this.sendChatMessage(msg)
+
+          // update the combat tracker to show/remove condition
+          ui.combat?.render()
         }
       }
     }
 
     return await super.update(data, context)
+  }
+
+  sendChatMessage(msg) {
+    let self = this
+
+    renderTemplate('systems/gurps/templates/chat-processing.html', { lines: [msg] }).then(content => {
+      let users = self.getOwners()
+      let ids = /** @type {string[] | undefined} */ (users?.map(it => it.id))
+
+      let messageData = {
+        content: content,
+        whisper: ids || null,
+        type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
+      }
+      ChatMessage.create(messageData)
+    })
   }
 
   async internalUpdate(data, context) {
