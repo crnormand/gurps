@@ -144,36 +144,49 @@ export async function createToken(tokenData, x, y) {
     // requestGMAction(GMAction.actions.createToken, {userId: game.user.id, targetSceneId, tokenData, x, y})
     return socketlibSocket.execuateAsGM("createToken", { userId: game.user.id, targetSceneId, tokenData, x, y });
 }
-export let teleport = async (token, targetScene, xpos, ypos) => {
+export let teleport = async (tokenDocument, targetScene, xpos, ypos) => {
     let x = Number(xpos);
     let y = parseInt(ypos);
     if (isNaN(x) || isNaN(y)) {
         console.error("dae| teleport: Invalid co-ords", xpos, ypos);
         return `Invalid target co-ordinates (${xpos}, ${ypos})`;
     }
-    if (!token) {
+    if (!tokenDocument) {
         console.warn("dae | teleport: No Token");
         return "No active token";
     }
     // Hide the current token
     if (targetScene.name === canvas.scene.name) {
         //@ts-ignore
-        CanvasAnimation.terminateAnimation(`Token.${token.id}.animateMovement`);
+        CanvasAnimation.terminateAnimation(`Token.${tokenDocument.id}.animateMovement`);
         let sourceSceneId = canvas.scene.id;
-        socketlibSocket.executeAsGM("recreateToken", { userId: game.user.id, tokenUuid: token.document.uuid, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
-        //requestGMAction(GMAction.actions.recreateToken, { userId: game.user.id, tokenUuid: token.uuid, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
-        setTimeout(() => canvas.pan({ x: xpos, y: ypos }), 200)
-        return true;
+        // After the token is transported, we need to store the new token as the active token (and select it, since the original was selected)
+        GURPS.IgnoreTokenSelect = true
+        let newDocument = await socketlibSocket.executeAsGM("recreateToken", { userId: game.user.id, tokenUuid: tokenDocument.uuid, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: tokenDocument.data, x: xpos, y: ypos });
+        let actor = newDocument.actor
+        if (!actor && newDocument.actorId) 
+          actor = game.actors.get(newDocument.actorId)
+        GURPS.SetLastActor(actor, newDocument)
+        GURPS.IgnoreTokenSelect = false
+       setTimeout(() => canvas.pan({ x: xpos, y: ypos }), 200)
+        return true
     }
     // deletes and recreates the token
     var sourceSceneId = canvas.scene.id;
     Hooks.once("canvasReady", async () => {
-        await socketlibSocket.executeAsGM("createToken", { userId: game.user.id, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: token.data, x: xpos, y: ypos });
-        await socketlibSocket.executeAsGM("deleteToken", { userId: game.user.id, tokenUuid: token.document.uuid });
+        GURPS.IgnoreTokenSelect = true
+        let newDocument = await socketlibSocket.executeAsGM("createToken", { userId: game.user.id, startSceneId: sourceSceneId, targetSceneId: targetScene.id, tokenData: tokenDocument.data, x: xpos, y: ypos });
+        await socketlibSocket.executeAsGM("deleteToken", { userId: game.user.id, tokenUuid: tokenDocument.uuid });
+        if (Array.isArray(newDocument)) newDocument = newDocument[0]
+        let actor = newDocument.actor
+        if (!actor && newDocument.actorId) 
+          actor = game.actors.get(newDocument.actorId)
+        GURPS.SetLastActor(actor, newDocument)
+        GURPS.IgnoreTokenSelect = false
         setTimeout(() => canvas.pan({ x: xpos, y: ypos }), 200)
     });
     // Need to stop animation since we are going to delete the token and if that happens before the animation completes we get an error
     //@ts-ignore
-    CanvasAnimation.terminateAnimation(`Token.${token.id}.animateMovement`);
+    CanvasAnimation.terminateAnimation(`Token.${tokenDocument.id}.animateMovement`);
     return await targetScene.view();
 };

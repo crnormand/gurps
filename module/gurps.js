@@ -99,10 +99,12 @@ GURPS.LastActor = null
 GURPS.SJGProductMappings = SJGProductMappings
 GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
 
-GURPS.SetLastActor = function (actor, token) {
+GURPS.SetLastActor = function (actor, tokenDocument) {
   if (actor != GURPS.LastActor) console.log('Setting Last Actor:' + actor?.name)
+  if (tokenDocument && !actor)
+    console.log('fukc')
   GURPS.LastActor = actor
-  GURPS.LastToken = token
+  GURPS.LastTokenDocument = tokenDocument
   setTimeout(() => GURPS.ModifierBucket.refresh(), 100) // Need to make certain the mod bucket refresh occurs later
 }
 
@@ -2182,7 +2184,7 @@ Hooks.once('ready', async function () {
     if (args.length > 1) {
       let a = args[0]?.actor
       if (!!a) {
-        if (args[1]) GURPS.SetLastActor(a, args[0])
+        if (args[1]) GURPS.SetLastActor(a, args[0].document)
         else GURPS.ClearLastActor(a)
       }
     }
