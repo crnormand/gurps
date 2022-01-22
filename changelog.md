@@ -7,6 +7,7 @@ Release 0.13.2
 - Updated Brazilian Portuguese language file. (Hi, Frerol!)
 - Fixed spamming chat messages for reeling/exhausted.
 - Fixed the 'user created equipment' flag on equipment creation.
+- Added system setting to turn on/off chat messages for reeling/exhausted.
 
 Release 0.13.1 1/12/2022
 

@@ -697,10 +697,12 @@ export class GurpsActor extends Actor {
         if (!!this.getGurpsActorData().conditions.reeling != flag) {
           this.toggleEffectByName('reeling', flag)
 
-          // send the chat message
-          let tag = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
-          let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
-          this.sendChatMessage(msg)
+          if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
+            // send the chat message
+            let tag = flag ? 'GURPS.chatTurnOnReeling' : 'GURPS.chatTurnOffReeling'
+            let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfReeling') })
+            this.sendChatMessage(msg)
+          }
 
           // update the combat tracker to show/remove condition
           ui.combat?.render()
@@ -712,9 +714,11 @@ export class GurpsActor extends Actor {
           this.toggleEffectByName('exhausted', flag)
 
           // send the chat message
-          let tag = flag ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
-          let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfTired') })
-          this.sendChatMessage(msg)
+          if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_CHAT_FOR_REELING_TIRED)) {
+            let tag = flag ? 'GURPS.chatTurnOnTired' : 'GURPS.chatTurnOffTired'
+            let msg = i18n_f(tag, { name: this.displayname, pdfref: i18n('GURPS.pdfTired') })
+            this.sendChatMessage(msg)
+          }
 
           // update the combat tracker to show/remove condition
           ui.combat?.render()
