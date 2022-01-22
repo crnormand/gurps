@@ -6,6 +6,7 @@ Release 0.13.2
 
 - Updated Brazilian Portuguese language file. (Hi, Frerol!)
 - Fixed spamming chat messages for reeling/exhausted.
+- Fixed the 'user created equipment' flag on equipment creation.
 
 Release 0.13.1 1/12/2022
 
