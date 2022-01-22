@@ -21,20 +21,21 @@ export default class TriggerHappySupport {
   }
 
   _init() {
-    Hooks.on('TriggerHappy', (key, args) => {
+    Hooks.on('TriggerHappy', async (key, args) => {
       switch (key) {
         case Teleport: 
           this._teleport(args)
           break;
         case OTF:
           this.otf(args)
+          break;
         default:
           console.log("Unknown key: " + key)
       }
     })   
   }
   _teleport(args) {
-    if (!GURPS.LastToken) {
+    if (!GURPS.LastTokenDocument) {
       ui.notifications.warn("No last token")
       return 
     }
@@ -61,7 +62,7 @@ export default class TriggerHappySupport {
       return
     }
     
-    teleport(GURPS.LastToken, scene, target.data.x, target.data.y)
+    teleport(GURPS.LastTokenDocument, scene, target.data.x, target.data.y)
   }
   otf(args) {
     args = args.join(' ')

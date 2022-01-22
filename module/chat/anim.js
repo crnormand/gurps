@@ -324,7 +324,7 @@ export class AnimChatProcessor extends ChatProcessor {
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
     if (destTokens.length == 0  && game.user.isGM) destTokens = canvas.tokens.controlled
-    if (m.self) destTokens = [ srcToken ]
+    if (m.self && srcToken) destTokens = [ srcToken ]
     if (m.dest) {
       let d = m.dest.substr(1).split(',')
       destTokens = [ {
@@ -370,7 +370,7 @@ export class AnimChatProcessor extends ChatProcessor {
       delay: delay
      }
     this.priv("Src:" + srcToken?.name)
-    this.priv("Dest:" + destTokens.map(e => e.name))
+    this.priv("Dest:" + destTokens.map(e => e?.name))
     this.priv("Opts: " + opts.join(', '))
     this.priv("Possible:")
     this.priv(files.map(e => e.split('/').pop()).join('<br>'))

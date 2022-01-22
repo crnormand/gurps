@@ -4,6 +4,10 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.13.2
 
+- Added support for c:[] d:[] p:[] f:[] parsing from notes
+- Added support for upcoming vtt_notes from GCS
+- Added /show FP HP
+- Update TriggerHappy teleport to be more selection friendly @Drawing[PortB]@Trigger[move capture]@Teleport[PortA]@OTF[1d-3 burn]@OTF[/wait 500\\/anim flames*orange*200 c270 *2]
 - Updated Brazilian Portuguese language file. (Hi, Frerol!)
 - Fixed spamming chat messages for reeling/exhausted.
 - Fixed the 'user created equipment' flag on equipment creation.

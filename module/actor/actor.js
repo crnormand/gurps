@@ -1164,9 +1164,8 @@ export class GurpsActor extends Actor {
     let old = this._findElementIn('skills', s.uuid)
     if (!!old) {
       s.name = this._tryToMerge(s.name || null, old.name)
-      s.notes = this._tryToMerge(s.notes, old.notes)
-      this._migrateOtfs(old, s)
-    }
+      this._migrateOtfsAndNotes(old, s, i.vtt_notes) 
+   }
     let ch = []
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importSk(j, i.id))
@@ -1209,8 +1208,7 @@ export class GurpsActor extends Actor {
     let old = this._findElementIn('spells', s.uuid)
     if (!!old) {
       s.name = this._tryToMerge(s.name || null, old.name)
-      s.notes = this._tryToMerge(s.notes, old.notes)
-      this._migrateOtfs(old, s)
+      this._migrateOtfsAndNotes(old, s, i.vtt_notes)
     }
     let ch = []
     if (i.children?.length) {
@@ -1642,8 +1640,7 @@ export class GurpsActor extends Actor {
             let old = this._findElementIn('melee', false, m.name, m.mode)
             if (!!old) {
               m.name = this._tryToMerge(m.name || null, old.name)
-              m.notes = this._tryToMerge(m.notes, old.notes)
-              this._migrateOtfs(old, m)
+              this._migrateOtfsAndNotes(old, m, i.vtt_notes)
             }
             GURPS.put(melee, m, m_index++)
           } else if (w.type == 'ranged_weapon') {
@@ -1667,8 +1664,7 @@ export class GurpsActor extends Actor {
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             if (!!old) {
               r.name = this._tryToMerge(r.name || null, old.name)
-              r.notes = this._tryToMerge(r.notes, old.notes)
-              this._migrateOtfs(old, r)
+              this._migrateOtfsAndNotes(old, r, i.vtt_notes)
             }
             GURPS.put(ranged, r, r_index++)
           }
@@ -2650,23 +2646,73 @@ export class GurpsActor extends Actor {
   }
 
   /**
+   * Copy old OTFs to the new object, and update the displayable notes
    * @param {Skill|Spell|Ranged|Melee} oldobj
    * @param {Skill|Spell|Ranged|Melee} newobj
    */
-  _migrateOtfs(oldobj, newobj) {
-    //if (!!oldobj.animationData) {
-    //const n = newobj.animationData
-    //const o = oldobj.animationData
-    let n = newobj
-    let o = oldobj
-
-    n.checkotf = o.checkotf
-    n.duringotf = o.duringotf
-    n.passotf = o.passotf
-    n.failotf = o.failotf
-    //}
+  _migrateOtfsAndNotes(oldobj, newobj, importvttnotes) {
+    newobj.vtt_notes = importvttnotes
+    this._updateOtf('check', oldobj, newobj)
+    this._updateOtf('during', oldobj, newobj)
+    this._updateOtf('pass', oldobj, newobj)
+    this._updateOtf('fail', oldobj, newobj)
+    if (oldobj.notes.startsWith(newobj.notes))
+      newobj.notes = oldobj.notes
+    if (!!newobj.vtt_notes)
+      if (!!newobj.notes)
+        newobj.notes += ' ' + newobj.vtt_notes
+      else
+        newobj.notes = newobj.vtt_notes
   }
-
+  
+  /**
+   *  Search for specific format OTF in the notes (and vttnotes).   
+   *  If we find it in the notes, remove it and replace the notes with the shorter version
+   */
+  _updateOtf(otfkey, oldobj, newobj) {
+    let objkey = otfkey + 'otf'
+    let oldotf = oldobj[objkey]
+    newobj[objkey] = oldotf
+    var notes, vttnotes, newotf
+    [ notes, newotf ] = this._removeOtf(otfkey, newobj.notes || '')
+    if (!!newotf) newobj[objkey] = newotf
+    if (!!newobj.vtt_notes) {
+       [ vttnotes, newotf ] = this._removeOtf(otfkey, newobj.vtt_notes)
+       if (!!newotf) newobj[objkey] = newotf
+    }
+    newobj.notes = notes
+    newobj.vtt_notes = vttnotes
+  }
+  
+  // Looking for OTFs in text.  ex:   c:[/qty -1] during:[/anim healing c]
+  _removeOtf(key, text) {
+    if (!text) return [ text, null ]
+    var start
+    let patstart = text.toLowerCase().indexOf(key[0] + ':[')
+    if (patstart < 0) {
+        patstart = text.toLowerCase().indexOf(key + ':[')
+        if (patstart < 0) 
+          return [ text, null ]
+        else start = patstart + key.length + 2
+    } else start = patstart + 3
+    let cnt = 1
+    let i = start
+    if (i >= text.length) return [ text, null ]
+    do {
+      let ch = text[i++] 
+      if (ch == '[') cnt++
+      if (ch == ']') cnt--
+    } while (i < text.length && cnt > 0)
+    if (cnt == 0) {
+       let otf = text.substring(start, i - 1)
+       let front = text.substring(0, patstart)
+       let end = text.substr(i)
+       if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
+       return [ front + end, otf ]
+    } else return [ text, null ]
+  }
+  
+  
   /**
    * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
@@ -2709,8 +2755,7 @@ export class GurpsActor extends Actor {
             let old = this._findElementIn('melee', false, m.name, m.mode)
             if (!!old) {
               m.name = this._tryToMerge(m.name || null, old.name)
-              m.notes = this._tryToMerge(m.notes, old.notes)
-              this._migrateOtfs(old, m)
+              this._migrateOtfsAndNotes(old, m, t(j2.vtt_notes))
             }
             GURPS.put(melee, m, index++)
           }
@@ -2768,8 +2813,7 @@ export class GurpsActor extends Actor {
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             if (!!old) {
               r.name = this._tryToMerge(r.name || null, old.name)
-              r.notes = this._tryToMerge(r.notes, old.notes)
-              this._migrateOtfs(old, r)
+              this._migrateOtfsAndNotes(old, r, t(j2.vtt_notes))
             }
             GURPS.put(ranged, r, index++)
           }
@@ -2967,8 +3011,7 @@ export class GurpsActor extends Actor {
         let old = this._findElementIn('skills', sk.uuid)
         if (!!old) {
           sk.name = this._tryToMerge(sk.name || null, old.name)
-          sk.notes = this._tryToMerge(sk.notes, old.notes)
-          this._migrateOtfs(old, sk)
+          this._migrateOtfsAndNotes(old, sk, t(j.vtt_notes))
         }
         temp.push(sk)
       }
@@ -3026,7 +3069,7 @@ export class GurpsActor extends Actor {
         if (!!old) {
           sp.name = this._tryToMerge(sp.name || null, old.name)
           sp.notes = this._tryToMerge(sp.notes, old.notes)
-          this._migrateOtfs(old, sp)
+          this._migrateOtfs(old, sp, t(j.vtt_notes))
         }
         temp.push(sp)
       }
