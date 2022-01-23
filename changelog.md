@@ -4,6 +4,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.13.2
 
+- Added support for Unmodified Damage in the GCS and GCA4/5 files for use with GGA import. (@Stevil)
 - Added support for c:[] d:[] p:[] f:[] parsing from notes
 - Added support for upcoming vtt_notes from GCS
 - Added /show FP HP
