@@ -46,8 +46,8 @@ function addToLibrary(module) {
 function fileWidth(entry) {
   let m = entry.match(/\.webm,W:(\d+)/)
   if (!!m) return { file: entry.split(",")[0], width: +m[1] }
-  console.log("Unknown format: " + entry)
-  return { file: '', width: 0 }
+//  console.log("Unknown format: " + entry)
+  return { file: entry, width: 1 }
 }
 
 // stolen from the Ping module
