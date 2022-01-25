@@ -82,7 +82,9 @@ class SoundChatProcessor extends ChatProcessor {
       volume: v,
       loop: false,
     }
-    AudioHelper.play(data, true)
+    AudioHelper.play(data, true).then(sound => {
+      if (sound.failed) ui.notifications.warn("Unable to play: " + data.src)
+    })
   }
 }
 
@@ -909,7 +911,7 @@ class RepeatChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/(repeat|rpt) +(\d+) *(.*)/i)
+    this.match = line.match(/^\/(repeat|rpt) +([\d\.]+) *(.*)/i)
     return !!this.match
   }
   
@@ -929,6 +931,7 @@ class RepeatChatProcessor extends ChatProcessor {
   }
   async repeatLoop(actor, anim, delay) {
     actor.RepeatAnimation = true
+    if (delay < 20) delay = delay * 1000
     const t = canvas.tokens.placeables.find(e => e.actor == actor)
     while (actor.RepeatAnimation) {
       let p = {
