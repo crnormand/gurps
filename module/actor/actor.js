@@ -2651,18 +2651,13 @@ export class GurpsActor extends Actor {
    * @param {Skill|Spell|Ranged|Melee} newobj
    */
   _migrateOtfsAndNotes(oldobj, newobj, importvttnotes) {
-    newobj.vtt_notes = importvttnotes
+    if (!!importvttnotes) newobj.notes += (!!newobj.notes ? ' ' : '') + importvttnotes
     this._updateOtf('check', oldobj, newobj)
     this._updateOtf('during', oldobj, newobj)
     this._updateOtf('pass', oldobj, newobj)
     this._updateOtf('fail', oldobj, newobj)
     if (oldobj.notes.startsWith(newobj.notes))
       newobj.notes = oldobj.notes
-    if (!!newobj.vtt_notes)
-      if (!!newobj.notes)
-        newobj.notes += ' ' + newobj.vtt_notes
-      else
-        newobj.notes = newobj.vtt_notes
   }
   
   /**
@@ -2673,15 +2668,10 @@ export class GurpsActor extends Actor {
     let objkey = otfkey + 'otf'
     let oldotf = oldobj[objkey]
     newobj[objkey] = oldotf
-    var notes, vttnotes, newotf
+    var notes, newotf
     [ notes, newotf ] = this._removeOtf(otfkey, newobj.notes || '')
     if (!!newotf) newobj[objkey] = newotf
-    if (!!newobj.vtt_notes) {
-       [ vttnotes, newotf ] = this._removeOtf(otfkey, newobj.vtt_notes)
-       if (!!newotf) newobj[objkey] = newotf
-    }
-    newobj.notes = notes
-    newobj.vtt_notes = vttnotes
+    newobj.notes = notes.trim()
   }
   
   // Looking for OTFs in text.  ex:   c:[/qty -1] during:[/anim healing c]

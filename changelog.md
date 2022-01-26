@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.2
+Release 0.13.2 1/24/2022
 
 - Added support for Unmodified Damage in the GCS and GCA4/5 files for use with GGA import. (@Stevil)
 - Added support for c:[] d:[] p:[] f:[] parsing from notes
@@ -13,6 +13,7 @@ Release 0.13.2
 - Fixed spamming chat messages for reeling/exhausted.
 - Fixed the 'user created equipment' flag on equipment creation.
 - Added system setting to turn on/off chat messages for reeling/exhausted.
+- Added warning for bad sound file
 
 Release 0.13.1 1/12/2022
 
