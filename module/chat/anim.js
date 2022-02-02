@@ -46,8 +46,8 @@ function addToLibrary(module) {
 function fileWidth(entry) {
   let m = entry.match(/\.webm,W:(\d+)/)
   if (!!m) return { file: entry.split(",")[0], width: +m[1] }
-  console.log("Unknown format: " + entry)
-  return { file: '', width: 0 }
+//  console.log("Unknown format: " + entry)
+  return { file: entry, width: 1 }
 }
 
 // stolen from the Ping module
@@ -324,7 +324,7 @@ export class AnimChatProcessor extends ChatProcessor {
     if (!srcToken) srcToken = canvas.tokens.controlled[0]
     let destTokens = Array.from(game.user.targets)
     if (destTokens.length == 0  && game.user.isGM) destTokens = canvas.tokens.controlled
-    if (m.self) destTokens = [ srcToken ]
+    if (m.self && srcToken) destTokens = [ srcToken ]
     if (m.dest) {
       let d = m.dest.substr(1).split(',')
       destTokens = [ {
@@ -370,7 +370,7 @@ export class AnimChatProcessor extends ChatProcessor {
       delay: delay
      }
     this.priv("Src:" + srcToken?.name)
-    this.priv("Dest:" + destTokens.map(e => e.name))
+    this.priv("Dest:" + destTokens.map(e => e?.name))
     this.priv("Opts: " + opts.join(', '))
     this.priv("Possible:")
     this.priv(files.map(e => e.split('/').pop()).join('<br>'))

@@ -82,7 +82,9 @@ class SoundChatProcessor extends ChatProcessor {
       volume: v,
       loop: false,
     }
-    AudioHelper.play(data, true)
+    AudioHelper.play(data, true).then(sound => {
+      if (sound.failed) ui.notifications.warn("Unable to play: " + data.src)
+    })
   }
 }
 
@@ -473,7 +475,7 @@ class SelectChatProcessor extends ChatProcessor {
           let tokens = canvas.tokens.placeables.filter(t => t.actor == a)
           if (tokens.length == 1) {
             tokens[0].control({ releaseOthers: true }) // Foundry 'select'
-            GURPS.SetLastActor(a, tokens[0])
+            GURPS.SetLastActor(a, tokens[0].document)
           } else
             GURPS.SetLastActor(a)
           this.priv('Selecting ' + a.displayname)
@@ -792,18 +794,24 @@ class ShowChatProcessor extends ChatProcessor {
       this.priv('<hr>')
       if (orig.toLowerCase() == 'move') this.priv("<b>Basic Move / Current Move</b>")
       if (orig.toLowerCase() == 'speed') this.priv("<b>Basic Speed</b>")
+      if (orig.toLowerCase() == 'hp') this.priv("<b>Hit Points: Current / Max</b>")
+      if (orig.toLowerCase() == 'fp') this.priv("<b>Fatigue Points: Current / Max</b>")
       let output = []
       for (const token of canvas.tokens.placeables) {
         let arg = orig
         let actor = token.actor
         switch (orig.toLowerCase()) {
+          case 'hp': 
+            output.push({ value: actor.data.data.HP.value, text: `${actor.name}: ${actor.data.data.HP.value} / ${actor.data.data.HP.max}`, name: actor.name})
+             continue;
+          case 'fp': 
+            output.push({ value: actor.data.data.FP.value, text: `${actor.name}: ${actor.data.data.FP.value} / ${actor.data.data.FP.max}`, name: actor.name})
+             continue;
           case 'move': 
             output.push({ value: actor.data.data.currentmove, text: `${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`, name: actor.name})
-            //this.priv(`${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`)
-            continue;
+             continue;
           case 'speed': 
             output.push({ value: actor.data.data.basicspeed.value, text: `${actor.name}: ${actor.data.data.basicspeed.value}`, name: actor.name})
-            //this.priv(`${actor.name}: ${actor.data.data.basicspeed.value}`)
             continue;
           case 'fright':
             arg = 'frightcheck'
@@ -903,7 +911,7 @@ class RepeatChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/(repeat|rpt) +(\d+) *(.*)/i)
+    this.match = line.match(/^\/(repeat|rpt) +([\d\.]+) *(.*)/i)
     return !!this.match
   }
   
@@ -923,6 +931,7 @@ class RepeatChatProcessor extends ChatProcessor {
   }
   async repeatLoop(actor, anim, delay) {
     actor.RepeatAnimation = true
+    if (delay < 20) delay = delay * 1000
     const t = canvas.tokens.placeables.find(e => e.actor == actor)
     while (actor.RepeatAnimation) {
       let p = {
