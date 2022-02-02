@@ -9,9 +9,12 @@
         {{#each effects}}
           <input name='effect-name' class='gcs-input clickable effect-control' data-effect-id='{{id}}'
             data-action='edit' type='text' readonly value='{{data.label}}' />
-          <a class='effect-control' data-effect-id='{{id}}' data-action='delete' title='{{i18n "GURPS.delete"}}'>
-            <i class='fas fa-trash'></i>
-          </a>
+          <div class='vertical-center'>
+            <a class='effect-control' data-effect-id='{{id}}' data-action='delete' title='{{i18n "GURPS.delete"}}'
+              style='padding: 6px 20px 0 10px;'>
+              <i class='fas fa-trash'></i>
+            </a>
+          </div>
         {{/each}}
       </div>
     </div>

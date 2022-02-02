@@ -23,6 +23,8 @@ export default class GurpsActiveEffectListSheet extends Application {
   getData() {
     const sheetData = super.getData()
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
+    for (const effect of sheetData.effects) {
+    }
     return sheetData
   }
 
@@ -50,12 +52,12 @@ export default class GurpsActiveEffectListSheet extends Application {
             disabled: true,
           },
         ])
-        return this.render()
+        return this.render(true)
       case 'delete':
         await effect.delete()
         return this.render(true)
       case 'edit':
-        return effect.sheet.render(true)
+        return effect.sheet.render(true, { parentWindow: this })
     }
   }
 }

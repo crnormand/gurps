@@ -1722,7 +1722,7 @@ Hooks.once('init', async function () {
 
   // add custom ActiveEffectConfig sheet class
   CONFIG.ActiveEffect.sheetClass = GurpsActiveEffectConfig
-  //ActiveEffectConfig.registerSheet(Document, 'ActiveEffect', GurpsActiveEffectConfig, { makeDefault: true })
+  // ActiveEffectConfig.registerSheet(Document, 'ActiveEffect', GurpsActiveEffectConfig, { makeDefault: true })
 
   // preload drag-and-drop image
   {

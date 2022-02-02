@@ -7,82 +7,97 @@ export default class GurpsActiveEffect extends ActiveEffect {
   static init() {
     CONFIG.ActiveEffect.documentClass = GurpsActiveEffect
 
-    Hooks.on(
-      'preCreateActiveEffect',
-      async (
-        /** @type {any} */ _effect,
-        /** @type {{ duration: { combat: any; }; }} */ data,
-        /** @type {any} */ _options,
-        /** @type {any} */ _userId
-      ) => {
-        // Add combat id if necessary
-        if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
-      }
-    )
+    Hooks.on('preCreateActiveEffect', GurpsActiveEffect._preCreate)
+    Hooks.on('createActiveEffect', GurpsActiveEffect._create)
+    Hooks.on('applyActiveEffect', GurpsActiveEffect._apply)
+    Hooks.on('updateActiveEffect', GurpsActiveEffect._update)
+    Hooks.on('deleteActiveEffect', GurpsActiveEffect._delete)
+    Hooks.on('updateCombat', GurpsActiveEffect._updateCombat)
+  }
 
-    Hooks.on(
-      'createActiveEffect',
-      async (/** @type {ActiveEffect} */ effect, /** @type {any} */ _data, /** @type {any} */ _userId) => {
-        if (effect.getFlag('gurps', 'requiresConfig') === true) {
-          let dialog = new ActiveEffectConfig(effect)
-          await dialog.render(true)
+  /**
+   * Before adding the ActiveEffect to the Actor/Item -- might be used to augment the data used to create, for example.
+   * @param {ActiveEffect} _effect
+   * @param {ActiveEffectData} data
+   * @param {*} _options
+   * @param {*} _userId
+   */
+  static _preCreate(_effect, data, _options, _userId) {
+    if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
+  }
+
+  /**
+   * After creation of the ActiveEffect.
+   * @param {ActiveEffect} effect
+   * @param {ActiveEffectData} _data
+   * @param {*} _userId
+   */
+  static async _create(effect, _data, _userId) {
+    if (effect.getFlag('gurps', 'requiresConfig') === true) {
+      let dialog = new ActiveEffectConfig(effect)
+      await dialog.render(true)
+    }
+  }
+
+  /**
+   * On Actor.applyEffect: Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM.
+   * @param {Actor|Item} actor
+   * @param {ChangeData} change - the change to apply
+   * @param {*} _options
+   * @param {*} _user
+   */
+  static async _apply(actor, change, _options, _user) {
+    if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
+    else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
+    // else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
+    else console.log(change)
+  }
+
+  /**
+   * When updating an ActiveEffect.
+   * @param {ActiveEffect} _effect
+   * @param {ActiveEffectData} _data to use to update the effect.
+   * @param {*} _options
+   * @param {*} _userId
+   */
+  static _update(_effect, _data, _options, _userId) {
+    console.log('update ' + _effect)
+  }
+
+  /**
+   * When deleting an ActiveEffect.
+   * @param {ActiveEffect} _effect
+   * @param {ActiveEffectData} _data
+   * @param {*} _userId
+   */
+  static _delete(_effect, _data, _userId) {
+    console.log('delete ' + _effect)
+    // effect.terminateActions.filter(it => it.type === 'chat').forEach(it => effect.chat(effect.parent, it))
+  }
+
+  /**
+   * Called whenever updating a Combat.
+   * @param {Combat} combat
+   * @param {CombatData} _data
+   * @param {*} _options
+   * @param {*} _userId
+   */
+  static async _updateCombat(combat, _data, _options, _userId) {
+    // get previous combatant { round: 6, turn: 0, combatantId: 'id', tokenId: 'id' }
+    let previous = combat.previous
+    if (previous.tokenId) {
+      let token = canvas.tokens?.get(previous.tokenId)
+
+      // go through all effects, removing those that have expired
+      if (token && token.actor) {
+        for (const effect of token.actor.effects) {
+          if (await effect.isExpired())
+            ui.notifications.info(
+              `${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.data.label)}]'`
+            )
         }
       }
-    )
-
-    /**
-     * Applies only to changes that have mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM
-     */
-    Hooks.on('applyActiveEffect', (actor, change, _options, _user) => {
-      if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
-      else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
-     // else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
-      else console.log(change)
-    })
-
-    // Hooks.on(
-    //   'updateActiveEffect',
-    //   (
-    //     /** @type {ActiveEffect} */ effect,
-    //     /** @type {any} */ _data,
-    //     /** @type {any} */ _options,
-    //     /** @type {any} */ _userId
-    //   ) => {}
-    // )
-
-    Hooks.on(
-      'deleteActiveEffect',
-      (/** @type {string} */ effect, /** @type {any} */ _data, /** @type {any} */ _userId) => {
-        console.log('delete ' + effect)
-        // effect.terminateActions.filter(it => it.type === 'chat').forEach(it => effect.chat(effect.parent, it))
-      }
-    )
-
-    Hooks.on(
-      'updateCombat',
-      async (
-        /** @type {Combat} */ combat,
-        /** @type {any} */ _data,
-        /** @type {any} */ _options,
-        /** @type {any} */ _userId
-      ) => {
-        // get previous combatant { round: 6, turn: 0, combatantId: 'id', tokenId: 'id' }
-        let previous = combat.previous
-        if (previous.tokenId) {
-          let token = canvas.tokens?.get(previous.tokenId)
-
-          // go through all effects, removing those that have expired
-          if (token && token.actor) {
-            for (const effect of token.actor.effects) {
-              if (await effect.isExpired())
-                ui.notifications.info(
-                  `${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.data.label)}]'`
-                )
-            }
-          }
-        }
-      }
-    )
+    }
   }
 
   /**
@@ -160,6 +175,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
       self.chatmessages.push(value.msg)
     })
   }
+
+  // TODO Any ActiveEffect with a status.core.statusId is by default a temporary effect and will be added as an icon to the token.
 
   async isExpired() {
     if (this.duration && !!this.duration.duration) {
