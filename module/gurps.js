@@ -608,7 +608,7 @@ const actionFuncs = {
    * @param {JQuery.Event|null} data.event
    */
   roll({ action, actor, event }) {
-    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula} ${action.desc}']`
+    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${!!action.desc ? ' ' + action.desc : ''}]`
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     return doRoll({
       actor,
