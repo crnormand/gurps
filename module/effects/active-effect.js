@@ -13,6 +13,32 @@ export default class GurpsActiveEffect extends ActiveEffect {
     Hooks.on('updateActiveEffect', GurpsActiveEffect._update)
     Hooks.on('deleteActiveEffect', GurpsActiveEffect._delete)
     Hooks.on('updateCombat', GurpsActiveEffect._updateCombat)
+
+    Hooks.once('ready', function () {
+      const oldDuration = Object.getOwnPropertyDescriptor(ActiveEffect.prototype, 'duration')
+
+      Object.defineProperty(ActiveEffect.prototype, 'duration', {
+        get: function () {
+          let results = oldDuration?.get?.call(this)
+
+          if (results.type === 'none') {
+            // check if there is a termination condition
+            const d = this.data.duration
+            if (!!d?.termination) {
+              // TODO add core statusId flag and fix up results to show there is a duration of sorts
+              results = {
+                type: 'condition',
+                duration: null,
+                remaining: null,
+                termination: d.termination,
+                label: d.termination,
+              }
+            }
+          }
+          return results
+        },
+      })
+    })
   }
 
   /**
@@ -72,7 +98,6 @@ export default class GurpsActiveEffect extends ActiveEffect {
    */
   static _delete(_effect, _data, _userId) {
     console.log('delete ' + _effect)
-    // effect.terminateActions.filter(it => it.type === 'chat').forEach(it => effect.chat(effect.parent, it))
   }
 
   /**
@@ -112,11 +137,18 @@ export default class GurpsActiveEffect extends ActiveEffect {
   }
 
   get endCondition() {
-    return this.getFlag('gurps', 'effect.endCondition')
+    return this.getFlag('gurps', 'endCondition')
+  }
+
+  set endCondition(otf) {
+    this.setFlag('gurps', 'endCondition', otf)
+    if (!!otf) {
+      this.setFlag('core', 'statusId', `${this.name}-endCondition`)
+    }
   }
 
   get terminateActions() {
-    let data = this.getFlag('gurps', 'effect.terminateActions')
+    let data = this.getFlag('gurps', 'terminateActions')
     return data ?? []
   }
 

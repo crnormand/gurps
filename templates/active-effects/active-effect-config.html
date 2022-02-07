@@ -79,6 +79,13 @@
     </div>
     <hr />
     <div class="form-group">
+      <label>{{i18n "GURPS.effectsTermination" 'Termination Condition (OtF)'}}</label>
+      <div class="form-fields">
+        <input type="text" name="flags.gurps.endCondition" value="{{ data.flags.gurps.endCondition }}" />
+      </div>
+    </div>
+    <hr />
+    <div class="form-group">
       <label>{{ localize "EFFECT.DurationTurns" }}</label>
       <div class="form-fields">
         <label>{{ localize "COMBAT.Rounds" }}</label>
