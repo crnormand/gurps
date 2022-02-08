@@ -3,7 +3,11 @@
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
 Release 0.13.3
+
 - Updated Brazilian Portuguese language file.
+- Fixed OTF parsing of [70]
+- Fixed initial importing of vtt_notes
+- Fixed Blind rolls
 
 Release 0.13.2 1/24/2022
 
