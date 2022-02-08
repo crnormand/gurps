@@ -4,6 +4,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.13.3
 
+- Updated Brazilian Portuguese language file.
 - Fixed OTF parsing of [70]
 - Fixed initial importing of vtt_notes
 - Fixed Blind rolls
