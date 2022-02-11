@@ -293,7 +293,7 @@
   "GURPS.chatYouMustBeGM": "Vous devez être MJ pour exécuter cette commande",
   "GURPS.chatYouMustHaveACharacterSelected": "Vous deve avoir un personnage selectionné",
   "GURPS.chatYouMustSelectTokens": "Vous devez sélectionner un token (ou utiliser",
-  "GURPS.chatHelpHelp": "/help chat-command: pour obtenir une aide sur cette cmd\n\n?chat-command: pour obtenir une aide sur cette commande",
+  "GURPS.chatHelpHelp": "<b>/help chat-command</b>: pour obtenir une aide sur cette cmd\n\n<b>?chat-command</b>: pour obtenir une aide sur cette commande",
   "GURPS.chatHelpSound": "Jouer un son en arrière-plan<hr>parameters:\nw: secondes d'attente avant début du son\nv: volume\n&lt;full path filename&gt;<hr>examples:\n/sound w2.5 /path/filename\n/sound v0.6 /path/filename\n/sound w3 v2 /path/filename",
   "GURPS.chatHelpW": "Chuchoter aux joueurs ou propriétaires des tokens sélectionnés<hr>parameters:\n&lt;[player names]&gt;\n@: Chuchoter aux joueurs ou propriétaires des tokens sélectionnés\n<hr>examples:\n/w [Chris] msg sent to Player Chris\n/w @ msg sent to owners of selected tokens",
   "GURPS.chatHelpWait": "Attendre X millisecondes avant d'exécuter le command chat suivante<hr>parameters:\nX: le nombre de millisecondes à attendre\n<hr>examples:\n/wait 500",
