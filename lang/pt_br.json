@@ -296,7 +296,7 @@
   "GURPS.chatYouMustBeGM": "Você precisa ser MJ para executar esse comando",
   "GURPS.chatYouMustHaveACharacterSelected": "Você precisa selecionar um personagem",
   "GURPS.chatYouMustSelectTokens": "É preciso selecionar uma miniatura (ou usar",
-  "GURPS.chatHelpHelp": "/help comando de chat: para ver a ajuda para esse cmd\n\n?comando de chat: para ver a ajuda para esse comando",
+  "GURPS.chatHelpHelp": "<b>/help comando de chat</b>: para ver a ajuda para esse cmd\n\n<b>?comando de chat</b>: para ver a ajuda para esse comando",
   "GURPS.chatHelpSound": "Tocar um som no fundo<hr>parâmetros:\nw: esperar segundos antes de começar o som\nv: volume\n&lt;caminho completo e nome do arquivo&gt;<hr>exemplos:\n/sound w2.5 /caminho/nome-do-arquivo\n/sound v0.6 /caminho/nome-do-arquivo\n/sound w3 v2 /caminho/nome-do-arquivo",
   "GURPS.chatHelpW": "Sussurrar aos jogadores ou aos donos das miniaturas selecionadas<hr>parâmetros:\n&lt;[nomes de jogadores]&gt;\n@: sussurrar aos donos das miniaturas selecionadas\n<hr>exemplos:\n/w [Cris] msg enviada ao jogador Cris\n/w @ msg enviadas aos donos das miniaturas selecionadas",
   "GURPS.chatHelpWait": "Aguarde X milissegundos antes de executar o próximo comando de chat<hr>parâmetros:\nX: o número de milissegundos a aguardar\n<hr>exemplos:\n/wait 500",

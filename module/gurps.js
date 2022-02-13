@@ -1980,6 +1980,7 @@ Hooks.once('ready', async function () {
       // @ts-ignore
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
     }
+    GURPS.executeOTF("/help")
   }
 
   // get all aliases defined in the resource tracker templates and register them as damage types
