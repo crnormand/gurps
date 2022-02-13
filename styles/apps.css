@@ -1065,6 +1065,7 @@ active-effects-list .section h3 {
 
 .gga-effects-list.table input {
     min-height: calc(var(--form-field-height) + 1px);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .resource-editor .tracker-manager.table {
@@ -1072,7 +1073,7 @@ active-effects-list .section h3 {
 }
 
 .active-effects-list .gga-effects-list.table {
-  grid-template-columns: 1fr min-content;
+  grid-template-columns: 1fr min-content min-content;
   margin: 0 0 0.25em 0;
 }
 

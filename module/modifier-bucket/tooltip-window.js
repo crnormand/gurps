@@ -99,7 +99,7 @@ export default class ModifierBucketEditor extends Application {
 
       let effects = GURPS.LastActor.effects.filter(e => !e.data.disabled)
       for (let effect of effects) {
-        let type = effect.data.flags.core.statusId
+        let type = effect.data.flags?.core?.statusId
         let m = ModifiersForStatus[type]
         if (!!m) {
           melee = melee.concat(m.melee)

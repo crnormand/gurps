@@ -6,6 +6,7 @@
 ./AnimatedArt/Breath Weapon/dragonBornSilver-WhiteCold15Cone.webm,width=512
 ./AnimatedArt/Fire/campfire.webm,width=400
 ./AnimatedArt/Fire/candle.webm,width=256
+./AnimatedArt/Fire/canonfire.webm,width=512
 ./AnimatedArt/Fire/fireBlast.webm,width=512
 ./AnimatedArt/Fire/fireblastMESS.webm,width=512
 ./AnimatedArt/Fire/fireBlastS.webm,width=512
@@ -21,13 +22,17 @@
 ./AnimatedArt/Fire/fireRing4.webm,width=512
 ./AnimatedArt/Fire/fireRingBlue.webm,width=512
 ./AnimatedArt/Fire/fireTop.webm,width=512
+./AnimatedArt/Fire/fireTop6.webm,width=512
 ./AnimatedArt/Fire/fireTopType2.webm,width=512
 ./AnimatedArt/Fire/fireTorchSmall.webm,width=512
 ./AnimatedArt/Fire/fireTrap1.webm,width=512
 ./AnimatedArt/Fire/fireType1.webm,width=512
 ./AnimatedArt/Fire/fireType2.webm,width=512
+./AnimatedArt/Fire/fuseBurning.webm,width=512
+./AnimatedArt/Fire/fuseNew.webm,width=1024
 ./AnimatedArt/Fire/hellPortalFire.webm,width=512
 ./AnimatedArt/Fire/walltorch.webm,width=512
+./AnimatedArt/Fire/wallTorch2.webm,width=512
 ./AnimatedArt/Misc/60secondCountdown.webm,width=512
 ./AnimatedArt/Misc/acidPool.webm,width=256
 ./AnimatedArt/Misc/ArrowBlue.webm,width=512
@@ -334,6 +339,7 @@
 ./AnimatedArt/Traps/boltTrap.webm,width=100
 ./AnimatedArt/Traps/leverSwitch.webm,width=512
 ./AnimatedArt/Traps/pitTrap.webm,width=512
+./AnimatedArt/Traps/pitTrapTransparent.webm,width=512
 ./AnimatedArt/Traps/pitTrapType2.webm,width=512
 ./AnimatedArt/Traps/pitTrap_noSpikes.webm,width=512
 ./AnimatedArt/Traps/pitTrap_noWalls.webm,width=512
@@ -342,8 +348,10 @@
 ./AnimatedArt/Traps/sawBladeCellShadeFloorISO.webm,width=512
 ./AnimatedArt/Traps/sawBladeHalf.webm,width=512
 ./AnimatedArt/Traps/sawBladeHalfStatic.webm,width=512
+./AnimatedArt/Traps/spikeSplat.webm,width=1024
 ./AnimatedArt/Traps/SpikesTrapD.webm,width=512
 ./AnimatedArt/Traps/SpikesTrapF.webm,width=512
+./AnimatedArt/Traps/spikeTrap.webm,width=1024
 ./AnimatedArt/Traps/trapNet.webm,width=512
 ./AnimatedArt/Traps/trapNetDark.webm,width=512
 ./AnimatedArt/Traps/trapsmashFFM.webm,width=512
