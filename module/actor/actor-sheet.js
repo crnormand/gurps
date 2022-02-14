@@ -838,6 +838,15 @@ export class GurpsActorSheet extends ActorSheet {
       }
       add = '[' + prefix + dragData.otf + ']'
     }
+    if (!!dragData.bucket) {
+      add = '["Modifier Bucket"'
+      let sep = ''
+      dragData.bucket.forEach(otf => {
+        add += sep + '/r [' + otf + ']'
+        sep = '\\\\'
+      })
+      add += ']'
+    }
 
     if (!!add)
       if (!!modelkey) {
