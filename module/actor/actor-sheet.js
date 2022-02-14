@@ -404,6 +404,8 @@ export class GurpsActorSheet extends ActorSheet {
       if (path.includes('spells')) this.editSpells(actor, path, obj)
       if (path.includes('notes')) this.editNotes(actor, path, obj)
     })
+    
+    html.find('.dblclkedit').on('drop', this.handleDblclickeditDrop.bind(this))
 
     // On clicking equipment quantity increment, increase the amount.
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
@@ -796,6 +798,12 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _addTracker(event) {
     this.actor.addTracker()
+  }
+  
+  handleDblclickeditDrop(ev) {
+    let parent = $(ev.currentTarget).closest('[data-key]')
+    let path = parent[0].dataset.key
+    this.dropFoundryLinks(ev, path + '.notes')
   }
 
   handleQnoteDrop(ev) {
