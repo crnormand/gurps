@@ -6,6 +6,7 @@ Release 0.13.4
 
 - Fixed drag and drop into Quick Notes to include display name
 - Added drag and drop OTFs into editables (Ads, Skills, spells, notes, etc.)
+- Changed <Blind Roll> to (Blind Roll) so as to not confuse HTML parsing
 
 Release 0.13.3 2/7/2022
 
