@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.13.4
 
 - Fixed drag and drop into Quick Notes to include display name
+- Added drag and drop OTFs into editables (Ads, Skills, spells, notes, etc.)
 
 Release 0.13.3 2/7/2022
 
