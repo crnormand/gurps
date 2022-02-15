@@ -680,17 +680,6 @@ export class GurpsActor extends Actor {
    * @remarks If no document has actually been updated, the returned {@link Promise} resolves to `undefined`.
    */
   async update(data, context) {
-    // TODO remove when the duplicate resource tracker issue is solved
-    let suspects = Object.keys(data).filter(it => it.startsWith('data.additionalresources.tracker.'))
-    if (!!suspects) {
-      for (let suspect of suspects) {
-        let value = suspect.replace('data.additionalresources.tracker.', '').split('.')[0]
-        if (value.length < 4) {
-          console.trace(suspect)
-        }
-      }
-    }
-
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
       if (data.hasOwnProperty('data.HP.value')) {
         let flag = data['data.HP.value'] < this.getGurpsActorData().HP.max / 3
@@ -1123,7 +1112,7 @@ export class GurpsActor extends Actor {
 
     let old = this._findElementIn('ads', a.uuid)
     this._migrateOtfsAndNotes(old, a)
-    
+
     let ch = []
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importAd(j, i.id))
@@ -1160,8 +1149,8 @@ export class GurpsActor extends Actor {
       s.notes = i.notes || ''
     }
     let old = this._findElementIn('skills', s.uuid)
-    this._migrateOtfsAndNotes(old, s, i.vtt_notes) 
-   
+    this._migrateOtfsAndNotes(old, s, i.vtt_notes)
+
     let ch = []
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importSk(j, i.id))
@@ -1203,7 +1192,7 @@ export class GurpsActor extends Actor {
 
     let old = this._findElementIn('spells', s.uuid)
     this._migrateOtfsAndNotes(old, s, i.vtt_notes)
-    
+
     let ch = []
     if (i.children?.length) {
       for (let j of i.children) ch = ch.concat(this.importSp(j, i.id))
@@ -1630,7 +1619,7 @@ export class GurpsActor extends Actor {
             m.block = w.calc?.block || ''
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, i.vtt_notes)
-           
+
             GURPS.put(melee, m, m_index++)
           } else if (w.type == 'ranged_weapon') {
             let r = new Ranged()
@@ -1652,7 +1641,7 @@ export class GurpsActor extends Actor {
             r.range = w.calc?.range || ''
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, i.vtt_notes)
-            
+
             GURPS.put(ranged, r, r_index++)
           }
         }
@@ -2630,14 +2619,14 @@ export class GurpsActor extends Actor {
     this._updateOtf('during', oldobj, newobj)
     this._updateOtf('pass', oldobj, newobj)
     this._updateOtf('fail', oldobj, newobj)
-    if (oldobj.notes?.startsWith(newobj.notes)) // Must be done AFTER OTFs have been stripped out
+    if (oldobj.notes?.startsWith(newobj.notes))
+      // Must be done AFTER OTFs have been stripped out
       newobj.notes = oldobj.notes
-    if (oldobj.name?.startsWith(newobj.name))
-      newobj.name = oldobj.name
+    if (oldobj.name?.startsWith(newobj.name)) newobj.name = oldobj.name
   }
-  
+
   /**
-   *  Search for specific format OTF in the notes (and vttnotes).   
+   *  Search for specific format OTF in the notes (and vttnotes).
    *  If we find it in the notes, remove it and replace the notes with the shorter version
    */
   _updateOtf(otfkey, oldobj, newobj) {
@@ -2645,40 +2634,38 @@ export class GurpsActor extends Actor {
     let oldotf = oldobj[objkey]
     newobj[objkey] = oldotf
     var notes, newotf
-    [ notes, newotf ] = this._removeOtf(otfkey, newobj.notes || '')
+    ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
     if (!!newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
   }
-  
+
   // Looking for OTFs in text.  ex:   c:[/qty -1] during:[/anim healing c]
   _removeOtf(key, text) {
-    if (!text) return [ text, null ]
+    if (!text) return [text, null]
     var start
     let patstart = text.toLowerCase().indexOf(key[0] + ':[')
     if (patstart < 0) {
-        patstart = text.toLowerCase().indexOf(key + ':[')
-        if (patstart < 0) 
-          return [ text, null ]
-        else start = patstart + key.length + 2
+      patstart = text.toLowerCase().indexOf(key + ':[')
+      if (patstart < 0) return [text, null]
+      else start = patstart + key.length + 2
     } else start = patstart + 3
     let cnt = 1
     let i = start
-    if (i >= text.length) return [ text, null ]
+    if (i >= text.length) return [text, null]
     do {
-      let ch = text[i++] 
+      let ch = text[i++]
       if (ch == '[') cnt++
       if (ch == ']') cnt--
     } while (i < text.length && cnt > 0)
     if (cnt == 0) {
-       let otf = text.substring(start, i - 1)
-       let front = text.substring(0, patstart)
-       let end = text.substr(i)
-       if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
-       return [ front + end, otf ]
-    } else return [ text, null ]
+      let otf = text.substring(start, i - 1)
+      let front = text.substring(0, patstart)
+      let end = text.substr(i)
+      if ((front == '' || front.endsWith(' ')) && end.startsWith(' ')) end = end.substring(1)
+      return [front + end, otf]
+    } else return [text, null]
   }
-  
-  
+
   /**
    * @param {{ [key: string]: any }} json
    * @param {boolean} isFoundryGCS
@@ -2720,7 +2707,7 @@ export class GurpsActor extends Actor {
             m.block = t(j2.block)
             let old = this._findElementIn('melee', false, m.name, m.mode)
             this._migrateOtfsAndNotes(old, m, t(j2.vtt_notes))
-            
+
             GURPS.put(melee, m, index++)
           }
         }
@@ -2776,7 +2763,7 @@ export class GurpsActor extends Actor {
             r.range = rng
             let old = this._findElementIn('ranged', false, r.name, r.mode)
             this._migrateOtfsAndNotes(old, r, t(j2.vtt_notes))
-            
+
             GURPS.put(ranged, r, index++)
           }
         }
@@ -2972,7 +2959,7 @@ export class GurpsActor extends Actor {
         sk.parentuuid = t(j.parentuuid)
         let old = this._findElementIn('skills', sk.uuid)
         this._migrateOtfsAndNotes(old, sk, t(j.vtt_notes))
-       
+
         temp.push(sk)
       }
     }
@@ -3236,6 +3223,17 @@ export class GurpsActor extends Actor {
     await this.update({ 'data.additionalresources.-=tracker': null })
     await this.update({ 'data.additionalresources.tracker': data })
 
+    this._forceRender()
+  }
+
+  async setMoveDefault(value) {
+    this.ignoreRender = true
+    let move = this.getGurpsActorData().move
+    for (const key in move) {
+      move[key].default = value === key
+    }
+    await this.update({ 'data.-=move': null })
+    await this.update({ 'data.move': move })
     this._forceRender()
   }
 
