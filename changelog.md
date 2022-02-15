@@ -2,12 +2,109 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.12.11
+Release 0.13.4
+
+- Fixed drag and drop into Quick Notes to include display name
+- Added drag and drop OTFs into editables (Ads, Skills, spells, notes, etc.)
+- Changed <Blind Roll> to (Blind Roll) so as to not confuse HTML parsing
+
+Release 0.13.3 2/7/2022
+
+- Updated Brazilian Portuguese language file.
+- Fixed OTF parsing of [70]
+- Fixed initial importing of vtt_notes
+- Fixed Blind rolls
+
+Release 0.13.2 1/24/2022
+
+- Added support for c:[] d:[] p:[] f:[] parsing from notes
+- Added support for upcoming vtt_notes from GCS
+- Added /show FP HP
+- Update TriggerHappy teleport to be more selection friendly @Drawing[PortB]@Trigger[move capture]@Teleport[PortA]@OTF[1d-3 burn]@OTF[/wait 500\\/anim flames*orange*200 c270 *2]
+- Updated Brazilian Portuguese language file. (Hi, Frerol!)
+- Fixed spamming chat messages for reeling/exhausted.
+- Fixed the 'user created equipment' flag on equipment creation.
+- Added system setting to turn on/off chat messages for reeling/exhausted.
+- Added warning for bad sound file
+
+Release 0.13.1 1/12/2022
+
+- Fixed OTF parsing for "\*Costs tr()"
+- @Neck fixed modifier/conditional modifier calculation for .gcs import
+- Added /repeat (/rpt) command for animations
+- Added @Teleport and @OTF verbs if you use Trigger Happy module
+- Fixed Natural Attacks bug (if the attack name contained parenthesis)
+- Change NPC UI 'Dmg' to 'Th/Sw'
+
+Release 0.13.0 1/8/2022
+
+- Fixed /ra help string
+- Added warning if trying to set maneuver /man when not in combat
+- Replace GURPS.genkey with zeroFill()
+- Fixed /uses reset eqt
+- Updated /light command to work with new Foundry V9 lighting model
+- Fixed /tr# (where # = 0-3)
+- Enhanced /tr & /qty commands to allow spaces between +-= and the number
+- Fixed Foundry Item image hover
+- Sorted /show output so highest results appear first, /showa (/sha) shows alphabetically
+- Fixed Attacks that have () in the mode
+- Updated Effects Modifier Popup button to appear in upper left menu
+- Fixed [ST26] OtFs (fixed target attribute rolls)
+
+Release 0.12.17 1/4/2020
+
+- Updated GCS import to calc block and handle missing 'calc' object @neck
+- Updated GCA5 export script to latest version
+- Updated lighting/darkness modifiers
+
+Release 0.12.16 12/31/2021 Happy New Year!
+
+- Fixed conditional modifiers from concatenating everything into the final line.
+- Fixed display of the NPC/Mook sheets.
+- Added French language file, thank you Eikhan!!
+- Round fractional numbers in Encumbrance and Lifting tables to 1 decimal place.
+
+Release 0.12.15 12/25/2021
+
+- Re-Fixed "Removed Unequipped Weapons" setting (allow things like Natural Attacks, which do not have a corresponding equipment)
+
+Release 0.12.14 12/25/2021 Happy Christmas everyone!
+
+- Fixed "Removed Unequipped Weapons" setting
+
+Release 0.12.13 12/25/2021 Ho Ho Ho... Merry Christmas!
+
+- Fixed "Cannot read properties of undefined (reading 'terms')"
+
+Release 0.12.12 12/24/2021 Merry Christmas everyone!
+
+- Always show the sign (+/-) on Conditional Modifiers
+- This fixes the issue of Roll Tables not adding the global modifier to the die roll.
+- Added code to prevent failure to import a character with a spell that has no 'difficulty' value.
+
+Release 0.12.11 12/23/2021
 
 - Update /show help
 - Add Portrait share for GM users
 - Fixed applying basic damage for multiple damage rolls
 - Updated GCS exporter to do Conditional Modifiers (needs a bug fixed in GCS before it works)
+- Fixed equipment menus to only open on a contextmenu event.
+- Add target modifiers to Effects Modifier popup window.
+- Add SM to target modifiers.
+- Added another range/speed table (-1 per 10 yards/meters).
+- Possibly fixed adding two statuses at the same time, such as stun + prone.
+- Fixed Full GCS sheet's navigation widget operating on wrong sheet.
+- Added effect modifiers for the "Blind" status.
+- Fixed the Dodge column in Encumbrance to enable 'rollable' only on the current encumbrance level.
+- Added GCS direct import by rinickolous / neck
+- ADD will now automatically select Injury Tolerance (Unliving, Diffuse, or Homogenous) if any of the following exists as an Advantage on the actor sheet, where \<type\> is one of Unliving, Diffuse, or Homogenous:
+  - Name is 'Injury Tolerance (\<type\>)' or
+  - Name is '\<type\>' or
+  - Name is 'Injury Tolerance' AND Notes contains '\<type\>'
+- Fix for Foundry v.0.9 layout.
+- Added targeted token modifiers to Effect Modifier popup.
+- Updated GCA export to GCA-11, supporting Conditional Modifiers
+- Added beta GCA5 export mehalforc / Stevil
 
 Release 0.12.10 12/1/2021
 

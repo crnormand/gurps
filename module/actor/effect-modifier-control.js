@@ -11,10 +11,11 @@ export class EffectModifierControl {
     this.token = null
 
     Hooks.once('init', this._registerSetting.bind(this))
-    Hooks.on('renderSceneControls', this._createEffectModifierButton.bind(this))
+    Hooks.on('getSceneControlButtons', this._createEffectModifierButton.bind(this))
     Hooks.on('controlToken', this._controlToken.bind(this))
     Hooks.on('updateToken', this._updateToken.bind(this))
     Hooks.on('createActiveEffect', this._createActiveEffect.bind(this))
+    Hooks.on('targetToken', this._targetToken.bind(this))
     Hooks.once('ready', () => (this._ui = new EffectModifierPopout(null, this)))
     Hooks.on('closeEffectModifierPopout', () => (this.showPopup = false))
   }
@@ -32,8 +33,7 @@ export class EffectModifierControl {
 
     // show the token control as active
     let toggle = $.find('[data-control=token] ol > li[data-tool=GURPSEffectsMod]')
-    toggle[0].classList.toggle('active')
-
+    toggle[0]?.classList.toggle('active')
     this.toggleEffectModifierPopup(closeOptions)
   }
 
@@ -49,25 +49,23 @@ export class EffectModifierControl {
     })
   }
 
-  _createEffectModifierButton(control, html, data) {
-    const name = EffectModifierControl.EffectModName
-    let existing = html.find(`li.control-tool.toggle[data-tool=GURPSEffectsMod]`)
-
-    if (this.shouldUseEffectModifierPopup() && existing.length === 0) {
-      const title = i18n('GURPS.tokenToolsTitle')
-      const icon = 'fas fa-list-alt'
-      const active = this.showPopup
-      const btn = $(
-        `<li class="control-tool toggle ${
-          active ? 'active' : ''
-        }" title="${title}" data-tool="${name}"><i class="${icon}"></i></li>`
-      )
-
-      let self = this
-      btn.on('click', _ => self.togglePopup())
-
-      let list = html.find('[data-control=token] ol')
-      list.append(btn)
+  _createEffectModifierButton(controls) {
+    if (this.shouldUseEffectModifierPopup()) {
+      let tokenButton = controls.find(b => b.name == 'token')
+      if (tokenButton) {
+        let self = this
+        tokenButton.tools.push({
+          name: EffectModifierControl.EffectModName,
+          title: i18n('GURPS.tokenToolsTitle'),
+          icon: 'fas fa-list-alt',
+          toggle: true,
+          active: this.showPopup,
+          visible: true,
+          onClick: value => {
+            self.togglePopup()
+          },
+        })
+      }
     }
   }
 
@@ -83,6 +81,10 @@ export class EffectModifierControl {
     let sharedStateID = this.token?.id
     console.log(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
     if (tokenDocument.object === this.token) this._ui.render(false)
+  }
+
+  _targetToken(user, token, targeted) {
+    this._ui.render(false)
   }
 
   _controlToken(token, isControlled) {

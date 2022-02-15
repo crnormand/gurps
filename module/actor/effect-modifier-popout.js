@@ -28,13 +28,29 @@ export class EffectModifierPopout extends Application {
   getData(options) {
     return mergeObject(super.getData(options), {
       selected: this.selectedToken,
-      modifiers: this._token
-        ? this._token.actor
-            .getGurpsActorData()
-            .conditions.self.modifiers.map(it => `[${i18n(it)}]`)
-            .map(it => GURPS.gurpslink(it))
+      selfmodifiers: this._token ? this.convertModifiers(this._token.actor.data.data.conditions.self.modifiers) : [],
+      targetmodifiers: this._token
+        ? this.convertModifiers(this._token.actor.data.data.conditions.target.modifiers)
         : [],
+      targets: this.targets,
     })
+  }
+
+  get targets() {
+    let results = []
+    for (const target of Array.from(game.user.targets)) {
+      let result = {}
+      result.name = target.data.name
+      result.targetmodifiers = target.actor
+        ? this.convertModifiers(target.actor.data.data.conditions.target.modifiers)
+        : []
+      results.push(result)
+    }
+    return results
+  }
+
+  convertModifiers(list) {
+    return list.map(it => `[${i18n(it)}]`).map(it => GURPS.gurpslink(it))
   }
 
   get selectedToken() {
@@ -66,5 +82,7 @@ export class EffectModifierPopout extends Application {
     this._callback.close(options)
   }
 
-  async closeApp(options) { super.close(options) }
+  async closeApp(options) {
+    super.close(options)
+  }
 }

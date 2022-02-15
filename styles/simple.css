@@ -247,6 +247,7 @@
 .rollable {
   color: black;
   background-color: rgb(255, 255, 190) !important;
+  min-width: fit-content;
 }
 
 .rollable:active {
@@ -398,9 +399,20 @@
   color: lightpink;
 }
 
+.gga-popup-window .glinkmodplus {
+  background-color: transparent !important;
+  color: palegreen;
+}
+
 .gga-popup-window .modifier-list {
   list-style-type: none;
 }
+
+.gga-popup-window .heading {
+  padding-left: 1em;
+  border-bottom: 1px solid dimgrey;
+}
+
 
 .glinkmodminus:active {
   cursor: pointer;
@@ -420,7 +432,8 @@
   font-weight: normal;
 }
 
-.gga-popup-window .glinkmodminus:hover {
+.gga-popup-window .glinkmodminus:hover,
+.gga-popup-window .glinkmodplus:hover {
   cursor: pointer;
   /* background: var(--lightgrey); */
   color: white;
@@ -429,6 +442,10 @@
   padding: 0;
   margin: 0;
   font-weight: normal;
+}
+
+.gga-popup-window .glinkmodplus:hover {
+  text-shadow: 0 0 5px green;
 }
 
 .gurpslink.test,
@@ -839,8 +856,8 @@ body {
   font-size: small;
   font-weight: normal;
   padding: 0;
-  margin: 0.25in;
-  margin-bottom: calc(0.25in - 1em);
+  /* margin: 0.25in; */
+  /* margin-bottom: calc(0.25in - 1em); */
 }
 
 #sheet-tab,
@@ -1398,6 +1415,7 @@ body {
   color: var(--lightgrey);
   font-size: var(--headerfontsize);
   font-weight: 600;
+  padding-left: var(--smallemgap);
   padding-right: calc(2 * var(--smallemgap));
   cursor: grab;
 }

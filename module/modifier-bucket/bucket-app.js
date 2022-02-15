@@ -18,6 +18,7 @@ Hooks.once('init', async function () {
   // FIXME Could be disastrously wrong!
   CONFIG.Dice.rolls.push(GurpsRoll)
 
+  // MONKEY_PATCH
   // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch them to
   // include the properties we need to support Physical Dice
   if (!!DiceTerm.fromMatch) {
@@ -29,6 +30,36 @@ Hooks.once('init', async function () {
     }
 
     DiceTerm.fromMatch = newFromMatch
+  }
+
+  // MONKEY_PATCH
+  // Patch Roll to have the properties we need for Physical Dice and modifier bucket handling.
+  // TODO With this change, GurpsRoll becomes redundant -- consider removing it??
+  if (!Roll.prototype._gurpsOriginalPrepareData) {
+    Roll.prototype._gurpsOriginalPrepareData = Roll.prototype._prepareData
+
+    let gurpsPrepareData = function (data) {
+      let d = Roll.prototype._gurpsOriginalPrepareData(data)
+      if (!d.hasOwnProperty('gmodc'))
+        Object.defineProperty(d, 'gmodc', {
+          get() {
+            let m = GURPS.ModifierBucket.currentSum()
+            GURPS.ModifierBucket.clear()
+            return parseInt(m)
+          },
+        })
+      d.gmod = GURPS.ModifierBucket.currentSum()
+      return d
+    }
+
+    Roll.prototype._prepareData = gurpsPrepareData
+
+    // Now add the dieOverride static variable and the isLoaded getter:
+    Roll.dieOverride = false
+    Object.defineProperty(Roll.prototype, 'isLoaded', {
+      // Used alternate define form, which defines 'this'.   get: () => {} does not set 'this'
+      get() { return this.terms.some(term => term instanceof GurpsDie && !!term._loaded) },
+    })
   }
 })
 
@@ -170,7 +201,7 @@ export class GurpsRoll extends Roll {
     let d = super._prepareData(data)
     if (!d.hasOwnProperty('gmodc'))
       Object.defineProperty(d, 'gmodc', {
-        get: () => {
+        get() {
           let m = GURPS.ModifierBucket.currentSum()
           GURPS.ModifierBucket.clear()
           return parseInt(m)
@@ -490,13 +521,13 @@ export class ModifierBucket extends Application {
 
     e.each((_, li) => {
       li.addEventListener('dragstart', ev => {
-        let bucket = GURPS.ModifierBucket
-          .modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
-          //.join(' & ')
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+        //.join(' & ')
         return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
-            name: 'Modifier Bucket',
+            displayname: 'Modifier Bucket',
+            type: 'modifierbucket',
             bucket: bucket,
           })
         )
@@ -523,7 +554,7 @@ export class ModifierBucket extends Application {
       event.preventDefault()
       let originalEvent = event.originalEvent
       if (originalEvent instanceof WheelEvent) {
-        let s = originalEvent.deltaY / -100
+        let s = Math.round(originalEvent.deltaY / -100)
         this.addModifier(s, '')
       }
     })
@@ -605,7 +636,7 @@ export class ModifierBucket extends Application {
   }
 
   refresh() {
-    setTimeout(() => this.render(true), 100)  // Not certain why the UI element isn't updating immediately, so hacked this
+    setTimeout(() => this.render(true), 100) // Not certain why the UI element isn't updating immediately, so hacked this
     if (this.SHOWING) {
       this.editor.render(true)
     }

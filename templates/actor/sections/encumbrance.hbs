@@ -26,7 +26,7 @@
       {{#if ../isEditing}}
         <input name='data.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' />
       {{else}}
-        {{weight}}
+        {{displayDecimal weight number=1 removeZeros=true }}
       {{/if}}
     </div>
     <div class='move flex-center {{include-if current 'current'}}'>
@@ -41,7 +41,7 @@
         <input name='data.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{dodge}}' />
       </div>
     {{else}}
-      <div class='dodge rollable flex-center {{include-if current 'current'}}' data-otf='Dodge' data-path='dodge'>
+      <div class='dodge flex-center {{include-if current 'current rollable'}}' {{#if current}}data-otf='Dodge'{{/if}} data-path='dodge'>
         {{currentdodge}}
       </div>
     {{/if}}

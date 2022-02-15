@@ -78,7 +78,7 @@ export default class ModifierBucketEditor extends Application {
     data.actorname = !!GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
-    data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
+    data.cansend = game.user?.isGM || game.user?.hasRole('TRUSTED') || game.user?.hasRole('ASSISTANT')
     data.users = game.users?.filter(u => u.id != game.user.id) || []
     data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
@@ -502,12 +502,12 @@ const ModifierLiterals = {
       i18n('GURPS.lighting'),
       `-1 ${i18n('GURPS.modifierLightDim')}`,
       `-2 ${i18n('GURPS.modifierLightTwilight')}`,
-      `-3 ${i18n('GURPS.modifierLightTorch')}`,
+      `-3 ${i18n('GURPS.modifierLightDeepTwilight')}`,
       `-4 ${i18n('GURPS.modifierLightFullMoon')}`,
-      `-5 ${i18n('GURPS.modifierLightCandle')}`,
-      `-6 ${i18n('GURPS.modifierLightHalfMoon')}`,
-      `-7 ${i18n('GURPS.modifierLightQuarterMoon')}`,
-      `-8 ${i18n('GURPS.modifierLightStarlight')}`,
+      `-5 ${i18n('GURPS.modifierLightHalfMoon')}`,
+      `-6 ${i18n('GURPS.modifierLightQuarterMoon')}`,
+      `-7 ${i18n('GURPS.modifierLightStarlight')}`,
+      `-8 ${i18n('GURPS.modifierLightStarlightClouds')}`,
       `-9 ${i18n('GURPS.modifierLightMoonless')}`,
       `-10 ${i18n('GURPS.modifierLightNone')}`,
     ]

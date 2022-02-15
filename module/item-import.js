@@ -1,3 +1,5 @@
+import { zeroFill } from '../lib/utilities.js'
+
 export class ItemImporter {
     constructor() {
       this.count = 0
@@ -97,7 +99,7 @@ export class ItemImporter {
             st: w.strength || "",
             otf: otf_list.join("|") || ""
           }
-          itemData.data.melee[GURPS.genkey(Object.keys(itemData.data.melee).length + 1)] = wep;
+          itemData.data.melee[zeroFill(Object.keys(itemData.data.melee).length + 1)] = wep;
         } else if (w.type === "ranged_weapon") {
           let wep = {
             acc: w.accuracy || "",
@@ -115,7 +117,7 @@ export class ItemImporter {
             st: w.strength,
             otf: otf_list.join("|") || ""
           }
-          itemData.data.ranged[GURPS.genkey(Object.keys(itemData.data.ranged).length + 1)] = wep;
+          itemData.data.ranged[zeroFill(Object.keys(itemData.data.ranged).length + 1)] = wep;
         }
       }
       let bonus_list = []

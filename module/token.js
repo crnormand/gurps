@@ -2,6 +2,7 @@ import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } fro
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
+import { i18n } from '../lib/utilities.js'
 
 export default class GurpsToken extends Token {
   static ready() {
@@ -93,7 +94,7 @@ export default class GurpsToken extends Token {
         await super.toggleEffect(GURPS.StatusEffect.lookup(id))
       }
     }
-    super.toggleEffect(effect, options)
+    await super.toggleEffect(effect, options)
   }
 
   async setEffectActive(name, active) {

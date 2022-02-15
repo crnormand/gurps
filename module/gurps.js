@@ -17,7 +17,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -28,7 +28,7 @@ import ManeuverHUDButton from './actor/maneuver-button.js'
 import { ItemImporter } from '../module/item-import.js'
 import GURPSTokenHUD from './token-hud.js'
 import GurpsJournalEntry from './journal.js'
-
+import TriggerHappySupport from './effects/triggerhappy.js'
 /**
  * Added to color the rollable parts of the character sheet.
  * Made this part eslint compatible...
@@ -99,9 +99,10 @@ GURPS.LastActor = null
 GURPS.SJGProductMappings = SJGProductMappings
 GURPS.clearActiveEffects = GurpsActiveEffect.clearEffectsOnSelectedToken
 
-GURPS.SetLastActor = function (actor) {
+GURPS.SetLastActor = function (actor, tokenDocument) {
   if (actor != GURPS.LastActor) console.log('Setting Last Actor:' + actor?.name)
   GURPS.LastActor = actor
+  GURPS.LastTokenDocument = tokenDocument
   setTimeout(() => GURPS.ModifierBucket.refresh(), 100) // Need to make certain the mod bucket refresh occurs later
 }
 
@@ -109,7 +110,6 @@ GURPS.ClearLastActor = function (actor) {
   if (GURPS.LastActor == actor) {
     console.log('Clearing Last Actor:' + GURPS.LastActor?.name)
     GURPS.LastActor = null
-    GURPS.LastActorName = null
     GURPS.ModifierBucket.refresh()
     const tokens = canvas.tokens
     if (tokens && tokens.controlled.length > 0) {
@@ -144,6 +144,7 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
 GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
 GURPS.PendingOTFs = []
 GURPS.IgnoreTokenSelect = false
+GURPS.wait = wait
 
 GURPS.attributepaths = {
   ST: 'attributes.ST.value',
@@ -430,7 +431,7 @@ const actionFuncs = {
   modifier({ action }) {
     GURPS.ModifierBucket.addModifier(parseInt(action.mod), action.desc)
     if (action.next && action.next.type === 'modifier') {
-      return this.modifier(action.next) // recursion
+      return this.modifier({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
     }
     return true
   },
@@ -441,12 +442,14 @@ const actionFuncs = {
    * @param {boolean} data.action.quiet
    * @param {JQuery.Event|null} data.event
    */
-  chat({ action, event }) {
+  async chat({ action, event }) {
     // @ts-ignore
-    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard?.isCtrl(event)}\n${action.orig}`
+    const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
+      KeyboardManager.MODIFIER_KEYS.CONTROL
+    )}\n${action.orig}`
 
     // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
-    return GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+    return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
   },
   /**
    * @param {Object} data
@@ -603,7 +606,7 @@ const actionFuncs = {
    * @param {JQuery.Event|null} data.event
    */
   roll({ action, actor, event }) {
-    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula} ${action.desc}']`
+    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${!!action.desc ? ' ' + action.desc : ''}]`
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     return doRoll({
       actor,
@@ -1051,7 +1054,7 @@ async function performAction(action, actor, event = null, targets = []) {
   if (['attribute', 'skill-spell'].includes(action.type)) {
     action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
   }
-  return !action ? false : GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+  return !action ? false : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
 }
 GURPS.performAction = performAction
 
@@ -1119,7 +1122,7 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
   let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   let smode = ''
-  let m = sname.match(/(.*?)\(([^\)]*)\)$/)
+  let m = sname.match(/(.*)\((.*?)\)$/)
   if (!!m) {
     // Found a mode "(xxx)" in the search name
     sname = m[1].trim()
@@ -1351,26 +1354,8 @@ function handleGurpslink(event, actor, desc, targets) {
 }
 GURPS.handleGurpslink = handleGurpslink
 
-/* You may be asking yourself, why the hell is he generating fake keys to fit in an object
-  when he could have just used an array. Well, I had TONs of problems with the handlebars and Foundry
-  trying to deal with an array. While is "should" be possible to use it, and some people claim
-  that they could... everything I tried did something wonky. So the 2am fix was just make everything an
-  object with fake indexes. Handlebars deals with this just fine using {{#each someobject}} 
-  and if you really did just want to modify a single entry, you could use {{#each someobject as | obj key |}}
-  which will give you the object, and also the key, such that you could execute someobject.key to get the 
-  correct instance.   */
-/**
- * @param {number} index
- */
-function genkey(index) {
-  let k = ''
-  if (index < 10) k += '0'
-  if (index < 100) k += '0'
-  if (index < 1000) k += '0'
-  if (index < 10000) k += '0'
-  return k + index
-}
-GURPS.genkey = genkey
+// So it can be called from a script macro
+GURPS.genkey = zeroFill
 
 /**
  * Add the value as a property to obj. The key will be a generated value equal
@@ -1390,9 +1375,9 @@ GURPS.genkey = genkey
 function put(obj, value, index = -1) {
   if (index == -1) {
     index = 0
-    while (obj.hasOwnProperty(GURPS.genkey(index))) index++
+    while (obj.hasOwnProperty(zeroFill(index))) index++
   }
-  let k = GURPS.genkey(index)
+  let k = zeroFill(index)
   obj[k] = value
   return k
 }
@@ -1420,8 +1405,8 @@ async function removeKey(actor, path) {
   i = parseInt(key)
 
   i = i + 1
-  while (object.hasOwnProperty(GURPS.genkey(i))) {
-    let k = GURPS.genkey(i)
+  while (object.hasOwnProperty(zeroFill(i))) {
+    let k = zeroFill(i)
     object[key] = object[k]
     delete object[k]
     key = k
@@ -1458,10 +1443,10 @@ async function insertBeforeKey(actor, path, newobj) {
   let start = parseInt(key)
 
   i = start + 1
-  while (object.hasOwnProperty(GURPS.genkey(i))) i++
+  while (object.hasOwnProperty(zeroFill(i))) i++
   i = i - 1
   for (let z = i; z >= start; z--) {
-    object[genkey(z + 1)] = object[genkey(z)]
+    object[zeroFill(z + 1)] = object[zeroFill(z)]
   }
   object[key] = newobj
   let sorted = Object.keys(object)
@@ -1707,6 +1692,7 @@ Hooks.once('init', async function () {
   let src = game.i18n.lang == 'pt_br' ? 'systems/gurps/icons/gurps4e-pt_br.webp' : 'systems/gurps/icons/gurps4e.webp'
 
   $('#logo').attr('src', src)
+  $('#logo').attr('height', '32px')
 
   // set up all hitlocation tables (must be done before MB)
   HitLocation.init()
@@ -1858,17 +1844,17 @@ Hooks.once('init', async function () {
 
       html.find('.directory-footer').append(button)
     }
-    
+
     // we need a special case to handle the markdown editor module because it changes the chat textarea with an EasyMDEContainer
-    const hasMeme = game.modules.get('markdown-editor')?.active;
-    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message');
-    
-    const dropHandler = function(event, inLog) {
+    const hasMeme = game.modules.get('markdown-editor')?.active
+    const chat = html[0]?.querySelector(hasMeme ? '.EasyMDEContainer' : '#chat-message')
+
+    const dropHandler = function (event, inLog) {
       event.preventDefault()
       if (event.originalEvent) event = event.originalEvent
-      const data = JSON.parse(event.dataTransfer.getData("text/plain"))
+      const data = JSON.parse(event.dataTransfer.getData('text/plain'))
       if (!!data && !!data.otf) {
-        let cmd = ''  
+        let cmd = ''
         if (!!data.encodedAction) {
           let action = JSON.parse(atou(data.encodedAction))
           if (action.quiet) cmd += '!'
@@ -1885,7 +1871,7 @@ Hooks.once('init', async function () {
             user: game.user.id,
             //speaker: ChatMessage.getSpeaker({ actor: game.user }),
             type: CONST.CHAT_MESSAGE_TYPES.OOC,
-            content: cmd
+            content: cmd,
           }
           ChatMessage.create(messageData, {})
         } else $(document).find('#chat-message').val(cmd)
@@ -1987,6 +1973,7 @@ Hooks.once('ready', async function () {
       // @ts-ignore
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
     }
+    GURPS.executeOTF("/help")
   }
 
   // get all aliases defined in the resource tracker templates and register them as damage types
@@ -2006,7 +1993,6 @@ Hooks.once('ready', async function () {
 
   // Sorry, removed the ts-ignores during editing.
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
-    console.log(data)
     if (!data.otf && !data.bucket) return
     let name = data.otf || data.bucket.join(' & ')
     if (!!data.displayname) name = data.displayname
@@ -2197,7 +2183,7 @@ Hooks.once('ready', async function () {
     if (args.length > 1) {
       let a = args[0]?.actor
       if (!!a) {
-        if (args[1]) GURPS.SetLastActor(a)
+        if (args[1]) GURPS.SetLastActor(a, args[0].document)
         else GURPS.ClearLastActor(a)
       }
     }
@@ -2290,6 +2276,7 @@ Hooks.once('ready', async function () {
   })
 
   GurpsToken.ready()
-  
+  TriggerHappySupport.init()
+
   // End of system "READY" hook.
 })

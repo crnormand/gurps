@@ -1126,11 +1126,11 @@ ul#result-effects li {
 }
 
 #condition .fieldblock .field[name='data.conditions.combatmove'] {
-    max-width: 12em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-left: 8px;
+  max-width: 12em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 8px;
 }
 
 #combat-sheet .fieldblock .field[name='data.conditions.combatmove'] {
@@ -1144,13 +1144,12 @@ ul#result-effects li {
 }
 
 select#maneuver option {
-      max-width: 12em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-left: 8px;
+  max-width: 12em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 8px;
 }
-
 
 .spinner details {
   position: relative;
@@ -1329,25 +1328,21 @@ button.equipmentbutton:last-child {
   color: white;
 }
 
-#navigate-toggle:checked + .navigate-bar > .navigation-view > span:before {
+.navigate-area input:checked + .navigate-bar > .navigation-view > span:before {
   content: '\f100';
   font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
   font-weight: 900;
   color: white;
 }
 
-#navigate-toggle:checked + .navigate-bar {
+.navigate-area input:checked + .navigate-bar {
   width: fit-content;
 }
 
-#navigate-toggle:checked + .navigate-bar > .navigate-container {
+.navigate-area input:checked + .navigate-bar > .navigate-container {
   width: 0;
   overflow: hidden;
 }
-
-/* #navigate-toggle:checked + .navigate-bar {
-  width: 24px;
-} */
 
 .navigation-link:hover {
   outline: none;
