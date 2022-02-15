@@ -1,6 +1,7 @@
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import { i18n } from '../../lib/utilities.js'
 import { MOVE_ONE, MOVE_NONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
+import { GURPS } from '../gurps.js'
 
 export class StatusEffect {
   static SETTING_USE_ACTIVE_EFFECTS = 'use-active-effects'
@@ -896,4 +897,27 @@ const _getActiveEffectsData = function (id) {
 
   let data = activeEffectsData[id]
   return data
+}
+
+// chat
+// data.conditions.exhausted
+// data.conditions.maneuver
+// data.conditions.posture
+// data.conditions.reeling
+// data.conditions.self.modifiers
+// data.conditions.target.modifiers
+// data.moveoverride.maneuver
+// data.moveoverride.posture
+// data.attributes.ST.import
+
+export const GURPSActiveEffectsChanges = {
+  'data.conditions.exhausted': 'GURPS.exhausted',
+  'data.conditions.maneuver': 'GURPS.maneuver',
+  'data.conditions.posture': 'GURPS.posture',
+  'data.conditions.reeling': 'GURPS.reeling',
+  'data.conditions.self.modifiers': 'GURPS.selfModifiers',
+  'data.conditions.target.modifiers': 'GURPS.targetModifiers',
+  'data.moveoverride.maneuver': 'GURPS.moveManeuver',
+  'data.moveoverride.posture': 'GURPS.movePosture',
+  'data.attributes.ST.import': 'GURPS.strength',
 }

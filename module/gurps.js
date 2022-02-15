@@ -72,6 +72,7 @@ import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
+import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -1054,7 +1055,9 @@ async function performAction(action, actor, event = null, targets = []) {
   if (['attribute', 'skill-spell'].includes(action.type)) {
     action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
   }
-  return !action ? false : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+  return !action
+    ? false
+    : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
 }
 GURPS.performAction = performAction
 
@@ -1716,6 +1719,10 @@ Hooks.once('init', async function () {
   // @ts-ignore
   CONFIG.Actor.documentClass = GurpsActor
   CONFIG.Item.documentClass = GurpsItem
+
+  // add custom ActiveEffectConfig sheet class
+  CONFIG.ActiveEffect.sheetClass = GurpsActiveEffectConfig
+  // ActiveEffectConfig.registerSheet(Document, 'ActiveEffect', GurpsActiveEffectConfig, { makeDefault: true })
 
   // preload drag-and-drop image
   {

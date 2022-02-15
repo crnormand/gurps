@@ -9,9 +9,9 @@
         </option>
         {{#each (listAllManeuvers) as |this key|}}
           <option value='{{key}}' {{select-if ../data.conditions.maneuver key}}>
-            {{i18n this.label}}
+            {{i18n this.label}} 
           </option>
-        {{/each}}
+        {{/each}} 
       </select>
     </div>
     <div class='label'>{{i18n 'GURPS.posture' 'Posture'}}:</div>
@@ -29,7 +29,7 @@
     <div class='field' name='data.conditions.combatmove'><span>{{data.conditions.move}}</span></div>
     <div class='label'></div>
     <div class='field' style='border: none;'>
-      <button id='open-modifier-popup' {{disabled (empty data.conditions.self.modifiers)}}><i class="fas fa-external-link-alt"></i>Effect Modifiers</button>
+      <button id='open-modifier-popup'><i class="fas fa-external-link-alt"></i>{{i18n 'GURPS.activeEffects' 'Active Effects'}}</button>
     </div>
-  </div>
+  </div> 
 </div>

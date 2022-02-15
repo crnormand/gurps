@@ -1,4 +1,0 @@
-#!/usr/bin/env zsh
-
-# node node_modules/.bin/jest $1
-node --experimental-vm-modules --trace-warnings node_modules/.bin/jest $1
