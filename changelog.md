@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.4
+Release 0.13.4 2/15/2022
 
 - Fixed drag and drop into Quick Notes to include display name
 - Added drag and drop OTFs into editables (Ads, Skills, spells, notes, etc.)
