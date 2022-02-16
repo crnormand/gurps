@@ -791,7 +791,9 @@ ul#result-effects li {
   cursor: pointer;
 }
 
-#editorsheet select#move-mode, #combat-sheet select#move-mode, #sheet select#move-mode {
+#editorsheet select#move-mode,
+#combat-sheet select#move-mode,
+#sheet select#move-mode {
   width: unset;
 }
 
@@ -1166,7 +1168,6 @@ active-effects-list .section h3 {
 
 .npc-sheet #condition .field {
   font-size: 90%;
-  padding-top: 3px;
   border: none;
 }
 
@@ -1197,7 +1198,9 @@ active-effects-list .section h3 {
   height: calc(var(--form-field-height) + 1px);
 }
 
-#editorsheet #condition .fieldblock button#edit-move-modes, #combat-sheet #condition .fieldblock button#edit-move-modes, #sheet #condition .fieldblock button#edit-move-modes {
+#editorsheet #condition .fieldblock button#edit-move-modes,
+#combat-sheet #condition .fieldblock button#edit-move-modes,
+#sheet #condition .fieldblock button#edit-move-modes {
   height: min-content;
 }
 
