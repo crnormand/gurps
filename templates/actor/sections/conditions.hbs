@@ -15,15 +15,24 @@
       </select>
     </div>
     <div class='label'>{{i18n 'GURPS.posture' 'Posture'}}:</div>
-    <div class='field' name='data.conditions.posture' style="border: none;">
+    <div class='field' style="border: none;">
       <select id='posture' name='data.conditions.posture' style='font-size: 90%;' {{disabled isEditing}}>
         <option value='standing' {{select-if ../data.conditions.posture 'standing'}}>{{i18n 'GURPS.STATUSStanding'}}</option>
         {{#each (listAllPostures) as |this key|}}
-          <option value= '{{key}}' {{select-if ../data.conditions.posture key}}>
+          <option value='{{key}}' {{select-if ../data.conditions.posture key}}>
             {{i18n this.label}}
           </option>
         {{/each}}
       </select>
+    </div>
+    <div class='label' for='move-mode'>{{i18n 'GURPS.movementMode' 'Move Type'}}:</div>
+    <div class='field' style='border: none'>
+      <select id='move-mode' style='font-size: 90%; max-width: 14em;' {{disabled (or isEditing (lt (length data.move) 2)) }}>
+        {{#each data.move as |this key|}}
+          <option value='{{@key}}' {{select-if this.default true}}>{{i18n this.mode this.mode}}</option>
+        {{/each}}
+      </select>
+      <button id='edit-move-modes'><i class="fas fa-pen"></i></button>
     </div>
     <div class='label'>{{i18n 'GURPS.combatMove' 'Combat Move'}}:</div>
     <div class='field' name='data.conditions.combatmove'><span>{{data.conditions.move}}</span></div>

@@ -552,7 +552,6 @@ export class CompositeDamageCalculator {
    * }
    */
   get hitLocationsWithDR() {
-    // internationalize English hit location name
     let locations = this._defender.hitLocationsWithDR
     return locations
   }

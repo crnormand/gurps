@@ -12,7 +12,6 @@ import {
   GurpsActorNpcSheet,
   GurpsInventorySheet,
   GurpsActorTabSheet,
-  GurpsActorNpcSheetCI,
 } from './actor/actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -607,7 +606,9 @@ const actionFuncs = {
    * @param {JQuery.Event|null} data.event
    */
   roll({ action, actor, event }) {
-    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${!!action.desc ? ' ' + action.desc : ''}]`
+    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${
+      !!action.desc ? ' ' + action.desc : ''
+    }]`
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     return doRoll({
       actor,
@@ -1761,11 +1762,6 @@ Hooks.once('init', async function () {
     makeDefault: false,
   })
   // @ts-ignore
-  Actors.registerSheet('gurps', GurpsActorNpcSheetCI, {
-    label: 'NPC/mini Conditional Injury',
-    makeDefault: false,
-  })
-  // @ts-ignore
   Actors.registerSheet('gurps', GurpsInventorySheet, {
     label: 'Inventory Only',
     makeDefault: false,
@@ -1980,7 +1976,7 @@ Hooks.once('ready', async function () {
       // @ts-ignore
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
     }
-    GURPS.executeOTF("/help")
+    GURPS.executeOTF('/help')
   }
 
   // get all aliases defined in the resource tracker templates and register them as damage types

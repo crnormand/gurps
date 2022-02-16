@@ -129,6 +129,23 @@ export class GurpsActor extends Actor {
 
   prepareDerivedData() {
     super.prepareDerivedData()
+
+    // Handle new move data -- if data.move exists, use the default value in that object to set the move
+    // value in the first entry of the encumbrance object.
+    let move = this.getGurpsActorData().move
+    if (!move) {
+      let currentMove = this.getGurpsActorData().encumbrance['00000'].move
+      let value = { mode: 'Ground', value: currentMove, default: true }
+      setProperty(this.getGurpsActorData(), 'move.00000', value)
+      move = this.getGurpsActorData().move
+    }
+
+    let current = Object.values(move).find(it => it.default)
+    if (current) {
+      // This is nonpersistent, derived values only.
+      this.getGurpsActorData().encumbrance['00000'].move = current.value
+    }
+
     this.calculateDerivedValues()
   }
 

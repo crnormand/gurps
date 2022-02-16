@@ -407,7 +407,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (path.includes('spells')) this.editSpells(actor, path, obj)
       if (path.includes('notes')) this.editNotes(actor, path, obj)
     })
-    
+
     html.find('.dblclkedit').on('drop', this.handleDblclickeditDrop.bind(this))
 
     // On clicking equipment quantity increment, increase the amount.
@@ -541,6 +541,11 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('#posture').on('change', ev => {
       let target = $(ev.currentTarget)
       this.actor.replacePosture(target.val())
+    })
+
+    html.find('#move-mode').on('change', ev => {
+      let target = $(ev.currentTarget)
+      this.actor.setMoveDefault(target.val())
     })
 
     html.find('#open-modifier-popup').on('click', this.showModifierPopup.bind(this))
@@ -802,7 +807,7 @@ export class GurpsActorSheet extends ActorSheet {
   async _addTracker(event) {
     this.actor.addTracker()
   }
-  
+
   handleDblclickeditDrop(ev) {
     let parent = $(ev.currentTarget).closest('[data-key]')
     let path = parent[0].dataset.key
@@ -1868,7 +1873,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 650,
+      width: 750,
       height: 450,
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
@@ -1879,7 +1884,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet.hbs'
+    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
   }
 
   getData() {
@@ -1911,25 +1916,6 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
     let val = element.dataset.value
     let parsed = parselink(val)
     GURPS.performAction(parsed.action, this.actor, ev)
-  }
-}
-export class GurpsActorNpcSheetCI extends GurpsActorNpcSheet {
-  /** @override */
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 750,
-      height: 450,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    })
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  get template() {
-    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
   }
 }
 

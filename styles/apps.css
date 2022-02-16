@@ -791,6 +791,10 @@ ul#result-effects li {
   cursor: pointer;
 }
 
+#editorsheet select#move-mode, #combat-sheet select#move-mode, #sheet select#move-mode {
+  width: unset;
+}
+
 #editorsheet .field select {
   height: min-content;
   /* background-color: transparent; */
@@ -1064,8 +1068,8 @@ active-effects-list .section h3 {
 }
 
 .gga-effects-list.table input {
-    min-height: calc(var(--form-field-height) + 1px);
-    background: rgba(0, 0, 0, 0.1);
+  min-height: calc(var(--form-field-height) + 1px);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .resource-editor .tracker-manager.table {
@@ -1095,7 +1099,8 @@ active-effects-list .section h3 {
   /* min-height: calc(var(--form-field-height) + 1px); */
 }
 
-.resource-editor .clickable:hover, .gga-effects-list .clickable:hover {
+.resource-editor .clickable:hover,
+.gga-effects-list .clickable:hover {
   cursor: pointer;
   box-shadow: 0 0 5px red;
 }
@@ -1159,6 +1164,17 @@ active-effects-list .section h3 {
   /* text-overflow: ellipsis; */
 }
 
+.npc-sheet #condition .field {
+  font-size: 90%;
+  padding-top: 3px;
+  border: none;
+}
+
+.npc-sheet #condition .field select {
+  font-size: inherit;
+  height: fit-content;
+}
+
 #condition .fieldblock .field[name='data.conditions.combatmove'] {
   max-width: 12em;
   white-space: nowrap;
@@ -1171,10 +1187,18 @@ active-effects-list .section h3 {
   font-size: 90%;
 }
 
-#condition .fieldblock button#open-modifier-popup {
+#condition .fieldblock button#open-modifier-popup,
+#condition .fieldblock button#edit-move-modes {
   font-size: 90%;
   max-height: fit-content;
-  padding: 0;
+  width: auto;
+  padding: 0 3px;
+  line-height: unset;
+  height: calc(var(--form-field-height) + 1px);
+}
+
+#editorsheet #condition .fieldblock button#edit-move-modes, #combat-sheet #condition .fieldblock button#edit-move-modes, #sheet #condition .fieldblock button#edit-move-modes {
+  height: min-content;
 }
 
 select#maneuver option {
