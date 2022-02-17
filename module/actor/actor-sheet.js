@@ -9,6 +9,7 @@ import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
+import MoveModeEditor from './move-mode-editor.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -548,7 +549,8 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.setMoveDefault(target.val())
     })
 
-    html.find('#open-modifier-popup').on('click', this.showModifierPopup.bind(this))
+    html.find('#open-modifier-popup').on('click', this._showActiveEffectsListPopup.bind(this))
+    html.find('#edit-move-modes').on('click', this._showMoveModeEditorPopup.bind(this))
   }
 
   _createHeaderMenus(html) {
@@ -918,10 +920,14 @@ export class GurpsActorSheet extends ActorSheet {
     d.render(true)
   }
 
-  async showModifierPopup(ev) {
+  async _showActiveEffectsListPopup(ev) {
     ev.preventDefault()
-    // GURPS.EffectModifierControl.showPopup = true
     new GurpsActiveEffectListSheet(this.actor).render(true)
+  }
+
+  async _showMoveModeEditorPopup(ev) {
+    ev.preventDefault()
+    new MoveModeEditor(this.actor).render(true)
   }
 
   async editEquipment(actor, path, obj) {

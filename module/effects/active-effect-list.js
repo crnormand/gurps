@@ -17,7 +17,7 @@ export default class GurpsActiveEffectListSheet extends Application {
   }
 
   get template() {
-    return 'systems/gurps/templates/actor/active-effects-list.html'
+    return 'systems/gurps/templates/actor/active-effects-list.hbs'
   }
 
   getData() {

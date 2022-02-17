@@ -41,6 +41,13 @@ Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
   await actor.update({ 'data.migrationversion': game.system.data.version })
 })
 
+export const MoveModes = {
+  Ground: 'GURPS.moveMode.Ground',
+  Air: 'GURPS.moveMode.Air',
+  Water: 'GURPS.moveMode.Water',
+  Space: 'GURPS.moveMode.Space',
+}
+
 export class GurpsActor extends Actor {
   /** @override */
   getRollData() {
@@ -135,7 +142,7 @@ export class GurpsActor extends Actor {
     let move = this.getGurpsActorData().move
     if (!move) {
       let currentMove = this.getGurpsActorData().encumbrance['00000'].move
-      let value = { mode: 'Ground', value: currentMove, default: true }
+      let value = { mode: MoveModes.Ground, value: currentMove, default: true }
       setProperty(this.getGurpsActorData(), 'move.00000', value)
       move = this.getGurpsActorData().move
     }

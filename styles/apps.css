@@ -854,11 +854,10 @@ ul#result-effects li {
 
 .resource-editor,
 .tracked-resource,
-.active-effects-list {
+.active-effects-list,
+.move-mode-editor {
   display: flex;
   flex-flow: column nowrap;
-  /* border: 1px solid black; */
-  /* justify-items: center; */
 }
 
 .tracked-resource {
@@ -1057,7 +1056,8 @@ active-effects-list .section h3 {
 }
 
 .resource-editor .tracker-manager.table,
-.active-effects-list .gga-effects-list.table {
+.active-effects-list .gga-effects-list.table,
+.move-mode-editor.table {
   display: grid;
   gap: 0.15rem;
   justify-items: stretch;
@@ -1081,6 +1081,10 @@ active-effects-list .section h3 {
 .active-effects-list .gga-effects-list.table {
   grid-template-columns: 1fr min-content min-content;
   margin: 0 0 0.25em 0;
+}
+
+.move-mode-editor.table {
+  grid-template-columns: 1fr min-content min-content min-content;
 }
 
 .resource-editor .table .span3 {

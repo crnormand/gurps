@@ -1098,5 +1098,11 @@
   "GURPS.CR12": "CR: 12 (Resist Quite Often)",
   "GURPS.CR15": "CR: 15 (Resist Almost All The Time)",
   "GURPS.modifiersBlindAttack": "-10 to hit (Blind)",
-  "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)"
+  "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)",
+
+  "GURPS.moveMode.Ground": "Ground",
+  "GURPS.moveMode.Air": "Air",
+  "GURPS.moveMode.Water": "Water",
+  "GURPS.moveMode.Space": "Space",
+  "GURPS.moveMode.Other": "Other..."
 }
