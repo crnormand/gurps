@@ -51,20 +51,10 @@ export default class MoveModeEditor extends Application {
   }
 
   async _keyup(action, key, value, html) {
-    switch (action) {
-      case 'other':
-        if (value === 'Escape') {
-          html.find(`#expand-contract-${key}`).removeClass('contracted')
-          break
-        }
-        console.log(`keyup: action ${action} key ${key} value ${value}`)
-        return
-
-      default:
-        return
+    if (action === 'other' && value === 'Escape') {
+      html.find(`#expand-contract-${key}`).removeClass('contracted')
+      this.render(true)
     }
-    console.log(`keyup: action ${action} key ${key} value ${value}`)
-    this.render(true)
   }
 
   async _change(action, key, value, html) {
@@ -74,11 +64,11 @@ export default class MoveModeEditor extends Application {
         {
           // if 'other', don't trigger an update ... just display the hidden field
           if (value === 'other') {
-            // save the current value
-            // this._oldValue = this.getData.move[key].mode
             html.find(`#expand-contract-${key}`).removeClass('contracted')
             return
           }
+
+          // hide the field and update the actor
           html.find(`#expand-contract-${key}`).addClass('contracted')
           await this.actor.update(JSON.parse(`{ "data.move.${key}.mode": "${value}" }`))
         }
@@ -97,7 +87,6 @@ export default class MoveModeEditor extends Application {
       default:
         return
     }
-    console.log(`change: action ${action} key ${key} value ${value}`)
     this.render(true)
   }
 
@@ -140,7 +129,7 @@ export default class MoveModeEditor extends Application {
           // only handle changing from false to true
           if (!state) {
             let json = []
-            // turn off everything
+            // turn off everything whose key isn't 'k'
             for (const k in this.moveData) json.push(`"data.move.${k}.default": ${key === k}`)
             let text = '{ ' + json.join(',') + ' }'
             await this.actor.update(JSON.parse(text))
@@ -171,7 +160,6 @@ export default class MoveModeEditor extends Application {
       default:
         return
     }
-    console.log(`click:  action ${action} key ${key} value ${value}`)
     this.render(true)
   }
 }
