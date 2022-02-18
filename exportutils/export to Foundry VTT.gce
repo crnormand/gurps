@@ -1176,6 +1176,14 @@ Sub PrintHandWeapons()
                 DamageText = DamageText & " " & Char.Items(i).DamageModeTagItem(CurMode, "chardamtype")
                 Paragraph = "<damage type=""string"">" & DamageText & "</damage>"
                 
+                ' print the unmodified damage
+                DamageText = RemoveAfterBasicDamage(Char.Items(i).DamageModeTagItem(CurMode, "damage"))
+                If Char.Items(i).DamageModeTagItem(CurMode, "armordivisor") <> "" Then
+                    DamageText = DamageText & " (" & Char.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
+                End If
+                DamageText = DamageText & " " & Char.Items(i).DamageModeTagItem(CurMode, "chardamtype")
+                Paragraph = "<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>"
+
                 'print the reach
                 Paragraph = "<reach type=""string"">" & Char.Items(i).DamageModeTagItem(CurMode, "charreach") & "</reach>"
                 
@@ -1299,6 +1307,14 @@ Sub PrintRangedWeapons()
                     DamageText = DamageText & " " & Char.Items(i).DamageModeTagItem(CurMode, "chardamtype")
                     Paragraph = "<damage type=""string"">" & DamageText & "</damage>"
                     
+                    ' print the unmodified damage
+                    DamageText = RemoveAfterBasicDamage(Char.Items(i).DamageModeTagItem(CurMode, "damage"))
+                    If Char.Items(i).DamageModeTagItem(CurMode, "armordivisor") <> "" Then
+                        DamageText = DamageText & " (" & Char.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
+                    End If
+                    DamageText = DamageText & " " & Char.Items(i).DamageModeTagItem(CurMode, "chardamtype")
+                    Paragraph = "<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>"
+
                     ' print the accuracy
                     Paragraph = "<acc type=""number"">" & Char.Items(i).DamageModeTagItem(CurMode, "characc") & "</acc>"
                     
@@ -1522,6 +1538,20 @@ Sub PrintPointSummary()
     
 End Sub
 
+
+'****************************************
+'* Function
+'* Added to "export to Foundry VTT.gce"
+'* ~ Stevil
+'****************************************
+Function RemoveAfterBasicDamage(ByVal damage)
+    
+    correctDamage = Split(damage, "+ ")
+    MyString = Replace(correctDamage(0), " ", "")
+
+    RemoveAfterBasicDamage = MyString
+    
+End Function
 
 '****************************************
 '* Function

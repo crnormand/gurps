@@ -969,6 +969,14 @@ Public Class ExportToFoundryVTT
                     DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
                     fw.Paragraph("<damage type=""string"">" & DamageText & "</damage>")
 
+                    ' print the unmodified damage
+                    DamageText = RemoveAfterBasicDamage(CurChar.Items(i).DamageModeTagItem(CurMode, "damage"))
+                    If CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") <> "" Then
+                        DamageText = DamageText & " (" & CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
+                    End If
+                    DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
+                    fw.Paragraph("<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>")
+
                     'print the reach
                     fw.Paragraph("<reach type=""string"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "charreach") & "</reach>")
 
@@ -1090,6 +1098,14 @@ Public Class ExportToFoundryVTT
                         End If
                         DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
                         fw.Paragraph("<damage type=""string"">" & DamageText & "</damage>")
+
+                        ' print the unmodified damage
+                        DamageText = RemoveAfterBasicDamage(CurChar.Items(i).DamageModeTagItem(CurMode, "damage"))
+                        If CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") <> "" Then
+                            DamageText = DamageText & " (" & CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
+                        End If
+                        DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
+                        fw.Paragraph("<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>")
 
                         ' print the accuracy
                         fw.Paragraph("<acc type=""number"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "characc") & "</acc>")
@@ -1930,6 +1946,23 @@ Public Class ExportToFoundryVTT
 
     End Sub
 
+
+
+'****************************************
+'* Function
+'* Added to "Export to Foundry VTT"
+'* ~ Stevil
+'****************************************
+    Public Function RemoveAfterBasicDamage(ByVal damage)
+        Dim correctDamage As Array
+        Dim MyString As String
+
+        correctDamage = Split(damage, "+ ")
+        MyString = correctDamage(0).Replace(" ", "")
+
+        Return MyString
+        
+    End Function
 
 
 '****************************************
