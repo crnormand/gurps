@@ -2,6 +2,13 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.5
+
+- Removed default hit locations from template file.
+- Added support for multiple movement modes, such as Ground, Air, Water, Space. (In the editor, click the edit button next to the new Move Type dropdown menu to add, delete, modify movement types).
+- Support unlimited, by-the-book, range on the Standard Speed, Size, and Range Table.
+- Unified the NPC/mini and NPC/mini CI sheets. Now "NPC/mini" supports both.
+
 Release 0.13.4 2/15/2022
 
 - Fixed drag and drop into Quick Notes to include display name
