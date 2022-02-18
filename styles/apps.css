@@ -1085,6 +1085,23 @@ active-effects-list .section h3 {
 
 .move-mode-editor.table {
   grid-template-columns: 1fr min-content min-content min-content;
+  margin-bottom: 30px;
+}
+
+.move-mode-editor .expand-contract {
+  transition: all 1s;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 3px 3px;
+  border-top: none;
+  margin: 0 3px;
+  width: calc(100% - 5px);
+  box-shadow: inset 0px 2px 3px 0 grey;
+}
+
+.move-mode-editor .expand-contract.contracted {
+  height: 0;
+  border: none;
+  padding: 0;
 }
 
 .resource-editor .table .span3 {
