@@ -12,7 +12,6 @@ import {
   GurpsActorNpcSheet,
   GurpsInventorySheet,
   GurpsActorTabSheet,
-  GurpsActorNpcSheetCI,
 } from './actor/actor-sheet.js'
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
@@ -72,6 +71,7 @@ import GurpsToken from './token.js'
 import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-number.js'
 import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
+import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -606,7 +606,9 @@ const actionFuncs = {
    * @param {JQuery.Event|null} data.event
    */
   roll({ action, actor, event }) {
-    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${!!action.desc ? ' ' + action.desc : ''}]`
+    const prefix = `Rolling [${!!action.displayformula ? action.displayformula : action.formula}${
+      !!action.desc ? ' ' + action.desc : ''
+    }]`
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     return doRoll({
       actor,
@@ -1054,7 +1056,9 @@ async function performAction(action, actor, event = null, targets = []) {
   if (['attribute', 'skill-spell'].includes(action.type)) {
     action = await findBestActionInChain({ action, event, actor, targets, originalOtf })
   }
-  return !action ? false : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
+  return !action
+    ? false
+    : await GURPS.actionFuncs[action.type]({ action, actor, event, targets, originalOtf, calcOnly })
 }
 GURPS.performAction = performAction
 
@@ -1717,6 +1721,10 @@ Hooks.once('init', async function () {
   CONFIG.Actor.documentClass = GurpsActor
   CONFIG.Item.documentClass = GurpsItem
 
+  // add custom ActiveEffectConfig sheet class
+  CONFIG.ActiveEffect.sheetClass = GurpsActiveEffectConfig
+  // ActiveEffectConfig.registerSheet(Document, 'ActiveEffect', GurpsActiveEffectConfig, { makeDefault: true })
+
   // preload drag-and-drop image
   {
     let img = new Image()
@@ -1751,11 +1759,6 @@ Hooks.once('init', async function () {
   // @ts-ignore
   Actors.registerSheet('gurps', GurpsActorNpcSheet, {
     label: 'NPC/mini',
-    makeDefault: false,
-  })
-  // @ts-ignore
-  Actors.registerSheet('gurps', GurpsActorNpcSheetCI, {
-    label: 'NPC/mini Conditional Injury',
     makeDefault: false,
   })
   // @ts-ignore
@@ -1973,7 +1976,7 @@ Hooks.once('ready', async function () {
       // @ts-ignore
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_CHANGELOG_VERSION, GURPS.currentVersion.toString())
     }
-    GURPS.executeOTF("/help")
+    GURPS.executeOTF('/help')
   }
 
   // get all aliases defined in the resource tracker templates and register them as damage types

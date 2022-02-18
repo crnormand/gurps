@@ -413,7 +413,6 @@
   border-bottom: 1px solid dimgrey;
 }
 
-
 .glinkmodminus:active {
   cursor: pointer;
   text-decoration: none;
@@ -620,6 +619,11 @@
   font-size: var(--headerfontsize);
 }
 
+.npc-sheet #condition .npc-header {
+  grid-column: 1/4;
+  column-gap: 5px;
+}
+
 .gga-table,
 .gga-tableheader {
   display: grid;
@@ -668,6 +672,10 @@
 
 .desc {
   width: 100%;
+}
+
+.npc-sheet .desc {
+  max-height: 9em;
 }
 
 .gga-table.with-notes > .desc:not(.header) {
@@ -802,7 +810,7 @@
 .gurps .fieldblock {
   display: grid;
   grid-template-columns: 0fr 1fr;
-  align-items: end;
+  /* align-items: end; */
   padding-bottom: 0.15em;
 }
 
@@ -900,7 +908,7 @@ body {
 .fieldblock {
   display: grid;
   grid-template-columns: 0fr 1fr;
-  align-items: end;
+  align-items: baseline;
   padding-bottom: 0.15em;
 }
 
@@ -1060,9 +1068,16 @@ body {
 
 #condition {
   grid-area: condition;
-  grid-template-rows: 0fr 1fr;
+  grid-template-rows: 0fr 1fr 1fr;
   align-items: start;
   border: var(--standardborder);
+}
+
+.npc-sheet div#condition {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: min-content;
+  column-gap: 5px;
 }
 
 #attributes {
@@ -1266,8 +1281,13 @@ body {
 }
 
 #condition .label {
-  text-align: right;
-  align-self: center;
+  /* text-align: right; */
+  /* align-self: center; */
+  /* height: 100%; */
+  display: flex;
+  flex-flow: row;
+  /* align-items: start; */
+  justify-content: right;
 }
 
 .field {
@@ -1597,11 +1617,11 @@ body {
 
 #tracker-scroller {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   gap: var(--sectiongap);
-  white-space: nowrap;
-  overflow-y: hidden;
-  overflow-x: auto;
+  /* white-space: nowrap; */
+  /* overflow-y: hidden; */
+  /* overflow-x: auto; */
 }
 
 #tracker-scroller .tracked-resource {

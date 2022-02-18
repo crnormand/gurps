@@ -627,7 +627,6 @@
   "GURPS.resourceTemplateHint": "Use this to create, reuse, and automatically apply Resource Trackers to character sheets.",
   "GURPS.resourceTemplateInitializer": "Initializer",
   "GURPS.resourceTemplateManager": "Resource Tracker Manager",
-  "GURPS.resourceTemplateName": "Resource Name",
   "GURPS.resourceTemplateSlot": "Assigned Slot",
   "GURPS.resourceTemplateTitle": "Resource Tracker Templates",
   "GURPS.resourceTracker": "Tracker",
@@ -639,6 +638,7 @@
   "GURPS.trackerNotUnique": "Tracker name ({name}) or alias ({alias}) is not unique.",
   "GURPS.resourceEnforceMinimum": "Enforce Minimum",
   "GURPS.resourceEnforceMaximum": "Enforce Maximum",
+  "GURPS.resourceTemplateName": "Template Name",
 
   "Skill Names__": "=========",
   "GURPS.skillAcrobatics": "Acrobatics",
@@ -1098,5 +1098,11 @@
   "GURPS.CR12": "CR: 12 (Resist Quite Often)",
   "GURPS.CR15": "CR: 15 (Resist Almost All The Time)",
   "GURPS.modifiersBlindAttack": "-10 to hit (Blind)",
-  "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)"
+  "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)",
+
+  "GURPS.moveMode.Ground": "Ground",
+  "GURPS.moveMode.Air": "Air",
+  "GURPS.moveMode.Water": "Water",
+  "GURPS.moveMode.Space": "Space",
+  "GURPS.moveMode.Other": "Other..."
 }

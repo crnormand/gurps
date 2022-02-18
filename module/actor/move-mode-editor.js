@@ -1,0 +1,144 @@
+import { i18n, i18n_f } from '../../lib/utilities.js'
+import { GURPS } from '../gurps.js'
+
+export default class MoveModeEditor extends Application {
+  constructor(actor, options) {
+    super(options)
+
+    this.actor = actor
+  }
+
+  static get defaultOptions() {
+    return mergeObject(super.defaultOptions, {
+      classes: ['sheet'],
+      width: 400,
+      height: 'auto',
+      resizable: false,
+    })
+  }
+
+  get template() {
+    return 'systems/gurps/templates/actor/move-mode-editor.hbs'
+  }
+
+  getData() {
+    const sheetData = super.getData()
+    sheetData.modes = this.actor.data.data.move
+    return sheetData
+  }
+
+  get title() {
+    let name = this.actor?.name || 'UNKNOWN'
+    return i18n_f('GURPS.moveModeEditor.Title', { name: name }, 'Movement Modes for {name}')
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html)
+
+    html.find('.move-mode-control').on('change click', this._onEffectControl.bind(this))
+  }
+
+  async _onEffectControl(event) {
+    event.preventDefault()
+    const a = event.currentTarget
+    const key = a.dataset.key ?? null
+    const value = a.value ?? null
+    const action = a.dataset.action ?? null
+
+    if (event.type === 'change') this._change(action, key, value)
+    if (event.type === 'click') this._click(action, key, value)
+  }
+
+  async _change(action, key, value) {
+    switch (action) {
+      // change: action [mode] key [00000] value [Ground]
+      case 'mode':
+        await this.actor.update(JSON.parse(`{ "data.move.${key}.mode": "${value}" }`))
+        break
+
+      // change: action [value] key [00000] value [6]
+      case 'value':
+        await this.actor.update(JSON.parse(`{ "data.move.${key}.value": "${value}" }`))
+        break
+
+      default:
+        return
+    }
+    console.log(`change: action ${action} key ${key} value ${value}`)
+    this.render(true)
+  }
+
+  get moveData() {
+    return this.actor.getGurpsActorData().move
+  }
+
+  async _click(action, key, value) {
+    switch (action) {
+      // click:  action [create] key [null] value [null]
+      case 'create':
+        {
+          // copy existing entries
+          let move = {}
+          for (const k in this.moveData)
+            setProperty(move, k, {
+              mode: this.moveData[k].mode,
+              value: this.moveData[k].value,
+              default: this.moveData[k].default,
+            })
+
+          // add a new entry at the end.
+          let empty = Object.values(this.moveData).length === 0
+          GURPS.put(move, { mode: 'other', value: 0, default: empty ? true : false })
+
+          // remove existing entries
+          await this.actor.update({ 'data.-=move': null })
+
+          // add the new entries
+          await this.actor.update({ 'data.move': move })
+        }
+        break
+
+      // click:  action [default] key [00000] value [on|off]
+      case 'default':
+        {
+          let state = getProperty(this.moveData, `${key}.default`)
+          if (getType(state) === 'string') state = state === 'true'
+
+          // only handle changing from false to true
+          if (!state) {
+            let json = []
+            // turn off everything
+            for (const k in this.moveData) json.push(`"data.move.${k}.default": ${key === k}`)
+            let text = '{ ' + json.join(',') + ' }'
+            await this.actor.update(JSON.parse(text))
+          }
+        }
+        break
+
+      // click:  action [delete] key [00000] value [null]
+      case 'delete':
+        {
+          let move = {}
+          // Copy every entry except the one to delete.
+          for (const k in this.moveData) {
+            if (k !== key)
+              GURPS.put(move, {
+                mode: this.moveData[k].mode,
+                value: this.moveData[k].value,
+                default: this.moveData[k].default,
+              })
+          }
+          // remove existing entries
+          await this.actor.update({ 'data.-=move': null })
+          // add the new entries
+          await this.actor.update({ 'data.move': move })
+        }
+        break
+
+      default:
+        return
+    }
+    console.log(`click:  action ${action} key ${key} value ${value}`)
+    this.render(true)
+  }
+}

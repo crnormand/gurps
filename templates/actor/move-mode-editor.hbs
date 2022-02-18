@@ -1,0 +1,27 @@
+<form class='{{cssClass}}' autocomplete='off'>
+  <div class='move-mode-editor table'>
+    <div class='label'>{{i18n 'GURPS.moveMode.Mode' 'Movement Mode'}}</div>
+    <div class='label'>{{i18n 'GURPS.moveMode.Value' 'Yards/Turn'}}</div>
+    <div class='label'>{{i18n 'GURPS.default' 'Default'}}</div>
+    <a id='template-add' class='move-mode-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
+    {{#each modes}}
+      <select class='move-mode-control' data-action='mode' data-key='{{@key}}'>
+        {{#each (moveOptions this)}}
+          <option value='{{this}}' {{select-if this ../mode}}>{{i18n this this}}</option>
+        {{/each}}
+        <option value='other'>&lt;{{i18n 'GURPS.moveMode.Other'}}&gt;</option>
+      </select>
+      <input class='move-mode-control' data-action='value' data-key='{{@key}}' type='number' value='{{value}}' />
+      <input class='move-mode-control' data-action='default' data-key='{{@key}}' type='checkbox' {{checked default}}
+        {{disabled (lt (length ../modes) 2)}} />
+      {{#unless default}}
+        <a class='move-mode-control' data-action='delete' data-key='{{@key}}' title='{{i18n "GURPS.delete"}}'
+          style='padding: 6px 20px 0 10px;' {{disabled default}}>
+          <i class='fas fa-trash'></i>
+        </a>
+      {{else}}
+        <div></div>
+      {{/unless}}
+    {{/each}}
+  </div>
+</form>

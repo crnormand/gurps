@@ -676,11 +676,11 @@ ul#result-effects li {
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  min-width: 120px;
+  /* min-width: 120px; */
   background-color: #555;
   color: white;
   text-align: center;
-  padding: 5px 0;
+  padding: 5px;
   border-radius: 6px;
   font-weight: normal;
   text-shadow: none;
@@ -690,8 +690,8 @@ ul#result-effects li {
   position: absolute;
   z-index: 1;
   top: 1.4em;
-  left: 50%;
-  margin-left: -60px;
+  left: 0;
+  /* margin-left: -60px; */
 
   /* Fade in tooltip */
   opacity: 0;
@@ -791,6 +791,12 @@ ul#result-effects li {
   cursor: pointer;
 }
 
+#editorsheet select#move-mode,
+#combat-sheet select#move-mode,
+#sheet select#move-mode {
+  width: unset;
+}
+
 #editorsheet .field select {
   height: min-content;
   /* background-color: transparent; */
@@ -847,9 +853,14 @@ ul#result-effects li {
 }
 
 .resource-editor,
-.tracked-resource {
+.tracked-resource,
+.active-effects-list,
+.move-mode-editor {
   display: flex;
   flex-flow: column nowrap;
+}
+
+.tracked-resource {
   border: 1px solid black;
 }
 
@@ -1022,9 +1033,16 @@ ul#result-effects li {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  /* color: white; */
+  /* background: black; */
 }
 
-.resource-editor .button.icon {
+.resource-editor .section h3,
+active-effects-list .section h3 {
+  margin: 0.25rem;
+}
+
+.table .button.icon {
   color: #4b4a44;
   padding: 0 20px 0 10px;
 }
@@ -1033,15 +1051,40 @@ ul#result-effects li {
   display: grid;
   grid-template-columns: min-content min-content min-content 1fr auto min-content;
   gap: 0.15rem;
-  justify-items: center;
+  justify-items: stretch;
   max-height: max-content;
 }
 
-.resource-editor .tracker-manager.table {
+.resource-editor .tracker-manager.table,
+.active-effects-list .gga-effects-list.table,
+.move-mode-editor.table {
   display: grid;
-  grid-template-columns: 3fr 1fr min-content 4fr min-content;
   gap: 0.15rem;
-  justify-items: center;
+  justify-items: stretch;
+}
+
+.table .label {
+  text-align: center;
+  color: white;
+  background-color: black;
+}
+
+.gga-effects-list.table input {
+  min-height: calc(var(--form-field-height) + 1px);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.resource-editor .tracker-manager.table {
+  grid-template-columns: 3fr 1fr min-content 4fr min-content;
+}
+
+.active-effects-list .gga-effects-list.table {
+  grid-template-columns: 1fr min-content min-content;
+  margin: 0 0 0.25em 0;
+}
+
+.move-mode-editor.table {
+  grid-template-columns: 1fr min-content min-content min-content;
 }
 
 .resource-editor .table .span3 {
@@ -1049,8 +1092,7 @@ ul#result-effects li {
   justify-content: center;
 }
 
-.gga-app .vertical-center,
-.resource-editor .vertical-center {
+.vertical-center {
   display: flex;
   align-items: center;
 }
@@ -1059,9 +1101,12 @@ ul#result-effects li {
   color: rgb(64, 64, 64);
   background-color: rgba(0, 0, 0, 0.1);
   box-shadow: none;
+  margin-left: 2px;
+  /* min-height: calc(var(--form-field-height) + 1px); */
 }
 
-.resource-editor .clickable:hover {
+.resource-editor .clickable:hover,
+.gga-effects-list .clickable:hover {
   cursor: pointer;
   box-shadow: 0 0 5px red;
 }
@@ -1125,6 +1170,16 @@ ul#result-effects li {
   /* text-overflow: ellipsis; */
 }
 
+.npc-sheet #condition .field {
+  font-size: 90%;
+  border: none;
+}
+
+.npc-sheet #condition .field select {
+  font-size: inherit;
+  height: fit-content;
+}
+
 #condition .fieldblock .field[name='data.conditions.combatmove'] {
   max-width: 12em;
   white-space: nowrap;
@@ -1137,10 +1192,20 @@ ul#result-effects li {
   font-size: 90%;
 }
 
-#condition .fieldblock button#open-modifier-popup {
+#condition .fieldblock button#open-modifier-popup,
+#condition .fieldblock button#edit-move-modes {
   font-size: 90%;
   max-height: fit-content;
-  padding: 0;
+  width: auto;
+  padding: 0 3px;
+  line-height: unset;
+  height: calc(var(--form-field-height) + 1px);
+}
+
+#editorsheet #condition .fieldblock button#edit-move-modes,
+#combat-sheet #condition .fieldblock button#edit-move-modes,
+#sheet #condition .fieldblock button#edit-move-modes {
+  height: min-content;
 }
 
 select#maneuver option {

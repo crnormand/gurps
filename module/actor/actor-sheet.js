@@ -8,6 +8,9 @@ import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
+import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
+import MoveModeEditor from './move-mode-editor.js'
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -66,6 +69,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
+    sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
     return sheetData
   }
 
@@ -163,7 +167,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = (tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
       let json = `{ "data.${path}.value": ${value} }`
@@ -347,7 +351,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tooltip) {
         tooltip.css({ visibility: 'visible' })
       }
-   })
+    })
 
     // On mouseout, stop displaying the tooltip.
     html.find('.tooltip.gga-manual').mouseout(ev => {
@@ -365,7 +369,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (tooltip) {
         tooltip.css({ visibility: 'hidden' })
       }
-   })
+    })
 
     // Equipment ===
 
@@ -404,7 +408,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (path.includes('spells')) this.editSpells(actor, path, obj)
       if (path.includes('notes')) this.editNotes(actor, path, obj)
     })
-    
+
     html.find('.dblclkedit').on('drop', this.handleDblclickeditDrop.bind(this))
 
     // On clicking equipment quantity increment, increase the amount.
@@ -540,7 +544,13 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.replacePosture(target.val())
     })
 
-    html.find('#open-modifier-popup').click(this.showModifierPopup.bind(this))
+    html.find('#move-mode').on('change', ev => {
+      let target = $(ev.currentTarget)
+      this.actor.setMoveDefault(target.val())
+    })
+
+    html.find('#open-modifier-popup').on('click', this._showActiveEffectsListPopup.bind(this))
+    html.find('#edit-move-modes').on('click', this._showMoveModeEditorPopup.bind(this))
   }
 
   _createHeaderMenus(html) {
@@ -799,7 +809,7 @@ export class GurpsActorSheet extends ActorSheet {
   async _addTracker(event) {
     this.actor.addTracker()
   }
-  
+
   handleDblclickeditDrop(ev) {
     let parent = $(ev.currentTarget).closest('[data-key]')
     let path = parent[0].dataset.key
@@ -910,9 +920,14 @@ export class GurpsActorSheet extends ActorSheet {
     d.render(true)
   }
 
-  async showModifierPopup(ev) {
+  async _showActiveEffectsListPopup(ev) {
     ev.preventDefault()
-    GURPS.EffectModifierControl.showPopup = true
+    new GurpsActiveEffectListSheet(this.actor).render(true)
+  }
+
+  async _showMoveModeEditorPopup(ev) {
+    ev.preventDefault()
+    new MoveModeEditor(this.actor).render(true)
   }
 
   async editEquipment(actor, path, obj) {
@@ -1864,7 +1879,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 650,
+      width: 750,
       height: 450,
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
@@ -1875,7 +1890,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet.hbs'
+    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
   }
 
   getData() {
@@ -1907,25 +1922,6 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
     let val = element.dataset.value
     let parsed = parselink(val)
     GURPS.performAction(parsed.action, this.actor, ev)
-  }
-}
-export class GurpsActorNpcSheetCI extends GurpsActorNpcSheet {
-  /** @override */
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 750,
-      height: 450,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    })
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  get template() {
-    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
   }
 }
 

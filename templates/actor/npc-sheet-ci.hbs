@@ -125,11 +125,11 @@
       {{> portrait }}
 
       <div id='condition'>
-        <div class="header">{{i18n "GURPS.conditions"}}</div>
+        <div class="npc-header">{{i18n "GURPS.conditions"}}</div>
         <div class="fieldblock">
           <div class="label">{{i18n "GURPS.maneuver"}}</div>
-          <div class="field" style='padding-top: 3px; border: none;'>
-            <select id='maneuver' name="data.conditions.maneuver" style='width: 100%; height: fit-content;'>
+          <div class="field">
+            <select id='maneuver' name="data.conditions.maneuver">
               <option value='undefined' {{select-if ../data.conditions.maneuver undefined }}>
                 {{i18n "GURPS.none"}}
               </option>
@@ -140,6 +140,15 @@
               {{/each}}
             </select>
           </div>
+          <div class='label' for='move-mode'>{{i18n 'GURPS.movementMode' 'Move Type'}}</div>
+          <div class='field'>
+            <select id='move-mode' {{disabled (or isEditing (lt (length data.move) 2)) }}>
+              {{#each data.move as |this key|}}
+                <option value='{{@key}}' {{select-if this.default true}}>{{i18n this.mode this.mode}}</option>
+              {{/each}}
+            </select>
+          </div>
+
         </div>
       </div>
       <div class="npc-input-traits">
