@@ -4,13 +4,19 @@
     <div class='label'>{{i18n 'GURPS.moveMode.Value' 'Yards/Turn'}}</div>
     <div class='label'>{{i18n 'GURPS.default' 'Default'}}</div>
     <a id='template-add' class='move-mode-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
+
     {{#each modes}}
-      <select class='move-mode-control' data-action='mode' data-key='{{@key}}'>
-        {{#each (moveOptions this)}}
-          <option value='{{this}}' {{select-if this ../mode}}>{{i18n this this}}</option>
-        {{/each}}
-        <option value='other'>&lt;{{i18n 'GURPS.moveMode.Other'}}&gt;</option>
-      </select>
+      <div style='display: flex; flex-flow: column nowrap'>
+        <select class='move-mode-control' data-action='mode' data-key='{{@key}}' style='width: 100%;'>
+          {{#each (moveOptions this)}}
+            <option value='{{this}}' {{select-if this ../mode}}>{{i18n this this}}</option>
+          {{/each}}
+          <option value='other'>&lt;{{i18n 'GURPS.moveMode.Other'}}&gt;</option>
+        </select>
+        <div class='expand-container' style='overflow: hidden; line-height: 0;'>
+          <input id='expand-contract-{{@key}}' class='expand-contract move-mode-control contracted' data-action='other' data-key='{{@key}}' type='text' value='{{i18n mode mode}}'/>
+        </div>
+      </div>
       <input class='move-mode-control' data-action='value' data-key='{{@key}}' type='number' value='{{value}}' />
       <input class='move-mode-control' data-action='default' data-key='{{@key}}' type='checkbox' {{checked default}}
         {{disabled (lt (length ../modes) 2)}} />

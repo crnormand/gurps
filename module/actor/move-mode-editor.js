@@ -35,30 +35,63 @@ export default class MoveModeEditor extends Application {
   activateListeners(html) {
     super.activateListeners(html)
 
-    html.find('.move-mode-control').on('change click', this._onEffectControl.bind(this))
+    html.find('.move-mode-control').on('change click keyup', this._onEffectControl.bind(this, html))
   }
 
-  async _onEffectControl(event) {
+  async _onEffectControl(html, event) {
     event.preventDefault()
     const a = event.currentTarget
     const key = a.dataset.key ?? null
     const value = a.value ?? null
     const action = a.dataset.action ?? null
 
-    if (event.type === 'change') this._change(action, key, value)
-    if (event.type === 'click') this._click(action, key, value)
+    if (event.type === 'change') this._change(action, key, value, html)
+    if (event.type === 'click') this._click(action, key, value, html)
+    if (event.type === 'keyup') this._keyup(action, key, event.key, html)
   }
 
-  async _change(action, key, value) {
+  async _keyup(action, key, value, html) {
+    switch (action) {
+      case 'other':
+        if (value === 'Escape') {
+          html.find(`#expand-contract-${key}`).removeClass('contracted')
+          break
+        }
+        console.log(`keyup: action ${action} key ${key} value ${value}`)
+        return
+
+      default:
+        return
+    }
+    console.log(`keyup: action ${action} key ${key} value ${value}`)
+    this.render(true)
+  }
+
+  async _change(action, key, value, html) {
     switch (action) {
       // change: action [mode] key [00000] value [Ground]
       case 'mode':
-        await this.actor.update(JSON.parse(`{ "data.move.${key}.mode": "${value}" }`))
+        {
+          // if 'other', don't trigger an update ... just display the hidden field
+          if (value === 'other') {
+            // save the current value
+            // this._oldValue = this.getData.move[key].mode
+            html.find(`#expand-contract-${key}`).removeClass('contracted')
+            return
+          }
+          html.find(`#expand-contract-${key}`).addClass('contracted')
+          await this.actor.update(JSON.parse(`{ "data.move.${key}.mode": "${value}" }`))
+        }
         break
 
       // change: action [value] key [00000] value [6]
       case 'value':
         await this.actor.update(JSON.parse(`{ "data.move.${key}.value": "${value}" }`))
+        break
+
+      case 'other':
+        html.find(`#expand-contract-${key}`).removeClass('contracted')
+        await this.actor.update(JSON.parse(`{ "data.move.${key}.mode": "${value}" }`))
         break
 
       default:
