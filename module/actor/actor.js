@@ -491,7 +491,7 @@ export class GurpsActor extends Actor {
         enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
         enc.currentflight = Math.max(1, Math.floor(effectiveFlight * threshold))
         enc.currentmovedisplay = enc.currentmove
-        if (!!data.additionalresources.showflightmove)
+        if (!!data.additionalresources?.showflightmove)
           enc.currentmovedisplay = enc.currentmove + '/' + enc.currentflight
         if (enc.current) {
           // Save the global move/dodge
