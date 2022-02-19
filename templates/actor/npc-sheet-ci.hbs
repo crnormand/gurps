@@ -140,7 +140,7 @@
               {{/each}}
             </select>
           </div>
-          <div class='label' for='move-mode'>{{i18n 'GURPS.movementMode' 'Move Type'}}</div>
+          <div class='label' for='move-mode'>{{i18n 'GURPS.moveMode.Mode'}}</div>
           <div class='field'>
             <select id='move-mode' {{disabled (or isEditing (lt (length data.move) 2)) }}>
               {{#each data.move as |this key|}}

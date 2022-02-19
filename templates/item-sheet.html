@@ -75,8 +75,7 @@
           <a class='item' data-tab='range-tab'><i
               class='fas fa-fighter-jet'></i>&nbsp;{{i18n "GURPS.ranged"}}&nbsp;<span
               style='font-size: 80%;'>{{#if (length data.ranged)}}({{length data.ranged}}){{/if}}</span></a>
-          <a class='item' data-tab='spell-tab'><i
-              class='fas fa-magic'></i>&nbsp;{{i18n "GURPS.spells" "Spells"}}&nbsp;<span
+          <a class='item' data-tab='spell-tab'><i class='fas fa-magic'></i>&nbsp;{{i18n "GURPS.spells"}}&nbsp;<span
               style='font-size: 80%;'>{{#if (length data.spells)}}({{length data.spells}}){{/if}}</span></a>
           <a class='item' data-tab='ads-tab'><i
               class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages"}}&nbsp;<span
@@ -136,7 +135,7 @@
                 <div class='label-value-row right-bias'>
                   <div></div>
                   <div></div>
-                  <label>{{i18n "GURPS.notes" "Notes"}}</label>
+                  <label>{{i18n "GURPS.notes"}}</label>
                   <div><textarea class='notes' rows='2' name='data.melee.{{key}}.notes'>{{notes}}</textarea></div>
 
                   <div></div>
@@ -367,7 +366,7 @@
                   <div class='label-value-row right-bias'>
                   </div>
                   <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.pdfPageReference" "Page Reference"}}</label>
+                    <label>{{i18n "GURPS.pdfPageReference"}}</label>
                     <div><input type='text' value='{{pageref}}' name='data.skills.{{key}}.pageref' />
                     </div>
                   </div>
@@ -378,7 +377,7 @@
 
                   <label>{{i18n "GURPS.skillLevel"}}</label>
                   <div><input type='text' value='{{otf}}' name='data.skills.{{key}}.otf' /></div>
-                  <label>{{i18n "GURPS.notes" "Notes"}}</label>
+                  <label>{{i18n "GURPS.notes"}}</label>
                   <div><textarea class='notes' rows='2' name='data.skills.{{key}}.notes'>{{notes}}</textarea></div>
 
                   <div></div>
@@ -437,7 +436,7 @@
                 <div class='label-value-row right-bias'>
                   <div></div>
                   <div></div>
-                  <label>{{i18n "GURPS.notes" "Notes"}}</label>
+                  <label>{{i18n "GURPS.notes"}}</label>
                   <div><textarea class='notes' rows='2' name='data.ads.{{key}}.notes'>{{notes}}</textarea></div>
                 </div>
               </div>
@@ -445,7 +444,7 @@
             {{/each}}
             <div class='button-bar'>
               <button id='add-ads'><i class='fas fa-check'></i>
-                {{i18n "GURPS.addAdvantage" "Add an Advantage/Disadvantage"}}</button>
+                {{i18n "GURPS.addAdvantage"}}</button>
             </div>
           </div>
         </section>
