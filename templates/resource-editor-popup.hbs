@@ -13,7 +13,7 @@
             data-dtype='Number'
             {{disabled (not isActor)}}
           />
-          <div class='label'>{{localize 'GURPS.minimum'}}</div>
+          <div class='label'>{{i18n 'GURPS.minimum'}}</div>
           <input
             class='maximum gcs-input'
             type='text'
@@ -21,7 +21,7 @@
             data-dtype='Number'
             {{disabled (not isActor)}}
           />
-          <div class='label'>{{localize 'GURPS.maximum'}}</div>
+          <div class='label'>{{i18n 'GURPS.maximum'}}</div>
           <input
             class='current gcs-input'
             type='text'
@@ -29,9 +29,9 @@
             data-dtype='Number'
             {{disabled (not isActor)}}
           />
-          <div class='label'>{{localize 'GURPS.current'}}</div>
+          <div class='label'>{{i18n 'GURPS.current'}}</div>
           <input class='alias gcs-input' type='text' value='{{tracker.alias}}' />
-          <div class='label'>{{localize 'GURPS.resourceTemplateAlias'}}</div>
+          <div class='label'>{{i18n 'GURPS.resourceTemplateAlias'}}</div>
         </div>
 
         <div class='inputs' style='margin: 0;'>
@@ -65,11 +65,11 @@
                 {{checked tracker.isDamageType}}
                 style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
               />
-              {{localize 'GURPS.resourceDamageType'}}
+              {{i18n 'GURPS.resourceDamageType'}}
             </label>
           </div>
           <input class='pdf-ref gcs-input' type='text' value='{{tracker.pdf}}' />
-          <div class='label'>{{localize 'GURPS.reference'}}</div>
+          <div class='label'>{{i18n 'GURPS.reference'}}</div>
         </div>
 
       </div>
@@ -80,7 +80,7 @@
           {{checked tracker.isDamageTracker}}
           style='width: 15px;height: 15px;padding: 0;margin: 0;vertical-align: bottom;position: relative;top: -1px;'
         />
-        {{localize 'GURPS.resourceDamageTracker'}}
+        {{i18n 'GURPS.resourceDamageTracker'}}
       </label>
     </div>
     <div>
@@ -93,9 +93,9 @@
     <div style='overflow-y: auto; height: 16em;'>
       <div class='threshold table'>
         {{#if tracker.thresholds}}
-          <div class='label span3'>{{localize 'GURPS.resourceCurrentValue'}}</div>
-          <div class='label'>{{localize 'GURPS.condition'}}</div>
-          <div class='label'>{{localize 'GURPS.color'}}</div>
+          <div class='label span3'>{{i18n 'GURPS.resourceCurrentValue'}}</div>
+          <div class='label'>{{i18n 'GURPS.condition'}}</div>
+          <div class='label'>{{i18n 'GURPS.color'}}</div>
           <div><a id='threshold-add' class='button icon'><i class='fas fa-plus'></i></a></div>
         {{/if}}
 
@@ -112,10 +112,10 @@
           <div>
             <!-- threshold.operator -->
             <select name='operator' data='{{@index}}'>
-              <option value='+' {{select-if operator '+'}}>{{localize 'GURPS.max'}} &plus;</option>
-              <option value='−' {{select-if operator '−'}}>{{localize 'GURPS.max'}} &minus;</option>
-              <option value='×' {{select-if operator '×'}}>{{localize 'GURPS.max'}} &times;</option>
-              <option value='÷' {{select-if operator '÷'}}>{{localize 'GURPS.max'}} &divide;</option>
+              <option value='+' {{select-if operator '+'}}>{{i18n 'GURPS.max'}} &plus;</option>
+              <option value='−' {{select-if operator '−'}}>{{i18n 'GURPS.max'}} &minus;</option>
+              <option value='×' {{select-if operator '×'}}>{{i18n 'GURPS.max'}} &times;</option>
+              <option value='÷' {{select-if operator '÷'}}>{{i18n 'GURPS.max'}} &divide;</option>
             </select>
           </div>
           <!-- threshold.value -->

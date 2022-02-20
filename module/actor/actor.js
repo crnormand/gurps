@@ -42,10 +42,10 @@ Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
 })
 
 export const MoveModes = {
-  Ground: 'GURPS.moveMode.Ground',
-  Air: 'GURPS.moveMode.Air',
-  Water: 'GURPS.moveMode.Water',
-  Space: 'GURPS.moveMode.Space',
+  Ground: 'GURPS.moveModeGround',
+  Air: 'GURPS.moveModeAir',
+  Water: 'GURPS.moveModeWater',
+  Space: 'GURPS.moveModeSpace',
 }
 
 export class GurpsActor extends Actor {

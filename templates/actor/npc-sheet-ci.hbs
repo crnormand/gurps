@@ -135,12 +135,12 @@
               </option>
               {{#each (listAllManeuvers) as | this key |}}
                 <option value='{{key}}' {{select-if ../data.conditions.maneuver key }}>
-                  {{localize this.label}}
+                  {{i18n this.label}}
                 </option>
               {{/each}}
             </select>
           </div>
-          <div class='label' for='move-mode'>{{i18n 'GURPS.moveMode.Mode'}}</div>
+          <div class='label' for='move-mode'>{{i18n 'GURPS.moveModeType'}}</div>
           <div class='field'>
             <select id='move-mode' {{disabled (or isEditing (lt (length data.move) 2)) }}>
               {{#each data.move as |this key|}}

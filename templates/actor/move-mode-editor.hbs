@@ -1,7 +1,7 @@
 <form class='{{cssClass}}' autocomplete='off'>
   <div class='move-mode-editor table'>
-    <div class='label'>{{i18n 'GURPS.moveMode.Mode'}}</div>
-    <div class='label'>{{i18n 'GURPS.moveMode.Value'}}</div>
+    <div class='label'>{{i18n 'GURPS.moveModeType'}}</div>
+    <div class='label'>{{i18n 'GURPS.moveModeValue'}}</div>
     <div class='label'>{{i18n 'GURPS.default'}}</div>
     <a id='template-add' class='move-mode-control button icon' data-action='create'><i class='fas fa-plus'></i></a>
 
@@ -11,7 +11,7 @@
           {{#each (moveOptions this)}}
             <option value='{{this}}' {{select-if this ../mode}}>{{i18n this this}}</option>
           {{/each}}
-          <option value='other'>&lt;{{i18n 'GURPS.moveMode.Other'}}&gt;</option>
+          <option value='other'>&lt;{{i18n 'GURPS.moveModeOther'}}&gt;</option>
         </select>
         <div class='expand-container' style='overflow: hidden; line-height: 0;'>
           <input id='expand-contract-{{@key}}' class='expand-contract move-mode-control contracted' data-action='other' data-key='{{@key}}' type='text' value='{{i18n mode mode}}'/>

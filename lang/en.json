@@ -1104,17 +1104,17 @@
   "GURPS.modifiersBlindAttack": "-10 to hit (Blind)",
   "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)",
 
-  "GURPS.moveMode.Ground": "Ground",
-  "GURPS.moveMode.Air": "Air",
-  "GURPS.moveMode.Water": "Water",
-  "GURPS.moveMode.Space": "Space",
-  "GURPS.moveMode.Other": "Other...",
-  "GURPS.moveMode.Mode": "Move Type",
-  "GURPS.moveMode.Value": "Yards/Turn",
+  "GURPS.moveModeGround": "Ground",
+  "GURPS.moveModeAir": "Air",
+  "GURPS.moveModeWater": "Water",
+  "GURPS.moveModeSpace": "Space",
+  "GURPS.moveModeOther": "Other...",
+  "GURPS.moveModeType": "Move Type",
+  "GURPS.moveModeValue": "Yards/Turn",
 
   "GURPS.effectsTermination": "Termination Condition (OtF)",
-  "GURPS.effects.Effect": "Effect",
+  "GURPS.effectsEffect": "Effect",
   "GURPS.default": "Default",
-  "GURPS.conditions.CombatMove": "Combat Move",
+  "GURPS.conditionsCombatMove": "Combat Move",
   "GURPS.activeEffects": "Active Effects"
 }

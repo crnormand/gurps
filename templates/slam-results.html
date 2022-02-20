@@ -1,13 +1,12 @@
 <div class='roll-message gga-chat-message'>
   <div class='prefix'>
-    {{attacker}} <i>{{localize "GURPS.slams"}} <i class="subtle fas fa-align-right"></i><i
-        class="fas fa-running"></i></i>
+    {{attacker}} <i>{{i18n "GURPS.slams"}} <i class="subtle fas fa-align-right"></i><i class="fas fa-running"></i></i>
     {{target}}.
   </div>
   <div>
     <ul class='modifier-list'>
       {{#if isAoAStrong}}
-        <li>+2 {{localize "GURPS.slamAOAStrong"}}</li>
+        <li>+2 {{i18n "GURPS.slamAOAStrong"}}</li>
       {{/if}}
       {{#if shieldDB}}
         <li>+{{shieldDB}} {{i18n "GURPS.slamForShieldDB"}} [PDF:{{i18n "GURPS.pdfShieldRush"}}]</li>
@@ -19,12 +18,12 @@
   </div>
   <div class='collapsible-wrapper'>
     <input id='collapsible-{{id}}' class='toggle offscreen-only' type='checkbox' {{showTheMath}}>
-    <label for='collapsible-{{id}}' class='label-toggle'>{{localize "GURPS.chatDamageResultShowMath"}}</label>
+    <label for='collapsible-{{id}}' class='label-toggle'>{{i18n "GURPS.chatDamageResultShowMath"}}</label>
     <div class='gga-group collapsible-content'>
       <div class='grid gurps-3col results-table content-inner'>
         <div>{{attacker}}</div>
         <div>{{attackerRaw}}</div>
-        <div>= {{localize "GURPS.HP"}} ({{attackerHp}}) &times; {{localize "GURPS.slamVelocity"}}
+        <div>= {{i18n "GURPS.HP"}} ({{attackerHp}}) &times; {{i18n "GURPS.slamVelocity"}}
           ({{relativeSpeed}}) &divide; 100</div>
 
         <div></div>
@@ -37,12 +36,12 @@
 
         <div>{{target}}</div>
         <div>{{targetRaw}}</div>
-        <div>= {{localize "GURPS.HP"}} ({{targetHp}}) &times; {{localize "GURPS.slamVelocity"}}
+        <div>= {{i18n "GURPS.HP"}} ({{targetHp}}) &times; {{i18n "GURPS.slamVelocity"}}
           ({{relativeSpeed}}) &divide; 100</div>
 
         <div></div>
         <div>{{targetDice.dice}}d{{#if targetDice.adds}}{{{displayNumber targetDice.adds}}}{{/if}}</div>
-        <div>{{localize "GURPS.Dice"}}</div>
+        <div>{{i18n "GURPS.Dice"}}</div>
 
         <div></div>
         <div>{{targetResult}}</div>

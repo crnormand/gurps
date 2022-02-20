@@ -2,7 +2,7 @@
   {{#if isEditing}}
     <div class='header'>
       <div class='headermenu' data-key='data.hitlocations'>
-        <span>{{localize 'GURPS.hitLocation'}}</span>
+        <span>{{i18n 'GURPS.hitLocation'}}</span>
         <i class='fas fa-caret-square-down'></i>
       </div>
       <div class='option'>
@@ -11,14 +11,14 @@
       </div>
     </div>
   {{else}}
-    <div class='header'>{{localize 'GURPS.hitLocation'}}</div>
+    <div class='header'>{{i18n 'GURPS.hitLocation'}}</div>
   {{/if}}
 
   <div class='itemmenu header' readonly></div>
-  <div class='roll header flex-center'>{{localize 'GURPS.roll'}}</div>
-  <div class='where header'>{{localize 'GURPS.hitLocationWhere'}}</div>
-  <div class='penalty header gga-right'>{{localize 'GURPS.hitLocationPenalty'}}</div>
-  <div class='dr header gga-right'>{{localize 'GURPS.hitLocationDR'}}</div>
+  <div class='roll header flex-center'>{{i18n 'GURPS.roll'}}</div>
+  <div class='where header'>{{i18n 'GURPS.hitLocationWhere'}}</div>
+  <div class='penalty header gga-right'>{{i18n 'GURPS.hitLocationPenalty'}}</div>
+  <div class='dr header gga-right'>{{i18n 'GURPS.hitLocationDR'}}</div>
 
   {{#each data.hitlocations as |this key|}}
     {{#if ../isEditing}}

@@ -27,7 +27,7 @@
         {{/each}}
       </select>
     </div>
-    <div class='label' for='move-mode'>{{i18n 'GURPS.moveMode.Mode'}}:</div>
+    <div class='label' for='move-mode'>{{i18n 'GURPS.moveModeType'}}:</div>
     <div class='field' style='border: none'>
       <select id='move-mode' style='font-size: 90%; max-width: 14em;'
         {{disabled (or isEditing (lt (length data.move) 2)) }}>
@@ -39,7 +39,7 @@
         <button id='edit-move-modes' style='padding-bottom: 1px;'><i class="fas fa-pen"></i></button>
       {{/if}}
     </div>
-    <div class='label'>{{i18n 'GURPS.conditions.CombatMove'}}:</div>
+    <div class='label'>{{i18n 'GURPS.conditionsCombatMove'}}:</div>
     <div class='field' name='data.conditions.combatmove'><span>{{data.conditions.move}}</span></div>
     <div class='label'></div>
     <div class='field' style='border: none; display: none;'>
