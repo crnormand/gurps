@@ -969,14 +969,6 @@ Public Class ExportToFoundryVTT
                     DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
                     fw.Paragraph("<damage type=""string"">" & DamageText & "</damage>")
 
-                    ' print the unmodified damage
-                    DamageText = RemoveAfterBasicDamage(CurChar.Items(i).DamageModeTagItem(CurMode, "damage"))
-                    If CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") <> "" Then
-                        DamageText = DamageText & " (" & CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
-                    End If
-                    DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
-                    fw.Paragraph("<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>")
-
                     'print the reach
                     fw.Paragraph("<reach type=""string"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "charreach") & "</reach>")
 
@@ -1098,14 +1090,6 @@ Public Class ExportToFoundryVTT
                         End If
                         DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
                         fw.Paragraph("<damage type=""string"">" & DamageText & "</damage>")
-
-                        ' print the unmodified damage
-                        DamageText = RemoveAfterBasicDamage(CurChar.Items(i).DamageModeTagItem(CurMode, "damage"))
-                        If CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") <> "" Then
-                            DamageText = DamageText & " (" & CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
-                        End If
-                        DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
-                        fw.Paragraph("<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>")
 
                         ' print the accuracy
                         fw.Paragraph("<acc type=""number"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "characc") & "</acc>")
@@ -1812,8 +1796,6 @@ Public Class ExportToFoundryVTT
         Dim i As Integer
         Dim item_index As Integer
         Dim tag_index As String
-        Dim SciNotn As Double
-        Dim SciNotnDecimal As String
 
         For i = 1 To CurChar.Items.Count
             If CurChar.Items(i).ItemType = Equipment Then
@@ -1833,16 +1815,10 @@ Public Class ExportToFoundryVTT
                     
                     fw.Paragraph("<id-" & tag_index & ">")
                     fw.Paragraph("<isidentified type=""number"">1</isidentified>")
-
                     fw.Paragraph("<name type=""string"">" & UpdateEscapeChars(CurChar.Items(i).FullNameTL) & "</name>")
                     fw.Paragraph("<count type=""number"">" & CurChar.Items(i).tagitem("count") & "</count>")
                     fw.Paragraph("<cost type=""string"">" & StrToDbl(CurChar.Items(i).tagitem("cost")) / qty & "</cost>")
-
-                    SciNotn = StrToDbl(CurChar.Items(i).tagitem("baseweight")) / qty
-                    SciNotnDecimal = Format$(SciNotn, "0.########################")
-
-                    fw.Paragraph("<weight type=""number"">" & SciNotnDecimal & "</weight>")
-                    
+                    fw.Paragraph("<weight type=""number"">" & CurChar.Items(i).tagitem("baseweight") & "</weight>")
                     fw.Paragraph("<weightsum type=""number"">" & StrToDbl(CurChar.Items(i).tagitem("weight")) / qty & "</weightsum>")
                     fw.Paragraph("<location type=""string"">" & CurChar.Items(i).tagitem("location") & "</location>")
                     fw.Paragraph("<notes type=""formattedtext"">" & UpdateEscapeChars(CurChar.Items(i).tagitem("description")) & "</notes>")
@@ -1946,23 +1922,6 @@ Public Class ExportToFoundryVTT
 
     End Sub
 
-
-
-'****************************************
-'* Function
-'* Added to "Export to Foundry VTT"
-'* ~ Stevil
-'****************************************
-    Public Function RemoveAfterBasicDamage(ByVal damage)
-        Dim correctDamage As Array
-        Dim MyString As String
-
-        correctDamage = Split(damage, "+ ")
-        MyString = correctDamage(0).Replace(" ", "")
-
-        Return MyString
-        
-    End Function
 
 
 '****************************************
