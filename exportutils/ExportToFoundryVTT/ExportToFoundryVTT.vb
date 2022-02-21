@@ -1812,8 +1812,6 @@ Public Class ExportToFoundryVTT
         Dim i As Integer
         Dim item_index As Integer
         Dim tag_index As String
-        Dim SciNotn As Double
-        Dim SciNotnDecimal As String
 
         For i = 1 To CurChar.Items.Count
             If CurChar.Items(i).ItemType = Equipment Then
@@ -1833,7 +1831,6 @@ Public Class ExportToFoundryVTT
                     
                     fw.Paragraph("<id-" & tag_index & ">")
                     fw.Paragraph("<isidentified type=""number"">1</isidentified>")
-
                     fw.Paragraph("<name type=""string"">" & UpdateEscapeChars(CurChar.Items(i).FullNameTL) & "</name>")
                     fw.Paragraph("<count type=""number"">" & CurChar.Items(i).tagitem("count") & "</count>")
                     fw.Paragraph("<cost type=""string"">" & CurChar.Items(i).tagitem("cost") / qty & "</cost>")
