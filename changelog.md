@@ -4,6 +4,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.13.5
 
+- Updated GCA5 Exporter to fix an export issue. ~Stevil
 - Removed default hit locations from template file.
 - Added support for multiple movement modes, such as Ground, Air, Water, Space. (In the editor, click the edit button next to the new Move Type dropdown menu to add, delete, modify movement types).
 - Support unlimited, by-the-book, range on the Standard Speed, Size, and Range Table.
