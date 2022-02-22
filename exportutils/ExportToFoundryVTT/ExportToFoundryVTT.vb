@@ -1812,8 +1812,6 @@ Public Class ExportToFoundryVTT
         Dim i As Integer
         Dim item_index As Integer
         Dim tag_index As String
-        Dim SciNotn As Double
-        Dim SciNotnDecimal As String
 
         For i = 1 To CurChar.Items.Count
             If CurChar.Items(i).ItemType = Equipment Then
@@ -1833,17 +1831,11 @@ Public Class ExportToFoundryVTT
                     
                     fw.Paragraph("<id-" & tag_index & ">")
                     fw.Paragraph("<isidentified type=""number"">1</isidentified>")
-
                     fw.Paragraph("<name type=""string"">" & UpdateEscapeChars(CurChar.Items(i).FullNameTL) & "</name>")
                     fw.Paragraph("<count type=""number"">" & CurChar.Items(i).tagitem("count") & "</count>")
-                    fw.Paragraph("<cost type=""string"">" & StrToDbl(CurChar.Items(i).tagitem("cost")) / qty & "</cost>")
-
-                    SciNotn = StrToDbl(CurChar.Items(i).tagitem("baseweight")) / qty
-                    SciNotnDecimal = Format$(SciNotn, "0.########################")
-
-                    fw.Paragraph("<weight type=""number"">" & SciNotnDecimal & "</weight>")
-                    
-                    fw.Paragraph("<weightsum type=""number"">" & StrToDbl(CurChar.Items(i).tagitem("weight")) / qty & "</weightsum>")
+                    fw.Paragraph("<cost type=""string"">" & CurChar.Items(i).tagitem("cost") / qty & "</cost>")
+                    fw.Paragraph("<weight type=""number"">" & CurChar.Items(i).tagitem("baseweight") & "</weight>")
+                    fw.Paragraph("<weightsum type=""number"">" & CurChar.Items(i).tagitem("weight") / qty & "</weightsum>")
                     fw.Paragraph("<location type=""string"">" & CurChar.Items(i).tagitem("location") & "</location>")
                     fw.Paragraph("<notes type=""formattedtext"">" & UpdateEscapeChars(CurChar.Items(i).tagitem("description")) & "</notes>")
                     fw.Paragraph("<carried type=""number"">2</carried>")
@@ -2019,6 +2011,8 @@ Public Class ExportToFoundryVTT
         MyString = Replace(MyString, " \par", "<br>")
         MyString = Replace(MyString, Chr(134), "&#8224;") 'Single Dagger
         MyString = Replace(MyString, Chr(135), "&#8225;") 'Double Dagger
+        MyString = Replace(MyString, "<", "&lt;")
+        MyString = Replace(MyString, ">", "&gt;")
 
         Return MyString  
 
