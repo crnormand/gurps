@@ -11,6 +11,8 @@ Release 0.13.5
 - Unified the NPC/mini and NPC/mini CI sheets. Now "NPC/mini" supports both.
 - Added /IF [otf] cs:{} s:{} f:{} cf:{} syntax
 - Added @gmargin to add last margin of success to roll (useful on frightcheck tables, reaction tables)
+- Added @target for /hp /fp commands
+- Added support for !/ev [OTF] which will roll [OTF] against all of the player characters, a blindrolls (so only the GM sees).
 
 Release 0.13.4 2/15/2022
 
