@@ -4,6 +4,10 @@
     <div id='globalmodifier' class='{{#if stack.plus}}plus{{/if}} {{#if stack.minus}}minus{{/if}}' draggable="true">
       {{stack.displaySum}}
     </div>
-    <div id='trash'><a class='button icon'><i class='fas fa-trash'></i></a></div>
+    <div>
+      <div id='trash'><a class='button icon'><i class='fas fa-trash'></i></a></div>
+      <hr style="height:1px;border:none;background-color:lightgray;" />
+      <div id='magnet' class='{{#if (not stack.AUTO_EMPTY)}}enabled{{/if}}'><a class='button icon'><i class="fas fa-magnet"></i></a></div>
+    </div>
   </div>
 </form>

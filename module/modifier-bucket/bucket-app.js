@@ -230,8 +230,15 @@ class ModifierStack {
     this.displaySum = '+0'
     this.plus = false
     this.minus = false
+
+    // do we automatically empty the bucket when a roll is made?
+    this.AUTO_EMPTY = true
   }
 
+  toggleAutoEmpty() {
+    this.AUTO_EMPTY = !this.AUTO_EMPTY
+    return this.AUTO_EMPTY
+  }
   savelist() {
     this.savedModifierList = this.modifierList
     this.modifierList = []
@@ -309,7 +316,7 @@ class ModifierStack {
   applyMods(targetmods = []) {
     let answer = !!targetmods ? targetmods : []
     answer = answer.concat(this.modifierList)
-    this.reset()
+    if (this.AUTO_EMPTY) this.reset()
     return answer
   }
 
@@ -352,7 +359,7 @@ export class ModifierBucket extends Application {
 
     // whether the ModifierBucketEditor is visible
     this.SHOWING = false
-
+    
     /** @type {string|null} */
     this._tempRangeMod = null
 
@@ -513,6 +520,7 @@ export class ModifierBucket extends Application {
     super.activateListeners(html)
 
     html.find('#trash').on('click', this._onClickTrash.bind(this))
+    html.find('#magnet').on('click', this._onClickMagnet.bind(this))
 
     let e = html.find('#globalmodifier')
 
@@ -585,6 +593,16 @@ export class ModifierBucket extends Application {
   async _onClickTrash(event) {
     event.preventDefault()
     this.clear()
+  }
+
+  async _onClickMagnet(event) {
+    event.preventDefault()
+    if (this.modifierStack.toggleAutoEmpty()) {
+      $(event.currentTarget).removeClass('enabled')
+     }
+    else {
+      $(event.currentTarget).addClass('enabled')
+     }
   }
 
   /**
