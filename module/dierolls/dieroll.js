@@ -157,6 +157,7 @@ export async function doRoll({
 
   if (
     !!optionalArgs.blind ||
+    !!optionalArgs.event?.blind ||
     isCtrl ||
     (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
   ) {

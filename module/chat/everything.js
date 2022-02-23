@@ -63,7 +63,9 @@ export class EveryoneBChatProcessor extends ChatProcessor {
           let actor = t.actor
           if (actor.hasPlayerOwner) {
             any = true
-            await GURPS.performAction(action.action, actor)
+            let event = { data:{} }
+            event.blind = this.msgs().quiet
+            await GURPS.performAction(action.action, actor, event)
           }
         }
         if (!any) this.priv(`There are no player owned characters!`)
