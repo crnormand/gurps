@@ -425,7 +425,26 @@ export default class ApplyDamageDialog extends Application {
     let roll3d = await this._calculator.randomizeHitLocation()
 
     if (isNiceDiceEnabled()) {
-      game.dice3d.showForRoll(roll3d).then(display => this.updateUI())
+      let throws = []
+      let dc = []
+      roll3d.dice.forEach(die => {
+        let type = 'd' + die.faces
+        die.results.forEach(s =>
+          dc.push({
+            result: s.result,
+            resultLabel: s.result,
+            type: type,
+            vectors: [],
+            options: {},
+          })
+        )
+      })
+      throws.push({ dice: dc })
+      if (dc.length > 0) {
+        // The user made a "multi-damage" roll... let them see the dice!
+        // @ts-ignore
+        game.dice3d.show({ throws: throws }).then(display => this.updateUI())
+      }
     } else {
       AudioHelper.play({ src: CONFIG.sounds.dice })
       this.updateUI()

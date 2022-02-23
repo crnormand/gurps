@@ -16,7 +16,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -2086,7 +2086,7 @@ Hooks.once('ready', async function () {
   })
 
   // @ts-ignore
-  game.socket.on('system.gurps', resp => {
+  game.socket.on('system.gurps', async resp => {
     if (resp.type == 'updatebucket') {
       if (resp.users.includes(game.user.id)) GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
     }
@@ -2095,6 +2095,21 @@ Hooks.once('ready', async function () {
         formula: resp.formula,
         decimals: resp.decimals,
       }
+    }
+    if (resp.type == 'playerFpHp') {
+      resp.targets.map(tid => game.canvas.tokens.get(tid).actor).forEach(a => {
+        if (a.isOwner) {
+          Dialog.confirm({
+            title: `${resp.actorname}`,
+            content: i18n_f("GURPS.chatWantsToExecute", { command: resp.command, name: a.name }),
+            yes: y => {
+              let old = GURPS.LastActor;
+              GURPS.SetLastActor(a);
+              GURPS.executeOTF(resp.command).then(p => GURPS.SetLastActor(old))
+            }
+          })
+        }
+      })
     }
     if (resp.type == 'executeOtF') {
       // @ts-ignore

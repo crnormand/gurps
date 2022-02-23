@@ -103,7 +103,7 @@ export async function doRoll({
 
     chatdata['optlabel'] = optionalArgs.text || ''
 
-    if (game.dice3d && !game.dice3d.messageHookDisabled) {
+    if (game.dice3d && !game.dice3d.messageHookDisabled) {  // save for after roll animation is complete
       if (failure && optionalArgs.obj?.failotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.failotf)
       if (!failure && optionalArgs.obj?.passotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.passotf)
     } else {
