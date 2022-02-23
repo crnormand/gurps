@@ -106,7 +106,28 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/ev ${attr}]`
             let roll = Roll.create(r)
             await roll.evaluate({ async: true })
-            if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)
+            if (isNiceDiceEnabled()) {        
+              let throws = []
+              let dc = []
+              roll.dice.forEach(die => {
+                let type = 'd' + die.faces
+                die.results.forEach(s =>
+                  dc.push({
+                    result: s.result,
+                    resultLabel: s.result,
+                    type: type,
+                    vectors: [],
+                    options: {},
+                  })
+                )
+              })
+              throws.push({ dice: dc })
+              if (dc.length > 0) {
+                // The user made a "multi-damage" roll... let them see the dice!
+                // @ts-ignore
+                game.dice3d.show({ throws: throws })
+              }
+            }
             value = roll.total
             if (!!mod)
               if (isNaN(mod)) {
