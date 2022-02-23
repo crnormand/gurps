@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.13.5
 
 - Updated GCA5 Exporter to fix an export issue. ~Stevil
+- Updated import code to warn if not using latest GCA5 export script.
 - Removed default hit locations from template file.
 - Added support for multiple movement modes, such as Ground, Air, Water, Space. (In the editor, click the edit button next to the new Move Type dropdown menu to add, delete, modify movement types).
 - Support unlimited, by-the-book, range on the Standard Speed, Size, and Range Table.
@@ -13,6 +14,7 @@ Release 0.13.5
 - Added @gmargin to add last margin of success to roll (useful on frightcheck tables, reaction tables)
 - Added @target for /hp /fp commands
 - Added support for !/ev [OTF] which will roll [OTF] against all of the player characters, a blindrolls (so only the GM sees).
+- Fixed some Dice so Nice calls for /ev, /hp, /fp and random hit location
 
 Release 0.13.4 2/15/2022
 

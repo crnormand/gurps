@@ -1859,6 +1859,7 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv1(xml, importname, importpath, suppressMessage = false) {
+    const GCA5Version = 'GCA-12'
     const GCAVersion = 'GCA-11'
     const GCSVersion = 'GCS-5'
     if (importname.endsWith('.gcs'))
@@ -1866,6 +1867,7 @@ export class GurpsActor extends Actor {
     var c, ra // The character json, release attributes
     let isFoundryGCS = false
     let isFoundryGCA = false
+    let isFoundryGCA5 = false
     // need to remove <p> and replace </p> with newlines from "formatted text"
     let origx = GURPS.cleanUpP(xml)
     let x = xmlTextToJson(origx)
@@ -1876,8 +1878,7 @@ export class GurpsActor extends Actor {
     let vernum = 1
     let exit = false
     if (!r) {
-      // if (importname.endsWith('.gcs')) this.importFromGCSv2(xml, importname, importpath)
-      // if (importname.endsWith('.gcs')) msg.push(i18n('GURPS.importCannotImportGCSDirectly'))
+      if (importname.endsWith('.gca5')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
       if (importname.endsWith('.gca4')) msg.push(i18n('GURPS.importCannotImportGCADirectly'))
       else if (!xml.startsWith('<?xml')) msg.push(i18n('GURPS.importNoXMLDetected'))
       exit = true
@@ -1899,46 +1900,53 @@ export class GurpsActor extends Actor {
       // Sorry for the horrible version checking... it sort of evolved organically
       isFoundryGCS = !!ra && ra.release == 'Foundry' && (ra.version == '1' || ra.version.startsWith('GCS'))
       isFoundryGCA = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA')
-      if (!(isFoundryGCS || isFoundryGCA)) {
+      isFoundryGCA5 = !!ra && ra.release == 'Foundry' && ra.version.startsWith('GCA5')
+      if (!(isFoundryGCS || isFoundryGCA || isFoundryGCA5)) {
         msg.push(i18n('GURPS.importFantasyGroundUnsupported'))
         exit = true
       }
       version = ra?.version || ''
       const v = !!ra?.version ? ra.version.split('-') : []
       if (isFoundryGCA) {
-        if (!v[1]) {
-          msg.push(i18n('GURPS.importGCANoBodyPlan'))
-        }
-        if (!!v[1]) vernum = parseInt(v[1])
-        if (vernum < 2) {
-          msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
-        }
-        if (vernum < 3) {
-          msg.push(i18n('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
-        }
-        if (vernum < 4) {
-          msg.push(i18n('GURPS.importGCANoParent'))
-        }
-        if (vernum < 5) {
-          msg.push(i18n('GURPS.importGCANoSanitizeNotes'))
-        }
-        if (vernum < 6) {
-          msg.push(i18n('GURPS.importGCANoMeleeIfAlsoRanged'))
-        }
-        if (vernum < 7) {
-          msg.push(i18n('GURPS.importGCABadBlockForDB'))
-        }
-        if (vernum < 8) {
-          msg.push(i18n('GURPS.importGCANoHideFlag'))
-        }
-        if (vernum < 9) {
-          msg.push(i18n('GURPS.importGCAChildrenWeights'))
-        }
-        if (vernum < 10) {
-          msg.push(i18n('GURPS.importGCAAdvMods'))
-        }
-        if (vernum < 11) {
-          msg.push(i18n('GURPS.importGCAConditionalModifiers'))
+        if (isFoundryGCA5) {
+          if (vernum < 12) {
+            msg.push(i18n('GURPS.importGCA5ImprovedInventoryHandling'))
+          }
+        } else {
+          if (!v[1]) {
+            msg.push(i18n('GURPS.importGCANoBodyPlan'))
+          }
+          if (!!v[1]) vernum = parseInt(v[1])
+          if (vernum < 2) {
+            msg.push(i18n('GURPS.importGCANoInnateRangedAndParent'))
+          }
+          if (vernum < 3) {
+            msg.push(i18n('GURPS.importGCANoSanitizedEquipmentPageRefs')) // Equipment Page ref's sanitized
+          }
+          if (vernum < 4) {
+            msg.push(i18n('GURPS.importGCANoParent'))
+          }
+          if (vernum < 5) {
+            msg.push(i18n('GURPS.importGCANoSanitizeNotes'))
+          }
+          if (vernum < 6) {
+            msg.push(i18n('GURPS.importGCANoMeleeIfAlsoRanged'))
+          }
+          if (vernum < 7) {
+            msg.push(i18n('GURPS.importGCABadBlockForDB'))
+          }
+          if (vernum < 8) {
+            msg.push(i18n('GURPS.importGCANoHideFlag'))
+          }
+          if (vernum < 9) {
+            msg.push(i18n('GURPS.importGCAChildrenWeights'))
+          }
+          if (vernum < 10) {
+            msg.push(i18n('GURPS.importGCAAdvMods'))
+          }
+          if (vernum < 11) {
+            msg.push(i18n('GURPS.importGCAConditionalModifiers'))
+          }
         }
       }
       if (isFoundryGCS) {
