@@ -49,6 +49,7 @@ Hooks.once('init', async function () {
           },
         })
       d.gmod = GURPS.ModifierBucket.currentSum()
+      d.gmargin = GURPS.lastTargetedRoll?.margin
       return d
     }
 
@@ -208,6 +209,7 @@ export class GurpsRoll extends Roll {
         },
       })
     d.gmod = GURPS.ModifierBucket.currentSum()
+    d.gmargin = GURPS.lastTargetedRoll?.margin
     return d
   }
 }

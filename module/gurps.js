@@ -128,10 +128,10 @@ GURPS.lastTargetedRolls = {} // mapped by both actor and token id
 
 GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients) {
   let tmp = { ...chatdata }
-  GURPS.lastTargetedRoll = tmp
   if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
   if (updateOtherClients)
+    GURPS.lastTargetedRoll = tmp    // keep the local copy
     game.socket.emit('system.gurps', {
       type: 'setLastTargetedRoll',
       chatdata: tmp,
