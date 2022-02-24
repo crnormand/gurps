@@ -429,7 +429,7 @@ const actionFuncs = {
    * @param {Object} data.action.next
    */
   modifier({ action }) {
-    GURPS.ModifierBucket.addModifier(parseInt(action.mod), action.desc)
+    GURPS.ModifierBucket.addModifier(action.mod, action.desc)
     if (action.next && action.next.type === 'modifier') {
       return this.modifier({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
     }
@@ -1126,20 +1126,23 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
   let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   let smode = ''
-  let m = sname.match(/(.*)\((.*?)\)$/)
-  if (!!m) {
+  let m = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', { unbalanced: 'skip-lazy', valueNames: [ 'between', null, 'match', null ] })
+  if (m.length == 2) {
     // Found a mode "(xxx)" in the search name
-    sname = m[1].trim()
-    smode = m[2].trim().toLowerCase()
+    sname = m[0].value.trim()
+    smode = m[1].value.trim().toLowerCase()
   }
   let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   if (isMelee)
     // @ts-ignore
     recurselist(actor.melee, (e, k, d) => {
       if (!t) {
+        let full = e.name
+        if (!!e.mode) full += ' (' + e.mode + ')'
         let em = !!e.mode ? e.mode.toLowerCase() : ''
         if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
-        else if (e.name.match(fullregex)) t = e
+        else if (e.name.match(fullregex)) t = e 
+        else if (full.match(fullregex)) t = e
       }
     })
   //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
@@ -1147,9 +1150,12 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
     // @ts-ignore
     recurselist(actor.ranged, (e, k, d) => {
       if (!t) {
+        let full = e.name
+        if (!!e.mode) full += ' (' + e.mode + ')'
         let em = !!e.mode ? e.mode.toLowerCase() : ''
         if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
         else if (e.name.match(fullregex)) t = e
+        else if (full.match(fullregex)) t = e
       }
     })
   //    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
