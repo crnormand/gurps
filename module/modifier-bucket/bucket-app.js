@@ -49,7 +49,7 @@ Hooks.once('init', async function () {
           },
         })
       d.gmod = GURPS.ModifierBucket.currentSum()
-      d.gmargin = GURPS.lastTargetedRoll?.margin
+      d.margin = GURPS.lastTargetedRoll?.margin
       return d
     }
 
@@ -209,7 +209,7 @@ export class GurpsRoll extends Roll {
         },
       })
     d.gmod = GURPS.ModifierBucket.currentSum()
-    d.gmargin = GURPS.lastTargetedRoll?.margin
+    d.margin = GURPS.lastTargetedRoll?.margin
     return d
   }
 }
@@ -298,7 +298,10 @@ class ModifierStack {
       if (replace) list.splice(i, 1)
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
-
+    let m = (mod + '').match(/([+-])?@margin/i)
+    if (!!m) {
+      mod = (GURPS.lastTargetedRoll?.margin || 0) * (m[1] == '-' ? -1 : 1) 
+    }
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
       oldmod.mod = displayMod(m)
