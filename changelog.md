@@ -19,6 +19,7 @@ Release 0.13.5
 - Added modifier [+@margin]
 - Fixed Melee attack usage not saving during edit
 - Fixed Melee/Range attack if usage/mode contained "( )"
+- Added +/-@margin to attribute, skill and attack OTFs ex: \[ST+@margin] \[Sk:Brawling-@margin] \[M:Natural*Attacks+@margin]
 
 Release 0.13.4 2/15/2022
 
