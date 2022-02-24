@@ -1588,6 +1588,14 @@ button.equipmentbutton:last-child {
   color: lightgrey;
 }
 
+.modifierbucket #magnet {
+  color: rgb(66, 66, 66);
+}
+
+.modifierbucket #magnet.enabled  {
+  color: red;
+}
+
 #modtooltip {
   width: 100%;
   height: 100%;

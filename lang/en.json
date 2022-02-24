@@ -312,6 +312,7 @@
   "GURPS.chatHelpShow": "Show various values from tokens in the scene<hr>parameters:\n&lt;Attributes (primary and secondary)&gt;\n&lt;Skill names&gt;\nparry\nblock\nwill\nfright\nper\nvision\nhearing\ntaste\nsmell\nmove\nspeed<hr>examples:\n/show IQ\n/show Stealth PER\n/show per move speed\n/show vision hearing",
   "GURPS.chatHelpManeuver": "Set the following maneuvers on the current character.  You may use * to match Maneuver names, example: '/man All Out*Double'<hr>",
   "GURPS.chatHelpRepeat": "Repeat the following /anim command with a delay of X seconds in between.<hr>examples:\n/repeat /anim 1.2 heal*blue c",
+  "GURPS.chatWantsToExecute": "Wants to execute <b>{command}</b> on {name},<br><br>Is that OK?",
 
   "__Permissions__": "=========",
   "GURPS.cannotDragNonFoundryEqt": "You cannot drag non-Foundry equipment to another character.",
@@ -719,6 +720,7 @@
   "__Import Messages__": "=========",
   "GURPS.importCannotImportGCADirectly": "We cannot import a GCA file directly. Please export the file using the 'export to Foundry VTT.gce' script.",
   "GURPS.importCannotImportGCSDirectly": "We cannot import a GCS file directly. Please export the file using the 'Foundry VTT' output template.",
+  "GURPS.importGCA5ImprovedInventoryHandling": "This file was created with an older version of the GCA5 export which does not handle inventory text well.",
   "GURPS.importCurrentVersions": "Current Versions: '{GCAVersion}' & '{GCSVersion}'.",
   "GURPS.importErrorParsingXML": "Error parsing XML: {text}.",
   "GURPS.importFantasyGroundUnsupported": "We no longer support the Fantasy Grounds import.",

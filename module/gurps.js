@@ -16,7 +16,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f } from '../lib/utilities.js'
 import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
@@ -128,10 +128,10 @@ GURPS.lastTargetedRolls = {} // mapped by both actor and token id
 
 GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients) {
   let tmp = { ...chatdata }
-  GURPS.lastTargetedRoll = tmp
   if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
   if (updateOtherClients)
+    GURPS.lastTargetedRoll = tmp    // keep the local copy
     game.socket.emit('system.gurps', {
       type: 'setLastTargetedRoll',
       chatdata: tmp,
@@ -429,7 +429,7 @@ const actionFuncs = {
    * @param {Object} data.action.next
    */
   modifier({ action }) {
-    GURPS.ModifierBucket.addModifier(parseInt(action.mod), action.desc)
+    GURPS.ModifierBucket.addModifier(action.mod, action.desc)
     if (action.next && action.next.type === 'modifier') {
       return this.modifier({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
     }
@@ -1126,20 +1126,23 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
   let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   let smode = ''
-  let m = sname.match(/(.*)\((.*?)\)$/)
-  if (!!m) {
+  let m = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', { unbalanced: 'skip-lazy', valueNames: [ 'between', null, 'match', null ] })
+  if (m.length == 2) {
     // Found a mode "(xxx)" in the search name
-    sname = m[1].trim()
-    smode = m[2].trim().toLowerCase()
+    sname = m[0].value.trim()
+    smode = m[1].value.trim().toLowerCase()
   }
   let nameregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   if (isMelee)
     // @ts-ignore
     recurselist(actor.melee, (e, k, d) => {
       if (!t) {
+        let full = e.name
+        if (!!e.mode) full += ' (' + e.mode + ')'
         let em = !!e.mode ? e.mode.toLowerCase() : ''
         if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
-        else if (e.name.match(fullregex)) t = e
+        else if (e.name.match(fullregex)) t = e 
+        else if (full.match(fullregex)) t = e
       }
     })
   //    t = Object.values(actor.melee).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
@@ -1147,9 +1150,12 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
     // @ts-ignore
     recurselist(actor.ranged, (e, k, d) => {
       if (!t) {
+        let full = e.name
+        if (!!e.mode) full += ' (' + e.mode + ')'
         let em = !!e.mode ? e.mode.toLowerCase() : ''
         if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
         else if (e.name.match(fullregex)) t = e
+        else if (full.match(fullregex)) t = e
       }
     })
   //    t = Object.values(actor.ranged).find(a => (a.name + (!!a.mode ? ' (' + a.mode + ')' : '')).match(nameregex))
@@ -2086,7 +2092,7 @@ Hooks.once('ready', async function () {
   })
 
   // @ts-ignore
-  game.socket.on('system.gurps', resp => {
+  game.socket.on('system.gurps', async resp => {
     if (resp.type == 'updatebucket') {
       if (resp.users.includes(game.user.id)) GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
     }
@@ -2095,6 +2101,21 @@ Hooks.once('ready', async function () {
         formula: resp.formula,
         decimals: resp.decimals,
       }
+    }
+    if (resp.type == 'playerFpHp') {
+      resp.targets.map(tid => game.canvas.tokens.get(tid).actor).forEach(a => {
+        if (a.isOwner) {
+          Dialog.confirm({
+            title: `${resp.actorname}`,
+            content: i18n_f("GURPS.chatWantsToExecute", { command: resp.command, name: a.name }),
+            yes: y => {
+              let old = GURPS.LastActor;
+              GURPS.SetLastActor(a);
+              GURPS.executeOTF(resp.command).then(p => GURPS.SetLastActor(old))
+            }
+          })
+        }
+      })
     }
     if (resp.type == 'executeOtF') {
       // @ts-ignore

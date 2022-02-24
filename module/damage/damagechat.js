@@ -242,6 +242,18 @@ export default class DamageChat {
     let adds1 = 0
     let temp = !!result.groups?.adds1 ? result.groups.adds1 : ''
     if (!!temp && temp !== '') {
+      let m = temp.match(/([+-])@margin/)
+      if (!!m) {
+        let mrg = GURPS.lastTargetedRoll?.margin || 0
+        if (m[1] == '+')
+          temp = '' + mrg
+        else {
+          if (mrg <= 0)
+            temp = '' + mrg
+          else
+            temp = '-' + mrg
+        }        
+      }
       temp = temp.startsWith('+') ? temp.slice(1) : temp
       adds1 = parseInt(temp)
     }
@@ -479,7 +491,7 @@ export default class DamageChat {
 }
 
 DamageChat.fullRegex =
-  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
+  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
 /*
 let transfer = {

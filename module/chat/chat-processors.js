@@ -390,61 +390,97 @@ class FpHpChatProcessor extends ChatProcessor {
   async process(line) {
     let m = this.match
     let actor = GURPS.LastActor
-    if (!actor) ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
-    else {
-      let attr = m[1].toUpperCase()
-      let delta = parseInt(m[3])
-      const max = actor.data.data[attr].max
-      let reset = ''
-      if (!!m[5]) {
-        await actor.update({ ['data.' + attr + '.value']: max })
-        this.prnt(`${actor.displayname} reset to ${max} ${attr}`)
-      } else if (isNaN(delta) && !!m[3]) {
-        // only happens with '='
-        delta = parseInt(m[3].substr(1))
-        if (isNaN(delta)) ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
-        else {
-          let mtxt = ''
-          if (delta > max) {
-            delta = max
-            mtxt = ` (max: ${max})`
-          }
-          await actor.update({ ['data.' + attr + '.value']: delta })
-          this.prnt(`${actor.displayname} ${i18n('GURPS.chatSetTo')} ${delta} ${attr}${mtxt}`)
-        }
-      } else if (!!m[2] || !!m[3]) {
+    if (!actor) {
+      ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return false
+    }
+    if (m[6]?.trim() == '@target') {
+      let targets = Array.from(game.user.targets).map(t => t.id)
+      if (targets.length == 0) 
+        return false
+      line = line.replace(/@target/g,'')
+      game.socket?.emit('system.gurps', {
+        type: 'playerFpHp',
+        actorname: actor.name,
+        targets: targets,
+        command: line
+      })
+      return true
+    }
+ 
+    let attr = m[1].toUpperCase()
+    let delta = parseInt(m[3])
+    const max = actor.data.data[attr].max
+    let reset = ''
+    if (!!m[5]) {
+      await actor.update({ ['data.' + attr + '.value']: max })
+      this.prnt(`${actor.displayname} reset to ${max} ${attr}`)
+    } else if (isNaN(delta) && !!m[3]) {
+      // only happens with '='
+      delta = parseInt(m[3].substr(1))
+      if (isNaN(delta)) ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
+      else {
         let mtxt = ''
-        let mod = m[3] || ''
-        delta = parseInt(mod)
-        let dice = m[2] || ''
-        let txt = ''
-        if (!!dice) {
-          let sign = dice[0] == '-' ? -1 : 1
-          let d = dice.match(/[+-](\d+)d(\d*)/)
-          let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/${attr}]`
-          let roll = Roll.create(r)
-          await roll.evaluate({ async: true })
-          if (isNiceDiceEnabled()) game.dice3d.showForRoll(roll, game.user, this.msgs().data.whisper)
-          delta = roll.total
-          if (!!mod)
-            if (isNaN(mod)) {
-              ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
-              return
-            } else delta += parseInt(mod)
-          delta = Math.max(delta, !!m[4] ? 1 : 0)
-          if (!!m[4]) mod += '!'
-          delta *= sign
-          txt = `(${delta}) `
-        }
-        delta += actor.data.data[attr].value
         if (delta > max) {
           delta = max
           mtxt = ` (max: ${max})`
         }
         await actor.update({ ['data.' + attr + '.value']: delta })
-        this.prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
-      } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
-    }
+        this.prnt(`${actor.displayname} ${i18n('GURPS.chatSetTo')} ${delta} ${attr}${mtxt}`)
+      }
+    } else if (!!m[2] || !!m[3]) {
+      let mtxt = ''
+      let mod = m[3] || ''
+      delta = parseInt(mod)
+      let dice = m[2] || ''
+      let txt = ''
+      if (!!dice) {
+        let sign = dice[0] == '-' ? -1 : 1
+        let d = dice.match(/[+-](\d+)d(\d*)/)
+        let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/${attr}]`
+        let roll = Roll.create(r)
+        await roll.evaluate({ async: true })
+        if (isNiceDiceEnabled()) {        
+          let throws = []
+          let dc = []
+          roll.dice.forEach(die => {
+            let type = 'd' + die.faces
+            die.results.forEach(s =>
+              dc.push({
+                result: s.result,
+                resultLabel: s.result,
+                type: type,
+                vectors: [],
+                options: {},
+              })
+            )
+          })
+          throws.push({ dice: dc })
+          if (dc.length > 0) {
+            // The user made a "multi-damage" roll... let them see the dice!
+            // @ts-ignore
+            game.dice3d.show({ throws: throws })
+          }
+        }
+        delta = roll.total
+        if (!!mod)
+          if (isNaN(mod)) {
+            ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
+            return
+          } else delta += parseInt(mod)
+        delta = Math.max(delta, !!m[4] ? 1 : 0)
+        if (!!m[4]) mod += '!'
+        delta *= sign
+        txt = `(${delta}) `
+      }
+      delta += actor.data.data[attr].value
+      if (delta > max) {
+        delta = max
+        mtxt = ` (max: ${max})`
+      }
+      await actor.update({ ['data.' + attr + '.value']: delta })
+      this.prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
+    } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
   }
 }
 

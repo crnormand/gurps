@@ -377,7 +377,7 @@ Public Class ExportToFoundryVTT
 '****************************************
     Private Sub ExportToFoundryVTT(CurChar As GCACharacter, fw As FileWriter)
         fw.Paragraph("<?xml version=""1.0"" encoding=""utf-8""?>")
-        fw.Paragraph("<root release=""Foundry"" version=""GCA-11"">")
+        fw.Paragraph("<root release=""Foundry"" version=""GCA5-12"">")
         fw.Paragraph("<character>")
         fw.Paragraph("<name type=""string"">" & CurChar.Name & "</name>")
         fw.Paragraph("")
