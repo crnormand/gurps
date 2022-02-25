@@ -624,7 +624,7 @@
   "GURPS.resourceInvalidAlias": "Invalid alias [{alias}].<br/>Only alphabet and number characters, plus ('+', '_', and '-'), are allowed.",
   "GURPS.resourceTemplateAlias": "Alias",
   "GURPS.resourceTemplateButton": "View and Edit Trackers",
-  "GURPS.resourceTemplateClickToAdd": "Click the '+' button above to add a template.",
+  "GURPS.resourceTemplateClickToAdd": "Click the '+' button to add a template.",
   "GURPS.resourceTemplateHint": "Use this to create, reuse, and automatically apply Resource Trackers to character sheets.",
   "GURPS.resourceTemplateInitializer": "Initializer",
   "GURPS.resourceTemplateManager": "Resource Tracker Manager",
