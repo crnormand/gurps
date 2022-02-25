@@ -36,6 +36,7 @@
   "GURPS.descriptionSkin": "Skin",
   "GURPS.descriptionTechLevel": "Tech Level (TL)",
   "GURPS.weight": "Weight",
+  "GURPS.share": "Share",
 
   "__Character Points__": "=========",
   "GURPS.point": "Point",
@@ -908,6 +909,7 @@
   "GURPS.addAdvantage": "Add an Advantage",
   "GURPS.addMeleeAttack": "Add a Melee Attack",
   "GURPS.addRangedAttack": "Add a Ranged Attack",
+  "GURPS.addRT": "Add ResourceTracker",
   "GURPS.addSkill": "Add a Skill",
   "GURPS.addSpell": "Add a Spell",
   "GURPS.advantage": "Advantage",

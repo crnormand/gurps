@@ -11,24 +11,21 @@
             type='text'
             value='{{tracker.min}}'
             data-dtype='Number'
-            {{disabled (not isActor)}}
-          />
+           />
           <div class='label'>{{localize 'GURPS.minimum'}}</div>
           <input
             class='maximum gcs-input'
             type='text'
             value='{{tracker.max}}'
             data-dtype='Number'
-            {{disabled (not isActor)}}
-          />
+           />
           <div class='label'>{{localize 'GURPS.maximum'}}</div>
           <input
             class='current gcs-input'
             type='text'
             value='{{tracker.value}}'
             data-dtype='Number'
-            {{disabled (not isActor)}}
-          />
+           />
           <div class='label'>{{localize 'GURPS.current'}}</div>
           <input class='alias gcs-input' type='text' value='{{tracker.alias}}' />
           <div class='label'>{{localize 'GURPS.resourceTemplateAlias'}}</div>
@@ -96,6 +93,11 @@
           <div class='label span3'>{{localize 'GURPS.resourceCurrentValue'}}</div>
           <div class='label'>{{localize 'GURPS.condition'}}</div>
           <div class='label'>{{localize 'GURPS.color'}}</div>
+          <div><a id='threshold-add' class='button icon'><i class='fas fa-plus'></i></a></div>
+        {{else}}     
+          <div class='span3'></div>
+          <div></div>
+          <div></div>
           <div><a id='threshold-add' class='button icon'><i class='fas fa-plus'></i></a></div>
         {{/if}}
 

@@ -4,6 +4,11 @@
     <div class='headermenu'>
       <span>{{i18n 'GURPS.meleeWeapons'}}</span>
       <i class='fas fa-caret-square-down'></i>
+      {{#if (empty data.additionalresources.tracker)}}
+        <span id='addFirstResourceTracker' >{{i18n 'GURPS.addRT'}}
+          <i class='fas fa-caret-square-up'></i>
+        </span>
+      {{/if}}
     </div>
   </div>
   <div class='usage header'>{{i18n 'GURPS.usage'}}</div>

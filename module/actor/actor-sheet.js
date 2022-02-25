@@ -551,6 +551,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('#open-modifier-popup').on('click', this._showActiveEffectsListPopup.bind(this))
     html.find('#edit-move-modes').on('click', this._showMoveModeEditorPopup.bind(this))
+    
+    html.find('#addFirstResourceTracker').on('click', ev => this._addTracker())
   }
 
   _createHeaderMenus(html) {
@@ -561,7 +563,7 @@ export class GurpsActorSheet extends ActorSheet {
       let items = this.getMenuItems(id)
       this._makeHeaderMenu($(table), '.headermenu', items, ClickAndContextMenu)
     }
-
+    
     let trackermenu = html.find('#combat-trackers')
     this._makeHeaderMenu(
       $(trackermenu[0]),
