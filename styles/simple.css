@@ -1115,6 +1115,16 @@ body {
   grid-template-rows: 0fr 0fr;
 }
 
+#melee .headermenu {
+	display: flex;
+  justify-content: space-between;
+}
+
+#melee .headermenu #addFirstResourceTracker {
+	font-size: calc(100% - 2px);
+  padding-left:50px; 
+}
+
 .equipmentlist .headermenu i,
 #notes .headermenu i,
 #spells .headermenu i,

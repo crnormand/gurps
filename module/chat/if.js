@@ -38,17 +38,14 @@ export class IfChatProcessor extends ChatProcessor {
     if (restOfLine.match(/{.*}/)) {  // using the advanced sytax
       m = XRegExp.matchRecursive(restOfLine, '{', '}', 'g', { valueNames:['between', null, 'match', null] });
       let needSuccess = true  // if we don't get a prefix, assume it is s:{} 'success'
-      var key, next
+      var next
       while (next = m.shift()) {
         let v = next.value.trim()
-        if (next.name == 'between')
-          if (v.endsWith(':')) 
-            key = v.slice(0, -1)
-            if (key == 's') needSuccess = false
-          else {
-            key = needSuccess ? 's' : 'f'
-            needSuccess = false  // after success, the next unnamed {} would be fail
-          }
+        let key = ''
+        if (next.name == 'between' && v.endsWith(':'))
+          key = v.slice(0, -1)
+        if (!key) key = needSuccess ? 's' : 'f'
+        if (key == 's') needSuccess = false
         if (next.name == 'match')
           results[key] = next.value
       }
