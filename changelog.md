@@ -8,6 +8,7 @@ Release 0.13.5
 - Updated import code to warn if not using latest GCA5 export script.
 - Removed default hit locations from template file.
 - Added support for multiple movement modes, such as Ground, Air, Water, Space. (In the editor, click the edit button next to the new Move Type dropdown menu to add, delete, modify movement types).
+- Support for Enhanced Move, including in the Drag Ruler.
 - Support unlimited, by-the-book, range on the Standard Speed, Size, and Range Table.
 - Unified the NPC/mini and NPC/mini CI sheets. Now "NPC/mini" supports both.
 - Added /IF [otf] cs:{} s:{} f:{} cf:{} syntax
@@ -19,7 +20,7 @@ Release 0.13.5
 - Added modifier [+@margin]
 - Fixed Melee attack usage not saving during edit
 - Fixed Melee/Range attack if usage/mode contained "( )"
-- Added +/-@margin to attribute, skill and attack OTFs ex: \[ST+@margin] \[Sk:Brawling-@margin] \[M:Natural*Attacks+@margin]
+- Added +/-@margin to attribute, skill and attack OTFs ex: \[ST+@margin] \[Sk:Brawling-@margin] \[M:Natural\*Attacks+@margin]
 - Fixed Resource Tacker editor (re-enabled + buttons), and added "Add Resource Tracker" button to melee head (if no trackers)
 
 Release 0.13.4 2/15/2022
