@@ -396,8 +396,10 @@ class FpHpChatProcessor extends ChatProcessor {
     }
     if (m[6]?.trim() == '@target') {
       let targets = Array.from(game.user.targets).map(t => t.id)
-      if (targets.length == 0) 
+      if (targets.length == 0) {
+        ui.notifications.warn(i18n('GURPS.noTargetSelected'))
         return false
+      }
       line = line.replace(/@target/g,'')
       game.socket?.emit('system.gurps', {
         type: 'playerFpHp',

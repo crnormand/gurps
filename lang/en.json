@@ -1028,6 +1028,7 @@
   "GURPS.swimmersOrFlyersSuffer": "Swimmers Flyers",
   "GURPS.target": "Target",
   "GURPS.targeting": "Targeting {name}",
+  "GURPS.noTargetSelected": "No Target selected",
   "GURPS.tired": "Tired",
   "GURPS.toAllDXBasedRolls": "to all DX-based rolls",
   "GURPS.TransferTo": "Transfer to",
