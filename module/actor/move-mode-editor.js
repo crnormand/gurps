@@ -76,7 +76,7 @@ export default class MoveModeEditor extends Application {
 
       // change: action [value] key [00000] value [6]
       case 'value':
-        await this.actor.update(JSON.parse(`{ "data.move.${key}.value": "${value}" }`))
+        await this.actor.update(JSON.parse(`{ "data.move.${key}.basic": "${value}" }`))
         break
 
       case 'other':

@@ -143,7 +143,7 @@ export class GurpsActor extends Actor {
       let move = this.getGurpsActorData().move
       if (!move) {
         let currentMove = this.getGurpsActorData().encumbrance['00000'].move
-        let value = { mode: MoveModes.Ground, value: currentMove, default: true }
+        let value = { mode: MoveModes.Ground, basic: currentMove, default: true }
         setProperty(this.getGurpsActorData(), 'move.00000', value)
         move = this.getGurpsActorData().move
       }
@@ -151,7 +151,7 @@ export class GurpsActor extends Actor {
       let current = Object.values(move).find(it => it.default)
       if (current) {
         // This is nonpersistent, derived values only.
-        this.getGurpsActorData().encumbrance['00000'].move = current.value
+        this.getGurpsActorData().encumbrance['00000'].move = current.basic
       }
     }
 
@@ -470,18 +470,18 @@ export class GurpsActor extends Actor {
       const level0 = encs[zeroFill(0)] // if there are encumbrances, there will always be a level0
       let effectiveMove = parseInt(level0.move)
       let effectiveDodge = parseInt(level0.dodge) + data.currentdodge
-      let effectiveFlight = parseFloat(data.basicspeed.value.toString()) * 2
+      let effectiveSprint = this._getSprintMove()
 
       if (isReeling) {
         effectiveMove = Math.ceil(effectiveMove / 2)
         effectiveDodge = Math.ceil(effectiveDodge / 2)
-        effectiveFlight = Math.ceil(effectiveFlight / 2)
+        effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
       if (isTired) {
         effectiveMove = Math.ceil(effectiveMove / 2)
         effectiveDodge = Math.ceil(effectiveDodge / 2)
-        effectiveFlight = Math.ceil(effectiveFlight / 2)
+        effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
       for (let enckey in encs) {
@@ -489,15 +489,16 @@ export class GurpsActor extends Actor {
         let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
         enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
-        enc.currentflight = Math.max(1, Math.floor(effectiveFlight * threshold))
+        enc.currentsprint = Math.max(1, Math.floor(effectiveSprint * threshold))
         enc.currentmovedisplay = enc.currentmove
-        if (!!data.additionalresources?.showflightmove)
-          enc.currentmovedisplay = enc.currentmove + '/' + enc.currentflight
+        // TODO remove additionalresources.showflightmove
+        // if (!!data.additionalresources?.showflightmove)
+        enc.currentmovedisplay = this._isEnhancedMove() ? enc.currentmove + '/' + enc.currentsprint : enc.currentmove
         if (enc.current) {
           // Save the global move/dodge
           data.currentmove = enc.currentmove
           data.currentdodge = enc.currentdodge
-          data.currentflight = enc.currentflight
+          data.currentsprint = enc.currentsprint
         }
       }
     }
@@ -508,6 +509,22 @@ export class GurpsActor extends Actor {
     if (!data.currentmove) data.currentmove = parseInt(data.basicmove.value.toString())
     if (!data.currentdodge && data.dodge.value) data.currentdodge = parseInt(data.dodge.value.toString())
     if (!data.currentflight) data.currentflight = parseFloat(data.basicspeed.value.toString()) * 2
+  }
+
+  _isEnhancedMove() {
+    return !!this._getCurrentMoveMode()?.enhanced
+  }
+
+  _getSprintMove() {
+    let current = this._getCurrentMoveMode()
+    if (current?.enhanced) return current.enhanced
+    return Math.floor(current.basic * 1.2)
+  }
+
+  _getCurrentMoveMode() {
+    let move = this.getGurpsActorData().move
+    let current = Object.values(move).find(it => it.default)
+    return current
   }
 
   /**
