@@ -15,7 +15,7 @@
         {{/each}}
       </select>
     </div>
-    <div class='label'>{{i18n 'GURPS.posture' 'Posture'}}:</div>
+    <div class='label'>{{i18n 'GURPS.modifierPosture'}}:</div>
     <div class='field' style="border: none;">
       <select id='posture' name='data.conditions.posture' style='font-size: 90%;' {{disabled isEditing}}>
         <option value='standing' {{select-if ../data.conditions.posture 'standing'}}>{{i18n 'GURPS.STATUSStanding'}}
@@ -27,7 +27,7 @@
         {{/each}}
       </select>
     </div>
-    <div class='label' for='move-mode'>{{i18n 'GURPS.movementMode' 'Move Type'}}:</div>
+    <div class='label' for='move-mode'>{{i18n 'GURPS.moveModeType'}}:</div>
     <div class='field' style='border: none'>
       <select id='move-mode' style='font-size: 90%; max-width: 14em;'
         {{disabled (or isEditing (lt (length data.move) 2)) }}>
@@ -39,12 +39,12 @@
         <button id='edit-move-modes' style='padding-bottom: 1px;'><i class="fas fa-pen"></i></button>
       {{/if}}
     </div>
-    <div class='label'>{{i18n 'GURPS.combatMove' 'Combat Move'}}:</div>
+    <div class='label'>{{i18n 'GURPS.conditionsCombatMove'}}:</div>
     <div class='field' name='data.conditions.combatmove'><span>{{data.conditions.move}}</span></div>
     <div class='label'></div>
     <div class='field' style='border: none; display: none;'>
       <button id='open-modifier-popup'><i
-          class="fas fa-external-link-alt"></i>{{i18n 'GURPS.activeEffects' 'Active Effects'}}</button>
+          class="fas fa-external-link-alt"></i>{{i18n 'GURPS.activeEffects'}}</button>
     </div>
   </div>
 </div>

@@ -75,8 +75,13 @@ export default class MoveModeEditor extends Application {
         break
 
       // change: action [value] key [00000] value [6]
-      case 'value':
-        await this.actor.update(JSON.parse(`{ "data.move.${key}.value": "${value}" }`))
+      case 'basic':
+        await this.actor.update(JSON.parse(`{ "data.move.${key}.basic": "${value}" }`))
+        break
+
+      // change: action [value] key [00000] value [6]
+      case 'enhanced':
+        await this.actor.update(JSON.parse(`{ "data.move.${key}.enhanced": "${value}" }`))
         break
 
       case 'other':
@@ -110,7 +115,7 @@ export default class MoveModeEditor extends Application {
 
           // add a new entry at the end.
           let empty = Object.values(this.moveData).length === 0
-          GURPS.put(move, { mode: 'other', value: 0, default: empty ? true : false })
+          GURPS.put(move, { mode: 'other', basic: 0, default: empty ? true : false })
 
           // remove existing entries
           await this.actor.update({ 'data.-=move': null })
@@ -146,7 +151,7 @@ export default class MoveModeEditor extends Application {
             if (k !== key)
               GURPS.put(move, {
                 mode: this.moveData[k].mode,
-                value: this.moveData[k].value,
+                basic: this.moveData[k].basic,
                 default: this.moveData[k].default,
               })
           }

@@ -1093,8 +1093,12 @@
   "GURPS.effectChatRangedModifier": "{displayName} is<br>[-2 to be hit with ranged combat ({posture})].",
 
   "GURPS.tokenToolsTitle": "Open Effect Modifier Popup",
+
   "GURPS.effectModNoTokenSelected": "No token selected",
+  "GURPS.targetedModifiers": "Targeted Modifiers",
   "GURPS.settingActiveEffects": "Turn on Active Effects",
+  "GURPS.targetModifiers": "Target:",
+
   "GURPS.settingHintActiveEffects": "Allow the GM to create and apply Active Effects",
 
   "GURPS.CR0": "CR: N/A (Cannot Resist)",
@@ -1105,9 +1109,17 @@
   "GURPS.modifiersBlindAttack": "-10 to hit (Blind)",
   "GURPS.modifiersBlindDefend": "-4 on Active Defenses (Blind)",
 
-  "GURPS.moveMode.Ground": "Ground",
-  "GURPS.moveMode.Air": "Air",
-  "GURPS.moveMode.Water": "Water",
-  "GURPS.moveMode.Space": "Space",
-  "GURPS.moveMode.Other": "Other..."
+  "GURPS.moveModeGround": "Ground",
+  "GURPS.moveModeAir": "Air",
+  "GURPS.moveModeWater": "Water",
+  "GURPS.moveModeSpace": "Space",
+  "GURPS.moveModeOther": "Other...",
+  "GURPS.moveModeType": "Move Type",
+  "GURPS.moveModeValue": "Yards/Turn",
+
+  "GURPS.effectsTermination": "Termination Condition (OtF)",
+  "GURPS.effectsEffect": "Effect",
+  "GURPS.default": "Default",
+  "GURPS.conditionsCombatMove": "Combat Move",
+  "GURPS.activeEffects": "Active Effects"
 }

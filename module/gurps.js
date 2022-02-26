@@ -72,6 +72,7 @@ import { parseDecimalNumber } from '../lib/parse-decimal-number/parse-decimal-nu
 import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
+import * as GURPSSpeedProvider from './speed-provider.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -130,14 +131,13 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
   let tmp = { ...chatdata }
   if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
-  if (updateOtherClients)
-    GURPS.lastTargetedRoll = tmp    // keep the local copy
-    game.socket.emit('system.gurps', {
-      type: 'setLastTargetedRoll',
-      chatdata: tmp,
-      actorid: actorid,
-      tokenid: tokenid,
-    })
+  if (updateOtherClients) GURPS.lastTargetedRoll = tmp // keep the local copy
+  game.socket.emit('system.gurps', {
+    type: 'setLastTargetedRoll',
+    chatdata: tmp,
+    actorid: actorid,
+    tokenid: tokenid,
+  })
 }
 
 // TODO Why are these global?
@@ -1126,7 +1126,10 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
   //  if (!!actor.data?.data?.additionalresources) actor = actor.data
   let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
   let smode = ''
-  let m = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', { unbalanced: 'skip-lazy', valueNames: [ 'between', null, 'match', null ] })
+  let m = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', {
+    unbalanced: 'skip-lazy',
+    valueNames: ['between', null, 'match', null],
+  })
   if (m.length == 2) {
     // Found a mode "(xxx)" in the search name
     sname = m[0].value.trim()
@@ -1141,7 +1144,7 @@ function findAttack(actor, sname, isMelee = true, isRanged = true) {
         if (!!e.mode) full += ' (' + e.mode + ')'
         let em = !!e.mode ? e.mode.toLowerCase() : ''
         if (e.name.match(nameregex) && (smode == '' || em == smode)) t = e
-        else if (e.name.match(fullregex)) t = e 
+        else if (e.name.match(fullregex)) t = e
         else if (full.match(fullregex)) t = e
       }
     })
@@ -1709,6 +1712,7 @@ Hooks.once('init', async function () {
   DamageChat.init()
   RegisterChatProcessors()
   GurpsActiveEffect.init()
+  GURPSSpeedProvider.init()
 
   // Modifier Bucket must be defined after hit locations
   GURPS.ModifierBucket = new ModifierBucket()
@@ -2103,19 +2107,21 @@ Hooks.once('ready', async function () {
       }
     }
     if (resp.type == 'playerFpHp') {
-      resp.targets.map(tid => game.canvas.tokens.get(tid).actor).forEach(a => {
-        if (a.isOwner) {
-          Dialog.confirm({
-            title: `${resp.actorname}`,
-            content: i18n_f("GURPS.chatWantsToExecute", { command: resp.command, name: a.name }),
-            yes: y => {
-              let old = GURPS.LastActor;
-              GURPS.SetLastActor(a);
-              GURPS.executeOTF(resp.command).then(p => GURPS.SetLastActor(old))
-            }
-          })
-        }
-      })
+      resp.targets
+        .map(tid => game.canvas.tokens.get(tid).actor)
+        .forEach(a => {
+          if (a.isOwner) {
+            Dialog.confirm({
+              title: `${resp.actorname}`,
+              content: i18n_f('GURPS.chatWantsToExecute', { command: resp.command, name: a.name }),
+              yes: y => {
+                let old = GURPS.LastActor
+                GURPS.SetLastActor(a)
+                GURPS.executeOTF(resp.command).then(p => GURPS.SetLastActor(old))
+              },
+            })
+          }
+        })
     }
     if (resp.type == 'executeOtF') {
       // @ts-ignore
@@ -2227,39 +2233,6 @@ Hooks.once('ready', async function () {
   ])
   // @ts-ignore
   GURPS.setInitiativeFormula()
-
-  //Add support for the Drag Ruler module: https://foundryvtt.com/packages/drag-ruler
-  Hooks.once('dragRuler.ready', SpeedProvider => {
-    class GURPSSpeedProvider extends SpeedProvider {
-      get colors() {
-        return [
-          { id: 'walk', default: 0x00ff00, name: 'GURPS.dragrulerWalk' },
-          { id: 'sprint', default: 0xffff00, name: 'GURPS.dragrulerSprint' },
-          { id: 'fly', default: 0xff8000, name: 'GURPS.dragrulerFly' },
-        ]
-      }
-
-      /**
-       * @param {GurpsToken} token
-       */
-      getRanges(token) {
-        const baseMove = token.actor.data.data.currentmove
-
-        // A character can always walk it's base speed and sprint at 1.2X
-        const ranges = [
-          { range: baseMove, color: 'walk' },
-          { range: Math.floor(baseMove * 1.2), color: 'sprint' },
-        ]
-
-        // Character is showing flight move
-        if (!!token.actor.data.data.additionalresources.showflightmove)
-          ranges.push({ range: token.actor.data.data.currentflight, color: 'fly' })
-        return ranges
-      }
-    }
-
-    dragRuler.registerSystem('gurps', GURPSSpeedProvider)
-  })
 
   // Translate attribute mappings if not in English
   if (game.i18n.lang != 'en') {
