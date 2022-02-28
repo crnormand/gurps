@@ -22,6 +22,7 @@ Release 0.13.5
 - Fixed Melee/Range attack if usage/mode contained "( )"
 - Added +/-@margin to attribute, skill and attack OTFs ex: \[ST+@margin] \[Sk:Brawling-@margin] \[M:Natural\*Attacks+@margin]
 - Fixed Resource Tacker editor (re-enabled + buttons), and added "Add Resource Tracker" button to melee head (if no trackers)
+- Updated to JB2A v0.3.8
 
 Release 0.13.4 2/15/2022
 
