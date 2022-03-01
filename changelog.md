@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.6 3/1/2022
+
+- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic   ;-)
+
 Release 0.13.5 2/28/2022
 
 - Updated GCA5 Exporter to fix an export issue. ~Stevil
