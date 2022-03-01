@@ -56,6 +56,16 @@ export default class MoveModeEditor extends Application {
       this.render(true)
     }
   }
+  
+  
+  /** Since the default move object may not actually be part of the DB,
+      (laissez-faire init), we need to update the full move object. 
+  */
+  async _updateMoveData(moveId, attrib, value) {
+    let old =  this.moveData[moveId]
+    old[attrib] = value 
+    await this.actor.update({ [`data.move.${moveId}`]: old})   
+  }
 
   async _change(action, key, value, html) {
     switch (action) {
@@ -70,23 +80,23 @@ export default class MoveModeEditor extends Application {
 
           // hide the field and update the actor
           html.find(`#expand-contract-${key}`).addClass('contracted')
-          await this.actor.update(JSON.parse(`{ "data.move.${key}.mode": "${value}" }`))
+          await this._updateMoveData(key, action, value)
         }
         break
 
       // change: action [value] key [00000] value [6]
       case 'basic':
-        await this.actor.update(JSON.parse(`{ "data.move.${key}.basic": "${value}" }`))
+        await this._updateMoveData(key, action, value)
         break
 
       // change: action [value] key [00000] value [6]
       case 'enhanced':
-        await this.actor.update(JSON.parse(`{ "data.move.${key}.enhanced": "${value}" }`))
+        await this._updateMoveData(key, action, value)
         break
 
       case 'other':
         html.find(`#expand-contract-${key}`).removeClass('contracted')
-        await this.actor.update(JSON.parse(`{ "data.move.${key}.mode": "${value}" }`))
+        await this._updateMoveData(key, 'mode', value)
         break
 
       default:
@@ -109,7 +119,8 @@ export default class MoveModeEditor extends Application {
           for (const k in this.moveData)
             setProperty(move, k, {
               mode: this.moveData[k].mode,
-              value: this.moveData[k].value,
+              basic: this.moveData[k].basic,
+              enhanced: this.moveData[k].enhanced,
               default: this.moveData[k].default,
             })
 
@@ -152,6 +163,7 @@ export default class MoveModeEditor extends Application {
               GURPS.put(move, {
                 mode: this.moveData[k].mode,
                 basic: this.moveData[k].basic,
+                enhanced: this.moveData[k].enhanced,
                 default: this.moveData[k].default,
               })
           }

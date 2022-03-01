@@ -2,7 +2,11 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.5
+Release 0.13.6 3/1/2022
+
+- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic   ;-)
+
+Release 0.13.5 2/28/2022
 
 - Updated GCA5 Exporter to fix an export issue. ~Stevil
 - Updated import code to warn if not using latest GCA5 export script.
@@ -22,6 +26,7 @@ Release 0.13.5
 - Fixed Melee/Range attack if usage/mode contained "( )"
 - Added +/-@margin to attribute, skill and attack OTFs ex: \[ST+@margin] \[Sk:Brawling-@margin] \[M:Natural\*Attacks+@margin]
 - Fixed Resource Tacker editor (re-enabled + buttons), and added "Add Resource Tracker" button to melee head (if no trackers)
+- Updated to JB2A v0.3.8
 
 Release 0.13.4 2/15/2022
 

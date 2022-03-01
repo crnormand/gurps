@@ -20,6 +20,7 @@ export var hitlocationDictionary = null
 
 export class HitLocation {
   static VITALS = 'Vitals'
+  static TORSO = 'Torso'
   static HUMANOID = 'humanoid'
   static SKULL = 'Skull'
   static BRAIN = 'Brain'
