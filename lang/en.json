@@ -78,6 +78,8 @@
   "GURPS.thrust": "Basic Thrust",
   "GURPS.touch": "Touch",
   "GURPS.vision": "Vision",
+  "GURPS.attributesQN": "QN",
+  "GURPS.attributesQNNAME": "Quintessence",
 
   "__ Character AddsDisadsPerksQuirks__": "=========",
   "GURPS.advDisadvPerkQuirks": "Advantages, Disadvantages, Perks & Quirks",
@@ -95,6 +97,10 @@
   "GURPS.SkillHTE": "HT/E",
   "GURPS.SkillHTH": "HT/H",
   "GURPS.SkillHTVH": "HT/VH",
+  "GURPS.SkillQNA": "QN/A",
+  "GURPS.SkillQNE": "QN/E",
+  "GURPS.SkillQNH": "QN/H",
+  "GURPS.SkillQNVH": "QN/VH",
   "GURPS.SkillIQA": "IQ/A",
   "GURPS.SkillIQE": "IQ/E",
   "GURPS.SkillIQH": "IQ/H",
@@ -1082,6 +1088,8 @@
   "GURPS.resolveDiceRoll": "What Did You Roll?",
   "GURPS.settingUsePhysicalDice": "Use Physical Dice",
   "GURPS.settingHintUsePhysicalDice": "If enabled, TRUSTED players will be prompted for all die roll values. This allows players to roll physical dice and enter the results into Foundry.",
+  "GURPS.settingUseQuintessence": "Use Quintessence",
+  "GURPS.settingHintUseQuintessence": "If enabled, adds the Quintessence attribute, and Quintessence Points become available to use as a Resource Tracker.",
 
   "GURPS.STATUSStanding": "Standing",
   "GURPS.STATUSCrawling": "Crawling",
