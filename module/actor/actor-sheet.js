@@ -144,7 +144,8 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('[data-operation="share-portrait"]').click(ev => {
       ev.preventDefault()
-      const ip = new ImagePopout(this.actor.img, {
+      let image = this.actor.data.data.fullimage ?? this.actor.img
+      const ip = new ImagePopout(image, {
         title: this.actor.name,
         shareable: true,
         entity: this.actor,
@@ -551,7 +552,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('#open-modifier-popup').on('click', this._showActiveEffectsListPopup.bind(this))
     html.find('#edit-move-modes').on('click', this._showMoveModeEditorPopup.bind(this))
-    
+
     html.find('#addFirstResourceTracker').on('click', ev => this._addTracker())
   }
 
@@ -563,7 +564,7 @@ export class GurpsActorSheet extends ActorSheet {
       let items = this.getMenuItems(id)
       this._makeHeaderMenu($(table), '.headermenu', items, ClickAndContextMenu)
     }
-    
+
     let trackermenu = html.find('#combat-trackers')
     this._makeHeaderMenu(
       $(trackermenu[0]),
