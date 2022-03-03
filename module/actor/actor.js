@@ -1927,7 +1927,8 @@ export class GurpsActor extends Actor {
       const v = !!ra?.version ? ra.version.split('-') : []
       if (isFoundryGCA) {
         if (isFoundryGCA5) {
-          if (vernum < 12) {
+         if (!!v[1]) vernum = parseInt(v[1])
+         if (vernum < 12) {
             msg.push(i18n('GURPS.importGCA5ImprovedInventoryHandling'))
           }
         } else {
