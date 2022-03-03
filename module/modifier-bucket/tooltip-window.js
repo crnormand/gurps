@@ -460,24 +460,26 @@ const ModifierLiterals = {
   },
 
   get OtherMods1() {
-    return `[+1]
-    [+2]
-    [+3]
-    [+4]
-    [+5]
-    [-1]
-    [-2]
-    [-3]
-    [-4]
-    [-5]`
+    return `["&nbsp;&nbsp;+1&nbsp;&nbsp;&nbsp;&hairsp;"+1]
+            ["&nbsp;&nbsp;+2&nbsp;&nbsp;&nbsp;&hairsp;"+2]
+            ["&nbsp;&nbsp;+3&nbsp;&nbsp;&nbsp;&hairsp;"+3]
+            ["&nbsp;&nbsp;+4&nbsp;&nbsp;&nbsp;&hairsp;"+4]
+            ["&nbsp;&nbsp;+5&nbsp;&nbsp;&nbsp;&hairsp;"+5]
+            ["&nbsp;&nbsp;&#8211;1&nbsp;&nbsp;&nbsp;"-1]
+            ["&nbsp;&nbsp;&#8211;2&nbsp;&nbsp;&nbsp;"-2]
+            ["&nbsp;&nbsp;&#8211;3&nbsp;&nbsp;&nbsp;"-3]
+            ["&nbsp;&nbsp;&#8211;4&nbsp;&nbsp;&nbsp;"-4]
+            ["&nbsp;&nbsp;&#8211;5&nbsp;&nbsp;&nbsp;"-5]`
   },
 
-  get OtherMods2() {
+  get OtherMods2() { return '' },
+  /**
     return `[+1 ${i18n('GURPS.modifierGMSaidSo')}]
     [-1 ${i18n('GURPS.modifierGMSaidSo')}]
     [+4 ${i18n('GURPS.modifierGMBlessed')}]
     [-4 ${i18n('GURPS.modifierGMDontTry')}]`
   },
+  */
 
   get TaskDifficultyModifiers() {
     return [
