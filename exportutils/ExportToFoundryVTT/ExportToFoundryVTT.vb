@@ -975,7 +975,7 @@ Public Class ExportToFoundryVTT
                         DamageText = DamageText & " (" & CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
                     End If
                     DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
-                    fw.Paragraph("<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>")
+                    fw.Paragraph("<unmodifiedDamage type=""string"">" & DamageText & "</unmodifiedDamage>")
 
                     'print the reach
                     fw.Paragraph("<reach type=""string"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "charreach") & "</reach>")
@@ -1105,7 +1105,7 @@ Public Class ExportToFoundryVTT
                             DamageText = DamageText & " (" & CurChar.Items(i).DamageModeTagItem(CurMode, "armordivisor") & ")"
                         End If
                         DamageText = DamageText & " " & CurChar.Items(i).DamageModeTagItem(CurMode, "chardamtype")
-                        fw.Paragraph("<unmodifiedDamage=""string"">" & DamageText & "</unmodifiedDamage>")
+                        fw.Paragraph("<unmodifiedDamage type=""string"">" & DamageText & "</unmodifiedDamage>")
 
                         ' print the accuracy
                         fw.Paragraph("<acc type=""number"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "characc") & "</acc>")
