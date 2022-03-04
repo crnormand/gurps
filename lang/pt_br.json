@@ -38,6 +38,7 @@
   "GURPS.descriptionSkin": "Pele",
   "GURPS.descriptionTechLevel": "Nível Tecnológico (NT)",
   "GURPS.weight": "Peso",
+  "GURPS.share": "Compartilhar",
 
   "__Character Points__": "=========",
   "GURPS.point": "Ponto",
@@ -314,6 +315,7 @@
   "GURPS.chatHelpShow": "Exibe vários valores de miniaturas na cena<hr>parâmetros:\n&lt;Atributos (primários e secundários)&gt;\n&lt;Nome de perícias&gt;\nparry (aparar)\nblock (bloqueio)\nwill (vont)\nfright (verif. de pânico)\nper\nvision (visão)\nhearing (audição)\ntaste (paladar)\nsmell (olfato)\nmove (deslocamento)\nspeed (velocidade)<hr>exemplos:\n/show IQ\n/show Furtividade PER\n/show per move speed\n/show vision hearing",
   "GURPS.chatHelpManeuver": "Configurar as seguintes manobras ao personagem selecionado.  Você pode usar * para ligar nomes de Manobras, por exemplo: '/man All Out*Double'<hr>",
   "GURPS.chatHelpRepeat": "Repetir o seguinte comando /anim com um atraso de X segundos entre cada execução.<hr>exemplos:\n/repeat /anim 1.2 heal*blue c",
+  "GURPS.chatWantsToExecute": "Deseja executar <b>{command}</b> em {name},<br><br>Você aceita?",
 
   "__Permissions__": "=========",
   "GURPS.cannotDragNonFoundryEqt": "Você não pode arrastar equipamento que não é do Foundry para outro personagem.",
@@ -629,7 +631,6 @@
   "GURPS.resourceTemplateHint": "Use esta opção para criar, reutilizar e aplicar automaticamente Controles de Recursos a planilhas de personagem.",
   "GURPS.resourceTemplateInitializer": "Inicializador",
   "GURPS.resourceTemplateManager": "Configurar Controle de Recursos",
-  "GURPS.resourceTemplateName": "Nome do Recurso",
   "GURPS.resourceTemplateSlot": "Posição Atribuída",
   "GURPS.resourceTemplateTitle": "Modelos de Controle de Recursos",
   "GURPS.resourceTracker": "Controle",
@@ -641,6 +642,7 @@
   "GURPS.trackerNotUnique": "Nome do controle ({name}) ou alias ({alias}) não é único.",
   "GURPS.resourceEnforceMinimum": "Forçar Mínimo",
   "GURPS.resourceEnforceMaximum": "Forçar Máximo",
+  "GURPS.resourceTemplateName": "Nome do Modelo",
 
   "Skill Names__": "=========",
   "GURPS.skillAcrobatics": "Acrobacia",
@@ -721,6 +723,7 @@
   "__Import Messages__": "=========",
   "GURPS.importCannotImportGCADirectly": "Não é possível importar um arquivo GCA diretamente. Por favor, exporte o arquivo utilizando a opção 'export to Foundry VTT.gce'.",
   "GURPS.importCannotImportGCSDirectly": "Não é possível importar um arquivo GCS diretamente. Por favor, exporte o arquivo utilizando o modelo de saída para o 'Foundry VTT'.",
+  "GURPS.importGCA5ImprovedInventoryHandling": "Este arquivo foi criado por uma versão mais antiga do GCA5 Export que não lida bem com o texto do inventário.",
   "GURPS.importCurrentVersions": "Versões Atualizadas: '{GCAVersion}' & '{GCSVersion}'.",
   "GURPS.importErrorParsingXML": "Erro ao analisar o XML: {text}.",
   "GURPS.importFantasyGroundUnsupported": "Não é mais possível importar um arquivo de Fantasy Grounds.",
@@ -908,6 +911,7 @@
   "GURPS.addAdvantage": "Adicionar Vantagem",
   "GURPS.addMeleeAttack": "Adicionar Ataque Corpo a Corpo",
   "GURPS.addRangedAttack": "Adicionar Ataque à Distância",
+  "GURPS.addRT": "Adicionar Controle de Recurso",
   "GURPS.addSkill": "Adicionar Perícia",
   "GURPS.addSpell": "Adicionar Mágica",
   "GURPS.advantage": "Vantagem",
@@ -1026,6 +1030,7 @@
   "GURPS.swimmersOrFlyersSuffer": "Nadadores ou voadores sofrem",
   "GURPS.target": "Alvo",
   "GURPS.targeting": "{name} é o alvo",
+  "GURPS.noTargetSelected": "Nenhum Alvo selecionado",
   "GURPS.tired": "Cansado(a)",
   "GURPS.toAllDXBasedRolls": " para todos os testes baseados em DX",
   "GURPS.TransferTo": "Transferir para",
@@ -1090,15 +1095,33 @@
   "GURPS.effectChatRangedModifier": "{displayName} :<br>[-2 nas jogadas de ataque feitas contra você com armas de combate à distância ({posture})].",
 
   "GURPS.tokenToolsTitle": "Abrir Janela de Moficiador de Efeitos",
-  "GURPS.effectModNoTokenSelected": "Nenhuma miniatura foi selecionada",
-  "GURPS.settingActiveEffects": "Exibir Efeitos Ativos",
-  "GURPS.settingHintActiveEffects": "Permitir ao MJ criar e aplicar Efeitos Ativos",
 
-  "GURPS.CR0": "TAC: N/D (Incapaz de Resistir)",
-  "GURPS.CR6": "TAC: 6 (Resiste Raramente)",
-  "GURPS.CR9": "TAC: 9 (Resiste Com Alguma Frequência)",
-  "GURPS.CR12": "TAC: 12 (Resiste Com Muita Frequência)",
-  "GURPS.CR15": "TAC: 15 (Resiste Quase Sempre)",
+  "GURPS.effectModNoTokenSelected": "Nenhuma miniatura selecionada",
+  "GURPS.targetedModifiers": "Modificadores Escolhidos",
+  "GURPS.settingActiveEffects": "Acionar Efeitos Ativos",
+  "GURPS.targetModifiers": "Target:",
+
+  "GURPS.settingHintActiveEffects": "Permitir ao Mestre criar e aplicar Efeitos Ativos",
+
+  "GURPS.CR0": "CR: N/D (Incapaz de Resistir)",
+  "GURPS.CR6": "CR: 6 (Resiste Raramente)",
+  "GURPS.CR9": "CR: 9 (Resiste Com Alguma Frequência)",
+  "GURPS.CR12": "CR: 12 (Resiste Com Muita Frequência)",
+  "GURPS.CR15": "CR: 15 (Resiste Quase Sempre)",
   "GURPS.modifiersBlindAttack": "-10 na jogada de ataque (Cego)",
-  "GURPS.modifiersBlindDefend": "-4 nas Defesas Ativas (Cego)"
+  "GURPS.modifiersBlindDefend": "-4 nas Defesas Ativas (Cego)",
+
+  "GURPS.moveModeGround": "Solo",
+  "GURPS.moveModeAir": "Ar",
+  "GURPS.moveModeWater": "Água",
+  "GURPS.moveModeSpace": "Espaço",
+  "GURPS.moveModeOther": "Outro...",
+  "GURPS.moveModeType": "Tipo de Deslocamento",
+  "GURPS.moveModeValue": "Metros/Turno",
+
+  "GURPS.effectsTermination": "Condição para Finalizar (OtF)",
+  "GURPS.effectsEffect": "Efeito",
+  "GURPS.default": "Predefinido",
+  "GURPS.conditionsCombatMove": "Deslocamento em Combate",
+  "GURPS.activeEffects": "Efeitos Ativos"
 }
