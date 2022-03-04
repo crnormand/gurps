@@ -2,6 +2,14 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.8
+
+- Fixed GCA5-12 export for unmodified damage
+
+Release 0.13.7 3/2/2022
+
+- Fixed /mook generator (Thank you Scimon!)
+
 Release 0.13.6 3/1/2022
 
 - Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic   ;-)

@@ -1928,7 +1928,8 @@ export class GurpsActor extends Actor {
       const v = !!ra?.version ? ra.version.split('-') : []
       if (isFoundryGCA) {
         if (isFoundryGCA5) {
-          if (vernum < 12) {
+         if (!!v[1]) vernum = parseInt(v[1])
+         if (vernum < 12) {
             msg.push(i18n('GURPS.importGCA5ImprovedInventoryHandling'))
           }
         } else {
@@ -3933,26 +3934,35 @@ export class GurpsActor extends Actor {
    */
   getEquipped(key) {
     let val = 0
+    let txt = ''
     if (!!this.getGurpsActorData().melee && !!this.getGurpsActorData().equipment?.carried)
       Object.values(this.getGurpsActorData().melee).forEach(melee => {
         recurselist(this.getGurpsActorData().equipment.carried, (e, k, d) => {
           if (!!e && !val && e.equipped && !!melee.name.match(makeRegexPatternFrom(e.name, false))) {
             let t = parseInt(melee[key])
-            if (!isNaN(t)) val = t
+            if (!isNaN(t)) {
+              val = t
+              txt = melee[key]
+            }
           }
         })
       })
     // @ts-ignore
-    if (!val && !!this.data.data[key]) val = parseInt(this.data.data[key])
-    return val
+    if (!val && !!this.data.data[key]) {
+      txt = '' + this.data.data[key]
+      val = parseInt(txt)
+    }
+    return [txt, val]
   }
 
   getEquippedParry() {
-    return this.getEquipped('parry')
+    let [txt, val] = this.getEquipped('parry')
+    this.getGurpsActorData().equippedparryisfencing = !!txt.match(/f$/i)
+    return val
   }
 
   getEquippedBlock() {
-    return this.getEquipped('block')
+    return this.getEquipped('block')[1]
   }
 
   /**
