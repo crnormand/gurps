@@ -4,7 +4,6 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.13.8
 
-<<<<<<< HEAD
 - Fixed GCA5-12 export for unmodified damage.
 - Increased size of generic modifier buttons in Other Modifiers section.
 - Fixed various chat messages (failing substitutions).
