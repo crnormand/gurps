@@ -10,6 +10,7 @@ Release 0.13.8
 - Added handling of user defined page ref containing URL.
 - Fixed /status chat command.
 - Updated Brazilian Portuguese language file.
+- Change remaining calls from {{localize}} handlebar to ((i18n}} handlebar.
 
 Release 0.13.7 3/2/2022
 
