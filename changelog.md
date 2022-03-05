@@ -11,6 +11,7 @@ Release 0.13.8
 - Fixed /status chat command.
 - Updated Brazilian Portuguese language file.
 - Change remaining calls from {{localize}} handlebar to ((i18n}} handlebar.
+- Fixed reaction and conditional mods to be draggable.
 
 Release 0.13.7 3/2/2022
 
