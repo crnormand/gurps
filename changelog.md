@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.8
+Release 0.13.8 3/5/2022
 
 - Fixed GCA5-12 export for unmodified damage.
 - Increased size of generic modifier buttons in Other Modifiers section.
