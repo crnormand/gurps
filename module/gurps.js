@@ -1291,11 +1291,12 @@ GURPS.applyModifierDesc = applyModifierDesc
  * @param {string | null | undefined} str
  * @param {boolean} [clrdmods=true]
  */
-function gurpslink(str, clrdmods = true) {
+function gurpslink(str, clrdmods = true, returnActions = false) {
   if (str === undefined || str == null) return '!!UNDEFINED'
   let found = -1
   let depth = 0
   let output = ''
+  let actions = []
   for (let i = 0; i < str.length; i++) {
     if (str[i] == '[') {
       if (depth == 0) found = ++i
@@ -1306,6 +1307,7 @@ function gurpslink(str, clrdmods = true) {
       if (depth == 0 && found >= 0) {
         output += str.substring(0, found - 1)
         let action = parselink(str.substring(found, i), '', clrdmods)
+        if (!!action.action) actions.push(action)
         if (!action.action) output += '['
         output += action.text
         if (!action.action) output += ']'
@@ -1315,6 +1317,7 @@ function gurpslink(str, clrdmods = true) {
       }
     }
   }
+  if (returnActions) return actions
   output += str
   return output
 }
