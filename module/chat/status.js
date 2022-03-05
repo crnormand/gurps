@@ -230,7 +230,7 @@ export default class StatusChatProcessor extends ChatProcessor {
    * @returns {EffectData|null}
    */
   getStatusEffect(actorEffect) {
-    for (const tatus of Object.values(CONFIG.statusEffects))
+    for (const status of Object.values(CONFIG.statusEffects))
       if (status.id == actorEffect.getFlag('core', 'statusId')) return status
 
     return null
