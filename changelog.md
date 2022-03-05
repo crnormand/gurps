@@ -4,11 +4,13 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.13.8
 
+<<<<<<< HEAD
 - Fixed GCA5-12 export for unmodified damage.
 - Increased size of generic modifier buttons in Other Modifiers section.
 - Fixed various chat messages (failing substitutions).
 - Added handling of user defined page ref containing URL.
 - Fixed /status chat command.
+- Updated Brazilian Portuguese language file.
 
 Release 0.13.7 3/2/2022
 
@@ -16,7 +18,7 @@ Release 0.13.7 3/2/2022
 
 Release 0.13.6 3/1/2022
 
-- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic   ;-)
+- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic ;-)
 
 Release 0.13.5 2/28/2022
 
