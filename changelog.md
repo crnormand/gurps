@@ -6,6 +6,7 @@ Release 0.13.9 3/6/2022
 
 - Fixed bug when melee attacks do not have a parry stat.
 - Disabled remote sending of LastTargetedRolls due to performance issues.
+- Added support for v2 of Token Action HUD
 
 Release 0.13.8 3/5/2022
 
