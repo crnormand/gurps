@@ -3956,7 +3956,7 @@ export class GurpsActor extends Actor {
 
   getEquippedParry() {
     let [txt, val] = this.getEquipped('parry')
-    this.getGurpsActorData().equippedparryisfencing = !!txt.match(/f$/i)
+    this.getGurpsActorData().equippedparryisfencing = !!txt?.match(/f$/i)
     return val
   }
 

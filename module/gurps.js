@@ -132,12 +132,14 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
   if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
   if (updateOtherClients) GURPS.lastTargetedRoll = tmp // keep the local copy
+/**
   game.socket.emit('system.gurps', {
     type: 'setLastTargetedRoll',
     chatdata: tmp,
     actorid: actorid,
     tokenid: tokenid,
   })
+  */
 }
 
 // TODO Why are these global?
