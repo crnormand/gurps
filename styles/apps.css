@@ -1957,6 +1957,28 @@ button.equipmentbutton:last-child {
   background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
+.standalonggurpslink {
+  color: darkblue !important;
+  background-color: rgba(225, 225, 210, 0.8) !important;
+  padding: 0.0825em 0.165em;
+  border: 0.0825em solid rgb(122, 121, 113);
+  border-radius: 0.25em;
+  margin: 0.0825em 0;
+}
+
+.standalonggurpslink:hover {
+  box-shadow: 0 0 5px rgb(128, 0, 0) !important;
+  cursor: pointer;
+  text-shadow: none;
+  font-weight: unset;
+  background-color: rgba(255, 255, 240, 0.8) !important;
+}
+
+.standalonggurpslink:active {
+  background-color: rgba(255, 255, 240, 0.4) !important;
+}
+
+
 .removemod.plus,
 .gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
