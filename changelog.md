@@ -2,6 +2,11 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.10
+
+- Re-enabled remote sending of LastTargetedRolls (fixed bug)
+- Fixed equipped parry (when 0)
+
 Release 0.13.9 3/6/2022
 
 - Fixed bug when melee attacks do not have a parry stat.
