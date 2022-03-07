@@ -3941,7 +3941,7 @@ export class GurpsActor extends Actor {
             let t = parseInt(melee[key])
             if (!isNaN(t)) {
               val = t
-              txt = melee[key]
+              txt = '' + melee[key]
             }
           }
         })
