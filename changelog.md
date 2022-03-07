@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.13.10
 
 - Re-enabled remote sending of LastTargetedRolls (fixed bug)
+- Fixed equipped parry (when 0)
 
 Release 0.13.9 3/6/2022
 
