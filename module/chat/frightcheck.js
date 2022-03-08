@@ -95,7 +95,8 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     let roll = Roll.create('3d6[Fright Check]')
     await roll.evaluate({ async: true })
 
-    let failure = roll.total > finaltarget
+    let margin = finaltarget - roll.total
+    let failure = margin < 0
     let table = this._findFrightCheckTable(tblname)
 
     let content = await renderTemplate('systems/gurps/templates/frightcheck-results.hbs', {
@@ -109,20 +110,19 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       loaded: roll.isLoaded,
       rolls: roll.dice[0].results.map(it => it.result).join(),
     })
-
+    
     await ChatMessage.create({
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       speaker: ChatMessage.getSpeaker(actor),
       content: content,
       roll: JSON.stringify(roll),
       rollMode: game.settings.get('core', 'rollMode'),
-    }).then(async () => {
+    }).then(async (html) => {
+      GURPS.setLastTargetedRoll({ margin: -margin }, actor)
       if (failure) {
-        // Draw results using a custom roll formula
-        let tableRoll = Roll.create(`3d6[Fright Check table roll] + @marginOfFailure`, {
-          marginOfFailure: roll.total - finaltarget,
-        })
-        table.draw({ roll: tableRoll }) // don't evaluate before passing
+        // Draw results using a custom roll formula.   use the negated margin for the rolltable only
+        let tableRoll = Roll.create(`3d6[Fright Check table roll] + @margin`)
+        table.draw({ roll: tableRoll }).then(() => GURPS.setLastTargetedRoll({ margin: margin }, actor)) // don't evaluate before passing
       }
     })
   }

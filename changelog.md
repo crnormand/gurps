@@ -2,6 +2,15 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.12
+
+- Allow Skill Names to be enclosed in single quotes
+- Import GCS VTT-Notes for Advantages and Equipment
+- Fixed import spell class from .gcs
+- Fixed display in melee/range if item in both equipped and other equipment list
+- Fixed /fc chat command
+- Added 'thing' description when using +/-@margin as a modifier
+
 Release 0.13.11 3/7/2022
 
 - Re-Fixed equipped parry (when 0)

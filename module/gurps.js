@@ -127,12 +127,13 @@ GURPS.ClearLastActor = function (actor) {
 GURPS.lastTargetedRoll = {}
 GURPS.lastTargetedRolls = {} // mapped by both actor and token id
 
-GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients) {
+GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients = false) {
   let tmp = { ...chatdata }
   if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
   GURPS.lastTargetedRoll = tmp // keep the local copy
-
+  // Interesting fields: GURPS.lastTargetedRoll.margin .isCritSuccess .IsCritFailure .thing
+  
   if (updateOtherClients) 
     game.socket.emit('system.gurps', {
       type: 'setLastTargetedRoll',
