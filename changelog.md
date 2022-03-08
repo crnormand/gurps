@@ -10,6 +10,7 @@ Release 0.13.12
 - Fixed display in melee/range if item in both equipped and other equipment list
 - Fixed /fc chat command
 - Added 'thing' description when using +/-@margin as a modifier
+- Add GM drag and drop combat initiative order (for Peter ;-)
 
 Release 0.13.11 3/7/2022
 

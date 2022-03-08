@@ -1121,5 +1121,6 @@
   "GURPS.effectsEffect": "Effect",
   "GURPS.default": "Default",
   "GURPS.conditionsCombatMove": "Combat Move",
-  "GURPS.activeEffects": "Active Effects"
+  "GURPS.activeEffects": "Active Effects",
+  "GURPS.quicknotes": "Quick Notes"
 }
