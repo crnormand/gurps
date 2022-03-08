@@ -1155,7 +1155,7 @@ export class GurpsActor extends Actor {
     a.parentuuid = p
 
     let old = this._findElementIn('ads', a.uuid)
-    this._migrateOtfsAndNotes(old, a)
+    this._migrateOtfsAndNotes(old, a, i.vtt_notes)
 
     let ch = []
     if (i.children?.length) {
@@ -1221,7 +1221,7 @@ export class GurpsActor extends Actor {
     s.parentuuid = p
     s.pageRef(i.reference || '')
     if (['spell', 'ritual_magic_spell'].includes(i.type)) {
-      s.class = i.spell || ''
+      s.class = i.spell_class || ''
       s.college = i.college || ''
       s.cost = i.casting_cost || ''
       s.maintain = i.maintenance_cost || ''
@@ -1327,7 +1327,7 @@ export class GurpsActor extends Actor {
     let old = this._findElementIn('equipment.carried', e.uuid)
     if (!old) old = this._findElementIn('equipment.other', e.uuid)
     if (!!old) {
-      this._migrateOtfsAndNotes(old, e)
+      this._migrateOtfsAndNotes(old, e, i.vtt_notes)
       e.carried = old.carried
       e.equipped = old.equipped
       e.parentuuid = old.parentuuid
@@ -2667,7 +2667,8 @@ export class GurpsActor extends Actor {
    * @param {Skill|Spell|Ranged|Melee} newobj
    */
   _migrateOtfsAndNotes(oldobj = {}, newobj, importvttnotes = '') {
-    if (!!importvttnotes) newobj.notes += (!!newobj.notes ? ' ' : '') + importvttnotes
+    if (!!importvttnotes) 
+      newobj.notes += (!!newobj.notes ? ' ' : '') + importvttnotes
     this._updateOtf('check', oldobj, newobj)
     this._updateOtf('during', oldobj, newobj)
     this._updateOtf('pass', oldobj, newobj)
