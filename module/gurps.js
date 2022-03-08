@@ -2097,9 +2097,42 @@ Hooks.once('ready', async function () {
           // @ts-ignore
           target.actor.handleDamageDrop(dropData.payload)
         }
+        if (dropData.type === 'initiative') {
+          let target = game.combat.data.combatants.get(combatant)
+          let src = game.combat.data.combatants.get(dropData.combatant)
+          let updates = []
+          if (target.initiative < src.initiative)
+            updates.push({_id: dropData.combatant, initiative: target.initiative - 0.00001});
+          else
+             updates.push({_id: dropData.combatant, initiative: target.initiative + 0.00001});    
+          game.combat.updateEmbeddedDocuments("Combatant", updates);     
+        }
+      })
+    }
+   
+      
+   if (game.user.isGM) {
+        html.find('.combatant').each((_, li) => {
+        li.setAttribute('draggable', true)
+        li.addEventListener('dragstart', ev => {
+          let display = ''
+          if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+          let dragIcon = $(event.currentTarget).find('.token-image')[0];
+          ev.dataTransfer.setDragImage(dragIcon, 25, 25);
+          return ev.dataTransfer.setData(
+            'text/plain',
+            JSON.stringify({
+              type: 'initiative',
+              combatant: li.getAttribute('data-combatant-id')
+            })
+          )
+        })
       })
     }
   })
+  
+
+  
 
   // @ts-ignore
   game.socket.on('system.gurps', async resp => {
