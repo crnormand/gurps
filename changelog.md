@@ -12,6 +12,7 @@ Release 0.13.12
 - Added 'thing' description when using +/-@margin as a modifier
 - Add GM drag and drop combat initiative order (for Peter ;-)
 - Fixed Item bonuses/melee/ranged not respecting 'unequipped' flag.
+- Added system setting for default ADD action (apply, apply quietly, target).
 
 Release 0.13.11 3/7/2022
 
