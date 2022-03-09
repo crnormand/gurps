@@ -11,6 +11,7 @@ Release 0.13.12
 - Fixed /fc chat command
 - Added 'thing' description when using +/-@margin as a modifier
 - Add GM drag and drop combat initiative order (for Peter ;-)
+- Fixed Item bonuses/melee/ranged not respecting 'unequipped' flag.
 
 Release 0.13.11 3/7/2022
 

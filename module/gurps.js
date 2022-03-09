@@ -2101,11 +2101,13 @@ Hooks.once('ready', async function () {
           let target = game.combat.data.combatants.get(combatant)
           let src = game.combat.data.combatants.get(dropData.combatant)
           let updates = []
-          if (target.initiative < src.initiative)
-            updates.push({_id: dropData.combatant, initiative: target.initiative - 0.00001});
-          else
-             updates.push({_id: dropData.combatant, initiative: target.initiative + 0.00001});    
-          game.combat.updateEmbeddedDocuments("Combatant", updates);     
+          if (!!target && !!src) {
+            if (target.initiative < src.initiative)
+              updates.push({_id: dropData.combatant, initiative: target.initiative - 0.00001});
+            else
+               updates.push({_id: dropData.combatant, initiative: target.initiative + 0.00001});    
+            game.combat.updateEmbeddedDocuments("Combatant", updates);     
+          }
         }
       })
     }
