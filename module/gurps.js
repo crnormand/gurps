@@ -1320,7 +1320,7 @@ function gurpslink(str, clrdmods = true, returnActions = false) {
       }
     }
   }
-  if (returnActions) return actions
+  if (returnActions === true) return actions
   output += str
   return output
 }
