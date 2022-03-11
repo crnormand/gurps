@@ -2,6 +2,32 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.13 3/10/2022
+
+- Make /hp/fp @target case insensitive
+- Fixed conflict with GURPS Easy Combat
+
+Release 0.13.12 3/9/2022
+
+- Allow Skill Names to be enclosed in single quotes
+- Import GCS VTT-Notes for Advantages and Equipment
+- Fixed import spell class from .gcs
+- Fixed display in melee/range if item in both equipped and other equipment list
+- Fixed /fc chat command
+- Added 'thing' description when using +/-@margin as a modifier
+- Add GM drag and drop combat initiative order (for Peter ;-)
+- Fixed Item bonuses/melee/ranged not respecting 'unequipped' flag.
+- Added system setting for default ADD action (apply, apply quietly, target).
+
+Release 0.13.11 3/7/2022
+
+- Re-Fixed equipped parry (when 0)
+
+Release 0.13.10 3/7/2022
+
+- Re-enabled remote sending of LastTargetedRolls (fixed bug)
+- Fixed equipped parry (when 0)
+
 Release 0.13.9 3/6/2022
 
 - Fixed bug when melee attacks do not have a parry stat.

@@ -127,19 +127,20 @@ GURPS.ClearLastActor = function (actor) {
 GURPS.lastTargetedRoll = {}
 GURPS.lastTargetedRolls = {} // mapped by both actor and token id
 
-GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients) {
+GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherClients = false) {
   let tmp = { ...chatdata }
   if (!!actorid) GURPS.lastTargetedRolls[actorid] = tmp
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
-  if (updateOtherClients) GURPS.lastTargetedRoll = tmp // keep the local copy
-/**
-  game.socket.emit('system.gurps', {
-    type: 'setLastTargetedRoll',
-    chatdata: tmp,
-    actorid: actorid,
-    tokenid: tokenid,
-  })
-  */
+  GURPS.lastTargetedRoll = tmp // keep the local copy
+  // Interesting fields: GURPS.lastTargetedRoll.margin .isCritSuccess .IsCritFailure .thing
+  
+  if (updateOtherClients) 
+    game.socket.emit('system.gurps', {
+      type: 'setLastTargetedRoll',
+      chatdata: tmp,
+      actorid: actorid,
+      tokenid: tokenid,
+    })
 }
 
 // TODO Why are these global?
@@ -1319,7 +1320,7 @@ function gurpslink(str, clrdmods = true, returnActions = false) {
       }
     }
   }
-  if (returnActions) return actions
+  if (returnActions === true) return actions
   output += str
   return output
 }
@@ -2096,9 +2097,44 @@ Hooks.once('ready', async function () {
           // @ts-ignore
           target.actor.handleDamageDrop(dropData.payload)
         }
+        if (dropData.type === 'initiative') {
+          let target = game.combat.data.combatants.get(combatant)
+          let src = game.combat.data.combatants.get(dropData.combatant)
+          let updates = []
+          if (!!target && !!src) {
+            if (target.initiative < src.initiative)
+              updates.push({_id: dropData.combatant, initiative: target.initiative - 0.00001});
+            else
+               updates.push({_id: dropData.combatant, initiative: target.initiative + 0.00001});    
+            game.combat.updateEmbeddedDocuments("Combatant", updates);     
+          }
+        }
+      })
+    }
+   
+      
+   if (game.user.isGM) {
+        html.find('.combatant').each((_, li) => {
+        li.setAttribute('draggable', true)
+        li.addEventListener('dragstart', ev => {
+          let display = ''
+          if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
+          let dragIcon = $(event.currentTarget).find('.token-image')[0];
+          ev.dataTransfer.setDragImage(dragIcon, 25, 25);
+          return ev.dataTransfer.setData(
+            'text/plain',
+            JSON.stringify({
+              type: 'initiative',
+              combatant: li.getAttribute('data-combatant-id')
+            })
+          )
+        })
       })
     }
   })
+  
+
+  
 
   // @ts-ignore
   game.socket.on('system.gurps', async resp => {

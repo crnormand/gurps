@@ -301,6 +301,8 @@ class ModifierStack {
     let m = (mod + '').match(/([+-])?@margin/i)
     if (!!m) {
       mod = (GURPS.lastTargetedRoll?.margin || 0) * (m[1] == '-' ? -1 : 1) 
+      if (GURPS.lastTargetedRoll?.thing)
+        reason = reason.replace(/-@/,' -').replace(/\+@/,'') + " for " + GURPS.lastTargetedRoll.thing
     }
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)

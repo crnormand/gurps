@@ -847,6 +847,9 @@
   "GURPS.settingImportHintBrowserImporter": "Check this if you are not hosting your Foundry instance locally (you are hosting externally, i.e. Forge). This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
   "GURPS.settingShowChatReeling": "Display Reeling/Tired Status in Chat",
   "GURPS.settingHintShowChatReeling": "When checked, changes to any actor's Reeling or Tired status will be displayed as a chat message.",
+  "GURPS.settingDefaultADDAction": "Set default action for Damage Dialog",
+  "GURPS.settingHintefaultADDAction": "When set to 'Target' it will choose 'Apply' for Player Characters and 'Apply Quietly' for NPCs.",
+  "GURPS.settingApplyBasedOnTarget": "'Target'",
 
   "__Color Settings__": "=========",
   "GURPS.settingColorSheetMenuTitle": "Color Character Sheet",
@@ -1121,5 +1124,6 @@
   "GURPS.effectsEffect": "Effect",
   "GURPS.default": "Default",
   "GURPS.conditionsCombatMove": "Combat Move",
-  "GURPS.activeEffects": "Active Effects"
+  "GURPS.activeEffects": "Active Effects",
+  "GURPS.quicknotes": "Quick Notes"
 }

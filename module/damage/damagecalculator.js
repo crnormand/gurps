@@ -200,6 +200,11 @@ export class CompositeDamageCalculator {
     if (viewId === 'all') return this
     return this._calculators[viewId]
   }
+  
+  get showApplyAction() {
+    return game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'apply' ||
+       (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'target' && this._defender.hasPlayerOwner)    
+  }
 
   get additionalWoundModifier() {
     return this._additionalWoundModifier
