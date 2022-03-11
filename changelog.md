@@ -2,9 +2,22 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.8
+Release 0.13.9 3/6/2022
 
-- Fixed GCA5-12 export for unmodified damage
+- Fixed bug when melee attacks do not have a parry stat.
+- Disabled remote sending of LastTargetedRolls due to performance issues.
+- Added support for v2 of Token Action HUD
+
+Release 0.13.8 3/5/2022
+
+- Fixed GCA5-12 export for unmodified damage.
+- Increased size of generic modifier buttons in Other Modifiers section.
+- Fixed various chat messages (failing substitutions).
+- Added handling of user defined page ref containing URL.
+- Fixed /status chat command.
+- Updated Brazilian Portuguese language file.
+- Change remaining calls from {{localize}} handlebar to ((i18n}} handlebar.
+- Fixed reaction and conditional mods to be draggable.
 
 Release 0.13.7 3/2/2022
 
@@ -12,7 +25,7 @@ Release 0.13.7 3/2/2022
 
 Release 0.13.6 3/1/2022
 
-- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic   ;-)
+- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic ;-)
 
 Release 0.13.5 2/28/2022
 
