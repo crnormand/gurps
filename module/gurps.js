@@ -424,6 +424,38 @@ const actionFuncs = {
     handlePdf(action.link)
     return true
   },
+  
+  // 
+  iftest({ action }) {
+    if (!GURPS.lastTargetedRoll)
+      return false
+    if (action.name == 'isCritSuccess')
+      return !!GURPS.lastTargetedRoll.isCritSuccess
+    if (action.name == 'isCritFailure')
+      return !!GURPS.lastTargetedRoll.isCritFailure
+    if (!action.equation)   // if [@margin] tests for >=0
+      return GURPS.lastTargetedRoll.margin >= 0
+    else {
+      let m = action.equation.match(/ *([=<>]+) *([+-]?[\d\.]+)/)
+      let value = Number(m[2])
+      switch (m[1]) {
+        case '=':
+        case '==':
+          return GURPS.lastTargetedRoll.margin == value
+        case '>':
+          return GURPS.lastTargetedRoll.margin > value
+        case '>=':
+          return GURPS.lastTargetedRoll.margin >= value
+        case '<':
+          return GURPS.lastTargetedRoll.margin < value
+        case '<=':
+          return GURPS.lastTargetedRoll.margin <= value
+        default:
+          return false
+      }
+    }
+  },
+
   /**
    * @param {Object} data
    * @param {Object} data.action
