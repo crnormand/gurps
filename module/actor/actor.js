@@ -525,6 +525,7 @@ export class GurpsActor extends Actor {
   _getCurrentMoveMode() {
     let move = this.getGurpsActorData().move
     let current = Object.values(move).find(it => it.default)
+    if (!current && Object.keys(move).length > 0) return move['00000']
     return current
   }
 

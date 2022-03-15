@@ -31,7 +31,7 @@
               </div>
               <div class='tooltip gga-manual'>
                 {{#if this.notes}}
-                  {{{gurpslinkbr this.notes}}}
+                  {{#if title}}<b>{{{gurpslinkbr this.title}}}</b> {{/if}}{{{gurpslinkbr this.notes}}}
                 {{else}}
                   {{i18n "GURPS.noteBlank"}}<i class='far fa-laugh-wink'></i>
                 {{/if}}
