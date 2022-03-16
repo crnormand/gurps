@@ -1,5 +1,5 @@
 import { arrayToObject, atou, i18n, i18n_f, objectToArray, zeroFill } from '../../lib/utilities.js'
-import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
+import { Reaction, Equipment, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
@@ -10,6 +10,7 @@ import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import MoveModeEditor from './move-mode-editor.js'
+import { Advantage, Melee, Note, Ranged, Skill, Spell } from './actor-components.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
