@@ -495,7 +495,7 @@ const actionFuncs = {
   dragdrop({ action }) {
     switch (action.link) {
       case 'JournalEntry':
-        game.journal?.get(action.id)?.show()
+        game.journal?.get(action.id)?.sheet?.render(true)
         return true
       case 'Actor':
         game.actors?.get(action.id)?.sheet?.render(true)
