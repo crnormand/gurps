@@ -1,5 +1,5 @@
 'use strict'
-import { Melee, Ranged, Skill, Spell, Advantage } from './actor/actor.js'
+import { _Base, Melee, Skill, Spell, Advantage, Ranged } from './actor/actor-components.js'
 import { digitsAndDecimalOnly, digitsOnly } from '../lib/jquery-helper.js'
 import { recurselist } from '../lib/utilities.js'
 
