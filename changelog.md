@@ -7,6 +7,7 @@ Release 0.13.14
 - Make all @margin entries case insensitive
 - Add /if check for @margin, @isCritSuccess, @isCritFailure (@margin >/>=/</<=/=/== X)
 - Fixed, when clicking OTF Journal link, only show for current user (not all owners, including GM).
+- Added range modifier support for grid units like "mile/miles/mi'
 
 Release 0.13.13 3/10/2022
 
