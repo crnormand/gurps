@@ -250,6 +250,14 @@
   min-width: fit-content;
 }
 
+.dodge span {
+  min-width: 1.5em;
+}
+
+.dodge span .bonus {
+  font-size: 90%;
+}
+
 .rollable:active {
   cursor: pointer;
   text-decoration: none;
