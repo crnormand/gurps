@@ -250,11 +250,15 @@
   min-width: fit-content;
 }
 
-.dodge span {
+.dodge span,
+.parry span,
+.block span {
   min-width: 1.5em;
 }
 
-.dodge span .bonus {
+.dodge span.bonus,
+.parry span.bonus,
+.block span.bonus {
   font-size: 90%;
 }
 
@@ -1124,13 +1128,13 @@ body {
 }
 
 #melee .headermenu {
-	display: flex;
+  display: flex;
   justify-content: space-between;
 }
 
 #melee .headermenu #addFirstResourceTracker {
-	font-size: calc(100% - 2px);
-  padding-left:50px; 
+  font-size: calc(100% - 2px);
+  padding-left: 50px;
 }
 
 .equipmentlist .headermenu i,

@@ -96,8 +96,18 @@
           data-key='data.melee.{{@key}}'
           data-otf='M:"{{name}} ({{mode}})"'
         >{{level}}</div>
-        <div class='parry rollable flex-center' data-otf='P:"{{name}} ({{mode}})"'>{{parry}}</div>
-        <div class='block rollable flex-center' data-otf='B:"{{name}} ({{mode}})"'>{{block}}</div>
+        <div class='parry flex-center'>
+          <span class="flex-center rollable" data-otf='P:"{{name}} ({{mode}})"'>{{parry}}</span>
+          {{#if (and parry ../data.defenses.parry.bonus)}}
+            <span class="flex-center rollable bonus" data-otf='P:"{{name}} ({{mode}})" {{{displayNumber ../data.defenses.parry.bonus}}} DB'>{{{displayNumber ../data.defenses.parry.bonus}}}</span>
+          {{/if}}
+        </div>
+        <div class='block flex-center' data-otf='B:"{{name}} ({{mode}})"'>
+          <span class="flex-center rollable" data-otf='B:"{{name}} ({{mode}})"'>{{block}}</span>
+          {{#if (and block ../data.defenses.block.bonus)}}
+            <span class="flex-center rollable bonus" data-otf='B:"{{name}} ({{mode}})" {{{displayNumber ../data.defenses.parry.bonus}}} DB'>{{{displayNumber ../data.defenses.block.bonus}}}</span>
+          {{/if}}
+        </div>
         <div class='damage rollable flex-center' data-damage data-otf='{{damage}}'>{{damage}}</div>
         <div class='reach flex-center'>{{reach}}</div>
         <div class='st flex-center'>{{st}}</div>

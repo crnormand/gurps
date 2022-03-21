@@ -45,7 +45,7 @@
         <span class="flex-center {{include-if current 'rollable'}}" {{#if current}}data-otf='Dodge'{{/if}}>{{currentdodge}}</span>
         {{#if ../data.defenses.dodge.bonus}}
           <span class="flex-center bonus {{include-if current 'rollable'}}"
-           {{#if current}}data-otf='Dodge {{../data.defenses.dodge.bonus}} DB'{{/if}}>
+           {{#if current}}data-otf='Dodge {{{displayNumber ../data.defenses.dodge.bonus}}} DB'{{/if}}>
            {{{displayNumber ../data.defenses.dodge.bonus}}}</span>
         {{/if}}
       </div>
