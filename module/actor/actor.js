@@ -470,18 +470,18 @@ export class GurpsActor extends Actor {
     if (!!encs) {
       const level0 = encs[zeroFill(0)] // if there are encumbrances, there will always be a level0
       let effectiveMove = parseInt(level0.move)
-      let effectiveDodge = parseInt(level0.dodge) + data.currentdodge
+      let effectiveDodge = isNaN(parseInt(level0.dodge)) ? '–' : parseInt(level0.dodge) + data.currentdodge
       let effectiveSprint = this._getSprintMove()
 
       if (isReeling) {
         effectiveMove = Math.ceil(effectiveMove / 2)
-        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
       if (isTired) {
         effectiveMove = Math.ceil(effectiveMove / 2)
-        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
@@ -489,7 +489,7 @@ export class GurpsActor extends Actor {
         let enc = encs[enckey]
         let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
-        enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
+        enc.currentdodge = isNaN(effectiveDodge) ? '–' : Math.max(1, effectiveDodge - parseInt(enc.level))
         enc.currentsprint = Math.max(1, Math.floor(effectiveSprint * threshold))
         enc.currentmovedisplay = enc.currentmove
         // TODO remove additionalresources.showflightmove
@@ -3926,7 +3926,7 @@ export class GurpsActor extends Actor {
   getTorsoDr() {
     if (!this.getGurpsActorData().hitlocations) return 0
     let hl = Object.values(this.getGurpsActorData().hitlocations).find(h => h.penalty == 0)
-    return !!hl ? hl.dr : 0
+    return !!hl ? hl : { dr: 0 }
   }
 
   /**
