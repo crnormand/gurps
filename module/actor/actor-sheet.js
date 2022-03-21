@@ -1089,7 +1089,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/note-editor-popup.html',
       'Note Editor',
-      ['pageref', 'notes'],
+      ['pageref', 'notes', 'title'],
       [],
       730
     )
@@ -1708,7 +1708,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeDeleteMenu(html, '.adsmenu', new Advantage('???'), ClickAndContextMenu)
     this.makeDeleteMenu(html, '.skillmenu', new Skill('???'), ClickAndContextMenu)
     this.makeDeleteMenu(html, '.spellmenu', new Spell('???'), ClickAndContextMenu)
-    this.makeDeleteMenu(html, '.notemenu', new Note('???', true), ClickAndContextMenu)
+    this.makeDeleteMenu(html, '.notemenu', new Note('???', true), 'contextmenu')
 
     html.find('#body-plan').change(async e => {
       let bodyplan = e.currentTarget.value
@@ -1798,28 +1798,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       default:
         return menu
     }
-
-    const map = {
-      '#equipmentcarried': [
-        this.sortAscendingMenu('data.equipment.carried'),
-        this.sortDescendingMenu('data.equipment.carried'),
-        this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
-          'data.equipment.carried'
-        ),
-      ],
-      '#equipmentother': [
-        this.sortAscendingMenu('data.equipment.other'),
-        this.sortDescendingMenu('data.equipment.other'),
-        this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
-          'data.equipment.other'
-        ),
-      ],
-    }
-    return map[elementid]
   }
 
   async _onClickIgnoreImportBodyPlan(ev) {
