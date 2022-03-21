@@ -133,8 +133,8 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
   GURPS.lastTargetedRoll = tmp // keep the local copy
   // Interesting fields: GURPS.lastTargetedRoll.margin .isCritSuccess .IsCritFailure .thing
-  
-  if (updateOtherClients) 
+
+  if (updateOtherClients)
     game.socket.emit('system.gurps', {
       type: 'setLastTargetedRoll',
       chatdata: tmp,
@@ -424,16 +424,14 @@ const actionFuncs = {
     handlePdf(action.link)
     return true
   },
-  
-  // 
+
+  //
   iftest({ action }) {
-    if (!GURPS.lastTargetedRoll)
-      return false
-    if (action.name == 'isCritSuccess')
-      return !!GURPS.lastTargetedRoll.isCritSuccess
-    if (action.name == 'isCritFailure')
-      return !!GURPS.lastTargetedRoll.isCritFailure
-    if (!action.equation)   // if [@margin] tests for >=0
+    if (!GURPS.lastTargetedRoll) return false
+    if (action.name == 'isCritSuccess') return !!GURPS.lastTargetedRoll.isCritSuccess
+    if (action.name == 'isCritFailure') return !!GURPS.lastTargetedRoll.isCritFailure
+    if (!action.equation)
+      // if [@margin] tests for >=0
       return GURPS.lastTargetedRoll.margin >= 0
     else {
       let m = action.equation.match(/ *([=<>]+) *([+-]?[\d\.]+)/)
@@ -1222,8 +1220,16 @@ async function handleRoll(event, actor, targets) {
   if (!!actor) GURPS.SetLastActor(actor)
 
   if ('damage' in element.dataset) {
-    // expect text like '2d+1 cut'
+    // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
     let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
+    if (f.includes(',')) {
+      let parts = f.split(',')
+      for (let part of parts) {
+        let result = parseForRollOrDamage(part.trim())
+        if (result?.action) performAction(result.action, actor, event, targets)
+      }
+      return
+    }
     let result = parseForRollOrDamage(f)
     if (result?.action) performAction(result.action, actor, event, targets)
     return
@@ -2135,38 +2141,33 @@ Hooks.once('ready', async function () {
           let updates = []
           if (!!target && !!src) {
             if (target.initiative < src.initiative)
-              updates.push({_id: dropData.combatant, initiative: target.initiative - 0.00001});
-            else
-               updates.push({_id: dropData.combatant, initiative: target.initiative + 0.00001});    
-            game.combat.updateEmbeddedDocuments("Combatant", updates);     
+              updates.push({ _id: dropData.combatant, initiative: target.initiative - 0.00001 })
+            else updates.push({ _id: dropData.combatant, initiative: target.initiative + 0.00001 })
+            game.combat.updateEmbeddedDocuments('Combatant', updates)
           }
         }
       })
     }
-   
-      
-   if (game.user.isGM) {
-        html.find('.combatant').each((_, li) => {
+
+    if (game.user.isGM) {
+      html.find('.combatant').each((_, li) => {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let display = ''
           if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
-          let dragIcon = $(event.currentTarget).find('.token-image')[0];
-          ev.dataTransfer.setDragImage(dragIcon, 25, 25);
+          let dragIcon = $(event.currentTarget).find('.token-image')[0]
+          ev.dataTransfer.setDragImage(dragIcon, 25, 25)
           return ev.dataTransfer.setData(
             'text/plain',
             JSON.stringify({
               type: 'initiative',
-              combatant: li.getAttribute('data-combatant-id')
+              combatant: li.getAttribute('data-combatant-id'),
             })
           )
         })
       })
     }
   })
-  
-
-  
 
   // @ts-ignore
   game.socket.on('system.gurps', async resp => {
