@@ -41,8 +41,13 @@
         <input name='data.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{dodge}}' />
       </div>
     {{else}}
-      <div class='dodge flex-center {{include-if current 'current rollable'}}' {{#if current}}data-otf='Dodge'{{/if}} data-path='dodge'>
-        {{currentdodge}}
+      <div class='dodge flex-center {{include-if current 'current'}}' data-path='dodge'>
+        <span class="flex-center {{include-if current 'rollable'}}" {{#if current}}data-otf='Dodge'{{/if}}>{{currentdodge}}</span>
+        {{#if ../data.defenses.dodge.bonus}}
+          <span class="flex-center bonus {{include-if current 'rollable'}}"
+           {{#if current}}data-otf='Dodge {{{displayNumber ../data.defenses.dodge.bonus}}} DB'{{/if}}>
+           {{{displayNumber ../data.defenses.dodge.bonus}}}</span>
+        {{/if}}
       </div>
     {{/if}}
   {{/each}}

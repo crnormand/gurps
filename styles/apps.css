@@ -1055,9 +1055,7 @@ active-effects-list .section h3 {
   max-height: max-content;
 }
 
-.resource-editor .tracker-manager.table,
-.active-effects-list .gga-effects-list.table,
-.move-mode-editor.table {
+.resource-editor .tracker-manager.table, .active-effects-list .gga-effects-list.table, .move-mode-editor.table, .splitdr-editor.table {
   display: grid;
   gap: 0.15rem;
   justify-items: stretch;
@@ -1088,7 +1086,13 @@ active-effects-list .section h3 {
   margin-bottom: 30px;
 }
 
-.move-mode-editor .expand-contract {
+.splitdr-editor.table {
+  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 1fr min-content min-content;
+}
+
+.move-mode-editor .expand-contract, .splitdr-editor .expand-contract {
   transition: all 1s;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 0 0 3px 3px;
@@ -1098,7 +1102,7 @@ active-effects-list .section h3 {
   box-shadow: inset 0px 2px 3px 0 grey;
 }
 
-.move-mode-editor .expand-contract.contracted {
+.move-mode-editor .expand-contract.contracted, .splitdr-editor .expand-contract.contracted {
   height: 0;
   border: none;
   padding: 0;
@@ -1209,8 +1213,7 @@ active-effects-list .section h3 {
   font-size: 90%;
 }
 
-#condition .fieldblock button#open-modifier-popup,
-#condition .fieldblock button#edit-move-modes {
+#condition .fieldblock button#open-modifier-popup, #condition .fieldblock button#edit-move-modes, #location .dr button {
   font-size: 90%;
   max-height: fit-content;
   width: auto;
@@ -1219,9 +1222,7 @@ active-effects-list .section h3 {
   height: calc(var(--form-field-height) + 1px);
 }
 
-#editorsheet #condition .fieldblock button#edit-move-modes,
-#combat-sheet #condition .fieldblock button#edit-move-modes,
-#sheet #condition .fieldblock button#edit-move-modes {
+#editorsheet #condition .fieldblock button#edit-move-modes, #combat-sheet #condition .fieldblock button#edit-move-modes, #sheet #condition .fieldblock button#edit-move-modes, #location .dr button {
   height: min-content;
 }
 
