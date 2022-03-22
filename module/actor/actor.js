@@ -3282,15 +3282,25 @@ export class GurpsActor extends Actor {
   async addTracker() {
     this.ignoreRender = true
 
-    let trackerData = this.data.data.additionalresources.tracker
-    if (!trackerData) trackerData = {}
-    let trackers = objectToArray(trackerData)
-    trackers.push({ name: '', value: 0, min: 0, max: 0, points: 0 })
-    let data = arrayToObject(trackers)
+    let trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
+    let data = GurpsActor.addTrackerToDataObject(this.getGurpsActorData(), trackerData)
+
     await this.update({ 'data.additionalresources.-=tracker': null })
     await this.update({ 'data.additionalresources.tracker': data })
 
     this._forceRender()
+  }
+
+  static addTrackerToDataObject(data, trackerData) {
+    let trackers = GurpsActor.getTrackersAsArray(data)
+    trackers.push(trackerData)
+    return arrayToObject(trackers)
+  }
+
+  static getTrackersAsArray(data) {
+    let trackerArray = data.additionalresources.tracker
+    if (!trackerArray) trackerArray = {}
+    return objectToArray(trackerArray)
   }
 
   async setMoveDefault(value) {
