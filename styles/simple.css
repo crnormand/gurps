@@ -238,8 +238,8 @@
   border-right: 1px solid #333300 !important;
   border-bottom: 1px solid #333300 !important;
   border-radius: 3px;
-  margin-bottom: -1px;
-  margin-right: -1px;
+  /* margin-bottom: -1px; */
+  /* margin-right: -1px; */
   overflow: visible;
   z-index: 99;
 }
@@ -254,6 +254,8 @@
 .parry span,
 .block span {
   min-width: 1.5em;
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid transparent;
 }
 
 .dodge span.bonus,

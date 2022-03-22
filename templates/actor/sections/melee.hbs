@@ -5,7 +5,7 @@
       <span>{{i18n 'GURPS.meleeWeapons'}}</span>
       <i class='fas fa-caret-square-down'></i>
       {{#if (empty data.additionalresources.tracker)}}
-        <span id='addFirstResourceTracker' >{{i18n 'GURPS.addRT'}}
+        <span id='addFirstResourceTracker'>{{i18n 'GURPS.addRT'}}
           <i class='fas fa-caret-square-up'></i>
         </span>
       {{/if}}
@@ -84,28 +84,28 @@
           </div>
         </div>
 
-        <div
-          class='usage rollable flex-center'
-          data-name='{{name}} ({{mode}})'
-          data-key='data.melee.{{@key}}'
-          data-otf='M:"{{name}} ({{mode}})"'
-        >{{mode}}</div>
-        <div
-          class='level rollable flex-center'
-          data-name='{{name}} ({{mode}})'
-          data-key='data.melee.{{@key}}'
-          data-otf='M:"{{name}} ({{mode}})"'
-        >{{level}}</div>
-        <div class='parry flex-center'>
-          <span class="flex-center rollable" data-otf='P:"{{name}} ({{mode}})"'>{{parry}}</span>
-          {{#if (and parry ../data.defenses.parry.bonus)}}
-            <span class="flex-center rollable bonus" data-otf='P:"{{name}} ({{mode}})" {{{displayNumber ../data.defenses.parry.bonus}}} DB'>{{{displayNumber ../data.defenses.parry.bonus}}}</span>
+        <div class='usage rollable flex-center' data-name='{{name}} ({{mode}})' data-key='data.melee.{{@key}}'
+          data-otf='M:"{{name}} ({{mode}})"'>{{mode}}</div>
+        <div class='level rollable flex-center' data-name='{{name}} ({{mode}})' data-key='data.melee.{{@key}}'
+          data-otf='M:"{{name}} ({{mode}})"'>{{level}}</div>
+        <div class='parry flex-center' style="background-color: #ffffbe; width: 100%;">
+          {{#if (isNum parry)}}
+            <span class="flex-center rollable" data-otf='P:"{{name}} ({{mode}})"'>{{parry}}</span>
+            {{#if (isNum ../data.defenses.parry.bonus)}}
+              <span class="flex-center rollable bonus"
+                data-otf='P:"{{name}} ({{mode}})" {{{displayNumber ../data.defenses.parry.bonus}}} DB'>
+                {{{displayNumber ../data.defenses.parry.bonus}}}</span>
+            {{/if}}
           {{/if}}
         </div>
-        <div class='block flex-center' data-otf='B:"{{name}} ({{mode}})"'>
-          <span class="flex-center rollable" data-otf='B:"{{name}} ({{mode}})"'>{{block}}</span>
-          {{#if (and block ../data.defenses.block.bonus)}}
-            <span class="flex-center rollable bonus" data-otf='B:"{{name}} ({{mode}})" {{{displayNumber ../data.defenses.parry.bonus}}} DB'>{{{displayNumber ../data.defenses.block.bonus}}}</span>
+        <div class='block flex-center' style="background-color: #ffffbe">
+          {{#if (isNum block)}}
+            <span class="flex-center rollable" data-otf='B:"{{name}} ({{mode}})"'>{{block}}</span>
+            {{#if (isNum ../data.defenses.block.bonus)}}
+              <span class="flex-center rollable bonus"
+                data-otf='B:"{{name}} ({{mode}})" {{{displayNumber ../data.defenses.block.bonus}}} DB'>
+                {{{displayNumber ../data.defenses.block.bonus}}}</span>
+            {{/if}}
           {{/if}}
         </div>
         <div class='damage rollable flex-center' data-damage data-otf='{{damage}}'>{{damage}}</div>

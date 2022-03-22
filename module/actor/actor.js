@@ -1,7 +1,6 @@
 'use strict'
 
 import {
-  extractP,
   xmlTextToJson,
   convertRollStringToArrayOfInt,
   recurselist,
@@ -35,7 +34,20 @@ import { SmartImporter } from '../smart-importer.js'
 import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
-import { _Base, Named, Skill, Spell, Advantage, Ranged, Note } from './actor-components.js'
+import {
+  _Base,
+  Skill,
+  Spell,
+  Advantage,
+  Ranged,
+  Note,
+  Encumbrance,
+  Equipment,
+  Reaction,
+  Modifier,
+  Melee,
+  HitLocationEntry,
+} from './actor-components.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -143,7 +155,7 @@ export class GurpsActor extends Actor {
     if (this.getGurpsActorData().encumbrance) {
       let move = this.getGurpsActorData().move
       if (!move) {
-        let currentMove = this.getGurpsActorData().encumbrance['00000'].move
+        let currentMove = this.getGurpsActorData().encumbrance['00000'].move ?? this.getGurpsActorData().basicmove.value
         let value = { mode: MoveModes.Ground, basic: currentMove, default: true }
         setProperty(this.getGurpsActorData(), 'move.00000', value)
         move = this.getGurpsActorData().move
@@ -3891,12 +3903,8 @@ export class GurpsActor extends Actor {
       if (!rollText) rollText = HitLocations.HitLocation.DEFAULT
       let dr = parseInt(value.dr)
       if (isNaN(dr)) dr = 0
-      myhitlocations.push({
-        where: value.where,
-        dr: dr,
-        roll: convertRollStringToArrayOfInt(rollText),
-        rollText: rollText,
-      })
+      let entry = new HitLocationEntry(value.where, dr, rollText, value?.split)
+      myhitlocations.push(entry)
     }
     return myhitlocations
   }
@@ -4135,116 +4143,3 @@ export class GurpsActor extends Actor {
     return true
   }
 }
-
-export class Encumbrance {
-  constructor() {
-    this.key = ''
-    this.level = 0
-    this.dodge = 9
-    this.weight = ''
-    this.move = 0
-    this.current = false
-  }
-}
-
-export class Equipment extends Named {
-  /**
-   * @param {string} [nm]
-   * @param {boolean} [ue]
-   */
-  constructor(nm, ue) {
-    super(nm)
-    this.save = ue
-    this.equipped = false
-    this.carried = false
-    this.count = 0
-    this.cost = 0
-    this.weight = 0
-    this.location = ''
-    this.techlevel = ''
-    this.legalityclass = ''
-    this.categories = ''
-    this.costsum = 0
-    this.weightsum = 0
-    this.uses = ''
-    this.maxuses = ''
-    this.ignoreImportQty = false
-    this.uuid = ''
-    this.parentuuid = ''
-    this.itemid = ''
-    /** @type {{ [key: string]: any }} */
-    this.collapsed = {}
-    /** @type {{ [key: string]: any }} */
-    this.contains = {}
-  }
-
-  /**
-   * @param {Equipment} eqt
-   */
-  static calc(eqt) {
-    Equipment.calcUpdate(null, eqt, '')
-  }
-
-  // OMG, do NOT fuck around with this method.   So many gotchas...
-  // the worst being that you cannot use array.forEach.   You must use a for loop
-  /**
-   * @param {Actor | null} actor
-   * @param {Equipment} eqt
-   * @param {string} objkey
-   */
-  static async calcUpdate(actor, eqt, objkey) {
-    if (!eqt) return
-    const num = (/** @type {string | number} */ s) => {
-      // @ts-ignore
-      return isNaN(s) ? 0 : Number(s)
-    }
-    const cln = (/** @type {number} */ s) => {
-      return !s ? 0 : num(String(s).replace(/,/g, ''))
-    }
-
-    eqt.count = cln(eqt.count)
-    eqt.cost = cln(eqt.cost)
-    eqt.weight = cln(eqt.weight)
-    let cs = eqt.count * eqt.cost
-    let ws = eqt.count * eqt.weight
-    if (!!eqt.contains) {
-      for (let k in eqt.contains) {
-        // @ts-ignore
-        let e = eqt.contains[k]
-        await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
-        cs += e.costsum
-        ws += e.weightsum
-      }
-    }
-    if (!!eqt.collapsed) {
-      for (let k in eqt.collapsed) {
-        // @ts-ignore
-        let e = eqt.collapsed[k]
-        await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
-        cs += e.costsum
-        ws += e.weightsum
-      }
-    }
-    if (!!actor)
-      await actor.update({
-        [objkey + '.costsum']: cs,
-        [objkey + '.weightsum']: ws,
-      })
-    // the local values 'should' be updated... but I need to force them anyway
-    eqt.costsum = cs
-    eqt.weightsum = ws
-  }
-}
-
-export class Reaction {
-  /**
-   * @param {string | undefined} [m]
-   * @param {string | undefined} [s]
-   */
-  constructor(m, s) {
-    this.modifier = m || ''
-    this.situation = s || ''
-  }
-}
-
-export class Modifier extends Reaction {}

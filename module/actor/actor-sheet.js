@@ -1,5 +1,4 @@
 import { arrayToObject, atou, i18n, i18n_f, objectToArray, zeroFill } from '../../lib/utilities.js'
-import { Reaction, Equipment, Modifier } from './actor.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
@@ -10,7 +9,8 @@ import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
 import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
 import MoveModeEditor from './move-mode-editor.js'
-import { Advantage, Melee, Note, Ranged, Skill, Spell } from './actor-components.js'
+import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
+import SplitDREditor from './splitdr-editor.js'
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -120,6 +120,9 @@ export class GurpsActorSheet extends ActorSheet {
         )
       })
     })
+
+    // open the split DR dialog
+    html.find('.dr button[data-key]').on('click', this._onClickSplit.bind(this))
 
     if (!isConfigurationAllowed(this.actor)) return // Only allow "owners" to be able to edit the sheet, but anyone can roll from the sheet
 
@@ -1375,7 +1378,7 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   /**
-   * Override this to chsange the buttons appended tp the sactor sheet title bar.
+   * Override this to change the buttons appended to the actor sheet title bar.
    */
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
@@ -1485,6 +1488,12 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _onClickRoll(event, targets) {
     GURPS.handleRoll(event, this.actor, targets)
+  }
+
+  async _onClickSplit(event) {
+    let element = event.currentTarget
+    let key = element.dataset.key
+    new SplitDREditor(this.actor, key).render(true)
   }
 
   async _onNavigate(event) {
