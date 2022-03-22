@@ -10,6 +10,7 @@ Release 0.13.14
 - Added range modifier support for grid units like "mile/miles/mi'
 - Add support for split DR.
 - Support linked damage: all comma-separated damage will be rolled with one click. E.g. `2d cut,1d+1 burn`.
+- Support an optional title for a Note.
 
 Release 0.13.13 3/10/2022
 
