@@ -1,4 +1,4 @@
-<form class='{{cssClass}}' autocomplete='off'>
+<div id='bucket-app' class='{{cssClass}}' autocomplete='off'>
   <div id='current-actor'><span>{{currentActor}}</span></div>
   <div id='modifierbucket' class='app'>
     <div id='globalmodifier' class='{{#if stack.plus}}plus{{/if}} {{#if stack.minus}}minus{{/if}}' draggable="true">
@@ -7,7 +7,12 @@
     <div>
       <div id='trash'><a class='button icon'><i class='fas fa-trash'></i></a></div>
       <hr style="height:1px;border:none;background-color:lightgray;" />
-      <div id='magnet' class='{{#if (not stack.AUTO_EMPTY)}}enabled{{/if}}'><a class='button icon'><i class="fas fa-magnet"></i></a></div>
+      <div id='magnet' class='{{#if (not stack.AUTO_EMPTY)}}enabled{{/if}}'><a class='button icon'><i
+            class="fas fa-magnet"></i></a></div>
     </div>
   </div>
-</form>
+  <div id="threed6" class="">
+    <img id="threed6dice" src="systems/gurps/icons/threed6new.png">
+    <img id="oned6dice" src="systems/gurps/icons/die-new.png">
+  </div>
+</div>

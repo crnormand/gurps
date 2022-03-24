@@ -8,14 +8,12 @@ import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
  * Define some Typescript types.
  * @typedef {{mod: String, modint: Number, desc: String, plus: Boolean}} Modifier
  */
-
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (/** @type {any} */ _, /** @type {JQuery} */ element) => {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
 
   // @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
-  // FIXME Could be disastrously wrong!
   CONFIG.Dice.rolls.push(GurpsRoll)
 
   // MONKEY_PATCH
@@ -59,9 +57,26 @@ Hooks.once('init', async function () {
     Roll.dieOverride = false
     Object.defineProperty(Roll.prototype, 'isLoaded', {
       // Used alternate define form, which defines 'this'.   get: () => {} does not set 'this'
-      get() { return this.terms.some(term => term instanceof GurpsDie && !!term._loaded) },
+      get() {
+        return this.terms.some(term => term instanceof GurpsDie && !!term._loaded)
+      },
     })
   }
+})
+
+Hooks.once('init', async function () {
+  game.keybindings.register('gurps', 'toggleDiceDisplay', {
+    name: 'Toggle dice display',
+    uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
+    onDown: () => {
+      GURPS.ModifierBucket.showOneD6()
+    },
+    onUp: () => {
+      GURPS.ModifierBucket.showThreeD6()
+    },
+    precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
+    // "ControlLeft", "ControlRight"
+  })
 })
 
 export class GurpsDie extends Die {
@@ -300,9 +315,9 @@ class ModifierStack {
     }
     let m = (mod + '').match(/([+-])?@margin/i)
     if (!!m) {
-      mod = (GURPS.lastTargetedRoll?.margin || 0) * (m[1] == '-' ? -1 : 1) 
+      mod = (GURPS.lastTargetedRoll?.margin || 0) * (m[1] == '-' ? -1 : 1)
       if (GURPS.lastTargetedRoll?.thing)
-        reason = reason.replace(/-@/,' -').replace(/\+@/,'') + " for " + GURPS.lastTargetedRoll.thing
+        reason = reason.replace(/-@/, ' -').replace(/\+@/, '') + ' for ' + GURPS.lastTargetedRoll.thing
     }
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
@@ -364,11 +379,16 @@ export class ModifierBucket extends Application {
 
     // whether the ModifierBucketEditor is visible
     this.SHOWING = false
-    
+
     /** @type {string|null} */
     this._tempRangeMod = null
 
     this.modifierStack = new ModifierStack()
+
+    // is the Dice section visible?
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)) {
+      // FIXME do nothing, for now...
+    }
   }
 
   // Start GLOBALLY ACCESSED METHODS (used to update the contents of the MB)
@@ -524,16 +544,15 @@ export class ModifierBucket extends Application {
   activateListeners(html) {
     super.activateListeners(html)
 
+    html.find('#oned6dice').addClass('invisible')
+    html.find('#threed6dice').removeClass('invisible')
+
     html.find('#trash').on('click', this._onClickTrash.bind(this))
     html.find('#magnet').on('click', this._onClickMagnet.bind(this))
 
     let e = html.find('#globalmodifier')
-
     e.on('click', this._onClick.bind(this))
-
-    // @ts-ignore -- apparently 'contextmenu' isn't a thing
     e.on('contextmenu', this.onRightClick.bind(this))
-
     e.each((_, li) => {
       li.addEventListener('dragstart', ev => {
         let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
@@ -551,7 +570,8 @@ export class ModifierBucket extends Application {
 
     if (this.isTooltip) e.on('mouseenter', ev => this._onenter(ev))
 
-    html.on('drop', function (/** @type {JQuery.DropEvent} */ event) {
+    let modifierbucket = html.find('#modifierbucket')
+    modifierbucket.on('drop', function (/** @type {JQuery.DropEvent} */ event) {
       event.preventDefault()
       event.stopPropagation()
       let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain') || '')
@@ -565,7 +585,7 @@ export class ModifierBucket extends Application {
       }
     })
 
-    html.on('wheel', (/** @type {JQuery.TriggeredEvent} */ event) => {
+    modifierbucket.on('wheel', (/** @type {JQuery.TriggeredEvent} */ event) => {
       event.preventDefault()
       let originalEvent = event.originalEvent
       if (originalEvent instanceof WheelEvent) {
@@ -573,6 +593,56 @@ export class ModifierBucket extends Application {
         this.addModifier(s, '')
       }
     })
+
+    html.find('#threed6').click(this._on3dClick.bind(this))
+    html.find('#threed6').contextmenu(this._on3dRightClick.bind(this))
+    html.find('#threed6').on('drop', function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain'))
+      if (!!dragData && !!dragData.actor && !!dragData.otf) {
+        let action = parselink(dragData.otf)
+        action.action.blindroll = true
+        GURPS.performAction(action.action, game.actors.get(dragData.actor), {
+          shiftKey: game.user.isGM,
+          ctrlKey: false,
+          data: {},
+        })
+      }
+    })
+  }
+
+  showOneD6() {
+    // handle Ctrl key event by setting the correct image to be visible in the Dice roller widget
+    this._element.find('#oned6dice').removeClass('invisible')
+    this._element.find('#threed6dice').addClass('invisible')
+    // this.render()
+  }
+
+  showThreeD6() {
+    this._element.find('#oned6dice').addClass('invisible')
+    this._element.find('#threed6dice').removeClass('invisible')
+    this.render()
+  }
+
+  async _on3dClick(event) {
+    event.preventDefault()
+    let action = {
+      type: 'roll',
+      formula: '3d6',
+      desc: '',
+    }
+    GURPS.performAction(action, GURPS.LastActor || game.user, event)
+  }
+
+  async _on3dRightClick(event) {
+    event.preventDefault()
+    let action = {
+      type: 'roll',
+      formula: '1d6',
+      desc: '',
+    }
+    GURPS.performAction(action, GURPS.LastActor || game.user, event)
   }
 
   /**
@@ -604,10 +674,9 @@ export class ModifierBucket extends Application {
     event.preventDefault()
     if (this.modifierStack.toggleAutoEmpty()) {
       $(event.currentTarget).removeClass('enabled')
-     }
-    else {
+    } else {
       $(event.currentTarget).addClass('enabled')
-     }
+    }
   }
 
   /**
@@ -661,9 +730,10 @@ export class ModifierBucket extends Application {
   }
 
   refresh() {
-    setTimeout(() => this.render(true), 100) // Not certain why the UI element isn't updating immediately, so hacked this
+    // setTimeout(() => this.render(true), 100) // Not certain why the UI element isn't updating immediately, so hacked this
+    this.render()
     if (this.SHOWING) {
-      this.editor.render(true)
+      this.editor.render()
     }
   }
 
@@ -679,5 +749,10 @@ export class ModifierBucket extends Application {
       }
     }
     return content
+  }
+
+  _injectHTML(html) {
+    html.insertAfter($('body').find('#hotbar'))
+    this._element = html
   }
 }
