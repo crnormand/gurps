@@ -141,35 +141,48 @@
 }
 
 #threed6 {
-  position: fixed;
-  bottom: 10px;
-  left: 880px;
-  width: 52px;
+  /* position: fixed; */
+  /* bottom: 10px; */
+  /* left: 880px; */
+  /* width: 52px; */
   height: 52px;
   margin: 0px;
   padding: 0px;
   cursor: pointer;
   display: inline-block;
+  grid-row: 2;
+  grid-column: 2;
+  border: 5px solid #1c2024;
+  border-radius: 5px;
+  background-color: lightgrey;
+  display: flex;
+  justify-content: center;
+}
+
+#threed6 img {
+  border: none;
+  max-height: 100%;
+  align-self: center;
 }
 
 #testdialog {
   left: 940px;
 }
 
-#threed6 #threed6dicerot {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 105;
+#threed6 #oned6dice {
+  /* display: none; */
+  /* position: absolute; */
+  /* top: 0; */
+  /* left: 0; */
+  /* z-index: 105; */
 }
 
 #threed6 #threed6dicerotactive {
   display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 105;
+  /* position: absolute; */
+  /* top: 0; */
+  /* left: 0; */
+  /* z-index: 105; */
 }
 
 #threed6:hover #threed6dicerot {

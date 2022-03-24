@@ -2,6 +2,10 @@
 /* GURPS Applications        */
 /* ========================= */
 
+:root {
+  --hotbar-control-width: 32px;
+}
+
 /* Global Override */
 body {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
@@ -51,7 +55,8 @@ body {
 
 /* remove this item from display  */
 .gga-chat-message .invisible,
-.gga-app .invisible {
+.gga-app .invisible,
+#threed6 .invisible {
   display: none;
 }
 
@@ -1055,7 +1060,10 @@ active-effects-list .section h3 {
   max-height: max-content;
 }
 
-.resource-editor .tracker-manager.table, .active-effects-list .gga-effects-list.table, .move-mode-editor.table, .splitdr-editor.table {
+.resource-editor .tracker-manager.table,
+.active-effects-list .gga-effects-list.table,
+.move-mode-editor.table,
+.splitdr-editor.table {
   display: grid;
   gap: 0.15rem;
   justify-items: stretch;
@@ -1092,7 +1100,8 @@ active-effects-list .section h3 {
   grid-template-columns: 1fr min-content min-content;
 }
 
-.move-mode-editor .expand-contract, .splitdr-editor .expand-contract {
+.move-mode-editor .expand-contract,
+.splitdr-editor .expand-contract {
   transition: all 1s;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 0 0 3px 3px;
@@ -1102,7 +1111,8 @@ active-effects-list .section h3 {
   box-shadow: inset 0px 2px 3px 0 grey;
 }
 
-.move-mode-editor .expand-contract.contracted, .splitdr-editor .expand-contract.contracted {
+.move-mode-editor .expand-contract.contracted,
+.splitdr-editor .expand-contract.contracted {
   height: 0;
   border: none;
   padding: 0;
@@ -1213,7 +1223,9 @@ active-effects-list .section h3 {
   font-size: 90%;
 }
 
-#condition .fieldblock button#open-modifier-popup, #condition .fieldblock button#edit-move-modes, #location .dr button {
+#condition .fieldblock button#open-modifier-popup,
+#condition .fieldblock button#edit-move-modes,
+#location .dr button {
   font-size: 90%;
   max-height: fit-content;
   width: auto;
@@ -1222,7 +1234,10 @@ active-effects-list .section h3 {
   height: calc(var(--form-field-height) + 1px);
 }
 
-#editorsheet #condition .fieldblock button#edit-move-modes, #combat-sheet #condition .fieldblock button#edit-move-modes, #sheet #condition .fieldblock button#edit-move-modes, #location .dr button {
+#editorsheet #condition .fieldblock button#edit-move-modes,
+#combat-sheet #condition .fieldblock button#edit-move-modes,
+#sheet #condition .fieldblock button#edit-move-modes,
+#location .dr button {
   height: min-content;
 }
 
@@ -1544,15 +1559,42 @@ button.equipmentbutton:last-child {
 /* ========================= */
 /* Modifier Bucket           */
 /* ========================= */
+#hotbar {
+  align-self: end;
+}
+
+@media (max-width: 1120px) {
+  #hotbar {
+    width: calc(var(--macro-width) * 5 + var(--hotbar-control-width) * 2 + 12);
+    width: 326px;
+  }
+}
+
+#ui-bottom > div {
+  justify-content: unset;
+}
+
+#bucket-app {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 3px;
+  width: 130px;
+  margin-bottom: 10px;
+  margin-left: 3px;
+}
+
 .modifierbucket #modifierbucket {
   border: 5px solid darkred;
-  position: fixed;
-  bottom: 10px;
-  left: 805px;
-  width: 70px;
+  /*   position: relative;
+  bottom: auto;
+  left: auto; */
+  grid-row: 2;
+  /* width: 72px; */
   height: 52px;
   margin: 0px;
-  padding: 0px 2px;
+  padding: 2px 2px;
   cursor: pointer;
   z-index: auto;
   background: rgb(28, 32, 36);
@@ -1563,10 +1605,9 @@ button.equipmentbutton:last-child {
 }
 
 .modifierbucket #current-actor {
-  position: fixed;
-  bottom: 60px;
-  left: 745px;
-  width: 190px;
+  grid-row: 1;
+  grid-column: 1 / 3;
+  width: 150px;
   height: 20px;
   text-align: center;
   white-space: nowrap;
@@ -1582,7 +1623,7 @@ button.equipmentbutton:last-child {
 .modifierbucket #globalmodifier {
   font-size: 20px;
   text-align: center;
-  width: 55px;
+  width: 40px;
 }
 
 .modifierbucket #trash {
@@ -1590,10 +1631,10 @@ button.equipmentbutton:last-child {
 }
 
 .modifierbucket #magnet {
-  color: rgb(66, 66, 66);
+  color: rgb(80, 80, 80);
 }
 
-.modifierbucket #magnet.enabled  {
+.modifierbucket #magnet.enabled {
   color: red;
 }
 
@@ -1979,7 +2020,6 @@ button.equipmentbutton:last-child {
   background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
-
 .removemod.plus,
 .gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
@@ -2006,7 +2046,7 @@ button.equipmentbutton:last-child {
 }
 
 .modtooltip .modifier-row {
-	display: grid;
+  display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-auto-rows: minmax(10px, auto);
   column-gap: 2px;
@@ -2014,7 +2054,7 @@ button.equipmentbutton:last-child {
   justify-items: stretch;
   justify-content: stretch;
 }
-	
+
 .modtooltip .shaded-group > div {
   display: flex;
   flex-flow: row nowrap;

@@ -17,7 +17,6 @@ import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
 import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f } from '../lib/utilities.js'
-import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
@@ -1963,15 +1962,15 @@ Hooks.once('ready', async function () {
   ResourceTrackerManager.initSettings()
   HitLocation.ready()
 
-  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
-    new ThreeD6({
-      popOut: false,
-      minimizable: false,
-      resizable: false,
-      id: 'ThreeD6',
-      template: 'systems/gurps/templates/threed6.html',
-      classes: [],
-    }).render(true)
+  // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
+  //   new ThreeD6({
+  //     popOut: false,
+  //     minimizable: false,
+  //     resizable: false,
+  //     id: 'ThreeD6',
+  //     template: 'systems/gurps/templates/threed6.html',
+  //     classes: [],
+  //   }).render(true)
 
   // @ts-ignore
   GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)

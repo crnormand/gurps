@@ -2,11 +2,10 @@
   <div class='header'>
     <div class='headermenu' data-key='data.additionalresources.tracker'>
       <span>{{i18n 'GURPS.resourceTrackers'}}</span>
-      {{#if isEditing}}
-        <i class='fas fa-caret-square-down'></i>
-      {{/if}}
+      <i class='fas fa-caret-square-down'></i>
     </div>
   </div>
+  {{#if (notEmpty data.additionalresources.tracker)}}
   <div id='tracker-scroller'>
     {{#each data.additionalresources.tracker}}
       {{>resource-tracker
@@ -17,4 +16,5 @@
         }}
     {{/each}}
   </div>
+  {{/if}}
 </div>
