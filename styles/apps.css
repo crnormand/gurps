@@ -1587,11 +1587,7 @@ button.equipmentbutton:last-child {
 
 .modifierbucket #modifierbucket {
   border: 5px solid darkred;
-  /*   position: relative;
-  bottom: auto;
-  left: auto; */
-  grid-row: 2;
-  /* width: 72px; */
+  grid-row: 3;
   height: 52px;
   margin: 0px;
   padding: 2px 2px;
@@ -1602,6 +1598,51 @@ button.equipmentbutton:last-child {
   flex-flow: row nowrap;
   gap: 3px;
   align-items: center;
+}
+
+.modifierbucket #damage-accumulator {
+  grid-row: 2;
+  grid-column: 1 / 3;
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: rgba(0, 0, 0, 0.6);
+  align-items: baseline;
+  z-index: 100;
+  border-style: groove;
+  border-color: rgb(64, 64, 64);
+  color: rgb(221, 221, 221);
+  border-radius: 3px;
+}
+
+.modifierbucket #damage-accumulator #accumulator-left,
+.modifierbucket #damage-accumulator #accumulator-right {
+  width: fit-content;
+  color: transparent;
+}
+
+.modifierbucket #damage-accumulator #accumulator-center {
+  color: gold;
+  width: 100%;
+  text-align: center;
+  width: 100%;
+  text-align: center;
+}
+
+.pulsate {
+  animation: pulsate 3s ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulsate {
+  0% {
+    color: gold;
+  }
+  50% {
+    color: red;
+  }
+  100% {
+    color: gold;
+  }
 }
 
 .modifierbucket #current-actor {
@@ -1616,7 +1657,7 @@ button.equipmentbutton:last-child {
 }
 
 .modifierbucket #current-actor > span {
-  color: yellow;
+  color: gold;
   background-color: black;
 }
 

@@ -849,6 +849,43 @@ export class GurpsActor extends Actor {
     return n
   }
 
+  /**
+   *
+   * @param {Object} action
+   * @param {string} action.orig - the original OTF string
+   * @param {string} action.costs - "*(per|cost) ${number} ${resource}" -- resource can be '@resource' to prompt user
+   * @param {string} action.formula - the basic die formula, such as '2d', '1d-2', '3d-1x2', etc.
+   * @param {string} action.damagetype - one of the recognized damage types (cr, cut, imp, etc)
+   * @param {string} action.extdamagetype - optional extra damage type, such as 'ex'
+   * @param {string} action.hitlocation - optional hit location
+   * @param {boolean} action.accumulate
+   */
+  async accumulateDamageRoll(action) {
+    const regex = /^\*([Cc]osts?|[Pp]er)\s+(?<cost>\d+)\s*(?<resource>.+)$/
+    if (action.costs.match(regex)) {
+      let groups = action.costs.match(regex).groups
+      let data = {
+        otf: action.orig,
+        dieroll: action.formula,
+        damagetype: action.damagetype,
+        damagemod: action.extdamagetype,
+        cost: +groups.cost,
+        resource: groups.resource,
+      }
+      
+      if (! this.getGurpsActorData().conditions.damageAccumulator) this.getGurpsActorData().conditions.damageAccumulator = {}
+      let accumulator = this.getGurpsActorData().conditions.damageAccumulator
+
+      if (!accumulator[data.otf]) {
+        accumulator[data.otf] = []
+      }
+
+      accumulator[data.otf].push(data)
+      await this.update({ 'data.conditions.damageAccumulator': accumulator})
+      console.log(accumulator)
+    }
+  }
+
   async importCharacter() {
     let p = this.getGurpsActorData().additionalresources.importpath
     if (!!p) {

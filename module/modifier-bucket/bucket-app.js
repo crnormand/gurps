@@ -3,6 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import GgaContextMenu from '../utilities/contextmenu.js'
 
 /**
  * Define some Typescript types.
@@ -610,6 +611,15 @@ export class ModifierBucket extends Application {
         })
       }
     })
+
+    new GgaContextMenu($('body'), $('body'), '#accumulator-center', `Damage Accumulator`, [
+      {
+        name: 'Roll Damage!',
+        icon: '<i class="fas fa-dice"></i>',
+        callback: () => {},
+        condition: () => true,
+      },
+    ])
   }
 
   showOneD6() {
