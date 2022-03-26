@@ -3,6 +3,7 @@ import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
+import GgaContextMenu from '../utilities/contextmenu.js'
 
 /**
  * Define some Typescript types.
@@ -62,9 +63,8 @@ Hooks.once('init', async function () {
       },
     })
   }
-})
 
-Hooks.once('init', async function () {
+  // Listen for the Ctrl key and show the single dice image
   game.keybindings.register('gurps', 'toggleDiceDisplay', {
     name: 'Toggle dice display',
     uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
@@ -77,6 +77,23 @@ Hooks.once('init', async function () {
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
     // "ControlLeft", "ControlRight"
   })
+})
+
+Hooks.once('ready', async function () {
+  // new GgaContextMenu($('body'), $('body'), '#accumulator-center', `Dmg Accumulator`, [
+  //   {
+  //     name: 'Roll Damage!',
+  //     icon: '<i class="fas fa-dice"></i>',
+  //     callback: () => {},
+  //     condition: () => true,
+  //   },
+  //   {
+  //     name: 'Clear Entry',
+  //     icon: '<i class="fas fa-trash"></i>',
+  //     callback: () => {},
+  //     condition: () => true,
+  //   },
+  // ])
 })
 
 export class GurpsDie extends Die {
@@ -228,10 +245,6 @@ export class GurpsRoll extends Roll {
     return d
   }
 }
-
-// Maybe a final, complete fix for Physical Dice?
-// CONFIG.Dice.termTypes.DiceTerm = GurpsDiceTerm
-// GurpsDiceTerm.fromMatch() -- add needed Die enhancements
 
 class ModifierStack {
   constructor() {
@@ -389,6 +402,8 @@ export class ModifierBucket extends Application {
     if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)) {
       // FIXME do nothing, for now...
     }
+
+    this.accumulatorIndex = 0
   }
 
   // Start GLOBALLY ACCESSED METHODS (used to update the contents of the MB)
@@ -529,8 +544,10 @@ export class ModifierBucket extends Application {
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
 
-    let ca = ''
+    let ca = null
     if (!!GURPS.LastActor) {
+      data.damageAccumulators = GURPS.LastActor.damageAccumulators
+      data.accumulatorIndex = this.accumulatorIndex
       ca = GURPS.LastActor.displayname
       if (ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
@@ -610,6 +627,33 @@ export class ModifierBucket extends Application {
         })
       }
     })
+
+    html.find('.accumulator-control').on('click', this._onAccumulatorClick.bind(this, html))
+  }
+
+  _onAccumulatorClick(hmtl, event) {
+    event.preventDefault()
+    const a = event.currentTarget
+    const value = a.value ?? null
+    const action = a.dataset.action ?? null
+
+    switch (action) {
+      case 'inc':
+        GURPS.LastActor.incrementDamageAccumulator(this.accumulatorIndex)
+        break
+      case 'dec':
+        GURPS.LastActor.decrementDamageAccumulator(this.accumulatorIndex)
+        break
+      case 'cancel':
+        GURPS.LastActor.clearDamageAccumulator(this.accumulatorIndex)
+        break
+      case 'apply':
+        GURPS.LastActor.applyDamageAccumulator(this.accumulatorIndex)
+        break
+      default:
+        break
+    }
+    this.render()
   }
 
   showOneD6() {

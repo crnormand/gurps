@@ -12,6 +12,7 @@ Release 0.13.14
 - Support linked damage: all comma-separated damage will be rolled with one click. E.g. `2d cut,1d+1 burn`.
 - Support an optional title for a Note.
 - Change image for dice roller when control key is held down.
+- Added a "damage accumulator" for powers like spells which do a variable amount of damage. Adding '+' in front of damage makes it accumulate.
 
 Release 0.13.13 3/10/2022
 

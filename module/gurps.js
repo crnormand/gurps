@@ -512,22 +512,36 @@ const actionFuncs = {
    * @param {Object} data
    *
    * @param {Object} data.action
-   * @param {string} data.action.costs
    * @param {string} data.action.mod
    * @param {string} data.action.desc
    * @param {string} data.action.formula
    * @param {string} data.action.damagetype
    * @param {string} data.action.extdamagetype
    * @param {string} data.action.hitlocation
+   * @param {string} data.action.costs
+   * @param {boolean} data.action.accumulate
    *
    * @param {JQuery.Event|null} data.event
    * @param {GurpsActor|null} data.actor
    * @param {string[]} data.targets
    */
   damage({ action, event, actor, targets }) {
+    // accumulate action fails if there's no selected actor
+    if (action.accumulate && !actor) {
+      ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return false
+    }
+
+    if (action.accumulate) {
+      // store/increment value on GurpsActor
+      actor.accumulateDamageRoll(action)
+      return true
+    }
+
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
 
     if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
+
     DamageChat.create(
       actor || game.user,
       action.formula,
@@ -550,6 +564,7 @@ const actionFuncs = {
    * @param {string} data.action.derivedformula
    * @param {string} data.action.extdamagetype
    * @param {string} data.action.hitlocation
+   * @param {boolean} data.action.accumulate
    *
    * @param {JQuery.Event|null} data.event
    * @param {GurpsActor|null} data.actor
@@ -568,6 +583,7 @@ const actionFuncs = {
       return false
     }
     let formula = df + action.formula
+
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     DamageChat.create(
       actor || game.user,
@@ -1383,6 +1399,7 @@ GURPS._mapAttributePath = _mapAttributePath
  * Given a string path "x.y.z", use it to resolve down an object heiracrhy
  * @param {string | string[]} path
  * @param {any} obj
+ * @deprecated - Just use Foundry's getProperty and setPrpoerty methods
  */
 function resolve(path, obj = self, separator = '.') {
   var properties = Array.isArray(path) ? path : path.split(separator)

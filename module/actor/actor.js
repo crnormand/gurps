@@ -48,6 +48,7 @@ import {
   Melee,
   HitLocationEntry,
 } from './actor-components.js'
+import { multiplyDice } from '../utilities/damage-utils.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -847,6 +848,76 @@ export class GurpsActor extends Actor {
     let n = this.name
     if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
     return n
+  }
+
+  /**
+   *
+   * @param {Object} action
+   * @param {string} action.orig - the original OTF string
+   * @param {string} action.costs - "*(per|cost) ${number} ${resource}" -- resource can be '@resource' to prompt user
+   * @param {string} action.formula - the basic die formula, such as '2d', '1d-2', '3d-1x2', etc.
+   * @param {string} action.damagetype - one of the recognized damage types (cr, cut, imp, etc)
+   * @param {string} action.extdamagetype - optional extra damage type, such as 'ex'
+   * @param {string} action.hitlocation - optional hit location
+   * @param {boolean} action.accumulate
+   */
+  async accumulateDamageRoll(action) {
+    // define a new actor property, damageAccumulators, which is an array of object:
+    // {
+    //  otf: action.orig,
+    //  dieroll: action.formula,
+    //  damagetype: action.damagetype,
+    //  damagemod: action.extdamagetype,
+    //  cost: the <cost> value parsed out of action.cost, optional
+    //  resource: the <resource> value parsed out of action.cost, optional
+    //  count: <number> -- the accumulator, i.e., how many times this damage is to be invoked.
+    // }
+
+    // initialize the damageAccumulators property if it doesn't exist:
+    if (!this.getGurpsActorData().conditions.damageAccumulators)
+      this.getGurpsActorData().conditions.damageAccumulators = []
+
+    let accumulators = this.getGurpsActorData().conditions.damageAccumulators
+
+    // first, try to find an existing accumulator, and increment if found
+    let existing = accumulators.findIndex(it => it.orig === action.orig)
+    if (existing !== -1) return this.incrementDamageAccumulator(existing)
+
+    // an existing accumulator is not found, create one
+    action.count = 1
+    delete action.accumulate
+    accumulators.push(action)
+    await this.update({ 'data.conditions.damageAccumulators': accumulators })
+    console.log(accumulators)
+  }
+
+  get damageAccumulators() {
+    return this.getGurpsActorData().conditions.damageAccumulators
+  }
+
+  async incrementDamageAccumulator(index) {
+    this.damageAccumulators[index].count++
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+  }
+
+  async decrementDamageAccumulator(index) {
+    this.damageAccumulators[index].count--
+    if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+  }
+
+  async clearDamageAccumulator(index) {
+    this.damageAccumulators.splice(index, 1)
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+  }
+
+  async applyDamageAccumulator(index) {
+    let accumulator = this.damageAccumulators[index]
+    let roll = multiplyDice(accumulator.formula, accumulator.count)
+    accumulator.formula = roll
+    this.damageAccumulators.splice(index, 1)
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
   async importCharacter() {
