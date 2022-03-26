@@ -512,13 +512,13 @@ const actionFuncs = {
    * @param {Object} data
    *
    * @param {Object} data.action
-   * @param {string} data.action.costs
    * @param {string} data.action.mod
    * @param {string} data.action.desc
    * @param {string} data.action.formula
    * @param {string} data.action.damagetype
    * @param {string} data.action.extdamagetype
    * @param {string} data.action.hitlocation
+   * @param {string} data.action.costs
    * @param {boolean} data.action.accumulate
    *
    * @param {JQuery.Event|null} data.event

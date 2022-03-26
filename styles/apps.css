@@ -1614,10 +1614,18 @@ button.equipmentbutton:last-child {
   border-radius: 3px;
 }
 
-.modifierbucket #damage-accumulator #accumulator-left,
-.modifierbucket #damage-accumulator #accumulator-right {
-  width: fit-content;
-  color: transparent;
+.modifierbucket #damage-accumulator .accumulator-control {
+  width: 2em;
+  text-align: center;
+}
+
+.modifierbucket #damage-accumulator .accumulator-control:hover {
+  background: black;
+  box-shadow: 0 0 6px inset var(--color-shadow-highlight);
+}
+
+.modifierbucket #damage-accumulator .accumulator-control[data-action='cancel'] {
+  color: red;
 }
 
 .modifierbucket #damage-accumulator #accumulator-center {
