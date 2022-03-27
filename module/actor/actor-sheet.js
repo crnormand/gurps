@@ -1487,7 +1487,7 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async _onClickRoll(event, targets) {
-    GURPS.handleRoll(event, this.actor, targets)
+    GURPS.handleRoll(event, this.actor, { targets: targets })
   }
 
   async _onClickSplit(event) {
