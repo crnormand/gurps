@@ -72,6 +72,8 @@ import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import * as GURPSSpeedProvider from './speed-provider.js'
+import { multiplyDice } from './utilities/damage-utils.js'
+import GurpsWiring from './gurps-wiring.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -1221,7 +1223,7 @@ GURPS.findAttack = findAttack
  * @param {GurpsActor | null} actor
  * @param {string[]} targets - labels for multiple Damage rolls
  */
-async function handleRoll(event, actor, targets) {
+async function handleRoll(event, actor, options) {
   event.preventDefault()
   let formula = ''
   let targetmods = null
@@ -1237,16 +1239,15 @@ async function handleRoll(event, actor, targets) {
   if ('damage' in element.dataset) {
     // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
     let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
-    if (f.includes(',')) {
-      let parts = f.split(',')
-      for (let part of parts) {
-        let result = parseForRollOrDamage(part.trim())
-        if (result?.action) performAction(result.action, actor, event, targets)
+
+    let parts = f.includes(',') ? f.split(',') : [f]
+    for (let part of parts) {
+      let result = parseForRollOrDamage(part.trim())
+      if (result?.action) {
+        if (options?.combined) result.action.formula = multiplyDice(result.action.formula, options.combined)
+        performAction(result.action, actor, event, options?.targets)
       }
-      return
     }
-    let result = parseForRollOrDamage(f)
-    if (result?.action) performAction(result.action, actor, event, targets)
     return
   } else if ('path' in element.dataset) {
     prefix = 'Roll vs '
@@ -1295,7 +1296,6 @@ async function handleRoll(event, actor, targets) {
       else {
         a.shift()
         let m = a.join(' ')
-        // TODO Why is modifierbucket on the ui object?
         if (!!m) GURPS.ModifierBucket.addModifier(0, m)
       }
     }
@@ -1417,15 +1417,15 @@ GURPS.resolve = resolve
  * @param {string | null} desc
  * @param {string[] | undefined} targets
  */
-function handleGurpslink(event, actor, desc, targets) {
-  event.preventDefault()
-  let element = event.currentTarget
-  let action = element.dataset.action // If we have already parsed
-  if (!!action) action = JSON.parse(atou(action))
-  else action = parselink(element.innerText, desc).action
-  GURPS.performAction(action, actor, event, targets)
-}
-GURPS.handleGurpslink = handleGurpslink
+// function handleGurpslink(event, actor, desc, targets) {
+//   event.preventDefault()
+//   let element = event.currentTarget
+//   let action = element.dataset.action // If we have already parsed
+//   if (!!action) action = JSON.parse(atou(action))
+//   else action = parselink(element.innerText, desc).action
+//   GURPS.performAction(action, actor, event, targets)
+// }
+// GURPS.handleGurpslink = handleGurpslink
 
 // So it can be called from a script macro
 GURPS.genkey = zeroFill
@@ -1707,8 +1707,22 @@ GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf 
       for (let index = 0; index < number; index++) {
         targets[index] = `${index + 1}`
       }
-      if (isOtf) GURPS.handleGurpslink(event, actor, null, targets)
-      else GURPS.handleRoll(event, actor, targets)
+      if (isOtf) GurpsWiring.handleGurpslink(event, actor, null, { targets: targets })
+      else GURPS.handleRoll(event, actor, { targets: targets })
+    },
+  }
+
+  buttons.combined = {
+    icon: '<i class="fas fa-plus"></i>',
+    label: i18n('GURPS.RESOLVEDAMAGEAdd', 'Combine'),
+    callback: html => {
+      let text = /** @type {string} */ (html.find('#number-rolls').val())
+      let number = parseInt(text)
+
+      if (isOtf) otf = multiplyDice(otf, number)
+
+      if (isOtf) GurpsWiring.handleGurpslink(event, actor, null, { combined: number })
+      else GURPS.handleRoll(event, actor, { combined: number })
     },
   }
 
