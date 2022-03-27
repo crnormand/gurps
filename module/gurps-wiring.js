@@ -133,7 +133,7 @@ export default class GurpsWiring {
     if (!!action) action = JSON.parse(atou(action))
     else action = parselink(element.innerText, desc).action
 
-    if (options.combined) {
+    if (options?.combined) {
       action.formula = multiplyDice(action.formula, options.combined)
       // action.orig = multiplyDice(action.orig, options.combined)
     }
