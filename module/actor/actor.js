@@ -35,7 +35,7 @@ import { SmartImporter } from '../smart-importer.js'
 import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
-import { _Base, Named, Skill, Spell, Advantage, Ranged, Note } from './actor-components.js'
+import { _Base, Named, Skill, Spell, Advantage, Melee, Ranged, Note } from './actor-components.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
