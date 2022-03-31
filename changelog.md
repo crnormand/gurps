@@ -7,7 +7,9 @@ Release 0.13.14
 - Make all @margin entries case insensitive
 - Add /if check for @margin, @isCritSuccess, @isCritFailure (@margin >/>=/</<=/=/== X)
 - Fixed, when clicking OTF Journal link, only show for current user (not all owners, including GM).
-- Added range modifier support for grid units like "mile/miles/mi'
+- Added range modifier support for grid units like "mile/miles/mi' (thank's @Kalos!)
+- Allow \*Per 1fp (vs. \*Cost 1fp)
+- Updated JB2A to v0.3.9
 - Add support for split DR.
 - Support linked damage: all comma-separated damage will be rolled with one click. E.g. `2d cut,1d+1 burn`.
 - Support an optional title for a Note.
