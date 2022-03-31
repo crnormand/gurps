@@ -17,7 +17,6 @@ import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
 import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f } from '../lib/utilities.js'
-import { ThreeD6 } from '../lib/threed6.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
@@ -73,6 +72,8 @@ import Maneuvers from './actor/maneuver.js'
 import { EffectModifierControl } from './actor/effect-modifier-control.js'
 import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import * as GURPSSpeedProvider from './speed-provider.js'
+import { multiplyDice } from './utilities/damage-utils.js'
+import GurpsWiring from './gurps-wiring.js'
 
 if (GURPS.DEBUG) {
   GURPS.parseDecimalNumber = parseDecimalNumber
@@ -133,8 +134,8 @@ GURPS.setLastTargetedRoll = function (chatdata, actorid, tokenid, updateOtherCli
   if (!!tokenid) GURPS.lastTargetedRolls[tokenid] = tmp
   GURPS.lastTargetedRoll = tmp // keep the local copy
   // Interesting fields: GURPS.lastTargetedRoll.margin .isCritSuccess .IsCritFailure .thing
-  
-  if (updateOtherClients) 
+
+  if (updateOtherClients)
     game.socket.emit('system.gurps', {
       type: 'setLastTargetedRoll',
       chatdata: tmp,
@@ -424,16 +425,14 @@ const actionFuncs = {
     handlePdf(action.link)
     return true
   },
-  
-  // 
+
+  //
   iftest({ action }) {
-    if (!GURPS.lastTargetedRoll)
-      return false
-    if (action.name == 'isCritSuccess')
-      return !!GURPS.lastTargetedRoll.isCritSuccess
-    if (action.name == 'isCritFailure')
-      return !!GURPS.lastTargetedRoll.isCritFailure
-    if (!action.equation)   // if [@margin] tests for >=0
+    if (!GURPS.lastTargetedRoll) return false
+    if (action.name == 'isCritSuccess') return !!GURPS.lastTargetedRoll.isCritSuccess
+    if (action.name == 'isCritFailure') return !!GURPS.lastTargetedRoll.isCritFailure
+    if (!action.equation)
+      // if [@margin] tests for >=0
       return GURPS.lastTargetedRoll.margin >= 0
     else {
       let m = action.equation.match(/ *([=<>]+) *([+-]?[\d\.]+)/)
@@ -515,22 +514,36 @@ const actionFuncs = {
    * @param {Object} data
    *
    * @param {Object} data.action
-   * @param {string} data.action.costs
    * @param {string} data.action.mod
    * @param {string} data.action.desc
    * @param {string} data.action.formula
    * @param {string} data.action.damagetype
    * @param {string} data.action.extdamagetype
    * @param {string} data.action.hitlocation
+   * @param {string} data.action.costs
+   * @param {boolean} data.action.accumulate
    *
    * @param {JQuery.Event|null} data.event
    * @param {GurpsActor|null} data.actor
    * @param {string[]} data.targets
    */
   damage({ action, event, actor, targets }) {
+    // accumulate action fails if there's no selected actor
+    if (action.accumulate && !actor) {
+      ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
+      return false
+    }
+
+    if (action.accumulate) {
+      // store/increment value on GurpsActor
+      actor.accumulateDamageRoll(action)
+      return true
+    }
+
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
 
     if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
+
     DamageChat.create(
       actor || game.user,
       action.formula,
@@ -553,6 +566,7 @@ const actionFuncs = {
    * @param {string} data.action.derivedformula
    * @param {string} data.action.extdamagetype
    * @param {string} data.action.hitlocation
+   * @param {boolean} data.action.accumulate
    *
    * @param {JQuery.Event|null} data.event
    * @param {GurpsActor|null} data.actor
@@ -571,6 +585,7 @@ const actionFuncs = {
       return false
     }
     let formula = df + action.formula
+
     if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
     DamageChat.create(
       actor || game.user,
@@ -1208,7 +1223,7 @@ GURPS.findAttack = findAttack
  * @param {GurpsActor | null} actor
  * @param {string[]} targets - labels for multiple Damage rolls
  */
-async function handleRoll(event, actor, targets) {
+async function handleRoll(event, actor, options) {
   event.preventDefault()
   let formula = ''
   let targetmods = null
@@ -1222,10 +1237,17 @@ async function handleRoll(event, actor, targets) {
   if (!!actor) GURPS.SetLastActor(actor)
 
   if ('damage' in element.dataset) {
-    // expect text like '2d+1 cut'
+    // expect text like '2d+1 cut' or '1d+1 cut,1d-1 ctrl' (linked damage)
     let f = !!element.dataset.otf ? element.dataset.otf : element.innerText.trim()
-    let result = parseForRollOrDamage(f)
-    if (result?.action) performAction(result.action, actor, event, targets)
+
+    let parts = f.includes(',') ? f.split(',') : [f]
+    for (let part of parts) {
+      let result = parseForRollOrDamage(part.trim())
+      if (result?.action) {
+        if (options?.combined) result.action.formula = multiplyDice(result.action.formula, options.combined)
+        performAction(result.action, actor, event, options?.targets)
+      }
+    }
     return
   } else if ('path' in element.dataset) {
     prefix = 'Roll vs '
@@ -1274,7 +1296,6 @@ async function handleRoll(event, actor, targets) {
       else {
         a.shift()
         let m = a.join(' ')
-        // TODO Why is modifierbucket on the ui object?
         if (!!m) GURPS.ModifierBucket.addModifier(0, m)
       }
     }
@@ -1378,6 +1399,7 @@ GURPS._mapAttributePath = _mapAttributePath
  * Given a string path "x.y.z", use it to resolve down an object heiracrhy
  * @param {string | string[]} path
  * @param {any} obj
+ * @deprecated - Just use Foundry's getProperty and setPrpoerty methods
  */
 function resolve(path, obj = self, separator = '.') {
   var properties = Array.isArray(path) ? path : path.split(separator)
@@ -1395,15 +1417,15 @@ GURPS.resolve = resolve
  * @param {string | null} desc
  * @param {string[] | undefined} targets
  */
-function handleGurpslink(event, actor, desc, targets) {
-  event.preventDefault()
-  let element = event.currentTarget
-  let action = element.dataset.action // If we have already parsed
-  if (!!action) action = JSON.parse(atou(action))
-  else action = parselink(element.innerText, desc).action
-  GURPS.performAction(action, actor, event, targets)
-}
-GURPS.handleGurpslink = handleGurpslink
+// function handleGurpslink(event, actor, desc, targets) {
+//   event.preventDefault()
+//   let element = event.currentTarget
+//   let action = element.dataset.action // If we have already parsed
+//   if (!!action) action = JSON.parse(atou(action))
+//   else action = parselink(element.innerText, desc).action
+//   GURPS.performAction(action, actor, event, targets)
+// }
+// GURPS.handleGurpslink = handleGurpslink
 
 // So it can be called from a script macro
 GURPS.genkey = zeroFill
@@ -1685,8 +1707,22 @@ GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf 
       for (let index = 0; index < number; index++) {
         targets[index] = `${index + 1}`
       }
-      if (isOtf) GURPS.handleGurpslink(event, actor, null, targets)
-      else GURPS.handleRoll(event, actor, targets)
+      if (isOtf) GurpsWiring.handleGurpslink(event, actor, null, { targets: targets })
+      else GURPS.handleRoll(event, actor, { targets: targets })
+    },
+  }
+
+  buttons.combined = {
+    icon: '<i class="fas fa-plus"></i>',
+    label: i18n('GURPS.RESOLVEDAMAGEAdd', 'Combine'),
+    callback: html => {
+      let text = /** @type {string} */ (html.find('#number-rolls').val())
+      let number = parseInt(text)
+
+      if (isOtf) otf = multiplyDice(otf, number)
+
+      if (isOtf) GurpsWiring.handleGurpslink(event, actor, null, { combined: number })
+      else GURPS.handleRoll(event, actor, { combined: number })
     },
   }
 
@@ -1957,15 +1993,15 @@ Hooks.once('ready', async function () {
   ResourceTrackerManager.initSettings()
   HitLocation.ready()
 
-  if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
-    new ThreeD6({
-      popOut: false,
-      minimizable: false,
-      resizable: false,
-      id: 'ThreeD6',
-      template: 'systems/gurps/templates/threed6.html',
-      classes: [],
-    }).render(true)
+  // if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6))
+  //   new ThreeD6({
+  //     popOut: false,
+  //     minimizable: false,
+  //     resizable: false,
+  //     id: 'ThreeD6',
+  //     template: 'systems/gurps/templates/threed6.html',
+  //     classes: [],
+  //   }).render(true)
 
   // @ts-ignore
   GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)
@@ -2135,38 +2171,33 @@ Hooks.once('ready', async function () {
           let updates = []
           if (!!target && !!src) {
             if (target.initiative < src.initiative)
-              updates.push({_id: dropData.combatant, initiative: target.initiative - 0.00001});
-            else
-               updates.push({_id: dropData.combatant, initiative: target.initiative + 0.00001});    
-            game.combat.updateEmbeddedDocuments("Combatant", updates);     
+              updates.push({ _id: dropData.combatant, initiative: target.initiative - 0.00001 })
+            else updates.push({ _id: dropData.combatant, initiative: target.initiative + 0.00001 })
+            game.combat.updateEmbeddedDocuments('Combatant', updates)
           }
         }
       })
     }
-   
-      
-   if (game.user.isGM) {
-        html.find('.combatant').each((_, li) => {
+
+    if (game.user.isGM) {
+      html.find('.combatant').each((_, li) => {
         li.setAttribute('draggable', true)
         li.addEventListener('dragstart', ev => {
           let display = ''
           if (!!ev.currentTarget.dataset.action) display = ev.currentTarget.innerText
-          let dragIcon = $(event.currentTarget).find('.token-image')[0];
-          ev.dataTransfer.setDragImage(dragIcon, 25, 25);
+          let dragIcon = $(event.currentTarget).find('.token-image')[0]
+          ev.dataTransfer.setDragImage(dragIcon, 25, 25)
           return ev.dataTransfer.setData(
             'text/plain',
             JSON.stringify({
               type: 'initiative',
-              combatant: li.getAttribute('data-combatant-id')
+              combatant: li.getAttribute('data-combatant-id'),
             })
           )
         })
       })
     }
   })
-  
-
-  
 
   // @ts-ignore
   game.socket.on('system.gurps', async resp => {

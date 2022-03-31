@@ -1,7 +1,6 @@
 'use strict'
 
 import {
-  extractP,
   xmlTextToJson,
   convertRollStringToArrayOfInt,
   recurselist,
@@ -35,7 +34,21 @@ import { SmartImporter } from '../smart-importer.js'
 import { GurpsItem } from '../item.js'
 import GurpsToken from '../token.js'
 import { parseDecimalNumber } from '../../lib/parse-decimal-number/parse-decimal-number.js'
-import { _Base, Named, Skill, Spell, Advantage, Melee, Ranged, Note } from './actor-components.js'
+import {
+  _Base,
+  Skill,
+  Spell,
+  Advantage,
+  Ranged,
+  Note,
+  Encumbrance,
+  Equipment,
+  Reaction,
+  Modifier,
+  Melee,
+  HitLocationEntry,
+} from './actor-components.js'
+import { multiplyDice } from '../utilities/damage-utils.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -143,7 +156,7 @@ export class GurpsActor extends Actor {
     if (this.getGurpsActorData().encumbrance) {
       let move = this.getGurpsActorData().move
       if (!move) {
-        let currentMove = this.getGurpsActorData().encumbrance['00000'].move
+        let currentMove = this.getGurpsActorData().encumbrance['00000'].move ?? this.getGurpsActorData().basicmove.value
         let value = { mode: MoveModes.Ground, basic: currentMove, default: true }
         setProperty(this.getGurpsActorData(), 'move.00000', value)
         move = this.getGurpsActorData().move
@@ -470,18 +483,18 @@ export class GurpsActor extends Actor {
     if (!!encs) {
       const level0 = encs[zeroFill(0)] // if there are encumbrances, there will always be a level0
       let effectiveMove = parseInt(level0.move)
-      let effectiveDodge = parseInt(level0.dodge) + data.currentdodge
+      let effectiveDodge = isNaN(parseInt(level0.dodge)) ? '–' : parseInt(level0.dodge) + data.currentdodge
       let effectiveSprint = this._getSprintMove()
 
       if (isReeling) {
         effectiveMove = Math.ceil(effectiveMove / 2)
-        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
       if (isTired) {
         effectiveMove = Math.ceil(effectiveMove / 2)
-        effectiveDodge = Math.ceil(effectiveDodge / 2)
+        effectiveDodge = isNaN(effectiveDodge) ? '–' : Math.ceil(effectiveDodge / 2)
         effectiveSprint = Math.ceil(effectiveSprint / 2)
       }
 
@@ -489,7 +502,7 @@ export class GurpsActor extends Actor {
         let enc = encs[enckey]
         let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
-        enc.currentdodge = Math.max(1, effectiveDodge - parseInt(enc.level))
+        enc.currentdodge = isNaN(effectiveDodge) ? '–' : Math.max(1, effectiveDodge - parseInt(enc.level))
         enc.currentsprint = Math.max(1, Math.floor(effectiveSprint * threshold))
         enc.currentmovedisplay = enc.currentmove
         // TODO remove additionalresources.showflightmove
@@ -835,6 +848,76 @@ export class GurpsActor extends Actor {
     let n = this.name
     if (!!this.token && this.token.name != n) n = this.token.name + '(' + n + ')'
     return n
+  }
+
+  /**
+   *
+   * @param {Object} action
+   * @param {string} action.orig - the original OTF string
+   * @param {string} action.costs - "*(per|cost) ${number} ${resource}" -- resource can be '@resource' to prompt user
+   * @param {string} action.formula - the basic die formula, such as '2d', '1d-2', '3d-1x2', etc.
+   * @param {string} action.damagetype - one of the recognized damage types (cr, cut, imp, etc)
+   * @param {string} action.extdamagetype - optional extra damage type, such as 'ex'
+   * @param {string} action.hitlocation - optional hit location
+   * @param {boolean} action.accumulate
+   */
+  async accumulateDamageRoll(action) {
+    // define a new actor property, damageAccumulators, which is an array of object:
+    // {
+    //  otf: action.orig,
+    //  dieroll: action.formula,
+    //  damagetype: action.damagetype,
+    //  damagemod: action.extdamagetype,
+    //  cost: the <cost> value parsed out of action.cost, optional
+    //  resource: the <resource> value parsed out of action.cost, optional
+    //  count: <number> -- the accumulator, i.e., how many times this damage is to be invoked.
+    // }
+
+    // initialize the damageAccumulators property if it doesn't exist:
+    if (!this.getGurpsActorData().conditions.damageAccumulators)
+      this.getGurpsActorData().conditions.damageAccumulators = []
+
+    let accumulators = this.getGurpsActorData().conditions.damageAccumulators
+
+    // first, try to find an existing accumulator, and increment if found
+    let existing = accumulators.findIndex(it => it.orig === action.orig)
+    if (existing !== -1) return this.incrementDamageAccumulator(existing)
+
+    // an existing accumulator is not found, create one
+    action.count = 1
+    delete action.accumulate
+    accumulators.push(action)
+    await this.update({ 'data.conditions.damageAccumulators': accumulators })
+    console.log(accumulators)
+  }
+
+  get damageAccumulators() {
+    return this.getGurpsActorData().conditions.damageAccumulators
+  }
+
+  async incrementDamageAccumulator(index) {
+    this.damageAccumulators[index].count++
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+  }
+
+  async decrementDamageAccumulator(index) {
+    this.damageAccumulators[index].count--
+    if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+  }
+
+  async clearDamageAccumulator(index) {
+    this.damageAccumulators.splice(index, 1)
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+  }
+
+  async applyDamageAccumulator(index) {
+    let accumulator = this.damageAccumulators[index]
+    let roll = multiplyDice(accumulator.formula, accumulator.count)
+    accumulator.formula = roll
+    this.damageAccumulators.splice(index, 1)
+    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
   async importCharacter() {
@@ -3270,15 +3353,25 @@ export class GurpsActor extends Actor {
   async addTracker() {
     this.ignoreRender = true
 
-    let trackerData = this.data.data.additionalresources.tracker
-    if (!trackerData) trackerData = {}
-    let trackers = objectToArray(trackerData)
-    trackers.push({ name: '', value: 0, min: 0, max: 0, points: 0 })
-    let data = arrayToObject(trackers)
+    let trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
+    let data = GurpsActor.addTrackerToDataObject(this.getGurpsActorData(), trackerData)
+
     await this.update({ 'data.additionalresources.-=tracker': null })
     await this.update({ 'data.additionalresources.tracker': data })
 
     this._forceRender()
+  }
+
+  static addTrackerToDataObject(data, trackerData) {
+    let trackers = GurpsActor.getTrackersAsArray(data)
+    trackers.push(trackerData)
+    return arrayToObject(trackers)
+  }
+
+  static getTrackersAsArray(data) {
+    let trackerArray = data.additionalresources.tracker
+    if (!trackerArray) trackerArray = {}
+    return objectToArray(trackerArray)
   }
 
   async setMoveDefault(value) {
@@ -3891,12 +3984,8 @@ export class GurpsActor extends Actor {
       if (!rollText) rollText = HitLocations.HitLocation.DEFAULT
       let dr = parseInt(value.dr)
       if (isNaN(dr)) dr = 0
-      myhitlocations.push({
-        where: value.where,
-        dr: dr,
-        roll: convertRollStringToArrayOfInt(rollText),
-        rollText: rollText,
-      })
+      let entry = new HitLocationEntry(value.where, dr, rollText, value?.split)
+      myhitlocations.push(entry)
     }
     return myhitlocations
   }
@@ -3926,7 +4015,7 @@ export class GurpsActor extends Actor {
   getTorsoDr() {
     if (!this.getGurpsActorData().hitlocations) return 0
     let hl = Object.values(this.getGurpsActorData().hitlocations).find(h => h.penalty == 0)
-    return !!hl ? hl.dr : 0
+    return !!hl ? hl : { dr: 0 }
   }
 
   /**
@@ -4135,116 +4224,3 @@ export class GurpsActor extends Actor {
     return true
   }
 }
-
-export class Encumbrance {
-  constructor() {
-    this.key = ''
-    this.level = 0
-    this.dodge = 9
-    this.weight = ''
-    this.move = 0
-    this.current = false
-  }
-}
-
-export class Equipment extends Named {
-  /**
-   * @param {string} [nm]
-   * @param {boolean} [ue]
-   */
-  constructor(nm, ue) {
-    super(nm)
-    this.save = ue
-    this.equipped = false
-    this.carried = false
-    this.count = 0
-    this.cost = 0
-    this.weight = 0
-    this.location = ''
-    this.techlevel = ''
-    this.legalityclass = ''
-    this.categories = ''
-    this.costsum = 0
-    this.weightsum = 0
-    this.uses = ''
-    this.maxuses = ''
-    this.ignoreImportQty = false
-    this.uuid = ''
-    this.parentuuid = ''
-    this.itemid = ''
-    /** @type {{ [key: string]: any }} */
-    this.collapsed = {}
-    /** @type {{ [key: string]: any }} */
-    this.contains = {}
-  }
-
-  /**
-   * @param {Equipment} eqt
-   */
-  static calc(eqt) {
-    Equipment.calcUpdate(null, eqt, '')
-  }
-
-  // OMG, do NOT fuck around with this method.   So many gotchas...
-  // the worst being that you cannot use array.forEach.   You must use a for loop
-  /**
-   * @param {Actor | null} actor
-   * @param {Equipment} eqt
-   * @param {string} objkey
-   */
-  static async calcUpdate(actor, eqt, objkey) {
-    if (!eqt) return
-    const num = (/** @type {string | number} */ s) => {
-      // @ts-ignore
-      return isNaN(s) ? 0 : Number(s)
-    }
-    const cln = (/** @type {number} */ s) => {
-      return !s ? 0 : num(String(s).replace(/,/g, ''))
-    }
-
-    eqt.count = cln(eqt.count)
-    eqt.cost = cln(eqt.cost)
-    eqt.weight = cln(eqt.weight)
-    let cs = eqt.count * eqt.cost
-    let ws = eqt.count * eqt.weight
-    if (!!eqt.contains) {
-      for (let k in eqt.contains) {
-        // @ts-ignore
-        let e = eqt.contains[k]
-        await Equipment.calcUpdate(actor, e, objkey + '.contains.' + k)
-        cs += e.costsum
-        ws += e.weightsum
-      }
-    }
-    if (!!eqt.collapsed) {
-      for (let k in eqt.collapsed) {
-        // @ts-ignore
-        let e = eqt.collapsed[k]
-        await Equipment.calcUpdate(actor, e, objkey + '.collapsed.' + k)
-        cs += e.costsum
-        ws += e.weightsum
-      }
-    }
-    if (!!actor)
-      await actor.update({
-        [objkey + '.costsum']: cs,
-        [objkey + '.weightsum']: ws,
-      })
-    // the local values 'should' be updated... but I need to force them anyway
-    eqt.costsum = cs
-    eqt.weightsum = ws
-  }
-}
-
-export class Reaction {
-  /**
-   * @param {string | undefined} [m]
-   * @param {string | undefined} [s]
-   */
-  constructor(m, s) {
-    this.modifier = m || ''
-    this.situation = s || ''
-  }
-}
-
-export class Modifier extends Reaction {}
