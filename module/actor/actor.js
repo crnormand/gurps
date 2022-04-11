@@ -1022,13 +1022,19 @@ export class GurpsActor extends Actor {
     att.WILL.points = atts.find(e => e.attr_id === 'will')?.calc?.points || 0
     att.PER.import = atts.find(e => e.attr_id === 'per')?.calc?.value || 0
     att.PER.points = atts.find(e => e.attr_id === 'per')?.calc?.points || 0
+    att.QN.import = atts.find(e => e.attr_id === 'qn')?.calc?.value || 0
+    att.QN.points = atts.find(e => e.attr_id === 'qn')?.calc?.points || 0
 
     data.HP.max = atts.find(e => e.attr_id === 'hp')?.calc?.value || 0
     data.HP.points = atts.find(e => e.attr_id === 'hp')?.calc?.points || 0
     data.FP.max = atts.find(e => e.attr_id === 'fp')?.calc?.value || 0
     data.FP.points = atts.find(e => e.attr_id === 'fp')?.calc?.points || 0
+    data.QP.max = atts.find(e => e.attr_id === 'qp')?.calc?.value || 0
+    data.QP.points = atts.find(e => e.attr_id === 'qp')?.calc?.points || 0
     let hp = atts.find(e => e.attr_id === 'hp')?.calc?.current || 0
     let fp = atts.find(e => e.attr_id === 'fp')?.calc?.current || 0
+    let qp = atts.find(e => e.attr_id === 'qp')?.calc?.current || 0
+
     let saveCurrent = false
 
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
@@ -1064,6 +1070,7 @@ export class GurpsActor extends Actor {
       data.HP.value = hp
       data.FP.value = fp
     }
+    data.QP.value = qp
 
     let bl_value = parseFloat(calc?.basic_lift.match(/[\d\.]+/g))
     let bl_unit = calc?.basic_lift.replace(bl_value + ' ', '')
@@ -1139,6 +1146,7 @@ export class GurpsActor extends Actor {
       'data.currentdodge': cd,
       'data.-=encumbrance': null,
       'data.encumbrance': es,
+      'data.QP': data.QP,
     }
   }
 
@@ -2987,6 +2995,7 @@ export class GurpsActor extends Actor {
     data.FP.points = i(json.fatiguepoints_points)
     let hp = i(json.hps)
     let fp = i(json.fps)
+
     let saveCurrent = false
     if (!!data.lastImport && (data.HP.value != hp || data.FP.value != fp)) {
       let option = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_IMPORT_HP_FP)

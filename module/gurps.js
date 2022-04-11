@@ -155,6 +155,7 @@ GURPS.attributepaths = {
   DX: 'attributes.DX.value',
   IQ: 'attributes.IQ.value',
   HT: 'attributes.HT.value',
+  QN: 'attributes.QN.value',
   WILL: 'attributes.WILL.value',
   Will: 'attributes.WILL.value',
   PER: 'attributes.PER.value',
@@ -167,6 +168,7 @@ GURPS.attributes = {
   DX: 'GURPS.attributesDX',
   IQ: 'GURPS.attributesIQ',
   HT: 'GURPS.attributesHT',
+  QN: 'GURPS.attributesQN',
   Will: 'GURPS.attributesWILL',
   Per: 'GURPS.attributesPER',
 }
@@ -176,6 +178,7 @@ GURPS.attributeNames = {
   DX: 'GURPS.attributesDXNAME',
   IQ: 'GURPS.attributesIQNAME',
   HT: 'GURPS.attributesHTNAME',
+  QN: 'GURPS.attributesQNNAME',
   Will: 'GURPS.attributesWILLNAME',
   Per: 'GURPS.attributesPERNAME',
 }
@@ -196,6 +199,11 @@ GURPS.skillTypes = {
   'HT/H': 'GURPS.SkillHTH',
   'HT/VH': 'GURPS.SkillHTVH',
 
+  'QN/E': 'GURPS.SkillQNE',
+  'QN/A': 'GURPS.SkillQNA',
+  'QN/H': 'GURPS.SkillQNH',
+  'QN/VH': 'GURPS.SkillQNVH',
+
   'Will/E': 'GURPS.SkillWillE',
   'Will/A': 'GURPS.SkillWillA',
   'Will/H': 'GURPS.SkillWillH',
@@ -212,6 +220,7 @@ GURPS.PARSELINK_MAPPINGS = {
   DX: 'attributes.DX.value',
   IQ: 'attributes.IQ.value',
   HT: 'attributes.HT.value',
+  QN: 'attributes.QN.value',
   WILL: 'attributes.WILL.value',
   PER: 'attributes.PER.value',
   VISION: 'vision',

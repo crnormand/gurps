@@ -40,6 +40,12 @@
             "points": 0,
             "dtype": "Number"
           }
+          "QN": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          }
         },
         "HP": {
           "value": 0,
@@ -48,6 +54,12 @@
           "points": 0
         },
         "FP": {
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "points": 0
+        },
+        "QP": {
           "value": 0,
           "min": 0,
           "max": 0,
