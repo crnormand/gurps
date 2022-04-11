@@ -4,6 +4,7 @@ import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
 import { DamageTables } from './damage-tables.js'
 import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { HitLocationEntry } from '../actor/actor-components.js'
 
 /* 
   Crippling injury:
@@ -201,6 +202,14 @@ export class CompositeDamageCalculator {
     return this._calculators[viewId]
   }
 
+  get showApplyAction() {
+    return (
+      game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'apply' ||
+      (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'target' &&
+        this._defender.hasPlayerOwner)
+    )
+  }
+
   get additionalWoundModifier() {
     return this._additionalWoundModifier
   }
@@ -285,21 +294,11 @@ export class CompositeDamageCalculator {
     if (this._hitLocation === 'Random') return 0
 
     // if (this._hitLocation === 'User Entered') return this._userEnteredDR
+    let entries = this._defender.hitLocationsWithDR
 
-    if (this._hitLocation === 'Large-Area') {
-      let lowestDR = Number.POSITIVE_INFINITY
-      let torsoDR = 0
-
-      // find the location with the lowest DR
-      for (let value of this._defender.hitLocationsWithDR.filter(it => it.roll.length > 0)) {
-        if (value.dr < lowestDR) lowestDR = value.dr
-        if (value.where === 'Torso') torsoDR = value.dr
-      }
-      // return the average of torso and lowest dr
-      return Math.ceil((lowestDR + torsoDR) / 2)
-    }
-
-    return this._defender.hitLocationsWithDR.filter(it => it.where === this._hitLocation).map(it => it.dr)[0]
+    return this._hitLocation === 'Large-Area'
+      ? HitLocationEntry.getLargeAreaDR(entries)
+      : HitLocationEntry.findLocation(entries, this._hitLocation).getDR(this.damageType)
   }
 
   get effects() {
@@ -553,6 +552,7 @@ export class CompositeDamageCalculator {
    */
   get hitLocationsWithDR() {
     let locations = this._defender.hitLocationsWithDR
+    for (let l of locations) l.damageType = this.damageType
     return locations
   }
 

@@ -84,7 +84,7 @@ export class EffectModifierControl {
   }
 
   _targetToken(user, token, targeted) {
-    this._ui.render(false)
+    this._ui?.render(false)
   }
 
   _controlToken(token, isControlled) {
@@ -93,12 +93,12 @@ export class EffectModifierControl {
     if (isControlled) this.token = token
     else if (this.token === token) this.token = null
 
-    this._ui.setToken(this.token)
+    this._ui?.setToken(this.token)
 
     // FIXME Yet another crappy hack ... no idea why when switching from one token to another we end up in the
     // "no token selected" state. This fixes that problem.
     let self = this
-    setTimeout(() => self._ui.render(false), 250)
+    setTimeout(() => self._ui?.render(false), 250)
   }
 
   async close(options) {

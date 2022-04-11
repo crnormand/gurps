@@ -44,17 +44,31 @@
       </div>
 
       <div style='display: grid; grid-template-columns: 1fr min-content;'>
-        <button id='apply-publicly' class='split-button'>{{i18n "GURPS.addApply"}}</button>
-        <div class='dropdown'>
-          <button id='apply-split' class='split-button'>
-            <i class='fa fa-caret-down'></i>
-          </button>
-          <div id='apply-dropdown' class="dropdown-content invisible">
-            <div id='apply-secretly'>{{i18n "GURPS.addApplyQuietly"}}</div>
-            <div id='apply-keep'>{{i18n "GURPS.addApplyAndKeep"}}</div>
-            <div id='apply-secretly-keep'>{{i18n "GURPS.addApplyQuietlyAndKeep"}}</div>
+	      {{#if CALC.showApplyAction}}
+	        <button id='apply-publicly' class='split-button'>{{i18n "GURPS.addApply"}}</button>
+	        <div class='dropdown'>
+	          <button id='apply-split' class='split-button'>
+	            <i class='fa fa-caret-down'></i>
+	          </button>
+	          <div id='apply-dropdown' class="dropdown-content invisible">
+	            <div id='apply-secretly'>{{i18n "GURPS.addApplyQuietly"}}</div>
+	            <div id='apply-keep'>{{i18n "GURPS.addApplyAndKeep"}}</div>
+	            <div id='apply-secretly-keep'>{{i18n "GURPS.addApplyQuietlyAndKeep"}}</div>
+	          </div>
+	        </div>
+	      {{else}}
+          <button id='apply-secretly' class='split-button'>{{i18n "GURPS.addApplyQuietly"}}</button>
+          <div class='dropdown'>
+            <button id='apply-split' class='split-button'>
+              <i class='fa fa-caret-down'></i>
+            </button>
+            <div id='apply-dropdown' class="dropdown-content invisible">
+              <div id='apply-publicly'>{{i18n "GURPS.addApply"}}</div>
+              <div id='apply-keep'>{{i18n "GURPS.addApplyAndKeep"}}</div>
+              <div id='apply-secretly-keep'>{{i18n "GURPS.addApplyQuietlyAndKeep"}}</div>
+            </div>
           </div>
-        </div>
+	      {{/if}}
       </div>
     </div>
 
@@ -514,17 +528,31 @@
               </div>
             </div>
             <div style='display: grid; grid-template-columns: 1fr min-content; margin-top: 1rem;'>
-              <button id='apply-injury-publicly' class='split-button'>{{i18n "GURPS.addApplyInjury"}}</button>
-              <div class='dropdown'>
-                <button id='apply-injury-split' class='split-button'>
-                  <i class='fa fa-caret-down'></i>
-                </button>
-                <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
-                  <div id='apply-injury-secretly'>{{i18n "GURPS.addApplyInjuryQuietly"}}</div>
-                  <div id='apply-injury-keep'>{{i18n "GURPS.addApplyInjuryAndKeep"}}</div>
-                  <div id='apply-injury-secretly-keep'>{{i18n "GURPS.addApplyInjuryQuietlyAndKeep"}}</div>
-                </div>
-              </div>
+                {{#if CALC.showApplyAction}}
+		              <button id='apply-injury-publicly' class='split-button'>{{i18n "GURPS.addApplyInjury"}}</button>
+		              <div class='dropdown'>
+		                <button id='apply-injury-split' class='split-button'>
+		                  <i class='fa fa-caret-down'></i>
+		                </button>
+		                <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
+		                  <div id='apply-injury-secretly'>{{i18n "GURPS.addApplyInjuryQuietly"}}</div>
+		                  <div id='apply-injury-keep'>{{i18n "GURPS.addApplyInjuryAndKeep"}}</div>
+		                  <div id='apply-injury-secretly-keep'>{{i18n "GURPS.addApplyInjuryQuietlyAndKeep"}}</div>
+		                </div>
+		              </div>
+		            {{else}}
+                  <button id='apply-injury-secretly' class='split-button'>{{i18n "GURPS.addApplyQuietly"}}</button>
+                  <div class='dropdown'>
+                    <button id='apply-injury-split' class='split-button'>
+                      <i class='fa fa-caret-down'></i>
+                    </button>
+                    <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
+                      <div id='apply-injury-publicly'>{{i18n "GURPS.addApplyInjury"}}</div>
+                      <div id='apply-injury-keep'>{{i18n "GURPS.addApplyInjuryAndKeep"}}</div>
+                      <div id='apply-injury-secretly-keep'>{{i18n "GURPS.addApplyInjuryQuietlyAndKeep"}}</div>
+                    </div>
+                  </div>
+                {{/if}}
             </div>
 
           </div>

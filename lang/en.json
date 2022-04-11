@@ -312,7 +312,7 @@
   "GURPS.chatHelpQty": "Modify the QTY column of equipment<hr>parameters:\n&lt;formula&gt;\n&lt;equipment&gt;\no:&lt;equipment&gt;: only search 'other' list<hr>examples:\n/qty +1 equipment\n/qty -2 equipment\n/qty =20 equipment\n/qty +1 o:equipment",
   "GURPS.chatHelpLight": "Set token's light level<hr>parameters:\nnone|off: turn off light\nX: dim light radius\nY: bright light radius\nZ: broadcast angle of light \n#RRGGBB: color of light\nW: color intensity (0.0-1.0)\n&lt;anim&gt;: animation pattern (torch, pulse, chroma, wave, fog, sunburst, dome, emanation, hexa, ghost, energy, roiling, hole\nSPEED: speed of animation (1-10)\nINT: intensity of animation (1-10)<hr>examples:\n/li 6 2\n/li 8 3 90\n/li 6 2 #ff0000\n/li 6 2 #ff1111 0.5\n/li 6 2 torch\n/li 8 4 90 #ff7777 0.5 pulse 5 5\nhttps://foundryvtt.com/article/lighting/",
   "GURPS.chatHelpTracker": "Modify the Resource Tracker<hr>command format:\n/tr0-3\n/tracker0-3\n/resource0-3\n/rt0-3\n/tr(name)\n/tracker(name)\n/resource(name)\n/rt(name)<hr>parameters:\n&lt;formula&gt;\nreset: reset Tracker to starting value<hr>examples:\n/tr0 +1\n/tr0 -2\n/tracker1 =20\n/tr(arrows) +1\n/resource(rounds) reset",
-  "GURPS.chatHelpStatus": "Set token's effects status<hr>parameters:\ntoggle|t: toggle the status\non|+|set: turn on the status\noff|-|unset: turn off the status\nclear: remove all statuses\n&lt;token name&gt;|@self: token to affect\nlist: display all status names\n{JSON data}: optional 'duration.combat' data<hr>examples:\n/st on prone Bog\n/st - shock1 @self\n/st list",
+  "GURPS.chatHelpStatus": "Set token's effects status<hr>parameters:\ntoggle|t: toggle the status\non|+|set: turn on the status\noff|-|unset: turn off the status\nclear: remove all statuses\n@self OR :tokenname\nlist: display all status names\n{JSON data}: optional 'duration.combat' data<hr>examples:\n/st on prone :Bog\n/st - shock1 @self\n/st list",
   "GURPS.chatHelpRemote": "Execute an On-the-Fly formula remotely<hr>parameters:\n[OtF]: On-the-Fly formula\n&lt;player names&gt;|<i>blank</i>: list of player names (or <i>blank</i> to send to all players)<hr>examples:\n/rem &#91;&rlm;PER] Chris\n/rem [&rlm;ST+2]",
   "GURPS.chatHelpEveryone": "Apply formula to FP or HP of all player characters or roll On-the-Fly formula locally against all player characters<hr>parameters:\nfp &lt;formula&gt;\nhp &lt;formula&gt;\n [OtF]: execute OtF (locally) for all player characters\nfp reset: Reset FP back to starting values\nhp reset: Reset HP back to starting values<hr>examples:\n/ev fp +1\n/ev hp -1\n/ev fp +1d\n/ev hp +1d-3!\n/ev fp reset\n/ev [&rlm;PER]",
   "GURPS.chatHelpAnim": "Play a centered or moving animation.\n<hr>parameters (for both)\nlist: display a list of available animations\nwX: wait X seconds before displaying animation\n&lt;filename pattern&gt;: pattern can contain <b>*</b>\nXx:Y: repeat animation X times (2x, 3x, etc.) with Y seconds delay between animations\n<hr>parameters for centered animations:\nc: indicates a centered animation\n*X: scale animation by X\n@self: use self as center, instead of target\nThe following options can be added after 'c'\n f: flip the animation on the x axis (left to right)\n m: move the centered animation to the target\n n: do not rotate moving centered animation\n X: degrees to rotate animation\n :Y,Z: offset animation (default 0.5,0.5)\n<hr>examples of centered animations:\n/anim &lt;pattern&gt; c *0.5 3x\n'centered, 1/2 scale, 3 times'\n\n/anim &lt;pattern&gt; cf *2 3x:4\n'centered, flipped (left-right), 2x scale, 3 times with 4 second delay\n\n/anim &lt;pattern&gt; cm\n'centered, move animation from self to target'\n\n/anim &lt;pattern&gt; cmn\n'centered, move animation from self to target, do not rotate'\n\n/anim &lt;pattern&gt; cfm\n'centered, flipped, move animation from self to target'\n\n/anim &lt;pattern&gt; c90\n'centered, rotate 90 degrees'\n\n/anim &lt;pattern&gt; cf180 *.333\n'centered, flipped, rotate 180 degrees, 1/3 scale'\n\n/anim &lt;pattern&gt; cm45\n/anim &lt;pattern&gt; c:0,1\n/anim &lt;pattern&gt; cf:0.5,1\n/anim &lt;pattern&gt; cmn:0.9,1 *2\n<hr>parameters for a moving animations:\n-X: shift left (0.0-1.0) towards the start of the animation\n+X: stretch right (0.0-infinity) towards the destination\n<hr>examples of moving animations:\n/anim &lt;pattern&gt; -0.1 +0.1 2x\n'moving animation, left shift 10%, right stretch 10%, 2 times'",
@@ -333,6 +333,7 @@
   "GURPS.damageAbbrevdmg": "dmg",
   "GURPS.damageAbbrevfat": "fat",
   "GURPS.damageAbbrevimp": "imp",
+  "GURPS.damageAbbrevinjury": "injury",
   "GURPS.damageAbbrevpi-": "pi-",
   "GURPS.damageAbbrevpi": "pi",
   "GURPS.damageAbbrevpi+": "pi+",
@@ -346,6 +347,7 @@
   "GURPS.damageTypeFatigue": "Fatigue",
   "GURPS.damageTypeHuge Piercing": "Huge Piercing",
   "GURPS.damageTypeImpaling": "Impaling",
+  "GURPS.damageTypeInjury": "Injury",
   "GURPS.damageTypeLarge Piercing": "Large Piercing",
   "GURPS.damageTypePiercing": "Piercing",
   "GURPS.damageTypeSmall Piercing": "Small Piercing",
@@ -853,6 +855,9 @@
   "GURPS.settingImportHintBrowserImporter": "Check this if you are not hosting your Foundry instance locally (you are hosting externally, i.e. Forge). This import dialog can remember the location of your import file during the session (which means that if you import the character again, in the same session, it will not have to bring up the File dialog).",
   "GURPS.settingShowChatReeling": "Display Reeling/Tired Status in Chat",
   "GURPS.settingHintShowChatReeling": "When checked, changes to any actor's Reeling or Tired status will be displayed as a chat message.",
+  "GURPS.settingDefaultADDAction": "Set default action for Damage Dialog",
+  "GURPS.settingHintefaultADDAction": "When set to 'Target' it will choose 'Apply' for Player Characters and 'Apply Quietly' for NPCs.",
+  "GURPS.settingApplyBasedOnTarget": "'Target'",
 
   "__Color Settings__": "=========",
   "GURPS.settingColorSheetMenuTitle": "Color Character Sheet",
@@ -1129,5 +1134,6 @@
   "GURPS.effectsEffect": "Effect",
   "GURPS.default": "Default",
   "GURPS.conditionsCombatMove": "Combat Move",
-  "GURPS.activeEffects": "Active Effects"
+  "GURPS.activeEffects": "Active Effects",
+  "GURPS.quicknotes": "Quick Notes"
 }

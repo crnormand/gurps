@@ -1,4 +1,4 @@
-import { i18n, i18n_f } from '../../lib/utilities.js'
+import { i18n_f } from '../../lib/utilities.js'
 import { GURPS } from '../gurps.js'
 
 export default class MoveModeEditor extends Application {
@@ -56,15 +56,14 @@ export default class MoveModeEditor extends Application {
       this.render(true)
     }
   }
-  
-  
+
   /** Since the default move object may not actually be part of the DB,
       (laissez-faire init), we need to update the full move object. 
   */
   async _updateMoveData(moveId, attrib, value) {
-    let old =  this.moveData[moveId]
-    old[attrib] = value 
-    await this.actor.update({ [`data.move.${moveId}`]: old})   
+    let old = this.moveData[moveId]
+    old[attrib] = value
+    await this.actor.update({ [`data.move.${moveId}`]: old })
   }
 
   async _change(action, key, value, html) {

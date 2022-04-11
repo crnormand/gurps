@@ -2,9 +2,71 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.14
+
+- Make all @margin entries case insensitive
+- Add /if check for @margin, @isCritSuccess, @isCritFailure (@margin >/>=/</<=/=/== X)
+- Fixed, when clicking OTF Journal link, only show for current user (not all owners, including GM).
+- Added range modifier support for grid units like "mile/miles/mi' (thank's @Kalos!)
+- Allow \*Per 1fp (vs. \*Cost 1fp)
+- Updated JB2A to v0.3.9
+- Add support for split DR.
+- Support linked damage: all comma-separated damage will be rolled with one click. E.g. `2d cut,1d+1 burn`.
+- Support an optional title for a Note.
+- Change image for dice roller when control key is held down.
+- Added a "damage accumulator" for powers like spells which do a variable amount of damage. Adding '+' in front of damage makes it accumulate.
+- Added damage right-click option to combine multiple rolls into one; e.g. combining five `1d-1 burn` rolls yields one roll of `5d-5 burn`.
+
+Release 0.13.13 3/10/2022
+
+- Make /hp/fp @target case insensitive
+- Fixed conflict with GURPS Easy Combat
+
+Release 0.13.12 3/9/2022
+
+- Allow Skill Names to be enclosed in single quotes
+- Import GCS VTT-Notes for Advantages and Equipment
+- Fixed import spell class from .gcs
+- Fixed display in melee/range if item in both equipped and other equipment list
+- Fixed /fc chat command
+- Added 'thing' description when using +/-@margin as a modifier
+- Add GM drag and drop combat initiative order (for Peter ;-)
+- Fixed Item bonuses/melee/ranged not respecting 'unequipped' flag.
+- Added system setting for default ADD action (apply, apply quietly, target).
+
+Release 0.13.11 3/7/2022
+
+- Re-Fixed equipped parry (when 0)
+
+Release 0.13.10 3/7/2022
+
+- Re-enabled remote sending of LastTargetedRolls (fixed bug)
+- Fixed equipped parry (when 0)
+
+Release 0.13.9 3/6/2022
+
+- Fixed bug when melee attacks do not have a parry stat.
+- Disabled remote sending of LastTargetedRolls due to performance issues.
+- Added support for v2 of Token Action HUD
+
+Release 0.13.8 3/5/2022
+
+- Fixed GCA5-12 export for unmodified damage.
+- Increased size of generic modifier buttons in Other Modifiers section.
+- Fixed various chat messages (failing substitutions).
+- Added handling of user defined page ref containing URL.
+- Fixed /status chat command.
+- Updated Brazilian Portuguese language file.
+- Change remaining calls from {{localize}} handlebar to ((i18n}} handlebar.
+- Fixed reaction and conditional mods to be draggable.
+
+Release 0.13.7 3/2/2022
+
+- Fixed /mook generator (Thank you Scimon!)
+
 Release 0.13.6 3/1/2022
 
-- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic   ;-)
+- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic ;-)
 
 Release 0.13.5 2/28/2022
 
