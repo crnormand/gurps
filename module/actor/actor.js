@@ -14,7 +14,7 @@ import {
   zeroFill,
   arrayBuffertoBase64,
 } from '../../lib/utilities.js'
-import { parselink } from '../../lib/parselink.js'
+import { parselink, COSTS_REGEX } from '../../lib/parselink.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
@@ -889,7 +889,8 @@ export class GurpsActor extends Actor {
     delete action.accumulate
     accumulators.push(action)
     await this.update({ 'data.conditions.damageAccumulators': accumulators })
-    console.log(accumulators)
+    GURPS.ModifierBucket.render()
+    //console.log(accumulators)
   }
 
   get damageAccumulators() {
@@ -899,22 +900,29 @@ export class GurpsActor extends Actor {
   async incrementDamageAccumulator(index) {
     this.damageAccumulators[index].count++
     await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    GURPS.ModifierBucket.render()
   }
 
   async decrementDamageAccumulator(index) {
     this.damageAccumulators[index].count--
     if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
     await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    GURPS.ModifierBucket.render()
   }
 
   async clearDamageAccumulator(index) {
     this.damageAccumulators.splice(index, 1)
     await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    GURPS.ModifierBucket.render()
   }
 
   async applyDamageAccumulator(index) {
     let accumulator = this.damageAccumulators[index]
     let roll = multiplyDice(accumulator.formula, accumulator.count)
+    let costs = accumulator.costs.match(COSTS_REGEX)
+    if (!!costs) {
+      accumulator.costs = `*${costs.groups.verb} ${accumulator.count * costs.groups.cost} ${costs.groups.type}`
+    }
     accumulator.formula = roll
     this.damageAccumulators.splice(index, 1)
     await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })

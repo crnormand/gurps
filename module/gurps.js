@@ -1,5 +1,5 @@
 // Import Modules
-import { parselink, parseForRollOrDamage } from '../lib/parselink.js'
+import { parselink, parseForRollOrDamage, COSTS_REGEX } from '../lib/parselink.js'
 import { handlePdf, SJGProductMappings } from './pdf-refs.js'
 import { GurpsActor } from './actor/actor.js'
 import { GurpsItem } from './item.js'
@@ -563,11 +563,8 @@ const actionFuncs = {
       action.extdamagetype,
       action.hitlocation
     )
-    if (action.next && action.next.type === 'damage') {
-      return this.damage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
-    }
-    if (action.next && action.next.type === 'deriveddamage') {
-      return this.deriveddamage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
+    if (action.next) {
+      return this.performAction(action.next, actor, event, targets)
     }
 
     return true
@@ -613,11 +610,8 @@ const actionFuncs = {
       action.extdamagetype,
       action.hitlocation
     )
-    if (action.next && action.next.type === 'damage') {
-      return this.damage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
-    }
-    if (action.next && action.next.type === 'deriveddamage') {
-      return this.deriveddamage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
+    if (action.next) {
+      return this.performAction(action.next, actor, event, targets)
     }
     return true
   },
@@ -1339,11 +1333,11 @@ GURPS.handleRoll = handleRoll
  */
 async function applyModifierDesc(actor, desc) {
   if (!desc) return null
-  let m = desc.match(/.*\* ?([Cc]osts|[Pp]er)? (\d+) ?([ \w\(\)]+)/i)
+  let m = desc.match(COSTS_REGEX)
 
   if (!!m && !!actor && !actor.isSelf) {
-    let delta = parseInt(m[2])
-    let target = m[3]
+    let delta = parseInt(m.groups.cost)
+    let target = m.groups.type
     if (target.match(/^[hf]p/i)) {
       let k = target.toUpperCase()
       // @ts-ignore
@@ -1356,7 +1350,7 @@ async function applyModifierDesc(actor, desc) {
     }
   }
 
-  let parse = desc.replace(/.*\*[Mm]ax: ?(\d+).*/g, '$1')
+  let parse = desc.replace(/.*\*max: ?(\d+).*/gi, '$1')
   if (parse != desc) {
     return parseInt(parse)
   }
