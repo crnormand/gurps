@@ -49,6 +49,7 @@ import {
   HitLocationEntry,
 } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
+import { DamageTables } from '../damage/damage-tables.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
@@ -1009,6 +1010,10 @@ export class GurpsActor extends Actor {
     if (!atts) return
     let data = this.getGurpsActorData()
     let att = data.attributes
+    if (!att.QN) { // upgrade older actors to include Q
+      att.QN = {}  
+      data.QP ={}
+    }
 
     att.ST.import = atts.find(e => e.attr_id === 'st')?.calc?.value || 0
     att.ST.points = atts.find(e => e.attr_id === 'st')?.calc?.points || 0
@@ -1497,7 +1502,11 @@ export class GurpsActor extends Actor {
       let l = new HitLocations.HitLocation(i.table_name)
       l.import = i.calc?.dr.all?.toString() || '0'
       for (let [key, value] of Object.entries(i.calc?.dr))
-        if (key != 'all') l.import += `/${(i.calc?.dr.all + value).toString()}`
+        if (key != 'all') {
+          let damtype = DamageTables.damageTypeMap[key]
+          if (!l.split) l.split = {}
+          l.split[damtype] = value
+        }
       l.penalty = i.hit_penalty.toString()
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*'
