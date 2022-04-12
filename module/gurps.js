@@ -564,7 +564,7 @@ const actionFuncs = {
       action.hitlocation
     )
     if (action.next) {
-      return this.performAction(action.next, actor, event, targets)
+      return GURPS.performAction(action.next, actor, event, targets)
     }
 
     return true
@@ -611,7 +611,7 @@ const actionFuncs = {
       action.hitlocation
     )
     if (action.next) {
-      return this.performAction(action.next, actor, event, targets)
+      return GURPS.performAction(action.next, actor, event, targets)
     }
     return true
   },
