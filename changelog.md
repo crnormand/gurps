@@ -13,7 +13,6 @@ Release 0.13.14
 - Add support for split DR.
 - Support linked damage: all comma-separated damage will be rolled with one click. E.g. `2d cut,1d+1 burn`.
 - Support an optional title for a Note.
-- Change image for dice roller when control key is held down.
 - Added a "damage accumulator" for powers like spells which do a variable amount of damage. Adding '+' in front of damage makes it accumulate.
 - Added damage right-click option to combine multiple rolls into one; e.g. combining five `1d-1 burn` rolls yields one roll of `5d-5 burn`.
 - Added @kbrownridge's Quintessence code

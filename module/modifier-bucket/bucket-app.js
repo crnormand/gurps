@@ -65,6 +65,9 @@ Hooks.once('init', async function () {
   }
 
   // Listen for the Ctrl key and show the single dice image
+  /**
+  **   We need to discuss... currently, holding down the CTRL key will make a private roll for the GM (or a blind roll for the player).
+  ***
   game.keybindings.register('gurps', 'toggleDiceDisplay', {
     name: 'Toggle dice display',
     uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
@@ -77,6 +80,7 @@ Hooks.once('init', async function () {
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
     // "ControlLeft", "ControlRight"
   })
+  */
 })
 
 Hooks.once('ready', async function () {
