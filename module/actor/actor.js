@@ -1513,7 +1513,7 @@ export class GurpsActor extends Actor {
         if (key != 'all') {
           let damtype = DamageTables.damageTypeMap[key]
           if (!l.split) l.split = {}
-          l.split[damtype] = value
+          l.split[damtype] = +l.import + value
         }
       l.penalty = i.hit_penalty.toString()
       while (locations.filter(it => it.where == l.where).length > 0) {

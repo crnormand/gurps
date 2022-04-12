@@ -795,7 +795,7 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Create',
             callback: async html => {
-              ;['notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              ;['notes', 'pageref', 'title'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
               GURPS.put(list, obj)
