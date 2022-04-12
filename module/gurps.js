@@ -563,6 +563,13 @@ const actionFuncs = {
       action.extdamagetype,
       action.hitlocation
     )
+    if (action.next && action.next.type === 'damage') {
+      return this.damage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
+    }
+    if (action.next && action.next.type === 'deriveddamage') {
+      return this.deriveddamage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
+    }
+
     return true
   },
   /**
@@ -606,6 +613,12 @@ const actionFuncs = {
       action.extdamagetype,
       action.hitlocation
     )
+    if (action.next && action.next.type === 'damage') {
+      return this.damage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
+    }
+    if (action.next && action.next.type === 'deriveddamage') {
+      return this.deriveddamage({ action: action.next }) // recursion, but you need to wrap the next action in an object using the 'action' attribute
+    }
     return true
   },
   /**
@@ -1326,11 +1339,11 @@ GURPS.handleRoll = handleRoll
  */
 async function applyModifierDesc(actor, desc) {
   if (!desc) return null
-  let m = desc.match(/.*\* ?Costs? (\d+) ?([ \w\(\)]+)/i)
+  let m = desc.match(/.*\* ?([Cc]osts|[Pp]er)? (\d+) ?([ \w\(\)]+)/i)
 
   if (!!m && !!actor && !actor.isSelf) {
-    let delta = parseInt(m[1])
-    let target = m[2]
+    let delta = parseInt(m[2])
+    let target = m[3]
     if (target.match(/^[hf]p/i)) {
       let k = target.toUpperCase()
       // @ts-ignore
