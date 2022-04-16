@@ -919,9 +919,11 @@ export class GurpsActor extends Actor {
   async applyDamageAccumulator(index) {
     let accumulator = this.damageAccumulators[index]
     let roll = multiplyDice(accumulator.formula, accumulator.count)
-    let costs = accumulator.costs.match(COSTS_REGEX)
-    if (!!costs) {
-      accumulator.costs = `*${costs.groups.verb} ${accumulator.count * costs.groups.cost} ${costs.groups.type}`
+    if (accumulator.costs) {
+      let costs = accumulator.costs.match(COSTS_REGEX)
+      if (!!costs) {
+        accumulator.costs = `*${costs.groups.verb} ${accumulator.count * costs.groups.cost} ${costs.groups.type}`
+      }
     }
     accumulator.formula = roll
     this.damageAccumulators.splice(index, 1)
