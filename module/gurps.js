@@ -648,6 +648,8 @@ const actionFuncs = {
       )
       return false
     }
+    if (action.calcOnly) return att.damage
+    
     let dam = parseForRollOrDamage(att.damage)
     if (!dam.action) {
       ui.notifications?.warn('parsed damage has no action')
@@ -1741,7 +1743,7 @@ GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf 
       else GURPS.handleRoll(event, actor, { combined: number })
     },
   }
-
+  let def = GURPS.lastTargetedRoll?.rofrcl || 2
   let dlg = new Dialog({
     title: `${title}`,
     content: `
@@ -1750,7 +1752,7 @@ GURPS.resolveDamageRoll = function (event, actor, otf, overridetxt, isGM, isOtf 
           <p>${prompt}</p>
           <div style='display: inline-grid; grid-template-columns: auto 1fr; place-items: center; gap: 4px'>
             <label>${quantity}</label>
-            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='2'>
+            <input type='text' id='number-rolls' class='digits-only' style='text-align: center;' value='${def}'>
           </div>
           <p/>
         </div>
@@ -1783,6 +1785,7 @@ GURPS.setInitiativeFormula = function (/** @type {boolean} */ broadcast) {
 }
 
 GURPS.recurselist = recurselist
+GURPS.parselink = parselink
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
