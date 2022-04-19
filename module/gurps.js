@@ -16,7 +16,7 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f } from '../lib/utilities.js'
+import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f, quotedAttackName } from '../lib/utilities.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
@@ -778,7 +778,6 @@ const actionFuncs = {
       }
       return false
     }
-    let mode = att.mode ? ` (${att.mode})` : ''
     let p = 'A:'
     if (!!action.isMelee && !action.isRanged) p = 'M:'
     if (!action.isMelee && !!action.isRanged) p = 'R:'
@@ -787,7 +786,7 @@ const actionFuncs = {
       .replace(/\[.*\]/, '')
       .replace(/ +/g, ' ')
       .trim()
-    const chatthing = thing === '' ? att.name + mode : `[${p}"${thing}${mode}"]`
+    const chatthing = `[${p}${quotedAttackName({name: thing, mode: att.mode})}]`
     let target = att.level
     if (!target) {
       ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`)

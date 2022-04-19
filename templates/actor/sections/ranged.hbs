@@ -93,13 +93,13 @@
           class='usage rollable flex-center'
           data-name='{{name}} ({{mode}})'
           data-key='data.ranged.{{@key}}'
-          data-otf='R:"{{name}} ({{mode}})"'
+          data-otf='{{quotedAttackName 'R' this}}'
         >{{mode}}</div>
         <div
           class='level rollable flex-center'
           data-name='{{this.name}} ({{this.mode}})'
           data-key='data.ranged.{{@key}}'
-          data-otf='R:"{{this.name}} ({{this.mode}})"'
+          data-otf='{{quotedAttackName 'R' this}}'
         >{{this.level}}</div>
         <div
           class='acc gga-right {{gmod this.acc}}'
