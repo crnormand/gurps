@@ -206,7 +206,11 @@ export class ItemImporter {
         }
       }
     itemData.data.bonuses = bonus_list.join('\n')
-    let oi = pack.find(p => p.data.data.eqt.uuid === itemData.data.eqt.uuid)
+    const cachedItems = [];
+    for (let i of pack.index) {
+      cachedItems.push(await pack.getDocument(i._id));
+    }
+    let oi = await cachedItems.find(p => p.data.data.eqt.uuid === itemData.data.eqt.uuid)
     if (!!oi) {
       let oldData = duplicate(oi.data.data)
       let newData = duplicate(itemData.data)
