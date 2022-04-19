@@ -2,6 +2,11 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.15
+
+- Default Multiple/Combine damage dialog to "possible number of hits" value (for ranged weapons with Rof and RCL)
+- Make Quintessence system setting world scope
+
 Release 0.13.14 4/12/2022
 
 - Make all @margin entries case insensitive
