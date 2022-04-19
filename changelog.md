@@ -6,6 +6,10 @@ Release 0.13.15
 
 - Default Multiple/Combine damage dialog to "possible number of hits" value (for ranged weapons with Rof and RCL)
 - Make Quintessence system setting world scope
+- Fixed non 6-sided damage parsing for Mook generator
+- Fixed equipment library items being duplicated after world is reloaded (@neck)
+- Made 3D6 transparent and borderless
+- Fix handling of Attacks with double quote in name (to show ammo size in inches)
 
 Release 0.13.14 4/12/2022
 
