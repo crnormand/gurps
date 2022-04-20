@@ -9,7 +9,8 @@ Release 0.13.15
 - Fixed non 6-sided damage parsing for Mook generator
 - Fixed equipment library items being duplicated after world is reloaded (@neck)
 - Made 3D6 transparent and borderless
-- Fix handling of Attacks with double quote in name (to show ammo size in inches)
+- Fix handling of Attacks with double quote in name (e.g. to show ammo size in inches)
+- Fixed /hp +X @target if target owner not online or GM
 
 Release 0.13.14 4/12/2022
 

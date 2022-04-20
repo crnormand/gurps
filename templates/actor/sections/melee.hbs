@@ -80,9 +80,9 @@
         </div>
 
         <div class='usage rollable flex-center' data-name='{{name}} ({{mode}})' data-key='data.melee.{{@key}}'
-          data-otf='M:"{{name}} ({{mode}})"'>{{mode}}</div>
+          data-otf='{{quotedAttackName 'M' this}}'>{{mode}}</div>
         <div class='level rollable flex-center' data-name='{{name}} ({{mode}})' data-key='data.melee.{{@key}}'
-          data-otf='M:"{{name}} ({{mode}})"'>{{level}}</div>
+          data-otf='{{quotedAttackName 'M' this}}'>{{level}}</div>
         <div class='parry flex-center' style="background-color: #ffffbe; width: 100%;">
           {{#if (isNum parry)}}
             <span class="flex-center rollable" data-otf='P:"{{name}} ({{mode}})"'>{{parry}}</span>
