@@ -188,13 +188,13 @@
           {{#listattack data "melee"}}
             <div class='npc-trait-row meleedraggable desc' data-key='data.melee.{{@key}}'>
               <div>
-                <div class='dblclickedit'>{{{gurpslink this.name}}} ({{mode}})
+                <div class='dblclickedit'>{{{gurpslink this.name}}} {{#if (truthy mode)}}({{mode}}){{/if}}
                   <div class="list_note">{{{gurpslink this.notes}}}</div>
                 </div>
               </div>
             </div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.melee.{{@key}}"
-              data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+              data-otf='{{quotedAttackName 'M' this}}'>{{this.level}}</div>
             <div class="damage rollable" data-damage data-otf='{{this.damage}}'>{{this.damage}}</div>
           {{/listattack}}
         </div>
@@ -205,14 +205,14 @@
           {{#listattack data "ranged"}}
             <div class='npc-trait-row rangeddraggable desc' data-key="data.ranged.{{@key}}">
               <div>
-                <div class="dblclkedit">{{{gurpslink this.name}}}
+                <div class="dblclkedit">{{{gurpslink this.name}}} {{#if (truthy mode)}}({{mode}}){{/if}}
                   {{#if this.rof}} &bullet; (RoF:{{this.rof}}){{/if}}{{#if this.rcl}} Rcl:{{this.rcl}}{{/if}}
                   <div class="list_note">{{{gurpslink this.notes}}}</div>
                 </div>
               </div>
             </div>
             <div class="level rollable" data-name="{{this.name}} ({{this.mode}})" data-key="data.ranged.{{@key}}"
-              data-otf='A:"{{this.name}} ({{this.mode}})"'>{{this.level}}</div>
+              data-otf='{{quotedAttackName 'R' this}}'>{{this.level}}</div>
             <div class="acc {{gmod this.acc}}" data-name='Acc for {{this.name}}'>
               {{{displayNumber this.acc}}}
             </div>

@@ -11,6 +11,8 @@ Release 0.13.15
 - Made 3D6 transparent and borderless
 - Fix handling of Attacks with double quote in name (e.g. to show ammo size in inches)
 - Fixed /hp +X @target if target owner not online or GM
+- Fixed error msg if damage formula is not rollable
+- Fixed Mooks displaying "meleename ()" if no Usage (mode)
 
 Release 0.13.14 4/12/2022
 
