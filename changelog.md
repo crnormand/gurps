@@ -13,6 +13,7 @@ Release 0.13.15
 - Fixed /hp +X @target if target owner not online or GM
 - Fixed error msg if damage formula is not rollable
 - Fixed Mooks displaying "meleename ()" if no Usage (mode)
+- Fixed GCA import failure when items contains notes
 
 Release 0.13.14 4/12/2022
 

@@ -6,7 +6,7 @@
  * to think really hard about potentially moving the class back to actor.js.
  */
 
-import { convertRollStringToArrayOfInt } from '../../lib/utilities.js'
+import { convertRollStringToArrayOfInt, extractP } from '../../lib/utilities.js'
 
 export class _Base {
   constructor() {
