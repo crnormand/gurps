@@ -651,8 +651,8 @@ const actionFuncs = {
     if (action.calcOnly) return att.damage
     
     let dam = parseForRollOrDamage(att.damage)
-    if (!dam.action) {
-      ui.notifications?.warn('parsed damage has no action')
+    if (!dam) {
+      ui.notifications?.warn('Damage is not rollable')
       return false
     }
     dam.action.costs = action.costs

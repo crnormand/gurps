@@ -85,10 +85,10 @@
           data-otf='{{quotedAttackName 'M' this}}'>{{level}}</div>
         <div class='parry flex-center' style="background-color: #ffffbe; width: 100%;">
           {{#if (isNum parry)}}
-            <span class="flex-center rollable" data-otf='P:"{{name}} ({{mode}})"'>{{parry}}</span>
+            <span class="flex-center rollable" data-otf='{{quotedAttackName 'P' this}}'>{{parry}}</span>
             {{#if (isNum ../data.defenses.parry.bonus)}}
               <span class="flex-center rollable bonus"
-                data-otf='P:"{{name}} ({{mode}})" {{{displayNumber ../data.defenses.parry.bonus}}} DB'>
+                data-otf='{{quotedAttackName 'P' this}}" {{{displayNumber ../data.defenses.parry.bonus}}} DB'>
                 {{{displayNumber ../data.defenses.parry.bonus}}}</span>
             {{/if}}
           {{/if}}
