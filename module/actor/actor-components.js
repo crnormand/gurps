@@ -375,6 +375,15 @@ export class Reaction {
 
 export class Modifier extends Reaction {}
 
+export class Language {
+  constructor(n, s, w, p) {
+    this.name = n
+    this.spoken = s || ''
+    this.written = w || ''
+    this.points = p || ''
+  }
+}
+
 /**
  * A representation of a Hit Location and DR on that location. If
  * this.damageType is set, this.dr will return a damage type-specific

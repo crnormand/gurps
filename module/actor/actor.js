@@ -47,6 +47,7 @@ import {
   Modifier,
   Melee,
   HitLocationEntry,
+  Language
 } from './actor-components.js'
 import { multiplyDice } from '../utilities/damage-utils.js'
 import { DamageTables } from '../damage/damage-tables.js'
@@ -207,6 +208,42 @@ export class GurpsActor extends Actor {
     await this.update({ 'data.migrationversion': game.system.data.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
+    await this.syncLanguages()
+  }
+  
+  // Ensure Language Advantages conform to a standard (for Polygot module)
+  async syncLanguages() {
+    if (this.data.data.languages) {
+      let updated = false
+      let newads = {...this.data.data.ads} 
+      let langn = new RegExp("Language:?", "i")
+      let langt = new RegExp(i18n("GURPS.language") + ':?', 'i')
+      recurselist(this.data.data.languages, (e, k, d) => {
+        let a = GURPS.findAdDisad(this, '*' + e.name)   // is there an Adv including the same name
+        if (a) {
+          if (!a.name.match(langn) && !a.name.match(langt)) {  // GCA4/GCS style
+            a.name = i18n("GURPS.language") + ": " + a.name
+            updated = true
+          }
+        } else { // GCA5 style (Language without Adv)
+          let n = i18n("GURPS.language") + ': ' + e.name
+          if (e.spoken == e.written) // If equal, then just report single level
+            n += ' (' + e.spoken + ')'
+          else if (!!e.spoken) // Otherwise, report type and level (like GCA4)
+            n += ' (' + i18n("GURPS.spoken") + ') (' + e.spoken + ')'
+          else
+            n += ' (' + i18n("GURPS.written") + ') (' + e.written + ')'
+          let a = new Advantage()
+          a.name = n
+          a.points = e.points
+          GURPS.put(newads, a)
+          updated = true
+        }
+      })
+      if (updated) {
+        await this.update({ 'data.ads': newads })
+      }
+    }
   }
 
   // This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
@@ -2141,6 +2178,7 @@ export class GurpsActor extends Actor {
         commit = { ...commit, ...this.importConditionalModifiersFromGCSv2(c.conditionalmods) }
       }
       if (isFoundryGCA) {
+        commit = { ...commit, ...this.importLangFromGCA(c.traits?.languagelist) }
         commit = { ...commit, ...this.importAdsFromGCA(c.traits?.adslist, c.traits?.disadslist) }
         commit = { ...commit, ...this.importReactionsFromGCA(c.traits?.reactionmodifiers, vernum) }
       }
@@ -2305,6 +2343,10 @@ export class GurpsActor extends Actor {
         GURPS.put(rs, r, index++)
       }
     }
+    return {
+      'data.-=conditionalmods': null,
+      'data.conditionalmods': rs,
+    }
   }
 
   /**
@@ -2329,6 +2371,28 @@ export class GurpsActor extends Actor {
     return {
       'data.-=reactions': null,
       'data.reactions': rs,
+    }
+  }
+  
+  importLangFromGCA(json) {
+    if (!json) return
+    let langs = {}
+    let index = 0
+    let t = this.textFrom
+    for (let key in json) {
+      if (key.startsWith('id-')) {
+        let j = json[key]
+        let n = t(j.name)
+        let s = t(j.spoken)
+        let w = t(j.written)
+        let p = t(j.points)
+        let l = new Language(n, s, w, p)
+        GURPS.put(langs, l, index++)
+      }
+    }
+    return {
+      'data.-=languages': null,
+      'data.languages': langs,
     }
   }
 

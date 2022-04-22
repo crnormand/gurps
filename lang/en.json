@@ -1135,5 +1135,8 @@
   "GURPS.default": "Default",
   "GURPS.conditionsCombatMove": "Combat Move",
   "GURPS.activeEffects": "Active Effects",
-  "GURPS.quicknotes": "Quick Notes"
+  "GURPS.quicknotes": "Quick Notes",
+  "GURPS.language": "Language",
+  "GURPS.spoken": "Spoken",
+  "GURPS.written": "Written"
 }
