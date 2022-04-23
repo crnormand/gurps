@@ -2,6 +2,11 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.16
+
+- Unified Language support for GCA4/5 & GCS (works with Polygot module)
+- Add "Roll Damage" button after successful "attack" roll
+
 Release 0.13.15 4/20/2022
 
 - Default Multiple/Combine damage dialog to "possible number of hits" value (for ranged weapons with Rof and RCL)

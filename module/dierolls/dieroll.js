@@ -85,6 +85,7 @@ export async function doRoll({
     chatdata['seventeen'] = seventeen
     chatdata['isDraggable'] = !seventeen && margin != 0
     chatdata['otf'] = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
+    chatdata['followon'] = optionalArgs.followon
 
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
       // if the attached obj (see handleRoll()) as Recoil information, do the additional math

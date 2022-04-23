@@ -787,6 +787,7 @@ const actionFuncs = {
       .replace(/ +/g, ' ')
       .trim()
     const chatthing = `[${p}${quotedAttackName({name: thing, mode: att.mode})}]`
+    const followon = `[D:${quotedAttackName({name: thing, mode: att.mode})}]`
     let target = att.level
     if (!target) {
       ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`)
@@ -801,6 +802,7 @@ const actionFuncs = {
       blind: action.blindroll,
       event,
       obj: att, // save the attack in the optional parameters, in case it has rcl/rof
+      followon: followon
     }
     let targetmods = []
     if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
