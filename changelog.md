@@ -6,6 +6,7 @@ Release 0.13.16
 
 - Unified Language support for GCA4/5 & GCS (works with Polygot module)
 - Add "Roll Damage" button after successful "attack" roll
+- "Mostly" internationalize Mook input screen and NPC sheet
 
 Release 0.13.15 4/20/2022
 
