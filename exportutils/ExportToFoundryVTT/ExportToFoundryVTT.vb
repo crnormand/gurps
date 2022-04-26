@@ -377,7 +377,7 @@ Public Class ExportToFoundryVTT
 '****************************************
     Private Sub ExportToFoundryVTT(CurChar As GCACharacter, fw As FileWriter)
         fw.Paragraph("<?xml version=""1.0"" encoding=""utf-8""?>")
-        fw.Paragraph("<root release=""Foundry"" version=""GCA5-12"">")
+        fw.Paragraph("<root release=""Foundry"" version=""GCA5-13"">")
         fw.Paragraph("<character>")
         fw.Paragraph("<name type=""string"">" & CurChar.Name & "</name>")
         fw.Paragraph("")
@@ -945,6 +945,8 @@ Public Class ExportToFoundryVTT
                 
                 fw.Paragraph("<tl type=""string"">" & CurChar.Items(i).TagItem("techlvl") & "</tl>")
                 
+                db = CurChar.items(i).tagitem("chardb")
+                
                 weapon_mode_index = 0
                 fw.Paragraph("<meleemodelist>")
                 Do
@@ -983,7 +985,6 @@ Public Class ExportToFoundryVTT
                     'print the parry
                     fw.Paragraph("<parry type=""string"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "charparryscore") & "</parry>")
 
-                    db = CurChar.Items(i).DamageModeTagItem(CurMode, "db")
                 ' If it has a DB value, then compute a block (since I can't find the "blocklevel")
                     if db <> "" Then
                         dim tskill, pos, block
