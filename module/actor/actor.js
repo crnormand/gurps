@@ -2026,7 +2026,7 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv1(xml, importname, importpath, suppressMessage = false) {
-    const GCA5Version = 'GCA-12'
+    const GCA5Version = 'GCA5-13'
     const GCAVersion = 'GCA-11'
     const GCSVersion = 'GCS-5'
     if (importname.endsWith('.gcs'))
@@ -2079,6 +2079,9 @@ export class GurpsActor extends Actor {
           if (!!v[1]) vernum = parseInt(v[1])
           if (vernum < 12) {
             msg.push(i18n('GURPS.importGCA5ImprovedInventoryHandling'))
+          }
+          if (vernum < 13) {
+            msg.push(i18n('GURPS.importGCA5ImprovedBlock'))
           }
         } else {
           if (!v[1]) {

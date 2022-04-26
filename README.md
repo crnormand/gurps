@@ -11,7 +11,7 @@ If you like our work [Sponsor our development](https://github.com/sponsors/crnor
 
 Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
-[Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-12' 2/28/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-13' 4/26/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 
 
