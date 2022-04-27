@@ -6,6 +6,7 @@ Release 0.13.17
 
 - Fixed GCA5 export for block values, thank you @Woodman!
 - Fixed display of DR in NPC/Mini and Simple sheets
+- Fixed Parry display (e.g. 11U, 12F, etc.)
 
 Release 0.13.16 4/26/2022
 
