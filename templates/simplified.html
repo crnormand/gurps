@@ -25,8 +25,8 @@
 		<label>Health (</label><label class="rollable simple_lrg" data-path="attributes.HT.value" data-otf="HT">{{data.attributes.HT.value}}</label>
 		<label>): How <strong>healthy</strong> and <strong>durable</strong></label>
 	</div>
-  <div class="simple_Shield rollableicon" data-value="Dodge"><label class="simple_dodge rollable" data-otf="Dodge">&nbsp;{{dodge}}&nbsp;</label></div>
-  <div class="simple_Body">{{defense}}</div>
+  <div class="simple_Shield" data-value="Dodge"><label class="simple_dodge rollable" data-otf="Dodge">&nbsp;{{dodge}}&nbsp;</label></div>
+  <div class="simple_Body">{{defense.dr}}{{#each defense.split as | this key |}}<span title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</div>
   <div class="simple_Heart {{hpCondition data.HP "style"}}"><div class="simple_Heart_inner">{{data.HP.value}}</div></div>
   <div class="simple_Defend">Defend</div>
   <div class="simple_Armor">Armor</div>

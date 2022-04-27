@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.13.17
 
 - Fixed GCA5 export for block values, thank you @Woodman!
+- Fixed display of DR in NPC/Mini and Simple sheets
 
 Release 0.13.16 4/26/2022
 
