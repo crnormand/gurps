@@ -2,7 +2,13 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.13.16
+Release 0.13.17 4/26/2022
+
+- Fixed GCA5 export for block values, thank you @Woodman!
+- Fixed display of DR in NPC/Mini and Simple sheets
+- Fixed Parry display (e.g. 11U, 12F, etc.)
+
+Release 0.13.16 4/26/2022
 
 - Unified Language support for GCA4/5 & GCS (works with Polygot module)
 - Add "Roll Damage" button after successful "attack" roll
