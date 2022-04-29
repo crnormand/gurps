@@ -80,6 +80,8 @@
   "GURPS.thrust": "Golpe de Ponta",
   "GURPS.touch": "Tato",
   "GURPS.vision": "Visão",
+  "GURPS.attributesQN": "QN",
+  "GURPS.attributesQNNAME": "Quintessência",
 
   "__ Character AddsDisadsPerksQuirks__": "=========",
   "GURPS.advDisadvPerkQuirks": "Vantagens, Desvantagens, Qualidades e Peculiaridades",
@@ -97,6 +99,10 @@
   "GURPS.SkillHTE": "HT/F",
   "GURPS.SkillHTH": "HT/D",
   "GURPS.SkillHTVH": "HT/MD",
+  "GURPS.SkillQNA": "QN/M",
+  "GURPS.SkillQNE": "QN/F",
+  "GURPS.SkillQNH": "QN/D",
+  "GURPS.SkillQNVH": "QN/MD",
   "GURPS.SkillIQA": "IQ/M",
   "GURPS.SkillIQE": "IQ/F",
   "GURPS.SkillIQH": "IQ/D",
@@ -329,6 +335,7 @@
   "GURPS.damageAbbrevdmg": "dano",
   "GURPS.damageAbbrevfat": "fad",
   "GURPS.damageAbbrevimp": "perf",
+  "GURPS.damageAbbrevinjury": "lesão",
   "GURPS.damageAbbrevpi-": "pa-",
   "GURPS.damageAbbrevpi": "pa",
   "GURPS.damageAbbrevpi+": "pa+",
@@ -342,6 +349,7 @@
   "GURPS.damageTypeFatigue": "Fadiga",
   "GURPS.damageTypeHuge Piercing": "Extremamente Perfurante",
   "GURPS.damageTypeImpaling": "Perfuração",
+  "GURPS.damageTypeInjury": "Lesão",
   "GURPS.damageTypeLarge Piercing": "Muito Perfurante",
   "GURPS.damageTypePiercing": "Perfurante",
   "GURPS.damageTypeSmall Piercing": "Pouco Perfurante",
@@ -849,6 +857,9 @@
   "GURPS.settingImportHintBrowserImporter": "Marque isso se você NÃO estiver hospedando localmente sua instância do Foundry (você está hospedando externamente, como por exemplo na Oracle Cloud). Dessa forma, a janela de importação se lembrará da localização dos arquivos importados durante a sessão (o que significa que se você importar o personagem novamente, na mesma sessão, a janela de Arquivo não precisará ser aberta).",
   "GURPS.settingShowChatReeling": "Exibir estado de Cambaleando/Cansado no Chat",
   "GURPS.settingHintShowChatReeling": "Quando marcado, quaisquer mudanças no status de algum ator em relação ao estado de Cambaleando ou Cansado será exibida como mensagem de chat.",
+  "GURPS.settingDefaultADDAction": "Definir ação padrão para a Janela de Dano",
+  "GURPS.settingHintefaultADDAction": "Quando configurado para 'Alvo' o sistema vai escolher 'Aplicar' para PdJs e 'Aplicar Discretamente' para PdMs.",
+  "GURPS.settingApplyBasedOnTarget": "'Alvo'",
 
   "__Color Settings__": "=========",
   "GURPS.settingColorSheetMenuTitle": "Cor da Planilha de Personagem",
@@ -1123,5 +1134,9 @@
   "GURPS.effectsEffect": "Efeito",
   "GURPS.default": "Predefinido",
   "GURPS.conditionsCombatMove": "Deslocamento em Combate",
-  "GURPS.activeEffects": "Efeitos Ativos"
+  "GURPS.activeEffects": "Efeitos Ativos",
+  "GURPS.quicknotes": "Notas Rápidas",
+  "GURPS.language": "Idioma",
+  "GURPS.spoken": "Falado",
+  "GURPS.written": "Escrito"
 }
