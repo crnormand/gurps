@@ -2,6 +2,11 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.18 
+
+- Updated to JB2A 0.4.2
+- Fixed "Roll Damage" followon (it only displays when an attack is rolled)
+
 Release 0.13.17 4/26/2022
 
 - Fixed GCA5 export for block values, thank you @Woodman!
