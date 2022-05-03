@@ -59,10 +59,10 @@
         <i class='fas fa-long-arrow-alt-right' style='color:dimgray'></i>
         <span class='aside-text'>Rolled ({{rolls}}) = {{rtotal}}.</span>
       </div>
-      {{#if (and followon (not failure))}}
+      {{#if followon}}{{#if (not failure)}}
         <hr />
         {{i18n "GURPS.roll"}} {{i18n "GURPS.damage"}}: {{followon}}
-      {{/if}}
+      {{/if}}{{/if}}
     </div>
   </div>
 </div>
