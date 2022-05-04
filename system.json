@@ -2,7 +2,7 @@
   "name": "gurps",
   "title": "GURPS 4th Ed. Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
-  "version": "0.13.18",
+  "version": "0.13.19",
   "minimumCoreVersion": "9",
   "compatibleCoreVersion": "9",
   "templateVersion": 2,
@@ -52,7 +52,7 @@
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/archive/0.13.18.zip",
+  "download": "https://github.com/crnormand/gurps/archive/0.13.19.zip",
   "socket": true,
   "license": "LICENSE.txt"
 }
