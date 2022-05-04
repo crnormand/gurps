@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.13.19 
+
+- Fixed *Cost 1FP modifiers (not removing FP)
+
 Release 0.13.18 5/02/2022
 
 - Updated to JB2A 0.4.2
