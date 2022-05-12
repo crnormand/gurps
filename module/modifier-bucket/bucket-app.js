@@ -800,7 +800,7 @@ export class ModifierBucket extends Application {
   }
 
   _injectHTML(html) {
-    html.insertAfter($('body').find('#hotbar'))
+    if ($('body').find('#bucket-app').length === 0) html.insertAfter($('body').find('#hotbar'))
     this._element = html
   }
 }
