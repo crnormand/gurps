@@ -153,7 +153,8 @@ export default class ModifierBucketEditor extends Application {
       let bucketWidth = 70
 
       let width = parseFloat(html.css('width').replace('px', ''))
-      let left = bucketLeft + bucketWidth / 2 - width / 2
+      // ensure that left is not negative
+      let left = Math.max(bucketLeft + bucketWidth / 2 - width / 2, 10)
       console.log(`bucketLeft: ${bucketLeft}; width: ${width}; left: ${left}`)
       html.css('left', `${left}px`)
       // }
@@ -262,7 +263,7 @@ export default class ModifierBucketEditor extends Application {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
     } else {
       setTimeout(() => ui.notifications.info("Unable to determine modifier for '" + element.value + "'"), 200)
-      this.bucket.refresh()   // WARNING: REQUIRED!  or the world will crash... trust me.
+      this.bucket.refresh() // WARNING: REQUIRED!  or the world will crash... trust me.
     }
   }
 
@@ -472,7 +473,9 @@ const ModifierLiterals = {
             ["&nbsp;&nbsp;&#8211;5&nbsp;&nbsp;&nbsp;"-5]`
   },
 
-  get OtherMods2() { return '' },
+  get OtherMods2() {
+    return ''
+  },
   /**
     return `[+1 ${i18n('GURPS.modifierGMSaidSo')}]
     [-1 ${i18n('GURPS.modifierGMSaidSo')}]
