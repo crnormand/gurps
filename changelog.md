@@ -5,6 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.13.20
 
 - Partial fix for Modifier Bucket when Minimal UI module is active.
+- Fix for Damage followon button for Nordlond Bestiary
 
 Release 0.13.19 5/03/2022
 
