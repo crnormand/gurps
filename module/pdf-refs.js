@@ -62,7 +62,8 @@ export const SJGProductMappings = {
 export function handleOnPdf(event) {
   event.preventDefault()
   event.stopPropagation()
-  handlePdf(event.currentTarget.innerText)
+  let pdf = event.currentTarget.dataset?.pdf || event.currentTarget.innerText
+  handlePdf(pdf)
 }
 
 /**
