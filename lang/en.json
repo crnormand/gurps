@@ -339,6 +339,7 @@
   "GURPS.damageAbbrevpi+": "pi+",
   "GURPS.damageAbbrevpi++": "pi++",
   "GURPS.damageAbbrevtox": "tox",
+  "GURPS.damageAbbrevkb": "kb",
   "GURPS.damageTypeBurning": "Burning",
   "GURPS.damageTypeCorrosive": "Corrosive",
   "GURPS.damageTypeCrushing": "Crushing",

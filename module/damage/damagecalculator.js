@@ -1118,7 +1118,7 @@ class DamageCalculator {
     // Damage modifier 'nkb' means no knockback
     if (this._parent._damageModifier === 'nkb') return false
 
-    if (this._parent.damageType === 'cr' && this._basicDamage > 0) return true
+    if ((this._parent.damageType === 'cr' || this._parent.damageType === 'kb') && this._basicDamage > 0) return true
 
     return this._parent.damageType === 'cut' && this._basicDamage > 0 && this.penetratingDamage === 0
   }
