@@ -14,6 +14,7 @@ const woundModifiers = {
   tox: { multiplier: 1, label: 'Toxic' },
   dmg: { multiplier: 1, label: 'Damage', nodisplay: false },
   injury: { multiplier: 1, label: 'Injury' },
+  kb: { multiplier: 1, label: 'Knockback only' },
   // This needs to be collected in the default list of hit locations... maybe remove "nodisplay"?
 }
 
@@ -48,6 +49,7 @@ const damageTypeMap = {
   'huge piercing': 'pi++',
   'piercing++': 'pi++',
   toxic: 'tox',
+  kb: 'kb',
 }
 
 export let DamageTables = null
@@ -71,6 +73,7 @@ class DamageTable {
     translationTable[game.i18n.localize('GURPS.damageAbbrevtox')] = 'tox'
     translationTable[game.i18n.localize('GURPS.damageAbbrevdmg')] = 'dmg'
     translationTable[game.i18n.localize('GURPS.damageAbbrevinjury')] = 'injury'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevkb')] = 'kb'
 
     this.translationTable = translationTable
   }
