@@ -7,6 +7,8 @@ Release 0.13.20
 - Partial fix for Modifier Bucket when Minimal UI module is active.
 - Fix for Damage followon button for Nordlond Bestiary.
 - Add initial support for 'kb' (knockback only) damage type.
+- Support override text for PDF links.
+- Fixed PDF references for Gaming Ballistic and Nordlond Bestiary
 
 Release 0.13.19 5/03/2022
 
