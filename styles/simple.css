@@ -148,7 +148,7 @@
   display: inline-block;
   grid-row: 3;
   grid-column: 2;
-  border: 5px solid #1c2024;
+  /* border: 5px solid #1c2024; */
   border-radius: 5px;
   background-color: lightgrey;
   display: flex;
