@@ -2011,7 +2011,7 @@ Hooks.once('init', async function () {
     colorGurpsActorSheet()
   })
 
-  Hooks.call('gurpsInit')
+  Hooks.call('gurpsinit')
 })
 
 Hooks.once('ready', async function () {
@@ -2400,5 +2400,5 @@ Hooks.once('ready', async function () {
   TriggerHappySupport.init()
 
   // End of system "READY" hook.
-  Hooks.call('gurpsReady')
+  Hooks.call('gurpsready')
 })
