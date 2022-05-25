@@ -2,9 +2,13 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.14.1
+Release 0.14.2
+
+
+Release 0.14.1 5/25/2022
 
 - Add guard code to prevent tokens without actors in combat from breaking everything.
+- Fix integration with Nordlond Bestiary module (Issue [1423](https://github.com/crnormand/gurps/issues/1423)).
 
 Release 0.14.0 5/18/2022
 
