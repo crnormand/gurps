@@ -2011,7 +2011,7 @@ Hooks.once('init', async function () {
     colorGurpsActorSheet()
   })
 
-  Hooks.call('gurpsinit')
+  Hooks.call('gurpsinit', GURPS)
 })
 
 Hooks.once('ready', async function () {
