@@ -5,7 +5,7 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.14.1 5/25/2022
 
 - Add guard code to prevent tokens without actors in combat from breaking everything.
-- Fix integration with Nordlond Bestiary module.
+- Fix integration with Nordlond Bestiary module (Issue #1423).
 
 Release 0.14.0 5/18/2022
 
