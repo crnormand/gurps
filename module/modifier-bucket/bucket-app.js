@@ -66,8 +66,9 @@ Hooks.once('init', async function () {
 
   // Listen for the Ctrl key and show the single dice image
   /**
-  **   We need to discuss... currently, holding down the CTRL key will make a private roll for the GM (or a blind roll for the player).
-  ***
+   ** TODO  We need to discuss... currently, holding down the CTRL key will make a private roll for the GM (or a blind roll for the player).
+   ** TODO Can't you just talk to me before changing something???
+   ***
   game.keybindings.register('gurps', 'toggleDiceDisplay', {
     name: 'Toggle dice display',
     uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
@@ -385,6 +386,8 @@ class ModifierStack {
 export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
+
+    console.trace('+++++ Create ModifierBucket +++++')
 
     this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
 
@@ -800,7 +803,9 @@ export class ModifierBucket extends Application {
   }
 
   _injectHTML(html) {
-    if ($('body').find('#bucket-app').length === 0) html.insertAfter($('body').find('#hotbar'))
-    this._element = html
+    if ($('body').find('#bucket-app').length === 0) {
+      html.insertAfter($('body').find('#hotbar'))
+      this._element = html
+    } else console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
   }
 }
