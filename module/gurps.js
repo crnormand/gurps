@@ -16,7 +16,19 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f, quotedAttackName, requestFpHp } from '../lib/utilities.js'
+import {
+  d6ify,
+  recurselist,
+  atou,
+  utoa,
+  makeRegexPatternFrom,
+  i18n,
+  zeroFill,
+  wait,
+  i18n_f,
+  quotedAttackName,
+  requestFpHp,
+} from '../lib/utilities.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
 import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
@@ -649,7 +661,7 @@ const actionFuncs = {
       return false
     }
     if (action.calcOnly) return att.damage
-    
+
     let dam = parseForRollOrDamage(att.damage)
     if (!dam) {
       ui.notifications?.warn('Damage is not rollable')
@@ -786,8 +798,8 @@ const actionFuncs = {
       .replace(/\[.*\]/, '')
       .replace(/ +/g, ' ')
       .trim()
-    const chatthing = `[${p}${quotedAttackName({name: thing, mode: att.mode})}]`
-    const followon = `[D:${quotedAttackName({name: thing, mode: att.mode})}]`
+    const chatthing = `[${p}${quotedAttackName({ name: thing, mode: att.mode })}]`
+    const followon = `[D:${quotedAttackName({ name: thing, mode: att.mode })}]`
     let target = att.level
     if (!target) {
       ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`)
@@ -802,7 +814,7 @@ const actionFuncs = {
       blind: action.blindroll,
       event,
       obj: att, // save the attack in the optional parameters, in case it has rcl/rof
-      followon: followon
+      followon: followon,
     }
     let targetmods = []
     if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
@@ -1998,6 +2010,8 @@ Hooks.once('init', async function () {
   Hooks.on('renderActorSheet', (...args) => {
     colorGurpsActorSheet()
   })
+
+  Hooks.call('gurpsinit')
 })
 
 Hooks.once('ready', async function () {
@@ -2386,4 +2400,5 @@ Hooks.once('ready', async function () {
   TriggerHappySupport.init()
 
   // End of system "READY" hook.
+  Hooks.call('gurpsready')
 })
