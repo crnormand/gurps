@@ -1,5 +1,4 @@
 import { i18n_f } from '../../lib/utilities.js'
-import { GURPS } from '../gurps.js'
 
 export default class MoveModeEditor extends Application {
   constructor(actor, options) {
