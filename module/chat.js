@@ -4,7 +4,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 import { i18n } from '../lib/utilities.js'
 import ChatProcessor from './chat/chat-processor.js'
 import GurpsWiring from './gurps-wiring.js'
-import { gurpslink } from '../../../../develop/gurps/module/utilities/gurpslink.js'
+import { gurpslink } from '../module/utilities/gurpslink.js'
 
 /**
  *  This holds functions for all things chat related

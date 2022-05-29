@@ -1,6 +1,6 @@
 import GurpsWiring from '../gurps-wiring.js'
 import { i18n, i18n_f } from '../../lib/utilities.js'
-import { gurpslink } from '../../../../../develop/gurps/module/utilities/gurpslink.js'
+import { gurpslink } from '../../module/utilities/gurpslink.js'
 
 export class EffectModifierPopout extends Application {
   constructor(token, callback, options = {}) {
