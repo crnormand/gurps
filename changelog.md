@@ -2,8 +2,9 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.14.2
+Release 0.14.2 5/29/2022
 
+- Another possible fix to the Forge modifier bucket bug.
 
 Release 0.14.1 5/25/2022
 
@@ -20,7 +21,7 @@ Release 0.14.0 5/18/2022
 
 Release 0.13.19 5/03/2022
 
-- Fixed *Cost 1FP modifiers (not removing FP)
+- Fixed \*Cost 1FP modifiers (not removing FP)
 
 Release 0.13.18 5/02/2022
 
