@@ -69,6 +69,9 @@ import GurpsActiveEffectConfig from './effects/active-effect-config.js'
 import * as GURPSSpeedProvider from './speed-provider.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import GurpsWiring from './gurps-wiring.js'
+import { gurpslink } from './utilities/gurpslink.js'
+
+let GURPS = undefined
 
 if (!window.GURPS) {
   GURPS = {}
@@ -370,6 +373,9 @@ if (!window.GURPS) {
     return s.replace(/^\s*$(?:\r\n?|\n)/gm, '').trim() // /^\s*[\r\n]/gm
   }
   GURPS.trim = trim
+
+  // Needed for external modules like Token Action HUD and Nordlond Bestiary
+  GURPS.gurpslink = gurpslink
 
   /**
    * @param {string} string

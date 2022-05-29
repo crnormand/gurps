@@ -1,3 +1,5 @@
+import { parselink } from '../../lib/parselink.js'
+
 /**
  * Return html for text, parsing GURPS "links" into <span class="gurplink">XXX</span>.
  * @param {string | null | undefined} str

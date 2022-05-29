@@ -1,6 +1,6 @@
 import GurpsWiring from './gurps-wiring.js'
 import { atou } from '../lib/utilities.js'
-import { gurpslink } from '../../../../develop/gurps/module/utilities/gurpslink.js'
+import { gurpslink } from '../module/utilities/gurpslink.js'
 
 export default class GurpsJournalEntry {
   static ready() {
