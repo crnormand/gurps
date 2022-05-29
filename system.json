@@ -51,8 +51,8 @@
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
-  "manifest": "https://github.com/crnormand/gurps/releases/download/v0.14.1/system.json",
-  "download": "https://github.com/crnormand/gurps/releases/download/v0.14.1/system.zip",
+  "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
+  "download": "https://github.com/crnormand/gurps/releases/download/v0.14.2/system.zip",
   "socket": true,
   "license": "LICENSE.txt"
 }
