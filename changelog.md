@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.14.3 5/31/2022
+
+- Update Foundry release
+
 Release 0.14.2 5/29/2022
 
 - Another possible fix to the Forge modifier bucket bug.
