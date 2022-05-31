@@ -1,7 +1,6 @@
 import { SYSTEM_NAME } from '../../lib/miscellaneous-settings.js'
 import { i18n } from '../../lib/utilities.js'
 import { MOVE_ONE, MOVE_NONE, MOVE_ONETHIRD, MOVE_TWOTHIRDS, PROPERTY_MOVEOVERRIDE_POSTURE } from '../actor/maneuver.js'
-import { GURPS } from '../gurps.js'
 
 export class StatusEffect {
   static SETTING_USE_ACTIVE_EFFECTS = 'use-active-effects'
