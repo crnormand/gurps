@@ -1214,7 +1214,7 @@ export class GurpsActor extends Actor {
     return t
   }
 
-  importTraitsFromGCSv2(p, cd, md) {
+  async importTraitsFromGCSv2(p, cd, md) {
     if (!p) return
     let ts = {}
     ts.race = ''
@@ -1234,10 +1234,40 @@ export class GurpsActor extends Actor {
     ts.hair = p.hair || ''
     ts.skin = p.skin || ''
 
-    return {
+    const r = {
       'data.-=traits': null,
       'data.traits': ts,
+    };
+
+    if (!!p.portrait && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_OVERWRITE_PORTRAITS)) {
+      const path = this.getPortraitPath();
+      let currentDir = "";
+      for (let i = 0; i < path.split("/").length; i++) {
+        try {
+          currentDir += path.split("/")[i] + "/";
+          await FilePicker.createDirectory("data", currentDir);
+        } catch (err) {
+          console.error(err);
+          continue;
+        }
+      }
+        const filename = `${p.name}_${this.id}_portrait.png`;
+        const url = `data:image/png;base64,${p.portrait}`;
+        await fetch(url)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const file = new File([blob], filename);
+            FilePicker.upload("data", path, file, {}, { notify: false });
+          });
+          r.img = path + "/" + filename;
+      }
+      return r;
     }
+
+
+  getPortraitPath() {
+    if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_PORTRAIT_PATH) == "global") return "images/portraits/";
+    return `worlds/${game.world.id}/images/portraits`;
   }
 
   signedNum(x) {
@@ -1927,7 +1957,7 @@ export class GurpsActor extends Actor {
     try {
       commit = { ...commit, ...{ 'data.additionalresources': ar } }
       commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) }
-      commit = { ...commit, ...this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date) }
+      commit = { ...commit, ...(await this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date)) }
       commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment) }
       commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages) }
       commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) }
