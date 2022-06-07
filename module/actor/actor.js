@@ -1247,7 +1247,6 @@ export class GurpsActor extends Actor {
           currentDir += path.split("/")[i] + "/";
           await FilePicker.createDirectory("data", currentDir);
         } catch (err) {
-          console.error(err);
           continue;
         }
       }
