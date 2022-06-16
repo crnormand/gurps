@@ -14,8 +14,11 @@ export const EXTREMITY = 'extremity'
 // Some entries combine two (or more?) related locations, such as left and right limbs. They will
 // have a 'roll' property that uses the ampersand (&) character. Those locations must also include
 // a 'prefix' property that will be used when splitting out the combined values into single values.
+
+// FIXME -- Rewrite to get rid of the global references.
 export var hitlocationRolls = null
 
+// FIXME -- Rewrite to get rid of the global references.
 export var hitlocationDictionary = null
 
 export class HitLocation {

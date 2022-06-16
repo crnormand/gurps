@@ -1,9 +1,8 @@
-import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
+import { displayMod, generateUniqueId } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
 import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
-import GgaContextMenu from '../utilities/contextmenu.js'
 
 /**
  * Define some Typescript types.
