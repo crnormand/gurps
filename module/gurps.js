@@ -16,10 +16,22 @@ import {
 import { ModifierBucket } from './modifier-bucket/bucket-app.js'
 import { ChangeLogWindow } from '../lib/change-log.js'
 import { SemanticVersion } from '../lib/semver.js'
-import { d6ify, recurselist, atou, utoa, makeRegexPatternFrom, i18n, zeroFill, wait, i18n_f, quotedAttackName, requestFpHp } from '../lib/utilities.js'
+import {
+  d6ify,
+  recurselist,
+  atou,
+  utoa,
+  makeRegexPatternFrom,
+  i18n,
+  zeroFill,
+  wait,
+  i18n_f,
+  quotedAttackName,
+  requestFpHp,
+} from '../lib/utilities.js'
 import { doRoll } from '../module/dierolls/dieroll.js'
 import { ResourceTrackerManager } from './actor/resource-tracker-manager.js'
-import { DamageTables, initializeDamageTables } from '../module/damage/damage-tables.js'
+import { DamageTable } from '../module/damage/damage-tables.js'
 import RegisterChatProcessors from '../module/chat/chat-processors.js'
 import { Migration } from '../lib/migration.js'
 import ManeuverHUDButton from './actor/maneuver-button.js'
@@ -649,7 +661,7 @@ const actionFuncs = {
       return false
     }
     if (action.calcOnly) return att.damage
-    
+
     let dam = parseForRollOrDamage(att.damage)
     if (!dam) {
       ui.notifications?.warn('Damage is not rollable')
@@ -786,8 +798,8 @@ const actionFuncs = {
       .replace(/\[.*\]/, '')
       .replace(/ +/g, ' ')
       .trim()
-    const chatthing = `[${p}${quotedAttackName({name: thing, mode: att.mode})}]`
-    const followon = `[D:${quotedAttackName({name: thing, mode: att.mode})}]`
+    const chatthing = `[${p}${quotedAttackName({ name: thing, mode: att.mode })}]`
+    const followon = `[D:${quotedAttackName({ name: thing, mode: att.mode })}]`
     let target = att.level
     if (!target) {
       ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`)
@@ -802,7 +814,7 @@ const actionFuncs = {
       blind: action.blindroll,
       event,
       obj: att, // save the attack in the optional parameters, in case it has rcl/rof
-      followon: followon
+      followon: followon,
     }
     let targetmods = []
     if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
@@ -2009,7 +2021,8 @@ Hooks.once('ready', async function () {
   // GURPS.StatusEffect = new StatusEffect()
   // CONFIG.statusEffects = GURPS.StatusEffect.effects()
 
-  initializeDamageTables()
+  GURPS.DamageTables = new DamageTable()
+
   ResourceTrackerManager.initSettings()
   HitLocation.ready()
 
@@ -2088,10 +2101,10 @@ Hooks.once('ready', async function () {
     .filter(it => !!it.tracker.isDamageType)
     .filter(it => !!it.tracker.alias)
     .map(it => it.tracker)
-  resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
+  resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
   resourceTrackers.forEach(
     it =>
-      (DamageTables.woundModifiers[it.alias] = {
+      (GURPS.DamageTables.woundModifiers[it.alias] = {
         multiplier: 1,
         label: it.name,
         resource: true,
@@ -2099,6 +2112,7 @@ Hooks.once('ready', async function () {
   )
 
   // Sorry, removed the ts-ignores during editing.
+  // No worries! TS is still a pipedream.
   Hooks.on('hotbarDrop', async (bar, data, slot) => {
     if (!data.otf && !data.bucket) return
     let name = data.otf || data.bucket.join(' & ')

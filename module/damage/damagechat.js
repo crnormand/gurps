@@ -245,14 +245,11 @@ export default class DamageChat {
       let m = temp.match(/([+-])@margin/)
       if (!!m) {
         let mrg = GURPS.lastTargetedRoll?.margin || 0
-        if (m[1] == '+')
-          temp = '' + mrg
+        if (m[1] == '+') temp = '' + mrg
         else {
-          if (mrg <= 0)
-            temp = '' + mrg
-          else
-            temp = '-' + mrg
-        }        
+          if (mrg <= 0) temp = '' + mrg
+          else temp = '-' + mrg
+        }
       }
       temp = temp.startsWith('+') ? temp.slice(1) : temp
       adds1 = parseInt(temp)
@@ -426,7 +423,7 @@ export default class DamageChat {
       damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,
-      hitlocation: draggableData[0].hitlocation
+      hitlocation: draggableData[0].hitlocation,
     })
 
     // @ts-ignore
