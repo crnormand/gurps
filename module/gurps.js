@@ -2031,7 +2031,8 @@ if (!globalThis.GURPS) {
     // GURPS.StatusEffect = new StatusEffect()
     // CONFIG.statusEffects = GURPS.StatusEffect.effects()
 
-    initializeDamageTables()
+    GURPS.DamageTables = new DamageTable()
+
     ResourceTrackerManager.initSettings()
     HitLocation.ready()
 
@@ -2110,10 +2111,10 @@ if (!globalThis.GURPS) {
       .filter(it => !!it.tracker.isDamageType)
       .filter(it => !!it.tracker.alias)
       .map(it => it.tracker)
-    resourceTrackers.forEach(it => (DamageTables.damageTypeMap[it.alias] = it.alias))
+    resourceTrackers.forEach(it => (GURPS.DamageTables.damageTypeMap[it.alias] = it.alias))
     resourceTrackers.forEach(
       it =>
-        (DamageTables.woundModifiers[it.alias] = {
+        (GURPS.DamageTables.woundModifiers[it.alias] = {
           multiplier: 1,
           label: it.name,
           resource: true,
