@@ -1,5 +1,6 @@
 import GurpsWiring from './gurps-wiring.js'
 import { atou } from '../lib/utilities.js'
+import { gurpslink } from '../module/utilities/gurpslink.js'
 
 export default class GurpsJournalEntry {
   static ready() {
@@ -14,16 +15,16 @@ export default class GurpsJournalEntry {
   static _renderJournalSheet(_app, html, _options) {
     let h = html.find('.editor-content')
     if (!!h) {
-      h.html(GURPS.gurpslink(h[0].innerHTML))
+      h.html(gurpslink(h[0].innerHTML))
       GurpsWiring.hookupAllEvents(html)
       // GurpsWiring.hookupGurpsRightClick(html)
-      
-      const dropHandler = function(event, app, options) {
+
+      const dropHandler = function (event, app, options) {
         event.preventDefault()
         if (event.originalEvent) event = event.originalEvent
-        const data = JSON.parse(event.dataTransfer.getData("text/plain"))
+        const data = JSON.parse(event.dataTransfer.getData('text/plain'))
         if (!!data && !!data.otf) {
-          let cmd = ''  
+          let cmd = ''
           if (!!data.encodedAction) {
             let action = JSON.parse(atou(data.encodedAction))
             if (action.quiet) cmd += '!'
@@ -37,11 +38,11 @@ export default class GurpsJournalEntry {
           cmd = '[' + cmd + ']'
           let content = app.object.data.content
           if (content) cmd = ' ' + cmd
-          app.object.data.update({'content':content + cmd})
+          app.object.data.update({ content: content + cmd })
           app.render(true)
         }
       }
-      
+
       html.find('.editor').on('drop', event => dropHandler(event, _app, _options))
     }
   }

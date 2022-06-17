@@ -1,3 +1,4 @@
+// Context Menu
 export default class GgaContextMenu extends ContextMenu {
   constructor(container, element, selector, title, menuItems, events = { eventName: 'contextmenu' }) {
     super(element, selector, menuItems, events)

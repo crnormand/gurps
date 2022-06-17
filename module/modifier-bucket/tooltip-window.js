@@ -13,6 +13,8 @@ export default class ModifierBucketEditor extends Application {
   constructor(bucket, options = {}) {
     super(options)
 
+    console.trace('+++++ Create ModifierBucketEditor +++++')
+
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
     this.inside = false
     this.tabIndex = 0

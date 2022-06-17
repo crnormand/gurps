@@ -4,6 +4,7 @@ import * as Settings from '../lib/miscellaneous-settings.js'
 import { i18n } from '../lib/utilities.js'
 import ChatProcessor from './chat/chat-processor.js'
 import GurpsWiring from './gurps-wiring.js'
+import { gurpslink } from '../module/utilities/gurpslink.js'
 
 /**
  *  This holds functions for all things chat related
@@ -27,7 +28,7 @@ class HelpChatProcessor extends ChatProcessor {
   async process(_line, _msgs) {
     let l = _line.split(' ')
     if (l.length > 1) return this.registry.handle('?' + l[1].trim())
-    
+
     let t = `<a href='${GURPS.USER_GUIDE_URL}'>${i18n('GURPS.gameAidUsersGuide')}</a><br>`
     let all = ChatProcessors.processorsForAll()
       .filter(it => !!it.help())
@@ -42,7 +43,7 @@ class HelpChatProcessor extends ChatProcessor {
       t += '<br>--- GM only ---<br>'
       t += gmonly.join('<br>')
     }
-    t += '<br><br>' + i18n("GURPS.chatHelpHelp")
+    t += '<br><br>' + i18n('GURPS.chatHelpHelp')
     this.priv(t)
   }
 }
@@ -76,7 +77,7 @@ class ChatProcessorRegistry {
     for (const line of lines)
       for (const p of this._processors) {
         if (p.usagematches(line) || (line[0] == '!' ? p.matches(line.substr(1)) : p.matches(line))) return true
-       }
+      }
     return false
   }
 
@@ -199,12 +200,11 @@ class ChatProcessorRegistry {
     processor = this._processors.find(it => it.usagematches(line))
     if (!!processor) {
       if (processor.isGMOnly() && !game.user?.isGM) ui.notifications?.warn(i18n('GURPS.chatYouMustBeGM'))
-      else 
-        this.priv(line)
-        this.priv('<hr>')
-        this.priv(processor.usage().replaceAll('\n', '<br>'))
-        return [true, true]
-      }
+      else this.priv(line)
+      this.priv('<hr>')
+      this.priv(processor.usage().replaceAll('\n', '<br>'))
+      return [true, true]
+    }
     return [false, false]
   }
 
@@ -386,7 +386,7 @@ export default function addChatHooks() {
             })
           }
         } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
-        let newContent = GURPS.gurpslink(c)
+        let newContent = gurpslink(c)
         let update = { content: newContent }
         chatMessage.data.update(update)
         return true

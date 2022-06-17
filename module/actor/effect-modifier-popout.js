@@ -1,5 +1,6 @@
 import GurpsWiring from '../gurps-wiring.js'
 import { i18n, i18n_f } from '../../lib/utilities.js'
+import { gurpslink } from '../../module/utilities/gurpslink.js'
 
 export class EffectModifierPopout extends Application {
   constructor(token, callback, options = {}) {
@@ -50,7 +51,7 @@ export class EffectModifierPopout extends Application {
   }
 
   convertModifiers(list) {
-    return list.map(it => `[${i18n(it)}]`).map(it => GURPS.gurpslink(it))
+    return list.map(it => `[${i18n(it)}]`).map(it => gurpslink(it))
   }
 
   get selectedToken() {
