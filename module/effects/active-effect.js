@@ -1,6 +1,5 @@
 'use strict'
 
-import { parselink } from '../../lib/parselink.js'
 import { i18n, i18n_f } from '../../lib/utilities.js'
 
 export default class GurpsActiveEffect extends ActiveEffect {

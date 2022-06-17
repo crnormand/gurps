@@ -2,7 +2,6 @@
 
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
-import { DamageTables } from './damage-tables.js'
 import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocationEntry } from '../actor/actor-components.js'
 
@@ -53,8 +52,8 @@ export class CompositeDamageCalculator {
 
     this.viewId = this._calculators.length == 1 ? 0 : 'all'
 
-    this._defaultWoundingModifiers = Object.keys(DamageTables.woundModifiers).reduce(function (r, e) {
-      if (!DamageTables.woundModifiers[e].nodisplay) r[e] = DamageTables.woundModifiers[e]
+    this._defaultWoundingModifiers = Object.keys(GURPS.DamageTables.woundModifiers).reduce(function (r, e) {
+      if (!GURPS.DamageTables.woundModifiers[e].nodisplay) r[e] = GURPS.DamageTables.woundModifiers[e]
       return r
     }, {})
 
@@ -63,7 +62,7 @@ export class CompositeDamageCalculator {
     if (Object.keys(this._defaultWoundingModifiers).includes(damageData[0].damageType))
       this._damageType = damageData[0].damageType
     else {
-      let temp = DamageTables.translate(damageData[0].damageType)
+      let temp = GURPS.DamageTables.translate(damageData[0].damageType)
       if (temp) this._damageType = temp
       else this._damageType = 'none'
     }
@@ -193,8 +192,8 @@ export class CompositeDamageCalculator {
   }
 
   static isResourceDamageType(damageType) {
-    let modifier = DamageTables.woundModifiers[damageType]
-    return !!modifier && !!DamageTables.woundModifiers[damageType].resource
+    let modifier = GURPS.DamageTables.woundModifiers[damageType]
+    return !!modifier && !!GURPS.DamageTables.woundModifiers[damageType].resource
   }
 
   get(viewId) {

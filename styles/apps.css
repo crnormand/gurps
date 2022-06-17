@@ -4,6 +4,8 @@
 
 :root {
   --hotbar-control-width: 32px;
+  --font-size-small: 90%;
+  --font-size-smaller: 80%;
 }
 
 /* Global Override */
@@ -29,7 +31,6 @@ body {
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;
-  /* background: url(/ui/parchment.webp) #dcdcd0; */
   background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
 }
@@ -154,15 +155,15 @@ body {
 
 .gga-group .pdflink {
   margin-left: 3px;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 .gga-chat-message .pdflink {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .gga-chat-message .aside {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .roll-message .aside .aside-text {
@@ -321,7 +322,7 @@ body {
 
 .label-value-row label,
 .gga-group.inputs label {
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
   justify-self: stretch;
   text-align: end;
   display: flex;
@@ -659,7 +660,7 @@ ul#result-effects li {
 
 #combat-sheet .resource-spinner input {
   height: 21px;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 #combat-sheet .tracked-resource {
@@ -792,7 +793,7 @@ ul#result-effects li {
   height: min-content;
   margin: 0;
   width: 100%;
-  font-size: 90%;
+  font-size: var(--font-size-small);
   cursor: pointer;
 }
 
@@ -810,14 +811,14 @@ ul#result-effects li {
   margin: 0;
   width: 100%;
   font-family: inherit;
-  font-size: 90%;
+  font-size: var(--font-size-small);
   cursor: inherit;
   line-height: inherit;
 }
 
 .field textarea {
   font-family: inherit;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
   border-radius: 0;
   border: 1px solid lightgrey;
   padding: 3px;
@@ -963,7 +964,7 @@ ul#result-effects li {
   display: flex;
   flex-flow: column nowrap;
   justify-content: stretch;
-  /* font-size: 80%; */
+  /* font-size: var(--font-size-smaller); */
 }
 
 /* #combat-trackers .tracked-resource .condition-block {
@@ -1022,7 +1023,7 @@ ul#result-effects li {
 }
 
 .resource-editor .inputs .label {
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 .resource-editor button i {
@@ -1202,7 +1203,7 @@ active-effects-list .section h3 {
 }
 
 .npc-sheet #condition .field {
-  font-size: 90%;
+  font-size: var(--font-size-small);
   border: none;
 }
 
@@ -1220,13 +1221,13 @@ active-effects-list .section h3 {
 }
 
 #combat-sheet .fieldblock .field[name='data.conditions.combatmove'] {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 #condition .fieldblock button#open-modifier-popup,
 #condition .fieldblock button#edit-move-modes,
 #location .dr button {
-  font-size: 90%;
+  font-size: var(--font-size-small);
   max-height: fit-content;
   width: auto;
   padding: 0 3px;
@@ -1263,7 +1264,7 @@ select#maneuver option {
   position: absolute;
   z-index: 10;
   margin-left: -150%;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
   min-inline-size: max-content;
   background-color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
@@ -1553,7 +1554,7 @@ button.equipmentbutton:last-child {
 
 .subtle {
   color: grey;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 /* ========================= */
@@ -1835,7 +1836,7 @@ button.equipmentbutton:last-child {
 .gmbutton {
   display: inline-block;
   text-align: center;
-  font-size: 90%;
+  font-size: var(--font-size-small);
   padding: 0.25em;
   width: fit-content;
   background: rgba(255, 255, 240, 0.8);
@@ -1955,7 +1956,7 @@ button.equipmentbutton:last-child {
   border-top: none;
   border-bottom-left-radius: 0.25em;
   border-bottom-right-radius: 0.25em;
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .modtooltip .collapsible-wrapper .content-inner {
@@ -1999,7 +2000,7 @@ button.equipmentbutton:last-child {
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
 .modtooltip .gurpslink {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .modtooltip .glinkmod,
@@ -2126,7 +2127,7 @@ button.equipmentbutton:last-child {
 
 .modifier-journals #entry-list > div:nth-child(3n + 3) {
   color: #555;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 .gga-app .section {

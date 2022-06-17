@@ -52,12 +52,7 @@ const damageTypeMap = {
   kb: 'kb',
 }
 
-export let DamageTables = null
-export function initializeDamageTables() {
-  DamageTables = new DamageTable()
-}
-
-class DamageTable {
+export class DamageTable {
   constructor() {
     let translationTable = {}
     translationTable[game.i18n.localize('GURPS.damageAbbrevburn')] = 'burn'
