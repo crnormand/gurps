@@ -1253,7 +1253,7 @@ export class GurpsActor extends Actor {
           continue;
         }
       }
-        const filename = `${p.name}_${this.id}_portrait.png`.replace(" ", "_");
+        const filename = `${p.name}_${this.id}_portrait.png`.replaceAll(" ", "_");
         const url = `data:image/png;base64,${p.portrait}`;
         await fetch(url)
           .then((res) => res.blob())
@@ -1261,7 +1261,7 @@ export class GurpsActor extends Actor {
             const file = new File([blob], filename);
             FilePicker.upload("data", path, file, {}, { notify: false });
           });
-          r.img = (path + "/" + filename).replace(" ", "_");
+          r.img = (path + "/" + filename).replaceAll(" ", "_").replaceAll("//", "/");
       }
       return r;
     }
