@@ -91,13 +91,19 @@ export function handlePdf(links) {
       page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
     }
     // Special case for Separate Basic Set PDFs
+    let setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BASICSET_PDF)
     if (book === 'B') {
-      let s = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BASICSET_PDF)
       if (page > 336)
-        if (s === 'Separate') {
+        if (setting === 'Separate') {
           book = 'BX'
           page = page - 335
         } else page += 2
+    }
+    else if (book === 'BX') {
+      if (setting === 'Combined') {
+          book = 'B'
+          page += 2
+      } else page -= 335 
     }
     // @ts-ignore
     const pdf = ui.PDFoundry.findPDFDataByCode(book)

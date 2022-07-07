@@ -5,6 +5,8 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 Release 0.14.4
 
 - Import Portrait image from GCS file, Thanks @Neck!
+- Change UTF reader to "hopefully" support extended characters on Mac and Linux
+- Update code to convert 'BX' PDF references to 'B' references if using the combined PDF (GCS Library update 3.15.1)
 
 Release 0.14.3 5/31/2022
 
