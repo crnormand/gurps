@@ -7,6 +7,8 @@ Release 0.14.4
 - Import Portrait image from GCS file, Thanks @Neck!
 - Change UTF reader to "hopefully" support extended characters on Mac and Linux
 - Update code to convert 'BX' PDF references to 'B' references if using the combined PDF (GCS Library update 3.15.1)
+- Update JB2A to 0.4.5
+- Fixed? the possible Mythic Game Master Emulator issue when using Dice so Nice.
 
 Release 0.14.3 5/31/2022
 
