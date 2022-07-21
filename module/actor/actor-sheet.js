@@ -1041,7 +1041,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/advantage-editor-popup.html',
       'Advantage / Disadvantage / Perk / Quirk Editor',
-      ['name', 'notes'],
+      ['name', 'notes', 'pageref'],
       ['points']
     )
   }
