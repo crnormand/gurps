@@ -1280,9 +1280,10 @@ if (!globalThis.GURPS) {
 
       let parts = f.includes(',') ? f.split(',') : [f]
       for (let part of parts) {
-        let result = parseForRollOrDamage(part.trim())
+        //let result = parseForRollOrDamage(part.trim())
+        let result = parselink(part.trim())
         if (result?.action) {
-          if (options?.combined) result.action.formula = multiplyDice(result.action.formula, options.combined)
+          if (options?.combined && result.action.type == 'damage') result.action.formula = multiplyDice(result.action.formula, options.combined)
           performAction(result.action, actor, event, options?.targets)
         }
       }
