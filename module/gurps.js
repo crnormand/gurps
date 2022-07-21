@@ -522,7 +522,13 @@ if (!globalThis.GURPS) {
     dragdrop({ action }) {
       switch (action.link) {
         case 'JournalEntry':
-          game.journal?.get(action.id)?.sheet?.render(true)
+          let j = game.journal?.get(action.id)
+          if (j) {
+            if (j.data.flags.pdfoundry) {
+              handlePdf(j.data.flags.pdfoundry.PDFData.code)
+            } else
+              j.sheet?.render(true)
+          }
           return true
         case 'Actor':
           game.actors?.get(action.id)?.sheet?.render(true)
