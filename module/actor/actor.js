@@ -1746,7 +1746,7 @@ export class GurpsActor extends Actor {
     let p_total = total
     let p_race = 0
     for (let i of atts) p_atts += i.calc?.points
-    for (let i of ads) [p_ads, p_disads, p_quirks, p_race] = this.adPointCount(i, p_ads, p_disads, p_quirks, p_race)
+    for (let i of ads) [p_ads, p_disads, p_quirks, p_race] = this.adPointCount(i, p_ads, p_disads, p_quirks, p_race, true)
     for (let i of skills) p_skills = this.skPointCount(i, p_skills)
     for (let i of spells) p_spells = this.skPointCount(i, p_spells)
     p_unspent -= p_atts + p_ads + p_disads + p_quirks + p_skills + p_spells + p_race
@@ -1898,11 +1898,20 @@ export class GurpsActor extends Actor {
     return [i].concat(ch)
   }
 
-  adPointCount(i, ads, disads, quirks, race) {
+  adPointCount(i, ads, disads, quirks, race, toplevel = false) {
     if (i.type == 'advantage_container' && i.container_type == 'race') race += i.calc?.points
     else if (i.type == 'advantage_container' && i.container_type == 'alternative_abilities') ads += i.calc?.points
-    else if (i.type == 'advantage_container' && !!i.children?.length)
-      for (let j of i.children) [ads, disads, quirks, race] = this.adPointCount(j, ads, disads, quirks, race)
+    else if (i.type == 'advantage_container' && !!i.children?.length) {
+      var [a, d] = [0, 0]
+      for (let j of i.children) [a, d, quirks, race] = this.adPointCount(j, a, d, quirks, race)
+      if (toplevel) {
+        if (a > 0)
+          ads += a
+        else 
+          disads += a
+      } else
+        ads += a + d
+    }
     else if (i.calc?.points == -1) quirks += i.calc?.points
     else if (i.calc?.points > 0) ads += i.calc?.points
     else disads += i.calc?.points
