@@ -2018,6 +2018,21 @@ if (!globalThis.GURPS) {
     Hooks.on('renderActorSheet', (...args) => {
       colorGurpsActorSheet()
     })
+    
+    // Listen for the Ctrl key and toggle the roll mode (to show the behaviour we currently do anyway)
+    game.keybindings.register('gurps', 'toggleDiceDisplay', {
+      name: 'Toggle dice display',
+      uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
+      onDown: () => {
+        GURPS.savedRollMode = game.settings.get('core', 'rollMode')
+        game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
+      },
+      onUp: () => {
+        game.settings.set('core', 'rollMode', GURPS.savedRollMode)
+      },
+      precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
+      // "ControlLeft", "ControlRight"
+    })
 
     Hooks.call('gurpsinit', GURPS)
   })
@@ -2405,21 +2420,6 @@ if (!globalThis.GURPS) {
       onChange: value => console.log(`${Settings.SETTING_ALT_SHEET}: ${value}`),
     })
     
-    // Listen for the Ctrl key and toggle the roll mode (to show the behaviour we currently do anyway)
-    game.keybindings.register('gurps', 'toggleDiceDisplay', {
-      name: 'Toggle dice display',
-      uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
-      onDown: () => {
-        GURPS.savedRollMode = game.settings.get('core', 'rollMode')
-        game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
-      },
-      onUp: () => {
-        game.settings.set('core', 'rollMode', GURPS.savedRollMode)
-      },
-      precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
-      // "ControlLeft", "ControlRight"
-    })
-
     GurpsToken.ready()
     TriggerHappySupport.init()
 
