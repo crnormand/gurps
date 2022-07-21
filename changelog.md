@@ -6,6 +6,11 @@ Release 0.14.5
 
 - Fixed pi+ and pi++ parsing on Mook generator
 - Fixed pi++ OTF parsing and damage creation
+- Fixed GCS import exception when using UTF-8
+- Added Legendsmith's BAD status icons
+- Fixed Cast time column for Items
+- Fixed calc on ADs/DisADs so it works like GCS
+- Holding CTRL shows changes in roll mode (GM roll for GMs, Blind roll for Players)
 
 Release 0.14.4 7/7/2022
 
