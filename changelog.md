@@ -14,6 +14,7 @@ Release 0.14.5
 - Fix /hp +1 @target for good?
 - Damage column can now execute OTFs (ex: PDF:B405)
 - OTF now handles HTTP URLs.   [http://google.com], as well as labeled ["Google!"http://google.com]
+- Drag and drop PDF Journal links now open PDFoundry, and not the placeholder Journal
 
 Release 0.14.4 7/7/2022
 
