@@ -701,6 +701,7 @@
   "GURPS.STATUSTerriblePain": "Terrible Pain",
   "GURPS.STATUSTipsy": "Tipsy",
   "GURPS.STATUSWait": "Waiting",
+  "GURPS.STATUSBad": "Basic Abstract Difficulty",
 
   "__Maneuvers__": "=========",
   "GURPS.maneuver": "Maneuver",

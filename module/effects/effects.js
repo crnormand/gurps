@@ -531,6 +531,56 @@ export class StatusEffect {
         id: 'num10',
         label: 'GURPS.STATUSCounter',
       },
+      'bad+1': {
+        icon: 'systems/gurps/icons/statuses/BAD+1.webp',
+        id: 'bad+1',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad+2': {
+        icon: 'systems/gurps/icons/statuses/BAD+2.webp',
+        id: 'bad+2',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad+3': {
+        icon: 'systems/gurps/icons/statuses/BAD+3.webp',
+        id: 'bad+3',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad+4': {
+        icon: 'systems/gurps/icons/statuses/BAD+4.webp',
+        id: 'bad+4',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad+5': {
+        icon: 'systems/gurps/icons/statuses/BAD+5.webp',
+        id: 'bad+5',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad-1': {
+        icon: 'systems/gurps/icons/statuses/BAD-1.webp',
+        id: 'bad-1',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad-2': {
+        icon: 'systems/gurps/icons/statuses/BAD-2.webp',
+        id: 'bad-2',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad-3': {
+        icon: 'systems/gurps/icons/statuses/BAD-3.webp',
+        id: 'bad-3',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad-4': {
+        icon: 'systems/gurps/icons/statuses/BAD-4.webp',
+        id: 'bad-4',
+        label: 'GURPS.STATUSBad',
+      },
+      'bad-5': {
+        icon: 'systems/gurps/icons/statuses/BAD-5.webp',
+        id: 'bad-5',
+        label: 'GURPS.STATUSBad',
+      },
     }
   }
 }

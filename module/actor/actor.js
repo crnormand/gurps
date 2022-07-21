@@ -294,11 +294,11 @@ export class GurpsActor extends Actor {
     //   data.attributes.ST.value = Math.ceil(parseInt(data.attributes.ST.value.toString()) / 2)
     recurselist(data.skills, (e, k, d) => {
       // @ts-ignore
-      e.level = parseInt(+e.import)
+      if (!!e.import) e.level = parseInt(+e.import)
     })
     recurselist(data.spells, (e, k, d) => {
       // @ts-ignore
-      e.level = parseInt(+e.import)
+      if (!!e.import) e.level = parseInt(+e.import)
     })
 
     // we don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
@@ -1354,20 +1354,30 @@ export class GurpsActor extends Actor {
   }
 
   importSk(i, p) {
-    let s = new Skill()
-    s.name =
+    let name =
       i.name + (!!i.tech_level ? `/TL${i.tech_level}` : '') + (!!i.specialization ? ` (${i.specialization})` : '') ||
       'Skill'
+    if (i.type == 'technique' && !!i.default) {
+      let addition = ''
+      addition = ' (' + i.default.name
+      if (!!i.default.specialization) {
+        addition += ' (' + i.default.specialization + ')'
+      }
+      name += addition + ')'
+    }
+    let s = new Skill(name, '')
     s.pageRef(i.reference || '')
     s.uuid = i.id
     s.parentuuid = p
     if (['skill', 'technique'].includes(i.type)) {
       s.type = i.type.toUpperCase()
-      s.import = i.calc?.level || ''
+      s.import = !!i.calc ? i.calc.level : ''
       if (s.level == 0) s.level = ''
       s.points = i.points
       s.relativelevel = i.calc?.rsl
       s.notes = i.notes || ''
+    } else { // Usually containers
+      s.level = ''
     }
     let old = this._findElementIn('skills', s.uuid)
     this._migrateOtfsAndNotes(old, s, i.vtt_notes)
