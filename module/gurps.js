@@ -1009,10 +1009,11 @@ if (!globalThis.GURPS) {
       }
       if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
-
+      opt.text = ''
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
+      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return doRoll({
         actor,
@@ -1125,7 +1126,9 @@ if (!globalThis.GURPS) {
 
   async function findBestActionInChain({ action, actor, event, targets, originalOtf }) {
     const actions = []
+    let overridetxt = action.overridetxt
     while (action) {
+      action.overridetxt = overridetxt
       actions.push(action)
       action = action.next
     }
