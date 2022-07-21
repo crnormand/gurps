@@ -1111,6 +1111,9 @@ if (!globalThis.GURPS) {
       }
       return false
     },
+    href({ action, actor, event, originalOtf, calcOnly }) {
+      window.open(action.orig, action.label)
+    }
   }
   GURPS.actionFuncs = actionFuncs
 

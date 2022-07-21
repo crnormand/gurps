@@ -12,6 +12,8 @@ Release 0.14.5
 - Fixed calc on ADs/DisADs so it works like GCS
 - Holding CTRL shows changes in roll mode (GM roll for GMs, Blind roll for Players)
 - Fix /hp +1 @target for good?
+- Damage column can now execute OTFs (ex: PDF:B405)
+- OTF now handles HTTP URLs.   [http://google.com], as well as labeled ["Google!"http://google.com]
 
 Release 0.14.4 7/7/2022
 
