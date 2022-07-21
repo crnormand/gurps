@@ -12,7 +12,7 @@ import {
   RemoteChatProcessor,
 } from './everything.js'
 import { IfChatProcessor } from './if.js'
-import { isNiceDiceEnabled, i18n, splitArgs, makeRegexPatternFrom, wait, zeroFill, locateToken, requestFpHp } from '../../lib/utilities.js'
+import { isNiceDiceEnabled, i18n, i18n_f, splitArgs, makeRegexPatternFrom, wait, zeroFill, locateToken, requestFpHp } from '../../lib/utilities.js'
 import StatusChatProcessor from '../chat/status.js'
 import SlamChatProcessor from '../chat/slam.js'
 import TrackerChatProcessor from '../chat/tracker.js'
@@ -406,13 +406,16 @@ class FpHpChatProcessor extends ChatProcessor {
       targets.map(tid => {
         let ta = game.canvas.tokens.get(tid).actor
         let remote = false
+        var any
         ta.getOwners().forEach(o => { 
-          if (!o.isGM && o.active) {
+          if (!o.isGM && o.active && !any) {
             remote = true
-            remotes.push(tid)
+            any = o
+            remotes.push([o.id, tid])
           }
         })
-        if (!remote) locals.push(tid)
+        if (!remote) locals.push(['', tid])
+        this.priv(`${i18n_f('GURPS.chatSentTo', { cmd: line, name: ta.name })}`)
       })
         
       game.socket?.emit('system.gurps', {

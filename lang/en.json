@@ -320,6 +320,7 @@
   "GURPS.chatHelpManeuver": "Set the following maneuvers on the current character.  You may use * to match Maneuver names, example: '/man All Out*Double'<hr>",
   "GURPS.chatHelpRepeat": "Repeat the following /anim command with a delay of X seconds in between.<hr>examples:\n/repeat /anim 1.2 heal*blue c",
   "GURPS.chatWantsToExecute": "Wants to execute <b>{command}</b> on {name},<br><br>Is that OK?",
+  "GURPS.chatSentTo": "Sent command [{cmd}] to {name}",
 
   "__Permissions__": "=========",
   "GURPS.cannotDragNonFoundryEqt": "You cannot drag non-Foundry equipment to another character.",

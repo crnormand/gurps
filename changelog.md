@@ -11,6 +11,7 @@ Release 0.14.5
 - Fixed Cast time column for Items
 - Fixed calc on ADs/DisADs so it works like GCS
 - Holding CTRL shows changes in roll mode (GM roll for GMs, Blind roll for Players)
+- Fix /hp +1 @target for good?
 
 Release 0.14.4 7/7/2022
 
