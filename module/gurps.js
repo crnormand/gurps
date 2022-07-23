@@ -510,6 +510,11 @@ if (!globalThis.GURPS) {
         KeyboardManager.MODIFIER_KEYS.CONTROL
       )}\n${action.orig}`
 
+      if (!!action.overridetxt) {
+        if (!event.data)
+          event.data = {}
+        event.data.overridetxt = action.overridetxt
+      }
       // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
       return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
     },
@@ -828,12 +833,14 @@ if (!globalThis.GURPS) {
         event,
         obj: att, // save the attack in the optional parameters, in case it has rcl/rof
         followon: followon,
+        text: ''
       }
       let targetmods = []
       if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
+      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return doRoll({
         actor,
@@ -888,7 +895,7 @@ if (!globalThis.GURPS) {
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       const chatthing = thing === '' ? att.name + mode : `[B:"${thing}${mode}"]`
-
+ 
       return doRoll({
         actor,
         targetmods,
@@ -1006,6 +1013,7 @@ if (!globalThis.GURPS) {
         event: event,
         action: action,
         obj: action.obj,
+        text: ''
       }
       if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
@@ -1066,6 +1074,7 @@ if (!globalThis.GURPS) {
         event,
         action,
         obj: action.obj,
+        text: ''
       }
       if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
@@ -1073,6 +1082,7 @@ if (!globalThis.GURPS) {
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       else if (!!action.desc) opt.text = "<span style='font-size:85%'>" + action.desc + '</span>'
+      if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
 
       return doRoll({ actor, targetmods, thing, chatthing, origtarget: target, optionalArgs: opt })
     },
@@ -2014,7 +2024,7 @@ if (!globalThis.GURPS) {
               content: cmd,
             }
             ChatMessage.create(messageData, {})
-          } else $(document).find('#chat-message').val(cmd)
+          } else $(document).find('#chat-message').val($(document).find('#chat-message').val() + cmd)
         }
       }
       if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))

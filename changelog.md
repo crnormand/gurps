@@ -20,7 +20,7 @@ Release 0.14.5
 - Add ability to roll dice or damage multiple times from chat (using compact syntax) "/3d 5" or "/3d cut 5"
 - Fixed initial vtt-notes import from GCS
 - Added warning for /repeat X /anim ... when actor not linked
-- Added selected, /sr [otf], /psr [otf] .   "rolls" (executes) OTF against the selected actors.  /sr [per], /sr [/hp -1d-3!], /sr [/hp reset]
+- Added "selected roll", /sr [otf], /psr [otf] .   "rolls" (executes) OTF against the selected actors.  /sr [per], /sr [/hp -1d-3!], /sr [/hp reset]
 
 Release 0.14.4 7/7/2022
 
