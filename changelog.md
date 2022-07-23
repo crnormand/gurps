@@ -10,12 +10,14 @@ Release 0.14.5
 - Added Legendsmith's BAD status icons
 - Fixed Cast time column for Items
 - Fixed calc on ADs/DisADs so it works like GCS
-- Holding CTRL shows changes in roll mode (GM roll for GMs, Blind roll for Players)
+- Holding CTRL shows changes in roll mode (GM roll for GMs, Blind roll for Players), w/system setting
 - Fix /hp +1 @target for good?
 - Damage column can now execute OTFs (ex: PDF:B405)
 - OTF now handles HTTP URLs.   [http://google.com], as well as labeled ["Google!"http://google.com]
 - Drag and drop PDF Journal links now open PDFoundry, and not the placeholder Journal
 - Show "flavor" text below roll (issue #1426)
+- Add ability to roll dice or damage multiple times from chat "/r [3d] 5" or "/r [3d cut] 5"
+- Add ability to roll dice or damage multiple times from chat (using compact syntax) "/3d 5" or "/3d cut 5"
 
 Release 0.14.4 7/7/2022
 

@@ -2037,11 +2037,14 @@ if (!globalThis.GURPS) {
       name: 'Toggle dice display',
       uneditable: [{ key: 'ControlLeft' }, { key: 'ControlRight' }],
       onDown: () => {
-        GURPS.savedRollMode = game.settings.get('core', 'rollMode')
-        game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
+        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY)) {
+          GURPS.savedRollMode = game.settings.get('core', 'rollMode')
+          game.settings.set('core', 'rollMode', game.user?.isGM ? 'gmroll' : 'blindroll')
+        }
       },
       onUp: () => {
-        game.settings.set('core', 'rollMode', GURPS.savedRollMode)
+        if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_CTRL_KEY))
+          game.settings.set('core', 'rollMode', GURPS.savedRollMode)
       },
       precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
       // "ControlLeft", "ControlRight"

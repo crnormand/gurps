@@ -121,19 +121,26 @@ export async function doRoll({
       min = 1
     }
 
-    roll = Roll.create(formula + `+${modifier}`)
-    await roll.evaluate({ async: true })
-
-    let rtotal = roll.total
-    if (rtotal < min) {
-      rtotal = min
+    let multiples = []
+    chatdata['multiples'] = multiples
+    let max = +(optionalArgs.event?.data?.repeat) || 1
+    if (max > 1) chatdata['chatthing'] = 'x' + max
+    for (let i = 0; i < max; i++) {
+      roll = Roll.create(formula + `+${modifier}`)
+      await roll.evaluate({ async: true })
+  
+      let rtotal = roll.total
+      if (rtotal < min) {
+        rtotal = min
+      }
+  
+      // ? if (rtotal == 1) thing = thing.replace('points', 'point')
+      let r = {}
+      r['rtotal'] = rtotal
+      r['loaded'] = !!roll.isLoaded
+      r['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
+      multiples.push(r)
     }
-
-    if (rtotal == 1) thing = thing.replace('points', 'point')
-
-    chatdata['rtotal'] = rtotal
-    chatdata['loaded'] = !!roll.isLoaded
-    chatdata['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
     chatdata['modifier'] = modifier
   }
 

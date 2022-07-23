@@ -94,15 +94,21 @@ class QuickDamageChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    let m = line.match(/^[\.\/](.*)/)
-    if (!!m) {
-      this.match = parseForRollOrDamage(m[1])
-      return !!this.match && this.match.action.type == 'damage'
+    this.match = line.match(/^[\.\/](.*?)( +[xX\*]?(?<num>\d+))?$/)
+    if (!!this.match) {
+      this.action = parselink(this.match[1])
+      return this.action?.action?.type == 'damage' || this.action?.action?.type == 'roll'
     }
     return false
   }
   async process(line) {
-    await GURPS.performAction(this.match.action, GURPS.LastActor)
+    let event = { 
+      shiftKey: this.action.action.blindroll, 
+      data: { 
+        repeat: this.match.groups.num
+      }
+    }
+    await GURPS.performAction(this.action.action, GURPS.LastActor, event)
   }
 }
 
@@ -592,7 +598,7 @@ class RollChatProcessor extends ChatProcessor {
     return '/roll (or /r) [On-the-Fly formula]'
   }
   matches(line) {
-    this.match = line.match(/^(\/roll|\/r|\/private|\/pr) \[([^\]]+)\]/)
+    this.match = line.match(/^(\/roll|\/r|\/private|\/pr) \[([^\]]+)\] *[xX\*]?(\d+)?/)
     return !!this.match
   }
   async process(line) {
@@ -604,9 +610,9 @@ class RollChatProcessor extends ChatProcessor {
         this.priv(line)
       else this.send() // send what we have
       return await GURPS.performAction(action.action, GURPS.LastActor, {
-        shiftKey: line.startsWith('/pr'),
+        shiftKey: line.startsWith('/pr') || action.action.blindroll,
         ctrlKey: false,
-        data: {},
+        data: { repeat: m[3] },
       })
     } // Looks like a /roll OtF, but didn't parse as one
     else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '[${m[2]}]'`)
