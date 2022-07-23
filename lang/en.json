@@ -276,7 +276,7 @@
   "GURPS.chatResetTo": "reset to",
   "GURPS.chatResourceTracker": "Resource Tracker",
   "GURPS.chatResultBelowZero": "Result below zero",
-  "GURPS.chatRollingDamage": "Rolling [{dice} {damageTypeText}] damage.",
+  "GURPS.chatRollingDamage": "Rolling [{dice} {damageTypeText}] damage{numtimes}.",
   "GURPS.chatSetTo": "set to",
   "GURPS.chatSelectSelfOrNameTokens": "You must select tokens, use '{self}', or use ':&lt;<i>token-name</i>&gt;' to apply status effects.",
   "GURPS.chatShock": "{name} takes {modifier} points of Shock ",
