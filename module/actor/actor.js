@@ -1513,8 +1513,8 @@ export class GurpsActor extends Actor {
     e.pageRef(i.reference || '')
     let old = this._findElementIn('equipment.carried', e.uuid)
     if (!old) old = this._findElementIn('equipment.other', e.uuid)
+    this._migrateOtfsAndNotes(old, e, i.vtt_notes)
     if (!!old) {
-      this._migrateOtfsAndNotes(old, e, i.vtt_notes)
       e.carried = old.carried
       e.equipped = old.equipped
       e.parentuuid = old.parentuuid
@@ -2770,8 +2770,8 @@ export class GurpsActor extends Actor {
         eqt.pageRef(t(j.pageref))
         let old = this._findElementIn('equipment.carried', eqt.uuid)
         if (!old) old = this._findElementIn('equipment.other', eqt.uuid)
+        this._migrateOtfsAndNotes(old, eqt)
         if (!!old) {
-          this._migrateOtfsAndNotes(old, eqt)
           eqt.carried = old.carried
           eqt.equipped = old.equipped
           eqt.parentuuid = old.parentuuid

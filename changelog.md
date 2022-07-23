@@ -18,6 +18,7 @@ Release 0.14.5
 - Show "flavor" text below roll (issue #1426)
 - Add ability to roll dice or damage multiple times from chat "/r [3d] 5" or "/r [3d cut] 5"
 - Add ability to roll dice or damage multiple times from chat (using compact syntax) "/3d 5" or "/3d cut 5"
+- Fixed initial vtt-notes import from GCS
 
 Release 0.14.4 7/7/2022
 
