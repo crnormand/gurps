@@ -598,7 +598,7 @@ class RollChatProcessor extends ChatProcessor {
     return '/roll (or /r) [On-the-Fly formula]'
   }
   matches(line) {
-    this.match = line.match(/^(\/roll|\/r|\/private|\/pr) \[([^\]]+)\] *[xX\*]?(\d+)?/)
+    this.match = line.match(/^(\/roll|\/r|\/private|\/pr|\/sr|\/psr) \[([^\]]+)\] *[xX\*]?(\d+)?/)
     return !!this.match
   }
   async process(line) {
@@ -609,11 +609,24 @@ class RollChatProcessor extends ChatProcessor {
         // only need to show modifiers, everything else does something.
         this.priv(line)
       else this.send() // send what we have
-      return await GURPS.performAction(action.action, GURPS.LastActor, {
-        shiftKey: line.startsWith('/pr') || action.action.blindroll,
-        ctrlKey: false,
-        data: { repeat: m[3] },
-      })
+      
+      let actors = [ GURPS.LastActor ]
+      if (line.startsWith('/psr') || line.startsWith('/sr'))
+        actors = canvas.tokens?.controlled.map(t => t.actor)
+      let atLeastOne = false
+      
+      let last = GURPS.LastActor
+      for (const actor of actors) {
+        GURPS.LastActor = actor
+        let result = await GURPS.performAction(action.action, actor, {
+          shiftKey: line.startsWith('/p') || action.action.blindroll,
+          ctrlKey: false,
+          data: { repeat: m[3] },
+        })
+        GURPS.LastActor = last
+        atLeastOne = atLeastOne || result
+      }
+      return atLeastOne
     } // Looks like a /roll OtF, but didn't parse as one
     else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '[${m[2]}]'`)
     return false
@@ -997,9 +1010,13 @@ class RepeatChatProcessor extends ChatProcessor {
     this.repeatLoop(GURPS.LastActor, this.match[3].trim(), this.match[2]) // We are purposefully NOT waiting for this method, so that it can continue in the background
   }
   async repeatLoop(actor, anim, delay) {
-    actor.RepeatAnimation = true
     if (delay < 20) delay = delay * 1000
     const t = canvas.tokens.placeables.find(e => e.actor == actor)
+    if (!t) {
+      ui.notifications.warn("/repeat only works on 'linked' actors, " + actor.name)
+      return false
+    }
+    actor.RepeatAnimation = true
     while (actor.RepeatAnimation) {
       let p = {
             x: t.position.x + t.w / 2,
