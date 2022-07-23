@@ -616,13 +616,18 @@ class RollChatProcessor extends ChatProcessor {
       let atLeastOne = false
       
       let last = GURPS.LastActor
+      action.action.overridetxt = this.msgs().event?.data?.overridetxt
+      let ev = {
+        shiftKey: line.startsWith('/p') || action.action.blindroll,
+        ctrlKey: false,
+        data: { 
+          repeat: m[3],
+          overridetxt: action.action.overridetxt
+        }
+      }
       for (const actor of actors) {
         GURPS.LastActor = actor
-        let result = await GURPS.performAction(action.action, actor, {
-          shiftKey: line.startsWith('/p') || action.action.blindroll,
-          ctrlKey: false,
-          data: { repeat: m[3] },
-        })
+        let result = await GURPS.performAction(action.action, actor, ev)
         GURPS.LastActor = last
         atLeastOne = atLeastOne || result
       }
