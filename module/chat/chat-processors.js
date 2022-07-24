@@ -598,7 +598,7 @@ class RollChatProcessor extends ChatProcessor {
     return '/roll (or /r) [On-the-Fly formula]'
   }
   matches(line) {
-    this.match = line.match(/^(\/roll|\/r|\/private|\/pr|\/sr|\/psr) \[([^\]]+)\] *[xX\*]?(\d+)?/)
+    this.match = line.match(/^(\/roll|\/r|\/private|\/pr|\/sr|\/psr) \[(.+)\] *[xX\*]?(\d+)?/)
     return !!this.match
   }
   async process(line) {
