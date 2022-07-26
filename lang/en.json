@@ -703,6 +703,7 @@
   "GURPS.STATUSTipsy": "Tipsy",
   "GURPS.STATUSWait": "Waiting",
   "GURPS.STATUSBad": "Basic Abstract Difficulty",
+  "GURPS.STATUSDisarmed": "Disarmed",
 
   "__Maneuvers__": "=========",
   "GURPS.maneuver": "Maneuver",
