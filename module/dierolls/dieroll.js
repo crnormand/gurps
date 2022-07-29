@@ -47,6 +47,10 @@ export async function doRoll({
     speaker: speaker,
     type: CONST.CHAT_MESSAGE_TYPES.ROLL,
   }
+  if (optionalArgs.event?.data?.private) {
+    messageData.whisper = [ game.user.id ]
+    messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+  }
 
   let roll = null // Will be the Roll
   if (isTargeted) {
