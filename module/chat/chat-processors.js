@@ -595,7 +595,7 @@ class SelectChatProcessor extends ChatProcessor {
 
 class RollChatProcessor extends ChatProcessor {
   help() {
-    return '/roll (or /r) [On-the-Fly formula]'
+    return '/roll (or /r) [On-the-Fly formula]<br>/private (or /pr) [On-the-Fly formula] "Private"<br>/sr [On-the-Fly formula] "Selected Roll"<br>/psr [On-the-Fly formula] "Private Selected Roll"'
   }
   matches(line) {
     this.match = line.match(/^(\/roll|\/r|\/private|\/pr|\/sr|\/psr) \[(.+)\] *[xX\*]?(\d+)?/)
@@ -622,7 +622,8 @@ class RollChatProcessor extends ChatProcessor {
         ctrlKey: false,
         data: { 
           repeat: m[3],
-          overridetxt: action.action.overridetxt
+          overridetxt: action.action.overridetxt,
+          private: line.startsWith('/p')
         }
       }
       for (const actor of actors) {
