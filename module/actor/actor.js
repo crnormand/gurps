@@ -1320,7 +1320,7 @@ export class GurpsActor extends Actor {
     a.notes = ''
 
     if (i.cr != null) {
-      a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ']'
+      a.notes = '[' + game.i18n.localize('GURPS.CR' + i.cr.toString()) + ': ' + a.name + ']'
     }
     if (i.modifiers?.length) {
       for (let j of i.modifiers)
