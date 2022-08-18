@@ -1301,9 +1301,10 @@ export class GurpsActor extends Actor {
 
   importAdsFromGCSv3(ads) {
     let temp = []
-    for (let i of ads) {
-      temp = temp.concat(this.importAd(i, ''))
-    }
+    if (!!ads)
+      for (let i of ads) {
+        temp = temp.concat(this.importAd(i, ''))
+      }
     return {
       'data.-=ads': null,
       'data.ads': this.foldList(temp),
