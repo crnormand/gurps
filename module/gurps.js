@@ -107,7 +107,7 @@ if (!globalThis.GURPS) {
   GURPS.Maneuvers = Maneuvers
 
   // Use the target d6 icon for rolltable entries
-  CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
+  //CONFIG.RollTable.resultIcon = 'systems/gurps/icons/single-die.webp'
   CONFIG.time.roundTime = 1
 
   GURPS.StatusEffect = new StatusEffect()

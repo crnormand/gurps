@@ -9,7 +9,8 @@ export class IfChatProcessor extends ChatProcessor {
     return '/if [OtF] [thenOTF] /else [elseOTF]<br>/if [OtF] {thenChatCmd} {elseChatCmd}'
   }
   matches(line) {  // Since this can get called recursively, we cannot use an instance variable to save the match status
-    return line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)   
+    let m = line.match(/^\/if (! *)?\[([^\]]+)\] (.*)/)
+    return m   
   }
 
   async _handleResult(then) {
