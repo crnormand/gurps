@@ -153,7 +153,7 @@ class RolltableChatProcessor extends ChatProcessor {
     return '/rolltable &lt;tablename&gt;'
   }
   matches(line) {
-    this.match = line.match(/\/rolltable(.*)/)
+    this.match = line.match(/^\/rolltable(.*)/)
     return !!this.match
   }
 
