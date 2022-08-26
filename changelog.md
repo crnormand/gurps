@@ -2,11 +2,12 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.14.8
+Release 0.14.8 - 8/26/2022
 
 - Update JB2A to 0.4.7
 - Fixed GCS import to handle no advantages
 - Append the advantage name to a default Control Roll import from GCS
+- @Neck fixed the GCS portrait import issue (for accented names)
 
 Release 0.14.7 - 7/28/2022
 
