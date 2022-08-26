@@ -52,7 +52,7 @@ import {
 import { multiplyDice } from '../utilities/damage-utils.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
-Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
+Hooks.on('createActor', async function(/** @type {Actor} */ actor) {
   await actor.update({ 'data.migrationversion': game.system.data.version })
 })
 
@@ -592,7 +592,7 @@ export class GurpsActor extends Actor {
     let inCombat = false
     try {
       inCombat = !!game.combat?.combatants.filter(c => c.data.actorId == this.id)
-    } catch (err) {} // During game startup, an exception is being thrown trying to access 'game.combat'
+    } catch (err) { } // During game startup, an exception is being thrown trying to access 'game.combat'
     let updateMove = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_MANEUVER_UPDATES_MOVE) && inCombat
 
     let maneuver = this._getMoveAdjustedForManeuver(move, threshold)
@@ -619,9 +619,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _adjustMove(move, threshold, value, reason) {
@@ -672,9 +672,9 @@ export class GurpsActor extends Actor {
     return !!adjustment
       ? adjustment
       : {
-          move: Math.max(1, Math.floor(move * threshold)),
-          text: i18n('GURPS.moveFull'),
-        }
+        move: Math.max(1, Math.floor(move * threshold)),
+        text: i18n('GURPS.moveFull'),
+      }
   }
 
   _calculateRangedRanges() {
@@ -865,7 +865,7 @@ export class GurpsActor extends Actor {
       let token = /** @type {GurpsToken} */ (this.token.object)
       return [token]
     }
-    return this.getActiveTokens().map(it => /** @type {GurpsToken} */ (it))
+    return this.getActiveTokens().map(it => /** @type {GurpsToken} */(it))
   }
 
   /**
@@ -1206,8 +1206,8 @@ export class GurpsActor extends Actor {
   }
 
   calcTotalCarried(eqp) {
-    let t = 0
-    if (!eqp) return t
+    let t = 0;
+    if (!eqp) return t;
     for (let i of eqp) {
       let w = 0
       w += parseFloat(i.weight || '0') * (i.type == 'equipment_container' ? 1 : i.quantity || 0)
@@ -1253,23 +1253,30 @@ export class GurpsActor extends Actor {
           continue;
         }
       }
-        const filename = `${p.name}_${this.id}_portrait.png`.replaceAll(" ", "_");
-        const url = `data:image/png;base64,${p.portrait}`;
-        await fetch(url)
-          .then((res) => res.blob())
-          .then((blob) => {
-            const file = new File([blob], filename);
-            FilePicker.upload("data", path, file, {}, { notify: false });
-          });
-          r.img = (path + "/" + filename).replaceAll(" ", "_").replaceAll("//", "/");
-      }
-      return r;
+      const filename = `${this.removeAccents(p.name)}${this.id}_portrait.png`.replaceAll(" ", "_");
+      const url = `data:image/png;base64,${p.portrait}`;
+      await fetch(url)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], filename);
+          FilePicker.upload("data", path, file, {}, { notify: false });
+        });
+      r.img = (path + "/" + filename).replaceAll(" ", "_").replaceAll("//", "/");
     }
+    return r;
+  }
 
 
   getPortraitPath() {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_PORTRAIT_PATH) == "global") return "images/portraits/";
     return `worlds/${game.world.id}/images/portraits`;
+  }
+
+  removeAccents(str) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+      .replace(/([^\w]+|\s+)/g, '-') // Replace space and other characters by hyphen
+      .replace(/\-\-+/g, '-')	// Replaces multiple hyphens by one hyphen
+      .replace(/(^-+|-+$)/g, '');
   }
 
   signedNum(x) {
@@ -1908,7 +1915,7 @@ export class GurpsActor extends Actor {
       if (toplevel) {
         if (a > 0)
           ads += a
-        else 
+        else
           disads += a
       } else
         ads += a + d
@@ -1919,11 +1926,10 @@ export class GurpsActor extends Actor {
     return [ads, disads, quirks, race]
   }
 
-  skPointCount(i, skills) {
-    if (i.type == ('skill_container' || 'spell_container') && !!i.children?.length)
-      for (let j of i.children) skills = this.skPointCount(j, skills)
-    else skills += i.points
-    return skills
+  skPointCount(i,skills) {
+    if (i.type == ("skill_container" || "spell_container") && i.children?.length) for (let j of i.children) skills = this.skPointCount(j,skills);
+    else skills += i.points;
+    return skills;
   }
 
   /**
@@ -2041,8 +2047,8 @@ export class GurpsActor extends Actor {
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
-          Math.round(performance.now() - starttime) +
-          'ms.)  You can inspect the character data below:'
+        Math.round(performance.now() - starttime) +
+        'ms.)  You can inspect the character data below:'
       )
       console.log(this)
       return true
@@ -2285,8 +2291,8 @@ export class GurpsActor extends Actor {
       if (!suppressMessage) ui.notifications?.info(i18n_f('GURPS.importSuccessful', { name: nm }))
       console.log(
         'Done importing (' +
-          Math.round(performance.now() - starttime) +
-          'ms.)  You can inspect the character data below:'
+        Math.round(performance.now() - starttime) +
+        'ms.)  You can inspect the character data below:'
       )
       console.log(this)
       return true
@@ -2294,7 +2300,7 @@ export class GurpsActor extends Actor {
       console.log(err.stack)
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
-      ui.notifications?.warn(msg.join('<br>'))
+      if (!supressMessage) ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
         version: version,
@@ -2692,8 +2698,8 @@ export class GurpsActor extends Actor {
     tableNames.forEach(it => (tableScores[it] = 0))
 
     // increment the count for a tableScore if it contains the same hit location as "prot"
-    locations.forEach(function (hitLocation) {
-      tableNames.forEach(function (tableName) {
+    locations.forEach(function(hitLocation) {
+      tableNames.forEach(function(tableName) {
         if (HitLocations.hitlocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
           tableScores[tableName] = tableScores[tableName] + 1
         }
@@ -2703,7 +2709,7 @@ export class GurpsActor extends Actor {
     // Select the tableScore with the highest score.
     let match = -1
     let name = HitLocations.HitLocation.HUMANOID
-    Object.keys(tableScores).forEach(function (score) {
+    Object.keys(tableScores).forEach(function(score) {
       if (tableScores[score] > match) {
         match = tableScores[score]
         name = score
@@ -2918,7 +2924,7 @@ export class GurpsActor extends Actor {
     let oldotf = oldobj[objkey]
     newobj[objkey] = oldotf
     var notes, newotf
-    ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
+      ;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || '')
     if (!!newotf) newobj[objkey] = newotf
     newobj.notes = notes.trim()
   }

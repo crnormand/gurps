@@ -986,6 +986,7 @@
   "GURPS.itemEditor": "Item Editor",
   "GURPS.itemFeatures": "Features",
   "GURPS.itemImport": "Import Equipment Library",
+  "GURPS.characterImport": "Import Character Library",
   "GURPS.knockback": "Knockback, {amount} {unit}",
   "GURPS.knockbackCheck": "{name}: roll {dx}, {acrobatics}, or {judo} or fall!",
   "GURPS.level": "Level",
