@@ -1253,7 +1253,7 @@ export class GurpsActor extends Actor {
 					continue;
 				}
 			}
-			const filename = `${this.id}_portrait.png`.replaceAll(" ", "_");
+			const filename = `${this.removeAccents(p.name)}${this.id}_portrait.png`.replaceAll(" ", "_");
 			const url = `data:image/png;base64,${p.portrait}`;
 			await fetch(url)
 				.then((res) => res.blob())
@@ -1270,6 +1270,13 @@ export class GurpsActor extends Actor {
 	getPortraitPath() {
 		if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_PORTRAIT_PATH) == "global") return "images/portraits/";
 		return `worlds/${game.world.id}/images/portraits`;
+	}
+
+	removeAccents(str) {
+		return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove accents
+			.replace(/([^\w]+|\s+)/g, '-') // Replace space and other characters by hyphen
+			.replace(/\-\-+/g, '-')	// Replaces multiple hyphens by one hyphen
+			.replace(/(^-+|-+$)/g, '');
 	}
 
 	signedNum(x) {
