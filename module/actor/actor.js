@@ -1206,8 +1206,8 @@ export class GurpsActor extends Actor {
   }
 
   calcTotalCarried(eqp) {
-    let t = 0
-    if (!eqp) return t
+    let t = 0;
+    if (!eqp) return t;
     for (let i of eqp) {
       let w = 0
       w += parseFloat(i.weight || '0') * (i.type == 'equipment_container' ? 1 : i.quantity || 0)
@@ -1926,11 +1926,10 @@ export class GurpsActor extends Actor {
     return [ads, disads, quirks, race]
   }
 
-  skPointCount(i, skills) {
-    if (i.type == ('skill_container' || 'spell_container') && !!i.children?.length)
-      for (let j of i.children) skills = this.skPointCount(j, skills)
-    else skills += i.points
-    return skills
+  skPointCount(i,skills) {
+    if (i.type == ("skill_container" || "spell_container") && i.children?.length) for (let j of i.children) skills = this.skPointCount(j,skills);
+    else skills += i.points;
+    return skills;
   }
 
   /**
@@ -2301,7 +2300,7 @@ export class GurpsActor extends Actor {
       console.log(err.stack)
       let msg = [i18n_f('GURPS.importGenericError', { name: nm, error: err.name, message: err.message })]
       if (err.message == 'Maximum depth exceeded') msg.push(i18n('GURPS.importTooManyContainers'))
-      ui.notifications?.warn(msg.join('<br>'))
+      if (!supressMessage) ui.notifications?.warn(msg.join('<br>'))
       let content = await renderTemplate('systems/gurps/templates/chat-import-actor-errors.html', {
         lines: msg,
         version: version,
