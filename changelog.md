@@ -2,6 +2,10 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.14.9 - 8/26/2022
+
+- @Neck fixed the item parsing bug (with missing names)
+
 Release 0.14.8 - 8/26/2022
 
 - Update JB2A to 0.4.7
