@@ -20,7 +20,7 @@ export const SJGProductMappings = {
   DFE: 'http://www.warehouse23.com/products/dungeon-fantasy-roleplaying-game',
   DR: 'http://www.warehouse23.com/products/gurps-dragons-1',
   F: 'http://www.warehouse23.com/products/gurps-fantasy',
-  FDG: 'https://gamingballistic.com/product/fantastic-dungeon-grappling-pdf-dfrpg/',
+  FDG: 'https://gaming-ballistic.myshopify.com/products/fantastic-dungeon-grappling?variant=42552585322751',
   GUL: 'https://www.gamesdiner.com/gulliver/',
   H: 'http://www.warehouse23.com/products/gurps-horror-1',
   HF: 'http://www.mygurps.com/historical_folks_4e.pdf',
@@ -38,6 +38,7 @@ export const SJGProductMappings = {
   MH1: 'http://www.warehouse23.com/products/gurps-monster-hunters-1-champions',
   MYST: 'http://www.warehouse23.com/products/gurps-mysteries-1',
   MYTH: 'http://www.sjgames.com/gurps/books/myth/',
+  NB: 'http://github.com/mjeffw/nordlond-bestiary-public/blob/main/README.md',
   P: 'http://www.warehouse23.com/products/gurps-powers',
   PDF: 'http://www.warehouse23.com/products/gurps-powers-divine-favor',
   PSI: 'http://www.warehouse23.com/products/gurps-psionic-powers',
@@ -62,7 +63,8 @@ export const SJGProductMappings = {
 export function handleOnPdf(event) {
   event.preventDefault()
   event.stopPropagation()
-  handlePdf(event.currentTarget.innerText)
+  let pdf = event.currentTarget.dataset?.pdf || event.currentTarget.innerText
+  handlePdf(pdf)
 }
 
 /**
@@ -89,13 +91,19 @@ export function handlePdf(links) {
       page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
     }
     // Special case for Separate Basic Set PDFs
+    let setting = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BASICSET_PDF)
     if (book === 'B') {
-      let s = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BASICSET_PDF)
       if (page > 336)
-        if (s === 'Separate') {
+        if (setting === 'Separate') {
           book = 'BX'
           page = page - 335
         } else page += 2
+    }
+    else if (book === 'BX') {
+      if (setting === 'Combined') {
+          book = 'B'
+          page += 2
+      } else page -= 335 
     }
     // @ts-ignore
     const pdf = ui.PDFoundry.findPDFDataByCode(book)

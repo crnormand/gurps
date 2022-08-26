@@ -1,11 +1,12 @@
 <li name='result-effect'>
   <div>
     <div>
-      <header>{{localize "GURPS.crippling"}}{{detail}}</header>
-      <aside>{{#if reduceInjury}}{{localize "GURPS.damageAbove"}}{{amount}}{{localize "GURPS.hpIgnored"}}{{/if}}</aside>
+      <header>{{i18n "GURPS.crippling"}}{{detail}}</header>
+      <aside>{{#if reduceInjury}}{{i18n "GURPS.damageAbove"}}{{amount}}{{i18n "GURPS.hpIgnored"}}{{/if}}</aside>
       {{#if (eq detail 'Tail')}}
         <aside>
-          {{localize "GURPS.groundCreatures"}}: -1 DX.<br />{{localize "GURPS.swimmerFlyer"}}: -2 DX {{i18n_f "GURPS.andHalfMove" this}}
+          {{i18n "GURPS.groundCreatures"}}: -1 DX.<br />{{i18n "GURPS.swimmerFlyer"}}: -2 DX
+          {{i18n_f "GURPS.andHalfMove" this}}
         </aside>
       {{/if}}
     </div>
@@ -14,6 +15,6 @@
       <button name='send-wound' data-struct='{{jsonStringify this}}'><span class='fa fa-comment-alt'></span></button>
     </div>
 
-    <div><span class='pdflink'>{{localize "GURPS.pdfCrippling"}}</span></div>
+    <div><span class='pdflink'>{{i18n "GURPS.pdfCrippling"}}</span></div>
   </div>
 </li>

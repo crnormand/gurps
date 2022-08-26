@@ -1,5 +1,4 @@
-import { arrayToObject, atou, i18n, i18n_f, objectToArray } from '../../lib/utilities.js'
-import { Melee, Reaction, Ranged, Advantage, Skill, Spell, Equipment, Note, Modifier } from './actor.js'
+import { arrayToObject, atou, i18n, i18n_f, objectToArray, zeroFill } from '../../lib/utilities.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
@@ -8,6 +7,11 @@ import { ResourceTrackerEditor } from './resource-tracker-editor.js'
 import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import GurpsWiring from '../gurps-wiring.js'
 import { isConfigurationAllowed } from '../game-utils.js'
+import GurpsActiveEffectListSheet from '../effects/active-effect-list.js'
+import MoveModeEditor from './move-mode-editor.js'
+import { Advantage, Equipment, Melee, Modifier, Note, Ranged, Reaction, Skill, Spell } from './actor-components.js'
+import SplitDREditor from './splitdr-editor.js'
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -64,6 +68,11 @@ export class GurpsActorSheet extends ActorSheet {
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.data.data.eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
+    sheetData.isGM = game.user.isGM
+    sheetData._id = sheetData.olddata._id
+    sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
+    sheetData.useQN = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE)
+
     return sheetData
   }
 
@@ -114,6 +123,9 @@ export class GurpsActorSheet extends ActorSheet {
       })
     })
 
+    // open the split DR dialog
+    html.find('.dr button[data-key]').on('click', this._onClickSplit.bind(this))
+
     if (!isConfigurationAllowed(this.actor)) return // Only allow "owners" to be able to edit the sheet, but anyone can roll from the sheet
 
     this._createHeaderMenus(html)
@@ -136,6 +148,19 @@ export class GurpsActorSheet extends ActorSheet {
     this.makelistdrag(html, '.meleedraggable', 'melee')
     this.makelistdrag(html, '.rangeddraggable', 'ranged')
 
+    html.find('[data-operation="share-portrait"]').click(ev => {
+      ev.preventDefault()
+      let image = this.actor.data.data.fullimage ?? this.actor.img
+      const ip = new ImagePopout(image, {
+        title: this.actor.name,
+        shareable: true,
+        entity: this.actor,
+      })
+
+      // Display the image popout
+      ip.render(true)
+    })
+
     // Stop ENTER key in a Resource Tracker (HP, FP, others) from doing anything.
     // This prevents the inadvertant triggering of the inc/dec buttons.
     html.find('.spinner details summary input').keypress(ev => {
@@ -149,7 +174,7 @@ export class GurpsActorSheet extends ActorSheet {
       let path = parent.attr('data-gurps-resource')
 
       let tracker = getProperty(this.actor.data.data, path)
-      let value = (tracker.value || 0) + (ev.shiftKey ? 5 : 1)
+      let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
       let json = `{ "data.${path}.value": ${value} }`
@@ -296,36 +321,6 @@ export class GurpsActorSheet extends ActorSheet {
         ev.preventDefault()
       })
 
-      // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
-      // display the tooltip in the correct position.
-      html.find('.tooltip.gga-manual').mouseover(ev => {
-        ev.preventDefault()
-
-        let target = $(ev.currentTarget)
-        if (target.hasNoChildren) {
-          return
-        }
-
-        let tooltip = target.children('.tooltiptext.gga-manual')
-        if (tooltip) {
-          tooltip.css({ visibility: 'visible' })
-        }
-      })
-
-      // On mouseout, stop displaying the tooltip.
-      html.find('.tooltip.gga-manual').mouseout(ev => {
-        ev.preventDefault()
-        let target = $(ev.currentTarget)
-        if (target.hasNoChildren) {
-          return
-        }
-
-        let tooltip = target.children('.tooltiptext.gga-manual')
-        if (tooltip) {
-          tooltip.css({ visibility: 'hidden' })
-        }
-      })
-
       // On a click of the enhanced input popup, update the text input field, but do not update the actor's data.
       html.find('button[data-operation="resource-update"]').click(ev => {
         let dataValue = $(ev.currentTarget).attr('data-value')
@@ -344,6 +339,44 @@ export class GurpsActorSheet extends ActorSheet {
         }
       })
     } // end enhanced input
+
+    // On mouseover any item with the class .tooltip-manager which also has a child (image) of class .tooltippic,
+    // display the tooltip in the correct position.
+    html.find('.tooltip.gga-manual').mouseover(ev => {
+      ev.preventDefault()
+
+      let target = $(ev.currentTarget)
+      if (target.hasNoChildren) {
+        return
+      }
+
+      let tooltip = target.children('.tooltiptext.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'visible' })
+      }
+      tooltip = target.children('.tooltippic.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'visible' })
+      }
+    })
+
+    // On mouseout, stop displaying the tooltip.
+    html.find('.tooltip.gga-manual').mouseout(ev => {
+      ev.preventDefault()
+      let target = $(ev.currentTarget)
+      if (target.hasNoChildren) {
+        return
+      }
+
+      let tooltip = target.children('.tooltiptext.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'hidden' })
+      }
+      tooltip = target.children('.tooltippic.gga-manual')
+      if (tooltip) {
+        tooltip.css({ visibility: 'hidden' })
+      }
+    })
 
     // Equipment ===
 
@@ -383,6 +416,8 @@ export class GurpsActorSheet extends ActorSheet {
       if (path.includes('notes')) this.editNotes(actor, path, obj)
     })
 
+    html.find('.dblclkedit').on('drop', this.handleDblclickeditDrop.bind(this))
+
     // On clicking equipment quantity increment, increase the amount.
     html.find('button[data-operation="equipment-inc"]').click(async ev => {
       ev.preventDefault()
@@ -393,7 +428,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = 0
       await this.actor.updateEqtCount(path, value)
     })
-    
+
     html.find('button[data-operation="equipment-inc-uses"]').click(async ev => {
       ev.preventDefault()
       let parent = $(ev.currentTarget).closest('[data-key]')
@@ -401,7 +436,7 @@ export class GurpsActorSheet extends ActorSheet {
       let eqt = getProperty(this.actor.data, path)
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      await this.actor.update({ [path + '.uses'] : value })
+      await this.actor.update({ [path + '.uses']: value })
     })
     html.find('button[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
@@ -411,7 +446,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      await this.actor.update({ [path + '.uses'] : value })
+      await this.actor.update({ [path + '.uses']: value })
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
@@ -516,7 +551,15 @@ export class GurpsActorSheet extends ActorSheet {
       this.actor.replacePosture(target.val())
     })
 
-    html.find('#open-modifier-popup').click(this.showModifierPopup.bind(this))
+    html.find('#move-mode').on('change', ev => {
+      let target = $(ev.currentTarget)
+      this.actor.setMoveDefault(target.val())
+    })
+
+    html.find('#open-modifier-popup').on('click', this._showActiveEffectsListPopup.bind(this))
+    html.find('#edit-move-modes').on('click', this._showMoveModeEditorPopup.bind(this))
+
+    html.find('#addFirstResourceTracker').on('click', ev => this._addTracker())
   }
 
   _createHeaderMenus(html) {
@@ -570,14 +613,14 @@ export class GurpsActorSheet extends ActorSheet {
       '<i class="fas fa-level-down-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.other')
     )
-    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: ClickAndContextMenu })
+    new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
 
     let moveup = this._createMenu(
       i18n('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
       this._moveEquipment.bind(this, 'data.equipment.carried')
     )
-    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: ClickAndContextMenu })
+    new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: 'contextmenu' })
   }
 
   _editEquipment(target) {
@@ -660,7 +703,7 @@ export class GurpsActorSheet extends ActorSheet {
       '#equipmentcarried': [
         this.addItemMenu(
           i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
+          new Equipment(`${i18n('GURPS.equipment')}...`, true),
           'data.equipment.carried'
         ),
         this.sortAscendingMenu('data.equipment.carried'),
@@ -669,7 +712,7 @@ export class GurpsActorSheet extends ActorSheet {
       '#equipmentother': [
         this.addItemMenu(
           i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
+          new Equipment(`${i18n('GURPS.equipment')}...`, true),
           'data.equipment.other'
         ),
         this.sortAscendingMenu('data.equipment.other'),
@@ -752,7 +795,7 @@ export class GurpsActorSheet extends ActorSheet {
           one: {
             label: 'Create',
             callback: async html => {
-              ;['notes', 'pageref'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
+              ;['notes', 'pageref', 'title'].forEach(a => (obj[a] = html.find(`.${a}`).val()))
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
               GURPS.put(list, obj)
@@ -774,6 +817,12 @@ export class GurpsActorSheet extends ActorSheet {
 
   async _addTracker(event) {
     this.actor.addTracker()
+  }
+
+  handleDblclickeditDrop(ev) {
+    let parent = $(ev.currentTarget).closest('[data-key]')
+    let path = parent[0].dataset.key
+    this.dropFoundryLinks(ev, path + '.notes')
   }
 
   handleQnoteDrop(ev) {
@@ -799,13 +848,33 @@ export class GurpsActorSheet extends ActorSheet {
     }
     if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
 
-    if (!!dragData.otf) add = ' [' + dragData.otf + ']'
+    if (!!dragData.otf) {
+      let prefix = ''
+      if (!!dragData.displayname) {
+        let q = '"'
+        if (dragData.displayname.includes(q)) q = "'"
+        prefix = q + dragData.displayname + q
+      }
+      add = '[' + prefix + dragData.otf + ']'
+    }
+    if (!!dragData.bucket) {
+      add = '["Modifier Bucket"'
+      let sep = ''
+      dragData.bucket.forEach(otf => {
+        add += sep + '/r [' + otf + ']'
+        sep = '\\\\'
+      })
+      add += ']'
+    }
 
     if (!!add)
       if (!!modelkey) {
         let t = getProperty(this.actor.data, modelkey) || ''
-        this.actor.update({ [modelkey]: t + add })
-      } else $(ev.currentTarget).val($(ev.currentTarget).val() + add)
+        this.actor.update({ [modelkey]: t + (t ? ' ' : '') + add })
+      } else {
+        let t = $(ev.currentTarget).val()
+        $(ev.currentTarget).val(t + (t ? ' ' : '') + add)
+      }
   }
 
   /**
@@ -860,9 +929,14 @@ export class GurpsActorSheet extends ActorSheet {
     d.render(true)
   }
 
-  async showModifierPopup(ev) {
+  async _showActiveEffectsListPopup(ev) {
     ev.preventDefault()
-    GURPS.EffectModifierControl.showPopup = true
+    new GurpsActiveEffectListSheet(this.actor).render(true)
+  }
+
+  async _showMoveModeEditorPopup(ev) {
+    ev.preventDefault()
+    new MoveModeEditor(this.actor).render(true)
   }
 
   async editEquipment(actor, path, obj) {
@@ -967,7 +1041,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/advantage-editor-popup.html',
       'Advantage / Disadvantage / Perk / Quirk Editor',
-      ['name', 'notes'],
+      ['name', 'notes', 'pageref'],
       ['points']
     )
   }
@@ -1020,7 +1094,7 @@ export class GurpsActorSheet extends ActorSheet {
       obj,
       'systems/gurps/templates/note-editor-popup.html',
       'Note Editor',
-      ['pageref', 'notes'],
+      ['pageref', 'notes', 'title'],
       [],
       730
     )
@@ -1207,7 +1281,7 @@ export class GurpsActorSheet extends ActorSheet {
               icon: '<i class="fas fa-sign-in-alt"></i>',
               label: `${i18n('GURPS.dropInside')}`,
               callback: async () => {
-                let key = targetkey + '.contains.' + GURPS.genkey(0)
+                let key = targetkey + '.contains.' + zeroFill(0)
                 if (!isSrcFirst) {
                   await this._removeKey(sourceKey)
                   await this._insertBeforeKey(key, object)
@@ -1306,7 +1380,7 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   /**
-   * Override this to chsange the buttons appended tp the sactor sheet title bar.
+   * Override this to change the buttons appended to the actor sheet title bar.
    */
   getCustomHeaderButtons() {
     const sheet = this.actor.getFlag('core', 'sheetClass')
@@ -1360,7 +1434,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (event.shiftKey)
       // Hold down the shift key for Simplified
       newSheet = 'gurps.GurpsActorSimplifiedSheet'
-    if (game.keyboard.isCtrl(event))
+    if (game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL))
       // Hold down the Ctrl key (Command on Mac) for Simplified
       newSheet = 'gurps.GurpsActorNpcSheet'
 
@@ -1415,7 +1489,13 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   async _onClickRoll(event, targets) {
-    GURPS.handleRoll(event, this.actor, targets)
+    GURPS.handleRoll(event, this.actor, { targets: targets })
+  }
+
+  async _onClickSplit(event) {
+    let element = event.currentTarget
+    let key = element.dataset.key
+    new SplitDREditor(this.actor, key).render(true)
   }
 
   async _onNavigate(event) {
@@ -1639,7 +1719,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     this.makeDeleteMenu(html, '.adsmenu', new Advantage('???'), ClickAndContextMenu)
     this.makeDeleteMenu(html, '.skillmenu', new Skill('???'), ClickAndContextMenu)
     this.makeDeleteMenu(html, '.spellmenu', new Spell('???'), ClickAndContextMenu)
-    this.makeDeleteMenu(html, '.notemenu', new Note('???', true), ClickAndContextMenu)
+    this.makeDeleteMenu(html, '.notemenu', new Note('???', true), 'contextmenu')
 
     html.find('#body-plan').change(async e => {
       let bodyplan = e.currentTarget.value
@@ -1729,28 +1809,6 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       default:
         return menu
     }
-
-    const map = {
-      '#equipmentcarried': [
-        this.sortAscendingMenu('data.equipment.carried'),
-        this.sortDescendingMenu('data.equipment.carried'),
-        this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
-          'data.equipment.carried'
-        ),
-      ],
-      '#equipmentother': [
-        this.sortAscendingMenu('data.equipment.other'),
-        this.sortDescendingMenu('data.equipment.other'),
-        this.addItemMenu(
-          i18n('GURPS.equipment'),
-          new Equipment(`${i18n('GURPS.equipment')}...`),
-          'data.equipment.other'
-        ),
-      ],
-    }
-    return map[elementid]
   }
 
   async _onClickIgnoreImportBodyPlan(ev) {
@@ -1814,7 +1872,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 650,
+      width: 750,
       height: 450,
       dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
     })
@@ -1825,7 +1883,7 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
   /** @override */
   get template() {
     if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet.hbs'
+    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
   }
 
   getData() {
@@ -1857,25 +1915,6 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
     let val = element.dataset.value
     let parsed = parselink(val)
     GURPS.performAction(parsed.action, this.actor, ev)
-  }
-}
-export class GurpsActorNpcSheetCI extends GurpsActorNpcSheet {
-  /** @override */
-  static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      classes: ['npc-sheet', 'sheet', 'actor'],
-      width: 750,
-      height: 450,
-      dragDrop: [{ dragSelector: '.item-list .item', dropSelector: null }],
-    })
-  }
-
-  /* -------------------------------------------- */
-
-  /** @override */
-  get template() {
-    if (!game.user.isGM && this.actor.limited) return 'systems/gurps/templates/actor/actor-sheet-gcs-limited.hbs'
-    return 'systems/gurps/templates/actor/npc-sheet-ci.hbs'
   }
 }
 

@@ -1,4 +1,4 @@
-import { displayMod, generateUniqueId, i18n } from '../../lib/utilities.js'
+import { displayMod, generateUniqueId } from '../../lib/utilities.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
 import ModifierBucketEditor from './tooltip-window.js'
 import { parselink } from '../../lib/parselink.js'
@@ -8,16 +8,16 @@ import ResolveDiceRoll from '../modifier-bucket/resolve-diceroll-app.js'
  * Define some Typescript types.
  * @typedef {{mod: String, modint: Number, desc: String, plus: Boolean}} Modifier
  */
-
 Hooks.once('init', async function () {
   Hooks.on('closeModifierBucketEditor', (/** @type {any} */ _, /** @type {JQuery} */ element) => {
     $(element).hide() // To make this application appear to close faster, we will hide it before the animation
   })
 
   // @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
-  // FIXME Could be disastrously wrong!
   CONFIG.Dice.rolls.push(GurpsRoll)
+  CONFIG.Dice.terms["d"] = GurpsDie  // Hack to get Dice so nice working (it checks the terms["d"].name vs the Dice class name
 
+  // MONKEY_PATCH
   // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch them to
   // include the properties we need to support Physical Dice
   if (!!DiceTerm.fromMatch) {
@@ -30,6 +30,57 @@ Hooks.once('init', async function () {
 
     DiceTerm.fromMatch = newFromMatch
   }
+
+  // MONKEY_PATCH
+  // Patch Roll to have the properties we need for Physical Dice and modifier bucket handling.
+  // TODO With this change, GurpsRoll becomes redundant -- consider removing it??
+  if (!Roll.prototype._gurpsOriginalPrepareData) {
+    Roll.prototype._gurpsOriginalPrepareData = Roll.prototype._prepareData
+
+    let gurpsPrepareData = function (data) {
+      let d = Roll.prototype._gurpsOriginalPrepareData(data)
+      if (!d.hasOwnProperty('gmodc'))
+        Object.defineProperty(d, 'gmodc', {
+          get() {
+            let m = GURPS.ModifierBucket.currentSum()
+            GURPS.ModifierBucket.clear()
+            return parseInt(m)
+          },
+        })
+      d.gmod = GURPS.ModifierBucket.currentSum()
+      d.margin = GURPS.lastTargetedRoll?.margin
+      return d
+    }
+
+    Roll.prototype._prepareData = gurpsPrepareData
+
+    // Now add the dieOverride static variable and the isLoaded getter:
+    Roll.dieOverride = false
+    Object.defineProperty(Roll.prototype, 'isLoaded', {
+      // Used alternate define form, which defines 'this'.   get: () => {} does not set 'this'
+      get() {
+        return this.terms.some(term => term instanceof GurpsDie && !!term._loaded)
+      },
+    })
+  }
+
+})
+
+Hooks.once('ready', async function () {
+  // new GgaContextMenu($('body'), $('body'), '#accumulator-center', `Dmg Accumulator`, [
+  //   {
+  //     name: 'Roll Damage!',
+  //     icon: '<i class="fas fa-dice"></i>',
+  //     callback: () => {},
+  //     condition: () => true,
+  //   },
+  //   {
+  //     name: 'Clear Entry',
+  //     icon: '<i class="fas fa-trash"></i>',
+  //     callback: () => {},
+  //     condition: () => true,
+  //   },
+  // ])
 })
 
 export class GurpsDie extends Die {
@@ -170,20 +221,17 @@ export class GurpsRoll extends Roll {
     let d = super._prepareData(data)
     if (!d.hasOwnProperty('gmodc'))
       Object.defineProperty(d, 'gmodc', {
-        get: () => {
+        get() {
           let m = GURPS.ModifierBucket.currentSum()
           GURPS.ModifierBucket.clear()
           return parseInt(m)
         },
       })
     d.gmod = GURPS.ModifierBucket.currentSum()
+    d.margin = GURPS.lastTargetedRoll?.margin
     return d
   }
 }
-
-// Maybe a final, complete fix for Physical Dice?
-// CONFIG.Dice.termTypes.DiceTerm = GurpsDiceTerm
-// GurpsDiceTerm.fromMatch() -- add needed Die enhancements
 
 class ModifierStack {
   constructor() {
@@ -197,8 +245,15 @@ class ModifierStack {
     this.displaySum = '+0'
     this.plus = false
     this.minus = false
+
+    // do we automatically empty the bucket when a roll is made?
+    this.AUTO_EMPTY = true
   }
 
+  toggleAutoEmpty() {
+    this.AUTO_EMPTY = !this.AUTO_EMPTY
+    return this.AUTO_EMPTY
+  }
   savelist() {
     this.savedModifierList = this.modifierList
     this.modifierList = []
@@ -258,7 +313,12 @@ class ModifierStack {
       if (replace) list.splice(i, 1)
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
-
+    let m = (mod + '').match(/([+-])?@margin/i)
+    if (!!m) {
+      mod = (GURPS.lastTargetedRoll?.margin || 0) * (m[1] == '-' ? -1 : 1)
+      if (GURPS.lastTargetedRoll?.thing)
+        reason = reason.replace(/-@/, ' -').replace(/\+@/, '') + ' for ' + GURPS.lastTargetedRoll.thing
+    }
     if (!!oldmod) {
       let m = oldmod.modint + parseInt(mod)
       oldmod.mod = displayMod(m)
@@ -276,7 +336,7 @@ class ModifierStack {
   applyMods(targetmods = []) {
     let answer = !!targetmods ? targetmods : []
     answer = answer.concat(this.modifierList)
-    this.reset()
+    if (this.AUTO_EMPTY) this.reset()
     return answer
   }
 
@@ -309,6 +369,8 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
+    console.trace('+++++ Create ModifierBucket +++++')
+
     this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
 
     this.editor = new ModifierBucketEditor(this, {
@@ -324,6 +386,13 @@ export class ModifierBucket extends Application {
     this._tempRangeMod = null
 
     this.modifierStack = new ModifierStack()
+
+    // is the Dice section visible?
+    if (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHOW_3D6)) {
+      // FIXME do nothing, for now...
+    }
+
+    this.accumulatorIndex = 0
   }
 
   // Start GLOBALLY ACCESSED METHODS (used to update the contents of the MB)
@@ -464,8 +533,10 @@ export class ModifierBucket extends Application {
     data.stack = this.modifierStack
     data.cssClass = 'modifierbucket'
 
-    let ca = ''
+    let ca = null
     if (!!GURPS.LastActor) {
+      data.damageAccumulators = GURPS.LastActor.damageAccumulators
+      data.accumulatorIndex = this.accumulatorIndex
       ca = GURPS.LastActor.displayname
       if (ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
@@ -479,24 +550,24 @@ export class ModifierBucket extends Application {
   activateListeners(html) {
     super.activateListeners(html)
 
+    html.find('#oned6dice').addClass('invisible')
+    html.find('#threed6dice').removeClass('invisible')
+
     html.find('#trash').on('click', this._onClickTrash.bind(this))
+    html.find('#magnet').on('click', this._onClickMagnet.bind(this))
 
     let e = html.find('#globalmodifier')
-
     e.on('click', this._onClick.bind(this))
-
-    // @ts-ignore -- apparently 'contextmenu' isn't a thing
     e.on('contextmenu', this.onRightClick.bind(this))
-
     e.each((_, li) => {
       li.addEventListener('dragstart', ev => {
-        let bucket = GURPS.ModifierBucket
-          .modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
-          //.join(' & ')
+        let bucket = GURPS.ModifierBucket.modifierStack.modifierList.map(m => `${m.mod} ${m.desc}`)
+        //.join(' & ')
         return ev.dataTransfer?.setData(
           'text/plain',
           JSON.stringify({
-            name: 'Modifier Bucket',
+            displayname: 'Modifier Bucket',
+            type: 'modifierbucket',
             bucket: bucket,
           })
         )
@@ -505,7 +576,8 @@ export class ModifierBucket extends Application {
 
     if (this.isTooltip) e.on('mouseenter', ev => this._onenter(ev))
 
-    html.on('drop', function (/** @type {JQuery.DropEvent} */ event) {
+    let modifierbucket = html.find('#modifierbucket')
+    modifierbucket.on('drop', function (/** @type {JQuery.DropEvent} */ event) {
       event.preventDefault()
       event.stopPropagation()
       let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain') || '')
@@ -519,14 +591,91 @@ export class ModifierBucket extends Application {
       }
     })
 
-    html.on('wheel', (/** @type {JQuery.TriggeredEvent} */ event) => {
+    modifierbucket.on('wheel', (/** @type {JQuery.TriggeredEvent} */ event) => {
       event.preventDefault()
       let originalEvent = event.originalEvent
       if (originalEvent instanceof WheelEvent) {
-        let s = originalEvent.deltaY / -100
+        let s = Math.round(originalEvent.deltaY / -100)
         this.addModifier(s, '')
       }
     })
+
+    html.find('#threed6').click(this._on3dClick.bind(this))
+    html.find('#threed6').contextmenu(this._on3dRightClick.bind(this))
+    html.find('#threed6').on('drop', function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      let dragData = JSON.parse(event.originalEvent?.dataTransfer?.getData('text/plain'))
+      if (!!dragData && !!dragData.actor && !!dragData.otf) {
+        let action = parselink(dragData.otf)
+        action.action.blindroll = true
+        GURPS.performAction(action.action, game.actors.get(dragData.actor), {
+          shiftKey: game.user.isGM,
+          ctrlKey: false,
+          data: {},
+        })
+      }
+    })
+
+    html.find('.accumulator-control').on('click', this._onAccumulatorClick.bind(this, html))
+  }
+
+  _onAccumulatorClick(hmtl, event) {
+    event.preventDefault()
+    const a = event.currentTarget
+    const value = a.value ?? null
+    const action = a.dataset.action ?? null
+
+    switch (action) {
+      case 'inc':
+        GURPS.LastActor.incrementDamageAccumulator(this.accumulatorIndex)
+        break
+      case 'dec':
+        GURPS.LastActor.decrementDamageAccumulator(this.accumulatorIndex)
+        break
+      case 'cancel':
+        GURPS.LastActor.clearDamageAccumulator(this.accumulatorIndex)
+        break
+      case 'apply':
+        GURPS.LastActor.applyDamageAccumulator(this.accumulatorIndex)
+        break
+      default:
+        break
+    }
+    this.render()
+  }
+
+  showOneD6() {
+    // handle Ctrl key event by setting the correct image to be visible in the Dice roller widget
+    this._element.find('#oned6dice').removeClass('invisible')
+    this._element.find('#threed6dice').addClass('invisible')
+    // this.render()
+  }
+
+  showThreeD6() {
+    this._element.find('#oned6dice').addClass('invisible')
+    this._element.find('#threed6dice').removeClass('invisible')
+    this.render()
+  }
+
+  async _on3dClick(event) {
+    event.preventDefault()
+    let action = {
+      type: 'roll',
+      formula: '3d6',
+      desc: '',
+    }
+    GURPS.performAction(action, GURPS.LastActor || game.user, event)
+  }
+
+  async _on3dRightClick(event) {
+    event.preventDefault()
+    let action = {
+      type: 'roll',
+      formula: '1d6',
+      desc: '',
+    }
+    GURPS.performAction(action, GURPS.LastActor || game.user, event)
   }
 
   /**
@@ -552,6 +701,15 @@ export class ModifierBucket extends Application {
   async _onClickTrash(event) {
     event.preventDefault()
     this.clear()
+  }
+
+  async _onClickMagnet(event) {
+    event.preventDefault()
+    if (this.modifierStack.toggleAutoEmpty()) {
+      $(event.currentTarget).removeClass('enabled')
+    } else {
+      $(event.currentTarget).addClass('enabled')
+    }
   }
 
   /**
@@ -605,9 +763,10 @@ export class ModifierBucket extends Application {
   }
 
   refresh() {
-    setTimeout(() => this.render(true), 100)  // Not certain why the UI element isn't updating immediately, so hacked this
+    // setTimeout(() => this.render(true), 100) // Not certain why the UI element isn't updating immediately, so hacked this
+    this.render()
     if (this.SHOWING) {
-      this.editor.render(true)
+      this.editor.render()
     }
   }
 
@@ -623,5 +782,12 @@ export class ModifierBucket extends Application {
       }
     }
     return content
+  }
+
+  _injectHTML(html) {
+    if ($('body').find('#bucket-app').length === 0) {
+      html.insertAfter($('body').find('#hotbar'))
+      this._element = html
+    } else console.warn('=== HOLA ===\n That weird Modifier Bucket problem just happened! \n============')
   }
 }

@@ -14,12 +14,16 @@ export const EXTREMITY = 'extremity'
 // Some entries combine two (or more?) related locations, such as left and right limbs. They will
 // have a 'roll' property that uses the ampersand (&) character. Those locations must also include
 // a 'prefix' property that will be used when splitting out the combined values into single values.
+
+// FIXME -- Rewrite to get rid of the global references.
 export var hitlocationRolls = null
 
+// FIXME -- Rewrite to get rid of the global references.
 export var hitlocationDictionary = null
 
 export class HitLocation {
   static VITALS = 'Vitals'
+  static TORSO = 'Torso'
   static HUMANOID = 'humanoid'
   static SKULL = 'Skull'
   static BRAIN = 'Brain'
@@ -105,6 +109,22 @@ export class HitLocation {
       'Right Arm': { roll: '8', penalty: -2, role: LIMB },
       Torso: { roll: '9-10', penalty: 0 },
       Groin: { roll: '11', penalty: -3 },
+      'Left Arm': { roll: '12', penalty: -2, role: LIMB },
+      'Left Leg': { roll: '13-14', penalty: -2, role: LIMB },
+      Hand: { roll: '15', penalty: -4, role: EXTREMITY },
+      Foot: { roll: '16', penalty: -4, role: EXTREMITY },
+      Neck: { roll: '17-18', penalty: -5 },
+      Vitals: { roll: '-', penalty: -3 },
+    }
+
+    tailedHumanoidHitLocations = {
+      Eye: { roll: '-', penalty: -9 },
+      Skull: { roll: '3-4', penalty: -7 },
+      Face: { roll: '5', penalty: -5 },
+      'Right Leg': { roll: '6-7', penalty: -2, role: LIMB },
+      'Right Arm': { roll: '8', penalty: -2, role: LIMB },
+      Torso: { roll: '9-10', penalty: 0 },
+      Tail: { roll: '11', penalty: -3, role: LIMB },
       'Left Arm': { roll: '12', penalty: -2, role: LIMB },
       'Left Leg': { roll: '13-14', penalty: -2, role: LIMB },
       Hand: { roll: '15', penalty: -4, role: EXTREMITY },
@@ -306,11 +326,31 @@ export class HitLocation {
       Vitals: { roll: '-', penalty: -3 },
     }
 
+    mermenHitLocations = {
+      Eye: { roll: '-', penalty: -9 },
+      Skull: { roll: '3-4', penalty: -7 },
+      Face: { roll: '5', penalty: -5 },
+      Tail: { roll: '6', penalty: -3, role: EXTREMITY },
+      Torso: { roll: '7', penalty: 0 },
+      'Right Arm': { roll: '8', penalty: -2, role: LIMB },
+      'Torso*': { roll: '9-10', penalty: 0 },
+      Groin: { roll: '11', penalty: -3 },
+      'Left Arm': { roll: '12', penalty: -2, role: LIMB },
+      'Torso**': { roll: '13', penalty: 0 },
+      'Tail*': { roll: '14', penalty: -3, role: EXTREMITY },
+      Hand: { roll: '15', penalty: -4, role: EXTREMITY },
+      'Tail**': { roll: '16', penalty: -3, role: EXTREMITY },
+      Neck: { roll: '17-18', penalty: -5 },
+      Vitals: { roll: '-', penalty: -3 },
+    }
+
     // Important that GCA keys be directly under GCS keys (as they are duplicates, and should be ignored when listing)
     hitlocationDictionary = {
       humanoid: humanoidHitLocations,
       'humanoid expanded': { ...humanoidHitLocations, ...{ Chest: { roll: '-', penalty: 0 } } }, // GCA
       'winged humanoid': { ...humanoidHitLocations, ...{ Wing: { roll: '-', penalty: -2, role: LIMB } } }, // GCA
+      'tailed humanoid': tailedHumanoidHitLocations,
+      humanoidTailed: tailedHumanoidHitLocations,
       quadruped: quadrupedHitLocations,
       quadrupedWinged: wingedQuadHitLocations,
       'winged quadruped': wingedQuadHitLocations, // GCA
@@ -329,6 +369,8 @@ export class HitLocation {
       scorpion: scorpionHitLocations,
       ichthyoid: ichthyoidHitLocations,
       arachnoid: arachnoidHitLocations,
+      'fish-tailed humanoid': mermenHitLocations,
+      mermen: mermenHitLocations,
     }
   }
 
@@ -483,4 +525,6 @@ var cancroidHitLocations = null
 var scorpionHitLocations = null
 var ichthyoidHitLocations = null
 var arachnoidHitLocations = null
+var tailedHumanoidHitLocations = null
+var mermenHitLocations = null
 var translations = {}

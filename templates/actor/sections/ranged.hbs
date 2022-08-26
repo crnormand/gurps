@@ -2,22 +2,22 @@
   <div class='itemmenu header' readonly></div>
   <div class='desc header'>
     <div class='headermenu'>
-      <span>{{localize 'GURPS.rangedWeapons'}}</span>
+      <span>{{i18n 'GURPS.rangedWeapons'}}</span>
       <i class='fas fa-caret-square-down'></i>
     </div>
   </div>
-  <div class='usage header'>{{localize 'GURPS.usage'}}</div>
-  <div class='level header'>{{localize 'GURPS.level'}}</div>
-  <div class='acc header'>{{localize 'GURPS.acc'}}</div>
-  <div class='damage header'>{{localize 'GURPS.damage'}}</div>
-  <div class='range header'>{{localize 'GURPS.range'}}</div>
-  <div class='rof header'>{{localize 'GURPS.rof'}}</div>
-  <div class='shots header'>{{localize 'GURPS.shots'}}</div>
-  <div class='bulk header'>{{localize 'GURPS.bulk'}}</div>
-  <div class='rcl header'>{{localize 'GURPS.rcl'}}</div>
-  <div class='st header'>{{localize 'GURPS.attributesST'}}</div>
+  <div class='usage header'>{{i18n 'GURPS.usage'}}</div>
+  <div class='level header'>{{i18n 'GURPS.level'}}</div>
+  <div class='acc header'>{{i18n 'GURPS.acc'}}</div>
+  <div class='damage header'>{{i18n 'GURPS.damage'}}</div>
+  <div class='range header'>{{i18n 'GURPS.range'}}</div>
+  <div class='rof header'>{{i18n 'GURPS.rof'}}</div>
+  <div class='shots header'>{{i18n 'GURPS.shots'}}</div>
+  <div class='bulk header'>{{i18n 'GURPS.bulk'}}</div>
+  <div class='rcl header'>{{i18n 'GURPS.rcl'}}</div>
+  <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
-  {{#each (flatlist data.ranged)}}
+  {{#each (attackflatlist data.ranged)}}
     {{#if ../isEditing}}
       <div class='itemmenu rangedmenu' data-key='data.ranged.{{@key}}'>
         <i class='fas fa-times'></i>
@@ -93,13 +93,13 @@
           class='usage rollable flex-center'
           data-name='{{name}} ({{mode}})'
           data-key='data.ranged.{{@key}}'
-          data-otf='R:"{{name}} ({{mode}})"'
+          data-otf='{{quotedAttackName 'R' this}}'
         >{{mode}}</div>
         <div
           class='level rollable flex-center'
           data-name='{{this.name}} ({{this.mode}})'
           data-key='data.ranged.{{@key}}'
-          data-otf='R:"{{this.name}} ({{this.mode}})"'
+          data-otf='{{quotedAttackName 'R' this}}'
         >{{this.level}}</div>
         <div
           class='acc gga-right {{gmod this.acc}}'

@@ -2,7 +2,7 @@
   {{#if isEditing}}
     <div class='header'>
       <div class='headermenu' data-key='data.hitlocations'>
-        <span>{{localize 'GURPS.hitLocation'}}</span>
+        <span>{{i18n 'GURPS.hitLocation'}}</span>
         <i class='fas fa-caret-square-down'></i>
       </div>
       <div class='option'>
@@ -11,14 +11,14 @@
       </div>
     </div>
   {{else}}
-    <div class='header'>{{localize 'GURPS.hitLocation'}}</div>
+    <div class='header'>{{i18n 'GURPS.hitLocation'}}</div>
   {{/if}}
 
   <div class='itemmenu header' readonly></div>
-  <div class='roll header flex-center'>{{localize 'GURPS.roll'}}</div>
-  <div class='where header'>{{localize 'GURPS.hitLocationWhere'}}</div>
-  <div class='penalty header gga-right'>{{localize 'GURPS.hitLocationPenalty'}}</div>
-  <div class='dr header gga-right'>{{localize 'GURPS.hitLocationDR'}}</div>
+  <div class='roll header flex-center'>{{i18n 'GURPS.roll'}}</div>
+  <div class='where header'>{{i18n 'GURPS.hitLocationWhere'}}</div>
+  <div class='penalty header gga-right'>{{i18n 'GURPS.hitLocationPenalty'}}</div>
+  <div class='dr header gga-right'>{{i18n 'GURPS.hitLocationDR'}}</div>
 
   {{#each data.hitlocations as |this key|}}
     {{#if ../isEditing}}
@@ -34,17 +34,17 @@
           name='data.hitlocations.{{@key}}.roll'
           class='gcs-input-4'
           type='text'
-          value='{{hitlocationroll this.where this.roll parent}}'
+          value='{{hitlocationroll where roll parent}}'
         />
       {{else}}
-        {{hitlocationroll this.where this.roll parent}}
+        {{hitlocationroll where roll parent}}
       {{/if}}
     </div>
-    <div class='where {{gurpstippable}}' data-tooltip='Eqt on {{this.where}}: {{this.equipment}}'>
+    <div class='where {{gurpstippable}}' data-tooltip='Eqt on {{where}}: {{equipment}}'>
       {{#if ../isEditing}}
-        <input name='data.hitlocations.{{@key}}.where' class='gcs-input-5' type='text' value='{{this.where}}' />
+        <input name='data.hitlocations.{{@key}}.where' class='gcs-input-5' type='text' value='{{where}}' />
       {{else}}
-        {{i18n (concat 'GURPS.hitLocation' this.where) this.where}}
+        {{i18n (concat 'GURPS.hitLocation' where) where}}
       {{/if}}
     </div>
     {{#if ../isEditing}}
@@ -53,22 +53,26 @@
           name='data.hitlocations.{{@key}}.penalty'
           class='gcs-input'
           type='text'
-          value='{{hitlocationpenalty this.where this.penalty parent}}'
+          value='{{hitlocationpenalty where penalty parent}}'
         />
       </div>
     {{else}}
-      <div class='penalty gga-right {{gmod this.penalty}}' data-name='to hit {{this.where}}' data-otf='{{this.penalty}} to hit {{this.where}}'>
-        {{{displayNumber (hitlocationpenalty this.where this.penalty parent)}}}
+      <div class='penalty gga-right {{gmod penalty}}' data-name='to hit {{where}}' data-otf='{{penalty}} to hit {{where}}'>
+        {{{displayNumber (hitlocationpenalty where penalty parent)}}}
       </div>
     {{/if}}
     <div class='dr gga-right'>
       {{#if ../isEditing}}
-        <input class='gcs-input' type='text' name='data.hitlocations.{{@key}}.import' value='{{this.import}}' />
+        <div style="display: flex; flex-flow: row nowrap">
+          <input class='gcs-input' type='text' name='data.hitlocations.{{@key}}.import' value='{{import}}' />
+          {{#each split as | this key |}}<span title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
+          <button id="split-{{@key}}" style="padding-bottom: 1px;" data-key='data.hitlocations.{{@key}}'>…</button>
+        </div>
       {{else}}
         {{#if ../document.limited}}
-        ??
+          ??
         {{else}}
-        {{this.dr}}
+          {{dr}}{{#each split as | this key |}}<span title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
         {{/if}}
       {{/if}}
     </div>

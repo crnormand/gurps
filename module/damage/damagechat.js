@@ -181,6 +181,10 @@ export default class DamageChat {
     if (dice == null) return
 
     if (!tokenNames) tokenNames = []
+    if (!!event && event.data?.repeat > 1)
+      for (let i = 0; i < event.data.repeat; i++) 
+        tokenNames.push('' + i)
+
     if (tokenNames.length == 0) tokenNames.push('')
 
     let draggableData = []
@@ -242,6 +246,15 @@ export default class DamageChat {
     let adds1 = 0
     let temp = !!result.groups?.adds1 ? result.groups.adds1 : ''
     if (!!temp && temp !== '') {
+      let m = temp.match(/([+-])@margin/)
+      if (!!m) {
+        let mrg = GURPS.lastTargetedRoll?.margin || 0
+        if (m[1] == '+') temp = '' + mrg
+        else {
+          if (mrg <= 0) temp = '' + mrg
+          else temp = '-' + mrg
+        }
+      }
       temp = temp.startsWith('+') ? temp.slice(1) : temp
       adds1 = parseInt(temp)
     }
@@ -414,7 +427,8 @@ export default class DamageChat {
       damageTypeText: `${damageType} `,
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,
-      hitlocation: draggableData[0].hitlocation
+      hitlocation: draggableData[0].hitlocation,
+      numtimes: draggableData.length > 1 ? ' x' + draggableData.length : ''
     })
 
     // @ts-ignore
@@ -429,7 +443,12 @@ export default class DamageChat {
     }
 
     if (event?.shiftKey) {
-      messageData.whisper = [game.user.id]
+      messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
+      if (game.user.isGM) {
+        messageData.whisper = [game.user.id]
+      } else
+        messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)
+        messageData.blind = true
     }
 
     messageData['flags.transfer'] = JSON.stringify({
@@ -479,7 +498,7 @@ export default class DamageChat {
 }
 
 DamageChat.fullRegex =
-  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]\d+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
+  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
 /*
 let transfer = {

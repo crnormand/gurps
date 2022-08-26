@@ -2,9 +2,8 @@
 
 import * as settings from '../../lib/miscellaneous-settings.js'
 import * as hitlocation from '../hitlocation/hitlocation.js'
-import { DamageTables } from './damage-tables.js'
 import { i18n, objectToArray, zeroFill } from '../../lib/utilities.js'
-import { GurpsActor } from '../actor/actor.js'
+import { HitLocationEntry } from '../actor/actor-components.js'
 
 /* 
   Crippling injury:
@@ -22,6 +21,7 @@ const piercing = ['pi-', 'pi', 'pi+', 'pi++']
 
 const DIFFUSE = 'diffuse'
 const HOMOGENOUS = 'homogenous'
+const UNLIVING = 'unliving'
 
 // -1 means 'Ignores DR'
 const armorDivisorSteps = [-1, 100, 10, 5, 3, 2, 1]
@@ -52,8 +52,8 @@ export class CompositeDamageCalculator {
 
     this.viewId = this._calculators.length == 1 ? 0 : 'all'
 
-    this._defaultWoundingModifiers = Object.keys(DamageTables.woundModifiers).reduce(function (r, e) {
-      if (!DamageTables.woundModifiers[e].nodisplay) r[e] = DamageTables.woundModifiers[e]
+    this._defaultWoundingModifiers = Object.keys(GURPS.DamageTables.woundModifiers).reduce(function (r, e) {
+      if (!GURPS.DamageTables.woundModifiers[e].nodisplay) r[e] = GURPS.DamageTables.woundModifiers[e]
       return r
     }, {})
 
@@ -62,7 +62,7 @@ export class CompositeDamageCalculator {
     if (Object.keys(this._defaultWoundingModifiers).includes(damageData[0].damageType))
       this._damageType = damageData[0].damageType
     else {
-      let temp = DamageTables.translate(damageData[0].damageType)
+      let temp = GURPS.DamageTables.translate(damageData[0].damageType)
       if (temp) this._damageType = temp
       else this._damageType = 'none'
     }
@@ -116,16 +116,97 @@ export class CompositeDamageCalculator {
 
     this._isShotgun = false
     this._shotgunRofMultiplier = 9
+
+    // look at defender and automatically set things like Unliving, Diffuse, Homogenous
+    // if advantage.name === 'Diffuse' -- DFRPG style
+    // if advantage.name === 'Injury Tolerance' && advantage.notes.startsWith('Diffuse ') -- GCS Basic style
+    //    _isInjuryTolerance = true
+    //    _injuryToleranceType = 'unliving'
+    let values = Object.values(this._defender.data.data.ads)
+    if (this.isUnliving(values, false)) {
+      this._isInjuryTolerance = true
+      this._injuryToleranceType = UNLIVING
+    }
+    if (this.isHomogenous(values)) {
+      this._isInjuryTolerance = true
+      this._injuryToleranceType = HOMOGENOUS
+    }
+    if (this.isDiffuse(values)) {
+      this._isInjuryTolerance = true
+      this._injuryToleranceType = DIFFUSE
+    }
+  }
+
+  isUnliving(values, found) {
+    if (!found) {
+      let self = this
+      found = values.find(value => {
+        let found = !!(
+          ['Injury Tolerance (Unliving)', 'Unliving'].includes(value.name) ||
+          (value.name === 'Injury Tolerance' && value.notes.includes('Unliving'))
+        )
+
+        if (!found && Object.keys(value.contains).length > 0) {
+          found = self.isUnliving(Object.values(value.contains), false)
+        }
+        return found
+      })
+    }
+    return !!found
+  }
+
+  isHomogenous(values, found) {
+    if (!found) {
+      let self = this
+      found = values.find(value => {
+        let found = !!(
+          ['Injury Tolerance (Homogenous)', 'Homogenous'].includes(value.name) ||
+          (value.name === 'Injury Tolerance' && value.notes.includes('Homogenous'))
+        )
+
+        if (!found && Object.keys(value.contains).length > 0) {
+          found = self.isHomogenous(Object.values(value.contains), false)
+        }
+        return found
+      })
+    }
+    return !!found
+  }
+
+  isDiffuse(values, found) {
+    if (!found) {
+      let self = this
+      found = values.find(value => {
+        let found = !!(
+          ['Injury Tolerance (Diffuse)', 'Diffuse'].includes(value.name) ||
+          (value.name === 'Injury Tolerance' && value.notes.includes('Diffuse'))
+        )
+
+        if (!found && Object.keys(value.contains).length > 0) {
+          found = self.isDiffuse(Object.values(value.contains), false)
+        }
+        return found
+      })
+    }
+    return !!found
   }
 
   static isResourceDamageType(damageType) {
-    let modifier = DamageTables.woundModifiers[damageType]
-    return !!modifier && !!DamageTables.woundModifiers[damageType].resource
+    let modifier = GURPS.DamageTables.woundModifiers[damageType]
+    return !!modifier && !!GURPS.DamageTables.woundModifiers[damageType].resource
   }
 
   get(viewId) {
     if (viewId === 'all') return this
     return this._calculators[viewId]
+  }
+
+  get showApplyAction() {
+    return (
+      game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'apply' ||
+      (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_DEFAULT_ADD_ACTION) == 'target' &&
+        this._defender.hasPlayerOwner)
+    )
   }
 
   get additionalWoundModifier() {
@@ -172,7 +253,7 @@ export class CompositeDamageCalculator {
    * Override at the individual dice roll level.
    */
   get basicDamage() {
-    if (this._viewId === 'all') return
+    if (this._viewId === 'all') return this._calculators.reduce((sum, a) => sum + a._basicDamage, 0)
     return this._calculators[this._viewId].basicDamage
   }
 
@@ -212,21 +293,11 @@ export class CompositeDamageCalculator {
     if (this._hitLocation === 'Random') return 0
 
     // if (this._hitLocation === 'User Entered') return this._userEnteredDR
+    let entries = this._defender.hitLocationsWithDR
 
-    if (this._hitLocation === 'Large-Area') {
-      let lowestDR = Number.POSITIVE_INFINITY
-      let torsoDR = 0
-
-      // find the location with the lowest DR
-      for (let value of this._defender.hitLocationsWithDR.filter(it => it.roll.length > 0)) {
-        if (value.dr < lowestDR) lowestDR = value.dr
-        if (value.where === 'Torso') torsoDR = value.dr
-      }
-      // return the average of torso and lowest dr
-      return Math.ceil((lowestDR + torsoDR) / 2)
-    }
-
-    return this._defender.hitLocationsWithDR.filter(it => it.where === this._hitLocation).map(it => it.dr)[0]
+    return this._hitLocation === 'Large-Area'
+      ? HitLocationEntry.getLargeAreaDR(entries)
+      : HitLocationEntry.findLocation(entries, this._hitLocation).getDR(this.damageType)
   }
 
   get effects() {
@@ -375,7 +446,7 @@ export class CompositeDamageCalculator {
 
     if (this._isInjuryTolerance) {
       switch (this._injuryToleranceType) {
-        case 'unliving':
+        case UNLIVING:
           // if Eye, Skull, or Vitals, don't modify wounding modifier
           if (['Eye', 'Skull', 'Vitals'].includes(this._hitLocation)) break
 
@@ -479,8 +550,8 @@ export class CompositeDamageCalculator {
    * }
    */
   get hitLocationsWithDR() {
-    // internationalize English hit location name
     let locations = this._defender.hitLocationsWithDR
+    for (let l of locations) l.damageType = this.damageType
     return locations
   }
 
@@ -1046,7 +1117,7 @@ class DamageCalculator {
     // Damage modifier 'nkb' means no knockback
     if (this._parent._damageModifier === 'nkb') return false
 
-    if (this._parent.damageType === 'cr' && this._basicDamage > 0) return true
+    if ((this._parent.damageType === 'cr' || this._parent.damageType === 'kb') && this._basicDamage > 0) return true
 
     return this._parent.damageType === 'cut' && this._basicDamage > 0 && this.penetratingDamage === 0
   }

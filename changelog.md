@@ -2,13 +2,314 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.14.8
+
+- Update JB2A to 0.4.7
+- Fixed GCS import to handle no advantages
+- Append the advantage name to a default Control Roll import from GCS
+
+Release 0.14.7 - 7/28/2022
+
+- Added 'disarmed' status effect icon
+- Fixed /pr (private roll), and /psr (private selected roll)
+- Update JB2A to 0.4.6 
+
+Release 0.14.6 - 7/24/2022
+
+- Fixed bug in /sr parsing to allow nested [] (for /if checks)
+
+Release 0.14.5 - 7/24/2022
+
+- Fixed pi+ and pi++ parsing on Mook generator
+- Fixed pi++ OTF parsing and damage creation
+- Fixed GCS import exception when using UTF-8
+- Added Legendsmith's BAD status icons
+- Fixed Cast time column for Items
+- Fixed calc on ADs/DisADs so it works like GCS
+- Holding CTRL shows changes in roll mode (GM roll for GMs, Blind roll for Players), w/system setting
+- Fix /hp +1 @target for good?
+- Damage column can now execute OTFs (ex: PDF:B405)
+- OTF now handles HTTP URLs.   [http://google.com], as well as labeled ["Google!"http://google.com]
+- Drag and drop PDF Journal links now open PDFoundry, and not the placeholder Journal
+- Show "flavor" text below roll (issue #1426)
+- Add ability to roll dice or damage multiple times from chat "/r [3d] 5" or "/r [3d cut] 5"
+- Add ability to roll dice or damage multiple times from chat (using compact syntax) "/3d 5" or "/3d cut 5"
+- Fixed initial vtt-notes import from GCS
+- Added warning for /repeat X /anim ... when actor not linked
+- Added "selected roll", /sr [otf], /psr [otf] .   "rolls" (executes) OTF against the selected actors.  /sr [per], /sr [/hp -1d-3!], /sr [/hp reset]
+
+Release 0.14.4 7/7/2022
+
+- Import Portrait image from GCS file, Thanks @Neck!
+- Change UTF reader to "hopefully" support extended characters on Mac and Linux
+- Update code to convert 'BX' PDF references to 'B' references if using the combined PDF (GCS Library update 3.15.1)
+- Update JB2A to 0.4.5
+- Fixed? the possible Mythic Game Master Emulator issue when using Dice so Nice.
+
+Release 0.14.3 5/31/2022
+
+- Update Foundry release
+
+Release 0.14.2 5/29/2022
+
+- Another possible fix to the Forge modifier bucket bug.
+
+Release 0.14.1 5/25/2022
+
+- Add guard code to prevent tokens without actors in combat from breaking everything.
+- Fix integration with Nordlond Bestiary module (Issue [1423](https://github.com/crnormand/gurps/issues/1423)).
+
+Release 0.14.0 5/18/2022
+
+- Partial fix for Modifier Bucket when Minimal UI module is active.
+- Fix for Damage followon button for Nordlond Bestiary.
+- Add initial support for 'kb' (knockback only) damage type.
+- Support override text for PDF links.
+- Fixed PDF references for Gaming Ballistic and Nordlond Bestiary
+
+Release 0.13.19 5/03/2022
+
+- Fixed \*Cost 1FP modifiers (not removing FP)
+
+Release 0.13.18 5/02/2022
+
+- Updated to JB2A 0.4.2
+- Fixed "Roll Damage" followon (it only displays when an attack is rolled)
+
+Release 0.13.17 4/26/2022
+
+- Fixed GCA5 export for block values, thank you @Woodman!
+- Fixed display of DR in NPC/Mini and Simple sheets
+- Fixed Parry display (e.g. 11U, 12F, etc.)
+
+Release 0.13.16 4/26/2022
+
+- Unified Language support for GCA4/5 & GCS (works with Polygot module)
+- Add "Roll Damage" button after successful "attack" roll
+- "Mostly" internationalize Mook input screen and NPC sheet
+
+Release 0.13.15 4/20/2022
+
+- Default Multiple/Combine damage dialog to "possible number of hits" value (for ranged weapons with Rof and RCL)
+- Make Quintessence system setting world scope
+- Fixed non 6-sided damage parsing for Mook generator
+- Fixed equipment library items being duplicated after world is reloaded (@neck)
+- Made 3D6 transparent and borderless
+- Fix handling of Attacks with double quote in name (e.g. to show ammo size in inches)
+- Fixed /hp +X @target if target owner not online or GM
+- Fixed error msg if damage formula is not rollable
+- Fixed Mooks displaying "meleename ()" if no Usage (mode)
+- Fixed GCA import failure when items contains notes
+
+Release 0.13.14 4/12/2022
+
+- Make all @margin entries case insensitive
+- Add /if check for @margin, @isCritSuccess, @isCritFailure (@margin >/>=/</<=/=/== X)
+- Fixed, when clicking OTF Journal link, only show for current user (not all owners, including GM).
+- Added range modifier support for grid units (ex: meters, millimeters, kilometers, inches, centimeters, feet, yards, miles, parcecs, light years, etc.) Thanks @Kalos!
+- Allow \*Per 1fp (vs. \*Cost 1fp)
+- Updated JB2A to v0.4.x
+- Add support for split DR.
+- Support linked damage: all comma-separated damage will be rolled with one click. E.g. `2d cut,1d+1 burn`.
+- Support an optional title for a Note.
+- Added a "damage accumulator" for powers like spells which do a variable amount of damage. Adding '+' in front of damage makes it accumulate.
+- Added damage right-click option to combine multiple rolls into one; e.g. combining five `1d-1 burn` rolls yields one roll of `5d-5 burn`.
+- Added @kbrownridge's Quintessence code
+
+Release 0.13.13 3/10/2022
+
+- Make /hp/fp @target case insensitive
+- Fixed conflict with GURPS Easy Combat
+
+Release 0.13.12 3/9/2022
+
+- Allow Skill Names to be enclosed in single quotes
+- Import GCS VTT-Notes for Advantages and Equipment
+- Fixed import spell class from .gcs
+- Fixed display in melee/range if item in both equipped and other equipment list
+- Fixed /fc chat command
+- Added 'thing' description when using +/-@margin as a modifier
+- Add GM drag and drop combat initiative order (for Peter ;-)
+- Fixed Item bonuses/melee/ranged not respecting 'unequipped' flag.
+- Added system setting for default ADD action (apply, apply quietly, target).
+
+Release 0.13.11 3/7/2022
+
+- Re-Fixed equipped parry (when 0)
+
+Release 0.13.10 3/7/2022
+
+- Re-enabled remote sending of LastTargetedRolls (fixed bug)
+- Fixed equipped parry (when 0)
+
+Release 0.13.9 3/6/2022
+
+- Fixed bug when melee attacks do not have a parry stat.
+- Disabled remote sending of LastTargetedRolls due to performance issues.
+- Added support for v2 of Token Action HUD
+
+Release 0.13.8 3/5/2022
+
+- Fixed GCA5-12 export for unmodified damage.
+- Increased size of generic modifier buttons in Other Modifiers section.
+- Fixed various chat messages (failing substitutions).
+- Added handling of user defined page ref containing URL.
+- Fixed /status chat command.
+- Updated Brazilian Portuguese language file.
+- Change remaining calls from {{localize}} handlebar to ((i18n}} handlebar.
+- Fixed reaction and conditional mods to be draggable.
+
+Release 0.13.7 3/2/2022
+
+- Fixed /mook generator (Thank you Scimon!)
+
+Release 0.13.6 3/1/2022
+
+- Fixed /IF [otf] cs:{} s:{} f:{} cf:{} logic ;-)
+
+Release 0.13.5 2/28/2022
+
+- Updated GCA5 Exporter to fix an export issue. ~Stevil
+- Updated import code to warn if not using latest GCA5 export script.
+- Removed default hit locations from template file.
+- Added support for multiple movement modes, such as Ground, Air, Water, Space. (In the editor, click the edit button next to the new Move Type dropdown menu to add, delete, modify movement types).
+- Support for Enhanced Move, including in the Drag Ruler.
+- Support unlimited, by-the-book, range on the Standard Speed, Size, and Range Table.
+- Unified the NPC/mini and NPC/mini CI sheets. Now "NPC/mini" supports both.
+- Added /IF [otf] cs:{} s:{} f:{} cf:{} syntax
+- Added @margin to add last margin of success to roll (useful on frightcheck tables, reaction tables)
+- Added @target for /hp /fp commands
+- Added support for !/ev [OTF] which will roll [OTF] against all of the player characters, a blindrolls (so only the GM sees).
+- Fixed some Dice so Nice calls for /ev, /hp, /fp and random hit location
+- Added Modifier Bucket magnet
+- Added modifier [+@margin]
+- Fixed Melee attack usage not saving during edit
+- Fixed Melee/Range attack if usage/mode contained "( )"
+- Added +/-@margin to attribute, skill and attack OTFs ex: \[ST+@margin] \[Sk:Brawling-@margin] \[M:Natural\*Attacks+@margin]
+- Fixed Resource Tacker editor (re-enabled + buttons), and added "Add Resource Tracker" button to melee head (if no trackers)
+- Updated to JB2A v0.3.8
+
+Release 0.13.4 2/15/2022
+
+- Fixed drag and drop into Quick Notes to include display name
+- Added drag and drop OTFs into editables (Ads, Skills, spells, notes, etc.)
+- Changed <Blind Roll> to (Blind Roll) so as to not confuse HTML parsing
+
+Release 0.13.3 2/7/2022
+
+- Updated Brazilian Portuguese language file.
+- Fixed OTF parsing of [70]
+- Fixed initial importing of vtt_notes
+- Fixed Blind rolls
+
+Release 0.13.2 1/24/2022
+
+- Added support for Unmodified Damage in the GCS and GCA4/5 files for use with GGA import. (@Stevil)
+- Added support for c:[] d:[] p:[] f:[] parsing from notes
+- Added support for upcoming vtt_notes from GCS
+- Added /show FP HP
+- Update TriggerHappy teleport to be more selection friendly @Drawing[PortB]@Trigger[move capture]@Teleport[PortA]@OTF[1d-3 burn]@OTF[/wait 500\\/anim flames*orange*200 c270 *2]
+- Updated Brazilian Portuguese language file. (Hi, Frerol!)
+- Fixed spamming chat messages for reeling/exhausted.
+- Fixed the 'user created equipment' flag on equipment creation.
+- Added system setting to turn on/off chat messages for reeling/exhausted.
+- Added warning for bad sound file
+
+Release 0.13.1 1/12/2022
+
+- Fixed OTF parsing for "\*Costs tr()"
+- @Neck fixed modifier/conditional modifier calculation for .gcs import
+- Added /repeat (/rpt) command for animations
+- Added @Teleport and @OTF verbs if you use Trigger Happy module
+- Fixed Natural Attacks bug (if the attack name contained parenthesis)
+- Change NPC UI 'Dmg' to 'Th/Sw'
+
+Release 0.13.0 1/8/2022
+
+- Fixed /ra help string
+- Added warning if trying to set maneuver /man when not in combat
+- Replace GURPS.genkey with zeroFill()
+- Fixed /uses reset eqt
+- Updated /light command to work with new Foundry V9 lighting model
+- Fixed /tr# (where # = 0-3)
+- Enhanced /tr & /qty commands to allow spaces between +-= and the number
+- Fixed Foundry Item image hover
+- Sorted /show output so highest results appear first, /showa (/sha) shows alphabetically
+- Fixed Attacks that have () in the mode
+- Updated Effects Modifier Popup button to appear in upper left menu
+- Fixed [ST26] OtFs (fixed target attribute rolls)
+
+Release 0.12.17 1/4/2020
+
+- Updated GCS import to calc block and handle missing 'calc' object @neck
+- Updated GCA5 export script to latest version
+- Updated lighting/darkness modifiers
+
+Release 0.12.16 12/31/2021 Happy New Year!
+
+- Fixed conditional modifiers from concatenating everything into the final line.
+- Fixed display of the NPC/Mook sheets.
+- Added French language file, thank you Eikhan!!
+- Round fractional numbers in Encumbrance and Lifting tables to 1 decimal place.
+
+Release 0.12.15 12/25/2021
+
+- Re-Fixed "Removed Unequipped Weapons" setting (allow things like Natural Attacks, which do not have a corresponding equipment)
+
+Release 0.12.14 12/25/2021 Happy Christmas everyone!
+
+- Fixed "Removed Unequipped Weapons" setting
+
+Release 0.12.13 12/25/2021 Ho Ho Ho... Merry Christmas!
+
+- Fixed "Cannot read properties of undefined (reading 'terms')"
+
+Release 0.12.12 12/24/2021 Merry Christmas everyone!
+
+- Always show the sign (+/-) on Conditional Modifiers
+- This fixes the issue of Roll Tables not adding the global modifier to the die roll.
+- Added code to prevent failure to import a character with a spell that has no 'difficulty' value.
+
+Release 0.12.11 12/23/2021
+
+- Update /show help
+- Add Portrait share for GM users
+- Fixed applying basic damage for multiple damage rolls
+- Updated GCS exporter to do Conditional Modifiers (needs a bug fixed in GCS before it works)
+- Fixed equipment menus to only open on a contextmenu event.
+- Add target modifiers to Effects Modifier popup window.
+- Add SM to target modifiers.
+- Added another range/speed table (-1 per 10 yards/meters).
+- Possibly fixed adding two statuses at the same time, such as stun + prone.
+- Fixed Full GCS sheet's navigation widget operating on wrong sheet.
+- Added effect modifiers for the "Blind" status.
+- Fixed the Dodge column in Encumbrance to enable 'rollable' only on the current encumbrance level.
+- Added GCS direct import by rinickolous / neck
+- ADD will now automatically select Injury Tolerance (Unliving, Diffuse, or Homogenous) if any of the following exists as an Advantage on the actor sheet, where \<type\> is one of Unliving, Diffuse, or Homogenous:
+  - Name is 'Injury Tolerance (\<type\>)' or
+  - Name is '\<type\>' or
+  - Name is 'Injury Tolerance' AND Notes contains '\<type\>'
+- Fix for Foundry v.0.9 layout.
+- Added targeted token modifiers to Effect Modifier popup.
+- Updated GCA export to GCA-11, supporting Conditional Modifiers
+- Added beta GCA5 export mehalforc / Stevil
+
+Release 0.12.10 12/1/2021
+
+- Fixed "crash the world" bug if user enters a bad modifier in tooltip
+- Removed unnecessary leading space when dropped in quick note
+
+Release 0.12.9 12/1/2021
+
+- Added OtF Drop into Journal (but not editor, sorry https://gitlab.com/foundrynet/foundryvtt/-/issues/6190)
+
 Release 0.12.8 12/1/2021
 
 - Added drag drop into chat log and chat input field
 - Fixed equipped parry if weapon name contains more info than the equipment
 - Added drag and drop into mook generator (to quickly create entries)
 - Added link to Foundry lighting page for /light help
-- Updated animation list to JB2A 3.2 
+- Updated animation list to JB2A 3.2
 
 Release 0.12.7 11/30/2021
 

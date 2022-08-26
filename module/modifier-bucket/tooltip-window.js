@@ -13,6 +13,8 @@ export default class ModifierBucketEditor extends Application {
   constructor(bucket, options = {}) {
     super(options)
 
+    console.trace('+++++ Create ModifierBucketEditor +++++')
+
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
     this.inside = false
     this.tabIndex = 0
@@ -78,7 +80,7 @@ export default class ModifierBucketEditor extends Application {
     data.actorname = !!GURPS.LastActor ? GURPS.LastActor.name : 'No active character!'
     data.othermods1 = ModifierLiterals.OtherMods1.split('\n')
     data.othermods2 = ModifierLiterals.OtherMods2.split('\n')
-    data.cansend = game.user?.isGM || game.user?.isRole('TRUSTED') || game.user?.isRole('ASSISTANT')
+    data.cansend = game.user?.isGM || game.user?.hasRole('TRUSTED') || game.user?.hasRole('ASSISTANT')
     data.users = game.users?.filter(u => u.id != game.user.id) || []
     data.everyone = data.users.length > 1 ? { name: 'Everyone!' } : null
     data.taskdificulties = ModifierLiterals.TaskDifficultyModifiers
@@ -99,7 +101,7 @@ export default class ModifierBucketEditor extends Application {
 
       let effects = GURPS.LastActor.effects.filter(e => !e.data.disabled)
       for (let effect of effects) {
-        let type = effect.data.flags.core.statusId
+        let type = effect.data.flags?.core?.statusId
         let m = ModifiersForStatus[type]
         if (!!m) {
           melee = melee.concat(m.melee)
@@ -153,7 +155,8 @@ export default class ModifierBucketEditor extends Application {
       let bucketWidth = 70
 
       let width = parseFloat(html.css('width').replace('px', ''))
-      let left = bucketLeft + bucketWidth / 2 - width / 2
+      // ensure that left is not negative
+      let left = Math.max(bucketLeft + bucketWidth / 2 - width / 2, 10)
       console.log(`bucketLeft: ${bucketLeft}; width: ${width}; left: ${left}`)
       html.css('left', `${left}px`)
       // }
@@ -255,12 +258,15 @@ export default class ModifierBucketEditor extends Application {
 
   async _onManualEntry(event) {
     event.preventDefault()
+    event.stopPropagation()
     let element = event.currentTarget
-    let v = element.value
     let parsed = parselink(element.value)
     if (!!parsed.action && parsed.action.type === 'modifier') {
       this.bucket.addModifier(parsed.action.mod, parsed.action.desc)
-    } else this.editor.refresh()
+    } else {
+      setTimeout(() => ui.notifications.info("Unable to determine modifier for '" + element.value + "'"), 200)
+      this.bucket.refresh() // WARNING: REQUIRED!  or the world will crash... trust me.
+    }
   }
 
   async _onList(event) {
@@ -457,24 +463,28 @@ const ModifierLiterals = {
   },
 
   get OtherMods1() {
-    return `[+1]
-    [+2]
-    [+3]
-    [+4]
-    [+5]
-    [-1]
-    [-2]
-    [-3]
-    [-4]
-    [-5]`
+    return `["&nbsp;&nbsp;+1&nbsp;&nbsp;&nbsp;&hairsp;"+1]
+            ["&nbsp;&nbsp;+2&nbsp;&nbsp;&nbsp;&hairsp;"+2]
+            ["&nbsp;&nbsp;+3&nbsp;&nbsp;&nbsp;&hairsp;"+3]
+            ["&nbsp;&nbsp;+4&nbsp;&nbsp;&nbsp;&hairsp;"+4]
+            ["&nbsp;&nbsp;+5&nbsp;&nbsp;&nbsp;&hairsp;"+5]
+            ["&nbsp;&nbsp;&#8211;1&nbsp;&nbsp;&nbsp;"-1]
+            ["&nbsp;&nbsp;&#8211;2&nbsp;&nbsp;&nbsp;"-2]
+            ["&nbsp;&nbsp;&#8211;3&nbsp;&nbsp;&nbsp;"-3]
+            ["&nbsp;&nbsp;&#8211;4&nbsp;&nbsp;&nbsp;"-4]
+            ["&nbsp;&nbsp;&#8211;5&nbsp;&nbsp;&nbsp;"-5]`
   },
 
   get OtherMods2() {
+    return ''
+  },
+  /**
     return `[+1 ${i18n('GURPS.modifierGMSaidSo')}]
     [-1 ${i18n('GURPS.modifierGMSaidSo')}]
     [+4 ${i18n('GURPS.modifierGMBlessed')}]
     [-4 ${i18n('GURPS.modifierGMDontTry')}]`
   },
+  */
 
   get TaskDifficultyModifiers() {
     return [
@@ -499,12 +509,12 @@ const ModifierLiterals = {
       i18n('GURPS.lighting'),
       `-1 ${i18n('GURPS.modifierLightDim')}`,
       `-2 ${i18n('GURPS.modifierLightTwilight')}`,
-      `-3 ${i18n('GURPS.modifierLightTorch')}`,
+      `-3 ${i18n('GURPS.modifierLightDeepTwilight')}`,
       `-4 ${i18n('GURPS.modifierLightFullMoon')}`,
-      `-5 ${i18n('GURPS.modifierLightCandle')}`,
-      `-6 ${i18n('GURPS.modifierLightHalfMoon')}`,
-      `-7 ${i18n('GURPS.modifierLightQuarterMoon')}`,
-      `-8 ${i18n('GURPS.modifierLightStarlight')}`,
+      `-5 ${i18n('GURPS.modifierLightHalfMoon')}`,
+      `-6 ${i18n('GURPS.modifierLightQuarterMoon')}`,
+      `-7 ${i18n('GURPS.modifierLightStarlight')}`,
+      `-8 ${i18n('GURPS.modifierLightStarlightClouds')}`,
       `-9 ${i18n('GURPS.modifierLightMoonless')}`,
       `-10 ${i18n('GURPS.modifierLightNone')}`,
     ]

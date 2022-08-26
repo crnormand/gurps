@@ -2,6 +2,12 @@
 /* GURPS Applications        */
 /* ========================= */
 
+:root {
+  --hotbar-control-width: 32px;
+  --font-size-small: 90%;
+  --font-size-smaller: 80%;
+}
+
 /* Global Override */
 body {
   font-family: 'Font Awesome 5 Free', Roboto, sans-serif;
@@ -25,7 +31,6 @@ body {
 /* GURPS App CSS */
 .gga-app {
   justify-items: center;
-  /* background: url(/ui/parchment.webp) #dcdcd0; */
   background: url(/systems/gurps/icons/hex2.webp) repeat, url(/ui/parchment.jpg) repeat, #dcdcd0;
   color: black;
 }
@@ -51,7 +56,8 @@ body {
 
 /* remove this item from display  */
 .gga-chat-message .invisible,
-.gga-app .invisible {
+.gga-app .invisible,
+#threed6 .invisible {
   display: none;
 }
 
@@ -149,15 +155,15 @@ body {
 
 .gga-group .pdflink {
   margin-left: 3px;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 .gga-chat-message .pdflink {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .gga-chat-message .aside {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .roll-message .aside .aside-text {
@@ -316,7 +322,7 @@ body {
 
 .label-value-row label,
 .gga-group.inputs label {
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
   justify-self: stretch;
   text-align: end;
   display: flex;
@@ -654,7 +660,7 @@ ul#result-effects li {
 
 #combat-sheet .resource-spinner input {
   height: 21px;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 #combat-sheet .tracked-resource {
@@ -676,11 +682,11 @@ ul#result-effects li {
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  min-width: 120px;
+  /* min-width: 120px; */
   background-color: #555;
   color: white;
   text-align: center;
-  padding: 5px 0;
+  padding: 5px;
   border-radius: 6px;
   font-weight: normal;
   text-shadow: none;
@@ -690,8 +696,8 @@ ul#result-effects li {
   position: absolute;
   z-index: 1;
   top: 1.4em;
-  left: 50%;
-  margin-left: -60px;
+  left: 0;
+  /* margin-left: -60px; */
 
   /* Fade in tooltip */
   opacity: 0;
@@ -787,8 +793,14 @@ ul#result-effects li {
   height: min-content;
   margin: 0;
   width: 100%;
-  font-size: 90%;
+  font-size: var(--font-size-small);
   cursor: pointer;
+}
+
+#editorsheet select#move-mode,
+#combat-sheet select#move-mode,
+#sheet select#move-mode {
+  width: unset;
 }
 
 #editorsheet .field select {
@@ -799,14 +811,14 @@ ul#result-effects li {
   margin: 0;
   width: 100%;
   font-family: inherit;
-  font-size: 90%;
+  font-size: var(--font-size-small);
   cursor: inherit;
   line-height: inherit;
 }
 
 .field textarea {
   font-family: inherit;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
   border-radius: 0;
   border: 1px solid lightgrey;
   padding: 3px;
@@ -847,9 +859,14 @@ ul#result-effects li {
 }
 
 .resource-editor,
-.tracked-resource {
+.tracked-resource,
+.active-effects-list,
+.move-mode-editor {
   display: flex;
   flex-flow: column nowrap;
+}
+
+.tracked-resource {
   border: 1px solid black;
 }
 
@@ -947,7 +964,7 @@ ul#result-effects li {
   display: flex;
   flex-flow: column nowrap;
   justify-content: stretch;
-  /* font-size: 80%; */
+  /* font-size: var(--font-size-smaller); */
 }
 
 /* #combat-trackers .tracked-resource .condition-block {
@@ -1006,7 +1023,7 @@ ul#result-effects li {
 }
 
 .resource-editor .inputs .label {
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 .resource-editor button i {
@@ -1022,9 +1039,16 @@ ul#result-effects li {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  /* color: white; */
+  /* background: black; */
 }
 
-.resource-editor .button.icon {
+.resource-editor .section h3,
+active-effects-list .section h3 {
+  margin: 0.25rem;
+}
+
+.table .button.icon {
   color: #4b4a44;
   padding: 0 20px 0 10px;
 }
@@ -1033,15 +1057,66 @@ ul#result-effects li {
   display: grid;
   grid-template-columns: min-content min-content min-content 1fr auto min-content;
   gap: 0.15rem;
-  justify-items: center;
+  justify-items: stretch;
   max-height: max-content;
 }
 
-.resource-editor .tracker-manager.table {
+.resource-editor .tracker-manager.table,
+.active-effects-list .gga-effects-list.table,
+.move-mode-editor.table,
+.splitdr-editor.table {
   display: grid;
-  grid-template-columns: 3fr 1fr min-content 4fr min-content;
   gap: 0.15rem;
-  justify-items: center;
+  justify-items: stretch;
+}
+
+.table .label {
+  text-align: center;
+  color: white;
+  background-color: black;
+}
+
+.gga-effects-list.table input {
+  min-height: calc(var(--form-field-height) + 1px);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.resource-editor .tracker-manager.table {
+  grid-template-columns: 3fr 1fr min-content 4fr min-content;
+}
+
+.active-effects-list .gga-effects-list.table {
+  grid-template-columns: 1fr min-content min-content;
+  margin: 0 0 0.25em 0;
+}
+
+.move-mode-editor.table {
+  grid-template-columns: 1fr 4em 4em min-content min-content;
+  margin-bottom: 30px;
+}
+
+.splitdr-editor.table {
+  margin-bottom: 30px;
+  display: grid;
+  grid-template-columns: 1fr min-content min-content;
+}
+
+.move-mode-editor .expand-contract,
+.splitdr-editor .expand-contract {
+  transition: all 1s;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 0 0 3px 3px;
+  border-top: none;
+  margin: 0 3px;
+  width: calc(100% - 5px);
+  box-shadow: inset 0px 2px 3px 0 grey;
+}
+
+.move-mode-editor .expand-contract.contracted,
+.splitdr-editor .expand-contract.contracted {
+  height: 0;
+  border: none;
+  padding: 0;
 }
 
 .resource-editor .table .span3 {
@@ -1049,8 +1124,7 @@ ul#result-effects li {
   justify-content: center;
 }
 
-.gga-app .vertical-center,
-.resource-editor .vertical-center {
+.vertical-center {
   display: flex;
   align-items: center;
 }
@@ -1059,9 +1133,12 @@ ul#result-effects li {
   color: rgb(64, 64, 64);
   background-color: rgba(0, 0, 0, 0.1);
   box-shadow: none;
+  margin-left: 2px;
+  /* min-height: calc(var(--form-field-height) + 1px); */
 }
 
-.resource-editor .clickable:hover {
+.resource-editor .clickable:hover,
+.gga-effects-list .clickable:hover {
   cursor: pointer;
   box-shadow: 0 0 5px red;
 }
@@ -1125,32 +1202,53 @@ ul#result-effects li {
   /* text-overflow: ellipsis; */
 }
 
+.npc-sheet #condition .field {
+  font-size: var(--font-size-small);
+  border: none;
+}
+
+.npc-sheet #condition .field select {
+  font-size: inherit;
+  height: fit-content;
+}
+
 #condition .fieldblock .field[name='data.conditions.combatmove'] {
-    max-width: 12em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-left: 8px;
+  max-width: 12em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 8px;
 }
 
 #combat-sheet .fieldblock .field[name='data.conditions.combatmove'] {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
-#condition .fieldblock button#open-modifier-popup {
-  font-size: 90%;
+#condition .fieldblock button#open-modifier-popup,
+#condition .fieldblock button#edit-move-modes,
+#location .dr button {
+  font-size: var(--font-size-small);
   max-height: fit-content;
-  padding: 0;
+  width: auto;
+  padding: 0 3px;
+  line-height: unset;
+  height: calc(var(--form-field-height) + 1px);
+}
+
+#editorsheet #condition .fieldblock button#edit-move-modes,
+#combat-sheet #condition .fieldblock button#edit-move-modes,
+#sheet #condition .fieldblock button#edit-move-modes,
+#location .dr button {
+  height: min-content;
 }
 
 select#maneuver option {
-      max-width: 12em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-left: 8px;
+  max-width: 12em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 8px;
 }
-
 
 .spinner details {
   position: relative;
@@ -1166,7 +1264,7 @@ select#maneuver option {
   position: absolute;
   z-index: 10;
   margin-left: -150%;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
   min-inline-size: max-content;
   background-color: white;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
@@ -1329,25 +1427,21 @@ button.equipmentbutton:last-child {
   color: white;
 }
 
-#navigate-toggle:checked + .navigate-bar > .navigation-view > span:before {
+.navigate-area input:checked + .navigate-bar > .navigation-view > span:before {
   content: '\f100';
   font-family: 'Font Awesome 5 Free', 'Roboto', sans-serif;
   font-weight: 900;
   color: white;
 }
 
-#navigate-toggle:checked + .navigate-bar {
+.navigate-area input:checked + .navigate-bar {
   width: fit-content;
 }
 
-#navigate-toggle:checked + .navigate-bar > .navigate-container {
+.navigate-area input:checked + .navigate-bar > .navigate-container {
   width: 0;
   overflow: hidden;
 }
-
-/* #navigate-toggle:checked + .navigate-bar {
-  width: 24px;
-} */
 
 .navigation-link:hover {
   outline: none;
@@ -1460,21 +1554,44 @@ button.equipmentbutton:last-child {
 
 .subtle {
   color: grey;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 /* ========================= */
 /* Modifier Bucket           */
 /* ========================= */
+#hotbar {
+  align-self: end;
+}
+
+@media (max-width: 1120px) {
+  #hotbar {
+    width: calc(var(--macro-width) * 5 + var(--hotbar-control-width) * 2 + 12);
+    width: 326px;
+  }
+}
+
+#ui-bottom > div {
+  justify-content: unset;
+}
+
+#bucket-app {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 3px;
+  width: 130px;
+  margin-bottom: 10px;
+  margin-left: 3px;
+}
+
 .modifierbucket #modifierbucket {
   border: 5px solid darkred;
-  position: fixed;
-  bottom: 10px;
-  left: 805px;
-  width: 70px;
+  grid-row: 3;
   height: 52px;
   margin: 0px;
-  padding: 0px 2px;
+  padding: 2px 2px;
   cursor: pointer;
   z-index: auto;
   background: rgb(28, 32, 36);
@@ -1484,11 +1601,63 @@ button.equipmentbutton:last-child {
   align-items: center;
 }
 
+.modifierbucket #damage-accumulator {
+  grid-row: 2;
+  grid-column: 1 / 3;
+  display: flex;
+  flex-flow: row nowrap;
+  background-color: rgba(0, 0, 0, 0.6);
+  align-items: baseline;
+  z-index: 100;
+  border-style: groove;
+  border-color: rgb(64, 64, 64);
+  color: rgb(221, 221, 221);
+  border-radius: 3px;
+}
+
+.modifierbucket #damage-accumulator .accumulator-control {
+  width: 2em;
+  text-align: center;
+}
+
+.modifierbucket #damage-accumulator .accumulator-control:hover {
+  background: black;
+  box-shadow: 0 0 6px inset var(--color-shadow-highlight);
+}
+
+.modifierbucket #damage-accumulator .accumulator-control[data-action='cancel'] {
+  color: red;
+}
+
+.modifierbucket #damage-accumulator #accumulator-center {
+  color: gold;
+  width: 100%;
+  text-align: center;
+  width: 100%;
+  text-align: center;
+}
+
+.pulsate {
+  animation: pulsate 3s ease-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulsate {
+  0% {
+    color: gold;
+  }
+  50% {
+    color: red;
+  }
+  100% {
+    color: gold;
+  }
+}
+
 .modifierbucket #current-actor {
-  position: fixed;
-  bottom: 60px;
-  left: 745px;
-  width: 190px;
+  grid-row: 1;
+  grid-column: 1 / 3;
+  width: 150px;
   height: 20px;
   text-align: center;
   white-space: nowrap;
@@ -1497,18 +1666,26 @@ button.equipmentbutton:last-child {
 }
 
 .modifierbucket #current-actor > span {
-  color: yellow;
+  color: gold;
   background-color: black;
 }
 
 .modifierbucket #globalmodifier {
   font-size: 20px;
   text-align: center;
-  width: 55px;
+  width: 40px;
 }
 
 .modifierbucket #trash {
   color: lightgrey;
+}
+
+.modifierbucket #magnet {
+  color: rgb(80, 80, 80);
+}
+
+.modifierbucket #magnet.enabled {
+  color: red;
 }
 
 #modtooltip {
@@ -1659,7 +1836,7 @@ button.equipmentbutton:last-child {
 .gmbutton {
   display: inline-block;
   text-align: center;
-  font-size: 90%;
+  font-size: var(--font-size-small);
   padding: 0.25em;
   width: fit-content;
   background: rgba(255, 255, 240, 0.8);
@@ -1779,7 +1956,7 @@ button.equipmentbutton:last-child {
   border-top: none;
   border-bottom-left-radius: 0.25em;
   border-bottom-right-radius: 0.25em;
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .modtooltip .collapsible-wrapper .content-inner {
@@ -1823,7 +2000,7 @@ button.equipmentbutton:last-child {
 .modtooltip .glinkmodplus,
 .modtooltip .glinkmodminus,
 .modtooltip .gurpslink {
-  font-size: 90%;
+  font-size: var(--font-size-small);
 }
 
 .modtooltip .glinkmod,
@@ -1872,6 +2049,27 @@ button.equipmentbutton:last-child {
   background-color: rgba(255, 255, 240, 0.4) !important;
 }
 
+.standalonggurpslink {
+  color: darkblue !important;
+  background-color: rgba(225, 225, 210, 0.8) !important;
+  padding: 0.0825em 0.165em;
+  border: 0.0825em solid rgb(122, 121, 113);
+  border-radius: 0.25em;
+  margin: 0.0825em 0;
+}
+
+.standalonggurpslink:hover {
+  box-shadow: 0 0 5px rgb(128, 0, 0) !important;
+  cursor: pointer;
+  text-shadow: none;
+  font-weight: unset;
+  background-color: rgba(255, 255, 240, 0.8) !important;
+}
+
+.standalonggurpslink:active {
+  background-color: rgba(255, 255, 240, 0.4) !important;
+}
+
 .removemod.plus,
 .gga-chat-message .glinkmodplus,
 .modtooltip .glinkmodplus {
@@ -1890,14 +2088,23 @@ button.equipmentbutton:last-child {
 }
 
 .modtooltip .modifier-row {
-  flex-flow: row wrap !important;
+  font-size: 145%;
 }
 
 .modtooltip .modifier-row > div {
-  margin-bottom: 0.25em;
+  margin-bottom: 0.1m;
 }
 
-.modtooltip .modifier-row,
+.modtooltip .modifier-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: minmax(10px, auto);
+  column-gap: 2px;
+  row-gap: 13px;
+  justify-items: stretch;
+  justify-content: stretch;
+}
+
 .modtooltip .shaded-group > div {
   display: flex;
   flex-flow: row nowrap;
@@ -1920,7 +2127,7 @@ button.equipmentbutton:last-child {
 
 .modifier-journals #entry-list > div:nth-child(3n + 3) {
   color: #555;
-  font-size: 80%;
+  font-size: var(--font-size-smaller);
 }
 
 .gga-app .section {

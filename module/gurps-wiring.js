@@ -2,6 +2,7 @@ import { parselink } from '../lib/parselink.js'
 import { atou } from '../lib/utilities.js'
 import { handleOnPdf } from './pdf-refs.js'
 import GgaContextMenu from './utilities/contextmenu.js'
+import { multiplyDice } from './utilities/damage-utils.js'
 
 export default class GurpsWiring {
   static hookupAllEvents(html) {
@@ -20,7 +21,7 @@ export default class GurpsWiring {
     html.find('.glinkmodplus').on('click', GurpsWiring.chatClickGmod)
     html.find('.glinkmodminus').on('click', GurpsWiring.chatClickGmod)
     html.find('.pdflink').on('click', handleOnPdf)
-    
+
     // Make any OtF element draggable
     html.find('[data-otf]').each((_, li) => {
       li.setAttribute('draggable', true)
@@ -37,7 +38,6 @@ export default class GurpsWiring {
         )
       })
     })
-
   }
 
   /**
@@ -64,7 +64,7 @@ export default class GurpsWiring {
     //   GURPS.whisperOtfToOwner('PDF:' + el.innerText, null, event, false, GURPS.LastActor)
     // })
   }
-  
+
   static createPdfLinkMenu(link) {
     let text = link.innerText
     let parent = $(link).parent()
@@ -126,13 +126,19 @@ export default class GurpsWiring {
    * @param {undefined} [desc]
    * @param {undefined} [targets]
    */
-  static handleGurpslink(event, actor, desc, targets) {
+  static handleGurpslink(event, actor, desc, options) {
     event.preventDefault()
     let element = event.currentTarget
-    let action = element.dataset.action // If we have already parsed
+    let action = element.dataset?.action // If we have already parsed
     if (!!action) action = JSON.parse(atou(action))
     else action = parselink(element.innerText, desc).action
-    GURPS.performAction(action, actor, event, targets)
+
+    if (options?.combined) {
+      action.formula = multiplyDice(action.formula, options.combined)
+      // action.orig = multiplyDice(action.orig, options.combined)
+    }
+
+    GURPS.performAction(action, actor, event, options?.targets)
   }
 
   /**

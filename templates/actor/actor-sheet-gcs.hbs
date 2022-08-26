@@ -50,9 +50,7 @@
       </div>
     {{/if}}
 
-    {{#if (notEmpty data.additionalresources.tracker)}}
-      {{>trackers}}
-    {{/if}}
+    {{>trackers}}
 
     {{#if (notEmpty data.melee)}}
       {{>melee}}
@@ -86,9 +84,9 @@
   {{>footer}}
   {{#if navigateVisible}}
     <div class='navigate-area'>
-      <input id='navigate-toggle' class='toggle offscreen-only' type='checkbox' />
+      <input id='navigate-toggle-{{_id}}' class='toggle offscreen-only' type='checkbox' />
       <div class='navigate-bar'>
-        <label class='navigation-view' for='navigate-toggle'><span class='icon'></span></label>
+        <label class='navigation-view' for='navigate-toggle-{{_id}}'><span class='icon'></span></label>
         <div class='navigate-container'>
           <div class='navigation-link' data-value='personal'>TOP</div>
           <div class='navigation-link' data-value='stats'>STATS</div>

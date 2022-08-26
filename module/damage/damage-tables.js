@@ -12,12 +12,16 @@ const woundModifiers = {
   'pi+': { multiplier: 1.5, label: 'Large Piercing' },
   'pi++': { multiplier: 2, label: 'Huge Piercing' },
   tox: { multiplier: 1, label: 'Toxic' },
-  dmg: { multiplier: 1, label: 'Damage', nodisplay: false }, // This needs to be collected in the default list of hit locations... maybe remove "nodisplay"?
+  dmg: { multiplier: 1, label: 'Damage', nodisplay: false },
+  injury: { multiplier: 1, label: 'Injury' },
+  kb: { multiplier: 1, label: 'Knockback only' },
+  // This needs to be collected in the default list of hit locations... maybe remove "nodisplay"?
 }
 
 // Map possible damage types to the allowed GURPS dmage types (plus support for dmg)
 const damageTypeMap = {
   dmg: 'dmg',
+  injury: 'dmg',
   burn: 'burn',
   cor: 'cor',
   cr: 'cr',
@@ -45,14 +49,10 @@ const damageTypeMap = {
   'huge piercing': 'pi++',
   'piercing++': 'pi++',
   toxic: 'tox',
+  kb: 'kb',
 }
 
-export let DamageTables = null
-export function initializeDamageTables() {
-  DamageTables = new DamageTable()
-}
-
-class DamageTable {
+export class DamageTable {
   constructor() {
     let translationTable = {}
     translationTable[game.i18n.localize('GURPS.damageAbbrevburn')] = 'burn'
@@ -67,6 +67,8 @@ class DamageTable {
     translationTable[game.i18n.localize('GURPS.damageAbbrevpi++')] = 'pi++'
     translationTable[game.i18n.localize('GURPS.damageAbbrevtox')] = 'tox'
     translationTable[game.i18n.localize('GURPS.damageAbbrevdmg')] = 'dmg'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevinjury')] = 'injury'
+    translationTable[game.i18n.localize('GURPS.damageAbbrevkb')] = 'kb'
 
     this.translationTable = translationTable
   }

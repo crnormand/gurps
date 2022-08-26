@@ -1,289 +1,204 @@
 {
   "Actor": {
-    "types": ["character"],
-    "character": {
-      "attributes": {
-        "ST": {
-          "import": 10,
-          "value": 10,
-          "points": 0,
-          "dtype": "Number"
+    "types": ["character", "enemy"],
+    "templates": {
+      "base": {
+        "attributes": {
+          "ST": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          },
+          "DX": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          },
+          "IQ": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          },
+          "HT": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          },
+          "WILL": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          },
+          "PER": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          },
+          "QN": {
+            "import": 10,
+            "value": 10,
+            "points": 0,
+            "dtype": "Number"
+          }
         },
-        "DX": {
-          "import": 10,
-          "value": 10,
-          "points": 0,
-          "dtype": "Number"
-        },
-        "IQ": {
-          "import": 10,
-          "value": 10,
-          "points": 0,
-          "dtype": "Number"
-        },
-        "HT": {
-          "import": 10,
-          "value": 10,
-          "points": 0,
-          "dtype": "Number"
-        },
-        "WILL": {
-          "import": 10,
-          "value": 10,
-          "points": 0,
-          "dtype": "Number"
-        },
-        "PER": {
-          "import": 10,
-          "value": 10,
-          "points": 0,
-          "dtype": "Number"
-        }
-      },
-      "HP": {
-        "value": 0,
-        "min": 0,
-        "max": 0,
-        "points": 0
-      },
-      "FP": {
-        "value": 0,
-        "min": 0,
-        "max": 0,
-        "points": 0
-      },
-      "dodge": {
-        "value": 0,
-        "enc_level": 0
-      },
-      "basicmove": {
-        "value": "0",
-        "points": 0
-      },
-      "basicspeed": {
-        "value": "0",
-        "points": 0
-      },
-      "parry": 0,
-      "currentmove": 0,
-      "thrust": "",
-      "swing": "",
-      "frightcheck": 0,
-      "hearing": 0,
-      "tastesmell": 0,
-      "vision": 0,
-      "touch": 0,
-      "ads": {},
-      "languages": {},
-      "skills": {},
-      "spells": {},
-      "money": {},
-      "traits": {
-        "title": "",
-        "race": "",
-        "height": "",
-        "weight": "",
-        "age": "",
-        "birthday": "",
-        "religion": "",
-        "gender": "",
-        "eyes": "",
-        "hair": "",
-        "hand": "",
-        "skin": "",
-        "sizemod": "+0",
-        "techlevel": "",
-        "createdon": "",
-        "modifiedon": "",
-        "player": ""
-      },
-      "totalpoints": {
-        "attributes": 0,
-        "ads": 0,
-        "disads": 0,
-        "quirks": 0,
-        "skills": 0,
-        "spells": 0,
-        "total": 150,
-        "unspent": 0,
-        "race": 0
-      },
-      "melee": {},
-      "ranged": {},
-      "conditionalmods": {},
-      "hitlocations": {
-        "00000": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-9",
-          "roll": "",
-          "where": "Eye"
-        },
-        "00001": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-7",
-          "roll": "",
-          "where": "Skull"
-        },
-        "00002": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-5",
-          "roll": "",
-          "where": "Face"
-        },
-        "00003": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-2",
-          "roll": "",
-          "where": "Right Leg"
-        },
-        "00004": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-2",
-          "roll": "",
-          "where": "Right Arm"
-        },
-        "00005": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "0",
-          "roll": "",
-          "where": "Torso"
-        },
-        "00006": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-3",
-          "roll": "",
-          "where": "Groin"
-        },
-        "00007": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-2",
-          "roll": "",
-          "where": "Left Arm"
-        },
-        "00008": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-2",
-          "roll": "",
-          "where": "Left Leg"
-        },
-        "00009": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-4",
-          "roll": "",
-          "where": "Hand"
-        },
-        "00010": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-4",
-          "roll": "",
-          "where": "Foot"
-        },
-        "00011": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-5",
-          "roll": "",
-          "where": "Neck"
-        },
-        "00012": {
-          "import": "0",
-          "dr": "0",
-          "equipment": "",
-          "penalty": "-3",
-          "roll": "",
-          "where": "Vitals"
-        }
-      },
-      "encumbrance": {
-        "00000": {
-          "key": "enc0",
-          "level": 0,
-          "dodge": 0,
-          "weight": 0,
-          "move": 0
-        },
-        "00001": {
-          "key": "enc1",
-          "level": 1,
-          "dodge": 0,
-          "weight": 0,
-          "move": 0
-        },
-        "00002": {
-          "key": "enc2",
-          "level": 2,
-          "dodge": 0,
-          "weight": 0,
-          "move": 0
-        },
-        "00003": {
-          "key": "enc3",
-          "level": 3,
-          "dodge": 0,
-          "weight": 0,
-          "move": 0
-        },
-        "00004": {
-          "key": "enc4",
-          "level": 4,
-          "dodge": 0,
-          "weight": 0,
-          "move": 0
-        }
-      },
-      "notes": {},
-      "equipment": {
-        "carried": {},
-        "other": {}
-      },
-      "liftingmoving": {
-        "basiclift": "",
-        "carryonback": "",
-        "onehandedlift": "",
-        "runningshove": "",
-        "shiftslightly": "",
-        "shove": "",
-        "twohandedelift": ""
-      },
-      "reactions": {},
-      "additionalresources": {
-        "bodyplan": "humanoid",
-        "tracker": {}
-      },
-      "conditions": {},
-      "conditionalinjury": {
-        "RT": {
-          "value": 4,
+        "HP": {
+          "value": 0,
+          "min": 0,
+          "max": 0,
           "points": 0
         },
-        "injury": {
-          "severity": "",
-          "daystoheal": 0
+        "FP": {
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "points": 0
+        },
+        "QP": {
+          "value": 0,
+          "min": 0,
+          "max": 0,
+          "points": 0
+        },
+        "dodge": {
+          "value": 0,
+          "enc_level": 0
+        },
+        "basicmove": {
+          "value": "0",
+          "points": 0
+        },
+        "basicspeed": {
+          "value": "0",
+          "points": 0
+        },
+        "parry": 0,
+        "currentmove": 0,
+        "thrust": "",
+        "swing": "",
+        "frightcheck": 0,
+        "hearing": 0,
+        "tastesmell": 0,
+        "vision": 0,
+        "touch": 0,
+        "ads": {},
+        "languages": {},
+        "skills": {},
+        "spells": {},
+        "money": {},
+        "traits": {
+          "title": "",
+          "race": "",
+          "height": "",
+          "weight": "",
+          "age": "",
+          "birthday": "",
+          "religion": "",
+          "gender": "",
+          "eyes": "",
+          "hair": "",
+          "hand": "",
+          "skin": "",
+          "sizemod": "+0",
+          "techlevel": "",
+          "createdon": "",
+          "modifiedon": "",
+          "player": ""
+        },
+        "totalpoints": {
+          "attributes": 0,
+          "ads": 0,
+          "disads": 0,
+          "quirks": 0,
+          "skills": 0,
+          "spells": 0,
+          "total": 150,
+          "unspent": 0,
+          "race": 0
+        },
+        "melee": {},
+        "ranged": {},
+        "conditionalmods": {},
+        "hitlocations": {},
+        "encumbrance": {
+          "00000": {
+            "key": "enc0",
+            "level": 0,
+            "dodge": 0,
+            "weight": 0,
+            "move": 0
+          },
+          "00001": {
+            "key": "enc1",
+            "level": 1,
+            "dodge": 0,
+            "weight": 0,
+            "move": 0
+          },
+          "00002": {
+            "key": "enc2",
+            "level": 2,
+            "dodge": 0,
+            "weight": 0,
+            "move": 0
+          },
+          "00003": {
+            "key": "enc3",
+            "level": 3,
+            "dodge": 0,
+            "weight": 0,
+            "move": 0
+          },
+          "00004": {
+            "key": "enc4",
+            "level": 4,
+            "dodge": 0,
+            "weight": 0,
+            "move": 0
+          }
+        },
+        "notes": {},
+        "equipment": {
+          "carried": {},
+          "other": {}
+        },
+        "liftingmoving": {
+          "basiclift": "",
+          "carryonback": "",
+          "onehandedlift": "",
+          "runningshove": "",
+          "shiftslightly": "",
+          "shove": "",
+          "twohandedlift": ""
+        },
+        "reactions": {},
+        "additionalresources": {
+          "bodyplan": "humanoid",
+          "tracker": {}
+        },
+        "conditions": {},
+        "conditionalinjury": {
+          "RT": {
+            "value": 4,
+            "points": 0
+          },
+          "injury": {
+            "severity": "",
+            "daystoheal": 0
+          }
         }
       }
+    },
+    "character": {
+      "templates": ["base"]
+    },
+    "enemy": {
+      "templates": ["base"]
     }
   },
   "Item": {

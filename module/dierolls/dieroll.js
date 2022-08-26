@@ -47,6 +47,10 @@ export async function doRoll({
     speaker: speaker,
     type: CONST.CHAT_MESSAGE_TYPES.ROLL,
   }
+  if (optionalArgs.event?.data?.private) {
+    messageData.whisper = [ game.user.id ]
+    messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
+  }
 
   let roll = null // Will be the Roll
   if (isTargeted) {
@@ -85,6 +89,7 @@ export async function doRoll({
     chatdata['seventeen'] = seventeen
     chatdata['isDraggable'] = !seventeen && margin != 0
     chatdata['otf'] = (margin >= 0 ? '+' + margin : margin) + ' margin for ' + thing
+    chatdata['followon'] = optionalArgs.followon
 
     if (margin > 0 && !!optionalArgs.obj && !!optionalArgs.obj.rcl) {
       // if the attached obj (see handleRoll()) as Recoil information, do the additional math
@@ -103,7 +108,7 @@ export async function doRoll({
 
     chatdata['optlabel'] = optionalArgs.text || ''
 
-    if (game.dice3d && !game.dice3d.messageHookDisabled) {
+    if (game.dice3d && !game.dice3d.messageHookDisabled) {  // save for after roll animation is complete
       if (failure && optionalArgs.obj?.failotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.failotf)
       if (!failure && optionalArgs.obj?.passotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.passotf)
     } else {
@@ -120,19 +125,26 @@ export async function doRoll({
       min = 1
     }
 
-    roll = Roll.create(formula + `+${modifier}`)
-    await roll.evaluate({ async: true })
-
-    let rtotal = roll.total
-    if (rtotal < min) {
-      rtotal = min
+    let multiples = []
+    chatdata['multiples'] = multiples
+    let max = +(optionalArgs.event?.data?.repeat) || 1
+    if (max > 1) chatdata['chatthing'] = 'x' + max
+    for (let i = 0; i < max; i++) {
+      roll = Roll.create(formula + `+${modifier}`)
+      await roll.evaluate({ async: true })
+  
+      let rtotal = roll.total
+      if (rtotal < min) {
+        rtotal = min
+      }
+  
+      // ? if (rtotal == 1) thing = thing.replace('points', 'point')
+      let r = {}
+      r['rtotal'] = rtotal
+      r['loaded'] = !!roll.isLoaded
+      r['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
+      multiples.push(r)
     }
-
-    if (rtotal == 1) thing = thing.replace('points', 'point')
-
-    chatdata['rtotal'] = rtotal
-    chatdata['loaded'] = !!roll.isLoaded
-    chatdata['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
     chatdata['modifier'] = modifier
   }
 
@@ -150,21 +162,24 @@ export async function doRoll({
   }
 
   let isCtrl = false
+  let creatOptions = {}
   try {
-    isCtrl = !!optionalArgs.event && game.keyboard.isCtrl(optionalArgs.event)
+    isCtrl = !!optionalArgs.event && game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
   } catch {}
 
   if (
     !!optionalArgs.blind ||
+    !!optionalArgs.event?.blind ||
     isCtrl ||
     (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
   ) {
-    messageData.whisper = ChatMessage.getWhisperRecipients('GM')
-    messageData.blind = true
+    messageData.whisper = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
+    messageData.blind = true  // possibly not used anymore
+    creatOptions.rollMode = "blindroll" // new for V9
   }
 
   messageData.sound = CONFIG.sounds.dice
-  ChatMessage.create(messageData, {})
+  ChatMessage.create(messageData, creatOptions)
 
   if (isTargeted && !!optionalArgs.action) {
     let users = actor.isSelf ? [] : actor.getOwners()

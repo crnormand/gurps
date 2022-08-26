@@ -103,6 +103,7 @@
               <name type="string">@USAGE</name>
               <level type="number">@LEVEL</level>
               <damage type="string">@DAMAGE</damage>
+              <unmodifiedDamage="string">@UNMODIFIED_DAMAGE</unmodifiedDamage>
               <reach type="string">@REACH</reach>
               <parry type="string">@PARRY</parry>
               <block type="string">@BLOCK</block>
@@ -124,6 +125,7 @@
               <name type="string">@USAGE</name>
               <level type="number">@LEVEL</level>
               <damage type="string">@DAMAGE</damage>
+              <unmodifiedDamage="string">@UNMODIFIED_DAMAGE</unmodifiedDamage>
               <acc type="number">@ACCURACY</acc>
               <range type="string">@RANGE</range>
               <rof type="string">@ROF</rof>
@@ -265,8 +267,15 @@
       <id-@ID>
         <modifier type="string">@MODIFIER</modifier>
         <situation type="string">@SITUATION</situation>
-       </id-@ID>@REACTION_LOOP_END
+      </id-@ID>@REACTION_LOOP_END
     </reactions>
+
+    <conditionalmods>@CONDITIONAL_MODIFIERS_LOOP_START
+      <id-@ID>
+        <modifier type="string">@MODIFIER</modifier>
+        <situation type="string">@SITUATION</situation>
+      </id-@ID>@CONDITIONAL_MODIFIERS_LOOP_END
+    </conditionalmods>
 
   </character>
 </root>

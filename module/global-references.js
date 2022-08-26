@@ -54,7 +54,6 @@ import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
  * @property {string}                 LEGAL
  * @property {ModifierBucket}         ModifierBucket
  * @property {GurpsActor|null}        LastActor
- * @property {string|null}            LastActorName
  * @property {string[]}               ChatCommandsInProcess
  * @property {string[]}               PendingOTFs
  * @property {boolean}                IgnoreTokenSelect

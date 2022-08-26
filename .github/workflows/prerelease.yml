@@ -1,0 +1,45 @@
+name: Pre-Release Creation
+
+on:
+  release:
+    types: [prereleased]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # get part of the tag after the `v`
+      - name: Extract tag version number
+        id: get_version
+        uses: battila7/get-version-action@v2
+
+      # Substitute the Manifest and Download URLs in the module.json
+      - name: Substitute Manifest and Download Links For Versioned Ones
+        id: sub_manifest_link_version
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: 'system.json'
+        env:
+          esmodules: '["module/gurps.js", "lib/xregexp-all.js"]'
+          version: ${{steps.get_version.outputs.version-without-v}}
+          download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/system.zip
+          manifest: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/system.json
+
+      # Create a zip file with all files required by the module to add to the release
+      - run: zip -r ./system.zip system.json template.json changelog.md LICENSE.txt icons/ lang/ lib/ module/ scripts/ styles/ templates/ ui/
+
+      # Create a release for this specific version
+      - name: Update Release with Files
+        id: create_version_release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true # Set this to false if you want to prevent updating existing releases
+          name: ${{ github.event.release.name }}
+          draft: ${{ github.event.release.unpublished }}
+          prerelease: ${{ github.event.release.prerelease }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: './system.json, ./system.zip'
+          tag: ${{ github.event.release.tag_name }}
+          body: ${{ github.event.release.body }}

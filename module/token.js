@@ -2,6 +2,28 @@ import { SETTING_MANEUVER_DETAIL, SETTING_MANEUVER_VISIBILITY, SYSTEM_NAME } fro
 import { GurpsActor } from './actor/actor.js'
 import Maneuvers from './actor/maneuver.js'
 import GurpsActiveEffect from './effects/active-effect.js'
+import { i18n } from '../lib/utilities.js'
+
+Hooks.once('init', async function () {
+  game.settings.register(SYSTEM_NAME, 'token-override-refresh-icon', {
+    name: i18n('GURPS.settingTokenOverrideRefresh', 'Override Token scaling'),
+    hint: i18n(
+      'GURPS.settingHintTokenOverrideRefresh',
+      'If "on", try to draw tokens to properly fit the hex grid. Overrides Foundry drawing functionality -- turn this off if there\'s any odd Foundry drawing behavior. Requires reloading the world.'
+    ),
+    scope: 'client',
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: value => console.log(`Token Override Refresh : ${value}`),
+  })
+})
+
+let overrideRefresh = false
+
+Hooks.once('ready', async function () {
+  overrideRefresh = game.settings.get(SYSTEM_NAME, 'token-override-refresh-icon')
+})
 
 export default class GurpsToken extends Token {
   static ready() {
@@ -93,7 +115,7 @@ export default class GurpsToken extends Token {
         await super.toggleEffect(GURPS.StatusEffect.lookup(id))
       }
     }
-    super.toggleEffect(effect, options)
+    await super.toggleEffect(effect, options)
   }
 
   async setEffectActive(name, active) {
@@ -174,5 +196,47 @@ export default class GurpsToken extends Token {
   async _toggleManeuverActiveEffect(effect, options = {}) {
     let data = Maneuvers.get(GurpsActiveEffect.getName(effect))
     await this.toggleEffect(data, options)
+  }
+
+  /**
+   * Size and display the Token Icon
+   *
+   * FIXME This is a horrible hack to fix Foundry's scaling of figures in a hex grid. By default, Foundry
+   *       scales tokens to fit the width of the grid if the "aspect" of the token is equal to or greater
+   *       than 1, where aspect is width/height. For Hex Columns, the width is measured from vertex to vertex;
+   *       for Hex Rows, the width is measured flat-side to flat-side. This results in tokens overflowing
+   *       a Hex Column, taking up space in adjacent hexes. This "fixes" that for a subset of tokens -- where
+   *       the token has an aspect of 1, we scale the token based on the smaller of the two dimensions.
+   */
+  _refreshIcon() {
+    // let override = game.settings.get(Settings.SYSTEM_NAME, 'token-override-refresh-icon')
+    if (!overrideRefresh) return super._refreshIcon()
+
+    // Size the texture aspect ratio within the token frame
+    const tex = this.texture
+    let aspect = tex.width / tex.height
+    const scale = this.icon.scale
+
+    if (aspect == 1) {
+      if (this.w > this.h) aspect = 0.9 // force scaling by height when width is greater than height
+    }
+
+    if (aspect >= 1) {
+      this.icon.width = this.w * this.data.scale
+      scale.y = Number(scale.x)
+    } else {
+      this.icon.height = this.h * this.data.scale
+      scale.x = Number(scale.y)
+    }
+
+    // Mirror horizontally or vertically
+    this.icon.scale.x = Math.abs(this.icon.scale.x) * (this.data.mirrorX ? -1 : 1)
+    this.icon.scale.y = Math.abs(this.icon.scale.y) * (this.data.mirrorY ? -1 : 1)
+
+    // Set rotation, position, and opacity
+    this.icon.rotation = this.data.lockRotation ? 0 : Math.toRadians(this.data.rotation)
+    this.icon.position.set(this.w / 2, this.h / 2)
+    this.icon.alpha = this.data.hidden ? Math.min(this.data.alpha, 0.5) : this.data.alpha
+    this.icon.visible = true
   }
 }
