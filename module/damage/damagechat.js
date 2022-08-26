@@ -181,7 +181,7 @@ export default class DamageChat {
     if (dice == null) return
 
     if (!tokenNames) tokenNames = []
-    if (event.data?.repeat > 1)
+    if (!!event && event.data?.repeat > 1)
       for (let i = 0; i < event.data.repeat; i++) 
         tokenNames.push('' + i)
 
