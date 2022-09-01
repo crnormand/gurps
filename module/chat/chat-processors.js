@@ -861,12 +861,12 @@ class ShowChatProcessor extends ChatProcessor {
   }
 
   matches(line) {
-    this.match = line.match(/^\/(showa?|sha?) (.*)/i)
+    this.match = line.match(/^\/(show|sh) (.*)/i)
     return !!this.match
   }
 
   usagematches(line) {
-    return line.match(/^[\/\?](showa?|sha?)$/i)
+    return line.match(/^[\/\?](show|sh)$/i)
   }
   usage() {
     return i18n("GURPS.chatHelpShow")
@@ -876,6 +876,15 @@ class ShowChatProcessor extends ChatProcessor {
   async process(line) {
     let args = splitArgs(this.match[2])
     this.priv(line)
+    let alpha = false
+    let pc = false
+    let npc = false
+    while (args[0].startsWith('-')) {
+      if (args[0] == '-a') alpha = true
+      if (args[0] == '-pc') pc = true
+      if (args[0] == '-npc') npc = true
+      args.shift()
+    }
     for (const orig of args) {
       this.priv('<hr>')
       if (orig.toLowerCase() == 'move') this.priv("<b>Basic Move / Current Move</b>")
@@ -886,40 +895,43 @@ class ShowChatProcessor extends ChatProcessor {
       for (const token of canvas.tokens.placeables) {
         let arg = orig
         let actor = token.actor
-        switch (orig.toLowerCase()) {
-          case 'hp': 
-            output.push({ value: actor.data.data.HP.value, text: `${actor.name}: ${actor.data.data.HP.value} / ${actor.data.data.HP.max}`, name: actor.name})
-             continue;
-          case 'fp': 
-            output.push({ value: actor.data.data.FP.value, text: `${actor.name}: ${actor.data.data.FP.value} / ${actor.data.data.FP.max}`, name: actor.name})
-             continue;
-          case 'move': 
-            output.push({ value: actor.data.data.currentmove, text: `${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`, name: actor.name})
-             continue;
-          case 'speed': 
-            output.push({ value: actor.data.data.basicspeed.value, text: `${actor.name}: ${actor.data.data.basicspeed.value}`, name: actor.name})
-            continue;
-          case 'fright':
-            arg = 'frightcheck'
-            break
-        }
-        if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) {
-          if (arg.includes(' ')) arg = '"' + arg + '"'
-          arg = 'S:' + arg
-        }
-        let action = parselink(arg)
-        if (!!action.action) {
-          action.action.calcOnly = true
-          let ret = await GURPS.performAction(action.action, actor)
-          if (!!ret.target) {
-            let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"!/sel ${token.id}\\\\/r [${arg}]]`
-            output.push({ value: ret.target, text: lbl, name: actor.name })
-            //this.priv(lbl)
+        let skip = (npc && actor.hasPlayerOwner) || (pc && !actor.hasPlayerOwner)
+        if (!skip) {
+          switch (orig.toLowerCase()) {
+            case 'hp': 
+              output.push({ value: actor.data.data.HP.value, text: `${actor.name}: ${actor.data.data.HP.value} / ${actor.data.data.HP.max}`, name: actor.name})
+               continue;
+            case 'fp': 
+              output.push({ value: actor.data.data.FP.value, text: `${actor.name}: ${actor.data.data.FP.value} / ${actor.data.data.FP.max}`, name: actor.name})
+               continue;
+            case 'move': 
+              output.push({ value: actor.data.data.currentmove, text: `${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`, name: actor.name})
+               continue;
+            case 'speed': 
+              output.push({ value: actor.data.data.basicspeed.value, text: `${actor.name}: ${actor.data.data.basicspeed.value}`, name: actor.name})
+              continue;
+            case 'fright':
+              arg = 'frightcheck'
+              break
+          }
+          if (!GURPS.PARSELINK_MAPPINGS[arg.toUpperCase()]) {
+            if (arg.includes(' ')) arg = '"' + arg + '"'
+            arg = 'S:' + arg
+          }
+          let action = parselink(arg)
+          if (!!action.action) {
+            action.action.calcOnly = true
+            let ret = await GURPS.performAction(action.action, actor)
+            if (!!ret.target) {
+              let lbl = `["${ret.thing} (${ret.target}) : ${actor.name}"!/sel ${token.id}\\\\/r [${arg}]]`
+              output.push({ value: ret.target, text: lbl, name: actor.name })
+              //this.priv(lbl)
+            }
           }
         }
       }
       let sortfunc = (a,b) => {return a.value < b.value ? 1 : -1}
-      if (!!this.match[1].match(/sho?w?a/)) sortfunc = (a,b) => {return a.name > b.name ? 1 : -1}
+      if (alpha) sortfunc = (a,b) => {return a.name > b.name ? 1 : -1}
       output.sort(sortfunc).forEach(e => this.priv(e.text))
     }
   }

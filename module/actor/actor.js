@@ -612,7 +612,8 @@ export class GurpsActor extends Actor {
 
     if (foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_MANEUVER)) {
       let value = foundry.utils.getProperty(this.data, PROPERTY_MOVEOVERRIDE_MANEUVER)
-      let reason = i18n(GURPS.Maneuvers.get(this.getGurpsActorData().conditions.maneuver).label)
+      let mv = GURPS.Maneuvers.get(this.getGurpsActorData().conditions.maneuver)
+      let reason = !!mv ? i18n(mv).label : ''
 
       adjustment = this._adjustMove(move, threshold, value, reason)
     }
@@ -1852,7 +1853,7 @@ export class GurpsActor extends Actor {
             m.techlevel = i.tech_level || ''
             m.cost = i.value || ''
             m.notes = i.notes || ''
-            if (!!m.notes && w.notes) i.notes += '\n' + w.notes
+            if (!!m.notes && w.usage_notes) m.notes += '\n' + w.usage_notes
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
             m.import = w.calc?.level.toString() || '0'
@@ -1872,7 +1873,7 @@ export class GurpsActor extends Actor {
             r.legalityclass = i.legality_class || '4'
             r.ammo = 0
             r.notes = i.notes || ''
-            if (!!r.notes && w.notes) i.notes += '\n' + w.notes
+            if (!!r.notes && w.usage_notes) r.notes += '\n' + w.usage_notes
             r.pageRef(i.reference || '')
             r.mode = w.usage || ''
             r.import = w.calc?.level || '0'
