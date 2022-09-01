@@ -310,7 +310,7 @@ class ModifierStack {
     var oldmod
     let i = list.findIndex(e => e.desc == reason && !e.desc.match(/\* *Cost/i)) // Don't double up on *Costs modifiers... so they will pay the full cost
     if (i > -1) {
-      if (replace) list.splice(i, 1)
+      if (replace) list.splice(i, 1) // only used by range modifier
       else oldmod = list[i] // Must modify list (cannot use filter())
     }
     let m = (mod + '').match(/([+-])?@margin/i)
@@ -478,6 +478,7 @@ export class ModifierBucket extends Application {
    * @param {string | null} id
    */
   sendBucketToPlayer(id) {
+    if ("SHOWALL" == id) return
     if (!id) {
       // Only occurs if the GM clicks on 'everyone'
       let _users = game.users
@@ -506,10 +507,12 @@ export class ModifierBucket extends Application {
     if (game.user?.hasRole('GAMEMASTER'))
       // Only actual GMs can update other user's flags
       users.forEach(u => u.setFlag('gurps', 'modifierstack', mb)) // Only used by /showmbs.   Not used by local users.
+    let ctrl = game.keyboard.isModifierActive(KeyboardManager.MODIFIER_KEYS.CONTROL)
     game.socket?.emit('system.gurps', {
       type: 'updatebucket',
       users: users.map(u => u.id),
       bucket: GURPS.ModifierBucket.modifierStack,
+      add: ctrl
     })
   }
 
