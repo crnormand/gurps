@@ -1187,7 +1187,7 @@ if (!globalThis.GURPS) {
     let best = 0
     if (!isSpellOnly)
       recurselist(actor.skills, s => {
-        if (s.name.match(skillRegExp) && s.level > best) {
+        if (s.name?.match(skillRegExp) && s.level > best) {
           t = s
           best = parseInt(s.level)
         }
@@ -1195,7 +1195,7 @@ if (!globalThis.GURPS) {
     if (!t)
       if (!isSkillOnly)
         recurselist(actor.spells, s => {
-          if (s.name.match(skillRegExp) && s.level > best) {
+          if (s.name?.match(skillRegExp) && s.level > best) {
             t = s
             best = parseInt(s.level)
           }

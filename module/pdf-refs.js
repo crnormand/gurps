@@ -87,7 +87,7 @@ export function handlePdf(links) {
       book = t.substring(0, i).trim()
       page = parseInt(t.substr(i + 1))
     } else {
-      book = t.replace(/[0-9]*/g, '').trim()
+      book = t.replace(/(.*?)[0-9].*/g, '$1').trim()
       page = parseInt(t.replace(/[a-zA-Z]*/g, ''))
     }
     // Special case for Separate Basic Set PDFs

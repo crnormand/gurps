@@ -2,6 +2,17 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.14.10
+
+- Fixed Skill search if skill has no name
+- Catch bad maneuver data during import
+- Don't throw exception when a bad token is in combat
+- Protect char sheet positioning if bad position
+- Fixed PDF references like "b40-43"
+- Fixed, reinstalled individual dice results on targetted rolls.
+- Enhanced /show to accept -a (sort alphabetically), -pc and -npc flags
+- Fixed import of usage notes for melee and ranged weapons
+
 Release 0.14.9 - 8/26/2022
 
 - @Neck fixed the item parsing bug (with missing names)

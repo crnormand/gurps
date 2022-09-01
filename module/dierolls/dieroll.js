@@ -34,6 +34,8 @@ export async function doRoll({
   targetmods = await GURPS.ModifierBucket.applyMods(targetmods) // append any global mods
 
   chatdata['targetmods'] = targetmods
+  let multiples = []    // The roll results (to display the individual dice rolls)
+  chatdata['multiples'] = multiples
 
   for (let m of targetmods) {
     modifier += m.modint
@@ -115,6 +117,11 @@ export async function doRoll({
       if (failure && optionalArgs.obj?.failotf) GURPS.executeOTF(optionalArgs.obj.failotf, optionalArgs.event)
       if (!failure && optionalArgs.obj?.passotf) GURPS.executeOTF(optionalArgs.obj.passotf, optionalArgs.event)
     }
+    let r = {}
+    r['rtotal'] = rtotal
+    r['loaded'] = !!roll.isLoaded
+    r['rolls'] = !!roll.dice[0] ? roll.dice[0].results.map(it => it.result).join() : ''
+    multiples.push(r)
   } else {
     // This is non-targeted, non-damage roll where the modifier is added to the roll, not the target
     // NOTE:   Damage rolls have been moved to damagemessage.js/DamageChat
@@ -125,8 +132,6 @@ export async function doRoll({
       min = 1
     }
 
-    let multiples = []
-    chatdata['multiples'] = multiples
     let max = +(optionalArgs.event?.data?.repeat) || 1
     if (max > 1) chatdata['chatthing'] = 'x' + max
     for (let i = 0; i < max; i++) {
