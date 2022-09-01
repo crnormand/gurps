@@ -25,9 +25,16 @@
             </div>
             {{#if everyone}}
               <div class='everyone'>
-                <button class="gmbutton" data-id="{{everyone.id}}" type="button">{{everyone.name}}</button>
+                <span><button class="gmbutton" data-id="{{everyone.id}}" type="button">{{everyone.name}}</button>
+                <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button></span>
+              </div>
+            {{else}}
+              <div class='everyone'>
+                 <button class="gmbutton" data-id="SHOWALL" type="button">{{i18n 'GURPS.showQuestion'}}</button>
               </div>
             {{/if}}
+                            
+            
           </div>
         {{/unless}}
 
