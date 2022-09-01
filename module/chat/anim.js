@@ -105,11 +105,12 @@ export class AnimChatProcessor extends ChatProcessor {
     if (effect.centered) {
       files = effect.files.map(f => fileWidth(f))
     } else {
+      let stretchfactor = 1 + effect.stretch
       let bestWidth = 0
       let best = 0
       for (const file of effect.files) {
         let f = fileWidth(file)
-        let s = distance / f.width
+        let s = distance / (f.width / stretchfactor)
         f.scale = s
         files.push(f)
         if (s >= best && s < 1.0) {
