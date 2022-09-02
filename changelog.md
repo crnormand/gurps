@@ -15,6 +15,7 @@ Release 0.14.10
 - Fixed /anim file selection algorithm (to detgermine best fit).   NOTE: You may need to adjust your current targeted /anim commands to get the right "look".
 - Added 'Show?' button to tooltip
 - Holding CTRL/CMD and clicking a "send to" will add, not replace player's bucket
+- Update to JB2A 0.4.9
 
 Release 0.14.9 - 8/26/2022
 
