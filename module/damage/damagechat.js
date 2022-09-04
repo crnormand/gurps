@@ -240,7 +240,7 @@ export default class DamageChat {
     if (originalDiceText.slice(-1) === '!') diceText = diceText + '!'
     diceText = diceText.replace('−', '-') // replace minus (&#8722;) with hyphen
 
-    let multiplier = !!result.groups?.mult ? parseInt(result.groups.mult) : 1
+    let multiplier = !!result.groups?.mult ? parseFloat(result.groups.mult) : 1
     let divisor = !!result.groups?.divisor ? parseFloat(result.groups.divisor) : 0
 
     let adds1 = 0
@@ -498,7 +498,7 @@ export default class DamageChat {
 }
 
 DamageChat.fullRegex =
-  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
+  /^(?<roll>\d+(?<D>d\d*)?(?<adds1>[+-]@?\w+)?(?<adds2>[+-]\d+)?)(?:[×xX\*](?<mult>\d+\.?\d*))?(?: ?\((?<divisor>-?\d+(?:\.\d+)?)\))?/
 
 /*
 let transfer = {
