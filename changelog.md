@@ -16,6 +16,7 @@ Release 0.14.10
 - Added 'Show?' button to tooltip
 - Holding CTRL/CMD and clicking a "send to" will add, not replace player's bucket
 - Update to JB2A 0.4.9
+- Fixed parsing for 1/2 damage, ex: [2Dx0.5 cut]
 
 Release 0.14.9 - 8/26/2022
 
