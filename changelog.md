@@ -18,6 +18,7 @@ Release 0.14.10
 - Update to JB2A 0.4.9
 - Fixed parsing for 1/2 damage, ex: [2Dx0.5 cut]
 - Fixed other eqt cost in header bar
+- Fixed damage chat message "attacker" (which may be different than 'selected')
 
 Release 0.14.9 - 8/26/2022
 

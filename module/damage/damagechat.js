@@ -432,7 +432,7 @@ export default class DamageChat {
     })
 
     // @ts-ignore
-    const speaker = ChatMessage.getSpeaker(actor)
+    const speaker = ChatMessage.getSpeaker({actor: actor})
     /** @type {Record<string,any>} */
     let messageData = {
       user: game.user.id,
