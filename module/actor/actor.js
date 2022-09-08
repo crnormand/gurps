@@ -2085,7 +2085,7 @@ export class GurpsActor extends Actor {
    * @param {string | undefined} [importpath]
    */
   async importFromGCSv1(xml, importname, importpath, suppressMessage = false) {
-    const GCA5Version = 'GCA5-13'
+    const GCA5Version = 'GCA5-14'
     const GCAVersion = 'GCA-11'
     const GCSVersion = 'GCS-5'
     if (importname.endsWith('.gcs'))
