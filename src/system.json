@@ -26,13 +26,9 @@
 		"maximum": 10
 	},
 	"templateVersion": 2,
-	"esmodules": [
-		"module/gurps.js"
-	],
+	"esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
 	"scripts": [],
-	"styles": [
-		"styles/gurps.css"
-	],
+	"styles": ["styles/gurps.css"],
 	"packs": [],
 	"languages": [
 		{

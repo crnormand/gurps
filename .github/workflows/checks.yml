@@ -1,11 +1,10 @@
-name: Release
+name: Checks
 
 on:
-    release:
-        types: [published]
+    - push
+    - pull_request
 
 env:
-    package_type: system
     node_version: 16
 
 jobs:
@@ -110,57 +109,5 @@ jobs:
             - name: Install dependencies
               run: npm ci --cache .npm --prefer-offline
 
-            - name: Extract tag version number
-              id: get_version
-              uses: battila7/get-version-action@v2
-
-            - name: Substitute Manifest and Download Links For Versioned Ones
-              id: sub_manifest_link_version
-              uses: microsoft/variable-substitution@v1
-              with:
-                  files: "src/${{ env.package_type }}.json"
-              env:
-                  version: ${{ steps.get_version.outputs.version-without-v }}
-                  url: https://github.com/${{ github.repository }}
-                  manifest: https://github.com/${{ github.repository }}/releases/latest/download/${{ env.package_type }}.json
-                  download: https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/${{ env.package_type }}.zip
-
             - name: Build
               run: npm run build
-
-            - name: Archive production artifacts
-              uses: actions/upload-artifact@v2
-              with:
-                  name: dist
-                  path: dist
-
-    publish:
-        needs:
-            - lint
-            - test
-            - typecheck
-            - build
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-
-            - name: Download production artifacts for publication
-              uses: actions/download-artifact@v2
-              with:
-                  name: dist
-                  path: dist
-
-            - name: Create zip file
-              working-directory: ./dist
-              run: zip -r ../${{ env.package_type }}.zip .
-
-            - name: Create release
-              id: create_version_release
-              uses: ncipollo/release-action@v1
-              with:
-                  allowUpdates: true
-                  name: ${{ github.event.release.name }}
-                  token: ${{ secrets.GITHUB_TOKEN }}
-                  artifacts: "./dist/${{ env.package_type }}.json, ./${{ env.package_type }}.zip"
-                  body: ${{ github.event.release.body }}
