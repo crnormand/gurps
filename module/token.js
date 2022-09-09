@@ -58,7 +58,7 @@ export default class GurpsToken extends Token {
     if (effects && effects.length > 0) {
       // restore the original token effects in case we've changed them
       // @ts-ignore
-      effects.forEach(it => (it.data.icon = it.getFlag('gurps', 'icon')))
+      effects.forEach(it => (it.icon = it.getFlag('gurps', 'icon')))
 
       // GM and Owner always see the exact maneuver.. Otherwise:
       if (!game.user?.isGM && !this.isOwner) {
@@ -69,13 +69,13 @@ export default class GurpsToken extends Token {
           effects
             .filter(it => 'feint' === /** @type {string} */ (it.getFlag('gurps', 'name')))
             // @ts-ignore
-            .forEach(it => (it.data.icon = it.getFlag('gurps', 'alt')))
+            .forEach(it => (it.icon = it.getFlag('gurps', 'alt')))
 
           if (detail === 'General') {
             // replace every maneuver that has an alternate appearance with it
             effects.forEach(it => {
               let alt = it.getFlag('gurps', 'alt')
-              if (alt) it.data.icon = /** @type {string} */ (alt)
+              if (alt) it.icon = /** @type {string} */ (alt)
             })
           }
         }
@@ -85,11 +85,11 @@ export default class GurpsToken extends Token {
       const visibility = game.settings.get(SYSTEM_NAME, SETTING_MANEUVER_VISIBILITY)
 
       // set all icons to null
-      if (visibility === 'NoOne') effects.forEach(it => (it.data.icon = null))
+      if (visibility === 'NoOne') effects.forEach(it => (it.icon = null))
       else if (visibility === 'GMAndOwner')
         if (!game.user?.isGM && !this.isOwner)
           // set icon to null if neither GM nor owner
-          effects.forEach(it => (it.data.icon = null))
+          effects.forEach(it => (it.icon = null))
     } // if (effects)
 
     // call the original method
@@ -222,21 +222,21 @@ export default class GurpsToken extends Token {
     }
 
     if (aspect >= 1) {
-      this.icon.width = this.w * this.data.scale
+      this.icon.width = this.w * this.scale
       scale.y = Number(scale.x)
     } else {
-      this.icon.height = this.h * this.data.scale
+      this.icon.height = this.h * this.scale
       scale.x = Number(scale.y)
     }
 
     // Mirror horizontally or vertically
-    this.icon.scale.x = Math.abs(this.icon.scale.x) * (this.data.mirrorX ? -1 : 1)
-    this.icon.scale.y = Math.abs(this.icon.scale.y) * (this.data.mirrorY ? -1 : 1)
+    this.icon.scale.x = Math.abs(this.icon.scale.x) * (this.mirrorX ? -1 : 1)
+    this.icon.scale.y = Math.abs(this.icon.scale.y) * (this.mirrorY ? -1 : 1)
 
     // Set rotation, position, and opacity
-    this.icon.rotation = this.data.lockRotation ? 0 : Math.toRadians(this.data.rotation)
+    this.icon.rotation = this.lockRotation ? 0 : Math.toRadians(this.rotation)
     this.icon.position.set(this.w / 2, this.h / 2)
-    this.icon.alpha = this.data.hidden ? Math.min(this.data.alpha, 0.5) : this.data.alpha
+    this.icon.alpha = this.hidden ? Math.min(this.alpha, 0.5) : this.alpha
     this.icon.visible = true
   }
 }

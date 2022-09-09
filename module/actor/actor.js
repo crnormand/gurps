@@ -234,7 +234,7 @@ export class GurpsActor extends Actor {
         }
       })
       if (updated) {
-        await this.update({ 'data.ads': newads })
+        await this.update({ 'sytem.ads': newads })
       }
     }
   }
@@ -256,8 +256,8 @@ export class GurpsActor extends Actor {
     // Must be done at end
     this._calculateWeights()
 
-    let maneuver = this.effects.contents.find(it => it.data.flags?.core?.statusId === 'maneuver')
-    this.system.conditions.maneuver = !!maneuver ? maneuver.data.flags.gurps.name : 'undefined'
+    let maneuver = this.effects.contents.find(it => it.flags?.core?.statusId === 'maneuver')
+    this.system.conditions.maneuver = !!maneuver ? maneuver.flags.gurps.name : 'undefined'
     this.ignoreRender = saved
     if (!saved) setTimeout(() => this._forceRender(), 500)
   }
@@ -457,11 +457,11 @@ export class GurpsActor extends Actor {
     var eqtkey
     let data = this.system
     recurselist(data.equipment.carried, (e, k, d) => {
-      if (e[key] == id) eqtkey = 'data.equipment.carried.' + k
+      if (e[key] == id) eqtkey = 'sytem.equipment.carried.' + k
     })
     if (!eqtkey)
       recurselist(data.equipment.other, (e, k, d) => {
-        if (e[key] == id) eqtkey = 'data.equipment.other.' + k
+        if (e[key] == id) eqtkey = 'sytem.equipment.other.' + k
       })
     return eqtkey
   }
@@ -771,8 +771,8 @@ export class GurpsActor extends Actor {
    */
   async update(data, context) {
     if (game.settings.get(settings.SYSTEM_NAME, settings.SETTING_AUTOMATIC_ONETHIRD)) {
-      if (data.hasOwnProperty('data.HP.value')) {
-        let flag = data['data.HP.value'] < this.system.HP.max / 3
+      if (data.hasOwnProperty('sytem.HP.value')) {
+        let flag = data['sytem.HP.value'] < this.system.HP.max / 3
         if (!!this.system.conditions.reeling != flag) {
           this.toggleEffectByName('reeling', flag)
 
@@ -787,8 +787,8 @@ export class GurpsActor extends Actor {
           ui.combat?.render()
         }
       }
-      if (data.hasOwnProperty('data.FP.value')) {
-        let flag = data['data.FP.value'] < this.system.FP.max / 3
+      if (data.hasOwnProperty('sytem.FP.value')) {
+        let flag = data['sytem.FP.value'] < this.system.FP.max / 3
         if (!!this.system.conditions.exhausted != flag) {
           this.toggleEffectByName('exhausted', flag)
 
@@ -917,7 +917,7 @@ export class GurpsActor extends Actor {
     action.count = 1
     delete action.accumulate
     accumulators.push(action)
-    await this.update({ 'data.conditions.damageAccumulators': accumulators })
+    await this.update({ 'sytem.conditions.damageAccumulators': accumulators })
     GURPS.ModifierBucket.render()
     //console.log(accumulators)
   }
@@ -928,20 +928,20 @@ export class GurpsActor extends Actor {
 
   async incrementDamageAccumulator(index) {
     this.damageAccumulators[index].count++
-    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    await this.update({ 'sytem.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
   async decrementDamageAccumulator(index) {
     this.damageAccumulators[index].count--
     if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
-    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    await this.update({ 'sytem.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
   async clearDamageAccumulator(index) {
     this.damageAccumulators.splice(index, 1)
-    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    await this.update({ 'sytem.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
@@ -956,7 +956,7 @@ export class GurpsActor extends Actor {
     }
     accumulator.formula = roll
     this.damageAccumulators.splice(index, 1)
-    await this.update({ 'data.conditions.damageAccumulators': this.damageAccumulators })
+    await this.update({ 'sytem.conditions.damageAccumulators': this.damageAccumulators })
     await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
@@ -1172,26 +1172,26 @@ export class GurpsActor extends Actor {
     }
 
     return {
-      'data.attributes': att,
-      'data.HP': data.HP,
-      'data.FP': data.FP,
-      'data.basiclift': data.basiclift,
-      'data.basicmove': data.basicmove,
-      'data.basicspeed': data.basicspeed,
-      'data.thrust': data.thrust,
-      'data.swing': data.swing,
-      'data.currentmove': data.currentmove,
-      'data.frightcheck': data.frightcheck,
-      'data.hearing': data.hearing,
-      'data.tastesmell': data.tastesmell,
-      'data.touch': data.touch,
-      'data.vision': data.vision,
-      'data.liftingmoving': lm,
-      'data.currentmove': cm,
-      'data.currentdodge': cd,
-      'data.-=encumbrance': null,
-      'data.encumbrance': es,
-      'data.QP': data.QP,
+      'sytem.attributes': att,
+      'sytem.HP': data.HP,
+      'sytem.FP': data.FP,
+      'sytem.basiclift': data.basiclift,
+      'sytem.basicmove': data.basicmove,
+      'sytem.basicspeed': data.basicspeed,
+      'sytem.thrust': data.thrust,
+      'sytem.swing': data.swing,
+      'sytem.currentmove': data.currentmove,
+      'sytem.frightcheck': data.frightcheck,
+      'sytem.hearing': data.hearing,
+      'sytem.tastesmell': data.tastesmell,
+      'sytem.touch': data.touch,
+      'sytem.vision': data.vision,
+      'sytem.liftingmoving': lm,
+      'sytem.currentmove': cm,
+      'sytem.currentdodge': cd,
+      'sytem.-=encumbrance': null,
+      'sytem.encumbrance': es,
+      'sytem.QP': data.QP,
     }
   }
 
@@ -1228,8 +1228,8 @@ export class GurpsActor extends Actor {
     ts.skin = p.skin || ''
 
     const r = {
-      'data.-=traits': null,
-      'data.traits': ts,
+      'sytem.-=traits': null,
+      'sytem.traits': ts,
     }
 
     if (!!p.portrait && game.settings.get(settings.SYSTEM_NAME, settings.SETTING_OVERWRITE_PORTRAITS)) {
@@ -1276,7 +1276,7 @@ export class GurpsActor extends Actor {
   }
 
   importSizeFromGCSv1(commit, profile, ads, skills, equipment) {
-    let ts = commit['data.traits']
+    let ts = commit['sytem.traits']
     let final = profile.SM || 0
     let temp = [].concat(ads, skills, equipment)
     let all = []
@@ -1292,8 +1292,8 @@ export class GurpsActor extends Actor {
     }
     ts.sizemod = this.signedNum(final)
     return {
-      'data.-=traits': null,
-      'data.traits': ts,
+      'sytem.-=traits': null,
+      'sytem.traits': ts,
     }
   }
 
@@ -1304,8 +1304,8 @@ export class GurpsActor extends Actor {
         temp = temp.concat(this.importAd(i, ''))
       }
     return {
-      'data.-=ads': null,
-      'data.ads': this.foldList(temp),
+      'sytem.-=ads': null,
+      'sytem.ads': this.foldList(temp),
     }
   }
 
@@ -1347,8 +1347,8 @@ export class GurpsActor extends Actor {
       temp = temp.concat(this.importSk(i, ''))
     }
     return {
-      'data.-=skills': null,
-      'data.skills': this.foldList(temp),
+      'sytem.-=skills': null,
+      'sytem.skills': this.foldList(temp),
     }
   }
 
@@ -1396,8 +1396,8 @@ export class GurpsActor extends Actor {
       temp = temp.concat(this.importSp(i, ''))
     }
     return {
-      'data.-=spells': null,
-      'data.spells': this.foldList(temp),
+      'sytem.-=spells': null,
+      'sytem.spells': this.foldList(temp),
     }
   }
 
@@ -1481,8 +1481,8 @@ export class GurpsActor extends Actor {
       }
     })
     return {
-      'data.-=equipment': null,
-      'data.equipment': equipment,
+      'sytem.-=equipment': null,
+      'sytem.equipment': equipment,
     }
   }
 
@@ -1560,8 +1560,8 @@ export class GurpsActor extends Actor {
       if (!!t.save) temp.push(t)
     })
     return {
-      'data.-=notes': null,
-      'data.notes': this.foldList(temp),
+      'sytem.-=notes': null,
+      'sytem.notes': this.foldList(temp),
     }
   }
 
@@ -1725,9 +1725,9 @@ export class GurpsActor extends Actor {
     }
     if (saveprot) {
       return {
-        'data.-=hitlocations': null,
-        'data.hitlocations': prot,
-        'data.additionalresources.bodyplan': bodyplan,
+        'sytem.-=hitlocations': null,
+        'sytem.hitlocations': prot,
+        'sytem.additionalresources.bodyplan': bodyplan,
       }
     } else return {}
   }
@@ -1752,15 +1752,15 @@ export class GurpsActor extends Actor {
     for (let i of spells) p_spells = this.skPointCount(i, p_spells)
     p_unspent -= p_atts + p_ads + p_disads + p_quirks + p_skills + p_spells + p_race
     return {
-      'data.totalpoints.attributes': p_atts,
-      'data.totalpoints.ads': p_ads,
-      'data.totalpoints.disads': p_disads,
-      'data.totalpoints.quirks': p_quirks,
-      'data.totalpoints.skills': p_skills,
-      'data.totalpoints.spells': p_spells,
-      'data.totalpoints.unspent': p_unspent,
-      'data.totalpoints.total': p_total,
-      'data.totalpoints.race': p_race,
+      'sytem.totalpoints.attributes': p_atts,
+      'sytem.totalpoints.ads': p_ads,
+      'sytem.totalpoints.disads': p_disads,
+      'sytem.totalpoints.quirks': p_quirks,
+      'sytem.totalpoints.skills': p_skills,
+      'sytem.totalpoints.spells': p_spells,
+      'sytem.totalpoints.unspent': p_unspent,
+      'sytem.totalpoints.total': p_total,
+      'sytem.totalpoints.race': p_race,
     }
   }
 
@@ -1817,10 +1817,10 @@ export class GurpsActor extends Actor {
       GURPS.put(cs, c, index_c++)
     }
     return {
-      'data.-=reactions': null,
-      'data.reactions': rs,
-      'data.-=conditionalmods': null,
-      'data.conditionalmods': cs,
+      'sytem.-=reactions': null,
+      'sytem.reactions': rs,
+      'sytem.-=conditionalmods': null,
+      'sytem.conditionalmods': cs,
     }
   }
 
@@ -1883,10 +1883,10 @@ export class GurpsActor extends Actor {
         }
     }
     return {
-      'data.-=melee': null,
-      'data.melee': melee,
-      'data.-=ranged': null,
-      'data.ranged': ranged,
+      'sytem.-=melee': null,
+      'sytem.melee': melee,
+      'sytem.-=ranged': null,
+      'sytem.ranged': ranged,
     }
   }
 
@@ -1968,12 +1968,12 @@ export class GurpsActor extends Actor {
     let starttime = performance.now()
     let commit = {}
 
-    commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
+    commit = { ...commit, ...{ 'sytem.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.system.additionalresources || {}
     ar.importname = importname || ar.importname
     ar.importpath = importpath || ar.importpath
     try {
-      commit = { ...commit, ...{ 'data.additionalresources': ar } }
+      commit = { ...commit, ...{ 'sytem.additionalresources': ar } }
       commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) }
       commit = { ...commit, ...(await this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date)) }
       commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment) }
@@ -2208,12 +2208,12 @@ export class GurpsActor extends Actor {
     let starttime = performance.now()
     let commit = {}
 
-    commit = { ...commit, ...{ 'data.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
+    commit = { ...commit, ...{ 'sytem.lastImport': new Date().toString().split(' ').splice(1, 4).join(' ') } }
     let ar = this.system.additionalresources || {}
     ar.importname = importname || ar.importname
     ar.importpath = importpath || ar.importpath
     ar.importversion = ra.version
-    commit = { ...commit, ...{ 'data.additionalresources': ar } }
+    commit = { ...commit, ...{ 'sytem.additionalresources': ar } }
 
     try {
       // This is going to get ugly, so break out various data into different methods
@@ -2375,8 +2375,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=reactions': null,
-      'data.reactions': rs,
+      'sytem.-=reactions': null,
+      'sytem.reactions': rs,
     }
   }
 
@@ -2395,8 +2395,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=conditionalmods': null,
-      'data.conditionalmods': rs,
+      'sytem.-=conditionalmods': null,
+      'sytem.conditionalmods': rs,
     }
   }
 
@@ -2420,8 +2420,8 @@ export class GurpsActor extends Actor {
       }
     })
     return {
-      'data.-=reactions': null,
-      'data.reactions': rs,
+      'sytem.-=reactions': null,
+      'sytem.reactions': rs,
     }
   }
 
@@ -2442,8 +2442,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=languages': null,
-      'data.languages': langs,
+      'sytem.-=languages': null,
+      'sytem.languages': langs,
     }
   }
 
@@ -2455,15 +2455,15 @@ export class GurpsActor extends Actor {
 
     let i = this.intFrom
     return {
-      'data.totalpoints.attributes': i(json.attributes),
-      'data.totalpoints.ads': i(json.ads),
-      'data.totalpoints.disads': i(json.disads),
-      'data.totalpoints.quirks': i(json.quirks),
-      'data.totalpoints.skills': i(json.skills),
-      'data.totalpoints.spells': i(json.spells),
-      'data.totalpoints.unspent': i(json.unspentpoints),
-      'data.totalpoints.total': i(json.totalpoints),
-      'data.totalpoints.race': i(json.race),
+      'sytem.totalpoints.attributes': i(json.attributes),
+      'sytem.totalpoints.ads': i(json.ads),
+      'sytem.totalpoints.disads': i(json.disads),
+      'sytem.totalpoints.quirks': i(json.quirks),
+      'sytem.totalpoints.skills': i(json.skills),
+      'sytem.totalpoints.spells': i(json.spells),
+      'sytem.totalpoints.unspent': i(json.unspentpoints),
+      'sytem.totalpoints.total': i(json.totalpoints),
+      'sytem.totalpoints.race': i(json.race),
     }
   }
 
@@ -2505,8 +2505,8 @@ export class GurpsActor extends Actor {
       if (!!t.save) temp.push(t)
     })
     return {
-      'data.-=notes': null,
-      'data.notes': this.foldList(temp),
+      'sytem.-=notes': null,
+      'sytem.notes': this.foldList(temp),
     }
   }
 
@@ -2667,9 +2667,9 @@ export class GurpsActor extends Actor {
     }
     if (saveprot)
       return {
-        'data.-=hitlocations': null,
-        'data.hitlocations': prot,
-        'data.additionalresources.bodyplan': bodyplan,
+        'sytem.-=hitlocations': null,
+        'sytem.hitlocations': prot,
+        'sytem.additionalresources.bodyplan': bodyplan,
       }
     else return {}
   }
@@ -2824,8 +2824,8 @@ export class GurpsActor extends Actor {
       }
     })
     return {
-      'data.-=equipment': null,
-      'data.equipment': equipment,
+      'sytem.-=equipment': null,
+      'sytem.equipment': equipment,
     }
   }
 
@@ -2881,10 +2881,10 @@ export class GurpsActor extends Actor {
       GURPS.put(es, e, index++)
     }
     return {
-      'data.currentmove': cm,
-      'data.currentdodge': cd,
-      'data.-=encumbrance': null,
-      'data.encumbrance': es,
+      'sytem.currentmove': cm,
+      'sytem.currentdodge': cd,
+      'sytem.-=encumbrance': null,
+      'sytem.encumbrance': es,
     }
   }
 
@@ -2994,8 +2994,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=melee': null,
-      'data.melee': melee,
+      'sytem.-=melee': null,
+      'sytem.melee': melee,
     }
   }
 
@@ -3050,8 +3050,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=ranged': null,
-      'data.ranged': ranged,
+      'sytem.-=ranged': null,
+      'sytem.ranged': ranged,
     }
   }
 
@@ -3093,8 +3093,8 @@ export class GurpsActor extends Actor {
       console.log(this)
     }
     return {
-      'data.-=traits': null,
-      'data.traits': ts,
+      'sytem.-=traits': null,
+      'sytem.traits': ts,
     }
   }
 
@@ -3191,21 +3191,21 @@ export class GurpsActor extends Actor {
     data.vision = i(json.vision)
 
     return {
-      'data.attributes': att,
-      'data.HP': data.HP,
-      'data.FP': data.FP,
-      'data.basiclift': data.basiclift,
-      'data.basicmove': data.basicmove,
-      'data.basicspeed': data.basicspeed,
-      'data.thrust': data.thrust,
-      'data.swing': data.swing,
-      'data.currentmove': data.currentmove,
-      'data.frightcheck': data.frightcheck,
-      'data.hearing': data.hearing,
-      'data.tastesmell': data.tastesmell,
-      'data.touch': data.touch,
-      'data.vision': data.vision,
-      'data.liftingmoving': lm,
+      'sytem.attributes': att,
+      'sytem.HP': data.HP,
+      'sytem.FP': data.FP,
+      'sytem.basiclift': data.basiclift,
+      'sytem.basicmove': data.basicmove,
+      'sytem.basicspeed': data.basicspeed,
+      'sytem.thrust': data.thrust,
+      'sytem.swing': data.swing,
+      'sytem.currentmove': data.currentmove,
+      'sytem.frightcheck': data.frightcheck,
+      'sytem.hearing': data.hearing,
+      'sytem.tastesmell': data.tastesmell,
+      'sytem.touch': data.touch,
+      'sytem.vision': data.vision,
+      'sytem.liftingmoving': lm,
     }
   }
 
@@ -3245,8 +3245,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=skills': null,
-      'data.skills': this.foldList(temp),
+      'sytem.-=skills': null,
+      'sytem.skills': this.foldList(temp),
     }
   }
 
@@ -3299,8 +3299,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=spells': null,
-      'data.spells': this.foldList(temp),
+      'sytem.-=spells': null,
+      'sytem.spells': this.foldList(temp),
     }
   }
 
@@ -3314,8 +3314,8 @@ export class GurpsActor extends Actor {
     this.importBaseAdvantages(list, adsjson)
     this.importBaseAdvantages(list, disadsjson)
     return {
-      'data.-=ads': null,
-      'data.ads': this.foldList(list),
+      'sytem.-=ads': null,
+      'sytem.ads': this.foldList(list),
     }
   }
 
@@ -3373,8 +3373,8 @@ export class GurpsActor extends Actor {
       }
     }
     return {
-      'data.-=ads': null,
-      'data.ads': this.foldList(temp),
+      'sytem.-=ads': null,
+      'sytem.ads': this.foldList(temp),
     }
   }
 
@@ -3485,10 +3485,10 @@ export class GurpsActor extends Actor {
     let data = arrayToObject(trackers)
 
     // remove all trackers
-    await this.update({ 'data.additionalresources.-=tracker': null })
+    await this.update({ 'sytem.additionalresources.-=tracker': null })
     // add the new "array" of trackers
-    if (data) this.update({ 'data.additionalresources.tracker': data })
-    else this.update('data.additionalresources.tracker', {})
+    if (data) this.update({ 'sytem.additionalresources.tracker': data })
+    else this.update('sytem.additionalresources.tracker', {})
 
     this._forceRender()
   }
@@ -3499,8 +3499,8 @@ export class GurpsActor extends Actor {
     let trackerData = { name: '', value: 0, min: 0, max: 0, points: 0 }
     let data = GurpsActor.addTrackerToDataObject(this.system, trackerData)
 
-    await this.update({ 'data.additionalresources.-=tracker': null })
-    await this.update({ 'data.additionalresources.tracker': data })
+    await this.update({ 'sytem.additionalresources.-=tracker': null })
+    await this.update({ 'sytem.additionalresources.tracker': data })
 
     this._forceRender()
   }
@@ -3523,8 +3523,8 @@ export class GurpsActor extends Actor {
     for (const key in move) {
       move[key].default = value === key
     }
-    await this.update({ 'data.-=move': null })
-    await this.update({ 'data.move': move })
+    await this.update({ 'sytem.-=move': null })
+    await this.update({ 'sytem.move': move })
     this._forceRender()
   }
 
@@ -3559,7 +3559,7 @@ export class GurpsActor extends Actor {
       return
     }
     ui.notifications?.info(data.name + ' => ' + this.name)
-    if (!data.data.globalid) await data.update({ _id: data._id, 'data.globalid': uuid })
+    if (!data.data.globalid) await data.update({ _id: data._id, 'system.globalid': uuid })
     this.ignoreRender = true
     await this.addNewItemData(data)
     this._forceRender()
@@ -3689,7 +3689,7 @@ export class GurpsActor extends Actor {
       await this.addItemData(item.data)
     } else {
       // If was in other... just add back to other (and forget addons)
-      await this._addNewItemEquipment(item.data, 'data.equipment.other.' + zeroFill(0))
+      await this._addNewItemEquipment(item.data, 'system.equipment.other.' + zeroFill(0))
     }
     let newkey = this._findEqtkeyForId('globalid', _data.globalid)
     if (!!oldeqt && (!!oldeqt.contains || !!oldeqt.collapsed)) {
@@ -3746,11 +3746,11 @@ export class GurpsActor extends Actor {
     if (!!_data.eqt.parentuuid) {
       var found
       recurselist(this.system.equipment.carried, (e, k, d) => {
-        if (e.uuid == _data.eqt.parentuuid) found = 'data.equipment.carried.' + k
+        if (e.uuid == _data.eqt.parentuuid) found = 'sytem.equipment.carried.' + k
       })
       if (!found)
         recurselist(this.system.equipment.other, (e, k, d) => {
-          if (e.uuid == _data.eqt.parentuuid) found = 'data.equipment.other.' + k
+          if (e.uuid == _data.eqt.parentuuid) found = 'sytem.equipment.other.' + k
         })
       if (!!found) {
         targetkey = found + '.contains.' + zeroFill(0)
@@ -3759,12 +3759,12 @@ export class GurpsActor extends Actor {
     if (targetkey == null)
       if (_data.carried) {
         // new carried items go at the end
-        targetkey = 'data.equipment.carried'
+        targetkey = 'sytem.equipment.carried'
         let index = 0
         let list = getProperty(this, targetkey)
         while (list.hasOwnProperty(zeroFill(index))) index++
         targetkey += '.' + zeroFill(index)
-      } else targetkey = 'data.equipment.other'
+      } else targetkey = 'sytem.equipment.other'
     if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
     let eqt = _data.eqt
     if (!eqt) {
@@ -3818,7 +3818,7 @@ export class GurpsActor extends Actor {
     if (!!eqt.itemid) {
       let item = /** @type {Item} */ (await this.items.get(eqt.itemid))
       await this.updateEmbeddedDocuments('Item', [
-        { _id: item.id, 'data.equipped': eqt.equipped, 'data.carried': carried },
+        { _id: item.id, 'sytem.equipped': eqt.equipped, 'sytem.carried': carried },
       ])
       if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid)
       if (carried && eqt.equipped) await this._addItemAdditions(item.data, eqtkey)
@@ -3852,7 +3852,7 @@ export class GurpsActor extends Actor {
       e.img = itemData.img
       GURPS.put(list, e)
     }
-    return i == 0 ? {} : { ['data.' + key]: list }
+    return i == 0 ? {} : { ['sytem.' + key]: list }
   }
 
   // return the item data that was deleted (since it might be transferred)
@@ -3915,7 +3915,7 @@ export class GurpsActor extends Actor {
       })
       if (!!found) {
         any = true
-        await GURPS.removeKey(this, 'data.' + key + '.' + found)
+        await GURPS.removeKey(this, 'sytem.' + key + '.' + found)
       }
     }
     return any
@@ -4225,8 +4225,8 @@ export class GurpsActor extends Actor {
     var eqt, key
     let list1 = otherFirst ? this.system.equipment.other : this.system.equipment.carried
     let list2 = otherFirst ? this.system.equipment.carried : this.system.equipment.other
-    let pkey1 = otherFirst ? 'data.equipment.other.' : 'data.equipment.carried.'
-    let pkey2 = otherFirst ? 'data.equipment.carried.' : 'data.equipment.other.'
+    let pkey1 = otherFirst ? 'sytem.equipment.other.' : 'sytem.equipment.carried.'
+    let pkey2 = otherFirst ? 'sytem.equipment.carried.' : 'sytem.equipment.other.'
     recurselist(
       list1,
       (e, k, d) => {
@@ -4282,7 +4282,7 @@ export class GurpsActor extends Actor {
     if (best != prev) {
       for (let key in encs) {
         let enc = encs[key]
-        let t = 'data.encumbrance.' + key + '.current'
+        let t = 'sytem.encumbrance.' + key + '.current'
         if (key === best) {
           enc.current = true
           this.system.currentmove = parseInt(enc.currentmove)
