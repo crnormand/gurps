@@ -48,7 +48,7 @@ export class CompositeDamageCalculator {
 
     // The CompositeDamageCalculator has multiple DamageCalculators -- create one per DamageData
     // and give it a back pointer to the Composite.
-    this._calculators = damagesystem.map(data => new DamageCalculator(this, data))
+    this._calculators = damageData.map(data => new DamageCalculator(this, data))
 
     this.viewId = this._calculators.length == 1 ? 0 : 'all'
 
@@ -948,7 +948,7 @@ class DamageCalculator {
    */
   constructor(parent, damageData) {
     this._parent = parent
-    this._basicDamage = damagesystem.damage
+    this._basicDamage = damageData.damage
     this._maxInjuryForDiffuse = null
     this._bluntTrauma = null
   }
