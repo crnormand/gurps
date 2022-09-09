@@ -3553,13 +3553,13 @@ export class GurpsActor extends Actor {
         ? `Compendium.${dragData.pack}.${dragData.id}`
         : `${dragData.type}.${dragData.id}`
     let global = await fromUuid(uuid)
-    let data = !!global ? global.data : dragData.data
+    let data = !!global ? global : dragData
     if (!data) {
       ui.notifications?.warn('NO ITEM DATA!')
       return
     }
     ui.notifications?.info(data.name + ' => ' + this.name)
-    if (!data.data.globalid) await data.update({ _id: data._id, 'system.globalid': uuid })
+    if (!data.globalid) await data.update({ _id: data._id, 'system.globalid': uuid })
     this.ignoreRender = true
     await this.addNewItemData(data)
     this._forceRender()
