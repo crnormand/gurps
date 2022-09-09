@@ -270,9 +270,6 @@ export class GurpsActor extends Actor {
     if (!!data.equipment && !data.equipment.carried) data.equipment.carried = {} // data protection
     if (!!data.equipment && !data.equipment.other) data.equipment.other = {}
 
-    if (!data.migrationversion) return // Prior to v0.9.6, this did not exist
-    let v = /** @type {SemanticVersion} */ (SemanticVersion.fromString(data.migrationversion))
-
     // Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
     // Need to protect against data errors
     for (const attr in data.attributes) {
@@ -321,11 +318,9 @@ export class GurpsActor extends Actor {
       e.level = parseInt(e.import)
     })
 
-    // Only prep hitlocation DRs from v0.9.7 or higher (we don't really need to use recurselist... but who knows, hitlocations may become hierarchical in the future)
-    if (!v.isLowerThan(settings.VERSION_097))
-      recurselist(data.hitlocations, (e, k, d) => {
-        e.dr = e.import
-      })
+    recurselist(data.hitlocations, (e, k, d) => {
+      e.dr = e.import
+    })
   }
 
   _applyItemBonuses() {
