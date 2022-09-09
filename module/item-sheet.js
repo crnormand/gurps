@@ -22,7 +22,7 @@ export class GurpsItemSheet extends ItemSheet {
   /** @override */
   getData() {
     const sheetData = super.getData()
-    sheetData.data = sheetData.data.data
+    sheetData.data = this.item.system
     sheetData.data.eqt.f_count = this.item.system.eqt.count // hack for Furnace module
     sheetData.name = this.item.name
     if (!this.item.system.globalid && !this.item.parent)
@@ -148,7 +148,7 @@ export class GurpsItemSheet extends ItemSheet {
     let dragData = JSON.parse(event.dataTransfer.getData('text/plain'))
     if (!['melee', 'ranged', 'skills', 'spells', 'ads', 'equipment'].includes(dragData.type)) return
     let srcActor = game.actors.get(dragData.actorid)
-    let srcData = getProperty(srcActor.data, dragData.key)
+    let srcData = getProperty(srcActor, dragData.key)
     srcData.contains = {} // don't include any contained/collapsed items from source
     srcData.collapsed = {}
     if (dragData.type == 'equipment') {
@@ -162,7 +162,7 @@ export class GurpsItemSheet extends ItemSheet {
   }
 
   _addToList(key, data) {
-    let list = this.item.data.data[key] || {}
+    let list = this.item.system[key] || {}
     GURPS.put(list, data)
     this.item.update({ ['data.' + key]: list })
   }

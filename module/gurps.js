@@ -511,8 +511,7 @@ if (!globalThis.GURPS) {
       )}\n${action.orig}`
 
       if (!!action.overridetxt) {
-        if (!event.data)
-          event.data = {}
+        if (!event.data) event.data = {}
         event.data.overridetxt = action.overridetxt
       }
       // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
@@ -531,8 +530,7 @@ if (!globalThis.GURPS) {
           if (j) {
             if (j.data.flags.pdfoundry) {
               handlePdf(j.data.flags.pdfoundry.PDFData.code)
-            } else
-              j.sheet?.render(true)
+            } else j.sheet?.render(true)
           }
           return true
         case 'Actor':
@@ -621,7 +619,7 @@ if (!globalThis.GURPS) {
         ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
-      let df = action.derivedformula.match(/sw/i) ? actor.getGurpsActorData().swing : actor.getGurpsActorData().thrust
+      let df = action.derivedformula.match(/sw/i) ? actor.system.swing : actor.system.thrust
       // action fails if there's no formula
       if (!df) {
         ui.notifications?.warn(`${actor.name} does not have a ${action.derivedformula.toUpperCase()} formula`)
@@ -671,7 +669,7 @@ if (!globalThis.GURPS) {
         return false
       }
       let att = null
-      att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+      att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(
           `No melee or ranged attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`
@@ -766,7 +764,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.getGurpsActorData().swing : actor.getGurpsActorData().thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.system.swing : actor.system.thrust
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       const originalFormula = action.derivedformula + action.formula
       return doRoll({
@@ -801,7 +799,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn('attack action without name')
         return false
       }
-      let att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
+      let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, !!action.isRanged) // find attack possibly using wildcards
       if (!att) {
         if (!action.calcOnly) {
           ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
@@ -833,7 +831,7 @@ if (!globalThis.GURPS) {
         event,
         obj: att, // save the attack in the optional parameters, in case it has rcl/rof
         followon: followon,
-        text: ''
+        text: '',
       }
       let targetmods = []
       if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
@@ -871,7 +869,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
-      let att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
+      let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, false) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
         return false
@@ -895,7 +893,7 @@ if (!globalThis.GURPS) {
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       const chatthing = thing === '' ? att.name + mode : `[B:"${thing}${mode}"]`
- 
+
       return doRoll({
         actor,
         targetmods,
@@ -927,7 +925,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
-      let att = GURPS.findAttack(actor.data.data, action.name, !!action.isMelee, false) // find attack possibly using wildcards
+      let att = GURPS.findAttack(actor.system, action.name, !!action.isMelee, false) // find attack possibly using wildcards
       if (!att) {
         ui.notifications.warn(`No melee attack named '${action.name.replace('<', '&lt;')}' found on ${actor.name}`)
         return false
@@ -989,12 +987,12 @@ if (!globalThis.GURPS) {
       if (!target && !!actor) {
         if (!!action.melee) {
           // Is it trying to match to an attack name (should only occur with Parry: & Block:
-          let meleeAttack = GURPS.findAttack(actor.data.data, action.melee)
+          let meleeAttack = GURPS.findAttack(actor.system, action.melee)
           if (!!meleeAttack) {
             target = parseInt(meleeAttack[action.attribute.toLowerCase()]) // should only occur with parry & block
           }
         } else {
-          target = parseInt(GURPS.resolve(action.path, actor.data.data))
+          target = parseInt(GURPS.resolve(action.path, actor.system))
         }
       }
       const thing = action.name
@@ -1013,7 +1011,7 @@ if (!globalThis.GURPS) {
         event: event,
         action: action,
         obj: action.obj,
-        text: ''
+        text: '',
       }
       if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
@@ -1074,7 +1072,7 @@ if (!globalThis.GURPS) {
         event,
         action,
         obj: action.obj,
-        text: ''
+        text: '',
       }
       if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
       if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
@@ -1088,16 +1086,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-    [AMRS][DPK]
-    A: ads & attack (melee & range)
-    AD: ads
-    AT: attack
-    M: melee
-    R: ranged
-    S: skills & spells
-    SK: skills
-    SP: spells
-  */
+		[AMRS][DPK]
+		A: ads & attack (melee & range)
+		AD: ads
+		AT: attack
+		M: melee
+		R: ranged
+		S: skills & spells
+		SK: skills
+		SP: spells
+	  */
     ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
       switch (action.prefix) {
         case 'A':
@@ -1130,7 +1128,7 @@ if (!globalThis.GURPS) {
     },
     href({ action, actor, event, originalOtf, calcOnly }) {
       window.open(action.orig, action.label)
-    }
+    },
   }
   GURPS.actionFuncs = actionFuncs
 
@@ -1181,8 +1179,7 @@ if (!globalThis.GURPS) {
     const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
     var t
     if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
-    // if (!!actor.data?.data?.additionalresources) actor = actor.data
+    if (actor instanceof GurpsActor) actor = actor.system
     let skillRegExp = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
     let best = 0
     if (!isSpellOnly)
@@ -1212,7 +1209,7 @@ if (!globalThis.GURPS) {
   function findAdDisad(actor, sname) {
     var t
     if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
+    if (actor instanceof GurpsActor) actor = actor.system
     sname = makeRegexPatternFrom(sname, false)
     let regex = new RegExp(sname, 'i')
     recurselist(actor.ads, s => {
@@ -1232,8 +1229,7 @@ if (!globalThis.GURPS) {
     const removeOtf = '^ *(\\[ ?["\'])?' // pattern to remove some of the OtF syntax from search name so attacks start start with an OtF can be matched
     var t
     if (!actor) return t
-    if (actor instanceof GurpsActor) actor = actor.getGurpsActorData()
-    //  if (!!actor.data?.data?.additionalresources) actor = actor.data
+    if (actor instanceof GurpsActor) actor = actor.system
     let fullregex = new RegExp(removeOtf + makeRegexPatternFrom(sname, false, false), 'i')
     let smode = ''
     let m = XRegExp.matchRecursive(sname, '\\(', '\\)', 'g', {
@@ -1305,7 +1301,8 @@ if (!globalThis.GURPS) {
         //let result = parseForRollOrDamage(part.trim())
         let result = parselink(part.trim())
         if (result?.action) {
-          if (options?.combined && result.action.type == 'damage') result.action.formula = multiplyDice(result.action.formula, options.combined)
+          if (options?.combined && result.action.type == 'damage')
+            result.action.formula = multiplyDice(result.action.formula, options.combined)
           performAction(result.action, actor, event, options?.targets)
         }
       }
@@ -1343,7 +1340,7 @@ if (!globalThis.GURPS) {
       let k = $(element).closest('[data-key]').attr('data-key')
       if (!k) k = element.dataset.key
       if (!!k) {
-        if (actor) opt.obj = getProperty(actor.data, k) // During the roll, we may want to extract something from the object
+        if (actor) opt.obj = getProperty(actor, k) // During the roll, we may want to extract something from the object
         if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return
         if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
       }
@@ -1387,7 +1384,7 @@ if (!globalThis.GURPS) {
       if (target.match(/^[hf]p/i)) {
         let k = target.toUpperCase()
         // @ts-ignore
-        delta = actor.data.data[k].value - delta
+        delta = actor.system[k].value - delta
         await actor.update({ ['data.' + k + '.value']: delta })
       }
       if (target.match(/^tr/i)) {
@@ -1531,7 +1528,7 @@ if (!globalThis.GURPS) {
     i = objpath.lastIndexOf('.')
     let parentpath = objpath.substring(0, i)
     let objkey = objpath.substr(i + 1)
-    let object = GURPS.decode(actor.data, objpath)
+    let object = GURPS.decode(actor, objpath)
     let t = parentpath + '.-=' + objkey
     let oldRender = actor.ignoreRender
     actor.ignoreRender = true
@@ -1572,7 +1569,7 @@ if (!globalThis.GURPS) {
     i = objpath.lastIndexOf('.')
     let parentpath = objpath.substring(0, i)
     let objkey = objpath.substr(i + 1)
-    let object = GURPS.decode(actor.data, objpath)
+    let object = GURPS.decode(actor, objpath)
     let t = parentpath + '.-=' + objkey
     await actor.internalUpdate({ [t]: null }) // Delete the whole object
     let start = parseInt(key)
@@ -1634,7 +1631,7 @@ if (!globalThis.GURPS) {
       }
       let display = true
       if (!!src && game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_REMOVE_UNEQUIPPED)) {
-        // if an optional src is provided (which == actor.data.data) assume we are checking attacks to see if they are equipped
+        // if an optional src is provided (which == actor.system) assume we are checking attacks to see if they are equipped
         recurselist(src.equipment.carried, e => {
           if (eqt.name.startsWith(e.name) && !e.equipped) display = false
         })
@@ -2024,7 +2021,10 @@ if (!globalThis.GURPS) {
               content: cmd,
             }
             ChatMessage.create(messageData, {})
-          } else $(document).find('#chat-message').val($(document).find('#chat-message').val() + cmd)
+          } else
+            $(document)
+              .find('#chat-message')
+              .val($(document).find('#chat-message').val() + cmd)
         }
       }
       if (!!chat) chat.addEventListener('drop', event => dropHandler(event, false))
@@ -2041,7 +2041,7 @@ if (!globalThis.GURPS) {
     Hooks.on('renderActorSheet', (...args) => {
       colorGurpsActorSheet()
     })
-    
+
     // Listen for the Ctrl key and toggle the roll mode (to show the behaviour we currently do anyway)
     game.keybindings.register('gurps', 'toggleDiceDisplay', {
       name: 'Toggle dice display',
@@ -2289,8 +2289,7 @@ if (!globalThis.GURPS) {
         if (resp.users.includes(game.user.id)) {
           if (resp.add) {
             resp.bucket.modifierList.forEach(e => GURPS.ModifierBucket.addModifier(e.mod, e.desc))
-          } else
-            GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
+          } else GURPS.ModifierBucket.updateModifierBucket(resp.bucket)
         }
       }
       if (resp.type == 'initiativeChanged') {
@@ -2328,7 +2327,7 @@ if (!globalThis.GURPS) {
             if (!!destKey) {
               // already have some
               // @ts-ignore
-              let destEqt = getProperty(destactor.data, destKey)
+              let destEqt = getProperty(destactor, destKey)
               // @ts-ignore
               destactor.updateEqtCount(destKey, destEqt.count + resp.count)
             } else {
@@ -2363,7 +2362,7 @@ if (!globalThis.GURPS) {
         // @ts-ignore
         let srcActor = game.actors.get(resp.srcactorid)
         // @ts-ignore
-        let eqt = getProperty(srcActor.data, resp.srckey)
+        let eqt = getProperty(srcActor, resp.srckey)
         if (resp.count >= eqt.count) {
           // @ts-ignore
           srcActor.deleteEquipment(resp.srckey)
@@ -2450,7 +2449,7 @@ if (!globalThis.GURPS) {
       default: 'Tabbed Sheet',
       onChange: value => console.log(`${Settings.SETTING_ALT_SHEET}: ${value}`),
     })
-    
+
     GurpsToken.ready()
     TriggerHappySupport.init()
 

@@ -29,10 +29,8 @@ export class EffectModifierPopout extends Application {
   getData(options) {
     return mergeObject(super.getData(options), {
       selected: this.selectedToken,
-      selfmodifiers: this._token ? this.convertModifiers(this._token.actor.getGurpsActorData().conditions.self.modifiers) : [],
-      targetmodifiers: this._token
-        ? this.convertModifiers(this._token.actor.getGurpsActorData().conditions.target.modifiers)
-        : [],
+      selfmodifiers: this._token ? this.convertModifiers(this._token.actor.system.conditions.self.modifiers) : [],
+      targetmodifiers: this._token ? this.convertModifiers(this._token.actor.system.conditions.target.modifiers) : [],
       targets: this.targets,
     })
   }
@@ -43,7 +41,7 @@ export class EffectModifierPopout extends Application {
       let result = {}
       result.name = target.data.name
       result.targetmodifiers = target.actor
-        ? this.convertModifiers(target.actor.getGurpsActorData().conditions.target.modifiers)
+        ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
         : []
       results.push(result)
     }

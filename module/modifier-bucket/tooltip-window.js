@@ -157,7 +157,7 @@ export default class ModifierBucketEditor extends Application {
       let width = parseFloat(html.css('width').replace('px', ''))
       // ensure that left is not negative
       let left = Math.max(bucketLeft + bucketWidth / 2 - width / 2, 10)
-      console.log(`bucketLeft: ${bucketLeft}; width: ${width}; left: ${left}`)
+      // console.log(`bucketLeft: ${bucketLeft}; width: ${width}; left: ${left}`)
       html.css('left', `${left}px`)
       // }
     }
@@ -240,7 +240,7 @@ export default class ModifierBucketEditor extends Application {
   }
 
   _onleave(ev) {
-    console.log('onleave')
+    // console.log('onleave')
     this.inside = false
     this.bucket.SHOWING = false
     this.close()
@@ -249,7 +249,7 @@ export default class ModifierBucketEditor extends Application {
   _onenter(ev) {
     if (!this.options.popOut) {
       if (!this.inside) {
-        console.log('onenter')
+        // console.log('onenter')
         this.inside = true
         $(ev.currentTarget).mouseleave(ev => this._onleave(ev))
       }
@@ -479,12 +479,12 @@ const ModifierLiterals = {
     return ''
   },
   /**
-    return `[+1 ${i18n('GURPS.modifierGMSaidSo')}]
-    [-1 ${i18n('GURPS.modifierGMSaidSo')}]
-    [+4 ${i18n('GURPS.modifierGMBlessed')}]
-    [-4 ${i18n('GURPS.modifierGMDontTry')}]`
-  },
-  */
+	  return `[+1 ${i18n('GURPS.modifierGMSaidSo')}]
+	  [-1 ${i18n('GURPS.modifierGMSaidSo')}]
+	  [+4 ${i18n('GURPS.modifierGMBlessed')}]
+	  [-4 ${i18n('GURPS.modifierGMDontTry')}]`
+	},
+	*/
 
   get TaskDifficultyModifiers() {
     return [

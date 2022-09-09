@@ -14,29 +14,27 @@ export default class GurpsActiveEffect extends ActiveEffect {
     Hooks.on('updateCombat', GurpsActiveEffect._updateCombat)
 
     Hooks.once('ready', function () {
-      const oldDuration = Object.getOwnPropertyDescriptor(ActiveEffect.prototype, 'duration')
-
-      Object.defineProperty(ActiveEffect.prototype, 'duration', {
-        get: function () {
-          let results = oldDuration?.get?.call(this)
-
-          if (results.type === 'none') {
-            // check if there is a termination condition
-            const d = this.data.duration
-            if (!!d?.termination) {
-              // TODO add core statusId flag and fix up results to show there is a duration of sorts
-              results = {
-                type: 'condition',
-                duration: null,
-                remaining: null,
-                termination: d.termination,
-                label: d.termination,
-              }
-            }
-          }
-          return results
-        },
-      })
+      // const oldDuration = Object.getOwnPropertyDescriptor(ActiveEffect.prototype, 'duration')
+      // Object.defineProperty(ActiveEffect.prototype, 'duration', {
+      // 	get: function() {
+      // 		let results = oldDuration?.get?.call(this)
+      // 		if (results.type === 'none') {
+      // 			// check if there is a termination condition
+      // 			const d = this.data.duration
+      // 			if (!!d?.termination) {
+      // 				// TODO add core statusId flag and fix up results to show there is a duration of sorts
+      // 				results = {
+      // 					type: 'condition',
+      // 					duration: null,
+      // 					remaining: null,
+      // 					termination: d.termination,
+      // 					label: d.termination,
+      // 				}
+      // 			}
+      // 		}
+      // 		return results
+      // 	},
+      // })
     })
   }
 
@@ -48,6 +46,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _preCreate(_effect, data, _options, _userId) {
+    console.log(_effect, data, _options, _userId)
     if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
   }
 
@@ -72,8 +71,8 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _user
    */
   static async _apply(actor, change, _options, _user) {
-    if (change.key === 'data.conditions.maneuver') actor.replaceManeuver(change.value)
-    else if (change.key === 'data.conditions.posture') actor.replacePosture(change)
+    if (change.key === 'system.conditions.maneuver') actor.replaceManeuver(change.value)
+    else if (change.key === 'system.conditions.posture') actor.replacePosture(change)
     // else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
     else console.log(change)
   }
@@ -86,7 +85,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _update(_effect, _data, _options, _userId) {
-    console.log('update ' + _effect)
+    console.log('update ', _effect)
   }
 
   /**
@@ -115,10 +114,12 @@ export default class GurpsActiveEffect extends ActiveEffect {
       // go through all effects, removing those that have expired
       if (token && token.actor) {
         for (const effect of token.actor.effects) {
-          if (await effect.isExpired())
+          if (await effect.isExpired()) {
+            effect.delete()
             ui.notifications.info(
               `${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.data.label)}]'`
             )
+          }
         }
       }
     }
@@ -251,15 +252,15 @@ export default class GurpsActiveEffect extends ActiveEffect {
 
 /*
   {
-    key: fields.BLANK_STRING,
-    value: fields.BLANK_STRING,
-    mode: {
-      type: Number,
-      required: true,
-      default: CONST.ACTIVE_EFFECT_MODES.ADD,
-      validate: m => Object.values(CONST.ACTIVE_EFFECT_MODES).includes(m),
-      validationError: "Invalid mode specified for change in ActiveEffectData"
-      },
-      priority: fields.NUMERIC_FIELD
-    }
+	key: fields.BLANK_STRING,
+	value: fields.BLANK_STRING,
+	mode: {
+	  type: Number,
+	  required: true,
+	  default: CONST.ACTIVE_EFFECT_MODES.ADD,
+	  validate: m => Object.values(CONST.ACTIVE_EFFECT_MODES).includes(m),
+	  validationError: "Invalid mode specified for change in ActiveEffectData"
+	  },
+	  priority: fields.NUMERIC_FIELD
+	}
 */

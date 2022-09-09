@@ -1,12 +1,14 @@
 # [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
+
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
 # Current Release Version 0.14.10 (compatible with Foundry 0.9.x)
+
 With support for the [Nordlondr Ovinabokin: Bestiary and Enemies module](https://foundryvtt.com/packages/nordlond-bestiary)!
 
 ### [Change Log](changelog.md)
-The list was getting just too long, so it has been moved to a separate file.   Click above to see what has changed.
 
+The list was getting just too long, so it has been moved to a separate file. Click above to see what has changed.
 
 If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
 
@@ -14,9 +16,8 @@ Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
 [Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-13' 4/26/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
-
-
 #### Legal
+
 The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
 
 [GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)

@@ -13,8 +13,8 @@ export const MOVE_HALF = 'half'
 export const MOVE_TWOTHIRDS = '×2/3'
 export const MOVE_FULL = 'full'
 
-export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'data.moveoverride.maneuver'
-export const PROPERTY_MOVEOVERRIDE_POSTURE = 'data.moveoverride.posture'
+export const PROPERTY_MOVEOVERRIDE_MANEUVER = 'system.moveoverride.maneuver'
+export const PROPERTY_MOVEOVERRIDE_POSTURE = 'system.moveoverride.posture'
 
 CONFIG.Token.objectClass = GurpsToken
 const oldTemporaryEffects = Object.getOwnPropertyDescriptor(Actor.prototype, 'temporaryEffects')

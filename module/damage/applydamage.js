@@ -54,7 +54,7 @@ export default class ApplyDamageDialog extends Application {
     let trackers = objectToArray(actor._additionalResources.tracker)
     this._resourceLabels = trackers.filter(it => !!it.isDamageType).filter(it => !!it.alias)
 
-    console.log(this._resourceLabels)
+    // console.log(this._resourceLabels)
   }
 
   static get defaultOptions() {
@@ -494,7 +494,7 @@ export default class ApplyDamageDialog extends Application {
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-shock.html', {
-        name: !!token ? token.name : this.actor.data.name,
+        name: !!token ? token.name : this.actor.name,
         modifier: object.amount,
         doubled: object.amount * 2,
         button: button,
@@ -508,7 +508,7 @@ export default class ApplyDamageDialog extends Application {
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-majorwound.html', {
-        name: !!token ? token.name : this.actor.data.name,
+        name: !!token ? token.name : this.actor.name,
         button: button,
         htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
       })
@@ -521,7 +521,7 @@ export default class ApplyDamageDialog extends Application {
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       message = await this._renderTemplate('chat-headvitalshit.html', {
-        name: !!token ? token.name : this.actor.data.name,
+        name: !!token ? token.name : this.actor.name,
         button: button,
         location: object.detail,
         htCheck: htCheck.replace('HT', i18n('GURPS.attributesHT')),
@@ -540,7 +540,7 @@ export default class ApplyDamageDialog extends Application {
       if (!!token) button = `/sel ${token.id} \\\\ ${button}`
 
       let templateData = {
-        name: !!token ? token.name : this.actor.data.name,
+        name: !!token ? token.name : this.actor.name,
         button: button,
         yards: object.amount,
         pdfref: i18n('GURPS.pdfKnockback'),
@@ -557,7 +557,7 @@ export default class ApplyDamageDialog extends Application {
 
     if (object.type === 'crippling') {
       message = await this._renderTemplate('chat-crippling.html', {
-        name: this.actor.data.name,
+        name: this.actor.name,
         location: object.detail,
         groundModifier: 'DX-1',
         swimFlyModifer: 'DX-2',
@@ -625,7 +625,7 @@ export default class ApplyDamageDialog extends Application {
 
     if (!resource || !path) {
       ui.notifications.warn(
-        `Actor ${this.actor.data.name} does not have a resource named "${this._calculator.damageType}"!!`
+        `Actor ${this.actor.name} does not have a resource named "${this._calculator.damageType}"!!`
       )
       return
     }
@@ -635,7 +635,7 @@ export default class ApplyDamageDialog extends Application {
     let data = {
       id: generateUniqueId(),
       injury: injury,
-      defender: this.actor.data.name,
+      defender: this.actor.name,
       current: resource.value,
       location: this._calculator.resourceType === 'HP' ? this._calculator.hitLocation : null,
       type: this._calculator.resourceType,

@@ -39,7 +39,7 @@
 .simple_form {
   width: 100% !important;
   height: 100% !important;
- }
+}
 
 .simple_container {
   width: 100% !important;
@@ -49,23 +49,23 @@
   grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 0.3fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   gap: 5px 5px;
   grid-template-areas:
-    "ST ST-desc ST-desc Portrait Portrait"
-    "DX DX-desc DX-desc Portrait Portrait"
-    "IQ IQ-desc IQ-desc Portrait Portrait"
-    "HT HT-desc HT-desc Portrait Portrait"
-    "Shield Body Heart Notes Notes"
-    "Shield Body Heart Notes Notes"
-    "Shield Body Heart Notes Notes"
-    "Defend Armor HP Notes Notes"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Attacks Attacks Attacks Skills Skills"
-    "Eqt Eqt Eqt Ads Ads"
-    "Eqt Eqt Eqt Ads Ads"
-    "Eqt Eqt Eqt Ads Ads"
-    "Eqt Eqt Eqt Ads Ads";
+    'ST ST-desc ST-desc Portrait Portrait'
+    'DX DX-desc DX-desc Portrait Portrait'
+    'IQ IQ-desc IQ-desc Portrait Portrait'
+    'HT HT-desc HT-desc Portrait Portrait'
+    'Shield Body Heart Notes Notes'
+    'Shield Body Heart Notes Notes'
+    'Shield Body Heart Notes Notes'
+    'Defend Armor HP Notes Notes'
+    'Attacks Attacks Attacks Skills Skills'
+    'Attacks Attacks Attacks Skills Skills'
+    'Attacks Attacks Attacks Skills Skills'
+    'Attacks Attacks Attacks Skills Skills'
+    'Attacks Attacks Attacks Skills Skills'
+    'Eqt Eqt Eqt Ads Ads'
+    'Eqt Eqt Eqt Ads Ads'
+    'Eqt Eqt Eqt Ads Ads'
+    'Eqt Eqt Eqt Ads Ads';
 }
 
 .simple_lrg {
@@ -120,7 +120,6 @@
   align-content: center;
 }
 
-
 .simple_HT-desc {
   grid-area: HT-desc;
   display: flex;
@@ -134,30 +133,27 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  
-  border-top: 1px solid #CCCCCC;
+
+  border-top: 1px solid #cccccc;
   border-right: 1px solid #333333;
   border-bottom: 1px solid #333333;
-  border-left: 1px solid #CCCCCC;
+  border-left: 1px solid #cccccc;
   border-radius: 5px;
-
 }
 
 .simple_container .gurpslink,
 .simple_container .glinkmod,
 .simple_container .rollable {
-  
-  border-top: 1px solid #CCCCCC;
+  border-top: 1px solid #cccccc;
   border-right: 1px solid #333333;
   border-bottom: 1px solid #333333;
-  border-left: 1px solid #CCCCCC;
+  border-left: 1px solid #cccccc;
   border-radius: 5px;
-  
- }
+}
 
 .simple_Shield {
   grid-area: Shield;
-  background-image: url("../ui/ri_1.webp");
+  background-image: url('../ui/ri_1.webp');
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -169,7 +165,7 @@
 .simple_Body {
   grid-area: Body;
   text-align: center;
-  background-image: url("../ui/ri_3.webp");
+  background-image: url('../ui/ri_3.webp');
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -191,7 +187,7 @@
   width: 100%;
   height: 100%;
   text-align: center;
-  background-image: url("../ui/ri_2t.webp");
+  background-image: url('../ui/ri_2t.webp');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -204,7 +200,6 @@
   flex-direction: column;
   padding: 0px 0px 30px 0px;
 }
-
 
 .simple_Defend {
   grid-area: Defend;
@@ -317,10 +312,10 @@
   text-decoration: none;
   background-color: rgb(255, 255, 128) !important;
   color: black;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 5px;
   overflow: visible;
   z-index: 99;
@@ -334,10 +329,10 @@
   background-color: rgb(255, 255, 128) !important;
   color: black;
   padding: 0px 3px 0px 3px;
-  border-top: 2px solid #CCCCCC;
+  border-top: 2px solid #cccccc;
   border-right: 2px solid #333333;
   border-bottom: 2px solid #333333;
-  border-left: 2px solid #CCCCCC;
+  border-left: 2px solid #cccccc;
   border-radius: 5px;
   margin: -2px -4px 0px -2px;
   overflow: visible;
@@ -349,16 +344,16 @@
   text-decoration: none;
   color: black;
   background-color: rgb(255, 255, 128) !important;
-  border-bottom: 2px solid #CCCCCC;
+  border-bottom: 2px solid #cccccc;
   border-left: 2px solid #333333;
   border-top: 2px solid #333333;
-  border-right: 2px solid #CCCCCC;
+  border-right: 2px solid #cccccc;
   border-radius: 8px;
   overflow: visible;
   z-index: 99;
   margin: 5px;
   padding: 10px;
- }
+}
 
 .simple_icon:active {
   cursor: pointer;
@@ -366,14 +361,14 @@
   color: black;
   background-color: rgb(255, 255, 128) !important;
   padding: 0px 3px 0px 3px;
-  border-bottom: 2px solid #CCCCCC;
+  border-bottom: 2px solid #cccccc;
   border-left: 2px solid #333333;
   border-top: 2px solid #333333;
-  border-right: 2px solid #CCCCCC;
+  border-right: 2px solid #cccccc;
   border-radius: 8px;
   margin: -2px -5px 0px -3px;
   overflow: visible;
-  z-index: 99
+  z-index: 99;
 }
 
 .simple_input {
@@ -386,5 +381,3 @@
   border: 2px solid black;
   background-color: rgb(255, 255, 175);
 }
-
-

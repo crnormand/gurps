@@ -581,7 +581,7 @@ export class StatusEffect {
         id: 'bad-5',
         label: 'GURPS.STATUSBad',
       },
-      'disarmed': {
+      disarmed: {
         icon: 'systems/gurps/icons/statuses/disarmed.webp',
         id: 'disarmed',
         label: 'GURPS.STATUSDisarmed',
