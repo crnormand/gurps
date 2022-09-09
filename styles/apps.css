@@ -168,7 +168,7 @@ body {
 }
 
 .roll-message .aside .aside-text {
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   font-weight: normal;
 }
 
@@ -399,14 +399,14 @@ ul#result-effects li {
   background-color: rgba(255, 255, 240, 0.8);
   border: 1px solid #b5b3a4;
   border-radius: 3px;
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   padding-left: 5.5px;
   padding-right: 5.5px;
   margin-right: 4px;
 }
 
 [name='result-effect'] .with-send-button {
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
 }
 
 [name='result-effect'] > div {
@@ -511,12 +511,12 @@ ul#result-effects li {
 
 .damage-message .label-toggle {
   font-size: small;
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
 }
 
 .damage-message .label-toggle:after {
   font: normal normal normal 12px/1;
-/*  font-family: 'Font Awesome 5 Free' */
+  /*  font-family: 'Font Awesome 5 Free' */
   font-weight: 900;
   content: '\f078';
   float: right;
@@ -524,20 +524,20 @@ ul#result-effects li {
 
 .damage-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1;
-/*  font-family: 'Font Awesome 5 Free'; */
+  /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
   content: '\f077';
   float: right;
 }
 
 .gga-chat-message * {
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   font-size: 13px;
 }
 
 .gga-chat-message .label-toggle {
   font-size: x-small;
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   padding: 0.25em;
   background-color: rgba(0, 0, 0, 0.5);
   margin-top: 4px;
@@ -552,7 +552,7 @@ ul#result-effects li {
 
 .gga-chat-message .label-toggle:after {
   font: normal normal normal 12px/1;
-/*  font-family: 'Font Awesome 5 Free'; */
+  /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
   content: '\f078';
   color: lightgray;
@@ -561,7 +561,7 @@ ul#result-effects li {
 
 .gga-chat-message .toggle:checked + .label-toggle:after {
   font: normal normal normal 12px/1;
-/*  font-family: 'Font Awesome 5 Free'; */
+  /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
   content: '\f077';
   color: lightgray;
@@ -622,7 +622,7 @@ ul#result-effects li {
 }
 
 .gga-app button.with-icon > i > span {
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   font-weight: 400;
 }
 
@@ -677,7 +677,7 @@ ul#result-effects li {
   border-bottom: 1px dotted grey;
   /* text-transform: uppercase; */
   /* color: darkgrey */
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
 }
 
 /* Tooltip text */
@@ -1150,7 +1150,7 @@ active-effects-list .section h3 {
   height: 1.2rem;
   flex: 0;
   border: 1px solid grey;
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   cursor: pointer;
 }
 
@@ -1325,7 +1325,7 @@ select#maneuver option {
   min-width: 0.75rem;
   flex: 0;
   /*  border: 1px solid grey;  */
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   padding: 0px 0px 0px 0px;
   cursor: pointer;
 }
@@ -1423,14 +1423,14 @@ button.equipmentbutton:last-child {
 
 .navigation-view > span:before {
   content: '\f101'; /* this is your text. You can also use UTF-8 character codes as I do here */
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   font-weight: 900;
   color: white;
 }
 
 .navigate-area input:checked + .navigate-bar > .navigation-view > span:before {
   content: '\f100';
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
   font-weight: 900;
   color: white;
 }
@@ -1825,7 +1825,7 @@ button.equipmentbutton:last-child {
 }
 
 .removemod:hover::after {
-/*  font-family: 'Font Awesome 5 Free'; */
+  /*  font-family: 'Font Awesome 5 Free'; */
   content: '\f1f8';
   display: inline-block;
   padding-right: 3px;
@@ -1929,12 +1929,12 @@ button.equipmentbutton:last-child {
   padding: 0.35em;
   border-radius: 0.25em;
   background: rgba(255, 255, 240, 0.8);
-/*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  /*  font-family: 'Font Awesome 5 Free', Roboto, sans-serif; */
 }
 
 .modtooltip .collapsible-wrapper > label:after {
   font: normal normal normal 12px/1;
-/*  font-family: 'Font Awesome 5 Free'; */
+  /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
   content: '\f078';
   float: right;
@@ -1947,7 +1947,7 @@ button.equipmentbutton:last-child {
 
 .modtooltip .collapsible-wrapper > input:checked + label:after {
   font: normal normal normal 12px/1;
-/*  font-family: 'Font Awesome 5 Free'; */
+  /*  font-family: 'Font Awesome 5 Free'; */
   font-weight: 900;
   content: '\f077';
   float: right;

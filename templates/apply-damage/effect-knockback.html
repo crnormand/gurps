@@ -1,15 +1,14 @@
-<li name='result-effect'>
+<li name="result-effect">
   <div>
     <div>
-      <header>
-        {{i18n_f "GURPS.knockback" this}}
-      </header>
+      <header>{{i18n_f "GURPS.knockback" this}}</header>
       <aside>{{i18n_f "GURPS.dxJudoAcrobaticsCheckToRemainStanding" this}}</aside>
     </div>
-    <div class='with-send-button'>
-      <button name='send-knockback' data-struct='{{jsonStringify this}}'><span
-          class='fa fa-comment-alt'></span></button>
+    <div class="with-send-button">
+      <button name="send-knockback" data-struct="{{jsonStringify this}}">
+        <span class="fa fa-comment-alt"></span>
+      </button>
     </div>
-    <div><span class='pdflink'>{{i18n "GURPS.pdfKnockback"}}</span></div>
+    <div><span class="pdflink">{{i18n "GURPS.pdfKnockback"}}</span></div>
   </div>
 </li>

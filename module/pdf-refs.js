@@ -98,12 +98,11 @@ export function handlePdf(links) {
           book = 'BX'
           page = page - 335
         } else page += 2
-    }
-    else if (book === 'BX') {
+    } else if (book === 'BX') {
       if (setting === 'Combined') {
-          book = 'B'
-          page += 2
-      } else page -= 335 
+        book = 'B'
+        page += 2
+      } else page -= 335
     }
     // @ts-ignore
     const pdf = ui.PDFoundry.findPDFDataByCode(book)

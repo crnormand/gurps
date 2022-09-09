@@ -1,63 +1,89 @@
-<form class='gga-app item-editor' autocomplete='off'>
+<form class="gga-app item-editor" autocomplete="off">
   <div>
-    <h2><i class='fa fa-cogs itemdraggable'></i> {{i18n "GURPS.itemEditor"}}</h2>
+    <h2><i class="fa fa-cogs itemdraggable"></i> {{i18n "GURPS.itemEditor"}}</h2>
 
-    <div class='gurps-2col right-bias'>
-      <div class='full-width'>
-        <input id='itemname' type='text' value='{{name}}' class='title' placeholder='{{i18n "GURPS.name"}}'
-          name='data.eqt.name' />
+    <div class="gurps-2col right-bias">
+      <div class="full-width">
+        <input
+          id="itemname"
+          type="text"
+          value="{{name}}"
+          class="title"
+          placeholder='{{i18n "GURPS.name"}}'
+          name="data.eqt.name"
+        />
       </div>
 
-      <div class='img-display itemdraggable' style='background-image: url({{item.img}}); border: solid 1px black;'>
-        <img class='profile-img itemdraggable' src='{{ item.img }}' data-edit='img'
-          title='{{#if name}}{{name}}{{else}}Image{{/if}}' />
+      <div class="img-display itemdraggable" style="background-image: url({{item.img}}); border: solid 1px black;">
+        <img
+          class="profile-img itemdraggable"
+          src="{{ item.img }}"
+          data-edit="img"
+          title="{{#if name}}{{name}}{{else}}Image{{/if}}"
+        />
       </div>
 
-      <div class='gga-group'>
+      <div class="gga-group">
         <h4>{{i18n "GURPS.attributes"}}</h4>
-        <div class='gurps-2col no-gap'>
-          <div class='label-value-row right-bias'>
+        <div class="gurps-2col no-gap">
+          <div class="label-value-row right-bias">
             <label>{{i18n "GURPS.quantity"}}</label>
-            <div class='icon-prefix'>
-              <input id='quantity' class='digits-only' type='number' value='{{data.eqt.count}}' name='data.eqt.count' />
+            <div class="icon-prefix">
+              <input id="quantity" class="digits-only" type="number" value="{{data.eqt.count}}" name="data.eqt.count" />
               <span></span>
             </div>
             <label>{{i18n "GURPS.equipmentCost"}}</label>
-            <div class='icon-prefix'>
-              <input id='cost' type='number' class='decimal-digits-only' value='{{data.eqt.cost}}'
-                name='data.eqt.cost' />
+            <div class="icon-prefix">
+              <input
+                id="cost"
+                type="number"
+                class="decimal-digits-only"
+                value="{{data.eqt.cost}}"
+                name="data.eqt.cost"
+              />
               <span>$</span>
             </div>
             <label>{{i18n "GURPS.weight"}}</label>
-            <div class='icon-prefix'>
-              <input id='weight' type='number' class='decimal-digits-only' value='{{data.eqt.weight}}'
-                name='data.eqt.weight' />
-              <span><i class='fas fa-weight-hanging'></i></span>
+            <div class="icon-prefix">
+              <input
+                id="weight"
+                type="number"
+                class="decimal-digits-only"
+                value="{{data.eqt.weight}}"
+                name="data.eqt.weight"
+              />
+              <span><i class="fas fa-weight-hanging"></i></span>
             </div>
           </div>
-          <div class='label-value-row right-bias'>
+          <div class="label-value-row right-bias">
             <label>{{i18n "GURPS.equipmentUses"}}</label>
             <div>
-              <input id='uses' type='number' class='digits-only' value='{{data.eqt.uses}}' name='data.eqt.uses' />
+              <input id="uses" type="number" class="digits-only" value="{{data.eqt.uses}}" name="data.eqt.uses" />
             </div>
             <label>{{i18n "GURPS.equipmentMaxUses"}}</label>
             <div>
-              <input id='maxuses' type='number' class='digits-only' value='{{data.eqt.maxuses}}'
-                name='data.eqt.maxuses' />
+              <input
+                id="maxuses"
+                type="number"
+                class="digits-only"
+                value="{{data.eqt.maxuses}}"
+                name="data.eqt.maxuses"
+              />
             </div>
             <label>{{i18n "GURPS.equipmentTechlevel"}}</label>
             <div>
-              <input id='techlevel' type='text' value='{{data.eqt.techlevel}}' name='data.eqt.techlevel' />
+              <input id="techlevel" type="text" value="{{data.eqt.techlevel}}" name="data.eqt.techlevel" />
             </div>
             <label>{{i18n "GURPS.pdfPageReference"}}</label>
-            <div><input id='pageref' type='text' value='{{data.eqt.pageref}}' name='data.eqt.pageref' /></div>
+            <div><input id="pageref" type="text" value="{{data.eqt.pageref}}" name="data.eqt.pageref" /></div>
           </div>
         </div>
-        <div class='label-value-row right-bias'>
+        <div class="label-value-row right-bias">
           <div></div>
           <div></div>
           <label>{{i18n "GURPS.notes"}}</label>
-          <div><textarea class='notes' id='item-notes' rows='4' name='data.eqt.notes'>{{data.eqt.notes}}</textarea>
+          <div>
+            <textarea class="notes" id="item-notes" rows="4" name="data.eqt.notes">{{data.eqt.notes}}</textarea>
           </div>
         </div>
       </div>
@@ -68,383 +94,384 @@
     <div>
       <h2>{{i18n "GURPS.itemFeatures"}}</h2>
 
-      <div class='flexcol'>
-        <nav class='gurps-sheet-tabs tabs gurps-tabs' data-group='sections'>
-          <a class='item' data-tab='melee-tab'><i class='fas fa-fist-raised'></i>&nbsp;{{i18n "GURPS.melee"}}&nbsp;<span
-              style='font-size: 80%;'>{{#if (length data.melee)}}({{length data.melee}}){{/if}}</span></a>
-          <a class='item' data-tab='range-tab'><i
-              class='fas fa-fighter-jet'></i>&nbsp;{{i18n "GURPS.ranged"}}&nbsp;<span
-              style='font-size: 80%;'>{{#if (length data.ranged)}}({{length data.ranged}}){{/if}}</span></a>
-          <a class='item' data-tab='spell-tab'><i class='fas fa-magic'></i>&nbsp;{{i18n "GURPS.spells"}}&nbsp;<span
-              style='font-size: 80%;'>{{#if (length data.spells)}}({{length data.spells}}){{/if}}</span></a>
-          <a class='item' data-tab='ads-tab'><i
-              class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages"}}&nbsp;<span
-              style='font-size: 80%;'>{{#if (length data.ads)}}({{length data.ads}}){{/if}}</span></a>
-          <a class='item' data-tab='skill-tab'><i
-              class='fas fa-snowboarding'></i>&nbsp;{{i18n "GURPS.skills"}}&nbsp;<span
-              style='font-size: 80%;'>{{#if (length data.skills)}}({{length data.skills}}){{/if}}</span></a>
-          <a class='item' data-tab='bonus-tab'><i class='fas fa-plus'></i>&nbsp;{{i18n "GURPS.bonuses"}}&nbsp;<span
-              style='font-size: 80%;'>{{#if (length data.bonuses)}}(&checkmark;){{/if}}</span></a>
+      <div class="flexcol">
+        <nav class="gurps-sheet-tabs tabs gurps-tabs" data-group="sections">
+          <a class="item" data-tab="melee-tab"
+            ><i class="fas fa-fist-raised"></i>&nbsp;{{i18n "GURPS.melee"}}&nbsp;<span style="font-size: 80%"
+              >{{#if (length data.melee)}}({{length data.melee}}){{/if}}</span
+            ></a
+          >
+          <a class="item" data-tab="range-tab"
+            ><i class="fas fa-fighter-jet"></i>&nbsp;{{i18n "GURPS.ranged"}}&nbsp;<span style="font-size: 80%"
+              >{{#if (length data.ranged)}}({{length data.ranged}}){{/if}}</span
+            ></a
+          >
+          <a class="item" data-tab="spell-tab"
+            ><i class="fas fa-magic"></i>&nbsp;{{i18n "GURPS.spells"}}&nbsp;<span style="font-size: 80%"
+              >{{#if (length data.spells)}}({{length data.spells}}){{/if}}</span
+            ></a
+          >
+          <a class="item" data-tab="ads-tab"
+            ><i class="fas fa-theater-masks"></i>&nbsp;{{i18n "GURPS.advantages"}}&nbsp;<span style="font-size: 80%"
+              >{{#if (length data.ads)}}({{length data.ads}}){{/if}}</span
+            ></a
+          >
+          <a class="item" data-tab="skill-tab"
+            ><i class="fas fa-snowboarding"></i>&nbsp;{{i18n "GURPS.skills"}}&nbsp;<span style="font-size: 80%"
+              >{{#if (length data.skills)}}({{length data.skills}}){{/if}}</span
+            ></a
+          >
+          <a class="item" data-tab="bonus-tab"
+            ><i class="fas fa-plus"></i>&nbsp;{{i18n "GURPS.bonuses"}}&nbsp;<span style="font-size: 80%"
+              >{{#if (length data.bonuses)}}(&checkmark;){{/if}}</span
+            ></a
+          >
         </nav>
 
-        <section id='config-tabs' class='content'>
+        <section id="config-tabs" class="content">
           <!-- melee tab -->
-          <div class='tab' data-tab='melee-tab' data-group='sections'>
+          <div class="tab" data-tab="melee-tab" data-group="sections">
             {{#each data.melee as | this key |}}
-              <div class='gga-group inputs'>
-                <h4 class='with-button'>{{i18n "GURPS.meleeAttack"}}
-                  {{#if mode}}({{mode}}){{/if}}<span class='delete button' data-path='data.melee' name='{{key}}'><i
-                      class='fas fa-trash'></i></span>
-                </h4>
+            <div class="gga-group inputs">
+              <h4 class="with-button">
+                {{i18n "GURPS.meleeAttack"}} {{#if mode}}({{mode}}){{/if}}<span
+                  class="delete button"
+                  data-path="data.melee"
+                  name="{{key}}"
+                  ><i class="fas fa-trash"></i
+                ></span>
+              </h4>
 
-                <div class='label-value-row right-bias'>
-                  <label>{{i18n "GURPS.skillLevel"}}</label>
-                  <div><input type='text' value='{{otf}}' name='data.melee.{{key}}.otf' /></div>
+              <div class="label-value-row right-bias">
+                <label>{{i18n "GURPS.skillLevel"}}</label>
+                <div><input type="text" value="{{otf}}" name="data.melee.{{key}}.otf" /></div>
+              </div>
+
+              <div class="gurps-3col">
+                <div class="label-value-row right-bias">
+                  <div></div>
+                  <div></div>
+                  <label>{{i18n "GURPS.usage"}}</label>
+                  <div><input type="text" value="{{mode}}" name="data.melee.{{key}}.mode" /></div>
+                  <label>{{i18n "GURPS.parrybonus"}}</label>
+                  <div><input type="text" value="{{parry}}" name="data.melee.{{key}}.parry" /></div>
                 </div>
-
-                <div class='gurps-3col'>
-                  <div class='label-value-row right-bias'>
-                    <div></div>
-                    <div></div>
-                    <label>{{i18n "GURPS.usage"}}</label>
-                    <div><input type='text' value='{{mode}}' name='data.melee.{{key}}.mode' /></div>
-                    <label>{{i18n "GURPS.parrybonus"}}</label>
-                    <div><input type='text' value='{{parry}}' name='data.melee.{{key}}.parry' />
-                    </div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <div></div>
-                    <div></div>
-                    <label>{{i18n "GURPS.blockbonus"}}</label>
-                    <div><input type='text' value='{{block}}' name='data.melee.{{key}}.block' />
-                    </div>
-                    <label>{{i18n "GURPS.damage"}}</label>
-                    <div><input type='text' value='{{damage}}' name='data.melee.{{key}}.damage' />
-                    </div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <div></div>
-                    <div></div>
-                    <label>{{i18n "GURPS.reach"}}</label>
-                    <div><input type='text' value='{{reach}}' name='data.melee.{{key}}.reach' />
-                    </div>
-                    <label>{{i18n "GURPS.attributesST"}}</label>
-                    <div><input type='text' value='{{st}}' name='data.melee.{{key}}.st' /></div>
-                  </div>
+                <div class="label-value-row right-bias">
+                  <div></div>
+                  <div></div>
+                  <label>{{i18n "GURPS.blockbonus"}}</label>
+                  <div><input type="text" value="{{block}}" name="data.melee.{{key}}.block" /></div>
+                  <label>{{i18n "GURPS.damage"}}</label>
+                  <div><input type="text" value="{{damage}}" name="data.melee.{{key}}.damage" /></div>
                 </div>
-                <div class='label-value-row right-bias'>
+                <div class="label-value-row right-bias">
                   <div></div>
                   <div></div>
-                  <label>{{i18n "GURPS.notes"}}</label>
-                  <div><textarea class='notes' rows='2' name='data.melee.{{key}}.notes'>{{notes}}</textarea></div>
-
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.check"}}</label>
-                  <div><input type='text' value='{{checkotf}}' name='data.melee.{{key}}.checkotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.during"}}</label>
-                  <div><input type='text' value='{{duringotf}}' name='data.melee.{{key}}.duringotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.pass"}}</label>
-                  <div><input type='text' value='{{passotf}}' name='data.melee.{{key}}.passotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.fail"}}</label>
-                  <div><input type='text' value='{{failotf}}' name='data.melee.{{key}}.failotf' />
-                  </div>
-
+                  <label>{{i18n "GURPS.reach"}}</label>
+                  <div><input type="text" value="{{reach}}" name="data.melee.{{key}}.reach" /></div>
+                  <label>{{i18n "GURPS.attributesST"}}</label>
+                  <div><input type="text" value="{{st}}" name="data.melee.{{key}}.st" /></div>
                 </div>
               </div>
-              <div class='vertical-gap'></div>
+              <div class="label-value-row right-bias">
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.notes"}}</label>
+                <div><textarea class="notes" rows="2" name="data.melee.{{key}}.notes">{{notes}}</textarea></div>
+
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.check"}}</label>
+                <div><input type="text" value="{{checkotf}}" name="data.melee.{{key}}.checkotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.during"}}</label>
+                <div><input type="text" value="{{duringotf}}" name="data.melee.{{key}}.duringotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.pass"}}</label>
+                <div><input type="text" value="{{passotf}}" name="data.melee.{{key}}.passotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.fail"}}</label>
+                <div><input type="text" value="{{failotf}}" name="data.melee.{{key}}.failotf" /></div>
+              </div>
+            </div>
+            <div class="vertical-gap"></div>
             {{/each}}
-            <div class='button-bar'>
-              <button id='add-melee'><i class='fas fa-check'></i>
-                {{i18n "GURPS.addMeleeAttack"}}</button>
+            <div class="button-bar">
+              <button id="add-melee"><i class="fas fa-check"></i> {{i18n "GURPS.addMeleeAttack"}}</button>
             </div>
           </div>
 
           <!-- range tab -->
-          <div class='tab' data-tab='range-tab' data-group='sections'>
+          <div class="tab" data-tab="range-tab" data-group="sections">
             {{#each data.ranged as | this key |}}
-              <div class='gga-group inputs'>
-                <h4 class='with-button'>{{i18n "GURPS.rangedAttack"}}
-                  {{#if mode}}({{mode}}){{/if}}<span class='delete button' data-path='data.ranged' name='{{key}}'><i
-                      class='fas fa-trash'></i></span>
-                </h4>
+            <div class="gga-group inputs">
+              <h4 class="with-button">
+                {{i18n "GURPS.rangedAttack"}} {{#if mode}}({{mode}}){{/if}}<span
+                  class="delete button"
+                  data-path="data.ranged"
+                  name="{{key}}"
+                  ><i class="fas fa-trash"></i
+                ></span>
+              </h4>
 
-                <div class='label-value-row right-bias'>
-                  <label>{{i18n "GURPS.skillLevel"}}</label>
-                  <div><input type='text' value='{{otf}}' name='data.ranged.{{key}}.otf' /></div>
+              <div class="label-value-row right-bias">
+                <label>{{i18n "GURPS.skillLevel"}}</label>
+                <div><input type="text" value="{{otf}}" name="data.ranged.{{key}}.otf" /></div>
+              </div>
+
+              <div class="gurps-3col">
+                <div class="label-value-row right-bias">
+                  <div></div>
+                  <div></div>
+                  <label>{{i18n "GURPS.usage"}}</label>
+                  <div><input type="text" value="{{mode}}" name="data.ranged.{{key}}.mode" /></div>
+                  <label>{{i18n "GURPS.acc"}}</label>
+                  <div><input type="text" value="{{acc}}" name="data.ranged.{{key}}.acc" /></div>
+                  <label>{{i18n "GURPS.damage"}}</label>
+                  <div><input class="damage" type="text" value="{{damage}}" name="data.ranged.{{key}}.damage" /></div>
                 </div>
-
-                <div class='gurps-3col'>
-                  <div class='label-value-row right-bias'>
-                    <div></div>
-                    <div></div>
-                    <label>{{i18n "GURPS.usage"}}</label>
-                    <div><input type='text' value='{{mode}}' name='data.ranged.{{key}}.mode' /></div>
-                    <label>{{i18n "GURPS.acc"}}</label>
-                    <div><input type='text' value='{{acc}}' name='data.ranged.{{key}}.acc' /></div>
-                    <label>{{i18n "GURPS.damage"}}</label>
-                    <div><input class='damage' type='text' value='{{damage}}' name='data.ranged.{{key}}.damage' /></div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <div></div>
-                    <div></div>
-                    <label>{{i18n "GURPS.range"}}</label>
-                    <div><input type='text' value='{{range}}' name='data.ranged.{{key}}.range' /></div>
-                    <label>{{i18n "GURPS.rof"}}</label>
-                    <div><input type='text' value='{{rof}}' name='data.ranged.{{key}}.rof' /></div>
-                    <label>{{i18n "GURPS.shots"}}</label>
-                    <div><input type='text' value='{{shots}}' name='data.ranged.{{key}}.shots' /></div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <div></div>
-                    <div></div>
-                    <label>{{i18n "GURPS.bulk"}}</label>
-                    <div><input type='text' value='{{bulk}}' name='data.ranged.{{key}}.bulk' /></div>
-                    <label>{{i18n "GURPS.rcl"}}</label>
-                    <div><input type='text' value='{{rcl}}' name='data.ranged.{{key}}.rcl' /></div>
-                    <div></div>
-                    <div>
-                      <input type='text' value='' disabled='' style='background: transparent;'>
-                    </div>
-                  </div>
+                <div class="label-value-row right-bias">
+                  <div></div>
+                  <div></div>
+                  <label>{{i18n "GURPS.range"}}</label>
+                  <div><input type="text" value="{{range}}" name="data.ranged.{{key}}.range" /></div>
+                  <label>{{i18n "GURPS.rof"}}</label>
+                  <div><input type="text" value="{{rof}}" name="data.ranged.{{key}}.rof" /></div>
+                  <label>{{i18n "GURPS.shots"}}</label>
+                  <div><input type="text" value="{{shots}}" name="data.ranged.{{key}}.shots" /></div>
                 </div>
-                <div class='label-value-row right-bias'>
-                  <label>{{i18n "GURPS.notes"}}</label>
-                  <div><textarea class='notes' rows='2' name='data.ranged.{{key}}.notes'>{{notes}}</textarea></div>
-
+                <div class="label-value-row right-bias">
                   <div></div>
                   <div></div>
-                  <label>{{i18n "GURPS.check"}}</label>
-                  <div><input type='text' value='{{checkotf}}' name='data.ranged.{{key}}.checkotf' />
+                  <label>{{i18n "GURPS.bulk"}}</label>
+                  <div><input type="text" value="{{bulk}}" name="data.ranged.{{key}}.bulk" /></div>
+                  <label>{{i18n "GURPS.rcl"}}</label>
+                  <div><input type="text" value="{{rcl}}" name="data.ranged.{{key}}.rcl" /></div>
+                  <div></div>
+                  <div>
+                    <input type="text" value="" disabled="" style="background: transparent" />
                   </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.during"}}</label>
-                  <div><input type='text' value='{{duringotf}}' name='data.ranged.{{key}}.duringotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.pass"}}</label>
-                  <div><input type='text' value='{{passotf}}' name='data.ranged.{{key}}.passotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.fail"}}</label>
-                  <div><input type='text' value='{{failotf}}' name='data.ranged.{{key}}.failotf' />
-                  </div>
-
                 </div>
               </div>
-              <div class='vertical-gap'></div>
+              <div class="label-value-row right-bias">
+                <label>{{i18n "GURPS.notes"}}</label>
+                <div><textarea class="notes" rows="2" name="data.ranged.{{key}}.notes">{{notes}}</textarea></div>
+
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.check"}}</label>
+                <div><input type="text" value="{{checkotf}}" name="data.ranged.{{key}}.checkotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.during"}}</label>
+                <div><input type="text" value="{{duringotf}}" name="data.ranged.{{key}}.duringotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.pass"}}</label>
+                <div><input type="text" value="{{passotf}}" name="data.ranged.{{key}}.passotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.fail"}}</label>
+                <div><input type="text" value="{{failotf}}" name="data.ranged.{{key}}.failotf" /></div>
+              </div>
+            </div>
+            <div class="vertical-gap"></div>
             {{/each}}
-            <div class='button-bar'>
-              <button id='add-ranged'><i class='fas fa-check'></i>
-                {{i18n "GURPS.addRangedAttack"}}</button>
+            <div class="button-bar">
+              <button id="add-ranged"><i class="fas fa-check"></i> {{i18n "GURPS.addRangedAttack"}}</button>
             </div>
           </div>
 
           <!-- bonus -->
-          <div class='tab' data-tab='bonus-tab' data-group='sections'>
+          <div class="tab" data-tab="bonus-tab" data-group="sections">
             <div>{{i18n "GURPS.itemBonusText"}}</div>
-            <div><textarea class='notes' rows='6' name='data.bonuses'>{{data.bonuses}}</textarea></div>
+            <div><textarea class="notes" rows="6" name="data.bonuses">{{data.bonuses}}</textarea></div>
           </div>
 
           <!-- Spells -->
-          <div class='tab' data-tab='spell-tab' data-group='sections'>
+          <div class="tab" data-tab="spell-tab" data-group="sections">
             {{#each data.spells as | this key |}}
-              <div class='gga-group inputs'>
-                <h4 class='with-button'>{{i18n "GURPS.spell"}}
-                  {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='data.spells' name='{{key}}'><i
-                      class='fas fa-trash'></i></span>
-                </h4>
+            <div class="gga-group inputs">
+              <h4 class="with-button">
+                {{i18n "GURPS.spell"}} {{#if name}}({{name}}){{/if}}<span
+                  class="delete button"
+                  data-path="data.spells"
+                  name="{{key}}"
+                  ><i class="fas fa-trash"></i
+                ></span>
+              </h4>
 
-                <div class='gurps-3col'>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.name"}}</label>
-                    <div><input type='text' value='{{name}}' name='data.spells.{{key}}.name' /></div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.spellClass"}}</label>
-                    <div><input type='text' value='{{class}}' name='data.spells.{{key}}.class' /></div>
-                  </div>
+              <div class="gurps-3col">
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.name"}}</label>
+                  <div><input type="text" value="{{name}}" name="data.spells.{{key}}.name" /></div>
                 </div>
-
-                <div class='label-value-row right-bias'>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.skillLevel"}}</label>
-                  <div><input type='text' value='{{otf}}' name='data.spells.{{key}}.otf' /></div>
-                </div>
-
-                <div class='gurps-3col'>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.spellCollege"}}</label>
-                    <div><input type='text' value='{{college}}' name='data.spells.{{key}}.college' /></div>
-                    <label>{{i18n "GURPS.spellCost"}}</label>
-                    <div><input type='text' value='{{cost}}' name='data.spells.{{key}}.cost' /></div>
-                    <label>{{i18n "GURPS.spellMaintain"}}</label>
-                    <div><input type='text' value='{{maintain}}' name='data.spells.{{key}}.maintain' /></div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.spellDuration"}}</label>
-                    <div><input type='text' value='{{duration}}' name='data.spells.{{key}}.duration' /></div>
-                    <label>{{i18n "GURPS.spellResist"}}</label>
-                    <div><input type='text' value='{{resist}}' name='data.spells.{{key}}.resist' /></div>
-                    <label>{{i18n "GURPS.spellTime"}}</label>
-                    <div><input type='text' value='{{casttime}}' name='data.spells.{{key}}.casttime' /></div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.spellDifficulty"}}</label>
-                    <div><input type='text' value='{{difficulty}}' name='data.spells.{{key}}.difficulty' /></div>
-                    <label>{{i18n "GURPS.pdfPageReference"}}</label>
-                    <div><input type='text' value='{{pageref}}' name='data.spells.{{key}}.pageref' /></div>
-                    <div></div>
-                    <div><input type='text' value='' disabled='' style='background: transparent;'></div>
-                  </div>
-                </div>
-
-                <div class='label-value-row right-bias'>
-                  <label>{{i18n "GURPS.notes"}}</label>
-                  <div><textarea class='notes' rows='2' name='data.spells.{{key}}.notes'>{{notes}}</textarea></div>
-
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.check"}}</label>
-                  <div><input type='text' value='{{checkotf}}' name='data.spells.{{key}}.checkotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.during"}}</label>
-                  <div><input type='text' value='{{duringotf}}' name='data.spells.{{key}}.duringotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.pass"}}</label>
-                  <div><input type='text' value='{{passotf}}' name='data.spells.{{key}}.passotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.fail"}}</label>
-                  <div><input type='text' value='{{failotf}}' name='data.spells.{{key}}.failotf' />
-                  </div>
-
+                <div class="label-value-row right-bias"></div>
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.spellClass"}}</label>
+                  <div><input type="text" value="{{class}}" name="data.spells.{{key}}.class" /></div>
                 </div>
               </div>
-              <div class='vertical-gap'></div>
+
+              <div class="label-value-row right-bias">
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.skillLevel"}}</label>
+                <div><input type="text" value="{{otf}}" name="data.spells.{{key}}.otf" /></div>
+              </div>
+
+              <div class="gurps-3col">
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.spellCollege"}}</label>
+                  <div><input type="text" value="{{college}}" name="data.spells.{{key}}.college" /></div>
+                  <label>{{i18n "GURPS.spellCost"}}</label>
+                  <div><input type="text" value="{{cost}}" name="data.spells.{{key}}.cost" /></div>
+                  <label>{{i18n "GURPS.spellMaintain"}}</label>
+                  <div><input type="text" value="{{maintain}}" name="data.spells.{{key}}.maintain" /></div>
+                </div>
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.spellDuration"}}</label>
+                  <div><input type="text" value="{{duration}}" name="data.spells.{{key}}.duration" /></div>
+                  <label>{{i18n "GURPS.spellResist"}}</label>
+                  <div><input type="text" value="{{resist}}" name="data.spells.{{key}}.resist" /></div>
+                  <label>{{i18n "GURPS.spellTime"}}</label>
+                  <div><input type="text" value="{{casttime}}" name="data.spells.{{key}}.casttime" /></div>
+                </div>
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.spellDifficulty"}}</label>
+                  <div><input type="text" value="{{difficulty}}" name="data.spells.{{key}}.difficulty" /></div>
+                  <label>{{i18n "GURPS.pdfPageReference"}}</label>
+                  <div><input type="text" value="{{pageref}}" name="data.spells.{{key}}.pageref" /></div>
+                  <div></div>
+                  <div><input type="text" value="" disabled="" style="background: transparent" /></div>
+                </div>
+              </div>
+
+              <div class="label-value-row right-bias">
+                <label>{{i18n "GURPS.notes"}}</label>
+                <div><textarea class="notes" rows="2" name="data.spells.{{key}}.notes">{{notes}}</textarea></div>
+
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.check"}}</label>
+                <div><input type="text" value="{{checkotf}}" name="data.spells.{{key}}.checkotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.during"}}</label>
+                <div><input type="text" value="{{duringotf}}" name="data.spells.{{key}}.duringotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.pass"}}</label>
+                <div><input type="text" value="{{passotf}}" name="data.spells.{{key}}.passotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.fail"}}</label>
+                <div><input type="text" value="{{failotf}}" name="data.spells.{{key}}.failotf" /></div>
+              </div>
+            </div>
+            <div class="vertical-gap"></div>
             {{/each}}
-            <div class='button-bar'>
-              <button id='add-spell'><i class='fas fa-check'></i>
-                {{i18n "GURPS.addSpell"}}</button>
+            <div class="button-bar">
+              <button id="add-spell"><i class="fas fa-check"></i> {{i18n "GURPS.addSpell"}}</button>
             </div>
           </div>
 
           <!-- Skills -->
-          <div class='tab' data-tab='skill-tab' data-group='sections'>
+          <div class="tab" data-tab="skill-tab" data-group="sections">
             {{#each data.skills as | this key |}}
-              <div class='gga-group inputs'>
-                <h4 class='with-button'>{{i18n "GURPS.skill"}}
-                  {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='data.skills' name='{{key}}'><i
-                      class='fas fa-trash'></i></span>
-                </h4>
+            <div class="gga-group inputs">
+              <h4 class="with-button">
+                {{i18n "GURPS.skill"}} {{#if name}}({{name}}){{/if}}<span
+                  class="delete button"
+                  data-path="data.skills"
+                  name="{{key}}"
+                  ><i class="fas fa-trash"></i
+                ></span>
+              </h4>
 
-                <div class='gurps-3col'>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.name"}}</label>
-                    <div><input type='text' value='{{name}}' name='data.skills.{{key}}.name' /></div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.pdfPageReference"}}</label>
-                    <div><input type='text' value='{{pageref}}' name='data.skills.{{key}}.pageref' />
-                    </div>
-                  </div>
+              <div class="gurps-3col">
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.name"}}</label>
+                  <div><input type="text" value="{{name}}" name="data.skills.{{key}}.name" /></div>
                 </div>
-                <div class='label-value-row right-bias'>
-                  <div></div>
-                  <div></div>
-
-                  <label>{{i18n "GURPS.skillLevel"}}</label>
-                  <div><input type='text' value='{{otf}}' name='data.skills.{{key}}.otf' /></div>
-                  <label>{{i18n "GURPS.notes"}}</label>
-                  <div><textarea class='notes' rows='2' name='data.skills.{{key}}.notes'>{{notes}}</textarea></div>
-
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.check"}}</label>
-                  <div><input type='text' value='{{checkotf}}' name='data.skills.{{key}}.checkotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.during"}}</label>
-                  <div><input type='text' value='{{duringotf}}' name='data.skills.{{key}}.duringotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.pass"}}</label>
-                  <div><input type='text' value='{{passotf}}' name='data.skills.{{key}}.passotf' />
-                  </div>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.fail"}}</label>
-                  <div><input type='text' value='{{failotf}}' name='data.skills.{{key}}.failotf' />
-                  </div>
-
+                <div class="label-value-row right-bias"></div>
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.pdfPageReference"}}</label>
+                  <div><input type="text" value="{{pageref}}" name="data.skills.{{key}}.pageref" /></div>
                 </div>
               </div>
-              <div class='vertical-gap'></div>
+              <div class="label-value-row right-bias">
+                <div></div>
+                <div></div>
+
+                <label>{{i18n "GURPS.skillLevel"}}</label>
+                <div><input type="text" value="{{otf}}" name="data.skills.{{key}}.otf" /></div>
+                <label>{{i18n "GURPS.notes"}}</label>
+                <div><textarea class="notes" rows="2" name="data.skills.{{key}}.notes">{{notes}}</textarea></div>
+
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.check"}}</label>
+                <div><input type="text" value="{{checkotf}}" name="data.skills.{{key}}.checkotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.during"}}</label>
+                <div><input type="text" value="{{duringotf}}" name="data.skills.{{key}}.duringotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.pass"}}</label>
+                <div><input type="text" value="{{passotf}}" name="data.skills.{{key}}.passotf" /></div>
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.fail"}}</label>
+                <div><input type="text" value="{{failotf}}" name="data.skills.{{key}}.failotf" /></div>
+              </div>
+            </div>
+            <div class="vertical-gap"></div>
             {{/each}}
-            <div class='button-bar'>
-              <button id='add-skill'><i class='fas fa-check'></i>
-                {{i18n "GURPS.addSkill"}}</button>
+            <div class="button-bar">
+              <button id="add-skill"><i class="fas fa-check"></i> {{i18n "GURPS.addSkill"}}</button>
             </div>
           </div>
 
           <!-- Advantages -->
-          <div class='tab' data-tab='ads-tab' data-group='sections'>
+          <div class="tab" data-tab="ads-tab" data-group="sections">
             {{#each data.ads as | this key |}}
-              <div class='gga-group inputs'>
-                <h4 class='with-button'>{{i18n "GURPS.advantage"}}
-                  {{#if name}}({{name}}){{/if}}<span class='delete button' data-path='data.ads' name='{{key}}'><i
-                      class='fas fa-trash'></i></span>
-                </h4>
+            <div class="gga-group inputs">
+              <h4 class="with-button">
+                {{i18n "GURPS.advantage"}} {{#if name}}({{name}}){{/if}}<span
+                  class="delete button"
+                  data-path="data.ads"
+                  name="{{key}}"
+                  ><i class="fas fa-trash"></i
+                ></span>
+              </h4>
 
-                <div class='gurps-3col'>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.name"}}</label>
-                    <div><input type='text' value='{{name}}' name='data.ads.{{key}}.name' /></div>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                  </div>
-                  <div class='label-value-row right-bias'>
-                    <label>{{i18n "GURPS.pdfPageReference"}}</label>
-                    <div><input type='text' value='{{pageref}}' name='data.ads.{{key}}.pageref' />
-                    </div>
-                  </div>
+              <div class="gurps-3col">
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.name"}}</label>
+                  <div><input type="text" value="{{name}}" name="data.ads.{{key}}.name" /></div>
                 </div>
-                <div class='label-value-row right-bias'>
-                  <div></div>
-                  <div></div>
-                  <label>{{i18n "GURPS.notes"}}</label>
-                  <div><textarea class='notes' rows='2' name='data.ads.{{key}}.notes'>{{notes}}</textarea></div>
+                <div class="label-value-row right-bias"></div>
+                <div class="label-value-row right-bias">
+                  <label>{{i18n "GURPS.pdfPageReference"}}</label>
+                  <div><input type="text" value="{{pageref}}" name="data.ads.{{key}}.pageref" /></div>
                 </div>
               </div>
-              <div class='vertical-gap'></div>
+              <div class="label-value-row right-bias">
+                <div></div>
+                <div></div>
+                <label>{{i18n "GURPS.notes"}}</label>
+                <div><textarea class="notes" rows="2" name="data.ads.{{key}}.notes">{{notes}}</textarea></div>
+              </div>
+            </div>
+            <div class="vertical-gap"></div>
             {{/each}}
-            <div class='button-bar'>
-              <button id='add-ads'><i class='fas fa-check'></i>
-                {{i18n "GURPS.addAdvantage"}}</button>
+            <div class="button-bar">
+              <button id="add-ads"><i class="fas fa-check"></i> {{i18n "GURPS.addAdvantage"}}</button>
             </div>
           </div>
         </section>

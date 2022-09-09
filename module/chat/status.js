@@ -41,7 +41,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](st|status)$/i)
   }
   usage() {
-    return i18n("GURPS.chatHelpStatus");
+    return i18n('GURPS.chatHelpStatus')
   }
 
   /**
@@ -58,11 +58,7 @@ export default class StatusChatProcessor extends ChatProcessor {
     let self = this.match.groups?.target /* this.match[4] */ === '@self'
     let tokenName = !self && !!this.match.groups?.target ? this.match.groups.target.replace(/^:(.*)$/, '$1') : null
 
-    let tokens = !!tokenName
-      ? this.getTokensFor(tokenName)
-      : !!self
-      ? this.getSelfTokens()
-      : canvas.tokens?.controlled
+    let tokens = !!tokenName ? this.getTokensFor(tokenName) : !!self ? this.getSelfTokens() : canvas.tokens?.controlled
 
     if (!tokens || tokens.length === 0) {
       ui.notifications.warn(i18n_f('GURPS.chatSelectSelfOrNameTokens', { self: '@self' }))
@@ -178,7 +174,9 @@ export default class StatusChatProcessor extends ChatProcessor {
       let actor = /** @type {GurpsActor} */ (token.actor)
       // TODO We need to turn this into a single string, instead of multiple i18n strings concatenated.
       // This assumes an English-like word order, which may not apply to another language.
-      this.prnt(`${i18n(actionText)} <i>${effect.id}:'${i18n(effect.label)}'</i> ${i18n('GURPS.for')} ${actor.displayname}`)
+      this.prnt(
+        `${i18n(actionText)} <i>${effect.id}:'${i18n(effect.label)}'</i> ${i18n('GURPS.for')} ${actor.displayname}`
+      )
     }
   }
 

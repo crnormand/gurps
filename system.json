@@ -1,82 +1,77 @@
 {
-	"id": "gurps",
-	"title": "GURPS 4th Ed. Game Aid (Unofficial)",
-	"description": "A game aid to help play GURPS 4e for Foundry VTT",
-	"version": "0.15.0",
-	"authors": [
-		{
-			"name": "Chris Normand",
-			"email": "",
-			"discord": "Nose66#6689"
-		},
-		{
-			"name": "M. Jeff Wilson",
-			"email": "",
-			"discord": "Nick Coffin, PI#8616"
-		},
-		{
-			"name": "Mikolaj Tomczynski",
-			"email": "mikolajtomczynski@gmail.com",
-			"discord": "neck#0001"
-		}
-	],
-	"compatibility": {
-		"minimum": 10,
-		"verified": "10.283",
-		"maximum": 10
-	},
-	"templateVersion": 2,
-	"esmodules": [
-		"module/gurps.js",
-		"lib/xregexp-all.js"
-	],
-	"scripts": [
-		"scripts/jquery.tinycolorpicker.js"
-	],
-	"styles": [
-		"styles/simple.css",
-		"styles/css_boilerplate.css",
-		"styles/simplified.css",
-		"styles/npc-input.css",
-		"styles/apps.css",
-		"styles/color-character-sheet.css",
-		"styles/tinycolorpicker.css"
-	],
-	"packs": [],
-	"languages": [
-		{
-			"lang": "en",
-			"name": "English",
-			"path": "lang/en.json"
-		},
-		{
-			"lang": "pt-BR",
-			"name": "Português (Brasil)",
-			"path": "lang/pt_br.json"
-		},
-		{
-			"lang": "de",
-			"name": "Deutsch (German)",
-			"path": "lang/de.json"
-		},
-		{
-			"lang": "ru",
-			"name": "русский (Russian)",
-			"path": "lang/ru.json"
-		},
-		{
-			"lang": "Fr",
-			"name": "French",
-			"path": "lang/fr.json"
-		}
-	],
-	"gridDistance": 1,
-	"gridUnits": "yd",
-	"primaryTokenAttribute": "HP",
-	"secondaryTokenAttribute": "FP",
-	"url": "https://github.com/crnormand/gurps",
-	"manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-	"download": "https://github.com/crnormand/gurps/archive/0.15.0.zip",
-	"socket": true,
-	"license": "LICENSE.txt"
+  "id": "gurps",
+  "title": "GURPS 4th Ed. Game Aid (Unofficial)",
+  "description": "A game aid to help play GURPS 4e for Foundry VTT",
+  "version": "0.15.0",
+  "authors": [
+    {
+      "name": "Chris Normand",
+      "email": "",
+      "discord": "Nose66#6689"
+    },
+    {
+      "name": "M. Jeff Wilson",
+      "email": "",
+      "discord": "Nick Coffin, PI#8616"
+    },
+    {
+      "name": "Mikolaj Tomczynski",
+      "email": "mikolajtomczynski@gmail.com",
+      "discord": "neck#0001"
+    }
+  ],
+  "compatibility": {
+    "minimum": 10,
+    "verified": "10.283",
+    "maximum": 10
+  },
+  "templateVersion": 2,
+  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
+  "scripts": ["scripts/jquery.tinycolorpicker.js"],
+  "styles": [
+    "styles/simple.css",
+    "styles/css_boilerplate.css",
+    "styles/simplified.css",
+    "styles/npc-input.css",
+    "styles/apps.css",
+    "styles/color-character-sheet.css",
+    "styles/tinycolorpicker.css"
+  ],
+  "packs": [],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt_br.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch (German)",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "ru",
+      "name": "русский (Russian)",
+      "path": "lang/ru.json"
+    },
+    {
+      "lang": "Fr",
+      "name": "French",
+      "path": "lang/fr.json"
+    }
+  ],
+  "gridDistance": 1,
+  "gridUnits": "yd",
+  "primaryTokenAttribute": "HP",
+  "secondaryTokenAttribute": "FP",
+  "url": "https://github.com/crnormand/gurps",
+  "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
+  "download": "https://github.com/crnormand/gurps/archive/0.15.0.zip",
+  "socket": true,
+  "license": "LICENSE.txt"
 }

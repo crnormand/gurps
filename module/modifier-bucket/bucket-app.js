@@ -15,7 +15,7 @@ Hooks.once('init', async function () {
 
   // @ts-ignore -- Need to look into why a GurpsRoll isn't a Roll
   CONFIG.Dice.rolls.push(GurpsRoll)
-  CONFIG.Dice.terms["d"] = GurpsDie  // Hack to get Dice so nice working (it checks the terms["d"].name vs the Dice class name
+  CONFIG.Dice.terms['d'] = GurpsDie // Hack to get Dice so nice working (it checks the terms["d"].name vs the Dice class name
 
   // MONKEY_PATCH
   // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch them to
@@ -63,7 +63,6 @@ Hooks.once('init', async function () {
       },
     })
   }
-
 })
 
 Hooks.once('ready', async function () {
@@ -478,7 +477,7 @@ export class ModifierBucket extends Application {
    * @param {string | null} id
    */
   sendBucketToPlayer(id) {
-    if ("SHOWALL" == id) return
+    if ('SHOWALL' == id) return
     if (!id) {
       // Only occurs if the GM clicks on 'everyone'
       let _users = game.users
@@ -512,7 +511,7 @@ export class ModifierBucket extends Application {
       type: 'updatebucket',
       users: users.map(u => u.id),
       bucket: GURPS.ModifierBucket.modifierStack,
-      add: ctrl
+      add: ctrl,
     })
   }
 

@@ -77,14 +77,18 @@
 				<div class="list_note">{{{gurpslink this.notes @root}}}</div>
 			</div>
 			<div class="rollable simple_roll_label" data-name="{{this.name}}" data-otf='S:"{{this.name}}"'>
-				{{this.level}}</div>
+				{{this.level}}
+			</div>
 			{{/each}}
 		</div>
 		<div class="simple_Eqt">
-			<label class="eqtdragtarget dblclksort" data-key="system.equipment.carried">My
-				Belongings</label><label>#</label>
+			<label class="eqtdragtarget dblclksort" data-key="system.equipment.carried">My Belongings</label>
+			<label>#</label>
 			{{#listeqt system.equipment.carried }}
-			<div class="indent{{@indent}} eqtdraggable" data-key="system.equipment.carried.{{@key}}"">{{{gurpslink this.name}}}
+			<div class="indent{{@indent}} eqtdraggable" data-key="system.equipment.carried.{{@key}}"">
+				{{{gurpslink this.name}}}
+			</div>
+		</div>
         <div class=" list_note eqtdraggable" data-key="system.equipment.carried.{{@key}}"">{{{gurpslink this.notes}}}</div>
     </div>
    	<div>{{this.count}}</div>

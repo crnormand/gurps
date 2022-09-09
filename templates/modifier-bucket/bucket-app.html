@@ -1,30 +1,31 @@
-<div id='bucket-app' class='{{cssClass}}' autocomplete='off'>
-  <div id='current-actor'><span>{{currentActor}}</span></div>
-  {{#each damageAccumulators}}
-    {{#if (eq ../accumulatorIndex @index)}}
-      <div id='damage-accumulator'>
-        <div class='accumulator-control' data-action='inc'><i class='fas fa-plus'></i></div>
-        <div class='accumulator-control' data-action='dec'><i class='fas fa-minus'></i></div>
-        <div id='accumulator-center' class='accumulator-control pulsate' data-action='apply'>
-          {{multiplyDice formula count}} {{damagetype}} {{extdamagetype}}
-        </div>
-        <div class='accumulator-control' data-action='cancel'><i class='fas fa-times'></i></div>
-      </div>
-    {{/if}}
-  {{/each}}
-  <div id='modifierbucket' class='app'>
-    <div id='globalmodifier' class='{{#if stack.plus}}plus{{/if}} {{#if stack.minus}}minus{{/if}}' draggable="true">
+<div id="bucket-app" class="{{cssClass}}" autocomplete="off">
+  <div id="current-actor"><span>{{currentActor}}</span></div>
+  {{#each damageAccumulators}} {{#if (eq ../accumulatorIndex @index)}}
+  <div id="damage-accumulator">
+    <div class="accumulator-control" data-action="inc"><i class="fas fa-plus"></i></div>
+    <div class="accumulator-control" data-action="dec"><i class="fas fa-minus"></i></div>
+    <div id="accumulator-center" class="accumulator-control pulsate" data-action="apply">
+      {{multiplyDice formula count}} {{damagetype}} {{extdamagetype}}
+    </div>
+    <div class="accumulator-control" data-action="cancel"><i class="fas fa-times"></i></div>
+  </div>
+  {{/if}} {{/each}}
+  <div id="modifierbucket" class="app">
+    <div id="globalmodifier" class="{{#if stack.plus}}plus{{/if}} {{#if stack.minus}}minus{{/if}}" draggable="true">
       {{stack.displaySum}}
     </div>
     <div>
-      <div id='trash'><a class='span icon'><i class='fas fa-trash'></i></a></div>
-      <hr style="height:1px; border:none; background-color:lightgray;" />
-      <div id='magnet' class='{{#if (not stack.AUTO_EMPTY)}}enabled{{/if}}'><a class='span icon'><i
-            class="fas fa-magnet"></i></a></div>
+      <div id="trash">
+        <a class="span icon"><i class="fas fa-trash"></i></a>
+      </div>
+      <hr style="height: 1px; border: none; background-color: lightgray" />
+      <div id="magnet" class="{{#if (not stack.AUTO_EMPTY)}}enabled{{/if}}">
+        <a class="span icon"><i class="fas fa-magnet"></i></a>
+      </div>
     </div>
   </div>
-  <div id="threed6" style="border-color: dark-grey; background-color: transparent;" class="">
-    <img id="threed6dice" src="systems/gurps/icons/threed6new.png">
-    <img id="oned6dice" src="systems/gurps/icons/die-new.png">
+  <div id="threed6" style="border-color: dark-grey; background-color: transparent" class="">
+    <img id="threed6dice" src="systems/gurps/icons/threed6new.png" />
+    <img id="oned6dice" src="systems/gurps/icons/die-new.png" />
   </div>
 </div>
