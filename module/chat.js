@@ -387,8 +387,7 @@ export default function addChatHooks() {
 					}
 				} catch (e) { } // a dangerous game... but limited to GURPs /roll OtF
 				let newContent = gurpslink(c)
-				let update = { content: newContent }
-				chatMessage.update(update)
+				setProperty(chatMessage, "_source.content", newContent);
 				return true
 			}
 		)

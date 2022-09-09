@@ -2046,7 +2046,8 @@ body {
 
 .roll-result .roll-value,
 .roll-result .roll-detail {
-  font-family: var(--fontawesomefamily);
+  /* font-family: var(--fontawesomefamily); */
+	font-family: inherit;
 }
 
 .roll-result .roll-detail {
