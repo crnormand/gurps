@@ -2,6 +2,16 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+TESTED in V10:
+Actor import directly from GCS
+Roll buttons on char sheet (although there is a jump in the page every time you click on a button)
+Drag damage to a character sheet
+Drag damage to Combat tracker entry
+
+Not working:
+Drag damage to a token
+Unable to drag foundry item onto character sheet.   Cannot create Item on actor.  WOW, they really changed Foundry Items :-(
+
 Release 0.14.11
 
 - Updated GCA5 export script (GCA5-14)
