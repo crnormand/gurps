@@ -3,6 +3,7 @@
   --sectiongap: 0.05in;
   --smallemgap: 0.2em;
 /*  --fontawesomefamily: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  --fontawesomefamily: "fontawesome";
   --lightgrey: rgba(0, 0, 0, 0.3);
   --headerfontsize: 80%;
   --standardborder: 1px solid black;

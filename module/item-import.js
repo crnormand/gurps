@@ -48,7 +48,7 @@ export class ItemImporter {
 		let itemData = {
 			name: i.description,
 			type: 'equipment',
-			data: {
+			system: {
 				eqt: {
 					name: i.description,
 					notes: i.notes,
@@ -110,14 +110,14 @@ export class ItemImporter {
 						damage: w.calc.damage || '',
 						mode: w.usage || '',
 						name: itemData.name,
-						notes: itemData.data.eqt.notes || '',
-						pageref: itemData.data.eqt.pageref || '',
+						notes: itemData.eqt.notes || '',
+						pageref: itemData.system.eqt.pageref || '',
 						parry: w.parry || '',
 						reach: w.reach || '',
 						st: w.strength || '',
 						otf: otf_list.join('|') || '',
 					}
-					itemData.data.melee[zeroFill(Object.keys(itemData.data.melee).length + 1)] = wep
+					itemData.system.melee[zeroFill(Object.keys(itemData.system.melee).length + 1)] = wep
 				} else if (w.type === 'ranged_weapon') {
 					let wep = {
 						acc: w.accuracy || '',
@@ -126,8 +126,8 @@ export class ItemImporter {
 						damage: w.calc.damage || '',
 						mode: w.usage,
 						name: itemData.name,
-						notes: itemData.data.eqt.notes || '',
-						pageref: itemData.data.eqt.pageref || '',
+						notes: itemData.system.eqt.notes || '',
+						pageref: itemData.system.eqt.pageref || '',
 						range: w.range,
 						rcl: w.recoil,
 						rof: w.rate_of_fire,
@@ -135,7 +135,7 @@ export class ItemImporter {
 						st: w.strength,
 						otf: otf_list.join('|') || '',
 					}
-					itemData.data.ranged[zeroFill(Object.keys(itemData.data.ranged).length + 1)] = wep
+					itemData.system.ranged[zeroFill(Object.keys(itemData.system.ranged).length + 1)] = wep
 				}
 			}
 		let bonus_list = []
@@ -205,12 +205,12 @@ export class ItemImporter {
 					}
 				}
 			}
-		itemData.data.bonuses = bonus_list.join('\n')
+		itemData.system.bonuses = bonus_list.join('\n')
 		const cachedItems = [];
 		for (let i of pack.index) {
 			cachedItems.push(await pack.getDocument(i._id));
 		}
-		let oi = await cachedItems.find(p => p.getGurpsActorData().eqt.uuid === itemData.eqt.uuid)
+		let oi = await cachedItems.find(p => p.system.eqt.uuid === itemData.eqt.uuid)
 		if (!!oi) {
 			let oldData = duplicate(oi.data)
 			let newData = duplicate(itemData)
