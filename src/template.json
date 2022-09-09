@@ -1,0 +1,239 @@
+{
+	"Actor": {
+		"types": ["character", "enemy"],
+		"templates": {
+			"base": {
+				"attributes": {
+					"ST": {
+						"import": 10,
+						"value": 10,
+						"points": 0,
+						"dtype": "Number"
+					},
+					"DX": {
+						"import": 10,
+						"value": 10,
+						"points": 0,
+						"dtype": "Number"
+					},
+					"IQ": {
+						"import": 10,
+						"value": 10,
+						"points": 0,
+						"dtype": "Number"
+					},
+					"HT": {
+						"import": 10,
+						"value": 10,
+						"points": 0,
+						"dtype": "Number"
+					},
+					"WILL": {
+						"import": 10,
+						"value": 10,
+						"points": 0,
+						"dtype": "Number"
+					},
+					"PER": {
+						"import": 10,
+						"value": 10,
+						"points": 0,
+						"dtype": "Number"
+					},
+					"QN": {
+						"import": 10,
+						"value": 10,
+						"points": 0,
+						"dtype": "Number"
+					}
+				},
+				"HP": {
+					"value": 0,
+					"min": 0,
+					"max": 0,
+					"points": 0
+				},
+				"FP": {
+					"value": 0,
+					"min": 0,
+					"max": 0,
+					"points": 0
+				},
+				"QP": {
+					"value": 0,
+					"min": 0,
+					"max": 0,
+					"points": 0
+				},
+				"dodge": {
+					"value": 0,
+					"enc_level": 0
+				},
+				"basicmove": {
+					"value": "0",
+					"points": 0
+				},
+				"basicspeed": {
+					"value": "0",
+					"points": 0
+				},
+				"parry": 0,
+				"currentmove": 0,
+				"thrust": "",
+				"swing": "",
+				"frightcheck": 0,
+				"hearing": 0,
+				"tastesmell": 0,
+				"vision": 0,
+				"touch": 0,
+				"ads": {},
+				"languages": {},
+				"skills": {},
+				"spells": {},
+				"money": {},
+				"traits": {
+					"title": "",
+					"race": "",
+					"height": "",
+					"weight": "",
+					"age": "",
+					"birthday": "",
+					"religion": "",
+					"gender": "",
+					"eyes": "",
+					"hair": "",
+					"hand": "",
+					"skin": "",
+					"sizemod": "+0",
+					"techlevel": "",
+					"createdon": "",
+					"modifiedon": "",
+					"player": ""
+				},
+				"totalpoints": {
+					"attributes": 0,
+					"ads": 0,
+					"disads": 0,
+					"quirks": 0,
+					"skills": 0,
+					"spells": 0,
+					"total": 150,
+					"unspent": 0,
+					"race": 0
+				},
+				"melee": {},
+				"ranged": {},
+				"conditionalmods": {},
+				"hitlocations": {},
+				"encumbrance": {
+					"00000": {
+						"key": "enc0",
+						"level": 0,
+						"dodge": 0,
+						"weight": 0,
+						"move": 0
+					},
+					"00001": {
+						"key": "enc1",
+						"level": 1,
+						"dodge": 0,
+						"weight": 0,
+						"move": 0
+					},
+					"00002": {
+						"key": "enc2",
+						"level": 2,
+						"dodge": 0,
+						"weight": 0,
+						"move": 0
+					},
+					"00003": {
+						"key": "enc3",
+						"level": 3,
+						"dodge": 0,
+						"weight": 0,
+						"move": 0
+					},
+					"00004": {
+						"key": "enc4",
+						"level": 4,
+						"dodge": 0,
+						"weight": 0,
+						"move": 0
+					}
+				},
+				"notes": {},
+				"equipment": {
+					"carried": {},
+					"other": {}
+				},
+				"liftingmoving": {
+					"basiclift": "",
+					"carryonback": "",
+					"onehandedlift": "",
+					"runningshove": "",
+					"shiftslightly": "",
+					"shove": "",
+					"twohandedlift": ""
+				},
+				"reactions": {},
+				"additionalresources": {
+					"bodyplan": "humanoid",
+					"tracker": {}
+				},
+				"conditions": {},
+				"conditionalinjury": {
+					"RT": {
+						"value": 4,
+						"points": 0
+					},
+					"injury": {
+						"severity": "",
+						"daystoheal": 0
+					}
+				}
+			}
+		},
+		"character": {
+			"templates": ["base"]
+		},
+		"enemy": {
+			"templates": ["base"]
+		}
+	},
+	"Item": {
+		"types": ["equipment"],
+		"equipment": {
+			"eqt": {
+				"name": "",
+				"notes": "",
+				"pageref": "",
+				"count": 1,
+				"weight": 0,
+				"cost": 0,
+				"location": "",
+				"carried": true,
+				"equipped": true,
+				"techlevel": "",
+				"categories": "",
+				"legalityclass": "",
+				"costsum": 0,
+				"weightsum": 0,
+				"uses": "",
+				"maxuses": "",
+				"parentuuid": "",
+				"uuid": "",
+				"contains": {}
+			},
+			"melee": {},
+			"ranged": {},
+			"ads": {},
+			"skills": {},
+			"spells": {},
+			"bonuses": "",
+			"equipped": true,
+			"carried": true,
+			"globalid": ""
+		}
+	}
+}
