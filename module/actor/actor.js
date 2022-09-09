@@ -83,7 +83,7 @@ export class GurpsActor extends Actor {
    */
   getGurpsActorData() {
     // @ts-ignore
-    return this.data.data
+    return this.system
   }
 
   // Return collection os Users that have ownership on this actor
@@ -190,7 +190,7 @@ export class GurpsActor extends Actor {
       let atLeastOne = false
       for (const i of orig) {
         // @ts-ignore
-        if (!i.data.data.eqt.parentuuid || good.find(e => e.data.data.eqt.uuid == i.data.data.eqt.parentuuid)) {
+        if (!i.system.eqt.parentuuid || good.find(e => e.system.eqt.uuid == i.system.eqt.parentuuid)) {
           atLeastOne = true
           good.push(i) // Add items in 'parent' order... parents before children (so children can find parent when inserted into list)
         } else left.push(i)
@@ -212,12 +212,12 @@ export class GurpsActor extends Actor {
 
   // Ensure Language Advantages conform to a standard (for Polygot module)
   async syncLanguages() {
-    if (this.data.data.languages) {
+    if (this.getGurpsActorData().languages) {
       let updated = false
-      let newads = { ...this.data.data.ads }
+      let newads = { ...this.getGurpsActorData().ads }
       let langn = new RegExp('Language:?', 'i')
       let langt = new RegExp(i18n('GURPS.language') + ':?', 'i')
-      recurselist(this.data.data.languages, (e, k, d) => {
+      recurselist(this.getGurpsActorData().languages, (e, k, d) => {
         let a = GURPS.findAdDisad(this, '*' + e.name) // is there an Adv including the same name
         if (a) {
           if (!a.name.match(langn) && !a.name.match(langt)) {
@@ -680,8 +680,8 @@ export class GurpsActor extends Actor {
 
   _calculateRangedRanges() {
     if (!game.settings.get(settings.SYSTEM_NAME, settings.SETTING_CONVERT_RANGED)) return
-    let st = +this.data.data.attributes.ST.value
-    recurselist(this.data.data.ranged, r => {
+    let st = +this.getGurpsActorData().attributes.ST.value
+    recurselist(this.getGurpsActorData().ranged, r => {
       let rng = r.range || '' // Data protection
       rng = rng + '' // force to string
       let m = rng.match(/^ *[xX]([\d\.]+) *$/)

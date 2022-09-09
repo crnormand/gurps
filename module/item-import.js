@@ -210,10 +210,10 @@ export class ItemImporter {
 		for (let i of pack.index) {
 			cachedItems.push(await pack.getDocument(i._id));
 		}
-		let oi = await cachedItems.find(p => p.data.data.eqt.uuid === itemData.data.eqt.uuid)
+		let oi = await cachedItems.find(p => p.getGurpsActorData().eqt.uuid === itemData.eqt.uuid)
 		if (!!oi) {
-			let oldData = duplicate(oi.data.data)
-			let newData = duplicate(itemData.data)
+			let oldData = duplicate(oi.data)
+			let newData = duplicate(itemData)
 			delete oldData.eqt.uuid
 			delete newData.eqt.uuid
 			if (oldData != newData) {

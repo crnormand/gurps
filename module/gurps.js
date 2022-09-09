@@ -621,7 +621,7 @@ if (!globalThis.GURPS) {
         ui.notifications?.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
-      let df = action.derivedformula.match(/sw/i) ? actor.data.data.swing : actor.data.data.thrust
+      let df = action.derivedformula.match(/sw/i) ? actor.getGurpsActorData().swing : actor.getGurpsActorData().thrust
       // action fails if there's no formula
       if (!df) {
         ui.notifications?.warn(`${actor.name} does not have a ${action.derivedformula.toUpperCase()} formula`)
@@ -766,7 +766,7 @@ if (!globalThis.GURPS) {
         ui.notifications.warn(i18n('GURPS.chatYouMustHaveACharacterSelected'))
         return false
       }
-      let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.data.data.swing : actor.data.data.thrust
+      let df = action.derivedformula.match(/[Ss][Ww]/) ? actor.getGurpsActorData().swing : actor.getGurpsActorData().thrust
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       const originalFormula = action.derivedformula + action.formula
       return doRoll({
@@ -2088,7 +2088,7 @@ if (!globalThis.GURPS) {
     //   }).render(true)
 
     // @ts-ignore
-    GURPS.currentVersion = SemanticVersion.fromString(game.system.data.version)
+    GURPS.currentVersion = SemanticVersion.fromString(game.system.version)
     // Test for migration
     let mv = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION)
     let quiet = false
@@ -2109,7 +2109,7 @@ if (!globalThis.GURPS) {
       // @ts-ignore
       if (migrationVersion.isLowerThan(Settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
 
-      game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.data.version)
+      game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
     }
 
     // Show changelog

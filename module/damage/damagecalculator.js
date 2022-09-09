@@ -122,7 +122,7 @@ export class CompositeDamageCalculator {
     // if advantage.name === 'Injury Tolerance' && advantage.notes.startsWith('Diffuse ') -- GCS Basic style
     //    _isInjuryTolerance = true
     //    _injuryToleranceType = 'unliving'
-    let values = Object.values(this._defender.data.data.ads)
+    let values = Object.values(this._defender.getGurpsActorData().ads)
     if (this.isUnliving(values, false)) {
       this._isInjuryTolerance = true
       this._injuryToleranceType = UNLIVING
@@ -218,7 +218,7 @@ export class CompositeDamageCalculator {
   }
 
   get allHitLocations() {
-    return this._defender.data.data.hitlocations
+    return this._defender.getGurpsActorData().hitlocations
   }
 
   get armorDivisor() {
@@ -246,7 +246,7 @@ export class CompositeDamageCalculator {
   }
 
   get attributes() {
-    return this._defender.data.data.attributes
+    return this._defender.getGurpsActorData().attributes
   }
 
   /**
@@ -501,7 +501,7 @@ export class CompositeDamageCalculator {
   }
 
   get FP() {
-    return this._defender.data.data.FP
+    return this._defender.getGurpsActorData().FP
   }
 
   get hardenedDRLevel() {
@@ -556,7 +556,7 @@ export class CompositeDamageCalculator {
   }
 
   get HP() {
-    return this._defender.data.data.HP
+    return this._defender.getGurpsActorData().HP
   }
 
   get injury() {
@@ -736,7 +736,7 @@ export class CompositeDamageCalculator {
 
   get resource() {
     // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let trackers = objectToArray(this._defender.getGurpsActorData().additionalresources.tracker)
     let tracker = null
     let index = null
     trackers.forEach((t, i) => {
@@ -749,13 +749,13 @@ export class CompositeDamageCalculator {
     if (!!tracker) return [tracker, `data.additionalresources.tracker.${zeroFill(index, 4)}`]
     // }
 
-    if (this._applyTo === 'FP') return [this._defender.data.data.FP, 'data.FP']
-    return [this._defender.data.data.HP, 'data.HP']
+    if (this._applyTo === 'FP') return [this._defender.getGurpsActorData().FP, 'data.FP']
+    return [this._defender.getGurpsActorData().HP, 'data.HP']
   }
 
   get resourceType() {
     // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let trackers = objectToArray(this._defender.getGurpsActorData().additionalresources.tracker)
     let tracker = trackers.find(it => it.alias === this._applyTo)
     if (!!tracker) return tracker.name
     // }

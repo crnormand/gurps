@@ -82,7 +82,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     targetmods = targetmods.filter(it => it != null)
 
     let totalMod = targetmods.map(it => it.mod).reduce((a, b) => a + b, 0)
-    let WILLVar = parseInt(actor.data.data.frightcheck || actor.data.data.attributes.WILL.value, 10)
+    let WILLVar = parseInt(actor.getGurpsActorData().frightcheck || actor.getGurpsActorData().attributes.WILL.value, 10)
     let finaltarget = totalMod + WILLVar
 
     // true or false?

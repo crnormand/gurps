@@ -66,7 +66,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.useCI = GURPS.ConditionalInjury.isInUse()
     sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
     GURPS.SetLastActor(this.actor)
-    sheetData.eqtsummary = this.actor.data.data.eqtsummary
+    sheetData.eqtsummary = this.actor.getGurpsActorData().eqtsummary
     sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
@@ -150,7 +150,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('[data-operation="share-portrait"]').click(ev => {
       ev.preventDefault()
-      let image = this.actor.data.data.fullimage ?? this.actor.img
+      let image = this.actor.getGurpsActorData().fullimage ?? this.actor.img
       const ip = new ImagePopout(image, {
         title: this.actor.name,
         shareable: true,
@@ -225,12 +225,12 @@ export class GurpsActorSheet extends ActorSheet {
 
     html.find('button[data-operation="ci-severity-inc"]').click(async ev => {
       ev.preventDefault()
-      updateActorWithChangedSeverity(CI.incrementSeverity(this.actor.data.data.conditionalinjury.injury.severity))
+      updateActorWithChangedSeverity(CI.incrementSeverity(this.actor.getGurpsActorData().conditionalinjury.injury.severity))
     })
 
     html.find('button[data-operation="ci-severity-dec"]').click(ev => {
       ev.preventDefault()
-      updateActorWithChangedSeverity(CI.decrementSeverity(this.actor.data.data.conditionalinjury.injury.severity))
+      updateActorWithChangedSeverity(CI.decrementSeverity(this.actor.getGurpsActorData().conditionalinjury.injury.severity))
     })
 
     const updateActorWithChangedDaysToHeal = changedDaysToHeal => {
@@ -244,14 +244,14 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('button[data-operation="ci-days-inc"]').click(async ev => {
       ev.preventDefault()
       updateActorWithChangedDaysToHeal(
-        CI.incrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
+        CI.incrementDaysToHeal(this.actor.getGurpsActorData().conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
       )
     })
 
     html.find('button[data-operation="ci-days-dec"]').click(ev => {
       ev.preventDefault()
       updateActorWithChangedDaysToHeal(
-        CI.decrementDaysToHeal(this.actor.data.data.conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
+        CI.decrementDaysToHeal(this.actor.getGurpsActorData().conditionalinjury.injury.daystoheal, ev.shiftKey ? 5 : 1)
       )
     })
 
@@ -494,7 +494,7 @@ export class GurpsActorSheet extends ActorSheet {
     html.find('[data-onethird]').click(ev => {
       let el = ev.currentTarget
       let opt = el.dataset.onethird
-      let active = !!this.actor.data.data.conditions[opt]
+      let active = !!this.actor.getGurpsActorData().conditions[opt]
       this.actor.toggleEffectByName(opt, !active)
     })
 
@@ -515,7 +515,7 @@ export class GurpsActorSheet extends ActorSheet {
     )
 
     html.find('#qnotes').dblclick(ex => {
-      let n = this.actor.data.data.additionalresources.qnotes || ''
+      let n = this.actor.getGurpsActorData().additionalresources.qnotes || ''
       n = n.replace(/<br>/g, '\n')
       let actor = this.actor
       new Dialog({
@@ -1528,7 +1528,7 @@ export class GurpsActorSheet extends ActorSheet {
       // Check for 'undefined' when clicking on Encumbrance Level 'header'. ~Stevil
       if (key !== undefined) {
         //////////
-        let encs = this.actor.data.data.encumbrance
+        let encs = this.actor.getGurpsActorData().encumbrance
         if (encs[key].current) return // already selected
         for (let enckey in encs) {
           let enc = encs[enckey]
@@ -1725,14 +1725,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
     html.find('#body-plan').change(async e => {
       let bodyplan = e.currentTarget.value
-      if (bodyplan !== this.actor.data.data.additionalresources.bodyplan) {
+      if (bodyplan !== this.actor.getGurpsActorData().additionalresources.bodyplan) {
         let hitlocationTable = hitlocationDictionary[bodyplan]
         if (!hitlocationTable) {
           ui.notifications.error(`Unsupported bodyplan value: ${bodyplan}`)
         } else {
           // Try to copy any DR values from hit locations that match
           let hitlocations = {}
-          let oldlocations = this.actor.data.data.hitlocations || {}
+          let oldlocations = this.actor.getGurpsActorData().hitlocations || {}
           let count = 0
           for (let loc in hitlocationTable) {
             let hit = hitlocationTable[loc]
@@ -1815,14 +1815,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
 
   async _onClickIgnoreImportBodyPlan(ev) {
     ev.preventDefault()
-    let current = this.actor.data.data.additionalresources.ignoreinputbodyplan
+    let current = this.actor.getGurpsActorData().additionalresources.ignoreinputbodyplan
     let ignore = !current
     await this.actor.update({ 'data.additionalresources.ignoreinputbodyplan': ignore })
   }
 
   async _onClickShowFlightMove(ev) {
     ev.preventDefault()
-    let current = this.actor.data.data.additionalresources.showflightmove
+    let current = this.actor.getGurpsActorData().additionalresources.showflightmove
     let show = !current
     await this.actor.update({ 'data.additionalresources.showflightmove': show })
   }
@@ -1890,8 +1890,8 @@ export class GurpsActorNpcSheet extends GurpsActorSheet {
 
   getData() {
     const data = super.getData()
-    data.currentdodge = this.actor.data.data.currentdodge
-    data.currentmove = this.actor.data.data.currentmove
+    data.currentdodge = this.actor.getGurpsActorData().currentdodge
+    data.currentmove = this.actor.getGurpsActorData().currentmove
     data.defense = this.actor.getTorsoDr()
     let p = this.actor.getEquippedParry()
     //    let b = this.actor.getEquippedBlock();      // Don't have a good way to display block yet

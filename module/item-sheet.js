@@ -23,9 +23,9 @@ export class GurpsItemSheet extends ItemSheet {
   getData() {
     const sheetData = super.getData()
     sheetData.data = sheetData.data.data
-    sheetData.data.eqt.f_count = this.item.data.data.eqt.count // hack for Furnace module
+    sheetData.data.eqt.f_count = this.item.system.eqt.count // hack for Furnace module
     sheetData.name = this.item.name
-    if (!this.item.data.data.globalid && !this.item.parent)
+    if (!this.item.system.globalid && !this.item.parent)
       this.item.update({ 'data.globalid': this.item.id, _id: this.item.id })
     return sheetData
   }
@@ -45,10 +45,10 @@ export class GurpsItemSheet extends ItemSheet {
         'data.eqt.name': nm,
         name: nm,
       }
-      recurselist(this.item.data.data.melee, (e, k, d) => {
+      recurselist(this.item.system.melee, (e, k, d) => {
         commit = { ...commit, ...{ ['data.melee.' + k + '.name']: nm } }
       })
-      recurselist(this.item.data.data.ranged, (e, k, d) => {
+      recurselist(this.item.system.ranged, (e, k, d) => {
         commit = { ...commit, ...{ ['data.melee.' + k + '.name']: nm } }
       })
       this.item.update(commit)

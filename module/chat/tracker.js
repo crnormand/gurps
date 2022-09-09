@@ -33,7 +33,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
     if (!!m[3]) {
       let pattern = '^' + m[3].trim().replace(/\(\)/, '')
       tracker = -1
-      for (const [key, value] of Object.entries(actor.data.data.additionalresources.tracker)) {
+      for (const [key, value] of Object.entries(actor.getGurpsActorData().additionalresources.tracker)) {
         if (value.name.match(pattern)) {
           tracker = key
           display = '(' + value.name + ')'
@@ -46,7 +46,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
     }
       
     let theTrackerKey = zeroFill(tracker, 4)
-    let theTracker = actor.data.data.additionalresources.tracker[theTrackerKey]
+    let theTracker = actor.getGurpsActorData().additionalresources.tracker[theTrackerKey]
     if (!theTracker) {
       ui.notifications.warn(`${i18n('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} 'tr${m[2]}'`)
       return false

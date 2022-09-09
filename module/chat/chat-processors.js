@@ -899,16 +899,16 @@ class ShowChatProcessor extends ChatProcessor {
         if (!skip) {
           switch (orig.toLowerCase()) {
             case 'hp': 
-              output.push({ value: actor.data.data.HP.value, text: `${actor.name}: ${actor.data.data.HP.value} / ${actor.data.data.HP.max}`, name: actor.name})
+              output.push({ value: actor.getGurpsActorData().HP.value, text: `${actor.name}: ${actor.getGurpsActorData().HP.value} / ${actor.getGurpsActorData().HP.max}`, name: actor.name})
                continue;
             case 'fp': 
-              output.push({ value: actor.data.data.FP.value, text: `${actor.name}: ${actor.data.data.FP.value} / ${actor.data.data.FP.max}`, name: actor.name})
+              output.push({ value: actor.getGurpsActorData().FP.value, text: `${actor.name}: ${actor.getGurpsActorData().FP.value} / ${actor.getGurpsActorData().FP.max}`, name: actor.name})
                continue;
             case 'move': 
-              output.push({ value: actor.data.data.currentmove, text: `${actor.name}: ${actor.data.data.basicmove.value} / ${actor.data.data.currentmove}`, name: actor.name})
+              output.push({ value: actor.getGurpsActorData().currentmove, text: `${actor.name}: ${actor.getGurpsActorData().basicmove.value} / ${actor.getGurpsActorData().currentmove}`, name: actor.name})
                continue;
             case 'speed': 
-              output.push({ value: actor.data.data.basicspeed.value, text: `${actor.name}: ${actor.data.data.basicspeed.value}`, name: actor.name})
+              output.push({ value: actor.getGurpsActorData().basicspeed.value, text: `${actor.name}: ${actor.getGurpsActorData().basicspeed.value}`, name: actor.name})
               continue;
             case 'fright':
               arg = 'frightcheck'

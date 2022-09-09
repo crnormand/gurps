@@ -16,7 +16,7 @@ Release 0.14.10 - 9/07/2022
 - Fixed, reinstalled individual dice results on targetted rolls.
 - Enhanced /show to accept -a (sort alphabetically), -pc and -npc flags
 - Fixed import of usage notes for melee and ranged weapons
-- Fixed /anim file selection algorithm (to detgermine best fit).   NOTE: You may need to adjust your current targeted /anim commands to get the right "look".
+- Fixed /anim file selection algorithm (to determine best fit).   NOTE: You may need to adjust your current targeted /anim commands to get the right "look".
 - Added 'Show?' button to tooltip
 - Holding CTRL/CMD and clicking a "send to" will add, not replace player's bucket
 - Update to JB2A 0.4.9

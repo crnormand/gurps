@@ -22,7 +22,7 @@ export default class MoveModeEditor extends Application {
 
   getData() {
     const sheetData = super.getData()
-    sheetData.modes = this.actor.data.data.move
+    sheetData.modes = this.actor.getGurpsActorData().move
     return sheetData
   }
 
