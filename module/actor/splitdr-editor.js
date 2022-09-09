@@ -32,7 +32,7 @@ export default class SplitDREditor extends Application {
   }
 
   get location() {
-    return getProperty(this.actor.data, this.key)
+    return getProperty(this.actor, this.key)
   }
 
   activateListeners(html) {

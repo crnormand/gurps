@@ -14,7 +14,7 @@ export const init = function () {
        * @param {GurpsToken} token
        */
       getRanges(token) {
-        const actordata = token.actor.data.data
+        const actordata = token.actor.system
 
         const ranges = [
           { range: actordata.currentmove, color: 'walk' },

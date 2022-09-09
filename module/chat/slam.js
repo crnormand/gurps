@@ -70,10 +70,10 @@ class SlamCalculatorForm extends FormApplication {
 
     this._calculator = new SlamCalculator()
 
-    this._attackerHp = !!attacker ? attacker.actor.data.data.HP.max : 10
-    this._attackerSpeed = !!attacker ? parseInt(attacker.actor.data.data.basicmove.value) : 5
+    this._attackerHp = !!attacker ? attacker.actor.system.HP.max : 10
+    this._attackerSpeed = !!attacker ? parseInt(attacker.actor.system.basicmove.value) : 5
 
-    this._targetHp = !!target ? target.actor.data.data.HP.max : 10
+    this._targetHp = !!target ? target.actor.system.HP.max : 10
     this._targetSpeed = 0
 
     this._isAoAStrong = false

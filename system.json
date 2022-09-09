@@ -1,12 +1,31 @@
 {
-  "name": "gurps",
+  "id": "gurps",
   "title": "GURPS 4th Ed. Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
-  "version": "0.14.10",
-  "minimumCoreVersion": "9",
-  "compatibleCoreVersion": "9",
+  "version": "0.15.0",
+  "authors": [
+    {
+      "name": "Chris Normand",
+      "email": "",
+      "discord": "Nose66#6689"
+    },
+    {
+      "name": "M. Jeff Wilson",
+      "email": "",
+      "discord": "Nick Coffin, PI#8616"
+    },
+    {
+      "name": "Mikolaj Tomczynski",
+      "email": "mikolajtomczynski@gmail.com",
+      "discord": "neck#0001"
+    }
+  ],
+  "compatibility": {
+    "minimum": 10,
+    "verified": "10.284",
+    "maximum": 10
+  },
   "templateVersion": 2,
-  "author": "Chris Normand/Nose66",
   "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
   "scripts": ["scripts/jquery.tinycolorpicker.js"],
   "styles": [
@@ -52,7 +71,7 @@
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
   "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
-  "download": "https://github.com/crnormand/gurps/archive/0.14.10.zip",
+  "download": "https://github.com/crnormand/gurps/archive/0.15.0.zip",
   "socket": true,
   "license": "LICENSE.txt"
 }

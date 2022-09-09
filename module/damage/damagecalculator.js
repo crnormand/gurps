@@ -48,7 +48,7 @@ export class CompositeDamageCalculator {
 
     // The CompositeDamageCalculator has multiple DamageCalculators -- create one per DamageData
     // and give it a back pointer to the Composite.
-    this._calculators = damageData.map(data => new DamageCalculator(this, data))
+    this._calculators = damagesystem.map(data => new DamageCalculator(this, data))
 
     this.viewId = this._calculators.length == 1 ? 0 : 'all'
 
@@ -80,7 +80,7 @@ export class CompositeDamageCalculator {
       this._useArmorDivisor = false
     }
 
-    let hitlocations = objectToArray(this._defender.getGurpsActorData().hitlocations)
+    let hitlocations = objectToArray(this._defender.system.hitlocations)
     let wheres = hitlocations.map(it => it.where.toLowerCase())
     let damageLocation = !!damageData[0].hitlocation ? damageData[0].hitlocation.toLowerCase() : ''
     let hlIndex = wheres.indexOf(damageLocation)
@@ -122,7 +122,7 @@ export class CompositeDamageCalculator {
     // if advantage.name === 'Injury Tolerance' && advantage.notes.startsWith('Diffuse ') -- GCS Basic style
     //    _isInjuryTolerance = true
     //    _injuryToleranceType = 'unliving'
-    let values = Object.values(this._defender.data.data.ads)
+    let values = Object.values(this._defender.system.ads)
     if (this.isUnliving(values, false)) {
       this._isInjuryTolerance = true
       this._injuryToleranceType = UNLIVING
@@ -218,7 +218,7 @@ export class CompositeDamageCalculator {
   }
 
   get allHitLocations() {
-    return this._defender.data.data.hitlocations
+    return this._defender.system.hitlocations
   }
 
   get armorDivisor() {
@@ -246,7 +246,7 @@ export class CompositeDamageCalculator {
   }
 
   get attributes() {
-    return this._defender.data.data.attributes
+    return this._defender.system.attributes
   }
 
   /**
@@ -501,7 +501,7 @@ export class CompositeDamageCalculator {
   }
 
   get FP() {
-    return this._defender.data.data.FP
+    return this._defender.system.FP
   }
 
   get hardenedDRLevel() {
@@ -556,7 +556,7 @@ export class CompositeDamageCalculator {
   }
 
   get HP() {
-    return this._defender.data.data.HP
+    return this._defender.system.HP
   }
 
   get injury() {
@@ -736,7 +736,7 @@ export class CompositeDamageCalculator {
 
   get resource() {
     // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let trackers = objectToArray(this._defender.system.additionalresources.tracker)
     let tracker = null
     let index = null
     trackers.forEach((t, i) => {
@@ -746,16 +746,16 @@ export class CompositeDamageCalculator {
         return
       }
     })
-    if (!!tracker) return [tracker, `data.additionalresources.tracker.${zeroFill(index, 4)}`]
+    if (!!tracker) return [tracker, `system.additionalresources.tracker.${zeroFill(index, 4)}`]
     // }
 
-    if (this._applyTo === 'FP') return [this._defender.data.data.FP, 'data.FP']
-    return [this._defender.data.data.HP, 'data.HP']
+    if (this._applyTo === 'FP') return [this._defender.system.FP, 'system.FP']
+    return [this._defender.system.HP, 'system.HP']
   }
 
   get resourceType() {
     // if (CompositeDamageCalculator.isResourceDamageType(this._applyTo)) {
-    let trackers = objectToArray(this._defender.data.data.additionalresources.tracker)
+    let trackers = objectToArray(this._defender.system.additionalresources.tracker)
     let tracker = trackers.find(it => it.alias === this._applyTo)
     if (!!tracker) return tracker.name
     // }
@@ -948,7 +948,7 @@ class DamageCalculator {
    */
   constructor(parent, damageData) {
     this._parent = parent
-    this._basicDamage = damageData.damage
+    this._basicDamage = damagesystem.damage
     this._maxInjuryForDiffuse = null
     this._bluntTrauma = null
   }
@@ -1175,7 +1175,7 @@ class DamageCalculator {
 
     if (this.isKnockbackEligible) {
       let st = this._parent.attributes.ST.value
-      let hp = this._parent._defender.getGurpsActorData().HP.max
+      let hp = this._parent._defender.system.HP.max
 
       // if the target has no ST score, use its HPs instead (B378)
       let knockbackResistance = !st || st == 0 ? hp - 2 : st - 2

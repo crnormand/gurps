@@ -20,7 +20,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](everyone|ev)$/i)
   }
   usage() {
-    return i18n("GURPS.chatHelpEveryone");
+    return i18n('GURPS.chatHelpEveryone')
   }
 
   async process(line) {
@@ -31,7 +31,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
       if (actor.hasPlayerOwner) {
         any = true
         let attr = m[2].toUpperCase()
-        let max = actor.data.data[attr].max
+        let max = actor.system[attr].max
         await actor.update({ ['data.' + attr + '.value']: max })
         this.priv(`${actor.displayname} ${attr} reset to ${max}`)
       }
@@ -63,7 +63,7 @@ export class EveryoneBChatProcessor extends ChatProcessor {
           let actor = t.actor
           if (actor.hasPlayerOwner) {
             any = true
-            let event = { data:{} }
+            let event = { data: {} }
             event.blind = this.msgs().quiet
             await GURPS.performAction(action.action, actor, event)
           }
@@ -108,7 +108,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             let r = d[1] + 'd' + (!!d[2] ? d[2] : '6') + `[/ev ${attr}]`
             let roll = Roll.create(r)
             await roll.evaluate({ async: true })
-            if (isNiceDiceEnabled()) {        
+            if (isNiceDiceEnabled()) {
               let throws = []
               let dc = []
               roll.dice.forEach(die => {
@@ -140,7 +140,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             value *= sign
             txt = `(${value}) `
           }
-          let cur = actor.data.data[attr].value
+          let cur = actor.system[attr].value
           let newval = parseInt(value)
           if (isNaN(newval)) {
             // only happens on =10
@@ -151,7 +151,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             }
           } else newval += cur
           let mtxt = ''
-          let max = actor.data.data[attr].max
+          let max = actor.system[attr].max
           if (newval > max) {
             newval = max
             mtxt = `(max: ${max})`
@@ -183,7 +183,7 @@ export class RemoteChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](remote|rem)$/i)
   }
   usage() {
-    return i18n("GURPS.chatHelpRemote");
+    return i18n('GURPS.chatHelpRemote')
   }
 
   async process(line) {

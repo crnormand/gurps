@@ -1,15 +1,15 @@
-@import url("https://fonts.googleapis.com/css2?family=Martel:wght@400;800&family=Roboto:wght@300;400;500&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Martel:wght@400;800&family=Roboto:wght@300;400;500&display=swap');
 
 /* Global styles */
 #navigation {
-  top: 20px; left: 180px;
-  width: calc(100% - 510px); 
+  top: 20px;
+  left: 180px;
+  width: calc(100% - 510px);
 }
 
 .window-app {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
-
 
 .directory-list .directory-item.actor {
   align-items: center;
@@ -22,7 +22,7 @@
 .rollable:hover,
 .rollable:focus {
   color: #000;
-/*  text-shadow: 0 0 10px red;  */
+  /*  text-shadow: 0 0 10px red;  */
   cursor: pointer;
 }
 
@@ -132,7 +132,7 @@
 
 /* Styles limited to boilerplate sheets */
 .boilerplate .item-form {
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .boilerplate .sheet-header {
@@ -209,8 +209,8 @@
 
 .boilerplate .tabs {
   height: 40px;
-  border-top: 1px solid #AAA;
-  border-bottom: 1px solid #AAA;
+  border-top: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
 }
 
 .boilerplate .tabs .item {
@@ -238,7 +238,7 @@
   height: 30px;
   line-height: 24px;
   padding: 3px 0;
-  border-bottom: 1px solid #BBB;
+  border-bottom: 1px solid #bbb;
 }
 
 .boilerplate .items-list .item .item-image {

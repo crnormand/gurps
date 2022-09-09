@@ -11,9 +11,9 @@
         class='label {{gmod this}}'
         data-name='{{this.moddesc}}'
         data-otf='{{i18n_f
-          'GURPS.rangeModifier'
+          "GURPS.rangeModifier"
           (jsonToObject (replace '{ "penalty": "$1", "max": "$2" }' this.penalty this.max))
-          '{penalty} for speed/range {max} yards'
+          "{penalty} for speed/range {max} yards"
         }}'
       >
         {{{displayNumber this.penalty}}}

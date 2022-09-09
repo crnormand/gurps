@@ -41,7 +41,7 @@ import GURPSConditionalInjury from './injury/foundry/conditional-injury.js'
  *   damagetype?: string;         // if [damage|deriveddamage], the string value of the damage type (i.e., 'cut', 'pi', 'burn', etc...)
  *   extdamagetype?: string;      // if [damage], any extra damage modifier, like 'ex'.
  *   derivedformula?: string;     // if [deriveddamage], a damage formula like 'sw+2' or 'thr-1'. If [derivedroll], 'sw' or 'thr'.
- *   calcOnly?: boolean;          // if [skill-spell|attribute], then return the target calculated for this skill-spell|attribute instead of rolling against it.   
+ *   calcOnly?: boolean;          // if [skill-spell|attribute], then return the target calculated for this skill-spell|attribute instead of rolling against it.
  *   attrkey?: string;
  *   melee?: string;
  *   attribute?: string;

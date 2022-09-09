@@ -16,7 +16,7 @@ Release 0.14.10 - 9/07/2022
 - Fixed, reinstalled individual dice results on targetted rolls.
 - Enhanced /show to accept -a (sort alphabetically), -pc and -npc flags
 - Fixed import of usage notes for melee and ranged weapons
-- Fixed /anim file selection algorithm (to detgermine best fit).   NOTE: You may need to adjust your current targeted /anim commands to get the right "look".
+- Fixed /anim file selection algorithm (to determine best fit). NOTE: You may need to adjust your current targeted /anim commands to get the right "look".
 - Added 'Show?' button to tooltip
 - Holding CTRL/CMD and clicking a "send to" will add, not replace player's bucket
 - Update to JB2A 0.4.9
@@ -39,7 +39,7 @@ Release 0.14.7 - 7/28/2022
 
 - Added 'disarmed' status effect icon
 - Fixed /pr (private roll), and /psr (private selected roll)
-- Update JB2A to 0.4.6 
+- Update JB2A to 0.4.6
 
 Release 0.14.6 - 7/24/2022
 
@@ -56,14 +56,14 @@ Release 0.14.5 - 7/24/2022
 - Holding CTRL shows changes in roll mode (GM roll for GMs, Blind roll for Players), w/system setting
 - Fix /hp +1 @target for good?
 - Damage column can now execute OTFs (ex: PDF:B405)
-- OTF now handles HTTP URLs.   [http://google.com], as well as labeled ["Google!"http://google.com]
+- OTF now handles HTTP URLs. [http://google.com], as well as labeled ["Google!"http://google.com]
 - Drag and drop PDF Journal links now open PDFoundry, and not the placeholder Journal
 - Show "flavor" text below roll (issue #1426)
 - Add ability to roll dice or damage multiple times from chat "/r [3d] 5" or "/r [3d cut] 5"
 - Add ability to roll dice or damage multiple times from chat (using compact syntax) "/3d 5" or "/3d cut 5"
 - Fixed initial vtt-notes import from GCS
 - Added warning for /repeat X /anim ... when actor not linked
-- Added "selected roll", /sr [otf], /psr [otf] .   "rolls" (executes) OTF against the selected actors.  /sr [per], /sr [/hp -1d-3!], /sr [/hp reset]
+- Added "selected roll", /sr [otf], /psr [otf] . "rolls" (executes) OTF against the selected actors. /sr [per], /sr [/hp -1d-3!], /sr [/hp reset]
 
 Release 0.14.4 7/7/2022
 

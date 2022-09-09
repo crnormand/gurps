@@ -15,7 +15,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
     return line.match(/^[\/\?](tracker|tr|rt|resource)([0123])?( *\(([^\)]+)\))?$/i)
   }
   usage() {
-    return i18n("GURPS.chatHelpTracker");
+    return i18n('GURPS.chatHelpTracker')
   }
 
   async process(line) {
@@ -33,7 +33,7 @@ export default class TrackerChatProcessor extends ChatProcessor {
     if (!!m[3]) {
       let pattern = '^' + m[3].trim().replace(/\(\)/, '')
       tracker = -1
-      for (const [key, value] of Object.entries(actor.data.data.additionalresources.tracker)) {
+      for (const [key, value] of Object.entries(actor.system.additionalresources.tracker)) {
         if (value.name.match(pattern)) {
           tracker = key
           display = '(' + value.name + ')'
@@ -44,9 +44,9 @@ export default class TrackerChatProcessor extends ChatProcessor {
         return false
       }
     }
-      
+
     let theTrackerKey = zeroFill(tracker, 4)
-    let theTracker = actor.data.data.additionalresources.tracker[theTrackerKey]
+    let theTracker = actor.system.additionalresources.tracker[theTrackerKey]
     if (!theTracker) {
       ui.notifications.warn(`${i18n('GURPS.chatNoResourceTracker', 'No Resource Tracker matched')} 'tr${m[2]}'`)
       return false
@@ -107,6 +107,6 @@ export default class TrackerChatProcessor extends ChatProcessor {
       await actor.update({ ['data.additionalresources.tracker.' + theTrackerKey + '.value']: value })
       this.prnt(`${i18n('GURPS.chatResourceTracker')}${display} ${m[5]} = ${value}`)
       return true
-    } 
+    }
   }
 }

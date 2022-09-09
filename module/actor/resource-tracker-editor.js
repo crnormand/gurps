@@ -19,7 +19,7 @@ export class ResourceTrackerEditor extends Application {
    * @param {*} options
    */
   static editForActor(actor, path, options) {
-    let tracker = getProperty(actor.data.data, path)
+    let tracker = getProperty(actor.system, path)
     let temp = JSON.stringify(tracker)
     let dialog = new ResourceTrackerEditor(JSON.parse(temp), true, options)
     dialog._updateTracker = async () => {
