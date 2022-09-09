@@ -573,7 +573,7 @@ class SelectChatProcessor extends ChatProcessor {
       let pat = makeRegexPatternFrom(m[3])
 
       let list =
-        game.scenes.viewed?.data.tokens.map(t => {
+        game.scenes.viewed?.tokens.map(t => {
           // get the token's actor which might be a synthetic actor
           if (t.actor) return t.actor
           // otherwise, get the 'canonical' actor (non-synthetic)

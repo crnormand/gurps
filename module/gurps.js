@@ -399,7 +399,7 @@ if (!globalThis.GURPS) {
   GURPS.executeOTF = executeOTF
 
   function processSkillSpell({ action, actor }) {
-    let actordata = actor?.data
+    let actordata = actor?.system
 
     // skill
     var skill
@@ -412,7 +412,7 @@ if (!globalThis.GURPS) {
       }
     }
     // @ts-ignore
-    else skill = GURPS.findSkillSpell(actor?.data?.data, action.name, !!action.isSkillOnly, !!action.isSpellOnly)
+    else skill = GURPS.findSkillSpell(actor?.system, action.name, !!action.isSkillOnly, !!action.isSpellOnly)
     if (!skill) {
       return 0
     }
