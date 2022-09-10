@@ -2,7 +2,7 @@
 
 import {
   xmlTextToJson,
-  convertRollStringToArrayOfInt,
+  // convertRollStringToArrayOfInt,
   recurselist,
   makeRegexPatternFrom,
   i18n,
@@ -19,7 +19,7 @@ import { ResourceTrackerManager } from './resource-tracker-manager.js'
 import ApplyDamageDialog from '../damage/applydamage.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import * as settings from '../../lib/miscellaneous-settings.js'
-import { SemanticVersion } from '../../lib/semver.js'
+// import { SemanticVersion } from '../../lib/semver.js'
 import {
   MOVE_NONE,
   MOVE_ONE,
@@ -193,7 +193,7 @@ export class GurpsActor extends Actor {
         orig = []
       }
     }
-    for (const item of good) await this.addItemData(item.data) // re-add the item equipment and features
+    for (const item of good) await this.addItemData(item.system) // re-add the item equipment and features
 
     await this.update({ '_stats.systemVersion': game.system.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
@@ -3547,7 +3547,7 @@ export class GurpsActor extends Actor {
       typeof dragData.pack === 'string'
         ? `Compendium.${dragData.pack}.${dragData.id}`
         : `${dragData.type}.${dragData.id}`
-    let global = await fromUuid(uuid)
+    let global = await fromUuid(dragData.uuid)
     let data = !!global ? global : dragData
     if (!data) {
       ui.notifications?.warn('NO ITEM DATA!')
@@ -3649,7 +3649,7 @@ export class GurpsActor extends Actor {
       let destowner = game.users?.players.find(p => this.testUserPermission(p, 'OWNER'))
       if (!!destowner) {
         ui.notifications?.info(`Asking ${this.name} if they want ${eqt.name}`)
-        dragData.itemData.data.eqt.count = count // They may not have given all of them
+        dragData.itemData.system.eqt.count = count // They may not have given all of them
         game.socket.emit('system.gurps', {
           type: 'dragEquipment1',
           srckey: dragData.key,
@@ -3710,7 +3710,7 @@ export class GurpsActor extends Actor {
     let localItems = await this.createEmbeddedDocuments('Item', [d]) // add a local Foundry Item based on some Item data
     let localItem = localItems[0]
     await this.updateEmbeddedDocuments('Item', [{ _id: localItem.id, 'system.eqt.uuid': generateUniqueId() }])
-    await this.addItemData(localItem.data, targetkey) // only created 1 item
+    await this.addItemData(localItem, targetkey) // only created 1 item
   }
 
   // Once the Items has been added to our items list, add the equipment and any features
@@ -3737,7 +3737,9 @@ export class GurpsActor extends Actor {
       let eqt = getProperty(this, existing)
       return [existing, eqt.carried && eqt.equipped]
     }
-    let _data = /** @type {GurpsItemData} */ (itemData.data)
+    let _data = /** @type {GurpsItemData} */ (itemData)
+    // HACK: ah, don't worry, we'll get rid of all this soon enough - M
+    if (!!_data.system) _data = _data.system
     if (!!_data.eqt.parentuuid) {
       var found
       recurselist(this.system.equipment.carried, (e, k, d) => {
@@ -3767,11 +3769,11 @@ export class GurpsActor extends Actor {
       return ['', false]
     } else {
       eqt.itemid = itemData._id
-      eqt.globalid = _data.globalid
+      eqt.globalid = _data.uuid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = !!itemData.data.equipped ?? true
+      eqt.equipped = !!itemData.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = !!itemData.data.carried ?? true
+      eqt.carried = !!itemData.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
       return [targetkey, eqt.carried && eqt.equipped]
@@ -3816,7 +3818,7 @@ export class GurpsActor extends Actor {
         { _id: item.id, 'system.equipped': eqt.equipped, 'system.carried': carried },
       ])
       if (!carried || !eqt.equipped) await this._removeItemAdditions(eqt.itemid)
-      if (carried && eqt.equipped) await this._addItemAdditions(item.data, eqtkey)
+      if (carried && eqt.equipped) await this._addItemAdditions(item, eqtkey)
     }
     for (const k in eqt.contains) await this._updateEqtStatus(eqt.contains[k], eqtkey + '.contains.' + k, carried)
     for (const k in eqt.collapsed) await this._updateEqtStatus(eqt.collapsed[k], eqtkey + '.collapsed.' + k, carried)
@@ -3838,9 +3840,9 @@ export class GurpsActor extends Actor {
     let list = { ...this.system[key] } // shallow copy
     let i = 0
     // @ts-ignore
-    for (const k in itemData.data[key]) {
+    for (const k in itemData.system[key]) {
       // @ts-ignore
-      let e = duplicate(itemData.data[key][k])
+      let e = duplicate(itemData.system[key][k])
       e.itemid = itemData._id
       e.uuid = key + '-' + i++ + '-' + e.itemid
       e.eqtkey = eqtkey

@@ -696,28 +696,28 @@ export class GurpsActorSheet extends ActorSheet {
 
   getMenuItems(elementid) {
     const map = {
-      '#ranged': [this.sortAscendingMenu('data.ranged'), this.sortDescendingMenu('data.ranged')],
-      '#melee': [this.sortAscendingMenu('data.melee'), this.sortDescendingMenu('data.melee')],
-      '#advantages': [this.sortAscendingMenu('data.ads'), this.sortDescendingMenu('data.ads')],
-      '#skills': [this.sortAscendingMenu('data.skills'), this.sortDescendingMenu('data.skills')],
-      '#spells': [this.sortAscendingMenu('data.spells'), this.sortDescendingMenu('data.spells')],
+      '#ranged': [this.sortAscendingMenu('system.ranged'), this.sortDescendingMenu('system.ranged')],
+      '#melee': [this.sortAscendingMenu('system.melee'), this.sortDescendingMenu('system.melee')],
+      '#advantages': [this.sortAscendingMenu('system.ads'), this.sortDescendingMenu('system.ads')],
+      '#skills': [this.sortAscendingMenu('system.skills'), this.sortDescendingMenu('system.skills')],
+      '#spells': [this.sortAscendingMenu('system.spells'), this.sortDescendingMenu('system.spells')],
       '#equipmentcarried': [
         this.addItemMenu(
           i18n('GURPS.equipment'),
           new Equipment(`${i18n('GURPS.equipment')}...`, true),
-          'data.equipment.carried'
+          'system.equipment.carried'
         ),
-        this.sortAscendingMenu('data.equipment.carried'),
-        this.sortDescendingMenu('data.equipment.carried'),
+        this.sortAscendingMenu('system.equipment.carried'),
+        this.sortDescendingMenu('system.equipment.carried'),
       ],
       '#equipmentother': [
         this.addItemMenu(
           i18n('GURPS.equipment'),
           new Equipment(`${i18n('GURPS.equipment')}...`, true),
-          'data.equipment.other'
+          'system.equipment.other'
         ),
-        this.sortAscendingMenu('data.equipment.other'),
-        this.sortDescendingMenu('data.equipment.other'),
+        this.sortAscendingMenu('system.equipment.other'),
+        this.sortDescendingMenu('system.equipment.other'),
       ],
     }
     return map[elementid] ?? []
@@ -833,6 +833,7 @@ export class GurpsActorSheet extends ActorSheet {
   dropFoundryLinks(ev, modelkey) {
     if (!!ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
+    if (!!dragData.uuid) dragData.id = dragData.uuid.split('.').at(-1)
     let add = ''
     var n
     if (dragData.type == 'JournalEntry') {
