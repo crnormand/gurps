@@ -9,9 +9,10 @@ Drag damage to a character sheet
 Drag damage to Combat tracker entry
 Unable to drag foundry item onto character sheet. (fixed)
 Cannot create Item on actor. (fixed)
+Drag damage to a token
 
 Not working:
-Drag damage to a token
+Nothing new found yet!
 
 Release 0.14.11
 

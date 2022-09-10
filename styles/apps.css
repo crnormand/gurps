@@ -516,7 +516,7 @@ ul#result-effects li {
 
 .damage-message .label-toggle:after {
   font: normal normal normal 12px/1;
-  /*  font-family: 'Font Awesome 5 Free' */
+  font-family: 'Font Awesome 6 Pro';
   font-weight: 900;
   content: '\f078';
   float: right;

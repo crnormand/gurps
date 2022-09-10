@@ -84,7 +84,7 @@ export default class DamageChat {
   static async _dropCanvasData(canvas, dropData) {
     if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
       let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
-      let grid_size = canvas.scene?.grid
+      let grid_size = canvas.scene?.grid.size
       canvas.tokens?.targetObjects(
         {
           x: dropData.x - grid_size / 2,
