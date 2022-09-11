@@ -3938,7 +3938,7 @@ export class GurpsActor extends Actor {
       if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
     }
     let object = getProperty(this, srckey)
-    if (targetkey.match(/^data\.equipment\.\w+$/)) {
+    if (targetkey.match(/^system\.equipment\.\w+$/)) {
       this.ignoreRender = true
       object.parentuuid = ''
       if (!!object.itemid) {

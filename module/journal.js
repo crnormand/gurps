@@ -14,7 +14,7 @@ export default class GurpsJournalEntry {
    */
   static _renderJournalSheet(_app, html, _options) {
     let h = html.find('.editor-content')
-    if (!!h) {
+    if (!!h && h.length > 0) {
       h.html(gurpslink(h[0].innerHTML))
       GurpsWiring.hookupAllEvents(html)
       // GurpsWiring.hookupGurpsRightClick(html)

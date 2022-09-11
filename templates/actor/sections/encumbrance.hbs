@@ -5,7 +5,7 @@
         <span>{{i18n 'GURPS.encumbranceMoveDodge'}}</span>
       </div>
       <div class='option'>
-        <input id='showflightmove' type='checkbox' {{checked data.additionalresources.showflightmove}} />
+        <input id='showflightmove' type='checkbox' {{checked system.additionalresources.showflightmove}} />
         <label for='showflightmove'>{{i18n "GURPS.showFlightMove"}}</label>
       </div>
     {{else}}
@@ -19,34 +19,34 @@
   <div class='move header'>{{i18n 'GURPS.move'}}</div>
   <div class='dodge header'>{{i18n 'GURPS.dodge'}}</div>
 
-  {{#each data.encumbrance}}
+  {{#each system.encumbrance}}
     <div class='encmarker {{include-if current 'current'}}'></div>
     <div class='enc {{include-if current 'current'}} {{key}} {{include-if (not (automaticEncumbrance)) 'clickable'}}' data-key='{{@key}}'></div>
     <div class='load gga-right {{include-if current 'current'}}'>
       {{#if ../isEditing}}
-        <input name='data.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' />
+        <input name='system.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' />
       {{else}}
         {{displayDecimal weight number=1 removeZeros=true }}
       {{/if}}
     </div>
     <div class='move flex-center {{include-if current 'current'}}'>
       {{#if ../isEditing}}
-        <input name='data.encumbrance.{{@key}}.move' class='gcs-input' type='text' value='{{move}}' />
+        <input name='system.encumbrance.{{@key}}.move' class='gcs-input' type='text' value='{{move}}' />
       {{else}}
         {{currentmovedisplay}}
       {{/if}}
     </div>
     {{#if ../isEditing}}
       <div class='dodge flex-center {{include-if current 'current'}}'>
-        <input name='data.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{dodge}}' />
+        <input name='system.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{dodge}}' />
       </div>
     {{else}}
       <div class='dodge flex-center {{include-if current 'current'}}' data-path='dodge'>
         <span class="flex-center {{include-if current 'rollable'}}" {{#if current}}data-otf='Dodge'{{/if}}>{{currentdodge}}</span>
-        {{#if ../data.defenses.dodge.bonus}}
+        {{#if ../system.defenses.dodge.bonus}}
           <span class="flex-center bonus {{include-if current 'rollable'}}"
-           {{#if current}}data-otf='Dodge {{{displayNumber ../data.defenses.dodge.bonus}}} DB'{{/if}}>
-           {{{displayNumber ../data.defenses.dodge.bonus}}}</span>
+           {{#if current}}data-otf='Dodge {{{displayNumber ../system.defenses.dodge.bonus}}} DB'{{/if}}>
+           {{{displayNumber ../system.defenses.dodge.bonus}}}</span>
         {{/if}}
       </div>
     {{/if}}

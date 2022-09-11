@@ -4,9 +4,9 @@
     <div class='points'></div>
     <div class='field'><input
         class='gcs-input'
-        name='data.conditionalinjury.injury.severity'
+        name='system.conditionalinjury.injury.severity'
         type='text'
-        value='{{data.conditionalinjury.injury.severity}}'
+        value='{{system.conditionalinjury.injury.severity}}'
         data-dtype='Number'
       />
     </div>
@@ -15,9 +15,9 @@
     <div class='points'></div>
     <div class='field'><input
         class='gcs-input'
-        name='data.conditionalinjury.injury.daystoheal'
+        name='system.conditionalinjury.injury.daystoheal'
         type='text'
-        value='{{data.conditionalinjury.injury.daystoheal}}'
+        value='{{system.conditionalinjury.injury.daystoheal}}'
         data-dtype='Number'
       />
     </div>
@@ -25,27 +25,27 @@
 
     <div class='points'>
       [<input
-        name='data.conditionalinjury.RT.points'
+        name='system.conditionalinjury.RT.points'
         class='gcs-input-sm2'
         type='text'
-        value='{{data.conditionalinjury.RT.points}}'
+        value='{{system.conditionalinjury.RT.points}}'
       />]
     </div>
     <div class='field'><input
         class='gcs-input'
-        name='data.conditionalinjury.RT.value'
+        name='system.conditionalinjury.RT.value'
         type='text'
-        value='{{data.conditionalinjury.RT.value}}'
+        value='{{system.conditionalinjury.RT.value}}'
         data-dtype='Number'
       />
     </div>
     <div class='label'>{{i18n 'GURPS.rt'}}</div>
 
     <div class='points'>
-      [<input name='data.HP.points' class='gcs-input-sm2' type='text' value='{{data.HP.points}}' />]
+      [<input name='system.HP.points' class='gcs-input-sm2' type='text' value='{{system.HP.points}}' />]
     </div>
     <div class='field'>
-      <input class='gcs-input' name='data.HP.max' type='text' value='{{data.HP.max}}' data-dtype='Number' />
+      <input class='gcs-input' name='system.HP.max' type='text' value='{{system.HP.max}}' data-dtype='Number' />
     </div>
     <div class='label'>{{i18n 'GURPS.attributesHPNAME'}}</div>
   </div>
