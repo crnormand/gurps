@@ -7,10 +7,12 @@ Actor import directly from GCS
 Roll buttons on char sheet (although there is a jump in the page every time you click on a button)
 Drag damage to a character sheet
 Drag damage to Combat tracker entry
+Unable to drag foundry item onto character sheet. (fixed)
+Cannot create Item on actor. (fixed)
+Drag damage to a token
 
 Not working:
-Drag damage to a token
-Unable to drag foundry item onto character sheet.   Cannot create Item on actor.  WOW, they really changed Foundry Items :-(
+Nothing new found yet!
 
 Release 0.14.11
 

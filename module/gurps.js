@@ -101,7 +101,7 @@ if (!globalThis.GURPS) {
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
 
-  // CONFIG.debug.hooks = true
+  CONFIG.debug.hooks = true
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
@@ -1086,16 +1086,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-		[AMRS][DPK]
-		A: ads & attack (melee & range)
-		AD: ads
-		AT: attack
-		M: melee
-		R: ranged
-		S: skills & spells
-		SK: skills
-		SP: spells
-	  */
+			[AMRS][DPK]
+			A: ads & attack (melee & range)
+			AD: ads
+			AT: attack
+			M: melee
+			R: ranged
+			S: skills & spells
+			SK: skills
+			SP: spells
+		  */
     ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
       switch (action.prefix) {
         case 'A':
