@@ -1,77 +1,77 @@
 <div id='points'>
-  <div class='header'>{{data.totalpoints.total}} {{i18n 'GURPS.points'}}</div>
+  <div class='header'>{{system.totalpoints.total}} {{i18n 'GURPS.points'}}</div>
   <div class='fieldblock'>
     {{#if isEditingA}}
       <div class='label'>{{i18n 'GURPS.pointsTotal'}}</div>
       <div class='field noedit'><input
-          name='data.totalpoints.total'
+          name='system.totalpoints.total'
           class='gcs-input'
           type='number'
-          value='{{data.totalpoints.total}}'
+          value='{{system.totalpoints.total}}'
         /></div>
     {{/if}}
     <div class='label'>{{i18n 'GURPS.pointsUnspent'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.unspent'
+        name='system.totalpoints.unspent'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.unspent}}'
+        value='{{system.totalpoints.unspent}}'
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>{{i18n 'GURPS.pointsRace'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.race'
+        name='system.totalpoints.race'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.race}}'
+        value='{{system.totalpoints.race}}'
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>{{i18n 'GURPS.pointsAttributes'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.attributes'
+        name='system.totalpoints.attributes'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.attributes}}'
+        value='{{system.totalpoints.attributes}}'
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>{{i18n 'GURPS.pointsAdvantages'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.ads'
+        name='system.totalpoints.ads'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.ads}}'
+        value='{{system.totalpoints.ads}}'
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>{{i18n 'GURPS.pointsDisadvantages'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.disads'
+        name='system.totalpoints.disads'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.disads}}'
+        value='{{system.totalpoints.disads}}'
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>{{i18n 'GURPS.pointsQuirks'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.quirks'
+        name='system.totalpoints.quirks'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.quirks}}'
+        value='{{system.totalpoints.quirks}}'
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>{{i18n 'GURPS.pointsSkills'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.skills'
+        name='system.totalpoints.skills'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.skills}}'
+        value='{{system.totalpoints.skills}}'
         {{disabled (not isEditing)}}
       /></div>
     <div class='label'>{{i18n 'GURPS.pointsSpells'}}</div>
     <div class='field noedit'><input
-        name='data.totalpoints.spells'
+        name='system.totalpoints.spells'
         class='gcs-input'
         type='number'
-        value='{{data.totalpoints.spells}}'
+        value='{{system.totalpoints.spells}}'
         {{disabled (not isEditing)}}
       /></div>
   </div>

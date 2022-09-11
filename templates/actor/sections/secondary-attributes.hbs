@@ -5,34 +5,34 @@
     <div class='points'>
       {{#if isEditing}}
         [<input
-          name='data.attributes.WILL.points'
+          name='system.attributes.WILL.points'
           class='gcs-input-sm2'
           type='number'
-          value='{{data.attributes.WILL.points}}'
+          value='{{system.attributes.WILL.points}}'
         />]
       {{else}}
-        [{{data.attributes.WILL.points}}]
+        [{{system.attributes.WILL.points}}]
       {{/if}}
     </div>
     {{#if isEditing}}
       <div class='field'>
         <input
-          name='data.attributes.WILL.value'
+          name='system.attributes.WILL.value'
           class='gcs-input'
           type='number'
-          value='{{data.attributes.WILL.value}}'
+          value='{{system.attributes.WILL.value}}'
         />
       </div>
     {{else}}
       <div class='field rollable' data-path='attributes.WILL.value' data-otf='WILL'>
-        {{data.attributes.WILL.value}}
+        {{system.attributes.WILL.value}}
       </div>
     {{/if}}
     <div class='label'>{{i18n 'GURPS.attributesWILLNAME'}}</div>
 
     <div class='points'></div>
     <div class='field noedit {{rollable (not isEditing)}}' data-path='frightcheck' data-otf='Fright Check'>
-      {{data.frightcheck}}
+      {{system.frightcheck}}
     </div>
     <div class='label'>{{i18n 'GURPS.frightcheck'}}</div>
 
@@ -40,32 +40,32 @@
     <div class='points'>
       {{#if isEditing}}
         [<input
-          name='data.attributes.PER.points'
+          name='system.attributes.PER.points'
           class='gcs-input-sm2'
           type='number'
-          value='{{data.attributes.PER.points}}'
+          value='{{system.attributes.PER.points}}'
         />]
       {{else}}
-        [{{data.attributes.PER.points}}]
+        [{{system.attributes.PER.points}}]
       {{/if}}
     </div>
     {{#if isEditing}}
       <div class='field'>
-        <input name='data.attributes.PER.value' class='gcs-input' type='number' value='{{data.attributes.PER.value}}' />
+        <input name='system.attributes.PER.value' class='gcs-input' type='number' value='{{system.attributes.PER.value}}' />
       </div>
     {{else}}
       <div class='field rollable' data-path='attributes.PER.value' data-otf='PER'>
-        {{data.attributes.PER.value}}
+        {{system.attributes.PER.value}}
       </div>
     {{/if}}
     <div class='label'>{{i18n 'GURPS.attributesPERNAME'}} ({{i18n 'GURPS.attributesPER'}})</div>
 
     <div class='points'></div>
-    <div class='field noedit {{rollable (not isEditing)}}' data-path='vision' data-otf='Vision'>{{data.vision}}</div>
+    <div class='field noedit {{rollable (not isEditing)}}' data-path='vision' data-otf='Vision'>{{system.vision}}</div>
     <div class='label'>{{i18n 'GURPS.vision'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{rollable (not isEditing)}}' data-path='hearing' data-otf='Hearing'>{{data.hearing}}</div>
+    <div class='field noedit {{rollable (not isEditing)}}' data-path='hearing' data-otf='Hearing'>{{system.hearing}}</div>
     <div class='label'>{{i18n 'GURPS.hearing'}}</div>
 
     <div class='points'></div>
@@ -73,12 +73,12 @@
       class='field noedit {{rollable (not isEditing)}}'
       data-path='tastesmell'
       data-otf='Taste Smell'
-    >{{data.tastesmell}}
+    >{{system.tastesmell}}
     </div>
     <div class='label'>{{i18n 'GURPS.tastesmell'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{rollable (not isEditing)}}' data-path='touch' data-otf='Touch'>{{data.touch}}</div>
+    <div class='field noedit {{rollable (not isEditing)}}' data-path='touch' data-otf='Touch'>{{system.touch}}</div>
     <div class='label'>{{i18n 'GURPS.touch'}}</div>
   </div>
 </div>

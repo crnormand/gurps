@@ -11,7 +11,7 @@
 	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
 	<div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
 
-	{{#each (flatlist data.skills)}}
+	{{#each (flatlist system.skills)}}
 	{{#if ../isEditing}}
 	<div class='itemmenu skillmenu' data-key='system.skills.{{@key}}'>
 		<i class='fas fa-times'></i>

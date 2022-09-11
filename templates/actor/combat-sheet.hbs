@@ -15,20 +15,20 @@
           {{else}}
             {{>hpfp-tracker
               name='HP'
-              resource=data.HP
+              resource=system.HP
               label='GURPS.attributesHPNAME'
               compact=true
               condition='reeling'
-              testcondition=data.conditions.reeling
+              testcondition=system.conditions.reeling
             }}
           {{/if}}
           {{>hpfp-tracker
             name='FP'
-            resource=data.FP
+            resource=system.FP
             label='GURPS.attributesFPNAME'
             compact=true
             condition='exhausted'
-            testcondition=data.conditions.exhausted
+            testcondition=system.conditions.exhausted
           }}
         </div>
         {{>conditions}}
@@ -36,11 +36,11 @@
 
       {{>trackers}}
 
-      {{#if (notEmpty data.melee)}}
+      {{#if (notEmpty system.melee)}}
         {{>melee}}
       {{/if}}
       {{>speed-range-table}}
-      {{#if (notEmpty data.ranged)}}
+      {{#if (notEmpty system.ranged)}}
         {{>ranged}}
       {{/if}}
     </div><!-- end of combat-sheet -->
