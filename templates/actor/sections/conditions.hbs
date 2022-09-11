@@ -3,13 +3,13 @@
   <div class='fieldblock'>
     <div class='label'>{{i18n 'GURPS.maneuver'}}:</div>
     <div class='field' style='border: none;'>
-      <select id='maneuver' name='data.conditions.maneuver' style='font-size: 90%; max-width: 14em;'
+      <select id='maneuver' name='system.conditions.maneuver' style='font-size: 90%; max-width: 14em;'
         {{disabled (or isEditing (not (inCombat this)))}}>
-        <option value='undefined' {{select-if ../data.conditions.maneuver 'undefined'}}>
+        <option value='undefined' {{select-if ../system.conditions.maneuver 'undefined'}}>
           {{i18n "GURPS.none"}}
         </option>
         {{#each (listAllManeuvers) as |this key|}}
-          <option value='{{key}}' {{select-if ../data.conditions.maneuver key}}>
+          <option value='{{key}}' {{select-if ../system.conditions.maneuver key}}>
             {{i18n this.label}}
           </option>
         {{/each}}
@@ -17,11 +17,11 @@
     </div>
     <div class='label'>{{i18n 'GURPS.modifierPosture'}}:</div>
     <div class='field' style="border: none;">
-      <select id='posture' name='data.conditions.posture' style='font-size: 90%;' {{disabled isEditing}}>
-        <option value='standing' {{select-if ../data.conditions.posture 'standing'}}>{{i18n 'GURPS.STATUSStanding'}}
+      <select id='posture' name='system.conditions.posture' style='font-size: 90%;' {{disabled isEditing}}>
+        <option value='standing' {{select-if ../system.conditions.posture 'standing'}}>{{i18n 'GURPS.STATUSStanding'}}
         </option>
         {{#each (listAllPostures) as |this key|}}
-          <option value='{{key}}' {{select-if ../data.conditions.posture key}}>
+          <option value='{{key}}' {{select-if ../system.conditions.posture key}}>
             {{i18n this.label}}
           </option>
         {{/each}}
@@ -30,8 +30,8 @@
     <div class='label' for='move-mode'>{{i18n 'GURPS.moveModeType'}}:</div>
     <div class='field' style='border: none'>
       <select id='move-mode' style='font-size: 90%; max-width: 14em;'
-        {{disabled (or isEditing (lt (length data.move) 2)) }}>
-        {{#each data.move as |this key|}}
+        {{disabled (or isEditing (lt (length system.move) 2)) }}>
+        {{#each system.move as |this key|}}
           <option value='{{@key}}' {{select-if this.default true}}>{{i18n this.mode this.mode}}</option>
         {{/each}}
       </select>
@@ -40,7 +40,7 @@
       {{/if}}
     </div>
     <div class='label'>{{i18n 'GURPS.conditionsCombatMove'}}:</div>
-    <div class='field' name='data.conditions.combatmove'><span>{{data.conditions.move}}</span></div>
+    <div class='field' name='system.conditions.combatmove'><span>{{system.conditions.move}}</span></div>
     <div class='label'></div>
     <div class='field' style='border: none; display: none;'>
       <button id='open-modifier-popup'><i
