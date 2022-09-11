@@ -34,7 +34,7 @@ export async function doRoll({
   targetmods = await GURPS.ModifierBucket.applyMods(targetmods) // append any global mods
 
   chatdata['targetmods'] = targetmods
-  let multiples = []    // The roll results (to display the individual dice rolls)
+  let multiples = [] // The roll results (to display the individual dice rolls)
   chatdata['multiples'] = multiples
 
   for (let m of targetmods) {
@@ -50,7 +50,7 @@ export async function doRoll({
     type: CONST.CHAT_MESSAGE_TYPES.ROLL,
   }
   if (optionalArgs.event?.data?.private) {
-    messageData.whisper = [ game.user.id ]
+    messageData.whisper = [game.user.id]
     messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
   }
 
@@ -110,7 +110,8 @@ export async function doRoll({
 
     chatdata['optlabel'] = optionalArgs.text || ''
 
-    if (game.dice3d && !game.dice3d.messageHookDisabled) {  // save for after roll animation is complete
+    if (game.dice3d && !game.dice3d.messageHookDisabled) {
+      // save for after roll animation is complete
       if (failure && optionalArgs.obj?.failotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.failotf)
       if (!failure && optionalArgs.obj?.passotf) GURPS.PendingOTFs.unshift(optionalArgs.obj.passotf)
     } else {
@@ -132,17 +133,17 @@ export async function doRoll({
       min = 1
     }
 
-    let max = +(optionalArgs.event?.data?.repeat) || 1
+    let max = +optionalArgs.event?.data?.repeat || 1
     if (max > 1) chatdata['chatthing'] = 'x' + max
     for (let i = 0; i < max; i++) {
       roll = Roll.create(formula + `+${modifier}`)
       await roll.evaluate({ async: true })
-  
+
       let rtotal = roll.total
       if (rtotal < min) {
         rtotal = min
       }
-  
+
       // ? if (rtotal == 1) thing = thing.replace('points', 'point')
       let r = {}
       r['rtotal'] = rtotal
@@ -178,9 +179,9 @@ export async function doRoll({
     isCtrl ||
     (game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_SHIFT_CLICK_BLIND) && !!optionalArgs.event?.shiftKey)
   ) {
-    messageData.whisper = ChatMessage.getWhisperRecipients("GM").map(u => u.id);
-    messageData.blind = true  // possibly not used anymore
-    creatOptions.rollMode = "blindroll" // new for V9
+    messageData.whisper = ChatMessage.getWhisperRecipients('GM').map(u => u.id)
+    // messageData.blind = true  // possibly not used anymore
+    creatOptions.rollMode = 'blindroll' // new for V9
   }
 
   messageData.sound = CONFIG.sounds.dice

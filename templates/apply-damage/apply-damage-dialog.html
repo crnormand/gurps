@@ -1,564 +1,589 @@
 <div class='gga-app {{classes}}'>
-  <div classes='flexcol flex-between'>
+	<div classes='flexcol flex-between'>
 
-    <h2>
-      <!-- TODO Consider adding hitlocation if passed to ADD -->
-      {{i18n "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=actor.data.name}}
-    </h2>
+		<h2>
+			<!-- TODO Consider adding hitlocation if passed to ADD -->
+			{{i18n "GURPS.addTitle" basic=CALC.totalBasicDamage damage=(damageTerm CALC) name=actor.name}}
+		</h2>
 
-    {{#if (gt CALC.length 1)}}
-      <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%'>
-        <nav class='pagination'>
-          <div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
-          <div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
-          {{#each CALC.calculators}}
-            <div id='pagination-{{@index}}' class='{{#if (eq ../CALC.viewId @index)}}active{{else}}{{/if}}'>
-              {{basicDamage}}
-            </div>
-          {{/each}}
-          <div id='pagination-right'><i class="fas fa-angle-double-right"></i></div>
-        </nav>
+		{{#if (gt CALC.length 1)}}
+		<div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%'>
+			<nav class='pagination'>
+				<div id='pagination-left'><i class="fas fa-angle-double-left"></i></div>
+				<div id='pagination-all' class='{{#if (eq CALC.viewId "all")}}active{{else}}{{/if}}'>ALL</div>
+				{{#each CALC.calculators}}
+				<div id='pagination-{{@index}}' class='{{#if (eq ../CALC.viewId @index)}}active{{else}}{{/if}}'>
+					{{basicDamage}}
+				</div>
+				{{/each}}
+				<div id='pagination-right'><i class="fas fa-angle-double-right"></i></div>
+			</nav>
 
-        <aside id='pagination-single-select'
-          style='font-style: italic; {{#if (eq CALC.viewId "all")}}visibility: hidden{{/if}}'>
-          {{i18n "GURPS.addSingleRollSelected"}}
-        </aside>
-      </div>
-    {{/if}}
+			<aside id='pagination-single-select'
+				style='font-style: italic; {{#if (eq CALC.viewId "all")}}visibility: hidden{{/if}}'>
+				{{i18n "GURPS.addSingleRollSelected"}}
+			</aside>
+		</div>
+		{{/if}}
 
-    <div class='flexrow flex-group-center flex-between' style='border: none'>
-      <h3>{{i18n "GURPS.addDirectlyApply"}}:</h3>
-      <input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}'
-        {{disabled (eq CALC.viewId 'all' )}}>
-      <div>
-        <select id='apply-to'>
-          <option value='HP' {{select-if CALC.applyTo 'HP' }}>{{i18n "GURPS.attributesHPNAME"}}
-          </option>
-          <option value='FP' {{select-if CALC.applyTo 'FP' }}>{{i18n "GURPS.attributesFPNAME"}}
-          </option>
+		<div class='flexrow flex-group-center flex-between' style='border: none'>
+			<h3>{{i18n "GURPS.addDirectlyApply"}}:</h3>
+			<input type='text' id='basicDamage' class='digits-only centered' value='{{CALC.totalBasicDamage}}'
+				{{disabled (eq CALC.viewId 'all' )}}>
+			<div>
+				<select id='apply-to'>
+					<option value='HP' {{select-if CALC.applyTo 'HP' }}>{{i18n "GURPS.attributesHPNAME"}}
+					</option>
+					<option value='FP' {{select-if CALC.applyTo 'FP' }}>{{i18n "GURPS.attributesFPNAME"}}
+					</option>
 
-          {{#each resourceLabels}}
-            <option value='{{alias}}' {{select-if ../CALC.applyTo alias}}>{{name}}</option>
-          {{/each}}
-        </select>
-      </div>
+					{{#each resourceLabels}}
+					<option value='{{alias}}' {{select-if ../CALC.applyTo alias}}>{{name}}</option>
+					{{/each}}
+				</select>
+			</div>
 
-      <div style='display: grid; grid-template-columns: 1fr min-content;'>
-	      {{#if CALC.showApplyAction}}
-	        <button id='apply-publicly' class='split-button'>{{i18n "GURPS.addApply"}}</button>
-	        <div class='dropdown'>
-	          <button id='apply-split' class='split-button'>
-	            <i class='fa fa-caret-down'></i>
-	          </button>
-	          <div id='apply-dropdown' class="dropdown-content invisible">
-	            <div id='apply-secretly'>{{i18n "GURPS.addApplyQuietly"}}</div>
-	            <div id='apply-keep'>{{i18n "GURPS.addApplyAndKeep"}}</div>
-	            <div id='apply-secretly-keep'>{{i18n "GURPS.addApplyQuietlyAndKeep"}}</div>
-	          </div>
-	        </div>
-	      {{else}}
-          <button id='apply-secretly' class='split-button'>{{i18n "GURPS.addApplyQuietly"}}</button>
-          <div class='dropdown'>
-            <button id='apply-split' class='split-button'>
-              <i class='fa fa-caret-down'></i>
-            </button>
-            <div id='apply-dropdown' class="dropdown-content invisible">
-              <div id='apply-publicly'>{{i18n "GURPS.addApply"}}</div>
-              <div id='apply-keep'>{{i18n "GURPS.addApplyAndKeep"}}</div>
-              <div id='apply-secretly-keep'>{{i18n "GURPS.addApplyQuietlyAndKeep"}}</div>
-            </div>
-          </div>
-	      {{/if}}
-      </div>
-    </div>
+			<div style='display: grid; grid-template-columns: 1fr min-content;'>
+				{{#if CALC.showApplyAction}}
+				<button id='apply-publicly' class='split-button'>{{i18n "GURPS.addApply"}}</button>
+				<div class='dropdown'>
+					<button id='apply-split' class='split-button'>
+						<i class='fa fa-caret-down'></i>
+					</button>
+					<div id='apply-dropdown' class="dropdown-content invisible">
+						<div id='apply-secretly'>{{i18n "GURPS.addApplyQuietly"}}</div>
+						<div id='apply-keep'>{{i18n "GURPS.addApplyAndKeep"}}</div>
+						<div id='apply-secretly-keep'>{{i18n "GURPS.addApplyQuietlyAndKeep"}}</div>
+					</div>
+				</div>
+				{{else}}
+				<button id='apply-secretly' class='split-button'>{{i18n "GURPS.addApplyQuietly"}}</button>
+				<div class='dropdown'>
+					<button id='apply-split' class='split-button'>
+						<i class='fa fa-caret-down'></i>
+					</button>
+					<div id='apply-dropdown' class="dropdown-content invisible">
+						<div id='apply-publicly'>{{i18n "GURPS.addApply"}}</div>
+						<div id='apply-keep'>{{i18n "GURPS.addApplyAndKeep"}}</div>
+						<div id='apply-secretly-keep'>{{i18n "GURPS.addApplyQuietlyAndKeep"}}</div>
+					</div>
+				</div>
+				{{/if}}
+			</div>
+		</div>
 
-    {{#unless isSimpleDialog}}
-      <div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>
-        <div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%;'>
-          <h3>{{i18n "GURPS.addApplyDamageOptions"}}:</h3>
-          {{#if (gt CALC.length 1)}}
-            <aside style='font-style: italic;'>{{i18n "GURPS.addApplyOptionsToAll"}}</aside>
-          {{/if}}
-        </div>
+		{{#unless isSimpleDialog}}
+		<div id='apply-damage-advanced' class='flex-group-left {{#if isSimpleDialog}}invisible{{/if}}'>
+			<div style='display: inline-flex; justify-content: space-between; align-items: center; width: 100%;'>
+				<h3>{{i18n "GURPS.addApplyDamageOptions"}}:</h3>
+				{{#if (gt CALC.length 1)}}
+				<aside style='font-style: italic;'>{{i18n "GURPS.addApplyOptionsToAll"}}</aside>
+				{{/if}}
+			</div>
 
-        <div class='grid grid-3col flex-between' style='grid-template-columns: auto auto auto; gap: 0'>
-          <div class='gga-group'>
-            <h4>{{i18n "GURPS.addHitLocationAndDR"}}</h4>
+			<div class='grid grid-3col flex-between' style='grid-template-columns: auto auto auto; gap: 0'>
+				<div class='gga-group'>
+					<h4>{{i18n "GURPS.addHitLocationAndDR"}}</h4>
 
-            <div class='gurps-3col gurps-radio-col'>
-              <header>{{i18n "GURPS.location"}}</header>
-              <header>{{i18n "GURPS.roll"}}</header>
-              <header>{{i18n "GURPS.hitLocationDR"}}</header>
+					<div class='gurps-3col gurps-radio-col'>
+						<header>{{i18n "GURPS.location"}}</header>
+						<header>{{i18n "GURPS.roll"}}</header>
+						<header>{{i18n "GURPS.hitLocationDR"}}</header>
 
-              {{#each CALC.hitLocationsWithDR}}
-                <div>
-                  <label>
-                    <input type='radio' name='hitlocation' value='{{this.where}}' {{checked (eq ../CALC.hitLocation
-                  this.where)}}>&nbsp;{{i18n (concat "GURPS.hitLocation" this.where)
-                this.where}}
-                  </label>
-                </div>
-                <div>{{this.rollText}}</div>
-                <div>{{this.dr}}</div>
-              {{/each}}
-            </div>
+						{{#each CALC.hitLocationsWithDR}}
+						<div>
+							<label>
+								<input type='radio' name='hitlocation' value='{{this.where}}' {{checked (eq
+									../CALC.hitLocation this.where)}}>&nbsp;{{i18n (concat "GURPS.hitLocation"
+								this.where)
+								this.where}}
+							</label>
+						</div>
+						<div>{{this.rollText}}</div>
+						<div>{{this.dr}}</div>
+						{{/each}}
+					</div>
 
-            <hr /> <!-- Doesn't do much except add some space -->
+					<hr /> <!-- Doesn't do much except add some space -->
 
-            <button id='random-location' class='with-icon'>
-              <i class='fa fa-dice'><span>&nbsp;{{i18n "GURPS.hitLocationRandom"}}</span></i>
-            </button>
+					<button id='random-location' class='with-icon'>
+						<i class='fa fa-dice'><span>&nbsp;{{i18n "GURPS.hitLocationRandom"}}</span></i>
+					</button>
 
-            <hr /> <!-- Doesn't do much except add some space -->
+					<hr /> <!-- Doesn't do much except add some space -->
 
-            <div class='gurps-3col gurps-radio-col'>
-              <div><label><input type='radio' name='hitlocation' value='Large-Area' {{checked (eq
-                  CALC.hitLocation "Large-Area" )}}>&nbsp;{{i18n "GURPS.addLargeAreaInjury"}}</label>
-              </div>
-              <div></div>
-              <div class='pdflink'>B400</div>
-            </div>
+					<div class='gurps-3col gurps-radio-col'>
+						<div><label><input type='radio' name='hitlocation' value='Large-Area' {{checked (eq
+									CALC.hitLocation "Large-Area" )}}>&nbsp;{{i18n "GURPS.addLargeAreaInjury"}}</label>
+						</div>
+						<div></div>
+						<div class='pdflink'>B400</div>
+					</div>
 
-            <hr /> <!-- Doesn't do much except add some space -->
+					<hr /> <!-- Doesn't do much except add some space -->
 
-            <div class='grid grid-2col flex-between'>
-              <label>{{i18n "GURPS.addOverrideDR"}}:</label>
-              <!-- <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
+					<div class='grid grid-2col flex-between'>
+						<label>{{i18n "GURPS.addOverrideDR"}}:</label>
+						<!-- <input type='text' id='user-entered-dr' name='User Entered' class='digits-only'
               value='{{CALC.userEnteredDR}}'> -->
 
-              <div id='override-dr' class='with-button'>
-                <input type='text' class='digits-only' style='border: 1px solid #7a7971;'
-                  value="{{#unless (eq CALC.userEnteredDR null)}}{{CALC.userEnteredDR}}{{/unless}}">
-                <button name="clear"><span class="fas fa-times-circle"></span></button>
-              </div>
+						<div id='override-dr' class='with-button'>
+							<input type='text' class='digits-only' style='border: 1px solid #7a7971;'
+								value="{{#unless (eq CALC.userEnteredDR null)}}{{CALC.userEnteredDR}}{{/unless}}">
+							<button name="clear"><span class="fas fa-times-circle"></span></button>
+						</div>
 
-            </div>
+					</div>
 
-          </div>
+				</div>
 
-          <div class='gga-group'>
-            <h4>{{i18n "GURPS.addTypeAndWoundingModifiers"}}</h4>
+				<div class='gga-group'>
+					<h4>{{i18n "GURPS.addTypeAndWoundingModifiers"}}</h4>
 
-            <section id='wound-modifier-table'>
-              <div name='wounding-modifiers' class='default-wound-modifiers'>
-                <div class='gurps-3col gurps-radio-col'>
-                  <header>{{i18n "GURPS.addDamageType"}}</header>
-                  <header>{{i18n "GURPS.addAbbrev"}}</header>
-                  <header>{{i18n "GURPS.modifier"}}</header>
+					<section id='wound-modifier-table'>
+						<div name='wounding-modifiers' class='default-wound-modifiers'>
+							<div class='gurps-3col gurps-radio-col'>
+								<header>{{i18n "GURPS.addDamageType"}}</header>
+								<header>{{i18n "GURPS.addAbbrev"}}</header>
+								<header>{{i18n "GURPS.modifier"}}</header>
 
-                  {{#each CALC.effectiveWoundModifiers}}
-                    <div><label><input type='radio' name='woundmodifier' {{checked (eq ../CALC.damageType @key)}}
-                          value='{{@key}}'>&nbsp;{{i18n (concat "GURPS.damageType" this.label) this.label}}</label>
-                    </div>
-                    <div>
-                      {{i18n (concat "GURPS.damageAbbrev" @key) @key}}
-                    </div>
-                    <div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>×{{fractionalize
-                  this.multiplier 2}}
-                    </div>
-                  {{/each}}
-                </div>
+								{{#each CALC.effectiveWoundModifiers}}
+								<div><label><input type='radio' name='woundmodifier' {{checked (eq ../CALC.damageType
+											@key)}} value='{{@key}}'>&nbsp;{{i18n (concat "GURPS.damageType" this.label)
+										this.label}}</label>
+								</div>
+								<div>
+									{{i18n (concat "GURPS.damageAbbrev" @key) @key}}
+								</div>
+								<div name='{{@key}}' {{#if this.changed}}class='{{this.changed}}' {{/if}}>
+									×{{fractionalize
+									this.multiplier 2}}
+								</div>
+								{{/each}}
+							</div>
 
-                {{#if CALC.isWoundModifierAdjustedForLocation}}
-                  <aside>{{i18n "GURPS.addAdjustedForHitLocation"}}.</aside>
-                {{/if}}
+							{{#if CALC.isWoundModifierAdjustedForLocation}}
+							<aside>{{i18n "GURPS.addAdjustedForHitLocation"}}.</aside>
+							{{/if}}
 
-                {{#if CALC.isWoundModifierAdjustedForInjuryTolerance}}
-                  <aside>{{i18n "GURPS.addAdjustedForInjuryTolerance"}}.</aside>
-                {{/if}}
+							{{#if CALC.isWoundModifierAdjustedForInjuryTolerance}}
+							<aside>{{i18n "GURPS.addAdjustedForInjuryTolerance"}}.</aside>
+							{{/if}}
 
-                {{#if CALC.isWoundModifierAdjustedForDamageType}}
-                  <aside>{{i18n "GURPS.addAdjustedForDamageType"}}.</aside>
-                {{/if}}
-              </div>
-            </section>
+							{{#if CALC.isWoundModifierAdjustedForDamageType}}
+							<aside>{{i18n "GURPS.addAdjustedForDamageType"}}.</aside>
+							{{/if}}
+						</div>
+					</section>
 
-            <hr /> <!-- Doesn't do much except add some space -->
+					<hr /> <!-- Doesn't do much except add some space -->
 
-            <label><input type='radio' name='woundmodifier' value='none' {{checked (eq CALC.damageType 'none'
-              )}}>&nbsp;{{i18n "GURPS.noModifier"}}</label>
+					<label><input type='radio' name='woundmodifier' value='none' {{checked (eq CALC.damageType 'none'
+							)}}>&nbsp;{{i18n "GURPS.noModifier"}}</label>
 
-            <div class='grid grid-2col flex-between'>
-              <div><label><input type='radio' name='woundmodifier' value='User Entered' {{checked (eq
-                  CALC.damageType 'User Entered' )}}>&nbsp;{{i18n "GURPS.addEnterModifier"}}:</label>
-              </div>
-              <input type='text' class='decimal-digits-only' id='user-entered-woundmod'
-                value='{{CALC.userEnteredWoundModifier}}'>
-            </div>
+					<div class='grid grid-2col flex-between'>
+						<div><label><input type='radio' name='woundmodifier' value='User Entered' {{checked (eq
+									CALC.damageType 'User Entered' )}}>&nbsp;{{i18n "GURPS.addEnterModifier"}}:</label>
+						</div>
+						<input type='text' class='decimal-digits-only' id='user-entered-woundmod'
+							value='{{CALC.userEnteredWoundModifier}}'>
+					</div>
 
-            <div class='grid grid-2col flex-between'>
-              <label>{{i18n "GURPS.addAdditionalStackingModifier"}}:</label>
-              <input type='number' class='decimal-digits-only' id='addmodifier'
-                value='{{CALC.additionalWoundModifier}}'>
-            </div>
+					<div class='grid grid-2col flex-between'>
+						<label>{{i18n "GURPS.addAdditionalStackingModifier"}}:</label>
+						<input type='number' class='decimal-digits-only' id='addmodifier'
+							value='{{CALC.additionalWoundModifier}}'>
+					</div>
 
-            <div class='grid grid-2col flex-between'>
-              <label>{{i18n "GURPS.addDamageModifier"}}:</label>
-              <input type='text' id='adddamagemodifier' value='{{CALC.damageModifier}}'>
-            </div>
-          </div>
+					<div class='grid grid-2col flex-between'>
+						<label>{{i18n "GURPS.addDamageModifier"}}:</label>
+						<input type='text' id='adddamagemodifier' value='{{CALC.damageModifier}}'>
+					</div>
+				</div>
 
-          <div class='gga-group shaded-group'>
-            <h4>{{i18n "GURPS.addTacticalRules"}}</h4>
-            <aside>{{i18n "GURPS.addTacticalRulesDefaults"}}.</aside>
+				<div class='gga-group shaded-group'>
+					<h4>{{i18n "GURPS.addTacticalRules"}}</h4>
+					<aside>{{i18n "GURPS.addTacticalRulesDefaults"}}.</aside>
 
-            <div class='gurps-3col gurps-checkbox-col'>
-              <div><input id='tactical-blunttrauma' type='checkbox' value='blunttrauma' {{checked CALC.useBluntTrauma}}>
-              </div>
-              <div><label for='tactical-blunttrauma'>&nbsp;{{i18n "GURPS.bluntTrauma"}}</label></div>
-              <div class='pdflink'>B379</div>
-            </div>
+					<div class='gurps-3col gurps-checkbox-col'>
+						<div><input id='tactical-blunttrauma' type='checkbox' value='blunttrauma' {{checked
+								CALC.useBluntTrauma}}>
+						</div>
+						<div><label for='tactical-blunttrauma'>&nbsp;{{i18n "GURPS.bluntTrauma"}}</label></div>
+						<div class='pdflink'>B379</div>
+					</div>
 
-            <div class='gurps-3col gurps-checkbox-col'>
-              <div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{checked
-                CALC.useLocationModifiers}}></div>
-              <div><label for='tactical-locationmodifier'>&nbsp;{{i18n "GURPS.addHitLocationWoundModifiers"}}</label>
-              </div>
-              <div class='pdflink'>B398</div>
-            </div>
+					<div class='gurps-3col gurps-checkbox-col'>
+						<div><input id='tactical-locationmodifier' type='checkbox' value='locationmodifier' {{checked
+								CALC.useLocationModifiers}}></div>
+						<div><label for='tactical-locationmodifier'>&nbsp;{{i18n
+								"GURPS.addHitLocationWoundModifiers"}}</label>
+						</div>
+						<div class='pdflink'>B398</div>
+					</div>
 
-            <h4>{{i18n "GURPS.addSpecialCombatSituations"}}</h4>
-            <div class='gurps-3col gurps-checkbox-col'>
-              <div><input id='specials-range12D' type='checkbox' value='range12D' {{checked CALC.isRangedHalfDamage}}>
-              </div>
-              <div><label for='specials-range12D'>&nbsp;{{i18n "GURPS.addRangedHalfDamage"}}</label></div>
-              <div class='pdflink'>B378</div>
-            </div>
+					<h4>{{i18n "GURPS.addSpecialCombatSituations"}}</h4>
+					<div class='gurps-3col gurps-checkbox-col'>
+						<div><input id='specials-range12D' type='checkbox' value='range12D' {{checked
+								CALC.isRangedHalfDamage}}>
+						</div>
+						<div><label for='specials-range12D'>&nbsp;{{i18n "GURPS.addRangedHalfDamage"}}</label></div>
+						<div class='pdflink'>B378</div>
+					</div>
 
-            <div class='collapsible-wrapper options-drawer'>
-              <input id='vulnerable' class='toggle' type='checkbox' value='vulnerable' {{checked CALC.isVulnerable}}>
-              <label for='vulnerable' class='label-toggle'>&nbsp;{{i18n "GURPS.addVulnerability"}}:<span
-                  class='pdflink'>B161</span></label>
-              <div class='grid grid-3col continuation collapsible-content'>
-                <label><input type='radio' name='vulnerability' value='2' {{checked (eq CALC.vulnerabilityMultiple
-                  2)}}>&nbsp;×2</label>
-                <label><input type='radio' name='vulnerability' value='3' {{checked (eq CALC.vulnerabilityMultiple
-                  3)}}>&nbsp;×3</label>
-                <label><input type='radio' name='vulnerability' value='4' {{checked (eq CALC.vulnerabilityMultiple
-                  4)}}>&nbsp;×4</label>
-              </div>
-            </div>
+					<div class='collapsible-wrapper options-drawer'>
+						<input id='vulnerable' class='toggle' type='checkbox' value='vulnerable' {{checked
+							CALC.isVulnerable}}>
+						<label for='vulnerable' class='label-toggle'>&nbsp;{{i18n "GURPS.addVulnerability"}}:<span
+								class='pdflink'>B161</span></label>
+						<div class='grid grid-3col continuation collapsible-content'>
+							<label><input type='radio' name='vulnerability' value='2' {{checked (eq
+									CALC.vulnerabilityMultiple 2)}}>&nbsp;×2</label>
+							<label><input type='radio' name='vulnerability' value='3' {{checked (eq
+									CALC.vulnerabilityMultiple 3)}}>&nbsp;×3</label>
+							<label><input type='radio' name='vulnerability' value='4' {{checked (eq
+									CALC.vulnerabilityMultiple 4)}}>&nbsp;×4</label>
+						</div>
+					</div>
 
-            <div class='gurps-3col gurps-checkbox-col'>
-              <div><input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor' {{checked
-                CALC.useArmorDivisor}}>
-              </div>
-              <div>
-                <label for='tactical-armordivisor' class='label-toggle'>&nbsp;{{i18n "GURPS.addArmorDivisor"}}:
-                  <select name='tactical-armordivisor' {{disabled (not CALC.useArmorDivisor)}}
-                    style='margin-left: 8px;'>
-                    <option value='0' {{select-if CALC.armorDivisor 0}}>None</option>
-                    <option value='0.1' {{select-if CALC.armorDivisor 0.1}}>(0.1)</option>
-                    <option value='0.2' {{select-if CALC.armorDivisor 0.2}}>(0.2)</option>
-                    <option value='0.5' {{select-if CALC.armorDivisor 0.5}}>(0.5)</option>
-                    <option value='2' {{select-if CALC.armorDivisor 2}}>(2)</option>
-                    <option value='3' {{select-if CALC.armorDivisor 3}}>(3)</option>
-                    <option value='4' {{select-if CALC.armorDivisor 4}}>(4)</option>
-                    <option value='5' {{select-if CALC.armorDivisor 5}}>(5)</option>
-                    <option value='10' {{select-if CALC.armorDivisor 10}}>(10)</option>
-                    <option value='100' {{select-if CALC.armorDivisor 100}}>(100)</option>
-                    <option value='-1' {{select-if CALC.armorDivisor -1}}>Ignores DR</option>
-                  </select></label>
-              </div>
-              <div class='pdflink'>B378</div>
-            </div>
+					<div class='gurps-3col gurps-checkbox-col'>
+						<div><input id='tactical-armordivisor' class='toggle' type='checkbox' value='armordivisor'
+								{{checked CALC.useArmorDivisor}}>
+						</div>
+						<div>
+							<label for='tactical-armordivisor' class='label-toggle'>&nbsp;{{i18n
+								"GURPS.addArmorDivisor"}}:
+								<select name='tactical-armordivisor' {{disabled (not CALC.useArmorDivisor)}}
+									style='margin-left: 8px;'>
+									<option value='0' {{select-if CALC.armorDivisor 0}}>None</option>
+									<option value='0.1' {{select-if CALC.armorDivisor 0.1}}>(0.1)</option>
+									<option value='0.2' {{select-if CALC.armorDivisor 0.2}}>(0.2)</option>
+									<option value='0.5' {{select-if CALC.armorDivisor 0.5}}>(0.5)</option>
+									<option value='2' {{select-if CALC.armorDivisor 2}}>(2)</option>
+									<option value='3' {{select-if CALC.armorDivisor 3}}>(3)</option>
+									<option value='4' {{select-if CALC.armorDivisor 4}}>(4)</option>
+									<option value='5' {{select-if CALC.armorDivisor 5}}>(5)</option>
+									<option value='10' {{select-if CALC.armorDivisor 10}}>(10)</option>
+									<option value='100' {{select-if CALC.armorDivisor 100}}>(100)</option>
+									<option value='-1' {{select-if CALC.armorDivisor -1}}>Ignores DR</option>
+								</select></label>
+						</div>
+						<div class='pdflink'>B378</div>
+					</div>
 
-            <div class='gurps-3col gurps-checkbox-col'>
-              <div>
-                <input id='hardened' class='toggle' type='checkbox' value='hardened' {{checked CALC.isHardenedDR}}>
-              </div>
-              <div>
-                <label for='hardened' class='label-toggle'>&nbsp;{{i18n "GURPS.addHardenedDRLevel"}}:
-                  <select name='hardened' {{disabled (not CALC.isHardenedDR)}} style='margin-left: 8px;'>
-                    <option value='1' {{select-if CALC.hardenedDRLevel 1}}>1</option>
-                    <option value='2' {{select-if CALC.hardenedDRLevel 2}}>2</option>
-                    <option value='3' {{select-if CALC.hardenedDRLevel 3}}>3</option>
-                    <option value='4' {{select-if CALC.hardenedDRLevel 4}}>4</option>
-                    <option value='5' {{select-if CALC.hardenedDRLevel 5}}>5</option>
-                    <option value='6' {{select-if CALC.hardenedDRLevel 6}}>6</option>
-                  </select>
-                </label>
-              </div>
-              <div>
-                <span class='pdflink'>B47</span>
-              </div>
-            </div>
+					<div class='gurps-3col gurps-checkbox-col'>
+						<div>
+							<input id='hardened' class='toggle' type='checkbox' value='hardened' {{checked
+								CALC.isHardenedDR}}>
+						</div>
+						<div>
+							<label for='hardened' class='label-toggle'>&nbsp;{{i18n "GURPS.addHardenedDRLevel"}}:
+								<select name='hardened' {{disabled (not CALC.isHardenedDR)}} style='margin-left: 8px;'>
+									<option value='1' {{select-if CALC.hardenedDRLevel 1}}>1</option>
+									<option value='2' {{select-if CALC.hardenedDRLevel 2}}>2</option>
+									<option value='3' {{select-if CALC.hardenedDRLevel 3}}>3</option>
+									<option value='4' {{select-if CALC.hardenedDRLevel 4}}>4</option>
+									<option value='5' {{select-if CALC.hardenedDRLevel 5}}>5</option>
+									<option value='6' {{select-if CALC.hardenedDRLevel 6}}>6</option>
+								</select>
+							</label>
+						</div>
+						<div>
+							<span class='pdflink'>B47</span>
+						</div>
+					</div>
 
-            <div class='collapsible-wrapper options-drawer'>
-              <input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{checked
-              CALC.isInjuryTolerance}}></input>
-              <label for='injury-tolerance' class='label-toggle'>&nbsp;{{i18n "GURPS.addInjuryTolerance"}}:<span
-                  class='pdflink'>
-                  B60</span></label>
-              <div class='collapsible-content continuation'>
-                <div><label><input type='radio' name='injury-tolerance' value='unliving' {{checked (eq
-                    CALC.injuryToleranceType "unliving" )}}>&nbsp;{{localize
-                  "GURPS.addInjuryToleranceUnliving"}}<span class='pdflink'>B380</span></label></div>
-                <div><label><input type='radio' name='injury-tolerance' value='homogenous' {{checked (eq
-                    CALC.injuryToleranceType "homogenous" )}}>&nbsp;{{localize
-                  "GURPS.addInjuryToleranceHomogenous"}}<span class='pdflink'>B380</span></label></div>
-                <div><label><input type='radio' name='injury-tolerance' value='diffuse' {{checked (eq
-                    CALC.injuryToleranceType "diffuse" )}}>&nbsp;{{localize
-                  "GURPS.addInjuryToleranceDiffuse"}}<span class='pdflink'>B380</span></label></div>
-              </div>
-            </div>
+					<div class='collapsible-wrapper options-drawer'>
+						<input id='injury-tolerance' class='toggle' type='checkbox' value='injury-tolerance' {{checked
+							CALC.isInjuryTolerance}}></input>
+						<label for='injury-tolerance' class='label-toggle'>&nbsp;{{i18n
+							"GURPS.addInjuryTolerance"}}:<span class='pdflink'>
+								B60</span></label>
+						<div class='collapsible-content continuation'>
+							<div><label><input type='radio' name='injury-tolerance' value='unliving' {{checked (eq
+										CALC.injuryToleranceType "unliving" )}}>&nbsp;{{localize
+									"GURPS.addInjuryToleranceUnliving"}}<span class='pdflink'>B380</span></label></div>
+							<div><label><input type='radio' name='injury-tolerance' value='homogenous' {{checked (eq
+										CALC.injuryToleranceType "homogenous" )}}>&nbsp;{{localize
+									"GURPS.addInjuryToleranceHomogenous"}}<span class='pdflink'>B380</span></label>
+							</div>
+							<div><label><input type='radio' name='injury-tolerance' value='diffuse' {{checked (eq
+										CALC.injuryToleranceType "diffuse" )}}>&nbsp;{{localize
+									"GURPS.addInjuryToleranceDiffuse"}}<span class='pdflink'>B380</span></label></div>
+						</div>
+					</div>
 
-            <div id='damage-reduction-container' class='gurps-3col'>
-              <input id='damage-reduction' type='checkbox' value='damage-reduction' {{checked CALC.useDamageReduction}}>
-              <label for='damage-reduction'>&nbsp;{{i18n "GURPS.addDamageReduction"}}: </label>
-              <div style='display: grid; grid-template-columns: auto min-content; gap: 3px; margin-left: 3px;'>
-                <div id='damage-reduction-field' class='with-button'>
-                  <input type='text' id='damage-reduction-level' class='digits-only'
-                    value='{{CALC.damageReductionLevel}}' {{disabled (not CALC.useDamageReduction)}}
-                    style='border: 1px solid #7a7971;'>
-                  <button name='clear'><span class='fas fa-times-circle'></button>
-                </div>
-                <div class='vertical-center pdflink'>P53</div>
-              </div>
-            </div>
+					<div id='damage-reduction-container' class='gurps-3col'>
+						<input id='damage-reduction' type='checkbox' value='damage-reduction' {{checked
+							CALC.useDamageReduction}}>
+						<label for='damage-reduction'>&nbsp;{{i18n "GURPS.addDamageReduction"}}: </label>
+						<div
+							style='display: grid; grid-template-columns: auto min-content; gap: 3px; margin-left: 3px;'>
+							<div id='damage-reduction-field' class='with-button'>
+								<input type='text' id='damage-reduction-level' class='digits-only'
+									value='{{CALC.damageReductionLevel}}' {{disabled (not CALC.useDamageReduction)}}
+									style='border: 1px solid #7a7971;'>
+								<button name='clear'><span class='fas fa-times-circle'></button>
+							</div>
+							<div class='vertical-center pdflink'>P53</div>
+						</div>
+					</div>
 
-            <div class='collapsible-wrapper options-drawer'>
-              <input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{checked
-              CALC.isExplosion}}></input>
-              <label for='explosion-damage' class='label-toggle'>&nbsp;{{i18n "GURPS.addExplosion"}}:<span
-                  class='pdflink'>B414</span></label>
-              <div class='collapsible-content continuation'>
-                <div style='display: flex; padding: 3px;'><label for='explosion-yards'
-                    style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>Hexes from
-                    center:</label><input type='text' id='explosion-yards' class='digits-only'
-                    value='{{CALC.hexesFromExplosion}}' /></div>
-              </div>
-            </div>
+					<div class='collapsible-wrapper options-drawer'>
+						<input id='explosion-damage' class='toggle' type='checkbox' value='explosion-damage' {{checked
+							CALC.isExplosion}}></input>
+						<label for='explosion-damage' class='label-toggle'>&nbsp;{{i18n "GURPS.addExplosion"}}:<span
+								class='pdflink'>B414</span></label>
+						<div class='collapsible-content continuation'>
+							<div style='display: flex; padding: 3px;'><label for='explosion-yards'
+									style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>Hexes from
+									center:</label><input type='text' id='explosion-yards' class='digits-only'
+									value='{{CALC.hexesFromExplosion}}' /></div>
+						</div>
+					</div>
 
-            {{#if CALC.useBluntTrauma}}
-              <div style='display: flex; flex-direction: column; justify-content: center;'>
-                <div id='specials-insert-point' class='gurps-3col'>
-                  <input id='flexible-armor' type='checkbox' value='flexible-armor' {{checked CALC.isFlexibleArmor}}>
-                  <label for='flexible-armor'>&nbsp;{{i18n "GURPS.addFlexibleArmor"}}
-                    <aside style='margin: 0;'>({{i18n "GURPS.bluntTrauma"}}):</aside>
-                  </label>
-                  <div id='blunt-trauma-field' class='with-button'>
-                    <input type='text' id='blunt-trauma' class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
-                      value='{{CALC.effectiveBluntTrauma}}' {{disabled (not CALC.isFlexibleArmor)}}
-                      style='border: 1px solid #7a7971;'>
-                    <button name='clear'><span class='fas fa-times-circle'></button>
-                  </div>
-                </div>
-              </div>
-            {{/if}}
+					{{#if CALC.useBluntTrauma}}
+					<div style='display: flex; flex-direction: column; justify-content: center;'>
+						<div id='specials-insert-point' class='gurps-3col'>
+							<input id='flexible-armor' type='checkbox' value='flexible-armor' {{checked
+								CALC.isFlexibleArmor}}>
+							<label for='flexible-armor'>&nbsp;{{i18n "GURPS.addFlexibleArmor"}}
+								<aside style='margin: 0;'>({{i18n "GURPS.bluntTrauma"}}):</aside>
+							</label>
+							<div id='blunt-trauma-field' class='with-button'>
+								<input type='text' id='blunt-trauma'
+									class='digits-only {{#if CALC.bluntTrauma}}user-entered{{/if}}'
+									value='{{CALC.effectiveBluntTrauma}}' {{disabled (not CALC.isFlexibleArmor)}}
+									style='border: 1px solid #7a7971;'>
+								<button name='clear'><span class='fas fa-times-circle'></button>
+							</div>
+						</div>
+					</div>
+					{{/if}}
 
-            <div class='collapsible-wrapper options-drawer'>
-              <input id='shotgun-damage' class='toggle' type='checkbox' value='shotgun-damage' {{checked
-              CALC.isShotgun}}></input>
-              <label for='shotgun-damage' class='label-toggle'>&nbsp;{{i18n "GURPS.addShotgunCloseRange"}}:<span
-                  class='pdflink'>B409</span></label>
-              <div class='collapsible-content continuation'>
-                <div style='display: flex; padding: 3px;'>
-                  <label for='shotgun-rof-multiplier'
-                    style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>{{localize
-                  "GURPS.addShotgunRofMultiplier"}}:&nbsp;</label>
-                  <div style='position: relative;'>
-                    <input type='number' id='shotgun-rof-multiplier' class='digits-only'
-                      value='{{CALC.shotgunRofMultiplier}}' style='padding-left: 1.5rem;' />
-                    <span
-                      style='position: absolute; text-align: center; width: 1.5rem; color: dimgray; left: 0; bottom: 0; line-height: 1.5rem;'>×</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+					<div class='collapsible-wrapper options-drawer'>
+						<input id='shotgun-damage' class='toggle' type='checkbox' value='shotgun-damage' {{checked
+							CALC.isShotgun}}></input>
+						<label for='shotgun-damage' class='label-toggle'>&nbsp;{{i18n
+							"GURPS.addShotgunCloseRange"}}:<span class='pdflink'>B409</span></label>
+						<div class='collapsible-content continuation'>
+							<div style='display: flex; padding: 3px;'>
+								<label for='shotgun-rof-multiplier'
+									style='min-width: fit-content; padding-top: 5px; padding-right: 3px;'>{{localize
+									"GURPS.addShotgunRofMultiplier"}}:&nbsp;</label>
+								<div style='position: relative;'>
+									<input type='number' id='shotgun-rof-multiplier' class='digits-only'
+										value='{{CALC.shotgunRofMultiplier}}' style='padding-left: 1.5rem;' />
+									<span
+										style='position: absolute; text-align: center; width: 1.5rem; color: dimgray; left: 0; bottom: 0; line-height: 1.5rem;'>×</span>
+								</div>
+							</div>
+						</div>
+					</div>
 
-          </div>
-        </div>
-      </div>
+				</div>
+			</div>
+		</div>
 
-      <div>
-        <div class='gga-group'>
-          <h4>{{i18n "GURPS.addCalculationAndResults"}}</h4>
-          <div id='calculation-results' class='grid grid-3col' style='grid-template-columns: 3fr 3fr 2fr; gap: 0'>
+		<div>
+			<div class='gga-group'>
+				<h4>{{i18n "GURPS.addCalculationAndResults"}}</h4>
+				<div id='calculation-results' class='grid grid-3col' style='grid-template-columns: 3fr 3fr 2fr; gap: 0'>
 
-            {{#if (eq CALC.viewId "all")}}
-              <div class='overflowy'>
-                <aside>Select a damage roll at the top of this window to see its calculation.</aside>
-                <!-- CALC.pointsToApply -->
-                <div style='display: inline-flex; flex-flow: row wrap; max-width: 250px;'>
-                  {{#each CALC.calculators}}
-                    <div
-                      style='display: inline-flex; align-items: center; justify-content: space-evenly; border: 1px solid black; padding: 4px 8px; border-radius: 3px; margin-bottom: 4px; margin-right:4px;'>
-                      <div>{{basicDamage}}</div>
-                      <div style='color: grey;'><i class="fas fa-arrow-right"></i></div>
-                      <div style='font-weight: bold; font-size: large;'>{{pointsToApply}}</div>
-                    </div>
-                  {{/each}}
-                </div>
-              </div>
-            {{else}}
-              <div class='gurps-3col results-table'>
-                <div>{{i18n "GURPS.addBasicDamage"}}</div>
-                <div>{{CALC.basicDamage}}</div>
-                <div>{{CALC.applyTo}}</div>
+					{{#if (eq CALC.viewId "all")}}
+					<div class='overflowy'>
+						<aside>Select a damage roll at the top of this window to see its calculation.</aside>
+						<!-- CALC.pointsToApply -->
+						<div style='display: inline-flex; flex-flow: row wrap; max-width: 250px;'>
+							{{#each CALC.calculators}}
+							<div
+								style='display: inline-flex; align-items: center; justify-content: space-evenly; border: 1px solid black; padding: 4px 8px; border-radius: 3px; margin-bottom: 4px; margin-right:4px;'>
+								<div>{{basicDamage}}</div>
+								<div style='color: grey;'><i class="fas fa-arrow-right"></i></div>
+								<div style='font-weight: bold; font-size: large;'>{{pointsToApply}}</div>
+							</div>
+							{{/each}}
+						</div>
+					</div>
+					{{else}}
+					<div class='gurps-3col results-table'>
+						<div>{{i18n "GURPS.addBasicDamage"}}</div>
+						<div>{{CALC.basicDamage}}</div>
+						<div>{{CALC.applyTo}}</div>
 
-                {{#if CALC.isRangedHalfDamage}}
-                  <div name='result-effective-dmg'>{{i18n "GURPS.addRangedHalfDamageShort"}}</div>
-                  <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
-                  <div name='result-effective-dmg'>= {{CALC.basicDamage}} &divide; 2</div>
-                {{/if}}
-                {{#if CALC.isShotgun}}
-                  <div name='result-effective-dmg'>{{i18n "GURPS.addShotgunDamage"}}</div>
-                  <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
-                  <div name='result-effective-dmg'>= {{CALC.basicDamage}} &times; {{CALC.shotgunDamageMultiplier}}</div>
-                {{/if}}
-                {{#if CALC.isExplosion}}
-                  <div name='result-effective-dmg'>{{i18n "GURPS.addExplosion"}}</div>
-                  <div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
-                  <div name='result-effective-dmg'><span>= {{CALC.basicDamage}} &times;
-                      <sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub> {{#if (eq CALC.hexesFromExplosion 1)}}
-                        ({{i18n "GURPS.addExplosionHex" hex=CALC.hexesFromExplosion}})
-                      {{else}}
-                        ({{i18n "GURPS.addExplosionHexes" hex=CALC.hexesFromExplosion}})
-                      {{/if}}
-                    </span>
-                  </div>
-                {{/if}}
+						{{#if CALC.isRangedHalfDamage}}
+						<div name='result-effective-dmg'>{{i18n "GURPS.addRangedHalfDamageShort"}}</div>
+						<div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+						<div name='result-effective-dmg'>= {{CALC.basicDamage}} &divide; 2</div>
+						{{/if}}
+						{{#if CALC.isShotgun}}
+						<div name='result-effective-dmg'>{{i18n "GURPS.addShotgunDamage"}}</div>
+						<div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+						<div name='result-effective-dmg'>= {{CALC.basicDamage}} &times; {{CALC.shotgunDamageMultiplier}}
+						</div>
+						{{/if}}
+						{{#if CALC.isExplosion}}
+						<div name='result-effective-dmg'>{{i18n "GURPS.addExplosion"}}</div>
+						<div name='result-effective-dmg'>{{CALC.effectiveDamage}}</div>
+						<div name='result-effective-dmg'><span>= {{CALC.basicDamage}} &times;
+								<sup>1</sup>/<sub>{{CALC.explosionDivisor}}</sub> {{#if (eq CALC.hexesFromExplosion 1)}}
+								({{i18n "GURPS.addExplosionHex" hex=CALC.hexesFromExplosion}})
+								{{else}}
+								({{i18n "GURPS.addExplosionHexes" hex=CALC.hexesFromExplosion}})
+								{{/if}}
+							</span>
+						</div>
+						{{/if}}
 
-                <div id='result-dr'>{{i18n "GURPS.hitLocationDR"}}</div>
-                <div>{{CALC.DR}}</div>
-                <div>{{CALC.hitLocation}}{{#unless (eq CALC.userEnteredDR null)}} ({{localize
-              "GURPS.overridden"}}){{/unless}}</div>
+						<div id='result-dr'>{{i18n "GURPS.hitLocationDR"}}</div>
+						<div>{{CALC.DR}}</div>
+						<div>{{CALC.hitLocation}}{{#unless (eq CALC.userEnteredDR null)}} ({{localize
+							"GURPS.overridden"}}){{/unless}}</div>
 
-                {{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
-                  <div>{{i18n "GURPS.hitLocationDRWithDivisor"}}</div>
-                  <div>{{CALC.effectiveDR}}</div>
-                  <!-- This is a big messy looking block, but it prints either:
+						{{#if (or (and CALC.useArmorDivisor CALC.armorDivisor) CALC.isShotgun)}}
+						<div>{{i18n "GURPS.hitLocationDRWithDivisor"}}</div>
+						<div>{{CALC.effectiveDR}}</div>
+						<!-- This is a big messy looking block, but it prints either:
                     "= DR ÷ AD" OR "= DR ÷ (EffectiveAD = (AD) w/Hard-X)* B378" -->
-                  <div><span>= {{CALC.DR}}
-                      {{#if CALC.isShotgun}} &times; {{CALC.shotgunDamageMultiplier}} (Shotgun){{/if}}
-                      {{#if CALC.armorDivisor}}
-                        &divide;
-                        {{#if CALC.isHardenedDR}}
-                          ({{CALC.effectiveArmorDivisor}} = ({{#if (eq CALC.armorDivisor
-                -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}}) {{localize
-                "GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
-                        {{else}}
-                          ({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
-                        {{/if}}
-                        {{#unless CALC.DR}}
-                          {{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
-                        {{/unless}}</span>
-                {{/if}}
-              </div>
-            {{/if}}
+						<div><span>= {{CALC.DR}}
+								{{#if CALC.isShotgun}} &times; {{CALC.shotgunDamageMultiplier}} (Shotgun){{/if}}
+								{{#if CALC.armorDivisor}}
+								&divide;
+								{{#if CALC.isHardenedDR}}
+								({{CALC.effectiveArmorDivisor}} = ({{#if (eq CALC.armorDivisor
+								-1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}}) {{localize
+								"GURPS.addWHard"}}–{{CALC.hardenedDRLevel}})
+								{{else}}
+								({{#if (eq CALC.armorDivisor -1)}}∞{{else}}{{CALC.armorDivisor}}{{/if}})
+								{{/if}}
+								{{#unless CALC.DR}}
+								{{#if (lt CALC.armorDivisor 1)}}* <span class="pdflink">B379</span>{{/if}}
+								{{/unless}}</span>
+							{{/if}}
+						</div>
+						{{/if}}
 
-            <div id='result-penetrating'>{{i18n "GURPS.addPenetrating"}}</div>
-            <div>{{CALC.penetratingDamage}}</div>
-            <div>= {{CALC.effectiveDamage}} &minus; {{CALC.effectiveDR}}</div>
+						<div id='result-penetrating'>{{i18n "GURPS.addPenetrating"}}</div>
+						<div>{{CALC.penetratingDamage}}</div>
+						<div>= {{CALC.effectiveDamage}} &minus; {{CALC.effectiveDR}}</div>
 
-            <div>{{i18n "GURPS.modifier"}}</div>
-            <div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
-            <div>
-              <span>{{woundModifierText CALC}}
-                {{#if (isWoundModAdjForLocation CALC)}}*
-                  ({{CALC.hitLocation}})
-                  <span class="pdflink">B398</span>
-                {{/if}}
-                {{#if (isWoundModAdjForInjuryTol CALC)}}*
-                  <span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span>
-                  <span class="pdflink">B380</span>
-                {{/if}}
-              </span>
-            </div>
+						<div>{{i18n "GURPS.modifier"}}</div>
+						<div>×{{fractionalize CALC.totalWoundingModifier 2}}</div>
+						<div>
+							<span>{{woundModifierText CALC}}
+								{{#if (isWoundModAdjForLocation CALC)}}*
+								({{CALC.hitLocation}})
+								<span class="pdflink">B398</span>
+								{{/if}}
+								{{#if (isWoundModAdjForInjuryTol CALC)}}*
+								<span style='text-transform: capitalize;'>({{CALC.injuryToleranceType}})</span>
+								<span class="pdflink">B380</span>
+								{{/if}}
+							</span>
+						</div>
 
-            {{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
-              <div>{{i18n "GURPS.addDamageReduction"}}</div>
-              <div>&divide;{{CALC.damageReductionLevel}}</div>
-              <div></div>
-            {{/if}}
+						{{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
+						<div>{{i18n "GURPS.addDamageReduction"}}</div>
+						<div>&divide;{{CALC.damageReductionLevel}}</div>
+						<div></div>
+						{{/if}}
 
-            <div>{{i18n "GURPS.addInjury"}}</div>
-            <div>{{CALC.injury}}</div>
-            <div><span>=
-                {{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize CALC.totalWoundingModifier 2}}
-                </span>
-                {{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
-                  &divide; {{CALC.damageReductionLevel}}
-                {{/if}}
-                {{#if CALC.maxInjuryForDiffuse}}
-                  ({{i18n "GURPS.addDiffuseMax"}} {{CALC.maxInjuryForDiffuse}})* <span class="pdflink">B380</span>
-                {{/if}}
-            </div>
+						<div>{{i18n "GURPS.addInjury"}}</div>
+						<div>{{CALC.injury}}</div>
+						<div><span>=
+								{{CALC.penetratingDamage}} × <span name='result-totalmod'>{{fractionalize
+									CALC.totalWoundingModifier 2}}
+								</span>
+								{{#if (and CALC.useDamageReduction CALC.damageReductionLevel)}}
+								&divide; {{CALC.damageReductionLevel}}
+								{{/if}}
+								{{#if CALC.maxInjuryForDiffuse}}
+								({{i18n "GURPS.addDiffuseMax"}} {{CALC.maxInjuryForDiffuse}})* <span
+									class="pdflink">B380</span>
+								{{/if}}
+						</div>
 
-            {{#if CALC.isBluntTraumaInjury}}
-              <div>{{i18n "GURPS.bluntTrauma"}}</div>
-              <div>{{CALC.effectiveBluntTrauma}}</div>
-              <div><span>= {{CALC.effectiveDamage}} ({{CALC.damageType}}) &divide; {{#if (eq CALC.damageType
-                'cr')}}5{{else}}10{{/if}} <span class="pdflink">B379</span></span></div>
-            {{/if}}
+						{{#if CALC.isBluntTraumaInjury}}
+						<div>{{i18n "GURPS.bluntTrauma"}}</div>
+						<div>{{CALC.effectiveBluntTrauma}}</div>
+						<div><span>= {{CALC.effectiveDamage}} ({{CALC.damageType}}) &divide; {{#if (eq CALC.damageType
+								'cr')}}5{{else}}10{{/if}} <span class="pdflink">B379</span></span></div>
+						{{/if}}
 
-            {{#if CALC.isInjuryReducedByLocation}}
-              <div>{{i18n "GURPS.addLocationMax"}}</div>
-              <div>{{CALC.locationMaxHPAsInt}}</div>
-              <div>{{CALC.hitLocation}}</div>
-            {{/if}}
+						{{#if CALC.isInjuryReducedByLocation}}
+						<div>{{i18n "GURPS.addLocationMax"}}</div>
+						<div>{{CALC.locationMaxHPAsInt}}</div>
+						<div>{{CALC.hitLocation}}</div>
+						{{/if}}
 
-            <!-- add a footnote that there is blunt trauma -->
-          </div>
-          {{/if}}
+						<!-- add a footnote that there is blunt trauma -->
+					</div>
+					{{/if}}
 
-          <div id="result-extrastuff">
-            <ul id='result-effects'>
-              {{#each CALC.effects}}
-                {{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
-              {{/each}}
-            </ul>
-          </div>
+					<div id="result-extrastuff">
+						<ul id='result-effects'>
+							{{#each CALC.effects}}
+							{{> (concat 'systems/gurps/templates/apply-damage/effect-' type '.html') }}
+							{{/each}}
+						</ul>
+					</div>
 
-          <div class='apply-results'
-            style='display: flex; flex-flow: column; justify-content:space-between; gap: 0.5em'>
-            <div style='display: flex; flex-flow: column; gap: inherit'>
-              <input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled type='text'
-                class='decimal-digits-only centered' id='result-apply-injury' name='damage'
-                value='{{CALC.pointsToApply}}'>
+					<div class='apply-results'
+						style='display: flex; flex-flow: column; justify-content:space-between; gap: 0.5em'>
+						<div style='display: flex; flex-flow: column; gap: inherit'>
+							<input style='font-size: larger; font-weight: bolder; border: 1px black solid;' disabled
+								type='text' class='decimal-digits-only centered' id='result-apply-injury' name='damage'
+								value='{{CALC.pointsToApply}}'>
 
-              <div class="grid grid-2col flex-between" style='grid-template-columns: max-content 1fr; margin-top: 3px;'>
-                <label for='apply-multiple'>{{i18n "GURPS.addApplyMultipleTimes"}}:</label>
-                <div style='position: relative;'>
-                  <input type="number" class="digits-only" id="apply-multiple" value="{{timesToApply}}"
-                    style='padding-left: 1.5rem;'>
-                  <span style='position: absolute; text-align: center; width: 1.5rem; color: dimgray;'>×</span>
-                </div>
-              </div>
-            </div>
-            <div style='display: grid; grid-template-columns: 1fr min-content; margin-top: 1rem;'>
-                {{#if CALC.showApplyAction}}
-		              <button id='apply-injury-publicly' class='split-button'>{{i18n "GURPS.addApplyInjury"}}</button>
-		              <div class='dropdown'>
-		                <button id='apply-injury-split' class='split-button'>
-		                  <i class='fa fa-caret-down'></i>
-		                </button>
-		                <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
-		                  <div id='apply-injury-secretly'>{{i18n "GURPS.addApplyInjuryQuietly"}}</div>
-		                  <div id='apply-injury-keep'>{{i18n "GURPS.addApplyInjuryAndKeep"}}</div>
-		                  <div id='apply-injury-secretly-keep'>{{i18n "GURPS.addApplyInjuryQuietlyAndKeep"}}</div>
-		                </div>
-		              </div>
-		            {{else}}
-                  <button id='apply-injury-secretly' class='split-button'>{{i18n "GURPS.addApplyQuietly"}}</button>
-                  <div class='dropdown'>
-                    <button id='apply-injury-split' class='split-button'>
-                      <i class='fa fa-caret-down'></i>
-                    </button>
-                    <div id='apply-injury-dropdown' class="dropdown-content invisible" style='bottom: 2.5em;'>
-                      <div id='apply-injury-publicly'>{{i18n "GURPS.addApplyInjury"}}</div>
-                      <div id='apply-injury-keep'>{{i18n "GURPS.addApplyInjuryAndKeep"}}</div>
-                      <div id='apply-injury-secretly-keep'>{{i18n "GURPS.addApplyInjuryQuietlyAndKeep"}}</div>
-                    </div>
-                  </div>
-                {{/if}}
-            </div>
+							<div class="grid grid-2col flex-between"
+								style='grid-template-columns: max-content 1fr; margin-top: 3px;'>
+								<label for='apply-multiple'>{{i18n "GURPS.addApplyMultipleTimes"}}:</label>
+								<div style='position: relative;'>
+									<input type="number" class="digits-only" id="apply-multiple"
+										value="{{timesToApply}}" style='padding-left: 1.5rem;'>
+									<span
+										style='position: absolute; text-align: center; width: 1.5rem; color: dimgray;'>×</span>
+								</div>
+							</div>
+						</div>
+						<div style='display: grid; grid-template-columns: 1fr min-content; margin-top: 1rem;'>
+							{{#if CALC.showApplyAction}}
+							<button id='apply-injury-publicly' class='split-button'>{{i18n
+								"GURPS.addApplyInjury"}}</button>
+							<div class='dropdown'>
+								<button id='apply-injury-split' class='split-button'>
+									<i class='fa fa-caret-down'></i>
+								</button>
+								<div id='apply-injury-dropdown' class="dropdown-content invisible"
+									style='bottom: 2.5em;'>
+									<div id='apply-injury-secretly'>{{i18n "GURPS.addApplyInjuryQuietly"}}</div>
+									<div id='apply-injury-keep'>{{i18n "GURPS.addApplyInjuryAndKeep"}}</div>
+									<div id='apply-injury-secretly-keep'>{{i18n "GURPS.addApplyInjuryQuietlyAndKeep"}}
+									</div>
+								</div>
+							</div>
+							{{else}}
+							<button id='apply-injury-secretly' class='split-button'>{{i18n
+								"GURPS.addApplyQuietly"}}</button>
+							<div class='dropdown'>
+								<button id='apply-injury-split' class='split-button'>
+									<i class='fa fa-caret-down'></i>
+								</button>
+								<div id='apply-injury-dropdown' class="dropdown-content invisible"
+									style='bottom: 2.5em;'>
+									<div id='apply-injury-publicly'>{{i18n "GURPS.addApplyInjury"}}</div>
+									<div id='apply-injury-keep'>{{i18n "GURPS.addApplyInjuryAndKeep"}}</div>
+									<div id='apply-injury-secretly-keep'>{{i18n "GURPS.addApplyInjuryQuietlyAndKeep"}}
+									</div>
+								</div>
+							</div>
+							{{/if}}
+						</div>
 
-          </div>
-        </div>
-      </div>
-  </div>
-  {{/unless}}
-</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{{/unless}}
+	</div>
 </div>

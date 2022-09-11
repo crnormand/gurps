@@ -377,7 +377,7 @@ Public Class ExportToFoundryVTT
 '****************************************
     Private Sub ExportToFoundryVTT(CurChar As GCACharacter, fw As FileWriter)
         fw.Paragraph("<?xml version=""1.0"" encoding=""utf-8""?>")
-        fw.Paragraph("<root release=""Foundry"" version=""GCA5-13"">")
+        fw.Paragraph("<root release=""Foundry"" version=""GCA5-14"">")
         fw.Paragraph("<character>")
         fw.Paragraph("<name type=""string"">" & CurChar.Name & "</name>")
         fw.Paragraph("")
@@ -534,7 +534,7 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<relativelevel type=""string"">" & tmp & "</relativelevel>")
 
                 fw.Paragraph("<points type=""number"">" & CurChar.Items(i).TagItem("points") & "</points>")
-                fw.Paragraph("<text type=""string"">" & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
                 fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                 fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                 fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -611,7 +611,7 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<class type=""string"">" & spellClass & "</class>")
                 fw.Paragraph("<type type=""string"">" & CurChar.Items(i).TagItem("type") & "</type>")
                 fw.Paragraph("<points type=""number"">" & CurChar.Items(i).TagItem("points") & "</points>")
-                fw.Paragraph("<text type=""string"">" & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
 
                 fw.Paragraph("<time type=""string"">" & CurChar.Items(i).TagItem("time") & "</time>")
                 fw.Paragraph("<duration type=""string"">" & CurChar.Items(i).TagItem("duration") & "</duration>")
@@ -941,7 +941,7 @@ Public Class ExportToFoundryVTT
                 fw.Paragraph("<weight type=""string"">" & StrToDbl(CurChar.Items(i).tagitem("weight")) /qty & "</weight>")
 
                 'print the notes (not currently shown on Fantasy Grounds character sheet)
-                fw.Paragraph("<text type=""string"">" & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
                 
                 fw.Paragraph("<tl type=""string"">" & CurChar.Items(i).TagItem("techlvl") & "</tl>")
                 
@@ -1073,7 +1073,7 @@ Public Class ExportToFoundryVTT
                     fw.Paragraph("<lc type=""string"">" & CurChar.Items(i).TagItem("lc") & "</lc>")
 
                     'print the notes (not currently shown on Fantasy Grounds character sheet)
-                    fw.Paragraph("<text type=""string"">" & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                    fw.Paragraph("<text type=""string"">" & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
 
                     fw.Paragraph("<tl type=""string"">" & CurChar.Items(i).DamageModeTagItem(CurMode, "techlvl") & "</tl>")
 
@@ -1381,7 +1381,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
                     fw.Paragraph("</id-" & tag_index & ">")
 
                 End If
@@ -1422,7 +1422,7 @@ Public Class ExportToFoundryVTT
                             work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                         End If
                         fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                        fw.Paragraph("<text type=""string"">" & mods_text & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                        fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
                         fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                         fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                         fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1465,7 +1465,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1525,7 +1525,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & CreateControlRoll(mods_text & CurChar.Items(i).TagItem("usernotes")) & "</text>")
+                    fw.Paragraph("<text type=""string"">" & CreateControlRoll(mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes"))) & "</text>")
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")
@@ -1567,7 +1567,7 @@ Public Class ExportToFoundryVTT
                         work = work - CInt(CurChar.Items(i).TagItem("childpoints"))
                     End If
                     fw.Paragraph("<points type=""number"">" & CStr(work) & "</points>")
-                    fw.Paragraph("<text type=""string"">" & mods_text & CurChar.Items(i).TagItem("usernotes") & "</text>")
+                    fw.Paragraph("<text type=""string"">" & mods_text & UpdateEscapeChars(CurChar.Items(i).TagItem("usernotes")) & "</text>")
                     fw.Paragraph("<pageref type=""string"">" & CurChar.Items(i).TagItem("page") & "</pageref>")
                     fw.Paragraph("<parentuuid>" & CurChar.Items(i).ParentKey & "</parentuuid>")
                     fw.Paragraph("<uuid>k" & CurChar.Items(i).idkey & "</uuid>")

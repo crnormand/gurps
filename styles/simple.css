@@ -2,7 +2,8 @@
   --controlhover: 0 0 5px red;
   --sectiongap: 0.05in;
   --smallemgap: 0.2em;
-  --fontawesomefamily: 'Font Awesome 5 Free', Roboto, sans-serif;
+  /*  --fontawesomefamily: 'Font Awesome 5 Free', Roboto, sans-serif; */
+  --fontawesomefamily: 'fontawesome';
   --lightgrey: rgba(0, 0, 0, 0.3);
   --headerfontsize: 80%;
   --standardborder: 1px solid black;
@@ -2045,7 +2046,8 @@ body {
 
 .roll-result .roll-value,
 .roll-result .roll-detail {
-  font-family: var(--fontawesomefamily);
+  /* font-family: var(--fontawesomefamily); */
+  font-family: inherit;
 }
 
 .roll-result .roll-detail {

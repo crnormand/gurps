@@ -334,12 +334,12 @@ export default function addChatHooks() {
 
     // Look for blind messages with .message-results and remove them
     /*  Hooks.on("renderChatMessage", (log, content, data) => {
-      if (!!data.message.blind) {
-          if (data.author?.isSelf && !data.author.isGm) {   // We are rendering the chat message for the sender (and they are not the GM)
-            $(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
-          }
-        }
-      });  */
+		  if (!!data.message.blind) {
+			  if (data.author?.isSelf && !data.author.isGm) {   // We are rendering the chat message for the sender (and they are not the GM)
+				$(content).find(".gurps-results").html("...");  // Replace gurps-results with "...".  Does nothing if not there.
+			  }
+			}
+		  });  */
 
     // Add the "for" attribute to a collapsible panel label. This is needed
     // because the server in 0.7.8 strips the "for" attribute in an attempt
@@ -365,7 +365,7 @@ export default function addChatHooks() {
     Hooks.on(
       'preCreateChatMessage',
       (/** @type {ChatMessage} */ chatMessage, /** @type {any} */ _options, /** @type {any} */ _userId) => {
-        let c = chatMessage.data.content
+        let c = chatMessage.content
         try {
           let html = $(c)
           let rt = html.find('.result-text') // Ugly hack to find results of a roll table to see if an OtF should be "rolled" /r /roll
@@ -387,8 +387,7 @@ export default function addChatHooks() {
           }
         } catch (e) {} // a dangerous game... but limited to GURPs /roll OtF
         let newContent = gurpslink(c)
-        let update = { content: newContent }
-        chatMessage.data.update(update)
+        setProperty(chatMessage, '_source.content', newContent)
         return true
       }
     )

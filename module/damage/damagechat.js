@@ -6,19 +6,19 @@ import { handleOnPdf } from '../pdf-refs.js'
 
 /**
  * @typedef {{
-      formula: string,
-      rolled: boolean,
-      modifier: number,
-      diceText: string,
-      damageType: string,
-      extdamagetype: string|null,
-      multiplier: number,
-      divisor: number,
-      adds1: number,
-      adds2: number,
-      min: number,
-      loaded?: boolean,
-    }} diceData;
+	  formula: string,
+	  rolled: boolean,
+	  modifier: number,
+	  diceText: string,
+	  damageType: string,
+	  extdamagetype: string|null,
+	  multiplier: number,
+	  divisor: number,
+	  adds1: number,
+	  adds2: number,
+	  min: number,
+	  loaded?: boolean,
+	}} diceData;
  */
 
 /**
@@ -37,7 +37,7 @@ export default class DamageChat {
   static async _renderDamageChat(app, html, _msg) {
     if (!html.find('.damage-chat-message').length) return // this is not a damage chat message
 
-    let transfer = JSON.parse(app.data.flags.transfer)
+    let transfer = JSON.parse(app.flags.transfer)
 
     // for each damage-message, set the drag-and-drop events and data
     let damageMessages = html.find('.damage-message')
@@ -52,7 +52,7 @@ export default class DamageChat {
     // for the damage-all-message, set the drag-and-drop events and data
     let allDamageMessage = html.find('.damage-all-message')
     if (!!allDamageMessage && allDamageMessage.length == 1) {
-      let transfer = JSON.parse(app.data.flags.transfer)
+      let transfer = JSON.parse(app.flags.transfer)
       let message = allDamageMessage[0]
 
       makeElementDraggable(message, 'damageItem', 'dragging', transfer.payload, GURPS.damageDragImage, [30, 30])
@@ -84,7 +84,7 @@ export default class DamageChat {
   static async _dropCanvasData(canvas, dropData) {
     if (dropData.type === 'damageItem' || dropData.type === 'Item' || dropData.type === 'equipment') {
       let oldselection = new Set(game.user.targets) // remember current targets (so we can reselect them afterwards)
-      let grid_size = canvas.scene?.data.grid
+      let grid_size = canvas.scene?.grid.size
       canvas.tokens?.targetObjects(
         {
           x: dropData.x - grid_size / 2,
@@ -181,9 +181,7 @@ export default class DamageChat {
     if (dice == null) return
 
     if (!tokenNames) tokenNames = []
-    if (!!event && event.data?.repeat > 1)
-      for (let i = 0; i < event.data.repeat; i++) 
-        tokenNames.push('' + i)
+    if (!!event && event?.repeat > 1) for (let i = 0; i < event.repeat; i++) tokenNames.push('' + i)
 
     if (tokenNames.length == 0) tokenNames.push('')
 
@@ -428,11 +426,11 @@ export default class DamageChat {
       modifiers: targetmods.map(it => `${it.mod} ${it.desc.replace(/^dmg/, 'damage')}`),
       userTarget: userTarget,
       hitlocation: draggableData[0].hitlocation,
-      numtimes: draggableData.length > 1 ? ' x' + draggableData.length : ''
+      numtimes: draggableData.length > 1 ? ' x' + draggableData.length : '',
     })
 
     // @ts-ignore
-    const speaker = ChatMessage.getSpeaker({actor: actor})
+    const speaker = ChatMessage.getSpeaker({ actor: actor })
     /** @type {Record<string,any>} */
     let messageData = {
       user: game.user.id,
@@ -443,12 +441,11 @@ export default class DamageChat {
     }
 
     if (event?.shiftKey) {
-      messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER;
+      messageData.type = CONST.CHAT_MESSAGE_TYPES.WHISPER
       if (game.user.isGM) {
         messageData.whisper = [game.user.id]
-      } else
-        messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)
-        messageData.blind = true
+      } else messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id)
+      messageData.blind = true
     }
 
     messageData['flags.transfer'] = JSON.stringify({
@@ -491,7 +488,7 @@ export default class DamageChat {
       messageData.sound = CONFIG.sounds.dice
     }
     ChatMessage.create(messageData).then(arg => {
-      let messageId = arg.data.id // 'qHz1QQuzpJiavH3V'
+      let messageId = arg.id // 'qHz1QQuzpJiavH3V'
       $(`[data-message-id='${messageId}']`).on('click', handleOnPdf)
     })
   }
@@ -504,8 +501,8 @@ DamageChat.fullRegex =
 let transfer = {
   dice: '3d+5',
   modifiers: [
-    '+2 damage (Strong Attack)',
-    '+2 damage (Mighty Blow) *Cost 1FP'
+	'+2 damage (Strong Attack)',
+	'+2 damage (Mighty Blow) *Cost 1FP'
   ]
   damage: 21,
   damageType: 'cut',

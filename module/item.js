@@ -9,19 +9,12 @@ export class GurpsItem extends Item {
 
   async internalUpdate(data, context) {
     let ctx = { render: true }
-    if (!!context) ctx = {...context, ...ctx}
+    if (!!context) ctx = { ...context, ...ctx }
     await this.update(data, ctx)
   }
 
   prepareData() {
     super.prepareData()
-  }
-
-  /**
-   * @returns {GurpsItemData}
-   */
-  getGurpsItemData() {
-    return /** @type {GurpsItemData} */ (this.data.data)
   }
 
   async internalUpdate(data, context) {

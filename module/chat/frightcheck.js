@@ -40,8 +40,8 @@ export class FrightCheckChatProcessor extends ChatProcessor {
             },
           },
         },
-        { width: 650 },
-      ).render(true),
+        { width: 650 }
+      ).render(true)
     )
   }
 
@@ -82,7 +82,7 @@ export class FrightCheckChatProcessor extends ChatProcessor {
     targetmods = targetmods.filter(it => it != null)
 
     let totalMod = targetmods.map(it => it.mod).reduce((a, b) => a + b, 0)
-    let WILLVar = parseInt(actor.data.data.frightcheck || actor.data.data.attributes.WILL.value, 10)
+    let WILLVar = parseInt(actor.system.frightcheck || actor.system.attributes.WILL.value, 10)
     let finaltarget = totalMod + WILLVar
 
     // true or false?
@@ -110,14 +110,14 @@ export class FrightCheckChatProcessor extends ChatProcessor {
       loaded: roll.isLoaded,
       rolls: roll.dice[0].results.map(it => it.result).join(),
     })
-    
+
     await ChatMessage.create({
       type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       speaker: ChatMessage.getSpeaker(actor),
       content: content,
       roll: JSON.stringify(roll),
       rollMode: game.settings.get('core', 'rollMode'),
-    }).then(async (html) => {
+    }).then(async html => {
       GURPS.setLastTargetedRoll({ margin: -margin }, actor)
       if (failure) {
         // Draw results using a custom roll formula.   use the negated margin for the rolltable only
