@@ -20,6 +20,10 @@ export class PDFViewerSheet extends DocumentSheet {
     return `systems/gurps/templates/pdf/view.hbs`
   }
 
+  get title() {
+    return this.object.name
+  }
+
   _getPDFData() {
     const params = new URLSearchParams()
     if (this.object.src) {

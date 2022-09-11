@@ -105,18 +105,20 @@ export function handlePdf(links) {
         page += 2
       } else page -= 335
     }
-    // // @ts-ignore
-    // const pdf = ui.PDFoundry.findPDFDataByCode(book)
-    const pdf = game.journal?.getName('PDF')?.pages.find(e => e.type === 'pdf' && e.system.code === book)
-    if (pdf === undefined) {
+    if (game.journal.size === 0) {
       let url = GURPS.SJGProductMappings[book]
       if (!url) url = 'http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb' // The main GURPS page
       window.open(url, '_blank')
       // @ts-ignore
     } else {
-      const pj = game.journal?.getName('PDF')
+      const pdfPages = []
+      game.journal.forEach(j => {
+        j.pages.forEach(p => {
+          if (p.type === 'pdf') pdfPages.push(p)
+        })
+      })
       let journalPage = null
-      if (!!pj) journalPage = pj.pages.find(e => e.type === 'pdf' && e.system.code === book)
+      if (pdfPages.length) journalPage = pdfPages.find(e => e.system.code === book)
       if (journalPage) {
         const viewer = new PDFViewerSheet(journalPage, { pageNumber: page })
         viewer.render(true)
