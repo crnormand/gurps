@@ -70,6 +70,8 @@ import * as GURPSSpeedProvider from './speed-provider.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import GurpsWiring from './gurps-wiring.js'
 import { gurpslink } from './utilities/gurpslink.js'
+import { PDFEditorSheet } from './pdf/edit.js'
+import { JournalEntryPageGURPS } from './pdf/index.js'
 
 let GURPS = undefined
 
@@ -1086,16 +1088,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-			[AMRS][DPK]
-			A: ads & attack (melee & range)
-			AD: ads
-			AT: attack
-			M: melee
-			R: ranged
-			S: skills & spells
-			SK: skills
-			SP: spells
-		  */
+				[AMRS][DPK]
+				A: ads & attack (melee & range)
+				AD: ads
+				AT: attack
+				M: melee
+				R: ranged
+				S: skills & spells
+				SK: skills
+				SP: spells
+			  */
     ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
       switch (action.prefix) {
         case 'A':
@@ -1864,6 +1866,7 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
+    CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
 
     // add custom ActiveEffectConfig sheet class
     CONFIG.ActiveEffect.sheetClass = GurpsActiveEffectConfig
@@ -1925,6 +1928,14 @@ if (!globalThis.GURPS) {
     Items.unregisterSheet('core', ItemSheet)
     // @ts-ignore
     Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
+
+    DocumentSheetConfig.unregisterSheet(JournalEntryPage, 'core', JournalPDFPageSheet)
+
+    DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
+      types: ['pdf'],
+      makeDefault: true,
+      label: 'GURPS PDF Editor Sheet',
+    })
 
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
     // @ts-ignore

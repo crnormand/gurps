@@ -14,6 +14,16 @@ body {
 }
  */
 
+.window-app.gcs.pdf .window-content {
+  overflow: clip;
+  padding: 0;
+}
+
+.window-app.gcs.pdf .window-content iframe {
+  height: 100%;
+  width: 100%;
+}
+
 .gurpsactorsheet #context-menu {
   width: max-content;
   left: calc(50% - 75px);

@@ -51,7 +51,12 @@
     </div>
     {{#if isEditing}}
       <div class='field'>
-        <input name='system.attributes.PER.value' class='gcs-input' type='number' value='{{system.attributes.PER.value}}' />
+        <input
+          name='system.attributes.PER.value'
+          class='gcs-input'
+          type='number'
+          value='{{system.attributes.PER.value}}'
+        />
       </div>
     {{else}}
       <div class='field rollable' data-path='attributes.PER.value' data-otf='PER'>
@@ -65,7 +70,11 @@
     <div class='label'>{{i18n 'GURPS.vision'}}</div>
 
     <div class='points'></div>
-    <div class='field noedit {{rollable (not isEditing)}}' data-path='hearing' data-otf='Hearing'>{{system.hearing}}</div>
+    <div
+      class='field noedit {{rollable (not isEditing)}}'
+      data-path='hearing'
+      data-otf='Hearing'
+    >{{system.hearing}}</div>
     <div class='label'>{{i18n 'GURPS.hearing'}}</div>
 
     <div class='points'></div>
