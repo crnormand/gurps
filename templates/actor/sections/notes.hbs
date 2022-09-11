@@ -11,7 +11,7 @@
     {{#if ../isEditing}}
       <div class='desc indent{{indent}} notemenu' data-key='system.notes.{{@key}}'>
         <div style="display: inline-flex; flex-flow: column nowrap; width: 100%;">
-          <input name="data.notes.{{@key}}.title" type="text" value="{{this.title}}" title="Title" placeholder="Title">
+          <input name="system.notes.{{@key}}.title" type="text" value="{{this.title}}" title="Title" placeholder="Title">
           <textarea
             name='system.notes.{{@key}}.notes'
             class='gcs-input-ta'

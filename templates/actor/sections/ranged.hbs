@@ -17,54 +17,54 @@
   <div class='rcl header'>{{i18n 'GURPS.rcl'}}</div>
   <div class='st header'>{{i18n 'GURPS.attributesST'}}</div>
 
-  {{#each (attackflatlist data.ranged)}}
+  {{#each (attackflatlist system.ranged)}}
     {{#if ../isEditing}}
-      <div class='itemmenu rangedmenu' data-key='data.ranged.{{@key}}'>
+      <div class='itemmenu rangedmenu' data-key='system.ranged.{{@key}}'>
         <i class='fas fa-times'></i>
       </div>
 
       <div class='desc indent{{indent}}'>
-        <input name='data.ranged.{{@key}}.name' class='gcs-input-25' type='text' value='{{this.name}}' />
+        <input name='system.ranged.{{@key}}.name' class='gcs-input-25' type='text' value='{{this.name}}' />
         <div class='list_note'>
-          <input name='data.ranged.{{@key}}.notes' class='gcs-input-25' type='text' value='{{this.notes}}' />
+          <input name='system.ranged.{{@key}}.notes' class='gcs-input-25' type='text' value='{{this.notes}}' />
         </div>
       </div>
 
       <div class='usage'>
-        <input name='data.ranged.{{@key}}.mode' class='gcs-input' type='text' value='{{this.mode}}' />
+        <input name='system.ranged.{{@key}}.mode' class='gcs-input' type='text' value='{{this.mode}}' />
       </div>
       <div class='level'>
-        <input name='data.ranged.{{@key}}.import' class='gcs-input-sm2' type='text' value='{{this.import}}' />
+        <input name='system.ranged.{{@key}}.import' class='gcs-input-sm2' type='text' value='{{this.import}}' />
       </div>
       <div class='acc'>
-        <input name='data.ranged.{{@key}}.acc' class='gcs-input-sm2' type='text' value='{{this.acc}}' />
+        <input name='system.ranged.{{@key}}.acc' class='gcs-input-sm2' type='text' value='{{this.acc}}' />
       </div>
       <div class='damage'>
-        <input name='data.ranged.{{@key}}.damage' class='gcs-input-5' type='text' value='{{this.damage}}' />
+        <input name='system.ranged.{{@key}}.damage' class='gcs-input-5' type='text' value='{{this.damage}}' />
       </div>
       <div class='range'>
-        <input name='data.ranged.{{@key}}.range' class='gcs-input-sm5' type='text' value='{{this.range}}' />
+        <input name='system.ranged.{{@key}}.range' class='gcs-input-sm5' type='text' value='{{this.range}}' />
       </div>
       <div class='rof'>
-        <input name='data.ranged.{{@key}}.rof' class='gcs-input-sm2' type='text' value='{{this.rof}}' />
+        <input name='system.ranged.{{@key}}.rof' class='gcs-input-sm2' type='text' value='{{this.rof}}' />
       </div>
       <div class='shots'>
-        <input name='data.ranged.{{@key}}.shots' class='gcs-input-sm2' type='text' value='{{this.shots}}' />
+        <input name='system.ranged.{{@key}}.shots' class='gcs-input-sm2' type='text' value='{{this.shots}}' />
       </div>
       <div class='bulk'>
-        <input name='data.ranged.{{@key}}.bulk' class='gcs-input-sm2' type='text' value='{{this.bulk}}' />
+        <input name='system.ranged.{{@key}}.bulk' class='gcs-input-sm2' type='text' value='{{this.bulk}}' />
       </div>
       <div class='rcl'>
-        <input name='data.ranged.{{@key}}.rcl' class='gcs-input-sm2' type='text' value='{{this.rcl}}' />
+        <input name='system.ranged.{{@key}}.rcl' class='gcs-input-sm2' type='text' value='{{this.rcl}}' />
       </div>
       <div class='st'>
-        <input name='data.ranged.{{@key}}.st' class='gcs-input-sm2' type='text' value='{{this.st}}' />
+        <input name='system.ranged.{{@key}}.st' class='gcs-input-sm2' type='text' value='{{this.st}}' />
       </div>
     {{else}}
       {{#unless isCollapsed}}
         <div class='itemmenu' readonly></div>
 
-        <div class='rangeddraggable' data-key='data.ranged.{{@key}}'>
+        <div class='rangeddraggable' data-key='system.ranged.{{@key}}'>
           <div class='desc dblclkedit indent{{indent}}'>
             <div class='gga-desc-text'>
               <div>
@@ -92,13 +92,13 @@
         <div
           class='usage rollable flex-center'
           data-name='{{name}} ({{mode}})'
-          data-key='data.ranged.{{@key}}'
+          data-key='system.ranged.{{@key}}'
           data-otf='{{quotedAttackName 'R' this}}'
         >{{mode}}</div>
         <div
           class='level rollable flex-center'
           data-name='{{this.name}} ({{this.mode}})'
-          data-key='data.ranged.{{@key}}'
+          data-key='system.ranged.{{@key}}'
           data-otf='{{quotedAttackName 'R' this}}'
         >{{this.level}}</div>
         <div
