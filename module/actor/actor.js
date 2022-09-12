@@ -3681,10 +3681,10 @@ export class GurpsActor extends Actor {
     if (!other) {
       // if not in other, remove from carried, and then re-add everything
       if (item.id) await this._removeItemElement(item.id, 'equipment.carried')
-      await this.addItemData(item.data)
+      await this.addItemData(item)
     } else {
       // If was in other... just add back to other (and forget addons)
-      await this._addNewItemEquipment(item.data, 'system.equipment.other.' + zeroFill(0))
+      await this._addNewItemEquipment(item, 'system.equipment.other.' + zeroFill(0))
     }
     let newkey = this._findEqtkeyForId('globalid', _data.globalid)
     if (!!oldeqt && (!!oldeqt.contains || !!oldeqt.collapsed)) {
@@ -3904,6 +3904,7 @@ export class GurpsActor extends Actor {
   async _removeItemElement(itemid, key) {
     let found = true
     let any = false
+    if (!key.startsWith('system.')) key = 'system.' + key
     while (!!found) {
       found = false
       let list = getProperty(this, key)
@@ -3912,7 +3913,7 @@ export class GurpsActor extends Actor {
       })
       if (!!found) {
         any = true
-        await GURPS.removeKey(this, 'system.' + key + '.' + found)
+        await GURPS.removeKey(this, key + '.' + found)
       }
     }
     return any

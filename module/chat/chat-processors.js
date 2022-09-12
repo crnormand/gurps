@@ -547,7 +547,7 @@ class SelectChatProcessor extends ChatProcessor {
     let m = this.match
     if (!!m[2]) {
       // @self
-      for (const a of game.actors.entities) {
+      for (const a of game.actors.entries()) {
         let users = a
           .getOwners()
           .filter(u => !u.isGM)

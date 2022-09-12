@@ -91,7 +91,7 @@ class Maneuver {
     let changes = []
 
     changes.push({
-      key: 'data.conditions.maneuver',
+      key: 'system.conditions.maneuver',
       value: this._data.name,
       mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
     })

@@ -1223,7 +1223,7 @@ active-effects-list .section h3 {
   height: fit-content;
 }
 
-#condition .fieldblock .field[name='data.conditions.combatmove'] {
+#condition .fieldblock .field[name='system.conditions.combatmove'] {
   max-width: 12em;
   white-space: nowrap;
   overflow: hidden;
@@ -1231,7 +1231,7 @@ active-effects-list .section h3 {
   margin-left: 8px;
 }
 
-#combat-sheet .fieldblock .field[name='data.conditions.combatmove'] {
+#combat-sheet .fieldblock .field[name='system.conditions.combatmove'] {
   font-size: var(--font-size-small);
 }
 

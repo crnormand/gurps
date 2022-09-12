@@ -178,7 +178,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = (+tracker.value || 0) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
-      let json = `{ "data.${path}.value": ${value} }`
+      let json = `{ "system.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
@@ -192,7 +192,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = (tracker.value || 0) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = tracker.max || 0
 
-      let json = `{ "data.${path}.value": ${value} }`
+      let json = `{ "system.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
@@ -205,7 +205,7 @@ export class GurpsActorSheet extends ActorSheet {
       let tracker = getProperty(this.actor.system, path)
       let value = !!tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
-      let json = `{ "data.${path}.value": ${value} }`
+      let json = `{ "system.${path}.value": ${value} }`
       this.actor.update(JSON.parse(json))
     })
 
@@ -219,8 +219,8 @@ export class GurpsActorSheet extends ActorSheet {
     const updateActorWithChangedSeverity = changedSeverity => {
       console.log('updateActorWithChangedSeverity')
       this.actor.update({
-        'data.conditionalinjury.injury.severity': formatCIEmpty(changedSeverity),
-        'data.conditionalinjury.injury.daystoheal': formatCIEmpty(CI.daysToHealForSeverity(changedSeverity)),
+        'system.conditionalinjury.injury.severity': formatCIEmpty(changedSeverity),
+        'system.conditionalinjury.injury.daystoheal': formatCIEmpty(CI.daysToHealForSeverity(changedSeverity)),
       })
     }
 
@@ -237,8 +237,8 @@ export class GurpsActorSheet extends ActorSheet {
     const updateActorWithChangedDaysToHeal = changedDaysToHeal => {
       console.log('updateActorWithChangedDaysToHeal')
       this.actor.update({
-        'data.conditionalinjury.injury.severity': formatCIEmpty(CI.severityForDaysToHeal(changedDaysToHeal)),
-        'data.conditionalinjury.injury.daystoheal': formatCIEmpty(changedDaysToHeal),
+        'system.conditionalinjury.injury.severity': formatCIEmpty(CI.severityForDaysToHeal(changedDaysToHeal)),
+        'system.conditionalinjury.injury.daystoheal': formatCIEmpty(changedDaysToHeal),
       })
     }
 
@@ -311,7 +311,7 @@ export class GurpsActorSheet extends ActorSheet {
         let parent = ev.currentTarget.closest('[data-gurps-resource]')
         let path = $(parent).attr('data-gurps-resource')
         let value = parseInt(newValue)
-        let json = `{ "data.${path}.value": ${value} }`
+        let json = `{ "system.${path}.value": ${value} }`
         this.actor.update(JSON.parse(json))
 
         details.open = false
@@ -529,7 +529,7 @@ export class GurpsActorSheet extends ActorSheet {
             label: 'Save',
             callback: html => {
               const i = html[0].querySelector('#i')
-              actor.update({ 'data.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
+              actor.update({ 'system.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
             },
           },
         },
@@ -612,14 +612,14 @@ export class GurpsActorSheet extends ActorSheet {
     let movedown = this._createMenu(
       i18n('GURPS.moveToOtherEquipment'),
       '<i class="fas fa-level-down-alt"></i>',
-      this._moveEquipment.bind(this, 'data.equipment.other')
+      this._moveEquipment.bind(this, 'system.equipment.other')
     )
     new ContextMenu(html, '.equipmenucarried', [movedown, ...opts], { eventName: 'contextmenu' })
 
     let moveup = this._createMenu(
       i18n('GURPS.moveToCarriedEquipment'),
       '<i class="fas fa-level-up-alt"></i>',
-      this._moveEquipment.bind(this, 'data.equipment.carried')
+      this._moveEquipment.bind(this, 'system.equipment.carried')
     )
     new ContextMenu(html, '.equipmenuother', [moveup, ...opts], { eventName: 'contextmenu' })
   }
@@ -827,7 +827,7 @@ export class GurpsActorSheet extends ActorSheet {
   }
 
   handleQnoteDrop(ev) {
-    this.dropFoundryLinks(ev, 'data.additionalresources.qnotes')
+    this.dropFoundryLinks(ev, 'system.additionalresources.qnotes')
   }
 
   dropFoundryLinks(ev, modelkey) {
@@ -1534,12 +1534,12 @@ export class GurpsActorSheet extends ActorSheet {
         if (encs[key].current) return // already selected
         for (let enckey in encs) {
           let enc = encs[enckey]
-          let t = 'data.encumbrance.' + enckey + '.current'
+          let t = 'system.encumbrance.' + enckey + '.current'
           if (key === enckey) {
             await this.actor.update({
               [t]: true,
-              'data.currentmove': parseInt(enc.move),
-              'data.currentdodge': parseInt(enc.dodge),
+              'system.currentmove': parseInt(enc.move),
+              'system.currentdodge': parseInt(enc.dodge),
             })
           } else if (enc.current) {
             await this.actor.update({ [t]: false })
@@ -1566,8 +1566,8 @@ export class GurpsActorSheet extends ActorSheet {
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
     await this.actor.update({
-      'data.equippedparry': p,
-      'data.equippedblock': b,
+      'system.equippedparry': p,
+      'system.equippedblock': b,
     })
     this.actor._forceRender()
   }
@@ -1712,7 +1712,7 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
       ev.preventDefault()
       let element = ev.currentTarget
       let show = element.checked
-      this.actor.update({ 'data.additionalresources.showflightmove': show })
+      this.actor.update({ 'system.additionalresources.showflightmove': show })
     })
 
     this.makeDeleteMenu(html, '.hlmenu', new HitLocation('???'), ClickAndContextMenu)
@@ -1745,12 +1745,12 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
           }
           this.actor.ignoreRender = true
           await this.actor.update({
-            'data.-=hitlocations': null,
-            'data.additionalresources.bodyplan': bodyplan,
+            'system.-=hitlocations': null,
+            'system.additionalresources.bodyplan': bodyplan,
           })
-          await this.actor.update({ 'data.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
+          await this.actor.update({ 'system.hitlocations': 0 }) // A hack. The delete above doesn't always get rid of the properties, so set it to Zero
           this.actor.ignoreRender = false
-          await this.actor.update({ 'data.hitlocations': hitlocations })
+          await this.actor.update({ 'system.hitlocations': hitlocations })
         }
       }
     })
@@ -1768,11 +1768,11 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     // add any additional items to the menu
     switch (elementid) {
       case '#location':
-        return [this.addItemMenu(i18n('GURPS.hitLocation'), new HitLocation('???'), 'data.hitlocations'), ...menu]
+        return [this.addItemMenu(i18n('GURPS.hitLocation'), new HitLocation('???'), 'system.hitlocations'), ...menu]
 
       case '#reactions':
         return [
-          this.addItemMenu(i18n('GURPS.reaction'), new Reaction('+0', i18n('GURPS.fromEllipses')), 'data.reactions'),
+          this.addItemMenu(i18n('GURPS.reaction'), new Reaction('+0', i18n('GURPS.fromEllipses')), 'system.reactions'),
           ...menu,
         ]
 
@@ -1781,34 +1781,34 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
           this.addItemMenu(
             i18n('GURPS.conditionalModifier'),
             new Modifier('+0', i18n('GURPS.fromEllipses')),
-            'data.conditionalmods'
+            'system.conditionalmods'
           ),
           ...menu,
         ]
 
       case '#melee':
         return [
-          this.addItemMenu(i18n('GURPS.meleeAttack'), new Ranged(`${i18n('GURPS.meleeAttack')}...`), 'data.melee'),
+          this.addItemMenu(i18n('GURPS.meleeAttack'), new Ranged(`${i18n('GURPS.meleeAttack')}...`), 'system.melee'),
           ...menu,
         ]
 
       case '#ranged':
         return [
-          this.addItemMenu(i18n('GURPS.rangedAttack'), new Ranged(`${i18n('GURPS.rangedAttack')}...`), 'data.ranged'),
+          this.addItemMenu(i18n('GURPS.rangedAttack'), new Ranged(`${i18n('GURPS.rangedAttack')}...`), 'system.ranged'),
           ...menu,
         ]
 
       case '#advantages':
         return [
-          this.addItemMenu(i18n('GURPS.adDisadQuirkPerk'), new Advantage(`${i18n('GURPS.adDisad')}...`), 'data.ads'),
+          this.addItemMenu(i18n('GURPS.adDisadQuirkPerk'), new Advantage(`${i18n('GURPS.adDisad')}...`), 'system.ads'),
           ...menu,
         ]
 
       case '#skills':
-        return [this.addItemMenu(i18n('GURPS.skill'), new Skill(`${i18n('GURPS.skill')}...`), 'data.skills'), ...menu]
+        return [this.addItemMenu(i18n('GURPS.skill'), new Skill(`${i18n('GURPS.skill')}...`), 'system.skills'), ...menu]
 
       case '#spells':
-        return [this.addItemMenu(i18n('GURPS.spell'), new Spell(`${i18n('GURPS.spell')}...`), 'data.spells'), ...menu]
+        return [this.addItemMenu(i18n('GURPS.spell'), new Spell(`${i18n('GURPS.spell')}...`), 'system.spells'), ...menu]
 
       default:
         return menu
@@ -1819,14 +1819,14 @@ export class GurpsActorEditorSheet extends GurpsActorSheet {
     ev.preventDefault()
     let current = this.actor.system.additionalresources.ignoreinputbodyplan
     let ignore = !current
-    await this.actor.update({ 'data.additionalresources.ignoreinputbodyplan': ignore })
+    await this.actor.update({ 'system.additionalresources.ignoreinputbodyplan': ignore })
   }
 
   async _onClickShowFlightMove(ev) {
     ev.preventDefault()
     let current = this.actor.system.additionalresources.showflightmove
     let show = !current
-    await this.actor.update({ 'data.additionalresources.showflightmove': show })
+    await this.actor.update({ 'system.additionalresources.showflightmove': show })
   }
 }
 
