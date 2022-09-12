@@ -52,7 +52,7 @@ export class GurpsItemSheet extends ItemSheet {
       recurselist(this.item.system.ranged, (e, k, d) => {
         commit = { ...commit, ...{ ['system.melee.' + k + '.name']: nm } }
       })
-      this.item.updateSource(commit)
+      this.item.update(commit)
     })
     //    html.find('#quantity').change(ev => this.item.update({ 'system.eqt.count': parseInt(ev.currentTarget.value) }))
 

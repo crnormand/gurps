@@ -82,21 +82,30 @@
     {{>notes}}
   </div>
   {{>footer}}
-  {{#if navigateVisible}}
+  {{#if navigateBar.visible}}
     <div class='navigate-area'>
       <input id='navigate-toggle-{{_id}}' class='toggle offscreen-only' type='checkbox' />
       <div class='navigate-bar'>
         <label class='navigation-view' for='navigate-toggle-{{_id}}'><span class='icon'></span></label>
         <div class='navigate-container'>
           <div class='navigation-link' data-value='personal'>TOP</div>
-          <div class='navigation-link' data-value='stats'>STATS</div>
-          <div class='navigation-link' data-value='melee'>MELEE</div>
-          <div class='navigation-link' data-value='ranged'>RANGED</div>
-          <div class='navigation-link' data-value='advantages'>ADVANTAGES</div>
-          <div class='navigation-link' data-value='skills'>SKILLS</div>
-          <div class='navigation-link' data-value='equipmentcarried'>EQUIPMENT</div>
-          <div class='navigation-link' data-value='other_equipment'>OTHER</div>
-          <div class='navigation-link' data-value='notes'>NOTES</div>
+          <div class='navigation-link' data-value='stats'>{{i18n 'GURPS.statsTab'}}</div>
+          {{#if navigateBar.hasMelee}}
+            <div class='navigation-link' data-value='melee'>{{i18n 'GURPS.melee'}}</div>
+          {{/if}}
+          {{#if navigateBar.hasRanged}}
+            <div class='navigation-link' data-value='ranged'>{{i18n 'GURPS.ranged'}}</div>
+          {{/if}}
+          <div class='navigation-link' data-value='advantages'>{{i18n 'GURPS.pointsAdvantages'}}</div>
+          <div class='navigation-link' data-value='skills'>{{i18n 'GURPS.skillsTab'}}</div>
+          {{#if navigateBar.hasSpells}}
+            <div class='navigation-link' data-value='spells'>{{i18n 'GURPS.spellsTab'}}</div>
+          {{/if}}
+          <div class='navigation-link' data-value='equipmentcarried'>{{i18n 'GURPS.equipment'}}</div>
+          {{#if navigateBar.hasOther}}
+            <div class='navigation-link' data-value='other_equipment'>OTHER</div>
+          {{/if}}
+          <div class='navigation-link' data-value='notes'>{{i18n 'GURPS.notes'}}</div>
         </div>
       </div>
     </div>
