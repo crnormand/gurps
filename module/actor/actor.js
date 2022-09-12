@@ -53,7 +53,7 @@ import { multiplyDice } from '../utilities/damage-utils.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
-  await actor.update({ '_stats.systemVersion': game.system.version })
+  await actor.internalUpdate({ '_stats.systemVersion': game.system.version })
 })
 
 export const MoveModes = {
@@ -195,7 +195,7 @@ export class GurpsActor extends Actor {
     }
     for (const item of good) await this.addItemData(item.system) // re-add the item equipment and features
 
-    await this.update({ '_stats.systemVersion': game.system.version }, { diff: false, render: false })
+    await this.internalUpdate({ '_stats.systemVersion': game.system.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
     await this.syncLanguages()
@@ -234,7 +234,7 @@ export class GurpsActor extends Actor {
         }
       })
       if (updated) {
-        await this.update({ 'system.ads': newads })
+        await this.internalUpdate({ 'system.ads': newads })
       }
     }
   }
@@ -259,7 +259,7 @@ export class GurpsActor extends Actor {
     let maneuver = this.effects.contents.find(it => it.flags?.core?.statusId === 'maneuver')
     this.system.conditions.maneuver = !!maneuver ? maneuver.flags.gurps.name : 'undefined'
     this.ignoreRender = saved
-    if (!saved) setTimeout(() => this._forceRender(), 500)
+    if (!saved) setTimeout(() => this._forceRender(), 333)
   }
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
@@ -913,7 +913,7 @@ export class GurpsActor extends Actor {
     action.count = 1
     delete action.accumulate
     accumulators.push(action)
-    await this.update({ 'system.conditions.damageAccumulators': accumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': accumulators })
     GURPS.ModifierBucket.render()
     //console.log(accumulators)
   }
@@ -924,20 +924,20 @@ export class GurpsActor extends Actor {
 
   async incrementDamageAccumulator(index) {
     this.damageAccumulators[index].count++
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
   async decrementDamageAccumulator(index) {
     this.damageAccumulators[index].count--
     if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
   async clearDamageAccumulator(index) {
     this.damageAccumulators.splice(index, 1)
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
@@ -952,7 +952,7 @@ export class GurpsActor extends Actor {
     }
     accumulator.formula = roll
     this.damageAccumulators.splice(index, 1)
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
