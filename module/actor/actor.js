@@ -3762,7 +3762,7 @@ export class GurpsActor extends Actor {
         while (list.hasOwnProperty(zeroFill(index))) index++
         targetkey += '.' + zeroFill(index)
       } else targetkey = 'system.equipment.other'
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
+    if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
     let eqt = _data.eqt
     if (!eqt) {
       ui.notifications?.warn('Item: ' + itemData._id + ' (Global:' + _data.globalid + ') missing equipment')
@@ -3771,9 +3771,9 @@ export class GurpsActor extends Actor {
       eqt.itemid = itemData._id
       eqt.globalid = _data.uuid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = !!itemData.equipped ?? true
+      eqt.equipped = !!_data.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = !!itemData.carried ?? true
+      eqt.carried = !!_data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
       return [targetkey, eqt.carried && eqt.equipped]
@@ -3840,9 +3840,9 @@ export class GurpsActor extends Actor {
     let list = { ...this.system[key] } // shallow copy
     let i = 0
     // @ts-ignore
-    for (const k in itemData[key]) {
+    for (const k in itemData.system[key]) {
       // @ts-ignore
-      let e = duplicate(itemData[key][k])
+      let e = duplicate(itemData.system[key][k])
       e.itemid = itemData._id
       e.uuid = key + '-' + i++ + '-' + e.itemid
       e.eqtkey = eqtkey
