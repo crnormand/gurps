@@ -20,16 +20,18 @@ Hooks.once('init', async function () {
   // MONKEY_PATCH
   // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch them to
   // include the properties we need to support Physical Dice
+  /**
   if (!!DiceTerm.fromMatch) {
     let _fromMatch = DiceTerm.fromMatch
-    let newFromMatch = function (/** @type {RegExpMatchArray} */ match) {
+    let newFromMatch = function (match) {
       let result = _fromMatch(match)
-      if (result instanceof Die) result = new GurpsDie(result).asDiceTerm()
+      if (result instanceof Die && !result instanceof GurpsDie) result = new GurpsDie(result).asDiceTerm()
       return result
     }
 
     DiceTerm.fromMatch = newFromMatch
   }
+  **/
 
   // MONKEY_PATCH
   // Patch Roll to have the properties we need for Physical Dice and modifier bucket handling.
@@ -89,7 +91,7 @@ export class GurpsDie extends Die {
   constructor(die) {
     super({
       number: die.number,
-      faces: die.faces,
+      faces: die.faces ? die.faces : 6, // GurpsDie (type 'd') defaults to 6 faces
       // @ts-ignore
       modifiers: die.modifiers,
       results: die.results,
