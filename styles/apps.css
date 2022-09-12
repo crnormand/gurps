@@ -8,11 +8,11 @@
   --font-size-smaller: 80%;
 }
 
-/* Global Override
+ Global Override
 body {
-  font-family: 'Font Awesome 6 Pro', Roboto, sans-serif;
+  font-family: 'Font Awesome 6 Pro', Helvetica, sans-serif;
 }
- */
+
 
 .window-app.gcs.pdf .window-content {
   overflow: clip;
@@ -1395,6 +1395,7 @@ button.equipmentbutton:last-child {
   display: flex;
   flex-flow: nowrap row;
   justify-content: flex-end;
+  font-family: 'Font Awesome 6 Pro', Helvetica , sans-serif;
 }
 
 .navigate-bar {

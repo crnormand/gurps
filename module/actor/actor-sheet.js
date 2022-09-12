@@ -1,4 +1,4 @@
-import { arrayToObject, atou, i18n, i18n_f, objectToArray, zeroFill } from '../../lib/utilities.js'
+import { arrayToObject, atou, i18n, i18n_f, objectToArray, zeroFill, isEmptyObject } from '../../lib/utilities.js'
 import { HitLocation, hitlocationDictionary } from '../hitlocation/hitlocation.js'
 import { parselink } from '../../lib/parselink.js'
 import * as CI from '../injury/domain/ConditionalInjury.js'
@@ -67,7 +67,13 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
-    sheetData.navigateVisible = game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION)
+    sheetData.navigateBar = { 
+      visible: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION),
+      hasMelee: !isEmptyObject(this.actor.system.melee),
+      hasRanged: !isEmptyObject(this.actor.system.ranged),
+      hasSpells: !isEmptyObject(this.actor.system.spells),
+      hasOther: !isEmptyObject(this.actor.system.equipment.other),
+    }
     sheetData.isGM = game.user.isGM
     sheetData._id = sheetData.olddata._id
     sheetData.effects = this.actor.getEmbeddedCollection('ActiveEffect').contents
@@ -1505,6 +1511,8 @@ export class GurpsActorSheet extends ActorSheet {
     let dataValue = $(event.currentTarget).attr('data-value')
     let windowContent = event.currentTarget.closest('.window-content')
     let target = windowContent.querySelector(`#${dataValue}`)
+    
+    if (!target) return   // If they click on a section that isn't on the sheet (like ranged)
 
     // The '33' represents the height of the window title bar + a bit of margin
     // TODO: we should really look this up and use the actual values as found in the DOM.
