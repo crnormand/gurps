@@ -32,7 +32,7 @@ export class EveryoneAChatProcessor extends ChatProcessor {
         any = true
         let attr = m[2].toUpperCase()
         let max = actor.system[attr].max
-        await actor.update({ ['data.' + attr + '.value']: max })
+        await actor.update({ ['system.' + attr + '.value']: max })
         this.priv(`${actor.displayname} ${attr} reset to ${max}`)
       }
     }
@@ -156,7 +156,7 @@ export class EveryoneCChatProcessor extends ChatProcessor {
             newval = max
             mtxt = `(max: ${max})`
           }
-          await actor.update({ ['data.' + attr + '.value']: newval })
+          await actor.update({ ['system.' + attr + '.value']: newval })
           this.priv(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
         }
       }

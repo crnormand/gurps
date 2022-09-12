@@ -48,16 +48,18 @@ export default class ModifierBucketJournals extends FormApplication {
    * }
    */
   get _htmlJournals() {
-    let allJournals = Array.from(game.journal)
-
-    // remove any that don't have "content" -- PDFs for PDFoundry are the only ones I know that don't have content
-    let htmlJournals = allJournals.filter(it => !!it.data.content)
+    let htmlJournals = []
+    game.journal.forEach(j => {
+      j.pages.forEach(p => {
+        if (p.type === 'text') htmlJournals.push(p)
+      })
+    })
 
     // only keep the journals this user has permissions to see
-    htmlJournals = htmlJournals.filter(it => it.testUserPermission(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
+    htmlJournals = htmlJournals.filter(it => it.testUserPermission(game.user, 'OBSERVER'))
 
     let results = htmlJournals.map(it => {
-      return { id: it.id, folder: this._folderPath(it.data.folder), name: it.name }
+      return { id: it.id, folder: this._folderPath(it.folder), name: it.name }
     })
     return results.sort((a, b) => `${a.folder}/${a.name}`.localeCompare(`${b.folder}/${b.name}`))
   }

@@ -189,7 +189,7 @@ export class AnimChatProcessor extends ChatProcessor {
           let pt = getMousePos(game.canvas)
           e.preventDefault()
           e.stopPropagation()
-          let grid_size = canvas.scene.data.grid.size
+          let grid_size = canvas.scene.grid.size
           canvas.tokens.targetObjects({
             x: pt.x - grid_size / 2,
             y: pt.y - grid_size / 2,

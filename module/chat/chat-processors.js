@@ -153,10 +153,11 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
-    await Migration.migrateTo096()
+/*    await Migration.migrateTo096()
     await Migration.migrateTo097()
     await Migration.migrateTo0104()
-    await Migration.fixDataModelProblems()
+    await Migration.fixDataModelProblems() 
+*/
   }
 }
 
@@ -458,7 +459,7 @@ class FpHpChatProcessor extends ChatProcessor {
     const max = actor.system[attr].max
     let reset = ''
     if (!!m[5]) {
-      await actor.update({ ['data.' + attr + '.value']: max })
+      await actor.update({ ['system.' + attr + '.value']: max })
       this.prnt(`${actor.displayname} reset to ${max} ${attr}`)
     } else if (isNaN(delta) && !!m[3]) {
       // only happens with '='
@@ -470,7 +471,7 @@ class FpHpChatProcessor extends ChatProcessor {
           delta = max
           mtxt = ` (max: ${max})`
         }
-        await actor.update({ ['data.' + attr + '.value']: delta })
+        await actor.update({ ['system.' + attr + '.value']: delta })
         this.prnt(`${actor.displayname} ${i18n('GURPS.chatSetTo')} ${delta} ${attr}${mtxt}`)
       }
     } else if (!!m[2] || !!m[3]) {
@@ -523,7 +524,7 @@ class FpHpChatProcessor extends ChatProcessor {
         delta = max
         mtxt = ` (max: ${max})`
       }
-      await actor.update({ ['data.' + attr + '.value']: delta })
+      await actor.update({ ['system.' + attr + '.value']: delta })
       this.prnt(`${actor.displayname} ${attr} ${dice}${mod} ${txt}${mtxt}`)
     } else ui.notifications.warn(`${i18n('GURPS.chatUnrecognizedFormat')} '${line}'`)
   }

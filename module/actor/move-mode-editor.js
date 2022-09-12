@@ -62,7 +62,7 @@ export default class MoveModeEditor extends Application {
   async _updateMoveData(moveId, attrib, value) {
     let old = this.moveData[moveId]
     old[attrib] = value
-    await this.actor.update({ [`data.move.${moveId}`]: old })
+    await this.actor.update({ [`system.move.${moveId}`]: old })
   }
 
   async _change(action, key, value, html) {
@@ -127,10 +127,10 @@ export default class MoveModeEditor extends Application {
           GURPS.put(move, { mode: 'other', basic: 0, default: empty ? true : false })
 
           // remove existing entries
-          await this.actor.update({ 'data.-=move': null })
+          await this.actor.update({ 'system.-=move': null })
 
           // add the new entries
-          await this.actor.update({ 'data.move': move })
+          await this.actor.update({ 'system.move': move })
         }
         break
 
@@ -144,7 +144,7 @@ export default class MoveModeEditor extends Application {
           if (!state) {
             let json = []
             // turn off everything whose key isn't 'k'
-            for (const k in this.moveData) json.push(`"data.move.${k}.default": ${key === k}`)
+            for (const k in this.moveData) json.push(`"system.move.${k}.default": ${key === k}`)
             let text = '{ ' + json.join(',') + ' }'
             await this.actor.update(JSON.parse(text))
           }
@@ -166,9 +166,9 @@ export default class MoveModeEditor extends Application {
               })
           }
           // remove existing entries
-          await this.actor.update({ 'data.-=move': null })
+          await this.actor.update({ 'system.-=move': null })
           // add the new entries
-          await this.actor.update({ 'data.move': move })
+          await this.actor.update({ 'system.move': move })
         }
         break
 

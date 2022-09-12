@@ -3415,15 +3415,14 @@ export class GurpsActor extends Actor {
    */
   async applyTrackerTemplate(path, template) {
     // is there an initializer? If so calculate its value
-    let value = 0
+    let value = template.tracker.value
     if (!!template.initialValue) {
       value = parseInt(template.initialValue, 10)
       if (Number.isNaN(value)) {
         // try to use initialValue as a path to another value
-        value = getProperty(this, template.initialValue)
+        value = getProperty(this, 'system.' + template.initialValue)
       }
     }
-    template.tracker.max = value
     template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
 
     // remove whatever is there
@@ -3432,7 +3431,7 @@ export class GurpsActor extends Actor {
     // add the new tracker
     /** @type {{ [key: string]: any }} */
     let update = {}
-    update[`data.${path}`] = template.tracker
+    update[`system.${path}`] = template.tracker
     await this.update(update)
   }
 
@@ -3447,7 +3446,7 @@ export class GurpsActor extends Actor {
 
     /** @type {{[key: string]: string}} */
     let update = {}
-    update[`data.${path}`] = {
+    update[`system.${path}`] = {
       name: '',
       alias: '',
       pdf: '',
