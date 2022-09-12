@@ -48,7 +48,6 @@ export class GurpsActorSheet extends ActorSheet {
 
   // Hack to keep sheet from flashing during multiple DB updates
   async _render(...args) {
-    //console.log("IgnoreRender: " + this.object?.ignoreRender)
     if (!!this.object?.ignoreRender) return
     await super._render(...args)
   }
@@ -179,7 +178,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = tracker.max || 0
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.update(JSON.parse(json))
+      this.actor.internalUpdate(JSON.parse(json))
     })
 
     // Handle resource tracker "-" button.
@@ -193,7 +192,7 @@ export class GurpsActorSheet extends ActorSheet {
       if (isNaN(value)) value = tracker.max || 0
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.update(JSON.parse(json))
+      this.actor.internalUpdate(JSON.parse(json))
     })
 
     // Handle resource tracker "reset" button.
@@ -206,7 +205,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = !!tracker.isDamageTracker ? tracker.min || 0 : tracker.max || 0
 
       let json = `{ "system.${path}.value": ${value} }`
-      this.actor.update(JSON.parse(json))
+      this.actor.internalUpdate(JSON.parse(json))
     })
 
     // allow a click on the 'edit' icon to open the resource tracker editor.
@@ -218,7 +217,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     const updateActorWithChangedSeverity = changedSeverity => {
       console.log('updateActorWithChangedSeverity')
-      this.actor.update({
+      this.actor.internalUpdate({
         'system.conditionalinjury.injury.severity': formatCIEmpty(changedSeverity),
         'system.conditionalinjury.injury.daystoheal': formatCIEmpty(CI.daysToHealForSeverity(changedSeverity)),
       })
@@ -236,7 +235,7 @@ export class GurpsActorSheet extends ActorSheet {
 
     const updateActorWithChangedDaysToHeal = changedDaysToHeal => {
       console.log('updateActorWithChangedDaysToHeal')
-      this.actor.update({
+      this.actor.internalUpdate({
         'system.conditionalinjury.injury.severity': formatCIEmpty(CI.severityForDaysToHeal(changedDaysToHeal)),
         'system.conditionalinjury.injury.daystoheal': formatCIEmpty(changedDaysToHeal),
       })
@@ -312,7 +311,7 @@ export class GurpsActorSheet extends ActorSheet {
         let path = $(parent).attr('data-gurps-resource')
         let value = parseInt(newValue)
         let json = `{ "system.${path}.value": ${value} }`
-        this.actor.update(JSON.parse(json))
+        this.actor.internalUpdate(JSON.parse(json))
 
         details.open = false
       })
@@ -437,7 +436,7 @@ export class GurpsActorSheet extends ActorSheet {
       let eqt = getProperty(this.actor, path)
       let value = parseInt(eqt.uses) + (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
-      await this.actor.update({ [path + '.uses']: value })
+      await this.actor.internalUpdate({ [path + '.uses']: value })
     })
     html.find('button[data-operation="equipment-dec-uses"]').click(async ev => {
       ev.preventDefault()
@@ -447,7 +446,7 @@ export class GurpsActorSheet extends ActorSheet {
       let value = parseInt(eqt.uses) - (ev.shiftKey ? 5 : 1)
       if (isNaN(value)) value = eqt.uses
       if (value < 0) value = 0
-      await this.actor.update({ [path + '.uses']: value })
+      await this.actor.internalUpdate({ [path + '.uses']: value })
     })
 
     // On clicking equipment quantity decrement, decrease the amount or remove from list.
@@ -529,7 +528,7 @@ export class GurpsActorSheet extends ActorSheet {
             label: 'Save',
             callback: html => {
               const i = html[0].querySelector('#i')
-              actor.update({ 'system.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
+              actor.internalUpdate({ 'system.additionalresources.qnotes': i.value.replace(/\n/g, '<br>') })
             },
           },
         },
@@ -655,14 +654,14 @@ export class GurpsActorSheet extends ActorSheet {
     let list = getProperty(this.actor, key)
     let t = parentpath + '.-=' + objkey
 
-    await this.actor.update({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
 
     let sortedobj = {}
     let index = 0
     Object.values(list)
       .sort((a, b) => (reverse ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.update({ [key]: sortedobj })
+    await this.actor.internalUpdate({ [key]: sortedobj })
   }
 
   _sortContentDescending(target) {
@@ -730,7 +729,7 @@ export class GurpsActorSheet extends ActorSheet {
       callback: e => {
         let o = GURPS.decode(this.actor, path) || {}
         GURPS.put(o, duplicate(obj))
-        this.actor.update({ [path]: o })
+        this.actor.internalUpdate({ [path]: o })
       },
     }
   }
@@ -800,7 +799,7 @@ export class GurpsActorSheet extends ActorSheet {
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
               GURPS.put(list, obj)
-              await actor.update({ [path]: list })
+              await actor.internalUpdate({ [path]: list })
             },
           },
         },
@@ -872,7 +871,7 @@ export class GurpsActorSheet extends ActorSheet {
     if (!!add)
       if (!!modelkey) {
         let t = getProperty(this.actor, modelkey) || ''
-        this.actor.update({ [modelkey]: t + (t ? ' ' : '') + add })
+        this.actor.internalUpdate({ [modelkey]: t + (t ? ' ' : '') + add })
       } else {
         let t = $(ev.currentTarget).val()
         $(ev.currentTarget).val(t + (t ? ' ' : '') + add)
@@ -962,7 +961,7 @@ export class GurpsActorSheet extends ActorSheet {
               if (!!u && obj.save != null) obj.save = u.is(':checked') // only set 'saved' if it was already defined
               let v = html.find('.ignoreImportQty') // Should only find in equipment
               if (!!v) obj.ignoreImportQty = v.is(':checked')
-              await actor.update({ [path]: obj })
+              await actor.internalUpdate({ [path]: obj })
               await actor.updateParentOf(path, false)
             },
           },
@@ -1117,7 +1116,7 @@ export class GurpsActorSheet extends ActorSheet {
 
               let u = html.find('.save') // Should only find in Note (or equipment)
               if (!!u) obj.save = u.is(':checked')
-              actor.update({ [path]: obj })
+              actor.internalUpdate({ [path]: obj })
             },
           },
         },
@@ -1162,13 +1161,13 @@ export class GurpsActorSheet extends ActorSheet {
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
     let t = parentpath + '.-=' + objkey
-    await this.actor.update({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => a.name.localeCompare(b.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.update({ [key]: sortedobj })
+    await this.actor.internalUpdate({ [key]: sortedobj })
   }
 
   async sortDescending(key) {
@@ -1177,13 +1176,13 @@ export class GurpsActorSheet extends ActorSheet {
     let objkey = key.substr(i + 1)
     let object = GURPS.decode(this.actor, key)
     let t = parentpath + '.-=' + objkey
-    await this.actor.update({ [t]: null }) // Delete the whole object
+    await this.actor.internalUpdate({ [t]: null }) // Delete the whole object
     let sortedobj = {}
     let index = 0
     Object.values(object)
       .sort((a, b) => b.name.localeCompare(a.name))
       .forEach(o => GURPS.put(sortedobj, o, index++))
-    await this.actor.update({ [key]: sortedobj })
+    await this.actor.internalUpdate({ [key]: sortedobj })
   }
 
   /* -------------------------------------------- */
@@ -1536,13 +1535,13 @@ export class GurpsActorSheet extends ActorSheet {
           let enc = encs[enckey]
           let t = 'system.encumbrance.' + enckey + '.current'
           if (key === enckey) {
-            await this.actor.update({
+            await this.actor.internalUpdate({
               [t]: true,
               'system.currentmove': parseInt(enc.move),
               'system.currentdodge': parseInt(enc.dodge),
             })
           } else if (enc.current) {
-            await this.actor.update({ [t]: false })
+            await this.actor.internalUpdate({ [t]: false })
           }
         }
         //////////
@@ -1561,11 +1560,11 @@ export class GurpsActorSheet extends ActorSheet {
     let key = element.dataset.key
     let eqt = duplicate(GURPS.decode(this.actor, key))
     eqt.equipped = !eqt.equipped
-    await this.actor.update({ [key]: eqt })
+    await this.actor.internalUpdate({ [key]: eqt })
     await this.actor.updateItemAdditionsBasedOn(eqt, key)
     let p = this.actor.getEquippedParry()
     let b = this.actor.getEquippedBlock()
-    await this.actor.update({
+    await this.actor.internalUpdate({
       'system.equippedparry': p,
       'system.equippedblock': b,
     })
