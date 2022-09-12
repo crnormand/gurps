@@ -820,7 +820,8 @@ export class GurpsActor extends Actor {
   }
 
   async internalUpdate(data, context) {
-    let ctx = { render: !this.ignoreRender }
+    //let ctx = { render: !this.ignoreRender }
+    let ctx = { render: false }
     if (!!context) ctx = { ...context, ...ctx }
     await this.update(data, ctx)
   }
@@ -3839,9 +3840,9 @@ export class GurpsActor extends Actor {
     let list = { ...this.system[key] } // shallow copy
     let i = 0
     // @ts-ignore
-    for (const k in itemData.system[key]) {
+    for (const k in itemData[key]) {
       // @ts-ignore
-      let e = duplicate(itemData.system[key][k])
+      let e = duplicate(itemData[key][k])
       e.itemid = itemData._id
       e.uuid = key + '-' + i++ + '-' + e.itemid
       e.eqtkey = eqtkey
@@ -3945,7 +3946,7 @@ export class GurpsActor extends Actor {
         let item = /** @type {Item} */ (this.items.get(object.itemid))
         await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.parentuuid': '' }])
       }
-      let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
+      let target = { ...GURPS.decode(this, targetkey) } // shallow copy the list
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
       let eqtkey = GURPS.put(target, object)
       await this.updateItemAdditionsBasedOn(object, targetkey + '.' + eqtkey)
