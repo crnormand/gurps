@@ -545,6 +545,10 @@ class SelectChatProcessor extends ChatProcessor {
   }
   process(line) {
     let m = this.match
+    if (m[3] == '*') {
+      canvas.tokens.placeables.forEach(t => t.control({ releaseOthers: false }))
+      return true  
+    }
     if (!!m[2]) {
       // @self
       for (const a of game.actors.entries()) {
@@ -996,6 +1000,10 @@ class DevChatProcessor extends ChatProcessor {
       case 'clear': {
         // flush the chat log without confirming
         game.messages.documentClass.deleteDocuments([], { deleteAll: true })
+        break
+      }
+      case 'reset': {
+        GURPS.executeOTF('/sel *\\\\/sr [/hp reset]\\\\/sr [/fp reset]\\\\/sr [/st clear]')
         break
       }
     }

@@ -1942,7 +1942,7 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     Hooks.on('createRollTable', async function (entity, options, userId) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
-      entity.data.img = 'systems/gurps/icons/single-die.webp'
+      entity.img = 'systems/gurps/icons/single-die.webp'
     })
 
     // @ts-ignore
@@ -2208,12 +2208,12 @@ if (!globalThis.GURPS) {
         game.user.assignHotbarMacro(macro, slot)
       }
 
-      let oldmacro = game.macros.get(game.user.data.hotbar[slot])
+      let oldmacro = game.macros.get(game.user.hotbar[slot])
       if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
         let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
         new Dialog({
           title: 'Merge or Replace On-the-Fly macro',
-          content: `Merge both macros into this:<br><br><mark>${oldmacro.data.command.split('\n').join('<br>')}<br>${cmd
+          content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
             .split('\n')
@@ -2223,7 +2223,7 @@ if (!globalThis.GURPS) {
               icon: '<i class="fas fa-angle-double-down"></i>',
               label: 'Merge',
               callback: () => {
-                setmacro(oldmacro.data.name, oldmacro.data.command + '\n' + cmd)
+                setmacro(oldmacro.name, oldmacro.command + '\n' + cmd)
               },
             },
             two: {
