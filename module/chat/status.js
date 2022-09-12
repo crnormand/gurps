@@ -157,7 +157,7 @@ export default class StatusChatProcessor extends ChatProcessor {
   isEffectActive(token, effect) {
     /** @type {GurpsActor} */
     // @ts-ignore
-    let actor = token?.actor || game.actors?.get(token.data.actorId)
+    let actor = token?.actor || game.actors?.get(token?.document.actorId)
     return actor.isEffectActive(effect)
     // return actor.effects.map(it => it.getFlag('core', 'statusId')).includes(effect.id)
   }

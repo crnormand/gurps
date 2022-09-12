@@ -39,7 +39,7 @@ export class EffectModifierPopout extends Application {
     let results = []
     for (const target of Array.from(game.user.targets)) {
       let result = {}
-      result.name = target.data.name
+      result.name = target.name
       result.targetmodifiers = target.actor
         ? this.convertModifiers(target.actor.system.conditions.target.modifiers)
         : []

@@ -129,8 +129,8 @@ export let moveToken = async (token, targetTokenName, xGridOffset = 0, yGridOffs
     tokenUuid: token.uuid,
     targetSceneId: scene.id,
     tokenData: token.data,
-    x: found.data.x + xGridOffset * canvas.scene.data.grid.size,
-    y: found.data.y + yGridOffset * canvas.scene.data.grid.size,
+    x: found.data.x + xGridOffset * canvas.scene.grid.size,
+    y: found.data.y + yGridOffset * canvas.scene.grid.size,
   })
   /*
     return await requestGMAction(GMAction.actions.recreateToken,

@@ -52,12 +52,17 @@ export default class ModifierBucketEditor extends Application {
   }
 
   get journals() {
-    let modifierJournalIds = ModifierBucketJournals.getJournalIds()
-    let journals = Array.from(game.journal)
-      .filter(it => modifierJournalIds.includes(it.id))
-      .map(it => game.journal.get(it.id))
-    journals = journals.filter(it => it.testUserPermission(game.user, CONST.ENTITY_PERMISSIONS.OBSERVER))
-    return journals
+    const settings = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_BUCKET_JOURNALS) || []
+    let bucketPages = []
+    game.journal.forEach(j => {
+      j.pages.forEach(p => {
+        for (const k in settings) {
+          const id = settings[k]
+          if (p.id == id) bucketPages.push(p)
+        }
+      })
+    })
+    return bucketPages
   }
 
   /**
