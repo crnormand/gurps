@@ -103,7 +103,7 @@ if (!globalThis.GURPS) {
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
 
-  CONFIG.debug.hooks = true
+  CONFIG.debug.hooks = false
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
@@ -162,10 +162,11 @@ if (!globalThis.GURPS) {
       })
   }
 
-  // TODO Why are these global?
+  // TODO Why are these global?  Because they are used as semaphores for certain multithreaded processes
   GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
   GURPS.PendingOTFs = []
   GURPS.IgnoreTokenSelect = false
+  
   GURPS.wait = wait
 
   GURPS.attributepaths = {
