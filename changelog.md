@@ -6,7 +6,7 @@ Release 0.15.0 9/11/2033
 
 - Updated the system for compatibility with FoundryVTT version 10
 - Updated GCA5 export script (GCA5-14)
-- Updated /select (/sel) command to accept * as only parameter (and selects all tokens)
+- Updated /select (/sel) command to accept \* as only parameter (and selects all tokens)
 - Updated targetted /anim commands to prompt for target, instead of just reporting error
 
 Release 0.14.10 - 9/07/2022
