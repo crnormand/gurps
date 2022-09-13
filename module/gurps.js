@@ -40,7 +40,7 @@ import GurpsJournalEntry from './journal.js'
 import TriggerHappySupport from './effects/triggerhappy.js'
 
 /**
- * Added to color the rollable parts of the character sheet.
+ * /dded to color the rollable parts of the character sheet.
  * Made this part eslint compatible...
  * ~Stevil
  */
@@ -1089,16 +1089,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-				[AMRS][DPK]
-				A: ads & attack (melee & range)
-				AD: ads
-				AT: attack
-				M: melee
-				R: ranged
-				S: skills & spells
-				SK: skills
-				SP: spells
-			  */
+					[AMRS][DPK]
+					A: ads & attack (melee & range)
+					AD: ads
+					AT: attack
+					M: melee
+					R: ranged
+					S: skills & spells
+					SK: skills
+					SP: spells
+				  */
     ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
       switch (action.prefix) {
         case 'A':
@@ -2113,13 +2113,14 @@ if (!globalThis.GURPS) {
     const migrationVersion = SemanticVersion.fromString(mv)
     // @ts-ignore
     if (migrationVersion.isLowerThan(GURPS.currentVersion)) {
+      // TODO: remove
       // check which migrations are needed
       // @ts-ignore
-      if (migrationVersion.isLowerThan(Settings.VERSION_096)) await Migration.migrateTo096(quiet)
+      // if (migrationVersion.isLowerThan(Settings.VERSION_096)) await Migration.migrateTo096(quiet)
       // @ts-ignore
-      if (migrationVersion.isLowerThan(Settings.VERSION_097)) await Migration.migrateTo097(quiet)
+      // if (migrationVersion.isLowerThan(Settings.VERSION_097)) await Migration.migrateTo097(quiet)
       // @ts-ignore
-      if (migrationVersion.isLowerThan(Settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
+      // if (migrationVersion.isLowerThan(Settings.VERSION_0104)) await Migration.migrateTo0104(quiet)
 
       game.settings.set(Settings.SYSTEM_NAME, Settings.SETTING_MIGRATION_VERSION, game.system.version)
     }
