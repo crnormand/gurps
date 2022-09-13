@@ -9,6 +9,11 @@ Release 0.15.0 9/11/2033
 - Updated /select (/sel) command to accept \* as only parameter (and selects all tokens)
 - Updated targetted /anim commands to prompt for target, instead of just reporting error
 
+Release 0.14.12 9/11/2033
+Release 0.14.11 9/11/2033
+
+- Fixed release branch
+
 Release 0.14.10 - 9/07/2022
 
 - Fixed Skill search if skill has no name

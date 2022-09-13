@@ -1,5 +1,5 @@
 {
-  "id": "gurps",
+  "name": "gurps",
   "title": "GURPS 4th Ed. Game Aid (Unofficial)",
   "description": "A game aid to help play GURPS 4e for Foundry VTT",
   "version": "0.15.0",
