@@ -8,11 +8,19 @@
   --font-size-smaller: 80%;
 }
 
-/* Global Override
-body {
-  font-family: 'Font Awesome 6 Pro', Roboto, sans-serif;
+Global Override body {
+  font-family: 'Font Awesome 6 Pro', Helvetica, sans-serif;
 }
- */
+
+.window-app.gcs.pdf .window-content {
+  overflow: clip;
+  padding: 0;
+}
+
+.window-app.gcs.pdf .window-content iframe {
+  height: 100%;
+  width: 100%;
+}
 
 .gurpsactorsheet #context-menu {
   width: max-content;
@@ -1213,7 +1221,7 @@ active-effects-list .section h3 {
   height: fit-content;
 }
 
-#condition .fieldblock .field[name='data.conditions.combatmove'] {
+#condition .fieldblock .field[name='system.conditions.combatmove'] {
   max-width: 12em;
   white-space: nowrap;
   overflow: hidden;
@@ -1221,7 +1229,7 @@ active-effects-list .section h3 {
   margin-left: 8px;
 }
 
-#combat-sheet .fieldblock .field[name='data.conditions.combatmove'] {
+#combat-sheet .fieldblock .field[name='system.conditions.combatmove'] {
   font-size: var(--font-size-small);
 }
 
@@ -1385,6 +1393,7 @@ button.equipmentbutton:last-child {
   display: flex;
   flex-flow: nowrap row;
   justify-content: flex-end;
+  font-family: 'Font Awesome 6 Pro', Helvetica, sans-serif;
 }
 
 .navigate-bar {

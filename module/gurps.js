@@ -70,6 +70,8 @@ import * as GURPSSpeedProvider from './speed-provider.js'
 import { multiplyDice } from './utilities/damage-utils.js'
 import GurpsWiring from './gurps-wiring.js'
 import { gurpslink } from './utilities/gurpslink.js'
+import { PDFEditorSheet } from './pdf/edit.js'
+import { JournalEntryPageGURPS } from './pdf/index.js'
 
 let GURPS = undefined
 
@@ -101,7 +103,7 @@ if (!globalThis.GURPS) {
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
 
-  CONFIG.debug.hooks = true
+  CONFIG.debug.hooks = false
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
@@ -160,10 +162,11 @@ if (!globalThis.GURPS) {
       })
   }
 
-  // TODO Why are these global?
+  // TODO Why are these global?  Because they are used as semaphores for certain multithreaded processes
   GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
   GURPS.PendingOTFs = []
   GURPS.IgnoreTokenSelect = false
+
   GURPS.wait = wait
 
   GURPS.attributepaths = {
@@ -1086,16 +1089,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-			[AMRS][DPK]
-			A: ads & attack (melee & range)
-			AD: ads
-			AT: attack
-			M: melee
-			R: ranged
-			S: skills & spells
-			SK: skills
-			SP: spells
-		  */
+				[AMRS][DPK]
+				A: ads & attack (melee & range)
+				AD: ads
+				AT: attack
+				M: melee
+				R: ranged
+				S: skills & spells
+				SK: skills
+				SP: spells
+			  */
     ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
       switch (action.prefix) {
         case 'A':
@@ -1864,6 +1867,7 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     CONFIG.Actor.documentClass = GurpsActor
     CONFIG.Item.documentClass = GurpsItem
+    CONFIG.JournalEntryPage.documentClass = JournalEntryPageGURPS
 
     // add custom ActiveEffectConfig sheet class
     CONFIG.ActiveEffect.sheetClass = GurpsActiveEffectConfig
@@ -1926,11 +1930,19 @@ if (!globalThis.GURPS) {
     // @ts-ignore
     Items.registerSheet('gurps', GurpsItemSheet, { makeDefault: true })
 
+    DocumentSheetConfig.unregisterSheet(JournalEntryPage, 'core', JournalPDFPageSheet)
+
+    DocumentSheetConfig.registerSheet(JournalEntryPage, 'gurps', PDFEditorSheet, {
+      types: ['pdf'],
+      makeDefault: true,
+      label: 'GURPS PDF Editor Sheet',
+    })
+
     // Warning, the very first table will take a refresh before the dice to show up in the dialog.  Sorry, can't seem to get around that
     // @ts-ignore
     Hooks.on('createRollTable', async function (entity, options, userId) {
       await entity.update({ img: 'systems/gurps/icons/single-die.webp' })
-      entity.data.img = 'systems/gurps/icons/single-die.webp'
+      entity.img = 'systems/gurps/icons/single-die.webp'
     })
 
     // @ts-ignore
@@ -2196,12 +2208,12 @@ if (!globalThis.GURPS) {
         game.user.assignHotbarMacro(macro, slot)
       }
 
-      let oldmacro = game.macros.get(game.user.data.hotbar[slot])
+      let oldmacro = game.macros.get(game.user.hotbar[slot])
       if (!!oldmacro && !!oldmacro.getFlag('gurps', 'drag-drop-otf')) {
         let c = (!!data.bucket ? '/clearmb\n' : '') + cmd
         new Dialog({
           title: 'Merge or Replace On-the-Fly macro',
-          content: `Merge both macros into this:<br><br><mark>${oldmacro.data.command.split('\n').join('<br>')}<br>${cmd
+          content: `Merge both macros into this:<br><br><mark>${oldmacro.command.split('\n').join('<br>')}<br>${cmd
             .split('\n')
             .join('<br>')}</mark><br><br>Or just replace current macro with:<br><br><mark>${c
             .split('\n')
@@ -2211,7 +2223,7 @@ if (!globalThis.GURPS) {
               icon: '<i class="fas fa-angle-double-down"></i>',
               label: 'Merge',
               callback: () => {
-                setmacro(oldmacro.data.name, oldmacro.data.command + '\n' + cmd)
+                setmacro(oldmacro.name, oldmacro.command + '\n' + cmd)
               },
             },
             two: {

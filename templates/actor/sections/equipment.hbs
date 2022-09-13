@@ -28,7 +28,7 @@
 	<div class='sum_weight header'><span>&sum; <i class='fas fa-weight-hanging'></i></span></div>
 	<div class='ref header'>{{i18n 'GURPS.pdfRef'}}</div>
 
-	{{#each (flatlist (lookup data.equipment container)) }}
+	{{#each (flatlist (lookup system.equipment container)) }}
 	{{#if ../isEditing}}
 	<div class='itemmenu equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
 		<i class='fas fa-caret-square-down'></i>

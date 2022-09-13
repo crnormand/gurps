@@ -2,7 +2,7 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-# Current Release Version 0.14.12 (compatible with FoundryVTT 9.x)
+# Current Release Version 0.15.0 (compatible with FoundryVTT v10.x)
 
 With support for the [Nordlondr Ovinabokin: Bestiary and Enemies module](https://foundryvtt.com/packages/nordlond-bestiary)!
 
@@ -14,7 +14,7 @@ If you like our work [Sponsor our development](https://github.com/sponsors/crnor
 
 Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
 
-[Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-13' 4/26/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+[Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-14' 9/09/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
 
 #### Legal
 

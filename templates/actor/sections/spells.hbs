@@ -17,7 +17,7 @@
 	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
 	<div class='ref header'>{{i18n "GURPS.abbrevRef"}}</div>
 
-	{{#each (flatlist data.spells)}}
+	{{#each (flatlist system.spells)}}
 	{{#if ../isEditing}}
 	<div class='itemmenu spellmenu' data-key='system.spells.{{@key}}'>
 		<i class='fas fa-times'></i>

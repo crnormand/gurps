@@ -20,7 +20,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
       // 		let results = oldDuration?.get?.call(this)
       // 		if (results.type === 'none') {
       // 			// check if there is a termination condition
-      // 			const d = this.data.duration
+      // 			const d = this.duration
       // 			if (!!d?.termination) {
       // 				// TODO add core statusId flag and fix up results to show there is a duration of sorts
       // 				results = {
@@ -46,7 +46,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _preCreate(_effect, data, _options, _userId) {
-    console.log(_effect, data, _options, _userId)
+    console.debug(_effect, data, _options, _userId)
     if (data.duration && !data.duration.combat && game.combat) data.duration.combat = game.combats?.active?.id
   }
 
@@ -74,7 +74,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
     if (change.key === 'system.conditions.maneuver') actor.replaceManeuver(change.value)
     else if (change.key === 'system.conditions.posture') actor.replacePosture(change)
     // else if (change.key === 'chat') change.effect.chat(actor, JSON.parse(change.value))
-    else console.log(change)
+    else console.debug(change)
   }
 
   /**
@@ -85,7 +85,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _update(_effect, _data, _options, _userId) {
-    console.log('update ', _effect)
+    console.debug('update ', _effect)
   }
 
   /**
@@ -95,7 +95,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
    * @param {*} _userId
    */
   static _delete(_effect, _data, _userId) {
-    console.log('delete ' + _effect)
+    console.debug('delete ' + _effect)
   }
 
   /**
@@ -116,9 +116,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
         for (const effect of token.actor.effects) {
           if (await effect.isExpired()) {
             effect.delete()
-            ui.notifications.info(
-              `${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.data.label)}]'`
-            )
+            ui.notifications.info(`${i18n('GURPS.effectExpired', 'Effect has expired: ')} '[${i18n(effect.label)}]'`)
           }
         }
       }
@@ -162,10 +160,10 @@ export default class GurpsActiveEffect extends ActiveEffect {
   static async clearEffectsOnSelectedToken() {
     const effect = _token.actor.effects.contents
     for (let i = 0; i < effect.length; i++) {
-      let condition = effect[i].data.label
-      let status = effect[i].data.disabled
-      let effect_id = effect[i].data._id
-      console.log(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
+      let condition = effect[i].label
+      let status = effect[i].disabled
+      let effect_id = effect[i]._id
+      console.debug(`Clear Effect: condition: [${condition}] status: [${status}] effect_id: [${effect_id}]`)
       if (status === false) {
         await _token.actor.deleteEmbeddedDocuments('ActiveEffect', [effect_id])
       }
@@ -175,7 +173,7 @@ export default class GurpsActiveEffect extends ActiveEffect {
   chat(actor, value) {
     if (!!value?.frequency && value.frequency === 'once') {
       if (this.chatmessages.includes(value.msg)) {
-        console.log(`Message [${value.msg}] already displayed, do nothing`)
+        console.debug(`Message [${value.msg}] already displayed, do nothing`)
         return
       }
     }

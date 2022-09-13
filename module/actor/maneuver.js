@@ -91,7 +91,7 @@ class Maneuver {
     let changes = []
 
     changes.push({
-      key: 'data.conditions.maneuver',
+      key: 'system.conditions.maneuver',
       value: this._data.name,
       mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
     })
@@ -361,7 +361,7 @@ Hooks.on('deleteCombatant', (/** @type {Combatant} */ combat, /** @type {any} */
 // On delete combat, remove the maneuver from every combatant
 Hooks.on('deleteCombat', (/** @type {Combat} */ combat, /** @type {any} */ _options, /** @type {any} */ _id) => {
   if (game.user?.isGM) {
-    let combatants = combat.data.combatants.contents
+    let combatants = combat.combatants.contents
     for (const combatant of combatants) {
       if (combatant?.token) {
         let token = /** @type {GurpsToken} */ (combatant.token.object)

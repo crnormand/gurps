@@ -189,7 +189,7 @@ export class AnimChatProcessor extends ChatProcessor {
           let pt = getMousePos(game.canvas)
           e.preventDefault()
           e.stopPropagation()
-          let grid_size = canvas.scene.data.grid.size
+          let grid_size = canvas.scene.grid.size
           canvas.tokens.targetObjects({
             x: pt.x - grid_size / 2,
             y: pt.y - grid_size / 2,
@@ -347,14 +347,19 @@ export class AnimChatProcessor extends ChatProcessor {
       ]
     }
     if (destTokens.length == 0) {
-      ui.notifications.info('Please click the target location')
+      ui.notifications.warn('Please click the target location')
       this.send()
       await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/, ''))
       return true
     }
     if (!srcToken) srcToken = destTokens[0] // centered anims should show on target (or selection)
-    if ((!centered || move) && destTokens.length == 1 && destTokens[0] == srcToken)
-      return this.errorExit('Source and Destination cannot be the same token with using a moving animation')
+    if ((!centered || move) && destTokens.length == 1 && destTokens[0] == srcToken) {
+      ui.notifications.warn('Please click the target location')
+      this.send()
+      await this.awaitClick((this.msgs().quiet ? '!' : '') + line.replace(/@ *$/, ''))
+      return true
+      //return this.errorExit('Source and Destination cannot be the same token with using a moving animation')
+    }
     if (move) {
       let temp = srcToken
       srcToken = destTokens[0]

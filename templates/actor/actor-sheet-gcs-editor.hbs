@@ -17,9 +17,9 @@
         {{#if useCI}}
           {{>ci-editor}}
         {{else}}
-          {{>hpfp-editor name='HP' resource=data.HP label='GURPS.attributesHPNAME'}}
+          {{>hpfp-editor name='HP' resource=system.HP label='GURPS.attributesHPNAME'}}
         {{/if}}
-        {{>hpfp-editor name='FP' resource=data.FP label='GURPS.attributesFPNAME'}}
+        {{>hpfp-editor name='FP' resource=system.FP label='GURPS.attributesFPNAME'}}
       </div>
       {{>locations parent=../data}}
       {{>encumbrance}}

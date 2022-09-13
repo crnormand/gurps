@@ -53,7 +53,7 @@ import { multiplyDice } from '../utilities/damage-utils.js'
 
 // Ensure that ALL actors has the current version loaded into them (for migration purposes)
 Hooks.on('createActor', async function (/** @type {Actor} */ actor) {
-  await actor.update({ '_stats.systemVersion': game.system.version })
+  await actor.internalUpdate({ '_stats.systemVersion': game.system.version })
 })
 
 export const MoveModes = {
@@ -195,7 +195,7 @@ export class GurpsActor extends Actor {
     }
     for (const item of good) await this.addItemData(item.system) // re-add the item equipment and features
 
-    await this.update({ '_stats.systemVersion': game.system.version }, { diff: false, render: false })
+    await this.internalUpdate({ '_stats.systemVersion': game.system.version }, { diff: false, render: false })
     // Set custom trackers based on templates.  should be last because it may need other data to initialize...
     await this.setResourceTrackers()
     await this.syncLanguages()
@@ -234,7 +234,7 @@ export class GurpsActor extends Actor {
         }
       })
       if (updated) {
-        await this.update({ 'system.ads': newads })
+        await this.internalUpdate({ 'system.ads': newads })
       }
     }
   }
@@ -259,7 +259,7 @@ export class GurpsActor extends Actor {
     let maneuver = this.effects.contents.find(it => it.flags?.core?.statusId === 'maneuver')
     this.system.conditions.maneuver = !!maneuver ? maneuver.flags.gurps.name : 'undefined'
     this.ignoreRender = saved
-    if (!saved) setTimeout(() => this._forceRender(), 500)
+    if (!saved) setTimeout(() => this._forceRender(), 333)
   }
 
   // Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
@@ -820,7 +820,8 @@ export class GurpsActor extends Actor {
   }
 
   async internalUpdate(data, context) {
-    let ctx = { render: !this.ignoreRender }
+    //let ctx = { render: !this.ignoreRender }
+    let ctx = { render: false }
     if (!!context) ctx = { ...context, ...ctx }
     await this.update(data, ctx)
   }
@@ -912,7 +913,7 @@ export class GurpsActor extends Actor {
     action.count = 1
     delete action.accumulate
     accumulators.push(action)
-    await this.update({ 'system.conditions.damageAccumulators': accumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': accumulators })
     GURPS.ModifierBucket.render()
     //console.log(accumulators)
   }
@@ -923,20 +924,20 @@ export class GurpsActor extends Actor {
 
   async incrementDamageAccumulator(index) {
     this.damageAccumulators[index].count++
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
   async decrementDamageAccumulator(index) {
     this.damageAccumulators[index].count--
     if (this.damageAccumulators[index].count < 1) this.damageAccumulators.splice(index, 1)
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
   async clearDamageAccumulator(index) {
     this.damageAccumulators.splice(index, 1)
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     GURPS.ModifierBucket.render()
   }
 
@@ -951,7 +952,7 @@ export class GurpsActor extends Actor {
     }
     accumulator.formula = roll
     this.damageAccumulators.splice(index, 1)
-    await this.update({ 'system.conditions.damageAccumulators': this.damageAccumulators })
+    await this.internalUpdate({ 'system.conditions.damageAccumulators': this.damageAccumulators })
     await GURPS.performAction(accumulator, GURPS.LastActor)
   }
 
@@ -3415,15 +3416,14 @@ export class GurpsActor extends Actor {
    */
   async applyTrackerTemplate(path, template) {
     // is there an initializer? If so calculate its value
-    let value = 0
+    let value = template.tracker.value
     if (!!template.initialValue) {
       value = parseInt(template.initialValue, 10)
       if (Number.isNaN(value)) {
         // try to use initialValue as a path to another value
-        value = getProperty(this, template.initialValue)
+        value = getProperty(this, 'system.' + template.initialValue)
       }
     }
-    template.tracker.max = value
     template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
 
     // remove whatever is there
@@ -3432,7 +3432,7 @@ export class GurpsActor extends Actor {
     // add the new tracker
     /** @type {{ [key: string]: any }} */
     let update = {}
-    update[`data.${path}`] = template.tracker
+    update[`system.${path}`] = template.tracker
     await this.update(update)
   }
 
@@ -3447,7 +3447,7 @@ export class GurpsActor extends Actor {
 
     /** @type {{[key: string]: string}} */
     let update = {}
-    update[`data.${path}`] = {
+    update[`system.${path}`] = {
       name: '',
       alias: '',
       pdf: '',
@@ -3681,10 +3681,10 @@ export class GurpsActor extends Actor {
     if (!other) {
       // if not in other, remove from carried, and then re-add everything
       if (item.id) await this._removeItemElement(item.id, 'equipment.carried')
-      await this.addItemData(item.data)
+      await this.addItemData(item)
     } else {
       // If was in other... just add back to other (and forget addons)
-      await this._addNewItemEquipment(item.data, 'system.equipment.other.' + zeroFill(0))
+      await this._addNewItemEquipment(item, 'system.equipment.other.' + zeroFill(0))
     }
     let newkey = this._findEqtkeyForId('globalid', _data.globalid)
     if (!!oldeqt && (!!oldeqt.contains || !!oldeqt.collapsed)) {
@@ -3762,7 +3762,7 @@ export class GurpsActor extends Actor {
         while (list.hasOwnProperty(zeroFill(index))) index++
         targetkey += '.' + zeroFill(index)
       } else targetkey = 'system.equipment.other'
-    if (targetkey.match(/^data\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
+    if (targetkey.match(/^system\.equipment\.\w+$/)) targetkey += '.' + zeroFill(0) //if just 'carried' or 'other'
     let eqt = _data.eqt
     if (!eqt) {
       ui.notifications?.warn('Item: ' + itemData._id + ' (Global:' + _data.globalid + ') missing equipment')
@@ -3771,9 +3771,9 @@ export class GurpsActor extends Actor {
       eqt.itemid = itemData._id
       eqt.globalid = _data.uuid
       //eqt.uuid = 'item-' + eqt.itemid
-      eqt.equipped = !!itemData.equipped ?? true
+      eqt.equipped = !!_data.equipped ?? true
       eqt.img = itemData.img
-      eqt.carried = !!itemData.carried ?? true
+      eqt.carried = !!_data.carried ?? true
       await GURPS.insertBeforeKey(this, targetkey, eqt)
       await this.updateParentOf(targetkey, true)
       return [targetkey, eqt.carried && eqt.equipped]
@@ -3904,6 +3904,7 @@ export class GurpsActor extends Actor {
   async _removeItemElement(itemid, key) {
     let found = true
     let any = false
+    if (!key.startsWith('system.')) key = 'system.' + key
     while (!!found) {
       found = false
       let list = getProperty(this, key)
@@ -3912,7 +3913,7 @@ export class GurpsActor extends Actor {
       })
       if (!!found) {
         any = true
-        await GURPS.removeKey(this, 'system.' + key + '.' + found)
+        await GURPS.removeKey(this, key + '.' + found)
       }
     }
     return any
@@ -3938,14 +3939,14 @@ export class GurpsActor extends Actor {
       if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
     }
     let object = getProperty(this, srckey)
-    if (targetkey.match(/^data\.equipment\.\w+$/)) {
+    if (targetkey.match(/^system\.equipment\.\w+$/)) {
       this.ignoreRender = true
       object.parentuuid = ''
       if (!!object.itemid) {
         let item = /** @type {Item} */ (this.items.get(object.itemid))
         await this.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.eqt.parentuuid': '' }])
       }
-      let target = { ...GURPS.decode(this.data, targetkey) } // shallow copy the list
+      let target = { ...GURPS.decode(this, targetkey) } // shallow copy the list
       if (!isSrcFirst) await GURPS.removeKey(this, srckey)
       let eqtkey = GURPS.put(target, object)
       await this.updateItemAdditionsBasedOn(object, targetkey + '.' + eqtkey)

@@ -2,7 +2,16 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.15.0 9/11/2033
+
+- Updated the system for compatibility with FoundryVTT version 10
+- Updated GCA5 export script (GCA5-14)
+- Updated /select (/sel) command to accept \* as only parameter (and selects all tokens)
+- Updated targetted /anim commands to prompt for target, instead of just reporting error
+
 Release 0.14.12 9/11/2033
+Release 0.14.11 9/11/2033
+
 - Fixed release branch
 
 Release 0.14.10 - 9/07/2022

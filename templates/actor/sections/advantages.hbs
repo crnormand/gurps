@@ -1,7 +1,7 @@
 <div id='advantages' class='gga-table with-notes'>
 	<div class='itemmenu header' readonly></div>
 	<div class='header desc'>
-		<div class='headermenu' data-key='data.ads'>
+		<div class='headermenu' data-key='system.ads'>
 			<span>{{i18n 'GURPS.advDisadvPerkQuirks'}}</span>
 			<i class='fas fa-caret-square-down'></i>
 		</div>
@@ -9,7 +9,7 @@
 	<div class='pts header'>{{i18n "GURPS.abbrevPoints"}}</div>
 	<div class='ref header'>{{i18n "GURPS.abbrevReference"}}</div>
 
-	{{#each (flatlist data.ads)}}
+	{{#each (flatlist system.ads)}}
 	{{#if ../isEditing}}
 	<div class='itemmenu adsmenu' data-key='system.ads.{{@key}}'>
 		<i class='fas fa-times'></i>

@@ -80,14 +80,14 @@
 	</div>
 
 	<div class='usage rollable flex-center' data-name='{{name}} ({{mode}})' data-key='system.melee.{{@key}}'
-		data-otf='{{quotedAttackName ' M' this}}'>{{mode}}</div>
+		data-otf='{{quotedAttackName 'M' this}}'>{{mode}}</div>
 	<div class='level rollable flex-center' data-name='{{name}} ({{mode}})' data-key='system.melee.{{@key}}'
-		data-otf='{{quotedAttackName ' M' this}}'>{{level}}</div>
+		data-otf='{{quotedAttackName 'M' this}}'>{{level}}</div>
 	<div class='parry flex-center' style="background-color: #ffffbe; width: 100%;">
 		{{#if (isNum parry)}}
-		<span class="flex-center rollable" data-otf='{{quotedAttackName ' P' this}}'>{{parry}}</span>
+		<span class="flex-center rollable" data-otf='{{quotedAttackName 'P' this}}'>{{parry}}</span>
 		{{#if (isNum ../system.defenses.parry.bonus)}}
-		<span class="flex-center rollable bonus" data-otf='{{quotedAttackName ' P' this}}" {{{displayNumber
+		<span class="flex-center rollable bonus" data-otf='{{quotedAttackName 'P' this}}" {{{displayNumber
 			../system.defenses.parry.bonus}}} DB'>
 			{{{displayNumber ../system.defenses.parry.bonus}}}</span>
 		{{/if}}
@@ -95,10 +95,10 @@
 	</div>
 	<div class='block flex-center' style="background-color: #ffffbe">
 		{{#if (isNum block)}}
-		<span class="flex-center rollable" data-otf='B:"{{name}} ({{mode}})"'>{{block}}</span>
+		<span class="flex-center rollable" data-otf='{{quotedAttackName 'B' this}}'>{{block}}</span>
 		{{#if (isNum ../system.defenses.block.bonus)}}
 		<span class="flex-center rollable bonus"
-			data-otf='B:"{{name}} ({{mode}})" {{{displayNumber ../system.defenses.block.bonus}}} DB'>
+			data-otf='{{quotedAttackName 'B' this}}" {{{displayNumber ../system.defenses.block.bonus}}} DB'>
 			{{{displayNumber ../system.defenses.block.bonus}}}</span>
 		{{/if}}
 		{{/if}}
