@@ -72,14 +72,14 @@ export class EffectModifierControl {
   _createActiveEffect(effect, _, __) {
     let effectID = effect?.parent.id
     let sharedStateID = this.token?.actor.id
-    console.log(`_createActiveEffect: effect id: ${effectID}, token actor id: ${sharedStateID}`)
+    console.debug(`_createActiveEffect: effect id: ${effectID}, token actor id: ${sharedStateID}`)
     if (effect?.parent.id === this.token?.actor.id) this._ui.render(false)
   }
 
   _updateToken(tokenDocument) {
     let tokenID = tokenDocument.object?.id
     let sharedStateID = this.token?.id
-    console.log(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
+    console.debug(`_updateToken: token id: ${tokenID}, token actor id: ${sharedStateID}`)
     if (tokenDocument.object === this.token) this._ui.render(false)
   }
 

@@ -67,7 +67,7 @@ export class GurpsActorSheet extends ActorSheet {
     sheetData.conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable()
     GURPS.SetLastActor(this.actor)
     sheetData.eqtsummary = this.actor.system.eqtsummary
-    sheetData.navigateBar = { 
+    sheetData.navigateBar = {
       visible: game.settings.get(settings.SYSTEM_NAME, settings.SETTING_SHOW_SHEET_NAVIGATION),
       hasMelee: !isEmptyObject(this.actor.system.melee),
       hasRanged: !isEmptyObject(this.actor.system.ranged),
@@ -1511,8 +1511,8 @@ export class GurpsActorSheet extends ActorSheet {
     let dataValue = $(event.currentTarget).attr('data-value')
     let windowContent = event.currentTarget.closest('.window-content')
     let target = windowContent.querySelector(`#${dataValue}`)
-    
-    if (!target) return   // If they click on a section that isn't on the sheet (like ranged)
+
+    if (!target) return // If they click on a section that isn't on the sheet (like ranged)
 
     // The '33' represents the height of the window title bar + a bit of margin
     // TODO: we should really look this up and use the actual values as found in the DOM.

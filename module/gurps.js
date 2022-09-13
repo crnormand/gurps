@@ -166,7 +166,7 @@ if (!globalThis.GURPS) {
   GURPS.ChatCommandsInProcess = [] // Taking advantage of synchronous nature of JS arrays
   GURPS.PendingOTFs = []
   GURPS.IgnoreTokenSelect = false
-  
+
   GURPS.wait = wait
 
   GURPS.attributepaths = {

@@ -21,17 +21,17 @@ Hooks.once('init', async function () {
   // Patch DiceTerm.fromMatch to hi-jack the returned Die instances and in turn patch them to
   // include the properties we need to support Physical Dice
   /**
-  if (!!DiceTerm.fromMatch) {
-    let _fromMatch = DiceTerm.fromMatch
-    let newFromMatch = function (match) {
-      let result = _fromMatch(match)
-      if (result instanceof Die && !result instanceof GurpsDie) result = new GurpsDie(result).asDiceTerm()
-      return result
-    }
-
-    DiceTerm.fromMatch = newFromMatch
-  }
-  **/
+	if (!!DiceTerm.fromMatch) {
+	  let _fromMatch = DiceTerm.fromMatch
+	  let newFromMatch = function (match) {
+		let result = _fromMatch(match)
+		if (result instanceof Die && !result instanceof GurpsDie) result = new GurpsDie(result).asDiceTerm()
+		return result
+	  }
+  
+	  DiceTerm.fromMatch = newFromMatch
+	}
+	**/
 
   // MONKEY_PATCH
   // Patch Roll to have the properties we need for Physical Dice and modifier bucket handling.
@@ -370,7 +370,7 @@ export class ModifierBucket extends Application {
   constructor(options = {}) {
     super(options)
 
-    console.trace('+++++ Create ModifierBucket +++++')
+    // console.trace('+++++ Create ModifierBucket +++++')
 
     this.isTooltip = game.settings.get(Settings.SYSTEM_NAME, Settings.SETTING_MODIFIER_TOOLTIP)
 

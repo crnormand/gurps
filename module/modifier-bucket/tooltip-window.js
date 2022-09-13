@@ -2,7 +2,6 @@ import { displayMod, horiz, i18n } from '../../lib/utilities.js'
 import { parselink } from '../../lib/parselink.js'
 import * as HitLocations from '../hitlocation/hitlocation.js'
 import * as Settings from '../../lib/miscellaneous-settings.js'
-import ModifierBucketJournals from './select-journals.js'
 import GurpsWiring from '../gurps-wiring.js'
 
 /**
@@ -13,7 +12,7 @@ export default class ModifierBucketEditor extends Application {
   constructor(bucket, options = {}) {
     super(options)
 
-    console.trace('+++++ Create ModifierBucketEditor +++++')
+    // console.trace('+++++ Create ModifierBucketEditor +++++')
 
     this.bucket = bucket // reference to class ModifierBucket, which is the 'button' that opens this window
     this.inside = false
@@ -484,12 +483,12 @@ const ModifierLiterals = {
     return ''
   },
   /**
-	  return `[+1 ${i18n('GURPS.modifierGMSaidSo')}]
-	  [-1 ${i18n('GURPS.modifierGMSaidSo')}]
-	  [+4 ${i18n('GURPS.modifierGMBlessed')}]
-	  [-4 ${i18n('GURPS.modifierGMDontTry')}]`
-	},
-	*/
+		return `[+1 ${i18n('GURPS.modifierGMSaidSo')}]
+		[-1 ${i18n('GURPS.modifierGMSaidSo')}]
+		[+4 ${i18n('GURPS.modifierGMBlessed')}]
+		[-4 ${i18n('GURPS.modifierGMDontTry')}]`
+	  },
+	  */
 
   get TaskDifficultyModifiers() {
     return [

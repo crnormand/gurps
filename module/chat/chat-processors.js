@@ -153,7 +153,7 @@ class ForceMigrateChatProcessor extends ChatProcessor {
     return !!this.match
   }
   async process(line) {
-/*    await Migration.migrateTo096()
+    /*    await Migration.migrateTo096()
     await Migration.migrateTo097()
     await Migration.migrateTo0104()
     await Migration.fixDataModelProblems() 
@@ -548,7 +548,7 @@ class SelectChatProcessor extends ChatProcessor {
     let m = this.match
     if (m[3] == '*') {
       canvas.tokens.placeables.forEach(t => t.control({ releaseOthers: false }))
-      return true  
+      return true
     }
     if (!!m[2]) {
       // @self
