@@ -542,7 +542,7 @@ export class ModifierBucket extends Application {
       data.damageAccumulators = GURPS.LastActor.damageAccumulators
       data.accumulatorIndex = this.accumulatorIndex
       ca = GURPS.LastActor.displayname
-      if (ca.length > 25) ca = ca.substring(0, 22) + '…'
+      if (ca && ca.length > 25) ca = ca.substring(0, 22) + '…'
     }
     data.currentActor = ca
     return data

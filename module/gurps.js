@@ -386,7 +386,7 @@ if (!globalThis.GURPS) {
    * @param {JQuery.Event|null} event
    * @returns {Promise<boolean>}
    */
-  async function executeOTF(string, priv = false, event = null) {
+  async function executeOTF(string, priv = false, event = null, actor = null) {
     if (!string) return false
     string = string.trim()
     if (string[0] == '[' && string[string.length - 1] == ']') string = string.substring(1, string.length - 1)
@@ -394,7 +394,7 @@ if (!globalThis.GURPS) {
     let answer = false
     if (!!action.action) {
       if (!event) event = { shiftKey: priv, ctrlKey: false, data: {} }
-      let result = await GURPS.performAction(action.action, GURPS.LastActor, event)
+      let result = await GURPS.performAction(action.action, actor || GURPS.LastActor, event)
       answer = !!result
     } else ui.notifications.warn(`"${string}" did not parse into a valid On-the-Fly formula`)
     return answer
@@ -507,7 +507,7 @@ if (!globalThis.GURPS) {
      * @param {boolean} data.action.quiet
      * @param {JQuery.Event|null} data.event
      */
-    async chat({ action, event }) {
+    async chat({ action, actor, event }) {
       // @ts-ignore
       const chat = `/setEventFlags ${!!action.quiet} ${!!event?.shiftKey} ${game.keyboard.isModifierActive(
         KeyboardManager.MODIFIER_KEYS.CONTROL
@@ -517,8 +517,11 @@ if (!globalThis.GURPS) {
         if (!event.data) event.data = {}
         event.data.overridetxt = action.overridetxt
       }
+      let savedActor = GURPS.LastActor
+      if (actor) GURPS.SetLastActor(actor) // try to ensure the correct last actor. 
       // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
-      return await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+      let ret =  await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+      if (savedActor) GURPS.SetLastActor(savedActor)
     },
     /**
      * @param {Object} data
@@ -530,11 +533,10 @@ if (!globalThis.GURPS) {
       switch (action.link) {
         case 'JournalEntry':
           let j = game.journal?.get(action.id)
-          if (j) {
-            if (j.data.flags.pdfoundry) {
-              handlePdf(j.data.flags.pdfoundry.PDFData.code)
-            } else j.sheet?.render(true)
-          }
+          if (j) j.sheet?.render(true)
+          return true
+        case 'JournalEntryPage':
+          Journal._showEntry(action.id)
           return true
         case 'Actor':
           game.actors?.get(action.id)?.sheet?.render(true)
@@ -583,7 +585,7 @@ if (!globalThis.GURPS) {
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
 
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
-
+      
       DamageChat.create(
         actor || game.user,
         action.formula,
@@ -733,9 +735,9 @@ if (!globalThis.GURPS) {
       let chatthing
       if (!!action.desc) {
         thing = action.desc
-        chatthing = `["Control Roll, ${thing}"CR:${target} ${thing}]`
+        chatthing = `["Control Roll, ${thing}"@${actor.id}@CR:${target} ${thing}]`
       } else {
-        chatthing = `[CR:${target}]`
+        chatthing = `[@${actor.id}@CR:${target}]`
       }
       return doRoll({
         actor,
@@ -817,8 +819,9 @@ if (!globalThis.GURPS) {
         .replace(/\[.*\]/, '')
         .replace(/ +/g, ' ')
         .trim()
-      const chatthing = `[${p}${quotedAttackName({ name: thing, mode: att.mode })}]`
-      const followon = `[D:${quotedAttackName({ name: thing, mode: att.mode })}]`
+      let qn = quotedAttackName({ name: thing, mode: att.mode })
+      const chatthing = `[@${actor.id}@${p}${qn}]`
+      const followon = `[@${actor.id}@D:${qn}]`
       let target = att.level
       if (!target) {
         ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`)
@@ -837,8 +840,8 @@ if (!globalThis.GURPS) {
         text: '',
       }
       let targetmods = []
-      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
-      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+      if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+      if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
       if (action.overridetxt) opt.text += "<span style='font-size:85%'>" + action.overridetxt + '</span>'
@@ -895,7 +898,7 @@ if (!globalThis.GURPS) {
       let targetmods = []
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      const chatthing = thing === '' ? att.name + mode : `[B:"${thing}${mode}"]`
+      const chatthing = thing === '' ? att.name + mode : `[@${actor.id}@B:"${thing}${mode}"]`
 
       return doRoll({
         actor,
@@ -951,7 +954,7 @@ if (!globalThis.GURPS) {
       let targetmods = []
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      const chatthing = thing === '' ? att.name + mode : `[P:"${thing}${mode}"]`
+      const chatthing = thing === '' ? att.name + mode : `[@${actor.id}@P:"${thing}${mode}"]`
 
       return doRoll({
         actor,
@@ -1008,7 +1011,7 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
       let targetmods = []
-      const chatthing = originalOtf ? `[${originalOtf}]` : `[${thing}]`
+      const chatthing = originalOtf ? `[@${actor.id}@${originalOtf}]` : `[@${actor.id}@${thing}]`
       let opt = {
         blind: action.blindroll,
         event: event,
@@ -1016,8 +1019,8 @@ if (!globalThis.GURPS) {
         obj: action.obj,
         text: '',
       }
-      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
-      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       opt.text = ''
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
@@ -1069,7 +1072,7 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
       let targetmods = []
-      let chatthing = originalOtf ? `[${originalOtf}]` : `[S:"${thing}"]`
+      let chatthing = originalOtf ? `[@${actor.id}@${originalOtf}]` : `[@${actor.id}@S:"${thing}"]`
       let opt = {
         blind: action.blindroll,
         event,
@@ -1077,8 +1080,8 @@ if (!globalThis.GURPS) {
         obj: action.obj,
         text: '',
       }
-      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return false
-      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+      if (opt.obj?.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return false
+      if (opt.obj?.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
 
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
@@ -1161,6 +1164,7 @@ if (!globalThis.GURPS) {
    */
   async function performAction(action, actor, event = null, targets = []) {
     if (!action || !(action.type in actionFuncs)) return false
+    if (action.sourceId) actor = game.actors.get(action.sourceId)
     const origAction = action
     const originalOtf = action.orig
     const calcOnly = action.calcOnly
@@ -1344,8 +1348,8 @@ if (!globalThis.GURPS) {
       if (!k) k = element.dataset.key
       if (!!k) {
         if (actor) opt.obj = getProperty(actor, k) // During the roll, we may want to extract something from the object
-        if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event))) return
-        if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event)
+        if (opt.obj.checkotf && !(await GURPS.executeOTF(opt.obj.checkotf, false, event, actor))) return
+        if (opt.obj.duringotf) await GURPS.executeOTF(opt.obj.duringotf, false, event, actor)
       }
       formula = '3d6'
       let t = element.innerText
