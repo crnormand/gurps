@@ -2,15 +2,22 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.15.0 9/11/2033
+Release 0.15.1 9/13/2022
+
+- Fixed call to missing obsolete migration methods.
+- Updated Users Doc PDF
+- Support JournalEntryPage drag&drop
+- Fixed targeted rolls made by a specific actor will remember that actor (especially when clicking 'follow on' damage after hit)
+
+Release 0.15.0 9/11/2022
 
 - Updated the system for compatibility with FoundryVTT version 10
 - Updated GCA5 export script (GCA5-14)
 - Updated /select (/sel) command to accept \* as only parameter (and selects all tokens)
 - Updated targetted /anim commands to prompt for target, instead of just reporting error
 
-Release 0.14.12 9/11/2033
-Release 0.14.11 9/11/2033
+Release 0.14.12 9/11/2022
+Release 0.14.11 9/11/2022
 
 - Fixed release branch
 

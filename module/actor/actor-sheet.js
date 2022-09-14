@@ -838,7 +838,7 @@ export class GurpsActorSheet extends ActorSheet {
   dropFoundryLinks(ev, modelkey) {
     if (!!ev.originalEvent) ev = ev.originalEvent
     let dragData = JSON.parse(ev.dataTransfer.getData('text/plain'))
-    if (!!dragData.uuid) dragData.id = dragData.uuid.split('.').at(-1)
+    if (!!dragData.uuid) dragData.id = dragData.uuid.split('.').at(1)
     let add = ''
     var n
     if (dragData.type == 'JournalEntry') {
@@ -853,7 +853,13 @@ export class GurpsActorSheet extends ActorSheet {
     if (dragData.type == 'Item') {
       n = game.items.get(dragData.id).name
     }
+    if (dragData.type == 'JournalEntryPage') {
+      let j = game.journal.get(dragData.id)
+      n = j.pages.get(dragData.uuid.split('.').at(-1)).name
+      dragData.id = dragData.uuid
+    }
     if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
+
 
     if (!!dragData.otf) {
       let prefix = ''
