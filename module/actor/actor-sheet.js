@@ -860,7 +860,6 @@ export class GurpsActorSheet extends ActorSheet {
     }
     if (!!n) add = ` [${dragData.type}[${dragData.id}]` + '{' + n + '}]'
 
-
     if (!!dragData.otf) {
       let prefix = ''
       if (!!dragData.displayname) {

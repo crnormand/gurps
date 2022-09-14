@@ -103,7 +103,7 @@ if (!globalThis.GURPS) {
   Settings.initializeSettings()
   GURPS.EffectModifierControl = new EffectModifierControl()
 
-  CONFIG.debug.hooks = false
+  // CONFIG.debug.hooks = true;
 
   // Expose Maneuvers to make them easier to use in modules
   GURPS.Maneuvers = Maneuvers
@@ -518,9 +518,9 @@ if (!globalThis.GURPS) {
         event.data.overridetxt = action.overridetxt
       }
       let savedActor = GURPS.LastActor
-      if (actor) GURPS.SetLastActor(actor) // try to ensure the correct last actor. 
+      if (actor) GURPS.SetLastActor(actor) // try to ensure the correct last actor.
       // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
-      let ret =  await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
+      let ret = await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
       if (savedActor) GURPS.SetLastActor(savedActor)
     },
     /**
@@ -585,7 +585,7 @@ if (!globalThis.GURPS) {
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
 
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc) // special case where Damage comes from [D:attack + mod]
-      
+
       DamageChat.create(
         actor || game.user,
         action.formula,
@@ -1092,16 +1092,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-					[AMRS][DPK]
-					A: ads & attack (melee & range)
-					AD: ads
-					AT: attack
-					M: melee
-					R: ranged
-					S: skills & spells
-					SK: skills
-					SP: spells
-				  */
+						[AMRS][DPK]
+						A: ads & attack (melee & range)
+						AD: ads
+						AT: attack
+						M: melee
+						R: ranged
+						S: skills & spells
+						SK: skills
+						SP: spells
+					  */
     ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
       switch (action.prefix) {
         case 'A':
