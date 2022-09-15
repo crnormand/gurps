@@ -4,7 +4,7 @@ import { gurpslink } from '../module/utilities/gurpslink.js'
 
 export default class GurpsJournalEntry {
   static ready() {
-    Hooks.on('renderJournalSheet', GurpsJournalEntry._renderJournalSheet)
+    Hooks.on('renderJournalPageSheet', GurpsJournalEntry._renderJournalSheet)
   }
 
   /**
@@ -12,14 +12,15 @@ export default class GurpsJournalEntry {
    * @param {JQuery<HTMLElement>} html
    * @param {*} _options
    */
-  static _renderJournalSheet(_app, html, _options) {
+  static _renderJournalSheet(app, html, options) {
     setTimeout(() => {
       // crazy hack... html is NOT displayed yet, so you can't find the Journal Page.   Must delay to allow other thread to display HTML
-      let h = html.find('.journal-page-content')
+      if (options.cssClass.includes('editable')) return
+      let h = html.parent().find('.journal-page-content')
       if (!!h && h.length > 0) {
         h.html(gurpslink(h[0].innerHTML))
         GurpsWiring.hookupAllEvents(html)
-        // GurpsWiring.hookupGurpsRightClick(html)
+        GurpsWiring.hookupGurpsRightClick(html)
 
         const dropHandler = function (event, app, options) {
           event.preventDefault()
@@ -38,16 +39,16 @@ export default class GurpsJournalEntry {
               cmd = "'" + data.displayname + "'" + cmd
             }
             cmd = '[' + cmd + ']'
-            let pid = _app._pages[_app.pageIndex]._id
-            let jp = _app.document.pages.get(pid)
+            let pid = app.pages[app.pageIndex]._id
+            let jp = app.document.pages.get(pid)
             let content = jp.text.content
             if (content) cmd = ' ' + cmd
             jp.update({ 'text.content': content + cmd })
-            _app.render(true)
+            app.render(true)
           }
         }
 
-        html.find('.journal-entry-pages').on('drop', event => dropHandler(event, _app, _options))
+        html.find('.journal-entry-pages').on('drop', event => dropHandler(event, app, _options))
       }
     }, 100)
   }
