@@ -26,7 +26,7 @@ export class ItemImporter {
     let pack = game.packs.find(p => p.metadata.name === filename)
     if (!pack)
       pack = await CompendiumCollection.createCompendium({
-        entity: 'Item',
+        type: 'Item',
         label: filename,
         name: filename,
         package: 'world',
@@ -110,7 +110,7 @@ export class ItemImporter {
             damage: w.calc.damage || '',
             mode: w.usage || '',
             name: itemData.name,
-            notes: itemData.eqt.notes || '',
+            notes: itemData.system.eqt.notes || '',
             pageref: itemData.system.eqt.pageref || '',
             parry: w.parry || '',
             reach: w.reach || '',
@@ -210,14 +210,14 @@ export class ItemImporter {
     for (let i of pack.index) {
       cachedItems.push(await pack.getDocument(i._id))
     }
-    let oi = await cachedItems.find(p => p.system.eqt.uuid === itemData.eqt.uuid)
+    let oi = await cachedItems.find(p => p.system.eqt.uuid === itemData.system.eqt.uuid)
     if (!!oi) {
-      let oldData = duplicate(oi.data)
+      let oldData = duplicate(oi)
       let newData = duplicate(itemData)
-      delete oldData.eqt.uuid
-      delete newData.eqt.uuid
+      delete oldData.system.eqt.uuid
+      delete newData.system.eqt.uuid
       if (oldData != newData) {
-        return oi.update(itemData)
+        return oi.update(newData)
       }
     } else {
       return Item.create(itemData, { pack: `world.${filename}` })

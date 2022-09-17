@@ -1,5 +1,4 @@
 <form class="{{cssClass}} simple_form" autocomplete="off">
-
 	<div class="simple_container">
 		<div class="simple_ST rollableicon" data-value="ST{{system.attributes.ST.value}}" data-otf='ST'><img
 				class="simple_icon" src="systems/gurps/ui/ri_4t.webp" />
@@ -38,9 +37,11 @@
 			<label>): How <strong>healthy</strong> and <strong>durable</strong></label>
 		</div>
 		<div class="simple_Shield" data-value="Dodge"><label class="simple_dodge rollable"
-				data-otf="Dodge">&nbsp;{{dodge}}&nbsp;</label></div>
+				data-otf="Dodge">&nbsp;{{dodge}}&nbsp;</label>
+		</div>
 		<div class="simple_Body">{{defense.dr}}{{#each defense.split as | this key |}}<span
-				title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}</div>
+				title='{{i18n key key}}'>/{{this}}{{#if (ne key 'cr')}}*{{/if}}</span>{{/each}}
+		</div>
 		<div class="simple_Heart {{hpCondition system.HP " style"}}">
 			<div class="simple_Heart_inner">{{system.HP.value}}</div>
 		</div>
