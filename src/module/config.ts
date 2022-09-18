@@ -1,16 +1,16 @@
-import { BaseActorGURPS } from "@actor";
-import { CharacterGURPS } from "@actor/character";
-import { AttributeBonus } from "@feature/attribute_bonus";
-import { ConditionalModifier } from "@feature/conditional_modifier";
-import { ContainedWeightReduction } from "@feature/contained_weight_reduction";
-import { CostReduction } from "@feature/cost_reduction";
-import { DRBonus } from "@feature/dr_bonus";
-import { ReactionBonus } from "@feature/reaction_bonus";
-import { SkillBonus } from "@feature/skill_bonus";
-import { SkillPointBonus } from "@feature/skill_point_bonus";
-import { SpellBonus } from "@feature/spell_bonus";
-import { SpellPointBonus } from "@feature/spell_point_bonus";
-import { WeaponBonus } from "@feature/weapon_damage_bonus";
+import { BaseActorGURPS } from "@actor"
+import { CharacterGURPS } from "@actor/character"
+import { AttributeBonus } from "@feature/attribute_bonus"
+import { ConditionalModifier } from "@feature/conditional_modifier"
+import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
+import { CostReduction } from "@feature/cost_reduction"
+import { DRBonus } from "@feature/dr_bonus"
+import { ReactionBonus } from "@feature/reaction_bonus"
+import { SkillBonus } from "@feature/skill_bonus"
+import { SkillPointBonus } from "@feature/skill_point_bonus"
+import { SpellBonus } from "@feature/spell_bonus"
+import { SpellPointBonus } from "@feature/spell_point_bonus"
+import { WeaponBonus } from "@feature/weapon_damage_bonus"
 import {
 	BaseItemGURPS,
 	ContainerGURPS,
@@ -30,16 +30,16 @@ import {
 	TraitGURPS,
 	TraitModifierContainerGURPS,
 	TraitModifierGURPS,
-} from "@item";
-import { AttributePrereq } from "@prereq/attribute_prereq";
-import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq";
-import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq";
-import { PrereqList } from "@prereq/prereq_list";
-import { SkillPrereq } from "@prereq/skill_prereq";
-import { SpellPrereq } from "@prereq/spell_prereq";
-import { TraitPrereq } from "@prereq/trait_prereq";
-import { rollModifiers } from "./data";
-import { MeleeWeapon, RangedWeapon } from "./weapon";
+} from "@item"
+import { AttributePrereq } from "@prereq/attribute_prereq"
+import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
+import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
+import { PrereqList } from "@prereq/prereq_list"
+import { SkillPrereq } from "@prereq/skill_prereq"
+import { SpellPrereq } from "@prereq/spell_prereq"
+import { TraitPrereq } from "@prereq/trait_prereq"
+import { rollModifiers } from "./data"
+import { MeleeWeapon, RangedWeapon } from "./weapon"
 
 // Const GURPSCONFIG: any = CONFIG;
 const GURPSCONFIG: any = {
@@ -306,9 +306,9 @@ const GURPSCONFIG: any = {
 			to_final_weight: "gurps.select.eqp_mod_weight_type.to_final_weight",
 		},
 	},
-};
+}
 // GURPSCONFIG.Item.documentClasses = {};
 // GURPSCONFIG.Actor.documentClasses = {
 // 	character: CharacterGURPS,
 // };
-export { GURPSCONFIG };
+export { GURPSCONFIG }

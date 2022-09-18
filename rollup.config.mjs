@@ -3,8 +3,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import typescript from "@rollup/plugin-typescript";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript"
+import { nodeResolve } from "@rollup/plugin-node-resolve"
 
 export default () => ({
 	input: "src/module/gurps.ts",
@@ -14,4 +14,4 @@ export default () => ({
 		sourcemap: true,
 	},
 	plugins: [nodeResolve(), typescript()],
-});
+})

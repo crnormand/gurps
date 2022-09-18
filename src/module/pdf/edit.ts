@@ -1,9 +1,9 @@
-import { SYSTEM_NAME } from "@module/settings";
+import { SYSTEM_NAME } from "@module/settings"
 
 // @ts-ignore
 export class PDFEditorSheet extends JournalPDFPageSheet {
 	constructor(object: any, options: any = { pageNumber: 1 }) {
-		super(object, options);
+		super(object, options)
 	}
 
 	// Static get defaultOptions() {
@@ -17,7 +17,7 @@ export class PDFEditorSheet extends JournalPDFPageSheet {
 	// }
 
 	get template(): string {
-		return `systems/${SYSTEM_NAME}/templates/app/pdf-edit.hbs`;
+		return `systems/${SYSTEM_NAME}/templates/app/pdf-edit.hbs`
 	}
 
 	// Render(force?: boolean | undefined, options?: Application.RenderOptions<DocumentSheetOptions> | undefined): this {
@@ -36,7 +36,7 @@ export class PDFEditorSheet extends JournalPDFPageSheet {
 	// }
 
 	getData(options?: Partial<DocumentSheetOptions> | undefined): any {
-		return super.getData(options);
+		return super.getData(options)
 	}
 
 	// Protected _getHeaderButtons(): Application.HeaderButton[] {

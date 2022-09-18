@@ -26,8 +26,12 @@
 		"maximum": 10
 	},
 	"scripts": [],
-	"esmodules": ["module/gurps.js"],
-	"styles": ["styles/gurps.css"],
+	"esmodules": [
+		"module/gurps.js"
+	],
+	"styles": [
+		"styles/gurps.css"
+	],
 	"packs": [],
 	"relatinships": {},
 	"languages": [

@@ -10,4 +10,4 @@ export default {
 			tsconfig: "<rootDir>/test/tsconfig.json",
 		},
 	},
-};
+}

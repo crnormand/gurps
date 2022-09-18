@@ -1,42 +1,42 @@
-import { Feature } from "@feature";
-import { SkillBonus } from "@feature/skill_bonus";
-import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data";
-import { CRAdjustment } from "@module/data";
-import { Weapon } from "@module/weapon";
-import { PrereqList } from "@prereq";
+import { Feature } from "@feature"
+import { SkillBonus } from "@feature/skill_bonus"
+import { BaseContainerSource, BaseContainerSystemData } from "@item/container/data"
+import { CRAdjustment } from "@module/data"
+import { Weapon } from "@module/weapon"
+import { PrereqList } from "@prereq"
 
-export type TraitSource = BaseContainerSource<"trait", TraitSystemData>;
+export type TraitSource = BaseContainerSource<"trait", TraitSystemData>
 
 // Export class TraitData extends BaseContainerData<TraitGURPS> {}
 
 export interface TraitData extends Omit<TraitSource, "effects" | "items">, TraitSystemData {
-	readonly type: TraitSource["type"];
+	readonly type: TraitSource["type"]
 	// Data: TraitSystemData;
-	readonly _source: TraitSource;
+	readonly _source: TraitSource
 }
 
 export interface TraitSystemData extends BaseContainerSystemData {
-	prereqs: PrereqList;
-	round_down: boolean;
-	disabled: boolean;
+	prereqs: PrereqList
+	round_down: boolean
+	disabled: boolean
 	// Mental: boolean;
 	// physical: boolean;
 	// social: boolean;
 	// exotic: boolean;
 	// supernatural: boolean;
-	levels: number;
-	base_points: number;
-	points_per_level: number;
+	levels: number
+	base_points: number
+	points_per_level: number
 	// Calc: {
 	// 	points: number;
 	// };
-	cr: number;
-	cr_adj: CRAdjustment;
-	features?: Feature[];
-	weapons?: Weapon[];
+	cr: number
+	cr_adj: CRAdjustment
+	features?: Feature[]
+	weapons?: Weapon[]
 }
 
-const CR_Features = new Map();
+const CR_Features = new Map()
 
 CR_Features.set("major_cost_of_living_increase", [
 	new SkillBonus(
@@ -48,6 +48,6 @@ CR_Features.set("major_cost_of_living_increase", [
 		},
 		{ ready: true }
 	),
-]);
+])
 
-export { CR_Features };
+export { CR_Features }

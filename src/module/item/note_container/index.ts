@@ -1,5 +1,5 @@
-import { ContainerGURPS } from "@item/container";
-import { NoteContainerData } from "./data";
+import { ContainerGURPS } from "@item/container"
+import { NoteContainerData } from "./data"
 
 export class NoteContainerGURPS extends ContainerGURPS {
 	// Static override get schema(): typeof NoteContainerData {
@@ -8,5 +8,5 @@ export class NoteContainerGURPS extends ContainerGURPS {
 }
 
 export interface NoteContainerGURPS {
-	readonly system: NoteContainerData;
+	readonly system: NoteContainerData
 }

@@ -1,126 +1,126 @@
-import { CharacterGURPS } from "@actor";
-import { Feature } from "@feature";
-import { BaseFeature } from "@feature/base";
-import { ItemGURPS } from "@item";
-import { ItemFlagsGURPS, ItemSystemDataGURPS } from "@item/data";
-import { EquipmentSystemData } from "@item/equipment/data";
-import { EquipmentContainerSystemData } from "@item/equipment_container/data";
-import { EquipmentModifierSystemData } from "@item/equipment_modifier/data";
-import { EquipmentModifierContainerSystemData } from "@item/equipment_modifier_container/data";
-import { NoteSystemData } from "@item/note/data";
-import { NoteContainerSystemData } from "@item/note_container/data";
-import { RitualMagicSpellSystemData } from "@item/ritual_magic_spell/data";
-import { SkillSystemData } from "@item/skill/data";
-import { SkillContainerSystemData } from "@item/skill_container/data";
-import { SpellSystemData } from "@item/spell/data";
-import { SpellContainerSystemData } from "@item/spell_container/data";
-import { TechniqueSystemData } from "@item/technique/data";
-import { TraitSystemData } from "@item/trait/data";
-import { TraitContainerSystemData } from "@item/trait_container/data";
-import { TraitModifierSystemData } from "@item/trait_modifier/data";
-import { TraitModifierContainerSystemData } from "@item/trait_modifier_container/data";
-import { AttributeObj } from "@module/attribute";
-import { AttributeDefObj } from "@module/attribute/attribute_def";
-import { CR } from "@module/data";
-import { SYSTEM_NAME } from "@module/settings";
-import { SkillDefault } from "@module/default";
-import { BaseWeapon, Weapon } from "@module/weapon";
-import { BasePrereq, PrereqList } from "@prereq";
-import { i18n, i18n_f, newUUID, removeAccents } from "@util";
-import { CharacterDataGURPS, CharacterSystemData } from "./data";
-import { GCAImporter } from "./import_GCA";
+import { CharacterGURPS } from "@actor"
+import { Feature } from "@feature"
+import { BaseFeature } from "@feature/base"
+import { ItemGURPS } from "@item"
+import { ItemFlagsGURPS, ItemSystemDataGURPS } from "@item/data"
+import { EquipmentSystemData } from "@item/equipment/data"
+import { EquipmentContainerSystemData } from "@item/equipment_container/data"
+import { EquipmentModifierSystemData } from "@item/equipment_modifier/data"
+import { EquipmentModifierContainerSystemData } from "@item/equipment_modifier_container/data"
+import { NoteSystemData } from "@item/note/data"
+import { NoteContainerSystemData } from "@item/note_container/data"
+import { RitualMagicSpellSystemData } from "@item/ritual_magic_spell/data"
+import { SkillSystemData } from "@item/skill/data"
+import { SkillContainerSystemData } from "@item/skill_container/data"
+import { SpellSystemData } from "@item/spell/data"
+import { SpellContainerSystemData } from "@item/spell_container/data"
+import { TechniqueSystemData } from "@item/technique/data"
+import { TraitSystemData } from "@item/trait/data"
+import { TraitContainerSystemData } from "@item/trait_container/data"
+import { TraitModifierSystemData } from "@item/trait_modifier/data"
+import { TraitModifierContainerSystemData } from "@item/trait_modifier_container/data"
+import { AttributeObj } from "@module/attribute"
+import { AttributeDefObj } from "@module/attribute/attribute_def"
+import { CR } from "@module/data"
+import { SYSTEM_NAME } from "@module/settings"
+import { SkillDefault } from "@module/default"
+import { BaseWeapon, Weapon } from "@module/weapon"
+import { BasePrereq, PrereqList } from "@prereq"
+import { i18n, i18n_f, newUUID, removeAccents } from "@util"
+import { CharacterDataGURPS, CharacterSystemData } from "./data"
+import { GCAImporter } from "./import_GCA"
 
 export interface CharacterImportedData extends Omit<CharacterSystemData, "attributes"> {
-	traits: Array<TraitSystemData | TraitContainerSystemData>;
-	skills: Array<SkillSystemData | TechniqueSystemData | SkillContainerSystemData>;
-	spells: Array<SpellSystemData | RitualMagicSpellSystemData | SpellContainerSystemData>;
-	equipment: Array<EquipmentSystemData | EquipmentContainerSystemData>;
-	other_equipment: Array<EquipmentSystemData | EquipmentContainerSystemData>;
-	notes: Array<NoteSystemData | NoteContainerSystemData>;
-	attributes: Array<AttributeObj>;
+	traits: Array<TraitSystemData | TraitContainerSystemData>
+	skills: Array<SkillSystemData | TechniqueSystemData | SkillContainerSystemData>
+	spells: Array<SpellSystemData | RitualMagicSpellSystemData | SpellContainerSystemData>
+	equipment: Array<EquipmentSystemData | EquipmentContainerSystemData>
+	other_equipment: Array<EquipmentSystemData | EquipmentContainerSystemData>
+	notes: Array<NoteSystemData | NoteContainerSystemData>
+	attributes: Array<AttributeObj>
 }
 
 export class CharacterImporter {
-	version: number;
+	version: number
 
-	document: CharacterGURPS;
+	document: CharacterGURPS
 
 	constructor(document: CharacterGURPS) {
-		this.version = 4;
-		this.document = document;
+		this.version = 4
+		this.document = document
 	}
 
 	static import(document: CharacterGURPS, file: { text: string; name: string; path: string }) {
-		if (file.name.includes(".gca5")) return GCAImporter.import(document, file);
-		const importer = new CharacterImporter(document);
-		importer._import(document, file);
+		if (file.name.includes(".gca5")) return GCAImporter.import(document, file)
+		const importer = new CharacterImporter(document)
+		importer._import(document, file)
 	}
 
 	async _import(document: CharacterGURPS, file: { text: string; name: string; path: string }) {
-		const json = file.text;
-		let r: CharacterImportedData;
-		const errorMessages: string[] = [];
+		const json = file.text
+		let r: CharacterImportedData
+		const errorMessages: string[] = []
 		try {
-			r = JSON.parse(json);
+			r = JSON.parse(json)
 		} catch (err) {
-			console.error(err);
-			errorMessages.push(i18n("gurps.error.import.no_json_detected"));
-			return this.throwImportError(errorMessages);
+			console.error(err)
+			errorMessages.push(i18n("gurps.error.import.no_json_detected"))
+			return this.throwImportError(errorMessages)
 		}
 
-		let commit: Partial<CharacterDataGURPS> = {};
-		const imp = document.importData;
-		imp.name = file.name ?? imp.name;
-		imp.path = file.path ?? imp.path;
-		imp.last_import = new Date().toISOString();
+		let commit: Partial<CharacterDataGURPS> = {}
+		const imp = document.importData
+		imp.name = file.name ?? imp.name
+		imp.path = file.path ?? imp.path
+		imp.last_import = new Date().toISOString()
 		try {
 			if (r.version < this.version)
-				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_old")]);
+				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_old")])
 			else if (r.version > this.version)
-				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_new")]);
-			commit = { ...commit, ...{ "system.import": imp } };
-			commit = { ...commit, ...{ name: r.profile.name, "prototypeToken.name": r.profile.name } };
-			commit = { ...commit, ...this.importMiscData(r) };
-			commit = { ...commit, ...(await this.importProfile(r.profile)) };
-			commit = { ...commit, ...this.importSettings(r.settings) };
-			commit = { ...commit, ...this.importAttributes(r.attributes) };
+				return this.throwImportError([...errorMessages, i18n("gurps.error.import.format_new")])
+			commit = { ...commit, ...{ "system.import": imp } }
+			commit = { ...commit, ...{ name: r.profile.name, "prototypeToken.name": r.profile.name } }
+			commit = { ...commit, ...this.importMiscData(r) }
+			commit = { ...commit, ...(await this.importProfile(r.profile)) }
+			commit = { ...commit, ...this.importSettings(r.settings) }
+			commit = { ...commit, ...this.importAttributes(r.attributes) }
 
 			// Begin item import
-			const items: Array<ItemGURPS> = [];
-			items.push(...this.importItems(r.traits));
-			items.push(...this.importItems(r.skills));
-			items.push(...this.importItems(r.spells));
-			items.push(...this.importItems(r.equipment));
-			items.push(...this.importItems(r.other_equipment, { other: true }));
-			items.push(...this.importItems(r.notes));
-			commit = { ...commit, ...{ items: items } };
+			const items: Array<ItemGURPS> = []
+			items.push(...this.importItems(r.traits))
+			items.push(...this.importItems(r.skills))
+			items.push(...this.importItems(r.spells))
+			items.push(...this.importItems(r.equipment))
+			items.push(...this.importItems(r.other_equipment, { other: true }))
+			items.push(...this.importItems(r.notes))
+			commit = { ...commit, ...{ items: items } }
 		} catch (err) {
-			console.error(err);
+			console.error(err)
 			errorMessages.push(
 				i18n_f("gurps.error.import.generic", {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
-			);
-			return this.throwImportError(errorMessages);
+			)
+			return this.throwImportError(errorMessages)
 		}
 
 		try {
 			await this.document.update(commit, {
 				diff: false,
 				recursive: false,
-			});
+			})
 		} catch (err) {
-			console.error(err);
+			console.error(err)
 			errorMessages.push(
 				i18n_f("gurps.error.import.generic", {
 					name: r.profile.name,
 					message: (err as Error).message,
 				})
-			);
-			return this.throwImportError(errorMessages);
+			)
+			return this.throwImportError(errorMessages)
 		}
-		return true;
+		return true
 	}
 
 	importMiscData(data: CharacterImportedData) {
@@ -130,7 +130,7 @@ export class CharacterImporter {
 			"system.created_date": data.created_date,
 			"system.modified_date": data.modified_date,
 			"system.total_points": data.total_points,
-		};
+		}
 	}
 
 	async importProfile(profile: CharacterImportedData["profile"]) {
@@ -151,41 +151,41 @@ export class CharacterImporter {
 			"system.profile.gender": profile.gender || "",
 			"system.profile.tech_level": profile.tech_level || "",
 			"system.profile.religion": profile.religion || "",
-		};
+		}
 		if (profile.portrait) {
-			const path: string = this.getPortraitPath();
-			let currentDir = "";
+			const path: string = this.getPortraitPath()
+			let currentDir = ""
 			for (const i of path.split("/")) {
 				try {
-					currentDir += `${i}/`;
-					await FilePicker.createDirectory("data", currentDir);
+					currentDir += `${i}/`
+					await FilePicker.createDirectory("data", currentDir)
 				} catch (err) {
-					continue;
+					continue
 				}
 			}
-			const filename = `${removeAccents(profile.name)}_${this.document.id}_portrait.png`.replaceAll(" ", "_");
-			const url = `data:image/png;base64,${profile.portrait}`;
+			const filename = `${removeAccents(profile.name)}_${this.document.id}_portrait.png`.replaceAll(" ", "_")
+			const url = `data:image/png;base64,${profile.portrait}`
 			await fetch(url)
 				.then(res => res.blob())
 				.then(blob => {
-					const file = new File([blob], filename);
+					const file = new File([blob], filename)
 					// TODO: get rid of as any when new types version drops
-					(FilePicker as any).upload("data", path, file, {}, { notify: false });
-				});
-			p.img = (path + filename).replaceAll(" ", "_");
+					;(FilePicker as any).upload("data", path, file, {}, { notify: false })
+				})
+			p.img = (path + filename).replaceAll(" ", "_")
 		}
-		return p;
+		return p
 	}
 
 	getPortraitPath(): string {
-		if ((game as Game).settings.get(SYSTEM_NAME, "portrait_path") === "global") return "images/portraits/";
-		return `worlds/${(game as Game).world.id}/images/portraits`;
+		if ((game as Game).settings.get(SYSTEM_NAME, "portrait_path") === "global") return "images/portraits/"
+		return `worlds/${(game as Game).world.id}/images/portraits`
 	}
 
 	importSettings(settings: CharacterImportedData["settings"]) {
-		const attributes: Record<string, AttributeDefObj> = {};
+		const attributes: Record<string, AttributeDefObj> = {}
 		for (const att of settings.attributes as unknown as AttributeDefObj[]) {
-			attributes[att.id] = att;
+			attributes[att.id] = att
 		}
 		return {
 			"system.settings.default_length_units": settings.default_length_units ?? "ft_in",
@@ -207,34 +207,34 @@ export class CharacterImporter {
 			"system.settings.block_layout": settings.block_layout,
 			"system.settings.attributes": attributes,
 			"system.settings.body_type": settings.body_type,
-		};
+		}
 	}
 
 	importAttributes(attributes: AttributeObj[]) {
-		const atts: Record<string, AttributeObj> = {};
+		const atts: Record<string, AttributeObj> = {}
 		for (const a of attributes) {
-			atts[a.attr_id] = a;
+			atts[a.attr_id] = a
 		}
 		return {
 			"system.attributes": atts,
-		};
+		}
 	}
 
 	importItems(list: Array<ItemSystemDataGURPS>, context?: { container?: boolean; other?: boolean }): Array<any> {
-		if (!list) return [];
-		const items: Array<any> = [];
+		if (!list) return []
+		const items: Array<any> = []
 		for (const item of list) {
-			item.name = item.name ?? (item as any).description ?? (item as any).text;
-			const id = randomID();
+			item.name = item.name ?? (item as any).description ?? (item as any).text
+			const id = randomID()
 			// Console.log(item.name);
-			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = this.getItemData(item, context);
+			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = this.getItemData(item, context)
 			const newItem = {
 				name: item.name ?? "ERROR",
 				type: item.type,
 				system: itemData,
 				flags: itemFlags,
 				_id: id,
-			};
+			}
 			// Const newItem = new BaseItemGURPS({
 			// 	name: item.name ?? "ERROR",
 			// 	type: item.type,
@@ -253,85 +253,85 @@ export class CharacterImporter {
 					// permission: newItem.permission,
 					type: item.type,
 					_id: id,
-				});
+				})
 			} else {
-				items.push(newItem);
+				items.push(newItem)
 			}
 		}
-		return items;
+		return items
 	}
 
 	getItemData(
 		item: ItemSystemDataGURPS,
 		context?: { container?: boolean; other?: boolean }
 	): [ItemSystemDataGURPS, ItemFlagsGURPS] {
-		let data: ItemSystemDataGURPS;
-		const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { contentsData: [] } };
+		let data: ItemSystemDataGURPS
+		const flags: ItemFlagsGURPS = { [SYSTEM_NAME]: { contentsData: [] } }
 		switch (item.type) {
 			case "trait":
-				data = this.getTraitData(item as TraitSystemData);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).modifiers, { container: true });
-				return [data, flags];
+				data = this.getTraitData(item as TraitSystemData)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).modifiers, { container: true })
+				return [data, flags]
 			case "trait_container":
-				data = this.getTraitContainerData(item as TraitContainerSystemData);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true });
+				data = this.getTraitContainerData(item as TraitContainerSystemData)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
 				flags[SYSTEM_NAME]!.contentsData!.concat(
 					this.importItems((item as any).modifiers, {
 						container: true,
 					})
-				);
-				return [data, flags];
+				)
+				return [data, flags]
 			case "modifier":
-				return [this.getTraitModifierData(item as TraitModifierSystemData), flags];
+				return [this.getTraitModifierData(item as TraitModifierSystemData), flags]
 			case "modifier_container":
-				data = this.getTraitModifierContainerData(item as TraitModifierContainerSystemData);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true });
-				return [data, flags];
+				data = this.getTraitModifierContainerData(item as TraitModifierContainerSystemData)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
+				return [data, flags]
 			case "skill":
-				return [this.getSkillData(item as SkillSystemData), flags];
+				return [this.getSkillData(item as SkillSystemData), flags]
 			case "technique":
-				return [this.getTechniqueData(item as TechniqueSystemData), flags];
+				return [this.getTechniqueData(item as TechniqueSystemData), flags]
 			case "skill_container":
-				data = this.getSkillContainerData(item as SkillContainerSystemData);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true });
-				return [data, flags];
+				data = this.getSkillContainerData(item as SkillContainerSystemData)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
+				return [data, flags]
 			case "spell":
-				return [this.getSpellData(item as SpellSystemData), flags];
+				return [this.getSpellData(item as SpellSystemData), flags]
 			case "ritual_magic_spell":
-				return [this.getRitualMagicSpellData(item as RitualMagicSpellSystemData), flags];
+				return [this.getRitualMagicSpellData(item as RitualMagicSpellSystemData), flags]
 			case "spell_container":
-				data = this.getSpellContainerData(item as SpellContainerSystemData);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true });
-				return [data, flags];
+				data = this.getSpellContainerData(item as SpellContainerSystemData)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
+				return [data, flags]
 			case "equipment":
-				data = this.getEquipmentData(item as EquipmentSystemData, context?.other);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).modifiers, { container: true });
-				return [data, flags];
+				data = this.getEquipmentData(item as EquipmentSystemData, context?.other)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).modifiers, { container: true })
+				return [data, flags]
 			case "equipment_container":
-				data = this.getEquipmentContainerData(item as EquipmentContainerSystemData, context?.other);
+				data = this.getEquipmentContainerData(item as EquipmentContainerSystemData, context?.other)
 				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, {
 					container: true,
 					other: context?.other,
-				});
+				})
 				flags[SYSTEM_NAME]!.contentsData!.concat(
 					this.importItems((item as any).modifiers, {
 						container: true,
 						other: context?.other,
 					})
-				);
-				return [data, flags];
+				)
+				return [data, flags]
 			case "eqp_modifier":
-				return [this.getEquipmentModifierData(item as EquipmentModifierSystemData), flags];
+				return [this.getEquipmentModifierData(item as EquipmentModifierSystemData), flags]
 			case "eqp_modifier_container":
-				data = this.getEquipmentModifierContainerData(item as EquipmentModifierContainerSystemData);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true });
-				return [data, flags];
+				data = this.getEquipmentModifierContainerData(item as EquipmentModifierContainerSystemData)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
+				return [data, flags]
 			case "note":
-				return [this.getNoteData(item as NoteSystemData), flags];
+				return [this.getNoteData(item as NoteSystemData), flags]
 			case "note_container":
-				data = this.getNoteContainerData(item as NoteContainerSystemData);
-				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true });
-				return [data, flags];
+				data = this.getNoteContainerData(item as NoteContainerSystemData)
+				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
+				return [data, flags]
 		}
 	}
 
@@ -353,7 +353,7 @@ export class CharacterImporter {
 			cr_adj: data.cr_adj ?? "none",
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
-		};
+		}
 	}
 
 	getTraitContainerData(data: TraitContainerSystemData): TraitContainerSystemData {
@@ -369,7 +369,7 @@ export class CharacterImporter {
 			cr: data.cr ?? CR.None,
 			cr_adj: data.cr_adj ?? "none",
 			open: data.open ?? false,
-		};
+		}
 	}
 
 	getTraitModifierData(data: TraitModifierSystemData): TraitModifierSystemData {
@@ -386,7 +386,7 @@ export class CharacterImporter {
 			affects: data.affects ?? "total",
 			levels: data.levels ?? 0,
 			features: data.features ? this.importFeatures(data.features) : [],
-		};
+		}
 	}
 
 	getTraitModifierContainerData(data: TraitModifierContainerSystemData): TraitModifierContainerSystemData {
@@ -398,7 +398,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
-		};
+		}
 	}
 
 	getSkillData(data: SkillSystemData): SkillSystemData {
@@ -419,7 +419,7 @@ export class CharacterImporter {
 			defaults: data.defaults ? this.importDefaults(data.defaults) : [],
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
-		};
+		}
 	}
 
 	getTechniqueData(data: TechniqueSystemData): TechniqueSystemData {
@@ -441,7 +441,7 @@ export class CharacterImporter {
 			defaults: data.defaults ? this.importDefaults(data.defaults) : [],
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
-		};
+		}
 	}
 
 	getSkillContainerData(data: SkillContainerSystemData): SkillContainerSystemData {
@@ -453,7 +453,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
-		};
+		}
 	}
 
 	getSpellData(data: SpellSystemData): SpellSystemData {
@@ -477,7 +477,7 @@ export class CharacterImporter {
 			maintenance_cost: data.maintenance_cost ?? "",
 			casting_time: data.casting_time ?? "",
 			duration: data.duration ?? "",
-		};
+		}
 	}
 
 	getRitualMagicSpellData(data: RitualMagicSpellSystemData): RitualMagicSpellSystemData {
@@ -503,7 +503,7 @@ export class CharacterImporter {
 			duration: data.duration ?? "",
 			base_skill: data.base_skill ?? "",
 			prereq_count: data.prereq_count ?? 0,
-		};
+		}
 	}
 
 	getSpellContainerData(data: SpellContainerSystemData): SpellContainerSystemData {
@@ -515,7 +515,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
-		};
+		}
 	}
 
 	getEquipmentData(data: EquipmentSystemData, other = false): EquipmentSystemData {
@@ -540,7 +540,7 @@ export class CharacterImporter {
 			quantity: data.quantity ?? 1,
 			ignore_weight_for_skills: data.ignore_weight_for_skills ?? false,
 			other: other,
-		};
+		}
 	}
 
 	getEquipmentContainerData(data: EquipmentContainerSystemData, other = false): EquipmentContainerSystemData {
@@ -566,7 +566,7 @@ export class CharacterImporter {
 			ignore_weight_for_skills: data.ignore_weight_for_skills ?? false,
 			other: other,
 			open: data.open ?? false,
-		};
+		}
 	}
 
 	getEquipmentModifierData(data: EquipmentModifierSystemData): EquipmentModifierSystemData {
@@ -584,12 +584,10 @@ export class CharacterImporter {
 			tech_level: data.tech_level ?? "",
 			features: data.features ? this.importFeatures(data.features) : [],
 			disabled: data.disabled ?? false,
-		};
+		}
 	}
 
-	getEquipmentModifierContainerData(
-		data: EquipmentModifierContainerSystemData
-	): EquipmentModifierContainerSystemData {
+	getEquipmentModifierContainerData(data: EquipmentModifierContainerSystemData): EquipmentModifierContainerSystemData {
 		return {
 			name: data.name ?? "Equipment Modifier Container",
 			type: data.type ?? "eqp_modifier_container",
@@ -598,7 +596,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
-		};
+		}
 	}
 
 	getNoteData(data: NoteSystemData): NoteSystemData {
@@ -610,7 +608,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			text: data.text ?? "",
-		};
+		}
 	}
 
 	getNoteContainerData(data: NoteContainerSystemData): NoteContainerSystemData {
@@ -623,35 +621,35 @@ export class CharacterImporter {
 			tags: data.tags ?? [],
 			text: data.text ?? "",
 			open: data.open ?? false,
-		};
+		}
 	}
 
 	importFeatures(features: Feature[]): Feature[] {
-		const list: Feature[] = [];
+		const list: Feature[] = []
 		for (const f of features) {
-			list.push(new BaseFeature(f, {}));
+			list.push(new BaseFeature(f, {}))
 		}
-		return list;
+		return list
 	}
 
 	importWeapons(features: Weapon[]): Weapon[] {
-		const list: Weapon[] = [];
+		const list: Weapon[] = []
 		for (const w of features) {
-			list.push(new BaseWeapon(w));
+			list.push(new BaseWeapon(w))
 		}
-		return list;
+		return list
 	}
 
 	importDefaults(features: SkillDefault[]): SkillDefault[] {
-		const list: SkillDefault[] = [];
+		const list: SkillDefault[] = []
 		for (const d of features) {
-			list.push(new SkillDefault(d));
+			list.push(new SkillDefault(d))
 		}
-		return list;
+		return list
 	}
 
 	async throwImportError(msg: string[]) {
-		ui.notifications?.error(msg.join("<br>"));
+		ui.notifications?.error(msg.join("<br>"))
 
 		await ChatMessage.create({
 			content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/chat/character-import-error.hbs`, {
@@ -660,7 +658,7 @@ export class CharacterImporter {
 			user: (game as Game).user!.id,
 			type: CONST.CHAT_MESSAGE_TYPES.WHISPER,
 			whisper: [(game as Game).user!.id],
-		});
-		return false;
+		})
+		return false
 	}
 }

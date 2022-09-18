@@ -1,7 +1,7 @@
-import { CharacterGURPS } from "./character";
+import { CharacterGURPS } from "./character"
 
-export type ActorGURPS = CharacterGURPS;
+export type ActorGURPS = CharacterGURPS
 
-export { BaseActorGURPS } from "./base";
+export { BaseActorGURPS } from "./base"
 
-export { CharacterGURPS } from "./character";
+export { CharacterGURPS } from "./character"
