@@ -1,12 +1,12 @@
-import { ItemSheetGURPS } from "@item/base/sheet";
+import { ItemSheetGURPS } from "@item/base/sheet"
 
 export class RitualMagicSpellSheet extends ItemSheetGURPS {
 	static get defaultOptions(): DocumentSheetOptions {
-		const options = super.defaultOptions;
+		const options = super.defaultOptions
 		mergeObject(options, {
 			classes: options.classes.concat(["ritual_magic_spell"]),
-		});
-		return options;
+		})
+		return options
 	}
 
 	getData(options?: Partial<DocumentSheetOptions> | undefined) {
@@ -18,7 +18,7 @@ export class RitualMagicSpellSheet extends ItemSheetGURPS {
 					...super.getData(options).attributes,
 				},
 			},
-		};
-		return sheetData;
+		}
+		return sheetData
 	}
 }

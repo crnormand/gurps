@@ -1,4 +1,4 @@
-import { CR, CRAdjustment } from "@module/data";
+import { CR, CRAdjustment } from "@module/data"
 
 /**
  *
@@ -6,20 +6,20 @@ import { CR, CRAdjustment } from "@module/data";
  * @param crAdj
  */
 export function adjustment(cr: CR, crAdj: CRAdjustment): number {
-	if (cr === CR.None) return 0;
+	if (cr === CR.None) return 0
 	switch (crAdj) {
 		case CRAdjustment.None:
-			return 0;
+			return 0
 		case CRAdjustment.ActionPenalty:
 		case CRAdjustment.ReactionPenalty:
 		case CRAdjustment.FrightCheckPenalty:
 		case CRAdjustment.FrightCheckBonus:
-			return Object.values(CR).indexOf(cr) - Object.values(CR).length;
+			return Object.values(CR).indexOf(cr) - Object.values(CR).length
 		case CRAdjustment.MinorCostOfLivingIncrease:
-			return 5 * Object.values(CR).length - Object.values(CR).indexOf(cr);
+			return 5 * Object.values(CR).length - Object.values(CR).indexOf(cr)
 		case CRAdjustment.MajorCostOfLivingIncrease:
-			return 10 * (1 << (Object.values(CR).length - (Object.values(CR).indexOf(cr) + 1)));
+			return 10 * (1 << (Object.values(CR).length - (Object.values(CR).indexOf(cr) + 1)))
 		default:
-			return adjustment(cr, CRAdjustment.None);
+			return adjustment(cr, CRAdjustment.None)
 	}
 }

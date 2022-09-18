@@ -1,17 +1,17 @@
-import { CharacterProfile } from "@actor/character/data";
-import { i18n } from "@util";
-import { AttributeDefObj } from "./attribute/attribute_def";
-import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data";
-import { GURPS } from "./gurps";
+import { CharacterProfile } from "@actor/character/data"
+import { i18n } from "@util"
+import { AttributeDefObj } from "./attribute/attribute_def"
+import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data"
+import { GURPS } from "./gurps"
 
-export const SYSTEM_NAME = "gcsga";
+export const SYSTEM_NAME = "gcsga"
 
 /**
  *
  */
 export function registerSettings(): void {
 	// Register any custom system settings here
-	const g = game as Game;
+	const g = game as Game
 
 	g.settings.register(SYSTEM_NAME, "basic_set_pdf", {
 		name: i18n("gurps.settings.basic_set_pdfs.name"),
@@ -25,7 +25,7 @@ export function registerSettings(): void {
 		},
 		default: "combined",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
-	});
+	})
 
 	g.settings.register(SYSTEM_NAME, "portrait_path", {
 		name: i18n("gurps.settings.portrait_path.name"),
@@ -39,7 +39,7 @@ export function registerSettings(): void {
 		},
 		default: "global",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
-	});
+	})
 
 	g.settings.register(SYSTEM_NAME, "portrait_overwrite", {
 		name: i18n("gurps.settings.portrait_overwrite.name"),
@@ -48,7 +48,7 @@ export function registerSettings(): void {
 		config: true,
 		type: Boolean,
 		default: true,
-	});
+	})
 
 	g.settings.register(SYSTEM_NAME, "compendiumBrowserPacks", {
 		name: "placeholder",
@@ -57,64 +57,64 @@ export function registerSettings(): void {
 		type: Object,
 		scope: "world",
 		onChange: () => {
-			GURPS.CompendiumBrowser.loadSettings();
+			GURPS.CompendiumBrowser.loadSettings()
 		},
-	});
+	})
 }
 
 /**
  *
  */
 function autoFillProfile(): CharacterProfile {
-	const p: CharacterProfile | any = {};
-	p.tech_level = "3";
-	p.player_name = "";
-	p.gender = "Male";
-	p.age = "25";
-	p.eyes = "Blue";
-	p.hair = "Brown";
-	p.skin = "Fair";
-	p.handedness = "Right";
-	p.height = "6'";
-	p.weight = "180 lb";
-	p.name = "John Doe";
-	p.birthday = "January 1";
-	return p;
+	const p: CharacterProfile | any = {}
+	p.tech_level = "3"
+	p.player_name = ""
+	p.gender = "Male"
+	p.age = "25"
+	p.eyes = "Blue"
+	p.hair = "Brown"
+	p.skin = "Fair"
+	p.handedness = "Right"
+	p.height = "6'"
+	p.weight = "180 lb"
+	p.name = "John Doe"
+	p.birthday = "January 1"
+	return p
 }
 
 interface provider {
 	sheet: {
-		default_length_units: LengthUnits;
-		default_weight_units: WeightUnits;
-		user_description_display: DisplayMode;
-		modifiers_display: DisplayMode;
-		notes_display: DisplayMode;
-		skill_level_adj_display: DisplayMode;
-		use_multiplicative_modifiers: boolean;
-		use_modifying_dice_plus_adds: boolean;
-		damage_progression: DamageProgression;
-		use_simple_metric_conversions: boolean;
-		show_difficulty: boolean;
-		show_trait_modifier_adj: boolean;
-		show_equipment_modifier_adj: boolean;
-		show_spell_adj: boolean;
-		use_title_in_footer: boolean;
+		default_length_units: LengthUnits
+		default_weight_units: WeightUnits
+		user_description_display: DisplayMode
+		modifiers_display: DisplayMode
+		notes_display: DisplayMode
+		skill_level_adj_display: DisplayMode
+		use_multiplicative_modifiers: boolean
+		use_modifying_dice_plus_adds: boolean
+		damage_progression: DamageProgression
+		use_simple_metric_conversions: boolean
+		show_difficulty: boolean
+		show_trait_modifier_adj: boolean
+		show_equipment_modifier_adj: boolean
+		show_spell_adj: boolean
+		use_title_in_footer: boolean
 		page: {
-			paper_size: string;
-			top_margin: string;
-			left_margin: string;
-			bottom_margin: string;
-			right_margin: string;
-			orientation: string;
-		};
-		block_layout: Array<string>;
-		attributes: Record<string, AttributeDefObj>;
-		body_type: unknown;
-	};
+			paper_size: string
+			top_margin: string
+			left_margin: string
+			bottom_margin: string
+			right_margin: string
+			orientation: string
+		}
+		block_layout: Array<string>
+		attributes: Record<string, AttributeDefObj>
+		body_type: unknown
+	}
 	general: {
-		initial_points: number;
-		auto_fill: CharacterProfile;
-	};
+		initial_points: number
+		auto_fill: CharacterProfile
+	}
 }
 
 export const SETTINGS_TEMP: provider = {
@@ -330,8 +330,7 @@ export const SETTINGS_TEMP: provider = {
 					},
 					{
 						state: "Collapse",
-						explanation:
-							"Roll vs. HT every second to avoid falling unconscious\nMove and Dodge are halved (B419)",
+						explanation: "Roll vs. HT every second to avoid falling unconscious\nMove and Dodge are halved (B419)",
 						expression: "round($hp/3)",
 						ops: ["halve_move", "halve_dodge"],
 					},
@@ -570,4 +569,4 @@ export const SETTINGS_TEMP: provider = {
 		initial_points: 250,
 		auto_fill: autoFillProfile(),
 	},
-};
+}

@@ -1,9 +1,9 @@
-import { SYSTEM_NAME } from "@module/settings";
-import { CompendiumBrowser, CompendiumIndexData } from "..";
-import { CompendiumTab } from "./base";
+import { SYSTEM_NAME } from "@module/settings"
+import { CompendiumBrowser, CompendiumIndexData } from ".."
+import { CompendiumTab } from "./base"
 
 export class CompendiumSpellTab extends CompendiumTab {
-	override templatePath = `systems/${SYSTEM_NAME}/templates/compendium-browser/spell.hbs`;
+	override templatePath = `systems/${SYSTEM_NAME}/templates/compendium-browser/spell.hbs`
 
 	override get searchFields(): string[] {
 		return [
@@ -15,26 +15,26 @@ export class CompendiumSpellTab extends CompendiumTab {
 			"system.maintenance_cost",
 			"system.casting_time",
 			"system.duration",
-		];
+		]
 	}
 
 	constructor(browser: CompendiumBrowser) {
-		super(browser, "spell");
+		super(browser, "spell")
 	}
 
 	protected override async loadData(): Promise<void> {
-		const spell_list: CompendiumIndexData[] = [];
-		const indexFields = ["img", "name", "system", "flags"];
+		const spell_list: CompendiumIndexData[] = []
+		const indexFields = ["img", "name", "system", "flags"]
 
 		for await (const { pack, index } of this.browser.packLoader.loadPacks(
 			"Item",
 			this.browser.loadedPacks("spell"),
 			indexFields
 		)) {
-			const collection = (game as Game).packs.get(pack.collection);
-			((await collection?.getDocuments()) as any).forEach((spell: any) => {
-				if (!["spell", "spell_container"].includes(spell.type)) return;
-				spell.prepareData();
+			const collection = (game as Game).packs.get(pack.collection)
+			;((await collection?.getDocuments()) as any).forEach((spell: any) => {
+				if (!["spell", "spell_container"].includes(spell.type)) return
+				spell.prepareData()
 				// TODO: hasAllIndexFields
 				spell_list.push({
 					_id: spell._id,
@@ -60,13 +60,13 @@ export class CompendiumSpellTab extends CompendiumTab {
 					casting_time: spell.system.casting_time,
 					duration: spell.system.duration,
 					difficulty: `${spell.attribute.toUpperCase()}/${spell.difficulty.toUpperCase()}`,
-				});
-			});
+				})
+			})
 
 			// TODO: get rid of
-			spell_list.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
+			spell_list.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
 		}
 
-		this.indexData = spell_list;
+		this.indexData = spell_list
 	}
 }

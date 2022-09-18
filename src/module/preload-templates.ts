@@ -1,4 +1,4 @@
-import { SYSTEM_NAME } from "./settings";
+import { SYSTEM_NAME } from "./settings"
 
 /**
  *
@@ -80,19 +80,19 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"compendium-browser/note",
 		"compendium-browser/item-notes",
 		"compendium-browser/settings",
-	];
-	const formattedPaths: string[] = [];
+	]
+	const formattedPaths: string[] = []
 	for (let filename of templatePaths) {
-		const name = filename;
-		filename = `systems/${SYSTEM_NAME}/templates/${filename}.hbs`;
+		const name = filename
+		filename = `systems/${SYSTEM_NAME}/templates/${filename}.hbs`
 		// Const match = filename.match(`.*/(.*).hbs`);
 		// const name = match ? match[1] : "";
 		fetch(filename)
 			.then(it => it.text())
 			.then(async text => {
-				if (name) Handlebars.registerPartial(name, text);
-				formattedPaths.push(name);
-			});
+				if (name) Handlebars.registerPartial(name, text)
+				formattedPaths.push(name)
+			})
 	}
-	return loadTemplates(formattedPaths);
+	return loadTemplates(formattedPaths)
 }

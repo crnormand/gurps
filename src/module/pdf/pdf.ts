@@ -1,6 +1,6 @@
-import { PDFViewerSheet } from "@module/pdf/sheet";
-import { SYSTEM_NAME } from "@module/settings";
-import { i18n } from "@util";
+import { PDFViewerSheet } from "@module/pdf/sheet"
+import { SYSTEM_NAME } from "@module/settings"
+import { i18n } from "@util"
 
 export const SJG_links = {
 	ACT1: "http://www.warehouse23.com/products/gurps-action-1-heroes",
@@ -55,7 +55,7 @@ export const SJG_links = {
 	TSOR: "http://www.warehouse23.com/products/gurps-thaumatology-sorcery",
 	UT: "http://www.warehouse23.com/products/gurps-ultra-tech",
 	VOR: "http://www.warehouse23.com/products/vorkosigan-saga-sourcebook-and-roleplaying-game",
-};
+}
 
 /**
  *
@@ -63,48 +63,48 @@ export const SJG_links = {
  */
 export function openPDF(pdfs: string) {
 	for (let link of pdfs.split(",")) {
-		link = link.trim();
-		const colonIndex = link.indexOf(":");
-		let book = "";
-		let page = 0;
+		link = link.trim()
+		const colonIndex = link.indexOf(":")
+		let book = ""
+		let page = 0
 		if (colonIndex > 0) {
-			book = link.substring(0, colonIndex).trim();
-			page = parseInt(link.substring(colonIndex + 1));
+			book = link.substring(0, colonIndex).trim()
+			page = parseInt(link.substring(colonIndex + 1))
 		} else {
-			book = link.replaceAll(/\d/g, "").trim();
-			page = parseInt(link.replaceAll(/\D/g, ""));
+			book = link.replaceAll(/\d/g, "").trim()
+			page = parseInt(link.replaceAll(/\D/g, ""))
 		}
 
 		if (book === "B") {
-			const s = (game as Game).settings.get(SYSTEM_NAME, "basic_set_pdf");
+			const s = (game as Game).settings.get(SYSTEM_NAME, "basic_set_pdf")
 			if (page > 336) {
 				if (s === "separate") {
-					book = "BX";
-					page = page - 335;
-				} else page += 2;
+					book = "BX"
+					page = page - 335
+				} else page += 2
 			}
 		}
 
-		console.log(book);
+		console.log(book)
 		if ((game as Game).journal?.size === 0) {
-			let url = (SJG_links as any)[book];
+			let url = (SJG_links as any)[book]
 			if (!url) {
-				if (pdfs.includes("http")) url = pdfs;
-				else url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb";
+				if (pdfs.includes("http")) url = pdfs
+				else url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb"
 			}
-			window.open(url, "_blank");
+			window.open(url, "_blank")
 		} else {
-			const pdfPages: any[] = [];
-			(game as Game).journal?.forEach(j => {
-				(j as any).pages.forEach((p: any) => {
-					if (p.type === "pdf") pdfPages.push(p);
-				});
-			});
-			let journalPage;
-			if (pdfPages.length) journalPage = pdfPages.find((e: any) => e.type === "pdf" && e.system.code === book);
+			const pdfPages: any[] = []
+			;(game as Game).journal?.forEach(j => {
+				;(j as any).pages.forEach((p: any) => {
+					if (p.type === "pdf") pdfPages.push(p)
+				})
+			})
+			let journalPage
+			if (pdfPages.length) journalPage = pdfPages.find((e: any) => e.type === "pdf" && e.system.code === book)
 			if (journalPage) {
-				const viewer = new PDFViewerSheet(journalPage, { pageNumber: page });
-				viewer.render(true);
+				const viewer = new PDFViewerSheet(journalPage, { pageNumber: page })
+				viewer.render(true)
 			}
 		}
 	}

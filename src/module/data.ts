@@ -1,10 +1,10 @@
-export type LengthUnits = "pt" | "in" | "ft" | "ft_in" | "yd" | "mi" | "mm" | "cm" | "km" | "m";
-export type WeightUnits = "oz" | "lb" | "tn" | "lt" | "t" | "kg" | "g";
-export type DisplayMode = "not_shown" | "inline" | "tooltip" | "inline_and_tooltip";
+export type LengthUnits = "pt" | "in" | "ft" | "ft_in" | "yd" | "mi" | "mm" | "cm" | "km" | "m"
+export type WeightUnits = "oz" | "lb" | "tn" | "lt" | "t" | "kg" | "g"
+export type DisplayMode = "not_shown" | "inline" | "tooltip" | "inline_and_tooltip"
 
 // TODO: change
-export type Height = `${number} ${LengthUnits}` | `${number}'` | `${number}'${number}"`;
-export type Weight = `${number} ${WeightUnits}`;
+export type Height = `${number} ${LengthUnits}` | `${number}'` | `${number}'${number}"`
+export type Weight = `${number} ${WeightUnits}`
 
 export enum DamageProgression {
 	BasicSet = "basic_set",
@@ -16,8 +16,8 @@ export enum DamageProgression {
 }
 
 export interface StringCompare {
-	compare: StringComparison;
-	qualifier?: string;
+	compare: StringComparison
+	qualifier?: string
 }
 
 export enum StringComparison {
@@ -33,8 +33,8 @@ export enum StringComparison {
 }
 
 export interface NumberCompare {
-	compare: NumberComparison;
-	qualifier: number;
+	compare: NumberComparison
+	qualifier: number
 }
 
 export enum NumberComparison {
@@ -82,7 +82,7 @@ export enum gid {
 	Will = "will",
 }
 
-export const attrPrefix = "attr.";
+export const attrPrefix = "attr."
 
 export enum CR {
 	None = 0,
@@ -122,9 +122,9 @@ export enum RollType {
 }
 
 export interface RollModifier {
-	name: string;
-	modifier: number;
-	tags: string[];
+	name: string
+	modifier: number
+	tags: string[]
 }
 
 export const rollModifiers: RollModifier[] = [
@@ -228,10 +228,10 @@ export const rollModifiers: RollModifier[] = [
 		modifier: -2,
 		tags: ["Ranged Combat"],
 	},
-];
+]
 
-export type ImagePath = `${string}.${ImageFileExtension}`;
-type ImageFileExtension = "jpg" | "jpeg" | "png" | "svg" | "webp";
+export type ImagePath = `${string}.${ImageFileExtension}`
+type ImageFileExtension = "jpg" | "jpeg" | "png" | "svg" | "webp"
 
 export enum UserFlags {
 	Init = "init",

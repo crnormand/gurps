@@ -1,22 +1,22 @@
 // @ts-nocheck
 
-import { ActorConstructorContextGURPS, BaseActorGURPS } from "@actor/base";
-import { ActorFlags } from "@actor/base/data";
-import { ActorSheetGURPS } from "@actor/base/sheet";
-import { StaticItemGURPS } from "@item/static";
-import EmbeddedCollection from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs";
-import { ActorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs";
-import { RollModifier, UserFlags } from "@module/data";
-import { SYSTEM_NAME } from "@module/settings";
-import { i18n } from "@util";
-import { MoveMode, MoveModeTypes, Posture, StaticCharacterSource, StaticCharacterSystemData } from "./data";
+import { ActorConstructorContextGURPS, BaseActorGURPS } from "@actor/base"
+import { ActorFlags } from "@actor/base/data"
+import { ActorSheetGURPS } from "@actor/base/sheet"
+import { StaticItemGURPS } from "@item/static"
+import EmbeddedCollection from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/embedded-collection.mjs"
+import { ActorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs"
+import { RollModifier, UserFlags } from "@module/data"
+import { SYSTEM_NAME } from "@module/settings"
+import { i18n } from "@util"
+import { MoveMode, MoveModeTypes, Posture, StaticCharacterSource, StaticCharacterSystemData } from "./data"
 
-Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			"_stats.systemVersion": (game as Game).system.version,
-		});
-});
+		})
+})
 
 class StaticCharacterGURPS extends BaseActorGURPS {
 	// IgnoreRender = false;
@@ -28,7 +28,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	getOwners() {
 		return (game as Game).users?.contents.filter(
 			u => this.getUserLevel(u) ?? 0 >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
-		);
+		)
 	}
 
 	// Async openSheet(newSheet: ActorSheetGURPS): Promise<void> {
@@ -43,23 +43,23 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// }
 
 	override prepareData(): void {
-		super.prepareData();
+		super.prepareData()
 	}
 
 	override prepareBaseData(): void {
 		// NOTE: why not set flags after sizemod calculation?
-		super.prepareBaseData();
-		this.system.conditions.posture = Posture.Standing;
-		this.setFlag(SYSTEM_NAME, ActorFlags.SelfModifiers, []);
-		this.setFlag(SYSTEM_NAME, ActorFlags.TargetModifiers, []);
+		super.prepareBaseData()
+		this.system.conditions.posture = Posture.Standing
+		this.setFlag(SYSTEM_NAME, ActorFlags.SelfModifiers, [])
+		this.setFlag(SYSTEM_NAME, ActorFlags.TargetModifiers, [])
 		// This.system.conditions.self = { modifiers: [] };
 		// this.system.conditions.target = { modifiers: [] };
-		this.system.conditions.exhausted = false;
-		this.system.conditions.reeling = false;
+		this.system.conditions.exhausted = false
+		this.system.conditions.reeling = false
 
-		let sizemod = this.system.traits.sizemod;
+		let sizemod = this.system.traits.sizemod
 		if (sizemod !== 0) {
-			this.system.conditions.target.modifiers.push();
+			this.system.conditions.target.modifiers.push()
 			this.setFlag(SYSTEM_NAME, ActorFlags.TargetModifiers, [
 				...(this.getFlag(SYSTEM_NAME, ActorFlags.TargetModifiers) as RollModifier[]),
 				{
@@ -67,7 +67,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 					modifier: sizemod,
 					tags: [],
 				},
-			]);
+			])
 		}
 		// Let attributes = this.getGurpsActorData().attributes;
 		// if (foundry.utils.getType(attributes.ST.import) === "string")
@@ -77,31 +77,39 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	}
 
 	prepareDerivedData(): void {
-		super.prepareDerivedData();
+		super.prepareDerivedData()
 
 		// Handle new move data -- if system.move exists, use the default value in that object to set the move
 		// value in the first entry of the encumbrance object
 		// TODO: migrate to GCS move calculation
 		if (this.system.encumbrance) {
-			let move: MoveMode = this.system.move;
+			let move: MoveMode = this.system.move
 			if (!move) {
-				let currentMove = this.system.encumbrance["00000"].move ?? this.system.basicmove.value;
+				let currentMove = this.system.encumbrance["00000"].move ?? this.system.basicmove.value
 				let value: MoveMode = {
 					mode: MoveModeTypes.Ground,
 					basic: currentMove,
 					default: true,
-				};
-				setProperty(this, "system.move.00000", value);
-				move = this.system.move;
+				}
+				setProperty(this, "system.move.00000", value)
+				move = this.system.move
 			}
 
-			let current = Object.values(move).find(it => it.default);
+			let current = Object.values(move).find(it => it.default)
 			if (current) {
-				this.system.encumbrance["00000"].move = current.basic;
+				this.system.encumbrance["00000"].move = current.basic
 			}
 		}
 
-		this.calculateDerivedValues();
+		this.calculateDerivedValues()
+	}
+
+	// execute after every import
+	async postImport() {
+		this.calculateDerivedValues()
+
+		// Convoluted code to add Items (and features) into the equipment list
+		let orig: StaticItemGURPS[] = this.items.contents.sort((a, b) => b.name?.localeCompare(a.name))
 	}
 
 	// Execute after every import
@@ -334,8 +342,8 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 }
 
 interface StaticCharacterGURPS extends BaseActorGURPS {
-	system: StaticCharacterSystemData;
-	_source: StaticCharacterSource;
+	system: StaticCharacterSystemData
+	_source: StaticCharacterSource
 }
 
-export { StaticCharacterGURPS };
+export { StaticCharacterGURPS }

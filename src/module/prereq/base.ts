@@ -1,10 +1,10 @@
-import { CharacterGURPS } from "@actor";
-import { NumberComparison, StringComparison } from "@module/data";
-import { TooltipGURPS } from "@module/tooltip";
-import { Prereq, PrereqList, PrereqType, TraitPrereq } from "@prereq";
+import { CharacterGURPS } from "@actor"
+import { NumberComparison, StringComparison } from "@module/data"
+import { TooltipGURPS } from "@module/tooltip"
+import { Prereq, PrereqList, PrereqType, TraitPrereq } from "@prereq"
 
 export interface PrereqConstructionContext {
-	ready?: boolean;
+	ready?: boolean
 }
 
 export class BasePrereq {
@@ -14,17 +14,17 @@ export class BasePrereq {
 		} else {
 			mergeObject(context, {
 				ready: true,
-			});
-			const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[data?.type as PrereqType];
-			if (PrereqConstructor) return new PrereqConstructor(data as any, context);
-			throw new Error("No PrereqConstructor provided");
+			})
+			const PrereqConstructor = (CONFIG as any).GURPS.Prereq.classes[data?.type as PrereqType]
+			if (PrereqConstructor) return new PrereqConstructor(data as any, context)
+			throw new Error("No PrereqConstructor provided")
 		}
 	}
 
 	static get defaults(): Record<string, any> {
 		return {
 			has: true,
-		};
+		}
 	}
 
 	static get default() {
@@ -37,7 +37,7 @@ export class BasePrereq {
 				has: true,
 			},
 			{ ready: true }
-		);
+		)
 	}
 
 	static get list() {
@@ -46,12 +46,12 @@ export class BasePrereq {
 			all: true,
 			when_tl: { compare: NumberComparison.None, qualifier: 0 },
 			prereqs: [],
-		});
+		})
 	}
 }
 
 export interface BasePrereq {
-	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean;
-	type: PrereqType;
-	has: boolean;
+	satisfied(character: CharacterGURPS, exclude: any, tooltip: TooltipGURPS, prefix: string): boolean
+	type: PrereqType
+	has: boolean
 }

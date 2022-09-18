@@ -1,4 +1,4 @@
-import { BaseFeature } from "./base";
+import { BaseFeature } from "./base"
 
 export class DRBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
@@ -6,11 +6,11 @@ export class DRBonus extends BaseFeature {
 			type: "dr_bonus",
 			location: "torso",
 			specialization: "all",
-		});
+		})
 	}
 }
 
 export interface DRBonus extends BaseFeature {
-	location: string;
-	specialization?: string;
+	location: string
+	specialization?: string
 }

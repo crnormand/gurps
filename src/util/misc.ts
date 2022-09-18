@@ -1,5 +1,5 @@
-import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data";
-import { v4 as uuidv4 } from "uuid";
+import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
+import { v4 as uuidv4 } from "uuid"
 
 /**
  *
@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from "uuid";
  * @param fallback
  */
 export function i18n(value: string, fallback?: string): string {
-	const result = (game as Game).i18n.localize(value);
-	if (fallback) return value === result ? fallback : result;
-	return result;
+	const result = (game as Game).i18n.localize(value)
+	if (fallback) return value === result ? fallback : result
+	return result
 }
 
 /**
@@ -19,11 +19,11 @@ export function i18n(value: string, fallback?: string): string {
  * @param fallback
  */
 export function i18n_f(value: string, data: Record<string, unknown>, fallback?: string): string {
-	const template = (game as Game).i18n.has(value) ? value : fallback;
-	if (!template) return value;
-	const result = (game as Game).i18n.format(template, data);
-	if (fallback) return value === result ? fallback : result;
-	return result;
+	const template = (game as Game).i18n.has(value) ? value : fallback
+	if (!template) return value
+	const result = (game as Game).i18n.format(template, data)
+	if (fallback) return value === result ? fallback : result
+	return result
 }
 
 /**
@@ -31,10 +31,10 @@ export function i18n_f(value: string, data: Record<string, unknown>, fallback?: 
  * @param i
  */
 export function signed(i: string | number): string {
-	if (i === "") i = "0";
-	if (typeof i === "string") i = parseFloat(i);
-	if (i >= 0) return `+${i.toString()}`;
-	return i.toString();
+	if (i === "") i = "0"
+	if (typeof i === "string") i = parseFloat(i)
+	if (i >= 0) return `+${i.toString()}`
+	return i.toString()
 }
 
 /**
@@ -44,42 +44,42 @@ export function signed(i: string | number): string {
  * @param reserved
  */
 export function sanitize(id: string, permit_leading_digits: boolean, reserved: string[]): string {
-	const buffer: string[] = [];
+	const buffer: string[] = []
 	for (let ch of id.split("")) {
-		if (ch.match("[A-Z]")) ch = ch.toLowerCase();
+		if (ch.match("[A-Z]")) ch = ch.toLowerCase()
 		if (ch === "_" || ch.match("[a-z]") || (ch.match("[0-9]") && (permit_leading_digits || buffer.length > 0)))
-			buffer.push(ch);
+			buffer.push(ch)
 	}
-	if (buffer.length === 0) buffer.push("_");
-	let ok = true;
+	if (buffer.length === 0) buffer.push("_")
+	let ok = true
 	while (ok) {
-		ok = true;
-		id = buffer.join("");
+		ok = true
+		id = buffer.join("")
 		for (const r of reserved) {
 			if (r === id) {
-				buffer.push("_");
-				ok = false;
-				break;
+				buffer.push("_")
+				ok = false
+				break
 			}
 		}
-		if (ok) return id;
+		if (ok) return id
 	}
 	// Cannot reach
-	return "";
+	return ""
 }
 
 /**
  *
  */
 export function newUUID(): string {
-	return uuidv4();
+	return uuidv4()
 }
 
 /**
  *
  */
 export function getCurrentTime(): string {
-	return new Date().toISOString();
+	return new Date().toISOString()
 }
 
 /**
@@ -88,37 +88,37 @@ export function getCurrentTime(): string {
  * @param base
  */
 export function stringCompare(value?: string | string[] | null, base?: StringCompare): boolean {
-	if (!base) return true;
-	if (!value) return false;
-	if (typeof value === "string") value = [value];
+	if (!base) return true
+	if (!value) return false
+	if (typeof value === "string") value = [value]
 	value = value.map(e => {
-		return e.toLowerCase();
-	});
+		return e.toLowerCase()
+	})
 	switch (base.compare) {
 		case StringComparison.None:
-			return true;
+			return true
 		case StringComparison.Is:
-			return !!base.qualifier && value.includes(base.qualifier);
+			return !!base.qualifier && value.includes(base.qualifier)
 		case StringComparison.IsNot:
-			return !!base.qualifier && !value.includes(base.qualifier);
+			return !!base.qualifier && !value.includes(base.qualifier)
 		case StringComparison.Contains:
-			for (const v of value) if (base.qualifier && v.includes(base.qualifier)) return true;
-			return false;
+			for (const v of value) if (base.qualifier && v.includes(base.qualifier)) return true
+			return false
 		case StringComparison.DoesNotContain:
-			for (const v of value) if (base.qualifier && v.includes(base.qualifier)) return false;
-			return true;
+			for (const v of value) if (base.qualifier && v.includes(base.qualifier)) return false
+			return true
 		case StringComparison.StartsWith:
-			for (const v of value) if (base.qualifier && v.startsWith(base.qualifier)) return true;
-			return false;
+			for (const v of value) if (base.qualifier && v.startsWith(base.qualifier)) return true
+			return false
 		case StringComparison.DoesNotStartWith:
-			for (const v of value) if (base.qualifier && v.startsWith(base.qualifier)) return false;
-			return true;
+			for (const v of value) if (base.qualifier && v.startsWith(base.qualifier)) return false
+			return true
 		case StringComparison.EndsWith:
-			for (const v of value) if (base.qualifier && v.endsWith(base.qualifier)) return true;
-			return false;
+			for (const v of value) if (base.qualifier && v.endsWith(base.qualifier)) return true
+			return false
 		case StringComparison.DoesNotEndWith:
-			for (const v of value) if (base.qualifier && v.endsWith(base.qualifier)) return false;
-			return true;
+			for (const v of value) if (base.qualifier && v.endsWith(base.qualifier)) return false
+			return true
 	}
 }
 
@@ -128,18 +128,18 @@ export function stringCompare(value?: string | string[] | null, base?: StringCom
  * @param base
  */
 export function numberCompare(value: number, base?: NumberCompare): boolean {
-	if (!base) return true;
+	if (!base) return true
 	switch (base.compare) {
 		case NumberComparison.None:
-			return true;
+			return true
 		case NumberComparison.Is:
-			return value === base.qualifier;
+			return value === base.qualifier
 		case NumberComparison.IsNot:
-			return value !== base.qualifier;
+			return value !== base.qualifier
 		case NumberComparison.AtMost:
-			return value <= base.qualifier;
+			return value <= base.qualifier
 		case NumberComparison.AtLeast:
-			return value >= base.qualifier;
+			return value >= base.qualifier
 	}
 }
 
@@ -148,32 +148,32 @@ export function numberCompare(value: number, base?: NumberCompare): boolean {
  * @param str
  */
 export function extractTechLevel(str: string): number {
-	return Math.min(Math.max(0, parseInt(str)), 12);
+	return Math.min(Math.max(0, parseInt(str)), 12)
 }
 
 export type WeightValueType =
 	| "weight_addition"
 	| "weight_percentage_addition"
 	| "weight_percentage_multiplier"
-	| "weight_multiplier";
+	| "weight_multiplier"
 
 /**
  *
  * @param s
  */
 export function determineModWeightValueTypeFromString(s: string): WeightValueType {
-	if (typeof s !== "string") s = `${s}`;
-	s = s.toLowerCase().trim();
+	if (typeof s !== "string") s = `${s}`
+	s = s.toLowerCase().trim()
 	if (s.endsWith("%")) {
-		if (s.startsWith("x")) return "weight_percentage_multiplier";
-		return "weight_percentage_addition";
-	} else if (s.endsWith("x") || s.startsWith("x")) return "weight_multiplier";
-	return "weight_addition";
+		if (s.startsWith("x")) return "weight_percentage_multiplier"
+		return "weight_percentage_addition"
+	} else if (s.endsWith("x") || s.startsWith("x")) return "weight_multiplier"
+	return "weight_addition"
 }
 
 export interface Fraction {
-	numerator: number;
-	denominator: number;
+	numerator: number
+	denominator: number
 }
 
 /**
@@ -181,29 +181,29 @@ export interface Fraction {
  * @param s
  */
 export function extractFraction(s: string): Fraction {
-	if (typeof s !== "string") s = `${s}`;
-	let v = s.trim();
+	if (typeof s !== "string") s = `${s}`
+	let v = s.trim()
 	while (v.length > 0 && v[-1].match("[0-9]")) {
-		v = v.substring(0, v.length - 1);
+		v = v.substring(0, v.length - 1)
 	}
-	const f = v.split("/");
+	const f = v.split("/")
 	const fraction: Fraction = {
 		numerator: parseInt(f[0]) || 0,
 		denominator: parseInt(f[1]) || 1,
-	};
-	const revised = determineModWeightValueTypeFromString(s);
+	}
+	const revised = determineModWeightValueTypeFromString(s)
 	if (revised === "weight_percentage_multiplier") {
 		if (fraction.numerator <= 0) {
-			fraction.numerator = 100;
-			fraction.denominator = 1;
+			fraction.numerator = 100
+			fraction.denominator = 1
 		}
 	} else if (revised === "weight_multiplier") {
 		if (fraction.numerator <= 0) {
-			fraction.numerator = 1;
-			fraction.denominator = 1;
+			fraction.numerator = 1
+			fraction.denominator = 1
 		}
 	}
-	return fraction;
+	return fraction
 }
 
 /**
@@ -214,8 +214,8 @@ export function dollarFormat(i: number): string {
 	const formatter = new Intl.NumberFormat("en-US", {
 		style: "currency",
 		currency: "USD",
-	});
-	return formatter.format(i);
+	})
+	return formatter.format(i)
 }
 
 /**
@@ -223,14 +223,14 @@ export function dollarFormat(i: number): string {
  * @param {...any} args
  */
 export function floatingMul(...args: number[]): number {
-	let multiplier = 100;
-	let x = args.length;
-	let result = multiplier;
+	let multiplier = 100
+	let x = args.length
+	let result = multiplier
 	for (const arg of args) {
-		const newArg = arg * multiplier;
-		result *= newArg;
+		const newArg = arg * multiplier
+		result *= newArg
 	}
-	return parseFloat((result / multiplier ** (x + 1)).toPrecision(12));
+	return parseFloat((result / multiplier ** (x + 1)).toPrecision(12))
 }
 
 /**
@@ -238,12 +238,12 @@ export function floatingMul(...args: number[]): number {
  * @param obj
  */
 export function toArray(obj: any): any[] {
-	if (Array.isArray(obj)) return obj;
-	const arr: any[] = [];
+	if (Array.isArray(obj)) return obj
+	const arr: any[] = []
 	for (const [key, value] of Object.entries(obj)) {
-		if (!isNaN(key as any) && !arr[parseInt(key)]) arr.push(value);
+		if (!isNaN(key as any) && !arr[parseInt(key)]) arr.push(value)
 	}
-	return arr;
+	return arr
 }
 
 /**
@@ -253,19 +253,19 @@ export function toArray(obj: any): any[] {
 export function toWord(n: number): string {
 	switch (n) {
 		case 1:
-			return "one";
+			return "one"
 		case 2:
-			return "two";
+			return "two"
 		case 3:
-			return "three";
+			return "three"
 		case 4:
-			return "four";
+			return "four"
 		case 5:
-			return "five";
+			return "five"
 		case 6:
-			return "six";
+			return "six"
 		default:
-			return "d6";
+			return "d6"
 	}
 }
 
@@ -279,7 +279,7 @@ export function removeAccents(str: string): string {
 		.replace(/[\u0300-\u036f]/g, "") // Remove accents
 		.replace(/([^\w]+|\s+)/g, "-") // Replace space and other characters by hyphen
 		.replace(/--+/g, "-") // Replaces multiple hyphens by one hyphen
-		.replace(/(^-+|-+$)/g, "");
+		.replace(/(^-+|-+$)/g, "")
 }
 
 /**
@@ -287,7 +287,7 @@ export function removeAccents(str: string): string {
  * @param s
  */
 export function capitalize(s: string): string {
-	return s.charAt(0).toUpperCase() + s.slice(1);
+	return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
 // Object.defineProperty(String.prototype, 'capitalize', {

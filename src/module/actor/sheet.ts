@@ -1,1 +1,1 @@
-export { CharacterSheetGURPS } from "./character/sheet";
+export { CharacterSheetGURPS } from "./character/sheet"

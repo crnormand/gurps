@@ -1,113 +1,113 @@
 name: Checks
 
 on:
-    - push
-    - pull_request
+  - push
+  - pull_request
 
 env:
-    node_version: 16
+  node_version: 16
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Install node
-              uses: actions/setup-node@v2
-              with:
-                  node-version: ${{ env.node_version }}
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
 
-            - name: Cache Node.js modules
-              uses: actions/cache@v2
-              with:
-                  path: .npm
-                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.OS }}-node-
-                      ${{ runner.OS }}-
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: .npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
 
-            - name: Install dependencies
-              run: npm ci --cache .npm --prefer-offline
+      - name: Install dependencies
+        run: npm ci --cache .npm --prefer-offline
 
-            - name: Lint
-              run: npm run lint
+      - name: Lint
+        run: npm run lint
 
-    test:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Install node
-              uses: actions/setup-node@v2
-              with:
-                  node-version: ${{ env.node_version }}
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
 
-            - name: Cache Node.js modules
-              uses: actions/cache@v2
-              with:
-                  path: .npm
-                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.OS }}-node-
-                      ${{ runner.OS }}-
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: .npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
 
-            - name: Install dependencies
-              run: npm ci --cache .npm --prefer-offline
+      - name: Install dependencies
+        run: npm ci --cache .npm --prefer-offline
 
-            - name: Test
-              run: npm run test:ci
+      - name: Test
+        run: npm run test:ci
 
-    typecheck:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Install node
-              uses: actions/setup-node@v2
-              with:
-                  node-version: ${{ env.node_version }}
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
 
-            - name: Cache Node.js modules
-              uses: actions/cache@v2
-              with:
-                  path: .npm
-                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.OS }}-node-
-                      ${{ runner.OS }}-
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: .npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
 
-            - name: Install dependencies
-              run: npm ci --cache .npm --prefer-offline
+      - name: Install dependencies
+        run: npm ci --cache .npm --prefer-offline
 
-            - name: Typecheck
-              run: npm run typecheck
+      - name: Typecheck
+        run: npm run typecheck
 
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-            - name: Install node
-              uses: actions/setup-node@v2
-              with:
-                  node-version: ${{ env.node_version }}
+      - name: Install node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.node_version }}
 
-            - name: Cache Node.js modules
-              uses: actions/cache@v2
-              with:
-                  path: .npm
-                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-                  restore-keys: |
-                      ${{ runner.OS }}-node-
-                      ${{ runner.OS }}-
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: .npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+            ${{ runner.OS }}-
 
-            - name: Install dependencies
-              run: npm ci --cache .npm --prefer-offline
+      - name: Install dependencies
+        run: npm ci --cache .npm --prefer-offline
 
-            - name: Build
-              run: npm run build
+      - name: Build
+        run: npm run build
