@@ -1,0 +1,26 @@
+<div class="desc item" data-uuid="Compendium.{{this.compendium}}.{{this._id}}" data-type="Item" {{{indent
+	this.parents.length}}}>
+	<div class="dropdown">
+		{{#if (eq this.type "eqp_modifier_container")}}
+		{{#if this.open}}
+		{{>actor/character/sections/dropdown-open}}
+		{{else}}
+		{{>actor/character/sections/dropdown-closed}}
+		{{/if}}
+		{{/if}}
+	</div>
+	<div class="name">
+		{{this.formattedName}}
+	</div>
+	{{>compendium-browser/item-notes}}
+</div>
+<div class="tl">{{this.techLevel}}</div>
+<div class="value">{{this.value}}</div>
+<div class="weight">{{this.weight}}</div>
+<div class="tags">{{join this.tags ", "}}</div>
+<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+{{#if this.open}}
+{{#each (sort this.children "sort")}}
+{{>compendium-browser/eqp_modifier}}
+{{/each}}
+{{/if}}

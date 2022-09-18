@@ -1,0 +1,234 @@
+0000000000000000000000000000000000000000 afa3101f17ce5171e158b4c5ea57cce218f3f228 nick <nick@arch.(none)> 1657907237 +0100	clone: from https://github.com/rinickolous/gcsga
+afa3101f17ce5171e158b4c5ea57cce218f3f228 2ac58a91fadb1270b5c62682483543da20fb0afe Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659458595 +0100	commit: style changes
+2ac58a91fadb1270b5c62682483543da20fb0afe b74eaec3b1def554eb0b3733965fda24a7cffdaa Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659459079 +0100	pull: Merge made by the 'ort' strategy.
+b74eaec3b1def554eb0b3733965fda24a7cffdaa a5aab03c4a0006650529e0ba9f144a9c0eebdf96 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659459126 +0100	commit: made husky executable
+a5aab03c4a0006650529e0ba9f144a9c0eebdf96 46751efdd5d11e7639cbb5b48b544004ee5e0423 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659459150 +0100	pull (start): checkout 46751efdd5d11e7639cbb5b48b544004ee5e0423
+46751efdd5d11e7639cbb5b48b544004ee5e0423 a83e51eb7a3aeaade2d84c6eefac125622ce22c7 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659459150 +0100	pull (pick): style changes
+a83e51eb7a3aeaade2d84c6eefac125622ce22c7 b4d907a3a4a2ac6d6d42527eea97a353516455e7 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659459150 +0100	pull (pick): made husky executable
+b4d907a3a4a2ac6d6d42527eea97a353516455e7 b4d907a3a4a2ac6d6d42527eea97a353516455e7 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659459150 +0100	pull (finish): returning to refs/heads/master
+b4d907a3a4a2ac6d6d42527eea97a353516455e7 a1761de6bf68f934c02a3c9a76668b10b8808612 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659460134 +0100	commit: update deps
+a1761de6bf68f934c02a3c9a76668b10b8808612 cf71f4767e23152aa8efbddba9ec6f5656881ba4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659460617 +0100	commit: update deps
+cf71f4767e23152aa8efbddba9ec6f5656881ba4 cf71f4767e23152aa8efbddba9ec6f5656881ba4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659473967 +0100	reset: moving to HEAD
+cf71f4767e23152aa8efbddba9ec6f5656881ba4 cf71f4767e23152aa8efbddba9ec6f5656881ba4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659473967 +0100	reset: moving to HEAD
+cf71f4767e23152aa8efbddba9ec6f5656881ba4 10339ca4dfa505baf4eb8d59d4845b18da75350d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659474098 +0100	commit: added custom gcs font
+10339ca4dfa505baf4eb8d59d4845b18da75350d 60d13c69260207f888dc4339b433b7c52fb1cd82 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659474356 +0100	commit: updated todo
+60d13c69260207f888dc4339b433b7c52fb1cd82 9d890bf85be12882e9bd60f0d7d7719714a66f55 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659489156 +0100	commit: updated to FoundryVTT v10
+9d890bf85be12882e9bd60f0d7d7719714a66f55 9d890bf85be12882e9bd60f0d7d7719714a66f55 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659698956 +0100	reset: moving to HEAD
+9d890bf85be12882e9bd60f0d7d7719714a66f55 9d890bf85be12882e9bd60f0d7d7719714a66f55 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659698956 +0100	reset: moving to HEAD
+9d890bf85be12882e9bd60f0d7d7719714a66f55 9d890bf85be12882e9bd60f0d7d7719714a66f55 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659698980 +0100	reset: moving to HEAD
+9d890bf85be12882e9bd60f0d7d7719714a66f55 9d890bf85be12882e9bd60f0d7d7719714a66f55 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659698980 +0100	reset: moving to HEAD
+9d890bf85be12882e9bd60f0d7d7719714a66f55 c6083c86dc004137718fc16253994bbd9fe3fb28 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659699032 +0100	commit: Updated system.json format for v10
+c6083c86dc004137718fc16253994bbd9fe3fb28 ccadf58e6d36bb63b1b24ce4216ac02ad2deafd8 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659798902 +0100	commit: updated GCS font
+ccadf58e6d36bb63b1b24ce4216ac02ad2deafd8 7b194b1d2469faf004291ebf836e79b6c8be7141 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659883524 +0100	commit: fixed nested item updates
+7b194b1d2469faf004291ebf836e79b6c8be7141 38fc73f6ae12b134d6da126e50bd06a44dee4fd7 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1659908145 +0100	commit: started on select boxes, continuing prereqs
+38fc73f6ae12b134d6da126e50bd06a44dee4fd7 cc49168330691818cf699c79cf1a18a2a206dd52 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660140941 +0100	commit: fixed parsing prereq and feature arrays
+cc49168330691818cf699c79cf1a18a2a206dd52 dbc69c35ff8f5f81d13391639bed20eb296a9b4e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660223955 +0100	pull: Fast-forward
+dbc69c35ff8f5f81d13391639bed20eb296a9b4e 59bc53403e4a3851d4090a6c65e327617dcc30d3 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660246224 +0100	commit: fixed (for now) nested item prereq adding and removing
+59bc53403e4a3851d4090a6c65e327617dcc30d3 9f0925163b3f568647a9e8a13d3622d4a5deb8f2 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660253943 +0100	commit: added attribute prereq UI
+9f0925163b3f568647a9e8a13d3622d4a5deb8f2 c03b311d71140b5d1586ce4ac5e5e76a81bc2719 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660274187 +0100	commit: updated pool thresholds to match new format
+c03b311d71140b5d1586ce4ac5e5e76a81bc2719 8ab60b5b2146767cbea8c8ccc565b96307ef7a5a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660299309 +0100	commit: added fuse for fuzzy search
+8ab60b5b2146767cbea8c8ccc565b96307ef7a5a 0442f50882ac9b6a7d63a73c9df1f1a48e6622ea Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660313594 +0100	commit: added rest of prereq UI
+0442f50882ac9b6a7d63a73c9df1f1a48e6622ea 399ca4a18d79c707f655656cd15466a7b3a31f2d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660390979 +0100	commit: added attribute separator support
+399ca4a18d79c707f655656cd15466a7b3a31f2d 8276699d2c40b322e8dbc7c0c3ec68a988366757 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660391076 +0100	commit: update deps
+8276699d2c40b322e8dbc7c0c3ec68a988366757 f2e91fecb5bc4611a8c25f6268101b074a12c814 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660494757 +0100	commit: prereq styling
+f2e91fecb5bc4611a8c25f6268101b074a12c814 5ea4db22a6088f4bd76c9fa2fc6a10ebec2c584d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660495093 +0100	commit: update deps
+5ea4db22a6088f4bd76c9fa2fc6a10ebec2c584d 8fc8844df41bc1df2a59fbc01f03ad3a00212afd Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660561723 +0100	commit: cleanup
+8fc8844df41bc1df2a59fbc01f03ad3a00212afd 8fc8844df41bc1df2a59fbc01f03ad3a00212afd Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660569250 +0100	reset: moving to HEAD
+8fc8844df41bc1df2a59fbc01f03ad3a00212afd 5ea4db22a6088f4bd76c9fa2fc6a10ebec2c584d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660569252 +0100	checkout: moving from master to 5ea4db22a6088f4bd76c9fa2fc6a10ebec2c584d
+5ea4db22a6088f4bd76c9fa2fc6a10ebec2c584d 8fc8844df41bc1df2a59fbc01f03ad3a00212afd Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660569421 +0100	checkout: moving from 5ea4db22a6088f4bd76c9fa2fc6a10ebec2c584d to master
+8fc8844df41bc1df2a59fbc01f03ad3a00212afd 7963beb4c86fef235d235f9cfe0697fccc274dbb Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660571490 +0100	commit: misc fixes
+7963beb4c86fef235d235f9cfe0697fccc274dbb fb5577b9915db72fa37adfbf3df82664896da86f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660646590 +0100	commit: feature UI progress
+fb5577b9915db72fa37adfbf3df82664896da86f 26afa1e6e6c82d7f212b27f77c3f0dc4aec5b877 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660647279 +0100	commit: added link handling for page references
+26afa1e6e6c82d7f212b27f77c3f0dc4aec5b877 14957c34bb6cfd863759cd9474336a474c9d06d4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660651876 +0100	commit: added character config menu (wip)
+14957c34bb6cfd863759cd9474336a474c9d06d4 3c000861a813214e7514fd88c153f6ec1ef8b56a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660654792 +0100	commit: styling fixes
+3c000861a813214e7514fd88c153f6ec1ef8b56a 68b5dd664c88a02962e4d753a6a0a4adc92336d5 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660745708 +0100	commit: finished features UI
+68b5dd664c88a02962e4d753a6a0a4adc92336d5 d8c57d09a6c2f409558460ea7152661db39de6ed Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660752009 +0100	commit: started trait modifier UI
+d8c57d09a6c2f409558460ea7152661db39de6ed e84d414938477d43619c2f4b9def9f942704d2f6 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660765965 +0100	commit: some styling cleanup
+e84d414938477d43619c2f4b9def9f942704d2f6 3d3c2b0a3909546d1758a84e94bb2aba352ee050 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660861372 +0100	commit: added support for modifier containers
+3d3c2b0a3909546d1758a84e94bb2aba352ee050 601de2eb543258e147b765130c7aab3e99302eba Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1660948921 +0100	commit: added dropping items onto item sheets
+601de2eb543258e147b765130c7aab3e99302eba 77a216095a69555d23902be5fdfa36e3af1f7f41 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661091206 +0100	commit: container cleanup & prereq/feature editing fixes
+77a216095a69555d23902be5fdfa36e3af1f7f41 eb97f5fa119eca32f2bf50623bf667f3d70c7a2e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661107594 +0100	commit: container cleanup and start on weapon editor
+eb97f5fa119eca32f2bf50623bf667f3d70c7a2e c6e5122cf55632591835b5a1195b6f122f58a63b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661124798 +0100	commit: finished base weapon editor sheets
+c6e5122cf55632591835b5a1195b6f122f58a63b e1c20e4f450a6c6eec22fea045eeba1836b25298 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661124915 +0100	commit (amend): finished base weapon editor sheets
+e1c20e4f450a6c6eec22fea045eeba1836b25298 c6e5122cf55632591835b5a1195b6f122f58a63b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661124929 +0100	pull (start): checkout c6e5122cf55632591835b5a1195b6f122f58a63b
+c6e5122cf55632591835b5a1195b6f122f58a63b eab68de9053795a7a96477e95e3eacacb6eacf70 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661124953 +0100	rebase (continue): finished base weapon editor sheets
+eab68de9053795a7a96477e95e3eacacb6eacf70 eab68de9053795a7a96477e95e3eacacb6eacf70 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661124968 +0100	rebase (continue) (finish): returning to refs/heads/master
+eab68de9053795a7a96477e95e3eacacb6eacf70 a7c714600746a2dc4cbe85f0962ce6a1690b53c5 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661162144 +0100	commit: update deps
+a7c714600746a2dc4cbe85f0962ce6a1690b53c5 7b8fa5f1c8dc17f3ab99a0a62b0ffff6f9b56e02 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661208073 +0100	commit: added trait container sheet, working on chat roll templates
+7b8fa5f1c8dc17f3ab99a0a62b0ffff6f9b56e02 55e966a90b7cf98dfe74462b367642196ef1e318 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661272798 +0100	pull: Fast-forward
+55e966a90b7cf98dfe74462b367642196ef1e318 2d4f17f58883a1cce436f417bbaafcef8b19d113 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661283313 +0100	commit: cleanup and fixes
+2d4f17f58883a1cce436f417bbaafcef8b19d113 9e75e211c979ba1498cbb5cc37f632b12f35f97d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661287807 +0100	commit: fixed weapon editor sheet
+9e75e211c979ba1498cbb5cc37f632b12f35f97d aac8773c5f0feb5fb1a86a9570f45185a5dfdc6a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661295943 +0100	commit: fixed relative item sorting on charsheet
+aac8773c5f0feb5fb1a86a9570f45185a5dfdc6a fd6795d119294803a591142c2cc5496ce9fd9aed Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661328369 +0100	commit: update deps
+fd6795d119294803a591142c2cc5496ce9fd9aed d112d64fcd747837c25e0a51f9062ac731d39082 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661348040 +0100	commit: added the remaining item sheets
+d112d64fcd747837c25e0a51f9062ac731d39082 aeae25f870f196623f5a68e9ac0e8848985dcfef Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661356212 +0100	commit: localization file reformat
+aeae25f870f196623f5a68e9ac0e8848985dcfef fbcd6536945b4b7cbf1b4094a129a63b93b481ce Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661521705 +0100	commit: fixed some number inputs returning empty string instead of 0
+fbcd6536945b4b7cbf1b4094a129a63b93b481ce 6f7255d8276f06e308ed0397a3c7781b9b2c7f04 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661725867 +0100	commit: added the modifier prompt
+6f7255d8276f06e308ed0397a3c7781b9b2c7f04 e4ca68ff7afa84dcf25fcc0ee554b0ba393f92ca Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661774741 +0100	commit: update deps
+e4ca68ff7afa84dcf25fcc0ee554b0ba393f92ca 0137daf78ee756241f95b6c298543dd305c01735 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661775025 +0100	revert: Revert "added the modifier prompt"
+0137daf78ee756241f95b6c298543dd305c01735 0137daf78ee756241f95b6c298543dd305c01735 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661775072 +0100	reset: moving to HEAD
+0137daf78ee756241f95b6c298543dd305c01735 ae60d32091d11b2af97848169d0aab477ab0a7c6 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661775092 +0100	revert: Revert "update deps"
+ae60d32091d11b2af97848169d0aab477ab0a7c6 e4ca68ff7afa84dcf25fcc0ee554b0ba393f92ca Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661775148 +0100	reset: moving to e4ca68ff7afa84dcf25fcc0ee554b0ba393f92ca
+e4ca68ff7afa84dcf25fcc0ee554b0ba393f92ca e4ca68ff7afa84dcf25fcc0ee554b0ba393f92ca Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661775212 +0100	reset: moving to HEAD
+e4ca68ff7afa84dcf25fcc0ee554b0ba393f92ca 6febb1bb752f9926119b9776983f2fbfeb1222af Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661775228 +0100	revert: Revert "update deps"
+6febb1bb752f9926119b9776983f2fbfeb1222af 9e7a1fa2a44a678c2cc01240866201ba991b5ed1 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661777379 +0100	commit: rename mod prompt files
+9e7a1fa2a44a678c2cc01240866201ba991b5ed1 906e9c49724e23b7e051ea1a728fdf0b86cca4c4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661863253 +0100	commit: begin GGA integration work, start on library import
+906e9c49724e23b7e051ea1a728fdf0b86cca4c4 dc6e6bc1bc72ff877722b83047f49dddd1d4545d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661886719 +0100	commit: template reformat, started compendium browser
+dc6e6bc1bc72ff877722b83047f49dddd1d4545d dc6e6bc1bc72ff877722b83047f49dddd1d4545d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661888298 +0100	reset: moving to HEAD
+dc6e6bc1bc72ff877722b83047f49dddd1d4545d dc6e6bc1bc72ff877722b83047f49dddd1d4545d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661888298 +0100	reset: moving to HEAD
+dc6e6bc1bc72ff877722b83047f49dddd1d4545d f9c7814b068a548f95a5af6b433ad1746ab8d901 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661888949 +0100	commit: update foundry-factory
+f9c7814b068a548f95a5af6b433ad1746ab8d901 b15ce4bda0a7be2fdd0e51f7df0ab249be0e8fdb Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661889216 +0100	commit: update deps
+b15ce4bda0a7be2fdd0e51f7df0ab249be0e8fdb 204c2b8c8b14092ceadd93b039bcb51ba13b6ee5 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661895325 +0100	commit: further work on library browser
+204c2b8c8b14092ceadd93b039bcb51ba13b6ee5 48e8c156b97f52461d26ad9b7ff68988d107f610 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661951054 +0100	commit: more work on static character model
+48e8c156b97f52461d26ad9b7ff68988d107f610 bba8b5800d8eb6f79ff8da766ee24d4a88837677 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661954828 +0100	commit: removed unused color variable
+bba8b5800d8eb6f79ff8da766ee24d4a88837677 5d595ec31d3a194a45231c81f2c69aa7a843b63b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661978511 +0100	commit: library browser styling
+5d595ec31d3a194a45231c81f2c69aa7a843b63b 45cb553260b08fb80f17f91a38ace474e3bad01c Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1661985217 +0100	commit: added XML to JS object conversion
+45cb553260b08fb80f17f91a38ace474e3bad01c b7baad2ec553e3a7a7130ea132d2815623cb0856 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662023994 +0100	commit: started processing for GCA import
+b7baad2ec553e3a7a7130ea132d2815623cb0856 f830ca03f178c469865f751ee2527b57cb6cecd7 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662049556 +0100	commit: temp bug fixes for GCA import
+f830ca03f178c469865f751ee2527b57cb6cecd7 7d0d79074a6fc1d8fdc1288405eac3541dd0b31e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662152987 +0100	commit: added most items to GCA direct import
+7d0d79074a6fc1d8fdc1288405eac3541dd0b31e 512789472243914d59a3f118dd2a6ca92f31cf2f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662153029 +0100	commit: updated todo
+512789472243914d59a3f118dd2a6ca92f31cf2f 374651304c0a68d71be89a1d6cd2ab8fce7ac3a4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662300150 +0100	commit: added some default item values
+374651304c0a68d71be89a1d6cd2ab8fce7ac3a4 78333ebfdf32a15afa900b662dd2ca6a47bbb995 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662300176 +0100	pull (start): checkout 78333ebfdf32a15afa900b662dd2ca6a47bbb995
+78333ebfdf32a15afa900b662dd2ca6a47bbb995 028faf17a3807ca1b7c85a36151bf8cb518d3a2f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662300176 +0100	pull (pick): added some default item values
+028faf17a3807ca1b7c85a36151bf8cb518d3a2f 028faf17a3807ca1b7c85a36151bf8cb518d3a2f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662300176 +0100	pull (finish): returning to refs/heads/master
+028faf17a3807ca1b7c85a36151bf8cb518d3a2f 3bab553d1eed5fbdd7ee00326031358b32a09443 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662331812 +0100	commit: added notes and ritual magic spells to GCA import
+3bab553d1eed5fbdd7ee00326031358b32a09443 af13843a7298ab8bfba4883a60721fdda39782c9 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662331943 +0100	commit (amend): added notes and ritual magic spells to GCA import
+af13843a7298ab8bfba4883a60721fdda39782c9 c8ac4a3945fa0a1145e715624e5c72c9aa295698 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662331968 +0100	commit (amend): added notes and ritual magic spells to GCA import
+c8ac4a3945fa0a1145e715624e5c72c9aa295698 8c893a575fa4ea7bec57b35add8319d52bf42e9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662331982 +0100	commit: removed unused images
+8c893a575fa4ea7bec57b35add8319d52bf42e9d 8c893a575fa4ea7bec57b35add8319d52bf42e9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662335460 +0100	reset: moving to HEAD
+8c893a575fa4ea7bec57b35add8319d52bf42e9d 674ef0e7718f1990bb98432185f03a6df404b45f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662335474 +0100	commit: updated todo
+674ef0e7718f1990bb98432185f03a6df404b45f 8c893a575fa4ea7bec57b35add8319d52bf42e9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662335665 +0100	reset: moving to HEAD@{1}
+8c893a575fa4ea7bec57b35add8319d52bf42e9d 8c893a575fa4ea7bec57b35add8319d52bf42e9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662335818 +0100	reset: moving to 8c893a5
+8c893a575fa4ea7bec57b35add8319d52bf42e9d a6fa3d0127619f23a29aa51c07576f4a6691cf07 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662337639 +0100	commit: improved loop performance
+a6fa3d0127619f23a29aa51c07576f4a6691cf07 8c893a575fa4ea7bec57b35add8319d52bf42e9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662342042 +0100	reset: moving to 8c893a5
+8c893a575fa4ea7bec57b35add8319d52bf42e9d 8c893a575fa4ea7bec57b35add8319d52bf42e9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662342049 +0100	reset: moving to HEAD
+8c893a575fa4ea7bec57b35add8319d52bf42e9d a6fa3d0127619f23a29aa51c07576f4a6691cf07 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662342090 +0100	pull: Fast-forward
+a6fa3d0127619f23a29aa51c07576f4a6691cf07 fb7e29792e330da37c0a703e2f43ab08ed541bd5 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662373246 +0100	commit: started on modifier browse menu
+fb7e29792e330da37c0a703e2f43ab08ed541bd5 f55d12005f118430c1463a05299686e75882f77e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662496048 +0100	commit: added dragging from library browser
+f55d12005f118430c1463a05299686e75882f77e f55d12005f118430c1463a05299686e75882f77e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662539361 +0100	checkout: moving from master to feature/library-browser
+f55d12005f118430c1463a05299686e75882f77e 045090f352b24c3f89e2065eec053ef362de1130 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662588057 +0100	commit: added list UI for library browser
+045090f352b24c3f89e2065eec053ef362de1130 9a3b48460638d70ab21140530322f8e05c9cbcec Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662636735 +0100	commit: lint fixes
+9a3b48460638d70ab21140530322f8e05c9cbcec b3554c496aeb7ecc48891c3ab32b1248396fd5ca Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662636769 +0100	commit (amend): lint fixes
+b3554c496aeb7ecc48891c3ab32b1248396fd5ca f55d12005f118430c1463a05299686e75882f77e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662799867 +0100	checkout: moving from feature/library-browser to master
+f55d12005f118430c1463a05299686e75882f77e 021ca5e46b0ee77f45ab65ccb077f668a3aeb491 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662799897 +0100	commit: updated system.json
+021ca5e46b0ee77f45ab65ccb077f668a3aeb491 b3554c496aeb7ecc48891c3ab32b1248396fd5ca Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662799909 +0100	pull (start): checkout b3554c496aeb7ecc48891c3ab32b1248396fd5ca
+b3554c496aeb7ecc48891c3ab32b1248396fd5ca 80954bb3e847f99455c88791bcb6fb911c79cb7a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662799909 +0100	pull (pick): updated system.json
+80954bb3e847f99455c88791bcb6fb911c79cb7a 80954bb3e847f99455c88791bcb6fb911c79cb7a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662799909 +0100	pull (finish): returning to refs/heads/master
+80954bb3e847f99455c88791bcb6fb911c79cb7a d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662800041 +0100	commit: update deps
+d7291e1943ee9552fd98e726bdce62d9abb957f0 b3554c496aeb7ecc48891c3ab32b1248396fd5ca Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662800068 +0100	checkout: moving from master to feature/library-browser
+b3554c496aeb7ecc48891c3ab32b1248396fd5ca d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662800071 +0100	pull: Fast-forward
+d7291e1943ee9552fd98e726bdce62d9abb957f0 d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662800951 +0100	checkout: moving from feature/library-browser to master
+d7291e1943ee9552fd98e726bdce62d9abb957f0 d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662800960 +0100	checkout: moving from master to bugfix
+d7291e1943ee9552fd98e726bdce62d9abb957f0 d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662802860 +0100	reset: moving to HEAD
+d7291e1943ee9552fd98e726bdce62d9abb957f0 045090f352b24c3f89e2065eec053ef362de1130 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662802870 +0100	checkout: moving from bugfix to 045090f
+045090f352b24c3f89e2065eec053ef362de1130 d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662802929 +0100	checkout: moving from 045090f352b24c3f89e2065eec053ef362de1130 to bugfix
+d7291e1943ee9552fd98e726bdce62d9abb957f0 b3554c496aeb7ecc48891c3ab32b1248396fd5ca Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662802941 +0100	checkout: moving from bugfix to b3554c4
+b3554c496aeb7ecc48891c3ab32b1248396fd5ca d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662802968 +0100	checkout: moving from b3554c496aeb7ecc48891c3ab32b1248396fd5ca to bugfix
+d7291e1943ee9552fd98e726bdce62d9abb957f0 d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662803048 +0100	checkout: moving from bugfix to bugfix
+d7291e1943ee9552fd98e726bdce62d9abb957f0 cfa52fd5bd0c2def1cdb15b0bf98c18400fb493b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662803091 +0100	revert: Revert "lint fixes"
+cfa52fd5bd0c2def1cdb15b0bf98c18400fb493b cfa52fd5bd0c2def1cdb15b0bf98c18400fb493b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662803129 +0100	reset: moving to HEAD
+cfa52fd5bd0c2def1cdb15b0bf98c18400fb493b d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662803145 +0100	checkout: moving from bugfix to d7291e1
+d7291e1943ee9552fd98e726bdce62d9abb957f0 1dd2678c036a881a99f644db6fc718b147ad714f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662803441 +0100	revert: Revert "lint fixes"
+1dd2678c036a881a99f644db6fc718b147ad714f cfa52fd5bd0c2def1cdb15b0bf98c18400fb493b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662803488 +0100	checkout: moving from 1dd2678c036a881a99f644db6fc718b147ad714f to bugfix
+cfa52fd5bd0c2def1cdb15b0bf98c18400fb493b 633a07ec6149d94c9fafd2cbd3c8206e80ca4c06 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662805111 +0100	commit: redo lint fix
+633a07ec6149d94c9fafd2cbd3c8206e80ca4c06 69196999eefdbc45c8c8597ce83f2f9e0af2227c Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662805280 +0100	commit: added eslint-plugin-jsdoc
+69196999eefdbc45c8c8597ce83f2f9e0af2227c d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662805390 +0100	checkout: moving from bugfix to feature/library-browser
+d7291e1943ee9552fd98e726bdce62d9abb957f0 f7ec5d446bd33e82696ac86a7f778a173b86a896 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662805392 +0100	pull: Fast-forward
+f7ec5d446bd33e82696ac86a7f778a173b86a896 0c609e9098b3906ff1ece5c8b79bb8ff37dbf396 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662819177 +0100	commit: (almost) finished library browser UI
+0c609e9098b3906ff1ece5c8b79bb8ff37dbf396 d41e29a5f79dfaa076177902661cceb248940807 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662907840 +0100	commit: finished library browser (for now)
+d41e29a5f79dfaa076177902661cceb248940807 d7291e1943ee9552fd98e726bdce62d9abb957f0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662908080 +0100	checkout: moving from feature/library-browser to master
+d7291e1943ee9552fd98e726bdce62d9abb957f0 847e3bb175cc0af1231c5760bd3707eb18a69558 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662908083 +0100	pull: Fast-forward
+847e3bb175cc0af1231c5760bd3707eb18a69558 847e3bb175cc0af1231c5760bd3707eb18a69558 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662908152 +0100	checkout: moving from master to feature/rolling
+847e3bb175cc0af1231c5760bd3707eb18a69558 bec3636e4b19bfe5aa5a30acebbc8cb1da651509 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662917194 +0100	commit: universal styling part 1
+bec3636e4b19bfe5aa5a30acebbc8cb1da651509 0f0894e46e375a21f6e843510c9cf361151989da Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662934504 +0100	commit: added PDF support
+0f0894e46e375a21f6e843510c9cf361151989da 0f0894e46e375a21f6e843510c9cf361151989da Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663108849 +0100	reset: moving to HEAD
+0f0894e46e375a21f6e843510c9cf361151989da 0f0894e46e375a21f6e843510c9cf361151989da Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663108849 +0100	reset: moving to HEAD
+0f0894e46e375a21f6e843510c9cf361151989da 9c474a3d37b8c8b20bbd79233f23f7949d861703 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663108883 +0100	commit: added modifier list to attack roll message
+9c474a3d37b8c8b20bbd79233f23f7949d861703 9c474a3d37b8c8b20bbd79233f23f7949d861703 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160335 +0100	reset: moving to HEAD
+9c474a3d37b8c8b20bbd79233f23f7949d861703 9c474a3d37b8c8b20bbd79233f23f7949d861703 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160478 +0100	reset: moving to HEAD
+9c474a3d37b8c8b20bbd79233f23f7949d861703 e97fa8acdd4939407e84ee1b390ef6f1052d7c80 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160483 +0100	rebase (start): checkout e97fa8acdd4939407e84ee1b390ef6f1052d7c80
+e97fa8acdd4939407e84ee1b390ef6f1052d7c80 697b0a2399c24306d88e8378b555f5435a4d3e21 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160483 +0100	rebase (pick): prereq styling
+697b0a2399c24306d88e8378b555f5435a4d3e21 7ae264f5678b8fb28236134d79509aa226c4ed3a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): update deps
+7ae264f5678b8fb28236134d79509aa226c4ed3a 6f1bba971a158b64488bf25df672ab884bbf4127 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): cleanup
+6f1bba971a158b64488bf25df672ab884bbf4127 2101ed6915270ab28927106ea2506e61672f9e48 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): misc fixes
+2101ed6915270ab28927106ea2506e61672f9e48 021ef7614e4e1ae4618d7507fb8a942671803420 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): feature UI progress
+021ef7614e4e1ae4618d7507fb8a942671803420 270759e1071d81f3bf336210c7c9ce206f2bd878 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added link handling for page references
+270759e1071d81f3bf336210c7c9ce206f2bd878 3923747fda08d085e2633aaed3b30b9686f28663 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added character config menu (wip)
+3923747fda08d085e2633aaed3b30b9686f28663 9c4a645f09c470cbd5bf43c2c7b0c463916609c7 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): styling fixes
+9c4a645f09c470cbd5bf43c2c7b0c463916609c7 6818d444dd609b04a1565e25d6f5279d787ec5b4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): finished features UI
+6818d444dd609b04a1565e25d6f5279d787ec5b4 e8e7458e75d5f0dad829ded894890f9a2dbaff34 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): started trait modifier UI
+e8e7458e75d5f0dad829ded894890f9a2dbaff34 b39a96db779d7ca414210d8ed345c17190788f6f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): some styling cleanup
+b39a96db779d7ca414210d8ed345c17190788f6f c11bba27e2ae62b291d5c9a81a3915c27d9c1ea3 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added support for modifier containers
+c11bba27e2ae62b291d5c9a81a3915c27d9c1ea3 bd06e37cd5f66365d6a9d1c5c98aded39a45b05a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added dropping items onto item sheets
+bd06e37cd5f66365d6a9d1c5c98aded39a45b05a defb1ed8d7d077c75499f665922075cb157afde7 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): container cleanup & prereq/feature editing fixes
+defb1ed8d7d077c75499f665922075cb157afde7 6a98cac69329c6daf48281cfadfd37a3e13072bb Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): container cleanup and start on weapon editor
+6a98cac69329c6daf48281cfadfd37a3e13072bb cb7ba6f07b5d3d79bf791203ca909e40ab5569a4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): finished base weapon editor sheets
+cb7ba6f07b5d3d79bf791203ca909e40ab5569a4 0c7de7ae557b9eb1a174fe2d155283deba49404e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): finished base weapon editor sheets
+0c7de7ae557b9eb1a174fe2d155283deba49404e 1767995eafcb38d17bca6d2cb895eba0ffa48a45 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): update deps
+1767995eafcb38d17bca6d2cb895eba0ffa48a45 662216fa2f5619e25e194a70ec7eb5e586e24030 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added trait container sheet, working on chat roll templates
+662216fa2f5619e25e194a70ec7eb5e586e24030 a573ddceed7452d27f4461183c5482db88fe26f8 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): Update TODO.md
+a573ddceed7452d27f4461183c5482db88fe26f8 6960d3e1a2499f4418a96f9a75b5448f2b2da019 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): Update TODO.md
+6960d3e1a2499f4418a96f9a75b5448f2b2da019 45f576a7a3ce25af575552598ad5d2701a0f9d9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): cleanup and fixes
+45f576a7a3ce25af575552598ad5d2701a0f9d9d f093feedae2350aa0923fbd6628da461da0e4ca5 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): fixed weapon editor sheet
+f093feedae2350aa0923fbd6628da461da0e4ca5 9479cb0771d3560626e3268f8419b5efc8af460f Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): fixed relative item sorting on charsheet
+9479cb0771d3560626e3268f8419b5efc8af460f e14071e7156e57dc9c210132a45fd702cc56019c Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): update deps
+e14071e7156e57dc9c210132a45fd702cc56019c 20767b06d72aec25e7c585f51dddedd6210c18bb Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added the remaining item sheets
+20767b06d72aec25e7c585f51dddedd6210c18bb 404f39acfedc47913b8c0881a044d9a0e7b33c2c Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): localization file reformat
+404f39acfedc47913b8c0881a044d9a0e7b33c2c 6df47a432d482260d6caeff66443e65e1241c02d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): fixed some number inputs returning empty string instead of 0
+6df47a432d482260d6caeff66443e65e1241c02d 05b25a0a62c8343967c51b089d34094e72a0f46e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added the modifier prompt
+05b25a0a62c8343967c51b089d34094e72a0f46e 74ec8cef48b2cc5d16a53b7b5489c86b30b55742 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): update deps
+74ec8cef48b2cc5d16a53b7b5489c86b30b55742 5e2c8bda89710477979975ce4ebf7e1823a68d9d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): Revert "update deps"
+5e2c8bda89710477979975ce4ebf7e1823a68d9d 99f6a69b2e525d2b85eb6e92cc7de8fce5940dee Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): rename mod prompt files
+99f6a69b2e525d2b85eb6e92cc7de8fce5940dee dd9ffe61f431d815ff72db188d4c3c75d9d19abb Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): begin GGA integration work, start on library import
+dd9ffe61f431d815ff72db188d4c3c75d9d19abb fc1e5c8738e99c2bce3034a646903c155c482b19 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): template reformat, started compendium browser
+fc1e5c8738e99c2bce3034a646903c155c482b19 d8eaf8787d9b2cfab99db5212bd5a94fcd05cdde Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): update foundry-factory
+d8eaf8787d9b2cfab99db5212bd5a94fcd05cdde 81dc2ee873b8c47c0226f7fe4cec2844d6f90e54 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): update deps
+81dc2ee873b8c47c0226f7fe4cec2844d6f90e54 5d0de5fd53cea360dcba3170e8d0e49976ad11ef Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): further work on library browser
+5d0de5fd53cea360dcba3170e8d0e49976ad11ef 33929380635b6d89a3bdc4ace2369c084377a12d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): more work on static character model
+33929380635b6d89a3bdc4ace2369c084377a12d 072ffe49940a538554827e9a3b2cbd61d7445132 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): removed unused color variable
+072ffe49940a538554827e9a3b2cbd61d7445132 8abd45f0b5633aab2e23b0864499f7e6406538ff Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): library browser styling
+8abd45f0b5633aab2e23b0864499f7e6406538ff 643fabcf50440373044e4eb9b3c49c5ad0eae521 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added XML to JS object conversion
+643fabcf50440373044e4eb9b3c49c5ad0eae521 f296d1577bf980de95ed24eb7ed7a474234ea360 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): started processing for GCA import
+f296d1577bf980de95ed24eb7ed7a474234ea360 c073dba707025d48ca6f613ecf7274543e6f2c8a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): temp bug fixes for GCA import
+c073dba707025d48ca6f613ecf7274543e6f2c8a 16d9933640d8aa64124a9da18e449287bce8a175 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added most items to GCA direct import
+16d9933640d8aa64124a9da18e449287bce8a175 351ffc38d38ecb548884186f71e3661d1ca6b923 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): updated todo
+351ffc38d38ecb548884186f71e3661d1ca6b923 1230e58604cfa846b4a61cf3392ee00b302051d1 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): Update TODO.md
+1230e58604cfa846b4a61cf3392ee00b302051d1 6d4bc1063dfe2c331868916a50a8bd3c49e1d71d Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added some default item values
+6d4bc1063dfe2c331868916a50a8bd3c49e1d71d c1e47df4861a6799d22a7b321d3ead7ef32b4228 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added notes and ritual magic spells to GCA import
+c1e47df4861a6799d22a7b321d3ead7ef32b4228 7716f5f6a365434437df878d44b9f2b17e10efc3 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): removed unused images
+7716f5f6a365434437df878d44b9f2b17e10efc3 b0009ff0581223aea707b8eea755325102d0c727 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): improved loop performance
+b0009ff0581223aea707b8eea755325102d0c727 9e8aaee89acf440b5995881f656971d42ede92e0 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): started on modifier browse menu
+9e8aaee89acf440b5995881f656971d42ede92e0 34c8562802e8ac668fd8908e2eaf59de44d62073 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added dragging from library browser
+34c8562802e8ac668fd8908e2eaf59de44d62073 6801f4bb6cb3de3d7f587846ef12a8da2951bb95 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added list UI for library browser
+6801f4bb6cb3de3d7f587846ef12a8da2951bb95 4b594a9b5dc89a839a1d854ab3420b46bb36196a Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): lint fixes
+4b594a9b5dc89a839a1d854ab3420b46bb36196a 0df268e1b647bba004ada65512557fa154e7bf40 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): updated system.json
+0df268e1b647bba004ada65512557fa154e7bf40 efe352dc4186a781282df1b6f42ae639f460bd67 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): update deps
+efe352dc4186a781282df1b6f42ae639f460bd67 e742891df0fb5988299f1f437ad45ed2ed05e017 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): Revert "lint fixes"
+e742891df0fb5988299f1f437ad45ed2ed05e017 fc2d9844a47f873b15aa4885776b5a8478ff20d4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): redo lint fix
+fc2d9844a47f873b15aa4885776b5a8478ff20d4 8313037239491c215a33c42deec364eca8e819bb Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added eslint-plugin-jsdoc
+8313037239491c215a33c42deec364eca8e819bb d8297c46691bdd72272cddf37ebe0b4f36becd28 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): (almost) finished library browser UI
+d8297c46691bdd72272cddf37ebe0b4f36becd28 388fbdc3401e5d92abb8b81294b989695437398e Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): finished library browser (for now)
+388fbdc3401e5d92abb8b81294b989695437398e 022d3b14c7c974dbd50be104f92da5b051e223b4 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): universal styling part 1
+022d3b14c7c974dbd50be104f92da5b051e223b4 c59405f2a8a1e0dce0caa0d5d9a4bc4c3e6bd71b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added PDF support
+c59405f2a8a1e0dce0caa0d5d9a4bc4c3e6bd71b b6060a0364eb4d8e54e0fab119949f27d781fc88 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (pick): added modifier list to attack roll message
+b6060a0364eb4d8e54e0fab119949f27d781fc88 b6060a0364eb4d8e54e0fab119949f27d781fc88 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (finish): returning to refs/heads/feature/rolling
+b6060a0364eb4d8e54e0fab119949f27d781fc88 c5be3f05820ed96de37a7cc06a7d841e23380bad Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160524 +0100	rebase (start): checkout c5be3f05820ed96de37a7cc06a7d841e23380bad
+c5be3f05820ed96de37a7cc06a7d841e23380bad b6060a0364eb4d8e54e0fab119949f27d781fc88 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160697 +0100	checkout: moving from c5be3f05820ed96de37a7cc06a7d841e23380bad to feature/rolling
+b6060a0364eb4d8e54e0fab119949f27d781fc88 9535efd873cf6bd8bf28564f235fe9967d79c1ac Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161269 +0100	commit: added clickable modifiers and margin of success/failure
+9535efd873cf6bd8bf28564f235fe9967d79c1ac b6060a0364eb4d8e54e0fab119949f27d781fc88 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161337 +0100	rebase (abort): updating HEAD
+b6060a0364eb4d8e54e0fab119949f27d781fc88 b6060a0364eb4d8e54e0fab119949f27d781fc88 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161337 +0100	rebase (abort): updating HEAD
+b6060a0364eb4d8e54e0fab119949f27d781fc88 9c474a3d37b8c8b20bbd79233f23f7949d861703 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161341 +0100	pull origin feature/rolling (start): checkout 9c474a3d37b8c8b20bbd79233f23f7949d861703
+9c474a3d37b8c8b20bbd79233f23f7949d861703 9c474a3d37b8c8b20bbd79233f23f7949d861703 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161341 +0100	pull origin feature/rolling (finish): returning to refs/heads/feature/rolling
+9c474a3d37b8c8b20bbd79233f23f7949d861703 80acbb6f9c35c7ac57044646bf026496e568381b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663163582 +0100	commit: reapplied changes from missing commit
+80acbb6f9c35c7ac57044646bf026496e568381b d90c9ba63181f855a769b164e208b9aad8cb12c2 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663184090 +0100	commit: finished attack and skill roll chat cards
+d90c9ba63181f855a769b164e208b9aad8cb12c2 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663287625 +0100	commit: adding damage roll part 1
+2299c86fba996626ff11d129d0a7001cb897a499 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663413972 +0100	reset: moving to HEAD
+2299c86fba996626ff11d129d0a7001cb897a499 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663413972 +0100	reset: moving to HEAD
+2299c86fba996626ff11d129d0a7001cb897a499 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663414026 +0100	checkout: moving from feature/rolling to feature/merge
+2299c86fba996626ff11d129d0a7001cb897a499 71df017a3b34e34d95cb0c054e81748901815ef2 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663414030 +0100	commit: starting static char integration
+71df017a3b34e34d95cb0c054e81748901815ef2 904084a548a3964bcca3aabd7a9ed949be8e7600 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663507072 +0100	commit: changed input span elements to textarea
+904084a548a3964bcca3aabd7a9ed949be8e7600 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663507112 +0100	checkout: moving from feature/merge to feature/rolling
+2299c86fba996626ff11d129d0a7001cb897a499 904084a548a3964bcca3aabd7a9ed949be8e7600 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663507134 +0100	checkout: moving from feature/rolling to feature/merge
+904084a548a3964bcca3aabd7a9ed949be8e7600 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663507213 +0100	checkout: moving from feature/merge to feature/rolling
+2299c86fba996626ff11d129d0a7001cb897a499 231659e9fc435e80bbdb044f82b5d87ecdce98e3 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663507225 +0100	pull origin master: Fast-forward
+231659e9fc435e80bbdb044f82b5d87ecdce98e3 98f3a1a36088a203e89e4428b0a4a2e4255bbc35 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663510468 +0100	commit: added attribute rolls

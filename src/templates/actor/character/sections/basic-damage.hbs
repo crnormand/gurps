@@ -1,0 +1,12 @@
+<div id="basic-damage">
+	<div class="header">{{localize "gurps.character.basic_damage"}}</div>
+	<div class="fieldblock3">
+		{{!-- TODO: change to longest point value for primary_attributes --}}
+		<div class="points" readonly></div>
+		{{>sections/input-text after="gurps.character.basic_thrust" field="field rollable" data=actor.thrust.string
+		class="disabled"}}
+		<div class="points" readonly></div>
+		{{>sections/input-text after="gurps.character.basic_swing" field="field rollable" data=actor.swing.string
+		class="disabled"}}
+	</div>
+</div>

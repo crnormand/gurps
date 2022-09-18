@@ -1,0 +1,22 @@
+import { CompendiumBrowser, CompendiumIndexData } from "..";
+import { TabName } from "../data";
+
+export abstract class CompendiumTab {
+	protected browser: CompendiumBrowser;
+	tabName: TabName;
+	isInitialized = false;
+	protected indexData: CompendiumIndexData[] = [];
+
+	constructor(browser: CompendiumBrowser, tabName: TabName) {
+		this.browser = browser;
+		this.tabName = tabName;
+	}
+
+	async init(): Promise<void> {
+		await this.loadData();
+		this.isInitialized = true;
+	}
+
+	/** Load and prepare the compendium index and set filter options */
+	protected async loadData(): Promise<void> { }
+}

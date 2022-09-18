@@ -1,0 +1,10 @@
+{{#if data.title.show}}
+<header class="journal-page-header">
+    <h{{data.title.level}}>{{data.name}}</h{{data.title.level}}>
+</header>
+{{/if}}
+{{#if data.src}}
+<div class="load-pdf">
+    <button type="button">{{localize "JOURNALENTRYPAGE.PDFLoad"}}</button>
+</div>
+{{/if}}

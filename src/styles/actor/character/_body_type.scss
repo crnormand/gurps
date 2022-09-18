@@ -1,0 +1,61 @@
+#hit-locations {
+	grid-area: hit-locations;
+	display: grid;
+	grid-template:
+		"title title title title"
+		"roll location penalty dr";
+	grid-template-columns: 1fr min-content min-content;
+	grid-template-rows: 0fr;
+	white-space: nowrap;
+	.header {
+		grid-area: auto;
+	}
+	.header.body-plan {
+		grid-area: title;
+	}
+	.header.location {
+		grid-column: span 2;
+	}
+
+	.penalty {
+		text-align: right;
+	}
+
+	.penalty,
+	.dr {
+		&:not(.header) {
+			color: rgba(var(--color-on-editable), 0.6);
+			font: var(--font-page-primary-fields);
+		}
+	}
+	.roll,
+	.location {
+		&:not(.header) {
+			color: rgba(var(--color-on-content), 1);
+			font: var(--font-page-primary-labels);
+		}
+	}
+
+	.dr,
+	.roll {
+		text-align: center;
+	}
+
+	.roll,
+	.penalty {
+		border-right: 1px solid rgba(var(--color-header), 1);
+	}
+
+	:not(.header) {
+		padding: var(--padding-standard);
+	}
+
+	.roll:nth-child(8n + 1),
+	.location:nth-child(8n + 2),
+	.penalty:nth-child(8n + 3),
+	.dr:nth-child(8n + 4) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+		}
+	}
+}

@@ -1,0 +1,7 @@
+<div id='modifier-app-list' class='{{cssClass}}' autocomplete='off'>
+	<ul id="applied-mods">
+		{{#each mods}}
+		<li {{#if (eq ../selection @index)}}class="selected" {{/if}}>{{this.name}} - {{this.modifier}}</li>
+		{{/each}}
+	</ul>
+</div>

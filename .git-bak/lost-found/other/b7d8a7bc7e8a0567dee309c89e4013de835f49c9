@@ -1,0 +1,55 @@
+import { SYSTEM_NAME } from "@module/settings";
+import { i18n } from "@util";
+import { ModifierAppWindow } from "./app_window";
+
+export class ModifierApp extends Application {
+
+	constructor(options = {}) {
+		super(options);
+		console.trace("Create ModifierApp");
+
+		this.showing = false;
+		this.window = new ModifierAppWindow(this, {});
+	}
+
+	static get defaultOptions(): ApplicationOptions {
+		return mergeObject(super.defaultOptions, {
+			popOut: false,
+			minimizable: false,
+			resizable: false,
+			id: "ModifierApp",
+			template: `systems/${SYSTEM_NAME}/templates/modifier-app/button.hbs`,
+			classes: ["modifier-app"],
+		});
+	}
+
+	protected _injectHTML(html: JQuery<HTMLElement>): void {
+		if ($("body").find("#modifier-app").length === 0) {
+			html.insertAfter($("body").find("#hotbar"));
+			this._element = html;
+		} else {
+			throw new Error(i18n("gcsga.error.modifier_app_load_failed"));
+		}
+	}
+
+	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html);
+		console.warn(html, html.find("#show-popup"));
+		html.find("#show-popup").on("click", event => this._onClick(event));
+
+	}
+
+	async _onClick(event: JQuery.ClickEvent): Promise<void> {
+		event.preventDefault();
+		if (this.showing) {
+			this.window.close();
+		} else {
+			await this.window.render(true);
+		}
+	}
+}
+
+export interface ModifierApp extends Application {
+	showing: boolean;
+	window: ModifierAppWindow;
+}

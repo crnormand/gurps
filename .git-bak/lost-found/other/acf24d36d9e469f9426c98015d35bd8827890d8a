@@ -1,0 +1,107 @@
+import { SYSTEM_NAME } from "@module/settings";
+import { fSearch } from "@util/fuse";
+import { ModifierApp } from "./app";
+import { ModifierAppList } from "./list";
+
+export class ModifierAppWindow extends Application {
+
+	constructor(button: ModifierApp, options = {}) {
+		super(options);
+
+		this.value = "";
+		this.button = button;
+		this.list = new ModifierAppList([]);
+	}
+
+	static get defaultOptions(): ApplicationOptions {
+		return mergeObject(super.defaultOptions, {
+			id: "ModifierAppWindow",
+			template: `systems/${SYSTEM_NAME}/templates/modifier-app/window.hbs`,
+			popOut: false,
+			minimizable: false,
+			classes: ["modifier-app-window"],
+		})
+	}
+
+	async render(force?: boolean | undefined, options?: Application.RenderOptions<ApplicationOptions> | undefined) {
+		this.button.showing = true;
+		await super.render(force, options);
+		this.list.render(force, options);
+	}
+
+	close(options?: Application.CloseOptions | undefined): Promise<void> {
+		this.button.showing = false;
+		this.list.close(options);
+		return super.close(options);
+	}
+
+	getData(options?: Partial<ApplicationOptions> | undefined): object | Promise<object> {
+
+		return mergeObject(super.getData, {
+			value: this.value,
+		});
+	}
+
+	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html);
+
+		// Get position
+		const button = $("#modifier-app");
+		const buttonTop = button.offset()?.top ?? 0; // might use position() depending on as yet unencountered issues
+		const buttonLeft = button.offset()?.left ?? 0;
+		let buttonWidth = parseFloat(button.css("width").replace("px", ""));
+		let width = parseFloat(html.css("width").replace("px", ""));
+		let height = parseFloat(html.css("height").replace("px", ""));
+
+		console.log(`buttonLeft: ${buttonLeft}\nbuttonTop: ${buttonTop} \nbuttonWidth: ${buttonWidth}\nwidth: ${width}\nheight: ${height}`);
+		let left = Math.max(buttonLeft + buttonWidth / 2 - width / 2, 10);
+		html.css("left", `${left}px`);
+		html.css("top", `${buttonTop - height - 10}px`);
+
+		// Focus the textbox on show
+		const searchbar = html.find(".searchbar");
+		searchbar.trigger("focus");
+		searchbar.on("input", event => this._updateQuery(event));
+		searchbar.on("keydown", event => this._keyDown(event));
+	}
+
+	_updateQuery(event: JQuery.TriggeredEvent) {
+		const input = String($(event.currentTarget).val());
+		this.value = input;
+		this.list.mods = fSearch(
+			(CONFIG as any).GURPS.modifiers,
+			input,
+			{
+				includeMatches: true,
+				includeScore: true,
+				keys: ["name", "modifier", "tags"]
+			}).map(e => e.item);
+		if (this.list.mods.length > 0) this.list.selection = 0;
+		else this.list.selection = -1;
+		this.list.render();
+	}
+
+	_keyDown(event: JQuery.KeyDownEvent) {
+		if (["ArrowUp", "ArrowDown"].includes(event.key)) {
+			event.preventDefault();
+			if (event.key == "ArrowUp") {
+				this.list.selection += 1;
+				if (this.list.selection > this.list.mods.length) this.list.selection = 0;
+			}
+			if (event.key == "ArrowDown") {
+				this.list.selection -= 1;
+				if (this.list.selection < 0) this.list.selection = this.list.mods.length - 1;
+			}
+			console.log(this.list);
+			this.list.render();
+		}
+	}
+}
+
+
+export interface ModifierAppWindow extends Application {
+	button: ModifierApp;
+	list: ModifierAppList;
+	value: string;
+}
+

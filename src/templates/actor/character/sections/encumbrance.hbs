@@ -1,0 +1,24 @@
+<div id="encumbrance">
+	<div class="header title">{{localize "gurps.character.encumbrance.title"}}</div>
+	<div class="header level">{{localize "gurps.character.encumbrance.level"}}</div>
+	<div class="header max-load">{{localize "gurps.character.encumbrance.max_load"}}</div>
+	<div class="header move">{{localize "gurps.character.encumbrance.move"}}</div>
+	<div class="header dodge">{{localize "gurps.character.encumbrance.dodge"}}</div>
+	{{#each encumbrance}}
+	{{#if this.active}}
+	<div class="encumbrance-marker active"><i class="gcs-weight"></i></div>
+	<div class="level-number active">{{this.level}}</div>
+	<div class="level active">{{this.name}}</div>
+	<div class="max-load active">{{this.maximum_carry}} lb</div>
+	<div class="move active">{{getMove ../actor this}}</div>
+	<div class="dodge active">{{getDodge ../actor this}}</div>
+	{{else}}
+	<div class="encumbrance-marker"></div>
+	<div class="level-number">{{this.level}}</div>
+	<div class="level">{{localize this.name}}</div>
+	<div class="max-load">{{this.maximum_carry}} lb</div>
+	<div class="move">{{getMove ../actor this}}</div>
+	<div class="dodge">{{getDodge ../actor this}}</div>
+	{{/if}}
+	{{/each}}
+</div>

@@ -1,0 +1,32 @@
+<div id="ranged" class="weapon-list">
+	<div class="header usage">{{localize "gurps.character.ranged.usage"}}</div>
+	<div class="header level">{{localize "gurps.character.ranged.level"}}</div>
+	<div class="header accuracy">{{localize "gurps.character.ranged.accuracy"}}</div>
+	<div class="header damage">{{localize "gurps.character.ranged.damage"}}</div>
+	<div class="header range">{{localize "gurps.character.ranged.range"}}</div>
+	<div class="header rate-of-fire">{{localize "gurps.character.ranged.rate_of_fire"}}</div>
+	<div class="header shots">{{localize "gurps.character.ranged.shots"}}</div>
+	<div class="header bulk">{{localize "gurps.character.ranged.bulk"}}</div>
+	<div class="header recoil">{{localize "gurps.character.ranged.recoil"}}</div>
+	<div class="header st">{{localize "gurps.character.ranged.st"}}</div>
+	{{#each rangedWeapons}}
+	<div class="usage" data-index="{{this.index}}">
+		<div class="name">
+			{{this.usage}}
+		</div>
+		{{>actor/character/sections/item-notes}}
+	</div>
+	<div data-index="{{this.index}}" class="level">
+		{{this.level}}</div>
+	<div data-index="{{this.index}}" class="accuracy">
+		{{signed this.accuracy}}</div>
+	<div data-index="{{this.index}}" class="damage">
+		{{this.damage}}</div>
+	<div data-index="{{this.index}}" class="range">{{this.range}}</div>
+	<div data-index="{{this.index}}" class="rate-of-fire">{{this.rate_of_fire}}</div>
+	<div data-index="{{this.index}}" class="shots">{{this.shots}}</div>
+	<div data-index="{{this.index}}" class="bulk">{{this.bulk}}
+	</div>
+	<div data-index="{{this.index}}" class="recoil">{{this.recoil}}</div>
+	<div data-index="{{this.index}}" class="st">{{this.st}}</div>
+	{{/each}}

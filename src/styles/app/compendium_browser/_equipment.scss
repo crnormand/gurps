@@ -1,0 +1,37 @@
+#equipment {
+	grid-template-columns: 1fr repeat(7, auto);
+
+	.desc:nth-child(16n + 1),
+	.uses:nth-child(16n + 2),
+	.tech-level:nth-child(16n + 3),
+	.legality-class:nth-child(16n + 4),
+	.value:nth-child(16n + 5),
+	.weight:nth-child(16n + 6),
+	.tags:nth-child(16n + 7),
+	.reference:nth-child(16n + 8) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+			&.disabled {
+				.name,
+				.item-notes,
+				&.points,
+				&.reference {
+					color: rgba(var(--color-on-banding), 0.3);
+				}
+			}
+		}
+	}
+
+	.disabled {
+		.name {
+			text-decoration: line-through;
+		}
+		.name,
+		.item-notes,
+		&.points,
+		&.reference {
+			color: rgba(var(--color-on-content), 0.3);
+		}
+	}
+}

@@ -1,0 +1,47 @@
+import { SYSTEM_NAME } from "@module/settings";
+
+export class ModifierAppList extends Application {
+
+	constructor(list: any[], options = {}) {
+		super(options);
+
+		this.mods = list;
+		this.selection = -1;
+	}
+
+	static get defaultOptions(): ApplicationOptions {
+		return mergeObject(super.defaultOptions, {
+			id: "ModifierAppList",
+			template: `systems/${SYSTEM_NAME}/templates/modifier-app/list.hbs`,
+			popOut: false,
+			minimizable: false,
+			classes: ["modifier-app-list"],
+		})
+	}
+
+	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html);
+
+		// Get position
+		const parent = $("#modifier-app-window");
+		const parentTop = parent.offset()?.top ?? 0; // might use position() depending on as yet unencountered issues
+		const parentLeft = parent.offset()?.left ?? 0;
+		let parentWidth = parseFloat(parent.css("width").replace("px", ""));
+
+		let left = Math.max(parentLeft + parentWidth + 10);
+		html.css("left", `${left}px`);
+		html.css("top", `${parentTop}px`);
+	}
+
+	getData(options?: Partial<ApplicationOptions> | undefined): object | Promise<object> {
+		return mergeObject(super.getData, {
+			mods: this.mods,
+			selection: this.selection,
+		})
+	}
+}
+
+export interface ModifierAppList extends Application {
+	mods: any[];
+	selection: number;
+}

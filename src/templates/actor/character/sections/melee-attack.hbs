@@ -1,0 +1,16 @@
+<div class="desc">
+	<div class="name">
+		{{this.name}}
+	</div>
+	{{>actor/character/sections/item-notes}}
+</div>
+<div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="attack" class="usage rollable">
+	{{this.usage}}</div>
+<div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="attack" class="level rollable">
+	{{this.level}}</div>
+<div class="parry rollable">{{this.fastResolvedParry}}</div>
+<div class="block rollable">{{this.fastResolvedBlock}}</div>
+<div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="damage" class="damage rollable">
+	{{this.fastResolvedDamage}}</div>
+<div class="reach">{{this.reach}}</div>
+<div class="st">{{this.st}}</div>

@@ -1,0 +1,93 @@
+<div class="compendium-browser-settings">
+	<form autocomplete="off">
+
+		<div class="container" id="traits">
+			<div class="header"><i class="gcs-trait"></i>{{localize "gurps.compendium_browser.trait"}}</div>
+			<div class="section">
+				{{#each trait as |conf pack|}}
+				<label class="checkbox-label">
+					<input type="checkbox" name="trait-{{pack}}" {{checked conf.load}} ?>
+					{{conf.name}}
+				</label>
+				{{/each}}
+			</div>
+		</div>
+
+		<div class="container" id="trait-mods">
+			<div class="header"><i class="gcs-modifier"></i>{{localize "gurps.compendium_browser.modifier"}}</div>
+			<div class="section">
+				{{#each modifier as |conf pack|}}
+				<label class="checkbox-label">
+					<input type="checkbox" name="modifier-{{pack}}" {{checked conf.load}} ?>
+					{{conf.name}}
+				</label>
+				{{/each}}
+			</div>
+		</div>
+
+		<div class="container" id="skills">
+			<div class="header"><i class="gcs-skill"></i>{{localize "gurps.compendium_browser.skill"}}</div>
+			<div class="section">
+				{{#each skill as |conf pack|}}
+				<label class="checkbox-label">
+					<input type="checkbox" name="skill-{{pack}}" {{checked conf.load}} ?>
+					{{conf.name}}
+				</label>
+				{{/each}}
+			</div>
+		</div>
+
+		<div class="container" id="spells">
+			<div class="header"><i class="gcs-spell"></i>{{localize "gurps.compendium_browser.spell"}}</div>
+			<div class="section">
+				{{#each spell as |conf pack|}}
+				<label class="checkbox-label">
+					<input type="checkbox" name="spell-{{pack}}" {{checked conf.load}} ?>
+					{{conf.name}}
+				</label>
+				{{/each}}
+			</div>
+		</div>
+
+		<div class="container" id="eqp">
+			<div class="header"><i class="gcs-equipment"></i>{{localize
+				"gurps.compendium_browser.equipment"}}</div>
+			<div class="section">
+				{{#each equipment as |conf pack|}}
+				<label class="checkbox-label">
+					<input type="checkbox" name="equipment-{{pack}}" {{checked conf.load}} ?>
+					{{conf.name}}
+				</label>
+				{{/each}}
+			</div>
+		</div>
+
+		<div class="container" id="eqp-mods">
+			<div class="header"><i class="gcs-eqp_modifier"></i>{{localize
+				"gurps.compendium_browser.eqp_modifier"}}</div>
+			<div class="section">
+				{{#each eqp_modifier as |conf pack|}}
+				<label class="checkbox-label">
+					<input type="checkbox" name="eqp_modifier-{{pack}}" {{checked conf.load}} ?>
+					{{conf.name}}
+				</label>
+				{{/each}}
+			</div>
+		</div>
+
+		<div class="container" id="notes">
+			<div class="header"><i class="gcs-note"></i>{{localize "gurps.compendium_browser.note"}}
+			</div>
+			<div class="section">
+				{{#each note as |conf pack|}}
+				<label class="checkbox-label">
+					<input type="checkbox" name="note-{{pack}}" {{checked conf.load}} ?>
+					{{conf.name}}
+				</label>
+				{{/each}}
+			</div>
+		</div>
+
+		<button type="button" class="save-settings">{{localize "SETTINGS.Save"}}</button>
+	</form>
+</div>

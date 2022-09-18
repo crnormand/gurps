@@ -1,0 +1,97 @@
+@import "traits", "modifiers", "skills", "spells", "equipment", "eqp_modifiers", "notes";
+
+.library-tab {
+	grid-template:
+		"searchbar"
+		"list";
+}
+
+.item-list {
+	display: grid;
+	grid-auto-rows: 0fr;
+	gap: var(--section-gap);
+	background-color: rgb(var(--color-content));
+	color: rgb(var(--color-on-content));
+	font: var(--font-field);
+
+	.header {
+		font: var(--font-label);
+		justify-content: center;
+		text-align: center;
+		background-color: rgb(var(--color-header));
+		color: rgb(var(--color-on-header));
+		padding: var(--padding-header);
+	}
+
+	.dropdown {
+		font-size: var(--font-size-10);
+	}
+
+	.item-list {
+		grid-area: list;
+	}
+
+	.item-list.hover {
+		border: 1px solid red !important;
+	}
+
+	.ph::before {
+		content: "";
+	}
+
+	> .desc {
+		display: grid;
+		grid-template:
+			"dropdown name"
+			"blank notes";
+		grid-template-columns: min-content auto;
+		.dropdown {
+			min-width: 0.75em;
+			margin-right: 6px;
+		}
+		.name {
+			font: inherit;
+			background: transparent;
+			color: inherit;
+			grid-area: name;
+		}
+		.item-notes {
+			grid-area: notes;
+			font: var(--font-secondary-fields);
+		}
+	}
+
+	> div {
+		border-right: 1px solid rgb(var(--color-header));
+		border-bottom: 1px solid rgb(var(--color-header));
+
+		&.header {
+			border-bottom: none;
+			border-right: 1px solid rgb(var(--color-divider));
+		}
+
+		&.reference {
+			border-right: none;
+		}
+	}
+
+	> :not(.header) {
+		padding: var(--padding-standard);
+		&.quantity {
+			min-width: 1em; //possibly unnecessary
+		}
+		&.drop-over {
+			&.desc {
+				border-top: none;
+				.name {
+					border-top: 2px dashed rgb(var(--color-drop-area));
+				}
+			}
+			border-top: 2px dashed rgb(var(--color-drop-area));
+		}
+	}
+
+	.desc.header {
+		white-space: nowrap;
+	}
+}

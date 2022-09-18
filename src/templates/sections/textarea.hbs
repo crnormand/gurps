@@ -1,0 +1,18 @@
+{{#if label}}
+<div class="label">{{localize label}}</div>
+{{/if}}
+{{#if field}}
+<div class="{{field}}">
+	{{/if}}
+	{{!-- <span role="textbox" name="{{name}}" class="input" type="text" data-edit="{{name}}" data-dtype="{{type}}" --}}
+		{{!-- contenteditable {{class}}> --}}
+		{{!-- {{{format data}}} --}}
+		{{!-- </span> --}}
+	<textarea name="{{name}}" class="input{{#if (in name 'NUMBER')}} number{{/if}}" type="text" data-dtype="{{type}}"
+		{{{class}}}>{{{textareaFormat data}}}</textarea>
+	{{#if field}}
+</div>
+{{/if}}
+{{#if after}}
+<div class="label">{{localize after}}</div>
+{{/if}}

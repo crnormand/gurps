@@ -1,0 +1,396 @@
+{
+	"Actor": {
+		"types": ["character_gcs", "character"],
+		"templates": {
+			"common": {}
+		},
+		"character_gcs": {
+			"version": 4,
+			"id": "",
+			"import": {
+				"name": "",
+				"path": "",
+				"last_import": ""
+			},
+			"total_points": 100,
+			"settings": {
+				"attributes": {}
+			},
+			"attributes": {},
+			"calc": {
+				"swing": "",
+				"thrust": "",
+				"basic_lift": "",
+				"lifting_st_bonus": 0,
+				"striking_st_bonus": 0,
+				"throwing_st_bonus": 0,
+				"move": [],
+				"dodge": [],
+				"dodge_bonus": 0,
+				"block_bonus": 0,
+				"parry_bonus": 0
+			}
+		},
+		"character": {
+			"attributes": {
+				"ST": {
+					"import": 10,
+					"value": 10,
+					"points": 0,
+					"dtype": "Number"
+				},
+				"DX": {
+					"import": 10,
+					"value": 10,
+					"points": 0,
+					"dtype": "Number"
+				},
+				"IQ": {
+					"import": 10,
+					"value": 10,
+					"points": 0,
+					"dtype": "Number"
+				},
+				"HT": {
+					"import": 10,
+					"value": 10,
+					"points": 0,
+					"dtype": "Number"
+				},
+				"WILL": {
+					"import": 10,
+					"value": 10,
+					"points": 0,
+					"dtype": "Number"
+				},
+				"PER": {
+					"import": 10,
+					"value": 10,
+					"points": 0,
+					"dtype": "Number"
+				},
+				"QN": {
+					"import": 10,
+					"value": 10,
+					"points": 0,
+					"dtype": "Number"
+				}
+			},
+			"HP": {
+				"value": 0,
+				"min": 0,
+				"max": 0,
+				"points": 0
+			},
+			"FP": {
+				"value": 0,
+				"min": 0,
+				"max": 0,
+				"points": 0
+			},
+			"QP": {
+				"value": 0,
+				"min": 0,
+				"max": 0,
+				"points": 0
+			},
+			"dodge": {
+				"value": 0,
+				"enc_level": 0
+			},
+			"basicmove": {
+				"value": "0",
+				"points": 0
+			},
+			"basicspeed": {
+				"value": "0",
+				"points": 0
+			},
+			"parry": 0,
+			"currentmove": 0,
+			"thrust": "",
+			"swing": "",
+			"frightcheck": 0,
+			"hearing": 0,
+			"tastesmell": 0,
+			"vision": 0,
+			"touch": 0,
+			"ads": {},
+			"languages": {},
+			"skills": {},
+			"spells": {},
+			"money": {},
+			"traits": {
+				"title": "",
+				"race": "",
+				"height": "",
+				"weight": "",
+				"age": "",
+				"birthday": "",
+				"religion": "",
+				"gender": "",
+				"eyes": "",
+				"hair": "",
+				"hand": "",
+				"skin": "",
+				"sizemod": "+0",
+				"techlevel": "",
+				"createdon": "",
+				"modifiedon": "",
+				"player": ""
+			},
+			"totalpoints": {
+				"attributes": 0,
+				"ads": 0,
+				"disads": 0,
+				"quirks": 0,
+				"skills": 0,
+				"spells": 0,
+				"total": 150,
+				"unspent": 0,
+				"race": 0
+			},
+			"melee": {},
+			"ranged": {},
+			"conditionalmods": {},
+			"hitlocations": {},
+			"encumbrance": {
+				"00000": {
+					"key": "enc0",
+					"level": 0,
+					"dodge": 0,
+					"weight": 0,
+					"move": 0
+				},
+				"00001": {
+					"key": "enc1",
+					"level": 1,
+					"dodge": 0,
+					"weight": 0,
+					"move": 0
+				},
+				"00002": {
+					"key": "enc2",
+					"level": 2,
+					"dodge": 0,
+					"weight": 0,
+					"move": 0
+				},
+				"00003": {
+					"key": "enc3",
+					"level": 3,
+					"dodge": 0,
+					"weight": 0,
+					"move": 0
+				},
+				"00004": {
+					"key": "enc4",
+					"level": 4,
+					"dodge": 0,
+					"weight": 0,
+					"move": 0
+				}
+			},
+			"notes": {},
+			"equipment": {
+				"carried": {},
+				"other": {}
+			},
+			"liftingmoving": {
+				"basiclift": "",
+				"carryonback": "",
+				"onehandedlift": "",
+				"runningshove": "",
+				"shiftslightly": "",
+				"shove": "",
+				"twohandedlift": ""
+			},
+			"reactions": {},
+			"additionalresources": {
+				"bodyplan": "humanoid",
+				"tracker": {}
+			},
+			"conditions": {},
+			"conditionalinjury": {
+				"RT": {
+					"value": 4,
+					"points": 0
+				},
+				"injury": {
+					"severity": "",
+					"daystoheal": 0
+				}
+			}
+		}
+	},
+	"Item": {
+		"types": [
+			"trait",
+			"trait_container",
+			"modifier",
+			"modifier_container",
+			"skill",
+			"technique",
+			"skill_container",
+			"spell",
+			"ritual_magic_spell",
+			"spell_container",
+			"equipment",
+			"equipment_container",
+			"eqp_modifier",
+			"eqp_modifier_container",
+			"note",
+			"note_container"
+		],
+		"templates": {
+			"common": {
+				"id": "",
+				"reference": "",
+				"notes": "",
+				"tags": []
+			},
+			"prereqs": {
+				"prereqs": {
+					"type": "prereq_list",
+					"all": true,
+					"when_tl": {
+						"compare": "none"
+					},
+					"prereqs": []
+				}
+			}
+		},
+		"trait": {
+			"templates": ["common", "prereqs"],
+			"round_down": false,
+			"disabled": false,
+			"levels": 0,
+			"base_points": 0,
+			"points_per_level": 0,
+			"cr": 0,
+			"cr_adj": "none",
+			"features": [],
+			"weapons": []
+		},
+		"trait_container": {
+			"templates": ["common"],
+			"disabled": false,
+			"container_type": "group",
+			"cr": 0,
+			"cr_adj": "none"
+		},
+		"modifier": {
+			"templates": ["common"],
+			"cost_type": "percentage",
+			"cost": 0,
+			"affects": "total",
+			"disabled": false,
+			"features": []
+		},
+		"modifier_container": {
+			"templates": ["common"],
+			"open": false
+		},
+		"skill": {
+			"templates": ["common", "prereqs"],
+			"difficulty": "dx/a",
+			"points": 1,
+			"encumbrance_penalty_multiplier": 0,
+			"features": [],
+			"weapons": []
+		},
+		"technique": {
+			"templates": ["common", "prereqs"],
+			"difficulty": "a",
+			"points": 1,
+			"default": {
+				"type": "skill",
+				"name": "Skill",
+				"specialization": "",
+				"modifier": 0
+			},
+			"features": [],
+			"weapons": []
+		},
+		"skill_container": {
+			"templates": ["common"],
+			"open": false
+		},
+		"spell": {
+			"templates": ["common", "prereqs"],
+			"spell_class": "Regular",
+			"power_source": "Arcane",
+			"points": 1,
+			"difficulty": "iq/h",
+			"casting_cost": "1",
+			"maintenance_cost": "",
+			"resist": "",
+			"casting_time": "1 sec",
+			"duration": "Instant",
+			"weapons": [],
+			"college": []
+		},
+		"ritual_magic_spell": {
+			"templates": ["common", "prereqs"],
+			"spell_class": "Regular",
+			"power_source": "Arcane",
+			"points": 1,
+			"difficulty": "h",
+			"casting_cost": "1",
+			"maintenance_cost": "",
+			"casting_time": "1 sec",
+			"duration": "Instant",
+			"base_skill": "Ritual Magic",
+			"prereq_count": 0,
+			"weapons": [],
+			"college": []
+		},
+		"spell_container": {
+			"templates": ["common"],
+			"open": false
+		},
+		"equipment": {
+			"templates": ["common", "prereqs"],
+			"weight": "0 lb",
+			"value": 0,
+			"quantity": 1,
+			"uses": 0,
+			"max_uses": 0,
+			"legality_class": "4",
+			"features": [],
+			"weapons": []
+		},
+		"equipment_container": {
+			"templates": ["common", "prereqs"],
+			"weight": "0 lb",
+			"value": 0,
+			"quantity": 1,
+			"uses": 0,
+			"max_uses": 0,
+			"legality_class": "4",
+			"features": [],
+			"weapons": [],
+			"open": false
+		},
+		"eqp_modifier": {
+			"templates": ["common"],
+			"cost_type": "to_original_cost",
+			"cost": "+0",
+			"weight_type": "to_original_weight",
+			"weight": "+0 lb",
+			"disabled": false,
+			"features": []
+		},
+		"eqp_modifier_container": {
+			"templates": ["common"],
+			"open": false
+		},
+		"note": {
+			"templates": ["common"]
+		},
+		"note_container": {
+			"templates": ["common"],
+			"open": false
+		}
+	}
+}

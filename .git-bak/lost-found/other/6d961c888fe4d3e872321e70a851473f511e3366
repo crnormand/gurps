@@ -1,0 +1,3 @@
+import { CompendiumTab } from "./base";
+
+export class CompendiumTraitModifierTab extends CompendiumTab { }

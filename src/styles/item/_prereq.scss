@@ -1,0 +1,43 @@
+#prerequisites {
+	margin: 2px 16px;
+	.content {
+		border: 1px solid rgb(var(--color-header));
+		background-color: rgb(var(--color-content));
+		display: grid;
+		> div {
+			padding: 5px;
+		}
+	}
+}
+
+.prereq {
+	display: grid;
+	grid-auto-flow: rows;
+	grid-gap: 5px;
+	i {
+		align-self: center;
+	}
+	> div {
+		display: grid;
+		grid-gap: 5px;
+		grid-auto-flow: column;
+		grid-template-columns: 0fr 0fr 1fr;
+		&.top {
+			grid-template-columns: 0fr;
+			grid-auto-columns: 0fr;
+		}
+		.placeholder {
+			width: 14px;
+		}
+		&.attribute-prereq {
+			grid-template-columns: repeat(4, 0fr) 1fr;
+		}
+		&.spell-prereq {
+			grid-template-columns: repeat(3, 0fr) 1fr;
+		}
+	}
+	select[disabled] {
+		color: transparent;
+		opacity: 1;
+	}
+}

@@ -1,0 +1,26 @@
+<div id="pool-attributes">
+	<div class="header">{{localize "gurps.character.point_pools"}}</div>
+	<div class="fieldblock6">
+		{{#each point_pools}}
+		{{#if (eq this.attribute_def.type "pool_separator")}}
+		<div class="separator_parent">
+			<div class="separator" data-text="{{this.attribute_def.name}}">{{this.attribute_def.name}}</div>
+		</div>
+		{{else}}
+		<div class="points">[{{this.points}}]</div>
+		{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name=(concat "system.attributes." this.id
+		".damage") data=this.current type="Number"}}
+		{{>sections/input-text after=this.attribute_def.name field="field" name=(concat "system.attributes." this.id ".adj")
+		data=this.max type="Number" class=(input_lock ../editing)}}
+		<div class="label tooltip">
+			{{#if this.currentThreshold.state}}
+			[{{this.currentThreshold.state}}]
+			{{#if this.currentThreshold.explanation}}
+			<span class="tooltiptext">{{{this.currentThreshold.explanation}}}</span>
+			{{/if}}
+			{{/if}}
+		</div>
+		{{/if}}
+		{{/each}}
+	</div>
+</div>

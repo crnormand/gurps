@@ -1,0 +1,17 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+    {{> journalEntryPageHeader}}
+
+    {{#if document.src}}
+    <iframe src="scripts/pdfjs/web/viewer.html?{{params}}"></iframe>
+    {{/if}}
+
+    <div class="form-group picker">
+        <label>{{localize "JOURNALENTRYPAGE.PDFSource"}}</label>
+        <div class="form-fields">
+            {{filePicker target="src" type="text"}}
+            <input class="image" type="text" name="src" placeholder="path/document.pdf" value="{{document.src}}">
+        </div>
+    </div>
+
+    {{> journalEntryPageFooter}}
+</form>

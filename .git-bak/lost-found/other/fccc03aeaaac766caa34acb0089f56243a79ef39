@@ -1,0 +1,19 @@
+type TabName = "trait" | "modifier" | "skill" | "spell" | "equipment" | "eqp_modifier" | "note";
+type TabType = any;
+
+export class CompendiumBrowser extends Application {
+	tabs: Record<TabName, TabType>;
+
+	constructor(options = {}) {
+		super(options);
+		this.tabs = {
+			trait: new browserTabs.Trait(this),
+			modifier: new browserTabs.TraitModifier(this),
+			skill: new browserTabs.Skill(this),
+			spell: new browserTabs.Spell(this),
+			equipment: new browserTabs.Equipment(this),
+			eqp_modifier: new browserTabs.EquipmentModifier(this),
+			note: new browserTabs.Note(this),
+		};
+	}
+}

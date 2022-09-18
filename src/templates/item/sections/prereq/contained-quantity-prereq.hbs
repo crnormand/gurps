@@ -1,0 +1,9 @@
+<select name="{{path}}.quantity.compare">
+	{{#select this.quantity.compare}}
+	{{#each config.select.number_compare_strict as |v k|}}
+	<option value="{{k}}">{{localize v}}</option>
+	{{/each}}
+	{{/select}}
+</select>
+{{>sections/input-text field="field" name=(concat "NUMBER." path ".quantity.qualifier") data=this.quantity.qualifier
+type="String"}}

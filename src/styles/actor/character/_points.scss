@@ -1,0 +1,26 @@
+#points {
+	// Display
+	grid-area: points;
+	display: grid;
+	grid-template:
+		"header"
+		"block";
+	grid-template-rows: 0fr 1fr;
+	border: var(--standard-border);
+	.field {
+		text-align: right;
+		padding: var(--padding-standard);
+		.input {
+			min-width: 2em;
+		}
+	}
+	.fieldblock {
+		.field:nth-child(4n-1),
+		.label:nth-child(4n) {
+			background-color: rgba(var(--color-banding), 1);
+			&.label {
+				color: rgba(var(--color-on-banding), 1);
+			}
+		}
+	}
+}

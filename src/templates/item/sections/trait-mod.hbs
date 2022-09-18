@@ -1,0 +1,24 @@
+<div class="enabled" data-uuid="{{this.uuid}}">{{#if this.enabled}}<i class="gcs-checkmark"></i>{{/if}}</div>
+<div class="desc item" data-uuid="{{this.uuid}}" {{{indent i=this init=0 step=6}}}>
+	<div class="dropdown">
+		{{#if (eq this.type "modifier_container")}}
+		{{#if this.open}}
+		{{>actor/character/sections/dropdown-open}}
+		{{else}}
+		{{>actor/character/sections/dropdown-closed}}
+		{{/if}}
+		{{/if}}
+	</div>
+	<div class="name">
+		{{this.name}}
+	</div>
+	{{>actor/character/sections/item-notes}}
+</div>
+<div class="cost">{{this.costDescription}}</div>
+<div class="tags">{{join this.tags ", "}}</div>
+<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+{{#if this.open}}
+{{#each (sort this.children "sort")}}
+{{>item/sections/trait-mod}}
+{{/each}}
+{{/if}}

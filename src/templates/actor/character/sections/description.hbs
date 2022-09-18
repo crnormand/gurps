@@ -1,0 +1,33 @@
+<div id="description">
+	<div class="header">{{localize "gurps.character.description"}}</div>
+	<div class="fieldblock">
+		{{>sections/input-text label="gurps.character.gender" field="field" name="system.profile.gender" type="String"
+		data=data.profile.gender class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.age" field="field" name="system.profile.age" type="String"
+		data=data.profile.age class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.birthday" field="field" name="system.profile.birthday" type="String"
+		data=data.profile.birthday class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.religion" field="field" name="system.profile.religion" type="String"
+		data=data.profile.religion class=(input_lock editing)}}
+	</div>
+	<div class="fieldblock">
+		{{>sections/input-text label="gurps.character.height" field="field" name="system.profile.height" type="String"
+		data=data.profile.height class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.weight" field="field" name="system.profile.weight" type="String"
+		data=data.profile.weight class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.sm" field="field" name="system.profile.SM" type="Number" data=(signed
+		actor.adjustedSizeModifier) class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.tech_level" field="field" name="system.profile.tech_level" type="String"
+		data=data.profile.tech_level class=(input_lock editing)}}
+	</div>
+	<div class="fieldblock">
+		{{>sections/input-text label="gurps.character.hair" field="field" name="system.profile.hair" type="String"
+		data=data.profile.hair class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.eyes" field="field" name="system.profile.eyes" type="String"
+		data=data.profile.eyes class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.skin" field="field" name="system.profile.skin" type="String"
+		data=data.profile.skin class=(input_lock editing)}}
+		{{>sections/input-text label="gurps.character.handedness" field="field" name="system.profile.handedness" type="String"
+		data=data.profile.handedness class=(input_lock editing)}}
+	</div>
+</div>

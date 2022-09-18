@@ -1,45 +1,166 @@
-name: Release Creation
+name: Release
 
 on:
-  release:
-    types: [released]
+    release:
+        types: [published]
+
+env:
+    package_type: system
+    node_version: 16
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+    lint:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
 
-      # get part of the tag after the `v`
-      - name: Extract tag version number
-        id: get_version
-        uses: battila7/get-version-action@v2
+            - name: Install node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ env.node_version }}
 
-      # Substitute the Manifest and Download URLs in the module.json
-      - name: Substitute Manifest and Download Links For Versioned Ones
-        id: sub_manifest_link_version
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: 'system.json'
-        env:
-          esmodules: '["module/gurps.js", "lib/xregexp-all.js"]'
-          version: ${{steps.get_version.outputs.version-without-v}}
-          manifest: https://raw.githubusercontent.com/crnormand/gurps/release/system.json
-          download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/system.zip
+            - name: Cache Node.js modules
+              uses: actions/cache@v2
+              with:
+                  path: .npm
+                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.OS }}-node-
+                      ${{ runner.OS }}-
 
-      # Create a zip file with all files required by the module to add to the release
-      - run: zip -r ./system.zip system.json template.json changelog.md LICENSE.txt icons/ lang/ lib/ module/ scripts/ styles/ templates/ ui/
+            - name: Install dependencies
+              run: npm ci --cache .npm --prefer-offline
 
-      # Create a release for this specific version
-      - name: Update Release with Files
-        id: create_version_release
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true # Set this to false if you want to prevent updating existing releases
-          name: ${{ github.event.release.name }}
-          draft: ${{ github.event.release.unpublished }}
-          prerelease: ${{ github.event.release.prerelease }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: './system.json, ./system.zip'
-          tag: ${{ github.event.release.tag_name }}
-          body: ${{ github.event.release.body }}
+            - name: Lint
+              run: npm run lint
+
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Install node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ env.node_version }}
+
+            - name: Cache Node.js modules
+              uses: actions/cache@v2
+              with:
+                  path: .npm
+                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.OS }}-node-
+                      ${{ runner.OS }}-
+
+            - name: Install dependencies
+              run: npm ci --cache .npm --prefer-offline
+
+            - name: Test
+              run: npm run test:ci
+
+    typecheck:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Install node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ env.node_version }}
+
+            - name: Cache Node.js modules
+              uses: actions/cache@v2
+              with:
+                  path: .npm
+                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.OS }}-node-
+                      ${{ runner.OS }}-
+
+            - name: Install dependencies
+              run: npm ci --cache .npm --prefer-offline
+
+            - name: Typecheck
+              run: npm run typecheck
+
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Install node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ env.node_version }}
+
+            - name: Cache Node.js modules
+              uses: actions/cache@v2
+              with:
+                  path: .npm
+                  key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.OS }}-node-
+                      ${{ runner.OS }}-
+
+            - name: Install dependencies
+              run: npm ci --cache .npm --prefer-offline
+
+            - name: Extract tag version number
+              id: get_version
+              uses: battila7/get-version-action@v2
+
+            - name: Substitute Manifest and Download Links For Versioned Ones
+              id: sub_manifest_link_version
+              uses: microsoft/variable-substitution@v1
+              with:
+                  files: "src/${{ env.package_type }}.json"
+              env:
+                  version: ${{ steps.get_version.outputs.version-without-v }}
+                  url: https://github.com/${{ github.repository }}
+                  manifest: https://github.com/${{ github.repository }}/releases/latest/download/${{ env.package_type }}.json
+                  download: https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/${{ env.package_type }}.zip
+
+            - name: Build
+              run: npm run build
+
+            - name: Archive production artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                  name: dist
+                  path: dist
+
+    publish:
+        needs:
+            - lint
+            - test
+            - typecheck
+            - build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Download production artifacts for publication
+              uses: actions/download-artifact@v2
+              with:
+                  name: dist
+                  path: dist
+
+            - name: Create zip file
+              working-directory: ./dist
+              run: zip -r ../${{ env.package_type }}.zip .
+
+            - name: Create release
+              id: create_version_release
+              uses: ncipollo/release-action@v1
+              with:
+                  allowUpdates: true
+                  name: ${{ github.event.release.name }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  artifacts: "./dist/${{ env.package_type }}.json, ./${{ env.package_type }}.zip"
+                  body: ${{ github.event.release.body }}

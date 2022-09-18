@@ -1,0 +1,36 @@
+#portrait {
+	// Layout
+	grid-area: portrait;
+	display: grid;
+	grid-template:
+		"header"
+		"portrait";
+	grid-template-rows: 0fr auto;
+	width: fit-content;
+	border: var(--standard-border);
+
+	// Image displayed as background-image
+	.img-display {
+		// background-position: center;
+		// background-repeat: no-repeat;
+		// background-size: cover;
+		// height: 100%;
+		// TODO: figure out how to set height without direct px value
+		// height: 132px;
+		// aspect-ratio: 3 / 4;
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		width: 7.6875rem;
+		aspect-ratio: 3/4;
+
+		// Actual portait element (invisible)
+		.profile-img {
+			display: block;
+			opacity: 0;
+			width: 100%;
+			aspect-ratio: 3 / 4;
+			border: none;
+		}
+	}
+}

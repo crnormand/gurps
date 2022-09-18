@@ -1,0 +1,41 @@
+#spells {
+	grid-template-columns: 1fr repeat(10, auto);
+	overflow-x: scroll;
+
+	.desc:nth-child(22n + 1),
+	.college:nth-child(22n + 2),
+	.resist:nth-child(22n + 3),
+	.class:nth-child(22n + 4),
+	.casting-cost:nth-child(22n + 5),
+	.maintenance-cost:nth-child(22n + 6),
+	.casting-time:nth-child(22n + 7),
+	.duration:nth-child(22n + 8),
+	.difficulty:nth-child(22n + 9),
+	.tags:nth-child(22n + 10),
+	.reference:nth-child(22n + 11) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+			&.disabled {
+				.name,
+				.item-notes,
+				&.points,
+				&.reference {
+					color: rgba(var(--color-on-banding), 0.3);
+				}
+			}
+		}
+	}
+
+	.disabled {
+		.name {
+			text-decoration: line-through;
+		}
+		.name,
+		.item-notes,
+		&.points,
+		&.reference {
+			color: rgba(var(--color-on-content), 0.3);
+		}
+	}
+}

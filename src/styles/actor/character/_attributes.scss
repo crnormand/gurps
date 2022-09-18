@@ -1,0 +1,89 @@
+#attributes {
+	grid-area: attributes;
+	display: grid;
+	grid-template:
+		"primary-attributes secondary-attributes"
+		"basic-damage secondary-attributes"
+		"pool-attributes pool-attributes";
+	grid-template-columns: 1fr 1fr;
+	gap: var(--section-gap);
+
+	#primary-attributes {
+		grid-area: primary-attributes;
+	}
+
+	#secondary-attributes {
+		grid-area: secondary-attributes;
+	}
+
+	#pool-attributes {
+		grid-area: pool-attributes;
+	}
+
+	#basic-damage {
+		grid-area: basic-damage;
+		.fieldblock3 {
+			.points {
+				color: transparent;
+			}
+			.label:nth-child(6n),
+			.field:nth-child(6n-1),
+			.points:nth-child(6n-2) {
+				background-color: rgba(var(--color-banding), 1);
+			}
+			.field {
+				width: 6ch;
+			}
+		}
+	}
+
+	.points {
+		font: var(--font-page-secondary-fields);
+		color: rgba(var(--color-on-editable), 0.6);
+	}
+	.label {
+		font: var(--font-page-primary-labels);
+		color: rgba(var(--color-on-content), 1);
+	}
+	.field .input {
+		text-align: right;
+	}
+
+	.separator {
+		overflow: hidden;
+		text-align: center;
+		font: var(--font-page-secondary-fields);
+		color: rgb(var(--color-on-content));
+		&:before,
+		&:after {
+			background-color: rgb(var(--color-divider));
+			content: "";
+			display: inline-block;
+			height: 1px;
+			position: relative;
+			vertical-align: middle;
+			width: 50%;
+		}
+		&:before {
+			right: 0.5em;
+			margin-left: -50%;
+		}
+		&:after {
+			left: 0.5em;
+			margin-right: -50%;
+		}
+		&[data-text=""] {
+			&:before,
+			&:after {
+				right: 0;
+				left: 0;
+			}
+		}
+	}
+	.fieldblock3 .separator_parent {
+		grid-column: 1 / span 3;
+	}
+	.fieldblock6 .separator_parent {
+		grid-column: 1 / span 6;
+	}
+}

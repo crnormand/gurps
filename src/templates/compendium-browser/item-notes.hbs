@@ -1,0 +1,12 @@
+<div class="item-notes">
+	{{#if (or (eq this.type "trait") (eq this.type "trait_container"))}}
+	{{#unless (eq this.cr 0)}}{{this.formattedCR}}<br>{{/unless}}
+	{{/if}}
+	{{#if (or (eq this.type "trait") (eq this.type "trait_container") (eq this.type "equipment") (eq this.type
+	"equipment_container"))}}
+	{{#each (enabledList this.modifiers)}}
+	{{#unless (eq @index 0)}}; {{/unless}}{{this.name}}{{#if this.notes}} ({{this.notes}}){{/if}}
+	{{/each}}
+	{{/if}}
+	{{{format this.notes}}}
+</div>

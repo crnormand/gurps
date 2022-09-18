@@ -1,0 +1,171 @@
+@font-face {
+	font-family: "gcs";
+	src: url("../fonts/gcs.eot?146970");
+	src: url("../fonts/gcs.eot?146970#iefix") format("embedded-opentype"),
+		url("../fonts/gcs.woff2?146970") format("woff2"), url("../fonts/gcs.woff?146970") format("woff"),
+		url("../fonts/gcs.ttf?146970") format("truetype"), url("../fonts/gcs.svg?146970#gcs") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Roboto Flex";
+	src: url("../fonts/roboto_flex.ttf");
+	font-weigth: normal;
+	font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'gcs';
+    src: url('../font/gcs.svg?146970#gcs') format('svg');
+  }
+}
+*/
+[class^="gcs-"]:before,
+[class*=" gcs-"]:before {
+	font-family: "gcs";
+	// margin-right: 3px;
+	-webkit-font-smoothing: antialiased;
+	display: inline-block;
+	font-style: normal;
+	font-variant: normal;
+	text-rendering: auto;
+	line-height: 1;
+	// font-style: normal;
+	// font-weight: normal;
+	// // speak: never;
+
+	// display: inline-block;
+	// text-decoration: inherit;
+	// width: 1em;
+	// margin-right: .2em;
+	// text-align: center;
+	// /* opacity: .8; */
+
+	// /* For safety - reset parent styles, that can break glyph codes*/
+	// font-variant: normal;
+	// text-transform: none;
+
+	// /* fix buttons height, for twitter bootstrap */
+	// line-height: 1em;
+
+	// /* Animation center compensation - margins should be symmetric */
+	// /* remove if not needed */
+	// margin-left: .2em;
+
+	// /* you can be more comfortable with increased icons size */
+	// /* font-size: 120%; */
+
+	// /* Font smoothing. That was taken from TWBS */
+	// -webkit-font-smoothing: antialiased;
+	// -moz-osx-font-smoothing: grayscale;
+
+	// /* Uncomment for 3D effect */
+	// /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.gcs-attribute:before {
+	content: "\e800";
+} /* '' */
+.gcs-body-type:before {
+	content: "\e801";
+} /* '' */
+.gcs-bookmark:before {
+	content: "\e802";
+} /* '' */
+.gcs-character:before {
+	content: "\e803";
+} /* '' */
+.gcs-checkmark:before {
+	content: "\e804";
+} /* '' */
+.gcs-chevron-right:before {
+	content: "\e805";
+} /* '' */
+.gcs-circled-add:before {
+	content: "\e806";
+} /* '' */
+.gcs-circled-chevron-down:before {
+	content: "\e807";
+} /* '' */
+.gcs-circled-chevron-right:before {
+	content: "\e808";
+} /* '' */
+.gcs-circled-exclamation:before {
+	content: "\e809";
+} /* '' */
+.gcs-circled-question:before {
+	content: "\e80a";
+} /* '' */
+.gcs-circled-vertical-ellipsis:before {
+	content: "\e80b";
+} /* '' */
+.gcs-closed-folder:before {
+	content: "\e80d";
+} /* '' */
+.gcs-coins:before {
+	content: "\e80e";
+} /* '' */
+.gcs-eqp-modifier:before {
+	content: "\e80f";
+} /* '' */
+.gcs-equipment:before {
+	content: "\e810";
+} /* '' */
+.gcs-gears:before {
+	content: "\e811";
+} /* '' */
+.gcs-grip:before {
+	content: "\e812";
+} /* '' */
+.gcs-melee-weapon:before {
+	content: "\e813";
+} /* '' */
+.gcs-menu:before {
+	content: "\e814";
+} /* '' */
+.gcs-modifier:before {
+	content: "\e815";
+} /* '' */
+.gcs-note:before {
+	content: "\e816";
+} /* '' */
+.gcs-open-folder:before {
+	content: "\e817";
+} /* '' */
+.gcs-randomize:before {
+	content: "\e818";
+} /* '' */
+.gcs-ranged-weapon:before {
+	content: "\e819";
+} /* '' */
+.gcs-settings:before {
+	content: "\e81a";
+} /* '' */
+.gcs-skill:before {
+	content: "\e81b";
+} /* '' */
+.gcs-spell:before {
+	content: "\e81c";
+} /* '' */
+.gcs-stack:before {
+	content: "\e81d";
+} /* '' */
+.gcs-trait:before {
+	content: "\e81e";
+} /* '' */
+.gcs-trash:before {
+	content: "\e81f";
+} /* '' */
+.gcs-triangle-exclamation:before {
+	content: "\e820";
+} /* '' */
+.gcs-weight:before {
+	content: "\e821";
+} /* '' */
+.gcs-circled-x:before {
+	content: "\e822";
+} /* '' */

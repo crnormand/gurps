@@ -1,0 +1,21 @@
+#melee {
+	grid-area: melee;
+	grid-template-columns: 1fr repeat(7, auto);
+	.header {
+		grid-area: auto;
+	}
+
+	.desc:nth-child(16n + 1),
+	.usage:nth-child(16n + 2),
+	.level:nth-child(16n + 3),
+	.parry:nth-child(16n + 4),
+	.block:nth-child(16n + 5),
+	.damage:nth-child(16n + 6),
+	.reach:nth-child(16n + 7),
+	.st:nth-child(16n + 8) {
+		&:not(.header) {
+			background-color: rgb(var(--color-banding));
+			color: rgb(var(--color-on-banding));
+		}
+	}
+}

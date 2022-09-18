@@ -1,0 +1,70 @@
+<div id="features">
+	<div class="header">{{localize "gurps.feature.header"}}</div>
+	<div class="content">
+		<div>
+			<i class="add button gcs-circled-add"></i>
+		</div>
+		{{#each system.features}}
+		<div class="feature">
+			<div class="top">
+				<i class="remove button gcs-trash" data-index="{{@index}}"></i>
+				<select class="type" name="system.features.{{@index}}.type" data-index="{{@index}}">
+					{{#select this.type}}
+					{{#each ../config.select.features as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+					{{/each}}
+					{{#if (eq ../this.type "equipment_container")}}
+					{{#each ../config.select.features as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+					{{/each}}
+					{{/if}}
+					{{/select}}
+				</select>
+				{{#if (eq this.type "cost_reduction")}}{{>cost-reduction config=../config
+				attributes=../attributes}}{{else}}
+				{{>sections/input-text field="field" name=(concat "NUMBER.system.features." @index ".amount")
+				data=this.amount
+				type="String"}}
+				{{#if (eq this.type "weapon_bonus")}}
+				<div class="field">
+					<label class="checkbox-label">
+						<input class="input" type="checkbox" data-dtype="Boolean"
+							name="system.features.{{@index}}.per_level" {{checked this.per_level}} />
+						{{localize "gurps.feature.per_die"}}
+					</label>
+				</div>
+				<div class="field">
+					<label class="checkbox-label">
+						<input class="input" type="checkbox" data-dtype="Boolean"
+							name="system.features.{{@index}}.percent" {{checked this.percent}} />
+						{{localize "gurps.feature.percent"}}
+					</label>
+				</div>
+				{{else}}
+				<div class="field">
+					<label class="checkbox-label">
+						<input class="input" type="checkbox" data-dtype="Boolean"
+							name="system.features.{{@index}}.per_level" {{checked this.per_level}} />
+						{{localize "gurps.feature.per_level"}}
+					</label>
+				</div>
+				{{/if}}
+				{{/if}}
+			</div>
+			{{#if (eq this.type "attribute_bonus")}}{{>item/sections/feature/attribute-bonus config=../config
+			attributes=../attributes}}{{/if}}
+			{{#if (eq this.type "reaction_bonus")}}{{>item/sections/feature/reaction-bonus config=../config}}{{/if}}
+			{{#if (eq this.type "dr_bonus")}}{{>item/sections/feature/dr-bonus config=../config
+			locations=../locations}}{{/if}}
+			{{#if (eq this.type "conditional_modifier")}}{{>item/sections/feature/cond-mod config=../config}}{{/if}}
+			{{#if (eq this.type "weapon_bonus")}}{{>item/sections/feature/weapon-bonus config=../config}}{{/if}}
+			{{#if (eq this.type "skill_bonus")}}{{>item/sections/feature/skill-bonus config=../config}}{{/if}}
+			{{#if (eq this.type "spell_bonus")}}{{>item/sections/feature/spell-bonus config=../config}}{{/if}}
+			{{#if (eq this.type "skill_point_bonus")}}{{>item/sections/feature/skill-point-bonus
+			config=../config}}{{/if}}
+			{{#if (eq this.type "spell_point_bonus")}}{{>item/sections/feature/spell-point-bonus
+			config=../config}}{{/if}}
+		</div>
+		{{/each}}
+	</div>
+</div>

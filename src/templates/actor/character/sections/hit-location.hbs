@@ -1,0 +1,9 @@
+<div class="roll">{{this.calc.roll_range}}</div>
+<div class="location">{{tab}}{{this.table_name}}</div>
+<div class="penalty rollable">{{this.hit_penalty}}</div>
+<div class="dr rollable">{{this.calc.dr.all}}</div>
+{{#if this.sub_table}}
+	{{#each this.sub_table.location}}
+		{{>hit-location tab=(concat tab " ")}}
+	{{/each}}
+{{/if}}

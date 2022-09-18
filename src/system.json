@@ -1,0 +1,53 @@
+{
+	"id": "gcsga",
+	"title": "GURPS 4th Edition (Unofficial)",
+	"description": "A game aid to help play GURPS 4e for FoundryVTT",
+	"version": "1.0.0",
+	"authors": [
+		{
+			"name": "Chris Normand",
+			"email": "",
+			"discord": "Nose66#6689"
+		},
+		{
+			"name": "M. Jeff Wilson",
+			"email": "",
+			"discord": "Nick Coffin, PI#8616"
+		},
+		{
+			"name": "Mikolaj Tomczynski",
+			"email": "mikolajtomczynski@gmail.com",
+			"discord": "neck#0001"
+		}
+	],
+	"compatibility": {
+		"minimum": 10,
+		"verified": "10.284",
+		"maximum": 10
+	},
+	"scripts": [],
+	"esmodules": ["module/gurps.js"],
+	"styles": ["styles/gurps.css"],
+	"packs": [],
+	"relatinships": {},
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json"
+		}
+	],
+	"socket": false,
+	"url": "https://github.com/crnormand/gurps",
+	"manifest": "this is autoreplaced",
+	"download": "this is autoreplaced",
+	"license": "MIT",
+	"readme": "README.md",
+	"bugs": "https://github.com/crnormand/gurps/issues",
+	"changelog": "",
+	"initiative": "",
+	"gridDistance": 1,
+	"gridUnits": "yd",
+	"primaryTokenAttribute": "pools.HP",
+	"secondaryTokenAttribute": "pools.FP"
+}

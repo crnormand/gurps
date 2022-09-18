@@ -1,0 +1,19 @@
+#spells {
+	grid-area: spells;
+	grid-template-columns: 1fr repeat(5, auto);
+	.header {
+		grid-area: auto;
+	}
+
+	.desc:nth-child(12n + 1),
+	.college:nth-child(12n + 2),
+	.level:nth-child(12n + 3),
+	.rsl:nth-child(12n + 4),
+	.points:nth-child(12n + 5),
+	.reference:nth-child(12n + 6) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+		}
+	}
+}

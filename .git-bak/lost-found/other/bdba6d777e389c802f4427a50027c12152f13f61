@@ -1,0 +1,55 @@
+<form class="{{cssClass}} gcsga" autocomplete="off">
+	<div id="sheet" class="gcs_trait_sheet">
+		<div id="details">
+			<label class="label"></label>
+			<div class="field">
+				<label class="checkbox-label">
+					<input class="input" name="system.disabled" type="checkbox" data-dtype="Boolean" {{checked (not
+						system.disabled)}} />
+					{{localize "gcsga.trait.enabled"}}
+				</label>
+			</div>
+			{{>input-text field="field" label="gcsga.trait.name" name="name" data=item.name type="String"}}
+			{{>textarea field="field" label="gcsga.trait.notes" name="system.notes" data=system.notes type="String"}}
+			{{>textarea field="field" label="gcsga.trait.vtt_notes" name="system.vtt_notes" data=system.vtt_notes
+			type="String"}}
+			{{>textarea field="field" label="gcsga.trait.user_description" name="system.user_description"
+			data=system.user_description type="String"}}
+			<div class="label">{{localize "gcsga.trait.tags"}}</div>
+			{{>input-text field="field" name="system.tags" data=(join system.tags ", ") type="String"}}
+			<div class="label">{{localize "gcsga.trait.point_cost"}}</div>
+			<div class="field no-stretch">
+				{{>input-text data=document.adjustedPoints type="Number" class="readonly"}}
+				<label class="label checkbox-label">
+					<input class="input" type="checkbox" checked />
+					{{localize "gcsga.trait.round_down"}}
+				</label>
+			</div>
+			<div class="label">{{localize "gcsga.trait.base_cost"}}</div>
+			<div class="field no-stretch">
+				{{>input-text name="system.base_points" data=system.base_points type="Number" class=""}}
+				{{>input-text label="gcsga.trait.points_per_level" name="system.points_per_level"
+				data=system.points_per_level type="Number"}}
+				{{>input-text label="gcsga.trait.levels" name="system.levels" data=system.levels type="Number"
+				class=(input_lock system.points_per_level)}}
+			</div>
+			<div class="label">{{localize "gcsga.trait.cr"}}</div>
+			<div class="field">
+				<select name="system.cr" data-dtype="Number">
+					{{#select system.cr}}
+					{{#each config.select.cr_level as |v k|}}
+					<option value="{{k}}">{{localize (concat "gcsga.trait.cr_level." v)}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+			</div>
+			{{>input-text field="field" label="gcsga.trait.reference" name="system.reference" data=system.reference
+			type="String"}}
+		</div>
+		{{>prerequisites}}
+		{{>features}}
+		{{>trait-modifiers}}
+		{{>melee-weapons}}
+		{{>ranged-weapons}}
+	</div>
+</form>

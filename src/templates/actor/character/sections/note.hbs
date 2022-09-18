@@ -1,0 +1,19 @@
+<div class="desc item" data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
+	<div class="dropdown">{{#if (eq this.type "note_container")}}
+		{{#if this.system.open}}
+		{{>actor/character/sections/dropdown-open}}
+		{{else}}
+		{{>actor/character/sections/dropdown-closed}}
+		{{/if}}
+		{{/if}}
+	</div>
+	<div class="name">
+		{{this.name}}
+	</div>
+</div>
+<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+{{#if this.open}}
+{{#each (sort this.children "sort")}}
+{{>actor/character/sections/note}}
+{{/each}}
+{{/if}}

@@ -1,0 +1,37 @@
+#traits {
+	grid-area: traits;
+
+	grid-template-columns: 1fr repeat(2, auto);
+	.header {
+		grid-area: auto;
+	}
+
+	.desc:nth-child(6n + 1),
+	.points:nth-child(6n + 2),
+	.reference:nth-child(6n + 3) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+			&.disabled {
+				.name,
+				.item-notes,
+				&.points,
+				&.reference {
+					color: rgba(var(--color-on-banding), 0.3);
+				}
+			}
+		}
+	}
+
+	.disabled {
+		.name {
+			text-decoration: line-through;
+		}
+		.name,
+		.item-notes,
+		&.points,
+		&.reference {
+			color: rgba(var(--color-on-content), 0.3);
+		}
+	}
+}

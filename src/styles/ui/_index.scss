@@ -1,0 +1,117 @@
+@import "sidebar";
+
+.app {
+	box-shadow: none;
+	background: rgba(var(--color-background), 0.6);
+	border: 1px solid rgb(var(--color-header));
+}
+
+#ui-left > #controls {
+	li {
+		background: rgba(var(--color-control), 0.6);
+		color: rgb(var(--color-on-control));
+		border: 1px solid rgb(var(--color-control-edge));
+		box-shadow: none;
+		&.toggle {
+			background-color: rgba(var(--color-pressed-control), 0.6);
+			color: rgb(var(--color-on-pressed-control));
+			&.active {
+				background-color: rgba(var(--color-pressed-control), 0.6);
+				color: rgb(var(--color-on-pressed-control));
+				border-color: rgb(var(--color-on-pressed-control));
+				box-shadow: 0 0 10px rgb(var(--color-on-pressed-control));
+			}
+		}
+
+		&.active {
+			background-color: rgb(var(--color-focused-tab));
+			color: rgb(var(--color-on-focused-tab));
+		}
+	}
+}
+
+#navigation {
+	.nav-item {
+		background: rgba(var(--color-control), 0.6);
+		color: rgb(var(--color-on-control));
+		border: 1px solid rgb(var(--color-control-edge));
+	}
+	#scene-list {
+		.scene {
+			.scene-name {
+				&:hover {
+					text-shadow: none;
+				}
+			}
+			/* &.gm { */
+			/* 	background: rgba(var(--color-current-tab), 0.6); */
+			/* 	color: rgb(var(--color-on-current-tab)); */
+			/* } */
+		}
+	}
+}
+
+aside#players {
+	border: 1px solid rgb(var(--color-header));
+	> h3 {
+		display: flex;
+		background: rgba(var(--color-header), 0.6);
+		color: rgb(var(--color-on-header));
+		border-bottom: none;
+		padding: var(--padding-header);
+		margin: 0;
+		font: var(--font-page-primary-labels);
+		justify-content: space-evenly;
+		> i {
+			translate: 0 3px;
+		}
+	}
+	> #player-list {
+		display: grid;
+		margin: 0px;
+		> li {
+			background-color: rgba(var(--color-content), 0.6);
+			color: rgb(var(--color-on-content));
+			padding: var(--padding-standard);
+			border-bottom: 1px solid rgb(var(--color-header));
+			.player-name {
+				font: var(--font-page-primary-fields);
+				color: inherit;
+			}
+		}
+		> li:nth-child(2n + 1) {
+			background-color: rgba(var(--color-banding), 0.6);
+			color: rgb(var(--color-on-banding));
+		}
+	}
+}
+
+#hotbar {
+	#hotbar-directory-controls,
+	#hotbar-page-controls {
+		background: rgba(var(--color-control), 0.8);
+		color: rgb(var(--color-on-control));
+		border: 1px solid rgb(var(--color-control-edge));
+		border-radius: 4px;
+		box-shadow: none;
+	}
+	#macro-list {
+		border: none;
+
+		> .macro {
+			background: rgba(var(--color-control), 0.8);
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+			border-radius: 4px;
+			box-shadow: none;
+
+			> .macro-key {
+				font: var(--font-system);
+				background-color: rgb(var(--color-control));
+				color: rgb(var(--color-on-control));
+				border: 1px solid rgb(var(--color-control-edge));
+				border-radius: 2px;
+			}
+		}
+	}
+}

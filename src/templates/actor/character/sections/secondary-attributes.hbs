@@ -1,0 +1,17 @@
+<div id="secondary-attributes">
+	<div class="header">{{localize "gurps.character.secondary_attributes"}}</div>
+	<div class="fieldblock3">
+		{{#each secondary_attributes}}
+		{{#if (eq this.attribute_def.type "secondary_separator")}}
+		<div class="separator_parent">
+			<div class="separator" data-text="{{this.attribute_def.name}}">{{this.attribute_def.name}}</div>
+		</div>
+		{{else}}
+		<div class="points">[{{this.points}}]</div>
+		{{>sections/input-text field="field rollable" name=(concat "system.attributes." this.id ".adj") data=this.current
+		type="Number" class=(input_lock ../editing)}}
+		<div class="label">{{this.attribute_def.combinedName}}</div>
+		{{/if}}
+		{{/each}}
+	</div>
+</div>

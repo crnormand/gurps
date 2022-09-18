@@ -1,0 +1,47 @@
+<form class="{{cssClass}} gurps" autocomplete="off">
+	<div id="sheet" class="gcs_melee_sheet">
+		<div id="details">
+			{{>sections/input-text field="field" label="gurps.weapon.usage" name="usage" data=weapon.usage type="String"}}
+			{{>sections/textarea field="field" label="gurps.weapon.notes" name="usage_notes" data=weapon.usage_notes
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.strength" name="strength" data=weapon.strength
+			type="String"}}
+			<div class="label">{{localize "gurps.weapon.damage.st"}}</div>
+			<div class="field">
+				<select name="damage.st" data-dtype="String">
+					{{#select weapon.damage.st}}
+					{{#each config.select.damage_st as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+			</div>
+			{{>sections/input-text field="field" label="gurps.weapon.damage.base" name="damage.base" data=(diceString
+			weapon.damage.base)
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.damage.modifier_per_die"
+			name="NUMBER.damage.modifier_per_die"
+			data=weapon.damage.modifier_per_die type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.damage.armor_divisor" name="NUMBER.damage.armor_divisor"
+			data=weapon.damage.armor_divisor type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.damage.type" name="damage.type" data=weapon.damage.type
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.damage.fragmentation" name="damage.fragmentation"
+			data=weapon.damage.fragmentation type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.damage.fragmentation_armor_divisor"
+			name="NUMBER.damage.fragmentation_armor_divisor" data=weapon.damage.fragmentation_armor_divisor
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.damage.fragmentation_type" name="damage.fragmentation_type"
+			data=weapon.damage.fragmentation_type type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.accuracy" name="accuracy" data=weapon.accuracy
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.rate_of_fire" name="rate_of_fire" data=weapon.rate_of_fire
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.range" name="range" data=weapon.range type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.recoil" name="recoil" data=weapon.recoil type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.shots" name="shots" data=weapon.shots type="String"}}
+			{{>sections/input-text field="field" label="gurps.weapon.bulk" name="bulk" data=weapon.bulk type="String"}}
+		</div>
+		{{>item/sections/defaults weapon attributes=attributes sysPrefix=sysPrefix}}
+	</div>
+</form>

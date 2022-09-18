@@ -1,0 +1,52 @@
+<form class="{{cssClass}} gcs" autocomplete="off">
+	<div id="sheet">
+		<div id="details">
+			<label class="label"></label>
+			<div class="field">
+				<label class="checkbox-label">
+					<input class="input" name="system.disabled" type="checkbox" data-dtype="Boolean" {{checked (not
+						system.disabled)}} />
+					{{localize "gurps.item.enabled"}}
+				</label>
+			</div>
+			{{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String"}}
+			{{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes
+			type="String"}}
+			{{>sections/textarea field="field" label="gurps.item.vtt_notes" name="system.vtt_notes"
+			data=system.vtt_notes
+			type="String"}}
+			<div class="label">{{localize "gurps.item.cost_mod"}}</div>
+			<div class="field no-stretch">
+				{{>sections/input-text name="NUMBER.system.cost" data=system.cost type="String"}}
+				<select name="system.cost_type" data-dtype="String">
+					{{#select system.cost_type}}
+					{{#each config.select.trait_mod_cost_type as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+				<select name="system.affects" data-dtype="String">
+					{{#select system.affects}}
+					{{#each config.select.trait_mod_affects as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+			</div>
+			{{#if (eq system.cost_type "percentage_leveled")}}
+			{{>sections/input-text field="field" label="gurps.item.level" name="NUMBER.system.levels" data=system.levels
+			type="String"}}
+			{{else}}
+			{{>sections/input-text field="field" label="gurps.item.level" data=system.levels class="disabled"}}
+			{{/if}}
+			{{>sections/input-text field="field" label="gurps.item.total" data=document.costDescription class="readonly
+			tabIndex='-1'"}}
+			{{>sections/input-text label="gurps.item.tags" field="field" name="system.tags" data=(join system.tags ", ")
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
+			data=system.reference
+			type="String"}}
+		</div>
+		{{>item/sections/features}}
+	</div>
+</form>

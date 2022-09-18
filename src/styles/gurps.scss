@@ -1,0 +1,253 @@
+/* ---------------------------- */
+/*             Sass             */
+/* This is your Sass entry file */
+/* ---------------------------- */
+
+@import "fonts", "actor", "ui", "packs", "item", "scene", "settings", "system", "variables", "app";
+
+// form.container {
+// 	.items {
+// 		width: 100%;
+// 		height: 100%;
+// 		background-color: white;
+// 	}
+// }
+
+#drag-ghost {
+	position: absolute;
+	top: -1000px;
+	background-color: rgb(var(--color-selection));
+	color: rgb(var(--color-on-selection));
+	font: var(--font-system);
+	width: min-content;
+	display: grid;
+	grid-auto-flow: column;
+	// grid-template-columns: min-content;
+	padding: 4px 15px;
+	gap: 4px;
+	border: 1px solid rgb(var(--color-on-selection));
+	border-radius: 1000px;
+	text-align: center;
+	white-space: nowrap;
+	align-items: baseline;
+	opacity: 1;
+	mask-image: none;
+	-webkit-mask-image: none;
+	svg {
+		height: 1em;
+	}
+}
+
+* {
+	--color-border-highlight: rgba(var(--color-scroll-edge), 1);
+}
+
+::-webkit-scrollbar-track {
+	box-shadow: none;
+}
+::-webkit-scrollbar-thumb {
+	background: rgba(var(--color-scroll));
+	border-radius: 6px;
+	&:hover {
+		background: rgba(var(--color-scroll-rollover));
+	}
+}
+
+.window-app.gcs {
+	// Header
+	background-image: linear-gradient(rgba(var(--color-focused-tab), 1), rgba(var(--color-focused-tab), 1));
+	color: rgba(var(--color-on-focused-tab), 1);
+	border: 1px solid rgba(var(--color-header), 1);
+	font: var(--font-system);
+	.window-title {
+		font: inherit;
+	}
+	.header-button:hover {
+		text-shadow: none;
+	}
+
+	// Content Background
+	.window-content {
+		height: 100%;
+		padding: 0px;
+		scroll-behavior: smooth;
+
+		background: rgb(var(--color-background));
+		color: rgb(var(--color-on-background));
+		// border-right: 2px solid transparent;
+
+		// Scrollbar
+		scrollbar-gutter: stable;
+		overflow-y: overlay;
+		// &::-webkit-scrollbar {
+		// 	width: 12px;
+		// }
+		&::-webkit-scrollbar-track {
+			box-shadow: none;
+		}
+		&::-webkit-scrollbar-thumb {
+			background: rgba(var(--color-scroll));
+			border-radius: 6px;
+			&:hover {
+				background: rgba(var(--color-scroll-rollover));
+			}
+		}
+	}
+	// Resize Handle
+	.window-resizable-handle {
+		background-color: rgb(var(--color-focused-tab));
+		color: rgb(var(--color-on-focused-tab));
+	}
+
+	select {
+		align-self: center;
+		font: var(--font-system);
+		background-color: rgb(var(--color-control));
+		color: rgb(var(--color-on-control));
+		border: 1px solid rgb(var(--color-control-edge));
+		padding: 1px 3px;
+		border-radius: 3px;
+		height: 24px;
+		width: max-content;
+		align-items: self-end;
+		optgroup {
+			font: var(--font-system);
+			background-color: rgb(var(--color-header));
+			color: rgb(var(--color-on-header));
+			border: 1px solid rgb(var(--color-on-header));
+		}
+		option {
+			font: var(--font-system);
+			background-color: rgb(var(--color-control));
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+		}
+		&:focus {
+			box-shadow: none;
+			border-width: 2px;
+			padding: 0px 2px;
+		}
+	}
+	button {
+		justify-self: center;
+		width: min-content;
+		white-space: nowrap;
+		grid-area: button;
+		background-color: rgb(var(--color-control));
+		color: rgb(var(--color-on-control));
+		font: var(--font-system);
+		border: 1px solid rgb(var(--color-control-edge));
+		border-radius: 4px;
+		&:hover,
+		&:focus {
+			box-shadow: none;
+		}
+		&:active {
+			background-color: rgb(var(--color-pressed-control));
+			color: rgb(var(--color-on-pressed-control));
+		}
+	}
+	input[type="text"],
+	input[type="search"],
+	input[type="number"] {
+		font: var(--font-field);
+		height: 24px;
+		width: 100%;
+		min-width: 40px;
+		border-radius: 0px;
+		background-color: rgb(var(--color-editable));
+		color: rgb(var(--color-on-editable));
+		border: 1px solid rgba(var(--color-control-edge));
+		padding: 1px 3px;
+		&:focus {
+			box-shadow: none;
+			border-width: 2px;
+			padding: 0 2px;
+		}
+		&[readonly] {
+			background-color: rgb(var(--color-backgroudn));
+			color: rgb(var(--color-on-background));
+			pointer-events: none;
+		}
+		&:disabled {
+			background-color: rgb(var(--color-background));
+			color: rgba(var(--color-on-editable), 0); // Invisible Text
+			pointer-events: none;
+		}
+	}
+	input[type="checkbox"] {
+		flex: 0 !important;
+		appearance: none;
+		margin: 0;
+		background-color: rgb(var(--color-control));
+		color: rgb(var(--color-on-control)); // Redundant?
+		font: inherit;
+		width: 14px;
+		height: 14px;
+		border: 1px solid rgb(var(--color-control-edge));
+		border-radius: 4px;
+		display: grid;
+		place-content: center;
+		filter: none;
+		translate: 0px 4px;
+		&:focus {
+			border-width: 2px;
+		}
+		&:active {
+			background-color: rgb(var(--color-pressed-control));
+		}
+		&::before {
+			font-family: "gcs";
+			font-size: var(--font-size-12);
+			content: "\e804";
+			opacity: 0;
+		}
+		&:checked::before {
+			opacity: 1;
+		}
+	}
+	.checkbox-label {
+		display: grid;
+		grid-auto-flow: column;
+		grid-gap: 5px;
+		justify-content: left;
+	}
+	/* .checkbox-label + .checkbox-label { */
+	/* 	margin-top: 1em; */
+	/* } */
+
+	.header {
+		grid-area: auto;
+		padding: var(--padding-header);
+		background-color: rgb(var(--color-header));
+		color: rgb(var(--color-on-header));
+		border-right: 1px solid rgb(var(--color-separator));
+		white-space: nowrap;
+	}
+}
+
+.tooltip {
+	position: relative;
+	.tooltiptext {
+		visibility: hidden;
+		background-color: rgb(var(--color-tooltip));
+		color: rgb(var(--color-on-tooltip));
+		text-align: center;
+		padding: 4px;
+		border: 1px solid rgb(var(--color-control-edge));
+		font-size: var(--font-size-14);
+
+		position: absolute;
+		z-index: 1;
+	}
+	&:hover .tooltiptext {
+		visibility: visible;
+	}
+}
+
+.button {
+	color: rgb(var(--color-icon-button));
+	&:hover {
+		color: rgb(var(--color-icon-button-rollover));
+	}
+}

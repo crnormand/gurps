@@ -1,0 +1,51 @@
+<form class="{{cssClass}} gurps" autocomplete="off">
+	<div id="sheet">
+		<div id="details">
+			<label class="label"></label>
+			<div class="field">
+				<label class="checkbox-label">
+					<input class="input" name="system.disabled" type="checkbox" data-dtype="Boolean" {{checked (not
+						system.disabled)}} />
+					{{localize "gurps.item.enabled"}}
+				</label>
+			</div>
+			{{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String"}}
+			{{>sections/input-text field="field" label="gurps.item.tech_level" name="system.tech_level"
+			data=system.tech_level
+			type="String"}}
+			{{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes
+			type="String"}}
+			{{>sections/textarea field="field" label="gurps.item.vtt_notes" name="system.vtt_notes"
+			data=system.vtt_notes
+			type="String"}}
+			<div class="label">{{localize "gurps.item.value_mod"}}</div>
+			<div class="field no-stretch">
+				{{>sections/input-text name="system.cost" data=system.cost type="String"}}
+				<select name="system.cost_type" data-dtype="String">
+					{{#select system.cost_type}}
+					{{#each config.select.eqp_mod_cost_type as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+			</div>
+			<div class="label">{{localize "gurps.item.weight_mod"}}</div>
+			<div class="field no-stretch">
+				{{>sections/input-text name="system.weight" data=system.weight type="String"}}
+				<select name="system.weight_type" data-dtype="String">
+					{{#select system.weight_type}}
+					{{#each config.select.eqp_mod_weight_type as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+			</div>
+			{{>sections/input-text label="gurps.item.tags" field="field" name="system.tags" data=(join system.tags ", ")
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
+			data=system.reference
+			type="String"}}
+		</div>
+		{{>item/sections/features}}
+	</div>
+</form>

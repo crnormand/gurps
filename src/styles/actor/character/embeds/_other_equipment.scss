@@ -1,0 +1,50 @@
+#other-equipment {
+	grid-area: other_equipment;
+	grid-template-columns: auto 1fr repeat(8, auto);
+	.header {
+		grid-area: auto;
+	}
+
+	.quantity:nth-child(20n + 1),
+	.desc:nth-child(20n + 2),
+	.uses:nth-child(20n + 3),
+	.tech-level:nth-child(20n + 4),
+	.legality-class:nth-child(20n + 5),
+	.value:nth-child(20n + 6),
+	.weight:nth-child(20n + 7),
+	.extended-value:nth-child(20n + 8),
+	.extended-weight:nth-child(20n + 9) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+		}
+	}
+
+	.quantity,
+	.dropdown,
+	.desc,
+	.uses,
+	.tech-level,
+	.legality-class,
+	.weight,
+	.value,
+	.extended-weight,
+	.extended-value,
+	.reference {
+		border-right: 1px solid rgb(var(--color-divider));
+		&.reference {
+			border-right: none;
+		}
+		&:not(.header) {
+			border-bottom: 1px solid rgb(var(--color-header));
+			border-right: 1px solid rgb(var(--color-header));
+			&.refernce,
+			&.dropdown {
+				border-right: none;
+			}
+			&:nth-last-child(-n + 10) {
+				border-bottom: none;
+			}
+		}
+	}
+}

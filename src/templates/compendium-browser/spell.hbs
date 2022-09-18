@@ -1,0 +1,30 @@
+<div class="desc item" data-uuid="{{this.uuid}}" data-type="Item" {{{indent this.parents.length}}}>
+	<div class="dropdown">
+		{{#if (eq this.type "spell_container")}}
+		{{#if this.open}}
+		{{>actor/character/sections/dropdown-open}}
+		{{else}}
+		{{>actor/character/sections/dropdown-closed}}
+		{{/if}}
+		{{/if}}
+	</div>
+	<div class="name">
+		{{this.formattedName}}
+	</div>
+	{{>compendium-browser/item-notes}}
+</div>
+<div class="college">{{join this.college ", "}}</div>
+<div class="resist">{{this.resist}}</div>
+<div class="class">{{this.class}}</div>
+<div class="casting-cost">{{this.casting_cost}}</div>
+<div class="maintenance-cost">{{this.maintenance_cost}}</div>
+<div class="casting-time">{{this.casting_time}}</div>
+<div class="duration">{{this.duration}}</div>
+<div class="difficulty">{{this.difficulty}}</div>
+<div class="tags">{{join this.tags ", "}}</div>
+<div class="reference" data-pdf="{{this.reference}}">{{ref this.reference}}</div>
+{{#if this.open}}
+{{#each (sort this.children "sort")}}
+{{>compendium-browser/spell}}
+{{/each}}
+{{/if}}

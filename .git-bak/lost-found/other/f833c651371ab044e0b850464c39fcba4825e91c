@@ -1,0 +1,159 @@
+.gcs.item {
+	@import "prereq", "feature", "trait_modifiers", "equipment_modifiers", "melee", "ranged";
+	&.trait {
+		@import "trait";
+	}
+
+	min-width: 600px;
+	.window-content {
+		background: rgb(var(--color-background));
+	}
+	#sheet {
+		background-color: rgb(var(--color-background));
+		color: rgb(var(--color-on-background));
+	}
+
+	// General Styles
+	.header {
+		grid-area: header;
+		background-color: rgba(var(--color-header), 1);
+		color: rgba(var(--color-on-header), 1);
+		justify-content: center;
+		text-align: center;
+		padding-bottom: 2px;
+		font: var(--font-label);
+	}
+	.label {
+		font: var(--font-label);
+		transform: translateY(4px);
+		text-align: right;
+	}
+	select {
+		align-self: center;
+		font: var(--font-system);
+		background-color: rgb(var(--color-control));
+		color: rgb(var(--color-on-control));
+		border: 1px solid rgb(var(--color-control-edge));
+		padding: 1px 3px;
+		border-radius: 3px;
+		height: 24px;
+		width: max-content;
+		align-items: self-end;
+		option {
+			font: var(--font-system);
+			background-color: rgb(var(--color-control));
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+		}
+		&:focus {
+			box-shadow: none;
+			border-width: 2px;
+			padding: 0px 2px;
+		}
+	}
+	.field {
+		display: grid;
+		grid-auto-flow: dense column;
+		align-items: start;
+		column-gap: 9px;
+		&.no-stretch {
+			width: max-content;
+		}
+		span.input {
+			min-height: 24px;
+			padding: 1px 3px;
+			line-height: 24px;
+			resize: both;
+			height: initial !important;
+			&:focus-visible {
+				outline: none;
+			}
+		}
+		.input[type="text"],
+		.input[type="number"] {
+			font: var(--font-field);
+			height: 24px;
+			width: 100%;
+			min-width: 40px;
+			border-radius: 0px;
+			background-color: rgb(var(--color-editable));
+			color: rgb(var(--color-on-editable));
+			border: 1px solid rgba(var(--color-editable-border));
+			padding: 1px 3px;
+			&:focus {
+				box-shadow: none;
+				border: 2px solid rgb(var(--color-focused-editable-border));
+				padding: 0 2px;
+			}
+			&[readonly] {
+				background-color: rgb(var(--color-backgroudn));
+				color: rgb(var(--color-on-background));
+				pointer-events: none;
+			}
+			&:disabled {
+				background-color: rgb(var(--color-background));
+				color: rgba(var(--color-on-editable), 0); // Invisible Text
+				pointer-events: none;
+			}
+			&[data-dtype="Number"] {
+				width: 93px;
+			}
+			&.calc {
+				width: 67px;
+			}
+		}
+		.checkbox-label {
+			display: grid;
+			grid-template-columns: 1em auto;
+			gap: 3px;
+			height: 16px;
+			grid-row-gap: 0px;
+			font: var(--font-system);
+			white-space: nowrap;
+			translate: 0px -4px;
+		}
+		input.input[type="checkbox"] {
+			appearance: none;
+			margin: 0;
+			background-color: rgb(var(--color-control));
+			color: rgb(var(--color-on-control)); // Redundant?
+			font: inherit;
+			width: 14px;
+			height: 14px;
+			border: 1px solid rgb(var(--color-control-edge));
+			border-radius: 4px;
+			display: grid;
+			place-content: center;
+			filter: none;
+			translate: 0px 4px;
+			&:focus {
+				border: 2px solid rgb(var(--color-focused-editable-border));
+			}
+			&:active {
+				background-color: rgb(var(--color-pressed-control));
+			}
+			&::before {
+				font-family: "gcs";
+				font-size: var(--font-size-12);
+				content: "\e804";
+				opacity: 0;
+			}
+			&:checked::before {
+				opacity: 1;
+			}
+		}
+		.checkbox-label + .checkbox-label {
+			margin-top: 1em;
+		}
+	}
+
+	#details {
+		display: grid;
+		grid-template: "label field";
+		grid-template-columns: max-content 1fr;
+		row-gap: 4px;
+		column-gap: 9px;
+		vertical-align: middle;
+		padding: 2px 16px;
+	}
+}

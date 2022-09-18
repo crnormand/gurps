@@ -1,0 +1,33 @@
+#skills {
+	grid-template-columns: 1fr repeat(3, auto);
+
+	.desc:nth-child(8n + 1),
+	.difficulty:nth-child(8n + 2),
+	.tags:nth-child(8n + 3),
+	.reference:nth-child(8n + 4) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+			&.disabled {
+				.name,
+				.item-notes,
+				&.points,
+				&.reference {
+					color: rgba(var(--color-on-banding), 0.3);
+				}
+			}
+		}
+	}
+
+	.disabled {
+		.name {
+			text-decoration: line-through;
+		}
+		.name,
+		.item-notes,
+		&.points,
+		&.reference {
+			color: rgba(var(--color-on-content), 0.3);
+		}
+	}
+}

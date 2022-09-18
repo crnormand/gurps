@@ -1,0 +1,577 @@
+{
+	"ACTOR": {
+		"TypeCharacter_gcs": "Character (Dynamic)",
+		"TypeCharacter": "Character (Static)"
+	},
+	"ITEM": {
+		"TypeTrait": "Trait",
+		"TypeTrait_container": "Trait Container",
+		"TypeModifier": "Trait Modifier",
+		"TypeModifier_container": "Trait Modifier Container",
+		"TypeSkill": "Skill",
+		"TypeTechnique": "Technique",
+		"TypeSkill_container": "Skill Container",
+		"TypeSpell": "Spell",
+		"TypeRitual_magic_spell": "Ritual Magic Spell",
+		"TypeSpell_container": "Spell Container",
+		"TypeEquipment": "Equipment",
+		"TypeEquipment_container": "Equipment Container",
+		"TypeEqp_modifier": "Equipment Modifier",
+		"TypeEqp_modifier_container": "Equipment Modifier Container",
+		"TypeNote": "Note",
+		"TypeNote_container": "Note Container"
+	},
+	"gurps": {
+		"character": {
+			"portrait": "Portrait",
+			"identity": "Identity",
+			"name": "Name",
+			"title": "Title",
+			"organization": "Organization",
+			"miscellaneous": "Miscellaneous",
+			"created_date": "Created",
+			"modified_date": "Modified",
+			"player_name": "Player",
+			"description": "Description",
+			"gender": "Gender",
+			"age": "Age",
+			"birthday": "Birthday",
+			"religion": "Religion",
+			"height": "Height",
+			"weight": "Weight",
+			"sm": "Size",
+			"tech_level": "TL",
+			"hair": "Hair",
+			"eyes": "Eyes",
+			"skin": "Skin",
+			"handedness": "Handedness",
+			"primary_attributes": "Primary Attributes",
+			"basic_damage": "Basic Damage",
+			"basic_thrust": "Basic Thrust",
+			"basic_swing": "Basic Swing",
+			"secondary_attributes": "Secondary Attributes",
+			"point_pools": "Point Pools",
+			"pool_of": "of",
+			"copyright": "GCS is copyrighted ©1998-{current_year} by Richard A. Wilkes. All rights reserved",
+			"link": "Link",
+			"cr_reaction": "from others when {trait} is triggered",
+			"cr_adj_display": {
+				"action_penalty": "{penalty} Action Penalty",
+				"reaction_penalty": "{penalty} Reaction Penalty",
+				"fright_check_penalty": "{penalty} Fright Check Penalty",
+				"fright_check_bonus": "{penalty} Fright Check Bonus",
+				"minor_cost_of_living_increase": "{penalty} Cost of Living Increase",
+				"major_cost_of_living_increase": "{penalty} Cost of Living Increase"
+			},
+			"settings": {
+				"import_title": "Import",
+				"import_note": "Select a file exported from GCS.<br><b>This import will overwrite the data for {name}</b>",
+				"import_warning": "<b>NOTE:</b> This action cannot be un-done."
+			},
+			"points": {
+				"title": "Points",
+				"unspent": "Unspent",
+				"race": "Race",
+				"attributes": "Attributes",
+				"advantages": "Advantages",
+				"disadvantages": "Disadvantages",
+				"quirks": "Quirks",
+				"skills": "Skills",
+				"spells": "Spells"
+			},
+			"body_type": {
+				"roll": "Roll",
+				"location": "Location",
+				"dr": "DR"
+			},
+			"encumbrance": {
+				"title": "Encumbrance, Move & Dodge",
+				"level": "Level",
+				"max_load": "Max Load",
+				"move": "Move",
+				"dodge": "Dodge",
+				"0": "None",
+				"1": "Light",
+				"2": "Medium",
+				"3": "Heavy",
+				"4": "X-Heavy"
+			},
+			"lifting": {
+				"title": "Lifting & Moving Things",
+				"basic_lift": "Basic Lift",
+				"one_handed_lift": "One-Handed Lift",
+				"two_handed_lift": "Two-Handed Lift",
+				"shove": "Shove & Knock Over",
+				"running_shove": "Running Shove & Knock Over",
+				"carry_on_back": "Carry on Back",
+				"shift_slightly": "Shift Slightly"
+			},
+			"reactions": {
+				"modifier": "±",
+				"reaction": "Reaction"
+			},
+			"conditional_modifiers": {
+				"modifier": "±",
+				"reaction": "Condition"
+			},
+			"melee": {
+				"desc": "Melee Weapon",
+				"usage": "Usage",
+				"level": "SL",
+				"parry": "Parry",
+				"block": "Block",
+				"damage": "Damage",
+				"reach": "Reach",
+				"st": "ST"
+			},
+			"ranged": {
+				"desc": "Ranged Weapon",
+				"usage": "Usage",
+				"level": "SL",
+				"accuracy": "Acc",
+				"damage": "Damage",
+				"range": "Range",
+				"rate_of_fire": "RoF",
+				"shots": "Shots",
+				"bulk": "Bulk",
+				"recoil": "Recoil",
+				"st": "ST"
+			},
+			"traits": {
+				"desc": "Trait",
+				"points": "Pts"
+			},
+			"skills": {
+				"desc": "Skill / Technique",
+				"level": "SL",
+				"rsl": "RSL",
+				"points": "Pts"
+			},
+			"spells": {
+				"desc": "Spell",
+				"college": "College",
+				"level": "SL",
+				"rsl": "RSL",
+				"points": "Pts",
+				"resist": "Resist",
+				"spell_class": "Class",
+				"casting_cost": "Cost",
+				"maintenance_cost": "Maintain",
+				"casting_time": "Time",
+				"duration": "Duration"
+			},
+			"equipment": {
+				"quantity": "#",
+				"desc": "Carried Equipment ({weight}; {value})",
+				"uses": "Uses",
+				"tech_level": "TL",
+				"legality_class": "LC"
+			},
+			"other_equipment": {
+				"quantity": "#",
+				"desc": "Other Equipment ({value})",
+				"uses": "Uses",
+				"tech_level": "TL",
+				"legality_class": "LC"
+			},
+			"notes": {
+				"desc": "Note"
+			}
+		},
+		"item": {
+			"name": "Name",
+			"enabled": "Enabled",
+			"notes": "Notes",
+			"vtt_notes": "VTT Notes",
+			"user_description": "User Description",
+			"tags": "Tags",
+			"point_cost": "Point Cost",
+			"base_cost": "Base Cost",
+			"round_down": "Round Down",
+			"points_per_level": "Per Level",
+			"levels": "Levels",
+			"level": "Level",
+			"cr": "Self-Control Roll",
+			"cr_adj": "CR Adjustment",
+			"reference": "Page Reference",
+			"modifier_desc": "Trait Modifier",
+			"modifier_point_cost": "Cost Modifier",
+			"modifier_tl": "TL",
+			"modifier_cost": "Cost Adjustment",
+			"modifier_weight": "Weight Adjustment",
+			"container_type": "Container Type",
+			"ancestry": "Ancestry",
+			"specialization": "Specialization",
+			"tech_level": "Tech Level",
+			"tech_level_required": "Required",
+			"epm_before": "Encumbrance Penalty",
+			"epm_after": "times the current encumbrance level",
+			"points": "Points",
+			"difficulty": "Difficulty",
+			"defaults_to": "Default To",
+			"college": "College",
+			"class": "Class",
+			"power_source": "Power Source",
+			"resist": "Resistance",
+			"casting_cost": "Casting Cost",
+			"maintenance_cost": "Maintenance Cost",
+			"casting_time": "Casting Time",
+			"duration": "Duration",
+			"base_skill": "Base Skill",
+			"prereq_count": "Prerequisite Count",
+			"legality_class": "Legality Class",
+			"quantity": "Quantity",
+			"equipped": "Equipped",
+			"value": "Value",
+			"extended_value": "Extended",
+			"weight": "Weight",
+			"extended_weight": "Extended",
+			"cost_mod": "Cost",
+			"value_mod": "Cost Modifier",
+			"weight_mod": "Weight Modifier",
+			"ignore_weight_for_skills": "Ignore weight for skills",
+			"uses": "Uses",
+			"max_uses": "Maximum Uses",
+			"limit": "Cannot exceed default skill level by more than",
+			"total": "Total",
+			"slash": "/"
+		},
+		"attributes": {
+			"dodge": "Dodge",
+			"parry": "Parry",
+			"block": "Block"
+		},
+		"prereq": {
+			"header": "Prerequisites"
+		},
+		"feature": {
+			"header": "Features",
+			"per_level": "per level",
+			"per_die": "per die",
+			"percent": "as a percentage"
+		},
+		"default": {
+			"header": "Defaults"
+		},
+		"weapon": {
+			"melee_header": "Melee Weapon Usage",
+			"ranged_header": "Ranged Weapon Usage",
+			"usage": "Usage",
+			"notes": "Notes",
+			"strength": "Minimum ST",
+			"damage": {
+				"st": "Base Damage",
+				"base": "Damage Modifier",
+				"modifier_per_die": "Damage Modifier Per Die",
+				"armor_divisor": "Armor Divisor",
+				"type": "Damage Type",
+				"fragmentation": "Fragmentation Base Damage",
+				"fragmentation_armor_divisor": "Fragmentation Armor Divisor",
+				"fragmentation_type": "Fragmentation Type"
+			},
+			"reach": "Reach",
+			"parry": "Parry Modifier",
+			"block": "Block Modifier",
+			"accuracy": "Accuracy",
+			"rate_of_fire": "Rate of Fire",
+			"range": "Range",
+			"recoil": "Recoil",
+			"shots": "Shots",
+			"bulk": "Bulk"
+		},
+		"roll": {
+			"just_made_it": "Just made it.",
+			"success_margin": "Made it by {margin}.",
+			"failure_margin": "Missed it by {margin}.",
+			"success": {
+				"success": "Success!",
+				"failure": "Failure!",
+				"critical_success": "Critical Success!",
+				"critical_failure": "Critical Failure!"
+			},
+			"success_attack": {
+				"success": "Hit!",
+				"failure": "Miss!",
+				"critical_success": "Critical Hit!",
+				"critical_failure": "Critical Miss!"
+			}
+		},
+		"select": {
+			"cr_level": {
+				"0": "None Required",
+				"6": "CR: 6 (Resist Rarely)",
+				"9": "CR: 9 (Resist Fairly Often)",
+				"12": "CR: 12 (Resist Quite Often)",
+				"15": "CR: 15 (Resist Almost All The Time)"
+			},
+			"cr_adj": {
+				"none": "None",
+				"action_penalty": "Includes an Action Penalty for Failure",
+				"reaction_penalty": "Includes a Reaction Penalty for Failure",
+				"fright_check_penalty": "Includes a Fright Check Penalty",
+				"fright_check_bonus": "Includes a Fright Check Bonus",
+				"minor_cost_of_living_increase": "Includes a Minor Cost of Living Increase",
+				"major_cost_of_living_increase": "Includes a Major Cost of Living Increase and Merchant Skill Penalty"
+			},
+			"number_compare": {
+				"none": "is anything",
+				"is": "is",
+				"is_not": "is not",
+				"at_least": "is at least",
+				"at_most": "is at most"
+			},
+			"number_compare_strict": {
+				"is": "exactly",
+				"at_least": "at least",
+				"at_most": "at most"
+			},
+			"string_compare": {
+				"none": "is anything",
+				"is": "is",
+				"is_not": "is not",
+				"contains": "contains",
+				"does_not_contain": "does not contain",
+				"starts_with": "starts with",
+				"does_not_start_with": "does not start with",
+				"ends_with": "ends with",
+				"does_not_end_with": "does not end with"
+			},
+			"has": {
+				"true": "has",
+				"false": "doesn't have"
+			},
+			"all": {
+				"true": "requires all of:",
+				"false": "requires at least one of:"
+			},
+			"prereqs": {
+				"trait_prereq": "a trait",
+				"attribute_prereq": "the attribute",
+				"contained_quantity_prereq": "a contained quantity",
+				"contained_weight_prereq": "a contained weight",
+				"skill_prereq": "a skill",
+				"spell_prereq": "spell(s)"
+			},
+			"features": {
+				"attribute_bonus": "Gives an attribute modifier of",
+				"conditional_modifier": "Gives a conditional modifier of",
+				"dr_bonus": "Gives a DR bonus of",
+				"reaction_bonus": "Gives a reaction modifier of",
+				"skill_bonus": "Gives a skill level modifier of",
+				"skill_point_bonus": "Gives a skill point modifier of",
+				"spell_bonus": "Gives a spell level modifier of",
+				"spell_point_bonus": "Gives a spell point modifier of",
+				"weapon_bonus": "Gives a weapon damage modifier of",
+				"cost_reduction": "Reduces the attribute cost of",
+				"contained_weight_reduction": "Reduces the contained weight by"
+			},
+			"st_limitation": {
+				"none": "",
+				"striking_only": "for striking only",
+				"lifting_only": "for lifting only",
+				"throwing_only": "for throwing only"
+			},
+			"spell_sub_type": {
+				"name": "whose name",
+				"tag": "with a tag which",
+				"college": "whose college name",
+				"college_count": "from different colleges",
+				"any": "of any kind"
+			},
+			"skill_bonus_selection_type": {
+				"skills_with_name": "to skills with name",
+				"weapons_with_name": "to weapons with name",
+				"this_weapon": "to this weapon"
+			},
+			"weapon_bonus_selection_type": {
+				"weapons_with_required_skill": "to weapons whose required skill name",
+				"weapons_with_name": "to weapons whose name",
+				"this_weapon": "to this weapon"
+			},
+			"spell_match": {
+				"all_colleges": "to all colleges",
+				"college_name": "to the college whose name",
+				"power_source_name": "to the power source whose name",
+				"spell_name": "to the spell whose name"
+			},
+			"damage_st": {
+				"none": "None",
+				"thr": "thr",
+				"thr_leveled": "thr (leveled)",
+				"sw": "sw",
+				"sw_leveled": "sw (leveled)"
+			},
+			"defaults": {
+				"ten": "10",
+				"parry": "Parry",
+				"block": "Block",
+				"skill": "Skill"
+			},
+			"container_type": {
+				"group": "Group",
+				"meta_trait": "Meta-Trait",
+				"race": "Race",
+				"alternative_abilities": "Alternative Abilities"
+			},
+			"trait_mod_cost_type": {
+				"percentage_leveled": "% per level",
+				"percentage": "%",
+				"points": "points",
+				"multiplier": "×"
+			},
+			"trait_mod_affects": {
+				"total": "to cost",
+				"base_only": "to base cost only",
+				"levels_only": "to leveled cost only"
+			},
+			"eqp_mod_cost_type": {
+				"to_original_cost": "to original cost (e.g. \"+5\", \"-5\", \"+10%\", \"-10%\", \"x3.2\")",
+				"to_base_cost": "to base cost (e.g. \"x2\", \"+2 CF\", \"-0.2 CF\")",
+				"to_final_base_cost": "to final base cost (e.g. \"+5\", \"-5\", \"+10%\", \"-10%\", \"x3.2\")",
+				"to_final_cost": "to final cost (e.g. \"+5\", \"-5\", \"+10%\", \"-10%\", \"x3.2\")"
+			},
+			"eqp_mod_weight_type": {
+				"to_original_weight": "to original weight (e.g. \"+5 lb\", \"-5 lb\", \"+10%\", \"-10%\")",
+				"to_base_weight": "to base weight (e.g. \"+5 lb\", \"-5 lb\", \"x10%\", \"x3\", \"x2/3\")",
+				"to_final_base_weight": "to final base weight (e.g. \"+5 lb\", \"-5 lb\", \"x10%\", \"x3\", \"x2/3\")",
+				"to_final_weight": "to final weight (e.g. \"+5 lb\", \"-5 lb\", \"x10%\", \"x3\", \"x2/3\")"
+			},
+			"difficulty": {
+				"easy": "E",
+				"average": "A",
+				"hard": "H",
+				"very_hard": "VH",
+				"wildcard": "W"
+			}
+		},
+		"field_prefix": {
+			"tech_level": "When the Tech Level",
+			"trait_name": "whose name",
+			"combined_with": "combined with",
+			"attribute_level": "which is",
+			"skills_with_name": "to skills whose name",
+			"this_weapon": "to this weapon",
+			"specialization": "and whose specialization",
+			"usage": "and whose usage",
+			"notes": "and whose notes",
+			"level": "and whose level",
+			"rsl": "and whose relative skill level",
+			"tags": "and at least one tag",
+			"dr_bonus_before": "against",
+			"dr_bonus_after": "attacks",
+			"dr": "to the {location}",
+			"percentage": "by {value}%"
+		},
+		"compendium_browser": {
+			"button": "Open Library Browser",
+			"title": "GCS Library Browser",
+			"hint": "Use the tabs above to select a library.",
+			"trait": "Traits",
+			"modifier": "Trait Modifiers",
+			"skill": "Skills",
+			"spell": "Spells",
+			"equipment": "Equipment",
+			"eqp_modifier": "Equipment Modifiers",
+			"note": "Notes",
+			"search": "Search",
+			"tags": "Tags",
+			"settings": "Settings",
+			"item": {
+				"trait": "Trait",
+				"modifier": "Trait Modifier",
+				"skill": "Skill / Technique",
+				"spell": "Spell",
+				"equipment": "Equipment",
+				"eqp_modifier": "Equipmennt Modifier",
+				"note": "Note",
+				"tags": "Tags",
+				"points": "Pts",
+				"cost_mod": "Cost Modifier",
+				"difficulty": "Diff",
+				"college": "College",
+				"resist": "Resist",
+				"spell_class": "Class",
+				"casting_cost": "Cost",
+				"maintenance_cost": "Maintain",
+				"casting_time": "Time",
+				"duration": "Duration",
+				"uses": "Uses",
+				"tech_level": "TL",
+				"legality_class": "LC",
+				"value_mod": "Cost Adjustment",
+				"weight_mod": "Weight Adjustment"
+			}
+		},
+		"system": {
+			"sheet": {
+				"character_gcs": "GURPS Dynamic Character Sheet",
+				"character": "GURPS Static Character Sheet",
+				"trait": "Trait Sheet",
+				"trait_container": "Trait Container Sheet",
+				"modifier": "Trait Modifier Sheet",
+				"modifier_container": "Trait Modifier Container Sheet",
+				"skill": "Skill Sheet",
+				"technique": "Technique Sheet",
+				"skill_container": "Skill Container Sheet",
+				"spell": "Spell Sheet",
+				"ritual_magic_spell": "Ritual Magic Spell Sheet",
+				"spell_container": "Spell Container Sheet",
+				"equipment": "Equipment Sheet",
+				"equipment_container": "Equipment Container Sheet",
+				"eqp_modifier": "Equipment Modifier Sheet",
+				"eqp_modifier_container": "Equipment Modifier Container Sheet",
+				"note": "Note Sheet",
+				"note_container": "Note Container Sheet"
+			},
+			"modifier_stack": {
+				"no_mods": "No modifiers currently active.",
+				"active_title": "Active Modifiers",
+				"pin_prompt": "Press Up for Pinned Modifiers",
+				"make_pin_prompt": "<b>Tip:</b>&nbsp;Press Shift+Enter to Pin Modifiers",
+				"browse": "Browse All",
+				"pinned_category": "Pinned"
+			},
+			"library_import": {
+				"button": "Import GCS Library",
+				"title": "Import GCS Library",
+				"import": "Import",
+				"cancel": "Cancel"
+			}
+		},
+		"settings": {
+			"basic_set_pdfs": {
+				"name": "Basic Set PDFs",
+				"hint": "Select Combined or Separate and use the associated PDF codes when configuring PDFoundry. Note: If you select Separate, the Basic Set Campaigns PDF should open up to page 340 during the PDFoundry test.",
+				"choices": {
+					"combined": "Combined Basic Set (B)",
+					"separate": "Separate (Characters: B, Campaigns: BX)"
+				}
+			},
+			"portrait_path": {
+				"name": "Default Portait Path",
+				"hint": "Choose where character portraits are stored (in the global Foundry User Data directory, or the local world directory).",
+				"choices": {
+					"global": "Global ([Foundry User Data]/Data/images/portaits/",
+					"local": "Local ([Foundry User Data]/Data/worlds/[World]/images/portaits/)"
+				}
+			},
+			"portrait_overwrite": {
+				"name": "Overwrite Portraits",
+				"hint": "Choose whether character portraits are overwritten on import"
+			}
+		},
+		"error": {
+			"import": {
+				"no_json_detected": "File is corrupted or not a JSON file",
+				"format_old": "File format is too old. Please save your file in the most up to date version of GCS",
+				"format_new": "File format it too new, and is not yet supported.",
+				"generic": "Import Error for {name}:\n{message}",
+				"ritual_magic_gca": "GCA Import does not currently support Ritual Magic Spells. Spell levels will likely be incorrect."
+			},
+			"modules": {
+				"pdfoundry_missing": "PDFoundry is not enabled. Please enable PDFoundry to view PDFs"
+			},
+			"modifier_app_load_failed": "Failed to initialize the Modifier Stack App."
+		}
+	}
+}

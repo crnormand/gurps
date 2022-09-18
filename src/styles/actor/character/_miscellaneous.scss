@@ -1,0 +1,13 @@
+#miscellaneous {
+	// Display
+	grid-area: miscellaneous;
+	display: grid;
+	grid-template:
+		"header"
+		"block";
+	grid-template-rows: 0fr 1fr;
+	border: var(--standard-border);
+	.label {
+		text-align: right;
+	}
+}

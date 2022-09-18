@@ -1,0 +1,17 @@
+<div id="points">
+	<div class="header">{{actor.totalPoints}} {{localize "gurps.character.points.title"}}</div>
+	<div class="fieldblock">
+		{{>sections/input-text after="gurps.character.points.unspent" field="field" name="actor.unspentPoints"
+		data=actor.unspentPoints type="Number" class=(input_lock editing)}}
+		{{>sections/input-text after="gurps.character.points.race" field="field" data=actor.traitPoints.[2] class="disabled"}}
+		{{>sections/input-text after="gurps.character.points.attributes" field="field" data=actor.attributePoints
+		class="disabled"}}
+		{{>sections/input-text after="gurps.character.points.advantages" field="field" data=actor.traitPoints.[0]
+		class="disabled"}}
+		{{>sections/input-text after="gurps.character.points.disadvantages" field="field" data=actor.traitPoints.[1]
+		class="disabled"}}
+		{{>sections/input-text after="gurps.character.points.quirks" field="field" data=actor.traitPoints.[3] class="disabled"}}
+		{{>sections/input-text after="gurps.character.points.skills" field="field" data=actor.skillPoints class="disabled"}}
+		{{>sections/input-text after="gurps.character.points.spells" field="field" data=actor.spellPoints class="disabled"}}
+	</div>
+</div>

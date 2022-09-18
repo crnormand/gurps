@@ -1,0 +1,34 @@
+import { CompendiumBrowser, CompendiumIndexData } from "..";
+import { CompendiumTab } from "./base";
+
+export class CompendiumTraitTab extends CompendiumTab {
+	constructor(browser: CompendiumBrowser) {
+		super(browser, "trait");
+	}
+
+	protected override async loadData(): Promise<void> {
+		const traits: CompendiumIndexData[] = [];
+		const indexFields = ["img", "name", "system.tags"];
+
+		for await (const { pack, index } of this.browser.packLoader.loadPacks(
+			"Item",
+			this.browser.loadedPacks("trait"),
+			indexFields
+		)) {
+			for (const traitData of index) {
+				if (traitData.type === "trait") {
+					// TODO: hasAllIndexFields
+					traits.push({
+						_id: traitData._id,
+						type: traitData.type,
+						name: traitData.name,
+						img: traitData.img,
+						compendium: pack.collection,
+					});
+				}
+			}
+		}
+
+		this.indexData = traits;
+	}
+}

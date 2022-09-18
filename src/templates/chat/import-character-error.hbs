@@ -1,0 +1,15 @@
+<div class='gga-chat-message'>
+  <div class='prefix'>
+  </div>
+  <div class='roll-result'>
+    <ul>
+      {{#each lines}}
+        <li>{{{this}}}</li>
+      {{/each}}
+    </ul>
+    <div class='aside'>
+      <p>{{localize "GURPS.importFileVersion" version=this.version}}</p>
+      <p>{{localize "GURPS.importCurrentVersions" GCAVersion=this.GCAVersion GCSVersion=this.GCSVersion}}</p>
+    </div>
+  </div>
+</div>

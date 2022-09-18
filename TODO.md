@@ -1,0 +1,82 @@
+# TO DO
+## In Progress
+- Roll chat templates
+- Roll Functionality
+	- ChatCommand for rolling
+	- Modifier parsing
+	- pin function doesn't work sometimes
+	- neutral mod color change
+	- skill rolls don't reset mods
+	- type error when skill/attack doesn't exist
+	- attribute rolls
+	- CR rolls
+- GCA import
+	- prereqs (leave for later)
+	- appearance
+	- finish features
+	- meta-traits
+	- racial templates
+	- alternate abilities
+ - PDF Support
+ - GGA 0.15 integration
+	- add posture to dynamic character
+	- add maneuver to dynamic character
+	- add non-attribute resource trackers to dynamic character (optional, could think of better solution)
+	- add move modes to dynamic character
+	- add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
+	the names pased should be customizable via an object-type system setting. the names(?) value should be an array of strings
+	- add optional encumbrance to dynamic character
+	- add deprecation/migration warning to static character
+	- modify static charsheet to match stylistically with dynamic charsheet. also eliminate "editable" static charsheet, instead using same system as dynamic
+	- add deprecation warning to static items
+	- (?) add optional reeling to dynamic character (maybe add ability to manually switch pool state for purposes of move etc. calculation)
+## Sheets & Styling
+- Global Foundry styling
+- Damage template
+- (compact) NPC sheet
+- GCS character settings form
+## Large Features
+- Character export/sync
+- Manual Light & Dark Mode
+- Vehicles
+	- Spaceships
+	- 3e(?) Vehicles
+	- Vehicles as items (?)
+- Mass Combat Elements
+- Conditions Redo
+- Damage Calculator Redo
+- Style (font & color) settings
+- Customizable default attributes/body plan/sheet settings
+- Mook Generator
+	- Autocomplete traits, skills, etc. from compendiums
+- G-Force calculator (affects encumbrance & move)
+	- Toggleable sidebar button
+	- Affects clicked on tokens / current map / current character
+- Active Effects with Features
+- Incorporate v10 tooltip API
+- Skill Defaults from compendium
+- @X@ notation dialog box for items
+- Support custom hit location tables in damage calculator
+- Support rolling on custom hit location tables (e.g. grand unified hit location table)
+- Tech Level Modifiers (B168)
+- Tours implementation for UI
+- update Nordlond sheet & compendium entries with dynamic characters
+- metric system conversion
+- Native PDF support
+- Roll20 style notes about character in place of character sheet (for players with limited access?)
+## Small Features, Changes & Fixes
+- Library Import
+	- Overwrite items instead of appending
+	- When importing to world items, overwrite items with the same GCS UUID
+- Polygot module support for Dynamic Characters
+- Sort character items on import
+- Change unsatisfied prerequisite messages for better formatting & localization
+- Redo drag & drop indicators
+- Add "children" section to sheets for items which can have children
+- Nested items cannot be dragged to item list
+- max uses blank value (current hack fix)
+- Calculate hit location table on prepareData
+- Different attribute based skill rolls 
+- automatically pop out effect mod window when choosing maneuver / posture / effect
+- "disabled" input fields should not have blank text, such as in case of locked compendium
+- switch between number and dice display for skill rolls

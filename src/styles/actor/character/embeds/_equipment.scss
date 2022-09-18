@@ -1,0 +1,32 @@
+#equipment {
+	grid-area: equipment;
+	grid-template-columns: auto auto 1fr repeat(8, auto);
+	.header {
+		grid-area: auto;
+	}
+
+	.equipped {
+		min-height: 22px;
+	}
+
+	.equipped:nth-child(22n + 1),
+	.quantity:nth-child(22n + 2),
+	.desc:nth-child(22n + 3),
+	.uses:nth-child(22n + 4),
+	.tech-level:nth-child(22n + 5),
+	.legality-class:nth-child(22n + 6),
+	.value:nth-child(22n + 7),
+	.weight:nth-child(22n + 8),
+	.extended-value:nth-child(22n + 9),
+	.extended-weight:nth-child(22n + 10),
+	.reference:nth-child(22n + 11) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+		}
+	}
+
+	.equipped {
+		padding: var(--padding-header);
+	}
+}

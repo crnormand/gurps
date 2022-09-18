@@ -1,0 +1,21 @@
+.gcs.actor {
+	.window-content {
+		background: rgb(var(--color-page));
+	}
+	&.character {
+		@import "character";
+	}
+	.error {
+		background-color: rgb(var(--color-error));
+		color: rgb(var(--color-on-error));
+		display: grid;
+		grid-auto-flow: column;
+		grid-auto-columns: min-content;
+		gap: 3px;
+		padding: var(--padding-standard);
+		width: min-content;
+		white-space: nowrap;
+	}
+}
+
+@import "character_config";

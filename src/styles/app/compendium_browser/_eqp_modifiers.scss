@@ -1,0 +1,35 @@
+#eqp-modifiers {
+	grid-template-columns: 1fr repeat(5, auto);
+
+	.desc:nth-child(12n + 1),
+	.tech-level:nth-child(12n + 2),
+	.value:nth-child(12n + 3),
+	.weight:nth-child(12n + 4),
+	.tags:nth-child(12n + 5),
+	.reference:nth-child(12n + 6) {
+		&:not(.header) {
+			background-color: rgba(var(--color-banding), 1);
+			color: rgba(var(--color-on-banding), 1);
+			&.disabled {
+				.name,
+				.item-notes,
+				&.points,
+				&.reference {
+					color: rgba(var(--color-on-banding), 0.3);
+				}
+			}
+		}
+	}
+
+	.disabled {
+		.name {
+			text-decoration: line-through;
+		}
+		.name,
+		.item-notes,
+		&.points,
+		&.reference {
+			color: rgba(var(--color-on-content), 0.3);
+		}
+	}
+}

@@ -1,0 +1,93 @@
+#encumbrance-lifting {
+	grid-area: encumbrance-lifting;
+	display: grid;
+	grid-template:
+		"encumbrance"
+		"lifting";
+	gap: var(--section-gap);
+
+	#encumbrance {
+		grid-area: encumbrance;
+		display: grid;
+		grid-template:
+			"title title title title title title"
+			"header1 header1 header1 header2 header3 header4"
+			"encumbrance-marker level-number level max-load move dodge";
+		grid-template-columns: min-content min-content 1fr min-content min-content min-content;
+		grid-template-rows: 0fr 0fr;
+		align-content: baseline;
+		white-space: nowrap;
+		font: var(--font-page-primary-fields);
+		background-color: rgba(var(--color-content), 1);
+		color: rgba(var(--color-on-editable), 0.6);
+		text-align: right;
+		.encumbrance-marker {
+			color: rgb(var(--color-on-content));
+		}
+		.level {
+			color: rgba(var(--color-on-content), 1);
+			font: var(--font-page-primary-labels);
+			text-align: left;
+		}
+		.header {
+			grid-area: auto;
+			text-align: center;
+		}
+		.title {
+			grid-area: title;
+		}
+		.level.header {
+			grid-column: 1 / span 3;
+		}
+		.level,
+		.max-load,
+		.move {
+			border-right: 1px solid rgba(var(--color-header), 1);
+		}
+		> :not(.header) {
+			padding: var(--padding-standard);
+		}
+
+		.encumbrance-marker:nth-child(12n),
+		.level-number:nth-child(12n + 1),
+		.level:nth-child(12n + 2),
+		.max-load:nth-child(12n + 3),
+		.move:nth-child(12n + 4),
+		.dodge:nth-child(12n + 5) {
+			&:not(.header) {
+				background-color: rgba(var(--color-banding), 1);
+			}
+		}
+
+		.active {
+			background-color: rgba(var(--color-marker), 1) !important;
+			&.dodge:hover {
+				background-color: rgba(var(--color-link), 1) !important;
+				color: rgba(var(--color-on-link), 1) !important;
+			}
+		}
+	}
+
+	#lifting {
+		grid-area: lifting;
+		display: grid;
+		grid-template:
+			"header header"
+			"lift label";
+		grid-template-rows: 0fr;
+		.lift {
+			font: var(--font-page-primary-fields);
+			color: rgba(var(--color-on-editable), 0.6);
+			text-align: right;
+		}
+		.label {
+			font: var(--font-page-primary-labels);
+			color: rgba(var(--color-on-content), 1);
+		}
+
+		.lift:nth-child(4n),
+		.label:nth-child(4n + 1) {
+			background-color: rgba(var(--color-banding), 1);
+		}
+	}
+}

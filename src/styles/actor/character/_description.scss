@@ -1,0 +1,13 @@
+#description {
+	// Display
+	grid-area: description;
+	display: grid;
+	grid-template:
+		"header header header"
+		"block block block";
+	grid-template-columns: 1fr 1fr 1fr;
+	border: var(--standard-border);
+	.label {
+		text-align: right;
+	}
+}

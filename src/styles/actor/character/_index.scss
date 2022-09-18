@@ -1,0 +1,142 @@
+#sheet {
+	@import "personal", "stats", "embeds";
+
+	div {
+		background-color: rgba(var(--color-content), 1);
+	}
+	> div {
+		background-color: rgb(var(--color-page));
+	}
+	.dropdown {
+		background-color: transparent;
+		font-size: var(--font-size-10);
+		margin-top: 3px;
+	}
+
+	background-color: rgb(var(--color-page));
+	padding: var(--padding-header);
+
+	// Sheet Layout
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: start;
+	gap: var(--section-gap);
+
+	// General Styles
+	.header {
+		grid-area: header;
+		background-color: rgba(var(--color-header), 1);
+		color: rgba(var(--color-on-header), 1);
+		justify-content: center;
+		text-align: center;
+		padding-bottom: 2px;
+		font: var(--font-page-primary-labels);
+	}
+
+	.fieldblock {
+		display: grid;
+		grid-template-columns: 0fr 1fr;
+		align-items: end;
+		text-align: left;
+		white-space: nowrap;
+		align-self: stretch;
+		background-color: rgba(var(--color-content), 1);
+		color: rgba(var(--color-on-content), 1);
+	}
+
+	.fieldblock3 {
+		display: grid;
+		grid-template-columns: 0fr 0fr 1fr;
+		white-space: nowrap;
+		background-color: rgba(var(--color-content), 1);
+		color: rgba(var(--color-on-content), 1);
+		> * {
+			padding: var(--padding-standard);
+		}
+	}
+
+	.fieldblock6 {
+		display: grid;
+		grid-template-columns: repeat(6, 0fr);
+		white-space: nowrap;
+		background-color: rgba(var(--color-content), 1);
+		color: rgba(var(--color-on-content), 1);
+		> * {
+			padding: var(--padding-standard);
+		}
+	}
+
+	.label {
+		font: var(--font-page-primary-labels);
+		padding: var(--padding-standard);
+	}
+
+	.field {
+		font: var(--font-page-primary-fields);
+	}
+
+	.rollable.hover {
+		background-color: rgba(var(--color-link), 1) !important;
+		color: rgba(var(--color-on-link), 1) !important;
+		cursor: pointer;
+		.input:disabled {
+			color: inherit;
+			cursor: inherit;
+		}
+	}
+
+	.input {
+		padding: 0;
+		border: none;
+		border-bottom: 1px solid rgba(var(--color-control-edge), 1);
+		border-radius: 0;
+		color: rgba(var(--color-on-editable), 1);
+		background: rgba(var(--color-editable), 1);
+		height: 100%;
+		min-width: 20px;
+		width: calc(100% - 2px);
+		&:focus {
+			box-shadow: none;
+			border-bottom-color: rgba(var(--color-accent), 1);
+		}
+		&:disabled {
+			border-bottom-color: transparent;
+			background-color: transparent;
+			color: rgba(var(--color-on-editable), 0.6);
+		}
+	}
+
+	#personal,
+	#stats,
+	#embeds {
+		> div:not(#attributes),
+		#attributes > div {
+			border: var(--standard-border);
+		}
+	}
+	#footer {
+		font: var(--font-page-secondary-footer);
+		background-color: rgb(var(--color-page));
+		color: rgba(var(--color-on-page), 1);
+		text-align: left;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		div {
+			background-color: inherit;
+		}
+		.centre {
+			font: var(--font-page-primary-footer);
+			text-align: center;
+		}
+		.right {
+			text-align: right;
+			a {
+				color: inherit;
+				text-decoration: inherit;
+				&:hover {
+					text-shadow: none;
+				}
+			}
+		}
+	}
+}

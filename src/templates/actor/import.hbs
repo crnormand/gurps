@@ -1,0 +1,9 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+	<p class="notes">Select a file exported from GCS.</p>
+	<div class="form-group">
+		<label for="data">Source Data:</label>
+		<input type="file" accept=".gcs,.gca5" name="data" />
+	</div>
+	<p class="notes"><br>The import will overwrite the data for {{name}}.</p>
+	<br><span class="fas fa-exclamation-triangle">NOTE: This cannot be un-done.</span>
+</form>

@@ -1,27 +1,100 @@
-# [Users Guide](https://bit.ly/2JaSlQd) for GURPS 4e Game Aid for Foundry VTT
+# GURPS Character Sheet Game Aid for FoundryVTT
 
-If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
+This system aims to aid GMs and players in playing on FoundryVTT using the GURPS system.
+The system is closely tied with the [GURPS Character Sheet by Richard Wilkes].
 
-# Current Release Version 0.15.2 (compatible with FoundryVTT v10.x)
+## Installation
 
-With support for the [Nordlondr Ovinabokin: Bestiary and Enemies module](https://foundryvtt.com/packages/nordlond-bestiary)!
+The system is currently under early development and its installation and use in play is not recommended.
 
-### [Change Log](changelog.md)
+## Development
 
-The list was getting just too long, so it has been moved to a separate file. Click above to see what has changed.
+To Do...
 
-If you like our work [Sponsor our development](https://github.com/sponsors/crnormand) or <a href="https://ko-fi.com/crnormand"><img height="36" src="https://cdn.ko-fi.com/cdn/kofi2.png?v=2"></a>
+### Prerequisites
 
-Join us on Discord: [GURPS Foundry-VTT Discord](https://discord.gg/6xJBcYWyED)
+In order to build this system, recent versions of `node` and `npm` are
+required. Most likely, using `yarn` also works, but only `npm` is officially
+supported. We recommend using the latest lts version of `node`. If you use `nvm`
+to manage your `node` versions, you can simply run
 
-[Current GCA4 Export version: 'GCA-11' 12/23/2021 / Current GCA5 Export version: 'GCA5-14' 9/09/2022 / Current GCS Export version: 'GCS-5' 3/8/2021](https://drive.google.com/file/d/1vbDb9WtYQiZI78Pwa_TlEvYpJnR_S67B/view?usp=sharing)
+```
+nvm install
+```
 
-#### Legal
+in the project's root directory.
 
-The material presented here is my original creation, intended for use with the [GURPS](http://www.sjgames.com/gurps) system from [Steve Jackson Games](ttp://www.sjgames.com). This material is not official and is not endorsed by Steve Jackson Games.
+You also need to install the project's dependencies. To do so, run
 
-[GURPS](http://www.sjgames.com/gurps) is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Chris Normand/Nose66 and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy](http://www.sjgames.com/general/online_policy.html)
+```
+npm install
+```
 
-This game system DOES NOT provide information contained in paid publications. It is only intended to allow people to play GURPS online using their GURPS books/PDFs.
+### Building
 
-Status icons for actors provided by [R.K. Media](https://marketplace.roll20.net/browse/publisher/507/rk-media) - check them out!
+You can build the project by running
+
+```
+npm run build
+```
+
+Alternatively, you can run
+
+```
+npm run build:watch
+```
+
+to watch for changes and automatically build as necessary.
+
+### Linking the built project to Foundry VTT
+
+In order to provide a fluent development experience, it is recommended to link
+the built system to your local Foundry VTT installation's data folder. In
+order to do so, first add a file called `foundryconfig.json` to the project root
+with the following content:
+
+```
+{
+  "dataPath": "/absolute/path/to/your/FoundryVTT"
+}
+```
+
+(if you are using Windows, make sure to use `\` as a path separator instead of
+`/`)
+
+Then run
+
+```
+npm run link-project
+```
+
+On Windows, creating symlinks requires administrator privileges, so unfortunately
+you need to run the above command in an administrator terminal for it to work.
+
+### Running the tests
+
+You can run the tests with the following command:
+
+```
+npm test
+```
+
+### Creating a release
+
+The workflow works basically the same as the workflow of the [League Basic JS Module Template], please follow the
+instructions given there.
+
+## Licensing
+
+This project is being developed under the terms of the
+[LIMITED LICENSE AGREEMENT FOR MODULE DEVELOPMENT] for Foundry Virtual Tabletop.
+
+GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games. All rights are reserved by Steve Jackson Games. This game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted in the [Steve Jackson Games Online Policy].
+
+This project is under an [MIT License].
+
+[GURPS Character Sheet by Richard Wilkes]: https://gurpscharactersheet.com/
+[League Basic JS Module Template]: https://github.com/League-of-Foundry-Developers/FoundryVTT-Module-Template
+[LIMITED LICENSE AGREEMENT FOR MODULE DEVELOPMENT]: https://foundryvtt.com/article/license/
+[Steve Jackson Games Online Policy]: http://www.sjgames.com/general/online_policy.html
+[MIT License]: https://github.com/crnormand/gurps/blob/master/LICENSE.md

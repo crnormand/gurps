@@ -1,0 +1,105 @@
+#sidebar {
+	border: 1px solid rgb(var(--color-header));
+
+	select,
+	#chat-controls .roll-type-select {
+		align-self: center;
+		font: var(--font-system);
+		background-color: rgb(var(--color-control));
+		color: rgb(var(--color-on-control));
+		border: 1px solid rgb(var(--color-control-edge));
+		padding: 1px 3px;
+		border-radius: 3px;
+		height: 24px;
+		width: max-content;
+		align-items: self-end;
+		optgroup {
+			font: var(--font-system);
+			background-color: rgb(var(--color-header));
+			color: rgb(var(--color-on-header));
+			border: 1px solid rgb(var(--color-on-header));
+		}
+		option {
+			font: var(--font-system);
+			background-color: rgb(var(--color-control));
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+		}
+		&:focus {
+			box-shadow: none;
+			border-width: 2px;
+			padding: 0px 2px;
+		}
+	}
+
+	&.collapsed {
+		#sidebar-tabs {
+			gap: 2px;
+			> .item.active,
+			> .item {
+				border-bottom: 1px solid rgb(var(--color-control-edge));
+				border-radius: 4px;
+			}
+		}
+	}
+
+	#sidebar-tabs {
+		box-shadow: none;
+		.item {
+			background-color: rgba(var(--color-control), 0.6);
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+			&.active {
+				background-color: rgb(var(--color-focused-tab));
+				color: rgb(var(--color-on-focused-tab));
+				text-shadow: none;
+				box-shadow: none;
+			}
+			&:hover {
+				text-shadow: none;
+			}
+		}
+
+		> .collapse {
+			color: rgb(var(--color-icon-button));
+			&:hover {
+				text-shadow: none;
+				color: rgb(var(--color-icon-button-rollover));
+			}
+		}
+	}
+	#chat {
+		#chat-controls {
+			.fa-dice-d20 {
+				color: rgb(var(--color-icon-button-rollover));
+				&:before {
+					content: "\f522";
+				}
+			}
+			.control-buttons > a {
+				color: rgb(var(--color-icon-button));
+				&:hover {
+					color: rgb(var(--color-icon-button-rollover));
+					text-shadow: none;
+				}
+			}
+		}
+
+		#chat-message {
+			font: var(--font-field);
+			background: rgba(var(--color-editable), 0.6);
+			color: rgb(var(--color-on-editable));
+			border: 1px solid rgba(var(--color-control-edge));
+			padding: 1px 3px;
+			&:focus {
+				box-shadow: none;
+				border-width: 2px;
+				padding: 0 2px;
+			}
+		}
+
+		#chat-log {
+			@import "message";
+		}
+	}
+}

@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"target": "ES2021",
+		"lib": ["DOM", "ES2021"],
+		"types": ["@league-of-foundry-developers/foundry-vtt-types"],
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"sourceMap": true,
+		"baseUrl": ".",
+		"paths": {
+			"@assets/*": ["src/assets/*"],
+			"@actor": ["src/module/actor"],
+			"@actor/*": ["src/module/actor/*"],
+			"@item": ["src/module/item"],
+			"@item/*": ["src/module/item/*"],
+			"@feature": ["src/module/feature"],
+			"@feature/*": ["src/module/feature/*"],
+			"@prereq": ["src/module/prereq"],
+			"@prereq/*": ["src/module/prereq/*"],
+			"@module/*": ["src/module/*"],
+			"@scripts/*": ["src/scripts/*"],
+			"@util": ["src/util"],
+			"@util/*": ["src/util/*"]
+		}
+	},
+	"include": ["src"]
+}

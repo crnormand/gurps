@@ -1,0 +1,19 @@
+<div id="primary-attributes">
+	<div class="header">{{localize "gurps.character.primary_attributes"}}</div>
+	<div class="fieldblock3">
+		{{#each primary_attributes}}
+		{{#if (eq this.attribute_def.type "primary_separator")}}
+		<div class="separator_parent">
+			<div class="separator" data-text="{{this.attribute_def.name}}">{{this.attribute_def.name}}</div>
+		</div>
+		{{else}}
+		<div class="points">[{{this.points}}]</div>
+		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable">
+			<input name="system.attributes.{{this.id}}.adj" class="input number" type="text" data-dtype="Number"
+				value="{{this.current}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{this.attribute_def.combinedName}}</div>
+		{{/if}}
+		{{/each}}
+	</div>
+</div>

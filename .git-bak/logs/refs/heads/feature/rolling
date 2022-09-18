@@ -1,0 +1,13 @@
+0000000000000000000000000000000000000000 847e3bb175cc0af1231c5760bd3707eb18a69558 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662908152 +0100	branch: Created from HEAD
+847e3bb175cc0af1231c5760bd3707eb18a69558 bec3636e4b19bfe5aa5a30acebbc8cb1da651509 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662917194 +0100	commit: universal styling part 1
+bec3636e4b19bfe5aa5a30acebbc8cb1da651509 0f0894e46e375a21f6e843510c9cf361151989da Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1662934504 +0100	commit: added PDF support
+0f0894e46e375a21f6e843510c9cf361151989da 9c474a3d37b8c8b20bbd79233f23f7949d861703 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663108883 +0100	commit: added modifier list to attack roll message
+9c474a3d37b8c8b20bbd79233f23f7949d861703 b6060a0364eb4d8e54e0fab119949f27d781fc88 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663160484 +0100	rebase (finish): refs/heads/feature/rolling onto e97fa8acdd4939407e84ee1b390ef6f1052d7c80
+b6060a0364eb4d8e54e0fab119949f27d781fc88 9535efd873cf6bd8bf28564f235fe9967d79c1ac Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161269 +0100	commit: added clickable modifiers and margin of success/failure
+9535efd873cf6bd8bf28564f235fe9967d79c1ac b6060a0364eb4d8e54e0fab119949f27d781fc88 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161337 +0100	rebase (abort): updating HEAD
+b6060a0364eb4d8e54e0fab119949f27d781fc88 9c474a3d37b8c8b20bbd79233f23f7949d861703 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663161341 +0100	pull origin feature/rolling (finish): refs/heads/feature/rolling onto 9c474a3d37b8c8b20bbd79233f23f7949d861703
+9c474a3d37b8c8b20bbd79233f23f7949d861703 80acbb6f9c35c7ac57044646bf026496e568381b Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663163582 +0100	commit: reapplied changes from missing commit
+80acbb6f9c35c7ac57044646bf026496e568381b d90c9ba63181f855a769b164e208b9aad8cb12c2 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663184090 +0100	commit: finished attack and skill roll chat cards
+d90c9ba63181f855a769b164e208b9aad8cb12c2 2299c86fba996626ff11d129d0a7001cb897a499 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663287625 +0100	commit: adding damage roll part 1
+2299c86fba996626ff11d129d0a7001cb897a499 231659e9fc435e80bbdb044f82b5d87ecdce98e3 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663507225 +0100	pull origin master: Fast-forward
+231659e9fc435e80bbdb044f82b5d87ecdce98e3 98f3a1a36088a203e89e4428b0a4a2e4255bbc35 Mikolaj Tomczynski <mikolajtomczynski@gmail.com> 1663510468 +0100	commit: added attribute rolls

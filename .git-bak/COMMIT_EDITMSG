@@ -1,0 +1,14 @@
+added attribute rolls
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch feature/rolling
+# Changes to be committed:
+#	modified:   TODO.md
+#	modified:   src/module/actor/character/sheet.ts
+#	modified:   src/module/data.ts
+#	modified:   src/styles/app/_index.scss
+#	modified:   src/templates/actor/character/sections/primary-attributes.hbs
+#	modified:   src/templates/actor/character/sections/spell.hbs
+#	modified:   src/util/roll.ts
+#

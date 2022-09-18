@@ -1,0 +1,28 @@
+<form autocomplete="off">
+	<div>
+		<label>{{{localize "gurps.character.settings.import_title"}}}</label>
+		<input type="file" acept=".gcs" name="data" />
+		<p class="notes">{{{localize "gurps.character.settings.import_note" name=actor.name}}}</p>
+		<i class="gcs gcs-triangle-exclamation"></i>
+		<p class="notes">{{{localize "gurps.character.settings.import_warning"}}}</p>
+	</div>
+	{{!-- <div> --}}
+		{{!-- <label>{{localize "SHEETS.ThisSheet"}}</label> --}}
+		{{!-- <select name="sheetClass"> --}}
+			{{!-- {{selectOptions sheetClasses selected=sheetClass blank=blankLabel}} --}}
+			{{!-- </select> --}}
+		{{!-- <p class="notes">{{localize "SHEETS.DocumentSheetHint"}}</p> --}}
+		{{!-- </div> --}}
+
+	{{!-- <div class="form-group"> --}}
+		{{!-- <label>{{localize "Default"}} <strong>{{type}}</strong> {{localize "Sheet"}}</label> --}}
+		{{!-- <select name="defaultClass" {{#unless isGM}}disabled{{/unless}}> --}}
+			{{!-- {{selectOptions sheetClasses selected=defaultClass}} --}}
+			{{!-- </select> --}}
+		{{!-- <p class="notes">{{localize "SHEETS.TypeSheetHint"}}</p> --}}
+		{{!-- </div> --}}
+
+	{{!-- <button type="submit" name="submit"> --}}
+		{{!-- <i class="fas fa-save"></i> {{localize "SHEETS.Save"}} --}}
+		{{!-- </button> --}}
+</form>

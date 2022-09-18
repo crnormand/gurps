@@ -1,0 +1,20 @@
+#reactions,
+#conditional-modifiers {
+	grid-area: reactions;
+	grid-template-columns: auto 1fr;
+	.header {
+		grid-area: auto;
+	}
+
+	.modifier:nth-child(4n + 1),
+	.condition:nth-child(4n + 2) {
+		&:not(.header) {
+			background-color: rgb(var(--color-banding));
+			color: rgb(var(--color-on-banding));
+		}
+	}
+}
+
+#conditional-modifiers {
+	grid-area: conditional_modifiers;
+}

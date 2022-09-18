@@ -1,0 +1,24 @@
+#ranged {
+	grid-area: ranged;
+	grid-template-columns: 1fr repeat(10, auto);
+	.header {
+		grid-area: auto;
+	}
+
+	.desc:nth-child(22n + 1),
+	.usage:nth-child(22n + 2),
+	.level:nth-child(22n + 3),
+	.accuracy:nth-child(22n + 4),
+	.damage:nth-child(22n + 5),
+	.range:nth-child(22n + 6),
+	.rate-of-fire:nth-child(22n + 7),
+	.shots:nth-child(22n + 8),
+	.bulk:nth-child(22n + 9),
+	.recoil:nth-child(22n + 10),
+	.st:nth-child(22n + 11) {
+		&:not(.header) {
+			background-color: rgb(var(--color-banding));
+			color: rgb(var(--color-on-banding));
+		}
+	}
+}

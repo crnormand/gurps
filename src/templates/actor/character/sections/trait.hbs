@@ -1,0 +1,23 @@
+<div class="desc item {{disabled (not this.enabled)}}" data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
+	<div class="dropdown">
+		{{!-- {{#if (eq this.type "trait_container")}} --}}
+		{{#if (or (eq this.type "trait_container") this.children.size)}}
+		{{#if this.open}}
+		{{>actor/character/sections/dropdown-open}}
+		{{else}}
+		{{>actor/character/sections/dropdown-closed}}
+		{{/if}}
+		{{/if}}
+	</div>
+	<div class="name">
+		{{this.formattedName}}
+	</div>
+	{{>actor/character/sections/item-notes}}
+</div>
+<div class="points {{disabled (not this.enabled)}}">{{this.adjustedPoints}}</div>
+<div class="reference" data-pdf="{{this.reference}}" {{disabled (not this.enabled)}}>{{ref this.reference}}</div>
+{{#if this.open}}
+{{#each (sort this.children "sort")}}
+{{>actor/character/sections/trait}}
+{{/each}}
+{{/if}}

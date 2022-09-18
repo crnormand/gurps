@@ -1,0 +1,21 @@
+<div id="modifier-app-browse" class="{{cssClass}}" autocomplete="off">
+	<div class="browse{{#if (eq selection.[0] 0)}} selected{{/if}}">{{localize "gurps.system.modifier_stack.browse"}}
+	</div>
+	{{#if showing}}
+	<div class="categories">
+		{{#each categories}}
+		<div data-index="{{@index}}" class="category{{#if (eq ../selection.[1] @index)}} selected{{/if}}">
+			<i class="fas fa-caret-left"></i>{{this.name}}
+		</div>
+		{{/each}}
+	</div>
+	{{/if}}
+	{{#each categories}}{{#if this.showing}}
+	<div class="entries" style="padding-bottom: calc({{@index}} * 24px)">
+		{{#each this.mods}}
+		<div data-index="{{@index}}" class="entry{{#if (eq ../../selection.[2] @index)}} selected{{/if}}">{{signed
+			this.modifier}}: {{this.name}}</div>
+		{{/each}}
+	</div>
+	{{/if}}{{/each}}
+</div>

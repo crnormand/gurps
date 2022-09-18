@@ -1,0 +1,86 @@
+<form class="{{cssClass}} gcs" autocomplete="off">
+	<div id="sheet">
+		<div id="details">
+			{{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String"}}
+			{{>sections/input-text field="field" label="gurps.item.specialization" name="system.specialization"
+			data=system.specialization type="String"}}
+			{{!-- <div class="label">{{localize "gurps.item.tech_level"}}</div> --}}
+			{{!-- <div class="field no-stretch"> --}}
+				{{!-- {{#if system.tech_level_required}} --}}
+				{{!-- {{>sections/input-text name="system.tech_level" --}}
+				{{!-- data=system.tech_level type="String"}} --}}
+				{{!-- {{else}} --}}
+				{{!-- {{>sections/input-text name="system.tech_level" --}}
+				{{!-- data=system.tech_level type="String" class="disabled"}} --}}
+				{{!-- {{/if}} --}}
+				{{!-- <label class="label checkbox-label"> --}}
+					{{!-- <input class="input" type="checkbox" name="system.tech_level_required" data-dtype="Boolean"
+						--}} {{!-- {{checked system.tech_level_required}} /> --}}
+					{{!-- {{localize "gurps.item.tech_level_required"}} --}}
+					{{!-- </label> --}}
+				{{!-- </div> --}}
+			{{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes
+			type="String"}}
+			{{>sections/textarea field="field" label="gurps.item.vtt_notes" name="system.vtt_notes"
+			data=system.vtt_notes
+			type="String"}}
+			{{>sections/input-text field="field" label="gurps.item.tags" name="system.tags" data=(join system.tags ", ")
+			type="String"}}
+			<div class="label">{{localize "gurps.item.defaults_to"}}</div>
+			<div class="field no-stretch">
+				<select name="system.default.type" data-dtype="String">
+					{{#select system.default.type}}
+					{{#each attributes as |v k|}}
+					<option value="{{k}}">{{localize (concat v)}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+				{{>sections/input-text name="system.default.name" data=system.default.name type="String"}}
+				{{>sections/input-text name="system.default.specialization" data=system.default.specialization
+				type="String"}}
+				{{>sections/input-text name="NUMBER.system.default.modifier" data=system.default.modifier
+				type="String"}}
+			</div>
+			<div class="label"></div>
+			<div class="field no-stretch">
+				<label class="label checkbox-label">
+					<input class="input" type="checkbox" name="system.limited" data-dtype="Boolean" {{checked
+						system.limited}} />
+					{{localize "gurps.item.limit"}}
+				</label>
+				{{#if system.limited}}
+				{{>sections/input-text name="NUMBER.system.limit" data=system.limit type="String"}}
+				{{else}}
+				{{>sections/input-text name="NUMBER.system.limit" data=system.limit type="String" class="disabled"}}
+				{{/if}}
+			</div>
+			<div class="label">{{localize "gurps.item.difficulty"}}</div>
+			<div class="field">
+				<select name="system.difficulty" data-dtype="String">
+					{{#select system.difficulty}}
+					{{#each config.select.difficulty as |v k|}}
+					<option value="{{k}}">{{localize (concat v)}}</option>
+					{{/each}}
+					{{/select}}
+				</select>
+			</div>
+			{{#if document.actor}}
+			<div class="label">{{localize "gurps.item.points"}}</div>
+			<div class="field no-stretch">
+				{{>sections/input-text name="NUMBER.system.points" data=system.points type="String"}}
+				<div class="label">{{localize "gurps.item.level"}}</div>
+				{{>sections/input-text data=(concat document.skillLevel "/" document.relativeLevel) class="readonly
+				tabIndex='-1'"}}
+			</div>
+			{{/if}}
+			{{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
+			data=system.reference
+			type="String"}}
+		</div>
+		{{>item/sections/prerequisites}}
+		{{>item/sections/defaults document attributes=attributes sysPrefix=sysPrefix}}
+		{{>item/sections/features}}
+		{{>item/sections/melee}}
+		{{>item/sections/ranged}}
+	</div>
+</form>
