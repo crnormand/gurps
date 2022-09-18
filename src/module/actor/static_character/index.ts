@@ -106,10 +106,10 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 
 	// execute after every import
 	async postImport() {
-		this.calculateDerivedValues();
+		this.calculateDerivedValues()
 
 		// Convoluted code to add Items (and features) into the equipment list
-		let orig: StaticItemGURPS[] = this.items.contents.sort((a, b) => b.name?.localeCompare(a.name));
+		let orig: StaticItemGURPS[] = this.items.contents.sort((a, b) => b.name?.localeCompare(a.name))
 	}
 
 	// Execute after every import
