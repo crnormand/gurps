@@ -1,0 +1,13 @@
+#sheet {
+	#personal #portrait {
+		grid-auto-flow: row;
+		grid-template:
+			"header"
+			"portrait"
+			"share";
+		grid-template-rows: 0fr auto 0fr;
+		.sharebutton {
+			grid-area: share;
+		}
+	}
+}

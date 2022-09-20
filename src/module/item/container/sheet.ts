@@ -110,7 +110,10 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		return (this.item as ContainerGURPS).createEmbeddedDocuments("Item", itemData, { temporary: false })
 	}
 
-	protected async _onSortItem(event: DragEvent, itemData: PropertiesToSource<ItemDataBaseProperties>): Promise<Item[]> {
+	protected async _onSortItem(
+		event: DragEvent,
+		itemData: PropertiesToSource<ItemDataBaseProperties>
+	): Promise<Item[]> {
 		const source = (this.item as ContainerGURPS).deepItems.get(itemData._id!)
 		const dropTarget = $(event.target!).closest("[data-item-id]")
 		const target = (this.item as ContainerGURPS).deepItems.get(dropTarget.data("item-id"))

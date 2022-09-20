@@ -140,7 +140,8 @@ export class TraitGURPS extends ContainerGURPS {
 				if (baseMod === levelMod) {
 					modifiedBasePoints = modifyPoints(modifiedBasePoints + leveledPoints, baseMod)
 				} else {
-					modifiedBasePoints = modifyPoints(modifiedBasePoints, baseMod) + modifyPoints(leveledPoints, levelMod)
+					modifiedBasePoints =
+						modifyPoints(modifiedBasePoints, baseMod) + modifyPoints(leveledPoints, levelMod)
 				}
 			}
 		} else {

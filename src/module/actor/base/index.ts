@@ -45,7 +45,10 @@ class BaseActorGURPS extends Actor {
 	): Promise<void> {
 		const defaultToken = `systems/${SYSTEM_NAME}/assets/icons/${this.type}.svg`
 		if (changed.img && !(changed as any).prototypeToken?.texture?.src) {
-			if (!(this as any).prototypeToken.texture.src || (this as any).prototypeToken.texture.src === defaultToken) {
+			if (
+				!(this as any).prototypeToken.texture.src ||
+				(this as any).prototypeToken.texture.src === defaultToken
+			) {
 				setProperty(changed, "prototypeToken.texture.src", changed.img)
 			} else {
 				setProperty(changed, "prototypeToken.texture.src", (this as any).prototypeToken.texture.src)

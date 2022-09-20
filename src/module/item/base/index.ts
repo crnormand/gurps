@@ -71,7 +71,11 @@ class BaseItemGURPS extends Item {
 		return parent.updateEmbeddedDocuments("Item", updates, context.options)
 	}
 
-	protected async _preCreate(data: ItemDataGURPS, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
+	protected async _preCreate(
+		data: ItemDataGURPS,
+		options: DocumentModificationOptions,
+		user: BaseUser
+	): Promise<void> {
 		let type = data.type.replace("_container", "")
 		if (type === "technique") type = "skill"
 		if (type === "ritual_magic_spell") type = "spell"
@@ -180,9 +184,15 @@ class BaseItemGURPS extends Item {
 
 	get weapons(): Map<number, Weapon> {
 		if (
-			!["trait", "skill", "technique", "spell", "ritual_magic_spell", "equipment", "equipment_container"].includes(
-				this.type
-			)
+			![
+				"trait",
+				"skill",
+				"technique",
+				"spell",
+				"ritual_magic_spell",
+				"equipment",
+				"equipment_container",
+			].includes(this.type)
 		)
 			return new Map()
 		const weapons: Map<number, Weapon> = new Map()

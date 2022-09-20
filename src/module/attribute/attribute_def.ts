@@ -31,7 +31,7 @@ export class AttributeDef {
 				for (const t of data.thresholds) {
 					thr.push(new PoolThreshold(t))
 				}
-			;(data as any).thresholds = thr
+			(data as any).thresholds = thr
 			Object.assign(this, data)
 		}
 	}

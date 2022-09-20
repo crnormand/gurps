@@ -1,0 +1,64 @@
+<div id='combat-hit' class='tracked-resource'>
+  <div class='header'>{{localize 'GURPS.injury'}}</div>
+  <div class='fieldblock3'>
+    <div class='points'></div>
+    <div class='field'><input
+        class='gcs-input'
+        name='system.conditionalinjury.injury.severity'
+        type='text'
+        value='{{system.conditionalinjury.injury.severity}}'
+        data-dtype='Number'
+      />
+    </div>
+    <div class='label'>{{localize 'GURPS.serverity'}}</div>
+
+    <div class='points'></div>
+    <div class='field'><input
+        class='gcs-input'
+        name='system.conditionalinjury.injury.daystoheal'
+        type='text'
+        value='{{system.conditionalinjury.injury.daystoheal}}'
+        data-dtype='Number'
+      />
+    </div>
+    <div class='label'>{{localize 'GURPS.days'}}</div>
+
+    <div class='points'>
+      [<input
+        name='system.conditionalinjury.RT.points'
+        class='gcs-input-sm2'
+        type='text'
+        value='{{system.conditionalinjury.RT.points}}'
+      />]
+    </div>
+    <div class='field'><input
+        class='gcs-input'
+        name='system.conditionalinjury.RT.value'
+        type='text'
+        value='{{system.conditionalinjury.RT.value}}'
+        data-dtype='Number'
+      />
+    </div>
+    <div class='label'>{{localize 'GURPS.rt'}}</div>
+
+    <div class='points'>
+      [<input name='system.HP.points' class='gcs-input-sm2' type='text' value='{{system.HP.points}}' />]
+    </div>
+    <div class='field'>
+      <input class='gcs-input' name='system.HP.max' type='text' value='{{system.HP.max}}' data-dtype='Number' />
+    </div>
+    <div class='label'>{{localize 'GURPS.attributesHPNAME'}}</div>
+  </div>
+  <div class='tooltip-wrapper gentle-flex'>
+    <div class='tooltip'>{{localize 'GURPS.severities'}}
+      <span class='tooltiptext'>
+        <div class='fieldblock'>
+          {{#ciSeveritiesTooltip}}
+            <div class='field condensed noedit'>{{severity}}</div>
+            <div class='label'>{{label}}</div>
+          {{/ciSeveritiesTooltip}}
+        </div>
+      </span>
+    </div>
+  </div>
+</div>

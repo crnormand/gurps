@@ -11,7 +11,7 @@ export class CharacterSheetConfig extends FormApplication {
 
 	static get defaultOptions() {
 		return mergeObject(super.defaultOptions, {
-			classes: ["form", "character-config", "gcs"],
+			classes: ["form", "character-config", "gurps"],
 			template: `systems/${SYSTEM_NAME}/templates/actor/character/config.hbs`,
 			width: 400,
 		})

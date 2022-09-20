@@ -330,7 +330,8 @@ export const SETTINGS_TEMP: provider = {
 					},
 					{
 						state: "Collapse",
-						explanation: "Roll vs. HT every second to avoid falling unconscious\nMove and Dodge are halved (B419)",
+						explanation:
+							"Roll vs. HT every second to avoid falling unconscious\nMove and Dodge are halved (B419)",
 						expression: "round($hp/3)",
 						ops: ["halve_move", "halve_dodge"],
 					},

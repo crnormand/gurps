@@ -84,7 +84,7 @@ export class ItemSheetGURPS extends ItemSheet {
 			width: 620,
 			min_width: 620,
 			height: 800,
-			classes: options.classes.concat(["item", "gcs"]),
+			classes: options.classes.concat(["item", "gurps"]),
 		})
 		return options
 	}
@@ -103,8 +103,7 @@ export class ItemSheetGURPS extends ItemSheet {
 		html.find(".feature .remove").on("click", event => this._removeFeature(event))
 		html.find(".feature .type").on("change", event => this._onFeatureTypeChange(event))
 		html.find(".weapon-list > :not(.header)").on("dblclick", event => this._onWeaponEdit(event))
-		html
-			.find("textarea")
+		html.find("textarea")
 			.each(function () {
 				const height = this.scrollHeight - 2
 				this.setAttribute("style", `height:${height}px;`)

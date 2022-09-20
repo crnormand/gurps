@@ -26,13 +26,11 @@ import { CharacterSheetConfig } from "./config_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
 	static override get defaultOptions(): ActorSheet.Options {
-		const options = super.defaultOptions
-		mergeObject(options, {
+		return mergeObject(super.defaultOptions, {
+			classes: super.defaultOptions.classes.concat(["character"]),
 			width: 800,
 			height: 800,
-			classes: super.defaultOptions.classes.concat(["character"]),
 		})
-		return options
 	}
 
 	override get template(): string {
@@ -173,7 +171,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const sheetData = {
 			...super.getData(options),
 			...{
-				data: actorData.system,
+				system: actorData.system,
 				items: items,
 				settings: (actorData.system as any).settings,
 				editing: this.actor.editing,
@@ -227,7 +225,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const [traits, skills, spells, equipment, other_equipment, notes] = data.items.reduce(
 			(arr: ItemGURPS[][], item: ItemGURPS) => {
 				if (item instanceof TraitGURPS || item instanceof TraitContainerGURPS) arr[0].push(item)
-				else if (item instanceof SkillGURPS || item instanceof TechniqueGURPS || item instanceof SkillContainerGURPS)
+				else if (
+					item instanceof SkillGURPS ||
+					item instanceof TechniqueGURPS ||
+					item instanceof SkillContainerGURPS
+				)
 					arr[1].push(item)
 				else if (
 					item instanceof SpellGURPS ||
@@ -345,4 +347,5 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 export interface CharacterSheetGURPS extends ActorSheetGURPS {
 	editing: boolean
+	object: CharacterGURPS
 }

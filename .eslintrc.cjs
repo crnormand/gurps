@@ -15,7 +15,8 @@ module.exports = {
 		jquery: true,
 	},
 
-	extends: ["plugin:@typescript-eslint/recommended", "plugin:jest/recommended", "plugin:prettier/recommended"],
+	// extends: ["plugin:@typescript-eslint/recommended", "plugin:jest/recommended", "plugin:prettier/recommended"],
+	extends: ["plugin:@typescript-eslint/recommended", "plugin:jest/recommended"],
 
 	plugins: ["@typescript-eslint", "jest", "jsdoc"],
 
@@ -117,7 +118,7 @@ module.exports = {
 		"prefer-spread": "warn",
 		"rest-spread-spacing": ["warn", "never"],
 		"semi-spacing": "warn",
-		"semi-style": ["warn", "last"],
+		"semi-style": "off",
 		"space-unary-ops": ["warn", { words: true, nonwords: false }],
 		"switch-colon-spacing": "warn",
 		"symbol-description": "warn",
@@ -170,7 +171,7 @@ module.exports = {
 		"prefer-template": "warn",
 		"quote-props": ["warn", "as-needed", { keywords: false }],
 		quotes: ["warn", "double", { avoidEscape: true, allowTemplateLiterals: false }],
-		semi: "warn",
+		semi: ["off", false],
 		"space-before-blocks": ["warn", "always"],
 		// "space-before-function-paren": [
 		// 	"warn",

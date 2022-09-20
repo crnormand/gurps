@@ -143,7 +143,7 @@ export class ModifierWindow extends Application {
 		} else {
 			pinnedMods.push(selectedMod)
 		}
-		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
+		(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
 		this.list.render()
 	}
 

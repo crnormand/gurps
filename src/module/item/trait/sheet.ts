@@ -35,7 +35,8 @@ export class TraitSheet extends ContainerSheetGURPS {
 	}
 
 	protected _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
-		if (Object.keys(formData).includes("system.disabled")) formData["system.disabled"] = !formData["system.disabled"]
+		if (Object.keys(formData).includes("system.disabled"))
+			formData["system.disabled"] = !formData["system.disabled"]
 		return super._updateObject(event, formData)
 	}
 }

@@ -1,5 +1,6 @@
 import { BaseActorGURPS } from "@actor"
 import { CharacterGURPS } from "@actor/character"
+import { StaticCharacterGURPS } from "@actor/static_character"
 import { AttributeBonus } from "@feature/attribute_bonus"
 import { ConditionalModifier } from "@feature/conditional_modifier"
 import { ContainedWeightReduction } from "@feature/contained_weight_reduction"
@@ -97,7 +98,7 @@ const GURPSCONFIG: any = {
 		documentClasses: {
 			character_gcs: CharacterGURPS,
 			// TODO: change to static charsheet
-			character: BaseActorGURPS,
+			character: StaticCharacterGURPS,
 		},
 		allowedContents: {
 			character: [

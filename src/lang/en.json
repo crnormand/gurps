@@ -26,6 +26,44 @@
 			"offset": "Page Offset",
 			"code": "PDF Book Code"
 		},
+		"language": {
+			"language": "Language",
+			"spoken": "Spoken",
+			"written": "Written"
+		},
+		"static": {
+			"st": "Strength (ST)",
+			"dx": "Dexterity (ST)",
+			"iq": "Intelligence (IQ)",
+			"ht": "Health (HT)",
+			"will": "Will",
+			"frightcheck": "Fright Check",
+			"per": "Perception (Per)",
+			"vision": "Vision",
+			"hearing": "Hearing",
+			"tastesmell": "Taste & Smell",
+			"touch": "Touch",
+			"status": {
+				"normal": "Normal",
+				"reeling": "Reeling",
+				"collapse": "Collapse",
+				"check1": "Check #1",
+				"check2": "Check #2",
+				"check3": "Check #3",
+				"check4": "Check #4",
+				"dead": "Dead",
+				"destroyed": "Destroyed",
+				"tired": "Tired",
+				"unconscious": "Unconscious"
+			},
+			"encumbrance": {
+				"enc0": "None",
+				"enc1": "Light",
+				"enc2": "Medium",
+				"enc3": "Heavy",
+				"enc4": "X-Heavy"
+			}
+		},
 		"character": {
 			"portrait": "Portrait",
 			"identity": "Identity",

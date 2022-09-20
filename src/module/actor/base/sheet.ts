@@ -8,7 +8,7 @@ export class ActorSheetGURPS extends ActorSheet {
 	static override get defaultOptions(): ActorSheet.Options {
 		const options = ActorSheet.defaultOptions
 		mergeObject(options, {
-			classes: ["gcs", "actor"],
+			classes: ["gurps", "actor"],
 		})
 		return options
 	}

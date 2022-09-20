@@ -1,0 +1,97 @@
+<div class="desc">
+	<div class="name">
+		{{this.name}}
+	</div>
+	<div class="item-notes">
+		{{{this.notes}}}
+	</div>
+</div>
+<div data-uuid="{{@key}}" data-weapon="melee" data-type="attack" class="usage rollable">
+	{{this.mode}}</div>
+<div data-uuid="{{@key}}" data-attack-id="melee" data-type="attack" class="level rollable">
+	{{this.import}}</div>
+<div class="parry rollable">{{this.parry}}</div>
+<div class="block rollable">{{this.block}}</div>
+<div data-uuid="{{@key}}" data-attack-id="melee" data-type="damage" class="damage rollable">
+	{{this.damage}}</div>
+<div class="reach">{{this.reach}}</div>
+<div class="st">{{this.st}}</div>
+
+{{!-- <div id='melee' class='gga-table with-notes'> --}}
+	{{!-- <div class='itemmenu header' readonly></div> --}}
+	{{!-- <div class='desc header'> --}}
+		{{!-- <div class='headermenu'> --}}
+			{{!-- <span>{{localize 'GURPS.meleeWeapons'}}</span> --}}
+			{{!-- <i class='fas fa-caret-square-down'></i> --}}
+			{{!-- </div> --}}
+		{{!-- </div> --}}
+	{{!-- <div class='usage header'>{{localize 'GURPS.usage'}}</div> --}}
+	{{!-- <div class='level header'>{{localize 'GURPS.level'}}</div> --}}
+	{{!-- <div class='parry header'>{{localize 'GURPS.parry'}}</div> --}}
+	{{!-- <div class='block header'>{{localize 'GURPS.block'}}</div> --}}
+	{{!-- <div class='damage header'>{{localize 'GURPS.damage'}}</div> --}}
+	{{!-- <div class='reach header'>{{localize 'GURPS.reach'}}</div> --}}
+	{{!-- <div class='st header'>{{localize 'GURPS.attributesST'}}</div> --}}
+
+	{{!-- {{#each (attackflatlist system.melee)}} --}}
+	{{!-- {{#unless isCollapsed}} --}}
+	{{!-- <div class='itemmenu' readonly></div> --}}
+
+	{{!-- <div class='meleedraggable' data-key='system.melee.{{@key}}'> --}}
+		{{!-- <div class='desc dblclkedit indent{{indent}}'> --}}
+			{{!-- <div class='gga-desc-text'> --}}
+				{{!-- <div> --}}
+					{{!-- {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}} --}}
+					{{!-- {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}} --}}
+					{{!-- </div> --}}
+				{{!-- <div class='tooltip gga-manual'> --}}
+					{{!-- {{{gurpslink name}}} --}}
+					{{!-- {{#if (displayItemHover this)}} --}}
+					{{!-- <div class='tooltiptext gga-manual'><img src='{{img}}' /></div> --}}
+					{{!-- {{/if}} --}}
+					{{!-- </div> --}}
+				{{!-- <div> --}}
+					{{!-- {{#if (isFoundryItem this)}} --}}
+					{{!-- <i class='fas fa-star tooltip gga-item'> --}}
+						{{!-- <span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span> --}}
+						{{!-- </i> --}}
+					{{!-- {{/if}} --}}
+					{{!-- </div> --}}
+				{{!-- </div> --}}
+			{{!-- <div class='list_note'> --}}
+				{{!-- {{{gurpslink notes}}} --}}
+				{{!-- </div> --}}
+			{{!-- </div> --}}
+		{{!-- </div> --}}
+
+	{{!-- <div class='usage rollable flex-center' data-name='{{name}} ({{mode}})' data-key='system.melee.{{@key}}' --}}
+		{{!-- data-otf='{{quotedAttackName ' M' this}}'>{{mode}}</div> --}}
+	{{!-- <div class='level rollable flex-center' data-name='{{name}} ({{mode}})' data-key='system.melee.{{@key}}' --}}
+		{{!-- data-otf='{{quotedAttackName ' M' this}}'>{{level}}</div> --}}
+	{{!-- <div class='parry flex-center' style="background-color: #ffffbe; width: 100%;"> --}}
+		{{!-- {{#if (isNum parry)}} --}}
+		{{!-- <span class="flex-center rollable" data-otf='{{quotedAttackName ' P' this}}'>{{parry}}</span> --}}
+		{{!-- {{#if (isNum ../system.defenses.parry.bonus)}} --}}
+		{{!-- <span class="flex-center rollable bonus" data-otf='{{quotedAttackName ' P' this}}" {{{displayNumber --}}
+			{{!-- ../system.defenses.parry.bonus}}} DB'> --}}
+			{{!-- {{{displayNumber ../system.defenses.parry.bonus}}}</span> --}}
+		{{!-- {{/if}} --}}
+		{{!-- {{/if}} --}}
+		{{!-- </div> --}}
+	{{!-- <div class='block flex-center' style="background-color: #ffffbe"> --}}
+		{{!-- {{#if (isNum block)}} --}}
+		{{!-- <span class="flex-center rollable" data-otf='{{quotedAttackName ' B' this}}'>{{block}}</span> --}}
+		{{!-- {{#if (isNum ../system.defenses.block.bonus)}} --}}
+		{{!-- <span class="flex-center rollable bonus" data-otf='{{quotedAttackName ' B' this}}" {{{displayNumber --}}
+			{{!-- ../system.defenses.block.bonus}}} DB'> --}}
+			{{!-- {{{displayNumber ../system.defenses.block.bonus}}}</span> --}}
+		{{!-- {{/if}} --}}
+		{{!-- {{/if}} --}}
+		{{!-- </div> --}}
+	{{!-- <div class='damage rollable flex-center' data-damage data-otf='{{damage}}'>{{damage}}</div> --}}
+	{{!-- <div class='reach flex-center'>{{reach}}</div> --}}
+	{{!-- <div class='st flex-center'>{{st}}</div> --}}
+	{{!-- {{/unless}} --}}
+	{{!-- {{/if}} --}}
+	{{!-- {{/each}} --}}
+	{{!-- </div> --}}

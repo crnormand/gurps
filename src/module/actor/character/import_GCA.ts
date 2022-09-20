@@ -361,7 +361,9 @@ export class GCAImporter {
 			const childKeys = item.childkeylist.split(", ")
 			flags[SYSTEM_NAME]!.contentsData = this.importItems(
 				{
-					trait: context.data.traits[context.type].trait.filter((e: any) => childKeys.includes(`k${e["@idkey"]}`)),
+					trait: context.data.traits[context.type].trait.filter((e: any) =>
+						childKeys.includes(`k${e["@idkey"]}`)
+					),
 				},
 				{ ...context, container: true }
 			)

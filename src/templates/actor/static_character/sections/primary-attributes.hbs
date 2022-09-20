@@ -1,0 +1,29 @@
+<div id="primary-attributes">
+	<div class="header">{{localize "gurps.character.primary_attributes"}}</div>
+	<div class="fieldblock3">
+		<div class="points">[{{system.attributes.ST.points}}]</div>
+		<div data-id="ST" data-type="attribute" class="field rollable">
+			<input name="system.attributes.ST.import" class="input number" type="text" data-dtype="Number"
+				value="{{system.attributes.ST.import}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.st"}}</div>
+		<div class="points">[{{system.attributes.DX.points}}]</div>
+		<div data-id="DX" data-type="attribute" class="field rollable">
+			<input name="system.attributes.DX.import" class="input number" type="text" data-dtype="Number"
+				value="{{system.attributes.DX.import}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.dx"}}</div>
+		<div class="points">[{{system.attributes.IQ.points}}]</div>
+		<div data-id="IQ" data-type="attribute" class="field rollable">
+			<input name="system.attributes.IQ.import" class="input number" type="text" data-dtype="Number"
+				value="{{system.attributes.IQ.import}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.iq"}}</div>
+		<div class="points">[{{system.attributes.HT.points}}]</div>
+		<div data-id="HT" data-type="attribute" class="field rollable">
+			<input name="system.attributes.HT.import" class="input number" type="text" data-dtype="Number"
+				value="{{system.attributes.HT.import}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.ht"}}</div>
+	</div>
+</div>
