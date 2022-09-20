@@ -3385,11 +3385,11 @@ export class GurpsActor extends Actor {
       // find the matching data on this actor
       let index = zeroFill(template.slot, 4)
       let path = `additionalresources.tracker.${index}`
-      let tracker = getProperty(this, path)
+      let tracker = getProperty(this, 'system.' + path)
 
       while (!tracker) {
         await this.addTracker()
-        tracker = getProperty(this, path)
+        tracker = getProperty(this, 'system.' + path)
       }
 
       // skip if already set
