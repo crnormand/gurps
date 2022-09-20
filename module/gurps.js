@@ -731,13 +731,14 @@ if (!globalThis.GURPS) {
      */
     controlroll({ action, actor, event }) {
       const target = parseInt(action.target)
+      let aid = actor ? "@${actor.id}@" : ""
       let thing
       let chatthing
       if (!!action.desc) {
         thing = action.desc
-        chatthing = `["Control Roll, ${thing}"@${actor.id}@CR:${target} ${thing}]`
+        chatthing = `["Control Roll, ${thing}"${aid}CR:${target} ${thing}]`
       } else {
-        chatthing = `[@${actor.id}@CR:${target}]`
+        chatthing = `[${aid}CR:${target}]`
       }
       return doRoll({
         actor,
@@ -820,8 +821,9 @@ if (!globalThis.GURPS) {
         .replace(/ +/g, ' ')
         .trim()
       let qn = quotedAttackName({ name: thing, mode: att.mode })
-      const chatthing = `[@${actor.id}@${p}${qn}]`
-      const followon = `[@${actor.id}@D:${qn}]`
+      let aid = actor ? "@${actor.id}@" : ""
+      const chatthing = `[${aid}${p}${qn}]`
+      const followon = `[${aid}D:${qn}]`
       let target = att.level
       if (!target) {
         ui.notifications.warn(`attack named ${thing} has level of 0 or NaN`)
@@ -898,7 +900,8 @@ if (!globalThis.GURPS) {
       let targetmods = []
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      const chatthing = thing === '' ? att.name + mode : `[@${actor.id}@B:"${thing}${mode}"]`
+      let aid = actor ? "@${actor.id}@" : ""
+      const chatthing = thing === '' ? att.name + mode : `[${aid}B:"${thing}${mode}"]`
 
       return doRoll({
         actor,
@@ -954,7 +957,8 @@ if (!globalThis.GURPS) {
       let targetmods = []
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      const chatthing = thing === '' ? att.name + mode : `[@${actor.id}@P:"${thing}${mode}"]`
+      let aid = actor ? "@${actor.id}@" : ""
+      const chatthing = thing === '' ? att.name + mode : `[${aid}P:"${thing}${mode}"]`
 
       return doRoll({
         actor,
@@ -1011,7 +1015,8 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
       let targetmods = []
-      const chatthing = originalOtf ? `[@${actor.id}@${originalOtf}]` : `[@${actor.id}@${thing}]`
+      let aid = actor ? "@${actor.id}@" : ""
+      const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
       let opt = {
         blind: action.blindroll,
         event: event,
@@ -1072,7 +1077,8 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
       let targetmods = []
-      let chatthing = originalOtf ? `[@${actor.id}@${originalOtf}]` : `[@${actor.id}@S:"${thing}"]`
+      let aid = actor ? "@${actor.id}@" : ""
+      let chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}S:"${thing}"]`
       let opt = {
         blind: action.blindroll,
         event,
@@ -2147,7 +2153,7 @@ if (!globalThis.GURPS) {
   <hr/>
   <div style='text-align: center;'>
     <div style="margin-bottom: 5px;">Like our work? Consider supporting us:</div>
-    <iframe src="https://github.com/sponsors/crnormand/button" title="Sponsor crnormand" height="35" width="116" style="border: 0;"></iframe>
+    <div><a href="https://github.com/sponsors/crnormand?o=esb"><img height="24" src="systems/gurps/icons/sponsor.png"> Github Sponsor</a></div><br>
     <div><a href="https://ko-fi.com/crnormand"><img height="24" src="systems/gurps/icons/SupportMe_stroke@2x.webp"></a></div>
   </div>
 </div>`,

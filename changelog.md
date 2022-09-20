@@ -6,6 +6,9 @@ Release 0.15.3
 
 - Fixed yard count for ruler, thanks @SrAndros!
 - Fixed infinite tracker import loop
+- Removed duplicate handlebar helpers
+- Fixed /ra bug
+- Possible solution to funky damage chat issue (https://github.com/crnormand/gurps/issues/1587)
 
 Release 0.15.2 9/15/2022
 
