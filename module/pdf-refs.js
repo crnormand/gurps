@@ -6,6 +6,7 @@ export const SJGProductMappings = {
   ACT3: 'http://www.warehouse23.com/products/gurps-action-3-furious-fists',
   B: 'http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns',
   BS: 'http://www.warehouse23.com/products/gurps-banestorm',
+  BX: 'http://www.warehouse23.com/products/gurps-basic-set-characters-and-campaigns',
   DF1: 'http://www.warehouse23.com/products/gurps-dungeon-fantasy-1-adventurers-1',
   DF3: 'http://www.warehouse23.com/products/gurps-dungeon-fantasy-3-the-next-level-1',
   DF4: 'http://www.warehouse23.com/products/gurps-dungeon-fantasy-4-sages-1',

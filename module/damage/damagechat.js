@@ -491,6 +491,7 @@ export default class DamageChat {
       let messageId = arg.id // 'qHz1QQuzpJiavH3V'
       $(`[data-message-id='${messageId}']`).on('click', handleOnPdf)
     })
+
   }
 }
 
