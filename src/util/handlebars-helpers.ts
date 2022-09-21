@@ -1,9 +1,11 @@
 import { CharacterGURPS } from "@actor"
 import { Encumbrance } from "@actor/character/data"
+import { StaticSpell } from "@actor/static_character/components"
 import { StaticCharacterSystemData } from "@actor/static_character/data"
 import { SpellGURPS } from "@item"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
 import { DiceGURPS } from "@module/dice"
+import { Static } from "@util"
 import { i18n } from "./misc"
 
 /**
@@ -314,12 +316,6 @@ export function registerHandlebarsHelpers() {
 		return condition ? iftrue : iffalse
 	})
 
-	Handlebars.registerHelper("flatlist", function(context) {
-		let data = {}
-		// Flatlist(context, 0, '', data, false)
-		return data
-	})
-
 	Handlebars.registerHelper("hitlocationroll", function() {
 		let data = {}
 		// Flatlist(context, 0, '', data, false)
@@ -360,5 +356,28 @@ export function registerHandlebarsHelpers() {
 		if (notEmpty(system.equipment?.carried)) outAr.push("equipment equipment")
 		if (notEmpty(system.equipment?.other)) outAr.push("other_equipment other_equipment")
 		return `"${outAr.join('" "')}";`
+	})
+
+	Handlebars.registerHelper('flatlist', function(context) {
+		let data = {}
+		Static.flatList(context, 0, '', data, false)
+		console.log(data)
+		return data
+	})
+
+	Handlebars.registerHelper("staticSpellValues", function(i: StaticSpell): string {
+		const values = {
+			resist: i.resist,
+			spell_class: i.class,
+			casting_cost: i.cost,
+			maintenance_cost: i.maintain,
+			casting_time: i.casttime,
+			duration: i.duration,
+		}
+		const list = []
+		for (const [k, v] of Object.entries(values)) {
+			if (v && v !== "-") list.push(`${i18n(`gurps.character.spells.${k}`)}: ${v}`)
+		}
+		return list.join("; ")
 	})
 }

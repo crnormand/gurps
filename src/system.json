@@ -22,12 +22,16 @@
 	],
 	"compatibility": {
 		"minimum": 10,
-		"verified": "10.284",
+		"verified": "10.286",
 		"maximum": 10
 	},
 	"scripts": [],
-	"esmodules": ["module/gurps.js"],
-	"styles": ["styles/gurps.css"],
+	"esmodules": [
+		"module/gurps.js"
+	],
+	"styles": [
+		"styles/gurps.css"
+	],
 	"packs": [],
 	"relatinships": {},
 	"languages": [

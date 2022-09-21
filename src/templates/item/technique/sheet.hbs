@@ -31,7 +31,7 @@
 				<select name="system.default.type" data-dtype="String">
 					{{#select system.default.type}}
 					{{#each attributes as |v k|}}
-					<option value="{{k}}">{{localize (concat v)}}</option>
+					<option value="{{k}}">{{localize v}}</option>
 					{{/each}}
 					{{/select}}
 				</select>
@@ -59,7 +59,7 @@
 				<select name="system.difficulty" data-dtype="String">
 					{{#select system.difficulty}}
 					{{#each config.select.difficulty as |v k|}}
-					<option value="{{k}}">{{localize (concat v)}}</option>
+					<option value="{{k}}">{{localize v}}</option>
 					{{/each}}
 					{{/select}}
 				</select>

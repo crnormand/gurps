@@ -23,7 +23,7 @@
 		<div class="label tooltip" as |this index|>
 			[{{localize (hpFpCondition "FP" system.FP "label")}}]
 		</div>
-		{{#each system.additionalresources.tracker}}
+		{{#each document.trackers}}
 		<div class="points">[{{this.points}}]</div>
 		{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name=(concat
 		"system.additionalresources.tracker." key ".value")

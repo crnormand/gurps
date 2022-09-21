@@ -10,6 +10,7 @@
 	- type error when skill/attack doesn't exist
 	- attribute rolls
 	- CR rolls
+	- Add conditional additional rolls, to be executed on failure, on success
 - GCA import
 	- prereqs (leave for later)
 	- appearance

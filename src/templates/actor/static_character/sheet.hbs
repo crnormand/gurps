@@ -90,8 +90,73 @@
 				<div class="header desc">{{localize "gurps.character.traits.desc"}}</div>
 				<div class="header points">{{localize "gurps.character.traits.points"}}</div>
 				<div class="header reference"><i class="gcs-bookmark"></i></div>
-				{{#each system.ads}}
+				{{#each (flatlist system.ads)}}
 				{{>actor/static_character/sections/trait}}
+				{{/each}}
+			</div>
+			{{/if}}
+
+			{{#if (notEmpty system.skills)}}
+			<div id="skills" class="item-list">
+				<div class="header desc">{{localize "gurps.character.skills.desc"}}</div>
+				<div class="header level">{{localize "gurps.character.skills.level"}}</div>
+				<div class="header rsl">{{localize "gurps.character.skills.rsl"}}</div>
+				<div class="header points">{{localize "gurps.character.skills.points"}}</div>
+				<div class="header reference"><i class="gcs-bookmark"></i></div>
+				{{#each (flatlist system.skills)}}
+				{{>actor/static_character/sections/skill}}
+				{{/each}}
+			</div>
+			{{/if}}
+
+			{{#if (notEmpty system.spells)}}
+			<div id="spells" class="item-list">
+				<div class="header desc">{{localize "gurps.character.spells.desc"}}</div>
+				<div class="header college">{{localize "gurps.character.spells.college"}}</div>
+				<div class="header level">{{localize "gurps.character.spells.level"}}</div>
+				<div class="header rsl">{{localize "gurps.character.spells.rsl"}}</div>
+				<div class="header points">{{localize "gurps.character.spells.points"}}</div>
+				<div class="header reference"><i class="gcs-bookmark"></i></div>
+				{{#each (flatlist system.spells)}}
+				{{>actor/static_character/sections/spell}}
+				{{/each}}
+			</div>
+			{{/if}}
+
+			{{#if (notEmpty system.equipment.carried)}}
+			<div id="equipment" class="item-list">
+				<div class="header equipped"><i class="gcs-checkmark"></i></div>
+				<div class="header quantity">{{localize "gurps.character.equipment.quantity"}}</div>
+				<div class="header desc">{{localize "gurps.character.equipment.desc" weight=actor.fastWeightCarried
+					value=actor.fastWealthCarried}}</div>
+				<div class="header uses">{{localize "gurps.character.equipment.uses"}}</div>
+				<div class="header tech-level">{{localize "gurps.character.equipment.tech_level"}}</div>
+				<div class="header legality-class">{{localize "gurps.character.equipment.legality_class"}}</div>
+				<div class="header value"><i class="gcs-coins"></i></div>
+				<div class="header weight"><i class="gcs-weight"></i></div>
+				<div class="header extended-value"><i class="gcs-stack"></i><i class="gcs-coins"></i></div>
+				<div class="header extended-weight"><i class="gcs-stack"></i><i class="gcs-weight"></i></div>
+				<div class="header reference"><i class="gcs-bookmark"></i></div>
+				{{#each (flatlist system.equipment.carried)}}
+				{{>actor/static_character/sections/equipment}}
+				{{/each}}
+			</div>
+			{{/if}}
+
+			{{#if (notEmpty system.equipment.other)}}
+			<div id="other-equipment" class="item-list">
+				<div class="header quantity">{{localize "gurps.character.other_equipment.quantity"}}</div>
+				<div class="header desc">{{localize "gurps.character.other_equipment.desc" value=other_value}}</div>
+				<div class="header uses">{{localize "gurps.character.other_equipment.uses"}}</div>
+				<div class="header tech-level">{{localize "gurps.character.other_equipment.tech_level"}}</div>
+				<div class="header legality-class">{{localize "gurps.character.other_equipment.legality_class"}}</div>
+				<div class="header value"><i class="gcs-coins"></i></div>
+				<div class="header weight"><i class="gcs-weight"></i></div>
+				<div class="header extended-value"><i class="gcs-stack"></i><i class="gcs-coins"></i></div>
+				<div class="header extended-weight"><i class="gcs-stack"></i><i class="gcs-weight"></i></div>
+				<div class="header reference"><i class="gcs-bookmark"></i></div>
+				{{#each (flatlist system.equipment.other)}}
+				{{>actor/static_character/sections/other_equipment}}
 				{{/each}}
 			</div>
 			{{/if}}
@@ -108,58 +173,61 @@
 		{{!-- {{>actor/static_character/sections/trackers}} --}}
 
 
-		{{#if (notEmpty system.ranged)}}
+		{{!-- {{#if (notEmpty system.ranged)}} --}}
 		{{!-- {{>actor/static_character/sections/ranged}} --}}
-		{{/if}}
+		{{!-- {{/if}} --}}
 
-		{{#if (or (notEmpty system.skills) (notEmpty system.ads))}}
-		<div id='ads-skills'>
+		{{!-- {{#if (or (notEmpty system.skills) (notEmpty system.ads))}} --}}
+		{{!-- {{!-- <div id='ads-skills'> --}} --}}
 			{{!-- {{#if (notEmpty system.ads)}}{{>actor/static_character/sections/advantages}}{{/if}} --}}
-			{{#if (notEmpty system.skills)}}{{>actor/static_character/sections/skills}}{{/if}}
-		</div>
-		{{/if}}
+			{{!-- {{#if (notEmpty system.skills)}}{{>actor/static_character/sections/skills}}{{/if}} --}}
+			{{!-- {{!-- </div> --}} --}}
+		{{!-- {{/if}} --}}
 
-		{{#if (notEmpty system.spells)}}
-		{{>actor/static_character/sections/spells}}
-		{{/if}}
+		{{!-- {{#if (notEmpty system.spells)}} --}}
+		{{!-- {{>actor/static_character/sections/spells}} --}}
+		{{!-- {{/if}} --}}
 
-		{{#if (notEmpty system.equipment.carried)}}
-		{{>actor/static_character/sections/equipment container='carried' data=this.data}}
-		{{/if}}
+		{{!-- {{#if (notEmpty system.equipment.carried)}} --}}
+		{{!-- {{>actor/static_character/sections/equipment container='carried' data=this.data}} --}}
+		{{!-- {{/if}} --}}
 
-		{{#if (notEmpty system.equipment.other)}}
-		{{>actor/static_character/sections/equipment container='other' data=this.data}}
-		{{/if}}
+		{{!-- {{#if (notEmpty system.equipment.other)}} --}}
+		{{!-- {{>actor/static_character/sections/equipment container='other' data=this.data}} --}}
+		{{!-- {{/if}} --}}
 
-		{{>actor/static_character/sections/notes}}
-	</div>
-	{{>actor/static_character/sections/footer}}
-	{{#if navigateBar.visible}}
-	<div class='navigate-area'>
-		<input id='navigate-toggle-{{_id}}' class='toggle offscreen-only' type='checkbox' />
-		<div class='navigate-bar'>
-			<label class='navigation-view' for='navigate-toggle-{{_id}}'><span class='icon'></span></label>
-			<div class='navigate-container'>
-				<div class='navigation-link' data-value='personal'>TOP</div>
-				<div class='navigation-link' data-value='stats'>{{localize 'GURPS.statsTab'}}</div>
-				{{#if navigateBar.hasMelee}}
-				<div class='navigation-link' data-value='melee'>{{localize 'GURPS.melee'}}</div>
-				{{/if}}
-				{{#if navigateBar.hasRanged}}
-				<div class='navigation-link' data-value='ranged'>{{localize 'GURPS.ranged'}}</div>
-				{{/if}}
-				<div class='navigation-link' data-value='advantages'>{{localize 'GURPS.pointsAdvantages'}}</div>
-				<div class='navigation-link' data-value='skills'>{{localize 'GURPS.skillsTab'}}</div>
-				{{#if navigateBar.hasSpells}}
-				<div class='navigation-link' data-value='spells'>{{localize 'GURPS.spellsTab'}}</div>
-				{{/if}}
-				<div class='navigation-link' data-value='equipmentcarried'>{{localize 'GURPS.equipment'}}</div>
-				{{#if navigateBar.hasOther}}
-				<div class='navigation-link' data-value='equipmentother'>OTHER</div>
-				{{/if}}
-				<div class='navigation-link' data-value='notes'>{{localize 'GURPS.notes'}}</div>
-			</div>
-		</div>
-	</div>
-	{{/if}}
+		{{!-- {{>actor/static_character/sections/notes}} --}}
+		{{!--
+	</div> --}}
+	{{!-- {{>actor/static_character/sections/footer}} --}}
+	{{!-- {{#if navigateBar.visible}} --}}
+	{{!-- <div class='navigate-area'> --}}
+		{{!-- <input id='navigate-toggle-{{_id}}' class='toggle offscreen-only' type='checkbox' /> --}}
+		{{!-- <div class='navigate-bar'> --}}
+			{{!-- <label class='navigation-view' for='navigate-toggle-{{_id}}'><span class='icon'></span></label> --}}
+			{{!-- <div class='navigate-container'> --}}
+				{{!-- <div class='navigation-link' data-value='personal'>TOP</div> --}}
+				{{!-- <div class='navigation-link' data-value='stats'>{{localize 'GURPS.statsTab'}}</div> --}}
+				{{!-- {{#if navigateBar.hasMelee}} --}}
+				{{!-- <div class='navigation-link' data-value='melee'>{{localize 'GURPS.melee'}}</div> --}}
+				{{!-- {{/if}} --}}
+				{{!-- {{#if navigateBar.hasRanged}} --}}
+				{{!-- <div class='navigation-link' data-value='ranged'>{{localize 'GURPS.ranged'}}</div> --}}
+				{{!-- {{/if}} --}}
+				{{!-- <div class='navigation-link' data-value='advantages'>{{localize 'GURPS.pointsAdvantages'}}</div>
+				--}}
+				{{!-- <div class='navigation-link' data-value='skills'>{{localize 'GURPS.skillsTab'}}</div> --}}
+				{{!-- {{#if navigateBar.hasSpells}} --}}
+				{{!-- <div class='navigation-link' data-value='spells'>{{localize 'GURPS.spellsTab'}}</div> --}}
+				{{!-- {{/if}} --}}
+				{{!-- <div class='navigation-link' data-value='equipmentcarried'>{{localize 'GURPS.equipment'}}</div>
+				--}}
+				{{!-- {{#if navigateBar.hasOther}} --}}
+				{{!-- <div class='navigation-link' data-value='equipmentother'>OTHER</div> --}}
+				{{!-- {{/if}} --}}
+				{{!-- <div class='navigation-link' data-value='notes'>{{localize 'GURPS.notes'}}</div> --}}
+				{{!-- </div> --}}
+			{{!-- </div> --}}
+		{{!-- </div> --}}
+	{{!-- {{/if}} --}}
 </form>

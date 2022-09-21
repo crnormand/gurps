@@ -133,3 +133,52 @@ export function zeroFill(number: number, width = 5) {
 	}
 	return `${number}` // Always return a string
 }
+
+export function flatList(
+	context: any,
+	level: number,
+	parentkey: string,
+	data: any,
+	isCollapsed: boolean,
+	actorToCheckEquipment?: StaticCharacterGURPS
+) {
+	if (!context) return data
+
+	for (let key in context) {
+		let item = context[key]
+		let display = true
+		if (actorToCheckEquipment) {
+			// if we have been given an actor, then check to see if the melee or ranged item is equipped in the inventory
+			let checked = false
+			recurseList(actorToCheckEquipment.system.equipment.carried, e => {
+				// check
+				if (item.name.startsWith(e.name)) {
+					checked = true
+					if (!e.equipped) display = false
+				}
+			})
+			if (!checked)
+				recurseList(actorToCheckEquipment.system.equipment.other, e => {
+					if (item.name.startsWith(e.name)) display = false
+				})
+		}
+		if (display) {
+			let newKey = parentkey + key
+
+			let newItem: any = { indent: level }
+			for (let propertyKey in item) {
+				if (!['contains', 'collapsed', 'indent'].includes(propertyKey)) {
+					newItem[propertyKey] = item[propertyKey]
+				}
+			}
+			newItem['hasCollapsed'] = !!item?.collapsed && Object.values(item?.collapsed).length > 0
+			newItem['hasContains'] = !!item?.contains && Object.values(item?.contains).length > 0
+			newItem['isCollapsed'] = isCollapsed
+
+			data[newKey] = newItem
+
+			if (newItem['hasContains']) flatList(item.contains, level + 1, newKey + '.contains.', data, isCollapsed)
+			if (newItem['hasCollapsed']) flatList(item.collapsed, level + 1, newKey + '.collapsed.', data, true)
+		}
+	}
+}

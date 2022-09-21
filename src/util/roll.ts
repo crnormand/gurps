@@ -78,7 +78,6 @@ async function getRollData(
 	name: string,
 	formula: string
 ): Promise<any> {
-	console.log(data)
 	const roll = Roll.create(formula)
 	await roll.evaluate({ async: true })
 	const rolls = roll.dice[0].results.map(e => {
@@ -237,7 +236,7 @@ async function rollAttribute(
 
 	// Console.log("chatData", chatData);
 
-	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/skill-roll.hbs`, chatData)
+	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/attribute-roll.hbs`, chatData)
 
 	const messageData = {
 		user: user,

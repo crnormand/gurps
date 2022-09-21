@@ -3,7 +3,7 @@ import { ActorFlags } from "@actor/base/data"
 import { StaticItemGURPS } from "@item/static"
 // Import { RollModifier } from "@module/data"
 import { SYSTEM_NAME } from "@module/settings"
-import { i18n, Static } from "@util"
+import { i18n, Static, toArray } from "@util"
 import { StaticAdvantage } from "./components"
 import {
 	MoveMode,
@@ -14,7 +14,7 @@ import {
 	StaticCharacterSystemData,
 } from "./data"
 
-Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			// @ts-ignore until v10 types
@@ -38,6 +38,25 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// Getters
 	get editing() {
 		return this.system.editing
+	}
+
+	get attributes(): Map<string, any> {
+		const atts = new Map()
+		for (const [key, value] of Object.entries(this.system.attributes)) {
+			atts.set(key.toLowerCase(), {
+				attr_id: key.toLowerCase(),
+				current: value.value,
+				points: value.points,
+				attribute_def: {
+					combinedName: i18n(`gurps.static.${key.toLowerCase()}`),
+				}
+			})
+		}
+		return atts
+	}
+
+	get trackers(): any[] {
+		return toArray(this.system.additionalresources.tracker)
 	}
 
 	// Async openSheet(newSheet: ActorSheetGURPS): Promise<void> {
@@ -163,11 +182,11 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// 				// GCA5 style (Language without Adv)
 	// 				let n = i18n("gurps.language.language") + ": " + e.name
 	// 				// if equal, then just report single level
-	// 				if (e.spoken == e.written) n += ` (${e.spoken})`
+	// 				if (e.spoken == e.written) n += ` (${ e.spoken })`
 	// 				// otherwise, report ttpy eand level (like GCA4)
 	// 				else {
-	// 					if (!!e.spoken) n += ` (${i18n("gurps.language.spoken")}) (${e.spoken})`
-	// 					if (!!e.written) n += ` (${i18n("gurps.language.written")}) (${e.written})`
+	// 					if (!!e.spoken) n += ` (${ i18n("gurps.language.spoken") })(${ e.spoken })`
+	// 					if (!!e.written) n += ` (${ i18n("gurps.language.written") })(${ e.written })`
 	// 				}
 	// 				let a = new StaticAdvantage()
 	// 				a.name = n
@@ -274,23 +293,23 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// // 		// Let updated = false;
 	// // 		let newads = this.system.ads;
 	// // 		let langn = new RegExp("Language:?", "i");
-	// // 		let langt = new RegExp(`${i18n("GURPS.language")}:?`, "i");
+	// // 		let langt = new RegExp(`${ i18n("GURPS.language") }:?`, "i");
 	// // 		recurselist(this.system.languages, (e: StaticAdvantage, _k: any, _d: any) => {
-	// // 			let a = GURPS.findAdDisad(this, `*${e.name}`); // Is there an advantage including the same name
+	// // 			let a = GURPS.findAdDisad(this, `* ${ e.name }`); // Is there an advantage including the same name
 	// // 			if (a) {
 	// // 				if (!a.name.match(langn) && !a.name.match(langt)) {
 	// // 					// GCA4 / GCS style
-	// // 					a.name = `${i18n("GURPS.language")}: ${a.name}`;
+	// // 					a.name = `${ i18n("GURPS.language") }: ${ a.name }`;
 	// // 					// Updated = true;
 	// // 				}
 	// // 			} else {
 	// // 				// GCA5 style (Language without Adv)
-	// // 				let n = `${i18n("GURPS.language")}: ${e.name}`;
-	// // 				if (e.spoken === e.written) n += ` (${e.spoken})`;
+	// // 				let n = `${ i18n("GURPS.language") }: ${ e.name }`;
+	// // 				if (e.spoken === e.written) n += ` (${ e.spoken })`;
 	// // 				// TODO: may be broken, check later
 	// // 				// Otherwise, report type and level (like GCA4)
-	// // 				else if (e.spoken) n += ` (${i18n("GURPS.spoken")}) (${e.spoken})`;
-	// // 				else n += ` (${i18n("GURPS.written")}) (${e.written})`;
+	// // 				else if (e.spoken) n += ` (${ i18n("GURPS.spoken") })(${ e.spoken })`;
+	// // 				else n += ` (${ i18n("GURPS.written") })(${ e.written })`;
 	// // 				let a = new StaticAdvantage();
 	// // 				a.name = n;
 	// // 				a.points = e.points;
@@ -413,7 +432,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// // 							e.level += pi(link.action.mod);
 	// // 							if (!isNaN(parseInt(e.parry))) {
 	// // 								// Handles "11f"
-	// // 								let m = `${e.parry}`.match(/(\d+)(.*)/);
+	// // 								let m = `${ e.parry }`.match(/(\d+)(.*)/);
 	// // 								e.parry = 3 + Math.floor(e.level / 2);
 	// // 								if (e.parrybonus) e.parry += pi(e.parrybonus);
 	// // 								if (m) e.parry += m[2];
@@ -429,7 +448,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// // 								e.level += pi(link.action.mod);
 	// // 								if (!isNaN(parseInt(e.parry))) {
 	// // 									// Handles "11f"
-	// // 									let m = `${e.parry}`.match(/(\d+)(.*)/);
+	// // 									let m = `${ e.parry }`.match(/(\d+)(.*)/);
 	// // 									e.parry = 3 + Math.floor(e.level / 2);
 	// // 									if (e.parrybonus) e.parry += pi(e.parrybonus);
 	// // 									if (m) e.parry += m[2];

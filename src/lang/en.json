@@ -33,7 +33,7 @@
 		},
 		"static": {
 			"st": "Strength (ST)",
-			"dx": "Dexterity (ST)",
+			"dx": "Dexterity (DX)",
 			"iq": "Intelligence (IQ)",
 			"ht": "Health (HT)",
 			"will": "Will",
@@ -104,6 +104,18 @@
 				"fright_check_bonus": "{penalty} Fright Check Bonus",
 				"minor_cost_of_living_increase": "{penalty} Cost of Living Increase",
 				"major_cost_of_living_increase": "{penalty} Cost of Living Increase"
+			},
+			"resource_trackers": {
+				"title": "Resource Trackers"
+			},
+			"macros": {
+				"title": "Quick Macros"
+			},
+			"move": {
+				"title": "Conditions",
+				"maneuver": "Maneuver",
+				"posture": "Posture",
+				"type": "Move Type"
 			},
 			"move_modes": {
 				"ground": "Ground",

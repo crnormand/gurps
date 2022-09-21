@@ -3,7 +3,7 @@
 	<select name="system.features.{{@index}}.match">
 		{{#select this.match}}
 		{{#each config.select.spell_match as |v k|}}
-		<option value="{{k}}">{{localize (concat v}}</option>
+		<option value="{{k}}">{{localize v}}</option>
 		{{/each}}
 		{{/select}}
 	</select>
@@ -14,7 +14,8 @@
 		{{/each}}
 		{{/select}}
 	</select>
-	{{>sections/input-text field="field" name=(concat "system.features." @index ".name.qualifier") data=this.name.qualifier
+	{{>sections/input-text field="field" name=(concat "system.features." @index ".name.qualifier")
+	data=this.name.qualifier
 	type="String" class=(input_lock (and (neq this.match "all_colleges") (neq this.name.compare "none")))}}
 </div>
 <div class="field-2">

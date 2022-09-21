@@ -44,6 +44,7 @@ type StaticCharacterFlags = ActorFlagsGURPS & {
 
 export interface StaticCharacterSystemData extends ActorSystemData {
 	editing: boolean
+	additionalresources: any
 	attributes: {
 		[key in StaticAttributeName]: StaticAttribute
 	}
@@ -115,7 +116,7 @@ export enum StaticSecondaryAttributeName {
 	touch = "touch",
 }
 
-interface StaticAttribute {
+export interface StaticAttribute {
 	import: number
 	value: number
 	points: number

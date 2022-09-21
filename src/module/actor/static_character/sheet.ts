@@ -1,5 +1,6 @@
 import { ActorSheetGURPS } from "@actor/base/sheet"
 import { RollType } from "@module/data"
+import { openPDF } from "@module/pdf"
 import { SYSTEM_NAME } from "@module/settings"
 import { i18n, RollGURPS } from "@util"
 import { StaticCharacterGURPS } from "."
@@ -53,7 +54,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		super.activateListeners(html)
 		// Html.find(".input").on("change", event => this._resizeInput(event))
 		// html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
-		// html.find(".reference").on("click", event => this._handlePDF(event))
+		html.find(".reference").on("click", event => this._handlePDF(event))
 		// html.find(".item").on("dblclick", event => this._openItemSheet(event))
 		// html.find(".equipped").on("click", event => this._onEquippedToggle(event))
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
@@ -65,6 +66,12 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		// html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
 	}
 
+	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
+		event.preventDefault()
+		const pdf = $(event.currentTarget).data("pdf")
+		if (pdf) return openPDF(pdf)
+	}
+
 	protected async _onClickRoll(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		if (this.actor.editing) return
@@ -73,6 +80,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		if (type === RollType.Attribute) {
 			const attribute = {
 				current: 0,
+				attr_id: "",
 				attribute_def: {
 					combinedName: "",
 				},
@@ -88,6 +96,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			attribute.attribute_def.combinedName = i18n(
 				`gurps.static.${$(event.currentTarget).data("id").toLowerCase()}`
 			)
+			attribute.attr_id = $(event.currentTarget).data("id").toLowerCase()
 			data.attribute = attribute
 		}
 		if (

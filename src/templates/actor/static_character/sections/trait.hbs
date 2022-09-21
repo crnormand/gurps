@@ -1,10 +1,10 @@
-<div class="desc item" data-uuid="{{this.uuid}}" {{{indent this.parents.length}}}>
+<div class="desc item" data-uuid="{{this.uuid}}" style="padding-left: calc({{this.indent}} * 12px + 6px)">
 	<div class="dropdown">
-		{{#if (notEmpty this.contains)}}
-		{{#if this.open}}
-		{{>actor/character/sections/dropdown-open}}
-		{{else}}
+		{{#if this.hasContains}}
+		{{#if this.hasCollapsed}}
 		{{>actor/character/sections/dropdown-closed}}
+		{{else}}
+		{{>actor/character/sections/dropdown-open}}
 		{{/if}}
 		{{/if}}
 	</div>
