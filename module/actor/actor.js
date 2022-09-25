@@ -1212,8 +1212,11 @@ export class GurpsActor extends Actor {
     ts.age = p.age || ''
     ts.title = p.title || ''
     ts.player = p.player_name || ''
-    ts.createdon = cd || ''
-    ts.modifiedon = md || ''
+    ts.createdon =
+      new Date(cd).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }).replace(' at', ',') || ''
+    ts.modifiedon =
+      new Date(md).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }).replace(' at', ',') || ''
+    // ts.modifiedon = md || ''
     ts.religion = p.religion || ''
     ts.birthday = p.birthday || ''
     ts.hand = p.handedness || ''
@@ -1307,7 +1310,7 @@ export class GurpsActor extends Actor {
 
   importAd(i, p) {
     let a = new Advantage()
-    a.name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Advantage'
+    a.name = i.name + (i.levels ? ' ' + i.levels.toString() : '') || 'Trait'
     a.points = i.calc?.points
     a.note = i.notes
     a.userdesc = i.userdesc
@@ -1592,7 +1595,8 @@ export class GurpsActor extends Actor {
           if (!l.split) l.split = {}
           l.split[damtype] = +l.import + value
         }
-      l.penalty = i.hit_penalty.toString()
+      console.log(i)
+      l.penalty = i.hit_penalty?.toString() || '0'
       while (locations.filter(it => it.where == l.where).length > 0) {
         l.where = l.where + '*'
       }
@@ -1973,19 +1977,22 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) }
       commit = { ...commit, ...(await this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date)) }
       commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment) }
-      commit = { ...commit, ...this.importAdsFromGCSv3(r.advantages) }
+      commit = { ...commit, ...this.importAdsFromGCSv3(r.traits || r.advantages) }
       commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) }
       commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) }
       commit = { ...commit, ...this.importEquipmentFromGCSv2(r.equipment, r.other_equipment) }
       commit = { ...commit, ...this.importNotesFromGCSv2(r.notes) }
 
-      commit = { ...commit, ...(await this.importProtectionFromGCSv2(r.settings.hit_locations)) }
       commit = {
         ...commit,
-        ...this.importPointTotalsFromGCSv2(r.total_points, r.attributes, r.advantages, r.skills, r.spells),
+        ...(await this.importProtectionFromGCSv2(r.settings.body_type || r.settings.hit_locations)),
       }
-      commit = { ...commit, ...this.importReactionsFromGCSv3(r.advantages, r.skills, r.equipment) }
-      commit = { ...commit, ...this.importCombatFromGCSv2(r.advantages, r.skills, r.spells, r.equipment) }
+      commit = {
+        ...commit,
+        ...this.importPointTotalsFromGCSv2(r.total_points, r.attributes, r.traits || r.advantages, r.skills, r.spells),
+      }
+      commit = { ...commit, ...this.importReactionsFromGCSv3(r.traits || r.advantages, r.skills, r.equipment) }
+      commit = { ...commit, ...this.importCombatFromGCSv2(r.traits || r.advantages, r.skills, r.spells, r.equipment) }
     } catch (err) {
       console.log(err.stack)
       msg.push(
