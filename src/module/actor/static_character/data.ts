@@ -28,7 +28,7 @@ export interface StaticCharacterSource extends BaseActorSourceGURPS<ActorType.Ch
 }
 export interface StaticCharacterDataGURPS
 	extends Omit<StaticCharacterSource, "effects" | "flags" | "items" | "token">,
-	StaticCharacterSystemData {
+		StaticCharacterSystemData {
 	readonly type: StaticCharacterSource["type"]
 	data: StaticCharacterSystemData
 	flags: StaticCharacterFlags

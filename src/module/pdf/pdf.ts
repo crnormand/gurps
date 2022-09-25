@@ -91,13 +91,13 @@ export function openPDF(pdfs: string) {
 			if (pdfs.includes("http")) url = pdfs
 			else url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb"
 		}
-		// window.open(url, "_blank")
+		// Window.open(url, "_blank")
 		const pdfPages: any[] = []
-			; (game as Game).journal?.forEach(j => {
-				(j as any).pages.forEach((p: any) => {
-					if (p.type === "pdf") pdfPages.push(p)
-				})
+		;(game as Game).journal?.forEach(j => {
+			(j as any).pages.forEach((p: any) => {
+				if (p.type === "pdf") pdfPages.push(p)
 			})
+		})
 		let journalPage
 		if (pdfPages.length) journalPage = pdfPages.find((e: any) => e.type === "pdf" && e.system.code === book)
 		if (journalPage) {

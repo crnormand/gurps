@@ -27,6 +27,15 @@
 				{{>actor/static_character/sections/encumbrance}}
 				{{>actor/static_character/sections/lifting}}
 			</div>
+			<div id="resource-trackers">
+				{{>actor/static_character/sections/resource-trackers}}
+			</div>
+			{{!-- <div id="macros"> --}}
+				{{!-- {{>actor/character/sections/macros}} --}}
+				{{!-- </div> --}}
+			<div id="move">
+				{{>actor/static_character/sections/move}}
+			</div>
 		</div>
 		<div id="embeds" style="grid-template: {{staticBlockLayout this.system}};">
 			{{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods))}}

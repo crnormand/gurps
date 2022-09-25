@@ -15,7 +15,7 @@ module.exports = {
 		jquery: true,
 	},
 
-	// extends: ["plugin:@typescript-eslint/recommended", "plugin:jest/recommended", "plugin:prettier/recommended"],
+	// Extends: ["plugin:@typescript-eslint/recommended", "plugin:jest/recommended", "plugin:prettier/recommended"],
 	extends: ["plugin:@typescript-eslint/recommended", "plugin:jest/recommended"],
 
 	plugins: ["@typescript-eslint", "jest", "jsdoc"],

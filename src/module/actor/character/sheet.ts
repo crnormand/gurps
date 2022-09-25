@@ -181,6 +181,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				encumbrance: encumbrance,
 				lifting: lifts,
 				current_year: new Date().getFullYear(),
+				maneuvers: (CONFIG as any).GURPS.select.maneuvers,
+				postures: (CONFIG as any).GURPS.select.postures,
+				move_types: (CONFIG as any).GURPS.select.move_types,
 			},
 		}
 		this.prepareItems(sheetData)
@@ -325,8 +328,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			},
 		]
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
-		all_buttons.at(-1)!.label = ""
-		all_buttons.at(-1)!.icon = "gcs-circled-x"
+		// All_buttons.at(-1)!.label = ""
+		// all_buttons.at(-1)!.icon = "gcs-circled-x"
 		return all_buttons
 		// Return buttons.concat(super._getHeaderButtons());
 	}

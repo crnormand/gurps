@@ -57,8 +57,6 @@ export function registerHandlebarsHelpers() {
 		return ""
 	})
 
-
-
 	Handlebars.registerHelper("and", function(...args) {
 		let val = true
 		for (const arg of args) {
@@ -93,7 +91,7 @@ export function registerHandlebarsHelpers() {
 
 	Handlebars.registerHelper("notEmpty", function(a: any[] | any) {
 		if (Array.isArray(a)) return !!a?.length
-		return !!a ? Object.values(a).length > 0 : false
+		return a ? Object.values(a).length > 0 : false
 	})
 
 	Handlebars.registerHelper("blockLayout", function(a: Array<string>, items: any) {
@@ -266,27 +264,43 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("hpFpCondition", function(type: "HP" | "FP", value: any, attr: string) {
+		/**
+		 *
+		 * @param pts
+		 * @param conditions
+		 */
 		function _getConditionKey(pts: any, conditions: Record<string, any>) {
-			let found = 'NORMAL'
+			let found = "NORMAL"
 			for (const [key, value] of Object.entries(conditions)) {
-				if (!!pts && pts.value > value.breakpoint(pts)) {
+				if (pts && pts.value > value.breakpoint(pts)) {
 					return found
 				}
 				found = key
 			}
 			return found
 		}
+		/**
+		 *
+		 * @param HP
+		 * @param member
+		 */
 		function hpCondition(HP: any, member: string) {
 			let key = _getConditionKey(HP, staticHpConditions)
 			return (staticHpConditions as any)[key][member]
 		}
+		/**
+		 *
+		 * @param this
+		 * @param FP
+		 * @param member
+		 */
 		function fpCondition(this: any, FP: any, member: string) {
 			let key = _getConditionKey(FP, staticFpConditions)
 			return (staticFpConditions as any)[key][member]
 		}
-		if (type === 'HP') return hpCondition(value, attr)
-		if (type === 'FP') return fpCondition(value, attr)
-		throw `hpFpCondition called with invalid type: [${type}]`
+		if (type === "HP") return hpCondition(value, attr)
+		if (type === "FP") return fpCondition(value, attr)
+		throw new Error(`hpFpCondition called with invalid type: [${type}]`)
 	})
 
 	Handlebars.registerHelper("optionSetStyle", function(boolean) {
@@ -335,8 +349,12 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("staticBlockLayout", function(system: StaticCharacterSystemData) {
+		/**
+		 *
+		 * @param o
+		 */
 		function notEmpty(o: any) {
-			return !!o ? Object.values(o).length > 0 : false
+			return o ? Object.values(o).length > 0 : false
 		}
 		const outAr = []
 		if (notEmpty(system.reactions) || notEmpty(system.conditionalmods)) {
@@ -358,10 +376,9 @@ export function registerHandlebarsHelpers() {
 		return `"${outAr.join('" "')}";`
 	})
 
-	Handlebars.registerHelper('flatlist', function(context) {
+	Handlebars.registerHelper("flatlist", function(context) {
 		let data = {}
-		Static.flatList(context, 0, '', data, false)
-		console.log(data)
+		Static.flatList(context, 0, "", data, false)
 		return data
 	})
 

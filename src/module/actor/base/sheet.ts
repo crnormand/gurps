@@ -113,6 +113,13 @@ export class ActorSheetGURPS extends ActorSheet {
 		}
 		return parent!.updateEmbeddedDocuments("Item", updateData) as unknown as Item[]
 	}
+
+	protected _getHeaderButtons(): Application.HeaderButton[] {
+		const all_buttons = super._getHeaderButtons()
+		all_buttons.at(-1)!.label = ""
+		all_buttons.at(-1)!.icon = "gcs-circled-x"
+		return all_buttons
+	}
 }
 
 export interface ActorSheetGURPS extends ActorSheet {

@@ -1,9 +1,9 @@
 #stats {
 	grid-area: stats;
 	display: grid;
-	grid-template: 
-	"attributes hit-locations encumbrance-lifting"
-	"resource-trackers macros move";
+	grid-template:
+		"attributes hit-locations encumbrance-lifting"
+		"resource-trackers move move";
 	gap: var(--section-gap);
 
 	@import "attributes", "body_type", "encumbrance_lifting", "resource_trackers", "macros", "move";

@@ -14,7 +14,7 @@ import {
 	StaticCharacterSystemData,
 } from "./data"
 
-Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			// @ts-ignore until v10 types
@@ -49,7 +49,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 				points: value.points,
 				attribute_def: {
 					combinedName: i18n(`gurps.static.${key.toLowerCase()}`),
-				}
+				},
 			})
 		}
 		return atts
