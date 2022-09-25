@@ -1,9 +1,12 @@
-.gcs.actor {
+.gurps.actor {
 	.window-content {
 		background: rgb(var(--color-page));
 	}
 	&.character {
 		@import "character";
+	}
+	&.character.static {
+		@import "static";
 	}
 	.error {
 		background-color: rgb(var(--color-error));

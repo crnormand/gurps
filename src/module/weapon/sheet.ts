@@ -25,7 +25,7 @@ export class WeaponSheet extends FormApplication {
 
 	static get defaultOptions() {
 		return mergeObject(super.defaultOptions, {
-			classes: ["form", "melee-weapon", "gcs", "item"],
+			classes: ["form", "melee-weapon", "gurps", "item"],
 			width: 420,
 			resizable: true,
 			submitOnChange: true,

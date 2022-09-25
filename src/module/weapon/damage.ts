@@ -204,7 +204,12 @@ export class WeaponDamage {
 		return buffer
 	}
 
-	extractWeaponDamageBonus(f: Feature, set: Map<WeaponBonus, boolean>, dieCount: number, tooltip?: TooltipGURPS): void {
+	extractWeaponDamageBonus(
+		f: Feature,
+		set: Map<WeaponBonus, boolean>,
+		dieCount: number,
+		tooltip?: TooltipGURPS
+	): void {
 		if (f instanceof WeaponBonus) {
 			const level = f.levels
 			f.levels = dieCount

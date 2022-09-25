@@ -26,7 +26,8 @@ export class CompendiumSkillTab extends CompendiumTab {
 			;((await collection?.getDocuments()) as any).forEach((skill: any) => {
 				if (!["skill", "technique", "skill_container"].includes(skill.type)) return
 				let difficulty = ""
-				if (skill.type === "skill") difficulty = `${skill.attribute.toUpperCase()}/${skill.difficulty.toUpperCase()}`
+				if (skill.type === "skill")
+					difficulty = `${skill.attribute.toUpperCase()}/${skill.difficulty.toUpperCase()}`
 				if (skill.type === "technique") difficulty = `Tech/${skill.difficulty.toUpperCase()}`
 				skill.prepareData()
 				skill_list.push({

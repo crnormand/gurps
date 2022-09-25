@@ -1,0 +1,7 @@
+#resource-trackers {
+	grid-area: resource-trackers;
+	display: grid;
+	grid-template:
+		"header"
+		"content";
+}

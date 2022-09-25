@@ -26,6 +26,44 @@
 			"offset": "Page Offset",
 			"code": "PDF Book Code"
 		},
+		"language": {
+			"language": "Language",
+			"spoken": "Spoken",
+			"written": "Written"
+		},
+		"static": {
+			"st": "Strength (ST)",
+			"dx": "Dexterity (DX)",
+			"iq": "Intelligence (IQ)",
+			"ht": "Health (HT)",
+			"will": "Will",
+			"frightcheck": "Fright Check",
+			"per": "Perception (Per)",
+			"vision": "Vision",
+			"hearing": "Hearing",
+			"tastesmell": "Taste & Smell",
+			"touch": "Touch",
+			"status": {
+				"normal": "Normal",
+				"reeling": "Reeling",
+				"collapse": "Collapse",
+				"check1": "Check #1",
+				"check2": "Check #2",
+				"check3": "Check #3",
+				"check4": "Check #4",
+				"dead": "Dead",
+				"destroyed": "Destroyed",
+				"tired": "Tired",
+				"unconscious": "Unconscious"
+			},
+			"encumbrance": {
+				"enc0": "None",
+				"enc1": "Light",
+				"enc2": "Medium",
+				"enc3": "Heavy",
+				"enc4": "X-Heavy"
+			}
+		},
 		"character": {
 			"portrait": "Portrait",
 			"identity": "Identity",
@@ -66,6 +104,18 @@
 				"fright_check_bonus": "{penalty} Fright Check Bonus",
 				"minor_cost_of_living_increase": "{penalty} Cost of Living Increase",
 				"major_cost_of_living_increase": "{penalty} Cost of Living Increase"
+			},
+			"resource_trackers": {
+				"title": "Resource Trackers"
+			},
+			"macros": {
+				"title": "Quick Macros"
+			},
+			"move": {
+				"title": "Conditions",
+				"maneuver": "Maneuver",
+				"posture": "Posture",
+				"type": "Move Type"
 			},
 			"move_modes": {
 				"ground": "Ground",
@@ -455,6 +505,45 @@
 				"hard": "H",
 				"very_hard": "VH",
 				"wildcard": "W"
+			},
+			"maneuvers": {
+				"none": "None",
+				"do_nothing": "Do Nothing",
+				"move": "Move",
+				"aim": "Aim",
+				"change_posture": "Change Posture",
+				"evaluate": "Evaluate",
+				"attack": "Attack",
+				"feint": "Feint",
+				"all_out_attack": "All-out Attack",
+				"all_out_attack_determined": "All-out Attack (Determined)",
+				"all_out_attack_double": "All-out Attack (Double)",
+				"all_out_attack_feint": "All-out Attack (Feint)",
+				"all_out_attack_strong": "All-out Attack (Strong)",
+				"all_out_attack_suppressing_fire": "All-out Attack (Suppressing Fire)",
+				"move_and_attack": "Move and Attack",
+				"all_out_defense": "All-out Defense",
+				"all_out_defense_dodge": "All-out Defense (Dodge)",
+				"all_out_defense_parry": "All-out Defense (Parry)",
+				"all_out_defense_block": "All-out Defense (Block)",
+				"all_out_defense_double": "All-out Defense (Double)",
+				"ready": "Ready",
+				"concentrate": "Concentrate",
+				"wait": "Wait"
+			},
+			"move_type": {
+				"ground": "Ground",
+				"air": "Air",
+				"water": "Water",
+				"space": "Space"
+			},
+			"postures": {
+				"standing": "Standing",
+				"lying": "Lying Down",
+				"kneeling": "Kneeling",
+				"crouching": "Crouching",
+				"sitting": "Sitting",
+				"crawling": "Crawling"
 			}
 		},
 		"field_prefix": {

@@ -10,7 +10,7 @@ export class PDFViewerSheet extends DocumentSheet {
 
 	static get defaultOptions() {
 		return mergeObject(super.defaultOptions, {
-			classes: ["gcs", "pdf"],
+			classes: ["gurps", "pdf"],
 			width: 860,
 			height: 900,
 			resizable: true,
@@ -21,19 +21,6 @@ export class PDFViewerSheet extends DocumentSheet {
 	override get template(): string {
 		return `systems/${SYSTEM_NAME}/templates/app/pdf.hbs`
 	}
-
-	// Render(force?: boolean | undefined, options?: Application.RenderOptions<DocumentSheetOptions> | undefined): this {
-	// 	console.log(force, options);
-	// 	return super.render(force, options);
-	// }
-
-	// activateListeners(html: JQuery<HTMLElement>): void {
-	// 	super.activateListeners(html);
-	// 	const target = html.find(".placeholder");
-	// 	const frame = document.createElement("iframe");
-	// 	frame.src = `scripts/pdfjs/web/viewer.html?${this._getPDFData()}#page=${this.pageNumber}`;
-	// 	target.replaceWith(frame);
-	// }
 
 	private _getPDFData(): URLSearchParams {
 		const params = new URLSearchParams()
@@ -51,10 +38,4 @@ export class PDFViewerSheet extends DocumentSheet {
 			params: this._getPDFData(),
 		})
 	}
-
-	// Protected _getHeaderButtons(): Application.HeaderButton[] {
-	// 	const buttons = super._getHeaderButtons();
-	// 	console.log(buttons);
-	// 	return buttons.filter(e => e.class !== "configure-sheet");
-	// }
 }

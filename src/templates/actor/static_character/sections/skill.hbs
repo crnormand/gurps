@@ -1,0 +1,108 @@
+<div class="desc item" data-uuid="{{this.uuid}}" style="padding-left: calc({{this.indent}} * 12px + 6px)">
+	<div class="dropdown">
+		{{#if this.hasContains}}
+		{{#if this.hasCollapsed}}
+		{{>actor/character/sections/dropdown-closed}}
+		{{else}}
+		{{>actor/character/sections/dropdown-open}}
+		{{/if}}
+		{{/if}}
+	</div>
+	<div class="name">
+		{{this.name}}
+	</div>
+	<div class="item-notes">
+		{{this.notes}}
+	</div>
+</div>
+<div data-uuid="{{this.uuid}}" data-type="skill" class="level rollable">{{this.import}}</div>
+<div data-uuid="{{this.uuid}}" data-type="skill_rsl" class="rsl rollable">{{this.relativelevel}}</div>
+<div class="points">{{this.points}}</div>
+<div class="reference" data-pdf="{{this.pageref}}">{{ref this.pageref}}</div>
+
+{{!-- <div id='skills' class='gga-table with-notes'> --}}
+	{{!-- <div class='itemmenu header' readonly></div> --}}
+	{{!-- <div class='desc header'> --}}
+		{{!-- <div class='headermenu'> --}}
+			{{!-- <span>{{localize 'GURPS.skills'}}</span> --}}
+			{{!-- <i class='fas fa-caret-square-down'></i> --}}
+			{{!-- </div> --}}
+		{{!-- </div> --}}
+	{{!-- <div class='sl header'>{{localize 'GURPS.sl'}}</div> --}}
+	{{!-- <div class='rsl header'>{{localize 'GURPS.rsl'}}</div> --}}
+	{{!-- <div class='pts header'>{{localize "GURPS.abbrevPoints"}}</div> --}}
+	{{!-- <div class='ref header'>{{localize "GURPS.abbrevRef"}}</div> --}}
+
+	{{!-- {{#each (flatlist system.skills)}} --}}
+	{{!-- {{#if ../isEditing}} --}}
+	{{!-- <div class='itemmenu skillmenu' data-key='system.skills.{{@key}}'> --}}
+		{{!-- <i class='fas fa-times'></i> --}}
+		{{!-- </div> --}}
+
+	{{!-- <div class='desc indent{{indent}}' data-key='system.skills.{{@key}}'> --}}
+		{{!-- <input name='system.skills.{{@key}}.name' class='gcs-input' type='text' value='{{this.name}}' /> --}}
+		{{!-- <div class='list_note'> --}}
+			{{!-- <input name='system.skills.{{@key}}.notes' class='gcs-input' type='text' value='{{this.notes}}' />
+			--}}
+			{{!-- </div> --}}
+		{{!-- </div> --}}
+
+	{{!-- <div class='sl' data-key='system.skills.{{@key}}'> --}}
+		{{!-- <input name='system.skills.{{@key}}.import' class='gcs-input-sm3' type='text' value='{{this.import}}' />
+		--}}
+		{{!-- </div> --}}
+	{{!-- <div class='rsl' data-key='system.skills.{{@key}}'> --}}
+		{{!-- <input name='system.skills.{{@key}}.relativelevel' class='gcs-input-sm4' type='text' --}} {{!--
+			value='{{this.relativelevel}}' /> --}}
+		{{!-- </div> --}}
+	{{!-- <div class='pts' data-key='system.skills.{{@key}}'> --}}
+		{{!-- <input name='system.skills.{{@key}}.points' class='gcs-input-sm3' type='text' value='{{this.points}}' />
+		--}}
+		{{!-- </div> --}}
+	{{!-- <div class='ref' data-key='system.skills.{{@key}}'> --}}
+		{{!-- <input name='system.skills.{{@key}}.pageref' class='gcs-input-sm5' type='text' value='{{this.pageref}}' />
+		--}}
+		{{!-- </div> --}}
+	{{!-- {{else}} --}}
+	{{!-- {{#unless isCollapsed}} --}}
+	{{!-- <div class='itemmenu' readonly></div> --}}
+
+	{{!-- <div class='skldraggable' data-key='system.skills.{{@key}}'> --}}
+		{{!-- <div class='desc dblclkedit indent{{indent}}'> --}}
+			{{!-- <div class='gga-desc-text'> --}}
+				{{!-- <div> --}}
+					{{!-- {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}} --}}
+					{{!-- {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}} --}}
+					{{!-- </div> --}}
+				{{!-- <div class='tooltip gga-manual'> --}}
+					{{!-- {{{gurpslink this.name}}} --}}
+					{{!-- {{#if (displayItemHover this)}} --}}
+					{{!-- <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div> --}}
+					{{!-- {{/if}} --}}
+					{{!-- </div> --}}
+				{{!-- <div> --}}
+					{{!-- {{#if (isFoundryItem this)}} --}}
+					{{!-- <i class='fas fa-star tooltip gga-item'> --}}
+						{{!-- <span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span> --}}
+						{{!-- </i> --}}
+					{{!-- {{/if}} --}}
+					{{!-- </div> --}}
+				{{!-- </div> --}}
+			{{!-- <div class='list_note'> --}}
+				{{!-- {{{gurpslink this.notes @root}}} --}}
+				{{!-- </div> --}}
+			{{!-- </div> --}}
+		{{!-- </div> --}}
+
+	{{!-- <div class='sl {{rollable this.level}} flex-center' data-name='{{this.name}}'
+		data-key='system.skills.{{@key}}' --}} {{!-- data-otf='Sk:"{{this.name}}"'> --}}
+		{{!-- {{this.level}} --}}
+		{{!-- </div> --}}
+	{{!-- <div class='rsl {{rollable this.level}} flex-center' data-otf='Sk:"{{this.name}}"'>{{this.relativelevel}}
+	</div> --}}
+	{{!-- <div class='pts flex-center'>{{this.points}}</div> --}}
+	{{!-- <div class='ref flex-center'>{{{pdflinkext this}}}</div> --}}
+	{{!-- {{/unless}} --}}
+	{{!-- {{/if}} --}}
+	{{!-- {{/each}} --}}
+	{{!-- </div> --}}

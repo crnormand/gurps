@@ -80,7 +80,7 @@ export class CompendiumBrowser extends Application {
 	static override get defaultOptions(): ApplicationOptions {
 		return mergeObject(super.defaultOptions, {
 			id: "compendium-browser",
-			classes: ["gcs"],
+			classes: ["gurps"],
 			template: `systems/${SYSTEM_NAME}/templates/compendium-browser/compendium-browser.hbs`,
 			width: 800,
 			height: 700,

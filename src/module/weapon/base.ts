@@ -37,7 +37,8 @@ class BaseWeapon {
 			// This.damage = new WeaponDamage({ ...data.damage, ...{ parent: this } });
 			this.damage = new WeaponDamage(data.damage)
 			// Horrible hack to prevent max stack size error
-			if (!context?.recursive) this.damage.parent = new BaseWeapon({ ...this }, { ...context, ...{ recursive: true } })
+			if (!context?.recursive)
+				this.damage.parent = new BaseWeapon({ ...this }, { ...context, ...{ recursive: true } })
 			// This.damage.parent = this;
 		} else {
 			mergeObject(context, { ready: true })

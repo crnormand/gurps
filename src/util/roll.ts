@@ -18,6 +18,7 @@ export async function handleRoll(
 	// Console.log(user, actor, data);
 	let name = ""
 	let rollData: any = {}
+	if (actor.type === "character") return staticHandleRoll(user, actor, data)
 	switch (data.type) {
 		case RollType.Modifier:
 			return addModifier(user, actor, data)
@@ -41,13 +42,32 @@ export async function handleRoll(
 		case RollType.Damage:
 			return rollDamage(user, actor, data)
 	}
-	if (data.type === RollType.Modifier) addModifier(user, actor, data)
 }
 
 /**
  *
  * @param user
  * @param actor
+ */
+export async function staticHandleRoll(
+	user: StoredDocument<User> | null,
+	actor: ActorGURPS | any,
+	data: { [key: string]: any }
+): Promise<void> {
+	console.log(user, actor, data)
+	switch (data.type) {
+		case RollType.Modifier:
+			return addModifier(user, actor, data)
+		case RollType.Attribute:
+			return rollAttribute(user, actor, data, "3d6")
+	}
+}
+
+/**
+ *
+ * @param user
+ * @param actor
+ * @param data
  * @param name
  * @param formula
  */
@@ -58,7 +78,6 @@ async function getRollData(
 	name: string,
 	formula: string
 ): Promise<any> {
-	console.log(data)
 	const roll = Roll.create(formula)
 	await roll.evaluate({ async: true })
 	const rolls = roll.dice[0].results.map(e => {
@@ -217,7 +236,7 @@ async function rollAttribute(
 
 	// Console.log("chatData", chatData);
 
-	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/skill-roll.hbs`, chatData)
+	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/attribute-roll.hbs`, chatData)
 
 	const messageData = {
 		user: user,

@@ -43,6 +43,8 @@ type StaticCharacterFlags = ActorFlagsGURPS & {
 }
 
 export interface StaticCharacterSystemData extends ActorSystemData {
+	editing: boolean
+	additionalresources: any
 	attributes: {
 		[key in StaticAttributeName]: StaticAttribute
 	}
@@ -80,17 +82,23 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 	traits: any
 	encumbrance: any
 	move: any
+	reactions: any
+	conditionalmods: any
 	ads: any
 	skills: any
 	spells: any
-	equipment: any
+	equipment: {
+		carried: any
+		other: any
+	}
+	eqtsummary: number
 	melee: any
 	ranged: any
 	currentdodge: any
 	languages: any
 }
 
-enum StaticAttributeName {
+export enum StaticAttributeName {
 	ST = "ST",
 	DX = "DX",
 	IQ = "IQ",
@@ -100,7 +108,15 @@ enum StaticAttributeName {
 	QN = "QN",
 }
 
-interface StaticAttribute {
+export enum StaticSecondaryAttributeName {
+	frightCheck = "frightcheck",
+	vision = "vision",
+	hearing = "hearing",
+	tasteSmell = "tastesmell",
+	touch = "touch",
+}
+
+export interface StaticAttribute {
 	import: number
 	value: number
 	points: number

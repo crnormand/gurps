@@ -1,0 +1,121 @@
+<div id="secondary-attributes">
+	<div class="header">{{localize "gurps.character.secondary_attributes"}}</div>
+	<div class="fieldblock3">
+		<div class="points">[{{system.attributes.WILL.points}}]</div>
+		<div data-id="WILL" data-type="attribute" class="field rollable">
+			<input name="system.attributes.WILL.import" class="input number" type="text" data-dtype="Number"
+				value="{{system.attributes.WILL.import}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.will"}}</div>
+		<div class="points"></div>
+		<div data-id="frightcheck" data-type="attribute" class="field rollable">
+			<input name="system.frightcheck" class="input number" type="text" data-dtype="Number"
+				value="{{system.frightcheck}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.frightcheck"}}</div>
+		<div class="points">[{{system.attributes.PER.points}}]</div>
+		<div data-id="PER" data-type="attribute" class="field rollable">
+			<input name="system.attributes.PER.import" class="input number" type="text" data-dtype="Number"
+				value="{{system.attributes.PER.import}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.per"}}</div>
+		<div class="points"></div>
+		<div data-id="vision" data-type="attribute" class="field rollable">
+			<input name="system.vision" class="input number" type="text" data-dtype="Number" value="{{system.vision}}"
+				{{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.vision"}}</div>
+		<div class="points"></div>
+		<div data-id="hearing" data-type="attribute" class="field rollable">
+			<input name="system.hearing" class="input number" type="text" data-dtype="Number" value="{{system.hearing}}"
+				{{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.hearing"}}</div>
+		<div class="points"></div>
+		<div data-id="tastesmell" data-type="attribute" class="field rollable">
+			<input name="system.tastesmell" class="input number" type="text" data-dtype="Number"
+				value="{{system.tastesmell}}" {{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.tastesmell"}}</div>
+		<div class="points"></div>
+		<div data-id="touch" data-type="attribute" class="field rollable">
+			<input name="system.touch" class="input number" type="text" data-dtype="Number" value="{{system.touch}}"
+				{{{input_lock ../editing}}} />
+		</div>
+		<div class="label">{{localize "gurps.static.touch"}}</div>
+	</div>
+</div>
+{{!--
+<div id='secondary-attributes'>
+	<div class='header'>{{localize 'GURPS.attributesSecondary'}}</div>
+	<div class='fieldblock3'>
+
+		<div class='points'>
+			{{#if isEditing}}
+			[<input name='system.attributes.WILL.points' class='gcs-input-sm2' type='number'
+				value='{{system.attributes.WILL.points}}' />]
+			{{else}}
+			[{{system.attributes.WILL.points}}]
+			{{/if}}
+		</div>
+		{{#if isEditing}}
+		<div class='field'>
+			<input name='system.attributes.WILL.value' class='gcs-input' type='number'
+				value='{{system.attributes.WILL.value}}' />
+		</div>
+		{{else}}
+		<div class='field rollable' data-path='attributes.WILL.value' data-otf='WILL'>
+			{{system.attributes.WILL.value}}
+		</div>
+		{{/if}}
+		<div class='label'>{{localize 'GURPS.attributesWILLNAME'}}</div>
+
+		<div class='points'></div>
+		<div class='field noedit {{rollable (not isEditing)}}' data-path='frightcheck' data-otf='Fright Check'>
+			{{system.frightcheck}}
+		</div>
+		<div class='label'>{{localize 'GURPS.frightcheck'}}</div>
+
+		<hr />
+		<div class='points'>
+			{{#if isEditing}}
+			[<input name='system.attributes.PER.points' class='gcs-input-sm2' type='number'
+				value='{{system.attributes.PER.points}}' />]
+			{{else}}
+			[{{system.attributes.PER.points}}]
+			{{/if}}
+		</div>
+		{{#if isEditing}}
+		<div class='field'>
+			<input name='system.attributes.PER.value' class='gcs-input' type='number'
+				value='{{system.attributes.PER.value}}' />
+		</div>
+		{{else}}
+		<div class='field rollable' data-path='attributes.PER.value' data-otf='PER'>
+			{{system.attributes.PER.value}}
+		</div>
+		{{/if}}
+		<div class='label'>{{localize 'GURPS.attributesPERNAME'}} ({{localize 'GURPS.attributesPER'}})</div>
+
+		<div class='points'></div>
+		<div class='field noedit {{rollable (not isEditing)}}' data-path='vision' data-otf='Vision'>{{system.vision}}
+		</div>
+		<div class='label'>{{localize 'GURPS.vision'}}</div>
+
+		<div class='points'></div>
+		<div class='field noedit {{rollable (not isEditing)}}' data-path='hearing' data-otf='Hearing'>{{system.hearing}}
+		</div>
+		<div class='label'>{{localize 'GURPS.hearing'}}</div>
+
+		<div class='points'></div>
+		<div class='field noedit {{rollable (not isEditing)}}' data-path='tastesmell' data-otf='Taste Smell'>
+			{{system.tastesmell}}
+		</div>
+		<div class='label'>{{localize 'GURPS.tastesmell'}}</div>
+
+		<div class='points'></div>
+		<div class='field noedit {{rollable (not isEditing)}}' data-path='touch' data-otf='Touch'>{{system.touch}}</div>
+		<div class='label'>{{localize 'GURPS.touch'}}</div>
+	</div>
+</div>
+--}}

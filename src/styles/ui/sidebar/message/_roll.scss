@@ -15,6 +15,7 @@
 	// 	text-align: center;
 	// }
 	&.attack,
+	&.attribute,
 	&.skill {
 		display: grid;
 		grid-auto-flow: row;

@@ -1,42 +1,6 @@
-#attributes {
-	grid-area: attributes;
+#attributes,
+#resource-trackers {
 	display: grid;
-	grid-template:
-		"primary-attributes secondary-attributes"
-		"basic-damage secondary-attributes"
-		"pool-attributes pool-attributes";
-	grid-template-columns: 1fr 1fr;
-	gap: var(--section-gap);
-
-	#primary-attributes {
-		grid-area: primary-attributes;
-	}
-
-	#secondary-attributes {
-		grid-area: secondary-attributes;
-	}
-
-	#pool-attributes {
-		grid-area: pool-attributes;
-	}
-
-	#basic-damage {
-		grid-area: basic-damage;
-		.fieldblock3 {
-			.points {
-				color: transparent;
-			}
-			.label:nth-child(6n),
-			.field:nth-child(6n-1),
-			.points:nth-child(6n-2) {
-				background-color: rgba(var(--color-banding), 1);
-			}
-			.field {
-				width: 6ch;
-			}
-		}
-	}
-
 	.points {
 		font: var(--font-page-secondary-fields);
 		color: rgba(var(--color-on-editable), 0.6);
@@ -48,7 +12,6 @@
 	.field .input {
 		text-align: right;
 	}
-
 	.separator {
 		overflow: hidden;
 		text-align: center;
@@ -85,5 +48,44 @@
 	}
 	.fieldblock6 .separator_parent {
 		grid-column: 1 / span 6;
+	}
+}
+
+#attributes {
+	grid-area: attributes;
+	grid-template:
+		"primary-attributes secondary-attributes"
+		"basic-damage secondary-attributes"
+		"pool-attributes pool-attributes";
+	grid-template-columns: 1fr 1fr;
+	gap: var(--section-gap);
+
+	#primary-attributes {
+		grid-area: primary-attributes;
+	}
+
+	#secondary-attributes {
+		grid-area: secondary-attributes;
+	}
+
+	#pool-attributes {
+		grid-area: pool-attributes;
+	}
+
+	#basic-damage {
+		grid-area: basic-damage;
+		.fieldblock3 {
+			.points {
+				color: transparent;
+			}
+			.label:nth-child(6n),
+			.field:nth-child(6n-1),
+			.points:nth-child(6n-2) {
+				background-color: rgba(var(--color-banding), 1);
+			}
+			.field {
+				width: 6ch;
+			}
+		}
 	}
 }

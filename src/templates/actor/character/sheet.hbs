@@ -15,17 +15,26 @@
 				{{>actor/character/sections/pool-attributes}}
 			</div>
 			<div id="hit-locations">
-				<div class="header body-plan">{{data.settings.body_type.name}}</div>
+				<div class="header body-plan">{{system.settings.body_type.name}}</div>
 				<div class="header roll">{{localize "gurps.character.body_type.roll"}}</div>
 				<div class="header location">{{localize "gurps.character.body_type.location"}}</div>
 				<div class="header dr">{{localize "gurps.character.body_type.dr"}}</div>
-				{{#each data.settings.body_type.locations}}
+				{{#each system.settings.body_type.locations}}
 				{{>actor/character/sections/hit-location tab=""}}
 				{{/each}}
 			</div>
 			<div id="encumbrance-lifting">
 				{{>actor/character/sections/encumbrance}}
 				{{>actor/character/sections/lifting}}
+			</div>
+			<div id="resource-trackers">
+				{{>actor/character/sections/resource-trackers}}
+			</div>
+			{{!-- <div id="macros"> --}}
+				{{!-- {{>actor/character/sections/macros}} --}}
+				{{!-- </div> --}}
+			<div id="move">
+				{{>actor/character/sections/move}}
 			</div>
 		</div>
 		<div id="embeds" style="grid-template: {{blockLayout settings.block_layout blocks}};">

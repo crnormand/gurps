@@ -86,26 +86,25 @@ export function openPDF(pdfs: string) {
 		}
 
 		console.log(book)
-		if ((game as Game).journal?.size === 0) {
-			let url = (SJG_links as any)[book]
-			if (!url) {
-				if (pdfs.includes("http")) url = pdfs
-				else url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb"
-			}
-			window.open(url, "_blank")
-		} else {
-			const pdfPages: any[] = []
-			;(game as Game).journal?.forEach(j => {
-				;(j as any).pages.forEach((p: any) => {
-					if (p.type === "pdf") pdfPages.push(p)
-				})
+		let url = (SJG_links as any)[book]
+		if (!url) {
+			if (pdfs.includes("http")) url = pdfs
+			else url = "http://www.warehouse23.com/products?taxons%5B%5D=558398545-sb"
+		}
+		// Window.open(url, "_blank")
+		const pdfPages: any[] = []
+		;(game as Game).journal?.forEach(j => {
+			(j as any).pages.forEach((p: any) => {
+				if (p.type === "pdf") pdfPages.push(p)
 			})
-			let journalPage
-			if (pdfPages.length) journalPage = pdfPages.find((e: any) => e.type === "pdf" && e.system.code === book)
-			if (journalPage) {
-				const viewer = new PDFViewerSheet(journalPage, { pageNumber: page })
-				viewer.render(true)
-			}
+		})
+		let journalPage
+		if (pdfPages.length) journalPage = pdfPages.find((e: any) => e.type === "pdf" && e.system.code === book)
+		if (journalPage) {
+			const viewer = new PDFViewerSheet(journalPage, { pageNumber: page })
+			viewer.render(true)
+		} else {
+			window.open(url, "_blank")
 		}
 	}
 }

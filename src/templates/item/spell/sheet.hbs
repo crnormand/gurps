@@ -28,7 +28,7 @@
 				<select name="attribute" data-dtype="String">
 					{{#select document.attribute}}
 					{{#each attributes as |v k|}}
-					<option value="{{k}}">{{localize (concat v)}}</option>
+					<option value="{{k}}">{{localize v}}</option>
 					{{/each}}
 					{{/select}}
 				</select>
@@ -36,7 +36,7 @@
 				<select name="difficulty" data-dtype="String">
 					{{#select document.difficulty}}
 					{{#each config.select.difficulty as |v k|}}
-					<option value="{{k}}">{{localize (concat v)}}</option>
+					<option value="{{k}}">{{localize v}}</option>
 					{{/each}}
 					{{/select}}
 				</select>

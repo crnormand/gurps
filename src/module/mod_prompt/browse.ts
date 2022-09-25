@@ -116,7 +116,8 @@ export class ModifierBrowse extends Application {
 			}
 		}
 		categories.sort((a: ModCategory, b: ModCategory) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
-		const pinnedMods: RollModifier[] = ((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as []) ?? []
+		const pinnedMods: RollModifier[] =
+			((game as Game).user?.getFlag(SYSTEM_NAME, UserFlags.ModifierPinned) as []) ?? []
 		categories.push({
 			name: i18n("gurps.system.modifier_stack.pinned_category"),
 			showing: false,

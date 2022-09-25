@@ -31,7 +31,10 @@ export class EquipmentModifierGURPS extends BaseItemGURPS {
 	}
 
 	get weightDescription(): string {
-		if (this.weightType === "to_original_weight" && (this.weightAmount === "" || this.weightAmount.startsWith("+0")))
+		if (
+			this.weightType === "to_original_weight" &&
+			(this.weightAmount === "" || this.weightAmount.startsWith("+0"))
+		)
 			return ""
 		return this.formatWeight(this.system.weight, "lb") + i18n(this.weightType)
 	}

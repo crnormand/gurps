@@ -269,7 +269,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const att in settings.attributes) {
 			defs[att] = new AttributeDef(settings.attributes[att])
 		}
-		;(settings as any).attributes = defs
+		(settings as any).attributes = defs
 		return settings
 	}
 
@@ -474,7 +474,11 @@ class CharacterGURPS extends BaseActorGURPS {
 	get spells(): Collection<SpellGURPS | RitualMagicSpellGURPS | SpellContainerGURPS> {
 		const spells: Collection<SpellGURPS | RitualMagicSpellGURPS | SpellContainerGURPS> = new Collection()
 		for (const item of this.deepItems) {
-			if (item instanceof SpellGURPS || item instanceof RitualMagicSpellGURPS || item instanceof SpellContainerGURPS)
+			if (
+				item instanceof SpellGURPS ||
+				item instanceof RitualMagicSpellGURPS ||
+				item instanceof SpellContainerGURPS
+			)
 				spells.set(item._id!, item)
 		}
 		return spells
@@ -483,7 +487,8 @@ class CharacterGURPS extends BaseActorGURPS {
 	get equipment(): Collection<EquipmentGURPS | EquipmentContainerGURPS> {
 		const equipment: Collection<EquipmentGURPS | EquipmentContainerGURPS> = new Collection()
 		for (const item of this.deepItems) {
-			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS) equipment.set(item._id!, item)
+			if (item instanceof EquipmentGURPS || item instanceof EquipmentContainerGURPS)
+				equipment.set(item._id!, item)
 		}
 		return equipment
 	}
@@ -868,7 +873,12 @@ class CharacterGURPS extends BaseActorGURPS {
 		return this.bestSkillNamed(def.name ?? "", def.specialization ?? "", require_points, null)
 	}
 
-	bestWeaponNamed(name: string, usage: string, type: WeaponType, excludes: Map<string, boolean> | null): Weapon | null {
+	bestWeaponNamed(
+		name: string,
+		usage: string,
+		type: WeaponType,
+		excludes: Map<string, boolean> | null
+	): Weapon | null {
 		let best: Weapon | null = null
 		let level = Math.max()
 		for (const w of this.weaponNamed(name, usage, type, excludes)) {
@@ -1015,7 +1025,11 @@ class CharacterGURPS extends BaseActorGURPS {
 	spellComparedBonusFor(featureID: string, name: string, tags: string[], tooltip: TooltipGURPS | undefined): number {
 		let total = 0
 		for (const feature of this.featureMap.get(featureID.toLowerCase()) ?? []) {
-			if (feature instanceof SpellBonus && stringCompare(name, feature.name) && stringCompare(tags, feature.tags)) {
+			if (
+				feature instanceof SpellBonus &&
+				stringCompare(name, feature.name) &&
+				stringCompare(tags, feature.tags)
+			) {
 				total += feature.adjustedAmount
 				feature.addToTooltip(tooltip)
 			}

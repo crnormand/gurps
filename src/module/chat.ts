@@ -69,6 +69,10 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 		data.weapon = character.bestWeaponNamed(item?.name, weapon.usage, weapon.type, null)
 		// Console.log(weapon);
 	}
+	if ([RollType.Attribute].includes(type)) {
+		const attribute = character.attributes.get($(event.currentTarget).data("id"))
+		data.attribute = attribute
+	}
 	// If (type === RollType.Modifier) {
 	// 	data.modifier = $(event.currentTarget).data("modifier");
 	// 	data.comment = $(event.currentTarget).data("comment");

@@ -513,7 +513,9 @@ export class ItemImporter {
 		}
 	}
 
-	getEquipmentModifierContainerData(data: EquipmentModifierContainerSystemData): EquipmentModifierContainerSystemData {
+	getEquipmentModifierContainerData(
+		data: EquipmentModifierContainerSystemData
+	): EquipmentModifierContainerSystemData {
 		return {
 			name: data.name ?? "Equipment Modifier Container",
 			type: data.type ?? "eqp_modifier_container",

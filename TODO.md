@@ -10,6 +10,7 @@
 	- type error when skill/attack doesn't exist
 	- attribute rolls
 	- CR rolls
+	- Add conditional additional rolls, to be executed on failure, on success
 - GCA import
 	- prereqs (leave for later)
 	- appearance
@@ -30,6 +31,7 @@
 	- modify static charsheet to match stylistically with dynamic charsheet. also eliminate "editable" static charsheet, instead using same system as dynamic
 	- add deprecation warning to static items
 	- (?) add optional reeling to dynamic character (maybe add ability to manually switch pool state for purposes of move etc. calculation)
+	- set totalpoints values to number value
 ## Sheets & Styling
 - Global Foundry styling
 - Damage template
@@ -64,6 +66,7 @@
 - metric system conversion
 - Native PDF support
 - Roll20 style notes about character in place of character sheet (for players with limited access?)
+- fully customizable sheet layout wit dragging around elements
 ## Small Features, Changes & Fixes
 - Library Import
 	- Overwrite items instead of appending
