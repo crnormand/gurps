@@ -1944,9 +1944,6 @@ export class GurpsActor extends Actor {
         exit = true
       }
     }
-    // if (r.version === 4) {
-    // 	return CharacterImporter.import(document: this, file: { text: json, name: importname, path: importpath })
-    // }
 
     if (msg.length > 0) {
       ui.notifications?.error(msg.join('<br>'))
