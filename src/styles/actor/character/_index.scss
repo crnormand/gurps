@@ -107,6 +107,38 @@
 		}
 	}
 
+	select {
+		appearance: none;
+		// align-self: center;
+		font: var(--font-field);
+		// background-color: rgb(var(--color-control));
+		background-color: rgb(var(--color-editable));
+		color: rgb(var(--color-on-editable));
+		// color: rgb(var(--color-on-control));
+		border: none;
+		border-bottom: 1px solid rgb(var(--color-control-edge));
+		border-radius: 0;
+		padding: 0;
+		height: 17px;
+		// border: 1px solid rgb(var(--color-control-edge));
+		// padding: 1px 3px;
+		// border-radius: 3px;
+		// height: 24px;
+		width: max-content;
+		align-items: self-end;
+		option {
+			font: var(--font-system);
+			background-color: rgb(var(--color-control));
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+		}
+		&:focus {
+			box-shadow: none;
+			// border-width: 2px;
+			// padding: 0px 2px;
+		}
+	}
+
 	#personal,
 	#stats,
 	#embeds {

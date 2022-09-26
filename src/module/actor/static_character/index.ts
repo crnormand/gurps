@@ -12,6 +12,7 @@ import {
 	StaticAttributeName,
 	StaticCharacterSource,
 	StaticCharacterSystemData,
+	StaticResourceTracker,
 } from "./data"
 
 Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
@@ -55,8 +56,9 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		return atts
 	}
 
-	get trackers(): any[] {
-		return toArray(this.system.additionalresources.tracker)
+	get trackers(): { [key: string]: StaticResourceTracker } {
+		return this.system.additionalresources.tracker
+		// Return toArray(this.system.additionalresources.tracker)
 	}
 
 	// Async openSheet(newSheet: ActorSheetGURPS): Promise<void> {

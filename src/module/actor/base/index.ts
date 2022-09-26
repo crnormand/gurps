@@ -8,6 +8,7 @@ import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { SYSTEM_NAME } from "@module/settings"
 import { ContainerGURPS, ItemGURPS } from "@item"
 import { ActorSystemData, BaseActorSourceGURPS } from "./data"
+// Import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -26,6 +27,14 @@ class BaseActorGURPS extends Actor {
 			return ActorConstructor ? new ActorConstructor(data, context) : new BaseActorGURPS(data, context)
 		}
 	}
+
+	// Update(
+	// 	data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined,
+	// 	context?: (DocumentModificationContext & MergeObjectOptions) | undefined
+	// ): Promise<this | undefined> {
+	// 	console.log(data, context)
+	// 	return super.update(data, context)
+	// }
 
 	protected async _preCreate(
 		data: ActorDataConstructorData & ActorDataGURPS,

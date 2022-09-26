@@ -1,5 +1,5 @@
 <div id="points">
-	<div class="header">{{actor.totalPoints}} {{localize "gurps.character.points.title"}}</div>
+	<div class="header">{{system.totalpoints.total}} {{localize "gurps.character.points.title"}}</div>
 	<div class="fieldblock">
 		{{>sections/input-text after="gurps.character.points.unspent" field="field" name="system.totalpoints.unspent"
 		data=system.totalpoints.unspent type="Number" class=(input_lock editing)}}

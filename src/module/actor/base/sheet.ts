@@ -13,6 +13,13 @@ export class ActorSheetGURPS extends ActorSheet {
 		return options
 	}
 
+	activateListeners(html: JQuery<HTMLElement>): void {
+		super.activateListeners(html)
+
+		const match = html.find(".maxWidth")
+		console.log(match)
+	}
+
 	// DragData handling
 	protected override async _onDropItem(event: DragEvent, data: ActorSheet.DropData.Item): Promise<unknown> {
 		// Remove Drag Markers

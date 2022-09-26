@@ -30,6 +30,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			classes: super.defaultOptions.classes.concat(["character"]),
 			width: 800,
 			height: 800,
+			tabs: [{ navSelector: ".tabs-navigation", contentSelector: ".tabs-content", initial: "lifting" }],
 		})
 	}
 

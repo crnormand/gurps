@@ -109,7 +109,8 @@
 				"title": "Resource Trackers"
 			},
 			"macros": {
-				"title": "Quick Macros"
+				"title": "Quick Macros",
+				"add": "Add New Quick Macro..."
 			},
 			"move": {
 				"title": "Conditions",
