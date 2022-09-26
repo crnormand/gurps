@@ -29,3 +29,4 @@ junit.xml
 
 #.git backup
 .git-bak
+.DS_Store
