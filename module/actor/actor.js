@@ -1976,7 +1976,10 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...{ 'system.additionalresources': ar } }
       commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) }
       commit = { ...commit, ...(await this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date)) }
-      commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment) }
+      commit = {
+        ...commit,
+        ...this.importSizeFromGCSv1(commit, r.profile, r.traits || r.advantages, r.skills, r.equipment),
+      }
       commit = { ...commit, ...this.importAdsFromGCSv3(r.traits || r.advantages) }
       commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) }
       commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) }
