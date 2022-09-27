@@ -1,33 +1,42 @@
-import { HitLocation, HitLocationTable } from "@actor/character/data"
 import { DiceGURPS } from "@module/dice"
-
-/**
- * Create a HitLocation calculated values block.
- */
-interface HitLocationCalc {
-	roll_range: string
-	dr: Record<string, unknown>
-}
-
-/**
- * Extend HitLocationTable.HitLocation to include the calculated values block.
- */
-interface HitLocationWithCalc extends HitLocation {
-	calc: HitLocationCalc
-}
+import { TraitGURPS } from "@item"
 
 /**
  * Extend Settings.HitLocationTable to change the type of locations to an array of HitLocationWithCalc.
  */
-interface HitLocationTableWithCalc extends HitLocationTable {
-	locations: HitLocationWithCalc[]
+type HitLocationCalc = { roll_range: string; dr: Record<string, any>; flexible: boolean }
+type HitLocation = {
+	calc: HitLocationCalc
+	choice_name: string
+	description: string
+	dr_bonus: number
+	hit_penalty: number
+	id: string
+	slots: number
+	table_name: string
+}
+
+interface HitLocationTableWithCalc {
+	name: string
+	roll: string
+	locations: HitLocation[]
 }
 
 /**
  * The target of a damage roll.
+ *
+ * Most commonly implemented as a wrapper on CharacterGURPS.
  */
+type HitPointsCalc = { value: number; current: number }
 interface DamageTarget {
+	// CharacterGURPS.attributes.get(gid.HitPoints).calc
+	hitPoints: HitPointsCalc
+	// CharacterGURPS.system.settings.body_type
 	hitLocationTable: HitLocationTableWithCalc
+	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
+	traits: Array<TraitGURPS>
+	//
+	hasTrait(name: string): boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -36,13 +45,13 @@ interface DamageAttacker {}
 /**
  * Create the definitions of GURPS damage types.
  */
-const enum DamageType {
+enum DamageType {
 	injury = "injury",
 	burn = "burning",
 	cor = "corrosive",
 	cr = "crushing",
 	cut = "cutting",
-	fat = "faigue",
+	fat = "fatigue",
 	imp = "impaling",
 	pi_m = "small piercing",
 	pi = "piercing",
@@ -87,66 +96,118 @@ const dataTypeMultiplier: DamageTypeData = {
 }
 
 /**
- * Displays the Apply Damage Dialog. Delegates all the logic behind calculating
- * and applying damage to a character to instance variable _calculator.
+ * This class represents some effect of sudden injury.
  *
- * Takes as input a GurpsActor and DamageData.
- *
- * EXAMPLE DamageData:
- *   let damageData = {
- *     attacker: actor,
- *     dice: '3d+5',
- *     damage: 21,
- *     damageType: 'cut',
- *     armorDivisor: 2
- *   }
+ * Right now, it is just data. At some point in the future, some of them may become Active Effects.
  */
+class InjuryEffect {
+	modifier: number
 
+	traits: Array<string>
+
+	text: string
+
+	constructor(modifier: number, traits: Array<string>, text: string) {
+		this.modifier = modifier
+		this.traits = traits
+		this.text = text
+	}
+}
+
+/**
+ * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
+ *
+ * This includes special damage effects such as Blunt Trauma, Shock Stun, Knockback, Major Wounds, etc.
+ *
+ * The DamageCalculator is immutable; you need to create a new one for every damage resolution.
+ */
 class DamageCalculator {
 	private _defender: DamageTarget
 
 	private _damageRoll: DamageRoll
 
+	/**
+	 * @returns {number} - The basic damage; typically directly from the damage roll.
+	 */
 	get basicDamage(): number {
 		return this._damageRoll.basicDamage
 	}
 
+	/**
+	 * @returns {number} - The amount of damage that penetrates any DR.
+	 */
 	get penetratingDamage(): number {
-		let dr = this.effectiveDR
+		let dr = this._effectiveDR
 		return Math.max(this._damageRoll.basicDamage - dr, 0)
 	}
 
+	/**
+	 * @returns {number} - The final amount of damage inflicted on the defender (does not consider blunt trauma).
+	 */
 	get injury(): number {
-		const temp = Math.floor(this.penetratingDamage * this.woundingModifier)
+		const temp = Math.floor(this.penetratingDamage * this._woundingModifier)
 		return this.penetratingDamage > 0 ? Math.max(1, temp) : 0
 	}
 
-	get effectiveDR() {
-		return Math.floor(this.basicDR / this.effectiveArmorDivisor)
+	/**
+	 * @returns {number} - The amount of blunt trauma damage, if any.
+	 */
+	get bluntTrauma(): number {
+		if (this.penetratingDamage > 0 || !this._targetedHitLocation?.calc.flexible) return 0
+		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
 	}
 
-	get effectiveArmorDivisor() {
+	/**
+	 * @returns {Array<InjuryEffect>} - The list of injury effects caused by this damage.
+	 */
+	get injuryEffects(): Array<InjuryEffect> {
+		if (this.injury <= 0) return []
+
+		return [new InjuryEffect(-1 * this.injury, ["IQ", "DX"], "Shock")]
+	}
+
+	private get _bluntTraumaDivisor() {
+		if (this._damageRoll.damageType === DamageType.cr) return 5
+		if (
+			[
+				DamageType.cut,
+				DamageType.imp,
+				DamageType.pi,
+				DamageType.pi_m,
+				DamageType.pi_p,
+				DamageType.pi_pp,
+			].includes(this._damageRoll.damageType)
+		)
+			return 10
+		return 0
+	}
+
+	private get _effectiveDR() {
+		return Math.floor(this._basicDR / this._effectiveArmorDivisor)
+	}
+
+	private get _effectiveArmorDivisor() {
 		return this._damageRoll.armorDivisor === 0 ? 1 : this._damageRoll.armorDivisor
 	}
 
-	get basicDR() {
-		return (this.targetedHitLocation?.calc.dr?.all as number | undefined) ?? 0
+	private get _basicDR() {
+		return (this._targetedHitLocation?.calc.dr?.all as number | undefined) ?? 0
 	}
 
-	get woundingModifier(): number {
+	private get _woundingModifier(): number {
 		return dataTypeMultiplier[this._damageRoll.damageType]
 	}
 
-	get defenderHitLocations(): Array<HitLocationWithCalc> {
+	private get _defenderHitLocations(): Array<HitLocation> {
 		return this._defender.hitLocationTable.locations
 	}
 
-	get targetedHitLocationId(): string {
+	private get _targetedHitLocationId(): string {
 		return this._damageRoll.locationId
 	}
 
-	get targetedHitLocation(): HitLocationWithCalc | undefined {
-		return this.defenderHitLocations.find(it => it.id === this.targetedHitLocationId)
+	private get _targetedHitLocation(): HitLocation | undefined {
+		return this._defenderHitLocations.find(it => it.id === this._targetedHitLocationId)
 	}
 
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
@@ -163,5 +224,5 @@ export {
 	DamageAttacker,
 	DefaultHitLocations,
 	HitLocationTableWithCalc,
-	HitLocationWithCalc,
+	HitLocation,
 }
