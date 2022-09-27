@@ -176,7 +176,7 @@ describe("Damage calculator", () => {
 		})
 
 		describe("Some divisors are fractions, such as (0.5), (0.2), or (0.1). DR is increased against such attacks:", () => {
-			it("... multiply DR by 2 for (0.5), ...", () => {
+			it("... multiply DR by 2 for (0.5),", () => {
 				_location.calc.dr.all = 5
 				_target.hitLocationTable.locations.push(_location)
 				_roll.basicDamage = 20
@@ -186,7 +186,7 @@ describe("Damage calculator", () => {
 				expect(calc.injury).toBe(10)
 			})
 
-			it("... by 5 for (0.2), ...", () => {
+			it("... by 5 for (0.2),", () => {
 				_location.calc.dr.all = 3
 				_target.hitLocationTable.locations.push(_location)
 				_roll.basicDamage = 20
@@ -388,63 +388,112 @@ describe("Damage calculator", () => {
 	})
 
 	describe("B381: Shock: Any injury that causes a loss of HP also causes “shock.”", () => {
-		it("This is -1 per HP lost...", () => {
+		beforeEach(() => {
 			_location.calc.dr.all = 2
 			_target.hitLocationTable.locations.push(_location)
+		})
 
-			for (const damage of [1, 2]) {
+		type DamageShock = { damage: number; shock: number }
+
+		let verify: any = function (hp: number, noShockValues: number[], shockValues: DamageShock[]) {
+			_target.hitPoints.value = hp
+
+			for (const damage of noShockValues) {
 				_roll.basicDamage = damage
-
 				let calc = new DamageCalculator(_roll, _target)
-
-				expect(calc.injuryEffects).toHaveLength(0)
+				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ name: "Shock" }))
 			}
 
-			for (const damage of [3, 4, 5, 6]) {
-				_roll.basicDamage = damage
-
+			for (let entry of shockValues) {
+				_roll.basicDamage = entry.damage
 				let calc = new DamageCalculator(_roll, _target)
-
-				expect(calc.injuryEffects).toHaveLength(1)
-				let effect = calc.injuryEffects[0]
-				expect(effect).toEqual(
+				expect(calc.injuryEffects).toContainEqual(
 					expect.objectContaining({
-						modifier: 2 - damage,
+						modifier: entry.shock,
 						text: "Shock",
 						traits: ["IQ", "DX"],
 					})
 				)
+			}
+		}
+
+		// eslint-disable-next-line jest/expect-expect
+		it("This is -1 per HP lost...", () => {
+			let hp = 19
+			let noShockValues = [1, 2]
+			let shockValues = [
+				{ damage: 3, shock: -1 },
+				{ damage: 4, shock: -2 },
+				{ damage: 5, shock: -3 },
+				{ damage: 6, shock: -4 },
+			]
+			verify(hp, noShockValues, shockValues)
+		})
+
+		// eslint-disable-next-line jest/expect-expect
+		it("...unless you have 20 or more HP, in which case it is -1 per (HP/10) lost, rounded down.", () => {
+			for (let hp of [20, 21, 22, 23, 24, 25, 26, 27, 28, 29]) {
+				let noShockValues = [1, 2, 3]
+				let shockValues = [
+					{ damage: 4, shock: -1 },
+					{ damage: 5, shock: -1 },
+					{ damage: 6, shock: -2 },
+					{ damage: 7, shock: -2 },
+					{ damage: 8, shock: -3 },
+					{ damage: 9, shock: -3 },
+					{ damage: 10, shock: -4 },
+					{ damage: 11, shock: -4 },
+				]
+
+				verify(hp, noShockValues, shockValues)
+			}
+
+			for (let hp of [30, 31, 32, 33, 34, 35, 36, 37, 38, 39]) {
+				let noShockValues = [1, 2, 3, 4]
+				let shockValues = [
+					{ damage: 5, shock: -1 },
+					{ damage: 6, shock: -1 },
+					{ damage: 7, shock: -1 },
+					{ damage: 8, shock: -2 },
+					{ damage: 9, shock: -2 },
+					{ damage: 10, shock: -2 },
+					{ damage: 11, shock: -3 },
+					{ damage: 12, shock: -3 },
+					{ damage: 13, shock: -3 },
+					{ damage: 14, shock: -4 },
+					{ damage: 15, shock: -4 },
+					{ damage: 16, shock: -4 },
+				]
+
+				verify(hp, noShockValues, shockValues)
 			}
 		})
 
-		it("...unless you have 20 or more HP, in which case it is -1 per (HP/10) lost, rounded down.", () => {
-			_location.calc.dr.all = 2
-			_target.hitLocationTable.locations.push(_location)
-			_target.hitPoints.value = 20
+		// eslint-disable-next-line jest/expect-expect
+		it("The shock penalty cannot exceed -4, no matter how much injury you suffer.", () => {
+			let hp = 12
+			let noShockValues: never[] = [] // We're not testing this here.
+			let shockValues = [
+				{ damage: 7, shock: -4 },
+				{ damage: 17, shock: -4 },
+				{ damage: 57, shock: -4 },
+			]
 
-			for (const damage of [1, 2]) {
-				_roll.basicDamage = damage
+			verify(hp, noShockValues, shockValues)
+		})
+	})
 
-				let calc = new DamageCalculator(_roll, _target)
+	describe("B381: Major Wounds", () => {
+		it("Any single injury that inflicts a wound in excess of 1/2 your HP is a major wound.", () => {
+			_target.hitPoints.value = 12
 
-				expect(calc.injuryEffects).toHaveLength(0)
-			}
+			_roll.basicDamage = 6
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ name: "Major Wound" }))
 
-			for (const damage of [3, 4, 5, 6]) {
-				_roll.basicDamage = damage
-
-				let calc = new DamageCalculator(_roll, _target)
-
-				expect(calc.injuryEffects).toHaveLength(1)
-				let effect = calc.injuryEffects[0]
-				expect(effect).toEqual(
-					expect.objectContaining({
-						modifier: 2 - damage,
-						text: "Shock",
-						traits: ["IQ", "DX"],
-					})
-				)
-			}
+			_roll.basicDamage = 7
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ name: "Major Wound" }))
 		})
 	})
 })

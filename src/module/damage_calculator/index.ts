@@ -122,7 +122,7 @@ class InjuryEffect {
  * The DamageCalculator is immutable; you need to create a new one for every damage resolution.
  */
 class DamageCalculator {
-	private _defender: DamageTarget
+	private _target: DamageTarget
 
 	private _damageRoll: DamageRoll
 
@@ -161,25 +161,43 @@ class DamageCalculator {
 	 * @returns {Array<InjuryEffect>} - The list of injury effects caused by this damage.
 	 */
 	get injuryEffects(): Array<InjuryEffect> {
-		if (this.injury <= 0) return []
+		let effects: InjuryEffect[] = []
 
-		return [new InjuryEffect(-1 * this.injury, ["IQ", "DX"], "Shock")]
+		effects.push(...this.addShockEffect())
+		effects.push(...this.addMajorWoundEffect())
+
+		return effects
+	}
+
+	private addShockEffect(): InjuryEffect[] {
+		let modifier = Math.floor(this.injury / this.shockFactor)
+		if (modifier > 0) {
+			modifier = Math.min(4, modifier)
+			return [new InjuryEffect(-1 * modifier, ["IQ", "DX"], "Shock")]
+		}
+		return []
+	}
+
+	addMajorWoundEffect(): InjuryEffect[] {
+		return this.injury > this._target.hitPoints.value / 2 ? [new InjuryEffect(0, [], "Major Wound")] : []
+	}
+
+	private get shockFactor(): number {
+		return Math.floor(this._target.hitPoints.value / 10)
 	}
 
 	private get _bluntTraumaDivisor() {
 		if (this._damageRoll.damageType === DamageType.cr) return 5
-		if (
-			[
-				DamageType.cut,
-				DamageType.imp,
-				DamageType.pi,
-				DamageType.pi_m,
-				DamageType.pi_p,
-				DamageType.pi_pp,
-			].includes(this._damageRoll.damageType)
-		)
-			return 10
-		return 0
+		return [
+			DamageType.cut,
+			DamageType.imp,
+			DamageType.pi,
+			DamageType.pi_m,
+			DamageType.pi_p,
+			DamageType.pi_pp,
+		].includes(this._damageRoll.damageType)
+			? 10
+			: 0
 	}
 
 	private get _effectiveDR() {
@@ -199,7 +217,7 @@ class DamageCalculator {
 	}
 
 	private get _defenderHitLocations(): Array<HitLocation> {
-		return this._defender.hitLocationTable.locations
+		return this._target.hitLocationTable.locations
 	}
 
 	private get _targetedHitLocationId(): string {
@@ -212,7 +230,7 @@ class DamageCalculator {
 
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		this._damageRoll = damageRoll
-		this._defender = defender
+		this._target = defender
 	}
 }
 
