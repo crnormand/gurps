@@ -2,7 +2,16 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
-Release 0.15.3 9/19/2020
+Release 0.15.5 9/28/2022
+
+- Fixed drag and drop items between non-GM characters
+- Minor GCS 5.0 import changes
+
+Release 0.15.4 9/27/2022
+
+- GCS 5.0 import, yeah!
+
+Release 0.15.3 9/19/2022
 
 - Fixed yard count for ruler, thanks @SrAndros!
 - Fixed infinite tracker import loop
