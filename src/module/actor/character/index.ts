@@ -63,6 +63,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.featureMap = new Map()
 	}
 
+	SizeModBonus = 0
+
 	protected _onCreate(data: any, options: DocumentModificationOptions, userId: string): void {
 		const sd: CharacterSystemData | any = {
 			id: newUUID(),
@@ -269,7 +271,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const att in settings.attributes) {
 			defs[att] = new AttributeDef(settings.attributes[att])
 		}
-		(settings as any).attributes = defs
+		;(settings as any).attributes = defs
 		return settings
 	}
 
@@ -451,6 +453,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get blockBonus(): number {
 		return this.calc.block_bonus ?? 0
+	}
+
+	override get sizeMod(): number {
+		return this.system.profile.SM + this.SizeModBonus
 	}
 
 	// Item Types
@@ -737,10 +743,6 @@ class CharacterGURPS extends BaseActorGURPS {
 		}
 	}
 
-	updateProfile(): void {
-		if (this.profile) this.profile.SM = this.bonusFor(`${attrPrefix}${gid.SizeModifier}`, undefined)
-	}
-
 	processFeatures() {
 		// Const featureMap: Map<string, Feature[]> = new Map();
 		this.featureMap = new Map()
@@ -798,7 +800,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				}
 			}
 		this.attributes = this.getAttributes()
-		this.updateProfile()
+		// This.updateProfile()
 		this.calc.dodge_bonus = this.bonusFor(`${attrPrefix}${gid.Dodge}`, undefined)
 		this.calc.parry_bonus = this.bonusFor(`${attrPrefix}${gid.Parry}`, undefined)
 		this.calc.block_bonus = this.bonusFor(`${attrPrefix}${gid.Block}`, undefined)

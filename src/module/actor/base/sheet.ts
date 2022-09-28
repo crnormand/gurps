@@ -16,8 +16,9 @@ export class ActorSheetGURPS extends ActorSheet {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
-		const match = html.find(".maxWidth")
-		console.log(match)
+		// Const match = html.find(".maxWidth")
+		// console.log(match)
+		// console.trace()
 	}
 
 	// DragData handling

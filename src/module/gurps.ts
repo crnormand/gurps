@@ -62,6 +62,7 @@ import { JournalEntryPageGURPS } from "./pdf"
 import { PDFEditorSheet } from "./pdf/edit"
 import { UserFlags } from "./data"
 import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
+import { TokenModifierControl } from "./token_modifier"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -70,7 +71,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	(globalThis as any).GURPS = GURPS
+	;(globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -90,6 +91,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.search = fSearch
 	GURPS.dice = DiceGURPS
 	GURPS.pdf = PDFViewerSheet
+	GURPS.TokenModifierControl = new TokenModifierControl()
 }
 // GURPS.XMLtoJS = XMLtoJS;
 // GURPS.GCAImport = GCAImporter;

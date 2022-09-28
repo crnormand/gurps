@@ -98,9 +98,9 @@ function fixedIf(e: Evaluator, args: string): any {
 	const evaluated = e.evaluateNew(arg)
 	const value = fixedFrom(evaluated)
 	if (value === 0) {
-		[, args] = nextArg(args)
+		;[, args] = nextArg(args)
 	}
-	[arg] = nextArg(args)
+	;[arg] = nextArg(args)
 	return e.evaluateNew(arg)
 }
 
@@ -196,7 +196,7 @@ function fixedDice(e: Evaluator, args: string): any {
 	const argArray = []
 	let arg: string
 	while (args) {
-		[arg, args] = nextArg(args)
+		;[arg, args] = nextArg(args)
 		argArray.push(fixedFrom(e.evaluateNew(arg)))
 	}
 	switch (rollArgs.length) {

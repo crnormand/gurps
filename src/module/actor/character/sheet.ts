@@ -44,6 +44,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
 		// Edit total points when unspent points are edited
+		console.log("_updateObject", formData)
 		if (Object.keys(formData).includes("actor.unspentPoints")) {
 			formData["system.total_points"] = (formData["actor.unspentPoints"] as number) + this.actor.spentPoints
 			delete formData["actor.unspentPoints"]

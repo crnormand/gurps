@@ -1,4 +1,4 @@
-@import "compendium_browser";
+@import "compendium_browser", "token_modifier_window";
 
 #menu {
 	box-shadow: none;
@@ -50,6 +50,7 @@
 @media (max-width: 1120px) {
 	#modifier-app {
 		height: calc(var(--hotbar-height) * 2) !important;
+		margin-left: 40px;
 	}
 }
 

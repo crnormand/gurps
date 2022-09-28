@@ -127,7 +127,7 @@ export interface HitLocation {
 	dr_bonus: number
 	description: string
 	sub_table?: HitLocationTable
-	calc: {
+	calc?: {
 		roll_range: string
 		dr: Record<string, number>
 	}

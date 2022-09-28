@@ -94,7 +94,7 @@ export function openPDF(pdfs: string) {
 		// Window.open(url, "_blank")
 		const pdfPages: any[] = []
 		;(game as Game).journal?.forEach(j => {
-			(j as any).pages.forEach((p: any) => {
+			;(j as any).pages.forEach((p: any) => {
 				if (p.type === "pdf") pdfPages.push(p)
 			})
 		})

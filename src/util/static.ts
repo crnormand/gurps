@@ -191,3 +191,38 @@ export function flatList(
 		}
 	}
 }
+
+/**
+ *
+ * @param actor
+ * @param path
+ * @param newobj
+ */
+export async function insertBeforeKey(actor: StaticCharacterGURPS, path: string, newobj: any) {
+	let i = path.lastIndexOf(".")
+	let objpath = path.substring(0, i)
+	let key = path.substring(i + 1)
+	i = objpath.lastIndexOf(".")
+	let parentpath = objpath.substring(0, i)
+	let objkey = objpath.substring(i + 1)
+	let object = getProperty(actor, objpath)
+	let t = `${parentpath}.-=${objkey}`
+	await actor.update({ [t]: null }) // Delete the whole object
+	let start = parseInt(key)
+
+	i = start + 1
+	while (object.hasOwnProperty(zeroFill(i))) i++
+	i = i - 1
+	for (let z = i; z >= start; z--) {
+		object[zeroFill(z + 1)] = object[zeroFill(z)]
+	}
+	object[key] = newobj
+	let sorted = Object.keys(object)
+		.sort()
+		.reduce((a, v) => {
+			// @ts-ignore
+			a[v] = object[v]
+			return a
+		}, {}) // Enforced key order
+	await actor.update({ [objpath]: sorted }, { diff: false })
+}

@@ -1,0 +1,17 @@
+.window-app.gurps.token-modifier-app {
+	.window-content {
+		.list {
+			margin: 5px;
+			width: calc(100% - 10px);
+			border: 1px solid rgb(var(--color-header));
+			display: grid;
+			grid-auto-flow: row;
+			grid-auto-rows: 0fr;
+			.header {
+				grid-column: 1 / span 2;
+				padding: var(--padding-header);
+				text-align: center;
+			}
+		}
+	}
+}
