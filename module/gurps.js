@@ -2344,7 +2344,7 @@ if (!globalThis.GURPS) {
           content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
           yes: () => {
             // @ts-ignore
-            let destKey = destactor._findEqtkeyForId('globalid', resp.itemData.data.globalid)
+            let destKey = destactor._findEqtkeyForId('globalid', resp.itemData.system.globalid)
             if (!!destKey) {
               // already have some
               // @ts-ignore
@@ -2352,7 +2352,7 @@ if (!globalThis.GURPS) {
               // @ts-ignore
               destactor.updateEqtCount(destKey, destEqt.count + resp.count)
             } else {
-              resp.itemData.data.equipped = true
+              resp.itemData.system.equipped = true
               // @ts-ignore
               destactor.addNewItemData(resp.itemData)
             }
