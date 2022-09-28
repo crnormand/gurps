@@ -37,9 +37,10 @@
 		"lint:fix": "eslint --ext .ts,.js,.cjs,.mjs --fix .",
 		"format": "prettier --write \"./**/*.(ts|js|cjs|mjs|json|yml|scss)\"",
 		"test": "jest",
-		"test:watch": "jest --watch",
+		"test:watch": "jest --verbose --watch",
 		"test:ci": "jest --ci --reporters=default --reporters=jest-junit",
 		"test:cov": "jest --coverage",
+		"test:verbose": "jest --verbose",
 		"postinstall": "husky install"
 	},
 	"devDependencies": {

@@ -15,6 +15,14 @@ import { RollType } from "../../src/module/data"
 class _Attacker implements DamageAttacker {}
 
 class _Target implements DamageTarget {
+	isDiffuse = false
+
+	isHomogenous = false
+
+	isUnliving = false
+
+	ST = 12
+
 	hitPoints = { value: 15, current: 10 }
 
 	traits: TraitGURPS[] = []
@@ -84,12 +92,7 @@ describe("Damage calculator", () => {
 		_roll.locationId = "torso"
 	})
 
-	it("calculator exists", () => {
-		let calc: DamageCalculator = new DamageCalculator(_roll, _target)
-		expect(calc).not.toBeNull()
-	})
-
-	describe("B378: Damage Roll", () => {
+	describe("B378: Damage Roll.", () => {
 		it("The result of the damage roll ... is the hit’s “basic damage.”", () => {
 			_roll.basicDamage = 8
 			let calc = new DamageCalculator(_roll, _target)
@@ -99,9 +102,16 @@ describe("Damage calculator", () => {
 			calc = new DamageCalculator(_roll, _target)
 			expect(calc.basicDamage).toBe(4)
 		})
+
+		it("(Knockback Only does no damage.)", () => {
+			_roll.basicDamage = 8
+			_roll.damageType = DamageType.kb
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.basicDamage).toBe(0)
+		})
 	})
 
-	describe("B378: Damage Resistance and Penetration - Subtract DR from basic damage. The result is the “penetrating damage”", () => {
+	describe("B378: Damage Resistance and Penetration. Subtract DR from basic damage. The result is the “penetrating damage”", () => {
 		it("If your foe has no DR, the entire damage roll is penetrating damage.", () => {
 			_roll.basicDamage = 8
 			let calc = new DamageCalculator(_roll, _target)
@@ -144,9 +154,25 @@ describe("Damage calculator", () => {
 			expect(calc.injury).toBe(0)
 			expect(calc.injury).toBe(calc.penetratingDamage)
 		})
+
+		it("(Direct Injury ignores DR.", () => {
+			_roll.damageType = DamageType.injury
+			_location.calc.dr.all = 2
+			_target.hitLocationTable.locations.push(_location)
+
+			_roll.basicDamage = 8
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(8)
+			expect(calc.injury).toBe(calc.penetratingDamage)
+
+			_roll.basicDamage = 11
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(11)
+			expect(calc.injury).toBe(calc.penetratingDamage)
+		})
 	})
 
-	describe("B378: Armor Divisors and Penetration Modifiers", () => {
+	describe("B378: Armor Divisors and Penetration Modifiers.", () => {
 		describe("A divisor of (2) or more means that DR protects at reduced value against the attack.", () => {
 			it("Divide the target’s DR by the number in parentheses before subtracting it from basic damage; e.g., (2) means DR protects at half value.", () => {
 				_location.calc.dr.all = 20
@@ -210,7 +236,7 @@ describe("Damage calculator", () => {
 		})
 	})
 
-	describe("B379: Wounding Modifiers and Injury - If there is any penetrating damage, multiply it by the attack’s “wounding modifier.”", () => {
+	describe("B379: Wounding Modifiers and Injury. If there is any penetrating damage, multiply it by the attack’s “wounding modifier.”", () => {
 		it("Small piercing (pi-): ×0.5.", () => {
 			_roll.damageType = DamageType.pi_m
 			_location.calc.dr.all = 5
@@ -218,6 +244,7 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 11
 			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.penetratingDamage).toBe(6)
 			expect(calc.injury).toBe(3)
 		})
 
@@ -230,6 +257,7 @@ describe("Damage calculator", () => {
 
 				_roll.basicDamage = 11
 				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(6)
 				expect(calc.injury).toBe(6)
 			}
 		})
@@ -243,6 +271,7 @@ describe("Damage calculator", () => {
 
 				_roll.basicDamage = 11
 				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(6)
 				expect(calc.injury).toBe(9)
 			}
 		})
@@ -256,6 +285,7 @@ describe("Damage calculator", () => {
 
 				_roll.basicDamage = 11
 				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(6)
 				expect(calc.injury).toBe(12)
 			}
 		})
@@ -281,58 +311,29 @@ describe("Damage calculator", () => {
 		})
 	})
 
-	describe("B379: Flexible Armor and Blunt Trauma", () => {
-		describe("An attack that does crushing, cutting, impaling, or piercing damage may inflict “blunt trauma” if it fails to penetrate flexible DR.", () => {
-			it("For every full 10 points of cutting, impaling, or piercing damage ... stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
-				_location.calc.flexible = true
-				_target.hitLocationTable.locations.push(_location)
+	describe("B379: Flexible Armor and Blunt Trauma. An attack that does crushing, cutting, impaling, or piercing damage may inflict “blunt trauma” if it fails to penetrate flexible DR.", () => {
+		it("For every full 10 points of cutting, impaling, or piercing damage ... stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
+			_location.calc.flexible = true
+			_target.hitLocationTable.locations.push(_location)
 
-				_location.calc.dr.all = 20
+			_location.calc.dr.all = 20
 
-				for (let type of [
-					DamageType.cut,
-					DamageType.imp,
-					DamageType.pi,
-					DamageType.pi_m,
-					DamageType.pi_p,
-					DamageType.pi_pp,
-				]) {
-					_roll.damageType = type
+			for (let type of [
+				DamageType.cut,
+				DamageType.imp,
+				DamageType.pi,
+				DamageType.pi_m,
+				DamageType.pi_p,
+				DamageType.pi_pp,
+			]) {
+				_roll.damageType = type
 
-					_roll.basicDamage = 9
-					let calc = new DamageCalculator(_roll, _target)
-					expect(calc.injury).toBe(0)
-					expect(calc.bluntTrauma).toBe(0)
-
-					_roll.basicDamage = 10
-					calc = new DamageCalculator(_roll, _target)
-					expect(calc.injury).toBe(0)
-					expect(calc.bluntTrauma).toBe(1)
-
-					_roll.basicDamage = 19
-					calc = new DamageCalculator(_roll, _target)
-					expect(calc.injury).toBe(0)
-					expect(calc.bluntTrauma).toBe(1)
-
-					_roll.basicDamage = 20
-					calc = new DamageCalculator(_roll, _target)
-					expect(calc.injury).toBe(0)
-					expect(calc.bluntTrauma).toBe(2)
-				}
-			})
-
-			it("For every full ... 5 points of crushing damage stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
-				_location.calc.flexible = true
-				_target.hitLocationTable.locations.push(_location)
-				_location.calc.dr.all = 20
-				_roll.damageType = DamageType.cr
-
-				_roll.basicDamage = 4
+				_roll.basicDamage = 9
 				let calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(0)
 				expect(calc.bluntTrauma).toBe(0)
 
-				_roll.basicDamage = 5
+				_roll.basicDamage = 10
 				calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(0)
 				expect(calc.bluntTrauma).toBe(1)
@@ -340,52 +341,78 @@ describe("Damage calculator", () => {
 				_roll.basicDamage = 19
 				calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(0)
-				expect(calc.bluntTrauma).toBe(3)
+				expect(calc.bluntTrauma).toBe(1)
 
 				_roll.basicDamage = 20
 				calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(0)
-				expect(calc.bluntTrauma).toBe(4)
-			})
+				expect(calc.bluntTrauma).toBe(2)
+			}
+		})
 
-			it("If even one point of damage penetrates your flexible DR, however, you do not suffer blunt trauma.", () => {
-				_location.calc.flexible = true
-				_target.hitLocationTable.locations.push(_location)
-				_location.calc.dr.all = 20
+		it("For every full ... 5 points of crushing damage stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
+			_location.calc.flexible = true
+			_target.hitLocationTable.locations.push(_location)
+			_location.calc.dr.all = 20
+			_roll.damageType = DamageType.cr
 
-				_roll.damageType = DamageType.cr
-				_roll.basicDamage = 21
+			_roll.basicDamage = 4
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(0)
+			expect(calc.bluntTrauma).toBe(0)
+
+			_roll.basicDamage = 5
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(0)
+			expect(calc.bluntTrauma).toBe(1)
+
+			_roll.basicDamage = 19
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(0)
+			expect(calc.bluntTrauma).toBe(3)
+
+			_roll.basicDamage = 20
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(0)
+			expect(calc.bluntTrauma).toBe(4)
+		})
+
+		it("If even one point of damage penetrates your flexible DR, however, you do not suffer blunt trauma.", () => {
+			_location.calc.flexible = true
+			_target.hitLocationTable.locations.push(_location)
+			_location.calc.dr.all = 20
+
+			_roll.damageType = DamageType.cr
+			_roll.basicDamage = 21
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(1)
+			expect(calc.bluntTrauma).toBe(0)
+
+			_roll.damageType = DamageType.pi_m
+			_roll.basicDamage = 21
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(1)
+			expect(calc.bluntTrauma).toBe(0)
+		})
+
+		it("(Injury, Burning, Corrosive, Fatigue, Toxic, and Knockback don't do blunt trauma.)", () => {
+			_location.calc.flexible = true
+			_location.calc.dr.all = 20
+			_target.hitLocationTable.locations.push(_location)
+
+			for (let type of [
+				DamageType.injury,
+				DamageType.burn,
+				DamageType.cor,
+				DamageType.fat,
+				DamageType.tox,
+				DamageType.kb,
+			]) {
+				_roll.damageType = type
+				_roll.basicDamage = 20
 				let calc = new DamageCalculator(_roll, _target)
-				expect(calc.injury).toBe(1)
 				expect(calc.bluntTrauma).toBe(0)
-
-				_roll.damageType = DamageType.pi_m
-				_roll.basicDamage = 21
-				calc = new DamageCalculator(_roll, _target)
-				expect(calc.injury).toBe(1)
-				expect(calc.bluntTrauma).toBe(0)
-			})
-
-			it("(Injury, Burning, Corrosive, Fatigue, Toxic, and Knockback don't do blunt trauma.)", () => {
-				_location.calc.flexible = true
-				_location.calc.dr.all = 20
-				_target.hitLocationTable.locations.push(_location)
-
-				for (let type of [
-					DamageType.injury,
-					DamageType.burn,
-					DamageType.cor,
-					DamageType.fat,
-					DamageType.tox,
-					DamageType.kb,
-				]) {
-					_roll.damageType = type
-					_roll.basicDamage = 20
-					let calc = new DamageCalculator(_roll, _target)
-					expect(calc.injury).toBe(0)
-					expect(calc.bluntTrauma).toBe(0)
-				}
-			})
+			}
 		})
 	})
 
@@ -501,9 +528,10 @@ describe("Damage calculator", () => {
 		})
 	})
 
-	describe("B381: Major Wounds", () => {
+	describe("B381: Major Wounds.", () => {
 		it("Any single injury that inflicts a wound in excess of 1/2 your HP is a major wound.", () => {
 			_target.hitPoints.value = 12
+			_roll.locationId = "dummy"
 
 			_roll.basicDamage = 6
 			let calc = new DamageCalculator(_roll, _target)
@@ -512,6 +540,8 @@ describe("Damage calculator", () => {
 			_roll.basicDamage = 7
 			calc = new DamageCalculator(_roll, _target)
 			expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
+			let wound = calc.injuryEffects.find(it => it.id === "majorWound")
+			expect(wound?.effects.length).toBe(0)
 		})
 
 		it("For a major wound to the torso, you must make a HT roll. Failure means you’re stunned and knocked down; failure by 5+ means you pass out.", () => {
@@ -534,6 +564,253 @@ describe("Damage calculator", () => {
 					],
 				})
 			)
+		})
+	})
+
+	describe("B378: Knockback. Knockback depends on basic damage rolled before subtracting DR.", () => {
+		it("For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker.", () => {
+			_location.calc.dr.all = 0
+			_target.hitLocationTable.locations.push(_location)
+			_target.ST = 12
+			_roll.basicDamage = 9
+			_roll.damageType = DamageType.cr
+
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(0)
+
+			_roll.basicDamage = 10
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 19
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 20
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(2)
+		})
+
+		it("A crushing (or knockback only) attack can cause knockback regardless of whether it penetrates DR.", () => {
+			_location.calc.dr.all = 15
+			_target.hitLocationTable.locations.push(_location)
+			_target.ST = 12
+			_roll.basicDamage = 9
+
+			_roll.damageType = DamageType.cr
+
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(0)
+
+			_roll.basicDamage = 10
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 19
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 20
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(2)
+
+			_roll.damageType = DamageType.kb
+			_roll.basicDamage = 9
+
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(0)
+
+			_roll.basicDamage = 10
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 19
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 20
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(2)
+		})
+
+		it("A cutting attack can cause knockback only if it fails to penetrate DR.", () => {
+			_location.calc.dr.all = 15
+			_target.hitLocationTable.locations.push(_location)
+
+			_target.ST = 12
+			_roll.basicDamage = 9
+			_roll.damageType = DamageType.cut
+
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(0)
+
+			_roll.basicDamage = 15
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 16
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(0)
+		})
+
+		it("Only crushing and cutting (and knockback only) attacks can cause knockback.", () => {
+			_location.calc.dr.all = 16
+			_target.hitLocationTable.locations.push(_location)
+
+			_target.ST = 10
+			_roll.basicDamage = 16
+
+			const testKeys = Object.keys(DamageType).filter(k => !["cr", "cut", "kb"].includes(k))
+			for (let type of testKeys as (keyof typeof DamageType)[]) {
+				_roll.damageType = DamageType[type]
+
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.knockback).toBe(0)
+			}
+		})
+	})
+
+	describe("B380: Injury to Unliving, Homogenous, and Diffuse Targets.", () => {
+		describe("Unliving.", () => {
+			beforeEach(() => {
+				_location.calc.dr.all = 5
+				_target.hitLocationTable.locations.push(_location)
+				_target.isUnliving = true
+			})
+
+			it("This gives impaling and huge piercing a wounding modifier of ×1; ...", () => {
+				let types = [DamageType.imp, DamageType.pi_pp]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(6)
+				}
+			})
+
+			it("... large piercing, ×1/2;", () => {
+				let types = [DamageType.pi_p]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(6)
+				}
+			})
+
+			it("... piercing, ×1/3;", () => {
+				let types = [DamageType.pi]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(2)
+				}
+			})
+
+			it("... and small piercing, ×1/5.", () => {
+				let types = [DamageType.pi_m]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.damageType = type
+					_roll.basicDamage = 15
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(2)
+				}
+			})
+		})
+
+		describe("Homogenous.", () => {
+			beforeEach(() => {
+				_location.calc.dr.all = 5
+				_target.hitLocationTable.locations.push(_location)
+				_target.isHomogenous = true
+			})
+
+			it("This gives impaling and huge piercing a wounding modifier of ×1/2; ...", () => {
+				let types = [DamageType.imp, DamageType.pi_pp]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(3)
+				}
+			})
+
+			it("... large piercing, ×1/3;", () => {
+				let types = [DamageType.pi_p]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 11
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(2)
+				}
+			})
+
+			it("... piercing, ×1/5;", () => {
+				let types = [DamageType.pi]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.basicDamage = 15
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(2)
+				}
+			})
+
+			it("... and small piercing, ×1/10.", () => {
+				let types = [DamageType.pi_m]
+				for (const type of types) {
+					_roll.damageType = type
+					_roll.damageType = type
+					_roll.basicDamage = 15
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(1)
+				}
+			})
+		})
+
+		describe("Diffuse.", () => {
+			beforeEach(() => {
+				_location.calc.dr.all = 5
+				_target.hitLocationTable.locations.push(_location)
+				_target.isDiffuse = true
+				_roll.basicDamage = 100
+			})
+
+			it("Impaling and piercing attacks (of any size) never do more than 1 HP of injury.", () => {
+				let types = [DamageType.imp, DamageType.pi_pp, DamageType.pi_p, DamageType.pi, DamageType.pi_m]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(95)
+					expect(calc.injury).toBe(1)
+				}
+			})
+
+			it("Other attacks can never do more than 2 HP of injury.", () => {
+				let types = [
+					DamageType.burn,
+					DamageType.cor,
+					DamageType.cr,
+					DamageType.cut,
+					DamageType.fat,
+					DamageType.injury,
+					DamageType.tox,
+				]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.injury).toBe(2)
+				}
+			})
 		})
 	})
 })
