@@ -430,7 +430,6 @@ if (!globalThis.GURPS) {
         let rsl = skill.relativelevel //  this is something like 'IQ-2' or 'Touch+3'
         console.log(rsl)
         let valueText = rsl.replace(/^.*([+-]\d+)$/g, '$1')
-        console.log(valueText)
         skillLevel = valueText === rsl ? parseInt(value) : parseInt(valueText) + parseInt(value)
       } else {
         ui.notifications?.warn('You must have a character selected to use a "Based" Skill')
@@ -731,7 +730,7 @@ if (!globalThis.GURPS) {
      */
     controlroll({ action, actor, event }) {
       const target = parseInt(action.target)
-      let aid = actor ? '@${actor.id}@' : ''
+      let aid = actor ? `@${actor.id}@` : ''
       let thing
       let chatthing
       if (!!action.desc) {
@@ -821,7 +820,7 @@ if (!globalThis.GURPS) {
         .replace(/ +/g, ' ')
         .trim()
       let qn = quotedAttackName({ name: thing, mode: att.mode })
-      let aid = actor ? '@${actor.id}@' : ''
+      let aid = actor ? `@${actor.id}@` : ''
       const chatthing = `[${aid}${p}${qn}]`
       const followon = `[${aid}D:${qn}]`
       let target = att.level
@@ -900,7 +899,7 @@ if (!globalThis.GURPS) {
       let targetmods = []
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      let aid = actor ? '@${actor.id}@' : ''
+      let aid = actor ? `@${actor.id}@` : ''
       const chatthing = thing === '' ? att.name + mode : `[${aid}B:"${thing}${mode}"]`
 
       return doRoll({
@@ -957,7 +956,7 @@ if (!globalThis.GURPS) {
       let targetmods = []
       if (!!action.costs) GURPS.ModifierBucket.addModifier(0, action.costs)
       if (!!action.mod) GURPS.ModifierBucket.addModifier(action.mod, action.desc, targetmods)
-      let aid = actor ? '@${actor.id}@' : ''
+      let aid = actor ? `@${actor.id}@` : ''
       const chatthing = thing === '' ? att.name + mode : `[${aid}P:"${thing}${mode}"]`
 
       return doRoll({
@@ -1015,7 +1014,7 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
       let targetmods = []
-      let aid = actor ? '@${actor.id}@' : ''
+      let aid = actor ? `@${actor.id}@` : ''
       const chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}${thing}]`
       let opt = {
         blind: action.blindroll,
@@ -1077,7 +1076,7 @@ if (!globalThis.GURPS) {
         return { target: target + modifier, thing: thing }
       }
       let targetmods = []
-      let aid = actor ? '@${actor.id}@' : ''
+      let aid = actor ? `@${actor.id}@` : ''
       let chatthing = originalOtf ? `[${aid}${originalOtf}]` : `[${aid}S:"${thing}"]`
       let opt = {
         blind: action.blindroll,
@@ -1098,16 +1097,16 @@ if (!globalThis.GURPS) {
     },
 
     /*
-						[AMRS][DPK]
-						A: ads & attack (melee & range)
-						AD: ads
-						AT: attack
-						M: melee
-						R: ranged
-						S: skills & spells
-						SK: skills
-						SP: spells
-					  */
+							[AMRS][DPK]
+							A: ads & attack (melee & range)
+							AD: ads
+							AT: attack
+							M: melee
+							R: ranged
+							S: skills & spells
+							SK: skills
+							SP: spells
+						  */
     ['test-exists']({ action, actor, event, originalOtf, calcOnly }) {
       switch (action.prefix) {
         case 'A':
@@ -1651,7 +1650,6 @@ if (!globalThis.GURPS) {
       }
       if (display) {
         let fragment = options.fn(eqt, { data: data })
-        // if (!!eqt?.equipped) console.log(fragment)
         ret = ret + fragment
       }
       ret = ret + listeqtrecurse(eqt.contains, options, level + 1, data, parentkey + key + '.contains.')
@@ -2346,7 +2344,7 @@ if (!globalThis.GURPS) {
           content: `<p>${srcActor.name} wants to give you ${resp.itemData.name} (${resp.count}),</p><br>Ok?`,
           yes: () => {
             // @ts-ignore
-            let destKey = destactor._findEqtkeyForId('globalid', resp.itemData.data.globalid)
+            let destKey = destactor._findEqtkeyForId('globalid', resp.itemData.system.globalid)
             if (!!destKey) {
               // already have some
               // @ts-ignore
@@ -2354,7 +2352,7 @@ if (!globalThis.GURPS) {
               // @ts-ignore
               destactor.updateEqtCount(destKey, destEqt.count + resp.count)
             } else {
-              resp.itemData.data.equipped = true
+              resp.itemData.system.equipped = true
               // @ts-ignore
               destactor.addNewItemData(resp.itemData)
             }

@@ -526,7 +526,8 @@ export class GurpsActor extends Actor {
 
       for (let enckey in encs) {
         let enc = encs[enckey]
-        let threshold = 1.0 - 0.2 * parseInt(enc.level) // each encumbrance level reduces move by 20%
+        let threshold = 10 - (2 * parseInt(enc.level)) // each encumbrance level reduces move by 20%
+        threshold /= 10 // JS likes to calculate 0.2*3 = 3.99999, but handles 2*3/10 fine.
         enc.currentmove = this._getCurrentMove(effectiveMove, threshold) //Math.max(1, Math.floor(m * t))
         enc.currentdodge = isNaN(effectiveDodge) ? '–' : Math.max(1, effectiveDodge - parseInt(enc.level))
         enc.currentsprint = Math.max(1, Math.floor(effectiveSprint * threshold))
@@ -1976,7 +1977,10 @@ export class GurpsActor extends Actor {
       commit = { ...commit, ...{ 'system.additionalresources': ar } }
       commit = { ...commit, ...(await this.importAttributesFromGCSv2(r.attributes, r.equipment, r.calc)) }
       commit = { ...commit, ...(await this.importTraitsFromGCSv2(r.profile, r.created_date, r.modified_date)) }
-      commit = { ...commit, ...this.importSizeFromGCSv1(commit, r.profile, r.advantages, r.skills, r.equipment) }
+      commit = {
+        ...commit,
+        ...this.importSizeFromGCSv1(commit, r.profile, r.traits || r.advantages, r.skills, r.equipment),
+      }
       commit = { ...commit, ...this.importAdsFromGCSv3(r.traits || r.advantages) }
       commit = { ...commit, ...this.importSkillsFromGCSv2(r.skills) }
       commit = { ...commit, ...this.importSpellsFromGCSv2(r.spells) }
@@ -3546,6 +3550,7 @@ export class GurpsActor extends Actor {
    * @param {{ type: any; x?: number; y?: number; payload?: any; pack?: any; id?: any; data?: any; }} dragData
    */
   async handleItemDrop(dragData) {
+    console.log('handleItemDrop', dragData)
     if (!this.isOwner) {
       ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
