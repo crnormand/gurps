@@ -1,5 +1,6 @@
-import { DiceGURPS } from "@module/dice"
 import { TraitGURPS } from "@item"
+import { DiceGURPS } from "@module/dice"
+import { RollType } from "../data"
 
 /**
  * Extend Settings.HitLocationTable to change the type of locations to an array of HitLocationWithCalc.
@@ -96,21 +97,76 @@ const dataTypeMultiplier: DamageTypeData = {
 }
 
 /**
+ * ModifierEffect represents a generic modifier to some kind of roll.
+ *
+ * modifier - the numeric value used to modify the roll or check.
+ * rollType - the type of the roll/check modified.
+ * id - either the id of an attribute or name of the thing (skill, spell, etc).
+ */
+class ModifierEffect {
+	modifier: number
+
+	rollType: RollType
+
+	id: string
+
+	constructor(id: string, rollType: RollType, modifier: number) {
+		this.id = id
+		this.rollType = rollType
+		this.modifier = modifier
+	}
+}
+
+/**
+ * An injury effect that requires a check of some kind.
+ *
+ * failure - an array of 'consequences' of failing the check.
+ */
+class InjuryEffectCheck extends ModifierEffect {
+	failures: CheckFailureConsequence[]
+
+	constructor(id: string, rollType: RollType, modifier: number, failures: CheckFailureConsequence[]) {
+		super(id, rollType, modifier)
+
+		this.failures = failures
+	}
+}
+
+/**
+ * The consequence of failing a check.
+ *
+ * margin - "margin of failure" at which this effect is applied.
+ * id - the identifier of a consequence.
+ */
+class CheckFailureConsequence {
+	margin: number
+
+	id: string
+
+	constructor(id: string, margin: number) {
+		this.id = id
+		this.margin = margin
+	}
+}
+
+enum InjuryEffectType {
+	shock = "shock",
+	majorWound = "majorWound",
+}
+
+/**
  * This class represents some effect of sudden injury.
  *
  * Right now, it is just data. At some point in the future, some of them may become Active Effects.
  */
 class InjuryEffect {
-	modifier: number
+	id: string
 
-	traits: Array<string>
+	effects: ModifierEffect[]
 
-	text: string
-
-	constructor(modifier: number, traits: Array<string>, text: string) {
-		this.modifier = modifier
-		this.traits = traits
-		this.text = text
+	constructor(id: string, effects: ModifierEffect[] = []) {
+		this.effects = effects
+		this.id = id
 	}
 }
 
@@ -170,16 +226,44 @@ class DamageCalculator {
 	}
 
 	private addShockEffect(): InjuryEffect[] {
-		let modifier = Math.floor(this.injury / this.shockFactor)
-		if (modifier > 0) {
-			modifier = Math.min(4, modifier)
-			return [new InjuryEffect(-1 * modifier, ["IQ", "DX"], "Shock")]
+		let rawModifier = Math.floor(this.injury / this.shockFactor)
+		if (rawModifier > 0) {
+			let modifier = Math.min(4, rawModifier) * -1
+			const shockEffect = new InjuryEffect(InjuryEffectType.shock, [
+				{ id: "dx", rollType: RollType.Attribute, modifier: modifier },
+				{ id: "iq", rollType: RollType.Attribute, modifier: modifier },
+			])
+			return [shockEffect]
 		}
 		return []
 	}
 
 	addMajorWoundEffect(): InjuryEffect[] {
-		return this.injury > this._target.hitPoints.value / 2 ? [new InjuryEffect(0, [], "Major Wound")] : []
+		const wounds = []
+		if (this.injury > this._target.hitPoints.value / 2) {
+			let effect = new InjuryEffect(InjuryEffectType.majorWound, [])
+
+			/**
+			 * TODO
+			 * To be honest, hardcoding the effects of major wounmds for a hit location probably doesn't work in every
+			 * case, especially for non-standard/non-humanoid body types. It might be better if the effects were
+			 * captured on the actor.system.settings.body_type hit location data.
+			 *
+			 * Perhaps the default algorithm would be: look up the hit location on the actor to see if it has major
+			 * wound effects, otherwise use the hardcoded values here.
+			 */
+			if (this._damageRoll.locationId === "torso") {
+				const htCheck = new InjuryEffectCheck("ht", RollType.Attribute, 0, [
+					new CheckFailureConsequence("stun", 0),
+					new CheckFailureConsequence("knocked down", 0),
+					new CheckFailureConsequence("unconscious", 5),
+				])
+				effect.effects.push(htCheck)
+			}
+
+			wounds.push(effect)
+		}
+		return wounds
 	}
 
 	private get shockFactor(): number {

@@ -8,8 +8,9 @@ import {
 	DamageType,
 	HitLocationTableWithCalc,
 	HitLocation,
-} from "../src/module/damage_calculator"
-import { DiceGURPS } from "../src/module/dice"
+} from "../../src/module/damage_calculator"
+import { DiceGURPS } from "../../src/module/dice"
+import { RollType } from "../../src/module/data"
 
 class _Attacker implements DamageAttacker {}
 
@@ -35,7 +36,8 @@ class _Target implements DamageTarget {
 }
 
 class _DamageRoll implements DamageRoll {
-	locationId = "torso"
+	// Not a real location id, which should be something like "torso".
+	locationId = "dummy"
 
 	attacker = new _Attacker()
 
@@ -407,11 +409,27 @@ describe("Damage calculator", () => {
 			for (let entry of shockValues) {
 				_roll.basicDamage = entry.damage
 				let calc = new DamageCalculator(_roll, _target)
-				expect(calc.injuryEffects).toContainEqual(
+
+				const injuryEffects = calc.injuryEffects
+				expect(injuryEffects).toContainEqual(
 					expect.objectContaining({
+						id: "shock",
+					})
+				)
+
+				let modifiers = calc.injuryEffects.find(it => it.id === "shock")?.effects
+				expect(modifiers).toContainEqual(
+					expect.objectContaining({
+						id: "dx",
+						rollType: RollType.Attribute,
 						modifier: entry.shock,
-						text: "Shock",
-						traits: ["IQ", "DX"],
+					})
+				)
+				expect(modifiers).toContainEqual(
+					expect.objectContaining({
+						id: "iq",
+						rollType: RollType.Attribute,
+						modifier: entry.shock,
 					})
 				)
 			}
@@ -489,11 +507,33 @@ describe("Damage calculator", () => {
 
 			_roll.basicDamage = 6
 			let calc = new DamageCalculator(_roll, _target)
-			expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ name: "Major Wound" }))
+			expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "majorWound" }))
 
 			_roll.basicDamage = 7
 			calc = new DamageCalculator(_roll, _target)
-			expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ name: "Major Wound" }))
+			expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
+		})
+
+		it("For a major wound to the torso, you must make a HT roll. Failure means you’re stunned and knocked down; failure by 5+ means you pass out.", () => {
+			_target.hitPoints.value = 12
+			_roll.locationId = "torso"
+			_roll.basicDamage = 7
+
+			const calc = new DamageCalculator(_roll, _target)
+
+			let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.effects
+			expect(checks).toContainEqual(
+				expect.objectContaining({
+					id: "ht",
+					rollType: RollType.Attribute,
+					modifier: 0,
+					failures: [
+						{ id: "stun", margin: 0 },
+						{ id: "knocked down", margin: 0 },
+						{ id: "unconscious", margin: 5 },
+					],
+				})
+			)
 		})
 	})
 })
