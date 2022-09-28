@@ -3549,6 +3549,7 @@ export class GurpsActor extends Actor {
    * @param {{ type: any; x?: number; y?: number; payload?: any; pack?: any; id?: any; data?: any; }} dragData
    */
   async handleItemDrop(dragData) {
+    console.log('handleItemDrop', dragData)
     if (!this.isOwner) {
       ui.notifications?.warn(i18n('GURPS.youDoNotHavePermssion'))
       return
