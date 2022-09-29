@@ -126,7 +126,6 @@ export abstract class CompendiumTab {
 			const html = domParser.parseFromString(htmlString, "text/html")
 			liElements.push(html.body.firstElementChild as HTMLLIElement)
 		}
-		// Console.log("liElements", liElements);
 		return liElements
 	}
 }

@@ -38,7 +38,6 @@ export class WeaponDamage {
 			if (this.armor_divisor !== 1) buffer += `(${this.armor_divisor})`
 			if (this.modifier_per_die !== 0) {
 				if (buffer.length !== 0) buffer += " "
-				console.log(this, this.parent, this.modifier_per_die)
 				buffer += `(${signed(this.modifier_per_die)} per die)`
 			}
 			const t = this.type.trim()

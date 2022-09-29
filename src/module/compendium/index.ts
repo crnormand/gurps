@@ -163,13 +163,9 @@ export class CompendiumBrowser extends Application {
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<unknown> {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		// Console.log(uuid);
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = (await fromUuid(uuid)) as Item
 		await item?.update({ _id: uuid.split(".").at(-1), "system.open": open })
-		// Const gparent = await fromUuid(uuid.split(".").splice(0, 4).join("."));
-		// console.log(item);
-		// console.log(item, gparent);
 		if (this.activeTab !== "settings") await this.tabs[this.activeTab].init()
 		return this.render()
 	}

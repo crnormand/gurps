@@ -67,7 +67,6 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 		const item = await fromUuid($(event.currentTarget).data("uuid"))
 		const weapon = (item as any)?.weapons.get($(event.currentTarget).data("weapon"))
 		data.weapon = character.bestWeaponNamed(item?.name, weapon.usage, weapon.type, null)
-		// Console.log(weapon);
 	}
 	if ([RollType.Attribute].includes(type)) {
 		const attribute = character.attributes.get($(event.currentTarget).data("id"))

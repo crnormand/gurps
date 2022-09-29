@@ -44,7 +44,6 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _updateObject(event: Event, formData: Record<string, unknown>): Promise<unknown> {
 		// Edit total points when unspent points are edited
-		console.log("_updateObject", formData)
 		if (Object.keys(formData).includes("actor.unspentPoints")) {
 			formData["system.total_points"] = (formData["actor.unspentPoints"] as number) + this.actor.spentPoints
 			delete formData["actor.unspentPoints"]
@@ -77,11 +76,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	protected _onCollapseToggle(event: JQuery.ClickEvent): void {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		console.log(uuid)
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = this.actor.deepItems.get(id)
-		item?.update({ _id: id, "system.open": open })
+		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
 	}
 
 	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {

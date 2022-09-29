@@ -85,7 +85,6 @@ export function openPDF(pdfs: string) {
 			}
 		}
 
-		console.log(book)
 		let url = (SJG_links as any)[book]
 		if (!url) {
 			if (pdfs.includes("http")) url = pdfs

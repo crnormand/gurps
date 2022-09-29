@@ -66,7 +66,6 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		this.system.conditions.posture = Posture.Standing
 		this.system.conditions.exhausted = false
 		this.system.conditions.reeling = false
-		console.log("checkem")
 	}
 
 	prepareDerivedData(): void {

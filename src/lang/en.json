@@ -340,11 +340,13 @@
 			"parry": "Parry Modifier",
 			"block": "Block Modifier",
 			"accuracy": "Accuracy",
+			"accuracy_for": "Accuracy ({name})",
 			"rate_of_fire": "Rate of Fire",
 			"range": "Range",
 			"recoil": "Recoil",
 			"shots": "Shots",
-			"bulk": "Bulk"
+			"bulk": "Bulk",
+			"bulk_for": "Bulk ({name})"
 		},
 		"roll": {
 			"effective_skill": "Effective Skill: {level}",

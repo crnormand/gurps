@@ -15,9 +15,9 @@ export class ItemSheetGURPS extends ItemSheet {
 		const locations: Record<string, string> = {}
 		const actor = this.item.actor as unknown as CharacterGURPS
 		if (actor) {
-			for (const e of Object.values(actor.attributes)) {
+			actor.attributes.forEach(e => {
 				attributes[e.attr_id] = e.attribute_def.name
-			}
+			})
 			for (const e of actor.system.settings.body_type.locations) {
 				locations[e.id] = e.choice_name
 			}
@@ -119,12 +119,10 @@ export class ItemSheetGURPS extends ItemSheet {
 	}
 
 	protected _onSubmit(event: Event, context?: any): Promise<Partial<Record<string, unknown>>> {
-		// Console.log(event, context);
 		return super._onSubmit(event, context)
 	}
 
 	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
-		console.log("_updateObject", formData)
 		if (formData["system.tags"] && typeof formData["system.tags"] === "string") {
 			const tags = formData["system.tags"].split(",").map(e => e.trim())
 			formData["system.tags"] = tags
@@ -155,7 +153,6 @@ export class ItemSheetGURPS extends ItemSheet {
 
 	protected async _addPrereqChild(event: JQuery.ClickEvent): Promise<any> {
 		const path = $(event.currentTarget).data("path")
-		// Console.log(path);
 		const prereqs = toArray(duplicate(getProperty(this.item as any, `${path}.prereqs`)))
 		prereqs.push({
 			type: "trait_prereq",
@@ -225,8 +222,7 @@ export class ItemSheetGURPS extends ItemSheet {
 	}
 
 	async getPrereqUpdate(path: string, data: any): Promise<any> {
-		// Console.log(path);
-		// if (path === "system.prereqs") return data;
+		// If (path === "system.prereqs") return data;
 		if (path === "system.prereqs.prereqs") return toArray(data)
 		const list = path.split(".")
 		const variable: string = list.pop()!
@@ -248,7 +244,6 @@ export class ItemSheetGURPS extends ItemSheet {
 		})
 		const update: any = {}
 		update["system.features"] = features
-		console.log(update)
 		return this.item.update(update)
 	}
 

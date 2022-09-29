@@ -21,20 +21,13 @@ class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
 		if (context.gurps?.ready) {
 			super(data, context)
+			this.noPrepare = true
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
 			const ActorConstructor = (CONFIG as any).GURPS.Actor.documentClasses[data.type]
 			return ActorConstructor ? new ActorConstructor(data, context) : new BaseActorGURPS(data, context)
 		}
 	}
-
-	// Update(
-	// 	data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)> | undefined,
-	// 	context?: (DocumentModificationContext & MergeObjectOptions) | undefined
-	// ): Promise<this | undefined> {
-	// 	console.log(data, context)
-	// 	return super.update(data, context)
-	// }
 
 	protected async _preCreate(
 		data: ActorDataConstructorData & ActorDataGURPS,
@@ -107,6 +100,7 @@ class BaseActorGURPS extends Actor {
 
 interface BaseActorGURPS extends Actor {
 	// Readonly data: BaseActorDataGURPS;
+	noPrepare: boolean
 	deepItems: Collection<ItemGURPS>
 	// Temp
 	system: ActorSystemData

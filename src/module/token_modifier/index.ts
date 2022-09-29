@@ -35,7 +35,6 @@ export class TokenModifierControl {
 
 		// Show the token control as active
 		let toggle = $(document).find(`ol > li[data-tool=${TokenModifierControl.EFFECT_MOD_NAME}]`)
-		console.log(this._showWindow, toggle)
 		if (this._showWindow && !toggle[0].classList.value.includes("active")) toggle[0]?.classList.add("active")
 		else if (!this._showWindow && toggle[0].classList.value.includes("active"))
 			toggle[0]?.classList.remove("active")
@@ -90,7 +89,6 @@ export class TokenModifierControl {
 	}
 
 	_controlToken(token: Token, isControlled: boolean): void {
-		console.log(token, isControlled)
 		if (isControlled) this.token = token
 		else if (this.token === token) this.token = null
 

@@ -246,6 +246,13 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
+
+	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	GURPS.ModifierButton = new ModifierButton()
+	GURPS.ModifierButton.render(true)
+
+	GURPS.CompendiumBrowser = new CompendiumBrowser()
+
 	await Promise.all(
 		(game as Game).actors!.map(async actor => {
 			actor.prepareData()
@@ -253,11 +260,6 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
-	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
-	GURPS.ModifierButton = new ModifierButton()
-	GURPS.ModifierButton.render(true)
-
-	GURPS.CompendiumBrowser = new CompendiumBrowser()
 })
 
 // Add any additional hooks if necessary
@@ -280,18 +282,9 @@ Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) 
 })
 
 Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
-	// Console.log(pack, documents, options, userId);
-	// const uuids = documents.map((e: any) => e.uuid);
 	const cb = GURPS.CompendiumBrowser
 	if (cb.rendered && cb.loadedPacks(cb.activeTab).includes(pack.collection)) {
 		await cb.tabs[cb.activeTab].init()
 		cb.render()
 	}
-	// Uuids.forEach(async (e: string) => {
-	// 	console.log(e);
-	// 	// const sheet = ((await fromUuid(e)) as Item)?.sheet;
-	// 	// if (!sheet?.rendered) {
-	// 	// 	sheet?.render(true);
-	// 	// }
-	// })
 })
