@@ -8,6 +8,7 @@ import {
 	DamageType,
 	HitLocationTableWithCalc,
 	HitLocation,
+	AnyPiercingType,
 } from "../../src/module/damage_calculator"
 import { DiceGURPS } from "../../src/module/dice"
 import { RollType } from "../../src/module/data"
@@ -28,10 +29,10 @@ class _Target implements DamageTarget {
 	traits: TraitGURPS[] = []
 
 	hasTrait(name: string): boolean {
-		throw new Error("Method not implemented.")
+		return this._traits.includes(name)
 	}
 
-	_dummy = {
+	_dummyHitLocationTable = {
 		name: "humanoid",
 		roll: "3d",
 		// eslint-disable-next-line no-array-constructor
@@ -39,8 +40,10 @@ class _Target implements DamageTarget {
 	}
 
 	get hitLocationTable(): HitLocationTableWithCalc {
-		return this._dummy
+		return this._dummyHitLocationTable
 	}
+
+	_traits: string[] = []
 }
 
 class _DamageRoll implements DamageRoll {
@@ -55,13 +58,15 @@ class _DamageRoll implements DamageRoll {
 
 	damageType = DamageType.cr
 
+	damageModifier = ""
+
 	armorDivisor = 0
 }
 
 // Add real tests here.
 describe("Damage calculator", () => {
 	let _attacker: DamageAttacker
-	let _target: DamageTarget
+	let _target: _Target
 	let _roll: DamageRoll
 	let _location: HitLocation
 
@@ -336,14 +341,7 @@ describe("Damage calculator", () => {
 
 			_location.calc.dr.all = 20
 
-			for (let type of [
-				DamageType.cut,
-				DamageType.imp,
-				DamageType.pi,
-				DamageType.pi_m,
-				DamageType.pi_p,
-				DamageType.pi_pp,
-			]) {
+			for (let type of [DamageType.cut, DamageType.imp, ...AnyPiercingType]) {
 				_roll.damageType = type
 
 				_roll.basicDamage = 9
@@ -462,7 +460,7 @@ describe("Damage calculator", () => {
 					})
 				)
 
-				let modifiers = calc.injuryEffects.find(it => it.id === "shock")?.effects
+				let modifiers = calc.injuryEffects.find(it => it.id === "shock")?.modifiers
 				expect(modifiers).toContainEqual(
 					expect.objectContaining({
 						id: "dx",
@@ -559,7 +557,7 @@ describe("Damage calculator", () => {
 			calc = new DamageCalculator(_roll, _target)
 			expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "majorWound" }))
 			let wound = calc.injuryEffects.find(it => it.id === "majorWound")
-			expect(wound?.effects.length).toBe(0)
+			expect(wound?.modifiers.length).toBe(0)
 		})
 
 		it("For a major wound to the torso, you must make a HT roll. Failure means you’re stunned and knocked down; failure by 5+ means you pass out.", () => {
@@ -569,12 +567,10 @@ describe("Damage calculator", () => {
 
 			const calc = new DamageCalculator(_roll, _target)
 
-			let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.effects
+			let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
 			expect(checks).toContainEqual(
 				expect.objectContaining({
-					id: "ht",
-					rollType: RollType.Attribute,
-					modifier: 0,
+					checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
 					failures: [
 						{ id: "stun", margin: 0 },
 						{ id: "knocked down", margin: 0 },
@@ -586,13 +582,14 @@ describe("Damage calculator", () => {
 	})
 
 	describe("B378: Knockback. Knockback depends on basic damage rolled before subtracting DR.", () => {
-		it("For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker.", () => {
-			_location.calc.dr.all = 0
-			_target.hitLocationTable.locations.push(_location)
+		beforeEach(() => {
 			_target.ST = 12
-			_roll.basicDamage = 9
+		})
+
+		it("For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker.", () => {
 			_roll.damageType = DamageType.cr
 
+			_roll.basicDamage = 9
 			let calc = new DamageCalculator(_roll, _target)
 			expect(calc.knockback).toBe(0)
 
@@ -610,13 +607,9 @@ describe("Damage calculator", () => {
 		})
 
 		it("A crushing (or knockback only) attack can cause knockback regardless of whether it penetrates DR.", () => {
-			_location.calc.dr.all = 15
-			_target.hitLocationTable.locations.push(_location)
-			_target.ST = 12
+			expect(_roll.damageType).toBe(DamageType.cr)
+
 			_roll.basicDamage = 9
-
-			_roll.damageType = DamageType.cr
-
 			let calc = new DamageCalculator(_roll, _target)
 			expect(calc.knockback).toBe(0)
 
@@ -633,8 +626,8 @@ describe("Damage calculator", () => {
 			expect(calc.knockback).toBe(2)
 
 			_roll.damageType = DamageType.kb
-			_roll.basicDamage = 9
 
+			_roll.basicDamage = 9
 			calc = new DamageCalculator(_roll, _target)
 			expect(calc.knockback).toBe(0)
 
@@ -652,13 +645,11 @@ describe("Damage calculator", () => {
 		})
 
 		it("A cutting attack can cause knockback only if it fails to penetrate DR.", () => {
+			_roll.damageType = DamageType.cut
 			_location.calc.dr.all = 15
 			_target.hitLocationTable.locations.push(_location)
 
-			_target.ST = 12
 			_roll.basicDamage = 9
-			_roll.damageType = DamageType.cut
-
 			let calc = new DamageCalculator(_roll, _target)
 			expect(calc.knockback).toBe(0)
 
@@ -674,7 +665,6 @@ describe("Damage calculator", () => {
 		it("Only crushing and cutting (and knockback only) attacks can cause knockback.", () => {
 			_location.calc.dr.all = 16
 			_target.hitLocationTable.locations.push(_location)
-
 			_target.ST = 10
 			_roll.basicDamage = 16
 
@@ -685,6 +675,120 @@ describe("Damage calculator", () => {
 				let calc = new DamageCalculator(_roll, _target)
 				expect(calc.knockback).toBe(0)
 			}
+		})
+
+		it("Anyone who suffers knockback must attempt a roll against the highest of DX, Acrobatics, or Judo. On a failure, he falls down.", () => {
+			expect(_roll.damageType).toBe(DamageType.cr)
+
+			_roll.basicDamage = 10
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			const injuryEffects = calc.injuryEffects
+			expect(injuryEffects).toContainEqual(
+				expect.objectContaining({
+					id: "knockback",
+				})
+			)
+
+			let checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			expect(checks).toContainEqual(
+				expect.objectContaining({
+					checks: [
+						{ id: "dx", rollType: RollType.Attribute, modifier: 0 },
+						{ id: "Acrobatics", rollType: RollType.Skill, modifier: 0 },
+						{ id: "Judo", rollType: RollType.Skill, modifier: 0 },
+					],
+					failures: [{ id: "fall down", margin: 0 }],
+				})
+			)
+		})
+
+		it("... at -1 per yard after the first.", () => {
+			expect(_roll.damageType).toBe(DamageType.cr)
+
+			_roll.basicDamage = 20
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(2)
+
+			const injuryEffects = calc.injuryEffects
+			expect(injuryEffects).toContainEqual(
+				expect.objectContaining({
+					id: "knockback",
+				})
+			)
+
+			let checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			expect(checks).toContainEqual(
+				expect.objectContaining({
+					checks: [
+						{ id: "dx", rollType: RollType.Attribute, modifier: -1 },
+						{ id: "Acrobatics", rollType: RollType.Skill, modifier: -1 },
+						{ id: "Judo", rollType: RollType.Skill, modifier: -1 },
+					],
+					failures: [{ id: "fall down", margin: 0 }],
+				})
+			)
+
+			_roll.basicDamage = 50
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(5)
+
+			checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			expect(checks).toContainEqual(
+				expect.objectContaining({
+					checks: [
+						{ id: "dx", rollType: RollType.Attribute, modifier: -4 },
+						{ id: "Acrobatics", rollType: RollType.Skill, modifier: -4 },
+						{ id: "Judo", rollType: RollType.Skill, modifier: -4 },
+					],
+					failures: [{ id: "fall down", margin: 0 }],
+				})
+			)
+		})
+
+		it("... Perfect Balance gives +4 to this roll.", () => {
+			expect(_roll.damageType).toBe(DamageType.cr)
+
+			_target._traits.push("Perfect Balance")
+			_roll.basicDamage = 10
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			const injuryEffects = calc.injuryEffects
+			expect(injuryEffects).toContainEqual(
+				expect.objectContaining({
+					id: "knockback",
+				})
+			)
+
+			let checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			expect(checks).toContainEqual(
+				expect.objectContaining({
+					checks: [
+						{ id: "dx", rollType: RollType.Attribute, modifier: 4 },
+						{ id: "Acrobatics", rollType: RollType.Skill, modifier: 4 },
+						{ id: "Judo", rollType: RollType.Skill, modifier: 4 },
+					],
+					failures: [{ id: "fall down", margin: 0 }],
+				})
+			)
+
+			_roll.basicDamage = 30
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(3)
+
+			checks = calc.injuryEffects.find(it => it.id === "knockback")?.checks
+			expect(checks).toContainEqual(
+				expect.objectContaining({
+					checks: [
+						{ id: "dx", rollType: RollType.Attribute, modifier: 2 },
+						{ id: "Acrobatics", rollType: RollType.Skill, modifier: 2 },
+						{ id: "Judo", rollType: RollType.Skill, modifier: 2 },
+					],
+					failures: [{ id: "fall down", margin: 0 }],
+				})
+			)
 		})
 	})
 
@@ -827,6 +931,108 @@ describe("Damage calculator", () => {
 					_roll.damageType = type
 					let calc = new DamageCalculator(_roll, _target)
 					expect(calc.injury).toBe(2)
+				}
+			})
+		})
+	})
+
+	describe("B398: Hit Location", () => {
+		describe("Vitals.", () => {
+			let _vitals = {
+				calc: {
+					dr: { all: 5 },
+					roll_range: "-",
+					flexible: false,
+				},
+				choice_name: "Vitals",
+				description: "",
+				dr_bonus: 0,
+				table_name: "Vitals",
+				hit_penalty: -3,
+				id: "vitals",
+				slots: 0,
+			}
+
+			beforeEach(() => {
+				_roll.locationId = "vitals"
+				_target.hitLocationTable.locations.push(_vitals)
+				_roll.basicDamage = 11
+			})
+
+			it("Increase the wounding modifier for an impaling or any piercing attack to ×3.", () => {
+				let types = [DamageType.imp, ...AnyPiercingType]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(18)
+				}
+			})
+
+			it("Increase the wounding modifier for a tight-beam burning attack ... to ×2.", () => {
+				_roll.damageType = DamageType.burn
+				_roll.damageModifier = "tbb"
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(6)
+				expect(calc.injury).toBe(12)
+			})
+		})
+
+		describe("Skull.", () => {
+			let _skull = {
+				calc: {
+					dr: { all: 5 },
+					roll_range: "3-4",
+					flexible: false,
+				},
+				choice_name: "Skull",
+				description: "",
+				dr_bonus: 2,
+				table_name: "Skull",
+				hit_penalty: -7,
+				id: "skull",
+				slots: 0,
+			}
+
+			beforeEach(() => {
+				_roll.locationId = "skull"
+				_target.hitLocationTable.locations.push(_skull)
+				_roll.basicDamage = 11
+			})
+
+			it("The wounding modifier for all attacks increases to ×4.", () => {
+				let types = [
+					DamageType.imp,
+					...AnyPiercingType,
+					DamageType.burn,
+					DamageType.cor,
+					DamageType.cr,
+					DamageType.cut,
+					DamageType.fat,
+				]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(24)
+				}
+			})
+
+			it("Knockdown rolls are at -10.", () => {
+				let types = [
+					DamageType.imp,
+					...AnyPiercingType,
+					DamageType.burn,
+					DamageType.cor,
+					DamageType.cr,
+					DamageType.cut,
+					DamageType.fat,
+				]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(6)
+					expect(calc.injury).toBe(24)
 				}
 			})
 		})

@@ -74,6 +74,8 @@ enum DamageType {
 	kb = "knockback only",
 }
 
+const AnyPiercingType: DamageType[] = [DamageType.pi, DamageType.pi_m, DamageType.pi_p, DamageType.pi_pp]
+
 enum DefaultHitLocations {
 	Default = "Default",
 	Random = "Random",
@@ -85,6 +87,8 @@ interface DamageRoll {
 	dice: DiceGURPS
 	basicDamage: number
 	damageType: DamageType
+	// Possible values: tbb.
+	damageModifier: string
 	armorDivisor: number | "Ignore"
 }
 
@@ -196,7 +200,7 @@ const dataTypeMultiplier: DamageTypeData = {
  * rollType - the type of the roll/check modified.
  * id - either the id of an attribute or name of the thing (skill, spell, etc).
  */
-class ModifierEffect {
+class CheckModifier {
 	modifier: number
 
 	rollType: RollType
@@ -215,12 +219,13 @@ class ModifierEffect {
  *
  * failure - an array of 'consequences' of failing the check.
  */
-class InjuryEffectCheck extends ModifierEffect {
+class InjuryEffectCheck {
+	checks: CheckModifier[]
+
 	failures: CheckFailureConsequence[]
 
-	constructor(id: string, rollType: RollType, modifier: number, failures: CheckFailureConsequence[]) {
-		super(id, rollType, modifier)
-
+	constructor(checks: CheckModifier[], failures: CheckFailureConsequence[]) {
+		this.checks = checks
 		this.failures = failures
 	}
 }
@@ -242,9 +247,13 @@ class CheckFailureConsequence {
 	}
 }
 
+/**
+ * TODO I'm kind of torn on this ... maybe it should just be a string, rather than an enum?
+ */
 enum InjuryEffectType {
 	shock = "shock",
 	majorWound = "majorWound",
+	knockback = "knockback",
 }
 
 /**
@@ -255,11 +264,14 @@ enum InjuryEffectType {
 class InjuryEffect {
 	id: string
 
-	effects: ModifierEffect[]
+	modifiers: CheckModifier[]
 
-	constructor(id: string, effects: ModifierEffect[] = []) {
-		this.effects = effects
+	checks: InjuryEffectCheck[]
+
+	constructor(id: string, modifiers: CheckModifier[] = [], checks: InjuryEffectCheck[] = []) {
 		this.id = id
+		this.modifiers = modifiers
+		this.checks = checks
 	}
 }
 
@@ -315,8 +327,9 @@ class DamageCalculator {
 	get injuryEffects(): Array<InjuryEffect> {
 		let effects: InjuryEffect[] = []
 
-		effects.push(...this._shockEffect)
-		effects.push(...this._majorWoundEffect)
+		effects.push(...this._shockEffects)
+		effects.push(...this._majorWoundEffects)
+		effects.push(...this._knockbackEffects)
 
 		return effects
 	}
@@ -334,20 +347,24 @@ class DamageCalculator {
 		return this._target.ST
 	}
 
-	private get _shockEffect(): InjuryEffect[] {
+	private get _shockEffects(): InjuryEffect[] {
 		let rawModifier = Math.floor(this.injury / this._shockFactor)
 		if (rawModifier > 0) {
 			let modifier = Math.min(4, rawModifier) * -1
 			const shockEffect = new InjuryEffect(InjuryEffectType.shock, [
-				{ id: "dx", rollType: RollType.Attribute, modifier: modifier },
-				{ id: "iq", rollType: RollType.Attribute, modifier: modifier },
+				new CheckModifier("dx", RollType.Attribute, modifier),
+				new CheckModifier("iq", RollType.Attribute, modifier),
 			])
 			return [shockEffect]
 		}
 		return []
 	}
 
-	private get _majorWoundEffect(): InjuryEffect[] {
+	private get _shockFactor(): number {
+		return Math.floor(this._target.hitPoints.value / 10)
+	}
+
+	private get _majorWoundEffects(): InjuryEffect[] {
 		const wounds = []
 		if (this.injury > this._target.hitPoints.value / 2) {
 			let effect = new InjuryEffect(InjuryEffectType.majorWound, [])
@@ -362,12 +379,15 @@ class DamageCalculator {
 			 * wound effects, otherwise use the hardcoded values here.
 			 */
 			if (this._damageRoll.locationId === "torso") {
-				const htCheck = new InjuryEffectCheck("ht", RollType.Attribute, 0, [
-					new CheckFailureConsequence("stun", 0),
-					new CheckFailureConsequence("knocked down", 0),
-					new CheckFailureConsequence("unconscious", 5),
-				])
-				effect.effects.push(htCheck)
+				const htCheck = new InjuryEffectCheck(
+					[new CheckModifier("ht", RollType.Attribute, 0)],
+					[
+						new CheckFailureConsequence("stun", 0),
+						new CheckFailureConsequence("knocked down", 0),
+						new CheckFailureConsequence("unconscious", 5),
+					]
+				)
+				effect.checks.push(htCheck)
 			}
 
 			wounds.push(effect)
@@ -375,8 +395,29 @@ class DamageCalculator {
 		return wounds
 	}
 
-	private get _shockFactor(): number {
-		return Math.floor(this._target.hitPoints.value / 10)
+	private get _knockbackEffects(): InjuryEffect[] {
+		let knockback = this.knockback
+		if (knockback === 0) return []
+
+		let penalty = knockback === 1 ? 0 : -1 * (knockback - 1)
+
+		if (this._target.hasTrait("Perfect Balance")) penalty += 4
+
+		const knockbackEffect = new InjuryEffect(
+			InjuryEffectType.knockback,
+			[],
+			[
+				new InjuryEffectCheck(
+					[
+						new CheckModifier("dx", RollType.Attribute, penalty),
+						new CheckModifier("Acrobatics", RollType.Skill, penalty),
+						new CheckModifier("Judo", RollType.Skill, penalty),
+					],
+					[new CheckFailureConsequence("fall down", 0)]
+				),
+			]
+		)
+		return [knockbackEffect]
 	}
 
 	private get _bluntTraumaDivisor() {
@@ -424,6 +465,22 @@ class DamageCalculator {
 		 */
 		if (this._target.isDiffuse) return multiplier.diffuse
 
+		// --- Calculate Wounding Modifier for Hit Location. ---
+		if (
+			this._damageRoll.locationId === "vitals" &&
+			[DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)
+		)
+			return x => x * 3
+
+		if (
+			this._damageRoll.locationId === "vitals" &&
+			this._damageRoll.damageType === DamageType.burn &&
+			this._damageRoll.damageModifier === "tbb"
+		)
+			return x => x * 2
+
+		if (this._damageRoll.locationId === "skull" && this._damageRoll.damageType !== DamageType.tox) return x => x * 4
+
 		return multiplier.theDefault
 	}
 
@@ -446,6 +503,7 @@ class DamageCalculator {
 }
 
 export {
+	AnyPiercingType,
 	DamageCalculator,
 	DamageTarget,
 	DamageRoll,
