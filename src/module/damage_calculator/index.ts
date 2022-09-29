@@ -30,6 +30,7 @@ interface HitLocationTableWithCalc {
  * (See https://java-design-patterns.com/patterns/adapter/).
  */
 type HitPointsCalc = { value: number; current: number }
+
 interface DamageTarget {
 	// CharacterGURPS.attributes.get(gid.ST).calc.value
 	ST: number
@@ -84,7 +85,7 @@ interface DamageRoll {
 	dice: DiceGURPS
 	basicDamage: number
 	damageType: DamageType
-	armorDivisor: number
+	armorDivisor: number | "Ignore"
 }
 
 type _function = (x: number) => number
@@ -393,9 +394,15 @@ class DamageCalculator {
 	}
 
 	private get _effectiveDR() {
-		return this._damageRoll.damageType === DamageType.injury
-			? 0
-			: Math.floor(this._basicDR / this._effectiveArmorDivisor)
+		if (this._effectiveArmorDivisor === "Ignore") return 0
+
+		let dr =
+			this._damageRoll.damageType === DamageType.injury
+				? 0
+				: Math.floor(this._basicDR / this._effectiveArmorDivisor)
+
+		// If the AD is a fraction, minimum DR is 1.
+		return this._effectiveArmorDivisor < 1 ? Math.max(dr, 1) : dr
 	}
 
 	private get _effectiveArmorDivisor() {

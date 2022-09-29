@@ -201,6 +201,15 @@ describe("Damage calculator", () => {
 					expect(calc.injury).toBe(expected[i])
 				}
 			})
+
+			it("(Cosmic: Ignores DR.)", () => {
+				_location.calc.dr.all = 20
+				_target.hitLocationTable.locations.push(_location)
+				_roll.basicDamage = 20
+				_roll.armorDivisor = "Ignore"
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.injury).toBe(20)
+			})
 		})
 
 		describe("Some divisors are fractions, such as (0.5), (0.2), or (0.1). DR is increased against such attacks:", () => {
@@ -232,6 +241,15 @@ describe("Damage calculator", () => {
 				_roll.armorDivisor = 0.1
 				let calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(1)
+			})
+
+			it("In addition, if you have any level of this limitation, targets that have DR 0 get DR 1 against your attack.", () => {
+				_location.calc.dr.all = 0
+				_target.hitLocationTable.locations.push(_location)
+				_roll.basicDamage = 20
+				_roll.armorDivisor = 0.5
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.injury).toBe(19)
 			})
 		})
 	})
