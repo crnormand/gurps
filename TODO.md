@@ -31,7 +31,6 @@
 	- modify static charsheet to match stylistically with dynamic charsheet. also eliminate "editable" static charsheet, instead using same system as dynamic
 	- add deprecation warning to static items
 	- (?) add optional reeling to dynamic character (maybe add ability to manually switch pool state for purposes of move etc. calculation)
-	- set totalpoints values to number value
 ## Sheets & Styling
 - Global Foundry styling
 - Damage template

@@ -109,7 +109,8 @@
 				"title": "Resource Trackers"
 			},
 			"macros": {
-				"title": "Quick Macros"
+				"title": "Quick Macros",
+				"add": "Add New Quick Macro..."
 			},
 			"move": {
 				"title": "Conditions",
@@ -124,9 +125,15 @@
 				"other": "Other..."
 			},
 			"settings": {
-				"import_title": "Import",
-				"import_note": "Select a file exported from GCS.<br><b>This import will overwrite the data for {name}</b>",
-				"import_warning": "<b>NOTE:</b> This action cannot be un-done."
+				"import": {
+					"title": "Import",
+					"note": "Select a file exported from GCS.<br><b>This import will overwrite the data for {name}</b>",
+					"warnign": "<b>NOTE:</b> This action cannot be un-done."
+				},
+				"enable_token_modifier_window": {
+					"title": "Enable Token Modifier Window",
+					"hint": "Enable the Token Modifier Window, which shows modifiers related to selected and targeted tokens"
+				}
 			},
 			"points": {
 				"title": "Points",
@@ -333,11 +340,13 @@
 			"parry": "Parry Modifier",
 			"block": "Block Modifier",
 			"accuracy": "Accuracy",
+			"accuracy_for": "Accuracy ({name})",
 			"rate_of_fire": "Rate of Fire",
 			"range": "Range",
 			"recoil": "Recoil",
 			"shots": "Shots",
-			"bulk": "Bulk"
+			"bulk": "Bulk",
+			"bulk_for": "Bulk ({name})"
 		},
 		"roll": {
 			"effective_skill": "Effective Skill: {level}",
@@ -641,6 +650,14 @@
 				"start": "Importing library: {name}",
 				"finished": "Finished importing {number} items."
 			}
+		},
+		"token_modifier_window": {
+			"button": "Token Modifiers",
+			"title": "Token Modifiers",
+			"self_modifiers": "Self Modifiers",
+			"target_modifiers": "Target Modifiers",
+			"target_name": "Target: {name}",
+			"no_targets": "No Targetted or Controlled Tokens!"
 		},
 		"settings": {
 			"basic_set_pdfs": {

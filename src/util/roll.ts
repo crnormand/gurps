@@ -15,7 +15,6 @@ export async function handleRoll(
 	actor: ActorGURPS | any,
 	data: { [key: string]: any }
 ): Promise<void> {
-	// Console.log(user, actor, data);
 	let name = ""
 	let rollData: any = {}
 	if (actor.type === "character") return staticHandleRoll(user, actor, data)
@@ -30,12 +29,10 @@ export async function handleRoll(
 		case RollType.SkillRelative:
 		case RollType.Spell:
 		case RollType.SpellRelative:
-			// Console.log(data);
 			name = `${data.item.formattedName}`
 			rollData = await getRollData(user, actor, data, name, "3d6")
 			return rollSkill(rollData)
 		case RollType.Attack:
-			console.log(data)
 			name = `${data.weapon.name}${data.weapon.usage ? ` - ${data.weapon.usage}` : ""}`
 			rollData = await getRollData(user, actor, data, name, "3d6")
 			return rollAttack(rollData)
@@ -54,7 +51,6 @@ export async function staticHandleRoll(
 	actor: ActorGURPS | any,
 	data: { [key: string]: any }
 ): Promise<void> {
-	console.log(user, actor, data)
 	switch (data.type) {
 		case RollType.Modifier:
 			return addModifier(user, actor, data)
@@ -104,7 +100,6 @@ async function getRollData(
 		}
 	}
 	const level = getLevel(data)
-	console.log(name, level)
 
 	const modifiers: Array<RollModifier & { class?: string }> = [
 		...(user?.getFlag(SYSTEM_NAME, UserFlags.ModifierStack) as RollModifier[]),
@@ -169,7 +164,13 @@ async function resetMods(user: StoredDocument<User> | null) {
  */
 function addModifier(user: StoredDocument<User> | null, actor: ActorGURPS, data: { [key: string]: any }) {
 	if (!user) return
-	throw new Error("Function not implemented.")
+	console.log(user, actor, data)
+	const mod: RollModifier = {
+		name: data.comment,
+		modifier: data.modifier,
+		tags: [],
+	}
+	return GURPS.ModifierButton.window.addModifier(mod)
 }
 
 /**
@@ -234,8 +235,6 @@ async function rollAttribute(
 		modifiers: modifiers,
 	}
 
-	// Console.log("chatData", chatData);
-
 	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/attribute-roll.hbs`, chatData)
 
 	const messageData = {
@@ -271,8 +270,6 @@ async function rollSkill(rollData: any): Promise<void> {
 		modifiers: rollData.modifiers,
 	}
 
-	// Console.log("chatData", chatData);
-
 	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/skill-roll.hbs`, chatData)
 
 	const messageData = {
@@ -292,8 +289,6 @@ async function rollSkill(rollData: any): Promise<void> {
  * @param {any} rollData
  */
 async function rollAttack(rollData: any): Promise<void> {
-	// Console.log("rollAttack", user, actor, data);
-
 	// Set up Chat Data
 	const chatData: { [key: string]: any } = {
 		data: rollData.data,
@@ -312,8 +307,6 @@ async function rollAttack(rollData: any): Promise<void> {
 		modifiers: rollData.modifiers,
 		// Modifier: modifier,
 	}
-
-	// Console.log("chatData", chatData);
 
 	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/attack-roll.hbs`, chatData)
 
@@ -339,7 +332,6 @@ async function rollDamage(
 	actor: ActorGURPS,
 	data: { [key: string]: any }
 ): Promise<void> {
-	console.log(data)
 	const dice = new DiceGURPS(data.weapon.fastResolvedDamage)
 	const roll = Roll.create(dice.toString(true))
 	await roll.evaluate({ async: true })
@@ -368,7 +360,6 @@ async function rollDamage(
 		damage,
 		damageType,
 	}
-	console.log(chatData)
 
 	// Const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/damage-roll.hbs`, chatData);
 

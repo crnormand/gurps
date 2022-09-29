@@ -3,13 +3,11 @@
 	{{#each document.trackers}}
 	<div class="points">[{{this.points}}]</div>
 	{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name=(concat
-	"system.additionalresources.tracker." key ".value")
+	"system.additionalresources.tracker." @key ".value")
 	data=this.value type="Number"}}
-	{{>sections/input-text after=this.name field="field" name=(concat "system.additionalresources.tracker." key
-	".max")
-	data=this.max type="Number" class="disabled"}}
+	{{>sections/input-text after=this.name field="field" data=this.max type="Number" class="disabled"}}
 	<div class="label tooltip">
-		[{{localize (hpFpCondition "FP" system.FP "label")}}]
+		[{{localize (resourceCondition this)}}]
 	</div>
 	{{/each}}
 </div>

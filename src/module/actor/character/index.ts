@@ -12,6 +12,7 @@ import { WeaponBonus } from "@feature/weapon_damage_bonus"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ItemGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RitualMagicSpellGURPS,
@@ -63,6 +64,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.featureMap = new Map()
 	}
 
+	SizeModBonus = 0
+
 	protected _onCreate(data: any, options: DocumentModificationOptions, userId: string): void {
 		const sd: CharacterSystemData | any = {
 			id: newUUID(),
@@ -95,9 +98,9 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override update(
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
-		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions
+		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
-		// Console.log("update data:", data);
+		console.log(data, context)
 		this.updateAttributes(data)
 		this.checkImport(data)
 		return super.update(data, context)
@@ -269,7 +272,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const att in settings.attributes) {
 			defs[att] = new AttributeDef(settings.attributes[att])
 		}
-		(settings as any).attributes = defs
+		;(settings as any).attributes = defs
 		return settings
 	}
 
@@ -335,11 +338,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		let total = 0
 		for (const e of this.carried_equipment) {
 			if (e.parent === this) {
-				// Console.log(e.name, e.extendedWeight(for_skills, this.settings.default_weight_units));
 				total += e.extendedWeight(for_skills, this.settings.default_weight_units)
 			}
 		}
-		// Console.log(total);
 		return floatingMul(total)
 	}
 
@@ -451,6 +452,10 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get blockBonus(): number {
 		return this.calc.block_bonus ?? 0
+	}
+
+	override get sizeMod(): number {
+		return this.system.profile.SM + this.SizeModBonus
 	}
 
 	// Item Types
@@ -579,7 +584,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get reactions(): CondMod[] {
 		let reactionMap: Map<string, CondMod> = new Map()
 		for (const t of this.traits) {
-			let source = i18n("gurps.reaction.from_trait") + (t.name ?? "")
+			let source = i18n_f("gurps.reaction.from_trait", { name: t.name ?? "" })
 			this.reactionsFromFeatureList(source, t.features, reactionMap)
 			for (const mod of t.deepModifiers) {
 				this.reactionsFromFeatureList(source, mod.features, reactionMap)
@@ -603,7 +608,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		for (const sk of this.skills) {
-			let source = i18n("gurps.reaction.from_skill") + (sk.name ?? "")
+			let source = i18n_f("gurps.reaction.from_skill", { name: sk.name ?? "" })
 			if (sk instanceof TechniqueGURPS) source = i18n("gurps.reaction.from_technique") + (sk.name ?? "")
 			this.reactionsFromFeatureList(source, sk.features, reactionMap)
 		}
@@ -622,16 +627,16 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get conditionalModifiers(): CondMod[] {
 		let reactionMap: Map<string, CondMod> = new Map()
-		for (const t of this.traits) {
-			let source = i18n("gurps.reaction.from_trait") + (t.name ?? "")
+		this.traits.forEach(t => {
+			let source = i18n_f("gurps.reaction.from_trait", { name: t.name ?? "" })
 			this.conditionalModifiersFromFeatureList(source, t.features, reactionMap)
 			for (const mod of t.deepModifiers) {
 				this.conditionalModifiersFromFeatureList(source, mod.features, reactionMap)
 			}
-		}
+		})
 		for (const e of this.carried_equipment) {
 			if (e.equipped && e.quantity > 0) {
-				let source = i18n("gurps.reaction.from_equipment") + (e.name ?? "")
+				let source = i18n_f("gurps.reaction.from_equipment", { name: e.name ?? "" })
 				this.conditionalModifiersFromFeatureList(source, e.features, reactionMap)
 				for (const mod of e.deepModifiers) {
 					this.conditionalModifiersFromFeatureList(source, mod.features, reactionMap)
@@ -639,8 +644,8 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		for (const sk of this.skills) {
-			let source = i18n("gurps.reaction.from_skill") + (sk.name ?? "")
-			if (sk instanceof TechniqueGURPS) source = i18n("gurps.reaction.from_technique") + (sk.name ?? "")
+			let source = i18n_f("gurps.reaction.from_skill", { name: sk.name ?? "" })
+			if (sk instanceof TechniqueGURPS) source = i18n_f("gurps.reaction.from_technique", { name: sk.name ?? "" })
 			this.conditionalModifiersFromFeatureList(source, sk.features, reactionMap)
 		}
 		let reactionList = Array.from(reactionMap.values())
@@ -648,12 +653,13 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	conditionalModifiersFromFeatureList(source: string, features: Feature[], m: Map<string, CondMod>): void {
-		for (const f of features)
+		features.forEach(f => {
 			if (f instanceof ConditionalModifier) {
 				let amount = f.adjustedAmount
 				if (m.has(f.situation)) m.get(f.situation)!.add(source, amount)
 				else m.set(f.situation, new CondMod(source, f.situation, amount))
 			}
+		})
 	}
 
 	newAttributes(): Record<string, AttributeObj> {
@@ -718,31 +724,30 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareEmbeddedDocuments(): void {
 		super.prepareEmbeddedDocuments()
-		this.updateSkills()
-		this.updateSpells()
-		for (let i = 0; i < 5; i++) {
-			this.processFeatures()
-			this.processPrereqs()
-			let skillsChanged = this.updateSkills()
-			let spellsChanged = this.updateSpells()
-			if (!skillsChanged && !spellsChanged) break
+		if (!this.noPrepare) {
+			this.updateSkills()
+			this.updateSpells()
+			for (let i = 0; i < 5; i++) {
+				this.processFeatures()
+				this.processPrereqs()
+				let skillsChanged = this.updateSkills()
+				let spellsChanged = this.updateSpells()
+				if (!skillsChanged && !spellsChanged) break
+			}
+			this.pools = {}
+			for (const a of Object.values(this.attributes)) {
+				if (a.attribute_def.type === "pool")
+					this.pools[a.attribute_def.name] = {
+						max: a.max,
+						value: a.current,
+					}
+			}
+		} else {
+			this.noPrepare = false
 		}
-		this.pools = {}
-		for (const a of Object.values(this.attributes)) {
-			if (a.attribute_def.type === "pool")
-				this.pools[a.attribute_def.name] = {
-					max: a.max,
-					value: a.current,
-				}
-		}
-	}
-
-	updateProfile(): void {
-		if (this.profile) this.profile.SM = this.bonusFor(`${attrPrefix}${gid.SizeModifier}`, undefined)
 	}
 
 	processFeatures() {
-		// Const featureMap: Map<string, Feature[]> = new Map();
 		this.featureMap = new Map()
 		for (const t of this.traits) {
 			if (t instanceof TraitGURPS) {
@@ -784,7 +789,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.calc.throwing_st_bonus = this.bonusFor(`${attrPrefix}${gid.Strength}.throwing_only`, undefined)
 		this.attributes = this.getAttributes()
 		if (this.attributes)
-			for (const attr of Object.values(this.attributes)) {
+			this.attributes.forEach(attr => {
 				if (!this.system.attributes[attr.attr_id]) return
 				const def = attr.attribute_def
 				if (def) {
@@ -796,9 +801,9 @@ class CharacterGURPS extends BaseActorGURPS {
 					this.system.attributes[attr.attr_id].bonus = 0
 					this.system.attributes[attr.attr_id].cost_reduction = 0
 				}
-			}
+			})
 		this.attributes = this.getAttributes()
-		this.updateProfile()
+		// This.updateProfile()
 		this.calc.dodge_bonus = this.bonusFor(`${attrPrefix}${gid.Dodge}`, undefined)
 		this.calc.parry_bonus = this.bonusFor(`${attrPrefix}${gid.Parry}`, undefined)
 		this.calc.block_bonus = this.bonusFor(`${attrPrefix}${gid.Block}`, undefined)
@@ -852,7 +857,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const k of this.skills.filter(e => !(e instanceof SkillContainerGURPS)) as Array<
 			SkillGURPS | TechniqueGURPS
 		>) {
-			if (k.updateLevel()) changed = true
+			if (k.updateLevel()) {
+				changed = true
+			}
 		}
 		return changed
 	}
@@ -862,7 +869,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const b of this.spells.filter(e => !(e instanceof SpellContainerGURPS)) as Array<
 			SpellGURPS | RitualMagicSpellGURPS
 		>) {
-			if (b.updateLevel()) changed = true
+			if (b.updateLevel()) {
+				changed = true
+			}
 		}
 		return changed
 	}
@@ -1339,13 +1348,12 @@ class CharacterGURPS extends BaseActorGURPS {
 }
 
 /**
- *
  * @param _parent
  * @param m
  * @param f
  * @param levels
  */
-export function processFeature(_parent: any, m: Map<string, Feature[]>, f: Feature, levels: number): void {
+export function processFeature(_parent: ItemGURPS, m: Map<string, Feature[]>, f: Feature, levels: number): void {
 	// Const key = f.type;
 	const key = f.featureMapKey.toLowerCase()
 	const list = m.get(key) ?? []

@@ -41,32 +41,10 @@ class BaseItemGURPS extends Item {
 		}
 	}
 
-	// Static override async createDocuments(
-	// 	data: any[],
-	// 	context: DocumentModificationContext & { options?: any }
-	// ): Promise<any[]> {
-	// 	const { parent, pack, options } = context;
-	// 	if (!(parent instanceof Item)) return Item.createDocuments(data, context);
-	// 	return parent.createEmbeddedDocuments("Item", data, options);
-	// }
-
-	// static override async updateDocuments(
-	// 	updates: any[],
-	// 	context: DocumentModificationContext & { options: any }
-	// ): Promise<any[]> {
-	// 	console.log(updates, context);
-	// 	console.trace();
-	// 	const { parent, pack, options } = context;
-	// 	if (!(parent instanceof Item)) return Item.updateDocuments(updates, context);
-	// 	// return Item.updateDocuments(updates, { parent: null as any, pack: null as any });
-	// 	return parent.updateEmbeddedDocuments("Item", updates, options);
-	// }
-
 	static override async updateDocuments(
 		updates: any[],
 		context: DocumentModificationContext & { options: any }
 	): Promise<any[]> {
-		// Console.log(updates, context);
 		if (!(parent instanceof Item)) return super.updateDocuments(updates, context)
 		return parent.updateEmbeddedDocuments("Item", updates, context.options)
 	}
@@ -87,9 +65,9 @@ class BaseItemGURPS extends Item {
 
 	override async update(
 		data: DeepPartial<ItemDataConstructorData | (ItemDataConstructorData & Record<string, unknown>)>,
-		context?: (DocumentModificationContext & MergeObjectOptions) | undefined
+		context?: DocumentModificationContext & MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
-		// Console.log(data, context, this);
+		if (this.actor && context?.noPrepare) this.actor.noPrepare = true
 		if (!(this.parent instanceof Item)) return super.update(data, context)
 		data = expandObject(data)
 		data._id = this.id
@@ -157,7 +135,7 @@ class BaseItemGURPS extends Item {
 			const features: Feature[] = []
 			const list = toArray((this.system as any).features)
 			for (const f of list ?? []) {
-				features.push(new BaseFeature(f))
+				features.push(new BaseFeature({ ...f, parent: this.uuid, item: this }))
 			}
 			return features
 		}

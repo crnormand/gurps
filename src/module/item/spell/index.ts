@@ -70,7 +70,7 @@ export class SpellGURPS extends ContainerGURPS {
 	updateLevel(): boolean {
 		const saved = this.level
 		this.level = this.calculateLevel
-		return saved !== this.level
+		return saved.level != this.level.level
 	}
 
 	get calculateLevel(): SkillLevel {

@@ -77,8 +77,8 @@ export class ContainerSheetGURPS extends ItemSheetGURPS {
 		try {
 			data = JSON.parse(event.dataTransfer?.getData("text/plain") ?? "")
 		} catch (err) {
-			console.log(event.dataTransfer?.getData("text/plain"))
-			console.log(err)
+			console.error(event.dataTransfer?.getData("text/plain"))
+			console.error(err)
 			return false
 		}
 

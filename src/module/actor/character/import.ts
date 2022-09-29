@@ -226,7 +226,6 @@ export class CharacterImporter {
 		for (const item of list) {
 			item.name = item.name ?? (item as any).description ?? (item as any).text
 			const id = randomID()
-			// Console.log(item.name);
 			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = this.getItemData(item, context)
 			const newItem = {
 				name: item.name ?? "ERROR",

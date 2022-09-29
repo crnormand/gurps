@@ -62,6 +62,7 @@ import { JournalEntryPageGURPS } from "./pdf"
 import { PDFEditorSheet } from "./pdf/edit"
 import { UserFlags } from "./data"
 import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
+import { TokenModifierControl } from "./token_modifier"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -70,7 +71,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	(globalThis as any).GURPS = GURPS
+	;(globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -90,6 +91,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.search = fSearch
 	GURPS.dice = DiceGURPS
 	GURPS.pdf = PDFViewerSheet
+	GURPS.TokenModifierControl = new TokenModifierControl()
 }
 // GURPS.XMLtoJS = XMLtoJS;
 // GURPS.GCAImport = GCAImporter;
@@ -244,6 +246,13 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
+
+	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	GURPS.ModifierButton = new ModifierButton()
+	GURPS.ModifierButton.render(true)
+
+	GURPS.CompendiumBrowser = new CompendiumBrowser()
+
 	await Promise.all(
 		(game as Game).actors!.map(async actor => {
 			actor.prepareData()
@@ -251,11 +260,6 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
-	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
-	GURPS.ModifierButton = new ModifierButton()
-	GURPS.ModifierButton.render(true)
-
-	GURPS.CompendiumBrowser = new CompendiumBrowser()
 })
 
 // Add any additional hooks if necessary
@@ -278,18 +282,9 @@ Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) 
 })
 
 Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
-	// Console.log(pack, documents, options, userId);
-	// const uuids = documents.map((e: any) => e.uuid);
 	const cb = GURPS.CompendiumBrowser
 	if (cb.rendered && cb.loadedPacks(cb.activeTab).includes(pack.collection)) {
 		await cb.tabs[cb.activeTab].init()
 		cb.render()
 	}
-	// Uuids.forEach(async (e: string) => {
-	// 	console.log(e);
-	// 	// const sheet = ((await fromUuid(e)) as Item)?.sheet;
-	// 	// if (!sheet?.rendered) {
-	// 	// 	sheet?.render(true);
-	// 	// }
-	// })
 })

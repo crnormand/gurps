@@ -12,7 +12,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			classes: super.defaultOptions.classes.concat(["character", "static"]),
 			width: 800,
 			height: 800,
-			tabs: [{ navSelector: "gurps-sheet-tabs", contentSelector: ".sheet-body", initial: "description" }],
+			tabs: [{ navSelector: ".tabs-navigation", contentSelector: ".tabs-content", initial: "lifting" }],
 			scrollY: [
 				".gurpsactorsheet #advantages #reactions #melee #ranged #skills #spells #equipmentcarried #equipmentother #notes",
 			],
@@ -45,6 +45,10 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			isGM: (game as Game).user?.isGM,
 			effects: this.actor.getEmbeddedCollection("ActiveEffect").contents,
 			// UseQN: (game as Game).settings.get(SYSTEM_NAME, settings.SETTING_USE_QUINTESSENCE),
+			current_year: new Date().getFullYear(),
+			maneuvers: (CONFIG as any).GURPS.select.maneuvers,
+			postures: (CONFIG as any).GURPS.select.postures,
+			move_types: (CONFIG as any).GURPS.select.move_types,
 		}
 
 		return sheetData

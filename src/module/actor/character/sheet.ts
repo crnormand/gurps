@@ -30,6 +30,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			classes: super.defaultOptions.classes.concat(["character"]),
 			width: 800,
 			height: 800,
+			tabs: [{ navSelector: ".tabs-navigation", contentSelector: ".tabs-content", initial: "lifting" }],
 		})
 	}
 
@@ -75,11 +76,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	protected _onCollapseToggle(event: JQuery.ClickEvent): void {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		console.log(uuid)
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = this.actor.deepItems.get(id)
-		item?.update({ _id: id, "system.open": open })
+		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
 	}
 
 	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {

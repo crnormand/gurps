@@ -1,6 +1,5 @@
 #attributes,
 #resource-trackers {
-	display: grid;
 	.points {
 		font: var(--font-page-secondary-fields);
 		color: rgba(var(--color-on-editable), 0.6);
@@ -53,6 +52,7 @@
 
 #attributes {
 	grid-area: attributes;
+	display: grid;
 	grid-template:
 		"primary-attributes secondary-attributes"
 		"basic-damage secondary-attributes"

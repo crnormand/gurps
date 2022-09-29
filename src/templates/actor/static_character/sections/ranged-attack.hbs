@@ -9,84 +9,14 @@
 <div class="usage">{{this.mode}}</div>
 <div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="attack" class="level rollable">
 	{{this.import}}</div>
-<div data-modifier="{{this.accuracy}}" data-comment="Accuracy" data-type="modifier" class="accuracy rollable">{{signed
-	this.acc}}</div>
+<div data-modifier="{{this.acc}}" data-comment="{{localize 'gurps.weapon.accuracy_for' name=this.name}}"
+	data-type="modifier" class="accuracy rollable">{{signed this.acc}}</div>
 <div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="damage" class="damage rollable">
 	{{this.damage}}</div>
 <div class="range">{{this.range}}</div>
 <div class="rate-of-fire">{{this.rof}}</div>
 <div class="shots">{{this.shots}}</div>
-<div data-modifier="{{this.bulk}}" data-comment="Bulk" data-type="modifier" class="bulk rollable">{{this.bulk}}</div>
-<div class="recoil rollable">{{this.rcl}}</div>
+<div data-modifier="{{this.bulk}}" data-comment="{{localize 'gurps.weapon.bulk_for' name=this.name}}"
+	data-type="modifier" class="bulk rollable">{{this.bulk}}</div>
+<div class="recoil">{{this.rcl}}</div>
 <div class="st">{{this.st}}</div>
-
-{{!-- <div id='ranged' class='gga-table with-notes'> --}}
-	{{!-- <div class='itemmenu header' readonly></div> --}}
-	{{!-- <div class='desc header'> --}}
-		{{!-- <div class='headermenu'> --}}
-			{{!-- <span>{{localize 'GURPS.rangedWeapons'}}</span> --}}
-			{{!-- <i class='fas fa-caret-square-down'></i> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='usage header'>{{localize 'GURPS.usage'}}</div> --}}
-	{{!-- <div class='level header'>{{localize 'GURPS.level'}}</div> --}}
-	{{!-- <div class='acc header'>{{localize 'GURPS.acc'}}</div> --}}
-	{{!-- <div class='damage header'>{{localize 'GURPS.damage'}}</div> --}}
-	{{!-- <div class='range header'>{{localize 'GURPS.range'}}</div> --}}
-	{{!-- <div class='rof header'>{{localize 'GURPS.rof'}}</div> --}}
-	{{!-- <div class='shots header'>{{localize 'GURPS.shots'}}</div> --}}
-	{{!-- <div class='bulk header'>{{localize 'GURPS.bulk'}}</div> --}}
-	{{!-- <div class='rcl header'>{{localize 'GURPS.rcl'}}</div> --}}
-	{{!-- <div class='st header'>{{localize 'GURPS.attributesST'}}</div> --}}
-
-	{{!-- {{#each (attackflatlist system.ranged)}} --}}
-	{{!-- {{#unless isCollapsed}} --}}
-	{{!-- <div class='itemmenu' readonly></div> --}}
-
-	{{!-- <div class='rangeddraggable' data-key='system.ranged.{{@key}}'> --}}
-		{{!-- <div class='desc dblclkedit indent{{indent}}'> --}}
-			{{!-- <div class='gga-desc-text'> --}}
-				{{!-- <div> --}}
-					{{!-- {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}} --}}
-					{{!-- {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- <div class='tooltip gga-manual'> --}}
-					{{!-- {{{gurpslink this.name}}} --}}
-					{{!-- {{#if (displayItemHover this)}} --}}
-					{{!-- <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div> --}}
-					{{!-- {{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- <div> --}}
-					{{!-- {{#if (isFoundryItem this)}} --}}
-					{{!-- <i class='far fas fa-star tooltip gga-item'> --}}
-						{{!-- <span class='tooltiptext'>{{localize 'GURPS.equipmentFoundryItem'}}</span> --}}
-						{{!-- </i> --}}
-					{{!-- {{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- </div> --}}
-			{{!-- <div class='list_note'>{{{gurpslink this.notes}}}</div> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='usage rollable flex-center' data-name='{{name}} ({{mode}})' data-key='system.ranged.{{@key}}' --}}
-		{{!-- data-otf='{{quotedAttackName ' R' this}}'>{{mode}}</div> --}}
-	{{!-- <div class='level rollable flex-center' data-name='{{this.name}} ({{this.mode}})'
-		data-key='system.ranged.{{@key}}' --}} {{!-- data-otf='{{quotedAttackName ' R' this}}'>{{this.level}}</div> --}}
-	{{!-- <div class='acc gga-right {{gmod this.acc}}' data-name='Acc for {{this.name}}' --}} {{!--
-		data-otf='{{{displayNumber this.acc}}} Acc'> --}}
-		{{!-- {{{displayNumber this.acc}}} --}}
-		{{!-- </div> --}}
-	{{!-- <div class='damage flex-center rollable' data-damage data-otf='{{this.damage}}'>{{this.damage}}</div> --}}
-	{{!-- <div class='range flex-center'>{{this.range}}</div> --}}
-	{{!-- <div class='rof gga-right'>{{this.rof}}</div> --}}
-	{{!-- <div class='shots flex-center'>{{this.shots}}</div> --}}
-	{{!-- <div class='bulk gga-right {{gmod this.bulk}}' data-name='Bulk for {{this.name}}'
-		data-otf='{{this.bulk}} Bulk'> --}}
-		{{!-- {{{displayNumber this.bulk}}} --}}
-		{{!-- </div> --}}
-	{{!-- <div class='rcl gga-right'>{{this.rcl}}</div> --}}
-	{{!-- <div class='st flex-center'>{{this.st}}</div> --}}
-	{{!-- {{/unless}} --}}
-	{{!-- {{/if}} --}}
-	{{!-- {{/each}} --}}
-	{{!-- </div> --}}

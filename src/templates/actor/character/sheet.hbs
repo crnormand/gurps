@@ -25,7 +25,16 @@
 			</div>
 			<div id="encumbrance-lifting">
 				{{>actor/character/sections/encumbrance}}
-				{{>actor/character/sections/lifting}}
+				<div id="lifting-macros">
+					<nav class="header tabs-navigation" data-group="lifting">
+						<a class="item" data-tab="lifting">{{localize "gurps.character.lifting.title"}}</a>
+						<a class="item" data-tab="macros">{{localize "gurps.character.macros.title"}}</a>
+					</nav>
+					<section class="tabs-content">
+						{{>actor/character/sections/lifting}}
+						{{>actor/character/sections/macros}}
+					</section>
+				</div>
 			</div>
 			<div id="resource-trackers">
 				{{>actor/character/sections/resource-trackers}}

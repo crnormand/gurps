@@ -44,7 +44,14 @@ type StaticCharacterFlags = ActorFlagsGURPS & {
 
 export interface StaticCharacterSystemData extends ActorSystemData {
 	editing: boolean
-	additionalresources: any
+	additionalresources: {
+		bodyplan: string
+		importname: string
+		imortpath: string
+		tracker: {
+			[key: string]: StaticResourceTracker
+		}
+	}
 	attributes: {
 		[key in StaticAttributeName]: StaticAttribute
 	}
@@ -121,4 +128,40 @@ export interface StaticAttribute {
 	value: number
 	points: number
 	dtype: "Number"
+}
+
+export interface StaticResourceTracker {
+	alias: string
+	initialValue: number
+	isDamageTracker: boolean
+	isDamageType: boolean
+	max: number
+	min: number
+	name: string
+	pdf: string
+	points: number
+	value: number
+	thresholds: StaticResourceThreshold[]
+}
+
+export interface StaticResourceThreshold {
+	color: string
+	comparison: StaticThresholdComparison
+	operator: StaticThresholdOperator
+	value: number
+	condition: string
+}
+
+export enum StaticThresholdComparison {
+	LessThan = "<",
+	GreaterThan = ">",
+	LessThanOrEqual = "≥",
+	GreaterThanOrEqual = "≤",
+}
+
+enum StaticThresholdOperator {
+	Add = "+",
+	Subtract = "−",
+	Multiply = "×",
+	Divide = "÷",
 }

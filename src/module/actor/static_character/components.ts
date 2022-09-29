@@ -150,6 +150,10 @@ export class StaticAdvantage extends NamedCostComponent {
 
 	note: string
 
+	spoken?: string
+
+	written?: string
+
 	constructor(name?: string) {
 		super(name)
 		this.userdesc = ""

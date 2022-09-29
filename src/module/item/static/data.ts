@@ -31,7 +31,10 @@ export interface StaticItemSystemData extends ItemSystemData {
 		maxuses: number
 		parentuuid: string
 		uuid: string
+		itemid: string
+		gloablid: string
 		contains: any
+		img: string | null
 	}
 	melee: any
 	ranged: any
@@ -42,4 +45,5 @@ export interface StaticItemSystemData extends ItemSystemData {
 	equipped: boolean
 	carried: boolean
 	globalid: string
+	uuid: string
 }

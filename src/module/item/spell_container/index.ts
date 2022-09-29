@@ -12,6 +12,16 @@ export class SpellContainerGURPS extends ContainerGURPS {
 	get children(): Collection<SpellGURPS | RitualMagicSpellGURPS | SpellContainerGURPS> {
 		return super.children as Collection<SpellGURPS | RitualMagicSpellGURPS | SpellContainerGURPS>
 	}
+
+	adjustedPoints(): number {
+		return this.points
+	}
+
+	get points(): number {
+		let points = 0
+		for (const child of this.children) points += child.adjustedPoints()
+		return points
+	}
 }
 
 export interface SpellContainerGURPS {

@@ -20,7 +20,6 @@ export class SpellSheet extends ItemSheetGURPS {
 				},
 			},
 		}
-		console.log(sheetData)
 		return sheetData
 	}
 
