@@ -1849,7 +1849,7 @@ export class GurpsActor extends Actor {
             if (!!m.notes && w.usage_notes) m.notes += '\n' + w.usage_notes
             m.pageRef(i.reference || '')
             m.mode = w.usage || ''
-            m.import = w.calc?.level.toString() || '0'
+            m.import = w.calc?.level?.toString() || '0'
             m.damage = w.calc?.damage || ''
             m.reach = w.reach || ''
             m.parry = w.calc?.parry || ''
