@@ -1,80 +1,12 @@
-import { TraitGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
 import { RollType } from "../data"
-
-/**
- * Extend Settings.HitLocationTable to change the type of locations to an array of HitLocationWithCalc.
- */
-type HitLocationCalc = { roll_range: string; dr: Record<string, any>; flexible: boolean }
-type HitLocation = {
-	calc: HitLocationCalc
-	choice_name: string
-	description: string
-	dr_bonus: number
-	hit_penalty: number
-	id: string
-	slots: number
-	table_name: string
-}
-
-interface HitLocationTableWithCalc {
-	name: string
-	roll: string
-	locations: HitLocation[]
-}
-
-/**
- * The target of a damage roll.
- *
- * Most commonly implemented as a CharacterGURPS adapter/façade.
- * (See https://java-design-patterns.com/patterns/adapter/).
- */
-type HitPointsCalc = { value: number; current: number }
-
-interface DamageTarget {
-	// CharacterGURPS.attributes.get(gid.ST).calc.value
-	ST: number
-	// CharacterGURPS.attributes.get(gid.HitPoints).calc
-	hitPoints: HitPointsCalc
-	// CharacterGURPS.system.settings.body_type
-	// TODO It would be better to have a method to return DR directly; this would allow DR overrides.
-	hitLocationTable: HitLocationTableWithCalc
-	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
-	traits: Array<TraitGURPS>
-	//
-	hasTrait(name: string): boolean
-	// This.hasTrait("Injury Tolerance (Unliving)").
-	isUnliving: boolean
-	// This.hasTrait("Injury Tolerance (Homogenous)").
-	isHomogenous: boolean
-	// This.hasTrait("Injury Tolerance (Diffuse)").
-	isDiffuse: boolean
-}
+import { DamageTarget } from "./damage_target"
+import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
+import { HitLocation } from "./hit_location"
+import { _function } from "./utils"
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface DamageAttacker {}
-
-/**
- * Create the definitions of GURPS damage types.
- */
-enum DamageType {
-	injury = "injury",
-	burn = "burning",
-	cor = "corrosive",
-	cr = "crushing",
-	cut = "cutting",
-	fat = "fatigue",
-	imp = "impaling",
-	pi_m = "small piercing",
-	pi = "piercing",
-	pi_p = "large piercing",
-	pi_pp = "huge piercing",
-	tox = "toxic",
-	// TODO Should we include "knockback only" as a damage type?
-	kb = "knockback only",
-}
-
-const AnyPiercingType: DamageType[] = [DamageType.pi, DamageType.pi_m, DamageType.pi_p, DamageType.pi_pp]
 
 enum DefaultHitLocations {
 	Default = "Default",
@@ -90,107 +22,6 @@ interface DamageRoll {
 	// Possible values: tbb.
 	damageModifier: string
 	armorDivisor: number | "Ignore"
-}
-
-type _function = (x: number) => number
-const identity: _function = x => x
-const max1: _function = x => Math.min(x, 1)
-const max2: _function = x => Math.min(x, 2)
-const oneHalf: _function = x => x * 0.5
-const oneAndOneHalf: _function = x => x * 1.5
-const double: _function = x => x * 2
-const oneThird: _function = x => x * (1 / 3)
-const oneFifth: _function = x => x * 0.2
-const oneTenth: _function = x => x * 0.1
-
-type DamageTypeData = {
-	[key in DamageType]: {
-		theDefault: _function
-		unliving: _function
-		homogenous: _function
-		diffuse: _function
-	}
-}
-
-const dataTypeMultiplier: DamageTypeData = {
-	[DamageType.injury]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.burn]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.cor]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.cr]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.cut]: {
-		theDefault: oneAndOneHalf,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.fat]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.imp]: {
-		theDefault: double,
-		unliving: identity,
-		homogenous: oneHalf,
-		diffuse: max1,
-	},
-	[DamageType.pi_m]: {
-		theDefault: oneHalf,
-		unliving: oneFifth,
-		homogenous: oneTenth,
-		diffuse: max1,
-	},
-	[DamageType.pi]: {
-		theDefault: identity,
-		unliving: oneThird,
-		homogenous: oneFifth,
-		diffuse: max1,
-	},
-	[DamageType.pi_p]: {
-		theDefault: oneAndOneHalf,
-		unliving: identity,
-		homogenous: oneThird,
-		diffuse: max1,
-	},
-	[DamageType.pi_pp]: {
-		theDefault: double,
-		unliving: identity,
-		homogenous: oneHalf,
-		diffuse: max1,
-	},
-	[DamageType.tox]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.kb]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
 }
 
 /**
@@ -239,6 +70,7 @@ class InjuryEffectCheck {
 class CheckFailureConsequence {
 	margin: number
 
+	// "fall prone", "stun", "unconscious", ...
 	id: string
 
 	constructor(id: string, margin: number) {
@@ -383,7 +215,7 @@ class DamageCalculator {
 					[new CheckModifier("ht", RollType.Attribute, 0)],
 					[
 						new CheckFailureConsequence("stun", 0),
-						new CheckFailureConsequence("knocked down", 0),
+						new CheckFailureConsequence("fall prone", 0),
 						new CheckFailureConsequence("unconscious", 5),
 					]
 				)
@@ -413,7 +245,7 @@ class DamageCalculator {
 						new CheckModifier("Acrobatics", RollType.Skill, penalty),
 						new CheckModifier("Judo", RollType.Skill, penalty),
 					],
-					[new CheckFailureConsequence("fall down", 0)]
+					[new CheckFailureConsequence("fall prone", 0)]
 				),
 			]
 		)
@@ -502,14 +334,4 @@ class DamageCalculator {
 	}
 }
 
-export {
-	AnyPiercingType,
-	DamageCalculator,
-	DamageTarget,
-	DamageRoll,
-	DamageType,
-	DamageAttacker,
-	DefaultHitLocations,
-	HitLocationTableWithCalc,
-	HitLocation,
-}
+export { AnyPiercingType, DamageCalculator, DamageRoll, DamageType, DamageAttacker, DefaultHitLocations }

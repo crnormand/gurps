@@ -4,14 +4,13 @@ import {
 	DamageAttacker,
 	DamageCalculator,
 	DamageRoll,
-	DamageTarget,
 	DamageType,
-	HitLocationTableWithCalc,
-	HitLocation,
 	AnyPiercingType,
 } from "../../src/module/damage_calculator"
 import { DiceGURPS } from "../../src/module/dice"
 import { RollType } from "../../src/module/data"
+import { DamageTarget } from "@module/damage_calculator/damage_target"
+import { HitLocation, HitLocationTableWithCalc } from "@module/damage_calculator/hit_location"
 
 class _Attacker implements DamageAttacker {}
 
@@ -573,7 +572,7 @@ describe("Damage calculator", () => {
 					checks: [{ id: "ht", modifier: 0, rollType: RollType.Attribute }],
 					failures: [
 						{ id: "stun", margin: 0 },
-						{ id: "knocked down", margin: 0 },
+						{ id: "fall prone", margin: 0 },
 						{ id: "unconscious", margin: 5 },
 					],
 				})
@@ -586,24 +585,19 @@ describe("Damage calculator", () => {
 			_target.ST = 12
 		})
 
-		it("For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker.", () => {
-			_roll.damageType = DamageType.cr
+		it("Only crushing and cutting (and knockback only) attacks can cause knockback.", () => {
+			_location.calc.dr.all = 16
+			_target.hitLocationTable.locations.push(_location)
+			_target.ST = 10
+			_roll.basicDamage = 16
 
-			_roll.basicDamage = 9
-			let calc = new DamageCalculator(_roll, _target)
-			expect(calc.knockback).toBe(0)
+			const testKeys = Object.keys(DamageType).filter(k => !["cr", "cut", "kb"].includes(k))
+			for (let type of testKeys as (keyof typeof DamageType)[]) {
+				_roll.damageType = DamageType[type]
 
-			_roll.basicDamage = 10
-			calc = new DamageCalculator(_roll, _target)
-			expect(calc.knockback).toBe(1)
-
-			_roll.basicDamage = 19
-			calc = new DamageCalculator(_roll, _target)
-			expect(calc.knockback).toBe(1)
-
-			_roll.basicDamage = 20
-			calc = new DamageCalculator(_roll, _target)
-			expect(calc.knockback).toBe(2)
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.knockback).toBe(0)
+			}
 		})
 
 		it("A crushing (or knockback only) attack can cause knockback regardless of whether it penetrates DR.", () => {
@@ -662,19 +656,24 @@ describe("Damage calculator", () => {
 			expect(calc.knockback).toBe(0)
 		})
 
-		it("Only crushing and cutting (and knockback only) attacks can cause knockback.", () => {
-			_location.calc.dr.all = 16
-			_target.hitLocationTable.locations.push(_location)
-			_target.ST = 10
-			_roll.basicDamage = 16
+		it("For every full multiple of the target’s ST-2 rolled, move the target one yard away from the attacker.", () => {
+			_roll.damageType = DamageType.cr
 
-			const testKeys = Object.keys(DamageType).filter(k => !["cr", "cut", "kb"].includes(k))
-			for (let type of testKeys as (keyof typeof DamageType)[]) {
-				_roll.damageType = DamageType[type]
+			_roll.basicDamage = 9
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(0)
 
-				let calc = new DamageCalculator(_roll, _target)
-				expect(calc.knockback).toBe(0)
-			}
+			_roll.basicDamage = 10
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 19
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(1)
+
+			_roll.basicDamage = 20
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.knockback).toBe(2)
 		})
 
 		it("Anyone who suffers knockback must attempt a roll against the highest of DX, Acrobatics, or Judo. On a failure, he falls down.", () => {
@@ -699,7 +698,7 @@ describe("Damage calculator", () => {
 						{ id: "Acrobatics", rollType: RollType.Skill, modifier: 0 },
 						{ id: "Judo", rollType: RollType.Skill, modifier: 0 },
 					],
-					failures: [{ id: "fall down", margin: 0 }],
+					failures: [{ id: "fall prone", margin: 0 }],
 				})
 			)
 		})
@@ -726,7 +725,7 @@ describe("Damage calculator", () => {
 						{ id: "Acrobatics", rollType: RollType.Skill, modifier: -1 },
 						{ id: "Judo", rollType: RollType.Skill, modifier: -1 },
 					],
-					failures: [{ id: "fall down", margin: 0 }],
+					failures: [{ id: "fall prone", margin: 0 }],
 				})
 			)
 
@@ -742,7 +741,7 @@ describe("Damage calculator", () => {
 						{ id: "Acrobatics", rollType: RollType.Skill, modifier: -4 },
 						{ id: "Judo", rollType: RollType.Skill, modifier: -4 },
 					],
-					failures: [{ id: "fall down", margin: 0 }],
+					failures: [{ id: "fall prone", margin: 0 }],
 				})
 			)
 		})
@@ -770,7 +769,7 @@ describe("Damage calculator", () => {
 						{ id: "Acrobatics", rollType: RollType.Skill, modifier: 4 },
 						{ id: "Judo", rollType: RollType.Skill, modifier: 4 },
 					],
-					failures: [{ id: "fall down", margin: 0 }],
+					failures: [{ id: "fall prone", margin: 0 }],
 				})
 			)
 
@@ -786,7 +785,7 @@ describe("Damage calculator", () => {
 						{ id: "Acrobatics", rollType: RollType.Skill, modifier: 2 },
 						{ id: "Judo", rollType: RollType.Skill, modifier: 2 },
 					],
-					failures: [{ id: "fall down", margin: 0 }],
+					failures: [{ id: "fall prone", margin: 0 }],
 				})
 			)
 		})
