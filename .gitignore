@@ -29,3 +29,8 @@ junit.xml
 
 #.git backup
 .git-bak
+.DS_Store
+
+#test coverage
+coverage
+test-report.html
