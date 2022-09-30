@@ -1,16 +1,12 @@
 /* eslint-disable jest/no-disabled-tests */
 import { TraitGURPS } from "@item"
-import {
-	DamageAttacker,
-	DamageCalculator,
-	DamageRoll,
-	DamageType,
-	AnyPiercingType,
-} from "../../src/module/damage_calculator"
+import { DamageCalculator } from "../../src/module/damage_calculator/index"
 import { DiceGURPS } from "../../src/module/dice"
 import { RollType } from "../../src/module/data"
-import { DamageTarget } from "@module/damage_calculator/damage_target"
-import { HitLocation, HitLocationTableWithCalc } from "@module/damage_calculator/hit_location"
+import { DamageTarget } from "../../src/module/damage_calculator/damage_target"
+import { HitLocation, HitLocationTableWithCalc } from "../../src/module/damage_calculator/hit_location"
+import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
+import { DamageAttacker, DamageRoll } from "../../src/module/damage_calculator/damage_roll"
 
 class _Attacker implements DamageAttacker {}
 
@@ -59,7 +55,7 @@ class _DamageRoll implements DamageRoll {
 
 	damageModifier = ""
 
-	armorDivisor = 0
+	armorDivisor = 1
 }
 
 // Add real tests here.
@@ -90,7 +86,7 @@ describe("Damage calculator", () => {
 		_roll = new _DamageRoll()
 		_roll.attacker = _attacker
 		_roll.basicDamage = 8
-		_roll.armorDivisor = 0
+		_roll.armorDivisor = 1
 		_roll.damageType = DamageType.cr
 		_roll.dice = new DiceGURPS("2d")
 		_roll.locationId = "torso"
@@ -210,7 +206,7 @@ describe("Damage calculator", () => {
 				_location.calc.dr.all = 20
 				_target.hitLocationTable.locations.push(_location)
 				_roll.basicDamage = 20
-				_roll.armorDivisor = "Ignore"
+				_roll.armorDivisor = 0
 				let calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(20)
 			})

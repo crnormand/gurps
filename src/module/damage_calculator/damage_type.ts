@@ -1,4 +1,15 @@
-import { double, identity, max1, max2, oneAndOneHalf, oneFifth, oneHalf, oneTenth, oneThird, _function } from "./utils"
+import {
+	double,
+	identity,
+	max1,
+	max2,
+	oneAndOneHalf,
+	oneFifth,
+	oneHalf,
+	oneTenth,
+	oneThird,
+	ModifierFunction,
+} from "./utils"
 
 /**
  * Create the definitions of GURPS damage types.
@@ -24,10 +35,10 @@ const AnyPiercingType: DamageType[] = [DamageType.pi, DamageType.pi_m, DamageTyp
 
 type DamageTypeData = {
 	[key in DamageType]: {
-		theDefault: _function
-		unliving: _function
-		homogenous: _function
-		diffuse: _function
+		theDefault: ModifierFunction
+		unliving: ModifierFunction
+		homogenous: ModifierFunction
+		diffuse: ModifierFunction
 	}
 }
 

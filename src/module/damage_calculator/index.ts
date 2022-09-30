@@ -1,111 +1,10 @@
-import { DiceGURPS } from "@module/dice"
 import { RollType } from "../data"
+import { DamageRoll } from "./damage_roll"
 import { DamageTarget } from "./damage_target"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
 import { HitLocation } from "./hit_location"
-import { _function } from "./utils"
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface DamageAttacker {}
-
-enum DefaultHitLocations {
-	Default = "Default",
-	Random = "Random",
-}
-
-interface DamageRoll {
-	locationId: string | DefaultHitLocations
-	attacker: DamageAttacker
-	dice: DiceGURPS
-	basicDamage: number
-	damageType: DamageType
-	// Possible values: tbb.
-	damageModifier: string
-	armorDivisor: number | "Ignore"
-}
-
-/**
- * ModifierEffect represents a generic modifier to some kind of roll.
- *
- * modifier - the numeric value used to modify the roll or check.
- * rollType - the type of the roll/check modified.
- * id - either the id of an attribute or name of the thing (skill, spell, etc).
- */
-class CheckModifier {
-	modifier: number
-
-	rollType: RollType
-
-	id: string
-
-	constructor(id: string, rollType: RollType, modifier: number) {
-		this.id = id
-		this.rollType = rollType
-		this.modifier = modifier
-	}
-}
-
-/**
- * An injury effect that requires a check of some kind.
- *
- * failure - an array of 'consequences' of failing the check.
- */
-class InjuryEffectCheck {
-	checks: CheckModifier[]
-
-	failures: CheckFailureConsequence[]
-
-	constructor(checks: CheckModifier[], failures: CheckFailureConsequence[]) {
-		this.checks = checks
-		this.failures = failures
-	}
-}
-
-/**
- * The consequence of failing a check.
- *
- * margin - "margin of failure" at which this effect is applied.
- * id - the identifier of a consequence.
- */
-class CheckFailureConsequence {
-	margin: number
-
-	// "fall prone", "stun", "unconscious", ...
-	id: string
-
-	constructor(id: string, margin: number) {
-		this.id = id
-		this.margin = margin
-	}
-}
-
-/**
- * TODO I'm kind of torn on this ... maybe it should just be a string, rather than an enum?
- */
-enum InjuryEffectType {
-	shock = "shock",
-	majorWound = "majorWound",
-	knockback = "knockback",
-}
-
-/**
- * This class represents some effect of sudden injury.
- *
- * Right now, it is just data. At some point in the future, some of them may become Active Effects.
- */
-class InjuryEffect {
-	id: string
-
-	modifiers: CheckModifier[]
-
-	checks: InjuryEffectCheck[]
-
-	constructor(id: string, modifiers: CheckModifier[] = [], checks: InjuryEffectCheck[] = []) {
-		this.id = id
-		this.modifiers = modifiers
-		this.checks = checks
-	}
-}
+import { CheckFailureConsequence, EffectCheck, InjuryEffect, InjuryEffectType, RollModifier } from "./jnjury_effect"
+import { ModifierFunction } from "./utils"
 
 /**
  * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
@@ -119,11 +18,21 @@ class DamageCalculator {
 
 	private _damageRoll: DamageRoll
 
+	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
+		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
+		this._damageRoll = damageRoll
+		this._target = defender
+	}
+
 	/**
 	 * @returns {number} - The basic damage; typically directly from the damage roll.
 	 */
 	get basicDamage(): number {
-		return this._damageRoll.damageType === DamageType.kb ? 0 : this._basicDamage
+		return this._isKnockbackOnly() ? 0 : this._basicDamage
+	}
+
+	private _isKnockbackOnly() {
+		return this._damageRoll.damageType === DamageType.kb
 	}
 
 	private get _basicDamage(): number {
@@ -149,8 +58,12 @@ class DamageCalculator {
 	 * @returns {number} - The amount of blunt trauma damage, if any.
 	 */
 	get bluntTrauma(): number {
-		if (this.penetratingDamage > 0 || !this._targetedHitLocation?.calc.flexible) return 0
+		if (this.penetratingDamage > 0 || !this._isFlexibleArmor()) return 0
 		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
+	}
+
+	private _isFlexibleArmor() {
+		return this._targetedHitLocation?.calc.flexible
 	}
 
 	/**
@@ -167,12 +80,16 @@ class DamageCalculator {
 	}
 
 	get knockback() {
-		if ([DamageType.cr, DamageType.cut, DamageType.kb].includes(this._damageRoll.damageType)) {
+		if (this._isDamageTypeKnockbackEligible()) {
 			if (this._damageRoll.damageType === DamageType.cut && this.penetratingDamage > 0) return 0
 
 			return Math.floor(this._basicDamage / (this._knockbackResistance - 2))
 		}
 		return 0
+	}
+
+	private _isDamageTypeKnockbackEligible() {
+		return [DamageType.cr, DamageType.cut, DamageType.kb].includes(this._damageRoll.damageType)
 	}
 
 	private get _knockbackResistance() {
@@ -184,8 +101,8 @@ class DamageCalculator {
 		if (rawModifier > 0) {
 			let modifier = Math.min(4, rawModifier) * -1
 			const shockEffect = new InjuryEffect(InjuryEffectType.shock, [
-				new CheckModifier("dx", RollType.Attribute, modifier),
-				new CheckModifier("iq", RollType.Attribute, modifier),
+				new RollModifier("dx", RollType.Attribute, modifier),
+				new RollModifier("iq", RollType.Attribute, modifier),
 			])
 			return [shockEffect]
 		}
@@ -211,8 +128,8 @@ class DamageCalculator {
 			 * wound effects, otherwise use the hardcoded values here.
 			 */
 			if (this._damageRoll.locationId === "torso") {
-				const htCheck = new InjuryEffectCheck(
-					[new CheckModifier("ht", RollType.Attribute, 0)],
+				const htCheck = new EffectCheck(
+					[new RollModifier("ht", RollType.Attribute, 0)],
 					[
 						new CheckFailureConsequence("stun", 0),
 						new CheckFailureConsequence("fall prone", 0),
@@ -221,14 +138,15 @@ class DamageCalculator {
 				)
 				effect.checks.push(htCheck)
 			}
-
 			wounds.push(effect)
 		}
 		return wounds
 	}
 
 	private get _knockbackEffects(): InjuryEffect[] {
+		// Cache the result of `this.knockback` as we will use it multiple times.
 		let knockback = this.knockback
+
 		if (knockback === 0) return []
 
 		let penalty = knockback === 1 ? 0 : -1 * (knockback - 1)
@@ -239,11 +157,11 @@ class DamageCalculator {
 			InjuryEffectType.knockback,
 			[],
 			[
-				new InjuryEffectCheck(
+				new EffectCheck(
 					[
-						new CheckModifier("dx", RollType.Attribute, penalty),
-						new CheckModifier("Acrobatics", RollType.Skill, penalty),
-						new CheckModifier("Judo", RollType.Skill, penalty),
+						new RollModifier("dx", RollType.Attribute, penalty),
+						new RollModifier("Acrobatics", RollType.Skill, penalty),
+						new RollModifier("Judo", RollType.Skill, penalty),
 					],
 					[new CheckFailureConsequence("fall prone", 0)]
 				),
@@ -267,7 +185,7 @@ class DamageCalculator {
 	}
 
 	private get _effectiveDR() {
-		if (this._effectiveArmorDivisor === "Ignore") return 0
+		if (this._isIgnoreDR()) return 0
 
 		let dr =
 			this._damageRoll.damageType === DamageType.injury
@@ -278,22 +196,28 @@ class DamageCalculator {
 		return this._effectiveArmorDivisor < 1 ? Math.max(dr, 1) : dr
 	}
 
+	private _isIgnoreDR(): boolean {
+		return this._effectiveArmorDivisor === 0
+	}
+
+	/**
+	 * Encapsulate here to allow overriding.
+	 */
 	private get _effectiveArmorDivisor() {
-		return this._damageRoll.armorDivisor === 0 ? 1 : this._damageRoll.armorDivisor
+		return this._damageRoll.armorDivisor
 	}
 
 	private get _basicDR() {
-		return (this._targetedHitLocation?.calc.dr?.all as number | undefined) ?? 0
+		return this._targetedHitLocation?.calc.dr?.all ?? 0
 	}
 
-	private get _woundingModifier(): _function {
+	private get _woundingModifier(): ModifierFunction {
 		const multiplier = dataTypeMultiplier[this._damageRoll.damageType]
 		if (this._target.isUnliving) return multiplier.unliving
 		if (this._target.isHomogenous) return multiplier.homogenous
 
 		/**
-		 * TODO
-		 * Diffuse: Exception: Area-effect, cone, and explosion attacks cause normal injury.
+		 * TODO Diffuse: Exception: Area-effect, cone, and explosion attacks cause normal injury.
 		 */
 		if (this._target.isDiffuse) return multiplier.diffuse
 
@@ -327,11 +251,6 @@ class DamageCalculator {
 	private get _targetedHitLocation(): HitLocation | undefined {
 		return this._defenderHitLocations.find(it => it.id === this._targetedHitLocationId)
 	}
-
-	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
-		this._damageRoll = damageRoll
-		this._target = defender
-	}
 }
 
-export { AnyPiercingType, DamageCalculator, DamageRoll, DamageType, DamageAttacker, DefaultHitLocations }
+export { DamageCalculator }
