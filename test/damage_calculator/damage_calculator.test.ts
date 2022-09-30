@@ -7,6 +7,7 @@ import { DamageTarget } from "../../src/module/damage_calculator/damage_target"
 import { HitLocation, HitLocationTableWithCalc } from "../../src/module/damage_calculator/hit_location"
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
 import { DamageAttacker, DamageRoll } from "../../src/module/damage_calculator/damage_roll"
+import { InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
 
 class _Attacker implements DamageAttacker {}
 
@@ -451,11 +452,11 @@ describe("Damage calculator", () => {
 				const injuryEffects = calc.injuryEffects
 				expect(injuryEffects).toContainEqual(
 					expect.objectContaining({
-						id: "shock",
+						id: InjuryEffectType.shock,
 					})
 				)
 
-				let modifiers = calc.injuryEffects.find(it => it.id === "shock")?.modifiers
+				let modifiers = calc.injuryEffects.find(it => it.id === InjuryEffectType.shock)?.modifiers
 				expect(modifiers).toContainEqual(
 					expect.objectContaining({
 						id: "dx",
@@ -1030,9 +1031,9 @@ describe("Damage calculator", () => {
 				expect(calc.penetratingDamage).toBe(1)
 				expect(calc.injury).toBe(1)
 
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "shock" }))
+				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.shock }))
 
-				let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+				let checks = calc.injuryEffects.find(it => it.id === InjuryEffectType.majorWound)?.checks
 				expect(checks).toContainEqual(
 					expect.objectContaining({
 						checks: [{ id: "ht", modifier: -5, rollType: RollType.Attribute }],
@@ -1162,7 +1163,7 @@ describe("Damage calculator", () => {
 				expect(calc.penetratingDamage).toBe(1)
 				expect(calc.injury).toBe(4)
 
-				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "blinded" }))
+				expect(calc.injuryEffects).not.toContainEqual(expect.objectContaining({ id: "eye blinded" }))
 
 				_roll.basicDamage = 7
 				_roll.damageType = DamageType.cr
@@ -1170,12 +1171,69 @@ describe("Damage calculator", () => {
 				expect(calc.penetratingDamage).toBe(2)
 				expect(calc.injury).toBe(8)
 
-				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: "blinded" }))
+				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
 			})
 		})
 
-		// Describe("Face.", () => {
-		// 	expect(true).toBeTruthy()
-		// })
+		describe("Face.", () => {
+			beforeEach(() => {
+				_roll.locationId = "face"
+			})
+
+			it("Corrosion damage (only) gets a ×1.5 wounding modifier.", () => {
+				_roll.damageType = DamageType.cor
+				_roll.basicDamage = 10
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(15)
+
+				let types = [DamageType.imp, ...AnyPiercingType, DamageType.burn, DamageType.cr, DamageType.cut]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(10)
+				}
+			})
+
+			it("Knockdown (stun) rolls are at -5.", () => {
+				let calc = new DamageCalculator(_roll, _target)
+
+				let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+				expect(checks).toContainEqual(
+					expect.objectContaining({
+						checks: [{ id: "ht", modifier: -5, rollType: RollType.Attribute }],
+						failures: [
+							{ id: "stun", margin: 0 },
+							{ id: "fall prone", margin: 0 },
+							{ id: "unconscious", margin: 5 },
+						],
+					})
+				)
+			})
+
+			it("If (cor) inflicts a major wound, it also blinds one eye.", () => {
+				_roll.locationId = "face"
+				_roll.basicDamage = 8
+				_roll.damageType = DamageType.cor
+				let calc = new DamageCalculator(_roll, _target)
+
+				expect(calc.injury).toBeGreaterThan(_target.hitPoints.value / 2)
+				expect(calc.injury).toBeLessThan(_target.hitPoints.value)
+				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.majorWound }))
+				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.eyeBlinded }))
+			})
+
+			it("...(both eyes on damage greater than full HP).", () => {
+				_roll.locationId = "face"
+				_roll.basicDamage = 15
+				_roll.damageType = DamageType.cor
+				let calc = new DamageCalculator(_roll, _target)
+
+				expect(calc.injury).toBeGreaterThan(_target.hitPoints.value)
+				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.majorWound }))
+				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.blinded }))
+			})
+		})
 	})
 })

@@ -7,7 +7,7 @@ import { RollType } from "../data"
  */
 class InjuryEffect {
 	/* A unique identifier for the kind of effect. Might be an enum? */
-	id: string
+	id: InjuryEffectType
 
 	/* An array of RollModifiers that is a direct consequence of the effect. */
 	modifiers: RollModifier[]
@@ -15,7 +15,7 @@ class InjuryEffect {
 	/* An array of EffectChecks. */
 	checks: EffectCheck[]
 
-	constructor(id: string, modifiers: RollModifier[] = [], checks: EffectCheck[] = []) {
+	constructor(id: InjuryEffectType, modifiers: RollModifier[] = [], checks: EffectCheck[] = []) {
 		this.id = id
 		this.modifiers = modifiers
 		this.checks = checks
@@ -90,6 +90,8 @@ enum InjuryEffectType {
 	shock = "shock",
 	majorWound = "majorWound",
 	knockback = "knockback",
+	eyeBlinded = "eyeBlinded",
+	blinded = "blinded",
 }
 
 class KnockdownCheck extends EffectCheck {

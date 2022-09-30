@@ -144,6 +144,8 @@ class DamageCalculator {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-10)]))
 		} else if (this._damageRoll.locationId === "vitals" && this._shockEffects.length > 0) {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
+		} else if (this._damageRoll.locationId === "face" && this._isMajorWound()) {
+			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
 		} else if (this._isMajorWound()) {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
 		}
@@ -183,7 +185,13 @@ class DamageCalculator {
 
 	private get _miscellaneousEffects(): InjuryEffect[] {
 		if (this._damageRoll.locationId === "eye" && this.injury > this._target.hitPoints.value / 10)
-			return [new InjuryEffect("blinded")]
+			return [new InjuryEffect(InjuryEffectType.eyeBlinded)]
+
+		if (this._damageRoll.locationId === "face" && this._isMajorWound()) {
+			return this.injury > this._target.hitPoints.value
+				? [new InjuryEffect(InjuryEffectType.blinded)]
+				: [new InjuryEffect(InjuryEffectType.eyeBlinded)]
+		}
 
 		return []
 	}
@@ -244,22 +252,17 @@ class DamageCalculator {
 		// Fatigue damage always ignores hit location.
 		if (this._damageRoll.damageType === DamageType.fat) return identity
 
-		if (
-			this._damageRoll.locationId === "vitals" &&
-			[DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)
-		)
-			return x => x * 3
-
-		if (
-			this._damageRoll.locationId === "vitals" &&
-			this._damageRoll.damageType === DamageType.burn &&
-			this._damageRoll.damageModifier === "tbb"
-		)
-			return x => x * 2
-
-		if (["skull", "eye"].includes(this._damageRoll.locationId) && this._damageRoll.damageType !== DamageType.tox)
-			return x => x * 4
-
+		if (this._damageRoll.locationId === "vitals") {
+			if ([DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)) return x => x * 3
+			if (this._damageRoll.damageType === DamageType.burn && this._damageRoll.damageModifier === "tbb")
+				return x => x * 2
+		}
+		if (["skull", "eye"].includes(this._damageRoll.locationId)) {
+			if (this._damageRoll.damageType !== DamageType.tox) return x => x * 4
+		}
+		if (this._damageRoll.locationId === "face") {
+			return this._damageRoll.damageType === DamageType.cor ? x => x * 1.5 : identity
+		}
 		return multiplier.theDefault
 	}
 
