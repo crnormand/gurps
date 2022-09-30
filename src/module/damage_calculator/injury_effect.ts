@@ -1,4 +1,4 @@
-import { RollType } from "@module/data"
+import { RollType } from "../data"
 
 /**
  * InjuryEffect represents some effect of sudden injury.
@@ -92,4 +92,17 @@ enum InjuryEffectType {
 	knockback = "knockback",
 }
 
-export { InjuryEffect, RollModifier, InjuryEffectType, CheckFailureConsequence, EffectCheck }
+class KnockdownCheck extends EffectCheck {
+	constructor(modifier = 0) {
+		super(
+			[new RollModifier("ht", RollType.Attribute, modifier)],
+			[
+				new CheckFailureConsequence("stun", 0),
+				new CheckFailureConsequence("fall prone", 0),
+				new CheckFailureConsequence("unconscious", 5),
+			]
+		)
+	}
+}
+
+export { InjuryEffect, RollModifier, InjuryEffectType, CheckFailureConsequence, EffectCheck, KnockdownCheck }

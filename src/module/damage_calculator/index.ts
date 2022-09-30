@@ -3,8 +3,17 @@ import { DamageRoll } from "./damage_roll"
 import { DamageTarget } from "./damage_target"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
 import { HitLocation } from "./hit_location"
-import { CheckFailureConsequence, EffectCheck, InjuryEffect, InjuryEffectType, RollModifier } from "./jnjury_effect"
-import { ModifierFunction } from "./utils"
+import {
+	CheckFailureConsequence,
+	EffectCheck,
+	InjuryEffect,
+	InjuryEffectType,
+	KnockdownCheck,
+	RollModifier,
+} from "./injury_effect"
+import { identity, ModifierFunction } from "./utils"
+
+const Head = ["skull", "eye", "face"]
 
 /**
  * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
@@ -58,6 +67,8 @@ class DamageCalculator {
 	 * @returns {number} - The amount of blunt trauma damage, if any.
 	 */
 	get bluntTrauma(): number {
+		if (this._damageRoll.damageType === DamageType.fat) return 0
+
 		if (this.penetratingDamage > 0 || !this._isFlexibleArmor()) return 0
 		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
 	}
@@ -67,18 +78,8 @@ class DamageCalculator {
 	}
 
 	/**
-	 * @returns {Array<InjuryEffect>} - The list of injury effects caused by this damage.
+	 * Return yards of knockback, if any.
 	 */
-	get injuryEffects(): Array<InjuryEffect> {
-		let effects: InjuryEffect[] = []
-
-		effects.push(...this._shockEffects)
-		effects.push(...this._majorWoundEffects)
-		effects.push(...this._knockbackEffects)
-
-		return effects
-	}
-
 	get knockback() {
 		if (this._isDamageTypeKnockbackEligible()) {
 			if (this._damageRoll.damageType === DamageType.cut && this.penetratingDamage > 0) return 0
@@ -94,6 +95,20 @@ class DamageCalculator {
 
 	private get _knockbackResistance() {
 		return this._target.ST
+	}
+
+	/**
+	 * @returns {Array<InjuryEffect>} - The list of injury effects caused by this damage.
+	 */
+	get injuryEffects(): Array<InjuryEffect> {
+		let effects: InjuryEffect[] = []
+
+		effects.push(...this._shockEffects)
+		effects.push(...this._majorWoundEffects)
+		effects.push(...this._knockbackEffects)
+		effects.push(...this._miscellaneousEffects)
+
+		return effects
 	}
 
 	private get _shockEffects(): InjuryEffect[] {
@@ -115,32 +130,28 @@ class DamageCalculator {
 
 	private get _majorWoundEffects(): InjuryEffect[] {
 		const wounds = []
-		if (this.injury > this._target.hitPoints.value / 2) {
-			let effect = new InjuryEffect(InjuryEffectType.majorWound, [])
 
-			/**
-			 * TODO
-			 * To be honest, hardcoding the effects of major wounmds for a hit location probably doesn't work in every
-			 * case, especially for non-standard/non-humanoid body types. It might be better if the effects were
-			 * captured on the actor.system.settings.body_type hit location data.
-			 *
-			 * Perhaps the default algorithm would be: look up the hit location on the actor to see if it has major
-			 * wound effects, otherwise use the hardcoded values here.
-			 */
-			if (this._damageRoll.locationId === "torso") {
-				const htCheck = new EffectCheck(
-					[new RollModifier("ht", RollType.Attribute, 0)],
-					[
-						new CheckFailureConsequence("stun", 0),
-						new CheckFailureConsequence("fall prone", 0),
-						new CheckFailureConsequence("unconscious", 5),
-					]
-				)
-				effect.checks.push(htCheck)
-			}
-			wounds.push(effect)
+		// Fatigue attacks ignore hit location
+		if (this._damageRoll.damageType === DamageType.fat && this._isMajorWound()) {
+			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+		} else if (this._damageRoll.locationId === "torso" && this._isMajorWound()) {
+			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+		} else if (
+			["skull", "eye"].includes(this._damageRoll.locationId) &&
+			(this._shockEffects.length > 0 || this._isMajorWound()) &&
+			this._damageRoll.damageType !== DamageType.tox
+		) {
+			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-10)]))
+		} else if (this._damageRoll.locationId === "vitals" && this._shockEffects.length > 0) {
+			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
+		} else if (this._isMajorWound()) {
+			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
 		}
 		return wounds
+	}
+
+	private _isMajorWound() {
+		return this.injury > this._target.hitPoints.value / 2
 	}
 
 	private get _knockbackEffects(): InjuryEffect[] {
@@ -168,6 +179,13 @@ class DamageCalculator {
 			]
 		)
 		return [knockbackEffect]
+	}
+
+	private get _miscellaneousEffects(): InjuryEffect[] {
+		if (this._damageRoll.locationId === "eye" && this.injury > this._target.hitPoints.value / 10)
+			return [new InjuryEffect("blinded")]
+
+		return []
 	}
 
 	private get _bluntTraumaDivisor() {
@@ -222,6 +240,10 @@ class DamageCalculator {
 		if (this._target.isDiffuse) return multiplier.diffuse
 
 		// --- Calculate Wounding Modifier for Hit Location. ---
+
+		// Fatigue damage always ignores hit location.
+		if (this._damageRoll.damageType === DamageType.fat) return identity
+
 		if (
 			this._damageRoll.locationId === "vitals" &&
 			[DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)
@@ -235,7 +257,8 @@ class DamageCalculator {
 		)
 			return x => x * 2
 
-		if (this._damageRoll.locationId === "skull" && this._damageRoll.damageType !== DamageType.tox) return x => x * 4
+		if (["skull", "eye"].includes(this._damageRoll.locationId) && this._damageRoll.damageType !== DamageType.tox)
+			return x => x * 4
 
 		return multiplier.theDefault
 	}
