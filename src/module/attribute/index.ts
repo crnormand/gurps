@@ -1,7 +1,7 @@
 import { CharacterGURPS } from "@actor"
 import { gid } from "@module/data"
 import { sanitize } from "@util"
-import { AttributeDef } from "./attribute_def"
+import { AttributeDef, AttributeType } from "./attribute_def"
 import { PoolThreshold } from "./pool_threshold"
 
 const reservedIds: string[] = [gid.Skill, gid.Parry, gid.Block, gid.Dodge, gid.SizeModifier, gid.Ten]
@@ -54,14 +54,14 @@ export class Attribute {
 		const def = this.attribute_def
 		if (!def) return 0
 		let max = def.baseValue(this.actor) + this.adj + this.bonus
-		if (def.type != "decimal") {
+		if (def.type !== AttributeType.Decimal) {
 			max = Math.floor(max)
 		}
 		return max
 	}
 
 	set max(v: number) {
-		if (this.max == v) return
+		if (this.max === v) return
 		const def = this.attribute_def
 		if (def) this.adj = v - (def.baseValue(this.actor) + this.bonus)
 	}
@@ -69,7 +69,7 @@ export class Attribute {
 	get current(): number {
 		const max = this.max
 		const def = this.attribute_def
-		if (!def || def.type != "pool") {
+		if (!def || def.type !== AttributeType.Pool) {
 			return max
 		}
 		return max - (this.damage ?? 0)
@@ -82,7 +82,12 @@ export class Attribute {
 	get currentThreshold(): PoolThreshold | null {
 		const def = this.attribute_def
 		if (!def) return null
-		if (def.type.includes("separator")) return null
+		if (
+			[AttributeType.PrimarySeparator, AttributeType.SecondarySeparator, AttributeType.PoolSeparator].includes(
+				def.type
+			)
+		)
+			return null
 		const cur = this.current
 		if (def.thresholds) {
 			for (const t of def.thresholds) {

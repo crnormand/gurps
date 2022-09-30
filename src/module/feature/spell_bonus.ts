@@ -13,7 +13,7 @@ export class SpellBonus extends BaseFeature {
 
 	get featureMapKey(): string {
 		if (this.tags?.compare !== "none") {
-			return "spell.points" + "*"
+			return "spell.points*"
 		}
 		switch (this.match) {
 			case "all_colleges":
@@ -31,7 +31,7 @@ export class SpellBonus extends BaseFeature {
 	}
 
 	buildKey(prefix: string): string {
-		if (this.name?.compare === "is") {
+		if (this.name?.compare === StringComparison.Is) {
 			return `${prefix}/${this.name.qualifier}`
 		}
 		return `${prefix}*`

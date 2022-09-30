@@ -1,6 +1,6 @@
 import { CharacterProfile } from "@actor/character/data"
 import { i18n } from "@util"
-import { AttributeDefObj } from "./attribute/attribute_def"
+import { AttributeDefObj, AttributeType } from "./attribute/attribute_def"
 import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data"
 import { GURPS } from "./gurps"
 
@@ -155,7 +155,7 @@ export const SETTINGS_TEMP: provider = {
 		attributes: {
 			st: {
 				id: "st",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "ST",
 				full_name: "Strength",
 				attribute_base: "10",
@@ -164,7 +164,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			dx: {
 				id: "dx",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "DX",
 				full_name: "Dexterity",
 				attribute_base: "10",
@@ -172,7 +172,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			iq: {
 				id: "iq",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "IQ",
 				full_name: "Intelligence",
 				attribute_base: "10",
@@ -180,7 +180,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			ht: {
 				id: "ht",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "HT",
 				full_name: "Health",
 				attribute_base: "10",
@@ -188,21 +188,21 @@ export const SETTINGS_TEMP: provider = {
 			},
 			will: {
 				id: "will",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Will",
 				attribute_base: "$iq",
 				cost_per_point: 5,
 			},
 			fright_check: {
 				id: "fright_check",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Fright Check",
 				attribute_base: "$will",
 				cost_per_point: 2,
 			},
 			per: {
 				id: "per",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Per",
 				full_name: "Perception",
 				attribute_base: "$iq",
@@ -210,49 +210,49 @@ export const SETTINGS_TEMP: provider = {
 			},
 			vision: {
 				id: "vision",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Vision",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			hearing: {
 				id: "hearing",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Hearing",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			taste_smell: {
 				id: "taste_smell",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Taste \u0026 Smell",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			touch: {
 				id: "touch",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Touch",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			basic_speed: {
 				id: "basic_speed",
-				type: "decimal",
+				type: AttributeType.Decimal,
 				name: "Basic Speed",
 				attribute_base: "($dx+$ht)/4",
 				cost_per_point: 20,
 			},
 			basic_move: {
 				id: "basic_move",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Basic Move",
 				attribute_base: "floor($basic_speed)",
 				cost_per_point: 5,
 			},
 			fp: {
 				id: "fp",
-				type: "pool",
+				type: AttributeType.Pool,
 				name: "FP",
 				full_name: "Fatigue Points",
 				attribute_base: "$ht",
@@ -288,7 +288,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			hp: {
 				id: "hp",
-				type: "pool",
+				type: AttributeType.Pool,
 				name: "HP",
 				full_name: "Hit Points",
 				attribute_base: "$st",

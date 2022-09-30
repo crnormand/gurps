@@ -34,7 +34,6 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 				// @ts-ignore until types v10
 				.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
 		)
-		// Const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.system.attributes)
 		const sheetData = {
 			...super.getData(options),
 			system: actorData.system,

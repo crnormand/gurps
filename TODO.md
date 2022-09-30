@@ -25,10 +25,9 @@
 	- add non-attribute resource trackers to dynamic character (optional, could think of better solution)
 	- add move modes to dynamic character
 	- add move advantage parsing (by name? or feature? or VTT notes?) for "Flight", "Walk on Air".
-	the names pased should be customizable via an object-type system setting. the names(?) value should be an array of strings
+	the names parsed should be customizable via an object-type system setting. the names(?) value should be an array of strings
 	- add optional encumbrance to dynamic character
 	- add deprecation/migration warning to static character
-	- modify static charsheet to match stylistically with dynamic charsheet. also eliminate "editable" static charsheet, instead using same system as dynamic
 	- add deprecation warning to static items
 	- (?) add optional reeling to dynamic character (maybe add ability to manually switch pool state for purposes of move etc. calculation)
 ## Sheets & Styling

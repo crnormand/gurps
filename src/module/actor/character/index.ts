@@ -1,5 +1,4 @@
-import { BaseActorGURPS } from "@actor/base"
-import { ActorConstructorContextGURPS } from "@actor/base"
+import { BaseActorGURPS, ActorConstructorContextGURPS } from "@actor/base"
 import { CharacterImporter } from "./import"
 import { Feature } from "@feature"
 import { ConditionalModifier } from "@feature/conditional_modifier"
@@ -29,7 +28,7 @@ import { CR_Features } from "@item/trait/data"
 import { DocumentModificationOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeObj } from "@module/attribute"
-import { AttributeDef } from "@module/attribute/attribute_def"
+import { AttributeDef, AttributeType } from "@module/attribute/attribute_def"
 import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
 import { attrPrefix, gid } from "@module/data"
@@ -736,7 +735,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 			this.pools = {}
 			for (const a of Object.values(this.attributes)) {
-				if (a.attribute_def.type === "pool")
+				if (a.attribute_def.type === AttributeType.Pool)
 					this.pools[a.attribute_def.name] = {
 						max: a.max,
 						value: a.current,
@@ -757,7 +756,7 @@ class CharacterGURPS extends BaseActorGURPS {
 					}
 			}
 			if (CR_Features.has(t.crAdj))
-				for (const f of CR_Features?.get(t.crAdj)) {
+				for (const f of CR_Features?.get(t.crAdj) || []) {
 					processFeature(t, this.featureMap, f, Math.max(t.levels, 0))
 				}
 			for (const m of t.deepModifiers) {
@@ -795,7 +794,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				if (def) {
 					const attrID = attrPrefix + attr.attr_id
 					this.system.attributes[attr.attr_id].bonus = this.bonusFor(attrID, undefined)
-					if (def.type !== "decimal") attr.bonus = Math.floor(attr.bonus)
+					if (def.type !== AttributeType.Decimal) attr.bonus = Math.floor(attr.bonus)
 					this.system.attributes[attr.attr_id].cost_reduction = this.costReductionFor(attrID)
 				} else {
 					this.system.attributes[attr.attr_id].bonus = 0
@@ -1262,7 +1261,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			console.warn(`No such variable definition: $${variableName}`)
 			return ""
 		}
-		if (def.type === "pool" && parts.length > 1) {
+		if (def.type === AttributeType.Pool && parts.length > 1) {
 			switch (parts[1]) {
 				case "current":
 					return attr.current.toString()

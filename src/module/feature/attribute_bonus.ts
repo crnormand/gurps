@@ -1,10 +1,6 @@
-import { BaseFeature, FeatureConstructionContext } from "./base"
+import { BaseFeature } from "./base"
 
 export class AttributeBonus extends BaseFeature {
-	constructor(data: AttributeBonus | any, context: FeatureConstructionContext) {
-		super(data, context)
-	}
-
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
 			type: "attribute_bonus",

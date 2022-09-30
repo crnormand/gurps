@@ -15,6 +15,7 @@ import {
 	TraitGURPS,
 } from "@item"
 import { Attribute } from "@module/attribute"
+import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
 import { RollType } from "@module/data"
 import { openPDF } from "@module/pdf"
@@ -196,7 +197,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const point_pools: Attribute[] = []
 		if (attributes)
 			attributes.forEach(a => {
-				if (a.attribute_def?.type.includes("pool")) point_pools.push(a)
+				if ([AttributeType.Pool, AttributeType.PoolSeparator].includes(a.attribute_def?.type))
+					point_pools.push(a)
 				else if (a.attribute_def?.isPrimary) primary_attributes.push(a)
 				else secondary_attributes.push(a)
 			})
