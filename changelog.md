@@ -4,8 +4,9 @@ If you can't access the Google doc, here is a [PDF](https://github.com/crnormand
 
 Release 0.15.6
 
-- Fix GCS import when melee attack has no level.
-
+- Fixed GCS 5 import when melee attack has no level.
+- Fixed GCS 5 disad calculations.
+ 
 Release 0.15.5 9/28/2022
 
 - Fixed drag and drop items between non-GM characters

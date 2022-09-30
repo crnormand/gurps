@@ -1909,6 +1909,7 @@ export class GurpsActor extends Actor {
       if (toplevel) {
         if (a > 0) ads += a
         else disads += a
+        disads += d
       } else ads += a + d
     } else if (i.calc?.points == -1) quirks += i.calc?.points
     else if (i.calc?.points > 0) ads += i.calc?.points
