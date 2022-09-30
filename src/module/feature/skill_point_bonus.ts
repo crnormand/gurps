@@ -13,10 +13,14 @@ export class SkillPointBonus extends BaseFeature {
 	}
 
 	get featureMapKey(): string {
-		if (this.name?.compare === "is" && this.specialization?.compare === "none" && this.tags?.compare === "none") {
-			return "skill.points" + `/${this.name?.qualifier}`
+		if (
+			this.name?.compare === StringComparison.Is &&
+			this.specialization?.compare === StringComparison.None &&
+			this.tags?.compare === StringComparison.None
+		) {
+			return `skill.points/${this.name?.qualifier}`
 		}
-		return "skill.points" + "*"
+		return "skill.points*"
 	}
 }
 

@@ -104,7 +104,7 @@ async function _onDamageRoll(event: JQuery.ClickEvent) {
 		data.item = actor!.deepItems.get($(event.currentTarget).data("item-id"))
 	if ([RollType.Damage, RollType.Attack].includes(type))
 		data.weapon = data.item.weapons.get($(event.currentTarget).data("attack-id"))
-	if (type == RollType.Modifier) {
+	if (type === RollType.Modifier) {
 		data.modifier = $(event.currentTarget).data("modifier")
 		data.comment = $(event.currentTarget).data("comment")
 	}

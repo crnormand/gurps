@@ -41,42 +41,6 @@ export class CompendiumBrowser extends Application {
 		return i18n("gurps.compendium_browser.title")
 	}
 
-	// Override render(force?: boolean | undefined, options?: Application.RenderOptions<ApplicationOptions> | undefined): unknown {
-	// 	this.initCompendiumList();
-	// 	return super.render(force, options);
-	// }
-
-	// Private async renderReultsList(html: HTMLElement, list: HTMLUListElement, start = 0): Promise<void> {
-	// 	const currentTab = this.activeTab !== "settings" ? this.tabs[this.activeTab] : null;
-	// 	if (!currentTab) return;
-
-	// 	const newResults = await currentTab.renderResults(start);
-	// 	this.activateResultListeners(newResults);
-	// 	const fragment = document.createDocumentFragment();
-	// 	fragment.append(...newResults);
-	// 	list.append(fragment);
-	// 	for (const dragDropHandler of this._dragDrop) {
-	// 		dragDropHandler.bind(html);
-	// 	}
-	// }
-
-	// private activateResultListeners(liElements: HTMLLIElement[] = []): void {
-	// 	for (const liElement of liElements) {
-	// 		const { entryUuid } = liElement.dataset;
-	// 		if (!entryUuid) continue;
-
-	// 		const nameAnchor = liElement.querySelector<HTMLAnchorElement>("div.name > a");
-	// 		if (nameAnchor) {
-	// 			nameAnchor.addEventListener("click", async () => {
-	// 				const document = (await fromUuid(entryUuid)) as any;
-	// 				if (document?.sheet) {
-	// 					document.sheet.render(true);
-	// 				}
-	// 			});
-	// 		}
-	// 	}
-	// }
-
 	static override get defaultOptions(): ApplicationOptions {
 		return mergeObject(super.defaultOptions, {
 			id: "compendium-browser",

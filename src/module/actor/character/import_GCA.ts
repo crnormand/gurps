@@ -571,7 +571,7 @@ export class GCAImporter {
 		tags = tags.filter(e => !e.startsWith("_"))
 		let defaults: Partial<SkillDefault>[] = []
 		if (item.ref.default) {
-			for (let e of item.ref.default?.split(",")) {
+			for (let e of item.ref.default?.split(",") || []) {
 				const def: Partial<SkillDefault> = {}
 				e = e.trim().replaceAll("\\", "").replaceAll('"', "")
 				if (e.startsWith("SK:")) {
@@ -627,7 +627,7 @@ export class GCAImporter {
 		tags = tags.filter(e => !e.startsWith("_"))
 		let defaults: Partial<SkillDefault>[] = []
 		if (item.ref.default) {
-			for (let e of item.ref.default?.split(",")) {
+			for (let e of item.ref.default?.split(",") || []) {
 				const def: Partial<SkillDefault> = {}
 				e = e.trim().replaceAll("\\", "").replaceAll('"', "")
 				if (e.startsWith("SK:")) {
