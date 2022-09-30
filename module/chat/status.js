@@ -14,7 +14,7 @@ const Command = {
   off: 'unset',
   unset: 'unset',
   '-': 'unset',
-  list: 'list',
+  list: 'list'
 }
 
 /** @typedef {{id: string, label: string, icon: string}} EffectData */
@@ -69,17 +69,30 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     let effectText = this.match.groups?.name?.trim() //this.match[3]?.trim()
     let effect = !!effectText ? this.findEffect(effectText) : null
+    let isStanding = false
     if (!effect) {
-      ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
-      return
+      if (!effectText) {
+        ui.notifications.warn(i18n('GURPS.chatNoStatusMatched'))
+        return
+      } else if (!effectText.match(new RegExp(makeRegexPatternFrom(GURPS.StatusEffectStanding), 'i')) && !effectText.match(new RegExp(makeRegexPatternFrom(i18n(GURPS.StatusEffectStandingLabel)), 'i'))) {
+        ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
+        return
+      }
+      isStanding = true
     }
-
     if (this.match.groups?.data) {
       let data = JSON.parse(this.match.groups.data)
       data.duration.combat = game.combats?.active?.id
       mergeObject(effect, data)
     }
 
+    if (isStanding) {
+      if (theCommand == Command.set)    
+        for (const pid in GURPS.StatusEffect.getAllPostures()) {
+          await this.unset(tokens, this.findEffect(pid))
+        }
+      return    // can't toggle or unset standing
+    }
     if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
     else if (theCommand == Command.set) return await this.set(tokens, effect)
     else if (theCommand == Command.unset) return await this.unset(tokens, effect)
@@ -94,15 +107,23 @@ export default class StatusChatProcessor extends ChatProcessor {
     /** @type {EffectData[]} */
     let sortedEffects = []
     let effectIds = Object.values(CONFIG.statusEffects.map(it => i18n(it.id)))
+    effectIds.push(GURPS.StatusEffectStanding)
     effectIds.sort()
     for (const id of effectIds) {
       let effect = CONFIG.statusEffects.find(it => it.id === id)
-      if (effect) sortedEffects.push(effect)
+      if (effect) {
+        effect.posture = !!GURPS.StatusEffect.getAllPostures()[id] || id == GURPS.StatusEffectStanding
+        sortedEffects.push(effect)
+      }
+      else if (id == GURPS.StatusEffectStanding) 
+        sortedEffects.push({ id: id, label: GURPS.StatusEffectStandingLabel, posture: true})  
     }
 
     sortedEffects.forEach(s => {
-      html += `<tr><td>${s.id}</td><td>'${i18n(s.label)}'</td></tr>`
+      let p = s.posture ? ' *' : ''
+      html += `<tr><td>${s.id}</td><td>'${i18n(s.label)}'${p}</td></tr>`
     })
+    html += `<tr><td></td><td>* => ${i18n('GURPS.modifierPosture')}</td></tr>`
     return html + '</table>'
   }
 

@@ -6,6 +6,7 @@ Release 0.15.6
 
 - Fixed GCS 5 import when melee attack has no level.
 - Fixed GCS 5 disad calculations.
+- Added support for /st + standing to allow you to clear other postures (to help supoprt TAH feature)
  
 Release 0.15.5 9/28/2022
 

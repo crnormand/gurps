@@ -17,6 +17,8 @@ export class StatusEffect {
     this._registerSetting()
 
     GURPS.SavedStatusEffects = CONFIG.statusEffects
+    GURPS.StatusEffectStanding = 'standing'
+    GURPS.StatusEffectStandingLabel = 'GURPS.STATUSStanding'
 
     this.useActiveEffects = true // StatusEffect.useActiveEffects()
     this._statusEffects = {}
