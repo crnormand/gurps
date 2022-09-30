@@ -246,7 +246,6 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-
 	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
 	GURPS.ModifierButton = new ModifierButton()
 	GURPS.ModifierButton.render(true)

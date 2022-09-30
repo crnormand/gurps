@@ -109,7 +109,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			const left: StaticItemGURPS[] = []
 			let atLeastOne = false
 			for (const i of orig) {
-				if (!i.system.eqt.parentuuid || good.find(e => e.system.eqt.uuid == i.system.eqt.parentuuid)) {
+				if (!i.system.eqt.parentuuid || good.find(e => e.system.eqt.uuid === i.system.eqt.parentuuid)) {
 					atLeastOne = true
 					good.push(i)
 				} else left.push(i)
@@ -151,7 +151,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 					// GCA5 style (Language without Adv)
 					let n = `${i18n("gurps.language.language")}: ${e.name}`
 					// If equal, then just report single level
-					if (e.spoken == e.written) n += ` (${e.spoken})`
+					if (e.spoken === e.written) n += ` (${e.spoken})`
 					// Otherwise, report ttpy eand level (like GCA4)
 					else {
 						if (e.spoken) n += ` (${i18n("gurps.language.spoken")})(${e.spoken})`
@@ -168,7 +168,8 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		}
 	}
 
-	// This will ensure that every characater at least starts with these new data values.  actor-sheet.js may change them.
+	// This will ensure that every characater at least starts
+	// with these new data values.  actor-sheet.js may change them.
 	calculateDerivedValues() {
 		// Let saved = !!this.ignoreRender
 		// this.ignoreRender = true
@@ -193,15 +194,19 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		// if (!saved) setTimeout(() => this.render(), 333)
 	}
 
-	// Initialize the attribute starting values/levels.   The code is expecting 'value' or 'level' for many things, and instead of changing all of the GUIs and OTF logic
-	// we are just going to switch the rug out from underneath.   "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
+	/*
+	 * Initialize the attribute starting values/levels.
+	 * The code is expecting 'value' or 'level' for many things,
+	 * and instead of changing all of the GUIs and OTF logic
+	 * we are just going to switch the rug out from underneath.
+	 * "Import" data will be in the 'import' key and then we will calculate value/level when the actor is loaded.
+	 */
 	_initializeStartingValues() {
 		const data = this.system
 		data.currentdodge = 0
 		data.equipment.carried ??= {}
 		data.equipment.other ??= {}
 
-		// Attributes need to have 'value' set because Foundry expects objs with value and max to be attributes (so we can't use currentvalue)
 		// Need to protect against data errors
 		for (const attr in data.attributes) {
 			if (
@@ -249,8 +254,6 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// 		if (e.import) e.level = parseInt(e.import);
 	// 	});
 
-	// 	// We don't really need to use recurselist for melee/ranged... but who knows, they may become hierarchical in the future
-
 	// 	recurselist(data.melee, (e, k, d) => {
 	// 		if (e.import) {
 	// 			e.level = parseInt(e.import);
@@ -280,7 +283,6 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	// 	});
 
 	// 	// Only prep hitlocation DRs from v0.9.7 or higher
-	// 	// (we don't really need to use recurselist... but who knows, hitlocations may become hierarchical in the future)
 	// 	if (!v.isLowerThan(settings.VERSION_097))
 	// 		recurselist(data.hitlocations, (e, k, d) => {
 	// 			e.dr = e.import;

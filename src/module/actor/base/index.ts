@@ -8,7 +8,6 @@ import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { SYSTEM_NAME } from "@module/settings"
 import { ContainerGURPS, ItemGURPS } from "@item"
 import { ActorFlags, ActorSystemData, BaseActorSourceGURPS } from "./data"
-// Import { MergeObjectOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/utils/helpers.mjs"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {

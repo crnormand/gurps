@@ -157,7 +157,8 @@ export function flatList(
 		let item = context[key]
 		let display = true
 		if (actorToCheckEquipment) {
-			// If we have been given an actor, then check to see if the melee or ranged item is equipped in the inventory
+			// If we have been given an actor,
+			// then check to see if the melee or ranged item is equipped in the inventory
 			let checked = false
 			recurseList(actorToCheckEquipment.system.equipment.carried, e => {
 				// Check
