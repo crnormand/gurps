@@ -11,7 +11,7 @@ import {
 	KnockdownCheck,
 	RollModifier,
 } from "./injury_effect"
-import { identity, ModifierFunction } from "./utils"
+import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
 
 const Head = ["skull", "eye", "face"]
 
@@ -115,6 +115,10 @@ class DamageCalculator {
 		let rawModifier = Math.floor(this.injury / this._shockFactor)
 		if (rawModifier > 0) {
 			let modifier = Math.min(4, rawModifier) * -1
+
+			// TODO In RAW, this doubling only occurs if the target is physiologically male.
+			if (this._damageRoll.damageType === DamageType.cr && this._damageRoll.locationId === "groin") modifier *= 2
+
 			const shockEffect = new InjuryEffect(InjuryEffectType.shock, [
 				new RollModifier("dx", RollType.Attribute, modifier),
 				new RollModifier("iq", RollType.Attribute, modifier),
@@ -144,7 +148,7 @@ class DamageCalculator {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-10)]))
 		} else if (this._damageRoll.locationId === "vitals" && this._shockEffects.length > 0) {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
-		} else if (this._damageRoll.locationId === "face" && this._isMajorWound()) {
+		} else if (["face", "groin"].includes(this._damageRoll.locationId) && this._isMajorWound()) {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
 		} else if (this._isMajorWound()) {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
@@ -255,13 +259,20 @@ class DamageCalculator {
 		if (this._damageRoll.locationId === "vitals") {
 			if ([DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)) return x => x * 3
 			if (this._damageRoll.damageType === DamageType.burn && this._damageRoll.damageModifier === "tbb")
-				return x => x * 2
+				return double
 		}
 		if (["skull", "eye"].includes(this._damageRoll.locationId)) {
 			if (this._damageRoll.damageType !== DamageType.tox) return x => x * 4
 		}
 		if (this._damageRoll.locationId === "face") {
-			return this._damageRoll.damageType === DamageType.cor ? x => x * 1.5 : identity
+			return this._damageRoll.damageType === DamageType.cor ? oneAndOneHalf : identity
+		}
+		if (this._damageRoll.locationId === "neck") {
+			return [DamageType.cor, DamageType.cr].includes(this._damageRoll.damageType)
+				? oneAndOneHalf
+				: this._damageRoll.damageType === DamageType.cut
+				? double
+				: multiplier.theDefault
 		}
 		return multiplier.theDefault
 	}

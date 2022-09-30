@@ -94,7 +94,7 @@ describe("Damage calculator", () => {
 	})
 
 	describe("B378: Damage Roll.", () => {
-		it("The result of the damage roll ... is the hit’s “basic damage.”", () => {
+		it("The result of the damage roll is the hit’s “basic damage.”", () => {
 			_roll.basicDamage = 8
 			let calc = new DamageCalculator(_roll, _target)
 			expect(calc.basicDamage).toBe(8)
@@ -331,7 +331,7 @@ describe("Damage calculator", () => {
 	})
 
 	describe("B379: Flexible Armor and Blunt Trauma. An attack that does crushing, cutting, impaling, or piercing damage may inflict “blunt trauma” if it fails to penetrate flexible DR.", () => {
-		it("For every full 10 points of cutting, impaling, or piercing damage ... stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
+		it("For every full 10 points of cutting, impaling, or piercing damage stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
 			_location.calc.flexible = true
 			_target.hitLocationTable.locations.push(_location)
 
@@ -362,7 +362,7 @@ describe("Damage calculator", () => {
 			}
 		})
 
-		it("For every full ... 5 points of crushing damage stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
+		it("For every full 5 points of crushing damage stopped by your DR, you suffer 1 HP of injury due to blunt trauma.", () => {
 			_location.calc.flexible = true
 			_target.hitLocationTable.locations.push(_location)
 			_location.calc.dr.all = 20
@@ -743,7 +743,7 @@ describe("Damage calculator", () => {
 			)
 		})
 
-		it("... Perfect Balance gives +4 to this roll.", () => {
+		it("Perfect Balance gives +4 to this roll.", () => {
 			expect(_roll.damageType).toBe(DamageType.cr)
 
 			_target._traits.push("Perfect Balance")
@@ -994,11 +994,43 @@ describe("Damage calculator", () => {
 				slots: 1,
 			}
 
+			let _neck = {
+				calc: {
+					dr: { all: 0 },
+					roll_range: "5",
+					flexible: false,
+				},
+				choice_name: "Face",
+				description: "",
+				dr_bonus: 0,
+				table_name: "Face",
+				hit_penalty: -5,
+				id: "face",
+				slots: 1,
+			}
+
+			let _groin = {
+				calc: {
+					dr: { all: 0 },
+					roll_range: "5",
+					flexible: false,
+				},
+				choice_name: "Face",
+				description: "",
+				dr_bonus: 0,
+				table_name: "Face",
+				hit_penalty: -5,
+				id: "face",
+				slots: 1,
+			}
+
 			_target.hitLocationTable.locations.push(_vitals)
 			_target.hitLocationTable.locations.push(_skull)
 			_target.hitLocationTable.locations.push(_eye)
 			_target.hitLocationTable.locations.push(_face)
-			_roll.basicDamage = 11
+			_target.hitLocationTable.locations.push(_neck)
+			_target.hitLocationTable.locations.push(_groin)
+			_roll.basicDamage = 10
 		})
 
 		describe("Vitals.", () => {
@@ -1011,20 +1043,20 @@ describe("Damage calculator", () => {
 				for (const type of types) {
 					_roll.damageType = type
 					let calc = new DamageCalculator(_roll, _target)
-					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(18)
+					expect(calc.penetratingDamage).toBe(5)
+					expect(calc.injury).toBe(15)
 				}
 			})
 
-			it("Increase the wounding modifier for a tight-beam burning attack ... to ×2.", () => {
+			it("Increase the wounding modifier for a tight-beam burning attack to ×2.", () => {
 				_roll.damageType = DamageType.burn
 				_roll.damageModifier = "tbb"
 				let calc = new DamageCalculator(_roll, _target)
-				expect(calc.penetratingDamage).toBe(6)
-				expect(calc.injury).toBe(12)
+				expect(calc.penetratingDamage).toBe(5)
+				expect(calc.injury).toBe(10)
 			})
 
-			it("B420: whenever you are struck in the ... vitals for enough injury to cause a shock penalty, you must make an immediate HT roll to avoid knockdown.", () => {
+			it("B420: Whenever you are struck in the vitals for enough injury to cause a shock penalty, you must make an immediate HT roll to avoid knockdown.", () => {
 				_roll.basicDamage = 6
 				_roll.damageType = DamageType.cr
 				let calc = new DamageCalculator(_roll, _target)
@@ -1063,8 +1095,8 @@ describe("Damage calculator", () => {
 					for (const type of types) {
 						_roll.damageType = type
 						let calc = new DamageCalculator(_roll, _target)
-						expect(calc.penetratingDamage).toBe(6)
-						expect(calc.injury).toBe(24)
+						expect(calc.penetratingDamage).toBe(5)
+						expect(calc.injury).toBe(20)
 					}
 				}
 			})
@@ -1084,8 +1116,6 @@ describe("Damage calculator", () => {
 					for (const type of types) {
 						_roll.damageType = type
 						let calc = new DamageCalculator(_roll, _target)
-						expect(calc.penetratingDamage).toBe(6)
-						expect(calc.injury).toBe(24)
 
 						let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
 						expect(checks).toContainEqual(
@@ -1102,7 +1132,7 @@ describe("Damage calculator", () => {
 				}
 			})
 
-			it("B420: whenever you are struck in the head ... for enough injury to cause a shock penalty, you must make an immediate HT roll to avoid knockdown.", () => {
+			it("B420: Whenever you are struck in the head for enough injury to cause a shock penalty, you must make an immediate HT roll to avoid knockdown.", () => {
 				for (const location of ["skull", "eye"]) {
 					_roll.locationId = location
 
@@ -1148,8 +1178,8 @@ describe("Damage calculator", () => {
 
 					_roll.damageType = DamageType.fat
 					let calc = new DamageCalculator(_roll, _target)
-					expect(calc.penetratingDamage).toBe(6)
-					expect(calc.injury).toBe(6)
+					expect(calc.penetratingDamage).toBe(5)
+					expect(calc.injury).toBe(5)
 				}
 			})
 
@@ -1182,7 +1212,6 @@ describe("Damage calculator", () => {
 
 			it("Corrosion damage (only) gets a ×1.5 wounding modifier.", () => {
 				_roll.damageType = DamageType.cor
-				_roll.basicDamage = 10
 				let calc = new DamageCalculator(_roll, _target)
 				expect(calc.penetratingDamage).toBe(10)
 				expect(calc.injury).toBe(15)
@@ -1212,7 +1241,7 @@ describe("Damage calculator", () => {
 				)
 			})
 
-			it("If (cor) inflicts a major wound, it also blinds one eye.", () => {
+			it("If (Corrosive damage) inflicts a major wound, it also blinds one eye...", () => {
 				_roll.locationId = "face"
 				_roll.basicDamage = 8
 				_roll.damageType = DamageType.cor
@@ -1233,6 +1262,139 @@ describe("Damage calculator", () => {
 				expect(calc.injury).toBeGreaterThan(_target.hitPoints.value)
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.majorWound }))
 				expect(calc.injuryEffects).toContainEqual(expect.objectContaining({ id: InjuryEffectType.blinded }))
+			})
+		})
+
+		describe("Neck.", () => {
+			beforeEach(() => {
+				_roll.locationId = "neck"
+			})
+
+			it("Increase the wounding multiplier of crushing and corrosion attacks to ×1.5", () => {
+				let types = [DamageType.cr, DamageType.cor]
+				for (const type of types) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(15)
+				}
+			})
+
+			it("...and that of cutting damage to ×2", () => {
+				_roll.damageType = DamageType.cut
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(20)
+			})
+
+			it("(Other damage types are unchanged.)", () => {
+				_roll.damageType = DamageType.pi_m
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(5)
+
+				for (const type of [DamageType.burn, DamageType.fat, DamageType.pi, DamageType.tox]) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(10)
+				}
+
+				_roll.damageType = DamageType.pi_p
+				calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(15)
+
+				for (const type of [DamageType.imp, DamageType.pi_pp]) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(20)
+				}
+			})
+		})
+
+		describe("Groin.", () => {
+			beforeEach(() => {
+				_roll.locationId = "groin"
+			})
+
+			it("Treat as a torso hit...", () => {
+				_roll.damageType = DamageType.pi_m
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.penetratingDamage).toBe(10)
+				expect(calc.injury).toBe(5)
+
+				for (const type of [
+					DamageType.burn,
+					DamageType.fat,
+					DamageType.pi,
+					DamageType.tox,
+					DamageType.cr,
+					DamageType.cor,
+				]) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(10)
+				}
+
+				for (const type of [DamageType.cut, DamageType.pi_p]) {
+					_roll.damageType = type
+					calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(15)
+				}
+
+				for (const type of [DamageType.imp, DamageType.pi_pp]) {
+					_roll.damageType = type
+					let calc = new DamageCalculator(_roll, _target)
+					expect(calc.penetratingDamage).toBe(10)
+					expect(calc.injury).toBe(20)
+				}
+			})
+
+			it("except that human males suffer double the usual shock from crushing damage (to a maximum of -8).", () => {
+				_roll.damageType = DamageType.cr
+
+				for (const damage of [1, 2, 3, 4]) {
+					_roll.basicDamage = damage
+					let calc = new DamageCalculator(_roll, _target)
+					const injuryEffects = calc.injuryEffects
+
+					let modifiers = calc.injuryEffects.find(it => it.id === InjuryEffectType.shock)?.modifiers
+					expect(modifiers).toContainEqual(
+						expect.objectContaining({
+							id: "dx",
+							rollType: RollType.Attribute,
+							modifier: damage * -2,
+						})
+					)
+					expect(modifiers).toContainEqual(
+						expect.objectContaining({
+							id: "iq",
+							rollType: RollType.Attribute,
+							modifier: damage * -2,
+						})
+					)
+				}
+			})
+
+			it("...and get -5 to knockdown rolls.", () => {
+				_roll.damageType = DamageType.cr
+				let calc = new DamageCalculator(_roll, _target)
+
+				let checks = calc.injuryEffects.find(it => it.id === "majorWound")?.checks
+				expect(checks).toContainEqual(
+					expect.objectContaining({
+						checks: [{ id: "ht", modifier: -5, rollType: RollType.Attribute }],
+						failures: [
+							{ id: "stun", margin: 0 },
+							{ id: "fall prone", margin: 0 },
+							{ id: "unconscious", margin: 5 },
+						],
+					})
+				)
 			})
 		})
 	})
