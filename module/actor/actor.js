@@ -840,7 +840,7 @@ export class GurpsActor extends Actor {
     let tokens = this._findTokens()
     if (tokens)
       for (const t of tokens) {
-        let id = changeData === 'standing' ? this.system.conditions.posture : changeData
+        let id = changeData === GURPS.StatusEffectStanding ? this.system.conditions.posture : changeData
         await t.toggleEffect(GURPS.StatusEffect.lookup(id))
       }
   }

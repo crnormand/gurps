@@ -14,16 +14,14 @@ const Command = {
   off: 'unset',
   unset: 'unset',
   '-': 'unset',
-  list: 'list',
-  posture: 'posture',
-  pos: 'posture'
+  list: 'list'
 }
 
 /** @typedef {{id: string, label: string, icon: string}} EffectData */
 
 export default class StatusChatProcessor extends ChatProcessor {
   static regex() {
-    return /^\/(st|status) +(?<command>toggle|t|on|off|\+|-|clear|set|unset|list|posture|pos) *(?<name>[^\@: ]+)? *(?<target>\@self|:\S+)? *(?<data>\{.*\})?/i
+    return /^\/(st|status) +(?<command>toggle|t|on|off|\+|-|clear|set|unset|list) *(?<name>[^\@: ]+)? *(?<target>\@self|:\S+)? *(?<data>\{.*\})?/i
   }
 
   help() {
@@ -71,38 +69,33 @@ export default class StatusChatProcessor extends ChatProcessor {
 
     let effectText = this.match.groups?.name?.trim() //this.match[3]?.trim()
     let effect = !!effectText ? this.findEffect(effectText) : null
-    if (theCommand != Command.posture) {
-      if (!effect) {
-        ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
+    let isStanding = false
+    if (!effect) {
+      if (!effectText) {
+        ui.notifications.warn(i18n('GURPS.chatNoStatusMatched'))
         return
-      } 
-    } else {
-      if (effect && !GURPS.StatusEffect.getAllPostures()[effect.id]) {
-        ui.notifications.warn(i18n('GURPS.chatStatusNotPosture') + " '" + effectText + "'")
-        return        
-      }
-      if (!effect && !!effectText && !effectText.match(new RegExp(makeRegexPatternFrom(GURPS.StatusEffectStanding), 'i')) && !effectText.match(new RegExp(makeRegexPatternFrom(i18n(GURPS.StatusEffectStandingLabel)), 'i'))) {
+      } else if (!effectText.match(new RegExp(makeRegexPatternFrom(GURPS.StatusEffectStanding), 'i')) && !effectText.match(new RegExp(makeRegexPatternFrom(i18n(GURPS.StatusEffectStandingLabel)), 'i'))) {
         ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
         return
       }
-    } 
-
+      isStanding = true
+    }
     if (this.match.groups?.data) {
       let data = JSON.parse(this.match.groups.data)
       data.duration.combat = game.combats?.active?.id
       mergeObject(effect, data)
     }
 
+    if (isStanding) {
+      if (theCommand == Command.set)    
+        for (const pid in GURPS.StatusEffect.getAllPostures()) {
+          await this.unset(tokens, this.findEffect(pid))
+        }
+      return    // can't toggle or unset standing
+    }
     if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
     else if (theCommand == Command.set) return await this.set(tokens, effect)
     else if (theCommand == Command.unset) return await this.unset(tokens, effect)
-    else if (theCommand == Command.posture) {
-      for (const pid in GURPS.StatusEffect.getAllPostures()) {
-        await this.unset(tokens, this.findEffect(pid))
-      }
-      if (!!effect) await this.set(tokens, effect)
-      return
-    }
     else ui.notifications.warn(`Unexpected error: command: ${theCommand} (${this.match})`)
   }
 
