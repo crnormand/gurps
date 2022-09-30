@@ -254,6 +254,7 @@
   "GURPS.chatNoEquipmentMatched": "No equipment matched",
   "GURPS.chatNoResourceTracker": "No Resource Tracker matched",
   "GURPS.chatNoStatusMatched": "No status matched",
+  "GURPS.chatStatusNotPosture": "The status selected was not a posture",
   "GURPS.chatNoOwnedTokenFound": "You do not own any tokens in this scene.",
   "GURPS.chatNoTokens": "Your character does not have any tokens. We require a token to set statuses",
   "GURPS.chatQty": "QTY",

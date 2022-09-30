@@ -6,6 +6,7 @@ Release 0.15.6
 
 - Fixed GCS 5 import when melee attack has no level.
 - Fixed GCS 5 disad calculations.
+- Added /st posture "status id for a posture" (.e.g /st posture kneel), which will reset other postures
  
 Release 0.15.5 9/28/2022
 
