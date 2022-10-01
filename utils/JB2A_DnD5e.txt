@@ -288,6 +288,7 @@
 ./Library/Generic/Butterflies/Butterflies_01_Regular_Orange_Many_400x400.webm,width=400
 ./Library/Generic/Butterflies/Butterflies_01_Regular_Orange_Single_400x400.webm,width=400
 ./Library/Generic/Celestial_Bodies/PlanetAtmo_01_Regular_BlueOrange_800x800.webm,width=800
+./Library/Generic/Celestial_Bodies/PlanetAtmo_05_Regular_Red_800x800.webm,width=800
 ./Library/Generic/Celestial_Bodies/PlanetGasGiant_01_Regular_Blue_800x800.webm,width=800
 ./Library/Generic/Celestial_Bodies/PlanetNoAtmo_03_Regular_Grey_800x800.webm,width=800
 ./Library/Generic/Conditions/Dizzy_Stars/DizzyStars_01_BlueOrange_200x200.webm,width=200
@@ -658,6 +659,19 @@
 ./Library/Generic/Nature/GroupVineNatureLoop01_01_Regular_Green_300x300.webm,width=300
 ./Library/Generic/Nature/GroupVineNatureLoop02_01_Regular_Green_300x300.webm,width=300
 ./Library/Generic/Nature/GroupVineNatureLoop03_01_Regular_Green_300x300.webm,width=300
+./Library/Generic/Nature/PlantGrowthRing02_01_Regular_GreenRed_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthRing03_01_Regular_GreenYellow_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthRingLoop03_01_Regular_GreenYellow_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthRingPulse02_01_Regular_GreenRed_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthRingPulse03_01_Regular_GreenYellow_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthRound03_01_Regular_GreenYellow_300x300.webm,width=500
+./Library/Generic/Nature/PlantGrowthRound03_01_Regular_GreenYellow_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthRoundLoop03_01_Regular_GreenYellow_300x300.webm,width=300
+./Library/Generic/Nature/PlantGrowthRoundLoop03_01_Regular_GreenYellow_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthSquare03_01_Regular_GreenYellow_300x300.webm,width=300
+./Library/Generic/Nature/PlantGrowthSquare03_01_Regular_GreenYellow_500x500.webm,width=500
+./Library/Generic/Nature/PlantGrowthSquareLoop03_01_Regular_GreenYellow_300x300.webm,width=300
+./Library/Generic/Nature/PlantGrowthSquareLoop03_01_Regular_GreenYellow_500x500.webm,width=500
 ./Library/Generic/Nature/SwirlingLeaves01_01_Regular_GreenOrange_05ft_600x400.webm,width=600
 ./Library/Generic/Nature/SwirlingLeaves01_01_Regular_GreenOrange_15ft_1000x400.webm,width=1000
 ./Library/Generic/Nature/SwirlingLeaves01_01_Regular_GreenOrange_30ft_1600x400.webm,width=1600
