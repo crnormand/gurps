@@ -28,12 +28,12 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
-		const items = deepClone(
-			this.actor.items
-				.map(item => item as Item)
-				// @ts-ignore until types v10
-				.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
-		)
+		// Const items = deepClone(
+		// 	this.actor.items
+		// 		.map(item => item as Item)
+		// 		// @ts-ignore until types v10
+		// 		.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
+		// )
 		const sheetData = {
 			...super.getData(options),
 			system: actorData.system,
@@ -131,6 +131,54 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		if (hover) event.currentTarget.classList.add("hover")
 		else event.currentTarget.classList.remove("hover")
+	}
+
+	async _onEditToggle(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		await this.actor.update({ "system.editing": !this.actor.editing })
+		$(event.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
+		return this.render()
+	}
+
+	protected override _getHeaderButtons(): Application.HeaderButton[] {
+		const edit_button = {
+			label: "",
+			class: "edit-toggle",
+			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
+			onclick: (event: any) => this._onEditToggle(event),
+		}
+		const buttons: Application.HeaderButton[] = [
+			edit_button,
+			// {
+			// 	label: "",
+			// 	class: "attributes",
+			// 	icon: "gcs-attribute",
+			// 	onclick: event => this._onAttributeSettingsClick(event),
+			// },
+			// {
+			// 	label: "",
+			// 	class: "body-type",
+			// 	icon: "gcs-body-type",
+			// 	onclick: event => this._onBodyTypeSettingsClick(event),
+			// },
+			{
+				label: "",
+				// Label: "Import",
+				class: "import",
+				icon: "fas fa-file-import",
+				onclick: event => this._onFileImport(event),
+			},
+		]
+		const all_buttons = [...buttons, ...super._getHeaderButtons()]
+		// All_buttons.at(-1)!.label = ""
+		// all_buttons.at(-1)!.icon = "gcs-circled-x"
+		return all_buttons
+		// Return buttons.concat(super._getHeaderButtons());
+	}
+
+	async _onFileImport(event: any) {
+		event.preventDefault()
+		this.actor.importCharacter()
 	}
 }
 

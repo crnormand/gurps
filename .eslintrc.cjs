@@ -171,8 +171,8 @@ module.exports = {
 		// ],
 		"prefer-template": "warn",
 		"quote-props": ["warn", "as-needed", { keywords: false }],
-		"quotes": ["warn", "double", { avoidEscape: true, allowTemplateLiterals: false }],
-		"semi": ["off", false],
+		quotes: ["warn", "double", { avoidEscape: true, allowTemplateLiterals: false }],
+		semi: ["off", false],
 		"space-before-blocks": ["warn", "always"],
 		// "space-before-function-paren": [
 		// 	"warn",

@@ -1,15 +1,10 @@
 # TO DO
 ## In Progress
-- Roll chat templates
 - Roll Functionality
 	- ChatCommand for rolling
-	- Modifier parsing
 	- pin function doesn't work sometimes
 	- neutral mod color change
-	- skill rolls don't reset mods
 	- type error when skill/attack doesn't exist
-	- attribute rolls
-	- CR rolls
 	- Add conditional additional rolls, to be executed on failure, on success
 - GCA import
 	- prereqs (leave for later)
@@ -18,7 +13,7 @@
 	- meta-traits
 	- racial templates
 	- alternate abilities
- - PDF Support
+ - PDF Support (done?)
  - GGA 0.15 integration
 	- add posture to dynamic character
 	- add maneuver to dynamic character

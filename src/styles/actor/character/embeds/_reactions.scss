@@ -11,6 +11,7 @@
 		&:not(.header) {
 			background-color: rgb(var(--color-banding));
 			color: rgb(var(--color-on-banding));
+			@import "roll_banding";
 		}
 	}
 }

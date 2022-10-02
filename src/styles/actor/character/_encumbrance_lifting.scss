@@ -26,7 +26,9 @@
 			color: rgb(var(--color-on-content));
 		}
 		.level {
-			color: rgba(var(--color-on-content), 1);
+			&:not(.header) {
+				color: rgba(var(--color-on-content), 1);
+			}
 			font: var(--font-page-primary-labels);
 			text-align: left;
 		}
@@ -43,7 +45,7 @@
 		.level,
 		.max-load,
 		.move {
-			border-right: 1px solid rgba(var(--color-header), 1);
+			border-right: 1px solid rgb(var(--color-interior-divider));
 		}
 		> :not(.header) {
 			padding: var(--padding-standard);

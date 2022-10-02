@@ -1,14 +1,14 @@
 <div class="message-roll skill">
 	<div data-uuid="{{data.item.uuid}}" data-type="skill" class="name rollable">
-		{{name}} ({{level}})</div>
+		{{name}} ({{localize "gurps.roll.cr_level" level=item.cr}})</div>
 	<div class="modifiers">
 		{{#each modifiers}}
 		<div class="mod mod-{{this.class}}" data-mod="{{json this}}">{{signed this.modifier}}{{#if this.name}}:
 			{{this.name}}{{/if}}</div>
 		{{/each}}
 	</div>
-	{{#if (neq level effectiveLevel)}}
-	<div class="effective">{{localize "gurps.roll.effective_skill" level=effectiveLevel}}</div>
+	{{#if (neq item.cr effectiveLevel)}}
+	<div class="effective">{{localize "gurps.roll.effective_target" level=effectiveLevel}}</div>
 	{{/if}}
 	<div class="result {{success}}">{{total}}: {{localize (concat "gurps.roll.success." success)}}</div>
 	<div class="margin mod mod-{{marginClass}}" data-mod="{{json marginMod}}">

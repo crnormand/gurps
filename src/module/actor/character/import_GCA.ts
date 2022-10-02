@@ -3,7 +3,7 @@ import { ItemFlagsGURPS, ItemSystemDataGURPS, ItemType, NoteData } from "@item/d
 import { StringComparison } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { DiceGURPS } from "@module/dice"
-import { SETTINGS_TEMP, SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SETTINGS_TEMP, SYSTEM_NAME } from "@module/settings"
 import { BasePrereq } from "@prereq"
 import { capitalize, i18n, i18n_f, newUUID, removeAccents } from "@util"
 import { XMLtoJS } from "@util/xml_js"
@@ -195,7 +195,8 @@ export class GCAImporter {
 			 *
 			 */
 			function getPortraitPath(): string {
-				if ((game as Game).settings.get(SYSTEM_NAME, "portrait_path") === "global") return "images/portraits/"
+				if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH) === "global")
+					return "images/portraits/"
 				return `worlds/${(game as Game).world.id}/images/portraits`
 			}
 

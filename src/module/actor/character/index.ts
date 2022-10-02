@@ -48,7 +48,7 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSource, CharacterSystemData, Encumbrance } from "./data"
+import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -454,7 +454,23 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	override get sizeMod(): number {
+		if (!this.system?.profile) return 0
 		return this.system.profile.SM + this.SizeModBonus
+	}
+
+	get HitLocations(): HitLocation[] {
+		return this.system.settings.body_type.locations.map(e => {
+			const l = e
+			l.roll_range = e.calc?.roll_range || "-"
+			l.dr = {}
+			const all = e.calc?.dr.all || 0
+			for (const k of Object.keys(e.calc!.dr)) {
+				if (k === "all") l.dr[k] = all
+				else l.dr[k] = all + e.calc!.dr[k]
+			}
+			delete l.calc
+			return l
+		})
 	}
 
 	// Item Types

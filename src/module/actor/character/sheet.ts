@@ -61,11 +61,13 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".equipped").on("click", event => this._onEquippedToggle(event))
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
-		html.find(".rollable").on("click", event => this._onClickRoll(event))
+		html.find(":not(.disabled) > > .rollable").on("click", event => this._onClickRoll(event))
 
 		// Hover Over
 		html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
 		html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
+
+		if (this.actor.editing) html.find(".rollable").addClass("noroll")
 	}
 
 	protected _resizeInput(event: JQuery.ChangeEvent) {
@@ -132,6 +134,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				RollType.SkillRelative,
 				RollType.Spell,
 				RollType.SpellRelative,
+				RollType.ControlRoll,
 			].includes(type)
 		)
 			data.item = await fromUuid($(event.currentTarget).data("uuid"))

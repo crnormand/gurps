@@ -59,6 +59,9 @@
 		&.no-stretch {
 			width: max-content;
 		}
+		&.check label.checkbox-label {
+			translate: 0 -4px;
+		}
 		textarea.input {
 			min-height: 24px;
 			padding: 1px 3px;
@@ -87,12 +90,12 @@
 				padding: 0 2px;
 			}
 			&[readonly] {
-				background-color: rgb(var(--color-backgroudn));
+				background-color: rgb(var(--color-background));
 				color: rgb(var(--color-on-background));
 				pointer-events: none;
 			}
 			&:disabled {
-				background-color: rgb(var(--color-background));
+				// background-color: rgb(var(--color-background));
 				color: rgba(var(--color-on-editable), 0); // Invisible Text
 				pointer-events: none;
 			}
@@ -114,7 +117,7 @@
 			grid-row-gap: 0px;
 			font: var(--font-system);
 			white-space: nowrap;
-			translate: 0px -4px;
+			translate: 0 0;
 		}
 		input[type="checkbox"] {
 			appearance: none;
@@ -129,7 +132,7 @@
 			display: grid;
 			place-content: center;
 			filter: none;
-			translate: 0px 4px;
+			translate: 0 0;
 			&:focus {
 				border-width: 2px;
 			}

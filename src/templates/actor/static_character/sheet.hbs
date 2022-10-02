@@ -15,7 +15,7 @@
 				{{>actor/static_character/sections/pool-attributes}}
 			</div>
 			<div id="hit-locations">
-				<div class="header body-plan">{{system.additionalresources.bodyplan}}</div>
+				<div class="header body-plan">{{localize (concat "gurps.static.body_plan." system.additionalresources.bodyplan)}}</div>
 				<div class="header roll">{{localize "gurps.character.body_type.roll"}}</div>
 				<div class="header location">{{localize "gurps.character.body_type.location"}}</div>
 				<div class="header dr">{{localize "gurps.character.body_type.dr"}}</div>
@@ -52,8 +52,8 @@
 			<div id="reactions">
 				<div class="header modifier">{{localize "gurps.character.reactions.modifier"}}</div>
 				<div class="header condition">{{localize "gurps.character.reactions.reaction"}}</div>
-				{{#each reactions}}
-				{{>actor/character/sections/reaction}}
+				{{#each system.reactions}}
+				{{>actor/static_character/sections/reaction}}
 				{{/each}}
 			</div>
 			{{/if}}
@@ -61,8 +61,8 @@
 			<div id="conditional-modifiers">
 				<div class="header modifier">{{localize "gurps.character.conditional_modifiers.modifier"}}</div>
 				<div class="header condition">{{localize "gurps.character.conditional_modifiers.reaction"}}</div>
-				{{#each conditionalModifiers}}
-				{{>actor/character/sections/conditional-modifier}}
+				{{#each system.conditionalmods}}
+				{{>actor/static_character/sections/reaction}}
 				{{/each}}
 			</div>
 			{{/if}}
@@ -179,73 +179,4 @@
 			</div>
 			{{/if}}
 		</div>
-
-		{{!-- {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods))}} --}}
-		{{!-- <div id='other' style='display: flex; flex-flow: row nowrap;'> --}}
-			{{!-- {{#if (notEmpty system.reactions)}}{{>actor/static_character/sections/reactions}}{{/if}} --}}
-			{{!-- {{#if (notEmpty system.conditionalmods)}}{{>actor/static_character/sections/conditionalmods}}{{/if}}
-			--}}
-			{{!-- </div> --}}
-		{{!-- {{/if}} --}}
-
-		{{!-- {{>actor/static_character/sections/trackers}} --}}
-
-
-		{{!-- {{#if (notEmpty system.ranged)}} --}}
-		{{!-- {{>actor/static_character/sections/ranged}} --}}
-		{{!-- {{/if}} --}}
-
-		{{!-- {{#if (or (notEmpty system.skills) (notEmpty system.ads))}} --}}
-		{{!-- {{!-- <div id='ads-skills'> --}} --}}
-			{{!-- {{#if (notEmpty system.ads)}}{{>actor/static_character/sections/advantages}}{{/if}} --}}
-			{{!-- {{#if (notEmpty system.skills)}}{{>actor/static_character/sections/skills}}{{/if}} --}}
-			{{!-- {{!-- </div> --}} --}}
-		{{!-- {{/if}} --}}
-
-		{{!-- {{#if (notEmpty system.spells)}} --}}
-		{{!-- {{>actor/static_character/sections/spells}} --}}
-		{{!-- {{/if}} --}}
-
-		{{!-- {{#if (notEmpty system.equipment.carried)}} --}}
-		{{!-- {{>actor/static_character/sections/equipment container='carried' data=this.data}} --}}
-		{{!-- {{/if}} --}}
-
-		{{!-- {{#if (notEmpty system.equipment.other)}} --}}
-		{{!-- {{>actor/static_character/sections/equipment container='other' data=this.data}} --}}
-		{{!-- {{/if}} --}}
-
-		{{!-- {{>actor/static_character/sections/notes}} --}}
-		{{!--
-	</div> --}}
-	{{!-- {{>actor/static_character/sections/footer}} --}}
-	{{!-- {{#if navigateBar.visible}} --}}
-	{{!-- <div class='navigate-area'> --}}
-		{{!-- <input id='navigate-toggle-{{_id}}' class='toggle offscreen-only' type='checkbox' /> --}}
-		{{!-- <div class='navigate-bar'> --}}
-			{{!-- <label class='navigation-view' for='navigate-toggle-{{_id}}'><span class='icon'></span></label> --}}
-			{{!-- <div class='navigate-container'> --}}
-				{{!-- <div class='navigation-link' data-value='personal'>TOP</div> --}}
-				{{!-- <div class='navigation-link' data-value='stats'>{{localize 'GURPS.statsTab'}}</div> --}}
-				{{!-- {{#if navigateBar.hasMelee}} --}}
-				{{!-- <div class='navigation-link' data-value='melee'>{{localize 'GURPS.melee'}}</div> --}}
-				{{!-- {{/if}} --}}
-				{{!-- {{#if navigateBar.hasRanged}} --}}
-				{{!-- <div class='navigation-link' data-value='ranged'>{{localize 'GURPS.ranged'}}</div> --}}
-				{{!-- {{/if}} --}}
-				{{!-- <div class='navigation-link' data-value='advantages'>{{localize 'GURPS.pointsAdvantages'}}</div>
-				--}}
-				{{!-- <div class='navigation-link' data-value='skills'>{{localize 'GURPS.skillsTab'}}</div> --}}
-				{{!-- {{#if navigateBar.hasSpells}} --}}
-				{{!-- <div class='navigation-link' data-value='spells'>{{localize 'GURPS.spellsTab'}}</div> --}}
-				{{!-- {{/if}} --}}
-				{{!-- <div class='navigation-link' data-value='equipmentcarried'>{{localize 'GURPS.equipment'}}</div>
-				--}}
-				{{!-- {{#if navigateBar.hasOther}} --}}
-				{{!-- <div class='navigation-link' data-value='equipmentother'>OTHER</div> --}}
-				{{!-- {{/if}} --}}
-				{{!-- <div class='navigation-link' data-value='notes'>{{localize 'GURPS.notes'}}</div> --}}
-				{{!-- </div> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-	{{!-- {{/if}} --}}
 </form>

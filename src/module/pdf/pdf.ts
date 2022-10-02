@@ -1,5 +1,5 @@
 import { PDFViewerSheet } from "@module/pdf/sheet"
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n } from "@util"
 
 export const SJG_links = {
@@ -76,7 +76,7 @@ export function openPDF(pdfs: string) {
 		}
 
 		if (book === "B") {
-			const s = (game as Game).settings.get(SYSTEM_NAME, "basic_set_pdf")
+			const s = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF)
 			if (page > 336) {
 				if (s === "separate") {
 					book = "BX"

@@ -208,7 +208,9 @@
 			"reactions": {},
 			"additionalresources": {
 				"bodyplan": "humanoid",
-				"tracker": {}
+				"tracker": {},
+				"importpath": "",
+				"importname": ""
 			},
 			"conditions": {},
 			"conditionalinjury": {

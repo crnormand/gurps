@@ -76,14 +76,38 @@
 		font: var(--font-page-primary-fields);
 	}
 
-	.rollable.hover {
-		background-color: rgba(var(--color-link), 1) !important;
-		color: rgba(var(--color-on-link), 1) !important;
-		cursor: pointer;
-		.input:disabled {
-			color: inherit;
-			cursor: inherit;
+	.rollable:not([data-type="modifier"]):not(.noroll) {
+		background: var(--background-roll);
+		color: rgb(var(--color-on-button-roll)) !important;
+		&.hover {
+			background: rgb(var(--color-button-roll-rollover)) !important;
+			color: rgb(var(--color-on-button-roll-rollover)) !important;
 		}
+		input {
+			color: inherit;
+		}
+	}
+
+	.rollable[data-type="modifier"]:not(.noroll) {
+		background: var(--background-mod);
+		color: rgb(var(--color-on-button-mod)) !important;
+		&.hover {
+			background: rgb(var(--color-button-mod-rollover)) !important;
+			color: rgb(var(--color-on-button-mod-rollover)) !important;
+		}
+		input {
+			color: inherit;
+		}
+	}
+
+	.rollable.hover {
+		// background-color: rgba(var(--color-link), 1) !important;
+		// color: rgba(var(--color-on-link), 1) !important;
+		cursor: pointer;
+		// .input:disabled {
+		// color: inherit;
+		// cursor: inherit;
+		// }
 	}
 
 	.input {
@@ -103,7 +127,7 @@
 		&:disabled {
 			border-bottom-color: transparent;
 			background-color: transparent;
-			color: rgba(var(--color-on-editable), 0.6);
+			// color: rgba(var(--color-on-editable), 0.6);
 		}
 	}
 

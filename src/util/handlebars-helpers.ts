@@ -230,6 +230,15 @@ export function registerHandlebarsHelpers() {
 		return JSON.stringify(o)
 	})
 
+	Handlebars.registerHelper("splitDR", function (a: { [key: string]: number }): string {
+		let DR = ""
+		for (const i of Object.values(a)) {
+			DR += `${i}/`
+		}
+		DR = DR.substring(0, DR.length - 1)
+		return DR
+	})
+
 	Handlebars.registerHelper("textareaFormat", function (s: string): string {
 		return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
 	})

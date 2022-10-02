@@ -8,8 +8,10 @@
 		</div>
 		{{else}}
 		<div class="points">[{{this.points}}]</div>
-		{{>sections/input-text field="field rollable" name=(concat "system.attributes." this.id ".adj") data=this.current
-		type="Number" class=(input_lock ../editing)}}
+		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable">
+			<input name="system.attributes.{{this.id}}.adj" class="input number" type="text" data-dtype="Number"
+				value="{{this.current}}" {{{input_lock ../editing}}} />
+		</div>
 		<div class="label">{{this.attribute_def.combinedName}}</div>
 		{{/if}}
 		{{/each}}

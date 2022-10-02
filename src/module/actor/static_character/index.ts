@@ -1,8 +1,8 @@
 import { BaseActorGURPS } from "@actor/base"
-import { ActorFlags } from "@actor/base/data"
+// Import { ActorFlags } from "@actor/base/data"
 import { StaticItemGURPS } from "@item/static"
 import { StaticItemSystemData } from "@item/static/data"
-import { RollModifier } from "@module/data"
+// Import { RollModifier } from "@module/data"
 import { SYSTEM_NAME } from "@module/settings"
 import { i18n, Static } from "@util"
 import { StaticAdvantage, StaticEquipment } from "./components"
@@ -15,6 +15,7 @@ import {
 	StaticCharacterSystemData,
 	StaticResourceTracker,
 } from "./data"
+import { StaticCharacterImporter } from "./import"
 
 Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
@@ -57,7 +58,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	}
 
 	override get sizeMod(): number {
-		return this.system.traits.sizemod
+		return this.system.traits?.sizemod ?? 0
 	}
 
 	override prepareBaseData(): void {
@@ -137,7 +138,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		if (this.system.languages) {
 			let updated = false
 			let newads = { ...this.system.ads }
-			let langn = new RegExp("Language:?", "i")
+			let langn = /Language:?/i
 			let langt = new RegExp(i18n("gurps.language.language"))
 			Static.recurseList(this.system.languages, (e, _k, _d) => {
 				let a = Static.findAdDisad(this, `*${e.name}`)
@@ -204,6 +205,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	_initializeStartingValues() {
 		const data = this.system
 		data.currentdodge = 0
+		data.equipment ??= {}
 		data.equipment.carried ??= {}
 		data.equipment.other ??= {}
 
@@ -473,6 +475,134 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			Static.put(list, e)
 		}
 		return i === 0 ? {} : { [`system.${key}`]: list }
+	}
+
+	async importCharacter() {
+		const import_path = this.system.additionalresources.importpath
+		const import_name = import_path.match(/.*[/\\]Data[/\\](.*)/)
+		if (import_name) {
+			const file_path = import_name[1].replace(/\\/g, "/")
+			const request = new XMLHttpRequest()
+			request.open("GET", file_path)
+
+			new Promise(resolve => {
+				request.onload = () => {
+					if (request.status === 200) {
+						const text = request.response
+						StaticCharacterImporter.import(this, {
+							text: text,
+							name: import_name[1],
+							path: import_path,
+						})
+					} else this._openImportDialog()
+					resolve(this)
+				}
+			})
+			request.send(null)
+		} else this._openImportDialog()
+	}
+
+	_openImportDialog() {
+		setTimeout(async () => {
+			new Dialog(
+				{
+					title: `Import character data for: ${this.name}`,
+					content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import.hbs`, {
+						name: `"${this.name}"`,
+					}),
+					buttons: {
+						import: {
+							icon: '<i class="fas fa-file-import"></i>',
+							label: "Import",
+							callback: html => {
+								const form = $(html).find("form")[0]
+								const files = form.data.files
+								if (!files.length) {
+									return ui.notifications?.error("You did not upload a data file!")
+								} else {
+									const file = files[0]
+									readTextFromFile(file).then(text =>
+										StaticCharacterImporter.import(this, {
+											text: text,
+											name: file.name,
+											path: file.path,
+										})
+									)
+								}
+							},
+						},
+						no: {
+							icon: '<i class="fas fa-times"></i>',
+							label: "Cancel",
+						},
+					},
+					default: "import",
+				},
+				{
+					width: 400,
+				}
+			).render(true)
+		}, 200)
+	}
+
+	_findElementIn(list: string, uuid: string, name = "", mode = "") {
+		let foundkey: any = null
+		let l = getProperty(this, list)
+		Static.recurseList(l, (e, k, _d) => {
+			if ((uuid && e.uuid === uuid) || (e.name && e.name.startsWith(name) && e.mode === mode)) foundkey = k
+		})
+		return foundkey === null ? foundkey : getProperty(this, `${list}.${foundkey}`)
+	}
+
+	_migrateOtfsAndNotes(oldobj: any = {}, newobj: any = {}, importvttnotes = "") {
+		if (!oldobj) return
+		if (importvttnotes) newobj.notes += (newobj.notes ? " " : "") + importvttnotes
+		this._updateOtf("check", oldobj, newobj)
+		this._updateOtf("during", oldobj, newobj)
+		this._updateOtf("pass", oldobj, newobj)
+		this._updateOtf("fail", oldobj, newobj)
+		if (oldobj.notes?.startsWith(newobj.notes))
+			// Must be done AFTER OTFs have been stripped out
+			newobj.notes = oldobj.notes
+		if (oldobj.name?.startsWith(newobj.name)) newobj.name = oldobj.name
+	}
+
+	_updateOtf(otfkey: string, oldobj: any, newobj: any) {
+		let objkey = `${otfkey}otf`
+		let oldotf = oldobj[objkey] ?? ""
+		newobj[objkey] = oldotf
+		let notes
+		let newotf
+		;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
+		if (newotf) newobj[objkey] = newotf
+		newobj.notes = notes?.trim()
+	}
+
+	// Looking for OTFs in text.  ex:   c:[/qty -1] during:[/anim healing c]
+	_removeOtf(key: string, text: string) {
+		if (!text) return [text, null]
+		let start
+		let patstart = text.toLowerCase().indexOf(`${key[0]}:[`)
+		if (patstart < 0) {
+			patstart = text.toLowerCase().indexOf(`${key}:[`)
+			if (patstart < 0) return [text, null]
+			else start = patstart + key.length + 2
+		} else start = patstart + 3
+		let cnt = 1
+		let i = start
+		if (i >= text.length) return [text, null]
+		do {
+			let ch = text[i++]
+			if (ch === "[") cnt++
+			if (ch === "]") cnt--
+		} while (i < text.length && cnt > 0)
+		if (cnt === 0) {
+			let otf = text.substring(start, i - 1)
+			let front = text.substring(0, patstart)
+			let end = text.substring(i)
+			if ((front === "" || front.endsWith(" ")) && end.startsWith(" ")) end = end.substring(1)
+			return [front + end, otf]
+		} else return [text, null]
 	}
 }
 

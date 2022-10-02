@@ -2,9 +2,9 @@
 	<div class="dropdown">
 		{{#if this.hasContains}}
 		{{#if this.hasCollapsed}}
-		{{>actor/character/sections/dropdown-closed}}
+		{{>actor/static_character/sections/dropdown-closed}}
 		{{else}}
-		{{>actor/character/sections/dropdown-open}}
+		{{>actor/static_character/sections/dropdown-open}}
 		{{/if}}
 		{{/if}}
 	</div>
@@ -17,52 +17,3 @@
 </div>
 <div class="points">{{this.points}}</div>
 <div class="reference" data-pdf="{{this.pageref}}">{{ref this.pageref}}</div>
-
-{{!-- <div id='advantages' class='gga-table with-notes'> --}}
-	{{!-- <div class='itemmenu header' readonly></div> --}}
-	{{!-- <div class='header desc'> --}}
-		{{!-- <div class='headermenu' data-key='system.ads'> --}}
-			{{!-- <span>{{localize 'GURPS.advDisadvPerkQuirks'}}</span> --}}
-			{{!-- <i class='fas fa-caret-square-down'></i> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='pts header'>{{localize "GURPS.abbrevPoints"}}</div> --}}
-	{{!-- <div class='ref header'>{{localize "GURPS.abbrevReference"}}</div> --}}
-
-	{{!-- {{#each (flatlist system.ads)}} --}}
-	{{!-- {{#unless isCollapsed}} --}}
-	{{!-- <div class='itemmenu' readonly></div> --}}
-
-	{{!-- <div class='adsdraggable' data-key='system.ads.{{@key}}'> --}}
-		{{!-- <div class='desc dblclkedit indent{{indent}}'> --}}
-			{{!-- <div class='gga-desc-text'> --}}
-				{{!-- <div> --}}
-					{{!-- {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}} --}}
-					{{!-- {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- <div class='tooltip gga-manual'> --}}
-					{{!-- {{{gurpslink this.name}}} --}}
-					{{!-- {{#if (displayItemHover this)}} --}}
-					{{!-- <div class='tooltiptext gga-manual'><img src='{{this.img}}' /></div> --}}
-					{{!-- {{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- <div> --}}
-					{{!-- {{#if (isFoundryItem this)}} --}}
-					{{!-- <i class='far fas fa-star tooltip gga-item'> --}}
-						{{!-- <span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span> --}}
-						{{!-- </i> --}}
-					{{!-- {{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- </div> --}}
-			{{!-- <div class='list_note'> --}}
-				{{!-- {{{gurpslinkbr this.notes}}} --}}
-				{{!-- </div> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='pts gga-right'>{{{displayNumber this.points false}}}</div> --}}
-	{{!-- <div class='ref flex-center'>{{{pdflinkext this}}}</div> --}}
-	{{!-- {{/unless}} --}}
-	{{!-- {{/if}} --}}
-	{{!-- {{/each}} --}}
-	{{!-- </div> --}}

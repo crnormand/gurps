@@ -1,6 +1,6 @@
 import { ImagePath } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
@@ -271,7 +271,7 @@ export class CompendiumBrowser extends Application {
 	}
 
 	loadSettings(): void {
-		const settings: string | any = (game as Game).settings.get(SYSTEM_NAME, "compendiumBrowserPacks")
+		const settings: string | any = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS)
 		if (typeof settings === "string") this.settings = JSON.parse(settings)
 		else this.settings = settings
 	}

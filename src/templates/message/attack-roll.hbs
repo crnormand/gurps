@@ -7,7 +7,9 @@
 			{{this.name}}{{/if}}</div>
 		{{/each}}
 	</div>
+	{{#if (neq level effectiveLevel)}}
 	<div class="effective">{{localize "gurps.roll.effective_skill" level=effectiveLevel}}</div>
+	{{/if}}
 	<div class="result {{success}}">{{total}}: {{localize (concat "gurps.roll.success_attack." success)}}</div>
 	<div class="margin mod mod-{{marginClass}}" data-mod="{{json marginMod}}">
 		{{#if (in success "success")}}

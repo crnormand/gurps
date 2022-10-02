@@ -105,7 +105,7 @@ export class WeaponDamage {
 		let best = -Infinity
 		for (const d of this.parent.defaults) {
 			if (d.skillBased) {
-				let level = d.skillLevelFast(actor, false, null, true)
+				let level = d.skillLevelFast(actor, false, true, null)
 				if (best < level) {
 					best = level
 					bestDefault = d

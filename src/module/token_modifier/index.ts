@@ -1,10 +1,8 @@
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n } from "@util"
 import { TokenModifierWindow } from "./window"
 
 export class TokenModifierControl {
-	static SETTING_SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window"
-
 	static EFFECT_MOD_NAME = "TokenModWindowGURPS"
 
 	private _showWindow: boolean
@@ -27,14 +25,14 @@ export class TokenModifierControl {
 	}
 
 	getWindowEnabled(): boolean {
-		return (game as Game).settings.get(SYSTEM_NAME, TokenModifierControl.SETTING_SHOW_TOKEN_MODIFIERS) as boolean
+		return (game as Game).settings.get(SYSTEM_NAME, SETTINGS.SHOW_TOKEN_MODIFIERS) as boolean
 	}
 
 	toggleWindow(closeOptions: Application.CloseOptions): void {
 		this._showWindow = !this._showWindow
 
 		// Show the token control as active
-		let toggle = $(document).find(`ol > li[data-tool=${TokenModifierControl.EFFECT_MOD_NAME}]`)
+		let toggle = $(document).find(`ol > li[data-tool=${SETTINGS.SHOW_TOKEN_MODIFIERS}]`)
 		if (this._showWindow && !toggle[0].classList.value.includes("active")) toggle[0]?.classList.add("active")
 		else if (!this._showWindow && toggle[0].classList.value.includes("active"))
 			toggle[0]?.classList.remove("active")
@@ -42,14 +40,14 @@ export class TokenModifierControl {
 	}
 
 	_registerSetting() {
-		;(game as Game).settings.register(SYSTEM_NAME, TokenModifierControl.SETTING_SHOW_TOKEN_MODIFIERS, {
+		;(game as Game).settings.register(SYSTEM_NAME, SETTINGS.SHOW_TOKEN_MODIFIERS, {
 			name: i18n("gurps.settings.show_token_modifiers.title"),
 			hint: i18n("gurps.settings.show_token_modifiers.hint"),
 			scope: "client",
 			config: true,
 			type: Boolean,
 			default: true,
-			onChange: value => console.log(`${TokenModifierControl.SETTING_SHOW_TOKEN_MODIFIERS} : ${value}`),
+			onChange: value => console.log(`${SETTINGS.SHOW_TOKEN_MODIFIERS} : ${value}`),
 		})
 	}
 
@@ -58,7 +56,7 @@ export class TokenModifierControl {
 			const tokenButton = controls.find(b => b.name === "token")
 			if (tokenButton) {
 				tokenButton.tools.push({
-					name: TokenModifierControl.EFFECT_MOD_NAME,
+					name: SETTINGS.SHOW_TOKEN_MODIFIERS,
 					title: i18n("gurps.token_modifier_window.button"),
 					icon: "fas fa-list",
 					toggle: true,

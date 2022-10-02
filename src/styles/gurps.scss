@@ -165,12 +165,12 @@
 			padding: 0 2px;
 		}
 		&[readonly] {
-			background-color: rgb(var(--color-backgroudn));
+			background-color: rgb(var(--color-background));
 			color: rgb(var(--color-on-background));
 			pointer-events: none;
 		}
 		&:disabled {
-			background-color: rgb(var(--color-background));
+			// background-color: rgb(var(--color-background));
 			color: rgba(var(--color-on-editable), 0); // Invisible Text
 			pointer-events: none;
 		}
@@ -221,7 +221,6 @@
 		padding: var(--padding-header);
 		background-color: rgb(var(--color-header));
 		color: rgb(var(--color-on-header));
-		border-right: 1px solid rgb(var(--color-separator));
 		white-space: nowrap;
 	}
 }

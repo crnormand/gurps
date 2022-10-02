@@ -5,6 +5,16 @@ import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data
 import { GURPS } from "./gurps"
 
 export const SYSTEM_NAME = "gcsga"
+export enum SETTINGS {
+	BASIC_SET_PDF = "basic_set_pdf",
+	PORTRAIT_PATH = "portrait_path",
+	PORTRAIT_OVERWRITE = "portrait_overwrite",
+	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
+	SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window",
+	IGNORE_IMPORT_NAME = "ignore_import_name",
+	STATIC_IMPORT_HP_FP = "import_hp_fp",
+	STATIC_IMPORT_BODY_PLAN = "import_bodyplan",
+}
 
 /**
  *
@@ -13,7 +23,7 @@ export function registerSettings(): void {
 	// Register any custom system settings here
 	const g = game as Game
 
-	g.settings.register(SYSTEM_NAME, "basic_set_pdf", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF, {
 		name: i18n("gurps.settings.basic_set_pdfs.name"),
 		hint: i18n("gurps.settings.basic_set_pdfs.hint"),
 		scope: "world",
@@ -27,7 +37,7 @@ export function registerSettings(): void {
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
-	g.settings.register(SYSTEM_NAME, "portrait_path", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH, {
 		name: i18n("gurps.settings.portrait_path.name"),
 		hint: i18n("gurps.settings.portrait_path.hint"),
 		scope: "world",
@@ -41,7 +51,7 @@ export function registerSettings(): void {
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
-	g.settings.register(SYSTEM_NAME, "portrait_overwrite", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_OVERWRITE, {
 		name: i18n("gurps.settings.portrait_overwrite.name"),
 		hint: i18n("gurps.settings.portrait_overwrite.hint"),
 		scope: "world",
@@ -50,7 +60,7 @@ export function registerSettings(): void {
 		default: true,
 	})
 
-	g.settings.register(SYSTEM_NAME, "compendiumBrowserPacks", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, {
 		name: "placeholder",
 		hint: "placeholder",
 		default: "{}",
@@ -59,6 +69,46 @@ export function registerSettings(): void {
 		onChange: () => {
 			GURPS.CompendiumBrowser.loadSettings()
 		},
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP, {
+		name: i18n("gurps.settings.import_hp_fp.name"),
+		hint: i18n("gurps.settings.import_hp_fp.hint"),
+		scope: "world",
+		config: true,
+		type: String,
+		choices: {
+			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
+			no: i18n("GURPS.settingImportHPAndFPIgnore"),
+			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+		},
+		default: "ask",
+		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_BODY_PLAN, {
+		name: i18n("gurps.settings.import_body_plan.name"),
+		hint: i18n("gurps.settings.import_body_plan.hint"),
+		scope: "world",
+		config: true,
+		type: String,
+		choices: {
+			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
+			no: i18n("GURPS.settingImportHPAndFPIgnore"),
+			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+		},
+		default: "ask",
+		onChange: (value: string) => console.log(`Import of Body Plan : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.IGNORE_IMPORT_NAME, {
+		name: i18n("GURPS.settingImportIgnoreName"),
+		hint: i18n("GURPS.settingHintImportIgnoreName"),
+		scope: "world",
+		config: true,
+		type: Boolean,
+		default: false,
+		onChange: value => console.log(`Ignore import name : ${value}`),
 	})
 }
 

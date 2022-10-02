@@ -29,6 +29,7 @@ export async function handleRoll(
 		case RollType.SkillRelative:
 		case RollType.Spell:
 		case RollType.SpellRelative:
+		case RollType.ControlRoll:
 			name = `${data.item.formattedName}`
 			rollData = await getRollData(user, actor, data, name, "3d6")
 			return rollSkill(rollData)
@@ -95,6 +96,8 @@ async function getRollData(
 				return parseInt(data.item.skillLevel) ?? 0
 			case RollType.Attack:
 				return data.weapon.skillLevel(false)
+			case RollType.ControlRoll:
+				return data.item.cr
 			default:
 				return 0
 		}
@@ -270,7 +273,10 @@ async function rollSkill(rollData: any): Promise<void> {
 		modifiers: rollData.modifiers,
 	}
 
-	const message = await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/skill-roll.hbs`, chatData)
+	const message =
+		chatData.data.type === RollType.ControlRoll
+			? await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/cr-roll.hbs`, chatData)
+			: await renderTemplate(`systems/${SYSTEM_NAME}/templates/message/skill-roll.hbs`, chatData)
 
 	const messageData = {
 		user: rollData.user,

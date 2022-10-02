@@ -5,6 +5,8 @@ import { StaticCharacterGURPS } from "."
 export class _BaseComponent {
 	notes: string
 
+	note = ""
+
 	pageref: string
 
 	externallink?: string
@@ -131,7 +133,7 @@ export class StaticSpell extends LeveledComponent {
 
 	relativelevel: string // "IQ+1"
 
-	constructor(name: string, level: number) {
+	constructor(name = "Spell", level = 0) {
 		super(name, level)
 		this.class = ""
 		this.college = ""
@@ -201,7 +203,7 @@ export class StaticMelee extends StaticAttack {
 
 	block: string
 
-	constructor(name: string, level: number, damage: string) {
+	constructor(name = "Weapon", level = 0, damage = "") {
 		super(name, level, damage)
 
 		this.weight = ""
@@ -218,7 +220,7 @@ export class StaticRanged extends StaticAttack {
 
 	legalityclass: string
 
-	ammo: string
+	ammo: number
 
 	acc: string
 
@@ -234,11 +236,11 @@ export class StaticRanged extends StaticAttack {
 
 	max: string
 
-	constructor(name: string, level: number, damage: string) {
+	constructor(name = "Weapon", level = 0, damage = "") {
 		super(name, level, damage)
 		this.bulk = ""
 		this.legalityclass = ""
-		this.ammo = ""
+		this.ammo = 0
 		this.acc = ""
 		this.range = ""
 		this.rof = ""
@@ -296,7 +298,7 @@ export class StaticEquipment extends NamedComponent {
 
 	contains: { [key: string]: any }
 
-	constructor(nm: string, ue: boolean) {
+	constructor(nm = "Equipment", ue = true) {
 		super(nm)
 		this.save = ue
 		this.equipped = false
@@ -366,12 +368,12 @@ export class StaticEquipment extends NamedComponent {
 	}
 }
 
-export class Note extends _BaseComponent {
+export class StaticNote extends _BaseComponent {
 	notes: string
 
 	save: boolean
 
-	constructor(notes: string, ue: boolean) {
+	constructor(notes?: string, ue = false) {
 		super()
 
 		this.notes = notes || ""

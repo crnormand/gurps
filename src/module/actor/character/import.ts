@@ -22,12 +22,12 @@ import { TraitModifierContainerSystemData } from "@item/trait_modifier_container
 import { AttributeObj } from "@module/attribute"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
 import { CR } from "@module/data"
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { BaseWeapon, Weapon } from "@module/weapon"
 import { BasePrereq, PrereqList } from "@prereq"
 import { i18n, i18n_f, newUUID, removeAccents } from "@util"
-import { CharacterDataGURPS, CharacterSystemData } from "./data"
+import { CharacterSystemData } from "./data"
 import { GCAImporter } from "./import_GCA"
 
 export interface CharacterImportedData extends Omit<CharacterSystemData, "attributes"> {
@@ -68,7 +68,7 @@ export class CharacterImporter {
 			return this.throwImportError(errorMessages)
 		}
 
-		let commit: Partial<CharacterDataGURPS> = {}
+		let commit: Partial<CharacterSystemData> = {}
 		const imp = document.importData
 		imp.name = file.name ?? imp.name
 		imp.path = file.path ?? imp.path
@@ -178,7 +178,7 @@ export class CharacterImporter {
 	}
 
 	getPortraitPath(): string {
-		if ((game as Game).settings.get(SYSTEM_NAME, "portrait_path") === "global") return "images/portraits/"
+		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH) === "global") return "images/portraits/"
 		return `worlds/${(game as Game).world.id}/images/portraits`
 	}
 

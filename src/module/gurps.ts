@@ -63,6 +63,7 @@ import { PDFEditorSheet } from "./pdf/edit"
 import { UserFlags } from "./data"
 import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
 import { TokenModifierControl } from "./token_modifier"
+import { StaticHitLocation } from "@actor/static_character/hit_location"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -112,6 +113,8 @@ Hooks.once("init", async () => {
 	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
 	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+
+	StaticHitLocation.init()
 
 	// Register custom system settings
 	registerSettings()

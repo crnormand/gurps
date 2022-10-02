@@ -14,6 +14,11 @@ export interface AttributeObj {
 	adj: number
 	damage?: number
 	attribute_def?: AttributeDef
+	calc?: {
+		value: number
+		current?: number
+		points: number
+	}
 }
 
 export class Attribute {
