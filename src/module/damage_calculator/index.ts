@@ -14,6 +14,8 @@ import {
 import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
 
 const Head = ["skull", "eye", "face"]
+const Limb = ["arm", "leg"]
+const Extremity = ["hand", "foot"]
 
 /**
  * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
@@ -60,7 +62,18 @@ class DamageCalculator {
 	 */
 	get injury(): number {
 		const temp = Math.floor(this._woundingModifier(this.penetratingDamage))
-		return this.penetratingDamage > 0 ? Math.max(1, temp) : 0
+		const candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
+		return this._applyMaximum(candidateInjury)
+	}
+
+	private _applyMaximum(candidateInjury: number): number {
+		if (Limb.includes(this._damageRoll.locationId)) {
+			return Math.min(Math.floor(this._target.hitPoints.value / 2) + 1, candidateInjury)
+		}
+		if (Extremity.includes(this._damageRoll.locationId)) {
+			return Math.min(Math.floor(this._target.hitPoints.value / 3) + 1, candidateInjury)
+		}
+		return candidateInjury
 	}
 
 	/**
@@ -138,26 +151,44 @@ class DamageCalculator {
 		// Fatigue attacks ignore hit location
 		if (this._damageRoll.damageType === DamageType.fat && this._isMajorWound()) {
 			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
-		} else if (this._damageRoll.locationId === "torso" && this._isMajorWound()) {
-			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
-		} else if (
-			["skull", "eye"].includes(this._damageRoll.locationId) &&
-			(this._shockEffects.length > 0 || this._isMajorWound()) &&
-			this._damageRoll.damageType !== DamageType.tox
-		) {
-			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-10)]))
-		} else if (this._damageRoll.locationId === "vitals" && this._shockEffects.length > 0) {
-			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
-		} else if (["face", "groin"].includes(this._damageRoll.locationId) && this._isMajorWound()) {
-			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
-		} else if (this._isMajorWound()) {
-			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+		} else {
+			switch (this._damageRoll.locationId) {
+				case "torso":
+					if (this._isMajorWound())
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+					break
+
+				case "skull":
+				case "eye":
+					if (this._shockEffects.length > 0 || this._isMajorWound()) {
+						let penalty = this._damageRoll.damageType !== DamageType.tox ? -10 : 0
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
+					}
+					break
+
+				case "vitals":
+					if (this._shockEffects.length > 0)
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
+					break
+
+				case "face":
+				case "groin":
+					if (this._isMajorWound())
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
+					break
+
+				default:
+					if (this._isMajorWound())
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+			}
 		}
+
 		return wounds
 	}
 
 	private _isMajorWound() {
-		return this.injury > this._target.hitPoints.value / 2
+		let divisor = Extremity.includes(this._damageRoll.locationId) ? 3 : 2
+		return this.injury > this._target.hitPoints.value / divisor
 	}
 
 	private get _knockbackEffects(): InjuryEffect[] {
@@ -195,6 +226,14 @@ class DamageCalculator {
 			return this.injury > this._target.hitPoints.value
 				? [new InjuryEffect(InjuryEffectType.blinded)]
 				: [new InjuryEffect(InjuryEffectType.eyeBlinded)]
+		}
+
+		if (Limb.includes(this._damageRoll.locationId) && this._isMajorWound()) {
+			return [new InjuryEffect(InjuryEffectType.limbCrippled)]
+		}
+
+		if (Extremity.includes(this._damageRoll.locationId) && this._isMajorWound()) {
+			return [new InjuryEffect(InjuryEffectType.limbCrippled)]
 		}
 
 		return []
@@ -251,30 +290,45 @@ class DamageCalculator {
 		 */
 		if (this._target.isDiffuse) return multiplier.diffuse
 
-		// --- Calculate Wounding Modifier for Hit Location. ---
-
 		// Fatigue damage always ignores hit location.
 		if (this._damageRoll.damageType === DamageType.fat) return identity
 
-		if (this._damageRoll.locationId === "vitals") {
-			if ([DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)) return x => x * 3
-			if (this._damageRoll.damageType === DamageType.burn && this._damageRoll.damageModifier === "tbb")
-				return double
+		// --- Calculate Wounding Modifier for Hit Location. ---
+
+		switch (this._damageRoll.locationId) {
+			case "vitals":
+				if ([DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)) return x => x * 3
+				return this.isTightBeamBurning() ? double : multiplier.theDefault
+
+			case "skull":
+			case "eye":
+				return this._damageRoll.damageType !== DamageType.tox ? x => x * 4 : multiplier.theDefault
+
+			case "face":
+				return this._damageRoll.damageType === DamageType.cor ? oneAndOneHalf : identity
+
+			case "neck":
+				return [DamageType.cor, DamageType.cr].includes(this._damageRoll.damageType)
+					? oneAndOneHalf
+					: this._damageRoll.damageType === DamageType.cut
+					? double
+					: multiplier.theDefault
+
+			case "hand":
+			case "foot":
+			case "arm":
+			case "leg":
+				return [DamageType.pi_p, DamageType.pi_pp, DamageType.imp].includes(this._damageRoll.damageType)
+					? identity
+					: multiplier.theDefault
+
+			default:
+				return multiplier.theDefault
 		}
-		if (["skull", "eye"].includes(this._damageRoll.locationId)) {
-			if (this._damageRoll.damageType !== DamageType.tox) return x => x * 4
-		}
-		if (this._damageRoll.locationId === "face") {
-			return this._damageRoll.damageType === DamageType.cor ? oneAndOneHalf : identity
-		}
-		if (this._damageRoll.locationId === "neck") {
-			return [DamageType.cor, DamageType.cr].includes(this._damageRoll.damageType)
-				? oneAndOneHalf
-				: this._damageRoll.damageType === DamageType.cut
-				? double
-				: multiplier.theDefault
-		}
-		return multiplier.theDefault
+	}
+
+	private isTightBeamBurning() {
+		return this._damageRoll.damageType === DamageType.burn && this._damageRoll.damageModifier === "tbb"
 	}
 
 	private get _defenderHitLocations(): Array<HitLocation> {
