@@ -129,8 +129,14 @@ class DamageCalculator {
 		if (rawModifier > 0) {
 			let modifier = Math.min(4, rawModifier) * -1
 
-			// TODO In RAW, this doubling only occurs if the target is physiologically male.
-			if (this._damageRoll.damageType === DamageType.cr && this._damageRoll.locationId === "groin") modifier *= 2
+			// TODO In RAW, this doubling only occurs if the target is physiologically male and does not have the
+			// "No Vitals" Injury Tolerance trait.
+			if (
+				this._damageRoll.damageType === DamageType.cr &&
+				this._damageRoll.locationId === "groin" &&
+				!this._target.hasTrait("No Vitals")
+			)
+				modifier *= 2
 
 			const shockEffect = new InjuryEffect(InjuryEffectType.shock, [
 				new RollModifier("dx", RollType.Attribute, modifier),
@@ -148,9 +154,10 @@ class DamageCalculator {
 	private get _majorWoundEffects(): InjuryEffect[] {
 		const wounds = []
 
-		// Fatigue attacks ignore hit location
-		if (this._damageRoll.damageType === DamageType.fat && this._isMajorWound()) {
-			wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+		// Fatigue attacks and Injury Tolerance (Homogenous) ignore hit location.
+		if (this._damageRoll.damageType === DamageType.fat || this._target.isHomogenous || this._target.isDiffuse) {
+			if (this._isMajorWound())
+				wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
 		} else {
 			switch (this._damageRoll.locationId) {
 				case "torso":
@@ -161,20 +168,31 @@ class DamageCalculator {
 				case "skull":
 				case "eye":
 					if (this._shockEffects.length > 0 || this._isMajorWound()) {
-						let penalty = this._damageRoll.damageType !== DamageType.tox ? -10 : 0
+						let penalty =
+							this._damageRoll.damageType !== DamageType.tox && !this._target.hasTrait("No Brain")
+								? -10
+								: 0
 						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
 					}
 					break
 
 				case "vitals":
-					if (this._shockEffects.length > 0)
-						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
+					if (this._shockEffects.length > 0) {
+						const penalty = this._target.hasTrait("No Vitals") ? 0 : -5
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
+					}
 					break
 
 				case "face":
-				case "groin":
 					if (this._isMajorWound())
 						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
+					break
+
+				case "groin":
+					if (this._isMajorWound()) {
+						const penalty = this._target.hasTrait("No Vitals") ? 0 : -5
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
+					}
 					break
 
 				default:
@@ -282,13 +300,20 @@ class DamageCalculator {
 
 	private get _woundingModifier(): ModifierFunction {
 		const multiplier = dataTypeMultiplier[this._damageRoll.damageType]
-		if (this._target.isUnliving) return multiplier.unliving
-		if (this._target.isHomogenous) return multiplier.homogenous
 
 		/**
 		 * TODO Diffuse: Exception: Area-effect, cone, and explosion attacks cause normal injury.
 		 */
 		if (this._target.isDiffuse) return multiplier.diffuse
+		if (this._target.isHomogenous) return multiplier.homogenous
+
+		// Unliving uses unliving modifiers unless the hit location is skull, eye, or vitals.
+		if (this._target.isUnliving && !["skull", "eye", "vitals"].includes(this._damageRoll.locationId))
+			return multiplier.unliving
+
+		// No Brain has no extra wounding modifier if hit location is skull or eye.
+		if (this._target.hasTrait("No Brain") && ["skull", "eye"].includes(this._damageRoll.locationId))
+			return multiplier.theDefault
 
 		// Fatigue damage always ignores hit location.
 		if (this._damageRoll.damageType === DamageType.fat) return identity
@@ -344,4 +369,4 @@ class DamageCalculator {
 	}
 }
 
-export { DamageCalculator }
+export { DamageCalculator, Head, Limb, Extremity }
