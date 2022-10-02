@@ -1,266 +1,21 @@
-import { TraitGURPS } from "@item"
-import { DiceGURPS } from "@module/dice"
 import { RollType } from "../data"
+import { DamageRoll } from "./damage_roll"
+import { DamageTarget } from "./damage_target"
+import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
+import { HitLocation } from "./hit_location"
+import {
+	CheckFailureConsequence,
+	EffectCheck,
+	InjuryEffect,
+	InjuryEffectType,
+	KnockdownCheck,
+	RollModifier,
+} from "./injury_effect"
+import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
 
-/**
- * Extend Settings.HitLocationTable to change the type of locations to an array of HitLocationWithCalc.
- */
-type HitLocationCalc = { roll_range: string; dr: Record<string, any>; flexible: boolean }
-type HitLocation = {
-	calc: HitLocationCalc
-	choice_name: string
-	description: string
-	dr_bonus: number
-	hit_penalty: number
-	id: string
-	slots: number
-	table_name: string
-}
-
-interface HitLocationTableWithCalc {
-	name: string
-	roll: string
-	locations: HitLocation[]
-}
-
-/**
- * The target of a damage roll.
- *
- * Most commonly implemented as a CharacterGURPS adapter/façade.
- * (See https://java-design-patterns.com/patterns/adapter/).
- */
-type HitPointsCalc = { value: number; current: number }
-interface DamageTarget {
-	// CharacterGURPS.attributes.get(gid.ST).calc.value
-	ST: number
-	// CharacterGURPS.attributes.get(gid.HitPoints).calc
-	hitPoints: HitPointsCalc
-	// CharacterGURPS.system.settings.body_type
-	// TODO It would be better to have a method to return DR directly; this would allow DR overrides.
-	hitLocationTable: HitLocationTableWithCalc
-	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
-	traits: Array<TraitGURPS>
-	//
-	hasTrait(name: string): boolean
-	// This.hasTrait("Injury Tolerance (Unliving)").
-	isUnliving: boolean
-	// This.hasTrait("Injury Tolerance (Homogenous)").
-	isHomogenous: boolean
-	// This.hasTrait("Injury Tolerance (Diffuse)").
-	isDiffuse: boolean
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface DamageAttacker {}
-
-/**
- * Create the definitions of GURPS damage types.
- */
-enum DamageType {
-	injury = "injury",
-	burn = "burning",
-	cor = "corrosive",
-	cr = "crushing",
-	cut = "cutting",
-	fat = "fatigue",
-	imp = "impaling",
-	pi_m = "small piercing",
-	pi = "piercing",
-	pi_p = "large piercing",
-	pi_pp = "huge piercing",
-	tox = "toxic",
-	// TODO Should we include "knockback only" as a damage type?
-	kb = "knockback only",
-}
-
-enum DefaultHitLocations {
-	Default = "Default",
-	Random = "Random",
-}
-
-interface DamageRoll {
-	locationId: string | DefaultHitLocations
-	attacker: DamageAttacker
-	dice: DiceGURPS
-	basicDamage: number
-	damageType: DamageType
-	armorDivisor: number
-}
-
-type _function = (x: number) => number
-const identity: _function = x => x
-const max1: _function = x => Math.min(x, 1)
-const max2: _function = x => Math.min(x, 2)
-const oneHalf: _function = x => x * 0.5
-const oneAndOneHalf: _function = x => x * 1.5
-const double: _function = x => x * 2
-const oneThird: _function = x => x * (1 / 3)
-const oneFifth: _function = x => x * 0.2
-const oneTenth: _function = x => x * 0.1
-
-type DamageTypeData = {
-	[key in DamageType]: {
-		theDefault: _function
-		unliving: _function
-		homogenous: _function
-		diffuse: _function
-	}
-}
-
-const dataTypeMultiplier: DamageTypeData = {
-	[DamageType.injury]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.burn]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.cor]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.cr]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.cut]: {
-		theDefault: oneAndOneHalf,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.fat]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.imp]: {
-		theDefault: double,
-		unliving: identity,
-		homogenous: oneHalf,
-		diffuse: max1,
-	},
-	[DamageType.pi_m]: {
-		theDefault: oneHalf,
-		unliving: oneFifth,
-		homogenous: oneTenth,
-		diffuse: max1,
-	},
-	[DamageType.pi]: {
-		theDefault: identity,
-		unliving: oneThird,
-		homogenous: oneFifth,
-		diffuse: max1,
-	},
-	[DamageType.pi_p]: {
-		theDefault: oneAndOneHalf,
-		unliving: identity,
-		homogenous: oneThird,
-		diffuse: max1,
-	},
-	[DamageType.pi_pp]: {
-		theDefault: double,
-		unliving: identity,
-		homogenous: oneHalf,
-		diffuse: max1,
-	},
-	[DamageType.tox]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-	[DamageType.kb]: {
-		theDefault: identity,
-		unliving: identity,
-		homogenous: identity,
-		diffuse: max2,
-	},
-}
-
-/**
- * ModifierEffect represents a generic modifier to some kind of roll.
- *
- * modifier - the numeric value used to modify the roll or check.
- * rollType - the type of the roll/check modified.
- * id - either the id of an attribute or name of the thing (skill, spell, etc).
- */
-class ModifierEffect {
-	modifier: number
-
-	rollType: RollType
-
-	id: string
-
-	constructor(id: string, rollType: RollType, modifier: number) {
-		this.id = id
-		this.rollType = rollType
-		this.modifier = modifier
-	}
-}
-
-/**
- * An injury effect that requires a check of some kind.
- *
- * failure - an array of 'consequences' of failing the check.
- */
-class InjuryEffectCheck extends ModifierEffect {
-	failures: CheckFailureConsequence[]
-
-	constructor(id: string, rollType: RollType, modifier: number, failures: CheckFailureConsequence[]) {
-		super(id, rollType, modifier)
-
-		this.failures = failures
-	}
-}
-
-/**
- * The consequence of failing a check.
- *
- * margin - "margin of failure" at which this effect is applied.
- * id - the identifier of a consequence.
- */
-class CheckFailureConsequence {
-	margin: number
-
-	id: string
-
-	constructor(id: string, margin: number) {
-		this.id = id
-		this.margin = margin
-	}
-}
-
-enum InjuryEffectType {
-	shock = "shock",
-	majorWound = "majorWound",
-}
-
-/**
- * This class represents some effect of sudden injury.
- *
- * Right now, it is just data. At some point in the future, some of them may become Active Effects.
- */
-class InjuryEffect {
-	id: string
-
-	effects: ModifierEffect[]
-
-	constructor(id: string, effects: ModifierEffect[] = []) {
-		this.effects = effects
-		this.id = id
-	}
-}
+const Head = ["skull", "eye", "face"]
+const Limb = ["arm", "leg"]
+const Extremity = ["hand", "foot"]
 
 /**
  * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
@@ -274,11 +29,21 @@ class DamageCalculator {
 
 	private _damageRoll: DamageRoll
 
+	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
+		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
+		this._damageRoll = damageRoll
+		this._target = defender
+	}
+
 	/**
 	 * @returns {number} - The basic damage; typically directly from the damage roll.
 	 */
 	get basicDamage(): number {
-		return this._damageRoll.damageType === DamageType.kb ? 0 : this._basicDamage
+		return this._isKnockbackOnly() ? 0 : this._basicDamage
+	}
+
+	private _isKnockbackOnly() {
+		return this._damageRoll.damageType === DamageType.kb
 	}
 
 	private get _basicDamage(): number {
@@ -297,15 +62,52 @@ class DamageCalculator {
 	 */
 	get injury(): number {
 		const temp = Math.floor(this._woundingModifier(this.penetratingDamage))
-		return this.penetratingDamage > 0 ? Math.max(1, temp) : 0
+		const candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
+		return this._applyMaximum(candidateInjury)
+	}
+
+	private _applyMaximum(candidateInjury: number): number {
+		if (Limb.includes(this._damageRoll.locationId)) {
+			return Math.min(Math.floor(this._target.hitPoints.value / 2) + 1, candidateInjury)
+		}
+		if (Extremity.includes(this._damageRoll.locationId)) {
+			return Math.min(Math.floor(this._target.hitPoints.value / 3) + 1, candidateInjury)
+		}
+		return candidateInjury
 	}
 
 	/**
 	 * @returns {number} - The amount of blunt trauma damage, if any.
 	 */
 	get bluntTrauma(): number {
-		if (this.penetratingDamage > 0 || !this._targetedHitLocation?.calc.flexible) return 0
+		if (this._damageRoll.damageType === DamageType.fat) return 0
+
+		if (this.penetratingDamage > 0 || !this._isFlexibleArmor()) return 0
 		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
+	}
+
+	private _isFlexibleArmor() {
+		return this._targetedHitLocation?.calc.flexible
+	}
+
+	/**
+	 * Return yards of knockback, if any.
+	 */
+	get knockback() {
+		if (this._isDamageTypeKnockbackEligible()) {
+			if (this._damageRoll.damageType === DamageType.cut && this.penetratingDamage > 0) return 0
+
+			return Math.floor(this._basicDamage / (this._knockbackResistance - 2))
+		}
+		return 0
+	}
+
+	private _isDamageTypeKnockbackEligible() {
+		return [DamageType.cr, DamageType.cut, DamageType.kb].includes(this._damageRoll.damageType)
+	}
+
+	private get _knockbackResistance() {
+		return this._target.ST
 	}
 
 	/**
@@ -314,68 +116,145 @@ class DamageCalculator {
 	get injuryEffects(): Array<InjuryEffect> {
 		let effects: InjuryEffect[] = []
 
-		effects.push(...this._shockEffect)
-		effects.push(...this._majorWoundEffect)
+		effects.push(...this._shockEffects)
+		effects.push(...this._majorWoundEffects)
+		effects.push(...this._knockbackEffects)
+		effects.push(...this._miscellaneousEffects)
 
 		return effects
 	}
 
-	get knockback() {
-		if ([DamageType.cr, DamageType.cut, DamageType.kb].includes(this._damageRoll.damageType)) {
-			if (this._damageRoll.damageType === DamageType.cut && this.penetratingDamage > 0) return 0
-
-			return Math.floor(this._basicDamage / (this._knockbackResistance - 2))
-		}
-		return 0
-	}
-
-	private get _knockbackResistance() {
-		return this._target.ST
-	}
-
-	private get _shockEffect(): InjuryEffect[] {
+	private get _shockEffects(): InjuryEffect[] {
 		let rawModifier = Math.floor(this.injury / this._shockFactor)
 		if (rawModifier > 0) {
 			let modifier = Math.min(4, rawModifier) * -1
+
+			// TODO In RAW, this doubling only occurs if the target is physiologically male and does not have the
+			// "No Vitals" Injury Tolerance trait.
+			if (
+				this._damageRoll.damageType === DamageType.cr &&
+				this._damageRoll.locationId === "groin" &&
+				!this._target.hasTrait("No Vitals")
+			)
+				modifier *= 2
+
 			const shockEffect = new InjuryEffect(InjuryEffectType.shock, [
-				{ id: "dx", rollType: RollType.Attribute, modifier: modifier },
-				{ id: "iq", rollType: RollType.Attribute, modifier: modifier },
+				new RollModifier("dx", RollType.Attribute, modifier),
+				new RollModifier("iq", RollType.Attribute, modifier),
 			])
 			return [shockEffect]
 		}
 		return []
 	}
 
-	private get _majorWoundEffect(): InjuryEffect[] {
+	private get _shockFactor(): number {
+		return Math.floor(this._target.hitPoints.value / 10)
+	}
+
+	private get _majorWoundEffects(): InjuryEffect[] {
 		const wounds = []
-		if (this.injury > this._target.hitPoints.value / 2) {
-			let effect = new InjuryEffect(InjuryEffectType.majorWound, [])
 
-			/**
-			 * TODO
-			 * To be honest, hardcoding the effects of major wounmds for a hit location probably doesn't work in every
-			 * case, especially for non-standard/non-humanoid body types. It might be better if the effects were
-			 * captured on the actor.system.settings.body_type hit location data.
-			 *
-			 * Perhaps the default algorithm would be: look up the hit location on the actor to see if it has major
-			 * wound effects, otherwise use the hardcoded values here.
-			 */
-			if (this._damageRoll.locationId === "torso") {
-				const htCheck = new InjuryEffectCheck("ht", RollType.Attribute, 0, [
-					new CheckFailureConsequence("stun", 0),
-					new CheckFailureConsequence("knocked down", 0),
-					new CheckFailureConsequence("unconscious", 5),
-				])
-				effect.effects.push(htCheck)
+		// Fatigue attacks and Injury Tolerance (Homogenous) ignore hit location.
+		if (this._damageRoll.damageType === DamageType.fat || this._target.isHomogenous || this._target.isDiffuse) {
+			if (this._isMajorWound())
+				wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+		} else {
+			switch (this._damageRoll.locationId) {
+				case "torso":
+					if (this._isMajorWound())
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
+					break
+
+				case "skull":
+				case "eye":
+					if (this._shockEffects.length > 0 || this._isMajorWound()) {
+						let penalty =
+							this._damageRoll.damageType !== DamageType.tox && !this._target.hasTrait("No Brain")
+								? -10
+								: 0
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
+					}
+					break
+
+				case "vitals":
+					if (this._shockEffects.length > 0) {
+						const penalty = this._target.hasTrait("No Vitals") ? 0 : -5
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
+					}
+					break
+
+				case "face":
+					if (this._isMajorWound())
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(-5)]))
+					break
+
+				case "groin":
+					if (this._isMajorWound()) {
+						const penalty = this._target.hasTrait("No Vitals") ? 0 : -5
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
+					}
+					break
+
+				default:
+					if (this._isMajorWound())
+						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
 			}
-
-			wounds.push(effect)
 		}
+
 		return wounds
 	}
 
-	private get _shockFactor(): number {
-		return Math.floor(this._target.hitPoints.value / 10)
+	private _isMajorWound() {
+		let divisor = Extremity.includes(this._damageRoll.locationId) ? 3 : 2
+		return this.injury > this._target.hitPoints.value / divisor
+	}
+
+	private get _knockbackEffects(): InjuryEffect[] {
+		// Cache the result of `this.knockback` as we will use it multiple times.
+		let knockback = this.knockback
+
+		if (knockback === 0) return []
+
+		let penalty = knockback === 1 ? 0 : -1 * (knockback - 1)
+
+		if (this._target.hasTrait("Perfect Balance")) penalty += 4
+
+		const knockbackEffect = new InjuryEffect(
+			InjuryEffectType.knockback,
+			[],
+			[
+				new EffectCheck(
+					[
+						new RollModifier("dx", RollType.Attribute, penalty),
+						new RollModifier("Acrobatics", RollType.Skill, penalty),
+						new RollModifier("Judo", RollType.Skill, penalty),
+					],
+					[new CheckFailureConsequence("fall prone", 0)]
+				),
+			]
+		)
+		return [knockbackEffect]
+	}
+
+	private get _miscellaneousEffects(): InjuryEffect[] {
+		if (this._damageRoll.locationId === "eye" && this.injury > this._target.hitPoints.value / 10)
+			return [new InjuryEffect(InjuryEffectType.eyeBlinded)]
+
+		if (this._damageRoll.locationId === "face" && this._isMajorWound()) {
+			return this.injury > this._target.hitPoints.value
+				? [new InjuryEffect(InjuryEffectType.blinded)]
+				: [new InjuryEffect(InjuryEffectType.eyeBlinded)]
+		}
+
+		if (Limb.includes(this._damageRoll.locationId) && this._isMajorWound()) {
+			return [new InjuryEffect(InjuryEffectType.limbCrippled)]
+		}
+
+		if (Extremity.includes(this._damageRoll.locationId) && this._isMajorWound()) {
+			return [new InjuryEffect(InjuryEffectType.limbCrippled)]
+		}
+
+		return []
 	}
 
 	private get _bluntTraumaDivisor() {
@@ -393,31 +272,88 @@ class DamageCalculator {
 	}
 
 	private get _effectiveDR() {
-		return this._damageRoll.damageType === DamageType.injury
-			? 0
-			: Math.floor(this._basicDR / this._effectiveArmorDivisor)
+		if (this._isIgnoreDR()) return 0
+
+		let dr =
+			this._damageRoll.damageType === DamageType.injury
+				? 0
+				: Math.floor(this._basicDR / this._effectiveArmorDivisor)
+
+		// If the AD is a fraction, minimum DR is 1.
+		return this._effectiveArmorDivisor < 1 ? Math.max(dr, 1) : dr
 	}
 
+	private _isIgnoreDR(): boolean {
+		return this._effectiveArmorDivisor === 0
+	}
+
+	/**
+	 * Encapsulate here to allow overriding.
+	 */
 	private get _effectiveArmorDivisor() {
-		return this._damageRoll.armorDivisor === 0 ? 1 : this._damageRoll.armorDivisor
+		return this._damageRoll.armorDivisor
 	}
 
 	private get _basicDR() {
-		return (this._targetedHitLocation?.calc.dr?.all as number | undefined) ?? 0
+		return this._targetedHitLocation?.calc.dr?.all ?? 0
 	}
 
-	private get _woundingModifier(): _function {
+	private get _woundingModifier(): ModifierFunction {
 		const multiplier = dataTypeMultiplier[this._damageRoll.damageType]
-		if (this._target.isUnliving) return multiplier.unliving
-		if (this._target.isHomogenous) return multiplier.homogenous
 
 		/**
-		 * TODO
-		 * Diffuse: Exception: Area-effect, cone, and explosion attacks cause normal injury.
+		 * TODO Diffuse: Exception: Area-effect, cone, and explosion attacks cause normal injury.
 		 */
 		if (this._target.isDiffuse) return multiplier.diffuse
+		if (this._target.isHomogenous) return multiplier.homogenous
 
-		return multiplier.theDefault
+		// Unliving uses unliving modifiers unless the hit location is skull, eye, or vitals.
+		if (this._target.isUnliving && !["skull", "eye", "vitals"].includes(this._damageRoll.locationId))
+			return multiplier.unliving
+
+		// No Brain has no extra wounding modifier if hit location is skull or eye.
+		if (this._target.hasTrait("No Brain") && ["skull", "eye"].includes(this._damageRoll.locationId))
+			return multiplier.theDefault
+
+		// Fatigue damage always ignores hit location.
+		if (this._damageRoll.damageType === DamageType.fat) return identity
+
+		// --- Calculate Wounding Modifier for Hit Location. ---
+
+		switch (this._damageRoll.locationId) {
+			case "vitals":
+				if ([DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)) return x => x * 3
+				return this.isTightBeamBurning() ? double : multiplier.theDefault
+
+			case "skull":
+			case "eye":
+				return this._damageRoll.damageType !== DamageType.tox ? x => x * 4 : multiplier.theDefault
+
+			case "face":
+				return this._damageRoll.damageType === DamageType.cor ? oneAndOneHalf : identity
+
+			case "neck":
+				return [DamageType.cor, DamageType.cr].includes(this._damageRoll.damageType)
+					? oneAndOneHalf
+					: this._damageRoll.damageType === DamageType.cut
+					? double
+					: multiplier.theDefault
+
+			case "hand":
+			case "foot":
+			case "arm":
+			case "leg":
+				return [DamageType.pi_p, DamageType.pi_pp, DamageType.imp].includes(this._damageRoll.damageType)
+					? identity
+					: multiplier.theDefault
+
+			default:
+				return multiplier.theDefault
+		}
+	}
+
+	private isTightBeamBurning() {
+		return this._damageRoll.damageType === DamageType.burn && this._damageRoll.damageModifier === "tbb"
 	}
 
 	private get _defenderHitLocations(): Array<HitLocation> {
@@ -431,20 +367,6 @@ class DamageCalculator {
 	private get _targetedHitLocation(): HitLocation | undefined {
 		return this._defenderHitLocations.find(it => it.id === this._targetedHitLocationId)
 	}
-
-	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
-		this._damageRoll = damageRoll
-		this._target = defender
-	}
 }
 
-export {
-	DamageCalculator,
-	DamageTarget,
-	DamageRoll,
-	DamageType,
-	DamageAttacker,
-	DefaultHitLocations,
-	HitLocationTableWithCalc,
-	HitLocation,
-}
+export { DamageCalculator, Head, Limb, Extremity }
