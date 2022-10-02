@@ -298,7 +298,7 @@ export class StaticEquipment extends NamedComponent {
 
 	contains: { [key: string]: any }
 
-	constructor(nm = "Equipment", ue = true) {
+	constructor(nm = "Equipment", ue = false) {
 		super(nm)
 		this.save = ue
 		this.equipped = false
@@ -416,7 +416,7 @@ export class StaticReaction {
 	}
 }
 
-export class StaticModifier extends StaticReaction {}
+export class StaticModifier extends StaticReaction { }
 
 export class StaticLanguage {
 	name: string

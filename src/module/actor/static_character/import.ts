@@ -91,7 +91,7 @@ export class StaticCharacterImporter {
 		const deletes = Object.fromEntries(Object.entries(commit).filter(([key, _value]) => key.includes(".-=")))
 		const adds = Object.fromEntries(Object.entries(commit).filter(([key, _value]) => !key.includes(".-=")))
 		try {
-			await this.document.update(deletes, { diff: false })
+			await this.document.update(deletes, { diff: false, render: false })
 			await this.document.update(adds, { diff: false })
 			await this.document.postImport()
 		} catch (err) {
@@ -335,7 +335,7 @@ export class StaticCharacterImporter {
 	) {
 		let ts = commit["system.traits"]
 		let final = profile.SM || 0
-		let temp = [...ads, ...skills, ...equipment]
+		let temp = [...(ads || []), ...(skills || []), ...(equipment || [])]
 		let all: any[] = []
 		for (let i of temp) {
 			all = all.concat(this.recursiveGet(i))
@@ -374,7 +374,8 @@ export class StaticCharacterImporter {
 		a.userdesc = i.userdesc
 		a.notes = ""
 
-		if (i.cr !== null) {
+
+		if (i.cr) {
 			a.notes = `[${i18n(`gurps.select.cr_level.${i.cr}`)}: ${a.name}]`
 		}
 		if (i.modifiers?.length) {
@@ -493,11 +494,11 @@ export class StaticCharacterImporter {
 		let temp: any[] = []
 		if (eq)
 			for (let i of eq) {
-				temp = temp.concat(this.importEq(i, "", true))
+				temp = [...temp, ...this.importEq(i, "", true)]
 			}
 		if (oeq)
 			for (let i of oeq) {
-				temp = temp.concat(this.importEq(i, "", false))
+				temp = [...temp, ...this.importEq(i, "", false)]
 			}
 
 		Static.recurseList(this.document.system.equipment?.carried, t => {
@@ -515,7 +516,7 @@ export class StaticCharacterImporter {
 		})
 
 		temp.forEach(e => {
-			if (e.parentuuid) {
+			if (!!e.parentuuid) {
 				let parent = null
 				parent = temp.find(f => f.uuid === e.parentuuid)
 				if (parent) Static.put(parent.contains, e)
@@ -545,7 +546,6 @@ export class StaticCharacterImporter {
 
 	importEq(i: any, p: string, carried: boolean): any {
 		let e = new StaticEquipment()
-		console.log(i)
 		e.name = i.description || "Equipment"
 		e.count = i.type === "equipment_container" ? "1" : i.quantity || "0"
 		// E.cost = parse
@@ -572,8 +572,8 @@ export class StaticCharacterImporter {
 		// E.weight =
 		// 	(parseFloat(i.calc?.extended_weight) / (i.type === "equipment_container" ? 1 : i.quantity || 1)) || 0
 		e.pageref = i.reference || ""
-		let old = this.document._findElementIn("equipment.carried", e.uuid)
-		if (!old) old = this.document._findElementIn("equipment.other", e.uuid)
+		let old = this.document._findElementIn("system.equipment.carried", e.uuid)
+		if (!old) old = this.document._findElementIn("system.equipment.other", e.uuid)
 		this.document._migrateOtfsAndNotes(old, e, i.vtt_notes)
 		if (old) {
 			e.carried = old.carried
@@ -608,7 +608,6 @@ export class StaticCharacterImporter {
 			//   }
 			// }
 		}
-		console.log(e)
 		return [e].concat(ch)
 	}
 
@@ -853,7 +852,7 @@ export class StaticCharacterImporter {
 		let cs = {}
 		let index_r = 0
 		let index_c = 0
-		let temp = [...ads, ...skills, ...equipment]
+		let temp = [...(ads || []), ...(skills || []), ...(equipment || [])]
 		let all: any[] = []
 		for (let i of temp) {
 			all = all.concat(this.recursiveGet(i))
@@ -913,7 +912,7 @@ export class StaticCharacterImporter {
 		let ranged = {}
 		let m_index = 0
 		let r_index = 0
-		let temp = [...ads, ...skills, ...spells, ...equipment]
+		let temp = [...(ads || []), ...(skills || []), ...(spells || []), ...(equipment || [])]
 		let all: any[] = []
 		for (let i of temp) {
 			all = all.concat(this.recursiveGet(i))
@@ -1037,8 +1036,8 @@ export class StaticCharacterImporter {
 		tableNames.forEach(it => (tableScores[it] = 0))
 
 		// Increment the count for a tableScore if it contains the same hit location as "prot"
-		locations.forEach(function (hitLocation) {
-			tableNames.forEach(function (tableName) {
+		locations.forEach(function(hitLocation) {
+			tableNames.forEach(function(tableName) {
 				if (StaticHitLocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
 					tableScores[tableName] = tableScores[tableName] + 1
 				}
@@ -1048,7 +1047,7 @@ export class StaticCharacterImporter {
 		// Select the tableScore with the highest score.
 		let match = -1
 		let name = StaticHitLocation.HUMANOID
-		Object.keys(tableScores).forEach(function (score) {
+		Object.keys(tableScores).forEach(function(score) {
 			if (tableScores[score] > match) {
 				match = tableScores[score]
 				name = score
