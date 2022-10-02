@@ -487,10 +487,11 @@ export default class DamageChat {
     } else {
       messageData.sound = CONFIG.sounds.dice
     }
-    ChatMessage.create(messageData).then(arg => {
-      let messageId = arg.id // 'qHz1QQuzpJiavH3V'
-      $(`[data-message-id='${messageId}']`).on('click', handleOnPdf)
-    })
+    ChatMessage.create(messageData)
+    // ChatMessage.create(messageData).then(arg => {
+    //   let messageId = arg.id // 'qHz1QQuzpJiavH3V'
+    //   $(`[data-message-id='${messageId}']`).on('click', handleOnPdf)
+    // })
   }
 }
 
