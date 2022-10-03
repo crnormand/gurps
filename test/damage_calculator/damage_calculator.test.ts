@@ -1980,5 +1980,19 @@ describe("Damage calculator", () => {
 		it("Roll this damage but divide it by (3 × yards from the center of the blast), rounding down.", () => {
 			expect(false).toBeTruthy()
 		})
+
+		describe("Contact Explosions. A person can throw himself on a grenade, etc.", () => {
+			it("They take maximum possible damage; their DR protects them normally.", () => {
+				expect(false).toBeTruthy()
+			})
+
+			it("Everyone else gets his torso’s DR + HP as “cover DR.”", () => {
+				expect(false).toBeTruthy()
+			})
+		})
+
+		it("Internal Explosions: DR has no effect! In addition, treat the blast as an attack on the vitals, with a ×3 wounding modifier.", () => {
+			expect(false).toBeTruthy()
+		})
 	})
 })
