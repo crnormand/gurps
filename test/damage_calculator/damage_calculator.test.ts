@@ -8,7 +8,6 @@ import { HitLocation, HitLocationTableWithCalc } from "../../src/module/damage_c
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
 import { DamageAttacker, DamageRoll } from "../../src/module/damage_calculator/damage_roll"
 import { InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
-import { SJG_links } from "../../src/module/pdf/pdf"
 
 class _Attacker implements DamageAttacker {}
 
@@ -1940,43 +1939,43 @@ describe("Damage calculator", () => {
 		})
 
 		describe("P53: Injury Tolerance (Damage Reduction).", () => {
-			it("You divide the injury you suffer by 2, 3, or 4 after subtracting DR from damage and applying wounding modifiers.", () => {
+			it.skip("You divide the injury you suffer by 2, 3, or 4 after subtracting DR from damage and applying wounding modifiers.", () => {
 				expect(false).toBeTruthy()
 			})
 		})
 	})
 
-	describe("B400: Large-Area Injury.", () => {
+	describe.skip("B400: Large-Area Injury.", () => {
 		it("Your “effective DR” is the average of your torso DR and the DR of the least protected hit location exposed to the attack, rounding up.", () => {
 			expect(false).toBeTruthy()
 		})
 	})
 
-	describe("B378: Half Damage (1/2D) for Ranged Weapons.", () => {
+	describe.skip("B378: Half Damage (1/2D) for Ranged Weapons.", () => {
 		it("If the target is at or beyond 1/2D range, divide basic damage by 2, rounding down.", () => {
 			expect(false).toBeTruthy()
 		})
 	})
 
-	describe("B161: Vulnerability.", () => {
+	describe.skip("B161: Vulnerability.", () => {
 		it("Applies a special wounding multiplier to damage that penetrates your DR. Regular wounding multipliers further multiply the damage.", () => {
 			expect(false).toBeTruthy()
 		})
 	})
 
-	describe("B47: Damage Resistance (Hardened).", () => {
+	describe.skip("B47: Damage Resistance (Hardened).", () => {
 		it("Each level of Hardened reduces the armor divisor of an attack by one step.", () => {
 			expect(false).toBeTruthy()
 		})
 	})
 
 	describe("B409: Shotguns and Multiple Projectiles.", () => {
-		it("At ranges <10% of 1/2D, don’t apply the RoF multiplier to RoF. Instead, multiply both basic damage dice and the target’s DR by half that value (round down).", () => {
+		it.skip("At ranges <10% of 1/2D, don’t apply the RoF multiplier to RoF. Instead, multiply both basic damage dice and the target’s DR by half that value (round down).", () => {
 			expect(false).toBeTruthy()
 		})
 	})
 
-	describe("B414: Explosions.", () => {
+	describe.skip("B414: Explosions.", () => {
 		it("Roll this damage but divide it by (3 × yards from the center of the blast), rounding down.", () => {
 			expect(false).toBeTruthy()
 		})
@@ -1992,6 +1991,76 @@ describe("Damage calculator", () => {
 		})
 
 		it("Internal Explosions: DR has no effect! In addition, treat the blast as an attack on the vitals, with a ×3 wounding modifier.", () => {
+			expect(false).toBeTruthy()
+		})
+	})
+
+	describe.skip("B552: Non-Humanoid Hit Location Tables", () => {
+		it("Wing: Treat a wing as a limb (arm, leg) for crippling purposes. A flyer with a crippled wing cannot fly.", () => {
+			expect(false).toBeTruthy()
+		})
+		it("Fin: Treat a fin as an extremity (hand, foot) for crippling purposes. A crippled fin affects balance: -3 DX.", () => {
+			expect(false).toBeTruthy()
+		})
+		it("Tail: If an Extra Arm or a Striker, or is a fish tail, treat it as a limb for crippling purposes; otherwise, treat it as an extremity. A crippled tail affects balance. For a ground creature, this gives -1 DX. For a swimmer or flyer, this gives -2 DX and halves Move.", () => {
+			expect(false).toBeTruthy()
+		})
+	})
+
+	describe.skip("B554: Vehicle Hit Location Table", () => {
+		it("Body", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Caterpillar Track", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Exposed Weapon Mount", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Helicopter Rotor", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Large Glass Window", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Small Glass Window", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Large Superstructure or Gondola", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Main Turret", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Mast", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Runner or Skids", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Small Superstructure or Independent Turret", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Vital Area", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Wheel", () => {
+			expect(false).toBeTruthy()
+		})
+
+		it("Wings", () => {
 			expect(false).toBeTruthy()
 		})
 	})
