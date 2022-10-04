@@ -1,12 +1,11 @@
 /* eslint-disable jest/no-disabled-tests */
-import { TraitGURPS } from "@item"
 import { DamageCalculator, Extremity, Head, Limb } from "../../src/module/damage_calculator"
 import { DiceGURPS } from "../../src/module/dice"
 import { RollType } from "../../src/module/data"
-import { DamageTarget } from "../../src/module/damage_calculator/damage_target"
+import { DamageTarget, TraitGURPSAdapter } from "../../src/module/damage_calculator/damage_target"
 import { HitLocation, HitLocationTableWithCalc } from "../../src/module/damage_calculator/hit_location"
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
-import { DamageAttacker, DamageRoll } from "../../src/module/damage_calculator/damage_roll"
+import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
 import { InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
 
 class _Attacker implements DamageAttacker {}
@@ -22,10 +21,14 @@ class _Target implements DamageTarget {
 
 	hitPoints = { value: 15, current: 10 }
 
-	traits: TraitGURPS[] = []
+	_traits: TraitGURPSAdapter[] = []
+
+	getTrait(name: string) {
+		return this._traits.find(it => it.name === name)
+	}
 
 	hasTrait(name: string): boolean {
-		return this._traits.includes(name)
+		return !!this.getTrait(name)
 	}
 
 	_dummyHitLocationTable = {
@@ -38,8 +41,6 @@ class _Target implements DamageTarget {
 	get hitLocationTable(): HitLocationTableWithCalc {
 		return this._dummyHitLocationTable
 	}
-
-	_traits: string[] = []
 }
 
 class _DamageRoll implements DamageRoll {
@@ -57,6 +58,8 @@ class _DamageRoll implements DamageRoll {
 	damageModifier = ""
 
 	armorDivisor = 1
+
+	isHalfDamage = false
 }
 
 const Knockdown = [
@@ -72,7 +75,18 @@ describe("Damage calculator", () => {
 	let _attacker: DamageAttacker
 	let _target: _Target
 	let _roll: DamageRoll
+
 	let _torso: HitLocation
+	let _vitals: HitLocation
+	let _skull: HitLocation
+	let _eye: HitLocation
+	let _face: HitLocation
+	let _neck: HitLocation
+	let _groin: HitLocation
+	let _arm: HitLocation
+	let _leg: HitLocation
+	let _hand: HitLocation
+	let _foot: HitLocation
 	const locations = ["groin", "vitals", "neck", ...Head, ...Limb, ...Extremity]
 
 	beforeEach(() => {
@@ -101,7 +115,7 @@ describe("Damage calculator", () => {
 			slots: 2,
 		}
 
-		let _vitals = {
+		_vitals = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "-",
@@ -116,7 +130,7 @@ describe("Damage calculator", () => {
 			slots: 0,
 		}
 
-		let _skull = {
+		_skull = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "3-4",
@@ -131,7 +145,7 @@ describe("Damage calculator", () => {
 			slots: 0,
 		}
 
-		let _eye = {
+		_eye = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "-",
@@ -146,7 +160,7 @@ describe("Damage calculator", () => {
 			slots: 0,
 		}
 
-		let _face = {
+		_face = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "5",
@@ -161,7 +175,7 @@ describe("Damage calculator", () => {
 			slots: 1,
 		}
 
-		let _neck = {
+		_neck = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "5",
@@ -176,7 +190,7 @@ describe("Damage calculator", () => {
 			slots: 1,
 		}
 
-		let _groin = {
+		_groin = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "5",
@@ -191,7 +205,7 @@ describe("Damage calculator", () => {
 			slots: 1,
 		}
 
-		let _arm = {
+		_arm = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "8",
@@ -206,7 +220,7 @@ describe("Damage calculator", () => {
 			slots: 1,
 		}
 
-		let _leg = {
+		_leg = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "6-7",
@@ -221,7 +235,7 @@ describe("Damage calculator", () => {
 			slots: 2,
 		}
 
-		let _hand = {
+		_hand = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "15",
@@ -236,7 +250,7 @@ describe("Damage calculator", () => {
 			slots: 1,
 		}
 
-		let _foot = {
+		_foot = {
 			calc: {
 				dr: { all: 0 },
 				roll_range: "16",
@@ -871,7 +885,8 @@ describe("Damage calculator", () => {
 		it("Perfect Balance gives +4 to this roll.", () => {
 			expect(_roll.damageType).toBe(DamageType.cr)
 
-			_target._traits.push("Perfect Balance")
+			_target._traits.push(new TraitGURPSAdapter("Perfect Balance", 0))
+
 			_roll.basicDamage = 10
 			let calc = new DamageCalculator(_roll, _target)
 			expect(calc.knockback).toBe(1)
@@ -1803,7 +1818,7 @@ describe("Damage calculator", () => {
 		describe("No Brain.", () => {
 			const theLocations = ["skull", "eye"]
 			beforeEach(() => {
-				_target._traits.push("No Brain")
+				_target._traits.push(new TraitGURPSAdapter("No Brain", 0))
 			})
 
 			it("Hits to the skull (or eye) get no extra knockdown modifier.", () => {
@@ -1896,7 +1911,7 @@ describe("Damage calculator", () => {
 		describe("No Vitals.", () => {
 			const theLocations = ["vitals", "groin"]
 			beforeEach(() => {
-				_target._traits.push("No Vitals")
+				_target._traits.push(new TraitGURPSAdapter("No Vitals", 0))
 			})
 
 			it("Hits to the vitals or groin have the same effect as torso hits.", () => {
@@ -1939,21 +1954,63 @@ describe("Damage calculator", () => {
 		})
 
 		describe("P53: Injury Tolerance (Damage Reduction).", () => {
-			it.skip("You divide the injury you suffer by 2, 3, or 4 after subtracting DR from damage and applying wounding modifiers.", () => {
-				expect(false).toBeTruthy()
+			it("You divide the injury you suffer by 2, 3, or 4 after subtracting DR from damage and applying wounding modifiers.", () => {
+				_torso.calc.dr.all = 4
+				_roll.damageType = DamageType.imp
+				_roll.basicDamage = 16
+
+				let calc = new DamageCalculator(_roll, _target)
+				expect(calc.injury).toBe(24)
+
+				const damageReduction = new TraitGURPSAdapter("Damage Reduction", 2)
+				_target._traits.push(damageReduction)
+				calc = new DamageCalculator(_roll, _target)
+				expect(calc.injury).toBe(12)
+
+				damageReduction.levels = 3
+				calc = new DamageCalculator(_roll, _target)
+				expect(calc.injury).toBe(8)
+
+				damageReduction.levels = 4
+				calc = new DamageCalculator(_roll, _target)
+				expect(calc.injury).toBe(6)
 			})
 		})
 	})
 
-	describe.skip("B400: Large-Area Injury.", () => {
+	describe("B400: Large-Area Injury.", () => {
 		it("Your “effective DR” is the average of your torso DR and the DR of the least protected hit location exposed to the attack, rounding up.", () => {
-			expect(false).toBeTruthy()
+			_torso.calc.dr.all = 12
+			_vitals.calc.dr.all = 6
+			_skull.calc.dr.all = 6
+			_eye.calc.dr.all = 2
+			_face.calc.dr.all = 6
+			_neck.calc.dr.all = 6
+			_groin.calc.dr.all = 6
+			_arm.calc.dr.all = 6
+			_leg.calc.dr.all = 6
+			_hand.calc.dr.all = 6
+			_foot.calc.dr.all = 6
+
+			_roll.locationId = DefaultHitLocations.LargeArea
+			_roll.basicDamage = 10
+			const calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(3)
 		})
 	})
 
-	describe.skip("B378: Half Damage (1/2D) for Ranged Weapons.", () => {
+	describe("B378: Half Damage (1/2D) for Ranged Weapons.", () => {
 		it("If the target is at or beyond 1/2D range, divide basic damage by 2, rounding down.", () => {
-			expect(false).toBeTruthy()
+			_torso.calc.dr.all = 5
+			_roll.damageType = DamageType.imp
+			_roll.basicDamage = 16
+
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(22)
+
+			_roll.isHalfDamage = true
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(6)
 		})
 	})
 

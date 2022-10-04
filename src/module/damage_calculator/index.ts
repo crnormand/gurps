@@ -1,5 +1,5 @@
 import { RollType } from "../data"
-import { DamageRoll } from "./damage_roll"
+import { DamageRoll, DefaultHitLocations } from "./damage_roll"
 import { DamageTarget } from "./damage_target"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
 import { HitLocation } from "./hit_location"
@@ -39,7 +39,8 @@ class DamageCalculator {
 	 * @returns {number} - The basic damage; typically directly from the damage roll.
 	 */
 	get basicDamage(): number {
-		return this._isKnockbackOnly() ? 0 : this._basicDamage
+		let halfD = this._damageRoll.isHalfDamage ? 0.5 : 1
+		return this._isKnockbackOnly() ? 0 : Math.floor(this._basicDamage * halfD)
 	}
 
 	private _isKnockbackOnly() {
@@ -62,18 +63,30 @@ class DamageCalculator {
 	 */
 	get injury(): number {
 		const temp = Math.floor(this._woundingModifier(this.penetratingDamage))
-		const candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
+		let candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
+		candidateInjury = candidateInjury / this._damageReductionValue
 		return this._applyMaximum(candidateInjury)
 	}
 
+	/**
+	 * @param candidateInjury
+	 * @returns {number} injury maximum value based on hit location.
+	 */
 	private _applyMaximum(candidateInjury: number): number {
 		if (Limb.includes(this._damageRoll.locationId)) {
 			return Math.min(Math.floor(this._target.hitPoints.value / 2) + 1, candidateInjury)
 		}
+
 		if (Extremity.includes(this._damageRoll.locationId)) {
 			return Math.min(Math.floor(this._target.hitPoints.value / 3) + 1, candidateInjury)
 		}
+
 		return candidateInjury
+	}
+
+	private get _damageReductionValue() {
+		let trait = this._target.getTrait("Damage Reduction")
+		return trait ? trait.levels : 1
 	}
 
 	/**
@@ -88,6 +101,10 @@ class DamageCalculator {
 
 	private _isFlexibleArmor() {
 		return this._targetedHitLocation?.calc.flexible
+	}
+
+	private get _targetedHitLocation(): HitLocation | undefined {
+		return this._defenderHitLocations.find(it => it.id === this._damageRoll.locationId)
 	}
 
 	/**
@@ -287,15 +304,21 @@ class DamageCalculator {
 		return this._effectiveArmorDivisor === 0
 	}
 
+	private get _basicDR() {
+		if (this._damageRoll.locationId === DefaultHitLocations.LargeArea) {
+			let torso = this._target.hitLocationTable.locations.find(it => it.id === "torso")
+			let allDR = this._target.hitLocationTable.locations.map(it => it.calc.dr.all)
+			return ((torso?.calc.dr.all ?? 0) + Math.min(...allDR)) / 2
+		}
+
+		return this._targetedHitLocation?.calc.dr?.all ?? 0
+	}
+
 	/**
 	 * Encapsulate here to allow overriding.
 	 */
 	private get _effectiveArmorDivisor() {
 		return this._damageRoll.armorDivisor
-	}
-
-	private get _basicDR() {
-		return this._targetedHitLocation?.calc.dr?.all ?? 0
 	}
 
 	private get _woundingModifier(): ModifierFunction {
@@ -358,14 +381,6 @@ class DamageCalculator {
 
 	private get _defenderHitLocations(): Array<HitLocation> {
 		return this._target.hitLocationTable.locations
-	}
-
-	private get _targetedHitLocationId(): string {
-		return this._damageRoll.locationId
-	}
-
-	private get _targetedHitLocation(): HitLocation | undefined {
-		return this._defenderHitLocations.find(it => it.id === this._targetedHitLocationId)
 	}
 }
 

@@ -15,6 +15,7 @@ interface DamageRoll {
 	dice: DiceGURPS
 	basicDamage: number
 	damageType: DamageType
+	isHalfDamage: boolean
 
 	/**
 	 * Currently, the DamageCalculator only cares about "tbb" (tight beam burning).
@@ -33,6 +34,7 @@ interface DamageAttacker {}
 enum DefaultHitLocations {
 	Default = "Default",
 	Random = "Random",
+	LargeArea = "LargeArea",
 }
 
 export { DamageRoll, DamageAttacker, DefaultHitLocations }

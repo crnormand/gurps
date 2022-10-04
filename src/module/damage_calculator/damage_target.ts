@@ -1,4 +1,3 @@
-import { TraitGURPS } from "@item"
 import { HitLocationTableWithCalc } from "./hit_location"
 
 /**
@@ -17,7 +16,7 @@ interface DamageTarget {
 	// TODO It would be better to have a method to return DR directly; this would allow DR overrides.
 	hitLocationTable: HitLocationTableWithCalc
 	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
-	traits: Array<TraitGURPS>
+	getTrait(name: string): TraitGURPSAdapter | undefined
 	//
 	hasTrait(name: string): boolean
 	// This.hasTrait("Injury Tolerance (Unliving)").
@@ -28,4 +27,15 @@ interface DamageTarget {
 	isDiffuse: boolean
 }
 
-export { DamageTarget }
+class TraitGURPSAdapter {
+	levels = 0
+
+	name = ""
+
+	constructor(name: string, levels: number) {
+		this.levels = levels
+		this.name = name
+	}
+}
+
+export { DamageTarget, TraitGURPSAdapter }
