@@ -2,14 +2,11 @@
     <div id="sheet">
         <div id="details">
             {{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String" }}
-            {{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes
-            type="String"}}
+            {{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes type="String"}}
             {{>sections/textarea field="field" label="gurps.item.vtt_notes" name="system.vtt_notes"
-            data=system.vtt_notes
-            type="String"}}
+            data=system.vtt_notes type="String"}}
             {{>sections/input-text field="field" label="gurps.item.tech_level" name="system.tech_level"
-            data=system.tech_level
-            type="String"}}
+            data=system.tech_level type="String"}}
             {{>sections/input-text field="field" label="gurps.item.legality_class" name="system.legality_class"
             data=system.legality_class type="String"}}
             <div class="label">{{ localize "gurps.item.quantity" }}</div>
@@ -44,16 +41,14 @@
             <div class="label">{{ localize "gurps.item.uses" }}</div>
             <div class="field no-stretch">
                 {{>sections/input-text name="NUMBER.system.uses" data=system.uses type="String" class=(input_lock (neq
-                system.max_uses
-                0))}}
+                system.max_uses 0))}}
                 <div class="label">{{ localize "gurps.item.max_uses" }}</div>
                 {{>sections/input-text name="NUMBER.system.max_uses" data=system.max_uses type="String" }}
             </div>
             {{>sections/input-text field="field" label="gurps.item.tags" name="system.tags" data=(join system.tags ", ")
             type="String"}}
             {{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
-            data=system.reference
-            type="String"}}
+            data=system.reference type="String"}}
         </div>
         {{>item/sections/prerequisites }}
         {{>item/sections/features }}
@@ -69,7 +64,7 @@
             <div class="header reference">
                 <i class="gcs-bookmark"></i>
             </div>
-            {{#each (sort modifiers "sort")}}
+            {{#each (sort modifiers "sort") }}
                 {{>eqp-mod }}
             {{/each }}
         </div>

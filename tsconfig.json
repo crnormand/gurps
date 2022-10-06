@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
-		"target": "ES2021",
-		"lib": ["DOM", "ES2021"],
+		"module": "es2022",
+		"target": "ES2022",
+		"lib": ["DOM", "ES2022"],
 		"types": ["@league-of-foundry-developers/foundry-vtt-types"],
 		"esModuleInterop": true,
 		"moduleResolution": "node",

@@ -242,7 +242,8 @@
 			"eqp_modifier",
 			"eqp_modifier_container",
 			"note",
-			"note_container"
+			"note_container",
+			"static_equipment"
 		],
 		"templates": {
 			"common": {
@@ -393,6 +394,38 @@
 		"note_container": {
 			"templates": ["common"],
 			"open": false
+		},
+		"static_equipment": {
+			"eqt": {
+				"name": "",
+				"notes": "",
+				"pageref": "",
+				"count": 1,
+				"weight": 0,
+				"cost": 0,
+				"location": "",
+				"carried": true,
+				"equipped": true,
+				"techlevel": "",
+				"categories": "",
+				"legalityclass": "",
+				"costsum": 0,
+				"weightsum": 0,
+				"uses": "",
+				"maxuses": "",
+				"parentuuid": "",
+				"uuid": "",
+				"contains": {}
+			},
+			"melee": {},
+			"ranged": {},
+			"ads": {},
+			"skills": {},
+			"spells": {},
+			"bonuses": "",
+			"equipped": true,
+			"carried": true,
+			"globalid": ""
 		}
 	}
 }

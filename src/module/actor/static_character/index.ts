@@ -17,7 +17,7 @@ import {
 } from "./data"
 import { StaticCharacterImporter } from "./import"
 
-Hooks.on("createActor", async function(actor: StaticCharacterGURPS) {
+Hooks.on("createActor", async function (actor: StaticCharacterGURPS) {
 	if (actor.type === "character")
 		await actor.update({
 			// @ts-ignore until v10 types
@@ -549,7 +549,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		let foundkey: any = null
 		let l = getProperty(this, list)
 		Static.recurseList(l, (e, k, _d) => {
-			if ((uuid && e.uuid === uuid) || (e.name && e.name.startsWith(name) && (!e.mode || e.mode === mode))) foundkey = k
+			if ((uuid && e.uuid == uuid) || (e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
 		})
 		return foundkey === null ? foundkey : getProperty(this, `${list}.${foundkey}`)
 	}
@@ -573,7 +573,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		newobj[objkey] = oldotf
 		let notes
 		let newotf
-			;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
+		;[notes, newotf] = this._removeOtf(otfkey, newobj.notes || "")
 		if (newotf) newobj[objkey] = newotf
 		newobj.notes = notes?.trim()
 	}

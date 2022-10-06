@@ -459,7 +459,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get HitLocations(): HitLocation[] {
-		return this.system.settings.body_type.locations.map(e => {
+		return this.system.settings?.body_type?.locations?.map(e => {
 			const l = e
 			l.roll_range = e.calc?.roll_range || "-"
 			l.dr = {}

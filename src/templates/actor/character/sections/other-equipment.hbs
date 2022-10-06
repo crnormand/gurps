@@ -1,7 +1,7 @@
 <div class="quantity">{{ this.quantity }}</div>
-<div class="desc item" data-uuid="{{ this.uuid }}" {{{ indent this.parents.length } }}>
+<div class="desc item" data-uuid="{{ this.uuid }}" {{{ indent this.parents.length }}}>
     <div class="dropdown">
-        {{#if (eq this.type "equipment_container")}}
+        {{#if (eq this.type "equipment_container") }}
             {{#if this.open }}
                 {{>actor/character/sections/dropdown-open }}
             {{ else }}
@@ -13,7 +13,7 @@
     {{>actor/character/sections/item-notes }}
 </div>
 <div class="uses">
-    {{#if (and this.uses this.maxUses)}}
+    {{#if (and this.uses this.maxUses) }}
         {{ this.uses }}
     {{/if }}
 </div>
@@ -25,7 +25,7 @@
 <div class="extended-weight">{{ this.extendedWeightFast }}</div>
 <div class="reference">{{ this.reference }}</div>
 {{#if this.open }}
-    {{#each (sort this.children "sort")}}
+    {{#each (sort this.children "sort") }}
         {{>actor/character/sections/other-equipment }}
     {{/each }}
 {{/if }}

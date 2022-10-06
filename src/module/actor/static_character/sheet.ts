@@ -2,7 +2,7 @@ import { ActorSheetGURPS } from "@actor/base/sheet"
 import { RollType } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { SYSTEM_NAME } from "@module/settings"
-import { i18n, RollGURPS } from "@util"
+import { i18n, RollGURPS, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import { StaticAttributeName, StaticSecondaryAttributeName } from "./data"
 
@@ -102,24 +102,35 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			attribute.attr_id = $(event.currentTarget).data("id").toLowerCase()
 			data.attribute = attribute
 		}
-		if (
-			[
-				RollType.Damage,
-				RollType.Attack,
-				RollType.Skill,
-				RollType.SkillRelative,
-				RollType.Spell,
-				RollType.SpellRelative,
-			].includes(type)
-		)
-			data.item = await fromUuid($(event.currentTarget).data("uuid"))
-		// Data.item = this.actor.deepItems.get($(event.currentTarget).data("item-id"));
-		if ([RollType.Damage, RollType.Attack].includes(type))
-			data.weapon = data.item.weapons.get($(event.currentTarget).data("attack-id"))
+		if ([RollType.Skill, RollType.SkillRelative, RollType.Spell, RollType.SpellRelative].includes(type)) {
+			Static.recurseList(this.actor.system.skills, e => {
+				if (e.uuid === $(event.currentTarget).data("uuid")) console.log(e)
+				if (e.uuid === $(event.currentTarget).data("uuid"))
+					data.item = {
+						formattedName: e.name,
+						skillLevel: e.level,
+					}
+			})
+			console.log(data.item)
+		}
+		if ([RollType.Damage, RollType.Attack].includes(type)) {
+			Static.recurseList(
+				this.actor.system[$(event.currentTarget).data("weapon") as "melee" | "ranged"],
+				(e, k) => {
+					if (k === $(event.currentTarget).data("uuid"))
+						data.weapon = {
+							name: e.name,
+							usage: e.mode,
+							skillLevel: parseInt(e.import) || 0,
+						}
+				}
+			)
+		}
 		if (type === RollType.Modifier) {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
 		}
+		console.log(data)
 		return RollGURPS.handleRoll((game as Game).user, this.actor, data)
 	}
 

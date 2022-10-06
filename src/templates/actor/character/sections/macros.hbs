@@ -1,8 +1,8 @@
 <div class="tab macros" data-group="lifting" data-tab="macros">
 	{{#unless document.macros}}
-	<a class="add-macro">{{localize "gurps.character.macros.add"}}</a>
+		<a class="add-macro">{{localize "gurps.character.macros.add"}}</a>
 	{{/unless}}
 	{{#each document.macros}}
-	<div class="macro" data-macro="{{@index}}">{{this.name}}</div>
+		<div class="macro" data-macro="{{@index}}">{{this.name}}</div>
 	{{/each}}
 </div>

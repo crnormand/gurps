@@ -31,7 +31,7 @@
 // Import TypeScript modules
 import { registerSettings, SYSTEM_NAME } from "./settings"
 import { preloadTemplates } from "./preload-templates"
-import { evaluateToNumber, i18n, registerHandlebarsHelpers } from "@util"
+import { evaluateToNumber, i18n, LastActor, registerHandlebarsHelpers, Static } from "@util"
 import { CharacterSheetGURPS } from "@actor/sheet"
 import { BaseActorGURPS } from "@actor/base"
 import { BaseItemGURPS } from "@item"
@@ -64,6 +64,7 @@ import { UserFlags } from "./data"
 import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
 import { TokenModifierControl } from "./token_modifier"
 import { StaticHitLocation } from "@actor/static_character/hit_location"
+import { StaticItemSheet } from "@item/static/sheet"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -93,6 +94,9 @@ if (!(globalThis as any).GURPS) {
 	GURPS.dice = DiceGURPS
 	GURPS.pdf = PDFViewerSheet
 	GURPS.TokenModifierControl = new TokenModifierControl()
+	GURPS.recurseList = Static.recurseList
+	GURPS.LastActor = LastActor.get
+	GURPS.setLastActor = LastActor.set
 }
 // GURPS.XMLtoJS = XMLtoJS;
 // GURPS.GCAImport = GCAImporter;
@@ -205,12 +209,18 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.note_container"),
 	})
+	Items.registerSheet(SYSTEM_NAME, StaticItemSheet, {
+		types: ["static_equipment"],
+		makeDefault: true,
+		label: i18n("gurps.system.sheet.static_equipment"),
+	})
 
 	Actors.registerSheet(SYSTEM_NAME, CharacterSheetGURPS, {
 		types: ["character_gcs"],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.character"),
 	})
+
 	Actors.registerSheet(SYSTEM_NAME, StaticCharacterSheetGURPS, {
 		types: ["character"],
 		makeDefault: true,

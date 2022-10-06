@@ -92,7 +92,7 @@ enum InjuryEffectType {
 	knockback = "knockback",
 	eyeBlinded = "eyeBlinded",
 	blinded = "blinded",
-	limbCrippled = "limbCrippled"
+	limbCrippled = "limbCrippled",
 }
 
 class KnockdownCheck extends EffectCheck {

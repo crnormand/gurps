@@ -374,7 +374,6 @@ export class StaticCharacterImporter {
 		a.userdesc = i.userdesc
 		a.notes = ""
 
-
 		if (i.cr) {
 			a.notes = `[${i18n(`gurps.select.cr_level.${i.cr}`)}: ${a.name}]`
 		}
@@ -516,7 +515,7 @@ export class StaticCharacterImporter {
 		})
 
 		temp.forEach(e => {
-			if (!!e.parentuuid) {
+			if (e.parentuuid) {
 				let parent = null
 				parent = temp.find(f => f.uuid === e.parentuuid)
 				if (parent) Static.put(parent.contains, e)
@@ -538,6 +537,9 @@ export class StaticCharacterImporter {
 				else Static.put(equipment.other, eqt, oindex++)
 			}
 		})
+
+		// Console.log("equipment:", equipment)
+
 		return {
 			"system.-=equipment": null,
 			"system.equipment": equipment,
@@ -548,10 +550,7 @@ export class StaticCharacterImporter {
 		let e = new StaticEquipment()
 		e.name = i.description || "Equipment"
 		e.count = i.type === "equipment_container" ? "1" : i.quantity || "0"
-		// E.cost = parse
 		e.cost = floatingMul(parseFloat(i.calc.extended_value) ?? 0) / (i.quantity || 1)
-		// E.cost =
-		// 	(parseFloat(i.calc?.extended_value) / (i.type === "equipment_container" ? 1 : i.quantity || 1)) || 0
 		e.carried = carried
 		e.equipped = i.equipped
 		e.techlevel = i.tech_level || ""
@@ -1036,8 +1035,8 @@ export class StaticCharacterImporter {
 		tableNames.forEach(it => (tableScores[it] = 0))
 
 		// Increment the count for a tableScore if it contains the same hit location as "prot"
-		locations.forEach(function(hitLocation) {
-			tableNames.forEach(function(tableName) {
+		locations.forEach(function (hitLocation) {
+			tableNames.forEach(function (tableName) {
 				if (StaticHitLocationDictionary[tableName].hasOwnProperty(hitLocation.where)) {
 					tableScores[tableName] = tableScores[tableName] + 1
 				}
@@ -1047,7 +1046,7 @@ export class StaticCharacterImporter {
 		// Select the tableScore with the highest score.
 		let match = -1
 		let name = StaticHitLocation.HUMANOID
-		Object.keys(tableScores).forEach(function(score) {
+		Object.keys(tableScores).forEach(function (score) {
 			if (tableScores[score] > match) {
 				match = tableScores[score]
 				name = score

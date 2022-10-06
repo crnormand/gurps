@@ -1,32 +1,32 @@
 {{#if selfModifiers}}
-<div class="list">
-	<div class="header">{{localize "gurps.token_modifier_window.self_modifiers"}}</div>
-	{{#each selfModifiers}}
-	<div class="modifier rollable">{{signed this.modifier}}</div>
-	<div class="name">{{this.name}}</div>
-	{{/each}}
-</div>
+	<div class="list">
+		<div class="header">{{localize "gurps.token_modifier_window.self_modifiers"}}</div>
+		{{#each selfModifiers}}
+			<div class="modifier rollable">{{signed this.modifier}}</div>
+			<div class="name">{{this.name}}</div>
+		{{/each}}
+	</div>
 {{/if}}
 {{#if targetModifiers}}
-<div class="list">
-	<div class="header">{{localize "gurps.token_modifier_window.target_modifiers"}}</div>
-	{{#each targetModifiers}}
-	<div class="modifier rollable">{{signed this.modifier}}</div>
-	<div class="name">{{this.name}}</div>
-	{{/each}}
-</div>
+	<div class="list">
+		<div class="header">{{localize "gurps.token_modifier_window.target_modifiers"}}</div>
+		{{#each targetModifiers}}
+			<div class="modifier rollable">{{signed this.modifier}}</div>
+			<div class="name">{{this.name}}</div>
+		{{/each}}
+	</div>
 {{/if}}
 {{#if targets}}
-{{#each targets}}
-<div class="list">
-	<div class="header">{{localize "gurps.token_modifier_window.target_name" name=this.name}}</div>
-	{{#each this.targetModifiers}}
-	<div class="modifier rollable">{{signed this.modifier}}</div>
-	<div class="name">{{this.name}}</div>
+	{{#each targets}}
+		<div class="list">
+			<div class="header">{{localize "gurps.token_modifier_window.target_name" name=this.name}}</div>
+			{{#each this.targetModifiers}}
+				<div class="modifier rollable">{{signed this.modifier}}</div>
+				<div class="name">{{this.name}}</div>
+			{{/each}}
+		</div>
 	{{/each}}
-</div>
-{{/each}}
 {{/if}}
 {{#unless (or selfModifiers targetModifiers targets)}}
-<div>{{localize "gurps.token_modifier_window.no_targets"}}</div>
+	<div>{{localize "gurps.token_modifier_window.no_targets"}}</div>
 {{/unless}}

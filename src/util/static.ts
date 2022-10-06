@@ -1,5 +1,6 @@
 import { StaticCharacterGURPS } from "@actor/static_character"
 import { StaticAdvantage } from "@actor/static_character/components"
+import { StaticItemGURPS } from "@item/static"
 
 /**
  *
@@ -226,4 +227,57 @@ export async function insertBeforeKey(actor: StaticCharacterGURPS, path: string,
 			return a
 		}, {}) // Enforced key order
 	await actor.update({ [objpath]: sorted }, { diff: false })
+}
+
+/**
+ * Convolutions to remove a key from an object and fill in the gaps, necessary
+ * because the default add behavior just looks for the first open gap
+ * @param {GurpsActor} actor
+ * @param {string} path
+ */
+export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, path: string) {
+	let i = path.lastIndexOf(".")
+	let objpath = path.substring(0, i)
+	let key = path.substring(i + 1)
+	i = objpath.lastIndexOf(".")
+	let parentpath = objpath.substring(0, i)
+	let objkey = objpath.substring(i + 1)
+	let object = decode(actor, objpath)
+	let t = `${parentpath}.-=${objkey}`
+	await actor.update({ [t]: null }) // Delete the whole object
+	delete object[key]
+	i = parseInt(key)
+
+	i = i + 1
+	while (object.hasOwnProperty(zeroFill(i))) {
+		let k = zeroFill(i)
+		object[key] = object[k]
+		delete object[k]
+		key = k
+		i++
+	}
+	let sorted = Object.keys(object)
+		.sort()
+		.reduce((a: any, v) => {
+			a[v] = object[v]
+			return a
+		}, {}) // Enforced key order
+	await actor.update({ [objpath]: sorted }, { diff: false, render: false })
+}
+
+/**
+ *
+ * @param obj
+ * @param path
+ * @param all
+ */
+function decode(obj: any, path: string, all = true) {
+	let p = path.split(".")
+	let end = p.length
+	if (!all) end = end - 1
+	for (let i = 0; i < end; i++) {
+		let q = p[i]
+		obj = obj[q]
+	}
+	return obj
 }

@@ -1,7 +1,7 @@
 {
 	"ACTOR": {
-		"TypeCharacter_gcs": "Character (Dynamic)",
-		"TypeCharacter": "Character (Static)"
+		"TypeCharacter_gcs": "Character",
+		"TypeCharacter": "Character (Legacy)"
 	},
 	"ITEM": {
 		"TypeTrait": "Trait",
@@ -19,7 +19,8 @@
 		"TypeEqp_modifier": "Equipment Modifier",
 		"TypeEqp_modifier_container": "Equipment Modifier Container",
 		"TypeNote": "Note",
-		"TypeNote_container": "Note Container"
+		"TypeNote_container": "Note Container",
+		"TypeStatic_equipment": "Equipment (Legacy)"
 	},
 	"gurps": {
 		"pdf": {
@@ -718,7 +719,8 @@
 				"eqp_modifier": "Equipment Modifier Sheet",
 				"eqp_modifier_container": "Equipment Modifier Container Sheet",
 				"note": "Note Sheet",
-				"note_container": "Note Container Sheet"
+				"note_container": "Note Container Sheet",
+				"static_equipment": "Legacy Item Sheet"
 			},
 			"modifier_stack": {
 				"no_mods": "No modifiers currently active.",

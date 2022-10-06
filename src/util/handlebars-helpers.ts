@@ -403,6 +403,7 @@ export function registerHandlebarsHelpers() {
 
 		if (notEmpty(system.equipment?.carried)) outAr.push("equipment equipment")
 		if (notEmpty(system.equipment?.other)) outAr.push("other_equipment other_equipment")
+		if (notEmpty(system.notes)) outAr.push("notes notes")
 		return `"${outAr.join('" "')}";`
 	})
 

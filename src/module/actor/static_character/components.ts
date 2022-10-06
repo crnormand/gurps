@@ -1,4 +1,4 @@
-import { Static } from "@util"
+import { floatingMul, Static } from "@util"
 import { convertRollStringToArrayOfInt } from "@util/static"
 import { StaticCharacterGURPS } from "."
 
@@ -107,7 +107,7 @@ export class StaticSkill extends LeveledComponent {
 
 	relativelevel = ""
 
-	constructor(name: string, level: number) {
+	constructor(name = "Skill", level = 0) {
 		super(name, level)
 		this.type = ""
 		this.relativelevel = ""
@@ -336,8 +336,8 @@ export class StaticEquipment extends NamedComponent {
 		}
 
 		eqt.count = cln(eqt.count)
-		eqt.cost = cln(eqt.cost)
-		eqt.weight = cln(eqt.weight)
+		eqt.cost = floatingMul(cln(eqt.cost))
+		eqt.weight = floatingMul(cln(eqt.weight))
 		let cs = eqt.count * eqt.cost
 		let ws = eqt.count * eqt.weight
 		if (eqt.contains) {
@@ -359,12 +359,12 @@ export class StaticEquipment extends NamedComponent {
 		}
 		if (actor)
 			await actor.update({
-				[`${objkey}.costsum`]: cs,
-				[`${objkey}.weightsum`]: ws,
+				[`${objkey}.costsum`]: floatingMul(cs),
+				[`${objkey}.weightsum`]: floatingMul(ws),
 			})
 		// The local values 'should' be updated... but I need to force them anyway
-		eqt.costsum = cs
-		eqt.weightsum = ws
+		eqt.costsum = floatingMul(cs)
+		eqt.weightsum = floatingMul(ws)
 	}
 }
 
@@ -416,7 +416,7 @@ export class StaticReaction {
 	}
 }
 
-export class StaticModifier extends StaticReaction { }
+export class StaticModifier extends StaticReaction {}
 
 export class StaticLanguage {
 	name: string
