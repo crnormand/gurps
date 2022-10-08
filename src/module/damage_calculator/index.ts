@@ -29,10 +29,21 @@ class DamageCalculator {
 
 	private _damageRoll: DamageRoll
 
+	private _vulnerability: number
+
+	/**
+	 * TODO We could look up "Vulnerability" in the target's traits and list them on the ADD, with
+	 * checkboxes/radio buttons.
+	 */
+	public set vulnerability(value: number) {
+		this._vulnerability = value
+	}
+
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
 		this._damageRoll = damageRoll
 		this._target = defender
+		this._vulnerability = 1
 	}
 
 	/**
@@ -40,7 +51,9 @@ class DamageCalculator {
 	 */
 	get basicDamage(): number {
 		let halfD = this._damageRoll.isHalfDamage ? 0.5 : 1
-		return this._isKnockbackOnly() ? 0 : Math.floor(this._basicDamage * halfD)
+		return this._isKnockbackOnly()
+			? 0
+			: Math.floor(this._basicDamage * halfD) * this._multiplierForShotgunExtremelyClose
 	}
 
 	private _isKnockbackOnly() {
@@ -62,7 +75,8 @@ class DamageCalculator {
 	 * @returns {number} - The final amount of damage inflicted on the defender (does not consider blunt trauma).
 	 */
 	get injury(): number {
-		const temp = Math.floor(this._woundingModifier(this.penetratingDamage))
+		let temp = Math.floor(this._woundingModifier(this.penetratingDamage))
+		temp = temp * this._vulnerability
 		let candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
 		candidateInjury = candidateInjury / this._damageReductionValue
 		return this._applyMaximum(candidateInjury)
@@ -305,20 +319,40 @@ class DamageCalculator {
 	}
 
 	private get _basicDR() {
+		let basicDr = 0
 		if (this._damageRoll.locationId === DefaultHitLocations.LargeArea) {
 			let torso = this._target.hitLocationTable.locations.find(it => it.id === "torso")
 			let allDR = this._target.hitLocationTable.locations.map(it => it.calc.dr.all)
-			return ((torso?.calc.dr.all ?? 0) + Math.min(...allDR)) / 2
+			basicDr = ((torso?.calc.dr.all ?? 0) + Math.min(...allDR)) / 2
+		} else {
+			basicDr = this._targetedHitLocation?.calc.dr?.all ?? 0
 		}
 
-		return this._targetedHitLocation?.calc.dr?.all ?? 0
+		return basicDr * this._multiplierForShotgunExtremelyClose
+	}
+
+	private get _multiplierForShotgunExtremelyClose() {
+		return this._damageRoll.isShotgunExtremeRange ? Math.floor(this._damageRoll.rofMultiplier / 2) : 1
 	}
 
 	/**
 	 * Encapsulate here to allow overriding.
 	 */
 	private get _effectiveArmorDivisor() {
-		return this._damageRoll.armorDivisor
+		let ad = this._damageRoll.armorDivisor
+		if (ad > 0 && ad < 1) return ad
+
+		const armorDivisors = [0, 100, 10, 5, 3, 2, 1]
+		let index = armorDivisors.indexOf(ad)
+
+		let damageResistance = this._target.getTrait("Damage Resistance")
+		if (damageResistance) {
+			let level = damageResistance.getModifier("Hardened")?.levels ?? 0
+
+			index += level
+			if (index > armorDivisors.length - 1) index = armorDivisors.length - 1
+		}
+		return armorDivisors[index]
 	}
 
 	private get _woundingModifier(): ModifierFunction {
