@@ -2,7 +2,7 @@
 import { DamageCalculator, Extremity, Head, Limb } from "../../src/module/damage_calculator"
 import { DiceGURPS } from "../../src/module/dice"
 import { RollType } from "../../src/module/data"
-import { DamageTarget, TraitGURPSAdapter } from "../../src/module/damage_calculator/damage_target"
+import { DamageTarget, TraitAdapter, TraitModifierAdapter } from "../../src/module/damage_calculator/damage_target"
 import { HitLocation, HitLocationTableWithCalc } from "../../src/module/damage_calculator/hit_location"
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
 import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
@@ -21,7 +21,7 @@ class _Target implements DamageTarget {
 
 	hitPoints = { value: 15, current: 10 }
 
-	_traits: TraitGURPSAdapter[] = []
+	_traits: TraitAdapter[] = []
 
 	getTrait(name: string) {
 		return this._traits.find(it => it.name === name)
@@ -60,6 +60,10 @@ class _DamageRoll implements DamageRoll {
 	armorDivisor = 1
 
 	isHalfDamage = false
+
+	isShotgunExtremeRange = false
+
+	rofMultiplier = 1
 }
 
 const Knockdown = [
@@ -885,7 +889,7 @@ describe("Damage calculator", () => {
 		it("Perfect Balance gives +4 to this roll.", () => {
 			expect(_roll.damageType).toBe(DamageType.cr)
 
-			_target._traits.push(new TraitGURPSAdapter("Perfect Balance", 0))
+			_target._traits.push(new TraitAdapter("Perfect Balance", 0))
 
 			_roll.basicDamage = 10
 			let calc = new DamageCalculator(_roll, _target)
@@ -1818,7 +1822,7 @@ describe("Damage calculator", () => {
 		describe("No Brain.", () => {
 			const theLocations = ["skull", "eye"]
 			beforeEach(() => {
-				_target._traits.push(new TraitGURPSAdapter("No Brain", 0))
+				_target._traits.push(new TraitAdapter("No Brain", 0))
 			})
 
 			it("Hits to the skull (or eye) get no extra knockdown modifier.", () => {
@@ -1911,7 +1915,7 @@ describe("Damage calculator", () => {
 		describe("No Vitals.", () => {
 			const theLocations = ["vitals", "groin"]
 			beforeEach(() => {
-				_target._traits.push(new TraitGURPSAdapter("No Vitals", 0))
+				_target._traits.push(new TraitAdapter("No Vitals", 0))
 			})
 
 			it("Hits to the vitals or groin have the same effect as torso hits.", () => {
@@ -1962,7 +1966,7 @@ describe("Damage calculator", () => {
 				let calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(24)
 
-				const damageReduction = new TraitGURPSAdapter("Damage Reduction", 2)
+				const damageReduction = new TraitAdapter("Damage Reduction", 2)
 				_target._traits.push(damageReduction)
 				calc = new DamageCalculator(_roll, _target)
 				expect(calc.injury).toBe(12)
@@ -2014,21 +2018,59 @@ describe("Damage calculator", () => {
 		})
 	})
 
-	describe.skip("B161: Vulnerability.", () => {
+	describe("B161: Vulnerability.", () => {
 		it("Applies a special wounding multiplier to damage that penetrates your DR. Regular wounding multipliers further multiply the damage.", () => {
-			expect(false).toBeTruthy()
+			_torso.calc.dr.all = 5
+			_roll.basicDamage = 10
+			_roll.damageType = DamageType.cr
+
+			let calc = new DamageCalculator(_roll, _target)
+			calc.vulnerability = 3
+			expect(calc.injury).toBe(15)
+
+			calc.vulnerability = 2
+			expect(calc.injury).toBe(10)
 		})
 	})
 
-	describe.skip("B47: Damage Resistance (Hardened).", () => {
+	describe("B47: Damage Resistance (Hardened).", () => {
 		it("Each level of Hardened reduces the armor divisor of an attack by one step.", () => {
-			expect(false).toBeTruthy()
+			// These steps are, in order: “ignores DR,” 100, 10, 5, 3, 2, and 1 (no divisor).
+			_torso.calc.dr.all = 20
+			_roll.basicDamage = 20
+			_roll.armorDivisor = 10
+			let calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(18)
+
+			const trait = new TraitAdapter("Damage Resistance", 0)
+			trait.modifiers.push(new TraitModifierAdapter("Hardened", 2))
+			_target._traits.push(trait)
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(14)
+
+			_roll.armorDivisor = 2
+			calc = new DamageCalculator(_roll, _target)
+			expect(calc.injury).toBe(0)
 		})
 	})
 
 	describe("B409: Shotguns and Multiple Projectiles.", () => {
-		it.skip("At ranges <10% of 1/2D, don’t apply the RoF multiplier to RoF. Instead, multiply both basic damage dice and the target’s DR by half that value (round down).", () => {
-			expect(false).toBeTruthy()
+		it("At ranges <10% of 1/2D, don’t apply the RoF multiplier to RoF. Instead, multiply both basic damage dice and the target’s DR by half that value (round down).", () => {
+			// Example: shotgun with 3x9 RoF and 1d+1 damage. Half of x9 is 4 (round down).
+			// The new basic damage is 1d+1 x 4 (4d+4); the target's DR is also multiplied by 4.
+
+			_torso.calc.dr.all = 6
+			let calc = new DamageCalculator(_roll, _target)
+
+			// TODO: It may be possible to derive this info if we had a reference to the weapon used (to find the RoF
+			// multiple and 10% of 1/2D range) and the distance between target and attacker.
+			//
+			// TODO: Maybe the correct approach is to determine damage BEFORE passing to the calculator, and setting
+			// the "isShotgunExtremeRange" flag in the DamageRoll object?
+			_roll.isShotgunExtremeRange = true
+			_roll.rofMultiplier = 9
+
+			expect(calc.injury).toBe(16)
 		})
 	})
 

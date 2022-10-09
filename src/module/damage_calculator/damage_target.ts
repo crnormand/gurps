@@ -16,7 +16,7 @@ interface DamageTarget {
 	// TODO It would be better to have a method to return DR directly; this would allow DR overrides.
 	hitLocationTable: HitLocationTableWithCalc
 	// CharacterGURPS.traits.contents.filter(it => it instanceof TraitGURPS)
-	getTrait(name: string): TraitGURPSAdapter | undefined
+	getTrait(name: string): TraitAdapter | undefined
 	//
 	hasTrait(name: string): boolean
 	// This.hasTrait("Injury Tolerance (Unliving)").
@@ -27,10 +27,27 @@ interface DamageTarget {
 	isDiffuse: boolean
 }
 
-class TraitGURPSAdapter {
+class TraitModifierAdapter {
 	levels = 0
 
 	name = ""
+
+	constructor(name: string, levels: number) {
+		this.name = name
+		this.levels = levels
+	}
+}
+
+class TraitAdapter {
+	getModifier(name: string): TraitModifierAdapter | undefined {
+		return this.modifiers.find(it => it.name === name)
+	}
+
+	levels = 0
+
+	name = ""
+
+	modifiers: TraitModifierAdapter[] = []
 
 	constructor(name: string, levels: number) {
 		this.levels = levels
@@ -38,4 +55,4 @@ class TraitGURPSAdapter {
 	}
 }
 
-export { DamageTarget, TraitGURPSAdapter }
+export { DamageTarget, TraitAdapter, TraitModifierAdapter }
