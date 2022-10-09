@@ -111,6 +111,8 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 		twohandedlift: string
 	}
 	notes: any
+	equippedparryisfencing?: boolean
+	block?: number
 }
 
 export enum StaticAttributeName {

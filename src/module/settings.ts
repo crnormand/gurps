@@ -14,6 +14,7 @@ export enum SETTINGS {
 	IGNORE_IMPORT_NAME = "ignore_import_name",
 	STATIC_IMPORT_HP_FP = "import_hp_fp",
 	STATIC_IMPORT_BODY_PLAN = "import_bodyplan",
+	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
 }
 
 /**

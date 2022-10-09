@@ -43,8 +43,6 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		// "actor/static_character/sections/conditionalmods",
 		"actor/static_character/sections/conditions",
 		"actor/static_character/sections/description",
-		"actor/static_character/sections/dropdown-closed",
-		"actor/static_character/sections/dropdown-open",
 		"actor/static_character/sections/encumbrance",
 		"actor/static_character/sections/equipment",
 		"actor/static_character/sections/footer",

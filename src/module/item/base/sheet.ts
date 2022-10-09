@@ -8,6 +8,7 @@ import { PrereqType } from "@prereq"
 import { i18n, toArray } from "@util"
 import { BaseItemGURPS } from "."
 
+// @ts-ignore
 export class ItemSheetGURPS extends ItemSheet {
 	getData(options?: Partial<ItemSheet.Options>): any {
 		const itemData = this.object.toObject(false)
@@ -286,4 +287,9 @@ export class ItemSheetGURPS extends ItemSheet {
 		all_buttons.at(-1)!.icon = "gcs-circled-x"
 		return all_buttons
 	}
+}
+
+// @ts-ignore
+export interface ItemSheetGURPS extends ItemSheet {
+	object: BaseItemGURPS
 }

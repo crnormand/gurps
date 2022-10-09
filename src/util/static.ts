@@ -48,7 +48,7 @@ export function findAdDisad(actor: StaticCharacterGURPS, sname: string): StaticA
  * @param end
  * @param start
  */
-function makeRegexPatternFrom(text: string, end = true, start = true) {
+export function makeRegexPatternFrom(text: string, end = true, start = true) {
 	// Defaults to exact match
 	let pattern = text
 		.split("*")
@@ -271,7 +271,7 @@ export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, p
  * @param path
  * @param all
  */
-function decode(obj: any, path: string, all = true) {
+export function decode(obj: any, path: string, all = true) {
 	let p = path.split(".")
 	let end = p.length
 	if (!all) end = end - 1

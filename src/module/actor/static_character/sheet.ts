@@ -28,15 +28,15 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
-		// Const items = deepClone(
-		// 	this.actor.items
-		// 		.map(item => item as Item)
-		// 		// @ts-ignore until types v10
-		// 		.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
-		// )
+
+		let deprecation = this.actor.getFlag(SYSTEM_NAME, "deprecation_acknowledged") ?? false
+		// Don't show deprecation warning if character is not imported
+		deprecation = deprecation || this.actor.system.additionalresources.importpath === ""
+
 		const sheetData = {
 			...super.getData(options),
 			system: actorData.system,
+			editing: this.actor.editing,
 			// Ranges: Static.rangeObject.ranges,
 			// useCI: GURPS.ConditionalInjury.isInUse(),
 			// conditionalEffectsTable = GURPS.ConditionalInjury.conditionalEffectsTable(),
@@ -48,6 +48,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			maneuvers: (CONFIG as any).GURPS.select.maneuvers,
 			postures: (CONFIG as any).GURPS.select.postures,
 			move_types: (CONFIG as any).GURPS.select.move_types,
+			deprecation: deprecation,
 		}
 
 		return sheetData
@@ -56,17 +57,43 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	override activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 		// Html.find(".input").on("change", event => this._resizeInput(event))
-		// html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
+		html.find(".dropdown-toggle").on("click", event => this._onCollapseToggle(event))
 		html.find(".reference").on("click", event => this._handlePDF(event))
 		// Html.find(".item").on("dblclick", event => this._openItemSheet(event))
 		// html.find(".equipped").on("click", event => this._onEquippedToggle(event))
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
 		html.find(".rollable").on("click", event => this._onClickRoll(event))
+		html.find(".equipped").on("click", event => this._onClickEquip(event))
+		html.find(".deprecation a").on("click", event => {
+			event.preventDefault()
+			this.actor.setFlag(SYSTEM_NAME, "deprecation_acknowledged", true)
+		})
 
 		// Hover Over
 		// html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
 		// html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
+	}
+
+	protected _onCollapseToggle(event: JQuery.ClickEvent): void {
+		event.preventDefault()
+		const path = $(event.currentTarget).data("key")
+		this.actor.toggleExpand(path)
+	}
+
+	async _onClickEquip(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		const key = $(event.currentTarget).data("key")
+		let eqt = duplicate(Static.decode(this.actor, key))
+		eqt.equipped = !eqt.equipped
+		await this.actor.update({ [key]: eqt })
+		await this.actor.updateItemAdditionsBasedOn(eqt, key)
+		let p = this.actor.getEquippedParry()
+		let b = this.actor.getEquippedBlock()
+		await this.actor.update({
+			"system.equippedparry": p,
+			"system.equippedblock": b,
+		})
 	}
 
 	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
@@ -104,14 +131,12 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		if ([RollType.Skill, RollType.SkillRelative, RollType.Spell, RollType.SpellRelative].includes(type)) {
 			Static.recurseList(this.actor.system.skills, e => {
-				if (e.uuid === $(event.currentTarget).data("uuid")) console.log(e)
 				if (e.uuid === $(event.currentTarget).data("uuid"))
 					data.item = {
 						formattedName: e.name,
 						skillLevel: e.level,
 					}
 			})
-			console.log(data.item)
 		}
 		if ([RollType.Damage, RollType.Attack].includes(type)) {
 			Static.recurseList(
@@ -130,7 +155,6 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			data.modifier = $(event.currentTarget).data("modifier")
 			data.comment = $(event.currentTarget).data("comment")
 		}
-		console.log(data)
 		return RollGURPS.handleRoll((game as Game).user, this.actor, data)
 	}
 

@@ -145,7 +145,9 @@
 				"Vitals": "Vitals",
 				"Where": "Where",
 				"Wing": "Wing"
-			}
+			},
+			"deprecated": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is elegible for Easy-Update.<br>Please update your document by pressing the \"Easy Update\" button in the GGA settings above.",
+			"deprecated_xml": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is NOT elegible for Easy-Update. Please update your document."
 		},
 		"character": {
 			"portrait": "Portrait",
@@ -776,7 +778,8 @@
 				"format_old": "File format is too old. Please save your file in the most up to date version of GCS",
 				"format_new": "File format it too new, and is not yet supported.",
 				"generic": "Import Error for {name}:\n{message}",
-				"ritual_magic_gca": "GCA Import does not currently support Ritual Magic Spells. Spell levels will likely be incorrect."
+				"ritual_magic_gca": "GCA Import does not currently support Ritual Magic Spells. Spell levels will likely be incorrect.",
+				"invalid_item_type": "Invalid Item Type: {type}"
 			},
 			"modifier_app_load_failed": "Failed to initialize the Modifier Stack App."
 		}

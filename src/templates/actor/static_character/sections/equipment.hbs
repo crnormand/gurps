@@ -1,31 +1,36 @@
-<div class="equipped" data-uuid="{{ this.uuid }}">
+{{#unless this.isCollapsed}}
+<div class="equipped" data-key="system.equipment.carried.{{@key}}">
     {{#if this.equipped }}
-        <i class="gcs-checkmark"></i>{{/if }}
+        <i class="gcs-checkmark"></i>
+    {{/if }}
+</div>
+<div class="quantity">{{ this.count }}</div>
+<div class="desc item"
+     data-uuid="{{ this.uuid }}"
+     style="padding-left: calc({{ this.indent }} * 12px + 6px)">
+    <div class="dropdown">
+        {{#if this.hasContains }}
+            <i class="dropdown-toggle open gcs-circled-chevron-down"
+               data-key="system.equipment.carried.{{@key}}"></i>
+        {{/if}}
+        {{#if this.hasCollapsed }}
+            <i class="dropdown-toggle closed gcs-circled-chevron-right"
+               data-key="system.equipment.carried.{{@key}}"></i>
+        {{/if}}
     </div>
-    <div class="quantity">{{ this.count }}</div>
-    <div class="desc item"
-         data-uuid="{{ this.uuid }}"
-         style="padding-left: calc({{ this.indent }} * 12px + 6px)">
-        <div class="dropdown">
-            {{#if this.hasContains }}
-                {{#if this.hasCollapsed }}
-                    {{>actor/character/sections/dropdown-closed }}
-                {{ else }}
-                    {{>actor/character/sections/dropdown-open }}
-                {{/if }}
-            {{/if }}
-        </div>
-        <div class="name">{{ this.name }}</div>
-        <div class="item-notes">{{ this.notes }}</div>
-    </div>
-    <div class="uses">
-        {{#if (and this.uses this.maxuses)}}
-            {{ this.uses }}{{/if }}
-        </div>
-        <div class="tech-level">{{ this.techlevel }}</div>
-        <div class="legality-class">{{ this.legalityclass }}</div>
-        <div class="value">{{ this.cost }}</div>
-        <div class="weight">{{ this.weight }}</div>
-        <div class="extended-value">{{ this.costsum }}</div>
-        <div class="extended-weight">{{ this.weightsum }}</div>
-        <div class="reference" data-pdf="{{ this.pageref }}">{{ ref this.pageref }}</div>
+    <div class="name">{{ this.name }}</div>
+    <div class="item-notes">{{ this.notes }}</div>
+</div>
+<div class="uses">
+    {{#if (and this.uses this.maxuses) }}
+        {{ this.uses }}
+    {{/if }}
+</div>
+<div class="tech-level">{{ this.techlevel }}</div>
+<div class="legality-class">{{ this.legalityclass }}</div>
+<div class="value">{{ this.cost }}</div>
+<div class="weight">{{ this.weight }}</div>
+<div class="extended-value">{{ this.costsum }}</div>
+<div class="extended-weight">{{ this.weightsum }}</div>
+<div class="reference" data-pdf="{{ this.pageref }}">{{ ref this.pageref }}</div>
+{{/unless}}

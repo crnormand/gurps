@@ -5,9 +5,9 @@
 		grid-area: auto;
 	}
 
-	// .equipped {
-	// 	min-height: 22px;
-	// }
+	.equipped {
+		min-height: 16px;
+	}
 
 	.equipped:nth-child(22n + 1),
 	.quantity:nth-child(22n + 2),

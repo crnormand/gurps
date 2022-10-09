@@ -1,4 +1,3 @@
-import { BaseActorGURPS } from "@actor"
 import { CharacterGURPS } from "@actor/character"
 import { StaticCharacterGURPS } from "@actor/static_character"
 import { AttributeBonus } from "@feature/attribute_bonus"
@@ -32,6 +31,7 @@ import {
 	TraitModifierContainerGURPS,
 	TraitModifierGURPS,
 } from "@item"
+import { StaticItemGURPS } from "@item/static"
 import { AttributePrereq } from "@prereq/attribute_prereq"
 import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
 import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
@@ -65,6 +65,7 @@ const GURPSCONFIG: any = {
 			eqp_modifier_container: EquipmentModifierContainerGURPS,
 			note: NoteGURPS,
 			note_container: NoteContainerGURPS,
+			static_equipment: StaticItemGURPS,
 		},
 		allowedContents: {
 			trait: ["modifier", "modifier_container"],

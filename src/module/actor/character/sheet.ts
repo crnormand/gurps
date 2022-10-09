@@ -326,9 +326,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				onclick: event => this._onFileImport(event),
 			},
 			{
-				label: "GURPS",
+				label: "",
 				class: "gmenu",
-				icon: "fas fa-dice",
+				icon: "gcs-all-seeing-eye",
 				onclick: event => this._onGMenu(event),
 			},
 		]

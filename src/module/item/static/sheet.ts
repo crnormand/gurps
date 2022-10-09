@@ -5,9 +5,6 @@ import { StaticItemGURPS } from "."
 import { StaticItemSystemData } from "./data"
 
 export class StaticItemSheet extends ItemSheetGURPS {
-	// @ts-ignore
-	object: StaticItemGURPS
-
 	static get defaultOptions(): DocumentSheetOptions {
 		const options = super.defaultOptions
 		mergeObject(options, {
@@ -157,4 +154,8 @@ export class StaticItemSheet extends ItemSheetGURPS {
 	// 	delete formData.difficulty
 	// 	return super._updateObject(event, formData)
 	// }
+}
+
+export interface StaticItemSheet {
+	object: StaticItemGURPS
 }

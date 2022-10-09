@@ -252,6 +252,8 @@ export class ItemImporter {
 				data = this.getNoteContainerData(item as NoteContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
 				return [data, flags]
+			default:
+				throw new Error(i18n_f("gcsga.error.import.invalid_item_type", { type: item.type }))
 		}
 	}
 

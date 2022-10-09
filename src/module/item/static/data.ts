@@ -1,6 +1,6 @@
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
 
-export type StaticItemSource = BaseItemSourceGURPS<"note", StaticItemSystemData>
+export type StaticItemSource = BaseItemSourceGURPS<"static_equipment", StaticItemSystemData>
 
 // Export class StaticItemData extends BaseItemDataGURPS<StaticItemGURPS> {}
 

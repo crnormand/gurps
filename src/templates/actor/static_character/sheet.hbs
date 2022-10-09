@@ -1,279 +1,287 @@
 <form class="{{ cssClass }}" autocomplete="off">
-    <div id="sheet" class="gurpsactorsheet">
-        <div id="personal">
-            {{>actor/static_character/sections/portrait }}
-            {{>actor/static_character/sections/identity }}
-            {{>actor/static_character/sections/miscellaneous }}
-            {{>actor/static_character/sections/description }}
-            {{>actor/static_character/sections/points }}
+    {{#unless deprecation}}
+    <div class="deprecation">
+        {{{localize "gurps.static.deprecated" type=(localize "ACTOR.TypeCharacter")}}}
+        <a class="gcs-circled-x"></a>
+    </div>
+{{/unless}}
+<div id="sheet" class="gurpsactorsheet">
+    <div id="personal">
+        {{>actor/static_character/sections/portrait }}
+        {{>actor/static_character/sections/identity }}
+        {{>actor/static_character/sections/miscellaneous }}
+        {{>actor/static_character/sections/description }}
+        {{>actor/static_character/sections/points }}
+    </div>
+    <div id="stats">
+        <div id="attributes">
+            {{>actor/static_character/sections/primary-attributes }}
+            {{>actor/static_character/sections/basic-damage }}
+            {{>actor/static_character/sections/secondary-attributes }}
+            {{>actor/static_character/sections/pool-attributes }}
         </div>
-        <div id="stats">
-            <div id="attributes">
-                {{>actor/static_character/sections/primary-attributes }}
-                {{>actor/static_character/sections/basic-damage }}
-                {{>actor/static_character/sections/secondary-attributes }}
-                {{>actor/static_character/sections/pool-attributes }}
+        <div id="hit-locations">
+            <div class="header body-plan">
+                {{ localize (concat "gurps.static.body_plan." system.additionalresources.bodyplan)}}
             </div>
-            <div id="hit-locations">
-                <div class="header body-plan">
-                    {{ localize (concat "gurps.static.body_plan." system.additionalresources.bodyplan)}}
+            <div class="header roll">{{ localize "gurps.character.body_type.roll" }}</div>
+            <div class="header location">{{ localize "gurps.character.body_type.location" }}</div>
+            <div class="header dr">{{ localize "gurps.character.body_type.dr" }}</div>
+            {{#each system.hitlocations }}
+                {{>actor/static_character/sections/hit-location tab="" }}
+            {{/each }}
+        </div>
+        <div id="encumbrance-lifting">
+            {{>actor/static_character/sections/encumbrance }}
+            <div id="lifting-macros">
+                <nav class="header tabs-navigation" data-group="lifting">
+                    <a class="item" data-tab="lifting">{{ localize "gurps.character.lifting.title" }}</a>
+                    <a class="item" data-tab="macros">{{ localize "gurps.character.macros.title" }}</a>
+                </nav>
+                <section class="tabs-content">
+                    {{>actor/static_character/sections/lifting }}
+                    {{>actor/static_character/sections/macros }}
+                </section>
+            </div>
+        </div>
+        <div id="resource-trackers">{{>actor/static_character/sections/resource-trackers }}</div>
+        {{!--
+        <div id="macros">
+            --}}
+            {{!-- {{>actor/character/sections/macros }} --}}
+            {{!--
+        </div>
+        --}}
+        <div id="move">{{>actor/static_character/sections/move }}</div>
+    </div>
+    <div id="embeds"
+         style="grid-template: {{ staticBlockLayout this.system }};">
+        {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods)) }}
+            {{#if (notEmpty system.reactions) }}
+                <div id="reactions">
+                    <div class="header modifier">{{ localize "gurps.character.reactions.modifier" }}</div>
+                    <div class="header condition">{{ localize "gurps.character.reactions.reaction" }}</div>
+                    {{#each system.reactions }}
+                        {{>actor/static_character/sections/reaction }}
+                    {{/each }}
                 </div>
-                <div class="header roll">{{ localize "gurps.character.body_type.roll" }}</div>
-                <div class="header location">{{ localize "gurps.character.body_type.location" }}</div>
-                <div class="header dr">{{ localize "gurps.character.body_type.dr" }}</div>
-                {{#each system.hitlocations }}
-                    {{>actor/static_character/sections/hit-location tab="" }}
+            {{/if }}
+            {{#if (notEmpty system.conditionalmods) }}
+                <div id="conditional-modifiers">
+                    <div class="header modifier">{{ localize "gurps.character.conditional_modifiers.modifier" }}</div>
+                    <div class="header condition">{{ localize "gurps.character.conditional_modifiers.reaction" }}</div>
+                    {{#each system.conditionalmods }}
+                        {{>actor/static_character/sections/reaction }}
+                    {{/each }}
+                </div>
+            {{/if }}
+        {{/if }}
+        {{#if (notEmpty system.melee) }}
+            <div id="melee">
+                <div class="header desc">{{ localize "gurps.character.melee.desc" }}</div>
+                <div class="header usage">{{ localize "gurps.character.melee.usage" }}</div>
+                <div class="header level">{{ localize "gurps.character.melee.level" }}</div>
+                <div class="header parry">{{ localize "gurps.character.melee.parry" }}</div>
+                <div class="header block">{{ localize "gurps.character.melee.block" }}</div>
+                <div class="header damage">{{ localize "gurps.character.melee.damage" }}</div>
+                <div class="header reach">{{ localize "gurps.character.melee.reach" }}</div>
+                <div class="header st">{{ localize "gurps.character.melee.st" }}</div>
+                {{#each system.melee }}
+                    {{>actor/static_character/sections/melee-attack }}
                 {{/each }}
             </div>
-            <div id="encumbrance-lifting">
-                {{>actor/static_character/sections/encumbrance }}
-                <div id="lifting-macros">
-                    <nav class="header tabs-navigation" data-group="lifting">
-                        <a class="item" data-tab="lifting">{{ localize "gurps.character.lifting.title" }}</a>
-                        <a class="item" data-tab="macros">{{ localize "gurps.character.macros.title" }}</a>
-                    </nav>
-                    <section class="tabs-content">
-                        {{>actor/static_character/sections/lifting }}
-                        {{>actor/static_character/sections/macros }}
-                    </section>
+        {{/if }}
+        {{#if (notEmpty system.ranged) }}
+            <div id="ranged">
+                <div class="header desc">{{ localize "gurps.character.ranged.desc" }}</div>
+                <div class="header usage">{{ localize "gurps.character.ranged.usage" }}</div>
+                <div class="header level">{{ localize "gurps.character.ranged.level" }}</div>
+                <div class="header accuracy">{{ localize "gurps.character.ranged.accuracy" }}</div>
+                <div class="header damage">{{ localize "gurps.character.ranged.damage" }}</div>
+                <div class="header range">
+                    {{ localize "gurps.character.ranged.range" }}
                 </div>
+                <div class="header rate-of-fire">
+                    {{ localize "gurps.character.ranged.rate_of_fire" }}
+                </div>
+                <div class="header shots">
+                    {{ localize "gurps.character.ranged.shots" }}
+                </div>
+                <div class="header bulk">
+                    {{ localize "gurps.character.ranged.bulk" }}
+                </div>
+                <div class="header recoil">
+                    {{ localize "gurps.character.ranged.recoil" }}
+                </div>
+                <div class="header st">
+                    {{ localize "gurps.character.ranged.st" }}
+                </div>
+                {{#each system.ranged }}
+                    {{>actor/static_character/sections/ranged-attack }}
+                {{/each }}
             </div>
-            <div id="resource-trackers">{{>actor/static_character/sections/resource-trackers }}</div>
-            {{!--
-            <div id="macros">
-                --}}
-                {{!-- {{>actor/character/sections/macros }} --}}
-                {{!--
+        {{/if }}
+        {{#if (notEmpty system.ads) }}
+            <div id="traits" class="item-list">
+                <div class="header desc">
+                    {{ localize "gurps.character.traits.desc" }}
+                </div>
+                <div class="header points">
+                    {{ localize "gurps.character.traits.points" }}
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each (flatlist system.ads) }}
+                    {{>actor/static_character/sections/trait }}
+                {{/each }}
             </div>
-            --}}
-            <div id="move">{{>actor/static_character/sections/move }}</div>
+        {{/if }}
+        {{#if (notEmpty system.skills) }}
+            <div id="skills" class="item-list">
+                <div class="header desc">
+                    {{ localize "gurps.character.skills.desc" }}
+                </div>
+                <div class="header level">
+                    {{ localize "gurps.character.skills.level" }}
+                </div>
+                <div class="header rsl">
+                    {{ localize "gurps.character.skills.rsl" }}
+                </div>
+                <div class="header points">
+                    {{ localize "gurps.character.skills.points" }}
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each (flatlist system.skills) }}
+                    {{>actor/static_character/sections/skill }}
+                {{/each }}
+            </div>
+        {{/if }}
+        {{#if (notEmpty system.spells) }}
+            <div id="spells" class="item-list">
+                <div class="header desc">
+                    {{ localize "gurps.character.spells.desc" }}
+                </div>
+                <div class="header college">
+                    {{ localize "gurps.character.spells.college" }}
+                </div>
+                <div class="header level">
+                    {{ localize "gurps.character.spells.level" }}
+                </div>
+                <div class="header rsl">
+                    {{ localize "gurps.character.spells.rsl" }}
+                </div>
+                <div class="header points">
+                    {{ localize "gurps.character.spells.points" }}
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each (flatlist system.spells) }}
+                    {{>actor/static_character/sections/spell }}
+                {{/each }}
+            </div>
+        {{/if }}
+        {{#if (notEmpty system.equipment.carried) }}
+            <div id="equipment" class="item-list">
+                <div class="header equipped">
+                    <i class="gcs-checkmark"></i>
+                </div>
+                <div class="header quantity">
+                    {{ localize "gurps.character.equipment.quantity" }}
+                </div>
+                <div class="header desc">
+                    {{localize "gurps.character.equipment.desc" weight=actor.fastWeightCarried
+                    value=actor.fastWealthCarried}}
+                </div>
+                <div class="header uses">
+                    {{ localize "gurps.character.equipment.uses" }}
+                </div>
+                <div class="header tech-level">
+                    {{ localize "gurps.character.equipment.tech_level" }}
+                </div>
+                <div class="header legality-class">
+                    {{ localize "gurps.character.equipment.legality_class" }}
+                </div>
+                <div class="header value">
+                    <i class="gcs-coins"></i>
+                </div>
+                <div class="header weight">
+                    <i class="gcs-weight"></i>
+                </div>
+                <div class="header extended-value">
+                    <i class="gcs-stack"></i><i class="gcs-coins"></i>
+                </div>
+                <div class="header extended-weight">
+                    <i class="gcs-stack"></i><i class="gcs-weight"></i>
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each (flatlist system.equipment.carried) }}
+                    {{>actor/static_character/sections/equipment }}
+                {{/each }}
+            </div>
+        {{/if }}
+        {{#if (notEmpty system.equipment.other) }}
+            <div id="other-equipment" class="item-list">
+                <div class="header quantity">
+                    {{ localize "gurps.character.other_equipment.quantity" }}
+                </div>
+                <div class="header desc">
+                    {{ localize "gurps.character.other_equipment.desc" value=other_value }}
+                </div>
+                <div class="header uses">
+                    {{ localize "gurps.character.other_equipment.uses" }}
+                </div>
+                <div class="header tech-level">
+                    {{ localize "gurps.character.other_equipment.tech_level" }}
+                </div>
+                <div class="header legality-class">
+                    {{ localize "gurps.character.other_equipment.legality_class" }}
+                </div>
+                <div class="header value">
+                    <i class="gcs-coins"></i>
+                </div>
+                <div class="header weight">
+                    <i class="gcs-weight"></i>
+                </div>
+                <div class="header extended-value">
+                    <i class="gcs-stack"></i><i class="gcs-coins"></i>
+                </div>
+                <div class="header extended-weight">
+                    <i class="gcs-stack"></i><i class="gcs-weight"></i>
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each (flatlist system.equipment.other) }}
+                    {{>actor/static_character/sections/other-equipment }}
+                {{/each }}
+            </div>
+        {{/if }}
+        {{#if (notEmpty system.notes) }}
+            <div id="notes" class="item-list">
+                <div class="header desc">
+                    {{ localize "gurps.character.notes.desc" }}
+                </div>
+                <div class="header reference">
+                    <i class="gcs-bookmark"></i>
+                </div>
+                {{#each (flatlist system.notes) }}
+                    {{>actor/static_character/sections/note }}
+                {{/each }}
+            </div>
+        {{/if }}
+    </div>
+    <div id="footer">
+        <div class="left">
+            {{{ localize "gurps.character.copyright" current_year=current_year }}}
         </div>
-        <div id="embeds"
-             style="grid-template: {{ staticBlockLayout this.system }};">
-            {{#if (or (notEmpty system.reactions) (notEmpty system.conditionalmods)) }}
-                {{#if (notEmpty system.reactions) }}
-                    <div id="reactions">
-                        <div class="header modifier">{{ localize "gurps.character.reactions.modifier" }}</div>
-                        <div class="header condition">{{ localize "gurps.character.reactions.reaction" }}</div>
-                        {{#each system.reactions }}
-                            {{>actor/static_character/sections/reaction }}
-                        {{/each }}
-                    </div>
-                {{/if }}
-                {{#if (notEmpty system.conditionalmods) }}
-                    <div id="conditional-modifiers">
-                        <div class="header modifier">{{ localize "gurps.character.conditional_modifiers.modifier" }}</div>
-                        <div class="header condition">{{ localize "gurps.character.conditional_modifiers.reaction" }}</div>
-                        {{#each system.conditionalmods }}
-                            {{>actor/static_character/sections/reaction }}
-                        {{/each }}
-                    </div>
-                {{/if }}
-            {{/if }}
-            {{#if (notEmpty system.melee) }}
-                <div id="melee">
-                    <div class="header desc">{{ localize "gurps.character.melee.desc" }}</div>
-                    <div class="header usage">{{ localize "gurps.character.melee.usage" }}</div>
-                    <div class="header level">{{ localize "gurps.character.melee.level" }}</div>
-                    <div class="header parry">{{ localize "gurps.character.melee.parry" }}</div>
-                    <div class="header block">{{ localize "gurps.character.melee.block" }}</div>
-                    <div class="header damage">{{ localize "gurps.character.melee.damage" }}</div>
-                    <div class="header reach">{{ localize "gurps.character.melee.reach" }}</div>
-                    <div class="header st">{{ localize "gurps.character.melee.st" }}</div>
-                    {{#each system.melee }}
-                        {{>actor/static_character/sections/melee-attack }}
-                    {{/each }}
-                </div>
-            {{/if }}
-            {{#if (notEmpty system.ranged) }}
-                <div id="ranged">
-                    <div class="header desc">{{ localize "gurps.character.ranged.desc" }}</div>
-                    <div class="header usage">{{ localize "gurps.character.ranged.usage" }}</div>
-                    <div class="header level">{{ localize "gurps.character.ranged.level" }}</div>
-                    <div class="header accuracy">{{ localize "gurps.character.ranged.accuracy" }}</div>
-                    <div class="header damage">{{ localize "gurps.character.ranged.damage" }}</div>
-                    <div class="header range">{{ localize "gurps.character.ranged.range" }}</div>
-                    <div class="header rate-of-fire">
-                        {{ localize "gurps.character.ranged.rate_of_fire" }}
-                    </div>
-                    <div class="header shots">
-                        {{ localize "gurps.character.ranged.shots" }}
-                    </div>
-                    <div class="header bulk">
-                        {{ localize "gurps.character.ranged.bulk" }}
-                    </div>
-                    <div class="header recoil">
-                        {{ localize "gurps.character.ranged.recoil" }}
-                    </div>
-                    <div class="header st">
-                        {{ localize "gurps.character.ranged.st" }}
-                    </div>
-                    {{#each system.ranged }}
-                        {{>actor/static_character/sections/ranged-attack }}
-                    {{/each }}
-                </div>
-            {{/if }}
-            {{#if (notEmpty system.ads) }}
-                <div id="traits" class="item-list">
-                    <div class="header desc">
-                        {{ localize "gurps.character.traits.desc" }}
-                    </div>
-                    <div class="header points">
-                        {{ localize "gurps.character.traits.points" }}
-                    </div>
-                    <div class="header reference">
-                        <i class="gcs-bookmark"></i>
-                    </div>
-                    {{#each (flatlist system.ads) }}
-                        {{>actor/static_character/sections/trait }}
-                    {{/each }}
-                </div>
-            {{/if }}
-            {{#if (notEmpty system.skills) }}
-                <div id="skills" class="item-list">
-                    <div class="header desc">
-                        {{ localize "gurps.character.skills.desc" }}
-                    </div>
-                    <div class="header level">
-                        {{ localize "gurps.character.skills.level" }}
-                    </div>
-                    <div class="header rsl">
-                        {{ localize "gurps.character.skills.rsl" }}
-                    </div>
-                    <div class="header points">
-                        {{ localize "gurps.character.skills.points" }}
-                    </div>
-                    <div class="header reference">
-                        <i class="gcs-bookmark"></i>
-                    </div>
-                    {{#each (flatlist system.skills) }}
-                        {{>actor/static_character/sections/skill }}
-                    {{/each }}
-                </div>
-            {{/if }}
-            {{#if (notEmpty system.spells) }}
-                <div id="spells" class="item-list">
-                    <div class="header desc">
-                        {{ localize "gurps.character.spells.desc" }}
-                    </div>
-                    <div class="header college">
-                        {{ localize "gurps.character.spells.college" }}
-                    </div>
-                    <div class="header level">
-                        {{ localize "gurps.character.spells.level" }}
-                    </div>
-                    <div class="header rsl">
-                        {{ localize "gurps.character.spells.rsl" }}
-                    </div>
-                    <div class="header points">
-                        {{ localize "gurps.character.spells.points" }}
-                    </div>
-                    <div class="header reference">
-                        <i class="gcs-bookmark"></i>
-                    </div>
-                    {{#each (flatlist system.spells) }}
-                        {{>actor/static_character/sections/spell }}
-                    {{/each }}
-                </div>
-            {{/if }}
-            {{#if (notEmpty system.equipment.carried) }}
-                <div id="equipment" class="item-list">
-                    <div class="header equipped">
-                        <i class="gcs-checkmark"></i>
-                    </div>
-                    <div class="header quantity">
-                        {{ localize "gurps.character.equipment.quantity" }}
-                    </div>
-                    <div class="header desc">
-                        {{localize "gurps.character.equipment.desc" weight=actor.fastWeightCarried
-                        value=actor.fastWealthCarried}}
-                    </div>
-                    <div class="header uses">
-                        {{ localize "gurps.character.equipment.uses" }}
-                    </div>
-                    <div class="header tech-level">
-                        {{ localize "gurps.character.equipment.tech_level" }}
-                    </div>
-                    <div class="header legality-class">
-                        {{ localize "gurps.character.equipment.legality_class" }}
-                    </div>
-                    <div class="header value">
-                        <i class="gcs-coins"></i>
-                    </div>
-                    <div class="header weight">
-                        <i class="gcs-weight"></i>
-                    </div>
-                    <div class="header extended-value">
-                        <i class="gcs-stack"></i><i class="gcs-coins"></i>
-                    </div>
-                    <div class="header extended-weight">
-                        <i class="gcs-stack"></i><i class="gcs-weight"></i>
-                    </div>
-                    <div class="header reference">
-                        <i class="gcs-bookmark"></i>
-                    </div>
-                    {{#each (flatlist system.equipment.carried) }}
-                        {{>actor/static_character/sections/equipment }}
-                    {{/each }}
-                </div>
-            {{/if }}
-            {{#if (notEmpty system.equipment.other) }}
-                <div id="other-equipment" class="item-list">
-                    <div class="header quantity">
-                        {{ localize "gurps.character.other_equipment.quantity" }}
-                    </div>
-                    <div class="header desc">
-                        {{ localize "gurps.character.other_equipment.desc" value=other_value }}
-                    </div>
-                    <div class="header uses">
-                        {{ localize "gurps.character.other_equipment.uses" }}
-                    </div>
-                    <div class="header tech-level">
-                        {{ localize "gurps.character.other_equipment.tech_level" }}
-                    </div>
-                    <div class="header legality-class">
-                        {{ localize "gurps.character.other_equipment.legality_class" }}
-                    </div>
-                    <div class="header value">
-                        <i class="gcs-coins"></i>
-                    </div>
-                    <div class="header weight">
-                        <i class="gcs-weight"></i>
-                    </div>
-                    <div class="header extended-value">
-                        <i class="gcs-stack"></i><i class="gcs-coins"></i>
-                    </div>
-                    <div class="header extended-weight">
-                        <i class="gcs-stack"></i><i class="gcs-weight"></i>
-                    </div>
-                    <div class="header reference">
-                        <i class="gcs-bookmark"></i>
-                    </div>
-                    {{#each (flatlist system.equipment.other) }}
-                        {{>actor/static_character/sections/other-equipment }}
-                    {{/each }}
-                </div>
-            {{/if }}
-            {{#if (notEmpty system.notes) }}
-                <div id="notes" class="item-list">
-                    <div class="header desc">
-                        {{ localize "gurps.character.notes.desc" }}
-                    </div>
-                    <div class="header reference">
-                        <i class="gcs-bookmark"></i>
-                    </div>
-                    {{#each (flatlist system.notes) }}
-                        {{>actor/static_character/sections/note }}
-                    {{/each }}
-                </div>
-            {{/if }}
+        <div class="right">
+            <a tabindex="-1" href="https://gurpscharactersheet.com/">gurpscharactersheet.com</a>
         </div>
-        <div id="footer">
-            <div class="left">
-                {{{ localize "gurps.character.copyright" current_year=current_year }}}
-            </div>
-            <div class="right">
-                <a tabindex="-1" href="https://gurpscharactersheet.com/">gurpscharactersheet.com</a>
-            </div>
-        </div>
-    </form>
+    </div>
+</form>
