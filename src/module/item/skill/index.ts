@@ -76,7 +76,6 @@ export class SkillGURPS extends ContainerGURPS {
 		if (!points) points = this.points ?? 0
 		let relative_level = baseRelativeLevel(this.difficulty)
 		let level = this.actor.resolveAttributeCurrent(this.attribute)
-		console.log("level:", level)
 		if (level !== -Infinity) {
 			if (this.difficulty === Difficulty.Wildcard) {
 				points /= 3
@@ -158,7 +157,6 @@ export class SkillGURPS extends ContainerGURPS {
 		const saved = this.level
 		this.defaultedFrom = this.bestDefaultWithPoints(null)
 		this.level = this.calculateLevel
-		console.log(this.formattedName, this.level)
 		if (this.defaultedFrom) {
 			const def = this.defaultedFrom
 			const previous = this.level
