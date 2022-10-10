@@ -6,6 +6,7 @@ Release 0.15.7
 
 - Fixed chat commands not returning true/false (for use in /if commands)
 - Fixed trackers not setting max value on import.
+- Fixed UI being moved off-screen when expanding damage calculation.
 
 Release 0.15.6
 
