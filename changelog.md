@@ -2,12 +2,19 @@
 
 If you can't access the Google doc, here is a [PDF](https://github.com/crnormand/gurps/raw/main/docs/Guide%20for%20GURPS%204e%20on%20Foundry%20VTT.pdf) of the latest version.
 
+Release 0.15.7
+
+- Fixed chat commands not returning true/false (for use in /if commands)
+- Fixed trackers not setting max value on import.
+- Fixed UI being moved off-screen when expanding damage calculation.
+
 Release 0.15.6
 
 - Fixed GCS 5 import when melee attack has no level.
 - Fixed GCS 5 disad calculations.
 - Added support for /st + standing to allow you to clear other postures (to help supoprt TAH feature)
- 
+- Update to JB2A 0.5.0
+
 Release 0.15.5 9/28/2022
 
 - Fixed drag and drop items between non-GM characters

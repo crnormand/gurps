@@ -521,6 +521,7 @@ if (!globalThis.GURPS) {
       // @ts-ignore - someone somewhere must have added chatmsgData to the MouseEvent.
       let ret = await GURPS.ChatProcessors.startProcessingLines(chat, event?.chatmsgData, event)
       if (savedActor) GURPS.SetLastActor(savedActor)
+      return ret
     },
     /**
      * @param {Object} data

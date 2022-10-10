@@ -25,10 +25,15 @@
   "compatibility": {
     "minimum": "10",
     "verified": "10.286",
-    "maximum": 10
+    "maximum": "10"
   },
-  "esmodules": ["module/gurps.js", "lib/xregexp-all.js"],
-  "scripts": ["scripts/jquery.tinycolorpicker.js"],
+  "esmodules": [
+    "module/gurps.js",
+    "lib/xregexp-all.js"
+  ],
+  "scripts": [
+    "scripts/jquery.tinycolorpicker.js"
+  ],
   "styles": [
     "styles/simple.css",
     "styles/css_boilerplate.css",
@@ -75,8 +80,8 @@
   "primaryTokenAttribute": "HP",
   "secondaryTokenAttribute": "FP",
   "url": "https://github.com/crnormand/gurps",
-  "manifest": "https://github.com/crnormand/gurps/releases/latest/download/system.json",
-  "download": "https://github.com/crnormand/gurps/archive/0.15.6.zip",
+  "manifest": "https://raw.githubusercontent.com/crnormand/gurps/release/system.json",
+  "download": "https://github.com/crnormand/gurps/releases/download/0.15.6/system.zip",
   "socket": true,
   "license": "LICENSE.txt"
 }

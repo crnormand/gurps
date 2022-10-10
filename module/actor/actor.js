@@ -3436,6 +3436,7 @@ export class GurpsActor extends Actor {
         value = getProperty(this, 'system.' + template.initialValue)
       }
     }
+    template.tracker.max = value
     template.tracker.value = template.tracker.isDamageTracker ? template.tracker.min : value
 
     // remove whatever is there
