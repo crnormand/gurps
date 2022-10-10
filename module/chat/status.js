@@ -14,7 +14,7 @@ const Command = {
   off: 'unset',
   unset: 'unset',
   '-': 'unset',
-  list: 'list'
+  list: 'list',
 }
 
 /** @typedef {{id: string, label: string, icon: string}} EffectData */
@@ -74,7 +74,10 @@ export default class StatusChatProcessor extends ChatProcessor {
       if (!effectText) {
         ui.notifications.warn(i18n('GURPS.chatNoStatusMatched'))
         return
-      } else if (!effectText.match(new RegExp(makeRegexPatternFrom(GURPS.StatusEffectStanding), 'i')) && !effectText.match(new RegExp(makeRegexPatternFrom(i18n(GURPS.StatusEffectStandingLabel)), 'i'))) {
+      } else if (
+        !effectText.match(new RegExp(makeRegexPatternFrom(GURPS.StatusEffectStanding), 'i')) &&
+        !effectText.match(new RegExp(makeRegexPatternFrom(i18n(GURPS.StatusEffectStandingLabel)), 'i'))
+      ) {
         ui.notifications.warn(i18n('GURPS.chatNoStatusMatched') + " '" + effectText + "'")
         return
       }
@@ -87,11 +90,11 @@ export default class StatusChatProcessor extends ChatProcessor {
     }
 
     if (isStanding) {
-      if (theCommand == Command.set)    
+      if (theCommand == Command.set)
         for (const pid in GURPS.StatusEffect.getAllPostures()) {
           await this.unset(tokens, this.findEffect(pid))
         }
-      return    // can't toggle or unset standing
+      return // can't toggle or unset standing
     }
     if (theCommand == Command.toggle) return await this.toggle(tokens, effect)
     else if (theCommand == Command.set) return await this.set(tokens, effect)
@@ -114,9 +117,8 @@ export default class StatusChatProcessor extends ChatProcessor {
       if (effect) {
         effect.posture = !!GURPS.StatusEffect.getAllPostures()[id] || id == GURPS.StatusEffectStanding
         sortedEffects.push(effect)
-      }
-      else if (id == GURPS.StatusEffectStanding) 
-        sortedEffects.push({ id: id, label: GURPS.StatusEffectStandingLabel, posture: true})  
+      } else if (id == GURPS.StatusEffectStanding)
+        sortedEffects.push({ id: id, label: GURPS.StatusEffectStandingLabel, posture: true })
     }
 
     sortedEffects.forEach(s => {
