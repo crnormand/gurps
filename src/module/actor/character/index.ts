@@ -108,6 +108,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	checkImport(data?: any) {
 		for (const i in data) {
 			if (i.includes("system.import")) return
+			if (i.includes("ownership")) return
 		}
 		data["system.modified_date"] = new Date().toISOString()
 	}
@@ -271,7 +272,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const att in settings.attributes) {
 			defs[att] = new AttributeDef(settings.attributes[att])
 		}
-		;(settings as any).attributes = defs
+		; (settings as any).attributes = defs
 		return settings
 	}
 
@@ -464,7 +465,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			l.roll_range = e.calc?.roll_range || "-"
 			l.dr = {}
 			const all = e.calc?.dr.all || 0
-			for (const k of Object.keys(e.calc!.dr)) {
+			for (const k of Object.keys(e.calc?.dr ?? {})) {
 				if (k === "all") l.dr[k] = all
 				else l.dr[k] = all + e.calc!.dr[k]
 			}
@@ -739,6 +740,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareEmbeddedDocuments(): void {
 		super.prepareEmbeddedDocuments()
+		console.log("prepareEmbeddedDocuments", this.noPrepare)
 		if (!this.noPrepare) {
 			this.updateSkills()
 			this.updateSpells()

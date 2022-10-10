@@ -153,11 +153,11 @@ class BaseItemGURPS extends Item {
 	}
 
 	get meleeWeapons(): Map<number, MeleeWeapon> {
-		return new Map([...this.weapons].filter(([k, v]) => v instanceof MeleeWeapon)) as Map<number, MeleeWeapon>
+		return new Map([...this.weapons].filter(([_k, v]) => v instanceof MeleeWeapon)) as Map<number, MeleeWeapon>
 	}
 
 	get rangedWeapons(): Map<number, RangedWeapon> {
-		return new Map([...this.weapons].filter(([k, v]) => v instanceof RangedWeapon)) as Map<number, RangedWeapon>
+		return new Map([...this.weapons].filter(([_k, v]) => v instanceof RangedWeapon)) as Map<number, RangedWeapon>
 	}
 
 	get weapons(): Map<number, Weapon> {

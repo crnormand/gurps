@@ -43,7 +43,7 @@ export class PrereqList extends BasePrereq {
 
 	override satisfied(character: CharacterGURPS, exclude: any, buffer: TooltipGURPS, prefix: string): boolean {
 		if (this.when_tl?.compare !== "none") {
-			let tl = extractTechLevel(character.profile.tech_level)
+			let tl = extractTechLevel(character.profile?.tech_level)
 			if (tl < 0) tl = 0
 			if (!numberCompare(tl, this.when_tl)) return true
 		}

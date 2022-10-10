@@ -1,4 +1,5 @@
 import { ActorSheetGURPS } from "@actor/base/sheet"
+import { CharacterSheetConfig } from "@actor/character/config_sheet"
 import { RollType } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { SYSTEM_NAME } from "@module/settings"
@@ -182,28 +183,25 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
 			onclick: (event: any) => this._onEditToggle(event),
 		}
-		const buttons: Application.HeaderButton[] = [
-			edit_button,
-			// {
-			// 	label: "",
-			// 	class: "attributes",
-			// 	icon: "gcs-attribute",
-			// 	onclick: event => this._onAttributeSettingsClick(event),
-			// },
-			// {
-			// 	label: "",
-			// 	class: "body-type",
-			// 	icon: "gcs-body-type",
-			// 	onclick: event => this._onBodyTypeSettingsClick(event),
-			// },
-			{
-				label: "",
-				// Label: "Import",
-				class: "import",
-				icon: "fas fa-file-import",
-				onclick: event => this._onFileImport(event),
-			},
-		]
+		const buttons: Application.HeaderButton[] =
+			this.actor.canUserModify((game as Game).user!, "update") ?
+				[
+					edit_button,
+					{
+						label: "",
+						// Label: "Import",
+						class: "import",
+						icon: "fas fa-file-import",
+						onclick: event => this._onFileImport(event),
+					},
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._onGMenu(event),
+					},
+				]
+				: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""
 		// all_buttons.at(-1)!.icon = "gcs-circled-x"
@@ -214,6 +212,14 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	async _onFileImport(event: any) {
 		event.preventDefault()
 		this.actor.importCharacter()
+	}
+
+	protected async _onGMenu(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		// new CharacterSheetConfig(this.document as StaticCh, {
+		// 	top: this.position.top! + 40,
+		// 	left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
+		// }).render(true)
 	}
 }
 
