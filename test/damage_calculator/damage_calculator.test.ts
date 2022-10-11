@@ -2060,7 +2060,6 @@ describe("Damage calculator", () => {
 			// The new basic damage is 1d+1 x 4 (4d+4); the target's DR is also multiplied by 4.
 
 			_torso.calc.dr.all = 6
-			let calc = new DamageCalculator(_roll, _target)
 
 			// TODO: It may be possible to derive this info if we had a reference to the weapon used (to find the RoF
 			// multiple and 10% of 1/2D range) and the distance between target and attacker.
@@ -2070,6 +2069,7 @@ describe("Damage calculator", () => {
 			_roll.isShotgunExtremeRange = true
 			_roll.rofMultiplier = 9
 
+			let calc = new DamageCalculator(_roll, _target)
 			expect(calc.injury).toBe(16)
 		})
 	})
