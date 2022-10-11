@@ -267,6 +267,7 @@
 			"templates": ["common", "prereqs"],
 			"round_down": false,
 			"disabled": false,
+			"can_level": false,
 			"levels": 0,
 			"base_points": 0,
 			"points_per_level": 0,

@@ -79,3 +79,8 @@
 -   Sort character items on import
 -   Polygot module support for Dynamic Characters
 -   Add "children" section to sheets for items which can have children
+-   Add native hex token size support (especially for elongated hexes)
+-   Add native "drag ruler" type support
+    -   Color green within maneuver range
+    -   Color yellow for one hex (1FP extra effort?/extra step) maybe toggleable
+    -   Color red beyond limit

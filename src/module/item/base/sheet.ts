@@ -266,11 +266,11 @@ export class ItemSheetGURPS extends ItemSheet {
 			type: value,
 			...FeatureConstructor.defaults,
 		}
-		const preUpdate: any = {}
+		// Const preUpdate: any = {}
 		const update: any = {}
-		preUpdate[`system.features.${index}`] = {}
+		// PreUpdate[`system.features.${index}`] = {}
 		update["system.features"] = features
-		await this.item.update(preUpdate, { render: false })
+		// Await this.item.update(preUpdate, { render: false })
 		return this.item.update(update)
 	}
 

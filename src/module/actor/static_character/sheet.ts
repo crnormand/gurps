@@ -183,9 +183,8 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
 			onclick: (event: any) => this._onEditToggle(event),
 		}
-		const buttons: Application.HeaderButton[] =
-			this.actor.canUserModify((game as Game).user!, "update") ?
-				[
+		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
+			? [
 					edit_button,
 					{
 						label: "",
@@ -200,8 +199,8 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 						icon: "gcs-all-seeing-eye",
 						onclick: event => this._onGMenu(event),
 					},
-				]
-				: []
+			  ]
+			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""
 		// all_buttons.at(-1)!.icon = "gcs-circled-x"
@@ -216,7 +215,7 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _onGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		// new CharacterSheetConfig(this.document as StaticCh, {
+		// New CharacterSheetConfig(this.document as StaticCh, {
 		// 	top: this.position.top! + 40,
 		// 	left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
 		// }).render(true)

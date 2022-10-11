@@ -16,7 +16,7 @@ export function i18n(value: string, fallback?: string): string {
  * @param value
  * @param data
  * @param fallback
- * @returns
+ * @returns {string}
  */
 export function i18n_f(value: string, data: Record<string, unknown>, fallback?: string): string {
 	const template = (game as Game).i18n.has(value) ? value : fallback
@@ -28,7 +28,7 @@ export function i18n_f(value: string, data: Record<string, unknown>, fallback?: 
 
 /**
  * @param i
- * @returns
+ * @returns {string}
  */
 export function signed(i: string | number): string {
 	if (i === "") i = "0"

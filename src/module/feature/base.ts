@@ -13,6 +13,7 @@ export type FeatureType =
 	| "spell_bonus"
 	| "spell_point_bonus"
 	| "weapon_bonus"
+	| "weapon_dr_divisor_bonus"
 	| "cost_reduction"
 	| "contained_weight_reduction"
 
@@ -75,13 +76,11 @@ export class BaseFeature {
 			buffer.push("\n")
 			buffer.push(this.parent)
 			buffer.push(
-				` [${
-					new LeveledAmount({
-						level: this.levels,
-						amount: this.amount,
-						per_level: this.per_level,
-					}).formatWithLevel
-				}]`
+				` [${new LeveledAmount({
+					level: this.levels,
+					amount: this.amount,
+					per_level: this.per_level,
+				}).formatWithLevel(false)}]`
 			)
 		}
 	}

@@ -50,20 +50,27 @@
 		}
 	}
 
-	.searchbar input {
-		font: var(--font-field);
-		height: 24px;
-		width: calc(100% - 10px);
-		border-radius: 0px;
-		background-color: rgb(var(--color-editable));
-		color: rgb(var(--color-on-editable));
-		border: 1px solid rgba(var(--color-control-edge));
-		padding: 1px 3px;
-		margin: 5px;
-		&:focus {
-			box-shadow: none;
-			border-width: 2px;
-			padding: 0 2px;
+	.searchbar {
+		display: grid;
+		grid-template-columns: auto min-content;
+		input {
+			font: var(--font-field);
+			height: 24px;
+			width: calc(100% - 10px);
+			border-radius: 0px;
+			background-color: rgb(var(--color-editable));
+			color: rgb(var(--color-on-editable));
+			border: 1px solid rgba(var(--color-control-edge));
+			padding: 1px 3px;
+			margin: 5px;
+			&:focus {
+				box-shadow: none;
+				border-width: 2px;
+				padding: 0 2px;
+			}
+		}
+		select {
+			margin-right: 5px;
 		}
 	}
 

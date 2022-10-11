@@ -311,7 +311,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			found = ""
 			let list = getProperty(this, key)
 			Static.recurseList(list, (e, k, _d) => {
-				if (e.itemid == itemid) found = k
+				if (e.itemid === itemid) found = k
 			})
 			if (found) {
 				any = true
@@ -327,7 +327,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 	 * @param {boolean} shiftkey
 	 */
 	async moveEquipment(srckey: string, targetkey: string, shiftkey: boolean) {
-		if (srckey == targetkey) return
+		if (srckey === targetkey) return
 		if (shiftkey && (await this._splitEquipment(srckey, targetkey))) return
 		// Because we may be modifing the same list, we have to check the order of the keys and
 		// apply the operation that occurs later in the list, first (to keep the indexes the same)
@@ -336,7 +336,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		let tara = targetkey.split(".")
 		tara.splice(0, 3)
 		let max = Math.min(srca.length, tara.length)
-		let isSrcFirst = max == 0 ? srca.length > tara.length : false
+		let isSrcFirst = max === 0 ? srca.length > tara.length : false
 		for (let i = 0; i < max; i++) {
 			if (parseInt(srca[i]) < parseInt(tara[i])) isSrcFirst = true
 		}
@@ -479,11 +479,12 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		let srceqt = getProperty(this, srckey)
 		let desteqt = getProperty(this, targetkey)
 		if (
-			(srceqt.globalid && srceqt.globalid == desteqt.globalid) ||
-			(!srceqt.globalid && srceqt.name == desteqt.name)
+			(srceqt.globalid && srceqt.globalid === desteqt.globalid) ||
+			(!srceqt.globalid && srceqt.name === desteqt.name)
 		) {
 			await this.updateEqtCount(targetkey, parseInt(srceqt.count) + parseInt(desteqt.count))
-			// If (srckey.includes('.carried') && targetkey.includes('.other')) await this._removeItemAdditionsBasedOn(desteqt)
+			// if (srckey.includes('.carried') && targetkey.includes('.other'))
+			// 	 await this._removeItemAdditionsBasedOn(desteqt)
 			await this.deleteEquipment(srckey)
 			this.render()
 			return true
@@ -817,7 +818,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 		let foundkey: any = null
 		let l = getProperty(this, list)
 		Static.recurseList(l, (e, k, _d) => {
-			if ((uuid && e.uuid == uuid) || (e.name && e.name.startsWith(name) && e.mode == mode)) foundkey = k
+			if ((uuid && e.uuid === uuid) || (e.name && e.name.startsWith(name) && e.mode === mode)) foundkey = k
 		})
 		return foundkey === null ? foundkey : getProperty(this, `${list}.${foundkey}`)
 	}
@@ -935,7 +936,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			await this._removeItemAdditions(eqt.itemid)
 		}
 		await Static.removeKey(this, path)
-		if (depth == 0) this.render()
+		if (depth === 0) this.render()
 		return item
 	}
 }

@@ -56,7 +56,7 @@ export function registerHandlebarsHelpers() {
 	// Return first argument which has a value
 	Handlebars.registerHelper("ror", function (...args) {
 		for (const arg of args) {
-			if (typeof arg !== "undefined") return arg
+			if (arg !== undefined) return arg
 		}
 		return ""
 	})

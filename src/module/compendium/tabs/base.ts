@@ -62,6 +62,7 @@ export abstract class CompendiumTab {
 				direction: "asc",
 				options: {},
 			},
+			tagFilter: "any_tag",
 		}
 	}
 
@@ -70,8 +71,12 @@ export abstract class CompendiumTab {
 	 * @param {CompendiumIndexData} entry
 	 */
 	protected filterIndexData(entry: CompendiumIndexData): boolean {
-		const { searchQuery } = this.filterData
+		const { searchQuery, tagFilter } = this.filterData
 
+		// Tag Filter
+		if (tagFilter !== "any_tag") {
+			if (!entry.tags.includes(tagFilter)) return false
+		}
 		// Name
 		if (searchQuery) {
 			for (const i of this.searchFields) {

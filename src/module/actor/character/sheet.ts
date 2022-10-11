@@ -292,9 +292,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	// Events
 	async _onEditToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		await this.actor.update({ "system.editing": !this.actor.editing })
 		$(event.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
-		return this.render()
+		await this.actor.update({ "system.editing": !this.actor.editing })
 	}
 
 	protected override _getHeaderButtons(): Application.HeaderButton[] {
@@ -304,9 +303,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
 			onclick: (event: any) => this._onEditToggle(event),
 		}
-		const buttons: Application.HeaderButton[] =
-			this.actor.canUserModify((game as Game).user!, "update") ?
-				[
+		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
+			? [
 					edit_button,
 					{
 						label: "",
@@ -321,8 +319,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 						icon: "gcs-all-seeing-eye",
 						onclick: event => this._onGMenu(event),
 					},
-				]
-				: []
+			  ]
+			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""
 		// all_buttons.at(-1)!.icon = "gcs-circled-x"

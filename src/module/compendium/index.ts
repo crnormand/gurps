@@ -81,7 +81,7 @@ export class CompendiumBrowser extends Application {
 							pack.load = formData.has(`${t}-${key}`)
 						}
 					}
-					await (game as Game).settings.set(SYSTEM_NAME, "compendiumBrowserPacks", this.settings)
+					await (game as Game).settings.set(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, this.settings)
 					this.loadSettings()
 					this.initCompendiumList()
 					for (const tab of Object.values(this.tabs)) {
@@ -120,6 +120,7 @@ export class CompendiumBrowser extends Application {
 		// 	}
 		// });
 		html.find("input.input").on("change", event => this._updateQuery(event))
+		html.find("select").on("change", event => this._updateFilter(event))
 
 		// This.renderReultsList(_html, list);
 	}
@@ -140,6 +141,12 @@ export class CompendiumBrowser extends Application {
 		this.render()
 	}
 
+	_updateFilter(event: JQuery.TriggeredEvent): void {
+		if (this.activeTab === "settings") return
+		this.tabs[this.activeTab].filterData.tagFilter = String($(event.currentTarget).val())
+		this.render()
+	}
+
 	override getData(): object | Promise<object> {
 		const activeTab = this.activeTab
 
@@ -156,11 +163,19 @@ export class CompendiumBrowser extends Application {
 		const tab = this.tabs[activeTab]
 		if (tab) {
 			const indexData = tab.getIndexData(0)
+			const tagSet: Set<string> = new Set()
+			tab.indexData.map(e =>
+				e.tags.forEach((t: string) => {
+					tagSet.add(t)
+				})
+			)
+			const tagList = Array.from(tagSet).sort()
 			return {
 				user: (game as Game).user,
 				[activeTab]: {
 					filterData: tab.filterData,
 					indexData: indexData,
+					tagList: tagList,
 				},
 				scrollLimit: tab.scrollLimit,
 			}

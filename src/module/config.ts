@@ -10,7 +10,8 @@ import { SkillBonus } from "@feature/skill_bonus"
 import { SkillPointBonus } from "@feature/skill_point_bonus"
 import { SpellBonus } from "@feature/spell_bonus"
 import { SpellPointBonus } from "@feature/spell_point_bonus"
-import { WeaponBonus } from "@feature/weapon_damage_bonus"
+import { WeaponDamageBonus } from "@feature/weapon_bonus"
+import { WeaponDRDivisorBonus } from "@feature/weapon_dr_divisor_bonus"
 import {
 	BaseItemGURPS,
 	ContainerGURPS,
@@ -128,7 +129,8 @@ const GURPSCONFIG: any = {
 			skill_point_bonus: SkillPointBonus,
 			spell_bonus: SpellBonus,
 			spell_point_bonus: SpellPointBonus,
-			weapon_bonus: WeaponBonus,
+			weapon_bonus: WeaponDamageBonus,
+			weapon_dr_divisor_bonus: WeaponDRDivisorBonus,
 			cost_reduction: CostReduction,
 			contained_weight_reduction: ContainedWeightReduction,
 		},
@@ -219,6 +221,7 @@ const GURPSCONFIG: any = {
 			spell_bonus: "gurps.select.features.spell_bonus",
 			spell_point_bonus: "gurps.select.features.spell_point_bonus",
 			weapon_bonus: "gurps.select.features.weapon_bonus",
+			weapon_dr_divisor_bonus: "gurps.select.features.weapon_dr_divisor_bonus",
 			cost_reduction: "gurps.select.features.cost_reduction",
 		},
 		features_eqc: {

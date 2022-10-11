@@ -1,7 +1,7 @@
 import { BaseFeature } from "./base"
 import { NumberCompare, NumberComparison, StringCompare, StringComparison } from "@module/data"
 
-export class WeaponBonus extends BaseFeature {
+export class WeaponDamageBonus extends BaseFeature {
 	static get defaults(): Record<string, any> {
 		return mergeObject(super.defaults, {
 			type: "weapon_bonus",
@@ -35,7 +35,7 @@ export class WeaponBonus extends BaseFeature {
 		return `${prefix}*`
 	}
 }
-export interface WeaponBonus extends BaseFeature {
+export interface WeaponDamageBonus extends BaseFeature {
 	selection_type: WeaponBonusSelectionType
 	name?: StringCompare
 	specialization?: StringCompare

@@ -341,7 +341,7 @@
 			"point_cost": "Point Cost",
 			"base_cost": "Base Cost",
 			"round_down": "Round Down",
-			"points_per_level": "Per Level",
+			"points_per_level": "Cost Per Level",
 			"levels": "Levels",
 			"level": "Level",
 			"cr": "Self-Control Roll",
@@ -402,7 +402,10 @@
 			"header": "Features",
 			"per_level": "per level",
 			"per_die": "per die",
-			"percent": "as a percentage"
+			"percent": "as a percentage",
+			"per_level_text": "{leveled} ({amt} per {what})",
+			"level": "level",
+			"die": "die"
 		},
 		"default": {
 			"header": "Defaults"
@@ -523,6 +526,7 @@
 				"spell_bonus": "Gives a spell level modifier of",
 				"spell_point_bonus": "Gives a spell point modifier of",
 				"weapon_bonus": "Gives a weapon damage modifier of",
+				"weapon_dr_divisor_bonus": "Gives a weapon DR divisor modifier of",
 				"cost_reduction": "Reduces the attribute cost of",
 				"contained_weight_reduction": "Reduces the contained weight by"
 			},
@@ -675,6 +679,7 @@
 			"note": "Notes",
 			"search": "Search",
 			"tags": "Tags",
+			"any_tag": "Any Tag",
 			"settings": "Settings",
 			"item": {
 				"trait": "Trait",

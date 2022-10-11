@@ -93,20 +93,20 @@ export class StaticItemSheet extends ItemSheetGURPS {
 		if (ev.originalEvent) ev = ev.originalEvent
 		let dragData = JSON.parse(ev.dataTransfer.getData("text/plain"))
 		let n
-		if (dragData.type == "JournalEntry") {
+		if (dragData.type === "JournalEntry") {
 			n = (game as Game).journal?.get(dragData.id)?.name
 		}
-		if (dragData.type == "Actor") {
+		if (dragData.type === "Actor") {
 			n = (game as Game).actors?.get(dragData.id)?.name
 		}
-		if (dragData.type == "RollTable") {
+		if (dragData.type === "RollTable") {
 			n = (game as Game).tables?.get(dragData.id)?.name
 		}
-		if (dragData.type == "Item") {
+		if (dragData.type === "Item") {
 			n = (game as Game).items?.get(dragData.id)?.name
 		}
 		if (n) {
-			let add = ` [${dragData.type}[${dragData.id}]` + `{${n}}]`
+			let add = ` [${dragData.type}[${dragData.id}]{${n}}]`
 			$(ev.currentTarget).val($(ev.currentTarget).val() + add)
 		}
 	}
@@ -124,7 +124,7 @@ export class StaticItemSheet extends ItemSheetGURPS {
 		let srcData = getProperty(srcActor!, dragData.key)
 		srcData.contains = {} // Don't include any contained/collapsed items from source
 		srcData.collapsed = {}
-		if (dragData.type == "equipment") {
+		if (dragData.type === "equipment") {
 			this.item.update({
 				name: srcData.name,
 				"system.eqt": srcData,

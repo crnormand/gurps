@@ -183,7 +183,7 @@ export class StaticCharacterImporter {
 		}
 		data.QP.value = qp
 
-		let bl_value = parseFloat(calc?.basic_lift.match(/[\d\.]+/g)?.[0] || "")
+		let bl_value = parseFloat(calc?.basic_lift.match(/[\d.]+/g)?.[0] || "")
 		let bl_unit = calc?.basic_lift.replace(`${bl_value} `, "")
 
 		let lm: Partial<StaticCharacterSystemData["liftingmoving"]> = {}
@@ -568,8 +568,6 @@ export class StaticCharacterImporter {
 		}
 		if (e.note) e.notes += (e.notes ? "\n" : "") + e.note
 		e.weight = floatingMul(parseFloat(i.calc.extended_weight) ?? 0) / (i.quantity || 1)
-		// E.weight =
-		// 	(parseFloat(i.calc?.extended_weight) / (i.type === "equipment_container" ? 1 : i.quantity || 1)) || 0
 		e.pageref = i.reference || ""
 		let old = this.document._findElementIn("system.equipment.carried", e.uuid)
 		if (!old) old = this.document._findElementIn("system.equipment.other", e.uuid)
@@ -592,20 +590,6 @@ export class StaticCharacterImporter {
 				e.cost -= j.cost * j.count
 				e.weight -= j.weight * j.count
 			}
-			// Let weight_reduction = 0;
-			// if (!!i.modifiers?.length) for (let m of i.modifiers) if (!m.disabled && !!m.features?.length) for (let mf of m.features) if (mf.type === "contained_weight_reduction") weight_reduction += parseFloat(mf.reduction);
-			// if (!!i.features?.length) for (let f of i.features) if (f.type === "contained_weight_reduction") weight_reduction += parseFloat(f.reduction);
-			// for (let j of ch) {
-			//   e.cost -= j.cost*j.count;
-			//   if (weight_reduction === 0) e.weight -= j.weight*j.count;
-			//   else {
-			//     weight_reduction -= j.weight*j.count;
-			//     if (weight_reduction < 0) {
-			//       e.weight += weight_reduction;
-			//       weight_reduction = 0;
-			//     }
-			//   }
-			// }
 		}
 		return [e].concat(ch)
 	}
@@ -614,7 +598,7 @@ export class StaticCharacterImporter {
 		if (!notes) return
 		let temp: any[] = []
 		for (let i of notes) {
-			temp = temp.concat(this.importNote(i, ""))
+			temp = [...temp, ...this.importNote(i, "")]
 		}
 		Static.recurseList(this.document.system.notes, t => {
 			if (t.save) temp.push(t)
@@ -804,7 +788,7 @@ export class StaticCharacterImporter {
 		let p_unspent = total
 		let p_total = total
 		let p_race = 0
-		for (let i of atts) p_atts += i.calc?.points
+		for (let i of atts) p_atts += i.calc?.points || 0
 		for (let i of ads)
 			[p_ads, p_disads, p_quirks, p_race] = this.adPointCount(i, p_ads, p_disads, p_quirks, p_race, true)
 		for (let i of skills) p_skills = this.skPointCount(i, p_skills)
@@ -824,8 +808,9 @@ export class StaticCharacterImporter {
 	}
 
 	adPointCount(i: any, ads: number, disads: number, quirks: number, race: number, toplevel = false) {
-		if (i.type === "advantage_container" && i.container_type === "race") race += i.calc?.points
-		else if (i.type === "advantage_container" && i.container_type === "alternative_abilities") ads += i.calc?.points
+		if (i.type === "advantage_container" && i.container_type === "race") race += i.calc?.points || 0
+		else if (i.type === "advantage_container" && i.container_type === "alternative_abilities")
+			ads += i.calc?.points || 0
 		else if (i.type === "advantage_container" && i.children?.length) {
 			let [a, d] = [0, 0]
 			for (let j of i.children) [a, d, quirks, race] = this.adPointCount(j, a, d, quirks, race)
@@ -833,9 +818,9 @@ export class StaticCharacterImporter {
 				if (a > 0) ads += a
 				else disads += a
 			} else ads += a + d
-		} else if (i.calc?.points === -1) quirks += i.calc?.points
-		else if (i.calc?.points > 0) ads += i.calc?.points
-		else disads += i.calc?.points
+		} else if (i.calc?.points === -1) quirks += i.calc?.points || 0
+		else if (i.calc?.points > 0) ads += i.calc?.points || 0
+		else disads += i.calc?.points || 0
 		return [ads, disads, quirks, race]
 	}
 
@@ -1022,7 +1007,7 @@ export class StaticCharacterImporter {
 			.normalize("NFD")
 			.replace(/[\u0300-\u036f]/g, "") // Remove accents
 			.replace(/([^\w]+|\s+)/g, "-") // Replace space and other characters by hyphen
-			.replace(/\-\-+/g, "-") // Replaces multiple hyphens by one hyphen
+			.replace(/--+/g, "-") // Replaces multiple hyphens by one hyphen
 			.replace(/(^-+|-+$)/g, "")
 	}
 

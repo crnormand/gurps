@@ -347,6 +347,7 @@ export class CharacterImporter {
 			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
 			round_down: data.round_down ?? false,
 			disabled: data.disabled ?? false,
+			can_level: data.can_level ?? false,
 			levels: data.levels ?? 0,
 			base_points: data.base_points ?? 0,
 			points_per_level: data.points_per_level ?? 0,

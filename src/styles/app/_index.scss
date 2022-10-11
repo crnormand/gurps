@@ -124,22 +124,6 @@
 		"none list"
 		"bar list";
 	align-items: end;
-	.searchbar {
-		grid-area: bar;
-		font: var(--font-field);
-		height: 24px;
-		min-width: 180px;
-		background-color: rgba(var(--color-editable), 0.8);
-		color: rgb(var(--color-on-editable));
-		padding: 1px 3px;
-		border: 1px solid rgba(var(--color-control-edge), 1);
-		border-radius: 0;
-		&:focus {
-			box-shadow: none;
-			border-width: 2px;
-			padding: 0 2px;
-		}
-	}
 	#applied-mods {
 		grid-area: list;
 		border: 1px solid rgb(var(--color-header));

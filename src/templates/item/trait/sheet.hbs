@@ -28,20 +28,23 @@
                     </label>
                 </div>
                 <div class="label">{{ localize "gurps.item.base_cost" }}</div>
+                <div class="field">{{ numberInput system.base_points name="NUMBER.system.base_points" }}</div>
+                <div class="label checkbox-label" style="justify-self: end;">
+                    <input class="input" type="checkbox" name="system.can_level" data-dtype="Boolean" {{checked system.can_level}} />
+                    {{ localize "gurps.item.levels" }}
+                </div>
                 <div class="field no-stretch">
-                    {{ numberInput system.base_points name="NUMBER.system.base_points" }}
-                    <div class="label">{{ localize "gurps.item.points_per_level" }}</div>
-                    {{ numberInput system.points_per_level name="NUMBER.system.points_per_level" }}
-                    <div class="label">{{ localize "gurps.item.levels" }}</div>
                     {{>sections/input-text name="NUMBER.system.levels" data=system.levels
-                    type="String"
-                    class=(input_lock system.points_per_level)}}
+                    type="String" class=(input_lock system.can_level)}}
+                    <div class="label">{{ localize "gurps.item.points_per_level" }}</div>
+                    {{>sections/input-text name="NUMBER.system.points_per_level" data=system.points_per_level
+                    type="String" class=(input_lock system.can_level)}}
                 </div>
                 <div class="label">{{ localize "gurps.item.cr" }}</div>
                 <div class="field">
                     <select name="NUMBER.system.cr" data-dtype="String">
                         {{#select system.cr }}
-                        {{#each config.select.cr_level as |v k | }}
+                        {{#each config.select.cr_level as |v k| }}
                             <option value="{{k}}">
                                 {{ localize v }}
                             </option>
@@ -53,7 +56,7 @@
             <div class="field">
                 <select name="system.cr_adj" data-dtype="String" {{ input_lock (neq system.cr 0 )}}>
                     {{#select system.cr_adj }}
-                    {{#each config.select.cr_adj as |v k | }}
+                    {{#each config.select.cr_adj as |v k| }}
                         <option value="{{k}}">
                             {{ localize v }}
                         </option>
@@ -77,7 +80,7 @@
         <div class="header reference">
             <i class="gcs-bookmark"></i>
         </div>
-        {{#each (sort modifiers "sort")}}
+        {{#each (sort modifiers "sort") }}
             {{>item/sections/trait-mod }}
         {{/each }}
     </div>

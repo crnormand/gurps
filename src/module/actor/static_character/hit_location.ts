@@ -361,7 +361,8 @@ export class StaticHitLocation {
 			Vitals: { roll: "-", penalty: -3 },
 		}
 
-		// Important that GCA keys be directly under GCS keys (as they are duplicates, and should be ignored when listing)
+		// Important that GCA keys be directly under GCS keys
+		// (as they are duplicates, and should be ignored when listing)
 		StaticHitLocationDictionary = {
 			humanoid: humanoidHitLocations,
 			"humanoid expanded": { ...humanoidHitLocations, ...{ Chest: { roll: "-", penalty: 0 } } }, // GCA
@@ -491,9 +492,9 @@ export class StaticHitLocation {
 	 * as needed.
 	 *
 	 * @param includeself
-	 * @returns array of HitLocation
+	 * @returns {StaticHitLocation[]}
 	 */
-	locations(includeself = false) {
+	locations(includeself = false): StaticHitLocation[] {
 		let entry = hitLocationAlias[this.where]
 		if (!entry) {
 			return [this]
