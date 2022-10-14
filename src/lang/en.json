@@ -146,7 +146,7 @@
 				"Where": "Where",
 				"Wing": "Wing"
 			},
-			"deprecated": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is elegible for Easy-Update.<br>Please update your document by pressing the \"Easy Update\" button in the GGA settings above.",
+			"deprecated": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is elegible for <i>Easy Update</i>.<br>Please update your document by pressing the \"Easy Update\" button in the <i class=\"gcs-all-seeing-eye\"></i> settings above.",
 			"deprecated_xml": "The document type \"{type}\" is deprecated and will be removed in version 2.0.<br>Your document is NOT elegible for Easy-Update. Please update your document."
 		},
 		"character": {

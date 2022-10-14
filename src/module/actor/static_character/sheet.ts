@@ -1,5 +1,4 @@
 import { ActorSheetGURPS } from "@actor/base/sheet"
-import { CharacterSheetConfig } from "@actor/character/config_sheet"
 import { RollType } from "@module/data"
 import { openPDF } from "@module/pdf"
 import { SYSTEM_NAME } from "@module/settings"
@@ -30,9 +29,12 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
 
-		let deprecation = this.actor.getFlag(SYSTEM_NAME, "deprecation_acknowledged") ?? false
+		let deprecation: string = (this.actor.getFlag(SYSTEM_NAME, "deprecation_acknowledged")) ? "acknowledged" : "manual"
 		// Don't show deprecation warning if character is not imported
-		deprecation = deprecation || this.actor.system.additionalresources.importpath === ""
+		if (deprecation === "manual") {
+			if (this.actor.system.additionalresources.importpath.includes(".gcs")) deprecation = "easy"
+			if (this.actor.system.additionalresources.importpath.includes(".gca5")) deprecation = "easy"
+		}
 
 		const sheetData = {
 			...super.getData(options),
@@ -185,21 +187,21 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-					edit_button,
-					{
-						label: "",
-						// Label: "Import",
-						class: "import",
-						icon: "fas fa-file-import",
-						onclick: event => this._onFileImport(event),
-					},
-					{
-						label: "",
-						class: "gmenu",
-						icon: "gcs-all-seeing-eye",
-						onclick: event => this._onGMenu(event),
-					},
-			  ]
+				edit_button,
+				{
+					label: "",
+					// Label: "Import",
+					class: "import",
+					icon: "fas fa-file-import",
+					onclick: event => this._onFileImport(event),
+				},
+				{
+					label: "",
+					class: "gmenu",
+					icon: "gcs-all-seeing-eye",
+					onclick: event => this._onGMenu(event),
+				},
+			]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""

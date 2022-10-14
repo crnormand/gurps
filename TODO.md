@@ -51,7 +51,6 @@
 -   Tech Level Modifiers (B168)
 -   update Nordlond sheet & compendium entries with dynamic characters
 -   Change unsatisfied prerequisite messages for better formatting & localization
--   Calculate hit location table on prepareData
 -   Redo drag & drop indicators
 -   automatically pop out effect mod window when choosing maneuver / posture / effect
 -   switch between number and dice display for skill rolls

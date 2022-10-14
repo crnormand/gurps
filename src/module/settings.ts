@@ -15,11 +15,9 @@ export enum SETTINGS {
 	STATIC_IMPORT_HP_FP = "import_hp_fp",
 	STATIC_IMPORT_BODY_PLAN = "import_bodyplan",
 	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
+	MODIFIER_MODE = "modifier_mode",
 }
 
-/**
- *
- */
 export function registerSettings(): void {
 	// Register any custom system settings here
 	const g = game as Game
@@ -110,6 +108,20 @@ export function registerSettings(): void {
 		type: Boolean,
 		default: false,
 		onChange: value => console.log(`Ignore import name : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_MODE, {
+		name: i18n("gurps.settings.modifier_mode.name"),
+		hint: i18n("gurps.settings.modifier_mode.hint"),
+		scope: "client",
+		config: true,
+		type: String,
+		choices: {
+			bucket: i18n("gurps.settings.modifier_mode.choices.bucket"),
+			prompt: i18n("gurps.settings.modifier_mode.choices.prompt"),
+		},
+		default: "prompt",
+		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),
 	})
 }
 

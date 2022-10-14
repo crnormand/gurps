@@ -73,7 +73,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	;(globalThis as any).GURPS = GURPS
+	; (globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -96,6 +96,7 @@ if (!(globalThis as any).GURPS) {
 	GURPS.TokenModifierControl = new TokenModifierControl()
 	GURPS.recurseList = Static.recurseList
 	GURPS.LastActor = LastActor.get
+	GURPS.LastToken = LastActor.getToken
 	GURPS.setLastActor = LastActor.set
 }
 // GURPS.XMLtoJS = XMLtoJS;
@@ -110,13 +111,13 @@ Hooks.once("init", async () => {
 
 	const src = `systems/${SYSTEM_NAME}/assets/gurps4e.svg`
 	$("#logo").attr("src", src)
-	// $("#logo").attr("width", "100px");
+		// $("#logo").attr("width", "100px");
 
-	// Assign custom classes and constants hereby
-	;(CONFIG as any).GURPS = GURPSCONFIG
-	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
+		// Assign custom classes and constants hereby
+		; (CONFIG as any).GURPS = GURPSCONFIG
+		; (CONFIG.Item.documentClass as any) = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
-	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+		; (CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
 
 	StaticHitLocation.init()
 
@@ -259,7 +260,7 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
-	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+		; (game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
 	GURPS.ModifierButton = new ModifierButton()
 	GURPS.ModifierButton.render(true)
 
@@ -298,5 +299,17 @@ Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
 	if (cb.rendered && cb.loadedPacks(cb.activeTab).includes(pack.collection)) {
 		await cb.tabs[cb.activeTab].init()
 		cb.render()
+	}
+})
+
+Hooks.on('controlToken', (...args: any[]) => {
+	// if (GURPS.IgnoreTokenSelect) return
+	console.log([...args])
+	if (args.length > 1) {
+		let a = args[0]?.actor
+		if (!!a) {
+			if (args[1]) LastActor.set(a, args[0].document)
+			else LastActor.clear(a)
+		}
 	}
 })

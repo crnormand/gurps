@@ -1,7 +1,11 @@
 <form class="{{ cssClass }}" autocomplete="off">
-    {{#unless deprecation}}
+    {{#unless (eq deprecation "acknowledged")}}
     <div class="deprecation">
-        {{{localize "gurps.static.deprecated" type=(localize "ACTOR.TypeCharacter")}}}
+        {{#if (eq deprecation "manual") }}
+            <p>{{{localize "gurps.static.deprecated_xml" type=(localize "ACTOR.TypeCharacter")}}}</p>
+        {{else}}
+            <p>{{{localize "gurps.static.deprecated" type=(localize "ACTOR.TypeCharacter")}}}</p>
+        {{/if}}
         <a class="gcs-circled-x"></a>
     </div>
 {{/unless}}
@@ -45,13 +49,6 @@
             </div>
         </div>
         <div id="resource-trackers">{{>actor/static_character/sections/resource-trackers }}</div>
-        {{!--
-        <div id="macros">
-            --}}
-            {{!-- {{>actor/character/sections/macros }} --}}
-            {{!--
-        </div>
-        --}}
         <div id="move">{{>actor/static_character/sections/move }}</div>
     </div>
     <div id="embeds"
@@ -96,8 +93,12 @@
                 <div class="header desc">{{ localize "gurps.character.ranged.desc" }}</div>
                 <div class="header usage">{{ localize "gurps.character.ranged.usage" }}</div>
                 <div class="header level">{{ localize "gurps.character.ranged.level" }}</div>
-                <div class="header accuracy">{{ localize "gurps.character.ranged.accuracy" }}</div>
-                <div class="header damage">{{ localize "gurps.character.ranged.damage" }}</div>
+                <div class="header accuracy">
+                    {{ localize "gurps.character.ranged.accuracy" }}
+                </div>
+                <div class="header damage">
+                    {{ localize "gurps.character.ranged.damage" }}
+                </div>
                 <div class="header range">
                     {{ localize "gurps.character.ranged.range" }}
                 </div>
