@@ -24,32 +24,6 @@
 		}
 	}
 
-	nav {
-		display: flex;
-		margin-top: 5px;
-		border-bottom: 1px solid rgb(var(--color-divider));
-
-		a {
-			display: flex;
-			flex-grow: 1;
-			justify-content: space-evenly;
-			background-color: rgb(var(--color-control));
-			color: rgb(var(--color-on-control));
-			padding: 2px;
-			border: 1px solid rgb(var(--color-control-edge));
-			border-radius: 4px 4px 0 0;
-
-			&:hover {
-				text-shadow: none;
-			}
-
-			&.active {
-				background-color: rgb(var(--color-focused-tab));
-				color: rgb(var(--color-on-focused-tab));
-			}
-		}
-	}
-
 	.searchbar {
 		display: grid;
 		grid-template-columns: auto min-content;

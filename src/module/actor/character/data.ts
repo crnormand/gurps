@@ -49,12 +49,12 @@ export interface CharacterSettings {
 	use_multiplicative_modifiers: boolean
 	use_modifying_dice_plus_adds: boolean
 	damage_progression: DamageProgression
-	use_simple_metric_conversions: boolean
 	show_difficulty: boolean
 	show_trait_modifier_adj: boolean
 	show_equipment_modifier_adj: boolean
 	show_spell_adj: boolean
 	use_title_in_footer: boolean
+	exclude_unspent_points_from_total: boolean
 	page: {
 		paper_size: string
 		top_margin: string

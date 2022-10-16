@@ -29,7 +29,9 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 	getData(options?: Partial<ActorSheet.Options> | undefined): any {
 		const actorData = this.actor.toObject(false) as any
 
-		let deprecation: string = (this.actor.getFlag(SYSTEM_NAME, "deprecation_acknowledged")) ? "acknowledged" : "manual"
+		let deprecation: string = this.actor.getFlag(SYSTEM_NAME, "deprecation_acknowledged")
+			? "acknowledged"
+			: "manual"
 		// Don't show deprecation warning if character is not imported
 		if (deprecation === "manual") {
 			if (this.actor.system.additionalresources.importpath.includes(".gcs")) deprecation = "easy"
@@ -187,21 +189,21 @@ export class StaticCharacterSheetGURPS extends ActorSheetGURPS {
 		}
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
-				edit_button,
-				{
-					label: "",
-					// Label: "Import",
-					class: "import",
-					icon: "fas fa-file-import",
-					onclick: event => this._onFileImport(event),
-				},
-				{
-					label: "",
-					class: "gmenu",
-					icon: "gcs-all-seeing-eye",
-					onclick: event => this._onGMenu(event),
-				},
-			]
+					edit_button,
+					{
+						label: "",
+						// Label: "Import",
+						class: "import",
+						icon: "fas fa-file-import",
+						onclick: event => this._onFileImport(event),
+					},
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._onGMenu(event),
+					},
+			  ]
 			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""

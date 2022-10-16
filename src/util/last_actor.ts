@@ -3,7 +3,7 @@ import { SYSTEM_NAME } from "@module/settings"
 
 export class LastActor {
 	static set(actor: ActorGURPS, token?: TokenDocument): void {
-		; (game as Game).user?.setFlag(SYSTEM_NAME, "last_actor", actor.uuid)
+		;(game as Game).user?.setFlag(SYSTEM_NAME, "last_actor", actor.uuid)
 		if (token) (game as Game).user?.setFlag(SYSTEM_NAME, "last_token", token.uuid)
 	}
 
@@ -24,7 +24,7 @@ export class LastActor {
 	static clear(a: ActorGURPS) {
 		const currentLastActor = LastActor.get()
 		if (currentLastActor === a) {
-			(game as Game).user?.setFlag(SYSTEM_NAME, "last_actor", null)
+			;(game as Game).user?.setFlag(SYSTEM_NAME, "last_actor", null)
 			const tokens = canvas?.tokens
 			if (tokens && tokens.controlled!.length! > 0) {
 				LastActor.set(tokens.controlled[0]?.actor as ActorGURPS)

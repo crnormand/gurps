@@ -36,6 +36,10 @@ export async function preloadTemplates(): Promise<Handlebars.TemplateDelegate[]>
 		"actor/character/sections/spell",
 		"actor/character/sections/trait",
 
+		"actor/character/config/sheet-settings",
+		"actor/character/config/attributes",
+		"actor/character/config/body-type",
+
 		"actor/static_character/sections/attributes",
 		"actor/static_character/sections/basic-damage",
 		"actor/static_character/sections/ci-editor",

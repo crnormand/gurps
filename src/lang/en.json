@@ -211,13 +211,44 @@
 			},
 			"settings": {
 				"import": {
+					"reimport": "Re-Import ({file})",
+					"import": "Import ({file})",
+					"none": "None",
+					"file": "Choose File",
 					"title": "Import",
 					"note": "Select a file exported from GCS.<br><b>This import will overwrite the data for {name}</b>",
-					"warnign": "<b>NOTE:</b> This action cannot be un-done."
+					"warning": "<b>NOTE:</b> This action cannot be un-done."
 				},
-				"enable_token_modifier_window": {
-					"title": "Enable Token Modifier Window",
-					"hint": "Enable the Token Modifier Window, which shows modifiers related to selected and targeted tokens"
+				"sheet_settings": {
+					"button": "Sheet Settings"
+				},
+				"attributes": {
+					"button": "Attributes"
+				},
+				"body_type": {
+					"button": "Body Type"
+				},
+				"damage_progression": "Damage Progression",
+				"show_trait_modifier_adj": "Show trait modifier cost adjustments",
+				"show_equipment_modifier_adj": "Show equipment modifier cost & weight adjustments",
+				"show_spell_adj": "Show spell ritual, cost & time adjustments",
+				"use_multiplicative_modifiers": "Use Multiplicative Modifiers (PW102; changes point value)",
+				"use_modifying_dice_plus_adds": "Use Modifying Dice + Adds (B269)",
+				"exclude_unspent_points_from_total": "Exclude unspent points from total",
+				"units": {
+					"title": "Units of Measurement",
+					"length": "Length Units",
+					"weight": "Weight Units"
+				},
+				"display": {
+					"title": "Where to Display...",
+					"user_description": "User Description",
+					"modifiers": "Modifiers",
+					"notes": "Notes",
+					"skill_level_adj": "Skill Level Adjustments"
+				},
+				"block_layout": {
+					"title": "Block Layout"
 				}
 			},
 			"points": {
@@ -646,6 +677,39 @@
 				"crouching": "Crouching",
 				"sitting": "Sitting",
 				"crawling": "Crawling"
+			},
+			"damage_progression": {
+				"basic_set": "Basic Set",
+				"knowing_your_own_strength": "Knowing Your Own Strength",
+				"no_school_grognard_damage": "No School Grognard Damage",
+				"thrust_equals_swing_minus_2": "Thrust = Swing - 2",
+				"swing_equals_thrust_plus_2": "Swing = Thrust + 2",
+				"phoenix_flame_d3": "Phoenix Flame D3"
+			},
+			"display": {
+				"not_shown": "Not Shown",
+				"inline": "Inline",
+				"tooltip": "Tooltip",
+				"inline_and_tooltip": "Inline & Tooltip"
+			},
+			"default_length_units": {
+				"ft_in": "Feet & Inches",
+				"in": "in",
+				"ft": "ft",
+				"yd": "yd",
+				"mi": "mi",
+				"cm": "cm",
+				"km": "km",
+				"m": "m"
+			},
+			"default_weight_units": {
+				"lb": "lb",
+				"#": "#",
+				"oz": "oz",
+				"tn": "tn",
+				"t": "t",
+				"kg": "kg",
+				"g": "g"
 			}
 		},
 		"field_prefix": {
@@ -774,6 +838,10 @@
 			"portrait_overwrite": {
 				"name": "Overwrite Portraits",
 				"hint": "Choose whether character portraits are overwritten on import"
+			},
+			"enable_token_modifier_window": {
+				"name": "Enable Token Modifier Window",
+				"hint": "Enable the Token Modifier Window, which shows modifiers related to selected and targeted tokens"
 			}
 		},
 		"error": {

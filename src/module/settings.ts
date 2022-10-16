@@ -18,6 +18,9 @@ export enum SETTINGS {
 	MODIFIER_MODE = "modifier_mode",
 }
 
+/**
+ *
+ */
 export function registerSettings(): void {
 	// Register any custom system settings here
 	const g = game as Game

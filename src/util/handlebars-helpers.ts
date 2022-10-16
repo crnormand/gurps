@@ -239,8 +239,11 @@ export function registerHandlebarsHelpers() {
 		return DR
 	})
 
-	Handlebars.registerHelper("textareaFormat", function (s: string): string {
-		return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
+	Handlebars.registerHelper("textareaFormat", function (s: string | string[]): string {
+		if (typeof s === "string") return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
+		else {
+			return s.join("\r") || ""
+		}
 	})
 
 	// TODO: remove

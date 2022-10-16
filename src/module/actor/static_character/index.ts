@@ -483,7 +483,7 @@ class StaticCharacterGURPS extends BaseActorGURPS {
 			(!srceqt.globalid && srceqt.name === desteqt.name)
 		) {
 			await this.updateEqtCount(targetkey, parseInt(srceqt.count) + parseInt(desteqt.count))
-			// if (srckey.includes('.carried') && targetkey.includes('.other'))
+			// If (srckey.includes('.carried') && targetkey.includes('.other'))
 			// 	 await this._removeItemAdditionsBasedOn(desteqt)
 			await this.deleteEquipment(srckey)
 			this.render()

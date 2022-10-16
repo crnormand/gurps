@@ -26,6 +26,8 @@ import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
+	config: CharacterSheetConfig | null = null
+
 	static override get defaultOptions(): ActorSheet.Options {
 		return mergeObject(super.defaultOptions, {
 			classes: super.defaultOptions.classes.concat(["character"]),
@@ -306,13 +308,13 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
 			? [
 					edit_button,
-					{
-						label: "",
-						// Label: "Import",
-						class: "import",
-						icon: "fas fa-file-import",
-						onclick: event => this._onFileImport(event),
-					},
+					// {
+					// 	label: "",
+					// 	// Label: "Import",
+					// 	class: "import",
+					// 	icon: "fas fa-file-import",
+					// 	onclick: event => this._onFileImport(event),
+					// },
 					{
 						label: "",
 						class: "gmenu",
@@ -328,17 +330,18 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		// Return buttons.concat(super._getHeaderButtons());
 	}
 
-	async _onFileImport(event: any) {
-		event.preventDefault()
-		this.actor.importCharacter()
-	}
+	// Async _onFileImport(event: any) {
+	// 	event.preventDefault()
+	// 	this.actor.importCharacter()
+	// }
 
 	protected async _onGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		new CharacterSheetConfig(this.document as CharacterGURPS, {
+		this.config = new CharacterSheetConfig(this.document as CharacterGURPS, {
 			top: this.position.top! + 40,
 			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
-		}).render(true)
+		})
+		this.config.render(true)
 	}
 }
 
