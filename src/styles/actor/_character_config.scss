@@ -1,5 +1,37 @@
-.gurps.character-config {
-	.window-content {
-		background: rgb(var(--color-page));
+.window-app.gurps.character-config {
+	#details,
+	.fieldblock {
+		display: grid;
+		grid-auto-flow: row;
+		row-gap: 4px;
+		column-gap: 9px;
+		vertical-align: middle;
+		padding: 2px 16px;
+	}
+	.field {
+		display: grid;
+		grid-auto-flow: column;
+	}
+	.fieldblock {
+		hr,
+		.title {
+			font: var(--font-system);
+			grid-column: 1 / span 2;
+		}
+		grid-template-columns: min-content auto;
+		.label {
+			white-space: nowrap;
+			text-align: right;
+		}
+	}
+	hr {
+		border: 1px solid rgb(var(--color-divider));
+		width: 100%;
+		margin: 0;
+	}
+	textarea.input {
+		grid-column: 1 / span 2;
+		width: 100%;
+		line-height: 16px;
 	}
 }

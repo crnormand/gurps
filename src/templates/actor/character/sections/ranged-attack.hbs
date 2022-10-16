@@ -6,14 +6,17 @@
 </div>
 <div class="usage">{{this.usage}}</div>
 <div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="attack" class="level rollable">
-	{{this.level}}</div>
-<div data-modifier="{{this.accuracy}}" data-comment="Accuracy" data-type="modifier" class="accuracy rollable">{{signed
-	this.accuracy}}</div>
+	{{this.level}}
+</div>
+<div data-modifier="{{this.accuracy}}" data-comment="{{localize 'gurps.weapon.accuracy_for' name=this.name}}"
+	data-type="modifier" class="accuracy rollable">{{signed this.accuracy}}</div>
 <div data-uuid="{{this.parent.uuid}}" data-attack-id="{{this.id}}" data-type="damage" class="damage rollable">
-	{{this.damage}}</div>
+	{{this.damage}}
+</div>
 <div class="range">{{this.range}}</div>
 <div class="rate-of-fire">{{this.rate_of_fire}}</div>
 <div class="shots">{{this.shots}}</div>
-<div data-modifier="{{this.bulk}}" data-comment="Bulk" data-type="modifier" class="bulk rollable">{{this.bulk}}</div>
-<div class="recoil rollable">{{this.recoil}}</div>
-<div class="st">{{this.st}}</div>
+<div data-modifier="{{this.bulk}}" data-comment="{{localize 'gurps.weapon.bulk_for' name=this.name}}"
+	data-type="modifier" class="bulk rollable">{{this.bulk}}</div>
+<div class="recoil">{{this.recoil}}</div>
+<div class="st">{{this.strength}}</div>

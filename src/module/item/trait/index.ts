@@ -32,7 +32,7 @@ export class TraitGURPS extends ContainerGURPS {
 	}
 
 	get isLeveled(): boolean {
-		return this.pointsPerLevel !== 0
+		return this.system.can_level
 	}
 
 	get levels(): number {

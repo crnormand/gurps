@@ -15,6 +15,7 @@ import {
 	TraitGURPS,
 } from "@item"
 import { Attribute } from "@module/attribute"
+import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
 import { RollType } from "@module/data"
 import { openPDF } from "@module/pdf"
@@ -25,11 +26,14 @@ import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
+	config: CharacterSheetConfig | null = null
+
 	static override get defaultOptions(): ActorSheet.Options {
 		return mergeObject(super.defaultOptions, {
 			classes: super.defaultOptions.classes.concat(["character"]),
 			width: 800,
 			height: 800,
+			tabs: [{ navSelector: ".tabs-navigation", contentSelector: ".tabs-content", initial: "lifting" }],
 		})
 	}
 
@@ -59,11 +63,13 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".equipped").on("click", event => this._onEquippedToggle(event))
 		html.find(".rollable").on("mouseover", event => this._onRollableHover(event, true))
 		html.find(".rollable").on("mouseout", event => this._onRollableHover(event, false))
-		html.find(".rollable").on("click", event => this._onClickRoll(event))
+		html.find(":not(.disabled) > > .rollable").on("click", event => this._onClickRoll(event))
 
 		// Hover Over
 		html.find(".item").on("dragleave", event => this._onItemDragLeave(event))
 		html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
+
+		if (this.actor.editing) html.find(".rollable").addClass("noroll")
 	}
 
 	protected _resizeInput(event: JQuery.ChangeEvent) {
@@ -75,11 +81,10 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	protected _onCollapseToggle(event: JQuery.ClickEvent): void {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		console.log(uuid)
 		const id = uuid.split(".").at(-1) ?? ""
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = this.actor.deepItems.get(id)
-		item?.update({ _id: id, "system.open": open })
+		item?.update({ _id: id, "system.open": open }, { noPrepare: true })
 	}
 
 	protected async _handlePDF(event: JQuery.ClickEvent): Promise<void> {
@@ -131,6 +136,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				RollType.SkillRelative,
 				RollType.Spell,
 				RollType.SpellRelative,
+				RollType.ControlRoll,
 			].includes(type)
 		)
 			data.item = await fromUuid($(event.currentTarget).data("uuid"))
@@ -196,7 +202,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const point_pools: Attribute[] = []
 		if (attributes)
 			attributes.forEach(a => {
-				if (a.attribute_def?.type.includes("pool")) point_pools.push(a)
+				if ([AttributeType.Pool, AttributeType.PoolSeparator].includes(a.attribute_def?.type))
+					point_pools.push(a)
 				else if (a.attribute_def?.isPrimary) primary_attributes.push(a)
 				else secondary_attributes.push(a)
 			})
@@ -287,9 +294,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	// Events
 	async _onEditToggle(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		await this.actor.update({ "system.editing": !this.actor.editing })
 		$(event.currentTarget).find("i").toggleClass("fa-unlock fa-lock")
-		return this.render()
+		await this.actor.update({ "system.editing": !this.actor.editing })
 	}
 
 	protected override _getHeaderButtons(): Application.HeaderButton[] {
@@ -299,34 +305,24 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 			icon: `fas fa-${this.actor.editing ? "un" : ""}lock`,
 			onclick: (event: any) => this._onEditToggle(event),
 		}
-		const buttons: Application.HeaderButton[] = [
-			edit_button,
-			// {
-			// 	label: "",
-			// 	class: "attributes",
-			// 	icon: "gcs-attribute",
-			// 	onclick: event => this._onAttributeSettingsClick(event),
-			// },
-			// {
-			// 	label: "",
-			// 	class: "body-type",
-			// 	icon: "gcs-body-type",
-			// 	onclick: event => this._onBodyTypeSettingsClick(event),
-			// },
-			{
-				label: "",
-				// Label: "Import",
-				class: "import",
-				icon: "fas fa-file-import",
-				onclick: event => this._onFileImport(event),
-			},
-			{
-				label: "GURPS",
-				class: "gmenu",
-				icon: "fas fa-dice",
-				onclick: event => this._onGMenu(event),
-			},
-		]
+		const buttons: Application.HeaderButton[] = this.actor.canUserModify((game as Game).user!, "update")
+			? [
+					edit_button,
+					// {
+					// 	label: "",
+					// 	// Label: "Import",
+					// 	class: "import",
+					// 	icon: "fas fa-file-import",
+					// 	onclick: event => this._onFileImport(event),
+					// },
+					{
+						label: "",
+						class: "gmenu",
+						icon: "gcs-all-seeing-eye",
+						onclick: event => this._onGMenu(event),
+					},
+			  ]
+			: []
 		const all_buttons = [...buttons, ...super._getHeaderButtons()]
 		// All_buttons.at(-1)!.label = ""
 		// all_buttons.at(-1)!.icon = "gcs-circled-x"
@@ -334,17 +330,18 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		// Return buttons.concat(super._getHeaderButtons());
 	}
 
-	async _onFileImport(event: any) {
-		event.preventDefault()
-		this.actor.importCharacter()
-	}
+	// Async _onFileImport(event: any) {
+	// 	event.preventDefault()
+	// 	this.actor.importCharacter()
+	// }
 
 	protected async _onGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		new CharacterSheetConfig(this.document as CharacterGURPS, {
+		this.config = new CharacterSheetConfig(this.document as CharacterGURPS, {
 			top: this.position.top! + 40,
 			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
-		}).render(true)
+		})
+		this.config.render(true)
 	}
 }
 

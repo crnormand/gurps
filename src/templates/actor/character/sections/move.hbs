@@ -4,9 +4,9 @@
 	<div class="field">
 		<select name="system.move.maneuver" data-dtype="String">
 			{{#select system.move.maneuver}}
-			{{#each maneuvers as |v k|}}
-			<option value="{{k}}">{{localize v}}</option>
-			{{/each}}
+				{{#each maneuvers as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+				{{/each}}
 			{{/select}}
 		</select>
 	</div>
@@ -15,9 +15,9 @@
 	<div class="field">
 		<select name="system.move.posture" data-dtype="String">
 			{{#select system.move.posture}}
-			{{#each postures as |v k|}}
-			<option value="{{k}}">{{localize v}}</option>
-			{{/each}}
+				{{#each postures as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+				{{/each}}
 			{{/select}}
 		</select>
 	</div>
@@ -26,9 +26,9 @@
 	<div class="field">
 		<select name="system.move.type" data-dtype="String">
 			{{#select system.move.type}}
-			{{#each move_types as |v k|}}
-			<option value="{{k}}">{{localize v}}</option>
-			{{/each}}
+				{{#each move_types as |v k|}}
+					<option value="{{k}}">{{localize v}}</option>
+				{{/each}}
 			{{/select}}
 		</select>
 	</div>

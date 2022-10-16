@@ -1,6 +1,6 @@
 import { ImagePath } from "@module/data"
 import { openPDF } from "@module/pdf"
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n } from "@util"
 import { BrowserTab, PackInfo, TabData, TabName } from "./data"
 import * as browserTabs from "./tabs"
@@ -40,42 +40,6 @@ export class CompendiumBrowser extends Application {
 	override get title(): string {
 		return i18n("gurps.compendium_browser.title")
 	}
-
-	// Override render(force?: boolean | undefined, options?: Application.RenderOptions<ApplicationOptions> | undefined): unknown {
-	// 	this.initCompendiumList();
-	// 	return super.render(force, options);
-	// }
-
-	// Private async renderReultsList(html: HTMLElement, list: HTMLUListElement, start = 0): Promise<void> {
-	// 	const currentTab = this.activeTab !== "settings" ? this.tabs[this.activeTab] : null;
-	// 	if (!currentTab) return;
-
-	// 	const newResults = await currentTab.renderResults(start);
-	// 	this.activateResultListeners(newResults);
-	// 	const fragment = document.createDocumentFragment();
-	// 	fragment.append(...newResults);
-	// 	list.append(fragment);
-	// 	for (const dragDropHandler of this._dragDrop) {
-	// 		dragDropHandler.bind(html);
-	// 	}
-	// }
-
-	// private activateResultListeners(liElements: HTMLLIElement[] = []): void {
-	// 	for (const liElement of liElements) {
-	// 		const { entryUuid } = liElement.dataset;
-	// 		if (!entryUuid) continue;
-
-	// 		const nameAnchor = liElement.querySelector<HTMLAnchorElement>("div.name > a");
-	// 		if (nameAnchor) {
-	// 			nameAnchor.addEventListener("click", async () => {
-	// 				const document = (await fromUuid(entryUuid)) as any;
-	// 				if (document?.sheet) {
-	// 					document.sheet.render(true);
-	// 				}
-	// 			});
-	// 		}
-	// 	}
-	// }
 
 	static override get defaultOptions(): ApplicationOptions {
 		return mergeObject(super.defaultOptions, {
@@ -117,7 +81,7 @@ export class CompendiumBrowser extends Application {
 							pack.load = formData.has(`${t}-${key}`)
 						}
 					}
-					await (game as Game).settings.set(SYSTEM_NAME, "compendiumBrowserPacks", this.settings)
+					await (game as Game).settings.set(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, this.settings)
 					this.loadSettings()
 					this.initCompendiumList()
 					for (const tab of Object.values(this.tabs)) {
@@ -156,6 +120,7 @@ export class CompendiumBrowser extends Application {
 		// 	}
 		// });
 		html.find("input.input").on("change", event => this._updateQuery(event))
+		html.find("select").on("change", event => this._updateFilter(event))
 
 		// This.renderReultsList(_html, list);
 	}
@@ -163,13 +128,9 @@ export class CompendiumBrowser extends Application {
 	protected async _onCollapseToggle(event: JQuery.ClickEvent): Promise<unknown> {
 		event.preventDefault()
 		const uuid: string = $(event.currentTarget).data("uuid")
-		// Console.log(uuid);
 		const open = !!$(event.currentTarget).attr("class")?.includes("closed")
 		const item = (await fromUuid(uuid)) as Item
 		await item?.update({ _id: uuid.split(".").at(-1), "system.open": open })
-		// Const gparent = await fromUuid(uuid.split(".").splice(0, 4).join("."));
-		// console.log(item);
-		// console.log(item, gparent);
 		if (this.activeTab !== "settings") await this.tabs[this.activeTab].init()
 		return this.render()
 	}
@@ -177,6 +138,12 @@ export class CompendiumBrowser extends Application {
 	_updateQuery(event: JQuery.TriggeredEvent): void {
 		if (this.activeTab === "settings") return
 		this.tabs[this.activeTab].filterData.searchQuery = String($(event.currentTarget).val())
+		this.render()
+	}
+
+	_updateFilter(event: JQuery.TriggeredEvent): void {
+		if (this.activeTab === "settings") return
+		this.tabs[this.activeTab].filterData.tagFilter = String($(event.currentTarget).val())
 		this.render()
 	}
 
@@ -196,11 +163,19 @@ export class CompendiumBrowser extends Application {
 		const tab = this.tabs[activeTab]
 		if (tab) {
 			const indexData = tab.getIndexData(0)
+			const tagSet: Set<string> = new Set()
+			tab.indexData.map(e =>
+				e.tags.forEach((t: string) => {
+					tagSet.add(t)
+				})
+			)
+			const tagList = Array.from(tagSet).sort()
 			return {
 				user: (game as Game).user,
 				[activeTab]: {
 					filterData: tab.filterData,
 					indexData: indexData,
+					tagList: tagList,
 				},
 				scrollLimit: tab.scrollLimit,
 			}
@@ -311,7 +286,7 @@ export class CompendiumBrowser extends Application {
 	}
 
 	loadSettings(): void {
-		const settings: string | any = (game as Game).settings.get(SYSTEM_NAME, "compendiumBrowserPacks")
+		const settings: string | any = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS)
 		if (typeof settings === "string") this.settings = JSON.parse(settings)
 		else this.settings = settings
 	}

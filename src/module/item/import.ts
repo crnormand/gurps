@@ -95,7 +95,6 @@ export class ItemImporter {
 
 	async _import(file: { text: string; name: string; path: string }) {
 		const json = file.text
-		// Console.log(file);
 		// Return;
 		const name = file.name.split(".")[0]
 		// Const name = "Library Test";
@@ -123,8 +122,6 @@ export class ItemImporter {
 			items.push(...this.importItems(r.rows))
 			// Commit = { ...commit, ...{ rows: items } };
 
-			// console.log(commit);
-
 			let pack = (game as Game).packs.find(p => p.metadata.name === name)
 			if (!pack) {
 				pack = await CompendiumCollection.createCompendium({
@@ -138,11 +135,9 @@ export class ItemImporter {
 			}
 			ui.notifications?.info(i18n_f("gurps.system.library_import.start", { name: name }))
 			let counter = items.length
-			// Console.log(items);
 			Item.create(items as any, { pack: `world.${name}` })
 			ui.notifications?.info(i18n_f("gurps.system.library_import.finished", { number: counter }))
 			const cb = GURPS.CompendiumBrowser
-			console.log(cb, cb.rendered)
 			if (cb.rendered) cb.render(true)
 		} catch (err) {
 			console.error(err)
@@ -163,7 +158,6 @@ export class ItemImporter {
 			item.name = item.name ?? (item as any).description ?? (item as any).text
 			const id = randomID()
 			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = this.getItemData(item, context)
-			// Console.log(itemData);
 			const newItem = {
 				name: item.name ?? "ERROR",
 				type: item.type,
@@ -258,6 +252,8 @@ export class ItemImporter {
 				data = this.getNoteContainerData(item as NoteContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
 				return [data, flags]
+			default:
+				throw new Error(i18n_f("gcsga.error.import.invalid_item_type", { type: item.type }))
 		}
 	}
 
@@ -272,6 +268,7 @@ export class ItemImporter {
 			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
 			round_down: data.round_down ?? false,
 			disabled: data.disabled ?? false,
+			can_level: data.can_level ?? false,
 			levels: data.levels ?? 0,
 			base_points: data.base_points ?? 0,
 			points_per_level: data.points_per_level ?? 0,

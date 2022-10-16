@@ -3,13 +3,14 @@ import { gid } from "@module/data"
 import { VariableResolver, evaluateToNumber, sanitize } from "@util"
 import { CharacterGURPS } from "@actor"
 
-export type AttributeType =
-	| "integer"
-	| "decimal"
-	| "pool"
-	| "primary_separator"
-	| "secondary_separator"
-	| "pool_separator"
+export enum AttributeType {
+	Integer = "integer",
+	Decimal = "decimal",
+	Pool = "pool",
+	PrimarySeparator = "primary_separator",
+	SecondarySeparator = "secondary_separator",
+	PoolSeparator = "pool_separator",
+}
 
 export const reserved_ids: string[] = [gid.Skill, gid.Parry, gid.Block, gid.Dodge, gid.SizeModifier, gid.Ten]
 
@@ -31,7 +32,7 @@ export class AttributeDef {
 				for (const t of data.thresholds) {
 					thr.push(new PoolThreshold(t))
 				}
-			(data as any).thresholds = thr
+			;(data as any).thresholds = thr
 			Object.assign(this, data)
 		}
 	}

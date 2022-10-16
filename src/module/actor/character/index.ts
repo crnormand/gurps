@@ -1,17 +1,17 @@
-import { BaseActorGURPS } from "@actor/base"
-import { ActorConstructorContextGURPS } from "@actor/base"
+import { BaseActorGURPS, ActorConstructorContextGURPS } from "@actor/base"
 import { CharacterImporter } from "./import"
-import { Feature } from "@feature"
+import { Feature, WeaponDRDivisorBonus } from "@feature"
 import { ConditionalModifier } from "@feature/conditional_modifier"
 import { CostReduction } from "@feature/cost_reduction"
 import { ReactionBonus } from "@feature/reaction_bonus"
 import { SkillBonus } from "@feature/skill_bonus"
 import { SkillPointBonus } from "@feature/skill_point_bonus"
 import { SpellBonus } from "@feature/spell_bonus"
-import { WeaponBonus } from "@feature/weapon_damage_bonus"
+import { WeaponDamageBonus } from "@feature/weapon_bonus"
 import {
 	EquipmentContainerGURPS,
 	EquipmentGURPS,
+	ItemGURPS,
 	NoteContainerGURPS,
 	NoteGURPS,
 	RitualMagicSpellGURPS,
@@ -28,7 +28,7 @@ import { CR_Features } from "@item/trait/data"
 import { DocumentModificationOptions } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs"
 import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData"
 import { Attribute, AttributeObj } from "@module/attribute"
-import { AttributeDef } from "@module/attribute/attribute_def"
+import { AttributeDef, AttributeType } from "@module/attribute/attribute_def"
 import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
 import { attrPrefix, gid } from "@module/data"
@@ -48,7 +48,7 @@ import {
 	SelfControl,
 	stringCompare,
 } from "@util"
-import { CharacterSource, CharacterSystemData, Encumbrance } from "./data"
+import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
@@ -62,6 +62,8 @@ class CharacterGURPS extends BaseActorGURPS {
 		if (this.system.attributes) this.attributes = this.getAttributes()
 		this.featureMap = new Map()
 	}
+
+	SizeModBonus = 0
 
 	protected _onCreate(data: any, options: DocumentModificationOptions, userId: string): void {
 		const sd: CharacterSystemData | any = {
@@ -95,9 +97,9 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override update(
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
-		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions
+		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
-		// Console.log("update data:", data);
+		console.log(data, context)
 		this.updateAttributes(data)
 		this.checkImport(data)
 		return super.update(data, context)
@@ -106,10 +108,12 @@ class CharacterGURPS extends BaseActorGURPS {
 	checkImport(data?: any) {
 		for (const i in data) {
 			if (i.includes("system.import")) return
+			if (i.includes("ownership")) return
 		}
 		data["system.modified_date"] = new Date().toISOString()
 	}
 
+	// TODO: move to character/sheet -> _updateObject
 	updateAttributes(
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>
 	) {
@@ -269,7 +273,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const att in settings.attributes) {
 			defs[att] = new AttributeDef(settings.attributes[att])
 		}
-		(settings as any).attributes = defs
+		;(settings as any).attributes = defs
 		return settings
 	}
 
@@ -335,11 +339,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		let total = 0
 		for (const e of this.carried_equipment) {
 			if (e.parent === this) {
-				// Console.log(e.name, e.extendedWeight(for_skills, this.settings.default_weight_units));
 				total += e.extendedWeight(for_skills, this.settings.default_weight_units)
 			}
 		}
-		// Console.log(total);
 		return floatingMul(total)
 	}
 
@@ -451,6 +453,26 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get blockBonus(): number {
 		return this.calc.block_bonus ?? 0
+	}
+
+	override get sizeMod(): number {
+		if (!this.system?.profile) return 0
+		return this.system.profile.SM + this.SizeModBonus
+	}
+
+	get HitLocations(): HitLocation[] {
+		return this.system.settings?.body_type?.locations?.map(e => {
+			const l = e
+			l.roll_range = e.calc?.roll_range || "-"
+			l.dr = {}
+			const all = e.calc?.dr.all || 0
+			for (const k of Object.keys(e.calc?.dr ?? {})) {
+				if (k === "all") l.dr[k] = all
+				else l.dr[k] = all + e.calc!.dr[k]
+			}
+			delete l.calc
+			return l
+		})
 	}
 
 	// Item Types
@@ -579,7 +601,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	get reactions(): CondMod[] {
 		let reactionMap: Map<string, CondMod> = new Map()
 		for (const t of this.traits) {
-			let source = i18n("gurps.reaction.from_trait") + (t.name ?? "")
+			let source = i18n_f("gurps.reaction.from_trait", { name: t.name ?? "" })
 			this.reactionsFromFeatureList(source, t.features, reactionMap)
 			for (const mod of t.deepModifiers) {
 				this.reactionsFromFeatureList(source, mod.features, reactionMap)
@@ -603,7 +625,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		for (const sk of this.skills) {
-			let source = i18n("gurps.reaction.from_skill") + (sk.name ?? "")
+			let source = i18n_f("gurps.reaction.from_skill", { name: sk.name ?? "" })
 			if (sk instanceof TechniqueGURPS) source = i18n("gurps.reaction.from_technique") + (sk.name ?? "")
 			this.reactionsFromFeatureList(source, sk.features, reactionMap)
 		}
@@ -622,16 +644,16 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get conditionalModifiers(): CondMod[] {
 		let reactionMap: Map<string, CondMod> = new Map()
-		for (const t of this.traits) {
-			let source = i18n("gurps.reaction.from_trait") + (t.name ?? "")
+		this.traits.forEach(t => {
+			let source = i18n_f("gurps.reaction.from_trait", { name: t.name ?? "" })
 			this.conditionalModifiersFromFeatureList(source, t.features, reactionMap)
 			for (const mod of t.deepModifiers) {
 				this.conditionalModifiersFromFeatureList(source, mod.features, reactionMap)
 			}
-		}
+		})
 		for (const e of this.carried_equipment) {
 			if (e.equipped && e.quantity > 0) {
-				let source = i18n("gurps.reaction.from_equipment") + (e.name ?? "")
+				let source = i18n_f("gurps.reaction.from_equipment", { name: e.name ?? "" })
 				this.conditionalModifiersFromFeatureList(source, e.features, reactionMap)
 				for (const mod of e.deepModifiers) {
 					this.conditionalModifiersFromFeatureList(source, mod.features, reactionMap)
@@ -639,8 +661,8 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		for (const sk of this.skills) {
-			let source = i18n("gurps.reaction.from_skill") + (sk.name ?? "")
-			if (sk instanceof TechniqueGURPS) source = i18n("gurps.reaction.from_technique") + (sk.name ?? "")
+			let source = i18n_f("gurps.reaction.from_skill", { name: sk.name ?? "" })
+			if (sk instanceof TechniqueGURPS) source = i18n_f("gurps.reaction.from_technique", { name: sk.name ?? "" })
 			this.conditionalModifiersFromFeatureList(source, sk.features, reactionMap)
 		}
 		let reactionList = Array.from(reactionMap.values())
@@ -648,12 +670,13 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	conditionalModifiersFromFeatureList(source: string, features: Feature[], m: Map<string, CondMod>): void {
-		for (const f of features)
+		features.forEach(f => {
 			if (f instanceof ConditionalModifier) {
 				let amount = f.adjustedAmount
 				if (m.has(f.situation)) m.get(f.situation)!.add(source, amount)
 				else m.set(f.situation, new CondMod(source, f.situation, amount))
 			}
+		})
 	}
 
 	newAttributes(): Record<string, AttributeObj> {
@@ -718,31 +741,31 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareEmbeddedDocuments(): void {
 		super.prepareEmbeddedDocuments()
-		this.updateSkills()
-		this.updateSpells()
-		for (let i = 0; i < 5; i++) {
-			this.processFeatures()
-			this.processPrereqs()
-			let skillsChanged = this.updateSkills()
-			let spellsChanged = this.updateSpells()
-			if (!skillsChanged && !spellsChanged) break
+		// Console.log("prepareEmbeddedDocuments", this.noPrepare)
+		if (!this.noPrepare) {
+			this.updateSkills()
+			this.updateSpells()
+			for (let i = 0; i < 5; i++) {
+				this.processFeatures()
+				this.processPrereqs()
+				let skillsChanged = this.updateSkills()
+				let spellsChanged = this.updateSpells()
+				if (!skillsChanged && !spellsChanged) break
+			}
+			this.pools = {}
+			for (const a of Object.values(this.attributes)) {
+				if (a.attribute_def.type === AttributeType.Pool)
+					this.pools[a.attribute_def.name] = {
+						max: a.max,
+						value: a.current,
+					}
+			}
+		} else {
+			this.noPrepare = false
 		}
-		this.pools = {}
-		for (const a of Object.values(this.attributes)) {
-			if (a.attribute_def.type === "pool")
-				this.pools[a.attribute_def.name] = {
-					max: a.max,
-					value: a.current,
-				}
-		}
-	}
-
-	updateProfile(): void {
-		if (this.profile) this.profile.SM = this.bonusFor(`${attrPrefix}${gid.SizeModifier}`, undefined)
 	}
 
 	processFeatures() {
-		// Const featureMap: Map<string, Feature[]> = new Map();
 		this.featureMap = new Map()
 		for (const t of this.traits) {
 			if (t instanceof TraitGURPS) {
@@ -752,7 +775,7 @@ class CharacterGURPS extends BaseActorGURPS {
 					}
 			}
 			if (CR_Features.has(t.crAdj))
-				for (const f of CR_Features?.get(t.crAdj)) {
+				for (const f of CR_Features?.get(t.crAdj) || []) {
 					processFeature(t, this.featureMap, f, Math.max(t.levels, 0))
 				}
 			for (const m of t.deepModifiers) {
@@ -784,21 +807,21 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.calc.throwing_st_bonus = this.bonusFor(`${attrPrefix}${gid.Strength}.throwing_only`, undefined)
 		this.attributes = this.getAttributes()
 		if (this.attributes)
-			for (const attr of Object.values(this.attributes)) {
+			this.attributes.forEach(attr => {
 				if (!this.system.attributes[attr.attr_id]) return
 				const def = attr.attribute_def
 				if (def) {
 					const attrID = attrPrefix + attr.attr_id
 					this.system.attributes[attr.attr_id].bonus = this.bonusFor(attrID, undefined)
-					if (def.type !== "decimal") attr.bonus = Math.floor(attr.bonus)
+					if (def.type !== AttributeType.Decimal) attr.bonus = Math.floor(attr.bonus)
 					this.system.attributes[attr.attr_id].cost_reduction = this.costReductionFor(attrID)
 				} else {
 					this.system.attributes[attr.attr_id].bonus = 0
 					this.system.attributes[attr.attr_id].cost_reduction = 0
 				}
-			}
+			})
 		this.attributes = this.getAttributes()
-		this.updateProfile()
+		// This.updateProfile()
 		this.calc.dodge_bonus = this.bonusFor(`${attrPrefix}${gid.Dodge}`, undefined)
 		this.calc.parry_bonus = this.bonusFor(`${attrPrefix}${gid.Parry}`, undefined)
 		this.calc.block_bonus = this.bonusFor(`${attrPrefix}${gid.Block}`, undefined)
@@ -852,7 +875,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const k of this.skills.filter(e => !(e instanceof SkillContainerGURPS)) as Array<
 			SkillGURPS | TechniqueGURPS
 		>) {
-			if (k.updateLevel()) changed = true
+			if (k.updateLevel()) {
+				changed = true
+			}
 		}
 		return changed
 	}
@@ -862,7 +887,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const b of this.spells.filter(e => !(e instanceof SpellContainerGURPS)) as Array<
 			SpellGURPS | RitualMagicSpellGURPS
 		>) {
-			if (b.updateLevel()) changed = true
+			if (b.updateLevel()) {
+				changed = true
+			}
 		}
 		return changed
 	}
@@ -951,7 +978,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	bonusFor(featureID: string, tooltip: TooltipGURPS | undefined): number {
 		let total = 0
 		for (const feature of this.featureMap?.get(featureID.toLowerCase()) ?? []) {
-			if (!(feature instanceof WeaponBonus)) {
+			if (!(feature instanceof WeaponDamageBonus)) {
 				total += feature.adjustedAmount
 				feature.addToTooltip(tooltip)
 			}
@@ -1071,17 +1098,17 @@ class CharacterGURPS extends BaseActorGURPS {
 		return best
 	}
 
-	addWeaponComparedDamageBonusesFor(
+	addWeaponComparedBonusesFor(
 		featureID: string,
 		nameQualifier: string,
 		specializationQualifier: string,
 		tagsQualifier: string[],
 		dieCount: number,
 		tooltip: TooltipGURPS | undefined,
-		m: Map<WeaponBonus, boolean>
-	): Map<WeaponBonus, boolean> {
+		m: Map<WeaponDamageBonus, boolean>
+	): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
 		if (!m) m = new Map()
-		for (const one of this.weaponComparedDamageBonusesFor(
+		for (const one of this.weaponComparedBonusesFor(
 			featureID,
 			nameQualifier,
 			specializationQualifier,
@@ -1094,17 +1121,17 @@ class CharacterGURPS extends BaseActorGURPS {
 		return m
 	}
 
-	addNamedWeaponDamageBonusesFor(
+	addNamedWeaponBonusesFor(
 		featureID: string,
 		nameQualifier: string,
 		usageQualifier: string,
 		tagsQualifier: string[],
 		dieCount: number,
 		tooltip: TooltipGURPS | undefined,
-		m: Map<WeaponBonus, boolean>
-	): Map<WeaponBonus, boolean> {
+		m: Map<WeaponDamageBonus, boolean>
+	): Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean> {
 		if (!m) m = new Map()
-		for (const one of this.namedWeaponDamageBonusesFor(
+		for (const one of this.namedWeaponBonusesFor(
 			featureID,
 			nameQualifier,
 			usageQualifier,
@@ -1117,27 +1144,27 @@ class CharacterGURPS extends BaseActorGURPS {
 		return m
 	}
 
-	namedWeaponDamageBonusesFor(
+	namedWeaponBonusesFor(
 		featureID: string,
 		nameQualifier: string,
 		usageQualifier: string,
 		tagsQualifier: string[],
 		dieCount: number,
 		tooltip: TooltipGURPS | undefined
-	): WeaponBonus[] {
+	): Array<WeaponDamageBonus | WeaponDRDivisorBonus> {
 		const list = this.featureMap.get(featureID.toLowerCase())
 		if (!list || list.length === 0) return []
-		const bonuses: WeaponBonus[] = []
+		const bonuses: WeaponDamageBonus[] = []
 		for (const f of list) {
 			if (
-				f instanceof WeaponBonus &&
+				(f instanceof WeaponDamageBonus || f instanceof WeaponDRDivisorBonus) &&
 				f.selection_type === "weapons_with_name" &&
 				stringCompare(nameQualifier, f.name) &&
 				stringCompare(usageQualifier, f.specialization) &&
 				stringCompare(tagsQualifier, f.tags)
 			) {
 				bonuses.push(f)
-				const level = f.levels
+				const level = f instanceof WeaponDamageBonus ? dieCount : f.levels
 				f.levels = dieCount
 				f.addToTooltip(tooltip)
 				f.levels = level
@@ -1171,22 +1198,22 @@ class CharacterGURPS extends BaseActorGURPS {
 		return bonuses
 	}
 
-	weaponComparedDamageBonusesFor(
+	weaponComparedBonusesFor(
 		featureID: string,
 		nameQualifier: string,
 		specializationQualifier: string,
 		tagsQualifier: string[],
 		dieCount: number,
 		tooltip: TooltipGURPS | undefined
-	): WeaponBonus[] {
+	): WeaponDamageBonus[] {
 		let rsl = -Infinity
 		for (const sk of this.skillNamed(nameQualifier, specializationQualifier, true, null)) {
 			if (rsl < sk.level.relative_level) rsl = sk.level.relative_level
 		}
 		if (rsl === -Infinity) return []
-		let bonuses: WeaponBonus[] = []
+		let bonuses: WeaponDamageBonus[] = []
 		for (const f of this.featureMap.get(featureID.toLowerCase()) ?? []) {
-			if (f instanceof WeaponBonus) {
+			if (f instanceof WeaponDamageBonus) {
 				if (
 					stringCompare(nameQualifier, f.name) &&
 					stringCompare(specializationQualifier, f.specialization) &&
@@ -1253,7 +1280,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			console.warn(`No such variable definition: $${variableName}`)
 			return ""
 		}
-		if (def.type === "pool" && parts.length > 1) {
+		if (def.type === AttributeType.Pool && parts.length > 1) {
 			switch (parts[1]) {
 				case "current":
 					return attr.current.toString()
@@ -1268,84 +1295,83 @@ class CharacterGURPS extends BaseActorGURPS {
 		return attr?.max.toString()
 	}
 
-	// Import from GCS
-	async importCharacter() {
-		const import_path = this.importData.path
-		const import_name = import_path.match(/.*[/\\]Data[/\\](.*)/)
-		if (import_name) {
-			const file_path = import_name[1].replace(/\\/g, "/")
-			const request = new XMLHttpRequest()
-			request.open("GET", file_path)
+	// 	// Import from GCS
+	// 	async importCharacter() {
+	// 		const import_path = this.importData.path
+	// 		const import_name = import_path.match(/.*[/\\]Data[/\\](.*)/)
+	// 		if (import_name) {
+	// 			const file_path = import_name[1].replace(/\\/g, "/")
+	// 			const request = new XMLHttpRequest()
+	// 			request.open("GET", file_path)
 
-			new Promise(resolve => {
-				request.onload = () => {
-					if (request.status === 200) {
-						const text = request.response
-						CharacterImporter.import(this, {
-							text: text,
-							name: import_name[1],
-							path: import_path,
-						})
-					} else this._openImportDialog()
-					resolve(this)
-				}
-			})
-			request.send(null)
-		} else this._openImportDialog()
-	}
+	// 			new Promise(resolve => {
+	// 				request.onload = () => {
+	// 					if (request.status === 200) {
+	// 						const text = request.response
+	// 						CharacterImporter.import(this, {
+	// 							text: text,
+	// 							name: import_name[1],
+	// 							path: import_path,
+	// 						})
+	// 					} else this._openImportDialog()
+	// 					resolve(this)
+	// 				}
+	// 			})
+	// 			request.send(null)
+	// 		} else this._openImportDialog()
+	// 	}
 
-	_openImportDialog() {
-		setTimeout(async () => {
-			new Dialog(
-				{
-					title: `Import character data for: ${this.name}`,
-					content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import.hbs`, {
-						name: `"${this.name}"`,
-					}),
-					buttons: {
-						import: {
-							icon: '<i class="fas fa-file-import"></i>',
-							label: "Import",
-							callback: html => {
-								const form = $(html).find("form")[0]
-								const files = form.data.files
-								if (!files.length) {
-									return ui.notifications?.error("You did not upload a data file!")
-								} else {
-									const file = files[0]
-									readTextFromFile(file).then(text =>
-										CharacterImporter.import(this, {
-											text: text,
-											name: file.name,
-											path: file.path,
-										})
-									)
-								}
-							},
-						},
-						no: {
-							icon: '<i class="fas fa-times"></i>',
-							label: "Cancel",
-						},
-					},
-					default: "import",
-				},
-				{
-					width: 400,
-				}
-			).render(true)
-		}, 200)
-	}
+	// 	_openImportDialog() {
+	// 		setTimeout(async () => {
+	// 			new Dialog(
+	// 				{
+	// 					title: `Import character data for: ${this.name}`,
+	// 					content: await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/import.hbs`, {
+	// 						name: `"${this.name}"`,
+	// 					}),
+	// 					buttons: {
+	// 						import: {
+	// 							icon: '<i class="fas fa-file-import"></i>',
+	// 							label: "Import",
+	// 							callback: html => {
+	// 								const form = $(html).find("form")[0]
+	// 								const files = form.data.files
+	// 								if (!files.length) {
+	// 									return ui.notifications?.error("You did not upload a data file!")
+	// 								} else {
+	// 									const file = files[0]
+	// 									readTextFromFile(file).then(text =>
+	// 										CharacterImporter.import(this, {
+	// 											text: text,
+	// 											name: file.name,
+	// 											path: file.path,
+	// 										})
+	// 									)
+	// 								}
+	// 							},
+	// 						},
+	// 						no: {
+	// 							icon: '<i class="fas fa-times"></i>',
+	// 							label: "Cancel",
+	// 						},
+	// 					},
+	// 					default: "import",
+	// 				},
+	// 				{
+	// 					width: 400,
+	// 				}
+	// 			).render(true)
+	// 		}, 200)
+	// 	}
 }
 
 /**
- *
  * @param _parent
  * @param m
  * @param f
  * @param levels
  */
-export function processFeature(_parent: any, m: Map<string, Feature[]>, f: Feature, levels: number): void {
+export function processFeature(_parent: ItemGURPS, m: Map<string, Feature[]>, f: Feature, levels: number): void {
 	// Const key = f.type;
 	const key = f.featureMapKey.toLowerCase()
 	const list = m.get(key) ?? []

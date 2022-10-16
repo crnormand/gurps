@@ -1,7 +1,8 @@
 <div class="roll">{{this.roll}}</div>
 <div class="location">{{tab}}{{this.where}}</div>
-<div class="penalty rollable">{{signed this.penalty}}</div>
-<div class="dr rollable">{{this.import}}{{#each this.split}}/{{this}}{{/each}}</div>
+<div data-modifier="{{ror this.penalty 0}}" data-comment="{{localize 'gurps.character.body_type.penalty_for' name=this.this.where}}"
+	data-type="modifier" class="penalty rollable">{{signed (ror this.penalty 0)}}</div>
+<div class="dr">{{this.import}}{{#each this.split}}/{{this}}{{/each}}</div>
 {{#if this.sub_table}}
 {{#each this.sub_table.location}}
 {{>actor/character/sections/hit-location tab=" "}}

@@ -110,7 +110,7 @@ export class TechniqueGURPS extends BaseItemGURPS {
 				if (sk) level = sk.calculateLevel.level
 			} else if (this.default) {
 				level =
-					(this.default?.skillLevelFast(this.actor, true, null, false) ?? 0) - (this.default?.modifier ?? 0)
+					(this.default?.skillLevelFast(this.actor, true, false, null) ?? 0) - (this.default?.modifier ?? 0)
 			}
 			if (level !== -Infinity) {
 				const base_level = level

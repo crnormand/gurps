@@ -1,6 +1,5 @@
 #attributes,
 #resource-trackers {
-	display: grid;
 	.points {
 		font: var(--font-page-secondary-fields);
 		color: rgba(var(--color-on-editable), 0.6);
@@ -53,6 +52,7 @@
 
 #attributes {
 	grid-area: attributes;
+	display: grid;
 	grid-template:
 		"primary-attributes secondary-attributes"
 		"basic-damage secondary-attributes"
@@ -82,6 +82,7 @@
 			.field:nth-child(6n-1),
 			.points:nth-child(6n-2) {
 				background-color: rgba(var(--color-banding), 1);
+				@import "embeds/roll_banding";
 			}
 			.field {
 				width: 6ch;

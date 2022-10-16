@@ -21,14 +21,15 @@ import { TraitModifierSystemData } from "@item/trait_modifier/data"
 import { TraitModifierContainerSystemData } from "@item/trait_modifier_container/data"
 import { AttributeObj } from "@module/attribute"
 import { AttributeDefObj } from "@module/attribute/attribute_def"
-import { CR } from "@module/data"
-import { SYSTEM_NAME } from "@module/settings"
+import { CR, DamageProgression } from "@module/data"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { BaseWeapon, Weapon } from "@module/weapon"
 import { BasePrereq, PrereqList } from "@prereq"
 import { i18n, i18n_f, newUUID, removeAccents } from "@util"
-import { CharacterDataGURPS, CharacterSystemData } from "./data"
+import { CharacterSystemData } from "./data"
 import { GCAImporter } from "./import_GCA"
+import { CharacterSheetGURPS } from "./sheet"
 
 export interface CharacterImportedData extends Omit<CharacterSystemData, "attributes"> {
 	traits: Array<TraitSystemData | TraitContainerSystemData>
@@ -68,7 +69,7 @@ export class CharacterImporter {
 			return this.throwImportError(errorMessages)
 		}
 
-		let commit: Partial<CharacterDataGURPS> = {}
+		let commit: Partial<CharacterSystemData> = {}
 		const imp = document.importData
 		imp.name = file.name ?? imp.name
 		imp.path = file.path ?? imp.path
@@ -110,6 +111,9 @@ export class CharacterImporter {
 				diff: false,
 				recursive: false,
 			})
+			if ((this.document.sheet as unknown as CharacterSheetGURPS)?.config !== null) {
+				;(this.document.sheet as unknown as CharacterSheetGURPS)?.config?.render(true)
+			}
 		} catch (err) {
 			console.error(err)
 			errorMessages.push(
@@ -178,7 +182,7 @@ export class CharacterImporter {
 	}
 
 	getPortraitPath(): string {
-		if ((game as Game).settings.get(SYSTEM_NAME, "portrait_path") === "global") return "images/portraits/"
+		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH) === "global") return "images/portraits/"
 		return `worlds/${(game as Game).world.id}/images/portraits`
 	}
 
@@ -187,6 +191,7 @@ export class CharacterImporter {
 		for (const att of settings.attributes as unknown as AttributeDefObj[]) {
 			attributes[att.id] = att
 		}
+		console.log(settings.show_spell_adj ?? false)
 		return {
 			"system.settings.default_length_units": settings.default_length_units ?? "ft_in",
 			"system.settings.default_weight_units": settings.default_weight_units ?? "lb",
@@ -196,13 +201,12 @@ export class CharacterImporter {
 			"system.settings.skill_level_adj_display": settings.skill_level_adj_display ?? "tooltip",
 			"system.settings.use_multiplicative_modifiers": settings.use_multiplicative_modifiers ?? false,
 			"system.settings.use_modifying_dice_plus_adds": settings.use_modifying_dice_plus_adds ?? false,
-			"system.settings.damage_progression": settings.damage_progression ?? "basic_set",
-			"system.settings.use_simple_metric_conversions": settings.use_simple_metric_conversions ?? true,
-			"system.settings.show_difficulty": settings.show_difficulty ?? true,
+			"system.settings.damage_progression": settings.damage_progression ?? DamageProgression.BasicSet,
 			"system.settings.show_trait_modifier_adj": settings.show_trait_modifier_adj ?? false,
 			"system.settings.show_equipment_modifier_adj": settings.show_equipment_modifier_adj ?? false,
-			"system.settings.show_spell_adj": settings.show_spell_adj ?? true,
+			"system.settings.show_spell_adj": settings.show_spell_adj ?? false,
 			"system.settings.use_title_in_footer": settings.use_title_in_footer ?? false,
+			"system.settings.exclude_unspent_points_from_total": settings.exclude_unspent_points_from_total ?? false,
 			"system.settings.page": settings.page,
 			"system.settings.block_layout": settings.block_layout,
 			"system.settings.attributes": attributes,
@@ -226,7 +230,6 @@ export class CharacterImporter {
 		for (const item of list) {
 			item.name = item.name ?? (item as any).description ?? (item as any).text
 			const id = randomID()
-			// Console.log(item.name);
 			const [itemData, itemFlags]: [ItemSystemDataGURPS, ItemFlagsGURPS] = this.getItemData(item, context)
 			const newItem = {
 				name: item.name ?? "ERROR",
@@ -332,6 +335,8 @@ export class CharacterImporter {
 				data = this.getNoteContainerData(item as NoteContainerSystemData)
 				flags[SYSTEM_NAME]!.contentsData = this.importItems((item as any).children, { container: true })
 				return [data, flags]
+			default:
+				throw new Error(i18n_f("gcsga.error.import.invalid_item_type", { type: item.type }))
 		}
 	}
 
@@ -346,6 +351,7 @@ export class CharacterImporter {
 			prereqs: data.prereqs ? new PrereqList(data.prereqs) : BasePrereq.list,
 			round_down: data.round_down ?? false,
 			disabled: data.disabled ?? false,
+			can_level: data.can_level ?? false,
 			levels: data.levels ?? 0,
 			base_points: data.base_points ?? 0,
 			points_per_level: data.points_per_level ?? 0,

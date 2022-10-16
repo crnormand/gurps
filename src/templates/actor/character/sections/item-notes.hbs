@@ -1,17 +1,26 @@
 <div class="item-notes">
-	{{#if (or (eq this.type "trait") (eq this.type "trait_container"))}}
-	{{#unless (eq this.cr 0)}}{{this.formattedCR}}<br>{{/unless}}
-	{{/if}}
-	{{#if (or (eq this.type "trait") (eq this.type "trait_container") (eq this.type "equipment") (eq this.type
-	"equipment_container"))}}
-	{{#each (enabledList this.modifiers)}}
-	{{#unless (eq @index 0)}}; {{/unless}}{{this.name}}{{#if this.notes}} ({{this.notes}}){{/if}}
-	{{/each}}
-	{{/if}}
-	{{{format this.notes}}}
-	{{#if (or (eq this.type "spell") (eq this.type "ritual_magic_spell"))}}
-	{{#if (and this.notes (spellValues this))}}<br>{{/if}}
-	{{{spellValues this}}}
-	{{/if}}
-	{{#if this.error}}{{>error}}{{/if}}
-</div>
+    {{#if (or (eq this.type "trait") (eq this.type "trait_container"))}}
+        {{#unless (eq this.cr 0)}}
+        <div data-uuid="{{ this.uuid }}"
+             data-type="control_roll"
+             class="cr rollable">{{ this.formattedCR }}</div>
+    {{/unless }}
+{{/if }}
+{{#if (or (eq this.type "trait") (eq this.type "trait_container") (eq this.type "equipment") (eq this.type
+    "equipment_container"))}}
+    {{#each (enabledList this.modifiers)}}
+        {{#unless (eq @index 0)}}; {{/unless }}{{ this.name }}
+        {{#if this.notes }}
+            ({{ this.notes }}){{/if }}
+        {{/each }}
+    {{/if }}
+    {{{ format this.notes }}}
+    {{#if (or (eq this.type "spell") (eq this.type "ritual_magic_spell"))}}
+        {{#if (and this.notes (spellValues this))}}
+            <br>
+        {{/if }}
+        {{{ spellValues this }}}
+    {{/if }}
+    {{#if this.error }}
+        {{>error }}{{/if }}
+    </div>

@@ -25,6 +25,7 @@ export interface TraitSystemData extends BaseContainerSystemData {
 	// exotic: boolean;
 	// supernatural: boolean;
 	levels: number
+	can_level: boolean
 	base_points: number
 	points_per_level: number
 	// Calc: {

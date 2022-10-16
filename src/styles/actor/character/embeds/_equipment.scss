@@ -6,7 +6,7 @@
 	}
 
 	.equipped {
-		min-height: 22px;
+		min-height: 16px;
 	}
 
 	.equipped:nth-child(22n + 1),
@@ -23,6 +23,7 @@
 		&:not(.header) {
 			background-color: rgba(var(--color-banding), 1);
 			color: rgba(var(--color-on-banding), 1);
+			@import "roll_banding";
 		}
 	}
 

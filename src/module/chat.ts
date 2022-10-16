@@ -67,7 +67,6 @@ async function _onRollClick(event: JQuery.ClickEvent) {
 		const item = await fromUuid($(event.currentTarget).data("uuid"))
 		const weapon = (item as any)?.weapons.get($(event.currentTarget).data("weapon"))
 		data.weapon = character.bestWeaponNamed(item?.name, weapon.usage, weapon.type, null)
-		// Console.log(weapon);
 	}
 	if ([RollType.Attribute].includes(type)) {
 		const attribute = character.attributes.get($(event.currentTarget).data("id"))
@@ -105,7 +104,7 @@ async function _onDamageRoll(event: JQuery.ClickEvent) {
 		data.item = actor!.deepItems.get($(event.currentTarget).data("item-id"))
 	if ([RollType.Damage, RollType.Attack].includes(type))
 		data.weapon = data.item.weapons.get($(event.currentTarget).data("attack-id"))
-	if (type == RollType.Modifier) {
+	if (type === RollType.Modifier) {
 		data.modifier = $(event.currentTarget).data("modifier")
 		data.comment = $(event.currentTarget).data("comment")
 	}

@@ -1,5 +1,3 @@
-import { signed } from "@util"
-
 export class CondMod {
 	constructor(source: string, from: string, amount: number) {
 		this.from = from
@@ -12,9 +10,8 @@ export class CondMod {
 		this.sources.push(source)
 	}
 
-	get total(): string {
-		const total = this.amounts.reduce((partialSum, a) => partialSum + a, 0)
-		return signed(total)
+	get total(): number {
+		return this.amounts.reduce((partialSum, a) => partialSum + a, 0)
 	}
 }
 

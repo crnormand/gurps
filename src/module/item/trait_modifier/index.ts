@@ -1,5 +1,5 @@
 import { BaseItemGURPS } from "@item/base"
-import { signed } from "@util"
+import { i18n, signed } from "@util"
 import { TraitModifierAffects, TraitModifierCostType, TraitModifierData } from "./data"
 
 export class TraitModifierGURPS extends BaseItemGURPS {
@@ -28,7 +28,7 @@ export class TraitModifierGURPS extends BaseItemGURPS {
 			}
 			base += "%"
 		} else if (this.costType === "points") base = signed(this.cost)
-		else if (this.costType === "multiplier") return `${this.costType}${this.cost}`
+		else if (this.costType === "multiplier") return `×${this.cost}`
 		return base
 	}
 

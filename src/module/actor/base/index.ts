@@ -7,7 +7,7 @@ import { ActorDataConstructorData } from "@league-of-foundry-developers/foundry-
 import { BaseUser } from "@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs"
 import { SYSTEM_NAME } from "@module/settings"
 import { ContainerGURPS, ItemGURPS } from "@item"
-import { ActorSystemData, BaseActorSourceGURPS } from "./data"
+import { ActorFlags, ActorSystemData, BaseActorSourceGURPS } from "./data"
 
 export interface ActorConstructorContextGURPS extends Context<TokenDocument> {
 	gurps?: {
@@ -20,6 +20,7 @@ class BaseActorGURPS extends Actor {
 	constructor(data: ActorSourceGURPS, context: ActorConstructorContextGURPS = {}) {
 		if (context.gurps?.ready) {
 			super(data, context)
+			this.noPrepare = true
 		} else {
 			mergeObject(context, { gurps: { ready: true } })
 			const ActorConstructor = (CONFIG as any).GURPS.Actor.documentClasses[data.type]
@@ -72,10 +73,33 @@ class BaseActorGURPS extends Actor {
 			})
 		)
 	}
+
+	get sizeMod(): number {
+		return 0
+	}
+
+	prepareDerivedData(): void {
+		super.prepareDerivedData()
+		// @ts-ignore until foundry types v10
+		setProperty(this.flags, `${SYSTEM_NAME}.${ActorFlags.SelfModifiers}`, [])
+		// @ts-ignore until foundry types v10
+		setProperty(this.flags, `${SYSTEM_NAME}.${ActorFlags.TargetModifiers}`, [])
+
+		const sizemod = this.sizeMod
+		if (sizemod !== 0) {
+			// @ts-ignore until foundry types v10
+			this.flags[SYSTEM_NAME][ActorFlags.TargetModifiers].push({
+				name: "for Size Modifier",
+				modifier: sizemod,
+				tags: [],
+			})
+		}
+	}
 }
 
 interface BaseActorGURPS extends Actor {
 	// Readonly data: BaseActorDataGURPS;
+	noPrepare: boolean
 	deepItems: Collection<ItemGURPS>
 	// Temp
 	system: ActorSystemData

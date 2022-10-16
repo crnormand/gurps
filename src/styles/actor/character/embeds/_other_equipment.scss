@@ -20,31 +20,31 @@
 		}
 	}
 
-	.quantity,
-	.dropdown,
-	.desc,
-	.uses,
-	.tech-level,
-	.legality-class,
-	.weight,
-	.value,
-	.extended-weight,
-	.extended-value,
-	.reference {
-		border-right: 1px solid rgb(var(--color-divider));
-		&.reference {
-			border-right: none;
-		}
-		&:not(.header) {
-			border-bottom: 1px solid rgb(var(--color-header));
-			border-right: 1px solid rgb(var(--color-header));
-			&.refernce,
-			&.dropdown {
-				border-right: none;
-			}
-			&:nth-last-child(-n + 10) {
-				border-bottom: none;
-			}
-		}
-	}
+	// .quantity,
+	// .dropdown,
+	// .desc,
+	// .uses,
+	// .tech-level,
+	// .legality-class,
+	// .weight,
+	// .value,
+	// .extended-weight,
+	// .extended-value,
+	// .reference {
+	// 	border-right: 1px solid rgb(var(--color-divider));
+	// 	&.reference {
+	// 		border-right: none;
+	// 	}
+	// 	&:not(.header) {
+	// 		border-bottom: 1px solid rgb(var(--color-header));
+	// 		border-right: 1px solid rgb(var(--color-header));
+	// 		&.refernce,
+	// 		&.dropdown {
+	// 			border-right: none;
+	// 		}
+	// 		&:nth-last-child(-n + 10) {
+	// 			border-bottom: none;
+	// 		}
+	// 	}
+	// }
 }

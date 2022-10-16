@@ -55,7 +55,6 @@ export class ModifierBrowse extends Application {
 
 	_onMouseLeave(event: JQuery.MouseLeaveEvent) {
 		event.preventDefault()
-		console.log("mouseLeave")
 		this.showing = false
 		for (const c of this.categories) c.showing = false
 		this.catShowing = -1

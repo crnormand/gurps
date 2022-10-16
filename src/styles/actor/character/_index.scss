@@ -76,14 +76,38 @@
 		font: var(--font-page-primary-fields);
 	}
 
-	.rollable.hover {
-		background-color: rgba(var(--color-link), 1) !important;
-		color: rgba(var(--color-on-link), 1) !important;
-		cursor: pointer;
-		.input:disabled {
-			color: inherit;
-			cursor: inherit;
+	.rollable:not([data-type="modifier"]):not(.noroll) {
+		background: var(--background-roll);
+		color: rgb(var(--color-on-button-roll)) !important;
+		&.hover {
+			background: rgb(var(--color-button-roll-rollover)) !important;
+			color: rgb(var(--color-on-button-roll-rollover)) !important;
 		}
+		input {
+			color: inherit;
+		}
+	}
+
+	.rollable[data-type="modifier"]:not(.noroll) {
+		background: var(--background-mod);
+		color: rgb(var(--color-on-button-mod)) !important;
+		&.hover {
+			background: rgb(var(--color-button-mod-rollover)) !important;
+			color: rgb(var(--color-on-button-mod-rollover)) !important;
+		}
+		input {
+			color: inherit;
+		}
+	}
+
+	.rollable.hover {
+		// background-color: rgba(var(--color-link), 1) !important;
+		// color: rgba(var(--color-on-link), 1) !important;
+		cursor: pointer;
+		// .input:disabled {
+		// color: inherit;
+		// cursor: inherit;
+		// }
 	}
 
 	.input {
@@ -103,7 +127,39 @@
 		&:disabled {
 			border-bottom-color: transparent;
 			background-color: transparent;
-			color: rgba(var(--color-on-editable), 0.6);
+			// color: rgba(var(--color-on-editable), 0.6);
+		}
+	}
+
+	select {
+		appearance: none;
+		// align-self: center;
+		font: var(--font-field);
+		// background-color: rgb(var(--color-control));
+		background-color: rgb(var(--color-editable));
+		color: rgb(var(--color-on-editable));
+		// color: rgb(var(--color-on-control));
+		border: none;
+		border-bottom: 1px solid rgb(var(--color-control-edge));
+		border-radius: 0;
+		padding: 0;
+		height: 17px;
+		// border: 1px solid rgb(var(--color-control-edge));
+		// padding: 1px 3px;
+		// border-radius: 3px;
+		// height: 24px;
+		width: max-content;
+		align-items: self-end;
+		option {
+			font: var(--font-system);
+			background-color: rgb(var(--color-control));
+			color: rgb(var(--color-on-control));
+			border: 1px solid rgb(var(--color-control-edge));
+		}
+		&:focus {
+			box-shadow: none;
+			// border-width: 2px;
+			// padding: 0px 2px;
 		}
 	}
 
@@ -138,6 +194,21 @@
 					text-shadow: none;
 				}
 			}
+		}
+	}
+}
+
+.deprecation {
+	padding: 5px;
+	display: flex;
+	justify-content: space-between;
+	background-color: rgb(var(--color-warning));
+	color: rgb(var(--color-on-warning));
+	font-weight: bold;
+	a {
+		align-self: center;
+		&:hover {
+			text-shadow: none;
 		}
 	}
 }

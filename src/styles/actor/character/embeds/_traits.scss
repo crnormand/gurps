@@ -12,12 +12,19 @@
 		&:not(.header) {
 			background-color: rgba(var(--color-banding), 1);
 			color: rgba(var(--color-on-banding), 1);
+			@import "roll_banding";
 			&.disabled {
 				.name,
 				.item-notes,
 				&.points,
 				&.reference {
 					color: rgba(var(--color-on-banding), 0.3);
+					.rollable,
+					.rollable.hover {
+						color: rgba(var(--color-on-banding), 0.3) !important;
+						background: transparent !important;
+						cursor: default;
+					}
 				}
 			}
 		}

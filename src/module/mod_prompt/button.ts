@@ -48,7 +48,7 @@ export class ModifierButton extends Application {
 
 	protected _injectHTML(html: JQuery<HTMLElement>): void {
 		if ($("body").find("#modifier-app").length === 0) {
-			html.insertAfter($("body").find("#hotbar-page-controls"))
+			html.insertAfter($("body").find("#hotbar"))
 			this._element = html
 		} else {
 			throw new Error(i18n("gurps.error.modifier_app_load_failed"))

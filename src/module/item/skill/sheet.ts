@@ -29,11 +29,15 @@ export class SkillSheet extends ItemSheetGURPS {
 	}
 
 	protected _updateObject(event: Event, formData: any): Promise<unknown> {
-		const attribute = formData.attribute ?? (this.item as SkillGURPS).attribute
-		const difficulty = formData.difficulty ?? (this.item as SkillGURPS).difficulty
+		const attribute = formData.attribute ?? this.item.attribute
+		const difficulty = formData.difficulty ?? this.item.difficulty
 		formData["system.difficulty"] = `${attribute}/${difficulty}`
 		delete formData.attribute
 		delete formData.difficulty
 		return super._updateObject(event, formData)
 	}
+}
+
+export interface SkillSheet extends ItemSheetGURPS {
+	object: SkillGURPS
 }

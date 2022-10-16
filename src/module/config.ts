@@ -1,4 +1,3 @@
-import { BaseActorGURPS } from "@actor"
 import { CharacterGURPS } from "@actor/character"
 import { StaticCharacterGURPS } from "@actor/static_character"
 import { AttributeBonus } from "@feature/attribute_bonus"
@@ -11,7 +10,8 @@ import { SkillBonus } from "@feature/skill_bonus"
 import { SkillPointBonus } from "@feature/skill_point_bonus"
 import { SpellBonus } from "@feature/spell_bonus"
 import { SpellPointBonus } from "@feature/spell_point_bonus"
-import { WeaponBonus } from "@feature/weapon_damage_bonus"
+import { WeaponDamageBonus } from "@feature/weapon_bonus"
+import { WeaponDRDivisorBonus } from "@feature/weapon_dr_divisor_bonus"
 import {
 	BaseItemGURPS,
 	ContainerGURPS,
@@ -32,6 +32,7 @@ import {
 	TraitModifierContainerGURPS,
 	TraitModifierGURPS,
 } from "@item"
+import { StaticItemGURPS } from "@item/static"
 import { AttributePrereq } from "@prereq/attribute_prereq"
 import { ContainedQuantityPrereq } from "@prereq/contained_quantity_prereq"
 import { ContainedWeightPrereq } from "@prereq/contained_weight_prereq"
@@ -65,6 +66,7 @@ const GURPSCONFIG: any = {
 			eqp_modifier_container: EquipmentModifierContainerGURPS,
 			note: NoteGURPS,
 			note_container: NoteContainerGURPS,
+			static_equipment: StaticItemGURPS,
 		},
 		allowedContents: {
 			trait: ["modifier", "modifier_container"],
@@ -127,7 +129,8 @@ const GURPSCONFIG: any = {
 			skill_point_bonus: SkillPointBonus,
 			spell_bonus: SpellBonus,
 			spell_point_bonus: SpellPointBonus,
-			weapon_bonus: WeaponBonus,
+			weapon_bonus: WeaponDamageBonus,
+			weapon_dr_divisor_bonus: WeaponDRDivisorBonus,
 			cost_reduction: CostReduction,
 			contained_weight_reduction: ContainedWeightReduction,
 		},
@@ -218,6 +221,7 @@ const GURPSCONFIG: any = {
 			spell_bonus: "gurps.select.features.spell_bonus",
 			spell_point_bonus: "gurps.select.features.spell_point_bonus",
 			weapon_bonus: "gurps.select.features.weapon_bonus",
+			weapon_dr_divisor_bonus: "gurps.select.features.weapon_dr_divisor_bonus",
 			cost_reduction: "gurps.select.features.cost_reduction",
 		},
 		features_eqc: {
@@ -344,6 +348,39 @@ const GURPSCONFIG: any = {
 			crouching: "gurps.select.postures.crouching",
 			sitting: "gurps.select.postures.sitting",
 			crawling: "gurps.select.postures.crawling",
+		},
+		damage_progression: {
+			basic_set: "gurps.select.damage_progression.basic_set",
+			knowing_your_own_strength: "gurps.select.damage_progression.knowing_your_own_strength",
+			no_school_grognard_damage: "gurps.select.damage_progression.no_school_grognard_damage",
+			thrust_equals_swing_minus_2: "gurps.select.damage_progression.thrust_equals_swing_minus_2",
+			swing_equals_thrust_plus_2: "gurps.select.damage_progression.swing_equals_thrust_plus_2",
+			phoenix_flame_d3: "gurps.select.damage_progression.phoenix_flame_d3",
+		},
+		default_length_units: {
+			ft_in: "gurps.select.default_length_units.ft_in",
+			in: "gurps.select.default_length_units.in",
+			ft: "gurps.select.default_length_units.ft",
+			yd: "gurps.select.default_length_units.yd",
+			mi: "gurps.select.default_length_units.mi",
+			cm: "gurps.select.default_length_units.cm",
+			km: "gurps.select.default_length_units.km",
+			m: "gurps.select.default_length_units.m",
+		},
+		default_weight_units: {
+			lb: "gurps.select.default_weight_units.lb",
+			lb_2: "gurps.select.default_weight_units.#",
+			oz: "gurps.select.default_weight_units.oz",
+			tn: "gurps.select.default_weight_units.tn",
+			t: "gurps.select.default_weight_units.t",
+			kg: "gurps.select.default_weight_units.kg",
+			g: "gurps.select.default_weight_units.g",
+		},
+		display: {
+			not_shown: "gurps.select.display.not_shown",
+			inline: "gurps.select.display.inline",
+			tooltip: "gurps.select.display.tooltip",
+			inline_and_tooltip: "gurps.select.display.inline_and_tooltip",
 		},
 	},
 }

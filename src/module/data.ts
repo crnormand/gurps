@@ -119,6 +119,7 @@ export enum RollType {
 	Attack = "attack",
 	Damage = "damage",
 	Modifier = "modifier",
+	ControlRoll = "control_roll",
 }
 
 export interface RollModifier {

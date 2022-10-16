@@ -1,5 +1,5 @@
 import { PDFViewerSheet } from "@module/pdf/sheet"
-import { SYSTEM_NAME } from "@module/settings"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { i18n } from "@util"
 
 export const SJG_links = {
@@ -76,7 +76,7 @@ export function openPDF(pdfs: string) {
 		}
 
 		if (book === "B") {
-			const s = (game as Game).settings.get(SYSTEM_NAME, "basic_set_pdf")
+			const s = (game as Game).settings.get(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF)
 			if (page > 336) {
 				if (s === "separate") {
 					book = "BX"
@@ -85,7 +85,6 @@ export function openPDF(pdfs: string) {
 			}
 		}
 
-		console.log(book)
 		let url = (SJG_links as any)[book]
 		if (!url) {
 			if (pdfs.includes("http")) url = pdfs
@@ -94,7 +93,7 @@ export function openPDF(pdfs: string) {
 		// Window.open(url, "_blank")
 		const pdfPages: any[] = []
 		;(game as Game).journal?.forEach(j => {
-			(j as any).pages.forEach((p: any) => {
+			;(j as any).pages.forEach((p: any) => {
 				if (p.type === "pdf") pdfPages.push(p)
 			})
 		})

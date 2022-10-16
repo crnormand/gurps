@@ -100,10 +100,8 @@ export class WeaponSheet extends FormApplication {
 	}
 
 	protected async _addDefault(event: JQuery.ClickEvent): Promise<any> {
-		console.log("_removeDefault", event)
 		const weapons = toArray(duplicate(getProperty(this.object, "system.weapons")))
 		const defaults = toArray(duplicate(getProperty(this.weapon, "defaults")))
-		console.log(weapons, defaults)
 		defaults.push({
 			type: "skill",
 			name: "",
@@ -113,23 +111,19 @@ export class WeaponSheet extends FormApplication {
 		const update: any = {}
 		this.weapon.defaults = defaults
 		weapons[this.index] = { ...this.weapon }
-		console.log(weapons)
 		update["system.weapons"] = weapons
 		await this.object.update(update)
 		return this.render(false, { action: "update", data: update } as any)
 	}
 
 	protected async _removeDefault(event: JQuery.ClickEvent): Promise<any> {
-		console.log("_removeDefault", event)
 		const index = $(event.currentTarget).data("index")
 		const weapons = toArray(duplicate(getProperty(this.object, "system.weapons")))
 		const defaults = toArray(duplicate(getProperty(this.weapon, "defaults")))
-		console.log(index, weapons, defaults)
 		defaults.splice(index, 1)
 		const update: any = {}
 		this.weapon.defaults = defaults
 		weapons[this.index] = { ...this.weapon }
-		console.log(weapons)
 		update["system.weapons"] = weapons
 		await this.object.update(update)
 		return this.render(false, { action: "update", data: update } as any)

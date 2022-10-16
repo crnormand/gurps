@@ -1,10 +1,22 @@
 import { CharacterProfile } from "@actor/character/data"
 import { i18n } from "@util"
-import { AttributeDefObj } from "./attribute/attribute_def"
+import { AttributeDefObj, AttributeType } from "./attribute/attribute_def"
 import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data"
 import { GURPS } from "./gurps"
 
 export const SYSTEM_NAME = "gcsga"
+export enum SETTINGS {
+	BASIC_SET_PDF = "basic_set_pdf",
+	PORTRAIT_PATH = "portrait_path",
+	PORTRAIT_OVERWRITE = "portrait_overwrite",
+	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
+	SHOW_TOKEN_MODIFIERS = "enable_token_modifier_window",
+	IGNORE_IMPORT_NAME = "ignore_import_name",
+	STATIC_IMPORT_HP_FP = "import_hp_fp",
+	STATIC_IMPORT_BODY_PLAN = "import_bodyplan",
+	STATIC_AUTOMATICALLY_SET_IGNOREQTY = "auto-ignore-qty",
+	MODIFIER_MODE = "modifier_mode",
+}
 
 /**
  *
@@ -13,7 +25,7 @@ export function registerSettings(): void {
 	// Register any custom system settings here
 	const g = game as Game
 
-	g.settings.register(SYSTEM_NAME, "basic_set_pdf", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.BASIC_SET_PDF, {
 		name: i18n("gurps.settings.basic_set_pdfs.name"),
 		hint: i18n("gurps.settings.basic_set_pdfs.hint"),
 		scope: "world",
@@ -27,7 +39,7 @@ export function registerSettings(): void {
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
-	g.settings.register(SYSTEM_NAME, "portrait_path", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH, {
 		name: i18n("gurps.settings.portrait_path.name"),
 		hint: i18n("gurps.settings.portrait_path.hint"),
 		scope: "world",
@@ -41,7 +53,7 @@ export function registerSettings(): void {
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
 	})
 
-	g.settings.register(SYSTEM_NAME, "portrait_overwrite", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_OVERWRITE, {
 		name: i18n("gurps.settings.portrait_overwrite.name"),
 		hint: i18n("gurps.settings.portrait_overwrite.hint"),
 		scope: "world",
@@ -50,7 +62,7 @@ export function registerSettings(): void {
 		default: true,
 	})
 
-	g.settings.register(SYSTEM_NAME, "compendiumBrowserPacks", {
+	g.settings.register(SYSTEM_NAME, SETTINGS.COMPENDIUM_BROWSER_PACKS, {
 		name: "placeholder",
 		hint: "placeholder",
 		default: "{}",
@@ -59,6 +71,60 @@ export function registerSettings(): void {
 		onChange: () => {
 			GURPS.CompendiumBrowser.loadSettings()
 		},
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_HP_FP, {
+		name: i18n("gurps.settings.import_hp_fp.name"),
+		hint: i18n("gurps.settings.import_hp_fp.hint"),
+		scope: "world",
+		config: true,
+		type: String,
+		choices: {
+			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
+			no: i18n("GURPS.settingImportHPAndFPIgnore"),
+			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+		},
+		default: "ask",
+		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.STATIC_IMPORT_BODY_PLAN, {
+		name: i18n("gurps.settings.import_body_plan.name"),
+		hint: i18n("gurps.settings.import_body_plan.hint"),
+		scope: "world",
+		config: true,
+		type: String,
+		choices: {
+			yes: i18n("GURPS.settingImportHPAndFPUseFile"),
+			no: i18n("GURPS.settingImportHPAndFPIgnore"),
+			ask: i18n("GURPS.settingImportHPAndFPAsk"),
+		},
+		default: "ask",
+		onChange: (value: string) => console.log(`Import of Body Plan : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.IGNORE_IMPORT_NAME, {
+		name: i18n("GURPS.settingImportIgnoreName"),
+		hint: i18n("GURPS.settingHintImportIgnoreName"),
+		scope: "world",
+		config: true,
+		type: Boolean,
+		default: false,
+		onChange: value => console.log(`Ignore import name : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.MODIFIER_MODE, {
+		name: i18n("gurps.settings.modifier_mode.name"),
+		hint: i18n("gurps.settings.modifier_mode.hint"),
+		scope: "client",
+		config: true,
+		type: String,
+		choices: {
+			bucket: i18n("gurps.settings.modifier_mode.choices.bucket"),
+			prompt: i18n("gurps.settings.modifier_mode.choices.prompt"),
+		},
+		default: "prompt",
+		onChange: (value: string) => console.log(`Modifier Mode: ${value}`),
 	})
 }
 
@@ -155,7 +221,7 @@ export const SETTINGS_TEMP: provider = {
 		attributes: {
 			st: {
 				id: "st",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "ST",
 				full_name: "Strength",
 				attribute_base: "10",
@@ -164,7 +230,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			dx: {
 				id: "dx",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "DX",
 				full_name: "Dexterity",
 				attribute_base: "10",
@@ -172,7 +238,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			iq: {
 				id: "iq",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "IQ",
 				full_name: "Intelligence",
 				attribute_base: "10",
@@ -180,7 +246,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			ht: {
 				id: "ht",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "HT",
 				full_name: "Health",
 				attribute_base: "10",
@@ -188,21 +254,21 @@ export const SETTINGS_TEMP: provider = {
 			},
 			will: {
 				id: "will",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Will",
 				attribute_base: "$iq",
 				cost_per_point: 5,
 			},
 			fright_check: {
 				id: "fright_check",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Fright Check",
 				attribute_base: "$will",
 				cost_per_point: 2,
 			},
 			per: {
 				id: "per",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Per",
 				full_name: "Perception",
 				attribute_base: "$iq",
@@ -210,49 +276,49 @@ export const SETTINGS_TEMP: provider = {
 			},
 			vision: {
 				id: "vision",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Vision",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			hearing: {
 				id: "hearing",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Hearing",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			taste_smell: {
 				id: "taste_smell",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Taste \u0026 Smell",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			touch: {
 				id: "touch",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Touch",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
 			basic_speed: {
 				id: "basic_speed",
-				type: "decimal",
+				type: AttributeType.Decimal,
 				name: "Basic Speed",
 				attribute_base: "($dx+$ht)/4",
 				cost_per_point: 20,
 			},
 			basic_move: {
 				id: "basic_move",
-				type: "integer",
+				type: AttributeType.Integer,
 				name: "Basic Move",
 				attribute_base: "floor($basic_speed)",
 				cost_per_point: 5,
 			},
 			fp: {
 				id: "fp",
-				type: "pool",
+				type: AttributeType.Pool,
 				name: "FP",
 				full_name: "Fatigue Points",
 				attribute_base: "$ht",
@@ -288,7 +354,7 @@ export const SETTINGS_TEMP: provider = {
 			},
 			hp: {
 				id: "hp",
-				type: "pool",
+				type: AttributeType.Pool,
 				name: "HP",
 				full_name: "Hit Points",
 				attribute_base: "$st",

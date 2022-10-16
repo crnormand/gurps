@@ -4,6 +4,7 @@
 	grid-template:
 		"encumbrance"
 		"lifting";
+	grid-template-rows: min-content min-content;
 	gap: var(--section-gap);
 
 	#encumbrance {
@@ -25,7 +26,9 @@
 			color: rgb(var(--color-on-content));
 		}
 		.level {
-			color: rgba(var(--color-on-content), 1);
+			&:not(.header) {
+				color: rgba(var(--color-on-content), 1);
+			}
 			font: var(--font-page-primary-labels);
 			text-align: left;
 		}
@@ -42,7 +45,7 @@
 		.level,
 		.max-load,
 		.move {
-			border-right: 1px solid rgba(var(--color-header), 1);
+			border-right: 1px solid rgb(var(--color-interior-divider));
 		}
 		> :not(.header) {
 			padding: var(--padding-standard);
@@ -68,26 +71,65 @@
 		}
 	}
 
-	#lifting {
+	#lifting-macros {
 		grid-area: lifting;
 		display: grid;
 		grid-template:
-			"header header"
-			"lift label";
-		grid-template-rows: 0fr;
-		.lift {
-			font: var(--font-page-primary-fields);
-			color: rgba(var(--color-on-editable), 0.6);
-			text-align: right;
-		}
-		.label {
-			font: var(--font-page-primary-labels);
-			color: rgba(var(--color-on-content), 1);
+			"header"
+			"content";
+
+		nav.header {
+			display: flex;
+			margin-top: 5px;
+			padding: 1px 0;
+			a {
+				display: flex;
+				justify-content: space-evenly;
+				flex-grow: 1;
+				// background-color: rgb(var(--color-control));
+				// color: rgb(var(--color-on-control));
+				padding: 0 4px;
+				border: 1px solid rgb(var(--color-control-edge));
+				&:hover {
+					text-shadow: none;
+				}
+				&.active {
+					background-color: rgb(var(--color-focused-tab));
+					color: rgb(var(--color-on-focused-tab));
+				}
+			}
 		}
 
-		.lift:nth-child(4n),
-		.label:nth-child(4n + 1) {
-			background-color: rgba(var(--color-banding), 1);
+		.tabs-content {
+			grid-area: content;
+		}
+
+		.tab {
+			min-height: 112px;
+			display: none;
+		}
+
+		.tab.active {
+			display: grid;
+		}
+
+		.tab.lifting {
+			grid-template-columns: auto auto;
+			grid-template-rows: 0fr;
+			.lift {
+				font: var(--font-page-primary-fields);
+				color: rgba(var(--color-on-editable), 0.6);
+				text-align: right;
+			}
+			.label {
+				font: var(--font-page-primary-labels);
+				color: rgba(var(--color-on-content), 1);
+			}
+
+			.lift:nth-child(4n + 1),
+			.label:nth-child(4n + 2) {
+				background-color: rgba(var(--color-banding), 1);
+			}
 		}
 	}
 }

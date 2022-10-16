@@ -1,0 +1,38 @@
+<form class="{{ cssClass }} gurps" autocomplete="off">
+    <div id="sheet">
+        <div id="details">
+            {{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String" }}
+            {{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes type="String"}}
+            {{>sections/input-text field="field" label="gurps.item.tech_level" name="system.tech_level"
+            data=system.tech_level type="String"}}
+            <div class="label">{{ localize "gurps.item.quantity" }}</div>
+            <div class="field no-stretch">
+                {{>sections/input-text field="field" name="NUMBER.system.quantity" data=system.quantity type="String" }}
+                {{#if document.actor }}
+                    <label class="label checkbox-label">
+                        <input class="input" type="checkbox" {{ checked system.equipped }} />
+                        {{ localize "gurps.item.equipped" }}
+                    </label>
+                {{/if }}
+            </div>
+            <div class="label">{{ localize "gurps.item.value" }}</div>
+            <div class="field no-stretch">
+                {{>sections/input-text name="NUMBER.system.eqt.cost" data=system.eqt.cost type="String" }}
+                <div class="label">{{ localize "gurps.item.extended_value" }}</div>
+                {{>sections/input-text data=system.eqt.costsum type="String" class="readonly tabIndex='-1'" }}
+            </div>
+            <div class="label">{{ localize "gurps.item.weight" }}</div>
+            <div class="field no-stretch">
+                {{>sections/input-text name="system.weight" data=document.weightString type="String" }}
+                <div class="label">{{ localize "gurps.item.extended_weight" }}</div>
+                {{>sections/input-text data=system.eqt.weightsum type="String" class="readonly tabIndex='-1'" }}
+            </div>
+            <div class="label">{{ localize "gurps.item.uses" }}</div>
+            <div class="field no-stretch">
+                {{>sections/input-text name="NUMBER.system.eqt.uses" data=system.eqt.uses type="String"}}
+            </div>
+            {{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
+            data=system.reference type="String"}}
+        </div>
+    </div>
+</form>

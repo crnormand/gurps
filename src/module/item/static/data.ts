@@ -1,6 +1,6 @@
 import { BaseItemSourceGURPS, ItemSystemData } from "@item/base/data"
 
-export type StaticItemSource = BaseItemSourceGURPS<"note", StaticItemSystemData>
+export type StaticItemSource = BaseItemSourceGURPS<"static_equipment", StaticItemSystemData>
 
 // Export class StaticItemData extends BaseItemDataGURPS<StaticItemGURPS> {}
 
@@ -31,7 +31,10 @@ export interface StaticItemSystemData extends ItemSystemData {
 		maxuses: number
 		parentuuid: string
 		uuid: string
+		itemid: string
+		gloablid: string
 		contains: any
+		img: string | null
 	}
 	melee: any
 	ranged: any
@@ -42,4 +45,5 @@ export interface StaticItemSystemData extends ItemSystemData {
 	equipped: boolean
 	carried: boolean
 	globalid: string
+	uuid: string
 }

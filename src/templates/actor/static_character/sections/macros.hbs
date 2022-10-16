@@ -1,3 +1,8 @@
-<div class="header">{{localize "gurps.character.macros.title"}}</div>
-<div class="fieldblock3">
+<div class="tab macros" data-group="lifting" data-tab="macros">
+	{{#unless document.macros}}
+		<a class="add-macro">{{localize "gurps.character.macros.add"}}</a>
+	{{/unless}}
+	{{#each document.macros}}
+		<div class="macro" data-macro="{{@index}}">{{this.name}}</div>
+	{{/each}}
 </div>

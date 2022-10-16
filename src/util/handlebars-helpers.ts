@@ -1,7 +1,11 @@
 import { CharacterGURPS } from "@actor"
 import { Encumbrance } from "@actor/character/data"
 import { StaticSpell } from "@actor/static_character/components"
-import { StaticCharacterSystemData } from "@actor/static_character/data"
+import {
+	StaticCharacterSystemData,
+	StaticResourceTracker,
+	StaticThresholdComparison,
+} from "@actor/static_character/data"
 import { SpellGURPS } from "@item"
 import { staticFpConditions, staticHpConditions } from "@module/constants"
 import { DiceGURPS } from "@module/dice"
@@ -12,7 +16,7 @@ import { i18n } from "./misc"
  *
  */
 export function registerHandlebarsHelpers() {
-	Handlebars.registerHelper("concat", function(...args) {
+	Handlebars.registerHelper("concat", function (...args) {
 		let outStr = ""
 		for (const arg of args) {
 			if (typeof arg !== "object") outStr += arg
@@ -20,7 +24,7 @@ export function registerHandlebarsHelpers() {
 		return outStr
 	})
 
-	Handlebars.registerHelper("camelcase", function(s) {
+	Handlebars.registerHelper("camelcase", function (s) {
 		let n = ""
 		for (const word of s.split(" ")) {
 			n = `${n}<span class="first-letter">${word.substring(0, 1)}</span>${word.substring(1)} `
@@ -28,19 +32,19 @@ export function registerHandlebarsHelpers() {
 		return n
 	})
 
-	Handlebars.registerHelper("input_lock", function(b: boolean) {
+	Handlebars.registerHelper("input_lock", function (b: boolean) {
 		return b ? "" : "disabled"
 	})
 
-	Handlebars.registerHelper("signed", function(n: number) {
+	Handlebars.registerHelper("signed", function (n: number) {
 		return n >= 0 ? `+${n}` : `${String(n).replace("-", "−")}`
 	})
 
-	Handlebars.registerHelper("abs", function(n: number) {
+	Handlebars.registerHelper("abs", function (n: number) {
 		return Math.abs(n)
 	})
 
-	Handlebars.registerHelper("or", function(...args) {
+	Handlebars.registerHelper("or", function (...args) {
 		let val = false
 		for (const arg of args) {
 			if (arg && typeof arg !== "object") val = true
@@ -50,14 +54,14 @@ export function registerHandlebarsHelpers() {
 	})
 
 	// Return first argument which has a value
-	Handlebars.registerHelper("ror", function(...args) {
+	Handlebars.registerHelper("ror", function (...args) {
 		for (const arg of args) {
-			if (typeof arg !== "undefined") return arg
+			if (arg !== undefined) return arg
 		}
 		return ""
 	})
 
-	Handlebars.registerHelper("and", function(...args) {
+	Handlebars.registerHelper("and", function (...args) {
 		let val = true
 		for (const arg of args) {
 			if (!arg && typeof arg !== "object") val = false
@@ -65,19 +69,19 @@ export function registerHandlebarsHelpers() {
 		return val
 	})
 
-	Handlebars.registerHelper("eq", function(a, b) {
+	Handlebars.registerHelper("eq", function (a, b) {
 		return a === b
 	})
 
-	Handlebars.registerHelper("neq", function(a, b) {
+	Handlebars.registerHelper("neq", function (a, b) {
 		return a !== b
 	})
 
-	Handlebars.registerHelper("gt", function(a, b) {
+	Handlebars.registerHelper("gt", function (a, b) {
 		return a > b
 	})
 
-	Handlebars.registerHelper("sum", function(...args) {
+	Handlebars.registerHelper("sum", function (...args) {
 		const arr: number[] = []
 		for (const arg of args) {
 			if (parseInt(arg)) arr.push(arg)
@@ -85,16 +89,16 @@ export function registerHandlebarsHelpers() {
 		return arr.reduce((a, b) => a + b, 0)
 	})
 
-	Handlebars.registerHelper("enabledList", function(a: any[]) {
+	Handlebars.registerHelper("enabledList", function (a: any[]) {
 		return a.filter(e => !e.system.disabled)
 	})
 
-	Handlebars.registerHelper("notEmpty", function(a: any[] | any) {
+	Handlebars.registerHelper("notEmpty", function (a: any[] | any) {
 		if (Array.isArray(a)) return !!a?.length
 		return a ? Object.values(a).length > 0 : false
 	})
 
-	Handlebars.registerHelper("blockLayout", function(a: Array<string>, items: any) {
+	Handlebars.registerHelper("blockLayout", function (a: Array<string>, items: any) {
 		if (!a) return ""
 		let outStr = ""
 		let line_length = 2
@@ -110,20 +114,20 @@ export function registerHandlebarsHelpers() {
 		return outStr
 	})
 
-	Handlebars.registerHelper("json", function(a: any) {
+	Handlebars.registerHelper("json", function (a: any) {
 		return JSON.stringify(a)
 	})
 
-	Handlebars.registerHelper("not", function(a: any) {
+	Handlebars.registerHelper("not", function (a: any) {
 		return !a
 	})
 
-	Handlebars.registerHelper("join", function(a: any[], s: string): string {
+	Handlebars.registerHelper("join", function (a: any[], s: string): string {
 		if (!a || !a.length) return ""
 		return a.join(s)
 	})
 
-	Handlebars.registerHelper("arr", function(...args) {
+	Handlebars.registerHelper("arr", function (...args) {
 		const outArr: any[] = []
 		for (const arg of args) {
 			if (arg && typeof arg !== "object") outArr.push(arg)
@@ -132,7 +136,7 @@ export function registerHandlebarsHelpers() {
 	})
 
 	// TODO: change to variable init and step
-	Handlebars.registerHelper("indent", function(i: number): string {
+	Handlebars.registerHelper("indent", function (i: number): string {
 		const init = -6
 		const step = 12
 		let sum = init
@@ -140,7 +144,7 @@ export function registerHandlebarsHelpers() {
 		return `style="padding-left: ${sum}px;"`
 	})
 
-	Handlebars.registerHelper("spellValues", function(i: SpellGURPS): string {
+	Handlebars.registerHelper("spellValues", function (i: SpellGURPS): string {
 		const values = {
 			resist: i.system.resist,
 			spell_class: i.system.spell_class,
@@ -156,20 +160,20 @@ export function registerHandlebarsHelpers() {
 		return list.join("; ")
 	})
 
-	Handlebars.registerHelper("disabled", function(a: boolean): string {
+	Handlebars.registerHelper("disabled", function (a: boolean): string {
 		if (a) return "disabled"
 		return ""
 	})
 
-	Handlebars.registerHelper("getMove", function(c: CharacterGURPS, level: Encumbrance): number {
+	Handlebars.registerHelper("getMove", function (c: CharacterGURPS, level: Encumbrance): number {
 		return c.move(level)
 	})
 
-	Handlebars.registerHelper("getDodge", function(c: CharacterGURPS, level: Encumbrance): number {
+	Handlebars.registerHelper("getDodge", function (c: CharacterGURPS, level: Encumbrance): number {
 		return c.dodge(level)
 	})
 
-	Handlebars.registerHelper("date", function(str: string): string {
+	Handlebars.registerHelper("date", function (str: string): string {
 		const date = new Date(str)
 		const options: any = {
 			dateStyle: "medium",
@@ -179,7 +183,7 @@ export function registerHandlebarsHelpers() {
 		return date.toLocaleString("en-US", options).replace(" at", ",")
 	})
 
-	Handlebars.registerHelper("length", function(...args: any[]): number {
+	Handlebars.registerHelper("length", function (...args: any[]): number {
 		let length = 0
 		for (const a of args) {
 			if ((typeof a === "number" || typeof a === "string") && `${a}`.length > length) length = `${a}`.length
@@ -187,16 +191,16 @@ export function registerHandlebarsHelpers() {
 		return length
 	})
 
-	Handlebars.registerHelper("print", function(a: any): any {
+	Handlebars.registerHelper("print", function (a: any): any {
 		console.log(a)
 		return ""
 	})
 
-	Handlebars.registerHelper("format", function(a: string): string {
+	Handlebars.registerHelper("format", function (a: string): string {
 		return (a ? a : "").replace(/\n/g, "<br>")
 	})
 
-	Handlebars.registerHelper("ref", function(a: string): string {
+	Handlebars.registerHelper("ref", function (a: string): string {
 		if (!a) return ""
 		if (a.includes("http")) return i18n("gurps.character.link")
 		return a
@@ -208,34 +212,46 @@ export function registerHandlebarsHelpers() {
 	// 	return "";
 	// });
 
-	Handlebars.registerHelper("in", function(total: string, sub: string): boolean {
+	Handlebars.registerHelper("in", function (total: string, sub: string): boolean {
 		if (!total) total = ""
 		return total.includes(sub)
 	})
 
 	// May be temporary
-	Handlebars.registerHelper("diceString", function(d: DiceGURPS): string {
+	Handlebars.registerHelper("diceString", function (d: DiceGURPS): string {
 		return new DiceGURPS(d).stringExtra(false)
 	})
 
-	Handlebars.registerHelper("sort", function(list: any[], key: string): any[] {
+	Handlebars.registerHelper("sort", function (list: any[], key: string): any[] {
 		return list.map(e => e).sort((a: any, b: any) => a[key] - b[key])
 	})
 
-	Handlebars.registerHelper("json", function(o: any): string {
+	Handlebars.registerHelper("json", function (o: any): string {
 		return JSON.stringify(o)
 	})
 
-	Handlebars.registerHelper("textareaFormat", function(s: string): string {
-		return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
+	Handlebars.registerHelper("splitDR", function (a: { [key: string]: number }): string {
+		let DR = ""
+		for (const i of Object.values(a)) {
+			DR += `${i}/`
+		}
+		DR = DR.substring(0, DR.length - 1)
+		return DR
+	})
+
+	Handlebars.registerHelper("textareaFormat", function (s: string | string[]): string {
+		if (typeof s === "string") return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
+		else {
+			return s.join("\r") || ""
+		}
 	})
 
 	// TODO: remove
-	Handlebars.registerHelper("rollable", function(value: any): string {
+	Handlebars.registerHelper("rollable", function (value: any): string {
 		return value ? "rollable" : ""
 	})
 
-	Handlebars.registerHelper("displayDecimal", function(num, options) {
+	Handlebars.registerHelper("displayDecimal", function (num, options) {
 		if (num != null) {
 			num = parseFloat(num.toString())
 
@@ -253,7 +269,7 @@ export function registerHandlebarsHelpers() {
 		} else return "" // Null or undefined
 	})
 
-	Handlebars.registerHelper("displayNumber", function(num, options) {
+	Handlebars.registerHelper("displayNumber", function (num, options) {
 		let showPlus = options.hash?.showPlus ?? false
 		if (num != null) {
 			if (parseInt(num) === 0) return showPlus ? "+0" : "0"
@@ -263,7 +279,7 @@ export function registerHandlebarsHelpers() {
 		} else return "" // Null or undefined
 	})
 
-	Handlebars.registerHelper("hpFpCondition", function(type: "HP" | "FP", value: any, attr: string) {
+	Handlebars.registerHelper("hpFpCondition", function (type: "HP" | "FP", value: any, attr: string) {
 		/**
 		 *
 		 * @param pts
@@ -303,15 +319,32 @@ export function registerHandlebarsHelpers() {
 		throw new Error(`hpFpCondition called with invalid type: [${type}]`)
 	})
 
-	Handlebars.registerHelper("optionSetStyle", function(boolean) {
+	Handlebars.registerHelper("resourceCondition", function (r: StaticResourceTracker): string {
+		// Let threshold = r.thresholds[0].condition
+		let threshold = ""
+		for (const t of r.thresholds) {
+			if (
+				(t.comparison === StaticThresholdComparison.LessThan && r.value < r.max * t.value) ||
+				(t.comparison === StaticThresholdComparison.LessThanOrEqual && r.value <= r.max * t.value) ||
+				(t.comparison === StaticThresholdComparison.GreaterThan && r.value > r.max * t.value) ||
+				(t.comparison === StaticThresholdComparison.GreaterThanOrEqual && r.value >= r.max * t.value)
+			) {
+				threshold = t.condition
+				break
+			}
+		}
+		return threshold
+	})
+
+	Handlebars.registerHelper("optionSetStyle", function (boolean) {
 		return boolean ? "buttonpulsatingred" : "buttongrey"
 	})
 
-	Handlebars.registerHelper("hpFpBreakpoints", function(type: "HP" | "FP", value: any, options: any) {
+	Handlebars.registerHelper("hpFpBreakpoints", function (type: "HP" | "FP", value: any, options: any) {
 		return []
 	})
 
-	Handlebars.registerHelper("inCombat", function(data) {
+	Handlebars.registerHelper("inCombat", function (data) {
 		if (data.actor && (game as Game).combats?.active) {
 			return (game as Game).combats?.active?.combatants.contents
 				.map(it => it.actor?.id)
@@ -321,34 +354,34 @@ export function registerHandlebarsHelpers() {
 		return false
 	})
 
-	Handlebars.registerHelper("select-if", function(value, expected) {
+	Handlebars.registerHelper("select-if", function (value, expected) {
 		return value === expected ? "selected" : ""
 	})
 
-	Handlebars.registerHelper("include-if", function(condition, iftrue, iffalse) {
+	Handlebars.registerHelper("include-if", function (condition, iftrue, iffalse) {
 		if (arguments.length === 3) iffalse = ""
 		return condition ? iftrue : iffalse
 	})
 
-	Handlebars.registerHelper("hitlocationroll", function() {
+	Handlebars.registerHelper("hitlocationroll", function () {
 		let data = {}
 		// Flatlist(context, 0, '', data, false)
 		return data
 	})
 
-	Handlebars.registerHelper("hitlocationpenalty", function() {
+	Handlebars.registerHelper("hitlocationpenalty", function () {
 		let data = {}
 		// Flatlist(context, 0, '', data, false)
 		return data
 	})
 
-	Handlebars.registerHelper("gmod", function() {
+	Handlebars.registerHelper("gmod", function () {
 		let data = {}
 		// Flatlist(context, 0, '', data, false)
 		return data
 	})
 
-	Handlebars.registerHelper("staticBlockLayout", function(system: StaticCharacterSystemData) {
+	Handlebars.registerHelper("staticBlockLayout", function (system: StaticCharacterSystemData) {
 		/**
 		 *
 		 * @param o
@@ -373,16 +406,17 @@ export function registerHandlebarsHelpers() {
 
 		if (notEmpty(system.equipment?.carried)) outAr.push("equipment equipment")
 		if (notEmpty(system.equipment?.other)) outAr.push("other_equipment other_equipment")
+		if (notEmpty(system.notes)) outAr.push("notes notes")
 		return `"${outAr.join('" "')}";`
 	})
 
-	Handlebars.registerHelper("flatlist", function(context) {
+	Handlebars.registerHelper("flatlist", function (context) {
 		let data = {}
 		Static.flatList(context, 0, "", data, false)
 		return data
 	})
 
-	Handlebars.registerHelper("staticSpellValues", function(i: StaticSpell): string {
+	Handlebars.registerHelper("staticSpellValues", function (i: StaticSpell): string {
 		const values = {
 			resist: i.resist,
 			spell_class: i.class,

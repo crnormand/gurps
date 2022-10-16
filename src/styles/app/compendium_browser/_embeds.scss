@@ -70,12 +70,11 @@
 	}
 
 	> div {
-		border-right: 1px solid rgb(var(--color-header));
-		border-bottom: 1px solid rgb(var(--color-header));
+		border-right: 1px solid rgb(var(--color-interior-divider));
+		border-bottom: 1px solid rgb(var(--color-interior-divider));
 
 		&.header {
 			border-bottom: none;
-			border-right: 1px solid rgb(var(--color-divider));
 		}
 
 		&.reference {

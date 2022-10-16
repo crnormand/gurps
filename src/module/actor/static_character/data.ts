@@ -44,18 +44,23 @@ type StaticCharacterFlags = ActorFlagsGURPS & {
 
 export interface StaticCharacterSystemData extends ActorSystemData {
 	editing: boolean
-	additionalresources: any
+	additionalresources: {
+		bodyplan: string
+		ignoreinputbodyplan: boolean
+		importname: string
+		importpath: string
+		tracker: {
+			[key: string]: StaticResourceTracker
+		}
+	}
+	hitlocations: any
+	lastImport: string
 	attributes: {
 		[key in StaticAttributeName]: StaticAttribute
 	}
-	pools: {
-		[key: string]: {
-			value: number
-			min: number
-			max: number
-			points: number
-		}
-	}
+	HP: StaticPoolValue
+	FP: StaticPoolValue
+	QP: StaticPoolValue
 	dodge: {
 		value: number
 		enc_level: number
@@ -88,14 +93,26 @@ export interface StaticCharacterSystemData extends ActorSystemData {
 	skills: any
 	spells: any
 	equipment: {
-		carried: any
-		other: any
+		carried?: any
+		other?: any
 	}
 	eqtsummary: number
 	melee: any
 	ranged: any
 	currentdodge: any
 	languages: any
+	liftingmoving: {
+		basiclift: string
+		carryonback: string
+		onehandedlift: string
+		runningshove: string
+		shiftslightly: string
+		shove: string
+		twohandedlift: string
+	}
+	notes: any
+	equippedparryisfencing?: boolean
+	block?: number
 }
 
 export enum StaticAttributeName {
@@ -106,6 +123,13 @@ export enum StaticAttributeName {
 	WILL = "WILL",
 	PER = "PER",
 	QN = "QN",
+}
+
+export interface StaticPoolValue {
+	value: number
+	min: number
+	max: number
+	points: number
 }
 
 export enum StaticSecondaryAttributeName {
@@ -121,4 +145,63 @@ export interface StaticAttribute {
 	value: number
 	points: number
 	dtype: "Number"
+}
+
+export interface StaticResourceTracker {
+	alias: string
+	initialValue: number
+	isDamageTracker: boolean
+	isDamageType: boolean
+	max: number
+	min: number
+	name: string
+	pdf: string
+	points: number
+	value: number
+	thresholds: StaticResourceThreshold[]
+}
+
+export interface StaticResourceThreshold {
+	color: string
+	comparison: StaticThresholdComparison
+	operator: StaticThresholdOperator
+	value: number
+	condition: string
+}
+
+export enum StaticThresholdComparison {
+	LessThan = "<",
+	GreaterThan = ">",
+	LessThanOrEqual = "≥",
+	GreaterThanOrEqual = "≤",
+}
+
+enum StaticThresholdOperator {
+	Add = "+",
+	Subtract = "−",
+	Multiply = "×",
+	Divide = "÷",
+}
+
+export class StaticEncumbrance {
+	key: string
+
+	level: number
+
+	dodge: number
+
+	weight: string
+
+	move: number
+
+	current: boolean
+
+	constructor() {
+		this.key = ""
+		this.level = 0
+		this.dodge = 9
+		this.weight = ""
+		this.move = 0
+		this.current = false
+	}
 }

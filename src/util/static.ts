@@ -1,5 +1,6 @@
 import { StaticCharacterGURPS } from "@actor/static_character"
 import { StaticAdvantage } from "@actor/static_character/components"
+import { StaticItemGURPS } from "@item/static"
 
 /**
  *
@@ -47,7 +48,7 @@ export function findAdDisad(actor: StaticCharacterGURPS, sname: string): StaticA
  * @param end
  * @param start
  */
-function makeRegexPatternFrom(text: string, end = true, start = true) {
+export function makeRegexPatternFrom(text: string, end = true, start = true) {
 	// Defaults to exact match
 	let pattern = text
 		.split("*")
@@ -157,7 +158,8 @@ export function flatList(
 		let item = context[key]
 		let display = true
 		if (actorToCheckEquipment) {
-			// If we have been given an actor, then check to see if the melee or ranged item is equipped in the inventory
+			// If we have been given an actor,
+			// then check to see if the melee or ranged item is equipped in the inventory
 			let checked = false
 			recurseList(actorToCheckEquipment.system.equipment.carried, e => {
 				// Check
@@ -190,4 +192,92 @@ export function flatList(
 			if (newItem.hasCollapsed) flatList(item.collapsed, level + 1, `${newKey}.collapsed.`, data, true)
 		}
 	}
+}
+
+/**
+ *
+ * @param actor
+ * @param path
+ * @param newobj
+ */
+export async function insertBeforeKey(actor: StaticCharacterGURPS, path: string, newobj: any) {
+	let i = path.lastIndexOf(".")
+	let objpath = path.substring(0, i)
+	let key = path.substring(i + 1)
+	i = objpath.lastIndexOf(".")
+	let parentpath = objpath.substring(0, i)
+	let objkey = objpath.substring(i + 1)
+	let object = getProperty(actor, objpath)
+	let t = `${parentpath}.-=${objkey}`
+	await actor.update({ [t]: null }) // Delete the whole object
+	let start = parseInt(key)
+
+	i = start + 1
+	while (object.hasOwnProperty(zeroFill(i))) i++
+	i = i - 1
+	for (let z = i; z >= start; z--) {
+		object[zeroFill(z + 1)] = object[zeroFill(z)]
+	}
+	object[key] = newobj
+	let sorted = Object.keys(object)
+		.sort()
+		.reduce((a, v) => {
+			// @ts-ignore
+			a[v] = object[v]
+			return a
+		}, {}) // Enforced key order
+	await actor.update({ [objpath]: sorted }, { diff: false })
+}
+
+/**
+ * Convolutions to remove a key from an object and fill in the gaps, necessary
+ * because the default add behavior just looks for the first open gap
+ * @param {GurpsActor} actor
+ * @param {string} path
+ */
+export async function removeKey(actor: StaticCharacterGURPS | StaticItemGURPS, path: string) {
+	let i = path.lastIndexOf(".")
+	let objpath = path.substring(0, i)
+	let key = path.substring(i + 1)
+	i = objpath.lastIndexOf(".")
+	let parentpath = objpath.substring(0, i)
+	let objkey = objpath.substring(i + 1)
+	let object = decode(actor, objpath)
+	let t = `${parentpath}.-=${objkey}`
+	await actor.update({ [t]: null }) // Delete the whole object
+	delete object[key]
+	i = parseInt(key)
+
+	i = i + 1
+	while (object.hasOwnProperty(zeroFill(i))) {
+		let k = zeroFill(i)
+		object[key] = object[k]
+		delete object[k]
+		key = k
+		i++
+	}
+	let sorted = Object.keys(object)
+		.sort()
+		.reduce((a: any, v) => {
+			a[v] = object[v]
+			return a
+		}, {}) // Enforced key order
+	await actor.update({ [objpath]: sorted }, { diff: false, render: false })
+}
+
+/**
+ *
+ * @param obj
+ * @param path
+ * @param all
+ */
+export function decode(obj: any, path: string, all = true) {
+	let p = path.split(".")
+	let end = p.length
+	if (!all) end = end - 1
+	for (let i = 0; i < end; i++) {
+		let q = p[i]
+		obj = obj[q]
+	}
+	return obj
 }

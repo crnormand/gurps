@@ -1,0 +1,15 @@
+<div class="searchbar">
+    <input name="searchQuery" class="input" value="{{filterData.searchQuery}}" data-dtype="String" placeholder={{localize "gurps.compendium_browser.search" }} />
+    <select name="tagFilter" data-dtype="String">
+        {{#select filterData.tagFilter}}
+        <option value="any_tag">
+            {{localize "gurps.compendium_browser.any_tag"}}
+        </option>
+        {{#each tagList }}
+            <option value="{{this}}">
+                {{this}}
+            </option>
+        {{/each}}
+    {{/select}}
+</select>
+</div>

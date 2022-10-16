@@ -42,12 +42,11 @@
 	}
 
 	> div > div {
-		border-right: 1px solid rgb(var(--color-header));
-		border-bottom: 1px solid rgb(var(--color-header));
+		border-right: 1px solid rgb(var(--color-interior-divider));
+		border-bottom: 1px solid rgb(var(--color-interior-divider));
 
 		&.header {
 			border-bottom: none;
-			border-right: 1px solid rgb(var(--color-divider));
 		}
 
 		&.st,
@@ -113,7 +112,8 @@
 		color: rgba(var(--color-on-content), 1);
 		font: var(--font-page-primary-fields);
 	}
-	.item-notes {
+	.item-notes,
+	.item-notes > div {
 		font: var(--font-page-secondary-fields);
 		background-color: transparent;
 		overflow-x: hidden;

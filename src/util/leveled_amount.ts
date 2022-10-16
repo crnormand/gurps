@@ -11,8 +11,15 @@ export class LeveledAmount {
 		if (data) Object.assign(this, data)
 	}
 
-	get formatWithLevel(): string {
-		return this.format(i18n("gurps.feature.level"))
+	formatWithLevel(asPercentage: boolean, what: string = i18n("gurps.feature.level")): string {
+		let amt = signed(this.amount)
+		if (asPercentage) amt += "%"
+		if (this.per_level) {
+			let leveled = signed(this.adjustedAmount)
+			if (asPercentage) leveled += "%"
+			return i18n_f("gurps.feature.per_level_text", { leveled: leveled, amt: amt, what: what })
+		}
+		return amt
 	}
 
 	format(what: string): string {
@@ -39,6 +46,4 @@ export interface LeveledAmount {
 	level: number
 	amount: number
 	per_level: boolean
-
-	formatWithLevel: string
 }

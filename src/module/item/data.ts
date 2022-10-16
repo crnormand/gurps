@@ -85,6 +85,7 @@ export type ItemType =
 	| "eqp_modifier_container"
 	| "note"
 	| "note_container"
+	| "static_equipment"
 
 // Export type ContainerType =
 // 	| "trait"

@@ -75,7 +75,7 @@ class BaseWeapon {
 			this.skillLevelBaseAdjustment(actor, primaryTooltip) + this.skillLevelPostAdjustment(actor, primaryTooltip)
 		let best = -Infinity
 		for (const def of this.defaults) {
-			let level = def.skillLevelFast(actor, false, null, true)
+			let level = def.skillLevelFast(actor, false, true, null)
 			if (level !== -Infinity) {
 				level += adj
 				if (best < level) best = level
@@ -216,7 +216,7 @@ class BaseWeapon {
 						else adj += actor.blockBonus
 						let best = -Infinity
 						for (const def of this.defaults) {
-							let level = def.skillLevelFast(actor, false, null, true)
+							let level = def.skillLevelFast(actor, false, true, null)
 							if (level === -Infinity) continue
 							level += preAdj
 							if (baseDefaultType !== def.type) Math.trunc((level = level / 2 + adj))

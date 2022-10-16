@@ -5,79 +5,82 @@
 	<div class="header move">{{localize "gurps.character.encumbrance.move"}}</div>
 	<div class="header dodge">{{localize "gurps.character.encumbrance.dodge"}}</div>
 	{{#each system.encumbrance}}
-	{{#if this.current}}
-	<div class="encumbrance-marker active"><i class="gcs-weight"></i></div>
-	<div class="level-number active">{{this.level}}</div>
-	<div class="level active">{{localize (concat "gurps.static.encumbrance." this.key)}}</div>
-	<div class="max-load active">{{this.weight}}</div>
-	<div class="move active">{{this.move}}</div>
-	<div class="dodge active">{{this.dodge}}</div>
-	{{else}}
-	<div class="encumbrance-marker"></div>
-	<div class="level-number">{{this.level}}</div>
-	<div class="level">{{localize (concat "gurps.static.encumbrance." this.key)}}</div>
-	<div class="max-load">{{this.weight}}</div>
-	<div class="move">{{this.move}}</div>
-	<div class="dodge">{{this.dodge}}</div>
-	{{/if}}
+		{{#if this.current}}
+			<div class="encumbrance-marker active"><i class="gcs-weight"></i></div>
+			<div class="level-number active">{{this.level}}</div>
+			<div class="level active">{{localize (concat "gurps.static.encumbrance." this.key)}}</div>
+			<div class="max-load active">{{this.weight}}</div>
+			<div class="move active">{{this.move}}</div>
+			<div class="dodge active">{{this.dodge}}</div>
+		{{else}}
+			<div class="encumbrance-marker"></div>
+			<div class="level-number">{{this.level}}</div>
+			<div class="level">{{localize (concat "gurps.static.encumbrance." this.key)}}</div>
+			<div class="max-load">{{this.weight}}</div>
+			<div class="move">{{this.move}}</div>
+			<div class="dodge">{{this.dodge}}</div>
+		{{/if}}
 	{{/each}}
 </div>
 
-{{!-- <div id='encumbrance' class='gga-tableheader'> --}}
-	{{!-- <div class='header'> --}}
-		{{!-- {{#if isEditing}} --}}
-		{{!-- <div class='enchead'> --}}
-			{{!-- <span>{{localize 'GURPS.encumbranceMoveDodge'}}</span> --}}
-			{{!-- </div> --}}
-		{{!-- <div class='option'> --}}
-			{{!-- <input id='showflightmove' type='checkbox' {{checked system.additionalresources.showflightmove}} />
+{{! <div id='encumbrance' class='gga-tableheader'> }}
+{{! <div class='header'> }}
+{{!-- {{#if isEditing}} --}}
+{{! <div class='enchead'> }}
+{{!-- <span>{{localize 'GURPS.encumbranceMoveDodge'}}</span> --}}
+{{! </div> }}
+{{! <div class='option'> }}
+{{!-- <input id='showflightmove' type='checkbox' {{checked system.additionalresources.showflightmove}} />
 			--}}
-			{{!-- <label for='showflightmove'>{{localize "GURPS.showFlightMove"}}</label> --}}
-			{{!-- </div> --}}
-		{{!-- {{else}} --}}
-		{{!-- {{localize 'GURPS.encumbranceMoveDodge'}} --}}
-		{{!-- {{/if}} --}}
-		{{!-- </div> --}}
+{{!-- <label for='showflightmove'>{{localize "GURPS.showFlightMove"}}</label> --}}
+{{! </div> }}
+{{!-- {{else}} --}}
+{{!-- {{localize 'GURPS.encumbranceMoveDodge'}} --}}
+{{!-- {{/if}} --}}
+{{! </div> }}
 
-	{{!-- <div class='encmarker header'></div> --}}
-	{{!-- <div class='enc header'>{{localize 'GURPS.level'}}</div> --}}
-	{{!-- <div class='load header'>{{localize 'GURPS.maxload'}}</div> --}}
-	{{!-- <div class='move header'>{{localize 'GURPS.move'}}</div> --}}
-	{{!-- <div class='dodge header'>{{localize 'GURPS.dodge'}}</div> --}}
+{{! <div class='encmarker header'></div> }}
+{{!-- <div class='enc header'>{{localize 'GURPS.level'}}</div> --}}
+{{!-- <div class='load header'>{{localize 'GURPS.maxload'}}</div> --}}
+{{!-- <div class='move header'>{{localize 'GURPS.move'}}</div> --}}
+{{!-- <div class='dodge header'>{{localize 'GURPS.dodge'}}</div> --}}
 
-	{{!-- {{#each system.encumbrance}} --}}
-	{{!-- <div class='encmarker {{include-if current ' current'}}'></div> --}}
-	{{!-- <div class='enc {{include-if current ' current'}} {{key}} {{include-if (not
-		(automaticEncumbrance)) 'clickable' }}' --}} {{!-- data-key='{{@key}}'></div> --}}
-	{{!-- <div class='load gga-right {{include-if current ' current'}}'> --}}
-		{{!-- {{#if ../isEditing}} --}}
-		{{!-- <input name='system.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' /> --}}
-		{{!-- {{else}} --}}
-		{{!-- {{displayDecimal weight number=1 removeZeros=true }} --}}
-		{{!-- {{/if}} --}}
-		{{!-- </div> --}}
-	{{!-- <div class='move flex-center {{include-if current ' current'}}'> --}}
-		{{!-- {{#if ../isEditing}} --}}
-		{{!-- <input name='system.encumbrance.{{@key}}.move' class='gcs-input' type='text' value='{{move}}' /> --}}
-		{{!-- {{else}} --}}
-		{{!-- {{currentmovedisplay}} --}}
-		{{!-- {{/if}} --}}
-		{{!-- </div> --}}
-	{{!-- {{#if ../isEditing}} --}}
-	{{!-- <div class='dodge flex-center {{include-if current ' current'}}'> --}}
-		{{!-- <input name='system.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{dodge}}' /> --}}
-		{{!-- </div> --}}
-	{{!-- {{else}} --}}
-	{{!-- <div class='dodge flex-center {{include-if current ' current'}}' data-path='dodge'> --}}
-		{{!-- <span class="flex-center {{include-if current 'rollable'}}" {{#if current}}data-otf='Dodge' --}} {{!--
+{{!-- {{#each system.encumbrance}} --}}
+{{!-- <div class='encmarker {{include-if current ' current'}}'></div> --}}
+{{!-- <div class='enc {{include-if current ' current'}} {{key}} {{include-if (not
+		(automaticEncumbrance)) 'clickable' }}' --}}
+{{!-- data-key='{{@key}}'></div> --}}
+{{!-- <div class='load gga-right {{include-if current ' current'}}'> --}}
+{{!-- {{#if ../isEditing}} --}}
+{{!-- <input name='system.encumbrance.{{@key}}.weight' class='gcs-input' type='text' value='{{weight}}' /> --}}
+{{!-- {{else}} --}}
+{{!-- {{displayDecimal weight number=1 removeZeros=true }} --}}
+{{!-- {{/if}} --}}
+{{! </div> }}
+{{!-- <div class='move flex-center {{include-if current ' current'}}'> --}}
+{{!-- {{#if ../isEditing}} --}}
+{{!-- <input name='system.encumbrance.{{@key}}.move' class='gcs-input' type='text' value='{{move}}' /> --}}
+{{!-- {{else}} --}}
+{{!-- {{currentmovedisplay}} --}}
+{{!-- {{/if}} --}}
+{{! </div> }}
+{{!-- {{#if ../isEditing}} --}}
+{{!-- <div class='dodge flex-center {{include-if current ' current'}}'> --}}
+{{!-- <input name='system.encumbrance.{{@key}}.dodge' class='gcs-input' type='text' value='{{dodge}}' /> --}}
+{{! </div> }}
+{{!-- {{else}} --}}
+{{!-- <div class='dodge flex-center {{include-if current ' current'}}' data-path='dodge'> --}}
+{{!-- <span class="flex-center {{include-if current 'rollable'}}" {{#if current}}data-otf='Dodge' --}}
+{{!--
 			{{/if}}>{{currentdodge}}</span> --}}
-		{{!-- {{#if ../system.defenses.dodge.bonus}} --}}
-		{{!-- <span class="flex-center bonus {{include-if current 'rollable'}}" {{#if --}} {{!--
+{{!-- {{#if ../system.defenses.dodge.bonus}} --}}
+{{!-- <span class="flex-center bonus {{include-if current 'rollable'}}" {{#if --}}
+{{!--
 			current}}data-otf='Dodge {{{displayNumber ../system.defenses.dodge.bonus}}} DB' {{/if}}> --}}
-			{{!-- {{{displayNumber ../system.defenses.dodge.bonus}}}</span> --}}
-		{{!-- {{/if}} --}}
-		{{!-- </div> --}}
-	{{!-- {{/if}} --}}
-	{{!-- {{/each}} --}}
-	{{!--
-</div> --}}
+{{!-- {{{displayNumber ../system.defenses.dodge.bonus}}}</span> --}}
+{{!-- {{/if}} --}}
+{{! </div> }}
+{{!-- {{/if}} --}}
+{{!-- {{/each}} --}}
+{{!
+</div> }}

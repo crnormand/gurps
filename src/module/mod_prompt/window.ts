@@ -58,7 +58,7 @@ export class ModifierWindow extends Application {
 		// Const buttonTop = button.offset()?.top ?? 0; // might use position() depending on as yet unencountered issues
 		// const buttonLeft = button.offset()?.left ?? 0;
 		const buttonTop = button.position()?.top ?? 0
-		const buttonLeft = button.position()?.left + 220 ?? 0
+		const buttonLeft = (button.position()?.left || 0) + 220 ?? 0
 		let buttonWidth = parseFloat(button.css("width").replace("px", ""))
 		// Let width = parseFloat(html.find(".searchbar").css("width").replace("px", ""));
 		const width = 180
@@ -143,7 +143,7 @@ export class ModifierWindow extends Application {
 		} else {
 			pinnedMods.push(selectedMod)
 		}
-		(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
+		;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.ModifierPinned, pinnedMods)
 		this.list.render()
 	}
 

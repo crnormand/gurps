@@ -1,180 +1,36 @@
-<div class="equipped" data-uuid="{{this.uuid}}">{{#if this.equipped}}<i class="gcs-checkmark"></i>{{/if}}</div>
-<div class="quantity">{{this.count}}</div>
-<div class="desc item" data-uuid="{{this.uuid}}" style="padding-left: calc({{this.indent}} * 12px + 6px)">
-	<div class="dropdown">
-		{{#if this.hasContains}}
-		{{#if this.hasCollapsed}}
-		{{>actor/character/sections/dropdown-closed}}
-		{{else}}
-		{{>actor/character/sections/dropdown-open}}
-		{{/if}}
-		{{/if}}
-	</div>
-	<div class="name">
-		{{this.name}}
-	</div>
-	<div class="item-notes">
-		{{this.notes}}
-	</div>
+{{#unless this.isCollapsed}}
+<div class="equipped" data-key="system.equipment.carried.{{@key}}">
+    {{#if this.equipped }}
+        <i class="gcs-checkmark"></i>
+    {{/if }}
 </div>
-<div class="uses">{{#if (and this.uses this.maxuses)}}{{this.uses}}{{/if}}</div>
-<div class="tech-level">{{this.techlevel}}</div>
-<div class="legality-class">{{this.legalityclass}}</div>
-<div class="value">{{this.cost}}</div>
-<div class="weight">{{this.weight}}</div>
-<div class="extended-value">{{this.costsum}}</div>
-<div class="extended-weight">{{this.weightsum}}</div>
-<div class="reference" data-pdf="{{this.pageref}}">{{ref this.pageref}}</div>
-
-{{!-- <div id='equipment{{container}}' class='equipmentlist gga-table with-notes'> --}}
-	{{!-- <div class='itemmenu header' readonly></div> --}}
-	{{!-- <div class='equipped header'>{{#if (eq container 'carried')}}{{localize 'GURPS.equipmentEquipped'}}{{/if}}
-	</div> --}}
-	{{!-- <div class='qty header' data-key='system.equipment.{{container}}'> --}}
-		{{!-- {{localize 'GURPS.equipmentQuantity'}} --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='desc header eqtdragtarget' data-key='system.equipment.{{container}}'> --}}
-		{{!-- <div class='headermenu'> --}}
-			{{!-- <span> --}}
-				{{!-- {{#if (eq container 'carried')}} --}}
-				{{!-- {{localize "GURPS.equipmentCarried"}} --}}
-				{{!-- ({{toLocaleString eqtsummary.eqtlbs}} --}}
-				{{!-- lb; ${{toLocaleString eqtsummary.eqtcost}}) --}}
-				{{!-- {{else}} --}}
-				{{!-- {{localize "GURPS.equipmentOther"}} --}}
-				{{!-- (${{toLocaleString eqtsummary.othercost}}) --}}
-				{{!-- {{/if}} --}}
-				{{!-- </span> --}}
-			{{!-- <i class='fas fa-caret-square-down'></i> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='uses header'>{{localize 'GURPS.equipmentUses'}}</div> --}}
-	{{!-- <div class='cost header'>$</div> --}}
-	{{!-- <div class='weight header'><i class='fas fa-weight-hanging'></i></div> --}}
-	{{!-- <div class='sum_cost header'>&sum; $</div> --}}
-	{{!-- <div class='sum_weight header'><span>&sum; <i class='fas fa-weight-hanging'></i></span></div> --}}
-	{{!-- <div class='ref header'>{{localize 'GURPS.pdfRef'}}</div> --}}
-
-	{{!-- {{#each (flatlist (lookup system.equipment container)) }} --}}
-	{{!-- {{#if ../isEditing}} --}}
-	{{!-- <div class='itemmenu equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- <i class='fas fa-caret-square-down'></i> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='equipped changeequip' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- {{#if (eq container 'carried')}} --}}
-		{{!-- {{#if this.equipped}}&check;{{/if}} --}}
-		{{!-- {{/if}} --}}
-		{{!-- </div> --}}
-	{{!-- <div class='qty' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- <input name='system.equipment.{{../container}}.{{@key}}.count' class='gcs-input-sm3' type='text' --}}
-			{{!-- value='{{this.count}}' /> --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='desc indent{{indent}} ' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- <input name='system.equipment.{{../container}}.{{@key}}.name' class='gcs-input' type='text' --}} {{!--
-			value='{{this.name}}' /> --}}
-		{{!-- <div class='list_note'> --}}
-			{{!-- <input name='system.equipment.{{../container}}.{{@key}}.notes' class='gcs-input' type='text' --}}
-				{{!-- value='{{this.notes}}' /> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='uses' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- <input name='system.equipment.{{../container}}.{{@key}}.uses' class='gcs-input-sm3' type='text' --}} {{!--
-			value='{{this.uses}}' /> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='cost' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- <input name='system.equipment.{{../container}}.{{@key}}.cost' class='gcs-input-sm5' type='text' --}} {{!--
-			value='{{this.cost}}' /> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='weight' data-key='system.equipment.{{../container}}.{{@key}}'><input --}} {{!--
-			name='system.equipment.{{../container}}.{{@key}}.weight' class='gcs-input-sm5' type='text' --}} {{!--
-			value='{{this.weight}}' /> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='sum_cost' data-key='system.equipment.{{../container}}.{{@key}}'><input --}} {{!--
-			name='system.equipment.{{../container}}.{{@key}}.costsum' class='gcs-input-sm5' type='text' --}} {{!--
-			value='{{this.costsum}}' /> --}}
-		{{!-- </div> --}}
-	{{!-- <div class='sum_weight' data-key='system.equipment.{{../container}}.{{@key}}'><input --}} {{!--
-			name='system.equipment.{{../container}}.{{@key}}.weightsum' class='gcs-input-sm5' type='text' --}} {{!--
-			value='{{this.weightsum}}' /></div> --}}
-	{{!-- <div class='ref' data-key='system.equipment.{{../container}}.{{@key}}'><input --}} {{!--
-			name='system.equipment.{{../container}}.{{@key}}.pageref' class='gcs-input-sm5' type='text' --}} {{!--
-			value='{{this.pageref}}' /> --}}
-		{{!-- </div> --}}
-	{{!-- {{else}} --}}
-	{{!-- {{#unless isCollapsed}} --}}
-	{{!-- <div class='itemmenu' readonly></div> --}}
-	{{!-- <div class='equipped changeequip flex-center' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- {{#if (eq ../container 'carried')}} --}}
-		{{!-- {{#if this.equipped}} --}}
-		{{!-- <i class="fas fa-check-circle"></i> --}}
-		{{!-- {{else}} --}}
-		{{!-- <i class="far fa-circle gga-inactive"></i> --}}
-		{{!-- {{/if}} --}}
-		{{!-- {{/if}} --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='qty flex-center' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- <button class='equipmentbutton bold' data-operation='equipment-dec'>&minus;</button> --}}
-		{{!-- <span>{{this.count}}</span> --}}
-		{{!-- <button class='equipmentbutton' data-operation='equipment-inc'>+</button> --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='eqtdraggable equipmenu{{../container}}' data-key='system.equipment.{{../container}}.{{@key}}'>
-		--}}
-		{{!-- <div class='desc indent{{indent}} dblclkedit'> --}}
-			{{!-- <div class='gga-desc-text'> --}}
-				{{!-- <div> --}}
-					{{!-- {{#if hasContains}}<i class='fas fa-caret-down expandcollapseicon'></i>{{/if}} --}}
-					{{!-- {{#if hasCollapsed}}<i class='fas fa-caret-right expandcollapseicon'></i>{{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- <div class='tooltip gga-manual'> --}}
-					{{!-- {{{gurpslink this.name}}} --}}
-					{{!-- {{#if (displayItemHover this)}} --}}
-					{{!-- <div class='tooltiptext gga-manual'><img src='{{img}}' /></div> --}}
-					{{!-- {{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- <div> --}}
-					{{!-- {{#if (isUserCreated this)}} --}}
-					{{!-- <i class='fas fa-bookmark tooltip gga-usercreated'> --}}
-						{{!-- <span class='tooltiptext'>{{localize "GURPS.equipmentUserCreated"}}</span> --}}
-						{{!-- </i> --}}
-					{{!-- {{/if}} --}}
-					{{!-- {{#if (isFoundryItem this)}} --}}
-					{{!-- <i class='fas fa-star tooltip gga-item'> --}}
-						{{!-- <span class='tooltiptext'>{{localize "GURPS.equipmentFoundryItem"}}</span> --}}
-						{{!-- </i> --}}
-					{{!-- {{/if}} --}}
-					{{!-- {{#if (ignoreImportQty this)}} --}}
-					{{!-- <i class="fas fa-hashtag tooltip gga-ignoreimport"> --}}
-						{{!-- <span class='tooltiptext'>{{localize "GURPS.equipmentIgnoreQtyImport"}} </span> --}}
-						{{!-- </i> --}}
-					{{!-- {{/if}} --}}
-					{{!-- </div> --}}
-				{{!-- </div> --}}
-			{{!-- <div class='list_note'> --}}
-				{{!-- {{{gurpslinkbr this.notes}}} --}}
-				{{!-- </div> --}}
-			{{!-- </div> --}}
-		{{!-- </div> --}}
-
-	{{!-- <div class='uses flex-center' data-key='system.equipment.{{../container}}.{{@key}}'> --}}
-		{{!-- {{#if (or (gt this.maxuses 0) (ne this.uses '0'))}} --}}
-		{{!-- {{#if (isNum this.uses)}}<button class='equipmentbutton bold' data-operation='equipment-dec-uses' {{#if
-			(lt --}} {{!-- this.uses 1)}}disabled{{/if}}>&minus;</button>{{/if}} --}}
-		{{!-- <span>{{this.uses}}</span> --}}
-		{{!-- {{#if (isNum this.uses)}}<button class='equipmentbutton'
-			data-operation='equipment-inc-uses'>+</button>{{/if}} --}}
-		{{!-- {{/if}} --}}
-		{{!-- </div> --}}
-	{{!-- <div class='cost gga-right'>{{toLocaleString (toNumber this.cost)}}</div> --}}
-	{{!-- <div class='weight gga-right'>{{toLocaleString (toNumber this.weight)}} lb</div> --}}
-	{{!-- <div class='sum_cost gga-right'>{{toLocaleString (round this.costsum)}}</div> --}}
-	{{!-- <div class='sum_weight gga-right'>{{toLocaleString (round this.weightsum)}} lb</div> --}}
-	{{!-- <div class='ref flex-center'>{{{pdflinkext this}}}</div> --}}
-	{{!-- {{/unless}} --}}
-	{{!-- {{/if}} --}}
-	{{!-- {{/each}} --}}
-	{{!-- </div> --}}
+<div class="quantity">{{ this.count }}</div>
+<div class="desc item"
+     data-uuid="{{ this.uuid }}"
+     style="padding-left: calc({{ this.indent }} * 12px + 6px)">
+    <div class="dropdown">
+        {{#if this.hasContains }}
+            <i class="dropdown-toggle open gcs-circled-chevron-down"
+               data-key="system.equipment.carried.{{@key}}"></i>
+        {{/if}}
+        {{#if this.hasCollapsed }}
+            <i class="dropdown-toggle closed gcs-circled-chevron-right"
+               data-key="system.equipment.carried.{{@key}}"></i>
+        {{/if}}
+    </div>
+    <div class="name">{{ this.name }}</div>
+    <div class="item-notes">{{ this.notes }}</div>
+</div>
+<div class="uses">
+    {{#if (and this.uses this.maxuses) }}
+        {{ this.uses }}
+    {{/if }}
+</div>
+<div class="tech-level">{{ this.techlevel }}</div>
+<div class="legality-class">{{ this.legalityclass }}</div>
+<div class="value">{{ this.cost }}</div>
+<div class="weight">{{ this.weight }}</div>
+<div class="extended-value">{{ this.costsum }}</div>
+<div class="extended-weight">{{ this.weightsum }}</div>
+<div class="reference" data-pdf="{{ this.pageref }}">{{ ref this.pageref }}</div>
+{{/unless}}

@@ -42,8 +42,9 @@
 	}
 
 	.roll,
+	.location.header,
 	.penalty {
-		border-right: 1px solid rgba(var(--color-header), 1);
+		border-right: 1px solid rgb(var(--color-interior-divider));
 	}
 
 	:not(.header) {
@@ -56,6 +57,7 @@
 	.dr:nth-child(8n + 4) {
 		&:not(.header) {
 			background-color: rgba(var(--color-banding), 1);
+			@import "embeds/roll_banding";
 		}
 	}
 }

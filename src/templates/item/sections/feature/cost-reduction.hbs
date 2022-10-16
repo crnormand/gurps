@@ -1,14 +1,14 @@
 <select name="{{path}}.which">
 	{{#select this.which}}
-	{{#each attributes as |v k|}}
-	<option value="{{k}}">{{v}}</option>
-	{{/each}}
+		{{#each attributes as |v k|}}
+			<option value="{{k}}">{{v}}</option>
+		{{/each}}
 	{{/select}}
 </select>
 <select name="{{path}}.percentage">
 	{{#select this.percentage}}
-	{{#each config.select.percentage as |v k|}}
-	<option value="{{k}}">{{localize "gurps.field_prefix.percentage" value=v}}</option>
-	{{/each}}
+		{{#each config.select.percentage as |v k|}}
+			<option value="{{k}}">{{localize "gurps.field_prefix.percentage" value=v}}</option>
+		{{/each}}
 	{{/select}}
 </select>

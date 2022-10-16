@@ -156,7 +156,6 @@ export abstract class ContainerGURPS extends BaseItemGURPS {
 		const deletedItems = containedItems.filter(e => ids.includes(e.id!))
 
 		if (this.parent) {
-			// Console.log(this, this.parent, ids, containedItems, newContainedItems);
 			await this.parent.updateEmbeddedDocuments("Item", [
 				{
 					_id: this.id,

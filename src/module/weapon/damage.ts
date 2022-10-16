@@ -1,11 +1,12 @@
-import { Feature } from "@feature"
-import { WeaponBonus } from "@feature/weapon_damage_bonus"
+import { Feature, WeaponDRDivisorBonus } from "@feature"
+import { WeaponDamageBonus } from "@feature/weapon_bonus"
 import { EquipmentContainerGURPS, EquipmentGURPS, TraitGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { signed, stringCompare } from "@util"
 import { Weapon } from "."
+import { CharacterGURPS } from "@actor"
 
 export class WeaponDamage {
 	constructor(data?: (WeaponDamage & { parent: Weapon }) | any) {
@@ -38,7 +39,6 @@ export class WeaponDamage {
 			if (this.armor_divisor !== 1) buffer += `(${this.armor_divisor})`
 			if (this.modifier_per_die !== 0) {
 				if (buffer.length !== 0) buffer += " "
-				console.log(this, this.parent, this.modifier_per_die)
 				buffer += `(${signed(this.modifier_per_die)} per die)`
 			}
 			const t = this.type.trim()
@@ -73,7 +73,7 @@ export class WeaponDamage {
 	resolvedDamage(tooltip?: TooltipGURPS): string {
 		const parent = this.parent
 		if (!parent) return this.toString()
-		const actor = this.parent.actor
+		const actor: CharacterGURPS = this.parent.actor
 		if (!actor) return this.toString()
 		const maxST = this.parent.resolvedMinimumStrength * 3
 		let st = actor.strengthOrZero + actor.striking_st_bonus
@@ -81,7 +81,9 @@ export class WeaponDamage {
 		let base = new DiceGURPS({ sides: 6, multiplier: 1 })
 		if (this.base) base = this.base
 		const t = this.parent.parent
+		let levels = 0
 		if (t instanceof TraitGURPS && t.isLeveled) {
+			levels = t.levels
 			multiplyDice(t.levels, base)
 		}
 		let intST = Math.trunc(st)
@@ -106,17 +108,17 @@ export class WeaponDamage {
 		let best = -Infinity
 		for (const d of this.parent.defaults) {
 			if (d.skillBased) {
-				let level = d.skillLevelFast(actor, false, null, true)
+				let level = d.skillLevelFast(actor, false, true, null)
 				if (best < level) {
 					best = level
 					bestDefault = d
 				}
 			}
 		}
-		let bonusSet: Map<WeaponBonus, boolean> = new Map()
+		let bonusSet: Map<WeaponDamageBonus, boolean> = new Map()
 		let tags = this.parent.parent.tags
 		if (bestDefault) {
-			actor.addWeaponComparedDamageBonusesFor(
+			actor.addWeaponComparedBonusesFor(
 				"skill.name*",
 				bestDefault.name ?? "",
 				bestDefault.specialization ?? "",
@@ -125,7 +127,7 @@ export class WeaponDamage {
 				tooltip,
 				bonusSet
 			)
-			actor.addWeaponComparedDamageBonusesFor(
+			actor.addWeaponComparedBonusesFor(
 				`skill.name/${bestDefault.name}`,
 				bestDefault.name ?? "",
 				bestDefault.specialization ?? "",
@@ -136,7 +138,7 @@ export class WeaponDamage {
 			)
 		}
 		const nameQualifier = this.parent.name
-		actor.addNamedWeaponDamageBonusesFor(
+		actor.addNamedWeaponBonusesFor(
 			"weapon_named.*",
 			nameQualifier,
 			this.parent.usage,
@@ -145,7 +147,7 @@ export class WeaponDamage {
 			tooltip,
 			bonusSet
 		)
-		actor.addNamedWeaponDamageBonusesFor(
+		actor.addNamedWeaponBonusesFor(
 			`weapon_named./${nameQualifier}`,
 			nameQualifier,
 			this.parent.usage,
@@ -155,26 +157,36 @@ export class WeaponDamage {
 			bonusSet
 		)
 		for (const f of this.parent.parent.features) {
-			this.extractWeaponDamageBonus(f, bonusSet, base.count, tooltip)
+			this.extractWeaponBonus(f, bonusSet, base.count, levels, tooltip)
 		}
 		if (t instanceof TraitGURPS || t instanceof EquipmentGURPS || t instanceof EquipmentContainerGURPS) {
 			for (const mod of t.modifiers) {
 				for (const f of mod.features) {
-					this.extractWeaponDamageBonus(f, bonusSet, base.count, tooltip)
+					this.extractWeaponBonus(f, bonusSet, base.count, levels, tooltip)
 				}
 			}
 		}
 		const adjustForPhoenixFlame = actor.settings.damage_progression === "phoenix_flame_d3" && base.sides === 3
-		let percent = 0
+		let [percentDamageBonus, percentDRDivisorBonus] = [0, 0]
+		let armorDivisor = this.armor_divisor
 		for (const bonus of bonusSet.keys()) {
-			if (bonus.percent) percent += bonus.amount
+			if (bonus.type === "weapon_bonus") {
+				if (bonus.percent) percentDamageBonus += bonus.amount
+				else {
+					let amount = bonus.amount
+					if (bonus.per_level) {
+						amount *= base.count
+						if (adjustForPhoenixFlame) amount /= 2
+					}
+					base.modifier += Math.trunc(amount)
+				}
+			} else if (bonus.percent) percentDRDivisorBonus += bonus.amount
 			else {
 				let amount = bonus.amount
 				if (bonus.per_level) {
 					amount *= base.count
-					if (adjustForPhoenixFlame) amount /= 2
 				}
-				base.modifier += Math.trunc(amount)
+				armorDivisor += amount
 			}
 		}
 		if (this.modifier_per_die !== 0) {
@@ -182,12 +194,13 @@ export class WeaponDamage {
 			if (adjustForPhoenixFlame) amount /= 2
 			base.modifier += Math.trunc(amount)
 		}
-		if (percent !== 0) base = adjustDiceForPercentBonus(base, percent)
+		if (percentDamageBonus !== 0) base = adjustDiceForPercentBonus(base, percentDamageBonus)
+		if (percentDRDivisorBonus !== 0) armorDivisor = (armorDivisor * percentDRDivisorBonus) / 100
 		let buffer = ""
 		if (base.count !== 0 || base.modifier !== 0) {
 			buffer += base.stringExtra(actor.settings.use_modifying_dice_plus_adds)
 		}
-		if (this.armor_divisor !== 1) buffer += `(${this.armor_divisor})`
+		if (armorDivisor !== 1) buffer += `(${armorDivisor})`
 		if (this.type.trim() !== "") {
 			if (buffer.length !== 0) buffer += " "
 			buffer += this.type
@@ -204,15 +217,16 @@ export class WeaponDamage {
 		return buffer
 	}
 
-	extractWeaponDamageBonus(
+	extractWeaponBonus(
 		f: Feature,
-		set: Map<WeaponBonus, boolean>,
+		set: Map<WeaponDamageBonus | WeaponDRDivisorBonus, boolean>,
 		dieCount: number,
+		levels: number,
 		tooltip?: TooltipGURPS
 	): void {
-		if (f instanceof WeaponBonus) {
+		if (f instanceof WeaponDamageBonus || f instanceof WeaponDRDivisorBonus) {
 			const level = f.levels
-			f.levels = dieCount
+			f.levels = f instanceof WeaponDamageBonus ? dieCount : levels
 			switch (f.selection_type) {
 				case "weapons_with_required_skill":
 					break

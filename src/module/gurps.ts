@@ -31,7 +31,7 @@
 // Import TypeScript modules
 import { registerSettings, SYSTEM_NAME } from "./settings"
 import { preloadTemplates } from "./preload-templates"
-import { evaluateToNumber, i18n, registerHandlebarsHelpers } from "@util"
+import { evaluateToNumber, i18n, LastActor, registerHandlebarsHelpers, Static } from "@util"
 import { CharacterSheetGURPS } from "@actor/sheet"
 import { BaseActorGURPS } from "@actor/base"
 import { BaseItemGURPS } from "@item"
@@ -62,6 +62,9 @@ import { JournalEntryPageGURPS } from "./pdf"
 import { PDFEditorSheet } from "./pdf/edit"
 import { UserFlags } from "./data"
 import { StaticCharacterSheetGURPS } from "@actor/static_character/sheet"
+import { TokenModifierControl } from "./token_modifier"
+import { StaticHitLocation } from "@actor/static_character/hit_location"
+import { StaticItemSheet } from "@item/static/sheet"
 // Import { XMLtoJS } from "@util/xml_js";
 // import { GCAImporter } from "@actor/character/import_GCA";
 
@@ -70,7 +73,7 @@ Error.stackTraceLimit = Infinity
 // TODO: make GURPS type concrete
 export const GURPS: any = {}
 if (!(globalThis as any).GURPS) {
-	(globalThis as any).GURPS = GURPS
+	;(globalThis as any).GURPS = GURPS
 	GURPS.DEBUG = true
 	GURPS.LEGAL =
 		"GURPS is a trademark of Steve Jackson Games, and its rules and art are copyrighted by Steve Jackson Games.\nAll rights are reserved by Steve Jackson Games.\nThis game aid is the original creation of Mikolaj Tomczynski and is released for free distribution, and not for resale, under the permissions granted by\nhttp://www.sjgames.com/general/online_policy.html"
@@ -90,6 +93,11 @@ if (!(globalThis as any).GURPS) {
 	GURPS.search = fSearch
 	GURPS.dice = DiceGURPS
 	GURPS.pdf = PDFViewerSheet
+	GURPS.TokenModifierControl = new TokenModifierControl()
+	GURPS.recurseList = Static.recurseList
+	GURPS.LastActor = LastActor.get
+	GURPS.LastToken = LastActor.getToken
+	GURPS.setLastActor = LastActor.set
 }
 // GURPS.XMLtoJS = XMLtoJS;
 // GURPS.GCAImport = GCAImporter;
@@ -110,6 +118,8 @@ Hooks.once("init", async () => {
 	;(CONFIG.Item.documentClass as any) = BaseItemGURPS
 	CONFIG.Actor.documentClass = BaseActorGURPS
 	;(CONFIG as any).JournalEntryPage.documentClass = JournalEntryPageGURPS
+
+	StaticHitLocation.init()
 
 	// Register custom system settings
 	registerSettings()
@@ -200,12 +210,18 @@ Hooks.once("init", async () => {
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.note_container"),
 	})
+	Items.registerSheet(SYSTEM_NAME, StaticItemSheet, {
+		types: ["static_equipment"],
+		makeDefault: true,
+		label: i18n("gurps.system.sheet.static_equipment"),
+	})
 
 	Actors.registerSheet(SYSTEM_NAME, CharacterSheetGURPS, {
 		types: ["character_gcs"],
 		makeDefault: true,
 		label: i18n("gurps.system.sheet.character"),
 	})
+
 	Actors.registerSheet(SYSTEM_NAME, StaticCharacterSheetGURPS, {
 		types: ["character"],
 		makeDefault: true,
@@ -244,6 +260,12 @@ Hooks.once("ready", async () => {
 	})
 	DRAG_IMAGE.id = "drag-ghost"
 	document.body.appendChild(DRAG_IMAGE)
+	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
+	GURPS.ModifierButton = new ModifierButton()
+	GURPS.ModifierButton.render(true)
+
+	GURPS.CompendiumBrowser = new CompendiumBrowser()
+
 	await Promise.all(
 		(game as Game).actors!.map(async actor => {
 			actor.prepareData()
@@ -251,11 +273,6 @@ Hooks.once("ready", async () => {
 	)
 
 	// Render modifier app after user object loaded to avoid old data
-	;(game as Game).user?.setFlag(SYSTEM_NAME, UserFlags.Init, true)
-	GURPS.ModifierButton = new ModifierButton()
-	GURPS.ModifierButton.render(true)
-
-	GURPS.CompendiumBrowser = new CompendiumBrowser()
 })
 
 // Add any additional hooks if necessary
@@ -278,18 +295,21 @@ Hooks.on("renderSidebarTab", async (app: SidebarTab, html: JQuery<HTMLElement>) 
 })
 
 Hooks.on("updateCompendium", async (pack, _documents, _options, _userId) => {
-	// Console.log(pack, documents, options, userId);
-	// const uuids = documents.map((e: any) => e.uuid);
 	const cb = GURPS.CompendiumBrowser
 	if (cb.rendered && cb.loadedPacks(cb.activeTab).includes(pack.collection)) {
 		await cb.tabs[cb.activeTab].init()
 		cb.render()
 	}
-	// Uuids.forEach(async (e: string) => {
-	// 	console.log(e);
-	// 	// const sheet = ((await fromUuid(e)) as Item)?.sheet;
-	// 	// if (!sheet?.rendered) {
-	// 	// 	sheet?.render(true);
-	// 	// }
-	// })
+})
+
+Hooks.on("controlToken", (...args: any[]) => {
+	// If (GURPS.IgnoreTokenSelect) return
+	console.log([...args])
+	if (args.length > 1) {
+		let a = args[0]?.actor
+		if (a) {
+			if (args[1]) LastActor.set(a, args[0].document)
+			else LastActor.clear(a)
+		}
+	}
 })

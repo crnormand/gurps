@@ -167,7 +167,7 @@ export class SkillGURPS extends ContainerGURPS {
 				this.level = previous
 			}
 		}
-		return saved !== this.level
+		return saved.level !== this.level.level
 	}
 
 	bestDefaultWithPoints(excluded: SkillDefault | null): SkillDefault | undefined {

@@ -222,7 +222,7 @@ export class Evaluator {
 		unaryOp: Operator | null
 	): number {
 		if (haveOperand && op && op.symbol === "(") {
-			[index, op] = this.processFunction(expression, index)
+			;[index, op] = this.processFunction(expression, index)
 			index += op?.symbol.length || 0
 			let tmp: number
 			;[tmp, op] = this.nextOperator(expression, index, null)
@@ -276,7 +276,7 @@ export class Evaluator {
 		let parens = 1
 		let next = opIndex
 		while (parens > 0) {
-			[next, op] = this.nextOperator(expression, next + 1, null)
+			;[next, op] = this.nextOperator(expression, next + 1, null)
 			if (!op) throw new Error(`Function not closed at index ${opIndex}`)
 			switch (op.symbol) {
 				case "(":

@@ -9,15 +9,14 @@
 		padding: var(--padding-header);
 		background-color: rgb(var(--color-header));
 		color: rgb(var(--color-on-header));
-		border-right: 1px solid rgb(var(--color-separator));
 		white-space: nowrap;
 	}
 
 	> div {
 		background-color: rgb(var(--color-content));
 		color: rgb(var(--color-on-content));
-		border-right: 1px solid rgb(var(--color-header));
-		border-bottom: 1px solid rgb(var(--color-header));
+		border-right: 1px solid rgb(var(--color-interior-divider));
+		border-bottom: 1px solid rgb(var(--color-interior-divider));
 
 		padding: var(--padding-standard);
 
@@ -27,7 +26,6 @@
 
 		&.header {
 			border-bottom: none;
-			border-right: 1px solid rgb(var(--color-divider));
 		}
 
 		&.st {
