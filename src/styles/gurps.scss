@@ -53,6 +53,37 @@
 	}
 }
 
+.gurps {
+	input[type="text"],
+	input[type="search"],
+	input[type="number"] {
+		font: var(--font-field);
+		height: 24px;
+		width: 100%;
+		min-width: 40px;
+		border-radius: 0px;
+		background-color: rgb(var(--color-editable));
+		color: rgb(var(--color-on-editable));
+		border: 1px solid rgba(var(--color-control-edge));
+		padding: 1px 3px;
+		&:focus {
+			box-shadow: none;
+			border-width: 2px;
+			padding: 0 2px;
+		}
+		&[readonly] {
+			background-color: rgb(var(--color-background));
+			color: rgb(var(--color-on-background));
+			pointer-events: none;
+		}
+		&:disabled {
+			// background-color: rgb(var(--color-background));
+			color: rgba(var(--color-on-editable), 0); // Invisible Text
+			pointer-events: none;
+		}
+	}
+}
+
 .window-app.gurps {
 	// Header
 	background-image: linear-gradient(rgba(var(--color-focused-tab), 1), rgba(var(--color-focused-tab), 1));

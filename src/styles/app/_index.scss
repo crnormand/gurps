@@ -83,9 +83,10 @@
 		}
 	}
 	.buttons {
+		translate: 0px -3px;
 		font-size: var(--font-size-12);
 		display: grid;
-		grid-gap: 0;
+		grid-gap: 1px;
 		grid-auto-flow: row;
 		> a {
 			color: rgb(var(--color-icon-button));
@@ -99,18 +100,22 @@
 					--fa-secondary-color: rgb(var(--color-magnet-secondary-rollover));
 				}
 			}
+			padding: 4px 0px;
 			&:hover {
 				color: rgb(var(--color-icon-button-rollover));
 				text-shadow: none;
 			}
 			&:active {
-				color: rgb(var(--color-pressed-icon-button));
+				color: rgb(var(--color-icon-button-rollover));
+				background-color: rgb(var(--color-pressed-icon-button));
+				border-radius: 4px;
 			}
 		}
 		> hr {
 			border-color: rgb(var(--color-divider));
 			width: 20px;
 			height: 2px;
+			margin: 0;
 		}
 	}
 }

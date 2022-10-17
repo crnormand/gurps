@@ -45,7 +45,16 @@ export class CharacterSheetConfig extends FormApplication {
 			options: options,
 			actor: actor.toObject(),
 			system: actor.system,
-			attributes: actor.system.settings.attributes,
+			// Attributes: actor.system.settings.attributes,
+			primaryAttributes: Object.fromEntries(
+				Object.entries(actor.settings.attributes).filter(([k, _v]) => actor.primaryAttributes(true).has(k))
+			),
+			secondaryAttributes: Object.fromEntries(
+				Object.entries(actor.settings.attributes).filter(([k, _v]) => actor.secondaryAttributes(true).has(k))
+			),
+			poolAttributes: Object.fromEntries(
+				Object.entries(actor.settings.attributes).filter(([k, _v]) => actor.poolAttributes(true).has(k))
+			),
 			locations: actor.system.settings.body_type,
 			filename: this.filename,
 			config: (CONFIG as any).GURPS,
@@ -130,10 +139,11 @@ export class CharacterSheetConfig extends FormApplication {
 		return all_buttons
 	}
 
-	protected async _updateObject(event: Event, formData?: object | undefined): Promise<unknown> {
+	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
 		if (!this.object.id) return
-		console.log(formData)
-		// Return this.object.update(formData);
+		if (formData["system.settings.block_layout"])
+			formData["system.settings.block_layout"] = formData["system.settings.block_layout"].split("\n")
+		return this.object.update(formData)
 	}
 
 	close(options?: FormApplication.CloseOptions | undefined): Promise<void> {

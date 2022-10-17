@@ -1,1 +1,63 @@
-<div id="details"></div>
+<div class="add">
+    <a class="gcs-circled-add add"></a>
+</div>
+<div class="table">
+    {{#each primaryAttributes }}
+        <div class="item">
+            <div class="controls">
+                <a class="gcs-grip"></a>
+                <a class="gcs-trash"></a>
+                <a class="gcs-circled-add disabled"></a>
+            </div>
+            <div class="fieldblock">
+                {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "system.settings.attributes." @key ".id") data=this.id type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "system.settings.attributes." @key ".name") data=this.name type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "system.settings.attributes." @key ".full_name") data=this.full_name type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "system.settings.attributes." @key ".attribute_base") data=this.attribute_base type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "system.settings.attributes." @key ".cost_per_point") data=this.cost_per_point type="Number" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "system.settings.attributes." @key ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="Number" }}
+                <div class="label">{{localize "gurps.attribute_def.type"}}</div>
+                <div class="field">
+                    <select name="system.settings.attributes.{{@key}}.type" data-dtype="String">
+                        {{#select this.type }}
+                        {{#each @root.config.select.attribute_type as |v k| }}
+                            <option value="{{k}}">
+                                {{ localize v }}
+                            </option>
+                        {{/each }}
+                    {{/select }}
+                </select>
+            </div>
+        </div>
+    </div>
+{{/each}}
+{{#each secondaryAttributes }}
+    <div class="item">
+        <div class="controls">
+            <a class="gcs-grip"></a>
+            <a class="gcs-trash"></a>
+            <a class="gcs-circled-add disabled"></a>
+        </div>
+        <div class="fieldblock">
+            {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "system.settings.attributes." @key ".id") data=this.id type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "system.settings.attributes." @key ".name") data=this.name type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "system.settings.attributes." @key ".full_name") data=this.full_name type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "system.settings.attributes." @key ".attribute_base") data=this.attribute_base type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "system.settings.attributes." @key ".cost_per_point") data=this.cost_per_point type="Number" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "system.settings.attributes." @key ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="Number" }}
+            <div class="label">{{localize "gurps.attribute_def.type"}}</div>
+            <div class="field">
+                <select name="system.settings.attributes.{{@key}}.type" data-dtype="String">
+                    {{#select this.type }}
+                    {{#each @root.config.select.attribute_type as |v k| }}
+                        <option value="{{k}}">
+                            {{ localize v }}
+                        </option>
+                    {{/each }}
+                {{/select }}
+            </select>
+        </div>
+    </div>
+</div>
+{{/each}}
+</div>
