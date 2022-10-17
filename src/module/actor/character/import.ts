@@ -189,6 +189,7 @@ export class CharacterImporter {
 	importSettings(settings: CharacterImportedData["settings"]) {
 		const attributes: Record<string, AttributeDefObj> = {}
 		for (const att of settings.attributes as unknown as AttributeDefObj[]) {
+			att.cost_adj_percent_per_sm ??= 0
 			attributes[att.id] = att
 		}
 		console.log(settings.show_spell_adj ?? false)

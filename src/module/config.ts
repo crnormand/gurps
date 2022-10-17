@@ -382,6 +382,14 @@ const GURPSCONFIG: any = {
 			tooltip: "gurps.select.display.tooltip",
 			inline_and_tooltip: "gurps.select.display.inline_and_tooltip",
 		},
+		attribute_type: {
+			integer: "gurps.select.attribute_type.integer",
+			decimal: "gurps.select.attribute_type.decimal",
+			pool: "gurps.select.attribute_type.pool",
+			primary_separator: "gurps.select.attribute_type.primary_separator",
+			secondary_separator: "gurps.select.attribute_type.secondary_separator",
+			pool_separator: "gurps.select.attribute_type.pool_separator",
+		},
 	},
 }
 // GURPSCONFIG.Item.documentClasses = {};

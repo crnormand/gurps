@@ -1,4 +1,11 @@
 .window-app.gurps.character-config {
+	form {
+		overflow: hidden;
+		.content {
+			height: calc(100% - 28px);
+			overflow-y: scroll;
+		}
+	}
 	#details,
 	.fieldblock {
 		display: grid;
@@ -33,5 +40,72 @@
 		grid-column: 1 / span 2;
 		width: 100%;
 		line-height: 16px;
+		margin-bottom: 5px;
+	}
+	.tab[data-tab="attributes"] {
+		div.add {
+			display: grid;
+			height: 20px;
+			align-items: center;
+			a.add {
+				width: 17px;
+				margin: 2px;
+				padding: 0px 2px;
+				color: rgb(var(--color-icon-button));
+				&:hover {
+					color: rgb(var(--color-icon-button-rollover));
+					text-shadow: none;
+				}
+				&:active {
+					color: rgb(var(--color-icon-button-rollover));
+					background-color: rgb(var(--color-pressed-icon-button));
+					border-radius: 4px;
+				}
+			}
+		}
+		.table {
+			.item {
+				background-color: rgb(var(--color-content));
+				display: grid;
+				grid-template-columns: 0fr 1fr;
+				.controls {
+					display: grid;
+					gap: 5px;
+					padding: 5px;
+					height: min-content;
+					grid-template:
+						"drag trash"
+						"empty add";
+					> :not(.disabled) {
+						color: rgb(var(--color-icon-button));
+						&:hover {
+							color: rgb(var(--color-icon-button-rollover));
+							text-shadow: none;
+						}
+						&:active {
+							color: rgb(var(--color-icon-button-rollover));
+							text-shadow: none;
+						}
+					}
+					> .disabled {
+						color: rgba(var(--color-icon-button), 0.6);
+						cursor: default;
+						pointer-events: none;
+					}
+					.gcs-grip {
+						grid-area: drag;
+					}
+					.gcs-trash {
+						grid-area: trash;
+					}
+					.gcs-circled-add {
+						grid-area: add;
+					}
+				}
+			}
+			.item:nth-child(2n) {
+				background-color: rgb(var(--color-banding));
+			}
+		}
 	}
 }

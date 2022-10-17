@@ -188,6 +188,28 @@ class CharacterGURPS extends BaseActorGURPS {
 		if (v !== this.unspentPoints) this.totalPoints = v + this.spentPoints
 	}
 
+	primaryAttributes(includeSeparators = false): Map<string, Attribute> {
+		const atts = new Map([...this.attributes].filter(([_k, v]) => v.attribute_def.isPrimary))
+		if (includeSeparators) return atts
+		return new Map([...atts].filter(([_k, v]) => v.attribute_def.type !== AttributeType.PrimarySeparator))
+	}
+
+	secondaryAttributes(includeSeparators = false): Map<string, Attribute> {
+		const atts = new Map(
+			[...this.attributes].filter(
+				([_k, v]) => !v.attribute_def.isPrimary && !v.attribute_def.type.includes("pool")
+			)
+		)
+		if (includeSeparators) return atts
+		return new Map([...atts].filter(([_k, v]) => v.attribute_def.type !== AttributeType.SecondarySeparator))
+	}
+
+	poolAttributes(includeSeparators = false): Map<string, Attribute> {
+		const atts = new Map([...this.attributes].filter(([_k, v]) => v.attribute_def.type === AttributeType.Pool))
+		if (includeSeparators) return atts
+		return new Map([...atts].filter(([_k, v]) => v.attribute_def.type !== AttributeType.PoolSeparator))
+	}
+
 	get attributePoints(): number {
 		let total = 0
 		for (const a of Object.values(this.attributes)) {
