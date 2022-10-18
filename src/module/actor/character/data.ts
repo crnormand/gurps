@@ -1,6 +1,6 @@
 import { DamageProgression, DisplayMode, Height, LengthUnits, Weight, WeightUnits } from "@module/data"
 import { ActorFlagsGURPS, ActorSystemData, ActorType, BaseActorSourceGURPS } from "@actor/base/data"
-import { AttributeDef, AttributeDefObj } from "@module/attribute/attribute_def"
+import { AttributeDef } from "@module/attribute/attribute_def"
 import { Attribute, AttributeObj } from "@module/attribute"
 import { DiceGURPS } from "@module/dice"
 
@@ -31,7 +31,8 @@ export interface CharacterSystemData extends ActorSystemData {
 	created_date: string
 	modified_date: string
 	profile: CharacterProfile
-	attributes: Record<string, Attribute | AttributeObj>
+	// Attributes: Record<string, Attribute | AttributeObj>
+	attributes: Array<AttributeObj>
 	total_points: number
 	calc: CharacterCalc
 	editing: boolean
@@ -66,7 +67,8 @@ export interface CharacterSettings {
 	block_layout: Array<string>
 	// Attributes: Record<string, AttributeSettingDef>;
 	body_type: HitLocationTable
-	attributes: Record<string, AttributeDef | AttributeDefObj> // AttributeObj represents the attribute as an object
+	// Attributes: Record<string, AttributeDef> // AttributeObj represents the attribute as an object
+	attributes: AttributeDef[]
 }
 
 export interface CharacterProfile {

@@ -1,5 +1,5 @@
 import { PoolThreshold, PoolThresholdDef } from "./pool_threshold"
-import { gid } from "@module/data"
+import { DamageProgression, gid } from "@module/data"
 import { VariableResolver, evaluateToNumber, sanitize } from "@util"
 import { CharacterGURPS } from "@actor"
 
@@ -57,7 +57,7 @@ export class AttributeDef {
 	}
 
 	get isPrimary(): boolean {
-		if (this.type === "primary_separator") return true
+		if (this.type === AttributeType.PrimarySeparator) return true
 		if (this.type.includes("_separator")) return false
 		return !isNaN(parseInt(this.attribute_base))
 	}
@@ -71,7 +71,7 @@ export class AttributeDef {
 		if (
 			size_modifier > 0 &&
 			this.cost_adj_percent_per_sm > 0 &&
-			!(this.def_id === "hp" && actor.settings.damage_progression === "knowing_your_own_strength")
+			!(this.def_id === "hp" && actor.settings.damage_progression === DamageProgression.KnowingYourOwnStrength)
 		)
 			cost_reduction = size_modifier * this.cost_adj_percent_per_sm
 		if (cost_reduction > 0) {

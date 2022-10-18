@@ -9,7 +9,7 @@
 		{{else}}
 		<div class="points">[{{this.points}}]</div>
 		<div data-id="{{this.attr_id}}" data-type="attribute" class="field rollable">
-			<input name="system.attributes.{{this.id}}.adj" class="input number" type="text" data-dtype="Number"
+			<input name="attributes.{{this.id}}.adj" class="input number" type="text" data-dtype="Number"
 				value="{{this.current}}" {{{input_lock ../editing}}} />
 		</div>
 		<div class="label">{{this.attribute_def.combinedName}}</div>

@@ -14,9 +14,9 @@
 			},
 			"total_points": 100,
 			"settings": {
-				"attributes": {}
+				"attributes": []
 			},
-			"attributes": {},
+			"attributes": [],
 			"calc": {
 				"swing": "",
 				"thrust": "",

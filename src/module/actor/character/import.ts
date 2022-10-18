@@ -20,7 +20,6 @@ import { TraitContainerSystemData } from "@item/trait_container/data"
 import { TraitModifierSystemData } from "@item/trait_modifier/data"
 import { TraitModifierContainerSystemData } from "@item/trait_modifier_container/data"
 import { AttributeObj } from "@module/attribute"
-import { AttributeDefObj } from "@module/attribute/attribute_def"
 import { CR, DamageProgression } from "@module/data"
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { SkillDefault } from "@module/default"
@@ -187,11 +186,11 @@ export class CharacterImporter {
 	}
 
 	importSettings(settings: CharacterImportedData["settings"]) {
-		const attributes: Record<string, AttributeDefObj> = {}
-		for (const att of settings.attributes as unknown as AttributeDefObj[]) {
-			att.cost_adj_percent_per_sm ??= 0
-			attributes[att.id] = att
-		}
+		// Const attributes: Record<string, AttributeDefObj> = {}
+		// for (const att of settings.attributes as unknown as AttributeDefObj[]) {
+		// 	att.cost_adj_percent_per_sm ??= 0
+		// 	attributes[att.id] = att
+		// }
 		console.log(settings.show_spell_adj ?? false)
 		return {
 			"system.settings.default_length_units": settings.default_length_units ?? "ft_in",
@@ -210,18 +209,22 @@ export class CharacterImporter {
 			"system.settings.exclude_unspent_points_from_total": settings.exclude_unspent_points_from_total ?? false,
 			"system.settings.page": settings.page,
 			"system.settings.block_layout": settings.block_layout,
-			"system.settings.attributes": attributes,
+			// "system.settings.attributes": attributes,
+			"system.settings.attributes": settings.attributes,
 			"system.settings.body_type": settings.body_type,
 		}
 	}
 
 	importAttributes(attributes: AttributeObj[]) {
-		const atts: Record<string, AttributeObj> = {}
-		for (const a of attributes) {
-			atts[a.attr_id] = a
-		}
+		// Const atts: Record<string, AttributeObj> = {}
+		// for (const a of attributes) {
+		// 	atts[a.attr_id] = a
+		// }
+		// return {
+		// 	"system.attributes": atts,
+		// }
 		return {
-			"system.attributes": atts,
+			"system.attributes": attributes,
 		}
 	}
 
