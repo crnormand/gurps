@@ -174,7 +174,7 @@ interface provider {
 			orientation: string
 		}
 		block_layout: Array<string>
-		attributes: Record<string, AttributeDefObj>
+		attributes: AttributeDefObj[]
 		body_type: unknown
 	}
 	general: {
@@ -218,8 +218,8 @@ export const SETTINGS_TEMP: provider = {
 			"other_equipment",
 			"notes",
 		],
-		attributes: {
-			st: {
+		attributes: [
+			{
 				id: "st",
 				type: AttributeType.Integer,
 				name: "ST",
@@ -228,7 +228,7 @@ export const SETTINGS_TEMP: provider = {
 				cost_per_point: 10,
 				cost_adj_percent_per_sm: 10,
 			},
-			dx: {
+			{
 				id: "dx",
 				type: AttributeType.Integer,
 				name: "DX",
@@ -236,7 +236,7 @@ export const SETTINGS_TEMP: provider = {
 				attribute_base: "10",
 				cost_per_point: 20,
 			},
-			iq: {
+			{
 				id: "iq",
 				type: AttributeType.Integer,
 				name: "IQ",
@@ -244,7 +244,7 @@ export const SETTINGS_TEMP: provider = {
 				attribute_base: "10",
 				cost_per_point: 20,
 			},
-			ht: {
+			{
 				id: "ht",
 				type: AttributeType.Integer,
 				name: "HT",
@@ -252,21 +252,21 @@ export const SETTINGS_TEMP: provider = {
 				attribute_base: "10",
 				cost_per_point: 10,
 			},
-			will: {
+			{
 				id: "will",
 				type: AttributeType.Integer,
 				name: "Will",
 				attribute_base: "$iq",
 				cost_per_point: 5,
 			},
-			fright_check: {
+			{
 				id: "fright_check",
 				type: AttributeType.Integer,
 				name: "Fright Check",
 				attribute_base: "$will",
 				cost_per_point: 2,
 			},
-			per: {
+			{
 				id: "per",
 				type: AttributeType.Integer,
 				name: "Per",
@@ -274,49 +274,49 @@ export const SETTINGS_TEMP: provider = {
 				attribute_base: "$iq",
 				cost_per_point: 5,
 			},
-			vision: {
+			{
 				id: "vision",
 				type: AttributeType.Integer,
 				name: "Vision",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
-			hearing: {
+			{
 				id: "hearing",
 				type: AttributeType.Integer,
 				name: "Hearing",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
-			taste_smell: {
+			{
 				id: "taste_smell",
 				type: AttributeType.Integer,
 				name: "Taste \u0026 Smell",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
-			touch: {
+			{
 				id: "touch",
 				type: AttributeType.Integer,
 				name: "Touch",
 				attribute_base: "$per",
 				cost_per_point: 2,
 			},
-			basic_speed: {
+			{
 				id: "basic_speed",
 				type: AttributeType.Decimal,
 				name: "Basic Speed",
 				attribute_base: "($dx+$ht)/4",
 				cost_per_point: 20,
 			},
-			basic_move: {
+			{
 				id: "basic_move",
 				type: AttributeType.Integer,
 				name: "Basic Move",
 				attribute_base: "floor($basic_speed)",
 				cost_per_point: 5,
 			},
-			fp: {
+			{
 				id: "fp",
 				type: AttributeType.Pool,
 				name: "FP",
@@ -352,7 +352,7 @@ export const SETTINGS_TEMP: provider = {
 					},
 				],
 			},
-			hp: {
+			{
 				id: "hp",
 				type: AttributeType.Pool,
 				name: "HP",
@@ -417,7 +417,7 @@ export const SETTINGS_TEMP: provider = {
 					},
 				],
 			},
-		},
+		],
 		body_type: {
 			name: "Humanoid",
 			roll: "3d",

@@ -2,6 +2,16 @@
 
 ## In Progress
 
+-   Implement GCS-style attribute editor
+    -   Adding draggable attributes
+        -   Change indicator when halfway down an entry
+        -   Functionally reorder attribute on drop
+    -   Functional Delete and Add button
+    -   Pool Attribute UI
+        -   Threshold UI
+        -   Functional Threshold Button
+        -   Draggable thresholds
+
 ## 1.0.0
 
 -   Finish the Damage Calculator conversion
@@ -25,7 +35,6 @@
 -   Convert over resource tracker functionality
 -   Convert over as much of the old localization files as we can
 -   Implement UI customization settings (colors, fonts)
--   Implement GCS-style attribute editor
 -   Implement GCS-style hit location table editor
 -   probably a bunch of other stuff I'm forgetting
 -   Dynamic Character changes

@@ -14,7 +14,7 @@ import {
 	TraitContainerGURPS,
 	TraitGURPS,
 } from "@item"
-import { Attribute } from "@module/attribute"
+import { Attribute, AttributeObj } from "@module/attribute"
 import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
 import { RollType } from "@module/data"
@@ -50,6 +50,25 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		if (Object.keys(formData).includes("actor.unspentPoints")) {
 			formData["system.total_points"] = (formData["actor.unspentPoints"] as number) + this.actor.spentPoints
 			delete formData["actor.unspentPoints"]
+		}
+
+		// Set values inside system.attributes array, and amend written values based on input
+		for (const i of Object.keys(formData)) {
+			if (i.startsWith("attributes.")) {
+				const attributes: AttributeObj[] =
+					(formData["system.attributes"] as AttributeObj[]) ?? duplicate(this.actor.system.attributes)
+				const id = i.split(".")[1]
+				const att = this.actor.attributes.get(id)
+				if (att) {
+					if (i.endsWith(".adj")) (formData[i] as number) -= att.max - att.adj
+					if (i.endsWith(".damage")) (formData[i] as number) = Math.max(att.max - (formData[i] as number), 0)
+				}
+				const key = i.replace(`attributes.${id}.`, "")
+				const index = attributes.findIndex(e => e.attr_id === id)
+				setProperty(attributes[index], key, formData[i])
+				formData["system.attributes"] = attributes
+				delete formData[i]
+			}
 		}
 		return super._updateObject(event, formData)
 	}

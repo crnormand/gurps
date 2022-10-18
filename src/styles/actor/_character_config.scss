@@ -63,11 +63,17 @@
 				}
 			}
 		}
-		.table {
+		.item-list {
 			.item {
 				background-color: rgb(var(--color-content));
 				display: grid;
 				grid-template-columns: 0fr 1fr;
+				&.border-top {
+					border-top: 1px solid rgb(var(--color-drop-area));
+				}
+				&.border-bottom {
+					border-bottom: 1px solid rgb(var(--color-drop-area));
+				}
 				.controls {
 					display: grid;
 					gap: 5px;

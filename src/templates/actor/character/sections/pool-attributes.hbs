@@ -8,9 +8,9 @@
 		</div>
 		{{else}}
 		<div class="points">[{{this.points}}]</div>
-		{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name=(concat "system.attributes." this.id
+		{{>sections/input-text after=(localize "gurps.character.pool_of") field="field" name=(concat "attributes." this.id
 		".damage") data=this.current type="Number"}}
-		{{>sections/input-text after=this.attribute_def.name field="field" name=(concat "system.attributes." this.id ".adj")
+		{{>sections/input-text after=this.attribute_def.name field="field" name=(concat "attributes." this.id ".adj")
 		data=this.max type="Number" class=(input_lock ../editing)}}
 		<div class="label tooltip">
 			{{#if this.currentThreshold.state}}

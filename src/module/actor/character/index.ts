@@ -1,5 +1,4 @@
 import { BaseActorGURPS, ActorConstructorContextGURPS } from "@actor/base"
-import { CharacterImporter } from "./import"
 import { Feature, WeaponDRDivisorBonus } from "@feature"
 import { ConditionalModifier } from "@feature/conditional_modifier"
 import { CostReduction } from "@feature/cost_reduction"
@@ -33,7 +32,7 @@ import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { CondMod } from "@module/conditional-modifier"
 import { attrPrefix, gid } from "@module/data"
 import { DiceGURPS } from "@module/dice"
-import { SETTINGS_TEMP, SYSTEM_NAME } from "@module/settings"
+import { SETTINGS_TEMP } from "@module/settings"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
 import { MeleeWeapon, RangedWeapon, Weapon, WeaponType } from "@module/weapon"
@@ -90,7 +89,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.settings = SETTINGS_TEMP.sheet
 		sd.modified_date = sd.created_date
 		if (SETTINGS_TEMP.general.auto_fill) sd.profile = SETTINGS_TEMP.general.auto_fill
-		sd.attributes = this.newAttributes()
+		sd.attributes = this.newAttributes(sd.settings.attributes)
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
 	}
@@ -120,9 +119,9 @@ class CharacterGURPS extends BaseActorGURPS {
 		for (const i in data) {
 			if (i.includes("system.import")) return
 		}
-		if (Object.keys(this.system.attributes).length === 0) (data as any)["system.attributes"] = this.newAttributes()
+		if (this.system.attributes.length === 0) (data as any)["system.attributes"] = this.newAttributes()
 		for (const i in data) {
-			if (i.includes("system.attributes.")) {
+			if (i.startsWith("system.attributes.")) {
 				const att = this.attributes.get(i.split("attributes.")[1].split(".")[0])
 				const type = i.split("attributes.")[1].split(".")[1]
 				if (att) {
@@ -291,11 +290,12 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get settings() {
 		let settings = this.system.settings
-		const defs: Record<string, AttributeDef> = {}
-		for (const att in settings.attributes) {
-			defs[att] = new AttributeDef(settings.attributes[att])
-		}
-		;(settings as any).attributes = defs
+		settings.attributes = settings.attributes.map(e => new AttributeDef(e))
+		// Const defs: Record<string, AttributeDef> = {}
+		// for (const att in settings.attributes) {
+		// 	defs[att] = new AttributeDef(settings.attributes[att])
+		// }
+		// ; (settings as any).attributes = defs
 		return settings
 	}
 
@@ -701,41 +701,48 @@ class CharacterGURPS extends BaseActorGURPS {
 		})
 	}
 
-	newAttributes(): Record<string, AttributeObj> {
-		const a: Record<string, AttributeObj> = {}
+	newAttributes(defs = this.system.settings.attributes): AttributeObj[] {
+		const a: AttributeObj[] = []
+		// Const a: Record<string, AttributeObj> = {}
 		let i = 0
-		for (const attr_id in this.system.settings.attributes) {
-			const attr = new Attribute(this, attr_id, i)
-			if (attr.attribute_def.type.includes("separator")) {
-				a[attr_id] = {
+		for (const attribute_def of defs) {
+			const attr = new Attribute(this, attribute_def.id, i)
+			if (attribute_def.type.includes("separator")) {
+				a.push({
 					attr_id: attr.attr_id,
 					order: attr.order,
 					adj: attr.adj,
-				}
+				})
 			} else {
-				a[attr_id] = {
+				a.push({
 					bonus: attr.bonus,
 					cost_reduction: attr.cost_reduction,
 					order: attr.order,
 					attr_id: attr.attr_id,
 					adj: attr.adj,
-				}
+				})
 			}
-			if (attr.damage) a[attr_id].damage = attr.damage
+			if (attr.damage) a[i].damage = attr.damage
 			i++
 		}
 		return a
 	}
 
 	getAttributes(): Map<string, Attribute> {
-		const a: Map<string, Attribute> = new Map()
-		let i = 0
-		for (const attr_id in this.system.attributes) {
-			let att = this.system.attributes[attr_id]
-			a.set(attr_id, new Attribute(this, attr_id, i, att))
-			i++
-		}
-		return a
+		const attributes: Map<string, Attribute> = new Map()
+		const att_array = this.system.attributes
+		if (!att_array.length) return attributes
+		// Const attributes: Map<string, Attribute> = new Map(this.system.attributes.map(e => [e.attr_id, new Attribute(this, e.attr_id, e.order, e)]))
+		att_array.forEach((v, k) => {
+			attributes.set(v.attr_id, new Attribute(this, v.attr_id, k, v))
+		})
+		// Let i = 0
+		// for (const attr of this.system.attributes) {
+		// 	let att = this.system.attributes[attr_id]
+		// 	a.set(attr_id, new Attribute(this, attr_id, i, att))
+		// 	i++
+		// }
+		return attributes
 	}
 
 	// Do not store modifiers directly on actors
@@ -755,7 +762,8 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareBaseData(): void {
 		super.prepareBaseData()
-		if (this.system.attributes && Object.keys(this.system.attributes).length === 0) {
+		this.system.settings.attributes.forEach(e => (e.cost_adj_percent_per_sm ??= 0))
+		if (this.system.attributes.length === 0) {
 			this.system.attributes = this.newAttributes()
 			this.attributes = this.getAttributes()
 		}
@@ -763,7 +771,6 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareEmbeddedDocuments(): void {
 		super.prepareEmbeddedDocuments()
-		// Console.log("prepareEmbeddedDocuments", this.noPrepare)
 		if (!this.noPrepare) {
 			this.updateSkills()
 			this.updateSpells()
@@ -830,16 +837,16 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.attributes = this.getAttributes()
 		if (this.attributes)
 			this.attributes.forEach(attr => {
-				if (!this.system.attributes[attr.attr_id]) return
+				if (!this.system.attributes[attr.order]) return
 				const def = attr.attribute_def
 				if (def) {
 					const attrID = attrPrefix + attr.attr_id
-					this.system.attributes[attr.attr_id].bonus = this.bonusFor(attrID, undefined)
+					this.system.attributes[attr.order].bonus = this.bonusFor(attrID, undefined)
 					if (def.type !== AttributeType.Decimal) attr.bonus = Math.floor(attr.bonus)
-					this.system.attributes[attr.attr_id].cost_reduction = this.costReductionFor(attrID)
+					this.system.attributes[attr.order].cost_reduction = this.costReductionFor(attrID)
 				} else {
-					this.system.attributes[attr.attr_id].bonus = 0
-					this.system.attributes[attr.attr_id].cost_reduction = 0
+					this.system.attributes[attr.order].bonus = 0
+					this.system.attributes[attr.order].cost_reduction = 0
 				}
 			})
 		this.attributes = this.getAttributes()
@@ -1297,7 +1304,8 @@ class CharacterGURPS extends BaseActorGURPS {
 			console.warn(`No such variable: $${variableName}`)
 			return ""
 		}
-		const def = this.settings.attributes[attr.attr_id]
+		const def = this.settings.attributes.find(e => e.id === attr.attr_id)
+		// Const def = this.settings.attributes[attr.attr_id]
 		if (!def) {
 			console.warn(`No such variable definition: $${variableName}`)
 			return ""

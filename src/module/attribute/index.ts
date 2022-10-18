@@ -52,7 +52,7 @@ export class Attribute {
 	}
 
 	get attribute_def(): AttributeDef {
-		return (this.actor?.settings.attributes as Record<string, AttributeDef>)[this.attr_id]
+		return this.actor.settings.attributes.find(e => e.id === this.attr_id)!
 	}
 
 	get max(): number {
