@@ -66,108 +66,112 @@
 	// /* Uncomment for 3D effect */
 	// /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
-.gcs-attribute:before {
+
+.gcs-all-seeing-eye:before {
 	content: "\e800";
 } /* '' */
-.gcs-body-type:before {
+.gcs-attribute:before {
 	content: "\e801";
 } /* '' */
 .gcs-bookmark:before {
 	content: "\e802";
 } /* '' */
-.gcs-character:before {
+.gcs-body-type:before {
 	content: "\e803";
 } /* '' */
-.gcs-checkmark:before {
+.gcs-character:before {
 	content: "\e804";
 } /* '' */
-.gcs-chevron-right:before {
+.gcs-checkmark:before {
 	content: "\e805";
 } /* '' */
-.gcs-circled-add:before {
+.gcs-chevron-right:before {
 	content: "\e806";
 } /* '' */
-.gcs-circled-chevron-down:before {
+.gcs-circled-add:before {
 	content: "\e807";
 } /* '' */
-.gcs-circled-chevron-right:before {
+.gcs-circled-chevron-down:before {
 	content: "\e808";
 } /* '' */
-.gcs-circled-exclamation:before {
+.gcs-circled-chevron-right:before {
 	content: "\e809";
 } /* '' */
-.gcs-circled-question:before {
+.gcs-circled-exclamation:before {
 	content: "\e80a";
 } /* '' */
-.gcs-circled-vertical-ellipsis:before {
+.gcs-circled-question:before {
 	content: "\e80b";
 } /* '' */
-.gcs-all-seeing-eye:before {
+.gcs-circled-vertical-ellipsis:before {
 	content: "\e80c";
 } /* '' */
-.gcs-closed-folder:before {
+.gcs-circled-x:before {
 	content: "\e80d";
 } /* '' */
-.gcs-coins:before {
+.gcs-closed-folder:before {
 	content: "\e80e";
 } /* '' */
-.gcs-eqp_modifier:before {
+.gcs-coins:before {
 	content: "\e80f";
 } /* '' */
-.gcs-equipment:before {
+.gcs-edit:before {
 	content: "\e810";
 } /* '' */
-.gcs-gears:before {
+.gcs-eqp-modifier:before {
 	content: "\e811";
 } /* '' */
-.gcs-grip:before {
+.gcs-equipment:before {
 	content: "\e812";
 } /* '' */
-.gcs-melee-weapon:before {
+.gcs-gears:before {
 	content: "\e813";
 } /* '' */
-.gcs-menu:before {
+.gcs-grip:before {
 	content: "\e814";
 } /* '' */
-.gcs-modifier:before {
+.gcs-melee-weapon:before {
 	content: "\e815";
 } /* '' */
-.gcs-note:before {
+.gcs-menu:before {
 	content: "\e816";
 } /* '' */
-.gcs-open-folder:before {
+.gcs-modifier:before {
 	content: "\e817";
 } /* '' */
-.gcs-randomize:before {
+.gcs-note:before {
 	content: "\e818";
 } /* '' */
-.gcs-ranged-weapon:before {
+.gcs-open-folder:before {
 	content: "\e819";
 } /* '' */
-.gcs-settings:before {
+.gcs-randomize:before {
 	content: "\e81a";
 } /* '' */
-.gcs-skill:before {
+.gcs-ranged-weapon:before {
 	content: "\e81b";
 } /* '' */
-.gcs-spell:before {
+.gcs-settings:before {
 	content: "\e81c";
 } /* '' */
-.gcs-stack:before {
+.gcs-spell:before {
 	content: "\e81d";
 } /* '' */
-.gcs-trait:before {
+.gcs-skill:before {
 	content: "\e81e";
 } /* '' */
-.gcs-trash:before {
+.gcs-stack:before {
 	content: "\e81f";
 } /* '' */
-.gcs-triangle-exclamation:before {
+.gcs-trait:before {
 	content: "\e820";
 } /* '' */
-.gcs-weight:before {
+.gcs-trash:before {
 	content: "\e821";
 } /* '' */
-.gcs-circled-x:before {
+.gcs-triangle-exclamation:before {
 	content: "\e822";
 } /* '' */
+.gcs-weight:before {
+	content: "\e823";
+} /* '' */
