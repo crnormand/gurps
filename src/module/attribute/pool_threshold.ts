@@ -6,9 +6,6 @@ export interface PoolThresholdDef {
 	state: string
 	explanation?: string
 	expression?: string
-	// Multiplier?: number;
-	// divisor?: number;
-	// addition?: number;
 	ops?: ThresholdOp[]
 }
 
