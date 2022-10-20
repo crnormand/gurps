@@ -63,6 +63,10 @@
 				}
 			}
 		}
+		.thresholds {
+			grid-column: 1 / span 2;
+			border: 1px solid rgb(var(--color-divider));
+		}
 		.item-list {
 			.item {
 				background-color: rgb(var(--color-content));

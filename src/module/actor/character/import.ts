@@ -133,6 +133,7 @@ export class CharacterImporter {
 			"system.created_date": data.created_date,
 			"system.modified_date": data.modified_date,
 			"system.total_points": data.total_points,
+			"system.points_record": data.points_record || [],
 		}
 	}
 

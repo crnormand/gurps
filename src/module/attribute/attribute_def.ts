@@ -22,7 +22,7 @@ export class AttributeDef {
 	// attribute_base = "10";
 	// cost_per_point = 10;
 	// cost_adj_percent_per_sm = 0;
-	// thresholds?: PoolThreshold[];
+	// thresholds?: PolThreshold[];
 	// order = 0;
 
 	constructor(data?: AttributeDefObj) {

@@ -8,9 +8,12 @@
         -   Functionally reorder attribute on drop
     -   Functional Delete and Add button
     -   Pool Attribute UI
-        -   Threshold UI
         -   Functional Threshold Button
         -   Draggable thresholds
+        -   Add \_updateObject options for threshold ops
+-   Implement Points Record
+    -   Add EditSVG to font
+    -   Implement point record edit window
 
 ## 1.0.0
 

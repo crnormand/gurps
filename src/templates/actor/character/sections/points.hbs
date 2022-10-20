@@ -1,8 +1,13 @@
 <div id="points">
 	<div class="header">{{actor.totalPoints}} {{localize "gurps.character.points.title"}}</div>
 	<div class="fieldblock">
+		{{#if (overspent actor)}}
+		{{>sections/input-text after="gurps.character.points.overspent" field="field overspent" name="actor.unspentPoints"
+		data=actor.unspentPoints class="disabled"}}
+		{{else}}
 		{{>sections/input-text after="gurps.character.points.unspent" field="field" name="actor.unspentPoints"
-		data=actor.unspentPoints type="Number" class=(input_lock editing)}}
+		data=actor.unspentPoints class="disabled"}}
+		{{/if}}
 		{{>sections/input-text after="gurps.character.points.race" field="field" data=actor.traitPoints.[2]
 		class="disabled"}}
 		{{>sections/input-text after="gurps.character.points.attributes" field="field" data=actor.attributePoints

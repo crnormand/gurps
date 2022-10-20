@@ -375,6 +375,10 @@ export function registerHandlebarsHelpers() {
 		return data
 	})
 
+	Handlebars.registerHelper("overspent", function (actor: CharacterGURPS) {
+		return actor.unspentPoints < 0
+	})
+
 	Handlebars.registerHelper("gmod", function () {
 		let data = {}
 		// Flatlist(context, 0, '', data, false)

@@ -34,6 +34,7 @@ export interface CharacterSystemData extends ActorSystemData {
 	// Attributes: Record<string, Attribute | AttributeObj>
 	attributes: Array<AttributeObj>
 	total_points: number
+	points_record: PointsRecord[]
 	calc: CharacterCalc
 	editing: boolean
 	// TODO: check if this fits
@@ -105,6 +106,12 @@ export interface CharacterCalc {
 	dodge_bonus: number
 	block_bonus: number
 	parry_bonus: number
+}
+
+export interface PointsRecord {
+	when: string
+	points: number
+	reason: string
 }
 
 export interface Encumbrance {

@@ -254,6 +254,7 @@
 			"points": {
 				"title": "Points",
 				"unspent": "Unspent",
+				"overspent": "Overspent",
 				"race": "Race",
 				"attributes": "Attributes",
 				"advantages": "Advantages",
@@ -433,7 +434,13 @@
 			"attribute_base": "Base Value",
 			"cost_per_point": "Cost per Point",
 			"cost_adj_percent_per_sm": "SM Reduction",
-			"type": "Attribute Type"
+			"type": "Attribute Type",
+			"state": "State",
+			"expression": "Threshold",
+			"explanation": "Explanation",
+			"halve_move": "Halve Move",
+			"halve_dodge": "Halve Dodge",
+			"halve_st": "Halve Strength"
 		},
 		"prereq": {
 			"header": "Prerequisites"
