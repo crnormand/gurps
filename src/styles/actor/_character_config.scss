@@ -1,3 +1,28 @@
+.window-app.gurps.points-sheet {
+	.fieldblock {
+		display: grid;
+		grid-auto-flow: row;
+		row-gap: 4px;
+		column-gap: 9px;
+		vertical-align: middle;
+		padding: 2px 16px;
+	}
+	a {
+		width: 17px;
+		margin: 2px;
+		padding: 0px 2px;
+		color: rgb(var(--color-icon-button));
+		&:hover {
+			color: rgb(var(--color-icon-button-rollover));
+			text-shadow: none;
+		}
+		&:active {
+			color: rgb(var(--color-icon-button-rollover));
+			border-radius: 4px;
+		}
+	}
+}
+
 .window-app.gurps.character-config {
 	form {
 		overflow: hidden;
@@ -58,7 +83,6 @@
 				}
 				&:active {
 					color: rgb(var(--color-icon-button-rollover));
-					background-color: rgb(var(--color-pressed-icon-button));
 					border-radius: 4px;
 				}
 			}

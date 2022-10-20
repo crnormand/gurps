@@ -24,6 +24,7 @@ import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, RollGURPS } from "@util"
 import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
+import { PointRecordSheet } from "./points_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
 	config: CharacterSheetConfig | null = null
@@ -89,6 +90,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
 
 		if (this.actor.editing) html.find(".rollable").addClass("noroll")
+
+		// Points Record
+		html.find(".edit-points").on("click", event => this._openPointsRecord(event))
 	}
 
 	protected _resizeInput(event: JQuery.ChangeEvent) {
@@ -118,6 +122,14 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const id = uuid.split(".").at(-1) ?? ""
 		const item = this.actor.deepItems.get(id)
 		item?.sheet?.render(true)
+	}
+
+	protected async _openPointsRecord(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		new PointRecordSheet(this.document as CharacterGURPS, {
+			top: this.position.top! + 40,
+			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
+		}).render(true)
 	}
 
 	protected async _onEquippedToggle(event: JQuery.ClickEvent) {
@@ -338,7 +350,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 						label: "",
 						class: "gmenu",
 						icon: "gcs-all-seeing-eye",
-						onclick: event => this._onGMenu(event),
+						onclick: event => this._openGMenu(event),
 					},
 			  ]
 			: []
@@ -354,7 +366,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	// 	this.actor.importCharacter()
 	// }
 
-	protected async _onGMenu(event: JQuery.ClickEvent) {
+	protected async _openGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		this.config = new CharacterSheetConfig(this.document as CharacterGURPS, {
 			top: this.position.top! + 40,

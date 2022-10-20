@@ -1,0 +1,33 @@
+<form autocomplete="off">
+	<div class="add">
+		<a class="gcs-circled-add add"></a>
+	</div>
+	<div class="fieldblock">
+		{{#each (sort system.points_record "when")}}
+			<div class="field no-stretch">
+				<a class="gcs-trash delete" data-index="{{@index}}"></a>
+				<input
+					name="{{@index}}.when"
+					type="text"
+					data-dtype="String"
+					value="{{date this.when}}"
+					placeholder={{localize "gurps.character.points_record.when"}}
+				/>
+				<input
+					name="NUMBER.{{@index}}.points"
+					type="text"
+					data-dtype="Number"
+					value="{{signed this.points}}"
+					placeholder={{localize "gurps.character.points_record.points"}}
+				/>
+				<input
+					name="{{@index}}.reason"
+					type="text"
+					data-dtype="String"
+					value="{{this.reason}}"
+					placeholder={{localize "gurps.character.points_record.reason"}}
+				/>
+			</div>
+		{{/each}}
+	</div>
+</form>

@@ -174,7 +174,7 @@ export class Evaluator {
 			if (opIndex === i) {
 				if (op && op.evaluateUnary && (haveOperator || i === 0)) {
 					i = opIndex + op.symbol.length
-					if (unaryOp) throw new Error(`Consecutive unary operators are not allowed at index ${i}`)
+					if (unaryOp) console.error(`Consecutive unary operators are not allowed at index ${i}`)
 					unaryOp = op
 				} else {
 					i = this.processOperator(expression, opIndex, op, haveOperand, unaryOp)
@@ -204,12 +204,12 @@ export class Evaluator {
 	processOperand(expression: string, start: number, opIndex: number, unaryOp: Operator | null): number {
 		if (opIndex === -1) {
 			const text = expression.substring(start).trim()
-			if (text === "") throw new Error(`Expression is invalid at index ${start}`)
+			if (text === "") console.error(`Expression is invalid at index ${start}`)
 			this.operandStack.push(new expressionOperand({ value: text, unaryOp: unaryOp }))
 			return expression.length
 		}
 		const text = expression.substring(start, opIndex).trim()
-		if (text === "") throw new Error(`Expression is invalid at index ${start}`)
+		if (text === "") console.error(`Expression is invalid at index ${start}`)
 		this.operandStack.push(new expressionOperand({ value: text, unaryOp: unaryOp }))
 		return opIndex
 	}
@@ -241,9 +241,9 @@ export class Evaluator {
 					if (this.operatorStack.length > 0) stackOp = this.operatorStack[this.operatorStack.length - 1]
 					else stackOp = null
 				}
-				if (this.operatorStack.length === 0) throw new Error(`Invalid expression at index ${index}`)
+				if (this.operatorStack.length === 0) console.error(`Invalid expression at index ${index}`)
 				stackOp = this.operatorStack[this.operatorStack.length - 1]
-				if (stackOp.op?.symbol !== "(") throw new Error(`Invalid expression at index ${index}`)
+				if (stackOp.op?.symbol !== "(") console.error(`Invalid expression at index ${index}`)
 				this.operatorStack.pop()
 				if (!stackOp?.unaryOp) {
 					const left = this.operandStack[this.operandStack.length - 1]
@@ -277,8 +277,8 @@ export class Evaluator {
 		let next = opIndex
 		while (parens > 0) {
 			;[next, op] = this.nextOperator(expression, next + 1, null)
-			if (!op) throw new Error(`Function not closed at index ${opIndex}`)
-			switch (op.symbol) {
+			if (!op) console.error(`Function not closed at index ${opIndex}`)
+			switch (op?.symbol) {
 				case "(":
 					parens++
 					break
@@ -287,19 +287,20 @@ export class Evaluator {
 					break
 			}
 		}
-		if (this.operandStack.length === 0) throw new Error(`Invalid stack at index ${next}`)
+		if (this.operandStack.length === 0) console.error(`Invalid stack at index ${next}`)
 		const operand = this.operandStack[this.operandStack.length - 1] as expressionOperand
-		if (!operand) throw new Error(`Unexpected operand stack value at index ${next}`)
+		if (!operand) console.error(`Unexpected operand stack value at index ${next}`)
 		this.operandStack.pop()
 		const f = this.functions.get(operand.value)
-		if (!f) throw new Error(`Function not defined: ${operand.value}`)
-		this.operandStack.push(
-			new parsedFunction({
-				function: f,
-				args: expression.substring(opIndex + 1, next),
-				unaryOp: operand.unaryOp,
-			})
-		)
+		if (!f) console.error(`Function not defined: ${operand.value}`)
+		else
+			this.operandStack.push(
+				new parsedFunction({
+					function: f,
+					args: expression.substring(opIndex + 1, next),
+					unaryOp: operand.unaryOp,
+				})
+			)
 		return [next, op]
 	}
 
@@ -330,10 +331,10 @@ export class Evaluator {
 				return null
 			}
 			if (operand.left && operand.right) {
-				if (!operand.op?.evaluate) throw new Error("Operator does ot have Evaluate function defined")
+				if (!operand.op?.evaluate) console.error("Operator does ot have Evaluate function defined")
 				let v: any
 				try {
-					v = operand.op.evaluate(left, right)
+					v = operand.op?.evaluate!(left, right)
 				} catch (err) {
 					console.error(err)
 					return null
@@ -353,7 +354,7 @@ export class Evaluator {
 					return null
 				}
 			}
-			if (!v) throw new Error("Expression is invalid")
+			if (!v) console.error("Expression is invalid")
 			return v
 		} else if (operand instanceof expressionOperand) {
 			const v = this.replaceVariables(operand.value)
@@ -365,7 +366,7 @@ export class Evaluator {
 			if (operand.unaryOp && operand.unaryOp.evaluateUnary) return operand.unaryOp.evaluateUnary(v)
 			return v
 		} else {
-			if (operand) throw new Error("Invalid expression")
+			if (operand) console.error("Invalid expression")
 			return null
 		}
 	}
@@ -373,7 +374,7 @@ export class Evaluator {
 	replaceVariables(expression: string): string {
 		let dollar = expression.indexOf("$")
 		if (dollar === -1) return expression
-		if (!this.resolver) throw new Error(`No variable resolver, yet variables present at index ${dollar}`)
+		if (!this.resolver) console.error(`No variable resolver, yet variables present at index ${dollar}`)
 		while (dollar >= 0) {
 			let last = dollar
 			for (let i = 0; i < expression.substring(dollar + 1).split("").length; i++) {
@@ -381,10 +382,10 @@ export class Evaluator {
 				if (ch.match("[a-zA-Z.#_]") || (i !== 0 && ch.match("[0-9]"))) last = dollar + 1 + i
 				else break
 			}
-			if (dollar === last) throw new Error(`Invalid variable at index ${dollar}`)
+			if (dollar === last) console.error(`Invalid variable at index ${dollar}`)
 			const name = expression.substring(dollar + 1, last + 1)
-			const v = this.resolver.resolveVariable(name)
-			if (v.trim() === "") throw new Error(`Unable to resolve variable $${name}`)
+			const v = this.resolver?.resolveVariable(name)
+			if (v?.trim() === "") console.error(`Unable to resolve variable $${name}`)
 			let buffer = ""
 			if (dollar > 0) buffer += expression.substring(0, dollar)
 			buffer += v

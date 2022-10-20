@@ -7,6 +7,21 @@
 		"block";
 	grid-template-rows: 0fr 1fr;
 	border: var(--standard-border);
+	.header {
+		display: flex;
+		justify-content: space-evenly;
+		a {
+			color: rgb(var(--color-icon-button));
+			&:hover {
+				color: rgb(var(--color-icon-button-rollover));
+				text-shadow: none;
+			}
+			&:active {
+				color: rgb(var(--color-icon-button-rollover));
+				text-shadow: none;
+			}
+		}
+	}
 	.field {
 		text-align: right;
 		padding: var(--padding-standard);

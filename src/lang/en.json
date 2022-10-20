@@ -193,6 +193,12 @@
 			"resource_trackers": {
 				"title": "Resource Trackers"
 			},
+			"points_record": {
+				"title": "Points Record for {name}",
+				"when": "When",
+				"points": "Points",
+				"reason": "Reason"
+			},
 			"macros": {
 				"title": "Quick Macros",
 				"add": "Add New Quick Macro..."
