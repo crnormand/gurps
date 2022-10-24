@@ -17,8 +17,9 @@ export class PointRecordSheet extends FormApplication {
 			template: `systems/${SYSTEM_NAME}/templates/actor/character/points-record.hbs`,
 			width: 520,
 			resizable: true,
-			submitOnChange: true,
-			closeOnSubmit: false,
+			submitOnChange: false,
+			submitOnClose: false,
+			closeOnSubmit: true,
 		})
 	}
 
@@ -38,6 +39,33 @@ export class PointRecordSheet extends FormApplication {
 
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
+		html.find(".add").on("click", event => this._onAdd(event))
+		html.find(".delete").on("click", event => this._onDelete(event))
+	}
+
+	async _onAdd(event: JQuery.ClickEvent): Promise<number> {
+		event.preventDefault()
+		event.stopPropagation()
+		const list = this.object.system.points_record
+		const date = new Date().toISOString()
+		list.unshift({
+			when: date,
+			points: 0,
+			reason: ""
+		})
+		await this.object.update({ "system.points_record": list })
+		await this.render()
+		return list.length
+	}
+
+	async _onDelete(event: JQuery.ClickEvent): Promise<PointsRecord> {
+		event.preventDefault()
+		const list = this.object.system.points_record
+		const index = parseInt($(event.currentTarget).data("index"))
+		const deleted = list.splice(index, 1)
+		await this.object.update({ "system.points_record": list })
+		await this.render()
+		return deleted[0]
 	}
 
 	protected async _updateObject(_event: Event, formData?: any | undefined): Promise<unknown> {
@@ -74,5 +102,20 @@ export class PointRecordSheet extends FormApplication {
 
 		await this.object.update(data)
 		return this.render()
+	}
+
+	protected _getHeaderButtons(): Application.HeaderButton[] {
+		const all_buttons = [
+			{
+				label: "",
+				class: "apply",
+				icon: "gcs-checkmark",
+				onclick: (event: any) => this._onSubmit(event),
+			},
+			...super._getHeaderButtons(),
+		]
+		all_buttons.at(-1)!.label = ""
+		all_buttons.at(-1)!.icon = "gcs-not"
+		return all_buttons
 	}
 }

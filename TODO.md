@@ -12,8 +12,8 @@
         -   Draggable thresholds
         -   Add \_updateObject options for threshold ops
 -   Implement Points Record
-    -   Add EditSVG to font
     -   Implement point record edit window
+    -   Fix header button colors
 -   Implement 5.3 optimization
 -   Move Spell College to description
 
