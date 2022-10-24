@@ -3,7 +3,6 @@ import { SkillLevel } from "@item/skill/data"
 import { Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { signed } from "@util"
 import { RitualMagicSpellData } from "./data"
 
 export class RitualMagicSpellGURPS extends BaseItemGURPS {
@@ -92,7 +91,7 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 		if (this.calculateLevel.level === -Infinity) return "-"
 		return (
 			(this.actor?.attributes?.get(this.attribute)?.attribute_def.name ?? "") +
-			signed(this.calculateLevel.relative_level)
+			this.calculateLevel.relative_level.signedString()
 		)
 	}
 

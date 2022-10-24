@@ -1,4 +1,5 @@
-import { AttributeDef, AttributeDefObj } from "@module/attribute/attribute_def"
+import { AttributeDef } from "@module/attribute/attribute_def"
+import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { SYSTEM_NAME } from "@module/settings"
 import { CharacterGURPS } from "."
 import { CharacterImporter } from "./import"
@@ -23,8 +24,9 @@ export class CharacterSheetConfig extends FormApplication {
 			template: `systems/${SYSTEM_NAME}/templates/actor/character/config/config.hbs`,
 			width: 450,
 			resizable: true,
-			submitOnChange: true,
-			closeOnSubmit: false,
+			submitOnChange: false,
+			submitOnClose: false,
+			closeOnSubmit: true,
 			tabs: [
 				{
 					navSelector: "nav",
@@ -33,6 +35,7 @@ export class CharacterSheetConfig extends FormApplication {
 				},
 			],
 			dragDrop: [{ dragSelector: ".item-list .item .controls .drag", dropSelector: null }],
+			scrollY: [".item-list"],
 		})
 	}
 
@@ -52,12 +55,6 @@ export class CharacterSheetConfig extends FormApplication {
 		const poolAttributes = actor.settings.attributes
 			.filter(e => actor.poolAttributes(true).has(e.id))
 			.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
-		// Const primaryAttributes = new Map(Object.entries(actor.settings.attributes).filter(([k, _v]) => actor.primaryAttributes(true).has(k)))
-		// const secondaryAttributes = new Map(Object.entries(actor.settings.attributes).filter(([k, _v]) => actor.secondaryAttributes(true).has(k)))
-		// const poolAttributes = new Map(Object.entries(actor.settings.attributes).filter(([k, _v]) => actor.poolAttributes(true).has(k)))
-		// primaryAttributes.forEach((e: AttributeDef): void => { e.order = actor.attributes.get(e.id)?.order || 0 })
-		// secondaryAttributes.forEach((e: AttributeDef): void => { e.order = actor.attributes.get(e.id)?.order || 0 })
-		// poolAttributes.forEach((e: AttributeDef): void => { e.order = actor.attributes.get(e.id)?.order || 0 })
 
 		return {
 			options: options,
@@ -147,9 +144,17 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	protected _getHeaderButtons(): Application.HeaderButton[] {
-		const all_buttons = super._getHeaderButtons()
+		const all_buttons = [
+			{
+				label: "",
+				class: "apply",
+				icon: "gcs-checkmark",
+				onclick: (event: any) => this._onSubmit(event),
+			},
+			...super._getHeaderButtons(),
+		]
 		all_buttons.at(-1)!.label = ""
-		all_buttons.at(-1)!.icon = "gcs-circled-x"
+		all_buttons.at(-1)!.icon = "gcs-not"
 		return all_buttons
 	}
 
@@ -169,19 +174,37 @@ export class CharacterSheetConfig extends FormApplication {
 		// Set values inside system.attributes array, and amend written values based on input
 		for (const i of Object.keys(formData)) {
 			if (i.startsWith("attributes.")) {
-				const attributes: AttributeDefObj[] =
-					(formData["system.settings.attributes"] as AttributeDefObj[]) ??
-					this.object.system.settings.attributes
-				const id = i.split(".")[1]
-				const key = i.replace(`attributes.${id}.`, "")
-				const index = attributes.findIndex(e => e.id === id)
-				setProperty(attributes[index], key, formData[i])
+				const attributes: AttributeDef[] =
+					(formData["system.settings.attributes"] as AttributeDef[]) ?? this.object.system.settings.attributes
+				const index = parseInt(i.split(".")[1])
+				const key = i.replace(`attributes.${index}.`, "")
+				if (key.startsWith("thresholds.")) {
+					const tindex = parseInt(key.split(".")[1])
+					const thresholds = attributes[index].thresholds!
+					const tkey = key.replace(`thresholds.${tindex}`, "")
+					if (tkey.startsWith("halve_")) {
+						if (thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
+							thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
+						} else {
+							thresholds[tindex].ops!.push(tkey as ThresholdOp)
+						}
+					} else {
+						setProperty(thresholds[tindex], tkey, formData[i])
+					}
+					console.log(attributes, index, key, tindex, tkey, formData[i])
+					setProperty(attributes[index], "thresholds", thresholds)
+				} else {
+					console.log(attributes, index, key, formData[i])
+					setProperty(attributes[index], key, formData[i])
+				}
+				// Console.log(attributes, index, key, formData[i])
 				formData["system.settings.attributes"] = attributes
 				delete formData[i]
 			}
 		}
 
-		return this.object.update(formData)
+		await this.object.update(formData)
+		return this.render()
 	}
 
 	async _onDragStart(event: DragEvent) {

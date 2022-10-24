@@ -113,20 +113,24 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	// TODO: move to character/sheet -> _updateObject
-	updateAttributes(
-		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>
-	) {
+	updateAttributes(data?: any) {
 		for (const i in data) {
 			if (i.includes("system.import")) return
 		}
-		if (this.system.attributes.length === 0) (data as any)["system.attributes"] = this.newAttributes()
+		if (this.system.attributes.length === 0) data["system.attributes"] = this.newAttributes()
 		for (const i in data) {
+			if (i === "system.settings.attributes") {
+				data["system.attributes"] = this.newAttributes(
+					data["system.settings.attributes"],
+					this.system.attributes
+				)
+			}
 			if (i.startsWith("system.attributes.")) {
 				const att = this.attributes.get(i.split("attributes.")[1].split(".")[0])
 				const type = i.split("attributes.")[1].split(".")[1]
 				if (att) {
-					if (type === "adj") (data as any)[i] -= att.max - att.adj
-					else if (type === "damage") (data as any)[i] = Math.max(att.max - (data as any)[i], 0)
+					if (type === "adj") data[i] -= att.max - att.adj
+					else if (type === "damage") data[i] = Math.max(att.max - data[i], 0)
 				}
 			}
 		}
@@ -211,9 +215,9 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get attributePoints(): number {
 		let total = 0
-		for (const a of Object.values(this.attributes)) {
+		this.attributes.forEach(a => {
 			if (!isNaN(a.points)) total += a.points
-		}
+		})
 		return total
 	}
 
@@ -283,7 +287,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		let total = 0
 		attributes.forEach(a => {
 			const threshold = a.currentThreshold
-			if (threshold && threshold.ops.includes(op)) total++
+			if (threshold && threshold.ops?.includes(op)) total++
 		})
 		return total
 	}
@@ -701,7 +705,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		})
 	}
 
-	newAttributes(defs = this.system.settings.attributes): AttributeObj[] {
+	newAttributes(defs = this.system.settings.attributes, prev: AttributeObj[] = []): AttributeObj[] {
 		const a: AttributeObj[] = []
 		// Const a: Record<string, AttributeObj> = {}
 		let i = 0
@@ -724,6 +728,12 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 			if (attr.damage) a[i].damage = attr.damage
 			i++
+		}
+		if (prev) {
+			a.forEach(attr => {
+				const prev_attr = prev.find(e => e.attr_id === attr.attr_id)
+				Object.assign(attr, prev_attr)
+			})
 		}
 		return a
 	}

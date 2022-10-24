@@ -3,7 +3,7 @@ import { MeleeWeapon, WeaponType } from "."
 import { EquipmentContainerGURPS, EquipmentGURPS, ItemGURPS, TraitGURPS } from "@item"
 import { TooltipGURPS } from "@module/tooltip"
 import { CharacterGURPS } from "@actor"
-import { i18n, signed, stringCompare } from "@util"
+import { i18n, stringCompare } from "@util"
 import { Feature } from "@feature"
 import { SkillBonus } from "@feature/skill_bonus"
 import { gid } from "@module/data"
@@ -142,7 +142,7 @@ class BaseWeapon {
 		if (penalty !== 0 && tooltip) {
 			tooltip.push("\n")
 			tooltip.push(i18n("gurps.tooltip.encumbrance"))
-			tooltip.push(` [${signed(penalty)}]`)
+			tooltip.push(` [${penalty.signedString()}]`)
 		}
 		return penalty
 	}

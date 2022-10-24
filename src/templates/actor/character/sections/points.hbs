@@ -1,5 +1,5 @@
 <div id="points">
-	<div class="header">{{actor.totalPoints}} {{localize "gurps.character.points.title"}}</div>
+	<div class="header">{{actor.totalPoints}} {{localize "gurps.character.points.title"}}<a class="gcs-edit edit-points"></a></div>
 	<div class="fieldblock">
 		{{#if (overspent actor)}}
 		{{>sections/input-text after="gurps.character.points.overspent" field="field overspent" name="actor.unspentPoints"

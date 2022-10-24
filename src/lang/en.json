@@ -193,6 +193,12 @@
 			"resource_trackers": {
 				"title": "Resource Trackers"
 			},
+			"points_record": {
+				"title": "Points Record for {name}",
+				"when": "When",
+				"points": "Points",
+				"reason": "Reason"
+			},
 			"macros": {
 				"title": "Quick Macros",
 				"add": "Add New Quick Macro..."
@@ -708,16 +714,6 @@
 				"tooltip": "Tooltip",
 				"inline_and_tooltip": "Inline & Tooltip"
 			},
-			"default_length_units": {
-				"ft_in": "Feet & Inches",
-				"in": "in",
-				"ft": "ft",
-				"yd": "yd",
-				"mi": "mi",
-				"cm": "cm",
-				"km": "km",
-				"m": "m"
-			},
 			"default_weight_units": {
 				"lb": "lb",
 				"#": "#",
@@ -841,6 +837,16 @@
 			"target_modifiers": "Target Modifiers",
 			"target_name": "Target: {name}",
 			"no_targets": "No Targetted or Controlled Tokens!"
+		},
+		"length_units": {
+			"ft_in": "Feet & Inches",
+			"in": "in",
+			"ft": "ft",
+			"yd": "yd",
+			"mi": "mi",
+			"cm": "cm",
+			"km": "km",
+			"m": "m"
 		},
 		"settings": {
 			"basic_set_pdfs": {
