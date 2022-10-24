@@ -14,9 +14,13 @@
 -   Implement Points Record
     -   Add EditSVG to font
     -   Implement point record edit window
+-   Implement 5.3 optimization
+-   Move Spell College to description
 
 ## 1.0.0
 
+-   GCS 5.3 enc(forSkills) function to expressions
+-   GCS 5.3 Study Time support
 -   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility
 -   Convert OTFs and chat commands
@@ -69,6 +73,7 @@
 
 ## 1.1.0 and beyond
 
+-   GCS 5.3 Template support
 -   Vehicles
     -   Spaceships
     -   3e(?) Vehicles

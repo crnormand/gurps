@@ -1,4 +1,4 @@
-import { AttributeDef, AttributeDefObj } from "@module/attribute/attribute_def"
+import { AttributeDef } from "@module/attribute/attribute_def"
 import { ThresholdOp } from "@module/attribute/pool_threshold"
 import { SYSTEM_NAME } from "@module/settings"
 import { CharacterGURPS } from "."
@@ -174,9 +174,8 @@ export class CharacterSheetConfig extends FormApplication {
 		// Set values inside system.attributes array, and amend written values based on input
 		for (const i of Object.keys(formData)) {
 			if (i.startsWith("attributes.")) {
-				const attributes: AttributeDefObj[] =
-					(formData["system.settings.attributes"] as AttributeDefObj[]) ??
-					this.object.system.settings.attributes
+				const attributes: AttributeDef[] =
+					(formData["system.settings.attributes"] as AttributeDef[]) ?? this.object.system.settings.attributes
 				const index = parseInt(i.split(".")[1])
 				const key = i.replace(`attributes.${index}.`, "")
 				if (key.startsWith("thresholds.")) {
@@ -185,10 +184,7 @@ export class CharacterSheetConfig extends FormApplication {
 					const tkey = key.replace(`thresholds.${tindex}`, "")
 					if (tkey.startsWith("halve_")) {
 						if (thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
-							thresholds[tindex].ops!.splice(
-								thresholds[tindex].ops!.indexOf(tkey as ThresholdOp),
-								1
-							)
+							thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
 						} else {
 							thresholds[tindex].ops!.push(tkey as ThresholdOp)
 						}

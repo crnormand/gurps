@@ -84,7 +84,7 @@ export class Attribute {
 		this.max = v
 	}
 
-	get currentThreshold(): PoolThreshold | null {
+	get currentThreshold(): Partial<PoolThreshold> | null {
 		const def = this.attribute_def
 		if (!def) return null
 		if (
@@ -96,7 +96,7 @@ export class Attribute {
 		const cur = this.current
 		if (def.thresholds) {
 			for (const t of def.thresholds) {
-				if (cur <= t.threshold(this.actor)) return t
+				if (cur <= t.threshold!(this.actor)) return t
 			}
 		}
 		return null

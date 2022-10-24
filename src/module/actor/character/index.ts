@@ -287,7 +287,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		let total = 0
 		attributes.forEach(a => {
 			const threshold = a.currentThreshold
-			if (threshold && threshold.ops.includes(op)) total++
+			if (threshold && threshold.ops?.includes(op)) total++
 		})
 		return total
 	}

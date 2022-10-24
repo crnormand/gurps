@@ -134,6 +134,16 @@ class DiceGURPS {
 		if (count < 0) count = 0
 		return [count, modifier]
 	}
+
+	roll(extraDiceFromModifiers: boolean): number {
+		let [count, result] = this.adjustedCountAndModifier(extraDiceFromModifiers)
+		if (this.sides > 1) {
+			for (let i = 0; i < count; i++) {
+				result += 1 + Math.floor(Math.random() * this.sides)
+			}
+		} else if (this.sides === 1) result = count
+		return result * this.multiplier
+	}
 }
 
 interface DiceGURPSDef {
