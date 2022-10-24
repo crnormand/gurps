@@ -27,17 +27,6 @@ export function i18n_f(value: string, data: Record<string, unknown>, fallback?: 
 }
 
 /**
- * @param i
- * @returns {string}
- */
-export function signed(i: string | number): string {
-	if (i === "") i = "0"
-	if (typeof i === "string") i = parseFloat(i)
-	if (i >= 0) return `+${i.toString()}`
-	return i.toString()
-}
-
-/**
  *
  * @param id
  * @param permit_leading_digits

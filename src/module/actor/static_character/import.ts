@@ -3,7 +3,7 @@ import { CharacterImportedData } from "@actor/character/import"
 import { TraitSystemData } from "@item/trait/data"
 import { TraitContainerSystemData } from "@item/trait_container/data"
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
-import { floatingMul, i18n, i18n_f, signed, Static } from "@util"
+import { floatingMul, i18n, i18n_f, Static } from "@util"
 import { StaticCharacterGURPS } from "."
 import {
 	StaticAdvantage,
@@ -347,7 +347,7 @@ export class StaticCharacterImporter {
 						final += f.amount * (i.levels ? parseFloat(i.levels) : 1)
 				}
 		}
-		ts.sizemod = signed(final)
+		ts.sizemod = final.signedString()
 		return {
 			"system.-=traits": null,
 			"system.traits": ts,
