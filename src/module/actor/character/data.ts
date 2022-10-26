@@ -1,8 +1,10 @@
 import { DamageProgression, DisplayMode, Height, LengthUnits, Weight, WeightUnits } from "@module/data"
 import { ActorFlagsGURPS, ActorSystemData, ActorType, BaseActorSourceGURPS } from "@actor/base/data"
-import { AttributeDef } from "@module/attribute/attribute_def"
+import { AttributeDefObj } from "@module/attribute/attribute_def"
 import { Attribute, AttributeObj } from "@module/attribute"
 import { DiceGURPS } from "@module/dice"
+import { ResourceTrackerObj } from "@module/resource_tracker"
+import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 
 export interface CharacterSource extends BaseActorSourceGURPS<ActorType.CharacterGCS, CharacterSystemData> {
 	flags: DeepPartial<CharacterFlags>
@@ -32,7 +34,8 @@ export interface CharacterSystemData extends ActorSystemData {
 	modified_date: string
 	profile: CharacterProfile
 	// Attributes: Record<string, Attribute | AttributeObj>
-	attributes: Array<AttributeObj>
+	attributes: AttributeObj[]
+	resource_trackers: ResourceTrackerObj[]
 	total_points: number
 	points_record: PointsRecord[]
 	calc: CharacterCalc
@@ -69,7 +72,8 @@ export interface CharacterSettings {
 	// Attributes: Record<string, AttributeSettingDef>;
 	body_type: HitLocationTable
 	// Attributes: Record<string, AttributeDef> // AttributeObj represents the attribute as an object
-	attributes: AttributeDef[]
+	attributes: AttributeDefObj[]
+	resource_trackers: ResourceTrackerDefObj[]
 }
 
 export interface CharacterProfile {

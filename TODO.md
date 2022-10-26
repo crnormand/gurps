@@ -2,6 +2,7 @@
 
 ## In Progress
 
+-   Implement server-side file upload dialog (toggle between client and server in settings)
 -   Implement GCS-style attribute editor
     -   Adding draggable attributes
         -   Change indicator when halfway down an entry
@@ -11,14 +12,14 @@
         -   Functional Threshold Button
         -   Draggable thresholds
         -   Add \_updateObject options for threshold ops
--   Implement Points Record
-    -   Implement point record edit window
-    -   Fix header button colors
 -   Implement 5.3 optimization
--   Move Spell College to description
+-   Resource tracker editor
+    -   enfore max/min checkboxes
+-   Replace "input-text" partial with sensible function
 
 ## 1.0.0
 
+-   Drag rollable buttons to hotbar or message box for macros
 -   GCS 5.3 enc(forSkills) function to expressions
 -   GCS 5.3 Study Time support
 -   Finish the Damage Calculator conversion

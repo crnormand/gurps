@@ -203,6 +203,8 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
 		)
 		const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.attributes)
+		const resource_trackers = Array.from(this.actor.resource_trackers.values())
+		console.log(resource_trackers)
 		const encumbrance = this.prepareEncumbrance()
 		const lifts = this.prepareLifts()
 		const sheetData = {
@@ -215,6 +217,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				primary_attributes: primary_attributes,
 				secondary_attributes: secondary_attributes,
 				point_pools: point_pools,
+				resource_trackers: resource_trackers,
 				encumbrance: encumbrance,
 				lifting: lifts,
 				current_year: new Date().getFullYear(),

@@ -48,9 +48,13 @@ import {
 	stringCompare,
 } from "@util"
 import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
+import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
+import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
+
+	resource_trackers: Map<string, ResourceTracker> = new Map()
 
 	variableResolverExclusions: Map<string, boolean> = new Map()
 
@@ -59,6 +63,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	constructor(data: CharacterSource, context: ActorConstructorContextGURPS = {}) {
 		super(data, context)
 		if (this.system.attributes) this.attributes = this.getAttributes()
+		if (this.system.resource_trackers) this.resource_trackers = this.getResourceTrackers()
 		this.featureMap = new Map()
 	}
 
@@ -90,6 +95,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.modified_date = sd.created_date
 		if (SETTINGS_TEMP.general.auto_fill) sd.profile = SETTINGS_TEMP.general.auto_fill
 		sd.attributes = this.newAttributes(sd.settings.attributes)
+		sd.resource_trackers = []
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
 	}
@@ -123,6 +129,12 @@ class CharacterGURPS extends BaseActorGURPS {
 				data["system.attributes"] = this.newAttributes(
 					data["system.settings.attributes"],
 					this.system.attributes
+				)
+			}
+			if (i === "system.settings.resource_trackers") {
+				data["system.resource_trackers"] = this.newTrackers(
+					data["system.settings.resource_trackers"],
+					this.system.resource_trackers
 				)
 			}
 			if (i.startsWith("system.attributes.")) {
@@ -294,6 +306,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get settings() {
 		let settings = this.system.settings
+		settings.resource_trackers = settings.resource_trackers.map(e => new ResourceTrackerDef(e))
 		settings.attributes = settings.attributes.map(e => new AttributeDef(e))
 		// Const defs: Record<string, AttributeDef> = {}
 		// for (const att in settings.attributes) {
@@ -738,21 +751,45 @@ class CharacterGURPS extends BaseActorGURPS {
 		return a
 	}
 
+	newTrackers(defs = this.system.settings.resource_trackers, prev: ResourceTrackerObj[] = []): ResourceTrackerObj[] {
+		const t: ResourceTrackerObj[] = []
+		let i = 0
+		for (const tracker_def of defs) {
+			const tracker = new ResourceTracker(this, tracker_def.id, i)
+			t.push({
+				order: tracker.order,
+				tracker_id: tracker.tracker_id,
+				damage: tracker.damage,
+			})
+			i++
+		}
+		if (prev) {
+			t.forEach(tracker => {
+				const prev_tracker = prev.find(e => e.tracker_id === tracker.tracker_id)
+				Object.assign(tracker, prev_tracker)
+			})
+		}
+		return t
+	}
+
 	getAttributes(): Map<string, Attribute> {
 		const attributes: Map<string, Attribute> = new Map()
 		const att_array = this.system.attributes
 		if (!att_array.length) return attributes
-		// Const attributes: Map<string, Attribute> = new Map(this.system.attributes.map(e => [e.attr_id, new Attribute(this, e.attr_id, e.order, e)]))
 		att_array.forEach((v, k) => {
 			attributes.set(v.attr_id, new Attribute(this, v.attr_id, k, v))
 		})
-		// Let i = 0
-		// for (const attr of this.system.attributes) {
-		// 	let att = this.system.attributes[attr_id]
-		// 	a.set(attr_id, new Attribute(this, attr_id, i, att))
-		// 	i++
-		// }
 		return attributes
+	}
+
+	getResourceTrackers(): Map<string, ResourceTracker> {
+		const trackers: Map<string, ResourceTracker> = new Map()
+		const tracker_array = this.system.resource_trackers
+		if (!tracker_array.length) return trackers
+		tracker_array.forEach((v, k) => {
+			trackers.set(v.tracker_id, new ResourceTracker(this, v.tracker_id, k, v))
+		})
+		return trackers
 	}
 
 	// Do not store modifiers directly on actors
