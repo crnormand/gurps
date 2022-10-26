@@ -192,7 +192,6 @@ export class CharacterImporter {
 		// 	att.cost_adj_percent_per_sm ??= 0
 		// 	attributes[att.id] = att
 		// }
-		console.log(settings.show_spell_adj ?? false)
 		return {
 			"system.settings.default_length_units": settings.default_length_units ?? "ft_in",
 			"system.settings.default_weight_units": settings.default_weight_units ?? "lb",
@@ -212,6 +211,7 @@ export class CharacterImporter {
 			"system.settings.block_layout": settings.block_layout,
 			// "system.settings.attributes": attributes,
 			"system.settings.attributes": settings.attributes,
+			"system.settings.resource_trackers": [],
 			"system.settings.body_type": settings.body_type,
 		}
 	}
@@ -364,6 +364,7 @@ export class CharacterImporter {
 			cr_adj: data.cr_adj ?? "none",
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -380,6 +381,7 @@ export class CharacterImporter {
 			cr: data.cr ?? CR.None,
 			cr_adj: data.cr_adj ?? "none",
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -397,6 +399,7 @@ export class CharacterImporter {
 			affects: data.affects ?? "total",
 			levels: data.levels ?? 0,
 			features: data.features ? this.importFeatures(data.features) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -409,6 +412,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -430,6 +434,7 @@ export class CharacterImporter {
 			defaults: data.defaults ? this.importDefaults(data.defaults) : [],
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -452,6 +457,7 @@ export class CharacterImporter {
 			defaults: data.defaults ? this.importDefaults(data.defaults) : [],
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -464,6 +470,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -488,6 +495,7 @@ export class CharacterImporter {
 			maintenance_cost: data.maintenance_cost ?? "",
 			casting_time: data.casting_time ?? "",
 			duration: data.duration ?? "",
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -514,6 +522,7 @@ export class CharacterImporter {
 			duration: data.duration ?? "",
 			base_skill: data.base_skill ?? "",
 			prereq_count: data.prereq_count ?? 0,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -526,6 +535,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -551,6 +561,7 @@ export class CharacterImporter {
 			quantity: data.quantity ?? 1,
 			ignore_weight_for_skills: data.ignore_weight_for_skills ?? false,
 			other: other,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -577,6 +588,7 @@ export class CharacterImporter {
 			ignore_weight_for_skills: data.ignore_weight_for_skills ?? false,
 			other: other,
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -595,6 +607,7 @@ export class CharacterImporter {
 			tech_level: data.tech_level ?? "",
 			features: data.features ? this.importFeatures(data.features) : [],
 			disabled: data.disabled ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -609,6 +622,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -621,6 +635,7 @@ export class CharacterImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			text: data.text ?? "",
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -634,6 +649,7 @@ export class CharacterImporter {
 			tags: data.tags ?? [],
 			text: data.text ?? "",
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 

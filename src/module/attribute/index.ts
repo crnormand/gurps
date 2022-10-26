@@ -1,10 +1,7 @@
 import { CharacterGURPS } from "@actor"
-import { gid } from "@module/data"
 import { sanitize } from "@util"
-import { AttributeDef, AttributeType } from "./attribute_def"
+import { AttributeDef, AttributeType, reserved_ids } from "./attribute_def"
 import { PoolThreshold } from "./pool_threshold"
-
-const reservedIds: string[] = [gid.Skill, gid.Parry, gid.Block, gid.Dodge, gid.SizeModifier, gid.Ten]
 
 export interface AttributeObj {
 	bonus?: number
@@ -48,11 +45,11 @@ export class Attribute {
 	}
 
 	set id(v: string) {
-		this.attr_id = sanitize(v, false, reservedIds)
+		this.attr_id = sanitize(v, false, reserved_ids)
 	}
 
 	get attribute_def(): AttributeDef {
-		return this.actor.settings.attributes.find(e => e.id === this.attr_id)!
+		return new AttributeDef(this.actor.settings.attributes.find(e => e.id === this.attr_id))
 	}
 
 	get max(): number {
@@ -121,15 +118,4 @@ export class Attribute {
 		if (this.damage) obj.damage = this.damage
 		return obj
 	}
-}
-
-export interface Attribute {
-	actor: CharacterGURPS
-	bonus: number
-	cost_reduction: number
-	order: number
-	attr_id: string
-	adj: number
-	damage?: number
-	attribute_def: AttributeDef
 }

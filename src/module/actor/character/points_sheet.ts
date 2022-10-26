@@ -51,7 +51,7 @@ export class PointRecordSheet extends FormApplication {
 		list.unshift({
 			when: date,
 			points: 0,
-			reason: ""
+			reason: "",
 		})
 		await this.object.update({ "system.points_record": list })
 		await this.render()

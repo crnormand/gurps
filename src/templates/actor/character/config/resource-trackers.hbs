@@ -1,0 +1,40 @@
+<div class="add">
+	<a class="gcs-circled-add add" data-type="resource_trackers"></a>
+</div>
+<div class="item-list">
+	{{#each resourceTrackers}}
+    <div class="item">
+        <div class="controls">
+			<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="resource-tracker"></a>
+            <a class="gcs-trash"></a>
+            <a class="gcs-circled-add disabled"></a>
+        </div>
+        <div class="fieldblock">
+            {{>sections/input-text field="field" label="gurps.resource_tracker_def.id" name=(concat "resource_trackers." this.order ".id") data=this.id type="String" }}
+            {{>sections/input-text field="field" label="gurps.resource_tracker_def.name" name=(concat "resource_trackers." this.order ".name") data=this.name type="String" }}
+            {{>sections/input-text field="field" label="gurps.resource_tracker_def.full_name" name=(concat "resource_trackers." this.order ".full_name") data=this.full_name type="String" }}
+			<div class="label">{{localize "gurps.resource_tracker_def.max"}}</div>
+            <div class="field no-stretch">
+				<input name="NUMBER.resource_trackers.{{this.order}}.max" class="input number" type="text" data-dtype="String" value="{{this.max}}" />
+				<label class="label checkbox-label">
+					<input class="input" type="checkbox" {{ checked this.isMaxEnforced }} />
+					{{ localize "gurps.resource_tracker_def.max_enforced" }}
+				</label>
+            </div>
+			<div class="label">{{localize "gurps.resource_tracker_def.min"}}</div>
+            <div class="field no-stretch">
+				<input name="NUMBER.resource_trackers.{{this.order}}.min" class="input number" type="text" data-dtype="String" value="{{this.min}}" />
+				<label class="label checkbox-label">
+					<input class="input" type="checkbox" {{ checked this.isminEnforced }} />
+					{{ localize "gurps.resource_tracker_def.min_enforced" }}
+				</label>
+            </div>
+		<div class="item-list thresholds">
+			{{#each this.thresholds}}
+			{{>actor/character/config/threshold id=(../this.order)}}
+			{{/each}}
+		</div>
+    </div>
+</div>
+	{{/each}}
+</div>

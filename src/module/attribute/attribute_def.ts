@@ -32,7 +32,7 @@ export class AttributeDef {
 				for (const t of data.thresholds) {
 					thr.push(new PoolThreshold(t))
 				}
-			;(data as any).thresholds = thr
+			data.thresholds = thr
 			Object.assign(this, data)
 		}
 	}
@@ -91,6 +91,7 @@ export interface AttributeDefObj {
 	cost_per_point: number
 	cost_adj_percent_per_sm?: number
 	thresholds?: PoolThresholdDef[]
+	order?: number
 }
 
 export interface AttributeDef {

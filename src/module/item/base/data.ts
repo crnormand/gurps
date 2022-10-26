@@ -31,6 +31,7 @@ export interface ItemSystemData {
 	name: string
 	reference: string
 	notes: string
+	vtt_notes: string
 	tags: Array<string>
 	type: ItemType
 }
