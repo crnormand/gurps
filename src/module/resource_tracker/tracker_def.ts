@@ -1,5 +1,5 @@
 import { reserved_ids } from "@module/attribute/attribute_def"
-import { PoolThreshold } from "@module/attribute/pool_threshold"
+import { PoolThreshold, PoolThresholdDef } from "@module/attribute/pool_threshold"
 import { evaluateToNumber, sanitize, VariableResolver } from "@util"
 
 export interface ResourceTrackerDefObj {
@@ -11,7 +11,7 @@ export interface ResourceTrackerDefObj {
 	min: number
 	isMaxEnforced: boolean
 	isMinEnforced: boolean
-	thresholds: PoolThreshold[]
+	thresholds?: PoolThresholdDef[]
 	order: number
 }
 

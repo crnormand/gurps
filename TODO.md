@@ -12,6 +12,8 @@
         -   Functional Threshold Button
         -   Draggable thresholds
         -   Add \_updateObject options for threshold ops
+        -   apply attribute type
+        -   maybe go back to live updates
 -   Implement 5.3 optimization
 -   Resource tracker editor
     -   enfore max/min checkboxes

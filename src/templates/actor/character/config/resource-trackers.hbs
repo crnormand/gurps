@@ -30,6 +30,9 @@
 				</label>
             </div>
 		<div class="item-list thresholds">
+			<div class="add">
+				<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="tracker_thresholds"></a>
+			</div>
 			{{#each this.thresholds}}
 			{{>actor/character/config/threshold id=(../this.order)}}
 			{{/each}}
