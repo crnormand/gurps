@@ -115,11 +115,11 @@ export class CharacterSheetConfig extends FormApplication {
 				if (files) {
 					readTextFromFile(files[0]).then(
 						text =>
-							(this.file = {
-								text: text,
-								name: files[0].name,
-								path: files[0].path,
-							})
+						(this.file = {
+							text: text,
+							name: files[0].name,
+							path: files[0].path,
+						})
 					)
 				}
 				this.render()
@@ -127,11 +127,11 @@ export class CharacterSheetConfig extends FormApplication {
 		}
 		html.find(".import-confirm").on("click", event => this._import(event))
 		html.find("textarea")
-			.each(function () {
+			.each(function() {
 				const height = this.scrollHeight
 				this.setAttribute("style", `height:${height}px;`)
 			})
-			.on("input", function () {
+			.on("input", function() {
 				const height = this.scrollHeight
 				// Const height = this.value.split("\r").length * 24;
 				this.style.height = "0"
@@ -145,19 +145,19 @@ export class CharacterSheetConfig extends FormApplication {
 	async _onAddItem(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		event.stopPropagation()
-		const type: "attributes" | "resource_trackers" = $(event.currentTarget).data("type")
+		const type: "attributes" | "resource_trackers" | "attribute_thresholds" | "tracker_thresholds" = $(event.currentTarget).data("type")
 		let new_id = ""
-		for (let n = 0; n < 26; n++) {
+		const attributes = this.object.system.settings.attributes || []
+		const resource_trackers = this.object.system.settings.resource_trackers || []
+		if (type === "attributes" || type === "resource_trackers") for (let n = 0; n < 26; n++) {
 			const char = String.fromCharCode(97 + n)
-			const list = (this.object.system.settings[type] as any[]) || []
-			if (!list.find((e: AttributeDefObj | ResourceTrackerDefObj) => e.id === char)) {
+			if (![...attributes, ...resource_trackers].find(e => e.id === char)) {
 				new_id = char
 				break
 			}
 		}
 		switch (type) {
 			case "attributes":
-				const attributes = this.object.system.settings.attributes || []
 				// TODO: account for possibility of all letters being taken
 				attributes.push({
 					type: AttributeType.Integer,
@@ -170,7 +170,6 @@ export class CharacterSheetConfig extends FormApplication {
 				await this.object.update({ "system.settings.attributes": attributes })
 				return this.render()
 			case "resource_trackers":
-				const resource_trackers = this.object.system.settings.resource_trackers || []
 				resource_trackers.push({
 					id: new_id,
 					name: "",
@@ -185,6 +184,28 @@ export class CharacterSheetConfig extends FormApplication {
 				})
 				await this.object.update({ "system.settings.resource_trackers": resource_trackers })
 				return this.render()
+			case "attribute_thresholds":
+				attributes[$(event.currentTarget).data("id")].thresholds ??= []
+				attributes[$(event.currentTarget).data("id")].thresholds!.push({
+					state: "",
+					explanation: "",
+					expression: "",
+					ops: []
+				})
+				await this.object.update({ "system.settings.attributes": attributes })
+				return this.render()
+			case "tracker_thresholds":
+				resource_trackers[$(event.currentTarget).data("id")].thresholds ??= []
+				resource_trackers[$(event.currentTarget).data("id")].thresholds!.push({
+					state: "",
+					explanation: "",
+					expression: "",
+					ops: []
+				})
+				await this.object.update({ "system.settings.resource_trackers": resource_trackers })
+				return this.render()
+
+
 		}
 	}
 
@@ -390,7 +411,7 @@ export class CharacterSheetConfig extends FormApplication {
 	}
 
 	close(options?: FormApplication.CloseOptions | undefined): Promise<void> {
-		;(this.object.sheet as unknown as CharacterSheetGURPS).config = null
+		; (this.object.sheet as unknown as CharacterSheetGURPS).config = null
 		return super.close(options)
 	}
 }
