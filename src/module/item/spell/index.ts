@@ -75,18 +75,18 @@ export class SpellGURPS extends ContainerGURPS {
 	get calculateLevel(): SkillLevel {
 		const tooltip = new TooltipGURPS()
 		let relative_level = baseRelativeLevel(this.difficulty)
-		let level = Math.max()
+		let level = -Infinity
 		if (this.actor) {
 			let points = Math.trunc(this.points)
 			level = this.actor.resolveAttributeCurrent(this.attribute)
 			if (this.difficulty === Difficulty.Wildcard) points = Math.trunc(points / 3)
 			if (points < 1) {
-				level = Math.max()
+				level = -Infinity
 				relative_level = 0
 			} else if (points < 4) relative_level += 1
 			else relative_level += 1 + Math.trunc(points / 4)
 
-			if (level !== Math.max()) {
+			if (level !== -Infinity) {
 				relative_level += this.actor.bestCollegeSpellBonus(this.college, this.tags, tooltip)
 				relative_level += this.actor.spellBonusesFor("spell.power_source", this.powerSource, this.tags, tooltip)
 				relative_level += this.actor.spellBonusesFor("spell.name", this.name ?? "", this.tags, tooltip)

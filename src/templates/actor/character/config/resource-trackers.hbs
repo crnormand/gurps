@@ -3,41 +3,92 @@
 </div>
 <div class="item-list">
 	{{#each resourceTrackers}}
-    <div class="item">
-        <div class="controls">
-			<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="resource-tracker"></a>
-            <a class="gcs-trash"></a>
-            <a class="gcs-circled-add disabled"></a>
-        </div>
-        <div class="fieldblock">
-            {{>sections/input-text field="field" label="gurps.resource_tracker_def.id" name=(concat "resource_trackers." this.order ".id") data=this.id type="String" }}
-            {{>sections/input-text field="field" label="gurps.resource_tracker_def.name" name=(concat "resource_trackers." this.order ".name") data=this.name type="String" }}
-            {{>sections/input-text field="field" label="gurps.resource_tracker_def.full_name" name=(concat "resource_trackers." this.order ".full_name") data=this.full_name type="String" }}
-			<div class="label">{{localize "gurps.resource_tracker_def.max"}}</div>
-            <div class="field no-stretch">
-				<input name="NUMBER.resource_trackers.{{this.order}}.max" class="input number" type="text" data-dtype="String" value="{{this.max}}" />
-				<label class="label checkbox-label">
-					<input class="input" type="checkbox" {{ checked this.isMaxEnforced }} />
-					{{ localize "gurps.resource_tracker_def.max_enforced" }}
-				</label>
-            </div>
-			<div class="label">{{localize "gurps.resource_tracker_def.min"}}</div>
-            <div class="field no-stretch">
-				<input name="NUMBER.resource_trackers.{{this.order}}.min" class="input number" type="text" data-dtype="String" value="{{this.min}}" />
-				<label class="label checkbox-label">
-					<input class="input" type="checkbox" {{ checked this.isminEnforced }} />
-					{{ localize "gurps.resource_tracker_def.min_enforced" }}
-				</label>
-            </div>
-		<div class="item-list thresholds">
-			<div class="add">
-				<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="tracker_thresholds"></a>
+		<div class="item">
+			<div class="controls">
+				<a
+					class="gcs-grip drag"
+					data-id="{{this.id}}"
+					data-order="{{this.order}}"
+					data-type="resource-tracker"
+				></a>
+				<a class="gcs-trash"></a>
+				<a class="gcs-circled-add disabled"></a>
 			</div>
-			{{#each this.thresholds}}
-			{{>actor/character/config/threshold id=(../this.order)}}
-			{{/each}}
+			<div class="fieldblock">
+				<div class="label">{{localize "gurps.resource_tracker_def.id"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="resource.trackers.{{this.order}}.id"
+						value="{{this.id}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.name"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="resource.trackers.{{this.order}}.name"
+						value="{{this.name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.full_name"}}</div>
+				<div class="field">
+					<input
+						type="text"
+						name="resource.trackers.{{this.order}}.full_name"
+						value="{{this.full_name}}"
+						data-dtype="String"
+					/>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.max"}}</div>
+				<div class="field no-stretch">
+					<input
+						name="resource_trackers.{{this.order}}.max"
+						class="input"
+						type="text"
+						data-dtype="Number"
+						value="{{this.max}}"
+					/>
+					<label class="label checkbox-label">
+						<input
+							class="input"
+							type="checkbox"
+							name="resource_trackers.{{this.order}}.isMaxEnforced"
+							{{checked this.isMaxEnforced}}
+						/>
+						{{localize "gurps.resource_tracker_def.max_enforced"}}
+					</label>
+				</div>
+				<div class="label">{{localize "gurps.resource_tracker_def.min"}}</div>
+				<div class="field no-stretch">
+					<input
+						name="resource_trackers.{{this.order}}.min"
+						class="input"
+						type="text"
+						data-dtype="Number"
+						value="{{this.min}}"
+					/>
+					<label class="label checkbox-label">
+						<input
+							class="input"
+							type="checkbox"
+							name="resource_trackers.{{this.order}}.isMinEnforced"
+							{{checked this.isMinEnforced}}
+						/>
+						{{localize "gurps.resource_tracker_def.min_enforced"}}
+					</label>
+				</div>
+				<div class="item-list thresholds">
+					<div class="add">
+						<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="tracker_thresholds"></a>
+					</div>
+					{{#each this.thresholds}}
+					{{>actor/character/config/threshold id=(../this.order)}}
+					{{/each}}
+				</div>
+			</div>
 		</div>
-    </div>
-</div>
 	{{/each}}
 </div>

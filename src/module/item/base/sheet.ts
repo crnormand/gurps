@@ -124,6 +124,7 @@ export class ItemSheetGURPS extends ItemSheet {
 	}
 
 	protected async _updateObject(event: Event, formData: Record<string, any>): Promise<unknown> {
+		// FormApplicationGURPS.updateObject(event, formData)
 		if (formData["system.tags"] && typeof formData["system.tags"] === "string") {
 			const tags = formData["system.tags"].split(",").map(e => e.trim())
 			formData["system.tags"] = tags
@@ -131,23 +132,6 @@ export class ItemSheetGURPS extends ItemSheet {
 		if (formData["system.college"] && typeof formData["system.college"] === "string") {
 			const college = formData["system.college"].split(",").map(e => e.trim())
 			formData["system.college"] = college
-		}
-		for (const [key, value] of Object.entries(formData)) {
-			// If (typeof value === "string" && value.includes("\n")) formData[key] = value.replaceAll("\n", "\r")
-			// if (typeof value === "string" && value.includes("<div>")) {
-			// 	formData[key] = value
-			// 		.replace(/(<\/div>)?<div>/g, "\n")
-			// 		.replace("<br></div>", "")
-			// 		.replace("<br>", "\n");
-			// }
-			if (value === "false") formData[key] = false
-			if (value === "true") formData[key] = true
-			// If (value === "\n") formData[key] = "";
-			// HACK: values of 0 are replaced with empty strings. this fixes it, but it's messy
-			if (key.startsWith("NUMBER.")) {
-				formData[key.replace("NUMBER.", "")] = isNaN(parseFloat(value)) ? 0 : parseFloat(value)
-				delete formData[key]
-			}
 		}
 		return super._updateObject(event, formData)
 	}

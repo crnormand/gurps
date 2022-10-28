@@ -68,17 +68,10 @@ export class PointRecordSheet extends FormApplication {
 		return deleted[0]
 	}
 
-	protected async _updateObject(_event: Event, formData?: any | undefined): Promise<unknown> {
+	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
+		// FormData = await FormApplicationGURPS.updateObject(event, formData)
+		console.log(formData)
 		if (!this.object.id) return
-		for (const [key, value] of Object.entries(formData)) {
-			// HACK: values of 0 are replaced with empty strings. this fixes it, but it's messy
-			if (key.startsWith("NUMBER.")) {
-				formData[key.replace("NUMBER.", "")] = isNaN(parseFloat(value as string))
-					? 0
-					: parseFloat(value as string)
-				delete formData[key]
-			}
-		}
 		const data: any = {}
 		const record: any[] = this.object.system.points_record
 		for (const k of Object.keys(formData)) {

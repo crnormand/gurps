@@ -104,7 +104,7 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 
 	get calculateLevel(): SkillLevel {
 		let skillLevel = {
-			level: Math.max(),
+			level: -Infinity,
 			relative_level: 0,
 			tooltip: new TooltipGURPS() as TooltipGURPS | string,
 		}
@@ -156,7 +156,7 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 		const tooltip = new TooltipGURPS()
 		let relative_level = 0
 		let points = this.adjustedPoints()
-		let level = Math.max()
+		let level = -Infinity
 		if (this.actor) {
 			if (def?.type === gid.Skill) {
 				const sk = this.actor.baseSkill(def!, true)
@@ -164,12 +164,12 @@ export class RitualMagicSpellGURPS extends BaseItemGURPS {
 			} else if (def) {
 				level = (def?.skillLevelFast(this.actor, true, false, null) || 0) - (def?.modifier || 0)
 			}
-			if (level !== Math.max()) {
+			if (level !== -Infinity) {
 				const base_level = level
 				level += def!.modifier // ?
 				if (this.difficulty === "h") points -= 1
 				if (points > 0) relative_level = points
-				if (level !== Math.max()) {
+				if (level !== -Infinity) {
 					relative_level += this.actor.bonusFor(`skill.name/${this.name}`, tooltip)
 					relative_level += this.actor.skillComparedBonusFor(
 						"skill.name*",

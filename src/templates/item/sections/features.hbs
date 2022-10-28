@@ -29,8 +29,9 @@
                 {{#if (eq this.type "cost_reduction") }}
                     {{>cost-reduction config=../config attributes=../attributes}}
                 {{else}}
-                    {{>sections/input-text field="field" name=(concat "NUMBER.system.features." @index ".amount")
-                    data=this.amount type="String"}}
+					<div class="field">
+						<input type="text" name="system.features.{{@index}}.amount" value="{{this.amount}}" data-dtype="String" />
+					</div>
                     {{#if (eq this.type "weapon_bonus") }}
                         <div class="field">
                             <label class="checkbox-label">

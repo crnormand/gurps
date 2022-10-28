@@ -51,6 +51,16 @@
 			padding: 0px 2px;
 		}
 	}
+	.checkbox-label {
+		display: grid;
+		grid-template-columns: 1em auto;
+		gap: 3px;
+		height: 16px;
+		grid-row-gap: 0px;
+		font: var(--font-system);
+		white-space: nowrap;
+		translate: 0 0;
+	}
 	.field {
 		display: grid;
 		grid-auto-flow: dense column;
@@ -59,52 +69,42 @@
 		&.no-stretch {
 			width: max-content;
 		}
-		&.check label.checkbox-label {
-			translate: 0 -4px;
-		}
+		// &.check label.checkbox-label {
+		// 	translate: 0 -4px;
+		// }
 		input[type="number"] {
 			width: 60px;
 		}
-		.checkbox-label {
-			display: grid;
-			grid-template-columns: 1em auto;
-			gap: 3px;
-			height: 16px;
-			grid-row-gap: 0px;
-			font: var(--font-system);
-			white-space: nowrap;
-			translate: 0 0;
-		}
-		input[type="checkbox"] {
-			appearance: none;
-			margin: 0;
-			background-color: rgb(var(--color-control));
-			color: rgb(var(--color-on-control)); // Redundant?
-			font: inherit;
-			width: 14px;
-			height: 14px;
-			border: 1px solid rgb(var(--color-control-edge));
-			border-radius: 4px;
-			display: grid;
-			place-content: center;
-			filter: none;
-			translate: 0 0;
-			&:focus {
-				border-width: 2px;
-			}
-			&:active {
-				background-color: rgb(var(--color-pressed-control));
-			}
-			&::before {
-				font-family: "gcs";
-				font-size: var(--font-size-12);
-				content: "\e804";
-				opacity: 0;
-			}
-			&:checked::before {
-				opacity: 1;
-			}
-		}
+		// input[type="checkbox"] {
+		// 	appearance: none;
+		// 	margin: 0;
+		// 	background-color: rgb(var(--color-control));
+		// 	color: rgb(var(--color-on-control)); // Redundant?
+		// 	font: inherit;
+		// 	width: 14px;
+		// 	height: 14px;
+		// 	border: 1px solid rgb(var(--color-control-edge));
+		// 	border-radius: 4px;
+		// 	display: grid;
+		// 	place-content: center;
+		// 	filter: none;
+		// 	translate: 0 0;
+		// 	&:focus {
+		// 		border-width: 2px;
+		// 	}
+		// 	&:active {
+		// 		background-color: rgb(var(--color-pressed-control));
+		// 	}
+		// 	&::before {
+		// 		font-family: "gcs";
+		// 		font-size: var(--font-size-12);
+		// 		content: "\e804";
+		// 		opacity: 0;
+		// 	}
+		// 	&:checked::before {
+		// 		opacity: 1;
+		// 	}
+		// }
 		.checkbox-label + .checkbox-label {
 			margin-top: 1em;
 		}
