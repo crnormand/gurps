@@ -1,8 +1,8 @@
 <form autocomplete="off">
-	<div class="add">
-		<a class="gcs-circled-add add"></a>
-	</div>
 	<div class="fieldblock">
+		<div class="field no-stretch">
+			<a class="gcs-circled-add add"></a>
+		</div>
 		{{#each (sort system.points_record "when")}}
 			<div class="field no-stretch">
 				<a class="gcs-trash delete" data-index="{{@index}}"></a>
@@ -14,10 +14,10 @@
 					placeholder={{localize "gurps.character.points_record.when"}}
 				/>
 				<input
-					name="NUMBER.{{@index}}.points"
+					name="{{@index}}.points"
 					type="text"
 					data-dtype="Number"
-					value="{{signed this.points}}"
+					value="{{signed this.points false}}"
 					placeholder={{localize "gurps.character.points_record.points"}}
 				/>
 				<input

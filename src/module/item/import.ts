@@ -276,6 +276,7 @@ export class ItemImporter {
 			cr_adj: data.cr_adj ?? "none",
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -292,6 +293,7 @@ export class ItemImporter {
 			cr: data.cr ?? CR.None,
 			cr_adj: data.cr_adj ?? "none",
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -309,6 +311,7 @@ export class ItemImporter {
 			affects: data.affects ?? "total",
 			levels: data.levels ?? 0,
 			features: data.features ? this.importFeatures(data.features) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -321,6 +324,7 @@ export class ItemImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -342,6 +346,7 @@ export class ItemImporter {
 			defaults: data.defaults ? this.importDefaults(data.defaults) : [],
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -364,6 +369,7 @@ export class ItemImporter {
 			defaults: data.defaults ? this.importDefaults(data.defaults) : [],
 			features: data.features ? this.importFeatures(data.features) : [],
 			weapons: data.weapons ? this.importWeapons(data.weapons) : [],
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -376,6 +382,7 @@ export class ItemImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -400,6 +407,7 @@ export class ItemImporter {
 			maintenance_cost: data.maintenance_cost ?? "",
 			casting_time: data.casting_time ?? "",
 			duration: data.duration ?? "",
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -426,6 +434,7 @@ export class ItemImporter {
 			duration: data.duration ?? "",
 			base_skill: data.base_skill ?? "",
 			prereq_count: data.prereq_count ?? 0,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -438,6 +447,7 @@ export class ItemImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -463,6 +473,7 @@ export class ItemImporter {
 			quantity: data.quantity ?? 1,
 			ignore_weight_for_skills: data.ignore_weight_for_skills ?? false,
 			other: other,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -489,6 +500,7 @@ export class ItemImporter {
 			ignore_weight_for_skills: data.ignore_weight_for_skills ?? false,
 			other: other,
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -507,6 +519,7 @@ export class ItemImporter {
 			tech_level: data.tech_level ?? "",
 			features: data.features ? this.importFeatures(data.features) : [],
 			disabled: data.disabled ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -521,6 +534,7 @@ export class ItemImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -533,6 +547,7 @@ export class ItemImporter {
 			notes: data.notes ?? "",
 			tags: data.tags ?? [],
 			text: data.text ?? "",
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 
@@ -546,6 +561,7 @@ export class ItemImporter {
 			tags: data.tags ?? [],
 			text: data.text ?? "",
 			open: data.open ?? false,
+			vtt_notes: data.vtt_notes ?? "",
 		}
 	}
 

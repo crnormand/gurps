@@ -309,6 +309,7 @@ export class GCAImporter {
 						notes: "",
 						tags: [],
 						type: "note",
+						vtt_notes: "",
 					},
 				},
 			]

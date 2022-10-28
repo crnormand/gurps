@@ -11,15 +11,18 @@
         -   Functional Threshold Button
         -   Draggable thresholds
         -   Add \_updateObject options for threshold ops
--   Implement Points Record
-    -   Add EditSVG to font
-    -   Implement point record edit window
+        -   apply attribute type
+        -   maybe go back to live updates
+        -   !! use cached values when updating, and update actor only on close !!
 -   Implement 5.3 optimization
--   Move Spell College to description
+-   Resource tracker editor
+    -   enfore max/min checkboxes
+-   Replace "input-text" partial with sensible function
+-   Live update input field to red if data is invalid (i.e. if attribute id is taken)
 
 ## 1.0.0
 
--   GCS 5.3 enc(forSkills) function to expressions
+-   Drag rollable buttons to hotbar or message box for macros
 -   GCS 5.3 Study Time support
 -   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility

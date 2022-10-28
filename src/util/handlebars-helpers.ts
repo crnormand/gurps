@@ -36,8 +36,9 @@ export function registerHandlebarsHelpers() {
 		return b ? "" : "disabled"
 	})
 
-	Handlebars.registerHelper("signed", function (n: number) {
-		return n >= 0 ? `+${n}` : `${String(n).replace("-", "−")}`
+	Handlebars.registerHelper("signed", function (n: number, replaceMinus = true) {
+		if (replaceMinus) return n >= 0 ? `+${n}` : `${String(n).replace("-", "−")}`
+		return n >= 0 ? `+${n}` : `${String(n)}`
 	})
 
 	Handlebars.registerHelper("abs", function (n: number) {
@@ -152,6 +153,7 @@ export function registerHandlebarsHelpers() {
 			maintenance_cost: i.system.maintenance_cost,
 			casting_time: i.system.casting_time,
 			duration: i.system.duration,
+			college: i.system.college,
 		}
 		const list = []
 		for (const [k, v] of Object.entries(values)) {
@@ -240,6 +242,7 @@ export function registerHandlebarsHelpers() {
 	})
 
 	Handlebars.registerHelper("textareaFormat", function (s: string | string[]): string {
+		// If (!s) return ""
 		if (typeof s === "string") return s?.replaceAll("\t", "").replaceAll("\n", "\r") || ""
 		else {
 			return s.join("\r") || ""

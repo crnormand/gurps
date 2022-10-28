@@ -1,6 +1,7 @@
-import { AttributeDef } from "@module/attribute/attribute_def"
+import { AttributeDef, AttributeType } from "@module/attribute/attribute_def"
 import { ThresholdOp } from "@module/attribute/pool_threshold"
-import { SYSTEM_NAME } from "@module/settings"
+import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
+import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { CharacterGURPS } from "."
 import { CharacterImporter } from "./import"
 import { CharacterSheetGURPS } from "./sheet"
@@ -26,7 +27,7 @@ export class CharacterSheetConfig extends FormApplication {
 			resizable: true,
 			submitOnChange: false,
 			submitOnClose: false,
-			closeOnSubmit: true,
+			closeOnSubmit: false,
 			tabs: [
 				{
 					navSelector: "nav",
@@ -55,6 +56,7 @@ export class CharacterSheetConfig extends FormApplication {
 		const poolAttributes = actor.settings.attributes
 			.filter(e => actor.poolAttributes(true).has(e.id))
 			.map(e => mergeObject(e, { order: actor.attributes.get(e.id)!.order }))
+		const resourceTrackers = actor.settings.resource_trackers
 
 		return {
 			options: options,
@@ -64,6 +66,7 @@ export class CharacterSheetConfig extends FormApplication {
 			primaryAttributes: primaryAttributes,
 			secondaryAttributes: secondaryAttributes,
 			poolAttributes: poolAttributes,
+			resourceTrackers: resourceTrackers,
 			locations: actor.system.settings.body_type,
 			filename: this.filename,
 			config: (CONFIG as any).GURPS,
@@ -73,26 +76,73 @@ export class CharacterSheetConfig extends FormApplication {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
+		html.find(".input[name$='.id']").on("input", event => {
+			const value = $(event.currentTarget).val()
+			const name = $(event.currentTarget).prop("name")
+			const attributes = this.object.settings.attributes
+			const resource_trackers = this.object.settings.resource_trackers
+			let invalid = false
+			if (value === "") invalid = true
+			attributes.forEach((e, i) => {
+				if (e.id === value && name !== `attributes.${i}.id`) invalid = true
+			})
+			resource_trackers.forEach((e, i) => {
+				if (e.id === value && name !== `resource_trackers.${i}.id`) invalid = true
+			})
+			if (invalid) $(event.currentTarget).addClass("invalid")
+			else $(event.currentTarget).removeClass("invalid")
+		})
+
 		// Re-uploading old character
 		html.find(".quick-import").on("click", event => this._reimport(event))
 
 		// Uploading new character
-		html.find("input[type='file']").on("change", event => {
-			const filename = String($(event.currentTarget).val()).split("\\").pop() || ""
-			const files = $(event.currentTarget).prop("files")
-			this.filename = filename
-			if (files) {
-				readTextFromFile(files[0]).then(
-					text =>
-						(this.file = {
-							text: text,
-							name: files[0].name,
-							path: files[0].path,
+		if ((game as Game).settings.get(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG)) {
+			html.find("input[type='file']").on("click", event => {
+				event.preventDefault()
+				const filepicker = new FilePicker({
+					callback: (path: string) => {
+						const request = new XMLHttpRequest()
+						request.open("GET", path)
+						new Promise(resolve => {
+							request.onload = () => {
+								if (request.status == 200) {
+									const text = request.response
+									this.file = {
+										text: text,
+										name: path,
+										path: request.responseURL,
+									}
+									this.filename = String(path).split(/\\|\//).pop() || ""
+									this.render()
+								}
+								resolve(this)
+							}
 						})
-				)
-			}
-			this.render()
-		})
+						request.send(null)
+					},
+				})
+				filepicker.extensions = [".gcs", ".xml", ".gca5"]
+				filepicker.render(true)
+			})
+		} else {
+			html.find("input[type='file']").on("change", event => {
+				const filename = String($(event.currentTarget).val()).split(/\\|\//).pop() || ""
+				const files = $(event.currentTarget).prop("files")
+				this.filename = filename
+				if (files) {
+					readTextFromFile(files[0]).then(
+						text =>
+							(this.file = {
+								text: text,
+								name: files[0].name,
+								path: files[0].path,
+							})
+					)
+				}
+				this.render()
+			})
+		}
 		html.find(".import-confirm").on("click", event => this._import(event))
 		html.find("textarea")
 			.each(function () {
@@ -107,13 +157,82 @@ export class CharacterSheetConfig extends FormApplication {
 			})
 
 		html.find(".item").on("dragover", event => this._onDragItem(event))
+		html.find(".add").on("click", event => this._onAddItem(event))
+	}
+
+	async _onAddItem(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		event.stopPropagation()
+		const type: "attributes" | "resource_trackers" | "attribute_thresholds" | "tracker_thresholds" = $(
+			event.currentTarget
+		).data("type")
+		let new_id = ""
+		const attributes = this.object.system.settings.attributes || []
+		const resource_trackers = this.object.system.settings.resource_trackers || []
+		if (type === "attributes" || type === "resource_trackers")
+			for (let n = 0; n < 26; n++) {
+				const char = String.fromCharCode(97 + n)
+				if (![...attributes, ...resource_trackers].find(e => e.id === char)) {
+					new_id = char
+					break
+				}
+			}
+		switch (type) {
+			case "attributes":
+				// TODO: account for possibility of all letters being taken
+				attributes.push({
+					type: AttributeType.Integer,
+					id: new_id,
+					name: "",
+					attribute_base: "",
+					cost_per_point: 0,
+					cost_adj_percent_per_sm: 0,
+				})
+				await this.object.update({ "system.settings.attributes": attributes })
+				return this.render()
+			case "resource_trackers":
+				resource_trackers.push({
+					id: new_id,
+					name: "",
+					full_name: "",
+					tracker_base: "",
+					max: 0,
+					isMaxEnforced: false,
+					min: 0,
+					isMinEnforced: false,
+					order: resource_trackers.length,
+					thresholds: [],
+				})
+				await this.object.update({ "system.settings.resource_trackers": resource_trackers })
+				return this.render()
+			case "attribute_thresholds":
+				attributes[$(event.currentTarget).data("id")].thresholds ??= []
+				attributes[$(event.currentTarget).data("id")].thresholds!.push({
+					state: "",
+					explanation: "",
+					expression: "",
+					ops: [],
+				})
+				await this.object.update({ "system.settings.attributes": attributes })
+				return this.render()
+			case "tracker_thresholds":
+				resource_trackers[$(event.currentTarget).data("id")].thresholds ??= []
+				resource_trackers[$(event.currentTarget).data("id")].thresholds!.push({
+					state: "",
+					explanation: "",
+					expression: "",
+					ops: [],
+				})
+				await this.object.update({ "system.settings.resource_trackers": resource_trackers })
+				return this.render()
+		}
 	}
 
 	protected async _reimport(event: JQuery.ClickEvent) {
 		event.preventDefault()
 		const import_path = this.object.importData.path
-		const import_name = import_path.match(/.*[/\\]Data[/\\](.*)/)!
-		const file_path = import_name[1].replace(/\\/g, "/")
+		const import_name = import_path.match(/.*[/\\]Data[/\\](.*)/)
+		const file_path = import_name?.[1].replace(/\\/g, "/") || this.object.importData.name
 		const request = new XMLHttpRequest()
 		request.open("GET", file_path)
 
@@ -123,7 +242,7 @@ export class CharacterSheetConfig extends FormApplication {
 					const text = request.response
 					CharacterImporter.import(this.object, {
 						text: text,
-						name: import_name[1],
+						name: file_path,
 						path: import_path,
 					})
 				}
@@ -154,21 +273,15 @@ export class CharacterSheetConfig extends FormApplication {
 			...super._getHeaderButtons(),
 		]
 		all_buttons.at(-1)!.label = ""
-		all_buttons.at(-1)!.icon = "gcs-not"
+		all_buttons.at(-1)!.icon = "gcs-circled-x"
 		return all_buttons
 	}
 
-	protected async _updateObject(_event: Event, formData?: any | undefined): Promise<unknown> {
+	protected async _updateObject(event: Event, formData?: any | undefined): Promise<unknown> {
+		// FormData = FormApplicationGURPS.updateObject(event, formData)
+		const element = $(event.currentTarget!)
+		if (element.hasClass("invalid")) delete formData[element.prop("name")]
 		if (!this.object.id) return
-		for (const [key, value] of Object.entries(formData)) {
-			// HACK: values of 0 are replaced with empty strings. this fixes it, but it's messy
-			if (key.startsWith("NUMBER.")) {
-				formData[key.replace("NUMBER.", "")] = isNaN(parseFloat(value as string))
-					? 0
-					: parseFloat(value as string)
-				delete formData[key]
-			}
-		}
 		if (formData["system.settings.block_layout"])
 			formData["system.settings.block_layout"] = formData["system.settings.block_layout"].split("\n")
 		// Set values inside system.attributes array, and amend written values based on input
@@ -191,14 +304,38 @@ export class CharacterSheetConfig extends FormApplication {
 					} else {
 						setProperty(thresholds[tindex], tkey, formData[i])
 					}
-					console.log(attributes, index, key, tindex, tkey, formData[i])
 					setProperty(attributes[index], "thresholds", thresholds)
 				} else {
-					console.log(attributes, index, key, formData[i])
+					// Console.log(attributes, index, key, formData, i, formData[i])
 					setProperty(attributes[index], key, formData[i])
 				}
-				// Console.log(attributes, index, key, formData[i])
 				formData["system.settings.attributes"] = attributes
+				delete formData[i]
+			}
+			if (i.startsWith("resource_trackers.")) {
+				const trackers: ResourceTrackerDef[] =
+					(formData["system.settings.resource_trackers"] as ResourceTrackerDef[]) ??
+					this.object.system.settings.resource_trackers
+				const index = parseInt(i.split(".")[1])
+				const key = i.replace(`resource_trackers.${index}.`, "")
+				if (key.startsWith("thresholds.")) {
+					const tindex = parseInt(key.split(".")[1])
+					const thresholds = trackers[index].thresholds!
+					const tkey = key.replace(`thresholds.${tindex}`, "")
+					if (tkey.startsWith("halve_")) {
+						if (thresholds[tindex].ops!.includes(tkey as ThresholdOp)) {
+							thresholds[tindex].ops!.splice(thresholds[tindex].ops!.indexOf(tkey as ThresholdOp), 1)
+						} else {
+							thresholds[tindex].ops!.push(tkey as ThresholdOp)
+						}
+					} else {
+						setProperty(thresholds[tindex], tkey, formData[i])
+					}
+					setProperty(trackers[index], "thresholds", thresholds)
+				} else {
+					setProperty(trackers[index], key, formData[i])
+				}
+				formData["system.settings.resource_trackers"] = trackers
 				delete formData[i]
 			}
 		}

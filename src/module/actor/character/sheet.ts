@@ -203,8 +203,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
 		)
 		const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.attributes)
+		const resource_trackers = Array.from(this.actor.resource_trackers.values())
+		console.log(resource_trackers)
 		const encumbrance = this.prepareEncumbrance()
 		const lifts = this.prepareLifts()
+		const overencumbered = this.actor.allEncumbrance.at(-1)!.maximum_carry! < this.actor!.weightCarried(false)
 		const sheetData = {
 			...super.getData(options),
 			...{
@@ -215,12 +218,14 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				primary_attributes: primary_attributes,
 				secondary_attributes: secondary_attributes,
 				point_pools: point_pools,
+				resource_trackers: resource_trackers,
 				encumbrance: encumbrance,
 				lifting: lifts,
 				current_year: new Date().getFullYear(),
 				maneuvers: (CONFIG as any).GURPS.select.maneuvers,
 				postures: (CONFIG as any).GURPS.select.postures,
 				move_types: (CONFIG as any).GURPS.select.move_types,
+				overencumbered: overencumbered,
 			},
 		}
 		this.prepareItems(sheetData)
@@ -368,7 +373,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 
 	protected async _openGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		this.config = new CharacterSheetConfig(this.document as CharacterGURPS, {
+		this.config ??= new CharacterSheetConfig(this.document as CharacterGURPS, {
 			top: this.position.top! + 40,
 			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
 		})
