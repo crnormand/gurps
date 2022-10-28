@@ -330,32 +330,33 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get basicLift(): number {
 		const basicLift = (this.resolveAttributeCurrent(gid.Strength) + (this.calc?.lifting_st_bonus ?? 0)) ** 2 / 5
+		if (basicLift === Infinity || basicLift === -Infinity) return 0
 		if (basicLift >= 10) return Math.round(basicLift)
 		return basicLift
 	}
 
 	get oneHandedLift(): number {
-		return this.basicLift * 2
+		return floatingMul(this.basicLift * 2)
 	}
 
 	get twoHandedLift(): number {
-		return this.basicLift * 8
+		return floatingMul(this.basicLift * 8)
 	}
 
 	get shove(): number {
-		return this.basicLift * 12
+		return floatingMul(this.basicLift * 12)
 	}
 
 	get runningShove(): number {
-		return this.basicLift * 24
+		return floatingMul(this.basicLift * 24)
 	}
 
 	get carryOnBack(): number {
-		return this.basicLift * 15
+		return floatingMul(this.basicLift * 15)
 	}
 
 	get shiftSlightly(): number {
-		return this.basicLift * 50
+		return floatingMul(this.basicLift * 50)
 	}
 
 	get fastWealthCarried(): string {
@@ -425,31 +426,31 @@ class CharacterGURPS extends BaseActorGURPS {
 		const ae: Encumbrance[] = [
 			{
 				level: 0,
-				maximum_carry: Number(bl),
+				maximum_carry: floatingMul(bl),
 				penalty: 0,
 				name: i18n("gurps.character.encumbrance.0"),
 			},
 			{
 				level: 1,
-				maximum_carry: bl * 2,
+				maximum_carry: floatingMul(bl * 2),
 				penalty: -1,
 				name: i18n("gurps.character.encumbrance.1"),
 			},
 			{
 				level: 2,
-				maximum_carry: bl * 3,
+				maximum_carry: floatingMul(bl * 3),
 				penalty: -2,
 				name: i18n("gurps.character.encumbrance.2"),
 			},
 			{
 				level: 3,
-				maximum_carry: bl * 6,
+				maximum_carry: floatingMul(bl * 6),
 				penalty: -3,
 				name: i18n("gurps.character.encumbrance.3"),
 			},
 			{
 				level: 4,
-				maximum_carry: bl * 10,
+				maximum_carry: floatingMul(bl * 10),
 				penalty: -4,
 				name: i18n("gurps.character.encumbrance.4"),
 			},
@@ -814,6 +815,10 @@ class CharacterGURPS extends BaseActorGURPS {
 			this.system.attributes = this.newAttributes()
 			this.attributes = this.getAttributes()
 		}
+		if (this.system.settings.resource_trackers.length === 0) {
+			this.system.resource_trackers = this.newTrackers()
+			this.resource_trackers = this.getResourceTrackers()
+		}
 	}
 
 	override prepareEmbeddedDocuments(): void {
@@ -897,6 +902,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				}
 			})
 		this.attributes = this.getAttributes()
+		this.resource_trackers = this.getResourceTrackers()
 		// This.updateProfile()
 		this.calc.dodge_bonus = this.bonusFor(`${attrPrefix}${gid.Dodge}`, undefined)
 		this.calc.parry_bonus = this.bonusFor(`${attrPrefix}${gid.Parry}`, undefined)
@@ -983,7 +989,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		excludes: Map<string, boolean> | null
 	): Weapon | null {
 		let best: Weapon | null = null
-		let level = Math.max()
+		let level = -Infinity
 		for (const w of this.weaponNamed(name, usage, type, excludes)) {
 			const skill_level = w.level
 			if (!best || level < skill_level) {
@@ -1019,7 +1025,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		excludes: Map<string, boolean> | null
 	): SkillGURPS | TechniqueGURPS | null {
 		let best: SkillGURPS | TechniqueGURPS | null = null
-		let level = Math.max()
+		let level = -Infinity
 		for (const sk of this.skillNamed(name, specialization, require_points, excludes)) {
 			const skill_level = sk.calculateLevel.level
 			if (!best || level < skill_level) {
@@ -1141,7 +1147,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	bestCollegeSpellBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
-		let best = Math.max()
+		let best = -Infinity
 		let bestTooltip = ""
 		for (const c of colleges) {
 			const buffer = new TooltipGURPS()
@@ -1153,12 +1159,12 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		if (tooltip) tooltip.push(bestTooltip)
-		if (best === Math.max()) best = 0
+		if (best === -Infinity) best = 0
 		return best
 	}
 
 	bestCollegeSpellPointBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
-		let best = Math.max()
+		let best = -Infinity
 		let bestTooltip = ""
 		for (const c of colleges) {
 			const buffer = new TooltipGURPS()
@@ -1170,7 +1176,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		if (tooltip) tooltip.push(bestTooltip)
-		if (best === Math.max()) best = 0
+		if (best === -Infinity) best = 0
 		return best
 	}
 
@@ -1322,7 +1328,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	resolveAttributeCurrent(attr_id: string): number {
 		const att = this.attributes?.get(attr_id)?.current
 		if (att) return att
-		return Math.max()
+		return -Infinity
 	}
 
 	resolveAttributeName(attr_id: string): string {

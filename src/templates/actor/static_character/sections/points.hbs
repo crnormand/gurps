@@ -1,22 +1,43 @@
 <div id="points">
 	<div class="header">{{system.totalpoints.total}} {{localize "gurps.character.points.title"}}</div>
 	<div class="fieldblock">
-		{{>sections/input-text after="gurps.character.points.unspent" field="field" name="system.totalpoints.unspent"
-		data=system.totalpoints.unspent type="Number" class=(input_lock editing)}}
-		{{>sections/input-text after="gurps.character.points.race" field="field" data=system.totalpoints.race
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.attributes" field="field"
-		data=system.totalpoints.attributes
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.advantages" field="field" data=system.totalpoints.ads
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.disadvantages" field="field" data=system.totalpoints.disads
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.quirks" field="field" data=system.totalpoints.quirks
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.skills" field="field" data=system.totalpoints.skills
-		class="disabled"}}
-		{{>sections/input-text after="gurps.character.points.spells" field="field" data=system.totalpoints.spells
-		class="disabled"}}
+		<div class="field">
+			<input
+				type="text"
+				name="system.totalpoints.unspent"
+				value="{{system.totalpoints.unspent}}"
+				data-dtype="Number"
+				{{input_lock editing}}
+			/>
+		</div>
+		<div class="label">{{localize "gurps.character.points.unspent"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.totalpoints.race}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.race"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.totalpoints.attributes}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.attributes"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.totalpoints.ads}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.advantages"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.totalpoints.disads}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.disadvantages"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.totalpoints.quirks}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.quirks"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.totalpoints.skills}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.skills"}}</div>
+		<div class="field">
+			<input type="text" value="{{system.totalpoints.spells}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.points.spells"}}</div>
 	</div>
 </div>

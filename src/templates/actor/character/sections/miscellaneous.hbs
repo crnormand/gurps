@@ -1,11 +1,23 @@
 <div id="miscellaneous">
 	<div class="header">{{localize "gurps.character.miscellaneous"}}</div>
 	<div class="fieldblock">
-		{{>sections/input-text label="gurps.character.created_date" field="field" data=(date actor.created_date)
-		class="disabled"}}
-		{{>sections/input-text label="gurps.character.modified_date" field="field" data=(date system.modified_date)
-		class="disabled"}}
-		{{>sections/input-text label="gurps.character.player_name" field="field" name="system.profile.player_name"
-		data=system.profile.player_name type="String" class=(input_lock editing)}}
+		<div class="label">{{localize "gurps.character.created_date"}}</div>
+		<div class="field">
+			<input type="text" value="{{date system.created_date}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.modified_date"}}</div>
+		<div class="field">
+			<input type="text" value="{{date system.modified_date}}" disabled />
+		</div>
+		<div class="label">{{localize "gurps.character.player_name"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="system.profile.player_name"
+				data={{system.profile.player_name}}
+				data-dtype="string"
+				{{input_lock editing}}
+			/>
+		</div>
 	</div>
 </div>

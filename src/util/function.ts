@@ -119,7 +119,7 @@ function evalIf(e: Evaluator, args: string): any {
  * @param args
  */
 function evalMaximum(e: Evaluator, args: string): any {
-	let max: number = Math.max()
+	let max = -Infinity
 	while (args) {
 		let arg: string
 		;[arg, args] = nextArg(args)

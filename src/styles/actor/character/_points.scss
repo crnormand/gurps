@@ -29,6 +29,10 @@
 			min-width: 2em;
 		}
 	}
+	.label.overspent {
+		background-color: rgb(var(--color-error));
+		color: rgb(var(--color-on-error));
+	}
 	.fieldblock {
 		.field:nth-child(4n-1),
 		.label:nth-child(4n) {

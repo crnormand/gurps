@@ -6,12 +6,21 @@
 	<div class="header dodge">{{localize "gurps.character.encumbrance.dodge"}}</div>
 	{{#each encumbrance}}
 	{{#if this.active}}
-	<div class="encumbrance-marker active"><i class="gcs-weight"></i></div>
-	<div class="level-number active">{{this.level}}</div>
-	<div class="level active">{{this.name}}</div>
-	<div class="max-load active">{{this.maximum_carry}} lb</div>
-	<div class="move active">{{getMove ../actor this}}</div>
-	<div class="dodge active">{{getDodge ../actor this}}</div>
+		{{#if ../overencumbered}}
+		<div class="encumbrance-marker overencumbered"><i class="gcs-weight"></i></div>
+		<div class="level-number overencumbered">{{this.level}}</div>
+		<div class="level overencumbered">{{this.name}}</div>
+		<div class="max-load overencumbered">{{this.maximum_carry}} lb</div>
+		<div class="move overencumbered">{{getMove ../actor this}}</div>
+		<div class="dodge overencumbered">{{getDodge ../actor this}}</div>
+		{{else}}
+		<div class="encumbrance-marker active"><i class="gcs-weight"></i></div>
+		<div class="level-number active">{{this.level}}</div>
+		<div class="level active">{{this.name}}</div>
+		<div class="max-load active">{{this.maximum_carry}} lb</div>
+		<div class="move active">{{getMove ../actor this}}</div>
+		<div class="dodge active">{{getDodge ../actor this}}</div>
+		{{/if}}
 	{{else}}
 	<div class="encumbrance-marker"></div>
 	<div class="level-number">{{this.level}}</div>

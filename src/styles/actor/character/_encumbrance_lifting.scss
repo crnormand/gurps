@@ -69,6 +69,16 @@
 				color: rgba(var(--color-on-link), 1) !important;
 			}
 		}
+		.overencumbered {
+			background-color: rgba(var(--color-overloaded), 1) !important;
+			&.level {
+				color: rgb(var(--color-on-overloaded)) !important;
+			}
+			&.dodge:hover {
+				background-color: rgba(var(--color-link), 1) !important;
+				color: rgba(var(--color-on-link), 1) !important;
+			}
+		}
 	}
 
 	#lifting-macros {

@@ -2,7 +2,6 @@
 
 ## In Progress
 
--   Implement server-side file upload dialog (toggle between client and server in settings)
 -   Implement GCS-style attribute editor
     -   Adding draggable attributes
         -   Change indicator when halfway down an entry
@@ -14,15 +13,16 @@
         -   Add \_updateObject options for threshold ops
         -   apply attribute type
         -   maybe go back to live updates
+        -   !! use cached values when updating, and update actor only on close !!
 -   Implement 5.3 optimization
 -   Resource tracker editor
     -   enfore max/min checkboxes
 -   Replace "input-text" partial with sensible function
+-   Live update input field to red if data is invalid (i.e. if attribute id is taken)
 
 ## 1.0.0
 
 -   Drag rollable buttons to hotbar or message box for macros
--   GCS 5.3 enc(forSkills) function to expressions
 -   GCS 5.3 Study Time support
 -   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility

@@ -329,7 +329,10 @@ export class Evaluator {
 			if (dollar === last) console.error(`Invalid variable at index ${dollar}`)
 			const name = expression.substring(dollar + 1, last + 1)
 			const v = this.resolver?.resolveVariable(name)
-			if (v?.trim() === "") console.error(`Unable to resolve variable $${name}`)
+			if (v?.trim() === "") {
+				console.error(`Unable to resolve variable $${name}`)
+				return "0"
+			}
 			let buffer = ""
 			if (dollar > 0) buffer += expression.substring(0, dollar)
 			buffer += v
