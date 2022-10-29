@@ -5,12 +5,7 @@ import { RollType } from "../../src/module/data"
 import { DamageTarget, TraitAdapter, TraitModifierAdapter } from "../../src/module/damage_calculator/damage_target"
 import { HitLocation, HitLocationTableWithCalc } from "../../src/module/damage_calculator/hit_location"
 import { AnyPiercingType, DamageType } from "../../src/module/damage_calculator/damage_type"
-import {
-	DamageAttacker,
-	DamageRoll,
-	DamageWeapon,
-	DefaultHitLocations,
-} from "../../src/module/damage_calculator/damage_roll"
+import { DamageAttacker, DamageRoll, DefaultHitLocations } from "../../src/module/damage_calculator/damage_roll"
 import { InjuryEffect, InjuryEffectType } from "../../src/module/damage_calculator/injury_effect"
 
 // Add real tests here.
@@ -2037,15 +2032,39 @@ describe("Damage calculator", () => {
 		it("Roll this damage but divide it by (3 × yards from the center of the blast), rounding down.", () => {
 			_roll.range = 2
 			_roll.basicDamage = 13
+			_torso.calc.dr.all = 1
 
 			const calc = _create(_roll, _target)
 			expect(calc.basicDamage).toBe(2) // 13 ÷ (3 × 2) = 2
+			expect(calc.injury).toBe(1)
 
 			_roll.range = 1
 			expect(calc.basicDamage).toBe(4) // 13 ÷ (3 × 1) = 4
+			expect(calc.injury).toBe(3)
 
 			_roll.range = 3
 			expect(calc.basicDamage).toBe(1) // 13 ÷ (3 × 3) = 1
+			expect(calc.injury).toBe(0)
+		})
+
+		it("If an explosive attack has an armor divisor, it does not apply to the collateral damage.", () => {
+			_roll.dice = new DiceGURPS("6d")
+			_roll.basicDamage = 24
+			_roll.armorDivisor = 3
+			_torso.calc.dr.all = 3
+
+			_roll.range = 2
+			const calc = _create(_roll, _target)
+			expect(calc.basicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
+			expect(calc.injury).toBe(1)
+
+			_roll.range = 1
+			expect(calc.basicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
+			expect(calc.injury).toBe(5)
+
+			_roll.range = 3
+			expect(calc.basicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
+			expect(calc.injury).toBe(0)
 		})
 
 		describe.skip("Contact Explosions. A person can throw himself on a grenade, etc.", () => {
@@ -2058,8 +2077,24 @@ describe("Damage calculator", () => {
 			})
 		})
 
-		it.skip("Internal Explosions: DR has no effect! In addition, treat the blast as an attack on the vitals, with a ×3 wounding modifier.", () => {
-			expect(false).toBeTruthy()
+		it("Internal Explosions: DR has no effect! In addition, treat the blast as an attack on the vitals, with a ×3 wounding modifier.", () => {
+			_roll.dice = new DiceGURPS("6d")
+			_roll.basicDamage = 24
+			_roll.internalExplosion = true
+			_torso.calc.dr.all = 3
+
+			_roll.range = 2
+			const calc = _create(_roll, _target)
+			expect(calc.basicDamage).toBe(4) // 24 ÷ (3 × 2) = 4
+			expect(calc.injury).toBe(4)
+
+			_roll.range = 1
+			expect(calc.basicDamage).toBe(8) // 24 ÷ (3 × 1) = 8
+			expect(calc.injury).toBe(8)
+
+			_roll.range = 3
+			expect(calc.basicDamage).toBe(2) // 24 ÷ (3 × 3) = 2
+			expect(calc.injury).toBe(2)
 		})
 	})
 
@@ -2196,6 +2231,8 @@ class _DamageRoll implements DamageRoll {
 	rofMultiplier = 1
 
 	vulnerability = 0
+
+	internalExplosion = false
 }
 
 const Knockdown = [

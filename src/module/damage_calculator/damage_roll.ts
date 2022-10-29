@@ -57,9 +57,11 @@ interface DamageRoll {
 
 	/**
 	 * If greater than 1, this represents the level of the Vulnerability disadvantage to apply to the target of this
-	 * attack. This value should always be greater than 0.
+	 * attack. This value should always be greater than or equal to 1.
 	 */
 	vulnerability: number
+
+	internalExplosion: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

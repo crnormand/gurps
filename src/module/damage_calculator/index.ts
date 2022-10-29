@@ -305,7 +305,7 @@ class DamageCalculator {
 	}
 
 	private get _effectiveDR() {
-		if (this._isIgnoreDR()) return 0
+		if (this._isIgnoreDR || this._isInternalExplosion) return 0
 
 		let dr =
 			this._damageRoll.damageType === DamageType.injury
@@ -316,8 +316,12 @@ class DamageCalculator {
 		return this._effectiveArmorDivisor < 1 ? Math.max(dr, 1) : dr
 	}
 
-	private _isIgnoreDR(): boolean {
+	private get _isIgnoreDR(): boolean {
 		return this._effectiveArmorDivisor === 0
+	}
+
+	private get _isInternalExplosion(): boolean {
+		return this._isExplosion && this._damageRoll.internalExplosion
 	}
 
 	private get _basicDR() {
@@ -344,6 +348,12 @@ class DamageCalculator {
 		let ad = this._damageRoll.armorDivisor
 		if (ad > 0 && ad < 1) return ad
 
+		// If this is an explosion, and the target is collateral damage, ignore Armor Divisors.
+		// My assumption is that this is true regardless of whether the AD is > 1 or < 1.
+		if (this._isCollateralDamage) {
+			return 1
+		}
+
 		const armorDivisors = [0, 100, 10, 5, 3, 2, 1]
 		let index = armorDivisors.indexOf(ad)
 
@@ -355,6 +365,14 @@ class DamageCalculator {
 			if (index > armorDivisors.length - 1) index = armorDivisors.length - 1
 		}
 		return armorDivisors[index]
+	}
+
+	private get _isCollateralDamage(): boolean {
+		return this._isExplosion && this._isAtRange
+	}
+
+	private get _isAtRange(): boolean {
+		return this._damageRoll.range != null && this._damageRoll.range > 0
 	}
 
 	private get _woundingModifier(): ModifierFunction {
