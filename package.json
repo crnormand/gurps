@@ -1,6 +1,6 @@
 {
 	"private": true,
-	"name": "gurps",
+	"name": "gcsga",
 	"description": "A game aid to help play GURPS 4e for Foundry VTT",
 	"license": "MIT",
 	"homepage": "https://github.com/crnormand/gurps",
@@ -36,7 +36,7 @@
 		"lint": "eslint --ext .ts,.js,.cjs,.mjs .",
 		"lint:fix": "eslint --ext .ts,.js,.cjs,.mjs --fix .",
 		"format": "prettier --write \"./**/*.(ts|js|cjs|mjs|json|yml|scss)\"",
-		"test": "jest",
+		"test": "jest --verbose",
 		"test:watch": "jest --verbose --watch",
 		"test:ci": "jest --ci --reporters=default --reporters=jest-junit",
 		"test:cov": "jest --coverage",
