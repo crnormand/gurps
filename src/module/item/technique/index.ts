@@ -3,7 +3,6 @@ import { SkillLevel } from "@item/skill/data"
 import { gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { signed } from "@util"
 import { TechniqueData } from "./data"
 
 export class TechniqueGURPS extends BaseItemGURPS {
@@ -78,7 +77,7 @@ export class TechniqueGURPS extends BaseItemGURPS {
 
 	get relativeLevel(): string {
 		if (this.calculateLevel.level === -Infinity) return "-"
-		return signed(this.calculateLevel.relative_level)
+		return this.calculateLevel.relative_level.signedString()
 	}
 
 	// Point & Level Manipulation

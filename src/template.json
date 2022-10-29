@@ -15,8 +15,10 @@
 			"total_points": 100,
 			"points_record": [],
 			"settings": {
+				"resource_trackers": [],
 				"attributes": []
 			},
+			"resource_trackers": [],
 			"attributes": [],
 			"calc": {
 				"swing": "",

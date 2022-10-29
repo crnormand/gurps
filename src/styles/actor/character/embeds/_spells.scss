@@ -1,16 +1,15 @@
 #spells {
 	grid-area: spells;
-	grid-template-columns: 1fr repeat(5, auto);
+	grid-template-columns: 1fr repeat(4, auto);
 	.header {
 		grid-area: auto;
 	}
 
-	.desc:nth-child(12n + 1),
-	.college:nth-child(12n + 2),
-	.level:nth-child(12n + 3),
-	.rsl:nth-child(12n + 4),
-	.points:nth-child(12n + 5),
-	.reference:nth-child(12n + 6) {
+	.desc:nth-child(11n + 1),
+	.level:nth-child(11n + 2),
+	.rsl:nth-child(11n + 3),
+	.points:nth-child(11n + 4),
+	.reference:nth-child(11n + 5) {
 		&:not(.header) {
 			background-color: rgba(var(--color-banding), 1);
 			color: rgba(var(--color-on-banding), 1);

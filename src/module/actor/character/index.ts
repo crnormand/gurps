@@ -48,9 +48,13 @@ import {
 	stringCompare,
 } from "@util"
 import { CharacterSource, CharacterSystemData, Encumbrance, HitLocation } from "./data"
+import { ResourceTrackerDef } from "@module/resource_tracker/tracker_def"
+import { ResourceTracker, ResourceTrackerObj } from "@module/resource_tracker"
 
 class CharacterGURPS extends BaseActorGURPS {
 	attributes: Map<string, Attribute> = new Map()
+
+	resource_trackers: Map<string, ResourceTracker> = new Map()
 
 	variableResolverExclusions: Map<string, boolean> = new Map()
 
@@ -59,6 +63,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	constructor(data: CharacterSource, context: ActorConstructorContextGURPS = {}) {
 		super(data, context)
 		if (this.system.attributes) this.attributes = this.getAttributes()
+		if (this.system.resource_trackers) this.resource_trackers = this.getResourceTrackers()
 		this.featureMap = new Map()
 	}
 
@@ -90,6 +95,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		sd.modified_date = sd.created_date
 		if (SETTINGS_TEMP.general.auto_fill) sd.profile = SETTINGS_TEMP.general.auto_fill
 		sd.attributes = this.newAttributes(sd.settings.attributes)
+		sd.resource_trackers = []
 		this.update({ _id: this._id, system: sd })
 		super._onCreate(data, options, userId)
 	}
@@ -113,20 +119,30 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	// TODO: move to character/sheet -> _updateObject
-	updateAttributes(
-		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>
-	) {
+	updateAttributes(data?: any) {
 		for (const i in data) {
 			if (i.includes("system.import")) return
 		}
-		if (this.system.attributes.length === 0) (data as any)["system.attributes"] = this.newAttributes()
+		if (this.system.attributes.length === 0) data["system.attributes"] = this.newAttributes()
 		for (const i in data) {
+			if (i === "system.settings.attributes") {
+				data["system.attributes"] = this.newAttributes(
+					data["system.settings.attributes"],
+					this.system.attributes
+				)
+			}
+			if (i === "system.settings.resource_trackers") {
+				data["system.resource_trackers"] = this.newTrackers(
+					data["system.settings.resource_trackers"],
+					this.system.resource_trackers
+				)
+			}
 			if (i.startsWith("system.attributes.")) {
 				const att = this.attributes.get(i.split("attributes.")[1].split(".")[0])
 				const type = i.split("attributes.")[1].split(".")[1]
 				if (att) {
-					if (type === "adj") (data as any)[i] -= att.max - att.adj
-					else if (type === "damage") (data as any)[i] = Math.max(att.max - (data as any)[i], 0)
+					if (type === "adj") data[i] -= att.max - att.adj
+					else if (type === "damage") data[i] = Math.max(att.max - data[i], 0)
 				}
 			}
 		}
@@ -211,9 +227,9 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get attributePoints(): number {
 		let total = 0
-		for (const a of Object.values(this.attributes)) {
+		this.attributes.forEach(a => {
 			if (!isNaN(a.points)) total += a.points
-		}
+		})
 		return total
 	}
 
@@ -283,13 +299,14 @@ class CharacterGURPS extends BaseActorGURPS {
 		let total = 0
 		attributes.forEach(a => {
 			const threshold = a.currentThreshold
-			if (threshold && threshold.ops.includes(op)) total++
+			if (threshold && threshold.ops?.includes(op)) total++
 		})
 		return total
 	}
 
 	get settings() {
 		let settings = this.system.settings
+		settings.resource_trackers = settings.resource_trackers.map(e => new ResourceTrackerDef(e))
 		settings.attributes = settings.attributes.map(e => new AttributeDef(e))
 		// Const defs: Record<string, AttributeDef> = {}
 		// for (const att in settings.attributes) {
@@ -313,32 +330,33 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	get basicLift(): number {
 		const basicLift = (this.resolveAttributeCurrent(gid.Strength) + (this.calc?.lifting_st_bonus ?? 0)) ** 2 / 5
+		if (basicLift === Infinity || basicLift === -Infinity) return 0
 		if (basicLift >= 10) return Math.round(basicLift)
 		return basicLift
 	}
 
 	get oneHandedLift(): number {
-		return this.basicLift * 2
+		return floatingMul(this.basicLift * 2)
 	}
 
 	get twoHandedLift(): number {
-		return this.basicLift * 8
+		return floatingMul(this.basicLift * 8)
 	}
 
 	get shove(): number {
-		return this.basicLift * 12
+		return floatingMul(this.basicLift * 12)
 	}
 
 	get runningShove(): number {
-		return this.basicLift * 24
+		return floatingMul(this.basicLift * 24)
 	}
 
 	get carryOnBack(): number {
-		return this.basicLift * 15
+		return floatingMul(this.basicLift * 15)
 	}
 
 	get shiftSlightly(): number {
-		return this.basicLift * 50
+		return floatingMul(this.basicLift * 50)
 	}
 
 	get fastWealthCarried(): string {
@@ -408,31 +426,31 @@ class CharacterGURPS extends BaseActorGURPS {
 		const ae: Encumbrance[] = [
 			{
 				level: 0,
-				maximum_carry: Number(bl),
+				maximum_carry: floatingMul(bl),
 				penalty: 0,
 				name: i18n("gurps.character.encumbrance.0"),
 			},
 			{
 				level: 1,
-				maximum_carry: bl * 2,
+				maximum_carry: floatingMul(bl * 2),
 				penalty: -1,
 				name: i18n("gurps.character.encumbrance.1"),
 			},
 			{
 				level: 2,
-				maximum_carry: bl * 3,
+				maximum_carry: floatingMul(bl * 3),
 				penalty: -2,
 				name: i18n("gurps.character.encumbrance.2"),
 			},
 			{
 				level: 3,
-				maximum_carry: bl * 6,
+				maximum_carry: floatingMul(bl * 6),
 				penalty: -3,
 				name: i18n("gurps.character.encumbrance.3"),
 			},
 			{
 				level: 4,
-				maximum_carry: bl * 10,
+				maximum_carry: floatingMul(bl * 10),
 				penalty: -4,
 				name: i18n("gurps.character.encumbrance.4"),
 			},
@@ -701,7 +719,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		})
 	}
 
-	newAttributes(defs = this.system.settings.attributes): AttributeObj[] {
+	newAttributes(defs = this.system.settings.attributes, prev: AttributeObj[] = []): AttributeObj[] {
 		const a: AttributeObj[] = []
 		// Const a: Record<string, AttributeObj> = {}
 		let i = 0
@@ -725,24 +743,54 @@ class CharacterGURPS extends BaseActorGURPS {
 			if (attr.damage) a[i].damage = attr.damage
 			i++
 		}
+		if (prev) {
+			a.forEach(attr => {
+				const prev_attr = prev.find(e => e.attr_id === attr.attr_id)
+				Object.assign(attr, prev_attr)
+			})
+		}
 		return a
+	}
+
+	newTrackers(defs = this.system.settings.resource_trackers, prev: ResourceTrackerObj[] = []): ResourceTrackerObj[] {
+		const t: ResourceTrackerObj[] = []
+		let i = 0
+		for (const tracker_def of defs) {
+			const tracker = new ResourceTracker(this, tracker_def.id, i)
+			t.push({
+				order: tracker.order,
+				tracker_id: tracker.tracker_id,
+				damage: tracker.damage,
+			})
+			i++
+		}
+		if (prev) {
+			t.forEach(tracker => {
+				const prev_tracker = prev.find(e => e.tracker_id === tracker.tracker_id)
+				Object.assign(tracker, prev_tracker)
+			})
+		}
+		return t
 	}
 
 	getAttributes(): Map<string, Attribute> {
 		const attributes: Map<string, Attribute> = new Map()
 		const att_array = this.system.attributes
 		if (!att_array.length) return attributes
-		// Const attributes: Map<string, Attribute> = new Map(this.system.attributes.map(e => [e.attr_id, new Attribute(this, e.attr_id, e.order, e)]))
 		att_array.forEach((v, k) => {
 			attributes.set(v.attr_id, new Attribute(this, v.attr_id, k, v))
 		})
-		// Let i = 0
-		// for (const attr of this.system.attributes) {
-		// 	let att = this.system.attributes[attr_id]
-		// 	a.set(attr_id, new Attribute(this, attr_id, i, att))
-		// 	i++
-		// }
 		return attributes
+	}
+
+	getResourceTrackers(): Map<string, ResourceTracker> {
+		const trackers: Map<string, ResourceTracker> = new Map()
+		const tracker_array = this.system.resource_trackers
+		if (!tracker_array.length) return trackers
+		tracker_array.forEach((v, k) => {
+			trackers.set(v.tracker_id, new ResourceTracker(this, v.tracker_id, k, v))
+		})
+		return trackers
 	}
 
 	// Do not store modifiers directly on actors
@@ -766,6 +814,10 @@ class CharacterGURPS extends BaseActorGURPS {
 		if (this.system.attributes.length === 0) {
 			this.system.attributes = this.newAttributes()
 			this.attributes = this.getAttributes()
+		}
+		if (this.system.settings.resource_trackers.length === 0) {
+			this.system.resource_trackers = this.newTrackers()
+			this.resource_trackers = this.getResourceTrackers()
 		}
 	}
 
@@ -850,6 +902,7 @@ class CharacterGURPS extends BaseActorGURPS {
 				}
 			})
 		this.attributes = this.getAttributes()
+		this.resource_trackers = this.getResourceTrackers()
 		// This.updateProfile()
 		this.calc.dodge_bonus = this.bonusFor(`${attrPrefix}${gid.Dodge}`, undefined)
 		this.calc.parry_bonus = this.bonusFor(`${attrPrefix}${gid.Parry}`, undefined)
@@ -936,7 +989,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		excludes: Map<string, boolean> | null
 	): Weapon | null {
 		let best: Weapon | null = null
-		let level = Math.max()
+		let level = -Infinity
 		for (const w of this.weaponNamed(name, usage, type, excludes)) {
 			const skill_level = w.level
 			if (!best || level < skill_level) {
@@ -972,7 +1025,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		excludes: Map<string, boolean> | null
 	): SkillGURPS | TechniqueGURPS | null {
 		let best: SkillGURPS | TechniqueGURPS | null = null
-		let level = Math.max()
+		let level = -Infinity
 		for (const sk of this.skillNamed(name, specialization, require_points, excludes)) {
 			const skill_level = sk.calculateLevel.level
 			if (!best || level < skill_level) {
@@ -1094,7 +1147,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	bestCollegeSpellBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
-		let best = Math.max()
+		let best = -Infinity
 		let bestTooltip = ""
 		for (const c of colleges) {
 			const buffer = new TooltipGURPS()
@@ -1106,12 +1159,12 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		if (tooltip) tooltip.push(bestTooltip)
-		if (best === Math.max()) best = 0
+		if (best === -Infinity) best = 0
 		return best
 	}
 
 	bestCollegeSpellPointBonus(colleges: string[], tags: string[], tooltip: TooltipGURPS | undefined): number {
-		let best = Math.max()
+		let best = -Infinity
 		let bestTooltip = ""
 		for (const c of colleges) {
 			const buffer = new TooltipGURPS()
@@ -1123,7 +1176,7 @@ class CharacterGURPS extends BaseActorGURPS {
 			}
 		}
 		if (tooltip) tooltip.push(bestTooltip)
-		if (best === Math.max()) best = 0
+		if (best === -Infinity) best = 0
 		return best
 	}
 
@@ -1275,7 +1328,7 @@ class CharacterGURPS extends BaseActorGURPS {
 	resolveAttributeCurrent(attr_id: string): number {
 		const att = this.attributes?.get(attr_id)?.current
 		if (att) return att
-		return Math.max()
+		return -Infinity
 	}
 
 	resolveAttributeName(attr_id: string): string {

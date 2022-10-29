@@ -35,12 +35,12 @@
 					{{/select}}
 				</select>
 				<div class="label">{{localize "gurps.item.prereq_count"}}</div>
-				{{>sections/input-text name="NUMBER.system.prereq_count" data=system.prereq_count type="String"}}
+				<input type="text" name="system.prereq_count" value="{{system.prereq_count}}" data-dtype="Number"}}
 			</div>
 			{{#if document.actor}}
 			<div class="label">{{localize "gurps.item.points"}}</div>
 			<div class="field no-stretch">
-				{{>sections/input-text name="NUMBER.system.points" data=system.points type="String"}}
+				<input type="text" name="system.points" value="{{system.points}}" data-dtype="Number"}}
 				<div class="label">{{localize "gurps.item.level"}}</div>
 				{{>sections/input-text data=(concat document.skillLevel "/" document.relativeLevel) class="readonly
 				tabIndex='-1'"}}

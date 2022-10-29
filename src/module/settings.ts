@@ -3,10 +3,12 @@ import { i18n } from "@util"
 import { AttributeDefObj, AttributeType } from "./attribute/attribute_def"
 import { DamageProgression, DisplayMode, LengthUnits, WeightUnits } from "./data"
 import { GURPS } from "./gurps"
+import { ResourceTrackerDefObj } from "./resource_tracker/tracker_def"
 
 export const SYSTEM_NAME = "gcsga"
 export enum SETTINGS {
 	BASIC_SET_PDF = "basic_set_pdf",
+	SERVER_SIDE_FILE_DIALOG = "server_side_file_dialog",
 	PORTRAIT_PATH = "portrait_path",
 	PORTRAIT_OVERWRITE = "portrait_overwrite",
 	COMPENDIUM_BROWSER_PACKS = "compendium_browser_packs",
@@ -37,6 +39,15 @@ export function registerSettings(): void {
 		},
 		default: "combined",
 		onChange: (value: string) => console.log(`Basic Set PDFs : ${value}`),
+	})
+
+	g.settings.register(SYSTEM_NAME, SETTINGS.SERVER_SIDE_FILE_DIALOG, {
+		name: i18n("gurps.settings.server_side_file_dialog.name"),
+		hint: i18n("gurps.settings.server_side_file_dialog.hint"),
+		scope: "client",
+		config: true,
+		type: Boolean,
+		default: false,
 	})
 
 	g.settings.register(SYSTEM_NAME, SETTINGS.PORTRAIT_PATH, {
@@ -175,6 +186,7 @@ interface provider {
 		}
 		block_layout: Array<string>
 		attributes: AttributeDefObj[]
+		resource_trackers: ResourceTrackerDefObj[]
 		body_type: unknown
 	}
 	general: {
@@ -218,6 +230,7 @@ export const SETTINGS_TEMP: provider = {
 			"other_equipment",
 			"notes",
 		],
+		resource_trackers: [],
 		attributes: [
 			{
 				id: "st",

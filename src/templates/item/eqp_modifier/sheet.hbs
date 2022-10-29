@@ -4,47 +4,62 @@
 			<label class="label"></label>
 			<div class="field">
 				<label class="checkbox-label">
-					<input class="input" name="system.disabled" type="checkbox" data-dtype="Boolean" {{checked (not
-						system.disabled)}} />
+					<input
+						class="input"
+						name="system.disabled"
+						type="checkbox"
+						data-dtype="Boolean"
+						{{checked (not system.disabled)}}
+					/>
 					{{localize "gurps.item.enabled"}}
 				</label>
 			</div>
-			{{>sections/input-text field="field" label="gurps.item.name" name="name" data=item.name type="String"}}
-			{{>sections/input-text field="field" label="gurps.item.tech_level" name="system.tech_level"
-			data=system.tech_level
-			type="String"}}
-			{{>sections/textarea field="field" label="gurps.item.notes" name="system.notes" data=system.notes
-			type="String"}}
-			{{>sections/textarea field="field" label="gurps.item.vtt_notes" name="system.vtt_notes"
-			data=system.vtt_notes
-			type="String"}}
+			<div class="label">{{localize "gurps.item.name"}}</div>
+			<div class="field">
+				<input type="text" name="name" value="{{item.name}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.tech_level"}}</div>
+			<div class="field">
+				<input type="text" name="system.tech_level" value="{{system.tech_level}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.notes"}}</div>
+			<div class="field">
+				<input type="text" name="system.notes" value="{{system.notes}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.vtt_notes"}}</div>
+			<div class="field">
+				<input type="text" name="system.vtt_notes" value="{{system.vtt_notes}}" data-dtype="String" />
+			</div>
 			<div class="label">{{localize "gurps.item.value_mod"}}</div>
 			<div class="field no-stretch">
-				{{>sections/input-text name="system.cost" data=system.cost type="String"}}
+				<input type="text" name="system.cost" value="{{system.cost}}" data-dtype="String" />
 				<select name="system.cost_type" data-dtype="String">
 					{{#select system.cost_type}}
-					{{#each config.select.eqp_mod_cost_type as |v k|}}
-					<option value="{{k}}">{{localize v}}</option>
-					{{/each}}
+						{{#each config.select.eqp_mod_cost_type as |v k|}}
+							<option value="{{k}}">{{localize v}}</option>
+						{{/each}}
 					{{/select}}
 				</select>
 			</div>
 			<div class="label">{{localize "gurps.item.weight_mod"}}</div>
 			<div class="field no-stretch">
-				{{>sections/input-text name="system.weight" data=system.weight type="String"}}
+				<input type="text" name="system.weight" value="{{system.weight}}" data-dtype="String" />
 				<select name="system.weight_type" data-dtype="String">
 					{{#select system.weight_type}}
-					{{#each config.select.eqp_mod_weight_type as |v k|}}
-					<option value="{{k}}">{{localize v}}</option>
-					{{/each}}
+						{{#each config.select.eqp_mod_weight_type as |v k|}}
+							<option value="{{k}}">{{localize v}}</option>
+						{{/each}}
 					{{/select}}
 				</select>
 			</div>
-			{{>sections/input-text label="gurps.item.tags" field="field" name="system.tags" data=(join system.tags ", ")
-			type="String"}}
-			{{>sections/input-text field="field" label="gurps.item.reference" name="system.reference"
-			data=system.reference
-			type="String"}}
+			<div class="label">{{localize "gurps.item.tags"}}</div>
+			<div class="field">
+				<input type="text" name="system.tags" value="{{join system.tags ', '}}" data-dtype="String" />
+			</div>
+			<div class="label">{{localize "gurps.item.reference"}}</div>
+			<div class="field">
+				<input type="text" name="system.reference" value="{{system.reference}}" data-dtype="String" />
+			</div>
 		</div>
 		{{>item/sections/features}}
 	</div>

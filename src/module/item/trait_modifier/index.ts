@@ -1,5 +1,4 @@
 import { BaseItemGURPS } from "@item/base"
-import { i18n, signed } from "@util"
 import { TraitModifierAffects, TraitModifierCostType, TraitModifierData } from "./data"
 
 export class TraitModifierGURPS extends BaseItemGURPS {
@@ -22,12 +21,12 @@ export class TraitModifierGURPS extends BaseItemGURPS {
 		let base = ""
 		if (this.costType === "percentage") {
 			if (this.hasLevels) {
-				base = signed(this.cost * this.levels)
+				base = (this.cost * this.levels).signedString()
 			} else {
-				base = signed(this.cost)
+				base = this.cost.signedString()
 			}
 			base += "%"
-		} else if (this.costType === "points") base = signed(this.cost)
+		} else if (this.costType === "points") base = this.cost.signedString()
 		else if (this.costType === "multiplier") return `×${this.cost}`
 		return base
 	}

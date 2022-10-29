@@ -1,5 +1,5 @@
 <div class="add">
-    <a class="gcs-circled-add add"></a>
+	<a class="gcs-circled-add add" data-type="attributes"></a>
 </div>
 <div class="item-list">
     {{#each primaryAttributes }}
@@ -10,15 +10,15 @@
                 <a class="gcs-circled-add disabled"></a>
             </div>
             <div class="fieldblock">
-                {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.id ".id") data=this.id type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.id ".name") data=this.name type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.id ".full_name") data=this.full_name type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.id ".attribute_base") data=this.attribute_base type="String" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.id ".cost_per_point") data=this.cost_per_point type="Number" }}
-                {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.id ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="Number" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.order ".id") data=this.id type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.order ".name") data=this.name type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.order ".full_name") data=this.full_name type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.order ".attribute_base") data=this.attribute_base type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.order ".cost_per_point") data=this.cost_per_point type="String" }}
+                {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.order ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="String" }}
                 <div class="label">{{localize "gurps.attribute_def.type"}}</div>
                 <div class="field">
-                    <select name="attributes.{{this.id}}.type" data-dtype="String">
+                    <select name="attributes.{{this.order}}.type" data-dtype="String">
                         {{#select this.type }}
                         {{#each @root.config.select.attribute_type as |v k| }}
                             <option value="{{k}}">
@@ -39,15 +39,15 @@
             <a class="gcs-circled-add disabled"></a>
         </div>
         <div class="fieldblock">
-            {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.id ".id") data=this.id type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.id ".name") data=this.name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.id ".full_name") data=this.full_name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.id ".attribute_base") data=this.attribute_base type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.id ".cost_per_point") data=this.cost_per_point type="Number" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.id ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="Number" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.order ".id") data=this.id type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.order ".name") data=this.name type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.order ".full_name") data=this.full_name type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.order ".attribute_base") data=this.attribute_base type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.order ".cost_per_point") data=this.cost_per_point type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.order ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="String" }}
             <div class="label">{{localize "gurps.attribute_def.type"}}</div>
             <div class="field">
-                <select name="attributes.{{this.id}}.type" data-dtype="String">
+                <select name="attributes.{{this.order}}.type" data-dtype="String">
                     {{#select this.type }}
                     {{#each @root.config.select.attribute_type as |v k| }}
                         <option value="{{k}}">
@@ -68,15 +68,15 @@
             <a class="gcs-circled-add disabled"></a>
         </div>
         <div class="fieldblock">
-            {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.id ".id") data=this.id type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.id ".name") data=this.name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.id ".full_name") data=this.full_name type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.id ".attribute_base") data=this.attribute_base type="String" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.id ".cost_per_point") data=this.cost_per_point type="Number" }}
-            {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.id ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="Number" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.id" name=(concat "attributes." this.order ".id") data=this.id type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.name" name=(concat "attributes." this.order ".name") data=this.name type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.full_name" name=(concat "attributes." this.order ".full_name") data=this.full_name type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.attribute_base" name=(concat "attributes." this.order ".attribute_base") data=this.attribute_base type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.cost_per_point" name=(concat "NUMBER.attributes." this.order ".cost_per_point") data=this.cost_per_point type="String" }}
+            {{>sections/input-text field="field" label="gurps.attribute_def.cost_adj_percent_per_sm" name=(concat "NUMBER.attributes." this.order ".cost_adj_percent_per_sm") data=(concat this.cost_adj_percent_per_sm "%") type="String" }}
             <div class="label">{{localize "gurps.attribute_def.type"}}</div>
             <div class="field">
-                <select name="attributes.{{this.id}}.type" data-dtype="String">
+                <select name="attributes.{{this.order}}.type" data-dtype="String">
                     {{#select this.type }}
                     {{#each @root.config.select.attribute_type as |v k| }}
                         <option value="{{k}}">
@@ -87,8 +87,11 @@
             </select>
         </div>
 		<div class="item-list thresholds">
+			<div class="add">
+				<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="attribute_thresholds"></a>
+			</div>
 			{{#each this.thresholds}}
-				{{>actor/character/config/threshold}}	
+			{{>actor/character/config/threshold id=../this.order}}
 			{{/each}}
 		</div>
     </div>

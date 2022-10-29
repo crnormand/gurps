@@ -11,12 +11,19 @@
         -   Functional Threshold Button
         -   Draggable thresholds
         -   Add \_updateObject options for threshold ops
--   Implement Points Record
-    -   Add EditSVG to font
-    -   Implement point record edit window
+        -   apply attribute type
+        -   maybe go back to live updates
+        -   !! use cached values when updating, and update actor only on close !!
+-   Implement 5.3 optimization
+-   Resource tracker editor
+    -   enfore max/min checkboxes
+-   Replace "input-text" partial with sensible function
+-   Live update input field to red if data is invalid (i.e. if attribute id is taken)
 
 ## 1.0.0
 
+-   Drag rollable buttons to hotbar or message box for macros
+-   GCS 5.3 Study Time support
 -   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility
 -   Convert OTFs and chat commands
@@ -69,6 +76,7 @@
 
 ## 1.1.0 and beyond
 
+-   GCS 5.3 Template support
 -   Vehicles
     -   Spaceships
     -   3e(?) Vehicles

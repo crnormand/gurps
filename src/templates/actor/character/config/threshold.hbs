@@ -1,32 +1,32 @@
-<div class="item" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute">
+<div class="item" data-id="{{@index}}" data-order="{{@index}}" data-type="threshold">
 	<div class="controls">
-		<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="threshold"></a>
-		<a class="gcs-trash"></a>
+		<a class="gcs-grip drag" data-id="{{@index}}" data-order="{{@index}}" data-type="threshold"></a>
+		<a class="gcs-trash delete" data-attribute="{{id}}" data-id="{{@index}}"></a>
 	</div>
 	<div class="fieldblock">
-		{{>sections/input-text field="field" label="gurps.attribute_def.state" name=(concat "attributes." ../this.id ".thresholds." @index ".state") data=this.state type="String" }}
-		{{>sections/input-text field="field" label="gurps.attribute_def.expression" name=(concat "attributes." ../this.id ".thresholds." @index ".expression") data=this.expression type="String" }}
+		{{>sections/input-text field="field" label="gurps.attribute_def.state" name=(concat "attributes." id ".thresholds." @index ".state") data=this.state type="String" }}
+		{{>sections/input-text field="field" label="gurps.attribute_def.expression" name=(concat "attributes." id ".thresholds." @index ".expression") data=this.expression type="String" }}
 	<div class="label"></div>
 	<div class="field">
 		<label class="label checkbox-label">
-			<input class="input" type="checkbox" name="attributes.{{../this.id}}.thresholds.{{@index}}.halve_move" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
+			<input class="input" type="checkbox" name="attributes.{{id}}.thresholds.{{@index}}.halve_move" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
 			{{localize "gurps.attribute_def.halve_move"}}
 		</label>
 	</div>
 	<div class="label"></div>
 	<div class="field">
 		<label class="label checkbox-label">
-			<input class="input" type="checkbox" name="attributes.{{../this.id}}.thresholds.{{@index}}.halve_dodge" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
+			<input class="input" type="checkbox" name="attributes.{{id}}.thresholds.{{@index}}.halve_dodge" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
 			{{localize "gurps.attribute_def.halve_dodge"}}
 		</label>
 	</div>
 	<div class="label"></div>
 	<div class="field">
 		<label class="label checkbox-label">
-			<input class="input" type="checkbox" name="attributes.{{../this.id}}.thresholds.{{@index}}.halve_st" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
+			<input class="input" type="checkbox" name="attributes.{{id}}.thresholds.{{@index}}.halve_st" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
 			{{localize "gurps.attribute_def.halve_st"}}
 		</label>
 	</div>
-		{{>sections/input-text field="field" label="gurps.attribute_def.explanation" name=(concat "attributes." ../this.id ".thresholds." @index ".explanation") data=this.explanation type="String" }}
+		{{>sections/input-text field="field" label="gurps.attribute_def.explanation" name=(concat "attributes." id ".thresholds." @index ".explanation") data=this.explanation type="String" }}
 	</div>
 </div>

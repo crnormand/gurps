@@ -1,29 +1,38 @@
+import { TraitGURPS } from "@item"
 import { DiceGURPS } from "@module/dice"
-import { Evaluator } from "@util"
+import { Evaluator, Measure, VariableResolver } from "@util"
 
-type eFunction = (evaluator: Evaluator | null, options: string) => [any, Error]
+export type eFunction = (e: Evaluator, a: string) => any
 
 /**
  *
  */
-export function fixedFunctions(): Map<string, eFunction> {
+export function evalFunctions(): Map<string, eFunction> {
 	const m = new Map()
-	m.set("abs", fixedAbsolute)
-	m.set("cbrt", fixedCubeRoot)
-	m.set("ceil", fixedCeiling)
-	m.set("exp", fixedBaseEExpontential)
-	m.set("exp2", fixedBase2Expontential)
-	m.set("floor", fixedFloor)
-	m.set("if", fixedIf)
-	m.set("log", fixedNaturalLog)
-	m.set("log1p", fixedNaturalLogSum)
-	m.set("log10", fixedDecimalLog)
-	m.set("max", fixedMaximum)
-	m.set("min", fixedMinimum)
-	m.set("round", fixedRound)
-	m.set("sqrt", fixedSqrt)
-	m.set("dice", fixedDice)
-	m.set("roll", fixedRoll)
+	m.set("abs", evalAbsolute)
+	m.set("cbrt", evalCubeRoot)
+	m.set("ceil", evalCeiling)
+	m.set("exp", evalBaseEExpontential)
+	m.set("exp2", evalBase2Expontential)
+	m.set("floor", evalFloor)
+	m.set("if", evalIf)
+	m.set("log", evalNaturalLog)
+	m.set("log1p", evalNaturalLogSum)
+	m.set("log10", evalDecimalLog)
+	m.set("max", evalMaximum)
+	m.set("min", evalMinimum)
+	m.set("round", evalRound)
+	m.set("sqrt", evalSqrt)
+	m.set("dice", evalDice)
+	m.set("roll", evalRoll)
+	m.set("advantage_level", evalTraitLevel)
+	m.set("trait_level", evalTraitLevel)
+	m.set("dice", evalDice)
+	m.set("roll", evalRoll)
+	m.set("signed", evalSigned)
+	m.set("ssrt", evalSSRT)
+	m.set("ssrt_to_yards", evalSSRTYards)
+	m.set("enc", evalEncumbrance)
 	return m
 }
 
@@ -32,8 +41,8 @@ export function fixedFunctions(): Map<string, eFunction> {
  * @param e
  * @param args
  */
-function fixedAbsolute(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalAbsolute(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.abs(value)
 }
 
@@ -42,8 +51,8 @@ function fixedAbsolute(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedCubeRoot(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalCubeRoot(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.cbrt(value)
 }
 
@@ -52,8 +61,8 @@ function fixedCubeRoot(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedCeiling(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalCeiling(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.ceil(value)
 }
 
@@ -62,8 +71,8 @@ function fixedCeiling(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedBaseEExpontential(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalBaseEExpontential(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.exp(value)
 }
 
@@ -72,8 +81,8 @@ function fixedBaseEExpontential(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedBase2Expontential(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalBase2Expontential(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return 2 ** value
 }
 
@@ -82,8 +91,8 @@ function fixedBase2Expontential(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedFloor(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalFloor(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.floor(value)
 }
 
@@ -92,11 +101,11 @@ function fixedFloor(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedIf(e: Evaluator, args: string): any {
+function evalIf(e: Evaluator, args: string): any {
 	let arg: string
 	;[arg, args] = nextArg(args)
 	const evaluated = e.evaluateNew(arg)
-	const value = fixedFrom(evaluated)
+	const value = evalFrom(evaluated)
 	if (value === 0) {
 		;[, args] = nextArg(args)
 	}
@@ -109,12 +118,12 @@ function fixedIf(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedMaximum(e: Evaluator, args: string): any {
-	let max: number = Math.max()
+function evalMaximum(e: Evaluator, args: string): any {
+	let max = -Infinity
 	while (args) {
 		let arg: string
 		;[arg, args] = nextArg(args)
-		const value = evalToFixed(e, arg)
+		const value = evalToNumber(e, arg)
 		max = Math.max(max, value)
 	}
 	return max
@@ -125,12 +134,12 @@ function fixedMaximum(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedMinimum(e: Evaluator, args: string): any {
+function evalMinimum(e: Evaluator, args: string): any {
 	let min: number = Math.min()
 	while (args) {
 		let arg: string
 		;[arg, args] = nextArg(args)
-		const value = evalToFixed(e, arg)
+		const value = evalToNumber(e, arg)
 		min = Math.min(min, value)
 	}
 	return min
@@ -141,8 +150,8 @@ function fixedMinimum(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedNaturalLog(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalNaturalLog(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.log(value)
 }
 
@@ -151,8 +160,8 @@ function fixedNaturalLog(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedNaturalLogSum(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalNaturalLogSum(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.log1p(value)
 }
 
@@ -161,8 +170,8 @@ function fixedNaturalLogSum(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedDecimalLog(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalDecimalLog(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.log10(value)
 }
 
@@ -171,8 +180,8 @@ function fixedDecimalLog(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedRound(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalRound(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.round(value)
 }
 
@@ -181,8 +190,8 @@ function fixedRound(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedSqrt(e: Evaluator, args: string): any {
-	const value = evalToFixed(e, args)
+function evalSqrt(e: Evaluator, args: string): any {
+	const value = evalToNumber(e, args)
 	return Math.sqrt(value)
 }
 
@@ -191,13 +200,13 @@ function fixedSqrt(e: Evaluator, args: string): any {
  * @param e
  * @param args
  */
-function fixedDice(e: Evaluator, args: string): any {
+function evalDice(e: Evaluator, args: string): any {
 	const rollArgs: any = { sides: 6, count: 1, modifier: 1, multiplier: 1 }
 	const argArray = []
 	let arg: string
 	while (args) {
 		;[arg, args] = nextArg(args)
-		argArray.push(fixedFrom(e.evaluateNew(arg)))
+		argArray.push(e.evaluateNew(arg))
 	}
 	switch (rollArgs.length) {
 		case 4:
@@ -216,13 +225,42 @@ function fixedDice(e: Evaluator, args: string): any {
 /**
  *
  * @param e
- * @param args
+ * @param a
  */
-function fixedRoll(e: Evaluator, args: string): any {
-	const d = new DiceGURPS(args)
-	const r = Roll.create(d.toString(true))
-	r.evaluate({ async: false })
-	return r.total
+function evalRoll(e: Evaluator, a: string): any {
+	if (a.indexOf("(") !== -1) {
+		a = evalToString(e, a)
+	}
+	return new DiceGURPS(a).roll(false)
+}
+
+/**
+ *
+ * @param e
+ * @param a
+ */
+function evalToBool(e: Evaluator, a: string): boolean {
+	const evaluated = e.evaluateNew(a)
+	switch (typeof evaluated) {
+		case "boolean":
+			return evaluated
+		case "number":
+			return evaluated !== 0
+		case "string":
+			return Boolean(evaluated)
+		default:
+			return false
+	}
+}
+
+/**
+ *
+ * @param e
+ * @param a
+ */
+function evalSigned(e: Evaluator, a: string): any {
+	const n = evalToNumber(e, a)
+	return n.signedString()
 }
 
 /**
@@ -230,16 +268,202 @@ function fixedRoll(e: Evaluator, args: string): any {
  * @param e
  * @param arg
  */
-function evalToFixed(e: Evaluator, arg: string): number {
+function evalToNumber(e: Evaluator, arg: string): number {
 	const evaluated = e.evaluateNew(arg)
-	return fixedFrom(evaluated)
+	return evalFrom(evaluated)
+}
+
+/**
+ *
+ * @param e
+ * @param a
+ */
+export function evalToString(e: Evaluator, a: string): string {
+	let evaluated: string | number | boolean
+	try {
+		evaluated = e.evaluateNew(a)
+	} catch (err) {
+		return ""
+	}
+	return String(evaluated)
+}
+
+/**
+ *
+ * @param e
+ * @param a
+ */
+export function evalEncumbrance(e: Evaluator, a: string): any {
+	const [arg, _] = nextArg(a)
+	const forSkills = evalToBool(e, arg)
+	const entity: VariableResolver | undefined = e.resolver
+	if (!entity) return 0
+	return (entity as any).encumbranceLevel(forSkills)
+}
+
+/**
+ *
+ * @param e
+ * @param a
+ */
+export function evalTraitLevel(e: Evaluator, a: string): any {
+	const entity: VariableResolver | undefined = e.resolver
+	if (!entity) return -1
+	const arg = a.replaceAll(/^['"]|[']$/g, "")
+	let levels = -1
+	;(entity as any).traits
+		.filter((t: TraitGURPS) => t.name === arg && t instanceof TraitGURPS)
+		.every((t: TraitGURPS) => {
+			t = t as unknown as TraitGURPS
+			if (t.isLeveled) levels = t.levels
+			return true
+		})
+	return levels
+}
+
+/**
+ *
+ * @param e
+ * @param a
+ */
+export function evalSSRT(e: Evaluator, a: string): any {
+	let arg: string
+	;[arg, a] = nextArg(a)
+	const n = evalToString(e, arg)
+	;[arg, a] = nextArg(a)
+	const units = evalToString(e, arg)
+	;[arg, a] = nextArg(a)
+	const wantSize = evalToBool(e, arg)
+	const length = Measure.lengthFromString(`${n} ${units}`, Measure.LengthUnits.Yard)
+	let result = yardsToValue(length, wantSize)
+	if (!wantSize) {
+		result = -result
+	}
+	return result
+}
+
+/**
+ *
+ * @param e
+ * @param a
+ */
+export function evalSSRTYards(e: Evaluator, a: string): any {
+	const v = evalToNumber(e, a)
+	return valueToYards(v)
+}
+
+/**
+ *
+ * @param length
+ * @param allowNegative
+ */
+function yardsToValue(length: Measure.Length, allowNegative: boolean): number {
+	const inches = Number(length)
+	const feet = inches / 12
+	let yards = inches / 36
+	if (allowNegative) {
+		if (inches <= 1 / 5) return -15
+		else if (inches <= 1 / 3) return -14
+		else if (inches <= 1 / 2) return -13
+		else if (inches <= 2 / 3) return -12
+		else if (inches <= 1) return -11
+		else if (inches <= 1.5) return -10
+		else if (inches <= 2) return -9
+		else if (inches <= 3) return -8
+		else if (inches <= 5) return -7
+		else if (inches <= 8) return -6
+		else if (feet <= 1) return -5
+		else if (feet <= 1.5) return -4
+		else if (feet <= 2) return -3
+		else if (yards <= 1) return -2
+		else if (yards < 1.5) return -1
+	}
+	if (yards <= 2) return 0
+	let amt = 0
+	while (yards > 10) {
+		yards /= 10
+		amt += 6
+	}
+	if (yards > 7) return amt + 4
+	else if (yards > 5) return amt + 3
+	else if (yards > 3) return amt + 2
+	else if (yards > 2) return amt + 1
+	else if (yards > 1.5) return amt
+	else return amt - 1
+}
+
+/**
+ *
+ * @param value
+ */
+function valueToYards(value: number): number {
+	if (value < -15) value = -15
+	switch (value) {
+		case -15:
+			return 1 / 5 / 36
+		case -14:
+			return 1 / 3 / 36
+		case -13:
+			return 1 / 2 / 36
+		case -12:
+			return 2 / 3 / 36
+		case -11:
+			return 1 / 36
+		case -10:
+			return 1.5 / 36
+		case -9:
+			return 2 / 36
+		case -8:
+			return 3 / 36
+		case -7:
+			return 5 / 36
+		case -6:
+			return 8 / 36
+		case -5:
+			return 1 / 3
+		case -4:
+			return 1.5 / 3
+		case -3:
+			return 2 / 3
+		case -2:
+			return 1
+		case -1:
+			return 1.5
+		case 0:
+			return 2
+		case 1:
+			return 3
+		case 2:
+			return 5
+		case 3:
+			return 7
+	}
+	value -= 4
+	let multiplier = 1
+	for (let i = 0; i < value / 6; i++) multiplier *= 10
+	let v = 0
+	switch (value % 6) {
+		case 0:
+			v = 10
+		case 1:
+			v = 15
+		case 2:
+			v = 20
+		case 3:
+			v = 30
+		case 4:
+			v = 50
+		case 5:
+			v = 70
+	}
+	return v * multiplier
 }
 
 /**
  *
  * @param arg
  */
-function fixedFrom(arg: any): number {
+function evalFrom(arg: any): number {
 	const a = typeof arg
 	switch (a) {
 		case "boolean":

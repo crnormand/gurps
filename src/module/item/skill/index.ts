@@ -3,7 +3,7 @@ import { ContainerGURPS } from "@item/container"
 import { Difficulty, gid } from "@module/data"
 import { SkillDefault } from "@module/default"
 import { TooltipGURPS } from "@module/tooltip"
-import { signed, toArray } from "@util"
+import { toArray } from "@util"
 import { baseRelativeLevel, SkillData, SkillLevel } from "./data"
 
 export class SkillGURPS extends ContainerGURPS {
@@ -149,7 +149,7 @@ export class SkillGURPS extends ContainerGURPS {
 		if (this.calculateLevel.level === -Infinity) return "-"
 		return (
 			(this.actor?.attributes?.get(this.attribute)?.attribute_def.name ?? "") +
-			signed(this.calculateLevel.relative_level)
+			this.calculateLevel.relative_level.signedString()
 		)
 	}
 

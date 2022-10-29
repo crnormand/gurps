@@ -1,4 +1,4 @@
-import { Fraction, signed } from "./misc"
+import { Fraction } from "./misc"
 
 /**
  *
@@ -19,7 +19,7 @@ export function string(fraction: Fraction): string {
 export function stringWithSign(fraction: Fraction): string {
 	let n = fraction
 	n = normalize(n)
-	const s = signed(n.numerator)
+	const s = n.numerator.signedString()
 	if (n.denominator === 1) return s
 	return `${s}/${n.denominator.toString()}`
 }

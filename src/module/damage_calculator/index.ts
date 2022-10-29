@@ -29,39 +29,41 @@ class DamageCalculator {
 
 	private _damageRoll: DamageRoll
 
-	private _vulnerability: number
-
-	/**
-	 * TODO We could look up "Vulnerability" in the target's traits and list them on the ADD, with
-	 * checkboxes/radio buttons.
-	 */
-	public set vulnerability(value: number) {
-		this._vulnerability = value
-	}
-
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
 		this._damageRoll = damageRoll
 		this._target = defender
-		this._vulnerability = 1
 	}
 
 	/**
 	 * @returns {number} - The basic damage; typically directly from the damage roll.
 	 */
 	get basicDamage(): number {
+		if (this._isExplosion && this._damageRoll.range) {
+			if (this._damageRoll.range > this._diceOfDamage * 2) return 0
+			return Math.floor(this._basicDamage / (3 * this._damageRoll.range))
+		}
+
 		let halfD = this._damageRoll.isHalfDamage ? 0.5 : 1
-		return this._isKnockbackOnly()
+		return this._isKnockbackOnly
 			? 0
 			: Math.floor(this._basicDamage * halfD) * this._multiplierForShotgunExtremelyClose
 	}
 
-	private _isKnockbackOnly() {
+	private get _isKnockbackOnly() {
 		return this._damageRoll.damageType === DamageType.kb
 	}
 
 	private get _basicDamage(): number {
 		return this._damageRoll.basicDamage
+	}
+
+	private get _isExplosion(): boolean {
+		return this._damageRoll.damageModifier === "ex"
+	}
+
+	private get _diceOfDamage(): number {
+		return this._damageRoll.dice.count
 	}
 
 	/**
@@ -76,7 +78,7 @@ class DamageCalculator {
 	 */
 	get injury(): number {
 		let temp = Math.floor(this._woundingModifier(this.penetratingDamage))
-		temp = temp * this._vulnerability
+		temp = temp * this._damageRoll.vulnerability
 		let candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
 		candidateInjury = candidateInjury / this._damageReductionValue
 		return this._applyMaximum(candidateInjury)
@@ -332,7 +334,7 @@ class DamageCalculator {
 	}
 
 	private get _multiplierForShotgunExtremelyClose() {
-		return this._damageRoll.isShotgunExtremeRange ? Math.floor(this._damageRoll.rofMultiplier / 2) : 1
+		return this._damageRoll.isShotgunCloseRange ? Math.floor(this._damageRoll.rofMultiplier / 2) : 1
 	}
 
 	/**

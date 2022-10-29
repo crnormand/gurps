@@ -193,6 +193,12 @@
 			"resource_trackers": {
 				"title": "Resource Trackers"
 			},
+			"points_record": {
+				"title": "Points Record for {name}",
+				"when": "When",
+				"points": "Points",
+				"reason": "Reason"
+			},
 			"macros": {
 				"title": "Quick Macros",
 				"add": "Add New Quick Macro..."
@@ -227,6 +233,9 @@
 				},
 				"body_type": {
 					"button": "Body Type"
+				},
+				"resource_trackers": {
+					"button": "Resource Trackers"
 				},
 				"damage_progression": "Damage Progression",
 				"show_trait_modifier_adj": "Show trait modifier cost adjustments",
@@ -441,6 +450,15 @@
 			"halve_move": "Halve Move",
 			"halve_dodge": "Halve Dodge",
 			"halve_st": "Halve Strength"
+		},
+		"resource_tracker_def": {
+			"id": "ID",
+			"name": "Short Name",
+			"full_name": "Full Name",
+			"max": "Max",
+			"max_enforced": "Enforce",
+			"min": "Min",
+			"min_enforced": "Enforce"
 		},
 		"prereq": {
 			"header": "Prerequisites"
@@ -708,16 +726,6 @@
 				"tooltip": "Tooltip",
 				"inline_and_tooltip": "Inline & Tooltip"
 			},
-			"default_length_units": {
-				"ft_in": "Feet & Inches",
-				"in": "in",
-				"ft": "ft",
-				"yd": "yd",
-				"mi": "mi",
-				"cm": "cm",
-				"km": "km",
-				"m": "m"
-			},
 			"default_weight_units": {
 				"lb": "lb",
 				"#": "#",
@@ -842,7 +850,21 @@
 			"target_name": "Target: {name}",
 			"no_targets": "No Targetted or Controlled Tokens!"
 		},
+		"length_units": {
+			"ft_in": "Feet & Inches",
+			"in": "in",
+			"ft": "ft",
+			"yd": "yd",
+			"mi": "mi",
+			"cm": "cm",
+			"km": "km",
+			"m": "m"
+		},
 		"settings": {
+			"show_token_modifiers": {
+				"name": "Show Token Modifiers",
+				"hint": "Enable the Token Effect Modifiers pop-up window."
+			},
 			"basic_set_pdfs": {
 				"name": "Basic Set PDFs",
 				"hint": "Select Combined or Separate and use the associated PDF codes when configuring PDFs. Note: If you select Separate, the Basic Set Campaigns PDF should open up to page 340 during the PDF test.",
@@ -850,6 +872,10 @@
 					"combined": "Combined Basic Set (B)",
 					"separate": "Separate (Characters: B, Campaigns: BX)"
 				}
+			},
+			"server_side_file_dialog": {
+				"name": "Use Server-Side File Dialog",
+				"hint": "When enabled, file prompts (for character sheet uploads, etc.) will use the FoundryVTT file dialog, which searches through files on the Foundry server. When disabled, file prompts will search the user's local machine."
 			},
 			"portrait_path": {
 				"name": "Default Portait Path",

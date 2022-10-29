@@ -24,6 +24,7 @@ import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, RollGURPS } from "@util"
 import { CharacterGURPS } from "."
 import { CharacterSheetConfig } from "./config_sheet"
+import { PointRecordSheet } from "./points_sheet"
 
 export class CharacterSheetGURPS extends ActorSheetGURPS {
 	config: CharacterSheetConfig | null = null
@@ -89,6 +90,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		html.find(".item").on("dragenter", event => this._onItemDragEnter(event))
 
 		if (this.actor.editing) html.find(".rollable").addClass("noroll")
+
+		// Points Record
+		html.find(".edit-points").on("click", event => this._openPointsRecord(event))
 	}
 
 	protected _resizeInput(event: JQuery.ChangeEvent) {
@@ -118,6 +122,14 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 		const id = uuid.split(".").at(-1) ?? ""
 		const item = this.actor.deepItems.get(id)
 		item?.sheet?.render(true)
+	}
+
+	protected async _openPointsRecord(event: JQuery.ClickEvent) {
+		event.preventDefault()
+		new PointRecordSheet(this.document as CharacterGURPS, {
+			top: this.position.top! + 40,
+			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
+		}).render(true)
 	}
 
 	protected async _onEquippedToggle(event: JQuery.ClickEvent) {
@@ -191,8 +203,11 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				.sort((a: Item, b: Item) => (a.sort ?? 0) - (b.sort ?? 0))
 		)
 		const [primary_attributes, secondary_attributes, point_pools] = this.prepareAttributes(this.actor.attributes)
+		const resource_trackers = Array.from(this.actor.resource_trackers.values())
+		console.log(resource_trackers)
 		const encumbrance = this.prepareEncumbrance()
 		const lifts = this.prepareLifts()
+		const overencumbered = this.actor.allEncumbrance.at(-1)!.maximum_carry! < this.actor!.weightCarried(false)
 		const sheetData = {
 			...super.getData(options),
 			...{
@@ -203,12 +218,14 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				primary_attributes: primary_attributes,
 				secondary_attributes: secondary_attributes,
 				point_pools: point_pools,
+				resource_trackers: resource_trackers,
 				encumbrance: encumbrance,
 				lifting: lifts,
 				current_year: new Date().getFullYear(),
 				maneuvers: (CONFIG as any).GURPS.select.maneuvers,
 				postures: (CONFIG as any).GURPS.select.postures,
 				move_types: (CONFIG as any).GURPS.select.move_types,
+				overencumbered: overencumbered,
 			},
 		}
 		this.prepareItems(sheetData)
@@ -338,7 +355,7 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 						label: "",
 						class: "gmenu",
 						icon: "gcs-all-seeing-eye",
-						onclick: event => this._onGMenu(event),
+						onclick: event => this._openGMenu(event),
 					},
 			  ]
 			: []
@@ -354,9 +371,9 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 	// 	this.actor.importCharacter()
 	// }
 
-	protected async _onGMenu(event: JQuery.ClickEvent) {
+	protected async _openGMenu(event: JQuery.ClickEvent) {
 		event.preventDefault()
-		this.config = new CharacterSheetConfig(this.document as CharacterGURPS, {
+		this.config ??= new CharacterSheetConfig(this.document as CharacterGURPS, {
 			top: this.position.top! + 40,
 			left: this.position.left! + (this.position.width! - DocumentSheet.defaultOptions.width!) / 2,
 		})
