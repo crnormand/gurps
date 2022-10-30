@@ -19,6 +19,7 @@ import { AttributeType } from "@module/attribute/attribute_def"
 import { CondMod } from "@module/conditional-modifier"
 import { RollType } from "@module/data"
 import { openPDF } from "@module/pdf"
+import { ResourceTrackerObj } from "@module/resource_tracker"
 import { SYSTEM_NAME } from "@module/settings"
 import { MeleeWeapon, RangedWeapon } from "@module/weapon"
 import { dollarFormat, RollGURPS } from "@util"
@@ -68,6 +69,24 @@ export class CharacterSheetGURPS extends ActorSheetGURPS {
 				const index = attributes.findIndex(e => e.attr_id === id)
 				setProperty(attributes[index], key, formData[i])
 				formData["system.attributes"] = attributes
+				delete formData[i]
+			}
+			if (i.startsWith("resource_trackers.")) {
+				const resource_trackers: ResourceTrackerObj[] =
+					(formData["system.resource_trackers"] as ResourceTrackerObj[]) ??
+					duplicate(this.actor.system.resource_trackers)
+				const id = i.split(".")[1]
+				const tracker = this.actor.resource_trackers.get(id)
+				if (tracker) {
+					let damage = tracker.max - Number(formData[i])
+					if (tracker.tracker_def.isMaxEnforced) damage = Math.max(damage, 0)
+					if (tracker.tracker_def.isMinEnforced) damage = Math.min(damage, tracker.max - tracker.min)
+					if (i.endsWith(".damage")) (formData[i] as number) = damage
+				}
+				const key = i.replace(`resource_trackers.${id}.`, "")
+				const index = resource_trackers.findIndex(e => e.tracker_id === id)
+				setProperty(resource_trackers[index], key, formData[i])
+				formData["system.resource_trackers"] = resource_trackers
 				delete formData[i]
 			}
 		}

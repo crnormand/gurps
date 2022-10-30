@@ -58,7 +58,8 @@
 
 	.fieldblock6 {
 		display: grid;
-		grid-template-columns: repeat(6, 0fr);
+		// grid-template-columns: repeat(6, 0fr);
+		grid-template-columns: repeat(6, auto);
 		white-space: nowrap;
 		background-color: rgba(var(--color-content), 1);
 		color: rgba(var(--color-on-content), 1);

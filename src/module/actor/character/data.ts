@@ -149,6 +149,6 @@ export interface HitLocation {
 	dr?: Record<string, DrValue>
 	calc?: {
 		roll_range: string
-		dr: Record<string, DrValue>
+		dr: Record<string, { value: number; flags?: Record<string, boolean> }>
 	}
 }

@@ -453,8 +453,8 @@
 		},
 		"resource_tracker_def": {
 			"id": "ID",
-			"name": "Short Name",
-			"full_name": "Full Name",
+			"name": "Name",
+			"tracker_base": "Base Value",
 			"max": "Max",
 			"max_enforced": "Enforce",
 			"min": "Min",

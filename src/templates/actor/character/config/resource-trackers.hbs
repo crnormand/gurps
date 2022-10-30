@@ -11,15 +11,15 @@
 					data-order="{{this.order}}"
 					data-type="resource-tracker"
 				></a>
-				<a class="gcs-trash"></a>
-				<a class="gcs-circled-add disabled"></a>
+				<a class="gcs-trash delete" data-index="{{this.order}}" data-type="resource_trackers"></a>
+				<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="tracker_thresholds"></a>
 			</div>
 			<div class="fieldblock">
 				<div class="label">{{localize "gurps.resource_tracker_def.id"}}</div>
 				<div class="field">
 					<input
 						type="text"
-						name="resource.trackers.{{this.order}}.id"
+						name="resource_trackers.{{this.order}}.id"
 						value="{{this.id}}"
 						data-dtype="String"
 					/>
@@ -28,17 +28,8 @@
 				<div class="field">
 					<input
 						type="text"
-						name="resource.trackers.{{this.order}}.name"
+						name="resource_trackers.{{this.order}}.name"
 						value="{{this.name}}"
-						data-dtype="String"
-					/>
-				</div>
-				<div class="label">{{localize "gurps.resource_tracker_def.full_name"}}</div>
-				<div class="field">
-					<input
-						type="text"
-						name="resource.trackers.{{this.order}}.full_name"
-						value="{{this.full_name}}"
 						data-dtype="String"
 					/>
 				</div>
@@ -81,11 +72,8 @@
 					</label>
 				</div>
 				<div class="item-list thresholds">
-					<div class="add">
-						<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="tracker_thresholds"></a>
-					</div>
 					{{#each this.thresholds}}
-					{{>actor/character/config/threshold id=(../this.order)}}
+					{{>actor/character/config/threshold id=../this.order parent="resource_trackers"}}
 					{{/each}}
 				</div>
 			</div>
