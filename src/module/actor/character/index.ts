@@ -505,10 +505,10 @@ class CharacterGURPS extends BaseActorGURPS {
 			const l = e
 			l.roll_range = e.calc?.roll_range || "-"
 			l.dr = {}
-			const all = e.calc?.dr.all || 0
+			const all = e.calc?.dr.all || { value: 0 }
 			for (const k of Object.keys(e.calc?.dr ?? {})) {
 				if (k === "all") l.dr[k] = all
-				else l.dr[k] = all + e.calc!.dr[k]
+				else l.dr[k] = { value: all.value + e.calc!.dr[k].value }
 			}
 			delete l.calc
 			return l
