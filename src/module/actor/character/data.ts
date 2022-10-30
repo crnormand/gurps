@@ -131,6 +131,11 @@ export interface HitLocationTable {
 	locations: HitLocation[]
 }
 
+export interface DrValue {
+	value: number
+	flags?: Record<string, boolean>
+}
+
 export interface HitLocation {
 	id: string
 	choice_name: string
@@ -141,9 +146,9 @@ export interface HitLocation {
 	description: string
 	sub_table?: HitLocationTable
 	roll_range?: string
-	dr?: Record<string, number>
+	dr?: Record<string, DrValue>
 	calc?: {
 		roll_range: string
-		dr: Record<string, number>
+		dr: Record<string, DrValue>
 	}
 }

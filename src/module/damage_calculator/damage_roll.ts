@@ -65,7 +65,9 @@ interface DamageRoll {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface DamageAttacker {}
+interface DamageAttacker {
+	name: string
+}
 
 /**
  * An adapter on BaseWeapon and its subclasses that gives the DamageCalculator an easy interface to use.

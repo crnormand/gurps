@@ -22,16 +22,21 @@ enum DamageType {
 	cut = "cutting",
 	fat = "fatigue",
 	imp = "impaling",
-	pi_m = "small piercing",
+	"pi-" = "small piercing",
 	pi = "piercing",
-	pi_p = "large piercing",
-	pi_pp = "huge piercing",
+	"pi+" = "large piercing",
+	"pi++" = "huge piercing",
 	tox = "toxic",
 	// TODO Should we include "knockback only" as a damage type?
 	kb = "knockback only",
 }
 
-const AnyPiercingType: DamageType[] = [DamageType.pi, DamageType.pi_m, DamageType.pi_p, DamageType.pi_pp]
+const damageTypeMap: Record<string, DamageType> = {
+	inj: DamageType.injury,
+	dmg: DamageType.injury,
+}
+
+const AnyPiercingType: DamageType[] = [DamageType.pi, DamageType["pi-"], DamageType["pi+"], DamageType["pi++"]]
 
 type DamageTypeData = {
 	[key in DamageType]: {
@@ -85,7 +90,7 @@ const dataTypeMultiplier: DamageTypeData = {
 		homogenous: oneHalf,
 		diffuse: max1,
 	},
-	[DamageType.pi_m]: {
+	[DamageType["pi-"]]: {
 		theDefault: oneHalf,
 		unliving: oneFifth,
 		homogenous: oneTenth,
@@ -97,13 +102,13 @@ const dataTypeMultiplier: DamageTypeData = {
 		homogenous: oneFifth,
 		diffuse: max1,
 	},
-	[DamageType.pi_p]: {
+	[DamageType["pi+"]]: {
 		theDefault: oneAndOneHalf,
 		unliving: identity,
 		homogenous: oneThird,
 		diffuse: max1,
 	},
-	[DamageType.pi_pp]: {
+	[DamageType["pi++"]]: {
 		theDefault: double,
 		unliving: identity,
 		homogenous: oneHalf,

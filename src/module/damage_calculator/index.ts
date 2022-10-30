@@ -2,7 +2,7 @@ import { RollType } from "../data"
 import { DamageRoll, DefaultHitLocations } from "./damage_roll"
 import { DamageTarget } from "./damage_target"
 import { AnyPiercingType, DamageType, dataTypeMultiplier } from "./damage_type"
-import { HitLocation } from "./hit_location"
+import { HitLocationAdapter } from "./hit_location"
 import {
 	CheckFailureConsequence,
 	EffectCheck,
@@ -16,6 +16,7 @@ import { double, identity, ModifierFunction, oneAndOneHalf } from "./utils"
 const Head = ["skull", "eye", "face"]
 const Limb = ["arm", "leg"]
 const Extremity = ["hand", "foot"]
+const Torso = "torso"
 
 /**
  * Given a DamageRoll and a DamageTarget, the DamageCalculator determines the damage done, if any.
@@ -25,45 +26,45 @@ const Extremity = ["hand", "foot"]
  * The DamageCalculator is immutable; you need to create a new one for every damage resolution.
  */
 class DamageCalculator {
-	private _target: DamageTarget
+	target: DamageTarget
 
-	private _damageRoll: DamageRoll
+	damageRoll: DamageRoll
 
 	constructor(damageRoll: DamageRoll, defender: DamageTarget) {
 		if (damageRoll.armorDivisor < 0) throw new Error(`Invalid Armor Divisor value: [${damageRoll.armorDivisor}]`)
-		this._damageRoll = damageRoll
-		this._target = defender
+		this.damageRoll = damageRoll
+		this.target = defender
 	}
 
 	/**
 	 * @returns {number} - The basic damage; typically directly from the damage roll.
 	 */
 	get basicDamage(): number {
-		if (this._isExplosion && this._damageRoll.range) {
-			if (this._damageRoll.range > this._diceOfDamage * 2) return 0
-			return Math.floor(this._basicDamage / (3 * this._damageRoll.range))
+		if (this._isExplosion && this.damageRoll.range) {
+			if (this.damageRoll.range > this._diceOfDamage * 2) return 0
+			return Math.floor(this._basicDamage / (3 * this.damageRoll.range))
 		}
 
-		let halfD = this._damageRoll.isHalfDamage ? 0.5 : 1
+		let halfD = this.damageRoll.isHalfDamage ? 0.5 : 1
 		return this._isKnockbackOnly
 			? 0
 			: Math.floor(this._basicDamage * halfD) * this._multiplierForShotgunExtremelyClose
 	}
 
 	private get _isKnockbackOnly() {
-		return this._damageRoll.damageType === DamageType.kb
+		return this.damageRoll.damageType === DamageType.kb
 	}
 
 	private get _basicDamage(): number {
-		return this._damageRoll.basicDamage
+		return this.damageRoll.basicDamage
 	}
 
 	private get _isExplosion(): boolean {
-		return this._damageRoll.damageModifier === "ex"
+		return this.damageRoll.damageModifier === "ex"
 	}
 
 	private get _diceOfDamage(): number {
-		return this._damageRoll.dice.count
+		return this.damageRoll.dice.count
 	}
 
 	/**
@@ -78,7 +79,7 @@ class DamageCalculator {
 	 */
 	get injury(): number {
 		let temp = Math.floor(this._woundingModifier(this.penetratingDamage))
-		temp = temp * this._damageRoll.vulnerability
+		temp = temp * this.damageRoll.vulnerability
 		let candidateInjury = this.penetratingDamage > 0 ? Math.max(1, temp) : 0
 		candidateInjury = candidateInjury / this._damageReductionValue
 		return this._applyMaximum(candidateInjury)
@@ -89,19 +90,19 @@ class DamageCalculator {
 	 * @returns {number} injury maximum value based on hit location.
 	 */
 	private _applyMaximum(candidateInjury: number): number {
-		if (Limb.includes(this._damageRoll.locationId)) {
-			return Math.min(Math.floor(this._target.hitPoints.value / 2) + 1, candidateInjury)
+		if (Limb.includes(this.damageRoll.locationId)) {
+			return Math.min(Math.floor(this.target.hitPoints.value / 2) + 1, candidateInjury)
 		}
 
-		if (Extremity.includes(this._damageRoll.locationId)) {
-			return Math.min(Math.floor(this._target.hitPoints.value / 3) + 1, candidateInjury)
+		if (Extremity.includes(this.damageRoll.locationId)) {
+			return Math.min(Math.floor(this.target.hitPoints.value / 3) + 1, candidateInjury)
 		}
 
 		return candidateInjury
 	}
 
 	private get _damageReductionValue() {
-		let trait = this._target.getTrait("Damage Reduction")
+		let trait = this.target.getTrait("Damage Reduction")
 		return trait ? trait.levels : 1
 	}
 
@@ -109,18 +110,18 @@ class DamageCalculator {
 	 * @returns {number} - The amount of blunt trauma damage, if any.
 	 */
 	get bluntTrauma(): number {
-		if (this._damageRoll.damageType === DamageType.fat) return 0
+		if (this.damageRoll.damageType === DamageType.fat) return 0
 
 		if (this.penetratingDamage > 0 || !this._isFlexibleArmor()) return 0
 		return this._bluntTraumaDivisor > 0 ? Math.floor(this.basicDamage / this._bluntTraumaDivisor) : 0
 	}
 
 	private _isFlexibleArmor() {
-		return this._targetedHitLocation?.calc.flexible
+		return this._targetedHitLocation?.calc?.isFlexible(this.damageRoll.damageType) ?? false
 	}
 
-	private get _targetedHitLocation(): HitLocation | undefined {
-		return this._defenderHitLocations.find(it => it.id === this._damageRoll.locationId)
+	private get _targetedHitLocation(): HitLocationAdapter | undefined {
+		return this._defenderHitLocations.find(it => it.id === this.damageRoll.locationId)
 	}
 
 	/**
@@ -128,7 +129,7 @@ class DamageCalculator {
 	 */
 	get knockback() {
 		if (this._isDamageTypeKnockbackEligible()) {
-			if (this._damageRoll.damageType === DamageType.cut && this.penetratingDamage > 0) return 0
+			if (this.damageRoll.damageType === DamageType.cut && this.penetratingDamage > 0) return 0
 
 			return Math.floor(this._basicDamage / (this._knockbackResistance - 2))
 		}
@@ -136,11 +137,11 @@ class DamageCalculator {
 	}
 
 	private _isDamageTypeKnockbackEligible() {
-		return [DamageType.cr, DamageType.cut, DamageType.kb].includes(this._damageRoll.damageType)
+		return [DamageType.cr, DamageType.cut, DamageType.kb].includes(this.damageRoll.damageType)
 	}
 
 	private get _knockbackResistance() {
-		return this._target.ST
+		return this.target.ST
 	}
 
 	/**
@@ -165,9 +166,9 @@ class DamageCalculator {
 			// TODO In RAW, this doubling only occurs if the target is physiologically male and does not have the
 			// "No Vitals" Injury Tolerance trait.
 			if (
-				this._damageRoll.damageType === DamageType.cr &&
-				this._damageRoll.locationId === "groin" &&
-				!this._target.hasTrait("No Vitals")
+				this.damageRoll.damageType === DamageType.cr &&
+				this.damageRoll.locationId === "groin" &&
+				!this.target.hasTrait("No Vitals")
 			)
 				modifier *= 2
 
@@ -181,18 +182,18 @@ class DamageCalculator {
 	}
 
 	private get _shockFactor(): number {
-		return Math.floor(this._target.hitPoints.value / 10)
+		return Math.floor(this.target.hitPoints.value / 10)
 	}
 
 	private get _majorWoundEffects(): InjuryEffect[] {
 		const wounds = []
 
 		// Fatigue attacks and Injury Tolerance (Homogenous) ignore hit location.
-		if (this._damageRoll.damageType === DamageType.fat || this._target.isHomogenous || this._target.isDiffuse) {
+		if (this.damageRoll.damageType === DamageType.fat || this.target.isHomogenous || this.target.isDiffuse) {
 			if (this._isMajorWound())
 				wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
 		} else {
-			switch (this._damageRoll.locationId) {
+			switch (this.damageRoll.locationId) {
 				case "torso":
 					if (this._isMajorWound())
 						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck()]))
@@ -202,16 +203,14 @@ class DamageCalculator {
 				case "eye":
 					if (this._shockEffects.length > 0 || this._isMajorWound()) {
 						let penalty =
-							this._damageRoll.damageType !== DamageType.tox && !this._target.hasTrait("No Brain")
-								? -10
-								: 0
+							this.damageRoll.damageType !== DamageType.tox && !this.target.hasTrait("No Brain") ? -10 : 0
 						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
 					}
 					break
 
 				case "vitals":
 					if (this._shockEffects.length > 0) {
-						const penalty = this._target.hasTrait("No Vitals") ? 0 : -5
+						const penalty = this.target.hasTrait("No Vitals") ? 0 : -5
 						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
 					}
 					break
@@ -223,7 +222,7 @@ class DamageCalculator {
 
 				case "groin":
 					if (this._isMajorWound()) {
-						const penalty = this._target.hasTrait("No Vitals") ? 0 : -5
+						const penalty = this.target.hasTrait("No Vitals") ? 0 : -5
 						wounds.push(new InjuryEffect(InjuryEffectType.majorWound, [], [new KnockdownCheck(penalty)]))
 					}
 					break
@@ -238,8 +237,8 @@ class DamageCalculator {
 	}
 
 	private _isMajorWound() {
-		let divisor = Extremity.includes(this._damageRoll.locationId) ? 3 : 2
-		return this.injury > this._target.hitPoints.value / divisor
+		let divisor = Extremity.includes(this.damageRoll.locationId) ? 3 : 2
+		return this.injury > this.target.hitPoints.value / divisor
 	}
 
 	private get _knockbackEffects(): InjuryEffect[] {
@@ -250,7 +249,7 @@ class DamageCalculator {
 
 		let penalty = knockback === 1 ? 0 : -1 * (knockback - 1)
 
-		if (this._target.hasTrait("Perfect Balance")) penalty += 4
+		if (this.target.hasTrait("Perfect Balance")) penalty += 4
 
 		const knockbackEffect = new InjuryEffect(
 			InjuryEffectType.knockback,
@@ -270,20 +269,20 @@ class DamageCalculator {
 	}
 
 	private get _miscellaneousEffects(): InjuryEffect[] {
-		if (this._damageRoll.locationId === "eye" && this.injury > this._target.hitPoints.value / 10)
+		if (this.damageRoll.locationId === "eye" && this.injury > this.target.hitPoints.value / 10)
 			return [new InjuryEffect(InjuryEffectType.eyeBlinded)]
 
-		if (this._damageRoll.locationId === "face" && this._isMajorWound()) {
-			return this.injury > this._target.hitPoints.value
+		if (this.damageRoll.locationId === "face" && this._isMajorWound()) {
+			return this.injury > this.target.hitPoints.value
 				? [new InjuryEffect(InjuryEffectType.blinded)]
 				: [new InjuryEffect(InjuryEffectType.eyeBlinded)]
 		}
 
-		if (Limb.includes(this._damageRoll.locationId) && this._isMajorWound()) {
+		if (Limb.includes(this.damageRoll.locationId) && this._isMajorWound()) {
 			return [new InjuryEffect(InjuryEffectType.limbCrippled)]
 		}
 
-		if (Extremity.includes(this._damageRoll.locationId) && this._isMajorWound()) {
+		if (Extremity.includes(this.damageRoll.locationId) && this._isMajorWound()) {
 			return [new InjuryEffect(InjuryEffectType.limbCrippled)]
 		}
 
@@ -291,15 +290,15 @@ class DamageCalculator {
 	}
 
 	private get _bluntTraumaDivisor() {
-		if (this._damageRoll.damageType === DamageType.cr) return 5
+		if (this.damageRoll.damageType === DamageType.cr) return 5
 		return [
 			DamageType.cut,
 			DamageType.imp,
 			DamageType.pi,
-			DamageType.pi_m,
-			DamageType.pi_p,
-			DamageType.pi_pp,
-		].includes(this._damageRoll.damageType)
+			DamageType["pi-"],
+			DamageType["pi+"],
+			DamageType["pi++"],
+		].includes(this.damageRoll.damageType)
 			? 10
 			: 0
 	}
@@ -308,7 +307,7 @@ class DamageCalculator {
 		if (this._isIgnoreDR || this._isInternalExplosion) return 0
 
 		let dr =
-			this._damageRoll.damageType === DamageType.injury
+			this.damageRoll.damageType === DamageType.injury
 				? 0
 				: Math.floor(this._basicDR / this._effectiveArmorDivisor)
 
@@ -321,31 +320,43 @@ class DamageCalculator {
 	}
 
 	private get _isInternalExplosion(): boolean {
-		return this._isExplosion && this._damageRoll.internalExplosion
+		return this._isExplosion && this.damageRoll.internalExplosion
 	}
 
 	private get _basicDR() {
 		let basicDr = 0
-		if (this._damageRoll.locationId === DefaultHitLocations.LargeArea) {
-			let torso = this._target.hitLocationTable.locations.find(it => it.id === "torso")
-			let allDR = this._target.hitLocationTable.locations.map(it => it.calc.dr.all)
-			basicDr = ((torso?.calc.dr.all ?? 0) + Math.min(...allDR)) / 2
+		if (this._isLargeAreaInjury) {
+			let torso = this.findHitLocation(Torso)
+
+			let allDR: number[] = this.target.hitLocationTable.locations
+				.map(it => it.calc?.dr(this.damageRoll.damageType) ?? -1)
+				.filter(it => it !== -1)
+
+			basicDr = ((torso?.calc?.dr(this.damageRoll.damageType) ?? 0) + Math.min(...allDR)) / 2
 		} else {
-			basicDr = this._targetedHitLocation?.calc.dr?.all ?? 0
+			basicDr = this._targetedHitLocation?.calc?.dr(this.damageRoll.damageType) ?? 0
 		}
 
 		return basicDr * this._multiplierForShotgunExtremelyClose
 	}
 
+	private findHitLocation(TORSO: string) {
+		return this.target.hitLocationTable.locations.find(it => it.id === TORSO)
+	}
+
+	private get _isLargeAreaInjury() {
+		return this.damageRoll.locationId === DefaultHitLocations.LargeArea
+	}
+
 	private get _multiplierForShotgunExtremelyClose() {
-		return this._damageRoll.isShotgunCloseRange ? Math.floor(this._damageRoll.rofMultiplier / 2) : 1
+		return this.damageRoll.isShotgunCloseRange ? Math.floor(this.damageRoll.rofMultiplier / 2) : 1
 	}
 
 	/**
 	 * Encapsulate here to allow overriding.
 	 */
 	private get _effectiveArmorDivisor() {
-		let ad = this._damageRoll.armorDivisor
+		let ad = this.damageRoll.armorDivisor
 		if (ad > 0 && ad < 1) return ad
 
 		// If this is an explosion, and the target is collateral damage, ignore Armor Divisors.
@@ -357,7 +368,7 @@ class DamageCalculator {
 		const armorDivisors = [0, 100, 10, 5, 3, 2, 1]
 		let index = armorDivisors.indexOf(ad)
 
-		let damageResistance = this._target.getTrait("Damage Resistance")
+		let damageResistance = this.target.getTrait("Damage Resistance")
 		if (damageResistance) {
 			let level = damageResistance.getModifier("Hardened")?.levels ?? 0
 
@@ -372,47 +383,47 @@ class DamageCalculator {
 	}
 
 	private get _isAtRange(): boolean {
-		return this._damageRoll.range != null && this._damageRoll.range > 0
+		return this.damageRoll.range != null && this.damageRoll.range > 0
 	}
 
 	private get _woundingModifier(): ModifierFunction {
-		const multiplier = dataTypeMultiplier[this._damageRoll.damageType]
+		const multiplier = dataTypeMultiplier[this.damageRoll.damageType]
 
 		/**
 		 * TODO Diffuse: Exception: Area-effect, cone, and explosion attacks cause normal injury.
 		 */
-		if (this._target.isDiffuse) return multiplier.diffuse
-		if (this._target.isHomogenous) return multiplier.homogenous
+		if (this.target.isDiffuse) return multiplier.diffuse
+		if (this.target.isHomogenous) return multiplier.homogenous
 
 		// Unliving uses unliving modifiers unless the hit location is skull, eye, or vitals.
-		if (this._target.isUnliving && !["skull", "eye", "vitals"].includes(this._damageRoll.locationId))
+		if (this.target.isUnliving && !["skull", "eye", "vitals"].includes(this.damageRoll.locationId))
 			return multiplier.unliving
 
 		// No Brain has no extra wounding modifier if hit location is skull or eye.
-		if (this._target.hasTrait("No Brain") && ["skull", "eye"].includes(this._damageRoll.locationId))
+		if (this.target.hasTrait("No Brain") && ["skull", "eye"].includes(this.damageRoll.locationId))
 			return multiplier.theDefault
 
 		// Fatigue damage always ignores hit location.
-		if (this._damageRoll.damageType === DamageType.fat) return identity
+		if (this.damageRoll.damageType === DamageType.fat) return identity
 
 		// --- Calculate Wounding Modifier for Hit Location. ---
 
-		switch (this._damageRoll.locationId) {
+		switch (this.damageRoll.locationId) {
 			case "vitals":
-				if ([DamageType.imp, ...AnyPiercingType].includes(this._damageRoll.damageType)) return x => x * 3
+				if ([DamageType.imp, ...AnyPiercingType].includes(this.damageRoll.damageType)) return x => x * 3
 				return this.isTightBeamBurning() ? double : multiplier.theDefault
 
 			case "skull":
 			case "eye":
-				return this._damageRoll.damageType !== DamageType.tox ? x => x * 4 : multiplier.theDefault
+				return this.damageRoll.damageType !== DamageType.tox ? x => x * 4 : multiplier.theDefault
 
 			case "face":
-				return this._damageRoll.damageType === DamageType.cor ? oneAndOneHalf : identity
+				return this.damageRoll.damageType === DamageType.cor ? oneAndOneHalf : identity
 
 			case "neck":
-				return [DamageType.cor, DamageType.cr].includes(this._damageRoll.damageType)
+				return [DamageType.cor, DamageType.cr].includes(this.damageRoll.damageType)
 					? oneAndOneHalf
-					: this._damageRoll.damageType === DamageType.cut
+					: this.damageRoll.damageType === DamageType.cut
 					? double
 					: multiplier.theDefault
 
@@ -420,7 +431,7 @@ class DamageCalculator {
 			case "foot":
 			case "arm":
 			case "leg":
-				return [DamageType.pi_p, DamageType.pi_pp, DamageType.imp].includes(this._damageRoll.damageType)
+				return [DamageType["pi+"], DamageType["pi++"], DamageType.imp].includes(this.damageRoll.damageType)
 					? identity
 					: multiplier.theDefault
 
@@ -430,11 +441,11 @@ class DamageCalculator {
 	}
 
 	private isTightBeamBurning() {
-		return this._damageRoll.damageType === DamageType.burn && this._damageRoll.damageModifier === "tbb"
+		return this.damageRoll.damageType === DamageType.burn && this.damageRoll.damageModifier === "tbb"
 	}
 
-	private get _defenderHitLocations(): Array<HitLocation> {
-		return this._target.hitLocationTable.locations
+	private get _defenderHitLocations(): Array<HitLocationAdapter> {
+		return this.target.hitLocationTable.locations
 	}
 }
 
