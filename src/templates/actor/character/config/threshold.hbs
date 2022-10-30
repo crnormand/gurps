@@ -1,32 +1,74 @@
 <div class="item" data-id="{{@index}}" data-order="{{@index}}" data-type="threshold">
 	<div class="controls">
 		<a class="gcs-grip drag" data-id="{{@index}}" data-order="{{@index}}" data-type="threshold"></a>
-		<a class="gcs-trash delete" data-attribute="{{id}}" data-id="{{@index}}"></a>
+		<a class="gcs-trash delete" data-pindex="{{id}}" data-index="{{@index}}" data-type="{{#if (eq parent 'resource_trackers')}}tracker_thresholds{{else}}attribute_thresholds{{/if}}"></a>
 	</div>
 	<div class="fieldblock">
-		{{>sections/input-text field="field" label="gurps.attribute_def.state" name=(concat "attributes." id ".thresholds." @index ".state") data=this.state type="String" }}
-		{{>sections/input-text field="field" label="gurps.attribute_def.expression" name=(concat "attributes." id ".thresholds." @index ".expression") data=this.expression type="String" }}
-	<div class="label"></div>
-	<div class="field">
-		<label class="label checkbox-label">
-			<input class="input" type="checkbox" name="attributes.{{id}}.thresholds.{{@index}}.halve_move" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
-			{{localize "gurps.attribute_def.halve_move"}}
-		</label>
-	</div>
-	<div class="label"></div>
-	<div class="field">
-		<label class="label checkbox-label">
-			<input class="input" type="checkbox" name="attributes.{{id}}.thresholds.{{@index}}.halve_dodge" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
-			{{localize "gurps.attribute_def.halve_dodge"}}
-		</label>
-	</div>
-	<div class="label"></div>
-	<div class="field">
-		<label class="label checkbox-label">
-			<input class="input" type="checkbox" name="attributes.{{id}}.thresholds.{{@index}}.halve_st" data-dtype="Boolean" {{checked (in this.ops "halve_st")}} />
-			{{localize "gurps.attribute_def.halve_st"}}
-		</label>
-	</div>
-		{{>sections/input-text field="field" label="gurps.attribute_def.explanation" name=(concat "attributes." id ".thresholds." @index ".explanation") data=this.explanation type="String" }}
+		<div class="label">{{localize "gurps.attribute_def.state"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{parent}}.{{id}}.thresholds.{{@index}}.state"
+				value="{{this.state}}"
+				data-dtype="String"
+			/>
+		</div>
+		<div class="label">{{localize "gurps.attribute_def.expression"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{parent}}.{{id}}.thresholds.{{@index}}.expression"
+				value="{{this.expression}}"
+				data-dtype="String"
+			/>
+		</div>
+		<div class="label"></div>
+		<div class="field">
+			<label class="label checkbox-label">
+				<input
+					class="input"
+					type="checkbox"
+					name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_move"
+					data-dtype="Boolean"
+					{{checked (in this.ops "halve_move")}}
+				/>
+				{{localize "gurps.attribute_def.halve_move"}}
+			</label>
+		</div>
+		<div class="label"></div>
+		<div class="field">
+			<label class="label checkbox-label">
+				<input
+					class="input"
+					type="checkbox"
+					name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_dodge"
+					data-dtype="Boolean"
+					{{checked (in this.ops "halve_dodge")}}
+				/>
+				{{localize "gurps.attribute_def.halve_dodge"}}
+			</label>
+		</div>
+		<div class="label"></div>
+		<div class="field">
+			<label class="label checkbox-label">
+				<input
+					class="input"
+					type="checkbox"
+					name="{{parent}}.{{id}}.thresholds.{{@index}}.halve_st"
+					data-dtype="Boolean"
+					{{checked (in this.ops "halve_st")}}
+				/>
+				{{localize "gurps.attribute_def.halve_st"}}
+			</label>
+		</div>
+		<div class="label">{{localize "gurps.attribute_def.explanation"}}</div>
+		<div class="field">
+			<input
+				type="text"
+				name="{{parent}}.{{id}}.thresholds.{{@index}}.explanation"
+				value="{{this.explanation}}"
+				data-dtype="String"
+			/>
+		</div>
 	</div>
 </div>

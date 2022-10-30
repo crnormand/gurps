@@ -1352,22 +1352,30 @@ class CharacterGURPS extends BaseActorGURPS {
 		this.variableResolverExclusions.set(variableName, true)
 		if (gid.SizeModifier === variableName) return this.profile.SM.signedString()
 		const parts = variableName.split(".") // TODO: check
-		const attr = this.attributes.get(parts[0])
+		let attr: Attribute | ResourceTracker | undefined = this.attributes.get(parts[0])
+		if (!attr) attr = this.resource_trackers.get(parts[0])
 		if (!attr) {
 			console.warn(`No such variable: $${variableName}`)
 			return ""
 		}
-		const def = this.settings.attributes.find(e => e.id === attr.attr_id)
-		// Const def = this.settings.attributes[attr.attr_id]
+		let def
+		if (attr instanceof Attribute) {
+			// Def = this.settings.attributes.find(e => e.id === (attr as Attribute).attr_id)
+			def = attr.attribute_def
+		} else if (attr instanceof ResourceTracker) {
+			def = attr.tracker_def
+			// Def = this.settings.resource_trackers.find(e => e.id === (attr as ResourceTracker).tracker_id)
+		}
 		if (!def) {
 			console.warn(`No such variable definition: $${variableName}`)
 			return ""
 		}
-		if (def.type === AttributeType.Pool && parts.length > 1) {
+		if ((def instanceof ResourceTrackerDef || def.type === AttributeType.Pool) && parts.length > 1) {
 			switch (parts[1]) {
 				case "current":
 					return attr.current.toString()
 				case "maximum":
+				case "max":
 					return attr.max.toString()
 				default:
 					console.warn(`No such variable: $${variableName}`)

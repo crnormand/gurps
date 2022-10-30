@@ -1,12 +1,11 @@
 import { reserved_ids } from "@module/attribute/attribute_def"
 import { PoolThreshold, PoolThresholdDef } from "@module/attribute/pool_threshold"
-import { evaluateToNumber, sanitize, VariableResolver } from "@util"
+import { sanitize, VariableResolver } from "@util"
 
 export interface ResourceTrackerDefObj {
 	id: string
 	name: string
 	full_name: string
-	tracker_base: string
 	max: number
 	min: number
 	isMaxEnforced: boolean
@@ -21,8 +20,6 @@ export class ResourceTrackerDef {
 	name = ""
 
 	full_name = ""
-
-	tracker_base = "10"
 
 	thresholds: PoolThreshold[] = []
 
@@ -67,8 +64,9 @@ export class ResourceTrackerDef {
 		return `${this.full_name} (${this.name})`
 	}
 
-	baseValue(resolver: VariableResolver): number {
-		return evaluateToNumber(this.tracker_base, resolver)
+	baseValue(_resolver: VariableResolver): number {
+		return this.max
+		// Return evaluateToNumber(this.tracker_base, resolver)
 	}
 }
 
