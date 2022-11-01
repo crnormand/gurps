@@ -104,6 +104,7 @@ class CharacterGURPS extends BaseActorGURPS {
 		data?: DeepPartial<ActorDataConstructorData | (ActorDataConstructorData & Record<string, unknown>)>,
 		context?: DocumentModificationContext & foundry.utils.MergeObjectOptions & { noPrepare?: boolean }
 	): Promise<this | undefined> {
+		if (context?.noPrepare) this.noPrepare = true
 		console.log(data, context)
 		this.updateAttributes(data)
 		this.checkImport(data)
@@ -501,18 +502,18 @@ class CharacterGURPS extends BaseActorGURPS {
 	}
 
 	get HitLocations(): HitLocation[] {
-		return this.system.settings?.body_type?.locations?.map(e => {
-			const l = e
-			l.roll_range = e.calc?.roll_range || "-"
-			l.dr = {}
-			const all = e.calc?.dr.all || { value: 0 }
-			for (const k of Object.keys(e.calc?.dr ?? {})) {
-				if (k === "all") l.dr[k] = all
-				else l.dr[k] = { value: all.value + e.calc!.dr[k].value }
-			}
-			delete l.calc
-			return l
-		})
+		return this.system.settings.body_type.locations
+		// Return this.system.settings.body_type.locations.map(e => {
+		// 	e.roll_range = e.calc?.roll_range || ""
+		// 	e.dr = {}
+		// 	const all = e.calc?.dr.all || { value: 0 }
+		// 	for (const k of Object.keys(e.calc?.dr || {})) {
+		// 		if (k === "all") e.dr[k] = { value: all.value }
+		// 		else e.dr[k] = { value: all.value + e.calc!.dr[k].value }
+		// 	}
+		// 	delete e.calc
+		// 	return e
+		// })
 	}
 
 	// Item Types
@@ -810,6 +811,7 @@ class CharacterGURPS extends BaseActorGURPS {
 
 	override prepareBaseData(): void {
 		super.prepareBaseData()
+		if (this.noPrepare) return
 		this.system.settings.attributes.forEach(e => (e.cost_adj_percent_per_sm ??= 0))
 		if (this.system.attributes.length === 0) {
 			this.system.attributes = this.newAttributes()

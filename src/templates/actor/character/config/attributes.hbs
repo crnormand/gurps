@@ -3,9 +3,9 @@
 </div>
 <div class="item-list">
 	{{#each primaryAttributes}}
-		<div class="item" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute">
+		<div class="item" data-id="{{this.id}}" data-index="{{this.order}}" data-type="attributes">
 			<div class="controls">
-				<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute"></a>
+				<a class="gcs-grip drag" data-index="{{this.order}}" data-type="attributes"></a>
 				<a class="gcs-trash delete" data-index="{{this.order}}" data-type="attributes"></a>
 				<a class="gcs-circled-add disabled"></a>
 			</div>
@@ -75,9 +75,9 @@
 		</div>
 	{{/each}}
 	{{#each secondaryAttributes}}
-		<div class="item">
+		<div class="item" data-id="{{this.id}}" data-index="{{this.order}}" data-type="attributes">
 			<div class="controls">
-				<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attribute"></a>
+				<a class="gcs-grip drag" data-index="{{this.order}}" data-type="attributes"></a>
 				<a class="gcs-trash delete" data-index="{{this.order}}" data-type="attributes"></a>
 				<a class="gcs-circled-add disabled"></a>
 			</div>
@@ -147,9 +147,9 @@
 		</div>
 	{{/each}}
 	{{#each poolAttributes}}
-		<div class="item">
+		<div class="item" data-id="{{this.id}}" data-index="{{this.order}}" data-type="attributes">
 			<div class="controls">
-				<a class="gcs-grip drag" data-id="{{this.id}}" data-order="{{this.order}}" data-type="attributes"></a>
+				<a class="gcs-grip drag" data-index="{{this.order}}" data-type="ressource_trackers"></a>
 				<a class="gcs-trash delete" data-index="{{this.order}}" data-type="attributes"></a>
 				<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="attribute_thresholds"></a>
 			</div>

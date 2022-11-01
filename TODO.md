@@ -2,28 +2,18 @@
 
 ## In Progress
 
--   Implement GCS-style attribute editor
-    -   Adding draggable attributes
-        -   Change indicator when halfway down an entry
-        -   Functionally reorder attribute on drop
-    -   Functional Delete and Add button
-    -   Pool Attribute UI
-        -   Functional Threshold Button
-        -   Draggable thresholds
-        -   Add \_updateObject options for threshold ops
-        -   apply attribute type
-        -   maybe go back to live updates
-        -   !! use cached values when updating, and update actor only on close !!
--   Implement 5.3 optimization
--   Resource tracker editor
-    -   enfore max/min checkboxes
+-   Implement GCS-style hit location table editor
+-   Customizable default attributes/body plan/sheet settings
 -   Replace "input-text" partial with sensible function
--   Live update input field to red if data is invalid (i.e. if attribute id is taken)
+-   GCS 5.3 Study Time support
+-   Character export/sync
+-   Global Foundry styling
+-   Style (font & color) settings
+-   Manual Light & Dark Mode
 
 ## 1.0.0
 
 -   Drag rollable buttons to hotbar or message box for macros
--   GCS 5.3 Study Time support
 -   Finish the Damage Calculator conversion
 -   Finish "static" character (0.15 and older) compatibility
 -   Convert OTFs and chat commands
@@ -39,13 +29,11 @@
     -   racial templates
     -   alternate abilities
 -   Convert the modifier bucket over
--   Apply consistent UI styling to everything
 -   Convert over the Active Effects implementation and add to it
 -   Convert over module compatibility
 -   Convert over resource tracker functionality
 -   Convert over as much of the old localization files as we can
 -   Implement UI customization settings (colors, fonts)
--   Implement GCS-style hit location table editor
 -   probably a bunch of other stuff I'm forgetting
 -   Dynamic Character changes
     -   add non-attribute resource trackers to dynamic character (optional, could think of better solution)
@@ -56,12 +44,7 @@
     -   (?) add optional reeling to dynamic character (maybe add ability to manually switch pool state for purposes of move etc. calculation)
     -   add posture to dynamic character
     -   add maneuver to dynamic character
--   Global Foundry styling
 -   (compact) NPC sheet
--   Character export/sync
--   Manual Light & Dark Mode
--   Style (font & color) settings
--   Customizable default attributes/body plan/sheet settings
 -   Active Effects with Features
 -   Incorporate v10 tooltip API
 -   Skill Defaults from compendium

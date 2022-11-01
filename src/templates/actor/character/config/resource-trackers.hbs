@@ -3,14 +3,9 @@
 </div>
 <div class="item-list">
 	{{#each resourceTrackers}}
-		<div class="item">
+		<div class="item" data-id="{{this.id}}" data-index="{{this.order}}" data-type="resource_trackers">
 			<div class="controls">
-				<a
-					class="gcs-grip drag"
-					data-id="{{this.id}}"
-					data-order="{{this.order}}"
-					data-type="resource-tracker"
-				></a>
+				<a class="gcs-grip drag" data-index="{{this.order}}" data-type="resource_trackers"></a>
 				<a class="gcs-trash delete" data-index="{{this.order}}" data-type="resource_trackers"></a>
 				<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="tracker_thresholds"></a>
 			</div>
@@ -72,6 +67,9 @@
 					</label>
 				</div>
 				<div class="item-list thresholds">
+					<div class="add">
+						<a class="gcs-circled-add add" data-id="{{this.order}}" data-type="tracker_thresholds"></a>
+					</div>
 					{{#each this.thresholds}}
 					{{>actor/character/config/threshold id=../this.order parent="resource_trackers"}}
 					{{/each}}
