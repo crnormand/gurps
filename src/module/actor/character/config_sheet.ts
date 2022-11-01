@@ -1,6 +1,6 @@
 import { AttributeDef, AttributeDefObj, AttributeType } from "@module/attribute/attribute_def"
-import { ThresholdOp } from "@module/attribute/pool_threshold"
-import { ResourceTrackerDef, ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
+import { PoolThresholdDef, ThresholdOp } from "@module/attribute/pool_threshold"
+import { ResourceTrackerDefObj } from "@module/resource_tracker/tracker_def"
 import { CharacterGURPS } from "."
 import { SETTINGS, SYSTEM_NAME } from "@module/settings"
 import { CharacterImporter } from "./import"
@@ -42,7 +42,7 @@ export class CharacterSheetConfig extends FormApplication {
 				},
 			],
 			dragDrop: [{ dragSelector: ".item-list .item .controls .drag", dropSelector: null }],
-			scrollY: [".item-list"],
+			scrollY: [".item-list", ".tab"],
 		})
 	}
 
@@ -83,7 +83,7 @@ export class CharacterSheetConfig extends FormApplication {
 	activateListeners(html: JQuery<HTMLElement>): void {
 		super.activateListeners(html)
 
-		html.find(".input[name$='.id']").on("input", event => {
+		html.find("input[name$='.id']").on("input", event => {
 			const value = $(event.currentTarget).val()
 			const name = $(event.currentTarget).prop("name")
 			let invalid = false
@@ -216,7 +216,7 @@ export class CharacterSheetConfig extends FormApplication {
 					expression: "",
 					ops: [],
 				})
-				await this.object.update({ "system.settings.attributes": AttributeDef })
+				await this.object.update({ "system.settings.attributes": this.attributes })
 				return this.render()
 			case "tracker_thresholds":
 				this.resource_trackers[$(event.currentTarget).data("id")].thresholds ??= []
@@ -377,36 +377,27 @@ export class CharacterSheetConfig extends FormApplication {
 
 	async _onDragStart(event: DragEvent) {
 		// TODO:update
-		const item = event.currentTarget
-		const type: "attribute" | "threshold" | "location" = $(item!).data("type")
-		if (type === "attribute") {
-			const id = $(item!).data("id")
-			const order = $(item!).data("order")
-			console.log(id, order)
-			event.dataTransfer?.setData(
-				"text/plain",
-				JSON.stringify({
-					type: type,
-					id: id,
-					order: order,
-				})
-			)
-		}
-
-		// Const dragImage = document.createElement("div")
-		// dragImage.innerHTML = await renderTemplate(`systems/${SYSTEM_NAME}/templates/actor/drag-image.hbs`, {
-		// 	name: `${item?.name}`,
-		// 	type: `${item?.type.replace("_container", "").replaceAll("_", "-")}`,
-		// })
-		// dragImage.id = "drag-ghost"
-		// document.body.querySelectorAll("#drag-ghost").forEach(e => e.remove())
-		// document.body.appendChild(dragImage)
-		// const height = (document.body.querySelector("#drag-ghost") as HTMLElement).offsetHeight
-		// event.dataTransfer?.setDragImage(dragImage, 0, height / 2)
+		const item = $(event.currentTarget!)
+		const type: "attributes" | "resource_trackers" | "attribute_thresholds" | "tracker_thresholds" | "locations" =
+			item.data("type")
+		const index = Number(item.data("index"))
+		const parent_index = Number(item.data("pindex")) || 0
+		event.dataTransfer?.setData(
+			"text/plain",
+			JSON.stringify({
+				type: type,
+				index: index,
+				parent_index: parent_index,
+			})
+		)
+		;(event as any).dragType = type
 	}
 
 	protected _onDragItem(event: JQuery.DragOverEvent): void {
 		const element = $(event.currentTarget!)
+		console.log(event.originalEvent)
+		// Let dragData = JSON.parse($(event as any).originalEvent!.dataTransfer!.getData("text/plain"))
+		// console.log(dragData)
 		const heightAcross = (event.pageY! - element.offset()!.top) / element.height()!
 		element.siblings(".item").removeClass("border-top").removeClass("border-bottom")
 		if (heightAcross > 0.5) {
@@ -422,37 +413,59 @@ export class CharacterSheetConfig extends FormApplication {
 		let dragData = JSON.parse(event.dataTransfer!.getData("text/plain"))
 		let element = $(event.target!)
 		if (!element.hasClass("item")) element = element.parent(".item")
-		const target_id = element.data("id")
-		const target_order = element.data("order")
-		console.log(dragData, target_id, target_order)
+		// Const target_id = element.data("id")
+		const target_index = element.data("index")
+		// Console.log(dragData, target_id, target_index)
 		const above = element.hasClass("border-top")
-		if (dragData.order === target_order) return this.render()
-		if (above && dragData.order === target_order - 1) return this.render()
-		if (!above && dragData.order === target_order + 1) return this.render()
+		if (dragData.order === target_index) return this.render()
+		if (above && dragData.order === target_index - 1) return this.render()
+		if (!above && dragData.order === target_index + 1) return this.render()
 
-		const attribute_defs = this.object.settings.attributes
-		const att_def = attribute_defs.splice(
-			attribute_defs.findIndex(e => e.id === dragData.id),
-			1
-		)[0]
-		console.log(`attribute_defs.splice(${target_order}, 0, ${att_def})`)
-		attribute_defs.splice(target_order, 0, att_def)
-		attribute_defs.forEach((v, k) => {
-			v.order = k
-		})
+		let container: any[] = []
+		if (dragData.type === "attributes") container = this.attributes
+		if (dragData.type === "resource_trackers") container = this.resource_trackers
+		if (dragData.type === "attribute_thresholds") container = this.attributes
+		if (dragData.type === "tracker_thresholds") container = this.resource_trackers
+		if (!container) return
 
-		const attributes = this.object.system.attributes
-		const att = attributes.splice(
-			attributes.findIndex(e => e.attr_id === dragData.id),
-			1
-		)[0]
-		attributes.splice(target_order, 0, att)
-		attributes.forEach((v, k) => {
-			v.order = k
-		})
+		let item
+		if (dragData.type.includes("_thresholds")) {
+			item = container[dragData.parent_index].thresholds.splice(dragData.index, 1)[0]
+			container[dragData.parent_index].thresholds.splice(target_index, 0, item as any)
+		} else {
+			item = container.splice(dragData.index, 1)[0]
+			container.splice(target_index, 0, item as any)
+		}
+		if (!dragData.type.includes("_thresholds"))
+			container.forEach((v: any, k: number) => {
+				v.order = k
+			})
 
-		await this.object.update({ "system.settings.attributes": attribute_defs, "system.attributes": attributes })
-		this.render()
+		console.log(container)
+		switch (dragData.type) {
+			case "attributes":
+			case "attribute_thresholds":
+				await this.object.update({ "system.settings.attributes": container })
+				return this.render()
+			case "resource_trackers":
+			case "tracker_thresholds":
+				console.log(container)
+				await this.object.update({ "system.settings.resource_trackers": container })
+				return this.render()
+		}
+
+		// Const attributes = this.object.system.attributes
+		// const att = attributes.splice(
+		// 	attributes.findIndex(e => e.attr_id === dragData.id),
+		// 	1
+		// )[0]
+		// attributes.splice(target_order, 0, att)
+		// attributes.forEach((v, k) => {
+		// 	v.order = k
+		// })
+
+		// await this.object.update({ "system.settings.attributes": attribute_defs, "system.attributes": attributes })
+		// this.render()
 	}
 
 	close(options?: FormApplication.CloseOptions | undefined): Promise<void> {

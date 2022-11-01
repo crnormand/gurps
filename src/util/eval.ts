@@ -86,7 +86,7 @@ export class Evaluator {
 		while (this.operatorStack.length !== 0) {
 			this.processTree()
 		}
-		if (this.operandStack.length === 0) return ["", null]
+		if (this.operandStack.length === 0) return ""
 		return this.evaluateOperand(this.operandStack[this.operandStack.length - 1])
 	}
 
@@ -350,13 +350,14 @@ export class Evaluator {
  * @param resolver
  */
 export function evaluateToNumber(expression: string, resolver: VariableResolver): number {
-	let result = 0
+	let result: any = 0
 	try {
 		result = new Evaluator({ resolver: resolver }).evaluate(expression)
 	} catch (err) {
 		console.error(err, `Unable to resolve ${expression}`)
 		return 0
 	}
+	if (result === "") return 0
 	if (typeof result === "number") return parseFloat(result.toFixed(4))
 	else if (typeof parseFloat(result) === "number") return parseFloat(result)
 	console.error(`Unable to resolve ${expression} to a number`)
